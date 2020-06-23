@@ -1,0 +1,15 @@
+﻿using System;
+using System.Text;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Collections.Generic;
+using System.Windows.Forms;
+using System.Diagnostics;
+
+namespace ComponentFactory.Krypton.Toolkit
+{
+    public static class KryptonToolkitSettings
+    {
+        public static bool DisableLayout;
+    }
+}
