@@ -40,7 +40,7 @@ namespace ComponentFactory.Krypton.Ribbon
 		{
 			get
 			{
-				if (_ribbon.RibbonShape == PaletteRibbonShape.Office2016)
+				if (_ribbon.RibbonShape == PaletteRibbonShape.NeoAxis)
 					return _preferredNormalPadding2016;
 				else
 					return _preferredNormalPadding;
@@ -51,7 +51,7 @@ namespace ComponentFactory.Krypton.Ribbon
 		{
 			get
 			{
-				if (_ribbon.RibbonShape == PaletteRibbonShape.Office2016)
+				if (_ribbon.RibbonShape == PaletteRibbonShape.NeoAxis)
 					return _preferredMinimizedPadding2016;
 				else
 					return _preferredMinimizedPadding;
@@ -62,7 +62,7 @@ namespace ComponentFactory.Krypton.Ribbon
 		{
 			get
 			{
-				if (_ribbon.RibbonShape == PaletteRibbonShape.Office2016)
+				if (_ribbon.RibbonShape == PaletteRibbonShape.NeoAxis)
 					return _layoutNormalPadding2016;
 				else
 					return _layoutNormalPadding;
@@ -73,7 +73,7 @@ namespace ComponentFactory.Krypton.Ribbon
 		{
 			get
 			{
-				if (_ribbon.RibbonShape == PaletteRibbonShape.Office2016)
+				if (_ribbon.RibbonShape == PaletteRibbonShape.NeoAxis)
 					return _layoutMinimizedPadding2016;
 				else
 					return _layoutMinimizedPadding;

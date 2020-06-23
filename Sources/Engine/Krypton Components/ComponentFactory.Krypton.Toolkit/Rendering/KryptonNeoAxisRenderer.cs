@@ -20,7 +20,7 @@ using System.Diagnostics;
 
 namespace ComponentFactory.Krypton.Toolkit
 {
-    internal class KryptonOffice2016Renderer : KryptonProfessionalRenderer
+    internal class KryptonNeoAxisRenderer : KryptonProfessionalRenderer
     {
         #region Static Fields
         private static readonly int _gripSquare = 2;
@@ -39,7 +39,7 @@ namespace ComponentFactory.Krypton.Toolkit
         /// Initialise a new instance of the KryptonOffice2010Renderer class.
         /// </summary>
         /// <param name="kct">Source for text colors.</param>
-        public KryptonOffice2016Renderer(KryptonColorTable kct)
+        public KryptonNeoAxisRenderer(KryptonColorTable kct)
             : base(kct)
         {
         }

@@ -599,11 +599,11 @@ namespace ComponentFactory.Krypton.Toolkit
                             break;
                     }
 
-              
+
                     // !!!! dont use canvas for checkbox images !
-                    // HACK: office 2016 modern theme. TODO: add property to office theme file
-                    bool isOffice2016Theme = _provider.ProviderRedirector.GetAllowOnePixelBorder() == InheritBool.True;
-                    if (isOffice2016Theme)
+                    // HACK: NeoAxis modern theme.
+                    bool isNeoAxisTheme = _provider.ProviderRedirector.GetAllowOnePixelBorder() == InheritBool.True;
+                    if (isNeoAxisTheme)
                     {
                         _imageCanvas.ElementState = PaletteState.Normal;
                         _imageCanvas.Enabled = true;

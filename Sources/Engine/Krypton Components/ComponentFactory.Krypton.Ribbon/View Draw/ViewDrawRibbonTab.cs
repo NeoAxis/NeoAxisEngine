@@ -296,7 +296,7 @@ namespace ComponentFactory.Krypton.Ribbon
                         return _preferredBorder2007;
                     case PaletteRibbonShape.Office2010:
                         return _preferredBorder2010;
-                    case PaletteRibbonShape.Office2016:
+                    case PaletteRibbonShape.NeoAxis:
                         return _preferredBorder2010;
                 }
             }
@@ -318,7 +318,7 @@ namespace ComponentFactory.Krypton.Ribbon
                         return _layoutBorder2007;
                     case PaletteRibbonShape.Office2010:
                         return _layoutBorder2010;
-                    case PaletteRibbonShape.Office2016:
+                    case PaletteRibbonShape.NeoAxis:
                         return _layoutBorder2010;
                 }
             }
@@ -421,7 +421,7 @@ namespace ComponentFactory.Krypton.Ribbon
             switch (_ribbon.RibbonShape)
             {
                 default:
-                case PaletteRibbonShape.Office2016:
+                case PaletteRibbonShape.NeoAxis:
                 case PaletteRibbonShape.Office2007:
                     if (cts != null)
                         RenderBefore2007ContextTab(context, cts);

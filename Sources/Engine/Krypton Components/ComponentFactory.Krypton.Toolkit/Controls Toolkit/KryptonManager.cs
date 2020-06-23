@@ -40,7 +40,7 @@ namespace ComponentFactory.Krypton.Toolkit
         private static GlobalStrings _globalStrings = new GlobalStrings();
 
         // Initialize the default modes
-        private static PaletteModeManager _globalPaletteMode = PaletteModeManager.Office2016Blue;
+        private static PaletteModeManager _globalPaletteMode = PaletteModeManager.NeoAxisBlue;
 
         // Initialize instances to match the default modes
         private static IPalette _globalPalette = CurrentGlobalPalette;
@@ -57,13 +57,13 @@ namespace ComponentFactory.Krypton.Toolkit
         //private static PaletteSparkleBlue _paletteSparkleBlue;
         //private static PaletteSparkleOrange _paletteSparkleOrange;
         //private static PaletteSparklePurple _paletteSparklePurple;
-        private static PaletteOffice2016Blue _paletteOffice2016Blue;
-        private static PaletteOffice2016Black _paletteOffice2016Black;
+        private static PaletteNeoAxisBlue _paletteNeoAxisBlue;
+        private static PaletteNeoAxisBlack _paletteNeoAxisBlack;
         private static RenderStandard _renderStandard;
         private static RenderProfessional _renderProfessional;
         //private static RenderOffice2007 _renderOffice2007;
         private static RenderOffice2010 _renderOffice2010;
-        private static RenderOffice2016 _renderOffice2016;
+        private static RenderNeoAxis _renderNeoAxis;
         //private static RenderSparkle _renderSparkle;
         #endregion
 
@@ -136,7 +136,7 @@ namespace ComponentFactory.Krypton.Toolkit
         /// </summary>
         [Category("Visuals")]
         [Description("Global palette applied to drawing.")]
-        [DefaultValue(typeof(PaletteModeManager), "Office2016Blue")]
+        [DefaultValue(typeof(PaletteModeManager), "NeoAxisBlue" )]
         public PaletteModeManager GlobalPaletteMode
         {
             get { return _globalPaletteMode; }
@@ -191,7 +191,7 @@ namespace ComponentFactory.Krypton.Toolkit
 
         private bool ShouldSerializeGlobalPaletteMode()
         {
-            return (GlobalPaletteMode != PaletteModeManager.Office2016Blue && GlobalPaletteMode != PaletteModeManager.Office2016Black );
+            return (GlobalPaletteMode != PaletteModeManager.NeoAxisBlue && GlobalPaletteMode != PaletteModeManager.NeoAxisBlack );
         }
 
         /// <summary>
@@ -199,7 +199,7 @@ namespace ComponentFactory.Krypton.Toolkit
         /// </summary>
         public void ResetGlobalPaletteMode()
         {
-            GlobalPaletteMode = PaletteModeManager.Office2016Blue;
+            GlobalPaletteMode = PaletteModeManager.NeoAxisBlue;
         }
 
         /// <summary>
@@ -222,7 +222,7 @@ namespace ComponentFactory.Krypton.Toolkit
                     IPalette tempPalette = _globalPalette;
 
                     // Use the new values
-                    _globalPaletteMode = (value == null) ? PaletteModeManager.Office2016Blue : PaletteModeManager.Custom;
+                    _globalPaletteMode = (value == null) ? PaletteModeManager.NeoAxisBlue : PaletteModeManager.Custom;
                     _globalPalette = value;
 
                     // If the new value creates a circular reference
@@ -267,7 +267,7 @@ namespace ComponentFactory.Krypton.Toolkit
         /// </summary>
         public void ResetGlobalPalette()
         {
-            GlobalPaletteMode = PaletteModeManager.Office2016Blue;
+            GlobalPaletteMode = PaletteModeManager.NeoAxisBlue;
         }
         
         /// <summary>
@@ -438,10 +438,10 @@ namespace ComponentFactory.Krypton.Toolkit
                     //    return PaletteSparkleOrange;
                     //case PaletteModeManager.SparklePurple:
                     //    return PaletteSparklePurple;
-                    case PaletteModeManager.Office2016Blue:
-                        return PaletteOffice2016Blue;
-                    case PaletteModeManager.Office2016Black:
-                        return PaletteOffice2016Black;
+                    case PaletteModeManager.NeoAxisBlue:
+                        return PaletteNeoAxisBlue;
+                    case PaletteModeManager.NeoAxisBlack:
+                        return PaletteNeoAxisBlack;
                 case PaletteModeManager.Custom:
                         return _globalPalette;
                     default:
@@ -482,10 +482,10 @@ namespace ComponentFactory.Krypton.Toolkit
                 //    return PaletteSparkleOrange;
                 //case PaletteMode.SparklePurple:
                 //    return PaletteSparklePurple;
-                case PaletteMode.Office2016Blue:
-                    return PaletteOffice2016Blue;
-                case PaletteMode.Office2016Black:
-                    return PaletteOffice2016Black;
+                case PaletteMode.NeoAxisBlue:
+                    return PaletteNeoAxisBlue;
+                case PaletteMode.NeoAxisBlack:
+                    return PaletteNeoAxisBlack;
                 case PaletteMode.Global:
                         return CurrentGlobalPalette;
                 case PaletteMode.Custom:
@@ -650,30 +650,30 @@ namespace ComponentFactory.Krypton.Toolkit
         //}
 
         /// <summary>
-        /// Gets the single instance of the Office 2016 palette.
+        /// Gets the single instance of the NeoAxis Blue palette.
         /// </summary>
-        public static PaletteOffice2016Blue PaletteOffice2016Blue
+        public static PaletteNeoAxisBlue PaletteNeoAxisBlue
         {
             get
             {
-                if (_paletteOffice2016Blue == null)
-                    _paletteOffice2016Blue = new PaletteOffice2016Blue();
+                if (_paletteNeoAxisBlue == null)
+                    _paletteNeoAxisBlue = new PaletteNeoAxisBlue();
 
-                return _paletteOffice2016Blue;
+                return _paletteNeoAxisBlue;
             }
         }
 
         /// <summary>
-        /// Gets the single instance of the Office 2016 palette.
+        /// Gets the single instance of the NeoAxis Black palette.
         /// </summary>
-        public static PaletteOffice2016Black PaletteOffice2016Black
+        public static PaletteNeoAxisBlack PaletteNeoAxisBlack
         {
             get
             {
-                if( _paletteOffice2016Black == null )
-                    _paletteOffice2016Black = new PaletteOffice2016Black();
+                if( _paletteNeoAxisBlack == null )
+                    _paletteNeoAxisBlack = new PaletteNeoAxisBlack();
 
-                return _paletteOffice2016Black;
+                return _paletteNeoAxisBlack;
             }
         }
 
@@ -746,16 +746,16 @@ namespace ComponentFactory.Krypton.Toolkit
         }
 
         /// <summary>
-        /// Gets the single instance of the Office 2016 renderer.
+        /// Gets the single instance of the NeoAxis renderer.
         /// </summary>
-        public static RenderOffice2016 RenderOffice2016
+        public static RenderNeoAxis RenderNeoAxis
         {
             get
             {
-                if (_renderOffice2016 == null)
-                    _renderOffice2016 = new RenderOffice2016();
+                if (_renderNeoAxis == null)
+                    _renderNeoAxis = new RenderNeoAxis();
 
-                return _renderOffice2016;
+                return _renderNeoAxis;
             }
         }
 
@@ -885,10 +885,10 @@ namespace ComponentFactory.Krypton.Toolkit
             //if (_paletteSparklePurple != null)
             //    _paletteSparklePurple.UserPreferenceChanged();
 
-            if (_paletteOffice2016Blue != null)
-                _paletteOffice2016Blue.UserPreferenceChanged();
-            if( _paletteOffice2016Black != null )
-                _paletteOffice2016Black.UserPreferenceChanged();
+            if (_paletteNeoAxisBlue != null)
+                _paletteNeoAxisBlue.UserPreferenceChanged();
+            if( _paletteNeoAxisBlack != null )
+                _paletteNeoAxisBlack.UserPreferenceChanged();
 
             UpdateToolStripManager();
         }

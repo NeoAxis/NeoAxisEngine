@@ -108,7 +108,7 @@ namespace ComponentFactory.Krypton.Ribbon
                         return _borderPadding2007;
                     case PaletteRibbonShape.Office2010:
                         return _borderPadding2010;
-                    case PaletteRibbonShape.Office2016 :
+                    case PaletteRibbonShape.NeoAxis :
                         return _borderPadding2016;
                 }
             }

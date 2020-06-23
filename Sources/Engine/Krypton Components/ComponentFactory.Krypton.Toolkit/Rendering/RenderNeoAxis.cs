@@ -23,7 +23,7 @@ namespace ComponentFactory.Krypton.Toolkit
 	/// <summary>
 	/// Extends the professional renderer to provide Office2010 style additions.
 	/// </summary>
-    public class RenderOffice2016 : RenderOffice2010
+    public class RenderNeoAxis : RenderOffice2010
     {
         #region Static Fields
         private static readonly float BORDER_PERCENT = 0.6f;
@@ -34,7 +34,7 @@ namespace ComponentFactory.Krypton.Toolkit
         #endregion
 
         #region Identity
-        static RenderOffice2016()
+        static RenderNeoAxis()
         {
             //_ribbonGroup5Blend = new Blend();
             //_ribbonGroup5Blend.Factors = new float[] { 0.0f, 0.0f, 1.0f };
@@ -95,7 +95,7 @@ namespace ComponentFactory.Krypton.Toolkit
             if (colorPalette == null) throw new ArgumentNullException("colorPalette");
 
             // Use the professional renderer but pull colors from the palette
-            KryptonOffice2016Renderer renderer = new KryptonOffice2016Renderer(colorPalette.ColorTable);
+            KryptonNeoAxisRenderer renderer = new KryptonNeoAxisRenderer(colorPalette.ColorTable);
 
             // Seup the need to use rounded corners
             renderer.RoundedEdges = (colorPalette.ColorTable.UseRoundedEdges != InheritBool.False);

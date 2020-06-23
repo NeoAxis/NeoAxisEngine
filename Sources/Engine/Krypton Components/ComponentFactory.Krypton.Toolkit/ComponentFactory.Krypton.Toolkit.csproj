@@ -289,13 +289,13 @@
     <Compile Include="Palette Base\PaletteRedirect\PaletteRedirectBorderEdge.cs" />
     <Compile Include="Palette Base\PaletteRedirect\PaletteRedirectBorder.cs" />
     <Compile Include="Palette Base\PaletteElementColor\PaletteElementColor.cs" />
-    <Compile Include="Palette Builtin\PaletteOffice2016Base.cs">
+    <Compile Include="Palette Builtin\PaletteNeoAxisBase.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Palette Builtin\PaletteOffice2016Black.cs">
+    <Compile Include="Palette Builtin\PaletteNeoAxisBlack.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Palette Builtin\PaletteOffice2016Blue.cs">
+    <Compile Include="Palette Builtin\PaletteNeoAxisBlue.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Palette Controls\KryptonColorTable2016.cs" />
@@ -406,12 +406,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Rendering\KryptonOffice2016Renderer.cs" />
+    <Compile Include="Rendering\KryptonNeoAxisRenderer.cs" />
     <Compile Include="Rendering\RenderExpertHelpers.cs" />
     <Compile Include="Rendering\KryptonOffice2010Renderer.cs" />
     <Compile Include="Rendering\KryptonProfessionalRenderer.cs" />
     <Compile Include="Rendering\RenderDragDockingData.cs" />
-    <Compile Include="Rendering\RenderOffice2016.cs">
+    <Compile Include="Rendering\RenderNeoAxis.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Rendering\Win10Glass\AccentColorService.cs" />

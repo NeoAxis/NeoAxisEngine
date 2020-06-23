@@ -266,7 +266,7 @@ namespace ComponentFactory.Krypton.Ribbon
         /// <param name="context">Layout context.</param>
         public override Size GetPreferredSize(ViewLayoutContext context)
         {
-            bool drawNonTrackingAreas = (_ribbon.RibbonShape != PaletteRibbonShape.Office2010 || _ribbon.RibbonShape == PaletteRibbonShape.Office2016);
+            bool drawNonTrackingAreas = (_ribbon.RibbonShape != PaletteRibbonShape.Office2010 || _ribbon.RibbonShape == PaletteRibbonShape.NeoAxis);
 
             // Update the views with the type of button being used
             _viewLarge.ButtonType = _ribbonColorButton.ButtonType;

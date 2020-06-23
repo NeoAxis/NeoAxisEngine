@@ -199,7 +199,7 @@ namespace ComponentFactory.Krypton.Ribbon
         {
             // We never draw the background/border for Office 2010 shape QAT
             if (_minibar && (_ribbon.RibbonShape == PaletteRibbonShape.Office2010 ||
-				_ribbon.RibbonShape == PaletteRibbonShape.Office2016))
+				_ribbon.RibbonShape == PaletteRibbonShape.NeoAxis))
                 return;
 
             IPaletteRibbonBack palette;
@@ -263,7 +263,7 @@ namespace ComponentFactory.Krypton.Ribbon
             {
                 if (_minibar)
                 {
-                    if (_ribbon.RibbonShape == PaletteRibbonShape.Office2010 || _ribbon.RibbonShape == PaletteRibbonShape.Office2016)
+                    if (_ribbon.RibbonShape == PaletteRibbonShape.Office2010 || _ribbon.RibbonShape == PaletteRibbonShape.NeoAxis)
                         return _noBorderPadding;
                     else
                     {
@@ -275,7 +275,7 @@ namespace ComponentFactory.Krypton.Ribbon
                 }
                 else
                 {
-                    if (_ribbon.RibbonShape == PaletteRibbonShape.Office2016)
+                    if (_ribbon.RibbonShape == PaletteRibbonShape.NeoAxis)
                         return _fullbarBorderPadding_2016;
                     else if(_ribbon.RibbonShape == PaletteRibbonShape.Office2010)
                         return _fullbarBorderPadding_2010;

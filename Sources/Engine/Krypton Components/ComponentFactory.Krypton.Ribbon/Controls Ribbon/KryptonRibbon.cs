@@ -1069,7 +1069,7 @@ namespace ComponentFactory.Krypton.Ribbon
                         // Update the minibar versions of the QAT
                         _captionArea.UpdateQAT();
 
-                        if (RibbonShape == PaletteRibbonShape.Office2016)
+                        if (RibbonShape == PaletteRibbonShape.NeoAxis)
                         {
                             QATButtonStyle = _qatLocation == QATLocation.Below ? 
                                 ButtonStyle.ButtonSpec : ButtonStyle.Form;
@@ -2999,7 +2999,7 @@ namespace ComponentFactory.Krypton.Ribbon
             GroupDialogButtonStyle = ButtonStyle.ButtonSpec;
             ScrollerStyle = ButtonStyle.Standalone;
 
-            if (RibbonShape == PaletteRibbonShape.Office2016)
+            if (RibbonShape == PaletteRibbonShape.NeoAxis)
                 QATButtonStyle = ButtonStyle.Form;
             else
                 QATButtonStyle = ButtonStyle.ButtonSpec;

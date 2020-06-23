@@ -22,9 +22,9 @@ using Microsoft.Win32;
 namespace ComponentFactory.Krypton.Toolkit
 {
     /// <summary>
-    /// Provides the White color scheme variant of the Office 2016 palette.
+    /// Provides the White color scheme variant of the NeoAxis palette.
     /// </summary>
-    public class PaletteOffice2016Black : PaletteOffice2016Base
+    public class PaletteNeoAxisBlack : PaletteNeoAxisBase
     {
         #region Static Fields
         private static readonly Color _backColor = Color.FromArgb( 54, 54, 54 );//45, 45, 48 );//240, 240, 240);
@@ -292,7 +292,7 @@ namespace ComponentFactory.Krypton.Toolkit
         #endregion
 
         #region Identity
-        static PaletteOffice2016Black()
+        static PaletteNeoAxisBlack()
         {
             _checkBoxList = new ImageList();
             _checkBoxList.ImageSize = new Size(
@@ -374,7 +374,7 @@ namespace ComponentFactory.Krypton.Toolkit
     /// <summary>
     /// Initialize a new instance of the PaletteOffice2010Silver class.
     /// </summary>
-    public PaletteOffice2016Black()
+    public PaletteNeoAxisBlack()
             : base( _schemeColors,
                    _checkBoxList,
                    _galleryButtonList,

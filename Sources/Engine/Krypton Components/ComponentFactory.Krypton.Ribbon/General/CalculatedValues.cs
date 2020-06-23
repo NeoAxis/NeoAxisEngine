@@ -85,7 +85,7 @@ namespace ComponentFactory.Krypton.Ribbon
                         _groupHeightModifier = 0;
                         _groupsHeightModifier = 0;
                         break;
-                    case PaletteRibbonShape.Office2016:
+                    case PaletteRibbonShape.NeoAxis:
                     case PaletteRibbonShape.Office2010:
                         _groupHeightModifier = -3;
                         _groupsHeightModifier = -3;

@@ -2144,14 +2144,14 @@ namespace ComponentFactory.Krypton.Toolkit
         Office2010Black,
 
         /// <summary>
-        /// Specifies the Office 2016 White palette theme.
+        /// Specifies the NeoAxis Blue palette theme.
         /// </summary>
-        Office2016Blue,
+        NeoAxisBlue,
 
         /// <summary>
-        /// Specifies the Office 2016 Black palette theme.
+        /// Specifies the NeoAxis Black palette theme.
         /// </summary>
-        Office2016Black,
+        NeoAxisBlack,
 
         /// <summary>
         /// Specifies the Blue color variant on the Sparkle palette theme.
@@ -2221,14 +2221,14 @@ namespace ComponentFactory.Krypton.Toolkit
         Office2010Black,
 
         /// <summary>
-        /// Specifies the White color variant of the Office 2016 appearance.
+        /// Specifies the White color variant of the NeoAxis Blue appearance.
         /// </summary>
-        Office2016Blue,
+        NeoAxisBlue,
 
         /// <summary>
-        /// Specifies the White color variant of the Office 2016 appearance.
+        /// Specifies the White color variant of the NeoAxis Black appearance.
         /// </summary>
-        Office2016Black,
+        NeoAxisBlack,
 
         /// <summary>
         /// Specifies the Blue color variant on the Sparkle palette theme.
@@ -5250,9 +5250,9 @@ namespace ComponentFactory.Krypton.Toolkit
         Office2010,
 
         /// <summary>
-        /// Specifies the Office 2016 ribbon shape.
+        /// Specifies the NeoAxis ribbon shape.
         /// </summary>
-        Office2016
+        NeoAxis
     }
     #endregion
 

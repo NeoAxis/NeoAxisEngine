@@ -414,7 +414,7 @@ namespace ComponentFactory.Krypton.Ribbon
             if (elapsed.TotalMilliseconds < SystemInformation.DoubleClickTime)
             {
                 // Office 2010 does not close on a double click
-                if (_ribbon.RibbonShape != PaletteRibbonShape.Office2010 || _ribbon.RibbonShape == PaletteRibbonShape.Office2016)
+                if (_ribbon.RibbonShape != PaletteRibbonShape.Office2010 || _ribbon.RibbonShape == PaletteRibbonShape.NeoAxis)
                 {
                     // Close down the associated application window
                     Form ownerForm = _ribbon.FindForm();

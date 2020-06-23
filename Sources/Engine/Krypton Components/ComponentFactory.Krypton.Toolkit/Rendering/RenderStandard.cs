@@ -2671,7 +2671,7 @@ namespace ComponentFactory.Krypton.Toolkit
                         context.Graphics.DrawLine(lightPen, displayRect.Left + 2, displayRect.Top + 3, displayRect.Left + 4, displayRect.Top + 1);
                     }
                     break;
-                case PaletteRibbonShape.Office2016:
+                case PaletteRibbonShape.NeoAxis:
                 case PaletteRibbonShape.Office2010:
                     using (SolidBrush fillBrush = new SolidBrush(darkColor))
                     {
@@ -2834,7 +2834,7 @@ namespace ComponentFactory.Krypton.Toolkit
                     }
                     break;
                 case PaletteRibbonShape.Office2010:
-                case PaletteRibbonShape.Office2016:
+                case PaletteRibbonShape.NeoAxis:
                     using (LinearGradientBrush darkBrush = new LinearGradientBrush(new RectangleF(displayRect.X, displayRect.Y - 1, displayRect.Width, displayRect.Height + 2), Color.FromArgb(72, darkColor), darkColor, 90f),
                                                lightBrush = new LinearGradientBrush(new RectangleF(displayRect.X - 1, displayRect.Y - 1, displayRect.Width + 2, displayRect.Height + 2), Color.FromArgb(128, lightColor), lightColor, 90f))
                     {

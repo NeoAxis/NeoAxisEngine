@@ -21,10 +21,10 @@ using Microsoft.Win32;
 
 namespace ComponentFactory.Krypton.Toolkit
 {
-	/// <summary>
-	/// Provides a base for Office 2016 palettes.
-	/// </summary>
-	public abstract class PaletteOffice2016Base : PaletteBase
+    /// <summary>
+    /// Provides a base for NeoAxis palettes.
+    /// </summary>
+    public abstract class PaletteNeoAxisBase : PaletteBase
     {
         #region Static Fields
         private static readonly Padding _formMargin = new Padding(1, 1, 1, 1);
@@ -256,7 +256,7 @@ namespace ComponentFactory.Krypton.Toolkit
 
         #region Identity
 
-        static PaletteOffice2016Base()
+        static PaletteNeoAxisBase()
         {
             _contextMenuChecked = (Bitmap)RenderStandard.GetImageForDispalyScale(Properties.Resources.Office2016Checked_16,
                 Properties.Resources.Office2016Checked_24, 13);
@@ -272,7 +272,7 @@ namespace ComponentFactory.Krypton.Toolkit
         /// <param name="galleryButtonList">List of images for gallery buttons.</param>
         /// <param name="radioButtonArray">Array of images for radio button.</param>
         /// <param name="trackBarColors">Array of track bar specific colors.</param>
-        public PaletteOffice2016Base(Color[] schemeColors,
+        public PaletteNeoAxisBase(Color[] schemeColors,
                                      ImageList checkBoxList,
                                      ImageList galleryButtonList,
                                      Image[] radioButtonArray,
@@ -333,7 +333,7 @@ namespace ComponentFactory.Krypton.Toolkit
         public override IRenderer GetRenderer()
         {
             // We always want the professional renderer
-            return KryptonManager.RenderOffice2016;
+            return KryptonManager.RenderNeoAxis;
         }
         #endregion
 
@@ -8181,7 +8181,7 @@ namespace ComponentFactory.Krypton.Toolkit
         /// <returns>Ribbon shape value.</returns>
         public override PaletteRibbonShape GetRibbonShape()
         {
-            return PaletteRibbonShape.Office2016;
+            return PaletteRibbonShape.NeoAxis;
         }
 
         /// <summary>
@@ -9061,7 +9061,7 @@ namespace ComponentFactory.Krypton.Toolkit
 
             switch (element)
             {
-                // not used in office 2016 theme
+                // not used in NeoAxis theme
                 //case PaletteElement.TrackBarTick:
                 //    return _trackBarColors[0];
                 case PaletteElement.TrackBarTrack:
@@ -9104,7 +9104,7 @@ namespace ComponentFactory.Krypton.Toolkit
         /// <returns>Color value.</returns>
         public override Color GetElementColor3(PaletteElement element, PaletteState state)
         {
-            // not used in office 2016 theme
+            // not used in NeoAxis theme
 
             //switch (element)
             //{
@@ -9153,7 +9153,7 @@ namespace ComponentFactory.Krypton.Toolkit
         /// <returns>Color value.</returns>
         public override Color GetElementColor4(PaletteElement element, PaletteState state)
         {
-            // not used in office 2016 theme
+            // not used in NeoAxis theme
 
             //switch (element)
             //{
@@ -9202,7 +9202,7 @@ namespace ComponentFactory.Krypton.Toolkit
         /// <returns>Color value.</returns>
         public override Color GetElementColor5(PaletteElement element, PaletteState state)
         {
-            // not used in office 2016 theme
+            // not used in NeoAxis theme
 
             //switch (element)
             //{

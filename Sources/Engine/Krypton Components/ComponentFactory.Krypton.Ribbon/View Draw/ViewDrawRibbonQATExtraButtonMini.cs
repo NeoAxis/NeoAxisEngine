@@ -28,8 +28,8 @@ namespace ComponentFactory.Krypton.Ribbon
 		private static readonly int MINI_BUTTON_HEIGHT = DpiHelper.Default.ScaleValue(22);
         private static readonly int MINI_BUTTON_OFFSET = DpiHelper.Default.ScaleValue(24);
 
-        private static readonly int MINI_BUTTON_HEIGHT_OFFICE2016 = DpiHelper.Default.ScaleValue(26);
-        private static readonly int MINI_BUTTON_OFFSET_OFFICE2016 = DpiHelper.Default.ScaleValue(30);
+        private static readonly int MINI_BUTTON_HEIGHT_NEOAXIS2016 = DpiHelper.Default.ScaleValue(26);
+        private static readonly int MINI_BUTTON_OFFSET_NEOAXIS2016 = DpiHelper.Default.ScaleValue(30);
         #endregion
 
         #region Identity
@@ -68,10 +68,10 @@ namespace ComponentFactory.Krypton.Ribbon
 
             // For the minibar we have to position ourself at bottom of available area
 
-            if (_ribbon.RibbonShape == PaletteRibbonShape.Office2016)
+            if (_ribbon.RibbonShape == PaletteRibbonShape.NeoAxis)
             {
-                clientRect.Y = clientRect.Bottom - 1 - MINI_BUTTON_OFFSET_OFFICE2016;
-                clientRect.Height = MINI_BUTTON_HEIGHT_OFFICE2016;
+                clientRect.Y = clientRect.Bottom - 1 - MINI_BUTTON_OFFSET_NEOAXIS2016;
+                clientRect.Height = MINI_BUTTON_HEIGHT_NEOAXIS2016;
             }
             else
             {

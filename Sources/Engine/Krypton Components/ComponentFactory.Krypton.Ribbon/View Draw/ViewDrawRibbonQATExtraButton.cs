@@ -168,7 +168,7 @@ namespace ComponentFactory.Krypton.Ribbon
 			IPaletteBorder paletteBorder = _ribbon.StateCommon.RibbonGroupDialogButton.PaletteBorder;
 			IPaletteRibbonGeneral paletteGeneral = _ribbon.StateCommon.RibbonGeneral;
 
-            if (_ribbon.RibbonShape == PaletteRibbonShape.Office2016)
+            if (_ribbon.RibbonShape == PaletteRibbonShape.NeoAxis)
             {
                 paletteBack = _ribbon.StateCommon.RibbonQATButton.PaletteBack;
                 paletteBorder = _ribbon.StateCommon.RibbonQATButton.PaletteBorder;

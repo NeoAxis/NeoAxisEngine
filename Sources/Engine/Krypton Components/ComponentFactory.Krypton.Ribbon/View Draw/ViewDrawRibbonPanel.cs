@@ -67,7 +67,7 @@ namespace ComponentFactory.Krypton.Ribbon
         {
             // If we are rendering using desktop window composition and using the Office 2010 shape 
             // of ribbon then we need to draw the tabs area as part of the window chromw
-            if (DrawOnComposition && (_ribbon.RibbonShape == PaletteRibbonShape.Office2010 || _ribbon.RibbonShape == PaletteRibbonShape.Office2016))
+            if (DrawOnComposition && (_ribbon.RibbonShape == PaletteRibbonShape.Office2010 || _ribbon.RibbonShape == PaletteRibbonShape.NeoAxis))
             {
                 int tabsHeight = _ribbon.TabsArea.ClientHeight;
 
@@ -94,7 +94,7 @@ namespace ComponentFactory.Krypton.Ribbon
             // If we are rendering using desktop window composition and using the Office 2010 shape 
             // of ribbon then we need to draw the tabs area as part of the window chrome
             // Not for 2016
-            if (DrawOnComposition && (_ribbon.RibbonShape == PaletteRibbonShape.Office2010 || _ribbon.RibbonShape == PaletteRibbonShape.Office2016))
+            if (DrawOnComposition && (_ribbon.RibbonShape == PaletteRibbonShape.Office2010 || _ribbon.RibbonShape == PaletteRibbonShape.NeoAxis))
             {
                 if (edges)
                 {
@@ -130,7 +130,7 @@ namespace ComponentFactory.Krypton.Ribbon
                         g.FillRectangle(backBrush, new Rectangle(rect.X, rect.Y, rect.Width, rect.Height - 1));
                     }
                 }
-                else */if (_ribbon.RibbonShape == PaletteRibbonShape.Office2016)
+                else */if (_ribbon.RibbonShape == PaletteRibbonShape.NeoAxis)
                 {
                     using (SolidBrush backBrush = new SolidBrush(Color.White))
                     {

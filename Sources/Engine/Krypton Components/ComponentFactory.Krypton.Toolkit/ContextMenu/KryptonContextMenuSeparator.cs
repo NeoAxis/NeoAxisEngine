@@ -136,9 +136,9 @@ namespace ComponentFactory.Krypton.Toolkit
                 separatorStack.Add(new ViewLayoutSeparator(1, 1));
                 docker.Add(separatorStack, ViewDockStyle.Fill);
 
-                // HACK: office 2016 modern theme. TODO: add property to office theme file
-                bool isOffice2016Theme = provider.ProviderRedirector.GetAllowOnePixelBorder() == InheritBool.True;
-                if (isOffice2016Theme)
+                // HACK: NeoAxis modern theme.
+                bool isNeoAxisTheme = provider.ProviderRedirector.GetAllowOnePixelBorder() == InheritBool.True;
+                if (isNeoAxisTheme)
                     docker.Add(new ViewLayoutSeparator(2, 0), ViewDockStyle.Right);
                 //
 

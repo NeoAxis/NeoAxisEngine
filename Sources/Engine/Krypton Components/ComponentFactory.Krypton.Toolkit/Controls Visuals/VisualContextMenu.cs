@@ -459,9 +459,9 @@ namespace ComponentFactory.Krypton.Toolkit
         /// <returns></returns>
         protected override IVisualPopupShadow CreateShadowControl()
         {
-            // HACK: office 2016 modern theme. TODO: add property to office theme file
-            bool isOffice2016Theme = _palette.GetAllowOnePixelBorder() == InheritBool.True;
-            if (isOffice2016Theme)
+            // HACK: NeoAxis modern theme.
+            bool isNeoAxisTheme = _palette.GetAllowOnePixelBorder() == InheritBool.True;
+            if (isNeoAxisTheme)
                 return new VisualPopupSimpleShadow();
             else
                 return base.CreateShadowControl();

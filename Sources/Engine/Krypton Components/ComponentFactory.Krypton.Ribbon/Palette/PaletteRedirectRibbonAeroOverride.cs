@@ -56,7 +56,7 @@ namespace ComponentFactory.Krypton.Ribbon
             if ((style == PaletteContentStyle.ButtonButtonSpec) && (state == PaletteState.Normal))
             {
                 // If the ribbon is showing in office 2010 style and using glass
-                if (_ribbon.CaptionArea.DrawCaptionOnComposition && (_ribbon.RibbonShape == PaletteRibbonShape.Office2010 || _ribbon.RibbonShape == PaletteRibbonShape.Office2016))
+                if (_ribbon.CaptionArea.DrawCaptionOnComposition && (_ribbon.RibbonShape == PaletteRibbonShape.Office2010 || _ribbon.RibbonShape == PaletteRibbonShape.NeoAxis))
                     return LightBackground(base.GetContentShortTextColor1(style, state));
             }
 
@@ -75,7 +75,7 @@ namespace ComponentFactory.Krypton.Ribbon
             if ((style == PaletteContentStyle.ButtonButtonSpec) && (state == PaletteState.Normal))
             {
                 // If the ribbon is showing in office 2010 style and using glass
-                if (_ribbon.CaptionArea.DrawCaptionOnComposition && (_ribbon.RibbonShape == PaletteRibbonShape.Office2010 || _ribbon.RibbonShape == PaletteRibbonShape.Office2016))
+                if (_ribbon.CaptionArea.DrawCaptionOnComposition && (_ribbon.RibbonShape == PaletteRibbonShape.Office2010 || _ribbon.RibbonShape == PaletteRibbonShape.NeoAxis))
                     return LightBackground(base.GetContentShortTextColor2(style, state));
             }
 
@@ -96,7 +96,7 @@ namespace ComponentFactory.Krypton.Ribbon
             if ((style == PaletteContentStyle.ButtonButtonSpec) && (state == PaletteState.Normal))
             {
                 // If the ribbon is showing in office 2010 style and using glass
-                if (_ribbon.CaptionArea.DrawCaptionOnComposition && (_ribbon.RibbonShape == PaletteRibbonShape.Office2010 || _ribbon.RibbonShape == PaletteRibbonShape.Office2016))
+                if (_ribbon.CaptionArea.DrawCaptionOnComposition && (_ribbon.RibbonShape == PaletteRibbonShape.Office2010 || _ribbon.RibbonShape == PaletteRibbonShape.NeoAxis))
                     return LightBackground(base.GetContentLongTextColor1(style, state));
             }
 
@@ -115,7 +115,7 @@ namespace ComponentFactory.Krypton.Ribbon
             if ((style == PaletteContentStyle.ButtonButtonSpec) && (state == PaletteState.Normal))
             {
                 // If the ribbon is showing in office 2010 style and using glass
-                if (_ribbon.CaptionArea.DrawCaptionOnComposition && (_ribbon.RibbonShape == PaletteRibbonShape.Office2010 || _ribbon.RibbonShape == PaletteRibbonShape.Office2016))
+                if (_ribbon.CaptionArea.DrawCaptionOnComposition && (_ribbon.RibbonShape == PaletteRibbonShape.Office2010 || _ribbon.RibbonShape == PaletteRibbonShape.NeoAxis))
                     return LightBackground(base.GetContentLongTextColor2(style, state));
             }
 
