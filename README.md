@@ -2,7 +2,7 @@
 
 <a href="https://www.neoaxis.com/">www.neoaxis.com</a>
 
-<div class="image" align="center"><a href="https://www.neoaxis.com/images/2020_3/NeoAxis_2020_3_CharacterScene.png"><img src="https://www.neoaxis.com/images/2020_3/NeoAxis_2020_3_CharacterScene.jpg" alt="" width="1000" vspace="10"></a></div>
+<div class="image" align="center"><a href="https://www.neoaxis.com/images/2020_3/NeoAxis_2020_3.png"><img src="https://www.neoaxis.com/images/2020_3/NeoAxis_2020_3.jpg" alt="" width="1000" vspace="10"></a></div>
 
 <h2>Supported platforms by the NeoAxis editor</h2>
 <ul>
