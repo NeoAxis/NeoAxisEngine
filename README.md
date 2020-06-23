@@ -7,16 +7,16 @@
 <h2>Supported platforms by the NeoAxis editor</h2>
 <ul>
 <li>Windows</li>
-<li>Mac (coming soon)</li>
-<li>Linux  (coming soon)</li>
+<li><font color="gray">Mac (coming soon)</font></li>
+<li><font color="gray">Linux (coming soon)</font></li>
 </ul>
 
 <h2>Supported platforms</h2>
 <ul>
 <li>Windows</li>
-<li>Universal Windows Platform (will fixed when make build from sources)</li>
-<li>Android (coming soon)</li>
-<li>...</li>
+<li>Universal Windows Platform <font color="gray">(will fixed when make build from sources)</font></li>
+<li><font color="gray">Android (coming soon)</font></li>
+<li><font color="gray">...</font></li>
 </ul>
 
 <h2>Building</h2>
