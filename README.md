@@ -14,7 +14,7 @@
 <h2>Supported platforms</h2>
 <ul>
 <li>Windows</li>
-<li>Universal Windows Platform (coming soon)</li>
+<li>UWP (coming soon in sources, already supported in binaries from neoaxis.com)</li>
 <li>Android (coming soon)</li>
 <li>...</li>
 </ul>
