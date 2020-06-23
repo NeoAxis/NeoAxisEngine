@@ -1,0 +1,21 @@
+# top-most EditorConfig file
+root = true
+
+[*.cs]
+indent_style = tab
+end_of_line = crlf
+
+# disabled conversion non unicode cs files to default unicode.
+# charset = utf-8-bom
+
+# NeoAxis main project formatting rules
+# https://docs.microsoft.com/ru-ru/visualstudio/ide/editorconfig-code-style-settings-reference
+
+csharp_new_line_before_open_brace = all
+#csharp_new_line_before_else = true
+csharp_space_after_keywords_in_control_flow_statements = false
+csharp_space_between_method_declaration_parameter_list_parentheses = true
+csharp_space_between_method_call_parameter_list_parentheses = true
+csharp_space_between_parentheses = control_flow_statements, expressions
+csharp_indent_switch_labels = false
+csharp_space_between_square_brackets = true

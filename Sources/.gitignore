@@ -1,0 +1,58 @@
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific files (MonoDevelop/Xamarin Studio)
+*.userprefs
+
+# Build results
+bin/
+obj/
+# [Dd]ebug/
+# [Dd]ebugPublic/
+# [Rr]elease/
+# [Rr]eleases/
+# [Xx]64/
+# [Xx]86/
+# [Bb]uild/
+# bld/
+# [Bb]in/
+# [Oo]bj/
+
+# Visual Studio cache/options directory
+.vs/
+
+# NuGet Packages
+*.nupkg
+# The packages folder can be ignored because of Package Restore
+**/packages/*
+# except build/, which is used as an MSBuild target.
+!**/packages/build/
+# Uncomment if necessary however generally it will be regenerated when needed
+#!**/packages/repositories.config
+# NuGet v3's project.json files produces more ignoreable files
+*.nuget.props
+*.nuget.targets
+
+# Visual C++ cache files
+ipch/
+*.aps
+*.ncb
+*.opendb
+*.opensdf
+*.sdf
+*.cachefile
+*.VC.db
+
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+
+# NeoAxis
+_Compilation/
+
