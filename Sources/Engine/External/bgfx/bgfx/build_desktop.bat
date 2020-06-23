@@ -1,0 +1,1 @@
+..\bx\tools\bin\windows\genie --with-shared-lib --with-tools vs2017

@@ -1,0 +1,44 @@
+#!/usr/bin/env python
+
+Import('GLOBALS')
+Import(GLOBALS)
+
+FREE_TYPE_DIR = SRC_CORE_DIR+'/External/FreeType'
+FREE_TYPE_SRC_DIR = FREE_TYPE_DIR+'/src'
+FREE_TYPE_BASE_DIR = FREE_TYPE_SRC_DIR+'/base'
+
+INCLUDE_DIR = FREE_TYPE_DIR+'/include'
+
+FREE_TYPE_C_SOURCE_FILES = [FREE_TYPE_SRC_DIR+'/autofit/autofit.c', FREE_TYPE_SRC_DIR+'/bdf/bdf.c',
+	FREE_TYPE_SRC_DIR+'/cff/cff.c', FREE_TYPE_SRC_DIR+'/cache/ftcache.c',
+	FREE_TYPE_DIR+'/builds/win32/ftdebug.c', FREE_TYPE_SRC_DIR+'/gzip/ftgzip.c',
+	FREE_TYPE_SRC_DIR+'/lzw/ftlzw.c', FREE_TYPE_SRC_DIR+'/smooth/smooth.c',
+	FREE_TYPE_SRC_DIR+'/pcf/pcf.c', FREE_TYPE_SRC_DIR+'/pfr/pfr.c', 
+	FREE_TYPE_SRC_DIR+'/psaux/psaux.c', FREE_TYPE_SRC_DIR+'/pshinter/pshinter.c', 
+	FREE_TYPE_SRC_DIR+'/psnames/psmodule.c', FREE_TYPE_SRC_DIR+'/raster/raster.c',
+	FREE_TYPE_SRC_DIR+'/sfnt/sfnt.c', FREE_TYPE_SRC_DIR+'/truetype/truetype.c',
+	FREE_TYPE_SRC_DIR+'/type1/type1.c', FREE_TYPE_SRC_DIR+'/cid/type1cid.c',
+	FREE_TYPE_SRC_DIR+'/type42/type42.c', FREE_TYPE_SRC_DIR+'/winfonts/winfnt.c']
+FREE_IMAGE_BASE_C_FILES = GetDirFiles(FREE_TYPE_BASE_DIR, ['*.c'],
+	excludes=['basepic.c', 'ftadvanc.c', 'ftapi.c', 'ftbdf.c', 
+		'ftcalc.c', 'ftcid.c', 'ftdbgmem.c', 'ftgloadr.c', 
+		'ftmac.c', 'ftobjs.c', 'ftoutln.c', 'ftpic.c',
+		'ftrfork.c', 'ftsnames.c', 'ftstream.c', 'fttrigon.c',
+		'ftutil.c', 'ftxf8.c'])
+
+sources = [FREE_TYPE_C_SOURCE_FILES, FREE_IMAGE_BASE_C_FILES]
+includes = [INCLUDE_DIR, ANDROID_STL_ROOT+'/gnu-libstdc++/libs/armeabi/include',
+	ANDROID_STL_ROOT+'/gnu-libstdc++/include']
+
+env = g_env.Clone()
+
+env.Append(CPPPATH = includes)
+env.Append(CPPDEFINES=['NDEBUG', '_LIB', '_CRT_SECURE_NO_WARNINGS', 'FT2_BUILD_LIBRARY'])
+
+if not env.GetOption('clean'):
+	CreateDir(OUT_DIR+'/FreeType')
+
+free_type = CreateLibrary(env, 'FreeType', sources, False)
+env.Install(LIB_DIR, free_type)
+
+

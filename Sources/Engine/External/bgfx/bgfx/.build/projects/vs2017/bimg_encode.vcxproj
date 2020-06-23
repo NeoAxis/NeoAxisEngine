@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{D1BE29CD-3D74-A2C2-C668-9C99321D99C6}</ProjectGuid>
+    <RootNamespace>bimg_encode</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>..\..\win32_vs2017\bin\</OutDir>
+    <IntDir>..\..\win32_vs2017\obj\x32\Debug\bimg_encode\</IntDir>
+    <TargetName>bimg_encodeDebug</TargetName>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>..\..\win64_vs2017\bin\</OutDir>
+    <IntDir>..\..\win64_vs2017\obj\x64\Debug\bimg_encode\</IntDir>
+    <TargetName>bimg_encodeDebug</TargetName>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>..\..\win32_vs2017\bin\</OutDir>
+    <IntDir>..\..\win32_vs2017\obj\x32\Release\bimg_encode\</IntDir>
+    <TargetName>bimg_encodeRelease</TargetName>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>..\..\win64_vs2017\bin\</OutDir>
+    <IntDir>..\..\win64_vs2017\obj\x64\Release\bimg_encode\</IntDir>
+    <TargetName>bimg_encodeRelease</TargetName>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/wd4201 /wd4324 /Ob2  %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..\..\..\bx\include\compat\msvc;..\..\..\..\bx\include;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty;..\..\..\..\bimg\3rdparty\nvtt;..\..\..\..\bimg\3rdparty\iqa\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;_DEBUG;WIN32;_WIN32;_HAS_EXCEPTIONS=0;_HAS_ITERATOR_DEBUGGING=0;_ITERATOR_DEBUG_LEVEL=0;_SCL_SECURE=0;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PrecompiledHeader></PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <LanguageStandard>stdcpp14</LanguageStandard>
+      <ExceptionHandling>false</ExceptionHandling>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ProgramDataBaseFileName>$(OutDir)bimg_encodeDebug.pdb</ProgramDataBaseFileName>
+      <OmitFramePointers>true</OmitFramePointers>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;_DEBUG;WIN32;_WIN32;_HAS_EXCEPTIONS=0;_HAS_ITERATOR_DEBUGGING=0;_ITERATOR_DEBUG_LEVEL=0;_SCL_SECURE=0;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\..\bx\include\compat\msvc;..\..\..\..\bx\include;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty;..\..\..\..\bimg\3rdparty\nvtt;..\..\..\..\bimg\3rdparty\iqa\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  <Lib>
+    <OutputFile>$(OutDir)bimg_encodeDebug.lib</OutputFile>
+    <AdditionalOptions>/ignore:4221 %(AdditionalOptions)</AdditionalOptions>
+    <TargetMachine>MachineX86</TargetMachine>
+  </Lib>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)bimg_encodeDebug.pdb</ProgramDatabaseFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalOptions>/wd4201 /wd4324 /Ob2  %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..\..\..\bx\include\compat\msvc;..\..\..\..\bx\include;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty;..\..\..\..\bimg\3rdparty\nvtt;..\..\..\..\bimg\3rdparty\iqa\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;_DEBUG;WIN32;_WIN32;_HAS_EXCEPTIONS=0;_HAS_ITERATOR_DEBUGGING=0;_ITERATOR_DEBUG_LEVEL=0;_SCL_SECURE=0;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PrecompiledHeader></PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <LanguageStandard>stdcpp14</LanguageStandard>
+      <ExceptionHandling>false</ExceptionHandling>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ProgramDataBaseFileName>$(OutDir)bimg_encodeDebug.pdb</ProgramDataBaseFileName>
+      <OmitFramePointers>true</OmitFramePointers>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;_DEBUG;WIN32;_WIN32;_HAS_EXCEPTIONS=0;_HAS_ITERATOR_DEBUGGING=0;_ITERATOR_DEBUG_LEVEL=0;_SCL_SECURE=0;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\..\bx\include\compat\msvc;..\..\..\..\bx\include;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty;..\..\..\..\bimg\3rdparty\nvtt;..\..\..\..\bimg\3rdparty\iqa\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  <Lib>
+    <OutputFile>$(OutDir)bimg_encodeDebug.lib</OutputFile>
+    <AdditionalOptions>/ignore:4221 %(AdditionalOptions)</AdditionalOptions>
+    <TargetMachine>MachineX64</TargetMachine>
+  </Lib>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)bimg_encodeDebug.pdb</ProgramDatabaseFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/wd4201 /wd4324 /Ob2  %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>MaxSpeed</Optimization>
+      <AdditionalIncludeDirectories>..\..\..\..\bx\include\compat\msvc;..\..\..\..\bx\include;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty;..\..\..\..\bimg\3rdparty\nvtt;..\..\..\..\bimg\3rdparty\iqa\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;NDEBUG;WIN32;_WIN32;_HAS_EXCEPTIONS=0;_HAS_ITERATOR_DEBUGGING=0;_ITERATOR_DEBUG_LEVEL=0;_SCL_SECURE=0;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PrecompiledHeader></PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <LanguageStandard>stdcpp14</LanguageStandard>
+      <ExceptionHandling>false</ExceptionHandling>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ProgramDataBaseFileName>$(OutDir)bimg_encodeRelease.pdb</ProgramDataBaseFileName>
+      <OmitFramePointers>true</OmitFramePointers>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;NDEBUG;WIN32;_WIN32;_HAS_EXCEPTIONS=0;_HAS_ITERATOR_DEBUGGING=0;_ITERATOR_DEBUG_LEVEL=0;_SCL_SECURE=0;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\..\bx\include\compat\msvc;..\..\..\..\bx\include;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty;..\..\..\..\bimg\3rdparty\nvtt;..\..\..\..\bimg\3rdparty\iqa\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  <Lib>
+    <OutputFile>$(OutDir)bimg_encodeRelease.lib</OutputFile>
+    <AdditionalOptions>/ignore:4221 %(AdditionalOptions)</AdditionalOptions>
+    <TargetMachine>MachineX86</TargetMachine>
+  </Lib>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)bimg_encodeRelease.pdb</ProgramDatabaseFile>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalOptions>/wd4201 /wd4324 /Ob2  %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>MaxSpeed</Optimization>
+      <AdditionalIncludeDirectories>..\..\..\..\bx\include\compat\msvc;..\..\..\..\bx\include;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty;..\..\..\..\bimg\3rdparty\nvtt;..\..\..\..\bimg\3rdparty\iqa\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;NDEBUG;WIN32;_WIN32;_HAS_EXCEPTIONS=0;_HAS_ITERATOR_DEBUGGING=0;_ITERATOR_DEBUG_LEVEL=0;_SCL_SECURE=0;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PrecompiledHeader></PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <LanguageStandard>stdcpp14</LanguageStandard>
+      <ExceptionHandling>false</ExceptionHandling>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ProgramDataBaseFileName>$(OutDir)bimg_encodeRelease.pdb</ProgramDataBaseFileName>
+      <OmitFramePointers>true</OmitFramePointers>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;NDEBUG;WIN32;_WIN32;_HAS_EXCEPTIONS=0;_HAS_ITERATOR_DEBUGGING=0;_ITERATOR_DEBUG_LEVEL=0;_SCL_SECURE=0;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\..\bx\include\compat\msvc;..\..\..\..\bx\include;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty;..\..\..\..\bimg\3rdparty\nvtt;..\..\..\..\bimg\3rdparty\iqa\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  <Lib>
+    <OutputFile>$(OutDir)bimg_encodeRelease.lib</OutputFile>
+    <AdditionalOptions>/ignore:4221 %(AdditionalOptions)</AdditionalOptions>
+    <TargetMachine>MachineX64</TargetMachine>
+  </Lib>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)bimg_encodeRelease.pdb</ProgramDatabaseFile>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\bimg\include\bimg\bimg.h" />
+    <ClInclude Include="..\..\..\..\bimg\include\bimg\decode.h" />
+    <ClInclude Include="..\..\..\..\bimg\include\bimg\encode.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\libsquish\alpha.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\libsquish\clusterfit.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\libsquish\colourblock.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\libsquish\colourfit.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\libsquish\colourset.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\libsquish\config.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\libsquish\maths.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\libsquish\rangefit.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\libsquish\simd.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\libsquish\simd_float.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\libsquish\singlecolourfit.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\libsquish\squish.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\edtaa3\edtaa3func.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\etc1\etc1.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\etc2\Math.hpp" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\etc2\ProcessCommon.hpp" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\etc2\ProcessRGB.hpp" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\etc2\Tables.hpp" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\etc2\Types.hpp" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\etc2\Vector.hpp" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvtt.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\bc6h\bits.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\bc6h\shapes_two.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\bc6h\tile.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\bc6h\zoh.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\bc6h\zoh_utils.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\avpcl.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\avpcl_utils.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\bits.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\endpts.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\shapes_three.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\shapes_two.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\tile.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\array.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\debug.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\defsgnucdarwin.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\defsgnuclinux.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\defsgnucwin32.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\defsvcwin32.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\foreach.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\hash.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\memory.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\nvcore.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\posh.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\stdstream.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\stream.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\strlib.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\utils.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvmath\fitting.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvmath\matrix.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvmath\nvmath.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvmath\plane.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvmath\vector.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\AlphaBitmap.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\Bitmap.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\BitScale.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\BitUtility.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\ColorRgba.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\Interval.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\MortonTable.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\Point2.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\PvrTcDecoder.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\PvrTcEncoder.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\PvrTcPacket.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\RgbaBitmap.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\RgbBitmap.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc\astc_codec_internals.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc\astc_lib.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc\mathlib.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc\softfloat.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc\vectypes.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\tinyexr\tinyexr.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\iqa\include\convolve.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\iqa\include\decimate.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\iqa\include\iqa.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\iqa\include\iqa_os.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\iqa\include\math_utils.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\iqa\include\ssim.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\bimg\src\image_encode.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\src\image_cubemap_filter.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\libsquish\alpha.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\libsquish\clusterfit.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\libsquish\colourblock.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\libsquish\colourfit.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\libsquish\colourset.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\libsquish\maths.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\libsquish\rangefit.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\libsquish\singlecolourfit.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\libsquish\squish.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\edtaa3\edtaa3func.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\etc1\etc1.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\etc2\ProcessRGB.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\etc2\Tables.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\nvtt.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc6h\zoh.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc6h\zohone.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc6h\zohtwo.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc6h\zoh_utils.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\avpcl.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\avpcl_mode0.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\avpcl_mode1.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\avpcl_mode2.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\avpcl_mode3.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\avpcl_mode4.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\avpcl_mode5.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\avpcl_mode6.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\avpcl_mode7.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\avpcl_utils.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\nvmath\fitting.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\pvrtc\BitScale.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\pvrtc\MortonTable.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\pvrtc\PvrTcDecoder.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\pvrtc\PvrTcEncoder.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\pvrtc\PvrTcPacket.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_averages_and_directions.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_block_sizes2.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_color_quantize.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_color_unquantize.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_compress_symbolic.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_compute_variance.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_decompress_symbolic.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_encoding_choice_error.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_find_best_partitioning.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_ideal_endpoints_and_weights.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_imageblock.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_integer_sequence.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_kmeans_partitioning.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_lib.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_partition_tables.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_percentile_tables.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_pick_best_endpoint_format.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_quantization.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_symbolic_physical.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_weight_align.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_weight_quant_xfer_tables.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\mathlib.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\softfloat.cpp">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\iqa\source\convolve.c">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\iqa\source\decimate.c">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\iqa\source\math_utils.c">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\iqa\source\mse.c">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\iqa\source\ms_ssim.c">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\iqa\source\psnr.c">
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\iqa\source\ssim.c">
+    </ClCompile>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

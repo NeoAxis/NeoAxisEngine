@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="3rdparty">
+      <UniqueIdentifier>{3E7DA5C5-2A4A-00D1-5363-EE783F8F355F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\ib-compress">
+      <UniqueIdentifier>{5E8C971A-4A1B-21E4-F339-35DFDFA7318A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\dear-imgui">
+      <UniqueIdentifier>{7ED79A37-EA38-7845-73A6-BEF7DF06AF04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\dear-imgui\widgets">
+      <UniqueIdentifier>{91A8F5B5-FDB5-239C-869C-1F87F2A8EF52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples">
+      <UniqueIdentifier>{84D830B1-70A5-8BBC-99BE-796485EAC04A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples\common">
+      <UniqueIdentifier>{496BB271-B5F6-1F36-BE07-A32A2A127C36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples\common\debugdraw">
+      <UniqueIdentifier>{BA9AFC39-265D-30C4-6F0D-BF50DB0E09A2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples\common\entry">
+      <UniqueIdentifier>{1791EED7-83FD-A9D2-4CF1-4130B81CCC3A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples\common\font">
+      <UniqueIdentifier>{BC84F099-A813-7A63-5132-8E5E3DA08A09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples\common\imgui">
+      <UniqueIdentifier>{C02F36D8-2C9C-F1D2-F58F-893061BB133B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples\common\nanovg">
+      <UniqueIdentifier>{0E8CD0E9-FA85-F93B-E3F2-8F4CCF8B5FA8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples\common\ps">
+      <UniqueIdentifier>{E82848A7-D40C-09FD-3D6D-03502970F37E}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\examples\common\entry\entry_ios.mm">
+      <Filter>examples\common\entry</Filter>
+    </None>
+    <None Include="..\..\..\examples\common\entry\entry_osx.mm">
+      <Filter>examples\common\entry</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\3rdparty\ib-compress\indexbuffercompression.h">
+      <Filter>3rdparty\ib-compress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\ib-compress\indexbuffercompressionformat.h">
+      <Filter>3rdparty\ib-compress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\ib-compress\indexbufferdecompression.h">
+      <Filter>3rdparty\ib-compress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\ib-compress\indexcompressionconstants.h">
+      <Filter>3rdparty\ib-compress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\ib-compress\readbitstream.h">
+      <Filter>3rdparty\ib-compress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\ib-compress\writebitstream.h">
+      <Filter>3rdparty\ib-compress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\dear-imgui\imconfig.h">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\dear-imgui\imgui.h">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\dear-imgui\imgui_internal.h">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\dear-imgui\imgui_user.h">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\dear-imgui\imstb_rectpack.h">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\dear-imgui\imstb_textedit.h">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\dear-imgui\imstb_truetype.h">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\dear-imgui\stb_rect_pack.h">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\dear-imgui\stb_textedit.h">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\dear-imgui\stb_truetype.h">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\dear-imgui\widgets\color_picker.h">
+      <Filter>3rdparty\dear-imgui\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\dear-imgui\widgets\color_wheel.h">
+      <Filter>3rdparty\dear-imgui\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\dear-imgui\widgets\dock.h">
+      <Filter>3rdparty\dear-imgui\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\dear-imgui\widgets\file_list.h">
+      <Filter>3rdparty\dear-imgui\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\dear-imgui\widgets\gizmo.h">
+      <Filter>3rdparty\dear-imgui\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\dear-imgui\widgets\markdown.h">
+      <Filter>3rdparty\dear-imgui\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\dear-imgui\widgets\memory_editor.h">
+      <Filter>3rdparty\dear-imgui\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\dear-imgui\widgets\range_slider.h">
+      <Filter>3rdparty\dear-imgui\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\aviwriter.h">
+      <Filter>examples\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\bgfx_utils.h">
+      <Filter>examples\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\bounds.h">
+      <Filter>examples\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\camera.h">
+      <Filter>examples\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\common.h">
+      <Filter>examples\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\cube_atlas.h">
+      <Filter>examples\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\packrect.h">
+      <Filter>examples\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\debugdraw\debugdraw.h">
+      <Filter>examples\common\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\debugdraw\fs_debugdraw_fill.bin.h">
+      <Filter>examples\common\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\debugdraw\fs_debugdraw_fill_lit.bin.h">
+      <Filter>examples\common\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\debugdraw\fs_debugdraw_fill_texture.bin.h">
+      <Filter>examples\common\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\debugdraw\fs_debugdraw_lines.bin.h">
+      <Filter>examples\common\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\debugdraw\fs_debugdraw_lines_stipple.bin.h">
+      <Filter>examples\common\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\debugdraw\vs_debugdraw_fill.bin.h">
+      <Filter>examples\common\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\debugdraw\vs_debugdraw_fill_lit.bin.h">
+      <Filter>examples\common\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\debugdraw\vs_debugdraw_fill_lit_mesh.bin.h">
+      <Filter>examples\common\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\debugdraw\vs_debugdraw_fill_mesh.bin.h">
+      <Filter>examples\common\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\debugdraw\vs_debugdraw_fill_texture.bin.h">
+      <Filter>examples\common\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\debugdraw\vs_debugdraw_lines.bin.h">
+      <Filter>examples\common\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\debugdraw\vs_debugdraw_lines_stipple.bin.h">
+      <Filter>examples\common\debugdraw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\entry\cmd.h">
+      <Filter>examples\common\entry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\entry\dbg.h">
+      <Filter>examples\common\entry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\entry\entry.h">
+      <Filter>examples\common\entry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\entry\entry_p.h">
+      <Filter>examples\common\entry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\entry\input.h">
+      <Filter>examples\common\entry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\font\font_manager.h">
+      <Filter>examples\common\font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\font\fs_font_basic.bin.h">
+      <Filter>examples\common\font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\font\fs_font_distance_field.bin.h">
+      <Filter>examples\common\font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\font\fs_font_distance_field_subpixel.bin.h">
+      <Filter>examples\common\font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\font\text_buffer_manager.h">
+      <Filter>examples\common\font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\font\text_metrics.h">
+      <Filter>examples\common\font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\font\utf8.h">
+      <Filter>examples\common\font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\font\vs_font_basic.bin.h">
+      <Filter>examples\common\font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\font\vs_font_distance_field.bin.h">
+      <Filter>examples\common\font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\font\vs_font_distance_field_subpixel.bin.h">
+      <Filter>examples\common\font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\imgui\droidsans.ttf.h">
+      <Filter>examples\common\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\imgui\fs_imgui_color.bin.h">
+      <Filter>examples\common\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\imgui\fs_imgui_cubemap.bin.h">
+      <Filter>examples\common\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\imgui\fs_imgui_image.bin.h">
+      <Filter>examples\common\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\imgui\fs_imgui_image_swizz.bin.h">
+      <Filter>examples\common\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\imgui\fs_imgui_latlong.bin.h">
+      <Filter>examples\common\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\imgui\fs_imgui_texture.bin.h">
+      <Filter>examples\common\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\imgui\fs_ocornut_imgui.bin.h">
+      <Filter>examples\common\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\imgui\icons_font_awesome.ttf.h">
+      <Filter>examples\common\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\imgui\icons_kenney.ttf.h">
+      <Filter>examples\common\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\imgui\imgui.h">
+      <Filter>examples\common\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\imgui\robotomono_regular.ttf.h">
+      <Filter>examples\common\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\imgui\roboto_regular.ttf.h">
+      <Filter>examples\common\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\imgui\scintilla.h">
+      <Filter>examples\common\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\imgui\vs_imgui_color.bin.h">
+      <Filter>examples\common\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\imgui\vs_imgui_cubemap.bin.h">
+      <Filter>examples\common\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\imgui\vs_imgui_image.bin.h">
+      <Filter>examples\common\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\imgui\vs_imgui_latlong.bin.h">
+      <Filter>examples\common\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\imgui\vs_imgui_texture.bin.h">
+      <Filter>examples\common\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\imgui\vs_ocornut_imgui.bin.h">
+      <Filter>examples\common\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\nanovg\fontstash.h">
+      <Filter>examples\common\nanovg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\nanovg\fs_nanovg_fill.bin.h">
+      <Filter>examples\common\nanovg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\nanovg\nanovg.h">
+      <Filter>examples\common\nanovg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\nanovg\nanovg_bgfx.h">
+      <Filter>examples\common\nanovg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\nanovg\vs_nanovg_fill.bin.h">
+      <Filter>examples\common\nanovg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\ps\fs_particle.bin.h">
+      <Filter>examples\common\ps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\ps\particle_system.h">
+      <Filter>examples\common\ps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\common\ps\vs_particle.bin.h">
+      <Filter>examples\common\ps</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\3rdparty\ib-compress\indexbuffercompression.cpp">
+      <Filter>3rdparty\ib-compress</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\ib-compress\indexbufferdecompression.cpp">
+      <Filter>3rdparty\ib-compress</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\dear-imgui\imgui.cpp">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\dear-imgui\imgui_demo.cpp">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\dear-imgui\imgui_draw.cpp">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\dear-imgui\imgui_widgets.cpp">
+      <Filter>3rdparty\dear-imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\bgfx_utils.cpp">
+      <Filter>examples\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\bounds.cpp">
+      <Filter>examples\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\camera.cpp">
+      <Filter>examples\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\cube_atlas.cpp">
+      <Filter>examples\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\debugdraw\debugdraw.cpp">
+      <Filter>examples\common\debugdraw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\entry\cmd.cpp">
+      <Filter>examples\common\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\entry\entry.cpp">
+      <Filter>examples\common\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\entry\entry_android.cpp">
+      <Filter>examples\common\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\entry\entry_asmjs.cpp">
+      <Filter>examples\common\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\entry\entry_glfw.cpp">
+      <Filter>examples\common\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\entry\entry_noop.cpp">
+      <Filter>examples\common\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\entry\entry_sdl.cpp">
+      <Filter>examples\common\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\entry\entry_windows.cpp">
+      <Filter>examples\common\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\entry\entry_x11.cpp">
+      <Filter>examples\common\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\entry\input.cpp">
+      <Filter>examples\common\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\font\font_manager.cpp">
+      <Filter>examples\common\font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\font\text_buffer_manager.cpp">
+      <Filter>examples\common\font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\font\text_metrics.cpp">
+      <Filter>examples\common\font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\font\utf8.cpp">
+      <Filter>examples\common\font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\imgui\imgui.cpp">
+      <Filter>examples\common\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\imgui\scintilla.cpp">
+      <Filter>examples\common\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\nanovg\nanovg.cpp">
+      <Filter>examples\common\nanovg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\nanovg\nanovg_bgfx.cpp">
+      <Filter>examples\common\nanovg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\ps\particle_system.cpp">
+      <Filter>examples\common\ps</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\examples\common\entry\entry_winrt.cx">
+      <Filter>examples\common\entry</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

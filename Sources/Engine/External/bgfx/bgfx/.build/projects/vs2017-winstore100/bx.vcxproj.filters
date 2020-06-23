@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="bx">
+      <UniqueIdentifier>{5F775900-4B03-880B-B4B1-880BA05C880B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bx\include">
+      <UniqueIdentifier>{5FF92DDE-4BB1-6F2B-B4B8-4887A08F0A1C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bx\include\bx">
+      <UniqueIdentifier>{7505CD53-E1C5-488A-AA00-920716808D66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bx\include\compat">
+      <UniqueIdentifier>{BFB2FCD6-2BC9-FA6C-7440-868EE095CBF4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bx\include\compat\freebsd">
+      <UniqueIdentifier>{768C0C27-E24E-40B1-2BFF-CE3D9700198F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bx\include\compat\ios">
+      <UniqueIdentifier>{863ABA97-F2A6-7592-BB9A-0DF027C697FA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bx\include\compat\mingw">
+      <UniqueIdentifier>{3D04786F-A93B-C006-B245-242A1EFCE6FF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bx\include\compat\msvc">
+      <UniqueIdentifier>{94CE038F-80C8-2CE1-6935-C3F155CE924D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bx\include\compat\msvc\pre1600">
+      <UniqueIdentifier>{1EC53103-0AEB-FB69-F330-8135DFF52036}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bx\include\compat\osx">
+      <UniqueIdentifier>{9554BA97-01C1-7592-CAB4-0DF036E097FA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bx\include\tinystl">
+      <UniqueIdentifier>{927449C5-7E58-0A1B-E7B8-046ED3BBF49C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bx\include\bx\inline">
+      <UniqueIdentifier>{D0BC4A55-BC4B-D41E-656A-E81951D8E4C4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bx\src">
+      <UniqueIdentifier>{037A28F5-EF1B-53CB-D8D6-661FC417DA1B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bx\scripts">
+      <UniqueIdentifier>{435159C7-2F09-9B14-9810-747084E73505}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\bx\include\bx\inline\allocator.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\bx.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\cpu.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\easing.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\endian.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\error.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\float4x4_t.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\handlealloc.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\hash.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\math.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\mpscqueue.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\mutex.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\pixelformat.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\readerwriter.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\ringbuffer.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\rng.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\simd128_langext.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\simd128_neon.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\simd128_ref.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\simd128_sse.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\simd128_swizzle.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\simd256_avx.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\simd256_ref.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\simd_ni.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\sort.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\spscqueue.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\string.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\uint32_t.inl">
+      <Filter>bx\include\bx\inline</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\bx\include\bx\allocator.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\bx.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\commandline.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\config.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\cpu.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\debug.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\easing.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\endian.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\error.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\file.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\filepath.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\float4x4_t.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\handlealloc.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\hash.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\macros.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\maputil.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\math.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\mpscqueue.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\mutex.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\os.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\pixelformat.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\platform.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\process.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\readerwriter.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\ringbuffer.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\rng.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\semaphore.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\settings.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\simd_t.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\sort.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\spscqueue.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\string.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\thread.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\timer.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\uint32_t.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\url.h">
+      <Filter>bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\compat\freebsd\alloca.h">
+      <Filter>bx\include\compat\freebsd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\compat\freebsd\dirent.h">
+      <Filter>bx\include\compat\freebsd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\compat\freebsd\malloc.h">
+      <Filter>bx\include\compat\freebsd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\compat\freebsd\signal.h">
+      <Filter>bx\include\compat\freebsd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\compat\ios\malloc.h">
+      <Filter>bx\include\compat\ios</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\compat\mingw\alloca.h">
+      <Filter>bx\include\compat\mingw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\compat\mingw\dirent.h">
+      <Filter>bx\include\compat\mingw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\compat\mingw\sal.h">
+      <Filter>bx\include\compat\mingw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\compat\mingw\salieri.h">
+      <Filter>bx\include\compat\mingw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\compat\mingw\specstrings_strict.h">
+      <Filter>bx\include\compat\mingw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\compat\mingw\specstrings_undef.h">
+      <Filter>bx\include\compat\mingw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\compat\msvc\alloca.h">
+      <Filter>bx\include\compat\msvc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\compat\msvc\dirent.h">
+      <Filter>bx\include\compat\msvc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\compat\msvc\inttypes.h">
+      <Filter>bx\include\compat\msvc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\compat\msvc\stdbool.h">
+      <Filter>bx\include\compat\msvc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\compat\msvc\pre1600\stdint.h">
+      <Filter>bx\include\compat\msvc\pre1600</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\compat\osx\malloc.h">
+      <Filter>bx\include\compat\osx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\tinystl\allocator.h">
+      <Filter>bx\include\tinystl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\tinystl\buffer.h">
+      <Filter>bx\include\tinystl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\tinystl\hash.h">
+      <Filter>bx\include\tinystl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\tinystl\hash_base.h">
+      <Filter>bx\include\tinystl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\tinystl\new.h">
+      <Filter>bx\include\tinystl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\tinystl\stddef.h">
+      <Filter>bx\include\tinystl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\tinystl\string.h">
+      <Filter>bx\include\tinystl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\tinystl\traits.h">
+      <Filter>bx\include\tinystl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\tinystl\unordered_map.h">
+      <Filter>bx\include\tinystl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\tinystl\unordered_set.h">
+      <Filter>bx\include\tinystl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\tinystl\vector.h">
+      <Filter>bx\include\tinystl</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\bx\src\allocator.cpp">
+      <Filter>bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\amalgamated.cpp">
+      <Filter>bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\bx.cpp">
+      <Filter>bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\commandline.cpp">
+      <Filter>bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\crtnone.cpp">
+      <Filter>bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\debug.cpp">
+      <Filter>bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\dtoa.cpp">
+      <Filter>bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\easing.cpp">
+      <Filter>bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\file.cpp">
+      <Filter>bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\filepath.cpp">
+      <Filter>bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\hash.cpp">
+      <Filter>bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\math.cpp">
+      <Filter>bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\mutex.cpp">
+      <Filter>bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\os.cpp">
+      <Filter>bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\process.cpp">
+      <Filter>bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\semaphore.cpp">
+      <Filter>bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\settings.cpp">
+      <Filter>bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\sort.cpp">
+      <Filter>bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\string.cpp">
+      <Filter>bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\thread.cpp">
+      <Filter>bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\timer.cpp">
+      <Filter>bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\url.cpp">
+      <Filter>bx\src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="..\..\..\..\bx\scripts\bx.natvis">
+      <Filter>bx\scripts</Filter>
+    </Natvis>
+    <Natvis Include="..\..\..\..\bx\scripts\tinystl.natvis">
+      <Filter>bx\scripts</Filter>
+    </Natvis>
+  </ItemGroup>
+</Project>

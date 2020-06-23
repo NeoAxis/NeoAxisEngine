@@ -1,0 +1,683 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{08F58426-6BD8-3C88-B647-53C204EEFFDD}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>x64</Platform>
+    <ProjectName>libbulletc</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\lib\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">libbulletc.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">libbulletc_Debug</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\lib\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">libbulletc.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">libbulletc</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\lib\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">libbulletc.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">libbulletc_MinsizeRel</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\lib\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">libbulletc.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">libbulletc_RelWithDebugInfo</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>E:\Projects2\bullet3\src;E:\Projects2\bullet3\Extras\HACD;E:\Projects2\bullet3\Extras\Serialize\BulletWorldImporter;E:\Projects2\bullet3\Extras\Serialize\BulletXmlWorldImporter;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>Debug/</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_WIN64;CMAKE_INTDIR="Debug";libbulletc_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_WIN64;CMAKE_INTDIR=\"Debug\";libbulletc_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>E:\Projects2\bullet3\src;E:\Projects2\bullet3\Extras\HACD;E:\Projects2\bullet3\Extras\Serialize\BulletWorldImporter;E:\Projects2\bullet3\Extras\Serialize\BulletXmlWorldImporter;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>E:\Projects2\bullet3\src;E:\Projects2\bullet3\Extras\HACD;E:\Projects2\bullet3\Extras\Serialize\BulletWorldImporter;E:\Projects2\bullet3\Extras\Serialize\BulletXmlWorldImporter;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>lib\Debug\BulletCollision_Debug.lib;lib\Debug\BulletDynamics_Debug.lib;lib\Debug\LinearMath_Debug.lib;lib\Debug\BulletFileLoader_Debug.lib;lib\Debug\BulletSoftBody_Debug.lib;lib\Debug\BulletWorldImporter_Debug.lib;lib\Debug\BulletXmlWorldImporter_Debug.lib;lib\Debug\HACD_Debug.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>E:/Projects2/BulletSharpPInvoke/libbulletc/msvc/2017/lib/Debug/libbulletc_Debug.lib</ImportLibrary>
+      <ProgramDataBaseFile>E:/Projects2/BulletSharpPInvoke/libbulletc/msvc/2017/lib/Debug/libbulletc_Debug.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version></Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>E:\Projects2\bullet3\src;E:\Projects2\bullet3\Extras\HACD;E:\Projects2\bullet3\Extras\Serialize\BulletWorldImporter;E:\Projects2\bullet3\Extras\Serialize\BulletXmlWorldImporter;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>Release/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_WIN64;CMAKE_INTDIR="Release";libbulletc_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat></DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_WIN64;CMAKE_INTDIR=\"Release\";libbulletc_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>E:\Projects2\bullet3\src;E:\Projects2\bullet3\Extras\HACD;E:\Projects2\bullet3\Extras\Serialize\BulletWorldImporter;E:\Projects2\bullet3\Extras\Serialize\BulletXmlWorldImporter;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>E:\Projects2\bullet3\src;E:\Projects2\bullet3\Extras\HACD;E:\Projects2\bullet3\Extras\Serialize\BulletWorldImporter;E:\Projects2\bullet3\Extras\Serialize\BulletXmlWorldImporter;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>lib\Release\BulletCollision.lib;lib\Release\BulletDynamics.lib;lib\Release\LinearMath.lib;lib\Release\BulletFileLoader.lib;lib\Release\BulletSoftBody.lib;lib\Release\BulletWorldImporter.lib;lib\Release\BulletXmlWorldImporter.lib;lib\Release\HACD.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>E:/Projects2/BulletSharpPInvoke/libbulletc/msvc/2017/lib/Release/libbulletc.lib</ImportLibrary>
+      <ProgramDataBaseFile>E:/Projects2/BulletSharpPInvoke/libbulletc/msvc/2017/lib/Release/libbulletc.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version></Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>E:\Projects2\bullet3\src;E:\Projects2\bullet3\Extras\HACD;E:\Projects2\bullet3\Extras\Serialize\BulletWorldImporter;E:\Projects2\bullet3\Extras\Serialize\BulletXmlWorldImporter;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>MinSizeRel/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_WIN64;CMAKE_INTDIR="MinSizeRel";libbulletc_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat></DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_WIN64;CMAKE_INTDIR=\"MinSizeRel\";libbulletc_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>E:\Projects2\bullet3\src;E:\Projects2\bullet3\Extras\HACD;E:\Projects2\bullet3\Extras\Serialize\BulletWorldImporter;E:\Projects2\bullet3\Extras\Serialize\BulletXmlWorldImporter;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>E:\Projects2\bullet3\src;E:\Projects2\bullet3\Extras\HACD;E:\Projects2\bullet3\Extras\Serialize\BulletWorldImporter;E:\Projects2\bullet3\Extras\Serialize\BulletXmlWorldImporter;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>lib\MinSizeRel\BulletCollision_MinsizeRel.lib;lib\MinSizeRel\BulletDynamics_MinsizeRel.lib;lib\MinSizeRel\LinearMath_MinsizeRel.lib;lib\MinSizeRel\BulletFileLoader_MinsizeRel.lib;lib\MinSizeRel\BulletSoftBody_MinsizeRel.lib;lib\MinSizeRel\BulletWorldImporter_MinsizeRel.lib;lib\MinSizeRel\BulletXmlWorldImporter_MinsizeRel.lib;lib\MinSizeRel\HACD_MinsizeRel.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>E:/Projects2/BulletSharpPInvoke/libbulletc/msvc/2017/lib/MinSizeRel/libbulletc_MinsizeRel.lib</ImportLibrary>
+      <ProgramDataBaseFile>E:/Projects2/BulletSharpPInvoke/libbulletc/msvc/2017/lib/MinSizeRel/libbulletc_MinsizeRel.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version></Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>E:\Projects2\bullet3\src;E:\Projects2\bullet3\Extras\HACD;E:\Projects2\bullet3\Extras\Serialize\BulletWorldImporter;E:\Projects2\bullet3\Extras\Serialize\BulletXmlWorldImporter;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>RelWithDebInfo/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_WIN64;CMAKE_INTDIR="RelWithDebInfo";libbulletc_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_WIN64;CMAKE_INTDIR=\"RelWithDebInfo\";libbulletc_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>E:\Projects2\bullet3\src;E:\Projects2\bullet3\Extras\HACD;E:\Projects2\bullet3\Extras\Serialize\BulletWorldImporter;E:\Projects2\bullet3\Extras\Serialize\BulletXmlWorldImporter;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>E:\Projects2\bullet3\src;E:\Projects2\bullet3\Extras\HACD;E:\Projects2\bullet3\Extras\Serialize\BulletWorldImporter;E:\Projects2\bullet3\Extras\Serialize\BulletXmlWorldImporter;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>lib\RelWithDebInfo\BulletCollision_RelWithDebugInfo.lib;lib\RelWithDebInfo\BulletDynamics_RelWithDebugInfo.lib;lib\RelWithDebInfo\LinearMath_RelWithDebugInfo.lib;lib\RelWithDebInfo\BulletFileLoader_RelWithDebugInfo.lib;lib\RelWithDebInfo\BulletSoftBody_RelWithDebugInfo.lib;lib\RelWithDebInfo\BulletWorldImporter_RelWithDebugInfo.lib;lib\RelWithDebInfo\BulletXmlWorldImporter_RelWithDebugInfo.lib;lib\RelWithDebInfo\HACD_RelWithDebugInfo.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>E:/Projects2/BulletSharpPInvoke/libbulletc/msvc/2017/lib/RelWithDebInfo/libbulletc_RelWithDebugInfo.lib</ImportLibrary>
+      <ProgramDataBaseFile>E:/Projects2/BulletSharpPInvoke/libbulletc/msvc/2017/lib/RelWithDebInfo/libbulletc_RelWithDebugInfo.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version></Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="E:\Projects2\BulletSharpPInvoke\libbulletc\CMakeLists.txt">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule E:/Projects2/BulletSharpPInvoke/libbulletc/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -HE:/Projects2/BulletSharpPInvoke/libbulletc -BE:/Projects2/BulletSharpPInvoke/libbulletc/msvc/2017 --check-stamp-file E:/Projects2/BulletSharpPInvoke/libbulletc/msvc/2017/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:/Projects2/BulletSharpPInvoke/libbulletc/CMakeLists.txt;E:\Projects2\BulletSharpPInvoke\libbulletc\CMakeLists.txt;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystem.cmake.in;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\3.9.1\CMakeSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompilerId.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCompilerIdDetection.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\ADSP-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\ARMCC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\AppleClang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Borland-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Bruce-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Clang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Compaq-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Cray-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Embarcadero-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Fujitsu-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\GHS-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\GNU-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\HP-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IAR-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Intel-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MIPSpro-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\NVIDIA-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\OpenWatcom-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\PGI-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\PathScale-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\SCO-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\SDCC-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\SunPro-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\TI-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\TinyCC-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\VisualAge-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IBMCPP-C-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Watcom-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\XL-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IBMCPP-C-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\zOS-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IBMCPP-C-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CompilerId\VS-10.vcxproj.in;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeFindBinUtils.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCCompiler.cmake.in;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\3.9.1\CMakeCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-Determine-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompilerId.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCompilerIdDetection.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\ADSP-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\ARMCC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\AppleClang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Borland-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Clang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Comeau-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Compaq-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Cray-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Embarcadero-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Fujitsu-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\GHS-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\GNU-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\HP-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IAR-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Intel-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MIPSpro-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\NVIDIA-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\OpenWatcom-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\PGI-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\PathScale-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\SCO-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\SunPro-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\TI-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\VisualAge-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Watcom-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\XL-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\zOS-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CompilerId\VS-10.vcxproj.in;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeFindBinUtils.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXCompiler.cmake.in;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\3.9.1\CMakeCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeRCCompiler.cmake.in;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\3.9.1\CMakeRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeTestRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeTestCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeTestCompilerCommon.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompilerABI.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeParseImplicitLinkInfo.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCCompilerABI.c;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompileFeatures.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCCompiler.cmake.in;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\3.9.1\CMakeCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeTestCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeTestCompilerCommon.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompilerABI.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeParseImplicitLinkInfo.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXCompilerABI.cpp;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompileFeatures.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Internal\FeatureTesting.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX-FeatureTests.cmake;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\feature_tests.cxx;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX-FeatureTests.cmake;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\feature_tests.cxx;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX-FeatureTests.cmake;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\feature_tests.cxx;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX-FeatureTests.cmake;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\feature_tests.cxx;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXCompiler.cmake.in;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\3.9.1\CMakeCXXCompiler.cmake;E:\Projects2\BulletSharpPInvoke\libbulletc\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule E:/Projects2/BulletSharpPInvoke/libbulletc/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -HE:/Projects2/BulletSharpPInvoke/libbulletc -BE:/Projects2/BulletSharpPInvoke/libbulletc/msvc/2017 --check-stamp-file E:/Projects2/BulletSharpPInvoke/libbulletc/msvc/2017/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:/Projects2/BulletSharpPInvoke/libbulletc/CMakeLists.txt;E:\Projects2\BulletSharpPInvoke\libbulletc\CMakeLists.txt;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystem.cmake.in;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\3.9.1\CMakeSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompilerId.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCompilerIdDetection.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\ADSP-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\ARMCC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\AppleClang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Borland-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Bruce-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Clang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Compaq-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Cray-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Embarcadero-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Fujitsu-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\GHS-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\GNU-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\HP-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IAR-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Intel-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MIPSpro-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\NVIDIA-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\OpenWatcom-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\PGI-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\PathScale-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\SCO-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\SDCC-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\SunPro-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\TI-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\TinyCC-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\VisualAge-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IBMCPP-C-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Watcom-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\XL-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IBMCPP-C-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\zOS-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IBMCPP-C-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CompilerId\VS-10.vcxproj.in;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeFindBinUtils.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCCompiler.cmake.in;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\3.9.1\CMakeCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-Determine-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompilerId.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCompilerIdDetection.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\ADSP-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\ARMCC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\AppleClang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Borland-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Clang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Comeau-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Compaq-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Cray-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Embarcadero-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Fujitsu-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\GHS-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\GNU-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\HP-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IAR-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Intel-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MIPSpro-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\NVIDIA-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\OpenWatcom-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\PGI-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\PathScale-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\SCO-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\SunPro-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\TI-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\VisualAge-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Watcom-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\XL-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\zOS-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CompilerId\VS-10.vcxproj.in;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeFindBinUtils.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXCompiler.cmake.in;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\3.9.1\CMakeCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeRCCompiler.cmake.in;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\3.9.1\CMakeRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeTestRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeTestCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeTestCompilerCommon.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompilerABI.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeParseImplicitLinkInfo.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCCompilerABI.c;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompileFeatures.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCCompiler.cmake.in;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\3.9.1\CMakeCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeTestCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeTestCompilerCommon.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompilerABI.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeParseImplicitLinkInfo.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXCompilerABI.cpp;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompileFeatures.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Internal\FeatureTesting.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX-FeatureTests.cmake;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\feature_tests.cxx;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX-FeatureTests.cmake;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\feature_tests.cxx;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX-FeatureTests.cmake;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\feature_tests.cxx;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX-FeatureTests.cmake;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\feature_tests.cxx;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXCompiler.cmake.in;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\3.9.1\CMakeCXXCompiler.cmake;E:\Projects2\BulletSharpPInvoke\libbulletc\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule E:/Projects2/BulletSharpPInvoke/libbulletc/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -HE:/Projects2/BulletSharpPInvoke/libbulletc -BE:/Projects2/BulletSharpPInvoke/libbulletc/msvc/2017 --check-stamp-file E:/Projects2/BulletSharpPInvoke/libbulletc/msvc/2017/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">E:/Projects2/BulletSharpPInvoke/libbulletc/CMakeLists.txt;E:\Projects2\BulletSharpPInvoke\libbulletc\CMakeLists.txt;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystem.cmake.in;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\3.9.1\CMakeSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompilerId.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCompilerIdDetection.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\ADSP-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\ARMCC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\AppleClang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Borland-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Bruce-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Clang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Compaq-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Cray-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Embarcadero-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Fujitsu-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\GHS-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\GNU-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\HP-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IAR-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Intel-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MIPSpro-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\NVIDIA-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\OpenWatcom-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\PGI-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\PathScale-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\SCO-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\SDCC-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\SunPro-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\TI-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\TinyCC-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\VisualAge-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IBMCPP-C-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Watcom-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\XL-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IBMCPP-C-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\zOS-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IBMCPP-C-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CompilerId\VS-10.vcxproj.in;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeFindBinUtils.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCCompiler.cmake.in;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\3.9.1\CMakeCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-Determine-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompilerId.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCompilerIdDetection.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\ADSP-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\ARMCC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\AppleClang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Borland-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Clang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Comeau-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Compaq-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Cray-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Embarcadero-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Fujitsu-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\GHS-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\GNU-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\HP-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IAR-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Intel-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MIPSpro-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\NVIDIA-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\OpenWatcom-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\PGI-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\PathScale-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\SCO-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\SunPro-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\TI-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\VisualAge-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Watcom-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\XL-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\zOS-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CompilerId\VS-10.vcxproj.in;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeFindBinUtils.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXCompiler.cmake.in;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\3.9.1\CMakeCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeRCCompiler.cmake.in;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\3.9.1\CMakeRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeTestRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeTestCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeTestCompilerCommon.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompilerABI.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeParseImplicitLinkInfo.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCCompilerABI.c;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompileFeatures.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCCompiler.cmake.in;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\3.9.1\CMakeCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeTestCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeTestCompilerCommon.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompilerABI.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeParseImplicitLinkInfo.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXCompilerABI.cpp;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompileFeatures.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Internal\FeatureTesting.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX-FeatureTests.cmake;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\feature_tests.cxx;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX-FeatureTests.cmake;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\feature_tests.cxx;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX-FeatureTests.cmake;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\feature_tests.cxx;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX-FeatureTests.cmake;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\feature_tests.cxx;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXCompiler.cmake.in;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\3.9.1\CMakeCXXCompiler.cmake;E:\Projects2\BulletSharpPInvoke\libbulletc\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule E:/Projects2/BulletSharpPInvoke/libbulletc/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -HE:/Projects2/BulletSharpPInvoke/libbulletc -BE:/Projects2/BulletSharpPInvoke/libbulletc/msvc/2017 --check-stamp-file E:/Projects2/BulletSharpPInvoke/libbulletc/msvc/2017/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">E:/Projects2/BulletSharpPInvoke/libbulletc/CMakeLists.txt;E:\Projects2\BulletSharpPInvoke\libbulletc\CMakeLists.txt;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystem.cmake.in;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\3.9.1\CMakeSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompilerId.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCompilerIdDetection.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\ADSP-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\ARMCC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\AppleClang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Borland-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Bruce-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Clang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Compaq-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Cray-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Embarcadero-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Fujitsu-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\GHS-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\GNU-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\HP-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IAR-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Intel-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MIPSpro-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\NVIDIA-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\OpenWatcom-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\PGI-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\PathScale-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\SCO-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\SDCC-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\SunPro-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\TI-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\TinyCC-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\VisualAge-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IBMCPP-C-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Watcom-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\XL-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IBMCPP-C-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\zOS-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IBMCPP-C-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CompilerId\VS-10.vcxproj.in;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeFindBinUtils.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCCompiler.cmake.in;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\3.9.1\CMakeCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-Determine-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompilerId.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCompilerIdDetection.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\ADSP-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\ARMCC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\AppleClang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Borland-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Clang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Comeau-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Compaq-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Cray-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Embarcadero-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Fujitsu-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\GHS-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\GNU-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\HP-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IAR-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Intel-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MIPSpro-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\NVIDIA-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\OpenWatcom-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\PGI-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\PathScale-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\SCO-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\SunPro-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\TI-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\VisualAge-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\Watcom-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\XL-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\zOS-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CompilerId\VS-10.vcxproj.in;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeFindBinUtils.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXCompiler.cmake.in;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\3.9.1\CMakeCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeRCCompiler.cmake.in;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\3.9.1\CMakeRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeTestRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeTestCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeTestCompilerCommon.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompilerABI.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeParseImplicitLinkInfo.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCCompilerABI.c;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompileFeatures.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCCompiler.cmake.in;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\3.9.1\CMakeCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeTestCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeTestCompilerCommon.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompilerABI.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeParseImplicitLinkInfo.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXCompilerABI.cpp;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeDetermineCompileFeatures.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Internal\FeatureTesting.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX-FeatureTests.cmake;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\feature_tests.cxx;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX-FeatureTests.cmake;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\feature_tests.cxx;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX-FeatureTests.cmake;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\feature_tests.cxx;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX-FeatureTests.cmake;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\feature_tests.cxx;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXCompiler.cmake.in;E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\3.9.1\CMakeCXXCompiler.cmake;E:\Projects2\BulletSharpPInvoke\libbulletc\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\dllmain.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\conversion.h" />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\main.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\collections.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\collections.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btActionInterface_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btActionInterface_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btAlignedObjectArray_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btAlignedObjectArray_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btAxisSweep3_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btAxisSweep3_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btBox2dBox2dCollisionAlgorithm_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btBox2dBox2dCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btBox2dShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btBox2dShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btBoxBoxCollisionAlgorithm_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btBoxBoxCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btBoxBoxDetector_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btBoxBoxDetector_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btBoxCollision_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btBoxCollision_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btBoxShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btBoxShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btBroadphaseInterface_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btBroadphaseInterface_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btBroadphaseProxy_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btBroadphaseProxy_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btBulletFile_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btBulletFile_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btBulletWorldImporter_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btBulletWorldImporter_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btBulletXmlWorldImporter_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btBulletXmlWorldImporter_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btBvhTriangleMeshShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btBvhTriangleMeshShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCapsuleShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCapsuleShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCharacterControllerInterface_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCharacterControllerInterface_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCollisionAlgorithm_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCollisionConfiguration_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCollisionConfiguration_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCollisionCreateFunc_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCollisionCreateFunc_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCollisionDispatcher_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCollisionDispatcher_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCollisionDispatcherMt_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCollisionDispatcherMt_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCollisionObject_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCollisionObject_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCollisionObjectWrapper_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCollisionObjectWrapper_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCollisionShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCollisionShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCollisionWorld_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCollisionWorld_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCompoundCollisionAlgorithm_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCompoundCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCompoundCompoundCollisionAlgorithm_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCompoundCompoundCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCompoundFromGimpact_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCompoundFromGimpact_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCompoundShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCompoundShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConcaveShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConcaveShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConeShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConeShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConeTwistConstraint_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConeTwistConstraint_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConstraintSolver_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConstraintSolver_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btContactConstraint_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btContactConstraint_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btContactSolverInfo_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btContactSolverInfo_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btContinuousConvexCollision_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btContinuousConvexCollision_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvex2dConvex2dAlgorithm_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvex2dConvex2dAlgorithm_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvex2dShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvex2dShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvexCast_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvexCast_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvexConcaveCollisionAlgorithm_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvexConcaveCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvexConvexAlgorithm_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvexConvexAlgorithm_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvexHullShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvexHullShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvexInternalShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvexInternalShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvexPenetrationDepthSolver_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvexPenetrationDepthSolver_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvexPlaneCollisionAlgorithm_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvexPlaneCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvexPointCloudShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvexPointCloudShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvexPolyhedron_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvexPolyhedron_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvexShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvexShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvexTriangleMeshShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btConvexTriangleMeshShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCpuFeatureUtility_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCpuFeatureUtility_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCylinderShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btCylinderShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btDantzigSolver_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btDantzigSolver_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btDbvt_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btDbvt_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btDbvtBroadphase_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btDbvtBroadphase_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btDefaultCollisionConfiguration_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btDefaultCollisionConfiguration_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btDefaultMotionState_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btDefaultMotionState_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btDefaultSoftBodySolver_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btDefaultSoftBodySolver_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btDiscreteCollisionDetectorInterface_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btDiscreteCollisionDetectorInterface_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btDiscreteDynamicsWorld_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btDiscreteDynamicsWorld_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btDiscreteDynamicsWorldMt_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btDiscreteDynamicsWorldMt_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btDispatcher_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btDispatcher_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btDynamicsWorld_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btDynamicsWorld_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btEmptyCollisionAlgorithm_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btEmptyCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btEmptyShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btEmptyShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btFixedConstraint_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btFixedConstraint_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGearConstraint_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGearConstraint_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGeneric6DofConstraint_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGeneric6DofConstraint_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGeneric6DofSpring2Constraint_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGeneric6DofSpring2Constraint_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGeneric6DofSpringConstraint_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGeneric6DofSpringConstraint_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGeometryUtil_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGeometryUtil_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGhostObject_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGhostObject_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGImpactBvh_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGImpactBvh_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGImpactCollisionAlgorithm_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGImpactCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGImpactQuantizedBvh_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGImpactQuantizedBvh_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGImpactShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGImpactShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGjkConvexCast_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGjkConvexCast_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGjkEpaPenetrationDepthSolver_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGjkEpaPenetrationDepthSolver_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGjkPairDetector_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btGjkPairDetector_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btHeightfieldTerrainShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btHeightfieldTerrainShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btHinge2Constraint_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btHinge2Constraint_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btHingeConstraint_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btHingeConstraint_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btIDebugDraw_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btIDebugDraw_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btKinematicCharacterController_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btKinematicCharacterController_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btLemkeSolver_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btLemkeSolver_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btManifoldPoint_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btManifoldPoint_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btManifoldResult_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btManifoldResult_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMinkowskiPenetrationDepthSolver_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMinkowskiPenetrationDepthSolver_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMinkowskiSumShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMinkowskiSumShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMLCPSolver_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMLCPSolver_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMLCPSolverInterface_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMLCPSolverInterface_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMotionState_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMotionState_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiBody_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiBody_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiBodyConstraint_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiBodyConstraint_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiBodyConstraintSolver_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiBodyConstraintSolver_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiBodyDynamicsWorld_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiBodyDynamicsWorld_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiBodyFixedConstraint_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiBodyFixedConstraint_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiBodyJointLimitConstraint_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiBodyJointLimitConstraint_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiBodyJointMotor_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiBodyJointMotor_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiBodyLink_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiBodyLink_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiBodyLinkCollider_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiBodyLinkCollider_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiBodyPoint2Point_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiBodyPoint2Point_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiBodySliderConstraint_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiBodySliderConstraint_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiBodySolverConstraint_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiBodySolverConstraint_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultimaterialTriangleMeshShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultimaterialTriangleMeshShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiSphereShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btMultiSphereShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btNNCGConstraintSolver_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btNNCGConstraintSolver_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btOptimizedBvh_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btOptimizedBvh_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btOverlappingPairCache_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btOverlappingPairCache_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btOverlappingPairCallback_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btOverlappingPairCallback_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btPersistentManifold_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btPersistentManifold_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btPoint2PointConstraint_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btPoint2PointConstraint_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btPointCollector_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btPointCollector_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btPolarDecomposition_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btPolarDecomposition_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btPolyhedralConvexShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btPolyhedralConvexShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btQuantizedBvh_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btQuantizedBvh_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btRaycastVehicle_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btRaycastVehicle_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btRigidBody_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btRigidBody_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btScaledBvhTriangleMeshShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btScaledBvhTriangleMeshShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSequentialImpulseConstraintSolver_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSequentialImpulseConstraintSolver_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSerializer_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSerializer_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btShapeHull_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btShapeHull_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSimulationIslandManager_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSimulationIslandManager_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSliderConstraint_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSliderConstraint_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSoftBody_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSoftBody_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSoftBodyConcaveCollisionAlgorithm_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSoftBodyConcaveCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSoftBodyHelpers_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSoftBodyHelpers_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSoftBodyRigidBodyCollisionConfiguration_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSoftBodyRigidBodyCollisionConfiguration_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSoftBodySolvers_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSoftBodySolvers_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSoftRigidCollisionAlgorithm_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSoftRigidCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSoftRigidDynamicsWorld_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSoftRigidDynamicsWorld_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSoftSoftCollisionAlgorithm_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSoftSoftCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSparseSdf3_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSparseSdf3_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSphereBoxCollisionAlgorithm_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSphereBoxCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSphereShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSphereShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSphereSphereCollisionAlgorithm_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSphereSphereCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSphereTriangleCollisionAlgorithm_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btSphereTriangleCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btStaticPlaneShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btStaticPlaneShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btStridingMeshInterface_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btStridingMeshInterface_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btTetrahedronShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btTetrahedronShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btThreads_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btThreads_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btTransformUtil_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btTransformUtil_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btTriangleBuffer_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btTriangleBuffer_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btTriangleCallback_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btTriangleCallback_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btTriangleIndexVertexArray_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btTriangleIndexVertexArray_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btTriangleIndexVertexMaterialArray_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btTriangleIndexVertexMaterialArray_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btTriangleMesh_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btTriangleMesh_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btTriangleMeshShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btTriangleMeshShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btTriangleShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btTriangleShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btTriangleShapeEx_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btTriangleShapeEx_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btTypedConstraint_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btTypedConstraint_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btUniformScalingShape_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btUniformScalingShape_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btUnionFind_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btUnionFind_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btUniversalConstraint_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btUniversalConstraint_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btVehicleRaycaster_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btVehicleRaycaster_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btVoronoiSimplexSolver_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btVoronoiSimplexSolver_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btWheelInfo_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btWheelInfo_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btWorldImporter_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\btWorldImporter_wrap.h" />
+    <ClCompile Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\hacdHACD_wrap.cpp"  />
+    <ClInclude Include="E:\Projects2\BulletSharpPInvoke\libbulletc\src\hacdHACD_wrap.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\ZERO_CHECK.vcxproj">
+      <Project>{DD264E5F-5ECD-372C-B6D5-9BDCEEF7164D}</Project>
+      <Name>ZERO_CHECK</Name>
+    </ProjectReference>
+    <ProjectReference Include="E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\bullet\src\BulletCollision\BulletCollision.vcxproj">
+      <Project>{23CA6C1E-8B93-357C-BAE9-5B6069AB10B0}</Project>
+      <Name>BulletCollision</Name>
+    </ProjectReference>
+    <ProjectReference Include="E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\bullet\src\BulletDynamics\BulletDynamics.vcxproj">
+      <Project>{0BF7F6EF-AA78-3DF3-8CE9-09D2D941D360}</Project>
+      <Name>BulletDynamics</Name>
+    </ProjectReference>
+    <ProjectReference Include="E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\bullet\Extras\Serialize\BulletFileLoader\BulletFileLoader.vcxproj">
+      <Project>{E326C245-B114-33EB-8659-4A725C168B90}</Project>
+      <Name>BulletFileLoader</Name>
+    </ProjectReference>
+    <ProjectReference Include="E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\bullet\src\BulletSoftBody\BulletSoftBody.vcxproj">
+      <Project>{A1783A6A-B92B-310A-84E1-168C350097DE}</Project>
+      <Name>BulletSoftBody</Name>
+    </ProjectReference>
+    <ProjectReference Include="E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\bullet\Extras\Serialize\BulletWorldImporter\BulletWorldImporter.vcxproj">
+      <Project>{1918D2EC-71DF-353B-A1AD-5F10CF8CEDF5}</Project>
+      <Name>BulletWorldImporter</Name>
+    </ProjectReference>
+    <ProjectReference Include="E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\bullet\Extras\Serialize\BulletXmlWorldImporter\BulletXmlWorldImporter.vcxproj">
+      <Project>{E5FBA69A-0B55-30A8-B65C-CF5D3A330261}</Project>
+      <Name>BulletXmlWorldImporter</Name>
+    </ProjectReference>
+    <ProjectReference Include="E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\bullet\Extras\HACD\HACD.vcxproj">
+      <Project>{E31AFC1B-5FCD-38D9-B3CA-42E53C628F98}</Project>
+      <Name>HACD</Name>
+    </ProjectReference>
+    <ProjectReference Include="E:\Projects2\BulletSharpPInvoke\libbulletc\msvc\2017\bullet\src\LinearMath\LinearMath.vcxproj">
+      <Project>{5B031F29-6A9B-32F6-B1C8-8854435B088F}</Project>
+      <Name>LinearMath</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

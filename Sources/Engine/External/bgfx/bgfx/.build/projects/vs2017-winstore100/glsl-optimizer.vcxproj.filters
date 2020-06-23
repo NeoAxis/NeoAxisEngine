@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="3rdparty">
+      <UniqueIdentifier>{3E7DA5C5-2A4A-00D1-5363-EE783F8F355F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\glsl-optimizer">
+      <UniqueIdentifier>{5C044C2B-C83B-94C2-D145-F8E53DFCBABB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\glsl-optimizer\src">
+      <UniqueIdentifier>{803D6340-EC4A-9126-7531-8D11E13D5DDD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\glsl-optimizer\src\glsl">
+      <UniqueIdentifier>{8ED14072-7A22-2CB4-A386-1A768F36BF1D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\glsl-optimizer\src\glsl\glcpp">
+      <UniqueIdentifier>{C0A6C6FE-ACF8-9DEE-9517-DBFE8108B7D7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\glsl-optimizer\src\mesa">
+      <UniqueIdentifier>{02FE4372-EE4E-2FB4-17B3-1D760363C21D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\glsl-optimizer\src\mesa\main">
+      <UniqueIdentifier>{834DDBDD-EF11-DACD-B877-0A9824FB7503}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\glsl-optimizer\src\mesa\program">
+      <UniqueIdentifier>{D6197D0D-C296-7050-EB13-7164D7EF0CE4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\glsl-optimizer\src\util">
+      <UniqueIdentifier>{9A9F4872-86F0-33B4-AF54-22769B04C71D}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\glcpp\glcpp.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl\glcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\glcpp\glcpp-parse.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl\glcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ast.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\builtin_type_macros.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\glsl_optimizer.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\glsl_parser.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\glsl_parser_extras.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\glsl_symbol_table.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\glsl_types.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_basic_block.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_builder.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_expression_flattening.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_function_inlining.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_hierarchical_visitor.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_optimization.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_print_glsl_visitor.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_print_metal_visitor.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_print_visitor.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_rvalue_visitor.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_stats.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_uniform.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_unused_structs.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_variable_refcount.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_visitor.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\link_uniform_block_active_visitor.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\link_varyings.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\linker.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\list.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\loop_analysis.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\program.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\s_expression.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\standalone_scaffolding.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\strtod.h">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\mesa\main\compiler.h">
+      <Filter>3rdparty\glsl-optimizer\src\mesa\main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\mesa\main\config.h">
+      <Filter>3rdparty\glsl-optimizer\src\mesa\main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\mesa\main\context.h">
+      <Filter>3rdparty\glsl-optimizer\src\mesa\main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\mesa\main\core.h">
+      <Filter>3rdparty\glsl-optimizer\src\mesa\main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\mesa\main\dd.h">
+      <Filter>3rdparty\glsl-optimizer\src\mesa\main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\mesa\main\errors.h">
+      <Filter>3rdparty\glsl-optimizer\src\mesa\main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\mesa\main\glheader.h">
+      <Filter>3rdparty\glsl-optimizer\src\mesa\main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\mesa\main\glminimal.h">
+      <Filter>3rdparty\glsl-optimizer\src\mesa\main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\mesa\main\imports.h">
+      <Filter>3rdparty\glsl-optimizer\src\mesa\main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\mesa\main\macros.h">
+      <Filter>3rdparty\glsl-optimizer\src\mesa\main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\mesa\main\mtypes.h">
+      <Filter>3rdparty\glsl-optimizer\src\mesa\main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\mesa\main\simple_list.h">
+      <Filter>3rdparty\glsl-optimizer\src\mesa\main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\mesa\program\hash_table.h">
+      <Filter>3rdparty\glsl-optimizer\src\mesa\program</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\mesa\program\prog_instruction.h">
+      <Filter>3rdparty\glsl-optimizer\src\mesa\program</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\mesa\program\prog_parameter.h">
+      <Filter>3rdparty\glsl-optimizer\src\mesa\program</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\mesa\program\prog_statevars.h">
+      <Filter>3rdparty\glsl-optimizer\src\mesa\program</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\mesa\program\symbol_table.h">
+      <Filter>3rdparty\glsl-optimizer\src\mesa\program</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\util\hash_table.h">
+      <Filter>3rdparty\glsl-optimizer\src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\util\macros.h">
+      <Filter>3rdparty\glsl-optimizer\src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glsl-optimizer\src\util\ralloc.h">
+      <Filter>3rdparty\glsl-optimizer\src\util</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\glcpp\glcpp-lex.c">
+      <Filter>3rdparty\glsl-optimizer\src\glsl\glcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\glcpp\glcpp-parse.c">
+      <Filter>3rdparty\glsl-optimizer\src\glsl\glcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\glcpp\pp.c">
+      <Filter>3rdparty\glsl-optimizer\src\glsl\glcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ast_array_index.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ast_expr.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ast_function.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ast_to_hir.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ast_type.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\builtin_functions.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\builtin_types.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\builtin_variables.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\glsl_lexer.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\glsl_optimizer.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\glsl_parser.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\glsl_parser_extras.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\glsl_symbol_table.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\glsl_types.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\hir_field_selection.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_basic_block.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_builder.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_clone.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_constant_expression.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_equals.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_expression_flattening.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_function.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_function_can_inline.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_function_detect_recursion.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_hierarchical_visitor.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_hv_accept.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_import_prototypes.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_print_glsl_visitor.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_print_metal_visitor.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_print_visitor.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_rvalue_visitor.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_stats.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_unused_structs.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_validate.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\ir_variable_refcount.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\link_atomics.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\link_functions.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\link_interface_blocks.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\link_uniform_block_active_visitor.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\link_uniform_blocks.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\link_uniform_initializers.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\link_uniforms.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\link_varyings.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\linker.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\loop_analysis.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\loop_controls.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\loop_unroll.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\lower_clip_distance.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\lower_discard.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\lower_discard_flow.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\lower_if_to_cond_assign.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\lower_instructions.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\lower_jumps.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\lower_mat_op_to_vec.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\lower_named_interface_blocks.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\lower_noise.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\lower_offset_array.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\lower_output_reads.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\lower_packed_varyings.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\lower_packing_builtins.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\lower_ubo_reference.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\lower_variable_index_to_cond_assign.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\lower_vec_index_to_cond_assign.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\lower_vec_index_to_swizzle.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\lower_vector.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\lower_vector_insert.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\lower_vertex_id.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_algebraic.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_array_splitting.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_constant_folding.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_constant_propagation.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_constant_variable.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_copy_propagation.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_copy_propagation_elements.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_cse.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_dead_builtin_variables.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_dead_builtin_varyings.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_dead_code.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_dead_code_local.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_dead_functions.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_flatten_nested_if_blocks.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_flip_matrices.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_function_inlining.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_if_simplification.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_minmax.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_noop_swizzle.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_rebalance_tree.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_redundant_jumps.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_structure_splitting.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_swizzle_swizzle.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_tree_grafting.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\opt_vectorize.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\s_expression.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\standalone_scaffolding.cpp">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\glsl\strtod.c">
+      <Filter>3rdparty\glsl-optimizer\src\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\mesa\main\imports.c">
+      <Filter>3rdparty\glsl-optimizer\src\mesa\main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\mesa\program\prog_hash_table.c">
+      <Filter>3rdparty\glsl-optimizer\src\mesa\program</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\mesa\program\symbol_table.c">
+      <Filter>3rdparty\glsl-optimizer\src\mesa\program</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\util\hash_table.c">
+      <Filter>3rdparty\glsl-optimizer\src\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glsl-optimizer\src\util\ralloc.c">
+      <Filter>3rdparty\glsl-optimizer\src\util</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
