@@ -216,4 +216,6 @@
 *.scene text eol=crlf
 *.settings text eol=crlf
 *.ui text eol=crlf
+*.uistyle text eol=crlf
 *.mesh text eol=crlf
+*.product text eol=crlf
