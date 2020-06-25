@@ -31,10 +31,10 @@ Tested on Visual Studio 2017.
 
 Shortly about the license. You can use NeoAxis Engine for free without any future royalties and distribute source codes subject to the following conditions:
 <ul>
-<li>1. When publishing your product, you must add "Made with NeoAxis Engine (www.neoaxis.com)" with the product information and in its credits.
+<li>1. When publishing your product, you must add **"Made with NeoAxis Engine (www.neoaxis.com)"** with the product information and in its credits.
 </li>
 
-<li>2. You can distribute the NeoAxis editor with your product. When you distribute the NeoAxis editor, or any another application which uses editor's code, the window title of the application should contains a text in the form: "Your project name - NeoAxis Engine 2020.3 (www.neoaxis.com)" Or if you made engine modification: "Your project name - Modified version of NeoAxis Engine 2020.3 (www.neoaxis.com)"
+<li>2. You can distribute the NeoAxis editor with your product. When you distribute the NeoAxis editor, or any another application which uses editor's code, the window title of the application should contains a text in the form: "Your project name - NeoAxis Engine 2020.3 (www.neoaxis.com)". Or if you made engine modification: "Your project name - Modified version of NeoAxis Engine 2020.3 (www.neoaxis.com)"
 
 This can be done by changing the value of the ModifiedVersionOfNeoAxisEngine field in the Sources\Engine\NeoAxis.Core\Utility\EngineInfo.cs file.</li>
 
