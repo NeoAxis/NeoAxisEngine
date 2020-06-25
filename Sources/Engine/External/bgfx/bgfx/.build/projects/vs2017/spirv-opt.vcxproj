@@ -614,8 +614,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\reduce\remove_opname_instruction_reduction_opportunity_finder.cpp">
     </ClCompile>
-    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\reduce\remove_unreferenced_instruction_reduction_opportunity_finder.cpp">
-    </ClCompile>
     <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\reduce\structured_loop_to_selection_reduction_opportunity.cpp">
     </ClCompile>
     <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\reduce\structured_loop_to_selection_reduction_opportunity_finder.cpp">
