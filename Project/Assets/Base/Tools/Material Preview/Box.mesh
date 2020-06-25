@@ -1,0 +1,7 @@
+.component NeoAxis.Component_Mesh
+{
+	.component NeoAxis.Component_MeshGeometry_Box
+	{
+		Name = MeshGeometry Box
+	}
+}

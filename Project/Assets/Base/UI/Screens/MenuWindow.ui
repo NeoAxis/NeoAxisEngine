@@ -1,0 +1,58 @@
+.component Project.MenuWindow
+{
+	Text = Menu
+	Size = Units 300 420
+	HorizontalAlignment = Center
+	VerticalAlignment = Center
+	EditorScrollPosition = -0.357991773378365 -0.573678059339237
+	Style
+	{
+		GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Scenes
+		Text = Scenes
+		Size = Units 200 40
+		HorizontalAlignment = Center
+		Margin = Units 0 80 0 0
+		EditorScrollPosition = 0 0
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Main Menu
+		Text = Main Menu
+		Size = Units 200 40
+		HorizontalAlignment = Center
+		Margin = Units 0 200 0 0
+		EditorScrollPosition = 0 0
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Exit
+		Text = Exit
+		Size = Units 200 40
+		HorizontalAlignment = Center
+		Margin = Units 0 260 0 0
+		EditorScrollPosition = 0 0
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Close
+		Text = Close
+		Size = Units 200 40
+		HorizontalAlignment = Center
+		VerticalAlignment = Bottom
+		Margin = Units 0 0 0 40
+		EditorScrollPosition = 0 0
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Options
+		Text = Options
+		Size = Units 200 40
+		HorizontalAlignment = Center
+		Margin = Units 0 140 0 0
+		EditorScrollPosition = 0 0
+	}
+}

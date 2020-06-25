@@ -1,0 +1,490 @@
+.component NeoAxis.Component_Scene
+{
+	RenderingPipeline
+	{
+		GetByReference = "root:$Rendering Pipeline"
+	}
+	CameraEditor
+	{
+		GetByReference = "this:$Camera Editor"
+	}
+	CameraEditor2D
+	{
+		GetByReference = "this:$Camera Editor 2D"
+	}
+	.component NeoAxis.Component_Camera
+	{
+		Name = Camera Editor
+		Visible = False
+		Transform = "4.47981480902241 -0.405926912608239 3.07780268043293; -0.203579264549818 0.0661648669475804 0.928987130264778 0.301928145805548; 1 1 1"
+	}
+	.component NeoAxis.Component_Camera
+	{
+		Name = Camera Editor 2D
+		Visible = False
+		Transform = "2.64918580053222 3.02745193504869 10; -0.502493739596367 0.497493760429674 0.497493760429674 0.502493739596367; 1 1 1"
+		Projection = Orthographic
+		Height = 16.8586419336498
+		FixedUp = 0 1 0
+		FarClipPlane = 100
+	}
+	.component NeoAxis.Component_Light
+	{
+		Name = Ambient Light
+		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
+		Type = Ambient
+		Brightness = 30000
+	}
+	.component NeoAxis.Component_RenderingPipeline_Default
+	{
+		Name = Rendering Pipeline
+		ShadowFarDistance = 15
+		ShadowIntensity = 0.5
+		.component NeoAxis.Component
+		{
+			Name = Background Effects
+		}
+		.component NeoAxis.Component
+		{
+			Name = Scene Effects
+			.component NeoAxis.Component_RenderingEffect_AmbientOcclusion
+			{
+				Name = Ambient Occlusion
+				Quality = High
+			}
+			.component NeoAxis.Component_RenderingEffect_MotionBlur
+			{
+				Name = Motion Blur
+			}
+			.component NeoAxis.Component_RenderingEffect_Bloom
+			{
+				Enabled = False
+				Name = Bloom
+			}
+			.component NeoAxis.Component_RenderingEffect_LensEffects
+			{
+				Name = Lens Effects
+			}
+			.component NeoAxis.Component_RenderingEffect_ToneMapping
+			{
+				Name = Tone Mapping
+			}
+			.component NeoAxis.Component_RenderingEffect_ToLDR
+			{
+				Name = To LDR
+			}
+			.component NeoAxis.Component_RenderingEffect_Antialiasing
+			{
+				Name = Antialiasing
+			}
+			.component NeoAxis.Component_RenderingEffect_Sharpen
+			{
+				Name = Sharpen
+				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
+			}
+		}
+		.component NeoAxis.Component
+		{
+			Name = Final Image Effects
+		}
+	}
+	.component NeoAxis.Component_GameMode
+	{
+		Name = Game Mode
+		UseBuiltInCamera = FirstPerson
+		ObjectControlledByPlayer
+		{
+			GetByReference = "this:..\\$Character"
+		}
+	}
+	.component NeoAxis.Component_Light
+	{
+		Name = Light 1
+		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
+		Type = Directional
+		Brightness = 130000
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 91.429
+	}
+	.component NeoAxis.Component_Light
+	{
+		Enabled = False
+		Name = Light 2
+		Transform = "-16.276133519817 -13.7764744895929 22.8055842838911; -0.800753779408636 -0.218616030310482 0.553641801455134 0.066941554624803; 1 1 1"
+		Type = Spotlight
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 91.429
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Ground
+		CanBeSelected = False
+		Transform = "0 0 0; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 100 100
+				UVTilesPerUnit = 0.25 0.25
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform
+			{
+				GetByReference = "this:..\\Transform"
+			}
+			.component NeoAxis.Component_CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Sphere
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "1.649926094671 -5.24069580321873 0.5; 0 0 0 1; 1 1 1"
+			MotionType = Dynamic
+			.component NeoAxis.Component_CollisionShape_Sphere
+			{
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "7.7583292677252 0.545388379699409 0.500000000000008; 0 0 0 1; 1 1 1"
+			MotionType = Dynamic
+			.component NeoAxis.Component_CollisionShape_Box
+			{
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Cylinder
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Cylinder
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "8.0300300933609 -4.62765027806383 0.499999999999976; 0 0 0 1; 1 1 1"
+			MotionType = Dynamic
+			.component NeoAxis.Component_CollisionShape_Cylinder
+			{
+			}
+		}
+	}
+	.component NeoAxis.Component_GroupOfObjects
+	{
+		Name = Group Of Objects
+		BaseObjects
+		{
+			Count = 1
+			0 "NeoAxis.Reference<NeoAxis.Component>"
+			{
+				GetByReference = "root:$Ground"
+			}
+		}
+	}
+	.component NeoAxis.Component_Character
+	{
+		Name = Character
+		RunSupport = True
+		FlyControlSupport = True
+		JumpSupport = True
+		Animate = True
+		RunAnimationSpeed = 0.5
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		IdleAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Root|Idle"
+		}
+		WalkAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Root|Walk_loop"
+		}
+		RunAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Root|Run_loop"
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			CanBeSelected = False
+			Transform = "1.22002240887655 -0.660201783847926 1.15221954800588; 0 0 0.707106781186547 0.707106781186548; 1 1 1"
+			MotionType = Dynamic
+			Mass = 70
+			AngularDamping = 10
+			MaterialFriction = 0
+			MaterialSpinningFriction = 0
+			MaterialRollingFriction = 0
+			LinearSleepingThreshold = 0
+			AngularSleepingThreshold = 0
+			.component NeoAxis.Component_CollisionShape_Capsule
+			{
+				Name = CollisionShape Capsule
+				TransformRelativeToParent = "0 0 -0.25; 0 0 0 1; 1 1 1"
+				Radius = 0.3
+				Height = 1.2
+			}
+		}
+		.component NeoAxis.Component_MeshInSpace
+		{
+			Name = Mesh In Space
+			CanBeSelected = False
+			Transform
+			{
+				GetByReference = "this:$Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Base\\Models\\Human.fbx|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			.component NeoAxis.Component_MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+			}
+			.component NeoAxis.Component_TransformOffset
+			{
+				Name = Transform Offset
+				PositionOffset = 0 0 -1.15
+				Source
+				{
+					GetByReference = "this:..\\..\\$Collision Body\\Transform"
+				}
+			}
+		}
+		.component NeoAxis.Component_CharacterInputProcessing
+		{
+			Name = Character Input Processing
+		}
+		.component NeoAxis.Component_CharacterAI
+		{
+			Name = Character AI
+		}
+	}
+	.component NeoAxis.Component_RenderTargetInSpace
+	{
+		Name = Render Target In Space
+		Transform = "1.94054675104483 2.47453653413676 1.5474972245669; 0 0 -0.5 0.866025403784439; 2 2 2"
+		CameraByName = Camera Editor
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		Scene
+		{
+			GetByReference = "Samples\\Starter Content\\Scenes\\Scripting C#.scene"
+		}
+		UIControl
+		{
+			GetByReference = "Base\\UI\\Screens\\MenuWindow.ui"
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Axis = 0
+				Dimensions = 1.333 1
+				UVTilesInTotal = 1 1
+				Material
+				{
+					GetByReference = "this:..\\..\\$Material"
+				}
+			}
+		}
+		.component NeoAxis.Component_Material
+		{
+			Name = Material
+			BaseColor
+			{
+				GetByReference = "this:$Shader graph\\$Node Shader Texture Sample 1\\$Shader Texture Sample\\RGBA"
+			}
+			Emissive
+			{
+				GetByReference = "this:$Shader graph\\$Node Invoke Member 1\\$Invoke Member\\__parameter_ReturnValue"
+			}
+			.component NeoAxis.Component_FlowGraph
+			{
+				Name = Shader graph
+				EditorScrollPosition = 0 0
+				Specialization
+				{
+					GetByReference = NeoAxis.Component_FlowGraphSpecialization_Shader|Instance
+				}
+				.component NeoAxis.Component_FlowGraphNode
+				{
+					Name = Node Material
+					Position = 10 -7
+					ControlledObject
+					{
+						GetByReference = "this:..\\.."
+					}
+				}
+				.component NeoAxis.Component_FlowGraphNode
+				{
+					Name = Node Shader Texture Sample 1
+					Position = -20 -9
+					ControlledObject
+					{
+						GetByReference = "this:$Shader Texture Sample"
+					}
+					.component NeoAxis.Component_ShaderTextureSample
+					{
+						Name = Shader Texture Sample
+						Location2 = 0 0
+						Location3 = 0 0 0
+						Texture
+						{
+							GetByReference = "this:..\\..\\..\\..\\CreatedImage"
+						}
+					}
+				}
+				.component NeoAxis.Component_FlowGraphNode
+				{
+					Name = Node Invoke Member 1
+					Position = -5 -2
+					ControlledObject
+					{
+						GetByReference = "this:$Invoke Member"
+					}
+					.component NeoAxis.Component_InvokeMember
+					{
+						Name = Invoke Member
+						__parameter_S = 0.4
+						Member
+						{
+							GetByReference = "NeoAxis.ColorValue|method:op_Multiply(NeoAxis.ColorValue,System.Single)"
+						}
+						Exit
+						{
+						}
+						__parameter_V
+						{
+							GetByReference = "this:..\\..\\$Node Shader Texture Sample 1\\$Shader Texture Sample\\RGBA"
+						}
+					}
+				}
+			}
+		}
+		.component NeoAxis.Component_Camera
+		{
+			Name = Camera
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			.component NeoAxis.Component_TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0 0 0.55
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+}

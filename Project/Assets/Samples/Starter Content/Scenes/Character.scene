@@ -1,0 +1,2006 @@
+.component NeoAxis.Component_Scene
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1180, 842\"><KW V=\"1\" A=\"2CABB93EFA594714F0AE454C73589B95\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"3380822B186E41A3B0AF1BCE3A2E7635\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"2CABB93EFA594714F0AE454C73589B95\"><KP UN=\"2CABB93EFA594714F0AE454C73589B95\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"2FC76A6B8D48421BCAA3FD59DD0F7CB3\" S=\"False\"><CPD ObjPath=\"$Button\\$$n1$C# Script\" /></KP><KP UN=\"BF7F219544234EEACA946AE1342D9CB4\" S=\"False\"><CPD ObjPath=\"$Regulator Switch\\$$n1$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	DisplayPhysicalObjects = True
+	RenderingPipeline
+	{
+		GetByReference = "root:$Rendering Pipeline"
+	}
+	CameraEditor
+	{
+		GetByReference = "this:$Camera Editor"
+	}
+	.component NeoAxis.Component_Camera
+	{
+		Name = Camera Editor
+		Visible = False
+		Transform = "-2.39369093352372 -5.48446106937172 3.78500834490024; -0.101623695756667 0.155959550130178 0.536390222525757 0.823185745966679; 1 1 1"
+	}
+	.component NeoAxis.Component_Light
+	{
+		Name = Ambient Light
+		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
+		Type = Ambient
+		Brightness = 30000
+	}
+	.component NeoAxis.Component_RenderingPipeline_Default
+	{
+		Name = Rendering Pipeline
+		ShadowFarDistance = 80
+		ShadowIntensity = 0.75
+		.component NeoAxis.Component
+		{
+			Name = Background Effects
+		}
+		.component NeoAxis.Component
+		{
+			Name = Scene Effects
+			.component NeoAxis.Component_RenderingEffect_AmbientOcclusion
+			{
+				Enabled = False
+				Name = Ambient Occlusion
+			}
+			.component NeoAxis.Component_RenderingEffect_MotionBlur
+			{
+				Enabled = False
+				Name = Motion Blur
+			}
+			.component NeoAxis.Component_RenderingEffect_Bloom
+			{
+				Enabled = False
+				Name = Bloom
+			}
+			.component NeoAxis.Component_RenderingEffect_LensEffects
+			{
+				Name = Lens Effects
+			}
+			.component NeoAxis.Component_RenderingEffect_ToneMapping
+			{
+				Name = Tone Mapping
+			}
+			.component NeoAxis.Component_RenderingEffect_ToLDR
+			{
+				Name = To LDR
+			}
+			.component NeoAxis.Component_RenderingEffect_Antialiasing
+			{
+				Name = Antialiasing
+			}
+			.component NeoAxis.Component_RenderingEffect_Sharpen
+			{
+				Name = Sharpen
+				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
+			}
+		}
+		.component NeoAxis.Component
+		{
+			Name = Final Image Effects
+		}
+	}
+	.component NeoAxis.Component_GameMode
+	{
+		Name = Game Mode
+		UseBuiltInCamera = FirstPerson
+		ObjectControlledByPlayer
+		{
+			GetByReference = "root:$Character 2"
+		}
+	}
+	.component NeoAxis.Component_Light
+	{
+		Name = Light 1
+		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
+		Type = Directional
+		Brightness = 130000
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 91.429
+	}
+	.component NeoAxis.Component_Light
+	{
+		Enabled = False
+		Name = Light 2
+		Transform = "-16.276133519817 -13.7764744895929 22.8055842838911; -0.800753779408636 -0.218616030310482 0.553641801455134 0.066941554624803; 1 1 1"
+		Type = Spotlight
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 91.429
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Ground
+		CanBeSelected = False
+		Transform = "0 0 0; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 100 100
+				UVTilesPerUnit = 0.25 0.25
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform
+			{
+				GetByReference = "this:..\\Transform"
+			}
+			.component NeoAxis.Component_CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_GroupOfObjects
+	{
+		Name = Group Of Objects
+		BaseObjects
+		{
+			Count = 1
+			0 "NeoAxis.Reference<NeoAxis.Component>"
+			{
+				GetByReference = "root:$Ground"
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 2
+		Color = 1 0.9909804 0.06509804
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "-5.68287627004316 7.82322850319406 0.971276327642117; 0 0 0 1; 1 1 1"
+			MotionType = Dynamic
+			Mass = 20
+			.component NeoAxis.Component_CollisionShape_Box
+			{
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 7
+		Color = 0.4630196 0.336 1
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "-7.72071999507779 2.80954466036117 0.500258976181139; 0 0 0 1; 1 1 1"
+			MotionType = Dynamic
+			Mass = 100
+			.component NeoAxis.Component_CollisionShape_Box
+			{
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 25
+		Color = 0.4630196 0.336 1
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "3.11775807364731 -2.48048477462376 1.08406798176852; 0 0 0 1; 1 2.0016699294486 2.18757967268553"
+			.component NeoAxis.Component_CollisionShape_Box
+			{
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 8
+		Color = 0.4630196 0.336 1
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "-7.72071999507779 2.80954466036117 1.50044636176216; 0 0 0 1; 1 1 1"
+			MotionType = Dynamic
+			Mass = 100
+			.component NeoAxis.Component_CollisionShape_Box
+			{
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 9
+		Color = 0.4630196 0.336 1
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry
+			{
+				Name = Mesh Geometry
+				VertexStructure
+				{
+					Value
+					{
+						Length = 5
+						0
+						{
+							Offset = 0
+							Type = Float3
+							Semantic = Position
+						}
+						1
+						{
+							Offset = 12
+							Type = Float3
+							Semantic = Normal
+						}
+						2
+						{
+							Offset = 24
+							Type = Float4
+							Semantic = Tangent
+						}
+						3
+						{
+							Offset = 40
+							Type = Float4
+							Semantic = Color0
+						}
+						4
+						{
+							Offset = 56
+							Type = Float2
+							Semantic = TextureCoordinate0
+						}
+					}
+				}
+				Vertices
+				{
+					Value
+					{
+						Length = 2304
+						.elements = "DmTAvwAAAD8VlI++AACAvwAAAAAAAACAAAAAAAAAgL8AAAAAAACAvwAAgD8AAIA/AACAPwAAgD8AAAAAAAAAAA5kwL8AAAA/AAAAvwAAgL8AAAAAAAAAgAAAAAAAAIC/AAAAAAAAgL8AAIA/AACAPwAAgD8AAIA/AAAAAAAAgD8OZMC/AAAAvwAAAL8AAIC/AAAAAAAAAIAAAAAAAACAvwAAAAAAAIC/AACAPwAAgD8AAIA/AACAPwAAgD8AAIA/DmTAvwAAAL8AAAC/AACAvwAAAAAAAAAAAAAAAAAAgL8AAAAAAACAvwAAgD8AAIA/AACAPwAAgD8AAIA/AACAPw5kwL8AAAC/FZSPvgAAgL8AAAAAAAAAAAAAAAAAAIC/AAAAAAAAgL8AAIA/AACAPwAAgD8AAIA/AACAPwAAAAAOZMC/AAAAPxWUj74AAIC/AAAAAAAAAAAAAAAAAACAvwAAAAAAAIC/AACAPwAAgD8AAIA/AACAPwAAAAAAAAAAAIHkPwAAAD8AAAC///9/PwAAAAAAAACAAAAAAAAAgD8AAAAAAACAvwAAgD8AAIA/AACAPwAAgD8AAIA/AACAPwCB5D8AAAA/bXZ4P///fz8AAAAAAAAAgAAAAAAAAIA/AAAAAAAAgL8AAIA/AACAPwAAgD8AAIA/AACAPwAAAAAAgeQ/AAAAv212eD///38/AAAAAAAAAIAAAAAAAACAPwAAAAAAAIC/AACAPwAAgD8AAIA/AACAPwAAAAAAAAAAAIHkPwAAAL9tdng///9/PwAAAAAAAAAAAAAAAAAAgD8AAAAAAACAvwAAgD8AAIA/AACAPwAAgD8AAAAAAAAAAACB5D8AAAC/AAAAv///fz8AAAAAAAAAAAAAAAAAAIA/AAAAAAAAgL8AAIA/AACAPwAAgD8AAIA/AAAAAAAAgD8AgeQ/AAAAPwAAAL///38/AAAAAAAAAAAAAAAAAACAPwAAAAAAAIC/AACAPwAAgD8AAIA/AACAPwAAgD8AAIA/DmTAvwAAAL8AAAC/AAAAAAAAgL8AAAAAAACAPwAAAAAAAAAAAACAvwAAgD8AAIA/AACAPwAAgD8AAAAAAACAPwCB5D8AAAC/AAAAvwAAAAAAAIC/AAAAAAAAgD8AAAAAAAAAAAAAgL8AAIA/AACAPwAAgD8AAIA/AACAPwAAgD8AgeQ/AAAAv212eD8AAAAAAACAvwAAAAAAAIA/AAAAAAAAAAAAAIC/AACAPwAAgD8AAIA/AACAPwAAgD8AAAAAAIHkPwAAAL9tdng/AAAAAAAAgL8AAAAAAACAPwAAAAAAAAAAAACAvwAAgD8AAIA/AACAPwAAgD8AAIA/AAAAAA5kwL8AAAC/FZSPvgAAAAAAAIC/AAAAAAAAgD8AAAAAAAAAAAAAgL8AAIA/AACAPwAAgD8AAIA/AAAAAAAAAAAOZMC/AAAAvwAAAL8AAAAAAACAvwAAAAAAAIA/AAAAAAAAAAAAAIC/AACAPwAAgD8AAIA/AACAPwAAAAAAAIA/DmTAvwAAAD8AAAC/AAAAAP//fz8AAAAAAACAvwAAAAAAAAAAAACAvwAAgD8AAIA/AACAPwAAgD8AAIA/AACAPw5kwL8AAAA/FZSPvgAAAAD//38/AAAAAAAAgL8AAAAAAAAAAAAAgL8AAIA/AACAPwAAgD8AAIA/AACAPwAAAAAAgeQ/AAAAP212eD8AAAAA//9/PwAAAAAAAIC/AAAAAAAAAAAAAIC/AACAPwAAgD8AAIA/AACAPwAAAAAAAAAAAIHkPwAAAD9tdng/AAAAAAAAgD8AAAAAAACAvwAAAAAAAAAAAACAvwAAgD8AAIA/AACAPwAAgD8AAAAAAAAAAACB5D8AAAA/AAAAvwAAAAAAAIA/AAAAAAAAgL8AAAAAAAAAAAAAgL8AAIA/AACAPwAAgD8AAIA/AAAAAAAAgD8OZMC/AAAAPwAAAL8AAAAAAACAPwAAAAAAAIC/AAAAAAAAAAAAAIC/AACAPwAAgD8AAIA/AACAPwAAgD8AAIA/DmTAvwAAAD8AAAC/AAAAAAAAAAAAAIC/AACAPwAAAAAAAAAAAACAvwAAgD8AAIA/AACAPwAAgD8AAAAAAACAPwCB5D8AAAA/AAAAvwAAAAAAAAAAAACAvwAAgD8AAAAAAAAAAAAAgL8AAIA/AACAPwAAgD8AAIA/AACAPwAAgD8AgeQ/AAAAvwAAAL8AAAAAAAAAAAAAgL8AAIA/AAAAAAAAAAAAAIC/AACAPwAAgD8AAIA/AACAPwAAgD8AAAAAAIHkPwAAAL8AAAC/AAAAAAAAAAAAAIC/AACAPwAAAAAAAAAAAACAvwAAgD8AAIA/AACAPwAAgD8AAIA/AAAAAA5kwL8AAAC/AAAAvwAAAAAAAAAAAACAvwAAgD8AAAAAAAAAAAAAgL8AAIA/AACAPwAAgD8AAIA/AAAAAAAAAAAOZMC/AAAAPwAAAL8AAAAAAAAAAAAAgL8AAIA/AAAAAAAAAAAAAIC/AACAPwAAgD8AAIA/AACAPwAAAAAAAIA/AIHkPwAAAD9tdng/YQ62vgAAAAD8RG8/AACAPwAAAAAAAAAAAACAvwAAgD8AAIA/AACAPwAAgD8AAIA/AAAAAA5kwL8AAAA/FZSPvmEOtr4AAAAA/ERvPwAAgD8AAAAAAAAAAAAAgL8AAIA/AACAPwAAgD8AAIA/AAAAAAAAAAAOZMC/AAAAvxWUj75hDra+AAAAAPxEbz8AAIA/AAAAAAAAAAAAAIC/AACAPwAAgD8AAIA/AACAPwAAAAAAAIA/DmTAvwAAAL8VlI++YQ62vgAAAAD8RG8/AACAPwAAAAAAAAAAAACAvwAAgD8AAIA/AACAPwAAgD8AAAAAAACAPwCB5D8AAAC/bXZ4P2EOtr4AAAAA/ERvPwAAgD8AAAAAAAAAAAAAgL8AAIA/AACAPwAAgD8AAIA/AACAPwAAgD8AgeQ/AAAAP212eD9hDra+AAAAAPxEbz8AAIA/AAAAAAAAAAAAAIC/AACAPwAAgD8AAIA/AACAPwAAgD8AAAAA"
+					}
+				}
+				Indices
+				{
+					Value
+					{
+						Length = 36
+						.elements = 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35
+					}
+				}
+			}
+			Structure
+			{
+				Edges = 0 1 0 4 4 7 1 7 2 3 2 6 5 6 3 5 4 5 6 7 1 2 0 3
+				Faces = 6 6 1 0 0 0 0 1 4 0 2 4 0 3 7 0 4 1 0 5 0 6 3 0 6 2 0 7 6 0 8 6 0 9 5 0 10 3 0 11 0 6 4 0 12 5 0 13 6 0 14 6 0 15 7 0 16 4 0 17 0 6 0 0 18 1 0 19 2 0 20 2 0 21 3 0 22 0 0 23 0 6 0 0 24 3 0 25 5 0 26 5 0 27 4 0 28 0 0 29 0 6 2 0 30 1 0 31 7 0 32 7 0 33 6 0 34 2 0 35 0
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "0.898111129673196 1.61372184453973 0.433802803712618; 0 0 0 1; 0.806451616392051 0.977837263880059 0.806451616392051"
+			MotionType = Dynamic
+			Mass = 100
+			.component NeoAxis.Component_CollisionShape_Mesh
+			{
+				ShapeType = Convex
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 22
+		Color = 0.4630196 0.336 1
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "2.9929824244032 1.61372184453973 0.60178451941408; 0 0 0 1; 1.23999999463558 1.23999999463558 1.23999999463558"
+			MotionType = Dynamic
+			Mass = 150
+			.component NeoAxis.Component_CollisionShape_Box
+			{
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 10
+		Color = 0.4630196 0.336 1
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "4.481496903488 1.61372184453973 0.841590496607235; 0 0 0 1; 1.67999998480082 1.67999998480082 1.67999998480082"
+			MotionType = Dynamic
+			Mass = 200
+			.component NeoAxis.Component_CollisionShape_Box
+			{
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 11
+		Color = 0.4630196 0.336 1
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "8.14928662291802 1.61372184453973 0.841590496607235; 0 0 0 1; 1.67999998480082 1.67999998480082 1.67999998480082"
+			MotionType = Dynamic
+			Mass = 200
+			.component NeoAxis.Component_CollisionShape_Box
+			{
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 23
+		Color = 0.4630196 0.336 1
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "8.83018470008885 1.61372184453973 1.77516004208853; 0 0 0 1; 7.78668187419802 1.1459146823556 0.172804437534095"
+			MotionType = Dynamic
+			Mass = 200
+			MaterialFriction = 1
+			.component NeoAxis.Component_CollisionShape_Box
+			{
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 24
+		Color = 0.4630196 0.336 1
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "13.4092143800171 4.17998672331642 1.77516004208853; 0 0 -0.707106781186547 0.707106781186548; 3.92567889578284 1.1459146823556 0.172804437534095"
+			MotionType = Dynamic
+			Mass = 200
+			MaterialFriction = 1
+			.component NeoAxis.Component_CollisionShape_Box
+			{
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 12
+		Color = 0.4630196 0.336 1
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "13.335887505268 1.61372184453973 0.841590496607235; 0 0 0 1; 1.67999998480082 1.67999998480082 1.67999998480082"
+			MotionType = Dynamic
+			Mass = 200
+			.component NeoAxis.Component_CollisionShape_Box
+			{
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 3
+		Color = 0.4630196 0.336 1
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "-4.69654260930846 8.1373296321815 -0.099649280661982; 0 0 0 1; 5.1301283725604 4.36202726832624 1"
+			.component NeoAxis.Component_CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 13
+		Color = 0.4630196 0.336 1
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "-0.483968639742536 15.3649721995469 -0.09132485238499; 0.0871557427476582 0 0 0.996194698091746; 5.1301283725604 4.36202726832624 1"
+			.component NeoAxis.Component_CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 4
+		Color = 0.4630196 0.336 1
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "4.54076709820946 8.19881603743874 0.15157293643731; 0 0 0 1; 5.1301283725604 4.36202726832624 1"
+			.component NeoAxis.Component_CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 21
+		Color = 0.4630196 0.336 1
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "-0.147234593681395 8.19881603743874 -0.0193678224674998; 0 0 0 1; 5.1301283725604 4.36202726832624 1"
+			.component NeoAxis.Component_CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 14
+		Color = 0.4630196 0.336 1
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "4.54076709820946 15.2813222603924 0.151719668810467; 0.17364817766693 0 0 0.984807753012208; 5.1301283725604 4.36202726832624 1"
+			.component NeoAxis.Component_CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 5
+		Color = 0.4630196 0.336 1
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "9.61614009594983 8.19881603743874 0.294472414670486; 0 0 0 1; 5.1301283725604 4.36202726832624 1.37274975303216"
+			.component NeoAxis.Component_CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 15
+		Color = 0.4630196 0.336 1
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "9.61614009594983 15.2324477603659 0.286001254020338; 0.258819045102521 0 0 0.965925826289068; 5.1301283725604 4.36202726832624 1.37274975303216"
+			.component NeoAxis.Component_CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 16
+		Color = 0.4630196 0.336 1
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "14.642359037804 15.2324477603659 0.286001254020338; 0.342020143325669 0 0 0.939692620785908; 5.1301283725604 4.36202726832624 1.37274975303216"
+			.component NeoAxis.Component_CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 17
+		Color = 0.4630196 0.336 1
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "19.6209049854826 15.2324477603659 0.286001254020338; 0.422618261740699 0 0 0.90630778703665; 5.1301283725604 4.36202726832624 1.37274975303216"
+			.component NeoAxis.Component_CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 18
+		Color = 0.4630196 0.336 1
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "24.4120432879408 15.2324477603659 0.286001254020338; 0.5 0 0 0.866025403784439; 5.1301283725604 4.36202726832624 1.37274975303216"
+			.component NeoAxis.Component_CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 19
+		Color = 0.4630196 0.336 1
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "29.0833948631581 15.2324477603659 0.286001254020338; 0.573576436351046 0 0 0.819152044288992; 5.1301283725604 4.36202726832624 1.37274975303216"
+			.component NeoAxis.Component_CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 20
+		Color = 0.4630196 0.336 1
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "33.716574282156 15.2324477603659 0.286001254020338; 0.642787609686539 0 0 0.766044443118978; 5.1301283725604 4.36202726832624 1.37274975303216"
+			.component NeoAxis.Component_CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 6
+		Color = 0.4630196 0.336 1
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "14.6581307799078 8.19881603743874 0.42848777250208; 0 0 0 1; 5.1301283725604 4.36202726832624 1.87478505854681"
+			.component NeoAxis.Component_CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Cylinder
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Cylinder
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform = "13.7950082305559 -3.76349740571981 0.500063640065496; 0 0 0 1; 1 1 1"
+			.component NeoAxis.Component_CollisionShape_Cylinder
+			{
+			}
+		}
+	}
+	.component NeoAxis.Component_Character
+	{
+		Name = Character
+		RunSupport = True
+		FlyControlSupport = True
+		JumpSupport = True
+		Animate = True
+		RunAnimationSpeed = 0.5
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		IdleAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Root|Idle"
+		}
+		WalkAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Root|Walk_loop"
+		}
+		RunAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Root|Run_loop"
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			CanBeSelected = False
+			Transform = "0.632945706344874 -3.78104800542164 1.2; 0 0 0.56375604653075 0.825941353850271; 1 1 1"
+			MotionType = Dynamic
+			Mass = 70
+			AngularDamping = 10
+			MaterialFriction = 0
+			MaterialSpinningFriction = 0
+			MaterialRollingFriction = 0
+			LinearSleepingThreshold = 0
+			AngularSleepingThreshold = 0
+			.component NeoAxis.Component_CollisionShape_Capsule
+			{
+				Name = CollisionShape Capsule
+				TransformRelativeToParent = "0 0 -0.25; 0 0 0 1; 1 1 1"
+				Radius = 0.3
+				Height = 1.2
+			}
+		}
+		.component NeoAxis.Component_MeshInSpace
+		{
+			Name = Mesh In Space
+			CanBeSelected = False
+			Transform
+			{
+				GetByReference = "this:$Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Base\\Models\\Human.fbx|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			.component NeoAxis.Component_MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+			}
+			.component NeoAxis.Component_TransformOffset
+			{
+				Name = Transform Offset
+				PositionOffset = 0 0 -1.15
+				Source
+				{
+					GetByReference = "this:..\\..\\$Collision Body\\Transform"
+				}
+			}
+		}
+		.component NeoAxis.Component_CharacterInputProcessing
+		{
+			Name = Character Input Processing
+		}
+	}
+	.component NeoAxis.Component_Character
+	{
+		Name = Character 3
+		RunSupport = True
+		FlyControlSupport = True
+		JumpSupport = True
+		Animate = True
+		RunAnimationSpeed = 0.5
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		IdleAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Root|Idle"
+		}
+		WalkAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Root|Walk_loop"
+		}
+		RunAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Root|Run_loop"
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			CanBeSelected = False
+			Transform = "15.7866955403844 7.47420039344927 2.58253268282204; 0 0 -0.99729002717831 0.0735703859625975; 1 1 1"
+			MotionType = Dynamic
+			Mass = 70
+			AngularDamping = 10
+			MaterialFriction = 0
+			MaterialSpinningFriction = 0
+			MaterialRollingFriction = 0
+			LinearSleepingThreshold = 0
+			AngularSleepingThreshold = 0
+			.component NeoAxis.Component_CollisionShape_Capsule
+			{
+				Name = CollisionShape Capsule
+				TransformRelativeToParent = "0 0 -0.25; 0 0 0 1; 1 1 1"
+				Radius = 0.3
+				Height = 1.2
+			}
+		}
+		.component NeoAxis.Component_MeshInSpace
+		{
+			Name = Mesh In Space
+			CanBeSelected = False
+			Transform
+			{
+				GetByReference = "this:$Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Base\\Models\\Human.fbx|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			.component NeoAxis.Component_MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+			}
+			.component NeoAxis.Component_TransformOffset
+			{
+				Name = Transform Offset
+				PositionOffset = 0 0 -1.15
+				Source
+				{
+					GetByReference = "this:..\\..\\$Collision Body\\Transform"
+				}
+			}
+		}
+		.component NeoAxis.Component_CharacterInputProcessing
+		{
+			Name = Character Input Processing
+		}
+		.component NeoAxis.Component_CharacterAI
+		{
+			Name = Character AI
+			.component NeoAxis.Component_CharacterAITask_MoveToObject
+			{
+				Name = Move To Object
+				Target
+				{
+					GetByReference = "this:..\\..\\..\\$Box 2"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_Character
+	{
+		Name = Character 2
+		RunSupport = True
+		FlyControlSupport = True
+		JumpSupport = True
+		Animate = True
+		RunAnimationSpeed = 0.5
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		IdleAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Root|Idle"
+		}
+		WalkAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Root|Walk_loop"
+		}
+		RunAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Root|Run_loop"
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			CanBeSelected = False
+			Transform = "-3.59661410014775 -2.03980724908308 1.15035128959915; 0 0 0.364465583317338 0.931216859049036; 1 1 1"
+			MotionType = Dynamic
+			Mass = 70
+			AngularDamping = 10
+			MaterialFriction = 0
+			MaterialSpinningFriction = 0
+			MaterialRollingFriction = 0
+			LinearSleepingThreshold = 0
+			AngularSleepingThreshold = 0
+			.component NeoAxis.Component_CollisionShape_Capsule
+			{
+				Name = CollisionShape Capsule
+				TransformRelativeToParent = "0 0 -0.25; 0 0 0 1; 1 1 1"
+				Radius = 0.3
+				Height = 1.2
+			}
+		}
+		.component NeoAxis.Component_MeshInSpace
+		{
+			Name = Mesh In Space
+			CanBeSelected = False
+			Transform
+			{
+				GetByReference = "this:$Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Base\\Models\\Human.fbx|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			.component NeoAxis.Component_MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+			}
+			.component NeoAxis.Component_TransformOffset
+			{
+				Name = Transform Offset
+				PositionOffset = 0 0 -1.15
+				Source
+				{
+					GetByReference = "this:..\\..\\$Collision Body\\Transform"
+				}
+			}
+		}
+		.component NeoAxis.Component_CharacterInputProcessing
+		{
+			Name = Character Input Processing
+		}
+	}
+	.component NeoAxis.Component_ButtonInSpace
+	{
+		Name = Button
+		Transform = "2.6 -2.034613134103 1.4; 0 0 -1 0.00000000000000006; 1 1 1"
+		Color = 0.6784314 0.6784314 0.6784314
+		Activated = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+				Dimensions = 0.05 0.3 0.3
+				Material
+				{
+					GetByReference = "Base\\Materials\\White.material"
+				}
+			}
+		}
+		.component NeoAxis.Component_MeshInSpace
+		{
+			Name = Button
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "this:$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			.component NeoAxis.Component_Mesh
+			{
+				Name = Mesh
+				.component NeoAxis.Component_MeshGeometry_Box
+				{
+					Name = Mesh Geometry
+					Dimensions = 0.05 0.15 0.15
+					Material
+					{
+						GetByReference = "Base\\Materials\\White.material"
+					}
+				}
+			}
+			.component NeoAxis.Component_TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.05 0 0
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+		.component NeoAxis.Component_MeshInSpace
+		{
+			Name = Indicator
+			Color = 0 1 0
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "this:$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			.component NeoAxis.Component_Mesh
+			{
+				Name = Mesh
+				.component NeoAxis.Component_MeshGeometry_Cylinder
+				{
+					Name = Mesh Geometry
+					Axis = 0
+					Radius = 0.02
+					Height = 0.02
+					Segments = 16
+					Material
+					{
+						GetByReference = "Base\\Materials\\White.material"
+					}
+				}
+			}
+			.component NeoAxis.Component_TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.03 0 0.12
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+		.component NeoAxis.Component_CSharpScript
+		{
+			Name = C# Script
+			Code = "public void InteractiveObjectButton_UpdateEvent(NeoAxis.Component sender, float delta)\r\n{\r\n\tvar _this = sender as Component_ButtonInSpace;\r\n\tif (_this != null)\r\n\t{\r\n\t\tvar indicator = _this.GetComponent(\"Indicator\") as Component_MeshInSpace;\r\n\t\tif (indicator != null)\r\n\t\t\tindicator.Color = _this.Activated ? new ColorValue(0, 1, 0) : new ColorValue(0.5, 0.5, 0.5);\r\n\r\n\t\tvar buttonOffset = _this.Components.GetByPath(\"Button\\\\Attach Transform Offset\") as Component_TransformOffset;\r\n\t\tif (buttonOffset != null)\r\n\t\t{\r\n\t\t\tvar offsetPushed = 0.01;\r\n\t\t\tvar offsetDefault = 0.05;\r\n\r\n\t\t\tvar coef = 0.0;\r\n\t\t\tif (_this.Clicking && _this.ClickingTotalTime != 0)\r\n\t\t\t{\r\n\t\t\t\tvar timeFactor = MathEx.Saturate(_this.ClickingCurrentTime / _this.ClickingTotalTime);\r\n\r\n\t\t\t\tif(timeFactor < 0.5)\r\n\t\t\t\t\tcoef = timeFactor * 2;\r\n\t\t\t\telse\r\n\t\t\t\t\tcoef = (1.0f - timeFactor) * 2;\r\n\t\t\t}\r\n\r\n\t\t\tvar offset = MathEx.Lerp(offsetDefault, offsetPushed, coef);\r\n\t\t\tbuttonOffset.PositionOffset = new Vector3(offset, 0, 0);\r\n\t\t}\r\n\t}\r\n}"
+			__parameter_Delta = 0
+			Exit
+			{
+			}
+			.component NeoAxis.Component_EventHandler
+			{
+				Name = Event Handler UpdateEvent
+				WhenEnable = Editor, Simulation, Instance
+				Event
+				{
+					GetByReference = "this:..\\..\\event:UpdateEvent"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\method:InteractiveObjectButton_UpdateEvent(NeoAxis.Component,System.Single)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+		.component NeoAxis.Component_CSharpScript
+		{
+			Name = C# Script
+			Code = "public void Button_Click(NeoAxis.Component_ButtonInSpace sender)\r\n{\r\n\tvar scene = sender.ParentScene;\r\n\r\n\tvar light = scene.GetComponent(\"Light 1\") as Component_Light;\r\n\tif (light != null)\r\n\t\tlight.Enabled = sender.Activated;\r\n}\r\n"
+			Exit
+			{
+			}
+			.component NeoAxis.Component_EventHandler
+			{
+				Name = Event Handler Click
+				Event
+				{
+					GetByReference = "this:..\\..\\event:Click"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\method:Button_Click(NeoAxis.Component_ButtonInSpace)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_RegulatorSwitchInSpace
+	{
+		Name = Regulator Switch
+		Transform = "2.6 -2.94546502987951 1.4; 0 0 -1 0.00000000000000006; 1 1 1"
+		Color = 0.6784314 0.6784314 0.6784314
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+				Dimensions = 0.05 0.3 0.3
+				Material
+				{
+					GetByReference = "Base\\Materials\\White.material"
+				}
+			}
+		}
+		.component NeoAxis.Component_MeshInSpace
+		{
+			Name = Button
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "this:$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			.component NeoAxis.Component_Mesh
+			{
+				Name = Mesh
+				.component NeoAxis.Component_MeshGeometry_Cylinder
+				{
+					Name = Mesh Geometry
+					Axis = 0
+					Radius = 0.08
+					Height = 0.08
+					Material
+					{
+						GetByReference = "Base\\Materials\\White.material"
+					}
+				}
+			}
+			.component NeoAxis.Component_TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.05 0 0
+				RotationOffset = 0.923879532511287 0 0 0.38268343236509
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+		.component NeoAxis.Component_MeshInSpace
+		{
+			Name = Indicator Min
+			Color = 1 0 0
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "this:$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			.component NeoAxis.Component_Mesh
+			{
+				Name = Mesh
+				.component NeoAxis.Component_MeshGeometry_Cylinder
+				{
+					Name = Mesh Geometry
+					Axis = 0
+					Radius = 0.02
+					Height = 0.02
+					Segments = 16
+					Material
+					{
+						GetByReference = "Base\\Materials\\White.material"
+					}
+				}
+			}
+			.component NeoAxis.Component_TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.03 -0.11 0.11
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+		.component NeoAxis.Component_MeshInSpace
+		{
+			Name = Indicator Max
+			Color = 0.5 0.5 0.5
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "this:$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			.component NeoAxis.Component_Mesh
+			{
+				Name = Mesh
+				.component NeoAxis.Component_MeshGeometry_Cylinder
+				{
+					Name = Mesh Geometry
+					Axis = 0
+					Radius = 0.02
+					Height = 0.02
+					Segments = 16
+					Material
+					{
+						GetByReference = "Base\\Materials\\White.material"
+					}
+				}
+			}
+			.component NeoAxis.Component_TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.03 0.11 0.11
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+		.component NeoAxis.Component_MeshInSpace
+		{
+			Name = Marker Min
+			Color = 1 0 0
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "this:$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			.component NeoAxis.Component_Mesh
+			{
+				Name = Mesh
+				.component NeoAxis.Component_MeshGeometry_Box
+				{
+					Name = Mesh Geometry
+					Dimensions = 0.05 0.14 0.01
+					Material
+					{
+						GetByReference = "Base\\Materials\\White.material"
+					}
+				}
+			}
+			.component NeoAxis.Component_TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.01 -0.0282842712474619 0.0282842712474619
+				RotationOffset = 0.923879532511287 0 0 0.38268343236509
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+		.component NeoAxis.Component_MeshInSpace
+		{
+			Name = Marker Max
+			Color = 0 1 0
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "this:$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			.component NeoAxis.Component_Mesh
+			{
+				Name = Mesh
+				.component NeoAxis.Component_MeshGeometry_Box
+				{
+					Name = Mesh Geometry
+					Dimensions = 0.05 0.14 0.01
+					Material
+					{
+						GetByReference = "Base\\Materials\\White.material"
+					}
+				}
+			}
+			.component NeoAxis.Component_TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.01 0.0282842712474619 0.0282842712474619
+				RotationOffset = 0.38268343236509 0 0 0.923879532511287
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+		.component NeoAxis.Component_MeshInSpace
+		{
+			Name = Marker Current
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "this:$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			.component NeoAxis.Component_Mesh
+			{
+				Name = Mesh
+				.component NeoAxis.Component_MeshGeometry_Box
+				{
+					Name = Mesh Geometry
+					Dimensions = 0.05 0.14 0.01
+					Material
+					{
+						GetByReference = "Base\\Materials\\White.material"
+					}
+				}
+			}
+			.component NeoAxis.Component_TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.06 -0.0282842712474619 0.0282842712474619
+				RotationOffset = 0.923879532511287 0 0 0.38268343236509
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+		.component NeoAxis.Component_CSharpScript
+		{
+			Name = C# Script
+			Code = "public void InteractiveObjectButton_UpdateEvent(NeoAxis.Component sender, float delta)\r\n{\r\n\tvar _this = sender as Component_RegulatorSwitchInSpace;\r\n\tif (_this != null)\r\n\t{\r\n\t\tvar indicatorMin = _this.GetComponent(\"Indicator Min\") as Component_MeshInSpace;\r\n\t\tif (indicatorMin != null)\r\n\t\t\tindicatorMin.Color = _this.Value.Value <= _this.ValueRange.Value.Minimum ? new ColorValue(1, 0, 0) : new ColorValue(0.5, 0.5, 0.5);\r\n\r\n\t\tvar indicatorMax = _this.GetComponent(\"Indicator Max\") as Component_MeshInSpace;\r\n\t\tif (indicatorMax != null)\r\n\t\t\tindicatorMax.Color = _this.Value.Value >= _this.ValueRange.Value.Maximum ? new ColorValue(0, 1, 0) : new ColorValue(0.5, 0.5, 0.5);\r\n\r\n\t\tvar button = _this.GetComponent(\"Button\");\r\n\t\tif (button != null)\r\n\t\t{\r\n\t\t\tvar offset = button.GetComponent<Component_TransformOffset>();\r\n\t\t\tif (offset != null)\r\n\t\t\t{\r\n\t\t\t\tvar angle = _this.GetValueAngle() - 90;\r\n\t\t\t\toffset.RotationOffset = new Angles(angle, 0, 0).ToQuaternion();\r\n\t\t\t}\r\n\t\t}\r\n\r\n\t\tvar markerMin = _this.GetComponent(\"Marker Min\");\r\n\t\tif (markerMin != null)\r\n\t\t{\r\n\t\t\tvar offset = markerMin.GetComponent<Component_TransformOffset>();\r\n\t\t\tif (offset != null)\r\n\t\t\t{\r\n\t\t\t\tvar angle = _this.AngleRange.Value.Minimum - 90;\r\n\t\t\t\tvar angleR = MathEx.DegreeToRadian(angle);\r\n\t\t\t\toffset.PositionOffset = new Vector3(0.01, Math.Cos(angleR) * 0.04, Math.Sin(-angleR) * 0.04);\r\n\t\t\t\toffset.RotationOffset = new Angles(angle, 0, 0).ToQuaternion();\r\n\t\t\t}\r\n\t\t}\r\n\r\n\t\tvar markerMax = _this.GetComponent(\"Marker Max\");\r\n\t\tif (markerMax != null)\r\n\t\t{\r\n\t\t\tvar offset = markerMax.GetComponent<Component_TransformOffset>();\r\n\t\t\tif (offset != null)\r\n\t\t\t{\r\n\t\t\t\tvar angle = _this.AngleRange.Value.Maximum - 90;\r\n\t\t\t\tvar angleR = MathEx.DegreeToRadian(angle);\r\n\t\t\t\toffset.PositionOffset = new Vector3(0.01, Math.Cos(angleR) * 0.04, Math.Sin(-angleR) * 0.04);\r\n\t\t\t\toffset.RotationOffset = new Angles(angle, 0, 0).ToQuaternion();\r\n\t\t\t}\r\n\t\t}\r\n\r\n\t\tvar markerCurrent = _this.GetComponent(\"Marker Current\");\r\n\t\tif (markerCurrent != null)\r\n\t\t{\r\n\t\t\tvar offset = markerCurrent.GetComponent<Component_TransformOffset>();\r\n\t\t\tif (offset != null)\r\n\t\t\t{\r\n\t\t\t\tvar angle = _this.GetValueAngle() - 90;\r\n\t\t\t\tvar angleR = MathEx.DegreeToRadian(angle);\r\n\t\t\t\toffset.PositionOffset = new Vector3(0.06, Math.Cos(angleR) * 0.04, Math.Sin(-angleR) * 0.04);\r\n\t\t\t\toffset.RotationOffset = new Angles(angle, 0, 0).ToQuaternion();\r\n\t\t\t}\r\n\t\t}\r\n\t}\r\n}"
+			__parameter_Delta = 0
+			Exit
+			{
+			}
+			.component NeoAxis.Component_EventHandler
+			{
+				Name = Event Handler UpdateEvent
+				WhenEnable = Editor, Simulation, Instance
+				Event
+				{
+					GetByReference = "this:..\\..\\event:UpdateEvent"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\method:InteractiveObjectButton_UpdateEvent(NeoAxis.Component,System.Single)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+		.component NeoAxis.Component_CSharpScript
+		{
+			Name = C# Script
+			Code = "public void RegulatorSwitch_ValueChanged(NeoAxis.Component_RegulatorSwitchInSpace obj)\r\n{\r\n\tvar scene = obj.ParentScene;\r\n\r\n\tvar light = scene.GetComponent(\"Light 1\") as Component_Light;\r\n\tif (light != null)\r\n\t\tlight.Color = new ColorValue(1.0, 1.0, 1.0 - obj.Value);\r\n}\r\n"
+			Exit
+			{
+			}
+			.component NeoAxis.Component_EventHandler
+			{
+				Name = Event Handler ValueChanged
+				Event
+				{
+					GetByReference = "this:..\\..\\event:ValueChanged"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\method:RegulatorSwitch_ValueChanged(NeoAxis.Component_RegulatorSwitchInSpace)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_Weapon
+	{
+		Name = Weapon
+		Transform = "-4.70278045372228 2.09502916200246 0.290565504429404; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Pipe
+			{
+				Name = Mesh Geometry
+				Axis = 0
+				Radius = 0.04
+				Thickness = 0.01
+				Material
+				{
+					GetByReference = "Base\\Materials\\White.material"
+				}
+			}
+		}
+		.component NeoAxis.Component_MeshInSpace
+		{
+			Name = Stock
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "this:$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			.component NeoAxis.Component_Mesh
+			{
+				Name = Mesh
+				.component NeoAxis.Component_MeshGeometry_Box
+				{
+					Name = Mesh Geometry
+					Dimensions = 0.4 0.05 0.15
+					Material
+					{
+						GetByReference = "Base\\Materials\\White.material"
+					}
+				}
+			}
+			.component NeoAxis.Component_TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = -0.22 0 -0.1
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+}

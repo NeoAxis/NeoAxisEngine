@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="SdkReference" DisplayName="SDK-Verweis" PageTemplate="generic" Description="SDK-Verweiseigenschaften" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="Allgemein"/>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ProjectFile" ItemType="SDKReference" HasConfigurationCondition="false"/>
+  </Rule.DataSource>
+
+  <EnumProperty Name="FileType" ReadOnly="true" Visible="true" DisplayName="Dateityp" Category="General" F1Keyword="javascript.project.property.reference.filetype" Description="Der Dateityp des Verweises.">
+
+    <EnumValue Name="SDK" DisplayName="SDK"/>
+  </EnumProperty>
+
+  <StringProperty Name="Identity" ReadOnly="true" DisplayName="Identität" Category="General" F1Keyword="javascript.project.property.reference.identity" Description="Sicherheits-ID der referenzierten Assembly">
+
+    <StringProperty.DataSource>
+      <DataSource PersistedName="{}{Identity}"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="ResolvedPath" ReadOnly="true" DisplayName="Pfad" Category="General" F1Keyword="javascript.project.property.reference.resolvedpath" Description="Speicherort der Datei, auf die verwiesen wird.">
+
+    <StringProperty.DataSource>
+      <DataSource PersistedName="Identity"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="AppXLocation" DisplayName="App-Paket" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.reference.package" Description="Das App-Paket, das diesem SDK-Verweis für die aktive Konfiguration zugeordnet ist."/>
+
+  <StringProperty Name="Version" ReadOnly="true" DisplayName="Version" Category="General" F1Keyword="javascript.project.property.reference.version" Description="Version des Verweises."/>
+
+  <!-- This property should be the same as the one for the ResolvedReference item -->
+  <StringProperty Name="OriginalItemSpec" Visible="false"/>
+  <StringProperty Name="FrameworkIdentity" Visible="false"/>
+  <BoolProperty Name="CopyPayload" Visible="false"/>
+  <BoolProperty Name="ExpandContent" Visible="false"/>
+  <BoolProperty Name="ExpandReferenceAssemblies" Visible="false"/>
+  <BoolProperty Name="CopyLocalExpandedReferenceAssemblies" Visible="false"/>
+</Rule>

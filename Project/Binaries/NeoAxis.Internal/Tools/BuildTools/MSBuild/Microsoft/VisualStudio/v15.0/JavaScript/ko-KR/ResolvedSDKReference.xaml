@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="ResolvedSdkReference" DisplayName="확인된 SDK 참조" PageTemplate="generic" Description="확인된 SDK 참조" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="일반"/>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ResolvedReference" ItemType="SDKReference" HasConfigurationCondition="false" SourceType="TargetResults" MSBuildTarget="ResolveSDKReferencesDesignTime"/>
+  </Rule.DataSource>
+
+  <StringProperty Name="OriginalItemSpec" ReadOnly="true" DisplayName="ID" Category="General" F1Keyword="javascript.project.property.reference.identity" Description="참조의 ID입니다.">
+  </StringProperty>
+
+  <StringProperty Name="ResolvedPath" ReadOnly="true" DisplayName="경로" Category="General" F1Keyword="javascript.project.property.reference.resolvedpath" Description="참조되는 파일의 위치입니다.">
+
+    <StringProperty.DataSource>
+      <DataSource PersistedName="Identity"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="AppXLocation" DisplayName="앱 패키지" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.reference.package" Description="활성 구성을 위해 이 SDK 참조와 연결된 앱 패키지입니다."/>
+
+  <StringProperty Name="Version" ReadOnly="true" DisplayName="버전" Category="General" F1Keyword="javascript.project.property.reference.version" Description="참조 버전입니다."/>
+
+  <!-- This property should be the same as the one for the ResolvedReference item -->
+  <StringProperty Name="FrameworkIdentity" Visible="false"/>
+  <StringProperty Name="DisplayName" Visible="false"/>
+  <StringProperty Name="CopyContentToSubDirectory" Visible="false"/>
+  <BoolProperty Name="CopyPayload" Visible="false"/>
+  <BoolProperty Name="ExpandContent" Visible="false"/>
+  <BoolProperty Name="ExpandReferenceAssemblies" Visible="false"/>
+  <BoolProperty Name="CopyLocalExpandedReferenceAssemblies" Visible="false"/>
+
+</Rule>

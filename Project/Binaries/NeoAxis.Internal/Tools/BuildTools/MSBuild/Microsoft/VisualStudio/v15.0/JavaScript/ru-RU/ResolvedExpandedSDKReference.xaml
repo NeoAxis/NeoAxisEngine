@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="ResolvedExpandedSDKReference" DisplayName="Разрешенная ссылка на сборку" PageTemplate="generic" Description="Разрешенная ссылка расширенного SDK" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="Общие"/>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ResolvedReference" ItemType="ExpandedSDKReference" HasConfigurationCondition="false" SourceType="TargetResults" MSBuildTarget="ExpandSDKReferencesDesignTime"/>
+  </Rule.DataSource>
+
+  <StringProperty Name="OriginalItemSpec" ReadOnly="true" DisplayName="Идентификатор" Category="General" F1Keyword="javascript.project.property.reference.identity" Description="Идентификатор ссылки.">
+  </StringProperty>
+
+  <StringProperty Name="ResolvedPath" ReadOnly="true" DisplayName="Путь" Category="General" F1Keyword="javascript.project.property.reference.resolvedpath" Description="Расположение файла, на который указывает ссылка.">
+
+    <StringProperty.DataSource>
+      <DataSource PersistedName="Identity"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="Version" ReadOnly="true" DisplayName="Версия" Category="General" F1Keyword="javascript.project.property.reference.version" Description="Версия ссылки."/>
+
+  <BoolProperty Name="SpecificVersion" DisplayName="Конкретная версия" Category="General" F1Keyword="javascript.project.property.reference.specificversion" Description="Определяет, может ли эта сборка быть разрешена без применения правил настройки разрешения сборки для различных версий.">
+
+    <BoolProperty.DataSource>
+      <DataSource Persistence="ProjectFile" ItemType="ExpandedSDKReference" HasConfigurationCondition="false"/>
+    </BoolProperty.DataSource>
+  </BoolProperty>
+
+  <StringProperty Name="RuntimeVersion" ReadOnly="true" Visible="false">
+  </StringProperty>
+
+  <BoolProperty Name="StrongName" ReadOnly="true" Visible="false"/>
+
+  <!-- This is the metadata we store on the reference item when we add it. -->
+  <BoolProperty Name="IsWinMDFile" Visible="false"/>
+
+  <!-- These are metadata added to the resolved item by MSBuild that we don't show to the user but use internally. -->
+  <BoolProperty Name="WinMDFile" Visible="false" ReadOnly="true"/>
+
+  <StringProperty Name="ResolvedFrom" Visible="false" ReadOnly="true"/>
+
+  <StringProperty Name="ReferenceFromSDK" Visible="false" ReadOnly="true"/>
+  <StringProperty Name="FusionName" Visible="false" ReadOnly="true"/>
+  <StringProperty Name="RequiredTargetFramework" Visible="false"/>
+  <StringProperty Name="HintPath" Visible="false"/>
+  <StringProperty Name="SDKIdentity" Visible="false"/>
+</Rule>

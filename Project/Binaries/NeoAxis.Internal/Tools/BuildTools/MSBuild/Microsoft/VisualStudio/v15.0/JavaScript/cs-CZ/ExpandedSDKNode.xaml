@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="ExpandedSdkNode" DisplayName="Rozbalený uzel sady SDK" PageTemplate="generic" Description="Obsah souboru z odkazované sady SDK" PropertyPagesHidden="true" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="Obecné"/>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ExpandedSdkNode" ItemType="ExpandedSdkNode"/>
+  </Rule.DataSource>
+
+  <StringProperty Name="FileName" DisplayName="Název souboru" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.expandedsdknode.filename" Description="Název souboru nebo složky"/>
+
+  <StringProperty Name="PackageVersion" DisplayName="Verze balíčku aplikace" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.expandedsdknode.packageversion" Description="Verze balíčku aplikace"/>
+
+  <StringProperty Name="FilePath" DisplayName="Cesta k souboru" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.expandedsdknode.filepath" Description="Cesta k souboru na disku"/>
+
+  <StringProperty Name="URI" DisplayName="Identifikátor URI" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.expandedsdknode.uri" Description="Identifikátor URI, který může být použit pro načtení tohoto souboru."/>
+</Rule>

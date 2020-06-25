@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="AppxManifest" DisplayName="Vlastnosti manifestu aplikace" PageTemplate="generic" Description="Vlastnosti manifestu aplikace" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="Obecné"/>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ProjectFile" HasConfigurationCondition="false" ItemType="AppxManifest"/>
+  </Rule.DataSource>
+
+  <EnumProperty Name="{}{ItemType}" DisplayName="Akce balíčku" Category="General" F1Keyword="javascript.project.property.packageaction" Description="Určuje akci pro tento soubor, když se vytvoří balíček aplikace.">
+    <EnumValue Name="None" DisplayName="Žádný"/>
+    <EnumValue Name="Content" DisplayName="Obsah"/>
+    <EnumValue Name="AppxManifest" DisplayName="Manifest aplikace"/>
+    <EnumValue Name="PackageLayout" DisplayName="Rozložení balíčku"/>
+    <EnumValue Name="PRIResource" DisplayName="Zdroj"/>
+
+    <EnumProperty.DataSource>
+      <DataSource Persistence="ProjectFile" Label="Configuration" SourceType="Item" ItemType="AppxManifest" HasConfigurationCondition="false"/>
+    </EnumProperty.DataSource>
+  </EnumProperty>
+
+  <EnumProperty Name="CopyToOutputDirectory" DisplayName="Kopírovat do výstupního adresáře" Category="General" F1Keyword="javascript.project.property.copytooutputdirectory" Description="Určuje, jestli by se měl být soubor zkopírovat do výstupní složky.">
+    <EnumValue Name="Never" DisplayName="Nekopírovat"/>
+    <EnumValue Name="Always" DisplayName="Kopírovat vždycky"/>
+    <EnumValue Name="PreserveNewest" DisplayName="Kopírovat, pokud je novější"/>
+  </EnumProperty>
+
+  <StringProperty Name="Identity" Visible="false" ReadOnly="true" Category="General" Description="Položka zadaná v atributu Include">
+    <StringProperty.DataSource>
+      <DataSource Persistence="Intrinsic" ItemType="AppxManifest" PersistedName="Identity"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="FullPath" DisplayName="Úplná cesta" ReadOnly="true" Category="General" F1Keyword="javascript.project.property.fullpath" Description="Umístění souboru">
+    <StringProperty.DataSource>
+      <DataSource Persistence="Intrinsic" ItemType="AppxManifest" PersistedName="FullPath"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="FileNameAndExtension" DisplayName="Název souboru" ReadOnly="true" Category="General" F1Keyword="javascript.project.property.filename" Description="Název souboru nebo složky">
+    <StringProperty.DataSource>
+      <DataSource Persistence="Intrinsic" ItemType="AppxManifest" PersistedName="FileNameAndExtension"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <BoolProperty Name="Visible" Visible="false"/>
+  <StringProperty Name="DependentUpon" Visible="false"/>
+  <StringProperty Name="Link" Visible="false"/>
+  <EnumProperty Name="SubType" Visible="false">
+    <EnumValue Name="Designer"/>
+  </EnumProperty>
+</Rule>

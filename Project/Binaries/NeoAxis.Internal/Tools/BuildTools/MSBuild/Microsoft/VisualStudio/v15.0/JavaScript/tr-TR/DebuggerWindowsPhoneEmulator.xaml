@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="WindowsPhoneEmulatorDebugger" DisplayName="Öykünücü" PageTemplate="debugger" Order="100" Description="Windows Phone Öykünücü Hata Ayıklayıcısı seçenekleri" xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+    <Rule.Metadata>
+        <sys:Guid x:Key="DebugTargetTypeCommandGuid">FEEA6E9D-77D8-423F-9EDE-3970CBB76125</sys:Guid>
+        <sys:UInt32 x:Key="DebugTargetTypeCommandId">0x500</sys:UInt32>
+        <sys:String x:Key="DebugTargetDropdownEnum">WindowsPhoneEmulatorID</sys:String>
+    </Rule.Metadata>
+
+    <Rule.DataSource>
+        <DataSource Persistence="UserFile"/>
+    </Rule.DataSource>
+
+    <Rule.Categories>
+        <Category Name="StartOptions" DisplayName="Başlatma Seçenekleri" Description="Başlatma Seçenekleri"/>
+    </Rule.Categories>
+    <DynamicEnumProperty Name="WindowsPhoneEmulatorID" DisplayName="Hata Ayıklama Hedefi" EnumProvider="JavaScriptWindowsPhoneEmulators" Description="Hata ayıklama için kullanılacak öykünücüyü belirtir. Hiçbir öykünücü yüklenmemişse, lütfen hata ayıklama hedefi açılan kutusunda 'Emulator 8.1'i indirin...' bağlantısını kullanın." F1Keyword="javascript.project.property.debugging.debuggertarget"/>
+    <BoolProperty Name="LaunchApplication" DisplayName="Uygulamayı Başlat" Category="StartOptions" F1Keyword="javascript.project.property.debugging.launchapplication" Description="Uygulamanın hemen mi başlatılacağını yoksa çalışmaya başladığında uygulamada hata ayıklama işleminin mi bekleneceğini belirtir."/>
+
+    <EnumProperty Name="DebuggerType" DisplayName="Hata Ayıklayıcı Türü" Category="StartOptions" F1Keyword="javascript.project.property.debugging.debuggertype" Description="Hangi hata ayıklayıcının etkinleştirileceğini belirtir. Karma olarak ayarlandığında, hem yönetilen hem de yerel kod için hata ayıklayıcılar kullanılır.">
+        <EnumValue Name="NativeOnly" DisplayName="Yalnızca Yerel" Description="Yalnızca Yerel"/>
+        <EnumValue Name="ManagedOnly" DisplayName="Yalnızca Yönetilen" Description="Yalnızca Yönetilen"/>
+        <EnumValue Name="Script" DisplayName="Yalnızca Betik" Description="Yalnızca Betik"/>
+        <EnumValue Name="Mixed" DisplayName="Karma (Yönetilen ve Yerel)" Description="Karma (Yönetilen ve Yerel)"/>
+        <EnumProperty.Metadata>
+            <NameValuePair Name="IsDebugType" Value="true"/>
+        </EnumProperty.Metadata>
+    </EnumProperty>
+
+    <StringProperty Name="CommandLineArgs" DisplayName="Komut Satırı Bağımsız Değişkenleri" Category="StartOptions" F1Keyword="javascript.project.property.debugging.commandlineargs" Description="UWP uygulamasının başlatılması için geçirilen komut satırı bağımsız değişkenlerinin belirtilmesine izin verir">
+    </StringProperty>
+
+    <StringProperty Name="RealOsVersion" Visible="false">
+        <StringProperty.DataSource>
+            <DataSource Persistence="ProjectFile" Label="Configuration" HasConfigurationCondition="false"/>
+        </StringProperty.DataSource>
+    </StringProperty>
+</Rule>

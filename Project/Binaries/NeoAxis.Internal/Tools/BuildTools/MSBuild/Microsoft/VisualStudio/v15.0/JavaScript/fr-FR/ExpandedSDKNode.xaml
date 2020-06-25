@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="ExpandedSdkNode" DisplayName="Nœud SDK développé" PageTemplate="generic" Description="Fichier de contenu d'un Kit de développement logiciel (SDK) référencé" PropertyPagesHidden="true" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="Général"/>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ExpandedSdkNode" ItemType="ExpandedSdkNode"/>
+  </Rule.DataSource>
+
+  <StringProperty Name="FileName" DisplayName="Nom de fichier" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.expandedsdknode.filename" Description="Nom du fichier ou du dossier."/>
+
+  <StringProperty Name="PackageVersion" DisplayName="Version du package d'application" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.expandedsdknode.packageversion" Description="Version du package d'application."/>
+
+  <StringProperty Name="FilePath" DisplayName="Chemin d'accès au fichier" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.expandedsdknode.filepath" Description="Chemin d'accès au fichier sur le disque."/>
+
+  <StringProperty Name="URI" DisplayName="URI" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.expandedsdknode.uri" Description="URI pouvant être utilisée pour charger ce fichier."/>
+</Rule>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="AppHostLocalDebugger" DisplayName="Yerel Makine" PageTemplate="debugger" Order="100" Description="Yerel Hata Ayıklayıcı seçenekleri" xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Metadata>
+    <sys:Guid x:Key="DebugTargetTypeCommandGuid">FEEA6E9D-77D8-423F-9EDE-3970CBB76125</sys:Guid>
+    <sys:UInt32 x:Key="DebugTargetTypeCommandId">0x200</sys:UInt32>
+  </Rule.Metadata>
+
+  <Rule.DataSource>
+    <DataSource Persistence="UserFile"/>
+  </Rule.DataSource>
+
+  <Rule.Categories>
+    <Category Name="StartOptions" DisplayName="Başlatma Seçenekleri" Description="Başlatma Seçenekleri"/>
+  </Rule.Categories>
+
+  <BoolProperty Name="LaunchApplication" DisplayName="Uygulamayı Başlat" Category="StartOptions" F1Keyword="javascript.project.property.debugging.launchapplication" Description="Uygulamanın hemen mi başlatılacağını yoksa çalışmaya başladığında uygulamada hata ayıklama işleminin mi bekleneceğini belirtir."/>
+
+  <BoolProperty Name="AllowLocalNetworkLoopback" DisplayName="Yerel Ağ Geri Döngüsüne İzin Ver" Category="StartOptions" F1Keyword="javascript.project.property.debugging.allowlocalnetworkloopback" Description="Windows Mağazası uygulamasında hata ayıklanırken, yerel hizmetleri kullanmanıza, ağ trafiğinde hata ayıklaması yapmanıza ve aynı makinedeki bileşenlerle iletişim kurmak için yerel geri döngüyü kullanmanıza olanak tanır."/>
+
+  <EnumProperty Name="DebuggerType" DisplayName="Hata Ayıklayıcı Türü" Category="StartOptions" F1Keyword="javascript.project.property.debugging.debuggertype" Description="Hangi hata ayıklayıcının etkinleştirileceğini belirtir. Karma olarak ayarlandığında, hem yönetilen hem de yerel kod için hata ayıklayıcılar kullanılır.">
+    <EnumValue Name="NativeOnly" DisplayName="Yalnızca Yerel" Description="Yalnızca Yerel"/>
+    <EnumValue Name="ManagedOnly" DisplayName="Yalnızca Yönetilen" Description="Yalnızca Yönetilen"/>
+    <EnumValue Name="Script" DisplayName="Yalnızca Betik" Description="Yalnızca Betik"/>
+    <EnumValue Name="Mixed" DisplayName="Karma (Yönetilen ve Yerel)" Description="Karma (Yönetilen ve Yerel)"/>
+    <EnumProperty.Metadata>
+      <NameValuePair Name="IsDebugType" Value="true"/>
+    </EnumProperty.Metadata>
+  </EnumProperty>
+
+  <StringProperty Name="CommandLineArgs" DisplayName="Komut Satırı Bağımsız Değişkenleri" Category="StartOptions" F1Keyword="javascript.project.property.debugging.commandlineargs" Description="UWP uygulamasının başlatılması için geçirilen komut satırı bağımsız değişkenlerinin belirtilmesine izin verir">
+  </StringProperty>
+</Rule>

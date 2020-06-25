@@ -1,0 +1,1434 @@
+.component NeoAxis.Component_Scene
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1174, 842\"><KW V=\"1\" A=\"790607C83A3347EEAF83C4EA23927AF2\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"1740F1199EE243E67E83B36F45D4595B\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"790607C83A3347EEAF83C4EA23927AF2\"><KP UN=\"790607C83A3347EEAF83C4EA23927AF2\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"1F34EFA8A2794DB9CCAB89799AC4DEDD\" S=\"False\"><CPD ObjPath=\"$Material\\$Shader graph\" /></KP><KP UN=\"40D844FD68034FCA4CA9AA00DE915F2F\" S=\"False\"><CPD ObjPath=\"$Material 2\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	RenderingPipeline
+	{
+		GetByReference = "root:$Rendering Pipeline"
+	}
+	CameraEditor
+	{
+		GetByReference = "this:$Camera Editor"
+	}
+	.component NeoAxis.Component_Camera
+	{
+		Name = Camera Editor
+		Visible = False
+		Transform = "-1.63313601788489 3.58391202544595 3.9602524349374; 0.0612460181833887 0.204274625921285 -0.280584813405873 0.935838108300464; 1 1 1"
+	}
+	.component NeoAxis.Component_Light
+	{
+		Name = Ambient Light
+		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
+		Type = Ambient
+		Brightness = 20000
+	}
+	.component NeoAxis.Component_RenderingPipeline_Default
+	{
+		Name = Rendering Pipeline
+		.component NeoAxis.Component
+		{
+			Name = Background Effects
+		}
+		.component NeoAxis.Component
+		{
+			Name = Scene Effects
+			.component NeoAxis.Component_RenderingEffect_AmbientOcclusion
+			{
+				Name = Ambient Occlusion
+			}
+			.component NeoAxis.Component_RenderingEffect_Bloom
+			{
+				Enabled = False
+				Name = Bloom
+			}
+			.component NeoAxis.Component_RenderingEffect_ToneMapping
+			{
+				Name = Tone Mapping
+			}
+			.component NeoAxis.Component_RenderingEffect_ToLDR
+			{
+				Name = To LDR
+			}
+			.component NeoAxis.Component_RenderingEffect_Sharpen
+			{
+				Name = Sharpen
+				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
+			}
+			.component NeoAxis.Component_RenderingEffect_Antialiasing
+			{
+				Name = Antialiasing
+			}
+		}
+		.component NeoAxis.Component
+		{
+			Name = Final Image Effects
+		}
+	}
+	.component NeoAxis.Component_GameMode
+	{
+		Name = Game Mode
+	}
+	.component NeoAxis.Component_Light
+	{
+		Name = Light 1
+		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
+		Type = Directional
+		Brightness = 130000
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 91.429
+	}
+	.component NeoAxis.Component_Light
+	{
+		Name = Light 2
+		Transform = "-16.276133519817 -13.7764744895929 22.8055842838911; -0.800753779408636 -0.218616030310482 0.553641801455134 0.066941554624803; 1 1 1"
+		Type = Spotlight
+		Brightness = 175962.87801
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 91.429
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Ground
+		CanBeSelected = False
+		Transform = "0 0 0; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 100 100
+				UVTilesPerUnit = 0.25 0.25
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform
+			{
+				GetByReference = "this:..\\Transform"
+			}
+			.component NeoAxis.Component_CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Sphere
+		Transform = "-0.731223615484145 -0.65046206051061 0.5; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Sphere 2
+		Transform = "3.87915261643461 -6.60046769979883 0.5; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box
+		Transform = "4.70197196338417 5.77635926158248 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Box 2
+		Transform = "7.78922063518347 0.928871512579819 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard
+		Transform = "2.32522857810735 2.8320705914045 1.40501051423393; 0 0 0 1; 1 1 1"
+		Size = 1 0.5
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 10
+		Transform = "8.77728900067947 6.88906597899553 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 30
+		Transform = "11.7665217670771 19.8096642353511 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 50
+		Transform = "-4.21671583310961 16.2739260908559 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 70
+		Transform = "-10.5002991953029 7.27159038977907 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 90
+		Transform = "-7.96466639161069 -2.9490772637315 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 110
+		Transform = "4.50808444846261 -15.0965699559518 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 15
+		Transform = "10.8381682334681 11.3405783864133 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 31
+		Transform = "13.8274009998657 24.2611766427689 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 51
+		Transform = "-2.15583660032098 20.7254384982737 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 71
+		Transform = "-8.43941996251426 11.7231027971969 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 91
+		Transform = "-5.90378715882205 1.50243514368628 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 111
+		Transform = "6.56896368125125 -10.6450575485341 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 20
+		Transform = "17.9301393352863 11.0826592400402 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 32
+		Transform = "20.9193721016839 24.0032574963958 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 52
+		Transform = "4.93613450149721 20.4675193519006 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 72
+		Transform = "-1.34744886069607 11.4651836508238 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 92
+		Transform = "1.64234285645507 1.12295286554971 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 112
+		Transform = "13.6609347830694 -10.9029766949071 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 25
+		Transform = "19.1432704850789 1.04104051148818 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 33
+		Transform = "22.1325032514765 13.9616387678437 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 53
+		Transform = "6.14926565128978 10.4259006233485 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 93
+		Transform = "2.4013150927887 -8.79710273123886 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 113
+		Transform = "14.874065932862 -20.9445954234592 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 6
+		Transform = "4.44008929757976 -4.06281683919783 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 11
+		Transform = "8.76444610115696 3.47221744264991 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 34
+		Transform = "11.7536788675546 16.3928156990055 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 54
+		Transform = "-4.22955873263212 12.8570775545102 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 74
+		Transform = "-10.5131420948254 3.85474185343345 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 94
+		Transform = "-7.97750929113319 -6.36592580007713 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 114
+		Transform = "4.49524154894011 -18.5134184922975 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 16
+		Transform = "10.8253253339456 7.9237298500677 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 35
+		Transform = "13.8145581003432 20.8443281064233 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 55
+		Transform = "-2.16867949984348 17.308589961928 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 75
+		Transform = "-8.45226286203677 8.30625426085124 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 95
+		Transform = "-5.91663005834456 -1.91441339265933 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 115
+		Transform = "6.55612078172874 -14.0619060848797 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 21
+		Transform = "17.9172964357638 7.66581070369462 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 36
+		Transform = "20.9065292021614 20.5864089600502 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 56
+		Transform = "4.92329160197471 17.0506708155549 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 76
+		Transform = "-1.36029176021858 8.04833511447815 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 116
+		Transform = "13.6480918835469 -14.3198252312528 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 26
+		Transform = "19.1304275855564 -2.37580802485744 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 37
+		Transform = "22.119660351954 10.5447902314981 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 57
+		Transform = "6.13642275176728 7.00905208700289 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 77
+		Transform = "0.55934507015507 -4.36364474579072 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 97
+		Transform = "2.3884721932662 -12.2139512675845 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 117
+		Transform = "14.8612230333395 -24.3614439598048 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 7
+		Transform = "7.14437239872879 -7.30386974438428 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 12
+		Transform = "11.468729202306 0.23116453746346 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 38
+		Transform = "14.4579619687036 13.151762793819 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 58
+		Transform = "-1.52527563148308 9.61602464932379 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 78
+		Transform = "-7.80885899367637 0.613688948246992 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 98
+		Transform = "-5.27322618998416 -9.60697870526358 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 118
+		Transform = "7.19952465008914 -21.7544713974839 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 17
+		Transform = "13.5296084350946 4.68267694488125 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 39
+		Transform = "16.5188412014923 17.6032752012368 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 59
+		Transform = "0.535603601305555 14.0675370567416 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 79
+		Transform = "-5.74797976088773 5.06520135566478 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 99
+		Transform = "-3.21234695719552 -5.15546629784579 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 119
+		Transform = "9.26040388287778 -17.3029589900661 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 22
+		Transform = "20.6215795369128 4.42475779850816 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 40
+		Transform = "23.6108123033105 17.3453560548637 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 60
+		Transform = "7.62757470312375 13.8096179103685 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 100
+		Transform = "3.87962414462267 -5.41338544421887 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 120
+		Transform = "16.352374984696 -17.5608781364392 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 27
+		Transform = "21.8347106867054 -5.61686093004389 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 41
+		Transform = "24.823943453103 7.30373732631167 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 61
+		Transform = "8.84070585291631 3.76799918181644 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 81
+		Transform = "2.55712249072303 -5.23433651926036 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 101
+		Transform = "5.09275529441524 -15.4550041727709 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 121
+		Transform = "17.5655061344885 -27.6024968649913 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 8
+		Transform = "9.65395830766251 -5.69260743585091 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 13
+		Transform = "13.9783151112397 1.84242684599683 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 42
+		Transform = "16.9675478776374 14.7630251023524 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 62
+		Transform = "0.984310277450641 11.2272869578572 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 82
+		Transform = "-5.29927308474264 2.22495125678036 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 102
+		Transform = "-2.76364028105044 -7.99571639673021 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 122
+		Transform = "9.70911055902286 -20.1432090889505 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 18
+		Transform = "16.0391943440284 6.29393925341462 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 43
+		Transform = "19.028427110426 19.2145375097702 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 63
+		Transform = "3.04518951023927 15.678799365275 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 83
+		Transform = "-3.23839385195401 6.67646366419816 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 103
+		Transform = "-0.702761048261802 -3.54420398931241 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 123
+		Transform = "11.7699897918115 -15.6916966815328 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 23
+		Transform = "23.1311654458465 6.03602010704154 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 44
+		Transform = "26.1203982122442 18.9566183633971 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 64
+		Transform = "10.1371606120575 15.4208802189019 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 84
+		Transform = "3.85357724986418 6.41854451782507 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 104
+		Transform = "6.38921005355639 -3.8021231356855 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 124
+		Transform = "18.8619608936297 -15.9496158279058 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 28
+		Transform = "24.3442965956391 -4.00559862151052 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 45
+		Transform = "27.3335293620367 8.91499963484505 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 65
+		Transform = "11.35029176185 5.37926149034981 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 85
+		Transform = "5.06670839965675 -3.62307421072699 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 105
+		Transform = "7.60234120334896 -13.8437418642376 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 125
+		Transform = "20.0750920434223 -25.9912345564579 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 9
+		Transform = "9.87789455443073 -1.71066932700089 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 14
+		Transform = "14.2022513580079 5.82436495484685 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 46
+		Transform = "17.1914841244056 18.7449632112024 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 66
+		Transform = "1.20824652421886 15.2092250667072 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 86
+		Transform = "-5.07533683797443 6.20688936563039 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 106
+		Transform = "-2.53970403428222 -4.01377828788019 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 126
+		Transform = "9.93304680579108 -16.1612709801005 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 19
+		Transform = "16.2631305907966 10.2758773622646 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 47
+		Transform = "19.2523633571942 23.1964756186202 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 67
+		Transform = "3.2691257570075 19.660737474125 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 87
+		Transform = "-3.01445760518579 10.6584017730482 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 127
+		Transform = "11.9939260385797 -11.7097585726827 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 24
+		Transform = "23.3551016926148 10.0179582158916 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 48
+		Transform = "26.3443344590124 22.9385564722471 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 68
+		Transform = "10.3610968588257 19.4028183277519 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 88
+		Transform = "4.0775134966324 10.4004826266751 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 128
+		Transform = "19.0858971403979 -11.9676777190558 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 29
+		Transform = "24.5682328424073 -0.0236605126605003 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 49
+		Transform = "27.557465608805 12.8969377436951 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 69
+		Transform = "11.5742280086183 9.36119959919983 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 109
+		Transform = "7.82627745011718 -9.86180375538754 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 129
+		Transform = "20.2990282901905 -22.0092964476079 1.40501051423393; 0 0 0 1; 1 1 1"
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 2
+		Transform = "-1.22815993672725 3.03138649320167 1.40501051423393; 0 0 0 1; 1 1 1"
+		Size = 0.5 0.2
+	}
+	.component NeoAxis.Component_Material
+	{
+		Name = Material
+		BlendMode = Transparent
+		ShadingModel = Simple
+		BaseColor = 0 0 0
+		ReceiveShadows = False
+		Emissive
+		{
+			GetByReference = "this:$Shader graph\\$Node Texture Sample 1\\$Texture Sample\\RGBA"
+		}
+		Opacity
+		{
+			GetByReference = "this:$Shader graph\\$Node Texture Sample 1\\$Texture Sample\\A"
+		}
+		.component NeoAxis.Component_FlowGraph
+		{
+			Name = Shader graph
+			EditorScrollPosition = 0 0
+			Specialization
+			{
+				GetByReference = NeoAxis.Component_FlowGraphSpecialization_Shader|Instance
+			}
+			.component NeoAxis.Component_FlowGraphNode
+			{
+				Name = Node Material
+				Position = 10 -7
+				ControlledObject
+				{
+					GetByReference = "this:..\\.."
+				}
+			}
+			.component NeoAxis.Component_FlowGraphNode
+			{
+				Name = Node Texture Sample 1
+				Position = -17 -11
+				ControlledObject
+				{
+					GetByReference = "this:$Texture Sample"
+				}
+				.component NeoAxis.Component_ShaderTextureSample
+				{
+					Name = Texture Sample
+					Location2 = 0 0
+					Location3 = 0 0 0
+					Texture
+					{
+						GetByReference = "Base\\UI\\Images\\Circle.png"
+					}
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_Material
+	{
+		Name = Material 2
+		BlendMode = Transparent
+		ShadingModel = Simple
+		BaseColor = 0.2200392 0.4941176 0.07309804
+		ReceiveShadows = False
+		Opacity
+		{
+			GetByReference = "this:$Shader graph\\$Node Texture Sample 1\\$Texture Sample\\A"
+		}
+		.component NeoAxis.Component_FlowGraph
+		{
+			Name = Shader graph
+			EditorScrollPosition = 0 0
+			Specialization
+			{
+				GetByReference = NeoAxis.Component_FlowGraphSpecialization_Shader|Instance
+			}
+			.component NeoAxis.Component_FlowGraphNode
+			{
+				Name = Node Material
+				Position = 10 -7
+				ControlledObject
+				{
+					GetByReference = "this:..\\.."
+				}
+			}
+			.component NeoAxis.Component_FlowGraphNode
+			{
+				Name = Node Texture Sample 1
+				Position = -17 -11
+				ControlledObject
+				{
+					GetByReference = "this:$Texture Sample"
+				}
+				.component NeoAxis.Component_ShaderTextureSample
+				{
+					Name = Texture Sample
+					Location2 = 0 0
+					Location3 = 0 0 0
+					Texture
+					{
+						GetByReference = "Base\\UI\\Images\\Circle.png"
+					}
+				}
+			}
+			.component NeoAxis.Component_FlowGraphNode
+			{
+				Name = Node Invoke Member 1
+				Position = -5 0
+				ControlledObject
+				{
+					GetByReference = "this:$Invoke Member"
+				}
+				.component NeoAxis.Component_InvokeMember
+				{
+					Name = Invoke Member
+					__parameter_V = 0 0
+					__parameter_S = 0
+					Member
+					{
+						GetByReference = "NeoAxis.Vector2|method:op_Multiply(NeoAxis.Vector2,System.Double)"
+					}
+					Exit
+					{
+					}
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_Billboard
+	{
+		Name = Billboard 4
+		Transform = "1.67799838279644 -1.70868498385464 1.37413705772073; 0 0 0 1; 1 1 1"
+		Size = 0.7 1.3
+		Material
+		{
+			GetByReference = "root:$Material 2"
+		}
+	}
+}

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="AppHostRemoteDebugger" DisplayName="远程计算机" PageTemplate="debugger" Order="300" Description="远程调试器选项" xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Metadata>
+    <sys:Guid x:Key="DebugTargetTypeCommandGuid">FEEA6E9D-77D8-423F-9EDE-3970CBB76125</sys:Guid>
+    <sys:UInt32 x:Key="DebugTargetTypeCommandId">0x400</sys:UInt32>
+  </Rule.Metadata>
+
+  <Rule.DataSource>
+    <DataSource Persistence="UserFile"/>
+  </Rule.DataSource>
+
+  <Rule.Categories>
+    <Category Name="StartOptions" DisplayName="启动选项" Description="启动选项"/>
+    <Category Name="RemoteOptions" DisplayName="远程选项" Description="远程选项"/>
+  </Rule.Categories>
+
+  <BoolProperty Name="LaunchApplication" DisplayName="启动应用程序" Category="StartOptions" F1Keyword="javascript.project.property.debugging.launchapplication" Description="指定是立即启动应用程序还是在应用程序开始运行时等待对其进行调试。"/>
+
+  <BoolProperty Name="AllowLocalNetworkLoopback" DisplayName="允许本地网络环回" Category="StartOptions" F1Keyword="javascript.project.property.debugging.allowlocalnetworkloopback" Description="在调试 Windows 应用商店应用时，您可以使用本地服务、调试网络通讯以及使用本地环回来与同一计算机上的组件进行通信。"/>
+
+  <EnumProperty Name="DebuggerType" DisplayName="调试器类型" Category="StartOptions" F1Keyword="javascript.project.property.debugging.debuggertype" Description="指定要启用的调试器。设置为“混合”时，将使用针对托管代码和本机代码的调试器。">
+    <EnumValue Name="NativeOnly" DisplayName="仅限本机" Description="仅限本机"/>
+    <EnumValue Name="ManagedOnly" DisplayName="仅限托管" Description="仅限托管"/>
+    <EnumValue Name="Script" DisplayName="仅脚本" Description="仅脚本"/>
+    <EnumValue Name="Mixed" DisplayName="混合(托管和本机)" Description="混合(托管和本机)"/>
+    <EnumProperty.Metadata>
+      <NameValuePair Name="IsDebugType" Value="true"/>
+    </EnumProperty.Metadata>
+  </EnumProperty>
+
+  <StringProperty Name="CommandLineArgs" DisplayName="命令行参数" Category="StartOptions" F1Keyword="javascript.project.property.debugging.commandlineargs" Description="允许指定要传递进行 UWP 应用启动的命令行参数">
+  </StringProperty>
+
+  <StringProperty Name="MachineName" DisplayName="计算机名" Category="RemoteOptions" F1Keyword="javascript.project.property.debugging.machinename" Description="指定要在远程调试时使用的计算机的名称。  请使用下拉列表查找临近计算机。">
+    <StringProperty.ValueEditors>
+      <ValueEditor EditorType="JsRemoteDebuggerOptionsPropertyEditor" DisplayName="&lt;定位...&gt;">
+        <ValueEditor.Metadata>
+          <NameValuePair Name="AuthenticationPropertyName" Value="RequireAuthentication"/>
+        </ValueEditor.Metadata>
+      </ValueEditor>
+    </StringProperty.ValueEditors>
+  </StringProperty>
+
+  <EnumProperty Name="RequireAuthentication" DisplayName="需要身份验证" Category="RemoteOptions" F1Keyword="javascript.project.property.debugging.requireauthentication" Description="指定在远程设备上进行调试时需要的身份验证级别。">
+    <EnumValue Name="false" DisplayName="无" Description="无需身份验证"/>
+    <EnumValue Name="true" DisplayName="Windows" Description="Windows 身份验证"/>
+    <EnumValue Name="Universal" DisplayName="通用(未加密协议)" Description="通用身份验证"/>
+  </EnumProperty>
+</Rule>

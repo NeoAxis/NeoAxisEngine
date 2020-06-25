@@ -1,0 +1,80 @@
+.component "Samples\\Starter Content\\Materials\\Vegetation Animation.material"
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1174, 842\"><KW V=\"1\" A=\"ACD29A5C79A840820EAD6FF01DF1C774\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"5D6B2C9ADB794A22418F2A5C3944B1CE\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"ACD29A5C79A840820EAD6FF01DF1C774\"><KP UN=\"D7E7CCABE139496F77A69EB5F94ED70E\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"ACD29A5C79A840820EAD6FF01DF1C774\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	BlendMode = Masked
+	TwoSided = True
+	OpacityMaskThreshold = 0.5
+	ClearCoatRoughness = 0.5
+	ClearCoatNormal = 0 0 0
+	AnisotropyDirection = 1 0 0
+	AnisotropyDirectionBasis = Tangent
+	Thickness = 0.5
+	SubsurfacePower = 12.234
+	SheenColor = 1 1 1
+	SubsurfaceColor = 1 1 1
+	Shininess = 20
+	BaseColor
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample 1\\$Texture Sample\\RGBA"
+	}
+	Opacity
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample 2\\$Texture Sample\\R"
+	}
+	.component NeoAxis.Component_FlowGraph
+	{
+		Name = Shader graph
+		EditorScrollPosition = 3.70588235294118 0
+		Specialization
+		{
+			GetByReference = NeoAxis.Component_FlowGraphSpecialization_Shader|Instance
+		}
+		.component NeoAxis.Component_FlowGraphNode
+		{
+			Name = "Node "
+			Position = 10 -7
+			ControlledObject
+			{
+				GetByReference = "this:..\\.."
+			}
+		}
+		.component NeoAxis.Component_FlowGraphNode
+		{
+			Name = Node Texture Sample 1
+			Position = -10 -10
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.Component_ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Samples\\Starter Content\\Models\\Fir Tree\\textures\\fir_tree_base_colour.png"
+				}
+			}
+		}
+		.component NeoAxis.Component_FlowGraphNode
+		{
+			Name = Node Texture Sample 2
+			Position = -10 -1
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.Component_ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Samples\\Starter Content\\Models\\Fir Tree\\textures\\fir_tree_opacity_mask.png"
+				}
+			}
+		}
+	}
+}

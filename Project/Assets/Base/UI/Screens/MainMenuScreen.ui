@@ -1,0 +1,118 @@
+.component Project.MainMenuScreen
+{
+	Size = Parent 1 1
+	EditorScrollPosition = 0 0
+	BackgroundScene
+	{
+		GetByReference = "Samples\\Sci-fi Demo\\Scenes\\Sci-fi Demo.scene"
+	}
+	.component NeoAxis.UIControl
+	{
+		Name = Bottom
+		Size = Units 0 62
+		HorizontalAlignment = Stretch
+		VerticalAlignment = Bottom
+		BackgroundColor = 0 0 0 0.3
+		EditorScrollPosition = 0 0
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Scenes
+		Text = Scenes
+		Size = Units 200 40
+		VerticalAlignment = Bottom
+		Margin = Units 10 10 10 10
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Options
+		Text = Options
+		Size = Units 200 40
+		VerticalAlignment = Bottom
+		Margin = Units 220 10 10 10
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Exit
+		Text = Exit
+		Size = Units 200 40
+		HorizontalAlignment = Right
+		VerticalAlignment = Bottom
+		Margin = Units 0 0 10 10
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Play Nature Demo
+		Text = Nature Demo
+		Size = Units 200 40
+		Margin = Units 10 680 130 318.058171164124
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Play Character Scene
+		Text = Character scene
+		Size = Units 200 40
+		Margin = Units 10 780 130 318.058171164124
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Play Simple Game
+		Text = Simple Game
+		Size = Units 200 40
+		Margin = Units 10 730 130 318.058171164124
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Play Spaceship 2D
+		Text = Spaceship 2D
+		Size = Units 200 40
+		Margin = Units 10 830 130 318.058171164124
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Play Character 2D
+		Text = Character 2D
+		Size = Units 200 40
+		Margin = Units 10 880 130 318.058171164124
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+	}
+}

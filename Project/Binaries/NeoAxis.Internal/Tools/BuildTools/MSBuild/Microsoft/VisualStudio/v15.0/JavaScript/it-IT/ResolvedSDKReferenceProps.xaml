@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="ResolvedSdkReferenceProps" DisplayName="Riferimento SDK risolto" PageTemplate="generic" Description="Riferimento SDK risolto" PropertyPagesHidden="true" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="Generale"/>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ResolvedSdkReferenceProps" ItemType="SDKReference"/>
+  </Rule.DataSource>
+
+  <StringProperty Name="OriginalItemSpec" ReadOnly="true" DisplayName="Identità SDK" Category="General" F1Keyword="javascript.project.property.reference.identity" Description="Identità del riferimento.">
+  </StringProperty>
+
+  <StringProperty Name="ResolvedPath" ReadOnly="true" DisplayName="Percorso" Category="General" F1Keyword="javascript.project.property.reference.resolvedpath" Description="Percorso del file a cui viene fatto riferimento.">
+  </StringProperty>
+
+  <StringProperty Name="AppXLocation" DisplayName="Pacchetto applicazione" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.reference.package" Description="Pacchetto applicazione associato al riferimento SDK per la configurazione attiva."/>
+
+  <StringProperty Name="Version" ReadOnly="true" DisplayName="Versione pacchetto applicazione" Category="General" F1Keyword="javascript.project.property.reference.version" Description="Versione del riferimento."/>
+
+  <!-- This property should be the same as the one for the ResolvedReference item -->
+  <StringProperty Name="FrameworkIdentity" Visible="false"/>
+  <StringProperty Name="DisplayName" Visible="false"/>
+  <StringProperty Name="CopyContentToSubDirectory" Visible="false"/>
+  <BoolProperty Name="CopyPayload" Visible="false"/>
+  <BoolProperty Name="ExpandContent" Visible="false"/>
+  <BoolProperty Name="ExpandReferenceAssemblies" Visible="false"/>
+  <BoolProperty Name="CopyLocalExpandedReferenceAssemblies" Visible="false"/>
+
+</Rule>

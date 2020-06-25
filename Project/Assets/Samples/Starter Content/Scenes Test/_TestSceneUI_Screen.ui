@@ -1,0 +1,54 @@
+.component NeoAxis.UIControl
+{
+	Size = Parent 1 1
+	EditorScrollPosition = 0 0
+	.component NeoAxis.UIButton
+	{
+		Name = Button
+		Text = Button
+		Size = Units 200 40
+		HorizontalAlignment = Center
+		VerticalAlignment = Bottom
+		Margin = Units 0 0 0 252.286579593867
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+	}
+	.component NeoAxis.UIText
+	{
+		Name = Text
+		Text = Text
+		Size = Units 400 30
+		HorizontalAlignment = Center
+		Margin = Units 0 637.684817125525 0 0
+		EditorScrollPosition = 0 0
+		Shadow = True
+	}
+	.component NeoAxis.UIImage
+	{
+		Name = Image
+		Size = Units 200 200
+		VerticalAlignment = Bottom
+		ColorMultiplier = 1 0 0
+		EditorScrollPosition = 0 0
+		SourceImage
+		{
+			GetByReference = "Base\\UI\\Images\\Circle.png"
+		}
+	}
+	.component NeoAxis.UIImage
+	{
+		Name = Image 2
+		Size = Units 200 200
+		HorizontalAlignment = Right
+		VerticalAlignment = Bottom
+		ColorMultiplier = 0 0 1
+		EditorScrollPosition = 0 0
+		SourceImage
+		{
+			GetByReference = "Base\\UI\\Images\\Circle.png"
+		}
+	}
+}

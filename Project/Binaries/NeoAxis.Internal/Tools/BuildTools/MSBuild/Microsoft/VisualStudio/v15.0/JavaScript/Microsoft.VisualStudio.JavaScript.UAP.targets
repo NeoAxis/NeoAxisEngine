@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="CheckUAPVersions" AssemblyFile="$(MSBuildThisFileDirectory)\Microsoft.VisualStudio.JavaScript.Project.BuildTask.dll" />
+
+  <PropertyGroup>
+    <OsBuildNumber>$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion@CurrentBuildNumber)</OsBuildNumber>    
+    <DebuggerFlavor Condition="$(OsBuildNumber) &lt; 10000">AppHostDeviceDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  
+  <ItemGroup>
+
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)\$(LangName)\General.UAP.xaml;">
+      <Context>Project</Context>
+    </PropertyPageSchema>
+
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)\$(LangName)\DebuggerRemote.xaml;
+                                 $(MSBuildThisFileDirectory)\$(LangName)\DebuggerDevice.xaml;">
+      <Context>Project</Context>
+    </PropertyPageSchema>
+
+    <PropertyPageSchema Condition=" '$(Platform)' != 'ARM' " 
+      Include="$(MSBuildThisFileDirectory)\$(LangName)\DebuggerSimulator.xaml;
+      $(MSBuildThisFileDirectory)\$(LangName)\DebuggerWindowsPhoneEmulator.xaml;">
+      <Context>Project</Context>
+    </PropertyPageSchema>
+
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)\$(LangName)\DebuggerLocal.xaml;" Condition="'$(Platform)' != 'ARM' and $(OsBuildNumber) &gt;= 10000">
+      <Context>Project</Context>
+    </PropertyPageSchema>
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectCapability Include="JavaScriptUAPProject" />
+    <ProjectCapability Include="JavaScriptWindowsPhoneProject" />
+    <ProjectCapability Include="JavaScriptWJProject" />
+    <ProjectCapability Include="WindowsAppContainer" />
+    <ProjectCapability Include="JavaScriptWindowsAppContainerProject" />
+    <ProjectCapability Include="WinRTReferences" />
+    <ProjectCapability Include="PackageReferences" />
+    <ProjectCapability Include="SDKReferences;ProjectReferences;SharedProjectReferences" />
+  </ItemGroup>
+  
+  <!-- Enable warning when referenced ESDKs do not have MaxPlatformVersion specified for Windows Store projects -->
+  <PropertyGroup>
+     <SDKReferenceWarnOnMissingMaxPlatformVersion Condition="'$(SDKReferenceWarnOnMissingMaxPlatformVersion)' == '' and 
+                                                             '$(TargetPlatformVersion)' &gt;= '8.0'">true</SDKReferenceWarnOnMissingMaxPlatformVersion>
+     <FindInvalidProjectReferences Condition="'$(TargetPlatformVersion)' &gt;= '8.0'">true</FindInvalidProjectReferences>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ProjectUISubcaption Condition=" '$(TargetPlatformVersion)' != ''">$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformSDKDisplayName($(TargetPlatformIdentifier), $(TargetPlatformVersion)))</ProjectUISubcaption>   
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RealOSVersion>6.4</RealOSVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- To enable enhanced developer experience in hybrid apps (non-optimized debugging of Release-built managed code), you should add "<Optimize>false</Optimize>" to your *.jsproj project file-->
+    <Optimize Condition=" '$(Optimize)' == '' and '$(UseDotNetNativeToolchain)' == 'true'">true</Optimize>
+    <Optimize Condition=" '$(Optimize)' == ''">false</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(SDKIdentifier)' == ''">
+    <SDKIdentifier>Windows</SDKIdentifier>
+    <SDKVersion>10.0</SDKVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetPlatformSdkPath>$([MSBuild]::GetRegistryValueFromView('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v10.0', InstallationFolder, null, RegistryView.Registry32, RegistryView.Default))</TargetPlatformSdkPath>
+    <TargetPlatformSdkMetadataLocation Condition="'$(TargetPlatformSdkMetadataLocation)' == '' and Exists('$(TargetPlatformSdkPath)')">$(TargetPlatformSdkPath)UnionMetadata</TargetPlatformSdkMetadataLocation>
+    <TargetPlatformWinMDLocation>$(TargetPlatformSdkMetadataLocation)</TargetPlatformWinMDLocation>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <BuildDependsOn>
+       WwaUapChecks;
+     $(BuildDependsOn)
+    </BuildDependsOn>
+  </PropertyGroup>
+  
+  <Target Name="WwaUapChecks">
+  <CheckUAPVersions TargetPlatformVersion="$(TargetPlatformVersion)" TargetPlatformMinVersion="$(TargetPlatformMinVersion)" SDKIdentifier="$(SDKIdentifier)" SDKVersion="$(SDKVersion)" />
+  </Target>
+
+  <PropertyGroup Label="DiagnosticsHub">
+    <ProjectTargetFactory>08577C20-C2C3-480F-8ADF-6D8599D3071D</ProjectTargetFactory>
+    <ProjectTarget>375E0663-2836-49A0-BDD4-DA34F1CCC723</ProjectTarget>
+  </PropertyGroup>
+</Project>

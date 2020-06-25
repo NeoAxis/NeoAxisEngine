@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)\$(LangName)\ProjectItemsSchema.xaml;"/>
+
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)\$(LangName)\DebuggerGeneral.xaml;">
+      <Context>Project</Context>
+    </PropertyPageSchema>
+
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)SCC.xaml;">
+      <Context>Invisible</Context>
+    </PropertyPageSchema>
+
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)\$(LangName)\General.BrowseObject.xaml;">
+      <Context>BrowseObject</Context>
+    </PropertyPageSchema>
+
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)Folder.xaml;
+                                 $(MSBuildThisFileDirectory)\$(LangName)\None.xaml;
+                                 $(MSBuildThisFileDirectory)\$(LangName)\Content.xaml;
+                                 $(MSBuildThisFileDirectory)\$(LangName)\AppxManifest.xaml;
+                                 $(MSBuildThisFileDirectory)\$(LangName)\PackageLayout.xaml;
+                                 $(MSBuildThisFileDirectory)\$(LangName)\PRIResource.xaml;">
+      <Context>File;BrowseObject</Context>
+    </PropertyPageSchema>
+
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)\$(LangName)\AssemblyReference.xaml;
+                                 $(MSBuildThisFileDirectory)\$(LangName)\ProjectReference.xaml;
+                                 $(MSBuildThisFileDirectory)\$(LangName)\SDKReference.xaml;
+                                 $(MSBuildThisFileDirectory)\$(LangName)\ResolvedSDKReferenceProps.xaml;
+                                 $(MSBuildThisFileDirectory)\$(LangName)\ExpandedSDKNode.xaml;">
+      <Context>;BrowseObject</Context>
+    </PropertyPageSchema>
+
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)\$(LangName)\ResolvedAssemblyReference.xaml;
+                                 $(MSBuildThisFileDirectory)\$(LangName)\ResolvedProjectReference.xaml;
+                                 $(MSBuildThisFileDirectory)\$(LangName)\ResolvedExpandedSDKReference.xaml;">
+      <Context>ProjectSubscriptionService;BrowseObject</Context>
+    </PropertyPageSchema>
+
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)\$(LangName)\ResolvedSDKReference.xaml;
+                                 $(MSBuildThisFileDirectory)\DeployableItemPath.xaml;">
+      <Context>ProjectSubscriptionService</Context>
+    </PropertyPageSchema>
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectCapability Include="JavaScript;JavaScriptProject" />
+    <ProjectCapability Include="OutputGroups;AllTargetOutputGroups;VisualStudioWellKnownOutputGroups" />
+    <ProjectCapability Include="SingleFileGenerators" />
+    <ProjectCapability Include="AllTargetOutputGroups;VisualStudioWellKnownOutputGroups" />
+    <ProjectCapability Include="SourceItemsFromImports;SharedImports" />
+    <ProjectCapability Include="RequiresSharedAssetsProjectLoadForOpenDocuments" />
+    <ProjectCapability Include="ProjectConfigurationsDeclaredAsItems" />
+  </ItemGroup>
+
+  <!-- Integrating with App Package creation task -->
+  <PropertyGroup>
+    <IncludeCopyWinMDArtifactsOutputGroup>true</IncludeCopyWinMDArtifactsOutputGroup>
+    <IncludeBuiltProjectOutputGroup>false</IncludeBuiltProjectOutputGroup>
+    <IncludeDebugSymbolsProjectOutputGroup>false</IncludeDebugSymbolsProjectOutputGroup>
+    <IncludeDocumentationProjectOutputGroup>false</IncludeDocumentationProjectOutputGroup>
+    <IncludeSatelliteDllsProjectOutputGroup>false</IncludeSatelliteDllsProjectOutputGroup>
+    <IncludeSourceFilesProjectOutputGroup>false</IncludeSourceFilesProjectOutputGroup>
+    <IncludeSGenFilesOutputGroup>false</IncludeSGenFilesOutputGroup>
+    <IncludeCopyLocalFilesOutputGroup>true</IncludeCopyLocalFilesOutputGroup>
+    <IncludeComFilesOutputGroup>false</IncludeComFilesOutputGroup>
+    <IncludeCustomOutputGroupForPackaging>false</IncludeCustomOutputGroupForPackaging>
+    <IncludeSDKRedistOutputGroup>true</IncludeSDKRedistOutputGroup>
+    <SynthesizeLinkMetadata Condition=" '$(HasSharedItems)' == 'true' ">true</SynthesizeLinkMetadata>
+    <OneAppCapabilities>Application</OneAppCapabilities>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DefaultContentType Condition="$(DefaultContentType) == ''">Default</DefaultContentType>
+    <!-- We don't target any framework, so clear what the Microsoft.Common.targets sets. -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildBinPath)\Microsoft.Common.targets" />
+
+  <PropertyGroup>
+    <AvailablePlatforms>Any CPU,x86,x64,ARM</AvailablePlatforms>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ProjectUISubcaption Condition=" '$(TargetPlatformVersion)' == '8.0' and  '$(TargetPlatformIdentifier)' != '' ">$(TargetPlatformIdentifier) 8</ProjectUISubcaption>
+  </PropertyGroup>
+
+  <!-- Overriding targets which when absent cause warnings from common targets -->
+  <Target Name="CoreCompile" />
+  <Target Name="CreateManifestResourceNames" />
+</Project>

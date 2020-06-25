@@ -1,0 +1,271 @@
+.component NeoAxis.Component_Scene
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1180, 842\"><KW V=\"1\" A=\"FADD19200D4E44D987A07857FD2BA387\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WS UN=\"59405266988148DCD28EAF450BC16E26\" S=\"T,0,50:T,0,50\" D=\"Vertical\"><WS UN=\"7C2525C0BE9644B224851E2459CD9A3A\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WS UN=\"9F3389F6E2A94580F1B2840B95A98D11\" S=\"T,0,50:T,0,50\" D=\"Vertical\"><WC UN=\"9EF2F90A01F5403BF2B503397C26C925\" S=\"T,0,707:T,0,495\" NM=\"BarTabGroup\" AR=\"True\" SP=\"FADD19200D4E44D987A07857FD2BA387\"><KP UN=\"FADD19200D4E44D987A07857FD2BA387\" S=\"False\"><CPD ObjPath=\"\" /></KP></WC><WS UN=\"863B07CF425D4019C8AD28275FA4B1AB\" S=\"T,0,50:T,0,342\" D=\"Horizontal\"><WC UN=\"78A869DF09C9480D5194C2DF50D224B9\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"D9A2A8E733BA4A6799A82BA3A7A561DB\"><KP UN=\"D9A2A8E733BA4A6799A82BA3A7A561DB\" S=\"False\"><CPD ObjPath=\"$My Material\\$Shader graph\" /></KP></WC><WC UN=\"B018E19300FC4C611DAC2BD985601DE9\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"6CAC0FF47E844A6392B1F29FB641EA5D\"><KP UN=\"6CAC0FF47E844A6392B1F29FB641EA5D\" S=\"False\"><CPD ObjPath=\"$My Material\\$Shader graph\\$Node Shader 1\\$Shader\" /></KP></WC></WS></WS><WS UN=\"0A3E6D746D2B466D9B86E8ECE727F2F9\" S=\"T,0,462:T,0,50\" D=\"Vertical\"><WC UN=\"F3523A72DE184B118BBDA5A8DADC4DDD\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" V=\"False\" SP=\"(null)\"><KP UN=\"D9A2A8E733BA4A6799A82BA3A7A561DB\" S=\"True\" V=\"False\"><CPD /></KP></WC><WC UN=\"5306CEA45D5D4E84CDB98BEB47D00D37\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" V=\"False\" SP=\"(null)\"><KP UN=\"6CAC0FF47E844A6392B1F29FB641EA5D\" S=\"True\" V=\"False\"><CPD /></KP></WC></WS></WS><WC UN=\"B813AE9AE26E4E34D199111DC726A7BE\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" V=\"False\" SP=\"(null)\"><KP UN=\"6CAC0FF47E844A6392B1F29FB641EA5D\" S=\"True\" V=\"False\"><CPD /></KP></WC></WS></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	RenderingPipeline
+	{
+		GetByReference = "root:$Rendering Pipeline"
+	}
+	CameraEditor
+	{
+		GetByReference = "this:$Camera Editor"
+	}
+	.component NeoAxis.Component_Camera
+	{
+		Name = Camera Editor
+		Visible = False
+		Transform = "2.28409884521453 -1.5506226754415 2.92596455765992; -0.190539442187551 0.190843775994026 0.680365157620234 0.681451851880669; 1 1 1"
+	}
+	.component NeoAxis.Component_Light
+	{
+		Name = Ambient Light
+		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
+		Type = Ambient
+		Brightness = 20000
+	}
+	.component NeoAxis.Component_RenderingPipeline_Default
+	{
+		Name = Rendering Pipeline
+		ShadowFarDistance = 60
+		.component NeoAxis.Component
+		{
+			Name = Background Effects
+		}
+		.component NeoAxis.Component
+		{
+			Name = Scene Effects
+			.component NeoAxis.Component_RenderingEffect_AmbientOcclusion
+			{
+				Name = Ambient Occlusion
+			}
+			.component NeoAxis.Component_RenderingEffect_Bloom
+			{
+				Enabled = False
+				Name = Bloom
+			}
+			.component NeoAxis.Component_RenderingEffect_LensEffects
+			{
+				Name = Lens Effects
+			}
+			.component NeoAxis.Component_RenderingEffect_ToneMapping
+			{
+				Name = Tone Mapping
+			}
+			.component NeoAxis.Component_RenderingEffect_ToLDR
+			{
+				Name = To LDR
+			}
+			.component NeoAxis.Component_RenderingEffect_Sharpen
+			{
+				Name = Sharpen
+				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
+			}
+			.component NeoAxis.Component_RenderingEffect_Antialiasing
+			{
+				Name = Antialiasing
+			}
+		}
+		.component NeoAxis.Component
+		{
+			Name = Final Image Effects
+		}
+	}
+	.component NeoAxis.Component_GameMode
+	{
+		Name = Game Mode
+	}
+	.component NeoAxis.Component_Light
+	{
+		Name = Light 1
+		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
+		Type = Directional
+		Brightness = 140000
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 91.429
+	}
+	.component NeoAxis.Component_Light
+	{
+		Name = Light 2
+		Transform = "-16.276133519817 -13.7764744895929 22.8055842838911; -0.800753779408636 -0.218616030310482 0.553641801455134 0.066941554624803; 1 1 1"
+		Type = Spotlight
+		Brightness = 175962.87801
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 91.429
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Ground
+		CanBeSelected = False
+		Transform = "0 0 0; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 100 100
+				UVTilesPerUnit = 0.25 0.25
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Transform
+			{
+				GetByReference = "this:..\\Transform"
+			}
+			.component NeoAxis.Component_CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_Material
+	{
+		Name = My Material
+		PositionOffset
+		{
+			GetByReference = "this:$Shader graph\\$Node Shader 1\\$Shader\\__parameter_ReturnValue"
+		}
+		.component NeoAxis.Component_FlowGraph
+		{
+			Name = Shader graph
+			EditorScrollPosition = -2.8501405094027 -2.71988825789606
+			EditorZoomIndex = 4
+			Specialization
+			{
+				GetByReference = NeoAxis.Component_FlowGraphSpecialization_Shader|Instance
+			}
+			.component NeoAxis.Component_FlowGraphNode
+			{
+				Name = Node My Material
+				Position = 10 -7
+				ControlledObject
+				{
+					GetByReference = "this:..\\.."
+				}
+			}
+			.component NeoAxis.Component_FlowGraphNode
+			{
+				Name = Node Shader Parameter 1
+				Position = -27 -5
+				ControlledObject
+				{
+					GetByReference = "this:$Shader Parameter"
+				}
+				.component NeoAxis.Component_ShaderParameter
+				{
+					Name = Shader Parameter
+					Source
+					{
+						GetByReference = NeoAxis.EngineApp|EngineTime
+					}
+				}
+			}
+			.component NeoAxis.Component_FlowGraphNode
+			{
+				Name = Node Shader 1
+				Position = -9 -8
+				ControlledObject
+				{
+					GetByReference = "this:$Shader"
+				}
+				.component NeoAxis.Component_ShaderScript
+				{
+					Name = Shader
+					Code = "/*!public*/ vec3 MyMethod(vec3 normal, float time)\r\n{\r\n\treturn normal * (0.1 + sin(time) * 0.1);\r\n}\r\n"
+					__parameter_Normal
+					{
+						GetByReference = "this:..\\..\\$Node Invoke Member 1\\$Invoke Member\\__value_Value"
+					}
+					__parameter_Time
+					{
+						GetByReference = "this:..\\..\\$Node Shader Parameter 1\\$Shader Parameter\\Output"
+					}
+				}
+			}
+			.component NeoAxis.Component_FlowGraphNode
+			{
+				Name = Node Invoke Member 1
+				Position = -27 -13
+				ControlledObject
+				{
+					GetByReference = "this:$Invoke Member"
+				}
+				.component NeoAxis.Component_InvokeMember
+				{
+					Name = Invoke Member
+					Member
+					{
+						GetByReference = "NeoAxis.ShaderConstants|property:Normal"
+					}
+					Exit
+					{
+					}
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Mesh In Space
+		Transform = "0.0638147015382553 2.02694041500983 1.52712500057624; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "this:..\\$My Material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Cylinder
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Mesh In Space 2
+		Transform = "4.31136323945172 1.72938003649598 1.55419415491295; 0 0 -0.837965634675132 0.545723002175557; 2.12999997474253 2.12999997474253 2.12999997474253"
+		Mesh
+		{
+			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Drone\\Sci-fi Drone.fbx|$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "this:..\\$My Material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+	}
+}

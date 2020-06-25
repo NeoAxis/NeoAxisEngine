@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)\$(LangName)\General.xaml;">
+      <Context>Project</Context>
+    </PropertyPageSchema>
+
+    <PropertyPageSchema Condition=" '$(Platform)' != 'ARM' and '$(Platform)' != 'AnyCPU' "
+                      Include="$(MSBuildThisFileDirectory)\$(LangName)\DebuggerWindowsPhoneEmulator.xaml;">
+      <Context>Project</Context>
+    </PropertyPageSchema>
+
+    <PropertyPageSchema Condition=" '$(Platform)' == 'AnyCPU' "
+                       Include="$(MSBuildThisFileDirectory)\$(LangName)\DebuggerDevice.xaml;
+                                $(MSBuildThisFileDirectory)\$(LangName)\DebuggerWindowsPhoneEmulator.xaml;">
+      <Context>Project</Context>
+    </PropertyPageSchema>
+
+    <PropertyPageSchema Condition=" '$(Platform)' == 'ARM' "
+                        Include="$(MSBuildThisFileDirectory)\$(LangName)\DebuggerDevice.xaml;">
+      <Context>Project</Context>
+    </PropertyPageSchema>
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectCapability Include="JavaScriptWindowsPhoneProject;WindowsAppContainer;JavaScriptWindowsAppContainerProject;WinRTReferences" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <RealOSVersion>6.3</RealOSVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ProjectUISubcaption Condition=" '$(TargetPlatformVersion)' != ''">Windows Phone $(TargetPlatformVersion)</ProjectUISubcaption>
+  </PropertyGroup>
+
+</Project>

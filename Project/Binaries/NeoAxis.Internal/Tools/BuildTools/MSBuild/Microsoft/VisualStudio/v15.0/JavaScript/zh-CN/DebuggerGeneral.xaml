@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="DebuggerGeneralProperties" DisplayName="调试器常规属性" Description="常规调试器选项" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.DataSource>
+    <DataSource Persistence="UserFile"/>
+  </Rule.DataSource>
+
+  <StringProperty Name="DebuggerFlavor" Visible="false"/>
+
+  <EnumProperty Name="ImageClrType" Visible="false">
+    <EnumValue Name="Native"/>
+    <EnumValue Name="Mixed"/>
+    <EnumValue Name="Managed"/>
+
+    <EnumProperty.DataSource>
+      <DataSource Persistence="UserFile" HasConfigurationCondition="false" PersistedName="_TargetImageClrType"/>
+    </EnumProperty.DataSource>
+  </EnumProperty>
+</Rule>

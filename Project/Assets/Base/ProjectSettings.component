@@ -1,0 +1,41 @@
+.component NeoAxis.Component_ProjectSettings
+{
+	Name = All
+	
+	.component NeoAxis.Component_ProjectSettings_PageBasic
+	{
+		Name = General
+	}
+	.component NeoAxis.Component_ProjectSettings_PageBasic
+	{
+		Name = Scene Editor
+	}
+	.component NeoAxis.Component_ProjectSettings_PageBasic
+	{
+		Name = UI Editor
+	}
+	.component NeoAxis.Component_ProjectSettings_PageBasic
+	{
+		Name = C# Editor
+	}
+	.component NeoAxis.Component_ProjectSettings_PageBasic
+	{
+		Name = Shader Editor
+	}
+	.component NeoAxis.Component_ProjectSettings_PageBasic
+	{
+		Name = Text Editor
+	}
+	.component NeoAxis.Component_ProjectSettings_PageBasic
+	{
+		Name = Ribbon and Toolbar
+	}
+	.component NeoAxis.Component_ProjectSettings_PageBasic
+	{
+		Name = Shortcuts
+	}
+	.component NeoAxis.Component_ProjectSettings_PageBasic
+	{
+		Name = Custom Splash Screen
+	}
+}

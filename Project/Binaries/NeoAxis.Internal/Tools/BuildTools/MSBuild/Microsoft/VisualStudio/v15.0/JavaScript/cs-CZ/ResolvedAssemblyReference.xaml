@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="ResolvedAssemblyReference" DisplayName="Vyřešené odkazy sestavení" PageTemplate="generic" Description="Vyřešený odkaz" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="Obecné"/>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ResolvedReference" ItemType="Reference" HasConfigurationCondition="false" SourceType="TargetResults" MSBuildTarget="ResolveAssemblyReferencesDesignTime"/>
+  </Rule.DataSource>
+
+  <StringProperty Name="OriginalItemSpec" ReadOnly="true" DisplayName="Identita" Category="General" F1Keyword="javascript.project.property.reference.identity" Description="Identita odkazu">
+  </StringProperty>
+
+  <StringProperty Name="ResolvedPath" ReadOnly="true" DisplayName="Cesta" Category="General" F1Keyword="javascript.project.property.reference.resolvedpath" Description="Umístění odkazovaného souboru">
+
+    <StringProperty.DataSource>
+      <DataSource PersistedName="Identity"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="RuntimeVersion" ReadOnly="true" Visible="false">
+  </StringProperty>
+
+<BoolProperty Name="SpecificVersion" DisplayName="Specifická verze" Category="General" F1Keyword="javascript.project.property.reference.specificversion" Description="Určuje, zda toto sestavení může být vyřešeno bez ohledu na pravidla cílení na více verzí pro vyřešení sestavení.">
+   
+    <BoolProperty.DataSource>
+      <DataSource Persistence="ProjectFile" ItemType="Reference" HasConfigurationCondition="false"/>
+    </BoolProperty.DataSource>
+  </BoolProperty>
+
+  <StringProperty Name="Version" ReadOnly="true" DisplayName="Verze" Category="General" F1Keyword="javascript.project.property.reference.version" Description="Verze odkazu"/>
+
+  <BoolProperty Name="StrongName" ReadOnly="true" Visible="false"/>
+
+  <!-- This is the metadata we store on the reference item when we add it. -->
+  <BoolProperty Name="IsWinMDFile" Visible="false"/>
+
+  <!-- These are metadata added to the resolved item by MSBuild that we don't show to the user but use internally. -->
+  <BoolProperty Name="WinMDFile" Visible="false" ReadOnly="true"/>
+  <StringProperty Name="Name" Visible="false" ReadOnly="True"/>
+
+  <StringProperty Name="ResolvedFrom" Visible="false" ReadOnly="true"/>
+
+  <StringProperty Name="ReferenceFromSDK" Visible="false" ReadOnly="true"/>
+
+  <StringProperty Name="FusionName" Visible="false" ReadOnly="true"/>
+  <StringProperty Name="RequiredTargetFramework" Visible="false"/>
+  <StringProperty Name="HintPath" Visible="false"/>
+  <StringProperty Name="SDKIdentity" Visible="false"/>
+  <StringProperty Name="FrameworkFile" Visible="false" ReadOnly="true"/>
+</Rule>

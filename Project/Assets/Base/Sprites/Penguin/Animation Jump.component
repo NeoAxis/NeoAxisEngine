@@ -1,0 +1,188 @@
+.component NeoAxis.Component_SpriteAnimation
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1180, 842\"><KW V=\"1\" A=\"D8078052F43943E052A03BD4189AD6AC\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"962C665ED75D494619A701EB61268C50\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"D8078052F43943E052A03BD4189AD6AC\"><KP UN=\"B7E653A14921431992A8AD721DD1C670\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"D8078052F43943E052A03BD4189AD6AC\" S=\"False\"><CPD ObjPath=\"$Frame 1\\$Material\\$Shader graph\" /></KP><KP UN=\"53F43E3B9924481EEE8AE5CBBB7D076E\" S=\"False\"><CPD ObjPath=\"$Frame 2\\$Material\\$Shader graph\" /></KP><KP UN=\"BAD314BB5D114AF16BB77A2AF7E0FE16\" S=\"False\"><CPD ObjPath=\"$Frame 3\\$Material\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	Length = 0.75
+	.component NeoAxis.Component_SpriteAnimationFrame
+	{
+		Name = Frame 1
+		TimeInterval = 0 0.25
+		Material
+		{
+			GetByReference = "root:$Frame 1\\$Material"
+		}
+		.component NeoAxis.Component_Material
+		{
+			Name = Material
+			BlendMode = Transparent
+			TwoSided = True
+			ShadingModel = Unlit
+			BaseColor
+			{
+				GetByReference = "this:$Shader graph\\$Node Texture Sample 1\\$Texture Sample\\RGBA"
+			}
+			Opacity
+			{
+				GetByReference = "this:$Shader graph\\$Node Texture Sample 1\\$Texture Sample\\A"
+			}
+			.component NeoAxis.Component_FlowGraph
+			{
+				Name = Shader graph
+				EditorScrollPosition = 0 0
+				Specialization
+				{
+					GetByReference = NeoAxis.Component_FlowGraphSpecialization_Shader|Instance
+				}
+				.component NeoAxis.Component_FlowGraphNode
+				{
+					Name = Node Material
+					Position = 10 -7
+					ControlledObject
+					{
+						GetByReference = "this:..\\.."
+					}
+				}
+				.component NeoAxis.Component_FlowGraphNode
+				{
+					Name = Node Texture Sample 1
+					Position = -16 -9
+					ControlledObject
+					{
+						GetByReference = "this:$Texture Sample"
+					}
+					.component NeoAxis.Component_ShaderTextureSample
+					{
+						Name = Texture Sample
+						Location2 = 0 0
+						Location3 = 0 0 0
+						Texture
+						{
+							GetByReference = "Base\\Sprites\\Penguin\\penguin_jump01.png"
+						}
+					}
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_SpriteAnimationFrame
+	{
+		Name = Frame 2
+		TimeInterval = 0.25 0.5
+		Material
+		{
+			GetByReference = "root:$Frame 2\\$Material"
+		}
+		.component NeoAxis.Component_Material
+		{
+			Name = Material
+			BlendMode = Transparent
+			TwoSided = True
+			ShadingModel = Unlit
+			BaseColor
+			{
+				GetByReference = "this:$Shader graph\\$Node Texture Sample 1\\$Texture Sample\\RGBA"
+			}
+			Opacity
+			{
+				GetByReference = "this:$Shader graph\\$Node Texture Sample 1\\$Texture Sample\\A"
+			}
+			.component NeoAxis.Component_FlowGraph
+			{
+				Name = Shader graph
+				EditorScrollPosition = 0 0
+				Specialization
+				{
+					GetByReference = NeoAxis.Component_FlowGraphSpecialization_Shader|Instance
+				}
+				.component NeoAxis.Component_FlowGraphNode
+				{
+					Name = Node Material
+					Position = 10 -7
+					ControlledObject
+					{
+						GetByReference = "this:..\\.."
+					}
+				}
+				.component NeoAxis.Component_FlowGraphNode
+				{
+					Name = Node Texture Sample 1
+					Position = -16 -9
+					ControlledObject
+					{
+						GetByReference = "this:$Texture Sample"
+					}
+					.component NeoAxis.Component_ShaderTextureSample
+					{
+						Name = Texture Sample
+						Location2 = 0 0
+						Location3 = 0 0 0
+						Texture
+						{
+							GetByReference = "Base\\Sprites\\Penguin\\penguin_jump02.png"
+						}
+					}
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_SpriteAnimationFrame
+	{
+		Name = Frame 3
+		TimeInterval = 0.5 0.75
+		Material
+		{
+			GetByReference = "root:$Frame 2\\$Material"
+		}
+		.component NeoAxis.Component_Material
+		{
+			Name = Material
+			BlendMode = Transparent
+			TwoSided = True
+			ShadingModel = Unlit
+			BaseColor
+			{
+				GetByReference = "this:$Shader graph\\$Node Texture Sample 1\\$Texture Sample\\RGBA"
+			}
+			Opacity
+			{
+				GetByReference = "this:$Shader graph\\$Node Texture Sample 1\\$Texture Sample\\A"
+			}
+			.component NeoAxis.Component_FlowGraph
+			{
+				Name = Shader graph
+				EditorScrollPosition = 0 0
+				Specialization
+				{
+					GetByReference = NeoAxis.Component_FlowGraphSpecialization_Shader|Instance
+				}
+				.component NeoAxis.Component_FlowGraphNode
+				{
+					Name = Node Material
+					Position = 10 -7
+					ControlledObject
+					{
+						GetByReference = "this:..\\.."
+					}
+				}
+				.component NeoAxis.Component_FlowGraphNode
+				{
+					Name = Node Texture Sample 1
+					Position = -16 -9
+					ControlledObject
+					{
+						GetByReference = "this:$Texture Sample"
+					}
+					.component NeoAxis.Component_ShaderTextureSample
+					{
+						Name = Texture Sample
+						Location2 = 0 0
+						Location3 = 0 0 0
+						Texture
+						{
+							GetByReference = "Base\\Sprites\\Penguin\\penguin_jump03.png"
+						}
+					}
+				}
+			}
+		}
+	}
+}

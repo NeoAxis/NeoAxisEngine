@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="ResolvedSdkReferenceProps" DisplayName="Vyřešené odkazy sady SDK" PageTemplate="generic" Description="Vyřešené odkazy sady SDK" PropertyPagesHidden="true" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="Obecné"/>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ResolvedSdkReferenceProps" ItemType="SDKReference"/>
+  </Rule.DataSource>
+
+  <StringProperty Name="OriginalItemSpec" ReadOnly="true" DisplayName="Identita sady SDK" Category="General" F1Keyword="javascript.project.property.reference.identity" Description="Identita odkazu">
+  </StringProperty>
+
+  <StringProperty Name="ResolvedPath" ReadOnly="true" DisplayName="Cesta" Category="General" F1Keyword="javascript.project.property.reference.resolvedpath" Description="Umístění odkazovaného souboru">
+  </StringProperty>
+
+  <StringProperty Name="AppXLocation" DisplayName="Balíček aplikace" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.reference.package" Description="Balíček aplikace přidružený k tomuto odkazu sady SDK pro aktivní konfiguraci"/>
+
+  <StringProperty Name="Version" ReadOnly="true" DisplayName="Verze balíčku aplikace" Category="General" F1Keyword="javascript.project.property.reference.version" Description="Verze odkazu"/>
+
+  <!-- This property should be the same as the one for the ResolvedReference item -->
+  <StringProperty Name="FrameworkIdentity" Visible="false"/>
+  <StringProperty Name="DisplayName" Visible="false"/>
+  <StringProperty Name="CopyContentToSubDirectory" Visible="false"/>
+  <BoolProperty Name="CopyPayload" Visible="false"/>
+  <BoolProperty Name="ExpandContent" Visible="false"/>
+  <BoolProperty Name="ExpandReferenceAssemblies" Visible="false"/>
+  <BoolProperty Name="CopyLocalExpandedReferenceAssemblies" Visible="false"/>
+
+</Rule>

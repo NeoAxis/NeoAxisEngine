@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="WindowsPhoneEmulatorDebugger" DisplayName="에뮬레이터" PageTemplate="debugger" Order="100" Description="Windows Phone 에뮬레이터 디버거 옵션" xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+    <Rule.Metadata>
+        <sys:Guid x:Key="DebugTargetTypeCommandGuid">FEEA6E9D-77D8-423F-9EDE-3970CBB76125</sys:Guid>
+        <sys:UInt32 x:Key="DebugTargetTypeCommandId">0x500</sys:UInt32>
+        <sys:String x:Key="DebugTargetDropdownEnum">WindowsPhoneEmulatorID</sys:String>
+    </Rule.Metadata>
+
+    <Rule.DataSource>
+        <DataSource Persistence="UserFile"/>
+    </Rule.DataSource>
+
+    <Rule.Categories>
+        <Category Name="StartOptions" DisplayName="시작 옵션" Description="시작 옵션"/>
+    </Rule.Categories>
+    <DynamicEnumProperty Name="WindowsPhoneEmulatorID" DisplayName="디버그 대상" EnumProvider="JavaScriptWindowsPhoneEmulators" Description="디버깅에 사용할 에뮬레이터를 지정합니다. 설치된 에뮬레이터가 없을 경우 디버그 대상 드롭다운에서 '에뮬레이터 8.1 다운로드...'를 사용하십시오." F1Keyword="javascript.project.property.debugging.debuggertarget"/>
+    <BoolProperty Name="LaunchApplication" DisplayName="응용 프로그램 시작" Category="StartOptions" F1Keyword="javascript.project.property.debugging.launchapplication" Description="응용 프로그램을 즉시 시작할지 아니면 실행 시작 시 응용 프로그램을 디버그하도록 대기할지를 지정합니다."/>
+
+    <EnumProperty Name="DebuggerType" DisplayName="디버거 형식" Category="StartOptions" F1Keyword="javascript.project.property.debugging.debuggertype" Description="사용하도록 설정할 디버거를 지정합니다. [혼합]으로 설정하는 경우 관리 코드와 네이티브 코드 둘 다에 대해 디버거가 사용됩니다.">
+        <EnumValue Name="NativeOnly" DisplayName="네이티브 전용" Description="네이티브 전용"/>
+        <EnumValue Name="ManagedOnly" DisplayName="관리 전용" Description="관리 전용"/>
+        <EnumValue Name="Script" DisplayName="스크립트만" Description="스크립트만"/>
+        <EnumValue Name="Mixed" DisplayName="혼합(관리/네이티브)" Description="혼합(관리/네이티브)"/>
+        <EnumProperty.Metadata>
+            <NameValuePair Name="IsDebugType" Value="true"/>
+        </EnumProperty.Metadata>
+    </EnumProperty>
+
+    <StringProperty Name="CommandLineArgs" DisplayName="명령줄 인수" Category="StartOptions" F1Keyword="javascript.project.property.debugging.commandlineargs" Description="UWP 앱 시작 시 전달되는 명령줄 인수를 지정하도록 허용">
+    </StringProperty>
+
+    <StringProperty Name="RealOsVersion" Visible="false">
+        <StringProperty.DataSource>
+            <DataSource Persistence="ProjectFile" Label="Configuration" HasConfigurationCondition="false"/>
+        </StringProperty.DataSource>
+    </StringProperty>
+</Rule>

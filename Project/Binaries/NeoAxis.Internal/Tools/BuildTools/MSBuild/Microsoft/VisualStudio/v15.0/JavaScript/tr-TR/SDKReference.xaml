@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="SdkReference" DisplayName="SDK Başvurusu" PageTemplate="generic" Description="SDK başvurusu özellikleri" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="Genel"/>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ProjectFile" ItemType="SDKReference" HasConfigurationCondition="false"/>
+  </Rule.DataSource>
+
+  <EnumProperty Name="FileType" ReadOnly="true" Visible="true" DisplayName="Dosya Türü" Category="General" F1Keyword="javascript.project.property.reference.filetype" Description="Başvurunun dosya türü.">
+
+    <EnumValue Name="SDK" DisplayName="SDK"/>
+  </EnumProperty>
+
+  <StringProperty Name="Identity" ReadOnly="true" DisplayName="Kimlik" Category="General" F1Keyword="javascript.project.property.reference.identity" Description="Başvurulan bütünleştirilmiş kodun güvenlik kimliği.">
+
+    <StringProperty.DataSource>
+      <DataSource PersistedName="{}{Identity}"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="ResolvedPath" ReadOnly="true" DisplayName="Yol" Category="General" F1Keyword="javascript.project.property.reference.resolvedpath" Description="Başvurulan dosyanın konumu.">
+
+    <StringProperty.DataSource>
+      <DataSource PersistedName="Identity"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="AppXLocation" DisplayName="Uygulama Paketi" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.reference.package" Description="Etkin yapılandırma için bu SDK başvurusuyla ilişkilendirilmiş uygulama paketi."/>
+
+  <StringProperty Name="Version" ReadOnly="true" DisplayName="Sürüm" Category="General" F1Keyword="javascript.project.property.reference.version" Description="Başvurunun sürümü."/>
+
+  <!-- This property should be the same as the one for the ResolvedReference item -->
+  <StringProperty Name="OriginalItemSpec" Visible="false"/>
+  <StringProperty Name="FrameworkIdentity" Visible="false"/>
+  <BoolProperty Name="CopyPayload" Visible="false"/>
+  <BoolProperty Name="ExpandContent" Visible="false"/>
+  <BoolProperty Name="ExpandReferenceAssemblies" Visible="false"/>
+  <BoolProperty Name="CopyLocalExpandedReferenceAssemblies" Visible="false"/>
+</Rule>

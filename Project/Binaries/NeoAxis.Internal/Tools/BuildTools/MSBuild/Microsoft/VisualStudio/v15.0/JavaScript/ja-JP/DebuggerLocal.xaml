@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="AppHostLocalDebugger" DisplayName="ローカル コンピューター" PageTemplate="debugger" Order="100" Description="ローカル デバッガー オプション" xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Metadata>
+    <sys:Guid x:Key="DebugTargetTypeCommandGuid">FEEA6E9D-77D8-423F-9EDE-3970CBB76125</sys:Guid>
+    <sys:UInt32 x:Key="DebugTargetTypeCommandId">0x200</sys:UInt32>
+  </Rule.Metadata>
+
+  <Rule.DataSource>
+    <DataSource Persistence="UserFile"/>
+  </Rule.DataSource>
+
+  <Rule.Categories>
+    <Category Name="StartOptions" DisplayName="開始オプション" Description="開始オプション"/>
+  </Rule.Categories>
+
+  <BoolProperty Name="LaunchApplication" DisplayName="アプリケーションの起動" Category="StartOptions" F1Keyword="javascript.project.property.debugging.launchapplication" Description="アプリケーションをすぐに起動するか、アプリケーションの実行が開始されたときにデバッグを待つかを指定します。"/>
+
+  <BoolProperty Name="AllowLocalNetworkLoopback" DisplayName="ローカル ネットワーク ループバックの許可" Category="StartOptions" F1Keyword="javascript.project.property.debugging.allowlocalnetworkloopback" Description="Windows ストア アプリをデバッグする際に、ローカル サービスの使用、ネットワーク トラフィックのデバッグ、およびローカル ループバックの使用 (同一コンピューター上のコンポーネントとの通信用) を許可します。"/>
+
+  <EnumProperty Name="DebuggerType" DisplayName="デバッガーの種類" Category="StartOptions" F1Keyword="javascript.project.property.debugging.debuggertype" Description="有効にするデバッガーを指定します。[混合] に設定された場合、マネージド コードとネイティブ コードの両方のデバッガーが使用されます。">
+    <EnumValue Name="NativeOnly" DisplayName="ネイティブのみ" Description="ネイティブのみ"/>
+    <EnumValue Name="ManagedOnly" DisplayName="マネージドのみ" Description="マネージドのみ"/>
+    <EnumValue Name="Script" DisplayName="スクリプトのみ" Description="スクリプトのみ"/>
+    <EnumValue Name="Mixed" DisplayName="混合 (マネージドとネイティブ)" Description="混合 (マネージドとネイティブ)"/>
+    <EnumProperty.Metadata>
+      <NameValuePair Name="IsDebugType" Value="true"/>
+    </EnumProperty.Metadata>
+  </EnumProperty>
+
+  <StringProperty Name="CommandLineArgs" DisplayName="コマンド ライン引数" Category="StartOptions" F1Keyword="javascript.project.property.debugging.commandlineargs" Description="UWP アプリの起動に渡されるコマンド ライン引数を指定できるようにします">
+  </StringProperty>
+</Rule>

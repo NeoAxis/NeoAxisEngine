@@ -1,0 +1,16 @@
+.component NeoAxis.Component_Font
+{
+	SizeMultiplier = 0.9 0.9
+	DrawOffsetY = -0.2
+	CharacterRanges
+	{
+		Value
+		{
+			Count = 4
+			0 = 32 127
+			1 = 160 191
+			2 = 1025 1025
+			3 = 1040 1105
+		}
+	}
+}

@@ -1,0 +1,13 @@
+.component NeoAxis.UIControl
+{
+	Size = Parent 1 1
+	EditorScrollPosition = 0 0
+	.component NeoAxis.UIWebBrowser
+	{
+		Name = Web Browser
+		Size = Units 1600 900
+		HorizontalAlignment = Center
+		VerticalAlignment = Center
+		EditorScrollPosition = 0 0
+	}
+}

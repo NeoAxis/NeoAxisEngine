@@ -1,0 +1,9 @@
+.component NeoAxis.Component_Mesh
+{
+	.component NeoAxis.Component_MeshGeometry_Sphere
+	{
+		Name = MeshGeometry Sphere
+		SegmentsHorizontal = 64
+		SegmentsVertical = 64
+	}
+}

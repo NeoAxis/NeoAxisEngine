@@ -1,0 +1,14 @@
+.component NeoAxis.Component_Font
+{
+	CharacterRanges
+	{
+		Value
+		{
+			Count = 4
+			0 = 32 127
+			1 = 160 191			
+			2 = 1025 1025
+			3 = 1040 1105
+		}
+	}
+}

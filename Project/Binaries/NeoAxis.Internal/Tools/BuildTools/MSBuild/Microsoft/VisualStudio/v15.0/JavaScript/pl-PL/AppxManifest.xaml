@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="AppxManifest" DisplayName="Właściwości manifestu aplikacji" PageTemplate="generic" Description="Właściwości manifestu aplikacji" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="Ogólne"/>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ProjectFile" HasConfigurationCondition="false" ItemType="AppxManifest"/>
+  </Rule.DataSource>
+
+  <EnumProperty Name="{}{ItemType}" DisplayName="Akcja pakietu" Category="General" F1Keyword="javascript.project.property.packageaction" Description="Określa akcję podejmowaną w odniesieniu do tego pliku, gdy jest tworzony pakiet aplikacji.">
+    <EnumValue Name="None" DisplayName="Brak"/>
+    <EnumValue Name="Content" DisplayName="Zawartość"/>
+    <EnumValue Name="AppxManifest" DisplayName="Manifest aplikacji"/>
+    <EnumValue Name="PackageLayout" DisplayName="Układ pakietu"/>
+    <EnumValue Name="PRIResource" DisplayName="Zasób"/>
+
+    <EnumProperty.DataSource>
+      <DataSource Persistence="ProjectFile" Label="Configuration" SourceType="Item" ItemType="AppxManifest" HasConfigurationCondition="false"/>
+    </EnumProperty.DataSource>
+  </EnumProperty>
+
+  <EnumProperty Name="CopyToOutputDirectory" DisplayName="Kopiuj do katalogu wyjściowego" Category="General" F1Keyword="javascript.project.property.copytooutputdirectory" Description="Określa, czy plik powinien zostać skopiowany do folderu wyjściowego.">
+    <EnumValue Name="Never" DisplayName="Nie kopiuj"/>
+    <EnumValue Name="Always" DisplayName="Zawsze kopiuj"/>
+    <EnumValue Name="PreserveNewest" DisplayName="Kopiuj, jeśli nowszy"/>
+  </EnumProperty>
+
+  <StringProperty Name="Identity" Visible="false" ReadOnly="true" Category="General" Description="Element wskazany w atrybucie Include.">
+    <StringProperty.DataSource>
+      <DataSource Persistence="Intrinsic" ItemType="AppxManifest" PersistedName="Identity"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="FullPath" DisplayName="Pełna ścieżka" ReadOnly="true" Category="General" F1Keyword="javascript.project.property.fullpath" Description="Lokalizacja pliku.">
+    <StringProperty.DataSource>
+      <DataSource Persistence="Intrinsic" ItemType="AppxManifest" PersistedName="FullPath"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="FileNameAndExtension" DisplayName="Nazwa pliku" ReadOnly="true" Category="General" F1Keyword="javascript.project.property.filename" Description="Nazwa pliku lub folderu.">
+    <StringProperty.DataSource>
+      <DataSource Persistence="Intrinsic" ItemType="AppxManifest" PersistedName="FileNameAndExtension"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <BoolProperty Name="Visible" Visible="false"/>
+  <StringProperty Name="DependentUpon" Visible="false"/>
+  <StringProperty Name="Link" Visible="false"/>
+  <EnumProperty Name="SubType" Visible="false">
+    <EnumValue Name="Designer"/>
+  </EnumProperty>
+</Rule>

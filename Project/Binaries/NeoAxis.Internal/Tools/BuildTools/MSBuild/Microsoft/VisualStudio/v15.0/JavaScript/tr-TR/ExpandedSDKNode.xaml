@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="ExpandedSdkNode" DisplayName="Genişletilmiş SDK Düğümü" PageTemplate="generic" Description="Başvurulan bir SDK'dan içerik dosyası" PropertyPagesHidden="true" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="Genel"/>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ExpandedSdkNode" ItemType="ExpandedSdkNode"/>
+  </Rule.DataSource>
+
+  <StringProperty Name="FileName" DisplayName="Dosya Adı" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.expandedsdknode.filename" Description="Dosya veya klasörün adı."/>
+
+  <StringProperty Name="PackageVersion" DisplayName="Uygulama Paketi Sürümü" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.expandedsdknode.packageversion" Description="Uygulama paketinin sürümü."/>
+
+  <StringProperty Name="FilePath" DisplayName="Dosya Yolu" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.expandedsdknode.filepath" Description="Diskteki dosya yolu."/>
+
+  <StringProperty Name="URI" DisplayName="URI" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.expandedsdknode.uri" Description="Bu dosyayı yüklerken kullanılabilecek URI."/>
+</Rule>

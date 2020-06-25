@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule
+  Name="DebuggerGeneralProperties"
+  DisplayName="Debugger General Properties"
+  Description="General Debugger options"
+  xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.DataSource>
+    <DataSource Persistence="UserFile" />
+  </Rule.DataSource>
+
+  <StringProperty Name="DebuggerFlavor" Visible="false" />
+
+  <EnumProperty Name="ImageClrType" Visible="false">
+    <EnumValue Name="Native" />
+    <EnumValue Name="Mixed" />
+    <EnumValue Name="Managed" />
+
+    <EnumProperty.DataSource>
+      <DataSource Persistence="UserFile" HasConfigurationCondition="false" PersistedName="_TargetImageClrType" />
+    </EnumProperty.DataSource>
+  </EnumProperty>
+</Rule>

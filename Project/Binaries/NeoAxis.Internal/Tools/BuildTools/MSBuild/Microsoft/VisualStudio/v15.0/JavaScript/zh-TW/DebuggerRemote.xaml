@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="AppHostRemoteDebugger" DisplayName="遠端電腦" PageTemplate="debugger" Order="300" Description="遠端偵錯工具選項" xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Metadata>
+    <sys:Guid x:Key="DebugTargetTypeCommandGuid">FEEA6E9D-77D8-423F-9EDE-3970CBB76125</sys:Guid>
+    <sys:UInt32 x:Key="DebugTargetTypeCommandId">0x400</sys:UInt32>
+  </Rule.Metadata>
+
+  <Rule.DataSource>
+    <DataSource Persistence="UserFile"/>
+  </Rule.DataSource>
+
+  <Rule.Categories>
+    <Category Name="StartOptions" DisplayName="起始選項" Description="起始選項"/>
+    <Category Name="RemoteOptions" DisplayName="遠端選項" Description="遠端選項"/>
+  </Rule.Categories>
+
+  <BoolProperty Name="LaunchApplication" DisplayName="啟動應用程式" Category="StartOptions" F1Keyword="javascript.project.property.debugging.launchapplication" Description="指定是否立即啟動應用程式，或是等到開始執行時再偵錯。"/>
+
+  <BoolProperty Name="AllowLocalNetworkLoopback" DisplayName="允許區域網路回送" Category="StartOptions" F1Keyword="javascript.project.property.debugging.allowlocalnetworkloopback" Description="在偵錯 Windows 市集應用程式時，可讓您使用本機服務、偵錯網路流量，並且使用本機回送，與同一部電腦上的元件進行通訊。"/>
+
+  <EnumProperty Name="DebuggerType" DisplayName="偵錯工具類型" Category="StartOptions" F1Keyword="javascript.project.property.debugging.debuggertype" Description="指定要啟用哪個偵錯工具。設為 [混合] 時，會針對受控碼及機器碼使用偵錯工具。">
+    <EnumValue Name="NativeOnly" DisplayName="僅限機器碼" Description="僅限機器碼"/>
+    <EnumValue Name="ManagedOnly" DisplayName="僅限受控" Description="僅限受控"/>
+    <EnumValue Name="Script" DisplayName="僅限指令碼" Description="僅限指令碼"/>
+    <EnumValue Name="Mixed" DisplayName="混合 (受控碼和機器碼)" Description="混合 (受控碼和機器碼)"/>
+    <EnumProperty.Metadata>
+      <NameValuePair Name="IsDebugType" Value="true"/>
+    </EnumProperty.Metadata>
+  </EnumProperty>
+
+  <StringProperty Name="CommandLineArgs" DisplayName="命令列的引數" Category="StartOptions" F1Keyword="javascript.project.property.debugging.commandlineargs" Description="允許傳遞給 UWP app 啟動的命令列引數規格">
+  </StringProperty>
+
+  <StringProperty Name="MachineName" DisplayName="電腦名稱" Category="RemoteOptions" F1Keyword="javascript.project.property.debugging.machinename" Description="指定在進行遠端偵錯時要使用的電腦名稱。請使用下拉式清單來尋找附近的電腦。">
+    <StringProperty.ValueEditors>
+      <ValueEditor EditorType="JsRemoteDebuggerOptionsPropertyEditor" DisplayName="&lt;尋找...&gt;">
+        <ValueEditor.Metadata>
+          <NameValuePair Name="AuthenticationPropertyName" Value="RequireAuthentication"/>
+        </ValueEditor.Metadata>
+      </ValueEditor>
+    </StringProperty.ValueEditors>
+  </StringProperty>
+
+  <EnumProperty Name="RequireAuthentication" DisplayName="需要驗證" Category="RemoteOptions" F1Keyword="javascript.project.property.debugging.requireauthentication" Description="指定在遠端裝置上進行偵錯時所需的驗證等級。">
+    <EnumValue Name="false" DisplayName="無" Description="非驗證"/>
+    <EnumValue Name="true" DisplayName="Windows" Description="Windows 驗證"/>
+    <EnumValue Name="Universal" DisplayName="通用 (未加密的通訊協定)" Description="通用驗證"/>
+  </EnumProperty>
+</Rule>

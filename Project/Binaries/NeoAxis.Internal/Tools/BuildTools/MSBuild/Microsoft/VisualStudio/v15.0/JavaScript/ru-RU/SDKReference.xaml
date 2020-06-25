@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="SdkReference" DisplayName="Ссылка SDK" PageTemplate="generic" Description="Свойства ссылки SDK" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="Общие"/>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ProjectFile" ItemType="SDKReference" HasConfigurationCondition="false"/>
+  </Rule.DataSource>
+
+  <EnumProperty Name="FileType" ReadOnly="true" Visible="true" DisplayName="Тип файла" Category="General" F1Keyword="javascript.project.property.reference.filetype" Description="Тип файла ссылки.">
+
+    <EnumValue Name="SDK" DisplayName="SDK"/>
+  </EnumProperty>
+
+  <StringProperty Name="Identity" ReadOnly="true" DisplayName="Идентификатор" Category="General" F1Keyword="javascript.project.property.reference.identity" Description="Идентификатор безопасности сборки, на которую указывает ссылка.">
+
+    <StringProperty.DataSource>
+      <DataSource PersistedName="{}{Identity}"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="ResolvedPath" ReadOnly="true" DisplayName="Путь" Category="General" F1Keyword="javascript.project.property.reference.resolvedpath" Description="Расположение файла, на который указывает ссылка.">
+
+    <StringProperty.DataSource>
+      <DataSource PersistedName="Identity"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="AppXLocation" DisplayName="Пакет приложения" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.reference.package" Description="Пакет приложения, связанный с этой ссылкой на пакет SDK для активной конфигурации."/>
+
+  <StringProperty Name="Version" ReadOnly="true" DisplayName="Версия" Category="General" F1Keyword="javascript.project.property.reference.version" Description="Версия ссылки."/>
+
+  <!-- This property should be the same as the one for the ResolvedReference item -->
+  <StringProperty Name="OriginalItemSpec" Visible="false"/>
+  <StringProperty Name="FrameworkIdentity" Visible="false"/>
+  <BoolProperty Name="CopyPayload" Visible="false"/>
+  <BoolProperty Name="ExpandContent" Visible="false"/>
+  <BoolProperty Name="ExpandReferenceAssemblies" Visible="false"/>
+  <BoolProperty Name="CopyLocalExpandedReferenceAssemblies" Visible="false"/>
+</Rule>

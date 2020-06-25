@@ -1,0 +1,5 @@
+.component NeoAxis.Component_Product_Android
+{
+	ProductName = Full Project
+	SortOrderInEditor = -800
+}

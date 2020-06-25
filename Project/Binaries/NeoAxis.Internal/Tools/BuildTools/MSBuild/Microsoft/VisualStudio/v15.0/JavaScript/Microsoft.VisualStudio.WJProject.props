@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TargetPlatformIdentifier Condition="'$(TargetPlatformIdentifier)' == ''">Windows</TargetPlatformIdentifier>
+    <TargetPlatformVersion Condition="'$(TargetPlatformVersion)' == ''">8.0</TargetPlatformVersion>
+    <WindowsAppContainer>true</WindowsAppContainer>
+    <AppxPackage>true</AppxPackage>
+    <TargetRuntime>AppHost</TargetRuntime>
+    <PlatformTarget Condition="'$(PlatformTarget)' ==''">$(Platform)</PlatformTarget>
+    <DebuggerFlavor Condition=" '$(DebuggerFlavor)' == '' and '$(Platform)' != 'ARM' and '$(Platform)' != 'AnyCPU' and '$(TargetPlatformIdentifier)' == 'WindowsPhoneApp' ">WindowsPhoneEmulatorDebugger</DebuggerFlavor>
+    <DebuggerFlavor Condition=" '$(DebuggerFlavor)' == '' and '$(Platform)' == 'AnyCPU' and '$(TargetPlatformIdentifier)' == 'WindowsPhoneApp'">WindowsPhoneEmulatorDebugger</DebuggerFlavor>
+    <DebuggerFlavor Condition=" '$(DebuggerFlavor)' == '' and '$(Platform)' == 'ARM' and '$(TargetPlatformIdentifier)' == 'WindowsPhoneApp' ">AppHostDeviceDebugger</DebuggerFlavor>
+    <DebuggerFlavor Condition=" '$(DebuggerFlavor)' == '' and '$(Platform)' != 'ARM' and '$(TargetPlatformIdentifier)' != 'WindowsPhoneApp'">AppHostLocalDebugger</DebuggerFlavor>
+    <DebuggerFlavor Condition=" '$(DebuggerFlavor)' == '' and '$(Platform)' == 'ARM' ">AppHostRemoteDebugger</DebuggerFlavor>
+  </PropertyGroup>
+</Project>

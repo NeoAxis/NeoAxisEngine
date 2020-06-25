@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="PackageLayout" DisplayName="패키지 레이아웃 속성" PageTemplate="generic" Description="패키지 레이아웃 속성" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="일반"/>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ProjectFile" HasConfigurationCondition="false" ItemType="PackageLayout"/>
+  </Rule.DataSource>
+
+  <EnumProperty Name="{}{ItemType}" DisplayName="패키지 작업" Category="General" F1Keyword="javascript.project.property.packageaction" Description="앱 패키지를 생성할 때 이 파일에 대해 수행할 작업을 지정합니다.">
+    <EnumValue Name="None" DisplayName="없음"/>
+    <EnumValue Name="Content" DisplayName="내용"/>
+    <EnumValue Name="AppxManifest" DisplayName="앱 매니페스트"/>
+    <EnumValue Name="PackageLayout" DisplayName="패키지 레이아웃"/>
+    <EnumValue Name="PRIResource" DisplayName="리소스"/>
+
+    <EnumProperty.DataSource>
+      <DataSource Persistence="ProjectFile" Label="Configuration" SourceType="Item" ItemType="PackageLayout" HasConfigurationCondition="false"/>
+    </EnumProperty.DataSource>
+  </EnumProperty>
+
+  <EnumProperty Name="CopyToOutputDirectory" DisplayName="출력 디렉터리에 복사" Category="General" F1Keyword="javascript.project.property.copytooutputdirectory" Description="파일을 출력 폴더에 복사할지를 지정합니다.">
+    <EnumValue Name="Never" DisplayName="복사 안 함"/>
+    <EnumValue Name="Always" DisplayName="항상 복사"/>
+    <EnumValue Name="PreserveNewest" DisplayName="새 버전이면 복사"/>
+  </EnumProperty>
+
+  <StringProperty Name="Identity" Visible="false" ReadOnly="true" Category="General" Description="Include 특성에 지정된 항목입니다.">
+    <StringProperty.DataSource>
+      <DataSource Persistence="Intrinsic" ItemType="PackageLayout" PersistedName="Identity"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="FullPath" DisplayName="전체 경로" ReadOnly="true" Category="General" F1Keyword="javascript.project.property.fullpath" Description="파일의 위치입니다.">
+    <StringProperty.DataSource>
+      <DataSource Persistence="Intrinsic" ItemType="PackageLayout" PersistedName="FullPath"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="FileNameAndExtension" DisplayName="파일 이름" ReadOnly="true" Category="General" F1Keyword="javascript.project.property.filename" Description="파일 또는 폴더의 이름입니다.">
+    <StringProperty.DataSource>
+      <DataSource Persistence="Intrinsic" ItemType="PackageLayout" PersistedName="FileNameAndExtension"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <BoolProperty Name="Visible" Visible="false"/>
+  <StringProperty Name="DependentUpon" Visible="false"/>
+  <StringProperty Name="Link" Visible="false"/>
+  <EnumProperty Name="SubType" Visible="false">
+    <EnumValue Name="Designer"/>
+  </EnumProperty>
+</Rule>

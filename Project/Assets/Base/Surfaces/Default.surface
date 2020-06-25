@@ -1,0 +1,45 @@
+.component NeoAxis.Component_Surface
+{
+	.component NeoAxis.Component_SurfaceGroupOfElements
+	{
+		Name = Group 1
+		MinDistanceBetweenObjects = 0.5
+		PositionZRange = 0.1 0.1
+		.component NeoAxis.Component_SurfaceElement_Mesh
+		{
+			Name = Mesh 1
+			Mesh
+			{
+				GetByReference = "this:$Mesh"
+			}
+			.component NeoAxis.Component_Mesh
+			{
+				Name = Mesh
+				.component NeoAxis.Component_MeshGeometry_Box
+				{
+					Name = Box
+					Dimensions = 0.2 0.2 0.2
+				}
+			}
+		}
+		.component NeoAxis.Component_SurfaceElement_Mesh
+		{
+			Name = Mesh 2
+			Mesh
+			{
+				GetByReference = "this:$Mesh"
+			}
+			.component NeoAxis.Component_Mesh
+			{
+				Name = Mesh
+				.component NeoAxis.Component_MeshGeometry_Cone
+				{
+					Name = Cone
+					Radius = 0.1
+					Height = 0.2
+					Segments = 12
+				}
+			}
+		}
+	}
+}

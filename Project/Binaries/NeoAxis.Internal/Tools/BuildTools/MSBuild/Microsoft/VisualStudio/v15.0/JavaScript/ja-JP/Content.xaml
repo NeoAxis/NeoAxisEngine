@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="Content" DisplayName="ファイルのプロパティ" PageTemplate="generic" Description="ファイルのプロパティ" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="全般"/>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ProjectFile" HasConfigurationCondition="false" ItemType="Content"/>
+  </Rule.DataSource>
+
+  <EnumProperty Name="{}{ItemType}" DisplayName="パッケージ アクション" Category="General" F1Keyword="javascript.project.property.packageaction" Description="アプリケーション パッケージが生成されたときにこのファイルに実行するアクションを指定します。">
+    <EnumValue Name="None" DisplayName="なし"/>
+    <EnumValue Name="Content" DisplayName="コンテンツ"/>
+    <EnumValue Name="AppxManifest" DisplayName="アプリケーション マニフェスト"/>
+    <EnumValue Name="PackageLayout" DisplayName="パッケージ レイアウト"/>
+    <EnumValue Name="PRIResource" DisplayName="リソース"/>
+
+    <EnumProperty.DataSource>
+      <DataSource Persistence="ProjectFile" Label="Configuration" SourceType="Item" ItemType="Content" HasConfigurationCondition="false"/>
+    </EnumProperty.DataSource>
+  </EnumProperty>
+
+  <EnumProperty Name="CopyToOutputDirectory" DisplayName="出力ディレクトリにコピー" Category="General" F1Keyword="javascript.project.property.copytooutputdirectory" Description="ファイルを出力フォルダーにコピーするかどうかを指定します。">
+    <EnumValue Name="Never" DisplayName="コピーしない"/>
+    <EnumValue Name="Always" DisplayName="常にコピーする"/>
+    <EnumValue Name="PreserveNewest" DisplayName="新しい場合はコピーする"/>
+  </EnumProperty>
+
+  <StringProperty Name="Identity" Visible="false" ReadOnly="true" Category="General" Description="Include 属性に指定された項目です。">
+    <StringProperty.DataSource>
+      <DataSource Persistence="Intrinsic" ItemType="Content" PersistedName="Identity"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="FullPath" DisplayName="完全パス" ReadOnly="true" Category="General" F1Keyword="javascript.project.property.fullpath" Description="ファイルの場所です。">
+    <StringProperty.DataSource>
+      <DataSource Persistence="Intrinsic" ItemType="Content" PersistedName="FullPath"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="FileNameAndExtension" DisplayName="ファイル名" ReadOnly="true" Category="General" F1Keyword="javascript.project.property.filename" Description="ファイルまたはフォルダーの名前です。">
+    <StringProperty.DataSource>
+      <DataSource Persistence="Intrinsic" ItemType="Content" PersistedName="FileNameAndExtension"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <BoolProperty Name="Visible" Visible="false"/>
+  <StringProperty Name="DependentUpon" Visible="false"/>
+  <StringProperty Name="Link" Visible="false"/>
+  <EnumProperty Name="SubType" Visible="false">
+    <EnumValue Name="Designer"/>
+  </EnumProperty>
+</Rule>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="AppHostDeviceDebugger" DisplayName="Dispositivo" PageTemplate="debugger" Order="100" Description="Opzioni del debugger del dispositivo Windows Phone" xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+    <Rule.Metadata>
+        <sys:Guid x:Key="DebugTargetTypeCommandGuid">FEEA6E9D-77D8-423F-9EDE-3970CBB76125</sys:Guid>
+        <sys:UInt32 x:Key="DebugTargetTypeCommandId">0x300</sys:UInt32>
+    </Rule.Metadata>
+
+    <Rule.DataSource>
+        <DataSource Persistence="UserFile"/>
+    </Rule.DataSource>
+
+    <Rule.Categories>
+        <Category Name="StartOptions" DisplayName="Opzioni di avvio" Description="Opzioni di avvio"/>
+    </Rule.Categories>
+
+    <BoolProperty Name="LaunchApplication" DisplayName="Avvia applicazione" Category="StartOptions" F1Keyword="javascript.project.property.debugging.launchapplication" Description="Specifica se avviare l'applicazione immediatamente o attendere il debug dell'applicazione all'avvio dell'esecuzione."/>
+
+    <EnumProperty Name="DebuggerType" DisplayName="Tipo di debugger" Category="StartOptions" F1Keyword="javascript.project.property.debugging.debuggertype" Description="Specifica quale debugger abilitare. Se è impostato su Misto, vengono usati i debugger sia per il codice gestito che per quello nativo.">
+        <EnumValue Name="NativeOnly" DisplayName="Solo nativo" Description="Solo nativo"/>
+        <EnumValue Name="ManagedOnly" DisplayName="Solo gestito" Description="Solo gestito"/>
+        <EnumValue Name="Script" DisplayName="Solo script" Description="Solo script"/>        
+        <EnumValue Name="Mixed" DisplayName="Misto (gestito e nativo)" Description="Misto (gestito e nativo)"/>
+        <EnumProperty.Metadata>
+            <NameValuePair Name="IsDebugType" Value="true"/>
+        </EnumProperty.Metadata>
+    </EnumProperty>
+
+  <StringProperty Name="CommandLineArgs" DisplayName="Argomenti della riga di comando" Category="StartOptions" F1Keyword="javascript.project.property.debugging.commandlineargs" Description="Consente di specificare gli argomenti della riga di comando passati all'avvio dell'app per la piattaforma UWP">
+  </StringProperty>
+</Rule>

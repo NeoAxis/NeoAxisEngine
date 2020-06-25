@@ -1,0 +1,26 @@
+.component Project.SplashScreen
+{
+	Size = Parent 1 1
+	.component NeoAxis.UIImage
+	{
+		Name = PoweredBy
+		Size = Units 800 300
+		HorizontalAlignment = Center
+		VerticalAlignment = Center
+		SourceImage
+		{
+			GetByReference = "Base\\UI\\Images\\PoweredBy.png"
+		}
+	}
+	.component NeoAxis.UIImage
+	{
+		Name = Project
+		Size = Units 800 300
+		HorizontalAlignment = Center
+		VerticalAlignment = Center
+		SourceImage
+		{
+			GetByReference = "Base\\UI\\Images\\Project.png"
+		}
+	}
+}

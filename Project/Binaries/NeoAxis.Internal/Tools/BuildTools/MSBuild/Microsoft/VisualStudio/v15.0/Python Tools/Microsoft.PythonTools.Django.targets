@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+Python Tools for Visual Studio
+Copyright(c) Microsoft Corporation
+All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the License); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at http://www.apache.org/licenses/LICENSE-2.0
+
+THIS CODE IS PROVIDED ON AN  *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS
+OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY
+IMPLIED WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
+MERCHANTABLITY OR NON-INFRINGEMENT.
+
+See the Apache Version 2.0 License for specific language governing
+permissions and limitations under the License.
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DjangoSettingsModule Condition="'$(DjangoSettingsModule)' == ''">$(MSBuildProjectName).settings</DjangoSettingsModule>
+    <DjangoDebugging Condition="'$(DjangoDebugging)'==''">true</DjangoDebugging>
+
+    <PythonRunWebServerCommandArguments Condition="'$(PythonRunWebServerCommandArguments)' == ''">runserver --settings $(DjangoSettingsModule) %SERVER_PORT% $(CommandLineArguments)</PythonRunWebServerCommandArguments>
+    <PythonRunWebServerCommandType Condition="'$(PythonRunWebServerCommandType)' == ''">script</PythonRunWebServerCommandType>
+    <PythonDebugWebServerCommandArguments Condition="'$(PythonDebugWebServerCommandArguments)' == ''">runserver --noreload --settings $(DjangoSettingsModule) %SERVER_PORT% $(CommandLineArguments)</PythonDebugWebServerCommandArguments>
+    <PythonDebugWebServerCommandType Condition="'$(PythonDebugWebServerCommandType)' == ''">script</PythonDebugWebServerCommandType>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Web.targets" />
+
+  <Target Name="_ValidateDjangoSettingsModule"
+          AfterTargets="_ValidateLegacyWsgiHandler"
+          Condition="$(DjangoSettingsModule) != ''">
+    <ItemGroup>
+      <_WebConfig Remove="@(_WebConfig)" />
+      <_WebConfig Include="@(Content);@(None)" Condition="'%(Identity)' == 'web.config'" />
+    </ItemGroup>
+    <XmlPeek XmlInputPath="@(_WebConfig)" Query="/configuration/appSettings/add[@key='DJANGO_SETTINGS_MODULE']/@value" Condition="@(_WebConfig) != ''">
+      <Output TaskParameter="Result" PropertyName="_WebConfigDjangoSettingsModule" />
+    </XmlPeek>
+    <PropertyGroup Condition="@(_WebConfig) != ''">
+      <_WarningMessage>
+        Your web.config file contains a different Django settings module ('$(_WebConfigDjangoSettingsModule)') than specified in Project Properties ('$(DjangoSettingsModule)').
+        Review and correct either value to suppress this warning.
+      </_WarningMessage>
+    </PropertyGroup>
+    <Warning Condition="@(_WebConfig) != '' and $(_WebConfigDjangoSettingsModule) != $(DjangoSettingsModule)" Text="$(_WarningMessage)" />
+  </Target>
+
+  <!-- Extend the standard Python web targets with our Django specific ones. -->
+  <PropertyGroup>
+    <CoreCompileDependsOn>
+      $(CoreCompileDependsOn);
+      DjangoCollectStaticFiles;
+    </CoreCompileDependsOn>
+  </PropertyGroup>
+
+
+  <!-- *************************************************************************
+       Runs the django `manage.py collectstatic` command to gather static files
+       in the user's project if they're configured for serving project files. 
+       The resulting files are added as content.
+       
+       This target is unconditional, to ensure we add the trailing slash if the
+       user has provided their own value.
+  -->
+  <Target Name="DetectStaticRootPath">
+    <RunPythonCommand Target="import $(DjangoSettingsModule) as settings; print(getattr(settings, 'STATIC_ROOT', '') or '')"
+                      TargetType="code"
+                      ExecuteIn="none"
+                      WorkingDirectory="$(WorkingDirectory)"
+                      Environment="DJANGO_SETTINGS_MODULE=$(DjangoSettingsModule)"
+                      ConsoleToMSBuild="true"
+                      Condition="'$(DjangoStaticRootSetting)' == ''">
+      <Output TaskParameter="ConsoleOutput" PropertyName="DjangoStaticRootSetting" />
+    </RunPythonCommand>
+
+    <PropertyGroup Condition="'$(DjangoStaticRootSetting)' != ''">
+      <DjangoStaticRootSetting>$(DjangoStaticRootSetting.Replace(`/`, `\`))</DjangoStaticRootSetting>
+      <DjangoStaticRootSetting Condition="!HasTrailingSlash('$(DjangoStaticRootSetting)')">$(DjangoStaticRootSetting)\</DjangoStaticRootSetting>
+    </PropertyGroup>
+
+    <Message Text="DjangoStaticRootSetting=$(DjangoStaticRootSetting)"/>
+  </Target>
+
+  <Target Name="DjangoCollectStaticFiles"
+          DependsOnTargets="DetectStaticRootPath;_DjangoCollectStaticFiles"
+          Condition="'$(DisableStaticFiles)' != 'true'" />
+
+  <Target Name="_DjangoCollectStaticFiles"
+          DependsOnTargets="SetStartupPathOrManagePy"
+          Condition="'$(DjangoStaticRootSetting)' != ''">
+    <RunPythonCommand Target="$(StartupPathOrManagePy)"
+                      TargetType="script"
+                      Arguments="collectstatic --noinput"
+                      ExecuteIn="none"
+                      WorkingDirectory="$(WorkingDirectory)"
+                      Environment="DJANGO_SETTINGS_MODULE=$(DjangoSettingsModule)" />
+
+    <ItemGroup>
+      <_DjangoStaticFiles Include="$(DjangoStaticRootSetting)**\*" />
+      <FilesForPackagingFromProject Include="@(_DjangoStaticFiles)" Condition="'%(FullPath)' != ''">
+        <DestinationRelativePath>$([MSBuild]::MakeRelative($(QualifiedProjectHome), %(FullPath)))</DestinationRelativePath>
+        <FromTarget>DjangoCollectStaticFiles</FromTarget>
+        <Category>Run</Category>
+      </FilesForPackagingFromProject>
+    </ItemGroup>
+  </Target>
+
+  <!-- *************************************************************************
+       Django-specific project commands
+  -->
+
+  <PropertyGroup>
+    <PythonCommands>
+      DjangoShellCommand;
+      DjangoCheckCommand;
+      DjangoMakeMigrationsCommand;
+      DjangoMigrateCommand;
+      DjangoCreateSuperUserCommand;
+      DjangoCollectStaticCommand;
+      $(PythonCommands);
+      DjangoValidateAppCommand;
+      DjangoSyncDbCommand;
+    </PythonCommands>
+
+    <StartupPathOrManagePy>$(QualifiedProjectHome)manage.py</StartupPathOrManagePy>
+    <StartupPathOrManagePy Condition="Exists($(StartupPath))">$(StartupPath)</StartupPathOrManagePy>
+  </PropertyGroup>
+
+  <Target Name="SetStartupPathOrManagePy" Outputs="$(StartupPathOrManagePy)">
+    <Message Importance="low" Text="Management commands are run with $(StartupPathOrManagePy)" />
+  </Target>
+
+  <Target Name="DjangoShellCommand"
+          Label="resource:Microsoft.PythonTools.Django;Microsoft.PythonTools.Django.Resources;OpenDjangoShellLabel"
+          Returns="@(Commands)">
+    <CreatePythonCommandItem Target="import django, $(DjangoSettingsModule); print('Starting Django %s shell' % django.get_version()); django.setup()"
+                             TargetType="code"
+                             Arguments=""
+                             WorkingDirectory="$(WorkingDirectory)"
+                             Environment="DJANGO_SETTINGS_MODULE=$(DjangoSettingsModule)"
+                             ExecuteIn="repl:resource:Microsoft.PythonTools.Django;Microsoft.PythonTools.Django.Resources;CommandReplTitle">
+      <Output TaskParameter="Command" ItemName="Commands" />
+    </CreatePythonCommandItem>
+  </Target>
+
+  <Target Name="DjangoCheckCommand"
+          Label="resource:Microsoft.PythonTools.Django;Microsoft.PythonTools.Django.Resources;CheckLabel"
+          DependsOnTargets="SetStartupPathOrManagePy"
+          Returns="@(Commands)">
+    <CreatePythonCommandItem Target="$(StartupPathOrManagePy)"
+                             TargetType="script"
+                             Arguments="check"
+                             WorkingDirectory="$(WorkingDirectory)"
+                             Environment="DJANGO_SETTINGS_MODULE=$(DjangoSettingsModule)"
+                             ExecuteIn="Repl:resource:Microsoft.PythonTools.Django;Microsoft.PythonTools.Django.Resources;CommandReplTitle">
+      <Output TaskParameter="Command" ItemName="Commands" />
+    </CreatePythonCommandItem>
+  </Target>
+
+  <Target Name="DjangoValidateAppCommand"
+          Label="resource:Microsoft.PythonTools.Django;Microsoft.PythonTools.Django.Resources;ValidateAppLabel"
+          DependsOnTargets="SetStartupPathOrManagePy"
+          Returns="@(Commands)">
+    <CreatePythonCommandItem Target="$(StartupPathOrManagePy)"
+                             TargetType="script"
+                             Arguments="validate"
+                             WorkingDirectory="$(WorkingDirectory)"
+                             Environment="DJANGO_SETTINGS_MODULE=$(DjangoSettingsModule)"
+                             ExecuteIn="Repl:resource:Microsoft.PythonTools.Django;Microsoft.PythonTools.Django.Resources;CommandReplTitle">
+      <Output TaskParameter="Command" ItemName="Commands" />
+    </CreatePythonCommandItem>
+  </Target>
+
+  <Target Name="DjangoMakeMigrationsCommand"
+          Label="resource:Microsoft.PythonTools.Django;Microsoft.PythonTools.Django.Resources;MakeMigrationsLabel"
+          DependsOnTargets="SetStartupPathOrManagePy"
+          Returns="@(Commands)">
+    <CreatePythonCommandItem Target="$(StartupPathOrManagePy)"
+                             TargetType="script"
+                             Arguments="makemigrations"
+                             WorkingDirectory="$(WorkingDirectory)"
+                             Environment="DJANGO_SETTINGS_MODULE=$(DjangoSettingsModule)"
+                             ExecuteIn="Repl:resource:Microsoft.PythonTools.Django;Microsoft.PythonTools.Django.Resources;CommandReplTitle">
+      <Output TaskParameter="Command" ItemName="Commands" />
+    </CreatePythonCommandItem>
+  </Target>
+
+  <Target Name="DjangoMigrateCommand"
+          Label="resource:Microsoft.PythonTools.Django;Microsoft.PythonTools.Django.Resources;MigrateLabel"
+          DependsOnTargets="SetStartupPathOrManagePy"
+          Returns="@(Commands)">
+    <CreatePythonCommandItem Target="$(StartupPathOrManagePy)"
+                             TargetType="script"
+                             Arguments="migrate"
+                             WorkingDirectory="$(WorkingDirectory)"
+                             Environment="DJANGO_SETTINGS_MODULE=$(DjangoSettingsModule)"
+                             ExecuteIn="Repl:resource:Microsoft.PythonTools.Django;Microsoft.PythonTools.Django.Resources;CommandReplTitle">
+      <Output TaskParameter="Command" ItemName="Commands" />
+    </CreatePythonCommandItem>
+  </Target>
+
+  <Target Name="DjangoCreateSuperUserCommand"
+          Label="resource:Microsoft.PythonTools.Django;Microsoft.PythonTools.Django.Resources;CreateSuperUserLabel"
+          DependsOnTargets="SetStartupPathOrManagePy"
+          Returns="@(Commands)">
+    <CreatePythonCommandItem Target="$(StartupPathOrManagePy)"
+                             TargetType="script"
+                             Arguments="createsuperuser"
+                             WorkingDirectory="$(WorkingDirectory)"
+                             Environment="DJANGO_SETTINGS_MODULE=$(DjangoSettingsModule)"
+                             ExecuteIn="Repl:resource:Microsoft.PythonTools.Django;Microsoft.PythonTools.Django.Resources;CommandReplTitle">
+      <Output TaskParameter="Command" ItemName="Commands" />
+    </CreatePythonCommandItem>
+  </Target>
+
+  <Target Name="DjangoSyncDbCommand"
+          Label="resource:Microsoft.PythonTools.Django;Microsoft.PythonTools.Django.Resources;SyncDbLabel"
+          DependsOnTargets="SetStartupPathOrManagePy"
+          Returns="@(Commands)">
+    <CreatePythonCommandItem Target="$(StartupPathOrManagePy)"
+                             TargetType="script"
+                             Arguments="syncdb"
+                             WorkingDirectory="$(WorkingDirectory)"
+                             Environment="DJANGO_SETTINGS_MODULE=$(DjangoSettingsModule)"
+                             ExecuteIn="Repl:resource:Microsoft.PythonTools.Django;Microsoft.PythonTools.Django.Resources;CommandReplTitle">
+      <Output TaskParameter="Command" ItemName="Commands" />
+    </CreatePythonCommandItem>
+  </Target>
+
+  <Target Name="DjangoCollectStaticCommand"
+          Label="resource:Microsoft.PythonTools.Django;Microsoft.PythonTools.Django.Resources;CollectStaticLabel"
+          DependsOnTargets="SetStartupPathOrManagePy"
+          Returns="@(Commands)">
+    <CreatePythonCommandItem Target="$(StartupPathOrManagePy)"
+                             TargetType="script"
+                             Arguments="collectstatic --noinput"
+                             WorkingDirectory="$(WorkingDirectory)"
+                             Environment="DJANGO_SETTINGS_MODULE=$(DjangoSettingsModule)"
+                             ExecuteIn="Repl:resource:Microsoft.PythonTools.Django;Microsoft.PythonTools.Django.Resources;CommandReplTitle">
+      <Output TaskParameter="Command" ItemName="Commands" />
+    </CreatePythonCommandItem>
+  </Target>
+</Project>

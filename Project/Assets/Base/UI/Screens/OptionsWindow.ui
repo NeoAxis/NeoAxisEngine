@@ -1,0 +1,174 @@
+.component Project.OptionsWindow
+{
+	Text = Options
+	Size = Units 1200 800
+	HorizontalAlignment = Center
+	VerticalAlignment = Center
+	EditorScrollPosition = -1.61983094181199 -0.214393423132069
+	EditorZoomIndex = 11
+	Style
+	{
+		GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Close
+		Text = Close
+		Size = Units 200 40
+		HorizontalAlignment = Right
+		VerticalAlignment = Bottom
+		Margin = Units 0 0 20 20
+		EditorScrollPosition = 0 0
+	}
+	.component NeoAxis.UIText
+	{
+		Name = Text
+		Text = Sound Volume
+		Size = Units 400 40
+		Margin = Units 30 60 0 0
+		EditorScrollPosition = 0 0
+		TextHorizontalAlignment = Left
+	}
+	.component NeoAxis.UISlider
+	{
+		Name = Slider Sound Volume
+		Size = Units 400 30
+		Margin = Units 30 100 0 0
+		EditorScrollPosition = 0 0
+		ValueRange = 0 1
+		Step = 0.05
+		TickFrequency = 0.1
+	}
+	.component NeoAxis.UIText
+	{
+		Name = Text 2
+		Text = Music Volume
+		Size = Units 400 40
+		Margin = Units 30 160 0 0
+		EditorScrollPosition = 0 0
+		TextHorizontalAlignment = Left
+	}
+	.component NeoAxis.UISlider
+	{
+		Name = Slider Music Volume
+		Size = Units 400 30
+		Margin = Units 30 200 0 0
+		EditorScrollPosition = 0 0
+		ValueRange = 0 1
+		Step = 0.05
+		TickFrequency = 0.1
+	}
+	.component NeoAxis.UICheck
+	{
+		Name = Check Display Viewport Statistics
+		Text = Display Viewport Statistics
+		Size = Units 25 25
+		Margin = Units 620 70 0 0
+		EditorScrollPosition = 0 0
+	}
+	.component NeoAxis.UICheck
+	{
+		Name = Check Vertical Sync
+		Text = Vertical Sync
+		Size = Units 25 25
+		Margin = Units 30 520 0 0
+		EditorScrollPosition = 0 0
+		Checked = Checked
+	}
+	.component NeoAxis.UICheck
+	{
+		Name = Check Fullscreen
+		Text = Fullscreen
+		Size = Units 25 25
+		Margin = Units 30 480 0 0
+		EditorScrollPosition = 0 0
+		Checked = Checked
+	}
+	.component NeoAxis.UIList
+	{
+		Name = List Antialiasing
+		Size = Units 400 150
+		Margin = Units 620 150 0 0
+		EditorScrollPosition = 0 0
+		Items
+		{
+			Count = 6
+			0 = Default
+			1 = None
+			2 = FXAA
+			3 = SSAAx2
+			4 = SSAAx3
+			5 = SSAAx4
+		}
+		.component NeoAxis.UIScrollBar
+		{
+			Name = ScrollBar
+			CanBeSelected = False
+			Size = Units 30 400
+			HorizontalAlignment = Right
+			VerticalAlignment = Stretch
+			Margin = Units 0 2 2 2
+			EditorScrollPosition = 0 0
+			Vertical = True
+		}
+	}
+	.component NeoAxis.UIList
+	{
+		Name = List Video Mode
+		Size = Units 400 150
+		Margin = Units 30 300 0 0
+		EditorScrollPosition = 0 0
+		Items
+		{
+			Count = 1
+			0 = Default
+		}
+		.component NeoAxis.UIScrollBar
+		{
+			Name = ScrollBar
+			CanBeSelected = False
+			Size = Units 30 400
+			HorizontalAlignment = Right
+			VerticalAlignment = Stretch
+			Margin = Units 0 2 2 2
+			EditorScrollPosition = 0 0
+			Vertical = True
+		}
+	}
+	.component NeoAxis.UIText
+	{
+		Name = Text 3
+		Text = Antialiasing
+		Size = Units 400 30
+		Margin = Units 620 120 0 0
+		EditorScrollPosition = 0 0
+		TextHorizontalAlignment = Left
+	}
+	.component NeoAxis.UIText
+	{
+		Name = Restart To Apply Changes
+		Text = Restart app to apply changes.
+		Size = Units 400 30
+		Margin = Units 30 560 0 0
+		ColorMultiplier = 1 0 0
+		EditorScrollPosition = 0 0
+		TextHorizontalAlignment = Left
+	}
+	.component NeoAxis.UIText
+	{
+		Name = Text 4
+		Text = Video Mode
+		Size = Units 400 30
+		Margin = Units 30 270 0 0
+		EditorScrollPosition = 0 0
+		TextHorizontalAlignment = Left
+	}
+	.component NeoAxis.UICheck
+	{
+		Name = Check Display Background Scene
+		Text = Display background scene
+		Size = Units 25 25
+		Margin = Units 620 330 0 0
+		EditorScrollPosition = 0 0
+	}
+}

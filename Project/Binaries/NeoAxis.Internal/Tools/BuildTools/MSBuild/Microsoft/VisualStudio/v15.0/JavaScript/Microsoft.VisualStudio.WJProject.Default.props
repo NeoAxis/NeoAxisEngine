@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <LaunchApplication Condition=" '$(LaunchApplication)' == '' ">true</LaunchApplication>
+    <AllowLocalNetworkLoopback Condition=" '$(AllowLocalNetworkLoopback)' == '' ">true</AllowLocalNetworkLoopback>
+    <DebuggerType Condition=" '$(DebuggerType)' == '' ">Script</DebuggerType>
+    <RequireAuthentication Condition=" '$(RequireAuthentication)' == '' ">true</RequireAuthentication>
+    <OutputPath Condition=" '$(OutputPath)' == '' and '$(Platform)' != 'AnyCPU' ">bin\$(Platform)\$(Configuration)</OutputPath>
+    <OutputPath Condition=" '$(OutputPath)' == '' and '$(Platform)' == 'AnyCPU' ">bin\$(Configuration)</OutputPath>
+
+    <OutputType>WindowsWebApplication</OutputType>
+    <BaseIntermediateOutputPath>bld\</BaseIntermediateOutputPath>
+    <SuppressOutOfDateMessageOnBuild>true</SuppressOutOfDateMessageOnBuild>
+    <DebugSymbols>false</DebugSymbols>
+
+    <!-- Allowed values: TAB_SDK_PLATFORM, TAB_SDK_EXTENSIONS, and TAB_SDK_ALL -->
+    <WinRTReferenceTabs>TAB_SDK_EXTENSIONS</WinRTReferenceTabs>
+
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <Content>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <AppxManifest>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </AppxManifest>
+    <PRIResource>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </PRIResource>
+    <None>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemDefinitionGroup>
+
+  <!-- Integration with build -->
+  <PropertyGroup>
+    <SkipCopyBuildProduct>true</SkipCopyBuildProduct>
+  </PropertyGroup>
+</Project>

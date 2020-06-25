@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<ProjectSchemaDefinitions xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <ContentType Name="Default" DisplayName="Тип файлов по умолчанию" ItemType="Content"/>
+
+  <ContentType Name="Resource" DisplayName="Файл ресурсов" ItemType="PRIResource"/>
+
+  <ContentType Name="AppxManifest" DisplayName="Манифест приложения" ItemType="AppxManifest"/>
+
+ <ContentType Name="PackageLayout" DisplayName="Макет пакета" ItemType="PackageLayout"/>
+
+  <ItemType Name="None" DisplayName="Нет"/>
+  <ItemType Name="Content" DisplayName="Содержимое"/>
+  <ItemType Name="AppxManifest" DisplayName="Манифест приложения"/>
+  <ItemType Name="PackageLayout" DisplayName="Макет пакета"/>
+  <ItemType Name="PRIResource" DisplayName="Ресурс"/>
+
+  <FileExtension Name=".appxmanifest" ContentType="AppxManifest"/>
+  <FileExtension Name=".packagelayout" ContentType="PackageLayout"/>
+  <FileExtension Name=".resjson" ContentType="Resource"/>
+</ProjectSchemaDefinitions>

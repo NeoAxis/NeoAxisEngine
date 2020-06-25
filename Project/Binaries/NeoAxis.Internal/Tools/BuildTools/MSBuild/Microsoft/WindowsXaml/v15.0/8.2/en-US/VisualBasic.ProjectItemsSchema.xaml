@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<ProjectSchemaDefinitions
+    xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+    <ContentType
+        Name="PageXaml"
+        DisplayName="XAML Page"
+        ItemType="Page">
+        <NameValuePair Name="DependentFileExtensions" Value=".vb" />
+        <NameValuePair Name="DefaultMetadata_SubType" Value="Designer" />
+        <NameValuePair Name="DefaultMetadata_Generator" Value="MSBuild:Compile" />
+    </ContentType>
+
+    <ContentType
+        Name="AppXaml"
+        DisplayName="XAML Application Definition"
+        ItemType="ApplicationDefinition">
+        <NameValuePair Name="DependentFileExtensions" Value=".vb" />
+        <NameValuePair Name="DefaultMetadata_SubType" Value="Designer" />
+        <NameValuePair Name="DefaultMetadata_Generator" Value="MSBuild:Compile" />
+    </ContentType>
+
+    <ItemType Name="Page" DisplayName="Page" />
+    <ItemType Name="ApplicationDefinition" DisplayName="ApplicationDefinition" />
+
+    <FileExtension Name=".xaml" ContentType="PageXaml" />
+</ProjectSchemaDefinitions>

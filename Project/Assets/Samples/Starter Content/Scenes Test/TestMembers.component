@@ -1,0 +1,62 @@
+.component NeoAxis.Component
+{
+	Property01 = Test
+	Property02_NoRef = sdasdsada1231344
+	Property = True
+	Property03_Bool
+	{
+		GetByReference = "root:Enabled"
+	}
+	.component NeoAxis.Component_Method
+	{
+		Name = Method01
+		TypeOnly = True
+		Parameters
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+	}
+	.component NeoAxis.Component_Property
+	{
+		Name = Property01
+		TypeOnly = True
+		Type = System.String
+		Indexers
+		{
+			Count = 0
+		}
+	}
+	.component NeoAxis.Component_Property
+	{
+		Name = Property02_NoRef
+		TypeOnly = True
+		Type = System.String
+		ReferenceSupport = False
+		Indexers
+		{
+			Count = 0
+		}
+	}
+	.component NeoAxis.Component_Property
+	{
+		Name = Property03_Bool
+		TypeOnly = True
+		Type = System.Boolean
+		Indexers
+		{
+			Count = 0
+		}
+	}
+	.component NeoAxis.Component_Property
+	{
+		Name = Property
+		Type = System.Boolean
+		Indexers
+		{
+			Count = 0
+		}
+	}
+}

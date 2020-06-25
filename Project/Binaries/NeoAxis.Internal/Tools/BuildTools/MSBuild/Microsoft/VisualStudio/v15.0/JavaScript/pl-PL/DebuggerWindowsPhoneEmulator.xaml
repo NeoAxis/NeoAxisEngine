@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="WindowsPhoneEmulatorDebugger" DisplayName="Emulator" PageTemplate="debugger" Order="100" Description="Emulator systemu Windows Phone — opcje debugera" xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+    <Rule.Metadata>
+        <sys:Guid x:Key="DebugTargetTypeCommandGuid">FEEA6E9D-77D8-423F-9EDE-3970CBB76125</sys:Guid>
+        <sys:UInt32 x:Key="DebugTargetTypeCommandId">0x500</sys:UInt32>
+        <sys:String x:Key="DebugTargetDropdownEnum">WindowsPhoneEmulatorID</sys:String>
+    </Rule.Metadata>
+
+    <Rule.DataSource>
+        <DataSource Persistence="UserFile"/>
+    </Rule.DataSource>
+
+    <Rule.Categories>
+        <Category Name="StartOptions" DisplayName="Opcje uruchamiania" Description="Opcje uruchamiania"/>
+    </Rule.Categories>
+    <DynamicEnumProperty Name="WindowsPhoneEmulatorID" DisplayName="Debuguj element docelowy" EnumProvider="JavaScriptWindowsPhoneEmulators" Description="Określa emulator używany do debugowania. Jeśli nie zainstalowano żadnych emulatorów, użyj polecenia „Pobierz emulator 8.1...” na liście rozwijanej elementu docelowego debugowania." F1Keyword="javascript.project.property.debugging.debuggertarget"/>
+    <BoolProperty Name="LaunchApplication" DisplayName="Uruchom aplikację" Category="StartOptions" F1Keyword="javascript.project.property.debugging.launchapplication" Description="Określa, czy natychmiast uruchomić aplikację, czy poczekać na debugowanie aplikacji, gdy jest uruchamiana."/>
+
+    <EnumProperty Name="DebuggerType" DisplayName="Typ debugera" Category="StartOptions" F1Keyword="javascript.project.property.debugging.debuggertype" Description="Określa, który debuger włączyć. W przypadku wybrania ustawienia Mieszany używany jest debuger dla kodu zarządzanego i natywnego.">
+        <EnumValue Name="NativeOnly" DisplayName="Tylko kod natywny" Description="Tylko kod natywny"/>
+        <EnumValue Name="ManagedOnly" DisplayName="Tylko kod zarządzany" Description="Tylko kod zarządzany"/>
+        <EnumValue Name="Script" DisplayName="Tylko skrypt" Description="Tylko skrypt"/>
+        <EnumValue Name="Mixed" DisplayName="Mieszany (zarządzany i natywny)" Description="Mieszany (zarządzany i natywny)"/>
+        <EnumProperty.Metadata>
+            <NameValuePair Name="IsDebugType" Value="true"/>
+        </EnumProperty.Metadata>
+    </EnumProperty>
+
+    <StringProperty Name="CommandLineArgs" DisplayName="Argumenty wiersza polecenia" Category="StartOptions" F1Keyword="javascript.project.property.debugging.commandlineargs" Description="Zezwala na określanie argumentów wiersza polecenia, które są przekazywane do uruchomienia aplikacji platformy UWP">
+    </StringProperty>
+
+    <StringProperty Name="RealOsVersion" Visible="false">
+        <StringProperty.DataSource>
+            <DataSource Persistence="ProjectFile" Label="Configuration" HasConfigurationCondition="false"/>
+        </StringProperty.DataSource>
+    </StringProperty>
+</Rule>

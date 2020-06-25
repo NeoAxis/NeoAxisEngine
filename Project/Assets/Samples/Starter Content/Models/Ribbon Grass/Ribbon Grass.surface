@@ -1,0 +1,59 @@
+.component NeoAxis.Component_Surface
+{
+	.component NeoAxis.Component_SurfaceGroupOfElements
+	{
+		Name = Group 1
+		MinDistanceBetweenObjects = 0.2
+		RotateAroundItsAxis = True
+		MaxIncline = 20
+		ScaleRange = 0.8 1.2
+		.component NeoAxis.Component_SurfaceElement_Mesh
+		{
+			Name = Mesh 1
+			Mesh
+			{
+				GetByReference = "Samples\\Starter Content\\Models\\Ribbon Grass\\tbdpec3r.json|$Meshes\\$Mesh 1"
+			}
+		}
+		.component NeoAxis.Component_SurfaceElement_Mesh
+		{
+			Name = Mesh 2
+			Mesh
+			{
+				GetByReference = "Samples\\Starter Content\\Models\\Ribbon Grass\\tbdpec3r.json|$Meshes\\$Mesh 2"
+			}
+		}
+		.component NeoAxis.Component_SurfaceElement_Mesh
+		{
+			Name = Mesh 3
+			Mesh
+			{
+				GetByReference = "Samples\\Starter Content\\Models\\Ribbon Grass\\tbdpec3r.json|$Meshes\\$Mesh 3"
+			}
+		}
+		.component NeoAxis.Component_SurfaceElement_Mesh
+		{
+			Name = Mesh 4
+			Mesh
+			{
+				GetByReference = "Samples\\Starter Content\\Models\\Ribbon Grass\\tbdpec3r.json|$Meshes\\$Mesh 4"
+			}
+		}
+		.component NeoAxis.Component_SurfaceElement_Mesh
+		{
+			Name = Mesh 5
+			Mesh
+			{
+				GetByReference = "Samples\\Starter Content\\Models\\Ribbon Grass\\tbdpec3r.json|$Meshes\\$Mesh 5"
+			}
+		}
+		.component NeoAxis.Component_SurfaceElement_Mesh
+		{
+			Name = Mesh 6
+			Mesh
+			{
+				GetByReference = "Samples\\Starter Content\\Models\\Ribbon Grass\\tbdpec3r.json|$Meshes\\$Mesh 6"
+			}
+		}
+	}
+}

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="PackageLayout" DisplayName="包布局属性" PageTemplate="generic" Description="包布局属性" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="常规"/>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ProjectFile" HasConfigurationCondition="false" ItemType="PackageLayout"/>
+  </Rule.DataSource>
+
+  <EnumProperty Name="{}{ItemType}" DisplayName="包操作" Category="General" F1Keyword="javascript.project.property.packageaction" Description="指定生成应用程序包时对此文件执行的操作。">
+    <EnumValue Name="None" DisplayName="无"/>
+    <EnumValue Name="Content" DisplayName="内容"/>
+    <EnumValue Name="AppxManifest" DisplayName="应用程序清单"/>
+    <EnumValue Name="PackageLayout" DisplayName="包布局"/>
+    <EnumValue Name="PRIResource" DisplayName="资源"/>
+
+    <EnumProperty.DataSource>
+      <DataSource Persistence="ProjectFile" Label="Configuration" SourceType="Item" ItemType="PackageLayout" HasConfigurationCondition="false"/>
+    </EnumProperty.DataSource>
+  </EnumProperty>
+
+  <EnumProperty Name="CopyToOutputDirectory" DisplayName="复制到输出目录" Category="General" F1Keyword="javascript.project.property.copytooutputdirectory" Description="指定是否应将文件复制到输出文件夹。">
+    <EnumValue Name="Never" DisplayName="不复制"/>
+    <EnumValue Name="Always" DisplayName="始终复制"/>
+    <EnumValue Name="PreserveNewest" DisplayName="如果较新则复制"/>
+  </EnumProperty>
+
+  <StringProperty Name="Identity" Visible="false" ReadOnly="true" Category="General" Description="Include 特性中指定的项。">
+    <StringProperty.DataSource>
+      <DataSource Persistence="Intrinsic" ItemType="PackageLayout" PersistedName="Identity"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="FullPath" DisplayName="完整路径" ReadOnly="true" Category="General" F1Keyword="javascript.project.property.fullpath" Description="文件位置。">
+    <StringProperty.DataSource>
+      <DataSource Persistence="Intrinsic" ItemType="PackageLayout" PersistedName="FullPath"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="FileNameAndExtension" DisplayName="文件名" ReadOnly="true" Category="General" F1Keyword="javascript.project.property.filename" Description="文件或文件夹的名称。">
+    <StringProperty.DataSource>
+      <DataSource Persistence="Intrinsic" ItemType="PackageLayout" PersistedName="FileNameAndExtension"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <BoolProperty Name="Visible" Visible="false"/>
+  <StringProperty Name="DependentUpon" Visible="false"/>
+  <StringProperty Name="Link" Visible="false"/>
+  <EnumProperty Name="SubType" Visible="false">
+    <EnumValue Name="Designer"/>
+  </EnumProperty>
+</Rule>

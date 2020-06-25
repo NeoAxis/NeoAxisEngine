@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)\$(LangName)\General.xaml;">
+      <Context>Project</Context>
+    </PropertyPageSchema>
+
+    <PropertyPageSchema Condition=" '$(Platform)' != 'ARM' "
+                        Include="$(MSBuildThisFileDirectory)\$(LangName)\DebuggerLocal.xaml;
+                                 $(MSBuildThisFileDirectory)\$(LangName)\DebuggerSimulator.xaml;
+                                 $(MSBuildThisFileDirectory)\$(LangName)\DebuggerRemote.xaml;">
+      <Context>Project</Context>
+    </PropertyPageSchema>
+
+    <PropertyPageSchema Condition=" '$(Platform)' == 'ARM' "
+                        Include="$(MSBuildThisFileDirectory)\$(LangName)\DebuggerRemote.xaml;">
+      <Context>Project</Context>
+    </PropertyPageSchema>
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectCapability Include="JavaScriptWJProject;WindowsAppContainer;JavaScriptWindowsAppContainerProject;WinRTReferences" />
+  </ItemGroup>
+  
+  <!-- Enable warning when referenced ESDKs do not have MaxPlatformVersion specified for Windows Store projects -->
+  <PropertyGroup>
+     <SDKReferenceWarnOnMissingMaxPlatformVersion Condition="'$(SDKReferenceWarnOnMissingMaxPlatformVersion)' == '' and 
+                                                             '$(TargetPlatformVersion)' &gt;= '8.0'">true</SDKReferenceWarnOnMissingMaxPlatformVersion>
+     <FindInvalidProjectReferences Condition="'$(TargetPlatformVersion)' &gt;= '8.0'">true</FindInvalidProjectReferences>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ProjectUISubcaption Condition=" '$(TargetPlatformVersion)' != ''">$(TargetPlatformIdentifier) $(TargetPlatformVersion)</ProjectUISubcaption>
+  </PropertyGroup>
+
+</Project>

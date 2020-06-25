@@ -1,0 +1,27 @@
+.component NeoAxis.Component_Image
+{
+	LoadCubePositiveX
+	{
+		GetByReference = "Base\\Images\\White.jpg"
+	}
+	LoadCubeNegativeX
+	{
+		GetByReference = "Base\\Images\\White.jpg"
+	}
+	LoadCubePositiveY
+	{
+		GetByReference = "Base\\Images\\White.jpg"
+	}
+	LoadCubeNegativeY
+	{
+		GetByReference = "Base\\Images\\White.jpg"
+	}
+	LoadCubePositiveZ
+	{
+		GetByReference = "Base\\Images\\White.jpg"
+	}
+	LoadCubeNegativeZ
+	{
+		GetByReference = "Base\\Images\\White.jpg"
+	}
+}

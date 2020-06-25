@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule
+  Name="DeployableItemPath"
+  DisplayName="Deployable Item Path"
+  PageTemplate="generic"
+  Description="Deploybale Item Path"
+  xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.DataSource>
+    <DataSource
+      Persistence="Intrinsic"
+      ItemType="Content"
+      HasConfigurationCondition="false"
+      SourceType="TargetResults"
+      MSBuildTarget="GetItemTargetPaths" />
+  </Rule.DataSource>
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="General" />
+  </Rule.Categories>
+
+  <StringProperty
+    Name="OriginalItemSpec"
+    ReadOnly="true"
+    DisplayName="Identity"
+    Category="General"
+    F1Keyword="javascript.identity"
+    Description="The identity of the file">
+  </StringProperty>
+
+  <StringProperty
+    Name="TargetPath"
+    ReadOnly="true"
+    DisplayName="TargetPath"
+    Category="General"
+    F1Keyword="targetpath"
+    Description="The location the file will deploy to in the package">
+  </StringProperty>
+
+
+</Rule>

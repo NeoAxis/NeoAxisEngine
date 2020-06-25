@@ -1,0 +1,279 @@
+.component NeoAxis.Component_Scene
+{
+	DisplayDevelopmentDataInSimulation = True
+	DisplayLights = True
+	DisplayReflectionProbes = True
+	RenderingPipeline
+	{
+		GetByReference = "root:$Rendering Pipeline"
+	}
+	CameraEditor
+	{
+		GetByReference = "this:$Camera Editor"
+	}
+	.component NeoAxis.Component_Camera
+	{
+		Name = Camera Editor
+		Visible = False
+		Transform = "-20.5930851190385 -18.6448712086957 11.3390167022518; -0.237301319695413 0.00501526300953766 0.971206266841312 0.0205260336140244; 1 1 1"
+	}
+	.component NeoAxis.Component_Light
+	{
+		Name = Ambient Light
+		Transform = "-27.7871391969358 -22.3112535611728 24.8527169920668; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
+		Type = Ambient
+		Brightness = 103244.904396875
+	}
+	.component NeoAxis.Component_RenderingPipeline_Default
+	{
+		Name = Rendering Pipeline
+		ShadowDirectionalLightCascades = 1
+		ShadowSpotlightTextureSize = _2048
+		.component NeoAxis.Component
+		{
+			Name = Background Effects
+		}
+		.component NeoAxis.Component
+		{
+			Name = Scene Effects
+			.component NeoAxis.Component_RenderingEffect_ToneMapping
+			{
+				Name = Tone Mapping
+			}
+			.component NeoAxis.Component_RenderingEffect_ToLDR
+			{
+				Name = To LDR
+			}
+			.component NeoAxis.Component_RenderingEffect_Sharpen
+			{
+				Name = Sharpen
+				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
+			}
+			.component NeoAxis.Component_RenderingEffect_Antialiasing
+			{
+				Name = Antialiasing
+			}
+		}
+	}
+	.component NeoAxis.Component_GameMode
+	{
+		Name = Game Mode
+	}
+	.component NeoAxis.Component_Light
+	{
+		Name = Light1
+		Transform = "-67.3559686436172 -24.6930832758389 30.8437317105508; -0.150389792056384 -0.860501251044365 0.0460004842907831 -0.484566262590921; 1 1 1"
+		Type = Directional
+		Brightness = 207307.1593
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 90
+		MaskScale = 257.5
+	}
+	.component NeoAxis.Component_Material
+	{
+		Name = Material Standard
+		BaseColor
+		{
+			GetByReference = "this:$Flowchart\\$Node Shader Texture Sample 1\\$Shader Texture Sample\\RGBA"
+		}
+		.component NeoAxis.Component_FlowGraph
+		{
+			Name = Flowchart
+			EditorScrollPosition = 7.18518518518518 -0.796296296296294
+			.component NeoAxis.Component_FlowGraphNode
+			{
+				Name = Flowchart Node
+				Position = 13 -10
+				ControlledObject
+				{
+					GetByReference = "this:..\\.."
+				}
+			}
+			.component NeoAxis.Component_FlowGraphNode
+			{
+				Name = Node Shader Texture Sample 1
+				Position = -12 -13
+				ControlledObject
+				{
+					GetByReference = "this:$Shader Texture Sample"
+				}
+				.component NeoAxis.Component_ShaderTextureSample
+				{
+					Name = Shader Texture Sample
+					Location2 = 0 0
+					Location3 = 0 0 0
+					Texture
+					{
+						GetByReference = "Samples\\Starter Content\\Scenes Test\\Files\\BoxDiffuse.dds"
+					}
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Mesh in Space 31
+		CanBeSelected = False
+		Transform = "0 0 0; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 500 500
+				UVTilesPerUnit = 0.333 0.333
+				Material
+				{
+					GetByReference = "Samples\\Starter Content\\Materials\\Concrete 3x3 meters\\Concrete 3x3 meters.material"
+				}
+			}
+		}
+		.component NeoAxis.Component_RigidBody
+		{
+			Name = Collision Body
+			Visible = False
+			CanBeSelected = False
+			Transform
+			{
+				GetByReference = "this:..\\Transform"
+			}
+			.component NeoAxis.Component_CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Mesh in Space
+		Transform = "-38.2972688970552 -8.07231380356469 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Mesh in Space2
+		Transform = "-38.2972688970552 -18.9293647915688 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Mesh in Space3
+		Transform = "-38.2972688970552 -29.9355779415399 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.Component_ReflectionProbe
+	{
+		Name = Reflection Probe
+		Transform = "-38.617541207262 -7.68485834503863 2.06189155977484; 0 0 0 1; 12.3095996403784 12.3095996403784 12.3095996403784"
+	}
+	.component NeoAxis.Component_Skybox
+	{
+		Name = Skybox
+		Cubemap
+		{
+			GetByReference = "Base\\Environments\\Gradient.image"
+		}
+	}
+	.component NeoAxis.Component_Material
+	{
+		Name = Material Standard 2
+		BaseColor = 0.8117647 0.8117647 0.8117647
+		Metallic = 1
+		Roughness = 0.119
+		.component NeoAxis.Component_FlowGraph
+		{
+			Name = Flowchart
+			EditorScrollPosition = 0 0
+			Specialization
+			{
+				GetByReference = NeoAxis.Component_FlowGraphSpecialization_Shader|Instance
+			}
+			.component NeoAxis.Component_FlowGraphNode
+			{
+				Name = Node Material Standard 2
+				Position = 10 -7
+				ControlledObject
+				{
+					GetByReference = "this:..\\.."
+				}
+			}
+		}
+	}
+}

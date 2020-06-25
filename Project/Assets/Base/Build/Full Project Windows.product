@@ -1,0 +1,5 @@
+.component NeoAxis.Component_Product_Windows
+{
+	ProductName = Full Project
+	SortOrderInEditor = -1000
+}

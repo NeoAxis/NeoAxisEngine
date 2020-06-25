@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+Python Tools for Visual Studio
+Copyright(c) Microsoft Corporation
+All rights reserved.
+ 
+Licensed under the Apache License, Version 2.0 (the License); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at http://www.apache.org/licenses/LICENSE-2.0
+ 
+THIS CODE IS PROVIDED ON AN  *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS
+OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY
+IMPLIED WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
+MERCHANTABLITY OR NON-INFRINGEMENT.
+ 
+See the Apache Version 2.0 License for specific language governing
+permissions and limitations under the License.
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <!-- *************************************************************************
+       Azure publishing support.
+  -->
+  <PropertyGroup>
+    <RoleType Condition="'$(RoleType)' == ''">Web</RoleType>
+    <_AzureSupportPath Condition="'$(_AzureSupportPath)' == ''">$(MSBuildThisFileDirectory)</_AzureSupportPath>
+    <_AzureSupportPath Condition="!HasTrailingSlash('$(_AzureSupportPath)')">$(_AzureSupportPath)\</_AzureSupportPath>
+  </PropertyGroup>
+
+  <!-- Build is only enabled if CoreCompile is defined. -->
+  <Target Name="CoreCompile" DependsOnTargets="$(CoreCompileDependsOn)" />
+
+  <!-- These targets are required to satisfy the Web publishing targets. -->
+  <Target Name="WatGetTargetFrameworkDirectories" Returns=""  />
+  <Target Name="WatGetTargetFrameworkMoniker" Returns="" />
+  <Target Name="WatGetTargetFrameworkMonikerDisplayName" Returns=""  />
+
+  <!-- These properties are required to convince the web targets that we're .NET -->
+  <PropertyGroup>
+    <TargetName Condition="$(TargetName) == ''">Microsoft.PythonTools.WebRole</TargetName>
+    <TargetExt Condition="$(TargetExt) == ''">.dll</TargetExt>
+    <TargetPath Condition="$(TargetPath) == ''">$(QualifiedProjectHome)bin\$(TargetName)$(TargetExt)</TargetPath>
+  </PropertyGroup>
+
+  <Import Project="Microsoft.PythonTools.targets"/>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\WebApplications\Microsoft.WebApplication.targets" />
+
+  <!-- *************************************************************************
+       Targets files for specific frameworks can schedule their own targets to
+       be dependencies of ResolvePythonWsgiHandler to set the value of
+       $(PythonWsgiHandler) at build time.
+       
+       Alternatively, the value of $(PythonWsgiHandler) can be set directly,
+       using {StartupModule} to refer to the importable name of the start file.
+  -->
+  <PropertyGroup>
+    <ResolvePythonWsgiHandlerDependsOnTargets>
+      $(ResolvePythonWsgiHandlerDependsOnTargets)
+    </ResolvePythonWsgiHandlerDependsOnTargets>
+  </PropertyGroup>
+
+  <Target Name="ResolvePythonWsgiHandler" DependsOnTargets="$(ResolvePythonWsgiHandlerDependsOnTargets)">
+    <PropertyGroup Condition="'$(PythonWsgiHandler)' != ''">
+      <PythonWsgiHandler>$(PythonWsgiHandler.Replace(`{StartupModule}`, $(StartupModule)))</PythonWsgiHandler>
+    </PropertyGroup>
+  </Target>
+
+  <!-- *************************************************************************
+       The Build target is invoked as part of the Publish phase.
+  -->
+
+  <PropertyGroup>
+    <SkipCopyBuildProduct>true</SkipCopyBuildProduct>
+
+    <CoreCompileDependsOn>
+      CollectPythonSourceFiles;
+      CollectPythonCloudServiceFiles;
+      $(CoreCompileDependsOn)
+    </CoreCompileDependsOn>
+
+    <PipelineCollectFilesPhaseDependsOn>
+      $(PipelineCollectFilesPhaseDependsOn);
+      CoreCompile
+    </PipelineCollectFilesPhaseDependsOn>
+  </PropertyGroup>
+
+  <Target Name="CollectPythonSourceFiles">
+    <ItemGroup>
+      <FilesForPackagingFromProject Include="@(Compile)">
+        <DestinationRelativePath>%(Compile.RelativeDir)%(Compile.Filename)%(Compile.Extension)</DestinationRelativePath>
+        <FromTarget>CollectPythonSourceFiles</FromTarget>
+        <Category>Run</Category>
+      </FilesForPackagingFromProject>
+    </ItemGroup>
+  </Target>
+
+  <!-- This target is not useful, so we suppress it -->
+  <Target Name="CollectFilesFromIntermediateAssembly" />
+
+  <!-- *************************************************************************
+       These targets are invoked by the IDE when determining whether the project
+       needs to be rebuilt.
+  -->
+
+  <PropertyGroup>
+    <BuiltProjectOutputGroupDependsOn>
+      _GetPythonCloudServiceFiles;
+      $(BuiltProjectOutputGroupDependsOn)
+    </BuiltProjectOutputGroupDependsOn>
+
+    <SourceFilesProjectOutputGroupDependsOn>
+      _GetPythonCloudServiceFiles;
+      $(SourceFilesProjectOutputGroupDependsOn)
+    </SourceFilesProjectOutputGroupDependsOn>
+  </PropertyGroup>
+
+  <Target Name="_WarnAboutLegacySettings" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <_WarningMessage>
+        <![CDATA[Publishing Python projects has recently changed, and the {{PROP}} property is now ignored.
+Please refer to https://aka.ms/pythononappservice for information about configuring and publishing to Azure App Service.]]>
+      </_WarningMessage>
+    </PropertyGroup>
+    <Warning Condition="'$(DeployedPythonInterpreterPath)' != ''" Text="$(_WarningMessage.Replace(`{{PROP}}`, `DeployedPythonInterpreterPath`))" />
+    <Warning Condition="'$(DeployedSiteRoot)' != ''" Text="$(_WarningMessage.Replace(`{{PROP}}`, `DeployedSiteRoot`))" />
+    <Warning Condition="'$(DeployedVirtualEnvPath)' != ''" Text="$(_WarningMessage.Replace(`{{PROP}}`, `DeployedVirtualEnvPath`))" />
+    <Warning Condition="'$(DeployedWFastCgiPath)' != ''" Text="$(_WarningMessage.Replace(`{{PROP}}`, `DeployedWFastCgiPath`))" />
+    <Warning Condition="'$(WsgiAppSettings)' != ''" Text="$(_WarningMessage.Replace(`{{PROP}}`, `WsgiAppSettings`))" />
+    <Warning Condition="'$(WsgiLogPath)' != ''" Text="$(_WarningMessage.Replace(`{{PROP}}`, `WsgiLogPath`))" />
+    <Warning Condition="'$(StaticUriPattern)' != ''" Text="$(_WarningMessage.Replace(`{{PROP}}`, `StaticUriPattern`))" />
+    <Warning Condition="'$(StaticUriRewrite)' != ''" Text="$(_WarningMessage.Replace(`{{PROP}}`, `StaticUriRewrite`))" />
+    <Warning Condition="'$(FastCgiRewriteConditions)' != ''" Text="$(_WarningMessage.Replace(`{{PROP}}`, `FastCgiRewriteConditions`))" />
+  </Target>
+
+  <Target Name="_ValidateLegacyWsgiHandler"
+          BeforeTargets="PrepareForBuild"
+          DependsOnTargets="ResolveStartupModule"
+          Condition="$(PythonWsgiHandler) != ''">
+    <PropertyGroup>
+      <_PythonWsgiHandler>$(PythonWsgiHandler.Replace(`{StartupModule}`, $(StartupModule)))</_PythonWsgiHandler>
+    </PropertyGroup>
+    <ItemGroup>
+      <_WebConfig Remove="@(_WebConfig)" />
+      <_WebConfig Include="@(Content);@(None)" Condition="'%(Identity)' == 'web.config'" />
+    </ItemGroup>
+    <XmlPeek XmlInputPath="@(_WebConfig)" Query="/configuration/appSettings/add[@key='WSGI_HANDLER']/@value" Condition="@(_WebConfig) != ''">
+      <Output TaskParameter="Result" PropertyName="_WebConfigWsgiHandler" />
+    </XmlPeek>
+    <PropertyGroup Condition="@(_WebConfig) != ''">
+      <_WarningMessage>
+        Your web.config file contains a different WSGI handler ('$(_WebConfigWsgiHandler)') than specified in Project Properties ('$(_PythonWsgiHandler)').
+        Review and correct either value to suppress this warning.
+      </_WarningMessage>
+    </PropertyGroup>
+    <Warning Condition="@(_WebConfig) != '' and $(_WebConfigWsgiHandler) != $(_PythonWsgiHandler)" Text="$(_WarningMessage)" />
+  </Target>
+
+  <PropertyGroup>
+    <SuppressCollectPythonCloudServiceFiles Condition="'$(SuppressCollectPythonCloudServiceFiles)' != 'true'">false</SuppressCollectPythonCloudServiceFiles>
+  </PropertyGroup>
+
+  <!-- *************************************************************************
+       CollectPythonCloudServiceFiles deploys extra files for cloud services.
+       
+       These files are copied to the bin\ path on build.
+       
+       When building inside VS (for the emulator), the directory of the item
+       returned from the GetTargetPath target is copied to the approot\bin
+       directory.
+       
+       When building outside VS (for publishing), the PipelineTransformPhase
+       target will add these files as content with a link to "bin\$(name)" to
+       ensure they are deployed to approot\bin.
+  -->
+  <ItemGroup Condition="'$(SuppressCollectPythonCloudServiceFiles)' != 'true'">
+    <!-- Common files -->
+    <_CloudServiceFiles Include="$(_AzureSupportPath)Microsoft.PythonTools.WebRole.dll" />
+    <!-- Web Role files -->
+    <_WebRoleFiles Include="$(_AzureSupportPath)wfastcgi.py" />
+  </ItemGroup>
+
+  <Target Name="CollectPythonCloudServiceFiles"
+          DependsOnTargets="_GetPythonCloudServiceFiles;
+                            _DeployPythonCloudServiceFiles;
+                            _CollectPythonCloudServiceFiles"
+          Condition="!$(SuppressCollectPythonCloudServiceFiles)" />
+
+  <Target Name="_GetPythonCloudServiceSourceFiles">
+    <ItemGroup>
+      <_CloudServiceFiles Include="@(_WebRoleFiles)" Condition="'$(RoleType)' == 'Web'" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="_GetPythonCloudServiceFiles"
+          DependsOnTargets="_GetPythonCloudServiceSourceFiles"
+          Returns="@(_PythonCloudServiceFiles)">
+    <ItemGroup Condition="'@(_CloudServiceFiles)' != ''">
+      <_CloudServiceFilesWithTargetPath Include="@(_CloudServiceFiles)">
+        <SourceFile>%(FullPath)</SourceFile>
+        <TargetPath>$(QualifiedProjectHome)bin\%(Filename)%(Extension)</TargetPath>
+        <TargetPath Condition="'%(_CloudServiceFiles.TargetPath)' != ''">%(_CloudServiceFiles.TargetPath)</TargetPath>
+      </_CloudServiceFilesWithTargetPath>
+
+      <_PythonCloudServiceFiles Include="@(_CloudServiceFilesWithTargetPath->'%(TargetPath)')" />
+
+      <InputFiles Include="@(_CloudServiceFilesWithTargetPath->'%(SourceFile)')" />
+      <OutputFiles Include="@(_CloudServiceFilesWithTargetPath->'%(TargetPath)')" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="_DeployPythonCloudServiceFiles"
+          Inputs="@(_PythonCloudServiceFiles->'%(SourceFile)')"
+          Outputs="@(_PythonCloudServiceFiles->'%(TargetPath)')"
+          DependsOnTargets="_GetPythonCloudServiceFiles"
+          Condition="!$(SuppressCollectPythonCloudServiceFiles) and '@(_PythonCloudServiceFiles)' != ''">
+    <Copy SourceFiles="@(_PythonCloudServiceFiles->'%(SourceFile)')"
+          DestinationFiles="@(_PythonCloudServiceFiles->'%(TargetPath)')"
+          SkipUnchangedFiles="true"/>
+
+    <ItemGroup>
+      <FileWrites Include="@(_PythonCloudServiceFiles->'%(TargetPath)')"/>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="_CollectPythonCloudServiceFiles"
+          DependsOnTargets="_GetPythonCloudServiceFiles"
+          Condition="!$(SuppressCollectPythonCloudServiceFiles) and '@(_PythonCloudServiceFiles)' != ''">
+    <ItemGroup>
+      <FilesForPackagingFromProject Include="@(_PythonCloudServiceFiles->'%(TargetPath)')">
+        <DestinationRelativePath>bin\%(FileName)%(Extension)</DestinationRelativePath>
+        <FromTarget>CollectPythonCloudServiceFiles</FromTarget>
+        <Category>Run</Category>
+      </FilesForPackagingFromProject>
+    </ItemGroup>
+  </Target>
+
+
+  <!-- *************************************************************************
+       GetTargetPath is invoked by Microsoft.WindowsAzure.targets when it is
+       collecting web role files. It returns one item that is our WebRole.dll.
+  -->
+  <Target Name="GetTargetPath" Returns="@(_WebRoleDll)">
+    <ItemGroup>
+      <_WebRoleDll Include="$(QualifiedProjectHome)bin\Microsoft.PythonTools.WebRole.dll" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="PrepareForBuild">
+    <MakeDir Directories="$(OutDir);$(IntermediateOutputPath);@(CreateDirectory)" ContinueOnError="True"/>
+  </Target>
+
+
+  <!-- *************************************************************************
+       Web commands. These are displayed to the user in the PTVS IDE and are
+       used by the web launcher.
+  -->
+  <PropertyGroup>
+    <WebServerHost Condition="'$(WebServerHost)' == ''">localhost</WebServerHost>
+    <_IgnorePythonWebCommands Condition="'$(_IgnorePythonWebCommands)' == ''">false</_IgnorePythonWebCommands>
+    <PythonCommands Condition="!$(_IgnorePythonWebCommands)">$(PythonCommands);PythonRunWebServerCommand;PythonDebugWebServerCommand</PythonCommands>
+  </PropertyGroup>
+
+  <Target Name="PythonRunWebServerCommand"
+          Label="resource:Microsoft.PythonTools.Common;Microsoft.PythonTools.Common.Strings;RunWebServerLabel"
+          Returns="@(Commands)">
+    <PropertyGroup>
+      <PythonRunWebServerCommand Condition="'$(PythonRunWebServerCommand)' == ''">$(StartupPath)</PythonRunWebServerCommand>
+      <PythonRunWebServerCommandType Condition="'$(PythonRunWebServerCommandType)' == ''">script</PythonRunWebServerCommandType>
+      <PythonRunWebServerCommandArguments Condition="'$(PythonRunWebServerCommandArguments)' == ''">$(CommandLineArguments)</PythonRunWebServerCommandArguments>
+      <PythonRunWebServerCommandEnvironment>
+        SERVER_HOST=$(WebServerHost)
+        SERVER_PORT=$(WebBrowserPort)
+        $(PythonRunWebServerCommandEnvironment)
+      </PythonRunWebServerCommandEnvironment>
+
+      <PythonRunWebServerCommand>$(PythonRunWebServerCommand.Replace(`{StartupModule}`, $(StartupModule)))</PythonRunWebServerCommand>
+      <PythonRunWebServerCommandArguments>$(PythonRunWebServerCommandArguments.Replace(`{StartupModule}`, $(StartupModule)))</PythonRunWebServerCommandArguments>
+      <PythonRunWebServerArguments>$(PythonRunWebServerArguments.Replace(`{StartupModule}`, $(StartupModule)))</PythonRunWebServerArguments>
+      <PythonRunWebServerCommandEnvironment>$(PythonRunWebServerCommandEnvironment.Replace(`{StartupModule}`, $(StartupModule)))</PythonRunWebServerCommandEnvironment>
+    </PropertyGroup>
+    <!-- 'console' and 'consolepause' are the only valid ExecuteIn values for this command. -->
+    <CreatePythonCommandItem Target="$(PythonRunWebServerCommand)"
+                             TargetType="$(PythonRunWebServerCommandType)"
+                             Arguments="$(PythonRunWebServerCommandArguments)"
+                             Environment="$(PythonRunWebServerCommandEnvironment)"
+                             WorkingDirectory="$(WorkingDirectory)"
+                             ExecuteIn="console"
+                             Condition="'$(PythonRunWebServerCommand)' != ''">
+      <Output TaskParameter="Command" ItemName="Commands" />
+    </CreatePythonCommandItem>
+  </Target>
+
+  <Target Name="PythonDebugWebServerCommand"
+          Label="resource:Microsoft.PythonTools.Common;Microsoft.PythonTools.Common.Strings;DebugWebServerLabel"
+          Returns="@(Commands)">
+    <PropertyGroup>
+      <PythonDebugWebServerCommand Condition="'$(PythonDebugWebServerCommand)' == ''">$(StartupPath)</PythonDebugWebServerCommand>
+      <PythonDebugWebServerCommandType Condition="'$(PythonDebugWebServerCommandType)' == ''">script</PythonDebugWebServerCommandType>
+      <PythonDebugWebServerCommandArguments Condition="'$(PythonDebugWebServerCommandArguments)' == ''">$(CommandLineArguments)</PythonDebugWebServerCommandArguments>
+      <PythonDebugWebServerCommandEnvironment>
+        SERVER_HOST=$(WebServerHost)
+        SERVER_PORT=$(WebBrowserPort)
+        $(PythonDebugWebServerCommandEnvironment)
+      </PythonDebugWebServerCommandEnvironment>
+
+      <PythonDebugWebServerCommand>$(PythonDebugWebServerCommand.Replace(`{StartupModule}`, $(StartupModule)))</PythonDebugWebServerCommand>
+      <PythonDebugWebServerCommandArguments>$(PythonDebugWebServerCommandArguments.Replace(`{StartupModule}`, $(StartupModule)))</PythonDebugWebServerCommandArguments>
+      <PythonDebugWebServerArguments>$(PythonDebugWebServerArguments.Replace(`{StartupModule}`, $(StartupModule)))</PythonDebugWebServerArguments>
+      <PythonDebugWebServerCommandEnvironment>$(PythonDebugWebServerCommandEnvironment.Replace(`{StartupModule}`, $(StartupModule)))</PythonDebugWebServerCommandEnvironment>
+    </PropertyGroup>
+    <!-- 'console' and 'consolepause' are the only valid ExecuteIn values for this command. -->
+    <CreatePythonCommandItem Target="$(PythonDebugWebServerCommand)"
+                             TargetType="$(PythonDebugWebServerCommandType)"
+                             Arguments="$(PythonDebugWebServerCommandArguments)"
+                             Environment="$(PythonDebugWebServerCommandEnvironment)"
+                             WorkingDirectory="$(WorkingDirectory)"
+                             ExecuteIn="console"
+                             Condition="'$(PythonDebugWebServerCommand)' != ''">
+      <Output TaskParameter="Command" ItemName="Commands" />
+    </CreatePythonCommandItem>
+  </Target>
+</Project>

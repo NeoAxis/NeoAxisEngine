@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="ExpandedSdkNode" DisplayName="展開された SDK ノード" PageTemplate="generic" Description="参照されている SDK のコンテンツ ファイル" PropertyPagesHidden="true" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="全般"/>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ExpandedSdkNode" ItemType="ExpandedSdkNode"/>
+  </Rule.DataSource>
+
+  <StringProperty Name="FileName" DisplayName="ファイル名" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.expandedsdknode.filename" Description="ファイルまたはフォルダーの名前です。"/>
+
+  <StringProperty Name="PackageVersion" DisplayName="アプリケーション パッケージ バージョン" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.expandedsdknode.packageversion" Description="アプリケーション パッケージのバージョン。"/>
+
+  <StringProperty Name="FilePath" DisplayName="ファイル パス" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.expandedsdknode.filepath" Description="ディスク上のファイルへのパス。"/>
+
+  <StringProperty Name="URI" DisplayName="URI" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.expandedsdknode.uri" Description="このファイルの読み込みに使用できる URI です。"/>
+</Rule>

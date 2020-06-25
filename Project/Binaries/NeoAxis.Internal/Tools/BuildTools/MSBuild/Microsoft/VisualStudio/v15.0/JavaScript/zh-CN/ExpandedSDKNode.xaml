@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="ExpandedSdkNode" DisplayName="展开的 SDK 节点" PageTemplate="generic" Description="引用的 SDK 中的内容文件" PropertyPagesHidden="true" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="常规"/>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ExpandedSdkNode" ItemType="ExpandedSdkNode"/>
+  </Rule.DataSource>
+
+  <StringProperty Name="FileName" DisplayName="文件名" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.expandedsdknode.filename" Description="文件或文件夹的名称。"/>
+
+  <StringProperty Name="PackageVersion" DisplayName="应用程序包版本" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.expandedsdknode.packageversion" Description="应用程序包的版本。"/>
+
+  <StringProperty Name="FilePath" DisplayName="文件路径" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.expandedsdknode.filepath" Description="指向磁盘上的文件的路径。"/>
+
+  <StringProperty Name="URI" DisplayName="URI" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.expandedsdknode.uri" Description="可用于加载此文件的 URI。"/>
+</Rule>

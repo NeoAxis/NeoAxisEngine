@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="AppxManifest" DisplayName="Uygulama Bildirimi Özellikleri" PageTemplate="generic" Description="Uygulama Bildirimi Özellikleri" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="Genel"/>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ProjectFile" HasConfigurationCondition="false" ItemType="AppxManifest"/>
+  </Rule.DataSource>
+
+  <EnumProperty Name="{}{ItemType}" DisplayName="Paket Eylemi" Category="General" F1Keyword="javascript.project.property.packageaction" Description="Uygulama paketi oluşturulduğunda bu dosya üzerinde gerçekleştirilecek eylemi belirtir.">
+    <EnumValue Name="None" DisplayName="Yok"/>
+    <EnumValue Name="Content" DisplayName="İçerik"/>
+    <EnumValue Name="AppxManifest" DisplayName="Uygulama Bildirimi"/>
+    <EnumValue Name="PackageLayout" DisplayName="Paket Düzeni"/>
+    <EnumValue Name="PRIResource" DisplayName="Kaynak"/>
+
+    <EnumProperty.DataSource>
+      <DataSource Persistence="ProjectFile" Label="Configuration" SourceType="Item" ItemType="AppxManifest" HasConfigurationCondition="false"/>
+    </EnumProperty.DataSource>
+  </EnumProperty>
+
+  <EnumProperty Name="CopyToOutputDirectory" DisplayName="Çıkış Dizinine Kopyala" Category="General" F1Keyword="javascript.project.property.copytooutputdirectory" Description="Dosyanın çıkış klasörüne kopyalanıp kopyalanmayacağını belirtir.">
+    <EnumValue Name="Never" DisplayName="Kopyalama"/>
+    <EnumValue Name="Always" DisplayName="Her zaman kopyala"/>
+    <EnumValue Name="PreserveNewest" DisplayName="Daha yeniyse kopyala"/>
+  </EnumProperty>
+
+  <StringProperty Name="Identity" Visible="false" ReadOnly="true" Category="General" Description="Include özniteliğinde belirtilen öğe.">
+    <StringProperty.DataSource>
+      <DataSource Persistence="Intrinsic" ItemType="AppxManifest" PersistedName="Identity"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="FullPath" DisplayName="Tam Yol" ReadOnly="true" Category="General" F1Keyword="javascript.project.property.fullpath" Description="Dosyanın konumu.">
+    <StringProperty.DataSource>
+      <DataSource Persistence="Intrinsic" ItemType="AppxManifest" PersistedName="FullPath"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="FileNameAndExtension" DisplayName="Dosya Adı" ReadOnly="true" Category="General" F1Keyword="javascript.project.property.filename" Description="Dosya veya klasörün adı.">
+    <StringProperty.DataSource>
+      <DataSource Persistence="Intrinsic" ItemType="AppxManifest" PersistedName="FileNameAndExtension"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <BoolProperty Name="Visible" Visible="false"/>
+  <StringProperty Name="DependentUpon" Visible="false"/>
+  <StringProperty Name="Link" Visible="false"/>
+  <EnumProperty Name="SubType" Visible="false">
+    <EnumValue Name="Designer"/>
+  </EnumProperty>
+</Rule>

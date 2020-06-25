@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="SdkReference" DisplayName="SDK 引用" PageTemplate="generic" Description="SDK 引用属性" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="常规"/>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ProjectFile" ItemType="SDKReference" HasConfigurationCondition="false"/>
+  </Rule.DataSource>
+
+  <EnumProperty Name="FileType" ReadOnly="true" Visible="true" DisplayName="文件类型" Category="General" F1Keyword="javascript.project.property.reference.filetype" Description="引用的文件类型。">
+
+    <EnumValue Name="SDK" DisplayName="SDK"/>
+  </EnumProperty>
+
+  <StringProperty Name="Identity" ReadOnly="true" DisplayName="标识" Category="General" F1Keyword="javascript.project.property.reference.identity" Description="引用的程序集的安全标识。">
+
+    <StringProperty.DataSource>
+      <DataSource PersistedName="{}{Identity}"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="ResolvedPath" ReadOnly="true" DisplayName="路径" Category="General" F1Keyword="javascript.project.property.reference.resolvedpath" Description="所引用的文件的位置。">
+
+    <StringProperty.DataSource>
+      <DataSource PersistedName="Identity"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="AppXLocation" DisplayName="应用程序包" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.reference.package" Description="与活动配置的此 SDK 引用关联的应用程序包。"/>
+
+  <StringProperty Name="Version" ReadOnly="true" DisplayName="版本" Category="General" F1Keyword="javascript.project.property.reference.version" Description="引用的版本。"/>
+
+  <!-- This property should be the same as the one for the ResolvedReference item -->
+  <StringProperty Name="OriginalItemSpec" Visible="false"/>
+  <StringProperty Name="FrameworkIdentity" Visible="false"/>
+  <BoolProperty Name="CopyPayload" Visible="false"/>
+  <BoolProperty Name="ExpandContent" Visible="false"/>
+  <BoolProperty Name="ExpandReferenceAssemblies" Visible="false"/>
+  <BoolProperty Name="CopyLocalExpandedReferenceAssemblies" Visible="false"/>
+</Rule>

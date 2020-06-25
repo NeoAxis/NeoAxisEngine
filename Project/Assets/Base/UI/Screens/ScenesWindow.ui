@@ -1,0 +1,53 @@
+.component Project.ScenesWindow
+{
+	Text = Scenes
+	Size = Units 1200 800
+	HorizontalAlignment = Center
+	VerticalAlignment = Center
+	EditorScrollPosition = 0 0
+	Style
+	{
+		GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Close
+		Text = Close
+		Size = Units 200 40
+		HorizontalAlignment = Right
+		VerticalAlignment = Bottom
+		Margin = Units 0 0 20 20
+		EditorScrollPosition = 0 0
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Load
+		Text = Load
+		Size = Units 200 40
+		HorizontalAlignment = Right
+		Margin = Units 0 50 20 0
+		EditorScrollPosition = 0 0
+	}
+	.component NeoAxis.UIList
+	{
+		Name = List
+		Size = Units 945 730
+		Margin = Units 20 50 0 0
+		EditorScrollPosition = 0 0
+		Items
+		{
+			Count = 0
+		}
+		.component NeoAxis.UIScrollBar
+		{
+			Name = ScrollBar
+			CanBeSelected = False
+			Size = Units 30 400
+			HorizontalAlignment = Right
+			VerticalAlignment = Stretch
+			Margin = Units 0 2 2 2
+			EditorScrollPosition = 0 0
+			Vertical = True
+		}
+	}
+}

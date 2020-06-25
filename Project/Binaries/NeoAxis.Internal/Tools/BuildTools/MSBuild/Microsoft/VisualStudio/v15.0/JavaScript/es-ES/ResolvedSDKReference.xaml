@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="ResolvedSdkReference" DisplayName="Referencia del SDK resuelta" PageTemplate="generic" Description="Referencia del SDK resuelta" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="General"/>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ResolvedReference" ItemType="SDKReference" HasConfigurationCondition="false" SourceType="TargetResults" MSBuildTarget="ResolveSDKReferencesDesignTime"/>
+  </Rule.DataSource>
+
+  <StringProperty Name="OriginalItemSpec" ReadOnly="true" DisplayName="Identidad" Category="General" F1Keyword="javascript.project.property.reference.identity" Description="Identidad de la referencia.">
+  </StringProperty>
+
+  <StringProperty Name="ResolvedPath" ReadOnly="true" DisplayName="Ruta de acceso" Category="General" F1Keyword="javascript.project.property.reference.resolvedpath" Description="Ubicación del archivo al que se hace referencia.">
+
+    <StringProperty.DataSource>
+      <DataSource PersistedName="Identity"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="AppXLocation" DisplayName="Paquete de aplicaciones" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.reference.package" Description="Paquete de aplicaciones asociado a esta referencia de SDK para la configuración activa."/>
+
+  <StringProperty Name="Version" ReadOnly="true" DisplayName="Versión" Category="General" F1Keyword="javascript.project.property.reference.version" Description="Versión de la referencia."/>
+
+  <!-- This property should be the same as the one for the ResolvedReference item -->
+  <StringProperty Name="FrameworkIdentity" Visible="false"/>
+  <StringProperty Name="DisplayName" Visible="false"/>
+  <StringProperty Name="CopyContentToSubDirectory" Visible="false"/>
+  <BoolProperty Name="CopyPayload" Visible="false"/>
+  <BoolProperty Name="ExpandContent" Visible="false"/>
+  <BoolProperty Name="ExpandReferenceAssemblies" Visible="false"/>
+  <BoolProperty Name="CopyLocalExpandedReferenceAssemblies" Visible="false"/>
+
+</Rule>

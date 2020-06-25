@@ -1,0 +1,463 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <UsingTask TaskName="SetEnvironmentVariable" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v12.0.dll">
+    <ParameterGroup>
+      <EnvKey ParameterType="System.String" Required="true" />
+      <EnvValue ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+            try {
+                Environment.SetEnvironmentVariable(EnvKey, EnvValue, System.EnvironmentVariableTarget.Process);
+            }
+            catch  {
+            }
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <!-- Global properties for all analyzers -->
+
+  <PropertyGroup>
+    <CodeAnalysisStaticAnalysisDirectory Condition="'$(CodeAnalysisStaticAnalysisDirectory)'=='' and Exists('$(VsInstallRoot)\Team Tools\Static Analysis Tools\')">$(VsInstallRoot)\Team Tools\Static Analysis Tools\</CodeAnalysisStaticAnalysisDirectory>
+
+    <!-- Default rule set search paths -->
+    <CodeAnalysisRuleSetDirectories Condition=
+            "'$(CodeAnalysisIgnoreBuiltInRuleSets)'!='true' and
+             '$(CodeAnalysisStaticAnalysisDirectory)'!=''">$(CodeAnalysisRuleSetDirectories);$(CodeAnalysisStaticAnalysisDirectory)\Rule Sets</CodeAnalysisRuleSetDirectories>
+
+    <!--
+         In scenario where we run CA from command-line , we don't get "CodeAnalysisVSSku" variable passed by the IDE, so in case of Express-only installation
+         we attempt to load rule sets that are only present on Pro and above - and fail. Let's assume we're in "Express" mode if the Pro+ rule set doesn't exist.
+      -->
+    <CodeAnalysisVSSku Condition="'$(CodeAnalysisVSSku)'=='' and !Exists('$(CodeAnalysisStaticAnalysisDirectory)\Rule Sets\NativeRecommendedRules.ruleset')">Express</CodeAnalysisVSSku>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RunCodeAnalysis)'=='true' or '$(RunCodeAnalysisOnce)'=='true'">
+    <!--
+         - Checking whether we should run Code Analysis only on specific project in the solution
+         - Combine all variables into one "master" control variable to simplify conditions further below
+      -->
+    <RunCodeAnalysisOnThisProject>true</RunCodeAnalysisOnThisProject>
+    <RunCodeAnalysisOnThisProject Condition="'$(CodeAnalysisProjectFullPath)'!='' and '$(MSBuildProjectFullPath)'!='' and '$(MSBuildProjectFullPath)'!='$(CodeAnalysisProjectFullPath)'">false</RunCodeAnalysisOnThisProject>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RunCodeAnalysisOnThisProject)'=='true'">
+    <!-- Define the CODE_ANALYSIS constant -->
+    <DefineConstants Condition="'$(Language)'=='C#' ">CODE_ANALYSIS;$(DefineConstants)</DefineConstants>
+    <FinalDefineConstants Condition="'$(Language)'=='VB' ">CODE_ANALYSIS=-1,$(FinalDefineConstants)</FinalDefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- We do this check all over the place, consolidate -->
+    <RunCppAnalysis>false</RunCppAnalysis>
+    <RunCppAnalysis Condition="'$(Language)'=='C++' and '$(RunCodeAnalysisOnThisProject)'=='true'">true</RunCppAnalysis>
+  </PropertyGroup>
+
+  <!-- Global properties for all analyzers -->
+
+
+  <!-- FxCop analyzer properties -->
+
+  <PropertyGroup>
+    <!-- FxCopDir must be considered for backwards compatibility with the Visual Studio 2005 task, except within the context of a Team Build build. -->
+    <CodeAnalysisPath Condition="'$(CodeAnalysisPath)'=='' and '$(FxCopDir)'!='' and '$(TeamBuildConstants)'==''">$(FxCopDir)</CodeAnalysisPath>
+    <CodeAnalysisPath Condition="'$(CodeAnalysisPath)'=='' and Exists('$(VsInstallRoot)\Team Tools\Static Analysis Tools\FxCop\')">$(VsInstallRoot)\Team Tools\Static Analysis Tools\FxCop\</CodeAnalysisPath>
+
+    <!-- Default FxCop settings -->
+    <CodeAnalysisApplyLogFileXsl Condition="'$(CodeAnalysisApplyLogFileXsl)'==''">false</CodeAnalysisApplyLogFileXsl>
+    <CodeAnalysisFailOnMissingRules Condition="'$(CodeAnalysisFailOnMissingRules)'==''">false</CodeAnalysisFailOnMissingRules>
+    <CodeAnalysisForceOutput Condition="'$(CodeAnalysisForceOutput)'==''">true</CodeAnalysisForceOutput>
+    <CodeAnalysisGenerateSuccessFile Condition="'$(CodeAnalysisGenerateSuccessFile)'==''">true</CodeAnalysisGenerateSuccessFile>
+    <CodeAnalysisIgnoreGeneratedCode Condition="'$(CodeAnalysisIgnoreGeneratedCode)'==''">true</CodeAnalysisIgnoreGeneratedCode>
+    <CodeAnalysisIgnoreInvalidTargets Condition="'$(CodeAnalysisIgnoreInvalidTargets)'==''">true</CodeAnalysisIgnoreInvalidTargets>
+    <CodeAnalysisIgnoreMissingIndirectReferences Condition="'$(CodeAnalysisIgnoreMissingIndirectReferences)'==''">false</CodeAnalysisIgnoreMissingIndirectReferences>
+    <CodeAnalysisInputAssembly Condition="'$(CodeAnalysisInputAssembly)'==''">$(OutDir)$(TargetFileName)</CodeAnalysisInputAssembly>
+    <CodeAnalysisLogFile Condition="'$(CodeAnalysisLogFile)'==''">$(CodeAnalysisInputAssembly).CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisModuleSuppressionsFile Condition="'$(CodeAnalysisModuleSuppressionsFile)'==''">GlobalSuppressions$(DefaultLanguageSourceExtension)</CodeAnalysisModuleSuppressionsFile>
+    <CodeAnalysisOverrideRuleVisibilities Condition="'$(CodeAnalysisOverrideRuleVisibilities)'==''">false</CodeAnalysisOverrideRuleVisibilities>
+    <CodeAnalysisOutputToConsole Condition="'$(CodeAnalysisOutputToConsole)'==''">false</CodeAnalysisOutputToConsole>
+    <CodeAnalysisQuiet Condition="'$(CodeAnalysisQuiet)'==''">false</CodeAnalysisQuiet>
+
+    <!--
+         Do not add the built-in rule directories in any of the following conditions:
+         1. CodeAnalysisRuleAssemblies is not empty, CodeAnalysisRuleDirectories is empty, and CodeAnalysisRuleSet is empty. (This is the case when CodeAnalysisRuleAssemblies will be used.)
+         2. CodeAnalysisIgnoreBuiltInRules is true.
+         3. CodeAnalysisPath is empty.
+         4. CodeAnalysisProject is not empty (i.e., an FxCop project file is used).
+
+         The condition below checks ensures none of these four are true.
+      -->
+    <CodeAnalysisRuleDirectories Condition=
+          "('$(CodeAnalysisRuleAssemblies)'=='' or '$(CodeAnalysisRuleDirectories)'!='' or '$(CodeAnalysisRuleSet)'!='') and 
+            '$(CodeAnalysisIgnoreBuiltInRules)'!='true' and 
+            '$(CodeAnalysisPath)'!='' and 
+            '$(CodeAnalysisProject)'==''">$(CodeAnalysisRuleDirectories);$(CodeAnalysisPath)\Rules</CodeAnalysisRuleDirectories>
+
+    <!-- We emit active and suppressed messages in the output log when running code analysis within Visual Studio.
+         Delete the below line if you do not want to see suppressed messages within Visual Studio. -->
+    <CodeAnalysisSaveMessagesToReport Condition="'$(CodeAnalysisSaveMessagesToReport)'=='' and '$(RunCodeAnalysisOnce)'=='true'">Active,Excluded</CodeAnalysisSaveMessagesToReport>
+    <!-- We only emit active messages in the output log when running code analysis from the command line. -->
+    <CodeAnalysisSaveMessagesToReport Condition="'$(CodeAnalysisSaveMessagesToReport)'==''">Active</CodeAnalysisSaveMessagesToReport>
+
+    <CodeAnalysisSearchGlobalAssemblyCache Condition="'$(CodeAnalysisSearchGlobalAssemblyCache)'==''">true</CodeAnalysisSearchGlobalAssemblyCache>
+    <CodeAnalysisSucceededFile Condition="'$(CodeAnalysisSucceededFile)'==''">$(CodeAnalysisInputAssembly).lastcodeanalysissucceeded</CodeAnalysisSucceededFile>
+    <CodeAnalysisSummary Condition="'$(CodeAnalysisSummary)'==''">false</CodeAnalysisSummary>
+    <CodeAnalysisTimeout Condition="'$(CodeAnalysisTimeout)'==''">120</CodeAnalysisTimeout>
+    <CodeAnalysisTreatWarningsAsErrors Condition="'$(CodeAnalysisTreatWarningsAsErrors)'==''">false</CodeAnalysisTreatWarningsAsErrors>
+    <CodeAnalysisUpdateProject Condition="'$(CodeAnalysisUpdateProject)'==''">false</CodeAnalysisUpdateProject>
+    <CodeAnalysisUseTypeNameInSuppression Condition="'$(CodeAnalysisUseTypeNameInSuppression)'==''">true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisVerbose Condition="'$(CodeAnalysisVerbose)'==''">false</CodeAnalysisVerbose>
+  </PropertyGroup>
+
+    <!-- Select appropriate default rule set depending on project type and VS Sku-->
+    <Choose>
+      <When Condition="!Exists('$(CodeAnalysisRuleSet)') and ('$(CodeAnalysisVSSku)'=='Express' or ('$(CodeAnalysisRules)'=='' and '$(CodeAnalysisRuleAssemblies)'=='' and '$(CodeAnalysisRuleSet)'==''))">
+        <Choose>
+          <When Condition="'$(Language)'=='C++' and '$(CLRSupport)'=='true' and '$(CodeAnalysisVSSku)'=='Express'">
+            <PropertyGroup>
+              <CodeAnalysisRuleSet>MixedMinimumRules.ruleset</CodeAnalysisRuleSet>
+            </PropertyGroup>
+          </When>
+          <When Condition="'$(Language)'=='C++' and '$(CLRSupport)'=='true'">
+            <PropertyGroup>
+              <CodeAnalysisRuleSet>MixedRecommendedRules.ruleset</CodeAnalysisRuleSet>
+            </PropertyGroup>
+          </When>
+          <When Condition="'$(Language)'=='C++' and '$(CodeAnalysisVSSku)'=='Express'">
+            <PropertyGroup>
+              <CodeAnalysisRuleSet>NativeMinimumRules.ruleset</CodeAnalysisRuleSet>
+            </PropertyGroup>
+          </When>
+          <When Condition="'$(Language)'=='C++'">
+            <PropertyGroup>
+              <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+            </PropertyGroup>
+          </When>
+          <When Condition="'$(CodeAnalysisVSSku)'=='Express'">
+            <PropertyGroup>
+              <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+            </PropertyGroup>
+          </When>
+          <Otherwise>
+              <PropertyGroup>
+                <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+              </PropertyGroup>
+          </Otherwise>
+        </Choose>
+      </When>
+    </Choose>
+
+    <!-- C#/VB specific properties -->
+    <PropertyGroup Condition="'$(Language)'=='C#' or '$(Language)'=='VB'">
+        <!-- Run Code Analysis after the build, but before running the application-->
+        <PrepareForRunDependsOn>$(PrepareForRunDependsOn);RunCodeAnalysis</PrepareForRunDependsOn>
+        <RunCodeAnalysisDependsOn>$(RunCodeAnalysisDependsOn);Compile</RunCodeAnalysisDependsOn>
+    </PropertyGroup>
+
+  <!-- C++ specific properties -->
+  <PropertyGroup Condition="'$(RunCppAnalysis)'=='true'">
+    <!-- CLR and WinRT projects don't support /analyze:only because they require metadata to be built -->
+    <VCAnalyzeOnlyAllowed Condition="'$(VCAnalyzeOnlyAllowed)'==''">true</VCAnalyzeOnlyAllowed>
+    <VCAnalyzeOnlyAllowed Condition="'$(VCAnalyzeOnlyAllowed)'=='' and ('$(WindowsAppContainer)'=='true' or '$(WinMDAssembly)'=='true' or '$(ManagedAssembly)'=='true')">false</VCAnalyzeOnlyAllowed>
+
+    <!-- Keep track if we are doing an analyze-only build (toolset 14.0 and higher) -->
+    <VCAnalyzeOnly>false</VCAnalyzeOnly>
+    <VCAnalyzeOnly Condition="'$(RunCodeAnalysisOnce)'=='true' and '$(VCAnalyzeOnlyAllowed)'=='true' and '$(PlatformToolsetVersion)'&gt;='140'">true</VCAnalyzeOnly>
+
+    <!-- Use the specified ruleset path if found otherwise try to determine the full path to the ruleset -->
+    <VCAnalyzeRulesetPath Condition="Exists('$(CodeAnalysisRuleSet)')">$(CodeAnalysisRuleSet)</VCAnalyzeRulesetPath>
+    <VCAnalyzeRulesetPath Condition="'$(VCAnalyzeRulesetPath)'==''">$(CodeAnalysisStaticAnalysisDirectory)Rule Sets\$(CodeAnalysisRuleSet)</VCAnalyzeRulesetPath>
+
+    <!-- Set up localEspc plugin path -->
+    <!-- use 32-bit version by default -->
+    <LocalEspcPath>$(VC_ExecutablePath_x86_x86)\localespc.dll</LocalEspcPath>
+    <!-- use 64-bit version if 64-bit cl.exe is used -->
+    <LocalEspcPath Condition="'$(VCToolArchitecture)'=='Native64Bit'">$(VC_ExecutablePath_x64_x64)\localespc.dll</LocalEspcPath>
+
+    <RunMergeNativeCodeAnalysisDependsOn>ClCompile</RunMergeNativeCodeAnalysisDependsOn>
+    <RunMergeNativeCodeAnalysisDependsOn Condition="'$(RunCodeAnalysisDependsOn)'!=''">$(RunCodeAnalysisDependsOn);$(RunMergeNativeCodeAnalysisDependsOn)</RunMergeNativeCodeAnalysisDependsOn>
+    <RunCodeAnalysisDependsOn>$(RunCodeAnalysisDependsOn);ClCompile;RunMergeNativeCodeAnalysis</RunCodeAnalysisDependsOn>
+
+    <ExtensionsToDeleteOnClean>$(ExtensionsToDeleteOnClean);$(CodeAnalysisLogFile);$(CodeAnalysisSucceededFile)</ExtensionsToDeleteOnClean>
+    <CodeAnalysisTLogFile>$(IntDir)CodeAnalysis.read.1.tlog</CodeAnalysisTLogFile>
+    <NativeCodeAnalysisTLogFile>$(IntDir)NativeCodeAnalysis.read.1.tlog</NativeCodeAnalysisTLogFile>
+  </PropertyGroup>
+
+  <!-- Analyze-only build, don't run any post-compile build steps -->
+  <PropertyGroup Condition="'$(RunCppAnalysis)'=='true' and '$(VCAnalyzeOnly)'=='true'">
+      <!--
+          See Microsoft.BuildSteps.targets
+          PrepareForBuild before ResolveReferences limits P2P rebuild
+      -->
+      <BuildSteps>
+          PrepareForBuild;
+          ResolveReferences;
+          InitializeBuildStatus;
+          BuildGenerateSources;
+          BeforeClCompile;
+          RunNativeCodeAnalysis
+      </BuildSteps>
+      <!-- In analyze-only, we don't generate assemblies so we can't run FxCop -->
+  </PropertyGroup>
+
+  <!-- Build with analyze, we run analysis after the assembly is linked -->
+  <PropertyGroup Condition="'$(RunCppAnalysis)'=='true' and '$(VCAnalyzeOnly)'!='true'">
+      <AfterBuildLinkTargets>$(AfterBuildLinkTargets);RunMergeNativeCodeAnalysis;RunNativeCodeAnalysis</AfterBuildLinkTargets>
+      <AfterBuildLinkTargets Condition="'$(CLRSupport)'=='true'">$(AfterBuildLinkTargets);RunCodeAnalysis</AfterBuildLinkTargets>
+  </PropertyGroup>
+
+    <!-- NOTE: Back-compat support for EnablePREFast item property.
+      It's possible to set manually set EnablePREFast in an item definition group
+      in project, without setting RunCodeAnalysis. In this case, we want to set
+      up CAExcludePath so headers are clean, but don't want to enable any other
+      C++ CA features like the result ingestion tasks or /analyze:quiet. -->
+  <PropertyGroup Condition="'$(Language)'=='C++' or '$(RunCppAnalysis)'=='true'">
+    <!-- Set up CAExcludePath for known include paths -->
+    <CAExcludePath Condition="'$(Console_SdkIncludeRoot)'!=''">$(Console_SdkIncludeRoot);$(CAExcludePath)</CAExcludePath>
+    <CAExcludePath Condition="'$(WindowsSDK_IncludePath)'!=''">$(WindowsSDK_IncludePath);$(CAExcludePath)</CAExcludePath>
+    <CAExcludePath Condition="'$(UniversalCRT_IncludePath)'!=''">$(UniversalCRT_IncludePath);$(CAExcludePath)</CAExcludePath>
+    <CAExcludePath Condition="Exists('$(VCToolsInstallDir)include')">$(VCToolsInstallDir)include;$(CAExcludePath)</CAExcludePath>
+    <CAExcludePath Condition="Exists('$(VCToolsInstallDir)atlmfc\include')">$(VCToolsInstallDir)atlmfc\include;$(CAExcludePath)</CAExcludePath>
+
+    <!-- Make sure the target that sets CAExcludePath is run -->
+    <PrepareForBuildDependsOn>$(PrepareForBuildDependsOn);SetCABuildNativeEnvironmentVariables</PrepareForBuildDependsOn>
+  </PropertyGroup>
+
+  <!-- Actually set CAExcludePath -->
+  <Target Name="SetCABuildNativeEnvironmentVariables">
+    <!-- SetEnv is defined in Microsoft.Cpp.CurrentVersion.targets and is much faster -->
+    <SetEnv Condition="'$(CAExcludePath)'!=''" Value="$(CAExcludePath)" Name="CAExcludePath" Prefix="false" />
+    <!-- Disabled for 15.8 RTW due to SARIF bug -->
+    <!--<SetEnv Condition="'$(RunCppAnalysis)'=='true' and '$(VCCodeAnalysisUX)'=='true'" Value="1" Name="CAEmitSarifLog" Prefix="false" />-->
+  </Target>
+
+  <!-- Set up the additional cl.exe command line for each compilation unit -->
+  <ItemDefinitionGroup Condition="'$(RunCppAnalysis)'=='true'">
+    <ClCompile>
+      <EnablePREFast>true</EnablePREFast>
+
+      <PreprocessorDefinitions>CODE_ANALYSIS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PREfastLog Condition="'$(PlatformToolsetVersion)'&lt;'120'">$(IntDir)%(FileName)%(Extension).nativecodeanalysis.xml</PREfastLog>
+      <PREfastLogFile Condition="'$(PlatformToolsetVersion)'&gt;='120'">%(ObjectFileName)%(FileName).nativecodeanalysis.xml</PREfastLogFile>
+
+      <!-- Add the localEspc plugin -->
+      <PREfastAdditionalPlugins Condition="Exists('$(LocalEspcPath)')">$(LocalEspcPath);%(ClCompile.PREfastAdditionalPlugins)</PREfastAdditionalPlugins>
+
+      <!-- After Dev11 pass /analyze:quiet because warnings are added to the error list by a post-build task. -->
+      <PREfastAdditionalOptions Condition="'$(PlatformToolsetVersion)'&gt;='110'">quiet;%(ClCompile.PREfastAdditionalOptions)</PREfastAdditionalOptions>
+
+      <!-- Disable code-gen for analyze-only build -->
+      <AdditionalOptions Condition="'$(VCAnalyzeOnly)'=='true'">%(ClCompile.AdditionalOptions) /c</AdditionalOptions>
+      <PREfastAdditionalOptions Condition="'$(VCAnalyzeOnly)'=='true'">only;%(ClCompile.PREfastAdditionalOptions)</PREfastAdditionalOptions>
+
+      <!-- In Dev15 we added ruleset handling in PREFast, add the ruleset file path if it exists -->
+      <AdditionalOptions Condition="'$(PlatformToolsetVersion)'&gt;='140' and Exists('$(VCAnalyzeRulesetPath)')">%(ClCompile.AdditionalOptions) /analyze:ruleset"$(VCAnalyzeRulesetPath)"</AdditionalOptions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
+  <!-- Make AdditionalFiles and CodeAnalysisDictionary available as a Build Action in Visual Studio -->
+  <ItemGroup>
+    <AvailableItemName Include="AdditionalFiles" />
+    <AvailableItemName Include="CodeAnalysisDictionary" />
+  </ItemGroup>
+
+  <!-- FxCop analyzer properties -->
+
+  <!-- Managed analyzer targets -->
+
+  <PropertyGroup>
+    <RunCodeAnalysisInputs>$(CodeAnalysisInputAssembly)</RunCodeAnalysisInputs>
+    <RunCodeAnalysisInputs Condition="'$(CodeAnalysisRuleSet)'!='' and Exists('$(CodeAnalysisRuleSet)')">$(RunCodeAnalysisInputs);$(CodeAnalysisRuleSet)</RunCodeAnalysisInputs>
+    <RunCodeAnalysisInputs Condition="'$(CodeAnalysisRuleSet)'!='' and !Exists('$(CodeAnalysisRuleSet)') and Exists('$(ProjectDir)$(CodeAnalysisRuleSet)')">$(RunCodeAnalysisInputs);$(ProjectDir)$(CodeAnalysisRuleSet)</RunCodeAnalysisInputs>
+  </PropertyGroup>
+
+  <UsingTask TaskName="Microsoft.Build.Tasks.CodeAnalysis" AssemblyFile=".\FxCopTask.dll"/>
+
+  <Target
+      Name="RunCodeAnalysis"
+      Condition="'$(RunCodeAnalysisOnThisProject)'=='true'"
+      Inputs="$(RunCodeAnalysisInputs)"
+      Outputs="$(CodeAnalysisLogFile);$(CodeAnalysisSucceededFile)"
+      DependsOnTargets="$(RunCodeAnalysisDependsOn)"
+      >
+
+    <!-- Build CodeAnalysisReferencePath inside of the RunCodeAnalysis target to ensure that ReferencePath -->
+    <!-- has already been populated by the ResolveReferences target prior to using it. -->
+    <ItemGroup>
+      <CodeAnalysisReferencePath Include="@(ReferencePath)" />
+      <CodeAnalysisReferencePath Condition="'$(Language)'=='VB' and '$(VBRuntimePath)'!=''" Include="$(VBRuntimePath)" />
+    </ItemGroup>
+
+    <!-- Add AdditionalUsingDirectories as reference assembly paths for C++ projects -->
+    <ItemGroup>
+      <CodeAnalysisDependentAssemblyPaths Condition="'$(Language)'=='C++'" Include="%(ClCompile.AdditionalUsingDirectories)" />
+    </ItemGroup>
+ 
+    <!-- If it is winmd file than we want to analyze winmdobj instead of winmd file -->
+    <PropertyGroup>
+      <CodeAnalysisInputAssembly Condition="'$(OutputType)'=='winmdobj'">@(IntermediateAssembly)</CodeAnalysisInputAssembly>
+      <CodeAnalysisInputAssembly Condition="'$(OutputType)'=='winmdobj' and '$(Language)'=='VB'">$(IntermediateOutputPath)\TempCA\$(TargetName)$(TargetExt)</CodeAnalysisInputAssembly>
+    </PropertyGroup>
+    
+    <!-- VBCompiler issue: fix the name of PDB file for winmdobj assembly -->
+    <Copy Condition="'$(OutputType)'=='winmdobj' and '$(Language)'=='VB'"
+        DestinationFiles="$(IntermediateOutputPath)\TempCA\$(TargetName).pdb"  
+        SourceFiles="$(PdbFile)" 
+        OverwriteReadOnlyFiles="True"/>
+        
+    <Copy Condition="'$(OutputType)'=='winmdobj' and '$(Language)'=='VB'"
+        DestinationFolder="$(IntermediateOutputPath)\TempCA\"  
+        SourceFiles="@(IntermediateAssembly)" 
+        OverwriteReadOnlyFiles="True"/>
+
+    <CodeAnalysis Condition="'$(RunCodeAnalysisOnThisProject)'=='true'"
+        AdditionalOptions="$(CodeAnalysisAdditionalOptions)"
+        AlternativeToolName="$(CodeAnalysisAlternativeToolName)"
+        AnalysisTimeout="$(CodeAnalysisTimeout)"
+        ApplyLogFileXsl="$(CodeAnalysisApplyLogFileXsl)"
+        Assemblies="$(CodeAnalysisInputAssembly)"
+        ConsoleXsl="$(CodeAnalysisConsoleXsl)"
+        Culture="$(CodeAnalysisCulture)"
+        DependentAssemblyPaths="@(CodeAnalysisDependentAssemblyPaths)"
+        Dictionaries="@(CodeAnalysisDictionary)"
+        DisableReferenceSwitchGeneration="$(CodeAnalysisDisableReferenceSwitchGeneration)"
+        FailOnMissingRules="$(CodeAnalysisFailOnMissingRules)"
+        FilesWritten="$(CodeAnalysisLogFile);$(CodeAnalysisSucceededFile)"
+        ForceOutput="$(CodeAnalysisForceOutput)"
+        GenerateSuccessFile="$(CodeAnalysisGenerateSuccessFile)"
+        IgnoreBuildTaskWarnings="$(CodeAnalysisIgnoreBuildTaskWarnings)"
+        IgnoreGeneratedCode="$(CodeAnalysisIgnoreGeneratedCode)"
+        IgnoreInvalidTargets="$(CodeAnalysisIgnoreInvalidTargets)"
+        IgnoreMissingIndirectReferences="$(CodeAnalysisIgnoreMissingIndirectReferences)"
+        Imports="@(CodeAnalysisImport)"
+        LogFile="$(CodeAnalysisLogFile)"
+        LogFileXsl="$(CodeAnalysisLogFileXsl)"
+        MSBuildProjectDirectory="$(MSBuildProjectDirectory)"
+        OutputToConsole="$(CodeAnalysisOutputToConsole)"
+        OverrideRuleVisibilities="$(CodeAnalysisOverrideRuleVisibilities)"
+        NeverReportRuleErrors="$(CodeAnalysisNeverReportRuleErrors)"
+        PlatformPath="$(CodeAnalysisPlatformPath)"
+        Project="$(CodeAnalysisProject)"
+        Quiet="$(CodeAnalysisQuiet)"
+        References="@(CodeAnalysisReferencePath)"
+        RuleAssemblies="$(CodeAnalysisRuleAssemblies)"
+        RuleDirectories="$(CodeAnalysisRuleDirectories)"
+        Rules="$(CodeAnalysisRules)"
+        RuleSet="$(CodeAnalysisRuleSet)"
+        RuleSetDirectories="$(CodeAnalysisRuleSetDirectories)"
+        RuleSetOverrides ="$(CodeAnalysisRuleSetOverrides)"
+        SaveMessagesToReport="$(CodeAnalysisSaveMessagesToReport)"
+        SearchGlobalAssemblyCache="$(CodeAnalysisSearchGlobalAssemblyCache)"
+        SuccessFile="$(CodeAnalysisSucceededFile)"
+        Summary="$(CodeAnalysisSummary)"
+        TargetFrameworkVersion="$(TargetFrameworkVersion)"
+        TLogFile="$(CodeAnalysisTLogFile)"
+        ToolPath="$(CodeAnalysisPath)"
+        TreatWarningsAsErrors="$(CodeAnalysisTreatWarningsAsErrors)"
+        UpdateProject="$(CodeAnalysisUpdateProject)"
+        Verbose="$(CodeAnalysisVerbose)"
+          >
+      <Output TaskParameter="FilesWritten" ItemName="FileWrites"/>
+    </CodeAnalysis>
+  </Target>
+
+  <!-- Managed analyzer targets -->
+
+  <!-- Native analyzer targets -->
+
+  <PropertyGroup Condition="'$(RunCppAnalysis)'=='true'">
+    <RunNativeCodeAnalysisInputs>$(OutputFile)</RunNativeCodeAnalysisInputs>
+    <RunNativeCodeAnalysisInputs Condition="'$(CodeAnalysisRuleSet)'!='' and Exists('$(CodeAnalysisRuleSet)')">$(RunNativeCodeAnalysisInputs);$(CodeAnalysisRuleSet)</RunNativeCodeAnalysisInputs>
+    <RunNativeCodeAnalysisInputs Condition="'$(CodeAnalysisRuleSet)'!='' and !Exists('$(CodeAnalysisRuleSet)') and Exists('$(ProjectDir)$(CodeAnalysisRuleSet)')">$(RunNativeCodeAnalysisInputs);$(ProjectDir)$(CodeAnalysisRuleSet)</RunNativeCodeAnalysisInputs>
+    <MergedOutputCodeAnalysisFile>$(IntDir)vc.nativecodeanalysis.all.xml</MergedOutputCodeAnalysisFile>
+  </PropertyGroup>
+
+  <Choose>
+    <When Condition="'$(RunCppAnalysis)'=='true'" >
+      <Choose>
+        <When Condition="'$(PlatformToolsetVersion)'&lt;'120'">
+          <PropertyGroup>
+            <MergeInputCodeAnalysisFiles>@(ClCompile->'%(PREfastLog)')</MergeInputCodeAnalysisFiles>
+          </PropertyGroup>
+        </When>
+        <Otherwise>
+          <PropertyGroup>
+            <MergeInputCodeAnalysisFiles>@(ClCompile->'%(PREfastLogFile)')</MergeInputCodeAnalysisFiles>
+          </PropertyGroup>
+        </Otherwise>
+      </Choose>
+    </When>
+  </Choose>
+
+  <UsingTask TaskName="Microsoft.Build.Tasks.NativeCodeAnalysis" AssemblyFile=".\FxCopTask.dll"/>
+
+  <!-- Normal case that runs analysis for a full build -->
+  <Target
+      Name="RunNativeCodeAnalysis"
+      Condition="'$(RunCppAnalysis)'=='true'"
+      Inputs="$(RunCodeAnalysisInputs);$(MergedOutputCodeAnalysisFile)"
+      Outputs="$(CodeAnalysisSucceededFile);$(NativeCodeAnalysisTLogFile)"
+      DependsOnTargets="$(RunCodeAnalysisDependsOn)"
+      >
+    <NativeCodeAnalysis
+        IgnoreBuildTaskWarnings="$(CodeAnalysisIgnoreBuildTaskWarnings)"
+        NativeCodeAnalysisLogFiles="$(MergedOutputCodeAnalysisFile)"
+        MSBuildProjectDirectory="$(MSBuildProjectDirectory)"
+        NeverReportRuleErrors="$(CodeAnalysisNeverReportRuleErrors)"
+        RuleSet="$(CodeAnalysisRuleSet)"
+        RuleSetDirectories="$(CodeAnalysisRuleSetDirectories)"
+        StaticAnalysisDirectory="$(CodeAnalysisStaticAnalysisDirectory)"
+        TLogFile="$(NativeCodeAnalysisTLogFile)"
+        TreatWarningsAsErrors="$(CodeAnalysisTreatWarningsAsErrors)"
+        VisualStudioSku="$(CodeAnalysisVSSku)"
+        CodeAnalysisSucceededFile="$(CodeAnalysisSucceededFile)"
+        >
+      <Output TaskParameter="FilesWritten" ItemName="FileWrites"/>
+    </NativeCodeAnalysis>
+  </Target>
+
+  <!-- Special case that runs analysis for selected file compile -->
+  <Target Name="RunSelectedFileNativeCodeAnalysis"
+          Condition="'$(RunCppAnalysis)'=='true' and '$(SelectedFiles)'!=''"
+          DependsOnTargets="RunMergeNativeCodeAnalysis;RunNativeCodeAnalysis"
+          AfterTargets="ClCompile">
+    <Message Text="Running code analysis targets for selected files $(SelectedFiles)" />
+
+    <!-- Show a warning that results may not be complete if /Gm is enabled during selective compile -->
+    <Warning
+      Condition="'%(ClCompile.MinimalRebuild)'!='false' and '$(VCAnalyzeOnly)'=='false'"
+      Text="Minimal rebuild (/Gm) was passed to the compiler, analysis results may be stale."/>
+  </Target>
+
+  <!-- Native analyzer targets -->
+
+  <!-- Merge native results targets -->
+
+  <UsingTask TaskName="Microsoft.Build.Tasks.MergeNativeCodeAnalysis" AssemblyFile=".\FxCopTask.dll"/>
+
+  <Target
+      Name="RunMergeNativeCodeAnalysis"
+      Condition="'$(RunCppAnalysis)'=='true'"
+      Inputs="$(RunCodeAnalysisInputs);$(MergeInputCodeAnalysisFiles)"
+      Outputs="$(CodeAnalysisSucceededFile);$(NativeCodeAnalysisTLogFile);$(MergedOutputCodeAnalysisFile)"
+      DependsOnTargets="$(RunMergeNativeCodeAnalysisDependsOn)"
+      >
+
+    <MergeNativeCodeAnalysis
+        InputNativeResultFiles="$(MergeInputCodeAnalysisFiles)"
+        OutputCodeAnalysisFile="$(MergedOutputCodeAnalysisFile)"
+        />
+  </Target>
+
+  <!-- Merge native results targets -->
+
+  <ItemGroup>
+    <Clean Include="$(IntermediateOutputPath)\TempCA\$(TargetName).pdb"/>
+    <Clean Include="$(IntermediateOutputPath)\TempCA\$(TargetName)$(TargetExt)"/>
+  </ItemGroup>
+ 
+</Project>

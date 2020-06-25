@@ -1,0 +1,14 @@
+﻿.component "NeoAxis.Component_ObjectInSpace"
+{
+	.component "NeoAxis.Component_MeshInSpace"
+	{
+		Mesh
+		{
+			GetByReference = "Samples\\Starter Content\\Scenes Test\\Sphere.mesh"
+		}
+		Transform
+		{
+			GetByReference = "this:..\\Transform"
+		}
+	}
+}

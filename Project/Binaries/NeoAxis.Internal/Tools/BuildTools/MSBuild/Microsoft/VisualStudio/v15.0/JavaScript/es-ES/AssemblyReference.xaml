@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="AssemblyReference" DisplayName="Referencia de ensamblado" PageTemplate="generic" Description="Propiedades de la referencia de ensamblado" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="General"/>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ProjectFile" ItemType="Reference" HasConfigurationCondition="false"/>
+  </Rule.DataSource>
+
+  <StringProperty Name="RequiredTargetFramework" Category="General" Visible="false"/>
+  <BoolProperty Name="CopyLocal" Category="General" Visible="false"/>
+  <StringProperty Name="HintPath" Visible="false"/>
+  <BoolProperty Name="SpecificVersion" Visible="false"/>
+  <BoolProperty Name="IsWinMDFile" Visible="false"/>
+</Rule>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="ResolvedSdkReferenceProps" DisplayName="Référence SDK résolue" PageTemplate="generic" Description="Référence SDK résolue" PropertyPagesHidden="true" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="Général"/>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ResolvedSdkReferenceProps" ItemType="SDKReference"/>
+  </Rule.DataSource>
+
+  <StringProperty Name="OriginalItemSpec" ReadOnly="true" DisplayName="Identité de SDK" Category="General" F1Keyword="javascript.project.property.reference.identity" Description="Identité de la référence.">
+  </StringProperty>
+
+  <StringProperty Name="ResolvedPath" ReadOnly="true" DisplayName="Chemin d'accès" Category="General" F1Keyword="javascript.project.property.reference.resolvedpath" Description="Emplacement du fichier référencé.">
+  </StringProperty>
+
+  <StringProperty Name="AppXLocation" DisplayName="Package d'application" Category="General" ReadOnly="true" F1Keyword="javascript.project.property.reference.package" Description="Package d'application associé à cette référence du kit de développement logiciel pour la configuration active."/>
+
+  <StringProperty Name="Version" ReadOnly="true" DisplayName="Version du package d'application" Category="General" F1Keyword="javascript.project.property.reference.version" Description="Version de la référence."/>
+
+  <!-- This property should be the same as the one for the ResolvedReference item -->
+  <StringProperty Name="FrameworkIdentity" Visible="false"/>
+  <StringProperty Name="DisplayName" Visible="false"/>
+  <StringProperty Name="CopyContentToSubDirectory" Visible="false"/>
+  <BoolProperty Name="CopyPayload" Visible="false"/>
+  <BoolProperty Name="ExpandContent" Visible="false"/>
+  <BoolProperty Name="ExpandReferenceAssemblies" Visible="false"/>
+  <BoolProperty Name="CopyLocalExpandedReferenceAssemblies" Visible="false"/>
+
+</Rule>

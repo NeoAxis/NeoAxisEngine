@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="WindowsPhoneEmulatorDebugger" DisplayName="Emulador" PageTemplate="debugger" Order="100" Description="Opções do Windows Phone Emulator Debugger" xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+    <Rule.Metadata>
+        <sys:Guid x:Key="DebugTargetTypeCommandGuid">FEEA6E9D-77D8-423F-9EDE-3970CBB76125</sys:Guid>
+        <sys:UInt32 x:Key="DebugTargetTypeCommandId">0x500</sys:UInt32>
+        <sys:String x:Key="DebugTargetDropdownEnum">WindowsPhoneEmulatorID</sys:String>
+    </Rule.Metadata>
+
+    <Rule.DataSource>
+        <DataSource Persistence="UserFile"/>
+    </Rule.DataSource>
+
+    <Rule.Categories>
+        <Category Name="StartOptions" DisplayName="Opções de Inicialização" Description="Opções de Inicialização"/>
+    </Rule.Categories>
+    <DynamicEnumProperty Name="WindowsPhoneEmulatorID" DisplayName="Destino de Depuração" EnumProvider="JavaScriptWindowsPhoneEmulators" Description="Especifica o emulador a ser usado para depuração. Se nenhum emulador estiver instalado, use 'Baixar o Emulador 8.1...' na lista suspensa de destino de depuração." F1Keyword="javascript.project.property.debugging.debuggertarget"/>
+    <BoolProperty Name="LaunchApplication" DisplayName="Inicializar aplicativo" Category="StartOptions" F1Keyword="javascript.project.property.debugging.launchapplication" Description="Especifica se deve-se inicializar o aplicativo imediatamente ou esperar para depurar o aplicativo quando ele começar a ser executado."/>
+
+    <EnumProperty Name="DebuggerType" DisplayName="Tipo de Depurador" Category="StartOptions" F1Keyword="javascript.project.property.debugging.debuggertype" Description="Especifica qual depurador deve ser habilitado. Quando definido como Misto, depuradores de código gerenciado e de código nativo são usados.">
+        <EnumValue Name="NativeOnly" DisplayName="Somente Nativo" Description="Somente Nativo"/>
+        <EnumValue Name="ManagedOnly" DisplayName="Somente Gerenciado" Description="Somente Gerenciado"/>
+        <EnumValue Name="Script" DisplayName="Somente Script" Description="Somente Script"/>
+        <EnumValue Name="Mixed" DisplayName="Misto (Nativo e Gerenciado)" Description="Misto (Nativo e Gerenciado)"/>
+        <EnumProperty.Metadata>
+            <NameValuePair Name="IsDebugType" Value="true"/>
+        </EnumProperty.Metadata>
+    </EnumProperty>
+
+    <StringProperty Name="CommandLineArgs" DisplayName="Argumentos de Linha de Comando" Category="StartOptions" F1Keyword="javascript.project.property.debugging.commandlineargs" Description="Permite a especificação dos argumentos de linha de comando passados para a inicialização do aplicativo UWP">
+    </StringProperty>
+
+    <StringProperty Name="RealOsVersion" Visible="false">
+        <StringProperty.DataSource>
+            <DataSource Persistence="ProjectFile" Label="Configuration" HasConfigurationCondition="false"/>
+        </StringProperty.DataSource>
+    </StringProperty>
+</Rule>

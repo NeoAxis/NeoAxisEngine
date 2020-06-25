@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<ProjectSchemaDefinitions
+    xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+    <ContentType
+        Name="Resw"
+        DisplayName="Resource file"
+        ItemType="PRIResource">
+    </ContentType>
+
+    <ContentType
+        Name="Resjson"
+        DisplayName="Resource file"
+        ItemType="PRIResource">
+    </ContentType>
+
+    <ContentType
+        Name="AppxManifest"
+        DisplayName="Appx Manifest"
+        ItemType="AppxManifest" />
+
+    <ItemType Name="PRIResource" DisplayName="PRIResource" />
+    <ItemType Name="AppxManifest" DisplayName="AppxManifest" />
+    <ItemType Name="DesignData" DisplayName="DesignData" />
+    <ItemType Name="DesignDataWithDesignTimeCreatableTypes" DisplayName="DesignDataWithDesignTimeCreatableTypes" />
+
+    <FileExtension Name=".resw" ContentType="Resw" />
+    <FileExtension Name=".resjson" ContentType="Resjson" />
+    <FileExtension Name=".appxmanifest" ContentType="AppxManifest" />
+</ProjectSchemaDefinitions>
+

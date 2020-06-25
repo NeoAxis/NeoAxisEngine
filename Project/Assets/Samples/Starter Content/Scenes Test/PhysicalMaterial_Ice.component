@@ -1,0 +1,4 @@
+.component NeoAxis.Component_PhysicalMaterial
+{
+	Friction = 0
+}

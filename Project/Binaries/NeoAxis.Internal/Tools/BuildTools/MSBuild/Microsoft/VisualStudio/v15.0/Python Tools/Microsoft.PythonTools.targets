@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+Python Tools for Visual Studio
+Copyright(c) Microsoft Corporation
+All rights reserved.
+ 
+Licensed under the Apache License, Version 2.0 (the License); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at http://www.apache.org/licenses/LICENSE-2.0
+ 
+THIS CODE IS PROVIDED ON AN  *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS
+OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY
+IMPLIED WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
+MERCHANTABLITY OR NON-INFRINGEMENT.
+ 
+See the Apache Version 2.0 License for specific language governing
+permissions and limitations under the License.
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <_PythonToolsPath Condition="!Exists($(_PythonToolsPath)) and $(VsInstallRoot) != ''">$(VsInstallRoot)\Common7\IDE\Extensions\Microsoft\Python\Core\</_PythonToolsPath>
+    <_PythonToolsPath Condition="!Exists($(_PythonToolsPath))">$([MSBuild]::GetRegistryValueFromView('HKEY_LOCAL_MACHINE\Software\Microsoft\PythonTools\$(VisualStudioVersion)', 'InstallDir', null, RegistryView.Registry32))</_PythonToolsPath>
+    <_PythonToolsPath Condition="!HasTrailingSlash('$(_PythonToolsPath)')">$(_PythonToolsPath)\</_PythonToolsPath>
+    <_PTVSSupportPath Condition="'$(_PTVSSupportPath)' == ''">$(MSBuildThisFileDirectory)</_PTVSSupportPath>
+    <_PTVSSupportPath Condition="!HasTrailingSlash('$(_PTVSSupportPath)')">$(_PTVSSupportPath)\</_PTVSSupportPath>
+    <_PTVSBuildTasks Condition="'$(_PTVSBuildTasks)' == ''">$([MSBuild]::Unescape($(_PythonToolsPath)Microsoft.PythonTools.BuildTasks.dll))</_PTVSBuildTasks>
+    <_PTVSBuildTasks Condition="!Exists($(_PTVSBuildTasks))">$([MSBuild]::Unescape($(_PTVSSupportPath)Microsoft.PythonTools.BuildTasks.Core.dll))</_PTVSBuildTasks>
+  </PropertyGroup>
+
+  <!-- Creates a command object that will be displayed in the IDE.
+  
+  ErrorRegex/WarningRegex are only useful when ExecuteIn="output". They identify
+  (with named groups) 'message', 'code', 'filename', 'line' and 'column' of an
+  item to add to the Error List window.
+
+  <Target Name="Name1" Label="Display Name" Returns="@(Commands)">
+    <CreatePythonCommandItem Target="filename, module name, or code"
+                   TargetType="executable/script/module/code/pip"
+                   Arguments="..."
+                   ExecuteIn="console/output/repl[:Display name]/Repl[:Display name]"
+                   ErrorRegex="..."
+                   WarningRegex="..."
+                   RequiredPackages="...;...">
+      <Output TaskParameter="Command"
+              ItemName="Commands" />
+    </CreatePythonCommandItem>
+  </Target>
+  -->
+  <UsingTask AssemblyFile="$(_PTVSBuildTasks)"
+             TaskName="CreatePythonCommandItem"
+             TaskFactory="CreatePythonCommandItemFactory"
+             Condition="Exists($(_PTVSBuildTasks))">
+    <Task Evaluate="true">
+      <PropertyGroup>
+        <ProjectPath>$([MSBuild]::Unescape($(MSBuildProjectFullPath)))</ProjectPath>
+      </PropertyGroup>
+    </Task>
+  </UsingTask>
+
+  <!-- Runs a Python command. Like CreatePythonCommandItem, but instead of
+       creating a user-activatable UI command, just runs it immediately.
+  <RunPythonCommand Target="filename, module name, or code"
+                  TargetType="executable/script/module/code"
+                  ExecuteIn="none/console/consolepause"
+                  Arguments="..."
+                  RequiredPackages="...;..."
+                  ConsoleToMSBuild="true/false">
+    <Output TaskParameter="ConsoleOutput" PropertyName="OutputText" />
+    <Output TaskParameter="ConsoleError" PropertyName="ErrorText" />
+  </RunPythonCommand>
+  -->
+  <UsingTask AssemblyFile="$(_PTVSBuildTasks)"
+             TaskName="RunPythonCommand"
+             TaskFactory="RunPythonCommandFactory"
+             Condition="Exists($(_PTVSBuildTasks))">
+    <Task Evaluate="true">
+      <PropertyGroup>
+        <ProjectPath>$([MSBuild]::Unescape($(MSBuildProjectFullPath)))</ProjectPath>
+      </PropertyGroup>
+    </Task>
+  </UsingTask>
+
+  <!-- Gets all the settings of the specified environment. If InterpreterId and
+       InterpreterVersion are omitted, uses the active environment.
+
+  <ResolveEnvironment [InterpreterId="..." InterpreterVersion="..."]>
+    <Output TaskParameter="PrefixPath" PropertyName="PrefixPath" />
+    <Output TaskParameter="ProjectRelativePrefixPath" PropertyName="ProjectRelativePrefixPath" />
+    <Output TaskParameter="InterpreterPath" PropertyName="InterpreterPath" />
+    <Output TaskParameter="WindowsInterpreterPath" PropertyName="WindowsInterpreterPath" />
+    <Output TaskParameter="Architecture" PropertyName="Architecture" />
+    <Output TaskParameter="PathEnvironmentVariable" PropertyName="PathEnvironmentVariable" />
+    <Output TaskParameter="Description" PropertyName="Description" />
+    <Output TaskParameter="MajorVersion" PropertyName="MajorVersion" />
+    <Output TaskParameter="MinorVersion" PropertyName="MinorVersion" />
+  </ResolveEnvironment>
+  -->
+  <UsingTask AssemblyFile="$(_PTVSBuildTasks)"
+             TaskName="ResolveEnvironment"
+             TaskFactory="ResolveEnvironmentFactory"
+             Condition="Exists($(_PTVSBuildTasks))">
+    <Task Evaluate="true">
+      <PropertyGroup>
+        <ProjectPath>$([MSBuild]::Unescape($(MSBuildProjectFullPath)))</ProjectPath>
+      </PropertyGroup>
+    </Task>
+  </UsingTask>
+
+  <!-- Converts a file path to an importable module name.
+  
+  <ConvertPathToModuleName Paths="..." [PathLimit="..."]>
+    <Output TaskParameter="ModuleNames"
+            ItemName="Modules" />
+  </ConvertPathToModuleName>
+  -->
+  <UsingTask AssemblyFile="$(_PTVSBuildTasks)"
+             TaskName="ConvertPathToModuleName"
+             Condition="Exists($(_PTVSBuildTasks))"/>
+
+  <!-- Checks whether a pattern is valid regex.
+  
+  <ValidateRegexPattern Pattern="..." [Message="..."]>
+    <Output TaskParameter="IsValid"
+            PropertyName="Isvalid" />
+  </ValidateRegexPattern>
+  -->
+
+  <UsingTask AssemblyFile="$(_PTVSBuildTasks)"
+             TaskName="ValidateRegexPattern"
+             Condition="Exists($(_PTVSBuildTasks))"/>
+
+  <!-- Gets the fully qualified path to the project home.  -->
+  <PropertyGroup>
+    <QualifiedProjectHome>$(MSBuildProjectDirectory)</QualifiedProjectHome>
+    <QualifiedProjectHome Condition="'$(ProjectHome)' != '' and '$(ProjectHome)' != '.'">$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine($(MSBuildProjectDirectory), $(ProjectHome)))))</QualifiedProjectHome>
+    <QualifiedProjectHome Condition="!HasTrailingSlash('$(QualifiedProjectHome)')">$(QualifiedProjectHome)\</QualifiedProjectHome>
+
+    <StartupPath Condition="'$(StartupPath)' == '' and '$(StartupFile)' != ''">$([System.IO.Path]::Combine($(QualifiedProjectHome), $(StartupFile)))</StartupPath>
+  </PropertyGroup>
+
+  <!-- Gets the full path module name of the startup file -->
+  <Target Name="ResolveStartupModule" AfterTargets="_CheckForInvalidConfigurationAndPlatform" Condition="'$(StartupPath)' != ''">
+    <ConvertPathToModuleName Paths="$(StartupPath)" PathLimit="$(QualifiedProjectHome)" IgnoreErrors="true">
+      <Output TaskParameter="ModuleNames" PropertyName="StartupModule" />
+    </ConvertPathToModuleName>
+
+    <Message Importance="low" Text="StartupModule: $(StartupModule)" />
+  </Target>
+
+  <!-- PyLint -->
+
+  <PropertyGroup>
+    <PythonCommands>$(PythonCommands);PythonRunPyLintCommand</PythonCommands>
+    <PyLintErrorRegex>
+      <![CDATA[^(?<filename>.+?)\((?<line>\d+),(?<column>\d+)\): (?<level>error) (?<code>.+?): (?<message>.+?)$]]>
+    </PyLintErrorRegex>
+    <PyLintWarningRegex>
+      <![CDATA[^(?<filename>.+?)\((?<line>\d+),(?<column>\d+)\): (?<level>warning) (?<code>.+?): (?<message>.+?)$]]>
+    </PyLintWarningRegex>
+    <PyLintMessageRegex>
+      <![CDATA[^(?<filename>.+?)\((?<line>\d+),(?<column>\d+)\): (?<level>[^ ]+) (?<code>.+?): (?<message>.+?)$]]>
+    </PyLintMessageRegex>
+  </PropertyGroup>
+
+  <Target Name="PythonRunPyLintCommand"
+          Label="resource:Microsoft.PythonTools.Common;Microsoft.PythonTools.Common.Strings;RunPyLintLabel"
+          Returns="@(Commands)">
+    <CreatePythonCommandItem Target="pylint.lint"
+                             TargetType="module"
+                             Arguments="&quot;--msg-template={abspath}({line},{column}): {category} {msg_id}: {msg} [{C}:{symbol}]&quot; -r n @(Compile, ' ')"
+                             WorkingDirectory="$(MSBuildProjectDirectory)"
+                             ExecuteIn="output"
+                             RequiredPackages="pylint&gt;=1.0.0"
+                             ErrorRegex="$(PyLintErrorRegex)"
+                             WarningRegex="$(PyLintWarningRegex)"
+                             MessageRegex="$(PyLintMessageRegex)">
+      <Output TaskParameter="Command" ItemName="Commands" />
+    </CreatePythonCommandItem>
+  </Target>
+
+  <!-- MyPy -->
+
+  <PropertyGroup>
+    <PythonCommands>$(PythonCommands);PythonRunMypyCommand</PythonCommands>
+    <MypyErrorRegex>
+      <![CDATA[^(?<filename>.+?):(?<line>\d+):((?<column>\d+):)? error: (?<message>.+?)$]]>
+    </MypyErrorRegex>
+    <MypyWarningRegex>
+      <![CDATA[^(?<filename>.+?):(?<line>\d+):((?<column>\d+):)? warning: (?<message>.+?)$]]>
+    </MypyWarningRegex>
+  </PropertyGroup>
+
+  <Target Name="PythonRunMypyCommand"
+          Label="resource:Microsoft.PythonTools.Common;Microsoft.PythonTools.Common.Strings;RunMypyLabel"
+          Returns="@(Commands)">
+    <CreatePythonCommandItem Target="mypy"
+                             TargetType="module"
+                             Arguments="--show-column-numbers @(Compile, ' ')"
+                             WorkingDirectory="$(MSBuildProjectDirectory)"
+                             ExecuteIn="output"
+                             RequiredPackages="mypy"
+                             ErrorRegex="$(MypyErrorRegex)"
+                             WarningRegex="$(MypyWarningRegex)">
+      <Output TaskParameter="Command" ItemName="Commands" />
+    </CreatePythonCommandItem>
+  </Target>
+
+  <!-- Build system compatibility -->
+
+  <PropertyGroup>
+    <BypassFrameworkInstallChecks>true</BypassFrameworkInstallChecks>
+    <DisableRarCache>true</DisableRarCache>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+
+  <!-- We don't have an intermediate assembly, but the common targets will set
+       one anyway. We clear it before PrepareForBuild in case another targets
+       file overrides that one.
+  -->
+  <Target Name="_ClearIntermediateAssembly" BeforeTargets="PrepareForBuild">
+    <ItemGroup>
+      <IntermediateAssembly Remove="@(IntermediateAssembly)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="PrepareForBuild">
+    <MakeDir Directories="$(OutDir);@(CreateDirectory)" ContinueOnError="True"/>
+  </Target>
+
+  <Target Name="BuiltProjectOutputGroupDependencies" Returns=""  />
+
+  <Target Name="GenerateManifests" Returns="" />
+  <Target Name="AddDatabasesToSourceManifest" Returns="" />
+  <Target Name="CreateManifestResourceNames" />
+  <Target Name="_CopyAppConfigFile" />
+
+  <Target Name="BuiltProjectOutputGroup"
+          Returns="@(BuiltProjectOutputGroupOutput)"
+          DependsOnTargets="$(BuiltProjectOutputGroupDependsOn)">
+    <ItemGroup>
+      <BuiltProjectOutputGroupOutput Remove="@(BuiltProjectOutputGroupOutput)" />
+      <_BuiltProjectOutputGroupOutput Remove="@(_BuiltProjectOutputGroupOutput)" />
+    </ItemGroup>
+
+    <AssignTargetPath RootFolder="$(QualifiedProjectHome)" Files="@(Compile);@(Content);@(OutputFiles);$(MSBuildProjectFile)">
+      <Output TaskParameter="AssignedFiles" ItemName="_BuiltProjectOutputGroupOutput" />
+    </AssignTargetPath>
+
+    <ItemGroup>
+      <BuiltProjectOutputGroupOutput Include="@(_BuiltProjectOutputGroupOutput->'%(FullPath)')" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="SourceFilesProjectOutputGroup"
+          Returns="@(SourceFilesProjectOutputGroupOutput)"
+          DependsOnTargets="$(SourceFilesProjectOutputGroupDependsOn)">
+    <ItemGroup>
+      <SourceFilesProjectOutputGroupOutput Remove="@(SourceFilesProjectOutputGroupOutput)" />
+      <_SourceFilesProjectOutputGroupOutput Remove="@(_SourceFilesProjectOutputGroupOutput)" />
+    </ItemGroup>
+
+    <AssignTargetPath RootFolder="$(QualifiedProjectHome)" Files="@(Compile);@(Content);@(InputFiles);$(MSBuildProjectFile)">
+      <Output TaskParameter="AssignedFiles" ItemName="_SourceFilesProjectOutputGroupOutput" />
+    </AssignTargetPath>
+
+    <ItemGroup>
+      <SourceFilesProjectOutputGroupOutput Include="@(_SourceFilesProjectOutputGroupOutput->'%(FullPath)')" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="DebugSymbolsProjectOutputGroup"
+          Returns="@(DebugSymbolsProjectOutputGroupOutput)"
+          DependsOnTargets="$(DebugSymbolsProjectOutputGroupDependsOn)">
+    <ItemGroup>
+      <DebugSymbolsProjectOutputGroupOutput Remove="@(DebugSymbolsProjectOutputGroupOutput)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="DocumentationProjectOutputGroup"
+          Returns="@(DocumentationProjectOutputGroupOutput)"
+          DependsOnTargets="$(DocumentationProjectOutputGroupDependsOn)">
+    <ItemGroup>
+      <DocumentationProjectOutputGroupOutput Remove="@(DocumentationProjectOutputGroupOutput)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="SatelliteDllsProjectOutputGroup"
+          Returns="@(SatelliteDllsProjectOutputGroupOutput)"
+          DependsOnTargets="$(SatelliteDllsProjectOutputGroupDependsOn)">
+    <ItemGroup>
+      <SatelliteDllsProjectOutputGroupOutput Remove="@(SatelliteDllsProjectOutputGroupOutput)" />
+    </ItemGroup>
+  </Target>
+
+</Project>

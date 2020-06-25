@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="ConfigurationGeneral" DisplayName="Général" PageTemplate="generic" Description="Général" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="Général"/>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ProjectFile"/>
+  </Rule.DataSource>
+
+  <StringProperty Name="ProjectGuid" Visible="false">
+    <StringProperty.DataSource>
+      <DataSource Persistence="ProjectFile" Label="Globals" HasConfigurationCondition="false"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="OutputPath" DisplayName="Chemin de sortie" Category="General" F1Keyword="javascript.project.property.outputpath" Description="Spécifie l'emplacement de la sortie de l'opération de génération."/>
+
+  <StringProperty Name="DefaultLanguage" Visible="false" Category="General">
+
+    <StringProperty.DataSource>
+      <DataSource Persistence="ProjectFile" Label="Globals" HasConfigurationCondition="false"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="AppxPackageRecipe" Visible="false"/>
+
+  <StringProperty Name="FinalAppxManifestName" Visible="false"/>
+
+  <StringProperty Name="ProjectPriFullPath" Visible="false"/>
+
+  <StringProperty Name="LayoutDir" Visible="false"/>
+
+  <BoolProperty Name="IgnoreLocalNetworkLoopback" Visible="false"/>
+
+  <BoolProperty Name="AllowLocalNetworkLoopback" Visible="false"/>
+
+  <StringProperty Name="TargetPlatformWinMDLocation" Visible="false"/>
+
+  <StringProperty Name="SDKReferenceDirectoryRoot" Visible="false"/>
+
+  <StringProperty Name="SDKReferenceRegistryRoot" Visible="false"/>
+  
+  <StringProperty Name="DefaultReferenceGroup" Visible="false"/>
+
+  <StringProperty Name="TargetPlatformIdentifier" Visible="false"/>
+
+  <StringProperty Name="TargetPlatformVersion" Visible="false"/>
+
+  <StringProperty Name="SDKIdentifier" Visible="false"/>
+
+  <StringProperty Name="SDKVersion" Visible="false"/>
+
+  <StringProperty Name="VisualStudioVersion" Visible="false">
+    <StringProperty.DataSource>
+      <DataSource Persistence="ProjectFile" HasConfigurationCondition="false"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+    
+  <StringProperty Name="MinimumVisualStudioVersion" Visible="false">
+    <StringProperty.DataSource>
+      <DataSource Persistence="ProjectFile" HasConfigurationCondition="false"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <BoolProperty Name="WindowsAppContainer" Visible="false"/>
+
+  <EnumProperty Name="TargetRuntime" Visible="false">
+    <EnumValue Name="Managed"/>
+    <EnumValue Name="Native"/>
+    <EnumValue Name="AppHost"/>
+  </EnumProperty>
+
+  <StringProperty Name="WinRTReferenceTabs" Visible="false"/>
+
+  <StringProperty Name="PackageAction" Visible="false"/>
+
+  <StringProperty Name="DefaultContentType" Visible="false"/>
+
+  <StringProperty Name="IntermediateOutputPath" Visible="false"/>
+
+  <BoolProperty Name="SuppressOutOfDateMessageOnBuild" Visible="false"/>
+
+  <BoolProperty Name="DisableFastUpToDateCheck" Visible="false"/>
+  
+  <EnumProperty Name="OutputType" Visible="false">
+    <EnumValue Name="Library"/>
+    <EnumValue Name="exe"/>
+    <EnumValue Name="winexe"/>
+    <EnumValue Name="AppContainerExe"/>
+    <EnumValue Name="WinMDObj"/>
+  </EnumProperty>
+
+  <StringProperty Name="TargetFrameworkIdentifier" Visible="false"/>
+
+  <StringProperty Name="TargetFrameworkVersion" Visible="false"/>
+
+  <StringProperty Name="TargetFrameworkProfile" Visible="false"/>
+
+  <StringProperty Name="TargetPath" Visible="false"/>
+
+  <StringProperty Name="RootNamespace" Visible="false"/>
+
+  <StringProperty Name="DebuggerSymbolsPath" Visible="false"/>
+
+  <StringProperty Name="AssemblySearchPaths" Visible="false"/>
+
+  <StringListProperty Name="AvailablePlatforms" Separator="," Visible="false"/>
+
+  <!-- This property name must remain in sync with the string literal reference in ProjectContextHelper. -->
+  <StringProperty Name="ReferenceCachePath" Visible="false">
+    <StringProperty.DataSource>
+      <DataSource Persistence="UserFile" HasConfigurationCondition="false"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <BoolProperty Name="ShowAllFiles" Visible="false">
+    <BoolProperty.DataSource>
+      <DataSource Persistence="UserFile" HasConfigurationCondition="false"/>
+    </BoolProperty.DataSource>
+  </BoolProperty>
+
+  <BoolProperty Name="AutoRefresh" Visible="false">
+    <BoolProperty.DataSource>
+      <DataSource Persistence="UserFile" HasConfigurationCondition="false"/>
+    </BoolProperty.DataSource>
+  </BoolProperty>
+
+  <StringProperty Name="FullPath" ReadOnly="true" Visible="false">
+    <StringProperty.DataSource>
+      <DataSource Persistence="ProjectFile" PersistedName="MSBuildProjectFullPath"/>
+    </StringProperty.DataSource>
+  </StringProperty>
+
+  <StringProperty Name="AddItemTemplatesGuid" Visible="False"/>
+</Rule>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright, Microsoft Corporation, All rights reserved.-->
+<Rule Name="AppHostSimulatorDebugger" DisplayName="Symulator" PageTemplate="debugger" Order="200" Description="Opcje debugera symulatora" xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Metadata>
+    <sys:Guid x:Key="DebugTargetTypeCommandGuid">FEEA6E9D-77D8-423F-9EDE-3970CBB76125</sys:Guid>
+    <sys:UInt32 x:Key="DebugTargetTypeCommandId">0x100</sys:UInt32>
+  </Rule.Metadata>
+
+  <Rule.DataSource>
+    <DataSource Persistence="UserFile"/>
+  </Rule.DataSource>
+
+  <Rule.Categories>
+    <Category Name="StartOptions" DisplayName="Opcje uruchamiania" Description="Opcje uruchamiania"/>
+  </Rule.Categories>
+
+  <BoolProperty Name="LaunchApplication" DisplayName="Uruchom aplikację" Category="StartOptions" F1Keyword="javascript.project.property.debugging.launchapplication" Description="Określa, czy natychmiast uruchomić aplikację, czy poczekać na debugowanie aplikacji, gdy jest uruchamiana."/>
+
+  <BoolProperty Name="AllowLocalNetworkLoopback" DisplayName="Zezwalaj na sprzężenie zwrotne sieci lokalnej" Category="StartOptions" F1Keyword="javascript.project.property.debugging.allowlocalnetworkloopback" Description="Podczas debugowania aplikacji ze Sklepu Windows pozwala na używanie usług lokalnych, debugowanie ruchu w sieci i używanie lokalnego sprzężenia zwrotnego do komunikowania się ze składnikami na tej samej maszynie."/>
+
+  <EnumProperty Name="DebuggerType" DisplayName="Typ debugera" Category="StartOptions" F1Keyword="javascript.project.property.debugging.debuggertype" Description="Określa, który debuger włączyć. W przypadku wybrania ustawienia Mieszany używany jest debuger dla kodu zarządzanego i natywnego.">
+    <EnumValue Name="NativeOnly" DisplayName="Tylko kod natywny" Description="Tylko kod natywny"/>
+    <EnumValue Name="ManagedOnly" DisplayName="Tylko kod zarządzany" Description="Tylko kod zarządzany"/>
+    <EnumValue Name="Script" DisplayName="Tylko skrypt" Description="Tylko skrypt"/>
+    <EnumValue Name="Mixed" DisplayName="Mieszany (zarządzany i natywny)" Description="Mieszany (zarządzany i natywny)"/>
+    <EnumProperty.Metadata>
+      <NameValuePair Name="IsDebugType" Value="true"/>
+    </EnumProperty.Metadata>
+  </EnumProperty>
+
+  <StringProperty Name="CommandLineArgs" DisplayName="Argumenty wiersza polecenia" Category="StartOptions" F1Keyword="javascript.project.property.debugging.commandlineargs" Description="Zezwala na określanie argumentów wiersza polecenia, które są przekazywane do uruchomienia aplikacji platformy UWP">
+  </StringProperty>
+</Rule>

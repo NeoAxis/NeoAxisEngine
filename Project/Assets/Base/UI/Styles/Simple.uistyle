@@ -1,0 +1,19 @@
+.component Project.UIStyleSimple
+{
+	ButtonSoundMouseEnter
+	{
+		GetByReference = "relative:Sounds\\ButtonMouseIntoArea.ogg"
+	}
+	ButtonSoundMouseLeave
+	{
+		GetByReference = "relative:Sounds\\ButtonMouseIntoArea.ogg"
+	}
+	ButtonSoundClick
+	{
+		GetByReference = "relative:Sounds\\ButtonClick.ogg"
+	}
+	CheckSoundClick
+	{
+		GetByReference = "Base\\UI\\Styles\\Sounds\\CheckClick.ogg"
+	}
+}
