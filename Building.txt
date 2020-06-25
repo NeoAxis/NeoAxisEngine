@@ -1,10 +1,10 @@
 ------------
 Windows
 
-Sources\NeoAxis.1.Native.sln.
-Sources\NeoAxis.2.Managed.sln. Restore NuGet packets before compilation.
+Sources\NeoAxis.2.Managed.sln - C# DLLs, Restore NuGet packets before compilation.
+Sources\NeoAxis.1.Native.sln - Native DLLs, already compiled.
 
-Tested with Visual Studio 2017. By default is better to use the Release configuration, debugging is supported.
+Visual Studio 2017, 2019. By default is better to use the Release configuration by performance reasons, debugging is supported.
 
 ------------
 (Is not available temporary)

@@ -23,11 +23,11 @@ Royalty free, open source platform.
 
 <h2>Building</h2>
 <ul>
-<li>Sources\NeoAxis.1.Native.sln</li>
-<li>Sources\NeoAxis.2.Managed.sln. Restore NuGet packets before compilation.</li>
+<li>Sources\NeoAxis.2.Managed.sln - C# DLLs, Restore NuGet packets before compilation.</li>
+<li>Sources\NeoAxis.1.Native.sln - Native DLLs, already compiled.</li>
 </ul>
 
-Tested with Visual Studio 2017. By default is better to use the Release configuration by performance reasons, debugging is supported.
+Visual Studio 2017, 2019. By default is better to use the Release configuration by performance reasons, debugging is supported.
 
 <h2>License</h2>
 
