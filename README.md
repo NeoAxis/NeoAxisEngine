@@ -27,7 +27,7 @@ Royalty free, open source platform.
 <li>Sources\NeoAxis.2.Managed.sln. Restore NuGet packets before compilation.</li>
 </ul>
 
-Tested on Visual Studio 2017.
+Tested with Visual Studio 2017.
 
 <h2>License</h2>
 
