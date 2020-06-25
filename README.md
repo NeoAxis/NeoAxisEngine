@@ -27,7 +27,7 @@ Royalty free, open source platform.
 <li>Sources\NeoAxis.2.Managed.sln. Restore NuGet packets before compilation.</li>
 </ul>
 
-Tested with Visual Studio 2017. By default is better to use the Release configuration, debugging is supported.
+Tested with Visual Studio 2017. By default is better to use the Release configuration by performance reasons, debugging is supported.
 
 <h2>License</h2>
 
@@ -53,6 +53,6 @@ www.neoaxis.com/LICENSE.txt
 
 <h2>Frequently Asked Questions</h2>
 <ul>
-<li><b>Did I understand correctly that the NeoAxis Engine is provided free of charge with full source code, while the royalties are completely absent? I should not even add splash screen when starting my game, just mention it in the credits?</b></li>
-<li>That's right. However, we will be glad of any help in the development of the engine, including its popularization.</li>
+<li><b>Did I understand correctly that the NeoAxis Engine is provided free of charge with full source code, while the no any royalties? I should not even add splash screen when starting my game, just mention it in the credits?</b></li>
+<li>That's right. However, we will be glad of any help with the development of the engine, including its popularization.</li>
 </ul>
