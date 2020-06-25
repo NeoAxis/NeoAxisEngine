@@ -1,6 +1,6 @@
 <b>NeoAxis Engine</b> is an integrated development environment with built-in 3D and 2D game engine.
 
-Free, royalty free and open source platform.
+Royalty free and open source platform.
 
 <a href="https://www.neoaxis.com/">www.neoaxis.com</a>
 
