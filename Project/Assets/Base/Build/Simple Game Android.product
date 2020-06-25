@@ -1,8 +1,0 @@
-.component NeoAxis.Component_Product_Android
-{
-	ProductName = Simple Game
-	SortOrderInEditor = 3
-	SelectedAssets = "Base;Samples\\Simple Game"
-	FileCache = False
-	ShaderCache = False
-}
