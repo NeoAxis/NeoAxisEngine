@@ -48,7 +48,7 @@ Licensee agrees that use of the Software is at their own risk. In no event shall
 
 7. DEFINITIONS
 
-"Editor" means part of the Source Code of the NeoAxis Engine or object code compiled from it that implements functional of NeoAxis.Editor.exe (the main application for developing NeoAxis Engine based projects). These include all C# files that have type definitions in the "NeoAxis.Editor" namespace of the unmodified Source Code of the NeoAxis Engine. For example, such files are in the "Sources\Engine\NeoAxis.Core\Editor" folder with "cs" file extension.
+"Editor" means part of the Source Code of the NeoAxis Engine or object code compiled from it that implements functional of "NeoAxis.Editor.exe" application (the main application for developing NeoAxis Engine based projects). These include all C# files that have type definitions in the "NeoAxis.Editor" namespace of the Source Code of the NeoAxis Engine. For example, such files are in the "Sources\Engine\NeoAxis.Core\Editor" folder with "cs" file extension.
 
 "Engine Code" means the Source Code and object code of the NeoAxis Engine, including any future versions, as made available to you by NeoAxis Group Ltd under this Agreement, and any object code compiled from that Source Code.
 
