@@ -48,5 +48,7 @@ This can be done by changing the value of the ModifiedVersionOfNeoAxisEngine fie
 </ul>
 
 <h2>Frequently Asked Questions</h2>
-<b>Did I understand correctly that the NeoAxis Engine is provided free of charge with full source code, while the royalties are completely absent? I should not even add splash screen when starting my game, just mention it in the credits?</b>
-That's right. However, we will be glad of any help in the development of the engine, including its popularization.
+<ul>
+<li><b>Did I understand correctly that the NeoAxis Engine is provided free of charge with full source code, while the royalties are completely absent? I should not even add splash screen when starting my game, just mention it in the credits?</b></li>
+<li>That's right. However, we will be glad of any help in the development of the engine, including its popularization.</li>
+</ul>
