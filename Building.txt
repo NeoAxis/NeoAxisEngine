@@ -4,7 +4,7 @@ Windows
 Sources\NeoAxis.1.Native.sln.
 Sources\NeoAxis.2.Managed.sln. Restore NuGet packets before compilation.
 
-Tested with Visual Studio 2017.
+Tested with Visual Studio 2017. By default is better to use the Release configuration, debugging is supported.
 
 ------------
 (Is not available temporary)
