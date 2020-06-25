@@ -47,6 +47,8 @@ This can be done by changing the value of the ModifiedVersionOfNeoAxisEngine fie
 <li>3. You can distribute the source code of the NeoAxis Engine. In the case of publishing any part of the modified Source Code, for example, by means of creating a fork or other distribution method, you automatically become the contributor of the NeoAxis Engine. This means that the NeoAxis Group Ltd reserves the right to use your modified source code at its discretion, for example, to improve the original version of the NeoAxis Engine. Copyright for modified code is saved to you.</li>
 </ul>
 
+www.neoaxis.com/LICENSE.txt
+
 <h2>Frequently Asked Questions</h2>
 <ul>
 <li><b>Did I understand correctly that the NeoAxis Engine is provided free of charge with full source code, while the royalties are completely absent? I should not even add splash screen when starting my game, just mention it in the credits?</b></li>
