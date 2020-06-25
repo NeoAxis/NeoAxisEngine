@@ -705,7 +705,10 @@ namespace NeoAxis
 				if( File.Exists( realFileName ) )
 					defaultSettingsConfig = TextBlockUtility.LoadFromRealFile( realFileName );
 				else
+				{
+					Log.Warning( "VirtualFileSystem: InitDefaultSettingsConfig: \"NeoAxis.DefaultSettings.config\" is not exists." );
 					defaultSettingsConfig = new TextBlock();
+				}
 			}
 		}
 

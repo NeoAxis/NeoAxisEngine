@@ -279,6 +279,8 @@ namespace NeoAxis
 
 				}
 			}
+			else
+				Log.Warning( "AssemblyUtility: ParseDisableAssemblyNamespaceRegistration: \"NeoAxis.DefaultSettings.config\" is not exists." );
 		}
 
 		public delegate void RegisterAssemblyEventDelegate( Assembly assembly );
