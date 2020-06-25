@@ -27,7 +27,9 @@ Royalty-free, open source platform.
 <li>Sources\NeoAxis.1.Native.sln - Native DLLs, already compiled.</li>
 </ul>
 
-Visual Studio 2017, 2019. By default is better to use the Release configuration by performance reasons, debugging is supported.
+Visual Studio 2017, 2019.
+
+By default is better to use the Release configuration by performance reasons, debugging is supported.
 
 <h2>License</h2>
 
