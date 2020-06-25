@@ -46,7 +46,7 @@ Shortly about the license. You can use NeoAxis Engine for free without any futur
 
 This can be done by changing the value of the ModifiedVersionOfNeoAxisEngine field in the Sources\Engine\NeoAxis.Core\Utility\EngineInfo.cs file.</li>
 
-<li>3. You can distribute the source code of the NeoAxis Engine. In the case of publishing any part of the modified Source Code, for example, by means of creating a fork or other distribution method, you automatically become the contributor of the NeoAxis Engine. This means that the NeoAxis Group Ltd reserves the right to use your modified source code at its discretion, for example, to improve the original version of the NeoAxis Engine. Copyright for modified code is saved to you.</li>
+<li>3. You can distribute the source code of the NeoAxis Engine. In the case of publishing any part of the modified source code, for example, by means of creating a fork or other distribution method, you automatically become the contributor of the NeoAxis Engine. This means that the NeoAxis Group Ltd reserves the right to use your modified source code at its discretion, for example, to improve the original version of the NeoAxis Engine. Copyright for modified code is saved to you.</li>
 </ul>
 
 www.neoaxis.com/LICENSE.txt
