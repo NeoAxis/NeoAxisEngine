@@ -6,6 +6,10 @@ Royalty-free, open source platform.
 
 <div class="image" align="center"><a href="https://www.neoaxis.com/images/2020_3/NeoAxis_2020_3.png"><img src="https://www.neoaxis.com/images/2020_3/NeoAxis_2020_3.jpg" alt="" width="1000" vspace="10"></a></div>
 
+<h2>Video review</h2>
+
+[![Video review](https://img.youtube.com/vi/YxZbaEWkegY/0.jpg)](https://www.youtube.com/watch?v=YxZbaEWkegY)
+
 <h2>Supported platforms by the NeoAxis editor</h2>
 <ul>
 <li>Windows</li>
