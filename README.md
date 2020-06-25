@@ -36,7 +36,7 @@ Shortly about the license. You can use NeoAxis Engine for free without any futur
 <li>1. When publishing your product, you must add "Made with NeoAxis Engine (www.neoaxis.com)" with the product information and in its credits.
 </li>
 
-<li>2. You can distribute the NeoAxis editor with your product. When you do it the window title must be:
+<li>2. You can distribute the NeoAxis editor with your product. When you do it the window title of the editor must be:
   
   "Your project name - NeoAxis Engine 2020.3 (www.neoaxis.com)".
   
