@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DC3F2BFF-9B09-42C3-978C-338A0E25B400}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NeoAxis.Addon.Pathfinding</RootNamespace>
+    <AssemblyName>NeoAxis.Addon.Pathfinding</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\..\Project\Binaries\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;STANDALONE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <NoWarn>CS3021;CS0659;CS0219;CS0649;CS0661;CS1591;CS1574;CS1573;CS1572;CS1587</NoWarn>
+    <DocumentationFile>..\..\..\..\Project\Binaries\NeoAxis.Addon.Pathfinding.xml</DocumentationFile>
+    <CodeAnalysisRuleSet />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\..\Project\Binaries\</OutputPath>
+    <DefineConstants>TRACE;STANDALONE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <NoWarn>CS3021;CS0659;CS0219;CS0649;CS0661;CS1591;CS1574;CS1573;CS1572;CS1587</NoWarn>
+    <DocumentationFile>..\..\..\..\Project\Binaries\NeoAxis.Addon.Pathfinding.xml</DocumentationFile>
+    <CodeAnalysisRuleSet />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="SharpNav\Area.cs" />
+    <Compile Include="SharpNav\AreaGenerator.cs" />
+    <Compile Include="SharpNav\Cell.cs" />
+    <Compile Include="SharpNav\Collections\BVTree.cs" />
+    <Compile Include="SharpNav\Collections\Generic\BufferedQueue.cs" />
+    <Compile Include="SharpNav\Collections\Generic\BufferedStack.cs" />
+    <Compile Include="SharpNav\Collections\Generic\IValueWithCost.cs" />
+    <Compile Include="SharpNav\Collections\Generic\PriorityQueue.cs" />
+    <Compile Include="SharpNav\Collections\Generic\ProximityGrid.cs" />
+    <Compile Include="SharpNav\CompactCell.cs" />
+    <Compile Include="SharpNav\CompactHeightfield.cs" />
+    <Compile Include="SharpNav\CompactSpan.cs" />
+    <Compile Include="SharpNav\CompactSpanReference.cs" />
+    <Compile Include="SharpNav\Contour.cs" />
+    <Compile Include="SharpNav\ContourBuildFlags.cs" />
+    <Compile Include="SharpNav\ContourSet.cs" />
+    <Compile Include="SharpNav\ContourVertex.cs" />
+    <Compile Include="SharpNav\Crowds\Agent.cs" />
+    <Compile Include="SharpNav\Crowds\Crowd.cs" />
+    <Compile Include="SharpNav\Crowds\CrowdAgentState.cs" />
+    <Compile Include="SharpNav\Crowds\LocalBoundary.cs" />
+    <Compile Include="SharpNav\Crowds\ObstacleAvoidanceQuery.cs" />
+    <Compile Include="SharpNav\Crowds\PathCorridor.cs" />
+    <Compile Include="SharpNav\Crowds\PathQueue.cs" />
+    <Compile Include="SharpNav\Crowds\Status.cs" />
+    <Compile Include="SharpNav\Crowds\TargetState.cs" />
+    <Compile Include="SharpNav\Crowds\UpdateFlags.cs" />
+    <Compile Include="SharpNav\Direction.cs" />
+    <Compile Include="SharpNav\EdgeFlags.cs" />
+    <Compile Include="SharpNav\Geometry\BBox2i.cs" />
+    <Compile Include="SharpNav\Geometry\BBox3.cs" />
+    <Compile Include="SharpNav\Geometry\Containment.cs" />
+    <Compile Include="SharpNav\Geometry\Distance.cs" />
+    <Compile Include="SharpNav\Geometry\Intersection.cs" />
+    <Compile Include="SharpNav\Geometry\Triangle3.cs" />
+    <Compile Include="SharpNav\Geometry\TriangleEnumerable.cs" />
+    <Compile Include="SharpNav\Geometry\Vector2.cs" />
+    <Compile Include="SharpNav\Geometry\Vector2i.cs" />
+    <Compile Include="SharpNav\Geometry\Vector3.cs" />
+    <Compile Include="SharpNav\Geometry\Vector3Extensions.cs" />
+    <Compile Include="SharpNav\Heightfield.cs" />
+    <Compile Include="SharpNav\Heightfield.Rasterization.cs" />
+    <Compile Include="SharpNav\HeightPatch.cs" />
+    <Compile Include="SharpNav\IO\Binary\NavMeshBinarySerializer.cs" />
+    <Compile Include="SharpNav\IO\Json\AreaConverter.cs" />
+    <Compile Include="SharpNav\IO\Json\NavMeshJsonSerializer.cs" />
+    <Compile Include="SharpNav\IO\Json\PolyIdConverter.cs" />
+    <Compile Include="SharpNav\IO\Json\Vector3Converter.cs" />
+    <Compile Include="SharpNav\IO\NavMeshConfigurationFile.cs" />
+    <Compile Include="SharpNav\IO\NavMeshSerializer.cs" />
+    <Compile Include="SharpNav\MathHelper.cs" />
+    <Compile Include="SharpNav\NavMesh.cs" />
+    <Compile Include="SharpNav\NavMeshBuilder.cs" />
+    <Compile Include="SharpNav\NavMeshGenerationSettings.cs" />
+    <Compile Include="SharpNav\NavMeshQuery.cs" />
+    <Compile Include="SharpNav\NodeFlags.cs" />
+    <Compile Include="SharpNav\NodePool.cs" />
+    <Compile Include="SharpNav\Pathfinding\BoundarySide.cs" />
+    <Compile Include="SharpNav\Pathfinding\FindPathOptions.cs" />
+    <Compile Include="SharpNav\Pathfinding\Link.cs" />
+    <Compile Include="SharpNav\Pathfinding\NavNode.cs" />
+    <Compile Include="SharpNav\Pathfinding\NavPoint.cs" />
+    <Compile Include="SharpNav\Pathfinding\NavPoly.cs" />
+    <Compile Include="SharpNav\Pathfinding\NavPolyId.cs" />
+    <Compile Include="SharpNav\Pathfinding\NavPolyIdManager.cs" />
+    <Compile Include="SharpNav\Pathfinding\NavQueryFilter.cs" />
+    <Compile Include="SharpNav\Pathfinding\NavTile.cs" />
+    <Compile Include="SharpNav\Pathfinding\OffMeshConnection.cs" />
+    <Compile Include="SharpNav\Pathfinding\Path.cs" />
+    <Compile Include="SharpNav\Pathfinding\PathBuildFlags.cs" />
+    <Compile Include="SharpNav\Pathfinding\PathfindingCommon.cs" />
+    <Compile Include="SharpNav\Pathfinding\RaycastHit.cs" />
+    <Compile Include="SharpNav\Pathfinding\RaycastOptions.cs" />
+    <Compile Include="SharpNav\Pathfinding\StraightPathFlags.cs" />
+    <Compile Include="SharpNav\PolyBounds.cs" />
+    <Compile Include="SharpNav\PolyMesh.cs" />
+    <Compile Include="SharpNav\PolyMeshDetail.cs" />
+    <Compile Include="SharpNav\PolyVertex.cs" />
+    <Compile Include="SharpNav\Region.cs" />
+    <Compile Include="SharpNav\Span.cs" />
+    <Compile Include="SharpNav\SpanReference.cs" />
+    <Compile Include="SharpNav\TiledNavMesh.cs" />
+    <Compile Include="_not_used_code.cs" />
+    <Compile Include="Component_Pathfinding_Geometry.cs" />
+    <Compile Include="Component_Pathfinding_TestMode.cs" />
+    <Compile Include="Component_Pathfinding_SettingsCell.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Component_Pathfinding_GeometryTag.cs" />
+    <Compile Include="Component_Pathfinding.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Krypton Components\ComponentFactory.Krypton.Toolkit\ComponentFactory.Krypton.Toolkit.csproj">
+      <Project>{96ecaecc-54f8-4aa5-8591-b443c2d9565f}</Project>
+      <Name>ComponentFactory.Krypton.Toolkit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\NeoAxis.Core\NeoAxis.Core.csproj">
+      <Project>{765cbd47-5d68-403f-98e3-46b43c10342f}</Project>
+      <Name>NeoAxis.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

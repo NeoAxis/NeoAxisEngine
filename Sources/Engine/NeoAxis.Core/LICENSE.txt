@@ -1,0 +1,64 @@
+NeoAxis Engine End User License Agreement
+
+1. LICENSE AGREEMENT
+
+This document is an agreement between NeoAxis Group Ltd, 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica ("Licensor") and Licensee (you) regarding the use of the NeoAxis Engine by Licensee.
+
+It is a legal document that explains your rights and obligations related to your use of the NeoAxis Engine. By downloading or using this software, you are agreeing to be bound by the terms of this Agreement. If you do not or cannot agree to the terms of this Agreement, please do not download or use this software.
+
+The License becomes effective on the date you accept this Agreement or download the Engine Code.
+
+2. LICENSE GRANT
+
+Permission is hereby granted, free of charge, to you obtaining a copy of this software and associated documentation files ("Software"), to deal in the Software, including the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+A. All redistributions must retain all occurrences of the above copyright notice and website addresses that are currently in place.
+
+B. Modified versions in binary form must be plainly marked as such, and must not be misrepresented as being the original software.
+
+C. When publishing your product made with any part of NeoAxis Engine, you must add "Made with NeoAxis Engine (www.neoaxis.com)" with the product information and in its credits.
+
+D. The window title of any software application created by using Source Code of the Editor must include a text in the form "{Your project name} - NeoAxis Engine {Engine version} (www.neoaxis.com)" where "{Your project name}" - the name of your project, "{Engine version}" - used version of NeoAxis Engine. Or if you created a software application by using Source Code of any part of the Editor and also you use a modified version of the NeoAxis Engine the window title must include a text in the form "{Your project name} - Modified version of NeoAxis Engine {Engine version} (www.neoaxis.com)". To put it more precisely, the application must use compiled Source Code of the Editor to executing its task. If inside this application contains compiled code of the Editor, but without using it, this is not considered to be using the Source Code of the Editor, which means that the condition does not need to be fulfilled for this application. Also the text must be well visible.
+
+The text "NeoAxis Engine" in the Editor's window the information about the Editor is also must be saved and have a prefix "Modified version of" when it modified.
+
+This can be done by changing the value of the ModifiedVersionOfNeoAxisEngine field in the Sources\Engine\NeoAxis.Core\Utility\EngineInfo.cs file.
+
+E. You can distribute the Source Code of the NeoAxis Engine. In the case of publishing any part of the modified Source Code, for example, by means of creating a fork or other distribution method, you automatically become the contributor of the NeoAxis Engine. This means that the NeoAxis Group Ltd reserves the right to use your modified Source Code at its discretion, for example, to improve the original version of the NeoAxis Engine. If the NeoAxis Engine will be provided in the future under a new license, then the contributions may be used in a new product. Copyright for modified code is saved to you.
+
+F. Original or modified version of Source Code can distributed by you only under this license, only to those who have the same license.
+
+If you do not accept these conditions or it is not enforceable in your jurisdiction, then you may not use the Software.
+
+3. COPYRIGHT
+
+Except where otherwise noted, all of the documentation and software included in the NeoAxis Engine is copyrighted by NeoAxis Group Ltd.
+
+4. OWNERSHIP
+
+The title and ownership of the software shall remain with Licensor. All rights to patents, copyrights, or any other intellectual property rights shall remain with the Licensor, or their respective owner.
+
+5. DISCLAIMER OF WARRANTY
+
+The software is provided "AS IS", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement.
+
+6. NO LIABILITY
+
+Licensee agrees that use of the Software is at their own risk. In no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the software.
+
+7. DEFINITIONS
+
+"Editor" means part of the Source Code of the NeoAxis Engine or object code compiled from it that implements functional of "NeoAxis.Editor.exe" application (the main application for developing NeoAxis Engine based projects). These include all C# files that have type definitions in the "NeoAxis.Editor" namespace of the Source Code of the NeoAxis Engine. For example, such files are in the "Sources\Engine\NeoAxis.Core\Editor" folder with "cs" file extension.
+
+"Engine Code" means the Source Code and object code of the NeoAxis Engine, including any future versions, as made available to you by NeoAxis Group Ltd under this Agreement, and any object code compiled from that Source Code.
+
+"Source Code" means the human readable form of a software program, including all modules it contains, plus any associated resource files, scripts used to control compilation.
+
+8. MISCELLANEOUS
+
+This Agreement and any document or information referred to in this Agreement constitute the entire agreement between you and NeoAxis Group Ltd relating to the subject matter covered by this Agreement. All other communications, proposals, and representations with respect to the subject matter covered by this Agreement are excluded.
+
+If any provision in this agreement is unenforceable or invalid, it shall not affect the rest of the agreement. The licensee agrees to replace any unenforceable or invalid provision with a valid provision that upholds the intent of the provision to the greatest extent possible.
+
+IBC NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+http://www.neoaxis.com/

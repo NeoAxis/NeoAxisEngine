@@ -1,0 +1,7 @@
+<!--NeoAxis projects setup common for desktop and UWP proj-->
+<Project>
+  <PropertyGroup>
+    <BaseIntermediateOutputPath>obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <MSBuildProjectExtensionsPath>obj\$(MSBuildProjectName)\</MSBuildProjectExtensionsPath>
+  </PropertyGroup>
+</Project>

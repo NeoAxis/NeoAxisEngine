@@ -1,0 +1,513 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A49B1604-5C02-3455-8543-8A45A6E6C450}</ProjectGuid>
+    <RootNamespace>NeoAxisCoreNative</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectName>NeoAxisCoreNative</ProjectName>
+    <AppContainerApplication>true</AppContainerApplication>
+    <ApplicationType>Windows Store</ApplicationType>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.17134.0</WindowsTargetPlatformMinVersion>
+    <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v141</PlatformToolset>
+    <WindowsAppContainer>true</WindowsAppContainer>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v141</PlatformToolset>
+    <WindowsAppContainer>true</WindowsAppContainer>
+    <UseOfMfc>false</UseOfMfc>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC70.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC70.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)_Compilation\UWP\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)_Compilation\UWP\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)_Compilation\UWP\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)_Compilation\UWP\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <GenerateManifest>true</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>..\include;..\..\PlugIns\ParticleFX\include;..\..\..\..\NativeMemoryManager;..\..\..\FreeImage\Source;..\..\..\FreeType\include;..\..\..\Stlport\stlport;..\..\..\NvidiaTextureTools\src;..\..\..\NvidiaTextureTools\project\vc8;..\..\OgreNativeWrapper\src;..\..\RenderSystems\NULL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_USRDLL;_MT;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;FREEIMAGE_LIB;_WINRT_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <MinimalRebuild>false</MinimalRebuild>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>OgreStableHeaders.h</PrecompiledHeaderFile>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4985;4309;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>freeimage.lib;FreeType.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <Version>
+      </Version>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <AdditionalLibraryDirectories>$(SolutionDir)Engine\Lib\UWP\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <ImportLibrary>$(OutDir)NeoAxisCoreNative.lib</ImportLibrary>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy $(OutDir)$(TargetName).lib $(SolutionDir)Engine\Lib\UWP\$(Platform)
+copy $(OutDir)$(TargetName)$(TargetExt) "..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <CompileAsWinRT>true</CompileAsWinRT>
+      <Optimization>Disabled</Optimization>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <OmitFramePointers>false</OmitFramePointers>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>..\include;..\..\PlugIns\ParticleFX\include;..\..\..\..\NativeMemoryManager;..\..\..\FreeImage\Source;..\..\..\FreeType\include;..\..\..\Stlport\stlport;..\..\..\NvidiaTextureTools\src;..\..\..\NvidiaTextureTools\project\vc8;..\..\OgreNativeWrapper\src;..\..\RenderSystems\NULL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_MT;_USRDLL;FREEIMAGE_LIB;_WINRT_DLL;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;OGRE_MEMORY_TRACKER_DEBUG_MODE;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>
+      </StringPooling>
+      <MinimalRebuild>false</MinimalRebuild>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>OgreStableHeaders.h</PrecompiledHeaderFile>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DisableSpecificWarnings>4985;4309;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <PreprocessToFile>false</PreprocessToFile>
+      <LanguageStandard>
+      </LanguageStandard>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>WindowsApp.lib;freeimage.lib;NativeMemoryManager.lib;FreeType.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <Version>
+      </Version>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <AdditionalLibraryDirectories>$(SolutionDir)Engine\Lib\UWP\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <ImportLibrary>$(OutDir)NeoAxisCoreNative.lib</ImportLibrary>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy $(OutDir)$(TargetName).lib $(SolutionDir)Engine\Lib\UWP\$(Platform)
+
+copy $(OutDir)$(TargetName)$(TargetExt) "..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\x64"
+copy $(OutDir)$(TargetName).pdb "..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\x64"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\RenderSystems\NULL\src\NULLEngineDll.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\RenderSystems\NULL\src\NULLGpuProgramManager.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\RenderSystems\NULL\src\NULLHardwareBufferManager.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\RenderSystems\NULL\src\NULLHardwareIndexBuffer.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\RenderSystems\NULL\src\NULLHardwarePixelBuffer.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\RenderSystems\NULL\src\NULLHardwareVertexBuffer.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\RenderSystems\NULL\src\NULLPlugin.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\RenderSystems\NULL\src\NULLRenderSystem.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\RenderSystems\NULL\src\NULLRenderWindow.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\RenderSystems\NULL\src\NULLTextureManager.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\NeoAxis\AxisAlignedBoxI.cpp" />
+    <ClCompile Include="..\NeoAxis\Base64.cpp" />
+    <ClCompile Include="..\NeoAxis\Bounds.cpp" />
+    <ClCompile Include="..\NeoAxis\BoundsD.cpp" />
+    <ClCompile Include="..\NeoAxis\BoundsI.cpp" />
+    <ClCompile Include="..\NeoAxis\Direct3D9Utils.cpp" />
+    <ClCompile Include="..\NeoAxis\DirectInputNativeWrapper.cpp" />
+    <ClCompile Include="..\NeoAxis\NativeMemoryDictionary.cpp" />
+    <ClCompile Include="..\NeoAxis\NeoAxisProprietary.cpp" />
+    <ClCompile Include="..\NeoAxis\NeoAxis_precompiled.cpp" />
+    <ClCompile Include="..\NeoAxis\OBB.cpp" />
+    <ClCompile Include="..\NeoAxis\OBBD.cpp" />
+    <ClCompile Include="..\NeoAxis\OctreeContainer.cpp" />
+    <ClCompile Include="..\NeoAxis\SoftwareOcclusionBuffer.cpp" />
+    <ClCompile Include="..\NeoAxis\StringUtils.cpp" />
+    <ClCompile Include="..\NeoAxis\UtilsNativeWrapper.cpp" />
+    <ClCompile Include="..\NeoAxis\Vector3I.cpp" />
+    <ClCompile Include="..\NeoAxis\XOREncrypt.cpp" />
+    <ClCompile Include="..\src\OgreAlignedAllocator.cpp" />
+    <ClCompile Include="..\src\OgreArchiveManager.cpp" />
+    <ClCompile Include="..\src\OgreAxisAlignedBox.cpp" />
+    <ClCompile Include="..\src\OgreAxisAlignedBoxD.cpp" />
+    <ClCompile Include="..\src\OgreCodec.cpp" />
+    <ClCompile Include="..\src\OgreColourValue.cpp" />
+    <ClCompile Include="..\src\OgreCommon.cpp" />
+    <ClCompile Include="..\src\OgreDataStream.cpp" />
+    <ClCompile Include="..\src\OgreDDSCodec.cpp" />
+    <ClCompile Include="..\src\OgreDebugKeys.cpp" />
+    <ClCompile Include="..\src\OgreDefaultHardwareBufferManager.cpp" />
+    <ClCompile Include="..\src\OgreGpuProgramManager.cpp" />
+    <ClCompile Include="..\src\OgreHardwareUniformBuffer.cpp" />
+    <ClCompile Include="..\src\OgreHighLevelGpuProgram.cpp" />
+    <ClCompile Include="..\src\OgreHighLevelGpuProgramManager.cpp" />
+    <ClCompile Include="..\src\OgreMathD.cpp" />
+    <ClCompile Include="..\src\OgreMatrix3D.cpp" />
+    <ClCompile Include="..\src\OgrePlaneD.cpp" />
+    <ClCompile Include="..\src\OgreRenderToVertexBuffer.cpp" />
+    <ClCompile Include="..\src\OgreStringInterface.cpp" />
+    <ClCompile Include="..\src\OgreUnifiedHighLevelGpuProgram.cpp" />
+    <ClCompile Include="..\src\OgreVector3D.cpp" />
+    <ClCompile Include="..\src\OgreDynLib.cpp" />
+    <ClCompile Include="..\src\OgreDynLibManager.cpp" />
+    <ClCompile Include="..\src\OgreException.cpp" />
+    <ClCompile Include="..\src\OgreFreeImageCodec.cpp" />
+    <ClCompile Include="..\src\OgreGpuProgram.cpp" />
+    <ClCompile Include="..\src\OgreHardwareBufferManager.cpp" />
+    <ClCompile Include="..\src\OgreHardwareIndexBuffer.cpp" />
+    <ClCompile Include="..\src\OgreHardwareOcclusionQuery.cpp" />
+    <ClCompile Include="..\src\OgreHardwarePixelBuffer.cpp" />
+    <ClCompile Include="..\src\OgreHardwareVertexBuffer.cpp" />
+    <ClCompile Include="..\src\OgreImage.cpp" />
+    <ClCompile Include="..\src\OgreLog.cpp" />
+    <ClCompile Include="..\src\OgreLogManager.cpp" />
+    <ClCompile Include="..\src\OgreMath.cpp" />
+    <ClCompile Include="..\src\OgreMatrix3.cpp" />
+    <ClCompile Include="..\src\OgreMatrix4.cpp" />
+    <ClCompile Include="..\src\OgreMemoryAllocatedObject.cpp" />
+    <ClCompile Include="..\src\OgreOptimisedUtil.cpp" />
+    <ClCompile Include="..\src\OgreOptimisedUtilGeneral.cpp" />
+    <ClCompile Include="..\src\OgreOptimisedUtilSSE.cpp" />
+    <ClCompile Include="..\src\OgrePass.cpp" />
+    <ClCompile Include="..\src\OgrePixelFormat.cpp" />
+    <ClCompile Include="..\src\OgrePlane.cpp" />
+    <ClCompile Include="..\src\OgrePlatformInformation.cpp" />
+    <ClCompile Include="..\src\OgrePrecompiledHeaders.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">OgreStableHeaders.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">OgreStableHeaders.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\src\OgrePVRTCCodec.cpp" />
+    <ClCompile Include="..\src\OgreQuaternion.cpp" />
+    <ClCompile Include="..\src\OgreRenderSystem.cpp" />
+    <ClCompile Include="..\src\OgreRenderSystemCapabilities.cpp" />
+    <ClCompile Include="..\src\OgreRenderTarget.cpp" />
+    <ClCompile Include="..\src\OgreRenderTexture.cpp" />
+    <ClCompile Include="..\src\OgreRenderWindow.cpp" />
+    <ClCompile Include="..\src\OgreResource.cpp" />
+    <ClCompile Include="..\src\OgreResourceGroupManager.cpp" />
+    <ClCompile Include="..\src\OgreResourceManager.cpp" />
+    <ClCompile Include="..\src\OgreRoot.cpp" />
+    <ClCompile Include="..\src\OgreSceneManager.cpp" />
+    <ClCompile Include="..\src\OgreString.cpp" />
+    <ClCompile Include="..\src\OgreStringConverter.cpp" />
+    <ClCompile Include="..\src\OgreTexture.cpp" />
+    <ClCompile Include="..\src\OgreTextureManager.cpp" />
+    <ClCompile Include="..\src\OgreVector2.cpp" />
+    <ClCompile Include="..\src\OgreVector3.cpp" />
+    <ClCompile Include="..\src\OgreVector4.cpp" />
+    <ClCompile Include="..\src\OgreViewport.cpp" />
+    <ClCompile Include="..\src\YUVToRGBConverter.cpp" />
+    <ClCompile Include="..\..\OgreNativeWrapper\src\FreeType_Wrapper.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\OgreNativeWrapper\src\GuiRendererItemRenderable.cpp" />
+    <ClCompile Include="..\..\OgreNativeWrapper\src\MiniDump.cpp" />
+    <ClCompile Include="..\..\OgreNativeWrapper\src\MyOgreLogListener.cpp" />
+    <ClCompile Include="..\..\OgreNativeWrapper\src\MyOgreRenderSystemListener.cpp" />
+    <ClCompile Include="..\..\OgreNativeWrapper\src\MyOgreRenderTargetListener.cpp" />
+    <ClCompile Include="..\..\OgreNativeWrapper\src\MyOgreSceneManager.cpp" />
+    <ClCompile Include="..\..\OgreNativeWrapper\src\MyOgreSceneManagerListener.cpp" />
+    <ClCompile Include="..\..\OgreNativeWrapper\src\MyOgreVirtualFileSystem.cpp" />
+    <ClCompile Include="..\..\OgreNativeWrapper\src\OgreNativeWrapper.cpp" />
+    <ClCompile Include="..\src\OgreDepthBuffer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\OgreNativeWrapper\src\AdditionalMathFunctions.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreHighLevelGpuProgramManager_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreMultiRenderTarget_Wrapper.h" />
+    <ClInclude Include="..\..\RenderSystems\NULL\include\NULLGpuProgram.h" />
+    <ClInclude Include="..\..\RenderSystems\NULL\include\NULLGpuProgramManager.h" />
+    <ClInclude Include="..\..\RenderSystems\NULL\include\NULLHardwareBufferManager.h" />
+    <ClInclude Include="..\..\RenderSystems\NULL\include\NULLHardwareIndexBuffer.h" />
+    <ClInclude Include="..\..\RenderSystems\NULL\include\NULLHardwarePixelBuffer.h" />
+    <ClInclude Include="..\..\RenderSystems\NULL\include\NULLHardwareVertexBuffer.h" />
+    <ClInclude Include="..\..\RenderSystems\NULL\include\NULLPlugin.h" />
+    <ClInclude Include="..\..\RenderSystems\NULL\include\NULLPrerequisites.h" />
+    <ClInclude Include="..\..\RenderSystems\NULL\include\NULLRenderSystem.h" />
+    <ClInclude Include="..\..\RenderSystems\NULL\include\NULLRenderWindow.h" />
+    <ClInclude Include="..\..\RenderSystems\NULL\include\NULLTexture.h" />
+    <ClInclude Include="..\..\RenderSystems\NULL\include\NULLTextureManager.h" />
+    <ClInclude Include="..\include\OgreAxisAlignedBoxD.h" />
+    <ClInclude Include="..\include\OgreGpuProgramManager.h" />
+    <ClInclude Include="..\include\OgreHardwareUniformBuffer.h" />
+    <ClInclude Include="..\include\OgreHighLevelGpuProgram.h" />
+    <ClInclude Include="..\include\OgreHighLevelGpuProgramManager.h" />
+    <ClInclude Include="..\include\OgreMathD.h" />
+    <ClInclude Include="..\include\OgreMatrix3D.h" />
+    <ClInclude Include="..\include\OgrePixelFormatDescriptions.h" />
+    <ClInclude Include="..\include\OgrePlaneD.h" />
+    <ClInclude Include="..\include\OgreRayD.h" />
+    <ClInclude Include="..\include\OgreRenderToVertexBuffer.h" />
+    <ClInclude Include="..\include\OgreSphereD.h" />
+    <ClInclude Include="..\include\OgreStringInterface.h" />
+    <ClInclude Include="..\include\OgreUnifiedHighLevelGpuProgram.h" />
+    <ClInclude Include="..\include\OgreVector3D.h" />
+    <ClInclude Include="..\include\WIN32\OgreComPtr.h" />
+    <ClInclude Include="..\NeoAxis\AxisAlignedBoxI.h" />
+    <ClInclude Include="..\NeoAxis\Base64.h" />
+    <ClInclude Include="..\NeoAxis\Bounds.h" />
+    <ClInclude Include="..\NeoAxis\BoundsD.h" />
+    <ClInclude Include="..\NeoAxis\BoundsI.h" />
+    <ClInclude Include="..\NeoAxis\DirectInputNativeWrapper.h" />
+    <ClInclude Include="..\NeoAxis\NativeMemoryDictionary.h" />
+    <ClInclude Include="..\NeoAxis\NeoAxisProprietary.h" />
+    <ClInclude Include="..\NeoAxis\OBB.h" />
+    <ClInclude Include="..\NeoAxis\OBBD.h" />
+    <ClInclude Include="..\NeoAxis\OctreeContainer.h" />
+    <ClInclude Include="..\NeoAxis\SoftwareOcclusionBuffer.h" />
+    <ClInclude Include="..\NeoAxis\StringUtils.h" />
+    <ClInclude Include="..\NeoAxis\UtilsNativeWrapper.h" />
+    <ClInclude Include="..\NeoAxis\Vector3I.h" />
+    <ClInclude Include="..\NeoAxis\XOREncrypt.h" />
+    <ClInclude Include="..\src\OgreImageResampler.h" />
+    <ClInclude Include="..\src\OgrePixelConversions.h" />
+    <ClInclude Include="..\src\OgreSIMDHelper.h" />
+    <ClInclude Include="..\include\asm_math.h" />
+    <ClInclude Include="..\include\DataReaderWriter.h" />
+    <ClInclude Include="..\include\Ogre.h" />
+    <ClInclude Include="..\include\OgreAlignedAllocator.h" />
+    <ClInclude Include="..\include\OgreArchive.h" />
+    <ClInclude Include="..\include\OgreArchiveFactory.h" />
+    <ClInclude Include="..\include\OgreArchiveManager.h" />
+    <ClInclude Include="..\include\OgreAtomicWrappers.h" />
+    <ClInclude Include="..\include\OgreAxisAlignedBox.h" />
+    <ClInclude Include="..\include\OgreBitwise.h" />
+    <ClInclude Include="..\include\OgreBlendMode.h" />
+    <ClInclude Include="..\include\OgreCodec.h" />
+    <ClInclude Include="..\include\OgreColourValue.h" />
+    <ClInclude Include="..\include\OgreCommon.h" />
+    <ClInclude Include="..\include\OgreConfig.h" />
+    <ClInclude Include="..\include\OgreConfigOptionMap.h" />
+    <ClInclude Include="..\include\OgreDataStream.h" />
+    <ClInclude Include="..\include\OgreDDSCodec.h" />
+    <ClInclude Include="..\include\OgreDebugKeys.h" />
+    <ClInclude Include="..\include\OgreDefaultHardwareBufferManager.h" />
+    <ClInclude Include="..\include\OgreDynLib.h" />
+    <ClInclude Include="..\include\OgreDynLibManager.h" />
+    <ClInclude Include="..\include\OgreException.h" />
+    <ClInclude Include="..\include\OgreFactoryObj.h" />
+    <ClInclude Include="..\include\OgreFreeImageCodec.h" />
+    <ClInclude Include="..\include\OgreGpuProgram.h" />
+    <ClInclude Include="..\include\OgreHardwareBuffer.h" />
+    <ClInclude Include="..\include\OgreHardwareBufferManager.h" />
+    <ClInclude Include="..\include\OgreHardwareIndexBuffer.h" />
+    <ClInclude Include="..\include\OgreHardwareOcclusionQuery.h" />
+    <ClInclude Include="..\include\OgreHardwarePixelBuffer.h" />
+    <ClInclude Include="..\include\OgreHardwareVertexBuffer.h" />
+    <ClInclude Include="..\include\OgreHeaderPrefix.h" />
+    <ClInclude Include="..\include\OgreHeaderSuffix.h" />
+    <ClInclude Include="..\include\OgreImage.h" />
+    <ClInclude Include="..\include\OgreImageCodec.h" />
+    <ClInclude Include="..\include\OgreIteratorRange.h" />
+    <ClInclude Include="..\include\OgreIteratorWrapper.h" />
+    <ClInclude Include="..\include\OgreIteratorWrappers.h" />
+    <ClInclude Include="..\include\OgreLog.h" />
+    <ClInclude Include="..\include\OgreLogManager.h" />
+    <ClInclude Include="..\include\OgreMath.h" />
+    <ClInclude Include="..\include\OgreMatrix3.h" />
+    <ClInclude Include="..\include\OgreMatrix4.h" />
+    <ClInclude Include="..\include\OgreMemoryAllocatedObject.h" />
+    <ClInclude Include="..\include\OgreMemoryAllocatorConfig.h" />
+    <ClInclude Include="..\include\OgreMemoryStdAlloc.h" />
+    <ClInclude Include="..\include\OgreMemorySTLAllocator.h" />
+    <ClInclude Include="..\include\OgreOptimisedUtil.h" />
+    <ClInclude Include="..\include\OgrePass.h" />
+    <ClInclude Include="..\include\OgrePixelFormat.h" />
+    <ClInclude Include="..\include\OgrePlane.h" />
+    <ClInclude Include="..\include\OgrePlaneBoundedVolume.h" />
+    <ClInclude Include="..\include\OgrePlatform.h" />
+    <ClInclude Include="..\include\OgrePlatformInformation.h" />
+    <ClInclude Include="..\include\OgrePlugin.h" />
+    <ClInclude Include="..\include\OgrePrerequisites.h" />
+    <ClInclude Include="..\include\OgrePVRTCCodec.h" />
+    <ClInclude Include="..\include\OgreQuaternion.h" />
+    <ClInclude Include="..\include\OgreRay.h" />
+    <ClInclude Include="..\include\OgreRenderOperation.h" />
+    <ClInclude Include="..\include\OgreRenderSystem.h" />
+    <ClInclude Include="..\include\OgreRenderSystemCapabilities.h" />
+    <ClInclude Include="..\include\OgreRenderTarget.h" />
+    <ClInclude Include="..\include\OgreRenderTexture.h" />
+    <ClInclude Include="..\include\OgreRenderWindow.h" />
+    <ClInclude Include="..\include\OgreResource.h" />
+    <ClInclude Include="..\include\OgreResourceGroupManager.h" />
+    <ClInclude Include="..\include\OgreResourceManager.h" />
+    <ClInclude Include="..\include\OgreRoot.h" />
+    <ClInclude Include="..\include\OgreSceneManager.h" />
+    <ClInclude Include="..\include\OgreSharedPtr.h" />
+    <ClInclude Include="..\include\OgreSingleton.h" />
+    <ClInclude Include="..\include\OgreSphere.h" />
+    <ClInclude Include="..\include\OgreStableHeaders.h" />
+    <ClInclude Include="..\include\OgreStdHeaders.h" />
+    <ClInclude Include="..\include\OgreString.h" />
+    <ClInclude Include="..\include\OgreStringConverter.h" />
+    <ClInclude Include="..\include\OgreStringVector.h" />
+    <ClInclude Include="..\include\OgreTexture.h" />
+    <ClInclude Include="..\include\OgreTextureManager.h" />
+    <ClInclude Include="..\include\Threading\OgreThreadDefines.h" />
+    <ClInclude Include="..\include\Threading\OgreThreadDefinesBoost.h" />
+    <ClInclude Include="..\include\Threading\OgreThreadDefinesNone.h" />
+    <ClInclude Include="..\include\Threading\OgreThreadDefinesPoco.h" />
+    <ClInclude Include="..\include\Threading\OgreThreadDefinesTBB.h" />
+    <ClInclude Include="..\include\Threading\OgreThreadHeaders.h" />
+    <ClInclude Include="..\include\Threading\OgreThreadHeadersBoost.h" />
+    <ClInclude Include="..\include\Threading\OgreThreadHeadersPoco.h" />
+    <ClInclude Include="..\include\Threading\OgreThreadHeadersTBB.h" />
+    <ClInclude Include="..\include\OgreVector2.h" />
+    <ClInclude Include="..\include\OgreVector3.h" />
+    <ClInclude Include="..\include\OgreVector4.h" />
+    <ClInclude Include="..\include\OgreViewport.h" />
+    <ClInclude Include="..\include\YUVToRGBConverter.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\FreeType_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\GuiRendererItemRenderable.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\MiniDump.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\MyOgreLogListener.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\MyOgreRenderSystemListener.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\MyOgreRenderTargetListener.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\MyOgreSceneManager.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\MyOgreSceneManagerListener.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\MyOgreVirtualFileSystem.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreAnimation_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreAnimationTrack_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreArchiveManager_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreCamera_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreFrustum_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreGpuProgramManager_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreGpuProgramPtr_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreHardwareBuffer_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreHardwareBufferManager_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreHardwareIndexBufferSharedPtr_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreHardwareOcclusionQuery_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreHardwarePixelBufferSharedPtr_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreHardwareVertexBufferSharedPtr_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreImageManager_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreIndexData_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreKeyFrame_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreLight_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreLogManager_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreNameValuePairList_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreNativeWrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreNativeWrapperGeneral.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgrePass_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgrePixelFormat_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgrePose_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreRenderQueue_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreRenderQueueInvocationSequence_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreRenderSystem_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreRenderSystemCapabilities_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreRenderTarget_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreRenderTexture_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreRenderWindow_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreResourceGroupManager_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreRoot_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreSkeleton_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreSkeletonManager_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreStringInterface_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreTechnique_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreTextureManager_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreTexturePtr_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreTextureUnitState_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreVertexData_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\OgreViewport_Wrapper.h" />
+    <ClInclude Include="..\..\OgreNativeWrapper\src\YUVToRGBConverter_Wrapper.h" />
+    <ClInclude Include="..\include\OgreDepthBuffer.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

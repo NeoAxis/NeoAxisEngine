@@ -1,0 +1,10 @@
+{
+	"workWith": [ "None", "Content", "Compile", "EmbeddedResource", "Page" ],
+	"changeToNone": [ "Content", "Page" ],
+	"ignore": 
+	[ 
+		"Properties\\Settings.settings",
+		"Properties\\Settings.Designer.cs",
+		"project.json"
+	]
+}

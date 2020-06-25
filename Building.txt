@@ -1,0 +1,27 @@
+------------
+Windows
+
+Sources\NeoAxis.1.Native.sln.
+Sources\NeoAxis.2.Managed.sln. Restore NuGet packets before compilation.
+
+Tested with Visual Studio 2017.
+
+------------
+(Is not available temporary)
+UWP
+
+1. Generate Stub assemblies. These are stubs for System.Windows.Forms.dll and other assemblies.
+
+Execute: Sources\Engine\Tools\FxConverter\Generate Stubs UWP.bat
+Files will appear in the UWP folder.
+Copy them to Project\Binaries\NeoAxis.Internal\Platforms\UWP\Managed
+
+2 Update NeoAxis.Core project. 
+Sources\Engine\NeoAxis.Core\NeoAxis.Core.UWP.PDPatcher.bat
+
+3. Compile NeoAxis.All.UWP.sln (Architecture - x64)
+
+------------
+Android
+
+TO DO

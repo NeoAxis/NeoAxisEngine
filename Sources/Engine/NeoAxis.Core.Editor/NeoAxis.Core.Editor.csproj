@@ -1,0 +1,267 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{16520154-5B9F-42B1-B11A-BC7C6D6B778B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NeoAxis</RootNamespace>
+    <AssemblyName>NeoAxis.Core.Editor</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\Project\Binaries\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <DocumentationFile>..\..\..\Project\Binaries\NeoAxis.Core.Editor.xml</DocumentationFile>
+    <NoWarn>CS0618;CS1591</NoWarn>
+    <CodeAnalysisRuleSet />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\Project\Binaries\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>7.3</LangVersion>
+    <NoWarn>CS0618;CS1591</NoWarn>
+    <DocumentationFile>..\..\..\Project\Binaries\NeoAxis.Core.Editor.xml</DocumentationFile>
+    <CodeAnalysisRuleSet />
+  </PropertyGroup>
+  <PropertyGroup>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Build" />
+    <Reference Include="Microsoft.CodeAnalysis, Version=2.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Project\Binaries\Microsoft.CodeAnalysis.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=2.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Project\Binaries\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.Workspaces, Version=2.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Project\Binaries\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable, Version=1.2.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Collections.Immutable.1.5.0\lib\netstandard1.3\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Composition.AttributedModel, Version=1.0.31.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Project\Binaries\System.Composition.AttributedModel.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Composition.Hosting, Version=1.0.31.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Project\Binaries\System.Composition.Hosting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Composition.Runtime, Version=1.0.31.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Project\Binaries\System.Composition.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Composition.TypedParts, Version=1.0.31.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Project\Binaries\System.Composition.TypedParts.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.IO.Compression.4.3.0\lib\net46\System.IO.Compression.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.FileSystem, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.IO.FileSystem.4.3.0\lib\net46\System.IO.FileSystem.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.ValueTuple, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Components\Scripting\Component_CSharpScript_DocumentWindow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\Scripting\Component_CSharpScript_DocumentWindow.designer.cs">
+      <DependentUpon>Component_CSharpScript_DocumentWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Scripting\Component_CSharpScript_PreviewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\Scripting\Component_CSharpScript_PreviewControl.designer.cs">
+      <DependentUpon>Component_CSharpScript_PreviewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ShaderScript\Component_ShaderScript_DocumentWindow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\ShaderScript\Component_ShaderScript_DocumentWindow.designer.cs">
+      <DependentUpon>Component_ShaderScript_DocumentWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Editor\HierarchicalContainer\DropDownEditors\ScriptDropDownControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Editor\HierarchicalContainer\DropDownEditors\ScriptDropDownControl.designer.cs">
+      <DependentUpon>ScriptDropDownControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Editor\HierarchicalContainer\HCItemEvent.cs" />
+    <Compile Include="Editor\HierarchicalContainer\HCItemScript.cs" />
+    <Compile Include="Editor\TextEditorDocumentWindow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Editor\TextEditorDocumentWindow.designer.cs">
+      <DependentUpon>TextEditorDocumentWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Editor\WPFApp\WPFApp.xaml.cs">
+      <DependentUpon>WPFApp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\ScriptingCSharp\Core\RoslynPadNeoAxisCoreExchangeImpl.cs" />
+    <Compile Include="Modules\ScriptingCSharp\Editor\ScriptEditorUtility.cs" />
+    <Compile Include="Modules\ScriptingCSharp\Editor\TextEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Modules\ScriptingCSharp\Editor\BlockIndentationStrategy.cs" />
+    <Compile Include="Modules\ScriptingCSharp\Editor\Common.UI\ScriptNotificationObject.cs" />
+    <Compile Include="Modules\ScriptingCSharp\Editor\Common.UI\ScriptNuGetViewModel.cs" />
+    <Compile Include="Modules\ScriptingCSharp\Editor\CSharpDocumentWindow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Modules\ScriptingCSharp\Editor\CSharpDocumentWindow.designer.cs">
+      <DependentUpon>CSharpDocumentWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\ScriptingCSharp\Editor\Formatting\CodeActionsConverter.cs" />
+    <Compile Include="Modules\ScriptingCSharp\Editor\Formatting\CodeActionToGlyphConverter.cs" />
+    <Compile Include="Modules\ScriptingCSharp\Editor\ScriptDocument.cs" />
+    <Compile Include="Modules\ScriptingCSharp\Editor\ScriptEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Modules\ScriptingCSharp\Editor\ScriptEditorEngine.cs" />
+    <Compile Include="Modules\ScriptingCSharp\Editor\ScriptPrinter.cs" />
+    <Compile Include="Modules\ScriptingCSharp\Editor\SystemCompositionServiceProvider.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="EditorAssemblyInterfaceImpl.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">
+      <Project>{6c55b776-26d4-4db3-a6ab-87e783b2f3d1}</Project>
+      <Name>ICSharpCode.AvalonEdit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Krypton Components\ComponentFactory.Krypton.Design\ComponentFactory.Krypton.Design.csproj">
+      <Project>{6004c98a-6642-4dcf-906c-e0ed3581978f}</Project>
+      <Name>ComponentFactory.Krypton.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Krypton Components\ComponentFactory.Krypton.Docking\ComponentFactory.Krypton.Docking.csproj">
+      <Project>{e00ff125-cb44-480b-847e-7b3d27e481eb}</Project>
+      <Name>ComponentFactory.Krypton.Docking</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Krypton Components\ComponentFactory.Krypton.Navigator\ComponentFactory.Krypton.Navigator.csproj">
+      <Project>{dc0dd714-4d19-4f31-a6d0-ea209d4f0ea8}</Project>
+      <Name>ComponentFactory.Krypton.Navigator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Krypton Components\ComponentFactory.Krypton.Ribbon\ComponentFactory.Krypton.Ribbon.csproj">
+      <Project>{e90fc375-453d-4fe4-9822-ce1db85b6553}</Project>
+      <Name>ComponentFactory.Krypton.Ribbon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Krypton Components\ComponentFactory.Krypton.Toolkit\ComponentFactory.Krypton.Toolkit.csproj">
+      <Project>{96ecaecc-54f8-4aa5-8591-b443c2d9565f}</Project>
+      <Name>ComponentFactory.Krypton.Toolkit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Krypton Components\ComponentFactory.Krypton.Workspace\ComponentFactory.Krypton.Workspace.csproj">
+      <Project>{9144ba04-155b-4b66-b85a-9a89aa93f7d4}</Project>
+      <Name>ComponentFactory.Krypton.Workspace</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NeoAxis.Core\NeoAxis.Core.csproj">
+      <Project>{765cbd47-5d68-403f-98e3-46b43c10342f}</Project>
+      <Name>NeoAxis.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ObjectListView\ObjectListView.csproj">
+      <Project>{18feda0c-d147-4286-b39a-01204808106a}</Project>
+      <Name>ObjectListView</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RoslynPad\RoslynPad.Common\RoslynPad.Common.csproj">
+      <Project>{fae8af1b-5004-42b6-8b42-eff1db5b677f}</Project>
+      <Name>RoslynPad.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RoslynPad\RoslynPad.Editor.Windows\RoslynPad.Editor.Windows.csproj">
+      <Project>{5fc3a02c-33b5-4e32-8512-7053474d9c57}</Project>
+      <Name>RoslynPad.Editor.Windows</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RoslynPad\RoslynPad.Roslyn.Windows\RoslynPad.Roslyn.Windows.csproj">
+      <Project>{075292f0-dbcd-4a01-9791-9637d396ccb8}</Project>
+      <Name>RoslynPad.Roslyn.Windows</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RoslynPad\RoslynPad.Roslyn\RoslynPad.Roslyn.csproj">
+      <Project>{ac9f325f-a3ff-4561-941e-49ce4736cbd0}</Project>
+      <Name>RoslynPad.Roslyn</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Editor\WPFApp\WPFApp.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Modules\ScriptingCSharp\Resources\Icons.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Modules\ScriptingCSharp\Resources\Resources.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Components\Scripting\Component_CSharpScript_DocumentWindow.resx">
+      <DependentUpon>Component_CSharpScript_DocumentWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\Scripting\Component_CSharpScript_PreviewControl.resx">
+      <DependentUpon>Component_CSharpScript_PreviewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\ShaderScript\Component_ShaderScript_DocumentWindow.resx">
+      <DependentUpon>Component_ShaderScript_DocumentWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editor\HierarchicalContainer\DropDownEditors\ScriptDropDownControl.resx">
+      <DependentUpon>ScriptDropDownControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editor\TextEditorDocumentWindow.resx">
+      <DependentUpon>TextEditorDocumentWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Modules\ScriptingCSharp\Editor\CSharpDocumentWindow.resx">
+      <DependentUpon>CSharpDocumentWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Modules\ScriptingCSharp\Editor\ScriptEditorControl.resx">
+      <DependentUpon>ScriptEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Modules\ScriptingCSharp\Editor\TextEditorControl.resx">
+      <DependentUpon>TextEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
