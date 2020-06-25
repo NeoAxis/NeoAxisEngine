@@ -4,7 +4,7 @@
 	EditorScrollPosition = 0 0
 	BackgroundScene
 	{
-		GetByReference = "Samples\\Sci-fi Demo\\Scenes\\Sci-fi Demo.scene"
+		GetByReference = "Samples\\Starter Content\\Scenes\\Scripting C#.scene"
 	}
 	.component NeoAxis.UIControl
 	{

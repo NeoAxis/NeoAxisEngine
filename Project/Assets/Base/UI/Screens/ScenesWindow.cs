@@ -23,6 +23,14 @@ namespace Project
 			if( list != null )
 			{
 				var files = VirtualDirectory.GetFiles( "", "*.scene", SearchOption.AllDirectories );
+
+				CollectionUtility.MergeSort( files, delegate ( string name1, string name2 )
+				{
+					var s1 = name1.Replace( "\\", " \\" );
+					var s2 = name2.Replace( "\\", " \\" );
+					return string.Compare( s1, s2 );
+				} );
+
 				foreach( var file in files )
 				{
 					list.Items.Add( file );

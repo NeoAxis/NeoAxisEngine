@@ -161,7 +161,7 @@
 		}
 		ReplaceMaterial
 		{
-			GetByReference = "Samples\\Nature Demo\\Materials\\Roads\\Road no dithering.material"
+			GetByReference = "Samples\\Starter Content\\Scenes Test\\Materials\\Road\\Road no dithering.material"
 		}
 		ReplaceMaterialSelectively
 		{
@@ -187,7 +187,7 @@
 		}
 		ReplaceMaterial
 		{
-			GetByReference = "Samples\\Nature Demo\\Materials\\Roads\\Road.material"
+			GetByReference = "Samples\\Starter Content\\Scenes Test\\Materials\\Road\\Road.material"
 		}
 		ReplaceMaterialSelectively
 		{
