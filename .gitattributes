@@ -1,5 +1,10 @@
 # Common settings that generally should always be used with your language specific settings
 
+# Exclude files from exporting
+.github/ export-ignore
+# .gitattributes  export-ignore
+# .gitignore export-ignore
+
 # Auto detect text files and perform LF normalization
 # https://www.davidlaing.com/2012/09/19/customise-your-gitattributes-to-become-a-git-ninja/
 * text=auto
