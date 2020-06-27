@@ -213,28 +213,10 @@ namespace NeoAxis.Editor
 			{
 				newFiles = VirtualDirectory.GetFiles( "", "*.scene", SearchOption.AllDirectories );
 
-				CollectionUtility.MergeSort( newFiles, delegate ( string s1, string s2 )
+				CollectionUtility.MergeSort( newFiles, delegate ( string name1, string name2 )
 				{
-					{
-						var p = @"_Tests\";
-						var v1 = s1.Length > p.Length && s1.Substring( 0, p.Length ) == p;
-						var v2 = s2.Length > p.Length && s2.Substring( 0, p.Length ) == p;
-						if( !v1 && v2 )
-							return -1;
-						if( v1 && !v2 )
-							return 1;
-					}
-
-					{
-						var p = @"Samples\";
-						var v1 = s1.Length > p.Length && s1.Substring( 0, p.Length ) == p;
-						var v2 = s2.Length > p.Length && s2.Substring( 0, p.Length ) == p;
-						if( !v1 && v2 )
-							return -1;
-						if( v1 && !v2 )
-							return 1;
-					}
-
+					var s1 = name1.Replace( "\\", " \\" );
+					var s2 = name2.Replace( "\\", " \\" );
 					return string.Compare( s1, s2 );
 				} );
 			}
