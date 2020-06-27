@@ -42,6 +42,11 @@ namespace NeoAxis
 			get { return "Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica."; }
 		}
 
+		public static string OriginalName
+		{
+			get { return "NeoAxis Engine"; }
+		}
+
 		public static string NameWithoutVersion
 		{
 			get
@@ -49,7 +54,7 @@ namespace NeoAxis
 				var result = "";
 				if( ModifiedVersionOfNeoAxisEngine )
 					result += "Modified version of ";
-				result += "NeoAxis Engine";
+				result += OriginalName;
 				return result;
 			}
 		}

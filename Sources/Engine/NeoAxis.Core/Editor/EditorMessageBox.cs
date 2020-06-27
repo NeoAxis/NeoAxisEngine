@@ -14,19 +14,19 @@ namespace NeoAxis.Editor
 	{
 		public static DialogResult ShowQuestion( string text, MessageBoxButtons buttons )
 		{
-			return KryptonMessageBox.Show( text, EngineInfo.NameWithVersion, buttons, MessageBoxIcon.Question );
+			return KryptonMessageBox.Show( text, EngineInfo.OriginalName, buttons, MessageBoxIcon.Question );
 			//return MessageBox.Show( text, EngineInfo.NameWithVersion, buttons, MessageBoxIcon.Question );
 		}
 
 		public static void ShowWarning( string text )
 		{
-			KryptonMessageBox.Show( text, EngineInfo.NameWithVersion, MessageBoxButtons.OK, MessageBoxIcon.Warning );
+			KryptonMessageBox.Show( text, EngineInfo.OriginalName, MessageBoxButtons.OK, MessageBoxIcon.Warning );
 			//MessageBox.Show( text, EngineInfo.NameWithVersion, MessageBoxButtons.OK, MessageBoxIcon.Warning );
 		}
 
 		public static void ShowInfo( string text )
 		{
-			KryptonMessageBox.Show( text, EngineInfo.NameWithVersion, MessageBoxButtons.OK, MessageBoxIcon.Information );
+			KryptonMessageBox.Show( text, EngineInfo.OriginalName, MessageBoxButtons.OK, MessageBoxIcon.Information );
 			//MessageBox.Show( text, EngineInfo.NameWithVersion, MessageBoxButtons.OK, MessageBoxIcon.Information );
 		}
 	}
