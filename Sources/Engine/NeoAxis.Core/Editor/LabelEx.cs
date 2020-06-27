@@ -73,7 +73,7 @@ namespace NeoAxis.Editor
 
 			ReadOnly = true;
 			TabStop = false;
-			if( !EditorUtility.IsDesignerHosted( this ) )
+			if( !WinFormsUtility.IsDesignerHosted( this ) )
 			{
 				StateCommon.Back.Color1 = GetResolvedPalette().GetBackColor1( PaletteBackStyle.PanelClient, PaletteState.Normal );
 				StateCommon.Border.Draw = InheritBool.False;

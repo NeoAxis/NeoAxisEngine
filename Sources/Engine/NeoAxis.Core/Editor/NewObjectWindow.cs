@@ -120,7 +120,7 @@ namespace NeoAxis.Editor
 		{
 			base.OnLoad( e );
 
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			labelName.Visible = IsFileCreation();
@@ -230,7 +230,7 @@ namespace NeoAxis.Editor
 
 		private void contentBrowser1_ItemAfterSelect( ContentBrowser sender, IList<ContentBrowser.Item> items, bool selectedByUser, ref bool handled )
 		{
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			UpdateSelectedType();
@@ -238,7 +238,7 @@ namespace NeoAxis.Editor
 
 		private void contentBrowser1_ItemAfterChoose( ContentBrowser sender, ContentBrowser.Item item, ref bool handled )
 		{
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			if( !IsReadyToCreate( out string dummy ) )
@@ -834,9 +834,9 @@ namespace NeoAxis.Editor
 
 		private void timer1_Tick( object sender, EventArgs e )
 		{
-			if( !IsHandleCreated || EditorUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
+			if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
 				return;
-			if( !EditorUtility.IsControlVisibleInHierarchy( this ) )
+			if( !WinFormsUtility.IsControlVisibleInHierarchy( this ) )
 				return;
 
 			//need periodically check for case when component inside _File item was loaded

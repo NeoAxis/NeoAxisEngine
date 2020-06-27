@@ -164,17 +164,6 @@ namespace NeoAxis.Editor
 		//	EditorForm.Instance.OpenTextAsDocument( text.ToString(), MetadataManager.MetadataGetType( obj ).ToString(), true );
 		//}
 
-		//!!!!может еще что-то вроверять там где вызывается
-		public static bool IsControlVisibleInHierarchy( Control control )
-		{
-			if( !control.Visible )
-				return false;
-			if( control.Parent != null )
-				return IsControlVisibleInHierarchy( control.Parent );
-			else
-				return true;
-		}
-
 		public static void SetPropertyReference( DocumentInstance document, object/* Component*/[] objects, Metadata.Property property, object[] indexers, string[] referenceValues )
 		{
 			var netType = property.Type.GetNetType();
@@ -268,24 +257,6 @@ namespace NeoAxis.Editor
 					obj.Register();
 				}
 			}
-		}
-
-		public static bool IsDesignerHosted( Control control )
-		{
-			var eUserControl = control as EUserControl;
-			if( eUserControl != null )
-				return eUserControl.IsDesignerHosted;
-
-			if( LicenseManager.UsageMode == LicenseUsageMode.Designtime )
-				return true;
-			Control ctrl = control;
-			while( ctrl != null )
-			{
-				if( ( ctrl.Site != null ) && ctrl.Site.DesignMode )
-					return true;
-				ctrl = ctrl.Parent;
-			}
-			return false;
 		}
 
 		//!!!!тут?
@@ -442,28 +413,6 @@ namespace NeoAxis.Editor
 			if( component.Parent.GetComponent( prefix ) == null )
 				return prefix;
 			return component.Parent.Components.GetUniqueName( prefix, false, 2 );
-		}
-
-		[DllImport( "user32.dll", EntryPoint = "GetWindowLongPtr", CharSet = CharSet.Unicode )]
-		static extern IntPtr GetWindowLong( IntPtr hWnd, int nIndex );
-
-		public static void InvalidateParentComposedStyleControl( Control control )
-		{
-			Control found = null;
-
-			Control p = control;
-			while( p != null )
-			{
-				ulong style = (ulong)GetWindowLong( p.Handle, -20 );//*GWL_EXSTYLE
-				if( ( style & 0x02000000 ) != 0 )//WS_EX_COMPOSITED
-				{
-					found = p;
-					break;
-				}
-				p = p.Parent;
-			}
-
-			found?.Invalidate();
 		}
 	}
 }

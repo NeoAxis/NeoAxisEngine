@@ -18,7 +18,7 @@ namespace NeoAxis.Editor
 		{
 			InitializeComponent();
 
-			if( !EditorUtility.IsDesignerHosted( this ) )
+			if( !WinFormsUtility.IsDesignerHosted( this ) )
 			{
 				checkBox1.AutoSize = false;
 				checkBox1.Size = new Size( 1, 1 );
@@ -39,7 +39,7 @@ namespace NeoAxis.Editor
 		{
 			base.OnPaint( e );
 
-			if( !EditorUtility.IsDesignerHosted( this ) )
+			if( !WinFormsUtility.IsDesignerHosted( this ) )
 			{
 				if( checkBox1.AutoSize != true )
 					checkBox1.AutoSize = true;

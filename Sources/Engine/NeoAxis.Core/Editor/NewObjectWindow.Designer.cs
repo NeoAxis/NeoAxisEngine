@@ -38,7 +38,7 @@
 			this.textBoxName = new ComponentFactory.Krypton.Toolkit.KryptonTextBox();
 			this.labelCreationPath = new System.Windows.Forms.Label();
 			this.labelError = new System.Windows.Forms.Label();
-			this.eUserControl1 = new NeoAxis.Editor.EUserControl();
+			this.eUserControl1 = new NeoAxis.EUserControl();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.label1 = new System.Windows.Forms.Label();
 			this.buttonCreateAndClose = new ComponentFactory.Krypton.Toolkit.KryptonButton();

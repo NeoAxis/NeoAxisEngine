@@ -68,7 +68,7 @@ namespace NeoAxis.Editor
 		{
 			InitializeComponent();
 
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			editor = new RoslynCodeEditor();
@@ -673,7 +673,7 @@ namespace NeoAxis.Editor
 
 		private void timer1_Tick( object sender, EventArgs e )
 		{
-			if( !IsHandleCreated || EditorUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
+			if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
 				return;
 
 			if( displayLineNumbers != ProjectSettings.Get.CSharpEditorDisplayLineNumbers )
@@ -722,7 +722,7 @@ namespace NeoAxis.Editor
 
 			//UpdateHighlightingScheme();
 
-			EditorUtility.InvalidateParentComposedStyleControl( this );
+			WinFormsUtility.InvalidateParentComposedStyleControl( this );
 		}
 
 		string Translate( string text )
@@ -1022,7 +1022,7 @@ namespace NeoAxis.Editor
 
 		private void ScriptEditorControl_Load( object sender, EventArgs e )
 		{
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			kryptonSplitContainer.Panel2MinSize = (int)( kryptonSplitContainer.Panel2MinSize * DpiHelper.Default.DpiScaleFactor );

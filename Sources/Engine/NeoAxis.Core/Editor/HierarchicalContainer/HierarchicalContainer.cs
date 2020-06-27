@@ -119,7 +119,7 @@ namespace NeoAxis.Editor
 			// register filter for redirect scroll event to childs
 			Application.AddMessageFilter( this );
 
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			engineScrollBar1.Visible = false;
@@ -205,7 +205,7 @@ namespace NeoAxis.Editor
 
 		private void HierarchicalContainer_Load( object sender, EventArgs e )
 		{
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			//engineScrollBar1.Scroll += EngineScrollBar1_Scroll;
@@ -428,9 +428,9 @@ namespace NeoAxis.Editor
 
 		private void timer50ms_Tick( object sender, EventArgs e )
 		{
-			if( !IsHandleCreated || EditorUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
+			if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
 				return;
-			if( !EditorUtility.IsControlVisibleInHierarchy( this ) )
+			if( !WinFormsUtility.IsControlVisibleInHierarchy( this ) )
 				return;
 
 			bool cancel = false;
@@ -444,7 +444,7 @@ namespace NeoAxis.Editor
 
 		public void PerformUpdate( bool forceUpdate = false )
 		{
-			if( !IsHandleCreated || EditorUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
+			if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
 				return;
 			if( Destroyed || destroying )
 				return;

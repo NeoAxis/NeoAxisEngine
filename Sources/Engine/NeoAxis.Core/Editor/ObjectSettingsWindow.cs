@@ -108,7 +108,7 @@ namespace NeoAxis.Editor
 		{
 			//!!!!!так?
 
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			var items = objectsBrowser1.GetAllItems();
@@ -135,9 +135,9 @@ namespace NeoAxis.Editor
 
 		private void Timer1_Tick( object sender, EventArgs e )
 		{
-			//if( !IsHandleCreated || EditorUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
+			//if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
 			//	return;
-			//if( !EditorUtility.IsControlVisibleInHierarchy( this ) )
+			//if( !WinFormsUtility.IsControlVisibleInHierarchy( this ) )
 			//	return;
 		}
 

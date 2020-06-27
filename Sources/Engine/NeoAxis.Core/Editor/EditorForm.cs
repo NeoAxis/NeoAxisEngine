@@ -91,7 +91,7 @@ namespace NeoAxis.Editor
 
 			InitializeComponent();
 
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			////!!!!new
@@ -144,7 +144,7 @@ namespace NeoAxis.Editor
 
 		private void EditorForm_Load( object sender, EventArgs e )
 		{
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			//hide ribbon to avoid redrawing
@@ -462,7 +462,7 @@ namespace NeoAxis.Editor
 
 		private void timer1_Tick( object sender, EventArgs e )
 		{
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 			if( !loaded )
 				return;

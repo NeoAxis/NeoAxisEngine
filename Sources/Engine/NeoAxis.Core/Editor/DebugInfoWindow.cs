@@ -51,7 +51,7 @@ namespace NeoAxis.Editor
 
 		private void DebugInfoForm_Load( object sender, EventArgs e )
 		{
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			//Translate();
@@ -131,7 +131,7 @@ namespace NeoAxis.Editor
 
 		private void timer1_Tick( object sender, EventArgs e )
 		{
-			if( !IsHandleCreated || EditorUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
+			if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
 				return;
 
 			UpdateContent();
@@ -139,7 +139,7 @@ namespace NeoAxis.Editor
 
 		void UpdateContent()
 		{
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			var lines = new List<string>();

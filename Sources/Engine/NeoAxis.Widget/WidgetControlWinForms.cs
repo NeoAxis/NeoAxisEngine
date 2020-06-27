@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using NeoAxis.Editor;
 
 namespace NeoAxis.Widget
 {
@@ -37,7 +36,7 @@ namespace NeoAxis.Widget
 
 		private void WidgetControl_Load( object sender, EventArgs e )
 		{
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			if( MainWidget )
@@ -64,7 +63,7 @@ namespace NeoAxis.Widget
 
 		protected override void OnDestroy()
 		{
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			if( MainWidget )
@@ -79,7 +78,7 @@ namespace NeoAxis.Widget
 
 		private void timer1_Tick( object sender, EventArgs e )
 		{
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 			if( !loaded )
 				return;

@@ -368,9 +368,9 @@ namespace NeoAxis.Editor
 
 		private void timer1_Tick( object sender, EventArgs e )
 		{
-			if( !IsHandleCreated || EditorUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
+			if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
 				return;
-			if( !EditorUtility.IsControlVisibleInHierarchy( this ) )
+			if( !WinFormsUtility.IsControlVisibleInHierarchy( this ) )
 				return;
 
 			double updateTime = 0.05;

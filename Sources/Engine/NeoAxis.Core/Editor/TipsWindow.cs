@@ -33,7 +33,7 @@ namespace NeoAxis.Editor
 		{
 			InitializeComponent();
 
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			WindowTitle = EditorLocalization.Translate( "TipsWindow", WindowTitle );
@@ -50,7 +50,7 @@ namespace NeoAxis.Editor
 
 		private void TipsWindow_Load( object sender, EventArgs e )
 		{
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			ViewportControl.Dock = panel1.Dock;
@@ -195,7 +195,7 @@ namespace NeoAxis.Editor
 
 		private void timer1_Tick( object sender, EventArgs e )
 		{
-			if( !IsHandleCreated || EditorUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
+			if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
 				return;
 
 		}

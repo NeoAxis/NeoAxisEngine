@@ -1833,6 +1833,7 @@
     <Compile Include="UISystem\WebBrowser\WebDownloadHandler.cs" />
     <Compile Include="Utility\BakingFile.cs" />
     <Compile Include="Utility\DarkThemeUtility.cs" />
+    <Compile Include="WinForms\WinFormsUtility.cs" />
     <Compile Include="Utility\LoginUtility.cs" />
     <Compile Include="Utility\PlatformStubs.cs" />
     <Compile Include="Utility\PointContainer3D.cs" />
@@ -2857,10 +2858,10 @@
       <DependentUpon>SettingsCell.cs</DependentUpon>
     </Compile>
     <Compile Include="Editor\SettingsProvider.cs" />
-    <Compile Include="Editor\EUserControl.cs">
+    <Compile Include="WinForms\EUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Editor\EUserControl.designer.cs">
+    <Compile Include="WinForms\EUserControl.designer.cs">
       <DependentUpon>EUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Editor\ObjectsWindow.cs">
@@ -2882,10 +2883,10 @@
       <DependentUpon>DocumentWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Editor\ContentBrowserItems.cs" />
-    <Compile Include="Editor\EngineViewportControl.cs">
+    <Compile Include="WinForms\EngineViewportControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Editor\EngineViewportControl.designer.cs">
+    <Compile Include="WinForms\EngineViewportControl.designer.cs">
       <DependentUpon>EngineViewportControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Editor\Utility\Win32Utility.cs" />
@@ -3531,7 +3532,7 @@
     <EmbeddedResource Include="Editor\SettingsCell.resx">
       <DependentUpon>SettingsCell.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Editor\EUserControl.resx">
+    <EmbeddedResource Include="WinForms\EUserControl.resx">
       <DependentUpon>EUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Editor\ObjectsWindow.resx">
@@ -3555,7 +3556,7 @@
     <EmbeddedResource Include="Editor\ContentInput.resx">
       <DependentUpon>ContentInput.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Editor\EngineViewportControl.resx">
+    <EmbeddedResource Include="WinForms\EngineViewportControl.resx">
       <DependentUpon>EngineViewportControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Editor\ContentBrowser.resx">

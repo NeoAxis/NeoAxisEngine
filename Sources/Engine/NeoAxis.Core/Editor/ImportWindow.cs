@@ -44,7 +44,7 @@ namespace NeoAxis.Editor
 		{
 			base.OnLoad( e );
 
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			textBoxDestinationFolder.Location = new Point( labelName.Location.X + labelName.Width + DpiHelper.Default.ScaleValue( 2 ), DpiHelper.Default.ScaleValue( 2 ) );
@@ -73,7 +73,7 @@ namespace NeoAxis.Editor
 
 		private void contentBrowser1_ItemAfterChoose( ContentBrowser sender, ContentBrowser.Item item, ref bool handled )
 		{
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			handled = true;
@@ -185,9 +185,9 @@ namespace NeoAxis.Editor
 
 		private void timer1_Tick( object sender, EventArgs e )
 		{
-			if( !IsHandleCreated || EditorUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
+			if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
 				return;
-			if( !EditorUtility.IsControlVisibleInHierarchy( this ) )
+			if( !WinFormsUtility.IsControlVisibleInHierarchy( this ) )
 				return;
 
 			UpdateControls();

@@ -46,7 +46,7 @@ namespace NeoAxis.Editor
 		{
 			InitializeComponent();
 
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			if( EditorAPI.DarkTheme )
@@ -64,7 +64,7 @@ namespace NeoAxis.Editor
 
 		private void StoreDocumentWindow_Load( object sender, EventArgs e )
 		{
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			//contentBrowser1.ImageHelper.AddImage( "DefaultDisabled",

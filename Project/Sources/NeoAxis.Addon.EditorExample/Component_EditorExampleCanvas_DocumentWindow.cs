@@ -64,7 +64,7 @@ namespace NeoAxis.Addon.EditorExample
 		{
 			InitializeComponent();
 
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			CalculateCellSize();

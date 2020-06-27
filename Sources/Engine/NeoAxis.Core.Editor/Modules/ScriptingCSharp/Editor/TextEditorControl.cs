@@ -264,7 +264,7 @@ namespace NeoAxis.Editor
 
 		private void TextEditorControl_Load( object sender, EventArgs e )
 		{
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			kryptonSplitContainer.Panel2MinSize = (int)( kryptonSplitContainer.Panel2MinSize * DpiHelper.Default.DpiScaleFactor );

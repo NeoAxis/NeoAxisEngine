@@ -48,7 +48,7 @@ namespace NeoAxis.Editor
 		{
 			InitializeComponent();
 
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			//CalculateFontSize();

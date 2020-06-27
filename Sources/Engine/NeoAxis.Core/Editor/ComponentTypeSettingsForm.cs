@@ -139,7 +139,7 @@ namespace NeoAxis.Editor
 
 			InitializeComponent();
 
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			hierarchicalContainer1.OverrideGroupDisplayName += HierarchicalContainer1_OverrideGroupDisplayName;
@@ -152,7 +152,7 @@ namespace NeoAxis.Editor
 
 		private void ContentTypeSettingsForm_Load( object sender, EventArgs e )
 		{
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			//ESet<string> addedComponentNames = new ESet<string>();

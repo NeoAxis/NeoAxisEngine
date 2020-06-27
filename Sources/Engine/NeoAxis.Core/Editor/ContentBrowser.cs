@@ -601,7 +601,7 @@ namespace NeoAxis.Editor
 					button2.Text = EditorLocalization.Translate( "ContentBrowser", button2.Text );
 			}
 
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			if( EditorAPI.DarkTheme )
@@ -684,7 +684,7 @@ namespace NeoAxis.Editor
 
 		private void ContentBrowser_Load( object sender, EventArgs e )
 		{
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			allInstances.Add( this );
@@ -845,7 +845,7 @@ namespace NeoAxis.Editor
 
 			base.OnDestroy();
 
-			if( !EditorUtility.IsDesignerHosted( this ) )
+			if( !WinFormsUtility.IsDesignerHosted( this ) )
 			{
 				//!!!!
 
@@ -1661,9 +1661,9 @@ namespace NeoAxis.Editor
 
 		private void timer50ms_Tick( object sender, EventArgs e )
 		{
-			if( !IsHandleCreated || EditorUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
+			if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
 				return;
-			if( !EditorUtility.IsControlVisibleInHierarchy( this ) )
+			if( !WinFormsUtility.IsControlVisibleInHierarchy( this ) )
 				return;
 
 			UpdateSize();
@@ -1748,7 +1748,7 @@ namespace NeoAxis.Editor
 
 		public void UpdateData()
 		{
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			updatedDataSortBy = options.SortFilesBy;

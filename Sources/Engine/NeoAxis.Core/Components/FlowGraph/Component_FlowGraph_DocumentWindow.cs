@@ -99,7 +99,7 @@ namespace NeoAxis.Editor
 		{
 			InitializeComponent();
 
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			CalculateCellSize();
@@ -2446,7 +2446,7 @@ namespace NeoAxis.Editor
 
 		private void timer50_Tick( object sender, EventArgs e )
 		{
-			if( !IsHandleCreated || EditorUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
+			if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
 				return;
 
 			//!!!!slowly?

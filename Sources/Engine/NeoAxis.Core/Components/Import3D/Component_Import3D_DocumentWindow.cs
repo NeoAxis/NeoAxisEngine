@@ -35,7 +35,7 @@ namespace NeoAxis.Editor
 		{
 			base.OnLoad( e );
 
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			var scene = CreateScene( false );

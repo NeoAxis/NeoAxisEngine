@@ -39,7 +39,7 @@
 			this.buttonDestinationFolderBrowse = new ComponentFactory.Krypton.Toolkit.KryptonButton();
 			this.labelError = new System.Windows.Forms.Label();
 			this.labelCreationPath = new System.Windows.Forms.Label();
-			this.eUserControl1 = new NeoAxis.Editor.EUserControl();
+			this.eUserControl1 = new NeoAxis.EUserControl();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.label1 = new System.Windows.Forms.Label();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);

@@ -29,7 +29,7 @@ namespace NeoAxis.Editor
 		{
 			timer1.Start();
 
-			if( EditorUtility.IsDesignerHosted( this ) )
+			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
 			hierarchicalContainer1.OverrideGroupDisplayName += HierarchicalContainer1_OverrideGroupDisplayName;
@@ -88,7 +88,7 @@ namespace NeoAxis.Editor
 
 		private void timer1_Tick( object sender, EventArgs e )
 		{
-			if( !IsHandleCreated || EditorUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
+			if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
 				return;
 
 			toolStripButtonProperties.Checked = hierarchicalContainer1.ContentMode == HierarchicalContainer.ContentModeEnum.Properties;
