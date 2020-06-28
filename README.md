@@ -26,7 +26,7 @@ Royalty-free, open source platform.
 
 <h2>Building</h2>
 <ul>
-<li>NeoAxis.2.Managed.sln - Restore NuGet packets before compilation. Visual Studio 2017+.</li>
+<li>NeoAxis.Managed.sln - Restore NuGet packets before compilation. Visual Studio 2017+.</li>
 <li>By default is better to use the Release configuration by performance reasons, debugging is supported.</li>
 <li>Download Sci-fi Demo and Nature Demo from the Asset Store window.</li>
 </ul>
