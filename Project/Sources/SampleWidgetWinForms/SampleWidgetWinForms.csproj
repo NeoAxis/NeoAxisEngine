@@ -82,19 +82,21 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="NeoAxis.Core, Version=2019.2.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Binaries\NeoAxis.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="NeoAxis.Widget, Version=2019.2.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Binaries\NeoAxis.Widget.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Sources\Engine\NeoAxis.Core\NeoAxis.Core.csproj">
+      <Project>{765cbd47-5d68-403f-98e3-46b43c10342f}</Project>
+      <Name>NeoAxis.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Sources\Engine\NeoAxis.Widget\NeoAxis.Widget.csproj">
+      <Project>{ca843a31-0452-4cae-99fa-946573d8eec6}</Project>
+      <Name>NeoAxis.Widget</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

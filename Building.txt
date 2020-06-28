@@ -1,12 +1,14 @@
 ------------
 Windows
 
-Sources\NeoAxis.2.Managed.sln - C# DLLs, Restore NuGet packets before compilation.
-Sources\NeoAxis.1.Native.sln - Native DLLs, already compiled.
+- NeoAxis.2.Managed.sln - Restore NuGet packets before compilation. Visual Studio 2017+.
+- By default is better to use the Release configuration by performance reasons, debugging is supported.
+- Download Sci-fi Demo and Nature Demo from the Asset Store window.
 
-Visual Studio 2017, 2019.
-
-By default is better to use the Release configuration by performance reasons, debugging is supported.
+Programming tips
+- Set up NeoAxis.Editor assembly as StartUp project to make run with debugger.
+- Add a new code to the NeoAxis.CoreExtension by default. Project assembly is also good.
+- Use English code page for your project if it possible: https://github.com/NeoAxis/NeoAxisEngine/issues/1
 
 ------------
 (Is not available temporary)

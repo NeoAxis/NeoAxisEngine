@@ -43,6 +43,8 @@
     <DefineDebug>True</DefineDebug>
     <DefineTrace>True</DefineTrace>
     <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <NoWarn>CS1607;CS1591;CS0618</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <OutputPath>..\..\..\Project\Binaries\</OutputPath>
@@ -53,7 +55,7 @@
     <DebugType>Full</DebugType>
     <DefineTrace>True</DefineTrace>
     <Prefer32Bit>false</Prefer32Bit>
-    <NoWarn>1607;CS1591;CS0618</NoWarn>
+    <NoWarn>CS1607;CS1591;CS0618</NoWarn>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
   <ItemGroup>

@@ -45,38 +45,6 @@
     <CodeAnalysisRuleSet />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ComponentFactory.Krypton.Design, Version=5.0.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Binaries\ComponentFactory.Krypton.Design.dll</HintPath>
-    </Reference>
-    <Reference Include="ComponentFactory.Krypton.Docking, Version=5.0.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Binaries\ComponentFactory.Krypton.Docking.dll</HintPath>
-    </Reference>
-    <Reference Include="ComponentFactory.Krypton.Navigator, Version=5.0.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Binaries\ComponentFactory.Krypton.Navigator.dll</HintPath>
-    </Reference>
-    <Reference Include="ComponentFactory.Krypton.Ribbon, Version=5.0.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Binaries\ComponentFactory.Krypton.Ribbon.dll</HintPath>
-    </Reference>
-    <Reference Include="ComponentFactory.Krypton.Toolkit, Version=5.0.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Binaries\ComponentFactory.Krypton.Toolkit.dll</HintPath>
-    </Reference>
-    <Reference Include="ComponentFactory.Krypton.Workspace, Version=5.0.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Binaries\ComponentFactory.Krypton.Workspace.dll</HintPath>
-    </Reference>
-    <Reference Include="NeoAxis.Addon.Pathfinding, Version=2020.3.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Binaries\NeoAxis.Addon.Pathfinding.dll</HintPath>
-    </Reference>
-    <Reference Include="NeoAxis.Core, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Binaries\NeoAxis.Core.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -149,6 +117,39 @@
       <DependentUpon>Component_Character2D_PreviewControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Sources\Engine\Addons\NeoAxis.Addon.Pathfinding\NeoAxis.Addon.Pathfinding.csproj">
+      <Project>{dc3f2bff-9b09-42c3-978c-338a0e25b400}</Project>
+      <Name>NeoAxis.Addon.Pathfinding</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Sources\Engine\Krypton Components\ComponentFactory.Krypton.Design\ComponentFactory.Krypton.Design.csproj">
+      <Project>{6004c98a-6642-4dcf-906c-e0ed3581978f}</Project>
+      <Name>ComponentFactory.Krypton.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Sources\Engine\Krypton Components\ComponentFactory.Krypton.Docking\ComponentFactory.Krypton.Docking.csproj">
+      <Project>{e00ff125-cb44-480b-847e-7b3d27e481eb}</Project>
+      <Name>ComponentFactory.Krypton.Docking</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Sources\Engine\Krypton Components\ComponentFactory.Krypton.Navigator\ComponentFactory.Krypton.Navigator.csproj">
+      <Project>{dc0dd714-4d19-4f31-a6d0-ea209d4f0ea8}</Project>
+      <Name>ComponentFactory.Krypton.Navigator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Sources\Engine\Krypton Components\ComponentFactory.Krypton.Ribbon\ComponentFactory.Krypton.Ribbon.csproj">
+      <Project>{e90fc375-453d-4fe4-9822-ce1db85b6553}</Project>
+      <Name>ComponentFactory.Krypton.Ribbon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Sources\Engine\Krypton Components\ComponentFactory.Krypton.Toolkit\ComponentFactory.Krypton.Toolkit.csproj">
+      <Project>{96ecaecc-54f8-4aa5-8591-b443c2d9565f}</Project>
+      <Name>ComponentFactory.Krypton.Toolkit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Sources\Engine\Krypton Components\ComponentFactory.Krypton.Workspace\ComponentFactory.Krypton.Workspace.csproj">
+      <Project>{9144ba04-155b-4b66-b85a-9a89aa93f7d4}</Project>
+      <Name>ComponentFactory.Krypton.Workspace</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Sources\Engine\NeoAxis.Core\NeoAxis.Core.csproj">
+      <Project>{765cbd47-5d68-403f-98e3-46b43c10342f}</Project>
+      <Name>NeoAxis.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -14,7 +14,6 @@ Royalty-free, open source platform.
 <ul>
 <li>Windows</li>
 <li>Mac (coming soon)</li>
-<li>Linux (coming soon)</li>
 </ul>
 
 <h2>Supported platforms</h2>
@@ -27,13 +26,17 @@ Royalty-free, open source platform.
 
 <h2>Building</h2>
 <ul>
-<li>Sources\NeoAxis.2.Managed.sln - C# DLLs, Restore NuGet packets before compilation.</li>
-<li>Sources\NeoAxis.1.Native.sln - Native DLLs, already compiled.</li>
+<li>NeoAxis.2.Managed.sln - Restore NuGet packets before compilation. Visual Studio 2017+.</li>
+<li>By default is better to use the Release configuration by performance reasons, debugging is supported.</li>
+<li>Download Sci-fi Demo and Nature Demo from the Asset Store window.</li>
 </ul>
 
-Visual Studio 2017, 2019.
-
-By default is better to use the Release configuration by performance reasons, debugging is supported.
+<h2>Programming tips</h2>
+<ul>
+<li>Set up NeoAxis.Editor assembly as StartUp project to make run with debugger.</li>
+<li>Add a new code to the NeoAxis.CoreExtension by default. Project assembly is also good.</li>
+<li>Use English code page for your project if it possible: https://github.com/NeoAxis/NeoAxisEngine/issues/1</li>
+</ul>
 
 <h2>License</h2>
 
