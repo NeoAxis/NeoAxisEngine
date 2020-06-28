@@ -1,7 +1,7 @@
 ------------
 Windows
 
-- NeoAxis.2.Managed.sln - Restore NuGet packets before compilation. Visual Studio 2017+.
+- NeoAxis.Managed.sln - Restore NuGet packets before compilation. Visual Studio 2017+.
 - By default is better to use the Release configuration by performance reasons, debugging is supported.
 - Download Sci-fi Demo and Nature Demo from the Asset Store window.
 
