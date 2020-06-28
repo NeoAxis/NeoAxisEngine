@@ -764,7 +764,7 @@ namespace NeoAxis.Editor
 				downloadingClient?.CancelAsync();
 				downloadingPackageName = "";
 				downloadingAddress = "";
-				downloadingDestinationPath = "";
+				//downloadingDestinationPath = "";
 				downloadProgress = 0;
 				downloadingClient = null;
 				return;
@@ -811,6 +811,7 @@ namespace NeoAxis.Editor
 		{
 			//var fileName = Path.Combine( PackageManager.PackagesFolder, Path.GetFileName( downloadingAddress ) );
 			var cancelled = false;
+			Exception error = null;
 
 			try
 			{
@@ -826,6 +827,7 @@ namespace NeoAxis.Editor
 							Monitor.Pulse( e.UserState );
 
 						cancelled = e.Cancelled;
+						error = e.Error;
 					};
 
 					var syncObject = new object();
@@ -858,13 +860,16 @@ namespace NeoAxis.Editor
 						}
 					}
 
-					if( cancelled )
+					if( cancelled || error != null )
 					{
 						if( File.Exists( downloadingDestinationPath ) )
 							File.Delete( downloadingDestinationPath );
 					}
 				}
 				catch { }
+
+				if( error != null && !cancelled )
+					Log.Warning( ( error.InnerException ?? error ).Message );
 
 				downloadingPackageName = "";
 				downloadingAddress = "";
@@ -876,7 +881,12 @@ namespace NeoAxis.Editor
 			needUpdateList = true;
 
 			if( !cancelled )
-				ScreenNotifications.Show( EditorLocalization.Translate( "General", "The package has been successfully downloaded." ) );
+			{
+				if( error != null )
+					ScreenNotifications.Show( EditorLocalization.Translate( "General", "Error downloading the package." ), true );
+				else
+					ScreenNotifications.Show( EditorLocalization.Translate( "General", "The package has been successfully downloaded." ) );
+			}
 		}
 
 		private void MyWebClient_DownloadProgressChanged( object sender, DownloadProgressChangedEventArgs e )
