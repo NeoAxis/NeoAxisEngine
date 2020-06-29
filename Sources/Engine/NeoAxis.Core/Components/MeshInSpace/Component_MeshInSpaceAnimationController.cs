@@ -1091,5 +1091,16 @@ namespace NeoAxis
 		{
 			get { return currentEngineTime; }
 		}
+
+		public int GetBoneIndex( string name )
+		{
+			if( bones != null )
+			{
+				for( int n = 0; n < bones.Length; n++ )
+					if( bones[ n ].Name == name )
+						return n;
+			}
+			return -1;
+		}
 	}
 }

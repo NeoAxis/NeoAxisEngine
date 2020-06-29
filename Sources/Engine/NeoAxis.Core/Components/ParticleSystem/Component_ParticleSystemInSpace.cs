@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using NeoAxis.Editor;
+using System.Threading.Tasks;
 
 namespace NeoAxis
 {
@@ -1211,7 +1212,7 @@ namespace NeoAxis
 
 		void Simulate( float delta, out bool wasUpdated )
 		{
-			wasUpdated = false;
+			var wasUpdated2 = false;
 
 			if( random == null )
 				random = new Random();
@@ -1292,6 +1293,8 @@ namespace NeoAxis
 
 						//update available time to spawn
 						emitter.AvailableTimeToSpawn -= spawnTime;
+
+						//!!!!multithreading
 
 						//emit
 						var spawnCount = compiledEmitter.SpawnCount.GenerateValue( random );
@@ -1444,7 +1447,7 @@ namespace NeoAxis
 										ObjectsAdd( &particle, 1 );
 									}
 
-									wasUpdated = true;
+									wasUpdated2 = true;
 								}
 							}
 						}
@@ -1456,13 +1459,22 @@ namespace NeoAxis
 			if( Objects != null )
 			{
 				var scene = ParentScene;
+				var sceneGravity = Vector3F.Zero;
+				if( scene != null )
+					sceneGravity = scene.Gravity.Value.ToVector3F();
 
 				//!!!!GC
 				List<int> toDelete = null;
 
 				//!!!!slowly? ObjectsGetAll
-				foreach( var particleIndex in ObjectsGetAll() )
+				var allParticles = ObjectsGetAll();
+
+				//foreach( var particleIndex in allParticles )
+				//{
+				Parallel.For( 0, allParticles.Count, delegate ( int parallelIndex )
 				{
+					var particleIndex = allParticles[ parallelIndex ];
+
 					ref var particle = ref Objects[ particleIndex ];
 
 					if( particle.Emitter < currentParticleSystem.Emitters.Length )
@@ -1482,9 +1494,10 @@ namespace NeoAxis
 							//delete
 							if( toDelete == null )
 								toDelete = new List<int>( 32 );
-							toDelete.Add( particleIndex );
+							lock( toDelete )
+								toDelete.Add( particleIndex );
 
-							wasUpdated = true;
+							wasUpdated2 = true;
 						}
 						else
 						{
@@ -1514,7 +1527,7 @@ namespace NeoAxis
 
 								//GravityMultiplier
 								if( particle.GravityMultiplier != 0 && scene != null )
-									particle.LinearVelocity += scene.Gravity.Value.ToVector3F() * particle.GravityMultiplier * delta;
+									particle.LinearVelocity += sceneGravity * particle.GravityMultiplier * delta;
 
 								//LinearAccelerationByTime
 								{
@@ -1632,16 +1645,18 @@ namespace NeoAxis
 									items[ n ].PerformUpdateAfter( this, delta, ref particle );
 							}
 
-							wasUpdated = true;
+							wasUpdated2 = true;
 						}
 
 					}
-				}
+				} );
+				//}
 
 				if( toDelete != null )
 					ObjectsRemove( toDelete );
 			}
 
+			wasUpdated = wasUpdated2;
 		}
 
 		//!!!!вызывать

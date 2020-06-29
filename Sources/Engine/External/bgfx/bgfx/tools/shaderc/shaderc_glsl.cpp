@@ -4,6 +4,10 @@
  */
 
 #include "shaderc.h"
+
+//!!!!betauser
+#if 0
+
 #include "glsl_optimizer.h"
 
 namespace bgfx { namespace glsl
@@ -364,3 +368,6 @@ namespace bgfx { namespace glsl
 	}
 
 } // namespace bgfx
+
+//!!!!betauser
+#endif

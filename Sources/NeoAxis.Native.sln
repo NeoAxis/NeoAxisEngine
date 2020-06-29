@@ -42,8 +42,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "shaderc", "Engine\External\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glslang", "Engine\External\bgfx\bgfx\.build\projects\vs2017\glslang.vcxproj", "{0D19B900-79F8-379C-8210-C372EE6E9EFD}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glsl-optimizer", "Engine\External\bgfx\bgfx\.build\projects\vs2017\glsl-optimizer.vcxproj", "{4783A312-3351-9718-1CE5-073F0852737D}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fcpp", "Engine\External\bgfx\bgfx\.build\projects\vs2017\fcpp.vcxproj", "{2EB2967C-1AE9-970D-C3D5-7D10AFEB130F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "spirv-opt", "Engine\External\bgfx\bgfx\.build\projects\vs2017\spirv-opt.vcxproj", "{F952D147-65BD-85BE-AEFB-36641AA56313}"
@@ -155,14 +153,6 @@ Global
 		{0D19B900-79F8-379C-8210-C372EE6E9EFD}.Release|Mixed Platforms.Build.0 = Release|x64
 		{0D19B900-79F8-379C-8210-C372EE6E9EFD}.Release|x64.ActiveCfg = Release|x64
 		{0D19B900-79F8-379C-8210-C372EE6E9EFD}.Release|x64.Build.0 = Release|x64
-		{4783A312-3351-9718-1CE5-073F0852737D}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
-		{4783A312-3351-9718-1CE5-073F0852737D}.Debug|Mixed Platforms.Build.0 = Debug|x64
-		{4783A312-3351-9718-1CE5-073F0852737D}.Debug|x64.ActiveCfg = Debug|x64
-		{4783A312-3351-9718-1CE5-073F0852737D}.Debug|x64.Build.0 = Debug|x64
-		{4783A312-3351-9718-1CE5-073F0852737D}.Release|Mixed Platforms.ActiveCfg = Release|x64
-		{4783A312-3351-9718-1CE5-073F0852737D}.Release|Mixed Platforms.Build.0 = Release|x64
-		{4783A312-3351-9718-1CE5-073F0852737D}.Release|x64.ActiveCfg = Release|x64
-		{4783A312-3351-9718-1CE5-073F0852737D}.Release|x64.Build.0 = Release|x64
 		{2EB2967C-1AE9-970D-C3D5-7D10AFEB130F}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
 		{2EB2967C-1AE9-970D-C3D5-7D10AFEB130F}.Debug|Mixed Platforms.Build.0 = Debug|x64
 		{2EB2967C-1AE9-970D-C3D5-7D10AFEB130F}.Debug|x64.ActiveCfg = Debug|x64

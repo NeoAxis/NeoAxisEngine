@@ -52,6 +52,15 @@ namespace Project
 				( (UIButton)Components[ "Button Exit" ] ).Click += ButtonExit_Click;
 
 			//play buttons
+			if( Components[ "Button Play Sci-fi Demo" ] != null )
+			{
+				var button = (UIButton)Components[ "Button Play Sci-fi Demo" ];
+				var fileName = @"Samples\Sci-fi Demo\Scenes\Sci-fi Demo.scene";
+				button.AnyData = fileName;
+				button.Click += ButtonPlay_Click;
+				if( button.Visible )
+					button.Visible = VirtualFile.Exists( fileName );
+			}
 			if( Components[ "Button Play Nature Demo" ] != null )
 			{
 				var button = (UIButton)Components[ "Button Play Nature Demo" ];

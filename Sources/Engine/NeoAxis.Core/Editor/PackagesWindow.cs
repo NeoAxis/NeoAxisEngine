@@ -419,6 +419,8 @@ namespace NeoAxis.Editor
 			if( EditorMessageBox.ShowQuestion( text, MessageBoxButtons.YesNo ) != DialogResult.Yes )
 				return;
 
+			var notification = ScreenNotifications.ShowSticky( "Installing the package..." );
+
 			try
 			{
 				using( var archive = ZipFile.OpenRead( selectedPackage.FullFilePath ) )
@@ -446,6 +448,10 @@ namespace NeoAxis.Editor
 			{
 				EditorMessageBox.ShowWarning( e2.Message );
 				return;
+			}
+			finally
+			{
+				notification.Close();
 			}
 
 			if( !string.IsNullOrEmpty( info.AddCSharpFilesToProject ) )

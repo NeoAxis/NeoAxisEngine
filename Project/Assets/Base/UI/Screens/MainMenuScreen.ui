@@ -69,6 +69,18 @@
 	}
 	.component NeoAxis.UIButton
 	{
+		Name = Button Play Sci-fi Demo
+		Text = Sci-fi Demo
+		Size = Units 200 40
+		Margin = Units 10 630 130 318.058171164124
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+	}
+	.component NeoAxis.UIButton
+	{
 		Name = Button Play Character Scene
 		Text = Character scene
 		Size = Units 200 40

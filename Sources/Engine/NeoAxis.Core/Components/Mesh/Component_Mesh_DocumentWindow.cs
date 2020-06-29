@@ -323,12 +323,12 @@ namespace NeoAxis.Editor
 					var skeleton = Mesh.Skeleton.Value;
 					if( skeleton != null )
 					{
-						var color = new ColorValue( 0, 0.5, 1, 0.7 );
-						viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.HiddenByOtherObjectsColorMultiplier );
-
 						var skeletonArrows = skeletonAnimationController.GetCurrentAnimatedSkeletonArrows();
 						if( skeletonArrows != null )
 						{
+							var color = new ColorValue( 0, 0.5, 1, 0.7 );
+							viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.HiddenByOtherObjectsColorMultiplier );
+
 							foreach( var arrow in skeletonArrows )
 								viewport.Simple3DRenderer.AddArrow( arrow.Start, arrow.End );
 						}
@@ -341,6 +341,13 @@ namespace NeoAxis.Editor
 								if( parent != null )
 								{
 									var from = parent.Transform.Value.Position;
+
+									ColorValue color;
+									if( SelectedObjectsSet.Contains( bone ) )
+										color = new ColorValue( 0, 1, 0 );
+									else
+										color = new ColorValue( 0, 0.5, 1, 0.7 );
+									viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.HiddenByOtherObjectsColorMultiplier );
 
 									viewport.Simple3DRenderer.AddArrow( from, pos );
 								}
