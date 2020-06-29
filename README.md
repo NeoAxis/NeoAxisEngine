@@ -69,4 +69,9 @@ That's right. However, we will be glad of any help with the development of the e
 <li><b>What is the difference between the version on the GitHub and the installer from www.neoaxis.com?</b>
 
 It is the same. The GitHub version has slightly more recent updates. Although you will need to additionally download Sci-fi Demo and Nature Demo inside the editor from Asset Store window if you want to look at them.</li>
+
+<li><b>Is the stable version on the GitHub?</b>
+
+Yes. If you encounter problems, please report it as soon as possible.</li>
+
 </ul>
