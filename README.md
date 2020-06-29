@@ -63,7 +63,10 @@ www.neoaxis.com/LICENSE.txt
 <h2>Frequently Asked Questions</h2>
 <ul>
 <li><b>Did I understand correctly that the NeoAxis Engine is provided free of charge with full source code, while the no any royalties? I should not even add splash screen when starting my game, just mention it in the credits?</b>
+
 That's right. However, we will be glad of any help with the development of the engine, including its popularization.</li>
+
 <li><b>What is the difference between the version on the GitHub and the installer from www.neoaxis.com?</b>
+
 It is the same. The GitHub version has slightly more recent updates. Although you will need to additionally download Sci-fi Demo and Nature Demo inside the editor from Asset Store window if you want to look at them.</li>
 </ul>
