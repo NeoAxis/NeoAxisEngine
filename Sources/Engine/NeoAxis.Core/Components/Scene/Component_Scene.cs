@@ -324,7 +324,7 @@ namespace NeoAxis
 		ReferenceField<double> _backgroundSoundVolumeInEditor = 0.0;
 
 		/// <summary>
-		/// Specifies backround sound volume in the simulation.
+		/// Specifies background sound volume in the simulation.
 		/// </summary>
 		[DefaultValue( 1.0 )]
 		[Range( 0, 1 )]
@@ -735,7 +735,7 @@ namespace NeoAxis
 		public event Action<Component_Scene> DisplaySceneOctreeChanged;
 
 		/// <summary>
-		/// Enables the frustrum culling test.
+		/// Enables the frustum culling test.
 		/// </summary>
 		[DefaultValue( false )]
 		[Serialize]
