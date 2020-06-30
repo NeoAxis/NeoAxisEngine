@@ -224,3 +224,7 @@
 *.uistyle text eol=crlf
 *.mesh text eol=crlf
 *.product text eol=crlf
+
+
+# Set GitHub top language to C#
+Sources/Engine/External/* linguist-vendored
