@@ -378,7 +378,7 @@ namespace NeoAxis.Editor
 
 				kryptonButtonDownload.Enabled = !installed && canDownload;
 				kryptonButtonInstall.Enabled = !installed && archiveInfo != null;
-				kryptonButtonUninstall.Enabled = installed && archiveInfo != null;
+				kryptonButtonUninstall.Enabled = installed;// && archiveInfo != null;
 				kryptonButtonDelete.Enabled = !installed && File.Exists( selectedPackage.FullFilePath );
 
 			}
@@ -522,22 +522,53 @@ namespace NeoAxis.Editor
 
 		private void kryptonButtonUninstall_Click( object sender, EventArgs e )
 		{
-			var info = PackageManager.ReadPackageArchiveInfo( selectedPackage.FullFilePath, out var error );
-			if( info == null )
-				return;
-
 			var filesToDelete = new List<string>();
-			foreach( var file in info.Files )
+			bool mustRestart = false;
+
+			//get list of files to delete
+			if( File.Exists( selectedPackage.FullFilePath ) )
 			{
-				var fullName = Path.Combine( VirtualFileSystem.Directories.Project, file );
-				if( File.Exists( fullName ) )
-					filesToDelete.Add( file );
+				//get list of files from the package archive
+
+				var info = PackageManager.ReadPackageArchiveInfo( selectedPackage.FullFilePath, out var error );
+				if( info == null )
+				{
+					ScreenNotifications.Show( "Could not read the package info.", true );
+					Log.Warning( error );
+					return;
+				}
+
+				foreach( var file in info.Files )
+				{
+					var fullName = Path.Combine( VirtualFileSystem.Directories.Project, file );
+					if( File.Exists( fullName ) )
+						filesToDelete.Add( file );
+				}
+
+				mustRestart = info.MustRestart;
+			}
+			else
+			{
+				//get list of files from selectedPackage.Files in case when the archive file is not exists
+
+				var str = selectedPackage.Files.Trim( new char[] { ' ', '\r', '\n' } );
+
+				var files = str.Split( new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries );
+				foreach( var file in files )
+				{
+					var fullName = Path.Combine( VirtualFileSystem.Directories.Project, file );
+					if( File.Exists( fullName ) )
+						filesToDelete.Add( file );
+				}
+
+				//!!!!mustRestart
+				mustRestart = true;
 			}
 
-			var text = string.Format( Translate( "Uninstall {0}?\n\n{1} files will deleted." ), selectedPackage.GetDisplayName(), filesToDelete.Count );
-			//var text = string.Format( Translate( "Uninstall {0}?\r\n\r\n{1} files will deleted." ), selectedPackage.Name, filesToDelete.Count );
-			//var text = $"Uninstall {selectedPackage.Name}?\r\n\r\n{filesToDelete.Count} files will deleted.";
+			if( filesToDelete.Count == 0 )
+				return;
 
+			var text = string.Format( Translate( "Uninstall {0}?\n\n{1} files will deleted." ), selectedPackage.GetDisplayName(), filesToDelete.Count );
 			if( EditorMessageBox.ShowQuestion( text, MessageBoxButtons.YesNo ) != DialogResult.Yes )
 				return;
 
@@ -624,7 +655,7 @@ namespace NeoAxis.Editor
 
 			needUpdateList = true;
 
-			if( info.MustRestart )
+			if( mustRestart )
 				ShowRestartLabel();
 
 			ScreenNotifications.Show( EditorLocalization.Translate( "General", "The package has been successfully uninstalled." ) );
