@@ -383,6 +383,17 @@ namespace NeoAxis.Editor
 		{
 			if( keyData == ( Keys.Control | Keys.F4 ) )
 			{
+				//close root window of the document when second level windows are exists
+				if( IsMainWindowInWorkspace )
+				{
+					var workspaceWindow = EditorForm.Instance.WorkspaceController.FindWorkspaceWindow( this );
+					if( workspaceWindow != null )
+					{
+						workspaceWindow.Close();
+						return true;
+					}
+				}
+
 				Close();
 				return true;
 			}
