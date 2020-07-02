@@ -324,7 +324,7 @@
 			this.Name = "PackagesWindow";
 			this.Size = new System.Drawing.Size(1095, 789);
 			this.WindowTitle = "Packages";
-			this.Load += new System.EventHandler(this.StoreDocumentWindow_Load);
+			this.Load += new System.EventHandler(this.PackagesDocumentWindow_Load);
 			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer1.Panel1)).EndInit();
 			this.kryptonSplitContainer1.Panel1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer1.Panel2)).EndInit();

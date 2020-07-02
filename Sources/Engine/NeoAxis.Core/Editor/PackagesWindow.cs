@@ -62,7 +62,7 @@ namespace NeoAxis.Editor
 			kryptonSplitContainer2.SplitterDistance = (int)distance;
 		}
 
-		private void StoreDocumentWindow_Load( object sender, EventArgs e )
+		private void PackagesDocumentWindow_Load( object sender, EventArgs e )
 		{
 			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
@@ -74,8 +74,9 @@ namespace NeoAxis.Editor
 			PerformRefreshList();
 			UpdatePackageControls();
 
-			//Text = EditorLocalization.Translate( "PackageManagerForm", Text );
-			//EditorLocalization.TranslateForm( "PackageManagerForm", this );
+			WindowTitle = EditorLocalization.Translate( "PackagesWindow", WindowTitle );
+			EditorLocalization.TranslateForm( "PackagesWindow", kryptonSplitContainer2.Panel1 );
+			EditorLocalization.TranslateForm( "PackagesWindow", this );
 
 			timer1.Start();
 

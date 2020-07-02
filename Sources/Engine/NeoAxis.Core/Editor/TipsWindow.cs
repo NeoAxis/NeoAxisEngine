@@ -37,7 +37,7 @@ namespace NeoAxis.Editor
 				return;
 
 			WindowTitle = EditorLocalization.Translate( "TipsWindow", WindowTitle );
-			EditorLocalization.TranslateForm( "TipsWindow", this );
+			EditorLocalization.TranslateForm( "TipsWindow", panel2 );
 
 			BackColor = Color.FromArgb( 54, 54, 54 );
 			if( EditorAPI.DarkTheme )
@@ -114,6 +114,19 @@ namespace NeoAxis.Editor
 
 					if( string.IsNullOrEmpty( foundPath ) )
 						break;
+
+					if( EditorLocalization.Initialized )
+					{
+						try
+						{
+							var d = Path.GetDirectoryName( foundPath );
+							var f = Path.GetFileName( foundPath );
+							var newPath = Path.Combine( d, EditorLocalization.Language + "_" + f );
+							if( File.Exists( newPath ) )
+								foundPath = newPath;
+						}
+						catch { }
+					}
 
 					result.Add( foundPath );
 				}

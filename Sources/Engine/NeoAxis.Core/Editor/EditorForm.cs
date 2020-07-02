@@ -100,7 +100,7 @@ namespace NeoAxis.Editor
 
 			workspaceController = new WorkspaceControllerForForm( kryptonPanel, this );
 
-			EnableLocalization();
+			//EnableLocalization();
 
 			EditorAssemblyInterface.Instance.InitializeWPFApplicationAndScriptEditor();
 			//InitializeWPFApplication();
@@ -225,6 +225,8 @@ namespace NeoAxis.Editor
 			}
 
 			EngineApp.DefaultSoundChannelGroup.Volume = 0;
+
+			EnableLocalization();
 
 			//set theme
 			if( ProjectSettings.Get.Theme.Value == Component_ProjectSettings.ThemeEnum.Dark )
@@ -878,9 +880,9 @@ namespace NeoAxis.Editor
 
 		void EnableLocalization()
 		{
-			//!!!!
-			//EditorLocalization.Init( "Chinese", true );
-			//EditorLocalization.Init( "Russian", true );
+			var language = ProjectSettings.Get.Language.Value.ToString();
+			if( !string.IsNullOrEmpty( language ) && language != "English" && language != "New" )
+				EditorLocalization.Init( language, true );
 
 			var strings = kryptonRibbon.RibbonStrings;
 			strings.CustomizeQuickAccessToolbar = EditorLocalization.Translate( "General", strings.CustomizeQuickAccessToolbar );

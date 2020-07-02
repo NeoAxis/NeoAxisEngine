@@ -842,7 +842,7 @@ namespace NeoAxis.Editor
 				a.ImageBig = Properties.Resources.Focus_32;
 				a.QatSupport = true;
 				a.RibbonText = ("Find", "Resource");
-				a.Description = "Find a selected resource in the Resources Window.";
+				a.Description = "Finds a selected resource in the Resources Window.";
 				a.GetState += delegate ( EditorAction.GetStateContext context )
 				{
 				};
@@ -3393,7 +3393,7 @@ namespace NeoAxis.Editor
 				};
 				a.Click += delegate ( EditorAction.ClickContext context )
 				{
-					Process.Start( Path.Combine( VirtualFileSystem.Directories.Project, "Sources\\Sources.sln" ) );
+					Process.Start( Path.Combine( VirtualFileSystem.Directories.Project, "..\\NeoAxis.Managed.sln" ) );
 				};
 				EditorActions.Register( a );
 			}

@@ -18,29 +18,30 @@ namespace NeoAxis
 		static bool writeNotFound;
 		static Dictionary<string, string> data = new Dictionary<string, string>();
 		static ESet<string> notFound = new ESet<string>();
+		static bool wideLanguage;
 
 		//
 
 		internal static void Init( string language, bool writeNotFound )
 		{
-#if LOCALIZATION
-			EditorLocalization.language = language;
-			EditorLocalization.writeNotFound = writeNotFound;
-
-			//parse basic txt file
-			if( ParseFile( language, out var d, out _ ) )
+			if( !string.IsNullOrEmpty( language ) && language != "English" )
 			{
-				foreach( var pair in d )
-					data[ pair.Key ] = pair.Value;
-			}
+				EditorLocalization.language = language;
+				EditorLocalization.writeNotFound = writeNotFound;
 
-			initialized = true;
-#endif
+				//parse basic txt file
+				if( ParseFile( language, out var d, out _, out wideLanguage ) )
+				{
+					foreach( var pair in d )
+						data[ pair.Key ] = pair.Value;
+				}
+
+				initialized = true;
+			}
 		}
 
 		internal static void Shutdown()
 		{
-#if LOCALIZATION
 			if( initialized && writeNotFound )
 			{
 				var fileBase = Path.Combine( VirtualFileSystem.Directories.EngineInternal, "Localization", language );
@@ -49,7 +50,7 @@ namespace NeoAxis
 				EDictionary<string, string> newNotFound = null;
 				Encoding encoding = null;
 				if( File.Exists( pathNotFoundTxt ) )
-					ParseFile( language + "_NotFound", out newNotFound, out encoding );
+					ParseFile( language + "_NotFound", out newNotFound, out encoding, out _ );
 
 				if( newNotFound == null )
 					newNotFound = new EDictionary<string, string>();
@@ -81,7 +82,6 @@ namespace NeoAxis
 					Log.Warning( "EditorLocalization: Shutdown: " + e.Message );
 				}
 			}
-#endif
 		}
 
 		public static bool Initialized
@@ -101,7 +101,6 @@ namespace NeoAxis
 
 		public static string Translate( string group, string text )
 		{
-#if LOCALIZATION
 			if( Initialized && text != null )
 			{
 				var text2 = text.Trim();
@@ -116,16 +115,15 @@ namespace NeoAxis
 						notFound.AddWithCheckAlreadyContained( key );
 				}
 			}
-#endif
 
 			return text;
 		}
 
-#if LOCALIZATION
-		public static bool ParseFile( string fileName, out EDictionary<string, string> resultData, out Encoding encoding )
+		public static bool ParseFile( string fileName, out EDictionary<string, string> resultData, out Encoding encoding, out bool wide )
 		{
 			resultData = null;
 			encoding = null;
+			wide = false;
 
 			var fileBase = Path.Combine( VirtualFileSystem.Directories.EngineInternal, "Localization", fileName );
 			var pathInfo = fileBase + ".info";
@@ -143,11 +141,21 @@ namespace NeoAxis
 						var block = TextBlockUtility.LoadFromRealFile( pathInfo );
 						if( block != null )
 						{
-							var value = block.GetAttribute( "Encoding" );
-							if( int.TryParse( value, out var codepage ) )
-								encodingCodepage = codepage;
-							else
-								encodingName = value;
+							//Encoding
+							{
+								var value = block.GetAttribute( "Encoding" );
+								if( int.TryParse( value, out var codepage ) )
+									encodingCodepage = codepage;
+								else
+									encodingName = value;
+							}
+
+							//WideLanguage
+							{
+								var value = block.GetAttribute( "WideLanguage" );
+								if( !string.IsNullOrEmpty( value ) )
+									wide = (bool)SimpleTypes.ParseValue( typeof( bool ), value );
+							}
 						}
 					}
 
@@ -185,11 +193,9 @@ namespace NeoAxis
 
 			return false;
 		}
-#endif
 
 		public static void TranslateForm( string group, Control control )
 		{
-#if LOCALIZATION
 			if( Initialized )
 			{
 				foreach( var child in control.Controls )
@@ -260,12 +266,10 @@ namespace NeoAxis
 					}
 				}
 			}
-#endif
 		}
 
 		public static string TranslateLabel( string group, string text )
 		{
-#if LOCALIZATION
 			if( Initialized && text != null )
 			{
 				if( text.Length > 0 && text[ text.Length - 1 ] == ':' )
@@ -276,17 +280,12 @@ namespace NeoAxis
 				else
 					return Translate( group, text );
 			}
-#endif
 			return text;
 		}
 
 		public static bool WideLanguage
 		{
-			get
-			{
-				//!!!!hardcoded
-				return Initialized && Language == "Russian";
-			}
+			get { return Initialized && wideLanguage; }
 		}
 	}
 }

@@ -99,6 +99,27 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		public enum LanguageEnum
+		{
+			English,
+			Russian,
+			New,
+		}
+
+		/// <summary>
+		/// The language of the editor. Restart the editor to apply changes.
+		/// </summary>
+		[DefaultValue( LanguageEnum.English )]
+		[Category( "Editor" )]
+		public Reference<LanguageEnum> Language
+		{
+			get { if( _language.BeginGet() ) Language = _language.Get( this ); return _language.value; }
+			set { if( _language.BeginSet( ref value ) ) { try { LanguageChanged?.Invoke( this ); } finally { _language.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Language"/> property value changes.</summary>
+		public event Action<Component_ProjectSettings> LanguageChanged;
+		ReferenceField<LanguageEnum> _language = LanguageEnum.English;
+
 		/// <summary>
 		/// The maximum FPS in the document.
 		/// </summary>

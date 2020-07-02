@@ -41,6 +41,8 @@ namespace NeoAxis.Editor
 			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
+			WindowTitle = EditorLocalization.Translate( "StoreDocumentWindow", WindowTitle );
+
 			toolbarMustVisibleForTime = Time.Current;
 			timer1.Start();
 

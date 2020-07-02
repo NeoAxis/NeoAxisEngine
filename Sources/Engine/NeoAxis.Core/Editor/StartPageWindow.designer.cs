@@ -182,7 +182,7 @@
 			this.Name = "StartPageWindow";
 			this.Size = new System.Drawing.Size(957, 789);
 			this.WindowTitle = "Start Page";
-			this.Load += new System.EventHandler(this.StoreDocumentWindow_Load);
+			this.Load += new System.EventHandler(this.StartPageWindow_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

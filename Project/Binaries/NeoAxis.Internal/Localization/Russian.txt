@@ -1,0 +1,946 @@
+AppButton|Project|Проект
+
+Ribbon.Group|New|Создать
+Ribbon.Group|Save|Сохранение
+Ribbon.Group|Additions|Дополнения
+Ribbon.Group|Attachment|Прикрепление
+Ribbon.Group|Boolean|Булевые операции
+Ribbon.Group|C# Editing|C# редактор
+Ribbon.Group|Caches|Кеши
+Ribbon.Group|Physics|Физика
+Ribbon.Group|Components|Компоненты
+Ribbon.Group|Create Objects|Создание объектов
+Ribbon.Group|Display|Отображать
+Ribbon.Group|Docs|Документация
+Ribbon.Group|Edge|Ребра
+Ribbon.Group|Editing|Редактирование
+Ribbon.Group|Face Tools|Грани
+Ribbon.Group|Find|Поиск
+Ribbon.Group|Geometry|Геометрия
+Ribbon.Group|Material Tools|Материал
+Ribbon.Group|Modify|Изменение
+Ribbon.Group|Object Tools|Объекты
+Ribbon.Group|Packing|Упаковка
+Ribbon.Group|Paint|Покраска
+Ribbon.Group|Play|Симуляция
+Ribbon.Group|Project|Проект
+Ribbon.Group|Resource|Ресурс
+Ribbon.Group|Selection Mode|Режим выделения
+Ribbon.Group|Selection Tools|Инструменты выделения
+Ribbon.Group|Settings|Настройки
+Ribbon.Group|Shape|Форма
+Ribbon.Group|Snap|Выравнивание
+Ribbon.Group|Solution|Решение
+Ribbon.Group|Structure|Структура
+Ribbon.Group|Tool Settings|Настройки инструмента
+Ribbon.Group|Transform|Положение
+Ribbon.Group|Vertex Tools|Вершины
+Ribbon.Group|Windows|Окна
+Ribbon.Group|C# Project|C# проект
+Ribbon.Group|External IDE|Внешняя IDE
+Ribbon.Group|Debug|Отладка
+Ribbon.Group|Document|Документ
+
+Ribbon.Tab|Builder 3D|Строитель 3D
+Ribbon.Tab|Home|Базовые
+Ribbon.Tab|Mesh Editor|Редактор мешей
+Ribbon.Tab|Scene Editor|Редактор сцен
+Ribbon.Tab|Scripting|Скриптование
+Ribbon.Tab|Terrain Editor|Редактор ландшафтов
+Ribbon.Tab|Tools|Инструменты
+Ribbon.Tab|UI Editor|UI редактор
+Ribbon.Tab|Windows|Окна
+
+Backstage|About|О программе
+Backstage|Build|Построить
+Backstage|Exit|Выход
+Backstage|Info|Информация
+Backstage|New|Создать
+Backstage|Open|Открыть
+Backstage|Settings|Настройки
+Backstage|Location|Местоположение
+Backstage|Name|Имя
+Backstage|Project info|Информация о проекте
+Backstage|Build product|Построение продукта
+Backstage|Product settings file|Файл настроек продукта
+Backstage|Destination folder|Папка назначения
+Backstage|New project|Создание проекта
+Backstage|Template|Шаблон
+Backstage|Browse...|Выбрать...
+Backstage|Build and Run|Запустить
+Backstage|Cancel|Отмена
+Backstage|Create|Создать
+Backstage|Copy of this project|Копия этого проекта
+Backstage|Login|Логин
+Backstage|Default project (Use NeoAxis Launcher or initial source package to create default project)|Проект по умолчанию (Используйте NeoAxis Launcher или начальный пакет исходных кодов для создания проекта по умолчанию)
+Backstage|Destination folder '{0}' is not empty. Clear folder and continue?|Папка назначения '{0}' не пуста. Очистить папку и продолжить?
+Backstage|The project was created successfully.|Проект успешно создан.
+Backstage|The product was built successfully.|Продукт успешно построен.
+Backstage|Email|Емейл
+Backstage|Error|Ошибка
+Backstage|Not registered.|Не зарегистрирован.
+Backstage|Password|Пароль
+Backstage|Register|Регистрация
+Backstage|Registered|Зарегистрирован
+
+Ribbon.Action|Add\nCollision|Добавить\nфизику
+Ribbon.Action|Add\nLayer|Добавить\nслой
+Ribbon.Action|Add\nStructure|Добавить\nструктуру
+Ribbon.Action|Add|Добавить
+Ribbon.Action|Addons|Аддоны
+Ribbon.Action|Animation|Анимация
+Ribbon.Action|Attach|Прикрепить
+Ribbon.Action|Binormals|Бинормали
+Ribbon.Action|Bounds|Габариты
+Ribbon.Action|Bridge|Мост
+Ribbon.Action|Brush|Кисть
+Ribbon.Action|Build\nSolution|Построить\nрешение
+Ribbon.Action|By\nMaterial|По\nматериалу
+Ribbon.Action|C# File|C# файл
+Ribbon.Action|C#\nScript|C# скрипт
+Ribbon.Action|Circle|Круг
+Ribbon.Action|Clear|Очищать
+Ribbon.Action|Click|По клику
+Ribbon.Action|Copy|Копия
+Ribbon.Action|Collision|Физика
+Ribbon.Action|Comment|Комментировать
+Ribbon.Action|Conform\nNormals|Согласовать\nнормали
+Ribbon.Action|Debug\nInfo|Отладочная\nинформация
+Ribbon.Action|Delete\nCollision|Удалить\nфизику
+Ribbon.Action|Delete\nStructure|Удалить\nструктуру
+Ribbon.Action|Delete|Удалить
+Ribbon.Action|Detach|Открепить
+Ribbon.Action|Drop|Бросать
+Ribbon.Action|Edge|Ребро
+Ribbon.Action|Face|Грань
+Ribbon.Action|Flat\nNormals|Плоские\nнормали
+Ribbon.Action|Flatten|Выровнить
+Ribbon.Action|Flip\nNormals|Обратить\nнормали
+Ribbon.Action|Flow\nGraph|Потоковый\nграф
+Ribbon.Action|Focus\nCamera|Фокус\nкамеры
+Ribbon.Action|Format|Форматировать
+Ribbon.Action|Grow|Увеличить
+Ribbon.Action|Import|Импорт
+Ribbon.Action|Intersect|Пересечь
+Ribbon.Action|Invert|Инверсия
+Ribbon.Action|Local|Локально
+Ribbon.Action|LOD|Уровни\nдетализации
+Ribbon.Action|Lower|Понизить
+Ribbon.Action|Manual|Руководство
+Ribbon.Action|Merge|Склеить
+Ribbon.Action|Message\nLog|Лог\nсообщений
+Ribbon.Action|Move|Двигать
+Ribbon.Action|NeoAxis\nBaking|NeoAxis\nупаковка
+Ribbon.Action|New|Новый
+Ribbon.Action|Normals|Нормали
+Ribbon.Action|Object|Объект
+Ribbon.Action|Objects|Объекты
+Ribbon.Action|Output|Вывод
+Ribbon.Action|Paint|Красить
+Ribbon.Action|Pivot|Пивот
+Ribbon.Action|Play|Запуск
+Ribbon.Action|Preview|Предпросмотр
+Ribbon.Action|Purge\nImages|Сбросить\nизображения
+Ribbon.Action|Raise|Повысить
+Ribbon.Action|Redo|Повтор
+Ribbon.Action|Remove|Удалить
+Ribbon.Action|Rename|Переименовать
+Ribbon.Action|Reset\nSettings|Сбросить\nнастройки
+Ribbon.Action|Resources|Ресурсы
+Ribbon.Action|Rotate|Вращать
+Ribbon.Action|Run\nPlayer|Запуск\nплеера
+Ribbon.Action|Save\nAll|Сохранить\nвсе
+Ribbon.Action|Save\nAs|Сохранить\nкак
+Ribbon.Action|Save|Сохранить
+Ribbon.Action|Scale|Масштаб
+Ribbon.Action|Select\nAll|Выбрать\nвсе
+Ribbon.Action|Select|Выделять
+Ribbon.Action|Set\nColor|Выставить\nцвет
+Ribbon.Action|Set\nMaterial|Выставить\nматериал
+Ribbon.Action|Settings|Настройки
+Ribbon.Action|Skeleton|Скелет
+Ribbon.Action|Smooth\nNormals|Сгладить\nнормали
+Ribbon.Action|Smooth|Сгладить
+Ribbon.Action|Snap X|Выровнить\nX
+Ribbon.Action|Snap Y|Выровнить\nY
+Ribbon.Action|Snap Z|Выровнить\nZ
+Ribbon.Action|Snap\nAll|Выровнить\nвсе
+Ribbon.Action|Split|Разделить
+Ribbon.Action|Square|Квадрат
+Ribbon.Action|Store|Магазин
+Ribbon.Action|Subtract|Вычесть
+Ribbon.Action|Tangents|Касательные
+Ribbon.Action|Tips|Советы
+Ribbon.Action|Triangles|Треугольники
+Ribbon.Action|Triangulate|Триангуляция
+Ribbon.Action|Uncomment|Раскомментировать
+Ribbon.Action|Undo|Отмена
+Ribbon.Action|Union|Объединить
+Ribbon.Action|UV|Текстурные\nкоординаты
+Ribbon.Action|Vertex\nColor|Цвет\nвершин
+Ribbon.Action|Vertex|Вершина
+Ribbon.Action|Vertices|Вершины
+Ribbon.Group|Collision|Физика
+Ribbon.Action|Add\nModifier|Добавить\nмодификатор
+Ribbon.Action|Development\nData|Данные\nразработки
+Ribbon.Action|Mirror|Отразить
+Ribbon.Action|Shape|Примитив
+Ribbon.Action|Destination|Назначение
+Ribbon.Action|Hardness|Твердость
+Ribbon.Action|Layers|Слои
+Ribbon.Action|Radius|Радиус
+Ribbon.Action|Strength|Сила
+Ribbon.Action|Project\nSolution|Решение\nProject
+Ribbon.Action|Sources\nSolution|Решение\nSources
+Ribbon.Action|Add\nProperty|Добавить\nСвойство
+Ribbon.Action|Find\nResource|Найти\nРесурс
+Ribbon.Action|Start\nPage|Стартовая\nСтраница
+
+Windows|Preview|Предпросмотр
+Windows|Resources|Ресурсы
+Windows|Objects|Объекты
+Windows|Settings|Настройки
+Windows|Debug Info|Отладка
+Windows|Message Log|Логи
+Windows|Output|Вывод
+
+General|Root|Корень
+General|No name|Без имени
+General|Customize Quick Access Toolbar|Настройки панели быстрого доступа
+General|&Show Above the Ribbon|Разместить &над лентой
+General|&Show Below the Ribbon|Разместить &под лентой
+General|Mi&nimize the Ribbon|&Минимизировать ленту
+General|Name|Имя
+General|Rename|Переименовать
+General|OK|OK
+General|Cancel|Отмена
+General|The object was duplicated.|Объект был дублирован.
+General|Objects were duplicated.|Объекты были дублированы.
+General|Items have been added to the Project.csproj.|Элементы были добавлены в Project.csproj.
+General|The item has been added to the Project.csproj.|Элемент был добавлен в Project.csproj.
+General|Items have been removed from the Project.csproj.|Элементы были удалены из Project.csproj.
+General|The item has been removed from the Project.csproj.|Элемент был удален из Project.csproj.
+General|To apply changes need restart the editor. Restart?|Для применения изменений необходимо перезапустить редактор. Перезапустить?
+General|Project.sln was built successfully. To apply changes need restart the editor. Restart?|Project.sln был успешно построен. Для применения изменений необходимо перезапустить редактор. Перезапустить?
+General|Project.sln compilation skipped because output file is up-to-date.|Компиляция Project.sln пропущена, поскольку выходной файл в актуальном состоянии.
+General|Find in Resources window|Найти в окне ресурсов
+General|The document was saved successfully.|Документ успешно сохранен.
+General|Save changes to the following files?|Сохранить изменения для следующих файлов?
+General|Reset windows settings and restart the editor?|Сбросить настройки окон и перезапустить редактор?
+General|Delete '{0}'?|Удалить '{0}'?
+General|Delete structure?|Удалить структуру?
+General|{0} unnecessary images found. Delete them?|Найдено {0} ненужных изображений. Удалить их?
+General|Done.|Готово.
+General|Unnecessary compressed images not found.|Ненужные сжатые изображения не найдены.
+General|Unable to compile Project.csproj. The project contains files which are not exists. Remove these files from the project?|Невозможно скомпилировать Project.csproj. Проект содержит файлы, которых не существует. Удалить эти файлы из проекта?
+General|Update|Обновить
+General|Auto update|Автообновление
+General|Delete selected objects?|Удалить выделенные объекты?
+General|Delete|Удалить
+
+ContentBrowser|Duplicate|Дублировать
+ContentBrowser|Copy|Копировать
+ContentBrowser|Cut|Вырезать
+ContentBrowser|Delete|Удалить
+ContentBrowser|Editor|Редактор
+ContentBrowser|Move Down|Передвинуть вниз
+ContentBrowser|Move Up|Передвинуть вверх
+ContentBrowser|New Folder|Новая папка
+ContentBrowser|New Object|Новый объект
+ContentBrowser|New Resource|Новый ресурс
+ContentBrowser|Open|Открыть
+ContentBrowser|Options|Настройки
+ContentBrowser|Paste|Вставить
+ContentBrowser|Rename|Переименовать
+ContentBrowser|Search|Найти
+ContentBrowser|Settings|Настройки
+ContentBrowser|Show Members|Показывать члены
+ContentBrowser|Filtering Mode|Режим фильтрации
+ContentBrowser.FilteringMode|All|Всё
+ContentBrowser.FilteringMode|Shaders|Шейдеры
+ContentBrowser.FilteringMode|C#|C#
+ContentBrowser|Content Browser Options|Настройки обозревателя контента
+ContentBrowser|Close|Закрыть
+ContentBrowser|Add to Favorites|Добавить в избранное
+ContentBrowser|Are you sure you want to delete '{0}'?|Вы уверены, что хотите удалить '{0}'?
+ContentBrowser|Are you sure you want to delete selected objects?|Вы уверены, что хотите удалить выделенные объекты?
+ContentBrowser|Ascending|По возрастанию
+ContentBrowser|Date|Дата
+ContentBrowser|External app|Внешнее приложение
+ContentBrowser|Import|Импорт
+ContentBrowser|Name|Имя
+ContentBrowser|New Resource of This Type|Новый ресурс этого типа
+ContentBrowser|Open Folder in Explorer|Открыть папку в проводнике
+ContentBrowser|Open with|Открыть в
+ContentBrowser|Properties|Свойства
+ContentBrowser|Size|Размер
+ContentBrowser|Sort by|Сортировать по
+ContentBrowser|Text editor|Текстовый редактор
+ContentBrowser|Type|Тип
+ContentBrowser|Select...|Выбрать...
+ContentBrowser|Remove from Favorites|Удалить из избранного
+ContentBrowser|Make copy of the object?|Сделать копию объекта?
+ContentBrowser|Move this object to the new place?|Переместить этот объект в новое место?
+ContentBrowser|Copy files?|Скопировать файлы?
+ContentBrowser|Move files?|Перенести файлы?
+ContentBrowser|The name is not specified.|Имя не указано.
+ContentBrowser|Invalid file path.|Некорректный файловый путь.
+ContentBrowser|A file or folder with same name already exists.|Файл или папка с таким именем уже существует.
+ContentBrowser|Same name.|То же имя.
+
+ContentBrowser.SearchForm|Close|Закрыть
+ContentBrowser.SearchForm|Filter by name|Фильтр по имени
+ContentBrowser.SearchForm|Search|Найти
+
+ContentBrowser.Options|Breadcrumb|Хлебные крошки
+ContentBrowser.Options|Buttons For Editing|Кнопки для редактирования
+ContentBrowser.Options|Editor Button|Кнопка редактора
+ContentBrowser.Options|Filtering Mode Button|Кнопка режима фильтрации
+ContentBrowser.Options|List Column Width|Ширина столбца списка
+ContentBrowser.Options|List Image Size|Размер изображения списка
+ContentBrowser.Options|List Mode|Режим списка
+ContentBrowser.Options|Members Button|Кнопка Показывать члены
+ContentBrowser.Options|Open Button|Кнопка открытия
+ContentBrowser.Options|Panel Mode|Режим панели
+ContentBrowser.Options|Search Button|Кнопка поиска
+ContentBrowser.Options|Settings Button|Кнопка настроек
+ContentBrowser.Options|Sort Files By Ascending|Сортировать по возрастанию
+ContentBrowser.Options|Sort Files By|Сортировать файлы по
+ContentBrowser.Options|Splitter Position|Положение разделителя
+ContentBrowser.Options|Tile Image Size|Размер изображения плитки
+ContentBrowser.Options|Auto|Авто
+ContentBrowser.Options|Date|Дата
+ContentBrowser.Options|List|Список
+ContentBrowser.Options|Name|Имя
+ContentBrowser.Options|Size|Размер
+ContentBrowser.Options|Tiles|Плитка
+ContentBrowser.Options|Tree|Дерево
+ContentBrowser.Options|Two Panels Split Horizontally|Две панели по горизонтали
+ContentBrowser.Options|Two Panels Split Vertically|Две панели по вертикали
+ContentBrowser.Options|Type|Тип
+
+SettingsWindow|Properties|Свойства
+SettingsWindow|Events|События
+SettingsWindow|Type Settings|Настройки типа
+SettingsWindow|Reset Type Settings to default.|Восстановить значение по умолчанию настройкам типа.
+SettingsWindow|Reset to default?|Восстановить значение по умолчанию?
+SettingsWindow|{0} objects|{0} объектов
+SettingsWindow|Add event handler.|Добавить обработчик события
+SettingsWindow|Edit event handlers.|Редактировать обработчики событий
+SettingsWindow|Reset to default.|Восстановить значение по умолчанию.
+SettingsWindow|Select a class type.|Выбрать тип класса.
+SettingsWindow|The reference is not specified.|Ссылка не указана.
+SettingsWindow|Reset To Default|Восстановить значение по умолчанию
+SettingsWindow|Reset Reference|Сбросить ссылку
+SettingsWindow|Open By Reference|Открыть по ссылке
+SettingsWindow|Add Handler to C# File|Добавить обработчик в C# файл
+SettingsWindow|Add Handler to C# Script|Добавить обработчик в C# скрипт
+SettingsWindow|Add Handler to Flow Graph|Добавить обработчик в потоковый граф
+SettingsWindow|Add C# Script in This Component|Добавить C# скрипт в эту компоненту
+SettingsWindow|Add Flow Graph in This Component|Добавить потоковый граф в эту компоненту
+SettingsWindow|Add C# Script in the Root Component|Добавить C# скрипт в корневую компоненту
+SettingsWindow|Add Flow Graph in the Root Component|Добавить потоковый граф в корневую компоненту
+
+TypeSettingsForm|Cancel|Отмена
+TypeSettingsForm|Make visible|Сделать видимыми
+TypeSettingsForm|OK|OK
+TypeSettingsForm|Reset|Сброс настроек
+TypeSettingsForm|Type Settings|Настройки типа
+TypeSettingsForm|Components|Компоненты
+TypeSettingsForm|Properties|Свойства
+
+ColorValuePoweredSelectForm|Select Color|Выбор цвета
+
+ContextMenu|Duplicate|Дублировать
+ContextMenu|Copy|Копировать
+ContextMenu|Cut|Вырезать
+ContextMenu|Delete|Удалить
+ContextMenu|Editor|Редактор
+ContextMenu|Move|Перемещать
+ContextMenu|New Object|Новый объект
+ContextMenu|Paste|Вставить
+ContextMenu|Rename|Переименовать
+ContextMenu|Rotate|Вращать
+ContextMenu|Scale|Масштабировать
+ContextMenu|Select...|Выбрать...
+ContextMenu|Select|Выделять
+ContextMenu|Settings|Настройки
+ContextMenu|Add C# files to Project.csproj|Добавить C# файлы в Project.csproj
+ContextMenu|New Resource|Новый ресурс
+ContextMenu|Remove C# files from Project.csproj|Удалить C# файлы из Project.csproj
+ContextMenu|Add Collision|Добавить физическое тело
+ContextMenu|Delete Collision|Удалить физическое тело
+ContextMenu|Attach Second to First|Прикрепить второй к первому
+ContextMenu|Detach from Another Object|Открепить от другого объекта
+ContextMenu|Image Compression|Сжатие изображения
+ContextMenu|Process Environment Cubemap|Обработка кубемапы окружения
+
+NewObjectWindow|New Object|Новый объект
+NewObjectWindow|Close|Закрыть
+NewObjectWindow|Create and Close|Создать и закрыть
+NewObjectWindow|Create|Создать
+NewObjectWindow|Name|Имя
+NewObjectWindow|A file with the name '{0}' already exists.|Файл с именем '{0}' уже существует.
+NewObjectWindow|Invalid file name.|Неверное имя файла.
+NewObjectWindow|The file name is not specified.|Имя файла не указано.
+
+DocumentWindow|Are you sure you want to delete '{0}'?|Вы уверены, что хотите удалить '{0}'?
+DocumentWindow|Are you sure you want to delete selected objects?|Вы уверены, что хотите удалить выбранные объекты?
+
+SceneDocumentWindow|Creating an object by brush|Создание объекта кистью
+SceneDocumentWindow|Creating an object by click|Создание объекта по клику
+SceneDocumentWindow|Draw calls|Вызовов отрисовки
+SceneDocumentWindow|Dynamic textures|Динамических текстур
+SceneDocumentWindow|FPS|Кадров в секунду
+SceneDocumentWindow|Lights|Источников света
+SceneDocumentWindow|Lines|Линий
+SceneDocumentWindow|Reflection probes|Зондов отражений
+SceneDocumentWindow|Render targets|Рендеринг целей
+SceneDocumentWindow|Triangles|Треугольников
+
+MeshDocumentWindow|Bounding box size|Размер габаритов
+MeshDocumentWindow|Bounding sphere radius|Радиус ограничивающей сферы
+MeshDocumentWindow|Level of detail|Уровень детализации
+MeshDocumentWindow|Render operations|Рендеринг операций
+MeshDocumentWindow|Triangles|Треугольников
+MeshDocumentWindow|Vertices|Вершин
+
+ImagePreviewControl|Processed|После обработки
+ImagePreviewControl|Source|Исходный
+ImagePreviewControl|Type|Тип
+ImagePreviewControl|No data|Нет данных
+
+ParticleSystemDocumentWindow|Particles|Частиц
+
+MaterialDocumentWindow|Decal rendering is not supported because {0}.|Рендеринг декалей не поддерживается, потому что {0}.
+MaterialDocumentWindow|Decal rendering is supported.|Рендеринг декалей поддерживается.
+MaterialDocumentWindow|Deferred shading is not supported because {0}.|Отложенное затенение не поддерживается, потому что {0}.
+MaterialDocumentWindow|Deferred shading is supported.|Отложенное затенение поддерживается.
+MaterialDocumentWindow|Receiving decals is not supported because {0}.|Наложение декалей не поддерживается, потому что {0}.
+MaterialDocumentWindow|Receiving decals is supported.|Наложение декалей поддерживается.
+
+MessageLogOptionsForm|Message Log Options|Настройки логов
+MessageLogOptionsForm|Horizontal|Горизонтальная
+MessageLogOptionsForm|Splitter Orientation|Ориентация разделителя
+MessageLogOptionsForm|Vertical|Вертикальная
+
+DebugInfoWindow|Memory|Память
+DebugInfoWindow|Render: Resources|Рендеринг: Ресурсы
+DebugInfoWindow|Render: Statistics|Рендеринг: Статистика
+DebugInfoWindow|Sound|Звук
+DebugInfoWindow|.NET memory|.NET память
+DebugInfoWindow|2D|2D
+DebugInfoWindow|3D|3D
+DebugInfoWindow|Active channels|Активные каналы
+DebugInfoWindow|GPU linked programs|GPU линкованные программы
+DebugInfoWindow|GPU programs|GPU программы
+DebugInfoWindow|Index buffers|Индексные буферы
+DebugInfoWindow|Native allocator actual memory used|Выделенная память нативным аллокатором
+DebugInfoWindow|Native allocator memory used by app|Используемая память приложения для работы нативного аллокатора
+DebugInfoWindow|Real|Реальный
+DebugInfoWindow|Render targets|Рендеринг целей
+DebugInfoWindow|Textures|Текстуры
+DebugInfoWindow|Time|Время
+DebugInfoWindow|Vertex buffers|Буферы вершин
+DebugInfoWindow|Virtual|Виртуальный
+DebugInfoWindow|Volume|Громкость
+
+TipsWindow|Close|Закрыть
+TipsWindow|Next|Следующий
+TipsWindow|Previous|Предыдущий
+TipsWindow|Tips|Советы
+TipsWindow|Show tips at startup|Показывать советы при запуске
+
+PackagesWindow|Close|Закрыть
+PackagesWindow|Delete|Удалить
+PackagesWindow|Install|Установить
+PackagesWindow|Package Manager|Менеджер пакетов
+PackagesWindow|Restart app to apply changes.|Чтобы применить изменения, нужно перезапустить редактор.
+PackagesWindow|Uninstall|Деинсталл...
+PackagesWindow|Install {0}?\n\n{1} files will created.|Установить {0}?\n\n{1} файлов будет добавлено.
+PackagesWindow|Uninstall {0}?\n\n{1} files will deleted.|Удалить {0}?\n\n{1} файлов будет удалено.
+PackagesWindow|Buy|Купить
+PackagesWindow|Download|Скачать
+PackagesWindow|Restart the editor to apply changes.|Перезапустите редактор, чтобы применить изменения.
+PackagesWindow|Available packages|Доступные пакеты
+PackagesWindow|Packages|Пакеты
+
+StoreDocumentWindow|Asset Store|Магазин
+
+ImportWindow|Close|Закрыть
+ImportWindow|Destination folder|Папка назначения
+ImportWindow|Import|Импорт
+ImportWindow|No selected items.|Нет выбранных элементов.
+ImportWindow|Destination folder must be inside Assets folder.|Папка назначения должна находиться внутри папки Assets.
+
+ObjectSettingsWindow|Apply|Применить
+ObjectSettingsWindow|Close|Закрыть
+
+ContentBrowser.Group|2D|2D
+ContentBrowser.Group|3D|3D
+ContentBrowser.Group|Additional|Дополнительно
+ContentBrowser.Group|Addon creation|Создание дополнений
+ContentBrowser.Group|Addons|Дополнения
+ContentBrowser.Group|Advanced|Продвинутые
+ContentBrowser.Group|Areas|Области
+ContentBrowser.Group|Base|Базовые
+ContentBrowser.Group|Common|Общие
+ContentBrowser.Group|Environment|Окружающая обстановка
+ContentBrowser.Group|Flow scripting|Скриптование графов
+ContentBrowser.Group|Game framework|Игровой фреймворк
+ContentBrowser.Group|Mesh modifiers|Модификаторы мешей
+ContentBrowser.Group|Metadata|Метаданные
+ContentBrowser.Group|Modules|Модули
+ContentBrowser.Group|Particles|Частицы
+ContentBrowser.Group|Physics|Физика
+ContentBrowser.Group|Primitives|Примитивы
+ContentBrowser.Group|Scene common|Общее сцены
+ContentBrowser.Group|Scene objects|Объекты сцены
+ContentBrowser.Group|Screen effects|Экранные эффекты
+ContentBrowser.Group|Scripting|Скриптование
+ContentBrowser.Group|Sensors|Датчики
+ContentBrowser.Group|Shapes|Формы
+ContentBrowser.Group|UI|Пользовательский интерфейс
+ContentBrowser.Group|Favorites|Избранное
+ContentBrowser.Group|All types|Все типы
+ContentBrowser.Group|Assets|Активы
+
+EditorAction.Description|Adds a collision body to selected objects.|Добавляет физическое тело к выделенным объектам.
+EditorAction.Description|Add Paint Layer\nAdds a masked paint layer.|Добавить слой краски\nДобавляет красящий слой.
+EditorAction.Description|Adds a masked paint layer.|Добавляет слой для покраски.
+EditorAction.Description|Adds C# files to the Project.csproj.|Добавляет C# файлы в Project.csproj.
+EditorAction.Description|Aligns the position of the selected objects by all axes.|Выравнивает положение выбранных объектов по всем осям.
+EditorAction.Description|Aligns the position of the selected objects by X axis.|Выравнивает положение выделенных объектов по оси X.
+EditorAction.Description|Aligns the position of the selected objects by Y axis.|Выравнивает положение выделенных объектов по оси Y.
+EditorAction.Description|Aligns the position of the selected objects by Z axis.|Выравнивает положение выделенных объектов по оси Z.
+EditorAction.Description|Attaches the second, third and next selected objects to the first selected object.|Прикрепляет второй, третий и следующий выбранные объекты к первому выбранному объекту.
+EditorAction.Description|Bridge Edges\nConnects two selected edges with a new face.|Соединение ребер\nСоединяет два выбранных ребра новой гранью.
+EditorAction.Description|Builds the project's solution.|Строит решение проекта.
+EditorAction.Description|Duplicates selected objects.|Дублирует выбранные объекты.
+EditorAction.Description|Comments the selected text.|Комментирует выделенный текст.
+EditorAction.Description|Configure downloadable packages.|Настраивает загружаемые пакеты.
+EditorAction.Description|Conform Normals\nFix invalid normals of the mesh.|Поправить нормали\nПоправляет некорректные нормали.
+EditorAction.Description|Creates a NeoAxis Baking file from selected folders and files.|Создает файл NeoAxis Baking из выбранных папок и файлов.
+EditorAction.Description|Creates a new C# file in the project.|Создает новый C# файл в проекте.
+EditorAction.Description|Creates a new C# script file.|Создает новый C# скрипт файл.
+EditorAction.Description|Creates a new flow graph file.|Создает новый файл потокового графа.
+EditorAction.Description|Creates a new resource in the project.|Создает новый ресурс в проекте.
+EditorAction.Description|Deletes the collision body of selected objects.|Удаляет физическое тело у выбранных объектов.
+EditorAction.Description|Deletes selected objects.|Удаляет выбранные объекты.
+EditorAction.Description|Deletes the collision body of the mesh.|Удаляет тело столкновения меша.
+EditorAction.Description|Deletes the structure of the mesh.|Удаляет структуру меша.
+EditorAction.Description|Deletes unnecessary auto generated compressed images from the cache.|Удаляет ненужные автоматически созданные сжатые изображения из кэша.
+EditorAction.Description|Detaches selected objects from another object.|Отцепить выбранные объекты от другого объекта.
+EditorAction.Description|Does auto formatting of selected text.|Осуществляет автоматическое форматирование выделенного текста.
+EditorAction.Description|Vertex Mode\nIn this mode you can select the vertices, move them, perform actions to edit them.|Режим вершин\nВ этом режиме вы можете выбирать вершины, перемещать их, выполнять действия по их редактированию.
+EditorAction.Description|Edge Mode\nIn this mode you can select the edges, move them, perform actions to edit them.|Режим ребер\nВ этом режиме вы можете выбирать ребра, перемещать их, выполнять действия по их редактированию.
+EditorAction.Description|Face Mode\nIn this mode you can select the faces, move them, perform actions to edit them.|Режим граней\nВ этом режиме вы можете выбирать грани, перемещать их, выполнять действия по их редактированию.
+EditorAction.Description|Enables the use of local transform coordinates.|Включает режим использования локальных координат при преобразовании.
+EditorAction.Description|Flat Normals\nRecalculates the normals of selected faces so that they do not have smoothing.|Плоские нормали\nУбирает сглаживание у нормалей.
+EditorAction.Description|Flip Normals\nInverts the normals of selected faces.|Отразить нормали\nПереворачивает нормали выбранных граней.
+EditorAction.Description|Focuses the camera on the selected object.|Фокусирует камеру на выбранном объекте.
+EditorAction.Description|Generates the structure of the mesh.|Создает структуру меша.
+EditorAction.Description|Grow Selection\nAdds adjacent elements to the currently selected elements.|Расширить выделение\nДобавляет соседние элементы к выбранным.
+EditorAction.Description|Imports resources to the project.|Импортирует ресурсы в проект.
+EditorAction.Description|Intersect\nExecutes constructive solid geometry intersect operation for two selected objects.|Пересечь\nВыполняет операцию конструктивной геометрии по пересечению двух выбранных объектов.
+EditorAction.Description|Subtract\nExecutes constructive solid geometry difference operation for two selected objects.|Вычесть\nВыполняет операцию конструктивной геометрии по вычитанию двух выбранных объектов.
+EditorAction.Description|Union\nExecutes constructive solid geometry union operation for two selected objects.|Объединить\nВыполняет операцию конструктивной геометрии по объединению двух выбранных объектов.
+EditorAction.Description|Invert Selection\nSelects all the elements that are not currently selected and removes selection from the currently selected elements.|Инвертировать выделение\nВыделяет все элементы, которые в данный момент не выделены, и удаляет выделение из выбранных в данный момент элементов.
+EditorAction.Description|Merge Faces\nCombines selected faces into a single one.|Объединить грани\nКомбинирует выбранные грани в одну.
+EditorAction.Description|Merge Objects\nCombines the selected objects into a single one.|Объединить объекты\nКомбинирует выбранные объекты в один.
+EditorAction.Description|Movement mode of the transform tool.|Режим перемещения инструмента преобразования.
+EditorAction.Description|Object Mode\nThis is the usual scene editor mode, enabled by default.|Режим объекта\nЭто обычный режим редактора сцен, включенный по умолчанию.
+EditorAction.Description|Opens the Asset Store.|Открывает магазин активов.
+EditorAction.Description|Opens the online documentation.|Открывает онлайн документацию.
+EditorAction.Description|Opens the settings of the project.|Открывает настройки проекта.
+EditorAction.Description|Opens the Tip of the Day.|Открывает совет дня.
+EditorAction.Description|Precalculates the collision of the mesh.|Просчитывает физическое тело меша.
+EditorAction.Description|Redos the last action.|Повторяет последнее действие.
+EditorAction.Description|Removes C# files from the Project.csproj.|Удаляет C# файлы из Project.csproj.
+EditorAction.Description|Renames the selected object.|Переименовывает выбранный объект.
+EditorAction.Description|Resets windows settings.|Сбрасывает настройки окон.
+EditorAction.Description|Rotation mode of the transform tool.|Режим вращения инструмента преобразования.
+EditorAction.Description|Runs the player application.|Запускает плеер.
+EditorAction.Description|Saves all modified documents.|Сохраняет все измененные документы.
+EditorAction.Description|Saves and runs the document in the player application.|Сохраняет и запускает документ в плеере.
+EditorAction.Description|Saves the current document in a different location, or with a different file name.|Сохраняет текущий документ в другом месте или под другим именем.
+EditorAction.Description|Saves the current document.|Сохраняет текущий документ.
+EditorAction.Description|Scaling mode of the transform tool.|Режим масштабирования инструмента преобразования.
+EditorAction.Description|Select All\nSelects all elements.|Выбрать все\nВыбрать все элементы.
+EditorAction.Description|Select By Material\nSelects all the faces that have the same material as currently selected faces.|Выбрать по материалу\nВыбирает все грани, которые имеют тот же материал, что и выбранные в данный момент грани.
+EditorAction.Description|Selection mode of the transform tool.|Режим выделения инструмента преобразования.
+EditorAction.Description|Set Color\nSets a color for the selected objects.|Установить цвет\nУстанавливает цвет для выбранных объектов.
+EditorAction.Description|Set Material\nSets a material for the selected faces. The material to use has to be selected in the Resources Window.|Задать материал\nУстанавливает материал для выбранных граней.
+EditorAction.Description|Shows or hides the Debug Info Window.|Показывает или скрывает окно отладочной информации.
+EditorAction.Description|Shows or hides the Message Log Window.|Показывает или скрывает окно журнала сообщений.
+EditorAction.Description|Shows or hides the Objects Window.|Показывает или скрывает окно объектов.
+EditorAction.Description|Shows or hides the Output Window.|Показывает или скрывает окно вывода.
+EditorAction.Description|Shows or hides the Preview Window.|Показывает или скрывает окно предварительного просмотра.
+EditorAction.Description|Shows or hides the Resources Window.|Показывает или скрывает окно ресурсов.
+EditorAction.Description|Shows or hides the Settings Window.|Показывает или скрывает окно настроек.
+EditorAction.Description|Smooth Normals\nSmooths the normals of selected faces.|Сглаживание нормалей\nСглаживает нормали выбранных граней.
+EditorAction.Description|Specifies a level of detail to display.|Определяет уровень детализации для отображения.
+EditorAction.Description|Specifies a texture coordinates channel to display.|Определяет канал текстурных координат для отображения.
+EditorAction.Description|Specifies the animation to play.|Определяет анимацию для воспроизведения.
+EditorAction.Description|Split Vertices\nMakes the vertices that are shared by many triangles independent.|Разделить вершины\nДелает вершины, общие для многих треугольников, независимыми.
+EditorAction.Description|The circle shape mode of the editing tool.|Режим формы инструмента редактирования в виде круга.
+EditorAction.Description|The hardness of the editing tool. Determines the strength of impact depending on the distance to the center of the tool.|Твердость инструмента редактирования. Определяет силу изменения в зависимости от расстояния до центра инструмента.
+EditorAction.Description|The list of layers to paint.|Список слоев для рисования.
+EditorAction.Description|The mode of creation objects by brush.|Режим создания объектов кистью.
+EditorAction.Description|The mode of creation objects by Drag & Drop.|Режим создания объектов методом бросания (Drag & Drop).
+EditorAction.Description|The mode of creation objects by mouse click.|Режим создания объектов щелчком мыши.
+EditorAction.Description|The mode of decreasing the height of the terrain. Holding down the Shift key will increase the height.|Режим уменьшения высоты местности. Удерживая клавишу Shift, высота будет увеличиваться.
+EditorAction.Description|The mode of erasing a layer. Holding down the Shift key will paint a layer.|Режим стирания слоя. Удерживая клавишу Shift, слой будет рисоваться.
+EditorAction.Description|The mode of flattening a layer.|Режим выравнивания слоя.
+EditorAction.Description|The mode of flattening the height of the terrain.|Режим выравнивания высоты местности.
+EditorAction.Description|The mode of increasing the height of the terrain. Holding down the Shift key will decrease the height.|Режим увеличения высоты местности. Удерживая клавишу Shift, высота будет уменьшаться.
+EditorAction.Description|The mode of paint a layer. Holding down the Shift key will erasing a layer.|Режим рисования слоя. Удерживая клавишу Shift, слой будет стираться.
+EditorAction.Description|The mode of smoothing a layer.|Режим сглаживания слоя.
+EditorAction.Description|The mode of smoothing the height of the terrain.|Режим сглаживания высоты местности.
+EditorAction.Description|The square shape mode of the editing tool.|Режим формы инструмента редактирования в виде квадрата.
+EditorAction.Description|The strength of impact of the editing tool.|Сила воздействия инструмента редактирования.
+EditorAction.Description|Tool size.|Размер инструмента.
+EditorAction.Description|Triangulate Faces\nSplits selected faces to the separate triangles.|Триангуляция граней\nРазделение выделенных граней на отдельные треугольники.
+EditorAction.Description|Uncomments the selected text.|Раскомментирует выделенный текст.
+EditorAction.Description|Undoes the last action.|Отменяет последнее действие.
+EditorAction.Description|Whether to display the binormal vectors.|Отображать ли бинормальные векторы.
+EditorAction.Description|Whether to display the bounding box.|Отображать ли ограничивающий параллелепипед.
+EditorAction.Description|Whether to display the collision.|Отображать ли физику.
+EditorAction.Description|Whether to display the normals.|Отображать ли нормали.
+EditorAction.Description|Whether to display the pivot.|Отображать ли пивот.
+EditorAction.Description|Whether to display the skeleton.|Отображать ли скелет.
+EditorAction.Description|Whether to display the tangent vectors.|Отображать ли касательные векторы.
+EditorAction.Description|Whether to display the triangles.|Отображать ли треугольники.
+EditorAction.Description|Whether to display the vertex color.|Отображать ли цвета вершин.
+EditorAction.Description|Whether to display the vertices.|Отображать ли вершины.
+EditorAction.Description|Add Mesh Modifier\nAdds a mesh modifier to the object.|Добавить модификатор сетки\nДобавляет модификатор меша к объекту.
+EditorAction.Description|Adds a new mesh modifier.|Добавляет новый модификатор меша.
+EditorAction.Description|Detach Faces\nRemoves selected faces from a geometry and places them in a new geometry.|Отделить грани\nУдалить выбранные грани из геометрии и поместить их в новую геометрию.
+EditorAction.Description|Merge Vertices\nMerges selected vertices into the single vertex.|Объединить вершины\nОбъединить выбранные вершины в одну вершину.
+EditorAction.Description|Mirror Objects\nCreates a mirror transformation of the selected object.|Зеркальные объекты\nСоздает зеркальное отражение выбранного объекта.
+EditorAction.Description|Specifies the display settings of the development data.|Определяет параметры отображения данных для разработки.
+EditorAction.Description|Creates a new primitive.|Создаёт новый примитив.
+EditorAction.Description|Restarts the editor.|Перезапускает редактор.
+EditorAction.Description|Adds property code for a component class.|Добавляет код свойства для класса компоненты.
+EditorAction.Description|Finds a selected resource in the Resources Window.|Находит выбранный ресурс в окне ресурсов.
+EditorAction.Description|Opens Project solution in an external IDE.|Открывает Project решение во внешней IDE.
+EditorAction.Description|Opens Sources solution in an external IDE.|Открывает решение с исходными кодами во внешней IDE.
+EditorAction.Description|Opens the package manager.|Открывает менеджер пакетов.
+EditorAction.Description|Opens the start page.|Открывает стартовую страницу.
+EditorAction.Description|Opens the Tips window.|Открывает окно советов.
+
+EditorAction.Name|Duplicate|Дублировать
+EditorAction.Name|Delete|Удалить
+EditorAction.Name|Import Resource|Импорт ресурса
+EditorAction.Name|Move|Переместить
+EditorAction.Name|New Resource|Новый ресурс
+EditorAction.Name|Play|Запустить
+EditorAction.Name|Project Settings|Настройки проекта
+EditorAction.Name|Redo|Повторить
+EditorAction.Name|Restart|Перезапустить
+EditorAction.Name|Rotate|Вращать
+EditorAction.Name|Run Player|Запустить плеер
+EditorAction.Name|Save All|Сохранить все
+EditorAction.Name|Save As|Сохранить как
+EditorAction.Name|Save|Сохранить
+EditorAction.Name|Scale|Масштабировать
+EditorAction.Name|Select|Выделять
+EditorAction.Name|Transform Using Local Coordinates|Преобразование с использованием локальных координат
+EditorAction.Name|Undo|Отменить
+
+EditorAction.Name|Arch|Арка
+EditorAction.Name|Box|Коробка
+EditorAction.Name|Capsule|Капсула
+EditorAction.Name|Cone|Конус
+EditorAction.Name|Cylinder|Цилиндр
+EditorAction.Name|Door|Дверь
+EditorAction.Name|Pipe|Труба
+EditorAction.Name|Plane|Плоскость
+EditorAction.Name|Polygon Based Polyhedron|Многогранник на базе многоугольника
+EditorAction.Name|Prism|Призма
+EditorAction.Name|Sphere|Сфера
+EditorAction.Name|Stairs|Лестница
+EditorAction.Name|Torus|Торус
+EditorAction.Name|Areas|Области
+EditorAction.Name|Box UV|Коробка UV
+EditorAction.Name|Cameras|Камеры
+EditorAction.Name|Decals|Декали
+EditorAction.Name|Detach Faces to Mesh Geometry (Split Vertices)|Отделить грани в геометрию меша (разделить вершины)
+EditorAction.Name|Detach Faces to Mesh Geometry|Отделить грани в геометрию меша
+EditorAction.Name|Detach Faces to Mesh In Space|Отделить грани в отдельный объект
+EditorAction.Name|Display In Editor|Показывать в редакторе
+EditorAction.Name|Display In Simulation|Показывать в симуляции
+EditorAction.Name|Frustum Culling Test|Тест отсечения видимости
+EditorAction.Name|Labels|Метки
+EditorAction.Name|Lights|Источники света
+EditorAction.Name|Mesh Modifier|Модификатор меша
+EditorAction.Name|Move to the First Vertex|Передвинуть к первой вершине
+EditorAction.Name|Move to the Middle|Передвинуть в середину
+EditorAction.Name|Object In Space Bounds|Границы объектов в пространстве
+EditorAction.Name|Physical Objects|Физические объекты
+EditorAction.Name|Randomize Position|Случайное положение
+EditorAction.Name|Reflection Probes|Зонды отражений
+EditorAction.Name|Scene Octree|Структура сцены
+EditorAction.Name|Sensors|Датчики
+EditorAction.Name|Sound Sources|Источники звука
+EditorAction.Name|Text Info|Текстовая информация
+EditorAction.Name|X|X
+EditorAction.Name|Y|Y
+EditorAction.Name|Z|Z
+
+SetReferenceWindow|Can make relative file path|Разрешить выставлять относительный путь к файлу
+SetReferenceWindow|Close|Закрыть
+SetReferenceWindow|Set and Close|Задать и закрыть
+SetReferenceWindow|Set Reference|Настройка ссылки
+SetReferenceWindow|Set|Задать
+
+SelectTypeWindow|Cancel|Отмена
+SelectTypeWindow|Select|Выбрать
+SelectTypeWindow|Select Type|Выбор типа
+
+MessageLogWindow|Options|Настройки
+MessageLogWindow|Clear|Очистить
+
+OutputWindow|Options|Настройки
+OutputWindow|Clear|Очистить
+
+ObjectInSpace|Detach from another object?|Открепить от другого объекта?
+ObjectInSpace|The object was attached to another object.|Объект был прикреплён к другому объекту.
+ObjectInSpace|The object was detached from another object.|Объект был откреплён от другого объекта.
+
+GroupOfObjects|Clear Objects|Очистить объекты
+GroupOfObjects|Clear|Очистить
+GroupOfObjects|Delete all objects and child components?|Удалить все объекты и дочерние компоненты?
+GroupOfObjects|Delete all objects?|Удалить все объекты?
+GroupOfObjects|Statistics|Статистика
+GroupOfObjects|Total data size: {0} MB.|Общий объем данных: {0} МБ.
+GroupOfObjects|Total objects: {0}|Всего объектов: {0}
+GroupOfObjects|Update Alignment|Выровнить
+
+GroupOfObjectsElement|Clear Objects|Очистить объекты
+GroupOfObjectsElement|Delete all objects of the element?|Удалить все объекты элемента?
+GroupOfObjectsElement|Random Groups|Случайные группы
+GroupOfObjectsElement|Refresh surface groups randomly?|Обновить группы поверхностей случайным образом?
+GroupOfObjectsElement|Reset color of the objects to '1 1 1'?|Сбросить цвет объектов в '1 1 1'?
+GroupOfObjectsElement|Reset Colors|Сбросить цвета
+GroupOfObjectsElement|Update Alignment|Выровнить
+GroupOfObjectsElement|Update variations of the objects?|Обновить варианты объектов?
+GroupOfObjectsElement|Update Variations|Варианты
+
+MeshModifier|Bake into Mesh|Запечь в меш
+MeshModifier|Bake selected geometry into the mesh?|Запечь выбранную геометрию в меш?
+MeshModifier|Bake selected geometries into the mesh?|Запечь выбранные геометрии в меш?
+
+MeshInSpace|Delete '{0}'?|Удалить '{0}'?
+MeshInSpace|The collision was deleted.|Физическое тело было удалено.
+MeshInSpace|The collision was added successfully.|Физическое тело было успешно добавлено.
+
+Texture|Compressing '{0}'...|Сжатие '{0}' ...
+
+ImageCompression|Auto|Автоматически
+ImageCompression|DXT1|DXT1
+ImageCompression|DXT5|DXT5
+ImageCompression|No Compression|Без сжатия
+ImageCompression|Normal Map|Карта нормалей
+ImageCompression|Update|Обновить
+
+ProcessEnvironmentCubemap|Auto Size|Авто размер
+ProcessEnvironmentCubemap|Delete|Удалить
+ProcessEnvironmentCubemap|Are you sure you want to delete these files?|Вы уверены, что хотите удалить эти файлы?
+
+Baking|File name|Имя файла
+Baking|NeoAxis Baking|NeoAxis пакование
+Baking|Please specify destination file name.|
+Baking|A file or folder with the same name already exists.|
+Baking|Compress archive?|
+Baking|The file was built successfully.|
+
+Baking|Please specify destination file name.|Пожалуйста, укажите имя файла назначения.
+Baking|A file or folder with the same name already exists.|Файл или папка с таким именем уже существует.
+Baking|Compress archive?|Сжать архив?
+Baking|The file was built successfully.|Файл успешно создан.
+
+CSharpScript|Members: {0}|Членов: {0}
+CSharpScript|Update|Обновить
+CSharpScript|Info|Информация
+CSharpScript|No compiled data.|Нет скомпилированных данных.
+
+Terrain|Unable to paint to selected layer because Mask size of the layer and MaskSize of the terrain are not equal.|Невозможно красить выбранным слоем, потому что размер маски слоя и MaskSize ландшафта не одинаковые.
+Terrain|Update|Обновить
+Terrain|Resize Masks|Размер масок
+Terrain|Resize masks of selected layers to {0}x{0}?|Изменить размер масок выбранных слоев до {0}x{0}?
+
+ScriptEditor|Name|Имя
+ScriptEditor|Rename Symbol|Переименовать символ
+ScriptEditor|The name is not specified.|Имя не указано.
+ScriptEditor|Invalid symbol name.|Неправильное имя символа.
+
+ParticleSystemInSpace|Play|Проигрывать
+ParticleSystemInSpace|Stop|Остановить
+
+Import3D|Re-import|Переимпорт
+Import3D|Unable to load or import resource '{0}'.|Не удалось загрузить или импортировать ресурс '{0}'.
+
+Docking|Move &Previous|Переместить &назад
+Docking|Move &Next|Переместить &дальше
+Docking|&Close|&Закрыть
+Docking|Close &All But This|Закрыть все &кроме этого
+Docking|Split &Horizontal|Разделить &горизонтально
+Docking|Split &Vertical|Разделить &вертикально
+Docking|&Rebalance|&Сбалансировать
+Docking|&Maximize|&Максимизировать
+Docking|Res&tore|Восс&тановить
+
+Docking|Auto Hide|Авто-скрытие
+Docking|Close All But This|Закрыть все, кроме этого
+Docking|Close|Закрыть
+Docking|Dock|Прикрепленный
+Docking|Float|Плавающий
+Docking|Hide|Скрыть
+Docking|Tabbed Document|Окно с вкладкой
+Docking|Window Position|Положение окна
+
+ProjectSettings.Group|C# Editor|С# редактор
+ProjectSettings.Group|Colors|Цвета
+ProjectSettings.Group|Editor|Редактор
+ProjectSettings.Group|General|Общее
+ProjectSettings.Group|Simulation|Симуляция
+ProjectSettings.Group|Preview|Предварительный просмотр
+ProjectSettings.Group|Project Application|Приложение проекта
+ProjectSettings.Group|Rendering|Рендеринг
+ProjectSettings.Group|Scene Editor: Camera|Редактор сцен: Камера
+ProjectSettings.Group|Scene Editor: Select|Редактор сцен: Выделение
+ProjectSettings.Group|Scene Editor: Snapping|Редактор сцен: Выравнивание
+ProjectSettings.Group|Scene Editor: Transform Tool|Редактор сцен: Инструмент трансформации
+ProjectSettings.Group|Shader Editor|Редактор шейдеров
+ProjectSettings.Group|Text Editor|Текстовый редактор
+ProjectSettings.Group|UI Editor: General|Редактор интерфейсов: Общее
+ProjectSettings.Group|UI Editor: Snapping|Редактор интерфейсов: Выравнивание
+
+ProjectSettings.Page|All|Все
+ProjectSettings.Page|C# Editor|С# редактор
+ProjectSettings.Page|General|Общее
+ProjectSettings.Page|Scene Editor|Редактор сцен
+ProjectSettings.Page|Shader Editor|Редактор шейдеров
+ProjectSettings.Page|Text Editor|Текстовый редактор
+ProjectSettings.Page|UI Editor|Редактор интерфейсов
+
+ProjectSettings.Property|Animate Windows Auto Hiding|Анимировать авто-скрытие окон
+ProjectSettings.Property|Automatically Format Block On }|Автоматически форматировать блок }
+ProjectSettings.Property|Automatically Format Statement On ;|Автоматически форматировать на операторе ;
+ProjectSettings.Property|Brace Completion|Автодобавление скобки
+ProjectSettings.Property|Can Select Color|Цвет при наведении на объект
+ProjectSettings.Property|Display Error Markers|Отображать маркеры ошибок
+ProjectSettings.Property|Display Grid|Отображать сетку
+ProjectSettings.Property|Display Hierarchy Of Objects In Settings Window|Отображать иерархию объектов в окне настроек
+ProjectSettings.Property|Display Info Markers|Отображать информационные маркеры
+ProjectSettings.Property|Display Line Numbers|Отображать номера строк
+ProjectSettings.Property|Display Warning Markers|Отображать предупреждающие маркеры
+ProjectSettings.Property|Editor Aspect Ratio|Соотношение сторон редактора
+ProjectSettings.Property|Hidden By Other Objects Color Multiplier|Множитель цвета для скрытых объектов
+ProjectSettings.Property|Initial UI Screen|Начальный экран интерфейса
+ProjectSettings.Property|Keyboard Movement Speed Fast|Скорость движения клавиатуры быстрая
+ProjectSettings.Property|Keyboard Movement Speed Normal|Скорость движения клавиатуры обычная
+ProjectSettings.Property|Keyboard Rotation Speed Fast|Скорость вращения клавиатуры быстрая
+ProjectSettings.Property|Keyboard Rotation Speed Normal|Скорость вращения клавиатуры обычная
+ProjectSettings.Property|Line Thickness|Толщина линий
+ProjectSettings.Property|Material Preview Environment|Окружение предварительного просмотра материала
+ProjectSettings.Property|Material Preview Mesh|Меш предварительного просмотра материала
+ProjectSettings.Property|Max Frames Per Second Document|Количество кадров в секунду в документе
+ProjectSettings.Property|Max Frames Per Second Preview|Количество кадров в секунду в предпросмотре
+ProjectSettings.Property|Mouse Movement Sensitivity Fast|Чувствительность мыши быстрая
+ProjectSettings.Property|Mouse Movement Sensitivity Normal|Чувствительность мыши обычная
+ProjectSettings.Property|Mouse Rotation Sensitivity Horizontal|Чувствительность поворота мыши по горизонтали
+ProjectSettings.Property|Mouse Rotation Sensitivity Vertical|Чувствительность поворота мыши по вертикали
+ProjectSettings.Property|Mouse Track Movement Sensitivity Fast|Чувствительность мыши быстрая
+ProjectSettings.Property|Mouse Track Movement Sensitivity Normal|Чувствительность мыши обычная
+ProjectSettings.Property|Mouse Wheel Movement Sensitivity Fast|Чувствительность колесика мыши быстрая
+ProjectSettings.Property|Mouse Wheel Movement Sensitivity Normal|Чувствительность колесика мыши обычная
+ProjectSettings.Property|Parent Measure: Step Movement|Parent мера: Шаг перемещения
+ProjectSettings.Property|Pixels Measure: Step Movement|Pixels мера: Шаг перемещения
+ProjectSettings.Property|Preview Ambient Light Brightness|Яркость фонового источника в предпросмотре
+ProjectSettings.Property|Preview Directional Light Brightness|Яркость направленного источника в предпросмотре
+ProjectSettings.Property|Project Name|Имя проекта
+ProjectSettings.Property|Properties Max Count Collection Items To Display|Максимальное количество элементов коллекций
+ProjectSettings.Property|Rotation Sensitivity|Чувствительность вращения
+ProjectSettings.Property|Run Simulation In Fullscreen|Запускать симуляцию в полноэкранном режиме
+ProjectSettings.Property|Scene Show Area Color|Цвет областей
+ProjectSettings.Property|Scene Show Decal Color|Цвет декалей
+ProjectSettings.Property|Scene Show Light Color|Цвет источников света
+ProjectSettings.Property|Scene Show Object In Space Bounds Color|Цвет габаритов объектов
+ProjectSettings.Property|Scene Show Physics Dynamic Active Color|Цвет физических активных объектов
+ProjectSettings.Property|Scene Show Physics Dynamic Inactive Color|Цвет физических неактивных объектов
+ProjectSettings.Property|Scene Show Physics Static Color|Цвет физических статичных объектов
+ProjectSettings.Property|Scene Show Reflection Probe Color|Цвет зондов отражений
+ProjectSettings.Property|Scene Show Sound Source Color|Цвет источников звука
+ProjectSettings.Property|Screen Label Color|Цвет экранных меток
+ProjectSettings.Property|Screen Measure: Step Movement|Screen мера: Шаг движения
+ProjectSettings.Property|Select By Double Click Radius|Радиус выделения при двойном щелчке
+ProjectSettings.Property|Selected Color|Цвет выделенного объекта
+ProjectSettings.Property|Shadow Intensity|Интенсивность теней
+ProjectSettings.Property|Simulation Steps Per Second|Шагов симуляции в секунду
+ProjectSettings.Property|Size|Размер
+ProjectSettings.Property|Sound Volume|Громкость звука
+ProjectSettings.Property|Step Movement|Шаг перемещения
+ProjectSettings.Property|Step Rotation|Шаг вращения
+ProjectSettings.Property|Step Scaling|Шаг масштабирования
+ProjectSettings.Property|Theme|Тема
+ProjectSettings.Property|Units Measure: Step Movement|Units мера: Шаг перемещения
+ProjectSettings.Property|Word Wrap|Переносить слова
+ProjectSettings.Property|Language|Язык
+
+ProjectSettings.Description|The language of the editor. Restart the editor to apply changes.|Язык редактора. Перезапустите редактор, чтобы применить изменения.
+
+Object.Group|Background Sound|Фоновый звук
+Object.Group|Camera|Камера
+Object.Group|Component|Компонент
+Object.Group|Debug|Отладка
+Object.Group|Development Data|Данные разработки
+Object.Group|Effect|Эффект
+Object.Group|Exposure|Экспозиция
+Object.Group|General|Общее
+Object.Group|Instancing|Инстансинг
+Object.Group|Level Of Detail|Уровень детализации
+Object.Group|Light|Источник света
+Object.Group|Mesh In Space|Меш в пространстве
+Object.Group|Mesh|Меш
+Object.Group|Object In Space|Объект в пространстве
+Object.Group|Octree|Октри
+Object.Group|Physics 2D|Физика 2D
+Object.Group|Physics|Физика
+Object.Group|Rendering|Рендеринг
+Object.Group|Scene|Сцена
+Object.Group|Shadows|Тени
+Object.Group|Collision Filtering|Фильтрация коллизий
+Object.Group|Collision Shape 2D|Физическая форма 2D
+Object.Group|Collision Shape|Физическая форма
+Object.Group|Contacts|Контакты
+Object.Group|Group Of Objects Element|Элемент группы объектов
+Object.Group|Group Of Objects|Группа объектов
+Object.Group|Input|Ввод
+Object.Group|Mesh Geometry|Геометрия меша
+Object.Group|Rigid Body 2D|Твердое тело 2D
+Object.Group|Rigid Body|Твердое тело
+Object.Group|Advanced|Продвинутое
+Object.Group|Animation|Анимация
+Object.Group|Basic|Основное
+Object.Group|CSharp Script|C# скрипт
+Object.Group|Fly Control|Управление в полете
+Object.Group|Invoke Method|Вызов метода
+Object.Group|Jump|Прыгать
+Object.Group|Method's Parameters|Параметры метода
+Object.Group|Run|Бегать
+Object.Group|Sensor 2D|Датчик 2D
+Object.Group|Sprite|Спрайт
+Object.Group|Text 2D|Текст 2D
+Object.Group|Walk|Ходить
+Object.Group|Weapon 2D|Оружие 2D
+Object.Group|Options|Опции
+
+StartPageWindow|Create Scene|Создать сцену
+StartPageWindow|New scene|Новая сцена
+StartPageWindow|Open scene|Открыть сцену
+StartPageWindow|Open Scene|Открыть сцену
+StartPageWindow|Open Store|Магазин
+StartPageWindow|Select theme|Выбрать тему
+StartPageWindow|Start Page|Стартовая страница

@@ -80,10 +80,13 @@ namespace NeoAxis.Editor
 			UpdateOpenScenes();
 		}
 
-		private void StoreDocumentWindow_Load( object sender, EventArgs e )
+		private void StartPageWindow_Load( object sender, EventArgs e )
 		{
 			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
+
+			WindowTitle = EditorLocalization.Translate( "StartPageWindow", WindowTitle );
+			EditorLocalization.TranslateForm( "StartPageWindow", this );
 
 			timer1.Start();
 

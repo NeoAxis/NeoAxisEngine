@@ -1,0 +1,4 @@
+Encoding = 1251
+
+//This means that a text of a given language is usually wider than English.
+WideLanguage = True

@@ -119,7 +119,7 @@ namespace NeoAxis.Editor
 				EditorLocalization.TranslateForm( "Backstage", kryptonPageInfo );
 				EditorLocalization.TranslateForm( "Backstage", kryptonPageNew );
 				EditorLocalization.TranslateForm( "Backstage", kryptonPageBuild );
-				//EditorLocalization.TranslateForm( kryptonPageAbout, "Backstage" );
+				EditorLocalization.TranslateForm( "Backstage", kryptonPageLogin );
 			}
 
 			LoginLoad();
