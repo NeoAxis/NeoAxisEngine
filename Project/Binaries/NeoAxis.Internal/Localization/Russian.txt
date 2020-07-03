@@ -103,7 +103,7 @@ Ribbon.Action|Clear|Очищать
 Ribbon.Action|Click|По клику
 Ribbon.Action|Copy|Копия
 Ribbon.Action|Collision|Физика
-Ribbon.Action|Comment|Комментировать
+Ribbon.Action|Comment|Добавить\nКомментарий
 Ribbon.Action|Conform\nNormals|Согласовать\nнормали
 Ribbon.Action|Debug\nInfo|Отладочная\nинформация
 Ribbon.Action|Delete\nCollision|Удалить\nфизику
@@ -173,7 +173,7 @@ Ribbon.Action|Tangents|Касательные
 Ribbon.Action|Tips|Советы
 Ribbon.Action|Triangles|Треугольники
 Ribbon.Action|Triangulate|Триангуляция
-Ribbon.Action|Uncomment|Раскомментировать
+Ribbon.Action|Uncomment|Убрать\nКомментарий
 Ribbon.Action|Undo|Отмена
 Ribbon.Action|Union|Объединить
 Ribbon.Action|UV|Текстурные\nкоординаты
