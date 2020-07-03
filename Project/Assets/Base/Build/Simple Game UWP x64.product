@@ -1,0 +1,7 @@
+.component NeoAxis.Component_Product_UWP
+{
+	ProductName = Simple Game
+	SortOrderInEditor = 2
+	SelectedAssets = "Base;Samples\\Simple Game"
+	FileCache = False
+}

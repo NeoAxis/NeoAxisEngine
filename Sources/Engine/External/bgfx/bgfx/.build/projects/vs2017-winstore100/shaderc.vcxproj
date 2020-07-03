@@ -416,10 +416,6 @@
       <Project>{0D19B900-79F8-379C-8210-C372EE6E9EFD}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="glsl-optimizer.vcxproj">
-      <Project>{4783A312-3351-9718-1CE5-073F0852737D}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

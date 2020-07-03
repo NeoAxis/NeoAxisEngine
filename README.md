@@ -19,7 +19,7 @@ Royalty-free, open source platform.
 <h2>Supported platforms</h2>
 <ul>
 <li>Windows</li>
-<li>UWP (coming soon in sources, already supported in binaries from neoaxis.com)</li>
+<li>UWP (Universal Windows, Xbox, Windows Store)</li>
 <li>Android (coming soon)</li>
 <li>...</li>
 </ul>
@@ -30,6 +30,7 @@ Royalty-free, open source platform.
 <li>By default is better to use the Release configuration by performance reasons, debugging is supported.</li>
 <li>Download Sci-fi Demo and Nature Demo from the Asset Store window.</li>
 </ul>
+How build for other platforms see Building.txt.
 
 <h2>Programming tips</h2>
 <ul>

@@ -50,6 +50,8 @@
 			this.objectsBrowserNew = new NeoAxis.Editor.ContentBrowser();
 			this.kryptonLabel2 = new ComponentFactory.Krypton.Toolkit.KryptonLabel();
 			this.kryptonPageBuild = new ComponentFactory.Krypton.Navigator.BackstagePage();
+			this.kryptonLinkLabel2 = new ComponentFactory.Krypton.Toolkit.KryptonLinkLabel();
+			this.kryptonLabelInstallPlatformTools = new ComponentFactory.Krypton.Toolkit.KryptonLabel();
 			this.kryptonButtonBuildCancel = new ComponentFactory.Krypton.Toolkit.KryptonButton();
 			this.progressBarBuild = new NeoAxis.Editor.EngineProgressBar();
 			this.kryptonButtonPackageBrowse = new ComponentFactory.Krypton.Toolkit.KryptonButton();
@@ -140,8 +142,8 @@
             this.kryptonPageLogin,
             this.kryptonPageAbout,
             this.kryptonPageExit});
-			this.kryptonNavigator1.SelectedIndex = 3;
-			this.kryptonNavigator1.Size = new System.Drawing.Size(1499, 825);
+			this.kryptonNavigator1.SelectedIndex = 2;
+			this.kryptonNavigator1.Size = new System.Drawing.Size(1507, 825);
 			this.kryptonNavigator1.StateCommon.Panel.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(87)))), ((int)(((byte)(154)))));
 			this.kryptonNavigator1.StateCommon.Tab.Border.Draw = ComponentFactory.Krypton.Toolkit.InheritBool.False;
 			this.kryptonNavigator1.StateCommon.Tab.Border.DrawBorders = ((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) 
@@ -241,7 +243,7 @@
 			this.kryptonPageNew.LastVisibleSet = true;
 			this.kryptonPageNew.MinimumSize = new System.Drawing.Size(50, 50);
 			this.kryptonPageNew.Name = "kryptonPageNew";
-			this.kryptonPageNew.Size = new System.Drawing.Size(1337, 823);
+			this.kryptonPageNew.Size = new System.Drawing.Size(1345, 823);
 			this.kryptonPageNew.Text = "New";
 			this.kryptonPageNew.ToolTipTitle = "Page ToolTip";
 			this.kryptonPageNew.UniqueName = "9A208880D6A24E29B3A6B24AA17F1383";
@@ -269,7 +271,7 @@
 			// kryptonButtonNewBrowse
 			// 
 			this.kryptonButtonNewBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.kryptonButtonNewBrowse.Location = new System.Drawing.Point(1140, 149);
+			this.kryptonButtonNewBrowse.Location = new System.Drawing.Point(1148, 149);
 			this.kryptonButtonNewBrowse.Name = "kryptonButtonNewBrowse";
 			this.kryptonButtonNewBrowse.Size = new System.Drawing.Size(117, 32);
 			this.kryptonButtonNewBrowse.TabIndex = 1;
@@ -308,7 +310,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.kryptonTextBoxNewFolder.Location = new System.Drawing.Point(45, 154);
 			this.kryptonTextBoxNewFolder.Name = "kryptonTextBoxNewFolder";
-			this.kryptonTextBoxNewFolder.Size = new System.Drawing.Size(1089, 23);
+			this.kryptonTextBoxNewFolder.Size = new System.Drawing.Size(1097, 23);
 			this.kryptonTextBoxNewFolder.StateCommon.Border.DrawBorders = ((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) 
             | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) 
             | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Right)));
@@ -330,7 +332,7 @@
 			this.objectsBrowserNew.Name = "objectsBrowserNew";
 			this.objectsBrowserNew.ReadOnlyHierarchy = false;
 			this.objectsBrowserNew.ShowToolBar = false;
-			this.objectsBrowserNew.Size = new System.Drawing.Size(1213, 251);
+			this.objectsBrowserNew.Size = new System.Drawing.Size(1221, 251);
 			this.objectsBrowserNew.TabIndex = 2;
 			this.objectsBrowserNew.ThisIsSettingsWindow = false;
 			// 
@@ -346,6 +348,8 @@
 			// kryptonPageBuild
 			// 
 			this.kryptonPageBuild.AutoHiddenSlideSize = new System.Drawing.Size(200, 200);
+			this.kryptonPageBuild.Controls.Add(this.kryptonLinkLabel2);
+			this.kryptonPageBuild.Controls.Add(this.kryptonLabelInstallPlatformTools);
 			this.kryptonPageBuild.Controls.Add(this.kryptonButtonBuildCancel);
 			this.kryptonPageBuild.Controls.Add(this.progressBarBuild);
 			this.kryptonPageBuild.Controls.Add(this.kryptonButtonPackageBrowse);
@@ -360,10 +364,37 @@
 			this.kryptonPageBuild.LastVisibleSet = true;
 			this.kryptonPageBuild.MinimumSize = new System.Drawing.Size(50, 50);
 			this.kryptonPageBuild.Name = "kryptonPageBuild";
-			this.kryptonPageBuild.Size = new System.Drawing.Size(1337, 823);
+			this.kryptonPageBuild.Size = new System.Drawing.Size(1345, 823);
 			this.kryptonPageBuild.Text = "Build";
 			this.kryptonPageBuild.ToolTipTitle = "Page ToolTip";
 			this.kryptonPageBuild.UniqueName = "3579A0DBAE6F4DD2C0B5DCB61AEC1F49";
+			// 
+			// kryptonLinkLabel2
+			// 
+			this.kryptonLinkLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.kryptonLinkLabel2.LabelStyle = ComponentFactory.Krypton.Toolkit.LabelStyle.Custom1;
+			this.kryptonLinkLabel2.Location = new System.Drawing.Point(54, 582);
+			this.kryptonLinkLabel2.Name = "kryptonLinkLabel2";
+			this.kryptonLinkLabel2.OverrideFocus.DrawFocus = ComponentFactory.Krypton.Toolkit.InheritBool.False;
+			this.kryptonLinkLabel2.Size = new System.Drawing.Size(419, 20);
+			this.kryptonLinkLabel2.StateCommon.LongText.Color1 = System.Drawing.Color.Red;
+			this.kryptonLinkLabel2.StateCommon.ShortText.Color1 = System.Drawing.Color.Red;
+			this.kryptonLinkLabel2.StateNormal.ShortText.Color1 = System.Drawing.Color.Red;
+			this.kryptonLinkLabel2.StateNormal.ShortText.Color2 = System.Drawing.Color.Red;
+			this.kryptonLinkLabel2.TabIndex = 30;
+			this.kryptonLinkLabel2.Values.Text = "Install \'Platform Tools\' from the Packages to unlock all platforms.";
+			this.kryptonLinkLabel2.Visible = false;
+			// 
+			// kryptonLabelInstallPlatformTools
+			// 
+			this.kryptonLabelInstallPlatformTools.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.kryptonLabelInstallPlatformTools.Location = new System.Drawing.Point(40, 542);
+			this.kryptonLabelInstallPlatformTools.Name = "kryptonLabelInstallPlatformTools";
+			this.kryptonLabelInstallPlatformTools.Size = new System.Drawing.Size(499, 24);
+			this.kryptonLabelInstallPlatformTools.StateCommon.ShortText.Color1 = System.Drawing.Color.Red;
+			this.kryptonLabelInstallPlatformTools.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.kryptonLabelInstallPlatformTools.TabIndex = 29;
+			this.kryptonLabelInstallPlatformTools.Values.Text = "Install \'Platform Tools\' from the Packages to unlock all platforms.";
 			// 
 			// kryptonButtonBuildCancel
 			// 
@@ -388,7 +419,7 @@
 			// kryptonButtonPackageBrowse
 			// 
 			this.kryptonButtonPackageBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.kryptonButtonPackageBrowse.Location = new System.Drawing.Point(1140, 149);
+			this.kryptonButtonPackageBrowse.Location = new System.Drawing.Point(1148, 149);
 			this.kryptonButtonPackageBrowse.Name = "kryptonButtonPackageBrowse";
 			this.kryptonButtonPackageBrowse.Size = new System.Drawing.Size(117, 32);
 			this.kryptonButtonPackageBrowse.TabIndex = 2;
@@ -437,7 +468,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.kryptonTextBoxPackageDestinationFolder.Location = new System.Drawing.Point(45, 154);
 			this.kryptonTextBoxPackageDestinationFolder.Name = "kryptonTextBoxPackageDestinationFolder";
-			this.kryptonTextBoxPackageDestinationFolder.Size = new System.Drawing.Size(1089, 23);
+			this.kryptonTextBoxPackageDestinationFolder.Size = new System.Drawing.Size(1097, 23);
 			this.kryptonTextBoxPackageDestinationFolder.TabIndex = 1;
 			this.kryptonTextBoxPackageDestinationFolder.Text = "C:\\_Temp";
 			this.kryptonTextBoxPackageDestinationFolder.WordWrap = false;
@@ -456,7 +487,7 @@
 			this.contentBrowserPackage.Name = "contentBrowserPackage";
 			this.contentBrowserPackage.ReadOnlyHierarchy = false;
 			this.contentBrowserPackage.ShowToolBar = false;
-			this.contentBrowserPackage.Size = new System.Drawing.Size(1213, 251);
+			this.contentBrowserPackage.Size = new System.Drawing.Size(1221, 251);
 			this.contentBrowserPackage.TabIndex = 0;
 			this.contentBrowserPackage.ThisIsSettingsWindow = false;
 			// 
@@ -486,7 +517,7 @@
 			this.kryptonPageLogin.LastVisibleSet = true;
 			this.kryptonPageLogin.MinimumSize = new System.Drawing.Size(62, 62);
 			this.kryptonPageLogin.Name = "kryptonPageLogin";
-			this.kryptonPageLogin.Size = new System.Drawing.Size(1337, 823);
+			this.kryptonPageLogin.Size = new System.Drawing.Size(1345, 823);
 			this.kryptonPageLogin.Text = "Login";
 			this.kryptonPageLogin.ToolTipTitle = "Login";
 			this.kryptonPageLogin.UniqueName = "2271C4BE75C64D08AC847F8523BAEDF0";
@@ -587,7 +618,7 @@
 			this.kryptonPageAbout.LastVisibleSet = true;
 			this.kryptonPageAbout.MinimumSize = new System.Drawing.Size(62, 62);
 			this.kryptonPageAbout.Name = "kryptonPageAbout";
-			this.kryptonPageAbout.Size = new System.Drawing.Size(1337, 823);
+			this.kryptonPageAbout.Size = new System.Drawing.Size(1345, 823);
 			this.kryptonPageAbout.Text = "About";
 			this.kryptonPageAbout.TextTitle = "About";
 			this.kryptonPageAbout.ToolTipTitle = "Page ToolTip";
@@ -624,7 +655,7 @@
 			this.kryptonLabel12.LabelStyle = ComponentFactory.Krypton.Toolkit.LabelStyle.TitlePanel;
 			this.kryptonLabel12.Location = new System.Drawing.Point(31, 64);
 			this.kryptonLabel12.Name = "kryptonLabel12";
-			this.kryptonLabel12.Size = new System.Drawing.Size(190, 34);
+			this.kryptonLabel12.Size = new System.Drawing.Size(405, 34);
 			this.kryptonLabel12.TabIndex = 4;
 			this.kryptonLabel12.Values.Text = "NeoAxis Engine (www.neoaxis.com)";
 			// 
@@ -655,7 +686,7 @@
 			this.Controls.Add(this.kryptonButtonBack);
 			this.Controls.Add(this.kryptonNavigator1);
 			this.Name = "BackstageMenu";
-			this.Size = new System.Drawing.Size(1499, 825);
+			this.Size = new System.Drawing.Size(1507, 825);
 			this.Load += new System.EventHandler(this.BackstageMenu_Load);
 			this.VisibleChanged += new System.EventHandler(this.BackstageMenu_VisibleChanged);
 			((System.ComponentModel.ISupportInitialize)(this.kryptonNavigator1)).EndInit();
@@ -730,5 +761,7 @@
 		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabel18;
 		private ComponentFactory.Krypton.Toolkit.KryptonTextBox kryptonTextBoxLoginEmail;
 		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabel19;
+		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabelInstallPlatformTools;
+		private ComponentFactory.Krypton.Toolkit.KryptonLinkLabel kryptonLinkLabel2;
 	}
 }

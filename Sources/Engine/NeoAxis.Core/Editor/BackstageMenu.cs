@@ -109,6 +109,7 @@ namespace NeoAxis.Editor
 				}
 
 				kryptonLabelLoginError.StateCommon.ShortText.Color1 = Color.Red;
+				kryptonLabelInstallPlatformTools.StateCommon.ShortText.Color1 = Color.Red;
 			}
 
 			//translate
@@ -429,6 +430,8 @@ namespace NeoAxis.Editor
 
 			var items = new List<ContentBrowser.Item>();
 
+			kryptonLabelInstallPlatformTools.Visible = false;
+
 			foreach( var virtualPath in files )
 			{
 				string fileName = Path.GetFileName( virtualPath );
@@ -463,6 +466,13 @@ namespace NeoAxis.Editor
 					item.Tag = packageComponent;
 					if( imageExists )
 						item.imageKey = imageKey;
+
+					if( !IsPlatformInstalled( packageComponent.Platform ) )
+					{
+						item.ShowDisabled = true;
+						kryptonLabelInstallPlatformTools.Visible = true;
+					}
+
 					items.Add( item );
 				}
 			}
@@ -743,6 +753,12 @@ namespace NeoAxis.Editor
 		private void kryptonButtonRegister_Click( object sender, EventArgs e )
 		{
 			Process.Start( "https://www.neoaxis.com/user" );
+		}
+
+		bool IsPlatformInstalled( SystemSettings.Platform platform )
+		{
+			var path = Path.Combine( VirtualFileSystem.Directories.EngineInternal, "Platforms", platform.ToString() );
+			return Directory.Exists( path );
 		}
 	}
 }

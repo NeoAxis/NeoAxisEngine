@@ -112,7 +112,7 @@ namespace NeoAxis
 
 							excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Tips" ) );
 							excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Localization" ) );
-							excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Tools\ProjectDiffPatcher" ) );
+							excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Tools\PlatformTools" ) );
 
 							excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Editor.exe" ) );
 							excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Editor.exe.config" ) );
