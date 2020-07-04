@@ -18,7 +18,7 @@ UWP (Universal Windows, Xbox, Windows Store)
 Do 2, 3. when made changes in NeoAxis.Core or in assemblies referenced by NeoAxis.Core.
 
 2. Generate Stub assemblies. These are stubs for System.Windows.Forms.dll and other assemblies.
-- Execute: Project\Binaries\NeoAxis.Internal\Tools\PlatformTools\GenerateStubs\Generate Stubs UWP.bat
+- Execute: Project\Binaries\NeoAxis.Internal\Tools\PlatformTools\Stubs\Generate Stubs UWP.bat
 - Files will appear in the UWP folder. Copy them to Project\Binaries\NeoAxis.Internal\Platforms\UWP\Managed
 
 3. Update NeoAxis.Core project for UWP.
