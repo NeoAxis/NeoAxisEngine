@@ -1180,7 +1180,7 @@
     <Compile Include="Libraries\FbxWrapper\SWIGTYPE_p_FbxListNodeT_FbxPlugin_t.cs" />
     <Compile Include="Libraries\FbxWrapper\SWIGTYPE_p_FbxLocalizationManager.cs" />
     <Compile Include="Libraries\FbxWrapper\SWIGTYPE_p_FbxLODGroup__EDisplayLevel.cs" />
-    <Compile Include="Libraries\FbxWrapper\SWIGTYPE_p_FbxMapT_FbxObject_p_FbxCloneManager__CloneSetElement_FbxLessCompareT_FbxObject_p_t_FbxBaseAllocator_t.cs" />
+    <Compile Include="Libraries\FbxWrapper\SWIGTYPE_fix_long_file_name.cs" />
     <Compile Include="Libraries\FbxWrapper\SWIGTYPE_p_FbxMapT_FbxObject_p_int_FbxLessCompareT_FbxObject_p_t_FbxBaseAllocator_t.cs" />
     <Compile Include="Libraries\FbxWrapper\SWIGTYPE_p_FbxMapT_FbxString_FbxObject_p_FbxStringCompare_FbxBaseAllocator_t__RecordType.cs" />
     <Compile Include="Libraries\FbxWrapper\SWIGTYPE_p_FbxMessage.cs" />

@@ -1,0 +1,1 @@
+class SWIGTYPE_p_FbxMapT_FbxObject_p_FbxCloneManager__CloneSetElement_FbxLessCompareT_FbxObject_p_t_FbxBaseAllocator_t
