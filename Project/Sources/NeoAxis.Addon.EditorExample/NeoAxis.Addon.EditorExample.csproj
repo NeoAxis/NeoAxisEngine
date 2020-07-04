@@ -39,28 +39,28 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Component_EditorExampleWinForms.cs" />
-    <Compile Include="Component_EditorExampleCanvas.cs" />
-    <Compile Include="Component_EditorExampleCanvas_DocumentWindow.cs">
+    <Compile Include="EditorExampleWinForms.cs" />
+    <Compile Include="EditorExampleCanvas.cs" />
+    <Compile Include="EditorExampleCanvas_DocumentWindow.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Component_EditorExampleCanvas_DocumentWindow.designer.cs">
-      <DependentUpon>Component_EditorExampleCanvas_DocumentWindow.cs</DependentUpon>
+    <Compile Include="EditorExampleCanvas_DocumentWindow.designer.cs">
+      <DependentUpon>EditorExampleCanvas_DocumentWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Component_EditorExampleWinForms_DocumentWindow.cs">
+    <Compile Include="EditorExampleWinForms_DocumentWindow.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Component_EditorExampleWinForms_DocumentWindow.designer.cs">
-      <DependentUpon>Component_EditorExampleWinForms_DocumentWindow.cs</DependentUpon>
+    <Compile Include="EditorExampleWinForms_DocumentWindow.designer.cs">
+      <DependentUpon>EditorExampleWinForms_DocumentWindow.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Component_EditorExampleCanvas_DocumentWindow.resx">
-      <DependentUpon>Component_EditorExampleCanvas_DocumentWindow.cs</DependentUpon>
+    <EmbeddedResource Include="EditorExampleCanvas_DocumentWindow.resx">
+      <DependentUpon>EditorExampleCanvas_DocumentWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Component_EditorExampleWinForms_DocumentWindow.resx">
-      <DependentUpon>Component_EditorExampleWinForms_DocumentWindow.cs</DependentUpon>
+    <EmbeddedResource Include="EditorExampleWinForms_DocumentWindow.resx">
+      <DependentUpon>EditorExampleWinForms_DocumentWindow.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

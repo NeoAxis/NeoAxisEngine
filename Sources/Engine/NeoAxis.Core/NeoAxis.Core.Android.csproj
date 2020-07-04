@@ -2258,6 +2258,7 @@
     <Compile Include="Libraries\FbxWrapper\Int_p.cs" />
     <Compile Include="Libraries\FbxWrapper\LockAccessStatus.cs" />
     <Compile Include="Libraries\FbxWrapper\RefCount.cs" />
+    <Compile Include="Libraries\FbxWrapper\SWIGTYPE_fix_long_file_name.cs" />
     <Compile Include="Libraries\FbxWrapper\SWIGTYPE_p_a_3__int.cs" />
     <Compile Include="Libraries\FbxWrapper\SWIGTYPE_p_a_4__a_4__double.cs" />
     <Compile Include="Libraries\FbxWrapper\SWIGTYPE_p_a_4__double.cs" />
@@ -2309,7 +2310,6 @@
     <Compile Include="Libraries\FbxWrapper\SWIGTYPE_p_FbxListNodeT_FbxPlugin_t.cs" />
     <Compile Include="Libraries\FbxWrapper\SWIGTYPE_p_FbxLocalizationManager.cs" />
     <Compile Include="Libraries\FbxWrapper\SWIGTYPE_p_FbxLODGroup__EDisplayLevel.cs" />
-    <Compile Include="Libraries\FbxWrapper\SWIGTYPE_p_FbxMapT_FbxObject_p_FbxCloneManager__CloneSetElement_FbxLessCompareT_FbxObject_p_t_FbxBaseAllocator_t.cs" />
     <Compile Include="Libraries\FbxWrapper\SWIGTYPE_p_FbxMapT_FbxObject_p_int_FbxLessCompareT_FbxObject_p_t_FbxBaseAllocator_t.cs" />
     <Compile Include="Libraries\FbxWrapper\SWIGTYPE_p_FbxMapT_FbxString_FbxObject_p_FbxStringCompare_FbxBaseAllocator_t__RecordType.cs" />
     <Compile Include="Libraries\FbxWrapper\SWIGTYPE_p_FbxMessage.cs" />
