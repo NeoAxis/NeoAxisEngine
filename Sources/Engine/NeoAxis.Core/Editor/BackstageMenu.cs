@@ -538,7 +538,8 @@ namespace NeoAxis.Editor
 
 		bool CanPackageProject()
 		{
-			if( GetSelectedBuildConfiguration() == null )
+			var selectedConfiguration = GetSelectedBuildConfiguration();
+			if( selectedConfiguration == null || !IsPlatformInstalled( selectedConfiguration.Platform ) )
 				return false;
 			string folder = kryptonTextBoxPackageDestinationFolder.Text.Trim();
 			if( string.IsNullOrEmpty( folder ) )

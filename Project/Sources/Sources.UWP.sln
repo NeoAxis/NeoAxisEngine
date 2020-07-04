@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.645
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoAxis.Player.UWP", "NeoAxis.Player.UWP\NeoAxis.Player.UWP.csproj", "{5417393A-BA14-4C40-AAC7-9FD5A5EC9278}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5417393A-BA14-4C40-AAC7-9FD5A5EC9278}.Debug|x64.ActiveCfg = Debug|x64
+		{5417393A-BA14-4C40-AAC7-9FD5A5EC9278}.Debug|x64.Build.0 = Debug|x64
+		{5417393A-BA14-4C40-AAC7-9FD5A5EC9278}.Debug|x64.Deploy.0 = Debug|x64
+		{5417393A-BA14-4C40-AAC7-9FD5A5EC9278}.Release|x64.ActiveCfg = Release|x64
+		{5417393A-BA14-4C40-AAC7-9FD5A5EC9278}.Release|x64.Build.0 = Release|x64
+		{5417393A-BA14-4C40-AAC7-9FD5A5EC9278}.Release|x64.Deploy.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F092C704-D35A-44CF-AE36-00AD58386803}
+	EndGlobalSection
+EndGlobal
