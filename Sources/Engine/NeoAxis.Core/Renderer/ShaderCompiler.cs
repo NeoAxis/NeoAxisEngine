@@ -95,7 +95,7 @@ namespace NeoAxis
 
 			//make sure you use precompiled shaders
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
-				Log.Fatal( "Shader compilation on UWP is not supported. Compiled shaders must be already precompiled in the shader cache." );
+				Log.Fatal( "Shader compilation on UWP is not supported. Compiled shaders must be already precompiled in the shader cache. Run your scenes on development machine to compile shaders." );
 
 			if( !libraryLoaded )
 			{
