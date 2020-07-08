@@ -118,6 +118,7 @@ namespace Project
 			EngineConfig.RegisterClassParameters( typeof( SimulationApp ) );
 
 			//creation settings
+
 			if( !Fullscreen )
 				EngineApp.InitSettings.CreateWindowFullscreen = false;
 			if( VideoMode != Vector2I.Zero && ( SystemSettings.VideoModeExists( VideoMode ) || !Fullscreen ) )
@@ -128,6 +129,54 @@ namespace Project
 			}
 			if( !VerticalSync )
 				EngineSettings.Init.SimulationVSync = false;
+
+			//get from project settings
+			{
+				var windowStateString = ProjectSettings.ReadParameterFromFile( "WindowState" );
+				if( !string.IsNullOrEmpty( windowStateString ) )
+				{
+					if( Enum.TryParse<Component_ProjectSettings.WindowStateEnum>( windowStateString, out var windowState ) )
+					{
+						if( windowState != Component_ProjectSettings.WindowStateEnum.Auto )
+						{
+							switch( windowState )
+							{
+							case Component_ProjectSettings.WindowStateEnum.Normal:
+								{
+									EngineApp.InitSettings.CreateWindowFullscreen = false;
+									EngineApp.InitSettings.CreateWindowState = EngineApp.WindowStateEnum.Normal;
+
+									var windowSizeString = ProjectSettings.ReadParameterFromFile( "WindowSize" );
+									if( !string.IsNullOrEmpty( windowSizeString ) )
+									{
+										try
+										{
+											EngineApp.InitSettings.CreateWindowSize = Vector2I.Parse( windowSizeString );
+										}
+										catch { }
+									}
+								}
+								break;
+
+							case Component_ProjectSettings.WindowStateEnum.Minimized:
+								EngineApp.InitSettings.CreateWindowFullscreen = false;
+								EngineApp.InitSettings.CreateWindowState = EngineApp.WindowStateEnum.Minimized;
+								break;
+
+							case Component_ProjectSettings.WindowStateEnum.Maximized:
+								EngineApp.InitSettings.CreateWindowFullscreen = false;
+								EngineApp.InitSettings.CreateWindowState = EngineApp.WindowStateEnum.Maximized;
+								break;
+
+							case Component_ProjectSettings.WindowStateEnum.Fullscreen:
+								EngineApp.InitSettings.CreateWindowFullscreen = true;
+								break;
+							}
+						}
+					}
+				}
+			}
+
 		}
 
 		public static void EngineApp_AppCreateAfter()

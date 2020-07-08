@@ -65,6 +65,14 @@ namespace NeoAxis
 
 					//switch( member.Name )
 					//{
+					//case nameof( WindowSize ):
+					//	if( WindowState.Value != WindowStateEnum.Normal )
+					//		skip = true;
+					//	break;
+					//}
+
+					//switch( member.Name )
+					//{
 					////case nameof( SplashScreenImage ):
 					////case nameof( CustomizeSplashScreen ):
 					//case nameof( EngineSplashScreenTime ):
@@ -614,6 +622,9 @@ namespace NeoAxis
 		}
 		float simulationStepsPerSecondInv = 1.0f / 50;
 
+		/// <summary>
+		/// Initial UI file when starting the project application.
+		/// </summary>
 		[DefaultValueReference( @"Base\UI\Screens\SplashScreen.ui" )]
 		[Category( "Project Application" )]
 		[DisplayName( "Initial UI Screen" )]
@@ -625,6 +636,43 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="InitialUIScreen"/> property value changes.</summary>
 		public event Action<Component_ProjectSettings> InitialUIScreenChanged;
 		ReferenceField<ReferenceValueType_Resource> _initialUIScreen = new Reference<ReferenceValueType_Resource>( null, @"Base\UI\Screens\SplashScreen.ui" );
+
+		public enum WindowStateEnum
+		{
+			Auto,
+			Normal,
+			Minimized,
+			Maximized,
+			Fullscreen
+		}
+
+		/// <summary>
+		/// The initial state of the project window. When set to Auto, it will enabled Fullscreen mode or Maximized mode when run from the editor.
+		/// </summary>
+		[Category( "Project Application" )]
+		[DefaultValue( WindowStateEnum.Auto )]
+		public Reference<WindowStateEnum> WindowState
+		{
+			get { if( _windowState.BeginGet() ) WindowState = _windowState.Get( this ); return _windowState.value; }
+			set { if( _windowState.BeginSet( ref value ) ) { try { WindowStateChanged?.Invoke( this ); } finally { _windowState.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="WindowState"/> property value changes.</summary>
+		public event Action<Component_ProjectSettings> WindowStateChanged;
+		ReferenceField<WindowStateEnum> _windowState = WindowStateEnum.Auto;
+
+		/// <summary>
+		/// The initial window size of the project window for Normal window state.
+		/// </summary>
+		[Category( "Project Application" )]
+		[DefaultValue( "1300 900" )]
+		public Reference<Vector2I> WindowSize
+		{
+			get { if( _windowSize.BeginGet() ) WindowSize = _windowSize.Get( this ); return _windowSize.value; }
+			set { if( _windowSize.BeginSet( ref value ) ) { try { WindowSizeChanged?.Invoke( this ); } finally { _windowSize.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="WindowSize"/> property value changes.</summary>
+		public event Action<Component_ProjectSettings> WindowSizeChanged;
+		ReferenceField<Vector2I> _windowSize = new Vector2I( 1300, 900 );
 
 		/////////////////////////////////////////
 

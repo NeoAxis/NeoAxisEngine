@@ -63,6 +63,15 @@
 			this.contentBrowserPackage = new NeoAxis.Editor.ContentBrowser();
 			this.kryptonLabel5 = new ComponentFactory.Krypton.Toolkit.KryptonLabel();
 			this.kryptonPageLogin = new ComponentFactory.Krypton.Navigator.KryptonPage();
+			this.kryptonLabelTokenBalance = new ComponentFactory.Krypton.Toolkit.KryptonLabel();
+			this.labelExTokenTransactions = new NeoAxis.Editor.LabelEx();
+			this.kryptonLabel16 = new ComponentFactory.Krypton.Toolkit.KryptonLabel();
+			this.kryptonLinkLabelTokenWhatIsIt = new ComponentFactory.Krypton.Toolkit.KryptonLinkLabel();
+			this.kryptonLabel11 = new ComponentFactory.Krypton.Toolkit.KryptonLabel();
+			this.kryptonButtonTokenWithdraw = new ComponentFactory.Krypton.Toolkit.KryptonButton();
+			this.kryptonButtonTokenBuy = new ComponentFactory.Krypton.Toolkit.KryptonButton();
+			this.kryptonButtonDonate = new ComponentFactory.Krypton.Toolkit.KryptonButton();
+			this.kryptonLabelSupportNeoAxis = new ComponentFactory.Krypton.Toolkit.KryptonLabel();
 			this.kryptonLabelLoginError = new ComponentFactory.Krypton.Toolkit.KryptonLabel();
 			this.kryptonLabel15 = new ComponentFactory.Krypton.Toolkit.KryptonLabel();
 			this.kryptonLabelLicense = new ComponentFactory.Krypton.Toolkit.KryptonLabel();
@@ -142,8 +151,8 @@
             this.kryptonPageLogin,
             this.kryptonPageAbout,
             this.kryptonPageExit});
-			this.kryptonNavigator1.SelectedIndex = 2;
-			this.kryptonNavigator1.Size = new System.Drawing.Size(1507, 825);
+			this.kryptonNavigator1.SelectedIndex = 3;
+			this.kryptonNavigator1.Size = new System.Drawing.Size(1507, 791);
 			this.kryptonNavigator1.StateCommon.Panel.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(87)))), ((int)(((byte)(154)))));
 			this.kryptonNavigator1.StateCommon.Tab.Border.Draw = ComponentFactory.Krypton.Toolkit.InheritBool.False;
 			this.kryptonNavigator1.StateCommon.Tab.Border.DrawBorders = ((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) 
@@ -364,7 +373,7 @@
 			this.kryptonPageBuild.LastVisibleSet = true;
 			this.kryptonPageBuild.MinimumSize = new System.Drawing.Size(50, 50);
 			this.kryptonPageBuild.Name = "kryptonPageBuild";
-			this.kryptonPageBuild.Size = new System.Drawing.Size(1345, 823);
+			this.kryptonPageBuild.Size = new System.Drawing.Size(1345, 789);
 			this.kryptonPageBuild.Text = "Build";
 			this.kryptonPageBuild.ToolTipTitle = "Page ToolTip";
 			this.kryptonPageBuild.UniqueName = "3579A0DBAE6F4DD2C0B5DCB61AEC1F49";
@@ -373,7 +382,7 @@
 			// 
 			this.kryptonLinkLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.kryptonLinkLabel2.LabelStyle = ComponentFactory.Krypton.Toolkit.LabelStyle.Custom1;
-			this.kryptonLinkLabel2.Location = new System.Drawing.Point(54, 582);
+			this.kryptonLinkLabel2.Location = new System.Drawing.Point(54, 548);
 			this.kryptonLinkLabel2.Name = "kryptonLinkLabel2";
 			this.kryptonLinkLabel2.OverrideFocus.DrawFocus = ComponentFactory.Krypton.Toolkit.InheritBool.False;
 			this.kryptonLinkLabel2.Size = new System.Drawing.Size(419, 20);
@@ -388,7 +397,7 @@
 			// kryptonLabelInstallPlatformTools
 			// 
 			this.kryptonLabelInstallPlatformTools.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.kryptonLabelInstallPlatformTools.Location = new System.Drawing.Point(40, 542);
+			this.kryptonLabelInstallPlatformTools.Location = new System.Drawing.Point(40, 508);
 			this.kryptonLabelInstallPlatformTools.Name = "kryptonLabelInstallPlatformTools";
 			this.kryptonLabelInstallPlatformTools.Size = new System.Drawing.Size(499, 24);
 			this.kryptonLabelInstallPlatformTools.StateCommon.ShortText.Color1 = System.Drawing.Color.Red;
@@ -399,7 +408,7 @@
 			// kryptonButtonBuildCancel
 			// 
 			this.kryptonButtonBuildCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.kryptonButtonBuildCancel.Location = new System.Drawing.Point(554, 488);
+			this.kryptonButtonBuildCancel.Location = new System.Drawing.Point(554, 454);
 			this.kryptonButtonBuildCancel.Name = "kryptonButtonBuildCancel";
 			this.kryptonButtonBuildCancel.Size = new System.Drawing.Size(117, 32);
 			this.kryptonButtonBuildCancel.TabIndex = 6;
@@ -410,7 +419,7 @@
 			// progressBarBuild
 			// 
 			this.progressBarBuild.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.progressBarBuild.Location = new System.Drawing.Point(297, 488);
+			this.progressBarBuild.Location = new System.Drawing.Point(297, 454);
 			this.progressBarBuild.Name = "progressBarBuild";
 			this.progressBarBuild.Size = new System.Drawing.Size(247, 32);
 			this.progressBarBuild.TabIndex = 5;
@@ -437,7 +446,7 @@
 			// kryptonButtonPackageCreateAndRun
 			// 
 			this.kryptonButtonPackageCreateAndRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.kryptonButtonPackageCreateAndRun.Location = new System.Drawing.Point(170, 488);
+			this.kryptonButtonPackageCreateAndRun.Location = new System.Drawing.Point(170, 454);
 			this.kryptonButtonPackageCreateAndRun.Name = "kryptonButtonPackageCreateAndRun";
 			this.kryptonButtonPackageCreateAndRun.Size = new System.Drawing.Size(117, 32);
 			this.kryptonButtonPackageCreateAndRun.TabIndex = 4;
@@ -447,7 +456,7 @@
 			// kryptonButtonPackageCreate
 			// 
 			this.kryptonButtonPackageCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.kryptonButtonPackageCreate.Location = new System.Drawing.Point(44, 488);
+			this.kryptonButtonPackageCreate.Location = new System.Drawing.Point(44, 454);
 			this.kryptonButtonPackageCreate.Name = "kryptonButtonPackageCreate";
 			this.kryptonButtonPackageCreate.Size = new System.Drawing.Size(117, 32);
 			this.kryptonButtonPackageCreate.TabIndex = 3;
@@ -487,7 +496,7 @@
 			this.contentBrowserPackage.Name = "contentBrowserPackage";
 			this.contentBrowserPackage.ReadOnlyHierarchy = false;
 			this.contentBrowserPackage.ShowToolBar = false;
-			this.contentBrowserPackage.Size = new System.Drawing.Size(1221, 251);
+			this.contentBrowserPackage.Size = new System.Drawing.Size(1221, 217);
 			this.contentBrowserPackage.TabIndex = 0;
 			this.contentBrowserPackage.ThisIsSettingsWindow = false;
 			// 
@@ -503,6 +512,15 @@
 			// kryptonPageLogin
 			// 
 			this.kryptonPageLogin.AutoHiddenSlideSize = new System.Drawing.Size(250, 250);
+			this.kryptonPageLogin.Controls.Add(this.kryptonLabelTokenBalance);
+			this.kryptonPageLogin.Controls.Add(this.labelExTokenTransactions);
+			this.kryptonPageLogin.Controls.Add(this.kryptonLabel16);
+			this.kryptonPageLogin.Controls.Add(this.kryptonLinkLabelTokenWhatIsIt);
+			this.kryptonPageLogin.Controls.Add(this.kryptonLabel11);
+			this.kryptonPageLogin.Controls.Add(this.kryptonButtonTokenWithdraw);
+			this.kryptonPageLogin.Controls.Add(this.kryptonButtonTokenBuy);
+			this.kryptonPageLogin.Controls.Add(this.kryptonButtonDonate);
+			this.kryptonPageLogin.Controls.Add(this.kryptonLabelSupportNeoAxis);
 			this.kryptonPageLogin.Controls.Add(this.kryptonLabelLoginError);
 			this.kryptonPageLogin.Controls.Add(this.kryptonLabel15);
 			this.kryptonPageLogin.Controls.Add(this.kryptonLabelLicense);
@@ -517,10 +535,98 @@
 			this.kryptonPageLogin.LastVisibleSet = true;
 			this.kryptonPageLogin.MinimumSize = new System.Drawing.Size(62, 62);
 			this.kryptonPageLogin.Name = "kryptonPageLogin";
-			this.kryptonPageLogin.Size = new System.Drawing.Size(1345, 823);
+			this.kryptonPageLogin.Size = new System.Drawing.Size(1345, 789);
 			this.kryptonPageLogin.Text = "Login";
 			this.kryptonPageLogin.ToolTipTitle = "Login";
 			this.kryptonPageLogin.UniqueName = "2271C4BE75C64D08AC847F8523BAEDF0";
+			// 
+			// kryptonLabelTokenBalance
+			// 
+			this.kryptonLabelTokenBalance.Location = new System.Drawing.Point(291, 611);
+			this.kryptonLabelTokenBalance.Name = "kryptonLabelTokenBalance";
+			this.kryptonLabelTokenBalance.Size = new System.Drawing.Size(27, 26);
+			this.kryptonLabelTokenBalance.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.kryptonLabelTokenBalance.TabIndex = 39;
+			this.kryptonLabelTokenBalance.Values.Text = "0";
+			// 
+			// labelExTokenTransactions
+			// 
+			this.labelExTokenTransactions.LabelStyle = ComponentFactory.Krypton.Toolkit.LabelStyle.NormalControl;
+			this.labelExTokenTransactions.Location = new System.Drawing.Point(44, 611);
+			this.labelExTokenTransactions.Multiline = true;
+			this.labelExTokenTransactions.Name = "labelExTokenTransactions";
+			this.labelExTokenTransactions.Size = new System.Drawing.Size(152, 128);
+			this.labelExTokenTransactions.StateCommon.Back.Color1 = System.Drawing.Color.White;
+			this.labelExTokenTransactions.StateCommon.Border.Draw = ComponentFactory.Krypton.Toolkit.InheritBool.False;
+			this.labelExTokenTransactions.StateCommon.Border.DrawBorders = ((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) 
+            | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Left) 
+            | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Right)));
+			this.labelExTokenTransactions.TabIndex = 40;
+			this.labelExTokenTransactions.Text = "Transactions:\r\n";
+			// 
+			// kryptonLabel16
+			// 
+			this.kryptonLabel16.Location = new System.Drawing.Point(210, 610);
+			this.kryptonLabel16.Name = "kryptonLabel16";
+			this.kryptonLabel16.Size = new System.Drawing.Size(89, 26);
+			this.kryptonLabel16.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.kryptonLabel16.TabIndex = 38;
+			this.kryptonLabel16.Values.Text = "Balance:";
+			// 
+			// kryptonLinkLabelTokenWhatIsIt
+			// 
+			this.kryptonLinkLabelTokenWhatIsIt.Location = new System.Drawing.Point(210, 516);
+			this.kryptonLinkLabelTokenWhatIsIt.Name = "kryptonLinkLabelTokenWhatIsIt";
+			this.kryptonLinkLabelTokenWhatIsIt.OverrideFocus.DrawFocus = ComponentFactory.Krypton.Toolkit.InheritBool.False;
+			this.kryptonLinkLabelTokenWhatIsIt.Size = new System.Drawing.Size(96, 24);
+			this.kryptonLinkLabelTokenWhatIsIt.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.kryptonLinkLabelTokenWhatIsIt.TabIndex = 36;
+			this.kryptonLinkLabelTokenWhatIsIt.Values.Text = "What is it?";
+			// 
+			// kryptonLabel11
+			// 
+			this.kryptonLabel11.Location = new System.Drawing.Point(40, 465);
+			this.kryptonLabel11.Name = "kryptonLabel11";
+			this.kryptonLabel11.Size = new System.Drawing.Size(158, 27);
+			this.kryptonLabel11.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.kryptonLabel11.TabIndex = 35;
+			this.kryptonLabel11.Values.Text = "NeoAxis Tokens";
+			// 
+			// kryptonButtonTokenWithdraw
+			// 
+			this.kryptonButtonTokenWithdraw.Enabled = false;
+			this.kryptonButtonTokenWithdraw.Location = new System.Drawing.Point(44, 554);
+			this.kryptonButtonTokenWithdraw.Name = "kryptonButtonTokenWithdraw";
+			this.kryptonButtonTokenWithdraw.Size = new System.Drawing.Size(117, 32);
+			this.kryptonButtonTokenWithdraw.TabIndex = 34;
+			this.kryptonButtonTokenWithdraw.Values.Text = "Withdraw";
+			// 
+			// kryptonButtonTokenBuy
+			// 
+			this.kryptonButtonTokenBuy.Location = new System.Drawing.Point(44, 516);
+			this.kryptonButtonTokenBuy.Name = "kryptonButtonTokenBuy";
+			this.kryptonButtonTokenBuy.Size = new System.Drawing.Size(117, 32);
+			this.kryptonButtonTokenBuy.TabIndex = 32;
+			this.kryptonButtonTokenBuy.Values.Text = "Buy Tokens";
+			this.kryptonButtonTokenBuy.Click += new System.EventHandler(this.kryptonButtonTokenBuy_Click);
+			// 
+			// kryptonButtonDonate
+			// 
+			this.kryptonButtonDonate.Location = new System.Drawing.Point(44, 393);
+			this.kryptonButtonDonate.Name = "kryptonButtonDonate";
+			this.kryptonButtonDonate.Size = new System.Drawing.Size(117, 32);
+			this.kryptonButtonDonate.TabIndex = 31;
+			this.kryptonButtonDonate.Values.Text = "Make Donation";
+			this.kryptonButtonDonate.Click += new System.EventHandler(this.kryptonButtonDonate_Click);
+			// 
+			// kryptonLabelSupportNeoAxis
+			// 
+			this.kryptonLabelSupportNeoAxis.Location = new System.Drawing.Point(40, 337);
+			this.kryptonLabelSupportNeoAxis.Name = "kryptonLabelSupportNeoAxis";
+			this.kryptonLabelSupportNeoAxis.Size = new System.Drawing.Size(416, 27);
+			this.kryptonLabelSupportNeoAxis.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.kryptonLabelSupportNeoAxis.TabIndex = 30;
+			this.kryptonLabelSupportNeoAxis.Values.Text = "Support the development of NeoAxis Engine!";
 			// 
 			// kryptonLabelLoginError
 			// 
@@ -686,7 +792,7 @@
 			this.Controls.Add(this.kryptonButtonBack);
 			this.Controls.Add(this.kryptonNavigator1);
 			this.Name = "BackstageMenu";
-			this.Size = new System.Drawing.Size(1507, 825);
+			this.Size = new System.Drawing.Size(1507, 791);
 			this.Load += new System.EventHandler(this.BackstageMenu_Load);
 			this.VisibleChanged += new System.EventHandler(this.BackstageMenu_VisibleChanged);
 			((System.ComponentModel.ISupportInitialize)(this.kryptonNavigator1)).EndInit();
@@ -763,5 +869,14 @@
 		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabel19;
 		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabelInstallPlatformTools;
 		private ComponentFactory.Krypton.Toolkit.KryptonLinkLabel kryptonLinkLabel2;
+		private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonDonate;
+		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabelSupportNeoAxis;
+		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabel11;
+		private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonTokenWithdraw;
+		private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonTokenBuy;
+		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabelTokenBalance;
+		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabel16;
+		private ComponentFactory.Krypton.Toolkit.KryptonLinkLabel kryptonLinkLabelTokenWhatIsIt;
+		private LabelEx labelExTokenTransactions;
 	}
 }

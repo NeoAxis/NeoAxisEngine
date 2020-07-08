@@ -120,7 +120,11 @@ namespace NeoAxis
 			//!!!!переопределять создание мира
 
 			data.collisionConfiguration = new SoftBodyRigidBodyCollisionConfiguration();
+
+			//!!!!
+			//data.dispatcher = new CollisionDispatcherMultiThreaded( data.collisionConfiguration );
 			data.dispatcher = new CollisionDispatcher( data.collisionConfiguration );
+
 			//!!!!?
 			data.broadphase = new DbvtBroadphase();
 			//!!!!

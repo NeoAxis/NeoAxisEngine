@@ -1,0 +1,166 @@
+.component Project.MessageBoxWindow
+{
+	Text = Caption
+	Size = Units 740 270
+	HorizontalAlignment = Center
+	VerticalAlignment = Center
+	EditorScrollPosition = 0 0
+	Style
+	{
+		GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+	}
+	.component NeoAxis.UIText
+	{
+		Name = Text
+		Text = Text text text text text text text text text text text text text text text. Text text text text text text text text text text text text text text text.
+		Size = Units 660 100
+		HorizontalAlignment = Center
+		Margin = Units 20 70 20 0
+		EditorScrollPosition = 0 0
+		WordWrap = True
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button 1 Set 1
+		Text = 1 Set 1
+		Size = Units 200 40
+		HorizontalAlignment = Center
+		Margin = Units 150 200 150 0
+		EditorScrollPosition = 0 0
+		.component NeoAxis.Component_EventHandler
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:Button_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button 2 Set 1
+		Text = 2 Set 1
+		Size = Units 200 40
+		HorizontalAlignment = Center
+		Margin = Units 40 200 260 0
+		EditorScrollPosition = 0 0
+		.component NeoAxis.Component_EventHandler
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:Button_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button 3 Set 1
+		Text = 3 Set 1
+		Size = Units 200 40
+		HorizontalAlignment = Center
+		Margin = Units -70 200 380 0
+		EditorScrollPosition = 0 0
+		.component NeoAxis.Component_EventHandler
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:Button_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button 3 Set 2
+		Text = 3 Set 2
+		Size = Units 200 40
+		HorizontalAlignment = Center
+		Margin = Units 160 200 150 0
+		EditorScrollPosition = 0 0
+		.component NeoAxis.Component_EventHandler
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:Button_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button 3 Set 3
+		Text = 3 Set 3
+		Size = Units 200 40
+		HorizontalAlignment = Center
+		Margin = Units 380 200 -60 0
+		EditorScrollPosition = 0 0
+		.component NeoAxis.Component_EventHandler
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:Button_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button 2 Set 2
+		Text = 2 Set 2
+		Size = Units 200 40
+		HorizontalAlignment = Center
+		Margin = Units 260 200 40 0
+		EditorScrollPosition = 0 0
+		.component NeoAxis.Component_EventHandler
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:Button_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+}

@@ -95,5 +95,29 @@ namespace NeoAxis
 			catch { }
 		}
 
+		/// <summary>
+		/// Reads a value from \'ProjectSettings.component\' without loading it as component. The method can be used to load data before engine initialized.
+		/// </summary>
+		/// <param name="parameter"></param>
+		/// <returns></returns>
+		public static string ReadParameterFromFile( string parameter )
+		{
+			if( VirtualFile.Exists( FileName ) )
+			{
+				try
+				{
+					var key = parameter + " = ";
+
+					foreach( var line in VirtualFile.ReadAllLines( FileName ) )
+					{
+						var index = line.IndexOf( key );
+						if( index != -1 )
+							return line.Substring( index + key.Length );
+					}
+				}
+				catch { }
+			}
+			return "";
+		}
 	}
 }

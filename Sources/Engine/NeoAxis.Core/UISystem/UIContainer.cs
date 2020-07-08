@@ -24,7 +24,7 @@ namespace NeoAxis
 		string currentCursor;
 		bool drawCursorWithPerPixelAccuracy = true;
 
-		//UIControl cachedTopMouseCoversControl;
+		List<UIControl> cachedCoverControls = new List<UIControl>();
 
 		internal Vector2 controlManagerMousePosition;
 
@@ -58,24 +58,51 @@ namespace NeoAxis
 			get { return viewport; }
 		}
 
-		public UIControl GetTopMouseCoversControl( bool dropCache )
+		void UpdateCachedCoverControls()
 		{
-			//!!!!
-			return null;
-			//if( dropCache )
-			//	cachedTopMouseCoversControl = base.GetTopMouseCoversControlRecursive();
-			//return cachedTopMouseCoversControl;
+			cachedCoverControls.Clear();
+			int counter = 0;
+
+			foreach( var control in GetComponents<UIControl>( false, true, true ) )
+			{
+				if( control.VisibleInHierarchy )
+				{
+					control.cachedIndexInHierarchyToImplementCovering = counter;
+					counter++;
+
+					if( control.CoverOtherControls != CoverOtherControlsEnum.None )
+						cachedCoverControls.Add( control );
+				}
+			}
 		}
 
-		void UpdateTopMouseCoversControl()
+		public bool IsControlCursorCoveredByOther( UIControl controlToCheck )
 		{
-			GetTopMouseCoversControl( true );
+			if( cachedCoverControls.Count != 0 )
+			{
+				foreach( var cachedControl in cachedCoverControls )
+				{
+					//check control before
+					if( controlToCheck.cachedIndexInHierarchyToImplementCovering < cachedControl.cachedIndexInHierarchyToImplementCovering )
+					{
+						//check control is not child
+						if( !controlToCheck.GetAllParents( false ).Contains( controlToCheck ) )
+						{
+							if( cachedControl.CoverOtherControls == CoverOtherControlsEnum.AllPreviousInHierarchy )
+								return true;
+							if( cachedControl.GetScreenRectangle().Contains( MousePosition ) )
+								return true;
+						}
+					}
+				}
+			}
+			return false;
 		}
 
 		public bool PerformKeyDown( KeyEvent e )
 		{
 			CheckCachedParameters();
-			UpdateTopMouseCoversControl();
+			UpdateCachedCoverControls();
 
 			if( capturedControl != null && capturedControl.ParentContainer == null )
 				capturedControl = null;
@@ -91,7 +118,7 @@ namespace NeoAxis
 		public bool PerformKeyPress( KeyPressEvent e )
 		{
 			CheckCachedParameters();
-			UpdateTopMouseCoversControl();
+			UpdateCachedCoverControls();
 
 			if( capturedControl != null && capturedControl.ParentContainer == null )
 				capturedControl = null;
@@ -107,7 +134,7 @@ namespace NeoAxis
 		public bool PerformKeyUp( KeyEvent e )
 		{
 			CheckCachedParameters();
-			UpdateTopMouseCoversControl();
+			UpdateCachedCoverControls();
 
 			if( capturedControl != null && capturedControl.ParentContainer == null )
 				capturedControl = null;
@@ -125,7 +152,7 @@ namespace NeoAxis
 		public bool PerformMouseDown( EMouseButtons button )
 		{
 			CheckCachedParameters();
-			UpdateTopMouseCoversControl();
+			UpdateCachedCoverControls();
 
 			if( capturedControl != null && capturedControl.ParentContainer == null )
 				capturedControl = null;
@@ -146,7 +173,7 @@ namespace NeoAxis
 		public bool PerformMouseUp( EMouseButtons button )
 		{
 			CheckCachedParameters();
-			UpdateTopMouseCoversControl();
+			UpdateCachedCoverControls();
 
 			if( capturedControl != null && capturedControl.ParentContainer == null )
 				capturedControl = null;
@@ -162,7 +189,7 @@ namespace NeoAxis
 		public bool PerformMouseDoubleClick( EMouseButtons button )
 		{
 			CheckCachedParameters();
-			UpdateTopMouseCoversControl();
+			UpdateCachedCoverControls();
 
 			if( capturedControl != null && capturedControl.ParentContainer == null )
 				capturedControl = null;
@@ -178,7 +205,7 @@ namespace NeoAxis
 		public void PerformMouseMove( Vector2 mouse )
 		{
 			CheckCachedParameters();
-			UpdateTopMouseCoversControl();
+			UpdateCachedCoverControls();
 
 			if( capturedControl != null && capturedControl.ParentContainer == null )
 				capturedControl = null;
@@ -200,7 +227,7 @@ namespace NeoAxis
 		public bool PerformMouseWheel( int delta )
 		{
 			CheckCachedParameters();
-			UpdateTopMouseCoversControl();
+			UpdateCachedCoverControls();
 
 			if( capturedControl != null && capturedControl.ParentContainer == null )
 				capturedControl = null;
@@ -216,7 +243,7 @@ namespace NeoAxis
 		public bool PerformJoystickEvent( JoystickInputEvent e )
 		{
 			CheckCachedParameters();
-			UpdateTopMouseCoversControl();
+			UpdateCachedCoverControls();
 
 			if( capturedControl != null && capturedControl.ParentContainer == null )
 				capturedControl = null;
@@ -232,7 +259,7 @@ namespace NeoAxis
 		public bool PerformTouchEvent( TouchEventData e )
 		{
 			CheckCachedParameters();
-			UpdateTopMouseCoversControl();
+			UpdateCachedCoverControls();
 
 			if( capturedControl != null && capturedControl.ParentContainer == null )
 				capturedControl = null;
@@ -248,7 +275,7 @@ namespace NeoAxis
 		public bool PerformSpecialInputDeviceEvent( InputEvent e )
 		{
 			CheckCachedParameters();
-			UpdateTopMouseCoversControl();
+			UpdateCachedCoverControls();
 
 			if( capturedControl != null && capturedControl.ParentContainer == null )
 				capturedControl = null;
@@ -266,7 +293,7 @@ namespace NeoAxis
 			base.OnUpdate_Before( delta );
 
 			CheckCachedParameters();
-			UpdateTopMouseCoversControl();
+			UpdateCachedCoverControls();
 
 			if( capturedControl != null && capturedControl.ParentContainer == null )
 				capturedControl = null;
@@ -368,7 +395,7 @@ namespace NeoAxis
 		public void PerformRenderUI( CanvasRenderer renderer )
 		{
 			CheckCachedParameters();
-			UpdateTopMouseCoversControl();
+			UpdateCachedCoverControls();
 
 			OnRenderUIWithChildren_NonTopMostMode( renderer );
 			OnRenderUIWithChildren_TopMostMode( renderer, false );

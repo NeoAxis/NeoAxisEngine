@@ -53,6 +53,8 @@ namespace NeoAxis.Editor
 				kryptonLabelEngineVersion.Text = version;
 			}
 			catch { }
+
+			kryptonLinkLabelTokenWhatIsIt.LinkClicked += KryptonLinkLabelTokenWhatIsIt_LinkClicked;
 		}
 
 		public void SelectDefaultPage()
@@ -110,6 +112,12 @@ namespace NeoAxis.Editor
 
 				kryptonLabelLoginError.StateCommon.ShortText.Color1 = Color.Red;
 				kryptonLabelInstallPlatformTools.StateCommon.ShortText.Color1 = Color.Red;
+
+				labelExTokenTransactions.StateCommon.Back.Color1 = Color.FromArgb( 40, 40, 40 );
+
+				kryptonLinkLabelTokenWhatIsIt.LabelStyle = LabelStyle.Custom1;
+				kryptonLinkLabelTokenWhatIsIt.StateCommon.ShortText.Color1 = Color.FromArgb( 0, 110, 190 );
+				//kryptonLinkLabelTokenWhatIsIt.StateCommon.ShortText.Color1 = Color.FromArgb( 230, 230, 230 );
 			}
 
 			//translate
@@ -710,13 +718,16 @@ namespace NeoAxis.Editor
 
 			{
 				string text;
+				string tokenTransactions = "";
 				string error = "";
 				if( LoginUtility.GetCurrentLicense( out var email, out var hash ) )
 				{
 					text = email;
-					if( LoginUtility.GetRequestedFullLicenseInfo( out var license, out var error2 ) )
+					if( LoginUtility.GetRequestedFullLicenseInfo( out var license, out tokenTransactions, out var error2 ) )
 					{
-						text += " " + license;
+						text += " ";//+ license;
+						if( !string.IsNullOrEmpty( license ) )
+							text += " You are awesome!";
 						error = error2;
 					}
 				}
@@ -725,6 +736,30 @@ namespace NeoAxis.Editor
 
 				kryptonLabelLicense.Text = text;
 				kryptonLabelLoginError.Text = error;
+
+				labelExTokenTransactions.Text = "Transactions:";
+				kryptonLabelTokenBalance.Text = "0";
+
+				try
+				{
+					//  "07/01/2020 +200|07/02/2020 +500"
+
+					double balance = 0;
+
+					foreach( var s in tokenTransactions.Split( new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries ) )
+					{
+						var s2 = s.Split( new char[] { ' ' } );
+						var v = double.Parse( s2[ 1 ] );
+						balance += v;
+					}
+
+					labelExTokenTransactions.Text = "Transactions:\r\n" + tokenTransactions.Replace( "|", "\r\n" );
+					kryptonLabelTokenBalance.Text = balance.ToString( "F0" );
+				}
+				catch( Exception e )
+				{
+					Log.Warning( e.Message );
+				}
 			}
 
 			{
@@ -760,6 +795,21 @@ namespace NeoAxis.Editor
 		{
 			var path = Path.Combine( VirtualFileSystem.Directories.EngineInternal, "Platforms", platform.ToString() );
 			return Directory.Exists( path );
+		}
+
+		private void kryptonButtonDonate_Click( object sender, EventArgs e )
+		{
+			Process.Start( "https://www.neoaxis.com/support/donate" );
+		}
+
+		private void KryptonLinkLabelTokenWhatIsIt_LinkClicked( object sender, EventArgs e )
+		{
+			Process.Start( "https://www.neoaxis.com/neoaxis/token" );
+		}
+
+		private void kryptonButtonTokenBuy_Click( object sender, EventArgs e )
+		{
+			Process.Start( "https://www.neoaxis.com/neoaxis/token" );
 		}
 	}
 }

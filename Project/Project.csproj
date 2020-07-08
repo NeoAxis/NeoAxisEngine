@@ -66,6 +66,8 @@
     <Compile Include="Assets\Base\UI\Screens\SplashScreen.cs" />
     <Compile Include="Assets\Base\Scripts\ProjectAssembly.cs" />
     <Compile Include="Assets\Base\UI\Styles\UIStyleSimple.cs" />
+    <Compile Include="Assets\Base\UI\Windows\MessageBoxWindow.cs" />
+    <Compile Include="Assets\Samples\Sample Window App\SampleAppMainForm.cs" />
     <Compile Include="Assets\Samples\Simple Game\SimpleGameGUI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

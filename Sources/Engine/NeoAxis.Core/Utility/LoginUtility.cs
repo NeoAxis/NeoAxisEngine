@@ -23,6 +23,7 @@ namespace NeoAxis
 		const string registryPath = @"SOFTWARE\NeoAxis";
 
 		static volatile string requestedFullLicenseInfo_License = "";
+		static volatile string requestedFullLicenseInfo_TokenTransactions = "";
 		static volatile string requestedFullLicenseInfo_Error = "";
 		//static double licenseInfoLastUpdateTime;
 		//static bool licenseInfoPro;
@@ -107,31 +108,51 @@ namespace NeoAxis
 				string data = $"email={email64}&hash={hash64}";
 				byte[] dataStream = Encoding.UTF8.GetBytes( data );
 
-				WebRequest request = WebRequest.Create( @"https://www.neoaxis.com/api/get_license" );
-				request.Method = "POST";
-				request.ContentType = "application/x-www-form-urlencoded";
-				request.ContentLength = dataStream.Length;
-				Stream newStream = request.GetRequestStream();
-				newStream.Write( dataStream, 0, dataStream.Length );
-				newStream.Close();
-
-				string text;
-				using( var response = (HttpWebResponse)request.GetResponse() )
-				using( var stream = response.GetResponseStream() )
-				using( var reader = new StreamReader( stream ) )
-					text = reader.ReadToEnd();
-
-				requestedFullLicenseInfo_Error = "";
-				if( text.Contains( "Pro" ) )
-					requestedFullLicenseInfo_License = "Pro";
-				else if( text.Contains( "Personal" ) )
-					requestedFullLicenseInfo_License = "Personal";
-				else if( !string.IsNullOrEmpty( text ) )
-					requestedFullLicenseInfo_License = text;
-				else
 				{
-					requestedFullLicenseInfo_License = "";
-					requestedFullLicenseInfo_Error = "Invalid username or password.";
+					WebRequest request = WebRequest.Create( @"https://www.neoaxis.com/api/get_license" );
+					request.Method = "POST";
+					request.ContentType = "application/x-www-form-urlencoded";
+					request.ContentLength = dataStream.Length;
+					Stream newStream = request.GetRequestStream();
+					newStream.Write( dataStream, 0, dataStream.Length );
+					newStream.Close();
+
+					string text;
+					using( var response = (HttpWebResponse)request.GetResponse() )
+					using( var stream = response.GetResponseStream() )
+					using( var reader = new StreamReader( stream ) )
+						text = reader.ReadToEnd();
+
+					requestedFullLicenseInfo_Error = "";
+					if( text.Contains( "Pro" ) )
+						requestedFullLicenseInfo_License = "Pro";
+					else if( text.Contains( "Personal" ) )
+						requestedFullLicenseInfo_License = "Personal";
+					else if( !string.IsNullOrEmpty( text ) )
+						requestedFullLicenseInfo_License = text;
+					else
+					{
+						requestedFullLicenseInfo_License = "";
+						requestedFullLicenseInfo_Error = "Invalid username or password.";
+					}
+				}
+
+				{
+					WebRequest request = WebRequest.Create( @"https://www.neoaxis.com/api/get_token_transactions" );
+					request.Method = "POST";
+					request.ContentType = "application/x-www-form-urlencoded";
+					request.ContentLength = dataStream.Length;
+					Stream newStream = request.GetRequestStream();
+					newStream.Write( dataStream, 0, dataStream.Length );
+					newStream.Close();
+
+					string text;
+					using( var response = (HttpWebResponse)request.GetResponse() )
+					using( var stream = response.GetResponseStream() )
+					using( var reader = new StreamReader( stream ) )
+						text = reader.ReadToEnd();
+
+					requestedFullLicenseInfo_TokenTransactions = text;
 				}
 
 				//SaveLicenseCertificate2();
@@ -143,6 +164,7 @@ namespace NeoAxis
 		public static void RequestFullLicenseInfo()
 		{
 			requestedFullLicenseInfo_License = "";
+			requestedFullLicenseInfo_TokenTransactions = "";
 
 			if( !GetCurrentLicense( out var email, out var hash ) )
 				return;
@@ -155,11 +177,12 @@ namespace NeoAxis
 			thread1.Start( param );
 		}
 
-		public static bool GetRequestedFullLicenseInfo( out string license, out string error )
+		public static bool GetRequestedFullLicenseInfo( out string license, out string tokenTransactions, out string error )
 		{
 			if( !string.IsNullOrEmpty( requestedFullLicenseInfo_License ) || !string.IsNullOrEmpty( requestedFullLicenseInfo_Error ) )
 			{
 				license = requestedFullLicenseInfo_License;
+				tokenTransactions = requestedFullLicenseInfo_TokenTransactions;
 				error = requestedFullLicenseInfo_Error;
 				//pro = requestedFullLicenseInfo_License.Contains( "Pro" );
 				return true;
@@ -167,6 +190,7 @@ namespace NeoAxis
 			else
 			{
 				license = "";
+				tokenTransactions = "";
 				error = "";
 				//pro = false;
 				return false;

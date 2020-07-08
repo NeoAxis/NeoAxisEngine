@@ -232,6 +232,8 @@ namespace NeoAxis
 			//default behavior
 			if( createdViewport != null && createdViewport.AttachedScene != null )
 			{
+				var scene = createdViewport.AttachedScene;
+
 				//Camera property
 				{
 					var camera = Camera.Value;
@@ -242,7 +244,16 @@ namespace NeoAxis
 				//CameraByName property
 				if( !string.IsNullOrEmpty( CameraByName ) )
 				{
-					var camera = createdViewport.AttachedScene.GetComponent( CameraByName, onlyEnabledInHierarchy: true ) as Component_Camera;
+					var camera = scene.GetComponent( CameraByName, onlyEnabledInHierarchy: true ) as Component_Camera;
+					if( camera != null )
+						return camera;
+				}
+
+				//use default camera of the scene
+				{
+					var camera = scene.CameraDefault.Value;
+					if( camera == null )
+						camera = scene.Mode.Value == Component_Scene.ModeEnum._2D ? scene.CameraEditor2D : scene.CameraEditor;
 					if( camera != null )
 						return camera;
 				}

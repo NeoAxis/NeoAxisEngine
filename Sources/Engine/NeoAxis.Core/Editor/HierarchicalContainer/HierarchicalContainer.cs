@@ -982,6 +982,21 @@ namespace NeoAxis.Editor
 			return itemType;
 		}
 
+		[DllImport( "user32.dll" )]
+		private static extern IntPtr WindowFromPoint( Point pnt );
+
+		bool IsChildOrThis( Control control )
+		{
+			var p = control;
+			while( p != null )
+			{
+				if( p == this )
+					return true;
+				p = p.Parent;
+			}
+			return false;
+		}
+
 		bool IMessageFilter.PreFilterMessage( ref Message m )
 		{
 			if( !Enabled || !Visible || IsDisposed )
@@ -1005,6 +1020,14 @@ namespace NeoAxis.Editor
 						return false;
 					if( foundControl == engineScrollBar1 )
 						return false;
+
+					var windowOverCursor = WindowFromPoint( pos );
+					if( windowOverCursor != IntPtr.Zero )
+					{
+						var controlOverCursor = FromHandle( windowOverCursor );
+						if( !IsChildOrThis( controlOverCursor ) )
+							return false;
+					}
 
 					//!!!!было
 					//if( !( foundControl is IHCProperty ) )

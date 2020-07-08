@@ -829,6 +829,7 @@ namespace NeoAxis
 			bool showMaximized = !EngineApp.FullscreenEnabled &&
 				EngineApp.InitSettings.CreateWindowState.Value == EngineApp.WindowStateEnum.Maximized &&
 				!EngineApp.InitSettings.MultiMonitorMode.Value;
+			bool showMinimized = EngineApp.InitSettings.CreateWindowState.Value == EngineApp.WindowStateEnum.Minimized;
 			//bool showMaximized = !App.FullScreenEnabled && App.VideoMode == GetScreenSize() && !EngineApp.InitializationParameters.MultiMonitorMode;
 
 			Vector2I position;
@@ -871,6 +872,8 @@ namespace NeoAxis
 
 			if( showMaximized )
 				ShowWindow( windowHandle, SW_SHOWMAXIMIZED );
+			if( showMinimized )
+				ShowWindow( windowHandle, SW_SHOWMINIMIZED );
 
 			SetForegroundWindow( windowHandle );
 			SetFocus( windowHandle );

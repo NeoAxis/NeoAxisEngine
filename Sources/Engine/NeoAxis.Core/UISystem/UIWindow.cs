@@ -38,9 +38,9 @@ namespace NeoAxis
 			Size = new UIMeasureValueVector2( UIMeasure.Units, 800, 600 );
 		}
 
-
-
-		//!!!!cover
-
+		public override CoverOtherControlsEnum CoverOtherControls
+		{
+			get { return CoverOtherControlsEnum.OnlyBehind; }
+		}
 	}
 }

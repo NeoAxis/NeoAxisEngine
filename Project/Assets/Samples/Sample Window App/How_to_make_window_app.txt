@@ -1,0 +1,18 @@
+You can develop window apps with NeoAxis Engine.
+
+NeoAxis.Player.exe is an application intended to execute app.
+
+Initial setup 
+--------------------------------
+
+1. In the project settings set 'Initial UI Screen' to 'Samples\Sample Window App\SampleAppMainForm.ui'.
+Now you can Run Player to see the form.
+
+2. Also set 'Window State', 'Window Size' to configure app window settings.
+
+
+You can programming inside the editor. Make GUI, event handlers.
+
+
+
+If you want rename NeoAxis.Player.exe you can do it by changing sources in 'Project\Sources\NeoAxis.Player'.

@@ -97,32 +97,14 @@ namespace NeoAxis
 			return base.OnMouseUp( button );
 		}
 
-		//!!!!
-		bool IsTheRoot( UIControl control )
-		{
-			UIControl c = ParentControl;
-			while( c != null )
-			{
-				if( c == control )
-					return true;
-				c = c.ParentControl;
-			}
-			return false;
-		}
-
 		bool CursorIsInArea()
 		{
 			//control rectangle
 			if( !( new Rectangle( Vector2.Zero, new Vector2( 1, 1 ) ) ).Contains( MousePosition ) )
 				return false;
 
-			UIControl cover = ParentContainer?.GetTopMouseCoversControl( false );
-			if( cover != null )
-			{
-				//!!!!!strange
-				if( !IsTheRoot( cover ) )
-					return false;
-			}
+			if( ParentContainer != null && ParentContainer.IsControlCursorCoveredByOther( this ) )
+				return false;
 
 			return true;
 		}

@@ -74,6 +74,8 @@ namespace NeoAxis
 		//Vec2? cachedScreenPosition;
 		//Vec2? cachedScreenSize;
 
+		internal int cachedIndexInHierarchyToImplementCovering;
+
 		///////////////////////////////////////////
 
 		/// <summary>
@@ -167,12 +169,26 @@ namespace NeoAxis
 			}
 		}
 
+		public enum CoverOtherControlsEnum
+		{
+			None,
+			AllPreviousInHierarchy,
+			OnlyBehind,
+		}
+
 		//!!!!
 		[Browsable( false )]
-		bool MouseCover
+		public virtual CoverOtherControlsEnum CoverOtherControls
 		{
-			get { return false; }
+			get { return CoverOtherControlsEnum.None; }
 		}
+
+		////!!!!
+		//[Browsable( false )]
+		//protected virtual bool MouseCover
+		//{
+		//	get { return false; }
+		//}
 		////!!!!name: InputCover?
 		//[DefaultValue( false )]
 		//[Category( "Not Refactored" )]//[Category( "Common" )]
@@ -1378,7 +1394,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		//!!!!
+		////!!!!
 		//internal UIControl GetTopMouseCoversControlRecursive()
 		//{
 		//	//!!!!GetComponentsSortedByZOrder
@@ -1392,6 +1408,12 @@ namespace NeoAxis
 		//		}
 		//	}
 
+		//	//if( CoverOtherControls == CoverOtherControlsEnum.OnlyBehind && ( new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) || MouseRelativeMode ) )
+		//	//	return true;
+		//	//if( CoverOtherControls == CoverOtherControlsEnum.AllPreviousInHierarchy )
+		//	//	return true;
+
+		//	//!!!!
 		//	if( MouseCover && new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) )
 		//		return this;
 
@@ -1581,7 +1603,9 @@ namespace NeoAxis
 					return true;
 			}
 
-			if( MouseCover && ( new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) || MouseRelativeMode ) )
+			if( CoverOtherControls == CoverOtherControlsEnum.OnlyBehind && ( new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) || MouseRelativeMode ) )
+				return true;
+			if( CoverOtherControls == CoverOtherControlsEnum.AllPreviousInHierarchy )
 				return true;
 
 			return false;
@@ -1664,7 +1688,9 @@ namespace NeoAxis
 					return true;
 			}
 
-			if( MouseCover && ( new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) || MouseRelativeMode ) )
+			if( CoverOtherControls == CoverOtherControlsEnum.OnlyBehind && ( new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) || MouseRelativeMode ) )
+				return true;
+			if( CoverOtherControls == CoverOtherControlsEnum.AllPreviousInHierarchy )
 				return true;
 
 			return false;

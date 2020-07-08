@@ -94,6 +94,7 @@
     </Reference>
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Android\Managed\System.Windows.Forms.dll</HintPath>
@@ -226,19 +227,19 @@
     <Compile Include="Components\Import3D\Assimp\ImportAssimp.cs" />
     <Compile Include="Components\Import3D\Component_Import3D.cs" />
     <Compile Include="Components\Import3D\Component_Import3D_DocumentWindow.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Components\Import3D\Component_Import3D_DocumentWindow.designer.cs">
       <DependentUpon>Component_Import3D_DocumentWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Components\Import3D\Component_Import3D_PreviewControl.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Components\Import3D\Component_Import3D_PreviewControl.designer.cs">
       <DependentUpon>Component_Import3D_PreviewControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Components\Import3D\Component_Import3D_SettingsCell.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Components\Import3D\FBX\AnimationTrackInfo.cs" />
     <Compile Include="Components\Import3D\FBX\CalcMiscProcess.cs" />
@@ -428,11 +429,11 @@
     <Compile Include="Components\Rendering\Component_RenderingEffect.cs" />
     <Compile Include="Components\Rendering\Component_RenderingEffect_CodeGenerated.cs" />
     <Compile Include="Components\Rendering\Component_RenderingEffect_CodeGenerated_SettingsCell.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Components\Rendering\Component_RenderingEffect_Simple.cs" />
     <Compile Include="Components\Rendering\Component_RenderingEffect_Simple_SettingsCell.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Components\Rendering\Component_RenderingPipeline.cs" />
     <Compile Include="Components\Rendering\Effects\AmbientOcclusion.cs" />
@@ -507,13 +508,13 @@
     <Compile Include="Components\Sprite\Component_SpriteAnimation.cs" />
     <Compile Include="Components\Sprite\Component_SpriteAnimationController.cs" />
     <Compile Include="Components\Sprite\Component_Sprite_DocumentWindow.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Components\Sprite\Component_Sprite_DocumentWindow.designer.cs">
       <DependentUpon>Component_Sprite_DocumentWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Components\Sprite\Component_Sprite_PreviewControl.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Components\Sprite\Component_Sprite_PreviewControl.designer.cs">
       <DependentUpon>Component_Sprite_PreviewControl.cs</DependentUpon>
@@ -895,7 +896,7 @@
       <DependentUpon>ObjectSettingsHeader.cs</DependentUpon>
     </Compile>
     <Compile Include="Editor\ObjectSettingsHeader_ObjectInfo.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Editor\ObjectSettingsHeader_ObjectInfo.designer.cs">
       <DependentUpon>ObjectSettingsHeader_ObjectInfo.cs</DependentUpon>
@@ -1010,7 +1011,7 @@
       <DependentUpon>SettingsCellProcedureUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Editor\SettingsCell_Properties.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Editor\SettingsCell_Properties.designer.cs">
       <DependentUpon>SettingsCell_Properties.cs</DependentUpon>
@@ -1022,13 +1023,13 @@
       <DependentUpon>SettingsHeader.cs</DependentUpon>
     </Compile>
     <Compile Include="Editor\SettingsHeader_Components.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Editor\SettingsHeader_Components.designer.cs">
       <DependentUpon>SettingsHeader_Components.cs</DependentUpon>
     </Compile>
     <Compile Include="Editor\SettingsHeader_ObjectInfo.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Editor\SettingsHeader_ObjectInfo.designer.cs">
       <DependentUpon>SettingsHeader_ObjectInfo.cs</DependentUpon>
@@ -3142,14 +3143,14 @@
     <Compile Include="Project settings\Component_ProjectSettings_PageBasic.cs" />
     <Compile Include="Project settings\HCItemProjectRibbonAndToolbarActions.cs" />
     <Compile Include="Project settings\HCItemProjectRibbonAndToolbarActionsForm.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Project settings\HCItemProjectRibbonAndToolbarActionsForm.Designer.cs">
       <DependentUpon>HCItemProjectRibbonAndToolbarActionsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Project settings\HCItemProjectShortcuts.cs" />
     <Compile Include="Project settings\HCItemProjectShortcutsForm.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Project settings\HCItemProjectShortcutsForm.Designer.cs">
       <DependentUpon>HCItemProjectShortcutsForm.cs</DependentUpon>
@@ -3315,13 +3316,13 @@
     <Compile Include="Utility\WindowsClipboard.cs" />
     <Compile Include="Utility\XmlDocumentationFiles.cs" />
     <Compile Include="WinForms\EngineViewportControl.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="WinForms\EngineViewportControl.designer.cs">
       <DependentUpon>EngineViewportControl.cs</DependentUpon>
     </Compile>
     <Compile Include="WinForms\EUserControl.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="WinForms\EUserControl.designer.cs">
       <DependentUpon>EUserControl.cs</DependentUpon>
