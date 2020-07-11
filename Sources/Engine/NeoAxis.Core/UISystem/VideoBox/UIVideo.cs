@@ -14,7 +14,7 @@ namespace NeoAxis
 	//!!!!пропадает картинка при паузе
 
 	/// <summary>
-	/// The control for video playback.
+	/// The control for video playback. Ogg theora format is supported.
 	/// </summary>
 	public class UIVideo : UIControl
 	{
@@ -27,7 +27,7 @@ namespace NeoAxis
 		///////////////////////////////////////////
 
 		/// <summary>
-		/// The source video file.
+		/// The source video file. Ogg theora format is supported.
 		/// </summary>
 		[DefaultValue( null )]
 		public Reference<ReferenceValueType_Resource> FileName
