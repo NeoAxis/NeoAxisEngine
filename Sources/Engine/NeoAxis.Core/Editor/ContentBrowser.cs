@@ -2227,7 +2227,7 @@ namespace NeoAxis.Editor
 					return item;
 				}
 
-				var newRoots = new List<Item>();
+				//var newRoots = new List<Item>();
 
 				foreach( var item in ResourcesWindowItems.Items )
 				{
@@ -2295,7 +2295,7 @@ namespace NeoAxis.Editor
 							if( n == 0 )
 							{
 								roots.Add( browserItem );
-								newRoots.Add( browserItem );
+								//newRoots.Add( browserItem );
 							}
 						}
 					}
@@ -2676,6 +2676,9 @@ namespace NeoAxis.Editor
 				dataItem.expandAtStartup = true;
 				if( Mode == ModeEnum.SetReference && setReferenceModeData.selectTypeWindow )
 					dataItem.expandAtStartup = false;
+
+				if( FilteringMode != null && FilteringMode.ExpandAllFileItemsAtStartup )
+					dataItem.expandAllAtStartup = true;
 			}
 			if( dataItem != null )
 				roots.Add( dataItem );

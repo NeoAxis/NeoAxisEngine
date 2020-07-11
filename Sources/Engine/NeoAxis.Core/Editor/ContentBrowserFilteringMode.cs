@@ -29,6 +29,8 @@ namespace NeoAxis.Editor
 		public virtual string[] FileSearchPatterns { get { return null; } }
 		public virtual bool HideDirectoriesWithoutItems { get { return false; } }
 
+		public virtual bool ExpandAllFileItemsAtStartup { get { return false; } }
+
 		public virtual bool AddItem( ContentBrowser.Item item ) { return true; }
 	}
 }
