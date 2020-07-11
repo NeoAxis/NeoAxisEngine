@@ -220,7 +220,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)bgfx-shared-libDebug.pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>gdi32.lib;psapi.lib;NativeMemoryManager.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gdi32.lib;psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bgfx-shared-libDebug.dll</OutputFile>
       <AdditionalLibraryDirectories>..\..\..\3rdparty\lib\win64_vs2017-winstore100;..\..\..\..\..\..\Lib\UWP\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\..\win64_vs2017-winstore100\bin\bgfx-shared-libDebug.lib</ImportLibrary>

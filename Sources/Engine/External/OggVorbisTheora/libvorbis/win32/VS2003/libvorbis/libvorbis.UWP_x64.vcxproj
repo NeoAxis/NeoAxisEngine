@@ -63,7 +63,7 @@
       <AdditionalDependencies>WindowsApp.lib;%(AdditionalDependencies);NativeMemoryManager.lib;libogg.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(OutDir)$(TargetName).lib $(SolutionDir)Engine\Lib\UWP\$(Platform)
+      <Command>copy "$(OutDir)$(TargetName).lib" "$(SolutionDir)Engine\Lib\UWP\$(Platform)"
 rem copy $(OutDir)$(TargetName)$(TargetExt) "..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
