@@ -501,8 +501,15 @@ namespace NeoAxis.Editor
 			{
 				var realFileName = VirtualPathUtility.GetRealPathByVirtual( info.OpenAfterInstall );
 
-				EditorAPI.SelectFilesOrDirectoriesInMainResourcesWindow( new string[] { realFileName }, Directory.Exists( realFileName ) );
-				EditorAPI.OpenFileAsDocument( realFileName, true, true );
+				if( info.MustRestart )
+				{
+					EditorSettingsSerialization.OpenFileAtStartup = realFileName;
+				}
+				else
+				{
+					EditorAPI.SelectFilesOrDirectoriesInMainResourcesWindow( new string[] { realFileName }, Directory.Exists( realFileName ) );
+					EditorAPI.OpenFileAsDocument( realFileName, true, true );
+				}
 			}
 
 			ScreenNotifications.Show( EditorLocalization.Translate( "General", "The package has been successfully installed." ) );

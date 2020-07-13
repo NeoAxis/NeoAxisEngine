@@ -468,7 +468,11 @@ namespace NeoAxis.Editor
 		{
 			buttonCreate.Enabled = IsReadyToCreate( out string reason );
 			buttonCreateAndClose.Enabled = buttonCreate.Enabled;
-			labelError.Text = reason;
+
+			if( DisableUnableToCreateReason )
+				labelError.Text = "";
+			else
+				labelError.Text = reason;
 		}
 
 		public Control AddCell( Type cellClass )//, bool getIfAlreadyCreated )
@@ -792,11 +796,19 @@ namespace NeoAxis.Editor
 			{
 				//!!!!не обязательно основное окно
 
-				//select new file in Resources window
-				EditorAPI.SelectFilesOrDirectoriesInMainResourcesWindow( new string[] { realFileName } );
+				EditorAPI.GetRestartApplication( out var needRestart, out _ );
+				if( needRestart )
+				{
+					EditorSettingsSerialization.OpenFileAtStartup = realFileName;
+				}
+				else
+				{
+					//select new file in Resources window
+					EditorAPI.SelectFilesOrDirectoriesInMainResourcesWindow( new string[] { realFileName } );
 
-				//open file
-				EditorAPI.OpenFileAsDocument( realFileName, true, true );
+					//open file
+					EditorAPI.OpenFileAsDocument( realFileName, true, true );
+				}
 			}
 			else
 			{
@@ -965,5 +977,9 @@ namespace NeoAxis.Editor
 				//browser.SaveSettings( browserBlock );
 			}
 		}
+
+		[Browsable( false )]
+		public bool DisableUnableToCreateReason { get; set; }
+
 	}
 }

@@ -660,6 +660,7 @@ namespace NeoAxis
 		public event Action<Component_ProjectSettings> WindowStateChanged;
 		ReferenceField<WindowStateEnum> _windowState = WindowStateEnum.Auto;
 
+		public static Vector2I WindowSizeDefault = new Vector2I( 1300, 900 );
 		/// <summary>
 		/// The initial window size of the project window for Normal window state.
 		/// </summary>
@@ -672,7 +673,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="WindowSize"/> property value changes.</summary>
 		public event Action<Component_ProjectSettings> WindowSizeChanged;
-		ReferenceField<Vector2I> _windowSize = new Vector2I( 1300, 900 );
+		ReferenceField<Vector2I> _windowSize = WindowSizeDefault;
 
 		/////////////////////////////////////////
 

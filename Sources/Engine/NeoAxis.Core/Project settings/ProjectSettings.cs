@@ -100,7 +100,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="parameter"></param>
 		/// <returns></returns>
-		public static string ReadParameterFromFile( string parameter )
+		public static string ReadParameterFromFile( string parameter, string defaultValue = "" )
 		{
 			if( VirtualFile.Exists( FileName ) )
 			{
@@ -117,7 +117,7 @@ namespace NeoAxis
 				}
 				catch { }
 			}
-			return "";
+			return defaultValue;
 		}
 	}
 }

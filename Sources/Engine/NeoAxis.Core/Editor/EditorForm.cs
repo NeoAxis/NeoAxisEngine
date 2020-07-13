@@ -534,6 +534,22 @@ namespace NeoAxis.Editor
 				Close();
 			}
 
+			//open file at startup
+			if( firstTick && !needClose )
+			{
+				var realFileName = EditorSettingsSerialization.OpenFileAtStartup;
+				EditorSettingsSerialization.OpenFileAtStartup = "";
+
+				if( File.Exists( realFileName ) )
+				{
+					//select new file in Resources window
+					EditorAPI.SelectFilesOrDirectoriesInMainResourcesWindow( new string[] { realFileName } );
+
+					//open file
+					EditorAPI.OpenFileAsDocument( realFileName, true, true );
+				}
+			}
+
 			if( firstTick )
 			{
 				//!!!!new

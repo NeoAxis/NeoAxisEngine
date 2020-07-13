@@ -23,6 +23,9 @@ namespace NeoAxis.Editor
 		[EngineConfig( "Editor", "ShowTipsAsStartup" )]
 		public static bool ShowTipsAsStartup = true;
 
+		[EngineConfig( "Editor", "OpenFileAtStartup" )]
+		public static string OpenFileAtStartup = "";
+
 		//
 
 		public static void Init()

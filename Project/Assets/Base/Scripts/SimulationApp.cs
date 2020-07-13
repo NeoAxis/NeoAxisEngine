@@ -146,7 +146,7 @@ namespace Project
 									EngineApp.InitSettings.CreateWindowFullscreen = false;
 									EngineApp.InitSettings.CreateWindowState = EngineApp.WindowStateEnum.Normal;
 
-									var windowSizeString = ProjectSettings.ReadParameterFromFile( "WindowSize" );
+									var windowSizeString = ProjectSettings.ReadParameterFromFile( "WindowSize", Component_ProjectSettings.WindowSizeDefault.ToString() );
 									if( !string.IsNullOrEmpty( windowSizeString ) )
 									{
 										try
