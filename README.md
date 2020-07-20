@@ -43,7 +43,7 @@ How build for other platforms see Building.txt.
 
 Shortly about the license. You can use NeoAxis Engine for free without any future royalties and distribute source codes subject to the following conditions:
 <ul>
-<li>1. When publishing your product, you must add "Made with NeoAxis Engine (<span>www</span>.neoaxis.com)" with the product information and in its credits.
+<li>1. When publishing your product, need to add "Made with NeoAxis Engine (<span>www</span>.neoaxis.com)" with the product information and in its credits.
 </li>
 
 <li>2. You can distribute the NeoAxis editor with your product. When you do it the window title of the editor must be:
