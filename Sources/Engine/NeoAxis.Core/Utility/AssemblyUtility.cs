@@ -354,6 +354,10 @@ namespace NeoAxis
 
 						RegisterAssemblyEvent?.Invoke( assembly );
 					}
+					catch( Exception e )
+					{
+						Log.Error( "Unable to register assembly \'" + name + "\'. " + e.Message );
+					}
 					finally
 					{
 						StartupTiming.CounterEnd( "Register assembly \'" + name + "\'" );
