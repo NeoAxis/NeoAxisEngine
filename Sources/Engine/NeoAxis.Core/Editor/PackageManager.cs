@@ -70,17 +70,20 @@ namespace NeoAxis.Editor
 			{
 				var filter = nExtension == 0 ? "*.neoaxispackage" : "*.zip";
 
-				foreach( var fileName in Directory.GetFiles( PackagesFolder, filter ) )
+				if( Directory.Exists( PackagesFolder ) )
 				{
-					var fileBase = Path.GetFileNameWithoutExtension( fileName );
-					var strings = fileBase.Split( new char[] { '-' }, StringSplitOptions.RemoveEmptyEntries );
-					if( strings.Length >= 2 )
+					foreach( var fileName in Directory.GetFiles( PackagesFolder, filter ) )
 					{
-						var info = new PackageInfo();
-						info.FullFilePath = fileName;
-						info.Name = strings[ 0 ].Replace( '_', ' ' );
-						info.Version = strings[ 1 ];
-						result.Add( info );
+						var fileBase = Path.GetFileNameWithoutExtension( fileName );
+						var strings = fileBase.Split( new char[] { '-' }, StringSplitOptions.RemoveEmptyEntries );
+						if( strings.Length >= 2 )
+						{
+							var info = new PackageInfo();
+							info.FullFilePath = fileName;
+							info.Name = strings[ 0 ].Replace( '_', ' ' );
+							info.Version = strings[ 1 ];
+							result.Add( info );
+						}
 					}
 				}
 			}

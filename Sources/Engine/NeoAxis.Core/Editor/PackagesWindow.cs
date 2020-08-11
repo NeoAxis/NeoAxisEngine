@@ -74,6 +74,16 @@ namespace NeoAxis.Editor
 			//	ToolStripRenderer.CreateDisabledImage( Properties.Resources.Default_16 ),
 			//	ToolStripRenderer.CreateDisabledImage( Properties.Resources.Default_32 ) );
 
+			try
+			{
+				if( !Directory.Exists( PackageManager.PackagesFolder ) )
+					Directory.CreateDirectory( PackageManager.PackagesFolder );
+			}
+			catch( Exception e2 )
+			{
+				Log.Warning( e2.Message );
+			}
+
 			PerformRefreshList();
 			UpdatePackageControls();
 
