@@ -41,6 +41,11 @@
       <SpecificVersion>false</SpecificVersion>
       <Private>false</Private>
     </Reference>
+    <Reference Include="System.ComponentModel.Primitives">
+      <HintPath>Binaries\System.ComponentModel.Primitives.dll</HintPath>
+      <Private>false</Private>
+      <SpecificVersion>false</SpecificVersion>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Base\Scripts\ProjectUtility.cs" />
