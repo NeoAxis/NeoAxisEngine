@@ -32,7 +32,7 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BackstageMenu));
 			this.kryptonButtonBack = new ComponentFactory.Krypton.Toolkit.KryptonButton();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
-			this.kryptonNavigator1 = new ComponentFactory.Krypton.Navigator.KryptonNavigator();
+			this.kryptonNavigator1 = new NeoAxis.Editor.BackstageMenu.MyKryptonNavigator();
 			this.kryptonPageInfo = new ComponentFactory.Krypton.Navigator.BackstagePage();
 			this.kryptonTextBoxInfoLocation = new ComponentFactory.Krypton.Toolkit.KryptonTextBox();
 			this.kryptonLabel8 = new ComponentFactory.Krypton.Toolkit.KryptonLabel();
@@ -64,7 +64,7 @@
 			this.kryptonLabel5 = new ComponentFactory.Krypton.Toolkit.KryptonLabel();
 			this.kryptonPageLogin = new ComponentFactory.Krypton.Navigator.KryptonPage();
 			this.kryptonLabelTokenBalance = new ComponentFactory.Krypton.Toolkit.KryptonLabel();
-			this.labelExTokenTransactions = new NeoAxis.Editor.LabelEx();
+			this.labelExTokenTransactions = new NeoAxis.Editor.EngineLabel();
 			this.kryptonLabel16 = new ComponentFactory.Krypton.Toolkit.KryptonLabel();
 			this.kryptonLinkLabelTokenWhatIsIt = new ComponentFactory.Krypton.Toolkit.KryptonLinkLabel();
 			this.kryptonLabel11 = new ComponentFactory.Krypton.Toolkit.KryptonLabel();
@@ -198,7 +198,7 @@
 			this.kryptonTextBoxInfoLocation.Location = new System.Drawing.Point(192, 160);
 			this.kryptonTextBoxInfoLocation.Name = "kryptonTextBoxInfoLocation";
 			this.kryptonTextBoxInfoLocation.ReadOnly = true;
-			this.kryptonTextBoxInfoLocation.Size = new System.Drawing.Size(602, 21);
+			this.kryptonTextBoxInfoLocation.Size = new System.Drawing.Size(602, 22);
 			this.kryptonTextBoxInfoLocation.TabIndex = 1;
 			this.kryptonTextBoxInfoLocation.WordWrap = false;
 			// 
@@ -223,7 +223,7 @@
 			this.kryptonTextBoxInfoName.Location = new System.Drawing.Point(192, 127);
 			this.kryptonTextBoxInfoName.Name = "kryptonTextBoxInfoName";
 			this.kryptonTextBoxInfoName.ReadOnly = true;
-			this.kryptonTextBoxInfoName.Size = new System.Drawing.Size(602, 21);
+			this.kryptonTextBoxInfoName.Size = new System.Drawing.Size(602, 22);
 			this.kryptonTextBoxInfoName.TabIndex = 0;
 			this.kryptonTextBoxInfoName.WordWrap = false;
 			// 
@@ -555,7 +555,7 @@
 			this.labelExTokenTransactions.Location = new System.Drawing.Point(44, 611);
 			this.labelExTokenTransactions.Multiline = true;
 			this.labelExTokenTransactions.Name = "labelExTokenTransactions";
-			this.labelExTokenTransactions.Size = new System.Drawing.Size(152, 128);
+			this.labelExTokenTransactions.Size = new System.Drawing.Size(152, 200);
 			this.labelExTokenTransactions.StateCommon.Back.Color1 = System.Drawing.Color.White;
 			this.labelExTokenTransactions.StateCommon.Border.Draw = ComponentFactory.Krypton.Toolkit.InheritBool.False;
 			this.labelExTokenTransactions.StateCommon.Border.DrawBorders = ((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders)((((ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Top | ComponentFactory.Krypton.Toolkit.PaletteDrawBorders.Bottom) 
@@ -819,7 +819,7 @@
 
 		#endregion
 
-		private ComponentFactory.Krypton.Navigator.KryptonNavigator kryptonNavigator1;
+		private NeoAxis.Editor.BackstageMenu.MyKryptonNavigator kryptonNavigator1;
 		private ComponentFactory.Krypton.Navigator.BackstagePage kryptonPageInfo;
 		private ComponentFactory.Krypton.Navigator.BackstagePage kryptonPageNew;
 		private ComponentFactory.Krypton.Navigator.BackstagePage kryptonPageExit;
@@ -877,6 +877,6 @@
 		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabelTokenBalance;
 		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabel16;
 		private ComponentFactory.Krypton.Toolkit.KryptonLinkLabel kryptonLinkLabelTokenWhatIsIt;
-		private LabelEx labelExTokenTransactions;
+		private EngineLabel labelExTokenTransactions;
 	}
 }

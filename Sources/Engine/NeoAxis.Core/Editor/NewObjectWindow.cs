@@ -87,7 +87,7 @@ namespace NeoAxis.Editor
 		{
 			InitializeComponent();
 
-			//HACK: kryptonsplitcontainer childs layout broken. see comments in kryptonsplitcontainer.cs
+			//KryptonSplitContainer childs layout broken. see comments in kryptonsplitcontainer.cs. Also Anchors works strange in .NET Core. 
 			panelName.Width = panelName.Parent.Width - DpiHelper.Default.ScaleValue( 9 );
 
 			//options
@@ -124,16 +124,6 @@ namespace NeoAxis.Editor
 				return;
 
 			labelName.Visible = IsFileCreation();
-			if( !labelName.Visible )
-			{
-				textBoxName.Location = new Point( DpiHelper.Default.ScaleValue( 2 ), DpiHelper.Default.ScaleValue( 2 ) );
-				textBoxName.Width = panelName.Width - DpiHelper.Default.ScaleValue( 4 );
-			}
-			else
-			{
-				textBoxName.Location = new Point( labelName.Location.X + labelName.Width + DpiHelper.Default.ScaleValue( 2 ), DpiHelper.Default.ScaleValue( 2 ) );
-				textBoxName.Width = panelName.Width - labelName.Width - DpiHelper.Default.ScaleValue( 7 );
-			}
 
 			if( IsFileCreation() )
 				textBoxName.Text = Path.Combine( creationData.initFileCreationDirectory, "File.ext" );
@@ -466,6 +456,26 @@ namespace NeoAxis.Editor
 
 		void UpdateControls()
 		{
+			//KryptonSplitContainer childs layout broken. see comments in kryptonsplitcontainer.cs. Also Anchors works strange in .NET Core. 
+			panelName.Width = panelName.Parent.Width - DpiHelper.Default.ScaleValue( 8 );
+			panelName.Height = DpiHelper.Default.ScaleValue( 25 );
+
+			if( !labelName.Visible )
+			{
+				textBoxName.Location = new Point( DpiHelper.Default.ScaleValue( 2 ), DpiHelper.Default.ScaleValue( 2 ) );
+				textBoxName.Width = panelName.Width - DpiHelper.Default.ScaleValue( 6 );
+			}
+			else
+			{
+				textBoxName.Location = new Point( labelName.Location.X + labelName.Width + DpiHelper.Default.ScaleValue( 2 ), DpiHelper.Default.ScaleValue( 2 ) );
+				textBoxName.Width = panelName.Width - labelName.Width - DpiHelper.Default.ScaleValue( 9 );
+			}
+
+			tableLayoutPanel1.Location = new Point( panelName.Location.X, panelName.Bounds.Bottom + DpiHelper.Default.ScaleValue( 10 ) );
+			tableLayoutPanel1.Size = new Size(
+				buttonClose.Bounds.Right - tableLayoutPanel1.Location.X,
+				buttonClose.Bounds.Top - DpiHelper.Default.ScaleValue( 10 ) - tableLayoutPanel1.Location.Y );
+
 			buttonCreate.Enabled = IsReadyToCreate( out string reason );
 			buttonCreateAndClose.Enabled = buttonCreate.Enabled;
 
@@ -980,6 +990,14 @@ namespace NeoAxis.Editor
 
 		[Browsable( false )]
 		public bool DisableUnableToCreateReason { get; set; }
+
+		protected override void OnResize( EventArgs e )
+		{
+			base.OnResize( e );
+
+			if( IsHandleCreated )
+				UpdateControls();
+		}
 
 	}
 }

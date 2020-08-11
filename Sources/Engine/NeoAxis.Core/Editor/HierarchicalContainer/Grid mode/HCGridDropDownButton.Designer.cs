@@ -33,15 +33,17 @@
 			// 
 			// kryptonDropButton
 			// 
-			this.kryptonDropButton.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			//this.kryptonDropButton.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( 
+			//System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right ) ) );
+			//this.kryptonDropButton.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
+			//| System.Windows.Forms.AnchorStyles.Left )
+			//| System.Windows.Forms.AnchorStyles.Right ) ) );
 			this.kryptonDropButton.ButtonStyle = ComponentFactory.Krypton.Toolkit.ButtonStyle.Custom3;
 			this.kryptonDropButton.Images.Common = global::NeoAxis.Properties.Resources.DropDownButton;
 			this.kryptonDropButton.Location = new System.Drawing.Point(0, 3);
 			this.kryptonDropButton.Margin = new System.Windows.Forms.Padding(4);
 			this.kryptonDropButton.Name = "kryptonDropButton";
-			this.kryptonDropButton.Size = new System.Drawing.Size(285, 23);
+			this.kryptonDropButton.Size = new System.Drawing.Size(285, 22);
 			this.kryptonDropButton.Splitter = false;
 			this.kryptonDropButton.TabIndex = 0;
 			this.kryptonDropButton.Values.Text = "kryptonDropButton1";

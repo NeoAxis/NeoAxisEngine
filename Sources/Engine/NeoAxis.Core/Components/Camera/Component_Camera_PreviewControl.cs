@@ -21,7 +21,7 @@ namespace NeoAxis.Editor
 
 		public Component_Camera Camera
 		{
-			get { return ObjectForPreview as Component_Camera; }
+			get { return ObjectOfPreview as Component_Camera; }
 		}
 
 		protected override bool EnableViewportControl

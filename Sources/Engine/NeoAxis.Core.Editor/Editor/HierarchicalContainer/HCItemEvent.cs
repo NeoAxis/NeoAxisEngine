@@ -82,7 +82,7 @@ namespace NeoAxis.Editor
 			}
 		}
 
-		public override UserControl CreateControlImpl()
+		public override EUserControl CreateControlImpl()
 		{
 			var control = new HCGridEvent();
 
@@ -175,7 +175,7 @@ namespace NeoAxis.Editor
 				items.Add( item );
 			}
 
-			EditorContextMenu.Show( items, Owner );
+			EditorContextMenuWinForms.Show( items, Owner );
 		}
 
 		static string Translate( string text )
@@ -659,7 +659,7 @@ namespace NeoAxis.Editor
 			//	items.Add( item );
 			//}
 
-			EditorContextMenu.Show( items, Owner );
+			EditorContextMenuWinForms.Show( items, Owner );
 		}
 	}
 }

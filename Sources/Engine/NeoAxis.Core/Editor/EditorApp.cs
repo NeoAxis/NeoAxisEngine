@@ -160,7 +160,11 @@ namespace NeoAxis.Editor
 
 			EditorAPI.GetRestartApplication( out var needRestart, out _ );
 			if( needRestart )
-				Application.Restart();
+			{
+				string fullPath = Process.GetCurrentProcess().MainModule.FileName;
+				Process.Start( new ProcessStartInfo( fullPath ) { UseShellExecute = true } );
+				//Application.Restart();
+			}
 			else
 			{
 				//!!!!

@@ -76,6 +76,103 @@
             Runs the IIndentationStrategy on the selected lines (or the whole document if the selection is empty).
             </summary>
         </member>
+        <member name="T:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList">
+            <summary>
+            The listbox used inside the CompletionWindow, contains CompletionListBox.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.IsFiltering">
+            <summary>
+            If true, the CompletionList is filtered to show only matching items. Also enables search by substring.
+            If false, enables the old behavior: no filtering, search by string.StartsWith.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.EmptyTemplateProperty">
+            <summary>
+            Dependency property for <see cref="P:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.EmptyTemplate" />.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.EmptyTemplate">
+            <summary>
+            Content of EmptyTemplate will be shown when CompletionList contains no items.
+            If EmptyTemplate is null, nothing will be shown.
+            </summary>
+        </member>
+        <member name="E:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.InsertionRequested">
+            <summary>
+            Is raised when the completion list indicates that the user has chosen
+            an entry to be completed.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.RequestInsertion(System.EventArgs)">
+            <summary>
+            Raises the InsertionRequested event.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.OnApplyTemplate">
+            <inheritdoc/>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.ListBox">
+            <summary>
+            Gets the list box.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.ScrollViewer">
+            <summary>
+            Gets the scroll viewer used in this list box.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.CompletionData">
+            <summary>
+            Gets the list to which completion data can be added.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.OnKeyDown(System.Windows.Input.KeyEventArgs)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.HandleKey(System.Windows.Input.KeyEventArgs)">
+            <summary>
+            Handles a key press. Used to let the completion list handle key presses while the
+            focus is still on the text editor.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.OnMouseDoubleClick(System.Windows.Input.MouseButtonEventArgs)">
+            <inheritdoc/>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.SelectedItem">
+            <summary>
+            Gets/Sets the selected item.
+            </summary>
+            <remarks>
+            The setter of this property does not scroll to the selected item.
+            You might want to also call <see cref="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.ScrollIntoView(ICSharpCode.AvalonEdit.CodeCompletion.ICompletionData)"/>.
+            </remarks>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.ScrollIntoView(ICSharpCode.AvalonEdit.CodeCompletion.ICompletionData)">
+            <summary>
+            Scrolls the specified item into view.
+            </summary>
+        </member>
+        <member name="E:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.SelectionChanged">
+            <summary>
+            Occurs when the SelectedItem property changes.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.SelectItem(System.String)">
+            <summary>
+            Selects the best match, and filter the items if turned on using <see cref="P:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.IsFiltering" />.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.SelectItemFiltering(System.String)">
+            <summary>
+            Filters CompletionList items to show only those matching given query, and selects the best match.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.SelectItemWithStart(System.String)">
+            <summary>
+            Selects the item that starts with the specified query.
+            </summary>
+        </member>
         <member name="T:ICSharpCode.AvalonEdit.CodeCompletion.CompletionListBox">
             <summary>
             The list box used inside the CompletionList.
@@ -107,6 +204,47 @@
         <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionListBox.CenterViewOn(System.Int32)">
             <summary>
             Centers the view on the item with the specified index.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.CodeCompletion.CompletionWindow">
+            <summary>
+            The code completion window.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.CodeCompletion.CompletionWindow.CompletionList">
+            <summary>
+            Gets the completion list used in this completion window.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionWindow.#ctor(ICSharpCode.AvalonEdit.Editing.TextArea)">
+            <summary>
+            Creates a new code completion window.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionWindow.DetachEvents">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionWindow.OnClosed(System.EventArgs)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionWindow.OnKeyDown(System.Windows.Input.KeyEventArgs)">
+            <inheritdoc/>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.CodeCompletion.CompletionWindow.CloseAutomatically">
+            <summary>
+            Gets/Sets whether the completion window should close automatically.
+            The default value is true.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.CodeCompletion.CompletionWindow.CloseOnFocusLost">
+            <inheritdoc/>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.CodeCompletion.CompletionWindow.CloseWhenCaretAtBeginning">
+            <summary>
+            When this flag is set, code completion closes if the caret moves to the
+            beginning of the allowed range. This is useful in Ctrl+Space and "complete when typing",
+            but not in dot-completion.
+            Has no effect if CloseAutomatically is false.
             </summary>
         </member>
         <member name="T:ICSharpCode.AvalonEdit.CodeCompletion.CompletionWindowBase">
@@ -206,144 +344,6 @@
             </summary>
             <remarks>This property allows only a single insertion, it is reset to false
             when that insertion has occurred.</remarks>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList">
-            <summary>
-            The listbox used inside the CompletionWindow, contains CompletionListBox.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.IsFiltering">
-            <summary>
-            If true, the CompletionList is filtered to show only matching items. Also enables search by substring.
-            If false, enables the old behavior: no filtering, search by string.StartsWith.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.EmptyTemplateProperty">
-            <summary>
-            Dependency property for <see cref="P:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.EmptyTemplate" />.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.EmptyTemplate">
-            <summary>
-            Content of EmptyTemplate will be shown when CompletionList contains no items.
-            If EmptyTemplate is null, nothing will be shown.
-            </summary>
-        </member>
-        <member name="E:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.InsertionRequested">
-            <summary>
-            Is raised when the completion list indicates that the user has chosen
-            an entry to be completed.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.RequestInsertion(System.EventArgs)">
-            <summary>
-            Raises the InsertionRequested event.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.OnApplyTemplate">
-            <inheritdoc/>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.ListBox">
-            <summary>
-            Gets the list box.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.ScrollViewer">
-            <summary>
-            Gets the scroll viewer used in this list box.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.CompletionData">
-            <summary>
-            Gets the list to which completion data can be added.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.OnKeyDown(System.Windows.Input.KeyEventArgs)">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.HandleKey(System.Windows.Input.KeyEventArgs)">
-            <summary>
-            Handles a key press. Used to let the completion list handle key presses while the
-            focus is still on the text editor.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.OnMouseDoubleClick(System.Windows.Input.MouseButtonEventArgs)">
-            <inheritdoc/>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.SelectedItem">
-            <summary>
-            Gets/Sets the selected item.
-            </summary>
-            <remarks>
-            The setter of this property does not scroll to the selected item.
-            You might want to also call <see cref="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.ScrollIntoView(ICSharpCode.AvalonEdit.CodeCompletion.ICompletionData)"/>.
-            </remarks>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.ScrollIntoView(ICSharpCode.AvalonEdit.CodeCompletion.ICompletionData)">
-            <summary>
-            Scrolls the specified item into view.
-            </summary>
-        </member>
-        <member name="E:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.SelectionChanged">
-            <summary>
-            Occurs when the SelectedItem property changes.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.SelectItem(System.String)">
-            <summary>
-            Selects the best match, and filter the items if turned on using <see cref="P:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.IsFiltering" />.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.SelectItemFiltering(System.String)">
-            <summary>
-            Filters CompletionList items to show only those matching given query, and selects the best match.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionList.SelectItemWithStart(System.String)">
-            <summary>
-            Selects the item that starts with the specified query.
-            </summary>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.CodeCompletion.CompletionWindow">
-            <summary>
-            The code completion window.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.CodeCompletion.CompletionWindow.CompletionList">
-            <summary>
-            Gets the completion list used in this completion window.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionWindow.#ctor(ICSharpCode.AvalonEdit.Editing.TextArea)">
-            <summary>
-            Creates a new code completion window.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionWindow.DetachEvents">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionWindow.OnClosed(System.EventArgs)">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.CodeCompletion.CompletionWindow.OnKeyDown(System.Windows.Input.KeyEventArgs)">
-            <inheritdoc/>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.CodeCompletion.CompletionWindow.CloseAutomatically">
-            <summary>
-            Gets/Sets whether the completion window should close automatically.
-            The default value is true.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.CodeCompletion.CompletionWindow.CloseOnFocusLost">
-            <inheritdoc/>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.CodeCompletion.CompletionWindow.CloseWhenCaretAtBeginning">
-            <summary>
-            When this flag is set, code completion closes if the caret moves to the
-            beginning of the allowed range. This is useful in Ctrl+Space and "complete when typing",
-            but not in dot-completion.
-            Has no effect if CloseAutomatically is false.
-            </summary>
         </member>
         <member name="T:ICSharpCode.AvalonEdit.CodeCompletion.ICompletionData">
             <summary>
@@ -504,9 +504,172 @@
             </summary>
             <param name="relativeIndexChange">The relative index change - usual values are +1 or -1.</param>
         </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.DocumentChangeEventArgs">
+            <summary>
+            Describes a change of the document text.
+            This class is thread-safe.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.DocumentChangeEventArgs.OffsetChangeMap">
+            <summary>
+            Gets the OffsetChangeMap associated with this document change.
+            </summary>
+            <remarks>The OffsetChangeMap instance is guaranteed to be frozen and thus thread-safe.</remarks>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.DocumentChangeEventArgs.OffsetChangeMapOrNull">
+            <summary>
+            Gets the OffsetChangeMap, or null if the default offset map (=single replacement) is being used.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.DocumentChangeEventArgs.GetNewOffset(System.Int32,ICSharpCode.AvalonEdit.Document.AnchorMovementType)">
+            <summary>
+            Gets the new offset where the specified offset moves after this document change.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.DocumentChangeEventArgs.#ctor(System.Int32,System.String,System.String)">
+            <summary>
+            Creates a new DocumentChangeEventArgs object.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.DocumentChangeEventArgs.#ctor(System.Int32,System.String,System.String,ICSharpCode.AvalonEdit.Document.OffsetChangeMap)">
+            <summary>
+            Creates a new DocumentChangeEventArgs object.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.DocumentChangeEventArgs.#ctor(System.Int32,ICSharpCode.AvalonEdit.Document.ITextSource,ICSharpCode.AvalonEdit.Document.ITextSource,ICSharpCode.AvalonEdit.Document.OffsetChangeMap)">
+            <summary>
+            Creates a new DocumentChangeEventArgs object.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.DocumentChangeEventArgs.Invert">
+            <inheritdoc/>
+        </member>
         <member name="T:ICSharpCode.AvalonEdit.Document.DocumentChangeOperation">
             <summary>
             Describes a change to a TextDocument.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.DocumentLine">
+            <summary>
+            Represents a line inside a <see cref="T:ICSharpCode.AvalonEdit.Document.TextDocument"/>.
+            </summary>
+            <remarks>
+            <para>
+            The <see cref="P:ICSharpCode.AvalonEdit.Document.TextDocument.Lines"/> collection contains one DocumentLine instance
+            for every line in the document. This collection is read-only to user code and is automatically
+            updated to reflect the current document content.
+            </para>
+            <para>
+            Internally, the DocumentLine instances are arranged in a binary tree that allows for both efficient updates and lookup.
+            Converting between offset and line number is possible in O(lg N) time,
+            and the data structure also updates all offsets in O(lg N) whenever a line is inserted or removed.
+            </para>
+            </remarks>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.DocumentLine.IsDeleted">
+            <summary>
+            Gets if this line was deleted from the document.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.DocumentLine.LineNumber">
+            <summary>
+            Gets the number of this line.
+            Runtime: O(log n)
+            </summary>
+            <exception cref="T:System.InvalidOperationException">The line was deleted.</exception>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.DocumentLine.Offset">
+            <summary>
+            Gets the starting offset of the line in the document's text.
+            Runtime: O(log n)
+            </summary>
+            <exception cref="T:System.InvalidOperationException">The line was deleted.</exception>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.DocumentLine.EndOffset">
+            <summary>
+            Gets the end offset of the line in the document's text (the offset before the line delimiter).
+            Runtime: O(log n)
+            </summary>
+            <exception cref="T:System.InvalidOperationException">The line was deleted.</exception>
+            <remarks>EndOffset = <see cref="P:ICSharpCode.AvalonEdit.Document.DocumentLine.Offset"/> + <see cref="P:ICSharpCode.AvalonEdit.Document.DocumentLine.Length"/>.</remarks>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.DocumentLine.Length">
+            <summary>
+            Gets the length of this line. The length does not include the line delimiter. O(1)
+            </summary>
+            <remarks>This property is still available even if the line was deleted;
+            in that case, it contains the line's length before the deletion.</remarks>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.DocumentLine.TotalLength">
+            <summary>
+            Gets the length of this line, including the line delimiter. O(1)
+            </summary>
+            <remarks>This property is still available even if the line was deleted;
+            in that case, it contains the line's length before the deletion.</remarks>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.DocumentLine.DelimiterLength">
+            <summary>
+            <para>Gets the length of the line delimiter.</para>
+            <para>The value is 1 for single <c>"\r"</c> or <c>"\n"</c>, 2 for the <c>"\r\n"</c> sequence;
+            and 0 for the last line in the document.</para>
+            </summary>
+            <remarks>This property is still available even if the line was deleted;
+            in that case, it contains the line delimiter's length before the deletion.</remarks>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.DocumentLine.NextLine">
+            <summary>
+            Gets the next line in the document.
+            </summary>
+            <returns>The line following this line, or null if this is the last line.</returns>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.DocumentLine.PreviousLine">
+            <summary>
+            Gets the previous line in the document.
+            </summary>
+            <returns>The line before this line, or null if this is the first line.</returns>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.DocumentLine.ToString">
+            <summary>
+            Gets a string with debug output showing the line number and offset.
+            Does not include the line's text.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.DocumentLine.ResetLine">
+            <summary>
+            Resets the line to enable its reuse after a document rebuild.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Document.DocumentLine.nodeTotalCount">
+            <summary>
+            The number of lines in this node and its child nodes.
+            Invariant:
+              nodeTotalCount = 1 + left.nodeTotalCount + right.nodeTotalCount
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Document.DocumentLine.nodeTotalLength">
+            <summary>
+            The total text length of this node and its child nodes.
+            Invariant:
+              nodeTotalLength = left.nodeTotalLength + documentLine.TotalLength + right.nodeTotalLength
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.DocumentLineTree">
+            <summary>
+            Data structure for efficient management of the document lines (most operations are O(lg n)).
+            This implements an augmented red-black tree.
+            See <see cref="T:ICSharpCode.AvalonEdit.Document.DocumentLine"/> for the augmented data.
+            
+            NOTE: The tree is never empty, initially it contains an empty line.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.DocumentLineTree.RebuildTree(System.Collections.Generic.List{ICSharpCode.AvalonEdit.Document.DocumentLine})">
+            <summary>
+            Rebuild the tree, in O(n).
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.DocumentLineTree.BuildTree(ICSharpCode.AvalonEdit.Document.DocumentLine[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            build a tree from a list of nodes
             </summary>
         </member>
         <member name="T:ICSharpCode.AvalonEdit.Document.DocumentTextWriter">
@@ -1213,136 +1376,6 @@
         <member name="M:ICSharpCode.AvalonEdit.Document.StringTextSource.LastIndexOf(System.String,System.Int32,System.Int32,System.StringComparison)">
             <inheritdoc/>
         </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.SimpleSegment">
-            <summary>
-            Represents a simple segment (Offset,Length pair) that is not automatically updated
-            on document changes.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.SimpleSegment.GetOverlap(ICSharpCode.AvalonEdit.Document.ISegment,ICSharpCode.AvalonEdit.Document.ISegment)">
-            <summary>
-            Gets the overlapping portion of the segments.
-            Returns SimpleSegment.Invalid if the segments don't overlap.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.SimpleSegment.ToString">
-            <inheritdoc/>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.AnchorSegment">
-            <summary>
-            A segment using <see cref="T:ICSharpCode.AvalonEdit.Document.TextAnchor"/>s as start and end positions.
-            </summary>
-            <remarks>
-            <para>
-            For the constructors creating new anchors, the start position will be AfterInsertion and the end position will be BeforeInsertion.
-            Should the end position move before the start position, the segment will have length 0.
-            </para>
-            </remarks>
-            <seealso cref="T:ICSharpCode.AvalonEdit.Document.ISegment"/>
-            <seealso cref="T:ICSharpCode.AvalonEdit.Document.TextSegment"/>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.AnchorSegment.Offset">
-            <inheritdoc/>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.AnchorSegment.Length">
-            <inheritdoc/>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.AnchorSegment.EndOffset">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.AnchorSegment.#ctor(ICSharpCode.AvalonEdit.Document.TextAnchor,ICSharpCode.AvalonEdit.Document.TextAnchor)">
-            <summary>
-            Creates a new AnchorSegment using the specified anchors.
-            The anchors must have <see cref="P:ICSharpCode.AvalonEdit.Document.TextAnchor.SurviveDeletion"/> set to true.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.AnchorSegment.#ctor(ICSharpCode.AvalonEdit.Document.TextDocument,ICSharpCode.AvalonEdit.Document.ISegment)">
-            <summary>
-            Creates a new AnchorSegment that creates new anchors.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.AnchorSegment.#ctor(ICSharpCode.AvalonEdit.Document.TextDocument,System.Int32,System.Int32)">
-            <summary>
-            Creates a new AnchorSegment that creates new anchors.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.AnchorSegment.ToString">
-            <inheritdoc/>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.RopeTextSource">
-            <summary>
-            Implements the ITextSource interface using a rope.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.#ctor(ICSharpCode.AvalonEdit.Utils.Rope{System.Char})">
-            <summary>
-            Creates a new RopeTextSource.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.#ctor(ICSharpCode.AvalonEdit.Utils.Rope{System.Char},ICSharpCode.AvalonEdit.Document.ITextSourceVersion)">
-            <summary>
-            Creates a new RopeTextSource.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.GetRope">
-            <summary>
-            Returns a clone of the rope used for this text source.
-            </summary>
-            <remarks>
-            RopeTextSource only publishes a copy of the contained rope to ensure that the underlying rope cannot be modified.
-            </remarks>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.RopeTextSource.Text">
-            <inheritdoc/>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.RopeTextSource.TextLength">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.GetCharAt(System.Int32)">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.GetText(System.Int32,System.Int32)">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.GetText(ICSharpCode.AvalonEdit.Document.ISegment)">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.CreateReader">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.CreateReader(System.Int32,System.Int32)">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.CreateSnapshot">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.CreateSnapshot(System.Int32,System.Int32)">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.IndexOf(System.Char,System.Int32,System.Int32)">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.IndexOfAny(System.Char[],System.Int32,System.Int32)">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.LastIndexOf(System.Char,System.Int32,System.Int32)">
-            <inheritdoc/>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.RopeTextSource.Version">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.IndexOf(System.String,System.Int32,System.Int32,System.StringComparison)">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.LastIndexOf(System.String,System.Int32,System.Int32,System.StringComparison)">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.WriteTextTo(System.IO.TextWriter)">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.WriteTextTo(System.IO.TextWriter,System.Int32,System.Int32)">
-            <inheritdoc/>
-        </member>
         <member name="T:ICSharpCode.AvalonEdit.Document.IUndoableOperation">
             <summary>
             This Interface describes a the basic Undo/Redo operation
@@ -1359,109 +1392,25 @@
             Redo the last operation
             </summary>
         </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.DocumentLine">
+        <member name="T:ICSharpCode.AvalonEdit.Document.LineManager">
             <summary>
-            Represents a line inside a <see cref="T:ICSharpCode.AvalonEdit.Document.TextDocument"/>.
-            </summary>
-            <remarks>
-            <para>
-            The <see cref="P:ICSharpCode.AvalonEdit.Document.TextDocument.Lines"/> collection contains one DocumentLine instance
-            for every line in the document. This collection is read-only to user code and is automatically
-            updated to reflect the current document content.
-            </para>
-            <para>
-            Internally, the DocumentLine instances are arranged in a binary tree that allows for both efficient updates and lookup.
-            Converting between offset and line number is possible in O(lg N) time,
-            and the data structure also updates all offsets in O(lg N) whenever a line is inserted or removed.
-            </para>
-            </remarks>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.DocumentLine.ResetLine">
-            <summary>
-            Resets the line to enable its reuse after a document rebuild.
+            Creates/Deletes lines when text is inserted/removed.
             </summary>
         </member>
-        <member name="F:ICSharpCode.AvalonEdit.Document.DocumentLine.nodeTotalCount">
+        <member name="F:ICSharpCode.AvalonEdit.Document.LineManager.lineTrackers">
             <summary>
-            The number of lines in this node and its child nodes.
-            Invariant:
-              nodeTotalCount = 1 + left.nodeTotalCount + right.nodeTotalCount
+            A copy of the line trackers. We need a copy so that line trackers may remove themselves
+            while being notified (used e.g. by WeakLineTracker)
             </summary>
         </member>
-        <member name="F:ICSharpCode.AvalonEdit.Document.DocumentLine.nodeTotalLength">
+        <member name="M:ICSharpCode.AvalonEdit.Document.LineManager.SetLineLength(ICSharpCode.AvalonEdit.Document.DocumentLine,System.Int32)">
             <summary>
-            The total text length of this node and its child nodes.
-            Invariant:
-              nodeTotalLength = left.nodeTotalLength + documentLine.TotalLength + right.nodeTotalLength
+            Sets the total line length and checks the delimiter.
+            This method can cause line to be deleted when it contains a single '\n' character
+            and the previous line ends with '\r'.
             </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.DocumentLine.IsDeleted">
-            <summary>
-            Gets if this line was deleted from the document.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.DocumentLine.LineNumber">
-            <summary>
-            Gets the number of this line.
-            Runtime: O(log n)
-            </summary>
-            <exception cref="T:System.InvalidOperationException">The line was deleted.</exception>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.DocumentLine.Offset">
-            <summary>
-            Gets the starting offset of the line in the document's text.
-            Runtime: O(log n)
-            </summary>
-            <exception cref="T:System.InvalidOperationException">The line was deleted.</exception>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.DocumentLine.EndOffset">
-            <summary>
-            Gets the end offset of the line in the document's text (the offset before the line delimiter).
-            Runtime: O(log n)
-            </summary>
-            <exception cref="T:System.InvalidOperationException">The line was deleted.</exception>
-            <remarks>EndOffset = <see cref="P:ICSharpCode.AvalonEdit.Document.DocumentLine.Offset"/> + <see cref="P:ICSharpCode.AvalonEdit.Document.DocumentLine.Length"/>.</remarks>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.DocumentLine.Length">
-            <summary>
-            Gets the length of this line. The length does not include the line delimiter. O(1)
-            </summary>
-            <remarks>This property is still available even if the line was deleted;
-            in that case, it contains the line's length before the deletion.</remarks>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.DocumentLine.TotalLength">
-            <summary>
-            Gets the length of this line, including the line delimiter. O(1)
-            </summary>
-            <remarks>This property is still available even if the line was deleted;
-            in that case, it contains the line's length before the deletion.</remarks>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.DocumentLine.DelimiterLength">
-            <summary>
-            <para>Gets the length of the line delimiter.</para>
-            <para>The value is 1 for single <c>"\r"</c> or <c>"\n"</c>, 2 for the <c>"\r\n"</c> sequence;
-            and 0 for the last line in the document.</para>
-            </summary>
-            <remarks>This property is still available even if the line was deleted;
-            in that case, it contains the line delimiter's length before the deletion.</remarks>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.DocumentLine.NextLine">
-            <summary>
-            Gets the next line in the document.
-            </summary>
-            <returns>The line following this line, or null if this is the last line.</returns>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.DocumentLine.PreviousLine">
-            <summary>
-            Gets the previous line in the document.
-            </summary>
-            <returns>The line before this line, or null if this is the first line.</returns>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.DocumentLine.ToString">
-            <summary>
-            Gets a string with debug output showing the line number and offset.
-            Does not include the line's text.
-            </summary>
+            <returns>Usually returns <paramref name="line"/>, but if line was deleted due to
+            the "\r\n" merge, returns the previous line.</returns>
         </member>
         <member name="M:ICSharpCode.AvalonEdit.Document.NewLineFinder.NextNewLine(System.String,System.Int32)">
             <summary>
@@ -1748,373 +1697,135 @@
             Tests the two entries for inequality.
             </summary>
         </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager">
+        <member name="T:ICSharpCode.AvalonEdit.Document.RopeTextSource">
             <summary>
-            Contains weak event managers for the TextDocument events.
+            Implements the ITextSource interface using a rope.
             </summary>
         </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.UpdateStarted">
+        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.#ctor(ICSharpCode.AvalonEdit.Utils.Rope{System.Char})">
             <summary>
-            Weak event manager for the <see cref="E:ICSharpCode.AvalonEdit.Document.TextDocument.UpdateStarted"/> event.
+            Creates a new RopeTextSource.
             </summary>
         </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.UpdateStarted.StartListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.UpdateStarted.StopListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
-            <inheritdoc/>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.UpdateFinished">
+        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.#ctor(ICSharpCode.AvalonEdit.Utils.Rope{System.Char},ICSharpCode.AvalonEdit.Document.ITextSourceVersion)">
             <summary>
-            Weak event manager for the <see cref="E:ICSharpCode.AvalonEdit.Document.TextDocument.UpdateFinished"/> event.
+            Creates a new RopeTextSource.
             </summary>
         </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.UpdateFinished.StartListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.UpdateFinished.StopListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
-            <inheritdoc/>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.Changing">
+        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.GetRope">
             <summary>
-            Weak event manager for the <see cref="E:ICSharpCode.AvalonEdit.Document.TextDocument.Changing"/> event.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.Changing.StartListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.Changing.StopListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
-            <inheritdoc/>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.Changed">
-            <summary>
-            Weak event manager for the <see cref="E:ICSharpCode.AvalonEdit.Document.TextDocument.Changed"/> event.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.Changed.StartListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.Changed.StopListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
-            <inheritdoc/>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.LineCountChanged">
-            <summary>
-            Weak event manager for the <see cref="E:ICSharpCode.AvalonEdit.Document.TextDocument.LineCountChanged"/> event.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.LineCountChanged.StartListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.LineCountChanged.StopListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
-            <inheritdoc/>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.TextLengthChanged">
-            <summary>
-            Weak event manager for the <see cref="E:ICSharpCode.AvalonEdit.Document.TextDocument.TextLengthChanged"/> event.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.TextLengthChanged.StartListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.TextLengthChanged.StopListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
-            <inheritdoc/>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.TextChanged">
-            <summary>
-            Weak event manager for the <see cref="E:ICSharpCode.AvalonEdit.Document.TextDocument.TextChanged"/> event.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.TextChanged.StartListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.TextChanged.StopListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
-            <inheritdoc/>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.TextLocation">
-            <summary>
-            A line/column position.
-            Text editor lines/columns are counted started from one.
+            Returns a clone of the rope used for this text source.
             </summary>
             <remarks>
-            The document provides the methods <see cref="M:ICSharpCode.AvalonEdit.Document.IDocument.GetLocation(System.Int32)"/> and
-            <see cref="M:ICSharpCode.AvalonEdit.Document.IDocument.GetOffset(ICSharpCode.AvalonEdit.Document.TextLocation)"/> to convert between offsets and TextLocations.
+            RopeTextSource only publishes a copy of the contained rope to ensure that the underlying rope cannot be modified.
             </remarks>
         </member>
-        <member name="F:ICSharpCode.AvalonEdit.Document.TextLocation.Empty">
-            <summary>
-            Represents no text location (0, 0).
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocation.#ctor(System.Int32,System.Int32)">
-            <summary>
-            Creates a TextLocation instance.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.TextLocation.Line">
-            <summary>
-            Gets the line number.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.TextLocation.Column">
-            <summary>
-            Gets the column number.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.TextLocation.IsEmpty">
-            <summary>
-            Gets whether the TextLocation instance is empty.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocation.ToString">
-            <summary>
-            Gets a string representation for debugging purposes.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocation.GetHashCode">
-            <summary>
-            Gets a hash code.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocation.Equals(System.Object)">
-            <summary>
-            Equality test.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocation.Equals(ICSharpCode.AvalonEdit.Document.TextLocation)">
-            <summary>
-            Equality test.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocation.op_Equality(ICSharpCode.AvalonEdit.Document.TextLocation,ICSharpCode.AvalonEdit.Document.TextLocation)">
-            <summary>
-            Equality test.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocation.op_Inequality(ICSharpCode.AvalonEdit.Document.TextLocation,ICSharpCode.AvalonEdit.Document.TextLocation)">
-            <summary>
-            Inequality test.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocation.op_LessThan(ICSharpCode.AvalonEdit.Document.TextLocation,ICSharpCode.AvalonEdit.Document.TextLocation)">
-            <summary>
-            Compares two text locations.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocation.op_GreaterThan(ICSharpCode.AvalonEdit.Document.TextLocation,ICSharpCode.AvalonEdit.Document.TextLocation)">
-            <summary>
-            Compares two text locations.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocation.op_LessThanOrEqual(ICSharpCode.AvalonEdit.Document.TextLocation,ICSharpCode.AvalonEdit.Document.TextLocation)">
-            <summary>
-            Compares two text locations.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocation.op_GreaterThanOrEqual(ICSharpCode.AvalonEdit.Document.TextLocation,ICSharpCode.AvalonEdit.Document.TextLocation)">
-            <summary>
-            Compares two text locations.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocation.CompareTo(ICSharpCode.AvalonEdit.Document.TextLocation)">
-            <summary>
-            Compares two text locations.
-            </summary>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.TextLocationConverter">
-            <summary>
-            Converts strings of the form '0+[;,]0+' to a <see cref="T:ICSharpCode.AvalonEdit.Document.TextLocation"/>.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocationConverter.CanConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Type)">
+        <member name="P:ICSharpCode.AvalonEdit.Document.RopeTextSource.Text">
             <inheritdoc/>
         </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocationConverter.CanConvertTo(System.ComponentModel.ITypeDescriptorContext,System.Type)">
+        <member name="P:ICSharpCode.AvalonEdit.Document.RopeTextSource.TextLength">
             <inheritdoc/>
         </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocationConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object)">
+        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.GetCharAt(System.Int32)">
             <inheritdoc/>
         </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocationConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object,System.Type)">
+        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.GetText(System.Int32,System.Int32)">
             <inheritdoc/>
         </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.ISegment">
+        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.GetText(ICSharpCode.AvalonEdit.Document.ISegment)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.CreateReader">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.CreateReader(System.Int32,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.CreateSnapshot">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.CreateSnapshot(System.Int32,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.IndexOf(System.Char,System.Int32,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.IndexOfAny(System.Char[],System.Int32,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.LastIndexOf(System.Char,System.Int32,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.RopeTextSource.Version">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.IndexOf(System.String,System.Int32,System.Int32,System.StringComparison)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.LastIndexOf(System.String,System.Int32,System.Int32,System.StringComparison)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.WriteTextTo(System.IO.TextWriter)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.RopeTextSource.WriteTextTo(System.IO.TextWriter,System.Int32,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.SimpleSegment">
             <summary>
-            An (Offset,Length)-pair.
+            Represents a simple segment (Offset,Length pair) that is not automatically updated
+            on document changes.
             </summary>
         </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.ISegment.Offset">
+        <member name="M:ICSharpCode.AvalonEdit.Document.SimpleSegment.GetOverlap(ICSharpCode.AvalonEdit.Document.ISegment,ICSharpCode.AvalonEdit.Document.ISegment)">
             <summary>
-            Gets the start offset of the segment.
+            Gets the overlapping portion of the segments.
+            Returns SimpleSegment.Invalid if the segments don't overlap.
             </summary>
         </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.ISegment.Length">
-            <summary>
-            Gets the length of the segment.
-            </summary>
-            <remarks>For line segments (IDocumentLine), the length does not include the line delimeter.</remarks>
+        <member name="M:ICSharpCode.AvalonEdit.Document.SimpleSegment.ToString">
+            <inheritdoc/>
         </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.ISegment.EndOffset">
+        <member name="T:ICSharpCode.AvalonEdit.Document.AnchorSegment">
             <summary>
-            Gets the end offset of the segment.
-            </summary>
-            <remarks>EndOffset = Offset + Length;</remarks>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.ISegmentExtensions">
-            <summary>
-            Extension methods for <see cref="T:ICSharpCode.AvalonEdit.Document.ISegment"/>.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.ISegmentExtensions.Contains(ICSharpCode.AvalonEdit.Document.ISegment,System.Int32,System.Int32)">
-            <summary>
-            Gets whether <paramref name="segment"/> fully contains the specified segment.
+            A segment using <see cref="T:ICSharpCode.AvalonEdit.Document.TextAnchor"/>s as start and end positions.
             </summary>
             <remarks>
-            Use <c>segment.Contains(offset, 0)</c> to detect whether a segment (end inclusive) contains offset;
-            use <c>segment.Contains(offset, 1)</c> to detect whether a segment (end exclusive) contains offset.
-            </remarks>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.ISegmentExtensions.Contains(ICSharpCode.AvalonEdit.Document.ISegment,ICSharpCode.AvalonEdit.Document.ISegment)">
-            <summary>
-            Gets whether <paramref name="thisSegment"/> fully contains the specified segment.
-            </summary>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.ISegmentTree">
-            <summary>
-            Interface to allow TextSegments to access the TextSegmentCollection - we cannot use a direct reference
-            because TextSegmentCollection is generic.
-            </summary>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1">
-            <summary>
             <para>
-            A collection of text segments that supports efficient lookup of segments
-            intersecting with another segment.
+            For the constructors creating new anchors, the start position will be AfterInsertion and the end position will be BeforeInsertion.
+            Should the end position move before the start position, the segment will have length 0.
             </para>
-            </summary>
-            <remarks><inheritdoc cref="T:ICSharpCode.AvalonEdit.Document.TextSegment"/></remarks>
-            <see cref="T:ICSharpCode.AvalonEdit.Document.TextSegment"/>
+            </remarks>
+            <seealso cref="T:ICSharpCode.AvalonEdit.Document.ISegment"/>
+            <seealso cref="T:ICSharpCode.AvalonEdit.Document.TextSegment"/>
         </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.#ctor">
-            <summary>
-            Creates a new TextSegmentCollection that needs manual calls to <see cref="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.UpdateOffsets(ICSharpCode.AvalonEdit.Document.DocumentChangeEventArgs)"/>.
-            </summary>
+        <member name="P:ICSharpCode.AvalonEdit.Document.AnchorSegment.Offset">
+            <inheritdoc/>
         </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.#ctor(ICSharpCode.AvalonEdit.Document.TextDocument)">
-            <summary>
-            Creates a new TextSegmentCollection that updates the offsets automatically.
-            </summary>
-            <param name="textDocument">The document to which the text segments
-            that will be added to the tree belong. When the document changes, the
-            position of the text segments will be updated accordingly.</param>
+        <member name="P:ICSharpCode.AvalonEdit.Document.AnchorSegment.Length">
+            <inheritdoc/>
         </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.UpdateOffsets(ICSharpCode.AvalonEdit.Document.DocumentChangeEventArgs)">
-            <summary>
-            Updates the start and end offsets of all segments stored in this collection.
-            </summary>
-            <param name="e">DocumentChangeEventArgs instance describing the change to the document.</param>
+        <member name="P:ICSharpCode.AvalonEdit.Document.AnchorSegment.EndOffset">
+            <inheritdoc/>
         </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.UpdateOffsets(ICSharpCode.AvalonEdit.Document.OffsetChangeMapEntry)">
+        <member name="M:ICSharpCode.AvalonEdit.Document.AnchorSegment.#ctor(ICSharpCode.AvalonEdit.Document.TextAnchor,ICSharpCode.AvalonEdit.Document.TextAnchor)">
             <summary>
-            Updates the start and end offsets of all segments stored in this collection.
-            </summary>
-            <param name="change">OffsetChangeMapEntry instance describing the change to the document.</param>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.Add(`0)">
-            <summary>
-            Adds the specified segment to the tree. This will cause the segment to update when the
-            document changes.
+            Creates a new AnchorSegment using the specified anchors.
+            The anchors must have <see cref="P:ICSharpCode.AvalonEdit.Document.TextAnchor.SurviveDeletion"/> set to true.
             </summary>
         </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.GetNextSegment(`0)">
+        <member name="M:ICSharpCode.AvalonEdit.Document.AnchorSegment.#ctor(ICSharpCode.AvalonEdit.Document.TextDocument,ICSharpCode.AvalonEdit.Document.ISegment)">
             <summary>
-            Gets the next segment after the specified segment.
-            Segments are sorted by their start offset.
-            Returns null if segment is the last segment.
+            Creates a new AnchorSegment that creates new anchors.
             </summary>
         </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.GetPreviousSegment(`0)">
+        <member name="M:ICSharpCode.AvalonEdit.Document.AnchorSegment.#ctor(ICSharpCode.AvalonEdit.Document.TextDocument,System.Int32,System.Int32)">
             <summary>
-            Gets the previous segment before the specified segment.
-            Segments are sorted by their start offset.
-            Returns null if segment is the first segment.
+            Creates a new AnchorSegment that creates new anchors.
             </summary>
         </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.FirstSegment">
-            <summary>
-            Returns the first segment in the collection or null, if the collection is empty.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.LastSegment">
-            <summary>
-            Returns the last segment in the collection or null, if the collection is empty.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.FindFirstSegmentWithStartAfter(System.Int32)">
-            <summary>
-            Gets the first segment with a start offset greater or equal to <paramref name="startOffset"/>.
-            Returns null if no such segment is found.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.FindNode(System.Int32@)">
-            <summary>
-            Finds the node at the specified offset.
-            After the method has run, offset is relative to the beginning of the returned node.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.FindSegmentsContaining(System.Int32)">
-            <summary>
-            Finds all segments that contain the given offset.
-            (StartOffset &lt;= offset &lt;= EndOffset)
-            Segments are returned in the order given by GetNextSegment/GetPreviousSegment.
-            </summary>
-            <returns>Returns a new collection containing the results of the query.
-            This means it is safe to modify the TextSegmentCollection while iterating through the result collection.</returns>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.FindOverlappingSegments(ICSharpCode.AvalonEdit.Document.ISegment)">
-            <summary>
-            Finds all segments that overlap with the given segment (including touching segments).
-            </summary>
-            <returns>Returns a new collection containing the results of the query.
-            This means it is safe to modify the TextSegmentCollection while iterating through the result collection.</returns>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.FindOverlappingSegments(System.Int32,System.Int32)">
-            <summary>
-            Finds all segments that overlap with the given segment (including touching segments).
-            Segments are returned in the order given by GetNextSegment/GetPreviousSegment.
-            </summary>
-            <returns>Returns a new collection containing the results of the query.
-            This means it is safe to modify the TextSegmentCollection while iterating through the result collection.</returns>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.Remove(`0)">
-            <summary>
-            Removes the specified segment from the tree. This will cause the segment to not update
-            anymore when the document changes.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.Clear">
-            <summary>
-            Removes all segments from the tree.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.Count">
-            <summary>
-            Gets the number of segments in the tree.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.Contains(`0)">
-            <summary>
-            Gets whether this tree contains the specified item.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.CopyTo(`0[],System.Int32)">
-            <summary>
-            Copies all segments in this SegmentTree to the specified array.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.GetEnumerator">
-            <summary>
-            Gets an enumerator to enumerate the segments.
-            </summary>
+        <member name="M:ICSharpCode.AvalonEdit.Document.AnchorSegment.ToString">
+            <inheritdoc/>
         </member>
         <member name="T:ICSharpCode.AvalonEdit.Document.TextAnchor">
             <summary>
@@ -2220,449 +1931,6 @@
             <summary>
             Finds the node at the specified offset.
             After the method has run, offset is relative to the beginning of the returned node.
-            </summary>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.TextSegment">
-            <summary>
-            A segment that can be put into a <see cref="T:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1"/>.
-            </summary>
-            <remarks>
-            <para>
-            A <see cref="T:ICSharpCode.AvalonEdit.Document.TextSegment"/> can be stand-alone or part of a <see cref="T:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1"/>.
-            If the segment is stored inside a TextSegmentCollection, its Offset and Length will be updated by that collection.
-            </para>
-            <para>
-            When the document changes, the offsets of all text segments in the TextSegmentCollection will be adjusted accordingly.
-            Start offsets move like <see cref="T:ICSharpCode.AvalonEdit.Document.AnchorMovementType">AnchorMovementType.AfterInsertion</see>,
-            end offsets move like <see cref="T:ICSharpCode.AvalonEdit.Document.AnchorMovementType">AnchorMovementType.BeforeInsertion</see>
-            (i.e. the segment will always stay as small as possible).</para>
-            <para>
-            If a document change causes a segment to be deleted completely, it will be reduced to length 0, but segments are
-            never automatically removed from the collection.
-            Segments with length 0 will never expand due to document changes, and they move as <c>AfterInsertion</c>.
-            </para>
-            <para>
-            Thread-safety: a TextSegmentCollection that is connected to a <see cref="T:ICSharpCode.AvalonEdit.Document.TextDocument"/> may only be used on that document's owner thread.
-            A disconnected TextSegmentCollection is safe for concurrent reads, but concurrent access is not safe when there are writes.
-            Keep in mind that reading the Offset properties of a text segment inside the collection is a read access on the
-            collection; and setting an Offset property of a text segment is a write access on the collection.
-            </para>
-            </remarks>
-            <seealso cref="T:ICSharpCode.AvalonEdit.Document.ISegment"/>
-            <seealso cref="T:ICSharpCode.AvalonEdit.Document.AnchorSegment"/>
-            <seealso cref="T:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1"/>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Document.TextSegment.color">
-            <summary>
-            The color of the segment in the red/black tree.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Document.TextSegment.nodeLength">
-            <summary>
-            The "length" of the node (distance to previous node)
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Document.TextSegment.totalNodeLength">
-            <summary>
-            The total "length" of this subtree.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Document.TextSegment.segmentLength">
-            <summary>
-            The length of the segment (do not confuse with nodeLength).
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Document.TextSegment.distanceToMaxEnd">
-            <summary>
-            distanceToMaxEnd = Max(segmentLength,
-                                   left.distanceToMaxEnd + left.Offset - Offset,
-                                   left.distanceToMaxEnd + right.Offset - Offset)
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.TextSegment.IsConnectedToCollection">
-            <summary>
-            Gets whether this segment is connected to a TextSegmentCollection and will automatically
-            update its offsets.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.TextSegment.StartOffset">
-            <summary>
-            Gets/Sets the start offset of the segment.
-            </summary>
-            <remarks>
-            When setting the start offset, the end offset will change, too: the Length of the segment will stay constant.
-            </remarks>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.TextSegment.EndOffset">
-            <summary>
-            Gets/Sets the end offset of the segment.
-            </summary>
-            <remarks>
-            Setting the end offset will change the length, the start offset will stay constant.
-            </remarks>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.TextSegment.Length">
-            <summary>
-            Gets/Sets the length of the segment.
-            </summary>
-            <remarks>
-            Setting the length will change the end offset, the start offset will stay constant.
-            </remarks>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegment.OnSegmentChanged">
-            <summary>
-            This method gets called when the StartOffset/Length/EndOffset properties are set.
-            It is not called when StartOffset/Length/EndOffset change due to document changes
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.TextSegment.Successor">
-            <summary>
-            Gets the inorder successor of the node.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.TextSegment.Predecessor">
-            <summary>
-            Gets the inorder predecessor of the node.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegment.ToString">
-            <inheritdoc/>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.TextSourceVersionProvider">
-            <summary>
-            Provides ITextSourceVersion instances.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextSourceVersionProvider.#ctor">
-            <summary>
-            Creates a new TextSourceVersionProvider instance.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.TextSourceVersionProvider.CurrentVersion">
-            <summary>
-            Gets the current version.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.TextSourceVersionProvider.AppendChange(ICSharpCode.AvalonEdit.Document.TextChangeEventArgs)">
-            <summary>
-            Replaces the current version with a new version.
-            </summary>
-            <param name="change">Change from current version to new version</param>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.CaretPositioningMode">
-            <summary>
-            Specifies the mode for getting the next caret position.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Document.CaretPositioningMode.Normal">
-            <summary>
-            Normal positioning (stop after every grapheme)
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Document.CaretPositioningMode.WordBorder">
-            <summary>
-            Stop only on word borders.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Document.CaretPositioningMode.WordStart">
-            <summary>
-            Stop only at the beginning of words. This is used for Ctrl+Left/Ctrl+Right.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Document.CaretPositioningMode.WordStartOrSymbol">
-            <summary>
-            Stop only at the beginning of words, and anywhere in the middle of symbols.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Document.CaretPositioningMode.WordBorderOrSymbol">
-            <summary>
-            Stop only on word borders, and anywhere in the middle of symbols.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Document.CaretPositioningMode.EveryCodepoint">
-            <summary>
-            Stop between every Unicode codepoint, even within the same grapheme.
-            This is used to implement deleting the previous grapheme when Backspace is pressed.
-            </summary>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.CharacterClass">
-            <summary>
-            Classifies a character as whitespace, line terminator, part of an identifier, or other.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Document.CharacterClass.Other">
-            <summary>
-            The character is not whitespace, line terminator or part of an identifier.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Document.CharacterClass.Whitespace">
-            <summary>
-            The character is whitespace (but not line terminator).
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Document.CharacterClass.IdentifierPart">
-            <summary>
-            The character can be part of an identifier (Letter, digit or underscore).
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Document.CharacterClass.LineTerminator">
-            <summary>
-            The character is line terminator (\r or \n).
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Document.CharacterClass.CombiningMark">
-            <summary>
-            The character is a unicode combining mark that modifies the previous character.
-            Corresponds to the Unicode designations "Mn", "Mc" and "Me".
-            </summary>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.UndoOperationGroup">
-            <summary>
-            This class stacks the last x operations from the undostack and makes
-            one undo/redo operation from it.
-            </summary>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.UndoStack">
-            <summary>
-            Undo stack implementation.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Document.UndoStack.StateListen">
-            undo stack is listening for changes
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Document.UndoStack.StatePlayback">
-            undo stack is reverting/repeating a set of changes
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Document.UndoStack.state">
-            state is used for checking that noone but the UndoStack performs changes
-            during Undo events
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Document.UndoStack.elementsOnUndoUntilOriginalFile">
-            <summary>
-            Number of times undo must be executed until the original state is reached.
-            Negative: number of times redo must be executed until the original state is reached.
-            Special case: int.MinValue == original state is unreachable
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.UndoStack.IsOriginalFile">
-            <summary>
-            Gets whether the document is currently in its original state (no modifications).
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.MarkAsOriginalFile">
-            <summary>
-            Marks the current state as original. Discards any previous "original" markers.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.DiscardOriginalFileMarker">
-            <summary>
-            Discards the current "original" marker.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.UndoStack.AcceptChanges">
-            <summary>
-            Gets if the undo stack currently accepts changes.
-            Is false while an undo action is running.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.UndoStack.CanUndo">
-            <summary>
-            Gets if there are actions on the undo stack.
-            Use the PropertyChanged event to listen to changes of this property.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.UndoStack.CanRedo">
-            <summary>
-            Gets if there are actions on the redo stack.
-            Use the PropertyChanged event to listen to changes of this property.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.UndoStack.SizeLimit">
-            <summary>
-            Gets/Sets the limit on the number of items on the undo stack.
-            </summary>
-            <remarks>The size limit is enforced only on the number of stored top-level undo groups.
-            Elements within undo groups do not count towards the size limit.</remarks>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.UndoStack.LastGroupDescriptor">
-            <summary>
-            If an undo group is open, gets the group descriptor of the current top-level
-            undo group.
-            If no undo group is open, gets the group descriptor from the previous undo group.
-            </summary>
-            <remarks>The group descriptor can be used to join adjacent undo groups:
-            use a group descriptor to mark your changes, and on the second action,
-            compare LastGroupDescriptor and use <see cref="M:ICSharpCode.AvalonEdit.Document.UndoStack.StartContinuedUndoGroup(System.Object)"/> if you
-            want to join the undo groups.</remarks>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.StartUndoGroup">
-            <summary>
-            Starts grouping changes.
-            Maintains a counter so that nested calls are possible.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.StartUndoGroup(System.Object)">
-            <summary>
-            Starts grouping changes.
-            Maintains a counter so that nested calls are possible.
-            </summary>
-            <param name="groupDescriptor">An object that is stored with the undo group.
-            If this is not a top-level undo group, the parameter is ignored.</param>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.StartContinuedUndoGroup(System.Object)">
-            <summary>
-            Starts grouping changes, continuing with the previously closed undo group if possible.
-            Maintains a counter so that nested calls are possible.
-            If the call to StartContinuedUndoGroup is a nested call, it behaves exactly
-            as <see cref="M:ICSharpCode.AvalonEdit.Document.UndoStack.StartUndoGroup"/>, only top-level calls can continue existing undo groups.
-            </summary>
-            <param name="groupDescriptor">An object that is stored with the undo group.
-            If this is not a top-level undo group, the parameter is ignored.</param>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.EndUndoGroup">
-            <summary>
-            Stops grouping changes.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.ThrowIfUndoGroupOpen">
-            <summary>
-            Throws an InvalidOperationException if an undo group is current open.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.Undo">
-            <summary>
-            Call this method to undo the last operation on the stack
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.Redo">
-            <summary>
-            Call this method to redo the last undone operation
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.Push(ICSharpCode.AvalonEdit.Document.IUndoableOperation)">
-            <summary>
-            Call this method to push an UndoableOperation on the undostack.
-            The redostack will be cleared if you use this method.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.PushOptional(ICSharpCode.AvalonEdit.Document.IUndoableOperation)">
-            <summary>
-            Call this method to push an UndoableOperation on the undostack.
-            However, the operation will be only stored if the undo group contains a
-            non-optional operation.
-            Use this method to store the caret position/selection on the undo stack to
-            prevent having only actions that affect only the caret and not the document.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.ClearRedoStack">
-            <summary>
-            Call this method, if you want to clear the redo stack
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.ClearAll">
-            <summary>
-            Clears both the undo and redo stack.
-            </summary>
-        </member>
-        <member name="E:ICSharpCode.AvalonEdit.Document.UndoStack.PropertyChanged">
-            <summary>
-            Is raised when a property (CanUndo, CanRedo) changed.
-            </summary>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.WeakLineTracker">
-            <summary>
-            Allows registering a line tracker on a TextDocument using a weak reference from the document to the line tracker.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.WeakLineTracker.Register(ICSharpCode.AvalonEdit.Document.TextDocument,ICSharpCode.AvalonEdit.Document.ILineTracker)">
-            <summary>
-            Registers the <paramref name="targetTracker"/> as line tracker for the <paramref name="textDocument"/>.
-            A weak reference to the target tracker will be used, and the WeakLineTracker will deregister itself
-            when the target tracker is garbage collected.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.WeakLineTracker.Deregister">
-            <summary>
-            Deregisters the weak line tracker.
-            </summary>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.DocumentChangeEventArgs">
-            <summary>
-            Describes a change of the document text.
-            This class is thread-safe.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.DocumentChangeEventArgs.OffsetChangeMap">
-            <summary>
-            Gets the OffsetChangeMap associated with this document change.
-            </summary>
-            <remarks>The OffsetChangeMap instance is guaranteed to be frozen and thus thread-safe.</remarks>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Document.DocumentChangeEventArgs.OffsetChangeMapOrNull">
-            <summary>
-            Gets the OffsetChangeMap, or null if the default offset map (=single replacement) is being used.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.DocumentChangeEventArgs.GetNewOffset(System.Int32,ICSharpCode.AvalonEdit.Document.AnchorMovementType)">
-            <summary>
-            Gets the new offset where the specified offset moves after this document change.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.DocumentChangeEventArgs.#ctor(System.Int32,System.String,System.String)">
-            <summary>
-            Creates a new DocumentChangeEventArgs object.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.DocumentChangeEventArgs.#ctor(System.Int32,System.String,System.String,ICSharpCode.AvalonEdit.Document.OffsetChangeMap)">
-            <summary>
-            Creates a new DocumentChangeEventArgs object.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.DocumentChangeEventArgs.#ctor(System.Int32,ICSharpCode.AvalonEdit.Document.ITextSource,ICSharpCode.AvalonEdit.Document.ITextSource,ICSharpCode.AvalonEdit.Document.OffsetChangeMap)">
-            <summary>
-            Creates a new DocumentChangeEventArgs object.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.DocumentChangeEventArgs.Invert">
-            <inheritdoc/>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.LineManager">
-            <summary>
-            Creates/Deletes lines when text is inserted/removed.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Document.LineManager.lineTrackers">
-            <summary>
-            A copy of the line trackers. We need a copy so that line trackers may remove themselves
-            while being notified (used e.g. by WeakLineTracker)
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.LineManager.SetLineLength(ICSharpCode.AvalonEdit.Document.DocumentLine,System.Int32)">
-            <summary>
-            Sets the total line length and checks the delimiter.
-            This method can cause line to be deleted when it contains a single '\n' character
-            and the previous line ends with '\r'.
-            </summary>
-            <returns>Usually returns <paramref name="line"/>, but if line was deleted due to
-            the "\r\n" merge, returns the previous line.</returns>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Document.DocumentLineTree">
-            <summary>
-            Data structure for efficient management of the document lines (most operations are O(lg n)).
-            This implements an augmented red-black tree.
-            See <see cref="T:ICSharpCode.AvalonEdit.Document.DocumentLine"/> for the augmented data.
-            
-            NOTE: The tree is never empty, initially it contains an empty line.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.DocumentLineTree.RebuildTree(System.Collections.Generic.List{ICSharpCode.AvalonEdit.Document.DocumentLine})">
-            <summary>
-            Rebuild the tree, in O(n).
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Document.DocumentLineTree.BuildTree(ICSharpCode.AvalonEdit.Document.DocumentLine[],System.Int32,System.Int32,System.Int32)">
-            <summary>
-            build a tree from a list of nodes
             </summary>
         </member>
         <member name="T:ICSharpCode.AvalonEdit.Document.TextDocument">
@@ -3121,6 +2389,738 @@
         <member name="P:ICSharpCode.AvalonEdit.Document.TextDocument.FileName">
             <inheritdoc/>
         </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager">
+            <summary>
+            Contains weak event managers for the TextDocument events.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.UpdateStarted">
+            <summary>
+            Weak event manager for the <see cref="E:ICSharpCode.AvalonEdit.Document.TextDocument.UpdateStarted"/> event.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.UpdateStarted.StartListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.UpdateStarted.StopListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
+            <inheritdoc/>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.UpdateFinished">
+            <summary>
+            Weak event manager for the <see cref="E:ICSharpCode.AvalonEdit.Document.TextDocument.UpdateFinished"/> event.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.UpdateFinished.StartListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.UpdateFinished.StopListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
+            <inheritdoc/>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.Changing">
+            <summary>
+            Weak event manager for the <see cref="E:ICSharpCode.AvalonEdit.Document.TextDocument.Changing"/> event.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.Changing.StartListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.Changing.StopListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
+            <inheritdoc/>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.Changed">
+            <summary>
+            Weak event manager for the <see cref="E:ICSharpCode.AvalonEdit.Document.TextDocument.Changed"/> event.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.Changed.StartListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.Changed.StopListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
+            <inheritdoc/>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.LineCountChanged">
+            <summary>
+            Weak event manager for the <see cref="E:ICSharpCode.AvalonEdit.Document.TextDocument.LineCountChanged"/> event.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.LineCountChanged.StartListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.LineCountChanged.StopListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
+            <inheritdoc/>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.TextLengthChanged">
+            <summary>
+            Weak event manager for the <see cref="E:ICSharpCode.AvalonEdit.Document.TextDocument.TextLengthChanged"/> event.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.TextLengthChanged.StartListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.TextLengthChanged.StopListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
+            <inheritdoc/>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.TextChanged">
+            <summary>
+            Weak event manager for the <see cref="E:ICSharpCode.AvalonEdit.Document.TextDocument.TextChanged"/> event.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.TextChanged.StartListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager.TextChanged.StopListening(ICSharpCode.AvalonEdit.Document.TextDocument)">
+            <inheritdoc/>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.TextLocation">
+            <summary>
+            A line/column position.
+            Text editor lines/columns are counted started from one.
+            </summary>
+            <remarks>
+            The document provides the methods <see cref="M:ICSharpCode.AvalonEdit.Document.IDocument.GetLocation(System.Int32)"/> and
+            <see cref="M:ICSharpCode.AvalonEdit.Document.IDocument.GetOffset(ICSharpCode.AvalonEdit.Document.TextLocation)"/> to convert between offsets and TextLocations.
+            </remarks>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Document.TextLocation.Empty">
+            <summary>
+            Represents no text location (0, 0).
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocation.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Creates a TextLocation instance.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.TextLocation.Line">
+            <summary>
+            Gets the line number.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.TextLocation.Column">
+            <summary>
+            Gets the column number.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.TextLocation.IsEmpty">
+            <summary>
+            Gets whether the TextLocation instance is empty.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocation.ToString">
+            <summary>
+            Gets a string representation for debugging purposes.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocation.GetHashCode">
+            <summary>
+            Gets a hash code.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocation.Equals(System.Object)">
+            <summary>
+            Equality test.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocation.Equals(ICSharpCode.AvalonEdit.Document.TextLocation)">
+            <summary>
+            Equality test.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocation.op_Equality(ICSharpCode.AvalonEdit.Document.TextLocation,ICSharpCode.AvalonEdit.Document.TextLocation)">
+            <summary>
+            Equality test.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocation.op_Inequality(ICSharpCode.AvalonEdit.Document.TextLocation,ICSharpCode.AvalonEdit.Document.TextLocation)">
+            <summary>
+            Inequality test.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocation.op_LessThan(ICSharpCode.AvalonEdit.Document.TextLocation,ICSharpCode.AvalonEdit.Document.TextLocation)">
+            <summary>
+            Compares two text locations.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocation.op_GreaterThan(ICSharpCode.AvalonEdit.Document.TextLocation,ICSharpCode.AvalonEdit.Document.TextLocation)">
+            <summary>
+            Compares two text locations.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocation.op_LessThanOrEqual(ICSharpCode.AvalonEdit.Document.TextLocation,ICSharpCode.AvalonEdit.Document.TextLocation)">
+            <summary>
+            Compares two text locations.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocation.op_GreaterThanOrEqual(ICSharpCode.AvalonEdit.Document.TextLocation,ICSharpCode.AvalonEdit.Document.TextLocation)">
+            <summary>
+            Compares two text locations.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocation.CompareTo(ICSharpCode.AvalonEdit.Document.TextLocation)">
+            <summary>
+            Compares two text locations.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.TextLocationConverter">
+            <summary>
+            Converts strings of the form '0+[;,]0+' to a <see cref="T:ICSharpCode.AvalonEdit.Document.TextLocation"/>.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocationConverter.CanConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Type)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocationConverter.CanConvertTo(System.ComponentModel.ITypeDescriptorContext,System.Type)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocationConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextLocationConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object,System.Type)">
+            <inheritdoc/>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.ISegment">
+            <summary>
+            An (Offset,Length)-pair.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.ISegment.Offset">
+            <summary>
+            Gets the start offset of the segment.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.ISegment.Length">
+            <summary>
+            Gets the length of the segment.
+            </summary>
+            <remarks>For line segments (IDocumentLine), the length does not include the line delimeter.</remarks>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.ISegment.EndOffset">
+            <summary>
+            Gets the end offset of the segment.
+            </summary>
+            <remarks>EndOffset = Offset + Length;</remarks>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.ISegmentExtensions">
+            <summary>
+            Extension methods for <see cref="T:ICSharpCode.AvalonEdit.Document.ISegment"/>.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.ISegmentExtensions.Contains(ICSharpCode.AvalonEdit.Document.ISegment,System.Int32,System.Int32)">
+            <summary>
+            Gets whether <paramref name="segment"/> fully contains the specified segment.
+            </summary>
+            <remarks>
+            Use <c>segment.Contains(offset, 0)</c> to detect whether a segment (end inclusive) contains offset;
+            use <c>segment.Contains(offset, 1)</c> to detect whether a segment (end exclusive) contains offset.
+            </remarks>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.ISegmentExtensions.Contains(ICSharpCode.AvalonEdit.Document.ISegment,ICSharpCode.AvalonEdit.Document.ISegment)">
+            <summary>
+            Gets whether <paramref name="thisSegment"/> fully contains the specified segment.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.TextSegment">
+            <summary>
+            A segment that can be put into a <see cref="T:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1"/>.
+            </summary>
+            <remarks>
+            <para>
+            A <see cref="T:ICSharpCode.AvalonEdit.Document.TextSegment"/> can be stand-alone or part of a <see cref="T:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1"/>.
+            If the segment is stored inside a TextSegmentCollection, its Offset and Length will be updated by that collection.
+            </para>
+            <para>
+            When the document changes, the offsets of all text segments in the TextSegmentCollection will be adjusted accordingly.
+            Start offsets move like <see cref="T:ICSharpCode.AvalonEdit.Document.AnchorMovementType">AnchorMovementType.AfterInsertion</see>,
+            end offsets move like <see cref="T:ICSharpCode.AvalonEdit.Document.AnchorMovementType">AnchorMovementType.BeforeInsertion</see>
+            (i.e. the segment will always stay as small as possible).</para>
+            <para>
+            If a document change causes a segment to be deleted completely, it will be reduced to length 0, but segments are
+            never automatically removed from the collection.
+            Segments with length 0 will never expand due to document changes, and they move as <c>AfterInsertion</c>.
+            </para>
+            <para>
+            Thread-safety: a TextSegmentCollection that is connected to a <see cref="T:ICSharpCode.AvalonEdit.Document.TextDocument"/> may only be used on that document's owner thread.
+            A disconnected TextSegmentCollection is safe for concurrent reads, but concurrent access is not safe when there are writes.
+            Keep in mind that reading the Offset properties of a text segment inside the collection is a read access on the
+            collection; and setting an Offset property of a text segment is a write access on the collection.
+            </para>
+            </remarks>
+            <seealso cref="T:ICSharpCode.AvalonEdit.Document.ISegment"/>
+            <seealso cref="T:ICSharpCode.AvalonEdit.Document.AnchorSegment"/>
+            <seealso cref="T:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1"/>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Document.TextSegment.color">
+            <summary>
+            The color of the segment in the red/black tree.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Document.TextSegment.nodeLength">
+            <summary>
+            The "length" of the node (distance to previous node)
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Document.TextSegment.totalNodeLength">
+            <summary>
+            The total "length" of this subtree.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Document.TextSegment.segmentLength">
+            <summary>
+            The length of the segment (do not confuse with nodeLength).
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Document.TextSegment.distanceToMaxEnd">
+            <summary>
+            distanceToMaxEnd = Max(segmentLength,
+                                   left.distanceToMaxEnd + left.Offset - Offset,
+                                   left.distanceToMaxEnd + right.Offset - Offset)
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.TextSegment.IsConnectedToCollection">
+            <summary>
+            Gets whether this segment is connected to a TextSegmentCollection and will automatically
+            update its offsets.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.TextSegment.StartOffset">
+            <summary>
+            Gets/Sets the start offset of the segment.
+            </summary>
+            <remarks>
+            When setting the start offset, the end offset will change, too: the Length of the segment will stay constant.
+            </remarks>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.TextSegment.EndOffset">
+            <summary>
+            Gets/Sets the end offset of the segment.
+            </summary>
+            <remarks>
+            Setting the end offset will change the length, the start offset will stay constant.
+            </remarks>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.TextSegment.Length">
+            <summary>
+            Gets/Sets the length of the segment.
+            </summary>
+            <remarks>
+            Setting the length will change the end offset, the start offset will stay constant.
+            </remarks>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegment.OnSegmentChanged">
+            <summary>
+            This method gets called when the StartOffset/Length/EndOffset properties are set.
+            It is not called when StartOffset/Length/EndOffset change due to document changes
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.TextSegment.Successor">
+            <summary>
+            Gets the inorder successor of the node.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.TextSegment.Predecessor">
+            <summary>
+            Gets the inorder predecessor of the node.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegment.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.ISegmentTree">
+            <summary>
+            Interface to allow TextSegments to access the TextSegmentCollection - we cannot use a direct reference
+            because TextSegmentCollection is generic.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1">
+            <summary>
+            <para>
+            A collection of text segments that supports efficient lookup of segments
+            intersecting with another segment.
+            </para>
+            </summary>
+            <remarks><inheritdoc cref="T:ICSharpCode.AvalonEdit.Document.TextSegment"/></remarks>
+            <see cref="T:ICSharpCode.AvalonEdit.Document.TextSegment"/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.#ctor">
+            <summary>
+            Creates a new TextSegmentCollection that needs manual calls to <see cref="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.UpdateOffsets(ICSharpCode.AvalonEdit.Document.DocumentChangeEventArgs)"/>.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.#ctor(ICSharpCode.AvalonEdit.Document.TextDocument)">
+            <summary>
+            Creates a new TextSegmentCollection that updates the offsets automatically.
+            </summary>
+            <param name="textDocument">The document to which the text segments
+            that will be added to the tree belong. When the document changes, the
+            position of the text segments will be updated accordingly.</param>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.UpdateOffsets(ICSharpCode.AvalonEdit.Document.DocumentChangeEventArgs)">
+            <summary>
+            Updates the start and end offsets of all segments stored in this collection.
+            </summary>
+            <param name="e">DocumentChangeEventArgs instance describing the change to the document.</param>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.UpdateOffsets(ICSharpCode.AvalonEdit.Document.OffsetChangeMapEntry)">
+            <summary>
+            Updates the start and end offsets of all segments stored in this collection.
+            </summary>
+            <param name="change">OffsetChangeMapEntry instance describing the change to the document.</param>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.Add(`0)">
+            <summary>
+            Adds the specified segment to the tree. This will cause the segment to update when the
+            document changes.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.GetNextSegment(`0)">
+            <summary>
+            Gets the next segment after the specified segment.
+            Segments are sorted by their start offset.
+            Returns null if segment is the last segment.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.GetPreviousSegment(`0)">
+            <summary>
+            Gets the previous segment before the specified segment.
+            Segments are sorted by their start offset.
+            Returns null if segment is the first segment.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.FirstSegment">
+            <summary>
+            Returns the first segment in the collection or null, if the collection is empty.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.LastSegment">
+            <summary>
+            Returns the last segment in the collection or null, if the collection is empty.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.FindFirstSegmentWithStartAfter(System.Int32)">
+            <summary>
+            Gets the first segment with a start offset greater or equal to <paramref name="startOffset"/>.
+            Returns null if no such segment is found.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.FindNode(System.Int32@)">
+            <summary>
+            Finds the node at the specified offset.
+            After the method has run, offset is relative to the beginning of the returned node.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.FindSegmentsContaining(System.Int32)">
+            <summary>
+            Finds all segments that contain the given offset.
+            (StartOffset &lt;= offset &lt;= EndOffset)
+            Segments are returned in the order given by GetNextSegment/GetPreviousSegment.
+            </summary>
+            <returns>Returns a new collection containing the results of the query.
+            This means it is safe to modify the TextSegmentCollection while iterating through the result collection.</returns>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.FindOverlappingSegments(ICSharpCode.AvalonEdit.Document.ISegment)">
+            <summary>
+            Finds all segments that overlap with the given segment (including touching segments).
+            </summary>
+            <returns>Returns a new collection containing the results of the query.
+            This means it is safe to modify the TextSegmentCollection while iterating through the result collection.</returns>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.FindOverlappingSegments(System.Int32,System.Int32)">
+            <summary>
+            Finds all segments that overlap with the given segment (including touching segments).
+            Segments are returned in the order given by GetNextSegment/GetPreviousSegment.
+            </summary>
+            <returns>Returns a new collection containing the results of the query.
+            This means it is safe to modify the TextSegmentCollection while iterating through the result collection.</returns>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.Remove(`0)">
+            <summary>
+            Removes the specified segment from the tree. This will cause the segment to not update
+            anymore when the document changes.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.Clear">
+            <summary>
+            Removes all segments from the tree.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.Count">
+            <summary>
+            Gets the number of segments in the tree.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.Contains(`0)">
+            <summary>
+            Gets whether this tree contains the specified item.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.CopyTo(`0[],System.Int32)">
+            <summary>
+            Copies all segments in this SegmentTree to the specified array.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextSegmentCollection`1.GetEnumerator">
+            <summary>
+            Gets an enumerator to enumerate the segments.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.TextSourceVersionProvider">
+            <summary>
+            Provides ITextSourceVersion instances.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextSourceVersionProvider.#ctor">
+            <summary>
+            Creates a new TextSourceVersionProvider instance.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.TextSourceVersionProvider.CurrentVersion">
+            <summary>
+            Gets the current version.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.TextSourceVersionProvider.AppendChange(ICSharpCode.AvalonEdit.Document.TextChangeEventArgs)">
+            <summary>
+            Replaces the current version with a new version.
+            </summary>
+            <param name="change">Change from current version to new version</param>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.CaretPositioningMode">
+            <summary>
+            Specifies the mode for getting the next caret position.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Document.CaretPositioningMode.Normal">
+            <summary>
+            Normal positioning (stop after every grapheme)
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Document.CaretPositioningMode.WordBorder">
+            <summary>
+            Stop only on word borders.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Document.CaretPositioningMode.WordStart">
+            <summary>
+            Stop only at the beginning of words. This is used for Ctrl+Left/Ctrl+Right.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Document.CaretPositioningMode.WordStartOrSymbol">
+            <summary>
+            Stop only at the beginning of words, and anywhere in the middle of symbols.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Document.CaretPositioningMode.WordBorderOrSymbol">
+            <summary>
+            Stop only on word borders, and anywhere in the middle of symbols.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Document.CaretPositioningMode.EveryCodepoint">
+            <summary>
+            Stop between every Unicode codepoint, even within the same grapheme.
+            This is used to implement deleting the previous grapheme when Backspace is pressed.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.CharacterClass">
+            <summary>
+            Classifies a character as whitespace, line terminator, part of an identifier, or other.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Document.CharacterClass.Other">
+            <summary>
+            The character is not whitespace, line terminator or part of an identifier.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Document.CharacterClass.Whitespace">
+            <summary>
+            The character is whitespace (but not line terminator).
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Document.CharacterClass.IdentifierPart">
+            <summary>
+            The character can be part of an identifier (Letter, digit or underscore).
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Document.CharacterClass.LineTerminator">
+            <summary>
+            The character is line terminator (\r or \n).
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Document.CharacterClass.CombiningMark">
+            <summary>
+            The character is a unicode combining mark that modifies the previous character.
+            Corresponds to the Unicode designations "Mn", "Mc" and "Me".
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.UndoOperationGroup">
+            <summary>
+            This class stacks the last x operations from the undostack and makes
+            one undo/redo operation from it.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.UndoStack">
+            <summary>
+            Undo stack implementation.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Document.UndoStack.StateListen">
+            undo stack is listening for changes
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Document.UndoStack.StatePlayback">
+            undo stack is reverting/repeating a set of changes
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Document.UndoStack.state">
+            state is used for checking that noone but the UndoStack performs changes
+            during Undo events
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Document.UndoStack.elementsOnUndoUntilOriginalFile">
+            <summary>
+            Number of times undo must be executed until the original state is reached.
+            Negative: number of times redo must be executed until the original state is reached.
+            Special case: int.MinValue == original state is unreachable
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.UndoStack.IsOriginalFile">
+            <summary>
+            Gets whether the document is currently in its original state (no modifications).
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.MarkAsOriginalFile">
+            <summary>
+            Marks the current state as original. Discards any previous "original" markers.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.DiscardOriginalFileMarker">
+            <summary>
+            Discards the current "original" marker.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.UndoStack.AcceptChanges">
+            <summary>
+            Gets if the undo stack currently accepts changes.
+            Is false while an undo action is running.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.UndoStack.CanUndo">
+            <summary>
+            Gets if there are actions on the undo stack.
+            Use the PropertyChanged event to listen to changes of this property.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.UndoStack.CanRedo">
+            <summary>
+            Gets if there are actions on the redo stack.
+            Use the PropertyChanged event to listen to changes of this property.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.UndoStack.SizeLimit">
+            <summary>
+            Gets/Sets the limit on the number of items on the undo stack.
+            </summary>
+            <remarks>The size limit is enforced only on the number of stored top-level undo groups.
+            Elements within undo groups do not count towards the size limit.</remarks>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Document.UndoStack.LastGroupDescriptor">
+            <summary>
+            If an undo group is open, gets the group descriptor of the current top-level
+            undo group.
+            If no undo group is open, gets the group descriptor from the previous undo group.
+            </summary>
+            <remarks>The group descriptor can be used to join adjacent undo groups:
+            use a group descriptor to mark your changes, and on the second action,
+            compare LastGroupDescriptor and use <see cref="M:ICSharpCode.AvalonEdit.Document.UndoStack.StartContinuedUndoGroup(System.Object)"/> if you
+            want to join the undo groups.</remarks>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.StartUndoGroup">
+            <summary>
+            Starts grouping changes.
+            Maintains a counter so that nested calls are possible.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.StartUndoGroup(System.Object)">
+            <summary>
+            Starts grouping changes.
+            Maintains a counter so that nested calls are possible.
+            </summary>
+            <param name="groupDescriptor">An object that is stored with the undo group.
+            If this is not a top-level undo group, the parameter is ignored.</param>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.StartContinuedUndoGroup(System.Object)">
+            <summary>
+            Starts grouping changes, continuing with the previously closed undo group if possible.
+            Maintains a counter so that nested calls are possible.
+            If the call to StartContinuedUndoGroup is a nested call, it behaves exactly
+            as <see cref="M:ICSharpCode.AvalonEdit.Document.UndoStack.StartUndoGroup"/>, only top-level calls can continue existing undo groups.
+            </summary>
+            <param name="groupDescriptor">An object that is stored with the undo group.
+            If this is not a top-level undo group, the parameter is ignored.</param>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.EndUndoGroup">
+            <summary>
+            Stops grouping changes.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.ThrowIfUndoGroupOpen">
+            <summary>
+            Throws an InvalidOperationException if an undo group is current open.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.Undo">
+            <summary>
+            Call this method to undo the last operation on the stack
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.Redo">
+            <summary>
+            Call this method to redo the last undone operation
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.Push(ICSharpCode.AvalonEdit.Document.IUndoableOperation)">
+            <summary>
+            Call this method to push an UndoableOperation on the undostack.
+            The redostack will be cleared if you use this method.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.PushOptional(ICSharpCode.AvalonEdit.Document.IUndoableOperation)">
+            <summary>
+            Call this method to push an UndoableOperation on the undostack.
+            However, the operation will be only stored if the undo group contains a
+            non-optional operation.
+            Use this method to store the caret position/selection on the undo stack to
+            prevent having only actions that affect only the caret and not the document.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.ClearRedoStack">
+            <summary>
+            Call this method, if you want to clear the redo stack
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.UndoStack.ClearAll">
+            <summary>
+            Clears both the undo and redo stack.
+            </summary>
+        </member>
+        <member name="E:ICSharpCode.AvalonEdit.Document.UndoStack.PropertyChanged">
+            <summary>
+            Is raised when a property (CanUndo, CanRedo) changed.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Document.WeakLineTracker">
+            <summary>
+            Allows registering a line tracker on a TextDocument using a weak reference from the document to the line tracker.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.WeakLineTracker.Register(ICSharpCode.AvalonEdit.Document.TextDocument,ICSharpCode.AvalonEdit.Document.ILineTracker)">
+            <summary>
+            Registers the <paramref name="targetTracker"/> as line tracker for the <paramref name="textDocument"/>.
+            A weak reference to the target tracker will be used, and the WeakLineTracker will deregister itself
+            when the target tracker is garbage collected.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Document.WeakLineTracker.Deregister">
+            <summary>
+            Deregisters the weak line tracker.
+            </summary>
+        </member>
         <member name="T:ICSharpCode.AvalonEdit.Editing.AbstractMargin">
             <summary>
             Base class for margins.
@@ -3352,91 +3352,6 @@
             Native API required for IME support.
             </summary>
         </member>
-        <member name="T:ICSharpCode.AvalonEdit.Editing.MouseSelectionMode">
-            <summary>
-            Enumeration of possible states of mouse selection.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Editing.MouseSelectionMode.None">
-            <summary>
-            no selection (no mouse button down)
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Editing.MouseSelectionMode.PossibleDragStart">
-            <summary>
-            left mouse button down on selection, might be normal click
-            or might be drag'n'drop
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Editing.MouseSelectionMode.Drag">
-            <summary>
-            dragging text
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Editing.MouseSelectionMode.Normal">
-            <summary>
-            normal selection (click+drag)
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Editing.MouseSelectionMode.WholeWord">
-            <summary>
-            whole-word selection (double click+drag or ctrl+click+drag)
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Editing.MouseSelectionMode.WholeLine">
-            <summary>
-            whole-line selection (triple click+drag)
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Editing.MouseSelectionMode.Rectangular">
-            <summary>
-            rectangular selection (alt+click+drag)
-            </summary>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Editing.SelectionSegment">
-            <summary>
-            Represents a selected segment.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Editing.SelectionSegment.#ctor(System.Int32,System.Int32)">
-            <summary>
-            Creates a SelectionSegment from two offsets.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Editing.SelectionSegment.#ctor(System.Int32,System.Int32,System.Int32,System.Int32)">
-            <summary>
-            Creates a SelectionSegment from two offsets and visual columns.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Editing.SelectionSegment.StartOffset">
-            <summary>
-            Gets the start offset.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Editing.SelectionSegment.EndOffset">
-            <summary>
-            Gets the end offset.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Editing.SelectionSegment.StartVisualColumn">
-            <summary>
-            Gets the start visual column.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Editing.SelectionSegment.EndVisualColumn">
-            <summary>
-            Gets the end visual column.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Editing.SelectionSegment.ICSharpCode#AvalonEdit#Document#ISegment#Offset">
-            <inheritdoc/>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Editing.SelectionSegment.Length">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Editing.SelectionSegment.ToString">
-            <inheritdoc/>
-        </member>
         <member name="T:ICSharpCode.AvalonEdit.Editing.IReadOnlySectionProvider">
             <summary>
             Determines whether the document can be modified.
@@ -3507,6 +3422,47 @@
         </member>
         <member name="M:ICSharpCode.AvalonEdit.Editing.LineNumberMargin.HitTestCore(System.Windows.Media.PointHitTestParameters)">
             <inheritdoc/>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Editing.MouseSelectionMode">
+            <summary>
+            Enumeration of possible states of mouse selection.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Editing.MouseSelectionMode.None">
+            <summary>
+            no selection (no mouse button down)
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Editing.MouseSelectionMode.PossibleDragStart">
+            <summary>
+            left mouse button down on selection, might be normal click
+            or might be drag'n'drop
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Editing.MouseSelectionMode.Drag">
+            <summary>
+            dragging text
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Editing.MouseSelectionMode.Normal">
+            <summary>
+            normal selection (click+drag)
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Editing.MouseSelectionMode.WholeWord">
+            <summary>
+            whole-word selection (double click+drag or ctrl+click+drag)
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Editing.MouseSelectionMode.WholeLine">
+            <summary>
+            whole-line selection (triple click+drag)
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Editing.MouseSelectionMode.Rectangular">
+            <summary>
+            rectangular selection (alt+click+drag)
+            </summary>
         </member>
         <member name="T:ICSharpCode.AvalonEdit.Editing.NoReadOnlySections">
             <summary>
@@ -3746,6 +3702,50 @@
             <summary>
             Handles selection of text using the mouse.
             </summary>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Editing.SelectionSegment">
+            <summary>
+            Represents a selected segment.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Editing.SelectionSegment.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Creates a SelectionSegment from two offsets.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Editing.SelectionSegment.#ctor(System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Creates a SelectionSegment from two offsets and visual columns.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Editing.SelectionSegment.StartOffset">
+            <summary>
+            Gets the start offset.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Editing.SelectionSegment.EndOffset">
+            <summary>
+            Gets the end offset.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Editing.SelectionSegment.StartVisualColumn">
+            <summary>
+            Gets the start visual column.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Editing.SelectionSegment.EndVisualColumn">
+            <summary>
+            Gets the end visual column.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Editing.SelectionSegment.ICSharpCode#AvalonEdit#Document#ISegment#Offset">
+            <inheritdoc/>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Editing.SelectionSegment.Length">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Editing.SelectionSegment.ToString">
+            <inheritdoc/>
         </member>
         <member name="T:ICSharpCode.AvalonEdit.Editing.SimpleSelection">
             <summary>
@@ -5221,6 +5221,103 @@
             The default HighlightingManager comes with built-in highlightings.
             </summary>
         </member>
+        <member name="T:ICSharpCode.AvalonEdit.Highlighting.HighlightingRule">
+            <summary>
+            A highlighting rule.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingRule.Regex">
+            <summary>
+            Gets/Sets the regular expression for the rule.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingRule.Color">
+            <summary>
+            Gets/Sets the highlighting color.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Highlighting.HighlightingRule.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Highlighting.HighlightingRuleSet">
+            <summary>
+            A highlighting rule set describes a set of spans that are valid at a given code location.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Highlighting.HighlightingRuleSet.#ctor">
+            <summary>
+            Creates a new RuleSet instance.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingRuleSet.Name">
+            <summary>
+            Gets/Sets the name of the rule set.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingRuleSet.Spans">
+            <summary>
+            Gets the list of spans.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingRuleSet.Rules">
+            <summary>
+            Gets the list of rules.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Highlighting.HighlightingRuleSet.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Highlighting.HighlightingSpan">
+            <summary>
+            A highlighting span is a region with start+end expression that has a different RuleSet inside
+            and colors the region.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingSpan.StartExpression">
+            <summary>
+            Gets/Sets the start expression.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingSpan.EndExpression">
+            <summary>
+            Gets/Sets the end expression.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingSpan.RuleSet">
+            <summary>
+            Gets/Sets the rule set that applies inside this span.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingSpan.StartColor">
+            <summary>
+            Gets the color used for the text matching the start expression.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingSpan.SpanColor">
+            <summary>
+            Gets the color used for the text between start and end.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingSpan.EndColor">
+            <summary>
+            Gets the color used for the text matching the end expression.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingSpan.SpanColorIncludesStart">
+            <summary>
+            Gets/Sets whether the span color includes the start.
+            The default is <c>false</c>.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingSpan.SpanColorIncludesEnd">
+            <summary>
+            Gets/Sets whether the span color includes the end.
+            The default is <c>false</c>.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Highlighting.HighlightingSpan.ToString">
+            <inheritdoc/>
+        </member>
         <member name="T:ICSharpCode.AvalonEdit.Highlighting.HtmlClipboard">
             <summary>
             Allows copying HTML text to the clipboard.
@@ -5468,103 +5565,6 @@
             <summary>
             Gets the list of properties.
             </summary>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Highlighting.HighlightingRule">
-            <summary>
-            A highlighting rule.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingRule.Regex">
-            <summary>
-            Gets/Sets the regular expression for the rule.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingRule.Color">
-            <summary>
-            Gets/Sets the highlighting color.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Highlighting.HighlightingRule.ToString">
-            <inheritdoc/>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Highlighting.HighlightingRuleSet">
-            <summary>
-            A highlighting rule set describes a set of spans that are valid at a given code location.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Highlighting.HighlightingRuleSet.#ctor">
-            <summary>
-            Creates a new RuleSet instance.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingRuleSet.Name">
-            <summary>
-            Gets/Sets the name of the rule set.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingRuleSet.Spans">
-            <summary>
-            Gets the list of spans.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingRuleSet.Rules">
-            <summary>
-            Gets the list of rules.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Highlighting.HighlightingRuleSet.ToString">
-            <inheritdoc/>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Highlighting.HighlightingSpan">
-            <summary>
-            A highlighting span is a region with start+end expression that has a different RuleSet inside
-            and colors the region.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingSpan.StartExpression">
-            <summary>
-            Gets/Sets the start expression.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingSpan.EndExpression">
-            <summary>
-            Gets/Sets the end expression.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingSpan.RuleSet">
-            <summary>
-            Gets/Sets the rule set that applies inside this span.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingSpan.StartColor">
-            <summary>
-            Gets the color used for the text matching the start expression.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingSpan.SpanColor">
-            <summary>
-            Gets the color used for the text between start and end.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingSpan.EndColor">
-            <summary>
-            Gets the color used for the text matching the end expression.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingSpan.SpanColorIncludesStart">
-            <summary>
-            Gets/Sets whether the span color includes the start.
-            The default is <c>false</c>.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Highlighting.HighlightingSpan.SpanColorIncludesEnd">
-            <summary>
-            Gets/Sets whether the span color includes the end.
-            The default is <c>false</c>.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Highlighting.HighlightingSpan.ToString">
-            <inheritdoc/>
         </member>
         <member name="T:ICSharpCode.AvalonEdit.Highlighting.IHighlightingDefinitionReferenceResolver">
             <summary>
@@ -5941,6 +5941,26 @@
         <member name="M:ICSharpCode.AvalonEdit.Highlighting.Xshd.XshdColor.AcceptVisitor(ICSharpCode.AvalonEdit.Highlighting.Xshd.IXshdVisitor)">
             <inheritdoc/>
         </member>
+        <member name="T:ICSharpCode.AvalonEdit.Highlighting.Xshd.XshdElement">
+            <summary>
+            An element in a XSHD rule set.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Highlighting.Xshd.XshdElement.LineNumber">
+            <summary>
+            Gets the line number in the .xshd file.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Highlighting.Xshd.XshdElement.ColumnNumber">
+            <summary>
+            Gets the column number in the .xshd file.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Highlighting.Xshd.XshdElement.AcceptVisitor(ICSharpCode.AvalonEdit.Highlighting.Xshd.IXshdVisitor)">
+            <summary>
+            Applies the visitor to this element.
+            </summary>
+        </member>
         <member name="T:ICSharpCode.AvalonEdit.Highlighting.Xshd.XshdImport">
             <summary>
             &lt;Import&gt; element.
@@ -5952,6 +5972,24 @@
             </summary>
         </member>
         <member name="M:ICSharpCode.AvalonEdit.Highlighting.Xshd.XshdImport.AcceptVisitor(ICSharpCode.AvalonEdit.Highlighting.Xshd.IXshdVisitor)">
+            <inheritdoc/>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Highlighting.Xshd.XshdKeywords">
+            <summary>
+            A list of keywords.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Highlighting.Xshd.XshdKeywords.ColorReference">
+            <summary>
+            The color.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Highlighting.Xshd.XshdKeywords.Words">
+            <summary>
+            Gets the list of key words.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Highlighting.Xshd.XshdKeywords.AcceptVisitor(ICSharpCode.AvalonEdit.Highlighting.Xshd.IXshdVisitor)">
             <inheritdoc/>
         </member>
         <member name="T:ICSharpCode.AvalonEdit.Highlighting.Xshd.XshdProperty">
@@ -6032,44 +6070,6 @@
             <summary>
             Inequality operator.
             </summary>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Highlighting.Xshd.XshdElement">
-            <summary>
-            An element in a XSHD rule set.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Highlighting.Xshd.XshdElement.LineNumber">
-            <summary>
-            Gets the line number in the .xshd file.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Highlighting.Xshd.XshdElement.ColumnNumber">
-            <summary>
-            Gets the column number in the .xshd file.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Highlighting.Xshd.XshdElement.AcceptVisitor(ICSharpCode.AvalonEdit.Highlighting.Xshd.IXshdVisitor)">
-            <summary>
-            Applies the visitor to this element.
-            </summary>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Highlighting.Xshd.XshdKeywords">
-            <summary>
-            A list of keywords.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Highlighting.Xshd.XshdKeywords.ColorReference">
-            <summary>
-            The color.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Highlighting.Xshd.XshdKeywords.Words">
-            <summary>
-            Gets the list of key words.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Highlighting.Xshd.XshdKeywords.AcceptVisitor(ICSharpCode.AvalonEdit.Highlighting.Xshd.IXshdVisitor)">
-            <inheritdoc/>
         </member>
         <member name="T:ICSharpCode.AvalonEdit.Highlighting.Xshd.XshdRule">
             <summary>
@@ -6220,62 +6220,6 @@
             Applies the visitor to all elements.
             </summary>
         </member>
-        <member name="F:ICSharpCode.AvalonEdit.Indentation.CSharp.IndentationSettings.LeaveEmptyLines">
-            <summary>Leave empty lines empty.</summary>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Indentation.CSharp.IndentationReformatter.Block">
-            <summary>
-            An indentation block. Tracks the state of the indentation.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Indentation.CSharp.IndentationReformatter.Block.OuterIndent">
-            <summary>
-            The indentation outside of the block.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Indentation.CSharp.IndentationReformatter.Block.InnerIndent">
-            <summary>
-            The indentation inside the block.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Indentation.CSharp.IndentationReformatter.Block.LastWord">
-            <summary>
-            The last word that was seen inside this block.
-            Because parenthesis open a sub-block and thus don't change their parent's LastWord,
-            this property can be used to identify the type of block statement (if, while, switch)
-            at the position of the '{'.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Indentation.CSharp.IndentationReformatter.Block.Bracket">
-            <summary>
-            The type of bracket that opened this block (, [ or {
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Indentation.CSharp.IndentationReformatter.Block.Continuation">
-            <summary>
-            Gets whether there's currently a line continuation going on inside this block.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Indentation.CSharp.IndentationReformatter.Block.OneLineBlock">
-            <summary>
-            Gets whether there's currently a 'one-line-block' going on. 'one-line-blocks' occur
-            with if statements that don't use '{}'. They are not represented by a Block instance on
-            the stack, but are instead handled similar to line continuations.
-            This property is an integer because there might be multiple nested one-line-blocks.
-            As soon as there is a finished statement, OneLineBlock is reset to 0.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Indentation.CSharp.IndentationReformatter.Block.PreviousOneLineBlock">
-            <summary>
-            The previous value of one-line-block before it was reset.
-            Used to restore the indentation of 'else' to the correct level.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Indentation.CSharp.IndentationReformatter.Block.StartLine">
-            <summary>
-            Gets the line number where this block started.
-            </summary>
-        </member>
         <member name="T:ICSharpCode.AvalonEdit.Indentation.CSharp.CSharpIndentationStrategy">
             <summary>
             Smart indentation for C#.
@@ -6353,6 +6297,62 @@
         </member>
         <member name="M:ICSharpCode.AvalonEdit.Indentation.CSharp.TextDocumentAccessor.MoveNext">
             <inheritdoc/>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Indentation.CSharp.IndentationSettings.LeaveEmptyLines">
+            <summary>Leave empty lines empty.</summary>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Indentation.CSharp.IndentationReformatter.Block">
+            <summary>
+            An indentation block. Tracks the state of the indentation.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Indentation.CSharp.IndentationReformatter.Block.OuterIndent">
+            <summary>
+            The indentation outside of the block.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Indentation.CSharp.IndentationReformatter.Block.InnerIndent">
+            <summary>
+            The indentation inside the block.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Indentation.CSharp.IndentationReformatter.Block.LastWord">
+            <summary>
+            The last word that was seen inside this block.
+            Because parenthesis open a sub-block and thus don't change their parent's LastWord,
+            this property can be used to identify the type of block statement (if, while, switch)
+            at the position of the '{'.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Indentation.CSharp.IndentationReformatter.Block.Bracket">
+            <summary>
+            The type of bracket that opened this block (, [ or {
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Indentation.CSharp.IndentationReformatter.Block.Continuation">
+            <summary>
+            Gets whether there's currently a line continuation going on inside this block.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Indentation.CSharp.IndentationReformatter.Block.OneLineBlock">
+            <summary>
+            Gets whether there's currently a 'one-line-block' going on. 'one-line-blocks' occur
+            with if statements that don't use '{}'. They are not represented by a Block instance on
+            the stack, but are instead handled similar to line continuations.
+            This property is an integer because there might be multiple nested one-line-blocks.
+            As soon as there is a finished statement, OneLineBlock is reset to 0.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Indentation.CSharp.IndentationReformatter.Block.PreviousOneLineBlock">
+            <summary>
+            The previous value of one-line-block before it was reset.
+            Used to restore the indentation of 'else' to the correct level.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Indentation.CSharp.IndentationReformatter.Block.StartLine">
+            <summary>
+            Gets the line number where this block started.
+            </summary>
         </member>
         <member name="T:ICSharpCode.AvalonEdit.Indentation.DefaultIndentationStrategy">
             <summary>
@@ -7017,6 +7017,11 @@
             <summary>
             Collapses the specified text section.
             Runtime: O(log n)
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Rendering.HeightTree.CheckAllContainedIn(System.Collections.Generic.IEnumerable{ICSharpCode.AvalonEdit.Rendering.CollapsedLineSection},System.Collections.Generic.ICollection{ICSharpCode.AvalonEdit.Rendering.CollapsedLineSection})">
+            <summary>
+            Checks that all elements in list1 are contained in list2.
             </summary>
         </member>
         <member name="P:ICSharpCode.AvalonEdit.Rendering.HeightTreeLineNode.TotalHeight">
@@ -8661,46 +8666,6 @@
             Returns the baseline of the text.
             </summary>
         </member>
-        <member name="T:ICSharpCode.AvalonEdit.Search.Localization">
-            <summary>
-            Holds default texts for buttons and labels in the SearchPanel. Override properties to add other languages.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Search.Localization.MatchCaseText">
-            <summary>
-            Default: 'Match case'
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Search.Localization.MatchWholeWordsText">
-            <summary>
-            Default: 'Match whole words'
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Search.Localization.UseRegexText">
-            <summary>
-            Default: 'Use regular expressions'
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Search.Localization.FindNextText">
-            <summary>
-            Default: 'Find next (F3)'
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Search.Localization.FindPreviousText">
-            <summary>
-            Default: 'Find previous (Shift+F3)'
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Search.Localization.ErrorText">
-            <summary>
-            Default: 'Error: '
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Search.Localization.NoMatchesFoundText">
-            <summary>
-            Default: 'No matches found!'
-            </summary>
-        </member>
         <member name="T:ICSharpCode.AvalonEdit.Search.DropDownButton">
             <summary>
             A button that opens a drop-down menu when clicked.
@@ -8799,6 +8764,46 @@
         </member>
         <member name="M:ICSharpCode.AvalonEdit.Search.SearchPatternException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
             <inheritdoc/>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Search.Localization">
+            <summary>
+            Holds default texts for buttons and labels in the SearchPanel. Override properties to add other languages.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Search.Localization.MatchCaseText">
+            <summary>
+            Default: 'Match case'
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Search.Localization.MatchWholeWordsText">
+            <summary>
+            Default: 'Match whole words'
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Search.Localization.UseRegexText">
+            <summary>
+            Default: 'Use regular expressions'
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Search.Localization.FindNextText">
+            <summary>
+            Default: 'Find next (F3)'
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Search.Localization.FindPreviousText">
+            <summary>
+            Default: 'Find previous (Shift+F3)'
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Search.Localization.ErrorText">
+            <summary>
+            Default: 'Error: '
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Search.Localization.NoMatchesFoundText">
+            <summary>
+            Default: 'No matches found!'
+            </summary>
         </member>
         <member name="T:ICSharpCode.AvalonEdit.Search.SearchCommands">
             <summary>
@@ -9044,190 +9049,6 @@
             Gets the segment associated with this element. May be null.
             </summary>
         </member>
-        <member name="T:ICSharpCode.AvalonEdit.Snippets.SnippetAnchorElement">
-            <summary>
-            Creates a named anchor that can be accessed by other SnippetElements.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Snippets.SnippetAnchorElement.Name">
-            <summary>
-            Gets or sets the name of the anchor.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetAnchorElement.#ctor(System.String)">
-            <summary>
-            Creates a SnippetAnchorElement with the supplied name.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetAnchorElement.Insert(ICSharpCode.AvalonEdit.Snippets.InsertionContext)">
-            <inheritdoc />
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Snippets.AnchorElement">
-            <summary>
-            AnchorElement created by SnippetAnchorElement.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Snippets.AnchorElement.IsEditable">
-            <inheritdoc />
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Snippets.AnchorElement.Segment">
-            <inheritdoc />
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Snippets.AnchorElement.#ctor(ICSharpCode.AvalonEdit.Document.AnchorSegment,System.String,ICSharpCode.AvalonEdit.Snippets.InsertionContext)">
-            <summary>
-            Creates a new AnchorElement.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Snippets.AnchorElement.Text">
-            <summary>
-            Gets or sets the text at the anchor.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Snippets.AnchorElement.Name">
-            <summary>
-            Gets or sets the name of the anchor.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Snippets.AnchorElement.OnInsertionCompleted">
-            <inheritdoc />
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Snippets.AnchorElement.Deactivate(ICSharpCode.AvalonEdit.Snippets.SnippetEventArgs)">
-            <inheritdoc />
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Snippets.SnippetEventArgs">
-            <summary>
-            Provides information about the event that occured during use of snippets.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Snippets.SnippetEventArgs.Reason">
-            <summary>
-            Gets the reason for deactivation.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetEventArgs.#ctor(ICSharpCode.AvalonEdit.Snippets.DeactivateReason)">
-            <summary>
-            Creates a new SnippetEventArgs object, with a DeactivateReason.
-            </summary>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Snippets.DeactivateReason">
-            <summary>
-            Describes the reason for deactivation of a <see cref="T:ICSharpCode.AvalonEdit.Snippets.SnippetElement" />.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Snippets.DeactivateReason.Unknown">
-            <summary>
-            Unknown reason.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Snippets.DeactivateReason.Deleted">
-            <summary>
-            Snippet was deleted.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Snippets.DeactivateReason.NoActiveElements">
-            <summary>
-            There are no active elements in the snippet.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Snippets.DeactivateReason.InputHandlerDetached">
-            <summary>
-            The SnippetInputHandler was detached.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Snippets.DeactivateReason.ReturnPressed">
-            <summary>
-            Return was pressed by the user.
-            </summary>
-        </member>
-        <member name="F:ICSharpCode.AvalonEdit.Snippets.DeactivateReason.EscapePressed">
-            <summary>
-            Escape was pressed by the user.
-            </summary>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Snippets.Snippet">
-            <summary>
-            A code snippet that can be inserted into the text editor.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Snippets.Snippet.Insert(ICSharpCode.AvalonEdit.Editing.TextArea)">
-            <summary>
-            Inserts the snippet into the text area.
-            </summary>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Snippets.SnippetBoundElement">
-            <summary>
-            An element that binds to a <see cref="T:ICSharpCode.AvalonEdit.Snippets.SnippetReplaceableTextElement"/> and displays the same text.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Snippets.SnippetBoundElement.TargetElement">
-            <summary>
-            Gets/Sets the target element.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetBoundElement.ConvertText(System.String)">
-            <summary>
-            Converts the text before copying it.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetBoundElement.Insert(ICSharpCode.AvalonEdit.Snippets.InsertionContext)">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetBoundElement.ToTextRun">
-            <inheritdoc/>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Snippets.SnippetCaretElement">
-            <summary>
-            Sets the caret position after interactive mode has finished.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetCaretElement.#ctor">
-            <summary>
-            Creates a new SnippetCaretElement.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetCaretElement.#ctor(System.Boolean)">
-            <summary>
-            Creates a new SnippetCaretElement.
-            </summary>
-            <param name="setCaretOnlyIfTextIsSelected">
-            If set to true, the caret is set only when some text was selected.
-            This is useful when both SnippetCaretElement and SnippetSelectionElement are used in the same snippet.
-            </param>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetCaretElement.Insert(ICSharpCode.AvalonEdit.Snippets.InsertionContext)">
-            <inheritdoc/>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Snippets.SnippetContainerElement">
-            <summary>
-            A snippet element that has sub-elements.
-            </summary>
-        </member>
-        <member name="P:ICSharpCode.AvalonEdit.Snippets.SnippetContainerElement.Elements">
-            <summary>
-            Gets the list of child elements.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetContainerElement.Insert(ICSharpCode.AvalonEdit.Snippets.InsertionContext)">
-            <inheritdoc/>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetContainerElement.ToTextRun">
-            <inheritdoc/>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Snippets.SnippetElement">
-            <summary>
-            An element inside a snippet.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetElement.Insert(ICSharpCode.AvalonEdit.Snippets.InsertionContext)">
-            <summary>
-            Performs insertion of the snippet.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetElement.ToTextRun">
-            <summary>
-            Converts the snippet to text, with replaceable fields in italic.
-            </summary>
-        </member>
         <member name="T:ICSharpCode.AvalonEdit.Snippets.InsertionContext">
             <summary>
             Represents the context of a snippet insertion.
@@ -9332,6 +9153,190 @@
         <member name="M:ICSharpCode.AvalonEdit.Snippets.InsertionContext.Link(ICSharpCode.AvalonEdit.Document.ISegment,ICSharpCode.AvalonEdit.Document.ISegment[])">
             <summary>
             Adds existing segments as snippet elements.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Snippets.Snippet">
+            <summary>
+            A code snippet that can be inserted into the text editor.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Snippets.Snippet.Insert(ICSharpCode.AvalonEdit.Editing.TextArea)">
+            <summary>
+            Inserts the snippet into the text area.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Snippets.SnippetAnchorElement">
+            <summary>
+            Creates a named anchor that can be accessed by other SnippetElements.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Snippets.SnippetAnchorElement.Name">
+            <summary>
+            Gets or sets the name of the anchor.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetAnchorElement.#ctor(System.String)">
+            <summary>
+            Creates a SnippetAnchorElement with the supplied name.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetAnchorElement.Insert(ICSharpCode.AvalonEdit.Snippets.InsertionContext)">
+            <inheritdoc />
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Snippets.AnchorElement">
+            <summary>
+            AnchorElement created by SnippetAnchorElement.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Snippets.AnchorElement.IsEditable">
+            <inheritdoc />
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Snippets.AnchorElement.Segment">
+            <inheritdoc />
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Snippets.AnchorElement.#ctor(ICSharpCode.AvalonEdit.Document.AnchorSegment,System.String,ICSharpCode.AvalonEdit.Snippets.InsertionContext)">
+            <summary>
+            Creates a new AnchorElement.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Snippets.AnchorElement.Text">
+            <summary>
+            Gets or sets the text at the anchor.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Snippets.AnchorElement.Name">
+            <summary>
+            Gets or sets the name of the anchor.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Snippets.AnchorElement.OnInsertionCompleted">
+            <inheritdoc />
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Snippets.AnchorElement.Deactivate(ICSharpCode.AvalonEdit.Snippets.SnippetEventArgs)">
+            <inheritdoc />
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Snippets.SnippetBoundElement">
+            <summary>
+            An element that binds to a <see cref="T:ICSharpCode.AvalonEdit.Snippets.SnippetReplaceableTextElement"/> and displays the same text.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Snippets.SnippetBoundElement.TargetElement">
+            <summary>
+            Gets/Sets the target element.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetBoundElement.ConvertText(System.String)">
+            <summary>
+            Converts the text before copying it.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetBoundElement.Insert(ICSharpCode.AvalonEdit.Snippets.InsertionContext)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetBoundElement.ToTextRun">
+            <inheritdoc/>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Snippets.SnippetCaretElement">
+            <summary>
+            Sets the caret position after interactive mode has finished.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetCaretElement.#ctor">
+            <summary>
+            Creates a new SnippetCaretElement.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetCaretElement.#ctor(System.Boolean)">
+            <summary>
+            Creates a new SnippetCaretElement.
+            </summary>
+            <param name="setCaretOnlyIfTextIsSelected">
+            If set to true, the caret is set only when some text was selected.
+            This is useful when both SnippetCaretElement and SnippetSelectionElement are used in the same snippet.
+            </param>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetCaretElement.Insert(ICSharpCode.AvalonEdit.Snippets.InsertionContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Snippets.SnippetContainerElement">
+            <summary>
+            A snippet element that has sub-elements.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Snippets.SnippetContainerElement.Elements">
+            <summary>
+            Gets the list of child elements.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetContainerElement.Insert(ICSharpCode.AvalonEdit.Snippets.InsertionContext)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetContainerElement.ToTextRun">
+            <inheritdoc/>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Snippets.SnippetElement">
+            <summary>
+            An element inside a snippet.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetElement.Insert(ICSharpCode.AvalonEdit.Snippets.InsertionContext)">
+            <summary>
+            Performs insertion of the snippet.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetElement.ToTextRun">
+            <summary>
+            Converts the snippet to text, with replaceable fields in italic.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Snippets.SnippetEventArgs">
+            <summary>
+            Provides information about the event that occured during use of snippets.
+            </summary>
+        </member>
+        <member name="P:ICSharpCode.AvalonEdit.Snippets.SnippetEventArgs.Reason">
+            <summary>
+            Gets the reason for deactivation.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Snippets.SnippetEventArgs.#ctor(ICSharpCode.AvalonEdit.Snippets.DeactivateReason)">
+            <summary>
+            Creates a new SnippetEventArgs object, with a DeactivateReason.
+            </summary>
+        </member>
+        <member name="T:ICSharpCode.AvalonEdit.Snippets.DeactivateReason">
+            <summary>
+            Describes the reason for deactivation of a <see cref="T:ICSharpCode.AvalonEdit.Snippets.SnippetElement" />.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Snippets.DeactivateReason.Unknown">
+            <summary>
+            Unknown reason.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Snippets.DeactivateReason.Deleted">
+            <summary>
+            Snippet was deleted.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Snippets.DeactivateReason.NoActiveElements">
+            <summary>
+            There are no active elements in the snippet.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Snippets.DeactivateReason.InputHandlerDetached">
+            <summary>
+            The SnippetInputHandler was detached.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Snippets.DeactivateReason.ReturnPressed">
+            <summary>
+            Return was pressed by the user.
+            </summary>
+        </member>
+        <member name="F:ICSharpCode.AvalonEdit.Snippets.DeactivateReason.EscapePressed">
+            <summary>
+            Escape was pressed by the user.
             </summary>
         </member>
         <member name="T:ICSharpCode.AvalonEdit.Snippets.SnippetReplaceableTextElement">
@@ -10726,6 +10731,49 @@
         <member name="M:ICSharpCode.AvalonEdit.Utils.ObserveAddRemoveCollection`1.SetItem(System.Int32,`0)">
             <inheritdoc/>
         </member>
+        <member name="T:ICSharpCode.AvalonEdit.Utils.PixelSnapHelpers">
+            <summary>
+            Contains static helper methods for aligning stuff on a whole number of pixels.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Utils.PixelSnapHelpers.GetPixelSize(System.Windows.Media.Visual)">
+            <summary>
+            Gets the pixel size on the screen containing visual.
+            This method does not take transforms on visual into account.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Utils.PixelSnapHelpers.PixelAlign(System.Double,System.Double)">
+            <summary>
+            Aligns <paramref name="value"/> on the next middle of a pixel.
+            </summary>
+            <param name="value">The value that should be aligned</param>
+            <param name="pixelSize">The size of one pixel</param>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Utils.PixelSnapHelpers.PixelAlign(System.Windows.Rect,System.Windows.Size)">
+            <summary>
+            Aligns the borders of rect on the middles of pixels.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Utils.PixelSnapHelpers.Round(System.Windows.Point,System.Windows.Size)">
+            <summary>
+            Rounds <paramref name="point"/> to whole number of pixels.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Utils.PixelSnapHelpers.Round(System.Windows.Rect,System.Windows.Size)">
+            <summary>
+            Rounds val to whole number of pixels.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Utils.PixelSnapHelpers.Round(System.Double,System.Double)">
+            <summary>
+            Rounds <paramref name="value"/> to a whole number of pixels.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Utils.PixelSnapHelpers.RoundToOdd(System.Double,System.Double)">
+            <summary>
+            Rounds <paramref name="value"/> to an whole odd number of pixels.
+            </summary>
+        </member>
         <member name="T:ICSharpCode.AvalonEdit.Utils.PlainRichTextWriter">
             <summary>
             RichTextWriter implementation that writes plain text only
@@ -11293,6 +11341,24 @@
             <param name="foreground">The foreground color. If this parameter is null, the foreground of the <paramref name="element"/> will be used.</param>
             <returns>A FormattedText object using the specified settings.</returns>
         </member>
+        <member name="T:ICSharpCode.AvalonEdit.Utils.ThrowUtil">
+            <summary>
+            Contains exception-throwing helper methods.
+            </summary>
+        </member>
+        <member name="M:ICSharpCode.AvalonEdit.Utils.ThrowUtil.CheckNotNull``1(``0,System.String)">
+            <summary>
+            Throws an ArgumentNullException if <paramref name="val"/> is null; otherwise
+            returns val.
+            </summary>
+            <example>
+            Use this method to throw an ArgumentNullException when using parameters for base
+            constructor calls.
+            <code>
+            public VisualLineText(string text) : base(ThrowUtil.CheckNotNull(text, "text").Length)
+            </code>
+            </example>
+        </member>
         <member name="T:ICSharpCode.AvalonEdit.Utils.WeakEventManagerBase`2">
             <summary>
             WeakEventManager with AddListener/RemoveListener and CurrentManager implementation.
@@ -11335,67 +11401,6 @@
             Gets the current manager.
             </summary>
         </member>
-        <member name="T:ICSharpCode.AvalonEdit.Utils.PixelSnapHelpers">
-            <summary>
-            Contains static helper methods for aligning stuff on a whole number of pixels.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Utils.PixelSnapHelpers.GetPixelSize(System.Windows.Media.Visual)">
-            <summary>
-            Gets the pixel size on the screen containing visual.
-            This method does not take transforms on visual into account.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Utils.PixelSnapHelpers.PixelAlign(System.Double,System.Double)">
-            <summary>
-            Aligns <paramref name="value"/> on the next middle of a pixel.
-            </summary>
-            <param name="value">The value that should be aligned</param>
-            <param name="pixelSize">The size of one pixel</param>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Utils.PixelSnapHelpers.PixelAlign(System.Windows.Rect,System.Windows.Size)">
-            <summary>
-            Aligns the borders of rect on the middles of pixels.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Utils.PixelSnapHelpers.Round(System.Windows.Point,System.Windows.Size)">
-            <summary>
-            Rounds <paramref name="point"/> to whole number of pixels.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Utils.PixelSnapHelpers.Round(System.Windows.Rect,System.Windows.Size)">
-            <summary>
-            Rounds val to whole number of pixels.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Utils.PixelSnapHelpers.Round(System.Double,System.Double)">
-            <summary>
-            Rounds <paramref name="value"/> to a whole number of pixels.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Utils.PixelSnapHelpers.RoundToOdd(System.Double,System.Double)">
-            <summary>
-            Rounds <paramref name="value"/> to an whole odd number of pixels.
-            </summary>
-        </member>
-        <member name="T:ICSharpCode.AvalonEdit.Utils.ThrowUtil">
-            <summary>
-            Contains exception-throwing helper methods.
-            </summary>
-        </member>
-        <member name="M:ICSharpCode.AvalonEdit.Utils.ThrowUtil.CheckNotNull``1(``0,System.String)">
-            <summary>
-            Throws an ArgumentNullException if <paramref name="val"/> is null; otherwise
-            returns val.
-            </summary>
-            <example>
-            Use this method to throw an ArgumentNullException when using parameters for base
-            constructor calls.
-            <code>
-            public VisualLineText(string text) : base(ThrowUtil.CheckNotNull(text, "text").Length)
-            </code>
-            </example>
-        </member>
         <member name="T:ICSharpCode.AvalonEdit.Utils.Win32">
             <summary>
             Wrapper around Win32 functions.
@@ -11419,36 +11424,6 @@
         <member name="M:ICSharpCode.AvalonEdit.Utils.Win32.DestroyCaret">
             <summary>
             Destroys the caret previously created using <see cref="M:ICSharpCode.AvalonEdit.Utils.Win32.CreateCaret(System.Windows.Media.Visual,System.Windows.Size)"/>.
-            </summary>
-        </member>
-        <member name="T:XamlGeneratedNamespace.GeneratedInternalTypeHelper">
-            <summary>
-            GeneratedInternalTypeHelper
-            </summary>
-        </member>
-        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.CreateInstance(System.Type,System.Globalization.CultureInfo)">
-            <summary>
-            CreateInstance
-            </summary>
-        </member>
-        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.GetPropertyValue(System.Reflection.PropertyInfo,System.Object,System.Globalization.CultureInfo)">
-            <summary>
-            GetPropertyValue
-            </summary>
-        </member>
-        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.SetPropertyValue(System.Reflection.PropertyInfo,System.Object,System.Object,System.Globalization.CultureInfo)">
-            <summary>
-            SetPropertyValue
-            </summary>
-        </member>
-        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.CreateDelegate(System.Type,System.Object,System.String)">
-            <summary>
-            CreateDelegate
-            </summary>
-        </member>
-        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.AddEventHandler(System.Reflection.EventInfo,System.Object,System.Delegate)">
-            <summary>
-            AddEventHandler
             </summary>
         </member>
     </members>

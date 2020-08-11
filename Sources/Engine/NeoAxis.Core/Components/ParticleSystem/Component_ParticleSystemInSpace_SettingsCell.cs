@@ -18,7 +18,7 @@ namespace NeoAxis
 			return EditorLocalization.Translate( "ParticleSystemInSpace", text );
 		}
 
-		protected override void OnInitUI()
+		protected override void OnInit()
 		{
 			buttonPlay = ProcedureForm.CreateButton( Translate( "Play" ) );
 			buttonPlay.Click += ButtonPlay_Click;

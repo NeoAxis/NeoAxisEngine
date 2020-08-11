@@ -13,7 +13,7 @@ namespace NeoAxis.Editor
 	{
 		public static DockWindow GetDockWindow( this KryptonPage page )
 		{
-			Debug.Assert( page.Controls.Count <= 1 );
+			//Debug.Assert( page.Controls.Count <= 1 );
 			if( page.Controls.Count == 0 )
 				return null;
 			return (DockWindow)page.Controls[ 0 ];
@@ -21,7 +21,7 @@ namespace NeoAxis.Editor
 
 		public static bool HasDockWindow( this KryptonPage page )
 		{
-			Debug.Assert( page.Controls.Count <= 1 );
+			//Debug.Assert( page.Controls.Count <= 1 );
 			return page.Controls.Count != 0;
 		}
 

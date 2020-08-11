@@ -1718,7 +1718,7 @@ namespace NeoAxis.Editor//ProXoft.WinForms
 
 		string TranslateContextMenu( string text )
 		{
-			return EditorContextMenu.Translate( text );
+			return EditorContextMenuWinForms.Translate( text );
 		}
 
 		void ShowContextMenu( Point location )
@@ -1804,7 +1804,7 @@ namespace NeoAxis.Editor//ProXoft.WinForms
 
 			//EditorContextMenu.AddActionsToMenu( EditorContextMenu.MenuTypeEnum.Document, items );
 
-			EditorContextMenu.Show( items, this );
+			EditorContextMenuWinForms.Show( items, this );
 		}
 
 		private void control_MouseClick( object sender, MouseEventArgs e )

@@ -15,18 +15,41 @@ namespace NeoAxis.Editor
 		HCDropDownHolderImpl impl;
 		Control openerControl; // control that calls holder.
 
+		DropShadowManager dropShadowManager;
+		ShadowImageCacheManager borderImageCacheManager;
+
+		/////////////////////////////////////////
+
+		class MyColorTable : ProfessionalColorTable
+		{
+			public MyColorTable()
+			{
+				base.UseSystemColors = false;
+			}
+
+			public override Color MenuBorder
+			{
+				get
+				{
+					return EditorAPI.DarkTheme ? Color.FromArgb( 90, 90, 90 ) : Color.FromArgb( 200, 200, 200 );
+				}
+			}
+		}
+
+		/////////////////////////////////////////
+
 		public bool Resizable
 		{
 			get { return impl != null ? impl.Resizable : false; }
 		}
-		public new Size MinimumSize
-		{
-			get { return impl != null ? impl.MinimumSize : Size.Empty; }
-		}
-		public new Size MaximumSize
-		{
-			get { return impl != null ? impl.MaximumSize : Size.Empty; }
-		}
+		//public new Size MinimumSize
+		//{
+		//	get { return impl != null ? impl.MinimumSize : Size.Empty; }
+		//}
+		//public new Size MaximumSize
+		//{
+		//	get { return impl != null ? impl.MaximumSize : Size.Empty; }
+		//}
 
 		// public bool NonInteractive => impl.NonInteractive; //TODO: implement NonInteractive if needed
 
@@ -50,9 +73,12 @@ namespace NeoAxis.Editor
 			//DoubleBuffered = true;
 			ResizeRedraw = true;
 			AutoSize = false;
-			RenderMode = ToolStripRenderMode.System; // only border color
 
-			//DropShadowEnabled = false;
+			RenderMode = ToolStripRenderMode.Professional; // only border color
+			Renderer = new ToolStripProfessionalRenderer( new MyColorTable() );
+			//RenderMode = ToolStripRenderMode.System; // only border color
+
+			DropShadowEnabled = false;
 
 			Closed += ( s, e ) => HolderClosed( s, e );
 
@@ -66,6 +92,22 @@ namespace NeoAxis.Editor
 			};
 
 			Items.Add( controlHost );
+		}
+
+		protected override void OnHandleCreated( EventArgs e )
+		{
+			base.OnHandleCreated( e );
+
+			KryptonWinFormsUtility.LockFormUpdate( this );
+
+			UpdateShadowState();
+		}
+
+		protected override void Dispose( bool disposing )
+		{
+			ReleaseShadow();
+
+			base.Dispose( disposing );
 		}
 
 		protected override void OnSizeChanged( EventArgs e )
@@ -98,6 +140,8 @@ namespace NeoAxis.Editor
 		{
 			base.OnOpened( e );
 			impl?.OnOpened();
+
+			KryptonWinFormsUtility.LockFormUpdate( null );
 		}
 
 		protected override void OnClosed( ToolStripDropDownClosedEventArgs e )
@@ -158,5 +202,60 @@ namespace NeoAxis.Editor
 			else
 				return false;
 		}
+
+		void UpdateShadowState()
+		{
+			if( DesignMode || !IsHandleCreated || IsDisposed )
+				return;
+
+			//if( IsCustomHeader )//&& IsOnePixelBorder)
+			CreateFormShadow();
+			//else
+			//    ReleaseShadow();
+		}
+
+		void CreateFormShadow()
+		{
+			if( borderImageCacheManager == null )
+				borderImageCacheManager = new ShadowImageCacheManager();
+
+			if( dropShadowManager == null )
+			{
+				dropShadowManager = new DropShadowManager( this );
+				UpdateShadowColor();
+			}
+		}
+
+		void ReleaseShadow()
+		{
+			if( dropShadowManager != null )
+			{
+				dropShadowManager.Dispose();
+				dropShadowManager = null;
+			}
+
+			if( borderImageCacheManager != null )
+			{
+				borderImageCacheManager.Dispose();
+				borderImageCacheManager = null;
+			}
+		}
+
+		void UpdateShadowColor()
+		{
+			if( dropShadowManager != null )
+			{
+				var color = KryptonDarkThemeUtility.DarkTheme ? Color.FromArgb( 30, 30, 30 ) : Color.FromArgb( 150, 150, 150 );
+				dropShadowManager.ImageCache = borderImageCacheManager.GetCached( color );
+			}
+		}
+
+		protected override void OnResize( EventArgs e )
+		{
+			base.OnResize( e );
+
+			UpdateShadowState();
+		}
+
 	}
 }

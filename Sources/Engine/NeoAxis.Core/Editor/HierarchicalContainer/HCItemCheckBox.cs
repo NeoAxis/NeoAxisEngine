@@ -30,7 +30,7 @@ namespace NeoAxis.Editor
 		{
 		}
 
-		public override UserControl CreateControlInsidePropertyItemControl()
+		public override EUserControl CreateControlInsidePropertyItemControl()
 		{
 			//if( Owner.GridMode )
 			return new HCGridCheckBox();

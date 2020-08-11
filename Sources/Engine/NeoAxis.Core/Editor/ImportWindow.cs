@@ -26,7 +26,7 @@ namespace NeoAxis.Editor
 		{
 			InitializeComponent();
 
-			//HACK: kryptonsplitcontainer childs layout broken. see comments in kryptonsplitcontainer.cs
+			//KryptonSplitContainer childs layout broken. see comments in kryptonsplitcontainer.cs. Also Anchors works strange in .NET Core. 
 			panelName.Width = panelName.Parent.Width - DpiHelper.Default.ScaleValue( 8 );
 
 			buttonDestinationFolderBrowse.Values.Image = EditorResourcesCache.SelectFolder;
@@ -48,8 +48,10 @@ namespace NeoAxis.Editor
 				return;
 
 			textBoxDestinationFolder.Location = new Point( labelName.Location.X + labelName.Width + DpiHelper.Default.ScaleValue( 2 ), DpiHelper.Default.ScaleValue( 2 ) );
-			textBoxDestinationFolder.Width = panelName.Width - labelName.Width - buttonDestinationFolderBrowse.Width - DpiHelper.Default.ScaleValue( 7 );
+			//textBoxDestinationFolder.Width = panelName.Width - labelName.Width - buttonDestinationFolderBrowse.Width - DpiHelper.Default.ScaleValue( 7 );
+
 			textBoxDestinationFolder.Text = InitialDestinationFolder;
+
 			UpdateContentBrowser();
 
 			timer1.Start();
@@ -101,6 +103,19 @@ namespace NeoAxis.Editor
 
 		void UpdateControls()
 		{
+			//KryptonSplitContainer childs layout broken. see comments in kryptonsplitcontainer.cs. Also Anchors works strange in .NET Core. 
+			panelName.Width = panelName.Parent.Width - DpiHelper.Default.ScaleValue( 8 );
+			panelName.Height = DpiHelper.Default.ScaleValue( 25 );
+
+			buttonDestinationFolderBrowse.Location = new Point( panelName.Width - buttonDestinationFolderBrowse.Width, buttonDestinationFolderBrowse.Location.Y );
+
+			textBoxDestinationFolder.Width = buttonDestinationFolderBrowse.Location.X - DpiHelper.Default.ScaleValue( 4 ) - labelName.Bounds.Right;
+
+			tableLayoutPanel1.Location = new Point( panelName.Location.X, panelName.Bounds.Bottom + DpiHelper.Default.ScaleValue( 10 ) );
+			tableLayoutPanel1.Size = new Size(
+				buttonClose.Bounds.Right - tableLayoutPanel1.Location.X,
+				buttonClose.Bounds.Top - DpiHelper.Default.ScaleValue( 10 ) - tableLayoutPanel1.Location.Y );
+
 			buttonImport.Enabled = IsReadyToImport( out string reason );
 			//buttonCreateAndClose.Enabled = buttonCreate.Enabled;
 			labelError.Text = reason;
@@ -247,6 +262,14 @@ namespace NeoAxis.Editor
 		private void eUserControl1_Load( object sender, EventArgs e )
 		{
 
+		}
+
+		protected override void OnResize( EventArgs e )
+		{
+			base.OnResize( e );
+
+			if( IsHandleCreated )
+				UpdateControls();
 		}
 	}
 }

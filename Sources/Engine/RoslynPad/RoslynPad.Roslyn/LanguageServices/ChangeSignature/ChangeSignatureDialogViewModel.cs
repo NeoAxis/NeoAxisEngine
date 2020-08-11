@@ -358,7 +358,7 @@ namespace RoslynPad.Roslyn.LanguageServices.ChangeSignature
                     }
 
                     if (_changeSignatureDialogViewModel._thisParameter != null &&
-                        ParameterSymbol == _changeSignatureDialogViewModel._thisParameter.ParameterSymbol)
+						ParameterSymbol == _changeSignatureDialogViewModel._thisParameter.ParameterSymbol )
                     {
                         return "this";
                     }

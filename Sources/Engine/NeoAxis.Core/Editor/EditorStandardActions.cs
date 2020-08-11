@@ -525,7 +525,7 @@ namespace NeoAxis.Editor
 				};
 				a.Click += delegate ( EditorAction.ClickContext context )
 				{
-					Process.Start( "https://www.neoaxis.com/docs/html/Manual_Root.htm" );
+					Process.Start( new ProcessStartInfo( "https://www.neoaxis.com/docs/html/Manual_Root.htm" ) { UseShellExecute = true } );
 				};
 				EditorActions.Register( a );
 			}
@@ -736,7 +736,7 @@ namespace NeoAxis.Editor
 				};
 				a.Click += delegate ( EditorAction.ClickContext context )
 				{
-					if( EditorMessageBox.ShowQuestion( EditorLocalization.Translate( "General", "Reset windows settings and restart the editor?" ), MessageBoxButtons.YesNo ) == DialogResult.Yes )
+					if( EditorMessageBox.ShowQuestion( EditorLocalization.Translate( "General", "Reset windows settings and restart the editor?" ), EMessageBoxButtons.YesNo ) == EDialogResult.Yes )
 						EditorAPI.BeginRestartApplication( true );
 				};
 				EditorActions.Register( a );
@@ -2649,7 +2649,7 @@ namespace NeoAxis.Editor
 				a.Click += delegate ( EditorAction.ClickContext context )
 				{
 					var text = string.Format( EditorLocalization.Translate( "General", "Delete \'{0}\'?" ), bodyName );
-					if( EditorMessageBox.ShowQuestion( text, MessageBoxButtons.YesNo ) == DialogResult.Yes )
+					if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) == EDialogResult.Yes )
 					{
 						var mesh = context.ObjectsInFocus.DocumentWindow.ObjectOfWindow as Component_Mesh;
 						var collision = mesh.GetComponent( bodyName ) as Component_RigidBody;
@@ -2718,7 +2718,7 @@ namespace NeoAxis.Editor
 				};
 				a.Click += delegate ( EditorAction.ClickContext context )
 				{
-					if( EditorMessageBox.ShowQuestion( EditorLocalization.Translate( "General", "Delete structure?" ), MessageBoxButtons.YesNo ) == DialogResult.Yes )
+					if( EditorMessageBox.ShowQuestion( EditorLocalization.Translate( "General", "Delete structure?" ), EMessageBoxButtons.YesNo ) == EDialogResult.Yes )
 					{
 						var mesh = context.ObjectsInFocus.DocumentWindow?.ObjectOfWindow as Component_Mesh;
 						if( mesh != null )
@@ -2812,7 +2812,7 @@ namespace NeoAxis.Editor
 				a.ImageSmall = Properties.Resources.Add_16;
 				a.ImageBig = Properties.Resources.Add_32;
 				a.QatSupport = true;
-				a.ContextMenuSupport = EditorContextMenu.MenuTypeEnum.Resources;
+				a.ContextMenuSupport = EditorContextMenuWinForms.MenuTypeEnum.Resources;
 				a.RibbonText = ("Add", "");
 
 				a.GetState += delegate ( EditorAction.GetStateContext context )
@@ -2910,7 +2910,7 @@ namespace NeoAxis.Editor
 				a.ImageSmall = Properties.Resources.Delete_16;
 				a.ImageBig = Properties.Resources.Delete_32;
 				a.QatSupport = true;
-				a.ContextMenuSupport = EditorContextMenu.MenuTypeEnum.Resources;
+				a.ContextMenuSupport = EditorContextMenuWinForms.MenuTypeEnum.Resources;
 				a.RibbonText = ("Remove", "");
 
 				a.GetState += delegate ( EditorAction.GetStateContext context )
@@ -3319,7 +3319,7 @@ namespace NeoAxis.Editor
 						if( CSharpProjectFileUtility.Compile( rebuild, outputDirOverride: CSharpProjectFileUtility.GetProjectTempDir() ) )
 						{
 							var text = EditorLocalization.Translate( "General", "Project.sln was built successfully.\r\n\r\nTo apply changes need restart the editor. Restart?" );
-							if( EditorMessageBox.ShowQuestion( text, MessageBoxButtons.YesNo ) == DialogResult.Yes )
+							if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) == EDialogResult.Yes )
 							{
 								EditorAPI.BeginRestartApplication();
 							}
@@ -3356,26 +3356,26 @@ namespace NeoAxis.Editor
 				EditorActions.Register( a );
 			}
 
-			//Open Project's Solution in external IDE
-			{
-				var a = new EditorAction();
-				a.Name = "Open Project Solution in External IDE";
-				a.CommonType = EditorAction.CommonTypeEnum.General;
-				a.ImageSmall = Properties.Resources.External_16;
-				a.ImageBig = Properties.Resources.External_32;
-				a.QatSupport = true;
-				a.RibbonText = ("Project", "Solution");
-				a.Description = "Opens Project solution in an external IDE.";
-				a.GetState += delegate ( EditorAction.GetStateContext context )
-				{
-					context.Enabled = true;
-				};
-				a.Click += delegate ( EditorAction.ClickContext context )
-				{
-					Process.Start( Path.Combine( VirtualFileSystem.Directories.Project, "Project.sln" ) );
-				};
-				EditorActions.Register( a );
-			}
+			////Open Project's Solution in external IDE
+			//{
+			//	var a = new EditorAction();
+			//	a.Name = "Open Project Solution in External IDE";
+			//	a.CommonType = EditorAction.CommonTypeEnum.General;
+			//	a.ImageSmall = Properties.Resources.External_16;
+			//	a.ImageBig = Properties.Resources.External_32;
+			//	a.QatSupport = true;
+			//	a.RibbonText = ("Project", "Solution");
+			//	a.Description = "Opens Project solution in an external IDE.";
+			//	a.GetState += delegate ( EditorAction.GetStateContext context )
+			//	{
+			//		context.Enabled = true;
+			//	};
+			//	a.Click += delegate ( EditorAction.ClickContext context )
+			//	{
+			//		Process.Start( new ProcessStartInfo( Path.Combine( VirtualFileSystem.Directories.Project, "Project.sln" ) ) { UseShellExecute = true } );
+			//	};
+			//	EditorActions.Register( a );
+			//}
 
 			//Open Sources Solution in external IDE
 			{
@@ -3393,7 +3393,7 @@ namespace NeoAxis.Editor
 				};
 				a.Click += delegate ( EditorAction.ClickContext context )
 				{
-					Process.Start( Path.Combine( VirtualFileSystem.Directories.Project, "..\\NeoAxis.Managed.sln" ) );
+					Process.Start( new ProcessStartInfo( Path.Combine( VirtualFileSystem.Directories.Project, "..\\NeoAxis.Managed.All.VS2019.Windows.sln" ) ) { UseShellExecute = true } );
 				};
 				EditorActions.Register( a );
 			}
@@ -3665,7 +3665,7 @@ namespace NeoAxis.Editor
 				a.QatSupport = true;
 				a.RibbonText = ("Image", "Compression");
 				a.ActionType = EditorAction.ActionTypeEnum.DropDown;
-				a.ContextMenuSupport = EditorContextMenu.MenuTypeEnum.Resources;
+				a.ContextMenuSupport = EditorContextMenuWinForms.MenuTypeEnum.Resources;
 
 				EventHandler clickHandler = delegate ( object s, EventArgs e2 )
 				{
@@ -3815,7 +3815,7 @@ namespace NeoAxis.Editor
 				a.QatSupport = true;
 				a.RibbonText = ("Process", "Env Cubemap");
 				a.ActionType = EditorAction.ActionTypeEnum.DropDown;
-				a.ContextMenuSupport = EditorContextMenu.MenuTypeEnum.Resources;
+				a.ContextMenuSupport = EditorContextMenuWinForms.MenuTypeEnum.Resources;
 
 				EventHandler clickHandler = delegate ( object s, EventArgs e2 )
 				{
@@ -3848,7 +3848,7 @@ namespace NeoAxis.Editor
 						}
 
 						var text = EditorLocalization.Translate( "ProcessEnvironmentCubemap", "Are you sure you want to delete these files?" );
-						if( EditorMessageBox.ShowQuestion( text, MessageBoxButtons.YesNo ) == DialogResult.Yes )
+						if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) == EDialogResult.Yes )
 						{
 							try
 							{
@@ -4015,7 +4015,7 @@ namespace NeoAxis.Editor
 							}
 						}
 
-						if( EditorMessageBox.ShowQuestion( text, MessageBoxButtons.YesNo ) == DialogResult.Yes )
+						if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) == EDialogResult.Yes )
 						{
 							try
 							{
@@ -4137,11 +4137,11 @@ namespace NeoAxis.Editor
 								return true;
 							}, delegate ( string text, ref string error )
 							{
-								var result = EditorMessageBox.ShowQuestion( EditorLocalization.Translate( "Baking", "Compress archive?" ), MessageBoxButtons.YesNoCancel );
-								if( result == DialogResult.Cancel )
+								var result = EditorMessageBox.ShowQuestion( EditorLocalization.Translate( "Baking", "Compress archive?" ), EMessageBoxButtons.YesNoCancel );
+								if( result == EDialogResult.Cancel )
 									return false;
 
-								bool compress = result == DialogResult.Yes;
+								bool compress = result == EDialogResult.Yes;
 
 								var success = BakingFile.Create( fullPaths, compress, text, out error );
 								if( success )
@@ -4171,7 +4171,7 @@ namespace NeoAxis.Editor
 				//a.ImageSmall = Properties.Resources.Default_16;
 				//a.ImageBig = Properties.Resources.Default_32;
 				a.QatSupport = true;
-				a.ContextMenuSupport = EditorContextMenu.MenuTypeEnum.Document;
+				a.ContextMenuSupport = EditorContextMenuWinForms.MenuTypeEnum.Document;
 
 				a.GetState += delegate ( EditorAction.GetStateContext context )
 				{
@@ -4210,7 +4210,7 @@ namespace NeoAxis.Editor
 				//a.ImageSmall = Properties.Resources.Default_16;
 				//a.ImageBig = Properties.Resources.Default_32;
 				a.QatSupport = true;
-				a.ContextMenuSupport = EditorContextMenu.MenuTypeEnum.Document;
+				a.ContextMenuSupport = EditorContextMenuWinForms.MenuTypeEnum.Document;
 
 				a.GetState += delegate ( EditorAction.GetStateContext context )
 				{

@@ -12,8 +12,8 @@ namespace NeoAxis
 	/// </summary>
 	[AddToResourcesWindow( @"Base\2D\Character 2D", -7899 )]
 	[ResourceFileExtension( "character" )]
-	[EditorDocumentWindow( typeof( Component_Character2D_DocumentWindow ) )]
-	[EditorPreviewControl( typeof( Component_Character2D_PreviewControl ) )]
+	[EditorDocumentWindow( typeof( Component_Character2D_Editor ) )]
+	[EditorPreviewControl( typeof( Component_Character2D_Preview ) )]
 	[NewObjectDefaultName( "Character 2D" )]
 	public class Component_Character2D : Component_ObjectInSpace
 	{

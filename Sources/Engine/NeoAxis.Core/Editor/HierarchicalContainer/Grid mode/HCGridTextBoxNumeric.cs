@@ -12,14 +12,18 @@ using ComponentFactory.Krypton.Toolkit;
 
 namespace NeoAxis.Editor
 {
-	public partial class HCGridTextBoxNumeric : UserControl, IHCTextBoxNumeric
+	public partial class HCGridTextBoxNumeric : EUserControl, IHCTextBoxNumeric
 	{
 		public HCGridTextBoxNumeric()
 		{
 			InitializeComponent();
+
+			textBox1.Location = new Point( 0, DpiHelper.Default.ScaleValue( 3 ) );
+			textBox1.AutoSize = false;
+			textBox1.Height = DpiHelper.Default.ScaleValue( 18 );
 		}
 
-		public HCKryptonTextBox TextBox
+		public EngineTextBox TextBox
 		{
 			get { return textBox1; }
 		}

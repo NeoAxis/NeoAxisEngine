@@ -7,6 +7,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
+using System.Windows.Media;
 using ComponentFactory.Krypton.Toolkit;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Search;
@@ -14,7 +15,7 @@ using RoslynPad.Editor;
 
 namespace NeoAxis.Editor
 {
-	public class TextEditorControl : UserControl
+	public class TextEditorControl : UserControl, EditorAssemblyInterface.ITextEditorControl
 	{
 		private KryptonSplitContainer kryptonSplitContainer;
 		private KryptonSplitContainer kryptonSplitContainerSub1;
@@ -26,6 +27,17 @@ namespace NeoAxis.Editor
 		TextEditor editor;
 
 		SearchReplacePanel searchReplacePanel;
+
+		bool manageColorsFromTextEditorProjectSettings;
+		bool manageFontFromTextEditorProjectSettings;
+		ColorValue backgroundColor = new ColorValue( -1, 0, 0, 0 );
+		ColorValue cursorColor = new ColorValue( -1, 0, 0, 0 );
+		string currentFont = "";
+		double currentFontSize;
+		ColorValue currentSelectionBackground = new ColorValue( -1, 0, 0, 0 );
+		ColorValue currentSelectionForeground = new ColorValue( -1, 0, 0, 0 );
+
+		bool border;
 
 		//
 
@@ -58,9 +70,23 @@ namespace NeoAxis.Editor
 			get { return editor; }
 		}
 
+		[Browsable( false )]
+		public bool ManageColorsFromTextEditorProjectSettings
+		{
+			get { return manageColorsFromTextEditorProjectSettings; }
+			set { manageColorsFromTextEditorProjectSettings = value; }
+		}
+
+		[Browsable( false )]
+		public bool ManageFontFromTextEditorProjectSettings
+		{
+			get { return manageFontFromTextEditorProjectSettings; }
+			set { manageFontFromTextEditorProjectSettings = value; }
+		}
+
 		string TranslateContextMenu( string text )
 		{
-			return EditorContextMenu.Translate( text );
+			return EditorContextMenuWinForms.Translate( text );
 		}
 
 		private void Editor_ContextMenuOpening( object sender, System.Windows.Controls.ContextMenuEventArgs e )
@@ -92,7 +118,7 @@ namespace NeoAxis.Editor
 						editor.Cut();
 					} );
 				item.ShortcutKeyDisplayString = EditorActions.GetFirstShortcutKeyString( "Cut" );
-				item.Enabled = true;// editor.CanCut();
+				item.Enabled = !Editor.IsReadOnly;// editor.CanCut();
 				items.Add( item );
 			}
 
@@ -116,13 +142,13 @@ namespace NeoAxis.Editor
 						editor.Paste();
 					} );
 				item.ShortcutKeyDisplayString = EditorActions.GetFirstShortcutKeyString( "Paste" );
-				item.Enabled = true;// CanPaste( out _ );
+				item.Enabled = !Editor.IsReadOnly;// CanPaste( out _ );
 				items.Add( item );
 			}
 
-			EditorContextMenu.AddActionsToMenu( EditorContextMenu.MenuTypeEnum.General, items );
+			EditorContextMenuWinForms.AddActionsToMenu( EditorContextMenuWinForms.MenuTypeEnum.General, items );
 
-			EditorContextMenu.Show( items, this );
+			EditorContextMenuWinForms.Show( items, this );
 		}
 
 		private void InitializeComponent()
@@ -155,7 +181,7 @@ namespace NeoAxis.Editor
 			// kryptonSplitContainer
 			// 
 			this.kryptonSplitContainer.Cursor = System.Windows.Forms.Cursors.Default;
-			this.kryptonSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+			//this.kryptonSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.kryptonSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
 			this.kryptonSplitContainer.IsSplitterFixed = true;
 			this.kryptonSplitContainer.Location = new System.Drawing.Point( 0, 0 );
@@ -279,19 +305,41 @@ namespace NeoAxis.Editor
 
 			if( EditorAPI.DarkTheme )
 			{
-				kryptonSplitContainerSub1.StateCommon.Back.Color1 = Color.FromArgb( 40, 40, 40 );
-				kryptonSplitContainerSub2.StateCommon.Back.Color1 = Color.FromArgb( 47, 47, 47 );
-				kryptonSplitContainerSub2.Panel2.StateCommon.Color1 = Color.FromArgb( 47, 47, 47 );
+				kryptonSplitContainerSub1.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb( 40, 40, 40 );
+				kryptonSplitContainerSub2.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb( 47, 47, 47 );
+				kryptonSplitContainerSub2.Panel2.StateCommon.Color1 = System.Drawing.Color.FromArgb( 47, 47, 47 );
 			}
 
 			UpdateScrollBars();
+			if( ManageColorsFromTextEditorProjectSettings )
+				UpdateBackgroundForeground();
+			if( ManageFontFromTextEditorProjectSettings )
+				UpdateFont();
+
+			UpdateSplitterContainerBounds();
 
 			timer1.Start();
+
+			////!!!!
+			//kryptonSplitContainer.StateCommon.Border.Draw = InheritBool.True;
+			//kryptonSplitContainer.StateCommon.Border.Color1 = System.Drawing.Color.FromArgb( 255, 0, 0 );
+			//kryptonSplitContainer.StateCommon.Border.Width = 1;
+			//kryptonSplitContainer.StateNormal.Border.Draw = InheritBool.True;
+			//kryptonSplitContainer.StateNormal.Border.Color1 = System.Drawing.Color.FromArgb( 255, 0, 0 );
+			//kryptonSplitContainer.StateNormal.Border.Width = 1;
+			//BorderStyle = BorderStyle.FixedSingle;
 		}
 
 		private void timer1_Tick( object sender, EventArgs e )
 		{
+			if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
+				return;
+
 			UpdateScrollBars();
+			if( ManageColorsFromTextEditorProjectSettings )
+				UpdateBackgroundForeground();
+			if( ManageFontFromTextEditorProjectSettings )
+				UpdateFont();
 		}
 
 		void UpdateScrollBars()
@@ -349,6 +397,167 @@ namespace NeoAxis.Editor
 		public SearchReplacePanel SearchReplacePanel
 		{
 			get { return searchReplacePanel; }
+		}
+
+		public string EditorText
+		{
+			get { return Editor.Text; }
+			set { Editor.Text = value; }
+		}
+
+		public bool EditorReadOnly
+		{
+			get { return Editor.IsReadOnly; }
+			set { Editor.IsReadOnly = value; }
+		}
+
+		public bool EditorWordWrap
+		{
+			get { return Editor.WordWrap; }
+			set { Editor.WordWrap = value; }
+		}
+
+		public int SelectionStart
+		{
+			get { return Editor.SelectionStart; }
+			set { Editor.SelectionStart = value; }
+		}
+
+		public int SelectionLength
+		{
+			get { return Editor.SelectionLength; }
+			set { Editor.SelectionLength = value; }
+		}
+
+		void UpdateBackgroundForeground()
+		{
+			{
+				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditorBackgroundColorDarkTheme : ProjectSettings.Get.TextEditorBackgroundColorLightTheme;
+				if( backgroundColor != color )
+				{
+					backgroundColor = color;
+					var packed = backgroundColor.ToColorPacked();
+					Editor.Background = new System.Windows.Media.SolidColorBrush( System.Windows.Media.Color.FromArgb( packed.Alpha, packed.Red, packed.Green, packed.Blue ) );
+				}
+			}
+
+			{
+				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditorForegroundColorDarkTheme : ProjectSettings.Get.TextEditorForegroundColorLightTheme;
+				if( cursorColor != color )
+				{
+					cursorColor = color;
+					var packed = cursorColor.ToColorPacked();
+					Editor.Foreground = new System.Windows.Media.SolidColorBrush( System.Windows.Media.Color.FromArgb( packed.Alpha, packed.Red, packed.Green, packed.Blue ) );
+				}
+			}
+
+			{
+				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditorSearchBackgroundDarkTheme.Value : ProjectSettings.Get.TextEditorSearchBackgroundLightTheme.Value;
+				var packed = color.ToColorPacked();
+				Editor.TextArea.SearchBackgroundBrush = new System.Windows.Media.SolidColorBrush( System.Windows.Media.Color.FromArgb( packed.Alpha, packed.Red, packed.Green, packed.Blue ) );
+			}
+		}
+
+		void UpdateFont()
+		{
+			if( currentFont != ProjectSettings.Get.TextEditorFont )
+			{
+				currentFont = ProjectSettings.Get.TextEditorFont;
+
+				try
+				{
+					Editor.FontFamily = new System.Windows.Media.FontFamily( ProjectSettings.Get.TextEditorFont );
+				}
+				catch { }
+			}
+
+			if( currentFontSize != ProjectSettings.Get.TextEditorFontSize )
+			{
+				currentFontSize = ProjectSettings.Get.TextEditorFontSize;
+
+				try
+				{
+					Editor.FontSize = ProjectSettings.Get.TextEditorFontSize;
+				}
+				catch { }
+			}
+
+			var selectionBackground = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditorSelectionBackgroundDarkTheme.Value : ProjectSettings.Get.TextEditorSelectionBackgroundLightTheme.Value;
+			if( currentSelectionBackground != selectionBackground )
+			{
+				currentSelectionBackground = selectionBackground;
+
+				try
+				{
+					var packed = selectionBackground.ToColorPacked();
+					Editor.TextArea.SelectionBrush = new System.Windows.Media.SolidColorBrush( System.Windows.Media.Color.FromArgb( packed.Alpha, packed.Red, packed.Green, packed.Blue ) );
+				}
+				catch { }
+			}
+
+			var selectionForeground = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditorSelectionForegroundDarkTheme.Value : ProjectSettings.Get.TextEditorSelectionForegroundLightTheme.Value;
+			if( currentSelectionForeground != selectionForeground )
+			{
+				currentSelectionForeground = selectionForeground;
+
+				try
+				{
+					var packed = selectionForeground.ToColorPacked();
+					Editor.TextArea.SelectionForeground = new System.Windows.Media.SolidColorBrush( System.Windows.Media.Color.FromArgb( packed.Alpha, packed.Red, packed.Green, packed.Blue ) );
+				}
+				catch { }
+			}
+
+		}
+
+		public void ScrollToHome()
+		{
+			Editor.ScrollToHome();
+		}
+
+		public void ScrollToEnd()
+		{
+			Editor.ScrollToEnd();
+		}
+
+		public void Select( int start, int length )
+		{
+			Editor.Select( start, length );
+		}
+
+		protected override void OnPaint( PaintEventArgs e )
+		{
+			base.OnPaint( e );
+
+			if( Border )
+			{
+				var color = EditorAPI.DarkTheme ? System.Drawing.Color.FromArgb( 80, 80, 80 ) : System.Drawing.Color.FromArgb( 213, 213, 213 );
+				ControlPaint.DrawBorder( e.Graphics, this.ClientRectangle, color, ButtonBorderStyle.Solid );
+			}
+		}
+
+		void UpdateSplitterContainerBounds()
+		{
+			if( kryptonSplitContainer != null )
+			{
+				if( Border )
+					kryptonSplitContainer.SetBounds( 1, 1, Width - 2, Height - 2 );
+				else
+					kryptonSplitContainer.SetBounds( 0, 0, Width, Height );
+			}
+		}
+
+		protected override void OnResize( EventArgs e )
+		{
+			base.OnResize( e );
+
+			UpdateSplitterContainerBounds();
+		}
+
+		public bool Border
+		{
+			get { return border; }
+			set { border = value; }
 		}
 
 	}

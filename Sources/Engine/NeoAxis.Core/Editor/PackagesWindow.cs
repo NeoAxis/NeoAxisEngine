@@ -60,6 +60,9 @@ namespace NeoAxis.Editor
 			double distance = 22.0 * EditorAPI.DPIScale;
 			kryptonSplitContainer2.Panel1MinSize = (int)distance;
 			kryptonSplitContainer2.SplitterDistance = (int)distance;
+
+			if( EditorAPI.DPIScale >= 2 )
+				this.buttonUpdateList.Values.Image = global::NeoAxis.Properties.Resources.Refresh_32;
 		}
 
 		private void PackagesDocumentWindow_Load( object sender, EventArgs e )
@@ -128,6 +131,9 @@ namespace NeoAxis.Editor
 
 		private void timer1_Tick( object sender, EventArgs e )
 		{
+			if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
+				return;
+
 			if( needUpdateList )
 			{
 				needUpdateList = false;
@@ -417,7 +423,7 @@ namespace NeoAxis.Editor
 			//var text = string.Format( Translate( "Install {0}?\r\n\r\n{1} files will created." ), selectedPackage.Name, filesToCopy.Count );
 			//var text = $"Install {selectedPackage.Name}?\r\n\r\n{filesToCopy.Count} files will created.";
 
-			if( EditorMessageBox.ShowQuestion( text, MessageBoxButtons.YesNo ) != DialogResult.Yes )
+			if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) != EDialogResult.Yes )
 				return;
 
 			var notification = ScreenNotifications.ShowSticky( "Installing the package..." );
@@ -518,7 +524,7 @@ namespace NeoAxis.Editor
 			if( info.MustRestart )
 			{
 				var text2 = EditorLocalization.Translate( "General", "To apply changes need restart the editor. Restart?" );
-				if( EditorMessageBox.ShowQuestion( text2, MessageBoxButtons.YesNo ) == DialogResult.Yes )
+				if( EditorMessageBox.ShowQuestion( text2, EMessageBoxButtons.YesNo ) == EDialogResult.Yes )
 					EditorAPI.BeginRestartApplication();
 			}
 		}
@@ -577,7 +583,7 @@ namespace NeoAxis.Editor
 				return;
 
 			var text = string.Format( Translate( "Uninstall {0}?\n\n{1} files will deleted." ), selectedPackage.GetDisplayName(), filesToDelete.Count );
-			if( EditorMessageBox.ShowQuestion( text, MessageBoxButtons.YesNo ) != DialogResult.Yes )
+			if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) != EDialogResult.Yes )
 				return;
 
 			var filesToDeletionAtStartup = new List<string>();
@@ -959,7 +965,7 @@ namespace NeoAxis.Editor
 			var template = Translate( "Are you sure you want to delete \'{0}\'?" );
 			var text = string.Format( template, selectedPackage.FullFilePath );
 
-			if( EditorMessageBox.ShowQuestion( text, MessageBoxButtons.YesNo ) == DialogResult.No )
+			if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) == EDialogResult.No )
 				return;
 
 			try
@@ -1008,12 +1014,20 @@ namespace NeoAxis.Editor
 			var tagStr = kryptonButtonBuy.Tag as string;
 			if( tagStr != null && tagStr == "SubscribeToPro" )
 			{
-				Process.Start( "https://www.neoaxis.com/licensing" );
+				Process.Start( new ProcessStartInfo( "https://www.neoaxis.com/licensing" ) { UseShellExecute = true } );
 				return;
 			}
 
 			//!!!!
 
+		}
+
+		protected override void OnResize( EventArgs e )
+		{
+			base.OnResize( e );
+
+			if( Created )
+				UpdateControls();
 		}
 	}
 }

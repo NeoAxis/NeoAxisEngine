@@ -154,6 +154,9 @@ namespace NeoAxis.Editor
 
 		private void timer1_Tick( object sender, EventArgs e )
 		{
+			if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
+				return;
+
 			//!!!!было
 			//if( Text != GetDemandTitle() )
 			//	Text = GetDemandTitle();
@@ -353,7 +356,7 @@ namespace NeoAxis.Editor
 
 			//New object
 			{
-				EditorContextMenu.AddNewObjectItem( items, CanNewObject( out _ ), delegate ( Metadata.TypeInfo type )
+				EditorContextMenuWinForms.AddNewObjectItem( items, CanNewObject( out _ ), delegate ( Metadata.TypeInfo type )
 				{
 					TryNewObject( type );
 				} );
@@ -434,9 +437,9 @@ namespace NeoAxis.Editor
 				items.Add( item );
 			}
 
-			EditorContextMenu.AddActionsToMenu( EditorContextMenu.MenuTypeEnum.Document, items );
+			EditorContextMenuWinForms.AddActionsToMenu( EditorContextMenuWinForms.MenuTypeEnum.Document, items );
 
-			EditorContextMenu.Show( items, this );
+			EditorContextMenuWinForms.Show( items, this );
 		}
 
 		(UIControl, MoveModeEnum) GetMouseOverObject( bool onlyCanBeSelected )
@@ -485,7 +488,7 @@ namespace NeoAxis.Editor
 
 		string TranslateContextMenu( string text )
 		{
-			return EditorContextMenu.Translate( text );
+			return EditorContextMenuWinForms.Translate( text );
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2490,22 +2493,22 @@ namespace NeoAxis.Editor
 			{
 			case MoveModeEnum.ResizeLeft | MoveModeEnum.ResizeTop:
 			case MoveModeEnum.ResizeRight | MoveModeEnum.ResizeBottom:
-				return Cursors.SizeNWSE;
+				return KryptonCursors.SizeNWSE;
 
 			case MoveModeEnum.ResizeLeft | MoveModeEnum.ResizeBottom:
 			case MoveModeEnum.ResizeRight | MoveModeEnum.ResizeTop:
-				return Cursors.SizeNESW;
+				return KryptonCursors.SizeNESW;
 
 			case MoveModeEnum.ResizeLeft:
 			case MoveModeEnum.ResizeRight:
-				return Cursors.SizeWE;
+				return KryptonCursors.SizeWE;
 
 			case MoveModeEnum.ResizeTop:
 			case MoveModeEnum.ResizeBottom:
-				return Cursors.SizeNS;
+				return KryptonCursors.SizeNS;
 
 			case MoveModeEnum.Move:
-				return Cursors.SizeAll;
+				return KryptonCursors.SizeAll;
 			}
 
 			return Cursors.Default;

@@ -12,11 +12,15 @@ using ComponentFactory.Krypton.Toolkit;
 
 namespace NeoAxis.Editor
 {
-	public partial class HCGridTextBox : UserControl, IHCTextBox
+	public partial class HCGridTextBox : EUserControl, IHCTextBox
 	{
 		public HCGridTextBox()
 		{
 			InitializeComponent();
+
+			textBox1.Location = new Point( 0, DpiHelper.Default.ScaleValue( 3 ) );
+			textBox1.AutoSize = false;
+			textBox1.Height = DpiHelper.Default.ScaleValue( 18 );
 		}
 
 		//public Label Label1
@@ -24,7 +28,7 @@ namespace NeoAxis.Editor
 		//	get { return null; }
 		//}
 
-		public HCKryptonTextBox TextBox
+		public EngineTextBox TextBox
 		{
 			get { return textBox1; }
 		}

@@ -13,7 +13,7 @@ namespace NeoAxis.Editor
 {
 	public interface IHCCollection
 	{
-		HCKryptonTextBox Label2 { get; }
+		EngineTextBox Label2 { get; }
 		ComponentFactory.Krypton.Toolkit.KryptonButton ButtonEdit { get; }
 	}
 
@@ -24,7 +24,7 @@ namespace NeoAxis.Editor
 		{
 		}
 
-		public override UserControl CreateControlInsidePropertyItemControl()
+		public override EUserControl CreateControlInsidePropertyItemControl()
 		{
 			return new HCGridCollection();
 		}

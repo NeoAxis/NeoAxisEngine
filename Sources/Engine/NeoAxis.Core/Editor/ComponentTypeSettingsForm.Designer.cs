@@ -31,7 +31,7 @@
 			this.kryptonButtonCancel = new ComponentFactory.Krypton.Toolkit.KryptonButton();
 			this.kryptonButtonOK = new ComponentFactory.Krypton.Toolkit.KryptonButton();
 			this.kryptonButtonReset = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-			this.labelEx1 = new NeoAxis.Editor.LabelEx();
+			this.labelEx1 = new NeoAxis.Editor.EngineLabel();
 			this.hierarchicalContainer1 = new NeoAxis.Editor.HierarchicalContainer();
 			this.SuspendLayout();
 			// 
@@ -85,9 +85,9 @@
 			// 
 			// hierarchicalContainer1
 			// 
-			this.hierarchicalContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.hierarchicalContainer1.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
+			| System.Windows.Forms.AnchorStyles.Left )
+			| System.Windows.Forms.AnchorStyles.Right ) ) );
 			this.hierarchicalContainer1.ContentMode = NeoAxis.Editor.HierarchicalContainer.ContentModeEnum.Properties;
 			this.hierarchicalContainer1.Location = new System.Drawing.Point(12, 39);
 			this.hierarchicalContainer1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -129,6 +129,6 @@
 		private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonCancel;
 		private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonOK;
 		private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonReset;
-		private LabelEx labelEx1;
+		private EngineLabel labelEx1;
 	}
 }

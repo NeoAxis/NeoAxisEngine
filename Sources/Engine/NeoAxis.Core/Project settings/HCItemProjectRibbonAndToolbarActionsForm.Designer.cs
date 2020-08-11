@@ -109,7 +109,7 @@
 			// kryptonSplitContainer2.Panel1
 			// 
 			this.kryptonSplitContainer2.Panel1.Controls.Add(this.toolStrip1);
-			this.kryptonSplitContainer2.Panel1MinSize = 24;
+			this.kryptonSplitContainer2.Panel1MinSize = 10;
 			// 
 			// kryptonSplitContainer2.Panel2
 			// 
@@ -134,8 +134,10 @@
             this.toolStripButtonMoveUp,
             this.toolStripButtonMoveDown});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+			this.toolStrip1.Padding = new System.Windows.Forms.Padding( 1, 1, 1, 1 );
 			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.Size = new System.Drawing.Size(221, 25);
+			this.toolStrip1.AutoSize = false;
+			this.toolStrip1.Size = new System.Drawing.Size(221, 26);
 			this.toolStrip1.TabIndex = 5;
 			this.toolStrip1.Text = "toolStrip1";
 			// 
@@ -145,6 +147,7 @@
 			this.toolStripButtonEnabled.Image = global::NeoAxis.Properties.Resources.Checked_16;
 			this.toolStripButtonEnabled.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonEnabled.Name = "toolStripButtonEnabled";
+			this.toolStripButtonEnabled.AutoSize = false;
 			this.toolStripButtonEnabled.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonEnabled.Text = "Enabled";
 			// 
@@ -159,6 +162,7 @@
 			this.toolStripButtonNewGroup.Image = global::NeoAxis.Properties.Resources.NewFolder_16;
 			this.toolStripButtonNewGroup.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonNewGroup.Name = "toolStripButtonNewGroup";
+			this.toolStripButtonNewGroup.AutoSize = false;
 			this.toolStripButtonNewGroup.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonNewGroup.Text = "New Group";
 			// 
@@ -168,6 +172,7 @@
 			this.toolStripButtonAdd.Image = global::NeoAxis.Properties.Resources.Add_16;
 			this.toolStripButtonAdd.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonAdd.Name = "toolStripButtonAdd";
+			this.toolStripButtonAdd.AutoSize = false;
 			this.toolStripButtonAdd.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonAdd.Text = "Add";
 			// 
@@ -177,6 +182,7 @@
 			this.toolStripButtonDelete.Image = global::NeoAxis.Properties.Resources.Delete_16;
 			this.toolStripButtonDelete.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonDelete.Name = "toolStripButtonDelete";
+			this.toolStripButtonDelete.AutoSize = false;
 			this.toolStripButtonDelete.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonDelete.Text = "Delete";
 			// 
@@ -186,6 +192,7 @@
 			this.toolStripButtonRename.Image = global::NeoAxis.Properties.Resources.Rename_16x;
 			this.toolStripButtonRename.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonRename.Name = "toolStripButtonRename";
+			this.toolStripButtonRename.AutoSize = false;
 			this.toolStripButtonRename.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonRename.Text = "Rename";
 			// 
@@ -195,6 +202,7 @@
 			this.toolStripButtonMoveUp.Image = global::NeoAxis.Properties.Resources.MoveUp_16;
 			this.toolStripButtonMoveUp.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonMoveUp.Name = "toolStripButtonMoveUp";
+			this.toolStripButtonMoveUp.AutoSize = false;
 			this.toolStripButtonMoveUp.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonMoveUp.Text = "Move Up";
 			// 
@@ -204,6 +212,7 @@
 			this.toolStripButtonMoveDown.Image = global::NeoAxis.Properties.Resources.MoveDown_16;
 			this.toolStripButtonMoveDown.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonMoveDown.Name = "toolStripButtonMoveDown";
+			this.toolStripButtonMoveDown.AutoSize = false;
 			this.toolStripButtonMoveDown.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonMoveDown.Text = "Move Down";
 			// 
@@ -264,7 +273,8 @@
 			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "HCItemProjectRibbonAndToolbarActionsForm";
 			this.Size = new System.Drawing.Size(456, 470);
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer1.Panel1)).EndInit();
+			this.Load += new System.EventHandler( this.HCItemProjectRibbonAndToolbarActionsForm_Load );
+			( (System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer1.Panel1)).EndInit();
 			this.kryptonSplitContainer1.Panel1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer1.Panel2)).EndInit();
 			this.kryptonSplitContainer1.Panel2.ResumeLayout(false);

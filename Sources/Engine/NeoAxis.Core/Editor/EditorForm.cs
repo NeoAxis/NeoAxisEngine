@@ -8,7 +8,6 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.IO;
 using ComponentFactory.Krypton.Toolkit;
-using ComponentFactory.Krypton.Ribbon;
 using ComponentFactory.Krypton.Docking;
 using System.Reflection;
 using Microsoft.Win32;
@@ -56,6 +55,10 @@ namespace NeoAxis.Editor
 
 		double lastSlowUpdatingTime;
 
+		public DateTime? unlockFormUpdateInTimer;
+
+		public int skipPaintCounter = 2;
+
 		/////////////////////////////////////////
 
 		//internal class CoverControl : Control
@@ -81,6 +84,18 @@ namespace NeoAxis.Editor
 		public EditorForm()
 		{
 			instance = this;
+
+			//get CustomWindowsStyle project settings
+			var customWindowsStyle = ProjectSettings.ReadParameterFromFile( "CustomWindowsStyle" );
+			if( !string.IsNullOrEmpty( customWindowsStyle ) )
+			{
+				try
+				{
+					KryptonToolkitSettings.AllowFormChrome = (bool)SimpleTypes.ParseValue( typeof( bool ), customWindowsStyle );
+				}
+				catch { }
+			}
+			AllowFormChrome = KryptonToolkitSettings.AllowFormChrome;
 
 			//if( /*showSplashScreenAtStartup &&*/ !Debugger.IsAttached )
 			//{
@@ -153,9 +168,6 @@ namespace NeoAxis.Editor
 			// create cover
 			coverControl = new Control();
 			coverControl.BackColor = Color.FromArgb( 40, 40, 40 );
-			// 127, 127, 127 );
-			//coverControl.BackColor = DarkTheme ? Color.FromArgb( 40, 40, 40 ) : Color.FromArgb( 42, 87, 154 );
-			//coverControl.BackColor = Color.Black;
 			coverControl.Dock = DockStyle.Fill;
 			Controls.Add( coverControl );
 			coverControl.BringToFront();
@@ -237,8 +249,9 @@ namespace NeoAxis.Editor
 			KryptonDarkThemeUtility.DarkTheme = EditorAPI.DarkTheme;
 			if( EditorAPI.DarkTheme )
 				EditorAssemblyInterface.Instance.SetDarkTheme();
-
 			Aga.Controls.Tree.NodeControls.BaseTextControl.DarkTheme = EditorAPI.DarkTheme;
+
+			BackColor = EditorAPI.DarkTheme ? Color.FromArgb( 40, 40, 40 ) : Color.FromArgb( 240, 240, 240 );
 
 			//app button
 			kryptonRibbon.RibbonAppButton.AppButtonText = EditorLocalization.Translate( "AppButton", kryptonRibbon.RibbonAppButton.AppButtonText );
@@ -257,6 +270,9 @@ namespace NeoAxis.Editor
 			//workspaceController.AddDockspace(new MembersWindow(), "Members", DockingEdge.Right, new Size(300, 300));
 			workspaceController.AddToDockspaceStack( new DockWindow[] { new ResourcesWindow(), new SolutionExplorer(), new PreviewWindow() }, DockingEdge.Left );
 			workspaceController.AddToDockspace( new DockWindow[] { new MessageLogWindow(), new OutputWindow(), new DebugInfoWindow() }, DockingEdge.Bottom );
+
+			Log.Info( "Use Log.Info(), Log.Warning() methods to write to the window. These methods can be used in the Player. Press '~' to open console of the Player." );
+			OutputWindow.Print( "Use OutputWindow.Print() method to write to the window. Unlike Message Log window, this window is not a list. Here you can add text in arbitrary format.\n" );
 
 			//!!!!
 			//workspaceController.AddDockWindow( new TipsWindow(), true, false );
@@ -302,15 +318,23 @@ namespace NeoAxis.Editor
 
 			LoginUtility.RequestFullLicenseInfo();
 
+			kryptonRibbon.BeforeMinimizedModeChanged += KryptonRibbon_BeforeMinimizedModeChanged;
+			kryptonRibbon.MinimizedModeChanged += KryptonRibbon_MinimizedModeChanged;
+
+			KryptonWinFormsUtility.editorFormStartTemporaryLockUpdateAction = delegate ()
+			{
+				if( IsHandleCreated && !EditorAPI.ClosingApplication )
+				{
+					KryptonWinFormsUtility.LockFormUpdate( this );
+					unlockFormUpdateInTimer = DateTime.Now + TimeSpan.FromSeconds( 0.1 );
+				}
+			};
+
 			loaded = true;
 		}
 
 		private void EditorForm_FormClosing( object sender, FormClosingEventArgs e )
 		{
-			//!!!!было в старом
-			////for lost focus in PropertyGrid
-			//PropertiesForm.Focus();
-
 			bool? result = ShowDialogAndSaveDocuments( workspaceController.GetDockWindows() );
 			if( result == null )
 			{
@@ -386,15 +410,15 @@ namespace NeoAxis.Editor
 			foreach( var doc in unsavedDocs )
 				text += "\n" + doc.Name;
 
-			switch( EditorMessageBox.ShowQuestion( text, MessageBoxButtons.YesNoCancel ) )
+			switch( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNoCancel ) )
 			{
-			case DialogResult.Cancel:
+			case EDialogResult.Cancel:
 				return null;
-			case DialogResult.Yes:
+			case EDialogResult.Yes:
 				//!!!!check error, return null
 				unsavedDocs.ForEach( doc => doc.Save() );
 				return true;
-			case DialogResult.No:
+			case EDialogResult.No:
 				return false;
 			}
 
@@ -413,19 +437,19 @@ namespace NeoAxis.Editor
 				var text = EditorLocalization.Translate( "General", "Save changes to the following files?" ) + "\n";
 				text += "\n" + documentWindow.Document.Name;
 
-				switch( EditorMessageBox.ShowQuestion( text, MessageBoxButtons.YesNoCancel ) )
+				switch( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNoCancel ) )
 				{
-				case DialogResult.Cancel:
+				case EDialogResult.Cancel:
 
 					//!!!!тут?
 					EditorAPI.SetRestartApplication( false );
 
 					return null;
-				case DialogResult.Yes:
+				case EDialogResult.Yes:
 					//!!!!check error, return null
 					documentWindow.SaveDocument();
 					return true;
-				case DialogResult.No:
+				case EDialogResult.No:
 					return false;
 				}
 			}
@@ -464,7 +488,7 @@ namespace NeoAxis.Editor
 
 		private void timer1_Tick( object sender, EventArgs e )
 		{
-			if( WinFormsUtility.IsDesignerHosted( this ) )
+			if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
 				return;
 			if( !loaded )
 				return;
@@ -552,7 +576,6 @@ namespace NeoAxis.Editor
 
 			if( firstTick )
 			{
-				//!!!!new
 				firstTick = false;
 
 				if( SplashForm.Instance != null )
@@ -569,8 +592,13 @@ namespace NeoAxis.Editor
 					EditorAPI.ShowTips();
 			}
 
+			if( unlockFormUpdateInTimer.HasValue && ( DateTime.Now - unlockFormUpdateInTimer.Value ).TotalSeconds > 0 )
+			{
+				KryptonWinFormsUtility.LockFormUpdate( null );
+				unlockFormUpdateInTimer = null;
+			}
+
 			canSaveConfig = true;
-			firstTick = false;
 		}
 
 		[Browsable( false )]
@@ -613,8 +641,8 @@ namespace NeoAxis.Editor
 
 		private void kryptonRibbon_AppButtonMenuOpening( object sender, CancelEventArgs e )
 		{
-			//!!!!если есть проект. если нет то New открывать или Open
 			backstageMenu1.SelectDefaultPage();
+			backstageMenu1.Refresh();
 		}
 
 		public void RenderViewports( out bool existActiveViewports )
@@ -966,7 +994,8 @@ namespace NeoAxis.Editor
 						var space = floatingWindow.FloatspaceControl;
 						if( space != null )
 						{
-							var pages = space.AllPages();
+							var pages = space.AllPages().Where( p => p.LastVisibleSet ).ToArray();
+
 							if( pages.Length == 1 )
 							{
 								foreach( var page in pages )
@@ -985,9 +1014,13 @@ namespace NeoAxis.Editor
 									}
 								}
 							}
+							else if( pages.Length == 0 )
+								v = false;
 						}
 
 						if( BackstageMenu.BackstageVisible )
+							v = false;
+						if( WindowState == FormWindowState.Minimized )
 							v = false;
 
 						if( floatingWindow.Visible != v )
@@ -998,5 +1031,44 @@ namespace NeoAxis.Editor
 			catch { }
 		}
 
+		private void KryptonRibbon_BeforeMinimizedModeChanged( object sender, EventArgs e )
+		{
+			KryptonWinFormsUtility.LockFormUpdate( this );
+		}
+
+		private void KryptonRibbon_MinimizedModeChanged( object sender, EventArgs e )
+		{
+			unlockFormUpdateInTimer = DateTime.Now + TimeSpan.FromSeconds( 0.1 );
+			needRecreatedRibbonButtons = true;
+		}
+
+		protected override void WndProc( ref Message m )
+		{
+			var processed = false;
+
+			if( !IsDisposed && !Disposing )
+			{
+				switch( m.Msg )
+				{
+				case ComponentFactory.Krypton.Toolkit.PI.WM_ERASEBKGND:
+				case ComponentFactory.Krypton.Toolkit.PI.WM_PAINT:
+					if( skipPaintCounter > 0 )
+					{
+						using( var brush = new SolidBrush( Color.FromArgb( 40, 40, 40 ) ) )
+						using( var graphics = CreateGraphics() )
+							graphics.FillRectangle( brush, new System.Drawing.Rectangle( 0, 0, Width, Height ) );
+
+						processed = true;
+
+						if( m.Msg == ComponentFactory.Krypton.Toolkit.PI.WM_PAINT && skipPaintCounter > 0 )
+							skipPaintCounter--;
+					}
+					break;
+				}
+			}
+
+			if( !processed )
+				base.WndProc( ref m );
+		}
 	}
 }

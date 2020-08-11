@@ -21,7 +21,7 @@ namespace NeoAxis.Editor
 		{
 		}
 
-		public override UserControl CreateControlInsidePropertyItemControl()
+		public override EUserControl CreateControlInsidePropertyItemControl()
 		{
 			return new HCGridColorValue();
 		}
@@ -86,7 +86,8 @@ namespace NeoAxis.Editor
 
 		private void PreviewButton_Click( object sender, EventArgs e )
 		{
-			Owner.ToggleDropDown( new ColorValuePoweredSelectControl( this ), this );
+			var control = (IHCColorValue)CreatedControlInsidePropertyItemControl;
+			Owner.ToggleDropDown( new ColorValuePoweredSelectControl( this ), control.PreviewButton );
 		}
 	}
 }

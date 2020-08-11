@@ -28,7 +28,7 @@ namespace NeoAxis.Editor
 				a.ActionType = EditorAction.ActionTypeEnum.DropDown;
 				a.QatSupport = true;
 				//a.qatAddByDefault = true;
-				a.ContextMenuSupport = EditorContextMenu.MenuTypeEnum.Document;
+				a.ContextMenuSupport = EditorContextMenuWinForms.MenuTypeEnum.Document;
 
 				a.GetState += delegate ( EditorAction.GetStateContext context )
 				{
@@ -662,7 +662,7 @@ namespace NeoAxis.Editor
 				a.ImageBig = Properties.Resources.Delete_32;
 				a.QatSupport = true;
 				//a.qatAddByDefault = true;
-				a.ContextMenuSupport = EditorContextMenu.MenuTypeEnum.Document;
+				a.ContextMenuSupport = EditorContextMenuWinForms.MenuTypeEnum.Document;
 
 				a.GetState += delegate ( EditorAction.GetStateContext context )
 				{
@@ -690,7 +690,7 @@ namespace NeoAxis.Editor
 				a.Click += delegate ( EditorAction.ClickContext context )
 				{
 					var text = string.Format( Translate( "Delete \'{0}\'?" ), bodyName );
-					if( EditorMessageBox.ShowQuestion( text, MessageBoxButtons.YesNo ) == DialogResult.Yes )
+					if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) == EDialogResult.Yes )
 					{
 						List<UndoSystem.Action> undoActions = new List<UndoSystem.Action>();
 

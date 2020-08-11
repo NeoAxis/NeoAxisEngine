@@ -41,6 +41,11 @@ namespace NeoAxis
 			}
 		}
 
+		public class MetadataGetMembersContextForPage : Metadata.GetMembersContext
+		{
+			public bool IsPage;
+		}
+
 		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
 		{
 			base.OnMetadataGetMembersFilter( context, member, ref skip );
@@ -49,6 +54,11 @@ namespace NeoAxis
 			{
 				if( member is Metadata.Property )
 				{
+					//no parameters for root
+					if( context == null || !( context is MetadataGetMembersContextForPage ) )
+						skip = true;
+
+
 					if( member.Name == "Name" || member.Name == "Enabled" )
 						skip = true;
 
@@ -214,6 +224,20 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="AnimateWindowsAutoHiding"/> property value changes.</summary>
 		public event Action<Component_ProjectSettings> AnimateAutoHideWindowsChanged;
 		ReferenceField<bool> _animateAutoHideWindows = false;
+
+		/// <summary>
+		/// Whether to use custom style for window title bars. Windows only. Restart the editor to apply changes.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Editor" )]
+		public Reference<bool> CustomWindowsStyle
+		{
+			get { if( _customWindowsStyle.BeginGet() ) CustomWindowsStyle = _customWindowsStyle.Get( this ); return _customWindowsStyle.value; }
+			set { if( _customWindowsStyle.BeginSet( ref value ) ) { try { CustomWindowsStyleChanged?.Invoke( this ); } finally { _customWindowsStyle.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="CustomWindowsStyle"/> property value changes.</summary>
+		public event Action<Component_ProjectSettings> CustomWindowsStyleChanged;
+		ReferenceField<bool> _customWindowsStyle = true;
 
 		/////////////////////////////////////////
 

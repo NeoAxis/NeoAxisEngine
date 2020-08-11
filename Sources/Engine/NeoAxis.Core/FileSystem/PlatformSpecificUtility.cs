@@ -56,10 +56,12 @@ namespace NeoAxis
 
 		public override string GetExecutableDirectoryPath()
 		{
+			var result = "";
+
 			try
 			{
 				string fileName = Process.GetCurrentProcess().MainModule.FileName;
-				return Path.GetDirectoryName( fileName );
+				result = Path.GetDirectoryName( fileName );
 			}
 			catch
 			{
@@ -71,8 +73,21 @@ namespace NeoAxis
 					hModule = IntPtr.Zero;
 				StringBuilder buffer = new StringBuilder( 260 );
 				int length = GetModuleFileName( hModule, buffer, buffer.Capacity );
-				return Path.GetDirectoryName( Path.GetFullPath( buffer.ToString() ) );
+				result = Path.GetDirectoryName( Path.GetFullPath( buffer.ToString() ) );
 			}
+
+			result = VirtualPathUtility.NormalizePath( result );
+
+			//when run by means built-in dotnet.exe from NeoAxis.Internal
+			{
+				var remove = VirtualPathUtility.NormalizePath( @"\NeoAxis.Internal\Platforms\Windows\dotnet" );
+
+				var index = result.IndexOf( remove );
+				if( index != -1 )
+					result = result.Remove( index, remove.Length );
+			}
+
+			return result;
 		}
 
 		public override IntPtr LoadLibrary( string path )

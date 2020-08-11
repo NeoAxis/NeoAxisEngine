@@ -8,6 +8,7 @@ using System.IO;
 using System.Reflection;
 using System.Drawing;
 using ComponentFactory.Krypton.Toolkit;
+using SharpBgfx.Common;
 
 namespace NeoAxis.Editor
 {
@@ -482,8 +483,6 @@ namespace NeoAxis.Editor
 				}
 			}
 
-			//!!!!указывать OK, Cancel или просто Close
-
 			var window = new ObjectSettingsWindow();
 			window.InitDocumentWindow( document, obj, true, null );
 
@@ -743,8 +742,7 @@ namespace NeoAxis.Editor
 
 		static DocumentWindow CreateWindowImpl( DocumentInstance document, object obj, bool openAsSettings )
 		{
-			Type type = null;
-
+			Type type;
 			if( openAsSettings )
 				type = typeof( ObjectSettingsWindow );
 			else if( document.SpecialMode == "TextEditor" )
@@ -752,7 +750,17 @@ namespace NeoAxis.Editor
 			else
 				type = GetDocumentWindowClass( obj ) ?? GetWindowClassFromFileName( document.RealFileName ) ?? typeof( DocumentWindow );
 
-			var window = (DocumentWindow)Activator.CreateInstance( type );
+			DocumentWindow window;
+			if( typeof( CanvasBasedEditor ).IsAssignableFrom( type ) )
+			{
+				var editor = (CanvasBasedEditor)Activator.CreateInstance( type );
+				var window2 = new DocumentWindowWithViewport_CanvasBasedEditor( editor );
+				editor.owner = window2;
+				window = window2;
+			}
+			else
+				window = (DocumentWindow)Activator.CreateInstance( type );
+
 			window.InitDocumentWindow( document, obj, openAsSettings, null );
 			return window;
 		}

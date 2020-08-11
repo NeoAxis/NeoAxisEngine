@@ -46,7 +46,7 @@ namespace NeoAxis
 			else if( Bgfx.GetCurrentBackend() == RendererBackend.OpenGLES )
 				name = "OpenGLES";
 			else
-				Log.Fatal( "GpuProgramManager: Shader model is not specified." );
+				Log.Fatal( "GpuProgramManager: Shader model is not specified. Bgfx.GetCurrentBackend() == {0}.", Bgfx.GetCurrentBackend() );
 
 			return Path.Combine( folder, name + ".cache" );
 

@@ -30,8 +30,8 @@ namespace NeoAxis.Editor
 		{
 			this.minLabel = new ComponentFactory.Krypton.Toolkit.KryptonLabel();
 			this.maxLabel = new ComponentFactory.Krypton.Toolkit.KryptonLabel();
-			this.minTextBox = new NeoAxis.Editor.HCKryptonTextBox();
-			this.maxTextBox = new NeoAxis.Editor.HCKryptonTextBox();
+			this.minTextBox = new NeoAxis.Editor.EngineTextBox();
+			this.maxTextBox = new NeoAxis.Editor.EngineTextBox();
 			this.minTrackBar = new ComponentFactory.Krypton.Toolkit.KryptonTrackBar();
 			this.maxTrackBar = new ComponentFactory.Krypton.Toolkit.KryptonTrackBar();
 			this.SuspendLayout();
@@ -59,7 +59,7 @@ namespace NeoAxis.Editor
 			// minTextBox
 			// 
 			this.minTextBox.Location = new System.Drawing.Point(81, 15);
-			this.minTextBox.LookLikeLabel = false;
+			this.minTextBox.LikeLabel = false;
 			this.minTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.minTextBox.Name = "minTextBox";
 			this.minTextBox.Size = new System.Drawing.Size(119, 21);
@@ -70,7 +70,7 @@ namespace NeoAxis.Editor
 			// maxTextBox
 			// 
 			this.maxTextBox.Location = new System.Drawing.Point(81, 47);
-			this.maxTextBox.LookLikeLabel = false;
+			this.maxTextBox.LikeLabel = false;
 			this.maxTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.maxTextBox.Name = "maxTextBox";
 			this.maxTextBox.Size = new System.Drawing.Size(119, 21);
@@ -121,8 +121,8 @@ namespace NeoAxis.Editor
 
 		private ComponentFactory.Krypton.Toolkit.KryptonLabel minLabel;
 		private ComponentFactory.Krypton.Toolkit.KryptonLabel maxLabel;
-		private HCKryptonTextBox minTextBox;
-		private HCKryptonTextBox maxTextBox;
+		private EngineTextBox minTextBox;
+		private EngineTextBox maxTextBox;
 		private ComponentFactory.Krypton.Toolkit.KryptonTrackBar minTrackBar;
 		private ComponentFactory.Krypton.Toolkit.KryptonTrackBar maxTrackBar;
 	}

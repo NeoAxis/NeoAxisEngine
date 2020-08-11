@@ -29,7 +29,7 @@ namespace NeoAxis.Editor
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+			this.splitContainer1 = new ComponentFactory.Krypton.Toolkit.KryptonSplitContainer();
 			this.contentBrowserList = new NeoAxis.Editor.ContentBrowser();
 			this.contentBrowserData = new NeoAxis.Editor.ContentBrowser();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
@@ -54,6 +54,7 @@ namespace NeoAxis.Editor
 			this.splitContainer1.Panel2.Controls.Add(this.contentBrowserData);
 			this.splitContainer1.Size = new System.Drawing.Size(625, 442);
 			this.splitContainer1.SplitterDistance = 168;
+			this.splitContainer1.SplitterPercent = 0.3;
 			this.splitContainer1.TabIndex = 0;
 			// 
 			// contentBrowserList
@@ -112,7 +113,7 @@ namespace NeoAxis.Editor
 
 		#endregion
 
-		private System.Windows.Forms.SplitContainer splitContainer1;
+		private ComponentFactory.Krypton.Toolkit.KryptonSplitContainer splitContainer1;
 		private ContentBrowser contentBrowserList;
 		private System.Windows.Forms.Timer timer1;
 		private ContentBrowser contentBrowserData;

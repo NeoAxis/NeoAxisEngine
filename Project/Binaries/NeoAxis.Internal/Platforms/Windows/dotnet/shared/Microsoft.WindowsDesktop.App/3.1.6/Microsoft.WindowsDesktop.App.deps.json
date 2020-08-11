@@ -1,0 +1,969 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v3.1/win-x64",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v3.1": {},
+    ".NETCoreApp,Version=v3.1/win-x64": {
+      "Microsoft.Build.Tasks.Git/1.0.0-beta2-19367-01": {},
+      "Microsoft.SourceLink.Common/1.0.0-beta2-19367-01": {},
+      "Microsoft.SourceLink.GitHub/1.0.0-beta2-19367-01": {
+        "dependencies": {
+          "Microsoft.Build.Tasks.Git": "1.0.0-beta2-19367-01",
+          "Microsoft.SourceLink.Common": "1.0.0-beta2-19367-01"
+        }
+      },
+      "Microsoft.SourceLink.Vsts.Git/1.0.0-beta2-19367-01": {
+        "dependencies": {
+          "Microsoft.Build.Tasks.Git": "1.0.0-beta2-19367-01",
+          "Microsoft.SourceLink.Common": "1.0.0-beta2-19367-01"
+        }
+      },
+      "Microsoft.WindowsDesktop.App/3.1.6-servicing.20316.4": {
+        "dependencies": {
+          "runtime.win-x64.Microsoft.WindowsDesktop.App": "3.1.6-servicing.20316.4"
+        }
+      },
+      "runtime.win-x64.Microsoft.WindowsDesktop.App/3.1.6-servicing.20316.4": {
+        "runtime": {
+          "runtimes/win-x64/lib/netcoreapp3.1/Accessibility.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.30804"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/DirectWriteForwarder.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/Microsoft.Win32.Registry.AccessControl.dll": {
+            "assemblyVersion": "4.0.5.0",
+            "fileVersion": "4.700.19.56404"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/Microsoft.Win32.SystemEvents.dll": {
+            "assemblyVersion": "4.0.2.0",
+            "fileVersion": "4.700.19.56404"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/PresentationCore.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/PresentationFramework-SystemCore.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/PresentationFramework-SystemData.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/PresentationFramework-SystemDrawing.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/PresentationFramework-SystemXml.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/PresentationFramework-SystemXmlLinq.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/PresentationFramework.Aero.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/PresentationFramework.Aero2.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/PresentationFramework.AeroLite.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/PresentationFramework.Classic.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/PresentationFramework.Luna.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/PresentationFramework.Royale.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/PresentationFramework.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/PresentationUI.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ReachFramework.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.CodeDom.dll": {
+            "assemblyVersion": "4.0.3.0",
+            "fileVersion": "4.700.19.56404"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.Configuration.ConfigurationManager.dll": {
+            "assemblyVersion": "4.0.3.0",
+            "fileVersion": "4.700.19.56404"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.Design.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.30804"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.Diagnostics.EventLog.dll": {
+            "assemblyVersion": "4.0.2.0",
+            "fileVersion": "4.700.19.56404"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.Diagnostics.PerformanceCounter.dll": {
+            "assemblyVersion": "4.0.2.0",
+            "fileVersion": "4.700.19.56404"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.DirectoryServices.dll": {
+            "assemblyVersion": "4.0.1.0",
+            "fileVersion": "4.700.19.56404"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.Drawing.Common.dll": {
+            "assemblyVersion": "4.0.2.0",
+            "fileVersion": "4.700.19.56404"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.Drawing.Design.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.30804"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.Drawing.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.30804"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.IO.Packaging.dll": {
+            "assemblyVersion": "4.0.5.0",
+            "fileVersion": "4.700.19.56404"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.Printing.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.Resources.Extensions.dll": {
+            "assemblyVersion": "4.0.1.0",
+            "fileVersion": "4.700.20.22101"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.Security.Cryptography.Pkcs.dll": {
+            "assemblyVersion": "4.1.1.0",
+            "fileVersion": "4.700.19.56404"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.Security.Cryptography.ProtectedData.dll": {
+            "assemblyVersion": "4.0.5.0",
+            "fileVersion": "4.700.19.56404"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.Security.Cryptography.Xml.dll": {
+            "assemblyVersion": "4.0.3.0",
+            "fileVersion": "4.700.19.56404"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.Security.Permissions.dll": {
+            "assemblyVersion": "4.0.3.0",
+            "fileVersion": "4.700.19.56404"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.Threading.AccessControl.dll": {
+            "assemblyVersion": "4.0.5.0",
+            "fileVersion": "4.700.19.56404"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.Windows.Controls.Ribbon.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.Windows.Extensions.dll": {
+            "assemblyVersion": "4.0.1.0",
+            "fileVersion": "4.700.19.56404"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.Windows.Forms.Design.Editors.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.30804"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.Windows.Forms.Design.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.30804"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.Windows.Forms.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.30804"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.Windows.Input.Manipulations.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.Windows.Presentation.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/System.Xaml.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/UIAutomationClient.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/UIAutomationClientSideProviders.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/UIAutomationProvider.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/UIAutomationTypes.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/WindowsBase.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/WindowsFormsIntegration.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.800.120.31503"
+          }
+        },
+        "native": {
+          "runtimes/win-x64/native/D3DCompiler_47_cor3.dll": {
+            "fileVersion": "10.0.19041.1"
+          },
+          "runtimes/win-x64/native/PenImc_cor3.dll": {
+            "fileVersion": "4.800.120.31504"
+          },
+          "runtimes/win-x64/native/PresentationNative_cor3.dll": {
+            "fileVersion": "4.800.120.31504"
+          },
+          "runtimes/win-x64/native/vcruntime140_cor3.dll": {
+            "fileVersion": "14.25.28508.3"
+          },
+          "runtimes/win-x64/native/wpfgfx_cor3.dll": {
+            "fileVersion": "4.800.120.31504"
+          }
+        },
+        "resources": {
+          "runtimes/win-x64/lib/netcoreapp3.1/cs/PresentationCore.resources.dll": {
+            "locale": "cs"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/cs/PresentationFramework.resources.dll": {
+            "locale": "cs"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/cs/PresentationUI.resources.dll": {
+            "locale": "cs"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/cs/ReachFramework.resources.dll": {
+            "locale": "cs"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/cs/System.Printing.resources.dll": {
+            "locale": "cs"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/cs/System.Windows.Controls.Ribbon.resources.dll": {
+            "locale": "cs"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/cs/System.Windows.Forms.Design.Editors.resources.dll": {
+            "locale": "cs"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/cs/System.Windows.Forms.Design.resources.dll": {
+            "locale": "cs"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/cs/System.Windows.Forms.resources.dll": {
+            "locale": "cs"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/cs/System.Windows.Input.Manipulations.resources.dll": {
+            "locale": "cs"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/cs/System.Xaml.resources.dll": {
+            "locale": "cs"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/cs/UIAutomationClient.resources.dll": {
+            "locale": "cs"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/cs/UIAutomationClientSideProviders.resources.dll": {
+            "locale": "cs"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/cs/UIAutomationProvider.resources.dll": {
+            "locale": "cs"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/cs/UIAutomationTypes.resources.dll": {
+            "locale": "cs"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/cs/WindowsBase.resources.dll": {
+            "locale": "cs"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/cs/WindowsFormsIntegration.resources.dll": {
+            "locale": "cs"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/de/PresentationCore.resources.dll": {
+            "locale": "de"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/de/PresentationFramework.resources.dll": {
+            "locale": "de"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/de/PresentationUI.resources.dll": {
+            "locale": "de"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/de/ReachFramework.resources.dll": {
+            "locale": "de"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/de/System.Printing.resources.dll": {
+            "locale": "de"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/de/System.Windows.Controls.Ribbon.resources.dll": {
+            "locale": "de"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/de/System.Windows.Forms.Design.Editors.resources.dll": {
+            "locale": "de"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/de/System.Windows.Forms.Design.resources.dll": {
+            "locale": "de"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/de/System.Windows.Forms.resources.dll": {
+            "locale": "de"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/de/System.Windows.Input.Manipulations.resources.dll": {
+            "locale": "de"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/de/System.Xaml.resources.dll": {
+            "locale": "de"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/de/UIAutomationClient.resources.dll": {
+            "locale": "de"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/de/UIAutomationClientSideProviders.resources.dll": {
+            "locale": "de"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/de/UIAutomationProvider.resources.dll": {
+            "locale": "de"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/de/UIAutomationTypes.resources.dll": {
+            "locale": "de"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/de/WindowsBase.resources.dll": {
+            "locale": "de"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/de/WindowsFormsIntegration.resources.dll": {
+            "locale": "de"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/es/PresentationCore.resources.dll": {
+            "locale": "es"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/es/PresentationFramework.resources.dll": {
+            "locale": "es"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/es/PresentationUI.resources.dll": {
+            "locale": "es"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/es/ReachFramework.resources.dll": {
+            "locale": "es"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/es/System.Printing.resources.dll": {
+            "locale": "es"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/es/System.Windows.Controls.Ribbon.resources.dll": {
+            "locale": "es"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/es/System.Windows.Forms.Design.Editors.resources.dll": {
+            "locale": "es"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/es/System.Windows.Forms.Design.resources.dll": {
+            "locale": "es"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/es/System.Windows.Forms.resources.dll": {
+            "locale": "es"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/es/System.Windows.Input.Manipulations.resources.dll": {
+            "locale": "es"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/es/System.Xaml.resources.dll": {
+            "locale": "es"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/es/UIAutomationClient.resources.dll": {
+            "locale": "es"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/es/UIAutomationClientSideProviders.resources.dll": {
+            "locale": "es"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/es/UIAutomationProvider.resources.dll": {
+            "locale": "es"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/es/UIAutomationTypes.resources.dll": {
+            "locale": "es"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/es/WindowsBase.resources.dll": {
+            "locale": "es"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/es/WindowsFormsIntegration.resources.dll": {
+            "locale": "es"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/fr/PresentationCore.resources.dll": {
+            "locale": "fr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/fr/PresentationFramework.resources.dll": {
+            "locale": "fr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/fr/PresentationUI.resources.dll": {
+            "locale": "fr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/fr/ReachFramework.resources.dll": {
+            "locale": "fr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/fr/System.Printing.resources.dll": {
+            "locale": "fr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/fr/System.Windows.Controls.Ribbon.resources.dll": {
+            "locale": "fr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/fr/System.Windows.Forms.Design.Editors.resources.dll": {
+            "locale": "fr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/fr/System.Windows.Forms.Design.resources.dll": {
+            "locale": "fr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/fr/System.Windows.Forms.resources.dll": {
+            "locale": "fr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/fr/System.Windows.Input.Manipulations.resources.dll": {
+            "locale": "fr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/fr/System.Xaml.resources.dll": {
+            "locale": "fr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/fr/UIAutomationClient.resources.dll": {
+            "locale": "fr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/fr/UIAutomationClientSideProviders.resources.dll": {
+            "locale": "fr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/fr/UIAutomationProvider.resources.dll": {
+            "locale": "fr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/fr/UIAutomationTypes.resources.dll": {
+            "locale": "fr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/fr/WindowsBase.resources.dll": {
+            "locale": "fr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/fr/WindowsFormsIntegration.resources.dll": {
+            "locale": "fr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/it/PresentationCore.resources.dll": {
+            "locale": "it"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/it/PresentationFramework.resources.dll": {
+            "locale": "it"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/it/PresentationUI.resources.dll": {
+            "locale": "it"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/it/ReachFramework.resources.dll": {
+            "locale": "it"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/it/System.Printing.resources.dll": {
+            "locale": "it"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/it/System.Windows.Controls.Ribbon.resources.dll": {
+            "locale": "it"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/it/System.Windows.Forms.Design.Editors.resources.dll": {
+            "locale": "it"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/it/System.Windows.Forms.Design.resources.dll": {
+            "locale": "it"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/it/System.Windows.Forms.resources.dll": {
+            "locale": "it"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/it/System.Windows.Input.Manipulations.resources.dll": {
+            "locale": "it"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/it/System.Xaml.resources.dll": {
+            "locale": "it"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/it/UIAutomationClient.resources.dll": {
+            "locale": "it"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/it/UIAutomationClientSideProviders.resources.dll": {
+            "locale": "it"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/it/UIAutomationProvider.resources.dll": {
+            "locale": "it"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/it/UIAutomationTypes.resources.dll": {
+            "locale": "it"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/it/WindowsBase.resources.dll": {
+            "locale": "it"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/it/WindowsFormsIntegration.resources.dll": {
+            "locale": "it"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ja/PresentationCore.resources.dll": {
+            "locale": "ja"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ja/PresentationFramework.resources.dll": {
+            "locale": "ja"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ja/PresentationUI.resources.dll": {
+            "locale": "ja"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ja/ReachFramework.resources.dll": {
+            "locale": "ja"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ja/System.Printing.resources.dll": {
+            "locale": "ja"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ja/System.Windows.Controls.Ribbon.resources.dll": {
+            "locale": "ja"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ja/System.Windows.Forms.Design.Editors.resources.dll": {
+            "locale": "ja"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ja/System.Windows.Forms.Design.resources.dll": {
+            "locale": "ja"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ja/System.Windows.Forms.resources.dll": {
+            "locale": "ja"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ja/System.Windows.Input.Manipulations.resources.dll": {
+            "locale": "ja"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ja/System.Xaml.resources.dll": {
+            "locale": "ja"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ja/UIAutomationClient.resources.dll": {
+            "locale": "ja"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ja/UIAutomationClientSideProviders.resources.dll": {
+            "locale": "ja"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ja/UIAutomationProvider.resources.dll": {
+            "locale": "ja"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ja/UIAutomationTypes.resources.dll": {
+            "locale": "ja"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ja/WindowsBase.resources.dll": {
+            "locale": "ja"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ja/WindowsFormsIntegration.resources.dll": {
+            "locale": "ja"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ko/PresentationCore.resources.dll": {
+            "locale": "ko"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ko/PresentationFramework.resources.dll": {
+            "locale": "ko"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ko/PresentationUI.resources.dll": {
+            "locale": "ko"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ko/ReachFramework.resources.dll": {
+            "locale": "ko"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ko/System.Printing.resources.dll": {
+            "locale": "ko"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ko/System.Windows.Controls.Ribbon.resources.dll": {
+            "locale": "ko"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ko/System.Windows.Forms.Design.Editors.resources.dll": {
+            "locale": "ko"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ko/System.Windows.Forms.Design.resources.dll": {
+            "locale": "ko"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ko/System.Windows.Forms.resources.dll": {
+            "locale": "ko"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ko/System.Windows.Input.Manipulations.resources.dll": {
+            "locale": "ko"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ko/System.Xaml.resources.dll": {
+            "locale": "ko"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ko/UIAutomationClient.resources.dll": {
+            "locale": "ko"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ko/UIAutomationClientSideProviders.resources.dll": {
+            "locale": "ko"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ko/UIAutomationProvider.resources.dll": {
+            "locale": "ko"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ko/UIAutomationTypes.resources.dll": {
+            "locale": "ko"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ko/WindowsBase.resources.dll": {
+            "locale": "ko"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ko/WindowsFormsIntegration.resources.dll": {
+            "locale": "ko"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pl/PresentationCore.resources.dll": {
+            "locale": "pl"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pl/PresentationFramework.resources.dll": {
+            "locale": "pl"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pl/PresentationUI.resources.dll": {
+            "locale": "pl"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pl/ReachFramework.resources.dll": {
+            "locale": "pl"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pl/System.Printing.resources.dll": {
+            "locale": "pl"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pl/System.Windows.Controls.Ribbon.resources.dll": {
+            "locale": "pl"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pl/System.Windows.Forms.Design.Editors.resources.dll": {
+            "locale": "pl"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pl/System.Windows.Forms.Design.resources.dll": {
+            "locale": "pl"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pl/System.Windows.Forms.resources.dll": {
+            "locale": "pl"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pl/System.Windows.Input.Manipulations.resources.dll": {
+            "locale": "pl"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pl/System.Xaml.resources.dll": {
+            "locale": "pl"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pl/UIAutomationClient.resources.dll": {
+            "locale": "pl"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pl/UIAutomationClientSideProviders.resources.dll": {
+            "locale": "pl"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pl/UIAutomationProvider.resources.dll": {
+            "locale": "pl"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pl/UIAutomationTypes.resources.dll": {
+            "locale": "pl"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pl/WindowsBase.resources.dll": {
+            "locale": "pl"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pl/WindowsFormsIntegration.resources.dll": {
+            "locale": "pl"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pt-BR/PresentationCore.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pt-BR/PresentationFramework.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pt-BR/PresentationUI.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pt-BR/ReachFramework.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pt-BR/System.Printing.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pt-BR/System.Windows.Controls.Ribbon.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pt-BR/System.Windows.Forms.Design.Editors.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pt-BR/System.Windows.Forms.Design.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pt-BR/System.Windows.Forms.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pt-BR/System.Windows.Input.Manipulations.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pt-BR/System.Xaml.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pt-BR/UIAutomationClient.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pt-BR/UIAutomationClientSideProviders.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pt-BR/UIAutomationProvider.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pt-BR/UIAutomationTypes.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pt-BR/WindowsBase.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/pt-BR/WindowsFormsIntegration.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ru/PresentationCore.resources.dll": {
+            "locale": "ru"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ru/PresentationFramework.resources.dll": {
+            "locale": "ru"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ru/PresentationUI.resources.dll": {
+            "locale": "ru"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ru/ReachFramework.resources.dll": {
+            "locale": "ru"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ru/System.Printing.resources.dll": {
+            "locale": "ru"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ru/System.Windows.Controls.Ribbon.resources.dll": {
+            "locale": "ru"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ru/System.Windows.Forms.Design.Editors.resources.dll": {
+            "locale": "ru"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ru/System.Windows.Forms.Design.resources.dll": {
+            "locale": "ru"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ru/System.Windows.Forms.resources.dll": {
+            "locale": "ru"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ru/System.Windows.Input.Manipulations.resources.dll": {
+            "locale": "ru"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ru/System.Xaml.resources.dll": {
+            "locale": "ru"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ru/UIAutomationClient.resources.dll": {
+            "locale": "ru"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ru/UIAutomationClientSideProviders.resources.dll": {
+            "locale": "ru"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ru/UIAutomationProvider.resources.dll": {
+            "locale": "ru"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ru/UIAutomationTypes.resources.dll": {
+            "locale": "ru"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ru/WindowsBase.resources.dll": {
+            "locale": "ru"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/ru/WindowsFormsIntegration.resources.dll": {
+            "locale": "ru"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/tr/PresentationCore.resources.dll": {
+            "locale": "tr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/tr/PresentationFramework.resources.dll": {
+            "locale": "tr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/tr/PresentationUI.resources.dll": {
+            "locale": "tr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/tr/ReachFramework.resources.dll": {
+            "locale": "tr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/tr/System.Printing.resources.dll": {
+            "locale": "tr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/tr/System.Windows.Controls.Ribbon.resources.dll": {
+            "locale": "tr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/tr/System.Windows.Forms.Design.Editors.resources.dll": {
+            "locale": "tr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/tr/System.Windows.Forms.Design.resources.dll": {
+            "locale": "tr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/tr/System.Windows.Forms.resources.dll": {
+            "locale": "tr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/tr/System.Windows.Input.Manipulations.resources.dll": {
+            "locale": "tr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/tr/System.Xaml.resources.dll": {
+            "locale": "tr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/tr/UIAutomationClient.resources.dll": {
+            "locale": "tr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/tr/UIAutomationClientSideProviders.resources.dll": {
+            "locale": "tr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/tr/UIAutomationProvider.resources.dll": {
+            "locale": "tr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/tr/UIAutomationTypes.resources.dll": {
+            "locale": "tr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/tr/WindowsBase.resources.dll": {
+            "locale": "tr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/tr/WindowsFormsIntegration.resources.dll": {
+            "locale": "tr"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hans/PresentationCore.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hans/PresentationFramework.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hans/PresentationUI.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hans/ReachFramework.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hans/System.Printing.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hans/System.Windows.Controls.Ribbon.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hans/System.Windows.Forms.Design.Editors.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hans/System.Windows.Forms.Design.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hans/System.Windows.Forms.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hans/System.Windows.Input.Manipulations.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hans/System.Xaml.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hans/UIAutomationClient.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hans/UIAutomationClientSideProviders.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hans/UIAutomationProvider.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hans/UIAutomationTypes.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hans/WindowsBase.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hans/WindowsFormsIntegration.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hant/PresentationCore.resources.dll": {
+            "locale": "zh-Hant"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hant/PresentationFramework.resources.dll": {
+            "locale": "zh-Hant"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hant/PresentationUI.resources.dll": {
+            "locale": "zh-Hant"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hant/ReachFramework.resources.dll": {
+            "locale": "zh-Hant"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hant/System.Printing.resources.dll": {
+            "locale": "zh-Hant"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hant/System.Windows.Controls.Ribbon.resources.dll": {
+            "locale": "zh-Hant"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hant/System.Windows.Forms.Design.Editors.resources.dll": {
+            "locale": "zh-Hant"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hant/System.Windows.Forms.Design.resources.dll": {
+            "locale": "zh-Hant"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hant/System.Windows.Forms.resources.dll": {
+            "locale": "zh-Hant"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hant/System.Windows.Input.Manipulations.resources.dll": {
+            "locale": "zh-Hant"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hant/System.Xaml.resources.dll": {
+            "locale": "zh-Hant"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hant/UIAutomationClient.resources.dll": {
+            "locale": "zh-Hant"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hant/UIAutomationClientSideProviders.resources.dll": {
+            "locale": "zh-Hant"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hant/UIAutomationProvider.resources.dll": {
+            "locale": "zh-Hant"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hant/UIAutomationTypes.resources.dll": {
+            "locale": "zh-Hant"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hant/WindowsBase.resources.dll": {
+            "locale": "zh-Hant"
+          },
+          "runtimes/win-x64/lib/netcoreapp3.1/zh-Hant/WindowsFormsIntegration.resources.dll": {
+            "locale": "zh-Hant"
+          }
+        }
+      },
+      "XliffTasks/1.0.0-beta.19252.1": {}
+    }
+  },
+  "libraries": {
+    "Microsoft.Build.Tasks.Git/1.0.0-beta2-19367-01": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-3kbkb7aUF41YuJnQzoCJRbjb6bgYY3KHlJ9GGJZ30Y5ytdFusLAC5o3/kfE+Vm6slvu4EBgIwMUknL6U+Pu9uA==",
+      "path": "microsoft.build.tasks.git/1.0.0-beta2-19367-01",
+      "hashPath": "microsoft.build.tasks.git.1.0.0-beta2-19367-01.nupkg.sha512"
+    },
+    "Microsoft.SourceLink.Common/1.0.0-beta2-19367-01": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-T6ZEkbRgqcmDoTQDn0ES4FcXiq6uOiqPmbb+hCnKQ/i45W3WjM1+hfNGmsXvTK/e/AqEGiqtXJIi9ZtmbHnzHQ==",
+      "path": "microsoft.sourcelink.common/1.0.0-beta2-19367-01",
+      "hashPath": "microsoft.sourcelink.common.1.0.0-beta2-19367-01.nupkg.sha512"
+    },
+    "Microsoft.SourceLink.GitHub/1.0.0-beta2-19367-01": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-+Zfc8EddeIPTy9w26xrMOqIL5k5fPICfoYGPMhvlCcmENVT0pslIvrOzRaEvv1UgUL1cjbGRO8SXa1HtoVEhPA==",
+      "path": "microsoft.sourcelink.github/1.0.0-beta2-19367-01",
+      "hashPath": "microsoft.sourcelink.github.1.0.0-beta2-19367-01.nupkg.sha512"
+    },
+    "Microsoft.SourceLink.Vsts.Git/1.0.0-beta2-19367-01": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-vfYRwh2jIQ5XFmqk9BebaGnj3tL9p1hkZ270NMXutiE7jCGH1zMB+3HCPec6DpnC4V3XX1oWlwAXoxNtXB90pQ==",
+      "path": "microsoft.sourcelink.vsts.git/1.0.0-beta2-19367-01",
+      "hashPath": "microsoft.sourcelink.vsts.git.1.0.0-beta2-19367-01.nupkg.sha512"
+    },
+    "Microsoft.WindowsDesktop.App/3.1.6-servicing.20316.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-8O9bJ9JuSogHl+D8fI5kfXs302QCfzcm3FQbwzw7JN4LPPJrnSn/ZN0ulLczKWObukuq5HuF6njOzmFoM6hKfw==",
+      "path": "microsoft.windowsdesktop.app/3.1.6-servicing.20316.4",
+      "hashPath": "microsoft.windowsdesktop.app.3.1.6-servicing.20316.4.nupkg.sha512"
+    },
+    "runtime.win-x64.Microsoft.WindowsDesktop.App/3.1.6-servicing.20316.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-OIWFpStJKvRjvTDN4BdseG8w2584YHgXjjmY688t6wa9ZhUEC/WCVxaZKohYhX6FMXGkUUD7DVQ5mZvPDbAbsA==",
+      "path": "runtime.win-x64.microsoft.windowsdesktop.app/3.1.6-servicing.20316.4",
+      "hashPath": "runtime.win-x64.microsoft.windowsdesktop.app.3.1.6-servicing.20316.4.nupkg.sha512"
+    },
+    "XliffTasks/1.0.0-beta.19252.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-pf1QwugyHdppWF5Q+qLSIqFkPkyBJOTAbvDxMO7Cv8zRkLGR9/OfOrjgSrcnniA2OTfZVo7JzTdNbDNAKSRZIA==",
+      "path": "xlifftasks/1.0.0-beta.19252.1",
+      "hashPath": "xlifftasks.1.0.0-beta.19252.1.nupkg.sha512"
+    }
+  }
+}

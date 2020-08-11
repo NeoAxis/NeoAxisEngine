@@ -9,6 +9,20 @@ using System.Xml;
 
 namespace NeoAxis.Editor
 {
+	//class EngineKryptonDockingManager : KryptonDockingManager
+	//{
+	//	protected override void OnAutoHiddenShowingStateChanged( AutoHiddenShowingStateEventArgs e )
+	//	{
+	//		base.OnAutoHiddenShowingStateChanged( e );
+
+	//		if( e.NewState == DockingAutoHiddenShowState.SlidingOut && EditorForm.Instance != null )
+	//		{
+	//			WinFormsUtility.LockFormUpdate( EditorForm.Instance );
+	//			EditorForm.Instance.unlockFormUpdateInTimer = DateTime.Now;
+	//		}
+	//	}
+	//}
+
 	/// <summary>
 	/// Helper class, to create initial DocumentWindow workspace configuration, and save to XML config.
 	/// 
@@ -45,7 +59,7 @@ namespace NeoAxis.Editor
 
 			var workspace = dockingManager.AddToWorkspace( "DockingWorkspace", pages.ToArray() );
 			if( selectedIndex != -1 )
-				workspace.SelectPage( pages[selectedIndex].UniqueName );
+				workspace.SelectPage( pages[ selectedIndex ].UniqueName );
 
 			using( var stream = new MemoryStream() )
 			{

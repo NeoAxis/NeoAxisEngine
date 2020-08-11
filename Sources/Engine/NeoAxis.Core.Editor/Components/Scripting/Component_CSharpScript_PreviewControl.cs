@@ -24,7 +24,7 @@ namespace NeoAxis.Editor
 			//var scene = CreateScene( false );
 			//scene.Enabled = true;
 
-			var script = ObjectForPreview as Component_CSharpScript;
+			var script = ObjectOfPreview as Component_CSharpScript;
 			script.CodeChanged += Script_CodeChanged;
 		}
 
@@ -34,7 +34,7 @@ namespace NeoAxis.Editor
 
 			//!!!!:  Is this the right place to unsubscribe from an event? it seems it is very rarely called
 
-			var script = ObjectForPreview as Component_CSharpScript;
+			var script = ObjectOfPreview as Component_CSharpScript;
 			if( script != null )
 				script.CodeChanged -= Script_CodeChanged;
 		}
@@ -61,7 +61,7 @@ namespace NeoAxis.Editor
 				if( scriptPrinter == null )
 					scriptPrinter = new ScriptPrinter();
 
-				var script = ObjectForPreview as Component_CSharpScript;
+				var script = ObjectOfPreview as Component_CSharpScript;
 				previewTexture = scriptPrinter.PrintToTexture( script.Code, new Vector2I( viewport.SizeInPixels.X, viewport.SizeInPixels.Y ) );
 			}
 
@@ -71,7 +71,7 @@ namespace NeoAxis.Editor
 
 		protected override void GetTextInfoLeftTopCorner( List<string> lines )
 		{
-			var script = ObjectForPreview as Component_CSharpScript;
+			var script = ObjectOfPreview as Component_CSharpScript;
 			if( script != null )
 			{
 				var info = Component_CSharpScript_SettingsCell.GetInfo( script );

@@ -33,7 +33,7 @@
 			// 
 			// checkBox1
 			// 
-			this.checkBox1.Location = new System.Drawing.Point(0, 6);
+			this.checkBox1.Location = new System.Drawing.Point(1, 6);
 			this.checkBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.checkBox1.Name = "checkBox1";
 			this.checkBox1.Size = new System.Drawing.Size(58, 20);

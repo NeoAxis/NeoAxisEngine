@@ -21,6 +21,7 @@ namespace NeoAxis.Editor
 		bool wordWrap;
 
 		//!!!!по идее это в TextEditorControl. но он юзается и в шейдерах
+		//!!!!!теперь в TextEditorControl есть базовые опции
 		ColorValue backgroundColor = new ColorValue( -1, 0, 0, 0 );
 		//ColorValue textColor = new ColorValue( -1, 0, 0, 0 );
 		string currentFont = "";
@@ -316,7 +317,7 @@ namespace NeoAxis.Editor
 				{
 					backgroundColor = color;
 					var packed = backgroundColor.ToColorPacked();
-					avalonTextEditor.Editor.Background = new SolidColorBrush( System.Windows.Media.Color.FromArgb( packed.Alpha, packed.Red, packed.Green, packed.Blue ) );
+					avalonTextEditor.Editor.Background = new SolidColorBrush( Color.FromArgb( packed.Alpha, packed.Red, packed.Green, packed.Blue ) );
 				}
 			}
 

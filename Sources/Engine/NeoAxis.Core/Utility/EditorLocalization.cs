@@ -236,7 +236,7 @@ namespace NeoAxis
 
 					//LabelEx
 					{
-						var child2 = child as LabelEx;
+						var child2 = child as EngineLabel;
 						if( child2 != null && !string.IsNullOrEmpty( child2.Text ) )
 						{
 							var text = child2.Text;

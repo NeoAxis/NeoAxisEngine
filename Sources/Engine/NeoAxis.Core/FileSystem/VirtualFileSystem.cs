@@ -294,6 +294,7 @@ namespace NeoAxis
 			ResourceManager.Shutdown();
 
 			VirtualFileWatcher.Shutdown();
+			CSharpProjectFileUtility.FileWatcherShutdown();
 
 			//!!!!!
 			//PackageManager.Shutdown();

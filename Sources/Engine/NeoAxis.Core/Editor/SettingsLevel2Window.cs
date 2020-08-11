@@ -141,12 +141,7 @@ namespace NeoAxis.Editor
 				if( selectedPanel == value )
 					return;
 
-				if( selectedPanel != null )
-				{
-					selectedPanel.layoutPanel.Visible = false;
-					selectedPanel.layoutPanel.Enabled = false;
-				}
-
+				var old = selectedPanel;
 				selectedPanel = value;
 
 				if( selectedPanel != null )
@@ -155,6 +150,27 @@ namespace NeoAxis.Editor
 					selectedPanel.layoutPanel.Visible = true;
 					//selectedPanel.control.Focus();
 				}
+
+				if( old != null )
+				{
+					old.layoutPanel.Visible = false;
+					old.layoutPanel.Enabled = false;
+				}
+
+				//if( selectedPanel != null )
+				//{
+				//	selectedPanel.layoutPanel.Visible = false;
+				//	selectedPanel.layoutPanel.Enabled = false;
+				//}
+
+				//selectedPanel = value;
+
+				//if( selectedPanel != null )
+				//{
+				//	selectedPanel.layoutPanel.Enabled = true;
+				//	selectedPanel.layoutPanel.Visible = true;
+				//	//selectedPanel.control.Focus();
+				//}
 
 				//!!!!тут ли
 				//PreviewWindow.Instance?.SelectObjects( selectedPanel );

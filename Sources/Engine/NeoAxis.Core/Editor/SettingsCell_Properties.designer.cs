@@ -30,7 +30,8 @@
         {
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsCell_Properties));
-			this.hierarchicalContainer1 = new NeoAxis.Editor.HierarchicalContainer();
+			this.hierarchicalContainerProperties = new NeoAxis.Editor.HierarchicalContainer();
+			this.hierarchicalContainerEvents = new NeoAxis.Editor.HierarchicalContainer();
 			this.toolStrip1 = new NeoAxis.Editor.EngineToolStrip();
 			this.toolStripButtonProperties = new System.Windows.Forms.ToolStripButton();
 			this.toolStripButtonEvents = new System.Windows.Forms.ToolStripButton();
@@ -38,19 +39,36 @@
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// hierarchicalContainer1
+			// hierarchicalContainerProperties
 			// 
-			this.hierarchicalContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.hierarchicalContainer1.ContentMode = NeoAxis.Editor.HierarchicalContainer.ContentModeEnum.Properties;
-			this.hierarchicalContainer1.Location = new System.Drawing.Point(0, 31);
-			this.hierarchicalContainer1.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
-			this.hierarchicalContainer1.Name = "hierarchicalContainer1";
-			this.hierarchicalContainer1.Size = new System.Drawing.Size(149, 102);
-			this.hierarchicalContainer1.SplitterPosition = 67;
-			this.hierarchicalContainer1.SplitterRatio = 0.4464286F;
-			this.hierarchicalContainer1.TabIndex = 0;
+			//this.hierarchicalContainerProperties.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+   //         | System.Windows.Forms.AnchorStyles.Left) 
+   //         | System.Windows.Forms.AnchorStyles.Right)));
+			this.hierarchicalContainerProperties.ReverseGroups = false;
+			this.hierarchicalContainerProperties.ContentMode = NeoAxis.Editor.HierarchicalContainer.ContentModeEnum.Properties;
+			this.hierarchicalContainerProperties.Location = new System.Drawing.Point(0, 31);
+			this.hierarchicalContainerProperties.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
+			this.hierarchicalContainerProperties.Name = "hierarchicalContainer1";
+			this.hierarchicalContainerProperties.Size = new System.Drawing.Size(149, 102);
+			this.hierarchicalContainerProperties.SplitterPosition = 67;
+			this.hierarchicalContainerProperties.SplitterRatio = 0.4464286F;
+			this.hierarchicalContainerProperties.TabIndex = 0;
+			// 
+			// hierarchicalContainerEvents
+			// 
+			//this.hierarchicalContainerEvents.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
+			//| System.Windows.Forms.AnchorStyles.Left )
+			//| System.Windows.Forms.AnchorStyles.Right ) ) );
+			this.hierarchicalContainerEvents.Visible = false;
+			this.hierarchicalContainerEvents.ReverseGroups = true;
+			this.hierarchicalContainerEvents.ContentMode = NeoAxis.Editor.HierarchicalContainer.ContentModeEnum.Events;
+			this.hierarchicalContainerEvents.Location = new System.Drawing.Point( 0, 31 );
+			this.hierarchicalContainerEvents.Margin = new System.Windows.Forms.Padding( 3, 1, 3, 1 );
+			this.hierarchicalContainerEvents.Name = "hierarchicalContainer1";
+			this.hierarchicalContainerEvents.Size = new System.Drawing.Size( 149, 102 );
+			this.hierarchicalContainerEvents.SplitterPosition = 67;
+			this.hierarchicalContainerEvents.SplitterRatio = 0.4464286F;
+			this.hierarchicalContainerEvents.TabIndex = 0;
 			// 
 			// toolStrip1
 			// 
@@ -62,6 +80,7 @@
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
 			this.toolStrip1.ShowItemToolTips = false;
+			this.toolStrip1.AutoSize = false;
 			this.toolStrip1.Size = new System.Drawing.Size(149, 25);
 			this.toolStrip1.TabIndex = 1;
 			this.toolStrip1.Text = "toolStrip1";
@@ -73,6 +92,7 @@
 			this.toolStripButtonProperties.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonProperties.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.toolStripButtonProperties.Name = "toolStripButtonProperties";
+			this.toolStripButtonProperties.AutoSize = false;
 			this.toolStripButtonProperties.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonProperties.Text = "Properties";
 			this.toolStripButtonProperties.Click += new System.EventHandler(this.toolStripButtonProperties_Click);
@@ -84,6 +104,7 @@
 			this.toolStripButtonEvents.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonEvents.ImageTransparentColor = System.Drawing.Color.Transparent;
 			this.toolStripButtonEvents.Name = "toolStripButtonEvents";
+			this.toolStripButtonEvents.AutoSize = false;
 			this.toolStripButtonEvents.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonEvents.Text = "Events";
 			this.toolStripButtonEvents.Click += new System.EventHandler(this.toolStripButtonEvents_Click);
@@ -99,12 +120,12 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CellsSortingPriority = -98F;
 			this.Controls.Add(this.toolStrip1);
-			this.Controls.Add(this.hierarchicalContainer1);
+			this.Controls.Add(this.hierarchicalContainerProperties);
+			this.Controls.Add(this.hierarchicalContainerEvents);
 			this.Margin = new System.Windows.Forms.Padding(0);
 			this.Name = "SettingsCell_Properties";
 			this.Size = new System.Drawing.Size(149, 135);
 			this.Load += new System.EventHandler(this.SettingsCell_Properties_Load);
-			this.Resize += new System.EventHandler(this.SettingsCell_Properties_Resize);
 			this.toolStrip1.ResumeLayout(false);
 			this.toolStrip1.PerformLayout();
 			this.ResumeLayout(false);
@@ -114,7 +135,8 @@
 
 		#endregion
 
-		private HierarchicalContainer hierarchicalContainer1;
+		private HierarchicalContainer hierarchicalContainerProperties;
+		private HierarchicalContainer hierarchicalContainerEvents;
 		private NeoAxis.Editor.EngineToolStrip toolStrip1;
 		private System.Windows.Forms.ToolStripButton toolStripButtonProperties;
 		private System.Windows.Forms.ToolStripButton toolStripButtonEvents;

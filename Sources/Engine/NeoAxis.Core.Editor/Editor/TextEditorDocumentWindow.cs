@@ -22,14 +22,6 @@ namespace NeoAxis.Editor
 		bool displayLineNumbers;
 		bool wordWrap;
 
-		//!!!!по идее это в TextEditorControl. но он юзается и в шейдерах
-		ColorValue backgroundColor = new ColorValue( -1, 0, 0, 0 );
-		ColorValue cursorColor = new ColorValue( -1, 0, 0, 0 );
-		string currentFont = "";
-		double currentFontSize;
-		ColorValue currentSelectionBackground = new ColorValue( -1, 0, 0, 0 );
-		ColorValue currentSelectionForeground = new ColorValue( -1, 0, 0, 0 );
-
 		bool firstTick = true;
 
 		static Dictionary<string, IHighlightingDefinition> loadedHighlightingDefinitions = new Dictionary<string, IHighlightingDefinition>();
@@ -51,8 +43,8 @@ namespace NeoAxis.Editor
 
 			avalonTextEditor.Editor.PreviewMouseWheel += Editor_PreviewMouseWheel;
 
-			UpdateBackgroundForeground();
-			UpdateFont();
+			avalonTextEditor.ManageColorsFromTextEditorProjectSettings = true;
+			avalonTextEditor.ManageFontFromTextEditorProjectSettings = true;
 
 			avalonTextEditor.InstallSearchReplacePanel();
 			//SearchReplacePanel.Install( avalonTextEditor.Editor.TextArea );
@@ -217,8 +209,8 @@ namespace NeoAxis.Editor
 				avalonTextEditor.Editor.WordWrap = wordWrap;
 			}
 
-			UpdateBackgroundForeground();
-			UpdateFont();
+			//UpdateBackgroundForeground();
+			//UpdateFont();
 
 			if( firstTick )
 			{
@@ -288,87 +280,6 @@ namespace NeoAxis.Editor
 			}
 
 			firstTick = false;
-		}
-
-		void UpdateBackgroundForeground()
-		{
-			{
-				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditorBackgroundColorDarkTheme : ProjectSettings.Get.TextEditorBackgroundColorLightTheme;
-				if( backgroundColor != color )
-				{
-					backgroundColor = color;
-					var packed = backgroundColor.ToColorPacked();
-					avalonTextEditor.Editor.Background = new SolidColorBrush( System.Windows.Media.Color.FromArgb( packed.Alpha, packed.Red, packed.Green, packed.Blue ) );
-				}
-			}
-
-			{
-				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditorForegroundColorDarkTheme : ProjectSettings.Get.TextEditorForegroundColorLightTheme;
-				if( cursorColor != color )
-				{
-					cursorColor = color;
-					var packed = cursorColor.ToColorPacked();
-					avalonTextEditor.Editor.Foreground = new SolidColorBrush( System.Windows.Media.Color.FromArgb( packed.Alpha, packed.Red, packed.Green, packed.Blue ) );
-				}
-			}
-
-			{
-				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditorSearchBackgroundDarkTheme.Value : ProjectSettings.Get.TextEditorSearchBackgroundLightTheme.Value;
-				var packed = color.ToColorPacked();
-				avalonTextEditor.Editor.TextArea.SearchBackgroundBrush = new SolidColorBrush( System.Windows.Media.Color.FromArgb( packed.Alpha, packed.Red, packed.Green, packed.Blue ) );
-			}
-		}
-
-		void UpdateFont()
-		{
-			if( currentFont != ProjectSettings.Get.TextEditorFont )
-			{
-				currentFont = ProjectSettings.Get.TextEditorFont;
-
-				try
-				{
-					avalonTextEditor.Editor.FontFamily = new System.Windows.Media.FontFamily( ProjectSettings.Get.TextEditorFont );
-				}
-				catch { }
-			}
-
-			if( currentFontSize != ProjectSettings.Get.TextEditorFontSize )
-			{
-				currentFontSize = ProjectSettings.Get.TextEditorFontSize;
-
-				try
-				{
-					avalonTextEditor.Editor.FontSize = ProjectSettings.Get.TextEditorFontSize;
-				}
-				catch { }
-			}
-
-			var selectionBackground = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditorSelectionBackgroundDarkTheme.Value : ProjectSettings.Get.TextEditorSelectionBackgroundLightTheme.Value;
-			if( currentSelectionBackground != selectionBackground )
-			{
-				currentSelectionBackground = selectionBackground;
-
-				try
-				{
-					var packed = selectionBackground.ToColorPacked();
-					avalonTextEditor.Editor.TextArea.SelectionBrush = new SolidColorBrush( System.Windows.Media.Color.FromArgb( packed.Alpha, packed.Red, packed.Green, packed.Blue ) );
-				}
-				catch { }
-			}
-
-			var selectionForeground = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditorSelectionForegroundDarkTheme.Value : ProjectSettings.Get.TextEditorSelectionForegroundLightTheme.Value;
-			if( currentSelectionForeground != selectionForeground )
-			{
-				currentSelectionForeground = selectionForeground;
-
-				try
-				{
-					var packed = selectionForeground.ToColorPacked();
-					avalonTextEditor.Editor.TextArea.SelectionForeground = new SolidColorBrush( System.Windows.Media.Color.FromArgb( packed.Alpha, packed.Red, packed.Green, packed.Blue ) );
-				}
-				catch { }
-			}
-
 		}
 
 		private void Editor_PreviewMouseWheel( object sender, MouseWheelEventArgs e )

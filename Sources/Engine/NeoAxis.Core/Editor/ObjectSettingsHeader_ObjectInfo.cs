@@ -55,6 +55,7 @@ namespace NeoAxis.Editor
 			timer1.Start();
 
 			UpdateInfoControls();
+			UpdateControlsLocation();
 			UpdateButtons();
 		}
 
@@ -214,6 +215,15 @@ namespace NeoAxis.Editor
 				return null;
 		}
 
+		void UpdateControlsLocation()
+		{
+			buttonTypeSettings.Location = new Point( ClientRectangle.Right - buttonTypeSettings.Width, 0 );
+			buttonTypeSettingsDefaultValue.Location = new Point( buttonTypeSettings.Location.X - buttonTypeSettingsDefaultValue.Width - 2, 5 );
+
+			kryptonLabel1.Width = buttonTypeSettingsDefaultValue.Location.X - 2 - kryptonLabel1.Location.X;
+			kryptonLabel2.Width = kryptonLabel1.Width;
+		}
+
 		void UpdateButtons()
 		{
 			var component = GetTypeSettingsComponent();
@@ -269,7 +279,7 @@ namespace NeoAxis.Editor
 			if( component != null )
 			{
 				var text = EditorLocalization.Translate( "SettingsWindow", "Reset to default?" );
-				if( EditorMessageBox.ShowQuestion( text, MessageBoxButtons.YesNo ) == DialogResult.Yes )
+				if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) == EDialogResult.Yes )
 				{
 					var oldValue = component.TypeSettingsPrivateObjects;
 
@@ -280,6 +290,14 @@ namespace NeoAxis.Editor
 					ObjectSettingsWindow.Document.Modified = true;
 				}
 			}
+		}
+
+		protected override void OnResize( EventArgs e )
+		{
+			base.OnResize( e );
+
+			if( Created )
+				UpdateControlsLocation();
 		}
 	}
 }

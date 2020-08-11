@@ -124,7 +124,7 @@ namespace NeoAxis.Editor
 
 		private void kryptonButtonLightTheme_Click( object sender, EventArgs e )
 		{
-			if( EditorMessageBox.ShowQuestion( "Set the light theme and restart the editor to apply changes?", MessageBoxButtons.OKCancel ) == DialogResult.Cancel )
+			if( EditorMessageBox.ShowQuestion( "Set the light theme and restart the editor to apply changes?", EMessageBoxButtons.OKCancel ) == EDialogResult.Cancel )
 				return;
 
 			ProjectSettings.Get.Theme = Component_ProjectSettings.ThemeEnum.Light;
@@ -134,7 +134,7 @@ namespace NeoAxis.Editor
 
 		private void kryptonButtonDarkTheme_Click( object sender, EventArgs e )
 		{
-			if( EditorMessageBox.ShowQuestion( "Set the dark theme and restart the editor to apply changes?", MessageBoxButtons.OKCancel ) == DialogResult.Cancel )
+			if( EditorMessageBox.ShowQuestion( "Set the dark theme and restart the editor to apply changes?", EMessageBoxButtons.OKCancel ) == EDialogResult.Cancel )
 				return;
 
 			ProjectSettings.Get.Theme = Component_ProjectSettings.ThemeEnum.Dark;

@@ -14,6 +14,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using NeoAxis.Editor;
+using System.Xml;
+using System.Linq.Expressions;
 
 namespace NeoAxis
 {
@@ -22,6 +24,10 @@ namespace NeoAxis
 	/// </summary>
 	public static class CSharpProjectFileUtility
 	{
+		static bool useManualParser = true;
+
+		/////////////////////////////////////////
+
 		public static string Name { get; set; } // Project and Solution Name.
 		public static string ProjectDir { get; set; }
 		public static string OutputAssemblyName { get; set; }
@@ -31,6 +37,11 @@ namespace NeoAxis
 		public static ESet<string> projectFileCSFiles;
 		public static ESet<string> projectFileCSFilesFullPaths;
 		public static List<string> projectFileReferences;
+
+		/////////////////////////////////////////
+
+		static FileSystemWatcher systemWatcher;
+		static bool needResetProjectData;
 
 		/////////////////////////////////////////
 
@@ -51,6 +62,8 @@ namespace NeoAxis
 			OutputAssemblyName = outputAssemblyName;
 			OutputDir = outputDir;
 			//BuildConfiguration = buildConfiguration;
+
+			CSharpProjectFileUtility.FileWatcherInit();
 		}
 
 		static IEnumerable<ProjectItem> GetProjectCSFiles( Project project )
@@ -101,8 +114,14 @@ namespace NeoAxis
 			//string sdksPath = Path.Combine( extensionsPath, "Sdks" );
 			string roslynTargetsPath = Path.Combine( toolsPath, "Roslyn" );
 
+			//!!!!test
+			//var sdksPath = @"F:\Dev5\Project\Binaries\NeoAxis.Internal\Platforms\Windows\dotnet\shared";
+			//var extensionsPath = @"F:\Dev5\Project\Binaries\NeoAxis.Internal\Platforms\Windows\dotnet\shared\Microsoft.WindowsDesktop.App\3.1.6";
+
 			return new Dictionary<string, string>
 			{
+				//{"UseLegacySdkResolver", "true" },
+
 				//{ "SolutionDir", solutionDir },
 				//{ "MSBuildExtensionsPath", extensionsPath },
 				//{ "MSBuildSDKsPath", sdksPath },
@@ -112,41 +131,75 @@ namespace NeoAxis
 
 		internal static ProjectCollection CreateProjectCollection()
 		{
-			string toolsPath = VisualStudioSolutionUtility.GetMSBuildPath();
-			var globalProperties = GetGlobalProperties( VisualStudioSolutionUtility.GetMSBuildPath() );
+			//!!!!
+			//var ss = ToolLocationHelper.GetPathToBuildToolsFile( "msbuild.exe", ToolLocationHelper.CurrentToolsVersion );
+			//Log.Info( ss );
+
+			string toolsPath = VisualStudioSolutionUtility.GetMSBuildFolderPath();
+			var globalProperties = GetGlobalProperties( VisualStudioSolutionUtility.GetMSBuildFolderPath() );
 			var projectCollection = new ProjectCollection( globalProperties );
 			// change toolset to internal.
+
+			//var toolsPath2 = ToolLocationHelper.GetPathToBuildTools( ToolLocationHelper.CurrentToolsVersion );
+			//Log.Info( toolsPath2 );
+
+			//!!!!
+			////projectCollection.AddToolset( new Toolset( "3.1.302", toolsPath, projectCollection, string.Empty ) );
 			projectCollection.AddToolset( new Toolset( ToolLocationHelper.CurrentToolsVersion, toolsPath, projectCollection, string.Empty ) );
 			return projectCollection;
 		}
 
+		//!!!!
+		//private const string MSBuildSDKsPath = nameof( MSBuildSDKsPath );
+
 		public static ESet<string> GetProjectFileCSFiles( bool reload, bool getFullPaths )
 		{
-			if( projectFileCSFiles == null || reload )
+			CheckResetProjectData();
+
+			if( useManualParser )
 			{
-				projectFileCSFiles = new ESet<string>();
-				projectFileCSFilesFullPaths = new ESet<string>();
-
-				if( ProjectFileExists() )
+				GetProjectFileData_ManualParser( reload );
+			}
+			else
+			{
+				if( projectFileCSFiles == null || reload )
 				{
-					try
-					{
-						using( var projectCollection = CreateProjectCollection() )
-						{
-							Project project = projectCollection.LoadProject( GetProjectFileName() );
+					projectFileCSFiles = new ESet<string>();
+					projectFileCSFilesFullPaths = new ESet<string>();
 
-							foreach( var item in GetProjectCSFiles( project ) )
-							{
-								var name = item.UnevaluatedInclude;
-								projectFileCSFiles.AddWithCheckAlreadyContained( name );
-								projectFileCSFilesFullPaths.AddWithCheckAlreadyContained( Path.Combine( ProjectDir, name ) );
-							}
-						}
-					}
-					catch( Exception e )
+					if( ProjectFileExists() )
 					{
 						//!!!!
-						Log.Warning( $"Unable to read file \'{GetProjectFileName()}\'. Error: {e.Message}" );
+
+						//var sdksPath = @"F:\Dev5\Project\Binaries\NeoAxis.Internal\Platforms\Windows\dotnet\sdk\3.1.302";
+
+						//var oldMSBuildSDKsPath = Environment.GetEnvironmentVariable( MSBuildSDKsPath );
+						//Environment.SetEnvironmentVariable( MSBuildSDKsPath, sdksPath );
+
+						try
+						{
+							using( var projectCollection = CreateProjectCollection() )
+							{
+								Project project = projectCollection.LoadProject( GetProjectFileName() );
+
+								foreach( var item in GetProjectCSFiles( project ) )
+								{
+									var name = item.UnevaluatedInclude;
+									projectFileCSFiles.AddWithCheckAlreadyContained( name );
+									projectFileCSFilesFullPaths.AddWithCheckAlreadyContained( Path.Combine( ProjectDir, name ) );
+								}
+							}
+						}
+						catch( Exception e )
+						{
+							//!!!!
+							Log.Warning( $"Unable to read file \'{GetProjectFileName()}\'. Error: {e.Message}" );
+						}
+						finally
+						{
+							//!!!!
+							//Environment.SetEnvironmentVariable( MSBuildSDKsPath, oldMSBuildSDKsPath );
+						}
 					}
 				}
 			}
@@ -156,26 +209,35 @@ namespace NeoAxis
 
 		public static List<string> GetProjectFileReferences( bool reload )
 		{
-			if( projectFileReferences == null || reload )
+			CheckResetProjectData();
+
+			if( useManualParser )
 			{
-				projectFileReferences = new List<string>();
-
-				if( ProjectFileExists() )
+				GetProjectFileData_ManualParser( reload );
+			}
+			else
+			{
+				if( projectFileReferences == null || reload )
 				{
-					try
-					{
-						using( var projectCollection = CreateProjectCollection() )
-						{
-							Project project = projectCollection.LoadProject( GetProjectFileName() );
+					projectFileReferences = new List<string>();
 
-							foreach( var item in GetProjectReferences( project ) )
-								projectFileReferences.Add( item );
-						}
-					}
-					catch( Exception e )
+					if( ProjectFileExists() )
 					{
-						//!!!!
-						Log.Warning( $"Unable to read file \'{GetProjectFileName()}\'. Error: {e.Message}" );
+						try
+						{
+							using( var projectCollection = CreateProjectCollection() )
+							{
+								Project project = projectCollection.LoadProject( GetProjectFileName() );
+
+								foreach( var item in GetProjectReferences( project ) )
+									projectFileReferences.Add( item );
+							}
+						}
+						catch( Exception e )
+						{
+							//!!!!
+							Log.Warning( $"Unable to read file \'{GetProjectFileName()}\'. Error: {e.Message}" );
+						}
 					}
 				}
 			}
@@ -204,60 +266,68 @@ namespace NeoAxis
 
 			bool wasUpdated = false;
 
-			try
+			if( useManualParser )
 			{
-				using( var projectCollection = CreateProjectCollection() )
+				if( !UpdateProjectFile_ManualParser( addFiles, removeFiles, out wasUpdated, out error ) )
+					return false;
+			}
+			else
+			{
+				try
 				{
-					var project = projectCollection.LoadProject( GetProjectFileName() );
-					//var project = new Project( GetProjectFileName() );
-
-					if( removeFiles != null )
+					using( var projectCollection = CreateProjectCollection() )
 					{
-						foreach( var fileName in removeFiles )
-						{
-							var fixedPath = fileName;
-							if( Path.IsPathRooted( fixedPath ) )
-								fixedPath = fixedPath.Replace( ProjectDir + Path.DirectorySeparatorChar, "" );
+						var project = projectCollection.LoadProject( GetProjectFileName() );
+						//var project = new Project( GetProjectFileName() );
 
-							var item = GetProjectItemByFileName( project, fixedPath );
-							if( item != null )
+						if( removeFiles != null )
+						{
+							foreach( var fileName in removeFiles )
 							{
-								project.RemoveItem( item );
+								var fixedPath = fileName;
+								if( Path.IsPathRooted( fixedPath ) )
+									fixedPath = fixedPath.Replace( ProjectDir + Path.DirectorySeparatorChar, "" );
+
+								var item = GetProjectItemByFileName( project, fixedPath );
+								if( item != null )
+								{
+									project.RemoveItem( item );
+									wasUpdated = true;
+								}
+
+								//if( item == null )
+								//{
+								//	error = $"Item with name \'{fileName}\' is not found.";
+								//	return false;
+								//}
+
+								//project.RemoveItem( item );
+							}
+						}
+
+						if( addFiles != null )
+						{
+							foreach( var fileName in addFiles )
+							{
+								var fixedPath = fileName;
+								if( Path.IsPathRooted( fixedPath ) )
+									fixedPath = fixedPath.Replace( ProjectDir + Path.DirectorySeparatorChar, "" );
+
+								project.AddItem( "Compile", fixedPath );
 								wasUpdated = true;
 							}
-
-							//if( item == null )
-							//{
-							//	error = $"Item with name \'{fileName}\' is not found.";
-							//	return false;
-							//}
-
-							//project.RemoveItem( item );
 						}
+
+						if( wasUpdated )
+							project.Save();
 					}
-
-					if( addFiles != null )
-					{
-						foreach( var fileName in addFiles )
-						{
-							var fixedPath = fileName;
-							if( Path.IsPathRooted( fixedPath ) )
-								fixedPath = fixedPath.Replace( ProjectDir + Path.DirectorySeparatorChar, "" );
-
-							project.AddItem( "Compile", fixedPath );
-							wasUpdated = true;
-						}
-					}
-
-					if( wasUpdated )
-						project.Save();
 				}
-			}
-			catch( Exception e )
-			{
-				//!!!!check
-				error = e.Message;
-				return false;
+				catch( Exception e )
+				{
+					//!!!!check
+					error = e.Message;
+					return false;
+				}
 			}
 
 			if( wasUpdated )
@@ -301,7 +371,7 @@ namespace NeoAxis
 					counter++;
 				}
 
-				if( EditorMessageBox.ShowQuestion( text, MessageBoxButtons.YesNo ) == DialogResult.Yes )
+				if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) == EDialogResult.Yes )
 				{
 					if( UpdateProjectFile( null, notExists, out var error ) )
 					{
@@ -438,6 +508,201 @@ namespace NeoAxis
 			return tempDir;
 		}
 
+		///////////////////////////////////////////////
+
+		static void GetProjectFileData_ManualParser( bool reload )
+		{
+			if( projectFileCSFiles == null || reload )
+			{
+				projectFileCSFiles = new ESet<string>();
+				projectFileCSFilesFullPaths = new ESet<string>();
+				projectFileReferences = new List<string>();
+
+				if( ProjectFileExists() )
+				{
+					try
+					{
+						var xmldoc = new XmlDocument();
+						xmldoc.Load( GetProjectFileName() );
+
+						{
+							var list = xmldoc.SelectNodes( "//Reference" );
+							foreach( XmlNode node in list )
+							{
+								var include = node.Attributes[ "Include" ].Value;
+								projectFileReferences.Add( include );
+							}
+						}
+
+						{
+							var list = xmldoc.SelectNodes( "//PackageReference" );
+							foreach( XmlNode node in list )
+							{
+								var include = node.Attributes[ "Include" ].Value;
+								projectFileReferences.Add( include );
+							}
+						}
+
+						{
+							var list = xmldoc.SelectNodes( "//Compile" );
+							foreach( XmlNode node in list )
+							{
+								var include = node.Attributes[ "Include" ].Value;
+								projectFileCSFiles.AddWithCheckAlreadyContained( include );
+								projectFileCSFilesFullPaths.AddWithCheckAlreadyContained( Path.Combine( ProjectDir, include ) );
+							}
+						}
+
+					}
+					catch( Exception e )
+					{
+						Log.Warning( $"Unable to read file \'{GetProjectFileName()}\'. Error: {e.Message}" );
+					}
+				}
+			}
+		}
+
+		static bool UpdateProjectFile_ManualParser( ICollection<string> addFiles, ICollection<string> removeFiles, out bool wasUpdated, out string error )
+		{
+			wasUpdated = false;
+			error = "";
+
+			try
+			{
+				var xmldoc = new XmlDocument();
+				xmldoc.Load( GetProjectFileName() );
+
+				if( removeFiles != null )
+				{
+					var removeFilesSet = new ESet<string>();
+					foreach( var fileName in removeFiles )
+					{
+						var fixedPath = fileName;
+						if( Path.IsPathRooted( fixedPath ) )
+							fixedPath = fixedPath.Replace( ProjectDir + Path.DirectorySeparatorChar, "" );
+
+						removeFilesSet.AddWithCheckAlreadyContained( fixedPath );
+					}
+
+					var nodesToRemove = new List<XmlNode>();
+
+					var list = xmldoc.SelectNodes( "//Compile" );
+					foreach( XmlNode node in list )
+					{
+						var name = node.Attributes[ "Include" ].Value;
+
+						if( removeFilesSet.Contains( name ) )
+						{
+							nodesToRemove.Add( node );
+							wasUpdated = true;
+						}
+					}
+
+					foreach( var node in nodesToRemove.GetReverse() )
+						node.ParentNode.RemoveChild( node );
+				}
+
+				if( addFiles != null )
+				{
+					XmlNode itemGroupNode = null;
+					{
+						var list = xmldoc.SelectNodes( "//Compile" );
+						foreach( XmlNode node in list )
+						{
+							itemGroupNode = node.ParentNode;
+							break;
+						}
+					}
+
+					if( itemGroupNode == null )
+					{
+						XmlNode projectNode = null;
+						{
+							var list = xmldoc.SelectNodes( "//Project" );
+							foreach( XmlNode node in list )
+							{
+								projectNode = node;
+								break;
+							}
+						}
+
+						if( projectNode == null )
+							throw new Exception( "Project node not found." );
+
+						itemGroupNode = xmldoc.CreateNode( XmlNodeType.Element, "ItemGroup", null );
+						projectNode.AppendChild( itemGroupNode );
+					}
+
+					foreach( var fileName in addFiles )
+					{
+						var fixedPath = fileName;
+						if( Path.IsPathRooted( fixedPath ) )
+							fixedPath = fixedPath.Replace( ProjectDir + Path.DirectorySeparatorChar, "" );
+
+						var node = xmldoc.CreateNode( XmlNodeType.Element, "Compile", null );
+						var includeAttribute = xmldoc.CreateAttribute( "Include" );
+						includeAttribute.Value = fixedPath;
+						node.Attributes.Append( includeAttribute );
+						itemGroupNode.AppendChild( node );
+
+						wasUpdated = true;
+					}
+				}
+
+				if( wasUpdated )
+					xmldoc.Save( GetProjectFileName() );
+			}
+			catch( Exception e )
+			{
+				error = e.Message;
+				return false;
+			}
+
+			return true;
+		}
+
+		///////////////////////////////////////////////
+
+		static void FileWatcherInit()
+		{
+			if( ProjectFileExists() )
+			{
+				var path = GetProjectFileName();
+				systemWatcher = new FileSystemWatcher( Path.GetDirectoryName( path ), Path.GetFileName( path ) );
+				//systemWatcher.InternalBufferSize = 32768;
+				systemWatcher.IncludeSubdirectories = false;
+				//systemWatcher.Created += fileSystemWatcher_Event;
+				//systemWatcher.Deleted += fileSystemWatcher_Event;
+				//systemWatcher.Renamed += fileSystemWatcher_Event;
+				systemWatcher.Changed += fileSystemWatcher_Event;
+				systemWatcher.EnableRaisingEvents = true;
+			}
+		}
+
+		internal static void FileWatcherShutdown()
+		{
+			systemWatcher?.Dispose();
+			systemWatcher = null;
+		}
+
+		static void fileSystemWatcher_Event( object sender, FileSystemEventArgs e )
+		{
+			//occurs from different threads
+			needResetProjectData = true;
+		}
+
+		static void CheckResetProjectData()
+		{
+			if( needResetProjectData )
+			{
+				projectFileCSFiles = null;
+				projectFileCSFilesFullPaths = null;
+				projectFileReferences = null;
+
+				needResetProjectData = false;
+			}
+		}
+
 	}
 }
 
@@ -468,6 +733,14 @@ namespace NeoAxis
 		public static ESet<string> GetProjectFileCSFiles( bool reload, bool getFullPaths )
 		{
 			return new ESet<string>();
+		}
+
+		static void FileWatcherInit()
+		{
+		}
+
+		internal static void FileWatcherShutdown()
+		{
 		}
 	}
 }

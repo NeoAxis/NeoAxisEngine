@@ -30,7 +30,7 @@ namespace NeoAxis.Editor
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.textBox1 = new NeoAxis.Editor.HCKryptonTextBox();
+			this.textBox1 = new NeoAxis.Editor.EngineTextBox();
 			this.SuspendLayout();
 			// 
 			// textBox1
@@ -38,10 +38,10 @@ namespace NeoAxis.Editor
 			this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.textBox1.Location = new System.Drawing.Point(0, 3);
-			this.textBox1.LookLikeLabel = false;
+			this.textBox1.LikeLabel = false;
 			this.textBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.textBox1.Name = "textBox1";
-			this.textBox1.Size = new System.Drawing.Size(307, 21);
+			this.textBox1.Size = new System.Drawing.Size(307, 22);
 			this.textBox1.TabIndex = 1;
 			// 
 			// HCGridTextBox
@@ -58,6 +58,6 @@ namespace NeoAxis.Editor
 		}
 
 		#endregion
-		public HCKryptonTextBox textBox1;
+		public EngineTextBox textBox1;
 	}
 }

@@ -164,54 +164,73 @@ namespace NeoAxis.Editor
 
 		public override void AddDockWindow( DockWindow window, bool floatingWindow, bool select )
 		{
-			//!!!! fix it. floating window always selected
-			if( floatingWindow )
-				select = true;
+			//bool needUnlockEditorForm = false;
+			//if( floatingWindow )
+			//{
+			//	WinFormsUtility.LockFormUpdate( EditorForm.Instance );
+			//	needUnlockEditorForm = true;
+			//}
 
-			// если окно не DocumentWindow, с воркспесом не работаем. просто добавляем его.
-			if( !( window is DocumentWindow ) )
+			try
 			{
-				base.AddDockWindow( window, floatingWindow, select );
-				return;
-			}
+				//!!!! fix it. floating window always selected
+				if( floatingWindow )
+					select = true;
 
-			var document = ( (DocumentWindow)window ).Document;
-			var windowsForDocument = FindWindowsRecursive( document );
-
-			if( windowsForDocument.Count() == 0 )
-			{
-				// первое окно с таким документом. просто добавляем его без воркспейса.
-				base.AddDockWindow( window, floatingWindow, select );
-				return;
-			}
-			else
-			{
-				// если есть воркспейс с документом, добавляем в воркспейс
-
-				var workspaceWindow = FindWorkspaceWindow( window );
-				if( workspaceWindow != null )
+				// если окно не DocumentWindow, с воркспесом не работаем. просто добавляем его.
+				if( !( window is DocumentWindow ) )
 				{
-					workspaceWindow.WorkspaceController.AddDockWindow( window, floatingWindow, select );
+					base.AddDockWindow( window, floatingWindow, select );
+					return;
+				}
+
+				var document = ( (DocumentWindow)window ).Document;
+				var windowsForDocument = FindWindowsRecursive( document );
+
+				if( windowsForDocument.Count() == 0 )
+				{
+					// первое окно с таким документом. просто добавляем его без воркспейса.
+					base.AddDockWindow( window, floatingWindow, select );
+					return;
 				}
 				else
 				{
-					// иначе создаём воркспейс и помещаем в него два окна.
+					// если есть воркспейс с документом, добавляем в воркспейс
 
-					Debug.Assert( windowsForDocument.Count() == 1 );
-					var relocationWindow = windowsForDocument.First();
+					var workspaceWindow = FindWorkspaceWindow( window );
+					if( workspaceWindow != null )
+					{
+						workspaceWindow.WorkspaceController.AddDockWindow( window, floatingWindow, select );
+					}
+					else
+					{
+						// иначе создаём воркспейс и помещаем в него два окна.
 
-					workspaceWindow = new WorkspaceWindow( editorForm );
-					workspaceWindow.Init( document );
+						Debug.Assert( windowsForDocument.Count() == 1 );
+						var relocationWindow = windowsForDocument.First();
 
-					// удаляем перемещаемое окно и на его место ставим воркспейс.
-					ReplaceDockWindow( relocationWindow, workspaceWindow, false, select );
+						//prevent blinking
+						relocationWindow.Size = new Size( 1, 1 );
+						window.Size = new Size( 1, 1 );
 
-					// перемещаем перемещаемое окно в новый воркспейс.
-					workspaceWindow.WorkspaceController.AddDockWindow( relocationWindow, false, false );
+						workspaceWindow = new WorkspaceWindow( editorForm );
+						workspaceWindow.Init( document );
 
-					// добавляем новое окно. выделяем его в последнюю очередь.
-					workspaceWindow.WorkspaceController.AddDockWindow( window, floatingWindow, select );
+						// удаляем перемещаемое окно и на его место ставим воркспейс.
+						ReplaceDockWindow( relocationWindow, workspaceWindow, false, select );
+
+						// перемещаем перемещаемое окно в новый воркспейс.
+						workspaceWindow.WorkspaceController.AddDockWindow( relocationWindow, false, false );
+
+						// добавляем новое окно. выделяем его в последнюю очередь.
+						workspaceWindow.WorkspaceController.AddDockWindow( window, floatingWindow, select );
+					}
 				}
+			}
+			finally
+			{
+				//if( needUnlockEditorForm )
+				//	WinFormsUtility.LockFormUpdate( null );
 			}
 		}
 

@@ -1107,6 +1107,9 @@ namespace NeoAxis
 				if( created )
 					Log.Fatal( "EngineApp: Create: The application is already created." );
 
+				////!!!!temp
+				//AssemblyUtility.LoadAssemblyByRealFileName( "NeoAxis.CoreExtension.dll", false );
+
 				//!!!!new тут. было ниже
 				//Project.csproj. load cs files, compile.
 				CompileAndLoadProjectAssembly( "Project" );
@@ -1390,18 +1393,35 @@ namespace NeoAxis
 		{
 #if !PROJECT_DEPLOY
 
-			CSharpProjectFileUtility.Init( projectName );
-			CSharpProjectFileUtility.GetProjectFileCSFiles( true, false );
-			CSharpProjectFileUtility.CheckToRemoveNotExistsFilesFromProject();
+			bool canCompile = true;
 
-			// compile
-			string outputAssemblyName = CSharpProjectFileUtility.OutputAssemblyName;
-			if( EngineSettings.Init.ScriptingCompileProjectSolutionAtStartup )
-				outputAssemblyName = CSharpProjectFileUtility.CompileIfRequired( rebuild, applicationType == ApplicationTypeEnum.Editor );
+			//check dotnet available
+			{
+				var folder = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "dotnet" );
+				if( !Directory.Exists( folder ) )
+					canCompile = false;
+			}
 
-			// and load
-			string fullPath = Path.Combine( CSharpProjectFileUtility.OutputDir, outputAssemblyName + ".dll" );
-			AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true );
+			if( canCompile )
+			{
+				CSharpProjectFileUtility.Init( projectName );
+				CSharpProjectFileUtility.GetProjectFileCSFiles( true, false );
+				CSharpProjectFileUtility.CheckToRemoveNotExistsFilesFromProject();
+
+				// compile
+				string outputAssemblyName = CSharpProjectFileUtility.OutputAssemblyName;
+				if( EngineSettings.Init.ScriptingCompileProjectSolutionAtStartup )
+					outputAssemblyName = CSharpProjectFileUtility.CompileIfRequired( rebuild, applicationType == ApplicationTypeEnum.Editor );
+
+				// and load
+				string fullPath = Path.Combine( CSharpProjectFileUtility.OutputDir, outputAssemblyName + ".dll" );
+				AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true );//, loadFromArray: true );
+			}
+			else
+			{
+				string fullPath = Path.Combine( VirtualFileSystem.Directories.Binaries, projectName + ".dll" );
+				AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true );//, loadFromArray: true );
+			}
 
 #else
 			string fullPath = Path.Combine( VirtualFileSystem.Directories.Binaries, projectName + ".dll" );

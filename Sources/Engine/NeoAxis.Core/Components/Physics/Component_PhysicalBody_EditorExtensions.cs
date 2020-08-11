@@ -25,7 +25,7 @@ namespace NeoAxis.Editor
 				//!!!!выключить где-то?
 				a.QatSupport = true;
 				//a.qatAddByDefault = true;
-				a.ContextMenuSupport = EditorContextMenu.MenuTypeEnum.Document;
+				a.ContextMenuSupport = EditorContextMenuWinForms.MenuTypeEnum.Document;
 
 				Component_PhysicalBody GetBody( object obj )
 				{

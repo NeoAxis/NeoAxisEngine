@@ -1,7 +1,12 @@
 .component NeoAxis.Component_ProjectSettings
 {
-	Name = All
-	
+	Name = Root
+	SoundVolume = 0.4
+	WindowState = Normal
+	InitialUIScreen
+	{
+		GetByReference = "More\\WindowApp\\WindowAppMainForm.ui"
+	}
 	.component NeoAxis.Component_ProjectSettings_PageBasic
 	{
 		Name = General

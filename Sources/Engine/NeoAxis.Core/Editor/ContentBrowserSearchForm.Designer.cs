@@ -31,7 +31,7 @@
 			this.buttonClose = new ComponentFactory.Krypton.Toolkit.KryptonButton();
 			this.kryptonButtonSearch = new ComponentFactory.Krypton.Toolkit.KryptonButton();
 			this.kryptonTextBoxFilterByName = new ComponentFactory.Krypton.Toolkit.KryptonTextBox();
-			this.labelEx1 = new NeoAxis.Editor.LabelEx();
+			this.labelEx1 = new NeoAxis.Editor.EngineLabel();
 			this.SuspendLayout();
 			// 
 			// buttonClose
@@ -60,7 +60,7 @@
 			// 
 			this.kryptonTextBoxFilterByName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.kryptonTextBoxFilterByName.Location = new System.Drawing.Point(12, 35);
+			this.kryptonTextBoxFilterByName.Location = new System.Drawing.Point(12, 37);
 			this.kryptonTextBoxFilterByName.Name = "kryptonTextBoxFilterByName";
 			this.kryptonTextBoxFilterByName.Size = new System.Drawing.Size(538, 23);
 			this.kryptonTextBoxFilterByName.TabIndex = 0;
@@ -111,7 +111,7 @@
 		#endregion
 		private ComponentFactory.Krypton.Toolkit.KryptonButton buttonClose;
 		private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonSearch;
-		private LabelEx labelEx1;
+		private EngineLabel labelEx1;
 		private ComponentFactory.Krypton.Toolkit.KryptonTextBox kryptonTextBoxFilterByName;
 	}
 }

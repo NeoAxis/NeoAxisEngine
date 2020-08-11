@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
-using System.Windows.Forms;
 using NeoAxis;
 
 namespace Project
@@ -12,12 +11,12 @@ namespace Project
 	{
 		public class ResultData
 		{
-			public DialogResult Result = DialogResult.None;
+			public EDialogResult Result = EDialogResult.None;
 		}
 
 		class ButtonData
 		{
-			public DialogResult DialogResult;
+			public EDialogResult DialogResult;
 			public ResultData ResultData;
 		}
 
@@ -44,7 +43,7 @@ namespace Project
 			data.ResultData.Result = data.DialogResult;
 		}
 
-		static void ConfigureButtons(UIWindow window, DialogResult[] results, ResultData resultData )
+		static void ConfigureButtons(UIWindow window, EDialogResult[] results, ResultData resultData )
 		{
 			var allButtonNames = new List<string>();
 			allButtonNames.Add("Button 1 Set 1");			
@@ -97,32 +96,32 @@ namespace Project
 			return window;
 		}
 
-		public static ResultData Show(UIControl parent, string text, string caption, MessageBoxButtons buttons )
+		public static ResultData Show(UIControl parent, string text, string caption, EMessageBoxButtons buttons )
 		{
 			var window = CreateWindow( parent, text, caption);
 			if( window == null )
 				return null;
 
-			DialogResult[] results = null;
+			EDialogResult[] results = null;
 			switch( buttons )
 			{
-			case MessageBoxButtons.OK:
-				results = new DialogResult[] { DialogResult.OK };
+			case EMessageBoxButtons.OK:
+				results = new EDialogResult[] { EDialogResult.OK };
 				break;
-			case MessageBoxButtons.OKCancel:
-				results = new DialogResult[] { DialogResult.OK, DialogResult.Cancel };
+			case EMessageBoxButtons.OKCancel:
+				results = new EDialogResult[] { EDialogResult.OK, EDialogResult.Cancel };
 				break;
-			case MessageBoxButtons.AbortRetryIgnore:
-				results = new DialogResult[] { DialogResult.Abort, DialogResult.Retry, DialogResult.Ignore };
+			case EMessageBoxButtons.AbortRetryIgnore:
+				results = new EDialogResult[] { EDialogResult.Abort, EDialogResult.Retry, EDialogResult.Ignore };
 				break;
-			case MessageBoxButtons.YesNoCancel:
-				results = new DialogResult[] { DialogResult.Yes, DialogResult.No, DialogResult.Cancel};
+			case EMessageBoxButtons.YesNoCancel:
+				results = new EDialogResult[] { EDialogResult.Yes, EDialogResult.No, EDialogResult.Cancel};
 				break;
-			case MessageBoxButtons.YesNo:
-				results = new DialogResult[] { DialogResult.Yes, DialogResult.No };
+			case EMessageBoxButtons.YesNo:
+				results = new EDialogResult[] { EDialogResult.Yes, EDialogResult.No };
 				break;
-			case MessageBoxButtons.RetryCancel:
-				results = new DialogResult[] { DialogResult.Retry, DialogResult.Cancel };
+			case EMessageBoxButtons.RetryCancel:
+				results = new EDialogResult[] { EDialogResult.Retry, EDialogResult.Cancel };
 				break;
 			}
 
@@ -138,7 +137,7 @@ namespace Project
 
 		public static void ShowInfo(UIControl parent, string text, string caption)
 		{
-			Show( parent, text, caption, MessageBoxButtons.OK );
+			Show( parent, text, caption, EMessageBoxButtons.OK );
 		}
     }
 }

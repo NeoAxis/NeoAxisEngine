@@ -12,17 +12,23 @@ using ComponentFactory.Krypton.Toolkit;
 
 namespace NeoAxis.Editor
 {
-	public partial class HCGridTextBoxSelect : UserControl, IHCTextBoxSelect
+	public partial class HCGridTextBoxSelect : EUserControl, IHCTextBoxSelect
 	{
 		public HCGridTextBoxSelect()
 		{
 			InitializeComponent();
 
 			if( textBox != null )
-				textBox.LookLikeLabel = UseReadOnlyLabel;
+				textBox.LikeLabel = UseReadOnlyLabel;
 
 			if( EditorAPI.DarkTheme )
 				buttonSelect.Values.Image = Properties.Resources.DropDownButton_Dark;
+
+			textBox.Location = new Point( 0, DpiHelper.Default.ScaleValue( 3 ) );
+			textBox.AutoSize = false;
+			textBox.Height = DpiHelper.Default.ScaleValue( 18 );
+
+			buttonSelect.Location = new Point( buttonSelect.Location.X, DpiHelper.Default.ScaleValue( 3 ) );
 		}
 
 		bool useReadOnlyLabel = false;
@@ -33,11 +39,11 @@ namespace NeoAxis.Editor
 			{
 				useReadOnlyLabel = value;
 				if( textBox != null )
-					textBox.LookLikeLabel = value;
+					textBox.LikeLabel = value;
 			}
 		}
 
-		public HCKryptonTextBox TextBox
+		public EngineTextBox TextBox
 		{
 			get { return textBox; }
 		}

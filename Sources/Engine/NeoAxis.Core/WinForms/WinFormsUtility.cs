@@ -63,5 +63,19 @@ namespace NeoAxis
 
 			found?.Invalidate();
 		}
+
+		//[DllImport( "user32.dll" )]
+		//static extern bool LockWindowUpdate( IntPtr hWndLock );
+
+		//public static void LockFormUpdate( Form form )
+		//{
+		//	//!!!!
+		//	return;
+
+		//	if( form != null )
+		//		LockWindowUpdate( form.Handle );
+		//	else
+		//		LockWindowUpdate( IntPtr.Zero );
+		//}
 	}
 }

@@ -130,5 +130,17 @@ namespace NeoAxis.Editor
 		{
 			AvalonEditDarkThemeUtility.DarkTheme = true;
 		}
+
+		public override ITextEditorControl CreateTextEditorControl()
+		{
+			var control = new TextEditorControl();
+
+			control.ManageColorsFromTextEditorProjectSettings = true;
+			control.ManageFontFromTextEditorProjectSettings = true;
+
+			control.InstallSearchReplacePanel();
+
+			return control;
+		}
 	}
 }

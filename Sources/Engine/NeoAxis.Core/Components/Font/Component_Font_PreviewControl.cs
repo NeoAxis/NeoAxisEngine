@@ -33,7 +33,7 @@ namespace NeoAxis.Editor
 			base.Viewport_UpdateBeforeOutput( viewport );
 
 			var renderer = viewport.CanvasRenderer;
-			var font = ObjectForPreview as Component_Font;
+			var font = ObjectOfPreview as Component_Font;
 
 			var corverOffset = new Vector2( 0.1 * Viewport.CanvasRenderer.AspectRatioInv * 0.5, 0.1 * 0.3 );
 

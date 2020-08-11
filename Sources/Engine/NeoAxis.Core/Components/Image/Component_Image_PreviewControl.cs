@@ -27,7 +27,7 @@ namespace NeoAxis.Editor
 
 			var scene = CreateScene( false );
 
-			var texture = ObjectForPreview as Component_Image;
+			var texture = ObjectOfPreview as Component_Image;
 			if( texture?.Result?.TextureType == Component_Image.TypeEnum.Cube )
 			{
 				var type = MetadataManager.GetType( "NeoAxis.Component_Skybox" );
@@ -46,7 +46,7 @@ namespace NeoAxis.Editor
 		{
 			base.Viewport_UpdateBeforeOutput( viewport );
 
-			var texture = ObjectForPreview as Component_Image;
+			var texture = ObjectOfPreview as Component_Image;
 			if( texture?.Result?.TextureType == Component_Image.TypeEnum._2D )
 			{
 				double viewScale = 0.95;
@@ -81,7 +81,7 @@ namespace NeoAxis.Editor
 
 		protected override void GetTextInfoLeftTopCorner( List<string> lines )
 		{
-			var texture = ObjectForPreview as Component_Image;
+			var texture = ObjectOfPreview as Component_Image;
 			if( texture != null )
 			{
 				var result = texture.Result;

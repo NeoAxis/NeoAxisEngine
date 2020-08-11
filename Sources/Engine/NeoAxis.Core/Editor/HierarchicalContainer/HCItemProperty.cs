@@ -49,7 +49,7 @@ namespace NeoAxis.Editor
 		object[] indexers;
 		Metadata.Property property_Dependent;
 
-		UserControl createdControlInsidePropertyItemControl;
+		EUserControl createdControlInsidePropertyItemControl;
 		//bool showDetails;
 
 		bool defaultValueButtonInitialized;
@@ -178,7 +178,7 @@ namespace NeoAxis.Editor
 			}
 		}
 
-		public override UserControl CreateControlImpl()
+		public override EUserControl CreateControlImpl()
 		{
 			//if( Owner.GridMode )
 			var control = new HCGridProperty();
@@ -238,9 +238,9 @@ namespace NeoAxis.Editor
 			return control;
 		}
 
-		public abstract UserControl CreateControlInsidePropertyItemControl();
+		public abstract EUserControl CreateControlInsidePropertyItemControl();
 
-		public UserControl CreatedControlInsidePropertyItemControl
+		public EUserControl CreatedControlInsidePropertyItemControl
 		{
 			get { return createdControlInsidePropertyItemControl; }
 		}
@@ -1004,7 +1004,7 @@ namespace NeoAxis.Editor
 					items.Add( item );
 				}
 
-				EditorContextMenu.Show( items, CreatedControl );
+				EditorContextMenuWinForms.Show( items, CreatedControl );
 			}
 		}
 
@@ -1601,7 +1601,7 @@ namespace NeoAxis.Editor
 				items.Add( item );
 			}
 
-			EditorContextMenu.Show( items, CreatedControl );
+			EditorContextMenuWinForms.Show( items, CreatedControl );
 		}
 
 		private void ButtonDefaultValue_Click( object sender, EventArgs e )

@@ -35,7 +35,7 @@ namespace NeoAxis.Editor
 				//!!!!выключить где-то?
 				a.QatSupport = true;
 				//a.qatAddByDefault = true;
-				a.ContextMenuSupport = EditorContextMenu.MenuTypeEnum.Document;
+				a.ContextMenuSupport = EditorContextMenuWinForms.MenuTypeEnum.Document;
 
 				a.GetState += delegate ( EditorAction.GetStateContext context )
 				{
@@ -179,7 +179,7 @@ namespace NeoAxis.Editor
 				//!!!!выключить где-то?
 				a.QatSupport = true;
 				//a.qatAddByDefault = true;
-				a.ContextMenuSupport = EditorContextMenu.MenuTypeEnum.Document;
+				a.ContextMenuSupport = EditorContextMenuWinForms.MenuTypeEnum.Document;
 
 				a.GetState += delegate ( EditorAction.GetStateContext context )
 				{
@@ -217,7 +217,7 @@ namespace NeoAxis.Editor
 
 				a.Click += delegate ( EditorAction.ClickContext context )
 				{
-					if( EditorMessageBox.ShowQuestion( Translate("Detach from another object?"), MessageBoxButtons.YesNo ) == DialogResult.Yes )
+					if( EditorMessageBox.ShowQuestion( Translate("Detach from another object?"), EMessageBoxButtons.YesNo ) == EDialogResult.Yes )
 					{
 						var undoMultiAction = new UndoMultiAction();
 

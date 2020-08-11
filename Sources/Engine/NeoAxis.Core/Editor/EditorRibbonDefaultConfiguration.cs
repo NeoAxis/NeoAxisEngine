@@ -302,10 +302,11 @@ namespace NeoAxis.Editor
 
 				//External IDE
 				{
-					var group = new Group( "External IDE" );
+					var group = new Group( "External" );
+					//var group = new Group( "External IDE" );
 					tab.Groups.Add( group );
 
-					group.AddAction( "Open Project Solution in External IDE" );
+					//group.AddAction( "Open Project Solution in External IDE" );
 					group.AddAction( "Open Sources Solution in External IDE" );
 				}
 			}

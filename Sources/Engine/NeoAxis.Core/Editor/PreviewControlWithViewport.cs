@@ -1,19 +1,11 @@
 ﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Text;
-using System.Drawing;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection;
 using ComponentFactory.Krypton.Toolkit;
-using ComponentFactory.Krypton.Navigator;
-using ComponentFactory.Krypton.Workspace;
-using ComponentFactory.Krypton.Docking;
-using NeoAxis;
 using NeoAxis.Widget;
-using System.IO;
 using NeoAxis.Input;
 
 namespace NeoAxis.Editor

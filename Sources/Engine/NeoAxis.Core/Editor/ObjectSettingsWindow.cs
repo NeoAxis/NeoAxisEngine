@@ -19,11 +19,8 @@ namespace NeoAxis.Editor
 	/// </summary>
 	public partial class ObjectSettingsWindow : DocumentWindow
 	{
-		static string projectSettingsUserModeLastSelectedTab = "";
+		static string projectSettingsUserModeLastSelectedTab = "General";
 
-		//!!!!!резайзинг неправильный
-
-		//!!!!
 		const int maxCachedCount = 10;
 
 		//DocumentWindow documentWindow;
@@ -34,6 +31,9 @@ namespace NeoAxis.Editor
 		PanelData selectedPanel;
 
 		bool readOnlyHierarchy;
+
+		bool needRecreatePanels;
+		object[] needRecreatePanelsSelectObjects;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -124,6 +124,8 @@ namespace NeoAxis.Editor
 			}
 
 			timer1.Start();
+
+			UpdateControlsLocation();
 		}
 
 		protected override void OnDestroy()
@@ -133,12 +135,41 @@ namespace NeoAxis.Editor
 			base.OnDestroy();
 		}
 
-		private void Timer1_Tick( object sender, EventArgs e )
+		void UpdateControlsLocation()
 		{
-			//if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
-			//	return;
+			objectSettingsHeader_ObjectInfo1.Width = ClientRectangle.Width - 18;
+		}
+
+		private void timer1_Tick( object sender, EventArgs e )
+		{
+			if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
+				return;
+			if( KryptonPage == null || KryptonPage.Parent == null )
+				return;
 			//if( !WinFormsUtility.IsControlVisibleInHierarchy( this ) )
 			//	return;
+
+			//recreate panels
+			if( needRecreatePanels )
+			{
+				object[] selectedObjects = needRecreatePanelsSelectObjects;
+
+				needRecreatePanels = false;
+				needRecreatePanelsSelectObjects = null;
+
+				RemoveCachedPanels();
+
+				if( selectedObjects != null )
+					SelectObjects( selectedObjects );//, this );
+			}
+		}
+
+		protected override void OnResize( EventArgs e )
+		{
+			base.OnResize( e );
+
+			if( IsHandleCreated )
+				UpdateControlsLocation();
 		}
 
 		//[Browsable( false )]
@@ -172,7 +203,7 @@ namespace NeoAxis.Editor
 			if( selectObjects.Count == 0 )
 				selectObjects.Add( ObjectOfWindow );
 
-			SelectObjects( selectObjects, this );
+			SelectObjects( selectObjects );//, this );
 
 			if( Document != null && Document.SpecialMode == "ProjectSettingsUserMode" )
 			{
@@ -209,7 +240,7 @@ namespace NeoAxis.Editor
 			return null;
 		}
 
-		PanelData CreatePanel( DocumentWindow documentWindow, object[] key, bool willSelected )
+		PanelData CreatePanel( /*DocumentWindow documentWindow, */object[] key, bool willSelected )
 		{
 			PanelData panel = new PanelData();
 			panels.Add( panel );
@@ -223,7 +254,7 @@ namespace NeoAxis.Editor
 				panel.layoutPanel.Enabled = false;
 			}
 
-			SettingsProvider.Create( documentWindow, panel.selectedObjects, panel.layoutPanel, null, true );
+			SettingsProvider.Create( this/*documentWindow*/, panel.selectedObjects, panel.layoutPanel, null, true );
 
 			//!!!!!было
 			////init panel
@@ -329,7 +360,7 @@ namespace NeoAxis.Editor
 				RemovePanel( panels[ panels.Count - 1 ] );
 		}
 
-		public void SelectObjects( IList<object> objects, DocumentWindow documentWindow )
+		public void SelectObjects( IList<object> objects )//, DocumentWindow documentWindow )
 		{
 			if( EditorAPI.ClosingApplication )
 				return;
@@ -354,7 +385,7 @@ namespace NeoAxis.Editor
 				while( panels.Count >= maxCachedCount )
 					RemovePanel( panels[ 0 ] );
 
-				panel = CreatePanel( documentWindow, key, true );
+				panel = CreatePanel( /*documentWindow, */key, true );
 			}
 
 			SelectedPanel = panel;
@@ -371,12 +402,7 @@ namespace NeoAxis.Editor
 				if( selectedPanel == value )
 					return;
 
-				if( selectedPanel != null )
-				{
-					selectedPanel.layoutPanel.Visible = false;
-					selectedPanel.layoutPanel.Enabled = false;
-				}
-
+				var old = selectedPanel;
 				selectedPanel = value;
 
 				if( selectedPanel != null )
@@ -385,6 +411,27 @@ namespace NeoAxis.Editor
 					selectedPanel.layoutPanel.Visible = true;
 					//selectedPanel.control.Focus();
 				}
+
+				if( old != null )
+				{
+					old.layoutPanel.Visible = false;
+					old.layoutPanel.Enabled = false;
+				}
+
+				//if( selectedPanel != null )
+				//{
+				//	selectedPanel.layoutPanel.Visible = false;
+				//	selectedPanel.layoutPanel.Enabled = false;
+				//}
+
+				//selectedPanel = value;
+
+				//if( selectedPanel != null )
+				//{
+				//	selectedPanel.layoutPanel.Enabled = true;
+				//	selectedPanel.layoutPanel.Visible = true;
+				//	//selectedPanel.control.Focus();
+				//}
 			}
 		}
 
@@ -418,6 +465,25 @@ namespace NeoAxis.Editor
 		//		return handleParam;
 		//	}
 		//}
+
+		protected override void OnKryptonPageParentChanged()
+		{
+			base.OnKryptonPageParentChanged();
+
+			//recreate panels when parent of KryptonPage was changed. need to restore _COMPOSITED flag, working tooltips
+			if( KryptonPage != null && KryptonPage.Parent == null )
+			{
+				if( SelectedPanel != null )
+				{
+					needRecreatePanels = true;
+					needRecreatePanelsSelectObjects = SelectedPanel.selectedObjects;
+					//else
+					//	needRecreatePanelsSelectObjects = null;
+
+					RemoveCachedPanels();
+				}
+			}
+		}
 	}
 
 	public class PanelDataWithTableLayout
@@ -434,6 +500,7 @@ namespace NeoAxis.Editor
 			TableLayoutPanel layoutPanel = new TableLayoutPanel();
 			layoutPanel.ColumnStyles.Add( new ColumnStyle( SizeType.Percent, 50f ) );
 			layoutPanel.Tag = this;
+			layoutPanel.SetBounds( 0, 0, owner.Width, owner.Height );
 			layoutPanel.Dock = DockStyle.Fill;
 
 			owner.Controls.Add( layoutPanel );

@@ -19,7 +19,7 @@ namespace NeoAxis.Editor
 			Item parent;
 			List<Item> children = new List<Item>();
 
-			UserControl createdControl;
+			EUserControl createdControl;
 
 			bool canExpand;
 			bool expanded;
@@ -59,7 +59,7 @@ namespace NeoAxis.Editor
 				return result;
 			}
 
-			public abstract UserControl CreateControlImpl();
+			public abstract EUserControl CreateControlImpl();
 
 			public virtual void UpdateControl() { }
 
@@ -183,7 +183,7 @@ namespace NeoAxis.Editor
 				}
 			}
 
-			public UserControl CreatedControl
+			public EUserControl CreatedControl
 			{
 				get { return createdControl; }
 				set { createdControl = value; }

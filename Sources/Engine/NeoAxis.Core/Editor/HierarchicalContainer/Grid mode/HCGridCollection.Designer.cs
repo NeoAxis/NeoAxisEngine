@@ -29,7 +29,7 @@
 		private void InitializeComponent()
 		{
 			this.buttonEdit = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-			this.label2 = new NeoAxis.Editor.HCKryptonTextBox();
+			this.label2 = new NeoAxis.Editor.EngineTextBox();
 			this.SuspendLayout();
 			// 
 			// buttonEdit
@@ -48,7 +48,7 @@
 			this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label2.Location = new System.Drawing.Point(0, 3);
-			this.label2.LookLikeLabel = true;
+			this.label2.LikeLabel = true;
 			this.label2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.label2.Name = "label2";
 			this.label2.ReadOnly = true;
@@ -77,7 +77,7 @@
 		}
 
 		#endregion
-		public HCKryptonTextBox label2;
+		public EngineTextBox label2;
 		public ComponentFactory.Krypton.Toolkit.KryptonButton buttonEdit;
 	}
 }

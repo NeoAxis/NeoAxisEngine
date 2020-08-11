@@ -27,7 +27,7 @@ namespace NeoAxis.Editor
 
 			var scene = CreateScene( false );
 
-			var particleSystem = ObjectForPreview as Component_ParticleSystem;
+			var particleSystem = ObjectOfPreview as Component_ParticleSystem;
 			if( particleSystem != null )
 			{
 				var inSpace = scene.CreateComponent<Component_ParticleSystemInSpace>();

@@ -16,7 +16,7 @@ namespace NeoAxis.Editor
 
 		//
 
-		protected override void OnInitUI()
+		protected override void OnInit()
 		{
 			buttonUpdate = ProcedureForm.CreateButton( EditorLocalization.Translate( "Terrain", "Update" ) );
 			buttonUpdate.Click += ButtonUpdate_Click;
@@ -78,7 +78,7 @@ namespace NeoAxis.Editor
 				return;
 
 			var text = string.Format( EditorLocalization.Translate( "Terrain", "Resize masks of selected layers to {0}x{0}?" ), terrain.GetPaintMaskSizeInteger() );
-			if( EditorMessageBox.ShowQuestion( text, MessageBoxButtons.OKCancel ) == DialogResult.OK )
+			if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.OKCancel ) == EDialogResult.OK )
 			{
 				var undoMultiAction = new UndoMultiAction();
 

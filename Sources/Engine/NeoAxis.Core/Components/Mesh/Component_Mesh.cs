@@ -23,8 +23,8 @@ namespace NeoAxis
 	/// The construct of mesh geometries.
 	/// </summary>
 	[ResourceFileExtension( "mesh" )]
-	[EditorDocumentWindow( typeof( Component_Mesh_DocumentWindow ) )]
-	[EditorPreviewControl( typeof( Component_Mesh_PreviewControl ) )]
+	[EditorDocumentWindow( typeof( Component_Mesh_Editor ) )]
+	[EditorPreviewControl( typeof( Component_Mesh_Preview ) )]
 	[EditorSettingsCell( typeof( Component_Mesh_SettingsCell ) )]
 	public partial class Component_Mesh : Component_ResultCompile<Component_Mesh.CompiledData>
 	{

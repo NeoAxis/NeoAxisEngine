@@ -33,6 +33,8 @@ namespace NeoAxis.Editor
 		public delegate void ProcessCmdKeyEventDelegate( MessageLogWindow sender, ref Message msg, Keys keyData, ref bool handled );
 		public event ProcessCmdKeyEventDelegate ProcessCmdKeyEvent;
 
+		EditorAssemblyInterface.ITextEditorControl kryptonRichTextBox1;
+
 		/////////////////////////////////////////
 
 		class ContentBrowserItem : ContentBrowserItem_Virtual
@@ -58,6 +60,26 @@ namespace NeoAxis.Editor
 		public MessageLogWindow()
 		{
 			InitializeComponent();
+
+			//kryptonRichTextBox1
+			{
+				kryptonRichTextBox1 = EditorAssemblyInterface.Instance.CreateTextEditorControl();
+				var control = (Control)this.kryptonRichTextBox1;
+
+				this.kryptonSplitContainer1.Panel2.Controls.Add( control );
+				control.Dock = System.Windows.Forms.DockStyle.Fill;
+				control.Location = new System.Drawing.Point( 0, 0 );
+				control.Name = "kryptonRichTextBox1";
+				this.kryptonRichTextBox1.EditorReadOnly = true;
+				control.Size = new System.Drawing.Size( 363, 165 );
+				//!!!!
+				//this.kryptonRichTextBox1.StateCommon.Content.Font = new System.Drawing.Font( "Courier New", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ( (byte)( 204 ) ) );
+				control.TabIndex = 2;
+				this.kryptonRichTextBox1.EditorText = "";
+				this.kryptonRichTextBox1.EditorWordWrap = true;//false;
+
+				kryptonRichTextBox1.Border = true;
+			}
 
 			toolStripButtonClear.Image = EditorResourcesCache.Delete;
 			toolStripButtonOptions.Image = EditorResourcesCache.Options;
@@ -88,7 +110,7 @@ namespace NeoAxis.Editor
 
 		public void Clear()
 		{
-			kryptonRichTextBox1.Text = "";
+			kryptonRichTextBox1.EditorText = "";
 		}
 
 		private void richTextBox1_PreviewKeyDown( object sender, PreviewKeyDownEventArgs e )
@@ -96,13 +118,6 @@ namespace NeoAxis.Editor
 			//!!!!!!было в старом
 			//if( e.KeyCode == Keys.F4 && e.Control )
 			//	Hide();
-		}
-
-		private void OutputForm_Load( object sender, EventArgs e )
-		{
-			Translate();
-
-			kryptonRichTextBox1.Select();
 		}
 
 		void Translate()
@@ -250,9 +265,9 @@ namespace NeoAxis.Editor
 		void UpdateSecondPanel()
 		{
 			if( contentBrowser1.SelectedItems.Length == 1 )
-				kryptonRichTextBox1.Text = (string)contentBrowser1.SelectedItems[ 0 ].Tag;
+				kryptonRichTextBox1.EditorText = (string)contentBrowser1.SelectedItems[ 0 ].Tag;
 			else
-				kryptonRichTextBox1.Text = "";
+				kryptonRichTextBox1.EditorText = "";
 
 			kryptonRichTextBox1.Select( 0, 0 );
 			//kryptonRichTextBox1.ScrollToCaret();
@@ -319,6 +334,17 @@ namespace NeoAxis.Editor
 
 		private void MessageLogWindow_Load( object sender, EventArgs e )
 		{
+			toolStrip1.Padding = new Padding( (int)EditorAPI.DPIScale );
+			toolStrip1.Size = new Size( 10, (int)( 21 * EditorAPI.DPIScale + 2 ) );
+			toolStripButtonOptions.Size = new Size( (int)( 20 * EditorAPI.DPIScale ), (int)( 20 * EditorAPI.DPIScale + 2 ) );
+			toolStripButtonClear.Size = new Size( (int)( 20 * EditorAPI.DPIScale ), (int)( 20 * EditorAPI.DPIScale + 2 ) );
+
+			Translate();
+
+			var control = (Control)kryptonRichTextBox1;
+			control.Select();
+			//kryptonRichTextBox1.Select();
+
 			timer1.Start();
 		}
 

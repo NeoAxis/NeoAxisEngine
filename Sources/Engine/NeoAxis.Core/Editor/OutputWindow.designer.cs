@@ -35,7 +35,7 @@
 			this.toolStripSeparatorFilteringMode = new System.Windows.Forms.ToolStripSeparator();
 			this.toolStripButtonClear = new System.Windows.Forms.ToolStripButton();
 			this.messageImageList = new System.Windows.Forms.ImageList(this.components);
-			this.kryptonRichTextBox1 = new ComponentFactory.Krypton.Toolkit.KryptonRichTextBox();
+			//this.kryptonRichTextBox1 = new ComponentFactory.Krypton.Toolkit.KryptonRichTextBox();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -49,6 +49,7 @@
             this.toolStripButtonClear});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
+			this.toolStrip1.AutoSize = false;
 			this.toolStrip1.Size = new System.Drawing.Size(713, 25);
 			this.toolStrip1.TabIndex = 1;
 			this.toolStrip1.Text = "toolStrip1";
@@ -60,6 +61,7 @@
 			this.toolStripButtonOptions.Image = global::NeoAxis.Properties.Resources.Options_16;
 			this.toolStripButtonOptions.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonOptions.Name = "toolStripButtonOptions";
+			this.toolStripButtonOptions.AutoSize = false;
 			this.toolStripButtonOptions.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonOptions.Text = "Options";
 			// 
@@ -74,6 +76,7 @@
 			this.toolStripButtonClear.Image = global::NeoAxis.Properties.Resources.Delete_16;
 			this.toolStripButtonClear.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonClear.Name = "toolStripButtonClear";
+			this.toolStripButtonClear.AutoSize = false;
 			this.toolStripButtonClear.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonClear.Text = "Clear";
 			this.toolStripButtonClear.Click += new System.EventHandler(this.toolStripButtonClear_Click);
@@ -85,29 +88,30 @@
 			this.messageImageList.Images.SetKeyName(0, "StatusAnnotations_Information_16xLG_color.png");
 			this.messageImageList.Images.SetKeyName(1, "StatusAnnotations_Warning_16xLG_color.png");
 			this.messageImageList.Images.SetKeyName(2, "StatusAnnotations_Critical_16xLG_color.png");
-			// 
-			// kryptonRichTextBox1
-			// 
-			this.kryptonRichTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.kryptonRichTextBox1.Location = new System.Drawing.Point(0, 25);
-			this.kryptonRichTextBox1.Name = "kryptonRichTextBox1";
-			this.kryptonRichTextBox1.ReadOnly = true;
-			this.kryptonRichTextBox1.Size = new System.Drawing.Size(713, 165);
-			this.kryptonRichTextBox1.StateCommon.Content.Font = new System.Drawing.Font("Courier New", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.kryptonRichTextBox1.TabIndex = 2;
-			this.kryptonRichTextBox1.Text = "";
-			this.kryptonRichTextBox1.WordWrap = false;
+			//// 
+			//// kryptonRichTextBox1
+			//// 
+			//this.kryptonRichTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+			//this.kryptonRichTextBox1.Location = new System.Drawing.Point(0, 25);
+			//this.kryptonRichTextBox1.Name = "kryptonRichTextBox1";
+			//this.kryptonRichTextBox1.ReadOnly = true;
+			//this.kryptonRichTextBox1.Size = new System.Drawing.Size(713, 165);
+			//this.kryptonRichTextBox1.StateCommon.Content.Font = new System.Drawing.Font("Courier New", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			//this.kryptonRichTextBox1.TabIndex = 2;
+			//this.kryptonRichTextBox1.Text = "";
+			//this.kryptonRichTextBox1.WordWrap = false;
 			// 
 			// OutputWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-			this.Controls.Add(this.kryptonRichTextBox1);
+			//this.Controls.Add(this.kryptonRichTextBox1);
 			this.Controls.Add(this.toolStrip1);
 			this.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.471698F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.Margin = new System.Windows.Forms.Padding(5);
 			this.Name = "OutputWindow";
 			this.Size = new System.Drawing.Size(713, 190);
 			this.WindowTitle = "Output";
+			this.Load += new System.EventHandler( this.OutputWindow_Load );
 			this.toolStrip1.ResumeLayout(false);
 			this.toolStrip1.PerformLayout();
 			this.ResumeLayout(false);
@@ -121,6 +125,6 @@
 		private System.Windows.Forms.ToolStripButton toolStripButtonOptions;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparatorFilteringMode;
 		private System.Windows.Forms.ImageList messageImageList;
-		private ComponentFactory.Krypton.Toolkit.KryptonRichTextBox kryptonRichTextBox1;
+		//private ComponentFactory.Krypton.Toolkit.KryptonRichTextBox kryptonRichTextBox1;
 	}
 }

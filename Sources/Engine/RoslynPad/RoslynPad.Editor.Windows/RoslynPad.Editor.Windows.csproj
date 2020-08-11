@@ -1,9 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <Import Project="..\common.props" />
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net46</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+	<EnableDefaultPageItems>false</EnableDefaultPageItems>
+	<UseWindowsForms>true</UseWindowsForms>
+	<UseWPF>true</UseWPF>	
+	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <PackageTargetFallback>$(PackageTargetFallback);portable-net45+win8+wp8+wpa81;</PackageTargetFallback>
     <RootNamespace>RoslynPad.Editor</RootNamespace>
     <Version>$(EditorPackageVersion)</Version>
@@ -12,13 +17,11 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningsAsErrors />
+    <OutputPath>..\..\..\..\Project\Binaries\</OutputPath>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\..\..\..\Project\Binaries\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Page Include="**\*.xaml" SubType="Designer" Generator="MSBuild:Compile" Exclude="App.xaml" />
     <None Remove="Resources\Back_16.png" />

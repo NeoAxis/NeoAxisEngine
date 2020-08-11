@@ -1736,7 +1736,6 @@ namespace NeoAxis.Editor
 		//		editorFont = EngineFontManager.Instance.LoadFont( "Default", demandFontHeight );
 		//}
 
-		//!!!!!так? везде так
 		public void AddTextWithShadow( Component_Font font, double fontSize, string text, Vector2 position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color )
 		{
 			var renderer = ViewportControl.Viewport.CanvasRenderer;

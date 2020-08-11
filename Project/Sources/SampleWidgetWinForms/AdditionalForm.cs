@@ -15,6 +15,8 @@ namespace SampleWidgetWinForms
 		{
 			InitializeComponent();
 
+			Font = new Font( new FontFamily( "Microsoft Sans Serif" ), 8f );
+
 			widgetControl1.ViewportCreated += WidgetControl1_ViewportCreated;
 		}
 

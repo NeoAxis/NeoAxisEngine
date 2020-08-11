@@ -158,8 +158,17 @@ namespace NeoAxis.Editor
 					var previewClass = GetPreviewClass( obj );
 					if( previewClass != null )
 					{
-						control = (PreviewControl)previewClass.InvokeMember( "",
-							BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance, null, null, null );
+						if( typeof( CanvasBasedPreview ).IsAssignableFrom( previewClass ) )
+						{
+							var preview = (CanvasBasedPreview)Activator.CreateInstance( previewClass );
+							var control2 = new PreviewControlWithViewport_CanvasBasedPreview( preview );
+							preview.owner = control2;
+							control = control2;
+						}
+						else
+						{
+							control = (PreviewControl)previewClass.InvokeMember( "", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance, null, null, null );
+						}
 					}
 
 					//bool allow = true;
@@ -269,12 +278,7 @@ namespace NeoAxis.Editor
 				if( selectedPanel == value )
 					return;
 
-				if( selectedPanel != null )
-				{
-					selectedPanel.control.Visible = false;
-					selectedPanel.control.Enabled = false;
-				}
-
+				var old = selectedPanel;
 				selectedPanel = value;
 
 				if( selectedPanel != null )
@@ -283,6 +287,27 @@ namespace NeoAxis.Editor
 					selectedPanel.control.Visible = true;
 					//selectedPanel.control.Focus();
 				}
+
+				if( old != null )
+				{
+					old.control.Visible = false;
+					old.control.Enabled = false;
+				}
+
+				//if( selectedPanel != null )
+				//{
+				//	selectedPanel.control.Visible = false;
+				//	selectedPanel.control.Enabled = false;
+				//}
+
+				//selectedPanel = value;
+
+				//if( selectedPanel != null )
+				//{
+				//	selectedPanel.control.Enabled = true;
+				//	selectedPanel.control.Visible = true;
+				//	//selectedPanel.control.Focus();
+				//}
 
 				//!!!!можно приоритеты менять для кешированных. где еще
 			}

@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -134,6 +135,8 @@ namespace NeoAxis.Editor
 
 		public ComponentTypeSettingsForm( DocumentInstance document, Component component )
 		{
+			//debug = true;
+
 			this.document = document;
 			this.component = component;
 
@@ -207,6 +210,8 @@ namespace NeoAxis.Editor
 			}
 
 			hierarchicalContainer1.SetData( null, new object[] { objectImpl } );
+
+			//UpdateControlsBounds();
 		}
 
 		private void buttonOK_Click( object sender, EventArgs e )
@@ -266,5 +271,22 @@ namespace NeoAxis.Editor
 		{
 			displayName = EditorLocalization.Translate( "TypeSettingsForm", displayName );
 		}
+
+		//void UpdateControlsBounds()
+		//{
+		//	if( hierarchicalContainer1 != null )
+		//	{
+		//		hierarchicalContainer1.Size = new Size(
+		//			kryptonButtonCancel.Bounds.Right - hierarchicalContainer1.Location.X,
+		//			kryptonButtonOK.Location.Y - 12 - hierarchicalContainer1.Location.Y );
+		//	}
+		//}
+
+		//protected override void OnResize( EventArgs e )
+		//{
+		//	base.OnResize( e );
+
+		//	UpdateControlsBounds();
+		//}
 	}
 }

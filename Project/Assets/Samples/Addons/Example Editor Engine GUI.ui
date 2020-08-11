@@ -1,0 +1,87 @@
+.component NeoAxis.UIControl
+{
+	Size = Parent 1 1
+	EditorScrollPosition = 0 0
+	Style
+	{
+		GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button
+		Text = Button
+		Size = Units 200 40
+		HorizontalAlignment = Right
+		Margin = Units 30 30 30 0
+		EditorScrollPosition = 0 0
+	}
+	.component NeoAxis.UIList
+	{
+		Name = List
+		Size = Units 1690 800
+		HorizontalAlignment = Stretch
+		VerticalAlignment = Stretch
+		Margin = Units 30 140 30 30
+		EditorScrollPosition = 0 0
+		Items
+		{
+			Count = 3
+			0 = Item 1
+			1 = Item 2
+			2 = Item 3
+		}
+		.component NeoAxis.UIScrollBar
+		{
+			Name = ScrollBar
+			CanBeSelected = False
+			Size = Units 30 400
+			HorizontalAlignment = Right
+			VerticalAlignment = Stretch
+			Margin = Units 0 2 2 2
+			EditorScrollPosition = 0 0
+			Vertical = True
+		}
+	}
+	.component NeoAxis.UIText
+	{
+		Name = Text
+		Text = "Edit:"
+		Size = Units 400 30
+		Margin = Units 30 20 0 0
+		EditorScrollPosition = 0 0
+		TextHorizontalAlignment = Left
+	}
+	.component NeoAxis.UIEdit
+	{
+		Name = Edit
+		ReadOnly = True
+		Size = Units 660 40
+		Margin = Units 30 50 0 0
+		EditorScrollPosition = 0 0
+		.component NeoAxis.UIText
+		{
+			Name = Text
+			CanBeSelected = False
+			Size = Parent 1 1
+			HorizontalAlignment = Stretch
+			VerticalAlignment = Stretch
+			Margin = Units 4 2 4 2
+			EditorScrollPosition = 0 0
+			TextHorizontalAlignment = Left
+			ClipRectangle = True
+			Text
+			{
+				GetByReference = "this:..\\DisplayText"
+			}
+		}
+	}
+	.component NeoAxis.UIText
+	{
+		Name = Text 2
+		Text = "List:"
+		Size = Units 400 30
+		Margin = Units 30 110 0 0
+		EditorScrollPosition = 0 0
+		TextHorizontalAlignment = Left
+	}
+}

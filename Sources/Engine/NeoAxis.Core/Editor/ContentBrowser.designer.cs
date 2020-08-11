@@ -165,9 +165,11 @@
             this.toolStripSeparatorSearchBar,
             this.toolStripTextBoxSearch});
 			this.toolStripForTreeView.Location = new System.Drawing.Point(0, 0);
+			this.toolStripForTreeView.Padding = new System.Windows.Forms.Padding( 1, 1, 1, 1 );
 			this.toolStripForTreeView.Name = "toolStripForTreeView";
 			this.toolStripForTreeView.ShowItemToolTips = false;
-			this.toolStripForTreeView.Size = new System.Drawing.Size(511, 25);
+			this.toolStripForTreeView.AutoSize = false;
+			this.toolStripForTreeView.Size = new System.Drawing.Size(511, 26);
 			this.toolStripForTreeView.TabIndex = 3;
 			this.toolStripForTreeView.Text = "toolStrip1";
 			// 
@@ -177,6 +179,7 @@
 			this.toolStripButtonOptions.Image = global::NeoAxis.Properties.Resources.Options_16;
 			this.toolStripButtonOptions.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonOptions.Name = "toolStripButtonOptions";
+			this.toolStripButtonOptions.AutoSize = false;
 			this.toolStripButtonOptions.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonOptions.Text = "Options";
 			this.toolStripButtonOptions.Click += new System.EventHandler(this.toolStripButtonOptions_Click);
@@ -187,6 +190,7 @@
 			this.toolStripButtonShowMembers.Image = global::NeoAxis.Properties.Resources.Members_16_2;
 			this.toolStripButtonShowMembers.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonShowMembers.Name = "toolStripButtonShowMembers";
+			this.toolStripButtonShowMembers.AutoSize = false;
 			this.toolStripButtonShowMembers.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonShowMembers.Text = "Show Members";
 			this.toolStripButtonShowMembers.Click += new System.EventHandler(this.toolStripButtonShowMembers_Click);
@@ -202,6 +206,7 @@
 			this.toolStripDropDownButtonFilteringMode.Image = global::NeoAxis.Properties.Resources.Selection_16_2;
 			this.toolStripDropDownButtonFilteringMode.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripDropDownButtonFilteringMode.Name = "toolStripDropDownButtonFilteringMode";
+			this.toolStripDropDownButtonFilteringMode.AutoSize = false;
 			this.toolStripDropDownButtonFilteringMode.Size = new System.Drawing.Size(30, 22);
 			this.toolStripDropDownButtonFilteringMode.Text = "Filtering Mode";
 			// 
@@ -216,6 +221,7 @@
 			this.toolStripButtonOpen.Image = global::NeoAxis.Properties.Resources.Edit_16;
 			this.toolStripButtonOpen.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonOpen.Name = "toolStripButtonOpen";
+			this.toolStripButtonOpen.AutoSize = false;
 			this.toolStripButtonOpen.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonOpen.Text = "Open";
 			this.toolStripButtonOpen.Click += new System.EventHandler(this.toolStripButtonOpen_Click);
@@ -231,6 +237,7 @@
 			this.toolStripButtonEditor.Image = global::NeoAxis.Properties.Resources.Edit_16;
 			this.toolStripButtonEditor.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonEditor.Name = "toolStripButtonEditor";
+			this.toolStripButtonEditor.AutoSize = false;
 			this.toolStripButtonEditor.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonEditor.Text = "Editor";
 			this.toolStripButtonEditor.Click += new System.EventHandler(this.toolStripButtonEditor_Click);
@@ -241,6 +248,7 @@
 			this.toolStripButtonSettings.Image = global::NeoAxis.Properties.Resources.Maximize_16;
 			this.toolStripButtonSettings.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonSettings.Name = "toolStripButtonSettings";
+			this.toolStripButtonSettings.AutoSize = false;
 			this.toolStripButtonSettings.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonSettings.Text = "Settings";
 			this.toolStripButtonSettings.Click += new System.EventHandler(this.toolStripButtonSettings_Click);
@@ -256,6 +264,7 @@
 			this.toolStripButtonNewFolder.Image = global::NeoAxis.Properties.Resources.NewFolder_16;
 			this.toolStripButtonNewFolder.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonNewFolder.Name = "toolStripButtonNewFolder";
+			this.toolStripButtonNewFolder.AutoSize = false;
 			this.toolStripButtonNewFolder.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonNewFolder.Text = "New Folder";
 			this.toolStripButtonNewFolder.Click += new System.EventHandler(this.toolStripButtonNewFolder_Click);
@@ -266,6 +275,7 @@
 			this.toolStripButtonNewResource.Image = global::NeoAxis.Properties.Resources.New_16;
 			this.toolStripButtonNewResource.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonNewResource.Name = "toolStripButtonNewResource";
+			this.toolStripButtonNewResource.AutoSize = false;
 			this.toolStripButtonNewResource.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonNewResource.Text = "New Resource";
 			this.toolStripButtonNewResource.Click += new System.EventHandler(this.toolStripButtonNewResource_Click);
@@ -276,6 +286,7 @@
 			this.toolStripButtonNewObject.Image = global::NeoAxis.Properties.Resources.New_16;
 			this.toolStripButtonNewObject.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonNewObject.Name = "toolStripButtonNewObject";
+			this.toolStripButtonNewObject.AutoSize = false;
 			this.toolStripButtonNewObject.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonNewObject.Text = "New Object";
 			this.toolStripButtonNewObject.Click += new System.EventHandler(this.toolStripButtonNewObject_Click);
@@ -286,6 +297,7 @@
 			this.toolStripButtonDelete.Image = global::NeoAxis.Properties.Resources.Delete_16;
 			this.toolStripButtonDelete.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonDelete.Name = "toolStripButtonDelete";
+			this.toolStripButtonDelete.AutoSize = false;
 			this.toolStripButtonDelete.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonDelete.Text = "Delete";
 			this.toolStripButtonDelete.Click += new System.EventHandler(this.toolStripButtonDelete_Click);
@@ -297,6 +309,7 @@
 			this.toolStripButtonRename.Image = global::NeoAxis.Properties.Resources.Rename_16x;
 			this.toolStripButtonRename.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonRename.Name = "toolStripButtonRename";
+			this.toolStripButtonRename.AutoSize = false;
 			this.toolStripButtonRename.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonRename.Text = "Rename";
 			this.toolStripButtonRename.Click += new System.EventHandler(this.toolStripButtonRename_Click);
@@ -307,6 +320,7 @@
 			this.toolStripButtonClone.Image = global::NeoAxis.Properties.Resources.Copy_16;
 			this.toolStripButtonClone.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonClone.Name = "toolStripButtonClone";
+			this.toolStripButtonClone.AutoSize = false;
 			this.toolStripButtonClone.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonClone.Text = "Duplicate";
 			this.toolStripButtonClone.Click += new System.EventHandler(this.toolStripButtonClone_Click);
@@ -317,6 +331,7 @@
 			this.toolStripButtonMoveUp.Image = global::NeoAxis.Properties.Resources.MoveUp_16;
 			this.toolStripButtonMoveUp.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonMoveUp.Name = "toolStripButtonMoveUp";
+			this.toolStripButtonMoveUp.AutoSize = false;
 			this.toolStripButtonMoveUp.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonMoveUp.Text = "Move Up";
 			this.toolStripButtonMoveUp.Click += new System.EventHandler(this.toolStripButtonMoveUp_Click);
@@ -327,6 +342,7 @@
 			this.toolStripButtonMoveDown.Image = global::NeoAxis.Properties.Resources.MoveDown_16;
 			this.toolStripButtonMoveDown.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonMoveDown.Name = "toolStripButtonMoveDown";
+			this.toolStripButtonMoveDown.AutoSize = false;
 			this.toolStripButtonMoveDown.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonMoveDown.Text = "Move Down";
 			this.toolStripButtonMoveDown.Click += new System.EventHandler(this.toolStripButtonMoveDown_Click);
@@ -337,6 +353,7 @@
 			this.toolStripButtonCut.Image = global::NeoAxis.Properties.Resources.Cut_16;
 			this.toolStripButtonCut.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonCut.Name = "toolStripButtonCut";
+			this.toolStripButtonCut.AutoSize = false;
 			this.toolStripButtonCut.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonCut.Text = "Cut";
 			this.toolStripButtonCut.Click += new System.EventHandler(this.toolStripButtonCut_Click);
@@ -347,6 +364,7 @@
 			this.toolStripButtonCopy.Image = global::NeoAxis.Properties.Resources.Copy_16;
 			this.toolStripButtonCopy.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonCopy.Name = "toolStripButtonCopy";
+			this.toolStripButtonCopy.AutoSize = false;
 			this.toolStripButtonCopy.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonCopy.Text = "Copy";
 			this.toolStripButtonCopy.Click += new System.EventHandler(this.toolStripButtonCopy_Click);
@@ -357,6 +375,7 @@
 			this.toolStripButtonPaste.Image = global::NeoAxis.Properties.Resources.Paste_16;
 			this.toolStripButtonPaste.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonPaste.Name = "toolStripButtonPaste";
+			this.toolStripButtonPaste.AutoSize = false;
 			this.toolStripButtonPaste.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonPaste.Text = "Paste";
 			this.toolStripButtonPaste.Click += new System.EventHandler(this.toolStripButtonPaste_Click);
@@ -372,6 +391,7 @@
 			this.toolStripButtonSearch.Image = global::NeoAxis.Properties.Resources.Focus_16;
 			this.toolStripButtonSearch.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonSearch.Name = "toolStripButtonSearch";
+			this.toolStripButtonSearch.AutoSize = false;
 			this.toolStripButtonSearch.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonSearch.Text = "Search";
 			this.toolStripButtonSearch.Click += new System.EventHandler(this.toolStripButtonSearch_Click);
@@ -743,7 +763,8 @@
 			this.toolStripForListView.Location = new System.Drawing.Point(1, 1);
 			this.toolStripForListView.Name = "toolStripForListView";
 			this.toolStripForListView.ShowItemToolTips = false;
-			this.toolStripForListView.Size = new System.Drawing.Size(509, 30);
+			this.toolStripForListView.AutoSize = false;
+			this.toolStripForListView.Size = new System.Drawing.Size(509, 27);
 			this.toolStripForListView.Stretch = true;
 			this.toolStripForListView.TabIndex = 3;
 			// 
@@ -754,15 +775,18 @@
 			this.toolStripButtonUp.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonUp.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.toolStripButtonUp.Name = "toolStripButtonUp";
-			this.toolStripButtonUp.Size = new System.Drawing.Size(23, 27);
+			this.toolStripButtonUp.AutoSize = false;
+			this.toolStripButtonUp.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonUp.Click += new System.EventHandler(this.toolStripButtonUp_Click);
 			// 
 			// toolStripBreadCrumbHost
 			// 
 			this.toolStripBreadCrumbHost.Font = new System.Drawing.Font("Microsoft Sans Serif", 4F, System.Drawing.FontStyle.Italic);
-			this.toolStripBreadCrumbHost.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
+			this.toolStripBreadCrumbHost.Margin = new System.Windows.Forms.Padding( 0, 0, 0, 0 );
+			this.toolStripBreadCrumbHost.Padding = new System.Windows.Forms.Padding( 0, 0, 0, 0 );
 			this.toolStripBreadCrumbHost.Name = "toolStripBreadCrumbHost";
-			this.toolStripBreadCrumbHost.Size = new System.Drawing.Size(133, 28);
+			//this.toolStripBreadCrumbHost.AutoSize = false;
+			this.toolStripBreadCrumbHost.Size = new System.Drawing.Size(133, 27);
 			// 
 			// kryptonBorderEdgeT
 			// 

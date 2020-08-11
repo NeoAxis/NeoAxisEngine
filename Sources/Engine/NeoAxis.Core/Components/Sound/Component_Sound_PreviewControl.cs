@@ -44,7 +44,7 @@ namespace NeoAxis.Editor
 
 		void Play( bool loop )
 		{
-			var soundComponent = ObjectForPreview as Component_Sound;
+			var soundComponent = ObjectOfPreview as Component_Sound;
 
 			if( soundComponent != null && soundComponent.Result != null )
 			{

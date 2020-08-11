@@ -22,7 +22,7 @@ namespace NeoAxis.Editor
 
 		public Component_Surface Surface
 		{
-			get { return ObjectForPreview as Component_Surface; }
+			get { return ObjectOfPreview as Component_Surface; }
 		}
 
 		protected override void OnLoad( EventArgs e )

@@ -59,7 +59,7 @@ namespace NeoAxis.Editor
 
 		public static string PackagesFolder
 		{
-			get { return Path.Combine( VirtualFileSystem.Directories.Project, "Packages" ); }
+			get { return Path.Combine( VirtualFileSystem.Directories.Project, "EnginePackages" ); }
 		}
 
 		public static List<PackageInfo> GetPackagesInfo()

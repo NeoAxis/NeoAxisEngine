@@ -56,11 +56,11 @@ namespace NeoAxis.Editor
 			InitializeComponent();
 
 			Resizable = true;
-			SpecialHolder = true;
+			UseFormDropDownHolder = true;
 			//DoubleBuffered = true;
 			ResizeRedraw = true;
-			MinimumSize = Size;
-			MaximumSize = new Size( Size.Width * 2, Size.Height * 2 );
+			//MinimumSize = Size;
+			//MaximumSize = new Size( Size.Width * 2, Size.Height * 2 );
 
 			AddOkCancelButtons( out _, out _ );
 

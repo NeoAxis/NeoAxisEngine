@@ -19,15 +19,14 @@ Royalty-free platform with source code provided.
 <h2>Supported platforms</h2>
 <ul>
 <li>Windows</li>
-<li>UWP (Universal Windows, Xbox, Windows Store)</li>
+<li>(Temporary disabled in 2020.5) UWP (Universal Windows, Xbox, Windows Store)</li>
 <li>Android (coming soon)</li>
 <li>...</li>
 </ul>
 
 <h2>Building</h2>
 <ul>
-<li>NeoAxis.Managed.sln - Restore NuGet packets before compilation. Visual Studio 2017+.</li>
-<li>By default is better to use the Release configuration by performance reasons, debugging is supported.</li>
+<li>NeoAxis.Managed.All.VS2019.Windows.sln - Restore NuGet packets before compilation. Visual Studio 2019, .NET Core 3.1.</li>
 <li>Download Sci-fi Demo and Nature Demo from the Asset Store window.</li>
 </ul>
 How build for other platforms see Building.txt.

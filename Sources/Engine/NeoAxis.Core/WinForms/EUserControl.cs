@@ -23,11 +23,16 @@ namespace NeoAxis
 		bool destroyed;
 		bool? isDesignerHosted; //contains information about design mode state
 
+		Form cachedParentFormToResizeEvents;
+		bool parentFormResizing;
+
 		/////////////////////////////////////////
 
 		public EUserControl()
 		{
 			InitializeComponent();
+
+			Font = new Font( new FontFamily( "Microsoft Sans Serif" ), 8f );
 		}
 
 		protected override void WndProc( ref Message m )
@@ -42,6 +47,13 @@ namespace NeoAxis
 			}
 
 			base.WndProc( ref m );
+		}
+
+		protected override void OnLoad( EventArgs e )
+		{
+			base.OnLoad( e );
+
+			UpdateCachedParentFormToResizeEvents();
 		}
 
 		protected virtual void OnDestroy()
@@ -95,6 +107,75 @@ namespace NeoAxis
 					return false;
 				}
 			}
+		}
+
+		public Form FindParentForm()
+		{
+			var p = Parent;
+			while( p != null )
+			{
+				var form = p as Form;
+				if( form != null )
+					return form;
+				p = p.Parent;
+			}
+			return null;
+		}
+
+		void UpdateCachedParentFormToResizeEvents()
+		{
+			var form = FindParentForm();
+			if( form != cachedParentFormToResizeEvents )
+			{
+				if( cachedParentFormToResizeEvents != null )
+				{
+					cachedParentFormToResizeEvents.ResizeBegin -= ParentFormToResizeEvents_ResizeBegin;
+					cachedParentFormToResizeEvents.ResizeEnd -= ParentFormToResizeEvents_ResizeEnd;
+					cachedParentFormToResizeEvents = null;
+				}
+
+				if( form != null )
+				{
+					cachedParentFormToResizeEvents = form;
+					cachedParentFormToResizeEvents.ResizeBegin += ParentFormToResizeEvents_ResizeBegin;
+					cachedParentFormToResizeEvents.ResizeEnd += ParentFormToResizeEvents_ResizeEnd;
+				}
+			}
+		}
+
+		protected override void OnResize( EventArgs e )
+		{
+			base.OnResize( e );
+
+			UpdateCachedParentFormToResizeEvents();
+		}
+
+		private void ParentFormToResizeEvents_ResizeBegin( object sender, EventArgs e )
+		{
+			if( cachedParentFormToResizeEvents != null && cachedParentFormToResizeEvents == FindParentForm() )
+				OnParentFormResizeBegin( EventArgs.Empty );
+		}
+
+		private void ParentFormToResizeEvents_ResizeEnd( object sender, EventArgs e )
+		{
+			if( cachedParentFormToResizeEvents != null && cachedParentFormToResizeEvents == FindParentForm() )
+				OnParentFormResizeEnd( EventArgs.Empty );
+		}
+
+		protected virtual void OnParentFormResizeBegin( EventArgs e )
+		{
+			parentFormResizing = true;
+		}
+
+		protected virtual void OnParentFormResizeEnd( EventArgs e )
+		{
+			parentFormResizing = false;
+		}
+
+		[Browsable( false )]
+		public bool ParentFormResizing
+		{
+			get { return parentFormResizing; }
 		}
 	}
 }

@@ -175,7 +175,7 @@ namespace NeoAxis.Editor
 			if( valueChanging )
 				return;
 
-			if( !ValidateTextBox( (HCKryptonTextBox)sender ) )
+			if( !ValidateTextBox( (EngineTextBox)sender ) )
 				return;
 
 			try
@@ -221,7 +221,7 @@ namespace NeoAxis.Editor
 			}
 		}
 
-		private bool ValidateTextBox( HCKryptonTextBox textBox )
+		private bool ValidateTextBox( EngineTextBox textBox )
 		{
 			try
 			{
@@ -240,7 +240,7 @@ namespace NeoAxis.Editor
 
 		private void anyTextBox_Validated( object sender, EventArgs e )
 		{
-			ValidateTextBox( (HCKryptonTextBox)sender );
+			ValidateTextBox( (EngineTextBox)sender );
 		}
 	}
 }

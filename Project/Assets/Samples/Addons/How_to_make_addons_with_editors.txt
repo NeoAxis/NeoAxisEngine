@@ -1,0 +1,9 @@
+You can make:
+- Canvas based editor.
+- The editor based on engine GUI. Make .ui file in the NeoAxis editor.
+- WinForms/WPF add-ons.
+- With help of canvas based editor you can add support of another GUI libraries like Avalonia.
+
+Projects for this folder:
+- NeoAxis.Addon.ExampleEditorEngineGUI
+- NeoAxis.Addon.ExampleEditorWinForms

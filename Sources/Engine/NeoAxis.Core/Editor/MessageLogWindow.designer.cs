@@ -35,7 +35,7 @@ namespace NeoAxis.Editor
 			this.toolStripButtonClear = new System.Windows.Forms.ToolStripButton();
 			this.kryptonSplitContainer1 = new ComponentFactory.Krypton.Toolkit.KryptonSplitContainer();
 			this.contentBrowser1 = new NeoAxis.Editor.ContentBrowser();
-			this.kryptonRichTextBox1 = new ComponentFactory.Krypton.Toolkit.KryptonRichTextBox();
+			//this.kryptonRichTextBox1 = new ComponentFactory.Krypton.Toolkit.KryptonRichTextBox();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.toolStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer1)).BeginInit();
@@ -56,6 +56,7 @@ namespace NeoAxis.Editor
             this.toolStripButtonClear});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
+			this.toolStrip1.AutoSize = false;
 			this.toolStrip1.Size = new System.Drawing.Size(713, 25);
 			this.toolStrip1.TabIndex = 1;
 			this.toolStrip1.Text = "toolStrip1";
@@ -66,6 +67,7 @@ namespace NeoAxis.Editor
 			this.toolStripButtonOptions.Image = global::NeoAxis.Properties.Resources.Options_16;
 			this.toolStripButtonOptions.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonOptions.Name = "toolStripButtonOptions";
+			this.toolStripButtonOptions.AutoSize = false;
 			this.toolStripButtonOptions.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonOptions.Text = "Options";
 			this.toolStripButtonOptions.Click += new System.EventHandler(this.toolStripButtonOptions_Click);
@@ -81,6 +83,7 @@ namespace NeoAxis.Editor
 			this.toolStripButtonClear.Image = global::NeoAxis.Properties.Resources.Delete_16;
 			this.toolStripButtonClear.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.toolStripButtonClear.Name = "toolStripButtonClear";
+			this.toolStripButtonClear.AutoSize = false;
 			this.toolStripButtonClear.Size = new System.Drawing.Size(23, 22);
 			this.toolStripButtonClear.Text = "Clear";
 			this.toolStripButtonClear.Click += new System.EventHandler(this.toolStripButtonClear_Click);
@@ -97,7 +100,7 @@ namespace NeoAxis.Editor
 			// 
 			// kryptonSplitContainer1.Panel2
 			// 
-			this.kryptonSplitContainer1.Panel2.Controls.Add(this.kryptonRichTextBox1);
+			//this.kryptonSplitContainer1.Panel2.Controls.Add(this.kryptonRichTextBox1);
 			this.kryptonSplitContainer1.Size = new System.Drawing.Size(713, 165);
 			this.kryptonSplitContainer1.SplitterDistance = 345;
 			this.kryptonSplitContainer1.SplitterPercent = 0.4838709677419355D;
@@ -119,18 +122,18 @@ namespace NeoAxis.Editor
 			this.contentBrowser1.TabIndex = 2;
 			this.contentBrowser1.ThisIsSettingsWindow = false;
 			this.contentBrowser1.ItemAfterSelect += new NeoAxis.Editor.ContentBrowser.ItemAfterSelectDelegate(this.contentBrowser1_ItemAfterSelect);
-			// 
-			// kryptonRichTextBox1
-			// 
-			this.kryptonRichTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.kryptonRichTextBox1.Location = new System.Drawing.Point(0, 0);
-			this.kryptonRichTextBox1.Name = "kryptonRichTextBox1";
-			this.kryptonRichTextBox1.ReadOnly = true;
-			this.kryptonRichTextBox1.Size = new System.Drawing.Size(363, 165);
-			this.kryptonRichTextBox1.StateCommon.Content.Font = new System.Drawing.Font("Courier New", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.kryptonRichTextBox1.TabIndex = 2;
-			this.kryptonRichTextBox1.Text = "";
-			this.kryptonRichTextBox1.WordWrap = false;
+			//// 
+			//// kryptonRichTextBox1
+			//// 
+			//this.kryptonRichTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+			//this.kryptonRichTextBox1.Location = new System.Drawing.Point(0, 0);
+			//this.kryptonRichTextBox1.Name = "kryptonRichTextBox1";
+			//this.kryptonRichTextBox1.ReadOnly = true;
+			//this.kryptonRichTextBox1.Size = new System.Drawing.Size(363, 165);
+			//this.kryptonRichTextBox1.StateCommon.Content.Font = new System.Drawing.Font("Courier New", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			//this.kryptonRichTextBox1.TabIndex = 2;
+			//this.kryptonRichTextBox1.Text = "";
+			//this.kryptonRichTextBox1.WordWrap = false;
 			// 
 			// timer1
 			// 
@@ -167,7 +170,7 @@ namespace NeoAxis.Editor
 		private System.Windows.Forms.ToolStripButton toolStripButtonOptions;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparatorFilteringMode;
 		private ComponentFactory.Krypton.Toolkit.KryptonSplitContainer kryptonSplitContainer1;
-		private ComponentFactory.Krypton.Toolkit.KryptonRichTextBox kryptonRichTextBox1;
+		//private ComponentFactory.Krypton.Toolkit.KryptonRichTextBox kryptonRichTextBox1;
 		private ContentBrowser contentBrowser1;
 		private System.Windows.Forms.Timer timer1;
 	}

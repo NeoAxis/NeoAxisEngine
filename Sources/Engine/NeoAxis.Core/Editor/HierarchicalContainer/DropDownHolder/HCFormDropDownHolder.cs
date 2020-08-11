@@ -8,7 +8,7 @@ using ComponentFactory.Krypton.Toolkit;
 
 namespace NeoAxis.Editor
 {
-	public partial class HCFormDropDownHolder : Form, IDropDownHolder
+	public partial class HCFormDropDownHolder : EngineForm, IDropDownHolder
 	{
 		HCDropDownHolderImpl impl;
 
@@ -18,14 +18,14 @@ namespace NeoAxis.Editor
 		{
 			get { return impl != null ? impl.Resizable : false; }
 		}
-		public new Size MinimumSize
-		{
-			get { return impl != null ? impl.MinimumSize : Size.Empty; }
-		}
-		public new Size MaximumSize
-		{
-			get { return impl != null ? impl.MaximumSize : Size.Empty; }
-		}
+		//public new Size MinimumSize
+		//{
+		//	get { return impl != null ? impl.MinimumSize : Size.Empty; }
+		//}
+		//public new Size MaximumSize
+		//{
+		//	get { return impl != null ? impl.MaximumSize : Size.Empty; }
+		//}
 
 		protected override CreateParams CreateParams
 		{
@@ -34,10 +34,6 @@ namespace NeoAxis.Editor
 				CreateParams cp = base.CreateParams;
 				cp.ExStyle |= PI.WS_EX_TOOLWINDOW;
 				cp.Style |= PI.WS_POPUP | PI.WS_BORDER;
-				if( OSFeature.IsPresent( SystemParameter.DropShadow ) )
-					cp.ClassStyle |= PI.CS_DROPSHADOW;
-
-				cp.ExStyle |= 0x02000000;//WS_EX_COMPOSITED
 
 				return cp;
 			}
@@ -47,9 +43,17 @@ namespace NeoAxis.Editor
 
 		public HCFormDropDownHolder( HCDropDownControl control )
 		{
+			//InitializeComponent();
+
+			MinimumSize = new Size( 1, 1 );
+			MaximumSize = new Size( 10000, 10000 );
+
 			//DoubleBuffered = true;
 			ResizeRedraw = true;
 			AutoSize = false;
+
+			//border
+			BackColor = EditorAPI.DarkTheme ? Color.FromArgb( 90, 90, 90 ) : Color.FromArgb( 240, 240, 240 );
 
 			Closed += ( s, e ) => HolderClosed( s, e );
 
@@ -109,17 +113,23 @@ namespace NeoAxis.Editor
 			if( Disposing )
 				return; // already closing
 
-			//HACK:
-			// 1) check active window after 10 ms.
-			// 2) if active window is main form or null, close holder.
-			// it prevents from closing when the WPF forms open. eg. AvelonEdit CompletionWindow
-			Task.Delay( 10 ).ContinueWith( ( t ) =>
+			if( !EditorAPI.ClosingApplication )
 			{
-				var wnd = GetActiveWindow();
-				if( wnd == IntPtr.Zero || wnd == EditorForm.Instance.Handle )
-					Close( true );
-			}, TaskScheduler.FromCurrentSynchronizationContext() );
-
+				try
+				{
+					//HACK:
+					// 1) check active window after 10 ms.
+					// 2) if active window is main form or null, close holder.
+					// it prevents from closing when the WPF forms open. eg. AvelonEdit CompletionWindow
+					Task.Delay( 10 ).ContinueWith( ( t ) =>
+					{
+						var wnd = GetActiveWindow();
+						if( wnd == IntPtr.Zero || wnd == EditorForm.Instance.Handle )
+							Close( true );
+					}, TaskScheduler.FromCurrentSynchronizationContext() );
+				}
+				catch { }
+			}
 		}
 
 		protected override bool ProcessCmdKey( ref Message msg, Keys keyData )

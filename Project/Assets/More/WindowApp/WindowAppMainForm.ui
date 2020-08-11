@@ -1,0 +1,365 @@
+.component Project.WindowAppMainForm
+{
+	Size = Parent 1 1
+	BackgroundColor = 0.3411765 0.3411765 0.3411765
+	EditorScrollPosition = -0.174094289653748 0.305407311651271
+	Style
+	{
+		GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Exit
+		Text = Close
+		Size = Units 200 40
+		HorizontalAlignment = Right
+		Margin = Units 500 30 30 0
+		EditorScrollPosition = 0 0
+		.component NeoAxis.Component_EventHandler
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonExit_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIRenderTarget
+	{
+		Name = Render Target
+		Size = Units 630.508761470931 400
+		HorizontalAlignment = Center
+		Margin = Units 390 560 200 0
+		EditorScrollPosition = 0 0
+		Scene
+		{
+			GetByReference = "Samples\\Starter Content\\Scenes\\Scripting C#.scene"
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button System Message Box
+		Text = System Message Box
+		ReadOnly = True
+		Size = Units 200 40
+		HorizontalAlignment = Right
+		Margin = Units 1550 230 30 0
+		EditorScrollPosition = 0 0
+		.component NeoAxis.Component_EventHandler
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonSystemMessageBox_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UICombo
+	{
+		Name = Combo
+		Size = Units 400 40
+		Margin = Units 30 80 0 0
+		EditorScrollPosition = 0 0
+		Items
+		{
+			Count = 3
+			0 = Item 1
+			1 = Item 2
+			2 = Item 3
+		}
+		.component NeoAxis.UIEdit
+		{
+			Name = Text Control
+			ReadOnly = True
+			CanBeSelected = False
+			Size = Parent 1 1
+			HorizontalAlignment = Stretch
+			VerticalAlignment = Stretch
+			EditorScrollPosition = 0 0
+			Text
+			{
+				GetByReference = "this:..\\DisplayText"
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text
+				CanBeSelected = False
+				Size = Parent 1 1
+				HorizontalAlignment = Stretch
+				VerticalAlignment = Stretch
+				Margin = Units 4 2 4 2
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				ClipRectangle = True
+				Text
+				{
+					GetByReference = "this:..\\DisplayText"
+				}
+			}
+			.component NeoAxis.UIImage
+			{
+				CanBeSelected = False
+				Size = Screen 0 0
+				HorizontalAlignment = Right
+				EditorScrollPosition = 0 0
+				SourceImage
+				{
+					GetByReference = "Base\\UI\\Images\\ComboBoxButton.png"
+				}
+			}
+		}
+		.component NeoAxis.UIList
+		{
+			Name = Down List
+			Visible = False
+			CanBeSelected = False
+			Size = Screen 0 0
+			Margin = Parent 0 1 1 1
+			TopMost = True
+			EditorScrollPosition = 0 0
+			Items
+			{
+				Count = 0
+			}
+			.component NeoAxis.UIScrollBar
+			{
+				Name = ScrollBar
+				CanBeSelected = False
+				Size = Units 30 400
+				HorizontalAlignment = Right
+				VerticalAlignment = Stretch
+				Margin = Units 0 2 2 2
+				EditorScrollPosition = 0 0
+				Vertical = True
+			}
+		}
+	}
+	.component NeoAxis.UIText
+	{
+		Name = Text
+		Text = Text text text
+		Size = Units 400 30
+		Margin = Units 30 860 360 0
+		EditorScrollPosition = 0 0
+		TextHorizontalAlignment = Left
+	}
+	.component NeoAxis.UICheck
+	{
+		Name = Check
+		Text = Check box
+		Size = Units 25 25
+		Margin = Units 30 30 0 0
+		EditorScrollPosition = 0 0
+	}
+	.component NeoAxis.UISlider
+	{
+		Name = Slider
+		Size = Units 400 30
+		Margin = Units 30 150 0 0
+		EditorScrollPosition = 0 0
+	}
+	.component NeoAxis.UIList
+	{
+		Name = List
+		Size = Units 400 100
+		Margin = Units 30 220 0 0
+		EditorScrollPosition = 0 0
+		Items
+		{
+			Count = 3
+			0 = Item 1
+			1 = Item 2
+			2 = Item 3
+		}
+		.component NeoAxis.UIScrollBar
+		{
+			Name = ScrollBar
+			CanBeSelected = False
+			Size = Units 30 400
+			HorizontalAlignment = Right
+			VerticalAlignment = Stretch
+			Margin = Units 0 2 2 2
+			EditorScrollPosition = 0 0
+			Vertical = True
+		}
+	}
+	.component NeoAxis.UIEdit
+	{
+		Name = Edit
+		Text = Edit box
+		Size = Units 400 40
+		Margin = Units 30 350 0 0
+		EditorScrollPosition = 0 0
+		.component NeoAxis.UIText
+		{
+			Name = Text
+			CanBeSelected = False
+			Size = Parent 1 1
+			HorizontalAlignment = Stretch
+			VerticalAlignment = Stretch
+			Margin = Units 4 2 4 2
+			EditorScrollPosition = 0 0
+			TextHorizontalAlignment = Left
+			ClipRectangle = True
+			Text
+			{
+				GetByReference = "this:..\\DisplayText"
+			}
+		}
+	}
+	.component NeoAxis.UIScrollBar
+	{
+		Name = Scroll Bar
+		Size = Units 400 30
+		Margin = Units 30 420 0 0
+		EditorScrollPosition = 0 0
+	}
+	.component NeoAxis.UIGrid
+	{
+		Name = Grid
+		Size = Units 400 280
+		Margin = Units 30 480 0 0
+		EditorScrollPosition = 0 0
+		Rows = 3
+		.component NeoAxis.UIControl
+		{
+			Name = Cell 0 0
+			Size = Parent 0.25 0.3333333333333333
+			EditorScrollPosition = 0 0
+		}
+		.component NeoAxis.UIControl
+		{
+			Name = Cell 0 1
+			Size = Parent 0.25 0.3333333333333333
+			Margin = Parent 0.25 0 0 0
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIImage
+			{
+				Name = Image
+				Size = Parent 0.9 0.9
+				Margin = Parent 0.05 0.05 1 1
+				EditorScrollPosition = 0 0
+				SourceImage
+				{
+					GetByReference = "Samples\\Starter Content\\Textures\\Lens flares\\starring.png"
+				}
+			}
+		}
+		.component NeoAxis.UIControl
+		{
+			Name = Cell 0 2
+			Size = Parent 0.25 0.3333333333333333
+			Margin = Parent 0.5 0 0 0
+			EditorScrollPosition = 0 0
+		}
+		.component NeoAxis.UIControl
+		{
+			Name = Cell 1 0
+			Size = Parent 0.25 0.3333333333333333
+			Margin = Parent 0 0.3333333333333333 0 0
+			EditorScrollPosition = 0 0
+		}
+		.component NeoAxis.UIControl
+		{
+			Name = Cell 1 1
+			Size = Parent 0.25 0.3333333333333333
+			Margin = Parent 0.25 0.3333333333333333 0 0
+			EditorScrollPosition = 0 0
+		}
+		.component NeoAxis.UIControl
+		{
+			Name = Cell 1 2
+			Size = Parent 0.25 0.3333333333333333
+			Margin = Parent 0.5 0.3333333333333333 0 0
+			EditorScrollPosition = 0 0
+		}
+		.component NeoAxis.UIControl
+		{
+			Name = Cell 2 0
+			Size = Parent 0.25 0.3333333333333333
+			Margin = Parent 0 0.6666666666666666 0 0
+			EditorScrollPosition = 0 0
+		}
+		.component NeoAxis.UIControl
+		{
+			Name = Cell 2 1
+			Size = Parent 0.25 0.3333333333333333
+			Margin = Parent 0.25 0.6666666666666666 0 0
+			EditorScrollPosition = 0 0
+		}
+		.component NeoAxis.UIControl
+		{
+			Name = Cell 2 2
+			Size = Parent 0.25 0.3333333333333333
+			Margin = Parent 0.5 0.6666666666666666 0 0
+			EditorScrollPosition = 0 0
+		}
+		.component NeoAxis.UIControl
+		{
+			Name = Cell 0 3
+			Size = Parent 0.25 0.3333333333333333
+			Margin = Parent 0.75 0 0 0
+			EditorScrollPosition = 0 0
+		}
+		.component NeoAxis.UIControl
+		{
+			Name = Cell 1 3
+			Size = Parent 0.25 0.3333333333333333
+			Margin = Parent 0.75 0.3333333333333333 0 0
+			EditorScrollPosition = 0 0
+		}
+		.component NeoAxis.UIControl
+		{
+			Name = Cell 2 3
+			Size = Parent 0.25 0.3333333333333333
+			Margin = Parent 0.75 0.6666666666666666 0 0
+			EditorScrollPosition = 0 0
+		}
+	}
+	.component NeoAxis.UIProgressBar
+	{
+		Name = Progress Bar
+		Size = Units 400 40
+		Margin = Units 30 790 0 0
+		EditorScrollPosition = 0 0
+		Value = 30
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Message Box
+		Text = Message Box
+		Size = Units 200 40
+		HorizontalAlignment = Right
+		Margin = Units 720 170 30 0
+		EditorScrollPosition = 0 0
+		.component NeoAxis.Component_EventHandler
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonMessageBox_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+}

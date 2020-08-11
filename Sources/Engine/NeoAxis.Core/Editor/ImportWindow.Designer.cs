@@ -115,8 +115,8 @@
 			// 
 			// panelName
 			// 
-			this.panelName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			//this.panelName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+   //         | System.Windows.Forms.AnchorStyles.Right)));
 			this.panelName.Controls.Add(this.labelName);
 			this.panelName.Controls.Add(this.textBoxDestinationFolder);
 			this.panelName.Controls.Add(this.buttonDestinationFolderBrowse);
@@ -137,8 +137,8 @@
 			// 
 			// textBoxDestinationFolder
 			// 
-			this.textBoxDestinationFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			//this.textBoxDestinationFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+   //         | System.Windows.Forms.AnchorStyles.Right)));
 			this.textBoxDestinationFolder.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.textBoxDestinationFolder.Location = new System.Drawing.Point(63, 2);
 			this.textBoxDestinationFolder.Name = "textBoxDestinationFolder";
@@ -147,7 +147,7 @@
 			// 
 			// buttonDestinationFolderBrowse
 			// 
-			this.buttonDestinationFolderBrowse.Dock = System.Windows.Forms.DockStyle.Right;
+			//this.buttonDestinationFolderBrowse.Dock = System.Windows.Forms.DockStyle.Right;
 			this.buttonDestinationFolderBrowse.Location = new System.Drawing.Point(634, 0);
 			this.buttonDestinationFolderBrowse.Name = "buttonDestinationFolderBrowse";
 			this.buttonDestinationFolderBrowse.Size = new System.Drawing.Size(30, 26);
@@ -198,9 +198,9 @@
 			// 
 			// tableLayoutPanel1
 			// 
-			this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			//this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+   //         | System.Windows.Forms.AnchorStyles.Left) 
+   //         | System.Windows.Forms.AnchorStyles.Right)));
 			this.tableLayoutPanel1.ColumnCount = 1;
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));

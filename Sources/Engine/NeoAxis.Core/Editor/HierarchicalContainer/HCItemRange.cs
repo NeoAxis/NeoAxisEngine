@@ -20,7 +20,8 @@ namespace NeoAxis.Editor
 
 		protected override void OnDropDownMouseButtonUp()
 		{
-			Owner.ToggleDropDown( new RangeDropDownControl( this ), this );
+			var control = (HCGridTextBoxSelect)CreatedControlInsidePropertyItemControl;
+			Owner.ToggleDropDown( new RangeDropDownControl( this ), control.ButtonSelect );
 		}
 	}
 }

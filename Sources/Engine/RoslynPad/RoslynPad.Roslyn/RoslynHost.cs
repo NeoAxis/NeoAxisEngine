@@ -2,7 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
-using Microsoft.CodeAnalysis.MSBuild;
+//using Microsoft.CodeAnalysis.MSBuild;
 using RoslynPad.Roslyn.Diagnostics;
 using System;
 using System.Collections.Concurrent;

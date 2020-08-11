@@ -354,37 +354,37 @@ namespace ICSharpCode.AvalonEdit.Highlighting
 			{
 				try
 				{
-#if DEBUG
-					// don't use lazy-loading in debug builds, show errors immediately
-					Xshd.XshdSyntaxDefinition xshd;
-					using (Stream s = Resources.OpenStream(resourceName)) {
-						using (XmlTextReader reader = new XmlTextReader(s)) {
-							xshd = Xshd.HighlightingLoader.LoadXshd(reader, false);
-						}
-					}
-					Debug.Assert(name == xshd.Name);
-					if (extensions != null)
-						Debug.Assert(System.Linq.Enumerable.SequenceEqual(extensions, xshd.Extensions));
-					else
-						Debug.Assert(xshd.Extensions.Count == 0);
+//#if DEBUG
+//					// don't use lazy-loading in debug builds, show errors immediately
+//					Xshd.XshdSyntaxDefinition xshd;
+//					using (Stream s = Resources.OpenStream(resourceName)) {
+//						using (XmlTextReader reader = new XmlTextReader(s)) {
+//							xshd = Xshd.HighlightingLoader.LoadXshd(reader, false);
+//						}
+//					}
+//					Debug.Assert(name == xshd.Name);
+//					if (extensions != null)
+//						Debug.Assert(System.Linq.Enumerable.SequenceEqual(extensions, xshd.Extensions));
+//					else
+//						Debug.Assert(xshd.Extensions.Count == 0);
 					
-					// round-trip xshd:
-//					string resourceFileName = Path.Combine(Path.GetTempPath(), resourceName);
-//					using (XmlTextWriter writer = new XmlTextWriter(resourceFileName, System.Text.Encoding.UTF8)) {
-//						writer.Formatting = Formatting.Indented;
-//						new Xshd.SaveXshdVisitor(writer).WriteDefinition(xshd);
-//					}
-//					using (FileStream fs = File.Create(resourceFileName + ".bin")) {
-//						new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Serialize(fs, xshd);
-//					}
-//					using (FileStream fs = File.Create(resourceFileName + ".compiled")) {
-//						new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Serialize(fs, Xshd.HighlightingLoader.Load(xshd, this));
-//					}
+//					// round-trip xshd:
+////					string resourceFileName = Path.Combine(Path.GetTempPath(), resourceName);
+////					using (XmlTextWriter writer = new XmlTextWriter(resourceFileName, System.Text.Encoding.UTF8)) {
+////						writer.Formatting = Formatting.Indented;
+////						new Xshd.SaveXshdVisitor(writer).WriteDefinition(xshd);
+////					}
+////					using (FileStream fs = File.Create(resourceFileName + ".bin")) {
+////						new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Serialize(fs, xshd);
+////					}
+////					using (FileStream fs = File.Create(resourceFileName + ".compiled")) {
+////						new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter().Serialize(fs, Xshd.HighlightingLoader.Load(xshd, this));
+////					}
 					
-					RegisterHighlighting(name, extensions, Xshd.HighlightingLoader.Load(xshd, this));
-#else
+//					RegisterHighlighting(name, extensions, Xshd.HighlightingLoader.Load(xshd, this));
+//#else
 					RegisterHighlighting( name, extensions, LoadHighlighting( resourceName ) );
-#endif
+//#endif
 				}
 				catch( HighlightingDefinitionInvalidException ex )
 				{
@@ -392,8 +392,8 @@ namespace ICSharpCode.AvalonEdit.Highlighting
 				}
 			}
 
-			[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode",
-															 Justification = "LoadHighlighting is used only in release builds" )]
+			//[System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode",
+			//												 Justification = "LoadHighlighting is used only in release builds" )]
 			Func<IHighlightingDefinition> LoadHighlighting( string resourceName )
 			{
 				Func<IHighlightingDefinition> func = delegate

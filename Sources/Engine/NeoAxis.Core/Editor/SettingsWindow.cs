@@ -31,6 +31,10 @@ namespace NeoAxis.Editor
 
 		bool settingsDisplayHierarchyOfObjectsInSettingsWindow;
 
+		bool needRecreatePanels;
+		DocumentWindow needRecreatePanelsDocumentWindow;
+		object[] needRecreatePanelsSelectObjects;
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		public class PanelData : PanelDataWithTableLayout
@@ -183,7 +187,8 @@ namespace NeoAxis.Editor
 							splitContainer.SplitterWidth = 8;
 							splitContainer.Orientation = Orientation.Horizontal;
 							splitContainer.Dock = DockStyle.Fill;
-							DarkThemeUtility.ApplyToSplitter( splitContainer );
+							if( EditorAPI.DarkTheme )
+								splitContainer.StateNormal.Back.Color1 = Color.FromArgb( 54, 54, 54 );
 							panel.layoutPanel.Controls.Add( splitContainer );
 
 							{
@@ -333,12 +338,7 @@ namespace NeoAxis.Editor
 				if( selectedPanel == value )
 					return;
 
-				if( selectedPanel != null )
-				{
-					selectedPanel.layoutPanel.Visible = false;
-					selectedPanel.layoutPanel.Enabled = false;
-				}
-
+				var old = selectedPanel;
 				selectedPanel = value;
 
 				if( selectedPanel != null )
@@ -347,6 +347,27 @@ namespace NeoAxis.Editor
 					selectedPanel.layoutPanel.Visible = true;
 					//selectedPanel.control.Focus();
 				}
+
+				if( old != null )
+				{
+					old.layoutPanel.Visible = false;
+					old.layoutPanel.Enabled = false;
+				}
+
+				//if( selectedPanel != null )
+				//{
+				//	selectedPanel.layoutPanel.Visible = false;
+				//	selectedPanel.layoutPanel.Enabled = false;
+				//}
+
+				//selectedPanel = value;
+
+				//if( selectedPanel != null )
+				//{
+				//	selectedPanel.layoutPanel.Enabled = true;
+				//	selectedPanel.layoutPanel.Visible = true;
+				//	//selectedPanel.control.Focus();
+				//}
 			}
 		}
 
@@ -390,6 +411,8 @@ namespace NeoAxis.Editor
 		{
 			if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
 				return;
+			if( KryptonPage == null || KryptonPage.Parent == null )
+				return;
 
 			UpdateEnabled();
 
@@ -410,6 +433,22 @@ namespace NeoAxis.Editor
 
 				if( selectedObjectsSet != null )
 					SelectObjects( documentWindow, selectedObjectsSet );
+			}
+
+			//recreate panels
+			if( needRecreatePanels )
+			{
+				var documentWindow = needRecreatePanelsDocumentWindow;
+				object[] selectedObjects = needRecreatePanelsSelectObjects;
+
+				needRecreatePanels = false;
+				needRecreatePanelsDocumentWindow = null;
+				needRecreatePanelsSelectObjects = null;
+
+				RemoveCachedPanels();
+
+				if( selectedObjects != null )
+					SelectObjects( documentWindow, selectedObjects );
 			}
 		}
 
@@ -463,5 +502,24 @@ namespace NeoAxis.Editor
 			}
 			return null;
 		}
+
+		protected override void OnKryptonPageParentChanged()
+		{
+			base.OnKryptonPageParentChanged();
+
+			//recreate panels when parent of KryptonPage was changed. need to restore _COMPOSITED flag, working tooltips
+			if( KryptonPage != null && KryptonPage.Parent == null )
+			{
+				if( SelectedPanel != null )
+				{
+					needRecreatePanels = true;
+					needRecreatePanelsDocumentWindow = SelectedPanel.documentWindow;
+					needRecreatePanelsSelectObjects = SelectedPanel.selectedObjectsSet.ToArray();
+
+					RemoveCachedPanels();
+				}
+			}
+		}
+
 	}
 }

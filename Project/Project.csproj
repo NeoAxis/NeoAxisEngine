@@ -1,59 +1,46 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{77A0E3BB-AD36-4128-9790-966770EAC238}</ProjectGuid>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Project</RootNamespace>
-    <AssemblyName>Project</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
     <OutputPath>Binaries\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Binaries\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NeoAxis.Addon.Pathfinding, Version=2020.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Binaries\NeoAxis.Addon.Pathfinding.dll</HintPath>
-    </Reference>
-    <Reference Include="NeoAxis.Core, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <EmbeddedResource Remove="Assets\Samples\Editor Addons\**" />
+    <EmbeddedResource Remove="Caches\**" />
+    <EmbeddedResource Remove="Packages\**" />
+    <EmbeddedResource Remove="Sources\**" />
+    <EmbeddedResource Remove="User settings\**" />
+    <None Remove="Assets\Samples\Editor Addons\**" />
+    <None Remove="Caches\**" />
+    <None Remove="Packages\**" />
+    <None Remove="Sources\**" />
+    <None Remove="User settings\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="NeoAxis.Core">
       <HintPath>Binaries\NeoAxis.Core.dll</HintPath>
-      <Private>False</Private>
+      <SpecificVersion>false</SpecificVersion>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="NeoAxis.CoreExtension, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="NeoAxis.CoreExtension">
       <HintPath>Binaries\NeoAxis.CoreExtension.dll</HintPath>
+      <SpecificVersion>false</SpecificVersion>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Base\Scripts\ProjectUtility.cs" />
@@ -67,10 +54,8 @@
     <Compile Include="Assets\Base\Scripts\ProjectAssembly.cs" />
     <Compile Include="Assets\Base\UI\Styles\UIStyleSimple.cs" />
     <Compile Include="Assets\Base\UI\Windows\MessageBoxWindow.cs" />
-    <Compile Include="Assets\Samples\Sample Window App\SampleAppMainForm.cs" />
     <Compile Include="Assets\Samples\Simple Game\SimpleGameGUI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Assets\More\WindowApp\WindowAppMainForm.cs" />
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

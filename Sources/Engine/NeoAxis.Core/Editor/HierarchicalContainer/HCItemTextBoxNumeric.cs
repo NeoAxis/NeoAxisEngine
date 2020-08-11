@@ -35,7 +35,7 @@ namespace NeoAxis.Editor
 		{
 		}
 
-		public override UserControl CreateControlInsidePropertyItemControl()
+		public override EUserControl CreateControlInsidePropertyItemControl()
 		{
 			return new HCGridTextBoxNumeric();
 		}

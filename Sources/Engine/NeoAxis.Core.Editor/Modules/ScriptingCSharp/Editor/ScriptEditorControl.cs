@@ -767,7 +767,7 @@ namespace NeoAxis.Editor
 
 		string TranslateContextMenu( string text )
 		{
-			return EditorContextMenu.Translate( text );
+			return EditorContextMenuWinForms.Translate( text );
 		}
 
 		private void Editor_ContextMenuOpening( object sender, System.Windows.Controls.ContextMenuEventArgs e )
@@ -868,9 +868,9 @@ namespace NeoAxis.Editor
 				items.Add( item );
 			}
 
-			EditorContextMenu.AddActionsToMenu( EditorContextMenu.MenuTypeEnum.General, items );
+			EditorContextMenuWinForms.AddActionsToMenu( EditorContextMenuWinForms.MenuTypeEnum.General, items );
 
-			EditorContextMenu.Show( items, this );
+			EditorContextMenuWinForms.Show( items, this );
 		}
 
 		void UpdateHighlightingScheme()

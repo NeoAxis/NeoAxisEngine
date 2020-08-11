@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO.Compression;
 
-#if ANDROID
+#if ANDROID || UWP
 
 namespace System.Configuration
 {
@@ -17,4 +17,11 @@ namespace System.Configuration
 	}
 }
 
-#endif //ANDROID
+namespace System
+{
+	public class UserPreferenceChangedEventArgs
+	{
+	}
+}
+
+#endif

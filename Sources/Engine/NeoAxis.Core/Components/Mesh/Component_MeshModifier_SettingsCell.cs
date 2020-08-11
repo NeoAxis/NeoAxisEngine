@@ -19,7 +19,7 @@ namespace NeoAxis.Editor
 			return EditorLocalization.Translate( "MeshModifier", text );
 		}
 
-		protected override void OnInitUI()
+		protected override void OnInit()
 		{
 			buttonBakeIntoMesh = ProcedureForm.CreateButton( Translate( "Bake into Mesh" ) );
 			buttonBakeIntoMesh.Click += ButtonBakeIntoMesh_Click;
@@ -46,7 +46,7 @@ namespace NeoAxis.Editor
 				else
 					text = Translate( "Bake selected geometry into the mesh?" );
 
-				if( EditorMessageBox.ShowQuestion( text, System.Windows.Forms.MessageBoxButtons.OKCancel ) == System.Windows.Forms.DialogResult.OK )
+				if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.OKCancel ) == EDialogResult.OK )
 				{
 					//bake
 					foreach( var modifier in modifiers )

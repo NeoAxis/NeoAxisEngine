@@ -191,8 +191,9 @@ namespace OpenALSoundSystem
 			if( thread != null )
 			{
 				needAbortThread = true;
-				Thread.Sleep( 50 );
-				thread.Abort();
+				Thread.Sleep( 100 );
+				//Thread.Sleep( 50 );
+				//thread.Abort();
 			}
 
 			if( realChannels != null )

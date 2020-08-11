@@ -13,6 +13,8 @@ namespace SampleWidgetWinForms
 		public SampleForm()
 		{
 			InitializeComponent();
+
+			Font = new Font( new FontFamily( "Microsoft Sans Serif" ), 8f );
 		}
 
 		private void buttonClose_Click( object sender, EventArgs e )

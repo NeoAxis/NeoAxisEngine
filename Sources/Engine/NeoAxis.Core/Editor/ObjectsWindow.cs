@@ -71,7 +71,7 @@ namespace NeoAxis.Editor
 			}
 			else
 			{
-				panel.control = new UserControl();
+				panel.control = new EUserControl();
 				panel.control.Dock = DockStyle.Fill;
 				Controls.Add( panel.control );
 			}

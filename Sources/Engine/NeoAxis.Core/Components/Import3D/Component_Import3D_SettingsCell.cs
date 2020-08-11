@@ -18,7 +18,7 @@ namespace NeoAxis.Editor
 			return EditorLocalization.Translate( "Import3D", text );
 		}
 
-		protected override void OnInitUI()
+		protected override void OnInit()
 		{
 			buttonReimport = ProcedureForm.CreateButton( Translate( "Re-import" ) );
 			buttonReimport.Click += ButtonReimport_Click;
@@ -60,8 +60,15 @@ namespace NeoAxis.Editor
 			{
 				Provider.DocumentWindow.Document.Modified = true;
 
-				var importDocumentWindow = Provider.DocumentWindow as Component_Import3D_DocumentWindow;
-				importDocumentWindow?.NeedRecreateDisplayObject( true );
+				//!!!!полезен вспомогательный метод/свойство чтобы получать CanvasBasedEditor
+				var window = Provider.DocumentWindow as DocumentWindowWithViewport_CanvasBasedEditor;
+				if( window != null )
+				{
+					var editor = window.Editor as Component_Import3D_Editor;
+					editor?.NeedRecreateDisplayObject( true );
+				}
+				//var importDocumentWindow = Provider.DocumentWindow as Component_Import3D_Editor;
+				//importDocumentWindow?.NeedRecreateDisplayObject( true );
 			}
 		}
 

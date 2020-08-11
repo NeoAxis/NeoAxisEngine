@@ -48,7 +48,7 @@ namespace NeoAxis.Editor
 		{
 		}
 
-		public override UserControl CreateControlInsidePropertyItemControl()
+		public override EUserControl CreateControlInsidePropertyItemControl()
 		{
 			return new HCGridDropDownButton();
 		}
@@ -64,15 +64,8 @@ namespace NeoAxis.Editor
 
 		private void Button_DropDown( object sender, ComponentFactory.Krypton.Toolkit.ContextPositionMenuArgs e )
 		{
-			Owner.ToggleDropDown( new EnumDropDownControl( this ), this );
-
-			// Krypton EnumDropDownControl experiments:
-			//var propertyType = ReferenceUtils.GetUnreferencedType( this.Property.Type.GetNetType() );
-			//var isFlag = propertyType.IsDefined( typeof( FlagsAttribute ), false );
-			//if( isFlag )
-			//	Owner.ToggleDropDown( new EnumDropDownControl_TestKCLB( this ), this );
-			//else
-			//	Owner.ToggleDropDown( new EnumDropDownControl_TestKLB( this ), this );
+			var control = (HCGridDropDownButton)CreatedControlInsidePropertyItemControl;
+			Owner.ToggleDropDown( new EnumDropDownControl( this ), control.Button );
 		}
 
 		public override void UpdateControl()
@@ -80,8 +73,11 @@ namespace NeoAxis.Editor
 			base.UpdateControl();
 
 			bool readOnly = !CanEditValue();
-			var control = (IHCDropDownButton)CreatedControlInsidePropertyItemControl;
+			var control = ( HCGridDropDownButton /*IHCDropDownButton*/)CreatedControlInsidePropertyItemControl;
 			control.Button.Enabled = !readOnly;
+
+			//update width. Anchor for this control works bad in .NET Core
+			control.Button.Width = control.Width - control.Button.Location.X;
 
 			var values = GetValues();
 			if( values == null )

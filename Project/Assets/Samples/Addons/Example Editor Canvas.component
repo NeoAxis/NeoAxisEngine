@@ -1,0 +1,5 @@
+.component NeoAxis.Addon.ExampleEditorEngineGUI.Component_ExampleEditorCanvas
+{
+	EditorScrollPosition = 0 0
+	EditorZoomIndex = 8
+}

@@ -1,28 +1,14 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{876CBDEC-8F38-453F-9BE5-D90A6AF28D10}</ProjectGuid>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NeoAxis</RootNamespace>
-    <AssemblyName>NeoAxis.CoreExtension</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
     <OutputPath>..\..\Binaries\</OutputPath>
     <DefineConstants>TRACE;DEBUG;WINDOWS;NET40</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DocumentationFile>..\..\Binaries\NeoAxis.CoreExtension.xml</DocumentationFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
@@ -31,12 +17,9 @@
     <CodeAnalysisRuleSet />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\Binaries\</OutputPath>
     <DefineConstants>TRACE;WINDOWS;NET40</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <NoWarn>CS1591;CS1573;CS0649;CS0414;CS1589;CS1574;CS1587</NoWarn>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <DocumentationFile>..\..\Binaries\NeoAxis.CoreExtension.xml</DocumentationFile>
@@ -45,111 +28,16 @@
     <CodeAnalysisRuleSet />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.ValueTuple, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Binaries\System.ValueTuple.dll</HintPath>
+    <Compile Update="Character2D\Component_Character2D_PreviewControl.cs" />
+    <Compile Update="Game framework\Component_ButtonInSpace_SettingsCell.cs" />
+    <Compile Update="Character2D\Component_Character2D_DocumentWindow.cs" />
+    <Compile Update="Character\Component_Character_DocumentWindow.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="NeoAxis.Core">
+      <HintPath>..\..\Binaries\NeoAxis.Core.dll</HintPath>
+      <SpecificVersion>false</SpecificVersion>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Character2D\Component_Character2D_PreviewControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Character2D\Component_Character2D_PreviewControl.designer.cs">
-      <DependentUpon>Component_Character2D_PreviewControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Game framework 2D\Component_Weapon2D.cs" />
-    <Compile Include="Game framework 2D\IComponent_Item2D.cs" />
-    <Compile Include="Game framework\Component_ButtonInSpace_SettingsCell.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Game framework 3D\IComponent_Item.cs" />
-    <Compile Include="Game framework 3D\Component_Weapon.cs" />
-    <Compile Include="Game framework\Component_CameraManagement.cs" />
-    <Compile Include="Game framework\Component_RegulatorSwitchInSpace.cs" />
-    <Compile Include="Game framework\Component_ButtonInSpace.cs" />
-    <Compile Include="Game framework 3D\IComponent_InteractiveObject.cs" />
-    <Compile Include="Mesh modifiers\Component_MeshModifier_BoxUV.cs" />
-    <Compile Include="Mesh modifiers\Component_MeshModifier_RandomizePosition.cs" />
-    <Compile Include="Character2D\Component_Character2D.cs" />
-    <Compile Include="Character2D\Component_Character2DAI.cs" />
-    <Compile Include="Character2D\Component_Character2DAITask_MoveTo.cs" />
-    <Compile Include="Character2D\Component_Character2DInputProcessing.cs" />
-    <Compile Include="Character2D\Component_Character2D_DocumentWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Character2D\Component_Character2D_DocumentWindow.designer.cs">
-      <DependentUpon>Component_Character2D_DocumentWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Character\Component_CharacterAITask_MoveTo.cs" />
-    <Compile Include="Character\Component_CharacterAI.cs" />
-    <Compile Include="Character\Component_Character.cs" />
-    <Compile Include="Character\Component_CharacterInputProcessing.cs" />
-    <Compile Include="Character\Component_Character_DocumentWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Character\Component_Character_DocumentWindow.designer.cs">
-      <DependentUpon>Component_Character_DocumentWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Game framework\Component_AITask.cs" />
-    <Compile Include="Game framework\Component_AI.cs" />
-    <Compile Include="Game framework\Component_InputProcessing.cs" />
-    <Compile Include="Utility\EngineConsole.cs" />
-    <Compile Include="Game framework\InputMessage.cs" />
-    <Compile Include="Shaders\ShaderFunctions.cs" />
-    <Compile Include="More components\Component_DestroyingSensor.cs" />
-    <Compile Include="Game framework\Component_GameMode.cs" />
-    <Compile Include="More components\Component_Grid.cs" />
-    <Compile Include="Character\CharacterAssemblyRegistration.cs" />
-    <Compile Include="More components\Component_RenderTargetInSpace.cs" />
-    <Compile Include="Utility\ScreenMessages.cs" />
-    <Compile Include="Project settings\Component_ProjectSettings_Extension.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utility\CanvasRendererUtility.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Character2D\Component_Character2D_PreviewControl.resx">
-      <DependentUpon>Component_Character2D_PreviewControl.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Sources\Engine\Addons\NeoAxis.Addon.Pathfinding\NeoAxis.Addon.Pathfinding.csproj">
-      <Project>{dc3f2bff-9b09-42c3-978c-338a0e25b400}</Project>
-      <Name>NeoAxis.Addon.Pathfinding</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Sources\Engine\Krypton Components\ComponentFactory.Krypton.Design\ComponentFactory.Krypton.Design.csproj">
-      <Project>{6004c98a-6642-4dcf-906c-e0ed3581978f}</Project>
-      <Name>ComponentFactory.Krypton.Design</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Sources\Engine\Krypton Components\ComponentFactory.Krypton.Docking\ComponentFactory.Krypton.Docking.csproj">
-      <Project>{e00ff125-cb44-480b-847e-7b3d27e481eb}</Project>
-      <Name>ComponentFactory.Krypton.Docking</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Sources\Engine\Krypton Components\ComponentFactory.Krypton.Navigator\ComponentFactory.Krypton.Navigator.csproj">
-      <Project>{dc0dd714-4d19-4f31-a6d0-ea209d4f0ea8}</Project>
-      <Name>ComponentFactory.Krypton.Navigator</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Sources\Engine\Krypton Components\ComponentFactory.Krypton.Ribbon\ComponentFactory.Krypton.Ribbon.csproj">
-      <Project>{e90fc375-453d-4fe4-9822-ce1db85b6553}</Project>
-      <Name>ComponentFactory.Krypton.Ribbon</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Sources\Engine\Krypton Components\ComponentFactory.Krypton.Toolkit\ComponentFactory.Krypton.Toolkit.csproj">
-      <Project>{96ecaecc-54f8-4aa5-8591-b443c2d9565f}</Project>
-      <Name>ComponentFactory.Krypton.Toolkit</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Sources\Engine\Krypton Components\ComponentFactory.Krypton.Workspace\ComponentFactory.Krypton.Workspace.csproj">
-      <Project>{9144ba04-155b-4b66-b85a-9a89aa93f7d4}</Project>
-      <Name>ComponentFactory.Krypton.Workspace</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Sources\Engine\NeoAxis.Core\NeoAxis.Core.csproj">
-      <Project>{765cbd47-5d68-403f-98e3-46b43c10342f}</Project>
-      <Name>NeoAxis.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

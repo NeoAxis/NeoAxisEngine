@@ -34,7 +34,7 @@
 			this.contentBrowser1 = new NeoAxis.Editor.ContentBrowser();
 			this.buttonSetAndClose = new ComponentFactory.Krypton.Toolkit.KryptonButton();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
-			this.labelSelectedReference = new NeoAxis.Editor.LabelEx();
+			this.labelSelectedReference = new NeoAxis.Editor.EngineLabel();
 			this.kryptonTextBox1 = new ComponentFactory.Krypton.Toolkit.KryptonTextBox();
 			this.kryptonCheckBoxCanMakeRelativeFilePath = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
 			this.SuspendLayout();
@@ -153,7 +153,7 @@
 		private ContentBrowser contentBrowser1;
 		private ComponentFactory.Krypton.Toolkit.KryptonButton buttonSetAndClose;
 		private System.Windows.Forms.Timer timer1;
-		private NeoAxis.Editor.LabelEx labelSelectedReference;
+		private NeoAxis.Editor.EngineLabel labelSelectedReference;
 		private ComponentFactory.Krypton.Toolkit.KryptonTextBox kryptonTextBox1;
 		private ComponentFactory.Krypton.Toolkit.KryptonCheckBox kryptonCheckBoxCanMakeRelativeFilePath;
 	}

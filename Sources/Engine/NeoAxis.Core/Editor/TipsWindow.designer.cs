@@ -124,7 +124,7 @@ namespace NeoAxis.Editor
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.Controls.Add(this.panel2);
 			this.Controls.Add(this.panel1);
-			this.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.471698F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			//this.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.471698F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.Margin = new System.Windows.Forms.Padding(5);
 			this.Name = "TipsWindow";
 			this.Size = new System.Drawing.Size(759, 535);

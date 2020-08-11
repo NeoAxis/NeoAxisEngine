@@ -21,7 +21,7 @@ namespace NeoAxis.Editor
 			return EditorLocalization.Translate( "CSharpScript", text );
 		}
 
-		protected override void OnInitUI()
+		protected override void OnInit()
 		{
 			buttonUpdate = ProcedureForm.CreateButton( Translate( "Update" ) );
 			buttonUpdate.Click += ButtonUpdate_Click;

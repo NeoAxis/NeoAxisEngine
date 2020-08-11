@@ -34,7 +34,11 @@ namespace NeoAxis.Editor
 		protected override void OnDropDownMouseButtonUp()
 		{
 			if( !dropDownHolderWasOpened )
-				Owner.ToggleDropDown( new ScriptDropDownControl( this ), this );
+			{
+				var control = (IHCTextBoxSelect)CreatedControlInsidePropertyItemControl;
+				Owner.ToggleDropDown( new ScriptDropDownControl( this ), control.ButtonSelect );
+				//Owner.ToggleDropDown( new ScriptDropDownControl( this ), this );
+			}
 		}
 	}
 }

@@ -12,7 +12,7 @@ using ComponentFactory.Krypton.Toolkit;
 
 namespace NeoAxis.Editor
 {
-	public partial class HCGridCheckBox : UserControl, IHCCheckBox
+	public partial class HCGridCheckBox : EUserControl, IHCCheckBox
 	{
 		public HCGridCheckBox()
 		{
@@ -20,6 +20,7 @@ namespace NeoAxis.Editor
 
 			if( !WinFormsUtility.IsDesignerHosted( this ) )
 			{
+				checkBox1.Location = new Point( 1, DpiHelper.Default.ScaleValue( 5 ) );
 				checkBox1.AutoSize = false;
 				checkBox1.Size = new Size( 1, 1 );
 			}

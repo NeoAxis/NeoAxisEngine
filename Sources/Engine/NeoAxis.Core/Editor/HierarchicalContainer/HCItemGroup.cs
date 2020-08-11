@@ -29,7 +29,7 @@ namespace NeoAxis.Editor
 			this.name = name;
 		}
 
-		public override UserControl CreateControlImpl()
+		public override EUserControl CreateControlImpl()
 		{
 			//if( Owner.GridMode )
 			return new HCGridGroup();

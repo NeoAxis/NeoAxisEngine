@@ -27,7 +27,7 @@ namespace NeoAxis.Editor
 		public class PanelData
 		{
 			public DocumentWindow documentWindow;
-			public UserControl control;
+			public EUserControl control;
 		}
 		List<PanelData> panels = new List<PanelData>();
 		EDictionary<DocumentWindow, PanelData> panelByDocumentWindow = new EDictionary<DocumentWindow, PanelData>();
@@ -71,12 +71,6 @@ namespace NeoAxis.Editor
 				if( selectedPanel == value )
 					return;
 
-				if( selectedPanel != null )
-				{
-					selectedPanel.control.Visible = false;
-					selectedPanel.control.Enabled = false;
-				}
-
 				var old = selectedPanel;
 				selectedPanel = value;
 
@@ -86,6 +80,28 @@ namespace NeoAxis.Editor
 					selectedPanel.control.Visible = true;
 					//selectedPanel.control.Focus();
 				}
+
+				if( old != null )
+				{
+					old.control.Visible = false;
+					old.control.Enabled = false;
+				}
+
+				//if( selectedPanel != null )
+				//{
+				//	selectedPanel.control.Visible = false;
+				//	selectedPanel.control.Enabled = false;
+				//}
+
+				//var old = selectedPanel;
+				//selectedPanel = value;
+
+				//if( selectedPanel != null )
+				//{
+				//	selectedPanel.control.Enabled = true;
+				//	selectedPanel.control.Visible = true;
+				//	//selectedPanel.control.Focus();
+				//}
 
 				OnSelectedPanelChanged( old );
 			}

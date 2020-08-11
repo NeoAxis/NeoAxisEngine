@@ -39,8 +39,8 @@
 			// 
 			// kryptonLabel1
 			// 
-			this.kryptonLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			//this.kryptonLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+   //         | System.Windows.Forms.AnchorStyles.Right)));
 			this.kryptonLabel1.AutoSize = false;
 			this.kryptonLabel1.LabelStyle = ComponentFactory.Krypton.Toolkit.LabelStyle.BoldControl;
 			this.kryptonLabel1.Location = new System.Drawing.Point(2, 2);
@@ -51,8 +51,8 @@
 			// 
 			// kryptonLabel2
 			// 
-			this.kryptonLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			//this.kryptonLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+   //         | System.Windows.Forms.AnchorStyles.Right)));
 			this.kryptonLabel2.AutoSize = false;
 			this.kryptonLabel2.Location = new System.Drawing.Point(112, 22);
 			this.kryptonLabel2.Name = "kryptonLabel2";
@@ -68,7 +68,7 @@
 			// 
 			// buttonTypeSettingsDefaultValue
 			// 
-			this.buttonTypeSettingsDefaultValue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			//this.buttonTypeSettingsDefaultValue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonTypeSettingsDefaultValue.Location = new System.Drawing.Point(432, 5);
 			this.buttonTypeSettingsDefaultValue.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.buttonTypeSettingsDefaultValue.Name = "buttonTypeSettingsDefaultValue";
@@ -84,7 +84,8 @@
 			// 
 			// buttonTypeSettings
 			// 
-			this.buttonTypeSettings.Dock = System.Windows.Forms.DockStyle.Right;
+			//this.buttonTypeSettings.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right ) ) );
+			//this.buttonTypeSettings.Dock = System.Windows.Forms.DockStyle.Right;
 			this.buttonTypeSettings.Location = new System.Drawing.Point(450, 0);
 			this.buttonTypeSettings.Name = "buttonTypeSettings";
 			this.buttonTypeSettings.Size = new System.Drawing.Size(30, 28);

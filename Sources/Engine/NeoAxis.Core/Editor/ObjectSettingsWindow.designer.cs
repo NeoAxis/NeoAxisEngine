@@ -47,7 +47,7 @@
 			// timer1
 			// 
 			this.timer1.Interval = 10;
-			this.timer1.Tick += new System.EventHandler(this.Timer1_Tick);
+			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
 			// 
 			// objectsBrowser1
 			// 
@@ -73,12 +73,13 @@
 			this.panelSettings.Location = new System.Drawing.Point(0, 0);
 			this.panelSettings.Name = "panelSettings";
 			this.panelSettings.Size = new System.Drawing.Size(569, 545);
+			this.panelSettings.Padding = new System.Windows.Forms.Padding( 8, 0, 0, 0 );
 			this.panelSettings.TabIndex = 0;
 			// 
 			// objectSettingsHeader_ObjectInfo1
 			// 
-			this.objectSettingsHeader_ObjectInfo1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			//this.objectSettingsHeader_ObjectInfo1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+   //         | System.Windows.Forms.AnchorStyles.Right)));
 			this.objectSettingsHeader_ObjectInfo1.Location = new System.Drawing.Point(9, 5);
 			this.objectSettingsHeader_ObjectInfo1.Margin = new System.Windows.Forms.Padding(0);
 			this.objectSettingsHeader_ObjectInfo1.Name = "objectSettingsHeader_ObjectInfo1";
@@ -118,7 +119,7 @@
 			this.kryptonSplitContainer1.Size = new System.Drawing.Size(876, 545);
 			this.kryptonSplitContainer1.SplitterDistance = 292;
 			this.kryptonSplitContainer1.SplitterPercent = 0.33333333333333331D;
-			this.kryptonSplitContainer1.SplitterWidth = 15;
+			this.kryptonSplitContainer1.SplitterWidth = 8;
 			this.kryptonSplitContainer1.StateNormal.Back.Color1 = System.Drawing.SystemColors.Control;
 			this.kryptonSplitContainer1.StateNormal.Back.ImageStyle = ComponentFactory.Krypton.Toolkit.PaletteImageStyle.Inherit;
 			this.kryptonSplitContainer1.TabIndex = 2;

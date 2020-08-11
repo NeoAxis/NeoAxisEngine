@@ -17,7 +17,7 @@ namespace NeoAxis.Editor
 		KryptonDropButton Button { get; }
 	}
 
-	public partial class HCGridDropDownButton : UserControl, IHCDropDownButton
+	public partial class HCGridDropDownButton : EUserControl, IHCDropDownButton
 	{
 		public HCGridDropDownButton()
 		{
@@ -27,11 +27,23 @@ namespace NeoAxis.Editor
 				kryptonDropButton.Images.Common = Properties.Resources.DropDownButton_Dark;
 			else
 				kryptonDropButton.Images.Common = Properties.Resources.DropDownButton;
+
+			kryptonDropButton.Location = new Point( 0, DpiHelper.Default.ScaleValue( 3 ) );
+			kryptonDropButton.AutoSize = false;
+			kryptonDropButton.Height = DpiHelper.Default.ScaleValue( 18 );
 		}
 
 		public KryptonDropButton Button
 		{
 			get { return kryptonDropButton; }
 		}
+
+		//protected override void OnResize( EventArgs e )
+		//{
+		//	base.OnResize( e );
+
+		//	if( Parent != null )
+		//		Width = Parent.Width;
+		//}
 	}
 }

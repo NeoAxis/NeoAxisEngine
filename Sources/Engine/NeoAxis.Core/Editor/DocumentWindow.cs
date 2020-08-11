@@ -412,7 +412,7 @@ namespace NeoAxis.Editor
 
 		string TranslateContextMenu( string text )
 		{
-			return EditorContextMenu.Translate( text );
+			return EditorContextMenuWinForms.Translate( text );
 		}
 
 		void ShowContextMenu()
@@ -446,7 +446,7 @@ namespace NeoAxis.Editor
 
 			//New object
 			{
-				EditorContextMenu.AddNewObjectItem( items, CanNewObject( out _ ), delegate ( Metadata.TypeInfo type )
+				EditorContextMenuWinForms.AddNewObjectItem( items, CanNewObject( out _ ), delegate ( Metadata.TypeInfo type )
 				{
 					TryNewObject( type );
 				} );
@@ -529,9 +529,9 @@ namespace NeoAxis.Editor
 				items.Add( item );
 			}
 
-			EditorContextMenu.AddActionsToMenu( EditorContextMenu.MenuTypeEnum.Document, items );//, this );
+			EditorContextMenuWinForms.AddActionsToMenu( EditorContextMenuWinForms.MenuTypeEnum.Document, items );//, this );
 
-			EditorContextMenu.Show( items, this );
+			EditorContextMenuWinForms.Show( items, this );
 		}
 
 		bool CanNewObject( out List<Component> parentsForNewObjects )
@@ -831,7 +831,7 @@ namespace NeoAxis.Editor
 				text = string.Format( template, objectsToDelete.Count );
 			}
 
-			if( EditorMessageBox.ShowQuestion( text, MessageBoxButtons.YesNo ) == DialogResult.No )
+			if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) == EDialogResult.No )
 				return false;
 
 			//!!!!может сцену выбрать? везде так

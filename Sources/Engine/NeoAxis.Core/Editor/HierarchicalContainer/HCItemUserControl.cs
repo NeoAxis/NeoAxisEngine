@@ -18,9 +18,9 @@ namespace NeoAxis.Editor
 		{
 		}
 
-		public override UserControl CreateControlInsidePropertyItemControl()
+		public override EUserControl CreateControlInsidePropertyItemControl()
 		{
-			var userControl = new UserControl();
+			var userControl = new EUserControl();
 			userControl.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			return userControl;
 		}

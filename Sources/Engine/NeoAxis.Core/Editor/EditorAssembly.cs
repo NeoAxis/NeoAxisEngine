@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
 using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
 
 namespace NeoAxis.Editor
 {
@@ -49,6 +51,23 @@ namespace NeoAxis.Editor
 
 		public abstract void ContentBrowserRendererBase_DrawText( ContentBrowserRendererBase _this, Graphics g, System.Drawing.Rectangle r, string txt, Color foreColor, bool wordWrap );
 		public abstract Size ContentBrowserRendererBase_CalculateTextSize( ContentBrowserRendererBase _this, Graphics g, string txt, int width, bool wordWrap );
+
+		public interface ITextEditorControl
+		{
+			string EditorText { get; set; }
+			bool EditorReadOnly { get; set; }
+			bool EditorWordWrap { get; set; }
+			bool Border { get; set; }
+
+			int SelectionStart { get; set; }
+			int SelectionLength { get; set; }
+			void Select( int start, int length );
+
+			void ScrollToHome();
+			void ScrollToEnd();
+		}
+
+		public abstract ITextEditorControl CreateTextEditorControl();
 
 		/////////////////////////////////////////
 

@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace NeoAxis.Editor
 {
-	public partial class HCGridGroup : UserControl, IHCGroup
+	public partial class HCGridGroup : EUserControl, IHCGroup
 	{
 		public HCGridGroup()
 		{

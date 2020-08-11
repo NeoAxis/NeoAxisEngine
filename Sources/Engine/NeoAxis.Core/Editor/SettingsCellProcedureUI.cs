@@ -4,40 +4,23 @@ using System.Text;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace NeoAxis.Editor
 {
-	public partial class SettingsCellProcedureUI : SettingsCell
+	partial class SettingsCellProcedureUI_Container : SettingsCell
 	{
+		internal SettingsCellProcedureUI procedureUI;
 		WinFormsProcedureUI.WinFormsForm procedureForm;
-
 
 		/////////////////////////////////////////
 
-		public SettingsCellProcedureUI()
+		public SettingsCellProcedureUI_Container()
 		{
 			InitializeComponent();
 
 			SizeType = SizeType.AutoSize;
-
-			//procedureForm = new WinFormsProcedureUI.WinFormsForm( this );
-			//OnInitUI();
-
-			//Height = procedureForm.positionY + 6;
 		}
-
-		internal override void PerformInit()
-		{
-			base.PerformInit();
-
-			procedureForm = new WinFormsProcedureUI.WinFormsForm( this );
-			OnInitUI();
-
-			Height = procedureForm.positionY + 6;
-		}
-
-		protected virtual void OnInitUI() { }
-		protected virtual void OnUpdate() { }
 
 		[Browsable( false )]
 		public ProcedureUI.Form ProcedureForm
@@ -45,10 +28,20 @@ namespace NeoAxis.Editor
 			get { return procedureForm; }
 		}
 
-		private void SettingsCellProcedureUI_Load( object sender, EventArgs e )
+		internal override void PerformInit()
+		{
+			base.PerformInit();
+
+			procedureForm = new WinFormsProcedureUI.WinFormsForm( this );
+			procedureUI.PerformInit();
+
+			Height = procedureForm.positionY + 6;
+		}
+
+		private void SettingsCellProcedureUI_Container_Load( object sender, EventArgs e )
 		{
 			timer1.Start();
-			OnUpdate();
+			procedureUI.PerformUpdate();
 		}
 
 		private void timer1_Tick( object sender, EventArgs e )
@@ -56,7 +49,75 @@ namespace NeoAxis.Editor
 			if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
 				return;
 
-			OnUpdate();
+			procedureUI.PerformUpdate();
 		}
 	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public abstract class SettingsCellProcedureUI
+	{
+		internal SettingsCellProcedureUI_Container container;
+
+		/////////////////////////////////////////
+
+		public SettingsCell/*ProcedureUI_Container*/ Container
+		{
+			get { return container; }
+		}
+
+		public SettingsProvider Provider
+		{
+			get { return container.Provider; }
+		}
+
+		public virtual float CellsSortingPriority
+		{
+			get { return container.CellsSortingPriority; }
+			set { container.CellsSortingPriority = value; }
+		}
+
+		public SizeType SizeType
+		{
+			get { return container.SizeType; }
+			set { container.SizeType = value; }
+		}
+
+		public T[] GetObjects<T>() where T : class
+		{
+			return Provider.SelectedObjects.OfType<T>().ToArray();
+		}
+
+		public T GetFirstObject<T>() where T : class
+		{
+			foreach( var obj in Provider.SelectedObjects )
+			{
+				var obj2 = obj as T;
+				if( obj2 != null )
+					return obj2;
+			}
+			return null;
+		}
+
+		/////////////////////////////////////////
+
+		protected virtual void OnInit() { }
+		internal void PerformInit()
+		{
+			OnInit();
+		}
+
+		protected virtual void OnUpdate() { }
+		internal void PerformUpdate()
+		{
+			OnUpdate();
+		}
+
+		[Browsable( false )]
+		public ProcedureUI.Form ProcedureForm
+		{
+			get { return container.ProcedureForm; }
+		}
+	}
+
 }

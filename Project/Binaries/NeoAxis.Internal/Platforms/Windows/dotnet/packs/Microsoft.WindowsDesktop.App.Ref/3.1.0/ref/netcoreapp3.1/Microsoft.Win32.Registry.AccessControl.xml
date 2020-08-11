@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Win32.Registry.AccessControl</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Win32.RegistryAclExtensions" />
+    <member name="M:Microsoft.Win32.RegistryAclExtensions.GetAccessControl(Microsoft.Win32.RegistryKey)">
+      <param name="key" />
+    </member>
+    <member name="M:Microsoft.Win32.RegistryAclExtensions.GetAccessControl(Microsoft.Win32.RegistryKey,System.Security.AccessControl.AccessControlSections)">
+      <param name="key" />
+      <param name="includeSections" />
+    </member>
+    <member name="M:Microsoft.Win32.RegistryAclExtensions.SetAccessControl(Microsoft.Win32.RegistryKey,System.Security.AccessControl.RegistrySecurity)">
+      <param name="key" />
+      <param name="registrySecurity" />
+    </member>
+  </members>
+</doc>

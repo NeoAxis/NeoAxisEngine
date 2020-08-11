@@ -31,19 +31,43 @@ namespace NeoAxis
 		{
 			get
 			{
-				//!!!!
-
-				//теперь в OnDispose очищается
-				//if( settingsComponent != null && settingsComponent.Disposed )
-				//	settingsComponent = null;
-
 				if( settingsComponent == null )
 				{
+					//create default settings
+					if( !VirtualFile.Exists( FileName ) )
+					{
+						var settingsComponent2 = ComponentUtility.CreateComponent<Component_ProjectSettings>( null, true, true );
+						settingsComponent2.Name = "Root";
+
+						var pageNames = new List<string>();
+						pageNames.Add( "General" );
+						pageNames.Add( "Scene Editor" );
+						pageNames.Add( "UI Editor" );
+						pageNames.Add( "C# Editor" );
+						pageNames.Add( "Shader Editor" );
+						pageNames.Add( "Text Editor" );
+						pageNames.Add( "Ribbon and Toolbar" );
+						pageNames.Add( "Shortcuts" );
+						pageNames.Add( "Custom Splash Screen" );
+
+						foreach( var name in pageNames )
+						{
+							var page = settingsComponent2.CreateComponent<Component_ProjectSettings_PageBasic>();
+							page.Name = name;
+						}
+
+						var realFileName = VirtualPathUtility.GetRealPathByVirtual( FileName );
+						if( !ComponentUtility.SaveComponentToFile( settingsComponent2, realFileName, null, out var error ) )
+							Log.Warning( "Unable to write project settings file. " + error );
+
+						settingsComponent2.Dispose();
+					}
+
+					//load
 					if( VirtualFile.Exists( FileName ) )
 					{
-						try//!!!!new
+						try
 						{
-							//!!!!или separate
 							settingsComponent = ResourceManager.LoadResource<Component_ProjectSettings>( FileName );
 						}
 						catch( Exception )
@@ -52,13 +76,7 @@ namespace NeoAxis
 						}
 					}
 					else
-					{
-						//!!!!default
-
 						settingsComponent = ComponentUtility.CreateComponent<Component_ProjectSettings>( null, true, true );
-
-						//!!!!!need save
-					}
 				}
 
 				return settingsComponent;

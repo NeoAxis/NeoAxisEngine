@@ -11,8 +11,8 @@ using System.Windows.Forms;
 using DirectInput;
 #endif
 using ComponentFactory.Krypton.Toolkit;
-using ComponentFactory.Krypton.Docking;
 using System.IO;
+using System.Diagnostics;
 
 namespace NeoAxis.Widget
 {
@@ -48,6 +48,8 @@ namespace NeoAxis.Widget
 		double splashScreenStartTime;
 
 		static Cursor hidedCursor;
+
+		int paintBackgroundCounter;
 
 		/////////////////////////////////////////
 
@@ -233,18 +235,29 @@ namespace NeoAxis.Widget
 		{
 			base.OnResize( e );
 
-			PerformResize();
+			if( !ParentFormResizing )
+				PerformResize();
+
+			paintBackgroundCounter = 3;
 
 			//!!!!?
 			//Invalidate();
 		}
 
+		protected override void OnParentFormResizeEnd( EventArgs e )
+		{
+			base.OnParentFormResizeEnd( e );
+
+			PerformResize();
+		}
+
 		protected override void OnPaintBackground( PaintEventArgs e )
 		{
-			if( renderWindow != null )//!!!!&& !WinFormsAppWorld.DuringWarningOrErrorMessageBox )
-				return;
+			if( paintBackgroundCounter > 0 )
+				paintBackgroundCounter--;
 
-			base.OnPaintBackground( e );
+			if( renderWindow == null || ParentFormResizing || paintBackgroundCounter != 0 )//!!!!|| WinFormsAppWorld.DuringWarningOrErrorMessageBox )
+				base.OnPaintBackground( e );
 		}
 
 		protected override void OnPaint( PaintEventArgs e )

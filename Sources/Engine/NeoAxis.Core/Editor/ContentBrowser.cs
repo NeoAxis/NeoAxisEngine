@@ -14,6 +14,7 @@ using Aga.Controls.Tree;
 using System.Collections;
 using BrightIdeasSoftware;
 using System.Runtime.InteropServices;
+using System.Configuration;
 
 namespace NeoAxis.Editor
 {
@@ -589,6 +590,7 @@ namespace NeoAxis.Editor
 			toolStripButtonShowMembers.Image = EditorResourcesCache.Type;
 			toolStripButtonUp.Image = EditorResourcesCache.MoveUp;
 			toolStripDropDownButtonFilteringMode.Image = EditorResourcesCache.Selection;
+			toolStripButtonSearch.Image = EditorResourcesCache.Focus;
 
 			foreach( var item in toolStripForTreeView.Items )
 			{
@@ -688,6 +690,43 @@ namespace NeoAxis.Editor
 				return;
 
 			allInstances.Add( this );
+
+			//update toolstrip sizes
+			{
+				var dpiScale = Math.Min( EditorAPI.DPIScale, 2 );
+
+				void UpdateSize( ToolStripItem item )
+				{
+					int width = 20;
+					if( item is ToolStripDropDownButton )
+						width = 28;
+					item.Size = new Size( (int)( width * dpiScale ), (int)( 20 * dpiScale + 2 ) );
+					//item.Size = new Size( (int)( width * EditorAPI.DPIScale + 2 ), (int)( 20 * EditorAPI.DPIScale + 2 ) );
+				}
+
+				toolStripForTreeView.Padding = new Padding( (int)dpiScale );
+				toolStripForTreeView.Size = new Size( 10, (int)( 21 * dpiScale + 2 ) );
+
+				foreach( var item in toolStripForTreeView.Items )
+				{
+					var button = item as ToolStripButton;
+					if( button != null )
+						UpdateSize( button );
+
+					var button2 = item as ToolStripDropDownButton;
+					if( button2 != null )
+						UpdateSize( button2 );
+				}
+
+
+				toolStripForListView.Padding = new Padding( (int)dpiScale );
+				toolStripForListView.Size = new Size( 10, (int)( 21 * dpiScale + 2 ) );
+
+				//toolStripBreadCrumbHost.Padding = new Padding( (int)EditorAPI.DPIScale );
+				//toolStripBreadCrumbHost.Size = new Size( 10, (int)( 21 * EditorAPI.DPIScale ) );
+
+				UpdateSize( toolStripButtonUp );
+			}
 
 			//calibrate ItemHeight depending system DPI
 			if( Math.Abs( DpiHelper.Default.DpiScaleFactor - 1.0 ) < 0.001 )
@@ -3657,7 +3696,7 @@ namespace NeoAxis.Editor
 
 						//New object
 						{
-							EditorContextMenu.AddNewObjectItem( items, CanNewObject( out _ ), delegate ( Metadata.TypeInfo type )
+							EditorContextMenuWinForms.AddNewObjectItem( items, CanNewObject( out _ ), delegate ( Metadata.TypeInfo type )
 							{
 								TryNewObject( type );
 							} );
@@ -4124,7 +4163,7 @@ namespace NeoAxis.Editor
 
 						//New resource
 						{
-							EditorContextMenu.AddNewResourceItem( items, CanNewResource( out _ ), delegate ( Metadata.TypeInfo type )
+							EditorContextMenuWinForms.AddNewResourceItem( items, CanNewResource( out _ ), delegate ( Metadata.TypeInfo type )
 							{
 								NewResource( type );
 							} );
@@ -4553,17 +4592,17 @@ namespace NeoAxis.Editor
 				}
 			}
 
-			var menuType = EditorContextMenu.MenuTypeEnum.General;
+			var menuType = EditorContextMenuWinForms.MenuTypeEnum.General;
 			if( Mode == ModeEnum.Resources )
-				menuType = EditorContextMenu.MenuTypeEnum.Resources;
+				menuType = EditorContextMenuWinForms.MenuTypeEnum.Resources;
 			else if( DocumentWindow != null )
-				menuType = EditorContextMenu.MenuTypeEnum.Document;
+				menuType = EditorContextMenuWinForms.MenuTypeEnum.Document;
 
-			EditorContextMenu.AddActionsToMenu( menuType, items );
+			EditorContextMenuWinForms.AddActionsToMenu( menuType, items );
 
 			ShowContextMenuEvent?.Invoke( this, items );
 
-			EditorContextMenu.Show( items, locationControl, locationPoint );
+			EditorContextMenuWinForms.Show( items, locationControl, locationPoint );
 		}
 
 		//!!!!!
@@ -4765,7 +4804,7 @@ namespace NeoAxis.Editor
 				text = string.Format( template, itemsToDelete.Count );
 			}
 
-			if( EditorMessageBox.ShowQuestion( text, MessageBoxButtons.YesNo ) == DialogResult.No )
+			if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) == EDialogResult.No )
 				return;
 
 			Item itemToSelectAfterDelection = null;
@@ -5693,7 +5732,7 @@ namespace NeoAxis.Editor
 									//else
 									//	text = "Are you sure you want to move this object to the new place?";
 
-									if( EditorMessageBox.ShowQuestion( text, MessageBoxButtons.YesNo ) == DialogResult.Yes )
+									if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) == EDialogResult.Yes )
 									{
 										if( makeClone )
 										{
@@ -5799,7 +5838,7 @@ namespace NeoAxis.Editor
 											//else
 											//	text = "Are you sure you want to move this object to the new place?";
 
-											if( EditorMessageBox.ShowQuestion( text, MessageBoxButtons.YesNo ) == DialogResult.Yes )
+											if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) == EDialogResult.Yes )
 											{
 												int insertIndex = -1;
 												var index = parent.Components.IndexOf( targetComponent );
@@ -5888,7 +5927,7 @@ namespace NeoAxis.Editor
 								else
 									text = Translate( "Move files?" );
 
-								if( EditorMessageBox.ShowQuestion( text, MessageBoxButtons.YesNo ) == DialogResult.Yes )
+								if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) == EDialogResult.Yes )
 								{
 									//!!!!multiselection
 									CutCopyFiles( new string[] { droppingFileItem.FullPath }, !copy, targetFolder );
@@ -7659,11 +7698,11 @@ namespace NeoAxis.Editor
 				items.Add( item );
 			}
 
-			EditorContextMenu.AddActionsToMenu( EditorContextMenu.MenuTypeEnum.None, items );
+			EditorContextMenuWinForms.AddActionsToMenu( EditorContextMenuWinForms.MenuTypeEnum.None, items );
 
 			ShowContextMenuEvent?.Invoke( this, items );
 
-			EditorContextMenu.Show( items, this, PointToClient( Cursor.Position ) );
+			EditorContextMenuWinForms.Show( items, this, PointToClient( Cursor.Position ) );
 		}
 
 		public void SetEnabled( bool value )

@@ -47,9 +47,12 @@ namespace NeoAxis.Editor
 
 		private void ContentBrowserOptionsForm_Load( object sender, EventArgs e )
 		{
-			//object[] objects = new object[ 1 ];
-			//objects[ 0 ] = Browser.Options;
-			//hierarchicalContainer1.SetData( null, objects );
+			//if( Browser != null )
+			//{
+			//	object[] objects = new object[ 1 ];
+			//	objects[ 0 ] = Browser.Options;
+			//	hierarchicalContainer1.SetData( null, objects );
+			//}
 		}
 
 		private void buttonClose_Click( object sender, EventArgs e )

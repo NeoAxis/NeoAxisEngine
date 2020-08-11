@@ -12,7 +12,7 @@ using ComponentFactory.Krypton.Toolkit;
 
 namespace NeoAxis.Editor
 {
-	public partial class HCGridProperty : UserControl, IHCProperty
+	public partial class HCGridProperty : EUserControl, IHCProperty
 	{
 		string buttonReferenceCurrentToolTip;
 		int splitterPosition;
@@ -43,7 +43,7 @@ namespace NeoAxis.Editor
 			DarkThemeUtility.ApplyToForm( this );
 			DarkThemeUtility.ApplyToToolTip( propertyToolTip );
 
-			// for debug
+			//!!!!
 			//BackColor = Random.Generate(ColorValue.Zero, ColorValue.One).ToColor();
 		}
 
@@ -166,6 +166,7 @@ namespace NeoAxis.Editor
 				if( editorControl != null )
 					Controls.Remove( editorControl );
 				editorControl = value;
+
 				Controls.Add( editorControl );
 
 				// default
@@ -238,26 +239,41 @@ namespace NeoAxis.Editor
 			}
 		}
 
+		//void PaintLabelName( PaintEventArgs e )
+		//{
+		//this.labelName.AutoEllipsis = true;
+		//this.labelName.Location = new System.Drawing.Point( 22, 6 );
+		//this.labelName.Name = "labelName";
+		//this.labelName.Size = new System.Drawing.Size( 55, 17 );
+		//this.labelName.TabIndex = 1;
+		//this.labelName.Text = "{Name}";
+		//}
+
 		protected override void OnPaint( PaintEventArgs e )
 		{
 			base.OnPaint( e );
+
+			//PaintLabelName( e );
 
 			if( HierarchicalContainer.DrawSplitter )
 			{
 #if !ANDROID
 				var color = EditorAPI.DarkTheme ? Color.FromArgb( 65, 65, 65 ) : Color.FromArgb( 225, 225, 225 );
 
-				// splitter debug draw
-				using( Pen myPen = new Pen( color ) )
-				{
-					var owner = Parent as HierarchicalContainer;
-					//!!!!
-					if( owner == null && Parent != null )
-						owner = Parent.Parent as HierarchicalContainer;
+				var owner = Parent as HierarchicalContainer;
+				//!!!!
+				if( owner == null && Parent != null )
+					owner = Parent.Parent as HierarchicalContainer;
 
-					myPen.Width = HierarchicalContainer.SpliterWidth;
-					int pos = owner.SplitterPosition - HierarchicalContainer.SpliterWidth / 2;
-					e.Graphics.DrawLine( myPen, pos, 0, pos, this.Height );
+				if( !owner.ParentFormResizing )
+				{
+					// splitter debug draw
+					using( Pen myPen = new Pen( color ) )
+					{
+						myPen.Width = HierarchicalContainer.SpliterWidth;
+						int pos = owner.SplitterPosition - HierarchicalContainer.SpliterWidth / 2;
+						e.Graphics.DrawLine( myPen, pos, 0, pos, this.Height );
+					}
 				}
 #endif //!ANDROID
 			}

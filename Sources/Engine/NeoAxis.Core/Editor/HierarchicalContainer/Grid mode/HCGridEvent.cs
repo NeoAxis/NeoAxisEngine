@@ -21,7 +21,7 @@ namespace NeoAxis.Editor
 		void SetToolTip( Control control, string caption );
 	}
 
-	public partial class HCGridEvent : UserControl, IHCEvent
+	public partial class HCGridEvent : EUserControl, IHCEvent
 	{
 		Control editorControl;
 

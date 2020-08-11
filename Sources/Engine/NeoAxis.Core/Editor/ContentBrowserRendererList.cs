@@ -132,7 +132,9 @@ namespace NeoAxis.Editor
 			Size titleSize = CalculateTextSize( g, titleText, r.Width, wordWrap );
 			titleSize.Height = Math.Min( titleSize.Height, r.Height );
 
-			totalHeight += titleSize.Height + 2;
+			//!!!!new .NET Core
+			totalHeight += titleSize.Height;
+			//totalHeight += titleSize.Height + 2;
 
 			// description
 

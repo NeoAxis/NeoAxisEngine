@@ -21,7 +21,7 @@ namespace NeoAxis.Editor
 
 		public Component_Sprite Sprite
 		{
-			get { return ObjectForPreview as Component_Sprite; }
+			get { return ObjectOfPreview as Component_Sprite; }
 		}
 
 		protected override void OnLoad( EventArgs e )

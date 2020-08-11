@@ -1,0 +1,78 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v2.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v2.0": {
+      "ILLink.Tasks/0.1.6-prerelease.19380.1": {
+        "dependencies": {
+          "Mono.Cecil": "0.1.6-prerelease.19380.1",
+          "illink": "0.1.6-prerelease.19380.1"
+        },
+        "runtime": {
+          "ILLink.Tasks.dll": {}
+        }
+      },
+      "illink/0.1.6-prerelease.19380.1": {
+        "dependencies": {
+          "Mono.Cecil": "0.1.6-prerelease.19380.1",
+          "Mono.Cecil.Mdb": "0.1.6-prerelease.19380.1",
+          "Mono.Cecil.Pdb": "0.1.6-prerelease.19380.1"
+        },
+        "runtime": {
+          "illink.dll": {}
+        }
+      },
+      "Mono.Cecil/0.1.6-prerelease.19380.1": {
+        "runtime": {
+          "Mono.Cecil.dll": {}
+        }
+      },
+      "Mono.Cecil.Mdb/0.1.6-prerelease.19380.1": {
+        "dependencies": {
+          "Mono.Cecil": "0.1.6-prerelease.19380.1"
+        },
+        "runtime": {
+          "Mono.Cecil.Mdb.dll": {}
+        }
+      },
+      "Mono.Cecil.Pdb/0.1.6-prerelease.19380.1": {
+        "dependencies": {
+          "Mono.Cecil": "0.1.6-prerelease.19380.1"
+        },
+        "runtime": {
+          "Mono.Cecil.Pdb.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "ILLink.Tasks/0.1.6-prerelease.19380.1": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "illink/0.1.6-prerelease.19380.1": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Mono.Cecil/0.1.6-prerelease.19380.1": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Mono.Cecil.Mdb/0.1.6-prerelease.19380.1": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Mono.Cecil.Pdb/0.1.6-prerelease.19380.1": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

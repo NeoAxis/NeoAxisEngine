@@ -31,15 +31,15 @@
 			this.components = new System.ComponentModel.Container();
 			this.buttonTypeSettings = new ComponentFactory.Krypton.Toolkit.KryptonButton();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
-			this.kryptonLabel1 = new NeoAxis.Editor.LabelEx();
-			this.kryptonLabel2 = new NeoAxis.Editor.LabelEx();
+			this.kryptonLabel1 = new NeoAxis.Editor.EngineLabel();
+			this.kryptonLabel2 = new NeoAxis.Editor.EngineLabel();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			this.buttonTypeSettingsDefaultValue = new ComponentFactory.Krypton.Toolkit.KryptonButton();
 			this.SuspendLayout();
 			// 
 			// buttonTypeSettings
 			// 
-			this.buttonTypeSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			//this.buttonTypeSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonTypeSettings.Location = new System.Drawing.Point(317, 0);
 			this.buttonTypeSettings.Name = "buttonTypeSettings";
 			this.buttonTypeSettings.Size = new System.Drawing.Size(30, 26);
@@ -63,8 +63,8 @@
 			// 
 			// kryptonLabel1
 			// 
-			this.kryptonLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			//this.kryptonLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+   //         | System.Windows.Forms.AnchorStyles.Right)));
 			this.kryptonLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F);
 			this.kryptonLabel1.LabelStyle = ComponentFactory.Krypton.Toolkit.LabelStyle.BoldControl;
 			this.kryptonLabel1.Location = new System.Drawing.Point(0, -1);
@@ -76,8 +76,8 @@
 			// 
 			// kryptonLabel2
 			// 
-			this.kryptonLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			//this.kryptonLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+   //         | System.Windows.Forms.AnchorStyles.Right)));
 			this.kryptonLabel2.LabelStyle = ComponentFactory.Krypton.Toolkit.LabelStyle.NormalControl;
 			this.kryptonLabel2.Location = new System.Drawing.Point(0, 24);
 			this.kryptonLabel2.Name = "kryptonLabel2";
@@ -87,7 +87,7 @@
 			// 
 			// buttonTypeSettingsDefaultValue
 			// 
-			this.buttonTypeSettingsDefaultValue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			//this.buttonTypeSettingsDefaultValue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonTypeSettingsDefaultValue.Location = new System.Drawing.Point(299, 5);
 			this.buttonTypeSettingsDefaultValue.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.buttonTypeSettingsDefaultValue.Name = "buttonTypeSettingsDefaultValue";
@@ -121,8 +121,8 @@
 		#endregion
 		private ComponentFactory.Krypton.Toolkit.KryptonButton buttonTypeSettings;
 		private System.Windows.Forms.Timer timer1;
-		private LabelEx kryptonLabel1;
-		private LabelEx kryptonLabel2;
+		private EngineLabel kryptonLabel1;
+		private EngineLabel kryptonLabel2;
 		private System.Windows.Forms.ToolTip toolTip1;
 		private ComponentFactory.Krypton.Toolkit.KryptonButton buttonTypeSettingsDefaultValue;
 	}

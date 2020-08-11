@@ -1443,7 +1443,7 @@ namespace NeoAxis.Editor
 
 		string TranslateContextMenu( string text )
 		{
-			return EditorContextMenu.Translate( text );
+			return EditorContextMenuWinForms.Translate( text );
 		}
 
 		void ShowContextMenu()
@@ -1459,7 +1459,7 @@ namespace NeoAxis.Editor
 			//Transform Tool
 			if( transformTool != null )
 			{
-				EditorContextMenu.AddTransformToolToMenu( items, transformTool );
+				EditorContextMenuWinForms.AddTransformToolToMenu( items, transformTool );
 				items.Add( new KryptonContextMenuSeparator() );
 			}
 
@@ -1492,7 +1492,7 @@ namespace NeoAxis.Editor
 
 			//New object
 			{
-				EditorContextMenu.AddNewObjectItem( items, CanNewObject( out _ ), delegate ( Metadata.TypeInfo type )
+				EditorContextMenuWinForms.AddNewObjectItem( items, CanNewObject( out _ ), delegate ( Metadata.TypeInfo type )
 				{
 					TryNewObject( mouse, type );
 				} );
@@ -1579,9 +1579,9 @@ namespace NeoAxis.Editor
 				items.Add( item );
 			}
 
-			EditorContextMenu.AddActionsToMenu( EditorContextMenu.MenuTypeEnum.Document, items );
+			EditorContextMenuWinForms.AddActionsToMenu( EditorContextMenuWinForms.MenuTypeEnum.Document, items );
 
-			EditorContextMenu.Show( items, this );
+			EditorContextMenuWinForms.Show( items, this );
 		}
 
 		public bool CanNewObject( out List<Component> parentsForNewObjects )

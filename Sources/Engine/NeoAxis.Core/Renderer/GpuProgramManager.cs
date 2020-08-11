@@ -100,7 +100,7 @@ namespace NeoAxis
 			else if( Bgfx.GetCurrentBackend() == RendererBackend.OpenGLES )
 				model = ShaderCompiler.ShaderModel.OpenGLES;
 			else
-				Log.Fatal( "GpuProgramManager: Shader model is not specified." );
+				Log.Fatal( "GpuProgramManager: Shader model is not specified. Bgfx.GetCurrentBackend() == {0}.", Bgfx.GetCurrentBackend() );
 
 			ShaderCompiler.Compile( model, (ShaderCompiler.ShaderType)type, realSourceFile, varyingFile, defines, out var data, out error );
 			if( !string.IsNullOrEmpty( error ) )

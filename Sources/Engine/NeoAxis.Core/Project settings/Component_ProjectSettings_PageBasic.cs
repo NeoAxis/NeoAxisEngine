@@ -81,7 +81,7 @@ namespace NeoAxis
 					var parent = Parent as Component_ProjectSettings;
 					if( parent != null )
 					{
-						foreach( var member in parent.MetadataGetMembers() )
+						foreach( var member in parent.MetadataGetMembers( new Component_ProjectSettings.MetadataGetMembersContextForPage() ) )
 						{
 							var sourceProperty = member as Metadata.Property;
 							if( sourceProperty != null )

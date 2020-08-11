@@ -22,7 +22,7 @@ namespace NeoAxis.Editor
 			return EditorLocalization.Translate( "GroupOfObjects", text );
 		}
 
-		protected override void OnInitUI()
+		protected override void OnInit()
 		{
 			buttonClearAll = ProcedureForm.CreateButton( Translate( "Clear" ), ProcedureUI.Button.SizeEnum.Long );
 			buttonClearAll.Click += ButtonClearAll_Click;
@@ -54,7 +54,7 @@ namespace NeoAxis.Editor
 
 		private void ButtonClearAll_Click( ProcedureUI.Button sender )
 		{
-			if( EditorMessageBox.ShowQuestion( Translate( "Delete all objects and child components?" ), MessageBoxButtons.YesNo ) != DialogResult.Yes )
+			if( EditorMessageBox.ShowQuestion( Translate( "Delete all objects and child components?" ), EMessageBoxButtons.YesNo ) != EDialogResult.Yes )
 				return;
 
 			var undoMultiAction = new UndoMultiAction();
@@ -78,7 +78,7 @@ namespace NeoAxis.Editor
 
 		private void ButtonClearObjects_Click( ProcedureUI.Button obj )
 		{
-			if( EditorMessageBox.ShowQuestion( Translate( "Delete all objects?" ), MessageBoxButtons.YesNo ) != DialogResult.Yes )
+			if( EditorMessageBox.ShowQuestion( Translate( "Delete all objects?" ), EMessageBoxButtons.YesNo ) != EDialogResult.Yes )
 				return;
 
 			var undoMultiAction = new UndoMultiAction();

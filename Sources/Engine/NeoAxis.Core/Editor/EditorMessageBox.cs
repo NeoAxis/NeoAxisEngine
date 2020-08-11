@@ -8,26 +8,23 @@ using System.Windows.Forms;
 namespace NeoAxis.Editor
 {
 	/// <summary>
-	/// Auxiliary class to work with MessageBox.
+	/// Message box of the editor.
 	/// </summary>
 	public class EditorMessageBox
 	{
-		public static DialogResult ShowQuestion( string text, MessageBoxButtons buttons )
+		public static EDialogResult ShowQuestion( string text, EMessageBoxButtons buttons )
 		{
-			return KryptonMessageBox.Show( text, EngineInfo.OriginalName, buttons, MessageBoxIcon.Question );
-			//return MessageBox.Show( text, EngineInfo.NameWithVersion, buttons, MessageBoxIcon.Question );
+			return (EDialogResult)KryptonMessageBox.Show( text, EngineInfo.OriginalName, (MessageBoxButtons)buttons, MessageBoxIcon.Question );
 		}
 
 		public static void ShowWarning( string text )
 		{
 			KryptonMessageBox.Show( text, EngineInfo.OriginalName, MessageBoxButtons.OK, MessageBoxIcon.Warning );
-			//MessageBox.Show( text, EngineInfo.NameWithVersion, MessageBoxButtons.OK, MessageBoxIcon.Warning );
 		}
 
 		public static void ShowInfo( string text )
 		{
 			KryptonMessageBox.Show( text, EngineInfo.OriginalName, MessageBoxButtons.OK, MessageBoxIcon.Information );
-			//MessageBox.Show( text, EngineInfo.NameWithVersion, MessageBoxButtons.OK, MessageBoxIcon.Information );
 		}
 	}
 }

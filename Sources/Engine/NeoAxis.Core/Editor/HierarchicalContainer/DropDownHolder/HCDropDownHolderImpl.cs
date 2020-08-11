@@ -12,23 +12,22 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ComponentFactory.Krypton.Toolkit;
-using VS = System.Windows.Forms.VisualStyles;
 
 namespace NeoAxis.Editor
 {
-	internal class HCDropDownHolderImpl
+	class HCDropDownHolderImpl
 	{
 		Control holder;
 		HCDropDownControl innerControl; // child control. the control that is hosted in the holder
 
-		private bool resizableTop;
-		private bool resizableLeft = true;
-		//private VS.VisualStyleRenderer sizeGripRenderer;
-		private bool nonInteractive;
+		bool resizableTop;
+		bool resizableLeft = true;
+		//VS.VisualStyleRenderer sizeGripRenderer;
+		bool nonInteractive;
 
 		public bool Resizable { get; set; }
-		public Size MinimumSize { get; set; }
-		public Size MaximumSize { get; set; }
+		//public Size MinimumSize { get; set; }
+		//public Size MaximumSize { get; set; }
 		public bool CommitOnClosing { get; set; }
 		public bool FocusOnOpen { get; set; } = true;
 
@@ -55,8 +54,13 @@ namespace NeoAxis.Editor
 
 			innerControl = control ?? throw new ArgumentNullException( "control" );
 			innerControl.ParentHolder = (IDropDownHolder)holder;
-			innerControl.Location = Point.Empty;
-			innerControl.RegionChanged += ( sender, e ) => UpdateRegion();
+
+			if( holder is HCFormDropDownHolder )
+				innerControl.Location = new Point( 1, 1 );
+			else
+				innerControl.Location = Point.Empty;
+
+			//innerControl.RegionChanged += ( sender, e ) => UpdateRegion();
 			//innerControl.Paint += ( sender, e ) => PaintSizeGrip( e );
 
 			Resizable = innerControl.Resizable;
@@ -64,20 +68,20 @@ namespace NeoAxis.Editor
 
 		internal void Initialize()
 		{
-			MinimumSize = innerControl.MinimumSize + holder.Padding.Size;
-			innerControl.MinimumSize = innerControl.Size;
-			MaximumSize = innerControl.MaximumSize + holder.Padding.Size;
-			innerControl.MaximumSize = innerControl.Size;
+			//MinimumSize = innerControl.MinimumSize + holder.Padding.Size;
+			//innerControl.MinimumSize = innerControl.Size;
+			//MaximumSize = innerControl.MaximumSize + holder.Padding.Size;
+			//innerControl.MaximumSize = innerControl.Size;
 			holder.Size = innerControl.Size + holder.Padding.Size;
-			UpdateRegion();
+			//UpdateRegion();
 		}
 
 		internal void OnSizeChanged()
 		{
 			if( innerControl != null )
 			{
-				innerControl.MinimumSize = holder.Size - holder.Padding.Size;
-				innerControl.MaximumSize = holder.Size - holder.Padding.Size;
+				//innerControl.MinimumSize = holder.Size - holder.Padding.Size;
+				//innerControl.MaximumSize = holder.Size - holder.Padding.Size;
 				innerControl.Size = holder.Size - holder.Padding.Size;
 			}
 		}
@@ -95,7 +99,8 @@ namespace NeoAxis.Editor
 			resizableTop = false;
 			resizableLeft = true;
 
-			Point location = openerControl.PointToScreen( new Point( area.Width, area.Top + area.Height ) );
+			Point location = openerControl.PointToScreen( new Point( area.Width, area.Top + area.Height + 2 ) );
+			//Point location = openerControl.PointToScreen( new Point( area.Width, area.Top + area.Height ) );
 			System.Drawing.Rectangle screen = Screen.FromControl( openerControl ).WorkingArea;
 			if( location.X - holder.Size.Width < screen.Left )
 			{
@@ -105,13 +110,14 @@ namespace NeoAxis.Editor
 			if( location.Y + holder.Size.Height > ( screen.Top + screen.Height ) )
 			{
 				resizableTop = true;
-				location.Y -= holder.Size.Height + area.Height + 5;
+				location.Y -= holder.Size.Height + area.Height + 7;
+				//location.Y -= holder.Size.Height + area.Height + 5;
 			}
 			location = openerControl.PointToClient( location );
 			return location;
 		}
 
-		private System.Drawing.Rectangle CalculateDropDownLocation( Point start, ToolStripDropDownDirection dropDownDirection )
+		System.Drawing.Rectangle CalculateDropDownLocation( Point start, ToolStripDropDownDirection dropDownDirection )
 		{
 			Point offset = Point.Empty;
 			System.Drawing.Rectangle dropDownBounds = new System.Drawing.Rectangle( Point.Empty, holder.Size );
@@ -137,18 +143,18 @@ namespace NeoAxis.Editor
 			return dropDownBounds;
 		}
 
-		private void UpdateRegion()
-		{
-			if( holder.Region != null )
-			{
-				holder.Region.Dispose();
-				holder.Region = null;
-			}
-			if( innerControl.Region != null )
-			{
-				holder.Region = innerControl.Region.Clone();
-			}
-		}
+		//void UpdateRegion()
+		//{
+		//	if( holder.Region != null )
+		//	{
+		//		holder.Region.Dispose();
+		//		holder.Region = null;
+		//	}
+		//	if( innerControl.Region != null )
+		//	{
+		//		holder.Region = innerControl.Region.Clone();
+		//	}
+		//}
 
 		internal void Close( bool commitChanges )
 		{
@@ -200,27 +206,25 @@ namespace NeoAxis.Editor
 			{
 				return OnNcHitTest( ref m, contentControl );
 			}
-			else if( m.Msg == PI.WM_GETMINMAXINFO )
-			{
-				return OnGetMinMaxInfo( ref m );
-			}
+			//else if( m.Msg == PI.WM_GETMINMAXINFO )
+			//{
+			//	return OnGetMinMaxInfo( ref m );
+			//}
 			return false;
 		}
 
-		[SecurityPermission( SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode )]
-		private bool OnGetMinMaxInfo( ref Message m )
-		{
-			PI.MINMAXINFO minmax = PI.MINMAXINFO.GetFrom( m.LParam );
-			if( !MaximumSize.IsEmpty )
-			{
-				minmax.ptMaxTrackSize = new PI.POINT( MaximumSize.Width, MaximumSize.Height );
-			}
-			minmax.ptMinTrackSize = new PI.POINT( MinimumSize.Width, MinimumSize.Height );
-			Marshal.StructureToPtr( minmax, m.LParam, false );
-			return true;
-		}
+		//[SecurityPermission( SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode )]
+		//bool OnGetMinMaxInfo( ref Message m )
+		//{
+		//	PI.MINMAXINFO minmax = PI.MINMAXINFO.GetFrom( m.LParam );
+		//	if( !MaximumSize.IsEmpty )
+		//		minmax.ptMaxTrackSize = new PI.POINT( MaximumSize.Width, MaximumSize.Height );
+		//	minmax.ptMinTrackSize = new PI.POINT( MinimumSize.Width, MinimumSize.Height );
+		//	Marshal.StructureToPtr( minmax, m.LParam, false );
+		//	return true;
+		//}
 
-		private bool OnNcHitTest( ref Message m, bool contentControl )
+		bool OnNcHitTest( ref Message m, bool contentControl )
 		{
 			if( NonInteractive )
 			{
@@ -284,7 +288,7 @@ namespace NeoAxis.Editor
 			return false;
 		}
 
-		//private void PaintSizeGrip( PaintEventArgs e )
+		//void PaintSizeGrip( PaintEventArgs e )
 		//{
 		//	if( e == null || e.Graphics == null || !Resizable )
 		//		return;

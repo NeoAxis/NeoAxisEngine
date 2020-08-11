@@ -14,6 +14,7 @@ using System.IO.Compression;
 using Microsoft.WindowsAPICodePack.Dialogs;
 #endif
 using ComponentFactory.Krypton.Toolkit;
+using ComponentFactory.Krypton.Navigator;
 
 namespace NeoAxis.Editor
 {
@@ -24,12 +25,34 @@ namespace NeoAxis.Editor
 	{
 		static bool backstageVisible;
 
-		//
+		bool doInitActionsInTimer;
+
+		/////////////////////////////////////////
+
+		public class MyKryptonNavigator : KryptonNavigator
+		{
+			[Browsable( false )]
+			public BackstageMenu owner;
+
+			protected override bool ProcessCmdKey( ref Message msg, Keys keyData )
+			{
+				if( keyData == Keys.Escape )
+				{
+					owner.Hide();
+					return true;
+				}
+
+				return base.ProcessCmdKey( ref msg, keyData );
+			}
+		}
+
+		/////////////////////////////////////////
 
 		public BackstageMenu()
 		{
 			InitializeComponent();
 
+			kryptonNavigator1.owner = this;
 			kryptonNavigator1.AllowPageReorder = false;
 			kryptonNavigator1.AllowTabFocus = false;
 
@@ -55,6 +78,9 @@ namespace NeoAxis.Editor
 			catch { }
 
 			kryptonLinkLabelTokenWhatIsIt.LinkClicked += KryptonLinkLabelTokenWhatIsIt_LinkClicked;
+
+			//!!!!
+			this.kryptonLabelInstallPlatformTools.Values.Text = "Other platforms temporary are not supported. Please wait next release.";
 		}
 
 		public void SelectDefaultPage()
@@ -88,9 +114,6 @@ namespace NeoAxis.Editor
 
 				BackColor = Color.FromArgb( 10, 10, 10 );
 
-				kryptonLinkLabel1.LabelStyle = LabelStyle.Custom1;
-				kryptonLinkLabel1.StateCommon.ShortText.Color1 = Color.FromArgb( 230, 230, 230 );
-
 				//kryptonNavigator1.StateCommon.Panel.Color1 = Color.FromArgb( 40, 40, 40 );
 				//kryptonNavigator1.StateSelected.Tab.Back.Color1 = Color.FromArgb( 54, 54, 54 );
 
@@ -115,9 +138,13 @@ namespace NeoAxis.Editor
 
 				labelExTokenTransactions.StateCommon.Back.Color1 = Color.FromArgb( 40, 40, 40 );
 
+				//restore colors after apply the dark theme
+				kryptonLinkLabel1.LabelStyle = LabelStyle.Custom1;
+				kryptonLinkLabel1.StateCommon.ShortText.Color1 = Color.FromArgb( 0, 110, 190 );
+
+				//restore colors after apply the dark theme
 				kryptonLinkLabelTokenWhatIsIt.LabelStyle = LabelStyle.Custom1;
 				kryptonLinkLabelTokenWhatIsIt.StateCommon.ShortText.Color1 = Color.FromArgb( 0, 110, 190 );
-				//kryptonLinkLabelTokenWhatIsIt.StateCommon.ShortText.Color1 = Color.FromArgb( 230, 230, 230 );
 			}
 
 			//translate
@@ -143,10 +170,15 @@ namespace NeoAxis.Editor
 
 			if( Visible )
 			{
+				KryptonWinFormsUtility.LockFormUpdate( EditorForm.Instance );
+				EditorForm.Instance.unlockFormUpdateInTimer = DateTime.Now + TimeSpan.FromSeconds( 0.2 );
+
 				InfoInit();
 				NewInit();
 				//OpenInit();
 				packagingNeedInit = true;
+
+				doInitActionsInTimer = true;
 			}
 
 			backstageVisible = Visible;
@@ -193,6 +225,15 @@ namespace NeoAxis.Editor
 			//OpenUpdate();
 			PackagingUpdate();
 			LoginUpdate();
+
+			if( Visible && doInitActionsInTimer )
+			{
+				doInitActionsInTimer = false;
+
+				kryptonNavigator1.Focus();
+				kryptonNavigator1.Select();
+				kryptonTextBoxInfoName.Select( 0, 0 );
+			}
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -237,7 +278,7 @@ namespace NeoAxis.Editor
 			var firstItem = item;
 			items.Add( item );
 
-			item = new ContentBrowserItem_Virtual( objectsBrowserNew, null, Translate( "Default project (Use NeoAxis Launcher or initial source package to create default project)" ) );
+			item = new ContentBrowserItem_Virtual( objectsBrowserNew, null, Translate( "Initial project (Use NeoAxis Launcher or initial source package to create default project)" ) );
 			item.ShowDisabled = true;
 			item.Tag = "DefaultProjectDisabled";
 			items.Add( item );
@@ -320,8 +361,8 @@ namespace NeoAxis.Editor
 				while( Directory.Exists( folder ) && !IOUtility.IsDirectoryEmpty( folder ) )
 				{
 					var text = string.Format( Translate( "Destination folder \'{0}\' is not empty. Clear folder and continue?" ), folder );
-					var result = EditorMessageBox.ShowQuestion( text, MessageBoxButtons.OKCancel );
-					if( result == DialogResult.Cancel )
+					var result = EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.OKCancel );
+					if( result == EDialogResult.Cancel )
 						return;
 
 					IOUtility.ClearDirectory( folder );
@@ -579,7 +620,7 @@ namespace NeoAxis.Editor
 			if( Directory.Exists( folder ) && !IOUtility.IsDirectoryEmpty( folder ) )
 			{
 				var text = string.Format( Translate( "Destination folder \'{0}\' is not empty. Clear folder and continue?" ), folder );
-				if( EditorMessageBox.ShowQuestion( text, MessageBoxButtons.OKCancel ) == DialogResult.Cancel )
+				if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.OKCancel ) == EDialogResult.Cancel )
 					return;
 
 				//delete
@@ -654,7 +695,7 @@ namespace NeoAxis.Editor
 
 		private void KryptonLinkLabel1_LinkClicked( object sender, EventArgs e )
 		{
-			Process.Start( "https://www.neoaxis.com/" );
+			Process.Start( new ProcessStartInfo( "https://www.neoaxis.com/" ) { UseShellExecute = true } );
 		}
 
 		string GetNeoAxisProjectsFolder()
@@ -788,7 +829,7 @@ namespace NeoAxis.Editor
 
 		private void kryptonButtonRegister_Click( object sender, EventArgs e )
 		{
-			Process.Start( "https://www.neoaxis.com/user" );
+			Process.Start( new ProcessStartInfo( "https://www.neoaxis.com/user" ) { UseShellExecute = true } );
 		}
 
 		bool IsPlatformInstalled( SystemSettings.Platform platform )
@@ -799,17 +840,17 @@ namespace NeoAxis.Editor
 
 		private void kryptonButtonDonate_Click( object sender, EventArgs e )
 		{
-			Process.Start( "https://www.neoaxis.com/support/donate" );
+			Process.Start( new ProcessStartInfo( "https://www.neoaxis.com/support/donate" ) { UseShellExecute = true } );
 		}
 
 		private void KryptonLinkLabelTokenWhatIsIt_LinkClicked( object sender, EventArgs e )
 		{
-			Process.Start( "https://www.neoaxis.com/neoaxis/token" );
+			Process.Start( new ProcessStartInfo( "https://www.neoaxis.com/neoaxis/token" ) { UseShellExecute = true } );
 		}
 
 		private void kryptonButtonTokenBuy_Click( object sender, EventArgs e )
 		{
-			Process.Start( "https://www.neoaxis.com/neoaxis/token" );
+			Process.Start( new ProcessStartInfo( "https://www.neoaxis.com/neoaxis/token" ) { UseShellExecute = true } );
 		}
 	}
 }

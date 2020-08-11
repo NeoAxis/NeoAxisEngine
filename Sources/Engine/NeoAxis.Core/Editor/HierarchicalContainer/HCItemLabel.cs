@@ -15,7 +15,7 @@ namespace NeoAxis.Editor
 	public interface IHCLabel
 	{
 		//Label Label1 { get; }
-		HCKryptonTextBox Label2 { get; }
+		EngineTextBox Label2 { get; }
 	}
 
 	public class HCItemLabel : HCItemProperty
@@ -25,7 +25,7 @@ namespace NeoAxis.Editor
 		{
 		}
 
-		public override UserControl CreateControlInsidePropertyItemControl()
+		public override EUserControl CreateControlInsidePropertyItemControl()
 		{
 			//if( Owner.GridMode )
 			return new HCGridLabel();

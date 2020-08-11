@@ -81,6 +81,7 @@ namespace NeoAxis.Editor
 				KryptonPage.TextTitle = windowTitle;
 				//KryptonPage.TextDescription = windowTitle;
 				KryptonPage.VisibleChanged += ( s, _ ) => { Visible = ( (KryptonPage)s ).LastVisibleSet; };
+				KryptonPage.ParentChanged += KryptonPage_ParentChanged;
 			}
 		}
 
@@ -252,6 +253,19 @@ namespace NeoAxis.Editor
 
 		internal virtual void OnLoading( XmlReader xmlReader )
 		{
+		}
+
+		protected virtual void OnKryptonPageParentChanged() { }
+
+		private void KryptonPage_ParentChanged( object sender, EventArgs e )
+		{
+			OnKryptonPageParentChanged();
+		}
+
+		//!!!!
+		protected override void OnVisibleChanged( EventArgs e )
+		{
+			base.OnVisibleChanged( e );
 		}
 	}
 }

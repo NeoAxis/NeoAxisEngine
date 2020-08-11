@@ -16,11 +16,13 @@ namespace NeoAxis.Editor
 	public class HCDropDownControl : EUserControl
 	{
 		public bool Resizable { get; set; }
-		public bool SpecialHolder { get; set; } // HCFormDropDownHolder
+		public bool UseFormDropDownHolder { get; set; }
 		public IDropDownHolder ParentHolder { get; set; }
 
 		public HCDropDownControl()
 		{
+			MinimumSize = new Size( 1, 1 );
+			MaximumSize = new Size( 10000, 10000 );
 		}
 
 		public virtual void OnCommitChanges()
@@ -34,22 +36,23 @@ namespace NeoAxis.Editor
 
 		public void AddOkCancelButtons( out KryptonButton buttonOK, out KryptonButton buttonCancel )
 		{
+			var size = DpiHelper.Default.ScaleValue( new Size( 94, 26 ) );
+
+			buttonOK = new KryptonButton();
+			buttonOK.Size = size;
+			buttonOK.Text = "OK";
+			buttonOK.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+			buttonOK.Location = new Point( Width - size.Width - buttonOK.Width - 20, Height - buttonOK.Height - 10 );
+			buttonOK.Click += ( s, e ) => ParentHolder.Close( true );
+			Controls.Add( buttonOK );
+
 			buttonCancel = new KryptonButton();
-			buttonCancel.Size = DpiHelper.Default.ScaleValue( new Size( 94, 26 ) );
+			buttonCancel.Size = size;
 			buttonCancel.Text = "Cancel";
 			buttonCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 			buttonCancel.Location = new Point( Size - buttonCancel.Size - new Size( 10, 10 ) );
 			buttonCancel.Click += ( s, e ) => ParentHolder.Close( false );
 			Controls.Add( buttonCancel );
-
-			buttonOK = new KryptonButton();
-			buttonOK.Size = DpiHelper.Default.ScaleValue( new Size( 94, 26 ) );
-			buttonOK.Text = "OK";
-			buttonOK.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-			buttonOK.Location = new Point( Width - buttonCancel.Width - buttonOK.Width - 20,
-				Height - buttonOK.Height - 10 );
-			buttonOK.Click += ( s, e ) => ParentHolder.Close( true );
-			Controls.Add( buttonOK );
 
 			Height += buttonCancel.Height + 10;
 

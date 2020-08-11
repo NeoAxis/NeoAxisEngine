@@ -34,7 +34,7 @@ namespace NeoAxis.Editor
 		}
 
 		[Browsable( false )]
-		public object ObjectForPreview
+		public object ObjectOfPreview
 		{
 			get
 			{

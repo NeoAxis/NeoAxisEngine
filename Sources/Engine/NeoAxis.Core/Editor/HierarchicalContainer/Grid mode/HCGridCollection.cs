@@ -12,7 +12,7 @@ using ComponentFactory.Krypton.Toolkit;
 
 namespace NeoAxis.Editor
 {
-	public partial class HCGridCollection : UserControl, IHCCollection
+	public partial class HCGridCollection : EUserControl, IHCCollection
 	{
 		public HCGridCollection()
 		{
@@ -20,9 +20,11 @@ namespace NeoAxis.Editor
 
 			if( EditorAPI.DarkTheme )
 				label2.StateCommon.Back.Color1 = Color.FromArgb( 54, 54, 54 );
+
+			buttonEdit.Location = new Point( buttonEdit.Location.X, DpiHelper.Default.ScaleValue( 3 ) );
 		}
 
-		public HCKryptonTextBox Label2
+		public EngineTextBox Label2
 		{
 			get { return label2; }
 		}

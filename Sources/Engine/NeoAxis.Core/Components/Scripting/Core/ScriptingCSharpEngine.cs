@@ -44,6 +44,19 @@ namespace NeoAxis
 						scriptAssemblyNameResolver = new ScriptAssemblyNameResolver();
 						scriptAssemblyNameResolver.AddSearchDirectory( VirtualFileSystem.Directories.Binaries );
 
+						{
+							var folder = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, @"dotnet\shared\Microsoft.WindowsDesktop.App\3.1.6" );
+							if( Directory.Exists( folder ) )
+								scriptAssemblyNameResolver.AddSearchDirectory( folder );
+						}
+						{
+							var folder = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, @"dotnet\shared\Microsoft.NETCore.App\3.1.6" );
+							if( Directory.Exists( folder ) )
+								scriptAssemblyNameResolver.AddSearchDirectory( folder );
+						}
+						//scriptAssemblyNameResolver.AddSearchDirectory( Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, @"dotnet\shared\Microsoft.WindowsDesktop.App\3.1.6" ) );
+						//scriptAssemblyNameResolver.AddSearchDirectory( Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, @"dotnet\shared\Microsoft.NETCore.App\3.1.6" ) );
+
 						InitReferenceAssemblies();
 						InitUsingNamespaces();
 

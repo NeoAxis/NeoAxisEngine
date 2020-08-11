@@ -23,7 +23,7 @@ namespace NeoAxis.Editor
 			return EditorLocalization.Translate( "GroupOfObjectsElement", text );
 		}
 
-		protected override void OnInitUI()
+		protected override void OnInit()
 		{
 			buttonClearItems = ProcedureForm.CreateButton( Translate( "Clear Objects" ), ProcedureUI.Button.SizeEnum.Long );
 			buttonClearItems.Click += ButtonClearObjects_Click;
@@ -61,7 +61,7 @@ namespace NeoAxis.Editor
 
 		private void ButtonClearObjects_Click( ProcedureUI.Button obj )
 		{
-			if( EditorMessageBox.ShowQuestion( Translate( "Delete all objects of the element?" ), MessageBoxButtons.YesNo ) != DialogResult.Yes )
+			if( EditorMessageBox.ShowQuestion( Translate( "Delete all objects of the element?" ), EMessageBoxButtons.YesNo ) != EDialogResult.Yes )
 				return;
 
 			var undoMultiAction = new UndoMultiAction();
@@ -163,7 +163,7 @@ namespace NeoAxis.Editor
 
 		private unsafe void ButtonUpdateVariations_Click( ProcedureUI.Button sender )
 		{
-			if( EditorMessageBox.ShowQuestion( Translate( "Update variations of the objects?" ), MessageBoxButtons.YesNo ) != DialogResult.Yes )
+			if( EditorMessageBox.ShowQuestion( Translate( "Update variations of the objects?" ), EMessageBoxButtons.YesNo ) != EDialogResult.Yes )
 				return;
 
 			UpdateSurfaceElementVariations( false );
@@ -171,7 +171,7 @@ namespace NeoAxis.Editor
 
 		private void ButtonRandomizeGroups_Click( ProcedureUI.Button obj )
 		{
-			if( EditorMessageBox.ShowQuestion( Translate( "Refresh surface groups randomly?" ), MessageBoxButtons.YesNo ) != DialogResult.Yes )
+			if( EditorMessageBox.ShowQuestion( Translate( "Refresh surface groups randomly?" ), EMessageBoxButtons.YesNo ) != EDialogResult.Yes )
 				return;
 
 			UpdateSurfaceElementVariations( true );
@@ -179,7 +179,7 @@ namespace NeoAxis.Editor
 
 		private void ButtonResetColors_Click( ProcedureUI.Button obj )
 		{
-			if( EditorMessageBox.ShowQuestion( Translate( "Reset color of the objects to \'1 1 1\'?" ), MessageBoxButtons.YesNo ) != DialogResult.Yes )
+			if( EditorMessageBox.ShowQuestion( Translate( "Reset color of the objects to \'1 1 1\'?" ), EMessageBoxButtons.YesNo ) != EDialogResult.Yes )
 				return;
 
 			ResetColors();

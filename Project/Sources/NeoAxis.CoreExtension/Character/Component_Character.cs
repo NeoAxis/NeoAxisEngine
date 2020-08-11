@@ -12,7 +12,7 @@ namespace NeoAxis
 	/// </summary>
 	[AddToResourcesWindow( @"Base\3D\Character", -8999 )]
 	[ResourceFileExtension( "character" )]
-	[EditorDocumentWindow( typeof( Component_Character_DocumentWindow ) )]
+	[EditorDocumentWindow( typeof( Component_Character_Editor ) )]
 	public class Component_Character : Component_ObjectInSpace
 	{
 		Component_RigidBody mainBody;
@@ -849,7 +849,7 @@ namespace NeoAxis
 			//HookColisionEvents();
 
 			//set reference. lock Transform of the character to Transform of the body
-			Transform = ReferenceUtility.MakeThisReference( this, body, "Transform" );
+				Transform = ReferenceUtility.MakeThisReference( this, body, "Transform" );
 		}
 
 		void DestroyCollisionBody()

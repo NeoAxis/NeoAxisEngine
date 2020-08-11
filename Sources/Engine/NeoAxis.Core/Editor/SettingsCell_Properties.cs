@@ -6,11 +6,19 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.ComponentModel;
+using ComponentFactory.Krypton.Toolkit;
 
 namespace NeoAxis.Editor
 {
 	public partial class SettingsCell_Properties : SettingsCell
 	{
+		bool propertiesHaveBeenUpdated;
+
+		bool currentEvents;
+		bool eventsHaveBeenUpdated;
+
+		//
+
 		public SettingsCell_Properties()
 		{
 			InitializeComponent();
@@ -32,9 +40,19 @@ namespace NeoAxis.Editor
 			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
-			hierarchicalContainer1.OverrideGroupDisplayName += HierarchicalContainer1_OverrideGroupDisplayName;
-			hierarchicalContainer1.OverridePropertyDisplayName += HierarchicalContainer1_OverridePropertyDisplayName;
-			hierarchicalContainer1.OverrideMemberDescription += HierarchicalContainer1_OverrideMemberDescription;
+			toolStrip1.Padding = new Padding( (int)EditorAPI.DPIScale );
+			toolStrip1.Size = new Size( 10, (int)( 21 * EditorAPI.DPIScale + 2 ) );
+			toolStripButtonProperties.Size = new Size( (int)( 20 * EditorAPI.DPIScale ), (int)( 20 * EditorAPI.DPIScale + 2 ) );
+			toolStripButtonEvents.Size = new Size( (int)( 20 * EditorAPI.DPIScale ), (int)( 20 * EditorAPI.DPIScale + 2 ) );
+
+			hierarchicalContainerProperties.OverrideGroupDisplayName += HierarchicalContainer1_OverrideGroupDisplayName;
+			hierarchicalContainerProperties.OverridePropertyDisplayName += HierarchicalContainer1_OverridePropertyDisplayName;
+			hierarchicalContainerProperties.OverrideMemberDescription += HierarchicalContainer1_OverrideMemberDescription;
+			hierarchicalContainerEvents.OverrideGroupDisplayName += HierarchicalContainer1_OverrideGroupDisplayName;
+			hierarchicalContainerEvents.OverridePropertyDisplayName += HierarchicalContainer1_OverridePropertyDisplayName;
+			hierarchicalContainerEvents.OverrideMemberDescription += HierarchicalContainer1_OverrideMemberDescription;
+
+			UpdateControlsBounds();
 		}
 
 		protected override void OnDestroy()
@@ -50,40 +68,57 @@ namespace NeoAxis.Editor
 				if( Provider?.DocumentWindow?.Document != null && Provider.DocumentWindow.Document.SpecialMode == "ProjectSettingsUserMode" )
 					showToolbar = false;
 
-				hierarchicalContainer1.SetData( Provider.DocumentWindow, Provider.SelectedObjects, false );
-				toolStrip1.Visible = true && showToolbar;
+				toolStrip1.Visible = showToolbar;
 
-				if( !showToolbar )
+				UpdateControlsBounds();
+
+				if( !propertiesHaveBeenUpdated )
 				{
-					if( hierarchicalContainer1.Location != new Point( 0, 0 ) )
-						hierarchicalContainer1.Location = new Point( 0, 0 );
+					hierarchicalContainerProperties.SetData( Provider.DocumentWindow, Provider.SelectedObjects );
+					propertiesHaveBeenUpdated = true;
 				}
-				//if( !showToolbar )
-				//{
-				//	if( hierarchicalContainer1.Dock != DockStyle.Fill )
-				//		hierarchicalContainer1.Dock = DockStyle.Fill;
-				//}
-				//var dock = showToolbar ? DockStyle.None : DockStyle.Fill;
-				//if( hierarchicalContainer1.Dock != dock )
-				//	hierarchicalContainer1.Dock = dock;
 			}
 			else
 			{
-				hierarchicalContainer1.SetData( null, null, false );
 				toolStrip1.Visible = false;
+				hierarchicalContainerProperties.SetData( null, null, false );
+				hierarchicalContainerEvents.SetData( null, null, false );
 			}
+
+			UpdateControlsChecked();
 		}
 
 		private void toolStripButtonProperties_Click( object sender, EventArgs e )
 		{
-			hierarchicalContainer1.ReverseGroups = false;
-			hierarchicalContainer1.ContentMode = HierarchicalContainer.ContentModeEnum.Properties;
+			currentEvents = false;
+
+			hierarchicalContainerProperties.Visible = true;
+			hierarchicalContainerEvents.Visible = false;
+
+			UpdateControlsChecked();
 		}
 
 		private void toolStripButtonEvents_Click( object sender, EventArgs e )
 		{
-			hierarchicalContainer1.ReverseGroups = true;
-			hierarchicalContainer1.ContentMode = HierarchicalContainer.ContentModeEnum.Events;
+			currentEvents = true;
+
+			hierarchicalContainerEvents.Visible = true;
+
+			if( !eventsHaveBeenUpdated )
+			{
+				hierarchicalContainerEvents.SetData( Provider.DocumentWindow, Provider.SelectedObjects );
+				eventsHaveBeenUpdated = true;
+			}
+
+			hierarchicalContainerProperties.Visible = false;
+
+			UpdateControlsChecked();
+		}
+
+		void UpdateControlsChecked()
+		{
+			toolStripButtonProperties.Checked = !currentEvents;
+			toolStripButtonEvents.Checked = currentEvents;
 		}
 
 		private void timer1_Tick( object sender, EventArgs e )
@@ -91,8 +126,7 @@ namespace NeoAxis.Editor
 			if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
 				return;
 
-			toolStripButtonProperties.Checked = hierarchicalContainer1.ContentMode == HierarchicalContainer.ContentModeEnum.Properties;
-			toolStripButtonEvents.Checked = hierarchicalContainer1.ContentMode == HierarchicalContainer.ContentModeEnum.Events;
+			UpdateControlsChecked();
 		}
 
 		private void HierarchicalContainer1_OverrideGroupDisplayName( HierarchicalContainer sender, HCItemGroup group, ref string displayName )
@@ -131,9 +165,38 @@ namespace NeoAxis.Editor
 			catch { }
 		}
 
-		private void SettingsCell_Properties_Resize( object sender, EventArgs e )
+		void UpdateControlsBounds()
 		{
-			hierarchicalContainer1?.SetBounds( 0, toolStrip1.Bounds.Bottom, Size.Width, Size.Height - toolStrip1.Bounds.Bottom );
+			hierarchicalContainerProperties.SetBounds( 0, toolStrip1.Bounds.Bottom, Size.Width, Size.Height - toolStrip1.Bounds.Bottom );
+			hierarchicalContainerEvents.SetBounds( 0, toolStrip1.Bounds.Bottom, Size.Width, Size.Height - toolStrip1.Bounds.Bottom );
+		}
+
+		protected override void OnResize( EventArgs e )
+		{
+			base.OnResize( e );
+
+			if( IsHandleCreated )
+				UpdateControlsBounds();
+		}
+
+		protected override void OnParentFormResizeBegin( EventArgs e )
+		{
+			base.OnParentFormResizeBegin( e );
+
+			if( !currentEvents && hierarchicalContainerProperties.RootItems.Count > 20 )
+				hierarchicalContainerProperties.Visible = false;
+			if( currentEvents && hierarchicalContainerEvents.RootItems.Count > 20 )
+				hierarchicalContainerEvents.Visible = false;
+		}
+
+		protected override void OnParentFormResizeEnd( EventArgs e )
+		{
+			base.OnParentFormResizeEnd( e );
+
+			if( !currentEvents )
+				hierarchicalContainerProperties.Visible = true;
+			if( currentEvents )
+				hierarchicalContainerEvents.Visible = true;
 		}
 	}
 }

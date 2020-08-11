@@ -36,8 +36,8 @@
 			// 
 			// timer50ms
 			// 
-			this.timer50ms.Interval = 50;
-			this.timer50ms.Tick += new System.EventHandler(this.timer50ms_Tick);
+			this.timer50ms.Interval = 10;
+			this.timer50ms.Tick += new System.EventHandler(this.timer10ms_Tick);
 			// 
 			// engineScrollBar1
 			// 

@@ -15,7 +15,7 @@ namespace NeoAxis.Editor
 	public interface IHCTextBox
 	{
 		//Label Label1 { get; }
-		HCKryptonTextBox TextBox { get; }
+		EngineTextBox TextBox { get; }
 	}
 
 	/// <summary>
@@ -38,7 +38,7 @@ namespace NeoAxis.Editor
 		{
 		}
 
-		public override UserControl CreateControlInsidePropertyItemControl()
+		public override EUserControl CreateControlInsidePropertyItemControl()
 		{
 			//if( Owner.GridMode )
 			return new HCGridTextBox();
@@ -129,8 +129,8 @@ namespace NeoAxis.Editor
 				invalidValue = false;
 
 			// make read only
-			if( control.TextBox.LookLikeLabel != readOnly )
-				control.TextBox.LookLikeLabel = readOnly;
+			if( control.TextBox.LikeLabel != readOnly )
+				control.TextBox.LikeLabel = readOnly;
 
 			//update text from property
 			if( !textBoxModifying && !invalidValue )

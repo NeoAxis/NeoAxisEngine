@@ -272,10 +272,28 @@ namespace NeoAxis.Editor
 				{
 					if( cellClass.IsAssignableFrom( c.GetType() ) )
 						return c;
+
+					if( typeof( SettingsCellProcedureUI ).IsAssignableFrom( cellClass ) )
+					{
+						var container = c as SettingsCellProcedureUI_Container;
+						if( container != null && cellClass.IsAssignableFrom( container.procedureUI.GetType() ) )
+							return c;
+					}
 				}
 			}
 
-			SettingsCell cell = (SettingsCell)cellClass.GetConstructor( new Type[ 0 ] ).Invoke( new object[ 0 ] );
+			SettingsCell cell;
+			if( typeof( SettingsCellProcedureUI ).IsAssignableFrom( cellClass ) )
+			{
+				var procedureUI = (SettingsCellProcedureUI)Activator.CreateInstance( cellClass );
+				var container = new SettingsCellProcedureUI_Container();
+				container.procedureUI = procedureUI;
+				procedureUI.container = container;
+				cell = container;
+			}
+			else
+				cell = (SettingsCell)cellClass.GetConstructor( new Type[ 0 ] ).Invoke( new object[ 0 ] );
+
 			AddCell( cell );
 			return cell;
 		}
@@ -283,6 +301,9 @@ namespace NeoAxis.Editor
 		public Control AddCell( SettingsCell cell )
 		{
 			cell.PerformInit();
+
+			if( cell.SizeType != SizeType.AutoSize )
+				cell.SetBounds( 0, 0, layoutPanel.Width, layoutPanel.Height );
 			cell.Dock = DockStyle.Fill;
 
 			if( cell.SizeType == SizeType.AutoSize )

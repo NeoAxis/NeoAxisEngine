@@ -17,6 +17,7 @@ namespace NeoAxis.Editor
 	partial class EditorForm
 	{
 		Component_ProjectSettings.RibbonAndToolbarActionsClass ribbonUpdatedForConfiguration;
+		bool needRecreatedRibbonButtons;
 
 		ESet<string> tabUsedKeyTips = new ESet<string>( new string[] { "P" } );
 
@@ -153,9 +154,10 @@ namespace NeoAxis.Editor
 		void RibbonButtonsCheckForRecreate()
 		{
 			var config = ProjectSettings.Get.RibbonAndToolbarActions;
-			if( ribbonUpdatedForConfiguration == null || !config.Equals( ribbonUpdatedForConfiguration ) )
+			if( ribbonUpdatedForConfiguration == null || !config.Equals( ribbonUpdatedForConfiguration ) || needRecreatedRibbonButtons )
 			{
 				ribbonUpdatedForConfiguration = config.Clone();
+				needRecreatedRibbonButtons = false;
 
 				ribbonLastSelectedTabTypeByUser_DisableUpdate = true;
 

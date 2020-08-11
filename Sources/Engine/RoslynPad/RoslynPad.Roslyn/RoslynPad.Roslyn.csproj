@@ -3,8 +3,9 @@
   <Import Project="..\common.props" />
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net46</TargetFramework>
-    <PackageTargetFallback>$(PackageTargetFallback);portable-net45+win8+wp8+wpa81;</PackageTargetFallback>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <InternalsAssemblyNames>Microsoft.CodeAnalysis.CSharp;Microsoft.CodeAnalysis.Features;Microsoft.CodeAnalysis.CSharp.Features;Microsoft.CodeAnalysis.Scripting;Microsoft.CodeAnalysis.CSharp.Scripting;Microsoft.CodeAnalysis.Workspaces;Microsoft.CodeAnalysis.CSharp.Workspaces;Microsoft.CodeAnalysis.Extensions;Microsoft.CodeAnalysis.PooledObjects</InternalsAssemblyNames>
     <Version>$(RoslynAssemblyVersion)</Version>
     <PackageVersion>$(RoslynPackageVersion)</PackageVersion>
@@ -13,13 +14,19 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningsAsErrors />
+    <OutputPath>..\..\..\..\Project\Binaries\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\..\..\..\Project\Binaries\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="IgnoresAccessChecksToGenerator" Version="0.4.0" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.8.2" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="2.8.2" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="2.8.2" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.8.2" />
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="2.8.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.8.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="2.8.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="2.8.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.8.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Features" Version="2.8.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.3.0" />
     <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />

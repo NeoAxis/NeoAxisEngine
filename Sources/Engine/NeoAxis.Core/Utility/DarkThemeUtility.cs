@@ -191,7 +191,7 @@ namespace NeoAxis
 
 					//LabelEx
 					{
-						var label = child as LabelEx;
+						var label = child as EngineLabel;
 						if( label != null )
 						{
 							label.ForeColor = Color.FromArgb( 230, 230, 230 );
@@ -212,11 +212,11 @@ namespace NeoAxis
 			}
 		}
 
-		public static void ApplyToSplitter( KryptonSplitContainer control )
-		{
-			if( EditorAPI.DarkTheme )
-				control.StateNormal.Back.Color1 = Color.FromArgb( 90, 90, 90 );// 40, 40, 40 );
-		}
+		//public static void ApplyToSplitter( KryptonSplitContainer control )
+		//{
+		//	if( EditorAPI.DarkTheme )
+		//		control.StateNormal.Back.Color1 = Color.FromArgb( 90, 90, 90 );// 40, 40, 40 );
+		//}
 
 		static void ToolTip1_Draw( object sender, DrawToolTipEventArgs e )
 		{

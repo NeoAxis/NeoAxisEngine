@@ -21,7 +21,7 @@ namespace NeoAxis.Editor
 	/// <summary>
 	/// Represents a container to manage controls with the ability to set up the structure of controls in the form of a hierarchy.
 	/// </summary>
-	public partial class HierarchicalContainer : EUserControl, IMessageFilter
+	public partial class HierarchicalContainer : EUserControl, IMessageFilter, ControlDoubleBufferComposited.IDoubleBufferComposited
 	{
 		static Dictionary<Type, Type> itemTypeByPropertyType = new Dictionary<Type, Type>();
 
@@ -54,6 +54,10 @@ namespace NeoAxis.Editor
 		internal static int CreatedItemsCount { get; set; } = 0;
 
 		double lastUpdateTime;
+
+		DateTime? doubleBufferCompositedTime;
+
+		//bool resizingWasVisible;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -174,8 +178,10 @@ namespace NeoAxis.Editor
 					splitterRatio = newValue;
 					//OnGridSplitterChanged();
 
-					Invalidate( true );
-					//Invalidate();
+					UpdateItems();
+					Refresh();
+					//Invalidate( true );
+					////Invalidate();
 				}
 			}
 		}
@@ -217,6 +223,9 @@ namespace NeoAxis.Editor
 			//VerticalScroll.Visible = false;
 			//// restore AutoScroll
 			//AutoScroll = true;
+
+			//!!!!.NET Core. move to WinForms designer when it will work
+			engineScrollBar1.ValueChanged += EngineScrollBar1_ValueChanged;
 		}
 
 		//private void EngineScrollBar1_Scroll( object sender, EngineScrollBarEventArgs e )
@@ -254,7 +263,7 @@ namespace NeoAxis.Editor
 				if( splitterHovered && !splitterState.HasFlag( SplitterState.Hovered ) )
 				{
 					splitterState |= SplitterState.Hovered;
-					Cursor = Cursors.VSplit;
+					Cursor = KryptonCursors.VSplit;
 				}
 				else if( !splitterHovered && splitterState.HasFlag( SplitterState.Hovered ) )
 				{
@@ -330,7 +339,7 @@ namespace NeoAxis.Editor
 			//	if( splitterHovered && !splitterState.HasFlag( SplitterState.Hovered ) )
 			//	{
 			//		splitterState |= SplitterState.Hovered;
-			//		Cursor = Cursors.VSplit;
+			//		Cursor = KryptonCursors.VSplit;
 			//	}
 			//	else if( !splitterHovered && splitterState.HasFlag( SplitterState.Hovered ) )
 			//	{
@@ -402,11 +411,13 @@ namespace NeoAxis.Editor
 
 		void OnGridSplitterChanged()
 		{
+			lastUpdateTime = 0;
+
 			//if( !GridMode )
 			//	return;
 
-			PerformUpdate( true );
-			//UpdateItemsLayout();
+			//PerformUpdate( true );
+			////UpdateItemsLayout();
 		}
 
 		protected override Point ScrollToControl( Control activeControl )
@@ -426,7 +437,7 @@ namespace NeoAxis.Editor
 			//	this.OnMouseLeave( EventArgs.Empty );
 		}
 
-		private void timer50ms_Tick( object sender, EventArgs e )
+		private void timer10ms_Tick( object sender, EventArgs e )
 		{
 			if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
 				return;
@@ -440,6 +451,12 @@ namespace NeoAxis.Editor
 
 			//!!!!когда не обновлять?
 			PerformUpdate();
+
+			if( doubleBufferCompositedTime.HasValue && ( DateTime.Now - doubleBufferCompositedTime.Value ).TotalSeconds > 0 )
+			{
+				ControlDoubleBufferComposited.RestoreComposited( this );
+				doubleBufferCompositedTime = null;
+			}
 		}
 
 		public void PerformUpdate( bool forceUpdate = false )
@@ -466,9 +483,6 @@ namespace NeoAxis.Editor
 
 			if( EngineApp.GetSystemTime() - lastUpdateTime < updateTime && !forceUpdate )
 				return;
-
-			//if( EngineApp.GetSystemTime() - lastUpdateTime < 0.04 )
-			//	return;
 
 			if( duringUpdate )
 				return;
@@ -497,7 +511,7 @@ namespace NeoAxis.Editor
 			this.selectedObjects = objects;
 
 			if( callPerformUpdate )
-				PerformUpdate();
+				PerformUpdate( true );
 
 			//start timer
 			timer50ms?.Start();
@@ -824,16 +838,16 @@ namespace NeoAxis.Editor
 			return dropDownHolder != null;
 		}
 
-		public void ToggleDropDown( HCDropDownControl control, HCItemProperty itemProperty )
+		public void ToggleDropDown( HCDropDownControl control, Control parentControl )
 		{
 			if( dropDownHolder == null )
 			{
-				if( control.SpecialHolder )
+				if( control.UseFormDropDownHolder )
 					dropDownHolder = new HCFormDropDownHolder( control );
 				else
 					dropDownHolder = new HCToolStripDropDownHolder( control );
 
-				dropDownHolder.Show( itemProperty.CreatedControlInsidePropertyItemControl );
+				dropDownHolder.Show( parentControl );
 				dropDownHolder.HolderClosed += DropDownHolder_Closed;
 			}
 			else
@@ -1002,7 +1016,7 @@ namespace NeoAxis.Editor
 			if( !Enabled || !Visible || IsDisposed )
 				return false;
 
-			if( m.Msg == PI.WM_MOUSEWHEEL )
+			if( m.Msg == ComponentFactory.Krypton.Toolkit.PI.WM_MOUSEWHEEL )
 			{
 				//don't filter when scroll bar is not visible
 				if( !engineScrollBar1.Visible )
@@ -1010,7 +1024,7 @@ namespace NeoAxis.Editor
 				//if( VerticalScroll == null || !VerticalScroll.Visible )
 				//	return false;
 
-				Point pos = new Point( PI.LOWORD( (int)m.LParam ), PI.HIWORD( (int)m.LParam ) );
+				Point pos = new Point( ComponentFactory.Krypton.Toolkit.PI.LOWORD( (int)m.LParam ), ComponentFactory.Krypton.Toolkit.PI.HIWORD( (int)m.LParam ) );
 
 				try //crashed once on ObjectsWindow. access to disposed object assertion.
 				{
@@ -1077,10 +1091,10 @@ namespace NeoAxis.Editor
 
 		private bool IsDropDownListAtPoint( Point pos )
 		{
-			IntPtr hWnd = PI.WindowFromPoint( new PI.POINT( pos ) );
+			IntPtr hWnd = ComponentFactory.Krypton.Toolkit.PI.WindowFromPoint( new ComponentFactory.Krypton.Toolkit.PI.POINT( pos ) );
 			if( hWnd != IntPtr.Zero )
 			{
-				string className = PI.GetClassName( hWnd );
+				string className = ComponentFactory.Krypton.Toolkit.PI.GetClassName( hWnd );
 				if( className == "ComboLBox" )
 					return true;
 			}
@@ -1114,6 +1128,7 @@ namespace NeoAxis.Editor
 			OverrideGroupDisplayName?.Invoke( this, group, ref displayName );
 		}
 
+		//ControlDoubleBufferComposited.IDoubleBufferComposited
 		protected override CreateParams CreateParams
 		{
 			get
@@ -1163,5 +1178,31 @@ namespace NeoAxis.Editor
 			get { return false; }
 			set { base.AutoScroll = value; }
 		}
+
+		private void EngineScrollBar1_ValueChanged( object sender, EventArgs e )
+		{
+			lastUpdateTime = 0;
+
+			doubleBufferCompositedTime = DateTime.Now + TimeSpan.FromSeconds( 0.5 );
+			ControlDoubleBufferComposited.DisableComposited( this );
+		}
+
+		protected override void OnParentFormResizeBegin( EventArgs e )
+		{
+			base.OnParentFormResizeBegin( e );
+
+			//resizingWasVisible = Visible;
+			//Visible = false;
+		}
+
+		protected override void OnParentFormResizeEnd( EventArgs e )
+		{
+			base.OnParentFormResizeEnd( e );
+
+			Invalidate();
+			//if( resizingWasVisible )
+			//	Visible = true;
+		}
+
 	}
 }

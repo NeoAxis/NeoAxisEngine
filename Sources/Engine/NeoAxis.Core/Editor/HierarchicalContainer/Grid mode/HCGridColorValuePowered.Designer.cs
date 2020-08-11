@@ -30,7 +30,7 @@
 		{
 			this.previewButton = new NeoAxis.Editor.HCColorPreviewButton();
 			this.trackBarPower = new ComponentFactory.Krypton.Toolkit.KryptonTrackBar();
-			this.textBox1 = new NeoAxis.Editor.HCKryptonTextBox();
+			this.textBox1 = new NeoAxis.Editor.EngineTextBox();
 			this.SuspendLayout();
 			// 
 			// previewButton
@@ -59,11 +59,12 @@
 			// 
 			this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBox1.Location = new System.Drawing.Point(0, 3);
-			this.textBox1.LookLikeLabel = false;
+			this.textBox1.Location = new System.Drawing.Point( 0, 4 );
+			//this.textBox1.Location = new System.Drawing.Point(0, 3);
+			this.textBox1.LikeLabel = false;
 			this.textBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.textBox1.Name = "textBox1";
-			this.textBox1.Size = new System.Drawing.Size(200, 21);
+			this.textBox1.Size = new System.Drawing.Size(200, 22);
 			this.textBox1.TabIndex = 0;
 			// 
 			// HCGridColorValuePowered
@@ -82,7 +83,7 @@
 		}
 
 		#endregion
-		public HCKryptonTextBox textBox1;
+		public EngineTextBox textBox1;
 		public HCColorPreviewButton previewButton;
 		private ComponentFactory.Krypton.Toolkit.KryptonTrackBar trackBarPower;
 	}

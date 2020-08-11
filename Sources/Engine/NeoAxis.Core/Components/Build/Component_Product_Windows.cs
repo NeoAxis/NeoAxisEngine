@@ -16,19 +16,19 @@ namespace NeoAxis
 	/// </summary>
 	public class Component_Product_Windows : Component_Product
 	{
-		/// <summary>
-		/// Whether to include build tools that are intended to compile C# scripts.
-		/// </summary>
-		[DefaultValue( false )]
-		[Category( "Files" )]
-		public Reference<bool> BuildTools
-		{
-			get { if( _buildTools.BeginGet() ) BuildTools = _buildTools.Get( this ); return _buildTools.value; }
-			set { if( _buildTools.BeginSet( ref value ) ) { try { BuildToolsChanged?.Invoke( this ); } finally { _buildTools.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="BuildTools"/> property value changes.</summary>
-		public event Action<Component_Product_Windows> BuildToolsChanged;
-		ReferenceField<bool> _buildTools = false;
+		///// <summary>
+		///// Whether to include build tools that are intended to compile C# scripts.
+		///// </summary>
+		//[DefaultValue( false )]
+		//[Category( "Files" )]
+		//public Reference<bool> BuildTools
+		//{
+		//	get { if( _buildTools.BeginGet() ) BuildTools = _buildTools.Get( this ); return _buildTools.value; }
+		//	set { if( _buildTools.BeginSet( ref value ) ) { try { BuildToolsChanged?.Invoke( this ); } finally { _buildTools.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="BuildTools"/> property value changes.</summary>
+		//public event Action<Component_Product_Windows> BuildToolsChanged;
+		//ReferenceField<bool> _buildTools = false;
 
 		/// <summary>
 		/// Whether to include files for debugging (xml, pdb).
@@ -43,6 +43,21 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="DebugFiles"/> property value changes.</summary>
 		public event Action<Component_Product_Windows> DebugFilesChanged;
 		ReferenceField<bool> _debugFiles = false;
+
+		/// <summary>
+		/// Whether to include files to support UIWebBrowser control.
+		/// </summary>
+		[Category( "Files" )]
+		[DisplayName( "UIWebBrowser" )]
+		[DefaultValue( false )]
+		public Reference<bool> UIWebBrowser
+		{
+			get { if( _uIWebBrowser.BeginGet() ) UIWebBrowser = _uIWebBrowser.Get( this ); return _uIWebBrowser.value; }
+			set { if( _uIWebBrowser.BeginSet( ref value ) ) { try { UIWebBrowserChanged?.Invoke( this ); } finally { _uIWebBrowser.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="UIWebBrowser"/> property value changes.</summary>
+		public event Action<Component_Product_Windows> UIWebBrowserChanged;
+		ReferenceField<bool> _uIWebBrowser = false;
 
 		/////////////////////////////////////////
 
@@ -121,11 +136,15 @@ namespace NeoAxis
 							excludePaths.Add( Path.Combine( sourceFolder, "SampleWidgetWPF.exe" ) );
 							excludePaths.Add( Path.Combine( sourceFolder, "SampleWidgetWPF.exe.config" ) );
 
-							if( !BuildTools )
-							{
-								excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Tools\BuildTools" ) );
-								excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Tools\Framework" ) );
-							}
+							excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Platforms\Windows\dotnet" ) );
+							//if( !BuildTools )
+							//{
+							//	excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Tools\BuildTools" ) );
+							//	excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Tools\Framework" ) );
+							//}
+
+							if( !UIWebBrowser )
+								excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Platforms\Windows\CefGlue" ) );
 
 							if( !DebugFiles )
 							{

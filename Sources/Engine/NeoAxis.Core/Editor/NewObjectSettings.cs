@@ -141,7 +141,7 @@ namespace Project
 
 					//restart application
 					var text = EditorLocalization.Translate( "General", "To apply changes need restart the editor. Restart?\r\n\r\nThe editor must be restarted to compile and enable a new created C# class." );
-					if( EditorMessageBox.ShowQuestion( text, MessageBoxButtons.YesNo ) == DialogResult.Yes )
+					if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) == EDialogResult.Yes )
 						EditorAPI.BeginRestartApplication();
 
 					Window.DisableUnableToCreateReason = false;

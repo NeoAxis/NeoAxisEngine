@@ -245,14 +245,14 @@ namespace NeoAxis.Editor
 		{
 		}
 
-		public override UserControl CreateControlInsidePropertyItemControl()
+		public override EUserControl CreateControlInsidePropertyItemControl()
 		{
 			var control = new HCItemProjectRibbonAndToolbarActionsForm();
 			control.contentBrowserProject.ShowContextMenuEvent += ContentBrowserProject_ShowContextMenuEvent;
 			return control;
 		}
 
-		public override UserControl CreateControlImpl()
+		public override EUserControl CreateControlImpl()
 		{
 			var control = (HCGridProperty)base.CreateControlImpl();
 			control.ShowOnlyEditorControl = true;
@@ -391,7 +391,7 @@ namespace NeoAxis.Editor
 			if( settings == null )
 				return;
 
-			if( EditorMessageBox.ShowQuestion( Translate( "Reset the configuration of the Ribbon and Quick Access Toolbar to default?" ), MessageBoxButtons.YesNo ) == DialogResult.No )
+			if( EditorMessageBox.ShowQuestion( Translate( "Reset the configuration of the Ribbon and Quick Access Toolbar to default?" ), EMessageBoxButtons.YesNo ) == EDialogResult.No )
 				return;
 
 			settings.ResetToDefault();
@@ -627,7 +627,7 @@ namespace NeoAxis.Editor
 			else
 				text = EditorLocalization.Translate( "General", "Delete selected objects?" );
 
-			if( EditorMessageBox.ShowQuestion( text, MessageBoxButtons.YesNo ) == DialogResult.No )
+			if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) == EDialogResult.No )
 				return;
 
 			var settings = GetSettings();

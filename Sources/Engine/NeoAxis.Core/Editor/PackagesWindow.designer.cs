@@ -38,13 +38,13 @@
 			this.kryptonSplitContainer2 = new ComponentFactory.Krypton.Toolkit.KryptonSplitContainer();
 			this.kryptonLabel1 = new ComponentFactory.Krypton.Toolkit.KryptonLabel();
 			this.contentBrowser1 = new NeoAxis.Editor.ContentBrowser();
-			this.labelExPackageSize = new NeoAxis.Editor.LabelEx();
+			this.labelExPackageSize = new NeoAxis.Editor.EngineLabel();
 			this.progressBarPackageProgress = new NeoAxis.Editor.EngineProgressBar();
-			this.labelExPackageStatus = new NeoAxis.Editor.LabelEx();
-			this.labelExPackageVersion = new NeoAxis.Editor.LabelEx();
-			this.labelExPackageDeveloper = new NeoAxis.Editor.LabelEx();
-			this.labelExPackageName = new NeoAxis.Editor.LabelEx();
-			this.labelExPackageInfo = new NeoAxis.Editor.LabelEx();
+			this.labelExPackageStatus = new NeoAxis.Editor.EngineLabel();
+			this.labelExPackageVersion = new NeoAxis.Editor.EngineLabel();
+			this.labelExPackageDeveloper = new NeoAxis.Editor.EngineLabel();
+			this.labelExPackageName = new NeoAxis.Editor.EngineLabel();
+			this.labelExPackageInfo = new NeoAxis.Editor.EngineLabel();
 			this.kryptonButtonUninstall = new ComponentFactory.Krypton.Toolkit.KryptonButton();
 			this.kryptonButtonInstall = new ComponentFactory.Krypton.Toolkit.KryptonButton();
 			this.kryptonButtonDownload = new ComponentFactory.Krypton.Toolkit.KryptonButton();
@@ -351,19 +351,19 @@
 		private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonDelete;
 		private ComponentFactory.Krypton.Toolkit.KryptonSplitContainer kryptonSplitContainer1;
 		private ContentBrowser contentBrowser1;
-		private LabelEx labelExPackageInfo;
+		private EngineLabel labelExPackageInfo;
 		private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonUninstall;
 		private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonInstall;
 		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabel1;
-		private LabelEx labelExPackageName;
-		private LabelEx labelExPackageDeveloper;
-		private LabelEx labelExPackageVersion;
+		private EngineLabel labelExPackageName;
+		private EngineLabel labelExPackageDeveloper;
+		private EngineLabel labelExPackageVersion;
 		private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonDownload;
-		private LabelEx labelExPackageStatus;
+		private EngineLabel labelExPackageStatus;
 		private NeoAxis.Editor.EngineProgressBar progressBarPackageProgress;
 		private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonBuy;
 		private ComponentFactory.Krypton.Toolkit.KryptonButton buttonUpdateList;
-		private LabelEx labelExPackageSize;
+		private EngineLabel labelExPackageSize;
 		private ComponentFactory.Krypton.Toolkit.KryptonSplitContainer kryptonSplitContainer2;
 	}
 }

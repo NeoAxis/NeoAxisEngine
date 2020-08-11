@@ -381,13 +381,9 @@ namespace NeoAxis
 
 		public static Metadata.NetTypeInfo GetTypeOfNetType( Type type )//, bool canRegisterAssembly = true )
 		{
-			//!!!!!
 			//!!!!! TODO: test for support refs return types https://docs.microsoft.com/ru-ru/dotnet/csharp/programming-guide/classes-and-structs/ref-returns
-			if( type.IsByRef )
-				Log.Info( "MetadataManager: GetTypeOfNetType: type.IsByRef == true." );
-			////!!!!!
 			//if( type.IsByRef )
-			//	Log.Fatal( "MetadataManager: GetTypeOfNetType: type.IsByRef == true." );
+			//	Log.Info( "MetadataManager: GetTypeOfNetType: type.IsByRef == true." );
 
 			lock( lockObject )
 			{

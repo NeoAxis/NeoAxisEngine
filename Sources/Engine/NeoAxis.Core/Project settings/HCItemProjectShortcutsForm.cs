@@ -12,7 +12,7 @@ using ComponentFactory.Krypton.Toolkit;
 
 namespace NeoAxis.Editor
 {
-	partial class HCItemProjectShortcutsForm : UserControl
+	partial class HCItemProjectShortcutsForm : EUserControl
 	{
 		public HCItemProjectShortcutsForm()
 		{

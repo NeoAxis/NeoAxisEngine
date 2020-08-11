@@ -4,11 +4,13 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <RootNamespace>RoslynPad</RootNamespace>
-    <TargetFramework>net46</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="System.Collections.Immutable" Version="1.3.1" />
-    <PackageReference Include="System.Diagnostics.StackTrace" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\..\..\..\Project\Binaries\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>..\..\..\..\Project\Binaries\</OutputPath>
+  </PropertyGroup>
 </Project>

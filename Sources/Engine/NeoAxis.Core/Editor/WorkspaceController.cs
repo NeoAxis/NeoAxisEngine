@@ -431,7 +431,29 @@ namespace NeoAxis.Editor
 			if( ownerControl.Disposing || ownerControl.IsDisposed )
 				return;
 
-			RemoveDockWindow( (KryptonPage)sender, true );
+			var page = (KryptonPage)sender;
+
+			//bool needUnlockEditorForm = false;
+			////try
+			////{
+			////	var dockWindow = page.GetDockWindow();
+			////	if( dockWindow != null && IsWindowFloating( dockWindow ) )
+			////{
+			//WinFormsUtility.LockFormUpdate( EditorForm.Instance );
+			//needUnlockEditorForm = true;
+			////}
+			////}
+			////catch { }
+
+			try
+			{
+				RemoveDockWindow( page, true );
+			}
+			finally
+			{
+				//if( needUnlockEditorForm )
+				//	WinFormsUtility.LockFormUpdate( null );
+			}
 		}
 
 		private void KryptonPage_VisibleChanged( object sender, EventArgs e )

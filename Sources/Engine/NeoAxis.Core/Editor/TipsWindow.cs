@@ -25,7 +25,11 @@ namespace NeoAxis.Editor
 		bool initialized;
 
 		bool waitingFirstTick = true;
-		double waitingStartTime;
+		//double waitingStartTime;
+
+		bool firstLoading = true;
+		bool firstWasLoaded;
+		int backstageCounter;
 
 		//
 
@@ -162,8 +166,11 @@ namespace NeoAxis.Editor
 			base.ViewportControl_ViewportCreated( sender );
 
 			var uiContainer = sender.Viewport.UIContainer;
+			uiContainer.AfterRenderUIWithChildren += UiContainer_AfterRenderUIWithChildren;
 
 			browser = uiContainer.CreateComponent<UIWebBrowser>( enabled: false );
+			browser.LoadStart += Browser_LoadStart;
+			browser.LoadEnd += Browser_LoadEnd;
 			ShowTip( currentTip );
 			browser.Enabled = true;
 
@@ -177,10 +184,37 @@ namespace NeoAxis.Editor
 			//browser.TargetUrlChanged += Browser_TargetUrlChanged;
 		}
 
+		private void Browser_LoadStart( UIWebBrowser sender, Xilium.CefGlue.CefFrame frame )
+		{
+			if( firstLoading )
+				firstWasLoaded = false;
+		}
+
+		private void Browser_LoadEnd( UIWebBrowser sender, Xilium.CefGlue.CefFrame frame, int httpStatusCode )
+		{
+			if( firstLoading )
+			{
+				firstWasLoaded = true;
+				backstageCounter = 10;
+
+				firstLoading = false;
+			}
+		}
+
+		private void UiContainer_AfterRenderUIWithChildren( UIControl sender, CanvasRenderer renderer )
+		{
+			if( firstWasLoaded && backstageCounter > 0 )
+				backstageCounter--;
+
+			if( !firstWasLoaded || backstageCounter != 0 )
+				renderer.AddQuad( new Rectangle( 0, 0, 1, 1 ), new ColorValue( 54.0 / 255.0, 54.0 / 255.0, 54.0 / 255.0 ) );
+		}
+
 		protected override void OnResize( EventArgs e )
 		{
 			base.OnResize( e );
 
+			backstageCounter = 10;
 			waitingFirstTick = true;
 		}
 
@@ -188,10 +222,10 @@ namespace NeoAxis.Editor
 		{
 			base.Viewport_UpdateBeforeOutput( viewport );
 
-			if( waitingFirstTick )
-				waitingStartTime = Time.Current;
+			//if( waitingFirstTick )
+			//	waitingStartTime = Time.Current;
 
-			var show = waitingFirstTick || Time.Current - waitingStartTime < 0.8;
+			var show = waitingFirstTick;// || Time.Current - waitingStartTime < 0;// 0.8;
 			if( backstage != null )
 				backstage.Visible = show;
 

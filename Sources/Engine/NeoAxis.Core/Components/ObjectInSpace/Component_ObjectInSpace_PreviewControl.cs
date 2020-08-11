@@ -20,7 +20,7 @@ namespace NeoAxis.Editor
 		{
 			get
 			{
-				var objectInSpace = ObjectForPreview as Component_ObjectInSpace;
+				var objectInSpace = ObjectOfPreview as Component_ObjectInSpace;
 				if( objectInSpace != null && objectInSpace.ParentScene == null )//show only if no scene
 					return true;
 				return false;
@@ -33,7 +33,7 @@ namespace NeoAxis.Editor
 
 			if( EnableViewportControl )
 			{
-				var objectInSpace = ObjectForPreview as Component_ObjectInSpace;
+				var objectInSpace = ObjectOfPreview as Component_ObjectInSpace;
 				if( objectInSpace != null && objectInSpace.ParentScene == null )//show only if no scene
 				{
 					var scene = CreateScene( false );

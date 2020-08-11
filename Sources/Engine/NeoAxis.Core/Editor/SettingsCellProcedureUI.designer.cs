@@ -1,6 +1,6 @@
 ﻿namespace NeoAxis.Editor
 {
-	partial class SettingsCellProcedureUI
+	partial class SettingsCellProcedureUI_Container
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -41,8 +41,8 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Name = "SettingsCellProcedureUI";
-			this.Load += new System.EventHandler(this.SettingsCellProcedureUI_Load);
+			this.Name = "SettingsCellProcedureUI_Container";
+			this.Load += new System.EventHandler(this.SettingsCellProcedureUI_Container_Load);
 			this.ResumeLayout(false);
 
 		}

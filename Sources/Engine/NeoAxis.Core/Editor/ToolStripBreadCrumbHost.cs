@@ -26,17 +26,19 @@ namespace NeoAxis.Editor
 			KryptonBreadCrumb bc = new KryptonBreadCrumb();
 			bc.StateCommon.Border.Draw = InheritBool.False;
 
-			//WORKAROUND:
-			/*	Now we do not scale toolstrip at high dpi, its height is always equal to 27.
-				However, BreadCrumb and the text inside it and font are scaled according to the general rules
-				to prevent the toolstrip height increasing I reduce the BreadCrumb text (content) padding from 3 to 2.
-				tested only at 125%
-			*/
-			if( DpiHelper.Default.DpiScaleFactor > 1.0 )
-				bc.StateCommon.BreadCrumb.Content.Padding = new Padding( 2 );
-			//
+			bc.StateCommon.BreadCrumb.Content.Padding = new Padding( 0 );
 
-			bc.MinimumSize = new Size( 100, 22 );
+			////WORKAROUND:
+			///*	Now we do not scale toolstrip at high dpi, its height is always equal to 27.
+			//	However, BreadCrumb and the text inside it and font are scaled according to the general rules
+			//	to prevent the toolstrip height increasing I reduce the BreadCrumb text (content) padding from 3 to 2.
+			//	tested only at 125%
+			//*/
+			//if( DpiHelper.Default.DpiScaleFactor > 1.0 )
+			//	bc.StateCommon.BreadCrumb.Content.Padding = new Padding( 2 );
+			////
+
+			//bc.MinimumSize = new Size( 100, 22 );
 
 			return bc;
 		}

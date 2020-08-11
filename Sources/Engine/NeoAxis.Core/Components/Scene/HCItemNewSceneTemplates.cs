@@ -19,7 +19,7 @@ namespace NeoAxis.Editor
 		{
 		}
 
-		public override UserControl CreateControlInsidePropertyItemControl()
+		public override EUserControl CreateControlInsidePropertyItemControl()
 		{
 			//create parent UserControl
 			var userControl = base.CreateControlInsidePropertyItemControl();
@@ -41,7 +41,7 @@ namespace NeoAxis.Editor
 			contentBrowser1.ShowToolBar = false;
 			contentBrowser1.ItemAfterSelect += Browser_ItemAfterSelect;
 			userControl.Controls.Add( this.contentBrowser1 );
-
+			
 			userControl.Height = ( 128 + ContentBrowserRendererTiles.TilePadding.Height + 4 ) * 2;
 
 			//add items

@@ -33,8 +33,9 @@ namespace NeoAxis
 		Component_SkeletonAnimationTrack.CalculateBoneTransformsItem[] boneTransforms;
 		BoneGlobalTransformItem[] boneGlobalTransforms;
 		Matrix4F[] transformMatrixRelativeToSkin;  //transform from bind pose to a current pose
-		Component_SkeletonAnimationTrack.CalculateBoneTransformsItem[] transformRelativeToSkin;
-		bool hasScale { get; set; }
+		//!!!!disable DQS
+		//Component_SkeletonAnimationTrack.CalculateBoneTransformsItem[] transformRelativeToSkin;
+		//bool hasScale { get; set; }
 
 		/////////////////////////////////////////
 
@@ -264,6 +265,74 @@ namespace NeoAxis
 
 			if( DisplaySkeleton )
 				RenderSkeleton( context.Owner );
+		}
+
+		//!!!!temp?
+		public void _Update()
+		{
+			//!!!!
+
+			if( !CalculateOnCPU )
+			{
+				Component_Skeleton skeleton = ReplaceSkeleton;
+				if( skeleton == null )
+					skeleton = ParentMeshInSpace?.Mesh.Value?.Skeleton;
+
+				if( skeleton != null )
+				{
+					var animation = PlayAnimation.Value;
+					if( animation != null )
+					{
+						UpdateAnimationTime();
+
+						//settings.animationStates = new AnimationStateItem[ 1 ];
+						//settings.animationStates[ 0 ] = new AnimationStateItem( animation, currentLocalTime, 1 );
+
+						var skeletonAnimation = animation as Component_SkeletonAnimation;
+						var track = skeletonAnimation?.Track.Value;
+
+						if( track != null || CalculateBoneTransforms != null )
+						{
+							Update( skeleton, track, currentAnimationTime );
+
+							//if( transformMatrixRelativeToSkin != null && transformMatrixRelativeToSkin.Length != 0 )
+							//{
+							//	item.AnimationData = new Component_RenderingPipeline.RenderSceneData.MeshItem.AnimationDataClass();
+
+							//	bool dualQuaternion = false;// GetSkinningMode( skeleton ) == Component_Skeleton.SkinningModeEnum.DualQuaternion;
+							//	if( dualQuaternion )
+							//		item.AnimationData.Mode = 2;
+							//	else
+							//		item.AnimationData.Mode = 1;
+
+							//	//create dynamic texture
+							//	var size = new Vector2I( 4, MathEx.NextPowerOfTwo( transformMatrixRelativeToSkin.Length ) );
+							//	var bonesTexture = context.DynamicTexture_Alloc( ViewportRenderingContext.DynamicTextureType.DynamicTexture, Component_Image.TypeEnum._2D, size, PixelFormat.Float32RGBA, 0, false );
+
+							//	//try get array from texture to minimize memory allocations
+							//	var surfaces = bonesTexture.Result.GetData();
+							//	if( surfaces == null )
+							//		surfaces = new GpuTexture.SurfaceData[] { new GpuTexture.SurfaceData( 0, 0, new byte[ size.X * size.Y * 16 ] ) };
+							//	var data = surfaces[ 0 ].data;
+
+							//	//copy data to the texture
+							//	unsafe
+							//	{
+							//		fixed ( byte* pData2 = data )
+							//		{
+							//			Matrix4F* pData = (Matrix4F*)pData2;
+							//			for( int n = 0; n < transformMatrixRelativeToSkin.Length; n++ )
+							//				pData[ n ] = transformMatrixRelativeToSkin[ n ];
+							//		}
+							//	}
+							//	bonesTexture.Result.SetData( new GpuTexture.SurfaceData[] { new GpuTexture.SurfaceData( 0, 0, data ) } );
+
+							//	item.AnimationData.BonesTexture = bonesTexture;
+							//}
+						}
+					}
+				}
+			}
 		}
 
 		private void ParentMeshInSpace_GetRenderSceneDataAddToFrameData( Component_MeshInSpace sender, ViewportRenderingContext context, GetRenderSceneDataMode mode, ref Component_RenderingPipeline.RenderSceneData.MeshItem item )
@@ -655,8 +724,9 @@ namespace NeoAxis
 			boneGlobalTransforms = null;
 			bones = null;
 			transformMatrixRelativeToSkin = null;
-			transformRelativeToSkin = null;
-			hasScale = false;
+			//!!!!disable DQS
+			//transformRelativeToSkin = null;
+			//hasScale = false;
 		}
 
 		public delegate void CalculateBoneTransformsDelegate( Component_MeshInSpaceAnimationController sender, Component_SkeletonAnimationTrack.CalculateBoneTransformsItem[] result/*, ref bool handled*/ );
@@ -681,8 +751,9 @@ namespace NeoAxis
 				if( transformMatrixRelativeToSkin == null || transformMatrixRelativeToSkin.Length != bones.Length )
 					transformMatrixRelativeToSkin = new Matrix4F[ bones.Length ];
 
-				if( transformRelativeToSkin == null || transformRelativeToSkin.Length != bones.Length )
-					transformRelativeToSkin = new Component_SkeletonAnimationTrack.CalculateBoneTransformsItem[ bones.Length ];
+				//!!!!disable DQS
+				//if( transformRelativeToSkin == null || transformRelativeToSkin.Length != bones.Length )
+				//	transformRelativeToSkin = new Component_SkeletonAnimationTrack.CalculateBoneTransformsItem[ bones.Length ];
 
 				if( boneGlobalTransforms == null || boneGlobalTransforms.Length != bones.Length )
 					boneGlobalTransforms = new BoneGlobalTransformItem[ bones.Length ];
@@ -693,7 +764,8 @@ namespace NeoAxis
 				foreach( var b in bones )
 					GetBoneGlobalTransformRecursive( skeleton, b );
 
-				hasScale = false;
+				//!!!!disable DQS
+				//hasScale = false;
 
 				for( int i = 0; i < bones.Length; i++ )
 				{
@@ -706,14 +778,16 @@ namespace NeoAxis
 						m = Matrix4F.Identity;
 					transformMatrixRelativeToSkin[ i ] = m;
 
-					m.Decompose( out Vector3F t, out QuaternionF r, out Vector3F s );
+					//!!!!disable DQS
 
-					transformRelativeToSkin[ i ] = new Component_SkeletonAnimationTrack.CalculateBoneTransformsItem { Position = t, Rotation = r, Scale = s };
+					//m.Decompose( out Vector3F t, out QuaternionF r, out Vector3F s );
 
-					//if the scale differs from 1.0 more than this value, then the scaling is present and DualQuaternionSkinning can not be used.
-					const float EpsilonForScale = 1e-3f;
-					if( Math.Abs( 1.0f - s.X ) > EpsilonForScale || Math.Abs( 1.0f - s.Y ) > EpsilonForScale || Math.Abs( 1.0f - s.Y ) > EpsilonForScale )
-						hasScale = true;
+					//transformRelativeToSkin[ i ] = new Component_SkeletonAnimationTrack.CalculateBoneTransformsItem { Position = t, Rotation = r, Scale = s };
+
+					////if the scale differs from 1.0 more than this value, then the scaling is present and DualQuaternionSkinning can not be used.
+					//const float EpsilonForScale = 1e-3f;
+					//if( Math.Abs( 1.0f - s.X ) > EpsilonForScale || Math.Abs( 1.0f - s.Y ) > EpsilonForScale || Math.Abs( 1.0f - s.Y ) > EpsilonForScale )
+					//	hasScale = true;
 				}
 			}
 		}
@@ -766,12 +840,13 @@ namespace NeoAxis
 		{
 			if( dualQuaternion )
 			{
-				for( int n = 0; n < newPosition.Length; n++ )
-				{
-					newPosition[ n ] = TransformByDualQuaternionSkinning(
-						position[ n ], normal[ n ], tangent[ n ], blendIndex[ n ], blendWeight[ n ],
-						out newNormal[ n ], out newTangent[ n ] );
-				}
+				//!!!!disable DQS
+				//for( int n = 0; n < newPosition.Length; n++ )
+				//{
+				//	newPosition[ n ] = TransformByDualQuaternionSkinning(
+				//		position[ n ], normal[ n ], tangent[ n ], blendIndex[ n ], blendWeight[ n ],
+				//		out newNormal[ n ], out newTangent[ n ] );
+				//}
 			}
 			else
 			{
@@ -791,12 +866,13 @@ namespace NeoAxis
 		{
 			if( dualQuaternion )
 			{
-				for( int n = 0; n < newPosition.Length; n++ )
-				{
-					newPosition[ n ] = TransformByDualQuaternionSkinning(
-						position[ n ], normal[ n ], Vector4F.One, blendIndex[ n ], blendWeight[ n ],
-						out newNormal[ n ], out _ );
-				}
+				//!!!!disable DQS
+				//for( int n = 0; n < newPosition.Length; n++ )
+				//{
+				//	newPosition[ n ] = TransformByDualQuaternionSkinning(
+				//		position[ n ], normal[ n ], Vector4F.One, blendIndex[ n ], blendWeight[ n ],
+				//		out newNormal[ n ], out _ );
+				//}
 			}
 			else
 			{
@@ -816,8 +892,9 @@ namespace NeoAxis
 		{
 			if( dualQuaternion )
 			{
-				for( int n = 0; n < newPosition.Length; n++ )
-					newPosition[ n ] = TransformByDualQuaternionSkinning( position[ n ], blendIndex[ n ], blendWeight[ n ] );
+				//!!!!disable DQS
+				//for( int n = 0; n < newPosition.Length; n++ )
+				//	newPosition[ n ] = TransformByDualQuaternionSkinning( position[ n ], blendIndex[ n ], blendWeight[ n ] );
 			}
 			else
 			{
@@ -853,33 +930,35 @@ namespace NeoAxis
 			}
 		}
 
-		Vector3F TransformByDualQuaternionSkinning( Vector3F position, Vector4I blendIndex, Vector4F blendWeight )
-		{
-			if( !GetVertexTransformByDualQuaternionSkinning( blendIndex, blendWeight, out DualQuaternionF dq, out Vector3F scale ) )
-				return position;
-			else
-			{
-				dq.Normalize();
-				return CalculateBlendPosition( scale * position, dq ); //! Dual Quaternion skinning does not fully support scaling (animation will have defects, if it have different scales)
-			}
-		}
+		//!!!!disable DQS
+		//Vector3F TransformByDualQuaternionSkinning( Vector3F position, Vector4I blendIndex, Vector4F blendWeight )
+		//{
+		//	if( !GetVertexTransformByDualQuaternionSkinning( blendIndex, blendWeight, out DualQuaternionF dq, out Vector3F scale ) )
+		//		return position;
+		//	else
+		//	{
+		//		dq.Normalize();
+		//		return CalculateBlendPosition( scale * position, dq ); //! Dual Quaternion skinning does not fully support scaling (animation will have defects, if it have different scales)
+		//	}
+		//}
 
-		Vector3F TransformByDualQuaternionSkinning( Vector3F position, Vector3F normal, Vector4F tangent, Vector4I blendIndex, Vector4F blendWeight, out Vector3F newNormal, out Vector4F newTangent )
-		{
-			if( !GetVertexTransformByDualQuaternionSkinning( blendIndex, blendWeight, out DualQuaternionF dq, out Vector3F scale ) )
-			{
-				newNormal = normal;
-				newTangent = tangent;
-				return position;
-			}
-			else
-			{
-				dq.Normalize();
-				newNormal = CalculateBlendNormal( normal, dq.Q0 );
-				newTangent = new Vector4F( CalculateBlendNormal( tangent.ToVector3F(), dq.Q0 ), tangent.W );
-				return CalculateBlendPosition( scale * position, dq );  //! Dual Quaternion skinning does not fully support scaling (animation will have defects, if it have different scales)
-			}
-		}
+		//!!!!disable DQS
+		//Vector3F TransformByDualQuaternionSkinning( Vector3F position, Vector3F normal, Vector4F tangent, Vector4I blendIndex, Vector4F blendWeight, out Vector3F newNormal, out Vector4F newTangent )
+		//{
+		//	if( !GetVertexTransformByDualQuaternionSkinning( blendIndex, blendWeight, out DualQuaternionF dq, out Vector3F scale ) )
+		//	{
+		//		newNormal = normal;
+		//		newTangent = tangent;
+		//		return position;
+		//	}
+		//	else
+		//	{
+		//		dq.Normalize();
+		//		newNormal = CalculateBlendNormal( normal, dq.Q0 );
+		//		newTangent = new Vector4F( CalculateBlendNormal( tangent.ToVector3F(), dq.Q0 ), tangent.W );
+		//		return CalculateBlendPosition( scale * position, dq );  //! Dual Quaternion skinning does not fully support scaling (animation will have defects, if it have different scales)
+		//	}
+		//}
 
 		//From Ogre HLSL
 		//void SGX_CalculateBlendNormal( in float3 vIn, in float2x4 blendDQ, out float3 vOut )
@@ -1024,55 +1103,56 @@ namespace NeoAxis
 			return true;
 		}
 
-		bool GetVertexTransformByDualQuaternionSkinning( Vector4I blendIndex, Vector4F blendWeight, out DualQuaternionF sumDq, out Vector3F scale )
-		{
-			DualQuaternionF dq;
+		//!!!!disable DQS
+		//bool GetVertexTransformByDualQuaternionSkinning( Vector4I blendIndex, Vector4F blendWeight, out DualQuaternionF sumDq, out Vector3F scale )
+		//{
+		//	DualQuaternionF dq;
 
-			float weight = blendWeight.X;
-			int index = blendIndex.X;
-			if( index == -1 )
-			{
-				sumDq = new DualQuaternionF( QuaternionF.Identity, Vector3F.Zero );
-				scale = Vector3F.One;
-				return false;
-			}
-			var t = transformRelativeToSkin[ index ];
-			sumDq = new DualQuaternionF( t.Rotation, t.Position ) * weight;
-			scale = t.Scale * weight;
-			var pivotR = t.Rotation;
+		//	float weight = blendWeight.X;
+		//	int index = blendIndex.X;
+		//	if( index == -1 )
+		//	{
+		//		sumDq = new DualQuaternionF( QuaternionF.Identity, Vector3F.Zero );
+		//		scale = Vector3F.One;
+		//		return false;
+		//	}
+		//	var t = transformRelativeToSkin[ index ];
+		//	sumDq = new DualQuaternionF( t.Rotation, t.Position ) * weight;
+		//	scale = t.Scale * weight;
+		//	var pivotR = t.Rotation;
 
-			//------------
-			weight = blendWeight.Y;
-			index = blendIndex.Y;
-			if( index == -1 )
-				return true;
-			t = transformRelativeToSkin[ index ];
-			dq = new DualQuaternionF( t.Rotation, t.Position );
-			sumDq += Dot( ref pivotR, ref t.Rotation ) < 0 ? dq * ( -weight ) : dq * weight; //AntipodalityAdjustment
-			scale += t.Scale * weight;
+		//	//------------
+		//	weight = blendWeight.Y;
+		//	index = blendIndex.Y;
+		//	if( index == -1 )
+		//		return true;
+		//	t = transformRelativeToSkin[ index ];
+		//	dq = new DualQuaternionF( t.Rotation, t.Position );
+		//	sumDq += Dot( ref pivotR, ref t.Rotation ) < 0 ? dq * ( -weight ) : dq * weight; //AntipodalityAdjustment
+		//	scale += t.Scale * weight;
 
-			//------------
-			weight = blendWeight.Z;
-			index = blendIndex.Z;
-			if( index == -1 )
-				return true;
-			t = transformRelativeToSkin[ index ];
-			dq = new DualQuaternionF( t.Rotation, t.Position );
-			sumDq += Dot( ref pivotR, ref t.Rotation ) < 0 ? dq * ( -weight ) : dq * weight; //AntipodalityAdjustment				
-			scale += t.Scale * weight;
+		//	//------------
+		//	weight = blendWeight.Z;
+		//	index = blendIndex.Z;
+		//	if( index == -1 )
+		//		return true;
+		//	t = transformRelativeToSkin[ index ];
+		//	dq = new DualQuaternionF( t.Rotation, t.Position );
+		//	sumDq += Dot( ref pivotR, ref t.Rotation ) < 0 ? dq * ( -weight ) : dq * weight; //AntipodalityAdjustment				
+		//	scale += t.Scale * weight;
 
-			//------------
-			weight = blendWeight.W;
-			index = blendIndex.W;
-			if( index == -1 )
-				return true;
-			t = transformRelativeToSkin[ index ];
-			dq = new DualQuaternionF( t.Rotation, t.Position );
-			sumDq += Dot( ref pivotR, ref t.Rotation ) < 0 ? dq * ( -weight ) : dq * weight; //AntipodalityAdjustment		
-			scale += t.Scale * weight;
+		//	//------------
+		//	weight = blendWeight.W;
+		//	index = blendIndex.W;
+		//	if( index == -1 )
+		//		return true;
+		//	t = transformRelativeToSkin[ index ];
+		//	dq = new DualQuaternionF( t.Rotation, t.Position );
+		//	sumDq += Dot( ref pivotR, ref t.Rotation ) < 0 ? dq * ( -weight ) : dq * weight; //AntipodalityAdjustment		
+		//	scale += t.Scale * weight;
 
-			return true;
-		}
+		//	return true;
+		//}
 
 		/// <summary>
 		/// Gets the current animation playback time.
@@ -1101,6 +1181,39 @@ namespace NeoAxis
 						return n;
 			}
 			return -1;
+		}
+
+		public int GetBoneIndex( Component_SkeletonBone bone )
+		{
+			if( bones != null )
+			{
+				for( int n = 0; n < bones.Length; n++ )
+					if( bones[ n ] == bone )
+						return n;
+			}
+			return -1;
+		}
+
+		//!!!!ragdoll
+		public bool GetBoneGlobalTransform( int boneIndex, ref Matrix4F value )
+		{
+			//!!!!
+
+			//if( transformMatrixRelativeToSkin != null && boneIndex < transformMatrixRelativeToSkin.Length )
+			//{
+			//	value = transformMatrixRelativeToSkin[ boneIndex ];
+			//	return true;
+			//}
+			//return false;
+
+			if( boneGlobalTransforms != null && boneIndex < boneGlobalTransforms.Length )
+			{
+				ref var item = ref boneGlobalTransforms[ boneIndex ];
+				if( item.HasValue )
+					value = item.Value;
+				return item.HasValue;
+			}
+			return false;
 		}
 	}
 }

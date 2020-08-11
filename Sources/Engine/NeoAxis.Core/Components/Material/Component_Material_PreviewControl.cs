@@ -32,7 +32,7 @@ namespace NeoAxis.Editor
 		{
 			base.OnLoad( e );
 
-			Component_Material material = ObjectForPreview as Component_Material;
+			Component_Material material = ObjectOfPreview as Component_Material;
 
 			//create scene
 			{

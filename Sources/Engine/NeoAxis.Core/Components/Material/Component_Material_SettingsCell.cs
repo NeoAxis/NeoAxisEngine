@@ -15,7 +15,7 @@ namespace NeoAxis.Editor
 
 		//
 
-		protected override void OnInitUI()
+		protected override void OnInit()
 		{
 			buttonUpdate = ProcedureForm.CreateButton( EditorLocalization.Translate( "General", "Update" ) );
 			buttonUpdate.Click += ButtonUpdate_Click;

@@ -72,7 +72,7 @@ namespace NeoAxis
 			}
 		}
 
-		static Assembly LoadAssemblyByRealFileNameImpl( string realFileName, bool returnNullIfFileIsNotExists )
+		static Assembly LoadAssemblyByRealFileNameImpl( string realFileName, bool returnNullIfFileIsNotExists )//, bool loadFromArray )
 		{
 			//!!!!!!! а если из пакета
 
@@ -110,6 +110,11 @@ namespace NeoAxis
 				Assembly assembly = null;
 				try
 				{
+					//if( loadFromArray )
+					//{
+					//	assembly = Assembly.Load( File.ReadAllBytes( changedFileName ) );
+					//}
+					//else
 					assembly = Assembly.Load( assemblyName );
 				}
 				catch( Exception e )
@@ -191,9 +196,9 @@ namespace NeoAxis
 
 		//!!!!name registerTypeNamesWithIncludedAssemblyName
 		public static Assembly LoadAssemblyByRealFileName( string realFileName, bool returnNullIfFileIsNotExists, bool registerAssembly = true,
-			string registerTypeNamesWithIncludedAssemblyName = "" )
+			string registerTypeNamesWithIncludedAssemblyName = "" )//, bool loadFromArray = false )
 		{
-			var a = LoadAssemblyByRealFileNameImpl( realFileName, returnNullIfFileIsNotExists );
+			var a = LoadAssemblyByRealFileNameImpl( realFileName, returnNullIfFileIsNotExists );//, loadFromArray );
 			if( a != null && registerAssembly )
 				RegisterAssembly( a, registerTypeNamesWithIncludedAssemblyName );
 			return a;

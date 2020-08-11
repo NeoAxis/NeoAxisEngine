@@ -15,8 +15,8 @@ namespace NeoAxis
 	/// <summary>
 	/// The component for import of 3D content.
 	/// </summary>
-	[EditorDocumentWindow( typeof( Component_Import3D_DocumentWindow ) )]
-	[EditorPreviewControl( typeof( Component_Import3D_PreviewControl ) )]
+	[EditorDocumentWindow( typeof( Component_Import3D_Editor ) )]
+	[EditorPreviewControl( typeof( Component_Import3D_Preview ) )]
 	[EditorSettingsCell( typeof( Component_Import3D_SettingsCell ) )]
 	public class Component_Import3D : Component
 	{
