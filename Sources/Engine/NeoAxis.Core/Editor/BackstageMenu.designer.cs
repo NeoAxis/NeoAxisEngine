@@ -419,6 +419,7 @@
 			// progressBarBuild
 			// 
 			this.progressBarBuild.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.progressBarBuild.Margin = new System.Windows.Forms.Padding( 3, 4, 3, 4 );
 			this.progressBarBuild.Location = new System.Drawing.Point(297, 454);
 			this.progressBarBuild.Name = "progressBarBuild";
 			this.progressBarBuild.Size = new System.Drawing.Size(247, 32);

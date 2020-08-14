@@ -3393,7 +3393,10 @@ namespace NeoAxis.Editor
 				};
 				a.Click += delegate ( EditorAction.ClickContext context )
 				{
-					Process.Start( new ProcessStartInfo( Path.Combine( VirtualFileSystem.Directories.Project, "..\\NeoAxis.Managed.All.VS2019.Windows.sln" ) ) { UseShellExecute = true } );
+					string realPath = Path.GetDirectoryName( VirtualFileSystem.Directories.Project );
+					Win32Utility.ShellExecuteEx( null, realPath );
+
+					//Process.Start( new ProcessStartInfo( Path.Combine( VirtualFileSystem.Directories.Project, "..\\NeoAxis.Managed.All.VS2019.Windows.sln" ) ) { UseShellExecute = true } );
 				};
 				EditorActions.Register( a );
 			}

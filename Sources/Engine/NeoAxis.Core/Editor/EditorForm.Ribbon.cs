@@ -70,6 +70,12 @@ namespace NeoAxis.Editor
 
 				//action
 				var action = child as EditorAction;
+				if( action == null )
+				{
+					var actionName = child as string;
+					if( actionName != null )
+						action = EditorActions.GetByName( actionName );
+				}
 				if( action != null )
 				{
 					EventHandler clickHandler = delegate ( object s, EventArgs e2 )

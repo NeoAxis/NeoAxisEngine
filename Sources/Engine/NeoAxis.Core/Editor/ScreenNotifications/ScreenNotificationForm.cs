@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace NeoAxis.Editor
 {
-	public partial class ScreenNotificationForm : Form
+	public partial class ScreenNotificationForm : Form//EngineForm
 	{
 		const double opacityMax = 0.93;
 

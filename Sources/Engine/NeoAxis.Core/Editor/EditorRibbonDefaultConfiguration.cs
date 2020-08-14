@@ -67,6 +67,7 @@ namespace NeoAxis.Editor
 			public Image DropDownGroupImageSmall;
 			public Image DropDownGroupImageLarge;
 			public string DropDownGroupDescription = "";
+			//can be Group, Action, action name (string), null (separator)
 			public List<object> Children = new List<object>();
 			public bool ShowArrow;
 			//public List<Group> SubGroups = new List<Group>();
@@ -86,8 +87,11 @@ namespace NeoAxis.Editor
 				var action = EditorActions.GetByName( actionName );
 				if( action == null )
 				{
-					//Log.Fatal( "EditorRibbonDefaultConfiguration: Group: AddAction: No action with name \"{0}\".", actionName );
-					return false;
+					//add string name
+					Children.Add( actionName );
+					return true;
+					//Log.Warning( "EditorRibbonDefaultConfiguration: Group: AddAction: No action with name \"{0}\".", actionName );
+					//return false;
 				}
 				Children.Add( action );
 				return true;

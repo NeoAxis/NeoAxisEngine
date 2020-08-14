@@ -8,7 +8,7 @@ Also you can programming inside the editor, make event handlers.
 Initial setup 
 --------------------------------
 
-1. In the project settings set 'Initial UI Screen' to 'More\WindowApp\WindowAppMainForm.ui'.
+1. In the project settings set 'Initial UI Screen' to 'Base\WindowApp\WindowAppMainForm.ui'.
 Now you can Run Player to see the form.
 
 2. Set 'Window State', 'Window Size' to configure app window settings.

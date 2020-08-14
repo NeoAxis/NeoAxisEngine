@@ -2062,6 +2062,12 @@ namespace NeoAxis
 
 									//action
 									var action = child as EditorAction;
+									if( action == null )
+									{
+										var actionName = child as string;
+										if( actionName != null )
+											action = EditorActions.GetByName( actionName );
+									}
 									if( action != null )
 									{
 										var actionItem = new ActionItem();

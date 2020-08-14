@@ -206,7 +206,7 @@
 			this.progressBarPackageProgress.Location = new System.Drawing.Point(217, 151);
 			this.progressBarPackageProgress.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
 			this.progressBarPackageProgress.Name = "progressBarPackageProgress";
-			this.progressBarPackageProgress.Size = new System.Drawing.Size(381, 26);
+			this.progressBarPackageProgress.Size = new System.Drawing.Size(381, 32);
 			this.progressBarPackageProgress.TabIndex = 5;
 			// 
 			// labelExPackageStatus

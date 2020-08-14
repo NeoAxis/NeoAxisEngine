@@ -362,7 +362,7 @@ namespace OpenALSoundSystem
 
 			unsafe
 			{
-				fixed ( float* orientation = tempFloatArray6 )
+				fixed( float* orientation = tempFloatArray6 )
 				{
 					orientation[ 0 ] = (float)forward.X;
 					orientation[ 1 ] = (float)forward.Y;
@@ -485,7 +485,11 @@ namespace OpenALSoundSystem
 				criticalSection.Leave();
 
 				while( !IsActive() )
+				{
 					Thread.Sleep( 100 );
+					if( needAbortThread )
+						break;
+				}
 
 				Thread.Sleep( 10 );
 

@@ -74,8 +74,16 @@ namespace NeoAxis.Editor
 
 			public override string LoadText()
 			{
-				using( var fileStream = File.OpenText( document.RealFileName ) )
-					return fileStream.ReadToEnd();
+				try
+				{
+					using( var fileStream = File.OpenText( document.RealFileName ) )
+						return fileStream.ReadToEnd();
+				}
+				catch( Exception e )
+				{
+					Log.Warning( e.Message );
+					return "";
+				}
 			}
 
 			//public override bool SaveText( Microsoft.CodeAnalysis.Text.SourceText text )
