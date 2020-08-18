@@ -68,7 +68,7 @@ namespace ComponentFactory.Krypton.Toolkit
 		/// </summary>
         public PaletteBase()
         {
-#if !PROJECT_DEPLOY
+#if !DEPLOY
             // We need to notice when system color settings change
             SystemEvents.UserPreferenceChanged += new UserPreferenceChangedEventHandler(OnUserPreferenceChanged);
 #endif		
@@ -1359,7 +1359,7 @@ namespace ComponentFactory.Krypton.Toolkit
         #region OnUserPreferenceChanged
         internal void UserPreferenceChanged()
         {
-#if !PROJECT_DEPLOY
+#if !DEPLOY
             OnUserPreferenceChanged( this, new UserPreferenceChangedEventArgs(UserPreferenceCategory.General));
 #endif		
         }

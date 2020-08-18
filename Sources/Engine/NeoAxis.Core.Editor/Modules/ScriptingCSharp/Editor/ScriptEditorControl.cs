@@ -521,8 +521,7 @@ namespace NeoAxis.Editor
 				return false;
 			try
 			{
-				var codeGenerator = new ScriptCodeGenerator();
-				document = codeGenerator.AddMethodToClass( document, codeGenerator.GenerateMethodFromReflection( methodName, parameters ) );
+				document = ScriptCodeGenerator.AddMethodToClass( document, ScriptCodeGenerator.GenerateMethodFromReflection( methodName, parameters ) );
 			}
 			catch( Exception e )
 			{

@@ -17,6 +17,9 @@ namespace NeoAxis.Editor
 	{
 	}
 
+	/// <summary>
+	/// Create a new text file.
+	/// </summary>
 	[EditorNewObjectCell( typeof( NewResourceType_TextFile_Cell ) )]
 	[ResourceFileExtension( "txt" )]
 	public class NewResourceType_TextFile : NewResourceType
@@ -25,8 +28,21 @@ namespace NeoAxis.Editor
 
 	//!!!!nb
 	//[EditorNewObjectCell( typeof( NewResourceType_CSharpClassLibrary_Cell ) )]
-	[ResourceFileExtension( "csproj" )]
+	/// <summary>
+	/// Create a new C# class library. The feature is not implemented.
+	/// </summary>
+	[ResourceFileExtension( "csproj" )]//!!!!
 	public class NewResourceType_CSharpClassLibrary : NewResourceType
+	{
+	}
+
+	//!!!!nb
+	//[EditorNewObjectCell( typeof( NewResourceType_CSharpClassLibrary_Cell ) )]
+	//[ResourceFileExtension( "csproj" )]//!!!!
+	/// <summary>
+	/// Create a new executable module (C# app). The feature is not implemented.
+	/// </summary>
+	public class NewResourceType_ExecutableApp : NewResourceType
 	{
 	}
 

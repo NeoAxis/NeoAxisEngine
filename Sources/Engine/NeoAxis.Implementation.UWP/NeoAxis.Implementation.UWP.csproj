@@ -40,7 +40,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;PROJECT_DEPLOY</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -50,7 +50,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <PlatformTarget>x64</PlatformTarget>
     <OutputPath>..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;PROJECT_DEPLOY</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <Optimize>false</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>

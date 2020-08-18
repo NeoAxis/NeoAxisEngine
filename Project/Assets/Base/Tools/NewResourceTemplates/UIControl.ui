@@ -1,0 +1,62 @@
+.component NeoAxis.UIControl
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1174, 842\"><KW V=\"1\" A=\"77681248E4BE49CF938E7A9ED4C49228\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WS UN=\"3042FF85AB204F347F960E02AC3D7D19\" S=\"T,0,50:T,0,50\" D=\"Vertical\"><WC UN=\"C203B3C20A3B446855896DAF21C4DDFE\" S=\"T,0,50:T,0,563\" NM=\"BarTabGroup\" AR=\"True\" SP=\"77681248E4BE49CF938E7A9ED4C49228\"><KP UN=\"77681248E4BE49CF938E7A9ED4C49228\" S=\"False\"><CPD ObjPath=\"\" /></KP></WC><WC UN=\"2337C8D6194D401CBD82ED96A0A52932\" S=\"T,0,50:T,0,274\" NM=\"BarTabGroup\" AR=\"True\" SP=\"65C7FEDEE8464A58AE9C5F4F2762323E\"><KP UN=\"65C7FEDEE8464A58AE9C5F4F2762323E\" S=\"False\"><CPD ObjPath=\"$Button 1\\$C# Script\" /></KP></WC></WS></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	Size = Parent 1 1
+	BackgroundColor = 0.2 0.2 0.2
+	EditorScrollPosition = 0 0
+	Style
+	{
+		GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button 1
+		Text = UIButton 1
+		Size = Units 200 40
+		Margin = Units 30 30 0 0
+		EditorScrollPosition = 0 0
+		.component NeoAxis.Component_CSharpScript
+		{
+			Name = C# Script
+			Code = "public void Button1_Click(NeoAxis.UIButton sender)\r\n{\r\n\t//get UIControl\r\n\tvar control = sender.ParentRoot as UIControl;\r\n\r\n\t//show message box\r\n\tMessageBoxWindow.ShowInfo(control, \"The text of the message.\", \"Message\");\r\n}\r\n"
+			Exit
+			{
+			}
+			.component NeoAxis.Component_EventHandler
+			{
+				Name = Event Handler Click
+				Event
+				{
+					GetByReference = "this:..\\..\\event:Click"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\method:Button1_Click(NeoAxis.UIButton)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.UIWindow
+	{
+		Name = Window
+		Text = UIWindow
+		Size = Units 800 600
+		HorizontalAlignment = Center
+		VerticalAlignment = Center
+		Margin = Units 0 0 0 0
+		EditorScrollPosition = 0 0
+		.component NeoAxis.UIButton
+		{
+			Name = Button 2
+			Text = UIButton 2
+			Size = Units 200 40
+			HorizontalAlignment = Right
+			VerticalAlignment = Bottom
+			Margin = Units 570 540 20 20
+			EditorScrollPosition = 0 0
+		}
+	}
+}

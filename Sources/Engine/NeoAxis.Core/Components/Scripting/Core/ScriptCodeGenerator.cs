@@ -13,11 +13,9 @@ using System.Threading.Tasks;
 
 namespace NeoAxis
 {
-	class ScriptCodeGenerator
+	static class ScriptCodeGenerator
 	{
-		public const string AutoClassName = "DynamicClass";
-
-		public void CheckForSyntaxErrors( string code )
+		public static void CheckForSyntaxErrors( string code )
 		{
 			SyntaxTree methodTree = CSharpSyntaxTree.ParseText( code );
 			var diagnostics = methodTree.GetDiagnostics();
@@ -26,29 +24,40 @@ namespace NeoAxis
 				throw new ScriptCompilerException( ScriptUtility.FormatCompilationError( diagnostics, true ) );
 		}
 
-		public string GenerateWrappedScript( IEnumerable<string> methods, IEnumerable<string> usingNamespaces, string inheritFrom = null, Type contextType = null )
+		public static string GenerateWrappedScript( IEnumerable<string> methods, IEnumerable<string> usingNamespaces, string inheritFrom )//, Type contextType )
 		{
 			var tree = SyntaxFactory.CompilationUnit();
 
-			// using
-
+			//using
 			foreach( var @using in usingNamespaces )
 				tree = tree.AddUsings( SyntaxFactory.UsingDirective( SyntaxFactory.ParseName( @using ) ) );
 
-			// classes
-
+			//classes
 			foreach( var method in methods )
-				tree = tree.AddMembers( GenerateClassWithMethod( method, inheritFrom, contextType ) );
+				tree = tree.AddMembers( GenerateClassWithMethod( method, inheritFrom/*, contextType*/ ) );
 
-			// comment
-
+			//comment
 			tree = tree.WithLeadingTrivia( SyntaxFactory.Comment( "// Auto-generated file" ) );
 
 			var code = tree.NormalizeWhitespace().ToFullString();
 			return code;
 		}
 
-		ClassDeclarationSyntax GenerateClassWithMethod( string methodCode, string inheritFrom = null, Type contextType = null )
+		static List<(string Name, string Type)> GetContextVars()// Type contextType )
+		{
+			var contextType = typeof( CSharpScriptContext );
+
+			var result = new List<(string Name, string Type)>();
+
+			var bindingFlags = BindingFlags.Public | BindingFlags.Instance;
+			var fieldsAndProps = contextType.GetFields( bindingFlags ).Cast<MemberInfo>().Concat( contextType.GetProperties( bindingFlags ) );
+			foreach( var member in fieldsAndProps )
+				result.Add( (member.Name, Type: member.GetUnderlyingType().FullName) );
+
+			return result;
+		}
+
+		static ClassDeclarationSyntax GenerateClassWithMethod( string methodCode, string inheritFrom = null )//, Type contextType = null )
 		{
 			// class decl
 
@@ -72,7 +81,7 @@ namespace NeoAxis
 
 			// generate context vars
 
-			foreach( var contextVar in ScriptContextHelper.GetContextVars( contextType ) )
+			foreach( var contextVar in GetContextVars( /*contextType*/ ) )
 			{
 				var variableDeclaration = SyntaxFactory.VariableDeclaration( SyntaxFactory.ParseTypeName( contextVar.Type ) )
 					.AddVariables( SyntaxFactory.VariableDeclarator( contextVar.Name ) );
@@ -97,16 +106,16 @@ namespace NeoAxis
 
 		static string GetUniqueName()
 		{
-			return AutoClassName + "_" + Guid.NewGuid().ToString().Replace( "-", "_" );
+			return "DynamicClass_" + Guid.NewGuid().ToString().Replace( "-", "_" );
 		}
 
-		string ToBase64( string code )
+		static string ToBase64( string code )
 		{
 			byte[] bytes = Encoding.UTF8.GetBytes( code );
 			return Convert.ToBase64String( bytes, Base64FormattingOptions.None );
 		}
 
-		public MethodDeclarationSyntax GenerateMethodFromReflection( string methodName, ParameterInfo[] parameters )
+		public static MethodDeclarationSyntax GenerateMethodFromReflection( string methodName, ParameterInfo[] parameters )
 		{
 			var returnParam = parameters.FirstOrDefault( p => p.IsRetval );
 			var returnTypeName = returnParam != null ? returnParam.ParameterType.Name : "void";
@@ -126,7 +135,7 @@ namespace NeoAxis
 			).WithAdditionalAnnotations( Formatter.Annotation );// Annotate that this node should be formatted
 		}
 
-		List<ParameterSyntax> GetParametersList( ParameterInfo[] parameters )
+		static List<ParameterSyntax> GetParametersList( ParameterInfo[] parameters )
 		{
 			var result = new List<ParameterSyntax>();
 
@@ -173,7 +182,7 @@ namespace NeoAxis
 			return result;
 		}
 
-		SyntaxTokenList GetParameterModifiers( ParameterInfo parameter )
+		static SyntaxTokenList GetParameterModifiers( ParameterInfo parameter )
 		{
 			if( parameter.IsOut )
 				return SyntaxFactory.TokenList( SyntaxFactory.Token( SyntaxKind.OutKeyword ) );
@@ -182,7 +191,7 @@ namespace NeoAxis
 			return SyntaxFactory.TokenList();
 		}
 
-		async Task<Document> AddMethodToClass2( Document document, MethodDeclarationSyntax method )
+		async static Task<Document> AddMethodToClass2( Document document, MethodDeclarationSyntax method )
 		{
 			var root = await document.GetSyntaxRootAsync().ConfigureAwait( false );
 			var classDeclaration = root.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
@@ -194,7 +203,7 @@ namespace NeoAxis
 			return await Formatter.FormatAsync( document, Formatter.Annotation ).ConfigureAwait( false );
 		}
 
-		public Document AddMethodToClass( Document document, MethodDeclarationSyntax method )
+		public static Document AddMethodToClass( Document document, MethodDeclarationSyntax method )
 		{
 			return AddMethodToClass2( document, method ).Result;
 		}

@@ -15,7 +15,7 @@ namespace NeoAxis.Editor
 
 		protected override void OnPaint( PaintEventArgs e )
 		{
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 
 			System.Drawing.Rectangle r = e.ClipRectangle;
 

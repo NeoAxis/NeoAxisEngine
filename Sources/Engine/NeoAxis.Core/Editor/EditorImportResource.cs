@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 using Microsoft.WindowsAPICodePack.Dialogs;
 #endif
 

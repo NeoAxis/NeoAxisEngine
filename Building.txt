@@ -10,23 +10,25 @@ Programming tips
 - Add a new code to the NeoAxis.CoreExtension by default. Project assembly is also good.
 - Use English code page for your project if it possible: https://github.com/NeoAxis/NeoAxisEngine/issues/1
 
+
 ------------
 UWP (Universal Windows, Xbox, Windows Store)
 
 1. Install 'Platform Tools' from the Packages.
 
-Do 2, 3. when made changes in NeoAxis.Core or in assemblies referenced by NeoAxis.Core.
+2. Execute 'Sources\UpdateProjects.Android.bat'.
+Execute if made changes in NeoAxis.Core.
 
-2. Generate Stub assemblies. These are stubs for System.Windows.Forms.dll and other assemblies.
-- Execute: Project\Binaries\NeoAxis.Internal\Tools\PlatformTools\Stubs\Generate Stubs UWP.bat
-- Files will appear in the UWP folder. Copy them to Project\Binaries\NeoAxis.Internal\Platforms\UWP\Managed
+3. Build UWP from the editor.
+Read more: https://www.neoaxis.com/docs/html/Project_Menu.htm
 
-3. Update NeoAxis.Core project for UWP.
-Sources\Engine\NeoAxis.Core\ProjectDiffPatcher.UWP.bat
+4. Compile Sources\Build.UWP.sln.
+Architecture - x64.
 
-4. Compile Sources\NeoAxis.UWP.sln (Architecture - x64)
+5. You can run without building.
+Use 'Sources\NeoAxis.UWP.sln'.
+Debugger is supported.
 
-You can debug from NeoAxis.UWP.sln.
 
 ------------
 Android

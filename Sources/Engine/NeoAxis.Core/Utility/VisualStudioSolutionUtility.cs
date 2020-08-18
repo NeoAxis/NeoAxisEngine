@@ -3,8 +3,10 @@
 using Fbx;
 using NeoAxis.Editor;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Windows;
 
 namespace NeoAxis
 {
@@ -208,8 +210,22 @@ namespace NeoAxis
 			}
 			else
 			{
-				var error = $"Unable to compile solution \'{fileName}\'.\r\n\r\n{result}\r\n\r\nCommand line:\r\n{msBuildExePath} {arguments}\r\n\r\nSee details in log.";
-				Log.Error( error );
+				if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+				{
+					var error = $"Unable to compile solution \'{fileName}\'. Continue?\r\n\r\n{result}\r\n\r\nCommand line:\r\n{msBuildExePath} {arguments}\r\n\r\nSee details in log.";
+
+					if( LogPlatformFunctionality.Get().ShowMessageBox( error, "Error", EMessageBoxButtons.OKCancel ) == EDialogResult.Cancel )
+					{
+						Process.GetCurrentProcess().Kill();
+						Environment.Exit( 0 );
+					}
+				}
+				else
+				{
+					var error = $"Unable to compile solution \'{fileName}\'.\r\n\r\n{result}\r\n\r\nCommand line:\r\n{msBuildExePath} {arguments}\r\n\r\nSee details in log.";
+					Log.Error( error );
+				}
+
 				return false;
 			}
 

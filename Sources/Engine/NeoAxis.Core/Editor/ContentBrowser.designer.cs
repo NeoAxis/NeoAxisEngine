@@ -694,6 +694,7 @@
 			this.listView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listView_MouseDoubleClick);
 			this.listView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.listView_MouseMove);
 			this.listView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.listView_MouseUp);
+			this.listView.Font = new System.Drawing.Font( "Tahoma", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ( (byte)( 204 ) ) );
 			// 
 			// olvColumnName
 			// 

@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Linq;
 using ComponentFactory.Krypton.Ribbon;
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 using Microsoft.WindowsAPICodePack.Dialogs;
 #endif
 using ComponentFactory.Krypton.Toolkit;

@@ -132,7 +132,7 @@ namespace NeoAxis.Editor
 
 		/////////////////////////////////////////
 
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 
 		static EditorRibbonDefaultConfiguration()
 		{
@@ -208,6 +208,8 @@ namespace NeoAxis.Editor
 
 					group.AddAction( "Play" );
 					group.AddAction( "Run Player" );
+					group.AddAction( "Run Device" );
+					//group.AddAction( "Run Device 2" );
 				}
 
 				//Project
@@ -250,7 +252,7 @@ namespace NeoAxis.Editor
 					tab.Groups.Add( group );
 
 					group.AddAction( "Build Project's Solution" );
-					group.AddAction( "Build and Apply Project's Solution" );
+					group.AddAction( "Build and Update Project's Solution" );
 					//group.AddAction( "Find in Files" );
 				}
 

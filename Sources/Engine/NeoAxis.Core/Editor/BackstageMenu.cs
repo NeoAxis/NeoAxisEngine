@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Reflection;
 using System.IO.Compression;
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 using Microsoft.WindowsAPICodePack.Dialogs;
 #endif
 using ComponentFactory.Krypton.Toolkit;
@@ -78,9 +78,6 @@ namespace NeoAxis.Editor
 			catch { }
 
 			kryptonLinkLabelTokenWhatIsIt.LinkClicked += KryptonLinkLabelTokenWhatIsIt_LinkClicked;
-
-			//!!!!
-			this.kryptonLabelInstallPlatformTools.Values.Text = "Other platforms temporary are not supported. Please wait next release.";
 		}
 
 		public void SelectDefaultPage()
@@ -306,7 +303,7 @@ namespace NeoAxis.Editor
 				break;
 			}
 
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 			CommonOpenFileDialog dialog = new CommonOpenFileDialog();
 			dialog.InitialDirectory = path;
 			dialog.IsFolderPicker = true;
@@ -549,7 +546,7 @@ namespace NeoAxis.Editor
 
 		private void kryptonButtonPackageBrowse_Click( object sender, EventArgs e )
 		{
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 			CommonOpenFileDialog dialog = new CommonOpenFileDialog();
 			dialog.InitialDirectory = kryptonTextBoxPackageDestinationFolder.Text;
 			dialog.IsFolderPicker = true;

@@ -10,7 +10,7 @@ using System.Collections;
 using System.ComponentModel;
 using ComponentFactory.Krypton.Ribbon;
 using ComponentFactory.Krypton.Toolkit;
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 using Microsoft.WindowsAPICodePack.Dialogs;
 #endif
 
@@ -280,7 +280,7 @@ namespace NeoAxis.Editor
 
 			case "Save As":
 				{
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 					var dialog = new CommonSaveFileDialog();
 					dialog.InitialDirectory = Path.GetDirectoryName( RealFileName );
 					dialog.DefaultFileName = Path.GetFileName( RealFileName );

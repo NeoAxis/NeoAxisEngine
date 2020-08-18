@@ -2,7 +2,7 @@ You can develop window apps with NeoAxis Engine.
 NeoAxis.Player.exe is an application intended to execute app.
 
 With built-in GUI editor you can create GUI for your app.
-Also you can programming inside the editor, make event handlers.
+The programming inside the editor is also supported. You can start from making event handlers for UI controls.
 
 
 Initial setup 
@@ -16,7 +16,17 @@ Now you can Run Player to see the form.
 3. Change icon (TO DO).
 Now can change NeoAxis.Player.csproj.
 
+
 More configuring 
 --------------------------------
 
 If you want rename NeoAxis.Player.exe you can do it by changing sources in 'Project\Sources\NeoAxis.Player'.
+
+
+TO DO 
+--------------------------------
+
+- The ability to create more executable apps inside a NeoAxis project.
+- The ability to create additional windows of the system.
+
+Read more: https://www.neoaxis.com/neoaxis/roadmap

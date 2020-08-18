@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Linq;
 using ComponentFactory.Krypton.Ribbon;
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 using Microsoft.WindowsAPICodePack.Dialogs;
 #endif
 using ComponentFactory.Krypton.Toolkit;
@@ -31,7 +31,7 @@ namespace NeoAxis.Editor
 				return;
 			initialized = true;
 
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 			RegisterGeneral();
 			RegisterWindows();
 			RegisterScene();
@@ -46,7 +46,7 @@ namespace NeoAxis.Editor
 
 		/////////////////////////////////////////
 
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 
 		static void RegisterGeneral()
 		{
@@ -468,7 +468,7 @@ namespace NeoAxis.Editor
 				var a = new EditorAction();
 				a.Name = "Run Player";
 				a.CommonType = EditorAction.CommonTypeEnum.General;
-				a.Description = "Runs the player application.";
+				a.Description = "Runs the application of the project.";
 				a.ImageSmall = Properties.Resources.PlayGreen_16;
 				a.ImageBig = Properties.Resources.PlayGreen_32;
 				a.ShortcutKeys = new Keys[] { Keys.F6 };
@@ -482,6 +482,46 @@ namespace NeoAxis.Editor
 				{
 					EditorAPI.SaveDocuments();
 					RunSimulation.Run( "", RunSimulation.RunMethod.Player );
+				};
+				EditorActions.Register( a );
+			}
+
+			//Run Device
+			{
+				var a = new EditorAction();
+				a.Name = "Run Device";
+				a.CommonType = EditorAction.CommonTypeEnum.General;
+				a.Description = "Runs the project on specific device. (The feature is not implemented)";
+				a.ImageSmall = Properties.Resources.PlayGreen_16;
+				a.ImageBig = Properties.Resources.PlayGreen_32;
+				a.ShortcutKeys = new Keys[] { Keys.F7 };
+				a.QatSupport = true;
+				a.QatAddByDefault = true;
+				a.GetState += delegate ( EditorAction.GetStateContext context )
+				{
+				};
+				a.Click += delegate ( EditorAction.ClickContext context )
+				{
+				};
+				EditorActions.Register( a );
+			}
+
+			//Run Device 2
+			{
+				var a = new EditorAction();
+				a.Name = "Run Device 2";
+				a.CommonType = EditorAction.CommonTypeEnum.General;
+				a.Description = "Runs the project on specific device. (The feature is not implemented)";
+				a.ImageSmall = Properties.Resources.PlayGreen_16;
+				a.ImageBig = Properties.Resources.PlayGreen_32;
+				a.ShortcutKeys = new Keys[] { Keys.F8 };
+				a.QatSupport = true;
+				//a.QatAddByDefault = true;
+				a.GetState += delegate ( EditorAction.GetStateContext context )
+				{
+				};
+				a.Click += delegate ( EditorAction.ClickContext context )
+				{
 				};
 				EditorActions.Register( a );
 			}
@@ -3297,7 +3337,8 @@ namespace NeoAxis.Editor
 				a.ImageBig = Properties.Resources.Build_32;
 				a.ImageBig_Dark = Properties.Resources.Build_32_Dark;
 				a.QatSupport = true;
-				a.RibbonText = ("Build", "Solution");
+				a.RibbonText = ("Build", "");
+				//a.RibbonText = ("Build", "Solution");
 				a.Description = "Builds the project's solution.";
 				a.GetState += delegate ( EditorAction.GetStateContext context )
 				{
@@ -3309,7 +3350,7 @@ namespace NeoAxis.Editor
 					//// save cs documents in editor, before compilation.
 					//EditorForm.Instance.SaveDocuments(doc => doc.Name.EndsWith(".cs"));
 
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 					CSharpProjectFileUtility.CheckToRemoveNotExistsFilesFromProject();
 
 					var rebuild = Control.ModifierKeys.HasFlag( Keys.Control );
@@ -3337,16 +3378,21 @@ namespace NeoAxis.Editor
 				EditorActions.Register( a );
 			}
 
-			//Build and Apply Project's Solution
+			//Build and Update Project's Solution
 			{
 				var a = new EditorAction();
-				a.Name = "Build and Apply Project's Solution";
+				a.Name = "Build and Update Project's Solution";
 				a.CommonType = EditorAction.CommonTypeEnum.General;
-				a.ImageSmall = Properties.Resources.Update_16;
-				a.ImageBig = Properties.Resources.Update_32;
+				a.ImageSmall = Properties.Resources.Build_16;
+				a.ImageSmall_Dark = Properties.Resources.Build_16_Dark;
+				a.ImageBig = Properties.Resources.Build_32;
+				a.ImageBig_Dark = Properties.Resources.Build_32_Dark;
+				//a.ImageSmall = Properties.Resources.Update_16;
+				//a.ImageBig = Properties.Resources.Update_32;
 				a.QatSupport = true;
-				a.RibbonText = ("Apply", "");// "Solution");
-				a.Description = "Builds the project's solution and updates the editor with a new code without restarting (hot refresh). (The feature is not implemented)";
+				a.RibbonText = ("Build", "Update");
+				//a.RibbonText = ("Update", "");// "Solution");
+				a.Description = "Builds the project's solution and updates the editor with a new code without restarting. (The feature is not implemented)";
 				a.GetState += delegate ( EditorAction.GetStateContext context )
 				{
 				};

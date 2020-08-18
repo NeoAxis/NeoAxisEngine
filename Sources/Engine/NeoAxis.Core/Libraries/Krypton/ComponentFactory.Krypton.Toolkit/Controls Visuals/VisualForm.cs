@@ -132,7 +132,7 @@ namespace ComponentFactory.Krypton.Toolkit
 
             // Hook into global static events
             KryptonManager.GlobalPaletteChanged += new EventHandler(OnGlobalPaletteChanged);
-#if !PROJECT_DEPLOY
+#if !DEPLOY
             SystemEvents.UserPreferenceChanged += new UserPreferenceChangedEventHandler(OnUserPreferenceChanged);
 #endif		
 
@@ -172,7 +172,7 @@ namespace ComponentFactory.Krypton.Toolkit
 
                 // Unhook from global static events
                 KryptonManager.GlobalPaletteChanged -= new EventHandler(OnGlobalPaletteChanged);
-#if !PROJECT_DEPLOY
+#if !DEPLOY
                 SystemEvents.UserPreferenceChanged -= new UserPreferenceChangedEventHandler(OnUserPreferenceChanged);
 #endif		
             }
@@ -2220,7 +2220,7 @@ namespace ComponentFactory.Krypton.Toolkit
         [SecuritySafeCritical]
         private void OnUserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
         {
-#if !PROJECT_DEPLOY
+#if !DEPLOY
             // If a change has occured that could effect the color table then it needs regenerating
             switch( e.Category)
             {

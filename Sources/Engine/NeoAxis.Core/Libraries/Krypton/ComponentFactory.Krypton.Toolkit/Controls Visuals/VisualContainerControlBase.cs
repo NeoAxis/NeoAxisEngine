@@ -129,7 +129,7 @@ namespace ComponentFactory.Krypton.Toolkit
             // Hook into global palette changing events
             KryptonManager.GlobalPaletteChanged += new EventHandler(OnGlobalPaletteChanged);
 
-#if !PROJECT_DEPLOY
+#if !DEPLOY
             // We need to notice when system color settings change
             SystemEvents.UserPreferenceChanged += new UserPreferenceChangedEventHandler(OnUserPreferenceChanged);
 #endif
@@ -162,7 +162,7 @@ namespace ComponentFactory.Krypton.Toolkit
 
                 // Unhook from global events
                 KryptonManager.GlobalPaletteChanged -= new EventHandler(OnGlobalPaletteChanged);
-#if !PROJECT_DEPLOY
+#if !DEPLOY
                 SystemEvents.UserPreferenceChanged -= new UserPreferenceChangedEventHandler(OnUserPreferenceChanged);
 #endif		
 

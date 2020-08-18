@@ -106,6 +106,8 @@ namespace NeoAxis
 		static string license = "Personal";
 		static internal volatile bool needReadLicenseCertificate;
 
+		static Assembly projectAssembly;
+
 		//PerformanceCounter.TimeCounter renderPerformanceCounter = new PerformanceCounter.TimeCounter( "Render", false, new ColorValue( 0, 0, 1 ), 0 );
 		//PerformanceCounter.TimeCounter soundPerformanceCounter = new PerformanceCounter.TimeCounter( "Sound", false, new ColorValue( 1, 1, 1 ), 1 );
 
@@ -1107,10 +1109,6 @@ namespace NeoAxis
 				if( created )
 					Log.Fatal( "EngineApp: Create: The application is already created." );
 
-				////!!!!temp
-				//AssemblyUtility.LoadAssemblyByRealFileName( "NeoAxis.CoreExtension.dll", false );
-
-				//!!!!new тут. было ниже
 				//Project.csproj. load cs files, compile.
 				CompileAndLoadProjectAssembly( "Project" );
 
@@ -1391,7 +1389,7 @@ namespace NeoAxis
 
 		private static void CompileAndLoadProjectAssembly( string projectName, bool rebuild = false )
 		{
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 
 			bool canCompile = true;
 
@@ -1415,17 +1413,17 @@ namespace NeoAxis
 
 				// and load
 				string fullPath = Path.Combine( CSharpProjectFileUtility.OutputDir, outputAssemblyName + ".dll" );
-				AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true );//, loadFromArray: true );
+				projectAssembly = AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true, loadWithoutLocking: true );
 			}
 			else
 			{
 				string fullPath = Path.Combine( VirtualFileSystem.Directories.Binaries, projectName + ".dll" );
-				AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true );//, loadFromArray: true );
+				projectAssembly = AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true, loadWithoutLocking: true );
 			}
 
 #else
 			string fullPath = Path.Combine( VirtualFileSystem.Directories.Binaries, projectName + ".dll" );
-			AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true );
+			projectAssembly = AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true );
 #endif
 		}
 
@@ -2703,5 +2701,9 @@ namespace NeoAxis
 		//	catch { }
 		//}
 
+		public static Assembly ProjectAssembly
+		{
+			get { return projectAssembly; }
+		}
 	}
 }

@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 using Microsoft.WindowsAPICodePack.Dialogs;
 #endif
 using ComponentFactory.Krypton.Toolkit;
@@ -214,7 +214,7 @@ namespace NeoAxis.Editor
 
 		private void buttonDestinationFolderBrowse_Click( object sender, EventArgs e )
 		{
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 			again:;
 
 			string destRealFolder = VirtualPathUtility.GetRealPathByVirtual( textBoxDestinationFolder.Text );

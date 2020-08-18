@@ -20,7 +20,7 @@ namespace NeoAxis
 			LogPlatformFunctionality.instance = instance;
 		}
 
-		public abstract void ShowMessageBox( string text, string caption );
+		public abstract EDialogResult ShowMessageBox( string text, string caption, EMessageBoxButtons buttons = EMessageBoxButtons.OK );
 
 		public static LogPlatformFunctionality Get()
 		{
@@ -51,10 +51,16 @@ namespace NeoAxis
 
 		///////////////////////////////////////////
 
-		public override void ShowMessageBox( string text, string caption )
+		public override EDialogResult ShowMessageBox( string text, string caption, EMessageBoxButtons buttons )
 		{
 			while( ShowCursor( 1 ) < 0 ) { }
-			MessageBox( IntPtr.Zero, text, caption, MB_OK | MB_ICONEXCLAMATION );
+
+			IntPtr hwnd = IntPtr.Zero;
+			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && EngineApp.CreatedInsideEngineWindow != null )
+				hwnd = EngineApp.CreatedInsideEngineWindow.Handle;
+
+			return (EDialogResult)MessageBox( hwnd, text, caption, (int)buttons | MB_ICONEXCLAMATION );
+			//MessageBox( hwnd, text, caption, MB_OK | MB_ICONEXCLAMATION );
 		}
 	}
 
@@ -69,9 +75,11 @@ namespace NeoAxis
 			public static extern void MessageBox( string text, string caption );
 		}
 
-		public override void ShowMessageBox( string text, string caption )
+		public override EDialogResult ShowMessageBox( string text, string caption, EMessageBoxButtons buttons )
 		{
+			//!!!!buttons, result
 			MacAppNativeWrapper.MessageBox( text, caption );
+			return EDialogResult.OK;
 		}
 	}
 }

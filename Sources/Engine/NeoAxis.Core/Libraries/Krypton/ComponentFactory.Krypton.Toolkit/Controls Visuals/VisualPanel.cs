@@ -731,7 +731,7 @@ namespace ComponentFactory.Krypton.Toolkit
         /// <param name="attach">True if attaching; otherwise false.</param>
         protected virtual void UpdateGlobalEvents(bool attach)
         {
-#if !PROJECT_DEPLOY
+#if !DEPLOY
             if( attach)
             {
                 KryptonManager.GlobalPaletteChanged += new EventHandler(OnGlobalPaletteChanged);

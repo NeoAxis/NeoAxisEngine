@@ -1,0 +1,32 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        
+
+
+        {
+            "name": "NeoAxis.Editor",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/Project/Binaries/NeoAxis.Editor.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+        {
+            "name": "NeoAxis.Player",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/Project/Binaries/NeoAxis.Player.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        }
+
+    ]
+}

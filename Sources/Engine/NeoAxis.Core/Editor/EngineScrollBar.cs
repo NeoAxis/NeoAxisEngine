@@ -996,7 +996,7 @@ namespace NeoAxis.Editor//ProXoft.WinForms
 
 		void DrawArrowButton( Graphics g, System.Drawing.Rectangle bounds, ScrollBarArrowButtonState state )
 		{
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 
 			Color color = Color.Red;
 			Color color2 = Color.Red;
@@ -1206,7 +1206,7 @@ namespace NeoAxis.Editor//ProXoft.WinForms
 				break;
 			}
 
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 			using( var brush = new SolidBrush( color ) )
 			{
 				g.FillRectangle( brush, bounds );
@@ -1265,7 +1265,7 @@ namespace NeoAxis.Editor//ProXoft.WinForms
 				break;
 			}
 
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 			using( var brush = new SolidBrush( color ) )
 			{
 				graphics.FillRectangle( brush, rec );

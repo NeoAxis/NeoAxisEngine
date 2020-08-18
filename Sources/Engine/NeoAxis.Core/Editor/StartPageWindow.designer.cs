@@ -53,7 +53,7 @@
 			this.kryptonLabel1.Name = "kryptonLabel1";
 			this.kryptonLabel1.Size = new System.Drawing.Size(88, 20);
 			this.kryptonLabel1.TabIndex = 0;
-			this.kryptonLabel1.Values.Text = "New scene:";
+			this.kryptonLabel1.Values.Text = "New resource:";
 			// 
 			// kryptonLabel2
 			// 
@@ -95,7 +95,7 @@
 			this.buttonCreateScene.Name = "buttonCreateScene";
 			this.buttonCreateScene.Size = new System.Drawing.Size(117, 32);
 			this.buttonCreateScene.TabIndex = 3;
-			this.buttonCreateScene.Values.Text = "Create Scene";
+			this.buttonCreateScene.Values.Text = "Create";
 			this.buttonCreateScene.Click += new System.EventHandler(this.buttonCreateScene_Click);
 			// 
 			// kryptonButtonLightTheme
@@ -150,7 +150,7 @@
 			this.kryptonButtonOpenScene.Name = "kryptonButtonOpenScene";
 			this.kryptonButtonOpenScene.Size = new System.Drawing.Size(117, 32);
 			this.kryptonButtonOpenScene.TabIndex = 5;
-			this.kryptonButtonOpenScene.Values.Text = "Open Scene";
+			this.kryptonButtonOpenScene.Values.Text = "Open";
 			this.kryptonButtonOpenScene.Click += new System.EventHandler(this.kryptonButtonOpenScene_Click);
 			// 
 			// kryptonButtonOpenStore

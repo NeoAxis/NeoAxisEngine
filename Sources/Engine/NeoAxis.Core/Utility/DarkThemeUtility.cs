@@ -50,7 +50,7 @@ namespace NeoAxis
 
 				if( draw )
 				{
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 					using( var brush = new SolidBrush( color ) )
 					{
 						var bounds = new System.Drawing.Rectangle( Point.Empty, item.Size );
@@ -89,7 +89,7 @@ namespace NeoAxis
 
 				if( draw )
 				{
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 					using( var brush = new SolidBrush( color ) )
 					{
 						var bounds = new System.Drawing.Rectangle( Point.Empty, item.Size );
@@ -121,7 +121,7 @@ namespace NeoAxis
 						disposeImage = true;
 					}
 
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 					if( e.Item.ImageScaling == ToolStripItemImageScaling.None )
 						e.Graphics.DrawImage( image, imageRect, new System.Drawing.Rectangle( Point.Empty, imageRect.Size ), GraphicsUnit.Pixel );
 					else
@@ -135,7 +135,7 @@ namespace NeoAxis
 
 			void DrawSeparator( Graphics g, ToolStripItem item, System.Drawing.Rectangle bounds, bool vertical )
 			{
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 				using( Pen pen = new Pen( Color.FromArgb( 30, 30, 30 ) ) )
 				{
 					var bounds2 = bounds;

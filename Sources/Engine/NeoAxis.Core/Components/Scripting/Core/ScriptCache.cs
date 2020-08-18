@@ -16,13 +16,14 @@ namespace NeoAxis
 		LiteDatabase database;
 		Dictionary<string, Type> loadedAssemblyDllTypes;
 
-		object lockObject = new object();
+		object lockObjectGetOrCompileScript = new object();
 
 		/////////////////////////////////////////
 
 		class DatabaseItem
 		{
 			public int Id { get; set; }
+
 			//save in Base64 because bug in the LiteDB. trim \r\n at the end of text
 			//script = script.Trim( new char[] { '\r', '\n' } );
 			public string ScriptBase64 { get; set; }
@@ -30,7 +31,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		class CompiledAssemblyDllItem
+		class DatabaseCompiledAssemblyDllItem
 		{
 			public int Id { get; set; }
 			public string ApplicationType { get; set; }
@@ -57,9 +58,20 @@ namespace NeoAxis
 			get { return Path.Combine( CacheFolder, $"CSharpScripts_{EngineApp.ApplicationType}.dll" ); }
 		}
 
+		public string GeneratedCSFileName
+		{
+			get { return Path.Combine( CacheFolder, "CSharpScripts.cs" ); }
+		}
+
+		public List<string> GetScriptsToCompile()
+		{
+			var scriptsCollection = database.GetCollection<DatabaseItem>( "scripts" );
+			return new List<string>( scriptsCollection.FindAll().Select( i => FromBase64( i.ScriptBase64 ) ) );
+		}
+
 		public void Initialize()
 		{
-			//create cacher folder
+			//create cache folder
 			if( !Directory.Exists( CacheFolder ) )
 				Directory.CreateDirectory( CacheFolder );
 
@@ -77,16 +89,12 @@ namespace NeoAxis
 			if( ScriptingCSharpEngine.CanCompileScripts )
 			{
 				//check dll is not in the list of precompiled dlls
-				var compiledDllsCollection = database.GetCollection<CompiledAssemblyDllItem>( "compiledDlls" );
+				var compiledDllsCollection = database.GetCollection<DatabaseCompiledAssemblyDllItem>( "compiledDlls" );
 				if( compiledDllsCollection.FindOne( Query.EQ( "ApplicationType", EngineApp.ApplicationType.ToString() ) ) == null )
 					needCompile = true;
 
-				//// if text cache changed
-				//if( File.Exists( Path.Combine( CacheFolder, "cache_changed" ) ) )
-				//	needCompile = true;
-
 				// if text cache exists and assembly is absent
-				if( /*File.Exists( textCachePath ) &&*/ !File.Exists( AssemblyFileName ) )
+				if( !File.Exists( AssemblyFileName ) )
 					needCompile = true;
 
 				// don't compile if assembly cache exist but locked.
@@ -99,20 +107,17 @@ namespace NeoAxis
 
 			if( needCompile )
 			{
-				var scriptsCollection = database.GetCollection<DatabaseItem>( "scripts" );
-				var scriptsToCompile = new List<string>( scriptsCollection.FindAll().Select( i => FromBase64( i.ScriptBase64 ) ) );
-				//var scriptsToCompile = new List<string>( scriptsCollection.FindAll().Select( i => i.ScriptBase64 ) );
-
+				var scriptsToCompile = GetScriptsToCompile();
 				if( scriptsToCompile.Count != 0 )
 				{
 					if( CompileAssemblyDll( scriptsToCompile ) )
 					{
 						//register dll as compiled
-						var compiledDllsCollection = database.GetCollection<CompiledAssemblyDllItem>( "compiledDlls" );
+						var compiledDllsCollection = database.GetCollection<DatabaseCompiledAssemblyDllItem>( "compiledDlls" );
 						try
 						{
 							if( compiledDllsCollection.FindOne( Query.EQ( "ApplicationType", EngineApp.ApplicationType.ToString() ) ) == null )
-								compiledDllsCollection.Insert( new CompiledAssemblyDllItem { ApplicationType = EngineApp.ApplicationType.ToString() } );
+								compiledDllsCollection.Insert( new DatabaseCompiledAssemblyDllItem { ApplicationType = EngineApp.ApplicationType.ToString() } );
 						}
 						catch { }
 					}
@@ -130,29 +135,21 @@ namespace NeoAxis
 				}
 				else
 					DeleteAssemblyDllFile();
-
-				//try
-				//{
-				//}
-				//catch( Exception e )
-				//{
-				//	Log.Info( "Script cache compilation failed. " + e.Message );
-
-				//	Clear();
-				//	//File.Delete( textCachePath );// clear cache
-				//}
-
-				//xx xx;
-				//File.Delete( Path.Combine( CacheFolder, "cache_changed" ) );
 			}
 			else
 			{
+#if DEPLOY
+				//on UWP, Android scripts compiled inside Project.dll
+				if( EngineApp.ProjectAssembly != null )
+					FillLoadedAssemblyDllTypes( EngineApp.ProjectAssembly );
+#else
 				//try load dll
 				if( File.Exists( AssemblyFileName ) )
 				{
 					if( !LoadAssemblyDll() )
 						DeleteAssemblyDllFile();
 				}
+#endif
 			}
 		}
 
@@ -175,10 +172,6 @@ namespace NeoAxis
 
 				//need recompile dlls
 				database.DropCollection( "compiledDlls" );
-				//// mark cache as changed.
-				//// we can use special "cache_changed" empty collection in database as alternative
-				//if( !File.Exists( Path.Combine( CacheFolder, "cache_changed" ) ) )
-				//	File.Create( Path.Combine( CacheFolder, "cache_changed" ) ).Dispose();
 			}
 		}
 
@@ -239,7 +232,7 @@ namespace NeoAxis
 
 			error = "";
 
-			lock( lockObject )
+			lock( lockObjectGetOrCompileScript )
 			{
 				var compiledScript = GetCompiledScript( script );
 				if( compiledScript != null )
@@ -247,7 +240,7 @@ namespace NeoAxis
 
 				if( !ScriptingCSharpEngine.CanCompileScripts )
 				{
-					error = "Unable to get compiled script. The script is not precompiled in the cache and script compilation is not supported on the current platform.";
+					error = "Unable to get compiled script. The script is not precompiled in the cache. Script compilation is not supported on the current platform, run scenes on dev machine to make the cache.";
 					return null;
 				}
 
@@ -284,13 +277,17 @@ namespace NeoAxis
 
 		void FillLoadedAssemblyDllTypes( Assembly assembly )
 		{
-			loadedAssemblyDllTypes = new Dictionary<string, Type>();
-			foreach( var type in assembly.GetTypes() )
+			try
 			{
-				var attr = type.GetCustomAttribute<CSharpScriptGeneratedAttribute>();
-				if( attr != null )
-					loadedAssemblyDllTypes[ attr.Key ] = type;
+				loadedAssemblyDllTypes = new Dictionary<string, Type>();
+				foreach( var type in assembly.GetTypes() )
+				{
+					var attr = type.GetCustomAttribute<CSharpScriptGeneratedAttribute>();
+					if( attr != null )
+						loadedAssemblyDllTypes[ attr.Key ] = type;
+				}
 			}
+			catch { }
 		}
 
 		bool CompileAssemblyDll( List<string> scriptsToCompile )

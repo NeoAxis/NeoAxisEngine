@@ -4083,7 +4083,7 @@ namespace NeoAxis.Editor
 						//!!!!! imageListContextMenu.Images[ "New_16.png" ] );
 						KryptonContextMenuItem itemOpenWith = new KryptonContextMenuItem( Translate( "Open with" ), null );
 						//!!!!!
-						itemOpenWith.Enabled = currentOrParentDirectoryItem != null;
+						itemOpenWith.Enabled = currentOrParentDirectoryItem != null || contentItem.Parent == null;
 
 						List<KryptonContextMenuItemBase> items2 = new List<KryptonContextMenuItemBase>();
 

@@ -863,7 +863,7 @@ namespace NeoAxis.Editor
 
 		void UpdateRecentProjectsInRegistry()
 		{
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 			string recentProjects = "";
 			try
 			{

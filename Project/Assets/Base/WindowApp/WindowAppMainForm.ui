@@ -43,31 +43,6 @@
 			GetByReference = "Samples\\Starter Content\\Scenes\\Scripting C#.scene"
 		}
 	}
-	.component NeoAxis.UIButton
-	{
-		Name = Button System Message Box
-		Text = System Message Box
-		ReadOnly = True
-		Size = Units 200 40
-		HorizontalAlignment = Right
-		Margin = Units 1550 230 30 0
-		EditorScrollPosition = 0 0
-		.component NeoAxis.Component_EventHandler
-		{
-			Name = Event Handler Click
-			Event
-			{
-				GetByReference = "this:..\\event:Click"
-			}
-			HandlerMethod
-			{
-				GetByReference = "this:..\\..\\method:ButtonSystemMessageBox_Click(NeoAxis.UIButton)"
-			}
-			HandlerFlow
-			{
-			}
-		}
-	}
 	.component NeoAxis.UICombo
 	{
 		Name = Combo

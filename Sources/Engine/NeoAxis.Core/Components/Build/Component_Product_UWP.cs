@@ -372,6 +372,8 @@ namespace NeoAxis
 
 			try
 			{
+				PatchCSharpProjects( buildInstance );
+
 				CopyFilesToPackageFolder( buildInstance );
 				buildInstance.Progress = 0.8f;
 
@@ -449,6 +451,25 @@ namespace NeoAxis
 		//	return Path.Combine( GetComponentFolder(), "ProjectTemplate" );
 		//}
 
+		void PatchCSharpProjects( ProductBuildInstance buildInstance )
+		{
+			var exeFileName = Path.Combine( VirtualFileSystem.Directories.EngineInternal, @"Tools\PlatformTools\ProjectDiffPatcher\bin\Debug\ProjectDiffPatcher.exe" );
+
+			{
+				var param1 = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.CoreExtension\NeoAxis.CoreExtension.UWP.csproj" );
+				var param2 = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.CoreExtension\NeoAxis.CoreExtension.csproj" );
+				var process = Process.Start( new ProcessStartInfo( exeFileName, $"\"{param1}\" \"{param2}\" UWP" ) { UseShellExecute = true } );
+				process.WaitForExit();
+			}
+
+			{
+				var param1 = Path.Combine( VirtualFileSystem.Directories.Project, @"Project.UWP.csproj" );
+				var param2 = Path.Combine( VirtualFileSystem.Directories.Project, @"Project.csproj" );
+				var process = Process.Start( new ProcessStartInfo( exeFileName, $"\"{param1}\" \"{param2}\" UWP" ) { UseShellExecute = true } );
+				process.WaitForExit();
+			}
+		}
+
 		void CopyFilesToPackageFolder( ProductBuildInstance buildInstance )
 		{
 			//copy Assets
@@ -504,13 +525,23 @@ namespace NeoAxis
 					return;
 			}
 
+			//copy Build.UWP.sln
+			CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Build.UWP.sln" );
+
+			//copy Project.UWP.csproj
+			CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Project.UWP.csproj" );
+
+			//copy Properties
+			CopyFolder( Path.Combine( VirtualFileSystem.Directories.Project, "Properties" ), Path.Combine( buildInstance.DestinationFolder, "Properties" ), buildInstance, new Range( 0.4, 0.4 ) );
+
 			//copy part of Sources
 			var sourceSourcesPath = Path.Combine( VirtualFileSystem.Directories.Project, "Sources" );
 			string destSourcesPath = Path.Combine( buildInstance.DestinationFolder, "Sources" );
-			//copy Sources\Sources.UWP.sln
-			CopyFiles( sourceSourcesPath, destSourcesPath, buildInstance, new Range( 0.4, 0.4 ), "Sources.UWP.sln" );
+
 			//copy Sources\NeoAxis.Player.UWP
-			CopyFolder( Path.Combine( sourceSourcesPath, "NeoAxis.Player.UWP" ), Path.Combine( destSourcesPath, "NeoAxis.Player.UWP" ), buildInstance, new Range( 0.4, 0.5 ) );
+			CopyFolder( Path.Combine( sourceSourcesPath, "NeoAxis.Player.UWP" ), Path.Combine( destSourcesPath, "NeoAxis.Player.UWP" ), buildInstance, new Range( 0.4, 0.45 ) );
+			//copy Sources\NeoAxis.CoreExtension
+			CopyFolder( Path.Combine( sourceSourcesPath, "NeoAxis.CoreExtension" ), Path.Combine( destSourcesPath, "NeoAxis.CoreExtension" ), buildInstance, new Range( 0.45, 0.5 ) );
 
 			var sourceBinariesPath = VirtualFileSystem.Directories.Binaries;
 			string destBinariesPath = Path.Combine( buildInstance.DestinationFolder, "Binaries" );

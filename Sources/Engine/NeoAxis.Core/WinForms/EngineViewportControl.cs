@@ -264,7 +264,7 @@ namespace NeoAxis.Widget
 		{
 			base.OnPaint( e );
 
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 			if( Viewport != null && DrawSplashScreen )
 			{
 				using( var brush = new SolidBrush( Color.Black ) )

@@ -383,7 +383,7 @@ using System.Threading;
             {
                 if (((this._selectedPath != null) && (this._selectedPath.Length != 0)) && this._selectedPathNeedsCheck)
                 {
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 					new FileIOPermission(FileIOPermissionAccess.PathDiscovery, this._selectedPath).Demand();
 #endif
                     this._selectedPathNeedsCheck = false;

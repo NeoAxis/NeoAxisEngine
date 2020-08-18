@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using NeoAxis.Editor;
 using System.Net.NetworkInformation;
 //!!!!
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 using System.Management;
 #endif
 
@@ -34,7 +34,7 @@ namespace NeoAxis
 
 		public static bool GetCurrentLicense( out string email, out string hash )
 		{
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 			try
 			{
 				//opening the subkey  
@@ -75,7 +75,7 @@ namespace NeoAxis
 
 		public static void SetCurrentLicense( string email, string password )
 		{
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 			try
 			{
 				var key = Registry.CurrentUser.CreateSubKey( registryPath );
@@ -234,7 +234,7 @@ namespace NeoAxis
 
 		public static string GetMachineId()
 		{
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 			if( string.IsNullOrEmpty( machineId ) )
 			{
 				try

@@ -234,6 +234,7 @@ namespace NeoAxis
 				}
 				catch { }
 
+				AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 				//bool monoRuntime = Type.GetType( "Mono.Runtime", false ) != null;
 				//if( monoRuntime )
 				//	AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
@@ -300,6 +301,22 @@ namespace NeoAxis
 			//PackageManager.Shutdown();
 			//ResourceTypes.Shutdown();
 			initialized = false;
+		}
+
+		static Assembly CurrentDomain_AssemblyResolve( object sender, ResolveEventArgs args )
+		{
+			//!!!!ReflectionOnlyAssemblyResolve event is also exists
+
+			string assemblyName = args.Name;
+			if( !string.IsNullOrEmpty( assemblyName ) )
+			{
+				string fileName = assemblyName.Substring( 0, assemblyName.IndexOf( ',' ) ) + ".dll";
+				string fullPath = Path.Combine( Directories.Binaries, fileName );
+				if( File.Exists( fullPath ) )
+					return AssemblyUtility.LoadAssemblyByRealFileName( fullPath, false, loadWithoutLocking: true );
+			}
+
+			return null;
 		}
 
 		////for Mono Runtime

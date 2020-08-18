@@ -19,7 +19,7 @@ Royalty-free platform with source code provided.
 <h2>Supported platforms</h2>
 <ul>
 <li>Windows</li>
-<li>UWP (Universal Windows, Xbox, Windows Store) (Temporary disabled in 2020.5)</li>
+<li>UWP (Universal Windows, Xbox, Windows Store)</li>
 <li>Android (coming soon)</li>
 <li>...</li>
 </ul>

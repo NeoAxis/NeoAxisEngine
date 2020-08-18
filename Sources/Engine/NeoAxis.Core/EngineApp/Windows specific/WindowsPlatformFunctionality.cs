@@ -1458,7 +1458,7 @@ namespace NeoAxis
 								var screenRect = instance.CreatedWindow_GetClientRectangle();
 								var center = screenRect.GetCenter();
 
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 								var imageSize = new Vector2I( bitmap.Size.Width, bitmap.Size.Height );
 
 								BitBlt( hdc, center.X - imageSize.X / 2, center.Y - imageSize.Y / 2, bitmap.Size.Width, bitmap.Size.Height, hdcMem, 0, 0, TernaryRasterOperations.SRCCOPY );

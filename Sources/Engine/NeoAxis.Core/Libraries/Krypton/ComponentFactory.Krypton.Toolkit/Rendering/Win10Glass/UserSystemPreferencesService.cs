@@ -16,7 +16,7 @@ namespace ComponentFactory.Krypton.Toolkit
         { 
             get 
             {
-#if !PROJECT_DEPLOY
+#if !DEPLOY
                 using( var baseKey = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry64))
                 {
 					var subKey = baseKey.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize");
@@ -35,7 +35,7 @@ namespace ComponentFactory.Krypton.Toolkit
         {
             get
             {
-#if !PROJECT_DEPLOY
+#if !DEPLOY
 				using (var baseKey = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry64))
                 {
 					var subKey = baseKey.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize");

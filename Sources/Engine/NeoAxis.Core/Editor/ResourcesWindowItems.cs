@@ -67,6 +67,11 @@ namespace NeoAxis.Editor
 				//GroupDescriptions[ group ] = "Description text";
 				Items.Add( new Item( group + @"\Component", typeof( Component ) ) );
 				Items.Add( new Item( group + @"\Text File", typeof( NewResourceType_TextFile ) ) );
+
+				//!!!!убрать "The feature is not implemented."
+				Items.Add( new Item( group + @"\C# Class Library", typeof( NewResourceType_CSharpClassLibrary ), disabled: true ) );
+				Items.Add( new Item( group + @"\Executable App", typeof( NewResourceType_ExecutableApp ), disabled: true ) );
+
 				Items.Add( new Item( group + @"\Advanced\Component Host", typeof( Component_ComponentHost ) ) );
 
 				//!!!!Image

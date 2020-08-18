@@ -20,6 +20,9 @@ namespace NeoAxis.Editor
 		string[] currentOpenScenes = new string[ 0 ];
 		double currentOpenScenesLastUpdate;
 
+		static Image previewImageNewUIControl;
+		static Image previewImageNewResource;
+
 		//
 
 		public StartPageWindow()
@@ -46,15 +49,87 @@ namespace NeoAxis.Editor
 			{
 				var items = new List<ContentBrowser.Item>();
 
+				//scenes
 				foreach( var template in Component_Scene.NewObjectSettingsScene.GetTemplates() )
 				{
 					contentBrowserNewScene.ImageHelper.AddImage( template.Name, null, template.Preview );
 
-					var item = new ContentBrowserItem_Virtual( contentBrowserNewScene, null, template.ToString() );
+					var item = new ContentBrowserItem_Virtual( contentBrowserNewScene, null, template.ToString() + " scene" );
 					item.Tag = template;
 					item.imageKey = template.Name;
+
 					items.Add( item );
 				}
+
+				//UI Control
+				{
+					var path = VirtualPathUtility.GetRealPathByVirtual( @"Base\Tools\NewResourceTemplates\UIControl.ui" );
+					if( File.Exists( path ) )
+					{
+						var name = Path.GetFileNameWithoutExtension( path );
+
+						if( previewImageNewUIControl == null )
+						{
+							var previewPath = Path.Combine( Path.GetDirectoryName( path ), name + ".png" );
+							previewImageNewUIControl = File.Exists( previewPath ) ? Image.FromFile( previewPath ) : null;
+						}
+
+						if( previewImageNewUIControl != null )
+							contentBrowserNewScene.ImageHelper.AddImage( name, null, previewImageNewUIControl );
+
+						var item = new ContentBrowserItem_Virtual( contentBrowserNewScene, null, "UI Control" );
+						item.Tag = "UIControl";
+						if( previewImageNewUIControl != null )
+							item.imageKey = name;
+
+						items.Add( item );
+					}
+				}
+
+				//Select resource
+				{
+					var name = "SelectResource";
+
+					if( previewImageNewResource == null )
+					{
+						var previewPath = VirtualPathUtility.GetRealPathByVirtual( @"Base\Tools\NewResourceTemplates\Resource.png" );
+						previewImageNewResource = File.Exists( previewPath ) ? Image.FromFile( previewPath ) : null;
+					}
+
+					if( previewImageNewResource != null )
+						contentBrowserNewScene.ImageHelper.AddImage( name, null, previewImageNewResource );
+
+					var item = new ContentBrowserItem_Virtual( contentBrowserNewScene, null, "Select type" );
+					item.Tag = "Resource";
+					if( previewImageNewResource != null )
+						item.imageKey = name;
+
+					items.Add( item );
+				}
+
+				////!!!!
+				//{
+				//	var item = new ContentBrowserItem_Virtual( contentBrowserNewScene, null, "C# Class Library" );
+				//	//!!!!
+				//	//item.Tag = template;
+				//	item.imageKey = "";//template.Name;
+
+				//	item.ShowDisabled = true;
+
+				//	items.Add( item );
+				//}
+
+				////!!!!
+				//{
+				//	var item = new ContentBrowserItem_Virtual( contentBrowserNewScene, null, "Executable App" );
+				//	//!!!!
+				//	//item.Tag = template;
+				//	item.imageKey = "";//template.Name;
+
+				//	item.ShowDisabled = true;
+
+				//	items.Add( item );
+				//}
 
 				if( items.Count != 0 )
 				{
@@ -157,23 +232,38 @@ namespace NeoAxis.Editor
 		private void buttonCreateScene_Click( object sender, EventArgs e )
 		{
 			if( contentBrowserNewScene.SelectedItems.Length == 1 )
-				CreateScene( contentBrowserNewScene.SelectedItems[ 0 ] );
+			{
+				var item = contentBrowserNewScene.SelectedItems[ 0 ];
+				CreateResource( item );
+			}
 		}
 
 		private void ContentBrowserNewScene_ItemAfterChoose( ContentBrowser sender, ContentBrowser.Item item, ref bool handled )
 		{
 			if( item != null )
+				CreateResource( item );
+		}
+
+		void CreateResource( ContentBrowser.Item item )
+		{
+			if( item.Tag as Component_Scene.NewObjectSettingsScene.TemplateClass != null )
 				CreateScene( item );
+			else if( item.Tag as string != null && item.Tag as string == "UIControl" )
+				CreateUIControl();
+			else
+				SelectCreateResource();
 		}
 
 		void CreateScene( ContentBrowser.Item item )
 		{
 			try
 			{
+				var prefix = VirtualDirectory.Exists( "Scenes" ) ? @"Scenes\" : "";
+
 				string fileName = null;
 				for( int n = 1; ; n++ )
 				{
-					string f = string.Format( @"Scenes\New{0}.scene", n > 1 ? n.ToString() : "" );
+					string f = prefix + string.Format( @"New{0}.scene", n > 1 ? n.ToString() : "" );
 					if( !VirtualFile.Exists( f ) )
 					{
 						fileName = f;
@@ -207,6 +297,55 @@ namespace NeoAxis.Editor
 				//Log.Warning( e.Message );
 				return;
 			}
+		}
+
+		void CreateUIControl()
+		{
+			try
+			{
+				var prefix = VirtualDirectory.Exists( "UI" ) ? @"UI\" : "";
+
+				string fileName = null;
+				for( int n = 1; ; n++ )
+				{
+					string f = prefix + string.Format( @"New{0}.ui", n > 1 ? n.ToString() : "" );
+					if( !VirtualFile.Exists( f ) )
+					{
+						fileName = f;
+						break;
+					}
+				}
+
+				if( !string.IsNullOrEmpty( fileName ) )
+				{
+					var realFileName = VirtualPathUtility.GetRealPathByVirtual( fileName );
+
+					var sourceFile = VirtualPathUtility.GetRealPathByVirtual( @"Base\Tools\NewResourceTemplates\UIControl.ui" );
+
+					var text = VirtualFile.ReadAllText( sourceFile );
+
+					var directoryName = Path.GetDirectoryName( realFileName );
+					if( !Directory.Exists( directoryName ) )
+						Directory.CreateDirectory( directoryName );
+
+					File.WriteAllText( realFileName, text );
+
+					EditorAPI.SelectFilesOrDirectoriesInMainResourcesWindow( new string[] { realFileName } );
+					EditorAPI.OpenFileAsDocument( realFileName, true, true );
+				}
+			}
+			catch( Exception e )
+			{
+				EditorMessageBox.ShowWarning( e.Message );
+				//Log.Warning( e.Message );
+				return;
+			}
+		}
+
+		void SelectCreateResource()
+		{
+			var initData = new NewObjectWindow.CreationDataClass();
+			EditorAPI.OpenNewObjectWindow( initData );
 		}
 
 		void UpdateOpenScenes()

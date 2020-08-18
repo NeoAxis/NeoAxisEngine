@@ -611,7 +611,7 @@ namespace ComponentFactory.Krypton.Toolkit
 
         private void RegisterFilter()
         {
-#if !PROJECT_DEPLOY
+#if !DEPLOY
             if( _filter == null)
             {
                 // Check that caller has permission to access unmanaged code

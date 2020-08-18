@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
+using System.Text;
 
 namespace NeoAxis
 {
@@ -18,11 +19,10 @@ namespace NeoAxis
 		static ScriptCache scriptCache = new ScriptCache();
 
 #if !NO_EMIT
-		static ScriptCodeGenerator codeGenerator = new ScriptCodeGenerator();
 		static Lazy<ScriptCompiler> scriptCompiler = new Lazy<ScriptCompiler>();
 
-		//currently we support only one context type for all scripts.
-		public static Type ContextType { get; private set; } = typeof( CSharpScriptContext );
+		////currently we support only one context type for all scripts.
+		//public static Type ContextType { get; private set; } = typeof( CSharpScriptContext );
 #endif
 
 		public static List<string> CSharpScriptReferenceAssemblies { get; } = new List<string>();
@@ -76,10 +76,52 @@ namespace NeoAxis
 			}
 		}
 
+#if !NO_EMIT
+		public static void WriteCharpScriptsCsFile()
+		{
+			try
+			{
+				//get scripts to compile
+				var scriptsToCompile = scriptCache.GetScriptsToCompile();
+
+				//generate code
+				string script = "";
+				if( scriptsToCompile.Count != 0 )
+				{
+					script = "#if DEPLOY\r\n";
+					script += "namespace Scripts {\r\n";
+					script += ScriptCodeGenerator.GenerateWrappedScript( scriptsToCompile, CSharpScriptUsingNamespaces, null );//, ContextType );
+					script += "\r\n}\r\n";
+					script += "#endif";
+				}
+
+				var path = scriptCache.GeneratedCSFileName;
+
+				//create folder
+				var directory = Path.GetDirectoryName( path );
+				if( !Directory.Exists( directory ) )
+					Directory.CreateDirectory( directory );
+
+				//write file
+				if( !File.Exists( path ) || File.ReadAllText( path, Encoding.UTF8 ) != script )
+					File.WriteAllText( path, script, Encoding.UTF8 );
+			}
+			catch( Exception e )
+			{
+				Log.Warning( $"Unable to write \'{scriptCache.GeneratedCSFileName}\'. " + e.Message );
+			}
+		}
+#endif
+
 		public static void Shutdown()
 		{
 			if( !initialized )
 				return;
+
+#if !NO_EMIT
+			//write CSharpScripts.cs
+			WriteCharpScriptsCsFile();
+#endif
 
 			try
 			{
@@ -133,7 +175,6 @@ namespace NeoAxis
 		{
 			get
 			{
-				//!!!!потом может быть опционально
 				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
 					return false;
 				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
@@ -180,11 +221,11 @@ namespace NeoAxis
 		}
 #endif
 
-		public static Assembly CompileScriptsToAssembly( IEnumerable<string> scripts, /*string scriptFile, bool emitInMemory, */string assemblyFileName )
+		public static Assembly CompileScriptsToAssembly( IEnumerable<string> scripts, string writeToDllOptional )
 		{
 #if !NO_EMIT
-			string script = codeGenerator.GenerateWrappedScript( scripts, CSharpScriptUsingNamespaces, null, ContextType );
-			return ScriptCompiler.CompileCode( script, /*scriptFile, emitInMemory, */assemblyFileName );
+			string script = ScriptCodeGenerator.GenerateWrappedScript( scripts, CSharpScriptUsingNamespaces, null );//, ContextType );
+			return ScriptCompiler.CompileCode( script, writeToDllOptional );
 #else
 			return null;
 #endif
@@ -193,7 +234,7 @@ namespace NeoAxis
 		public static void CheckForSyntaxErrors( string code )
 		{
 #if !NO_EMIT
-			codeGenerator.CheckForSyntaxErrors( code );
+			ScriptCodeGenerator.CheckForSyntaxErrors( code );
 #endif
 		}
 	}

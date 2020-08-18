@@ -16,7 +16,10 @@ namespace NeoAxis
 {
 	class ScriptCompiler
 	{
-		public static bool DebugBuild { get; set; } = true;
+		//!!!!can work when false?
+		/*public */
+		static bool DebugBuild { get; set; } = true;
+
 		public static ScriptOptions Settings { get; set; } = ScriptOptions.Default;
 
 		//
@@ -26,7 +29,7 @@ namespace NeoAxis
 			return Path.Combine( Path.GetTempPath(), string.Format( "{0}.{1}.tmp", Process.GetCurrentProcess().Id, Guid.NewGuid() ) );
 		}
 
-		public Assembly CompileCode( string scriptText, /*string scriptFile, bool emitInMemory, */string assemblyFileName )
+		public Assembly CompileCode( string scriptText, string writeToDllOptional )
 		{
 			string scriptFile = null;
 
@@ -51,6 +54,7 @@ namespace NeoAxis
 					scriptText = $"#line 1 \"{scriptFile ?? tempScriptFile}\"{Environment.NewLine}" + scriptText;
 				}
 
+				//options
 				var options = Settings;
 				if( !DebugBuild )
 				{
@@ -64,11 +68,13 @@ namespace NeoAxis
 				var compilation = CSharpScript.Create( scriptText, options ).GetCompilation();
 
 				if( DebugBuild )
+				{
 					compilation = compilation.WithOptions( compilation.Options
 						.WithOptimizationLevel( OptimizationLevel.Debug )
 						.WithOutputKind( OutputKind.DynamicallyLinkedLibrary ) );
+				}
 
-				return EmitIL( compilation, /*emitInMemory, */assemblyFileName );
+				return EmitIL( compilation, writeToDllOptional );
 			}
 			finally
 			{
@@ -82,9 +88,9 @@ namespace NeoAxis
 			}
 		}
 
-		Assembly EmitIL( Compilation compilation, /*bool emitInMemory, */string assemblyFileName )
+		Assembly EmitIL( Compilation compilation, string writeToDllOptional )
 		{
-			var emitInMemory = string.IsNullOrEmpty( assemblyFileName );
+			var emitInMemory = string.IsNullOrEmpty( writeToDllOptional );
 
 			using( var peStream = new MemoryStream() )
 			using( var pdbStream = new MemoryStream() )
@@ -114,17 +120,17 @@ namespace NeoAxis
 					else
 					{
 						peStream.Seek( 0, SeekOrigin.Begin );
-						CopyToFile( assemblyFileName, peStream );
+						CopyToFile( writeToDllOptional, peStream );
 						//CopyToFileAsync( assemblyPath, peStream ).Wait();
 
 						if( DebugBuild )
 						{
 							pdbStream.Seek( 0, SeekOrigin.Begin );
-							CopyToFile( Path.ChangeExtension( assemblyFileName, "pdb" ), pdbStream );
+							CopyToFile( Path.ChangeExtension( writeToDllOptional, "pdb" ), pdbStream );
 							//CopyToFileAsync( Path.ChangeExtension( assemblyPath, "pdb" ), pdbStream ).ConfigureAwait( false );
 						}
 
-						return Assembly.LoadFrom( assemblyFileName );
+						return Assembly.LoadFrom( writeToDllOptional );
 					}
 				}
 				else
