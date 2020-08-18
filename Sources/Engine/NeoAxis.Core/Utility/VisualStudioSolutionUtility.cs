@@ -165,8 +165,8 @@ namespace NeoAxis
 
 				builder.Append( $" --verbosity {config.Verbosity}" );
 
-				//!!!!опционально?
-				builder.Append( " --no-restore" );
+				//!!!!optional?
+				//builder.Append( " --no-restore" );
 
 				if( rebuild )
 					builder.Append( " --no-incremental" );
