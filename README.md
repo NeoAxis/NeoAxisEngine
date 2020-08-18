@@ -26,7 +26,8 @@ Royalty-free platform with source code provided.
 
 <h2>Building</h2>
 <ul>
-<li>NeoAxis.Managed.All.VS2019.Windows.sln - Restore NuGet packets before compilation. Visual Studio 2019.</li>
+<li>Visual Studio 2019: NeoAxis.Managed.All.VS2019.Windows.sln - Restore NuGet packets before compilation.</li>
+<li>Visual Studio Code, Rider: NeoAxis.Managed.ProjectOnly.AnyIDE.sln.</li>
 <li>.NET Core 3.1.</li>
 <li>Download Sci-fi Demo and Nature Demo from the Asset Store window.</li>
 </ul>
