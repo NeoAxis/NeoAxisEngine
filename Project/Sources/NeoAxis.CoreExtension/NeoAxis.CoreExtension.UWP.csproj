@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5AC5DA1A-BB1C-419E-A8F6-ECE12B62E731}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NeoAxis</RootNamespace>
+    <AssemblyName>NeoAxis.CoreExtension</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.17134.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.17134.0</TargetPlatformMinVersion>
+    <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OutputPath>..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DefineConstants>TRACE;DEBUG;UWP;DEPLOY</DefineConstants>
+    <NoWarn>CS1591;CS1573;CS0649;CS0414;CS1589;CS1574;CS1587</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>7.3</LangVersion>
+    <GenerateLibraryLayout>false</GenerateLibraryLayout>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <DefineConstants>TRACE;UWP;DEPLOY</DefineConstants>
+    <Optimize>false</Optimize>
+    <NoWarn>CS1591;CS1573;CS0649;CS0414;CS1589;CS1574;CS1587</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <LangVersion>7.3</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Character\CharacterAssemblyRegistration.cs" />
+    <Compile Include="Character\Component_Character.cs" />
+    <Compile Include="Character\Component_CharacterAI.cs" />
+    <Compile Include="Character\Component_CharacterAITask_MoveTo.cs" />
+    <Compile Include="Character\Component_CharacterInputProcessing.cs" />
+    <Compile Include="Character\Component_Character_Editor.cs" />
+    <Compile Include="Character2D\Component_Character2D.cs" />
+    <Compile Include="Character2D\Component_Character2DAI.cs" />
+    <Compile Include="Character2D\Component_Character2DAITask_MoveTo.cs" />
+    <Compile Include="Character2D\Component_Character2DInputProcessing.cs" />
+    <Compile Include="Character2D\Component_Character2D_Editor.cs" />
+    <Compile Include="Character2D\Component_Character2D_Preview.cs" />
+    <Compile Include="Game framework\Component_AI.cs" />
+    <Compile Include="Game framework\Component_AITask.cs" />
+    <Compile Include="Game framework\Component_ButtonInSpace.cs" />
+    <Compile Include="Game framework\Component_ButtonInSpace_SettingsCell.cs" />
+    <Compile Include="Game framework\Component_CameraManagement.cs" />
+    <Compile Include="Game framework\Component_GameMode.cs" />
+    <Compile Include="Game framework\Component_InputProcessing.cs" />
+    <Compile Include="Game framework\Component_RegulatorSwitchInSpace.cs" />
+    <Compile Include="Game framework\InputMessage.cs" />
+    <Compile Include="Game framework 2D\Component_Weapon2D.cs" />
+    <Compile Include="Game framework 2D\IComponent_Item2D.cs" />
+    <Compile Include="Game framework 3D\Component_Weapon.cs" />
+    <Compile Include="Game framework 3D\IComponent_InteractiveObject.cs" />
+    <Compile Include="Game framework 3D\IComponent_Item.cs" />
+    <Compile Include="Mesh modifiers\Component_MeshModifier_BoxUV.cs" />
+    <Compile Include="Mesh modifiers\Component_MeshModifier_RandomizePosition.cs" />
+    <Compile Include="More components\Component_DestroyingSensor.cs" />
+    <Compile Include="More components\Component_Grid.cs" />
+    <Compile Include="More components\Component_RenderTargetInSpace.cs" />
+    <Compile Include="Project settings\Component_ProjectSettings_Extension.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shaders\ShaderFunctions.cs" />
+    <Compile Include="Utility\CanvasRendererUtility.cs" />
+    <Compile Include="Utility\EngineConsole.cs" />
+    <Compile Include="Utility\ScreenMessages.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
+      <Version>6.2.10</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="NeoAxis.Core, Version=2020.5.1.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\NeoAxis.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
+    <VisualStudioVersion>14.0</VisualStudioVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
