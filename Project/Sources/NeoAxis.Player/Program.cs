@@ -71,8 +71,7 @@ namespace NeoAxis.Player
 			//create and run application loop.
 			if( EngineApp.Create() )
 			{
-				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
-					EngineApp.CreatedInsideEngineWindow.Icon = NeoAxis.Player.Properties.Resources.Logo;
+				EngineApp.CreatedInsideEngineWindow.Icon = NeoAxis.Player.Properties.Resources.Logo;
 
 				EngineApp.Run();
 			}
