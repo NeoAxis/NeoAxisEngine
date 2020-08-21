@@ -17,7 +17,7 @@ UWP (Universal Windows, Xbox, Windows Store)
 
 1. Install 'Platform Tools' from the Packages.
 
-2. Execute 'Sources\UpdateProjects.Android.bat'.
+2. Execute 'Sources\UpdateProjects.UWP.bat'.
 Execute if made changes in NeoAxis.Core.
 
 3. Build UWP from the editor.
@@ -26,7 +26,7 @@ Read more: https://www.neoaxis.com/docs/html/Project_Menu.htm
 4. Compile Sources\Build.UWP.sln.
 Architecture - x64.
 
-5. You can run without building.
+You can run without building from the editor.
 Use 'Sources\NeoAxis.UWP.sln'.
 Debugger is supported.
 
