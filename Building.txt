@@ -18,7 +18,7 @@ UWP (Universal Windows, Xbox, Windows Store)
 1. Install 'Platform Tools' from the Packages.
 
 2. Execute 'Sources\UpdateProjects.UWP.bat'.
-Execute if made changes in NeoAxis.Core.
+Execute it when made changes in NeoAxis.Core.
 
 3. Build UWP from the editor.
 Read more: https://www.neoaxis.com/docs/html/Project_Menu.htm
@@ -26,7 +26,8 @@ Read more: https://www.neoaxis.com/docs/html/Project_Menu.htm
 4. Compile Sources\Build.UWP.sln.
 Architecture - x64.
 
-You can run without building from the editor.
+
+You can run without building (skip 3, 4).
 Use 'Sources\NeoAxis.UWP.sln'.
 Debugger is supported.
 
