@@ -159,10 +159,16 @@ namespace NeoAxis
 						}
 					}
 
+#if !DEPLOY
 					if( encodingCodepage.HasValue )
-						encoding = Encoding.GetEncoding( encodingCodepage.Value );
+						encoding = CodePagesEncodingProvider.Instance.GetEncoding( encodingCodepage.Value );
 					else if( !string.IsNullOrEmpty( encodingName ) )
-						encoding = Encoding.GetEncoding( encodingName );
+						encoding = CodePagesEncodingProvider.Instance.GetEncoding( encodingName );
+#endif
+					//if( encodingCodepage.HasValue )
+					//	encoding = Encoding.GetEncoding( encodingCodepage.Value );
+					//else if( !string.IsNullOrEmpty( encodingName ) )
+					//	encoding = Encoding.GetEncoding( encodingName );
 
 					string[] lines = null;
 					if( encoding != null )

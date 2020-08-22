@@ -29,8 +29,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="obj\**" />
+    <Compile Remove="Properties\Android\**" />
     <EmbeddedResource Remove="obj\**" />
+    <EmbeddedResource Remove="Properties\Android\**" />
     <None Remove="obj\**" />
+    <None Remove="Properties\Android\**" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="NeoAxis.Core">

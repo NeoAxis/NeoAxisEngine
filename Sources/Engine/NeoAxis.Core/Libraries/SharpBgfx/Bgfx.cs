@@ -831,18 +831,32 @@ namespace SharpBgfx {
             NativeMethods.bgfx_reset_view(id);
         }
 
+        //!!!!betauser
         /// <summary>
         /// Submits the current batch of primitives for rendering.
         /// </summary>
         /// <param name="id">The index of the view to submit.</param>
         /// <param name="program">The program with which to render.</param>
         /// <param name="depth">A depth value to use for sorting the batch.</param>
-        /// <param name="preserveState"><c>true</c> to preserve internal draw state after the call.</param>
+        /// <param name="flags">Which states to discard for next draw.</param>
         /// <returns>The number of draw calls.</returns>
-        public static int Submit (ushort id, Program program, int depth = 0, bool preserveState = false) {
-            return NativeMethods.bgfx_submit(id, program.handle, depth, preserveState);
+        public static int Submit( ushort id, Program program, int depth, DiscardFlags flags )
+        {
+            return NativeMethods.bgfx_submit( id, program.handle, depth, flags );
         }
+        ///// <summary>
+        ///// Submits the current batch of primitives for rendering.
+        ///// </summary>
+        ///// <param name="id">The index of the view to submit.</param>
+        ///// <param name="program">The program with which to render.</param>
+        ///// <param name="depth">A depth value to use for sorting the batch.</param>
+        ///// <param name="preserveState"><c>true</c> to preserve internal draw state after the call.</param>
+        ///// <returns>The number of draw calls.</returns>
+        //public static int Submit (ushort id, Program program, int depth = 0, bool preserveState = false) {
+        //    return NativeMethods.bgfx_submit(id, program.handle, depth, preserveState);
+        //}
 
+        //!!!!betauser
         /// <summary>
         /// Submits the current batch of primitives for rendering.
         /// </summary>
@@ -850,12 +864,26 @@ namespace SharpBgfx {
         /// <param name="program">The program with which to render.</param>
         /// <param name="query">An occlusion query to use as a predicate during rendering.</param>
         /// <param name="depth">A depth value to use for sorting the batch.</param>
-        /// <param name="preserveState"><c>true</c> to preserve internal draw state after the call.</param>
+        /// <param name="flags">Which states to discard for next draw.</param>
         /// <returns>The number of draw calls.</returns>
-        public static int Submit (ushort id, Program program, OcclusionQuery query, int depth = 0, bool preserveState = false) {
-            return NativeMethods.bgfx_submit_occlusion_query(id, program.handle, query.handle, depth, preserveState);
+        public static int Submit( ushort id, Program program, OcclusionQuery query, int depth, DiscardFlags flags )
+        {
+            return NativeMethods.bgfx_submit_occlusion_query( id, program.handle, query.handle, depth, flags );
         }
+        ///// <summary>
+        ///// Submits the current batch of primitives for rendering.
+        ///// </summary>
+        ///// <param name="id">The index of the view to submit.</param>
+        ///// <param name="program">The program with which to render.</param>
+        ///// <param name="query">An occlusion query to use as a predicate during rendering.</param>
+        ///// <param name="depth">A depth value to use for sorting the batch.</param>
+        ///// <param name="preserveState"><c>true</c> to preserve internal draw state after the call.</param>
+        ///// <returns>The number of draw calls.</returns>
+        //public static int Submit (ushort id, Program program, OcclusionQuery query, int depth = 0, bool preserveState = false) {
+        //    return NativeMethods.bgfx_submit_occlusion_query(id, program.handle, query.handle, depth, preserveState);
+        //}
 
+        //!!!!betauser
         /// <summary>
         /// Submits an indirect batch of drawing commands to be used for rendering.
         /// </summary>
@@ -865,19 +893,43 @@ namespace SharpBgfx {
         /// <param name="startIndex">The index of the first command to process.</param>
         /// <param name="count">The number of commands to process from the buffer.</param>
         /// <param name="depth">A depth value to use for sorting the batch.</param>
-        /// <param name="preserveState"><c>true</c> to preserve internal draw state after the call.</param>
+        /// <param name="flags">Which states to discard for next draw.</param>
         /// <returns>The number of draw calls.</returns>
-        public static int Submit (ushort id, Program program, IndirectBuffer indirectBuffer, int startIndex = 0, int count = 1, int depth = 0, bool preserveState = false) {
-            return NativeMethods.bgfx_submit_indirect(id, program.handle, indirectBuffer.handle, (ushort)startIndex, (ushort)count, depth, preserveState);
+        public static int Submit( ushort id, Program program, IndirectBuffer indirectBuffer, int startIndex, int count, int depth, DiscardFlags flags )
+        {
+            return NativeMethods.bgfx_submit_indirect( id, program.handle, indirectBuffer.handle, (ushort)startIndex, (ushort)count, depth, flags );
         }
+        ///// <summary>
+        ///// Submits an indirect batch of drawing commands to be used for rendering.
+        ///// </summary>
+        ///// <param name="id">The index of the view to submit.</param>
+        ///// <param name="program">The program with which to render.</param>
+        ///// <param name="indirectBuffer">The buffer containing drawing commands.</param>
+        ///// <param name="startIndex">The index of the first command to process.</param>
+        ///// <param name="count">The number of commands to process from the buffer.</param>
+        ///// <param name="depth">A depth value to use for sorting the batch.</param>
+        ///// <param name="preserveState"><c>true</c> to preserve internal draw state after the call.</param>
+        ///// <returns>The number of draw calls.</returns>
+        //public static int Submit (ushort id, Program program, IndirectBuffer indirectBuffer, int startIndex = 0, int count = 1, int depth = 0, bool preserveState = false) {
+        //    return NativeMethods.bgfx_submit_indirect(id, program.handle, indirectBuffer.handle, (ushort)startIndex, (ushort)count, depth, preserveState);
+        //}
 
+        //!!!!betauser
         /// <summary>
         /// Discards all previously set state for the draw call.
         /// </summary>
-        public static void Discard () {
-            NativeMethods.bgfx_discard();
+        public static void Discard( DiscardFlags flags )
+        {
+            NativeMethods.bgfx_discard( flags );
         }
+        ///// <summary>
+        ///// Discards all previously set state for the draw call.
+        ///// </summary>
+        //public static void Discard () {
+        //    NativeMethods.bgfx_discard();
+        //}
 
+        //!!!!betauser
         /// <summary>
         /// Dispatches a compute job.
         /// </summary>
@@ -886,10 +938,24 @@ namespace SharpBgfx {
         /// <param name="xCount">The size of the job in the first dimension.</param>
         /// <param name="yCount">The size of the job in the second dimension.</param>
         /// <param name="zCount">The size of the job in the third dimension.</param>
-        public static void Dispatch (ushort id, Program program, int xCount = 1, int yCount = 1, int zCount = 1) {
-            NativeMethods.bgfx_dispatch(id, program.handle, (uint)xCount, (uint)yCount, (uint)zCount);
+        /// <param name="flags">Which states to discard for next draw.</param>
+        public static void Dispatch( ushort id, Program program, int xCount, int yCount, int zCount, DiscardFlags flags )
+        {
+            NativeMethods.bgfx_dispatch( id, program.handle, (uint)xCount, (uint)yCount, (uint)zCount, flags );
         }
+        ///// <summary>
+        ///// Dispatches a compute job.
+        ///// </summary>
+        ///// <param name="id">The index of the view to dispatch.</param>
+        ///// <param name="program">The shader program to use.</param>
+        ///// <param name="xCount">The size of the job in the first dimension.</param>
+        ///// <param name="yCount">The size of the job in the second dimension.</param>
+        ///// <param name="zCount">The size of the job in the third dimension.</param>
+        //public static void Dispatch (ushort id, Program program, int xCount = 1, int yCount = 1, int zCount = 1) {
+        //    NativeMethods.bgfx_dispatch(id, program.handle, (uint)xCount, (uint)yCount, (uint)zCount);
+        //}
 
+        //!!!!betauser
         /// <summary>
         /// Dispatches an indirect compute job.
         /// </summary>
@@ -898,9 +964,22 @@ namespace SharpBgfx {
         /// <param name="indirectBuffer">The buffer containing drawing commands.</param>
         /// <param name="startIndex">The index of the first command to process.</param>
         /// <param name="count">The number of commands to process from the buffer.</param>
-        public static void Dispatch (ushort id, Program program, IndirectBuffer indirectBuffer, int startIndex = 0, int count = 1) {
-            NativeMethods.bgfx_dispatch_indirect(id, program.handle, indirectBuffer.handle, (ushort)startIndex, (ushort)count);
+        /// <param name="flags">Which states to discard for next draw.</param>
+        public static void Dispatch( ushort id, Program program, IndirectBuffer indirectBuffer, int startIndex, int count, DiscardFlags flags )
+        {
+            NativeMethods.bgfx_dispatch_indirect( id, program.handle, indirectBuffer.handle, (ushort)startIndex, (ushort)count, flags );
         }
+        ///// <summary>
+        ///// Dispatches an indirect compute job.
+        ///// </summary>
+        ///// <param name="id">The index of the view to dispatch.</param>
+        ///// <param name="program">The shader program to use.</param>
+        ///// <param name="indirectBuffer">The buffer containing drawing commands.</param>
+        ///// <param name="startIndex">The index of the first command to process.</param>
+        ///// <param name="count">The number of commands to process from the buffer.</param>
+        //public static void Dispatch (ushort id, Program program, IndirectBuffer indirectBuffer, int startIndex = 0, int count = 1) {
+        //    NativeMethods.bgfx_dispatch_indirect(id, program.handle, indirectBuffer.handle, (ushort)startIndex, (ushort)count);
+        //}
 
         /// <summary>
         /// Requests that a screenshot be saved. The ScreenshotTaken event will be fired to save the result.

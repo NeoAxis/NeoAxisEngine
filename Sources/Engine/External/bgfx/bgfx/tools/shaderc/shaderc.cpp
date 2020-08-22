@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2019 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2020 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
  */
 
@@ -13,7 +13,7 @@ extern "C"
 #include <fpp.h>
 } // extern "C"
 
-#define BGFX_SHADER_BIN_VERSION 6
+#define BGFX_SHADER_BIN_VERSION 8
 #define BGFX_CHUNK_MAGIC_CSH BX_MAKEFOURCC('C', 'S', 'H', BGFX_SHADER_BIN_VERSION)
 #define BGFX_CHUNK_MAGIC_FSH BX_MAKEFOURCC('F', 'S', 'H', BGFX_SHADER_BIN_VERSION)
 #define BGFX_CHUNK_MAGIC_VSH BX_MAKEFOURCC('V', 'S', 'H', BGFX_SHADER_BIN_VERSION)
@@ -310,7 +310,7 @@ namespace bgfx
 
 	const char* getUniformTypeName(UniformType::Enum _enum)
 	{
-		uint32_t idx = _enum & ~(BGFX_UNIFORM_FRAGMENTBIT|BGFX_UNIFORM_SAMPLERBIT);
+		uint32_t idx = _enum & ~(kUniformFragmentBit|kUniformSamplerBit);
 		if (idx < UniformType::Count)
 		{
 			return s_uniformTypeName[idx];
@@ -452,7 +452,6 @@ namespace bgfx
 			return size;
 		}
 
-		std::string m_filePath;
 		bx::StringView m_name;
 		typedef std::vector<uint8_t> Buffer;
 		Buffer m_buffer;
@@ -541,7 +540,7 @@ namespace bgfx
 		}
 		replace[len] = '\0';
 
-		BX_CHECK(len >= bx::strLen(_replace), "");
+		BX_ASSERT(len >= bx::strLen(_replace), "");
 		for (bx::StringView ptr = bx::strFind(_str, _find)
 			; !ptr.isEmpty()
 			; ptr = bx::strFind(ptr.getPtr() + len, _find)
@@ -897,7 +896,7 @@ namespace bgfx
 
 		FPRINTF(stderr
 			, "shaderc, bgfx shader compiler tool, version %d.%d.%d.\n"
-			  "Copyright 2011-2019 Branimir Karadzic. All rights reserved.\n"
+			  "Copyright 2011-2020 Branimir Karadzic. All rights reserved.\n"
 			  "License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause\n\n"
 			, BGFX_SHADERC_VERSION_MAJOR
 			, BGFX_SHADERC_VERSION_MINOR
@@ -970,7 +969,6 @@ namespace bgfx
 		uint32_t pssl  = 0;
 		uint32_t spirv = 0;
 		const char* profile = _options.profile.c_str();
-
 		if ('\0' != profile[0])
 		{
 			if (0 == bx::strCmp(&profile[1], "s_4_0_level", 11) )
@@ -1338,22 +1336,22 @@ namespace bgfx
 			if ('f' == _options.shaderType)
 			{
 				bx::write(_writer, BGFX_CHUNK_MAGIC_FSH);
-				bx::write(_writer, inputHash);
-				bx::write(_writer, uint32_t(0) );
 			}
 			else if ('v' == _options.shaderType)
 			{
 				bx::write(_writer, BGFX_CHUNK_MAGIC_VSH);
-				bx::write(_writer, uint32_t(0) );
-				bx::write(_writer, outputHash);
 			}
 			else
 			{
 				bx::write(_writer, BGFX_CHUNK_MAGIC_CSH);
-				bx::write(_writer, uint32_t(0) );
+			}
+
+			bx::write(_writer, inputHash);
 				bx::write(_writer, outputHash);
 			}
 
+		if (raw)
+		{
 			if (0 != glsl)
 			{
 				bx::write(_writer, uint16_t(0) );
@@ -1924,21 +1922,6 @@ namespace bgfx
 							"\n#define __RETURN__ \\\n"
 							"\t} \\\n"
 							);
-
-						if (hlsl != 0
-						&&  hlsl <= 3)
-						{
-//								preprocessor.writef(
-//									"\tgl_Position.xy += u_viewTexel.xy * gl_Position.w; \\\n"
-//									);
-						}
-
-						if (0 != spirv)
-						{
-							preprocessor.writef(
-								"\tgl_Position.y = -gl_Position.y; \\\n"
-								);
-						}
 
 						preprocessor.writef(
 							"\treturn _varying_"

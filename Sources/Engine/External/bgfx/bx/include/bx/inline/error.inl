@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2020 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
  */
 
@@ -22,7 +22,7 @@ namespace bx
 
 	inline void Error::setError(ErrorResult _errorResult, const StringView& _msg)
 	{
-		BX_CHECK(0 != _errorResult.code, "Invalid ErrorResult passed to setError!");
+		BX_ASSERT(0 != _errorResult.code, "Invalid ErrorResult passed to setError!");
 
 		if (!isOk() )
 		{
@@ -62,12 +62,12 @@ namespace bx
 	inline ErrorScope::ErrorScope(Error* _err)
 		: m_err(_err)
 	{
-		BX_CHECK(NULL != _err, "_err can't be NULL");
+		BX_ASSERT(NULL != _err, "_err can't be NULL");
 	}
 
 	inline ErrorScope::~ErrorScope()
 	{
-		BX_CHECK(m_err->isOk(), "Error: %d", m_err->get().code);
+		BX_ASSERT(m_err->isOk(), "Error: %d", m_err->get().code);
 	}
 
 } // namespace bx

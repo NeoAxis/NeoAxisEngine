@@ -379,8 +379,7 @@ _wopendir(
      * Note that on WinRT there's no way to convert relative paths
      * into absolute paths, so just assume it is an absolute path.
      */
-	 //!!!! fixed condition
-#if defined(WINAPI_FAMILY)  && (WINAPI_FAMILY == WINAPI_FAMILY_APP || WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP)
+#if defined(WINAPI_FAMILY) && defined(WINAPI_FAMILY_PHONE_APP) && (WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP)
     /* WinRT */
     n = wcslen (dirname);
 #else
@@ -402,7 +401,7 @@ _wopendir(
      * Note that on WinRT there's no way to convert relative paths
      * into absolute paths, so just assume it is an absolute path.
      */
-#if defined(WINAPI_FAMILY)  && (WINAPI_FAMILY == WINAPI_FAMILY_APP || WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP)
+#if defined(WINAPI_FAMILY) && defined(WINAPI_FAMILY_PHONE_APP) && (WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP)
     /* WinRT */
     wcsncpy_s (dirp->patt, n+1, dirname, n);
 #else
@@ -1028,7 +1027,7 @@ versionsort(
     return alphasort (a, b);
 }
 
-//!!!!
+//!!!!betauser
 /* Convert utf8 multi-byte string to wide character string */
 static int
 dirent_utf8towcs_s(
@@ -1074,7 +1073,6 @@ dirent_utf8towcs_s(
 	return error;
 }
 
-
 /* Convert multi-byte string to wide character string */
 static int
 dirent_mbstowcs_s(
@@ -1090,21 +1088,18 @@ dirent_mbstowcs_s(
     UINT cp;
     DWORD flags;
 
-	//!!!!
-#if defined(WINAPI_FAMILY)  && (WINAPI_FAMILY == WINAPI_FAMILY_APP || WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP)
-	cp = GetACP(); //TEST IT!
+    /* Determine code page for multi-byte string */
+#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+    if (AreFileApisANSI ()) {
+        /* Default ANSI code page */
+        cp = GetACP ();
+    } else {
+        /* Default OEM code page */
+        cp = GetOEMCP ();
+    }
 #else
-	/* Determine code page for multi-byte string */
-	if (AreFileApisANSI()) {
-		/* Default ANSI code page */
-		cp = GetACP();
-	}
-	else {
-		/* Default OEM code page */
-		cp = GetOEMCP();
-	}
-#endif
-
+    cp = CP_ACP;
+#endif // WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
     /*
      * Determine flags based on the character set.  For more information,
@@ -1188,20 +1183,19 @@ dirent_wcstombs_s(
     BOOL flag = 0;
     LPBOOL pflag;
 
-//!!!!
-#if defined(WINAPI_FAMILY)  && (WINAPI_FAMILY == WINAPI_FAMILY_APP || WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP)
-	cp = GetACP(); //TEST IT !
+    /* Determine code page for multi-byte string */
+#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+    if (AreFileApisANSI ()) {
+        /* Default ANSI code page */
+        cp = GetACP ();
+    } else {
+        /* Default OEM code page */
+        cp = GetOEMCP ();
+    }
 #else
-	/* Determine code page for multi-byte string */
-	if (AreFileApisANSI()) {
-		/* Default ANSI code page */
-		cp = GetACP();
-	}
-	else {
-		/* Default OEM code page */
-		cp = GetOEMCP();
-	}
-#endif
+    cp = CP_ACP;
+#endif // WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
 
     /* Compute the length of input string without zero-terminator */
     len = 0;

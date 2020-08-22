@@ -262,9 +262,9 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\tools\shaderc\LibraryBase.h" />
     <ClInclude Include="..\..\..\tools\shaderc\shaderc.h" />
-    <ClInclude Include="..\..\..\src\vertexdecl.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\src\vertexlayout.cpp" />
     <ClCompile Include="..\..\..\tools\shaderc\Library.cpp">
     </ClCompile>
     <ClCompile Include="..\..\..\tools\shaderc\LibraryBase.cpp">
@@ -273,8 +273,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\tools\shaderc\shaderc_glsl.cpp" />
     <ClCompile Include="..\..\..\tools\shaderc\shaderc_hlsl.cpp">
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\vertexdecl.cpp">
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

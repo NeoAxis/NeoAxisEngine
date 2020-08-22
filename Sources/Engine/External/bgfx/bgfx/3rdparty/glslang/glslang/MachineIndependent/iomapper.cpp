@@ -33,7 +33,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef GLSLANG_WEB
+#if !defined(GLSLANG_WEB) && !defined(GLSLANG_ANGLE)
 
 #include "../Include/Common.h"
 #include "../Include/InfoSink.h"
@@ -79,6 +79,11 @@ public:
             target = &outputList;
         else if (base->getQualifier().isUniformOrBuffer() && !base->getQualifier().isPushConstant())
             target = &uniformList;
+        // If a global is being visited, then we should also traverse it incase it's evaluation
+        // ends up visiting inputs we want to tag as live
+        else if (base->getQualifier().storage == EvqGlobal)
+            addGlobalReference(base->getName());
+
         if (target) {
             TVarEntryInfo ent = {base->getId(), base, ! traverseAll};
             ent.stage = intermediate.getStage();
@@ -309,26 +314,43 @@ struct TSymbolValidater
         TIntermSymbol* base = ent1.symbol;
         const TType& type = ent1.symbol->getType();
         const TString& name = entKey.first;
-        TString mangleName1, mangleName2;
-        type.appendMangledName(mangleName1);
         EShLanguage stage = ent1.stage;
+        TString mangleName1, mangleName2;
         if (currentStage != stage) {
             preStage = currentStage;
             currentStage = stage;
             nextStage = EShLangCount;
             for (int i = currentStage + 1; i < EShLangCount; i++) {
-                if (inVarMaps[i] != nullptr)
+                if (inVarMaps[i] != nullptr) {
                     nextStage = static_cast<EShLanguage>(i);
+                    break;
+                }
             }
         }
+
+        if (type.getQualifier().isArrayedIo(stage)) {
+            TType subType(type, 0);
+            subType.appendMangledName(mangleName1);
+        } else {
+            type.appendMangledName(mangleName1);
+        }
+
         if (base->getQualifier().storage == EvqVaryingIn) {
             // validate stage in;
             if (preStage == EShLangCount)
                 return;
+            if (name == "gl_PerVertex")
+                return;
             if (outVarMaps[preStage] != nullptr) {
                 auto ent2 = outVarMaps[preStage]->find(name);
                 if (ent2 != outVarMaps[preStage]->end()) {
-                    ent2->second.symbol->getType().appendMangledName(mangleName2);
+                    if (ent2->second.symbol->getType().getQualifier().isArrayedIo(preStage)) {
+                        TType subType(ent2->second.symbol->getType(), 0);
+                        subType.appendMangledName(mangleName2);
+                    }
+                    else {
+                        ent2->second.symbol->getType().appendMangledName(mangleName2);
+                    }
                     if (mangleName1 == mangleName2)
                         return;
                     else {
@@ -343,10 +365,18 @@ struct TSymbolValidater
             // validate stage out;
             if (nextStage == EShLangCount)
                 return;
+            if (name == "gl_PerVertex")
+                return;
             if (outVarMaps[nextStage] != nullptr) {
                 auto ent2 = inVarMaps[nextStage]->find(name);
                 if (ent2 != inVarMaps[nextStage]->end()) {
-                    ent2->second.symbol->getType().appendMangledName(mangleName2);
+                    if (ent2->second.symbol->getType().getQualifier().isArrayedIo(nextStage)) {
+                        TType subType(ent2->second.symbol->getType(), 0);
+                        subType.appendMangledName(mangleName2);
+                    }
+                    else {
+                        ent2->second.symbol->getType().appendMangledName(mangleName2);
+                    }
                     if (mangleName1 == mangleName2)
                         return;
                     else {
@@ -1080,11 +1110,12 @@ bool TIoMapper::addStage(EShLanguage stage, TIntermediate& intermediate, TInfoSi
     TVarGatherTraverser iter_binding_live(intermediate, false, inVarMap, outVarMap, uniformVarMap);
     root->traverse(&iter_binding_all);
     iter_binding_live.pushFunction(intermediate.getEntryPointMangledName().c_str());
-    while (! iter_binding_live.functions.empty()) {
-        TIntermNode* function = iter_binding_live.functions.back();
-        iter_binding_live.functions.pop_back();
-        function->traverse(&iter_binding_live);
+    while (! iter_binding_live.destinations.empty()) {
+        TIntermNode* destination = iter_binding_live.destinations.back();
+        iter_binding_live.destinations.pop_back();
+        destination->traverse(&iter_binding_live);
     }
+
     // sort entries by priority. see TVarEntryInfo::TOrderByPriority for info.
     std::for_each(inVarMap.begin(), inVarMap.end(),
                   [&inVector](TVarLivePair p) { inVector.push_back(p); });
@@ -1175,11 +1206,12 @@ bool TGlslIoMapper::addStage(EShLanguage stage, TIntermediate& intermediate, TIn
                                           *uniformVarMap[stage]);
     root->traverse(&iter_binding_all);
     iter_binding_live.pushFunction(intermediate.getEntryPointMangledName().c_str());
-    while (! iter_binding_live.functions.empty()) {
-        TIntermNode* function = iter_binding_live.functions.back();
-        iter_binding_live.functions.pop_back();
-        function->traverse(&iter_binding_live);
+    while (! iter_binding_live.destinations.empty()) {
+        TIntermNode* destination = iter_binding_live.destinations.back();
+        iter_binding_live.destinations.pop_back();
+        destination->traverse(&iter_binding_live);
     }
+
     TNotifyInOutAdaptor inOutNotify(stage, *resolver);
     TNotifyUniformAdaptor uniformNotify(stage, *resolver);
     // Resolve current stage input symbol location with previous stage output here,
@@ -1256,4 +1288,4 @@ bool TGlslIoMapper::doMap(TIoMapResolver* resolver, TInfoSink& infoSink) {
 
 } // end namespace glslang
 
-#endif // GLSLANG_WEB
+#endif // !GLSLANG_WEB && !GLSLANG_ANGLE

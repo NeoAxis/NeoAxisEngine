@@ -58,6 +58,8 @@ class ForwardPointer;
 class PipeStorage;
 class NamedBarrier;
 class AccelerationStructureNV;
+class CooperativeMatrixNV;
+class RayQueryProvisionalKHR;
 
 // Abstract class for a SPIR-V type. It has a bunch of As<sublcass>() methods,
 // which is used as a way to probe the actual <subclass>.
@@ -93,6 +95,8 @@ class Type {
     kPipeStorage,
     kNamedBarrier,
     kAccelerationStructureNV,
+    kCooperativeMatrixNV,
+    kRayQueryProvisionalKHR
   };
 
   Type(Kind k) : kind_(k) {}
@@ -196,6 +200,8 @@ class Type {
   DeclareCastMethod(PipeStorage)
   DeclareCastMethod(NamedBarrier)
   DeclareCastMethod(AccelerationStructureNV)
+  DeclareCastMethod(CooperativeMatrixNV)
+  DeclareCastMethod(RayQueryProvisionalKHR)
 #undef DeclareCastMethod
 
  protected:
@@ -597,6 +603,36 @@ class ForwardPointer : public Type {
   const Pointer* pointer_;
 };
 
+class CooperativeMatrixNV : public Type {
+ public:
+  CooperativeMatrixNV(const Type* type, const uint32_t scope,
+                      const uint32_t rows, const uint32_t columns);
+  CooperativeMatrixNV(const CooperativeMatrixNV&) = default;
+
+  std::string str() const override;
+
+  CooperativeMatrixNV* AsCooperativeMatrixNV() override { return this; }
+  const CooperativeMatrixNV* AsCooperativeMatrixNV() const override {
+    return this;
+  }
+
+  void GetExtraHashWords(std::vector<uint32_t>*,
+                         std::unordered_set<const Type*>*) const override;
+
+  const Type* component_type() const { return component_type_; }
+  uint32_t scope_id() const { return scope_id_; }
+  uint32_t rows_id() const { return rows_id_; }
+  uint32_t columns_id() const { return columns_id_; }
+
+ private:
+  bool IsSameImpl(const Type* that, IsSameCache*) const override;
+
+  const Type* component_type_;
+  const uint32_t scope_id_;
+  const uint32_t rows_id_;
+  const uint32_t columns_id_;
+};
+
 #define DefineParameterlessType(type, name)                                    \
   class type : public Type {                                                   \
    public:                                                                     \
@@ -626,6 +662,7 @@ DefineParameterlessType(Queue, queue);
 DefineParameterlessType(PipeStorage, pipe_storage);
 DefineParameterlessType(NamedBarrier, named_barrier);
 DefineParameterlessType(AccelerationStructureNV, accelerationStructureNV);
+DefineParameterlessType(RayQueryProvisionalKHR, rayQueryProvisionalKHR);
 #undef DefineParameterlessType
 
 }  // namespace analysis

@@ -1,5 +1,5 @@
 #
-# Copyright 2011-2019 Branimir Karadzic. All rights reserved.
+# Copyright 2011-2020 Branimir Karadzic. All rights reserved.
 # License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
 #
 
@@ -22,7 +22,7 @@ all:
 	@echo "  TARGET=4 (glsl)"
 	@echo "  TARGET=5 (metal)"
 	@echo "  TARGET=6 (pssl)"
-	@echo "  TARGET=7 (spriv)"
+	@echo "  TARGET=7 (spirv)"
 
 .PHONY: rebuild
 rebuild:

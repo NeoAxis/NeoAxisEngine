@@ -639,16 +639,19 @@ namespace NeoAxis
 			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && EngineSettings.Init.SimulationTripleBuffering )
 				Bgfx.SetTripleBuffering();
 
-			//set OpenGL ES for Android
+			//set Vulkan for Android
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
 			{
-				EngineSettings.Init.RendererBackend = RendererBackend.OpenGLES;
+				//!!!!
+
+				EngineSettings.Init.RendererBackend = RendererBackend.Vulkan;
+				//EngineSettings.Init.RendererBackend = RendererBackend.OpenGLES;
 				//EngineSettings.Init.RendererBackend = RendererBackend.Noop;
 			}
 
 			//Log.InvisibleInfo( "Renderer backend: " + EngineSettings.Init.RendererBackend.ToString() );
 
-			Bgfx.Init( new InitSettings
+			var initSettings = new InitSettings
 			{
 				Backend = EngineSettings.Init.RendererBackend,
 				CallbackHandler = new CallbackHandler(),
@@ -657,7 +660,9 @@ namespace NeoAxis
 				//Debug = true
 				//!!!!
 				//ResetFlags = ResetFlags.MSAA8x,
-			} );
+			};
+
+			Bgfx.Init( initSettings );
 
 			Bgfx.Reset( initialWindowSize.X, initialWindowSize.Y, GetApplicationWindowResetFlags() );
 

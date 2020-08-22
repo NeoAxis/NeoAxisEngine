@@ -385,7 +385,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\tools\shaderc\LibraryBase.h" />
     <ClInclude Include="..\..\..\tools\shaderc\shaderc.h" />
-    <ClInclude Include="..\..\..\src\vertexdecl.h" />
+    <ClInclude Include="..\..\..\src\vertexlayout.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\tools\shaderc\Library.cpp">
@@ -400,7 +400,7 @@
     </ClCompile>
     <ClCompile Include="..\..\..\tools\shaderc\shaderc_pssl.cpp">
     </ClCompile>
-    <ClCompile Include="..\..\..\src\vertexdecl.cpp">
+    <ClCompile Include="..\..\..\src\vertexlayout.cpp">
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -410,10 +410,6 @@
     </ProjectReference>
     <ProjectReference Include="fcpp.vcxproj">
       <Project>{2EB2967C-1AE9-970D-C3D5-7D10AFEB130F}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="glslang.vcxproj">
-      <Project>{0D19B900-79F8-379C-8210-C372EE6E9EFD}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>

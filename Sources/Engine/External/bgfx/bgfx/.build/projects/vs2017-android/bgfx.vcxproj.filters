@@ -147,9 +147,6 @@
     <ClCompile Include="..\..\..\src\topology.cpp">
       <Filter>bgfx</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\vertexdecl.cpp">
-      <Filter>bgfx</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\bimg\src\image.cpp">
       <Filter>bimg</Filter>
     </ClCompile>
@@ -188,6 +185,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\weight_infill.cc">
       <Filter>bimg\astc-codec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\vertexlayout.cpp">
+      <Filter>bgfx</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -15,9 +15,9 @@
 #ifndef SOURCE_FUZZ_TRANSFORMATION_REPLACE_ID_WITH_SYNONYM_H_
 #define SOURCE_FUZZ_TRANSFORMATION_REPLACE_ID_WITH_SYNONYM_H_
 
-#include "source/fuzz/fact_manager.h"
 #include "source/fuzz/protobufs/spirvfuzz_protobufs.h"
 #include "source/fuzz/transformation.h"
+#include "source/fuzz/transformation_context.h"
 #include "source/opt/ir_context.h"
 
 namespace spvtools {
@@ -29,42 +29,57 @@ class TransformationReplaceIdWithSynonym : public Transformation {
       const protobufs::TransformationReplaceIdWithSynonym& message);
 
   TransformationReplaceIdWithSynonym(
-      protobufs::IdUseDescriptor id_use_descriptor,
-      protobufs::DataDescriptor data_descriptor,
-      uint32_t fresh_id_for_temporary);
+      protobufs::IdUseDescriptor id_use_descriptor, uint32_t synonymous_id);
 
   // - The fact manager must know that the id identified by
   //   |message_.id_use_descriptor| is synonomous with
-  //   |message_.data_descriptor|.
-  // - Replacing the id in |message_.id_use_descriptor| by the synonym in
-  //   |message_.data_descriptor| must respect SPIR-V's rules about uses being
+  //   |message_.synonymous_id|.
+  // - Replacing the id in |message_.id_use_descriptor| by
+  //   |message_.synonymous_id| must respect SPIR-V's rules about uses being
   //   dominated by their definitions.
   // - The id must not be an index into an access chain whose base object has
   //   struct type, as such indices must be constants.
   // - The id must not be a pointer argument to a function call (because the
   //   synonym might not be a memory object declaration).
   // - |fresh_id_for_temporary| must be 0.
-  // TODO(https://github.com/KhronosGroup/SPIRV-Tools/issues/2855): the
-  //  motivation for the temporary is to support the case where an id is
-  //  synonymous with an element of a composite.  Until support for that is
-  //  implemented, 0 records that no temporary is needed.
-  bool IsApplicable(opt::IRContext* context,
-                    const FactManager& fact_manager) const override;
+  bool IsApplicable(
+      opt::IRContext* ir_context,
+      const TransformationContext& transformation_context) const override;
 
   // Replaces the use identified by |message_.id_use_descriptor| with the
-  // synonymous id identified by |message_.data_descriptor|.
-  // TODO(https://github.com/KhronosGroup/SPIRV-Tools/issues/2855): in due
-  //  course it will also be necessary to add an additional instruction to pull
-  //  the synonym out of a composite.
-  void Apply(opt::IRContext* context, FactManager* fact_manager) const override;
+  // synonymous id identified by |message_.synonymous_id|.
+  void Apply(opt::IRContext* ir_context,
+             TransformationContext* transformation_context) const override;
 
   protobufs::Transformation ToMessage() const override;
 
-  static bool ReplacingUseWithSynonymIsOk(
-      opt::IRContext* context, opt::Instruction* use_instruction,
-      uint32_t use_in_operand_index, const protobufs::DataDescriptor& synonym);
+  // Checks whether various conditions hold related to the acceptability of
+  // replacing the id use at |use_in_operand_index| of |use_instruction| with
+  // a synonym.  In particular, this checks that:
+  // - the id use is not an index into a struct field in an OpAccessChain - such
+  //   indices must be constants, so it is dangerous to replace them.
+  // - the id use is not a pointer function call argument, on which there are
+  //   restrictions that make replacement problematic.
+  static bool UseCanBeReplacedWithSynonym(opt::IRContext* ir_context,
+                                          opt::Instruction* use_instruction,
+                                          uint32_t use_in_operand_index);
+
+  // Returns true if |type_id_1| and |type_id_2| represent compatible types
+  // given the context of the instruction with |opcode| (i.e. we can replace
+  // an operand of |opcode| of the first type with an id of the second type
+  // and vice-versa).
+  static bool TypesAreCompatible(opt::IRContext* ir_context, SpvOp opcode,
+                                 uint32_t use_in_operand_index,
+                                 uint32_t type_id_1, uint32_t type_id_2);
 
  private:
+  // Returns true if the instruction with opcode |opcode| does not change its
+  // behaviour depending on the signedness of the operand at
+  // |use_in_operand_index|.
+  // Assumes that the operand must be the id of an integer scalar or vector.
+  static bool IsAgnosticToSignednessOfOperand(SpvOp opcode,
+                                              uint32_t use_in_operand_index);
+
   protobufs::TransformationReplaceIdWithSynonym message_;
 };
 

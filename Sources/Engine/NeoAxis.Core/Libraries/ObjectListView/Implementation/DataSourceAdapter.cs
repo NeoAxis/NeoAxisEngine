@@ -347,7 +347,8 @@ namespace BrightIdeasSoftware
         /// </summary>
         protected virtual void CreateMissingAspectGettersAndPutters() {
             foreach (OLVColumn x in this.ListView.AllColumns) {
-                OLVColumn column = x; // stack based variable accessible from closures
+#if !ANDROID
+				OLVColumn column = x; // stack based variable accessible from closures
                 if (column.AspectGetter == null && !String.IsNullOrEmpty(column.AspectName)) {
                     column.AspectGetter = delegate(object row) {
                         // In most cases, rows will be DataRowView objects
@@ -369,12 +370,13 @@ namespace BrightIdeasSoftware
                         }
                     };
                 }
+#endif
             }
         }
 
-        #endregion
+#endregion
 
-        #region Event Handlers
+#region Event Handlers
 
         /// <summary>
         /// CurrencyManager ListChanged event handler.
@@ -463,12 +465,13 @@ namespace BrightIdeasSoftware
         /// </summary>
         /// <param name="e"></param>
         protected virtual void HandleListChangedItemAdded(ListChangedEventArgs e) {
-            // We get this event twice if certain grid controls are used to add a new row to a
-            // datatable: once when the editing of a new row begins, and once again when that
-            // editing commits. (If the user cancels the creation of the new row, we never see
-            // the second creation.) We detect this by seeing if this is a view on a row in a
-            // DataTable, and if it is, testing to see if it's a new row under creation.
+			// We get this event twice if certain grid controls are used to add a new row to a
+			// datatable: once when the editing of a new row begins, and once again when that
+			// editing commits. (If the user cancels the creation of the new row, we never see
+			// the second creation.) We detect this by seeing if this is a view on a row in a
+			// DataTable, and if it is, testing to see if it's a new row under creation.
 
+#if !ANDROID
             Object newRow = this.CurrencyManager.List[e.NewIndex];
             DataRowView drv = newRow as DataRowView;
             if (drv == null || !drv.IsNew) {
@@ -477,6 +480,7 @@ namespace BrightIdeasSoftware
                 // handle the new row now!
                 this.InitializeDataSource();
             }
+#endif
         }
 
         /// <summary>
@@ -559,9 +563,9 @@ namespace BrightIdeasSoftware
                 this.ListView.EnsureVisible(this.ListView.SelectedIndices[0]);
         }
 
-        #endregion
+#endregion
 
-        #region ObjectListView event handlers
+#region ObjectListView event handlers
 
         /// <summary>
         /// Handle the selection changing in our ListView.
@@ -621,6 +625,6 @@ namespace BrightIdeasSoftware
             this.RebindDataSource(false);
         }
 
-        #endregion
+#endregion
     }
 }

@@ -132,9 +132,9 @@ namespace NeoAxis
 
 		private void DrawGradient( Graphics g )
 		{
+#if !ANDROID
 			System.Drawing.Rectangle gradientRect;
 
-#if !ANDROID
 			// draw gradient
 			using( LinearGradientBrush lgb = new LinearGradientBrush( this.ClientRectangle, topColor, bottomColor, 90, false ) )
 			{

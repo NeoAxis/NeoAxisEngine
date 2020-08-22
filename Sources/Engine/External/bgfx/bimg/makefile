@@ -1,5 +1,5 @@
 #
-# Copyright 2011-2019 Branimir Karadzic. All rights reserved.
+# Copyright 2011-2020 Branimir Karadzic. All rights reserved.
 # License: https://github.com/bkaradzic/bimg#license-bsd-2-clause
 #
 
@@ -48,9 +48,9 @@ projgen: ## Generate project files for all configurations.
 	$(GENIE)              --gcc=freebsd       gmake
 	$(GENIE)                                --gcc=android-arm     gmake
 	$(GENIE)                                --gcc=android-arm64   gmake
-	$(GENIE)                                --gcc=android-mips    gmake
 	$(GENIE)                                --gcc=android-x86     gmake
-	$(GENIE)                                --gcc=asmjs           gmake
+	$(GENIE)                                --gcc=wasm2js         gmake
+	$(GENIE)                                --gcc=wasm            gmake
 	$(GENIE)                                --gcc=ios-arm         gmake
 	$(GENIE)                                --gcc=ios-arm64       gmake
 	$(GENIE)                                --gcc=ios-simulator   gmake
@@ -73,14 +73,6 @@ android-arm64-release: .build/projects/gmake-android-arm64 ## Build - Android AR
 	$(MAKE) -R -C .build/projects/gmake-android-arm64 config=release
 android-arm64: android-arm64-debug android-arm64-release ## Build - Android ARM64 Debug and Release
 
-.build/projects/gmake-android-mips:
-	$(GENIE) --gcc=android-mips gmake
-android-mips-debug: .build/projects/gmake-android-mips ## Build - Android MIPS Debug
-	$(MAKE) -R -C .build/projects/gmake-android-mips config=debug
-android-mips-release: .build/projects/gmake-android-mips ## Build - Android MIPS Release
-	$(MAKE) -R -C .build/projects/gmake-android-mips config=release
-android-mips: android-mips-debug android-mips-release ## Build - Android MIPS Debug and Release
-
 .build/projects/gmake-android-x86:
 	$(GENIE) --gcc=android-x86 gmake
 android-x86-debug: .build/projects/gmake-android-x86 ## Build - Android x86 Debug and Release
@@ -89,13 +81,21 @@ android-x86-release: .build/projects/gmake-android-x86 ## Build - Android x86 De
 	$(MAKE) -R -C .build/projects/gmake-android-x86 config=release
 android-x86: android-x86-debug android-x86-release ## Build - Android x86 Debug and Release
 
-.build/projects/gmake-asmjs:
-	$(GENIE) --gcc=asmjs gmake
-asmjs-debug: .build/projects/gmake-asmjs ## Build - Emscripten Debug
-	$(MAKE) -R -C .build/projects/gmake-asmjs config=debug
-asmjs-release: .build/projects/gmake-asmjs ## Build - Emscripten Release
-	$(MAKE) -R -C .build/projects/gmake-asmjs config=release
-asmjs: asmjs-debug asmjs-release ## Build - Emscripten Debug and Release
+.build/projects/gmake-wasm2js:
+	$(GENIE) --gcc=wasm2js gmake
+wasm2js-debug: .build/projects/gmake-wasm2js ## Build - Emscripten Debug
+	$(MAKE) -R -C .build/projects/gmake-wasm2js config=debug
+wasm2js-release: .build/projects/gmake-wasm2js ## Build - Emscripten Release
+	$(MAKE) -R -C .build/projects/gmake-wasm2js config=release
+wasm2js: wasm2js-debug wasm2js-release ## Build - Emscripten Debug and Release
+
+.build/projects/gmake-wasm:
+	$(GENIE) --gcc=wasm gmake
+wasm-debug: .build/projects/gmake-wasm ## Build - Emscripten Debug
+	$(MAKE) -R -C .build/projects/gmake-wasm config=debug
+wasm-release: .build/projects/gmake-wasm ## Build - Emscripten Release
+	$(MAKE) -R -C .build/projects/gmake-wasm config=release
+wasm: wasm-debug wasm-release ## Build - Emscripten Debug and Release
 
 .build/projects/gmake-linux:
 	$(GENIE) --with-tools --gcc=linux-gcc gmake

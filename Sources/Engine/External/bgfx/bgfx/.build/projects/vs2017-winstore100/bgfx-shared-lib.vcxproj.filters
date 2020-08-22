@@ -122,10 +122,13 @@
     <ClInclude Include="..\..\..\src\topology.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\vertexdecl.h">
+    <ClInclude Include="..\..\..\src\special.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\special.h">
+    <ClInclude Include="..\..\..\src\renderer_webgpu.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vertexlayout.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
@@ -190,10 +193,16 @@
     <ClCompile Include="..\..\..\src\topology.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\vertexdecl.cpp">
+    <ClCompile Include="..\..\..\src\special.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\special.cpp">
+    <ClCompile Include="..\..\..\src\vertexlayout.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\renderer_webgpu.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\renderer_nvn.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

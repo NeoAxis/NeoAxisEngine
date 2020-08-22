@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2019 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2020 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
  */
 
@@ -70,7 +70,7 @@ namespace bgfx { namespace hlsl
 	static const D3DCompiler s_d3dcompiler[] =
 	{ // BK - the only different method in interface is GetRequiresFlags at the end
 	  //      of IID_ID3D11ShaderReflection47 (which is not used anyway).
-#if BX_PLATFORM_WINRT //!!!!
+#if BX_PLATFORM_WINRT //!!!!betauser
 		{ "NeoAxis.Internal\\Platforms\\UWP\\D3DCompiler_47.dll", { 0x8d536ca1, 0x0cca, 0x4956,{ 0xa8, 0x37, 0x78, 0x69, 0x63, 0x75, 0x55, 0x84 } } },
 #else
 		{ "D3DCompiler_47.dll", { 0x8d536ca1, 0x0cca, 0x4956, { 0xa8, 0x37, 0x78, 0x69, 0x63, 0x75, 0x55, 0x84 } } },
@@ -371,7 +371,7 @@ namespace bgfx { namespace hlsl
 				Uniform un;
 				un.name = '$' == name[0] ? name + 1 : name;
 				un.type = isSampler(desc.Type)
-					? UniformType::Enum(BGFX_UNIFORM_SAMPLERBIT | type)
+					? UniformType::Enum(kUniformSamplerBit | type)
 					: type
 					;
 				un.num = (uint8_t)ctType.Elements;
@@ -485,7 +485,7 @@ namespace bgfx { namespace hlsl
 								un.type = uniformType;
 								un.num = uint8_t(constDesc.Elements);
 								un.regIndex = uint16_t(varDesc.StartOffset);
-								un.regCount = BX_ALIGN_16(varDesc.Size) / 16;
+								un.regCount = bx::alignUp(varDesc.Size, 16) / 16;
 								_uniforms.push_back(un);
 
 								BX_TRACE("\t%s, %d, size %d, flags 0x%08x, %d (used)"
@@ -533,7 +533,7 @@ namespace bgfx { namespace hlsl
 					{
 						Uniform un;
 						un.name.assign(bindDesc.Name, (end.getPtr() - bindDesc.Name) );
-						un.type = UniformType::Enum(BGFX_UNIFORM_SAMPLERBIT | UniformType::Sampler);
+						un.type = UniformType::Enum(kUniformSamplerBit | UniformType::Sampler);
 						un.num = 1;
 						un.regIndex = uint16_t(bindDesc.BindPoint);
 						un.regCount = uint16_t(bindDesc.BindCount);
@@ -734,7 +734,7 @@ namespace bgfx { namespace hlsl
 			uint16_t count = (uint16_t)uniforms.size();
 			bx::write(_writer, count);
 
-			uint32_t fragmentBit = profile[0] == 'p' ? BGFX_UNIFORM_FRAGMENTBIT : 0;
+			uint32_t fragmentBit = profile[0] == 'p' ? kUniformFragmentBit : 0;
 			for (UniformArray::const_iterator it = uniforms.begin(); it != uniforms.end(); ++it)
 			{
 				const Uniform& un = *it;
@@ -746,6 +746,8 @@ namespace bgfx { namespace hlsl
 				bx::write(_writer, un.num);
 				bx::write(_writer, un.regIndex);
 				bx::write(_writer, un.regCount);
+				bx::write(_writer, un.texComponent);
+				bx::write(_writer, un.texDimension);
 
 				BX_TRACE("%s, %s, %d, %d, %d"
 					, un.name.c_str()

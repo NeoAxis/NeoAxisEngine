@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace SharpBgfx {
     /// <summary>
@@ -358,6 +359,7 @@ namespace SharpBgfx {
             public uint MaxUniforms;
             public uint MaxOcclusionQueries;
             public uint MaxEncoders;
+            public uint MinResourceCbSize;
             public uint TransientVbSize;
             public uint TransientIbSize;
 
@@ -701,19 +703,39 @@ namespace SharpBgfx {
                 get { return new string(data->Name); }
             }
 
-            /// <summary>
-            /// The amount of CPU time elapsed during processing of this view.
-            /// </summary>
-            public long CpuTimeElapsed {
-                get { return (long)data->CpuTimeElapsed; }
+            public long CpuTimeBegin
+            {
+                get { return (long)data->CpuTimeBegin; }
             }
 
-            /// <summary>
-            /// The amount of GPU time elapsed during processing of this view.
-            /// </summary>
-            public long GpuTimeElapsed {
-                get { return (long)data->GpuTimeElapsed; }
+            public long CpuTimeEnd
+            {
+                get { return (long)data->CpuTimeEnd; }
             }
+
+            public long GpuTimeBegin
+            {
+                get { return (long)data->GpuTimeBegin; }
+            }
+
+            public long GpuTimeEnd
+            {
+                get { return (long)data->GpuTimeEnd; }
+            }
+
+            ///// <summary>
+            ///// The amount of CPU time elapsed during processing of this view.
+            ///// </summary>
+            //public long CpuTimeElapsed {
+            //    get { return (long)data->CpuTimeElapsed; }
+            //}
+
+            ///// <summary>
+            ///// The amount of GPU time elapsed during processing of this view.
+            ///// </summary>
+            //public long GpuTimeElapsed {
+            //    get { return (long)data->GpuTimeElapsed; }
+            //}
 
             internal ViewStats(ViewStatsNative* data) {
                 this.data = data;
@@ -939,8 +961,10 @@ namespace SharpBgfx {
         internal struct ViewStatsNative {
             public fixed char Name[256];
             public ushort View;
-            public ulong CpuTimeElapsed;
-            public ulong GpuTimeElapsed;
+            public ulong CpuTimeBegin;   //!< CPU (submit) begin time.
+            public ulong CpuTimeEnd;     //!< CPU (submit) end time.
+            public ulong GpuTimeBegin;   //!< GPU begin time.
+            public ulong GpuTimeEnd;     //!< GPU end time.
         }
 
         internal struct EncoderStatsNative {
@@ -955,15 +979,20 @@ namespace SharpBgfx {
             public long CpuTimeBegin;
             public long CpuTimeEnd;
             public long CpuTimerFrequency;
+
             public long GpuTimeBegin;
             public long GpuTimeEnd;
             public long GpuTimerFrequency;
+
             public long WaitRender;
+
             public long WaitSubmit;
+
             public int NumDraw;
             public int NumCompute;
             public int NumBlit;
             public int MaxGpuLatency;
+
             public ushort NumDynamicIndexBuffers;
             public ushort NumDynamicVertexBuffers;
             public ushort NumFrameBuffers;
@@ -975,19 +1004,25 @@ namespace SharpBgfx {
             public ushort NumUniforms;
             public ushort NumVertexBuffers;
             public ushort NumVertexDecls;
+
             public long TextureMemoryUsed;
             public long RtMemoryUsed;
             public int TransientVbUsed;
             public int TransientIbUsed;
+
             public fixed uint NumPrims[NumTopologies];
+
             public long GpuMemoryMax;
             public long GpuMemoryUsed;
+
             public ushort Width;
             public ushort Height;
             public ushort TextWidth;
             public ushort TextHeight;
+
             public ushort NumViews;
             public ViewStatsNative* ViewStats;
+
             public byte NumEncoders;
             public EncoderStatsNative* EncoderStats;
         }
@@ -1063,6 +1098,23 @@ namespace SharpBgfx {
         /// </summary>
         unsafe public InitSettings () {
             Native native;
+
+            //var r = sizeof( InstanceDataBuffer.NativeStruct );
+            //Console.Write( r.ToString() );
+
+            //var r2 = sizeof( FrameBuffer.NativeAttachment );
+            //Console.Write( r2.ToString() );
+
+            //var r3 = sizeof( Capabilities.Caps );
+            //Console.Write( r3.ToString() );
+
+            //var r4 = sizeof( PerfStats.ViewStatsNative );
+            //Console.Write( r4.ToString() );
+
+            //var r5 = sizeof( PerfStats.Stats );
+            //Console.Write( r5.ToString() );
+
+
             NativeMethods.bgfx_init_ctor(&native);
 
             Backend = native.Backend;
@@ -1103,6 +1155,7 @@ namespace SharpBgfx {
 
         internal struct InitLimits {
             public ushort MaxEncoders;
+            public uint MinResourceCbSize;
             public uint TransientVbSize;
             public uint TransientIbSize;
         }

@@ -76,7 +76,7 @@
     <ClCompile Include="..\..\..\src\shader_spirv.cpp" />
     <ClCompile Include="..\..\..\src\special.cpp" />
     <ClCompile Include="..\..\..\src\topology.cpp" />
-    <ClCompile Include="..\..\..\src\vertexdecl.cpp" />
+    <ClCompile Include="..\..\..\src\vertexlayout.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{85F5B410-5450-430A-A385-56231A8640D3}</ProjectGuid>

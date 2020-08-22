@@ -48,8 +48,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="obj\**" />
+    <Compile Remove="Properties\Android\**" />
     <EmbeddedResource Remove="obj\**" />
+    <EmbeddedResource Remove="Properties\Android\**" />
     <None Remove="obj\**" />
+    <None Remove="Properties\Android\**" />
+    <Page Remove="Properties\Android\**" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Addons\NeoAxis.Addon.Builder3D\Properties\Resources.Designer.cs">
@@ -184,9 +188,7 @@
     <Compile Update="Editor\PackagesWindow.designer.cs">
       <DependentUpon>PackagesWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\StartPageWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\StartPageWindow.cs" />
     <Compile Update="Editor\StartPageWindow.designer.cs">
       <DependentUpon>StartPageWindow.cs</DependentUpon>
     </Compile>
@@ -480,9 +482,7 @@
     <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridProperty.Designer.cs">
       <DependentUpon>HCGridProperty.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\HierarchicalContainer\HCDropDownControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\HCDropDownControl.cs" />
     <Compile Update="Editor\HierarchicalContainer\HierarchicalContainer.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1215,5 +1215,6 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="2.8.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.8.0" />
     <PackageReference Include="System.Management" Version="4.7.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.7.0" />
   </ItemGroup>
 </Project>

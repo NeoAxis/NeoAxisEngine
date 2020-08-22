@@ -266,9 +266,6 @@
     <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\ParseHelper.cpp">
       <Filter>3rdparty\glslang\glslang\MachineIndependent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\pch.cpp">
-      <Filter>3rdparty\glslang\glslang\MachineIndependent</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\PoolAlloc.cpp">
       <Filter>3rdparty\glslang\glslang\MachineIndependent</Filter>
     </ClCompile>
@@ -310,30 +307,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\3rdparty\glslang\glslang\OSDependent\Windows\ossource.cpp">
       <Filter>3rdparty\glslang\glslang\OSDependent\Windows</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\3rdparty\glslang\hlsl\hlslAttributes.cpp">
-      <Filter>3rdparty\glslang\hlsl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\3rdparty\glslang\hlsl\hlslGrammar.cpp">
-      <Filter>3rdparty\glslang\hlsl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\3rdparty\glslang\hlsl\hlslOpMap.cpp">
-      <Filter>3rdparty\glslang\hlsl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\3rdparty\glslang\hlsl\hlslParseables.cpp">
-      <Filter>3rdparty\glslang\hlsl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\3rdparty\glslang\hlsl\hlslParseHelper.cpp">
-      <Filter>3rdparty\glslang\hlsl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\3rdparty\glslang\hlsl\hlslScanContext.cpp">
-      <Filter>3rdparty\glslang\hlsl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\3rdparty\glslang\hlsl\hlslTokenStream.cpp">
-      <Filter>3rdparty\glslang\hlsl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\3rdparty\glslang\hlsl\pch.cpp">
-      <Filter>3rdparty\glslang\hlsl</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\3rdparty\glslang\SPIRV\disassemble.cpp">
       <Filter>3rdparty\glslang\SPIRV</Filter>

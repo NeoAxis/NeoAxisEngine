@@ -1190,9 +1190,9 @@ namespace NeoAxis
 			pass.RenderingProcess_SetRenderState( renderOperation, occlusionQuery == null );
 
 			if( occlusionQuery != null )
-				Bgfx.Submit( CurrentViewNumber, pass.LinkedProgram.RealObject, occlusionQuery.Value );
+				Bgfx.Submit( CurrentViewNumber, pass.LinkedProgram.RealObject, occlusionQuery.Value, 0, DiscardFlags.All );
 			else
-				Bgfx.Submit( CurrentViewNumber, pass.LinkedProgram.RealObject );
+				Bgfx.Submit( CurrentViewNumber, pass.LinkedProgram.RealObject, 0, DiscardFlags.All );
 
 			//Bgfx.Submit( CurrentViewNumber, pass.LinkedProgram.RealObject, preserveState: true );
 

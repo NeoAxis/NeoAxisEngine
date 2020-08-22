@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2019 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2020 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
  */
 
@@ -9,6 +9,20 @@
 #include "bgfx_shader.sh"
 
 #ifndef __cplusplus
+
+#if BGFX_SHADER_LANGUAGE_GLSL
+#	define FRAMEBUFFER_IMAGE2D_RW_0(_name, _format) IMAGE2D_RW(_name, _format, 4)
+#	define FRAMEBUFFER_IMAGE2D_RW_1(_name, _format) IMAGE2D_RW(_name, _format, 5)
+#	define FRAMEBUFFER_IMAGE2D_RW_2(_name, _format) IMAGE2D_RW(_name, _format, 6)
+#	define FRAMEBUFFER_IMAGE2D_RW_3(_name, _format) IMAGE2D_RW(_name, _format, 7)
+#else
+#	define FRAMEBUFFER_IMAGE2D_RW_0(_name, _format) IMAGE2D_RW(_name, _format, 16)
+#	define FRAMEBUFFER_IMAGE2D_RW_1(_name, _format) IMAGE2D_RW(_name, _format, 17)
+#	define FRAMEBUFFER_IMAGE2D_RW_2(_name, _format) IMAGE2D_RW(_name, _format, 18)
+#	define FRAMEBUFFER_IMAGE2D_RW_3(_name, _format) IMAGE2D_RW(_name, _format, 19)
+#endif // BGFX_SHADER_LANGUAGE_GLSL
+
+#define FRAMEBUFFER_IMAGE2D_RW(_name, _format, _reg) FRAMEBUFFER_IMAGE2D_RW_ ## _reg(_name, _format)
 
 #if BGFX_SHADER_LANGUAGE_GLSL
 
@@ -124,7 +138,7 @@
 #define IMAGE3D_WR( _name, _format, _reg) IMAGE3D_RW(_name, _format, _reg)
 #define UIMAGE3D_WR(_name, _format, _reg) IMAGE3D_RW(_name, _format, _reg)
 
-#if BGFX_SHADER_LANGUAGE_METAL
+#if BGFX_SHADER_LANGUAGE_METAL || BGFX_SHADER_LANGUAGE_SPIRV
 #define BUFFER_RO(_name, _struct, _reg) StructuredBuffer<_struct>   _name : REGISTER(t, _reg)
 #define BUFFER_RW(_name, _struct, _reg) RWStructuredBuffer <_struct> _name : REGISTER(u, _reg)
 #define BUFFER_WR(_name, _struct, _reg) BUFFER_RW(_name, _struct, _reg)
@@ -319,7 +333,7 @@ __IMAGE_IMPL_ATOMIC(r32ui,       x,    uvec4, xxxx)
 	, _numY               \
 	, _numZ               \
 	)                     \
-	_buffer[_offset*2+0] = uvec4(_numX, _numY, _numZ, 0u)
+	_buffer[(_offset)*2+0] = uvec4(_numX, _numY, _numZ, 0u)
 
 #define drawIndirect( \
 	  _buffer         \
@@ -329,7 +343,7 @@ __IMAGE_IMPL_ATOMIC(r32ui,       x,    uvec4, xxxx)
 	, _startVertex    \
 	, _startInstance  \
 	)                 \
-	_buffer[_offset*2+0] = uvec4(_numVertices, _numInstances, _startVertex, _startInstance)
+	_buffer[(_offset)*2+0] = uvec4(_numVertices, _numInstances, _startVertex, _startInstance)
 
 #define drawIndexedIndirect( \
 	  _buffer                \
@@ -340,8 +354,8 @@ __IMAGE_IMPL_ATOMIC(r32ui,       x,    uvec4, xxxx)
 	, _startVertex           \
 	, _startInstance         \
 	)                        \
-	_buffer[_offset*2+0] = uvec4(_numIndices, _numInstances, _startIndex, _startVertex); \
-	_buffer[_offset*2+1] = uvec4(_startInstance, 0u, 0u, 0u)
+	_buffer[(_offset)*2+0] = uvec4(_numIndices, _numInstances, _startIndex, _startVertex); \
+	_buffer[(_offset)*2+1] = uvec4(_startInstance, 0u, 0u, 0u)
 
 #endif // __cplusplus
 

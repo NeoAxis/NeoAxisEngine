@@ -116,8 +116,10 @@ namespace SharpBgfx {
             public IntPtr data;
             public int size;
             public int offset;
+            public int num;
             public ushort stride;
-            public ushort num;
+            //public ushort stride;
+            //public ushort num;
             public ushort handle;
         }
 #pragma warning restore 649

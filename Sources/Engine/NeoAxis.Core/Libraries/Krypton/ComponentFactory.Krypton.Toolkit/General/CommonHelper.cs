@@ -77,14 +77,16 @@ namespace ComponentFactory.Krypton.Toolkit
         private static Point _nullPoint = new Point(Int32.MaxValue, Int32.MaxValue);
         private static Rectangle _nullRectangle = new Rectangle(Int32.MaxValue, Int32.MaxValue, 0, 0);
         private static DoubleConverter _dc = new DoubleConverter();
+#if !ANDROID
         private static SizeConverter _sc = new SizeConverter();
         private static PointConverter _pc = new PointConverter();
+#endif
         private static BooleanConverter _bc = new BooleanConverter();
         private static ColorConverter _cc = new ColorConverter();
         private static Form _activeFloatingWindow;
-        #endregion
+#endregion
 
-        #region Public Static
+#region Public Static
         /// <summary>
         /// Gets access to the global null point value.
         /// </summary>
@@ -1411,7 +1413,11 @@ namespace ComponentFactory.Krypton.Toolkit
         /// <returns>Culture invariant string representation.</returns>
         public static string SizeToString(Size s)
         {
+#if ANDROID
+            return "";
+#else
             return _sc.ConvertToInvariantString(s);
+#endif
         }
 
         /// <summary>
@@ -1421,7 +1427,11 @@ namespace ComponentFactory.Krypton.Toolkit
         /// <returns>Size value.</returns>
         public static Size StringToSize(string s)
         {
+#if ANDROID
+            return new Size( 0, 0 );
+#else
             return (Size)_sc.ConvertFromInvariantString(s);
+#endif
         }
 
         /// <summary>
@@ -1431,7 +1441,11 @@ namespace ComponentFactory.Krypton.Toolkit
         /// <returns>Culture invariant string representation.</returns>
         public static string PointToString(Point s)
         {
+#if ANDROID
+            return "";
+#else
             return _pc.ConvertToInvariantString(s);
+#endif
         }
 
         /// <summary>
@@ -1441,7 +1455,11 @@ namespace ComponentFactory.Krypton.Toolkit
         /// <returns>Point value.</returns>
         public static Point StringToPoint(string s)
         {
+#if ANDROID
+            return new Point( 0, 0 );
+#else
             return (Point)_pc.ConvertFromInvariantString(s);
+#endif
         }
 
         /// <summary>
@@ -1632,6 +1650,6 @@ namespace ComponentFactory.Krypton.Toolkit
             get { return _activeFloatingWindow; }
             set { _activeFloatingWindow = value; }
         }
-        #endregion
+#endregion
     }
 }

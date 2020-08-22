@@ -20,6 +20,7 @@
 #include "source/fuzz/fuzzer_util.h"
 #include "source/fuzz/id_use_descriptor.h"
 #include "source/opt/types.h"
+#include "source/util/make_unique.h"
 
 namespace spvtools {
 namespace fuzz {
@@ -30,66 +31,72 @@ TransformationReplaceIdWithSynonym::TransformationReplaceIdWithSynonym(
     : message_(message) {}
 
 TransformationReplaceIdWithSynonym::TransformationReplaceIdWithSynonym(
-    protobufs::IdUseDescriptor id_use_descriptor,
-    protobufs::DataDescriptor data_descriptor,
-    uint32_t fresh_id_for_temporary) {
-  assert(fresh_id_for_temporary == 0 && data_descriptor.index().size() == 0 &&
-         "At present we do not support making an id that is synonymous with an "
-         "index into a composite.");
+    protobufs::IdUseDescriptor id_use_descriptor, uint32_t synonymous_id) {
   *message_.mutable_id_use_descriptor() = std::move(id_use_descriptor);
-  *message_.mutable_data_descriptor() = std::move(data_descriptor);
-  message_.set_fresh_id_for_temporary(fresh_id_for_temporary);
+  message_.set_synonymous_id(synonymous_id);
 }
 
 bool TransformationReplaceIdWithSynonym::IsApplicable(
-    spvtools::opt::IRContext* context,
-    const spvtools::fuzz::FactManager& fact_manager) const {
+    opt::IRContext* ir_context,
+    const TransformationContext& transformation_context) const {
   auto id_of_interest = message_.id_use_descriptor().id_of_interest();
 
   // Does the fact manager know about the synonym?
-  if (fact_manager.GetIdsForWhichSynonymsAreKnown().count(id_of_interest) ==
-      0) {
+  auto data_descriptor_for_synonymous_id =
+      MakeDataDescriptor(message_.synonymous_id(), {});
+  if (!transformation_context.GetFactManager()->IsSynonymous(
+          MakeDataDescriptor(id_of_interest, {}),
+          data_descriptor_for_synonymous_id)) {
     return false;
   }
 
-  auto available_synonyms = fact_manager.GetSynonymsForId(id_of_interest);
-  if (std::find_if(available_synonyms.begin(), available_synonyms.end(),
-                   [this](protobufs::DataDescriptor dd) -> bool {
-                     return DataDescriptorEquals()(&dd,
-                                                   &message_.data_descriptor());
-                   }) == available_synonyms.end()) {
-    return false;
-  }
-
+  // Does the id use descriptor in the transformation identify an instruction?
   auto use_instruction =
-      transformation::FindInstruction(message_.id_use_descriptor(), context);
+      FindInstructionContainingUse(message_.id_use_descriptor(), ir_context);
   if (!use_instruction) {
     return false;
   }
 
-  if (!ReplacingUseWithSynonymIsOk(
-          context, use_instruction,
-          message_.id_use_descriptor().in_operand_index(),
-          message_.data_descriptor())) {
+  uint32_t type_id_of_interest =
+      ir_context->get_def_use_mgr()->GetDef(id_of_interest)->type_id();
+  uint32_t type_id_synonym = ir_context->get_def_use_mgr()
+                                 ->GetDef(message_.synonymous_id())
+                                 ->type_id();
+
+  // If the id of interest and the synonym are scalar or vector integer
+  // constants with different signedness, their use can only be swapped if the
+  // instruction is agnostic to the signedness of the operand.
+  if (!TypesAreCompatible(ir_context, use_instruction->opcode(),
+                          message_.id_use_descriptor().in_operand_index(),
+                          type_id_of_interest, type_id_synonym)) {
     return false;
   }
 
-  assert(message_.fresh_id_for_temporary() == 0);
-  assert(message_.data_descriptor().index().empty());
+  // Is the use suitable for being replaced in principle?
+  if (!UseCanBeReplacedWithSynonym(
+          ir_context, use_instruction,
+          message_.id_use_descriptor().in_operand_index())) {
+    return false;
+  }
 
-  return true;
+  // The transformation is applicable if the synonymous id is available at the
+  // use point.
+  return fuzzerutil::IdIsAvailableAtUse(
+      ir_context, use_instruction,
+      message_.id_use_descriptor().in_operand_index(),
+      message_.synonymous_id());
 }
 
 void TransformationReplaceIdWithSynonym::Apply(
-    spvtools::opt::IRContext* context,
-    spvtools::fuzz::FactManager* /*unused*/) const {
-  assert(message_.data_descriptor().index().empty());
+    spvtools::opt::IRContext* ir_context,
+    TransformationContext* /*unused*/) const {
   auto instruction_to_change =
-      transformation::FindInstruction(message_.id_use_descriptor(), context);
+      FindInstructionContainingUse(message_.id_use_descriptor(), ir_context);
   instruction_to_change->SetInOperand(
       message_.id_use_descriptor().in_operand_index(),
-      {message_.data_descriptor().object()});
-  context->InvalidateAnalysesExceptFor(opt::IRContext::Analysis::kAnalysisNone);
+      {message_.synonymous_id()});
+  ir_context->InvalidateAnalysesExceptFor(
+      opt::IRContext::Analysis::kAnalysisNone);
 }
 
 protobufs::Transformation TransformationReplaceIdWithSynonym::ToMessage()
@@ -99,33 +106,20 @@ protobufs::Transformation TransformationReplaceIdWithSynonym::ToMessage()
   return result;
 }
 
-bool TransformationReplaceIdWithSynonym::ReplacingUseWithSynonymIsOk(
-    opt::IRContext* context, opt::Instruction* use_instruction,
-    uint32_t use_in_operand_index, const protobufs::DataDescriptor& synonym) {
-  auto defining_instruction =
-      context->get_def_use_mgr()->GetDef(synonym.object());
-
-  if (use_instruction == defining_instruction) {
-    // If we have an instruction:
-    //   %a = OpCopyObject %t %b
-    // then we know %a and %b are synonymous, but we do *not* want to turn
-    // this into:
-    //   %a = OpCopyObject %t %a
-    // We require this special case because an instruction dominates itself.
-    return false;
-  }
-
-  if (use_instruction->opcode() == SpvOpAccessChain &&
+bool TransformationReplaceIdWithSynonym::UseCanBeReplacedWithSynonym(
+    opt::IRContext* ir_context, opt::Instruction* use_instruction,
+    uint32_t use_in_operand_index) {
+  if (spvOpcodeIsAccessChain(use_instruction->opcode()) &&
       use_in_operand_index > 0) {
     // This is an access chain index.  If the (sub-)object being accessed by the
     // given index has struct type then we cannot replace the use with a
     // synonym, as the use needs to be an OpConstant.
 
     // Get the top-level composite type that is being accessed.
-    auto object_being_accessed = context->get_def_use_mgr()->GetDef(
+    auto object_being_accessed = ir_context->get_def_use_mgr()->GetDef(
         use_instruction->GetSingleWordInOperand(0));
     auto pointer_type =
-        context->get_type_mgr()->GetType(object_being_accessed->type_id());
+        ir_context->get_type_mgr()->GetType(object_being_accessed->type_id());
     assert(pointer_type->AsPointer());
     auto composite_type_being_accessed =
         pointer_type->AsPointer()->pointee_type();
@@ -146,9 +140,12 @@ bool TransformationReplaceIdWithSynonym::ReplacingUseWithSynonymIsOk(
       } else if (composite_type_being_accessed->AsArray()) {
         composite_type_being_accessed =
             composite_type_being_accessed->AsArray()->element_type();
+      } else if (composite_type_being_accessed->AsRuntimeArray()) {
+        composite_type_being_accessed =
+            composite_type_being_accessed->AsRuntimeArray()->element_type();
       } else {
         assert(composite_type_being_accessed->AsStruct());
-        auto constant_index_instruction = context->get_def_use_mgr()->GetDef(
+        auto constant_index_instruction = ir_context->get_def_use_mgr()->GetDef(
             use_instruction->GetSingleWordInOperand(index_in_operand));
         assert(constant_index_instruction->opcode() == SpvOpConstant);
         uint32_t member_index =
@@ -173,42 +170,84 @@ bool TransformationReplaceIdWithSynonym::ReplacingUseWithSynonymIsOk(
     // type.
 
     // Get the definition of the function being called.
-    auto function = context->get_def_use_mgr()->GetDef(
+    auto function = ir_context->get_def_use_mgr()->GetDef(
         use_instruction->GetSingleWordInOperand(0));
     // From the function definition, get the function type.
-    auto function_type =
-        context->get_def_use_mgr()->GetDef(function->GetSingleWordInOperand(1));
+    auto function_type = ir_context->get_def_use_mgr()->GetDef(
+        function->GetSingleWordInOperand(1));
     // OpTypeFunction's 0-th input operand is the function return type, and the
     // function argument types follow. Because the arguments to OpFunctionCall
     // start from input operand 1, we can use |use_in_operand_index| to get the
     // type associated with this function argument.
-    auto parameter_type = context->get_type_mgr()->GetType(
+    auto parameter_type = ir_context->get_type_mgr()->GetType(
         function_type->GetSingleWordInOperand(use_in_operand_index));
     if (parameter_type->AsPointer()) {
       return false;
     }
   }
 
-  // We now need to check that replacing the use with the synonym will respect
-  // dominance rules - i.e. the synonym needs to dominate the use.
-  auto dominator_analysis = context->GetDominatorAnalysis(
-      context->get_instr_block(use_instruction)->GetParent());
-  if (use_instruction->opcode() == SpvOpPhi) {
-    // In the case where the use is an operand to OpPhi, it is actually the
-    // *parent* block associated with the operand that must be dominated by the
-    // synonym.
-    auto parent_block =
-        use_instruction->GetSingleWordInOperand(use_in_operand_index + 1);
-    if (!dominator_analysis->Dominates(
-            context->get_instr_block(defining_instruction)->id(),
-            parent_block)) {
-      return false;
-    }
-  } else if (!dominator_analysis->Dominates(defining_instruction,
-                                            use_instruction)) {
+  if (use_instruction->opcode() == SpvOpImageTexelPointer &&
+      use_in_operand_index == 2) {
+    // The OpImageTexelPointer instruction has a Sample parameter that in some
+    // situations must be an id for the value 0.  To guard against disrupting
+    // that requirement, we do not replace this argument to that instruction.
     return false;
   }
+
   return true;
+}
+
+// TODO(https://github.com/KhronosGroup/SPIRV-Tools/issues/3582): Add all
+//  opcodes that are agnostic to signedness of operands to function.
+//  This is not exhaustive yet.
+bool TransformationReplaceIdWithSynonym::IsAgnosticToSignednessOfOperand(
+    SpvOp opcode, uint32_t use_in_operand_index) {
+  switch (opcode) {
+    case SpvOpSNegate:
+    case SpvOpNot:
+    case SpvOpIAdd:
+    case SpvOpISub:
+    case SpvOpIMul:
+    case SpvOpSDiv:
+    case SpvOpSRem:
+    case SpvOpSMod:
+    case SpvOpShiftRightLogical:
+    case SpvOpShiftRightArithmetic:
+    case SpvOpShiftLeftLogical:
+    case SpvOpBitwiseOr:
+    case SpvOpBitwiseXor:
+    case SpvOpBitwiseAnd:
+    case SpvOpIEqual:
+    case SpvOpINotEqual:
+    case SpvOpULessThan:
+    case SpvOpSLessThan:
+    case SpvOpUGreaterThan:
+    case SpvOpSGreaterThan:
+    case SpvOpULessThanEqual:
+    case SpvOpSLessThanEqual:
+    case SpvOpUGreaterThanEqual:
+    case SpvOpSGreaterThanEqual:
+      return true;
+    case SpvOpAccessChain:
+      // The signedness of indices does not matter.
+      return use_in_operand_index > 0;
+    default:
+      // Conservatively assume that the id cannot be swapped in other
+      // instructions.
+      return false;
+  }
+}
+
+bool TransformationReplaceIdWithSynonym::TypesAreCompatible(
+    opt::IRContext* ir_context, SpvOp opcode, uint32_t use_in_operand_index,
+    uint32_t type_id_1, uint32_t type_id_2) {
+  assert(ir_context->get_type_mgr()->GetType(type_id_1) &&
+         ir_context->get_type_mgr()->GetType(type_id_2) &&
+         "Type ids are invalid");
+
+  return type_id_1 == type_id_2 ||
+         (IsAgnosticToSignednessOfOperand(opcode, use_in_operand_index) &&
+          fuzzerutil::TypesAreEqualUpToSign(ir_context, type_id_1, type_id_2));
 }
 
 }  // namespace fuzz

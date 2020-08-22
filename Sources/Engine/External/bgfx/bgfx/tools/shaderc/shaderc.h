@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2019 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2020 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
  */
 
@@ -27,7 +27,7 @@ namespace bgfx
 					} \
 				BX_MACRO_BLOCK_END
 
-#define _BX_CHECK(_condition, _format, ...) \
+#define _BX_ASSERT(_condition, _format, ...) \
 				BX_MACRO_BLOCK_BEGIN \
 					if (!(_condition) ) \
 					{ \
@@ -38,10 +38,10 @@ namespace bgfx
 
 #define BX_TRACE _BX_TRACE
 #define BX_WARN  _BX_WARN
-#define BX_CHECK _BX_CHECK
+#define BX_ASSERT _BX_ASSERT
 
 #ifndef SHADERC_CONFIG_HLSL
-#	define SHADERC_CONFIG_HLSL BX_PLATFORM_WINDOWS || BX_PLATFORM_WINRT //!!!!
+#	define SHADERC_CONFIG_HLSL BX_PLATFORM_WINDOWS || BX_PLATFORM_WINRT //!!!!betauser
 #endif // SHADERC_CONFIG_HLSL
 
 #include <alloca.h>
@@ -60,7 +60,7 @@ namespace bgfx
 #include <bx/string.h>
 #include <bx/hash.h>
 #include <bx/file.h>
-#include "../../src/vertexdecl.h"
+#include "../../src/vertexlayout.h"
 
 
 //!!!!betauser
@@ -96,13 +96,13 @@ namespace bgfx
 			if (m_str[m_pos] == '\0'
 			||  m_pos == m_size)
 			{
-				BX_ERROR_SET(_err, BX_ERROR_READERWRITER_EOF, "LineReader: EOF.");
+				BX_ERROR_SET(_err, bx::kErrorReaderWriterEof, "LineReader: EOF.");
 				return 0;
 			}
 
 			uint32_t pos = m_pos;
 			const char* str = &m_str[pos];
-			const char* nl = bx::strFindNl(str).getPtr();
+			const char* nl = bx::strFindNl(bx::StringView(str, str + (m_size - pos))).getPtr();
 			pos += (uint32_t)(nl - str);
 
 			const char* eol = &m_str[pos];
@@ -122,19 +122,39 @@ namespace bgfx
 
 	bx::StringView nextWord(bx::StringView& _parse);
 
-#define BGFX_UNIFORM_FRAGMENTBIT UINT8_C(0x10)
-#define BGFX_UNIFORM_SAMPLERBIT  UINT8_C(0x20)
+	constexpr uint8_t kUniformFragmentBit  = 0x10;
+	constexpr uint8_t kUniformSamplerBit   = 0x20;
+	constexpr uint8_t kUniformReadOnlyBit  = 0x40;
+	constexpr uint8_t kUniformCompareBit   = 0x80;
+	constexpr uint8_t kUniformMask = 0
+		| kUniformFragmentBit
+		| kUniformSamplerBit
+		| kUniformReadOnlyBit
+		| kUniformCompareBit
+		;
 
 	const char* getUniformTypeName(UniformType::Enum _enum);
 	UniformType::Enum nameToUniformTypeEnum(const char* _name);
 
 	struct Uniform
 	{
+		Uniform()
+			: type(UniformType::Count)
+			, num(0)
+			, regIndex(0)
+			, regCount(0)
+			, texComponent(0)
+			, texDimension(0)
+		{
+		}
+
 		std::string name;
 		UniformType::Enum type;
 		uint8_t num;
 		uint16_t regIndex;
 		uint16_t regCount;
+		uint8_t texComponent;
+		uint8_t texDimension;
 	};
 
 	struct Options

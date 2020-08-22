@@ -50,6 +50,8 @@ namespace SharpBgfx {
         /// </summary>
         Vulkan,
 
+        WebGPU,
+
         /// <summary>
         /// Used during initialization; specifies that the library should
         /// pick the best renderer for the running hardware and OS.
@@ -966,10 +968,10 @@ namespace SharpBgfx {
         /// </summary>
         TextureCompareLessEqual = 0x200000,
 
-        /// <summary>
-        /// Device supports all texture comparison modes.
-        /// </summary>
-        TextureCompareAll = TextureCompareLessEqual | TextureCompareExtended,
+        ///// <summary>
+        ///// Device supports all texture comparison modes.
+        ///// </summary>
+        //TextureCompareAll = TextureCompareLessEqual | TextureCompareExtended,
 
         /// <summary>
         /// Device supports cubemap texture arrays.
@@ -1755,4 +1757,22 @@ namespace SharpBgfx {
         /// </summary>
         PointList
     }
+
+    //!!!!betauser
+    /// <summary>
+    /// Rendering state discard. When state is preserved in submit, rendering states can be discarded on a finer grain.
+    /// </summary>
+    [Flags]
+    public enum DiscardFlags : byte
+    {
+        None                   = (0x00), //!< Preserve everything.
+        Bindings = (0x01), //!< Discard texture sampler and buffer bindings.
+        IndexBuffer = (0x02), //!< Discard index buffer.
+        InstanceData = ( 0x04 ), //!< Discard instance data.
+        State = (0x08), //!< Discard state.
+        Transform = (0x10), //!< Discard transform.
+        VertexStreams = (0x20), //!< Discard vertex streams.
+        All = (0xff), //!< Discard all states.
+    }
+
 }

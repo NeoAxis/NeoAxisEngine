@@ -34,6 +34,7 @@ set(SPIRV_TOOLS_OPT_SOURCES
   dead_variable_elimination.h
   decompose_initialized_variables_pass.h
   decoration_manager.h
+  debug_info_manager.h
   def_use_manager.h
   desc_sroa.h
   dominator_analysis.h
@@ -58,6 +59,7 @@ set(SPIRV_TOOLS_OPT_SOURCES
   inline_pass.h
   inst_bindless_check_pass.h
   inst_buff_addr_check_pass.h
+  inst_debug_printf_pass.h
   instruction.h
   instruction_list.h
   instrument_pass.h
@@ -140,6 +142,7 @@ set(SPIRV_TOOLS_OPT_SOURCES
   dead_variable_elimination.cpp
   decompose_initialized_variables_pass.cpp
   decoration_manager.cpp
+  debug_info_manager.cpp
   def_use_manager.cpp
   desc_sroa.cpp
   dominator_analysis.cpp
@@ -164,6 +167,7 @@ set(SPIRV_TOOLS_OPT_SOURCES
   inline_pass.cpp
   inst_bindless_check_pass.cpp
   inst_buff_addr_check_pass.cpp
+  inst_debug_printf_pass.cpp
   instruction.cpp
   instruction_list.cpp
   instrument_pass.cpp
@@ -222,28 +226,26 @@ set(SPIRV_TOOLS_OPT_SOURCES
   wrap_opkill.cpp
 )
 
-if(MSVC)
+if(MSVC AND (NOT ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")))
   # Enable parallel builds across four cores for this lib
   add_definitions(/MP4)
 endif()
 
 spvtools_pch(SPIRV_TOOLS_OPT_SOURCES pch_source_opt)
 
-add_library(SPIRV-Tools-opt ${SPIRV_TOOLS_OPT_SOURCES})
+add_library(SPIRV-Tools-opt STATIC ${SPIRV_TOOLS_OPT_SOURCES})
 
 spvtools_default_compile_options(SPIRV-Tools-opt)
 target_include_directories(SPIRV-Tools-opt
   PUBLIC
 	$<BUILD_INTERFACE:${spirv-tools_SOURCE_DIR}/include>
-	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>
-  PUBLIC
 	$<BUILD_INTERFACE:${SPIRV_HEADER_INCLUDE_DIR}>
 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
   PRIVATE ${spirv-tools_BINARY_DIR}
 )
 # We need the assembling and disassembling functionalities in the main library.
 target_link_libraries(SPIRV-Tools-opt
-  PUBLIC ${SPIRV_TOOLS})
+  PUBLIC ${SPIRV_TOOLS}-static)
 
 set_property(TARGET SPIRV-Tools-opt PROPERTY FOLDER "SPIRV-Tools libraries")
 spvtools_check_symbol_exports(SPIRV-Tools-opt)
@@ -253,5 +255,12 @@ if(ENABLE_SPIRV_TOOLS_INSTALL)
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
-  install(EXPORT SPIRV-Tools-optTargets DESTINATION lib/cmake)
+  export(EXPORT SPIRV-Tools-optTargets FILE SPIRV-Tools-optTargets.cmake)
+
+  spvtools_config_package_dir(SPIRV-Tools-opt PACKAGE_DIR)
+  install(EXPORT SPIRV-Tools-optTargets FILE SPIRV-Tools-optTargets.cmake
+  	DESTINATION ${PACKAGE_DIR})
+
+  spvtools_generate_config_file(SPIRV-Tools-opt)
+  install(FILES ${CMAKE_BINARY_DIR}/SPIRV-Tools-optConfig.cmake DESTINATION ${PACKAGE_DIR})
 endif(ENABLE_SPIRV_TOOLS_INSTALL)

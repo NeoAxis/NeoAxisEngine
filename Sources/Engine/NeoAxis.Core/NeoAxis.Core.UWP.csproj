@@ -591,6 +591,7 @@
     <Compile Include="UISystem\UIScrollBar.cs" />
     <Compile Include="UISystem\UISlider.cs" />
     <Compile Include="UISystem\UIStyle.cs" />
+    <Compile Include="UISystem\UITabControl.cs" />
     <Compile Include="UISystem\UIText.cs" />
     <Compile Include="UISystem\UIWindow.cs" />
     <Compile Include="Utility\ArrayDataReader.cs" />
@@ -889,8 +890,6 @@
     <Compile Include="Editor\HierarchicalContainer\HCItemTextBoxNumeric.cs" />
     <Compile Include="Editor\HierarchicalContainer\HCItemTextBoxSelect.cs" />
     <Compile Include="Editor\HierarchicalContainer\HCItemUserControl.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HCItemСontentBrowser.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HCItemСontentBrowserForEnum.cs" />
     <Compile Include="Editor\HierarchicalContainer\HierarchicalContainer.cs" />
     <Compile Include="Editor\HierarchicalContainer\HierarchicalContainer.designer.cs" />
     <Compile Include="Editor\HierarchicalContainer\HierarchicalContainer.Item.cs" />

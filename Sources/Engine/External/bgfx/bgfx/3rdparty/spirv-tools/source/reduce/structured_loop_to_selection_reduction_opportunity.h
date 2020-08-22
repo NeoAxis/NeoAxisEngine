@@ -62,11 +62,6 @@ class StructuredLoopToSelectionReductionOpportunity
   void RedirectEdge(uint32_t source_id, uint32_t original_target_id,
                     uint32_t new_target_id);
 
-  // Removes any components of |to_block|'s phi instructions relating to
-  // |from_id|.
-  void AdaptPhiInstructionsForRemovedEdge(uint32_t from_id,
-                                          opt::BasicBlock* to_block);
-
   // Adds components to |to_block|'s phi instructions to account for a new
   // incoming edge from |from_id|.
   void AdaptPhiInstructionsForAddedEdge(uint32_t from_id,
@@ -77,8 +72,8 @@ class StructuredLoopToSelectionReductionOpportunity
   void ChangeLoopToSelection();
 
   // Fixes any scenarios where, due to CFG changes, ids have uses not dominated
-  // by their definitions, by changing such uses to uses of OpUndef or of dummy
-  // variables.
+  // by their definitions, by changing such uses to uses of OpUndef or of
+  // placeholder variables.
   void FixNonDominatedIdUses();
 
   // Returns true if and only if at least one of the following holds:

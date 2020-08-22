@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-add_library(SPIRV-Tools-link
+add_library(SPIRV-Tools-link STATIC
   linker.cpp
 )
 
@@ -19,8 +19,6 @@ spvtools_default_compile_options(SPIRV-Tools-link)
 target_include_directories(SPIRV-Tools-link
   PUBLIC
     $<BUILD_INTERFACE:${spirv-tools_SOURCE_DIR}/include>
-	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>
-  PUBLIC
 	$<BUILD_INTERFACE:${SPIRV_HEADER_INCLUDE_DIR}>
 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
   PRIVATE ${spirv-tools_BINARY_DIR}
@@ -37,5 +35,12 @@ if(ENABLE_SPIRV_TOOLS_INSTALL)
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
-  install(EXPORT SPIRV-Tools-linkTargets DESTINATION lib/cmake)
+  export(EXPORT SPIRV-Tools-linkTargets FILE SPIRV-Tools-linkTargets.cmake)
+
+  spvtools_config_package_dir(SPIRV-Tools-link PACKAGE_DIR)
+  install(EXPORT SPIRV-Tools-linkTargets FILE SPIRV-Tools-linkTargets.cmake
+  	DESTINATION ${PACKAGE_DIR})
+
+  spvtools_generate_config_file(SPIRV-Tools-link)
+  install(FILES ${CMAKE_BINARY_DIR}/SPIRV-Tools-linkConfig.cmake DESTINATION ${PACKAGE_DIR})
 endif(ENABLE_SPIRV_TOOLS_INSTALL)

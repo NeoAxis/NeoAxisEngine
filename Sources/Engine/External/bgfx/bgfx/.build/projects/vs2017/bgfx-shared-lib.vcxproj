@@ -300,13 +300,14 @@
     <ClInclude Include="..\..\..\src\renderer_gl.h" />
     <ClInclude Include="..\..\..\src\renderer_mtl.h" />
     <ClInclude Include="..\..\..\src\renderer_vk.h" />
+    <ClInclude Include="..\..\..\src\renderer_webgpu.h" />
     <ClInclude Include="..\..\..\src\shader.h" />
     <ClInclude Include="..\..\..\src\shader_dx9bc.h" />
     <ClInclude Include="..\..\..\src\shader_dxbc.h" />
     <ClInclude Include="..\..\..\src\shader_spirv.h" />
     <ClInclude Include="..\..\..\src\special.h" />
     <ClInclude Include="..\..\..\src\topology.h" />
-    <ClInclude Include="..\..\..\src\vertexdecl.h" />
+    <ClInclude Include="..\..\..\src\vertexlayout.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\amalgamated.cpp">
@@ -341,8 +342,10 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\renderer_noop.cpp">
     </ClCompile>
+    <ClCompile Include="..\..\..\src\renderer_nvn.cpp" />
     <ClCompile Include="..\..\..\src\renderer_vk.cpp">
     </ClCompile>
+    <ClCompile Include="..\..\..\src\renderer_webgpu.cpp" />
     <ClCompile Include="..\..\..\src\shader.cpp">
     </ClCompile>
     <ClCompile Include="..\..\..\src\shader_dx9bc.cpp">
@@ -354,8 +357,7 @@
     <ClCompile Include="..\..\..\src\special.cpp" />
     <ClCompile Include="..\..\..\src\topology.cpp">
     </ClCompile>
-    <ClCompile Include="..\..\..\src\vertexdecl.cpp">
-    </ClCompile>
+    <ClCompile Include="..\..\..\src\vertexlayout.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\src\glcontext_eagl.mm" />
