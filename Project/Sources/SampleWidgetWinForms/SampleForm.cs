@@ -17,6 +17,13 @@ namespace SampleWidgetWinForms
 			Font = new Font( new FontFamily( "Microsoft Sans Serif" ), 8f );
 		}
 
+		protected override void OnLoad( EventArgs e )
+		{
+			base.OnLoad( e );
+
+			UpdateControls();
+		}
+
 		private void buttonClose_Click( object sender, EventArgs e )
 		{
 			Close();
@@ -32,6 +39,25 @@ namespace SampleWidgetWinForms
 
 			var form = new AdditionalForm();
 			form.Show();
+		}
+
+		void UpdateControls()
+		{
+			//!!!!WinForms on .NET Core works strange with anchors
+
+			//update widget bounds manually
+			if( widgetControl1 != null )
+			{
+				var offset = widgetControl1.Location;
+				widgetControl1.SetBounds( offset.X, offset.Y, buttonClose.Location.X - offset.X * 2, ClientSize.Height - offset.Y * 2 );
+			}
+		}
+
+		protected override void OnResize( EventArgs e )
+		{
+			base.OnResize( e );
+
+			UpdateControls();
 		}
 	}
 }
