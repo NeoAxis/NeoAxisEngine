@@ -125,7 +125,7 @@ namespace NeoAxis.Editor
 			//	//!!!!!
 			//}
 
-			Application.EnableVisualStyles();
+			//Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault( false );
 
 			EditorForm form = new EditorForm();

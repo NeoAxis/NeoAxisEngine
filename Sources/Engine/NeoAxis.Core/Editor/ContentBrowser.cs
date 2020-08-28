@@ -11,10 +11,6 @@ using System.Reflection;
 using ComponentFactory.Krypton.Toolkit;
 using System.IO;
 using Aga.Controls.Tree;
-using System.Collections;
-using BrightIdeasSoftware;
-using System.Runtime.InteropServices;
-using System.Configuration;
 
 namespace NeoAxis.Editor
 {
@@ -35,9 +31,8 @@ namespace NeoAxis.Editor
 		//ResourcesModeDataClass resourcesModeData;
 		SetReferenceModeDataClass setReferenceModeData;
 
+		bool preloadResourceOnSelection = true;
 		bool canSelectObjectSettings;
-
-
 
 		bool readOnlyHierarchy;
 		//!!!!
@@ -52,8 +47,8 @@ namespace NeoAxis.Editor
 
 		PanelModeEnum panelMode = PanelModeEnum.TwoPanelsSplitHorizontally;
 		ListModeEnum listMode = ListModeEnum.List;
-		int listImageSize;
-		int listTileColumnWidth;
+		int currentListImageSizeScaled = 1;
+		int currentListTileColumnWidthScaled = 1;
 
 		ESet<Item> items = new ESet<Item>();
 		Dictionary<ItemTreeNode, Item> itemByNode = new Dictionary<ItemTreeNode, Item>();
@@ -84,7 +79,7 @@ namespace NeoAxis.Editor
 
 		TreeModel treeViewModel;
 
-		ContentBrowserImageHelper imageHelper;
+		ContentBrowserImageHelper imageHelper = new ContentBrowserImageHelper();
 
 		bool selectItemsMethodCalling;
 		//!!!!new
@@ -108,7 +103,7 @@ namespace NeoAxis.Editor
 
 		double lastUpdateTime;
 
-		Type listViewItemRendererOverride;
+		EngineListView.ModeClass/*Type*/ listViewModeOverride;
 
 		KryptonBreadCrumb breadCrumb;
 
@@ -250,6 +245,13 @@ namespace NeoAxis.Editor
 					showDisabled = value;
 
 					UpdateImage();
+
+					var listItem = owner.GetListItemByItem( this );
+					if( listItem != null )
+					{
+						listItem.ShowDisabled = ShowDisabled;
+						owner.UpdateListItemImage( listItem );
+					}
 				}
 			}
 
@@ -358,14 +360,10 @@ namespace NeoAxis.Editor
 			{
 				if( owner.nodeByItem.TryGetValue( this, out var itemNode ) )
 				{
-					//!!!!
-					//var image = owner.imageHelper.GetImageForTreeNode( imageKey );
-					//if( image != null )
-					//{
-					//	itemNode.Image = ToolStripRenderer.CreateDisabledImage( image );
-					//}
-
-					itemNode.Image = owner.imageHelper.GetImageForTreeNode( imageKey, showDisabled );
+					var image = owner.imageHelper.GetImageScaledForTreeView( imageKey, showDisabled );
+					if( image == null )
+						image = ContentBrowserImageHelperBasicImages.Helper.GetImageScaledForTreeView( imageKey, showDisabled );
+					itemNode.Image = image;
 				}
 			}
 		}
@@ -428,69 +426,6 @@ namespace NeoAxis.Editor
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		//!!!!need?
-		public class ListItem
-		{
-			Item item;
-
-			public ListItem( Item item )
-			{
-				this.item = item;
-
-			}
-
-			public Item Item
-			{
-				get { return item; }
-			}
-
-			//[OLVColumn( Name = "Text" )]
-			//[OLVColumn( ImageAspectName = "ImageName" )]
-			public string Name
-			{
-				get { return item.Text; }
-			}
-
-			public string Description
-			{
-				get { return item.GetDescription(); }
-			}
-
-			//!!!!
-			public string Description2
-			{
-				get { return ""; }
-			}
-
-			internal bool ShowTooltip { get; set; }
-
-			//public string Description
-			//{
-			//	get { return item.GetDescription(); }
-			//}
-
-			//public string Description2
-			//{
-			//	get { return item.GetDescription2(); }
-			//}
-
-			//[OLVIgnore]
-			//public string ImageName
-			//{
-			//	get
-			//	{
-			//		return "Default_32.png";
-			//	}
-			//}
-
-			//public Image Image
-			//{
-			//	get { return Properties.Resources.Default_32; }
-			//}
-		}
-
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 		public static List<ContentBrowser> AllInstances
 		{
 			get { return allInstances; }
@@ -530,17 +465,9 @@ namespace NeoAxis.Editor
 			}
 		}
 
-		internal ContentBrowserImageHelper ImageHelper
-		{
-			get { return imageHelper; }
-		}
-
 		public ContentBrowser()
 		{
 			InitializeComponent();
-
-			imageHelper = new ContentBrowserImageHelper( components );
-			imageHelper.LoadDefaultImages();
 
 			var tsbc = toolStripForListView.Items.OfType<ToolStripBreadCrumbHost>().First();
 			breadCrumb = tsbc.BreadCrumb;
@@ -553,22 +480,16 @@ namespace NeoAxis.Editor
 
 			SetPanelMode( PanelModeEnum.Tree, true );
 
-			// default size.
-			listImageSize = 32;
-			listTileColumnWidth = options.ListColumnWidth;
+			if( WinFormsUtility.IsDesignerHosted( this ) )
+				return;
 
-
-			listView.OnBoundsChanging += ListView_OnBoundsChanging;
-
-			listView.DropSink = new ContentBrowserDropSink();
-			listView.IsSimpleDragSource = true;
-			listView.CanDrop += listView_CanDrop;
-			listView.Dropped += listView_Dropped;
-
-			// column auto width size.
-			var column = listView.Columns[ 0 ];
-			if( column != null )
-				column.Width = -1;
+			listView.CanDrag = true;
+			listView.BeforeStartDrag += ListView_BeforeStartDrag;
+			//!!!!
+			//listView.DropSink = new ContentBrowserDropSink();
+			//listView.IsSimpleDragSource = true;
+			//listView.CanDrop += listView_CanDrop;
+			//listView.Dropped += listView_Dropped;
 
 			MultiSelectUpdate();
 
@@ -603,15 +524,13 @@ namespace NeoAxis.Editor
 					button2.Text = EditorLocalization.Translate( "ContentBrowser", button2.Text );
 			}
 
-			if( WinFormsUtility.IsDesignerHosted( this ) )
-				return;
+			toolStripForTreeView.Renderer = EditorThemeUtility.GetToolbarToolStripRenderer();
+			toolStripForListView.Renderer = EditorThemeUtility.GetToolbarToolStripRenderer();
+			toolStripSearch.Renderer = EditorThemeUtility.GetToolbarToolStripRenderer();
 
 			if( EditorAPI.DarkTheme )
 			{
 				UpdateTreeViewListViewForDarkTheme();
-				toolStripForTreeView.Renderer = DarkThemeUtility.GetToolbarToolStripRenderer();
-				toolStripForListView.Renderer = DarkThemeUtility.GetToolbarToolStripRenderer();
-				toolStripSearch.Renderer = DarkThemeUtility.GetToolbarToolStripRenderer();
 
 				//!!!!
 				//breadCrumb.OverrideToolStripRenderer = DarkThemeUtility.GetToolbarToolStripRenderer();
@@ -664,6 +583,14 @@ namespace NeoAxis.Editor
 			get { return setReferenceModeData; }
 		}
 
+		[DefaultValue( true )]
+		public bool PreloadResourceOnSelection
+		{
+			get { return preloadResourceOnSelection; }
+			set { preloadResourceOnSelection = value; }
+		}
+
+		[DefaultValue( false )]
 		public bool CanSelectObjectSettings
 		{
 			get { return canSelectObjectSettings; }
@@ -750,21 +677,13 @@ namespace NeoAxis.Editor
 			kryptonSplitContainerTreeSub1.SplitterDistance = 10000;
 			kryptonSplitContainerTreeSub2.Panel2MinSize = (int)( kryptonSplitContainerTreeSub2.Panel2MinSize * DpiHelper.Default.DpiScaleFactor );
 			kryptonSplitContainerTreeSub2.SplitterDistance = 10000;
-			kryptonSplitContainerList.Panel2MinSize = (int)( kryptonSplitContainerList.Panel2MinSize * DpiHelper.Default.DpiScaleFactor );
-			kryptonSplitContainerList.SplitterDistance = 10000;
-			kryptonSplitContainerListSub1.Panel2MinSize = (int)( kryptonSplitContainerListSub1.Panel2MinSize * DpiHelper.Default.DpiScaleFactor );
-			kryptonSplitContainerListSub1.SplitterDistance = 10000;
-			kryptonSplitContainerListSub2.Panel2MinSize = (int)( kryptonSplitContainerListSub2.Panel2MinSize * DpiHelper.Default.DpiScaleFactor );
-			kryptonSplitContainerListSub2.SplitterDistance = 10000;
-
-			ConfigureListView();
 
 			//!!!!
 			//InitData();
 
 			//InitFilteringModes();
 			UpdateToolBar();
-			UpdateSize();
+			//UpdateSize();
 
 			UpdateListMode( true );
 			UpdateBreadcrumbVisibility();
@@ -801,8 +720,8 @@ namespace NeoAxis.Editor
 				//breadCrumb.StateDisabled.BreadCrumb.Back.Color1 = Color.Red;
 				//breadCrumb.StateDisabled.BreadCrumb.Border.Color1 = Color.Red;
 
-				DarkThemeUtility.ApplyToToolTip( toolTip1 );
-				DarkThemeUtility.ApplyToToolTip( toolTip2 );
+				EditorThemeUtility.ApplyDarkThemeToToolTip( toolTip1 );
+				EditorThemeUtility.ApplyDarkThemeToToolTip( toolTip2 );
 			}
 
 			//!!!!так?
@@ -837,12 +756,8 @@ namespace NeoAxis.Editor
 
 			engineScrollBarTreeVertical.Scroll += EngineScrollBarTreeVertical_Scroll;
 			engineScrollBarTreeHorizontal.Scroll += EngineScrollBarTreeHorizontal_Scroll;
-			engineScrollBarListVertical.Scroll += EngineScrollBarListVertical_Scroll;
-			engineScrollBarListHorizontal.Scroll += EngineScrollBarListHorizontal_Scroll;
 
-			listView.Scroll += ListView_Scroll;
-
-			UpdateSize();
+			//UpdateSize();
 			UpdateScrollBars();
 
 			loaded = true;
@@ -859,22 +774,9 @@ namespace NeoAxis.Editor
 			listView.BackColor = Color.FromArgb( 40, 40, 40 );
 			listView.ForeColor = Color.FromArgb( 230, 230, 230 );
 
-			listView.SelectedBackColor = Color.FromArgb( 70, 70, 70 );
-			listView.SelectedForeColor = Color.FromArgb( 230, 230, 230 );
-
-			listView.UnfocusedSelectedBackColor = Color.FromArgb( 90, 90, 90 );
-			listView.UnfocusedSelectedForeColor = Color.FromArgb( 230, 230, 230 );
-
-			listView.UnfocusedHighlightBackgroundColor = Color.FromArgb( 60, 60, 60 );
-			listView.UnfocusedHighlightForegroundColor = Color.FromArgb( 230, 230, 230 );
-
 			kryptonSplitContainerTreeSub1.StateCommon.Back.Color1 = Color.FromArgb( 40, 40, 40 );
 			kryptonSplitContainerTreeSub2.StateCommon.Back.Color1 = Color.FromArgb( 47, 47, 47 );
 			kryptonSplitContainerTreeSub2.Panel2.StateCommon.Color1 = Color.FromArgb( 47, 47, 47 );
-
-			kryptonSplitContainerListSub1.StateCommon.Back.Color1 = Color.FromArgb( 40, 40, 40 );
-			kryptonSplitContainerListSub2.StateCommon.Back.Color1 = Color.FromArgb( 47, 47, 47 );
-			kryptonSplitContainerListSub2.Panel2.StateCommon.Color1 = Color.FromArgb( 47, 47, 47 );
 		}
 
 		protected override void OnDestroy()
@@ -893,6 +795,8 @@ namespace NeoAxis.Editor
 				Resource.Instance.AllInstances_DisposedEvent -= ResourceInstance_AllInstances_DisposedEvent;
 			}
 
+			imageHelper?.Dispose();
+
 			allInstances.Remove( this );
 		}
 
@@ -909,9 +813,9 @@ namespace NeoAxis.Editor
 			treeViewModel.Nodes.Clear();
 			TreeViewEndUpdate();
 
-			listView.BeginUpdate();
-			listView.Items.Clear();
-			listView.EndUpdate();
+			//listView.BeginUpdate();
+			listView.ClearItems();
+			//listView.EndUpdate();
 
 			foreach( var item in toDispose )
 			{
@@ -952,6 +856,10 @@ namespace NeoAxis.Editor
 			var node = GetNodeByItem( item );
 			if( node != null )
 				node.UpdateText();
+
+			var listItem = GetListItemByItem( item );
+			if( listItem != null )
+				listItem.Text = item.Text;
 		}
 
 		private void Item_TextColorChanged( Item item )
@@ -1314,15 +1222,16 @@ namespace NeoAxis.Editor
 			setDataMethodCalling = false;
 		}
 
-		//!!!!
-		public void SetError( string text )
-		{
-			//TODO: switch to list.
-			Enabled = false;
-			listView.EmptyListMsgFont = this.Font;
-			//listView.EmptyListMsgOverlay = null;
-			listView.EmptyListMsg = text;
-		}
+		//public void SetError( string text )
+		//{
+		//	//TODO: switch to list.
+		//	Enabled = false;
+
+		//	//!!!!
+		//	//listView.EmptyListMsgFont = this.Font;
+		//	////listView.EmptyListMsgOverlay = null;
+		//	//listView.EmptyListMsg = text;
+		//}
 
 		public void AddRootItem( Item item )
 		{
@@ -1477,42 +1386,9 @@ namespace NeoAxis.Editor
 			}
 		}
 
-		void UpdateSize()
-		{
-			var panel = kryptonSplitContainerListSub1.Panel1;
-
-			//!!!!
-
-			int add = 0;
-			if( ( Time.Current - lastResizeTime ) < 0.5 )
-				add = 20;// 100;
-			listView.SetBounds( 0, 0,
-				panel.Width + SystemInformation.VerticalScrollBarWidth + 1 + add,
-				panel.Height + SystemInformation.HorizontalScrollBarHeight + 1 + add );
-
-			//int add = 0;
-			//if( ( Time.Current - lastResizeTime ) < 0.5 )
-			//	add = 100;
-			//listView.SetBounds( 0, 0,
-			//	panel.Width + ( engineScrollBarListVertical.Visible ? SystemInformation.VerticalScrollBarWidth : 0 ) + 1 + add,
-			//	panel.Height + ( engineScrollBarListHorizontal.Visible ? SystemInformation.HorizontalScrollBarHeight : 0 ) + 1 + add );
-
-			//listView.SetBounds( 0, 0, panel.Width + SystemInformation.VerticalScrollBarWidth + 1, panel.Height + SystemInformation.HorizontalScrollBarHeight + 1 );
-
-			//listView.SetBounds( 0, 0, panel.Width, panel.Height );
-
-			//!!!!было
-			//!!!!?
-			//kryptonPanel.Size = ClientSize - new Size( kryptonPanel.Location.X, kryptonPanel.Location.Y );
-		}
-
-		double lastResizeTime;
-
 		private void ContentBrowser_Resize( object sender, EventArgs e )
 		{
-			lastResizeTime = Time.Current;
-
-			UpdateSize();
+			//UpdateSize();
 		}
 
 		private void treeView_MouseClick( object sender, MouseEventArgs e )
@@ -1669,10 +1545,10 @@ namespace NeoAxis.Editor
 			{
 				List<Item> result = new List<Item>();
 
-				if( listView.SelectedObjects.Count != 0 )
+				if( listView.SelectedItems.Count != 0 )
 				{
-					foreach( ListItem item in listView.SelectedObjects )
-						result.Add( item.Item );
+					foreach( var item in listView.SelectedItems )
+						result.Add( (Item)item.Tag );
 				}
 				else
 					result.AddRange( GetTreeSelectedItems() );
@@ -1705,7 +1581,7 @@ namespace NeoAxis.Editor
 			if( !WinFormsUtility.IsControlVisibleInHierarchy( this ) )
 				return;
 
-			UpdateSize();
+			//UpdateSize();
 			UpdateScrollBars();
 
 			double updateTime = 0.05;
@@ -3360,60 +3236,63 @@ namespace NeoAxis.Editor
 
 			var unableToLoad = false;
 
-			foreach( var item in items )// if( item != null )//&& canLoadResources )
+			if( PreloadResourceOnSelection )
 			{
-				ContentBrowserItem_File fileItem = item as ContentBrowserItem_File;
-				if( fileItem != null && !fileItem.IsDirectory )
+				foreach( var item in items )// if( item != null )//&& canLoadResources )
 				{
-					//!!!!!
-
-					//!!!!
-					//Resource type: Scene definition. а не сама загрузка. дефинишен будет в одном экземпляре всегда
-
-					//!!!!не делать предпросмотр для карты, т.к. долго. что еще?
-					var ext = Path.GetExtension( fileItem.FullPath );
-					if( ResourceManager.GetTypeByFileExtension( ext ) != null )
+					ContentBrowserItem_File fileItem = item as ContentBrowserItem_File;
+					if( fileItem != null && !fileItem.IsDirectory )
 					{
-						string virtualName = VirtualPathUtility.GetVirtualPathByReal( fileItem.FullPath );
-						if( string.IsNullOrEmpty( virtualName ) )
+						//!!!!!
+
+						//!!!!
+						//Resource type: Scene definition. а не сама загрузка. дефинишен будет в одном экземпляре всегда
+
+						//!!!!не делать предпросмотр для карты, т.к. долго. что еще?
+						var ext = Path.GetExtension( fileItem.FullPath );
+						if( ResourceManager.GetTypeByFileExtension( ext ) != null )
 						{
-							//!!!!
+							string virtualName = VirtualPathUtility.GetVirtualPathByReal( fileItem.FullPath );
+							if( string.IsNullOrEmpty( virtualName ) )
+							{
+								//!!!!
+							}
+
+							//как separate открывать?
+							//!!!!!!Wait
+							//!!!!!.Separate
+							var ins = ResourceManager.LoadResource( virtualName, true );
+							if( ins == null )
+								unableToLoad = true;
+
+							//if( CanSelectObjectSettings && selectedByUser && ins != null && ins.ResultObject != null )
+							//{
+							//	//!!!!!видать, потом по другому будет. получать что/где сейчас выделено?
+
+							//	var component = ins.ResultComponent;
+							//	if( component != null )
+							//	{
+							//		SettingsWindowSelectObjects( new object[] { component } );
+							//		//EditorForm.Instance.SelectObjectSettings( DocumentWindow, new object[] { component } );
+							//		selected = true;
+							//	}
+							//}
 						}
-
-						//как separate открывать?
-						//!!!!!!Wait
-						//!!!!!.Separate
-						var ins = ResourceManager.LoadResource( virtualName, true );
-						if( ins == null )
-							unableToLoad = true;
-
-						//if( CanSelectObjectSettings && selectedByUser && ins != null && ins.ResultObject != null )
+					}
+					else
+					{
+						//if( CanSelectObjectSettings && selectedByUser )
 						//{
-						//	//!!!!!видать, потом по другому будет. получать что/где сейчас выделено?
-
-						//	var component = ins.ResultComponent;
-						//	if( component != null )
+						//	//same as in ObjectsWindow
+						//	ContentBrowserItem_Component componentItem = node.item as ContentBrowserItem_Component;
+						//	if( componentItem != null && componentItem.Component != null )
 						//	{
-						//		SettingsWindowSelectObjects( new object[] { component } );
-						//		//EditorForm.Instance.SelectObjectSettings( DocumentWindow, new object[] { component } );
+						//		SettingsWindowSelectObjects( new object[] { componentItem.Component } );
+						//		//EditorForm.Instance.SelectObjectSettings( DocumentWindow, new object[] { componentItem.Component } );
 						//		selected = true;
 						//	}
 						//}
 					}
-				}
-				else
-				{
-					//if( CanSelectObjectSettings && selectedByUser )
-					//{
-					//	//same as in ObjectsWindow
-					//	ContentBrowserItem_Component componentItem = node.item as ContentBrowserItem_Component;
-					//	if( componentItem != null && componentItem.Component != null )
-					//	{
-					//		SettingsWindowSelectObjects( new object[] { componentItem.Component } );
-					//		//EditorForm.Instance.SelectObjectSettings( DocumentWindow, new object[] { componentItem.Component } );
-					//		selected = true;
-					//	}
-					//}
 				}
 			}
 
@@ -5406,23 +5285,25 @@ namespace NeoAxis.Editor
 			set { showToolBar = value; }
 		}
 
-		private static NodePosition DropTargetLocationToNodePosition( DropTargetLocation location )
-		{
-			if( location == DropTargetLocation.AboveItem )
-				return NodePosition.Before;
-			else if( location == DropTargetLocation.BelowItem )
-				return NodePosition.After;
-			else
-				return NodePosition.Inside;
-		}
+		//!!!!
+		//private static NodePosition DropTargetLocationToNodePosition( DropTargetLocation location )
+		//{
+		//	if( location == DropTargetLocation.AboveItem )
+		//		return NodePosition.Before;
+		//	else if( location == DropTargetLocation.BelowItem )
+		//		return NodePosition.After;
+		//	else
+		//		return NodePosition.Inside;
+		//}
 
 		internal static DragDropItemData GetDroppingItemData( IDataObject data )
 		{
-			if( data is OLVDataObject olvDataObject )
+			if( data is EngineListView.DragData listViewData )
 			{
 				// item from list
-				var li = (ListItem)olvDataObject.ModelObjects[ 0 ];
-				return new DragDropItemData() { Item = li.Item };
+				var listItem = listViewData.Items[ 0 ];
+				var item = (Item)listItem.Tag;
+				return new DragDropItemData() { Item = item };
 			}
 			else
 			{
@@ -5436,59 +5317,61 @@ namespace NeoAxis.Editor
 			return (DragDropSetReferenceData)data.GetData( typeof( DragDropSetReferenceData ) );
 		}
 
-		// can drop to list
-		private void listView_CanDrop( object sender, OlvDropEventArgs e )
-		{
-			if( e.DropTargetItem == null )
-				return;
+		//!!!!
+		//// can drop to list
+		//private void listView_CanDrop( object sender, OlvDropEventArgs e )
+		//{
+		//if( e.DropTargetItem == null )
+		//	return;
 
-			var listItem = (ListItem)e.DropTargetItem.RowObject;
-			var targetItem = listItem.Item;
-			if( targetItem == null )
-				return;
+		//var listItem = (ListItem)e.DropTargetItem.RowObject;
+		//var targetItem = listItem.Item;
+		//if( targetItem == null )
+		//	return;
 
-			if( !targetItem.CanDoDragDrop() )
-				return;
-			PreloadNode( targetItem );
+		//if( !targetItem.CanDoDragDrop() )
+		//	return;
+		//PreloadNode( targetItem );
 
-			var nodePosition = DropTargetLocationToNodePosition( e.DropTargetLocation );
+		//var nodePosition = DropTargetLocationToNodePosition( e.DropTargetLocation );
 
-			var droppingRefData = GetDroppingRefData( e.DragEventArgs.Data );
-			if( droppingRefData != null )
-			{
-				if( DragDropSetReferenceFromReferenceButton( droppingRefData, targetItem, nodePosition, true ) )
-					e.Effect = DragDropEffects.Link;
-			}
-			else
-			{
-				var droppingItemData = GetDroppingItemData( e.DragEventArgs.Data );
-				e.Effect = DragDropItemFromContentBrowser( droppingItemData, targetItem, nodePosition, true, out Component _ );
-			}
-		}
+		//var droppingRefData = GetDroppingRefData( e.DragEventArgs.Data );
+		//if( droppingRefData != null )
+		//{
+		//	if( DragDropSetReferenceFromReferenceButton( droppingRefData, targetItem, nodePosition, true ) )
+		//		e.Effect = DragDropEffects.Link;
+		//}
+		//else
+		//{
+		//	var droppingItemData = GetDroppingItemData( e.DragEventArgs.Data );
+		//	e.Effect = DragDropItemFromContentBrowser( droppingItemData, targetItem, nodePosition, true, out Component _ );
+		//}
+		//}
 
-		// drop to list
-		private void listView_Dropped( object sender, OlvDropEventArgs e )
-		{
-			var listItem = (ListItem)e.DropTargetItem.RowObject;
-			var targetItem = listItem.Item;
-			if( targetItem == null )
-				return;
+		//!!!!
+		//// drop to list
+		//private void listView_Dropped( object sender, OlvDropEventArgs e )
+		//{
+		//var listItem = (ListItem)e.DropTargetItem.RowObject;
+		//var targetItem = listItem.Item;
+		//if( targetItem == null )
+		//	return;
 
-			var nodePosition = DropTargetLocationToNodePosition( e.DropTargetLocation );
+		//var nodePosition = DropTargetLocationToNodePosition( e.DropTargetLocation );
 
-			var droppingRefData = GetDroppingRefData( e.DragEventArgs.Data );
-			if( droppingRefData != null )
-			{
-				DragDropSetReferenceFromReferenceButton( droppingRefData, targetItem, nodePosition, false );
-			}
-			else
-			{
-				var droppingItemData = GetDroppingItemData( e.DragEventArgs.Data );
-				DragDropItemFromContentBrowser( droppingItemData, targetItem, nodePosition, false, out Component _ );
-			}
+		//var droppingRefData = GetDroppingRefData( e.DragEventArgs.Data );
+		//if( droppingRefData != null )
+		//{
+		//	DragDropSetReferenceFromReferenceButton( droppingRefData, targetItem, nodePosition, false );
+		//}
+		//else
+		//{
+		//	var droppingItemData = GetDroppingItemData( e.DragEventArgs.Data );
+		//	DragDropItemFromContentBrowser( droppingItemData, targetItem, nodePosition, false, out Component _ );
+		//}
 
-			UpdateList();
-		}
+		//UpdateList();
+		//}
 
 		// can drop to tree
 		private void treeView_DragOver( object sender, DragEventArgs e )
@@ -6757,25 +6640,6 @@ namespace NeoAxis.Editor
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		void ConfigureListView()
-		{
-			olvColumnName.ImageGetter = delegate ( object rowObject )
-			{
-				var listItem = (ListItem)rowObject;
-				var item = listItem.Item;
-				return imageHelper.GetImageForListView( item.imageKey );
-			};
-
-			//listView.ShowItemToolTips = false;
-			//listView.ShowItemToolTips = true;
-			//listView.CellToolTipShowing += delegate ( object sender, ToolTipShowingEventArgs e )
-			//{
-			//	var li = (ListItem)e.Model;
-			//	if( li.ShowTooltip )
-			//		e.Text = li.Description;
-			//};
-		}
-
 		void UpdateList()
 		{
 			if( panelMode != PanelModeEnum.Tree )
@@ -6835,11 +6699,11 @@ namespace NeoAxis.Editor
 
 				//listView.SelectedObject = null;
 
-				var listItems = new List<ListItem>();
+				var listItems = new List<EngineListView.Item>();
 
 				if( treeView.SelectedNodes.Count <= 1 )
 				{
-					TreeNodeAdv rootNode = null;
+					TreeNodeAdv rootNode;
 					if( UseSelectedTreeNodeAsRootForList && treeView.SelectedNode != null )
 						rootNode = treeView.SelectedNode;
 					else
@@ -6850,7 +6714,13 @@ namespace NeoAxis.Editor
 						foreach( var treeItem in rootNode.Children )
 						{
 							var item = GetItemByNode( GetItemTreeNode( treeItem ) );
-							var listItem = new ListItem( item );
+
+							var listItem = new EngineListView.Item( listView );
+							listItem.Tag = item;
+							listItem.Text = item.Text;
+							listItem.Description = item.GetDescription();
+							listItem.ShowTooltip = !string.IsNullOrEmpty( listItem.Description );
+
 							listItems.Add( listItem );
 						}
 					}
@@ -6862,38 +6732,29 @@ namespace NeoAxis.Editor
 
 							foreach( var childItem in selectedItem.GetChildren( true ) )
 							{
-								var listItem = new ListItem( childItem );
+								var listItem = new EngineListView.Item( listView );
+								listItem.Tag = childItem;
+								listItem.Text = childItem.Text;
+								listItem.Description = childItem.GetDescription();
+								listItem.ShowTooltip = !string.IsNullOrEmpty( listItem.Description );
+
 								listItems.Add( listItem );
 							}
 						}
-
-						//if( SelectedItems.Length == 1 )
-						//{
-						//	var selectedItem = SelectedItems[ 0 ];
-
-						//	foreach( var childItem in selectedItem.GetChildren( true ) )
-						//	{
-						//		var listItem = new ListItem( childItem );
-						//		listItems.Add( listItem );
-						//	}
-						//}
 					}
 				}
 
 				//skip update
 				{
-					var current = new List<ListItem>();
-					if( listView.Objects != null )
-					{
-						foreach( ListItem item in listView.Objects )
-							current.Add( item );
-					}
+					var current = new List<EngineListView.Item>();
+					foreach( var item in listView.Items )
+						current.Add( item );
 
 					bool needUpdate = false;
 					if( current.Count == listItems.Count )
 					{
 						for( int n = 0; n < current.Count; n++ )
-							if( current[ n ].Item != listItems[ n ].Item )
+							if( current[ n ].Tag != listItems[ n ].Tag )
 								needUpdate = true;
 					}
 					else
@@ -6904,7 +6765,7 @@ namespace NeoAxis.Editor
 				}
 
 				//!!!!
-				listView.SelectedObject = null;
+				listView.SelectedItem = null;
 
 				////bool needUpdate = true;
 				//bool needUpdate = false;
@@ -6936,17 +6797,17 @@ namespace NeoAxis.Editor
 
 				//if( needUpdate )
 				//{
-				listView.SetObjects( listItems );
+				listView.SetItems( listItems );
 				//}
 
-				foreach( OLVListItem listViewItem in listView.Items )
+				foreach( var listItem in listView.Items )
 				{
-					var item = GetItemByOLVListItem( listViewItem );
+					var item = GetItemByListViewItem( listItem );
 					if( item != null )
-						listViewItem.ShowDisabled = item.ShowDisabled;
-					//if( item != null && item.showDisabled )
-					//	listViewItem.ShowDisabled = true;
+						listItem.ShowDisabled = item.ShowDisabled;
 				}
+
+				UpdateListImages();
 
 				//if( needUpdate )
 				//{
@@ -6954,7 +6815,7 @@ namespace NeoAxis.Editor
 				if( !UseSelectedTreeNodeAsRootForList )
 				{
 					var selected = GetItemTreeNode( treeView.SelectedNode );
-					listView.SelectedObject = GetListItemByItem( selected?.item );
+					listView.SelectedItem = GetListItemByItem( selected?.item );
 				}
 				////!!!!new gg
 				//else
@@ -6978,11 +6839,18 @@ namespace NeoAxis.Editor
 			}
 		}
 
+		Item GetItemByListViewItem( EngineListView.Item listItem )
+		{
+			if( listItem != null )
+				return listItem.Tag as Item;
+			return null;
+		}
+
 		private void listView_MouseClick( object sender, MouseEventArgs e )
 		{
 			if( e.Button == MouseButtons.Right )
 			{
-				var item = GetItemByOLVListItem( listView.GetItemAt( e.Location.X, e.Location.Y, out _ ) );
+				var item = GetItemByListViewItem( listView.GetItemAt( e.Location ) );
 				if( item != null )
 					ShowContextMenu( item, listView, e.Location );
 
@@ -7000,7 +6868,7 @@ namespace NeoAxis.Editor
 		{
 			if( e.Button == MouseButtons.Right )
 			{
-				var item = GetItemByOLVListItem( listView.GetItemAt( e.Location.X, e.Location.Y, out _ ) );
+				var item = GetItemByListViewItem( listView.GetItemAt( e.Location ) );
 				if( item == null )
 				{
 					if( SelectedItems.Length == 1 )
@@ -7011,36 +6879,31 @@ namespace NeoAxis.Editor
 			}
 		}
 
-		public Item GetItemByOLVListItem( OLVListItem listItem )
-		{
-			if( listItem == null )
-				return null;
-			return ( (ListItem)listItem.RowObject ).Item;
-		}
-
-		public ListItem GetListItemByItem( Item item )
+		public EngineListView.Item GetListItemByItem( Item item )
 		{
 			if( item == null )
 				return null;
-			foreach( ListItem listItem in listView.Objects )
-				if( listItem.Item == item )
+			foreach( var listItem in listView.Items )
+				if( listItem.Tag == item )
 					return listItem;
 			return null;
 		}
 
-		private void listView_ItemSelectionChanged( object sender, ListViewItemSelectionChangedEventArgs e )
+		private void listView_SelectedItemsChanged( EngineListView sender )//object sender, ListViewItemSelectionChangedEventArgs e )
 		{
-			// raise event only at selection, not deselection
-			if( !e.IsSelected )
-				return;
+			//if( sender.SelectedItems.Count == 0 )
+			//	return;
+			//// raise event only at selection, not deselection
+			//if( !e.IsSelected )
+			//	return;
 
 			bool selectedByUser = !selectItemsMethodCalling && !setDataMethodCalling;
 
 			var items = new List<Item>();
-			if( listView.SelectedObjects.Count != 0 )
+			if( listView.SelectedItems.Count != 0 )
 			{
-				foreach( ListItem listItem in listView.SelectedObjects )
-					items.Add( listItem.Item );
+				foreach( var listItem in listView.SelectedItems )
+					items.Add( (Item)listItem.Tag );
 			}
 			if( items.Count == 0 )
 				items.AddRange( SelectedItems );
@@ -7053,8 +6916,8 @@ namespace NeoAxis.Editor
 		{
 			try//!!!!new
 			{
-				//strange, but need. something strange inside ObjectListView
-				listView.SelectedObject = null;
+				////strange, but need. something strange inside ObjectListView
+				//listView.SelectedObject = null;
 
 				//if children of the item is not created then create
 				var parentItem = item.Parent;
@@ -7073,7 +6936,7 @@ namespace NeoAxis.Editor
 					//restore selection
 					var listItem = GetListItemByItem( item );
 					if( listItem != null )
-						listView.SelectedObject = listItem;
+						listView.SelectedItem = listItem;
 
 					PerformItemAfterChoose( item, ref handled );
 					//ItemAfterChoose?.Invoke( this, item, ref handled );
@@ -7081,33 +6944,24 @@ namespace NeoAxis.Editor
 
 				if( !handled )
 				{
-					if( item.GetChildren( true ).Count != 0 )//!!!!new
+					if( item.GetChildren( true ).Count != 0 )
 					{
 						SelectItems( new Item[] { item }, true, true );
 
 						//select first item
-						foreach( var obj in listView.Objects )
-						{
-							listView.SelectedObject = obj;
-							break;
-						}
+						if( listView.Items.Count > 0 )
+							listView.SelectedItem = listView.Items[ 0 ];
 					}
 				}
 			}
 			catch { }
 		}
 
-		private void ListView_OnBoundsChanging( object sender, System.Drawing.Rectangle r )
-		{
-			//we should resize tiles before content browser SizeChanged. it fix vertical scroll updating/repainting
-			ResizeListTiles( listImageSize, listTileColumnWidth, r.Width - engineScrollBarListVertical.Width/*SystemInformation.VerticalScrollBarWidth*/ );
-		}
-
 		private void listView_MouseDoubleClick( object sender, MouseEventArgs e )
 		{
 			if( e.Button == MouseButtons.Left )
 			{
-				var item = GetItemByOLVListItem( listView.GetItemAt( e.Location.X, e.Location.Y, out _ ) );
+				var item = GetItemByListViewItem( listView.GetItemAt( e.Location ) );
 				if( item != null )
 					ListViewGoDeeperOrChoose( item );
 			}
@@ -7125,7 +6979,7 @@ namespace NeoAxis.Editor
 
 			if( e.KeyCode == Keys.Return )
 			{
-				var item = GetItemByOLVListItem( listView.SelectedItem );
+				var item = GetItemByListViewItem( listView.SelectedItem );
 				if( item != null )
 					ListViewGoDeeperOrChoose( item );
 			}
@@ -7135,9 +6989,6 @@ namespace NeoAxis.Editor
 				var node = GetItemTreeNode( treeView.SelectedNode );
 				if( node != null )
 				{
-					//strange, but need. something strange inside ObjectListView
-					listView.SelectedObject = null;
-
 					Item[] toSelect;
 					if( node.item.Parent != null )
 						toSelect = new Item[] { node.item.Parent };
@@ -7145,7 +6996,7 @@ namespace NeoAxis.Editor
 						toSelect = new Item[ 0 ];
 
 					SelectItems( toSelect, false, true );
-					listView.SelectedObject = GetListItemByItem( node.item );
+					listView.SelectedItem = GetListItemByItem( node.item );
 				}
 			}
 
@@ -7180,10 +7031,6 @@ namespace NeoAxis.Editor
 			}
 		}
 
-		//TODO: Create ContentBrowserListView : ObjectListView class and move 
-		// listImageSize, UpdateListMode, OnListModeChanged, OnListImageSizeChanged etc to the ContentBrowserListView
-		// or/and at least move all list view logic to partial ContentBrowser.ListView.cs
-
 		ListModeEnum GetDemandedListMode()
 		{
 			var result = options.ListMode;
@@ -7202,111 +7049,62 @@ namespace NeoAxis.Editor
 		void UpdateListMode( bool forceUpdate )
 		{
 			var demandedListMode = GetDemandedListMode();
-			int demandedImageSize = demandedListMode == ListModeEnum.Tiles ? options.TileImageSize : options.ListImageSize;
 
-			if( listMode != demandedListMode || forceUpdate )
+			int demandedImageSize = (int)( (float)( demandedListMode == ListModeEnum.Tiles ? options.TileImageSize : options.ListImageSize ) * EditorAPI.DPIScale );
+			var demandedListTileColumnWidth = (int)( (float)options.ListColumnWidth * EditorAPI.DPIScale );
+
+			if( listMode != demandedListMode || currentListImageSizeScaled != demandedImageSize || currentListTileColumnWidthScaled != demandedListTileColumnWidth || forceUpdate )
 			{
 				listMode = demandedListMode;
+				currentListImageSizeScaled = demandedImageSize;
+				currentListTileColumnWidthScaled = demandedListTileColumnWidth;
 
-				listView.View = View.Tile;
-
-				if( listViewItemRendererOverride != null )
+				if( listViewModeOverride != null )
 				{
-					listView.ItemRenderer = (BrightIdeasSoftware.IRenderer)listViewItemRendererOverride.InvokeMember( "", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance, null, null, new object[] { imageHelper, demandedImageSize } );
+					listView.Mode = listViewModeOverride;
+					//try
+					//{
+					//	listView.Mode = (EngineListView.ModeClass)listViewModeOverride.InvokeMember( "", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance, null, null, new object[] { listView } );
+					//}
+					//catch
+					//{
+					//	listView.Mode = (EngineListView.ModeClass)listViewModeOverride.InvokeMember( "", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance, null, null, new object[] { listView, this } );
+					//}
 				}
 				else
 				{
 					switch( listMode )
 					{
 					case ListModeEnum.List:
-						listView.ItemRenderer = new ContentBrowserRendererList( imageHelper, demandedImageSize ) /*{ DebugRender = true }*/;
+						listView.Mode = new ContentBrowserListModeList( this );
 						break;
 					case ListModeEnum.Tiles:
-						listView.ItemRenderer = new ContentBrowserRendererTiles( imageHelper, demandedImageSize );
+						listView.Mode = new ContentBrowserListModeTiles( this );
 						break;
 					}
 				}
 
-				//case ListModeEnum.Details:
-				//	listView.View = View.Details;
-				//	break;
-
-				ResizeListTiles( listImageSize, listTileColumnWidth );
-				RefreshListItemsLayout();
-			}
-
-
-			if( listImageSize != demandedImageSize )
-			{
-				int oldListImageSize = listImageSize;
-				listImageSize = demandedImageSize;
-
-				ResizeListTiles( listImageSize, listTileColumnWidth );
-				ResizeListImageList( listImageSize );
-				//RefreshListItemsLayout(); // we do not need to refresh. Refreshing occurs automatically when the LargeImageList is changed in ResizeListImageList.
-			}
-
-			if( listTileColumnWidth != options.ListColumnWidth )
-			{
-				listTileColumnWidth = options.ListColumnWidth;
-
-				ResizeListTiles( listImageSize, listTileColumnWidth );
-				RefreshListItemsLayout();
+				UpdateListImages();
 			}
 		}
 
-		void RefreshListItemsLayout()
+		void UpdateListItemImage( EngineListView.Item listItem )
 		{
-			//HACK: fix it.
-			// I found only one way to update the list items layout.
-			// create and set new list with different size, and return to the former list
+			var item = (Item)listItem.Tag;
 
-			// new way:
-			var column = listView.Columns[ 0 ];
-			if( column != null )
-			{
-				column.Width = 0;
-				column.Width = -1;
-			}
-
-			// old way: not always work.
-			//var il = listView.LargeImageList;
-			//listView.LargeImageList = new ImageList() { ImageSize = new Size( 1, 1 ) };
-			//listView.LargeImageList = il;
+			var image = imageHelper.GetImage( item.imageKey, currentListImageSizeScaled, item.ShowDisabled );
+			if( image == null )
+				image = ContentBrowserImageHelperBasicImages.Helper.GetImage( item.imageKey, currentListImageSizeScaled, item.ShowDisabled );
+			listItem.Image = image;
 		}
 
-		void ResizeListTiles( int imageSize, int tileColumnWidth, int? tileColumnWidthLimit = null )
+		public void UpdateListImages()
 		{
-			if( imageSize <= 0 || tileColumnWidth <= 0 || listView.Width <= 0 )
-				return;
-			if( tileColumnWidthLimit != null && tileColumnWidthLimit <= 0 )
-				return;
-			if( listView.View != View.Tile )
-				return;
+			foreach( var listItem in listView.Items )
+				UpdateListItemImage( listItem );
 
-			var renderer = listView.ItemRenderer as ContentBrowserRendererBase;
-			listView.TileSize = renderer.GetTileSize( imageSize, tileColumnWidth, tileColumnWidthLimit ?? listView.ClientSize.Width );
-		}
-
-		void ResizeListImageList( int size )
-		{
-			if( size <= 0 )
-				return;
-
-			var size2 = Math.Min( size, 256 );
-
-			var renderer = listView.ItemRenderer as ContentBrowserRendererBase;
-			renderer?.ResizeImageList( new Size( size2, size2 ) );
-
-			//HACK: we dont use the listView.LargeImageList directly but we must change its size
-			if( listView.LargeImageList == null )
-				listView.LargeImageList = new ImageList();
-			listView.LargeImageList.ImageSize = new Size( size2, size2 );
-		}
-
-		public void UpdateListImageList()
-		{
-			ResizeListImageList( listImageSize );
+			listView.UpdateScrollBars();
+			listView.Invalidate();
 		}
 
 		private void treeView_MouseMove( object sender, MouseEventArgs e )
@@ -7655,11 +7453,18 @@ namespace NeoAxis.Editor
 		}
 
 		[Browsable( false )]
-		public Type ListViewItemRendererOverride
+		public EngineListView.ModeClass ListViewModeOverride
 		{
-			get { return listViewItemRendererOverride; }
-			set { listViewItemRendererOverride = value; }
+			get { return listViewModeOverride; }
+			set { listViewModeOverride = value; }
 		}
+
+		//[Browsable( false )]
+		//public Type ListViewModeOverride
+		//{
+		//	get { return listViewModeOverride; }
+		//	set { listViewModeOverride = value; }
+		//}
 
 		public Item FindItemByTag( object tag )
 		{
@@ -7729,67 +7534,6 @@ namespace NeoAxis.Editor
 			treeView.HScrollBar.Value = (int)engineScrollBarTreeHorizontal.Value;
 		}
 
-		void UpdateScrollFromEngineScrollBars()
-		{
-			try
-			{
-				int vPosition = 0;
-				int hPosition = 0;
-
-				{
-					Win32.SCROLLINFO si = new Win32.SCROLLINFO();
-					si.cbSize = (uint)Marshal.SizeOf( si );
-					si.fMask = (int)Win32.ScrollInfoMask.SIF_ALL;
-					if( Win32.GetScrollInfo( listView.Handle, (int)Win32.SBOrientation.SB_VERT, ref si ) )
-						vPosition = si.nPos;
-				}
-
-				{
-					Win32.SCROLLINFO si = new Win32.SCROLLINFO();
-					si.cbSize = (uint)Marshal.SizeOf( si );
-					si.fMask = (int)Win32.ScrollInfoMask.SIF_ALL;
-					if( Win32.GetScrollInfo( listView.Handle, (int)Win32.SBOrientation.SB_HORZ, ref si ) )
-						hPosition = si.nPos;
-				}
-
-				int scrollAmtX = engineScrollBarListHorizontal.Value - hPosition;
-				int scrollAmtY = engineScrollBarListVertical.Value - vPosition;
-
-				if( scrollAmtX != 0 || scrollAmtY != 0 )
-					Win32.SendMessage( listView.Handle, (int)Win32.ListViewMessages.LVM_SCROLL, scrollAmtX, scrollAmtY );
-
-				//Win32.SetScrollPos( listView.Handle, Orientation.Horizontal, scrollAmtX, false );
-				//Win32.SetScrollPos( listView.Handle, Orientation.Vertical, scrollAmtY, false );
-
-
-
-				//Win32.SCROLLINFO si = new Win32.SCROLLINFO();
-				//si.cbSize = (uint)Marshal.SizeOf( si );
-				//si.fMask = (uint)Win32.ScrollInfoMask.SIF_RANGE;
-
-				//si.nMin = 0;
-				//si.nMax = scrollAmtY;
-				////si.nMax = 3; // for example the number of items in the control
-
-				//Win32.SetScrollInfo( listView.Handle, (int)Win32.SBOrientation.SB_VERT, ref si, true );
-
-				//Win32.SetScrollPos( listView.Handle, Orientation.Vertical, (int)engineScrollBarListVertical.Value, true );
-
-				//listView.VScrollBar.Value = (int)engineScrollBarListVertical.Value;
-			}
-			catch { }
-		}
-
-		private void EngineScrollBarListVertical_Scroll( object sender, EngineScrollBarEventArgs e )
-		{
-			UpdateScrollFromEngineScrollBars();
-		}
-
-		private void EngineScrollBarListHorizontal_Scroll( object sender, EngineScrollBarEventArgs e )
-		{
-			UpdateScrollFromEngineScrollBars();
-		}
-
 		void UpdateScrollBarsTree()
 		{
 			if( treeView.HScrollBar.Size != new Size( treeView.HScrollBar.Size.Width, 0 ) )
@@ -7828,93 +7572,9 @@ namespace NeoAxis.Editor
 			kryptonSplitContainerTreeSub2.Panel2Collapsed = !treeView.VScrollBar.Visible;
 		}
 
-		void UpdateScrollBarsList()
-		{
-			//!!!!
-			bool updating1 = engineScrollBarListVertical.MouseUpDownStatus;//&& engineScrollBar1.MouseScrollBarArea == EnhancedScrollBarMouseLocation.Thumb;
-			if( !updating1 )
-			{
-				Win32.SCROLLINFO si = new Win32.SCROLLINFO();
-				si.cbSize = (uint)Marshal.SizeOf( si );
-				si.fMask = (int)Win32.ScrollInfoMask.SIF_ALL;
-				if( Win32.GetScrollInfo( listView.Handle, (int)Win32.SBOrientation.SB_VERT, ref si ) )
-				{
-					//!!!!
-					engineScrollBarListVertical.Maximum = Math.Max( si.nMax - kryptonSplitContainerListSub1.Panel1.Height, 0 );
-					//engineScrollBarListVertical.Maximum = Math.Max( si.nMax - listView.ClientSize.Height, 0 );
-					//engineScrollBarListVertical.Maximum = si.nMax;
-
-					engineScrollBarListVertical.SmallChange = 30;
-					engineScrollBarListVertical.LargeChange = kryptonSplitContainerListSub1.Panel1.Height;
-					engineScrollBarListVertical.Value = si.nPos;
-				}
-			}
-
-			//!!!!
-			bool updating2 = engineScrollBarListHorizontal.MouseUpDownStatus;//&& engineScrollBar1.MouseScrollBarArea == EnhancedScrollBarMouseLocation.Thumb;
-			if( !updating2 )
-			{
-				Win32.SCROLLINFO si = new Win32.SCROLLINFO();
-				si.cbSize = (uint)Marshal.SizeOf( si );
-				si.fMask = (int)Win32.ScrollInfoMask.SIF_ALL;
-				if( Win32.GetScrollInfo( listView.Handle, (int)Win32.SBOrientation.SB_HORZ, ref si ) )
-				{
-					//!!!!
-					engineScrollBarListHorizontal.Maximum = Math.Max( si.nMax - kryptonSplitContainerListSub1.Panel1.Width, 0 );
-					//engineScrollBarListHorizontal.Maximum = Math.Max( si.nMax - listView.ClientSize.Width, 0 );
-					//engineScrollBarListHorizontal.Maximum = si.nMax;
-
-					engineScrollBarListHorizontal.SmallChange = 30;
-					engineScrollBarListHorizontal.LargeChange = kryptonSplitContainerListSub1.Panel1.Width;
-					engineScrollBarListHorizontal.Value = si.nPos;
-				}
-			}
-
-			int wndStyle = Win32.GetWindowLong( listView.Handle, Win32.GWL_STYLE );
-			bool hVisible = ( wndStyle & Win32.WS_HSCROLL ) != 0;
-			bool vVisible = ( wndStyle & Win32.WS_VSCROLL ) != 0;
-
-			if( listMode == ListModeEnum.List || engineScrollBarListHorizontal.Maximum == 0 )
-				hVisible = false;
-			if( engineScrollBarListVertical.Maximum == 0 )
-				vVisible = false;
-
-			kryptonSplitContainerList.Panel2Collapsed = !hVisible;
-			kryptonSplitContainerListSub1.Panel2Collapsed = !vVisible;
-			kryptonSplitContainerListSub2.Panel2Collapsed = !vVisible;
-
-			//additional hide. чтобы не вышло так, что оригинальный виден, скиновый не виден
-			if( !vVisible )
-				Win32.ShowScrollBar( listView.Handle, (int)Win32.SBOrientation.SB_VERT, false );
-			if( !hVisible )
-				Win32.ShowScrollBar( listView.Handle, (int)Win32.SBOrientation.SB_HORZ, false );
-
-			//bool vVisible = false;
-			//{
-			//	Win32.SCROLLBARINFO psbi = new Win32.SCROLLBARINFO();
-			//	psbi.cbSize = Marshal.SizeOf( psbi );
-			//	int nResult = Win32.GetScrollBarInfo( listView.Handle, Win32.OBJID_VSCROLL, ref psbi );
-			//	if( nResult != 0 )
-			//		vVisible = true;
-			//}
-
-			//bool hVisible = false;
-			//{
-			//	Win32.SCROLLBARINFO psbi = new Win32.SCROLLBARINFO();
-			//	psbi.cbSize = Marshal.SizeOf( psbi );
-			//	int nResult = Win32.GetScrollBarInfo( listView.Handle, Win32.OBJID_HSCROLL, ref psbi );
-			//	if( nResult != 0 )
-			//		hVisible = true;
-			//}
-
-			//Win32.ShowScrollBar( listView.Handle, (int)Win32.SBOrientation.SB_VERT, false );
-			//Win32.ShowScrollBar( listView.Handle, (int)Win32.SBOrientation.SB_HORZ, false );
-		}
-
 		void UpdateScrollBars()
 		{
 			UpdateScrollBarsTree();
-			UpdateScrollBarsList();
 		}
 
 		private void listView_MouseMove( object sender, MouseEventArgs e )
@@ -7922,16 +7582,9 @@ namespace NeoAxis.Editor
 			var newToolTip = "";
 
 			var pos = listView.PointToClient( MousePosition );
-			var item = listView.GetItemAt( pos.X, pos.Y ) as OLVListItem;
-			if( item != null )
-			{
-				var listItem = item.RowObject as ListItem;
-				if( listItem != null )
-				{
-					if( listItem.ShowTooltip )
-						newToolTip = listItem.Description;
-				}
-			}
+			var item = listView.GetItemAt( pos );
+			if( item != null && item.ShowTooltip )
+				newToolTip = item.Description;
 
 			if( currentToolTipListView != newToolTip )
 			{
@@ -7946,122 +7599,44 @@ namespace NeoAxis.Editor
 			}
 		}
 
-		static class Win32
+		public void AddImageKey( string key, Image imageSmall, Image imageBig )
 		{
-			[DllImport( "user32.dll" )]
-			[return: MarshalAs( UnmanagedType.Bool )]
-			public static extern bool GetScrollInfo( IntPtr hwnd, int fnBar, ref SCROLLINFO lpsi );
+			if( imageSmall == null && imageBig == null )
+				return;
 
-			[Serializable, StructLayout( LayoutKind.Sequential )]
-			public struct SCROLLINFO
+			if( imageSmall == null )
 			{
-				public uint cbSize;
-				public uint fMask;
-				public int nMin;
-				public int nMax;
-				public uint nPage;
-				public int nPos;
-				public int nTrackPos;
+				AddImageKey( key, imageBig );
+				return;
 			}
 
-			public enum ScrollInfoMask : uint
+			if( imageBig == null )
 			{
-				SIF_RANGE = 0x1,
-				SIF_PAGE = 0x2,
-				SIF_POS = 0x4,
-				SIF_DISABLENOSCROLL = 0x8,
-				SIF_TRACKPOS = 0x10,
-				SIF_ALL = ( SIF_RANGE | SIF_PAGE | SIF_POS | SIF_TRACKPOS ),
+				AddImageKey( key, imageSmall );
+				return;
 			}
 
-			public enum SBOrientation : int
-			{
-				SB_HORZ = 0x0,
-				SB_VERT = 0x1,
-				SB_CTL = 0x2,
-				SB_BOTH = 0x3
-			}
-
-			[DllImport( "user32.dll" )]
-			[return: MarshalAs( UnmanagedType.Bool )]
-			public static extern bool ShowScrollBar( IntPtr hWnd, int wBar, [MarshalAs( UnmanagedType.Bool )] bool bShow );
-
-			//public int PreferredWidth
-			//{
-			//	get
-			//	{
-			//		int MINWIDTH = 200;
-			//		int BORDERWIDTH = SystemInformation.Border3DSize.Width;
-			//		int SCROLLBARWIDTH = SystemInformation.VerticalScrollBarWidth;
-
-			//		SCROLLINFO si = new SCROLLINFO();
-			//		si.cbSize = Marshal.SizeOf( si );
-			//		si.fMask = (int)ScrollInfoMask.SIF_RANGE;
-			//		GetScrollInfo( RichTextBox1.Handle, (int)SBOrientation.SB_HORZ, ref si );
-
-			//		int iWidth = si.nMax - si.nMin + 2 * BORDERWIDTH + SCROLLBARWIDTH + 2;
-			//		return Math.Max( MINWIDTH, iWidth );
-			//	}
-			//}
-
-			//[DllImport( "user32.dll", SetLastError = true, EntryPoint = "GetScrollBarInfo" )]
-			//public static extern int GetScrollBarInfo( IntPtr hWnd, uint idObject, ref SCROLLBARINFO psbi );
-
-			//[StructLayout( LayoutKind.Sequential )]
-			//public struct SCROLLBARINFO
-			//{
-			//	public int cbSize;
-			//	public Rectangle rcScrollBar;
-			//	public int dxyLineButton;
-			//	public int xyThumbTop;
-			//	public int xyThumbBottom;
-			//	public int reserved;
-			//	[MarshalAs( UnmanagedType.ByValArray, SizeConst = 6 )]
-			//	public int[] rgstate;
-			//}
-
-			//public struct RECT
-			//{
-			//	public int left;
-			//	public int top;
-			//	public int right;
-			//	public int bottom;
-			//}
-
-			public const uint OBJID_HSCROLL = 0xFFFFFFFA;
-			public const uint OBJID_VSCROLL = 0xFFFFFFFB;
-			public const uint OBJID_CLIENT = 0xFFFFFFFC;
-
-
-			// offset of window style value
-			public const int GWL_STYLE = -16;
-
-			// window style constants for scrollbars
-			public const int WS_VSCROLL = 0x00200000;
-			public const int WS_HSCROLL = 0x00100000;
-
-			[DllImport( "user32.dll", SetLastError = true )]
-			public static extern int GetWindowLong( IntPtr hWnd, int nIndex );
-
-			[DllImport( "user32.dll" )]
-			public static extern int SetScrollPos( IntPtr hWnd, Orientation nBar, int nPos, bool bRedraw );
-
-			public enum ListViewMessages : int
-			{
-				LVM_FIRST = 0x1000,
-				LVM_SCROLL = ( LVM_FIRST + 20 )
-			}
-
-			[DllImport( "user32.dll", CharSet = CharSet.Auto, SetLastError = true )]
-			public static extern IntPtr SendMessage( IntPtr hWnd, int msg, int wParam, int lParam );
-
-			[DllImport( "user32.dll" )]
-			public static extern int SetScrollInfo( IntPtr hwnd, int fnBar, [In] ref SCROLLINFO lpsi, bool fRedraw );
+			imageHelper.AddImage( key, imageSmall, imageBig );
 		}
 
-		private void ListView_Scroll( object sender, ScrollEventArgs e )
+		public void AddImageKey( string key, Image image )
 		{
-			UpdateScrollBarsList();
+			imageHelper.AddImage( key, null, image );
 		}
+
+		//public void AddImageKey( string key, ICollection<Image> images )
+		//{
+		//}
+
+		public EngineListView GetListView()
+		{
+			return listView;
+		}
+
+		private void ListView_BeforeStartDrag( EngineListView sender, EngineListView.Item[] items, ref bool canStart )
+		{
+			canStart = items.Length == 1;
+		}
+
 	}
 }

@@ -28,7 +28,7 @@ namespace NeoAxis.Editor
 
 			toolTip1.SetToolTip( buttonTypeSettings, EditorLocalization.Translate( "SettingsWindow", "Type Settings" ) );
 			toolTip1.SetToolTip( buttonTypeSettingsDefaultValue, EditorLocalization.Translate( "SettingsWindow", "Reset Type Settings to default." ) );
-			DarkThemeUtility.ApplyToToolTip( toolTip1 );
+			EditorThemeUtility.ApplyDarkThemeToToolTip( toolTip1 );
 		}
 
 		private void buttonMove_Click( object sender, EventArgs e )

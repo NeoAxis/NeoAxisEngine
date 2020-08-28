@@ -1363,6 +1363,16 @@ namespace ComponentFactory.Krypton.Toolkit.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap ProfessionalContextButton_Dark {
+            get {
+                object obj = ResourceManager.GetObject("ProfessionalContextButton_Dark", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap ProfessionalDropDownButton {
             get {
                 object obj = ResourceManager.GetObject("ProfessionalDropDownButton", resourceCulture);

@@ -68,14 +68,7 @@
 			this.engineScrollBarTreeHorizontal = new NeoAxis.Editor.EngineScrollBar();
 			this.toolStripSearch = new NeoAxis.Editor.EngineToolStrip();
 			this.toolStripTextBoxSearch_notUsed = new System.Windows.Forms.ToolStripTextBox();
-			this.kryptonSplitContainerList = new ComponentFactory.Krypton.Toolkit.KryptonSplitContainer();
-			this.kryptonSplitContainerListSub1 = new ComponentFactory.Krypton.Toolkit.KryptonSplitContainer();
-			this.listView = new BrightIdeasSoftware.ObjectListView();
-			this.olvColumnName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-			this.olvColumnDescription = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-			this.engineScrollBarListVertical = new NeoAxis.Editor.EngineScrollBar();
-			this.kryptonSplitContainerListSub2 = new ComponentFactory.Krypton.Toolkit.KryptonSplitContainer();
-			this.engineScrollBarListHorizontal = new NeoAxis.Editor.EngineScrollBar();
+			this.listView = new NeoAxis.Editor.EngineListView();
 			this.kryptonBorderEdgeT2 = new ComponentFactory.Krypton.Toolkit.KryptonBorderEdge();
 			this.toolStripForListView = new NeoAxis.Editor.EngineToolStrip();
 			this.toolStripButtonUp = new System.Windows.Forms.ToolStripButton();
@@ -113,24 +106,6 @@
 			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainerTreeSub2.Panel2)).BeginInit();
 			this.kryptonSplitContainerTreeSub2.SuspendLayout();
 			this.toolStripSearch.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainerList)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainerList.Panel1)).BeginInit();
-			this.kryptonSplitContainerList.Panel1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainerList.Panel2)).BeginInit();
-			this.kryptonSplitContainerList.Panel2.SuspendLayout();
-			this.kryptonSplitContainerList.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainerListSub1)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainerListSub1.Panel1)).BeginInit();
-			this.kryptonSplitContainerListSub1.Panel1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainerListSub1.Panel2)).BeginInit();
-			this.kryptonSplitContainerListSub1.Panel2.SuspendLayout();
-			this.kryptonSplitContainerListSub1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.listView)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainerListSub2)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainerListSub2.Panel1)).BeginInit();
-			this.kryptonSplitContainerListSub2.Panel1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainerListSub2.Panel2)).BeginInit();
-			this.kryptonSplitContainerListSub2.SuspendLayout();
 			this.toolStripForListView.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -431,7 +406,7 @@
 			// 
 			// kryptonSplitContainer1.Panel2
 			// 
-			this.kryptonSplitContainer1.Panel2.Controls.Add(this.kryptonSplitContainerList);
+			this.kryptonSplitContainer1.Panel2.Controls.Add( this.listView );
 			this.kryptonSplitContainer1.Panel2.Controls.Add(this.kryptonBorderEdgeT2);
 			this.kryptonSplitContainer1.Panel2.Controls.Add(this.toolStripForListView);
 			this.kryptonSplitContainer1.Panel2.Controls.Add(this.kryptonBorderEdgeT);
@@ -621,129 +596,21 @@
 			this.toolStripTextBoxSearch_notUsed.Size = new System.Drawing.Size(200, 25);
 			this.toolStripTextBoxSearch_notUsed.Text = "Search";
 			// 
-			// kryptonSplitContainerList
-			// 
-			this.kryptonSplitContainerList.Cursor = System.Windows.Forms.Cursors.Default;
-			this.kryptonSplitContainerList.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.kryptonSplitContainerList.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-			this.kryptonSplitContainerList.IsSplitterFixed = true;
-			this.kryptonSplitContainerList.Location = new System.Drawing.Point(1, 32);
-			this.kryptonSplitContainerList.Name = "kryptonSplitContainerList";
-			this.kryptonSplitContainerList.Orientation = System.Windows.Forms.Orientation.Horizontal;
-			// 
-			// kryptonSplitContainerList.Panel1
-			// 
-			this.kryptonSplitContainerList.Panel1.Controls.Add(this.kryptonSplitContainerListSub1);
-			// 
-			// kryptonSplitContainerList.Panel2
-			// 
-			this.kryptonSplitContainerList.Panel2.Controls.Add(this.kryptonSplitContainerListSub2);
-			this.kryptonSplitContainerList.Panel2MinSize = 16;
-			this.kryptonSplitContainerList.Size = new System.Drawing.Size(509, 347);
-			this.kryptonSplitContainerList.SplitterDistance = 328;
-			this.kryptonSplitContainerList.SplitterPercent = 0.94524495677233433D;
-			this.kryptonSplitContainerList.SplitterWidth = 0;
-			this.kryptonSplitContainerList.TabIndex = 8;
-			// 
-			// kryptonSplitContainerListSub1
-			// 
-			this.kryptonSplitContainerListSub1.Cursor = System.Windows.Forms.Cursors.Default;
-			this.kryptonSplitContainerListSub1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.kryptonSplitContainerListSub1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-			this.kryptonSplitContainerListSub1.IsSplitterFixed = true;
-			this.kryptonSplitContainerListSub1.Location = new System.Drawing.Point(0, 0);
-			this.kryptonSplitContainerListSub1.Name = "kryptonSplitContainerListSub1";
-			// 
-			// kryptonSplitContainerListSub1.Panel1
-			// 
-			this.kryptonSplitContainerListSub1.Panel1.Controls.Add(this.listView);
-			// 
-			// kryptonSplitContainerListSub1.Panel2
-			// 
-			this.kryptonSplitContainerListSub1.Panel2.Controls.Add(this.engineScrollBarListVertical);
-			this.kryptonSplitContainerListSub1.Panel2MinSize = 16;
-			this.kryptonSplitContainerListSub1.Size = new System.Drawing.Size(509, 328);
-			this.kryptonSplitContainerListSub1.SplitterDistance = 489;
-			this.kryptonSplitContainerListSub1.SplitterPercent = 0.96070726915520632D;
-			this.kryptonSplitContainerListSub1.SplitterWidth = 1;
-			this.kryptonSplitContainerListSub1.TabIndex = 0;
-			// 
 			// listView
 			// 
-			this.listView.AllColumns.Add(this.olvColumnName);
-			this.listView.AllColumns.Add(this.olvColumnDescription);
-			this.listView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvColumnName,
-            this.olvColumnDescription});
-			this.listView.Cursor = System.Windows.Forms.Cursors.Default;
-			this.listView.FullRowSelect = true;
-			this.listView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-			this.listView.HideSelection = false;
 			this.listView.Location = new System.Drawing.Point(-1, -1);
+			this.listView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.listView.Margin = new System.Windows.Forms.Padding(4);
 			this.listView.Name = "listView";
-			this.listView.ShowGroups = false;
 			this.listView.Size = new System.Drawing.Size(453, 288);
 			this.listView.TabIndex = 2;
-			this.listView.UseCompatibleStateImageBehavior = false;
-			this.listView.View = System.Windows.Forms.View.SmallIcon;
-			this.listView.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.listView_ItemSelectionChanged);
+			this.listView.SelectedItemsChanged += new NeoAxis.Editor.EngineListView.SelectedItemsChangedDelegate(this.listView_SelectedItemsChanged);
 			this.listView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listView_KeyDown);
 			this.listView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listView_MouseClick);
 			this.listView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listView_MouseDoubleClick);
 			this.listView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.listView_MouseMove);
 			this.listView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.listView_MouseUp);
 			this.listView.Font = new System.Drawing.Font( "Tahoma", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ( (byte)( 204 ) ) );
-			// 
-			// olvColumnName
-			// 
-			this.olvColumnName.AspectName = "Name";
-			this.olvColumnName.Text = "Name";
-			this.olvColumnName.Width = 160;
-			this.olvColumnName.WordWrap = true;
-			// 
-			// olvColumnDescription
-			// 
-			this.olvColumnDescription.AspectName = "Description";
-			this.olvColumnDescription.IsTileViewColumn = true;
-			this.olvColumnDescription.Text = "Description";
-			// 
-			// engineScrollBarListVertical
-			// 
-			this.engineScrollBarListVertical.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.engineScrollBarListVertical.Location = new System.Drawing.Point(0, 0);
-			this.engineScrollBarListVertical.Name = "engineScrollBarListVertical";
-			this.engineScrollBarListVertical.Size = new System.Drawing.Size(19, 328);
-			this.engineScrollBarListVertical.TabIndex = 1;
-			// 
-			// kryptonSplitContainerListSub2
-			// 
-			this.kryptonSplitContainerListSub2.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.kryptonSplitContainerListSub2.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-			this.kryptonSplitContainerListSub2.IsSplitterFixed = true;
-			this.kryptonSplitContainerListSub2.Location = new System.Drawing.Point(0, 0);
-			this.kryptonSplitContainerListSub2.Name = "kryptonSplitContainerListSub2";
-			// 
-			// kryptonSplitContainerListSub2.Panel1
-			// 
-			this.kryptonSplitContainerListSub2.Panel1.Controls.Add(this.engineScrollBarListHorizontal);
-			this.kryptonSplitContainerListSub2.Panel2MinSize = 16;
-			this.kryptonSplitContainerListSub2.Size = new System.Drawing.Size(509, 19);
-			this.kryptonSplitContainerListSub2.SplitterDistance = 489;
-			this.kryptonSplitContainerListSub2.SplitterPercent = 0.96070726915520632D;
-			this.kryptonSplitContainerListSub2.SplitterWidth = 1;
-			this.kryptonSplitContainerListSub2.TabIndex = 0;
-			// 
-			// engineScrollBarListHorizontal
-			// 
-			this.engineScrollBarListHorizontal.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.engineScrollBarListHorizontal.Location = new System.Drawing.Point(0, 0);
-			this.engineScrollBarListHorizontal.MinimumSize = new System.Drawing.Size(102, 0);
-			this.engineScrollBarListHorizontal.Name = "engineScrollBarListHorizontal";
-			this.engineScrollBarListHorizontal.Orientation = System.Windows.Forms.Orientation.Horizontal;
-			this.engineScrollBarListHorizontal.Size = new System.Drawing.Size(489, 19);
-			this.engineScrollBarListHorizontal.TabIndex = 2;
 			// 
 			// kryptonBorderEdgeT2
 			// 
@@ -873,24 +740,6 @@
 			this.kryptonSplitContainerTreeSub2.ResumeLayout(false);
 			this.toolStripSearch.ResumeLayout(false);
 			this.toolStripSearch.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainerList.Panel1)).EndInit();
-			this.kryptonSplitContainerList.Panel1.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainerList.Panel2)).EndInit();
-			this.kryptonSplitContainerList.Panel2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainerList)).EndInit();
-			this.kryptonSplitContainerList.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainerListSub1.Panel1)).EndInit();
-			this.kryptonSplitContainerListSub1.Panel1.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainerListSub1.Panel2)).EndInit();
-			this.kryptonSplitContainerListSub1.Panel2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainerListSub1)).EndInit();
-			this.kryptonSplitContainerListSub1.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.listView)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainerListSub2.Panel1)).EndInit();
-			this.kryptonSplitContainerListSub2.Panel1.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainerListSub2.Panel2)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainerListSub2)).EndInit();
-			this.kryptonSplitContainerListSub2.ResumeLayout(false);
 			this.toolStripForListView.ResumeLayout(false);
 			this.toolStripForListView.PerformLayout();
 			this.ResumeLayout(false);
@@ -931,10 +780,8 @@
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparatorOpen;
 		private System.Windows.Forms.ToolStripButton toolStripButtonOpen;
 		private BordersContainer treeBordersContainer;
-		private BrightIdeasSoftware.ObjectListView listView;
-		private BrightIdeasSoftware.OLVColumn olvColumnName;
+		private NeoAxis.Editor.EngineListView listView;
 		private System.Windows.Forms.ToolTip toolTip1;
-		private BrightIdeasSoftware.OLVColumn olvColumnDescription;
 		private NeoAxis.Editor.EngineToolStrip toolStripForListView;
 		private System.Windows.Forms.ToolStripButton toolStripButtonUp;
 		private ToolStripBreadCrumbHost toolStripBreadCrumbHost;
@@ -952,10 +799,5 @@
 		private ComponentFactory.Krypton.Toolkit.KryptonSplitContainer kryptonSplitContainerTreeSub1;
 		private ComponentFactory.Krypton.Toolkit.KryptonSplitContainer kryptonSplitContainerTreeSub2;
 		private System.Windows.Forms.ToolTip toolTip2;
-		private ComponentFactory.Krypton.Toolkit.KryptonSplitContainer kryptonSplitContainerList;
-		private ComponentFactory.Krypton.Toolkit.KryptonSplitContainer kryptonSplitContainerListSub1;
-		private ComponentFactory.Krypton.Toolkit.KryptonSplitContainer kryptonSplitContainerListSub2;
-		private EngineScrollBar engineScrollBarListVertical;
-		private EngineScrollBar engineScrollBarListHorizontal;
 	}
 }

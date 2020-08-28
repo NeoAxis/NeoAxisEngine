@@ -42,7 +42,7 @@ namespace NeoAxis.Editor
 
 		static bool qatInitialized;
 
-		internal float dpi;
+		//internal float dpi;
 
 		public string ribbonLastSelectedTabTypeByUser = "";
 		public bool ribbonLastSelectedTabTypeByUser_DisableUpdate = true;
@@ -173,19 +173,19 @@ namespace NeoAxis.Editor
 			coverControl.BringToFront();
 			Application.DoEvents();
 
-			//dpi
-			try
-			{
-				using( Graphics graphics = CreateGraphics() )
-				{
-					dpi = graphics.DpiX;
-				}
-			}
-			catch( Exception ex )
-			{
-				dpi = 96;
-				Log.Warning( "EditorForm: CreateGraphics: Call failed. " + ex.Message );
-			}
+			////dpi
+			//try
+			//{
+			//	using( Graphics graphics = CreateGraphics() )
+			//	{
+			//		dpi = graphics.DpiX;
+			//	}
+			//}
+			//catch( Exception ex )
+			//{
+			//	dpi = 96;
+			//	Log.Warning( "EditorForm: CreateGraphics: Call failed. " + ex.Message );
+			//}
 
 			kryptonRibbon.RibbonTabs.Clear();
 
@@ -587,6 +587,8 @@ namespace NeoAxis.Editor
 				if( coverControl != null )
 					Controls.Remove( coverControl );
 				//coverControl.Visible = false;
+
+				Invalidate( true );
 
 				if( EditorSettingsSerialization.ShowTipsAsStartup )
 					EditorAPI.ShowTips();
@@ -1070,5 +1072,6 @@ namespace NeoAxis.Editor
 			if( !processed )
 				base.WndProc( ref m );
 		}
+
 	}
 }

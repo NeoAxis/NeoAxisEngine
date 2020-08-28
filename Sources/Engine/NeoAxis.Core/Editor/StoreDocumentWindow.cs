@@ -33,15 +33,14 @@ namespace NeoAxis.Editor
 		{
 			InitializeComponent();
 
-			DarkThemeUtility.ApplyToForm( panelToolbar );
+			WindowTitle = EditorLocalization.Translate( "StoreDocumentWindow", WindowTitle );
+			EditorThemeUtility.ApplyDarkThemeToForm( panelToolbar );
 		}
 
 		private void StoreDocumentWindow_Load( object sender, EventArgs e )
 		{
 			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
-
-			WindowTitle = EditorLocalization.Translate( "StoreDocumentWindow", WindowTitle );
 
 			toolbarMustVisibleForTime = Time.Current;
 			timer1.Start();

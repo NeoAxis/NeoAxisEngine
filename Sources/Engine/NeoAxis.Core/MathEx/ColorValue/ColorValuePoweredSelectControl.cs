@@ -36,7 +36,7 @@ namespace NeoAxis.Editor
 		{
 			InitializeComponent();
 			AddOkCancelButtons( out okButton, out cancelButton );
-			DarkThemeUtility.ApplyToForm( this );
+			EditorThemeUtility.ApplyDarkThemeToForm( this );
 		}
 
 		public ColorValuePoweredSelectControl( HCItemProperty itemProperty )
@@ -112,7 +112,7 @@ namespace NeoAxis.Editor
 			propertyItemForUndoSupport = itemProperty.GetItemInHierarchyToRestoreValues();
 			propertyItemForUndoSupport.SaveValuesToRestore();
 
-			DarkThemeUtility.ApplyToForm( this );
+			EditorThemeUtility.ApplyDarkThemeToForm( this );
 		}
 
 		public void Init( ColorValuePowered value, bool noAlpha, bool powered, ApplicableRangeColorValuePowerAttribute powerRange, bool readOnly )

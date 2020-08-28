@@ -81,19 +81,19 @@ namespace NeoAxis.Editor
 		[DefaultValue( ContentBrowser.ListModeEnum.Auto )]
 		public ContentBrowser.ListModeEnum ListMode { get; set; } = ContentBrowser.ListModeEnum.Auto;
 
-		const int ListImageSizeDefault = 32;
+		const int ListImageSizeDefault = 26;//32;
 		[DefaultValue( ListImageSizeDefault )]
-		[Range( 16, 128 )]
+		[Range( 10/*16*/, 128 )]
 		public int ListImageSize { get; set; } = ListImageSizeDefault;
 
 		const int ListColumnWidthDefault = 1000;
 		[DefaultValue( ListColumnWidthDefault )]
-		[Range( 64, 2000 )]
+		[Range( 50/*64*/, 2000 )]
 		public int ListColumnWidth { get; set; } = ListColumnWidthDefault;
 
-		const int TileImageSizeDefault = 32;//48;
+		const int TileImageSizeDefault = 26;//32;//48;
 		[DefaultValue( TileImageSizeDefault )]
-		[Range( 16, 128 )]
+		[Range( 10/*16*/, 128 )]
 		public int TileImageSize { get; set; } = TileImageSizeDefault;
 
 		[Range( 0, 1 )]

@@ -16,6 +16,7 @@ namespace ComponentFactory.Krypton.Toolkit
         private static DpiHelper _defaultProvider;
 
         private const float LogicalDpi = 96.0f;
+        private float _dpi;
         private float _dpiScale;
         private InterpolationMode interpolationMode = InterpolationMode.Invalid;
         private const bool enableImagesScaling = true;
@@ -84,9 +85,16 @@ namespace ComponentFactory.Krypton.Toolkit
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
+        public float Dpi
+        {
+            get
+            {
+                if( _dpi == 0.0 )
+                    _dpi = this.GetDpi();
+                return _dpi;
+            }
+        }
+
         public float DpiScaleFactor {
             get {
                 if (_dpiScale == 0.0)
@@ -162,27 +170,14 @@ namespace ComponentFactory.Krypton.Toolkit
                 ScaleValue(padding.Right, scale), ScaleValue(padding.Bottom, scale));
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        protected float GetDpiScaleFactor()
+        float GetDpi()
         {
-            //float dpiScale = 1f;
-            //using (Control control = new Control())
-            //{
-            //    using (Graphics graphics = control.CreateGraphics())
-            //        dpiScale = graphics.DpiY / LogicalDpi;
-            //}
-            //if (dpiScale == 1.0)
-            //{
-            //    Size deviceDpi = GetDeviceDPI();
-            //    dpiScale = deviceDpi.Height / LogicalDpi;
-            //}
-            //if (dpiScale == 1.0)
-            //    dpiScale = SystemInformation.IconSize.Width / 32f;
-            //return dpiScale;
+            Size deviceDpi = GetDeviceDPI();
+            return deviceDpi.Height;
+        }
 
+        float GetDpiScaleFactor()
+        {
             Size deviceDpi = GetDeviceDPI();
             return deviceDpi.Height / LogicalDpi;
         }

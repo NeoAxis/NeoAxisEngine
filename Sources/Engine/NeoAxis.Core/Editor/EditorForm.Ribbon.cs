@@ -424,7 +424,7 @@ namespace NeoAxis.Editor
 
 										if( action.ListBox.Mode == EditorAction.ListBoxSettings.ModeEnum.Tiles )
 										{
-											browser.ListViewItemRendererOverride = typeof( ContentBrowserRendererTilesRibbon );
+											browser.ListViewModeOverride = new ContentBrowserListModeTilesRibbon( browser );
 											browser.Options.PanelMode = ContentBrowser.PanelModeEnum.List;
 											browser.Options.ListMode = ContentBrowser.ListModeEnum.Tiles;
 											browser.UseSelectedTreeNodeAsRootForList = false;

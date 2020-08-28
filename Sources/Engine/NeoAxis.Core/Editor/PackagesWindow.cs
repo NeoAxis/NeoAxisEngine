@@ -51,10 +51,10 @@ namespace NeoAxis.Editor
 
 			if( EditorAPI.DarkTheme )
 			{
-				DarkThemeUtility.ApplyToForm( kryptonSplitContainer1.Panel1 );
-				DarkThemeUtility.ApplyToForm( kryptonSplitContainer1.Panel2 );
+				EditorThemeUtility.ApplyDarkThemeToForm( kryptonSplitContainer1.Panel1 );
+				EditorThemeUtility.ApplyDarkThemeToForm( kryptonSplitContainer1.Panel2 );
 
-				DarkThemeUtility.ApplyToToolTip( toolTip1 );
+				EditorThemeUtility.ApplyDarkThemeToToolTip( toolTip1 );
 			}
 
 			double distance = 22.0 * EditorAPI.DPIScale;
@@ -63,6 +63,8 @@ namespace NeoAxis.Editor
 
 			if( EditorAPI.DPIScale >= 2 )
 				this.buttonUpdateList.Values.Image = global::NeoAxis.Properties.Resources.Refresh_32;
+
+			WindowTitle = EditorLocalization.Translate( "PackagesWindow", WindowTitle );
 		}
 
 		private void PackagesDocumentWindow_Load( object sender, EventArgs e )
@@ -87,7 +89,6 @@ namespace NeoAxis.Editor
 			PerformRefreshList();
 			UpdatePackageControls();
 
-			WindowTitle = EditorLocalization.Translate( "PackagesWindow", WindowTitle );
 			EditorLocalization.TranslateForm( "PackagesWindow", kryptonSplitContainer2.Panel1 );
 			EditorLocalization.TranslateForm( "PackagesWindow", this );
 
@@ -880,25 +881,57 @@ namespace NeoAxis.Editor
 				{
 					downloadingClient = client;
 
-					client.DownloadProgressChanged += MyWebClient_DownloadProgressChanged;
+					var tempFileName = Path.GetTempFileName();
+
+					client.DownloadProgressChanged += delegate ( object sender, DownloadProgressChangedEventArgs e )
+					{
+						//check already ended
+						if( cancelled )
+							return;
+
+						if( e.TotalBytesToReceive != 0 )
+							downloadProgress = MathEx.Saturate( (float)e.BytesReceived / (float)e.TotalBytesToReceive );
+					};
+
 					client.DownloadFileCompleted += delegate ( object sender, AsyncCompletedEventArgs e )
 					{
+						//check already ended
+						if( cancelled )
+							return;
+
 						//releases blocked thread
 						lock( e.UserState )
 							Monitor.Pulse( e.UserState );
 
 						cancelled = e.Cancelled;
 						error = e.Error;
+
+						//copy to destination path
+						if( !cancelled && error == null )
+							File.Copy( tempFileName, downloadingDestinationPath );
+
+						try
+						{
+							File.Delete( tempFileName );
+						}
+						catch { }
 					};
 
-					var syncObject = new object();
-					lock( syncObject )
+					using( var task = client.DownloadFileTaskAsync( new Uri( downloadingAddress ), tempFileName ) )
 					{
-						client.DownloadFileAsync( new Uri( downloadingAddress ), downloadingDestinationPath, syncObject );
-
-						//This would block the thread until download completes
-						Monitor.Wait( syncObject );
+						while( !string.IsNullOrEmpty( downloadingAddress ) && !task.Wait( 10 ) )
+						{
+						}
 					}
+
+					//var syncObject = new object();
+					//lock( syncObject )
+					//{
+					//	client.DownloadFileAsync( new Uri( downloadingAddress ), downloadingDestinationPath, syncObject );
+
+					//	//This would block the thread until download completes
+					//	Monitor.Wait( syncObject );
+					//}
 
 					downloadingClient = null;
 				}
@@ -920,6 +953,8 @@ namespace NeoAxis.Editor
 							cancelled = true;
 						}
 					}
+					if( !cancelled && !File.Exists( downloadingDestinationPath ) )
+						cancelled = true;
 
 					if( cancelled || error != null )
 					{
@@ -947,21 +982,6 @@ namespace NeoAxis.Editor
 					ScreenNotifications.Show( EditorLocalization.Translate( "General", "Error downloading the package." ), true );
 				else
 					ScreenNotifications.Show( EditorLocalization.Translate( "General", "The package has been successfully downloaded." ) );
-			}
-		}
-
-		private void MyWebClient_DownloadProgressChanged( object sender, DownloadProgressChangedEventArgs e )
-		{
-			if( e.TotalBytesToReceive != 0 )
-				downloadProgress = MathEx.Saturate( (float)e.BytesReceived / (float)e.TotalBytesToReceive );
-		}
-
-		public void MyWebClient_HandleDownloadComplete( object sender, AsyncCompletedEventArgs e )
-		{
-			lock( e.UserState )
-			{
-				//releases blocked thread
-				Monitor.Pulse( e.UserState );
 			}
 		}
 

@@ -127,7 +127,7 @@ namespace NeoAxis.Editor
 
 					//page.StateCommon.Page.Color1 = Color.FromArgb( 54, 54, 54 );
 
-					DarkThemeUtility.ApplyToForm( page );
+					EditorThemeUtility.ApplyDarkThemeToForm( page );
 				}
 
 				kryptonLabelLoginError.StateCommon.ShortText.Color1 = Color.Red;
@@ -496,7 +496,7 @@ namespace NeoAxis.Editor
 						var image32 = Properties.Resources.ResourceManager.GetObject( imageKey + "_32", Properties.Resources.Culture ) as Image;
 						if( image16 != null )
 						{
-							contentBrowserPackage.ImageHelper.AddImage( imageKey, image16, image32 );
+							contentBrowserPackage.AddImageKey( imageKey, image16, image32 );
 
 							alreadyAddedImages.Add( imageKey );
 							imageExists = true;

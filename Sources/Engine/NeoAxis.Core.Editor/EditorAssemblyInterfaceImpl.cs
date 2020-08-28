@@ -94,38 +94,6 @@ namespace NeoAxis.Editor
 			return Assembly.GetExecutingAssembly().GetType( typeName );
 		}
 
-		public override void ContentBrowserRendererBase_DrawText( ContentBrowserRendererBase _this, Graphics g, System.Drawing.Rectangle r, string txt, Color foreColor, bool wordWrap )
-		{
-			if( string.IsNullOrEmpty( txt ) )
-				return;
-
-			Color backColor = Color.Transparent;
-			if( _this.IsDrawBackground && _this.IsItemSelected && !_this.ListView.FullRowSelect )
-				backColor = _this.GetSelectedBackgroundColor();
-
-			TextFormatFlags flags = ContentBrowserRendererBase.NormalTextFormatFlags | _this.TextAlignment;
-
-			if( wordWrap )
-				flags |= TextFormatFlags.WordBreak | TextFormatFlags.TextBoxControl;
-
-			TextRenderer.DrawText( g, txt, _this.Font, r, foreColor, backColor, flags );
-		}
-
-		public override Size ContentBrowserRendererBase_CalculateTextSize( ContentBrowserRendererBase _this, Graphics g, string txt, int width, bool wordWrap )
-		{
-			if( string.IsNullOrEmpty( txt ) )
-				return Size.Empty;
-
-			Size proposedSize = new Size( width, Int32.MaxValue );
-
-			TextFormatFlags flags = ContentBrowserRendererBase.NormalTextFormatFlags;
-
-			if( wordWrap )
-				flags |= TextFormatFlags.WordBreak | TextFormatFlags.TextBoxControl;
-
-			return TextRenderer.MeasureText( g, txt, _this.Font, proposedSize, flags );
-		}
-
 		public override void SetDarkTheme()
 		{
 			AvalonEditDarkThemeUtility.DarkTheme = true;

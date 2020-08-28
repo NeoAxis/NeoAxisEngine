@@ -178,7 +178,7 @@
 			this.contentBrowser1.CanSelectObjectSettings = false;
 			this.contentBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.contentBrowser1.FilteringMode = null;
-			this.contentBrowser1.ListViewItemRendererOverride = null;
+			this.contentBrowser1.ListViewModeOverride = null;
 			this.contentBrowser1.Location = new System.Drawing.Point(0, 0);
 			this.contentBrowser1.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
 			this.contentBrowser1.Mode = NeoAxis.Editor.ContentBrowser.ModeEnum.Objects;
@@ -203,8 +203,8 @@
 			// 
 			// progressBarPackageProgress
 			// 
-			this.progressBarPackageProgress.Location = new System.Drawing.Point(217, 151);
-			this.progressBarPackageProgress.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+			this.progressBarPackageProgress.Location = new System.Drawing.Point(217, 152);
+			//this.progressBarPackageProgress.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
 			this.progressBarPackageProgress.Name = "progressBarPackageProgress";
 			this.progressBarPackageProgress.Size = new System.Drawing.Size(381, 32);
 			this.progressBarPackageProgress.TabIndex = 5;

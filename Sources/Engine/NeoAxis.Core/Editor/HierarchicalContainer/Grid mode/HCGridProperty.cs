@@ -40,8 +40,8 @@ namespace NeoAxis.Editor
 			//DoubleBuffered = true;
 			ResizeRedraw = true;
 
-			DarkThemeUtility.ApplyToForm( this );
-			DarkThemeUtility.ApplyToToolTip( propertyToolTip );
+			EditorThemeUtility.ApplyDarkThemeToForm( this );
+			EditorThemeUtility.ApplyDarkThemeToToolTip( propertyToolTip );
 
 			//!!!!
 			//BackColor = Random.Generate(ColorValue.Zero, ColorValue.One).ToColor();

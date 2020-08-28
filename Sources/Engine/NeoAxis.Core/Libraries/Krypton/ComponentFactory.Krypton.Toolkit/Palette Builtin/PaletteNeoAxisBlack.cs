@@ -205,7 +205,7 @@ namespace ComponentFactory.Krypton.Toolkit
                                                                       Color.Red,                        // RibbonQATFullbar1 -n                                                 
                                                                       Color.FromArgb(54,54,54),//240, 240, 240),    // RibbonQATFullbar2                                                      
                                                                       Color.Red,                        // RibbonQATFullbar3 -n                                                   
-                                                                      Color.FromArgb(59, 59, 59),	    // RibbonQATButtonDark                                                      
+                                                                      Color.FromArgb(140, 140, 140),	    // RibbonQATButtonDark                                                      
                                                                       Color.White,                      // RibbonQATButtonLight                                                      
                                                                       Color.FromArgb(233, 237, 241),    // RibbonQATOverflow1                                                      
                                                                       Color.FromArgb(138, 144, 150),    // RibbonQATOverflow2                                                      
@@ -497,6 +497,8 @@ namespace ComponentFactory.Krypton.Toolkit
                 return _formMax;
             case PaletteButtonSpecStyle.FormRestore:
                 return _formRestore;
+            case PaletteButtonSpecStyle.Context:
+                return _buttonSpecContext_Dark;
             default:
                 return base.GetButtonSpecImage( style, state );
             }

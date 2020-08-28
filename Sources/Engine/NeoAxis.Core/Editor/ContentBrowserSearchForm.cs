@@ -18,7 +18,7 @@ namespace NeoAxis.Editor
 		{
 			InitializeComponent();
 
-			DarkThemeUtility.ApplyToForm( this );
+			EditorThemeUtility.ApplyDarkThemeToForm( this );
 			Text = EditorLocalization.Translate( "ContentBrowser.SearchForm", Text );
 			EditorLocalization.TranslateForm( "ContentBrowser.SearchForm", this );
 		}

@@ -1,106 +1,63 @@
 ﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace NeoAxis.Editor
 {
-	internal class ContentBrowserImageHelper
+	class ContentBrowserImageHelper
 	{
-		Image defaultSmallImage;
-		Image defaultLargeImage;
+		static Image defaultSmallImage;
+		static Image defaultLargeImage;
 
-		ImageListAdv imageListIconsSmall;
-		ImageListAdv imageListIconsLarge;
+		ImageCollection imageListIconsSmall = new ImageCollection();
+		ImageCollection imageListIconsLarge = new ImageCollection();
 
 		Dictionary<string, Image> scaledImagesCacheForTree = new Dictionary<string, Image>();
 		Dictionary<string, Image> scaledImagesCacheForTreeDisabled = new Dictionary<string, Image>();
 
+		Dictionary<(string, int), Image> imageListDisabled = new Dictionary<(string, int), Image>();
 
-		public ContentBrowserImageHelper( IContainer container )
-		{
-			imageListIconsSmall = new ImageListAdv( container );
-			imageListIconsLarge = new ImageListAdv( container );
-			imageListIconsLarge.ImageSize = new Size( 32, 32 );
-		}
+		///////////////////////////////////////////////
 
-		internal void LoadDefaultImages()
+		static ContentBrowserImageHelper()
 		{
 			defaultSmallImage = Properties.Resources.Default_16;
 			defaultLargeImage = Properties.Resources.Default_32;
-
-			AddImage( "Default", Properties.Resources.Default_16, Properties.Resources.Default_32 );
-			AddImage( "Namespace", Properties.Resources.Namespace_16, null );
-			AddImage( "Class", Properties.Resources.Class, Properties.Resources.Class_32 );
-			AddImage( "Struct", Properties.Resources.Struct, null );
-			AddImage( "Assembly", Properties.Resources.Assembly, null );
-
-			//!!!!tr
-			//if( EditorAPI.DarkTheme )
-			//	AddImage( "Resource", Properties.Resources.Resource_16_Dark, Properties.Resources.Resource_32_Dark );
-			//else
-			AddImage( "Resource", Properties.Resources.Resource_16, Properties.Resources.Resource_32 );
-
-			AddImage( "AssemblyList", Properties.Resources.AssemblyList, null );
-			AddImage( "Folder", Properties.Resources.Folder_16, Properties.Resources.Folder_32 );
-			AddImage( "Delegate", Properties.Resources.Delegate, null );
-			AddImage( "Enum", Properties.Resources.Enum, null );
-			AddImage( "Property", Properties.Resources.Property, null );
-			AddImage( "GoUpper", Properties.Resources.GoUpper_16, null );
-			AddImage( "Method", Properties.Resources.Method, null );
-			AddImage( "Event", Properties.Resources.Event_16, null );
-			AddImage( "StaticClass", Properties.Resources.StaticClass, null );
-			AddImage( "StaticEvent", Properties.Resources.StaticEvent, null );
-			AddImage( "StaticMethod", Properties.Resources.StaticMethod, null );
-			AddImage( "StaticProperty", Properties.Resources.StaticProperty, null );
-			AddImage( "Constructor", Properties.Resources.Constructor, null );
-			AddImage( "Operator", Properties.Resources.Operator, null );
-
-			AddImage( "CSharp", Properties.Resources.CSharp_16, Properties.Resources.CSharp_32 );
-			AddImage( "UI", Properties.Resources.Window_16, Properties.Resources.Window_32 );
-			AddImage( "Image", Properties.Resources.Image_16, Properties.Resources.Image_32 );
-			AddImage( "Sound", Properties.Resources.Sound_16, Properties.Resources.Sound_32 );
-			AddImage( "Mesh", Properties.Resources.Mesh_16, Properties.Resources.Mesh_32 );
-			AddImage( "Material", Properties.Resources.Material_16, Properties.Resources.Material_32 );
-			AddImage( "Scene", Properties.Resources.Scene_16, Properties.Resources.Scene_32 );
-
-			AddImage( "Cog", Properties.Resources.Cog_16, Properties.Resources.Cog_32 );
-
-			AddImage( "CSharpProject", Properties.Resources.CSharpProject_16, Properties.Resources.CSharpProject_32 );
-			AddImage( "Attach", Properties.Resources.Attach_16, Properties.Resources.Attach_32 );
-			AddImage( "New", Properties.Resources.New_16, Properties.Resources.New_32 );
-
-			//AddImage( "Character", Properties.Resources.MeshSkeleton_16, Properties.Resources.MeshSkeleton_32 );
-
-			//HACK: recreate images to fix render image size at different system scales.
-			int listImageSize = imageListIconsLarge.ImageSize.Height;
-			imageListIconsLarge = ImageListAdv.MakeResizedImageList( imageListIconsLarge, listImageSize, listImageSize );
 		}
 
-		internal void AddImage( string key, Image smallImage, Image largeImage )//, bool useCache )
+		public void Dispose()
 		{
-			if( !imageListIconsSmall.Images.ContainsKey( key ) )
-				imageListIconsSmall.Images.Add( key, smallImage ?? defaultSmallImage );
-
-			if( !imageListIconsLarge.Images.ContainsKey( key ) )
-				imageListIconsLarge.Images.Add( key, largeImage ?? defaultLargeImage );
-
-			var scaledImage = EditorAPI.GetImageForDispalyScale( imageListIconsSmall.Images[ key ], imageListIconsLarge.Images[ key ] );//, useCache );
-			scaledImagesCacheForTree[ key ] = scaledImage;
+			//!!!!?
 		}
 
-		internal Image GetImageForTreeNode( string key, bool disabled )
+		public void AddImage( string key, Image smallImage, Image largeImage )
+		{
+			if( !imageListIconsSmall.ContainsKey( key ) )
+				imageListIconsSmall.Add( key, smallImage ?? defaultSmallImage );
+
+			if( !imageListIconsLarge.ContainsKey( key ) )
+				imageListIconsLarge.Add( key, largeImage ?? defaultLargeImage );
+		}
+
+		//tree view right now has no the ability to configure in the editor. image size always same, depending font size of the system
+		public Image GetImageScaledForTreeView( string key, bool disabled )
 		{
 			if( string.IsNullOrEmpty( key ) )
 				key = "Default";
 
-			if( !scaledImagesCacheForTree.TryGetValue( key, out var image ) )
-				return null;
+			//add if still not exists
+			if( !scaledImagesCacheForTree.ContainsKey( key ) )
+			{
+				if( !imageListIconsSmall.ContainsKey( key ) )
+					return null;
+
+				var scaledImage = EditorAPI.GetImageForDispalyScale( imageListIconsSmall[ key ], imageListIconsLarge[ key ] );//, useCache );
+				scaledImagesCacheForTree[ key ] = scaledImage;
+			}
+
+			var image = scaledImagesCacheForTree[ key ];
 
 			if( disabled )
 			{
@@ -120,39 +77,99 @@ namespace NeoAxis.Editor
 			}
 
 			return image;
-
-			//return scaledImagesCacheForTree[ key ];
 		}
 
-		internal ImageListAdv ResizeImagesForListView( Size size )
-		{
-			if( imageListIconsLarge.ImageSize == size )
-				return imageListIconsLarge;
-			return ImageListAdv.MakeResizedImageList( imageListIconsLarge, size.Width, size.Height ); ;
-		}
-
-		//!!!!maybe temp
-		ESet<string> imageListIconsLargeAvailable;
-
-		//TODO: return Image. but ovl list item cached image, and we have problems with resize imagelist
-		internal string GetImageForListView( string key )
+		public Image GetImage( string key, int requestedSize, bool disabled )
 		{
 			if( string.IsNullOrEmpty( key ) )
 				key = "Default";
 
-			if( imageListIconsLargeAvailable == null )
+			Image image = null;
+			if( requestedSize <= 16 )
+				image = imageListIconsSmall[ key ];
+			if( image == null )
+				image = imageListIconsLarge[ key ];
+			if( image == null )
+				image = imageListIconsSmall[ key ];
+
+			if( disabled && image != null )
 			{
-				imageListIconsLargeAvailable = new ESet<string>();
-				foreach( var name in imageListIconsLarge.Images.Keys )
-					imageListIconsLargeAvailable.AddWithCheckAlreadyContained( name );
+				var key2 = (key, requestedSize);
+
+				if( !imageListDisabled.TryGetValue( key2, out var imageDisabled ) )
+				{
+					try
+					{
+						imageDisabled = ToolStripRenderer.CreateDisabledImage( image );
+					}
+					catch { }
+
+					if( imageDisabled != null )
+						imageListDisabled[ key2 ] = imageDisabled;
+				}
+
+				image = imageDisabled;
 			}
 
-			//check availability
-			if( !imageListIconsLargeAvailable.Contains( key ) )
-				key = "Default";
-
-			return key;
-
+			return image;
 		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	static class ContentBrowserImageHelperBasicImages
+	{
+		static ContentBrowserImageHelper helper = new ContentBrowserImageHelper();
+
+		public static ContentBrowserImageHelper Helper
+		{
+			get { return helper; }
+		}
+
+		static ContentBrowserImageHelperBasicImages()
+		{
+			Helper.AddImage( "Default", Properties.Resources.Default_16, Properties.Resources.Default_32 );
+			Helper.AddImage( "Namespace", Properties.Resources.Namespace_16, null );
+			Helper.AddImage( "Class", Properties.Resources.Class, Properties.Resources.Class_32 );
+			Helper.AddImage( "Struct", Properties.Resources.Struct, null );
+			Helper.AddImage( "Assembly", Properties.Resources.Assembly, null );
+
+			//if( EditorAPI.DarkTheme )
+			//	Helper.AddImage( "Resource", Properties.Resources.Resource_16_Dark, Properties.Resources.Resource_32_Dark );
+			//else
+			Helper.AddImage( "Resource", Properties.Resources.Resource_16, Properties.Resources.Resource_32 );
+
+			Helper.AddImage( "AssemblyList", Properties.Resources.AssemblyList, null );
+			Helper.AddImage( "Folder", Properties.Resources.Folder_16, Properties.Resources.Folder_32 );
+			Helper.AddImage( "Delegate", Properties.Resources.Delegate, null );
+			Helper.AddImage( "Enum", Properties.Resources.Enum, null );
+			Helper.AddImage( "Property", Properties.Resources.Property, null );
+			Helper.AddImage( "GoUpper", Properties.Resources.GoUpper_16, null );
+			Helper.AddImage( "Method", Properties.Resources.Method, null );
+			Helper.AddImage( "Event", Properties.Resources.Event_16, null );
+			Helper.AddImage( "StaticClass", Properties.Resources.StaticClass, null );
+			Helper.AddImage( "StaticEvent", Properties.Resources.StaticEvent, null );
+			Helper.AddImage( "StaticMethod", Properties.Resources.StaticMethod, null );
+			Helper.AddImage( "StaticProperty", Properties.Resources.StaticProperty, null );
+			Helper.AddImage( "Constructor", Properties.Resources.Constructor, null );
+			Helper.AddImage( "Operator", Properties.Resources.Operator, null );
+
+			Helper.AddImage( "CSharp", Properties.Resources.CSharp_16, Properties.Resources.CSharp_32 );
+			Helper.AddImage( "UI", Properties.Resources.Window_16, Properties.Resources.Window_32 );
+			Helper.AddImage( "Image", Properties.Resources.Image_16, Properties.Resources.Image_32 );
+			Helper.AddImage( "Sound", Properties.Resources.Sound_16, Properties.Resources.Sound_32 );
+			Helper.AddImage( "Mesh", Properties.Resources.Mesh_16, Properties.Resources.Mesh_32 );
+			Helper.AddImage( "Material", Properties.Resources.Material_16, Properties.Resources.Material_32 );
+			Helper.AddImage( "Scene", Properties.Resources.Scene_16, Properties.Resources.Scene_32 );
+
+			Helper.AddImage( "Cog", Properties.Resources.Cog_16, Properties.Resources.Cog_32 );
+
+			Helper.AddImage( "CSharpProject", Properties.Resources.CSharpProject_16, Properties.Resources.CSharpProject_32 );
+			Helper.AddImage( "Attach", Properties.Resources.Attach_16, Properties.Resources.Attach_32 );
+			Helper.AddImage( "New", Properties.Resources.New_16, Properties.Resources.New_32 );
+
+			//Helper.AddImage( "Character", Properties.Resources.MeshSkeleton_16, Properties.Resources.MeshSkeleton_32 );
+		}
+
 	}
 }

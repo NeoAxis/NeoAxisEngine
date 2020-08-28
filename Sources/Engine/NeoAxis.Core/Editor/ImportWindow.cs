@@ -36,8 +36,8 @@ namespace NeoAxis.Editor
 			WindowTitle = EditorLocalization.Translate( "ImportWindow", WindowTitle );
 			EditorLocalization.TranslateForm( "ImportWindow", eUserControl1 );
 
-			DarkThemeUtility.ApplyToForm( eUserControl1 );
-			DarkThemeUtility.ApplyToForm( panelName );
+			EditorThemeUtility.ApplyDarkThemeToForm( eUserControl1 );
+			EditorThemeUtility.ApplyDarkThemeToForm( panelName );
 		}
 
 		protected override void OnLoad( EventArgs e )

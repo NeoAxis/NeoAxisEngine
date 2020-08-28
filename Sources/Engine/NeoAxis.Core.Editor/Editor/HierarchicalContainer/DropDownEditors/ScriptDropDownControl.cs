@@ -48,7 +48,7 @@ namespace NeoAxis.Editor
 		{
 			InitializeComponent();
 
-			DarkThemeUtility.ApplyToForm( this );
+			EditorThemeUtility.ApplyDarkThemeToForm( this );
 		}
 
 		public ScriptDropDownControl( HCItemProperty itemProperty )
@@ -79,7 +79,7 @@ namespace NeoAxis.Editor
 				Enabled = false;
 			}
 
-			DarkThemeUtility.ApplyToForm( this );
+			EditorThemeUtility.ApplyDarkThemeToForm( this );
 		}
 
 		public override void OnCommitChanges()

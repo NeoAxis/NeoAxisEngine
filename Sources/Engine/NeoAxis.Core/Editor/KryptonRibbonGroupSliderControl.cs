@@ -29,7 +29,7 @@ namespace NeoAxis.Editor
 		{
 			InitializeComponent();
 
-			DarkThemeUtility.ApplyToForm( this );
+			EditorThemeUtility.ApplyDarkThemeToForm( this );
 		}
 
 		public void Init( double minimum, double maximum, double exponentialPower )

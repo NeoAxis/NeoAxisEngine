@@ -28,7 +28,7 @@ namespace NeoAxis.Editor
 			timer.Interval = SystemInformation.MouseHoverTime;
 			timer.Tick += new EventHandler( timer_Tick );
 			Tooltip = new ToolTip();
-			DarkThemeUtility.ApplyToToolTip( Tooltip );
+			EditorThemeUtility.ApplyDarkThemeToToolTip( Tooltip );
 		}
 
 		protected override void OnMouseMove( MouseEventArgs mea )
@@ -91,7 +91,7 @@ namespace NeoAxis.Editor
 						if( Tooltip == null )
 						{
 							Tooltip = new ToolTip();
-							DarkThemeUtility.ApplyToToolTip( Tooltip );
+							EditorThemeUtility.ApplyDarkThemeToToolTip( Tooltip );
 						}
 						Tooltip.Show( ToolTipText, this, currentMouseOverPoint, ToolTipInterval );
 					}
@@ -105,7 +105,7 @@ namespace NeoAxis.Editor
 						if( Tooltip == null )
 						{
 							Tooltip = new ToolTip();
-							DarkThemeUtility.ApplyToToolTip( Tooltip );
+							EditorThemeUtility.ApplyDarkThemeToToolTip( Tooltip );
 						}
 						Tooltip.Show( mouseOverItem.ToolTipText, this, currentMouseOverPoint, ToolTipInterval );
 					}

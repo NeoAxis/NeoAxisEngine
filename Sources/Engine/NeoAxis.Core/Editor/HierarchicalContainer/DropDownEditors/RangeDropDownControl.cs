@@ -64,7 +64,7 @@ namespace NeoAxis.Editor
 		{
 			InitializeComponent();
 
-			DarkThemeUtility.ApplyToForm( this );
+			EditorThemeUtility.ApplyDarkThemeToForm( this );
 		}
 
 		public RangeDropDownControl( HCItemProperty itemProperty )
@@ -92,7 +92,7 @@ namespace NeoAxis.Editor
 
 			UpdateTrackBarsAndTextBoxes();
 
-			DarkThemeUtility.ApplyToForm( this );
+			EditorThemeUtility.ApplyDarkThemeToForm( this );
 		}
 
 		protected override void OnParentChanged( EventArgs e )

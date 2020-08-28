@@ -343,7 +343,7 @@ namespace NeoAxis.Editor
 
 				if( selectedPanel != null )
 				{
-					selectedPanel.layoutPanel.Enabled = true;
+					selectedPanel.layoutPanel.Enabled = GetEnabledForSelectedPanel();
 					selectedPanel.layoutPanel.Visible = true;
 					//selectedPanel.control.Focus();
 				}
@@ -353,27 +353,12 @@ namespace NeoAxis.Editor
 					old.layoutPanel.Visible = false;
 					old.layoutPanel.Enabled = false;
 				}
-
-				//if( selectedPanel != null )
-				//{
-				//	selectedPanel.layoutPanel.Visible = false;
-				//	selectedPanel.layoutPanel.Enabled = false;
-				//}
-
-				//selectedPanel = value;
-
-				//if( selectedPanel != null )
-				//{
-				//	selectedPanel.layoutPanel.Enabled = true;
-				//	selectedPanel.layoutPanel.Visible = true;
-				//	//selectedPanel.control.Focus();
-				//}
 			}
 		}
 
 		//!!!!надо ли?
 		[Browsable( false )]
-		public object[] SelectedObjects//public object[] _SelectedObjects
+		public object[] SelectedObjects
 		{
 			get
 			{
@@ -386,7 +371,7 @@ namespace NeoAxis.Editor
 
 		//!!!!надо ли?
 		[Browsable( false )]
-		public ESet<object> SelectedObjectsSet//public ESet<object> _SelectedObjectsSet
+		public ESet<object> SelectedObjectsSet
 		{
 			get
 			{
@@ -402,10 +387,6 @@ namespace NeoAxis.Editor
 		{
 			return SelectedObjectsSet.Contains( obj );
 		}
-		//public bool _IsObjectSelected( object obj )
-		//{
-		//	return _SelectedObjectsSet.Contains( obj );
-		//}
 
 		private void timer1_Tick( object sender, EventArgs e )
 		{
@@ -414,7 +395,8 @@ namespace NeoAxis.Editor
 			if( KryptonPage == null || KryptonPage.Parent == null )
 				return;
 
-			UpdateEnabled();
+			if( selectedPanel != null )
+				selectedPanel.layoutPanel.Enabled = GetEnabledForSelectedPanel();
 
 			//check for DisplayHierarchyOfObjectsInSettingsWindow update
 			if( settingsDisplayHierarchyOfObjectsInSettingsWindow != ProjectSettings.Get.DisplayHierarchyOfObjectsInSettingsWindow.Value )
@@ -452,7 +434,7 @@ namespace NeoAxis.Editor
 			}
 		}
 
-		void UpdateEnabled()
+		bool GetEnabledForSelectedPanel()
 		{
 			//!!!!slowly
 
@@ -484,7 +466,7 @@ namespace NeoAxis.Editor
 				}
 			}
 
-			Enabled = enable;
+			return enable;
 		}
 
 		public override ObjectsInFocus GetObjectsInFocus()

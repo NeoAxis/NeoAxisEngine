@@ -50,7 +50,7 @@ namespace NeoAxis.Editor
 
 			var items = new List<ContentBrowser.Item>();
 
-			var needUpdateImageList = false;
+			var needUpdateImages = false;
 
 			for( int n = 0; n < dataItems.Count; n++ )
 			{
@@ -68,11 +68,11 @@ namespace NeoAxis.Editor
 
 						imageKey = "_Image_" + images.Count.ToString();
 
-						browser.ImageHelper.AddImage( imageKey, image, image );
+						browser.AddImageKey( imageKey, image );
 
 						images.Add( image, imageKey );
 
-						needUpdateImageList = true;
+						needUpdateImages = true;
 					}
 
 					item.imageKey = imageKey;
@@ -81,8 +81,8 @@ namespace NeoAxis.Editor
 				items.Add( item );
 			}
 
-			if( needUpdateImageList )
-				browser.UpdateListImageList();
+			if( needUpdateImages )
+				browser.UpdateListImages();
 
 			//update browser's items
 			browser.SetData( items, false );

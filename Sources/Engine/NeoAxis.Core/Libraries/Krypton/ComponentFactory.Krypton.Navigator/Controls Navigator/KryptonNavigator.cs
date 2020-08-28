@@ -75,6 +75,9 @@ namespace ComponentFactory.Krypton.Navigator
         private int _cachePageCount;
         private int _cachePageVisibleCount;
 
+        ////!!!!betauser
+        //List<KryptonPage> lastSelectedPages = new List<KryptonPage>();
+
         // Palette storage objects
         private PaletteNavigatorRedirect _stateCommon;
         private PaletteNavigator _stateNormal;
@@ -522,6 +525,17 @@ namespace ComponentFactory.Krypton.Navigator
 
                         // Use the new selection
                         _selectedPage = value;
+
+                        //!!!!betauser
+                        //if( _selectedPage != null )
+                        //{
+                        //    _selectedPage.lastSelectedTime = DateTime.Now;
+
+                        //    //if( lastSelectedPages.Count > 20 )
+                        //    //    lastSelectedPages.RemoveAt( 0 );
+                        //    //lastSelectedPages.Remove( _selectedPage );
+                        //    //lastSelectedPages.Add( _selectedPage );
+                        //}
 
                         // If there was an old selection, generate event to show it is deselected
                         if (oldSelected != null)
@@ -2783,60 +2797,102 @@ namespace ComponentFactory.Krypton.Navigator
             KryptonPage firstEnabled = null;
             KryptonPage firstDisabled = null;
 
-            // Start the search by moving forwards
-            bool forward = true;
+            ////!!!!betauser
+            ////select in order of last selected pages
+            //if(ChildPanel != null)
+            //{
+            //    var pagesToCheck = new List<KryptonPage>();
+            //    foreach( var page in Pages )
+            //    {
+            //        if( page.LastVisibleSet && page.Parent == ChildPanel )
+            //            pagesToCheck.Add( page );
+            //    }
+            //    NeoAxis.CollectionUtility.InsertionSort( pagesToCheck, delegate ( KryptonPage p1, KryptonPage p2 )
+            //    {
+            //        if( p1.lastSelectedTime > p2.lastSelectedTime )
+            //            return -1;
+            //        if( p1.lastSelectedTime < p2.lastSelectedTime )
+            //            return 1;
+            //        return 0;
+            //    } );
 
-            // Start searching from the provided page
-            KryptonPage start = begin;
+            //    foreach( var next in pagesToCheck )
+            //    {
+            //        // Create event information
+            //        KryptonPageCancelEventArgs args = new KryptonPageCancelEventArgs( next, Pages.IndexOf( next ) );
 
-            // Process all pages except the current one to find available pape
-            for (int i = 0; i < Pages.Count - 1; i++)
+            //        // Disabled pages default to not becoming selected
+            //        args.Cancel = !next.Enabled;
+
+            //        // Give event handlers a chance to cancel the selection of the new page
+            //        OnSelecting( args );
+
+            //        // Does this page want the selection?
+            //        if( !args.Cancel )
+            //        {
+            //            newSelection = next;
+            //            break;
+            //        }
+            //    }
+            //}
+
+            if( newSelection == null )//!!!!betauser
             {
-                KryptonPage next;
+                // Start the search by moving forwards
+                bool forward = true;
 
-                // Are we already at the last page in the pages collection?
-                if (Pages.IndexOf(start) == (Pages.Count - 1))
+                // Start searching from the provided page
+                KryptonPage start = begin;
+
+                // Process all pages except the current one to find available pape
+                for( int i = 0; i < Pages.Count - 1; i++ )
                 {
-                    // Then need to reverse searching direction
-                    forward = false;
+                    KryptonPage next;
 
-                    // Next page is the one before the beginning page
-                    next = Pages[Pages.IndexOf(begin) - 1];
-                }
-                else
-                {
-                    // Otherwise just move to the next page in sequence
-                    next = Pages[Pages.IndexOf(start) + (forward ? 1 : -1)];
-                }
-
-                // Can only select a visible page
-                if (next.LastVisibleSet)
-                {
-                    // Track the first found enabled and disabled pages found
-                    if (next.Enabled && (firstEnabled == null))
-                        firstEnabled = next;
-                    else if (!next.Enabled && (firstDisabled == null))
-                        firstDisabled = next;
-
-                    // Create event information
-                    KryptonPageCancelEventArgs args = new KryptonPageCancelEventArgs(next, Pages.IndexOf(next));
-
-                    // Disabled pages default to not becoming selected
-                    args.Cancel = !next.Enabled;
-
-                    // Give event handlers a chance to cancel the selection of the new page
-                    OnSelecting(args);
-
-                    // Does this page want the selection?
-                    if (!args.Cancel)
+                    // Are we already at the last page in the pages collection?
+                    if( Pages.IndexOf( start ) == ( Pages.Count - 1 ) )
                     {
-                        newSelection = next;
-                        break;
-                    }
-                }
+                        // Then need to reverse searching direction
+                        forward = false;
 
-                // Move forward a page for next loop
-                start = next;
+                        // Next page is the one before the beginning page
+                        next = Pages[ Pages.IndexOf( begin ) - 1 ];
+                    }
+                    else
+                    {
+                        // Otherwise just move to the next page in sequence
+                        next = Pages[ Pages.IndexOf( start ) + ( forward ? 1 : -1 ) ];
+                    }
+
+                    // Can only select a visible page
+                    if( next.LastVisibleSet )
+                    {
+                        // Track the first found enabled and disabled pages found
+                        if( next.Enabled && ( firstEnabled == null ) )
+                            firstEnabled = next;
+                        else if( !next.Enabled && ( firstDisabled == null ) )
+                            firstDisabled = next;
+
+                        // Create event information
+                        KryptonPageCancelEventArgs args = new KryptonPageCancelEventArgs( next, Pages.IndexOf( next ) );
+
+                        // Disabled pages default to not becoming selected
+                        args.Cancel = !next.Enabled;
+
+                        // Give event handlers a chance to cancel the selection of the new page
+                        OnSelecting( args );
+
+                        // Does this page want the selection?
+                        if( !args.Cancel )
+                        {
+                            newSelection = next;
+                            break;
+                        }
+                    }
+
+                    // Move forward a page for next loop
+                    start = next;
+                }
             }
 
 			// If no page wants the new selection

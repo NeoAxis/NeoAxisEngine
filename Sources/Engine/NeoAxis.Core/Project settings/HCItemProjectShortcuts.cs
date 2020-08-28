@@ -97,7 +97,7 @@ namespace NeoAxis.Editor
 						{
 							id = "Name_" + imageCounter.ToString();
 							images[ smallImage ] = id;
-							control.contentBrowserAll.ImageHelper.AddImage( id, smallImage, action.GetImageBig() );
+							control.contentBrowserAll.AddImageKey( id, smallImage, action.GetImageBig() );
 							imageCounter++;
 						}
 						item.imageKey = id;

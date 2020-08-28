@@ -41,6 +41,9 @@
 			this.kryptonButtonOpenScene = new ComponentFactory.Krypton.Toolkit.KryptonButton();
 			this.kryptonButtonOpenStore = new ComponentFactory.Krypton.Toolkit.KryptonButton();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+			this.kryptonLabel4 = new ComponentFactory.Krypton.Toolkit.KryptonLabel();
+			this.kryptonCheckBoxMinimizeRibbon = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
+			this.kryptonCheckBoxShowQATBelowRibbon = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
 			this.SuspendLayout();
 			// 
 			// timer1
@@ -77,7 +80,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.contentBrowserNewScene.CanSelectObjectSettings = false;
 			this.contentBrowserNewScene.FilteringMode = null;
-			this.contentBrowserNewScene.ListViewItemRendererOverride = null;
+			this.contentBrowserNewScene.ListViewModeOverride = null;
 			this.contentBrowserNewScene.Location = new System.Drawing.Point(26, 207);
 			this.contentBrowserNewScene.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.contentBrowserNewScene.Mode = NeoAxis.Editor.ContentBrowser.ModeEnum.Resources;
@@ -85,7 +88,7 @@
 			this.contentBrowserNewScene.ReadOnlyHierarchy = false;
 			this.contentBrowserNewScene.ShowToolBar = false;
 			this.contentBrowserNewScene.Size = new System.Drawing.Size(901, 213);
-			this.contentBrowserNewScene.TabIndex = 2;
+			this.contentBrowserNewScene.TabIndex = 5;
 			this.contentBrowserNewScene.ThisIsSettingsWindow = false;
 			// 
 			// buttonCreateScene
@@ -131,7 +134,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.contentBrowserOpenScene.CanSelectObjectSettings = false;
 			this.contentBrowserOpenScene.FilteringMode = null;
-			this.contentBrowserOpenScene.ListViewItemRendererOverride = null;
+			this.contentBrowserOpenScene.ListViewModeOverride = null;
 			this.contentBrowserOpenScene.Location = new System.Drawing.Point(26, 512);
 			this.contentBrowserOpenScene.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.contentBrowserOpenScene.Mode = NeoAxis.Editor.ContentBrowser.ModeEnum.Resources;
@@ -139,7 +142,7 @@
 			this.contentBrowserOpenScene.ReadOnlyHierarchy = false;
 			this.contentBrowserOpenScene.ShowToolBar = false;
 			this.contentBrowserOpenScene.Size = new System.Drawing.Size(901, 217);
-			this.contentBrowserOpenScene.TabIndex = 4;
+			this.contentBrowserOpenScene.TabIndex = 6;
 			this.contentBrowserOpenScene.ThisIsSettingsWindow = false;
 			// 
 			// kryptonButtonOpenScene
@@ -149,8 +152,8 @@
 			this.kryptonButtonOpenScene.Margin = new System.Windows.Forms.Padding(4);
 			this.kryptonButtonOpenScene.Name = "kryptonButtonOpenScene";
 			this.kryptonButtonOpenScene.Size = new System.Drawing.Size(117, 32);
-			this.kryptonButtonOpenScene.TabIndex = 5;
-			this.kryptonButtonOpenScene.Values.Text = "Open";
+			this.kryptonButtonOpenScene.TabIndex = 7;
+			this.kryptonButtonOpenScene.Values.Text = "Open Scene";
 			this.kryptonButtonOpenScene.Click += new System.EventHandler(this.kryptonButtonOpenScene_Click);
 			// 
 			// kryptonButtonOpenStore
@@ -160,14 +163,43 @@
 			this.kryptonButtonOpenStore.Margin = new System.Windows.Forms.Padding(4);
 			this.kryptonButtonOpenStore.Name = "kryptonButtonOpenStore";
 			this.kryptonButtonOpenStore.Size = new System.Drawing.Size(117, 32);
-			this.kryptonButtonOpenStore.TabIndex = 6;
+			this.kryptonButtonOpenStore.TabIndex = 4;
 			this.kryptonButtonOpenStore.Values.Text = "Open Store";
 			this.kryptonButtonOpenStore.Click += new System.EventHandler(this.kryptonButtonOpenStore_Click);
+			// 
+			// kryptonLabel4
+			// 
+			this.kryptonLabel4.Location = new System.Drawing.Point(349, 23);
+			this.kryptonLabel4.Name = "kryptonLabel4";
+			this.kryptonLabel4.Size = new System.Drawing.Size(142, 20);
+			this.kryptonLabel4.TabIndex = 7;
+			this.kryptonLabel4.Values.Text = "Editor configuration:";
+			// 
+			// kryptonCheckBoxMinimizeRibbon
+			// 
+			this.kryptonCheckBoxMinimizeRibbon.Location = new System.Drawing.Point(355, 50);
+			this.kryptonCheckBoxMinimizeRibbon.Name = "kryptonCheckBoxMinimizeRibbon";
+			this.kryptonCheckBoxMinimizeRibbon.Size = new System.Drawing.Size(158, 20);
+			this.kryptonCheckBoxMinimizeRibbon.TabIndex = 2;
+			this.kryptonCheckBoxMinimizeRibbon.Values.Text = "Minimize the Ribbon";
+			this.kryptonCheckBoxMinimizeRibbon.CheckedChanged += new System.EventHandler(this.kryptonCheckBoxMinimizeRibbon_CheckedChanged);
+			// 
+			// kryptonCheckBoxShowQATBelowRibbon
+			// 
+			this.kryptonCheckBoxShowQATBelowRibbon.Location = new System.Drawing.Point(355, 76);
+			this.kryptonCheckBoxShowQATBelowRibbon.Name = "kryptonCheckBoxShowQATBelowRibbon";
+			this.kryptonCheckBoxShowQATBelowRibbon.Size = new System.Drawing.Size(320, 20);
+			this.kryptonCheckBoxShowQATBelowRibbon.TabIndex = 3;
+			this.kryptonCheckBoxShowQATBelowRibbon.Values.Text = "Show Quick Access Toolbar below the Ribbon";
+			this.kryptonCheckBoxShowQATBelowRibbon.CheckedChanged += new System.EventHandler(this.kryptonCheckBoxShowQATBelowRibbon_CheckedChanged);
 			// 
 			// StartPageWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.kryptonCheckBoxShowQATBelowRibbon);
+			this.Controls.Add(this.kryptonCheckBoxMinimizeRibbon);
+			this.Controls.Add(this.kryptonLabel4);
 			this.Controls.Add(this.kryptonButtonOpenStore);
 			this.Controls.Add(this.kryptonButtonOpenScene);
 			this.Controls.Add(this.contentBrowserOpenScene);
@@ -201,5 +233,8 @@
 		private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonOpenScene;
 		private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonOpenStore;
 		private System.Windows.Forms.ToolTip toolTip1;
+		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabel4;
+		private ComponentFactory.Krypton.Toolkit.KryptonCheckBox kryptonCheckBoxMinimizeRibbon;
+		private ComponentFactory.Krypton.Toolkit.KryptonCheckBox kryptonCheckBoxShowQATBelowRibbon;
 	}
 }

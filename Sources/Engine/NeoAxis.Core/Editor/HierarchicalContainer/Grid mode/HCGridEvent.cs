@@ -34,8 +34,8 @@ namespace NeoAxis.Editor
 			buttonEditEventHandlers.Values.Image = EditorResourcesCache.Edit;
 			buttonAddEventHandler.Values.Image = EditorResourcesCache.New;
 
-			DarkThemeUtility.ApplyToForm( this );
-			DarkThemeUtility.ApplyToToolTip( eventToolTip );
+			EditorThemeUtility.ApplyDarkThemeToForm( this );
+			EditorThemeUtility.ApplyDarkThemeToToolTip( eventToolTip );
 
 			eventToolTip.SetToolTip( buttonAddEventHandler, EditorLocalization.Translate( "SettingsWindow", "Add event handler." ) );
 			eventToolTip.SetToolTip( buttonEditEventHandlers, EditorLocalization.Translate( "SettingsWindow", "Edit event handlers." ) );

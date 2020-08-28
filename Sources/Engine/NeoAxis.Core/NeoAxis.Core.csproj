@@ -132,13 +132,11 @@
     <Compile Update="Editor\CanvasBasedPreview.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Editor\ContentBrowserRendererTilesRibbon.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Update="Editor\ContentBrowserSearchForm.cs" />
     <Compile Update="Editor\ContentBrowserSearchForm.Designer.cs">
       <DependentUpon>ContentBrowserSearchForm.cs</DependentUpon>
     </Compile>
+    <Compile Update="Editor\EngineListView.cs" />
     <Compile Update="Editor\EngineProgressBar.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -239,11 +237,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Update="Libraries\ObjectListView\Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Update="MathEx\ColorValue\ColorValuePoweredSelectForm.cs" />
     <Compile Update="MathEx\ColorValue\ColorValuePoweredSelectForm.designer.cs">
       <DependentUpon>ColorValuePoweredSelectForm.cs</DependentUpon>
@@ -262,12 +255,6 @@
     </Compile>
     <Compile Update="Project settings\HCItemProjectRibbonAndToolbarActionsForm.Designer.cs">
       <DependentUpon>HCItemProjectRibbonAndToolbarActionsForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\ContentBrowserRendererBase.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="Editor\ContentBrowserRendererTiles.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Update="Editor\FolderBrowserDialogEx.cs">
       <SubType>Component</SubType>
@@ -302,9 +289,6 @@
     </Compile>
     <Compile Update="Editor\StoreDocumentWindow.designer.cs">
       <DependentUpon>StoreDocumentWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\ImageListAdv.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Update="Components\Scripting\Component_CSharpScript_SettingsCell.cs" />
     <Compile Update="Editor\ComponentTypeSettingsForm.cs" />
@@ -970,11 +954,6 @@
       <CustomToolNamespace>ComponentFactory.Krypton.Workspace.Properties</CustomToolNamespace>
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Libraries\ObjectListView\Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>BrightIdeasSoftware.Properties</CustomToolNamespace>
     </EmbeddedResource>
     <EmbeddedResource Update="WinForms\EUserControl.resx">
       <DependentUpon>EUserControl.cs</DependentUpon>

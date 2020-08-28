@@ -37,12 +37,16 @@ namespace NeoAxis.Editor
 			contentBrowser1.Options.ListMode = ContentBrowser.ListModeEnum.Tiles;
 			contentBrowser1.UseSelectedTreeNodeAsRootForList = false;
 			contentBrowser1.Options.Breadcrumb = false;
-			contentBrowser1.Options.TileImageSize = 128;
+			contentBrowser1.Options.TileImageSize = 100;
+			//contentBrowser1.Options.TileImageSize = 128;
 			contentBrowser1.ShowToolBar = false;
 			contentBrowser1.ItemAfterSelect += Browser_ItemAfterSelect;
 			userControl.Controls.Add( this.contentBrowser1 );
-			
-			userControl.Height = ( 128 + ContentBrowserRendererTiles.TilePadding.Height + 4 ) * 2;
+
+			//!!!!
+			// image size + side padding + two lines of text for height
+			Size tilePadding = DpiHelper.Default.ScaleValue( new Size( 30, 40 ) );
+			userControl.Height = ( 128 + tilePadding.Height + 4 ) * 2;
 
 			//add items
 			try
@@ -51,7 +55,7 @@ namespace NeoAxis.Editor
 
 				foreach( var template in Component_Scene.NewObjectSettingsScene.GetTemplates() )
 				{
-					contentBrowser1.ImageHelper.AddImage( template.Name, null, template.Preview );
+					contentBrowser1.AddImageKey( template.Name, template.Preview );
 
 					var item = new ContentBrowserItem_Virtual( contentBrowser1, null, template.ToString() );
 					item.Tag = template;
@@ -67,7 +71,8 @@ namespace NeoAxis.Editor
 			}
 			catch( Exception exc )
 			{
-				contentBrowser1.SetError( "Error: " + exc.Message );
+				Log.Warning( exc.Message );
+				//contentBrowser1.SetError( "Error: " + exc.Message );
 			}
 
 			return userControl;

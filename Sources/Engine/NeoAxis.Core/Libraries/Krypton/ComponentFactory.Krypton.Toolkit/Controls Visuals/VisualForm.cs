@@ -917,10 +917,10 @@ namespace ComponentFactory.Krypton.Toolkit
             //SuspendPaint();
         }
 
-        //private int _inWmWindowPosChanged;
+        private int _inWmWindowPosChanged;
         private bool _creatingHandle = false;
-        //private Size _savedClientSize;
-        //private bool _shouldPatchClientSize;
+        private Size _savedClientSize;
+        private bool _shouldPatchClientSize;
 
         protected override void CreateHandle()
         {
@@ -951,40 +951,37 @@ namespace ComponentFactory.Krypton.Toolkit
 
         protected override void OnSizeChanged(EventArgs e)
         {
-            //!!!!new
-            //if (IsCustomHeader && FormBorderStyle != FormBorderStyle.None && (ControlBox || !string.IsNullOrEmpty(Text)) && WindowState == FormWindowState.Normal)
-            //    PatchClientSize();
-            //else if (_shouldPatchClientSize && WindowState != FormWindowState.Minimized)
-            //    PatchClientSize();
+            if( IsCustomHeader && FormBorderStyle != FormBorderStyle.None && ( ControlBox || !string.IsNullOrEmpty( Text ) ) && WindowState == FormWindowState.Normal )
+                PatchClientSize();
+            else if( _shouldPatchClientSize && WindowState != FormWindowState.Minimized )
+                PatchClientSize();
 
             base.OnSizeChanged(e);
         }
 
         protected override void OnClientSizeChanged(EventArgs e)
         {
-            //!!!!new
-            //if( _shouldPatchClientSize)
-            //    PatchClientSize();
+            if( _shouldPatchClientSize )
+                PatchClientSize();
             base.OnClientSizeChanged(e);
         }
 
-        //!!!!new
-        //private void PatchClientSize()
-        //{
-            //_savedClientSize = GetClientSizeFromSize(Size);
+        private void PatchClientSize()
+        {
+            _savedClientSize = GetClientSizeFromSize( Size );
 
-            //if (ClientSize != _savedClientSize)
-            //{
-            //    var before = ClientSize;
+            if( ClientSize != _savedClientSize )
+            {
+                var before = ClientSize;
 
-            //    FieldInfo fiWidth = typeof(Control).GetField("_clientWidth", BindingFlags.Instance | BindingFlags.NonPublic);
-            //    FieldInfo fiHeight = typeof(Control).GetField("_clientHeight", BindingFlags.Instance | BindingFlags.NonPublic);
-            //    fiWidth.SetValue(this, _savedClientSize.Width);
-            //    fiHeight.SetValue(this, _savedClientSize.Height);
+                FieldInfo fiWidth = typeof( Control ).GetField( "_clientWidth", BindingFlags.Instance | BindingFlags.NonPublic );
+                FieldInfo fiHeight = typeof( Control ).GetField( "_clientHeight", BindingFlags.Instance | BindingFlags.NonPublic );
+                fiWidth.SetValue( this, _savedClientSize.Width );
+                fiHeight.SetValue( this, _savedClientSize.Height );
 
-            //    //Debug.WriteLine($"EDITOR: PatchClientSize(): ClientSize={before} => {ClientSize}");
-            //}
-        //}
+                //Debug.WriteLine($"EDITOR: PatchClientSize(): ClientSize={before} => {ClientSize}");
+            }
+        }
 
         /// <summary>
         /// Recalc Size from ClientSize
@@ -993,44 +990,43 @@ namespace ComponentFactory.Krypton.Toolkit
         /// <param name="y"></param>
         protected override void SetClientSizeCore(int x, int y)
         {
-            //!!!!new
-
             base.SetClientSizeCore( x, y );
 
-            //if( !IsCustomHeader)
-            //{
-            //    base.SetClientSizeCore(x, y);
+            //if( !IsCustomHeader )
             //    return;
-            //}
 
-            //FieldInfo clientWidthField = typeof(Control).GetField("clientWidth", BindingFlags.Instance | BindingFlags.NonPublic);
-            //FieldInfo clientHeightField = typeof(Control).GetField("clientHeight", BindingFlags.Instance | BindingFlags.NonPublic);
-            //FieldInfo formStateSetClientSizeField = typeof(Form).GetField("FormStateSetClientSize", BindingFlags.Static | BindingFlags.NonPublic);
-            //FieldInfo formStateField = typeof(Form).GetField("formState", BindingFlags.Instance | BindingFlags.NonPublic);
-
-            //if (clientWidthField != null && clientHeightField != null &&
-            //    formStateField != null && formStateSetClientSizeField != null)
+            //try
             //{
-            //    Size = SizeFromClientSize(new Size(x, y));
+            //    FieldInfo clientWidthField = typeof( Control ).GetField( "_clientWidth", BindingFlags.Instance | BindingFlags.NonPublic );
+            //    FieldInfo clientHeightField = typeof( Control ).GetField( "_clientHeight", BindingFlags.Instance | BindingFlags.NonPublic );
+            //    FieldInfo formStateSetClientSizeField = typeof( Form ).GetField( "FormStateSetClientSize", BindingFlags.Static | BindingFlags.NonPublic );
+            //    FieldInfo formStateField = typeof( Form ).GetField( "formState", BindingFlags.Instance | BindingFlags.NonPublic );
 
-            //    clientWidthField.SetValue(this, x);
-            //    clientHeightField.SetValue(this, y);
+            //    if( clientWidthField != null && clientHeightField != null &&
+            //        formStateField != null && formStateSetClientSizeField != null )
+            //    {
+            //        Size = SizeFromClientSize( new Size( x, y ) );
 
-            //    //Debug.WriteLine($"EDITOR: SetClientSizeCore(): ClientSize={new Size(x, y)} Size={Size}");
+            //        clientWidthField.SetValue( this, x );
+            //        clientHeightField.SetValue( this, y );
 
-            //    BitVector32.Section index = (BitVector32.Section)formStateSetClientSizeField.GetValue(this);
-            //    BitVector32 bitVector32 = (BitVector32)formStateField.GetValue(this);
+            //        //Debug.WriteLine($"EDITOR: SetClientSizeCore(): ClientSize={new Size(x, y)} Size={Size}");
 
-            //    bitVector32[index] = 1;
-            //    formStateField.SetValue(this, bitVector32);
+            //        BitVector32.Section index = (BitVector32.Section)formStateSetClientSizeField.GetValue( this );
+            //        BitVector32 bitVector32 = (BitVector32)formStateField.GetValue( this );
 
-            //    this.OnClientSizeChanged(EventArgs.Empty);
+            //        bitVector32[ index ] = 1;
+            //        formStateField.SetValue( this, bitVector32 );
 
-            //    bitVector32[index] = 0;
-            //    formStateField.SetValue(this, bitVector32);
+            //        this.OnClientSizeChanged( EventArgs.Empty );
+
+            //        bitVector32[ index ] = 0;
+            //        formStateField.SetValue( this, bitVector32 );
+            //    }
+            //    else
+            //        base.SetClientSizeCore( x, y );
             //}
-            //else
-            //    base.SetClientSizeCore(x, y);
+            //catch { }
         }
 
         /// <summary>
@@ -1108,46 +1104,44 @@ namespace ComponentFactory.Krypton.Toolkit
         /// <returns></returns>
         protected virtual Size PatchFormSizeInRestoreWindowBoundsIfNecessary(int width, int height)
         {
-            //!!!!new
-            //if (IsCustomHeader && WindowState == FormWindowState.Normal && _inWmWindowPosChanged > 0)
-            //{
-            //    try
-            //    {
-            //        FieldInfo restoredWindowBoundsSpecifiedField = typeof(Form).GetField("restoredWindowBoundsSpecified", BindingFlags.Instance | BindingFlags.NonPublic);
-            //        BoundsSpecified restoredSpecified = (BoundsSpecified)restoredWindowBoundsSpecifiedField.GetValue(this);
-            //        if ((restoredSpecified & BoundsSpecified.Size) != BoundsSpecified.None)
-            //        {
-            //            FieldInfo restoredWindowBoundsField = typeof(Form).GetField("restoredWindowBounds", BindingFlags.Instance | BindingFlags.NonPublic);
-            //            if (restoredWindowBoundsField != null)
-            //            {
-            //                Rectangle restoredWindowBounds = (Rectangle)restoredWindowBoundsField.GetValue(this);
-            //                if (IsFormStateClientSizeSet())
-            //                {
-            //                    width = restoredWindowBounds.Width + WindowMargin.Horizontal;
-            //                    height = restoredWindowBounds.Height + WindowMargin.Vertical;
-            //                }
-            //            }
-            //        }
-            //    }
-            //    catch
-            //    {
-            //    }
-            //}
+            if( IsCustomHeader && WindowState == FormWindowState.Normal && _inWmWindowPosChanged > 0 )
+            {
+                try
+                {
+                    FieldInfo restoredWindowBoundsSpecifiedField = typeof( Form ).GetField( "restoredWindowBoundsSpecified", BindingFlags.Instance | BindingFlags.NonPublic );
+                    BoundsSpecified restoredSpecified = (BoundsSpecified)restoredWindowBoundsSpecifiedField.GetValue( this );
+                    if( ( restoredSpecified & BoundsSpecified.Size ) != BoundsSpecified.None )
+                    {
+                        FieldInfo restoredWindowBoundsField = typeof( Form ).GetField( "restoredWindowBounds", BindingFlags.Instance | BindingFlags.NonPublic );
+                        if( restoredWindowBoundsField != null )
+                        {
+                            Rectangle restoredWindowBounds = (Rectangle)restoredWindowBoundsField.GetValue( this );
+                            if( IsFormStateClientSizeSet() )
+                            {
+                                width = restoredWindowBounds.Width + WindowMargin.Horizontal;
+                                height = restoredWindowBounds.Height + WindowMargin.Vertical;
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                }
+            }
 
             return new Size(width, height);
         }
 
-        //!!!!new
-        //private bool IsFormStateClientSizeSet()
-        //{
-        //    FieldInfo formStateExWindowBoundsWidthIsClientSize = typeof(Form).GetField("FormStateExWindowBoundsWidthIsClientSize", BindingFlags.Static | BindingFlags.NonPublic);
-        //    FieldInfo formStateEx = typeof(Form).GetField("formStateEx", BindingFlags.Instance | BindingFlags.NonPublic);
-        //    if (formStateExWindowBoundsWidthIsClientSize == null || formStateEx == null)
-        //        return false;
-        //    BitVector32.Section index = (BitVector32.Section)formStateExWindowBoundsWidthIsClientSize.GetValue(this);
-        //    BitVector32 state = (BitVector32)formStateEx.GetValue(this);
-        //    return state[index] == 1;
-        //}
+        private bool IsFormStateClientSizeSet()
+        {
+            FieldInfo formStateExWindowBoundsWidthIsClientSize = typeof( Form ).GetField( "FormStateExWindowBoundsWidthIsClientSize", BindingFlags.Static | BindingFlags.NonPublic );
+            FieldInfo formStateEx = typeof( Form ).GetField( "formStateEx", BindingFlags.Instance | BindingFlags.NonPublic );
+            if( formStateExWindowBoundsWidthIsClientSize == null || formStateEx == null )
+                return false;
+            BitVector32.Section index = (BitVector32.Section)formStateExWindowBoundsWidthIsClientSize.GetValue( this );
+            BitVector32 state = (BitVector32)formStateEx.GetValue( this );
+            return state[ index ] == 1;
+        }
 
         /// <summary>
         /// Raises the Activated event.
@@ -1354,20 +1348,20 @@ namespace ComponentFactory.Krypton.Toolkit
             {
                 switch (m.Msg)
                 {
-                //case PI.WM_MOVE:
-                //    {
-                //        if (IsCustomHeader && MdiParent == null && WindowState != FormWindowState.Maximized)
-                //            _shouldPatchClientSize = true;
-                //    }
-                //    break;
-                case PI.WM_WINDOWPOSCHANGED:
+                    case PI.WM_MOVE:
                         {
-                            //if (IsCustomHeader && MdiParent == null && WindowState != FormWindowState.Maximized)
-                            //    _shouldPatchClientSize = true;
+                            if( IsCustomHeader && MdiParent == null && WindowState != FormWindowState.Maximized )
+                                _shouldPatchClientSize = true;
+                        }
+                        break;
+                    case PI.WM_WINDOWPOSCHANGED:
+                        {
+                            if( IsCustomHeader && MdiParent == null && WindowState != FormWindowState.Maximized )
+                                _shouldPatchClientSize = true;
 
-                            //_inWmWindowPosChanged++;
+                            _inWmWindowPosChanged++;
                             base.WndProc(ref m);
-                            //_inWmWindowPosChanged--;
+                            _inWmWindowPosChanged--;
 
                             processed = true;
                         }
@@ -1461,7 +1455,7 @@ namespace ComponentFactory.Krypton.Toolkit
             if (!processed && m.Msg != PI.WM_GETMINMAXINFO)
                 base.WndProc(ref m);
 
-            //_shouldPatchClientSize = false;
+            _shouldPatchClientSize = false;
         }
 
         /// <summary>

@@ -384,13 +384,23 @@ namespace NeoAxis.Editor
 
 		public static float DPI
 		{
-			get { return EditorForm.Instance.dpi; }
+			get { return DpiHelper.Default.Dpi; }
 		}
 
 		public static float DPIScale
 		{
-			get { return DPI / 96.0f; }
+			get { return DpiHelper.Default.DpiScaleFactor; }
 		}
+
+		//public static float DPI
+		//{
+		//	get { return EditorForm.Instance.dpi; }
+		//}
+
+		//public static float DPIScale
+		//{
+		//	get { return DPI / 96.0f; }
+		//}
 
 		public static ObjectsInFocus GetObjectsInFocus( bool useOnlySelectedDocumentWindow )
 		{

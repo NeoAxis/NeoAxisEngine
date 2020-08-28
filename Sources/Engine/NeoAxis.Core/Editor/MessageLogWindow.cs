@@ -91,9 +91,9 @@ namespace NeoAxis.Editor
 
 			//configure list
 			contentBrowser1.SetData( new ContentBrowser.Item[ 0 ], false );
-			contentBrowser1.ImageHelper.AddImage( "Info", Properties.Resources.Info_16, Properties.Resources.Info_32 );
-			contentBrowser1.ImageHelper.AddImage( "Warning", Properties.Resources.Warning_16, Properties.Resources.Warning_32 );
-			contentBrowser1.ImageHelper.AddImage( "Error", Properties.Resources.Error_16, Properties.Resources.Error_32 );
+			contentBrowser1.AddImageKey( "Info", Properties.Resources.Info_16, Properties.Resources.Info_32 );
+			contentBrowser1.AddImageKey( "Warning", Properties.Resources.Warning_16, Properties.Resources.Warning_32 );
+			contentBrowser1.AddImageKey( "Error", Properties.Resources.Error_16, Properties.Resources.Error_32 );
 
 			Config_Load();
 			EngineConfig.SaveEvent += Config_SaveEvent;
@@ -102,8 +102,7 @@ namespace NeoAxis.Editor
 			toolStripButtonOptions.Text = EditorLocalization.Translate( "MessageLogWindow", toolStripButtonOptions.Text );
 			toolStripButtonClear.Text = EditorLocalization.Translate( "MessageLogWindow", toolStripButtonClear.Text );
 
-			if( EditorAPI.DarkTheme )
-				toolStrip1.Renderer = DarkThemeUtility.GetToolbarToolStripRenderer();
+			toolStrip1.Renderer = EditorThemeUtility.GetToolbarToolStripRenderer();
 		}
 
 		public override bool HideOnRemoving { get { return true; } }

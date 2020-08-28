@@ -21,8 +21,7 @@ namespace NeoAxis.Editor
 			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
-			if( EditorAPI.DarkTheme )
-				toolStrip1.Renderer = DarkThemeUtility.GetToolbarToolStripRenderer();
+			toolStrip1.Renderer = EditorThemeUtility.GetToolbarToolStripRenderer();
 
 			//double distance = 22.0 * EditorAPI.DPIScale;
 			//kryptonSplitContainer2.Panel1MinSize = (int)distance;

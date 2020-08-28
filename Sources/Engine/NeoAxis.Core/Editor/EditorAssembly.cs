@@ -49,9 +49,6 @@ namespace NeoAxis.Editor
 
 		public abstract Type GetTypeByName( string typeName );
 
-		public abstract void ContentBrowserRendererBase_DrawText( ContentBrowserRendererBase _this, Graphics g, System.Drawing.Rectangle r, string txt, Color foreColor, bool wordWrap );
-		public abstract Size ContentBrowserRendererBase_CalculateTextSize( ContentBrowserRendererBase _this, Graphics g, string txt, int width, bool wordWrap );
-
 		public interface ITextEditorControl
 		{
 			string EditorText { get; set; }

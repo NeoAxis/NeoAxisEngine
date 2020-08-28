@@ -8,14 +8,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using NeoAxis.Widget;
+using ComponentFactory.Krypton.Toolkit;
 
 namespace NeoAxis.Editor
 {
 	/// <summary>
 	/// Represents the Start Page.
 	/// </summary>
-	public partial class StartPageWindow : DocumentWindow
+	public partial class StartPageWindow : DocumentWindow, ControlDoubleBufferComposited.IDoubleBufferComposited
 	{
 		string[] currentOpenScenes = new string[ 0 ];
 		double currentOpenScenesLastUpdate;
@@ -35,14 +35,15 @@ namespace NeoAxis.Editor
 			if( EditorAPI.DarkTheme )
 			{
 				BackColor = Color.FromArgb( 40, 40, 40 );
-				DarkThemeUtility.ApplyToToolTip( toolTip1 );
+				EditorThemeUtility.ApplyDarkThemeToToolTip( toolTip1 );
 			}
 
 			contentBrowserNewScene.Options.PanelMode = ContentBrowser.PanelModeEnum.List;
 			contentBrowserNewScene.Options.ListMode = ContentBrowser.ListModeEnum.Tiles;
 			contentBrowserNewScene.UseSelectedTreeNodeAsRootForList = false;
 			contentBrowserNewScene.Options.Breadcrumb = false;
-			contentBrowserNewScene.Options.TileImageSize = 128;
+			contentBrowserNewScene.Options.TileImageSize = 100;
+			//contentBrowserNewScene.Options.TileImageSize = 128;
 
 			//add items
 			try
@@ -52,7 +53,7 @@ namespace NeoAxis.Editor
 				//scenes
 				foreach( var template in Component_Scene.NewObjectSettingsScene.GetTemplates() )
 				{
-					contentBrowserNewScene.ImageHelper.AddImage( template.Name, null, template.Preview );
+					contentBrowserNewScene.AddImageKey( template.Name, template.Preview );
 
 					var item = new ContentBrowserItem_Virtual( contentBrowserNewScene, null, template.ToString() + " scene" );
 					item.Tag = template;
@@ -75,7 +76,7 @@ namespace NeoAxis.Editor
 						}
 
 						if( previewImageNewUIControl != null )
-							contentBrowserNewScene.ImageHelper.AddImage( name, null, previewImageNewUIControl );
+							contentBrowserNewScene.AddImageKey( name, previewImageNewUIControl );
 
 						var item = new ContentBrowserItem_Virtual( contentBrowserNewScene, null, "UI Control" );
 						item.Tag = "UIControl";
@@ -97,7 +98,7 @@ namespace NeoAxis.Editor
 					}
 
 					if( previewImageNewResource != null )
-						contentBrowserNewScene.ImageHelper.AddImage( name, null, previewImageNewResource );
+						contentBrowserNewScene.AddImageKey( name, previewImageNewResource );
 
 					var item = new ContentBrowserItem_Virtual( contentBrowserNewScene, null, "Select type" );
 					item.Tag = "Resource";
@@ -139,7 +140,8 @@ namespace NeoAxis.Editor
 			}
 			catch( Exception exc )
 			{
-				contentBrowserNewScene.SetError( "Error: " + exc.Message );
+				Log.Warning( exc.Message );
+				//contentBrowserNewScene.SetError( "Error: " + exc.Message );
 			}
 
 			contentBrowserNewScene.ItemAfterChoose += ContentBrowserNewScene_ItemAfterChoose;
@@ -149,10 +151,18 @@ namespace NeoAxis.Editor
 			contentBrowserOpenScene.Options.ListMode = ContentBrowser.ListModeEnum.List;
 			contentBrowserOpenScene.UseSelectedTreeNodeAsRootForList = false;
 			contentBrowserOpenScene.Options.Breadcrumb = false;
-			contentBrowserOpenScene.Options.ListImageSize = 18;
+
+			var imageSize = EditorAPI.DPIScale >= 1.25f ? 13 : 16;
+
+			contentBrowserOpenScene.Options.ListImageSize = imageSize;
 			contentBrowserOpenScene.Options.ListColumnWidth = 10000;
+			contentBrowserOpenScene.ListViewModeOverride = new EngineListView.DefaultListMode( contentBrowserOpenScene.GetListView(), imageSize );
+
+			contentBrowserOpenScene.PreloadResourceOnSelection = false;
 
 			UpdateOpenScenes();
+
+			WindowTitle = EditorLocalization.Translate( "StartPageWindow", WindowTitle );
 		}
 
 		private void StartPageWindow_Load( object sender, EventArgs e )
@@ -160,7 +170,6 @@ namespace NeoAxis.Editor
 			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
-			WindowTitle = EditorLocalization.Translate( "StartPageWindow", WindowTitle );
 			EditorLocalization.TranslateForm( "StartPageWindow", this );
 
 			timer1.Start();
@@ -175,6 +184,9 @@ namespace NeoAxis.Editor
 
 			kryptonButtonLightTheme.Enabled = ProjectSettings.Get.Theme.Value != Component_ProjectSettings.ThemeEnum.Light;
 			kryptonButtonDarkTheme.Enabled = ProjectSettings.Get.Theme.Value != Component_ProjectSettings.ThemeEnum.Dark;
+
+			kryptonCheckBoxMinimizeRibbon.Checked = EditorForm.Instance.kryptonRibbon.MinimizedMode;
+			kryptonCheckBoxShowQATBelowRibbon.Checked = EditorForm.Instance.kryptonRibbon.QATLocation == ComponentFactory.Krypton.Ribbon.QATLocation.Below;
 		}
 
 		private void timer1_Tick( object sender, EventArgs e )
@@ -384,13 +396,9 @@ namespace NeoAxis.Editor
 						var item = new ContentBrowserItem_File( contentBrowserOpenScene, null, realFileName, false );
 						item.SetText( file );
 						item.Tag = file;
-						item.imageKey = "Resource";
-						items.Add( item );
+						item.imageKey = "Scene";
 
-						//var item = new ContentBrowserItem_Virtual( contentBrowserOpenScene, null, file );
-						//item.Tag = file;
-						//item.imageKey = "Resource";
-						//items.Add( item );
+						items.Add( item );
 					}
 				}
 
@@ -400,9 +408,30 @@ namespace NeoAxis.Editor
 			}
 			catch( Exception exc )
 			{
-				contentBrowserOpenScene.SetError( "Error: " + exc.Message );
+				Log.Warning( exc.Message );
+				//contentBrowserOpenScene.SetError( "Error: " + exc.Message );
 			}
 
+		}
+
+		protected override CreateParams CreateParams
+		{
+			get
+			{
+				CreateParams handleParam = base.CreateParams;
+				handleParam.ExStyle |= 0x02000000;//WS_EX_COMPOSITED       
+				return handleParam;
+			}
+		}
+
+		private void kryptonCheckBoxMinimizeRibbon_CheckedChanged( object sender, EventArgs e )
+		{
+			EditorForm.Instance.kryptonRibbon.MinimizedMode = kryptonCheckBoxMinimizeRibbon.Checked;
+		}
+
+		private void kryptonCheckBoxShowQATBelowRibbon_CheckedChanged( object sender, EventArgs e )
+		{
+			EditorForm.Instance.kryptonRibbon.QATLocation = kryptonCheckBoxShowQATBelowRibbon.Checked ? ComponentFactory.Krypton.Ribbon.QATLocation.Below : ComponentFactory.Krypton.Ribbon.QATLocation.Above;
 		}
 	}
 }

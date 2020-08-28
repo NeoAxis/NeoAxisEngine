@@ -402,6 +402,7 @@ namespace ComponentFactory.Krypton.Navigator
             _buttonController.ClickOnDown = true;
             _buttonController.Click += new MouseEventHandler(OnClick);
             _buttonController.RightClick += new MouseEventHandler(OnRightClick);
+            _buttonController.MiddleClick += new MouseEventHandler( OnMiddleClick );
 
             // Allow the page to be dragged and hook into drag events
             _buttonController.AllowDragging = true;
@@ -502,6 +503,19 @@ namespace ComponentFactory.Krypton.Navigator
                 }
             }
         }
+
+        //!!!!betauser
+        /// <summary>
+        /// Processes the MiddleClick event from the button. 
+        /// </summary>
+        /// <param name="sender">Source of the event.</param>
+        /// <param name="e">An EventArgs containing the event data.</param>
+        protected virtual void OnMiddleClick( object sender, MouseEventArgs e )
+        {
+            if( _page != null )
+                Navigator.PerformCloseAction( _page );
+        }
+
         #endregion
 
         #region Implementation

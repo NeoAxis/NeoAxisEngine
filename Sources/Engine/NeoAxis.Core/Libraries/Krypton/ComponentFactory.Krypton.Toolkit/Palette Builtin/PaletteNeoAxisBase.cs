@@ -72,6 +72,7 @@ namespace ComponentFactory.Krypton.Toolkit
         private static readonly Image _disabledDropDown = Properties.Resources.DisabledDropDownButton;
         private static readonly Image _buttonSpecClose = Properties.Resources.ProfessionalCloseButton;
         private static readonly Image _buttonSpecContext = Properties.Resources.ProfessionalContextButton;
+        protected static readonly Image _buttonSpecContext_Dark = Properties.Resources.ProfessionalContextButton_Dark;
         private static readonly Image _buttonSpecNext = Properties.Resources.ProfessionalNextButton;
         private static readonly Image _buttonSpecPrevious = Properties.Resources.ProfessionalPreviousButton;
         private static readonly Image _buttonSpecArrowLeft = Properties.Resources.ProfessionalArrowLeftButton;

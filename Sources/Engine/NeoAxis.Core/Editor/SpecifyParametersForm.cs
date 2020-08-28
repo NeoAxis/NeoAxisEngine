@@ -151,7 +151,7 @@ namespace NeoAxis.Editor
 
 			labelError.Text = "";
 
-			DarkThemeUtility.ApplyToForm( this );
+			EditorThemeUtility.ApplyDarkThemeToForm( this );
 		}
 
 		private void OKCancelTextBoxForm_Load( object sender, EventArgs e )

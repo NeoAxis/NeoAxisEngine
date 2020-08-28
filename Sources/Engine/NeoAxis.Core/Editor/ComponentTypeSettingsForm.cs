@@ -147,7 +147,7 @@ namespace NeoAxis.Editor
 
 			hierarchicalContainer1.OverrideGroupDisplayName += HierarchicalContainer1_OverrideGroupDisplayName;
 
-			DarkThemeUtility.ApplyToForm( this );
+			EditorThemeUtility.ApplyDarkThemeToForm( this );
 
 			Text = EditorLocalization.Translate( "TypeSettingsForm", Text );
 			EditorLocalization.TranslateForm( "TypeSettingsForm", this );

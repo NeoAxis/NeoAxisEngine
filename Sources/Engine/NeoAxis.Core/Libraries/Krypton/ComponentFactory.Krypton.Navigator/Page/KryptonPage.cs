@@ -78,6 +78,10 @@ namespace ComponentFactory.Krypton.Navigator
         private LabelStyle _toolTipStyle;
         private KryptonContextMenu _kcm;
         private Size _autoHiddenSlideSize;
+
+        //!!!!betauser
+        //internal DateTime lastSelectedTime;
+
         #endregion
 
 		#region Events

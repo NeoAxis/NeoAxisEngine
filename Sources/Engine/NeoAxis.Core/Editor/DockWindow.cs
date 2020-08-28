@@ -37,7 +37,7 @@ namespace NeoAxis.Editor
 			if( IsDesignerHosted )
 				return;
 
-			DarkThemeUtility.ApplyToForm( this );
+			EditorThemeUtility.ApplyDarkThemeToForm( this );
 			//if( EditorAPI.DarkTheme )
 			//{
 			//	BackColor = Color.FromArgb( 54, 54, 54 );
@@ -77,6 +77,9 @@ namespace NeoAxis.Editor
 
 			if( KryptonPage != null )
 			{
+				if( Parent != null )
+					UpdateWindowTitle();
+
 				KryptonPage.Text = windowTitle;
 				KryptonPage.TextTitle = windowTitle;
 				//KryptonPage.TextDescription = windowTitle;
@@ -260,12 +263,6 @@ namespace NeoAxis.Editor
 		private void KryptonPage_ParentChanged( object sender, EventArgs e )
 		{
 			OnKryptonPageParentChanged();
-		}
-
-		//!!!!
-		protected override void OnVisibleChanged( EventArgs e )
-		{
-			base.OnVisibleChanged( e );
 		}
 	}
 }

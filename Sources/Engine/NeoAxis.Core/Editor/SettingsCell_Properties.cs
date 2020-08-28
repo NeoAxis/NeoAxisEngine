@@ -29,8 +29,7 @@ namespace NeoAxis.Editor
 			toolStripButtonProperties.Text = EditorLocalization.Translate( "SettingsWindow", toolStripButtonProperties.Text );
 			toolStripButtonEvents.Text = EditorLocalization.Translate( "SettingsWindow", toolStripButtonEvents.Text );
 
-			if( EditorAPI.DarkTheme )
-				toolStrip1.Renderer = DarkThemeUtility.GetToolbarToolStripRenderer();
+			toolStrip1.Renderer = EditorThemeUtility.GetToolbarToolStripRenderer();
 		}
 
 		private void SettingsCell_Properties_Load( object sender, EventArgs e )

@@ -20,6 +20,10 @@ namespace NeoAxis.Editor
 	///// </summary>
 	class WorkspaceControllerForForm : WorkspaceController
 	{
+		//!!!!
+		//public List<DockWindow> lastSelectedDockWindows = new List<DockWindow>();
+		//public bool needSelectLastSelectedDockWindow;
+
 		// class for window settings serialization/deserialization
 		internal class WindowConfig
 		{
@@ -300,6 +304,8 @@ namespace NeoAxis.Editor
 			{
 				base.OnDockWindowCloseRequest( window, out cancel );
 			}
+
+			//needSelectLastSelectedDockWindow = true;
 		}
 
 		protected override void OnDockWindowSaving( DockWindow window, DockPageSavingEventArgs e )

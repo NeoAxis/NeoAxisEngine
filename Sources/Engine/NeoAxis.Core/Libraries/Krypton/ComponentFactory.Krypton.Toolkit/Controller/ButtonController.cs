@@ -57,11 +57,17 @@ namespace ComponentFactory.Krypton.Toolkit
         /// Occurs when the mouse is used to right click the target.
         /// </summary>
         public event MouseEventHandler RightClick;
-        
+
+        //!!!!betauser
         /// <summary>
-		/// Occurs when the mouse is used to left select the target.
-		/// </summary>
-		public event MouseEventHandler MouseSelect;
+        /// Occurs when the mouse is used to right click the target.
+        /// </summary>
+        public event MouseEventHandler MiddleClick;
+
+        /// <summary>
+        /// Occurs when the mouse is used to left select the target.
+        /// </summary>
+        public event MouseEventHandler MouseSelect;
 
         /// <summary>
         /// Occurs when start of drag operation occurs.
@@ -373,6 +379,19 @@ namespace ComponentFactory.Krypton.Toolkit
 
                             // Indicate the right mouse was used on the button
                             OnRightClick(new MouseEventArgs(MouseButtons.Right, 1, pt.X, pt.Y, 0));
+                        }
+                    }
+                    //!!!!betauser
+                    else if( button == MouseButtons.Middle )
+                    {
+                        if( !_fixedPressed )
+                        {
+                            // Do we become fixed in the pressed state until RemoveFixed is called?
+                            if( BecomesRightFixed )
+                                _fixedPressed = true;
+
+                            // Indicate the right mouse was used on the button
+                            OnMiddleClick( new MouseEventArgs( MouseButtons.Right, 1, pt.X, pt.Y, 0 ) );
                         }
                     }
                 }
@@ -921,12 +940,23 @@ namespace ComponentFactory.Krypton.Toolkit
             if (RightClick != null)
                 RightClick(_target, e);
         }
-        
+
+        //!!!!betauser
         /// <summary>
-		/// Raises the MouseSelect event.
-		/// </summary>
-		/// <param name="e">A MouseEventArgs containing the event data.</param>
-		protected virtual void OnMouseSelect(MouseEventArgs e)
+        /// Raises the MiddleClick event.
+        /// </summary>
+        /// <param name="e">A MouseEventArgs containing the event data.</param>
+        protected virtual void OnMiddleClick( MouseEventArgs e )
+        {
+            if( MiddleClick != null )
+                MiddleClick( _target, e );
+        }
+
+        /// <summary>
+        /// Raises the MouseSelect event.
+        /// </summary>
+        /// <param name="e">A MouseEventArgs containing the event data.</param>
+        protected virtual void OnMouseSelect(MouseEventArgs e)
 		{
 			if (MouseSelect != null)
 				MouseSelect(_target, e);

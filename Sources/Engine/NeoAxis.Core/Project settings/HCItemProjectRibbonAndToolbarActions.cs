@@ -67,7 +67,7 @@ namespace NeoAxis.Editor
 									{
 										id = "Name_" + hcItem.imageCounter.ToString();
 										hcItem.images[ smallImage ] = id;
-										control.contentBrowserProject.ImageHelper.AddImage( id, smallImage, action.GetImageBig() );
+										control.contentBrowserProject.AddImageKey( id, smallImage, action.GetImageBig() );
 										hcItem.imageCounter++;
 									}
 									item.imageKey = id;
@@ -310,7 +310,7 @@ namespace NeoAxis.Editor
 						{
 							id = "Name_" + imageCounter.ToString();
 							images[ smallImage ] = id;
-							control.contentBrowserAll.ImageHelper.AddImage( id, smallImage, action.GetImageBig() );
+							control.contentBrowserAll.AddImageKey( id, smallImage, action.GetImageBig() );
 							imageCounter++;
 						}
 						item.imageKey = id;

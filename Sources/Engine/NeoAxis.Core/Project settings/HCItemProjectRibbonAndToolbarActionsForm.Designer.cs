@@ -85,7 +85,7 @@
 			this.contentBrowserAll.CanSelectObjectSettings = false;
 			this.contentBrowserAll.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.contentBrowserAll.FilteringMode = null;
-			this.contentBrowserAll.ListViewItemRendererOverride = null;
+			this.contentBrowserAll.ListViewModeOverride = null;
 			this.contentBrowserAll.Location = new System.Drawing.Point(0, 0);
 			this.contentBrowserAll.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
 			this.contentBrowserAll.Mode = NeoAxis.Editor.ContentBrowser.ModeEnum.Resources;
@@ -221,7 +221,7 @@
 			this.contentBrowserProject.CanSelectObjectSettings = false;
 			this.contentBrowserProject.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.contentBrowserProject.FilteringMode = null;
-			this.contentBrowserProject.ListViewItemRendererOverride = null;
+			this.contentBrowserProject.ListViewModeOverride = null;
 			this.contentBrowserProject.Location = new System.Drawing.Point(0, 0);
 			this.contentBrowserProject.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
 			this.contentBrowserProject.Mode = NeoAxis.Editor.ContentBrowser.ModeEnum.Resources;

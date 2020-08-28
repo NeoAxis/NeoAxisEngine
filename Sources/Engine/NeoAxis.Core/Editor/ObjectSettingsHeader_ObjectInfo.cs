@@ -29,8 +29,8 @@ namespace NeoAxis.Editor
 			if( IsDesignerHosted )
 				return;
 
-			DarkThemeUtility.ApplyToForm( this );
-			DarkThemeUtility.ApplyToToolTip( toolTip1 );
+			EditorThemeUtility.ApplyDarkThemeToForm( this );
+			EditorThemeUtility.ApplyDarkThemeToToolTip( toolTip1 );
 
 			toolTip1.SetToolTip( buttonTypeSettings, EditorLocalization.Translate( "SettingsWindow", "Type Settings" ) );
 			toolTip1.SetToolTip( buttonTypeSettingsDefaultValue, EditorLocalization.Translate( "SettingsWindow", "Reset Type Settings to default." ) );

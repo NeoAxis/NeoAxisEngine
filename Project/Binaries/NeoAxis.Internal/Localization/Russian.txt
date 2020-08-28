@@ -40,6 +40,7 @@ Ribbon.Group|C# Project|C# проект
 Ribbon.Group|External IDE|Внешняя IDE
 Ribbon.Group|Debug|Отладка
 Ribbon.Group|Document|Документ
+Ribbon.Group|External|Внешний
 
 Ribbon.Tab|Builder 3D|Строитель 3D
 Ribbon.Tab|Home|Базовые
@@ -72,7 +73,7 @@ Backstage|Cancel|Отмена
 Backstage|Create|Создать
 Backstage|Copy of this project|Копия этого проекта
 Backstage|Login|Логин
-Backstage|Default project (Use NeoAxis Launcher or initial source package to create default project)|Проект по умолчанию (Используйте NeoAxis Launcher или начальный пакет исходных кодов для создания проекта по умолчанию)
+Backstage|Initial project (Use NeoAxis Launcher or initial source package to create default project)|Начальный проект (Используйте NeoAxis Launcher или пакет исходных кодов для создания чистого проекта)
 Backstage|Destination folder '{0}' is not empty. Clear folder and continue?|Папка назначения '{0}' не пуста. Очистить папку и продолжить?
 Backstage|The project was created successfully.|Проект успешно создан.
 Backstage|The product was built successfully.|Продукт успешно построен.
@@ -82,6 +83,14 @@ Backstage|Not registered.|Не зарегистрирован.
 Backstage|Password|Пароль
 Backstage|Register|Регистрация
 Backstage|Registered|Зарегистрирован
+Backstage|Install 'Platform Tools' from the Packages to unlock all platforms.|Установите 'Platform Tools' в окне пакетов для разблокирования всех платформ.
+Backstage|Balance|Баланс
+Backstage|Buy Tokens|Купить токены
+Backstage|Make Donation|Пожертвовать
+Backstage|NeoAxis Tokens|NeoAxis токены
+Backstage|Support the development of NeoAxis Engine!|Поддержать разработку NeoAxis Engine!
+Backstage|What is it?|Что это?
+Backstage|Withdraw|Вывести
 
 Ribbon.Action|Add\nCollision|Добавить\nфизику
 Ribbon.Action|Add\nLayer|Добавить\nслой
@@ -195,6 +204,7 @@ Ribbon.Action|Sources\nSolution|Решение\nSources
 Ribbon.Action|Add\nProperty|Добавить\nСвойство
 Ribbon.Action|Find\nResource|Найти\nРесурс
 Ribbon.Action|Start\nPage|Стартовая\nСтраница
+Ribbon.Action|Build|Построить
 
 Windows|Preview|Предпросмотр
 Windows|Resources|Ресурсы
@@ -944,3 +954,8 @@ StartPageWindow|Open Scene|Открыть сцену
 StartPageWindow|Open Store|Магазин
 StartPageWindow|Select theme|Выбрать тему
 StartPageWindow|Start Page|Стартовая страница
+StartPageWindow|Create|Создать
+StartPageWindow|Editor configuration|Конфигурация редактора
+StartPageWindow|Minimize the Ribbon|Минимизировать ленту
+StartPageWindow|New resource|Новый ресурс
+StartPageWindow|Show Quick Access Toolbar below the Ribbon|Показывать панель быстрого доступа под лентой

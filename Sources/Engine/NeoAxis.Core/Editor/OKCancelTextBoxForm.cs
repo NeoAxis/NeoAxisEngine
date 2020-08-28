@@ -39,7 +39,7 @@ namespace NeoAxis.Editor
 
 			labelError.Text = "";
 
-			DarkThemeUtility.ApplyToForm( this );
+			EditorThemeUtility.ApplyDarkThemeToForm( this );
 
 			buttonOK.Text = EditorLocalization.Translate( "General", buttonOK.Text );
 			buttonCancel.Text = EditorLocalization.Translate( "General", buttonCancel.Text );

@@ -67,7 +67,7 @@
 			this.contentBrowserAll.CanSelectObjectSettings = false;
 			this.contentBrowserAll.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.contentBrowserAll.FilteringMode = null;
-			this.contentBrowserAll.ListViewItemRendererOverride = null;
+			this.contentBrowserAll.ListViewModeOverride = null;
 			this.contentBrowserAll.Location = new System.Drawing.Point(0, 0);
 			this.contentBrowserAll.Margin = new System.Windows.Forms.Padding(4);
 			this.contentBrowserAll.Mode = NeoAxis.Editor.ContentBrowser.ModeEnum.Resources;

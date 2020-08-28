@@ -4,13 +4,16 @@ using System.Collections;
 using System.Drawing;
 using System.Windows.Forms;
 using ComponentFactory.Krypton.Toolkit;
-using NeoAxis.Editor;
 
-namespace NeoAxis
+namespace NeoAxis.Editor
 {
-	public static class DarkThemeUtility
+	public static class EditorThemeUtility
 	{
-		class DarkToolStripRenderer : ToolStripRenderer
+		static MyToolStripRenderer toolStripRenderer;
+
+		///////////////////////////////////////////////
+
+		class MyToolStripRenderer : ToolStripRenderer
 		{
 			protected override void OnRenderItemBackground( ToolStripItemRenderEventArgs e )
 			{
@@ -33,19 +36,19 @@ namespace NeoAxis
 				if( item.Selected )
 				{
 					draw = true;
-					color = Color.FromArgb( 90, 90, 90 );
+					color = EditorAPI.DarkTheme ? Color.FromArgb( 90, 90, 90 ) : Color.FromArgb( 197, 197, 197 );
 				}
 
 				if( item.Checked )
 				{
 					draw = true;
-					color = Color.FromArgb( 90, 90, 90 );
+					color = EditorAPI.DarkTheme ? Color.FromArgb( 90, 90, 90 ) : Color.FromArgb( 197, 197, 197 );
 				}
 
 				if( item.Pressed )
 				{
 					draw = true;
-					color = Color.FromArgb( 110, 110, 110 );
+					color = EditorAPI.DarkTheme ? Color.FromArgb( 110, 110, 110 ) : Color.FromArgb( 174, 174, 174 );
 				}
 
 				if( draw )
@@ -72,7 +75,7 @@ namespace NeoAxis
 				if( item.Selected )
 				{
 					draw = true;
-					color = Color.FromArgb( 90, 90, 90 );
+					color = EditorAPI.DarkTheme ? Color.FromArgb( 90, 90, 90 ) : Color.FromArgb( 197, 197, 197 );
 				}
 
 				//if( item.Checked )
@@ -84,7 +87,7 @@ namespace NeoAxis
 				if( item.Pressed )
 				{
 					draw = true;
-					color = Color.FromArgb( 110, 110, 110 );
+					color = EditorAPI.DarkTheme ? Color.FromArgb( 110, 110, 110 ) : Color.FromArgb( 174, 174, 174 );
 				}
 
 				if( draw )
@@ -101,8 +104,7 @@ namespace NeoAxis
 
 			protected override void OnRenderArrow( ToolStripArrowRenderEventArgs e )
 			{
-				if( EditorAPI.DarkTheme )
-					e.ArrowColor = Color.FromArgb( 140, 140, 140 );
+				e.ArrowColor = EditorAPI.DarkTheme ? Color.FromArgb( 140, 140, 140 ) : Color.FromArgb( 59, 59, 59 );
 
 				base.OnRenderArrow( e );
 			}
@@ -136,7 +138,9 @@ namespace NeoAxis
 			void DrawSeparator( Graphics g, ToolStripItem item, System.Drawing.Rectangle bounds, bool vertical )
 			{
 #if !DEPLOY
-				using( Pen pen = new Pen( Color.FromArgb( 30, 30, 30 ) ) )
+				var color = EditorAPI.DarkTheme ? Color.FromArgb( 30, 30, 30 ) : Color.FromArgb( 210, 210, 210 );
+
+				using( Pen pen = new Pen( color ) )
 				{
 					var bounds2 = bounds;
 					bounds2.Y += 2;
@@ -164,7 +168,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		public static void ApplyToForm( Control control )
+		public static void ApplyDarkThemeToForm( Control control )
 		{
 			if( EditorAPI.DarkTheme )
 			{
@@ -212,7 +216,7 @@ namespace NeoAxis
 			}
 		}
 
-		//public static void ApplyToSplitter( KryptonSplitContainer control )
+		//public static void ApplyDarkThemeToSplitter( KryptonSplitContainer control )
 		//{
 		//	if( EditorAPI.DarkTheme )
 		//		control.StateNormal.Back.Color1 = Color.FromArgb( 90, 90, 90 );// 40, 40, 40 );
@@ -225,7 +229,7 @@ namespace NeoAxis
 			e.DrawText( TextFormatFlags.HidePrefix | TextFormatFlags.Left | TextFormatFlags.VerticalCenter );
 		}
 
-		public static void ApplyToToolTip( ToolTip control )
+		public static void ApplyDarkThemeToToolTip( ToolTip control )
 		{
 			if( EditorAPI.DarkTheme && !control.OwnerDraw )
 			{
@@ -237,14 +241,11 @@ namespace NeoAxis
 			}
 		}
 
-		//public static bool Enabled
-		//{
-		//	get { return EditorAPI.DarkTheme; }
-		//}
-
 		public static ToolStripRenderer GetToolbarToolStripRenderer()
 		{
-			return new DarkToolStripRenderer();
+			if( toolStripRenderer == null )
+				toolStripRenderer = new MyToolStripRenderer();
+			return toolStripRenderer;
 		}
 	}
 }

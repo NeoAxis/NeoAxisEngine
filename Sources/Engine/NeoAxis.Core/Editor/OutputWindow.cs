@@ -63,8 +63,7 @@ namespace NeoAxis.Editor
 			toolStripButtonOptions.Text = EditorLocalization.Translate( "OutputWindow", toolStripButtonOptions.Text );
 			toolStripButtonClear.Text = EditorLocalization.Translate( "OutputWindow", toolStripButtonClear.Text );
 
-			if( EditorAPI.DarkTheme )
-				toolStrip1.Renderer = DarkThemeUtility.GetToolbarToolStripRenderer();
+			toolStrip1.Renderer = EditorThemeUtility.GetToolbarToolStripRenderer();
 		}
 
 		public override bool HideOnRemoving { get { return true; } }

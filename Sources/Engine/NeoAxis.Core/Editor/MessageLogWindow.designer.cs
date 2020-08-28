@@ -111,7 +111,7 @@ namespace NeoAxis.Editor
 			this.contentBrowser1.CanSelectObjectSettings = false;
 			this.contentBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.contentBrowser1.FilteringMode = null;
-			this.contentBrowser1.ListViewItemRendererOverride = null;
+			this.contentBrowser1.ListViewModeOverride = null;
 			this.contentBrowser1.Location = new System.Drawing.Point(0, 0);
 			this.contentBrowser1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.contentBrowser1.Mode = NeoAxis.Editor.ContentBrowser.ModeEnum.Objects;
