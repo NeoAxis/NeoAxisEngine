@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
@@ -67,7 +67,7 @@ namespace RoslynPad.Roslyn.SignatureHelp
                 if (items.SelectedItemIndex == null)
                 {
                     var selection = DefaultSignatureHelpSelector.GetSelection(items.Items, null, false, items.ArgumentIndex, items.ArgumentCount, items.ArgumentName, isCaseSensitive: true);
-                    if (selection.SelectedItem != null)
+                    if ( selection.SelectedItem != null)
                     {
                         items.SelectedItemIndex = items.Items.IndexOf(selection.SelectedItem);
                     }
@@ -133,7 +133,7 @@ namespace RoslynPad.Roslyn.SignatureHelp
                 IList<SignatureHelpItem> filteredItems, int selectedParameter, int argumentCount, string name, bool isCaseSensitive)
             {
                 // If the current item is still applicable, then just keep it.
-                if (filteredItems.Contains(currentItem) &&
+                if ( currentItem != null && filteredItems.Contains(currentItem) &&
                     IsApplicable(currentItem, argumentCount, name, isCaseSensitive))
                 {
                     // If the current item was user-selected, we keep it as such.
@@ -166,7 +166,7 @@ namespace RoslynPad.Roslyn.SignatureHelp
                 // If we don't have an item that can take that number of parameters, then just pick
                 // the last item.  Or stick with the current item if the last item isn't any better.
                 var lastItem = filteredItems.Last();
-                if (currentItem.IsVariadic || currentItem.Parameters.Length == lastItem.Parameters.Length)
+                if ( currentItem != null && (currentItem.IsVariadic || currentItem.Parameters.Length == lastItem.Parameters.Length))
                 {
                     return;
                 }
