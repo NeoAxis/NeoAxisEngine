@@ -25,10 +25,12 @@ Royalty-free platform with source code provided.
 </ul>
 
 <h2>Building</h2>
-Build NeoAxis from sources is very easy. You need Visual Studio 2019 or another C# IDE with .NET Core 3.1 support. The native code is already compiled. What need to build:
+Build NeoAxis from sources is very easy. You need Visual Studio 2019 or another C# IDE with .NET Core 3.1 support. The native code is already compiled.
+
+What need to build:
 <ul>
-<li>Visual Studio 2019 - NeoAxis.Managed.All.VS2019.Windows.sln - Restore NuGet packets before compilation.</li>
-<li>Visual Studio Code, Rider - NeoAxis.Managed.ProjectOnly.AnyIDE.sln.</li>
+<li>Full compilation - Visual Studio 2019 - NeoAxis.Managed.All.VS2019.Windows.sln - Restore NuGet packets.</li>
+<li>Project compilation - Visual Studio Code, Rider - NeoAxis.Managed.ProjectOnly.AnyIDE.sln.</li>
 <li>.NET Core 3.1.</li>
 <li>Download Sci-fi Demo and Nature Demo from the Asset Store window.</li>
 </ul>
