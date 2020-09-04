@@ -61,6 +61,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoAxis.CoreExtension.UWP", "..\Project\Sources\NeoAxis.CoreExtension\NeoAxis.CoreExtension.UWP.csproj", "{5AC5DA1A-BB1C-419E-A8F6-ECE12B62E731}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project.UWP", "..\Project\Project.UWP.csproj", "{1479C4F8-80D1-4313-9657-ACC6FB8815EB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EAC808E4-37A9-4C48-833B-A125CB1AA4AD} = {EAC808E4-37A9-4C48-833B-A125CB1AA4AD}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoAxis.Stubs.UWP", "Engine\NeoAxis.Stubs\NeoAxis.Stubs.UWP.csproj", "{77341505-5B07-4CA9-933E-EBF69C25AC8B}"
 EndProject

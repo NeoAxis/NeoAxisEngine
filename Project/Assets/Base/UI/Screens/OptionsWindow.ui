@@ -100,9 +100,9 @@
 			4 = SSAAx3
 			5 = SSAAx4
 		}
-		.component NeoAxis.UIScrollBar
+		.component NeoAxis.UIScroll
 		{
-			Name = ScrollBar
+			Name = Scroll
 			CanBeSelected = False
 			Size = Units 30 400
 			HorizontalAlignment = Right
@@ -123,9 +123,9 @@
 			Count = 1
 			0 = Default
 		}
-		.component NeoAxis.UIScrollBar
+		.component NeoAxis.UIScroll
 		{
-			Name = ScrollBar
+			Name = Scroll
 			CanBeSelected = False
 			Size = Units 30 400
 			HorizontalAlignment = Right

@@ -5,20 +5,33 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
 
-//!!!!Work in progress
-
 namespace NeoAxis
 {
 	/// <summary>
-	/// Manages a related set of tab pages.
+	/// Represents a control that contains multiple items that share the same space on the screen.
 	/// </summary>
 	public class UITabControl : UIControl
 	{
+		bool needRecreateButtons = true;
+
+		//
+
 		[DefaultValue( null )]
 		public Reference<UIButton> Button
 		{
 			get { if( _button.BeginGet() ) Button = _button.Get( this ); return _button.value; }
-			set { if( _button.BeginSet( ref value ) ) { try { ButtonChanged?.Invoke( this ); } finally { _button.EndSet(); } } }
+			set
+			{
+				if( _button.BeginSet( ref value ) )
+				{
+					try
+					{
+						ButtonChanged?.Invoke( this );
+						needRecreateButtons = true;
+					}
+					finally { _button.EndSet(); }
+				}
+			}
 		}
 		/// <summary>Occurs when the <see cref="Button"/> property value changes.</summary>
 		public event Action<UITabControl> ButtonChanged;
@@ -46,24 +59,23 @@ namespace NeoAxis
 		public event Action<UITabControl> SideChanged;
 		ReferenceField<SideEnum> _side = SideEnum.Top;
 
+		[DefaultValue( "Units 4 4" )]
+		public Reference<UIMeasureValueVector2> ButtonIndents
+		{
+			get { if( _buttonIndents.BeginGet() ) ButtonIndents = _buttonIndents.Get( this ); return _buttonIndents.value; }
+			set { if( _buttonIndents.BeginSet( ref value ) ) { try { ButtonIndentsChanged?.Invoke( this ); } finally { _buttonIndents.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ButtonIndents"/> property value changes.</summary>
+		public event Action<UITabControl> ButtonIndentsChanged;
+		ReferenceField<UIMeasureValueVector2> _buttonIndents = new UIMeasureValueVector2( UIMeasure.Units, 4, 4 );
+
 		/// <summary>
 		/// The index of the selected page.
 		/// </summary>
 		[DefaultValue( 0 )]
 		public int SelectedIndex
 		{
-			get
-			{
-				return selectedIndex;
-
-				//var buttons = GetAllButtons();
-				//for( int n = 0; n < buttons.Count; n++ )
-				//{
-				//	if( buttons[ n ].Highlighted.Value )
-				//		return n;
-				//}
-				//return -1;
-			}
+			get { return selectedIndex; }
 			set
 			{
 				if( value == SelectedIndex )
@@ -112,10 +124,7 @@ namespace NeoAxis
 		{
 			base.NewObjectSetDefaultConfiguration( createdFromNewObjectWindow );
 
-			//!!!!
-			//!!!!в стиль?
-			BackgroundColor = new ColorValue( 0, 0, 0 );
-
+			//create pages by default
 			for( int n = 1; n <= 3; n++ )
 			{
 				var page = CreateComponent<UIControl>();
@@ -123,11 +132,11 @@ namespace NeoAxis
 				page.Text = n.ToString();
 
 				if( n == 1 )
-					page.BackgroundColor = new ColorValue( 0.5, 0, 0, 1 );
+					page.BackgroundColor = new ColorValue( 0.5, 0, 0 );
 				else if( n == 2 )
-					page.BackgroundColor = new ColorValue( 0, 0.5, 0, 1 );
+					page.BackgroundColor = new ColorValue( 0, 0.5, 0 );
 				else
-					page.BackgroundColor = new ColorValue( 0, 0, 0.5, 1 );
+					page.BackgroundColor = new ColorValue( 0, 0, 0.5 );
 			}
 
 			UpdateControls();
@@ -136,37 +145,28 @@ namespace NeoAxis
 		Rectangle GetPagesParentRectangle()
 		{
 			var side = Side.Value;
-			if( side != SideEnum.None )
-			{
-				//!!!!
-				UIButton button = null;
 
-				if( button != null )
+			if( side == SideEnum.None )
+				return new Rectangle( 0, 0, 1.0, 1.0 );
+			else
+			{
+				var buttons = GetAllButtons();
+				if( buttons.Count > 0 )
 				{
-					var buttonSize = ConvertScreenToLocal( button.GetScreenSize() );
+					var buttonSize = ConvertOffset( new UIMeasureValueVector2( UIMeasure.Screen, buttons[ 0 ].GetScreenSize() ), UIMeasure.Parent );
+					var buttonIndents = ConvertOffset( ButtonIndents, UIMeasure.Parent );
 
 					switch( side )
 					{
-					case SideEnum.Left: return new Rectangle( buttonSize.X, 0, 1.0 - buttonSize.X, 1.0 );
-					case SideEnum.Top: return new Rectangle( 0, buttonSize.Y, 1.0, 1.0 - buttonSize.Y );
-					case SideEnum.Right: return new Rectangle( 0, 0, 1.0 - buttonSize.X, 1.0 );
-					case SideEnum.Bottom: return new Rectangle( 0, 0, 1.0, 1.0 - buttonSize.Y );
+					case SideEnum.Left: return new Rectangle( buttonSize.X + buttonIndents.X, 0, 1.0, 1.0 );
+					case SideEnum.Top: return new Rectangle( 0, buttonSize.Y + buttonIndents.Y, 1.0, 1.0 );
+					case SideEnum.Right: return new Rectangle( 0, 0, 1.0 - buttonSize.X - buttonIndents.X, 1.0 );
+					case SideEnum.Bottom: return new Rectangle( 0, 0, 1.0, 1.0 - buttonSize.Y - buttonIndents.Y );
 					}
-
-					//var size = GetScreenSize();
-					//var buttonSize = button.GetScreenSize();
-
-					//switch( side )
-					//{
-					//case SideEnum.Left: return new Rectangle( buttonSize.X, 0, size.X - buttonSize.X, size.Y );
-					//case SideEnum.Top: return new Rectangle( 0, buttonSize.Y, size.X, size.Y - buttonSize.Y );
-					//case SideEnum.Right: return new Rectangle( 0, 0, size.X - buttonSize.X, size.Y );
-					//case SideEnum.Bottom: return new Rectangle( 0, 0, size.X, size.Y - buttonSize.Y );
-					//}
 				}
 			}
 
-			return new Rectangle( 0, 0, 1, 1 );
+			return new Rectangle( 0, 0, 0, 0 );
 		}
 
 		void UpdateControls()
@@ -174,60 +174,98 @@ namespace NeoAxis
 			var side = Side.Value;
 			var pages = GetAllPages();
 
+			//recreate buttons
+			{
+				var buttons = GetAllButtons();
+				if( buttons.Count != pages.Count || needRecreateButtons )
+				{
+					foreach( var b in buttons )
+						b.Dispose();
+
+					if( side != SideEnum.None )
+					{
+						for( int n = 0; n < pages.Count; n++ )
+						{
+							var page = pages[ n ];
+
+							UIButton button;
+							if( Button.Value != null )
+							{
+								button = (UIButton)Button.Value.Clone();
+								AddComponent( button );
+							}
+							else
+								button = CreateComponent<UIButton>( enabled: false );
+
+							button.Name = "Button " + page.Name;
+							button.CanBeSelected = false;
+							button.SaveSupport = false;
+							button.CloneSupport = false;
+							button.AnyData = n;
+							button.Enabled = true;
+
+							button.Click += delegate ( UIButton sender )
+							{
+								SelectedIndex = (int)sender.AnyData;
+							};
+						}
+					}
+
+					needRecreateButtons = false;
+				}
+			}
+
 			//update buttons
 			{
 				var buttons = GetAllButtons();
-
-				//recreate buttons
-				if( buttons.Count != pages.Count )
+				if( buttons.Count == pages.Count && buttons.Count > 0 )
 				{
-					//szzzzzzz;
-
-					//!!!!Button property
-
-					//buttons = GetAllButtons();
-
-
-					//!!!!click events
-				}
-
-				//update buttons
-				if( pages.Count == buttons.Count && buttons.Count > 0 )
-				{
-					var buttonSize = buttons[ 0 ].GetScreenSize();
+					var buttonSize = ConvertOffset( new UIMeasureValueVector2( UIMeasure.Screen, buttons[ 0 ].GetScreenSize() ), UIMeasure.Parent );
+					var buttonIndents = ConvertOffset( ButtonIndents, UIMeasure.Parent );
 
 					for( int n = 0; n < buttons.Count; n++ )
 					{
 						var button = buttons[ n ];
+						var page = pages[ n ];
 
-						button.Text = pages[ n ].Text;
+						var text = page.Text;
+						if( string.IsNullOrEmpty( text ) )
+							text = page.Name;
+						button.Text = text;
+
 						button.Highlighted = n == SelectedIndex;
 
-						//location
-
-						//!!!!Side
-
-						//!!!!UIMeasure.Screen
-
-						button.Margin = new UIMeasureValueRectangle( UIMeasure.Screen, buttonSize.X * n, 0, 0, 0 );
+						switch( side )
+						{
+						case SideEnum.Left:
+							button.Margin = new UIMeasureValueRectangle( UIMeasure.Parent, 0, ( buttonSize.Y + buttonIndents.Y ) * n, 0, 0 );
+							break;
+						case SideEnum.Top:
+							button.Margin = new UIMeasureValueRectangle( UIMeasure.Parent, ( buttonSize.X + buttonIndents.X ) * n, 0, 0, 0 );
+							break;
+						case SideEnum.Right:
+							button.Margin = new UIMeasureValueRectangle( UIMeasure.Parent, 1.0 - buttonSize.X, ( buttonSize.Y + buttonIndents.Y ) * n, 0, 0 );
+							break;
+						case SideEnum.Bottom:
+							button.Margin = new UIMeasureValueRectangle( UIMeasure.Parent, ( buttonSize.X + buttonIndents.X ) * n, 1.0 - buttonSize.Y, 0, 0 );
+							break;
+						}
 					}
 				}
 			}
 
-			var selectedIndex = SelectedIndex;
-			var pagesRectangle = GetPagesParentRectangle();
-
 			//update pages
-			for( int n = 0; n < pages.Count; n++ )
 			{
-				var page = pages[ n ];
+				var pagesRectangle = GetPagesParentRectangle();
 
-				//visibility
-				page.Visible = n == selectedIndex;
+				for( int n = 0; n < pages.Count; n++ )
+				{
+					var page = pages[ n ];
 
-				//location
-				page.Margin = new UIMeasureValueRectangle( UIMeasure.Parent, pagesRectangle.Left, pagesRectangle.Top, 0, 0 );
-				page.Size = new UIMeasureValueVector2( UIMeasure.Parent, pagesRectangle.Size );
+					page.Visible = n == SelectedIndex;
+					page.Margin = new UIMeasureValueRectangle( UIMeasure.Parent, pagesRectangle.Left, pagesRectangle.Top, 0, 0 );
+					page.Size = new UIMeasureValueVector2( UIMeasure.Parent, pagesRectangle.Size );
+				}
 			}
 		}
 
@@ -235,7 +273,6 @@ namespace NeoAxis
 		{
 			base.OnUpdate( delta );
 
-			//!!!!тут?
 			UpdateControls();
 		}
 

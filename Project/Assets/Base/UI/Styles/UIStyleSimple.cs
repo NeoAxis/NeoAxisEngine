@@ -11,24 +11,73 @@ namespace Project
 	{
 		protected override void OnRenderButton( UIButton control, CanvasRenderer renderer )
 		{
-			var styleColor = ColorValue.Zero;
-			switch( control.State )
+			if( control.Parent as UIContextMenu != null )
 			{
-			case UIButton.StateEnum.Normal: styleColor = new ColorValue( 0.1, 0.1, 0.6 ); break;
-			case UIButton.StateEnum.Hover: styleColor = new ColorValue( 0.175, 0.175, 0.75 ); break;
-			case UIButton.StateEnum.Pushed: styleColor = new ColorValue( 0.25, 0.25, 0.9 ); break;
-			case UIButton.StateEnum.Highlighted: styleColor = new ColorValue( 0.6, 0.6, 0 ); break;
-			case UIButton.StateEnum.Disabled: styleColor = new ColorValue( 0.5, 0.5, 0.5 ); break;
+				//context menu button
+
+				var styleColor = ColorValue.Zero;
+				switch( control.State )
+				{
+				case UIButton.StateEnum.Normal: styleColor = new ColorValue( 0.1, 0.1, 0.7 ); break;
+				case UIButton.StateEnum.Hover: styleColor = new ColorValue( 0.175, 0.175, 0.75 ); break;
+				case UIButton.StateEnum.Pushed: styleColor = new ColorValue( 0.25, 0.25, 0.9 ); break;
+				case UIButton.StateEnum.Highlighted: styleColor = new ColorValue( 0.6, 0.6, 0 ); break;
+				case UIButton.StateEnum.Disabled: styleColor = new ColorValue( 0.1, 0.1, 0.7 ); break;//new ColorValue( 0.5, 0.5, 0.5 ); break;
+				}
+
+				control.GetScreenRectangle( out var rect );
+				var color = styleColor.GetSaturate();
+				if( color.Alpha > 0 )
+				{
+					//back
+					renderer.AddQuad( rect, color );
+
+					//!!!!image
+
+					//text
+					var position = new Vector2( rect.Left + control.GetScreenOffsetByValueX( new UIMeasureValueDouble( UIMeasure.Units, 10 ) ), rect.GetCenter().Y ) + new Vector2( 0, renderer.DefaultFontSize / 10 );
+					var textColor = control.State == UIButton.StateEnum.Disabled ? new ColorValue( 0.5, 0.5, 0.5 ) : new ColorValue( 1, 1, 1 );
+					renderer.AddText( control.Text, position, EHorizontalAlignment.Left, EVerticalAlignment.Center, textColor );
+				}
 			}
-
-			control.GetScreenRectangle( out var rect );
-			var color = styleColor.GetSaturate();
-			if( color.Alpha > 0 )
+			else
 			{
-				renderer.AddQuad( rect, color );
+				//usual button
 
-				var center = rect.GetCenter() + new Vector2( 0, renderer.DefaultFontSize / 10 );
-				renderer.AddText( control.Text, center, EHorizontalAlignment.Center, EVerticalAlignment.Center, new ColorValue( 1, 1, 1 ) );
+				var styleColor = ColorValue.Zero;
+				switch( control.State )
+				{
+				case UIButton.StateEnum.Normal: styleColor = new ColorValue( 0.1, 0.1, 0.6 ); break;
+				case UIButton.StateEnum.Hover: styleColor = new ColorValue( 0.175, 0.175, 0.75 ); break;
+				case UIButton.StateEnum.Pushed: styleColor = new ColorValue( 0.25, 0.25, 0.9 ); break;
+				case UIButton.StateEnum.Highlighted: styleColor = new ColorValue( 0.6, 0.6, 0 ); break;
+				case UIButton.StateEnum.Disabled: styleColor = new ColorValue( 0.5, 0.5, 0.5 ); break;
+				}
+
+				control.GetScreenRectangle( out var rect );
+				var color = styleColor.GetSaturate();
+				if( color.Alpha > 0 )
+				{
+					//back
+					renderer.AddQuad( rect, color );
+
+					//image
+					if( control.Image.Value != null )
+					{
+						var image = control.Image.Value;
+						if( control.ReadOnly && control.ImageDisabled.Value != null )
+							image = control.ImageDisabled.Value;
+
+						var imageRect = rect;
+						imageRect.Expand( -control.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 4, 4 ) ) );
+						renderer.AddQuad( imageRect, new Rectangle( 0, 0, 1, 1 ), image, new ColorValue( 1, 1, 1 ), true );
+					}
+
+					//text
+					var position = rect.GetCenter() + new Vector2( 0, renderer.DefaultFontSize / 10 );
+					var textColor = control.State == UIButton.StateEnum.Disabled ? new ColorValue( 0.5, 0.5, 0.5 ) : new ColorValue( 1, 1, 1 );
+					renderer.AddText( control.Text, position, EHorizontalAlignment.Center, EVerticalAlignment.Center, textColor );
+				}
 			}
 		}
 
@@ -55,9 +104,9 @@ namespace Project
 
 		/////////////////////////////////////////
 
-		protected override void OnRenderScrollBar( UIScrollBar control, CanvasRenderer renderer )
+		protected override void OnRenderScroll( UIScroll control, CanvasRenderer renderer )
 		{
-			base.OnRenderScrollBar( control, renderer );
+			base.OnRenderScroll( control, renderer );
 		}
 
 		/////////////////////////////////////////
@@ -107,7 +156,7 @@ namespace Project
 
 		/////////////////////////////////////////
 
-		protected override void OnRenderProgressBar( UIProgressBar control, CanvasRenderer renderer )
+		protected override void OnRenderProgress( UIProgress control, CanvasRenderer renderer )
 		{
 			var rect = control.GetScreenRectangle();
 			renderer.AddQuad( rect, new ColorValue( 0.05, 0.05, 0.3 ) );
@@ -145,6 +194,44 @@ namespace Project
 		protected override void OnRenderCombo( UICombo control, CanvasRenderer renderer )
 		{
 			base.OnRenderCombo( control, renderer );
+		}
+
+		/////////////////////////////////////////
+
+		protected override void OnRenderTooltip( UITooltip tooltip, CanvasRenderer renderer )
+		{
+			base.OnRenderTooltip( tooltip, renderer );
+		}
+
+		/////////////////////////////////////////
+
+		protected override void OnRenderContextMenu( UIContextMenu menu, CanvasRenderer renderer )
+		{
+			base.OnRenderContextMenu( menu, renderer );
+
+			//draw background
+			renderer.AddQuad( menu.GetScreenRectangle(), new ColorValue( 0.1, 0.1, 0.7 ) );
+		}
+
+		/////////////////////////////////////////
+
+		protected override void OnRenderToolbar( UIToolbar control, CanvasRenderer renderer )
+		{
+			base.OnRenderToolbar( control, renderer );
+		}
+
+		/////////////////////////////////////////
+
+		protected override void OnRenderSplitContainer( UISplitContainer control, CanvasRenderer renderer )
+		{
+			base.OnRenderSplitContainer( control, renderer );
+		}
+
+		/////////////////////////////////////////
+
+		protected override void OnRenderTabControl( UITabControl control, CanvasRenderer renderer )
+		{
+			base.OnRenderTabControl( control, renderer );
 		}
 
 	}

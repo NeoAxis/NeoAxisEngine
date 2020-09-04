@@ -742,12 +742,12 @@ namespace System.Windows.Forms
 
 		public virtual Font Font
 		{
-			[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalType = "System.Windows.Forms.Control+ActiveXFontMarshaler, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
+			//[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalType = "System.Windows.Forms.Control+ActiveXFontMarshaler, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
 			get
 			{
 				throw null;
 			}
-			[param: MarshalAs(UnmanagedType.CustomMarshaler, MarshalType = "System.Windows.Forms.Control+ActiveXFontMarshaler, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
+			//[param: MarshalAs(UnmanagedType.CustomMarshaler, MarshalType = "System.Windows.Forms.Control+ActiveXFontMarshaler, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
 			set
 			{
 				throw null;

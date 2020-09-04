@@ -9,7 +9,7 @@ namespace NeoAxis
 	/// <summary>
 	/// Standard UI element for scrolling.
 	/// </summary>
-	public class UIScrollBar : UIControl
+	public class UIScroll : UIControl
 	{
 		bool cursorInsideArea;
 		bool pushed;
@@ -25,7 +25,7 @@ namespace NeoAxis
 			get { if( _vertical.BeginGet() ) Vertical = _vertical.Get( this ); return _vertical.value; }
 			set { if( _vertical.BeginSet( ref value ) ) { try { VerticalChanged?.Invoke( this ); } finally { _vertical.EndSet(); } } }
 		}
-		public event Action<UIScrollBar> VerticalChanged;
+		public event Action<UIScroll> VerticalChanged;
 		ReferenceField<bool> _vertical = false;
 
 		/// <summary>
@@ -37,7 +37,7 @@ namespace NeoAxis
 			get { if( _valueRange.BeginGet() ) ValueRange = _valueRange.Get( this ); return _valueRange.value; }
 			set { if( _valueRange.BeginSet( ref value ) ) { try { ValueRangeChanged?.Invoke( this ); } finally { _valueRange.EndSet(); } } }
 		}
-		public event Action<UIScrollBar> ValueRangeChanged;
+		public event Action<UIScroll> ValueRangeChanged;
 		ReferenceField<Range> _valueRange = new Range( 0, 1 );
 
 		/// <summary>
@@ -49,11 +49,11 @@ namespace NeoAxis
 			get { if( _value.BeginGet() ) Value = _value.Get( this ); return _value.value; }
 			set { if( _value.BeginSet( ref value ) ) { try { ValueChanged?.Invoke( this ); } finally { _value.EndSet(); } } }
 		}
-		public event Action<UIScrollBar> ValueChanged;
+		public event Action<UIScroll> ValueChanged;
 		ReferenceField<double> _value = 0.0;
 
 
-		public UIScrollBar()
+		public UIScroll()
 		{
 			Size = new UIMeasureValueVector2( UIMeasure.Units, 400, 30 );
 		}

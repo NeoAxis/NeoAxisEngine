@@ -9,7 +9,7 @@ namespace NeoAxis
 	/// <summary>
 	/// UI element for visualization progress.
 	/// </summary>
-	public class UIProgressBar : UIControl
+	public class UIProgress : UIControl
 	{
 		/// <summary>
 		/// Specifies the maximum position.
@@ -20,7 +20,7 @@ namespace NeoAxis
 			get { if( _maximum.BeginGet() ) Maximum = _maximum.Get( this ); return _maximum.value; }
 			set { if( _maximum.BeginSet( ref value ) ) { try { MaximumChanged?.Invoke( this ); } finally { _maximum.EndSet(); } } }
 		}
-		public event Action<UIProgressBar> MaximumChanged;
+		public event Action<UIProgress> MaximumChanged;
 		ReferenceField<double> _maximum = 100.0;
 
 		/// <summary>
@@ -33,12 +33,12 @@ namespace NeoAxis
 			get { if( _value.BeginGet() ) Value = _value.Get( this ); return _value.value; }
 			set { if( _value.BeginSet( ref value ) ) { try { ValueChanged?.Invoke( this ); } finally { _value.EndSet(); } } }
 		}
-		public event Action<UIProgressBar> ValueChanged;
+		public event Action<UIProgress> ValueChanged;
 		ReferenceField<double> _value = 0.0;
 
 		///////////////////////////////////////////
 
-		public UIProgressBar()
+		public UIProgress()
 		{
 			Size = new UIMeasureValueVector2( UIMeasure.Units, 400, 40 );
 		}

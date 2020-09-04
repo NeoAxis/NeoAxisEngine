@@ -55,6 +55,7 @@
     <Compile Include="Assets\Base\UI\Screens\PlayScreen.cs" />
     <Compile Include="Assets\Base\UI\Screens\SplashScreen.cs" />
     <Compile Include="Assets\Base\Scripts\ProjectAssembly.cs" />
+    <Compile Include="Assets\Base\UI\Styles\UIStyleEditor.cs" />
     <Compile Include="Assets\Base\UI\Styles\UIStyleSimple.cs" />
     <Compile Include="Assets\Base\UI\Windows\MessageBoxWindow.cs" />
     <Compile Include="Assets\Samples\Simple Game\SimpleGameGUI.cs" />

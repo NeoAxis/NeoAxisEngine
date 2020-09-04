@@ -176,12 +176,14 @@ namespace NeoAxis
 			OnlyBehind,
 		}
 
-		//!!!!
 		[Browsable( false )]
+		[Serialize( false )]
 		public virtual CoverOtherControlsEnum CoverOtherControls
 		{
-			get { return CoverOtherControlsEnum.None; }
+			get { return coverOtherControls; }
+			set { coverOtherControls = value; }
 		}
+		CoverOtherControlsEnum coverOtherControls = CoverOtherControlsEnum.None;
 
 		////!!!!
 		//[Browsable( false )]
@@ -1392,6 +1394,16 @@ namespace NeoAxis
 			return ConvertOffset( value, UIMeasure.Screen );
 		}
 
+		public double GetScreenOffsetByValueX( UIMeasureValueDouble value )
+		{
+			return ConvertOffsetX( value, UIMeasure.Screen );
+		}
+
+		public double GetScreenOffsetByValueY( UIMeasureValueDouble value )
+		{
+			return ConvertOffsetY( value, UIMeasure.Screen );
+		}
+
 		/////////////////////////////////////////
 
 		////!!!!
@@ -2064,7 +2076,7 @@ namespace NeoAxis
 			//}
 
 			//render control
-			GetStyle().PerformRenderControl( this, renderer );
+			GetStyle().PerformRenderComponent( this, renderer );
 		}
 
 		public delegate void RenderUIDelegate( UIControl sender, CanvasRenderer renderer );
@@ -2702,5 +2714,28 @@ namespace NeoAxis
 			else
 				return UIStyle.Default;
 		}
+
+		internal delegate void EnumerateChildrenDelegate( UIControl control, ref bool stopEnumerate );
+
+		//!!!!public?
+		internal bool EnumerateChildrenRecursive( bool reverse, bool onlyEnabledInHierarchy, bool onlyVisible, EnumerateChildrenDelegate action )
+		{
+			foreach( var control in GetControls( reverse ) )
+			{
+				if( ( !onlyEnabledInHierarchy || control.EnabledInHierarchy ) && !control.RemoveFromParentQueued && ( !onlyVisible || control.Visible ) )
+				{
+					if( !control.EnumerateChildrenRecursive( reverse, onlyEnabledInHierarchy, onlyVisible, action ) )
+						return false;
+				}
+			}
+
+			bool stopEnumerate = false;
+			action( this, ref stopEnumerate );
+			if( stopEnumerate )
+				return false;
+
+			return true;
+		}
+
 	}
 }

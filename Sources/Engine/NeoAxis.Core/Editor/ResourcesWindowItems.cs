@@ -163,24 +163,42 @@ namespace NeoAxis.Editor
 
 			//UI
 			{
-				var group = @"Base\UI";
-				Items.Add( new Item( group + @"\Control", typeof( UIControl ) ) );
-				Items.Add( new Item( group + @"\Window", typeof( UIWindow ) ) );
-				Items.Add( new Item( group + @"\Text", typeof( UIText ) ) );
-				Items.Add( new Item( group + @"\Image", typeof( UIImage ) ) );
-				Items.Add( new Item( group + @"\Button", typeof( UIButton ) ) );
-				Items.Add( new Item( group + @"\Check", typeof( UICheck ) ) );
-				Items.Add( new Item( group + @"\Edit", typeof( UIEdit ) ) );
-				Items.Add( new Item( group + @"\Slider", typeof( UISlider ) ) );
-				Items.Add( new Item( group + @"\Progress Bar", typeof( UIProgressBar ) ) );
-				Items.Add( new Item( group + @"\Scroll Bar", typeof( UIScrollBar ) ) );
-				Items.Add( new Item( group + @"\Combo", typeof( UICombo ) ) );
-				Items.Add( new Item( group + @"\List", typeof( UIList ) ) );
-				Items.Add( new Item( group + @"\Grid", typeof( UIGrid ) ) );
-				Items.Add( new Item( group + @"\Video", typeof( UIVideo ) ) );
-				Items.Add( new Item( group + @"\Web Browser", typeof( UIWebBrowser ) ) );
-				Items.Add( new Item( group + @"\Render Target", typeof( UIRenderTarget ) ) );
-				Items.Add( new Item( group + @"\Style", typeof( UIStyle ) ) );
+				{
+					var group = @"Base\UI";
+					Items.Add( new Item( group + @"\Control", typeof( UIControl ) ) );
+					Items.Add( new Item( group + @"\Window", typeof( UIWindow ) ) );
+					Items.Add( new Item( group + @"\Text", typeof( UIText ) ) );
+					Items.Add( new Item( group + @"\Image", typeof( UIImage ) ) );
+					Items.Add( new Item( group + @"\Button", typeof( UIButton ) ) );
+					Items.Add( new Item( group + @"\Check", typeof( UICheck ) ) );
+					Items.Add( new Item( group + @"\Edit", typeof( UIEdit ) ) );
+					Items.Add( new Item( group + @"\Slider", typeof( UISlider ) ) );
+					Items.Add( new Item( group + @"\Progress", typeof( UIProgress ) ) );
+					Items.Add( new Item( group + @"\Scroll", typeof( UIScroll ) ) );
+					Items.Add( new Item( group + @"\Combo", typeof( UICombo ) ) );
+					Items.Add( new Item( group + @"\List", typeof( UIList ) ) );
+					//Items.Add( new Item( group + @"\Tree", typeof( UITree ) ) );
+					Items.Add( new Item( group + @"\Video", typeof( UIVideo ) ) );
+					Items.Add( new Item( group + @"\Web Browser", typeof( UIWebBrowser ) ) );
+					Items.Add( new Item( group + @"\Render Target", typeof( UIRenderTarget ) ) );
+					//Items.Add( new Item( group + @"\Menu", typeof( UIMenu ) ) );
+				}
+
+				//Containers
+				{
+					var group = @"Base\UI\Containers";
+					Items.Add( new Item( group + @"\Tab Control", typeof( UITabControl ) ) );
+					//Items.Add( new Item( group + @"\Split Container", typeof( UISplitContainer ) ) );
+					Items.Add( new Item( group + @"\Grid", typeof( UIGrid ) ) );
+					Items.Add( new Item( group + @"\Toolbar", typeof( UIToolbar ) ) );
+				}
+
+				//More
+				{
+					var group = @"Base\UI\More";
+					Items.Add( new Item( group + @"\Style", typeof( UIStyle ) ) );
+					Items.Add( new Item( group + @"\Tooltip", typeof( UITooltip ) ) );
+				}
 			}
 
 			//Common 3D

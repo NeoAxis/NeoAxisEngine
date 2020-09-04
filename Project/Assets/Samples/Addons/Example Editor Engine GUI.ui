@@ -30,9 +30,9 @@
 			1 = Item 2
 			2 = Item 3
 		}
-		.component NeoAxis.UIScrollBar
+		.component NeoAxis.UIScroll
 		{
-			Name = ScrollBar
+			Name = Scroll
 			CanBeSelected = False
 			Size = Units 30 400
 			HorizontalAlignment = Right

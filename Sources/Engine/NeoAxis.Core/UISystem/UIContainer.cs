@@ -31,6 +31,10 @@ namespace NeoAxis
 		//!!!!impl
 		Transform transform3D;
 
+		double lastMouseMoveTime;
+
+		Rectangle lastCursorRectangle;
+
 		//
 
 		//Keys
@@ -204,6 +208,8 @@ namespace NeoAxis
 
 		public void PerformMouseMove( Vector2 mouse )
 		{
+			lastMouseMoveTime = EngineApp.EngineTime;
+
 			CheckCachedParameters();
 			UpdateCachedCoverControls();
 
@@ -333,6 +339,8 @@ namespace NeoAxis
 
 		void DrawCursor( CanvasRenderer renderer )
 		{
+			lastCursorRectangle = Rectangle.Zero;
+
 			//hide cursor for mouse relative mode
 			if( MouseRelativeMode )
 				currentCursor = null;
@@ -378,6 +386,8 @@ namespace NeoAxis
 
 						Rectangle rectangle = new Rectangle( leftTop, rightBottom );
 						renderer.AddQuad( rectangle, new Rectangle( 0, 0, 1, 1 ), textureIns, new ColorValue( 1, 1, 1 ), true );
+
+						lastCursorRectangle = rectangle;
 					}
 					else
 					{
@@ -387,9 +397,16 @@ namespace NeoAxis
 						Rectangle rectangle = new Rectangle( -size / 2, size / 2 ) + MousePosition;
 
 						renderer.AddQuad( rectangle, new Rectangle( 0, 0, 1, 1 ), textureIns, new ColorValue( 1, 1, 1 ), true );
+
+						lastCursorRectangle = rectangle;
 					}
 				}
 			}
+		}
+
+		public Rectangle LastCursorRectangle
+		{
+			get { return lastCursorRectangle; }
 		}
 
 		public void PerformRenderUI( CanvasRenderer renderer )
@@ -402,6 +419,9 @@ namespace NeoAxis
 
 			//draw cursor
 			DrawCursor( renderer );
+
+			//draw tooltip
+			DrawTooltip( renderer );
 
 			//before was in DoRender().
 			CurrentCursor = defaultCursor;
@@ -507,7 +527,7 @@ namespace NeoAxis
 			}
 		}
 
-		internal Vector2 ContainerGetMousePosition()
+		public Vector2 ContainerGetMousePosition()
 		{
 			return controlManagerMousePosition;
 		}
@@ -529,5 +549,46 @@ namespace NeoAxis
 		//{
 		//	get { return GetMouseRelativeMode(); }
 		//}
+
+		//!!!!public?
+		UIControl GetControlByScreenPosition( Vector2 screenPosition )
+		{
+			UIControl result = null;
+
+			EnumerateChildrenRecursive( true, true, true, delegate ( UIControl control, ref bool stopEnumerate )
+			{
+				if( result == null )
+				{
+					control.GetScreenRectangle( out var rect );
+					if( rect.Contains( screenPosition ) )
+					{
+						result = control;
+						stopEnumerate = true;
+					}
+				}
+			} );
+
+			return result;
+		}
+
+		void DrawTooltip( CanvasRenderer renderer )
+		{
+			if( MouseRelativeMode )
+				return;
+
+			var mouse = ContainerGetMousePosition();
+			var control = GetControlByScreenPosition( mouse );
+
+			if( control != null )
+			{
+				var tooltip = control.GetComponent<UITooltip>( onlyEnabledInHierarchy: true );
+				if( tooltip != null )
+				{
+					if( EngineApp.EngineTime - lastMouseMoveTime > tooltip.InitialDelay )
+						GetStyle().PerformRenderComponent( tooltip, renderer );
+				}
+			}
+		}
+
 	}
 }

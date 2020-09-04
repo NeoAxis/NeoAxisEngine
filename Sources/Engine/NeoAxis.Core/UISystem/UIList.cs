@@ -52,13 +52,13 @@ namespace NeoAxis
 		/// Whether the scrollbar will be always visible or not.
 		/// </summary>
 		[DefaultValue( false )]
-		public Reference<bool> AlwaysShowScrollBar
+		public Reference<bool> AlwaysShowScroll
 		{
-			get { if( _alwaysShowScrollBar.BeginGet() ) AlwaysShowScrollBar = _alwaysShowScrollBar.Get( this ); return _alwaysShowScrollBar.value; }
-			set { if( _alwaysShowScrollBar.BeginSet( ref value ) ) { try { AlwaysShowScrollBarChanged?.Invoke( this ); } finally { _alwaysShowScrollBar.EndSet(); } } }
+			get { if( _alwaysShowScroll.BeginGet() ) AlwaysShowScroll = _alwaysShowScroll.Get( this ); return _alwaysShowScroll.value; }
+			set { if( _alwaysShowScroll.BeginSet( ref value ) ) { try { AlwaysShowScrollChanged?.Invoke( this ); } finally { _alwaysShowScroll.EndSet(); } } }
 		}
-		public event Action<UIList> AlwaysShowScrollBarChanged;
-		ReferenceField<bool> _alwaysShowScrollBar = false;
+		public event Action<UIList> AlwaysShowScrollChanged;
+		ReferenceField<bool> _alwaysShowScroll = false;
 
 		//!!!!
 		////UpdateActiveStateOfSelectedItem();
@@ -132,8 +132,8 @@ namespace NeoAxis
 			base.NewObjectSetDefaultConfiguration( createdFromNewObjectWindow );
 
 			{
-				var obj = CreateComponent<UIScrollBar>();
-				obj.Name = "ScrollBar";
+				var obj = CreateComponent<UIScroll>();
+				obj.Name = "Scroll";
 				obj.Size = new UIMeasureValueVector2( UIMeasure.Units, 30, 400 );
 				obj.Vertical = true;
 				obj.CanBeSelected = false;
@@ -148,9 +148,9 @@ namespace NeoAxis
 		//{
 		//	get { return GetComponentByPath( "ScrollBar" ) as UIScrollBar; }
 		//}
-		public UIScrollBar GetScrollBar()
+		public UIScroll GetScroll()
 		{
-			return GetComponentByPath( "ScrollBar" ) as UIScrollBar;
+			return GetComponentByPath( "Scroll" ) as UIScroll;
 		}
 
 		/////////////////////////////////////////////
@@ -276,15 +276,15 @@ namespace NeoAxis
 			var cursorInsideArea = CursorIsInArea();
 			if( VisibleInHierarchy && cursorInsideArea /*new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition )*/ && EnabledInHierarchy )
 			{
-				var scrollBar = GetScrollBar();
-				if( scrollBar != null && scrollBar.EnabledInHierarchy && scrollBar.VisibleInHierarchy )
+				var scroll = GetScroll();
+				if( scroll != null && scroll.EnabledInHierarchy && scroll.VisibleInHierarchy )
 				{
-					var v = scrollBar.Value.Value;
+					var v = scroll.Value.Value;
 					//!!!!
 					v -= (double)delta / 700.0f / 10;
 					//v -= (double)delta / 700.0f;
-					MathEx.Clamp( ref v, scrollBar.ValueRange.Value.Minimum, scrollBar.ValueRange.Value.Maximum );
-					scrollBar.Value = v;
+					MathEx.Clamp( ref v, scroll.ValueRange.Value.Minimum, scroll.ValueRange.Value.Maximum );
+					scroll.Value = v;
 
 					return true;
 				}

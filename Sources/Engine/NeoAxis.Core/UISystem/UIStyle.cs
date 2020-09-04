@@ -44,22 +44,25 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		protected virtual void OnRenderControl( UIControl control, CanvasRenderer renderer ) { }
+		protected virtual void OnRenderComponent( Component component, CanvasRenderer renderer ) { }
 
-		public delegate void RenderControlDelegate( UIControl control, CanvasRenderer renderer );
-		public event RenderControlDelegate RenderControl;
+		public delegate void RenderComponentDelegate( Component component, CanvasRenderer renderer );
+		public event RenderComponentDelegate RenderComponent;
 
-		public void PerformRenderControl( UIControl control, CanvasRenderer renderer )
+		public void PerformRenderComponent( Component component, CanvasRenderer renderer )
 		{
-			OnRenderControl( control, renderer );
-			RenderControl?.Invoke( control, renderer );
+			OnRenderComponent( component, renderer );
+			RenderComponent?.Invoke( component, renderer );
 		}
 
 		/////////////////////////////////////////
 
 		protected virtual void OnButtonMouseEnter( UIButton control )
 		{
-			control.ParentContainer?.PlaySound( ButtonSoundMouseEnter );
+			if( control.Parent as UIContextMenu != null )
+				control.ParentContainer?.PlaySound( ContextMenuButtonSoundMouseEnter );
+			else
+				control.ParentContainer?.PlaySound( ButtonSoundMouseEnter );
 		}
 
 		public delegate void ButtonMouseEnterDelegate( UIButton control );
@@ -75,7 +78,10 @@ namespace NeoAxis
 
 		protected virtual void OnButtonMouseLeave( UIButton control )
 		{
-			control.ParentContainer?.PlaySound( ButtonSoundMouseLeave );
+			if( control.Parent as UIContextMenu != null )
+				control.ParentContainer?.PlaySound( ContextMenuButtonSoundMouseLeave );
+			else
+				control.ParentContainer?.PlaySound( ButtonSoundMouseLeave );
 		}
 
 		public delegate void ButtonMouseLeaveDelegate( UIButton control );
@@ -91,7 +97,10 @@ namespace NeoAxis
 
 		protected virtual void OnButtonClick( UIButton control )
 		{
-			control.ParentContainer?.PlaySound( ButtonSoundClick );
+			if( control.Parent as UIContextMenu != null )
+				control.ParentContainer?.PlaySound( ContextMenuButtonSoundClick );
+			else
+				control.ParentContainer?.PlaySound( ButtonSoundClick );
 		}
 
 		public delegate void ButtonClickDelegate( UIButton control );
@@ -140,6 +149,44 @@ namespace NeoAxis
 		}
 		public event Action<UIStyle> ButtonSoundClickChanged;
 		ReferenceField<Component_Sound> _buttonSoundClick;
+
+		/////////////////////////////////////////
+
+		/// <summary>
+		/// The sound played when mouse pointer enters the button of context menu.
+		/// </summary>
+		[DefaultValue( null )]
+		public Reference<Component_Sound> ContextMenuButtonSoundMouseEnter
+		{
+			get { if( _contextMenuButtonSoundMouseEnter.BeginGet() ) ContextMenuButtonSoundMouseEnter = _contextMenuButtonSoundMouseEnter.Get( this ); return _contextMenuButtonSoundMouseEnter.value; }
+			set { if( _contextMenuButtonSoundMouseEnter.BeginSet( ref value ) ) { try { ContextMenuButtonSoundMouseEnterChanged?.Invoke( this ); } finally { _contextMenuButtonSoundMouseEnter.EndSet(); } } }
+		}
+		public event Action<UIStyle> ContextMenuButtonSoundMouseEnterChanged;
+		ReferenceField<Component_Sound> _contextMenuButtonSoundMouseEnter;
+
+		/// <summary>
+		/// The sound played when mouse pointer leaves the button of context menu.
+		/// </summary>
+		[DefaultValue( null )]
+		public Reference<Component_Sound> ContextMenuButtonSoundMouseLeave
+		{
+			get { if( _contextMenuButtonSoundMouseLeave.BeginGet() ) ContextMenuButtonSoundMouseLeave = _contextMenuButtonSoundMouseLeave.Get( this ); return _contextMenuButtonSoundMouseLeave.value; }
+			set { if( _contextMenuButtonSoundMouseLeave.BeginSet( ref value ) ) { try { ContextMenuButtonSoundMouseLeaveChanged?.Invoke( this ); } finally { _contextMenuButtonSoundMouseLeave.EndSet(); } } }
+		}
+		public event Action<UIStyle> ContextMenuButtonSoundMouseLeaveChanged;
+		ReferenceField<Component_Sound> _contextMenuButtonSoundMouseLeave;
+
+		/// <summary>
+		/// The sound played when user clicks on the button of context menu.
+		/// </summary>
+		[DefaultValue( null )]
+		public Reference<Component_Sound> ContextMenuButtonSoundClick
+		{
+			get { if( _contextMenuButtonSoundClick.BeginGet() ) ContextMenuButtonSoundClick = _contextMenuButtonSoundClick.Get( this ); return _contextMenuButtonSoundClick.value; }
+			set { if( _contextMenuButtonSoundClick.BeginSet( ref value ) ) { try { ContextMenuButtonSoundClickChanged?.Invoke( this ); } finally { _contextMenuButtonSoundClick.EndSet(); } } }
+		}
+		public event Action<UIStyle> ContextMenuButtonSoundClickChanged;
+		ReferenceField<Component_Sound> _contextMenuButtonSoundClick;
 
 		/////////////////////////////////////////
 
@@ -284,58 +331,118 @@ namespace NeoAxis
 			}
 		}
 
-		protected override void OnRenderControl( UIControl control, CanvasRenderer renderer )
+		protected override void OnRenderComponent( Component component, CanvasRenderer renderer )
 		{
-			base.OnRenderControl( control, renderer );
+			base.OnRenderComponent( component, renderer );
 
-			OnRenderBackground( control, renderer );
+			var control = component as UIControl;
+			if( control != null )
+				OnRenderBackground( control, renderer );
 
 			//control classes
-			if( control is UIButton button )
+			if( component is UIButton button )
 				OnRenderButton( button, renderer );
-			else if( control is UICheck check )
+			else if( component is UICheck check )
 				OnRenderCheck( check, renderer );
-			else if( control is UIEdit edit )
+			else if( component is UIEdit edit )
 				OnRenderEdit( edit, renderer );
-			else if( control is UIText text )
+			else if( component is UIText text )
 				OnRenderText( text, renderer );
-			else if( control is UIScrollBar scrollBar )
-				OnRenderScrollBar( scrollBar, renderer );
-			else if( control is UIList list )
+			else if( component is UIScroll scroll )
+				OnRenderScroll( scroll, renderer );
+			else if( component is UIList list )
 				OnRenderList( list, renderer );
-			else if( control is UIWindow window )
+			else if( component is UIWindow window )
 				OnRenderWindow( window, renderer );
-			else if( control is UIProgressBar progressBar )
-				OnRenderProgressBar( progressBar, renderer );
-			else if( control is UISlider slider )
+			else if( component is UIProgress progress )
+				OnRenderProgress( progress, renderer );
+			else if( component is UISlider slider )
 				OnRenderSlider( slider, renderer );
-			else if( control is UIGrid grid )
+			else if( component is UIGrid grid )
 				OnRenderGrid( grid, renderer );
-			else if( control is UICombo combo )
+			else if( component is UICombo combo )
 				OnRenderCombo( combo, renderer );
+			else if( component is UITooltip tooltip )
+				OnRenderTooltip( tooltip, renderer );
+			else if( component is UIContextMenu contextMenu )
+				OnRenderContextMenu( contextMenu, renderer );
+			else if( component is UIToolbar toolbar )
+				OnRenderToolbar( toolbar, renderer );
+			else if( component is UISplitContainer splitContainer )
+				OnRenderSplitContainer( splitContainer, renderer );
+			else if( component is UITabControl tabControl )
+				OnRenderTabControl( tabControl, renderer );
 		}
 
 		protected virtual void OnRenderButton( UIButton control, CanvasRenderer renderer )
 		{
-			var styleColor = ColorValue.Zero;
-			switch( control.State )
+			if( control.Parent as UIContextMenu != null )
 			{
-			case UIButton.StateEnum.Normal: styleColor = new ColorValue( 0.5, 0.5, 0.5 ); break;
-			case UIButton.StateEnum.Hover: styleColor = new ColorValue( 0.65, 0.65, 0.65 ); break;
-			case UIButton.StateEnum.Pushed: styleColor = new ColorValue( 0.8, 0.8, 0.8 ); break;
-			//case UIButton.StateEnum.Normal: styleColor = new ColorValue( 0, 0.5, 0 ); break;
-			//case UIButton.StateEnum.Hover: styleColor = new ColorValue( 0, 0.7, 0 ); break;
-			//case UIButton.StateEnum.Pushed: styleColor = new ColorValue( 0, 0.9, 0 ); break;
-			case UIButton.StateEnum.Highlighted: styleColor = new ColorValue( 0.6, 0.6, 0 ); break;
-			case UIButton.StateEnum.Disabled: styleColor = new ColorValue( 0.5, 0.5, 0.5 ); break;
-			}
+				//context menu button
 
-			control.GetScreenRectangle( out var rect );
-			var color = styleColor.GetSaturate();
-			if( color.Alpha > 0 )
+				var styleColor = ColorValue.Zero;
+				switch( control.State )
+				{
+				case UIButton.StateEnum.Normal: styleColor = new ColorValue( 0.5, 0.5, 0.5 ); break;
+				case UIButton.StateEnum.Hover: styleColor = new ColorValue( 0.65, 0.65, 0.65 ); break;
+				case UIButton.StateEnum.Pushed: styleColor = new ColorValue( 0.8, 0.8, 0.8 ); break;
+				case UIButton.StateEnum.Highlighted: styleColor = new ColorValue( 0.6, 0.6, 0 ); break;
+				case UIButton.StateEnum.Disabled: styleColor = new ColorValue( 0.5, 0.5, 0.5 ); break;
+				}
+
+				control.GetScreenRectangle( out var rect );
+				var color = styleColor.GetSaturate();
+				if( color.Alpha > 0 )
+				{
+					//back
+					renderer.AddQuad( rect, color );
+
+					//!!!!image
+
+					//text
+					var position = new Vector2( rect.Left + control.GetScreenOffsetByValueX( new UIMeasureValueDouble( UIMeasure.Units, 10 ) ), rect.GetCenter().Y ) + new Vector2( 0, renderer.DefaultFontSize / 10 );
+					var textColor = control.State == UIButton.StateEnum.Disabled ? new ColorValue( 0.5, 0.5, 0.5 ) : new ColorValue( 1, 1, 1 );
+					renderer.AddText( control.Text, position, EHorizontalAlignment.Left, EVerticalAlignment.Center, textColor );
+				}
+			}
+			else
 			{
-				renderer.AddQuad( rect, color );
-				renderer.AddText( control.Text, rect.GetCenter(), EHorizontalAlignment.Center, EVerticalAlignment.Center, new ColorValue( 1, 1, 1 ) );
+				//usual button
+
+				var styleColor = ColorValue.Zero;
+				switch( control.State )
+				{
+				case UIButton.StateEnum.Normal: styleColor = new ColorValue( 0.5, 0.5, 0.5 ); break;
+				case UIButton.StateEnum.Hover: styleColor = new ColorValue( 0.65, 0.65, 0.65 ); break;
+				case UIButton.StateEnum.Pushed: styleColor = new ColorValue( 0.8, 0.8, 0.8 ); break;
+				case UIButton.StateEnum.Highlighted: styleColor = new ColorValue( 0.6, 0.6, 0 ); break;
+				case UIButton.StateEnum.Disabled: styleColor = new ColorValue( 0.5, 0.5, 0.5 ); break;
+				}
+
+				control.GetScreenRectangle( out var rect );
+				var color = styleColor.GetSaturate();
+				if( color.Alpha > 0 )
+				{
+					//back
+					renderer.AddQuad( rect, color );
+
+					//image
+					if( control.Image.Value != null )
+					{
+						var image = control.Image.Value;
+						if( control.ReadOnly && control.ImageDisabled.Value != null )
+							image = control.ImageDisabled.Value;
+
+						var imageRect = rect;
+						imageRect.Expand( -control.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 4, 4 ) ) );
+						renderer.AddQuad( imageRect, new Rectangle( 0, 0, 1, 1 ), image, new ColorValue( 1, 1, 1 ), true );
+					}
+
+					//text
+					var position = rect.GetCenter() + new Vector2( 0, renderer.DefaultFontSize / 10 );
+					var textColor = control.State == UIButton.StateEnum.Disabled ? new ColorValue( 0.5, 0.5, 0.5 ) : new ColorValue( 1, 1, 1 );
+					renderer.AddText( control.Text, position, EHorizontalAlignment.Center, EVerticalAlignment.Center, textColor );
+				}
 			}
 		}
 
@@ -469,7 +576,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		void GetScrollBarButtonsScreenRectangles( UIScrollBar control, out Rectangle up, out Rectangle down )
+		void GetScrollBarButtonsScreenRectangles( UIScroll control, out Rectangle up, out Rectangle down )
 		{
 			//!!!!margin
 
@@ -489,7 +596,7 @@ namespace NeoAxis
 			}
 		}
 
-		protected virtual void OnRenderScrollBar( UIScrollBar control, CanvasRenderer renderer )
+		protected virtual void OnRenderScroll( UIScroll control, CanvasRenderer renderer )
 		{
 			var rect = control.GetScreenRectangle();
 			GetScrollBarButtonsScreenRectangles( control, out var up, out var down );
@@ -573,7 +680,7 @@ namespace NeoAxis
 			var fontSize = control.GetFontSizeScreen();
 			var itemSize = GetListItemSizeScreen( control, renderer );
 			var totalItemsHeight = itemSize * control.Items.Count;
-			var scrollBar = control.GetScrollBar();
+			var scrollBar = control.GetScroll();
 
 			//!!!!тут?
 			//update scroll bar properties
@@ -582,7 +689,7 @@ namespace NeoAxis
 				double screenSizeY = rect2.Size.Y;
 				double scrollScreenSizeY = totalItemsHeight - screenSizeY;
 
-				scrollBar.Visible = control.AlwaysShowScrollBar || totalItemsHeight > screenSizeY;
+				scrollBar.Visible = control.AlwaysShowScroll || totalItemsHeight > screenSizeY;
 				if( scrollBar.Visible )
 					scrollBar.ValueRange = new Range( 0, scrollScreenSizeY );
 
@@ -684,7 +791,7 @@ namespace NeoAxis
 				var fontSize = control.GetFontSizeScreen();
 				var itemSize = GetListItemSizeScreen( control, renderer );
 				var totalItemsHeight = itemSize * control.Items.Count;
-				var scrollBar = control.GetScrollBar();
+				var scrollBar = control.GetScroll();
 
 				//items
 				if( control.Items.Count != 0 && rect2.Contains( position ) )
@@ -751,7 +858,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		protected virtual void OnRenderProgressBar( UIProgressBar control, CanvasRenderer renderer )
+		protected virtual void OnRenderProgress( UIProgress control, CanvasRenderer renderer )
 		{
 			var rect = control.GetScreenRectangle();
 			renderer.AddQuad( rect, new ColorValue( 0, 0, 0 ) );
@@ -856,7 +963,7 @@ namespace NeoAxis
 
 				ColorValue c;
 				if( !control.ReadOnly.Value )
-					c = new ColorValue( 1, 1, 1, 0.5 );
+					c = new ColorValue( 0.7, 0.7, 0.7, 0.5 );
 				else
 					c = new ColorValue( 0.5, 0.5, 0.5, 0.5 );
 				renderer.AddQuad( r, c );
@@ -897,6 +1004,172 @@ namespace NeoAxis
 		protected virtual void OnRenderCombo( UICombo control, CanvasRenderer renderer )
 		{
 			control.RenderDefaultStyle( renderer );
+		}
+
+		protected virtual void OnRenderTooltip( UITooltip tooltip, CanvasRenderer renderer )
+		{
+			var container = tooltip.FindParent<UIContainer>();
+			var parentControl = tooltip.Parent as UIControl;
+			if( container != null && parentControl != null )
+			{
+				var text = tooltip.Text.Value;
+				if( !string.IsNullOrEmpty( text ) )
+				{
+					var position = container.ContainerGetMousePosition();
+
+					//cursor offset
+					if( container.LastCursorRectangle.Size.Y != 0 )
+						position.Y += container.LastCursorRectangle.Size.Y;
+					else
+						position.Y += parentControl.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Pixels, 0, 32 ) ).Y;
+
+					//get text size
+					var width = renderer.DefaultFont.GetTextLength( renderer.DefaultFontSize, renderer, text );
+					var height = renderer.DefaultFontSize;
+
+					var rect = new Rectangle( position.X, position.Y, position.X + width, position.Y + height );
+					rect.Expand( parentControl.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 4, 4 ) ) );
+
+					//fix rectangle when outside screen
+					if( rect.Right > 1 )
+					{
+						var offset = rect.Right - 1.0;
+						rect.Left -= offset;
+						rect.Right -= offset;
+					}
+					if( rect.Bottom > 1 )
+					{
+						var offset = rect.Bottom - 1.0;
+						rect.Top -= offset;
+						rect.Bottom -= offset;
+					}
+
+					//back
+					renderer.AddQuad( rect, new ColorValue( 0.3, 0.3, 0.3 ) );
+
+					//text
+					renderer.AddText( text, rect.LeftTop + parentControl.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 2, 2 ) ) );
+				}
+			}
+		}
+
+		protected virtual void OnRenderContextMenu( UIContextMenu menu, CanvasRenderer renderer )
+		{
+			var borderIndents = menu.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 10, 10 ) );
+
+			var maxTextWidth = 0.0;
+			{
+				foreach( var itemBase in menu.Items )
+				{
+					var item = itemBase as UIContextMenu.Item;
+					if( item != null )
+					{
+						var width = renderer.DefaultFont.GetTextLength( renderer.DefaultFontSize, renderer, item.Text );
+						if( width > maxTextWidth )
+							maxTextWidth = width;
+					}
+				}
+			}
+
+			var textHeight = renderer.DefaultFontSize;
+
+			var buttonSize = new Vector2( maxTextWidth, textHeight ) + menu.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 20, 20 ) );
+			var separatorHeight = menu.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 0, 10 ) ).Y;
+
+			//update menu rectangle
+			{
+				var width = borderIndents.X * 2 + buttonSize.X;
+				var height = borderIndents.Y * 2;
+
+				foreach( var itemBase in menu.Items )
+				{
+					var item = itemBase as UIContextMenu.Item;
+					if( item != null )
+						height += buttonSize.Y;
+
+					var separator = itemBase as UIContextMenu.Separator;
+					if( separator != null )
+						height += separatorHeight;
+				}
+
+				//update menu rectangle
+
+				var rect = new Rectangle( menu.InitialScreenPosition, menu.InitialScreenPosition + new Vector2( width, height ) );
+
+				//fix rectangle when outside screen
+				if( rect.Right > 1 )
+				{
+					var offset = rect.Right - 1.0;
+					rect.Left -= offset;
+					rect.Right -= offset;
+				}
+				if( rect.Bottom > 1 )
+				{
+					var offset = rect.Bottom - 1.0;
+					rect.Top -= offset;
+					rect.Bottom -= offset;
+				}
+
+				menu.Margin = new UIMeasureValueRectangle( UIMeasure.Screen, new Rectangle( rect.LeftTop, Vector2.Zero ) );
+				menu.Size = new UIMeasureValueVector2( UIMeasure.Screen, rect.Size );
+			}
+
+			//update buttons
+			{
+				var buttons = menu.GetComponents<UIButton>();
+
+				UIButton GetButtonByItem( UIContextMenu.Item item )
+				{
+					foreach( var button in buttons )
+						if( button.AnyData == item )
+							return button;
+					return null;
+				};
+
+				var currentPositionY = menu.GetScreenPosition().Y + borderIndents.Y;
+
+				foreach( var itemBase in menu.Items )
+				{
+					var item = itemBase as UIContextMenu.Item;
+					if( item != null )
+					{
+						var button = GetButtonByItem( item );
+						if( button != null )
+						{
+							button.Margin = new UIMeasureValueRectangle( UIMeasure.Screen, menu.GetScreenPosition().X + borderIndents.X, currentPositionY, 0, 0 );
+							button.Size = new UIMeasureValueVector2( UIMeasure.Screen, buttonSize );
+
+							currentPositionY += buttonSize.Y;
+						}
+					}
+
+					var separator = itemBase as UIContextMenu.Separator;
+					if( separator != null )
+						currentPositionY += separatorHeight;
+				}
+			}
+
+			//draw default background
+			if( menu.BackgroundColor.Value == ColorValue.Zero )
+				renderer.AddQuad( menu.GetScreenRectangle(), new ColorValue( 0.3, 0.3, 0.3 ) );
+		}
+
+		protected virtual void OnRenderToolbar( UIToolbar control, CanvasRenderer renderer )
+		{
+			//draw default background
+			if( control.BackgroundColor.Value == ColorValue.Zero )
+				renderer.AddQuad( control.GetScreenRectangle(), new ColorValue( 0.3, 0.3, 0.3 ) );
+		}
+
+		protected virtual void OnRenderSplitContainer( UISplitContainer control, CanvasRenderer renderer )
+		{
+			//draw default background
+			if( control.BackgroundColor.Value == ColorValue.Zero )
+				renderer.AddQuad( control.GetScreenRectangle(), new ColorValue( 0.3, 0.3, 0.3 ) );
+		}
+
+		protected virtual void OnRenderTabControl( UITabControl control, CanvasRenderer renderer )
+		{
 		}
 
 	}

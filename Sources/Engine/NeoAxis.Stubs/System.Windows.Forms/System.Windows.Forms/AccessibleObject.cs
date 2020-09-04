@@ -7,7 +7,7 @@ using System.Windows.Forms.Automation;
 
 namespace System.Windows.Forms
 {
-	public class AccessibleObject : StandardOleMarshalObject, IReflect, IAccessible
+	public class AccessibleObject : StandardOleMarshalObject, IReflect//, IAccessible
 	{
 		public virtual Rectangle Bounds
 		{
@@ -97,37 +97,37 @@ namespace System.Windows.Forms
 			}
 		}
 
-		int IAccessible.accChildCount
-		{
-			get
-			{
-				throw null;
-			}
-		}
+		//int IAccessible.accChildCount
+		//{
+		//	get
+		//	{
+		//		throw null;
+		//	}
+		//}
 
-		object IAccessible.accFocus
-		{
-			get
-			{
-				throw null;
-			}
-		}
+		//object IAccessible.accFocus
+		//{
+		//	get
+		//	{
+		//		throw null;
+		//	}
+		//}
 
-		object IAccessible.accParent
-		{
-			get
-			{
-				throw null;
-			}
-		}
+		//object IAccessible.accParent
+		//{
+		//	get
+		//	{
+		//		throw null;
+		//	}
+		//}
 
-		object IAccessible.accSelection
-		{
-			get
-			{
-				throw null;
-			}
-		}
+		//object IAccessible.accSelection
+		//{
+		//	get
+		//	{
+		//		throw null;
+		//	}
+		//}
 
 		Type IReflect.UnderlyingSystemType
 		{
@@ -262,30 +262,30 @@ namespace System.Windows.Forms
 			throw null;
 		}
 
-		void IAccessible.accDoDefaultAction(object childID)
-		{
-			throw null;
-		}
+		//void IAccessible.accDoDefaultAction(object childID)
+		//{
+		//	throw null;
+		//}
 
-		object IAccessible.accHitTest(int xLeft, int yTop)
-		{
-			throw null;
-		}
+		//object IAccessible.accHitTest(int xLeft, int yTop)
+		//{
+		//	throw null;
+		//}
 
-		void IAccessible.accLocation(out int pxLeft, out int pyTop, out int pcxWidth, out int pcyHeight, object childID)
-		{
-			throw null;
-		}
+		//void IAccessible.accLocation(out int pxLeft, out int pyTop, out int pcxWidth, out int pcyHeight, object childID)
+		//{
+		//	throw null;
+		//}
 
-		object IAccessible.accNavigate(int navDir, object childID)
-		{
-			throw null;
-		}
+		//object IAccessible.accNavigate(int navDir, object childID)
+		//{
+		//	throw null;
+		//}
 
-		void IAccessible.accSelect(int flagsSelect, object childID)
-		{
-			throw null;
-		}
+		//void IAccessible.accSelect(int flagsSelect, object childID)
+		//{
+		//	throw null;
+		//}
 
 		public virtual void DoDefaultAction()
 		{

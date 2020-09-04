@@ -27,6 +27,26 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		[DefaultValue( null )]
+		public Reference<Component_Image> Image
+		{
+			get { if( _image.BeginGet() ) Image = _image.Get( this ); return _image.value; }
+			set { if( _image.BeginSet( ref value ) ) { try { ImageChanged?.Invoke( this ); } finally { _image.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Image"/> property value changes.</summary>
+		public event Action<UIButton> ImageChanged;
+		ReferenceField<Component_Image> _image = null;
+
+		[DefaultValue( null )]
+		public Reference<Component_Image> ImageDisabled
+		{
+			get { if( _imageDisabled.BeginGet() ) ImageDisabled = _imageDisabled.Get( this ); return _imageDisabled.value; }
+			set { if( _imageDisabled.BeginSet( ref value ) ) { try { ImageDisabledChanged?.Invoke( this ); } finally { _imageDisabled.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ImageDisabled"/> property value changes.</summary>
+		public event Action<UIButton> ImageDisabledChanged;
+		ReferenceField<Component_Image> _imageDisabled = null;
+
 		/// <summary>
 		/// Specifies highlighted state of the button.
 		/// </summary>
@@ -44,6 +64,22 @@ namespace NeoAxis
 		public UIButton()
 		{
 			Size = new UIMeasureValueVector2( UIMeasure.Units, 200, 40 );
+		}
+
+		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
+		{
+			base.OnMetadataGetMembersFilter( context, member, ref skip );
+
+			if( member is Metadata.Property )
+			{
+				switch( member.Name )
+				{
+				case nameof( ImageDisabled ):
+					if( !Image.ReferenceSpecified )
+						skip = true;
+					break;
+				}
+			}
 		}
 
 		protected override bool OnMouseDown( EMouseButtons button )

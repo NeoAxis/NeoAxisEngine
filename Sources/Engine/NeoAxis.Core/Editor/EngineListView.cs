@@ -5,8 +5,6 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.ComponentModel;
 using System.Linq;
-using System.Diagnostics;
-using ComponentFactory.Krypton.Toolkit;
 
 namespace NeoAxis.Editor
 {
@@ -670,13 +668,6 @@ namespace NeoAxis.Editor
 				}
 			}
 		}
-
-		//protected override void OnPreviewKeyDown( PreviewKeyDownEventArgs e )
-		//{
-		//	var keyData = e.KeyCode;
-
-		//	base.OnPreviewKeyDown( e );
-		//}
 
 		void EnsureVisibleCurrentItem()
 		{

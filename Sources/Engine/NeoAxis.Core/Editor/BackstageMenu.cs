@@ -200,7 +200,8 @@ namespace NeoAxis.Editor
 
 			if( e.Item == kryptonPageExit )
 			{
-				EditorForm.Instance.Close();
+				if( EditorMessageBox.ShowQuestion( Translate( "Exit the editor?" ), EMessageBoxButtons.OKCancel ) == EDialogResult.OK )
+					EditorForm.Instance.Close();
 				return;
 			}
 		}
