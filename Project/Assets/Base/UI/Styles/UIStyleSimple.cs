@@ -36,7 +36,7 @@ namespace Project
 
 					//text
 					var position = new Vector2( rect.Left + control.GetScreenOffsetByValueX( new UIMeasureValueDouble( UIMeasure.Units, 10 ) ), rect.GetCenter().Y ) + new Vector2( 0, renderer.DefaultFontSize / 10 );
-					var textColor = control.State == UIButton.StateEnum.Disabled ? new ColorValue( 0.5, 0.5, 0.5 ) : new ColorValue( 1, 1, 1 );
+					var textColor = control.State == UIButton.StateEnum.Disabled ? new ColorValue( 0.7, 0.7, 0.7 ) : new ColorValue( 1, 1, 1 );
 					renderer.AddText( control.Text, position, EHorizontalAlignment.Left, EVerticalAlignment.Center, textColor );
 				}
 			}
@@ -75,7 +75,7 @@ namespace Project
 
 					//text
 					var position = rect.GetCenter() + new Vector2( 0, renderer.DefaultFontSize / 10 );
-					var textColor = control.State == UIButton.StateEnum.Disabled ? new ColorValue( 0.5, 0.5, 0.5 ) : new ColorValue( 1, 1, 1 );
+					var textColor = control.State == UIButton.StateEnum.Disabled ? new ColorValue( 0.7, 0.7, 0.7 ) : new ColorValue( 1, 1, 1 );
 					renderer.AddText( control.Text, position, EHorizontalAlignment.Center, EVerticalAlignment.Center, textColor );
 				}
 			}
