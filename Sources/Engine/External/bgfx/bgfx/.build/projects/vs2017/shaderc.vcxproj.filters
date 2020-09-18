@@ -18,9 +18,6 @@
     <ClInclude Include="..\..\..\tools\shaderc\shaderc.h">
       <Filter>tools\shaderc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\vertexdecl.h">
-      <Filter>src</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\tools\shaderc\Library.cpp">
@@ -35,11 +32,9 @@
     <ClCompile Include="..\..\..\tools\shaderc\shaderc_hlsl.cpp">
       <Filter>tools\shaderc</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\vertexdecl.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\tools\shaderc\shaderc_glsl.cpp">
       <Filter>tools\shaderc</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\vertexlayout.cpp" />
   </ItemGroup>
 </Project>

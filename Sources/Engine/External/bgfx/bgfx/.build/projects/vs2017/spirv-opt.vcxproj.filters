@@ -357,12 +357,6 @@
     <ClInclude Include="..\..\..\3rdparty\spirv-tools\source\reduce\remove_instruction_reduction_opportunity.h">
       <Filter>3rdparty\spirv-tools\source\reduce</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\3rdparty\spirv-tools\source\reduce\remove_opname_instruction_reduction_opportunity_finder.h">
-      <Filter>3rdparty\spirv-tools\source\reduce</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\3rdparty\spirv-tools\source\reduce\remove_unreferenced_instruction_reduction_opportunity_finder.h">
-      <Filter>3rdparty\spirv-tools\source\reduce</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\3rdparty\spirv-tools\source\reduce\structured_loop_to_selection_reduction_opportunity.h">
       <Filter>3rdparty\spirv-tools\source\reduce</Filter>
     </ClInclude>
@@ -789,9 +783,6 @@
       <Filter>3rdparty\spirv-tools\source\reduce</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\reduce\remove_instruction_reduction_opportunity.cpp">
-      <Filter>3rdparty\spirv-tools\source\reduce</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\reduce\remove_opname_instruction_reduction_opportunity_finder.cpp">
       <Filter>3rdparty\spirv-tools\source\reduce</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\reduce\structured_loop_to_selection_reduction_opportunity.cpp">

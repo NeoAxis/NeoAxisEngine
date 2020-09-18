@@ -159,6 +159,7 @@
     <TargetName>$(ProjectName)</TargetName>
     <OutDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
     <IntDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <PackageDebugSymbols>true</PackageDebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>$(ProjectName)</TargetName>
@@ -225,8 +226,8 @@
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\include;..\..\..\..\..\..\NativeMemoryManager;..\..\..\..\bx\include;..\..\..\..\bx\3rdparty;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty;..\..\..\..\bimg\3rdparty\astc-codec\include;..\..\..\..\bimg\3rdparty\astc-codec;$(Sysroot)\usr\include</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;NDEBUG;_MT;_SECURE_SCL=0;BGFX_CONFIG_RENDERER_OPENGLES=30;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\include;..\..\..\..\..\..\NativeMemoryManager;..\..\..\..\bx\include;..\..\..\..\bx\3rdparty;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty;..\..\..\..\bimg\3rdparty\astc-codec\include;..\..\..\..\bimg\3rdparty\astc-codec;$(Sysroot)\usr\include;..\..\..\3rdparty\khronos</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;NDEBUG;_MT;_SECURE_SCL=0;BGFX_CONFIG_RENDERER_VUL___KAN=10;BGFX_CONFIG_RENDERER_OPENGLES=30;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -327,8 +328,8 @@
       <OmitFramePointers>false</OmitFramePointers>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(StlIncludeDirectories);$(Sysroot)\usr\include;..\..\..\include;..\..\..\..\..\..\NativeMemoryManager;..\..\..\..\bx\include;..\..\..\..\bx\3rdparty;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty;..\..\..\..\bimg\3rdparty\astc-codec\include;..\..\..\..\bimg\3rdparty\astc-codec;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;_DEBUG;_MT;_SECURE_SCL=0;BGFX_CONFIG_RENDERER_OPENGLES=30;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(StlIncludeDirectories);$(Sysroot)\usr\include;..\..\..\include;..\..\..\..\..\..\NativeMemoryManager;..\..\..\..\bx\include;..\..\..\..\bx\3rdparty;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty;..\..\..\..\bimg\3rdparty\astc-codec\include;..\..\..\..\bimg\3rdparty\astc-codec;..\..\..\3rdparty\khronos;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;_DEBUG;_MT;_SECURE_SCL=0;BGFX_CONFIG_RENDERER_VUL___KAN=10;BGFX_CONFIG_RENDERER_OPENGLES=30;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>
       </StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -367,6 +368,7 @@
       </DataExecutionPrevention>
       <ImportLibrary>$(OutDir)libbgfx.lib</ImportLibrary>
       <AdditionalOptions>-z muldefs -lm %(AdditionalOptions)</AdditionalOptions>
+      <DebuggerSymbolInformation>OmitAllSymbolInformation</DebuggerSymbolInformation>
     </Link>
     <PostBuildEvent>
       <Command>copy $(OutDir)$(TargetName)$(TargetExt) "..\..\..\..\..\..\..\..\Project\Sources\NeoAxis.Player.Android\lib\arm64-v8a\"</Command>

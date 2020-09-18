@@ -341,7 +341,7 @@ rem copy ..\..\_Compilation\Android\x64\NativeMemoryManager.Android\libNativeMem
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <ImportLibrary>$(TargetDir)\libNativeMemoryManager.lib</ImportLibrary>
-      <DebuggerSymbolInformation>true</DebuggerSymbolInformation>
+      <DebuggerSymbolInformation>OmitAllSymbolInformation</DebuggerSymbolInformation>
       <Soname>$(OutDir)libOpenAL.a</Soname>
       <VerboseOutput>false</VerboseOutput>
       <AdditionalOptions>-lm %(AdditionalOptions)</AdditionalOptions>

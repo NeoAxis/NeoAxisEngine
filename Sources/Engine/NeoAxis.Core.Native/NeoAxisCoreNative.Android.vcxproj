@@ -407,6 +407,7 @@
     <TargetName>$(ProjectName)</TargetName>
     <OutDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
     <IntDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <PackageDebugSymbols>true</PackageDebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>$(ProjectName)</TargetName>
@@ -613,6 +614,7 @@
       </DataExecutionPrevention>
       <ImportLibrary>$(OutDir)libNeoAxisCoreNative.lib</ImportLibrary>
       <AdditionalOptions>-z muldefs -lm %(AdditionalOptions)</AdditionalOptions>
+      <DebuggerSymbolInformation>OmitAllSymbolInformation</DebuggerSymbolInformation>
     </Link>
     <PostBuildEvent>
       <Command>copy $(OutDir)$(TargetName)$(TargetExt) "..\..\..\Project\Sources\NeoAxis.Player.Android\lib\arm64-v8a\"</Command>

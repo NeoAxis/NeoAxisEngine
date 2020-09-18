@@ -538,7 +538,7 @@ rem copy ..\..\..\..\..\..\_Compilation\Android\x64\libbulletc.Android\libbullet
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <ImportLibrary>$(TargetDir)\libbulletc.lib</ImportLibrary>
-      <DebuggerSymbolInformation>true</DebuggerSymbolInformation>
+      <DebuggerSymbolInformation>OmitAllSymbolInformation</DebuggerSymbolInformation>
       <Soname>$(OutDir)libbulletc.a</Soname>
       <VerboseOutput>false</VerboseOutput>
       <AdditionalOptions> -lm %(AdditionalOptions)</AdditionalOptions>
