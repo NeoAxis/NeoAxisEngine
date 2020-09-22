@@ -2105,5 +2105,18 @@ namespace ComponentFactory.Krypton.Toolkit
         }
         #endregion
 
+        protected override void OnKeyDown( KeyEventArgs e )
+        {
+            //!!!!betauser
+            if( e.KeyCode == Keys.A && ( ModifierKeys & Keys.Control ) != 0 )
+            {
+                SelectAll();
+                e.Handled = true;
+                return;
+            }
+
+            base.OnKeyDown( e );
+        }
+
     }
 }
