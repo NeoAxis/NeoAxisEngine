@@ -219,7 +219,7 @@ namespace Project
 				MainViewport.MouseMove += MainViewport_MouseMove;
 				MainViewport.MouseWheel += MainViewport_MouseWheel;
 				MainViewport.JoystickEvent += MainViewport_JoystickEvent;
-				MainViewport.TouchEvent += MainViewport_TouchEvent;
+				MainViewport.Touch += MainViewport_Touch;
 				MainViewport.SpecialInputDeviceEvent += MainViewport_SpecialInputDeviceEvent;
 
 				//!!!!!Tick +=
@@ -387,8 +387,15 @@ namespace Project
 
 		}
 
-		private static void MainViewport_TouchEvent( Viewport viewport, NeoAxis.Input.TouchEventData e, ref bool handled )
+		private static void MainViewport_Touch( Viewport viewport, NeoAxis.Input.TouchData e, ref bool handled )
 		{
+			//Engine console
+			if( EngineConsole.PerformTouch( e ) )
+			{
+				handled = true;
+				return;
+			}
+
 			//disable input processing
 			if( IsNeedDisableKeyboardAndMouseInput() )
 			{
@@ -623,6 +630,7 @@ namespace Project
 		static void FirstTickActions()
 		{
 			string playFile = "";
+
 			if( SystemSettings.CommandLineParameters.TryGetValue( "-play", out playFile ) )
 			{
 				try
@@ -631,6 +639,13 @@ namespace Project
 						playFile = VirtualPathUtility.GetVirtualPathByReal( playFile );
 				}
 				catch { }
+			}
+
+			if( string.IsNullOrEmpty( playFile ) && ProjectSettings.Get.AutorunScene.ReferenceSpecified )
+			{
+				var res = ProjectSettings.Get.AutorunScene.Value;
+				if( res != null && VirtualFile.Exists( res.ResourceName ) )
+					playFile = res.ResourceName;
 			}
 
 			if( !string.IsNullOrEmpty( playFile ) && VirtualFile.Exists( playFile ) )

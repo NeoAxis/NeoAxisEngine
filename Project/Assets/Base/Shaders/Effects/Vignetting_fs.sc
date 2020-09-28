@@ -27,19 +27,19 @@ void main()
 	vec4 sourceColor = texture2D(s_sourceTexture, v_texCoord0);
 
 	vec2 dist = v_texCoord0 - vec2(0.5,0.5);
-	float powX = 1 - dot(dist, dist);
+	float powX = 1.0 - dot(dist, dist);
 	float effect = saturate(pow(powX, radius.x));
 	//float color = saturate(pow(powX, radius) + (1 - intensity));
 
 	//noise
 	BRANCH
-	if(noiseRange.x != 1 || noiseRange.y != 1)
+	if(noiseRange.x != 1.0 || noiseRange.y != 1.0)
 	{
 		vec2 noiseUV = v_texCoord0 * viewportSize.xy * noiseTextureSize.zw;
 		//noiseUV += seeds.xy;
 		vec4 noise = texture2D(s_noiseTexture, noiseUV);
 		
-		float m = saturate((random2(noise.xy) + 1) / 2);
+		float m = saturate((random2(noise.xy) + 1.0) / 2.0);
 		float m2 = lerp(noiseRange.x, noiseRange.y, m);
 		
 		effect = saturate(effect * m2);

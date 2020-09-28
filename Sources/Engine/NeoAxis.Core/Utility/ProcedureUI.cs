@@ -16,6 +16,8 @@ namespace NeoAxis
 		{
 			public abstract Button CreateButton( string text, Button.SizeEnum size = Button.SizeEnum.Standard );
 			public abstract Check CreateCheck( string text );
+			public abstract Edit CreateEdit( string text = "" );
+			public abstract Text CreateText( string text );
 
 			public abstract void AddRow( IEnumerable<Control> controls );
 		}
@@ -95,6 +97,25 @@ namespace NeoAxis
 			//			State = StateEnum.Indeterminate;
 			//	}
 			//}
+		}
+
+		/////////////////////////////////////////
+
+		/// <summary>
+		/// Represents a edit box for <see cref="ProcedureUI"/>.
+		/// </summary>
+		public abstract class Edit : Control
+		{
+		}
+
+		/////////////////////////////////////////
+
+		/// <summary>
+		/// Represents a text label for <see cref="ProcedureUI"/>.
+		/// </summary>
+		public abstract class Text : Control
+		{
+			public virtual bool Bold { get; set; } = false;
 		}
 
 		/////////////////////////////////////////

@@ -82,6 +82,10 @@ namespace NeoAxis
 		internal static void Shutdown()
 		{
 			DisposeAllResources();
+
+			types.Clear();
+			typeByFileExtension.Clear();
+			resources.Clear();
 		}
 
 		internal static string GetKey( string name )

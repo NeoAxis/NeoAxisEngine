@@ -1455,7 +1455,7 @@ namespace NeoAxis
 				int* dest = (int*)NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Utility, destInBytes );
 
 				int destCount;
-				fixed ( int* pIndices = indices )
+				fixed( int* pIndices = indices )
 				{
 					destCount = (int)Bgfx.TopologyConvert( TopologyConvert.TriListToLineList, (IntPtr)dest, (uint)destInBytes, (IntPtr)pIndices, (uint)indices.Length, true );
 				}
@@ -1669,65 +1669,57 @@ namespace NeoAxis
 			return n1 && n2 && n3;
 		}
 
-		/// <summary>
-		/// Original arrays will not changed.
-		/// </summary>
-		/// <param name="vertices"></param>
-		/// <param name="indices"></param>
-		/// <param name="epsilon"></param>
-		public static void MergeEqualVertices( ref Vector3[] vertices, ref int[] indices, double epsilon )
+		static void MergeEqualVerticesSortByAxisMethod( ref Vector3[] vertices, ref int[] indices, double epsilon, int axis )
 		{
-			//!!!!slowly. есть метод, где по одной оси сравнивается сначала
-			//!!!!можно еще если мало индексов просто пробежать
+			var verticesLocal = vertices;
 
-			if( vertices.Length == 0 || indices.Length == 0 )
-				return;
+			var vertices2 = new int[ vertices.Length ];
+			for( int n = 0; n < vertices2.Length; n++ )
+				vertices2[ n ] = n;
 
-			var found = false;
-			var newVertices = new List<Vector3>( vertices.Length );
-			var newIndices = new List<int>( indices.Length );
-
-			var bounds = Bounds.Cleared;
-			foreach( var vertex in vertices )
-				bounds.Add( vertex );
-			bounds.Expand( epsilon * 2 );
-
-			var initSettings = new OctreeContainer.InitSettings();
-			initSettings.InitialOctreeBounds = bounds;
-			initSettings.OctreeBoundsRebuildExpand = Vector3.Zero;
-			initSettings.MinNodeSize = bounds.GetSize() / 50;
-			var octreeContainer = new OctreeContainer( initSettings );
-
-			foreach( var index in indices )
+			CollectionUtility.MergeSort( vertices2, delegate ( int index1, int index2 )
 			{
-				var p = vertices[ index ];
-				var b = new Bounds( p - new Vector3( epsilon, epsilon, epsilon ), p + new Vector3( epsilon, epsilon, epsilon ) );
+				var v1 = verticesLocal[ index1 ][ axis ];
+				var v2 = verticesLocal[ index2 ][ axis ];
 
-				int newIndex;
+				if( v1 < v2 )
+					return -1;
+				if( v1 > v2 )
+					return 1;
+				return 0;
 
-				//!!!!check by Vec3 position
-				int[] result = octreeContainer.GetObjects( b, 0xFFFFFFFF, OctreeContainer.ModeEnum.All );
-				if( result.Length != 0 )
+			}, true );
+
+			var newVertices = new List<Vector3>( vertices.Length );
+			var vertexMapping = new Dictionary<int, int>( vertices.Length );
+			bool found = false;
+
+			var current = new Vector3( float.MinValue, 0, 0 );
+
+			foreach( var index in vertices2 )
+			{
+				ref var v = ref verticesLocal[ index ];
+
+				if( current.Equals( ref v, epsilon ) )
 				{
+					vertexMapping[ index ] = newVertices.Count - 1;
 					found = true;
-					newIndex = result[ 0 ];
 				}
 				else
 				{
-					newIndex = newVertices.Count;
-					octreeContainer.AddObject( b, 1 );
-					newVertices.Add( p );
+					newVertices.Add( v );
+					vertexMapping[ index ] = newVertices.Count - 1;
+
+					current = v;
 				}
-
-				newIndices.Add( newIndex );
 			}
-
-			octreeContainer.Dispose();
 
 			if( found )
 			{
 				vertices = newVertices.ToArray();
-				indices = newIndices.ToArray();
+
+				for( int n = 0; n < indices.Length; n++ )
+					indices[ n ] = vertexMapping[ indices[ n ] ];
 			}
 		}
 
@@ -1737,58 +1729,187 @@ namespace NeoAxis
 		/// <param name="vertices"></param>
 		/// <param name="indices"></param>
 		/// <param name="epsilon"></param>
-		public static void MergeEqualVertices( ref Vector3F[] vertices, ref int[] indices, float epsilon )
+		public static void MergeEqualVertices( ref Vector3[] vertices, ref int[] indices, double epsilon, bool fastMethod = true )
 		{
-			//!!!!slowly. есть метод, где по одной оси сравнивается сначала
-
 			if( vertices.Length == 0 || indices.Length == 0 )
 				return;
 
-			var found = false;
-			var newVertices = new List<Vector3F>( vertices.Length );
-			var newIndices = new List<int>( indices.Length );
-
-			var bounds = Bounds.Cleared;
-			foreach( var vertex in vertices )
-				bounds.Add( vertex );
-			bounds.Expand( epsilon * 2 );
-
-			var initSettings = new OctreeContainer.InitSettings();
-			initSettings.InitialOctreeBounds = bounds;
-			initSettings.OctreeBoundsRebuildExpand = Vector3.Zero;
-			initSettings.MinNodeSize = bounds.GetSize() / 50;
-			var octreeContainer = new OctreeContainer( initSettings );
-
-			foreach( var index in indices )
+			if( fastMethod )
 			{
-				var p = vertices[ index ];
-				var b = new Bounds( p - new Vector3F( epsilon, epsilon, epsilon ), p + new Vector3F( epsilon, epsilon, epsilon ) );
+				MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, epsilon, 0 );
+				MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, epsilon, 1 );
+				MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, epsilon, 2 );
+			}
+			else
+			{
+				var found = false;
+				var newVertices = new List<Vector3>( vertices.Length );
+				var newIndices = new List<int>( indices.Length );
 
-				int newIndex;
+				var bounds = Bounds.Cleared;
+				foreach( var vertex in vertices )
+					bounds.Add( vertex );
+				bounds.Expand( epsilon * 2 );
 
-				//!!!!check by Vec3 position
-				int[] result = octreeContainer.GetObjects( b, 0xFFFFFFFF, OctreeContainer.ModeEnum.All );
-				if( result.Length != 0 )
+				var initSettings = new OctreeContainer.InitSettings();
+				initSettings.InitialOctreeBounds = bounds;
+				initSettings.OctreeBoundsRebuildExpand = Vector3.Zero;
+				initSettings.MinNodeSize = bounds.GetSize() / 50;
+				var octreeContainer = new OctreeContainer( initSettings );
+
+				foreach( var index in indices )
 				{
+					var p = vertices[ index ];
+					var b = new Bounds( p - new Vector3( epsilon, epsilon, epsilon ), p + new Vector3( epsilon, epsilon, epsilon ) );
+
+					int newIndex;
+
+					//!!!!check by Vec3 position
+					int[] result = octreeContainer.GetObjects( b, 0xFFFFFFFF, OctreeContainer.ModeEnum.All );
+					if( result.Length != 0 )
+					{
+						found = true;
+						newIndex = result[ 0 ];
+					}
+					else
+					{
+						newIndex = newVertices.Count;
+						octreeContainer.AddObject( b, 1 );
+						newVertices.Add( p );
+					}
+
+					newIndices.Add( newIndex );
+				}
+
+				octreeContainer.Dispose();
+
+				if( found )
+				{
+					vertices = newVertices.ToArray();
+					indices = newIndices.ToArray();
+				}
+			}
+		}
+
+		static void MergeEqualVerticesSortByAxisMethod( ref Vector3F[] vertices, ref int[] indices, float epsilon, int axis )
+		{
+			var verticesLocal = vertices;
+
+			var vertices2 = new int[ vertices.Length ];
+			for( int n = 0; n < vertices2.Length; n++ )
+				vertices2[ n ] = n;
+
+			CollectionUtility.MergeSort( vertices2, delegate ( int index1, int index2 )
+			{
+				var v1 = verticesLocal[ index1 ][ axis ];
+				var v2 = verticesLocal[ index2 ][ axis ];
+
+				if( v1 < v2 )
+					return -1;
+				if( v1 > v2 )
+					return 1;
+				return 0;
+
+			}, true );
+
+			var newVertices = new List<Vector3F>( vertices.Length );
+			var vertexMapping = new Dictionary<int, int>( vertices.Length );
+			bool found = false;
+
+			var current = new Vector3F( float.MinValue, 0, 0 );
+
+			foreach( var index in vertices2 )
+			{
+				ref var v = ref verticesLocal[ index ];
+
+				if( current.Equals( ref v, epsilon ) )
+				{
+					vertexMapping[ index ] = newVertices.Count - 1;
 					found = true;
-					newIndex = result[ 0 ];
 				}
 				else
 				{
-					newIndex = newVertices.Count;
-					octreeContainer.AddObject( b, 1 );
-					newVertices.Add( p );
+					newVertices.Add( v );
+					vertexMapping[ index ] = newVertices.Count - 1;
+
+					current = v;
 				}
-
-				newIndices.Add( newIndex );
 			}
-
-			octreeContainer.Dispose();
 
 			if( found )
 			{
 				vertices = newVertices.ToArray();
-				indices = newIndices.ToArray();
+
+				for( int n = 0; n < indices.Length; n++ )
+					indices[ n ] = vertexMapping[ indices[ n ] ];
+			}
+		}
+
+		/// <summary>
+		/// Original arrays will not changed.
+		/// </summary>
+		/// <param name="vertices"></param>
+		/// <param name="indices"></param>
+		/// <param name="epsilon"></param>
+		public static void MergeEqualVertices( ref Vector3F[] vertices, ref int[] indices, float epsilon, bool fastMethod = true )
+		{
+			if( vertices.Length == 0 || indices.Length == 0 )
+				return;
+
+			if( fastMethod )
+			{
+				MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, epsilon, 0 );
+				MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, epsilon, 1 );
+				MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, epsilon, 2 );
+			}
+			else
+			{
+				var found = false;
+				var newVertices = new List<Vector3F>( vertices.Length );
+				var newIndices = new List<int>( indices.Length );
+
+				var bounds = Bounds.Cleared;
+				foreach( var vertex in vertices )
+					bounds.Add( vertex );
+				bounds.Expand( epsilon * 2 );
+
+				var initSettings = new OctreeContainer.InitSettings();
+				initSettings.InitialOctreeBounds = bounds;
+				initSettings.OctreeBoundsRebuildExpand = Vector3.Zero;
+				initSettings.MinNodeSize = bounds.GetSize() / 50;
+				var octreeContainer = new OctreeContainer( initSettings );
+
+				foreach( var index in indices )
+				{
+					var p = vertices[ index ];
+					var b = new Bounds( p - new Vector3F( epsilon, epsilon, epsilon ), p + new Vector3F( epsilon, epsilon, epsilon ) );
+
+					int newIndex;
+
+					//!!!!check by Vec3 position
+					int[] result = octreeContainer.GetObjects( b, 0xFFFFFFFF, OctreeContainer.ModeEnum.All );
+					if( result.Length != 0 )
+					{
+						found = true;
+						newIndex = result[ 0 ];
+					}
+					else
+					{
+						newIndex = newVertices.Count;
+						octreeContainer.AddObject( b, 1 );
+						newVertices.Add( p );
+					}
+
+					newIndices.Add( newIndex );
+				}
+
+				octreeContainer.Dispose();
+
+				if( found )
+				{
+					vertices = newVertices.ToArray();
+					indices = newIndices.ToArray();
+				}
 			}
 		}
 
@@ -1857,25 +1978,40 @@ namespace NeoAxis
 				return false;
 
 			var newVertices = new List<Vector3F>( vertices.Length );
-			for( int n = 0; n < vertices.Length; n++ )
-				if( bits[ n ] )
-					newVertices.Add( vertices[ n ] );
+			var vertexMapping = new Dictionary<int, int>( vertices.Length );
 
-			var newIndices = (int[])indices.Clone();
-			for( int nVertex = vertices.Length - 1; nVertex >= 0; nVertex-- )
+			for( int n = 0; n < vertices.Length; n++ )
 			{
-				if( !bits[ nVertex ] )
+				if( bits[ n ] )
 				{
-					for( int n = 0; n < newIndices.Length; n++ )
-					{
-						if( newIndices[ n ] > nVertex )
-							newIndices[ n ]--;
-					}
+					newVertices.Add( vertices[ n ] );
+					vertexMapping[ n ] = newVertices.Count - 1;
 				}
 			}
 
+			for( int n = 0; n < indices.Length; n++ )
+				indices[ n ] = vertexMapping[ indices[ n ] ];
+
+			//var newVertices = new List<Vector3F>( vertices.Length );
+			//for( int n = 0; n < vertices.Length; n++ )
+			//	if( bits[ n ] )
+			//		newVertices.Add( vertices[ n ] );
+
+			//var newIndices = (int[])indices.Clone();
+			//for( int nVertex = vertices.Length - 1; nVertex >= 0; nVertex-- )
+			//{
+			//	if( !bits[ nVertex ] )
+			//	{
+			//		for( int n = 0; n < newIndices.Length; n++ )
+			//		{
+			//			if( newIndices[ n ] > nVertex )
+			//				newIndices[ n ]--;
+			//		}
+			//	}
+			//}
+
 			vertices = newVertices.ToArray();
-			indices = newIndices;
+			//indices = newIndices;
 			return true;
 		}
 
@@ -1906,12 +2042,11 @@ namespace NeoAxis
 		{
 			var vertices = sourceVertices;
 			var indices = sourceIndices;
-			int[] trianglesToSourceIndex = null;
+			int[] trianglesToSourceIndex;
 
 			RemoveCollinearDegenerateTriangles( vertices, ref indices, out trianglesToSourceIndex, epsilon );
 			RemoveUnusedVertices( ref vertices, ref indices );
-			MergeEqualVertices( ref vertices, ref indices, epsilon );
-
+			MergeEqualVertices( ref vertices, ref indices, epsilon, true );
 			CheckValidVertexIndexBuffer( vertices.Length, indices, true );
 
 			processedVertices = vertices;

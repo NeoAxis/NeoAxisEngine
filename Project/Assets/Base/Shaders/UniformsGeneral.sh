@@ -25,3 +25,10 @@ uniform vec4 u_fogSettings[FOG_SETTING_SIZE];
 #define u_fogHeightMode u_fogSettings[1].w
 #define u_fogHeight u_fogSettings[2].x
 #define u_fogHeightScale u_fogSettings[2].y
+
+
+#ifdef GLSL
+	#define getFragCoord() vec4(gl_FragCoord.x, u_viewportSize.y - gl_FragCoord.y, gl_FragCoord.z, gl_FragCoord.w)
+#else
+	#define getFragCoord() gl_FragCoord
+#endif

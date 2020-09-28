@@ -487,6 +487,22 @@ namespace NeoAxis
 			return true;
 		}
 
+		public static bool PerformTouch( Input.TouchData e )
+		{
+			switch( e.Action )
+			{
+			case Input.TouchData.ActionEnum.Down:
+				if( Active && e.Position.Y < 0.5 )
+				{
+					Active = false;
+					return true;
+				}
+				break;
+			}
+
+			return false;
+		}
+
 		public static void PerformTick( double delta )
 		{
 			if( active )

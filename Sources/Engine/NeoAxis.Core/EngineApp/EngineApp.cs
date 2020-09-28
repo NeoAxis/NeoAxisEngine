@@ -659,6 +659,7 @@ namespace NeoAxis
 			if( instance != null )
 			{
 				instance.ShutdownInternal();
+				applicationType = ApplicationTypeEnum.Unknown;
 				instance = null;
 			}
 		}
@@ -1187,7 +1188,6 @@ namespace NeoAxis
 					}
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
 					{
-						//instance = new AndroidInputDeviceManager();
 					}
 					else
 						Log.Fatal( "EngineApp: Init InputDeviceManager: Unknown platform." );
@@ -1422,8 +1422,11 @@ namespace NeoAxis
 			}
 
 #else
-			string fullPath = Path.Combine( VirtualFileSystem.Directories.Binaries, projectName + ".dll" );
-			projectAssembly = AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true );
+			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
+			{
+				string fullPath = Path.Combine( VirtualFileSystem.Directories.Binaries, projectName + ".dll" );
+				projectAssembly = AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true );
+			}
 #endif
 		}
 
@@ -2704,6 +2707,25 @@ namespace NeoAxis
 		public static Assembly ProjectAssembly
 		{
 			get { return projectAssembly; }
+			set { projectAssembly = value; }
 		}
+
+		//!!!!
+
+		//!!!!может без енума. просто Restart
+
+		//public enum RestartEngineEventEnum
+		//{
+		//	Destroyed,
+		//	Created,
+		//}
+		//public delegate void RestartEngineEventDelegate( RestartEngineEventEnum name );
+		//public static event RestartEngineEventDelegate RestartEngineEvent;
+
+		//public static void PerformRestartEngineEvent( RestartEngineEventEnum name )
+		//{
+		//	RestartEngineEvent?.Invoke( name );
+		//}
+
 	}
 }

@@ -1,6 +1,7 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace NeoAxis.Input
 {
@@ -125,22 +126,72 @@ namespace NeoAxis.Input
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public class TouchEventData
+	public class TouchData
 	{
 		//!!!!more properties
 
 		public Vector2I PositionInPixels;
 		public Vector2F Position;
+		//!!!!
+		public object PointerIdentifier;
 
-		/// <summary>
-		/// Use reflection to get values from this object without adding reference to Android, iOS dlls.
-		/// </summary>
-		public object AndroidView;
+		public enum ActionEnum
+		{
+			/// <summary>
+			/// A pressed gesture has started, the motion contains the initial starting location.
+			/// </summary>
+			Down,
+			/// <summary>
+			/// A pressed gesture has ended.
+			/// </summary>
+			Up,
+			/// <summary>
+			/// A pressed gesture has moved.
+			/// </summary>
+			Move,
+			///// <summary>
+			///// The current gesture has been aborted. You will not receive any more points in it.
+			///// </summary>
+			//Cancel,
+			///// <summary>
+			///// A movement has happened outside of the normal bounds of the UI element.
+			///// </summary>
+			//Outside,
 
-		/// <summary>
-		/// Use reflection to get values from this object without adding reference to Android, iOS dlls.
-		/// </summary>
-		public object AndroidMotionEvent;
+			//Other,
+		}
+		public ActionEnum Action;
+
+		//!!!!
+		public class TouchDownRequestToProcessTouch
+		{
+			public UIControl Sender;
+			public double ProcessPriority;
+			public double DistanceInPixels;
+			public object AnyData;
+			public delegate void ActionDelegate( UIControl sender, TouchData touchData, object anyData );
+			public ActionDelegate Action;
+
+			public TouchDownRequestToProcessTouch( UIControl sender, double processPriority, double distanceInPixels, object anyData, ActionDelegate action )
+			{
+				Sender = sender;
+				ProcessPriority = processPriority;
+				DistanceInPixels = distanceInPixels;
+				AnyData = anyData;
+				Action = action;
+			}
+		}
+		public List<TouchDownRequestToProcessTouch> TouchDownRequestToControlActions = new List<TouchDownRequestToProcessTouch>();
+
+		///// <summary>
+		///// Use reflection to get values from this object without adding reference to Android, iOS dlls.
+		///// </summary>
+		//public object AndroidView;
+
+		///// <summary>
+		///// Use reflection to get values from this object without adding reference to Android, iOS dlls.
+		///// </summary>
+		//public object AndroidMotionEvent;
 
 		////
 		//// Summary:

@@ -26,8 +26,8 @@ namespace Project
 
 				CollectionUtility.MergeSort( files, delegate ( string name1, string name2 )
 				{
-					var s1 = name1.Replace( "\\", " \\" );
-					var s2 = name2.Replace( "\\", " \\" );
+					var s1 = name1.Replace( "\\", " \\" ).Replace( "/", " /" );
+					var s2 = name2.Replace( "\\", " \\" ).Replace( "/", " /" );
 					return string.Compare( s1, s2 );
 				} );
 

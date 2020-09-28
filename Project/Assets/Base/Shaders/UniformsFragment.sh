@@ -13,12 +13,12 @@
 #define u_lightShadowTextureSize u_lightDataFragment[5].y
 #define u_lightShadowMapFarClipDistance u_lightDataFragment[5].z
 #define u_lightShadowCascadesVisualize u_lightDataFragment[5].w
-#define u_lightShadowTextureViewProjMatrix0 mat4(u_lightDataFragment[6], u_lightDataFragment[7], u_lightDataFragment[8], u_lightDataFragment[9])
-#define u_lightShadowTextureViewProjMatrix1 mat4(u_lightDataFragment[10], u_lightDataFragment[11], u_lightDataFragment[12], u_lightDataFragment[13])
-#define u_lightShadowTextureViewProjMatrix2 mat4(u_lightDataFragment[14], u_lightDataFragment[15], u_lightDataFragment[16], u_lightDataFragment[17])
-#define u_lightShadowTextureViewProjMatrix3 mat4(u_lightDataFragment[18], u_lightDataFragment[19], u_lightDataFragment[20], u_lightDataFragment[21])
+#define u_lightShadowTextureViewProjMatrix0 mtxFromRows(u_lightDataFragment[6], u_lightDataFragment[7], u_lightDataFragment[8], u_lightDataFragment[9])
+#define u_lightShadowTextureViewProjMatrix1 mtxFromRows(u_lightDataFragment[10], u_lightDataFragment[11], u_lightDataFragment[12], u_lightDataFragment[13])
+#define u_lightShadowTextureViewProjMatrix2 mtxFromRows(u_lightDataFragment[14], u_lightDataFragment[15], u_lightDataFragment[16], u_lightDataFragment[17])
+#define u_lightShadowTextureViewProjMatrix3 mtxFromRows(u_lightDataFragment[18], u_lightDataFragment[19], u_lightDataFragment[20], u_lightDataFragment[21])
 #define u_lightShadowCascades u_lightDataFragment[22]
-#define u_lightMaskMatrix mat4(u_lightDataFragment[23], u_lightDataFragment[24], u_lightDataFragment[25], u_lightDataFragment[26])
+#define u_lightMaskMatrix mtxFromRows(u_lightDataFragment[23], u_lightDataFragment[24], u_lightDataFragment[25], u_lightDataFragment[26])
 #define u_lightShadowUnitDistanceTexelSizes u_lightDataFragment[27]
 #define u_lightShadowBias u_lightDataFragment[28].x
 #define u_lightShadowNormalBias u_lightDataFragment[28].y
@@ -57,3 +57,21 @@
 //#if defined(USAGEMODE_MATERIALBLENDFIRST) || defined(USAGEMODE_MATERIALBLENDNOTFIRST)
 //	uniform vec4/*float*/ param_materialBlendMask;
 //#endif
+
+
+void getMaterialData(sampler2D materials, vec4 renderOperationData[5], out vec4 materialStandardFragment[MATERIAL_STANDARD_FRAGMENT_SIZE])
+{
+#ifdef GLSL
+	float materialIndex = renderOperationData[0].x;
+	for(int n=0;n<MATERIAL_STANDARD_FRAGMENT_SIZE;n++)
+	{
+		int x = int(mod(materialIndex, 64.0) * 8.0 + float(n));
+		int y = int(floor(materialIndex / 64.0));
+		materialStandardFragment[n] = texelFetch(materials, ivec2(x, y), 0);
+	}
+#else
+	int materialIndex = int(renderOperationData[0].x);
+	for(int n=0;n<MATERIAL_STANDARD_FRAGMENT_SIZE;n++)
+		materialStandardFragment[n] = texelFetch(materials, ivec2((int)(materialIndex % 64) * 8 + n, (int)(materialIndex / 64)), 0);	
+#endif	
+}

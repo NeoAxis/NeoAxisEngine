@@ -119,6 +119,8 @@ if errorlevel 1 goto VCEnd</Command>
       <PreprocessorDefinitions>ANDROID;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <Optimization>MinSize</Optimization>
     </ClCompile>
     <PostBuildEvent>
       <Command>set LibOutDir=$(SolutionDir)Engine\Lib\Android\$(Platform)

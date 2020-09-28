@@ -757,7 +757,7 @@ namespace NeoAxis
 
 		//!!!!!как тут это всё с Viewport и multirendertarget?
 		//!!!!!для RenderQuad добавить "RectI? scissorRectangle"?
-		public void RenderQuadToCurrentViewport( CanvasRenderer.ShaderItem shader, CanvasRenderer.BlendingType blending = CanvasRenderer.BlendingType.Opaque, bool flipY = false )
+		public void RenderQuadToCurrentViewport( CanvasRenderer.ShaderItem shader, CanvasRenderer.BlendingType blending = CanvasRenderer.BlendingType.Opaque )//, bool flipY = false )
 		{
 			if( currentViewport == null )
 				Log.Fatal( "ViewportRenderingContext: RenderQuadToCurrentViewport: CurrentViewport == null." );
@@ -765,10 +765,10 @@ namespace NeoAxis
 			renderer.PushShader( shader );
 			renderer.PushBlendingType( blending );// GuiRenderer.BlendingType.Opaque );
 
-			if( flipY )
-				renderer.AddQuad( new Rectangle( 0, 0, 1, 1 ), new Rectangle( 0, 1, 1, 0 ), null, new ColorValue( 1, 1, 1 ), false );
-			else
-				renderer.AddQuad( new Rectangle( 0, 0, 1, 1 ), new Rectangle( 0, 0, 1, 1 ), null, new ColorValue( 1, 1, 1 ), false );
+			//if( flipY )
+			//	renderer.AddQuad( new Rectangle( 0, 0, 1, 1 ), new Rectangle( 0, 1, 1, 0 ), null, new ColorValue( 1, 1, 1 ), false );
+			//else
+			renderer.AddQuad( new Rectangle( 0, 0, 1, 1 ), new Rectangle( 0, 0, 1, 1 ), null, new ColorValue( 1, 1, 1 ), false );
 
 			renderer.PopBlendingType();
 			renderer.PopShader();
@@ -888,7 +888,7 @@ namespace NeoAxis
 
 		public unsafe void SetUniform( Uniform uniform, ParameterType type, int arraySize, ArraySegment<byte> valueData )
 		{
-			fixed ( byte* pData = valueData.Array )
+			fixed( byte* pData = valueData.Array )
 				SetUniform( uniform, type, arraySize, (IntPtr)( pData + valueData.Offset ) );
 		}
 
@@ -908,7 +908,7 @@ namespace NeoAxis
 
 		public unsafe void SetUniform( string name, ParameterType type, int arraySize, ArraySegment<byte> valueData )
 		{
-			fixed ( byte* pData = valueData.Array )
+			fixed( byte* pData = valueData.Array )
 				SetUniform( name, type, arraySize, (IntPtr)( pData + valueData.Offset ) );
 		}
 

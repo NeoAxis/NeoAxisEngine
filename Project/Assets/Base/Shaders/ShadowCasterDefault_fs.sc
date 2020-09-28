@@ -11,7 +11,7 @@ uniform vec4/*float*/ u_farClipDistance;
 
 void main()
 {
-	smoothLOD(gl_FragCoord, u_renderOperationData[2].w);
+	smoothLOD(getFragCoord(), u_renderOperationData[2].w);
 
 	vec2 depth = v_depth;
 	//!!!!

@@ -1,6 +1,7 @@
 $input v_texCoord0
 
 #include "../../Common.sh"
+#include "../../FragmentFunctions.sh"
 
 SAMPLER2D(s_depthTexture, 0);
 SAMPLER2D(s_sceneTexture, 1);
@@ -21,10 +22,10 @@ uniform vec4 fov;
 uniform vec4 aspectRatio;
 uniform vec4 cameraPosition;
 
-#include "..\..\PBRFilament\common_types.sh"
-#include "..\..\PBRFilament\common_math.sh"
-#include "..\..\PBRFilament\brdf.sh"
-#include "..\..\PBRFilament\PBRFilament.sh"
+#include "../../PBRFilament/common_types.sh"
+#include "../../PBRFilament/common_math.sh"
+#include "../../PBRFilament/brdf.sh"
+#include "../../PBRFilament/PBRFilament.sh"
 
 float getDepth(vec2 coord)
 {
@@ -104,7 +105,7 @@ vec3 raymarch(vec3 position, vec3 direction)
 		OOB = OOB || (screencoord.y < 0.0) || (screencoord.y > 1.0); // Y
 		OOB = OOB || (position.z >  zFar.x ) || (position.z <  zNear.x); // Z
 		if (OOB)
-			return vec3_splat(0.0);
+			return vec3_splat(0);
 
 		screencoord = snapToPixel(screencoord);
 		float penetration = length(position) - length(getViewPosition(screencoord));
@@ -121,7 +122,7 @@ vec3 raymarch(vec3 position, vec3 direction)
 		}
 	}
 
-	return vec3_splat(0.0);
+	return vec3_splat(0);
 }
 
 vec3 glossyReflection(vec3 position, vec3 normal, vec3 view, vec3 specIBL)
@@ -176,13 +177,13 @@ vec3 specularIBL(vec2 texCoords)
 	material.ambientOcclusion = gBufferData.z;
 
 	material.anisotropy = 0.0f;
-	material.anisotropyDirection = vec3_splat(0.0);
+	material.anisotropyDirection = vec3_splat(0);
 
 	material.clearCoat = 0;
 	material.clearCoatRoughness = 0;
 	material.clearCoatNormal = vec3_splat(0);
 
-	setupPBRFilamentParams(material, vec3_splat(0.0), vec3_splat(0.0), normal, normal, toLight, toCamera, false);//gl_FrontFacing);
+	setupPBRFilamentParams(material, vec3_splat(0), vec3_splat(0), normal, normal, toLight, toCamera, false);//gl_FrontFacing);
 
 	PixelParams pixel;
 	getPBRFilamentPixelParams(material, pixel);

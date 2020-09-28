@@ -64,7 +64,16 @@ namespace Project
 		protected override void OnAddedToParent()
 		{
 			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+			{
 				instance = this;
+
+				if( !SystemSettings.MobileDevice )
+				{
+					var button = GetComponent( "Button Menu" );
+					if( button != null )
+						button.Enabled = false;
+				}
+			}
 
 			base.OnAddedToParent();
 		}
@@ -166,13 +175,13 @@ namespace Project
 			return base.OnJoystickEvent( e );
 		}
 
-		protected override bool OnTouchEvent( TouchEventData e )
+		protected override bool OnTouch( TouchData e )
 		{
 			//Game mode
 			if( gameMode != null && gameMode.ProcessInputMessage( this, new InputMessageTouch( e ) ) )
 				return true;
 
-			return base.OnTouchEvent( e );
+			return base.OnTouch( e );
 		}
 
 		protected override bool OnSpecialInputDeviceEvent( InputEvent e )
@@ -438,6 +447,11 @@ namespace Project
 				return true;
 				//return !EngineConsole.Active && menuWindow == null;
 			}
+		}
+
+		public void ButtonMenu_Click( NeoAxis.UIButton sender )
+		{
+			OpenOrCloseMenu();
 		}
 	}
 }

@@ -10,9 +10,13 @@ float getShadowValueSimple(sampler2DArrayShadow shadowMapArray, int cascadeIndex
 {
 	float compareDepth = shadowUV.z / u_lightShadowMapFarClipDistance;
 	vec2 uv = shadowUV.xy / shadowUV.w;
-	
+
+#ifdef GLSL
+	float shadowFactor = shadow2DArray(shadowMapArray, vec4(uv, cascadeIndex, compareDepth));
+#else
 	float shadowFactor = shadow2DArray(shadowMapArray, vec4(uv, cascadeIndex, compareDepth)).r;
-	return (1 - shadowFactor);
+#endif
+	return (1.0 - shadowFactor);
 }
 
 //default for High
@@ -21,13 +25,26 @@ float getShadowValuePCF8TapFixedDisk4x(sampler2DArrayShadow shadowMapArray, int 
 	float compareDepth = shadowUV.z / u_lightShadowMapFarClipDistance;
 	vec2 shadowUVScaled = shadowUV.xy / shadowUV.w;
 
-	const float scale = 2.0f / u_lightShadowTextureSize;
+	float scale = 2.0f / u_lightShadowTextureSize;
 	//float scale = u_lightShadowSoftness * 2.0f / u_lightShadowTextureSize;
 	//const float scale = 2.0f / u_lightShadowTextureSize;
 
+#ifdef GLSL
+	const vec2 poisson[8] = vec2[8]
+	(
+		vec2(     0.0,      0.0),
+		vec2( -0.18, -0.816),
+		vec2(-0.126,    0.8),
+		vec2(-0.854, -0.166),
+		vec2( 0.856,  -0.13),
+		vec2(-0.394,  0.032),
+		vec2( 0.178,   0.33),
+		vec2( 0.186, -0.324)
+	);
+#else
 	const vec2 poisson[8] =
 	{
-		vec2(     0,      0),
+		vec2(     0.0,      0.0),
 		vec2( -0.18, -0.816),
 		vec2(-0.126,    0.8),
 		vec2(-0.854, -0.166),
@@ -36,17 +53,22 @@ float getShadowValuePCF8TapFixedDisk4x(sampler2DArrayShadow shadowMapArray, int 
 		vec2( 0.178,   0.33),
 		vec2( 0.186, -0.324),
 	};
+#endif
 
 	//8 tap filter
 
-	float shadow = 0;
+	float shadow = 0.0;
 	for(int n = 0; n < 8; n++)
 	{
 		vec2 texCoord = shadowUVScaled.xy + poisson[n] * scale;
+#ifdef GLSL
+		float shadowFactor = shadow2DArray(shadowMapArray, vec4(texCoord, cascadeIndex, compareDepth));
+#else
 		float shadowFactor = shadow2DArray(shadowMapArray, vec4(texCoord, cascadeIndex, compareDepth)).r;
-		shadow += (float)shadowFactor;
+#endif		
+		shadow += shadowFactor;
 	}
-	return (1 - shadow / 8);
+	return (1.0 - shadow / 8.0);
 }
 
 /*
@@ -144,7 +166,7 @@ float getShadowValuePointSimple(samplerCubeShadow shadowMap, vec4 shadowUV)
 	//flipped cubemaps. conversion already done in the vertex shader.
 	float compareDepth = shadowUV.w / u_lightShadowMapFarClipDistance;
 	float shadowFactor = shadowCube(shadowMap, vec4(shadowUV.xyz, compareDepth));
-	return (1 - shadowFactor);
+	return (1.0 - shadowFactor);
 }
 
 //default for High
@@ -162,26 +184,26 @@ float getShadowValuePointPCF8TapFixedDisk4x(samplerCubeShadow shadowMap, vec4 sh
 	if(absRay.x > absRay.y && absRay.x > absRay.z)
 	{
 		planeX = true;
-		if(ray.x > 0)
-			planeNormal = vec3(1, 0, 0);
+		if(ray.x > 0.0)
+			planeNormal = vec3(1.0, 0.0, 0.0);
 		else
-			planeNormal = vec3(-1, 0, 0);
+			planeNormal = vec3(-1.0, 0.0, 0.0);
 	}
 	else if(absRay.y > absRay.z)
 	{
 		planeY = true;
-		if(ray.y > 0)
-			planeNormal = vec3(0, 1, 0);
+		if(ray.y > 0.0)
+			planeNormal = vec3(0.0, 1.0, 0.0);
 		else
-			planeNormal = vec3(0, -1, 0);
+			planeNormal = vec3(0.0, -1.0, 0.0);
 	}
 	else
 	{
 		planeZ = true;
-		if(ray.z > 0)
-			planeNormal = vec3(0, 0, 1);
+		if(ray.z > 0.0)
+			planeNormal = vec3(0.0, 0.0, 1.0);
 		else
-			planeNormal = vec3(0, 0, -1);
+			planeNormal = vec3(0.0, 0.0, -1.0);
 	}
 	
 	//detecting plane intersection point
@@ -194,9 +216,22 @@ float getShadowValuePointPCF8TapFixedDisk4x(samplerCubeShadow shadowMap, vec4 sh
 	//float scale = u_lightShadowSoftness * 1.5f;
 	//const float scale = 1.5;// = scale / u_lightShadowTextureSize;
 
+#ifdef GLSL
+	const vec2 poisson[8] = vec2[8]
+	(
+		vec2(     0.0,      0.0),
+		vec2( -0.18, -0.816),
+		vec2(-0.126,    0.8),
+		vec2(-0.854, -0.166),
+		vec2( 0.856,  -0.13),
+		vec2(-0.394,  0.032),
+		vec2( 0.178,   0.33),
+		vec2( 0.186, -0.324)
+	);
+#else
 	const vec2 poisson[8] =
 	{
-		vec2(     0,      0),
+		vec2(     0.0,      0.0),
 		vec2( -0.18, -0.816),
 		vec2(-0.126,    0.8),
 		vec2(-0.854, -0.166),
@@ -205,23 +240,24 @@ float getShadowValuePointPCF8TapFixedDisk4x(samplerCubeShadow shadowMap, vec4 sh
 		vec2( 0.178,   0.33),
 		vec2( 0.186, -0.324),
 	};
+#endif
 
 	//8 tap filter
 
 	float compareDepth = shadowUV.w / u_lightShadowMapFarClipDistance;
 
-	float shadow = 0;
+	float shadow = 0.0;
 	for(int n = 0; n < 8; n++)
 	{
 		vec2 offset2 = poisson[n] * scale;
 
 		vec3 offset;
 		if(planeX)
-			offset = vec3(0, offset2.x, offset2.y);
+			offset = vec3(0.0, offset2.x, offset2.y);
 		else if(planeY)
-			offset = vec3(offset2.x, 0, offset2.y);
+			offset = vec3(offset2.x, 0.0, offset2.y);
 		else
-			offset = vec3(offset2.x, offset2.y, 0);
+			offset = vec3(offset2.x, offset2.y, 0.0);
 
 		vec3 texCoord = texPos + offset;
 
@@ -230,7 +266,7 @@ float getShadowValuePointPCF8TapFixedDisk4x(samplerCubeShadow shadowMap, vec4 sh
 
 		shadow += shadowFactor;
 	}
-	return (1 - shadow / 8);
+	return (1.0 - shadow / 8.0);
 }
 
 /*
@@ -417,9 +453,10 @@ float getShadowValueForPointLightPoisson16(samplerCube shadowMap, vec4 shadowUV)
 
 #endif //LIGHT_TYPE_POINT
 
-float calcWorldTexelSize(float worldDistanceToSample, int cascadeIndex = 0) {
+float calcWorldTexelSize(float worldDistanceToSample, int cascadeIndex)
+{
 	#ifdef LIGHT_TYPE_DIRECTIONAL
-		float distScale = 1;
+		float distScale = 1.0;
 		float unitTexelSize = u_lightShadowUnitDistanceTexelSizes[cascadeIndex];
 	#else
 		float distScale = worldDistanceToSample;
@@ -439,7 +476,7 @@ float getShadowMultiplier(vec3 worldPosition, float cameraDistance, float cascad
 {
 	float final;
 
-	int cascadeIndex = 0;	
+	int cascadeIndex = 0;
 	#ifdef LIGHT_TYPE_DIRECTIONAL		
 		if(cascadeDepth < u_lightShadowCascades.y)
 			cascadeIndex = 0;
@@ -449,7 +486,7 @@ float getShadowMultiplier(vec3 worldPosition, float cameraDistance, float cascad
 			cascadeIndex = 2;
 		else
 			cascadeIndex = 3;
-		int cascadeCount = (int)u_lightShadowCascades.x - 1;
+		int cascadeCount = int(u_lightShadowCascades.x) - 1;
 		cascadeIndex = min(cascadeIndex, cascadeCount);
 	#endif
 
@@ -464,11 +501,11 @@ float getShadowMultiplier(vec3 worldPosition, float cameraDistance, float cascad
 	#endif
 
 	float NdotL = dot(shadowTexelNormal, worldNormal);//float NdotL = dot(lightWorldDirection, worldNormal);
-	float sine = sqrt(1 - NdotL * NdotL);
+	float sine = sqrt(1.0 - NdotL * NdotL);
 	float tan = abs(NdotL) > 0.0 ? sine / NdotL : 0.0;
    	float worldTexelSize = calcWorldTexelSize(length(worldPosition - u_lightPosition.xyz), cascadeIndex); 
 
-	worldPosition.xyz += 2 * lightWorldDirection * u_lightShadowBias * clamp(tan, 0.9, 10) * worldTexelSize;
+	worldPosition.xyz += 2.0 * lightWorldDirection * u_lightShadowBias * clamp(tan, 0.9, 10.0) * worldTexelSize;
 	worldPosition.xyz += 2.5 * (worldNormal * u_lightShadowNormalBias) * clamp(sine, 0.1, 1.0) * worldTexelSize;
 	// clamp нужен, чтобы избежать артефактов, когда тексел с пола заезжает на стенку и недостаточно сильно
 	// выправляется bias-ом, 0.1 и 0.9 подобраны эмпирически, надо подумать, нельзя ли их привязать к
@@ -505,7 +542,7 @@ float getShadowMultiplier(vec3 worldPosition, float cameraDistance, float cascad
 			cascadeIndex = 2;
 		else
 			cascadeIndex = 3;
-		int cascadeCount = (int)u_lightShadowCascades.x - 1;
+		int cascadeCount = int(u_lightShadowCascades.x) - 1;
 		cascadeIndex = min(cascadeIndex, cascadeCount);
 	#endif
 */
@@ -530,7 +567,7 @@ float getShadowMultiplier(vec3 worldPosition, float cameraDistance, float cascad
 
 	//visualize cascades
 	#ifdef LIGHT_TYPE_DIRECTIONAL
-	if(u_lightShadowCascadesVisualize > 0 && u_lightShadowCascades.x > 1)
+	if(u_lightShadowCascadesVisualize > 0.0 && u_lightShadowCascades.x > 1.0)
 	{
 		if(cascadeDepth < u_lightShadowCascades.y)
 			final += .8f;
@@ -548,7 +585,7 @@ float getShadowMultiplier(vec3 worldPosition, float cameraDistance, float cascad
 	//////////////////////////////////////////////////
 
 	//shadow intensity
-	final = 1 - final * u_lightShadowIntensity;
+	final = 1.0 - final * u_lightShadowIntensity;
 
 	//fading by distance
 	//vec3 u_viewportOwnerShadowFarDistance:
@@ -556,8 +593,8 @@ float getShadowMultiplier(vec3 worldPosition, float cameraDistance, float cascad
 	//y: shadowFarDistance - shadowFadeMinDistance * 2
 	//z: 1 / (shadowFarDistance - shadowFadeMinDistance)
 	final += saturate((cameraDistance + u_viewportOwnerShadowFarDistance.y) * u_viewportOwnerShadowFarDistance.z);
-	if(final > 1)
-		final = 1;
+	if(final > 1.0)
+		final = 1.0;
 
 	return final;
 }

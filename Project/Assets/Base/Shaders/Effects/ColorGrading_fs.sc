@@ -16,7 +16,7 @@ void main()
 
 	vec4 color = sourceColor;
 
-	if(useLookupTable.x > 0)
+	if(useLookupTable.x > 0.0)
 	{
 		color = saturate(color);
 
@@ -26,8 +26,8 @@ void main()
 		float fracB = color.b * 15.0f - intB * 16.0f;
 		float u = intB + color.r * scale / 16.0f;
 		float v = color.g * scale;
-		vec3 rg0 = texture2DLod( s_lookupTable, offset + vec2( u, v ), 0 ).rgb;
-		vec3 rg1 = texture2DLod( s_lookupTable, offset + vec2( u + 1.0f / 16.0f, v ), 0 ).rgb;
+		vec3 rg0 = texture2DLod( s_lookupTable, offset + vec2( u, v ), 0.0 ).rgb;
+		vec3 rg1 = texture2DLod( s_lookupTable, offset + vec2( u + 1.0f / 16.0f, v ), 0.0 ).rgb;
 		vec3 color2 = lerp( rg0, rg1, fracB );
 		color = vec4( color2, color.w );
 	}

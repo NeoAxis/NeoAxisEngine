@@ -51,6 +51,7 @@
 			}
 			.component NeoAxis.Component_RenderingEffect_ToneMapping
 			{
+				Enabled = False
 				Name = Tone Mapping
 			}
 			.component NeoAxis.Component_RenderingEffect_ToLDR
@@ -81,7 +82,7 @@
 		Name = Light 1
 		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
 		Type = Directional
-		Brightness = 140000
+		Brightness = 176643.25912030696
 		AttenuationFar = 100
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
@@ -89,6 +90,7 @@
 	}
 	.component NeoAxis.Component_Light
 	{
+		Enabled = False
 		Name = Light 2
 		Transform = "-16.276133519817 -13.7764744895929 22.8055842838911; -0.800753779408636 -0.218616030310482 0.553641801455134 0.066941554624803; 1 1 1"
 		Type = Spotlight
@@ -147,6 +149,28 @@
 	{
 		Name = Sphere
 		Transform = "2.24972662229752 2.10321566284794 0.5; 0 0 0 1; 1 1 1"
+		Color = 1 0.9916863 0
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Sphere 2
+		Transform = "2.24972662229752 4.87818831259736 0.5; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -187,8 +211,52 @@
 	}
 	.component NeoAxis.Component_MeshInSpace
 	{
+		Name = Box 2
+		Transform = "-0.320886046807019 4.98718804278286 0.500000000000008; 0 0 0 1; 1 1 1"
+		Color = 0 1 0.04615686
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
 		Name = Cylinder
 		Transform = "4.72503177820751 2.15633617627311 0.499999999999976; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Cylinder
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
+		Name = Cylinder 2
+		Transform = "4.72503177820751 4.93130882602254 0.499999999999976; 0 0 0 1; 1 1 1"
+		Color = 1 0 0.02368627
 		Mesh
 		{
 			GetByReference = "this:$Mesh"

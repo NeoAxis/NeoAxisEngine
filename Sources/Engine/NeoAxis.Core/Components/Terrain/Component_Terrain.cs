@@ -1749,7 +1749,7 @@ namespace NeoAxis
 			foreach( char c in new string( Path.GetInvalidFileNameChars() ) + new string( Path.GetInvalidPathChars() ) )
 				name = name.Replace( c.ToString(), "_" );
 			name = name.Replace( " ", "_" );
-			return Path.Combine( ComponentUtility.GetOwnedFileNameOfComponent( this ) + "_Files", name );
+			return PathUtility.Combine( ComponentUtility.GetOwnedFileNameOfComponent( this ) + "_Files", name );
 		}
 
 		string GetSaveRealDirectory( string realFileName )
@@ -1758,12 +1758,12 @@ namespace NeoAxis
 			foreach( char c in new string( Path.GetInvalidFileNameChars() ) + new string( Path.GetInvalidPathChars() ) )
 				name = name.Replace( c.ToString(), "_" );
 			name = name.Replace( " ", "_" );
-			return Path.Combine( realFileName + "_Files", name );
+			return PathUtility.Combine( realFileName + "_Files", name );
 		}
 
 		unsafe bool LoadHeightmapBuffer( string virtualDirectory, out string error )
 		{
-			string virtualFileName = Path.Combine( virtualDirectory, "Heightmap.exr" );
+			string virtualFileName = PathUtility.Combine( virtualDirectory, "Heightmap.exr" );
 
 			if( VirtualFile.Exists( virtualFileName ) )
 			{
@@ -1929,7 +1929,7 @@ namespace NeoAxis
 		{
 			if( heightmapBuffer != null )
 			{
-				string realFileName = Path.Combine( realDirectory, "Heightmap.exr" );
+				string realFileName = PathUtility.Combine( realDirectory, "Heightmap.exr" );
 
 				int length = heightmapSize + 1;
 				var data = new float[ length * length ];

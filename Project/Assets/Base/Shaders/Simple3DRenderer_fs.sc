@@ -2,6 +2,7 @@ $input v_pos, v_colorVisible, v_colorInvisible
 
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "Common.sh"
+#include "FragmentFunctions.sh"
 
 SAMPLER2D(s_depthTexture, 0);
 
@@ -14,11 +15,13 @@ uniform vec4 u_simple3DRendererVertex[3];
 void main()
 {
 	bool visible = true;
-	if(u_depthTextureAvailable > 0)
+	if(u_depthTextureAvailable > 0.0)
 	{	
 		vec2 ndc = v_pos.xy/v_pos.w;
+#ifdef HLSL
 		// flip ndc y coord to match directx v tex coord
 		ndc.y = -ndc.y;
+#endif
 		float rawDepth = texture2D(s_depthTexture, 0.5*ndc + 0.5).r;
 		float depth = getDepthValue(rawDepth, u_viewportOwnerNearClipDistance, u_viewportOwnerFarClipDistance);
 		if(depth < v_pos.z) visible = false;
@@ -31,7 +34,7 @@ void main()
 		gl_FragColor = v_colorInvisible;
 		
 		//need for support occlusion query
-		if(!any(v_colorInvisible))
+		if(!any2(v_colorInvisible))
 			discard;
 	}
 }

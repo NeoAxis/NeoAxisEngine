@@ -5,12 +5,15 @@
 
 #include "shaderc.h"
 
+//!!!!betauser
+#if 0
+
 BX_PRAGMA_DIAGNOSTIC_PUSH()
 BX_PRAGMA_DIAGNOSTIC_IGNORED_MSVC(4100) // error C4100: 'inclusionDepth' : unreferenced formal parameter
 BX_PRAGMA_DIAGNOSTIC_IGNORED_MSVC(4265) // error C4265: 'spv::spirvbin_t': class has virtual functions, but destructor is not virtual
 BX_PRAGMA_DIAGNOSTIC_IGNORED_CLANG_GCC("-Wattributes") // warning: attribute ignored
-BX_PRAGMA_DIAGNOSTIC_IGNORED_CLANG_GCC("-Wdeprecated-declarations") // warning: ‘MSLVertexAttr’ is deprecated
-BX_PRAGMA_DIAGNOSTIC_IGNORED_CLANG_GCC("-Wtype-limits") // warning: comparison of unsigned expression in ‘< 0’ is always false
+BX_PRAGMA_DIAGNOSTIC_IGNORED_CLANG_GCC("-Wdeprecated-declarations") // warning: â€˜MSLVertexAttrâ€™ is deprecated
+BX_PRAGMA_DIAGNOSTIC_IGNORED_CLANG_GCC("-Wtype-limits") // warning: comparison of unsigned expression in â€˜< 0â€™ is always false
 BX_PRAGMA_DIAGNOSTIC_IGNORED_CLANG_GCC("-Wshadow") // warning: declaration of 'userData' shadows a member of 'glslang::TShader::Includer::IncludeResult'
 #define ENABLE_OPT 1
 #include <ShaderLang.h>
@@ -23,6 +26,15 @@ BX_PRAGMA_DIAGNOSTIC_IGNORED_CLANG_GCC("-Wshadow") // warning: declaration of 'u
 #include <spirv_reflect.hpp>
 #include <spirv-tools/optimizer.hpp>
 BX_PRAGMA_DIAGNOSTIC_POP()
+
+#ifdef __ANDROID__
+#include <android/log.h>
+#define LOG_ANDROID_INFO(T) __android_log_print(ANDROID_LOG_INFO, "bgfx", T)
+extern void LogLongText(std::string s);
+#endif
+
+//!!!!betauser
+#endif
 
 namespace bgfx
 {
@@ -48,6 +60,9 @@ namespace bgfx
 		}
 	}
 } // namespace bgfx
+
+//!!!!betauser
+#if 0
 
 #define TINYSTL_ALLOCATOR bgfx::TinyStlAllocator
 #include <tinystl/allocator.h>
@@ -680,6 +695,13 @@ namespace bgfx { namespace spirv
 	{
 		BX_UNUSED(_version);
 
+		//!!!!temp
+		{
+			LogLongText("START:\n");
+			LogLongText(_code.c_str());
+			LogLongText("END:\n");
+		}
+
 		glslang::InitializeProcess();
 
 		glslang::TProgram* program = new glslang::TProgram;
@@ -753,6 +775,10 @@ namespace bgfx { namespace spirv
 
 				printCode(_code.c_str(), line, start, end, column);
 
+				//!!!!temp
+				LOG_ANDROID_INFO(std::string(log).c_str());
+				//LOG_ANDROID_INFO((std::string("----- ") + std::string(log) + std::string(" -----")).c_str());
+
 				FPRINTF(stderr, "%s\n", log);
 			}
 		}
@@ -788,20 +814,15 @@ namespace bgfx { namespace spirv
 					};
 					std::vector<Uniform> uniforms;
 
-					bx::Error err;
-					LineReader reader(_code.c_str() );
-					while (err.isOk() )
-					{
-						char str[4096];
-						int32_t len = bx::read(&reader, str, BX_COUNTOF(str), &err);
-						if (err.isOk() )
+					bx::LineReader reader(_code.c_str() );
+					while (!reader.isDone() )
 						{
-							std::string strLine(str, len);
+						bx::StringView strLine = reader.next();
 
 							bool moved = false;
 
-							size_t index = strLine.find("uniform ");
-							if (index != std::string::npos)
+						bx::StringView str = strFind(strLine, "uniform ");
+						if (!str.isEmpty() )
 							{
 								bool found = false;
 								bool sampler = false;
@@ -811,7 +832,7 @@ namespace bgfx { namespace spirv
 
 								for (uint32_t ii = 0; ii < BX_COUNTOF(s_samplerTypes); ++ii)
 								{
-									if (!bx::findIdentifierMatch(strLine.c_str(), s_samplerTypes[ii]).isEmpty())
+								if (!bx::findIdentifierMatch(strLine, s_samplerTypes[ii]).isEmpty() )
 								{
 									found = true;
 										sampler = true;
@@ -828,7 +849,7 @@ namespace bgfx { namespace spirv
 										// included in the uniform blob that the application must upload
 										// we can't just remove them, because unused functions might still reference
 										// them and cause a compile error when they're gone
-										if (!bx::findIdentifierMatch(strLine.c_str(), program->getUniformName(ii)).isEmpty())
+									if (!bx::findIdentifierMatch(strLine, program->getUniformName(ii) ).isEmpty() )
 										{
 											found = true;
 											name = program->getUniformName(ii);
@@ -839,42 +860,48 @@ namespace bgfx { namespace spirv
 
 								if (!found)
 								{
-									strLine.replace(index, 7 /* uniform */, "static");
+								output.append(strLine.getPtr(), str.getPtr() );
+								output += "static ";
+								output.append(str.getTerm(), strLine.getTerm() );
+								output += "\n";
+								moved = true;
 								}
 								else if (!sampler)
 								{
 									Uniform uniform;
 									uniform.name = name;
-									uniform.decl = strLine;
+								uniform.decl = std::string(strLine.getPtr(), strLine.getTerm() );
 									uniforms.push_back(uniform);
 									moved = true;
 							}
+						}
 
+						if (!moved)
+						{
+							output.append(strLine.getPtr(), strLine.getTerm() );
+							output += "\n";
+						}
 					}
-
-							if (!moved)
-								output += strLine;
-									}
-											}
 
 					std::string uniformBlock;
 					uniformBlock += "cbuffer UniformBlock\n";
 					uniformBlock += "{\n";
+
 					for (const Uniform& uniform : uniforms)
-										{
+					{
 						uniformBlock += uniform.decl.substr(7 /* uniform */);
-										}
+						uniformBlock += "\n";
+					}
+
 					uniformBlock += "};\n";
 
 					output = uniformBlock + output;
 
-					//std::cout << "[debug] uniforms: " << std::endl << uniformBlock << std::endl;
-
 					// recompile with the unused uniforms converted to statics
 					return compile(_options, _version, output.c_str(), _writer, false);
-								}
+				}
 				else
-										{
+				{
 					// second time, do nothing (todo remove)
 				}
 
@@ -1177,7 +1204,15 @@ namespace bgfx { namespace spirv
 
 	bool compileSPIRVShader(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _writer)
 	{
+		//!!!!
+		//std::string _code2 = std::string("#version 450\n") + _code;
+		//std::string _code2 = std::string("#version 310 es\n") + _code;
+		//return spirv::compile(_options, _version, _code2, _writer, true);
+
 		return spirv::compile(_options, _version, _code, _writer, true);
 	}
 
 } // namespace bgfx
+
+//!!!!betauser
+#endif

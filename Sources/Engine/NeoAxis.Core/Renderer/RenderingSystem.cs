@@ -137,12 +137,6 @@ namespace NeoAxis
 
 		//List<RenderTarget> lastUpdatedRenderTargetsForRenderTimeCalculation = new List<RenderTarget>();
 
-		//static long renderWindowNameCounter = 1;
-		//static long multiRenderTargetNameCounter = 1;
-
-		//!!!!
-		//static ShaderCacheManager shaderCacheManager = new OnlyForLoadShaderCacheManager();
-
 		//OgreRoot.profilingToolBeginOperationDelegate profilingToolBeginOperationDelegate;
 		//OgreRoot.profilingToolEndOperationDelegate profilingToolEndOperationDelegate;
 
@@ -162,36 +156,6 @@ namespace NeoAxis
 			public object callbackParameter;
 		}
 		static List<OcclusionQueryItem> occlusionQueries = new List<OcclusionQueryItem>();
-
-		//static CallbackHandler callbackHandler;
-
-		///////////////////////////////////////////
-
-		//public delegate void BeginRenderFrameDelegate();
-		//public event BeginRenderFrameDelegate BeginRenderFrame;
-
-		///////////////////////////////////////////
-
-		//public enum FilteringMode
-		//{
-		//	//[DisplayName( "Recommended setting", "Renderer" )]
-		//	RecommendedSetting,
-
-		//	//[DisplayName( "Trilinear", "Renderer" )]
-		//	Trilinear,
-
-		//	//[DisplayName( "Anisotropic 2x", "Renderer" )]
-		//	Anisotropic2x,
-
-		//	//[DisplayName( "Anisotropic 4x", "Renderer" )]
-		//	Anisotropic4x,
-
-		//	//[DisplayName( "Anisotropic 8x", "Renderer" )]
-		//	Anisotropic8x,
-
-		//	//[DisplayName( "Anisotropic 16x", "Renderer" )]
-		//	Anisotropic16x,
-		//}
 
 		///////////////////////////////////////////////
 
@@ -286,14 +250,6 @@ namespace NeoAxis
 				Shutdown();
 			return result;
 		}
-
-		///// <summary>
-		///// Gets an instance of the <see cref="RendererWorld"/>.
-		///// </summary>
-		//public static RendererWorld Instance
-		//{
-		//	get { return instance; }
-		//}
 
 		internal static void _PostInitRendererAddition()
 		{
@@ -505,42 +461,6 @@ namespace NeoAxis
 		//   UpdateRenderTargets( null, true );
 		//}
 
-		//public string _GetParticleFilePathByName( string particleName )
-		//{
-		//	unsafe
-		//	{
-		//		OgreParticleSystem* realParticleSystem = (OgreParticleSystem*)
-		//			OgreParticleSystemManager.getTemplate( RendererWorld.realRoot, particleName );
-
-		//		string ret;
-		//		if( realParticleSystem != null )
-		//		{
-		//			ret = OgreNativeWrapper.GetOutString(
-		//				OgreParticleSystem.getOrigin( realParticleSystem ) );
-		//		}
-		//		else
-		//			ret = "";
-
-		//		return ret;
-		//	}
-		//}
-
-		///// <summary>Gets the renderer driver name.</summary>
-		//public string DriverName
-		//{
-		//	get
-		//	{
-		//		int major;
-		//		int minor;
-		//		int patch;
-		//		IntPtr versionNamePointer;
-		//		OgreRoot.getOgreVersion( out major, out minor, out patch, out versionNamePointer );
-		//		string versionName = OgreNativeWrapper.GetOutString( versionNamePointer );
-
-		//		return string.Format( "OGRE {0}.{1}.{2} {3}", major, minor, patch, versionName );
-		//	}
-		//}
-
 		//!!!!!надо
 		///// <summary>
 		///// Gets the render statistics.
@@ -563,12 +483,7 @@ namespace NeoAxis
 		public static RenderTarget[] GetRenderTargets()
 		{
 			lock( renderTargets )
-			{
 				return renderTargets.ToArray();
-				//RenderTarget[] a = new RenderTarget[ renderTargets.Count ];
-				//renderTargets.Values.CopyTo( a, 0 );
-				//return a;
-			}
 		}
 
 		/// <summary>
@@ -577,12 +492,7 @@ namespace NeoAxis
 		public static Viewport[] GetViewports()
 		{
 			lock( viewports )
-			{
 				return viewports.ToArray();
-				//Viewport[] a = new Viewport[ viewports.Count ];
-				//viewports.Values.CopyTo( a, 0 );
-				//return a;
-			}
 		}
 
 		public static bool _InvisibleInternalLogMessages
@@ -630,24 +540,25 @@ namespace NeoAxis
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
 				initialWindowSize = EngineApp.platform.CreatedWindow_GetClientRectangle().Size;
 
-			//set platform data
+			//set backend for Android
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
+			{
+				EngineSettings.Init.RendererBackend = RendererBackend.OpenGLES;
+				//EngineSettings.Init.RendererBackend = RendererBackend.Vulkan;
+				//EngineSettings.Init.RendererBackend = RendererBackend.Noop;
+			}
+
+			//set platform data
+			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android && EngineSettings.Init.RendererBackend == RendererBackend.OpenGLES )
+			{
+				//Android, OpenGLES
 				Bgfx.SetPlatformData( new PlatformData { Context = (IntPtr)1 } );
+			}
 			else
 				Bgfx.SetPlatformData( new PlatformData { WindowHandle = EngineApp.ApplicationWindowHandle } );
 
 			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && EngineSettings.Init.SimulationTripleBuffering )
 				Bgfx.SetTripleBuffering();
-
-			//set Vulkan for Android
-			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
-			{
-				//!!!!
-
-				EngineSettings.Init.RendererBackend = RendererBackend.Vulkan;
-				//EngineSettings.Init.RendererBackend = RendererBackend.OpenGLES;
-				//EngineSettings.Init.RendererBackend = RendererBackend.Noop;
-			}
 
 			//Log.InvisibleInfo( "Renderer backend: " + EngineSettings.Init.RendererBackend.ToString() );
 
@@ -668,16 +579,11 @@ namespace NeoAxis
 
 			realRoot = (OgreRoot*)OgreRoot.New( path );
 
-			//!!!!before
-			//realRoot = (OgreRoot*)OgreRoot.New( VirtualFileSystem.Directories.PlatformSpecific );
-
 			//profilingToolBeginOperationDelegate = profilingToolBeginOperation;
 			//profilingToolEndOperationDelegate = profilingToolEndOperation;
 			//OgreRoot.setCallbackDelegates( realRoot,
 			//   profilingToolBeginOperationDelegate, 
 			//   profilingToolEndOperationDelegate );
-
-			//this.isEditor = isEditor;
 
 			logListener_messageLoggedDelegate = logListener_messageLogged;
 			logListener = (MyOgreLogListener*)MyOgreLogListener.New(
@@ -714,182 +620,23 @@ namespace NeoAxis
 			//		EngineApp.InitSettings.RenderingDeviceIndex );
 			//}
 
-			////load plugins
-			//{
-			//	//load render system
-			//	{
-			//		//fix EngineSettings.Init.renderingSystemDLL
-			//		{
-			//			//!!!!!если пустое или неправильное
-			//			//EngineSettings.Init.renderingSystemDLL = "NeoAxis.Impl.Render.OpenGL.dll";
-			//		}
-
-			//		IntPtr errorPointer;
-			//		OgreRoot.loadPlugin( realRoot, EngineSettings.Init.renderingSystemDLL, out errorPointer );
-			//		string error = OgreNativeWrapper.GetOutString( errorPointer );
-			//		if( error != null )
-			//			Log.Fatal( "RendererWorld: Loading plugin \"{0}\" failed ({1}).", EngineSettings.Init.renderingSystemDLL, error );
-			//	}
-
-			//	//load addition plugins
-			//	if( configBlock != null )
-			//	{
-			//		TextBlock pluginsBlock = configBlock.FindChild( "plugins" );
-			//		if( pluginsBlock != null )
-			//		{
-			//			foreach( TextBlock pluginBlock in pluginsBlock.Children )
-			//			{
-			//				string pluginName = pluginBlock.GetAttribute( "name" );
-
-			//				IntPtr errorPointer;
-			//				OgreRoot.loadPlugin( realRoot, pluginName, out errorPointer );
-			//				string error = OgreNativeWrapper.GetOutString( errorPointer );
-			//				if( error != null )
-			//				{
-			//					Log.Fatal( "RendererWorld: Loading plugin \"{0}\" failed ({1}).", pluginName, error );
-			//					return false;
-			//				}
-			//			}
-			//		}
-			//	}
-			//}
-
-			////Render system
-			//RenderingSystem.Init();
-
 			////!!!!!!всё таки выключать можно для NULL рендеринга?
 			////renderSystem.MaxPixelShadersVersion = MaxPixelShadersVersions.PS30;
 			////renderSystem.MaxVertexShadersVersion = MaxVertexShadersVersions.VS30;
 			//RenderingSystem.Direct3DFPUPreserve = EngineApp.InitSettings.RenderingDirect3DFPUPreserve;
-
-			//!!!!
-			////hardware instancing settings
-			//if( configBlock != null )
-			//{
-			//	TextBlock hardwareInstancingBlock = configBlock.FindChild( "hardwareInstancing" );
-			//	if( hardwareInstancingBlock != null )
-			//	{
-			//		if( hardwareInstancingBlock.AttributeExists( "hardwareInstancingMaxObjectCountInBatch" ) )
-			//		{
-			//			RenderingSystem.HardwareInstancingMaxObjectCountInBatch = int.Parse(
-			//				hardwareInstancingBlock.GetAttribute( "hardwareInstancingMaxObjectCountInBatch" ) );
-			//		}
-
-			//		if( hardwareInstancingBlock.AttributeExists( "hardwareInstancingMaxObjectVertexCount" ) )
-			//		{
-			//			RenderingSystem.HardwareInstancingMaxObjectVertexCount = int.Parse(
-			//				hardwareInstancingBlock.GetAttribute( "hardwareInstancingMaxObjectVertexCount" ) );
-			//		}
-			//	}
-			//}
-
-			//!!!!
-			////shaderCacheManager
-			//if( shaderCacheManager != null )
-			//	shaderCacheManager.RendererInit();
 
 			unsafe
 			{
 				OgreRoot.initialise( realRoot );
 			}
 
-			////Render window
-			//OgreRenderWindow* realRenderWindow;
-			//{
-			//	OgreNameValuePairList* _params = (OgreNameValuePairList*)OgreNameValuePairList.New();
-
-			//	OgreNameValuePairList.insert( _params, "colourDepth", EngineApp.platform.GetScreenBitsPerPixel().ToString() );
-
-			//	//if( verticalSyncInitialized )
-			//	//   OgreNameValuePairList.insert( _params, "vsync", verticalSync ? "true" : "false" );
-			//	OgreNameValuePairList.insert( _params, "vsync", EngineApp.InitSettings.RenderingVerticalSync ? "true" : "false" );
-
-			//	//!!!! Code duplication !
-
-			//	if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
-			//	{
-			//		// dont set externalWindowHandle
-			//	}
-			//	else
-			//	{
-			//		IntPtr externalWindowHandle = EngineApp.ApplicationWindowHandle;
-			//		if( externalWindowHandle != IntPtr.Zero )
-			//		{
-			//			if( IntPtr.Size == 8 )
-			//			{
-			//				UInt64 hwnd = (UInt64)externalWindowHandle.ToInt64();
-			//				OgreNameValuePairList.insert( _params, "externalWindowHandle", hwnd.ToString() );
-			//			}
-			//			else
-			//			{
-			//				uint hwnd = (uint)externalWindowHandle.ToInt32();
-			//				OgreNameValuePairList.insert( _params, "externalWindowHandle", hwnd.ToString() );
-			//			}
-			//		}
-			//	}
-
-			//	IntPtr glContext = EngineApp.platform.GetGLContext();
-			//	if( glContext != IntPtr.Zero )
-			//	{
-			//		if( IntPtr.Size == 8 )
-			//		{
-			//			UInt64 context = (UInt64)glContext.ToInt64();
-			//			OgreNameValuePairList.insert( _params, "externalGLContext", context.ToString() );
-			//		}
-			//		else
-			//		{
-			//			OgreNameValuePairList.insert( _params, "externalGLContext", glContext.ToString() );
-			//		}
-			//	}
-
-			//	if( EngineApp.InitSettings.RenderingHardwareFullScreenAntialiasing != 0 )
-			//		OgreNameValuePairList.insert( _params, "FSAA", EngineApp.InitSettings.RenderingHardwareFullScreenAntialiasing.ToString() );
-			//	//if( !InitializationOptions.AllowSceneMRTRendering )
-			//	//{
-			//	//   int fsaa;
-			//	//   if( !int.TryParse( InitializationOptions.FullSceneAntialiasing, out fsaa ) )
-			//	//      fsaa = 0;
-			//	//   if( fsaa != 0 )
-			//	//      OgreNameValuePairList.insert( _params, "FSAA", fsaa.ToString() );
-			//	//}
-
-			//	if( multiMonitorMode )
-			//		OgreNameValuePairList.insert( _params, "multiMonitorMode", "true" );
-			//	if( Debugger.IsAttached )
-			//		OgreNameValuePairList.insert( _params, "debugger", "true" );
-
-			//	{
-			//		IntPtr errorPointer;
-			//		realRenderWindow = (OgreRenderWindow*)OgreRoot.createRenderWindow( realRoot,
-			//			"MainWindow", 640, 480, startedAtFullScreen, _params, out errorPointer );
-			//		string error = OgreNativeWrapper.GetOutString( errorPointer );
-			//		if( error != null )
-			//		{
-			//			Log.Fatal( "RendererWorld: Initializing window failed ({0}).", error );
-			//			return false;
-			//		}
-			//	}
-
-			//	OgreNameValuePairList.Delete( _params );
-
-			//	if( realRenderWindow == null )
-			//	{
-			//		Log.Fatal( "RendererWorld: Creation render window failed." );
-			//		return false;
-			//	}
-			//}
-
 			GpuProgramManager.Init();
 
-			RenderingSystem.InitGPUSettingsAndCapabilities();
+			InitGPUSettingsAndCapabilities();
 
 			applicationRenderWindow = new RenderWindow( FrameBuffer.Invalid, initialWindowSize, EngineApp.ApplicationWindowHandle, true );
 			//applicationRenderWindow.WindowMovedOrResized( xxx );
 			//!!!!!?, mainRenderTargetSize );
-
-			//!!!!!!если это новый редактор, то не так.
-			//было
-			//applicationRenderWindow.AllowAdditionalMRTs = true;
 
 			//Scene manager
 			MyOgreSceneManager* realSceneManager = (MyOgreSceneManager*)OgreRoot.createSceneManager( realRoot, "NeoAxisSceneManager" );
@@ -928,80 +675,10 @@ namespace NeoAxis
 			}
 			resourcesInitialized = true;
 
-			////animation defaults
-			//OgreAnimation.setDefaultInterpolationMode( OgreAnimation.InterpolationMode.IM_LINEAR );
-			//OgreAnimation.setDefaultRotationInterpolationMode(
-			//   OgreAnimation.RotationInterpolationMode.RIM_LINEAR );
-
 			GpuBufferManager.Init();
-			//LowLevelMaterialManager.Init();
-			//!!!!!
-			//MeshManager_Old.Init();
-			//MeshManager_Old.Init();
-			//ModelImportConfigurationManager.Init();
-			//!!!!!
-			//SkeletonManager_Old.Init();
-
-			//GpuProgramManager.Init();
-			//CompositorManager.Init();
-			//!!!!!было
-			//ParticleSystemManager.Init();
-
-			//_old_GpuProgramCacheManager.Init();
-			//!!!!!HighLevelMaterialManager.Init();
 
 			//!!!!!
 			//ResourceLoadingManagerInBackground.Init();
-
-			//!!!!!было
-			//AnimationTreeManager.Init();
-
-			//Rectangle2DRenderer.Init();
-
-			//!!!!менять в real-time? кому нельзя менять?
-			//filtering
-			{
-				//!!!!
-				////get recommeded settings
-				//if( EngineApp.InitSettings.RenderingFilteringMode == FilteringMode.RecommendedSetting )
-				//{
-				//	if( RenderingSystem.GPUIsGeForce() )
-				//		EngineApp.InitSettings.RenderingFilteringMode = FilteringMode.Anisotropic8x;
-				//	else if( RenderingSystem.GPUIsRadeon() )
-				//		EngineApp.InitSettings.RenderingFilteringMode = FilteringMode.Anisotropic8x;
-				//	else
-				//		EngineApp.InitSettings.RenderingFilteringMode = FilteringMode.Anisotropic4x;
-				//}
-
-				//!!!!!
-				////apply
-				//switch( EngineApp.InitSettings.RenderingFilteringMode )
-				//{
-				//case FilteringMode.Trilinear:
-				//	LowLevelMaterialManager.Instance.SetDefaultTextureFiltering( TextureFilterOption.Trilinear );
-				//	break;
-
-				//case FilteringMode.Anisotropic2x:
-				//	LowLevelMaterialManager.Instance.SetDefaultTextureFiltering( TextureFilterOption.Anisotropic );
-				//	LowLevelMaterialManager.Instance.DefaultAnisotropy = 2;
-				//	break;
-
-				//case FilteringMode.Anisotropic4x:
-				//	LowLevelMaterialManager.Instance.SetDefaultTextureFiltering( TextureFilterOption.Anisotropic );
-				//	LowLevelMaterialManager.Instance.DefaultAnisotropy = 4;
-				//	break;
-
-				//case FilteringMode.Anisotropic8x:
-				//	LowLevelMaterialManager.Instance.SetDefaultTextureFiltering( TextureFilterOption.Anisotropic );
-				//	LowLevelMaterialManager.Instance.DefaultAnisotropy = 8;
-				//	break;
-
-				//case FilteringMode.Anisotropic16x:
-				//	LowLevelMaterialManager.Instance.SetDefaultTextureFiltering( TextureFilterOption.Anisotropic );
-				//	LowLevelMaterialManager.Instance.DefaultAnisotropy = 16;
-				//	break;
-				//}
-			}
 
 			return true;
 		}
@@ -1023,27 +700,11 @@ namespace NeoAxis
 					r.Dispose();
 			}
 
-			//Rectangle2DRenderer.Shutdown();
-
-			//!!!!!было
-			//AnimationTreeManager.Shutdown();
-
 			//!!!!!
 			//ResourceLoadingManagerInBackground.Shutdown();
 
-			//!!!!HighLevelMaterialManager.Shutdown();
-			//_old_GpuProgramCacheManager.Shutdown();
-			//!!!!!было
-			//ParticleSystemManager.Shutdown();
-			//CompositorManager.Shutdown();
 			GpuProgramManager.Shutdown();
-			//_old_GpuProgramManager.Shutdown();
-			//!!!!!
-			//SkeletonManager_Old.Shutdown();
-			//ModelImportConfigurationManager.Shutdown();
-			//!!!!!
-			//MeshManager_Old.Shutdown();
-			//MeshManager_Old.Shutdown();
+
 			EngineFontManager.Shutdown();
 
 			//!!!!!temp. как делать?
@@ -1070,26 +731,12 @@ namespace NeoAxis
 				applicationRenderWindow.Dispose();
 				applicationRenderWindow = null;
 			}
-			//mainRenderTargetCamera = null;
-			//if( mainRenderTargetCamera != null )
-			//{
-			//   mainRenderTargetCamera.Dispose();
-			//   mainRenderTargetCamera = null;
-			//}
 
 			if( sceneManager != null )
 			{
 				sceneManager.Dispose();
 				sceneManager = null;
 			}
-
-			//if( mainRenderTarget != null )
-			//{
-			//   mainRenderTarget.DisposeInternal();
-			//   mainRenderTarget = null;
-			//}
-
-			//RenderingSystem.Dispose();
 
 			if( logListener != null )
 			{
@@ -1098,28 +745,7 @@ namespace NeoAxis
 				logListener = null;
 			}
 
-			//unload plugins
-			//{
-			//if( loadedRenderSystemPlugin != null )
-			//{
-			//   OgreRoot.unloadPlugin( realRoot, loadedRenderSystemPlugin );
-			//   loadedRenderSystemPlugin = null;
-			//}
-			//}
-
-			//!!!!
-			//ShaderCacheManager = null;
-			//ChangeShaderCacheManager( null );
-
 			MyOgreVirtualFileSystem.Shutdown();
-
-			//!!!!!валится
-			//if( realRoot != null )
-			//{
-			//	OgreRoot.Delete( realRoot );
-			//	realRoot = null;
-			//}
-			//OgreRoot.Delete();
 
 			Bgfx.Shutdown();
 
@@ -1201,78 +827,8 @@ namespace NeoAxis
 			var frameBuffer = new FrameBuffer( parentWindowHandle, size.X, size.Y );
 			var renderWindow = new RenderWindow( frameBuffer, size, parentWindowHandle, false );
 			return renderWindow;
-
-			//unsafe
-			//{
-			//	OgreRenderWindow* realRenderWindow;
-
-			//	OgreNameValuePairList* _params = (OgreNameValuePairList*)OgreNameValuePairList.New();
-
-			//	OgreNameValuePairList.insert( _params, "colourDepth", EngineApp.platform.GetScreenBitsPerPixel().ToString() );
-
-			//	//!!!! Code duplication !
-
-			//	if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
-			//	{
-			//		// dont set externalWindowHandle
-			//	}
-			//	else
-			//	{
-			//		if( IntPtr.Size == 8 )
-			//		{
-			//			UInt64 hwnd = (UInt64)parentWindowHandle.ToInt64();
-			//			OgreNameValuePairList.insert( _params, "externalWindowHandle", hwnd.ToString() );
-			//		}
-			//		else
-			//		{
-			//			uint hwnd = (uint)parentWindowHandle.ToInt32();
-			//			OgreNameValuePairList.insert( _params, "externalWindowHandle", hwnd.ToString() );
-			//		}
-			//	}
-
-			//	if( EngineApp.InitSettings.RenderingHardwareFullScreenAntialiasing != 0 )
-			//		OgreNameValuePairList.insert( _params, "FSAA", EngineApp.InitSettings.RenderingHardwareFullScreenAntialiasing.ToString() );
-			//	//if( !InitializationOptions.AllowSceneMRTRendering )
-			//	//{
-			//	//   int fsaa;
-			//	//   if( !int.TryParse( InitializationOptions.FullSceneAntialiasing, out fsaa ) )
-			//	//      fsaa = 0;
-			//	//   if( fsaa != 0 )
-			//	//      OgreNameValuePairList.insert( _params, "FSAA", fsaa.ToString() );
-			//	//}
-
-			//	unchecked
-			//	{
-			//		renderWindowNameCounter++;
-			//	}
-			//	string name = string.Format( "RenderWindow{0}", renderWindowNameCounter );
-
-			//	{
-			//		IntPtr errorPointer;
-			//		realRenderWindow = (OgreRenderWindow*)OgreRoot.createRenderWindow( realRoot, name,
-			//			size.X, size.Y, false, _params, out errorPointer );
-			//		string error = OgreNativeWrapper.GetOutString( errorPointer );
-			//		if( error != null )
-			//		{
-			//			Log.Fatal( "RendererWorld: Initializing window failed ({0}).", error );
-			//			return null;
-			//		}
-			//	}
-
-			//	OgreNameValuePairList.Delete( _params );
-
-			//	if( realRenderWindow == null )
-			//	{
-			//		Log.Warning( "RendererWorld: CreateRenderWindow: Creation render window failed." );
-			//		return null;
-			//	}
-
-			//	var renderWindow = new RenderWindow( frameBuffer, size, parentWindowHandle, false );
-			//	return renderWindow;
-			//}
 		}
 
-		//!!!!тут?
 		public static MultiRenderTarget CreateMultiRenderTarget( MultiRenderTarget.Item[] items )
 		{
 			//!!!!
@@ -1293,37 +849,7 @@ namespace NeoAxis
 			var frameBuffer = new FrameBuffer( attachments );
 			var mrt = new MultiRenderTarget( frameBuffer, items );
 			return mrt;
-
-			//unchecked
-			//{
-			//	multiRenderTargetNameCounter++;
-			//}
-			//string name = string.Format( "MultiRenderTarget{0}", multiRenderTargetNameCounter );
-
-			//unsafe
-			//{
-			//	OgreMultiRenderTarget* realMRT = (OgreMultiRenderTarget*)OgreRenderSystem.createMultiRenderTarget( realRoot, name );
-
-			//	var mrt = new MultiRenderTarget( realMRT );
-			//	return mrt;
-			//}
 		}
-
-		//!!!!
-		////!!!!!потом разрулится это всё
-		//public static ShaderCacheManager ShaderCacheManager
-		//{
-		//	get { return shaderCacheManager; }
-		//	set { shaderCacheManager = value; }
-		//}
-
-		//public static void ChangeShaderCacheManager( ShaderCacheManager newManager )
-		//{
-		//   if( shaderCacheManager != null )
-		//      shaderCacheManager.Dispose();
-
-		//   shaderCacheManager = newManager;
-		//}
 
 		//static unsafe void profilingToolBeginOperation( string operationName )
 		//{
@@ -1388,9 +914,6 @@ namespace NeoAxis
 			}
 		}
 
-
-
-
 		public static bool BackendNull
 		{
 			get { return Capabilities.Backend == RendererBackend.Noop; }
@@ -1398,8 +921,6 @@ namespace NeoAxis
 
 		public delegate void RenderSystemEventDelegate( RenderSystemEvent name );
 
-		//!!!!threading
-		//!!!!!!вызывать
 		/// <summary>
 		/// Occurs when the render system event is generated.
 		/// </summary>
@@ -1418,8 +939,11 @@ namespace NeoAxis
 		/// </remarks>
 		public static event RenderSystemEventDelegate RenderSystemEvent;
 
-		//public delegate void RenderTargetPreUpdateEventDelegate( RenderTarget renderTarget );
-		//public event RenderTargetPreUpdateEventDelegate RenderTargetPreUpdate;
+		//!!!!
+		internal static void PerformRenderSystemEvent( RenderSystemEvent name )
+		{
+			RenderSystemEvent?.Invoke( name );
+		}
 
 		///// <summary>
 		///// D3D specific method to return whether the device has been lost.
@@ -1472,27 +996,27 @@ namespace NeoAxis
 		}
 
 		//!!!!
-		static void Listener_eventOccurred( string name )
-		{
-			if( RenderSystemEvent != null )
-			{
-				RenderSystemEvent type;
+		//static void Listener_eventOccurred( string name )
+		//{
+		//	if( RenderSystemEvent != null )
+		//	{
+		//		RenderSystemEvent type;
 
-				if( name == "DeviceLost" )
-					type = NeoAxis.RenderSystemEvent.DeviceLost;
-				else if( name == "DeviceRestored" )
-					type = NeoAxis.RenderSystemEvent.DeviceRestored;
-				else
-				{
-					Log.Fatal( "RenderSystem: Unknown render system event \"{0}\".", name );
-					return;
-				}
+		//		if( name == "DeviceLost" )
+		//			type = NeoAxis.RenderSystemEvent.DeviceLost;
+		//		else if( name == "DeviceRestored" )
+		//			type = NeoAxis.RenderSystemEvent.DeviceRestored;
+		//		else
+		//		{
+		//			Log.Fatal( "RenderSystem: Unknown render system event \"{0}\".", name );
+		//			return;
+		//		}
 
-				RenderSystemEvent( type );
-			}
-		}
+		//		RenderSystemEvent( type );
+		//	}
+		//}
 
-		internal static void InitGPUSettingsAndCapabilities()
+		static void InitGPUSettingsAndCapabilities()
 		{
 			Capabilities = Bgfx.GetCaps();
 

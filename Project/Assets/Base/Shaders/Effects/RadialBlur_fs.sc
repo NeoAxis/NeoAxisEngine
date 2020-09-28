@@ -13,13 +13,13 @@ void main()
 	vec4 sourceColor = texture2D(s_sourceTexture, v_texCoord0);
 
 	const int samples = 32;
-	vec4 color = 0;
+	vec4 color = vec4_splat(0);
 	for(int n = 0; n < samples; n++) 
 	{ 
-		float scale = 1.0f - blurFactor.x * (n / (float)(samples - 1));
+		float scale = 1.0f - blurFactor.x * (float(n) / float(samples - 1));
 		color += texture2D(s_sourceTexture, (v_texCoord0 - center.xy) * scale + center.xy);
 	} 
-	color /= samples; 
+	color /= float(samples);
 
 	gl_FragColor = lerp(sourceColor, color, intensity.x);
 }

@@ -2,6 +2,7 @@ $input v_texCoord0
 
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "../../Common.sh"
+#include "../../FragmentFunctions.sh"
 
 SAMPLER2D(s_sourceTexture, 0);
 SAMPLER2D(s_blurTexture, 1);
@@ -24,7 +25,7 @@ void main()
 	//if(focalDistance < 0)
 	//	focalDistance = tex2D(autoFocusCurrentTexture, float2(.5f, .5f)).r;
 
-	float halfFocalSize = focalSize / 2;
+	float halfFocalSize = focalSize / 2.0;
 	float startBackgroundDistance = focalDistance + halfFocalSize;
 	float startForegroundDistance = focalDistance - halfFocalSize;
 
@@ -43,10 +44,10 @@ void main()
 	}
 	else
 	{
-		if(foregroundTransitionLength >= 0)
+		if(foregroundTransitionLength >= 0.0)
 			blurFactor = (startForegroundDistance - depth) / foregroundTransitionLength;
 		else
-			blurFactor = 0;
+			blurFactor = 0.0;
 	}
 	blurFactor = saturate(blurFactor);
 

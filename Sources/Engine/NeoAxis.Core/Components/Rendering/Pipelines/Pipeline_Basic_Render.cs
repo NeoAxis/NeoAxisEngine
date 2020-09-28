@@ -167,7 +167,7 @@ namespace NeoAxis
 				{
 					if( PointSpotLightCount < 6 )
 					{
-						fixed ( int* p = PointSpotLightsFixed )
+						fixed( int* p = PointSpotLightsFixed )
 							p[ PointSpotLightCount ] = lightIndex;
 					}
 					else if( PointSpotLightCount == 6 )
@@ -184,7 +184,7 @@ namespace NeoAxis
 				{
 					if( n < 6 )
 					{
-						fixed ( int* p = PointSpotLightsFixed )
+						fixed( int* p = PointSpotLightsFixed )
 							return p[ n ];
 					}
 					else
@@ -254,7 +254,7 @@ namespace NeoAxis
 				{
 					if( PointSpotLightCount < 6 )
 					{
-						fixed ( int* p = PointSpotLightsFixed )
+						fixed( int* p = PointSpotLightsFixed )
 							p[ PointSpotLightCount ] = lightIndex;
 					}
 					else if( PointSpotLightCount == 6 )
@@ -271,7 +271,7 @@ namespace NeoAxis
 				{
 					if( n < 6 )
 					{
-						fixed ( int* p = PointSpotLightsFixed )
+						fixed( int* p = PointSpotLightsFixed )
 							return p[ n ];
 					}
 					else
@@ -1111,7 +1111,7 @@ namespace NeoAxis
 						Log.Fatal( "ViewportRenderingContext: SetUniforms: vec4Count != 1." );
 					if( u_lightDataVertex == null )
 						u_lightDataVertex = GpuProgramManager.RegisterUniform( "u_lightDataVertex", UniformType.Vector4, vec4Count );
-					fixed ( LightDataVertex* p = &lightDataVertex )
+					fixed( LightDataVertex* p = &lightDataVertex )
 						Bgfx.SetUniform( u_lightDataVertex.Value, p, vec4Count );
 				}
 
@@ -1122,7 +1122,7 @@ namespace NeoAxis
 						Log.Fatal( "ViewportRenderingContext: SetUniforms: vec4Count != 29." );
 					if( u_lightDataFragment == null )
 						u_lightDataFragment = GpuProgramManager.RegisterUniform( "u_lightDataFragment", UniformType.Vector4, vec4Count );
-					fixed ( LightDataFragment* p = &lightDataFragment )
+					fixed( LightDataFragment* p = &lightDataFragment )
 						Bgfx.SetUniform( u_lightDataFragment.Value, p, vec4Count );
 				}
 			}
@@ -1771,6 +1771,9 @@ namespace NeoAxis
 							if( item.data.BoundingBox.GetPointDistance( cameraPosition ) > shadowFarDistance )
 								skip = true;
 						}
+
+						//!!!!temp
+						if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android ) skip = true;
 
 						if( !skip )
 						{
@@ -3099,7 +3102,7 @@ namespace NeoAxis
 												BindRenderOperationData( context, frameData, specialShadowCasterData != null ? materialData : null, batchInstancing, meshItem.AnimationData, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, outputItem.operation.UnwrappedUV, ref meshItem.Color, outputItem.operation.VertexStructureContainsColor, false );
 
 												if( !batchInstancing )
-													fixed ( Matrix4F* p = &meshItem.Transform )
+													fixed( Matrix4F* p = &meshItem.Transform )
 														Bgfx.SetTransform( (float*)p );
 
 												RenderOperation( context, outputItem.operation, pass, null, meshItem.BatchingInstanceBuffer );
@@ -3450,7 +3453,7 @@ namespace NeoAxis
 										BindRenderOperationData( context, frameData, materialData, batchInstancing, meshItem.AnimationData, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, outputItem.operation.UnwrappedUV, ref meshItem.Color, outputItem.operation.VertexStructureContainsColor, false );
 
 										if( !batchInstancing )
-											fixed ( Matrix4F* p = &meshItem.Transform )
+											fixed( Matrix4F* p = &meshItem.Transform )
 												Bgfx.SetTransform( (float*)p );
 
 										RenderOperation( context, outputItem.operation, pass, null, meshItem.BatchingInstanceBuffer );
@@ -3513,7 +3516,7 @@ namespace NeoAxis
 										materialData.BindCurrentFrameData_MaskTextures( context, layer.Mask );
 
 										if( !batchInstancing )
-											fixed ( Matrix4F* p = &meshItem.Transform )
+											fixed( Matrix4F* p = &meshItem.Transform )
 												Bgfx.SetTransform( (float*)p );
 
 										var color = meshItem.Color * layer.Color;
@@ -4838,7 +4841,7 @@ namespace NeoAxis
 											BindRenderOperationData( context, frameData, materialData, batchInstancing, meshItem.AnimationData, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, outputItem.operation.UnwrappedUV, ref meshItem.Color, outputItem.operation.VertexStructureContainsColor, false );
 
 											if( !batchInstancing )
-												fixed ( Matrix4F* p = &meshItem.Transform )
+												fixed( Matrix4F* p = &meshItem.Transform )
 													Bgfx.SetTransform( (float*)p );
 
 											RenderOperation( context, outputItem.operation, pass, null, meshItem.BatchingInstanceBuffer );
@@ -4959,7 +4962,7 @@ namespace NeoAxis
 													ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, true );
 
 													if( !batchInstancing )
-														fixed ( Matrix4F* p = &meshItem.Transform )
+														fixed( Matrix4F* p = &meshItem.Transform )
 															Bgfx.SetTransform( (float*)p );
 
 													var color = meshItem.Color * layer.Color;
@@ -5111,7 +5114,7 @@ namespace NeoAxis
 									materialData.BindCurrentFrameData( context, false, materialWasChanged, true );
 									materialData.BindCurrentFrameData_MaskTextures( context, layer.Mask );
 
-									fixed ( Matrix4F* p = &meshItem.Transform )
+									fixed( Matrix4F* p = &meshItem.Transform )
 										Bgfx.SetTransform( (float*)p );
 
 									var color = meshItem.Color * layer.Color;
@@ -5329,7 +5332,7 @@ namespace NeoAxis
 								}
 								else
 								{
-									fixed ( Matrix4F* p = &meshItem.Transform )
+									fixed( Matrix4F* p = &meshItem.Transform )
 										Bgfx.SetTransform( (float*)p );
 									RenderOperation( context, oper, pass, null );
 								}
@@ -5390,7 +5393,7 @@ namespace NeoAxis
 										materialData.BindCurrentFrameData( context, false, materialWasChanged, true );
 										materialData.BindCurrentFrameData_MaskTextures( context, layer.Mask );
 
-										fixed ( Matrix4F* p = &meshItem.Transform )
+										fixed( Matrix4F* p = &meshItem.Transform )
 											Bgfx.SetTransform( (float*)p );
 
 										var color = meshItem.Color * layer.Color;
@@ -5579,7 +5582,7 @@ namespace NeoAxis
 			}
 		}
 
-		public void CopyToCurrentViewport( ViewportRenderingContext context, Component_Image sourceTexture, CanvasRenderer.BlendingType blending = CanvasRenderer.BlendingType.Opaque, bool flipY = false )
+		public void CopyToCurrentViewport( ViewportRenderingContext context, Component_Image sourceTexture, CanvasRenderer.BlendingType blending = CanvasRenderer.BlendingType.Opaque )//, bool flipY = false )
 		{
 			CanvasRenderer.ShaderItem shader = new CanvasRenderer.ShaderItem();
 			shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
@@ -5594,7 +5597,7 @@ namespace NeoAxis
 				//shader.Parameters.Set( "0"/* "sourceTexture"*/, textureValue, ParameterType.Texture2D );
 			}
 
-			context.RenderQuadToCurrentViewport( shader, blending, flipY );
+			context.RenderQuadToCurrentViewport( shader, blending );//, flipY );
 			//context.RenderQuadToCurrentViewport( shader, CanvasRenderer.BlendingType.Opaque );
 			//context.RenderQuadToCurrentViewport( shader );
 		}
@@ -6172,12 +6175,10 @@ namespace NeoAxis
 			/////////////////////////////////////
 			//Copy to output target
 			context.SetViewport( owner );
-
-			//!!!!
-			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
-				CopyToCurrentViewport( context, sceneTexture, flipY: true );
-			else
-				CopyToCurrentViewport( context, sceneTexture );
+			//if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
+			//	CopyToCurrentViewport( context, sceneTexture, flipY: true );
+			//else
+			CopyToCurrentViewport( context, sceneTexture );
 
 			//clear or destroy something maybe
 		}
@@ -6680,7 +6681,7 @@ namespace NeoAxis
 
 				if( u_renderOperationData == null )
 					u_renderOperationData = GpuProgramManager.RegisterUniform( "u_renderOperationData", UniformType.Vector4, 5 );
-				fixed ( Vector4F* pData = u_renderOperationDataCurrentValue )
+				fixed( Vector4F* pData = u_renderOperationDataCurrentValue )
 					Bgfx.SetUniform( u_renderOperationData.Value, pData, 5 );
 			}
 
@@ -6733,7 +6734,7 @@ namespace NeoAxis
 				prepareMaterialsTempBuffer = new byte[ tempBufferSize ];
 			var data = prepareMaterialsTempBuffer;
 
-			fixed ( byte* pData = data )
+			fixed( byte* pData = data )
 			{
 				for( int n = 0; n < frameData.Materials.Count; n++ )
 				{
@@ -6760,7 +6761,6 @@ namespace NeoAxis
 			if( !GetUseMultiRenderTargets() )
 				return false;
 
-			//!!!!ut
 			//deferred shading is not supported on limited devices
 			if( SystemSettings.LimitedDevice )
 				return false;

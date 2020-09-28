@@ -33,6 +33,16 @@ namespace Project
 		public event Action<MainMenuScreen> BackgroundSceneChanged;
 		ReferenceField<ReferenceValueType_Resource> _backgroundScene;
 
+		[DefaultValue( null )]
+		[Serialize]
+		public Reference<ReferenceValueType_Resource> BackgroundSceneLimitedDevice
+		{
+			get { if( _backgroundSceneLimitedDevice.BeginGet() ) BackgroundSceneLimitedDevice = _backgroundSceneLimitedDevice.Get( this ); return _backgroundSceneLimitedDevice.value; }
+			set { if( _backgroundSceneLimitedDevice.BeginSet( ref value ) ) { try { BackgroundSceneLimitedDeviceChanged?.Invoke( this ); } finally { _backgroundSceneLimitedDevice.EndSet(); } } }
+		}
+		public event Action<MainMenuScreen> BackgroundSceneLimitedDeviceChanged;
+		ReferenceField<ReferenceValueType_Resource> _backgroundSceneLimitedDevice;
+
 		///////////////////////////////////////////
 
 		public static MainMenuScreen Instance
@@ -79,6 +89,14 @@ namespace Project
 				if( button.Visible )
 					button.Visible = VirtualFile.Exists( fileName );
 			}
+
+			if( Components[ "Text Simple Game Comment" ] != null )
+			{
+				var text = (UIText)Components[ "Text Simple Game Comment" ];
+				var fileName = @"Samples\Simple Game\SimpleGameLevel1.scene";
+				if( text.Visible )
+					text.Visible = VirtualFile.Exists( fileName ) && SystemSettings.MobileDevice;
+			}
 			if( Components[ "Button Play Character Scene" ] != null )
 			{
 				var button = (UIButton)Components[ "Button Play Character Scene" ];
@@ -114,7 +132,7 @@ namespace Project
 			currentDisplayBackgroundSceneOption = SimulationApp.DisplayBackgroundScene;
 			if( currentDisplayBackgroundSceneOption && EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
 			{
-				var fileName = BackgroundScene.GetByReference;
+				var fileName = SystemSettings.LimitedDevice ? BackgroundSceneLimitedDevice.GetByReference : BackgroundScene.GetByReference;
 				if( !string.IsNullOrEmpty( fileName ) && VirtualFile.Exists( fileName ) )
 					LoadScene( fileName );
 				else
@@ -184,7 +202,7 @@ namespace Project
 
 				if( currentDisplayBackgroundSceneOption && EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
 				{
-					var fileName = BackgroundScene.GetByReference;
+					var fileName = SystemSettings.LimitedDevice ? BackgroundSceneLimitedDevice.GetByReference : BackgroundScene.GetByReference;
 					if( !string.IsNullOrEmpty( fileName ) && VirtualFile.Exists( fileName ) )
 						LoadScene( fileName );
 					else

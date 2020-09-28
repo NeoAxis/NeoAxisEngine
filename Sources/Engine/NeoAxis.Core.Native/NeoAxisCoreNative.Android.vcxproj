@@ -416,6 +416,7 @@
     <TargetName>$(ProjectName)</TargetName>
     <OutDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
     <IntDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <PackageDebugSymbols>true</PackageDebugSymbols>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -467,14 +468,14 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>MinSize</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(StlIncludeDirectories);$(Sysroot)\usr\include;..\include;..\..\PlugIns\ParticleFX\include;..\..\..\..\NativeMemoryManager;..\..\..\FreeImage\Source;..\..\..\FreeType\include;..\..\..\Stlport\stlport;..\..\..\NvidiaTextureTools\src;..\..\..\NvidiaTextureTools\project\vc8;..\..\OgreNativeWrapper\src;..\..\RenderSystems\NULL\include;..\External\OggVorbisTheora\libogg\include;..\External\OggVorbisTheora\libvorbis\include;..\External\OggVorbisTheora\libvorbis\lib;..\External\OggVorbisTheora\libtheora\include;./;MemoryManager;..\External\FreeImage\Source;NativeWrapper;ImageLibrary;..\External\FreeType\include;NeoAxis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(StlIncludeDirectories);$(Sysroot)\usr\include;..\include;..\..\PlugIns\ParticleFX\include;..\..\..\FreeImage\Source;..\..\..\FreeType\include;..\..\..\Stlport\stlport;..\..\..\NvidiaTextureTools\src;..\..\..\NvidiaTextureTools\project\vc8;..\..\RenderSystems\NULL\include;..\..\OgreNativeWrapper\src;..\External\OggVorbisTheora\libogg\include;..\External\OggVorbisTheora\libvorbis\include;..\External\OggVorbisTheora\libvorbis\lib;..\External\OggVorbisTheora\libtheora\include;./;MemoryManager;..\External\FreeImage\Source;NativeWrapper;ImageLibrary;..\External\FreeType\include;NeoAxis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;NDEBUG;_MT;FREEIMAGE_LIB;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;OGRE_MEMORY_TRACKER_DEBUG_MODE;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;OGRE_GCC_VISIBILITY;PLATFORM_ANDROID;PNG_ARM_NEON_OPT=0;NATIVEMEMORYMANAGER_EXPORTS;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -508,6 +509,7 @@
       <ImportLibrary>$(OutDir)libNeoAxisCoreNative.lib</ImportLibrary>
       <AdditionalOptions>-z muldefs -lm %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>$(SolutionDir)Engine\Lib\Android\$(Platform)\FreeImage.a;$(SolutionDir)Engine\Lib\Android\$(Platform)\freetype.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <DebuggerSymbolInformation>OmitAllSymbolInformation</DebuggerSymbolInformation>
     </Link>
     <PostBuildEvent>
       <Command>copy $(OutDir)$(TargetName)$(TargetExt) "..\..\..\Project\Sources\NeoAxis.Player.Android\lib\arm64-v8a\"</Command>

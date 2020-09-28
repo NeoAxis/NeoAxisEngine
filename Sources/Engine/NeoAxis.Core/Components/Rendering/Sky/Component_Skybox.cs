@@ -8,12 +8,14 @@ using System.Reflection;
 using System.IO;
 using System.Drawing.Design;
 using SharpBgfx;
+using NeoAxis.Editor;
 
 namespace NeoAxis
 {
 	/// <summary>
 	/// Implements the sky is using cubemap or panoramic image.
 	/// </summary>
+	[EditorSettingsCell( typeof( Component_Skybox_SettingsCell ) )]
 	public class Component_Skybox : Component_Sky
 	{
 		static GpuMaterialPass materialPass;

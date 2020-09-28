@@ -15,6 +15,8 @@ namespace NeoAxis
 	/// </summary>
 	public class Component_Product_Android : Component_Product
 	{
+		static readonly DateTime setTimeToFilesInZip = new DateTime( 2001, 1, 1, 1, 1, 1 );
+
 		///// <summary>
 		///// The package name of the package.
 		///// </summary>
@@ -265,6 +267,8 @@ namespace NeoAxis
 		{
 			try
 			{
+				PatchCSharpProjects( buildInstance );
+
 				CopyFilesToPackageFolder( buildInstance );
 				buildInstance.Progress = 0.8f;
 
@@ -293,6 +297,25 @@ namespace NeoAxis
 				return;
 
 			ShowSuccessScreenNotification();
+		}
+
+		void PatchCSharpProjects( ProductBuildInstance buildInstance )
+		{
+			var exeFileName = Path.Combine( VirtualFileSystem.Directories.EngineInternal, @"Tools\PlatformTools\ProjectDiffPatcher\bin\Debug\ProjectDiffPatcher.exe" );
+
+			{
+				var param1 = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.CoreExtension\NeoAxis.CoreExtension.Android.csproj" );
+				var param2 = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.CoreExtension\NeoAxis.CoreExtension.csproj" );
+				var process = Process.Start( new ProcessStartInfo( exeFileName, $"\"{param1}\" \"{param2}\" Android" ) { UseShellExecute = true } );
+				process.WaitForExit();
+			}
+
+			{
+				var param1 = Path.Combine( VirtualFileSystem.Directories.Project, @"Project.Android.csproj" );
+				var param2 = Path.Combine( VirtualFileSystem.Directories.Project, @"Project.csproj" );
+				var process = Process.Start( new ProcessStartInfo( exeFileName, $"\"{param1}\" \"{param2}\" Android" ) { UseShellExecute = true } );
+				process.WaitForExit();
+			}
 		}
 
 		void CopyFilesToPackageFolder( ProductBuildInstance buildInstance )
@@ -350,29 +373,46 @@ namespace NeoAxis
 					return;
 			}
 
-			//copy Binaries
-			{
-				string sourceFolder = Path.Combine( VirtualFileSystem.Directories.Project, "Binaries" );
-				string destFolder = Path.Combine( buildInstance.DestinationFolder, "Binaries" );
+			//copy Build.Android.sln
+			CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Build.Android.sln" );
 
-				var excludePaths = new List<string>();
-				excludePaths.AddRange( GetPlatformsExcludePaths() );
+			//copy Project.Android.csproj
+			CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Project.Android.csproj" );
 
-				CopyFolder( sourceFolder, destFolder, buildInstance, new Range( 0.4, 0.5 ), excludePaths );
-
-				if( CheckCancel( buildInstance ) )
-					return;
-			}
+			//copy Properties
+			CopyFolder( Path.Combine( VirtualFileSystem.Directories.Project, "Properties" ), Path.Combine( buildInstance.DestinationFolder, "Properties" ), buildInstance, new Range( 0.4, 0.4 ) );
 
 			//copy part of Sources
-			{
-				var sourceFolder = Path.Combine( VirtualFileSystem.Directories.Project, "Sources" );
-				string destFolder = Path.Combine( buildInstance.DestinationFolder, "Sources" );
-				//copy Sources\Sources.Android.sln
-				CopyFiles( sourceFolder, destFolder, buildInstance, new Range( 0.5, 0.6 ), "Sources.Android.sln" );
-				//copy Sources\NeoAxis.Player.Android
-				CopyFolder( Path.Combine( sourceFolder, "NeoAxis.Player.Android" ), Path.Combine( destFolder, "NeoAxis.Player.Android" ), buildInstance, new Range( 0.6, 0.7 ) );
-			}
+			var sourceSourcesPath = Path.Combine( VirtualFileSystem.Directories.Project, "Sources" );
+			string destSourcesPath = Path.Combine( buildInstance.DestinationFolder, "Sources" );
+
+			//copy Sources\NeoAxis.Player.Android
+			CopyFolder( Path.Combine( sourceSourcesPath, "NeoAxis.Player.Android" ), Path.Combine( destSourcesPath, "NeoAxis.Player.Android" ), buildInstance, new Range( 0.4, 0.45 ) );
+			//copy Sources\NeoAxis.CoreExtension
+			CopyFolder( Path.Combine( sourceSourcesPath, "NeoAxis.CoreExtension" ), Path.Combine( destSourcesPath, "NeoAxis.CoreExtension" ), buildInstance, new Range( 0.45, 0.5 ) );
+
+			var sourceBinariesPath = VirtualFileSystem.Directories.Binaries;
+			string destBinariesPath = Path.Combine( buildInstance.DestinationFolder, "Binaries" );
+
+			var sourcePlatformFolder = Path.Combine( sourceBinariesPath, "NeoAxis.Internal\\Platforms", Platform.ToString() );
+			var destPlatformFolder = Path.Combine( destBinariesPath, "NeoAxis.Internal\\Platforms", Platform.ToString() );
+
+			////copy managed dll references from original folder
+			//CopyFiles( VirtualFileSystem.Directories.Binaries, destBinariesPath, buildInstance, new Range( 0.5, 0.6 ), "*.dll" );
+			//copy NeoAxis.DefaultSettings.config
+			Directory.CreateDirectory( destBinariesPath );
+			File.Copy(
+				Path.Combine( VirtualFileSystem.Directories.Binaries, "NeoAxis.DefaultSettings.config" ),
+				Path.Combine( destBinariesPath, "NeoAxis.DefaultSettings.config" ) );
+
+			//!!!!unnecessary dlls are copied? we need a list of references?
+			//copy managed dll references from Android folder
+			CopyFiles(
+				Path.Combine( sourcePlatformFolder, "Managed" ),
+				Path.Combine( destPlatformFolder, "Managed" ), buildInstance, new Range( 0.6, 0.7 ), "*.dll" );
+
+			if( CheckCancel( buildInstance ) )
+				return;
 
 			//create Project.zip
 			{
@@ -385,6 +425,7 @@ namespace NeoAxis
 				var paths = new List<string>();
 				paths.Add( Path.Combine( buildInstance.DestinationFolder, "Assets" ) );
 				paths.Add( Path.Combine( buildInstance.DestinationFolder, @"Binaries\NeoAxis.DefaultSettings.config" ) );
+				//!!!!without CSharpScripts
 				paths.Add( Path.Combine( buildInstance.DestinationFolder, "Caches" ) );
 
 				using( var archive = ZipFile.Open( destinationFileName, ZipArchiveMode.Create ) )
@@ -401,6 +442,7 @@ namespace NeoAxis
 								//write
 								var fileName = file.Substring( buildInstance.DestinationFolder.Length + 1 );
 								var entry = archive.CreateEntry( fileName, compressionLevel );
+								entry.LastWriteTime = new DateTimeOffset( setTimeToFilesInZip );
 								using( var stream = entry.Open() )
 									stream.Write( bytes, 0, bytes.Length );
 							}
@@ -413,6 +455,7 @@ namespace NeoAxis
 							//write
 							var fileName = path.Substring( buildInstance.DestinationFolder.Length + 1 );
 							var entry = archive.CreateEntry( fileName, compressionLevel );
+							entry.LastWriteTime = new DateTimeOffset( setTimeToFilesInZip );
 							using( var stream = entry.Open() )
 								stream.Write( bytes, 0, bytes.Length );
 						}
@@ -444,21 +487,30 @@ namespace NeoAxis
 
 			//delete Assets, Caches, Binaries\NeoAxis.Internal\Tips, Binaries\NeoAxis.Internal\Tools
 			{
-				var destFolder = Path.Combine( buildInstance.DestinationFolder, "Assets" );
-				if( Directory.Exists( destFolder ) )
-					Directory.Delete( destFolder, true );
+				//need for cs files
+				//var destFolder = Path.Combine( buildInstance.DestinationFolder, "Assets" );
+				//if( Directory.Exists( destFolder ) )
+				//	Directory.Delete( destFolder, true );
 
-				destFolder = Path.Combine( buildInstance.DestinationFolder, "Caches" );
-				if( Directory.Exists( destFolder ) )
-					Directory.Delete( destFolder, true );
+				//need for cs files
+				//destFolder = Path.Combine( buildInstance.DestinationFolder, "Caches" );
+				//if( Directory.Exists( destFolder ) )
+				//	Directory.Delete( destFolder, true );
 
-				destFolder = Path.Combine( buildInstance.DestinationFolder, @"Binaries\NeoAxis.Internal\Tips" );
+				var destFolder = Path.Combine( buildInstance.DestinationFolder, @"Binaries\NeoAxis.Internal\Tips" );
 				if( Directory.Exists( destFolder ) )
 					Directory.Delete( destFolder, true );
 
 				destFolder = Path.Combine( buildInstance.DestinationFolder, @"Binaries\NeoAxis.Internal\Tools" );
 				if( Directory.Exists( destFolder ) )
 					Directory.Delete( destFolder, true );
+			}
+
+			//copy PrepareAssetsForDebug
+			{
+				var sourceFolder = Path.Combine( sourceBinariesPath, @"NeoAxis.Internal\Tools\PlatformTools\PrepareAssetsForDebug" );
+				var destFolder = Path.Combine( destBinariesPath, @"NeoAxis.Internal\Tools\PlatformTools\PrepareAssetsForDebug" );
+				CopyFolder( sourceFolder, destFolder, buildInstance, new Range( 0.8, 0.9 ) );
 			}
 
 		}

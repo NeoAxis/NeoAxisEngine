@@ -262,7 +262,7 @@ namespace NeoAxis
 			return CallJoystickEvent( e );
 		}
 
-		public bool PerformTouchEvent( TouchEventData e )
+		public bool PerformTouch( TouchData e )
 		{
 			CheckCachedParameters();
 			UpdateCachedCoverControls();
@@ -273,9 +273,9 @@ namespace NeoAxis
 				focusedControl = null;
 
 			if( capturedControl != null )
-				return capturedControl.CallTouchEvent( e );
+				return capturedControl.CallTouch( e );
 
-			return CallTouchEvent( e );
+			return CallTouch( e );
 		}
 
 		public bool PerformSpecialInputDeviceEvent( InputEvent e )
@@ -466,6 +466,7 @@ namespace NeoAxis
 					channel.Position = Transform3D.Position;
 					//channel.Velocity = xxx;
 				}
+
 				channel.Pause = false;
 			}
 		}

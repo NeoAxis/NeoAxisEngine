@@ -1196,7 +1196,7 @@ namespace NeoAxis
 					try
 					{
 						//!!!!new
-						return Path.GetFileNameWithoutExtension( Name );
+						return PathUtility.GetFileNameWithoutExtension( Name );
 						//return Path.GetFileName( Name );
 					}
 					catch { }

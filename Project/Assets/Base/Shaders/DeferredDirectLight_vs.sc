@@ -22,9 +22,9 @@ void main()
 	v_texCoord0 = a_texcoord0;
 /*
 	v_worldPosition = worldPosition.xyz;
-	v_worldNormal = normalize(mul((mat3)worldMatrix, a_normal));
+	v_worldNormal = normalize(mul(toMat3(worldMatrix), a_normal));
 	v_depth = gl_Position.z;
-	v_tangent = normalize(mul((mat3)worldMatrix, a_tangent.xyz));
+	v_tangent = normalize(mul(toMat3(worldMatrix), a_tangent.xyz));
 	v_bitangent = cross(v_tangent.xyz, v_worldNormal) * a_tangent.w;
 
 	//!!!!

@@ -1,3 +1,33 @@
 .component Project.PlayScreen
 {
+	Size = Parent 1 1
+	EditorScrollPosition = 0 0
+	Style
+	{
+		GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Menu
+		Text = Menu
+		Size = Units 100 40
+		HorizontalAlignment = Right
+		Margin = Units 0 0 0 0
+		EditorScrollPosition = 0 0
+		.component NeoAxis.Component_EventHandler
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonMenu_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
 }

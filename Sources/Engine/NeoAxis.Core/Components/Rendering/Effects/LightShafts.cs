@@ -355,5 +355,11 @@ namespace NeoAxis
 			//update actual texture
 			actualTexture = finalTexture;
 		}
+
+		public override bool LimitedDevicesSupport
+		{
+			get { return true; }
+		}
+
 	}
 }

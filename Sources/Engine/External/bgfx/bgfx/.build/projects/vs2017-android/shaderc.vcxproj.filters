@@ -7,9 +7,6 @@
     <Filter Include="tools\shaderc">
       <UniqueIdentifier>{174bf810-609f-4d73-9aca-50ea870817cb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src">
-      <UniqueIdentifier>{ffa11512-6af4-4344-9ad5-6698061a5d85}</UniqueIdentifier>
-    </Filter>
     <Filter Include="bx">
       <UniqueIdentifier>{cbdbb4ff-cfb6-44bd-8d89-e1cac4f808d8}</UniqueIdentifier>
     </Filter>

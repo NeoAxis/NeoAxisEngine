@@ -1,0 +1,59 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30309.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoAxis.Player.Android", "Sources\NeoAxis.Player.Android\NeoAxis.Player.Android.csproj", "{3BC0AC7E-3B3B-4D3F-9CC0-B2BDECC460A6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{77A0E3BB-AD36-4128-9790-966770EAC238} = {77A0E3BB-AD36-4128-9790-966770EAC238}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project.Android", "Project.Android.csproj", "{77A0E3BB-AD36-4128-9790-966770EAC238}"
+	ProjectSection(ProjectDependencies) = postProject
+		{876CBDEC-8F38-453F-9BE5-D90A6AF28D10} = {876CBDEC-8F38-453F-9BE5-D90A6AF28D10}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoAxis.CoreExtension.Android", "Sources\NeoAxis.CoreExtension\NeoAxis.CoreExtension.Android.csproj", "{876CBDEC-8F38-453F-9BE5-D90A6AF28D10}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM64 = Debug|ARM64
+		Debug|x64 = Debug|x64
+		Release|ARM64 = Release|ARM64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3BC0AC7E-3B3B-4D3F-9CC0-B2BDECC460A6}.Debug|ARM64.ActiveCfg = Debug|x64
+		{3BC0AC7E-3B3B-4D3F-9CC0-B2BDECC460A6}.Debug|ARM64.Build.0 = Debug|x64
+		{3BC0AC7E-3B3B-4D3F-9CC0-B2BDECC460A6}.Debug|ARM64.Deploy.0 = Debug|x64
+		{3BC0AC7E-3B3B-4D3F-9CC0-B2BDECC460A6}.Debug|x64.ActiveCfg = Debug|x64
+		{3BC0AC7E-3B3B-4D3F-9CC0-B2BDECC460A6}.Debug|x64.Build.0 = Debug|x64
+		{3BC0AC7E-3B3B-4D3F-9CC0-B2BDECC460A6}.Debug|x64.Deploy.0 = Debug|x64
+		{3BC0AC7E-3B3B-4D3F-9CC0-B2BDECC460A6}.Release|ARM64.ActiveCfg = Release|x64
+		{3BC0AC7E-3B3B-4D3F-9CC0-B2BDECC460A6}.Release|ARM64.Build.0 = Release|x64
+		{3BC0AC7E-3B3B-4D3F-9CC0-B2BDECC460A6}.Release|ARM64.Deploy.0 = Release|x64
+		{3BC0AC7E-3B3B-4D3F-9CC0-B2BDECC460A6}.Release|x64.ActiveCfg = Release|x64
+		{3BC0AC7E-3B3B-4D3F-9CC0-B2BDECC460A6}.Release|x64.Build.0 = Release|x64
+		{3BC0AC7E-3B3B-4D3F-9CC0-B2BDECC460A6}.Release|x64.Deploy.0 = Release|x64
+		{77A0E3BB-AD36-4128-9790-966770EAC238}.Debug|ARM64.ActiveCfg = Debug|x64
+		{77A0E3BB-AD36-4128-9790-966770EAC238}.Debug|ARM64.Build.0 = Debug|x64
+		{77A0E3BB-AD36-4128-9790-966770EAC238}.Debug|x64.ActiveCfg = Debug|x64
+		{77A0E3BB-AD36-4128-9790-966770EAC238}.Debug|x64.Build.0 = Debug|x64
+		{77A0E3BB-AD36-4128-9790-966770EAC238}.Release|ARM64.ActiveCfg = Release|x64
+		{77A0E3BB-AD36-4128-9790-966770EAC238}.Release|x64.ActiveCfg = Release|x64
+		{77A0E3BB-AD36-4128-9790-966770EAC238}.Release|x64.Build.0 = Release|x64
+		{876CBDEC-8F38-453F-9BE5-D90A6AF28D10}.Debug|ARM64.ActiveCfg = Debug|x64
+		{876CBDEC-8F38-453F-9BE5-D90A6AF28D10}.Debug|ARM64.Build.0 = Debug|x64
+		{876CBDEC-8F38-453F-9BE5-D90A6AF28D10}.Debug|x64.ActiveCfg = Debug|x64
+		{876CBDEC-8F38-453F-9BE5-D90A6AF28D10}.Debug|x64.Build.0 = Debug|x64
+		{876CBDEC-8F38-453F-9BE5-D90A6AF28D10}.Release|ARM64.ActiveCfg = Release|x64
+		{876CBDEC-8F38-453F-9BE5-D90A6AF28D10}.Release|x64.ActiveCfg = Release|x64
+		{876CBDEC-8F38-453F-9BE5-D90A6AF28D10}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6E522168-8C78-4A11-AC73-7C972CDD175B}
+	EndGlobalSection
+EndGlobal

@@ -67,12 +67,13 @@ float D_GGX(float linearRoughness, float NoH, const vec3 h) {
     // This computes 1.0 - NoH^2 directly (which is close to zero in the highlights and has
     // enough precision).
     // Overall this yields better performance, keeping all computations in mediump
-#if defined(TARGET_MOBILE)
-    vec3 NxH = cross(shading_normal, h);
-    float oneMinusNoHSquared = dot(NxH, NxH);
-#else
+//!!!!betauser
+//#if defined(TARGET_MOBILE)
+//    vec3 NxH = cross(shading_normal, h);
+//    float oneMinusNoHSquared = dot(NxH, NxH);
+//#else
     float oneMinusNoHSquared = 1.0 - NoH * NoH;
-#endif
+//#endif
 
     float a = NoH * linearRoughness;
     float k = linearRoughness / (oneMinusNoHSquared + a * a);

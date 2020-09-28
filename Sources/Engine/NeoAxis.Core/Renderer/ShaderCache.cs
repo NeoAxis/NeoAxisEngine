@@ -36,15 +36,15 @@ namespace NeoAxis
 			if( Bgfx.GetCurrentBackend() == RendererBackend.Noop )
 				return "";
 
-			string folder = Path.Combine( VirtualFileSystem.Directories.Project, @"Caches\ShaderCache" );
+			string folder = PathUtility.Combine( VirtualFileSystem.Directories.Project, @"Caches\ShaderCache" );
 
 			string name = "";
 			if( Bgfx.GetCurrentBackend() == RendererBackend.Direct3D11 || Bgfx.GetCurrentBackend() == RendererBackend.Direct3D12 )
 				name = "Direct3D11";
-			else if( Bgfx.GetCurrentBackend() == RendererBackend.Vulkan )
-				name = "Vulkan";
 			else if( Bgfx.GetCurrentBackend() == RendererBackend.OpenGLES )
 				name = "OpenGLES";
+			else if( Bgfx.GetCurrentBackend() == RendererBackend.Vulkan )
+				name = "Vulkan";
 			else
 				Log.Fatal( "GpuProgramManager: Shader model is not specified. Bgfx.GetCurrentBackend() == {0}.", Bgfx.GetCurrentBackend() );
 

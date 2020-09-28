@@ -75,8 +75,8 @@ namespace NeoAxis
 		{
 			DX11_SM5,
 			DX12_SM6,
-			Vulkan,
 			OpenGLES,
+			Vulkan,
 		}
 
 		/////////////////////////////////////////

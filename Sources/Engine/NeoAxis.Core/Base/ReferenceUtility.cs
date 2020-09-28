@@ -354,8 +354,8 @@ namespace NeoAxis
 			var toResource = ComponentUtility.GetOwnedFileNameOfComponent( to );
 			if( fromResource != toResource )
 			{
-				var fromResourceFolder = Path.GetDirectoryName( fromResource );
-				var toResourceFolder = Path.GetDirectoryName( toResource );
+				var fromResourceFolder = PathUtility.GetDirectoryName( fromResource );
+				var toResourceFolder = PathUtility.GetDirectoryName( toResource );
 
 				int commonChars = GetEqualPart( new string[] { fromResourceFolder, toResourceFolder } );
 
@@ -436,8 +436,8 @@ namespace NeoAxis
 			var toResource = to;
 			if( fromResource != toResource )
 			{
-				var fromResourceFolder = Path.GetDirectoryName( fromResource );
-				var toResourceFolder = Path.GetDirectoryName( toResource );
+				var fromResourceFolder = PathUtility.GetDirectoryName( fromResource );
+				var toResourceFolder = PathUtility.GetDirectoryName( toResource );
 
 				int commonChars = GetEqualPart( new string[] { fromResourceFolder, toResourceFolder } );
 
@@ -825,13 +825,13 @@ namespace NeoAxis
 				var fromResource = ComponentUtility.GetOwnedFileNameOfComponent( from );
 				var fromResourceFolder = "";
 				if( !string.IsNullOrEmpty( fromResource ) )
-					fromResourceFolder = Path.GetDirectoryName( fromResource );
+					fromResourceFolder = PathUtility.GetDirectoryName( fromResource );
 
 				var resourceName = "";
 				{
 					//!!!!
 
-					resourceName = Path.Combine( fromResourceFolder, resourceName2 );
+					resourceName = PathUtility.Combine( fromResourceFolder, resourceName2 );
 
 					if( resourceName2.Contains( ".." ) )
 					{

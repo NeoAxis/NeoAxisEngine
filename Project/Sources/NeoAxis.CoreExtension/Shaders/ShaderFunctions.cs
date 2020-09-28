@@ -8,7 +8,7 @@ namespace NeoAxis
 	public static class ShaderFunctions
 	{
 		//Shader file: Assets\Base\Shaders\FragmentFunctions.sh
-		[ShaderGenerationFunction( "dither(gl_FragCoord, {value})" )]
+		[ShaderGenerationFunction( "dither(getFragCoord(), {value})" )]
 		public static double Dither( double value )
 		{
 			return 0;

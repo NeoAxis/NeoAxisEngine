@@ -53,14 +53,7 @@ namespace NeoAxis
 		[Category( "Shadows" )]
 		public Reference<bool> Shadows
 		{
-			get
-			{
-				//!!!!ut
-				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
-					return false;
-
-				if( _shadows.BeginGet() ) Shadows = _shadows.Get( this ); return _shadows.value;
-			}
+			get { if( _shadows.BeginGet() ) Shadows = _shadows.Get( this ); return _shadows.value; }
 			set { if( _shadows.BeginSet( ref value ) ) { try { ShadowsChanged?.Invoke( this ); } finally { _shadows.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Shadows"/> property value changes.</summary>

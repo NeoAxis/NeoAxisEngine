@@ -12,7 +12,7 @@ SAMPLER2DARRAY(s_depthHalfTextureArrayL, 1);
 void main()
 {
 	float ao;
-    	ivec2 pixPos = (ivec2)gl_FragCoord.xy;
+    	ivec2 pixPos = (ivec2)getFragCoord().xy;
     	ivec2 pixPosHalf = pixPos / ivec2(2, 2);
 
 	// calculate index in the four deinterleaved source array texture
@@ -42,13 +42,13 @@ void main()
 
 	// calculate final sampling offsets and sample using bilinear filter
 
-	vec2  uvH = (gl_FragCoord.xy + vec2(fmx + fmxe - 0.5, 0.5 - fmy)) * 0.5 * halfViewportPixelSize;
+	vec2  uvH = (getFragCoord().xy + vec2(fmx + fmxe - 0.5, 0.5 - fmy)) * 0.5 * halfViewportPixelSize;
 	float aoH = bgfxTexture2DArray(s_depthHalfTextureArrayL, vec3(uvH, (float)ih)).x;
 
-	vec2  uvV = (gl_FragCoord.xy + vec2(0.5 - fmx, fmy - 0.5 + fmye)) * 0.5 * halfViewportPixelSize;
+	vec2  uvV = (getFragCoord().xy + vec2(0.5 - fmx, fmy - 0.5 + fmye)) * 0.5 * halfViewportPixelSize;
 	float aoV = bgfxTexture2DArray(s_depthHalfTextureArrayL, vec3(uvV, (float)iv)).x;
 
-	vec2  uvD = (gl_FragCoord.xy + vec2(fmx - 0.5 + fmxe, fmy - 0.5 + fmye)) * 0.5 * halfViewportPixelSize;
+	vec2  uvD = (getFragCoord().xy + vec2(fmx - 0.5 + fmxe, fmy - 0.5 + fmye)) * 0.5 * halfViewportPixelSize;
 	float aoD = bgfxTexture2DArray(s_depthHalfTextureArrayL, vec3(uvD, (float)id)).x;
 
 	// reduce weight for samples near edge - if the edge is on both sides, weight goes to 0

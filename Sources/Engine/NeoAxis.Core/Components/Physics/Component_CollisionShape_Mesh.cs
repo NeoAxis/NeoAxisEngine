@@ -293,6 +293,8 @@ namespace NeoAxis
 
 				//без useQuantizedAabbCompression в три раза быстрее создается
 
+				//!!!!в ключ итема в кеше давать геометрию до обработки (MergeEqualVerticesRemoveInvalidTriangles)
+
 				//!!!!enable when cache support
 				bool useQuantizedAabbCompression = false;
 				//bool useQuantizedAabbCompression = true;

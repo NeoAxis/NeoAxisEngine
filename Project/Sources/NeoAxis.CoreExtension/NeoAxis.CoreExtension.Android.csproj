@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{876CBDEC-8F38-453F-9BE5-D90A6AF28D10}</ProjectGuid>
+    <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TemplateGuid>{9ef11e43-1701-4396-8835-8392d57abb70}</TemplateGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NeoAxis.CoreExtension</RootNamespace>
+    <AssemblyName>NeoAxis.CoreExtension</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <AndroidResgenFile>Properties\Android\Resource.designer.cs</AndroidResgenFile>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
+    <TargetFrameworkVersion>v8.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\Binaries\NeoAxis.Internal\Platforms\Android\Managed\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;ANDROID</DefineConstants>
+    <DebugType>portable</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>7.3</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>CS1591;CS1573;CS0649;CS0414;CS1589;CS1574;CS1587</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>..\..\Binaries\NeoAxis.Internal\Platforms\Android\Managed\</OutputPath>
+    <DefineConstants>ANDROID</DefineConstants>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>7.3</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>CS1591;CS1573;CS0649;CS0414;CS1589;CS1574;CS1587</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Mono.Android" />
+    <Reference Include="mscorlib" />
+    <Reference Include="NeoAxis.Core">
+      <HintPath>..\..\Binaries\NeoAxis.Internal\Platforms\Android\Managed\NeoAxis.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Character\CharacterAssemblyRegistration.cs" />
+    <Compile Include="Character\Component_Character.cs" />
+    <Compile Include="Character\Component_CharacterAI.cs" />
+    <Compile Include="Character\Component_CharacterAITask_MoveTo.cs" />
+    <Compile Include="Character\Component_CharacterInputProcessing.cs" />
+    <Compile Include="Character\Component_Character_Editor.cs" />
+    <Compile Include="Character2D\Component_Character2D.cs" />
+    <Compile Include="Character2D\Component_Character2DAI.cs" />
+    <Compile Include="Character2D\Component_Character2DAITask_MoveTo.cs" />
+    <Compile Include="Character2D\Component_Character2DInputProcessing.cs" />
+    <Compile Include="Character2D\Component_Character2D_Editor.cs" />
+    <Compile Include="Character2D\Component_Character2D_Preview.cs" />
+    <Compile Include="Game framework\Component_AI.cs" />
+    <Compile Include="Game framework\Component_AITask.cs" />
+    <Compile Include="Game framework\Component_ButtonInSpace.cs" />
+    <Compile Include="Game framework\Component_ButtonInSpace_SettingsCell.cs" />
+    <Compile Include="Game framework\Component_CameraManagement.cs" />
+    <Compile Include="Game framework\Component_GameMode.cs" />
+    <Compile Include="Game framework\Component_InputProcessing.cs" />
+    <Compile Include="Game framework\Component_RegulatorSwitchInSpace.cs" />
+    <Compile Include="Game framework\InputMessage.cs" />
+    <Compile Include="Game framework 2D\Component_Weapon2D.cs" />
+    <Compile Include="Game framework 2D\IComponent_Item2D.cs" />
+    <Compile Include="Game framework 3D\Component_Weapon.cs" />
+    <Compile Include="Game framework 3D\IComponent_InteractiveObject.cs" />
+    <Compile Include="Game framework 3D\IComponent_Item.cs" />
+    <Compile Include="Mesh modifiers\Component_MeshModifier_BoxUV.cs" />
+    <Compile Include="Mesh modifiers\Component_MeshModifier_RandomizePosition.cs" />
+    <Compile Include="More components\Component_DestroyingSensor.cs" />
+    <Compile Include="More components\Component_Fence.cs" />
+    <Compile Include="More components\Component_Grid.cs" />
+    <Compile Include="More components\Component_Pipe.cs" />
+    <Compile Include="More components\Component_Plant.cs" />
+    <Compile Include="More components\Component_RenderTargetInSpace.cs" />
+    <Compile Include="More components\Component_Road.cs" />
+    <Compile Include="Project settings\Component_ProjectSettings_Extension.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shaders\ShaderFunctions.cs" />
+    <Compile Include="Utility\CanvasRendererUtility.cs" />
+    <Compile Include="Utility\EngineConsole.cs" />
+    <Compile Include="Utility\ScreenMessages.cs" />
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

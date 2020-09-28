@@ -96,8 +96,12 @@
     <Compile Include="Mesh modifiers\Component_MeshModifier_BoxUV.cs" />
     <Compile Include="Mesh modifiers\Component_MeshModifier_RandomizePosition.cs" />
     <Compile Include="More components\Component_DestroyingSensor.cs" />
+    <Compile Include="More components\Component_Fence.cs" />
     <Compile Include="More components\Component_Grid.cs" />
+    <Compile Include="More components\Component_Pipe.cs" />
+    <Compile Include="More components\Component_Plant.cs" />
     <Compile Include="More components\Component_RenderTargetInSpace.cs" />
+    <Compile Include="More components\Component_Road.cs" />
     <Compile Include="Project settings\Component_ProjectSettings_Extension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shaders\ShaderFunctions.cs" />

@@ -3,6 +3,7 @@ $input v_texCoord0
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "Common.sh"
 #include "UniformsFragment.sh"
+#include "FragmentFunctions.sh"
 
 uniform vec4 u_lightDataFragment[LIGHTDATA_FRAGMENT_SIZE];
 
@@ -27,10 +28,10 @@ SAMPLERCUBE(s_environmentTexture, 6);
 SAMPLERCUBE(s_environmentTextureIBL, 7);
 SAMPLER2D(s_brdfLUT, 8);
 
-#include "PBRFilament\common_types.sh"
-#include "PBRFilament\common_math.sh"
-#include "PBRFilament\brdf.sh"
-#include "PBRFilament\PBRFilament.sh"
+#include "PBRFilament/common_types.sh"
+#include "PBRFilament/common_math.sh"
+#include "PBRFilament/brdf.sh"
+#include "PBRFilament/PBRFilament.sh"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

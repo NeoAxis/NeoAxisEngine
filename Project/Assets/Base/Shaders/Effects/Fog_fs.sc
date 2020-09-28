@@ -2,6 +2,7 @@ $input v_texCoord0
 
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "../Common.sh"
+#include "../FragmentFunctions.sh"
 
 SAMPLER2D(s_depthTexture, 0);
 uniform vec4/*float*/ affectBackground;

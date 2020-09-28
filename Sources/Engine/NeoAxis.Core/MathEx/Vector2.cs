@@ -58,7 +58,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="x">X component.</param>
 		/// <param name="y">Y component.</param>
-		[ShaderGenerationFunction( "float2({x}, {y})" )]
+		[ShaderGenerationFunction( "vec2({x}, {y})" )]
 		public Vector2( double x, double y )
 		{
 			this.X = x;

@@ -1,6 +1,6 @@
 .component NeoAxis.Component_Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1180, 842\"><KW V=\"1\" A=\"9548DCD6D149499BE584418DFC2068A8\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"7957DABB94FF4DB255877C2A7B895295\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"9548DCD6D149499BE584418DFC2068A8\"><KP UN=\"9548DCD6D149499BE584418DFC2068A8\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"25B96ED2DE084CC80781AA9F00E91F93\" S=\"False\"><CPD ObjPath=\"$Opacity Change\" /></KP><KP UN=\"02E5CBADE9584119259C83EBD3C481F4\" S=\"False\"><CPD ObjPath=\"$Opacity Change\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1186, 842\"><KW V=\"1\" A=\"9548DCD6D149499BE584418DFC2068A8\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"7957DABB94FF4DB255877C2A7B895295\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"9548DCD6D149499BE584418DFC2068A8\"><KP UN=\"9548DCD6D149499BE584418DFC2068A8\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"25B96ED2DE084CC80781AA9F00E91F93\" S=\"False\"><CPD ObjPath=\"$Opacity Change\" /></KP><KP UN=\"02E5CBADE9584119259C83EBD3C481F4\" S=\"False\"><CPD ObjPath=\"$Opacity Change\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -13,7 +13,7 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "7.58064265054246 -5.16719395099408 12.1530271542207; -0.24196947454261 0.0891096163591549 0.906656492048295 0.333892580164006; 1 1 1"
+		Transform = "7.54516529150303 -5.1370623008413 12.0788392542901; -0.274882388944794 0.100583488891228 0.897973661964924 0.328581704341211; 1 1 1"
 	}
 	.component NeoAxis.Component_Light
 	{

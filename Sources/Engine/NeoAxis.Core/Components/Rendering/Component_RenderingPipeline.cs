@@ -164,6 +164,23 @@ namespace NeoAxis
 		/////////////////////////////////////////
 
 		/// <summary>
+		/// Specifies the quality for procedural generation of 3D models and other assets. A value of 0.75 is optimal for real-time graphics. The higher values are more applicable for non real-time rendering.
+		/// </summary>
+		[Category( "Procedural Generation" )]
+		[DefaultValue( 0.75 )]
+		[Range( 0, 1 )]
+		public Reference<double> ProceduralGenerationQuality
+		{
+			get { if( _proceduralGenerationQuality.BeginGet() ) ProceduralGenerationQuality = _proceduralGenerationQuality.Get( this ); return _proceduralGenerationQuality.value; }
+			set { if( _proceduralGenerationQuality.BeginSet( ref value ) ) { try { ProceduralGenerationQualityChanged?.Invoke( this ); } finally { _proceduralGenerationQuality.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ProceduralGenerationQuality"/> property value changes.</summary>
+		public event Action<Component_RenderingPipeline> ProceduralGenerationQualityChanged;
+		ReferenceField<double> _proceduralGenerationQuality = 0.75;
+
+		/////////////////////////////////////////
+
+		/// <summary>
 		/// Specifies the distance multiplier when determining the level of detail.
 		/// </summary>
 		[Category( "Level Of Detail" )]

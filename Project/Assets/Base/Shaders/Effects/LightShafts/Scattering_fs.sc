@@ -15,9 +15,9 @@ void main()
 
 	//calculate vector from pixel to light source in screen space.  
 	vec2 deltaTexCoord = screenLightPosition.xy - v_texCoord0;
-	deltaTexCoord *= density.x / (float)iterations;
+	deltaTexCoord *= density.x / float(iterations);
 
-	float scatter = 0;
+	float scatter = 0.0;
 	vec2 newTexCoord = v_texCoord0;
 	float fallOff = 1.0;
 	for( int n = 0; n < iterations; n++ )
@@ -29,7 +29,7 @@ void main()
 
 		newTexCoord += deltaTexCoord;
 	}
-	scatter /= (float)iterations;
+	scatter /= float(iterations);
 	
 	gl_FragColor = vec4(scatter, 0, 0, 0);
 }

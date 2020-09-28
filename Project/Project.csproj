@@ -59,8 +59,8 @@
     <Compile Include="Assets\Base\UI\Styles\UIStyleSimple.cs" />
     <Compile Include="Assets\Base\UI\Windows\MessageBoxWindow.cs" />
     <Compile Include="Assets\Samples\Simple Game\SimpleGameGUI.cs" />
+    <Compile Include="Caches\CSharpScripts\CSharpScripts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Assets\Base\WindowApp\WindowAppMainForm.cs" />
-    <Compile Include="Caches\CSharpScripts\CSharpScripts.cs" />
   </ItemGroup>
 </Project>

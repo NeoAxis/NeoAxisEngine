@@ -330,5 +330,11 @@ namespace NeoAxis
 				contextData.UpdateLastTimeVisible( light );
 			}
 		}
+
+		public override bool LimitedDevicesSupport
+		{
+			get { return true; }
+		}
+
 	}
 }

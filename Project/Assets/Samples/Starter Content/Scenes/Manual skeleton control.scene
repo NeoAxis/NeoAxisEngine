@@ -1,6 +1,6 @@
 .component NeoAxis.Component_Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1174, 842\"><KW V=\"1\" A=\"4E8F1A9109764849FBA8764337C53FA8\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WS UN=\"EE2822F88E754BF93BA3906E32330AAF\" S=\"T,0,50:T,0,50\" D=\"Vertical\"><WC UN=\"753DE069FFC04991C3B9F57735DA9561\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"4E8F1A9109764849FBA8764337C53FA8\"><KP UN=\"4E8F1A9109764849FBA8764337C53FA8\" S=\"False\"><CPD ObjPath=\"\" /></KP></WC><WC UN=\"196A37D5838C43A7F3A1C1DA245A63CC\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"58E19DAABB8E4723B19FFED934541549\"><KP UN=\"58E19DAABB8E4723B19FFED934541549\" S=\"False\"><CPD ObjPath=\"$Character\\$Mesh In Space\\$Mesh In Space Animation Controller\\$C# Script\" /></KP></WC></WS></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1186, 842\"><KW V=\"1\" A=\"4E8F1A9109764849FBA8764337C53FA8\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WS UN=\"EE2822F88E754BF93BA3906E32330AAF\" S=\"T,0,50:T,0,50\" D=\"Vertical\"><WC UN=\"753DE069FFC04991C3B9F57735DA9561\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"4E8F1A9109764849FBA8764337C53FA8\"><KP UN=\"4E8F1A9109764849FBA8764337C53FA8\" S=\"False\"><CPD ObjPath=\"\" /></KP></WC><WC UN=\"196A37D5838C43A7F3A1C1DA245A63CC\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"58E19DAABB8E4723B19FFED934541549\"><KP UN=\"58E19DAABB8E4723B19FFED934541549\" S=\"False\"><CPD ObjPath=\"$Character\\$Mesh In Space\\$Mesh In Space Animation Controller\\$C# Script\" /></KP></WC></WS></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -17,7 +17,7 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "2.70616434112919 -0.87042652123119 2.13425705564872; -0.202746958248857 0.20238595616322 0.678074288668145 0.676866940185384; 1 1 1"
+		Transform = "2.70562807346165 -0.569514810202128 1.9366416347359; -0.202746958248857 0.20238595616322 0.678074288668145 0.676866940185384; 1 1 1"
 	}
 	.component NeoAxis.Component_Camera
 	{
@@ -212,7 +212,7 @@
 				Name = CollisionShape Capsule
 				TransformRelativeToParent = "0 0 -0.25; 0 0 0 1; 1 1 1"
 				Radius = 0.3
-				Height = 1.2
+				Height = 1.2000000000000002
 			}
 		}
 		.component NeoAxis.Component_MeshInSpace
@@ -255,7 +255,7 @@
 						}
 						HandlerMethod
 						{
-							GetByReference = "this:..\\method:MeshInSpaceAnimationController_CalculateBoneTransforms(NeoAxis.Component_MeshInSpaceAnimationController,NeoAxis.CalculateBoneTransformsItem[])"
+							GetByReference = "this:..\\method:MeshInSpaceAnimationController_CalculateBoneTransforms(NeoAxis.Component_MeshInSpaceAnimationController,NeoAxis.Component_SkeletonAnimationTrack.CalculateBoneTransformsItem[])"
 						}
 						HandlerFlow
 						{

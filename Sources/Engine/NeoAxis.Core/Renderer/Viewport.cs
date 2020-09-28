@@ -848,18 +848,18 @@ namespace NeoAxis
 			}
 		}
 
-		public delegate void TouchEventDelegate( Viewport viewport, TouchEventData e, ref bool handled );
-		public event TouchEventDelegate TouchEvent;
+		public delegate void TouchDelegate( Viewport viewport, TouchData e, ref bool handled );
+		public event TouchDelegate Touch;
 
-		public void PerformTouchEvent( TouchEventData e, ref bool handled )
+		public void PerformTouch( TouchData e, ref bool handled )
 		{
 			EngineThreading.CheckMainThread();
 
-			TouchEvent?.Invoke( this, e, ref handled );
+			Touch?.Invoke( this, e, ref handled );
 			if( handled )
 				return;
 
-			if( uiContainer != null && uiContainer.PerformTouchEvent( e ) )
+			if( uiContainer != null && uiContainer.PerformTouch( e ) )
 			{
 				handled = true;
 				return;

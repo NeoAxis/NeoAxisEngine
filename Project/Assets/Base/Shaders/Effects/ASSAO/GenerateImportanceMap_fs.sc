@@ -24,7 +24,7 @@ vec4 FetchSSAOMapArray(vec2 TexCoords, int layer)
 
 void main()
 {
-    uvec2 basePos = ((uvec2)gl_FragCoord.xy) * 2;
+    uvec2 basePos = ((uvec2)getFragCoord().xy) * 2;
 
     vec2 gatherUV = (vec2(basePos) + vec2(1.0, 1.0)) * halfViewportPixelSize.xy;
 

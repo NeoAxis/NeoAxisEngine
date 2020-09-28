@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
+using NeoAxis.Input;
 
 namespace NeoAxis
 {
@@ -12,6 +13,8 @@ namespace NeoAxis
 	/// </summary>
 	public class UIList : UIControl
 	{
+		object touchDown;
+
 		/// <summary>
 		/// The height of a list element.
 		/// </summary>
@@ -360,6 +363,54 @@ namespace NeoAxis
 			}
 
 			return base.OnMouseDoubleClick( button );
+		}
+
+		protected override bool OnTouch( TouchData e )
+		{
+			switch( e.Action )
+			{
+			case TouchData.ActionEnum.Down:
+				if( VisibleInHierarchy && EnabledInHierarchy && !ReadOnlyInHierarchy && touchDown == null )
+				{
+					GetScreenRectangle( out var rect );
+					var rectInPixels = rect * ParentContainer.Viewport.SizeInPixels.ToVector2();
+					var distanceInPixels = rectInPixels.GetPointDistance( e.PositionInPixels.ToVector2() );
+
+					var item = new TouchData.TouchDownRequestToProcessTouch( this, 1, distanceInPixels, null,
+						delegate ( UIControl sender, TouchData touchData, object anyData )
+						{
+							//start touch
+							touchDown = e.PointerIdentifier;
+							var index = GetListItemIndexByScreenPosition( e.Position );
+							if( index != -1 )
+								SelectedIndex = index;
+						} );
+					e.TouchDownRequestToControlActions.Add( item );
+				}
+				break;
+
+			case TouchData.ActionEnum.Up:
+				if( touchDown != null && ReferenceEquals( e.PointerIdentifier, touchDown ) )
+					touchDown = null;
+				break;
+
+			case TouchData.ActionEnum.Move:
+				if( touchDown != null && ReferenceEquals( e.PointerIdentifier, touchDown ) )
+				{
+					var index = GetListItemIndexByScreenPosition( e.Position );
+					if( index != -1 )
+						SelectedIndex = index;
+				}
+				break;
+
+				//case TouchData.ActionEnum.Cancel:
+				//	break;
+
+				//case TouchData.ActionEnum.Outside:
+				//	break;
+			}
+
+			return base.OnTouch( e );
 		}
 
 		public int GetListItemIndexByScreenPosition( Vector2 position )

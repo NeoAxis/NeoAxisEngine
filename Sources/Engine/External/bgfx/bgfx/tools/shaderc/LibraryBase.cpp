@@ -7,6 +7,36 @@
 #include <android/log.h>
 #endif
 
+#ifdef __ANDROID__
+#include <android/log.h>
+#define LOG_ANDROID_INFO(T) __android_log_print(ANDROID_LOG_INFO, "bgfx", T)
+
+#include <unistd.h>
+
+void LogLongText(std::string s)
+{
+	std::string t;
+
+	for (int n = 0; n < s.length(); n++)
+	{
+		char c = s[n];
+		t += c;
+		if (t.length() > 900 && c == '\n')
+		{
+			LOG_ANDROID_INFO(t.c_str());
+			usleep(30000);
+			t = "";
+		}
+	}
+	if (t.length() != 0)
+	{
+		LOG_ANDROID_INFO(t.c_str());
+		usleep(30000);
+	}
+}
+
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 std::string ConvertStringToUTF8(const std::wstring& str)
@@ -66,8 +96,12 @@ std::wstring ConvertStringToUTFWide(const std::string& str)
 		}
 #elif defined(__ANDROID__)
 
-		std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
-		result = myconv.from_bytes(str);
+		//!!!!
+		for (int n = 0; n < str.length(); n++)
+			result += str[n];
+
+		//std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
+		//result = myconv.from_bytes(str);
 
 		//using convert_type = std::codecvt_utf8<wchar_t>;
 		//std::wstring_convert<convert_type, wchar_t> converter;

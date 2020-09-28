@@ -5,11 +5,15 @@ using System.ComponentModel;
 using System.Linq;
 using System.IO;
 using NeoAxis;
+using NeoAxis.Input;
 
 namespace Project
 {
 	public class SimpleGameGUI : NeoAxis.UIControl
 	{
+		object touchDown;
+		Vector2? touchPosition;
+
 		protected override void OnEnabledInSimulation()
 		{
 			base.OnEnabledInSimulation();
@@ -50,11 +54,15 @@ namespace Project
 
 		Component_ObjectInSpace GetObjectByCursor(Viewport viewport)
 		{
+			var mouse = MousePosition;
+			if( touchPosition != null )
+				mouse = touchPosition.Value;
+
 			// Get scene object.
 			var scene = Component_Scene.First;
 
 			// Get world ray by cursor position.
-			var ray = viewport.CameraSettings.GetRayByScreenCoordinates(MousePosition);
+			var ray = viewport.CameraSettings.GetRayByScreenCoordinates(mouse);
 
 			// Get objects by the ray.
 			var item = new Component_Scene.GetObjectsInSpaceItem(Component_Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, ray);
@@ -93,30 +101,67 @@ namespace Project
 			}
 		}
 
+		void ClickToDestroy()
+		{
+			// Get viewport.
+			var viewport = ParentContainer.Viewport;
+
+			// Get object by the cursor.
+			var obj = GetObjectByCursor( viewport );
+			if( obj != null )
+			{
+				// Destroy the object.
+				obj.RemoveFromParent( false );
+
+				// Show screen messages.
+				var objectsLeft = GetObjectsThanCanBeSelected().Count;
+				ScreenMessages.Add( $"Objects left: {objectsLeft}" );
+				if( objectsLeft == 0 )
+					ScreenMessages.Add( "You won!" );
+			}
+		}
 
 		protected override bool OnMouseDown(EMouseButtons button)
 		{
 			if (EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && button == EMouseButtons.Left)
-			{
-				// Get viewport.
-				var viewport = ParentContainer.Viewport;
-
-				// Get object by the cursor.
-				var obj = GetObjectByCursor(viewport);
-				if (obj != null)
-				{
-					// Destroy the object.
-					obj.RemoveFromParent(false);
-
-					// Show screen messages.
-					var objectsLeft = GetObjectsThanCanBeSelected().Count;
-					ScreenMessages.Add($"Objects left: {objectsLeft}");
-					if (objectsLeft == 0)
-						ScreenMessages.Add("You won!");
-				}
-			}
+				ClickToDestroy();
 
 			return base.OnMouseDown(button);
+		}
+
+		protected override bool OnTouch( TouchData e )
+		{
+			switch( e.Action )
+			{
+			case TouchData.ActionEnum.Down:
+				if( touchDown == null )
+				{
+					touchDown = e.PointerIdentifier;
+					touchPosition = e.Position;
+					ClickToDestroy();
+				}
+				break;
+
+			case TouchData.ActionEnum.Up:
+				if( touchDown != null && ReferenceEquals( e.PointerIdentifier, touchDown ) )
+				{
+					touchDown = null;
+					touchPosition = null;
+				}
+				break;
+
+			case TouchData.ActionEnum.Move:
+				if( touchDown != null && ReferenceEquals( e.PointerIdentifier, touchDown ) )
+					touchPosition = e.Position;
+				break;
+
+				//case TouchData.ActionEnum.Cancel:
+				//	break;
+				//case TouchData.ActionEnum.Outside:
+				//	break;
+			}
+
+			return base.OnTouch( e );
 		}
 
 		public void ButtonNextLevel_Click(UIButton sender)
@@ -124,8 +169,8 @@ namespace Project
 			// Get next level file name.
 			string nextLevel;
 			{
-				var currentLevel = Component_Scene.First.HierarchyController.CreatedByResource.Owner.Name;
-				var fileName = Path.GetFileName(currentLevel);
+				var currentLevel = VirtualPathUtility.NormalizePath( Component_Scene.First.HierarchyController.CreatedByResource.Owner.Name );
+				var fileName = Path.GetFileName( VirtualPathUtility.NormalizePath( currentLevel ) );
 				string numberStr = new String(fileName.Where(Char.IsDigit).ToArray());
 				int number = int.Parse(numberStr) + 1;
 				nextLevel = Path.Combine(Path.GetDirectoryName(currentLevel), $"SimpleGameLevel{number}.scene");

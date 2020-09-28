@@ -213,6 +213,8 @@ namespace NeoAxis
 		public event Action<Component_Scene> PhysicsNumberIterationsChanged;
 		ReferenceField<int> _physicsNumberIterations = 10;
 
+		//!!!!в Environment
+
 		/// <summary>
 		/// The direction of the wind.
 		/// </summary>
@@ -348,6 +350,97 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="BackgroundSoundVolumeInSimulation"/> property value changes.</summary>
 		public event Action<Component_Scene> BackgroundSoundVolumeInSimulationChanged;
 		ReferenceField<double> _backgroundSoundVolumeInSimulation = 1.0;
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		//!!!!в terrain?
+		//[Category( "Environment" )]
+		//[DefaultValue( 0.75 )]
+		//[Range( 0, 1 )]
+		//public Reference<double> MineralsQuality
+		//{
+		//	get { if( _mineralsQuality.BeginGet() ) MineralsQuality = _mineralsQuality.Get( this ); return _mineralsQuality.value; }
+		//	set { if( _mineralsQuality.BeginSet( ref value ) ) { try { MineralsQualityChanged?.Invoke( this ); } finally { _mineralsQuality.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="MineralsQuality"/> property value changes.</summary>
+		//public event Action<Component_Scene> MineralsQualityChanged;
+		//ReferenceField<double> _mineralsQuality = 0.75;
+
+		[Category( "Environment" )]
+		[DefaultValue( 0.75 )]
+		[Range( 0, 1 )]
+		public Reference<double> AverageSolarEnergy
+		{
+			get { if( _averageSolarEnergy.BeginGet() ) AverageSolarEnergy = _averageSolarEnergy.Get( this ); return _averageSolarEnergy.value; }
+			set { if( _averageSolarEnergy.BeginSet( ref value ) ) { try { AverageSolarEnergyChanged?.Invoke( this ); } finally { _averageSolarEnergy.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="AverageSolarEnergy"/> property value changes.</summary>
+		public event Action<Component_Scene> AverageSolarEnergyChanged;
+		ReferenceField<double> _averageSolarEnergy = 0.75;
+
+		[Category( "Environment" )]
+		[DefaultValue( 0.5 )]
+		[Range( 0, 1 )]
+		public Reference<double> AverageHumidity
+		{
+			get { if( _averageAverageHumidity.BeginGet() ) AverageHumidity = _averageAverageHumidity.Get( this ); return _averageAverageHumidity.value; }
+			set { if( _averageAverageHumidity.BeginSet( ref value ) ) { try { AverageHumidityChanged?.Invoke( this ); } finally { _averageAverageHumidity.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="AverageHumidity"/> property value changes.</summary>
+		public event Action<Component_Scene> AverageHumidityChanged;
+		ReferenceField<double> _averageAverageHumidity = 0.5;
+
+		/// <summary>
+		/// Season of a year. 0 - summer, 1 - fall, 2 - winter, 3 - spring.
+		/// </summary>
+		[Category( "Environment" )]
+		[DefaultValue( 0.0 )]
+		[Range( 0, 4 )]
+		public Reference<double> Season
+		{
+			get { if( _season.BeginGet() ) Season = _season.Get( this ); return _season.value; }
+			set { if( _season.BeginSet( ref value ) ) { try { SeasonChanged?.Invoke( this ); } finally { _season.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Season"/> property value changes.</summary>
+		public event Action<Component_Scene> SeasonChanged;
+		ReferenceField<double> _season = 0.0;
+
+		[Category( "Environment" )]
+		[DefaultValue( 20 )]
+		[Range( -40, 60 )]
+		[DisplayName( "Temperature °C" )]
+		public Reference<double> Temperature
+		{
+			get { if( _temperature.BeginGet() ) Temperature = _temperature.Get( this ); return _temperature.value; }
+			set { if( _temperature.BeginSet( ref value ) ) { try { TemperatureChanged?.Invoke( this ); } finally { _temperature.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Temperature"/> property value changes.</summary>
+		public event Action<Component_Scene> TemperatureChanged;
+		ReferenceField<double> _temperature = 20;
+
+		[Category( "Environment" )]
+		[DefaultValue( 0.5 )]
+		[Range( 0, 1 )]
+		public Reference<double> Humidity
+		{
+			get { if( _humidity.BeginGet() ) Humidity = _humidity.Get( this ); return _humidity.value; }
+			set { if( _humidity.BeginSet( ref value ) ) { try { HumidityChanged?.Invoke( this ); } finally { _humidity.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Humidity"/> property value changes.</summary>
+		public event Action<Component_Scene> HumidityChanged;
+		ReferenceField<double> _humidity = 0.5;
+
+		[Category( "Environment" )]
+		[DefaultValue( 0.0 )]
+		[Range( 0, 1 )]
+		public Reference<double> Precipitation
+		{
+			get { if( _precipitation.BeginGet() ) Precipitation = _precipitation.Get( this ); return _precipitation.value; }
+			set { if( _precipitation.BeginSet( ref value ) ) { try { PrecipitationChanged?.Invoke( this ); } finally { _precipitation.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Precipitation"/> property value changes.</summary>
+		public event Action<Component_Scene> PrecipitationChanged;
+		ReferenceField<double> _precipitation = 0.0;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

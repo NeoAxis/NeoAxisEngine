@@ -124,12 +124,11 @@ namespace NeoAxis
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		static void GetTemplate( Component component, out string template, out Type autoConstantType, out string autoConstantName )
+		static void GetTemplate( Component component, out string template, out Type autoConstantType, out string autoConstantName )//, out Type outputType )
 		{
 			autoConstantType = null;
 			autoConstantName = null;
-
-			//!!!!
+			//outputType = null;
 
 			var invokeMember = component as Component_InvokeMember;
 			if( invokeMember != null && invokeMember.MemberObject != null )
@@ -141,6 +140,14 @@ namespace NeoAxis
 					{
 						var attrib = (ShaderGenerationFunctionAttribute)attribs[ 0 ];
 						template = attrib.Template;
+
+						//var property = invokeMember.MemberObject as Metadata.Property;
+						//if( property != null )
+						//	outputType = property.Type.GetNetType();
+						//var method = invokeMember.MemberObject as Metadata.Method;
+						//if( method != null && method.GetReturnParameters().Length != 0 )
+						//	outputType = method.GetReturnParameters()[ 0 ].Type.GetNetType();
+
 						return;
 					}
 				}
@@ -154,6 +161,7 @@ namespace NeoAxis
 						template = attrib.Name;
 						autoConstantType = attrib.Type;
 						autoConstantName = attrib.Name;
+						//outputType = autoConstantType;
 						return;
 					}
 				}
@@ -191,6 +199,9 @@ namespace NeoAxis
 				s += ")";
 
 				template = s;
+
+				//!!!!outputType?
+
 				return;
 			}
 
@@ -421,6 +432,7 @@ namespace NeoAxis
 		void GenerateLine( VariableToCreate variableToCreate )
 		{
 			string body;
+			//Type bodyType = null;
 
 			var propertyValue = variableToCreate.property.GetValue( variableToCreate.owner, null );
 			if( propertyValue != null )
@@ -459,6 +471,7 @@ namespace NeoAxis
 									//add swizzles from vec4.
 									//!!!!mat3, mat4
 									body = parameterName + GetSwizzleFromVec4( type );
+									//bodyType = type;
 									//body = parameterName;
 
 									//body = "vec3(1,0,0)";
@@ -518,10 +531,18 @@ namespace NeoAxis
 									}
 								}
 
+								//bodyType = typeof( Vector4 );
+
 								string postfix = "";
 								var ar = outMember.GetCustomAttributes( typeof( ShaderGenerationPropertyPostfixAttribute ), true );
 								if( ar.Length != 0 )
+								{
 									postfix = ( (ShaderGenerationPropertyPostfixAttribute)ar[ 0 ] ).Postfix;
+
+									//var property = outMember as Metadata.Property;
+									//if( property != null )
+									//	bodyType = property.Type.GetNetType();
+								}
 
 								//!!!!Sampler
 								//!!!!input.texCoord0
@@ -570,12 +591,13 @@ namespace NeoAxis
 								}
 
 								body = constructBody;
+								//bodyType was initialized before
 							}
 							else
 							{
 								//method, property
 
-								GetTemplate( component, out string template, out Type autoConstantType, out string autoConstantName );
+								GetTemplate( component, out string template, out Type autoConstantType, out string autoConstantName );//, out var outputType );
 								template = TemplateToUpperParameterNames( template );
 
 								var propertyNames = GetTemplatePropertyNames( template );
@@ -612,6 +634,7 @@ namespace NeoAxis
 								}
 
 								body = constructBody;
+								//bodyType = outputType;
 
 								//add auto constant item
 								if( autoConstantType != null )
@@ -650,7 +673,10 @@ namespace NeoAxis
 					else
 					{
 						if( iReference.ValueAsObject != null )
+						{
 							body = GetValueString( iReference.ValueAsObject );
+							//bodyType = iReference.ValueAsObject.GetType();
+						}
 						else
 						{
 							//!!!!
@@ -661,6 +687,7 @@ namespace NeoAxis
 				else
 				{
 					body = GetValueString( propertyValue );
+					//bodyType = propertyValue.GetType();
 				}
 			}
 			else
@@ -683,11 +710,28 @@ namespace NeoAxis
 				varTypeName = GetTypeString( unrefType, colorValueNoAlpha );
 			}
 
-			//!!!!new. compatibility hack for glsl
-			if( varTypeName == "vec3" && body.Contains( "CODE_BODY_TEXTURE2D" ) && !body.Contains( "." ) )
-				body += ".rgb";
+			//compatibility fix for glsl
+			//if( varTypeName == "vec3" && body.Contains( "CODE_BODY_TEXTURE2D" ) && !body.Contains( "." ) )
+			//	body += ".rgb";
 
-			string resultLine = string.Format( "{0} {1} = {2};", varTypeName, variableToCreate.name, body );
+			string resultLine;
+
+			//compatibility fix for glsl. convert from vec4 to vec3
+			if( varTypeName == "vec3" )
+				resultLine = string.Format( "{0} {1} = ({2}).xyz;", varTypeName, variableToCreate.name, body );
+			else
+				resultLine = string.Format( "{0} {1} = {2};", varTypeName, variableToCreate.name, body );
+
+			//compatibility fix for glsl. convert from vec4 to vec3
+			//if( varTypeName == "vec3" )
+			//{
+			//	if( bodyType != null && ( bodyType == typeof( ColorValue ) || bodyType == typeof( Vector4 ) || bodyType == typeof( Vector4F ) ) )
+			//		resultLine = string.Format( "{0} {1} = ({2}).xyz;", varTypeName, variableToCreate.name, body );
+			//}
+
+			//if( resultLine == null )
+			//	resultLine = string.Format( "{0} {1} = {2};", varTypeName, variableToCreate.name, body );
+
 			resultCodeLines.Add( resultLine );
 		}
 
@@ -794,6 +838,14 @@ namespace NeoAxis
 			{
 				var v = ( (ColorValuePowered)value ).ToVector4();
 				return string.Format( "vec4({0}, {1}, {2}, {3})", v.X, v.Y, v.Z, v.W );
+			}
+
+			if( value is double || value is float )
+			{
+				var v = value.ToString();
+				if( !v.Contains( "." ) )
+					v += ".0";
+				return v;
 			}
 
 			return value.ToString();

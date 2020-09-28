@@ -6,6 +6,10 @@
 	{
 		GetByReference = "Samples\\Starter Content\\Scenes\\Scripting C#.scene"
 	}
+	BackgroundSceneLimitedDevice
+	{
+		GetByReference = "Samples\\Starter Content\\Scenes Test\\_TestAnimation_LimitedDevice.scene"
+	}
 	.component NeoAxis.UIControl
 	{
 		Name = Bottom
@@ -126,5 +130,15 @@
 		{
 			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
 		}
+	}
+	.component NeoAxis.UIText
+	{
+		Name = Text Simple Game Comment
+		Text = Adapted for mobile devices
+		Size = Units 280.0449709064039 30
+		Margin = Units 221.66978964627805 738.2657756121698 0 0
+		EditorScrollPosition = 0 0
+		TextHorizontalAlignment = Left
+		Shadow = True
 	}
 }

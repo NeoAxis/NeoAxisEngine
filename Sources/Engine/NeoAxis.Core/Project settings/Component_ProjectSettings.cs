@@ -661,6 +661,20 @@ namespace NeoAxis
 		public event Action<Component_ProjectSettings> InitialUIScreenChanged;
 		ReferenceField<ReferenceValueType_Resource> _initialUIScreen = new Reference<ReferenceValueType_Resource>( null, @"Base\UI\Screens\SplashScreen.ui" );
 
+		/// <summary>
+		/// A scene to run automatically when the Player started.
+		/// </summary>
+		[Category( "Project Application" )]
+		[DefaultValue( null )]
+		public Reference<ReferenceValueType_Resource> AutorunScene
+		{
+			get { if( _autorunScene.BeginGet() ) AutorunScene = _autorunScene.Get( this ); return _autorunScene.value; }
+			set { if( _autorunScene.BeginSet( ref value ) ) { try { AutorunSceneChanged?.Invoke( this ); } finally { _autorunScene.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="AutorunScene"/> property value changes.</summary>
+		public event Action<Component_ProjectSettings> AutorunSceneChanged;
+		ReferenceField<ReferenceValueType_Resource> _autorunScene;
+
 		public enum WindowStateEnum
 		{
 			Auto,

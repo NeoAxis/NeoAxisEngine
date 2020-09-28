@@ -16,8 +16,8 @@ enum ShaderModel
 {
 	ShaderModel_DX11_SM5,
 	ShaderModel_DX12_SM6,
-	ShaderModel_Vulkan,
 	ShaderModel_OpenGLES,
+	ShaderModel_Vulkan,
 };
 
 struct Instance
@@ -146,13 +146,12 @@ EXPORT Instance* ShaderC_New(ShaderType shaderType, ShaderModel shaderModel, wch
 	instance->options.inputFilePath = ConvertStringToUTF8(TO_WCHAR_T(shaderFile));
 	//instance->options.outputFilePath
 
-	//!!!!
-	if(shaderModel == ShaderModel_OpenGLES)
-		instance->options.platform = "android";
-	else
-		instance->options.platform = "windows";
+#ifdef ANDROID
+	instance->options.platform = "android";
+#else
+	instance->options.platform = "windows";
+#endif
 
-	//!!!!
 	switch(shaderModel)
 	{
 	case ShaderModel_DX11_SM5:
@@ -177,19 +176,6 @@ EXPORT Instance* ShaderC_New(ShaderType shaderType, ShaderModel shaderModel, wch
 		}
 		break;
 
-	case ShaderModel_Vulkan:
-		switch (shaderType)
-		{
-		//case ShaderType_Vertex:instance->options.profile = "spirv"; break;
-		//case ShaderType_Fragment:instance->options.profile = "spirv"; break;
-		//case ShaderType_Compute:instance->options.profile = "spirv"; break;
-		case ShaderType_Vertex:instance->options.profile = "vs_5_0"; break;
-		case ShaderType_Fragment:instance->options.profile = "ps_5_0"; break;
-		case ShaderType_Compute:instance->options.profile = "cs_5_0"; break;
-		default: ::Fatal("ShaderC_New: impl."); break;
-		}
-		break;
-
 	case ShaderModel_OpenGLES:
 		switch (shaderType)
 		{
@@ -207,6 +193,25 @@ EXPORT Instance* ShaderC_New(ShaderType shaderType, ShaderModel shaderModel, wch
 		//case ShaderType_Vertex:instance->options.profile = "330"; break;
 		//case ShaderType_Fragment:instance->options.profile = "330"; break;
 		//case ShaderType_Compute:instance->options.profile = "330"; break;
+		default: ::Fatal("ShaderC_New: impl."); break;
+		}
+		break;
+
+	case ShaderModel_Vulkan:
+		switch (shaderType)
+		{
+		//!!!!
+		case ShaderType_Vertex:instance->options.profile = "310"; break;
+		case ShaderType_Fragment:instance->options.profile = "310"; break;
+		case ShaderType_Compute:instance->options.profile = "310"; break;
+
+		//case ShaderType_Vertex:instance->options.profile = "spirv"; break;
+		//case ShaderType_Fragment:instance->options.profile = "spirv"; break;
+		//case ShaderType_Compute:instance->options.profile = "spirv"; break;
+
+		//case ShaderType_Vertex:instance->options.profile = "vs_5_0"; break;
+		//case ShaderType_Fragment:instance->options.profile = "ps_5_0"; break;
+		//case ShaderType_Compute:instance->options.profile = "cs_5_0"; break;
 		default: ::Fatal("ShaderC_New: impl."); break;
 		}
 		break;

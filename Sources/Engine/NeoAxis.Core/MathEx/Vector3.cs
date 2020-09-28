@@ -68,7 +68,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="xy">The given <see cref="Vector2"/>.</param>
 		/// <param name="z">The scalar value.</param>
-		[ShaderGenerationFunction( "float3({xy}, {z})" )]
+		[ShaderGenerationFunction( "vec3({xy}, {z})" )]
 		public Vector3( Vector2 xy, double z )
 		{
 			this.X = xy.X;
@@ -82,7 +82,7 @@ namespace NeoAxis
 		/// <param name="x">X component.</param>
 		/// <param name="y">Y component.</param>
 		/// <param name="z">Z component.</param>
-		[ShaderGenerationFunction( "float3({x}, {y}, {z})" )]
+		[ShaderGenerationFunction( "vec3({x}, {y}, {z})" )]
 		public Vector3( double x, double y, double z )
 		{
 			this.X = x;

@@ -64,7 +64,7 @@ namespace NeoAxis
 		/// <param name="x">X component.</param>
 		/// <param name="y">Y component.</param>
 		/// <param name="z">Z component.</param>
-		[ShaderGenerationFunction( "float4({x}, {y}, {z}, {w})" )]
+		[ShaderGenerationFunction( "vec4({x}, {y}, {z}, {w})" )]
 		public Vector4( double x, double y, double z, double w )
 		{
 			this.X = x;
@@ -78,7 +78,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="v">The vector to use as the X, Y and Z components.</param>
 		/// <param name="w">The W component.</param>
-		[ShaderGenerationFunction( "float4({v}, {w})" )]
+		[ShaderGenerationFunction( "vec4({v}, {w})" )]
 		public Vector4( Vector3 v, double w )
 		{
 			this.X = v.X;

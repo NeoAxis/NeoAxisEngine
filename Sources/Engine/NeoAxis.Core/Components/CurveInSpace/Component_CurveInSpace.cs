@@ -30,6 +30,20 @@ namespace NeoAxis
 		ReferenceField<CurveTypeEnum> _curveTypePosition = CurveTypeEnum.CubicSpline;
 
 		/// <summary>
+		/// The curvature radius of the points for Rounded Line curve type.
+		/// </summary>
+		[DefaultValue( 1.0 )]
+		[Range( 0.0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 4 )]
+		public Reference<double> RoundedLineCurvatureRadius
+		{
+			get { if( _roundedLineCurvatureRadius.BeginGet() ) RoundedLineCurvatureRadius = _roundedLineCurvatureRadius.Get( this ); return _roundedLineCurvatureRadius.value; }
+			set { if( _roundedLineCurvatureRadius.BeginSet( ref value ) ) { try { RoundedLineCurvatureRadiusChanged?.Invoke( this ); } finally { _roundedLineCurvatureRadius.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="RoundedLineCurvatureRadius"/> property value changes.</summary>
+		public event Action<Component_CurveInSpace> RoundedLineCurvatureRadiusChanged;
+		ReferenceField<double> _roundedLineCurvatureRadius = 1.0;
+
+		/// <summary>
 		/// The type of the curve for rotation of the points.
 		/// </summary>
 		[DefaultValue( CurveTypeEnum.CubicSpline )]
@@ -170,7 +184,7 @@ namespace NeoAxis
 			CubicSpline,
 			Bezier,
 			Line,
-			//RoundedLine,
+			RoundedLine,
 		}
 
 		/////////////////////////////////////////
@@ -181,6 +195,7 @@ namespace NeoAxis
 		public class SourceData
 		{
 			public CurveTypeEnum curveTypePosition;
+			public double roundedLineCurvatureRadius;
 			public CurveTypeEnum curveTypeRotation;
 			public CurveTypeEnum curveTypeScale;
 			public double timeScale;
@@ -197,6 +212,8 @@ namespace NeoAxis
 			public bool Equals( SourceData data )
 			{
 				if( curveTypePosition != data.curveTypePosition )
+					return false;
+				if( roundedLineCurvatureRadius != data.roundedLineCurvatureRadius )
 					return false;
 				if( curveTypeRotation != data.curveTypeRotation )
 					return false;
@@ -236,6 +253,22 @@ namespace NeoAxis
 		}
 
 		/////////////////////////////////////////
+
+		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
+		{
+			base.OnMetadataGetMembersFilter( context, member, ref skip );
+
+			if( member is Metadata.Property )
+			{
+				switch( member.Name )
+				{
+				case nameof( RoundedLineCurvatureRadius ):
+					if( CurveTypePosition.Value != CurveTypeEnum.RoundedLine )
+						skip = true;
+					break;
+				}
+			}
+		}
 
 		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
 		{
@@ -388,6 +421,7 @@ namespace NeoAxis
 			case CurveTypeEnum.CubicSpline: return new CurveCubicSpline();
 			case CurveTypeEnum.Bezier: return new CurveBezier();
 			case CurveTypeEnum.Line: return new CurveLine();
+			case CurveTypeEnum.RoundedLine: return new CurveRoundedLine();
 			}
 
 			Log.Fatal( "Component_CurveInSpace: CreateCurve: no implementation." );
@@ -398,6 +432,7 @@ namespace NeoAxis
 		{
 			var sourceData = new SourceData();
 			sourceData.curveTypePosition = CurveTypePosition;
+			sourceData.roundedLineCurvatureRadius = RoundedLineCurvatureRadius;
 			sourceData.curveTypeRotation = CurveTypeRotation;
 			sourceData.curveTypeScale = CurveTypeScale;
 			sourceData.timeScale = TimeScale;
@@ -456,7 +491,11 @@ namespace NeoAxis
 
 						var transform = point.transform;
 
-						data.positionCurve.AddPoint( time, transform.Position );
+						object additionalData = null;
+						var rounded = data.positionCurve as CurveRoundedLine;
+						if( rounded != null )
+							additionalData = RoundedLineCurvatureRadius.Value;
+						data.positionCurve.AddPoint( time, transform.Position, additionalData );
 
 						transform.Rotation.GetForward( out var forward );
 						transform.Rotation.GetUp( out var up );

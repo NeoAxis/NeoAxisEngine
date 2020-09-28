@@ -409,6 +409,7 @@
     <Compile Include="UISystem\UICombo.cs" />
     <Compile Include="UISystem\UICommon.cs" />
     <Compile Include="UISystem\UIContainer.cs" />
+    <Compile Include="UISystem\UIContextMenu.cs" />
     <Compile Include="UISystem\UIControl.cs" />
     <Compile Include="UISystem\UIControlsWorld.cs" />
     <Compile Include="UISystem\UIControl_DocumentWindow.cs" />
@@ -417,13 +418,18 @@
     <Compile Include="UISystem\UIGrid.cs" />
     <Compile Include="UISystem\UIImage.cs" />
     <Compile Include="UISystem\UIList.cs" />
-    <Compile Include="UISystem\UIProgressBar.cs" />
+    <Compile Include="UISystem\UIMenu.cs" />
+    <Compile Include="UISystem\UIProgress.cs" />
     <Compile Include="UISystem\UIRenderTarget.cs" />
-    <Compile Include="UISystem\UIScrollBar.cs" />
+    <Compile Include="UISystem\UIScroll.cs" />
     <Compile Include="UISystem\UISlider.cs" />
+    <Compile Include="UISystem\UISplitContainer.cs" />
     <Compile Include="UISystem\UIStyle.cs" />
     <Compile Include="UISystem\UITabControl.cs" />
     <Compile Include="UISystem\UIText.cs" />
+    <Compile Include="UISystem\UIToolbar.cs" />
+    <Compile Include="UISystem\UITooltip.cs" />
+    <Compile Include="UISystem\UITree.cs" />
     <Compile Include="UISystem\UIWindow.cs" />
     <Compile Include="Utility\ArrayDataReader.cs" />
     <Compile Include="Utility\ArrayDataWriter.cs" />
@@ -457,6 +463,7 @@
     <Compile Include="Utility\ParameterContainer.cs" />
     <Compile Include="Utility\ParameterType.cs" />
     <Compile Include="Utility\ParameterTypeUtility.cs" />
+    <Compile Include="Utility\PathUtility.cs" />
     <Compile Include="Utility\PlatformStubs.cs" />
     <Compile Include="Utility\PointContainer3D.cs" />
     <Compile Include="Utility\ProcedureUI.cs" />
@@ -1684,6 +1691,7 @@
     <Compile Include="Components\Rendering\Pipelines\Pipeline_Default.cs" />
     <Compile Include="Components\Rendering\Sky\Component_Sky.cs" />
     <Compile Include="Components\Rendering\Sky\Component_Skybox.cs" />
+    <Compile Include="Components\Rendering\Sky\Component_Skybox_SettingsCell.cs" />
     <Compile Include="Components\Scripting\Core\CompiledScript.cs" />
     <Compile Include="Components\Scripting\Core\ScriptAssemblyNameResolver.cs" />
     <Compile Include="Components\Scripting\Core\ScriptCache.cs" />

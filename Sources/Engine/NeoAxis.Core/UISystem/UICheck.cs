@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
+using NeoAxis.Input;
 
 namespace NeoAxis
 {
@@ -13,6 +14,8 @@ namespace NeoAxis
 	{
 		bool cursorInsideArea;
 		bool pushed;
+		object touchDown;
+		bool touchDownPointerInside;
 
 		/////////////////////////////////////////
 
@@ -79,6 +82,10 @@ namespace NeoAxis
 
 		protected virtual bool OnCursorIsInArea()
 		{
+			//touch
+			if( touchDown != null && touchDownPointerInside )
+				return true;
+
 			//control rectangle
 			if( !( new Rectangle( Vector2.Zero, new Vector2( 1, 1 ) ) ).Contains( MousePosition ) )
 				return false;
@@ -125,6 +132,60 @@ namespace NeoAxis
 					//ParentContainer?.PlaySound( cursorInsideArea ? SoundMouseEnter : SoundMouseLeave );
 				}
 			}
+		}
+
+		bool CheckTouchPointerInside( Vector2I positionInPixels )
+		{
+			GetScreenRectangle( out var rect );
+			var rectInPixels = rect * ParentContainer.Viewport.SizeInPixels.ToVector2();
+			var distanceInPixels = rectInPixels.GetPointDistance( positionInPixels.ToVector2() );
+
+			//!!!!
+			int maxDistance = ParentContainer.Viewport.SizeInPixels.MinComponent() / 20;
+
+			return distanceInPixels <= maxDistance;
+		}
+
+		protected override bool OnTouch( TouchData e )
+		{
+			switch( e.Action )
+			{
+			case TouchData.ActionEnum.Down:
+				if( VisibleInHierarchy && EnabledInHierarchy && !ReadOnlyInHierarchy && touchDown == null )
+				{
+					GetScreenRectangle( out var rect );
+					var rectInPixels = rect * ParentContainer.Viewport.SizeInPixels.ToVector2();
+					var distanceInPixels = rectInPixels.GetPointDistance( e.PositionInPixels.ToVector2() );
+
+					var item = new TouchData.TouchDownRequestToProcessTouch( this, 0, distanceInPixels, null,
+						delegate ( UIControl sender, TouchData touchData, object anyData )
+						{
+							//start touch
+							touchDown = e.PointerIdentifier;
+							touchDownPointerInside = true;
+						} );
+					e.TouchDownRequestToControlActions.Add( item );
+				}
+				break;
+
+			case TouchData.ActionEnum.Up:
+				if( touchDown != null && ReferenceEquals( e.PointerIdentifier, touchDown ) )
+				{
+					if( VisibleInHierarchy && EnabledInHierarchy && !ReadOnlyInHierarchy && touchDownPointerInside )
+						PerformClick();
+					touchDown = null;
+					touchDownPointerInside = false;
+				}
+				break;
+
+			case TouchData.ActionEnum.Move:
+				if( touchDown != null && ReferenceEquals( e.PointerIdentifier, touchDown ) )
+					touchDownPointerInside = CheckTouchPointerInside( e.PositionInPixels );
+				break;
+
+			}
+
+			return base.OnTouch( e );
 		}
 
 		protected override void OnUpdate( float delta )

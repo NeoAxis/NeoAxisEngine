@@ -24,13 +24,15 @@ namespace NeoAxis
 		{
 			internal double time;
 			internal Vector3 value;
+			internal object additionalData;
 
 			//
 
-			public Point( double time, Vector3 value )
+			public Point( double time, Vector3 value, object additionalData = null )
 			{
 				this.time = time;
 				this.value = value;
+				this.additionalData = additionalData;
 			}
 
 			public double Time
@@ -41,6 +43,11 @@ namespace NeoAxis
 			public Vector3 Value
 			{
 				get { return value; }
+			}
+
+			public object AdditionalData
+			{
+				get { return additionalData; }
 			}
 
 			public override string ToString()
@@ -66,9 +73,9 @@ namespace NeoAxis
 			return index;
 		}
 
-		public int AddPoint( double time, Vector3 value )
+		public int AddPoint( double time, Vector3 value, object additionalData = null )
 		{
-			return AddPoint( new Point( time, value ) );
+			return AddPoint( new Point( time, value, additionalData ) );
 		}
 
 		public void RemovePoint( int index )

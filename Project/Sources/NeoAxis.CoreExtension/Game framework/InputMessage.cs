@@ -145,14 +145,14 @@ namespace NeoAxis
 
 	public class InputMessageTouch : InputMessage
 	{
-		TouchEventData touchEvent;
+		TouchData touchEvent;
 
-		public InputMessageTouch( TouchEventData touchEvent )
+		public InputMessageTouch( TouchData touchEvent )
 		{
 			this.touchEvent = touchEvent;
 		}
 
-		public TouchEventData TouchEvent { get { return touchEvent; } }
+		public TouchData TouchEvent { get { return touchEvent; } }
 	}
 
 	public class InputMessageSpecialInputDevice : InputMessage

@@ -118,18 +118,32 @@ vec3 diffuseIrradiance(const vec3 n, samplerCube environmentTextureIBL, Environm
 
 vec3 specularIrradiance(const vec3 r, float roughness, samplerCube environmentTexture, EnvironmentTextureData environmentTextureData)
 {
+	float lod;
+#ifdef GLSL
+	//!!!!
+	lod = 8.0 * roughness;
+	//lod = float(textureQueryLevels(environmentTexture.m_texture)) * roughness;
+#else
 	vec3 texDim = vec3(0.0, 0.0, 0.0);
 	environmentTexture.m_texture.GetDimensions(0, texDim.x, texDim.y, texDim.z);
-	float lod = texDim.z * roughness;
+	lod = texDim.z * roughness;
+#endif	
 	return getEnvironmentValueLod(environmentTexture, environmentTextureData, r, lod);
 	//return textureCubeLod(environmentTexture, flipCubemapCoords(r), lod).rgb;
 }
 
 vec3 specularIrradiance_Offset(const vec3 r, float roughness, float offset, samplerCube environmentTexture, EnvironmentTextureData environmentTextureData)
 {
+	float lod;
+#ifdef GLSL
+	//!!!!
+	lod = 8.0 * roughness * roughness;
+	//lod = float(textureQueryLevels(environmentTexture.m_texture)) * roughness * roughness;
+#else
 	vec3 texDim = vec3(0.0, 0.0, 0.0);
 	environmentTexture.m_texture.GetDimensions(0, texDim.x, texDim.y, texDim.z);
-	float lod = texDim.z * roughness * roughness;
+	lod = texDim.z * roughness * roughness;
+#endif
 	return getEnvironmentValueLod(environmentTexture, environmentTextureData, r, lod + offset);
 	//return textureCubeLod(environmentTexture, flipCubemapCoords(r), lod + offset).rgb;
 }
@@ -304,13 +318,13 @@ void setupPBRFilamentParams(const MaterialInputs material, vec3 tangent, vec3 bi
 
 	shading_ToL = saturate(dot(normal, shading_L));
 
-	shading_tangentToWorld = transpose(mat3(tangent, bitangent, normal));
+	shading_tangentToWorld = transpose(mtxFromRows(tangent, bitangent, normal));
 
 	shading_NoV = clampNoV(dot(shading_normal, shading_view));
 	shading_reflected = reflect(-shading_view, normal);
 
 #ifdef MATERIAL_HAS_CLEAR_COAT
-	mat3 tangentToWorld_ClearCoat = transpose(mat3(tangent, bitangent, inputNormal));
+	mat3 tangentToWorld_ClearCoat = transpose(mtxFromRows(tangent, bitangent, inputNormal));
 	shading_clearCoatNormal = normalize(mul(tangentToWorld_ClearCoat, material.clearCoatNormal));
 	#ifdef TWO_SIDED_FLIP_NORMALS
 		if(frontFacing)//if(!gl_FrontFacing)
@@ -406,7 +420,7 @@ void getPBRFilamentPixelParams(const MaterialInputs material, out PixelParams pi
 	// See "Multiple-Scattering Microfacet BSDFs with the Smith Model"
 	pixel.energyCompensation = 1.0 + pixel.f0 * (1.0 / pixel.dfg.y - 1.0);
 #else
-	pixel.energyCompensation = vec3_splat(1.0);
+	pixel.energyCompensation = vec3_splat(1);
 #endif
 
 }
@@ -518,7 +532,7 @@ vec3 surfaceShadingStandard(const PixelParams pixel)
 #if defined(SHADING_MODEL_SUBSURFACE)
 vec3 surfaceShadingSubSurface(const PixelParams pixel)
 {
-	vec3 Fr = vec3_splat(0.0);
+	vec3 Fr = vec3_splat(0);
 
 	if (shading_NoL > 0.0)
 	{

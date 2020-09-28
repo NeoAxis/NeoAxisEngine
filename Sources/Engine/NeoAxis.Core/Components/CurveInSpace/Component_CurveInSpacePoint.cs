@@ -28,6 +28,9 @@ namespace NeoAxis
 		public event Action<Component_CurveInSpacePoint> TimeChanged;
 		ReferenceField<double> _time = 0.0;
 
+		//!!!!need "double?" support for properties
+		//RoundedLineCurvatureRadius
+
 		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
 		{
 			base.OnGetRenderSceneData( context, mode );

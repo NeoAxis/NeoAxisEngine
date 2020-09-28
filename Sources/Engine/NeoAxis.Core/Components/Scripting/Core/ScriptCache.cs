@@ -45,7 +45,7 @@ namespace NeoAxis
 
 		string CacheFolder
 		{
-			get { return Path.Combine( VirtualFileSystem.Directories.Project, @"Caches\CSharpScripts" ); }
+			get { return PathUtility.Combine( VirtualFileSystem.Directories.Project, @"Caches\CSharpScripts" ); }
 		}
 
 		string DatabaseFileName

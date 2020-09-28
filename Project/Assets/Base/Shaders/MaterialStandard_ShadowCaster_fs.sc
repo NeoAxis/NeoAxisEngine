@@ -11,8 +11,6 @@ uniform vec4/*float*/ u_farClipDistance;
 
 SAMPLER2D(s_materials, 1);
 
-vec4 materialStandardFragment[MATERIAL_STANDARD_FRAGMENT_SIZE];
-
 #ifdef FRAGMENT_CODE_PARAMETERS
 	FRAGMENT_CODE_PARAMETERS
 #endif
@@ -27,12 +25,11 @@ vec4 materialStandardFragment[MATERIAL_STANDARD_FRAGMENT_SIZE];
 
 void main()
 {
-	smoothLOD(gl_FragCoord, u_renderOperationData[2].w);
+	smoothLOD(getFragCoord(), u_renderOperationData[2].w);
 	
 	//get material data
-	int materialIndex = (int)u_renderOperationData[0].x;
-	for(int n=0;n<MATERIAL_STANDARD_FRAGMENT_SIZE;n++)
-		materialStandardFragment[n] = texelFetch(s_materials, ivec2((int)(materialIndex % 64) * 8 + n, (int)(materialIndex / 64)), 0);
+	vec4 materialStandardFragment[MATERIAL_STANDARD_FRAGMENT_SIZE];
+	getMaterialData(s_materials, u_renderOperationData, materialStandardFragment);	
 	
 	vec2 depth = v_depth;
 	//!!!!
@@ -57,13 +54,13 @@ void main()
 
 	//apply color parameter
 	opacity *= v_colorParameter.w;
-	if(u_materialUseVertexColor != 0)
+	if(u_materialUseVertexColor != 0.0)
 		opacity *= v_color0.w;
 	opacity = saturate(opacity);
 
 //	//opacity dithering
 //#ifdef OPACITY_DITHERING
-//	opacity = dither(gl_FragCoord, opacity);
+//	opacity = dither(getFragCoord(), opacity);
 //#endif
 
 //opacity masked clipping

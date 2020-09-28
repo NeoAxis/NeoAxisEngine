@@ -207,6 +207,27 @@
 	}
 	.component NeoAxis.Component_MeshInSpace
 	{
+		Name = Box 3
+		Transform = "0.952935268390075 -0.156062960928362 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		.component NeoAxis.Component_Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.Component_MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.Component_MeshInSpace
+	{
 		Name = Cylinder
 		Transform = "5.83784400973029 1.75981764467444 0.499999999999976; 0 0 0 1; 1 1 1"
 		Mesh
@@ -292,13 +313,13 @@
 	.component NeoAxis.Component_CurveInSpace
 	{
 		Name = Curve In Space
-		Transform = "1.89263788764004 -0.345238541349724 0.694814551691028; 0 0 0.839750417986334 0.542972591842146; 1 1 1"
+		Transform = "2.83330107505634 -0.755783818129606 0.694814551691028; 0 0 0.839750417986334 0.542972591842146; 1 1 1"
 		TimeScale = 1.3
 		DisplayCurveInSimulation = True
 		.component NeoAxis.Component_CurveInSpacePoint
 		{
 			Name = Curve In Space Point
-			Transform = "1.775463343296 3.06666539422799 1.14293068823283; 0 0 0 1; 1 1 1"
+			Transform = "2.73147945278872 3.06666539422799 1.14293068823283; 0 0 0 1; 1 1 1"
 		}
 		.component NeoAxis.Component_CurveInSpacePoint
 		{
@@ -338,7 +359,7 @@
 		.component NeoAxis.Component_CurveInSpacePoint
 		{
 			Name = Curve In Space Point9
-			Transform = "1.89263788764004 -0.345238541349724 0.694814551691028; 0 0 0.839750417986334 0.542972591842146; 1 1 1"
+			Transform = "2.83330107505634 -0.755783818129606 0.694814551691028; 0 0 0.839750417986334 0.542972591842146; 1 1 1"
 		}
 	}
 }

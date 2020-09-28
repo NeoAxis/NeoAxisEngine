@@ -4,6 +4,7 @@ $output v_texCoord01, v_worldPosition, v_worldNormal, v_depth, v_tangent, v_bita
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "Common.sh"
 #include "UniformsVertex.sh"
+#include "VertexFunctions.sh"
 
 uniform vec4 u_renderOperationData[5];
 uniform mat4 u_viewProjPrevious;
@@ -30,20 +31,17 @@ void main()
 
 	mat4 worldMatrix;
 	vec3 previousWorldPosition;
-	if(u_renderOperationData[0].y < 0)
+	if(u_renderOperationData[0].y < 0.0)
 	{
 		//instancing
-		worldMatrix[0] = i_data0;
-		worldMatrix[1] = i_data1;
-		worldMatrix[2] = i_data2;
-		worldMatrix[3] = vec4(0,0,0,1);
+		worldMatrix = mtxFromRows(i_data0, i_data1, i_data2, vec4(0,0,0,1));
 		previousWorldPosition = i_data3.xyz;
 		uint data = asuint(i_data3.w);
 		v_colorParameter.w = float((data & uint(0xff000000)) >> 24);
 		v_colorParameter.z = float((data & uint(0x00ff0000)) >> 16);
 		v_colorParameter.y = float((data & uint(0x0000ff00)) >> 8);
 		v_colorParameter.x = float((data & uint(0x000000ff)) >> 0);
-		v_colorParameter = pow(v_colorParameter / 255.0, vec4_splat(2)) * 10.0;
+		v_colorParameter = pow(v_colorParameter / 255.0, vec4_splat(2.0)) * 10.0;
 	}
 	else
 	{
@@ -60,7 +58,7 @@ void main()
 	vec2 c_texCoord2 = a_texcoord2;
 	vec2 c_texCoord3 = a_texcoord3;
 	vec2 c_unwrappedUV = getUnwrappedUV(c_texCoord0, c_texCoord1, c_texCoord2, c_texCoord3, u_renderOperationData[3].x);
-	vec4 c_color0 = (u_renderOperationData[3].y > 0) ? a_color0 : vec4_splat(1);
+	vec4 c_color0 = (u_renderOperationData[3].y > 0.0) ? a_color0 : vec4_splat(1);
 	vec3 positionOffset = vec3(0,0,0);
 #ifdef VERTEX_CODE_BODY
 	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2D(_sampler, _uv)
@@ -75,9 +73,9 @@ void main()
 	v_texCoord23.xy = a_texcoord2;
 	v_texCoord23.zw = a_texcoord3;
 	v_worldPosition = worldPosition.xyz;
-	v_worldNormal = normalize(mul((mat3)worldMatrix, normalLocal));
+	v_worldNormal = normalize(mul(toMat3(worldMatrix), normalLocal));
 	v_depth = gl_Position.z;
-	v_tangent = normalize(mul((mat3)worldMatrix, tangentLocal.xyz));
+	v_tangent = normalize(mul(toMat3(worldMatrix), tangentLocal.xyz));
 	v_bitangent = cross(v_tangent.xyz, v_worldNormal) * tangentLocal.w;
 
 //	//Shadows
@@ -100,7 +98,7 @@ void main()
 	#endif
 #endif
 
-	v_color0 = (u_renderOperationData[3].y > 0) ? a_color0 : vec4_splat(1);
+	v_color0 = (u_renderOperationData[3].y > 0.0) ? a_color0 : vec4_splat(1);
 
 	//displacement
 #ifdef DISPLACEMENT
@@ -111,11 +109,17 @@ void main()
 		vec3 normalizedTangent = normalize(tangentLocal.xyz);
 		vec3 binormal = normalize(cross( normalizedNormal, normalizedTangent ) * tangentLocal.w);
 	
+		mat3 worldMatrix3 = toMat3(worldMatrix);
+	
 		mat3 tangentToWorldSpace;
-		tangentToWorldSpace[0] = mul( worldMatrix, normalizedTangent );
-		tangentToWorldSpace[1] = mul( worldMatrix, binormal );
-		tangentToWorldSpace[2] = mul( worldMatrix, normalizedNormal );	
+		tangentToWorldSpace[0] = mul( worldMatrix3, normalizedTangent );
+		tangentToWorldSpace[1] = mul( worldMatrix3, binormal );
+		tangentToWorldSpace[2] = mul( worldMatrix3, normalizedNormal );	
+#ifdef GLSL
+		mat3 worldToTangentSpace = tangentToWorldSpace;
+#else
 		mat3 worldToTangentSpace = transpose(tangentToWorldSpace);
+#endif
 		
 		v_eyeTangentSpace = mul( eyeWorldSpace, worldToTangentSpace );
 		v_normalTangentSpace = mul( v_worldNormal, worldToTangentSpace );

@@ -62,14 +62,12 @@ namespace NeoAxis
 			RenderEvent?.Invoke( this, context, frameData, ref actualTexture );
 		}
 
-		//!!!!
 		[Browsable( false )]
 		public virtual bool LimitedDevicesSupport
 		{
 			get { return false; }
 		}
 
-		//!!!!
 		[Browsable( false )]
 		public virtual bool IsSupported
 		{

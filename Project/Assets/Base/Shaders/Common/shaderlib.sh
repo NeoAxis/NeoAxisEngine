@@ -49,6 +49,7 @@ vec3 decodeNormalUint(vec3 _encodedNormal)
 	return _encodedNormal * 2.0 - 1.0;
 }
 
+/*
 vec2 encodeNormalSphereMap(vec3 _normal)
 {
 	return normalize(_normal.xy) * sqrt(_normal.z * 0.5 + 0.5);
@@ -333,6 +334,7 @@ vec3 adjustHue(vec3 _rgb, float _hue)
 	float len = length(yiq.yz);
 	return convertYIQ2RGB(vec3(yiq.x, len*cos(angle), len*sin(angle) ) );
 }
+*/
 
 vec4 packFloatToRgba(float _value)
 {
@@ -369,6 +371,7 @@ float random(vec2 _uv)
 	return fract(sin(dot(_uv.xy, vec2(12.9898, 78.233) ) ) * 43758.5453);
 }
 
+/*
 vec3 fixCubeLookup(vec3 _v, float _lod, float _topLevelCubeSize)
 {
 	// Reference(s):
@@ -384,33 +387,6 @@ vec3 fixCubeLookup(vec3 _v, float _lod, float _topLevelCubeSize)
 	if (az != vmax) { _v.z *= scale; }
 	return _v;
 }
-
-vec2 texture2DBc5(sampler2D _sampler, vec2 _uv)
-{
-#if BGFX_SHADER_LANGUAGE_HLSL && BGFX_SHADER_LANGUAGE_HLSL <= 3
-	return texture2D(_sampler, _uv).yx;
-#else
-	return texture2D(_sampler, _uv).xy;
-#endif
-}
-
-mat3 cofactor(mat4 _m)
-{
-	// Reference:
-	// Cofactor of matrix. Use to transform normals. The code assumes the last column of _m is [0,0,0,1].
-	// https://www.shadertoy.com/view/3s33zj
-	// https://github.com/graphitemaster/normals_revisited
-	return mat3(
-		_m[1][1]*_m[2][2]-_m[1][2]*_m[2][1],
-		_m[1][2]*_m[2][0]-_m[1][0]*_m[2][2],
-		_m[1][0]*_m[2][1]-_m[1][1]*_m[2][0],
-		_m[0][2]*_m[2][1]-_m[0][1]*_m[2][2],
-		_m[0][0]*_m[2][2]-_m[0][2]*_m[2][0],
-		_m[0][1]*_m[2][0]-_m[0][0]*_m[2][1],
-		_m[0][1]*_m[1][2]-_m[0][2]*_m[1][1],
-		_m[0][2]*_m[1][0]-_m[0][0]*_m[1][2],
-		_m[0][0]*_m[1][1]-_m[0][1]*_m[1][0]
-		);
-}
+*/
 
 #endif // __SHADERLIB_SH__

@@ -980,7 +980,7 @@ namespace NeoAxis
 		{
 			if( !string.IsNullOrEmpty( virtualFileName ) )
 			{
-				var realFileName = Path.Combine( VirtualFileSystem.Directories.Project, @"Caches\Files", virtualFileName ) + ".dds";
+				var realFileName = PathUtility.Combine( VirtualFileSystem.Directories.Project, @"Caches\Files", virtualFileName ) + ".dds";
 
 				try
 				{

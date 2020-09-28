@@ -461,7 +461,7 @@ namespace NeoAxis
 
 		string GetCompressedFileRealFileName()
 		{
-			return Path.Combine( VirtualFileSystem.Directories.Project, @"Caches\Files", componentTextureVirtualFileName ) + ".dds";
+			return PathUtility.Combine( VirtualFileSystem.Directories.Project, @"Caches\Files", componentTextureVirtualFileName ) + ".dds";
 		}
 
 		void ReadCompressedFileInfo( out string hash, out Vector2I sourceFileSize, out PixelFormat sourceFileFormat, out bool fileNotExists )

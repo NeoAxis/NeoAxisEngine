@@ -165,7 +165,7 @@ namespace NeoAxis
 		{
 			var result = new List<string>();
 
-			var path = Path.Combine( VirtualFileSystem.Directories.Binaries, @"NeoAxis.Internal\Platforms" );
+			var path = PathUtility.Combine( VirtualFileSystem.Directories.Binaries, @"NeoAxis.Internal\Platforms" );
 			foreach( var folder in Directory.GetDirectories( path ) )
 			{
 				if( Path.GetFileName( folder ) != Platform.ToString() )

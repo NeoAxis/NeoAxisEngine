@@ -1,3 +1,5 @@
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+
 struct Material_SpecularSM_Inputs
 {
 	vec3 diffuseColor;
@@ -27,7 +29,7 @@ vec3 surfaceShading_SpecularSM(Material_SpecularSM_Inputs material, vec3 lightCo
 	vec3 specularReflection;
 	if (NoL < 0.0) // light source on the wrong side?
 	{
-		specularReflection = vec3_splat(0.0); // no specular reflection
+		specularReflection = vec3_splat(0); // no specular reflection
 	}
 	else // light source on the right side
 	{

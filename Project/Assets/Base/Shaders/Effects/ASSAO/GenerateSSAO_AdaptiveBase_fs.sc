@@ -193,6 +193,10 @@ void GenerateSSAOShadowsInternal(out float outShadowTerm, out vec4 outEdges, out
 
     vec4 rs = patternRotScaleMatrices[pseudoRandomIndex];
 
+#ifdef GLSL
+	zz mtxFromRows;
+#endif
+
     mat2 rotScale = mat2(rs.x * pixLookupRadiusMod, rs.y * pixLookupRadiusMod,
                          rs.z * pixLookupRadiusMod, rs.w * pixLookupRadiusMod);
 
@@ -230,7 +234,7 @@ void main()
     float outWeight;
     vec4 outEdges;
 
-    GenerateSSAOShadowsInternal(outShadowTerm, outEdges, outWeight, gl_FragCoord.xy, v_texCoord0);
+    GenerateSSAOShadowsInternal(outShadowTerm, outEdges, outWeight, getFragCoord().xy, v_texCoord0);
 
     gl_FragColor = vec4(outShadowTerm, outWeight / ((float)SSAO_ADAPTIVE_TAP_BASE_COUNT * 4.0), 0.0, 0.0);
 }

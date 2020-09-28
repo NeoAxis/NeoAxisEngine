@@ -3,6 +3,7 @@ $output v_depth, v_texCoord01, v_color0, v_texCoord23, v_colorParameter
 
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "Common.sh"
+#include "VertexFunctions.sh"
 
 uniform vec4 u_renderOperationData[5];
 SAMPLER2D(s_bones, 0);
@@ -28,19 +29,16 @@ void main()
 	getAnimationData(u_renderOperationData[0], s_bones, a_indices, a_weight, positionLocal, normalLocal, tangentLocal);
 	
 	mat4 worldMatrix;
-	if(u_renderOperationData[0].y < 0)
+	if(u_renderOperationData[0].y < 0.0)
 	{
 		//instancing
-		worldMatrix[0] = i_data0;
-		worldMatrix[1] = i_data1;
-		worldMatrix[2] = i_data2;
-		worldMatrix[3] = vec4(0,0,0,1);
+		worldMatrix = mtxFromRows(i_data0, i_data1, i_data2, vec4(0,0,0,1));
 		uint data = asuint(i_data3.w);
 		v_colorParameter.w = float((data & uint(0xff000000)) >> 24);
 		v_colorParameter.z = float((data & uint(0x00ff0000)) >> 16);
 		v_colorParameter.y = float((data & uint(0x0000ff00)) >> 8);
 		v_colorParameter.x = float((data & uint(0x000000ff)) >> 0);
-		v_colorParameter = pow(v_colorParameter / 255.0, 2) * 10;
+		v_colorParameter = pow2(v_colorParameter / 255.0, 2.0) * 10.0;
 	}
 	else
 	{
@@ -56,7 +54,7 @@ void main()
 	vec2 c_texCoord2 = a_texcoord2;
 	vec2 c_texCoord3 = a_texcoord3;
 	vec2 c_unwrappedUV = getUnwrappedUV(c_texCoord0, c_texCoord1, c_texCoord2, c_texCoord3, u_renderOperationData[3].x);
-	vec4 c_color0 = (u_renderOperationData[3].y > 0) ? a_color0 : vec4_splat(1);
+	vec4 c_color0 = (u_renderOperationData[3].y > 0.0) ? a_color0 : vec4_splat(1);
 	vec3 positionOffset = vec3(0,0,0);
 #ifdef VERTEX_CODE_BODY
 	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2D(_sampler, _uv)
@@ -80,7 +78,7 @@ void main()
 	v_texCoord01.zw = a_texcoord1;
 	v_texCoord23.xy = a_texcoord2;
 	v_texCoord23.zw = a_texcoord3;
-	v_color0 = (u_renderOperationData[3].y > 0) ? a_color0 : vec4_splat(1);
+	v_color0 = (u_renderOperationData[3].y > 0.0) ? a_color0 : vec4_splat(1);
 }
 
 

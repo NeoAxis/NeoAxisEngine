@@ -115,6 +115,9 @@ class FuzzerContext {
   uint32_t GetChanceOfAddingArrayOrStructType() {
     return chance_of_adding_array_or_struct_type_;
   }
+  uint32_t GetChanceOfAddingCompositeInsert() {
+    return chance_of_adding_composite_insert_;
+  }
   uint32_t GetChanceOfAddingCopyMemory() {
     return chance_of_adding_copy_memory_;
   }
@@ -144,6 +147,9 @@ class FuzzerContext {
   }
   uint32_t GetChanceOfAddingNoContractionDecoration() {
     return chance_of_adding_no_contraction_decoration_;
+  }
+  uint32_t GetChanceOfAddingOpPhiSynonym() {
+    return chance_of_adding_opphi_synonym_;
   }
   uint32_t GetChanceOfAddingParameters() { return chance_of_adding_parameters; }
   uint32_t GetChanceOfAddingRelaxedDecoration() {
@@ -186,8 +192,14 @@ class FuzzerContext {
   uint32_t GetChanceOfDonatingAdditionalModule() {
     return chance_of_donating_additional_module_;
   }
+  uint32_t GetChanceOfGoingDeeperToInsertInComposite() {
+    return chance_of_going_deeper_to_insert_in_composite_;
+  }
   uint32_t GetChanceOfGoingDeeperWhenMakingAccessChain() {
     return chance_of_going_deeper_when_making_access_chain_;
+  }
+  uint32_t GetChanceOfInliningFunction() {
+    return chance_of_inlining_function_;
   }
   uint32_t GetChanceOfInterchangingSignednessOfIntegerOperands() {
     return chance_of_interchanging_signedness_of_integer_operands_;
@@ -296,6 +308,9 @@ class FuzzerContext {
   uint32_t GetRandomIndexForAccessChain(uint32_t composite_size_bound) {
     return random_generator_->RandomUint32(composite_size_bound);
   }
+  uint32_t GetRandomIndexForCompositeInsert(uint32_t number_of_components) {
+    return random_generator_->RandomUint32(number_of_components);
+  }
   uint32_t GetRandomLoopControlPartialCount() {
     return random_generator_->RandomUint32(max_loop_control_partial_count_);
   }
@@ -342,6 +357,7 @@ class FuzzerContext {
   uint32_t chance_of_adding_access_chain_;
   uint32_t chance_of_adding_another_struct_field_;
   uint32_t chance_of_adding_array_or_struct_type_;
+  uint32_t chance_of_adding_composite_insert_;
   uint32_t chance_of_adding_copy_memory_;
   uint32_t chance_of_adding_dead_block_;
   uint32_t chance_of_adding_dead_break_;
@@ -354,6 +370,7 @@ class FuzzerContext {
   uint32_t chance_of_adding_loop_preheader_;
   uint32_t chance_of_adding_matrix_type_;
   uint32_t chance_of_adding_no_contraction_decoration_;
+  uint32_t chance_of_adding_opphi_synonym_;
   uint32_t chance_of_adding_parameters;
   uint32_t chance_of_adding_relaxed_decoration_;
   uint32_t chance_of_adding_store_;
@@ -371,7 +388,9 @@ class FuzzerContext {
   uint32_t chance_of_constructing_composite_;
   uint32_t chance_of_copying_object_;
   uint32_t chance_of_donating_additional_module_;
+  uint32_t chance_of_going_deeper_to_insert_in_composite_;
   uint32_t chance_of_going_deeper_when_making_access_chain_;
+  uint32_t chance_of_inlining_function_;
   uint32_t chance_of_interchanging_signedness_of_integer_operands_;
   uint32_t chance_of_interchanging_zero_like_constants_;
   uint32_t chance_of_inverting_comparison_operators_;

@@ -15,8 +15,6 @@ SAMPLER2D(s_depthTexture, 2);
 SAMPLER2D(s_gBuffer1TextureCopy, 3);
 SAMPLER2D(s_gBuffer4TextureCopy, 4);
 
-vec4 materialStandardFragment[MATERIAL_STANDARD_FRAGMENT_SIZE];
-
 #ifdef DISPLACEMENT_CODE_PARAMETERS
 	DISPLACEMENT_CODE_PARAMETERS
 #endif
@@ -46,16 +44,15 @@ vec4 materialStandardFragment[MATERIAL_STANDARD_FRAGMENT_SIZE];
 void main()
 {
 	//get material data
-	int materialIndex = (int)u_renderOperationData[0].x;
-	for(int n=0;n<8;n++)
-		materialStandardFragment[n] = texelFetch(s_materials, ivec2((int)(materialIndex % 64) * 8 + n, (int)(materialIndex / 64)), 0);
+	vec4 materialStandardFragment[MATERIAL_STANDARD_FRAGMENT_SIZE];
+	getMaterialData(s_materials, u_renderOperationData, materialStandardFragment);	
 	
 	//vec3 worldPosition = v_worldPosition;
 	vec3 inputWorldNormal = normalize(v_worldNormal);
 
 	//decal specified code
 	
-	vec2 screenPosition = gl_FragCoord.xy * u_viewTexel.xy;
+	vec2 screenPosition = getFragCoord().xy * u_viewTexel.xy;
 	float rawDepth = texture2D(s_depthTexture, screenPosition).r;
 	vec3 worldPosition = reconstructWorldPosition(u_invViewProj, screenPosition, rawDepth);
 
@@ -101,7 +98,7 @@ void main()
 	//displacement
 	vec2 displacementOffset = vec2_splat(0);
 #if defined(DISPLACEMENT_CODE_BODY) && defined(DISPLACEMENT)
-	displacementOffset = getParallaxOcclusionMappingOffset(decalTexCoord/*v_texCoord01.xy*/, v_eyeTangentSpace, v_normalTangentSpace);
+	displacementOffset = getParallaxOcclusionMappingOffset(decalTexCoord/*v_texCoord01.xy*/, v_eyeTangentSpace, v_normalTangentSpace, u_materialDisplacementScale);
 #endif //DISPLACEMENT_CODE_BODY
 	
 	//get material parameters
@@ -140,17 +137,17 @@ void main()
 
 	//apply color parameter
 	baseColor *= v_colorParameter.xyz;
-	if(u_materialUseVertexColor != 0)
+	if(u_materialUseVertexColor != 0.0)
 		baseColor *= v_color0.xyz;
 	baseColor = max(baseColor, vec3_splat(0));
 	opacity *= v_colorParameter.w;
-	if(u_materialUseVertexColor != 0)
+	if(u_materialUseVertexColor != 0.0)
 		opacity *= v_color0.w;
 	opacity = saturate(opacity);
 
 	//opacity dithering
 #ifdef OPACITY_DITHERING
-	opacity = dither(gl_FragCoord, opacity);
+	opacity = dither(getFragCoord(), opacity);
 #endif
 
 	//opacity masked threshold
@@ -169,7 +166,7 @@ void main()
 	{
 		vec3 bitangent = cross(sourceTangent.xyz, sourceNormal) * sourceTangent.w;
 		
-		mat3 tbn = transpose(mat3(tangent.xyz, bitangent, sourceNormal));
+		mat3 tbn = transpose(mtxFromRows(tangent.xyz, bitangent, sourceNormal));
 		normal = expand(normal);
 		normal.z = sqrt(max(1.0 - dot(normal.xy, normal.xy), 0.0));
 		normal = normalize(mul(tbn, normal));
@@ -178,7 +175,7 @@ void main()
 		normal = sourceNormal;
 	/*vec3 normal;
 	{
-		mat3 tbn = transpose(mat3(tangent.xyz, bitangent, sourceNormal));
+		mat3 tbn = transpose(mtxFromRows(tangent.xyz, bitangent, sourceNormal));
 		normal = normalize(mul(tbn, normal));
 	}*/
 	
@@ -192,7 +189,7 @@ void main()
 	vec3 bitangent = normalize(v_bitangent);
 	if(any(normal))
 	{
-		mat3 tbn = transpose(mat3(tangent.xyz, bitangent, inputWorldNormal));
+		mat3 tbn = transpose(mtxFromRows(tangent.xyz, bitangent, inputWorldNormal));
 		normal = expand(normal);
 		normal.z = sqrt(max(1.0 - dot(normal.xy, normal.xy), 0.0));
 		normal = normalize(mul(tbn, normal));

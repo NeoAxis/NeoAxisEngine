@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
+using NeoAxis.Input;
 
 namespace NeoAxis
 {
@@ -118,6 +119,7 @@ namespace NeoAxis
 				obj.NewObjectSetDefaultConfiguration();
 
 				obj.MouseDown += TextControl_MouseDown;
+				obj.Touch += TextControl_Touch;
 
 				//create down button
 				{
@@ -173,6 +175,7 @@ namespace NeoAxis
 					obj2.Margin = new UIMeasureValueRectangle( UIMeasure.Screen, 0, 0, 1, 1 );
 					obj2.Size = new UIMeasureValueVector2( UIMeasure.Screen, 1, 1 );
 					obj2.MouseDown += ListCover_MouseDown;
+					obj2.Touch += ListCover_Touch;
 				}
 			}
 		}
@@ -185,9 +188,15 @@ namespace NeoAxis
 			if( textControl != null )
 			{
 				if( EnabledInHierarchy )
+				{
 					textControl.MouseDown += TextControl_MouseDown;
+					textControl.Touch += TextControl_Touch;
+				}
 				else
+				{
 					textControl.MouseDown -= TextControl_MouseDown;
+					textControl.Touch -= TextControl_Touch;
+				}
 			}
 
 			var list = GetDownList();
@@ -200,7 +209,10 @@ namespace NeoAxis
 
 					var cover = list.GetComponent( "Cover" ) as UIControl;
 					if( cover != null )
+					{
 						cover.MouseDown += ListCover_MouseDown;
+						cover.Touch += ListCover_Touch;
+					}
 				}
 				else
 				{
@@ -209,7 +221,10 @@ namespace NeoAxis
 
 					var cover = list.GetComponent( "Cover" ) as UIControl;
 					if( cover != null )
+					{
 						cover.MouseDown -= ListCover_MouseDown;
+						cover.Touch -= ListCover_Touch;
+					}
 				}
 			}
 
@@ -226,6 +241,47 @@ namespace NeoAxis
 					list.Visible = show;
 					//list.Capture = show;
 				}
+			}
+		}
+
+		private void TextControl_Touch( UIControl sender, TouchData e, ref bool handled )
+		{
+			switch( e.Action )
+			{
+			case TouchData.ActionEnum.Down:
+				if( VisibleInHierarchy && EnabledInHierarchy )//&& !ReadOnlyInHierarchy )//&& touchDown == null )
+				{
+					GetScreenRectangle( out var rect );
+					var rectInPixels = rect * ParentContainer.Viewport.SizeInPixels.ToVector2();
+					var distanceInPixels = rectInPixels.GetPointDistance( e.PositionInPixels.ToVector2() );
+
+					var item = new TouchData.TouchDownRequestToProcessTouch( this, 0, distanceInPixels, null,
+						delegate ( UIControl sender2, TouchData touchData, object anyData )
+						{
+							//touch
+							var list = GetDownList();
+							if( list != null )
+							{
+								var show = !list.Visible;
+								list.Visible = show;
+								//list.Capture = show;
+							}
+						} );
+					e.TouchDownRequestToControlActions.Add( item );
+				}
+				break;
+
+				//case TouchData.ActionEnum.Up:
+				//	break;
+
+				//case TouchData.ActionEnum.Move:
+				//	break;
+
+				//case TouchData.ActionEnum.Cancel:
+				//	break;
+
+				//case TouchData.ActionEnum.Outside:
+				//	break;
 			}
 		}
 
@@ -258,14 +314,45 @@ namespace NeoAxis
 			if( button == EMouseButtons.Left || button == EMouseButtons.Right )
 			{
 				var list = GetDownList();
-				if( list != null )
+				if( list != null && !new Rectangle( 0, 0, 1, 1 ).Contains( list.MousePosition ) )
 				{
-					if( !new Rectangle( 0, 0, 1, 1 ).Contains( list.MousePosition ) )
+					list.Visible = false;
+					handled = true;
+				}
+			}
+		}
+
+		private void ListCover_Touch( UIControl sender, TouchData e, ref bool handled )
+		{
+			switch( e.Action )
+			{
+			case TouchData.ActionEnum.Down:
+				if( VisibleInHierarchy && EnabledInHierarchy )//&& !ReadOnlyInHierarchy && touchDown == null )
+				{
+					var list = GetDownList();
+					if( list != null && !list.GetScreenRectangle().Contains( e.Position ) )
 					{
-						list.Visible = false;
-						handled = true;
+						var item = new TouchData.TouchDownRequestToProcessTouch( this, 10, 0, null,
+							delegate ( UIControl sender2, TouchData touchData, object anyData )
+							{
+								list.Visible = false;
+							} );
+						e.TouchDownRequestToControlActions.Add( item );
 					}
 				}
+				break;
+
+				//case TouchData.ActionEnum.Up:
+				//	break;
+
+				//case TouchData.ActionEnum.Move:
+				//	break;
+
+				//case TouchData.ActionEnum.Cancel:
+				//	break;
+
+				//case TouchData.ActionEnum.Outside:
+				//	break;
 			}
 		}
 

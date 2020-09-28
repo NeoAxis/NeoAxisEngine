@@ -3,6 +3,7 @@ $output v_pos, v_colorVisible, v_colorInvisible
 
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "Common.sh"
+#include "VertexFunctions.sh"
 
 uniform vec4/*vec3*/ u_cameraPosition;
 
@@ -32,7 +33,7 @@ void main()
 
 	//gl_Position = mul(u_modelViewProj, vec4(a_position, 1.0));
 
-	if(u_useColorFromUniform > 0)
+	if(u_useColorFromUniform > 0.0)
 	{
 		v_colorVisible = u_color;
 		v_colorInvisible = u_colorInvisibleBehindObjects;

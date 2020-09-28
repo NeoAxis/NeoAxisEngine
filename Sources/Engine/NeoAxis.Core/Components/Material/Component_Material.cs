@@ -630,14 +630,7 @@ namespace NeoAxis
 		[FlowGraphBrowsable( false )]
 		public Reference<bool> ReceiveShadows
 		{
-			get
-			{
-				//!!!!ut
-				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
-					return false;
-
-				if( _receiveShadows.BeginGet() ) ReceiveShadows = _receiveShadows.Get( this ); return _receiveShadows.value;
-			}
+			get { if( _receiveShadows.BeginGet() ) ReceiveShadows = _receiveShadows.Get( this ); return _receiveShadows.value; }
 			set
 			{
 				if( _receiveShadows.BeginSet( ref value ) )
@@ -861,23 +854,370 @@ namespace NeoAxis
 		/// </summary>
 		public class NewObjectSettingsMaterial : NewObjectSettings
 		{
+			NewMaterialData newMaterialData;
+			double newMaterialDataLastUpdate;
+
 			[DefaultValue( true )]
 			[Category( "Options" )]
 			[DisplayName( "Shader graph" )]
 			public bool ShaderGraph { get; set; } = true;
+
+			/// <summary>
+			/// The mode for automatic adjustment textures of a material. The texture files must be in the folder of a material. The mode does not always work, for example, when there are several files suitable for one channel texture.
+			/// </summary>
+			[DefaultValue( true )]
+			[Category( "Automatic Tuning" )]
+			[DisplayName( "Configure textures from the folder" )]
+			public bool ConfigureTexturesFromFolder { get; set; } = true;
+
+			/// <summary>
+			/// The mode for automatic adjustment textures of a material. The texture files must be in the folder of a material. The mode does not always work, for example, when there are several files suitable for one channel texture.
+			/// </summary>
+			[DefaultValue( false )]
+			[Category( "Automatic Tuning" )]
+			[DisplayName( "Configure textures from the folder" )]
+			public bool ConfigureTexturesFromFolderDisabled { get; } = false;
+
+			[DefaultValue( true )]
+			[Category( "Automatic Tuning" )]
+			public bool BaseColor { get; set; } = true;
+			[DefaultValue( false )]
+			[Category( "Automatic Tuning" )]
+			[DisplayName( "Base Color" )]
+			public bool BaseColorDisabled { get; } = false;
+
+			[DefaultValue( true )]
+			[Category( "Automatic Tuning" )]
+			public bool Metallic { get; set; } = true;
+			[DefaultValue( false )]
+			[Category( "Automatic Tuning" )]
+			[DisplayName( "Metallic" )]
+			public bool MetallicDisabled { get; } = false;
+
+			[DefaultValue( true )]
+			[Category( "Automatic Tuning" )]
+			public bool Roughness { get; set; } = true;
+			[DefaultValue( false )]
+			[Category( "Automatic Tuning" )]
+			[DisplayName( "Roughness" )]
+			public bool RoughnessDisabled { get; } = false;
+
+			[DefaultValue( true )]
+			[Category( "Automatic Tuning" )]
+			public bool AmbientOcclusion { get; set; } = true;
+			[DefaultValue( false )]
+			[Category( "Automatic Tuning" )]
+			[DisplayName( "Ambient Occlusion" )]
+			public bool AmbientOcclusionDisabled { get; } = false;
+
+			[DefaultValue( true )]
+			[Category( "Automatic Tuning" )]
+			public bool Emissive { get; set; } = true;
+			[DefaultValue( false )]
+			[Category( "Automatic Tuning" )]
+			[DisplayName( "Emissive" )]
+			public bool EmissiveDisabled { get; } = false;
+
+			[DefaultValue( true )]
+			[Category( "Automatic Tuning" )]
+			public bool Opacity { get; set; } = true;
+			[DefaultValue( false )]
+			[Category( "Automatic Tuning" )]
+			[DisplayName( "Opacity" )]
+			public bool OpacityDisabled { get; } = false;
+
+			[DefaultValue( true )]
+			[Category( "Automatic Tuning" )]
+			public bool Normal { get; set; } = true;
+			[DefaultValue( false )]
+			[Category( "Automatic Tuning" )]
+			[DisplayName( "Normal" )]
+			public bool NormalDisabled { get; } = false;
+
+			[DefaultValue( false )]
+			[Category( "Automatic Tuning" )]
+			public bool Displacement { get; set; } = false;
+			[DefaultValue( false )]
+			[Category( "Automatic Tuning" )]
+			[DisplayName( "Displacement" )]
+			public bool DisplacementDisabled { get; } = false;
+
+			//
+
+			public override bool Init( NewObjectWindow window )
+			{
+				if( !base.Init( window ) )
+					return false;
+
+				UpdateNewMaterialData();
+
+				return true;
+			}
+
+			protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
+			{
+				base.OnMetadataGetMembersFilter( context, member, ref skip );
+
+				//update new material data
+				if( EngineApp.EngineTime > newMaterialDataLastUpdate + 1.0 )
+					UpdateNewMaterialData();
+
+				if( member is Metadata.Property )
+				{
+					switch( member.Name )
+					{
+					case nameof( ConfigureTexturesFromFolder ):
+						if( !ShaderGraph || newMaterialData == null )
+							skip = true;
+						break;
+
+					case nameof( ConfigureTexturesFromFolderDisabled ):
+						if( !ShaderGraph || newMaterialData != null )
+							skip = true;
+						break;
+
+					case nameof( BaseColor ):
+					case nameof( Metallic ):
+					case nameof( Roughness ):
+					case nameof( Normal ):
+					case nameof( Displacement ):
+					case nameof( AmbientOcclusion ):
+					case nameof( Emissive ):
+					case nameof( Opacity ):
+						if( !ShaderGraph || !ConfigureTexturesFromFolder || newMaterialData == null )
+							skip = true;
+						else if( newMaterialData != null && string.IsNullOrEmpty( newMaterialData.GetTextureValueByName( member.Name ) ) )
+							skip = true;
+						break;
+
+					case nameof( BaseColorDisabled ):
+					case nameof( MetallicDisabled ):
+					case nameof( RoughnessDisabled ):
+					case nameof( NormalDisabled ):
+					case nameof( DisplacementDisabled ):
+					case nameof( AmbientOcclusionDisabled ):
+					case nameof( EmissiveDisabled ):
+					case nameof( OpacityDisabled ):
+						if( !ShaderGraph || !ConfigureTexturesFromFolder || newMaterialData == null )
+							skip = true;
+						else if( newMaterialData != null && !string.IsNullOrEmpty( newMaterialData.GetTextureValueByName( member.Name.Replace( "Disabled", "" ) ) ) )
+							skip = true;
+						break;
+					}
+				}
+			}
+
+			string DetectTextureTypeNameByFileName( string name )
+			{
+				if( name.Contains( "_albedo" ) || /*name.Contains( "_diffuse" ) || name.Contains( "_diff_" ) ||*/ name.Contains( "_color" ) || name.Contains( "_base_color" ) || name.Contains( "_basecolor" ) )
+					return "BaseColor";
+
+				if( name.Contains( "_metallic" ) || name.Contains( "_metalness" ) )
+					return "Metallic";
+
+				if( name.Contains( "_roughness" ) || ( name.Contains( "_rough_" ) && !name.Contains( "_rough_ao_" ) ) )
+					return "Roughness";
+
+				if( name.Contains( "_normal" ) || name.Contains( "_nor_" ) )
+					return "Normal";
+
+				if( name.Contains( "_displacement" ) || name.Contains( "_disp_" ) || name.Contains( "_height" ) )
+					return "Displacement";
+
+				if( name.Contains( "_ambientocclusion" ) || ( !name.Contains( "_rough_ao_" ) && name.Contains( "_ao_" ) ) )
+					return "AmbientOcclusion";
+
+				if( name.Contains( "_emissive" ) || name.Contains( "_emission" ) )
+					return "Emissive";
+
+				if( name.Contains( "_opacity" ) )
+					return "Opacity";
+
+				return "";
+			}
+
+			void UpdateNewMaterialData()
+			{
+				NewMaterialData data = null;
+
+				try
+				{
+					var realFileName = Window.GetFileCreationRealFileName();
+					if( !string.IsNullOrEmpty( realFileName ) )
+					{
+						var virtualDirectory = VirtualPathUtility.GetVirtualPathByReal( PathUtility.GetDirectoryName( realFileName ) );
+						var paths = VirtualDirectory.GetFiles( virtualDirectory );
+
+						var imageType = ResourceManager.GetTypeByName( "Image" );
+
+						var extensions = new ESet<string>();
+						foreach( var ext in imageType.FileExtensions )
+							extensions.AddWithCheckAlreadyContained( ext );
+
+						foreach( var path in paths )
+						{
+							var lowerName = Path.GetFileName( path ).ToLower();
+							var extension = Path.GetExtension( lowerName ).Replace( ".", "" );
+							if( extensions.Contains( extension ) )
+							{
+								var textureTypeName = DetectTextureTypeNameByFileName( lowerName );
+								if( !string.IsNullOrEmpty( textureTypeName ) )
+								{
+									if( data == null )
+										data = new NewMaterialData();
+
+									//check already exists
+									if( !string.IsNullOrEmpty( data.GetTextureValueByName( textureTypeName ) ) )
+									{
+										data = null;
+										goto end;
+									}
+
+									data.SetTextureValueByName( textureTypeName, path );
+								}
+							}
+						}
+
+						end:;
+
+						if( data != null && data.GetTextureCount() == 0 )
+							data = null;
+					}
+				}
+				catch { }
+
+				newMaterialDataLastUpdate = EngineApp.EngineTime;
+				newMaterialData = data;
+			}
 
 			public override bool Creation( NewObjectCell.ObjectCreationContext context )
 			{
 				var newObject2 = (Component_Material)context.newObject;
 
 				if( ShaderGraph )
-					newObject2.NewObjectCreateShaderGraph();
+				{
+					UpdateNewMaterialData();
+
+					NewMaterialData data = null;
+					if( ConfigureTexturesFromFolder && newMaterialData != null )
+					{
+						data = newMaterialData.Clone();
+
+						if( !BaseColor )
+							data.SetTextureValueByName( "BaseColor", "" );
+						if( !Metallic )
+							data.SetTextureValueByName( "Metallic", "" );
+						if( !Roughness )
+							data.SetTextureValueByName( "Roughness", "" );
+						if( !Normal )
+							data.SetTextureValueByName( "Normal", "" );
+						if( !Displacement )
+							data.SetTextureValueByName( "Displacement", "" );
+						if( !AmbientOcclusion )
+							data.SetTextureValueByName( "AmbientOcclusion", "" );
+						if( !Emissive )
+							data.SetTextureValueByName( "Emissive", "" );
+						if( !Opacity )
+							data.SetTextureValueByName( "Opacity", "" );
+					}
+
+					newObject2.NewObjectCreateShaderGraph( data );
+				}
 
 				return base.Creation( context );
 			}
 		}
 
-		/////////////////////////////////////////
+		///////////////////////////////////////////////
+
+		class NewMaterialData
+		{
+			//public int Index;
+			//public string Name;
+			//public ShadingModelEnum ShadingModel = ShadingModelEnum.Lit;
+			//public bool TwoSided;
+
+			//public ColorValue? BaseColor;
+			public string BaseColorTexture;
+			public string MetallicTexture;
+			public string RoughnessTexture;
+			public string NormalTexture;
+			public string DisplacementTexture;
+			public string AmbientOcclusionTexture;
+			public string EmissiveTexture;
+			public string OpacityTexture;
+
+			public string GetTextureValueByName( string name )
+			{
+				switch( name )
+				{
+				case "BaseColor": return BaseColorTexture;
+				case "Metallic": return MetallicTexture;
+				case "Roughness": return RoughnessTexture;
+				case "Normal": return NormalTexture;
+				case "Displacement": return DisplacementTexture;
+				case "AmbientOcclusion": return AmbientOcclusionTexture;
+				case "Emissive": return EmissiveTexture;
+				case "Opacity": return OpacityTexture;
+				}
+				return "";
+			}
+
+			public void SetTextureValueByName( string name, string value )
+			{
+				switch( name )
+				{
+				case "BaseColor": BaseColorTexture = value; break;
+				case "Metallic": MetallicTexture = value; break;
+				case "Roughness": RoughnessTexture = value; break;
+				case "Normal": NormalTexture = value; break;
+				case "Displacement": DisplacementTexture = value; break;
+				case "AmbientOcclusion": AmbientOcclusionTexture = value; break;
+				case "Emissive": EmissiveTexture = value; break;
+				case "Opacity": OpacityTexture = value; break;
+				}
+			}
+
+			public int GetTextureCount()
+			{
+				int result = 0;
+				if( !string.IsNullOrEmpty( BaseColorTexture ) )
+					result++;
+				if( !string.IsNullOrEmpty( MetallicTexture ) )
+					result++;
+				if( !string.IsNullOrEmpty( RoughnessTexture ) )
+					result++;
+				if( !string.IsNullOrEmpty( NormalTexture ) )
+					result++;
+				if( !string.IsNullOrEmpty( DisplacementTexture ) )
+					result++;
+				if( !string.IsNullOrEmpty( AmbientOcclusionTexture ) )
+					result++;
+				if( !string.IsNullOrEmpty( EmissiveTexture ) )
+					result++;
+				if( !string.IsNullOrEmpty( OpacityTexture ) )
+					result++;
+				return result;
+			}
+
+			public NewMaterialData Clone()
+			{
+				var result = new NewMaterialData();
+
+				result.BaseColorTexture = BaseColorTexture;
+				result.MetallicTexture = MetallicTexture;
+				result.RoughnessTexture = RoughnessTexture;
+				result.NormalTexture = NormalTexture;
+				result.DisplacementTexture = DisplacementTexture;
+				result.AmbientOcclusionTexture = AmbientOcclusionTexture;
+				result.EmissiveTexture = EmissiveTexture;
+				result.OpacityTexture = OpacityTexture;
+
+				return result;
+			}
+		}
+
+		///////////////////////////////////////////////
 
 		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
 		{
@@ -1241,6 +1581,9 @@ namespace NeoAxis
 
 		protected virtual string OnCheckDeferredShadingSupport()
 		{
+			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
+				return "Android";
+
 			if( BlendMode.Value == BlendModeEnum.Transparent || BlendMode.Value == BlendModeEnum.Add )
 				return "Blend Mode";
 			if( ShadingModel.Value != ShadingModelEnum.Lit && ShadingModel.Value != ShadingModelEnum.Simple )
@@ -1966,17 +2309,166 @@ namespace NeoAxis
 			return result;
 		}
 
-		void NewObjectCreateShaderGraph()
+		void NewObjectCreateShaderGraph( NewMaterialData data = null )
 		{
 			var graph = CreateComponent<Component_FlowGraph>();
 			graph.Name = "Shader graph";
 			graph.Specialization = ReferenceUtility.MakeReference(
 				MetadataManager.GetTypeOfNetType( typeof( Component_FlowGraphSpecialization_Shader ) ).Name + "|Instance" );
 
-			var node = graph.CreateComponent<Component_FlowGraphNode>();
-			node.Name = "Node " + Name;
-			node.Position = new Vector2I( 10, -7 );
-			node.ControlledObject = ReferenceUtility.MakeThisReference( node, this );
+			{
+				var node = graph.CreateComponent<Component_FlowGraphNode>();
+				node.Name = "Node " + Name;
+				node.Position = new Vector2I( 10, -7 );
+				node.ControlledObject = ReferenceUtility.MakeThisReference( node, this );
+			}
+
+			//configure
+			if( data != null )
+			{
+				const int step = 9;
+				Vector2I position = new Vector2I( -20, -data.GetTextureCount() * step / 2 );
+
+				//BaseColor
+				if( !string.IsNullOrEmpty( data.BaseColorTexture ) )
+				{
+					var node = graph.CreateComponent<Component_FlowGraphNode>();
+					node.Name = "Node Texture Sample " + "BaseColor";
+					node.Position = position;
+					position.Y += step;
+
+					var sample = node.CreateComponent<Component_ShaderTextureSample>();
+					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
+					sample.Texture = new Reference<Component_Image>( null, data.BaseColorTexture );
+
+					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
+
+					BaseColor = ReferenceUtility.MakeThisReference( this, sample, "RGBA" );
+				}
+				//else if( data.BaseColor.HasValue )
+				//	BaseColor = data.BaseColor.Value;
+
+				//Metallic
+				if( !string.IsNullOrEmpty( data.MetallicTexture ) )
+				{
+					var node = graph.CreateComponent<Component_FlowGraphNode>();
+					node.Name = "Node Texture Sample " + "Metallic";
+					node.Position = position;
+					position.Y += step;
+
+					var sample = node.CreateComponent<Component_ShaderTextureSample>();
+					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
+					sample.Texture = new Reference<Component_Image>( null, data.MetallicTexture );
+
+					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
+
+					Metallic = ReferenceUtility.MakeThisReference( this, sample, "R" );
+				}
+
+				//Roughness
+				if( !string.IsNullOrEmpty( data.RoughnessTexture ) )
+				{
+					var node = graph.CreateComponent<Component_FlowGraphNode>();
+					node.Name = "Node Texture Sample " + "Roughness";
+					node.Position = position;
+					position.Y += step;
+
+					var sample = node.CreateComponent<Component_ShaderTextureSample>();
+					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
+					sample.Texture = new Reference<Component_Image>( null, data.RoughnessTexture );
+
+					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
+
+					Roughness = ReferenceUtility.MakeThisReference( this, sample, "R" );
+				}
+
+				//Normal
+				if( !string.IsNullOrEmpty( data.NormalTexture ) )
+				{
+					var node = graph.CreateComponent<Component_FlowGraphNode>();
+					node.Name = "Node Texture Sample " + "Normal";
+					node.Position = position;
+					position.Y += step;
+
+					var sample = node.CreateComponent<Component_ShaderTextureSample>();
+					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
+					sample.Texture = new Reference<Component_Image>( null, data.NormalTexture );
+
+					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
+
+					Normal = ReferenceUtility.MakeThisReference( this, sample, "RGBA" );
+				}
+
+				//Displacement
+				if( !string.IsNullOrEmpty( data.DisplacementTexture ) )
+				{
+					var node = graph.CreateComponent<Component_FlowGraphNode>();
+					node.Name = "Node Texture Sample " + "Displacement";
+					node.Position = position;
+					position.Y += step;
+
+					var sample = node.CreateComponent<Component_ShaderTextureSample>();
+					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
+					sample.Texture = new Reference<Component_Image>( null, data.DisplacementTexture );
+
+					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
+
+					Displacement = ReferenceUtility.MakeThisReference( this, sample, "R" );
+				}
+
+				//AmbientOcclusion
+				if( !string.IsNullOrEmpty( data.AmbientOcclusionTexture ) )
+				{
+					var node = graph.CreateComponent<Component_FlowGraphNode>();
+					node.Name = "Node Texture Sample " + "AmbientOcclusion";
+					node.Position = position;
+					position.Y += step;
+
+					var sample = node.CreateComponent<Component_ShaderTextureSample>();
+					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
+					sample.Texture = new Reference<Component_Image>( null, data.AmbientOcclusionTexture );
+
+					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
+
+					AmbientOcclusion = ReferenceUtility.MakeThisReference( this, sample, "R" );
+				}
+
+				//Emissive
+				if( !string.IsNullOrEmpty( data.EmissiveTexture ) )
+				{
+					var node = graph.CreateComponent<Component_FlowGraphNode>();
+					node.Name = "Node Texture Sample " + "Emissive";
+					node.Position = position;
+					position.Y += step;
+
+					var sample = node.CreateComponent<Component_ShaderTextureSample>();
+					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
+					sample.Texture = new Reference<Component_Image>( null, data.EmissiveTexture );
+
+					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
+
+					Emissive = ReferenceUtility.MakeThisReference( this, sample, "RGBA" );
+				}
+
+				//Opacity
+				if( !string.IsNullOrEmpty( data.OpacityTexture ) )
+				{
+					var node = graph.CreateComponent<Component_FlowGraphNode>();
+					node.Name = "Node Texture Sample " + "Opacity";
+					node.Position = position;
+					position.Y += step;
+
+					var sample = node.CreateComponent<Component_ShaderTextureSample>();
+					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
+					sample.Texture = new Reference<Component_Image>( null, data.OpacityTexture );
+
+					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
+
+					Opacity = ReferenceUtility.MakeThisReference( this, sample, "R" );
+
+					BlendMode = BlendModeEnum.Masked;
+				}
+			}
 
 			if( Parent == null )
 			{

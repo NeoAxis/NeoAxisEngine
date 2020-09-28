@@ -1,13 +1,13 @@
 
 //https://www.gamedev.net/articles/programming/graphics/a-closer-look-at-parallax-occlusion-mapping-r3262/
 
-vec2 getParallaxOcclusionMappingOffset(vec2 texCoord, vec3 eye, vec3 normal)
+vec2 getParallaxOcclusionMappingOffset(vec2 texCoord, vec3 eye, vec3 normal, float materialDisplacementScale)
 {
 	float heightScale;// = 0.05;
 	{
 		vec2 c_texCoord0 = vec2_splat(0);//dummy
-		float displacement = 0;//dummy
-		float displacementScale = u_materialDisplacementScale;
+		float displacement = 0.0;//dummy
+		float displacementScale = materialDisplacementScale;//u_materialDisplacementScale;
 		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2D(_sampler, _uv)
 		DISPLACEMENT_CODE_BODY
 		#undef CODE_BODY_TEXTURE2D
@@ -40,8 +40,10 @@ vec2 getParallaxOcclusionMappingOffset(vec2 texCoord, vec3 eye, vec3 normal)
 	
 	//vec2 texCoordsPerSize = texCoord * textureDims;
 
-	vec2 dx = ddx( texCoord );
-	vec2 dy = ddy( texCoord );
+	vec2 dx = dFdx( texCoord );
+	vec2 dy = dFdy( -texCoord );
+	//vec2 dx = ddx( texCoord );
+	//vec2 dy = ddy( texCoord );
 	
 	// Compute all 4 derivatives in x and y in a single instruction to optimize:
 	/*
@@ -87,10 +89,10 @@ vec2 getParallaxOcclusionMappingOffset(vec2 texCoord, vec3 eye, vec3 normal)
 	// the geometric normal and the view direction ray:
 
 	//!!!!constant number of steps works faster
-	const int numSteps = 32;
+	const int numSteps = DISPLACEMENT_STEPS;
 	//const int maxSamples = 32;
 	//const int minSamples = 10;
-	//int numSteps = (int)lerp( maxSamples, minSamples, dot( eye, normal ) );
+	//int numSteps = int(lerp( maxSamples, minSamples, dot( eye, normal ) ));
 
 	// Intersect the view ray with the height field profile along the direction of
 	// the parallax offset ray (computed in the vertex shader. Note that the code is
@@ -107,7 +109,7 @@ vec2 getParallaxOcclusionMappingOffset(vec2 texCoord, vec3 eye, vec3 normal)
 	// See the above paper for more details about the process and derivation.
 	//
 
-	float stepSize = 1.0 / (float)numSteps;
+	float stepSize = 1.0 / float(numSteps);
 	float prevHeight = 1.0;
 
 	vec2 texOffsetPerStep = stepSize * parallaxOffsetTS;
@@ -122,8 +124,8 @@ vec2 getParallaxOcclusionMappingOffset(vec2 texCoord, vec3 eye, vec3 normal)
 		texCurrentOffset -= texOffsetPerStep;
 
 		vec2 c_texCoord0 = texCurrentOffset;
-		float displacement = 0;
-		float displacementScale = 0;//dummy
+		float displacement = 0.0;
+		float displacementScale = 0.0;//dummy
 		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DGrad(_sampler, _uv, dx, dy)
 		DISPLACEMENT_CODE_BODY
 		#undef CODE_BODY_TEXTURE2D
@@ -151,7 +153,7 @@ vec2 getParallaxOcclusionMappingOffset(vec2 texCoord, vec3 eye, vec3 normal)
 	else
 		parallaxAmount = (pt1.x * delta2 - pt2.x * delta1 ) / denominator;
 
-	vec2 parallaxOffset = parallaxOffsetTS * ( 1 - parallaxAmount );
+	vec2 parallaxOffset = parallaxOffsetTS * ( 1.0 - parallaxAmount );
 	return parallaxOffset;
 		
 	//}

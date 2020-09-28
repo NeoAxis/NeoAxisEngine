@@ -30,25 +30,7 @@ extern "C"
 #ifdef __ANDROID__
 #include <android/log.h>
 #define LOG_ANDROID_INFO(T) __android_log_print(ANDROID_LOG_INFO, "bgfx", T)
-
-void LogLongText(std::string s)
-{
-	std::string t;
-
-	for (int n = 0; n < s.length(); n++)
-	{
-		char c = s[n];
-		t += c;
-		if (t.length() > 900 && c == '\n')
-		{
-			LOG_ANDROID_INFO(t.c_str());
-			t = "";
-		}
-	}
-	if (t.length() != 0)
-		LOG_ANDROID_INFO(t.c_str());
-}
-
+extern void LogLongText(std::string s);
 #endif
 
 
@@ -1058,7 +1040,13 @@ namespace bgfx
 		if (0 == bx::strCmpI(platform, "android") )
 		{
 			preprocessor.setDefine("BX_PLATFORM_ANDROID=1");
-			preprocessor.setDefine("BGFX_SHADER_LANGUAGE_GLSL=1");
+
+			//!!!!
+			preprocessor.setDefine(glslDefine);
+			//preprocessor.setDefine("BGFX_SHADER_LANGUAGE_SPIRV=1");
+
+			//preprocessor.setDefine("BGFX_SHADER_LANGUAGE_GLSL=130");
+			//preprocessor.setDefine("BGFX_SHADER_LANGUAGE_GLSL=1");
 		}
 		else if (0 == bx::strCmpI(platform, "asm.js") )
 		{
@@ -1492,6 +1480,11 @@ namespace bgfx
 							}
 
 #if 1
+
+//							//!!!!not tested
+//#ifdef ANDROID
+//							compiled = compileSPIRVShader(_options, 0, code, _writer);
+//#endif
 							code += preprocessor.m_preprocessed;
 
 							bx::write(_writer, uint16_t(0) );
@@ -1502,6 +1495,8 @@ namespace bgfx
 							bx::write(_writer, uint8_t(0) );
 
 							compiled = true;
+
+
 #else
 							code += _comment;
 							code += preprocessor.m_preprocessed;
@@ -1514,10 +1509,16 @@ namespace bgfx
 							code += _comment;
 							code += preprocessor.m_preprocessed;
 
-							if (0 != spirv || 0 != metal)
+							if (0 != metal)
 							{
 								//!!!!betauser
-								//compiled = compileSPIRVShader(_options, 0, code, _writer);
+								//compiled = compileMetalShader(_options, BX_MAKEFOURCC('M', 'T', 'L', 0), code, _writer);
+							}
+							else if (0 != spirv)
+							{
+//#ifdef ANDROID
+//								compiled = compileSPIRVShader(_options, 0, code, _writer);
+//#endif
 							}
 							else if (0 != pssl)
 							{
@@ -1572,6 +1573,76 @@ namespace bgfx
 							"#define shadow2DProj(_sampler, _coord) bgfxShadow2DProj(_sampler, _coord).x\n"
 							);
 					}
+
+					//!!!!new Vulkan test
+
+					//{
+					//	int locationCounter = 0;
+
+					//	for (InOut::const_iterator it = shaderInputs.begin(), itEnd = shaderInputs.end(); it != itEnd; ++it)
+					//	{
+					//		VaryingMap::const_iterator varyingIt = varyingMap.find(*it);
+					//		if (varyingIt != varyingMap.end())
+					//		{
+					//			const Varying& var = varyingIt->second;
+					//			const char* name = var.m_name.c_str();
+
+					//			if (0 == bx::strCmp(name, "a_", 2)
+					//				|| 0 == bx::strCmp(name, "i_", 2))
+					//			{
+					//				preprocessor.writef(
+					//					"layout(location=%d)in %s %s %s %s;\n"
+					//					, locationCounter
+					//					, var.m_precision.c_str()
+					//					, var.m_interpolation.c_str()
+					//					, var.m_type.c_str()
+					//					, name
+					//				);
+					//			}
+					//			else
+					//			{
+					//				preprocessor.writef(
+					//					"layout(location=%d)%s in %s %s %s;\n"
+					//					, locationCounter
+					//					, var.m_interpolation.c_str()
+					//					, var.m_precision.c_str()
+					//					, var.m_type.c_str()
+					//					, name
+					//				);
+					//			}
+
+					//			//!!!!может тут?
+					//		}
+
+					//		//!!!!тут? может выше
+					//		locationCounter++;
+					//	}
+					//}
+
+					//{
+					//	int locationCounter = 0;
+
+					//	for (InOut::const_iterator it = shaderOutputs.begin(), itEnd = shaderOutputs.end(); it != itEnd; ++it)
+					//	{
+					//		VaryingMap::const_iterator varyingIt = varyingMap.find(*it);
+					//		if (varyingIt != varyingMap.end())
+					//		{
+					//			const Varying& var = varyingIt->second;
+					//			preprocessor.writef("layout(location=%d)%s out %s %s;\n"
+					//				, locationCounter
+					//				, var.m_interpolation.c_str()
+					//				, var.m_type.c_str()
+					//				, var.m_name.c_str()
+					//			);
+
+					//			//!!!!может тут?
+					//		}
+
+					//		//!!!!тут? может выше
+					//		locationCounter++;
+					//	}
+					//}
+
 
 					for (InOut::const_iterator it = shaderInputs.begin(), itEnd = shaderInputs.end(); it != itEnd; ++it)
 					{
@@ -1977,7 +2048,22 @@ namespace bgfx
 						if (0 != glsl
 						||  0 != essl)
 						{
+
+							//!!!!
+//#ifdef ANDROID
+//
+//							bx::stringPrintf(code, "#version 310 es\n");
+//							//bx::stringPrintf(code, "#define attribute in\n");
+//							//bx::stringPrintf(code, "#define varying %s\n", 'f' == _options.shaderType ? "in" : "out" );
+//
+//							code += _comment;
+//							code += preprocessor.m_preprocessed;
+//
+//							compiled = compileSPIRVShader(_options, 0, code, _writer);
+//#endif
+
 							const bx::StringView preprocessedInput(preprocessor.m_preprocessed.c_str() );
+
 
 							//!!!!betauser
 							//if (!bx::strFind(preprocessedInput, "layout(std430").isEmpty()
@@ -2383,6 +2469,7 @@ namespace bgfx
 													un.num = num;
 													un.regIndex = 0;
 													un.regCount = num;
+
 													uniforms.push_back(un);
 												}
 											}
@@ -2404,11 +2491,9 @@ namespace bgfx
 										bx::write(_writer, un.regIndex);
 										bx::write(_writer, un.regCount);
 
-										//!!!!uy
-										//LogLongText((std::string("UNIFORM: ") + un.name));
-										//LOG_ANDROID_INFO((std::string("UNIFORM: ") + un.name + std::string(" ") +
-										//	std::string(getUniformTypeName(un.type)) + std::string(" ") + std::to_string(un.num) + std::string(" ") +
-										//	std::to_string(un.regIndex) + std::string(" ") + std::to_string(un.regCount)).c_str());
+										//!!!!new
+										bx::write(_writer, un.texComponent);
+										bx::write(_writer, un.texDimension);
 
 										BX_TRACE("%s, %s, %d, %d, %d"
 											, un.name.c_str()
@@ -2430,23 +2515,31 @@ namespace bgfx
 
 								compiled = true;
 
+
 								//code += _comment;
 								//code += preprocessor.m_preprocessed;
 
-//#ifdef __ANDROID__
-								//compiled = compileGLSLShader(_options, metal ? BX_MAKEFOURCC('M', 'T', 'L', 0) : essl, code, _writer);
-//#endif
+////#ifdef __ANDROID__
+//								//compiled = compileGLSLShader(_options, metal ? BX_MAKEFOURCC('M', 'T', 'L', 0) : essl, code, _writer);
+////#endif
 							}
+
 						}
 						else
 						{
 							code += _comment;
 							code += preprocessor.m_preprocessed;
 
-							if (0 != spirv || 0 != metal)
+							if (0 != metal)
 							{
 								//!!!!betauser
-								//compiled = compileSPIRVShader(_options, 0, code, _writer);
+								//compiled = compileMetalShader(_options, BX_MAKEFOURCC('M', 'T', 'L', 0), code, _writer);
+							}
+							else if (0 != spirv)
+							{
+//#ifdef ANDROID
+//								compiled = compileSPIRVShader(_options, 0, code, _writer);
+//#endif
 							}
 							else if (0 != pssl)
 							{

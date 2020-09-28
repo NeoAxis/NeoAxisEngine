@@ -257,15 +257,20 @@ namespace NeoAxis
 				//!!!!!
 				if( addNamespaceDeclaringTypeAssemblyName )
 				{
-					if( type.IsNested && type.DeclaringType != null )//!!!!! && !type.IsGenericType )
+					//!!!!new
+					var type2 = type;
+					if( type.IsArray )
+						type2 = type.GetElementType();
+
+					if( type2.IsNested && type2.DeclaringType != null )//!!!!! && !type.IsGenericType )
 					{
-						name.Append( GetNetTypeName( type.DeclaringType, displayName, addNamespaceDeclaringTypeAssemblyName ) );
+						name.Append( GetNetTypeName( type2.DeclaringType, displayName, addNamespaceDeclaringTypeAssemblyName ) );
 						//baseName = GetTypeOfNetType( type.DeclaringType ).Name;
 					}
 					else
 					{
 						//!!!maybe slowly. NetTypeInfo.Namespace is faster.
-						name.Append( type.Namespace );
+						name.Append( type2.Namespace );
 					}
 					name.Append( '.' );
 				}
@@ -1325,7 +1330,7 @@ namespace NeoAxis
 					if( string.IsNullOrEmpty( fromResource ) )
 						return;
 
-					var fromDirectory = Path.GetDirectoryName( fromResource );
+					var fromDirectory = PathUtility.GetDirectoryName( fromResource );
 
 					string resourceName2;
 					string path;
@@ -1349,7 +1354,7 @@ namespace NeoAxis
 					{
 						//!!!!slowly
 
-						resourceName = Path.Combine( fromDirectory, resourceName2 );
+						resourceName = PathUtility.Combine( fromDirectory, resourceName2 );
 
 						if( resourceName2.Contains( ".." ) )
 						{
@@ -1397,7 +1402,7 @@ namespace NeoAxis
 					if( string.IsNullOrEmpty( fromResource ) )
 						return;
 
-					var fromDirectory = Path.GetDirectoryName( fromResource );
+					var fromDirectory = PathUtility.GetDirectoryName( fromResource );
 
 					string resourceName2;
 					string path;
@@ -1421,7 +1426,7 @@ namespace NeoAxis
 					{
 						//!!!!slowly
 
-						resourceName = Path.Combine( fromDirectory, resourceName2 );
+						resourceName = PathUtility.Combine( fromDirectory, resourceName2 );
 
 						if( resourceName2.Contains( ".." ) )
 						{

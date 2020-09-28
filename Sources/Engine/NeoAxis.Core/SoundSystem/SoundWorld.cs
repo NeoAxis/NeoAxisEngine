@@ -91,11 +91,6 @@ namespace NeoAxis
 
 		static void CreateSoundWorldInstance()
 		{
-			//!!!!jh
-			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
-				EngineSettings.Init.SoundSystemDLL = "null";
-
-
 			if( string.Compare( EngineSettings.Init.SoundSystemDLL, "null", true ) != 0 )
 			{
 				string fullPath = "";

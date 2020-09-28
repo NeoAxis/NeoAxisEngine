@@ -295,6 +295,10 @@ vec4 bgfxTexelFetchOffset(BgfxSampler2D _sampler, ivec2 _coord, int _lod, ivec2 
 
 vec2 bgfxTextureSize(BgfxSampler2D _sampler, int _lod)
 {
+	////!!!!betauser
+	//uint x, y, z, levels;
+	//_sampler.m_texture.GetDimensions((uint)_lod, x, y, z, levels);
+	//return vec2((float)x, (float)y);
 	vec2 result;
 	_sampler.m_texture.GetDimensions(result.x, result.y);
 	return result;
@@ -340,10 +344,30 @@ vec4 bgfxTexelFetch(BgfxSampler3D _sampler, ivec3 _coord, int _lod)
 
 vec3 bgfxTextureSize(BgfxSampler3D _sampler, int _lod)
 {
+	////!!!!betauser
+	//uint x, y, z, levels;
+	//_sampler.m_texture.GetDimensions((uint)_lod, x, y, z, levels);
+	//return vec3((float)x, (float)y, (float)z);	
 	vec3 result;
 	_sampler.m_texture.GetDimensions(result.x, result.y, result.z);
 	return result;
 }
+
+/*
+//!!!!betauser
+vec3 bgfxTextureSize(BgfxSamplerCube _sampler, int _lod)
+{
+	vec3 texDim = vec3(0.0, 0.0, 0.0);
+	_sampler.m_texture.GetDimensions((uint)_lod, texDim.x, texDim.y, texDim.z);
+	return texDim;
+	//uint x, y, z, levels;
+	//_sampler.m_texture.GetDimensions((uint)_lod, x, y, z, levels);
+	//return vec3((float)x, (float)y, (float)z);	
+	//vec3 result;
+	//_sampler.m_texture.GetDimensions(result.x, result.y, result.z);
+	//return result;
+}
+*/
 
 #		define SAMPLER2D(_name, _reg) \
 			uniform SamplerState _name ## Sampler : REGISTER(s, _reg); \
@@ -539,6 +563,27 @@ vec4  mod(vec4  _a, vec4  _b) { return _a - _b * floor(_a / _b); }
 #	define atan2(_x, _y) atan(_x, _y)
 #	define mul(_a, _b) ( (_a) * (_b) )
 #	define saturate(_x) clamp(_x, 0.0, 1.0)
+
+//!!!!betauser
+
+#	define SAMPLER2D(_name, _reg)       layout(binding=_reg) uniform sampler2D _name
+#	define SAMPLER2DMS(_name, _reg)     layout(binding=_reg) uniform sampler2DMS _name
+#	define SAMPLER3D(_name, _reg)       layout(binding=_reg) uniform sampler3D _name
+#	define SAMPLERCUBE(_name, _reg)     layout(binding=_reg) uniform samplerCube _name
+#	define SAMPLER2DSHADOW(_name, _reg) layout(binding=_reg) uniform sampler2DShadow _name
+#	define SAMPLERCUBESHADOW(_name, _reg) layout(binding=_reg) uniform samplerCubeShadow _name
+
+#	define SAMPLER2DARRAY(_name, _reg)       layout(binding=_reg) uniform sampler2DArray _name
+#	define SAMPLER2DMSARRAY(_name, _reg)     layout(binding=_reg) uniform sampler2DMSArray _name
+#	define SAMPLERCUBEARRAY(_name, _reg)     layout(binding=_reg) uniform samplerCubeArray _name
+#	define SAMPLER2DARRAYSHADOW(_name, _reg) layout(binding=_reg) uniform sampler2DArrayShadow _name
+
+#		define ISAMPLER2D(_name, _reg) layout(binding=_reg) uniform isampler2D _name
+#		define USAMPLER2D(_name, _reg) layout(binding=_reg) uniform usampler2D _name
+#		define ISAMPLER3D(_name, _reg) layout(binding=_reg) uniform isampler3D _name
+#		define USAMPLER3D(_name, _reg) layout(binding=_reg) uniform usampler3D _name
+
+/*
 #	define SAMPLER2D(_name, _reg)       uniform sampler2D _name
 #	define SAMPLER2DMS(_name, _reg)     uniform sampler2DMS _name
 #	define SAMPLER3D(_name, _reg)       uniform sampler3D _name
@@ -554,6 +599,7 @@ vec4  mod(vec4  _a, vec4  _b) { return _a - _b * floor(_a / _b); }
 #		define USAMPLER2D(_name, _reg) uniform usampler2D _name
 #		define ISAMPLER3D(_name, _reg) uniform isampler3D _name
 #		define USAMPLER3D(_name, _reg) uniform usampler3D _name
+*/
 
 #	define texture2DBias(_sampler, _coord, _bias)      texture2D(_sampler, _coord, _bias)
 #	define textureCubeBias(_sampler, _coord, _bias)    textureCube(_sampler, _coord, _bias)
@@ -563,6 +609,11 @@ vec4  mod(vec4  _a, vec4  _b) { return _a - _b * floor(_a / _b); }
 #		define texture2DArray(_sampler, _coord) texture(_sampler, _coord)
 #		define texture3D(_sampler, _coord)      texture(_sampler, _coord)
 #	endif // BGFX_SHADER_LANGUAGE_GLSL >= 130
+
+//!!!!betauser
+#define textureCubeLod(_sampler, _coord, _level) textureLod(_sampler, _coord, float(_level))
+#define shadow2DArray(_sampler, _coord) texture(_sampler, _coord)
+#define shadowCube(_sampler, _coord) texture(_sampler, _coord)
 
 vec3 instMul(vec3 _vec, mat3 _mtx) { return mul(_vec, _mtx); }
 vec3 instMul(mat3 _mtx, vec3 _vec) { return mul(_mtx, _vec); }
@@ -663,7 +714,7 @@ uniform vec4  u_alphaRef4;
 #define GLES 1
 #endif
 
-#if GLES
+#ifdef GLSL
 
 vec4 lerp(vec4 x, vec4 y, float s) { return mix(x,y,s); }
 vec3 lerp(vec3 x, vec3 y, float s) { return mix(x,y,s); }
@@ -671,13 +722,35 @@ vec2 lerp(vec2 x, vec2 y, float s) { return mix(x,y,s); }
 float lerp(float x, float y, float s) { return mix(x,y,s); }
 
 float frac(float x) { return fract(x); }
+vec2 frac(vec2 x) { return vec2(fract(x.x), fract(x.y)); }
+vec3 frac(vec3 x) { return vec3(fract(x.x), fract(x.y), fract(x.z)); }
+vec4 frac(vec4 x) { return vec4(fract(x.x), fract(x.y), fract(x.z), fract(x.w)); }
 
 uint asuint(float _x) { return floatBitsToUint(_x); }
 uvec2 asuint(vec2 _x) { return floatBitsToUint(_x); }
 uvec3 asuint(vec3 _x) { return floatBitsToUint(_x); }
 uvec4 asuint(vec4 _x) { return floatBitsToUint(_x); }
 
+void sincos(float x, out float s, out float c)
+{
+	s = sin(x);
+	c = cos(x);
+}
+
+vec2 vec2_splat(int _x) { return vec2(_x, _x); }
+vec3 vec3_splat(int _x) { return vec3(_x, _x, _x); }
+vec4 vec4_splat(int _x) { return vec4(_x, _x, _x, _x); }
+
 #endif
+
+mat3 mtxFromRows(float _00, float _01, float _02, float _10, float _11, float _12, float _20, float _21, float _22)
+{
+#if BGFX_SHADER_LANGUAGE_GLSL
+	return transpose(mat3(_00, _01, _02, _10, _11, _12, _20, _21, _22));
+#else
+	return mat3(_00, _01, _02, _10, _11, _12, _20, _21, _22);
+#endif // BGFX_SHADER_LANGUAGE_GLSL
+}
 
 
 

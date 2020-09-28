@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
+using NeoAxis.Input;
 
 namespace NeoAxis
 {
@@ -13,6 +14,7 @@ namespace NeoAxis
 	{
 		bool cursorInsideArea;
 		bool pushed;
+		object touchDown;
 
 		/////////////////////////////////////////
 
@@ -123,7 +125,7 @@ namespace NeoAxis
 			{
 				pushed = true;
 				Capture = true;
-				UpdateValueByMouse();
+				UpdateValueByCursor();
 				return true;
 			}
 
@@ -144,6 +146,10 @@ namespace NeoAxis
 
 		bool CursorIsInArea()
 		{
+			//touch
+			if( touchDown != null )
+				return true;
+
 			//control rectangle
 			if( !( new Rectangle( Vector2.Zero, new Vector2( 1, 1 ) ) ).Contains( MousePosition ) )
 				return false;
@@ -161,7 +167,49 @@ namespace NeoAxis
 			if( EnabledInHierarchy && VisibleInHierarchy && !ReadOnlyInHierarchy )
 				cursorInsideArea = CursorIsInArea();
 			if( pushed && EnabledInHierarchy )
-				UpdateValueByMouse();
+				UpdateValueByCursor();
+		}
+
+		protected override bool OnTouch( TouchData e )
+		{
+			switch( e.Action )
+			{
+			case TouchData.ActionEnum.Down:
+				if( VisibleInHierarchy && EnabledInHierarchy && !ReadOnlyInHierarchy && touchDown == null )
+				{
+					GetScreenRectangle( out var rect );
+					var rectInPixels = rect * ParentContainer.Viewport.SizeInPixels.ToVector2();
+					var distanceInPixels = rectInPixels.GetPointDistance( e.PositionInPixels.ToVector2() );
+
+					var item = new TouchData.TouchDownRequestToProcessTouch( this, 0, distanceInPixels, null,
+						delegate ( UIControl sender, TouchData touchData, object anyData )
+						{
+							//start touch
+							touchDown = e.PointerIdentifier;
+							UpdateValueByCursor( e.Position );
+						} );
+					e.TouchDownRequestToControlActions.Add( item );
+				}
+				break;
+
+			case TouchData.ActionEnum.Up:
+				if( touchDown != null && ReferenceEquals( e.PointerIdentifier, touchDown ) )
+					touchDown = null;
+				break;
+
+			case TouchData.ActionEnum.Move:
+				if( touchDown != null && ReferenceEquals( e.PointerIdentifier, touchDown ) )
+					UpdateValueByCursor( e.Position );
+				break;
+
+			//case TouchData.ActionEnum.Cancel:
+			//	break;
+
+			//case TouchData.ActionEnum.Outside:
+			//	break;
+			}
+
+			return base.OnTouch( e );
 		}
 
 		protected override void OnUpdate( float delta )
@@ -194,11 +242,11 @@ namespace NeoAxis
 		//	return new Vector2( baseHeight * ParentContainer.AspectRatio, baseHeight );
 		//}
 
-		void UpdateValueByMouse()
+		void UpdateValueByCursor( Vector2? cursorScreenPosition = null )
 		{
 			var style = GetStyle();
 			var valuesRay = style.GetSliderValuesRayInScreenCoords( this );
-			var mouse = ConvertLocalToScreen( MousePosition );
+			Vector2 mouse = cursorScreenPosition != null ? cursorScreenPosition.Value : ConvertLocalToScreen( MousePosition );
 
 			double valueCoef = 0;
 			if( Vertical )

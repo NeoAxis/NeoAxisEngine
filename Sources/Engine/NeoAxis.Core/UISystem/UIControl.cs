@@ -1829,27 +1829,26 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		//OnTouchEventBefore
-		protected virtual bool OnTouchEvent( TouchEventData e ) { return false; }
+		protected virtual bool OnTouch( TouchData e ) { return false; }
 
-		public delegate void TouchEventDelegate( UIControl sender, TouchEventData e, ref bool handled );
-		//public event TouchEventDelegate TouchEventBefore;
-		public event TouchEventDelegate TouchEvent;
+		public delegate void TouchDelegate( UIControl sender, TouchData e, ref bool handled );
+		//public event TouchDelegate TouchBefore;
+		public event TouchDelegate Touch;
 
-		internal bool CallTouchEvent( TouchEventData e )
+		internal bool CallTouch( TouchData e )
 		{
 			foreach( UIControl control in GetControls( true ) )
 			{
 				if( control.EnabledInHierarchy && !control.RemoveFromParentQueued && control.Visible )
-					if( control.CallTouchEvent( e ) )
+					if( control.CallTouch( e ) )
 						return true;
 			}
 
-			if( OnTouchEvent( e ) )
+			if( OnTouch( e ) )
 				return true;
 
 			bool handled = false;
-			TouchEvent?.Invoke( this, e, ref handled );
+			Touch?.Invoke( this, e, ref handled );
 			if( handled )
 				return true;
 

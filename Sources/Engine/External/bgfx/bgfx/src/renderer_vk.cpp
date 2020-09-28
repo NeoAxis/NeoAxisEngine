@@ -15,6 +15,12 @@
 #	import <Metal/Metal.h>
 #endif // BX_PLATFORM_OSX
 
+//!!!!betauser
+#ifdef __ANDROID__
+#include <android/log.h>
+#define LOG_ANDROID_INFO(T) __android_log_print(ANDROID_LOG_INFO, "bgfx", T)
+#endif
+
 namespace bgfx { namespace vk
 {
 	static char s_viewName[BGFX_CONFIG_MAX_VIEWS][BGFX_CONFIG_MAX_VIEW_NAME];
@@ -5193,8 +5199,8 @@ VK_DESTROY
 			m_height    = ti.height;
 			m_depth     = ti.depth;
 			m_numLayers = ti.numLayers;
-			m_requestedFormat = bgfx::TextureFormat::Enum(imageContainer.m_format);
-			m_textureFormat = getViableTextureFormat(imageContainer);
+			m_requestedFormat = uint8_t(imageContainer.m_format);
+			m_textureFormat   = uint8_t(getViableTextureFormat(imageContainer) );
 			m_format = bimg::isDepth(bimg::TextureFormat::Enum(m_textureFormat) )
 				? s_textureFormat[m_textureFormat].m_fmtDsv
 				: (m_flags & BGFX_TEXTURE_SRGB) ? s_textureFormat[m_textureFormat].m_fmtSrgb : s_textureFormat[m_textureFormat].m_fmt

@@ -6,8 +6,12 @@ $output v_color0, v_texCoord0
 
 void main()
 {
-	//gl_Position = vec4(a_position.x * 2 - 1, (a_position.y * 2 - 1) * -1, 0, 1.0);
+	//!!!!
+	//gl_Position = vec4(a_position.x, -a_position.y, 0.0, 1.0);
+	//gl_Position = mul(u_viewProj, vec4(a_position.x, 1.0 - a_position.y, 0.0, 1.0) );
+	
 	gl_Position = vec4(a_position, 1.0);
+	////gl_Position = vec4(a_position.x * 2 - 1, (a_position.y * 2 - 1) * -1, 0, 1.0);
 
 	//gl_Position = mul(u_modelViewProj, vec4(a_position, 1.0) );
 	v_texCoord0 = a_texcoord0;

@@ -1,6 +1,7 @@
 $input v_texCoord0
 
 #include "../../Common.sh"
+#include "../../FragmentFunctions.sh"
 
 uniform mat4 invViewProj;
 uniform vec4 cameraPosition;
@@ -24,14 +25,14 @@ SAMPLER2D(s_gBuffer2Texture, 8);
 
 SAMPLER2D(s_gBuffer0Texture, 9);
 
-#include "..\..\PBRFilament\common_types.sh"
-#include "..\..\PBRFilament\common_math.sh"
-#include "..\..\PBRFilament\brdf.sh"
-#include "..\..\PBRFilament\PBRFilament.sh"
+#include "../../PBRFilament/common_types.sh"
+#include "../../PBRFilament/common_math.sh"
+#include "../../PBRFilament/brdf.sh"
+#include "../../PBRFilament/PBRFilament.sh"
 
 void main()
 {
-	vec3 resultColor = vec3_splat(0.0);
+	vec3 resultColor = vec3_splat(0);
 
 	BRANCH
 	if(any(ambientLightPower.rgb)) //if ((ambientLightPower.r +  ambientLightPower.g + ambientLightPower.b) > 0.0)
@@ -69,7 +70,7 @@ void main()
 		//material.emissive        = vec4(emissive, 0.0);
 
 		material.anisotropy = 0.0f;
-		material.anisotropyDirection = vec3_splat(0.0);
+		material.anisotropyDirection = vec3_splat(0);
 
 		material.clearCoat = 0;
 		material.clearCoatRoughness = 0;
@@ -78,7 +79,7 @@ void main()
 		PixelParams pixel;
 		getPBRFilamentPixelParams(material, pixel);
 		
-		setupPBRFilamentParams(material, vec3_splat(0.0), vec3_splat(0.0), normal, normal, toLight, toCamera, false);//gl_FrontFacing);
+		setupPBRFilamentParams(material, vec3_splat(0), vec3_splat(0), normal, normal, toLight, toCamera, false);//gl_FrontFacing);
 
 		EnvironmentTextureData data;
 		data.rotation = mat3(1,0,0,0,1,0,0,0,1);

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
+using NeoAxis.Input;
 
 namespace NeoAxis
 {
@@ -13,6 +14,7 @@ namespace NeoAxis
 	{
 		bool cursorInsideArea;
 		bool pushed;
+		object touchDown;
 
 		/////////////////////////////////////////
 
@@ -78,7 +80,7 @@ namespace NeoAxis
 			{
 				pushed = true;
 				Capture = true;
-				UpdateValueByMouse();
+				UpdateValueByCursor();
 				return true;
 			}
 
@@ -117,7 +119,49 @@ namespace NeoAxis
 			if( EnabledInHierarchy && VisibleInHierarchy && !ReadOnlyInHierarchy )
 				cursorInsideArea = CursorIsInArea();
 			if( pushed && EnabledInHierarchy )
-				UpdateValueByMouse();
+				UpdateValueByCursor();
+		}
+
+		protected override bool OnTouch( TouchData e )
+		{
+			switch( e.Action )
+			{
+			case TouchData.ActionEnum.Down:
+				if( VisibleInHierarchy && EnabledInHierarchy && !ReadOnlyInHierarchy && touchDown == null )
+				{
+					GetScreenRectangle( out var rect );
+					var rectInPixels = rect * ParentContainer.Viewport.SizeInPixels.ToVector2();
+					var distanceInPixels = rectInPixels.GetPointDistance( e.PositionInPixels.ToVector2() );
+
+					var item = new TouchData.TouchDownRequestToProcessTouch( this, 2, distanceInPixels, null,
+						delegate ( UIControl sender, TouchData touchData, object anyData )
+						{
+							//start touch
+							touchDown = e.PointerIdentifier;
+							UpdateValueByCursor( e.Position );
+						} );
+					e.TouchDownRequestToControlActions.Add( item );
+				}
+				break;
+
+			case TouchData.ActionEnum.Up:
+				if( touchDown != null && ReferenceEquals( e.PointerIdentifier, touchDown ) )
+					touchDown = null;
+				break;
+
+			case TouchData.ActionEnum.Move:
+				if( touchDown != null && ReferenceEquals( e.PointerIdentifier, touchDown ) )
+					UpdateValueByCursor( e.Position );
+				break;
+
+			//case TouchData.ActionEnum.Cancel:
+			//	break;
+
+			//case TouchData.ActionEnum.Outside:
+			//	break;
+			}
+
+			return base.OnTouch( e );
 		}
 
 		protected override void OnUpdate( float delta )
@@ -150,7 +194,7 @@ namespace NeoAxis
 		//	return new Vector2( baseHeight * ParentContainer.AspectRatio, baseHeight );
 		//}
 
-		void UpdateValueByMouse()
+		void UpdateValueByCursor( Vector2? cursorScreenPosition = null )
 		{
 			//!!!!может в стиль
 
@@ -159,18 +203,22 @@ namespace NeoAxis
 			//rectangle.LeftTop *= baseSize;
 			//rectangle.RightBottom *= baseSize;
 
+			var mouse = MousePosition;
+			if( cursorScreenPosition != null )
+				mouse = ConvertScreenToLocal( cursorScreenPosition.Value );
+
 			double valueCoef;
 
 			if( !Vertical )
 			{
-				valueCoef = MousePosition.X;
+				valueCoef = mouse.X;
 				valueCoef -= .5f;
 				valueCoef *= rectangle.Size.X / ( rectangle.Size.X - rectangle.Size.Y );
 				valueCoef += .5f;
 			}
 			else
 			{
-				valueCoef = MousePosition.Y;
+				valueCoef = mouse.Y;
 				valueCoef -= .5f;
 				valueCoef *= rectangle.Size.Y / ( rectangle.Size.Y - rectangle.Size.X );
 				valueCoef += .5f;

@@ -10,24 +10,12 @@ namespace NeoAxis
 	/// </summary>
 	public class CurveRoundedLine : CurveSpline
 	{
-		List<double> curvatureRadiuses = new List<double>();
-
-		//
-
 		public double GetCurvatureRadius( int index )
 		{
-			//return 1;
-
-			if( index >= 0 && index < curvatureRadiuses.Count )
-				return curvatureRadiuses[ index ];
+			var data = Points[ index ].additionalData;
+			if( data != null && data is double )
+				return (double)data;
 			return 0;
-		}
-
-		public void SetCurvatureRadius( int index, double value )
-		{
-			while( index >= curvatureRadiuses.Count )
-				curvatureRadiuses.Add( 0 );
-			curvatureRadiuses[ index ] = value;
 		}
 
 		static bool GetCirclePoint( Vector3 p1, Vector3 p2, Vector3 p3, Vector3 pointOnLine, double radius, out Vector3 result )

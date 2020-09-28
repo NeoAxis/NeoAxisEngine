@@ -420,10 +420,15 @@ namespace NeoAxis
 		/// </summary>
 		public static bool LimitedDevice
 		{
-			get
-			{
-				return CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS;
-			}
+			get { return CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS; }
+		}
+
+		/// <summary>
+		/// Android, iOS.
+		/// </summary>
+		public static bool MobileDevice
+		{
+			get { return CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS; }
 		}
 
 	}

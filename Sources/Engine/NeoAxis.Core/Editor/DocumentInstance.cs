@@ -48,7 +48,7 @@ namespace NeoAxis.Editor
 		//!!!!
 		public string Name
 		{
-			get { return Path.GetFileName( RealFileName ); }
+			get { return PathUtility.GetFileName( RealFileName ); }
 		}
 
 		//public DocumentWindow ParentDocument

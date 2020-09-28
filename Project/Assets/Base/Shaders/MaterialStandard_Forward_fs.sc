@@ -10,8 +10,6 @@ uniform vec4 u_renderOperationData[5];
 
 SAMPLER2D(s_materials, 1);
 
-vec4 materialStandardFragment[MATERIAL_STANDARD_FRAGMENT_SIZE];
-
 #ifdef DISPLACEMENT_CODE_PARAMETERS
 	DISPLACEMENT_CODE_PARAMETERS
 #endif
@@ -33,10 +31,10 @@ uniform vec4 u_environmentBlendingFactor;//.x. factor of the environment1 for re
 
 SAMPLER2D(s_brdfLUT, 6);
 
-#include "PBRFilament\common_types.sh"
-#include "PBRFilament\common_math.sh"
-#include "PBRFilament\brdf.sh"
-#include "PBRFilament\PBRFilament.sh"
+#include "PBRFilament/common_types.sh"
+#include "PBRFilament/common_math.sh"
+#include "PBRFilament/brdf.sh"
+#include "PBRFilament/PBRFilament.sh"
 
 #ifdef SHADING_MODEL_SPECULAR
 	#include "ShadingModelSpecular.sh"
@@ -83,20 +81,19 @@ SAMPLER2D(s_brdfLUT, 6);
 
 void main()
 {
-	bool isLayer = u_renderOperationData[3].z != 0;
+	bool isLayer = u_renderOperationData[3].z != 0.0;
 	
 	#if defined(BLEND_MODE_OPAQUE) || defined(BLEND_MODE_MASKED)
-		smoothLOD(gl_FragCoord, u_renderOperationData[2].w);
+		smoothLOD(getFragCoord(), u_renderOperationData[2].w);
 	#endif
 	#if defined(BLEND_MODE_TRANSPARENT) || defined(BLEND_MODE_ADD)
 	if(isLayer)
-		smoothLOD(gl_FragCoord, u_renderOperationData[2].w);
+		smoothLOD(getFragCoord(), u_renderOperationData[2].w);
 	#endif
-		
+
 	//get material data
-	int materialIndex = (int)u_renderOperationData[0].x;
-	for(int n=0;n<MATERIAL_STANDARD_FRAGMENT_SIZE;n++)
-		materialStandardFragment[n] = texelFetch(s_materials, ivec2((int)(materialIndex % 64) * 8 + n, (int)(materialIndex / 64)), 0);
+	vec4 materialStandardFragment[MATERIAL_STANDARD_FRAGMENT_SIZE];
+	getMaterialData(s_materials, u_renderOperationData, materialStandardFragment);	
 	
 	vec3 worldPosition = v_worldPosition;
 	vec3 inputWorldNormal = normalize(v_worldNormal);
@@ -108,7 +105,7 @@ void main()
 	//displacement
 	vec2 displacementOffset = vec2_splat(0);
 #if defined(DISPLACEMENT_CODE_BODY) && defined(DISPLACEMENT)
-	displacementOffset = getParallaxOcclusionMappingOffset(v_texCoord01.xy, v_eyeTangentSpace, v_normalTangentSpace);
+	displacementOffset = getParallaxOcclusionMappingOffset(v_texCoord01.xy, v_eyeTangentSpace, v_normalTangentSpace, u_materialDisplacementScale);
 #endif //DISPLACEMENT_CODE_BODY
 	
 	//lightWorldDirection
@@ -120,7 +117,7 @@ void main()
 	#endif
 
 	//objectLightAttenuation
-	float objectLightAttenuation = 1;
+	float objectLightAttenuation = 1.0;
 	#if defined(LIGHT_TYPE_SPOTLIGHT) || defined(LIGHT_TYPE_POINT)
 		float lightDistance = length(u_lightPosition.xyz - worldPosition);
 		objectLightAttenuation = getLightAttenuation(u_lightAttenuation, lightDistance);
@@ -134,7 +131,7 @@ void main()
 	#endif
 
 	vec3 lightMaskMultiplier = vec3(1,1,1);
-	float shadowMultiplier = 1;
+	float shadowMultiplier = 1.0;
 	
 	//!!!!
 	//BRANCH
@@ -189,7 +186,7 @@ void main()
 	float subsurfacePower = u_materialSubsurfacePower;
 	vec3 sheenColor = u_materialSheenColor;
 	vec3 subsurfaceColor = u_materialSubsurfaceColor;
-	float ambientOcclusion = 1;
+	float ambientOcclusion = 1.0;
 	float rayTracingReflection = u_materialRayTracingReflection;
 	vec3 emissive = u_materialEmissive;
 	float shininess = u_materialShininess;
@@ -209,17 +206,17 @@ void main()
 
 	//apply color parameter
 	baseColor *= v_colorParameter.xyz;
-	if(u_materialUseVertexColor != 0)
+	if(u_materialUseVertexColor != 0.0)
 		baseColor *= v_color0.xyz;
 	baseColor = max(baseColor, vec3_splat(0));
 	opacity *= v_colorParameter.w;
-	if(u_materialUseVertexColor != 0)
+	if(u_materialUseVertexColor != 0.0)
 		opacity *= v_color0.w;
 	opacity = saturate(opacity);
 
 	//opacity dithering
 #ifdef OPACITY_DITHERING
-	opacity = dither(gl_FragCoord, opacity);
+	opacity = dither(getFragCoord(), opacity);
 #endif
 
 	//opacity masked clipping
@@ -231,7 +228,7 @@ void main()
 
 #ifndef SHADING_MODEL_UNLIT
 
-	if(any(anisotropyDirection))
+	if(any2(anisotropyDirection))
 		anisotropyDirection = expand(anisotropyDirection);
 	else
    		anisotropyDirection = u_materialAnisotropyDirection;
@@ -242,9 +239,9 @@ void main()
 	vec3 tangent = normalize(v_tangent);
 	vec3 bitangent = normalize(v_bitangent);
 
-	if(any(normal))
+	if(any2(normal))
 	{
-		mat3 tbn = transpose(mat3(tangent, bitangent, inputWorldNormal));
+		mat3 tbn = transpose(mtxFromRows(tangent, bitangent, inputWorldNormal));
 		normal = expand(normal);
 		normal.z = sqrt(max(1.0 - dot(normal.xy, normal.xy), 0.0));
 		normal = normalize(mul(tbn, normal));
@@ -258,7 +255,7 @@ void main()
 
 	//clearCoatNormal
 #ifdef MATERIAL_HAS_CLEAR_COAT
-	if(any(clearCoatNormal))
+	if(any2(clearCoatNormal))
 	{
 		clearCoatNormal = expand(clearCoatNormal);
 		clearCoatNormal.z = sqrt(max(1.0 - dot(clearCoatNormal.xy, clearCoatNormal.xy), 0.0));
@@ -269,7 +266,7 @@ void main()
 	
 	//!!!!
 	//BRANCH
-	//if(any(lightColor) && ambientOcclusion != 0 )
+	//if(any2(lightColor) && ambientOcclusion != 0 )
 	{
 		//toLight
 		vec3 toLight;
@@ -299,14 +296,14 @@ void main()
 			#else				
 				EnvironmentTextureData data1;
 				data1.rotation = u_environmentTexture1Rotation;
-				data1.multiplier = u_environmentTexture1Multiplier;
+				data1.multiplier = u_environmentTexture1Multiplier.xyz;
 				
 				EnvironmentTextureData data2;
 				data2.rotation = u_environmentTexture2Rotation;
-				data2.multiplier = u_environmentTexture2Multiplier;
+				data2.multiplier = u_environmentTexture2Multiplier.xyz;
 				
-				vec3 envColor1 = iblEnvironment_SpecularSM(vec3_splat(0), 0, s_environmentTexture1, data1, lightColor);
-				vec3 envColor2 = iblEnvironment_SpecularSM(vec3_splat(0), 0, s_environmentTexture2, data2, lightColor);
+				vec3 envColor1 = iblEnvironment_SpecularSM(vec3_splat(0), 0.0, s_environmentTexture1, data1, lightColor);
+				vec3 envColor2 = iblEnvironment_SpecularSM(vec3_splat(0), 0.0, s_environmentTexture2, data2, lightColor);
 				
 				//vec3 envColor1 = iblEnvironment_SpecularSM(vec3_splat(0), 0, s_environmentTexture1, lightColor);
 				//vec3 envColor2 = iblEnvironment_SpecularSM(vec3_splat(0), 0, s_environmentTexture2, lightColor);
@@ -362,16 +359,16 @@ void main()
 				
 				EnvironmentTextureData data1;
 				data1.rotation = u_environmentTexture1Rotation;
-				data1.multiplier = u_environmentTexture1Multiplier;
+				data1.multiplier = u_environmentTexture1Multiplier.xyz;
 				
 				EnvironmentTextureData data2;
 				data2.rotation = u_environmentTexture2Rotation;
-				data2.multiplier = u_environmentTexture2Multiplier;
+				data2.multiplier = u_environmentTexture2Multiplier.xyz;
 
 				vec3 color1 = iblDiffuse(material, pixel, s_environmentTextureIBL1, data1, s_environmentTexture1, data1) + 
-					iblSpecular(material, pixel, vec3_splat(0), 0, s_environmentTexture1, data1);
+					iblSpecular(material, pixel, vec3_splat(0), 0.0, s_environmentTexture1, data1);
 				vec3 color2 = iblDiffuse(material, pixel, s_environmentTextureIBL2, data2, s_environmentTexture2, data2) + 
-					iblSpecular(material, pixel, vec3_splat(0), 0, s_environmentTexture2, data2);
+					iblSpecular(material, pixel, vec3_splat(0), 0.0, s_environmentTexture2, data2);
 			
 				//vec3 color1 = iblDiffuse(material, pixel, s_environmentTextureIBL1, s_environmentTexture1) +
 				//	iblSpecular(material, pixel, vec3_splat(0), 0, s_environmentTexture1);
@@ -383,7 +380,7 @@ void main()
 				resultColor.rgb = mix(color2, color1, u_environmentBlendingFactor.x);
 				//resultColor.rgb = u_envFactor * color1 + (1 - u_envFactor) * color2;
 			#endif
-
+			
 			resultColor.rgb *= lightColor;
 
 		#endif //PBR
@@ -408,9 +405,9 @@ void main()
 	//resultColor.a
 	#if defined(BLEND_MODE_OPAQUE) || defined(BLEND_MODE_MASKED)
 		#ifndef LIGHT_TYPE_AMBIENT
-			resultColor.a = 1;
+			resultColor.a = 1.0;
 		#else
-			resultColor.a = 0;
+			resultColor.a = 0.0;
 		#endif
 	#endif
 	#ifdef BLEND_MODE_TRANSPARENT
@@ -420,10 +417,10 @@ void main()
 		if(!isLayer)
 		{
 			float lodValue = u_renderOperationData[2].w;
-			if(lodValue != 0)
+			if(lodValue != 0.0)
 			{
-				if(lodValue > 0)
-					resultColor.a *= 1 - lodValue;
+				if(lodValue > 0.0)
+					resultColor.a *= 1.0 - lodValue;
 				else
 					resultColor.a *= -lodValue;
 			}
@@ -472,7 +469,7 @@ void main()
 			switch(u_viewportOwnerDebugMode)
 			{
 			case DebugMode_Geometry: resultColor.rgb = vec3_splat(abs(dot(inputWorldNormal, shading_view))); break;
-			case DebugMode_Surface: resultColor.rgb = vec3_splat(shading_NoV); break;				
+			case DebugMode_Surface: resultColor.rgb = vec3_splat(shading_NoV); break;
 			case DebugMode_BaseColor: resultColor.rgb = baseColor; break;
 			case DebugMode_Metallic: resultColor.rgb = vec3_splat(metallic); break;
 			case DebugMode_Roughness: resultColor.rgb = vec3_splat(roughness); break;
@@ -498,8 +495,9 @@ void main()
 		vec2 aa = (v_position.xy / v_position.w) * 0.5 + 0.5;
 		vec2 bb = (v_previousPosition.xy / v_previousPosition.w) * 0.5 + 0.5;
 		vec2 velocity = aa - bb;
-		gl_FragData[2] = vec4(velocity.x,velocity.y,0,resultColor.a);
+		gl_FragData[2] = vec4(velocity.x,velocity.y,0.0,resultColor.a);
 	#else
 		gl_FragData[2] = vec4(0,0,0,0);
 	#endif
+	
 }

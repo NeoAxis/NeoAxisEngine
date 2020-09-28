@@ -562,7 +562,7 @@ namespace NeoAxis
 			foreach( char c in new string( Path.GetInvalidFileNameChars() ) + new string( Path.GetInvalidPathChars() ) )
 				name = name.Replace( c.ToString(), "_" );
 			name = name.Replace( " ", "_" );
-			return Path.Combine( ComponentUtility.GetOwnedFileNameOfComponent( this ) + "_Files", name + ".hdr" );
+			return PathUtility.Combine( ComponentUtility.GetOwnedFileNameOfComponent( this ) + "_Files", name + ".hdr" );
 		}
 
 		public void UpdateCaptureCubemap()

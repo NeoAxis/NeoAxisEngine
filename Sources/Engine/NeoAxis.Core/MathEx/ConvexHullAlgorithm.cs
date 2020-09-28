@@ -2660,7 +2660,7 @@ namespace NeoAxis
 			////!!!!
 			//Log.Info( "before: " + resultVertices.Length.ToString() + " " + resultIndices.Length.ToString() );
 
-			MathAlgorithms.MergeEqualVertices( ref resultVertices, ref resultIndices, epsilon );
+			MathAlgorithms.MergeEqualVertices( ref resultVertices, ref resultIndices, epsilon, true );
 
 			////!!!!
 			//Log.Info( "after: " + resultVertices.Length.ToString() + " " + resultIndices.Length.ToString() );

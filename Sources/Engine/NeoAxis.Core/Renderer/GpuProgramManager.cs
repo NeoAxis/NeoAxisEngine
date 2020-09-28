@@ -95,10 +95,10 @@ namespace NeoAxis
 			//	model = ShaderCompiler.ShaderModel.DX12_SM6;
 			//else if( Bgfx.GetCurrentBackend() == RendererBackend.Direct3D11 )
 			//	model = ShaderCompiler.ShaderModel.DX11_SM5;
-			else if( Bgfx.GetCurrentBackend() == RendererBackend.Vulkan )
-				model = ShaderCompiler.ShaderModel.Vulkan;
 			else if( Bgfx.GetCurrentBackend() == RendererBackend.OpenGLES )
 				model = ShaderCompiler.ShaderModel.OpenGLES;
+			else if( Bgfx.GetCurrentBackend() == RendererBackend.Vulkan )
+				model = ShaderCompiler.ShaderModel.Vulkan;
 			else
 				Log.Fatal( "GpuProgramManager: Shader model is not specified. Bgfx.GetCurrentBackend() == {0}.", Bgfx.GetCurrentBackend() );
 
@@ -230,14 +230,6 @@ namespace NeoAxis
 			if( Bgfx.GetCurrentBackend() == RendererBackend.Noop )
 				return new GpuProgram( type, new Shader() );
 
-			//!!!!ut
-			//if( !sourceFile.Contains( "CanvasRenderer" ) )
-			if( sourceFile.Contains( "Deferred" ) || sourceFile.Contains( "Shadow" ) )
-			{
-				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
-					return new GpuProgram( type, new Shader() );
-			}
-
 			//!!!!
 			EngineThreading.CheckMainThread();
 
@@ -258,9 +250,6 @@ namespace NeoAxis
 				}
 				compileArguments2 = s.ToString();
 			}
-
-			//if( RenderingSystem.IsOpenGL() )
-			//	compileArguments2 += " -DOPENGL";
 
 			//LongOperationCallbackManager.CallCallback( "GpuProgramCacheManager: AddProgram" );
 

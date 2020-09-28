@@ -30,10 +30,10 @@ void main()
 	noiseUV += seeds.xy;
 	vec4 noise = texture2D(s_noiseTexture, noiseUV);
 
-	float m = (random2(noise.xy) + 1) / 2;
+	float m = (random2(noise.xy) + 1.0) / 2.0;
 	m = lerp(multiply.x, multiply.y, m);
 
-	float a = (random2(noise.yz) + 1) / 2;
+	float a = (random2(noise.yz) + 1.0) / 2.0;
 	a = lerp(add.x, add.y, a);
 
 //!!!!!clamp? optionally?

@@ -322,7 +322,7 @@ rem copy ..\..\_Compilation\Android\x64\NativeMemoryManager.Android\libNativeMem
       <OmitFramePointers>false</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <AdditionalIncludeDirectories>./;../include;../alc;../common;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__ANDROID__;ANDROID;NDEBUG;AL_BUILD_LIBRARY;AL_ALEXT_PROTOTYPES;AL_NO_UID_DEFS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__ANDROID__;ANDROID;_DEBUG;AL_BUILD_LIBRARY;AL_ALEXT_PROTOTYPES;AL_NO_UID_DEFS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -422,7 +422,7 @@ rem copy ..\..\_Compilation\Android\$(Platform)\NativeMemoryManager.Android\libN
       </DataExecutionPrevention>
       <ImportLibrary>$(TargetDir)\libNativeMemoryManager.lib</ImportLibrary>
       <DebuggerSymbolInformation>true</DebuggerSymbolInformation>
-      <Soname>$(OutDir)libNativeMemoryManager.a</Soname>
+      <Soname>$(OutDir)libOpenAL.a</Soname>
       <VerboseOutput>false</VerboseOutput>
     </Link>
     <PostBuildEvent>
@@ -477,8 +477,8 @@ rem copy ..\..\_Compilation\Android\x64\NativeMemoryManager.Android\libNativeMem
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__ANDROID__;ANDROID;NDEBUG;NATIVEMEMORYMANAGER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>./;../include;../alc;../common;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__ANDROID__;ANDROID;NDEBUG;AL_BUILD_LIBRARY;AL_ALEXT_PROTOTYPES;AL_NO_UID_DEFS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -487,9 +487,10 @@ rem copy ..\..\_Compilation\Android\x64\NativeMemoryManager.Android\libNativeMem
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>None</DebugInformationFormat>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <ExceptionHandling>Enabled</ExceptionHandling>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)libNativeMemoryManager.so</OutputFile>
+      <OutputFile>$(OutDir)libOpenAL.so</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -498,10 +499,11 @@ rem copy ..\..\_Compilation\Android\x64\NativeMemoryManager.Android\libNativeMem
       </DataExecutionPrevention>
       <ImportLibrary>$(TargetDir)\libNativeMemoryManager.lib</ImportLibrary>
       <DebuggerSymbolInformation>OmitAllSymbolInformation</DebuggerSymbolInformation>
+      <LibraryDependencies>OpenSLES;$(StlLibraryName);%(LibraryDependencies)</LibraryDependencies>
+      <AdditionalOptions>-lm %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>copy ..\..\_Compilation\Android\$(Platform)\NativeMemoryManager.Android\libNativeMemoryManager.so "..\..\..\Project\Sources\NeoAxis.Player.Android\lib\arm64-v8a\"
-rem copy ..\..\_Compilation\Android\$(Platform)\NativeMemoryManager.Android\libNativeMemoryManager.a ..\Lib\Android\$(Platform)</Command>
+      <Command>copy ..\..\..\..\_Compilation\Android\$(Platform)\OpenAL.Android\libOpenAL.so "..\..\..\..\..\Project\Sources\NeoAxis.Player.Android\lib\arm64-v8a\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

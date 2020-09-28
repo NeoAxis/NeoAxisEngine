@@ -36,6 +36,11 @@ namespace SharpBgfx {
         Metal,
 
         /// <summary>
+        /// NVN
+        /// </summary>
+        NVN,
+
+        /// <summary>
         /// OpenGL ES
         /// </summary>
         OpenGLES,
@@ -50,6 +55,9 @@ namespace SharpBgfx {
         /// </summary>
         Vulkan,
 
+        /// <summary>
+        /// WebGPU
+        /// </summary>
         WebGPU,
 
         /// <summary>

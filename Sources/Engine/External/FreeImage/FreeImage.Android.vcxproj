@@ -160,9 +160,11 @@ if errorlevel 1 goto VCEnd</Command>
     <ClCompile>
       <AdditionalIncludeDirectories>Source;Source\FreeImageToolkit;Source\LibJPEG;Source\LibOpenJPEG;Source\LibPNG;Source\LibRawLite;Source\LibRawLite\dcraw;Source\LibRawLite\internal;Source\LibRawLite\libraw;Source\LibRawLite\src;Source\LibTIFF;Source\LibWebP;Source\OpenEXR;Source\OpenEXR\Half;Source\OpenEXR\Iex;Source\OpenEXR\IexMath;Source\OpenEXR\IlmImf;Source\OpenEXR\IlmThread;Source\OpenEXR\Imath;Source\ZLib;Source\Freeimage;$(Sysroot)\usr\include;$(StlIncludeDirectories);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling>Enabled</ExceptionHandling>
-      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;ANDROID;OPJ_STATIC;FREEIMAGE_LIB;_CRT_SECURE_NO_DEPRECATE;LIBRAW_NODLL;USE_JPIP;NDEBUG;PNG_ARM_NEON_OPT=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;ANDROID;NDEBUG;OPJ_STATIC;FREEIMAGE_LIB;_CRT_SECURE_NO_DEPRECATE;LIBRAW_NODLL;USE_JPIP;NDEBUG;PNG_ARM_NEON_OPT=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>-Wno-c++11-narrowing %(AdditionalOptions)</AdditionalOptions>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <Optimization>MinSize</Optimization>
     </ClCompile>
     <PostBuildEvent>
       <Command>set LibOutDir=$(SolutionDir)Engine\Lib\Android\$(Platform)
