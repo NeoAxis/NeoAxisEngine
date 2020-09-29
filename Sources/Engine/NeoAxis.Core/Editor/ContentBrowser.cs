@@ -5443,6 +5443,9 @@ namespace NeoAxis.Editor
 		// drag drop process from tree
 		private void treeView_ItemDrag( object sender, ItemDragEventArgs e )
 		{
+			if( ReadOnlyHierarchy )
+				return;
+
 			//!!!!!multiselection. drop
 			ItemTreeNode itemNode = null;
 			{
