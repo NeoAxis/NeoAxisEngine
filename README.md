@@ -28,13 +28,13 @@ Royalty-free platform with source code provided.
 <h2>Building</h2>
 Build NeoAxis from sources is very easy.
 <ul>
-<li>You need Visual Studio 2019 with .NET Core 3.1 installed to compile C# code. Use NeoAxis.Managed.All.VS2019.Windows.sln.</li>
+<li>You need Visual Studio 2019 with .NET Core 3.1. Use NeoAxis.Managed.All.VS2019.Windows.sln.</li>
 <li>The native code is already compiled.</li>
 <li>Download Sci-fi Demo and Nature Demo from the Asset Store window in the editor.</li>
 </ul>
 How build for other platforms see Building.txt.
 
-To compile project assemblies can use Visual Studio Code, Rider. Use NeoAxis.Managed.ProjectOnly.AnyIDE.sln.
+To compile project assemblies you can use Visual Studio Code, Rider. Use NeoAxis.Managed.ProjectOnly.AnyIDE.sln.
 
 <h2>Programming tips</h2>
 <ul>
