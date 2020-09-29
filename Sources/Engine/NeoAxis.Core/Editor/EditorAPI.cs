@@ -319,6 +319,9 @@ namespace NeoAxis.Editor
 			//event
 			EditorActionGetStateEvent?.Invoke( context );
 
+			if( !EditorUtility.PerformEditorActionVisibleFilter( action ) )
+				context.Enabled = false;
+
 			//context.Enabled = true;
 
 			return context;

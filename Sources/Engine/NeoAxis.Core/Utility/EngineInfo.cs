@@ -42,10 +42,8 @@ namespace NeoAxis
 			get { return "Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica."; }
 		}
 
-		public static string OriginalName
-		{
-			get { return "NeoAxis Engine"; }
-		}
+		public static bool SpecialAppMode { get; set; } = false;
+		public static string OriginalName { get; set; } = "NeoAxis Engine";
 
 		public static string NameWithoutVersion
 		{
@@ -64,7 +62,10 @@ namespace NeoAxis
 			get
 			{
 				Version v = Assembly.GetExecutingAssembly().GetName().Version;
-				return NameWithoutVersion + $" {v.Major}.{v.Minor} ({WWW})";
+				var result = NameWithoutVersion + $" {v.Major}.{v.Minor}";
+				if( !SpecialAppMode )
+					result += $" ({WWW})";
+				return result;
 			}
 		}
 

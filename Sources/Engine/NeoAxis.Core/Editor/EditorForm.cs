@@ -462,7 +462,7 @@ namespace NeoAxis.Editor
 			string projectName = "";
 			var c = ProjectSettings.Get;//.GetComponent<Component_ProjectSettings_General>();
 			if( c != null )
-				projectName = c.ProjectName;
+				projectName = c.ProjectName.Value.Trim();
 
 			var postFix = "";// " " + ( EngineApp.IsProPlan ? "Pro" : "Personal" );
 

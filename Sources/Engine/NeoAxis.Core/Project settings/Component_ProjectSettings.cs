@@ -19,6 +19,10 @@ namespace NeoAxis
 	[EditorDocumentWindow( typeof( ObjectSettingsWindow ) )]
 	public class Component_ProjectSettings : Component
 	{
+		public static ESet<string> HidePropertiesForSpecialAppMode = new ESet<string>();
+
+		//
+
 		protected override void OnDispose()
 		{
 			base.OnDispose();
@@ -58,6 +62,11 @@ namespace NeoAxis
 					if( context == null || !( context is MetadataGetMembersContextForPage ) )
 						skip = true;
 
+					//special app mode
+					if( !EngineInfo.SpecialAppMode && member.Name == nameof( ExtendedMode ) )
+						skip = true;
+					if( !ExtendedMode && HidePropertiesForSpecialAppMode.Contains( member.Name ) )
+						skip = true;
 
 					if( member.Name == "Name" || member.Name == "Enabled" )
 						skip = true;
@@ -100,6 +109,20 @@ namespace NeoAxis
 				}
 			}
 		}
+
+		/// <summary>
+		/// Whether is enabled the extended mode of the app (NeoAxis Engine mode).
+		/// </summary>
+		[DefaultValue( false )]
+		[Category( "General" )]
+		public Reference<bool> ExtendedMode
+		{
+			get { if( _extendedMode.BeginGet() ) ExtendedMode = _extendedMode.Get( this ); return _extendedMode.value; }
+			set { if( _extendedMode.BeginSet( ref value ) ) { try { ExtendedModeChanged?.Invoke( this ); } finally { _extendedMode.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ExtendedMode"/> property value changes.</summary>
+		public event Action<Component_ProjectSettings> ExtendedModeChanged;
+		ReferenceField<bool> _extendedMode = false;
 
 		/// <summary>
 		/// The name of the project.
@@ -715,6 +738,9 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		/// <summary>
+		/// Whether to launch the Player in fullscreen mode.
+		/// </summary>
 		[DefaultValue( false )]
 		[Category( "Simulation" )]
 		public Reference<bool> RunSimulationInFullscreen

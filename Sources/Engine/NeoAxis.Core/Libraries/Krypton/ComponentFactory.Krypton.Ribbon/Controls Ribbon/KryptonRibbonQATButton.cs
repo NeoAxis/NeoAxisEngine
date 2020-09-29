@@ -160,7 +160,7 @@ namespace ComponentFactory.Krypton.Ribbon
                     OnPropertyChanged("Visible");
 
                     // Must try and layout to show change
-                    if (_ribbon != null)
+                    if( _ribbon != null)
                     {
                         _ribbon.PerformNeedPaint(true);
                         _ribbon.UpdateQAT();

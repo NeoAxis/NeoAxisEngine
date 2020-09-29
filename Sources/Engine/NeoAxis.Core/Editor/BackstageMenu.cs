@@ -243,7 +243,7 @@ namespace NeoAxis.Editor
 
 		void InfoUpdate()
 		{
-			kryptonTextBoxInfoName.Text = ProjectSettings.Get != null ? ProjectSettings.Get.ProjectName.Value : "";
+			kryptonTextBoxInfoName.Text = ProjectSettings.Get != null ? ProjectSettings.Get.ProjectName.Value.Trim() : "";
 			kryptonTextBoxInfoLocation.Text = VirtualFileSystem.Directories.Project;
 		}
 

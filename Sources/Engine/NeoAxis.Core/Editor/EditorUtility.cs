@@ -414,5 +414,42 @@ namespace NeoAxis.Editor
 				return prefix;
 			return component.Parent.Components.GetUniqueName( prefix, false, 2 );
 		}
+
+		///////////////////////////////////////////////
+
+		public delegate void ComponentDisplayInEditorFilterDelegate( Component obj, ref bool display );
+		public static event ComponentDisplayInEditorFilterDelegate ComponentDisplayInEditorFilter;
+
+		public static bool PerformComponentDisplayInEditorFilter( Component obj )
+		{
+			var result = true;
+			ComponentDisplayInEditorFilter?.Invoke( obj, ref result );
+			return result;
+		}
+
+		///////////////////////////////////////////////
+
+		public delegate void RibbonTabVisibleFilterDelegate( EditorRibbonDefaultConfiguration.Tab tab, ref bool visible );
+		public static event RibbonTabVisibleFilterDelegate RibbonTabVisibleFilter;
+
+		public static bool PerformRibbonTabVisibleFilter( EditorRibbonDefaultConfiguration.Tab tab )
+		{
+			var result = true;
+			RibbonTabVisibleFilter?.Invoke( tab, ref result );
+			return result;
+		}
+
+		///////////////////////////////////////////////
+
+		public delegate void EditorActionVisibleFilterDelegate( EditorAction action, ref bool visible );
+		public static event EditorActionVisibleFilterDelegate EditorActionVisibleFilter;
+
+		public static bool PerformEditorActionVisibleFilter( EditorAction action )
+		{
+			var result = true;
+			EditorActionVisibleFilter?.Invoke( action, ref result );
+			return result;
+		}
+
 	}
 }

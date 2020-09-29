@@ -450,7 +450,7 @@ namespace NeoAxis.Editor
 								//add (with new order)
 								foreach( var childComponent in component.Components )
 								{
-									if( childComponent.DisplayInEditor && childComponent.TypeSettingsIsPublic() )
+									if( childComponent.DisplayInEditor && childComponent.TypeSettingsIsPublic() && EditorUtility.PerformComponentDisplayInEditorFilter( childComponent ) )
 									{
 										//bool skip = false;
 
@@ -1289,7 +1289,7 @@ namespace NeoAxis.Editor
 					//add (with new order)
 					foreach( var childComponent in component.Components )
 					{
-						if( childComponent.DisplayInEditor && childComponent.TypeSettingsIsPublic() )
+						if( childComponent.DisplayInEditor && childComponent.TypeSettingsIsPublic() && EditorUtility.PerformComponentDisplayInEditorFilter( childComponent ) )
 						{
 							//bool skip = false;
 

@@ -497,6 +497,9 @@ namespace NeoAxis.Editor
 
 								if( item3.Enabled )
 									existsEnabled = true;
+
+								if( !EditorUtility.PerformEditorActionVisibleFilter( action ) )
+									item3.Visible = false;
 							}
 						}
 					}
@@ -524,6 +527,8 @@ namespace NeoAxis.Editor
 							visible = selectedType != null && tab.VisibleOnlyForType.IsAssignableFrom( selectedType );
 						if( tab.VisibleCondition != null && visible )
 							visible = tab.VisibleCondition();
+						if( visible && !EditorUtility.PerformRibbonTabVisibleFilter( tab ) )
+							visible = false;
 
 						if( ribbonTab.Visible != visible )
 						{
@@ -581,6 +586,9 @@ namespace NeoAxis.Editor
 											button.ButtonType = GroupButtonType.Check;
 
 										button.Checked = state.Checked;
+
+										if( !EditorUtility.PerformEditorActionVisibleFilter( action ) )
+											button.Visible = false;
 									}
 								}
 
@@ -601,6 +609,9 @@ namespace NeoAxis.Editor
 											slider.Control.SetValue( action.Slider.Value );
 											//trackBar.Value = action.Slider.Value;
 										}
+
+										if( !EditorUtility.PerformEditorActionVisibleFilter( action ) )
+											slider.Visible = false;
 									}
 								}
 
@@ -677,6 +688,9 @@ namespace NeoAxis.Editor
 
 											action.ListBox.SelectIndex = null;
 										}
+
+										if( !EditorUtility.PerformEditorActionVisibleFilter( action ) )
+											listBox.Visible = false;
 
 										//{
 										//	int selectIndex = action.ListBox.SelectedIndex;
