@@ -44,6 +44,8 @@ To compile project assemblies you can use Visual Studio Code, Rider. Use NeoAxis
 
 <h2>License</h2>
 
+The engine is a free and open source product, although it has a non-standard license.
+
 Shortly about the license. You can use NeoAxis Engine for free without any future royalties and distribute source codes subject to the following conditions:
 <ul>
 <li>1. When publishing your product, need to add "Made with NeoAxis Engine (<span>www</span>.neoaxis.com)" with the product information and in its credits.
