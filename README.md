@@ -25,8 +25,7 @@ Royalty-free platform with source code provided.
 <li>...</li>
 </ul>
 
-<h2>Building</h2>
-Build NeoAxis from sources is very easy.
+<h2>Building (very easy)</h2>
 <ul>
 <li>You need Visual Studio 2019 with .NET Core 3.1. Use NeoAxis.Managed.All.VS2019.Windows.sln.</li>
 <li>The native code is already compiled.</li>
