@@ -12,16 +12,16 @@ Royalty-free platform with source code provided.
 
 <h2>Supported platforms by the NeoAxis editor</h2>
 <ul>
-<li>Windows</li>
+<li>Windows 7+ x64</li>
 <li>Mac (WIP)</li>
 <li>Linux (WIP)</li>
 </ul>
 
 <h2>Supported platforms</h2>
 <ul>
-<li>Windows</li>
-<li>Android</li>
-<li>UWP (Universal Windows, Xbox, Windows Store)</li>
+<li>Windows 7+ x64</li>
+<li>Android 8.0+ ARM64 (Oreo)</li>
+<li>UWP x64 (Universal Windows, Xbox, Windows Store)</li>
 <li>...</li>
 </ul>
 
