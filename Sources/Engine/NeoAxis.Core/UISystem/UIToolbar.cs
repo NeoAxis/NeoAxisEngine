@@ -12,6 +12,9 @@ namespace NeoAxis
 	/// </summary>
 	public class UIToolbar : UIControl
 	{
+		/// <summary>
+		/// Indents around buttons.
+		/// </summary>
 		[DefaultValue( "Units 8 8 8 8" )]
 		public Reference<UIMeasureValueRectangle> BorderIndents
 		{
@@ -22,6 +25,9 @@ namespace NeoAxis
 		public event Action<UIToolbar> BorderIndentsChanged;
 		ReferenceField<UIMeasureValueRectangle> _borderIndents = new UIMeasureValueRectangle( UIMeasure.Units, 8, 8, 8, 8 );
 
+		/// <summary>
+		/// Indents between buttons.
+		/// </summary>
 		[DefaultValue( "Units 4 4" )]
 		public Reference<UIMeasureValueVector2> IndentBetweenItems
 		{

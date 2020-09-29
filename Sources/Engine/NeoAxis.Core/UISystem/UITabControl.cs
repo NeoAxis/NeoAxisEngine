@@ -16,6 +16,9 @@ namespace NeoAxis
 
 		//
 
+		/// <summary>
+		/// The class of the buttons.
+		/// </summary>
 		[DefaultValue( null )]
 		public Reference<UIButton> Button
 		{
@@ -59,6 +62,9 @@ namespace NeoAxis
 		public event Action<UITabControl> SideChanged;
 		ReferenceField<SideEnum> _side = SideEnum.Top;
 
+		/// <summary>
+		/// Indents between buttons.
+		/// </summary>
 		[DefaultValue( "Units 4 4" )]
 		public Reference<UIMeasureValueVector2> ButtonIndents
 		{

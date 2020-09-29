@@ -12,6 +12,9 @@ namespace NeoAxis
 	/// </summary>
 	public class UITooltip : Component
 	{
+		/// <summary>
+		/// The text of the tooltip.
+		/// </summary>
 		[DefaultValue( "Tooltip" )]
 		public Reference<string> Text
 		{
@@ -22,6 +25,9 @@ namespace NeoAxis
 		public event Action<UITooltip> TextChanged;
 		ReferenceField<string> _text = "Tooltip";
 
+		/// <summary>
+		/// Time delay before appearing in seconds.
+		/// </summary>
 		[DefaultValue( 0.5 )]
 		public Reference<double> InitialDelay
 		{
