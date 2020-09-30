@@ -264,7 +264,7 @@
       <DebuggerSymbolInformation>OmitAllSymbolInformation</DebuggerSymbolInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(OutDir)$(TargetName)$(TargetExt) "..\..\..\..\..\..\..\..\Project\Sources\NeoAxis.Player.Android\lib\arm64-v8a\"</Command>
+      <Command>copy "$(OutDir)$(TargetName)$(TargetExt)" "..\..\..\..\..\..\..\..\Project\Sources\NeoAxis.Player.Android\lib\arm64-v8a\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -373,7 +373,7 @@
       <DebuggerSymbolInformation>OmitAllSymbolInformation</DebuggerSymbolInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(OutDir)$(TargetName)$(TargetExt) "..\..\..\..\..\..\..\..\Project\Sources\NeoAxis.Player.Android\lib\arm64-v8a\"</Command>
+      <Command>copy "$(OutDir)$(TargetName)$(TargetExt)" "..\..\..\..\..\..\..\..\Project\Sources\NeoAxis.Player.Android\lib\arm64-v8a\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -349,8 +349,8 @@ rem copy ..\..\_Compilation\Android\x64\NativeMemoryManager.Android\libNativeMem
     </Link>
     <PostBuildEvent />
     <PostBuildEvent>
-      <Command>copy ..\..\..\..\_Compilation\Android\$(Platform)\OpenAL.Android\libOpenAL.so "..\..\..\..\..\Project\Sources\NeoAxis.Player.Android\lib\arm64-v8a\"
-rem copy ..\..\_Compilation\Android\$(Platform)\NativeMemoryManager.Android\libNativeMemoryManager.a ..\Lib\Android\$(Platform)</Command>
+      <Command>copy "..\..\..\..\_Compilation\Android\$(Platform)\OpenAL.Android\libOpenAL.so" "..\..\..\..\..\Project\Sources\NeoAxis.Player.Android\lib\arm64-v8a\"
+rem copy "..\..\_Compilation\Android\$(Platform)\NativeMemoryManager.Android\libNativeMemoryManager.a" "..\Lib\Android\$(Platform)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -503,7 +503,7 @@ rem copy ..\..\_Compilation\Android\x64\NativeMemoryManager.Android\libNativeMem
       <AdditionalOptions>-lm %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>copy ..\..\..\..\_Compilation\Android\$(Platform)\OpenAL.Android\libOpenAL.so "..\..\..\..\..\Project\Sources\NeoAxis.Player.Android\lib\arm64-v8a\"</Command>
+      <Command>copy "..\..\..\..\_Compilation\Android\$(Platform)\OpenAL.Android\libOpenAL.so" "..\..\..\..\..\Project\Sources\NeoAxis.Player.Android\lib\arm64-v8a\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

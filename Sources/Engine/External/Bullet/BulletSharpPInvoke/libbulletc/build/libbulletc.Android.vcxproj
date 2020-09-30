@@ -545,8 +545,8 @@ rem copy ..\..\..\..\..\..\_Compilation\Android\x64\libbulletc.Android\libbullet
     </Link>
     <PostBuildEvent />
     <PostBuildEvent>
-      <Command>copy ..\..\..\..\..\..\_Compilation\Android\$(Platform)\libbulletc.Android\libbulletc.so "..\..\..\..\..\..\..\Project\Sources\NeoAxis.Player.Android\lib\arm64-v8a\"
-rem copy ..\..\..\..\..\..\_Compilation\Android\$(Platform)\libbulletc.Android\libbulletc.a ..\..\..\..\..\Lib\Android\$(Platform)\
+      <Command>copy "..\..\..\..\..\..\_Compilation\Android\$(Platform)\libbulletc.Android\libbulletc.so" "..\..\..\..\..\..\..\Project\Sources\NeoAxis.Player.Android\lib\arm64-v8a\"
+rem copy "..\..\..\..\..\..\_Compilation\Android\$(Platform)\libbulletc.Android\libbulletc.a" "..\..\..\..\..\Lib\Android\$(Platform)\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -698,8 +698,8 @@ rem copy ..\..\_Compilation\Android\x64\NativeMemoryManager.Android\NativeMemory
       <AdditionalOptions> -lm %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>copy ..\..\..\..\..\..\_Compilation\Android\$(Platform)\libbulletc.Android\libbulletc.so "..\..\..\..\..\..\..\Project\Sources\NeoAxis.Player.Android\lib\arm64-v8a\"
-rem copy ..\..\..\..\..\..\_Compilation\Android\$(Platform)\libbulletc.Android\libbulletc.a ..\..\..\..\..\Lib\Android\$(Platform)\
+      <Command>copy "..\..\..\..\..\..\_Compilation\Android\$(Platform)\libbulletc.Android\libbulletc.so" "..\..\..\..\..\..\..\Project\Sources\NeoAxis.Player.Android\lib\arm64-v8a\"
+rem copy "..\..\..\..\..\..\_Compilation\Android\$(Platform)\libbulletc.Android\libbulletc.a" "..\..\..\..\..\Lib\Android\$(Platform)\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
