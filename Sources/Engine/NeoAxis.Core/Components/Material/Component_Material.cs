@@ -1009,7 +1009,7 @@ namespace NeoAxis
 
 			string DetectTextureTypeNameByFileName( string name )
 			{
-				if( name.Contains( "_albedo" ) || /*name.Contains( "_diffuse" ) || name.Contains( "_diff_" ) ||*/ name.Contains( "_color" ) || name.Contains( "_base_color" ) || name.Contains( "_basecolor" ) )
+				if( name.Contains( "_albedo" ) || name.Contains( "_diffuse" ) || name.Contains( "_diff_" ) || name.Contains( "_color" ) || name.Contains( "_base_color" ) || name.Contains( "_basecolor" ) )
 					return "BaseColor";
 
 				if( name.Contains( "_metallic" ) || name.Contains( "_metalness" ) )
@@ -1024,7 +1024,7 @@ namespace NeoAxis
 				if( name.Contains( "_displacement" ) || name.Contains( "_disp_" ) || name.Contains( "_height" ) )
 					return "Displacement";
 
-				if( name.Contains( "_ambientocclusion" ) || ( !name.Contains( "_rough_ao_" ) && name.Contains( "_ao_" ) ) )
+				if( name.Contains( "_ambientocclusion" ) || ( !name.Contains( "_rough_ao_" ) && name.Contains( "_ao" ) ) )
 					return "AmbientOcclusion";
 
 				if( name.Contains( "_emissive" ) || name.Contains( "_emission" ) )
