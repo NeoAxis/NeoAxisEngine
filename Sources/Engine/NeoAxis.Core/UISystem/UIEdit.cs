@@ -374,7 +374,7 @@ namespace NeoAxis
 		}
 
 		[Browsable( false )]
-		public string DisplayText
+		public virtual string DisplayText
 		{
 			get
 			{
