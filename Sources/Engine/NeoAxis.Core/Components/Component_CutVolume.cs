@@ -17,6 +17,9 @@ namespace NeoAxis
 			Cylinder
 		}
 
+		/// <summary>
+		/// The shape of the volume.
+		/// </summary>
 		[DefaultValue( ShapeEnum.Box )]
 		public Reference<ShapeEnum> Shape
 		{

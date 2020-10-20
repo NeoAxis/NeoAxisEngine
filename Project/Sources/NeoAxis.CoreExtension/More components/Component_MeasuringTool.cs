@@ -11,6 +11,9 @@ namespace NeoAxis
 	/// </summary>
 	public class Component_MeasuringTool : Component_ObjectInSpace
 	{
+		/// <summary>
+		/// The color of the line.
+		/// </summary>
 		[DefaultValue( "0 0 1" )]
 		public Reference<ColorValue> Color
 		{
@@ -21,6 +24,9 @@ namespace NeoAxis
 		public event Action<Component_MeasuringTool> ColorChanged;
 		ReferenceField<ColorValue> _color = new ColorValue( 0, 0, 1 );
 
+		/// <summary>
+		/// The thickness of the line.
+		/// </summary>
 		[DefaultValue( 0.05 )]
 		[Range( 0, 1, RangeAttribute.ConvenientDistributionEnum.Exponential )]
 		public Reference<double> Thickness
@@ -39,6 +45,9 @@ namespace NeoAxis
 			Sphere,
 		}
 
+		/// <summary>
+		/// The style of start cap.
+		/// </summary>
 		[DefaultValue( CapStyleEnum.Arrow )]
 		public Reference<CapStyleEnum> StartCapStyle
 		{
@@ -49,6 +58,9 @@ namespace NeoAxis
 		public event Action<Component_MeasuringTool> StartCapStyleChanged;
 		ReferenceField<CapStyleEnum> _startCapStyle = CapStyleEnum.Arrow;
 
+		/// <summary>
+		/// The style of end cap.
+		/// </summary>
 		[DefaultValue( CapStyleEnum.Arrow )]
 		public Reference<CapStyleEnum> EndCapStyle
 		{
@@ -59,6 +71,9 @@ namespace NeoAxis
 		public event Action<Component_MeasuringTool> EndCapStyleChanged;
 		ReferenceField<CapStyleEnum> _endCapStyle = CapStyleEnum.Arrow;
 
+		/// <summary>
+		/// Whether to display information text.
+		/// </summary>
 		[DefaultValue( true )]
 		public Reference<bool> DisplayText
 		{
@@ -72,10 +87,14 @@ namespace NeoAxis
 		public enum MeasureEnum
 		{
 			Units,
+			Meters,
 			Centimeters,
 			Inches,
 		}
 
+		/// <summary>
+		/// Units of display text.
+		/// </summary>
 		[DefaultValue( MeasureEnum.Units )]
 		public Reference<MeasureEnum> MeasureOfDisplayedLength
 		{
@@ -184,25 +203,38 @@ namespace NeoAxis
 			newBounds = new SpaceBounds( b );
 		}
 
+		public delegate void UpdateTextDelegate( Component_MeasuringTool sender, ref string text );
+		public event UpdateTextDelegate UpdateText;
+
 		void UpdateTextComponent()
 		{
 			var text = GetComponent<Component_Text2D>();
 			if( text != null )
 			{
+				text.Visible = DisplayText;
 				text.Transform = new Transform( GetCenterPosition() );
+
+				string value = "";
 
 				switch( MeasureOfDisplayedLength.Value )
 				{
 				case MeasureEnum.Units:
-					text.Text = GetLength().ToString( "F2" );
+					value = GetLength().ToString( "F2" );
+					break;
+				case MeasureEnum.Meters:
+					value = GetLength().ToString( "F2" ) + " m";
 					break;
 				case MeasureEnum.Centimeters:
-					text.Text = ( GetLength() / 0.01 ).ToString( "F2" ) + " cm";
+					value = ( GetLength() / 0.01 ).ToString( "F2" ) + " cm";
 					break;
 				case MeasureEnum.Inches:
-					text.Text = ( GetLength() / 0.0254 ).ToString( "F2" ) + " in";
+					value = ( GetLength() / 0.0254 ).ToString( "F2" ) + " in";
 					break;
 				}
+
+				UpdateText?.Invoke( this, ref value );
+
+				text.Text = value;
 			}
 		}
 

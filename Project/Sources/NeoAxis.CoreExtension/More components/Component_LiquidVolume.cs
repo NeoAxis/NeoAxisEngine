@@ -12,6 +12,9 @@ namespace NeoAxis
 	{
 		//!!!!Shape property
 
+		/// <summary>
+		/// The material of liquid surface.
+		/// </summary>
 		[DefaultValueReference( @"Base\Components\Liquid Volume\Water Surface.material" )]
 		public Reference<Component_Material> MaterialSurface
 		{
@@ -24,6 +27,9 @@ namespace NeoAxis
 
 		//!!!!MaterialUnderSurface
 
+		/// <summary>
+		/// The number of vertices per unit of the world.
+		/// </summary>
 		[DefaultValue( 0.0 )]
 		[Range( 0, 5, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
 		public Reference<double> TessellationPerUnit
@@ -35,6 +41,9 @@ namespace NeoAxis
 		public event Action<Component_LiquidVolume> TessellationPerUnitChanged;
 		ReferenceField<double> _tessellationPerUnit = 0.0;
 
+		/// <summary>
+		/// The number of UV tiles per unit of the world.
+		/// </summary>
 		[DefaultValue( 1.0 )]
 		[Range( 0.1, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 4 )]
 		[DisplayName( "UV Tiles Per Unit" )]
