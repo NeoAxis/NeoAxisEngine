@@ -37,6 +37,11 @@ namespace NeoAxis
 			Normal,
 			Depth,
 			MotionVector,
+			ShadowDirectionalLightSplit1,
+			ShadowDirectionalLightSplit2,
+			ShadowDirectionalLightSplit3,
+			ShadowDirectionalLightSplit4,
+			ShadowSpotlight,
 		}
 
 		/// <summary>
@@ -93,6 +98,26 @@ namespace NeoAxis
 		public event Action<Component_RenderingEffect_ShowRenderTarget> MotionMultiplierChanged;
 		ReferenceField<double> _motionMultiplier = 1000;
 
+		/// <summary>
+		/// The shadow multiplier applied.
+		/// </summary>
+		[Serialize]
+		[DefaultValue( 1.0 )]
+		[Range( 0, 100, RangeAttribute.ConvenientDistributionEnum.Exponential, 4 )]
+		public Reference<double> ShadowMultiplier
+		{
+			get { if( _shadowMultiplier.BeginGet() ) ShadowMultiplier = _shadowMultiplier.Get( this ); return _shadowMultiplier.value; }
+			set
+			{
+				if( value < 0 )
+					value = new Reference<double>( 0, value.GetByReference );
+				if( _shadowMultiplier.BeginSet( ref value ) ) { try { ShadowMultiplierChanged?.Invoke( this ); } finally { _shadowMultiplier.EndSet(); } }
+			}
+		}
+		/// <summary>Occurs when the <see cref="ShadowMultiplier"/> property value changes.</summary>
+		public event Action<Component_RenderingEffect_ShowRenderTarget> ShadowMultiplierChanged;
+		ReferenceField<double> _shadowMultiplier = 1;
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
@@ -108,6 +133,11 @@ namespace NeoAxis
 					return;
 				}
 				if( p.Name == nameof( MotionMultiplier ) && Texture.Value != TextureType.MotionVector )
+				{
+					skip = true;
+					return;
+				}
+				if( p.Name == nameof( ShadowMultiplier ) && !Texture.Value.ToString().Contains( "Shadow" ) )
 				{
 					skip = true;
 					return;
@@ -129,11 +159,36 @@ namespace NeoAxis
 				shader.FragmentProgramFileName = @"Base\Shaders\Effects\ShowRenderTarget_fs.sc";
 
 				string textureName = "";
+				double multiplier = 1.0;
+
 				switch( Texture.Value )
 				{
-				case TextureType.Normal: textureName = "normalTexture"; break;
-				case TextureType.Depth: textureName = "depthTexture"; break;
-				case TextureType.MotionVector: textureName = "motionTexture"; break;
+				case TextureType.Normal: 
+					textureName = "normalTexture"; 
+					break;
+
+				case TextureType.Depth: 
+					textureName = "depthTexture";
+					multiplier = DepthMultiplier;
+					break;
+
+				case TextureType.MotionVector: 
+					textureName = "motionTexture";
+					multiplier = MotionMultiplier;
+					break;
+
+				case TextureType.ShadowDirectionalLightSplit1:
+				case TextureType.ShadowDirectionalLightSplit2:
+				case TextureType.ShadowDirectionalLightSplit3:
+				case TextureType.ShadowDirectionalLightSplit4:
+					textureName = "shadowDirectional1";
+					multiplier = ShadowMultiplier;
+					break;
+
+				case TextureType.ShadowSpotlight:
+					textureName = "shadowSpotlight1";
+					multiplier = ShadowMultiplier;
+					break;
 				}
 				context.objectsDuringUpdate.namedTextures.TryGetValue( textureName, out var showTexture );
 				if( showTexture == null )
@@ -141,6 +196,9 @@ namespace NeoAxis
 					context.DynamicTexture_Free( finalTexture );
 					return;
 				}
+
+				if( Texture.Value.ToString().Contains( "ShadowDirectionalLight" ) )
+					shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "SHADOW_DIRECTIONAL_LIGHT" ) );
 
 				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/, actualTexture,
 					TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
@@ -151,8 +209,7 @@ namespace NeoAxis
 				shader.Parameters.Set( "nearClipDistance", (float)context.Owner.CameraSettings.NearClipDistance );
 				shader.Parameters.Set( "farClipDistance", (float)context.Owner.CameraSettings.FarClipDistance );
 				shader.Parameters.Set( "mode", (float)Texture.Value );
-				shader.Parameters.Set( "depthMultiplier", (float)DepthMultiplier );
-				shader.Parameters.Set( "motionMultiplier", (float)MotionMultiplier );
+				shader.Parameters.Set( "multiplier", (float)multiplier );
 
 				context.RenderQuadToCurrentViewport( shader );
 			}

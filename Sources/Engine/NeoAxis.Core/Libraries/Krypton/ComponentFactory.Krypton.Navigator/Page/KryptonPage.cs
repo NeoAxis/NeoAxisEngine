@@ -80,6 +80,12 @@ namespace ComponentFactory.Krypton.Navigator
         private Size _autoHiddenSlideSize;
 
         //!!!!betauser
+        internal bool needHideAfterLoading;
+
+        //!!!!betauser
+        internal Control associatedDockWindow;
+
+        //!!!!betauser
         //internal DateTime lastSelectedTime;
 
         #endregion

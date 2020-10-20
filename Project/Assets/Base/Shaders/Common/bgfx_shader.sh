@@ -492,7 +492,8 @@ float bgfxShadow2DProj(sampler2DShadow _sampler, vec4 _coord)
 #		define texture2DProj(_sampler, _coord) bgfxTexture2DProj(_sampler, _coord)
 
 #		define SAMPLER2DARRAY(_name, _reg) SAMPLER2D(_name, _reg)
-#		define texture2DArray(_sampler, _coord) texture2D(_sampler, (_coord).xy)
+//!!!!betauser
+//#		define texture2DArray(_sampler, _coord) texture2D(_sampler, (_coord).xy)
 #		define texture2DArrayLod(_sampler, _coord, _lod) texture2DLod(_sampler, _coord, _lod)
 
 #		define SAMPLER2DSHADOW(_name, _reg) uniform sampler2DShadow _name : REGISTER(s, _reg)

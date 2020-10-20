@@ -98,6 +98,8 @@
     <Compile Include="More components\Component_DestroyingSensor.cs" />
     <Compile Include="More components\Component_Fence.cs" />
     <Compile Include="More components\Component_Grid.cs" />
+    <Compile Include="More components\Component_LiquidVolume.cs" />
+    <Compile Include="More components\Component_MeasuringTool.cs" />
     <Compile Include="More components\Component_Pipe.cs" />
     <Compile Include="More components\Component_Plant.cs" />
     <Compile Include="More components\Component_RenderTargetInSpace.cs" />

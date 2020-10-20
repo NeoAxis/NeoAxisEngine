@@ -7,6 +7,8 @@ namespace NeoAxis.Editor
 {
 	public static class EditorFavorites
 	{
+		public static bool AllowFavorites = true;
+
 		[EngineConfig( "Editor", "Favorites" )]
 		public static string Favorites = "";
 

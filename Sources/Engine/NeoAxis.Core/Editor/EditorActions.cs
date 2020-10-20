@@ -69,6 +69,8 @@ namespace NeoAxis.Editor
 
 		public object UserData;
 
+		public bool CompletelyDisabled;
+
 		/////////////////////////////////////////
 
 		public enum CommonTypeEnum
@@ -445,6 +447,9 @@ namespace NeoAxis.Editor
 			return action;
 		}
 
+		//public delegate void RegisterEventDelegate( EditorAction action, ref bool remove );
+		//public static event RegisterEventDelegate RegisterEvent;
+
 		public static void Register( EditorAction action )
 		{
 			//init ribbonText
@@ -461,8 +466,29 @@ namespace NeoAxis.Editor
 					action.RibbonText = (name, "");
 			}
 
+			//bool allowRegister = true;
+			//RegisterEvent?.Invoke( action, ref allowRegister );
+			//if( !allowRegister )
+			//	return;
+
 			actions.Add( action.Name, action );
 		}
+
+		public static void CompleteDisable( string name )
+		{
+			var action = GetByName( name );
+			if( action != null )
+				action.CompletelyDisabled = true;
+		}
+
+		//public static void Unregister( string name )
+		//{
+		//	//var action = GetByName( name );
+		//	//if( action != null )
+		//	//{
+		//	actions.Remove( name );
+		//	//}
+		//}
 
 		public static void RegisterDockWindowAction( string name, (string, string) ribbonText, Type windowClass )
 		{

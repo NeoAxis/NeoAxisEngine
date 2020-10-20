@@ -424,5 +424,10 @@ namespace NeoAxis.Editor
 		{
 			return null;
 		}
+
+		public override Vector2I DefaultAutoHiddenSlideSize
+		{
+			get { return ( new Vector2( 280, 200 ) * EditorAPI.DPIScale ).ToVector2I(); }
+		}
 	}
 }

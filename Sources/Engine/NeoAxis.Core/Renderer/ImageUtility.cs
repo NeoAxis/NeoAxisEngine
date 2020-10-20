@@ -74,6 +74,22 @@ namespace NeoAxis
 					this.data = new byte[ sizeInBytes ];
 			}
 
+			public Image2D( PixelFormat format, Vector2I size, IntPtr data )
+			{
+				this.format = format;
+				this.size = size;
+
+				this.data = new byte[ SizeInBytes ];
+				if( data != IntPtr.Zero )
+				{
+					unsafe
+					{
+						fixed( byte* pData = this.data )
+							NativeUtility.CopyMemory( (IntPtr)pData, data, SizeInBytes );
+					}
+				}
+			}
+
 			public PixelFormat Format
 			{
 				get { return format; }
@@ -94,6 +110,11 @@ namespace NeoAxis
 				get { return size.X * size.Y; }
 			}
 
+			public int SizeInBytes
+			{
+				get { return TotalPixels * PixelFormatUtility.GetNumElemBytes( Format ); }
+			}
+
 			public unsafe Vector4F GetPixel( Vector2I position )
 			{
 				if( position.X < 0 || position.X >= size.X || position.Y < 0 || position.Y >= size.Y )
@@ -101,7 +122,7 @@ namespace NeoAxis
 
 				Vector4F value = new Vector4F( 1, 1, 1, 1 );
 
-				fixed ( byte* pData = data )
+				fixed( byte* pData = data )
 				{
 					switch( format )
 					{
@@ -181,15 +202,27 @@ namespace NeoAxis
 				if( position.X < 0 || position.X >= size.X || position.Y < 0 || position.Y >= size.Y )
 					return;
 
-				fixed ( byte* pData = data )
+				fixed( byte* pData = data )
 				{
 					switch( format )
 					{
 					case PixelFormat.Float32RGB:
-						var p = (Vector3F*)pData + position.Y * size.X + position.X;
-						p->X = value.X;
-						p->Y = value.Y;
-						p->Z = value.Z;
+						{
+							var p = (Vector3F*)pData + position.Y * size.X + position.X;
+							p->X = value.X;
+							p->Y = value.Y;
+							p->Z = value.Z;
+						}
+						break;
+
+					case PixelFormat.A8R8G8B8:
+						{
+							var p = pData + ( position.Y * size.X + position.X ) * 4;
+							p[ 3 ] = (byte)MathEx.Clamp( (int)( value.W * 255.0 ), 0, 255 );
+							p[ 2 ] = (byte)MathEx.Clamp( (int)( value.X * 255.0 ), 0, 255 );
+							p[ 1 ] = (byte)MathEx.Clamp( (int)( value.Y * 255.0 ), 0, 255 );
+							p[ 0 ] = (byte)MathEx.Clamp( (int)( value.Z * 255.0 ), 0, 255 );
+						}
 						break;
 
 					default:
@@ -200,11 +233,18 @@ namespace NeoAxis
 				}
 			}
 
-			public void Blit( Vector2I position, Image2D image )
+			public void Blit( Vector2I writePosition, Image2D image, Vector2I readPosition )
 			{
+				//!!!!slowly
+
 				for( int y = 0; y < image.Size.Y; y++ )
 					for( int x = 0; x < image.Size.X; x++ )
-						SetPixel( position + new Vector2I( x, y ), image.GetPixel( new Vector2I( x, y ) ) );
+						SetPixel( writePosition + new Vector2I( x, y ), image.GetPixel( readPosition + new Vector2I( x, y ) ) );
+			}
+
+			public void Blit( Vector2I writePosition, Image2D image )
+			{
+				Blit( writePosition, image, Vector2I.Zero );
 			}
 		}
 
@@ -282,7 +322,7 @@ namespace NeoAxis
 				IntPtr errPointer;
 
 				bool result;
-				fixed ( byte* pSourceBuffer = sourceBuffer )
+				fixed( byte* pSourceBuffer = sourceBuffer )
 				{
 					result = OgreImageManager.loadFromBuffer( RenderingSystem.realRoot,
 						(IntPtr)pSourceBuffer, sourceBuffer.Length, fileType, out pData, out dataSize,
@@ -392,7 +432,7 @@ namespace NeoAxis
 		{
 			unsafe
 			{
-				fixed ( byte* pData = data )
+				fixed( byte* pData = data )
 				{
 					return Save( realFileName, (IntPtr)pData, size, depth, format, numFaces, numMipmaps, out error );
 				}
@@ -409,18 +449,24 @@ namespace NeoAxis
 			Bicubic
 		};
 
-		public static void Scale( byte[] data, Vector2I size, PixelFormat format, Vector2I newSize,
-			Filters filter, out byte[] newData )
+		public static void Scale( byte[] data, Vector2I size, PixelFormat format, Vector2I newSize, Filters filter, out byte[] newData )
 		{
 			newData = new byte[ newSize.X * newSize.Y * PixelFormatUtility.GetNumElemBytes( format ) ];
 
 			unsafe
 			{
-				fixed ( byte* pData = data, pNewData = newData )
+				fixed( byte* pData = data, pNewData = newData )
 				{
-					OgreImageManager.scale( RenderingSystem.realRoot, (IntPtr)pData, size.X, size.Y,
-						format, newSize.X, newSize.Y, filter, (IntPtr)pNewData );
+					OgreImageManager.scale( RenderingSystem.realRoot, (IntPtr)pData, size.X, size.Y, format, newSize.X, newSize.Y, filter, (IntPtr)pNewData );
 				}
+			}
+		}
+
+		public static void Scale( IntPtr data, Vector2I size, PixelFormat format, Vector2I newSize, Filters filter, IntPtr newData )
+		{
+			unsafe
+			{
+				OgreImageManager.scale( RenderingSystem.realRoot, data, size.X, size.Y, format, newSize.X, newSize.Y, filter, newData );
 			}
 		}
 

@@ -78,19 +78,22 @@ namespace NeoAxis.Editor
 				}
 				if( action != null )
 				{
-					EventHandler clickHandler = delegate ( object s, EventArgs e2 )
+					if( !action.CompletelyDisabled )
 					{
-						var item2 = (KryptonContextMenuItem)s;
+						EventHandler clickHandler = delegate ( object s, EventArgs e2 )
+						{
+							var item2 = (KryptonContextMenuItem)s;
 
-						var action2 = item2.Tag as EditorAction;
-						if( action2 != null )
-							EditorAPI.EditorActionClick( EditorAction.HolderEnum.RibbonQAT, action2.Name );
-					};
+							var action2 = item2.Tag as EditorAction;
+							if( action2 != null )
+								EditorAPI.EditorActionClick( EditorAction.HolderEnum.RibbonQAT, action2.Name );
+						};
 
-					var item = new KryptonContextMenuItem( action.GetContextMenuText(), null, clickHandler );
-					//var item = new KryptonContextMenuItem( action.GetContextMenuText(), action.imageSmall, clickHandler );
-					item.Tag = action;
-					items.Add( item );
+						var item = new KryptonContextMenuItem( action.GetContextMenuText(), null, clickHandler );
+						//var item = new KryptonContextMenuItem( action.GetContextMenuText(), action.imageSmall, clickHandler );
+						item.Tag = action;
+						items.Add( item );
+					}
 				}
 				//separator
 				else if( child == null )
@@ -220,7 +223,7 @@ namespace NeoAxis.Editor
 							ribbonGroup.TextLine1 = groupSettings.Name;
 
 						ribbonGroup.DialogBoxLauncher = false;//!!!!для группы Transform можно было бы в настройки снеппинга переходить
-						ribbonTab.Groups.Add( ribbonGroup );
+															  //ribbonTab.Groups.Add( ribbonGroup );
 
 						foreach( var groupSettingsChild in groupSettings.Actions )
 						{
@@ -299,7 +302,7 @@ namespace NeoAxis.Editor
 							{
 								var action = EditorActions.GetByName( groupSettingsChild.Name );
 
-								if( action != null )
+								if( action != null && !action.CompletelyDisabled )
 								{
 									if( action.ActionType == EditorAction.ActionTypeEnum.Button || action.ActionType == EditorAction.ActionTypeEnum.DropDown )
 									{
@@ -430,9 +433,7 @@ namespace NeoAxis.Editor
 											browser.UseSelectedTreeNodeAsRootForList = false;
 											browser.Options.Breadcrumb = false;
 											browser.ListViewBorderDraw = BorderSides.Left | BorderSides.Right | BorderSides.Bottom;
-
-											browser.Options.TileImageSize = (int)( (float)23 * EditorAPI.DPIScale );
-											//browser.Options.TileImageSize = 28;// 32;
+											browser.Options.TileImageSize = 22;
 										}
 										else
 										{
@@ -458,6 +459,9 @@ namespace NeoAxis.Editor
 								}
 							}
 						}
+
+						if( ribbonGroup.Items.Count != 0 )
+							ribbonTab.Groups.Add( ribbonGroup );
 					}
 
 					//select

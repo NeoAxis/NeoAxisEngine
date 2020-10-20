@@ -155,7 +155,7 @@ namespace NeoAxis.Editor
 
 			foreach( var action in EditorActions.Actions )
 			{
-				if( action.ContextMenuSupport != MenuTypeEnum.None && action.ContextMenuSupport == menuType )
+				if( !action.CompletelyDisabled && action.ContextMenuSupport != MenuTypeEnum.None && action.ContextMenuSupport == menuType )
 				{
 					var state = EditorAPI.EditorActionGetState( EditorAction.HolderEnum.ContextMenu, action );
 					//bool enabled = false;
@@ -247,6 +247,10 @@ namespace NeoAxis.Editor
 
 					foreach( var item in ResourcesWindowItems.Items )
 					{
+						//custom filtering
+						if( !EditorUtility.PerformResourcesWindowItemVisibleFilter( item ) )
+							continue;
+
 						//skip
 						if( !typeof( Component ).IsAssignableFrom( item.Type ) )
 							continue;
@@ -324,6 +328,7 @@ namespace NeoAxis.Editor
 				}
 
 				//Favorites
+				if( EditorFavorites.AllowFavorites )
 				{
 					var favoritesItem = new KryptonContextMenuItem( EditorLocalization.Translate( "ContentBrowser.Group", "Favorites" ), null, null );
 
@@ -402,6 +407,10 @@ namespace NeoAxis.Editor
 
 					foreach( var item in ResourcesWindowItems.Items )
 					{
+						//custom filtering
+						if( !EditorUtility.PerformResourcesWindowItemVisibleFilter( item ) )
+							continue;
+
 						////skip
 						//if( !typeof( Component ).IsAssignableFrom( item.type ) )
 						//	continue;

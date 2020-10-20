@@ -158,3 +158,45 @@ vec3 getEnvironmentValueLod(samplerCube tex, EnvironmentTextureData data, vec3 t
 {
 	return textureCubeLod(tex, flipCubemapCoords(mul(data.rotation, texCoord)), lod).rgb * data.multiplier;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void cutVolumes(vec3 worldPosition)
+{
+#ifdef GLOBAL_CUT_VOLUME_SUPPORT
+
+	BRANCH
+	if(u_viewportCutVolumeSettings.x > 0.0)
+	{
+		int count = int(u_viewportCutVolumeSettings.x);
+		for(int n = 0; n < count; n++)
+		{
+			mat4 m = u_viewportCutVolumeData[n];
+			float shape = m[3][3];
+			m[3][3] = 1.0;
+
+			vec3 p = abs(mul(m, vec4(worldPosition, 1.0)).xyz);
+			
+			if(shape == 0.0)
+			{
+				//Box
+				if(p.x < 0.5 && p.y < 0.5 && p.z < 0.5)
+					discard;
+			}
+			else if(shape == 1.0)
+			{
+				//Sphere
+				if(length(p) < 0.5)
+					discard;
+			}
+			else
+			{
+				//Cylinder
+				if(p.x < 0.5 && length(p.yz) < 0.5)
+					discard;
+			}
+		}
+	}
+
+#endif
+}

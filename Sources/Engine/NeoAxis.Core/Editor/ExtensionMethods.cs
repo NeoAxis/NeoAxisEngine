@@ -19,11 +19,11 @@ namespace NeoAxis.Editor
 			return (DockWindow)page.Controls[ 0 ];
 		}
 
-		public static bool HasDockWindow( this KryptonPage page )
-		{
-			//Debug.Assert( page.Controls.Count <= 1 );
-			return page.Controls.Count != 0;
-		}
+		//public static bool HasDockWindow( this KryptonPage page )
+		//{
+		//	//Debug.Assert( page.Controls.Count <= 1 );
+		//	return page.Controls.Count != 0;
+		//}
 
 		//public static DockWindow GetParentDockWindow( this Control control )
 		//{
@@ -39,12 +39,12 @@ namespace NeoAxis.Editor
 		//	return null;
 		//}
 
-		internal static int GetTotalControlsCount( this Control control )
-		{
-			int count = 0;
-			foreach( Control child in control.Controls )
-				count += 1 + child.GetTotalControlsCount();
-			return count;
-		}
+		//internal static int GetTotalControlsCount( this Control control )
+		//{
+		//	int count = 0;
+		//	foreach( Control child in control.Controls )
+		//		count += 1 + child.GetTotalControlsCount();
+		//	return count;
+		//}
 	}
 }

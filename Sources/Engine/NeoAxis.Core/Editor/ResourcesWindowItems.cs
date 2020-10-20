@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Reflection;
+using System.Linq;
 
 namespace NeoAxis.Editor
 {
@@ -46,6 +47,8 @@ namespace NeoAxis.Editor
 			get { return groupDescriptions; }
 		}
 
+		public static event Action FixItems;
+
 		public static void PrepareItems()
 		{
 			if( itemsPrepared )
@@ -54,6 +57,8 @@ namespace NeoAxis.Editor
 			AddBaseItems();
 			//AddSolutionItems();
 			items.AddRange( itemsByAttribute );
+
+			FixItems?.Invoke();
 
 			itemsPrepared = true;
 		}
@@ -259,11 +264,17 @@ namespace NeoAxis.Editor
 				Items.Add( new Item( group + @"\Areas\Area", typeof( Component_Area ) ) );
 				Items.Add( new Item( group + @"\Areas\Surface Area", typeof( Component_SurfaceArea ) ) );
 
+				Items.Add( new Item( group + @"\Volumes\Cut Volume", typeof( Component_CutVolume ) ) );
+				if( MetadataManager.GetType( "NeoAxis.Component_LiquidVolume" ) != null )
+					Items.Add( new Item( group + @"\Volumes\Liquid Volume", MetadataManager.GetType( "NeoAxis.Component_LiquidVolume" ).GetNetType() ) );
+
 				Items.Add( new Item( group + @"\Sensors\Sensor", typeof( Component_Sensor ) ) );
 				if( MetadataManager.GetType( "NeoAxis.Component_DestroyingSensor" ) != null )
 					Items.Add( new Item( group + @"\Sensors\Destroying Sensor", MetadataManager.GetType( "NeoAxis.Component_DestroyingSensor" ).GetNetType() ) );
 
 				Items.Add( new Item( group + @"\Additional\Text 2D", typeof( Component_Text2D ) ) );
+				if( MetadataManager.GetType( "NeoAxis.Component_MeasuringTool" ) != null )
+					Items.Add( new Item( group + @"\Additional\Measuring Tool", MetadataManager.GetType( "NeoAxis.Component_MeasuringTool" ).GetNetType() ) );
 				if( MetadataManager.GetType( "NeoAxis.Component_Grid" ) != null )
 					Items.Add( new Item( group + @"\Additional\Grid", MetadataManager.GetType( "NeoAxis.Component_Grid" ).GetNetType() ) );
 				if( MetadataManager.GetType( "NeoAxis.Component_CurveInSpace" ) != null )
@@ -385,34 +396,76 @@ namespace NeoAxis.Editor
 
 			//Screen effects
 			{
-				var group = @"Base\Screen effects";
-
-				var list = new List<(string, string)>();
-				list.Add( ("Ambient Occlusion", "Component_RenderingEffect_AmbientOcclusion") );
-				list.Add( ("Antialiasing", "Component_RenderingEffect_Antialiasing") );
-				list.Add( ("Bloom", "Component_RenderingEffect_Bloom") );
-				list.Add( ("Color Grading", "Component_RenderingEffect_ColorGrading") );
-				list.Add( ("Depth Of Field", "Component_RenderingEffect_DepthOfField") );
-				list.Add( ("Gaussian Blur", "Component_RenderingEffect_GaussianBlur") );
-				list.Add( ("Grayscale", "Component_RenderingEffect_Grayscale") );
-				list.Add( ("Lens Effects", "Component_RenderingEffect_LensEffects") );
-				list.Add( ("Light Shafts", "Component_RenderingEffect_LightShafts") );
-				list.Add( ("Motion Blur", "Component_RenderingEffect_MotionBlur") );
-				list.Add( ("Noise", "Component_RenderingEffect_Noise") );
-				list.Add( ("Radial Blur", "Component_RenderingEffect_RadialBlur") );
-				list.Add( ("Screen Space Reflection", "Component_RenderingEffect_ScreenSpaceReflection") );
-				list.Add( ("Sharpen", "Component_RenderingEffect_Sharpen") );
-				list.Add( ("Show Render Target", "Component_RenderingEffect_ShowRenderTarget") );
-				list.Add( ("To LDR", "Component_RenderingEffect_ToLDR") );
-				list.Add( ("Tone Mapping", "Component_RenderingEffect_ToneMapping") );
-				list.Add( ("Vignetting", "Component_RenderingEffect_Vignetting") );
-
-				foreach( var item in list )
 				{
-					var type = MetadataManager.GetType( "NeoAxis." + item.Item2 );
-					if( type != null )
-						Items.Add( new Item( group + "\\" + item.Item1, type.GetNetType() ) );
+					var group = @"Base\Screen effects";
+
+					var list = new List<(string, string)>();
+					//list.Add( ("Ambient Occlusion", "Component_RenderingEffect_AmbientOcclusion") );
+					//list.Add( ("Antialiasing", "Component_RenderingEffect_Antialiasing") );
+					//list.Add( ("Bloom", "Component_RenderingEffect_Bloom") );
+					list.Add( ("Chromatic Aberration", "Component_RenderingEffect_ChromaticAberration") );
+					list.Add( ("Color Grading", "Component_RenderingEffect_ColorGrading") );
+					list.Add( ("Depth Of Field", "Component_RenderingEffect_DepthOfField") );
+					list.Add( ("Edge Detection", "Component_RenderingEffect_EdgeDetection") );
+					list.Add( ("Gaussian Blur", "Component_RenderingEffect_GaussianBlur") );
+					list.Add( ("Grayscale", "Component_RenderingEffect_Grayscale") );
+					//list.Add( ("Lens Effects", "Component_RenderingEffect_LensEffects") );
+					list.Add( ("Light Shafts", "Component_RenderingEffect_LightShafts") );
+					//list.Add( ("Motion Blur", "Component_RenderingEffect_MotionBlur") );
+					list.Add( ("Noise", "Component_RenderingEffect_Noise") );
+					list.Add( ("Pixelate", "Component_RenderingEffect_Pixelate") );
+					list.Add( ("Posterize", "Component_RenderingEffect_Posterize") );
+					list.Add( ("Radial Blur", "Component_RenderingEffect_RadialBlur") );
+					list.Add( ("Screen Space Reflection", "Component_RenderingEffect_ScreenSpaceReflection") );
+					//list.Add( ("Sharpen", "Component_RenderingEffect_Sharpen") );
+					//list.Add( ("Show Render Target", "Component_RenderingEffect_ShowRenderTarget") );
+					//list.Add( ("To LDR", "Component_RenderingEffect_ToLDR") );
+					//list.Add( ("Tone Mapping", "Component_RenderingEffect_ToneMapping") );
+					list.Add( ("Vignetting", "Component_RenderingEffect_Vignetting") );
+
+					foreach( var item in list )
+					{
+						var type = MetadataManager.GetType( "NeoAxis." + item.Item2 );
+						if( type != null )
+							Items.Add( new Item( group + "\\" + item.Item1, type.GetNetType() ) );
+					}
 				}
+
+				{
+					var group = @"Base\Screen effects\Added by default";
+
+					var list = new List<(string, string)>();
+					list.Add( ("Ambient Occlusion", "Component_RenderingEffect_AmbientOcclusion") );
+					list.Add( ("Antialiasing", "Component_RenderingEffect_Antialiasing") );
+					list.Add( ("Bloom", "Component_RenderingEffect_Bloom") );
+					list.Add( ("Lens Effects", "Component_RenderingEffect_LensEffects") );
+					list.Add( ("Motion Blur", "Component_RenderingEffect_MotionBlur") );
+					list.Add( ("Sharpen", "Component_RenderingEffect_Sharpen") );
+					list.Add( ("To LDR", "Component_RenderingEffect_ToLDR") );
+					list.Add( ("Tone Mapping", "Component_RenderingEffect_ToneMapping") );
+
+					foreach( var item in list )
+					{
+						var type = MetadataManager.GetType( "NeoAxis." + item.Item2 );
+						if( type != null )
+							Items.Add( new Item( group + "\\" + item.Item1, type.GetNetType() ) );
+					}
+				}
+
+				{
+					var group = @"Base\Screen effects\Special";
+
+					var list = new List<(string, string)>();
+					list.Add( ("Show Render Target", "Component_RenderingEffect_ShowRenderTarget") );
+
+					foreach( var item in list )
+					{
+						var type = MetadataManager.GetType( "NeoAxis." + item.Item2 );
+						if( type != null )
+							Items.Add( new Item( group + "\\" + item.Item1, type.GetNetType() ) );
+					}
+				}
+
 			}
 		}
 
@@ -465,6 +518,11 @@ namespace NeoAxis.Editor
 			//} );
 
 			//itemsByAttribute.AddRange( toAdd );
+		}
+
+		public static Item GetItemByPath( string path )
+		{
+			return Items.FirstOrDefault( item => item.Path == path );
 		}
 	}
 }

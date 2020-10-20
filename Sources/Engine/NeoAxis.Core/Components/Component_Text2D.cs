@@ -16,7 +16,7 @@ namespace NeoAxis
 		/// The text to display.
 		/// </summary>
 		[DefaultValue( "Text" )]
-		[Category( "Text 2D" )]
+		[Category( "Text" )]
 		public Reference<string> Text
 		{
 			get { if( _text.BeginGet() ) Text = _text.Get( this ); return _text.value; }
@@ -27,10 +27,51 @@ namespace NeoAxis
 		ReferenceField<string> _text = "Text";
 
 		/// <summary>
+		/// Whether to display a text in multiline mode. Use '\n' to specify returns in the <see cref="Text"/> property.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Text" )]
+		public Reference<bool> Multiline
+		{
+			get { if( _multiline.BeginGet() ) Multiline = _multiline.Get( this ); return _multiline.value; }
+			set { if( _multiline.BeginSet( ref value ) ) { try { MultilineChanged?.Invoke( this ); } finally { _multiline.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Multiline"/> property value changes.</summary>
+		public event Action<Component_Text2D> MultilineChanged;
+		ReferenceField<bool> _multiline = true;
+
+		/// <summary>
+		/// The horizontal alignment of the multiline text.
+		/// </summary>
+		[DefaultValue( EHorizontalAlignment.Center )]
+		[Category( "Text" )]
+		public Reference<EHorizontalAlignment> TextHorizontalAlignment
+		{
+			get { if( _textHorizontalAlignment.BeginGet() ) TextHorizontalAlignment = _textHorizontalAlignment.Get( this ); return _textHorizontalAlignment.value; }
+			set { if( _textHorizontalAlignment.BeginSet( ref value ) ) { try { TextHorizontalAlignmentChanged?.Invoke( this ); } finally { _textHorizontalAlignment.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="TextHorizontalAlignment"/> property value changes.</summary>
+		public event Action<Component_Text2D> TextHorizontalAlignmentChanged;
+		ReferenceField<EHorizontalAlignment> _textHorizontalAlignment = EHorizontalAlignment.Center;
+
+		/// <summary>
+		/// Vertical space between lines in multiline mode.
+		/// </summary>
+		[DefaultValue( "Units 0" )]
+		[Category( "Text" )]
+		public Reference<UIMeasureValueDouble> VerticalIndention
+		{
+			get { if( _verticalIndention.BeginGet() ) VerticalIndention = _verticalIndention.Get( this ); return _verticalIndention.value; }
+			set { if( _verticalIndention.BeginSet( ref value ) ) { try { VerticalIndentionChanged?.Invoke( this ); } finally { _verticalIndention.EndSet(); } } }
+		}
+		public event Action<Component_Text2D> VerticalIndentionChanged;
+		ReferenceField<UIMeasureValueDouble> _verticalIndention = new UIMeasureValueDouble( UIMeasure.Units, 0 );
+
+		/// <summary>
 		/// The font of rendered text.
 		/// </summary>
 		[DefaultValue( null )]
-		[Category( "Text 2D" )]
+		[Category( "Text" )]
 		public Reference<Component_Font> Font
 		{
 			get { if( _font.BeginGet() ) Font = _font.Get( this ); return _font.value; }
@@ -42,76 +83,21 @@ namespace NeoAxis
 		/// <summary>
 		/// Font size of rendered text.
 		/// </summary>
-		[DefaultValue( "Screen 0.02" )]
-		[Category( "Text 2D" )]
+		[DefaultValue( "Screen 0.025" )]
+		[Category( "Text" )]
 		public Reference<UIMeasureValueDouble> FontSize
 		{
 			get { if( _fontSize.BeginGet() ) FontSize = _fontSize.Get( this ); return _fontSize.value; }
 			set { if( _fontSize.BeginSet( ref value ) ) { try { FontSizeChanged?.Invoke( this ); } finally { _fontSize.EndSet(); } } }
 		}
 		public event Action<Component_Text2D> FontSizeChanged;
-		ReferenceField<UIMeasureValueDouble> _fontSize = new UIMeasureValueDouble( UIMeasure.Screen, 0.02 );
-
-		/// <summary>
-		/// Whether to display a text in multiline mode. Parsing "\n".
-		/// </summary>
-		[DefaultValue( true )]
-		[Category( "Text 2D" )]
-		public Reference<bool> Multiline
-		{
-			get { if( _multiline.BeginGet() ) Multiline = _multiline.Get( this ); return _multiline.value; }
-			set { if( _multiline.BeginSet( ref value ) ) { try { MultilineChanged?.Invoke( this ); } finally { _multiline.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="Multiline"/> property value changes.</summary>
-		public event Action<Component_Text2D> MultilineChanged;
-		ReferenceField<bool> _multiline = true;
-
-		/// <summary>
-		/// Vertical space between the margin of control and the start of text.
-		/// </summary>
-		[DefaultValue( "Units 0" )]
-		[Category( "Text 2D" )]
-		public Reference<UIMeasureValueDouble> VerticalIndention
-		{
-			get { if( _verticalIndention.BeginGet() ) VerticalIndention = _verticalIndention.Get( this ); return _verticalIndention.value; }
-			set { if( _verticalIndention.BeginSet( ref value ) ) { try { VerticalIndentionChanged?.Invoke( this ); } finally { _verticalIndention.EndSet(); } } }
-		}
-		public event Action<Component_Text2D> VerticalIndentionChanged;
-		ReferenceField<UIMeasureValueDouble> _verticalIndention = new UIMeasureValueDouble( UIMeasure.Units, 0 );
-
-		/// <summary>
-		/// The horizontal alignment of the text.
-		/// </summary>
-		[DefaultValue( EHorizontalAlignment.Center )]
-		[Category( "Text 2D" )]
-		public Reference<EHorizontalAlignment> HorizontalAlign
-		{
-			get { if( _horizontalAlign.BeginGet() ) HorizontalAlign = _horizontalAlign.Get( this ); return _horizontalAlign.value; }
-			set { if( _horizontalAlign.BeginSet( ref value ) ) { try { HorizontalAlignChanged?.Invoke( this ); } finally { _horizontalAlign.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="HorizontalAlign"/> property value changes.</summary>
-		public event Action<Component_Text2D> HorizontalAlignChanged;
-		ReferenceField<EHorizontalAlignment> _horizontalAlign = EHorizontalAlignment.Center;
-
-		/// <summary>
-		/// The vertical alignment of the text.
-		/// </summary>
-		[DefaultValue( EVerticalAlignment.Center )]
-		[Category( "Text 2D" )]
-		public Reference<EVerticalAlignment> VerticalAlign
-		{
-			get { if( _verticalAlign.BeginGet() ) VerticalAlign = _verticalAlign.Get( this ); return _verticalAlign.value; }
-			set { if( _verticalAlign.BeginSet( ref value ) ) { try { VerticalAlignChanged?.Invoke( this ); } finally { _verticalAlign.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="VerticalAlign"/> property value changes.</summary>
-		public event Action<Component_Text2D> VerticalAlignChanged;
-		ReferenceField<EVerticalAlignment> _verticalAlign = EVerticalAlignment.Center;
+		ReferenceField<UIMeasureValueDouble> _fontSize = new UIMeasureValueDouble( UIMeasure.Screen, 0.025 );
 
 		/// <summary>
 		/// The color of the text.
 		/// </summary>
 		[DefaultValue( "1 1 1" )]
-		[Category( "Text 2D" )]
+		[Category( "Text" )]
 		public Reference<ColorValue> Color
 		{
 			get { if( _color.BeginGet() ) Color = _color.Get( this ); return _color.value; }
@@ -121,63 +107,11 @@ namespace NeoAxis
 		public event Action<Component_Text2D> ColorChanged;
 		ReferenceField<ColorValue> _color = ColorValue.One;
 
-		///// <summary>
-		///// The color of the lines when they are behind other objects.
-		///// </summary>
-		//[DefaultValue( "1 1 1 0.3" )]
-		//public Reference<ColorValue> ColorInvisible
-		//{
-		//	get { if( _colorInvisible.BeginGet() ) ColorInvisible = _colorInvisible.Get( this ); return _colorInvisible.value; }
-		//	set { if( _colorInvisible.BeginSet( ref value ) ) { try { ColorInvisibleChanged?.Invoke( this ); } finally { _colorInvisible.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="ColorInvisible"/> property value changes.</summary>
-		//public event Action<Component_Text2D> ColorInvisibleChanged;
-		//ReferenceField<ColorValue> _colorInvisible = new ColorValue( 1, 1, 1, 0.3 );
-
-		/// <summary>
-		/// Draw the shadow behind the text.
-		/// </summary>
-		[DefaultValue( false )]
-		[Category( "Text 2D" )]
-		public Reference<bool> Shadow
-		{
-			get { if( _shadow.BeginGet() ) Shadow = _shadow.Get( this ); return _shadow.value; }
-			set { if( _shadow.BeginSet( ref value ) ) { try { ShadowChanged?.Invoke( this ); } finally { _shadow.EndSet(); } } }
-		}
-		public event Action<Component_Text2D> ShadowChanged;
-		ReferenceField<bool> _shadow = false;
-
-		/// <summary>
-		/// Extra offset added to the text shadow position.
-		/// </summary>
-		[DefaultValue( "Units 1 1" )]
-		[Category( "Text 2D" )]
-		public Reference<UIMeasureValueVector2> ShadowOffset
-		{
-			get { if( _shadowOffset.BeginGet() ) ShadowOffset = _shadowOffset.Get( this ); return _shadowOffset.value; }
-			set { if( _shadowOffset.BeginSet( ref value ) ) { try { ShadowOffsetChanged?.Invoke( this ); } finally { _shadowOffset.EndSet(); } } }
-		}
-		public event Action<Component_Text2D> ShadowOffsetChanged;
-		ReferenceField<UIMeasureValueVector2> _shadowOffset = new UIMeasureValueVector2( UIMeasure.Units, 1, 1 );
-
-		/// <summary>
-		/// The color of the text shadow.
-		/// </summary>
-		[DefaultValue( "0 0 0" )]
-		[Category( "Text 2D" )]
-		public Reference<ColorValue> ShadowColor
-		{
-			get { if( _shadowColor.BeginGet() ) ShadowColor = _shadowColor.Get( this ); return _shadowColor.value; }
-			set { if( _shadowColor.BeginSet( ref value ) ) { try { ShadowColorChanged?.Invoke( this ); } finally { _shadowColor.EndSet(); } } }
-		}
-		public event Action<Component_Text2D> ShadowColorChanged;
-		ReferenceField<ColorValue> _shadowColor = new ColorValue( 0, 0, 0 );
-
 		/// <summary>
 		/// Whether to use pixel aligned rendering of the text.
 		/// </summary>
 		[DefaultValue( true )]
-		[Category( "Text 2D" )]
+		[Category( "Text" )]
 		public Reference<bool> PixelAlign
 		{
 			get { if( _pixelAlign.BeginGet() ) PixelAlign = _pixelAlign.Get( this ); return _pixelAlign.value; }
@@ -188,11 +122,139 @@ namespace NeoAxis
 		ReferenceField<bool> _pixelAlign = true;
 
 		/// <summary>
+		/// Draw the shadow behind the text.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Shadow" )]
+		public Reference<bool> Shadow
+		{
+			get { if( _shadow.BeginGet() ) Shadow = _shadow.Get( this ); return _shadow.value; }
+			set { if( _shadow.BeginSet( ref value ) ) { try { ShadowChanged?.Invoke( this ); } finally { _shadow.EndSet(); } } }
+		}
+		public event Action<Component_Text2D> ShadowChanged;
+		ReferenceField<bool> _shadow = true;
+
+		/// <summary>
+		/// Extra offset added to the text shadow position.
+		/// </summary>
+		[DefaultValue( "Pixels 2 2" )]//!!!!Units 1 1
+		[Category( "Shadow" )]
+		public Reference<UIMeasureValueVector2> ShadowOffset
+		{
+			get { if( _shadowOffset.BeginGet() ) ShadowOffset = _shadowOffset.Get( this ); return _shadowOffset.value; }
+			set { if( _shadowOffset.BeginSet( ref value ) ) { try { ShadowOffsetChanged?.Invoke( this ); } finally { _shadowOffset.EndSet(); } } }
+		}
+		public event Action<Component_Text2D> ShadowOffsetChanged;
+		ReferenceField<UIMeasureValueVector2> _shadowOffset = new UIMeasureValueVector2( UIMeasure.Pixels, 2, 2 );
+
+		/// <summary>
+		/// The color of the text shadow.
+		/// </summary>
+		[DefaultValue( "0 0 0 0.7" )]
+		[Category( "Shadow" )]
+		public Reference<ColorValue> ShadowColor
+		{
+			get { if( _shadowColor.BeginGet() ) ShadowColor = _shadowColor.Get( this ); return _shadowColor.value; }
+			set { if( _shadowColor.BeginSet( ref value ) ) { try { ShadowColorChanged?.Invoke( this ); } finally { _shadowColor.EndSet(); } } }
+		}
+		public event Action<Component_Text2D> ShadowColorChanged;
+		ReferenceField<ColorValue> _shadowColor = new ColorValue( 0, 0, 0, 0.7 );
+
+		/// <summary>
+		/// Draw the back rentangle behind the text.
+		/// </summary>
+		[DefaultValue( false )]
+		[Category( "Back" )]
+		public Reference<bool> Back
+		{
+			get { if( _back.BeginGet() ) Back = _back.Get( this ); return _back.value; }
+			set { if( _back.BeginSet( ref value ) ) { try { BackChanged?.Invoke( this ); } finally { _back.EndSet(); } } }
+		}
+		public event Action<Component_Text2D> BackChanged;
+		ReferenceField<bool> _back = false;
+
+		/// <summary>
+		/// The color of the back rectangle.
+		/// </summary>
+		[DefaultValue( "0.7 0.7 0.7" )]
+		[Category( "Back" )]
+		public Reference<ColorValue> BackColor
+		{
+			get { if( _BackColor.BeginGet() ) BackColor = _BackColor.Get( this ); return _BackColor.value; }
+			set { if( _BackColor.BeginSet( ref value ) ) { try { BackColorChanged?.Invoke( this ); } finally { _BackColor.EndSet(); } } }
+		}
+		public event Action<Component_Text2D> BackColorChanged;
+		ReferenceField<ColorValue> _BackColor = new ColorValue( 0.7, 0.7, 0.7 );
+
+		public enum BackStyleEnum
+		{
+			Rectangle,
+			RoundedRectangle,
+		}
+
+		/// <summary>
+		/// The size increase of the back rectangle depending by font size.
+		/// </summary>
+		[DefaultValue( "0.3 0.3" )]
+		[Range( 0, 1 )]
+		[Category( "Back" )]
+		public Reference<Vector2> BackSizeAdd
+		{
+			get { if( _backSizeAdd.BeginGet() ) BackSizeAdd = _backSizeAdd.Get( this ); return _backSizeAdd.value; }
+			set { if( _backSizeAdd.BeginSet( ref value ) ) { try { BackSizeAddChanged?.Invoke( this ); } finally { _backSizeAdd.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="BackSizeAdd"/> property value changes.</summary>
+		public event Action<Component_Text2D> BackSizeAddChanged;
+		ReferenceField<Vector2> _backSizeAdd = new Vector2( 0.3, 0.3 );
+
+		/// <summary>
+		/// The form of the back rectangle.
+		/// </summary>
+		[DefaultValue( BackStyleEnum.Rectangle )]
+		[Category( "Back" )]
+		public Reference<BackStyleEnum> BackStyle
+		{
+			get { if( _backStyle.BeginGet() ) BackStyle = _backStyle.Get( this ); return _backStyle.value; }
+			set { if( _backStyle.BeginSet( ref value ) ) { try { BackStyleChanged?.Invoke( this ); } finally { _backStyle.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="BackStyle"/> property value changes.</summary>
+		public event Action<Component_Text2D> BackStyleChanged;
+		ReferenceField<BackStyleEnum> _backStyle = BackStyleEnum.Rectangle;
+
+		/// <summary>
+		/// The horizontal alignment on the screen.
+		/// </summary>
+		[DefaultValue( EHorizontalAlignment.Center )]
+		[Category( "Displaying In Scene" )]
+		public Reference<EHorizontalAlignment> HorizontalAlignment
+		{
+			get { if( _horizontalAlignment.BeginGet() ) HorizontalAlignment = _horizontalAlignment.Get( this ); return _horizontalAlignment.value; }
+			set { if( _horizontalAlignment.BeginSet( ref value ) ) { try { HorizontalAlignmentChanged?.Invoke( this ); } finally { _horizontalAlignment.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="HorizontalAlignment"/> property value changes.</summary>
+		public event Action<Component_Text2D> HorizontalAlignmentChanged;
+		ReferenceField<EHorizontalAlignment> _horizontalAlignment = EHorizontalAlignment.Center;
+
+		/// <summary>
+		/// The vertical alignment on the screen.
+		/// </summary>
+		[DefaultValue( EVerticalAlignment.Center )]
+		[Category( "Displaying In Scene" )]
+		public Reference<EVerticalAlignment> VerticalAlignment
+		{
+			get { if( _verticalAlignment.BeginGet() ) VerticalAlignment = _verticalAlignment.Get( this ); return _verticalAlignment.value; }
+			set { if( _verticalAlignment.BeginSet( ref value ) ) { try { VerticalAlignmentChanged?.Invoke( this ); } finally { _verticalAlignment.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="VerticalAlignment"/> property value changes.</summary>
+		public event Action<Component_Text2D> VerticalAlignmentChanged;
+		ReferenceField<EVerticalAlignment> _verticalAlignment = EVerticalAlignment.Center;
+
+		/// <summary>
 		/// How far from the camera lines are visible.
 		/// </summary>
 		[DefaultValue( 50.0 )]
 		[Range( 1, 1000, RangeAttribute.ConvenientDistributionEnum.Exponential, 4 )]
-		[Category( "Text 2D" )]
+		[Category( "Displaying In Scene" )]
 		public Reference<double> VisibilityDistance
 		{
 			get { if( _visibilityDistance.BeginGet() ) VisibilityDistance = _visibilityDistance.Get( this ); return _visibilityDistance.value; }
@@ -207,7 +269,7 @@ namespace NeoAxis
 		/// </summary>
 		[DefaultValue( 3.0 )]
 		[Range( 1.0, 10.0 )]
-		[Category( "Text 2D" )]
+		[Category( "Displaying In Scene" )]
 		public Reference<double> BoundingRadius
 		{
 			get { if( _boundingRadius.BeginGet() ) BoundingRadius = _boundingRadius.Get( this ); return _boundingRadius.value; }
@@ -221,7 +283,7 @@ namespace NeoAxis
 		/// Whether the component is visible in the simulation mode.
 		/// </summary>
 		[DefaultValue( true )]
-		[Category( "Text 2D" )]
+		[Category( "Displaying In Scene" )]
 		public Reference<bool> DisplayInSimulation
 		{
 			get { if( _displayInSimulation.BeginGet() ) DisplayInSimulation = _displayInSimulation.Get( this ); return _displayInSimulation.value; }
@@ -242,8 +304,16 @@ namespace NeoAxis
 			{
 				switch( p.Name )
 				{
+				case nameof( TextHorizontalAlignment ):
 				case nameof( VerticalIndention ):
 					if( !Multiline )
+						skip = true;
+					break;
+
+				case nameof( BackColor ):
+				case nameof( BackSizeAdd ):
+				case nameof( BackStyle ):
+					if( !Back )
 						skip = true;
 					break;
 
@@ -263,6 +333,12 @@ namespace NeoAxis
 			newBounds = new SpaceBounds( new Sphere( TransformV.Position, BoundingRadius ) );
 		}
 
+		public delegate void RenderBeforeDelegate( Component_Text2D sender, ViewportRenderingContext context, Vector2 screenPosition, ref bool handled );
+		public event RenderBeforeDelegate RenderBefore;
+
+		public delegate void RenderAfterDelegate( Component_Text2D sender, ViewportRenderingContext context, Vector2 screenPosition );
+		public event RenderAfterDelegate RenderAfter;
+
 		protected virtual void Render( ViewportRenderingContext context, Vector2 screenPosition )
 		{
 			if( !string.IsNullOrEmpty( Text ) )
@@ -274,31 +350,173 @@ namespace NeoAxis
 			}
 		}
 
+		//render after PrepareListsOfObjects with sorting by camera distance from far to near
+		void Render( ViewportRenderingContext context )
+		{
+			if( EngineApp.ApplicationType != EngineApp.ApplicationTypeEnum.Simulation ||
+				EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && DisplayInSimulation )
+			{
+				var cameraPosition = context.Owner.CameraSettings.Position;
+				var sphere = new Sphere( cameraPosition, VisibilityDistance );
+
+				if( SpaceBounds.CalculatedBoundingSphere.Intersects( ref sphere ) )
+				{
+					if( context.Owner.CameraSettings.ProjectToScreenCoordinates( TransformV.Position, out var screenPosition ) )
+					{
+						bool handled = false;
+						RenderBefore?.Invoke( this, context, screenPosition, ref handled );
+						if( !handled )
+						{
+							Render( context, screenPosition );
+							RenderAfter?.Invoke( this, context, screenPosition );
+						}
+					}
+				}
+			}
+		}
+
 		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
 		{
 			base.OnGetRenderSceneData( context, mode );
 
-			if( mode == GetRenderSceneDataMode.InsideFrustum )
+			if( mode == GetRenderSceneDataMode.InsideFrustum && context.Owner.CanvasRenderer != null && context.Owner.Simple3DRenderer != null )
 			{
 				var context2 = context.objectInSpaceRenderingContext;
 
-				if( EngineApp.ApplicationType != EngineApp.ApplicationTypeEnum.Simulation ||
-					EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && DisplayInSimulation )
+				//render after PrepareListsOfObjects with sorting by camera distance from far to near
+				var item = new Component_RenderingPipeline.RenderSceneData.ActionToDoAfterPrepareListsOfObjectsSortedByDistance();
+				item.DistanceToCamera = (float)( Transform.Value.Position - context.Owner.CameraSettings.Position ).Length();
+				item.Action = Render;
+				context.FrameData.RenderSceneData.ActionsToDoAfterPrepareListsOfObjectsSortedByDistance.Add( item );
+			}
+		}
+
+		public delegate void RenderBackBeforeDelegate( Component_Text2D sender, ViewportRenderingContext context, Rectangle rectangle, ref bool handled );
+		public event RenderBackBeforeDelegate RenderBackBefore;
+
+		public delegate void RenderBackAfterDelegate( Component_Text2D sender, ViewportRenderingContext context, Rectangle rectangle );
+		public event RenderBackAfterDelegate RenderBackAfter;
+
+		void RenderBackRectangle( ViewportRenderingContext context, Rectangle rectangle, ColorValue color )
+		{
+			var renderer = context.Owner.CanvasRenderer;
+
+			switch( BackStyle.Value )
+			{
+			case BackStyleEnum.Rectangle:
+				renderer.AddQuad( rectangle, color );
+				break;
+
+			case BackStyleEnum.RoundedRectangle:
 				{
-					var cameraPosition = context.Owner.CameraSettings.Position;
-					var sphere = new Sphere( cameraPosition, VisibilityDistance );
+					var rect2 = rectangle.ToRectangleF();
+					var fontSize = GetFontSizeScreen( context );
+					var roundSize = new Vector2F( renderer.AspectRatioInv, 1 ) * (float)fontSize * 0.4f;
 
-					if( SpaceBounds.CalculatedBoundingSphere.Intersects( ref sphere ) )
+					int steps = 16;
+
+					var list = new List<Vector2F>( steps * 4 );
+
+					for( int n = 0; n < steps; n++ )
 					{
-						var canvasRenderer = context.Owner.CanvasRenderer;
-						var renderer = context.Owner.Simple3DRenderer;
-
-						if( canvasRenderer != null && renderer != null )
-						{
-							if( context.Owner.CameraSettings.ProjectToScreenCoordinates( TransformV.Position, out var screenPosition ) )
-								Render( context, screenPosition );
-						}
+						var v = (float)n / (float)( steps - 1 );
+						var angle = v * MathEx.PI / 2;
+						list.Add( rect2.LeftTop + new Vector2F( 1.0f - MathEx.Cos( angle ), 1.0f - MathEx.Sin( angle ) ) * roundSize );
 					}
+
+					for( int n = steps - 1; n >= 0; n-- )
+					{
+						var v = (float)n / (float)( steps - 1 );
+						var angle = v * MathEx.PI / 2;
+						list.Add( rect2.RightTop + new Vector2F( MathEx.Cos( angle ) - 1.0f, 1.0f - MathEx.Sin( angle ) ) * roundSize );
+					}
+
+					for( int n = 0; n < steps; n++ )
+					{
+						var v = (float)n / (float)( steps - 1 );
+						var angle = v * MathEx.PI / 2;
+						list.Add( rect2.RightBottom + new Vector2F( MathEx.Cos( angle ) - 1.0f, MathEx.Sin( angle ) - 1.0f ) * roundSize );
+					}
+
+					for( int n = steps - 1; n >= 0; n-- )
+					{
+						var v = (float)n / (float)( steps - 1 );
+						var angle = v * MathEx.PI / 2;
+						list.Add( rect2.LeftBottom + new Vector2F( 1.0f - MathEx.Cos( angle ), MathEx.Sin( angle ) - 1.0f ) * roundSize );
+					}
+
+					var vertices = new List<CanvasRenderer.TriangleVertex>( 1 + list.Count );
+					var indices = new List<int>( list.Count * 3 );
+
+					vertices.Add( new CanvasRenderer.TriangleVertex( rect2.GetCenter(), color ) );
+					foreach( var v in list )
+						vertices.Add( new CanvasRenderer.TriangleVertex( v, color ) );
+
+					for( int n = 0; n < list.Count; n++ )
+					{
+						indices.Add( 0 );
+						indices.Add( 1 + n );
+						indices.Add( 1 + ( n + 1 ) % list.Count );
+					}
+
+					renderer.AddTriangles( vertices, indices );
+				}
+				break;
+			}
+		}
+
+		protected virtual void RenderBack( ViewportRenderingContext context, Rectangle rectangle )
+		{
+			var context2 = context.objectInSpaceRenderingContext;
+
+			RenderBackRectangle( context, rectangle, BackColor );
+
+			//selection rectangle
+			if( context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) )
+			{
+				ColorValue color;
+				if( context2.selectedObjects.Contains( this ) )
+					color = ProjectSettings.Get.SelectedColor;
+				else
+					color = ProjectSettings.Get.CanSelectColor;
+
+				color.Alpha *= 0.5f;
+
+				RenderBackRectangle( context, rectangle, color );
+			}
+		}
+
+		void RenderBack2( ViewportRenderingContext context, Rectangle rectangle )
+		{
+			var renderer = context.Owner.CanvasRenderer;
+			var context2 = context.objectInSpaceRenderingContext;
+			var fontSize = GetFontSizeScreen( context );
+
+			//calculate rectangle
+			var rect2 = rectangle;
+			rect2.Expand( new Vector2( renderer.AspectRatioInv, 1 ) * fontSize * BackSizeAdd.Value );
+
+			//render
+			if( Back && BackColor.Value.Alpha > 0 || context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) )
+			{
+				var handled = false;
+				RenderBackBefore?.Invoke( this, context, rect2, ref handled );
+				if( !handled )
+				{
+					RenderBack( context, rect2 );
+					RenderBackAfter?.Invoke( this, context, rect2 );
+				}
+			}
+
+			//modify selection label
+			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+			{
+				var item = context2.viewport.GetLastFrameScreenLabelByObjectInSpace( this );
+				if( item != null )
+				{
+					item.ScreenRectangle = rect2;
+					item.Color = ColorValue.Zero;
+					item.Shape = Viewport.LastFrameScreenLabelItem.ShapeEnum.Rectangle;
 				}
 			}
 		}
@@ -309,18 +527,54 @@ namespace NeoAxis
 			var fontSize = GetFontSizeScreen( context );
 			var options = PixelAlign.Value ? CanvasRenderer.AddTextOptions.PixelAlign : 0;
 
+			var font = Font.Value;
+			if( font == null )
+				font = renderer.DefaultFont;
+			if( font == null || font.Disposed )
+				return;
+
+			//Back
+			{
+				var length = font.GetTextLength( fontSize, renderer, Text );
+				var offset = new Vector2( length, fontSize ) * 0.5;
+
+				var pos = screenPosition;
+
+				switch( HorizontalAlignment.Value )
+				{
+				case EHorizontalAlignment.Left:
+				case EHorizontalAlignment.Stretch:
+					pos.X += length * 0.5;
+					break;
+				case EHorizontalAlignment.Right:
+					pos.X -= length * 0.5;
+					break;
+				}
+
+				switch( VerticalAlignment.Value )
+				{
+				case EVerticalAlignment.Top:
+				case EVerticalAlignment.Stretch:
+					pos.Y += fontSize * 0.5;
+					break;
+				case EVerticalAlignment.Bottom:
+					pos.Y -= fontSize * 0.5;
+					break;
+				}
+
+				var rect = new Rectangle( pos - offset, pos + offset );
+				RenderBack2( context, rect );
+			}
+
 			if( Shadow )
 			{
 				ColorValue color = ShadowColor.Value.GetSaturate();
-				renderer.AddText( Font, fontSize, Text,
+				renderer.AddText( font, fontSize, Text,
 					screenPosition + ConvertOffsetToScreen( context, ShadowOffset ),
-					HorizontalAlign, VerticalAlign, color, options );
+					HorizontalAlignment, VerticalAlignment, color, options );
 			}
 
-			{
-				ColorValue color = Color.Value.GetSaturate();
-				renderer.AddText( Font, fontSize, Text, screenPosition, HorizontalAlign, VerticalAlign, Color, options );
-			}
+			renderer.AddText( font, fontSize, Text, screenPosition, HorizontalAlignment, VerticalAlignment, Color, options );
 		}
 
 		struct LineItem
@@ -356,7 +610,7 @@ namespace NeoAxis
 				var strLines = text.Split( new string[] { "\\n" }, StringSplitOptions.None );
 				for( int n = 0; n < strLines.Length; n++ )
 				{
-					var alignByWidth = HorizontalAlign.Value == EHorizontalAlignment.Stretch && n != strLines.Length - 1;
+					var alignByWidth = TextHorizontalAlignment.Value == EHorizontalAlignment.Stretch && n != strLines.Length - 1;
 					lines.Add( new LineItem( strLines[ n ], alignByWidth ) );
 				}
 			}
@@ -374,32 +628,44 @@ namespace NeoAxis
 					screenSize = Math.Max( screenSize, size );
 				}
 
-				double startY = 0;
-				switch( VerticalAlign.Value )
+				double height = fontSize * (double)lines.Count + screenVerticalIndention * ( (double)lines.Count - 1 );
+
+				Rectangle rect;
 				{
-				case EVerticalAlignment.Top:
-				case EVerticalAlignment.Stretch:
-					startY = screenPosition.Y;
-					break;
-				case EVerticalAlignment.Center:
+					var pos = screenPosition;
+
+					switch( HorizontalAlignment.Value )
 					{
-						double height = fontSize * (double)lines.Count + screenVerticalIndention * ( (double)lines.Count - 1 );
-						startY = screenPosition.Y - height / 2;
+					case EHorizontalAlignment.Center:
+						pos.X -= screenSize * 0.5;
+						break;
+					case EHorizontalAlignment.Right:
+						pos.X -= screenSize;
+						break;
 					}
-					break;
-				case EVerticalAlignment.Bottom:
+
+					switch( VerticalAlignment.Value )
 					{
-						double height = fontSize * (double)lines.Count + screenVerticalIndention * ( (double)lines.Count - 1 );
-						startY = screenPosition.Y - height;
+					case EVerticalAlignment.Center:
+						pos.Y -= height * 0.5;
+						break;
+					case EVerticalAlignment.Bottom:
+						pos.Y -= height;
+						break;
 					}
-					break;
+
+					rect = new Rectangle( pos, pos + new Vector2( screenSize, height ) );
 				}
 
 				double stepY = fontSize + screenVerticalIndention;
 
+				//Back
+				RenderBack2( context, rect );
+
+				//text
 				for( int nStep = Shadow ? 0 : 1; nStep < 2; nStep++ )
 				{
-					double positionY = startY;
+					double positionY = rect.Top;//startY;
 					foreach( LineItem line in lines )
 					{
 						if( line.alignByWidth )
@@ -418,7 +684,7 @@ namespace NeoAxis
 							if( words.Length > 1 )
 								space = ( screenSize - totalLength ) / ( words.Length - 1 );
 
-							double posX = screenPosition.X;
+							double posX = rect.Left;
 							for( int n = 0; n < words.Length; n++ )
 							{
 								Vector2 pos = new Vector2( posX, positionY );// + ConvertOffsetToScreen( context, Offset );
@@ -440,21 +706,19 @@ namespace NeoAxis
 							var horizontalAlign = EHorizontalAlignment.Left;
 
 							double positionX = 0;
-							switch( HorizontalAlign.Value )
+							switch( TextHorizontalAlignment.Value )
 							{
 							case EHorizontalAlignment.Left:
 							case EHorizontalAlignment.Stretch:
-								positionX = screenPosition.X;
+								positionX = rect.Left;
 								break;
 							case EHorizontalAlignment.Center:
 								horizontalAlign = EHorizontalAlignment.Center;
-								positionX = screenPosition.X;
-								//positionX = screenPosition.X - screenSize / 2;
+								positionX = rect.GetCenter().X;
 								break;
 							case EHorizontalAlignment.Right:
 								horizontalAlign = EHorizontalAlignment.Right;
-								positionX = screenPosition.X;
-								//positionX = screenPosition.X - screenSize;
+								positionX = rect.Right;
 								break;
 							}
 

@@ -14,6 +14,7 @@ using Microsoft.Win32;
 using SharpBgfx;
 using System.Diagnostics;
 using NeoAxis.Widget;
+using ComponentFactory.Krypton.Navigator;
 
 namespace NeoAxis.Editor
 {
@@ -129,7 +130,6 @@ namespace NeoAxis.Editor
 			EditorFavorites.Init();
 		}
 
-
 		//static void InitializeScriptEditor()
 		//{
 		//	if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
@@ -239,6 +239,7 @@ namespace NeoAxis.Editor
 			EngineApp.DefaultSoundChannelGroup.Volume = 0;
 
 			EnableLocalization();
+			PreviewImagesManager.Init();
 
 			//set theme
 			if( ProjectSettings.Get.Theme.Value == Component_ProjectSettings.ThemeEnum.Dark )
@@ -274,9 +275,6 @@ namespace NeoAxis.Editor
 			Log.Info( "Use Log.Info(), Log.Warning() methods to write to the window. These methods can be used in the Player. Press '~' to open console of the Player." );
 			OutputWindow.Print( "Use OutputWindow.Print() method to write to the window. Unlike Message Log window, this window is not a list. Here you can add text in arbitrary format.\n" );
 
-			//!!!!
-			//workspaceController.AddDockWindow( new TipsWindow(), true, false );
-
 			//!!!!эвент чтобы свои добавлять. и пример
 
 			//load docking state
@@ -288,17 +286,33 @@ namespace NeoAxis.Editor
 
 				if( File.Exists( configFile ) )
 				{
+					//no try catch to save the ability to work with debugger. in case when error happens during loading one of documents
+
 					//try
 					//{
-					////!!!! If xml broken, we will not get an exception.
-					//// the exception is swallowed inside the krypton.
-					//// how do I know if an error has occurred?
 					workspaceController.LoadLayoutFromFile( configFile );
+
+					//!!!!
+					//hack. unhide the page to load it correctly. after loading the page will hided
+					foreach( var page in workspaceController.DockingManager.Pages )
+					{
+						if( page.needHideAfterLoading )
+						{
+							page.needHideAfterLoading = false;
+
+							var window = page.GetDockWindow();
+							if( window != null )
+								workspaceController.SetDockWindowVisibility( window, false );
+						}
+					}
+
 					//}
-					//	catch
-					//	{
-					//		//!!!!TODO: layout broken. fix this!
-					//	}
+					//catch( Exception e2 )
+					//{
+					//	var text = $"Error loading docking settings.\n\n" + e2.Message;
+					//	Log.Warning( text );
+					//	EditorMessageBox.ShowWarning( text );
+					//}
 				}
 			}
 
@@ -369,6 +383,9 @@ namespace NeoAxis.Editor
 					//	controller.SaveLayoutToFile(workspaceConfigFile);
 					//}
 				}
+
+				//save part to Editor.config
+				workspaceController.SaveAdditionalConfig();
 			}
 
 			EditorAPI.ClosingApplication = true;
@@ -385,6 +402,8 @@ namespace NeoAxis.Editor
 			//destroy all viewport controls
 			foreach( var control in EngineViewportControl.allInstances.ToArray() )
 				control.Dispose();
+
+			PreviewImagesManager.Shutdown();
 
 			if( !canSaveConfig )
 				EngineApp.NeedSaveConfig = false;
@@ -534,8 +553,8 @@ namespace NeoAxis.Editor
 					document.EditorUpdateWhenDocumentModified_Tick();
 			}
 
-			if( !needClose )
-				PreviewIconsManager.Update();
+			//if( !needClose )
+			//	PreviewImagesManager.Update();
 
 			////!!!!temp
 			//CheckRestartApplicationToApplyChanged();
@@ -599,6 +618,9 @@ namespace NeoAxis.Editor
 				KryptonWinFormsUtility.LockFormUpdate( null );
 				unlockFormUpdateInTimer = null;
 			}
+
+			if( !needClose )
+				EngineToolTipManager.Update();
 
 			canSaveConfig = true;
 		}
@@ -694,6 +716,14 @@ namespace NeoAxis.Editor
 				{
 					RenderingSystem.CallBgfxFrame();
 					RenderingSystem.CallBgfxFrame();
+				}
+
+				//preview images
+				if( EngineApp.Instance != null && EngineApp.Created )
+				{
+					PreviewImagesManager.Update();
+					if( PreviewImagesManager.ExistsWorkingProcessors() )
+						existActiveViewports = true;
 				}
 
 				//render
@@ -1072,6 +1102,7 @@ namespace NeoAxis.Editor
 			if( !processed )
 				base.WndProc( ref m );
 		}
+
 
 	}
 }

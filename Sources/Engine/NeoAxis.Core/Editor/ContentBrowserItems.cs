@@ -628,7 +628,7 @@ namespace NeoAxis.Editor
 						bool skip = false;
 
 						var fileItem = item as ContentBrowserItem_File;
-						if( fileItem != null && fileItem.IsDirectory && fileItem.GetChildren( false ).Count == 0 )
+						if( fileItem != null && fileItem.IsDirectory && fileItem.GetChildrenFilter( false ).Count == 0 )
 							skip = true;
 
 						if( !skip )

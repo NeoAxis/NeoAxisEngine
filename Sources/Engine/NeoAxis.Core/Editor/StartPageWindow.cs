@@ -33,10 +33,7 @@ namespace NeoAxis.Editor
 				return;
 
 			if( EditorAPI.DarkTheme )
-			{
 				BackColor = Color.FromArgb( 40, 40, 40 );
-				EditorThemeUtility.ApplyDarkThemeToToolTip( toolTip1 );
-			}
 
 			contentBrowserNewScene.Options.PanelMode = ContentBrowser.PanelModeEnum.List;
 			contentBrowserNewScene.Options.ListMode = ContentBrowser.ListModeEnum.Tiles;

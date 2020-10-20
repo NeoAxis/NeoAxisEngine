@@ -557,8 +557,14 @@ namespace ComponentFactory.Krypton.Docking
 
                 if (page != null)
                 {
-                    // Use the loaded visible state
-                    page.Visible = CommonHelper.StringToBool(boolVisible);
+                    //!!!!betauser
+                    //hack. unhide the page to load it correctly. after loading the page will hided
+                    if( !CommonHelper.StringToBool( boolVisible ) )
+                        page.needHideAfterLoading = true;
+                    page.Visible = true;
+
+                    //// Use the loaded visible state
+                    //page.Visible = CommonHelper.StringToBool(boolVisible);
 
                     // Create a proxy around the page and append it
                     KryptonAutoHiddenProxyPage proxyPage = new KryptonAutoHiddenProxyPage(page);

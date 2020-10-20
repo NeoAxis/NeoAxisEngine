@@ -197,16 +197,16 @@ namespace NeoAxis.Editor
 				UpdateEditorDocumentConfiguration( formWorkspaceController );
 
 				string error;
-				if( ComponentUtility.SaveComponentToFile( LoadedResource.ResultComponent, realPath, null, out error ) )
-				{
-					return true;
-				}
-				else
+				if( !ComponentUtility.SaveComponentToFile( LoadedResource.ResultComponent, realPath, null, out error ) )
 				{
 					//!!!!
 					Log.Error( error );
 					return false;
 				}
+
+				PreviewImagesManager.AddResourceToProcess( realPath );
+
+				return true;
 			}
 			else
 			{
@@ -346,7 +346,10 @@ namespace NeoAxis.Editor
 
 			case "Find Resource":
 				if( !string.IsNullOrEmpty( RealFileName ) )
+				{
 					EditorAPI.SelectFilesOrDirectoriesInMainResourcesWindow( new string[] { RealFileName } );
+					EditorAPI.SelectDockWindow( EditorAPI.FindWindow<ResourcesWindow>() );
+				}
 				break;
 			}
 		}
@@ -381,6 +384,7 @@ namespace NeoAxis.Editor
 					items.Items.Add( new KryptonContextMenuItem( EditorLocalization.Translate( "General", "Find in Resources window" ), ( s, e ) =>
 					{
 						EditorAPI.SelectFilesOrDirectoriesInMainResourcesWindow( new string[] { RealFileName } );
+						EditorAPI.SelectDockWindow( EditorAPI.FindWindow<ResourcesWindow>() );
 					} ) );
 				}
 

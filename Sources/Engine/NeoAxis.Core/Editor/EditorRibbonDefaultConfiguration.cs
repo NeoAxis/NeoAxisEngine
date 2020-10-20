@@ -444,6 +444,7 @@ namespace NeoAxis.Editor
 					//groupDevData.AddAction( "Scene Display Physics Dynamic" );
 					//groupDevData.AddAction( "Scene Display Physics Internal" );
 					groupDevData.AddAction( "Scene Display Areas" );
+					groupDevData.AddAction( "Scene Display Volumes" );
 					groupDevData.AddAction( "Scene Display Sensors" );
 					groupDevData.AddAction( "Scene Display Sound Sources" );
 					groupDevData.AddAction( "Scene Display Object In Space Bounds" );

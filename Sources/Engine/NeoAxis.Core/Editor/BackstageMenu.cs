@@ -80,9 +80,15 @@ namespace NeoAxis.Editor
 			kryptonLinkLabelTokenWhatIsIt.LinkClicked += KryptonLinkLabelTokenWhatIsIt_LinkClicked;
 		}
 
+		[Browsable( false )]
+		public KryptonPage DefaultPage;
+
 		public void SelectDefaultPage()
 		{
-			kryptonNavigator1.SelectedPage = kryptonPageInfo;
+			if( DefaultPage != null )
+				kryptonNavigator1.SelectedPage = DefaultPage;
+			else
+				kryptonNavigator1.SelectedPage = kryptonPageInfo;
 		}
 
 		string Translate( string text )
@@ -200,7 +206,7 @@ namespace NeoAxis.Editor
 
 			if( e.Item == kryptonPageExit )
 			{
-				if( EditorMessageBox.ShowQuestion( Translate( "Exit the editor?" ), EMessageBoxButtons.OKCancel ) == EDialogResult.OK )
+				if( EditorMessageBox.ShowQuestion( Translate( "Exit the app?" ), EMessageBoxButtons.OKCancel ) == EDialogResult.OK )
 					EditorForm.Instance.Close();
 				return;
 			}

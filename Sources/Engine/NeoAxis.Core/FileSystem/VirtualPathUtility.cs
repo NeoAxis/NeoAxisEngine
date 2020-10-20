@@ -33,7 +33,7 @@ namespace NeoAxis
 		public static bool GetVirtualPathByReal( string realPath, out string virtualPath )
 		{
 			if( realPath == null )
-				Log.Fatal( "VirtualPathUtils: GetVirtualPathByReal: realPath == null." );
+				Log.Fatal( "VirtualPathUtility: GetVirtualPathByReal: realPath == null." );
 
 			realPath = NormalizePath( realPath );
 			if( !Path.IsPathRooted( realPath ) )
@@ -108,7 +108,7 @@ namespace NeoAxis
 			return virtualPath;
 
 			//if( realPath == null )
-			//	Log.Fatal( "VirtualPathUtils: GetVirtualPathByReal: realPath == null." );
+			//	Log.Fatal( "VirtualPathUtility: GetVirtualPathByReal: realPath == null." );
 
 			//realPath = NormalizePath( realPath );
 			//if( !Path.IsPathRooted( realPath ) )

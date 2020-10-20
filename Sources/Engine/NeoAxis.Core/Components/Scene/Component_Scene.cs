@@ -130,6 +130,7 @@ namespace NeoAxis
 			set { if( _cameraEditor2D.BeginSet( ref value ) ) { try { CameraEditor2DChanged?.Invoke( this ); } finally { _cameraEditor2D.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CameraEditor2D"/> property value changes.</summary>
+		[DisplayName( "Camera Editor 2D Changed" )]
 		public event Action<Component_Scene> CameraEditor2DChanged;
 		ReferenceField<Component_Camera> _cameraEditor2D;
 
@@ -269,6 +270,7 @@ namespace NeoAxis
 			}
 		}
 		/// <summary>Occurs when the <see cref="Gravity2D"/> property value changes.</summary>
+		[DisplayName( "Gravity 2D Changed" )]
 		public event Action<Component_Scene> Gravity2DChanged;
 		ReferenceField<Vector2> _gravity2D = new Vector2( 0, -9.81 );
 
@@ -685,6 +687,20 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="DisplayAreas"/> property value changes.</summary>
 		public event Action<Component_Scene> DisplayAreasChanged;
 		ReferenceField<bool> _displayAreas = false;
+
+		/// <summary>
+		/// Whether to display volumes.
+		/// </summary>
+		[DefaultValue( false )]
+		[Category( "Development Data" )]
+		public Reference<bool> DisplayVolumes
+		{
+			get { if( _displayVolumes.BeginGet() ) DisplayVolumes = _displayVolumes.Get( this ); return _displayVolumes.value; }
+			set { if( _displayVolumes.BeginSet( ref value ) ) { try { DisplayVolumesChanged?.Invoke( this ); } finally { _displayVolumes.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="DisplayVolumes"/> property value changes.</summary>
+		public event Action<Component_Scene> DisplayVolumesChanged;
+		ReferenceField<bool> _displayVolumes = false;
 
 		/// <summary>
 		/// Whether to display sensors.

@@ -59,7 +59,7 @@ namespace NeoAxis.Editor
 		public static void SelectFilesOrDirectoriesInMainResourcesWindow( string[] realPaths, bool expandNodes = false )
 		{
 			var window = FindWindow<ResourcesWindow>();
-			if( window != null && window.Visible )
+			if( window != null )//&& window.Visible )
 				window.ContentBrowser1?.NeedSelectFilesOrDirectories( realPaths, expandNodes );
 		}
 
@@ -330,7 +330,7 @@ namespace NeoAxis.Editor
 		public static EditorAction.GetStateContext EditorActionGetState( EditorAction.HolderEnum holder, string actionName )
 		{
 			var action = EditorActions.GetByName( actionName );
-			if( action == null )
+			if( action == null || action.CompletelyDisabled )
 				return null;
 			return EditorActionGetState( holder, action );
 		}
@@ -359,7 +359,7 @@ namespace NeoAxis.Editor
 		public static void EditorActionClick( EditorAction.HolderEnum holder, string actionName )
 		{
 			var action = EditorActions.GetByName( actionName );
-			if( action == null )
+			if( action == null || action.CompletelyDisabled )
 				return;
 			EditorActionClick( holder, action );
 		}
@@ -970,7 +970,7 @@ namespace NeoAxis.Editor
 			if( actionItem != null )
 			{
 				var action = EditorActions.GetByName( actionItem.Name );
-				if( action != null )
+				if( action != null && !action.CompletelyDisabled )
 				{
 					foreach( var shortcut in actionItem.ToArray() )
 					{

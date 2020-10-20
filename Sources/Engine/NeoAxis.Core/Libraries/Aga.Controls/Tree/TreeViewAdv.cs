@@ -35,7 +35,7 @@ namespace Aga.Controls.Tree
 		private bool _needFullUpdate;
 		private bool _fireSelectionEvent;
 		private NodePlusMinus _plusMinus;
-		private ToolTip _toolTip;
+		//private ToolTip _toolTip;
 		private DrawContext _measureContext;
 		private TreeColumn _hotColumn;
 		private IncrementalSearch _search;
@@ -233,7 +233,7 @@ namespace Aga.Controls.Tree
 			_selection = new List<TreeNodeAdv>();
 			_readonlySelection = new ReadOnlyCollection<TreeNodeAdv>(_selection);
 			_columns = new TreeColumnCollection(this);
-			_toolTip = new ToolTip();
+			//_toolTip = new ToolTip();
 
 			_measureContext = new DrawContext();
 			_measureContext.Font = Font;

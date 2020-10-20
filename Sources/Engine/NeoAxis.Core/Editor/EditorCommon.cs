@@ -94,6 +94,34 @@ namespace NeoAxis.Editor
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	public class EditorPreviewImageAttribute : Attribute
+	{
+		Type previewClass;
+		string previewClassName;
+
+		public EditorPreviewImageAttribute( Type previewClass )
+		{
+			this.previewClass = previewClass;
+		}
+
+		public EditorPreviewImageAttribute( string previewClassName )
+		{
+			this.previewClassName = previewClassName;
+		}
+
+		public Type PreviewClass
+		{
+			get { return previewClass; }
+		}
+
+		public string PreviewClassName
+		{
+			get { return previewClassName; }
+		}
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	public class EditorNewObjectSettingsAttribute : Attribute
 	{
 		Type settingsClass;

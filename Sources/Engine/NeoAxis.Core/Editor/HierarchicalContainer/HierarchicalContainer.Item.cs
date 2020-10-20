@@ -93,15 +93,15 @@ namespace NeoAxis.Editor
 
 					Owner.ContentPanel.Controls.Add( CreatedControl );
 
-					CreatedItemsCount++;
+					//CreatedItemsCount++;
 
-					unsafe
-					{
-						unchecked
-						{
-							CreatedControlsCount += CreatedControl.GetTotalControlsCount();
-						}
-					}
+					//unsafe
+					//{
+					//	unchecked
+					//	{
+					//		CreatedControlsCount += CreatedControl.GetTotalControlsCount();
+					//	}
+					//}
 				}
 
 				foreach( var item in Children )

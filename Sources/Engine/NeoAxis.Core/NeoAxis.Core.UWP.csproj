@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -247,6 +247,7 @@
     <Compile Include="Components\ComponentsHidePublic.cs" />
     <Compile Include="Components\Component_Billboard.cs" />
     <Compile Include="Components\Component_ComponentHost.cs" />
+    <Compile Include="Components\Component_CutVolume.cs" />
     <Compile Include="Components\Component_Decal.cs" />
     <Compile Include="Components\Component_InvokeMember.cs" />
     <Compile Include="Components\Component_Layer.cs" />
@@ -263,26 +264,14 @@
     <Compile Include="DebugInfo\DebugInfoPage_RenderStatistics.cs" />
     <Compile Include="DebugInfo\DebugInfoPage_Scene.cs" />
     <Compile Include="DebugInfo\DebugInfoPage_Sound.cs" />
-    <Compile Include="Editor\BackstageMenu.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\BackstageMenu.cs" />
     <Compile Include="Editor\BackstageMenu.designer.cs" />
-    <Compile Include="Editor\BordersContainer.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Editor\CanvasBasedEditor.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Editor\CanvasBasedPreview.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Editor\ComponentTypeSettingsForm.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\BordersContainer.cs" />
+    <Compile Include="Editor\CanvasBasedEditor.cs" />
+    <Compile Include="Editor\CanvasBasedPreview.cs" />
+    <Compile Include="Editor\ComponentTypeSettingsForm.cs" />
     <Compile Include="Editor\ComponentTypeSettingsForm.Designer.cs" />
-    <Compile Include="Editor\ContentBrowser.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\ContentBrowser.cs" />
     <Compile Include="Editor\ContentBrowser.designer.cs" />
     <Compile Include="Editor\ContentBrowserFilteringMode.cs" />
     <Compile Include="Editor\ContentBrowserImageHelper.cs" />
@@ -290,32 +279,20 @@
     <Compile Include="Editor\ContentBrowserItems_Solution.cs" />
     <Compile Include="Editor\ContentBrowserListViewModes.cs" />
     <Compile Include="Editor\ContentBrowserOptions.cs" />
-    <Compile Include="Editor\ContentBrowserOptionsForm.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\ContentBrowserOptionsForm.cs" />
     <Compile Include="Editor\ContentBrowserOptionsForm.Designer.cs" />
-    <Compile Include="Editor\ContentBrowserSearchForm.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\ContentBrowserSearchForm.cs" />
     <Compile Include="Editor\ContentBrowserSearchForm.Designer.cs" />
     <Compile Include="Editor\ContentBrowserUtility.cs" />
-    <Compile Include="Editor\DebugInfoWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\DebugInfoWindow.cs" />
     <Compile Include="Editor\DebugInfoWindow.designer.cs" />
-    <Compile Include="Editor\DockWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\DockWindow.cs" />
     <Compile Include="Editor\DockWindow.designer.cs" />
     <Compile Include="Editor\DockWindowEventArgs.cs" />
     <Compile Include="Editor\DocumentInstance.cs" />
-    <Compile Include="Editor\DocumentWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\DocumentWindow.cs" />
     <Compile Include="Editor\DocumentWindow.designer.cs" />
-    <Compile Include="Editor\DocumentWindowWithViewport.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\DocumentWindowWithViewport.cs" />
     <Compile Include="Editor\DocumentWindowWithViewport.designer.cs" />
     <Compile Include="Editor\EditorActions.cs" />
     <Compile Include="Editor\EditorAPI.cs" />
@@ -325,16 +302,10 @@
     <Compile Include="Editor\EditorContextMenu.cs" />
     <Compile Include="Editor\EditorContextMenuWinForms.cs" />
     <Compile Include="Editor\EditorFavorites.cs" />
-    <Compile Include="Editor\EditorForm.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\EditorForm.cs" />
     <Compile Include="Editor\EditorForm.designer.cs" />
-    <Compile Include="Editor\EditorForm.QAT.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Editor\EditorForm.Ribbon.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\EditorForm.QAT.cs" />
+    <Compile Include="Editor\EditorForm.Ribbon.cs" />
     <Compile Include="Editor\EditorImportResource.cs" />
     <Compile Include="Editor\EditorMessageBox.cs" />
     <Compile Include="Editor\EditorResourcesCache.cs" />
@@ -342,196 +313,112 @@
     <Compile Include="Editor\EditorSettingsSerialization.cs" />
     <Compile Include="Editor\EditorStandardActions.cs" />
     <Compile Include="Editor\EditorUtility.cs" />
-    <Compile Include="Editor\EngineForm.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\EngineForm.cs" />
     <Compile Include="Editor\EngineForm.Designer.cs" />
     <Compile Include="Editor\EngineLabel.cs" />
-    <Compile Include="Editor\EngineListView.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Editor\EngineProgressBar.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Editor\EngineScrollBar.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\EngineListView.cs" />
+    <Compile Include="Editor\EngineProgressBar.cs" />
+    <Compile Include="Editor\EngineScrollBar.cs" />
     <Compile Include="Editor\EngineTextBox.cs" />
-    <Compile Include="Editor\EngineToolStrip.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\EngineToolStrip.cs" />
     <Compile Include="Editor\ExtensionMethods.cs" />
-    <Compile Include="Editor\FolderBrowserDialogEx.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Editor\ForeachDocumentWindowContainer.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\FolderBrowserDialogEx.cs" />
+    <Compile Include="Editor\ForeachDocumentWindowContainer.cs" />
     <Compile Include="Editor\ForeachDocumentWindowContainer.designer.cs" />
     <Compile Include="Editor\IDocumentWindow.cs" />
     <Compile Include="Editor\ImageCollection.cs" />
-    <Compile Include="Editor\ImportWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\ImportWindow.cs" />
     <Compile Include="Editor\ImportWindow.Designer.cs" />
     <Compile Include="Editor\KryptonConfigGenerator.cs" />
     <Compile Include="Editor\KryptonRibbonGroupListBox.cs" />
     <Compile Include="Editor\KryptonRibbonGroupListBox.Designer.cs" />
-    <Compile Include="Editor\KryptonRibbonGroupListBoxControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\KryptonRibbonGroupListBoxControl.cs" />
     <Compile Include="Editor\KryptonRibbonGroupListBoxControl.Designer.cs" />
     <Compile Include="Editor\KryptonRibbonGroupSlider.cs" />
     <Compile Include="Editor\KryptonRibbonGroupSlider.Designer.cs" />
-    <Compile Include="Editor\KryptonRibbonGroupSliderControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\KryptonRibbonGroupSliderControl.cs" />
     <Compile Include="Editor\KryptonRibbonGroupSliderControl.Designer.cs" />
+    <Compile Include="Editor\LabelExtended.cs" />
     <Compile Include="Editor\LowProfileDockableWorkspace.cs" />
     <Compile Include="Editor\MessageLogOptions.cs" />
-    <Compile Include="Editor\MessageLogOptionsForm.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\MessageLogOptionsForm.cs" />
     <Compile Include="Editor\MessageLogOptionsForm.Designer.cs" />
-    <Compile Include="Editor\MessageLogWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\MessageLogWindow.cs" />
     <Compile Include="Editor\MessageLogWindow.designer.cs" />
-    <Compile Include="Editor\NewObjectCell.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\NewObjectCell.cs" />
     <Compile Include="Editor\NewObjectCell.designer.cs" />
     <Compile Include="Editor\NewObjectSettings.cs" />
-    <Compile Include="Editor\NewObjectSettingsCell.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\NewObjectSettingsCell.cs" />
     <Compile Include="Editor\NewObjectSettingsCell.designer.cs" />
-    <Compile Include="Editor\NewObjectWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\NewObjectWindow.cs" />
     <Compile Include="Editor\NewObjectWindow.Designer.cs" />
     <Compile Include="Editor\ObjectCreationMode.cs" />
-    <Compile Include="Editor\ObjectSettingsHeader.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\ObjectSettingsHeader.cs" />
     <Compile Include="Editor\ObjectSettingsHeader.designer.cs" />
-    <Compile Include="Editor\ObjectSettingsHeader_ObjectInfo.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\ObjectSettingsHeader_ObjectInfo.cs" />
     <Compile Include="Editor\ObjectSettingsHeader_ObjectInfo.designer.cs" />
-    <Compile Include="Editor\ObjectSettingsWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\ObjectSettingsWindow.cs" />
     <Compile Include="Editor\ObjectSettingsWindow.designer.cs" />
-    <Compile Include="Editor\ObjectsWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\ObjectsWindow.cs" />
     <Compile Include="Editor\ObjectsWindow.designer.cs" />
-    <Compile Include="Editor\OKCancelTextBoxForm.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\OKCancelTextBoxForm.cs" />
     <Compile Include="Editor\OKCancelTextBoxForm.designer.cs" />
-    <Compile Include="Editor\OutputWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\OutputWindow.cs" />
     <Compile Include="Editor\OutputWindow.designer.cs" />
     <Compile Include="Editor\PackageManager.cs" />
-    <Compile Include="Editor\PackagesWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\PackagesWindow.cs" />
     <Compile Include="Editor\PackagesWindow.designer.cs" />
-    <Compile Include="Editor\PreviewControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\PreviewControl.cs" />
     <Compile Include="Editor\PreviewControl.designer.cs" />
-    <Compile Include="Editor\PreviewControlWithViewport.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\PreviewControlWithViewport.cs" />
     <Compile Include="Editor\PreviewControlWithViewport.designer.cs" />
-    <Compile Include="Editor\PreviewIconsManager.cs" />
-    <Compile Include="Editor\PreviewWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\PreviewImageGenerator.cs" />
+    <Compile Include="Editor\PreviewImagesManager.cs" />
+    <Compile Include="Editor\PreviewWindow.cs" />
     <Compile Include="Editor\PreviewWindow.designer.cs" />
-    <Compile Include="Editor\ResourcesWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\ResourcesWindow.cs" />
     <Compile Include="Editor\ResourcesWindow.designer.cs" />
     <Compile Include="Editor\ResourcesWindowItems.cs" />
     <Compile Include="Editor\RunSimulation.cs" />
-    <Compile Include="Editor\SelectTypeWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\SelectTypeWindow.cs" />
     <Compile Include="Editor\SelectTypeWindow.Designer.cs" />
-    <Compile Include="Editor\SetReferenceWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\SetReferenceWindow.cs" />
     <Compile Include="Editor\SetReferenceWindow.Designer.cs" />
-    <Compile Include="Editor\SettingsCell.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\SettingsCell.cs" />
     <Compile Include="Editor\SettingsCell.designer.cs" />
-    <Compile Include="Editor\SettingsCellProcedureUI.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\SettingsCellProcedureUI.cs" />
     <Compile Include="Editor\SettingsCellProcedureUI.designer.cs" />
-    <Compile Include="Editor\SettingsCell_Properties.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\SettingsCell_Properties.cs" />
     <Compile Include="Editor\SettingsCell_Properties.designer.cs" />
-    <Compile Include="Editor\SettingsHeader.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\SettingsHeader.cs" />
     <Compile Include="Editor\SettingsHeader.designer.cs" />
-    <Compile Include="Editor\SettingsHeader_Components.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\SettingsHeader_Components.cs" />
     <Compile Include="Editor\SettingsHeader_Components.designer.cs" />
-    <Compile Include="Editor\SettingsHeader_ObjectInfo.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\SettingsHeader_ObjectInfo.cs" />
     <Compile Include="Editor\SettingsHeader_ObjectInfo.designer.cs" />
-    <Compile Include="Editor\SettingsLevel2Window.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\SettingsLevel2Window.cs" />
     <Compile Include="Editor\SettingsLevel2Window.designer.cs" />
     <Compile Include="Editor\SettingsProvider.cs" />
-    <Compile Include="Editor\SettingsWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\SettingsWindow.cs" />
     <Compile Include="Editor\SettingsWindow.designer.cs" />
-    <Compile Include="Editor\SolutionExplorer.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\SolutionExplorer.cs" />
     <Compile Include="Editor\SolutionExplorer.designer.cs" />
-    <Compile Include="Editor\SpecifyParametersForm.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\SpecifyParametersForm.cs" />
     <Compile Include="Editor\SpecifyParametersForm.designer.cs" />
-    <Compile Include="Editor\SplashForm.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\SplashForm.cs" />
     <Compile Include="Editor\SplashForm.Designer.cs" />
-    <Compile Include="Editor\StartPageWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\StartPageWindow.cs" />
     <Compile Include="Editor\StartPageWindow.designer.cs" />
-    <Compile Include="Editor\StoreDocumentWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\StoreDocumentWindow.cs" />
     <Compile Include="Editor\StoreDocumentWindow.designer.cs" />
-    <Compile Include="Editor\TipsWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\TipsWindow.cs" />
     <Compile Include="Editor\TipsWindow.designer.cs" />
     <Compile Include="Editor\ToolStripBreadCrumbHost.cs" />
     <Compile Include="Editor\WinFormsProcedureUI.cs" />
     <Compile Include="Editor\WorkspaceController.cs" />
     <Compile Include="Editor\WorkspaceControllerForForm.cs" />
     <Compile Include="Editor\WorkspaceControllerForWindow.cs" />
-    <Compile Include="Editor\WorkspaceWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\WorkspaceWindow.cs" />
     <Compile Include="Editor\WorkspaceWindow.designer.cs" />
     <Compile Include="EngineApp\EngineApp.cs" />
     <Compile Include="EngineApp\EngineBackgroundTasks.cs" />
@@ -633,14 +520,10 @@
     <Compile Include="Project settings\Component_ProjectSettings_Page.cs" />
     <Compile Include="Project settings\Component_ProjectSettings_PageBasic.cs" />
     <Compile Include="Project settings\HCItemProjectRibbonAndToolbarActions.cs" />
-    <Compile Include="Project settings\HCItemProjectRibbonAndToolbarActionsForm.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Project settings\HCItemProjectRibbonAndToolbarActionsForm.cs" />
     <Compile Include="Project settings\HCItemProjectRibbonAndToolbarActionsForm.Designer.cs" />
     <Compile Include="Project settings\HCItemProjectShortcuts.cs" />
-    <Compile Include="Project settings\HCItemProjectShortcutsForm.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Project settings\HCItemProjectShortcutsForm.cs" />
     <Compile Include="Project settings\HCItemProjectShortcutsForm.Designer.cs" />
     <Compile Include="Project settings\ProjectSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -697,9 +580,7 @@
     <Compile Include="UISystem\UIContextMenu.cs" />
     <Compile Include="UISystem\UIControl.cs" />
     <Compile Include="UISystem\UIControlsWorld.cs" />
-    <Compile Include="UISystem\UIControl_DocumentWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="UISystem\UIControl_DocumentWindow.cs" />
     <Compile Include="UISystem\UIControl_DocumentWindow.designer.cs" />
     <Compile Include="UISystem\UIEdit.cs" />
     <Compile Include="UISystem\UIGrid.cs" />
@@ -773,13 +654,9 @@
     <Compile Include="Utility\VisualStudioSolutionUtility.cs" />
     <Compile Include="Utility\WindowsClipboard.cs" />
     <Compile Include="Utility\XmlDocumentationFiles.cs" />
-    <Compile Include="WinForms\EngineViewportControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="WinForms\EngineViewportControl.cs" />
     <Compile Include="WinForms\EngineViewportControl.designer.cs" />
-    <Compile Include="WinForms\EUserControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="WinForms\EUserControl.cs" />
     <Compile Include="WinForms\EUserControl.designer.cs" />
     <Compile Include="WinForms\WinFormsUtility.cs" />
     <Compile Include="Addons\NeoAxis.Addon.Builder3D\Actions.cs" />
@@ -802,17 +679,13 @@
     <Compile Include="Components\Area\Component_AreaPoint.cs" />
     <Compile Include="Components\Build\Component_Product.cs" />
     <Compile Include="Components\Build\Component_Product_Android.cs" />
-    <Compile Include="Components\Build\Component_Product_DocumentWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Components\Build\Component_Product_DocumentWindow.cs" />
     <Compile Include="Components\Build\Component_Product_DocumentWindow.designer.cs" />
     <Compile Include="Components\Build\Component_Product_UWP.cs" />
     <Compile Include="Components\Build\Component_Product_Windows.cs" />
     <Compile Include="Components\Build\ProductBuildInstance.cs" />
     <Compile Include="Components\Camera\Component_Camera.cs" />
-    <Compile Include="Components\Camera\Component_Camera_PreviewControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Components\Camera\Component_Camera_PreviewControl.cs" />
     <Compile Include="Components\Camera\Component_Camera_PreviewControl.designer.cs" />
     <Compile Include="Components\CurveInSpace\Component_CurveInSpace.cs" />
     <Compile Include="Components\CurveInSpace\Component_CurveInSpacePoint.cs" />
@@ -837,15 +710,11 @@
     <Compile Include="Components\FlowGraph\Component_FlowGraphNodeStyle.cs" />
     <Compile Include="Components\FlowGraph\Component_FlowGraphSpecialization.cs" />
     <Compile Include="Components\FlowGraph\Component_FlowGraphStyle.cs" />
-    <Compile Include="Components\FlowGraph\Component_FlowGraph_DocumentWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Components\FlowGraph\Component_FlowGraph_DocumentWindow.cs" />
     <Compile Include="Components\FlowGraph\Component_FlowGraph_DocumentWindow.designer.cs" />
     <Compile Include="Components\FlowGraph\FlowGraphCommon.cs" />
     <Compile Include="Components\Font\Component_Font.cs" />
-    <Compile Include="Components\Font\Component_Font_PreviewControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Components\Font\Component_Font_PreviewControl.cs" />
     <Compile Include="Components\Font\Component_Font_PreviewControl.designer.cs" />
     <Compile Include="Components\Font\Resource_Font.cs" />
     <Compile Include="Components\GroupOfObjects\Component_GroupOfObjects.cs" />
@@ -855,19 +724,17 @@
     <Compile Include="Components\GroupOfObjects\Component_GroupOfObjects_GetObjects.cs" />
     <Compile Include="Components\GroupOfObjects\Component_GroupOfObjects_SettingsCell.cs" />
     <Compile Include="Components\Image\Component_Image.cs" />
-    <Compile Include="Components\Image\Component_Image_DocumentWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Components\Image\Component_Image_DocumentWindow.cs" />
     <Compile Include="Components\Image\Component_Image_DocumentWindow.designer.cs" />
-    <Compile Include="Components\Image\Component_Image_PreviewControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Components\Image\Component_Image_PreviewControl.cs" />
     <Compile Include="Components\Image\Component_Image_PreviewControl.designer.cs" />
+    <Compile Include="Components\Image\Component_Image_PreviewImage.cs" />
     <Compile Include="Components\Image\Component_Image_Settings.cs" />
     <Compile Include="Components\Import3D\Assembly_Import3D.cs" />
     <Compile Include="Components\Import3D\Component_Import3D.cs" />
     <Compile Include="Components\Import3D\Component_Import3D_Editor.cs" />
     <Compile Include="Components\Import3D\Component_Import3D_Preview.cs" />
+    <Compile Include="Components\Import3D\Component_Import3D_PreviewImage.cs" />
     <Compile Include="Components\Import3D\Component_Import3D_SettingsCell.cs" />
     <Compile Include="Components\Import3D\ImportGeneral.cs" />
     <Compile Include="Components\Import3D\Resource_Import3D.cs" />
@@ -875,14 +742,11 @@
     <Compile Include="Components\Material\Component_Material.cs" />
     <Compile Include="Components\Material\Component_MaterialBlend.cs" />
     <Compile Include="Components\Material\Component_Material_CompiledData.cs" />
-    <Compile Include="Components\Material\Component_Material_DocumentWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Components\Material\Component_Material_DocumentWindow.cs" />
     <Compile Include="Components\Material\Component_Material_DocumentWindow.designer.cs" />
-    <Compile Include="Components\Material\Component_Material_PreviewControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Components\Material\Component_Material_PreviewControl.cs" />
     <Compile Include="Components\Material\Component_Material_PreviewControl.designer.cs" />
+    <Compile Include="Components\Material\Component_Material_PreviewImage.cs" />
     <Compile Include="Components\Material\Component_Material_SettingsCell.cs" />
     <Compile Include="Components\Material\Component_ShaderParameter.cs" />
     <Compile Include="Components\Material\Component_ShaderTextureSample.cs" />
@@ -906,6 +770,7 @@
     <Compile Include="Components\Mesh\Component_MeshModifier_SettingsCell.cs" />
     <Compile Include="Components\Mesh\Component_Mesh_Editor.cs" />
     <Compile Include="Components\Mesh\Component_Mesh_Preview.cs" />
+    <Compile Include="Components\Mesh\Component_Mesh_PreviewImage.cs" />
     <Compile Include="Components\Mesh\Component_Mesh_SettingsCell.cs" />
     <Compile Include="Components\Mesh\Component_Mesh__Structure.cs" />
     <Compile Include="Components\Mesh\Component_Skeleton.cs" />
@@ -917,9 +782,7 @@
     <Compile Include="Components\MeshInSpace\Component_MeshInSpace_EditorExtensions.cs" />
     <Compile Include="Components\ObjectInSpace\Component_ObjectInSpace.cs" />
     <Compile Include="Components\ObjectInSpace\Component_ObjectInSpace_EditorExtensions.cs" />
-    <Compile Include="Components\ObjectInSpace\Component_ObjectInSpace_PreviewControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Components\ObjectInSpace\Component_ObjectInSpace_PreviewControl.cs" />
     <Compile Include="Components\ObjectInSpace\Component_ObjectInSpace_PreviewControl.designer.cs" />
     <Compile Include="Components\ObjectInSpace\Component_ObjectInSpace_Utility.cs" />
     <Compile Include="Components\ParticleSystem\Component_ParticleEmitter.cs" />
@@ -927,13 +790,9 @@
     <Compile Include="Components\ParticleSystem\Component_ParticleSystem.cs" />
     <Compile Include="Components\ParticleSystem\Component_ParticleSystemInSpace.cs" />
     <Compile Include="Components\ParticleSystem\Component_ParticleSystemInSpace_SettingsCell.cs" />
-    <Compile Include="Components\ParticleSystem\Component_ParticleSystem_DocumentWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Components\ParticleSystem\Component_ParticleSystem_DocumentWindow.cs" />
     <Compile Include="Components\ParticleSystem\Component_ParticleSystem_DocumentWindow.designer.cs" />
-    <Compile Include="Components\ParticleSystem\Component_ParticleSystem_PreviewControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Components\ParticleSystem\Component_ParticleSystem_PreviewControl.cs" />
     <Compile Include="Components\ParticleSystem\Component_ParticleSystem_PreviewControl.designer.cs" />
     <Compile Include="Components\ParticleSystem\Component_ParticleSystem_SettingsCell.cs" />
     <Compile Include="Components\Physics\BulletPhysicsUtility.cs" />
@@ -982,9 +841,7 @@
     <Compile Include="Components\Rendering\Component_RenderingEffect_Simple_SettingsCell.cs" />
     <Compile Include="Components\Rendering\Component_RenderingPipeline.cs" />
     <Compile Include="Components\Scene\Component_Scene.cs" />
-    <Compile Include="Components\Scene\Component_Scene_DocumentWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Components\Scene\Component_Scene_DocumentWindow.cs" />
     <Compile Include="Components\Scene\Component_Scene_DocumentWindow.designer.cs" />
     <Compile Include="Components\Scene\Component_Scene_Utility.cs" />
     <Compile Include="Components\Scene\Component_Scene__NewObjectSettings.cs" />
@@ -999,20 +856,14 @@
     <Compile Include="Components\ShaderScript\Component_ShaderScript.cs" />
     <Compile Include="Components\ShaderScript\Component_ShaderScript_SettingsCell.cs" />
     <Compile Include="Components\Sound\Component_Sound.cs" />
-    <Compile Include="Components\Sound\Component_Sound_PreviewControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Components\Sound\Component_Sound_PreviewControl.cs" />
     <Compile Include="Components\Sound\Component_Sound_PreviewControl.designer.cs" />
     <Compile Include="Components\Sprite\Component_Sprite.cs" />
     <Compile Include="Components\Sprite\Component_SpriteAnimation.cs" />
     <Compile Include="Components\Sprite\Component_SpriteAnimationController.cs" />
-    <Compile Include="Components\Sprite\Component_Sprite_DocumentWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Components\Sprite\Component_Sprite_DocumentWindow.cs" />
     <Compile Include="Components\Sprite\Component_Sprite_DocumentWindow.designer.cs" />
-    <Compile Include="Components\Sprite\Component_Sprite_PreviewControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Components\Sprite\Component_Sprite_PreviewControl.cs" />
     <Compile Include="Components\Sprite\Component_Sprite_PreviewControl.designer.cs" />
     <Compile Include="Components\Sprite\SpriteMeshManager.cs" />
     <Compile Include="Components\Surface\Component_Surface.cs" />
@@ -1020,13 +871,9 @@
     <Compile Include="Components\Surface\Component_SurfaceGroupOfElements.cs" />
     <Compile Include="Components\Surface\Component_SurfaceLayer.cs" />
     <Compile Include="Components\Surface\Component_SurfaceUtility.cs" />
-    <Compile Include="Components\Surface\Component_Surface_DocumentWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Components\Surface\Component_Surface_DocumentWindow.cs" />
     <Compile Include="Components\Surface\Component_Surface_DocumentWindow.designer.cs" />
-    <Compile Include="Components\Surface\Component_Surface_PreviewControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Components\Surface\Component_Surface_PreviewControl.cs" />
     <Compile Include="Components\Surface\Component_Surface_PreviewControl.designer.cs" />
     <Compile Include="Components\SurfaceArea\Component_SurfaceArea.cs" />
     <Compile Include="Components\SurfaceArea\Component_SurfaceArea_SettingsCell.cs" />
@@ -1035,11 +882,13 @@
     <Compile Include="Components\Terrain\Component_Terrain_SettingsCell.cs" />
     <Compile Include="Components\Terrain\Component_Terrain_Undo.cs" />
     <Compile Include="Components\Timeline\Component_Timeline.cs" />
+    <Compile Include="Editor\EngineToolTip\EngineToolTip.cs" />
+    <Compile Include="Editor\EngineToolTip\EngineToolTipForm.cs" />
+    <Compile Include="Editor\EngineToolTip\EngineToolTipForm.designer.cs" />
+    <Compile Include="Editor\EngineToolTip\EngineToolTipManager.cs" />
     <Compile Include="Editor\HierarchicalContainer\HCColorPreviewButton.cs" />
     <Compile Include="Editor\HierarchicalContainer\HCCommon.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HCDropDownControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\HierarchicalContainer\HCDropDownControl.cs" />
     <Compile Include="Editor\HierarchicalContainer\HCExtensions.cs" />
     <Compile Include="Editor\HierarchicalContainer\HCItemCheckBox.cs" />
     <Compile Include="Editor\HierarchicalContainer\HCItemCollection.cs" />
@@ -1055,30 +904,18 @@
     <Compile Include="Editor\HierarchicalContainer\HCItemTextBoxNumeric.cs" />
     <Compile Include="Editor\HierarchicalContainer\HCItemTextBoxSelect.cs" />
     <Compile Include="Editor\HierarchicalContainer\HCItemUserControl.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HierarchicalContainer.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\HierarchicalContainer\HierarchicalContainer.cs" />
     <Compile Include="Editor\HierarchicalContainer\HierarchicalContainer.designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HierarchicalContainer.Item.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\HierarchicalContainer\HierarchicalContainer.Item.cs" />
     <Compile Include="Editor\ResourcesToCreate\NewResourceType.cs" />
     <Compile Include="Editor\ResourcesToCreate\NewResourceType_CSharpClass.cs" />
-    <Compile Include="Editor\ResourcesToCreate\NewResourceType_CSharpClassLibrary_Cell.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\ResourcesToCreate\NewResourceType_CSharpClassLibrary_Cell.cs" />
     <Compile Include="Editor\ResourcesToCreate\NewResourceType_CSharpClassLibrary_Cell.designer.cs" />
-    <Compile Include="Editor\ResourcesToCreate\NewResourceType_FlowGraphLibrary_Cell.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\ResourcesToCreate\NewResourceType_FlowGraphLibrary_Cell.cs" />
     <Compile Include="Editor\ResourcesToCreate\NewResourceType_FlowGraphLibrary_Cell.designer.cs" />
-    <Compile Include="Editor\ResourcesToCreate\NewResourceType_TextFile_Cell.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\ResourcesToCreate\NewResourceType_TextFile_Cell.cs" />
     <Compile Include="Editor\ResourcesToCreate\NewResourceType_TextFile_Cell.designer.cs" />
-    <Compile Include="Editor\ScreenNotifications\ScreenNotificationForm.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\ScreenNotifications\ScreenNotificationForm.cs" />
     <Compile Include="Editor\ScreenNotifications\ScreenNotificationForm.designer.cs" />
     <Compile Include="Editor\ScreenNotifications\ScreenNotifications.cs" />
     <Compile Include="Editor\TransformTool\TransformTool.cs" />
@@ -1119,9 +956,7 @@
     <Compile Include="Libraries\Aether.Physics2D\Settings.cs" />
     <Compile Include="Libraries\Aga.Controls\BitmapHelper.cs" />
     <Compile Include="Libraries\Aga.Controls\GifDecoder.cs" />
-    <Compile Include="Libraries\Aga.Controls\NumericTextBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Libraries\Aga.Controls\NumericTextBox.cs" />
     <Compile Include="Libraries\Aga.Controls\PerformanceAnalyzer.cs" />
     <Compile Include="Libraries\Aga.Controls\ResourceHelper.cs" />
     <Compile Include="Libraries\Aga.Controls\StringCollectionEditor.cs" />
@@ -1873,22 +1708,14 @@
     <Compile Include="Libraries\TextureTools\DDSTextureTools.cs" />
     <Compile Include="Libraries\TextureTools\DDSWriter.cs" />
     <Compile Include="Libraries\TextureTools\NvidiaTextureTools.cs" />
-    <Compile Include="MathEx\ColorValue\ColorGradientControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="MathEx\ColorValue\ColorGradientControl.cs" />
     <Compile Include="MathEx\ColorValue\ColorValue.cs" />
     <Compile Include="MathEx\ColorValue\ColorValuePowered.cs" />
-    <Compile Include="MathEx\ColorValue\ColorValuePoweredSelectControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="MathEx\ColorValue\ColorValuePoweredSelectControl.cs" />
     <Compile Include="MathEx\ColorValue\ColorValuePoweredSelectControl.designer.cs" />
-    <Compile Include="MathEx\ColorValue\ColorValuePoweredSelectForm.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="MathEx\ColorValue\ColorValuePoweredSelectForm.cs" />
     <Compile Include="MathEx\ColorValue\ColorValuePoweredSelectForm.designer.cs" />
-    <Compile Include="MathEx\ColorValue\ColorWheel.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="MathEx\ColorValue\ColorWheel.cs" />
     <Compile Include="MathEx\ColorValue\HSVColor.cs" />
     <Compile Include="MathEx\Curve\Curve.cs" />
     <Compile Include="MathEx\Curve\CurveBezier.cs" />
@@ -2014,14 +1841,18 @@
     <Compile Include="Components\Rendering\Effects\AmbientOcclusion.cs" />
     <Compile Include="Components\Rendering\Effects\Antialiasing.cs" />
     <Compile Include="Components\Rendering\Effects\Bloom.cs" />
+    <Compile Include="Components\Rendering\Effects\ChromaticAberration.cs" />
     <Compile Include="Components\Rendering\Effects\ColorGrading.cs" />
     <Compile Include="Components\Rendering\Effects\DepthOfField.cs" />
+    <Compile Include="Components\Rendering\Effects\EdgeDetection.cs" />
     <Compile Include="Components\Rendering\Effects\GaussianBlur.cs" />
     <Compile Include="Components\Rendering\Effects\Grayscale.cs" />
     <Compile Include="Components\Rendering\Effects\LensEffects.cs" />
     <Compile Include="Components\Rendering\Effects\LightShafts.cs" />
     <Compile Include="Components\Rendering\Effects\MotionBlur.cs" />
     <Compile Include="Components\Rendering\Effects\Noise.cs" />
+    <Compile Include="Components\Rendering\Effects\Pixelate.cs" />
+    <Compile Include="Components\Rendering\Effects\Posterize.cs" />
     <Compile Include="Components\Rendering\Effects\RadialBlur.cs" />
     <Compile Include="Components\Rendering\Effects\ScreenSpaceReflection.cs" />
     <Compile Include="Components\Rendering\Effects\Sharpen.cs" />
@@ -2051,68 +1882,38 @@
     <Compile Include="Components\Scripting\Core\ScriptingCSharpEngine.cs" />
     <Compile Include="Components\Scripting\Core\ScriptUtility.cs" />
     <Compile Include="Components\Scripting\Editor\ContentBrowserFilteringMode_CSharp.cs" />
-    <Compile Include="Editor\HierarchicalContainer\DropDownEditors\EnumDropDownControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\HierarchicalContainer\DropDownEditors\EnumDropDownControl.cs" />
     <Compile Include="Editor\HierarchicalContainer\DropDownEditors\EnumDropDownControl.designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\DropDownEditors\RangeDropDownControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\HierarchicalContainer\DropDownEditors\RangeDropDownControl.cs" />
     <Compile Include="Editor\HierarchicalContainer\DropDownEditors\RangeDropDownControl.designer.cs" />
     <Compile Include="Editor\HierarchicalContainer\DropDownHolder\GripBounds.cs" />
     <Compile Include="Editor\HierarchicalContainer\DropDownHolder\HCDropDownHolderImpl.cs" />
-    <Compile Include="Editor\HierarchicalContainer\DropDownHolder\HCFormDropDownHolder.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\HierarchicalContainer\DropDownHolder\HCFormDropDownHolder.cs" />
     <Compile Include="Editor\HierarchicalContainer\DropDownHolder\HCToolStripDropDownHolder.cs" />
     <Compile Include="Editor\HierarchicalContainer\DropDownHolder\IDropDownHolder.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridCheckBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridCheckBox.cs" />
     <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridCheckBox.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridCollection.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridCollection.cs" />
     <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridCollection.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridColorValue.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridColorValue.cs" />
     <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridColorValue.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridColorValuePowered.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridColorValuePowered.cs" />
     <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridColorValuePowered.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridDropDownButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridDropDownButton.cs" />
     <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridDropDownButton.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridEvent.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridEvent.cs" />
     <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridEvent.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridGroup.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridGroup.cs" />
     <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridGroup.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridLabel.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridLabel.cs" />
     <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridLabel.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridProperty.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridProperty.cs" />
     <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridProperty.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridTextBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridTextBox.cs" />
     <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridTextBox.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxNumeric.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxNumeric.cs" />
     <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxNumeric.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxSelect.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxSelect.cs" />
     <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxSelect.Designer.cs" />
     <Compile Include="FileSystem\Archives\_DISABLED\Package.cs" />
     <Compile Include="FileSystem\Archives\_DISABLED\ZipPackage.cs" />
@@ -2217,22 +2018,12 @@
     <Compile Include="Libraries\Aga.Controls\Tree\TreeNodeAdvMouseEventArgs.cs" />
     <Compile Include="Libraries\Aga.Controls\Tree\TreePath.cs" />
     <Compile Include="Libraries\Aga.Controls\Tree\TreePathEventArgs.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.cs" />
     <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Designer.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Draw.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Editor.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Input.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Properties.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Draw.cs" />
+    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Editor.cs" />
+    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Input.cs" />
+    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Properties.cs" />
     <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdvCancelEventArgs.cs" />
     <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdvEventArgs.cs" />
     <Compile Include="Libraries\Aga.Controls\Tree\TreeViewRowDrawEventArgs.cs" />
@@ -3192,9 +2983,7 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Navigator\KryptonNavigatorDesigner.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Navigator\KryptonPageActionList.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Navigator\KryptonPageDesigner.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Navigator\KryptonPageFormEditFlags.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Navigator\KryptonPageFormEditFlags.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Navigator\KryptonPageFormEditFlags.Designer.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Navigator\NavigatorPageCollectionEditor.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Properties\Resources.Designer.cs" />
@@ -3243,9 +3032,7 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\KryptonCheckBoxDesigner.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\KryptonCheckButtonActionList.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\KryptonCheckButtonCollectionEditor.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\KryptonCheckButtonCollectionForm.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\KryptonCheckButtonCollectionForm.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\KryptonCheckButtonCollectionForm.Designer.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\KryptonCheckButtonDesigner.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\KryptonCheckedListBoxActionList.cs" />
@@ -3324,9 +3111,7 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\KryptonWrapLabelActionList.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\KryptonWrapLabelDesigner.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\PaletteDrawBordersEditor.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\PaletteDrawBordersSelector.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\PaletteDrawBordersSelector.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\PaletteDrawBordersSelector.Designer.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Workspace\KryptonWorkspaceActionList.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Workspace\KryptonWorkspaceCellDesigner.cs" />
@@ -3396,9 +3181,7 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\General\Definitions.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\General\DockingHelper.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\General\DockingMultiUpdate.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\General\ObscureControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\General\ObscureControl.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\General\PlatformInvoke.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Palette\DockingManagerStrings.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Properties\Resources.Designer.cs" />
@@ -3438,12 +3221,8 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DragTarget.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DragTargetNavigatorTransfer.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DropDockingIndicatorsRounded.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DropDockingIndicatorsSquare.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DropSolidWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DropDockingIndicatorsSquare.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DropSolidWindow.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\PageDragEndData.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\EventArgs\CloseActionEventArgs.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\EventArgs\ContextActionEventArgs.cs" />
@@ -3605,12 +3384,8 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Ribbon\KryptonRibbonRecentDocCollection.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Ribbon\KryptonRibbonTab.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Ribbon\KryptonRibbonTabCollection.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\BackstageAppMenu.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\KeyTipControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\BackstageAppMenu.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\KeyTipControl.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\VisualPopupAppMenu.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\VisualPopupGroup.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\VisualPopupMinimized.cs" />
@@ -3871,9 +3646,7 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonDateTimePicker.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonDomainUpDown.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonDropButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonForm.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonForm.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonGroup.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonGroupBox.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonGroupPanel.cs" />
@@ -3910,24 +3683,16 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualControl.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualControlBase.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualControlContainment.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualForm.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualForm.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPanel.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopup.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopupManager.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopupShadow.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopupSimpleShadow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopupShadow.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopupSimpleShadow.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopupTooltip.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualSimple.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualSimpleBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualTaskDialog.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualTaskDialog.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\ButtonSpecFormFixedConverter.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\ButtonStyleConverter.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\DataGridViewStyleConverter.cs" />
@@ -3993,9 +3758,7 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\KryptonControlCollection.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\KryptonDefaultColorAttribute.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\KryptonReadOnlyControls.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\ModalWaitDialog.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\ModalWaitDialog.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\ModalWaitDialog.Designer.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\NullContentValues.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\OperationThread.cs" />
@@ -4199,9 +3962,7 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewComposite.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewContext.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewContextMenuManager.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewControl.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewDecorator.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewLeaf.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewManager.cs" />
@@ -4462,9 +4223,7 @@
     <Compile Include="Libraries\Aether.Physics2D\Common\Decomposition\Seidel\Triangulator.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Common\Decomposition\Seidel\XNode.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Common\Decomposition\Seidel\YNode.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\ShadowsV2\DropShadow.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\ShadowsV2\DropShadow.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\ShadowsV2\DropShadowManager.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\ShadowsV2\ImageMaps.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\ShadowsV2\ShadowImageCache.cs" />

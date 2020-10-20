@@ -41,7 +41,6 @@ namespace NeoAxis.Editor
 			ResizeRedraw = true;
 
 			EditorThemeUtility.ApplyDarkThemeToForm( this );
-			EditorThemeUtility.ApplyDarkThemeToToolTip( propertyToolTip );
 
 			//!!!!
 			//BackColor = Random.Generate(ColorValue.Zero, ColorValue.One).ToColor();

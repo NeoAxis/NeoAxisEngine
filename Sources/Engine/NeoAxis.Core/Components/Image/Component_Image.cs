@@ -17,6 +17,7 @@ namespace NeoAxis
 	[ResourceFileExtension( "image" )]
 	[EditorDocumentWindow( typeof( Component_Image_DocumentWindow ) )]
 	[EditorPreviewControl( typeof( Component_Image_PreviewControl ) )]
+	[EditorPreviewImage( typeof( Component_Image_PreviewImage ) )]
 	public class Component_Image : Component_ResultCompile<GpuTexture>
 	{
 		/// <summary>

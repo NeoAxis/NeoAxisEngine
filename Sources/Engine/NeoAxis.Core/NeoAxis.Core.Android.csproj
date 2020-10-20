@@ -82,6 +82,7 @@
     <Compile Include="Components\ComponentsHidePublic.cs" />
     <Compile Include="Components\Component_Billboard.cs" />
     <Compile Include="Components\Component_ComponentHost.cs" />
+    <Compile Include="Components\Component_CutVolume.cs" />
     <Compile Include="Components\Component_Decal.cs" />
     <Compile Include="Components\Component_InvokeMember.cs" />
     <Compile Include="Components\Component_Layer.cs" />
@@ -172,6 +173,7 @@
     <Compile Include="Editor\KryptonRibbonGroupSlider.Designer.cs" />
     <Compile Include="Editor\KryptonRibbonGroupSliderControl.cs" />
     <Compile Include="Editor\KryptonRibbonGroupSliderControl.Designer.cs" />
+    <Compile Include="Editor\LabelExtended.cs" />
     <Compile Include="Editor\LowProfileDockableWorkspace.cs" />
     <Compile Include="Editor\MessageLogOptions.cs" />
     <Compile Include="Editor\MessageLogOptionsForm.cs" />
@@ -205,7 +207,8 @@
     <Compile Include="Editor\PreviewControl.designer.cs" />
     <Compile Include="Editor\PreviewControlWithViewport.cs" />
     <Compile Include="Editor\PreviewControlWithViewport.designer.cs" />
-    <Compile Include="Editor\PreviewIconsManager.cs" />
+    <Compile Include="Editor\PreviewImageGenerator.cs" />
+    <Compile Include="Editor\PreviewImagesManager.cs" />
     <Compile Include="Editor\PreviewWindow.cs" />
     <Compile Include="Editor\PreviewWindow.designer.cs" />
     <Compile Include="Editor\ResourcesWindow.cs" />
@@ -560,11 +563,13 @@
     <Compile Include="Components\Image\Component_Image_DocumentWindow.designer.cs" />
     <Compile Include="Components\Image\Component_Image_PreviewControl.cs" />
     <Compile Include="Components\Image\Component_Image_PreviewControl.designer.cs" />
+    <Compile Include="Components\Image\Component_Image_PreviewImage.cs" />
     <Compile Include="Components\Image\Component_Image_Settings.cs" />
     <Compile Include="Components\Import3D\Assembly_Import3D.cs" />
     <Compile Include="Components\Import3D\Component_Import3D.cs" />
     <Compile Include="Components\Import3D\Component_Import3D_Editor.cs" />
     <Compile Include="Components\Import3D\Component_Import3D_Preview.cs" />
+    <Compile Include="Components\Import3D\Component_Import3D_PreviewImage.cs" />
     <Compile Include="Components\Import3D\Component_Import3D_SettingsCell.cs" />
     <Compile Include="Components\Import3D\ImportGeneral.cs" />
     <Compile Include="Components\Import3D\Resource_Import3D.cs" />
@@ -576,6 +581,7 @@
     <Compile Include="Components\Material\Component_Material_DocumentWindow.designer.cs" />
     <Compile Include="Components\Material\Component_Material_PreviewControl.cs" />
     <Compile Include="Components\Material\Component_Material_PreviewControl.designer.cs" />
+    <Compile Include="Components\Material\Component_Material_PreviewImage.cs" />
     <Compile Include="Components\Material\Component_Material_SettingsCell.cs" />
     <Compile Include="Components\Material\Component_ShaderParameter.cs" />
     <Compile Include="Components\Material\Component_ShaderTextureSample.cs" />
@@ -599,6 +605,7 @@
     <Compile Include="Components\Mesh\Component_MeshModifier_SettingsCell.cs" />
     <Compile Include="Components\Mesh\Component_Mesh_Editor.cs" />
     <Compile Include="Components\Mesh\Component_Mesh_Preview.cs" />
+    <Compile Include="Components\Mesh\Component_Mesh_PreviewImage.cs" />
     <Compile Include="Components\Mesh\Component_Mesh_SettingsCell.cs" />
     <Compile Include="Components\Mesh\Component_Mesh__Structure.cs" />
     <Compile Include="Components\Mesh\Component_Skeleton.cs" />
@@ -710,6 +717,10 @@
     <Compile Include="Components\Terrain\Component_Terrain_SettingsCell.cs" />
     <Compile Include="Components\Terrain\Component_Terrain_Undo.cs" />
     <Compile Include="Components\Timeline\Component_Timeline.cs" />
+    <Compile Include="Editor\EngineToolTip\EngineToolTip.cs" />
+    <Compile Include="Editor\EngineToolTip\EngineToolTipForm.cs" />
+    <Compile Include="Editor\EngineToolTip\EngineToolTipForm.designer.cs" />
+    <Compile Include="Editor\EngineToolTip\EngineToolTipManager.cs" />
     <Compile Include="Editor\HierarchicalContainer\HCColorPreviewButton.cs" />
     <Compile Include="Editor\HierarchicalContainer\HCCommon.cs" />
     <Compile Include="Editor\HierarchicalContainer\HCDropDownControl.cs" />
@@ -1665,14 +1676,18 @@
     <Compile Include="Components\Rendering\Effects\AmbientOcclusion.cs" />
     <Compile Include="Components\Rendering\Effects\Antialiasing.cs" />
     <Compile Include="Components\Rendering\Effects\Bloom.cs" />
+    <Compile Include="Components\Rendering\Effects\ChromaticAberration.cs" />
     <Compile Include="Components\Rendering\Effects\ColorGrading.cs" />
     <Compile Include="Components\Rendering\Effects\DepthOfField.cs" />
+    <Compile Include="Components\Rendering\Effects\EdgeDetection.cs" />
     <Compile Include="Components\Rendering\Effects\GaussianBlur.cs" />
     <Compile Include="Components\Rendering\Effects\Grayscale.cs" />
     <Compile Include="Components\Rendering\Effects\LensEffects.cs" />
     <Compile Include="Components\Rendering\Effects\LightShafts.cs" />
     <Compile Include="Components\Rendering\Effects\MotionBlur.cs" />
     <Compile Include="Components\Rendering\Effects\Noise.cs" />
+    <Compile Include="Components\Rendering\Effects\Pixelate.cs" />
+    <Compile Include="Components\Rendering\Effects\Posterize.cs" />
     <Compile Include="Components\Rendering\Effects\RadialBlur.cs" />
     <Compile Include="Components\Rendering\Effects\ScreenSpaceReflection.cs" />
     <Compile Include="Components\Rendering\Effects\Sharpen.cs" />

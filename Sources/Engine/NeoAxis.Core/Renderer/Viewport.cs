@@ -66,10 +66,19 @@ namespace NeoAxis
 		{
 			//!!!!обязательно ли Object in space
 			public Component_ObjectInSpace ObjectInSpace;
-			public RectangleF ScreenRectangle;
+			public float DistanceToCamera;
+			public Rectangle ScreenRectangle;
 			public ColorValue Color;
+
+			public enum ShapeEnum
+			{
+				Rectangle,
+				Ellipse
+			}
+			public ShapeEnum Shape = ShapeEnum.Ellipse;
 		}
 		List<LastFrameScreenLabelItem> lastFrameScreenLabels = new List<LastFrameScreenLabelItem>();
+		Dictionary<Component_ObjectInSpace, LastFrameScreenLabelItem> lastFrameScreenLabelByObjectInSpace = new Dictionary<Component_ObjectInSpace, LastFrameScreenLabelItem>();
 
 		//!!!!new. так?
 		bool allowRenderScreenLabels = true;
@@ -1566,6 +1575,7 @@ namespace NeoAxis
 				renderingContext.objectInSpaceRenderingContext = objectInSpaceRenderingContext;
 
 				lastFrameScreenLabels.Clear();
+				lastFrameScreenLabelByObjectInSpace.Clear();
 
 				//!!!!это правильнее рисовать до transform tool. а значит между двумя UpdateBeforeOutput
 				if( AttachedScene != null && AttachedScene.EnabledInHierarchy )
@@ -1743,6 +1753,17 @@ namespace NeoAxis
 		public List<LastFrameScreenLabelItem> LastFrameScreenLabels
 		{
 			get { return lastFrameScreenLabels; }
+		}
+
+		public Dictionary<Component_ObjectInSpace, LastFrameScreenLabelItem> LastFrameScreenLabelByObjectInSpace
+		{
+			get { return lastFrameScreenLabelByObjectInSpace; }
+		}
+
+		public LastFrameScreenLabelItem GetLastFrameScreenLabelByObjectInSpace( Component_ObjectInSpace obj )
+		{
+			lastFrameScreenLabelByObjectInSpace.TryGetValue( obj, out var item );
+			return item;
 		}
 
 		public bool AllowRenderScreenLabels

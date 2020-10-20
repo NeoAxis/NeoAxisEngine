@@ -36,6 +36,7 @@ namespace NeoAxis
 			physics2DWorldData = null;
 		}
 
+		[DisplayName( "Physics 2D Simulation Step After" )]
 		public event Action<Component_Scene> Physics2DSimulationStepAfter;
 
 		void Physics2DSimulate()

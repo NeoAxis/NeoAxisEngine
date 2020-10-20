@@ -25,6 +25,7 @@ namespace NeoAxis
 	[ResourceFileExtension( "mesh" )]
 	[EditorDocumentWindow( typeof( Component_Mesh_Editor ) )]
 	[EditorPreviewControl( typeof( Component_Mesh_Preview ) )]
+	[EditorPreviewImage( typeof( Component_Mesh_PreviewImage ) )]
 	[EditorSettingsCell( typeof( Component_Mesh_SettingsCell ) )]
 	public partial class Component_Mesh : Component_ResultCompile<Component_Mesh.CompiledData>
 	{

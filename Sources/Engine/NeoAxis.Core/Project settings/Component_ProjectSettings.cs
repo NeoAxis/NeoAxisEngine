@@ -111,10 +111,11 @@ namespace NeoAxis
 		}
 
 		/// <summary>
-		/// Whether is enabled the extended mode of the app (NeoAxis Engine mode).
+		/// Enables the extended mode of the app. All features of NeoAxis Engine is activated in this mode.
 		/// </summary>
 		[DefaultValue( false )]
 		[Category( "General" )]
+		[DisplayName( "Extended Mode (Restart the app to apply changes)" )]
 		public Reference<bool> ExtendedMode
 		{
 			get { if( _extendedMode.BeginGet() ) ExtendedMode = _extendedMode.Get( this ); return _extendedMode.value; }
@@ -508,6 +509,20 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="SceneShowAreaColor"/> property value changes.</summary>
 		public event Action<Component_ProjectSettings> SceneShowAreaColorChanged;
 		ReferenceField<ColorValue> _sceneShowAreaColor = new ColorValue( 0, 0, 1 );
+
+		/// <summary>
+		/// The color of volumes in the scene view.
+		/// </summary>
+		[DefaultValue( "0 0 1" )]
+		[Category( "Colors" )]
+		public Reference<ColorValue> SceneShowVolumeColor
+		{
+			get { if( _sceneShowVolumeColor.BeginGet() ) SceneShowVolumeColor = _sceneShowVolumeColor.Get( this ); return _sceneShowVolumeColor.value; }
+			set { if( _sceneShowVolumeColor.BeginSet( ref value ) ) { try { SceneShowVolumeColorChanged?.Invoke( this ); } finally { _sceneShowVolumeColor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="SceneShowVolumeColor"/> property value changes.</summary>
+		public event Action<Component_ProjectSettings> SceneShowVolumeColorChanged;
+		ReferenceField<ColorValue> _sceneShowVolumeColor = new ColorValue( 0, 0, 1 );
 
 		/// <summary>
 		/// The color of sound source objects in the scene view.

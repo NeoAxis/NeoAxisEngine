@@ -78,8 +78,8 @@
 			this.kryptonBorderEdgeR = new ComponentFactory.Krypton.Toolkit.KryptonBorderEdge();
 			this.kryptonBorderEdgeB = new ComponentFactory.Krypton.Toolkit.KryptonBorderEdge();
 			this.timer50ms = new System.Windows.Forms.Timer(this.components);
-			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-			this.toolTip2 = new System.Windows.Forms.ToolTip(this.components);
+			this.toolTip1 = new NeoAxis.Editor.EngineToolTip(this.components);
+			this.toolTip2 = new NeoAxis.Editor.EngineToolTip(this.components);
 			this.toolStripForTreeView.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer1.Panel1)).BeginInit();
@@ -781,7 +781,7 @@
 		private System.Windows.Forms.ToolStripButton toolStripButtonOpen;
 		private BordersContainer treeBordersContainer;
 		private NeoAxis.Editor.EngineListView listView;
-		private System.Windows.Forms.ToolTip toolTip1;
+		private NeoAxis.Editor.EngineToolTip toolTip1;
 		private NeoAxis.Editor.EngineToolStrip toolStripForListView;
 		private System.Windows.Forms.ToolStripButton toolStripButtonUp;
 		private ToolStripBreadCrumbHost toolStripBreadCrumbHost;
@@ -798,6 +798,6 @@
 		private ComponentFactory.Krypton.Toolkit.KryptonSplitContainer kryptonSplitContainerTree;
 		private ComponentFactory.Krypton.Toolkit.KryptonSplitContainer kryptonSplitContainerTreeSub1;
 		private ComponentFactory.Krypton.Toolkit.KryptonSplitContainer kryptonSplitContainerTreeSub2;
-		private System.Windows.Forms.ToolTip toolTip2;
+		private NeoAxis.Editor.EngineToolTip toolTip2;
 	}
 }

@@ -1261,6 +1261,42 @@ namespace NeoAxis.Editor
 				EditorActions.Register( a );
 			}
 
+			//Scene Display Volumes
+			{
+				var a = new EditorAction();
+				a.Name = "Scene Display Volumes";
+				a.ImageSmall = Properties.Resources.Default_16;
+				a.ImageBig = Properties.Resources.Default_32;
+				a.QatSupport = true;
+				a.RibbonText = ("Volumes", "");
+				a.ContextMenuText = a.Name.Replace( "Scene Display ", "" );
+				a.GetState += delegate ( EditorAction.GetStateContext context )
+				{
+					var scene = context.ObjectsInFocus.DocumentWindow?.Document.ResultComponent as Component_Scene;
+					if( scene != null )
+					{
+						context.Enabled = scene.DisplayDevelopmentDataInEditor || scene.DisplayDevelopmentDataInSimulation;
+						context.Checked = context.Enabled && scene.DisplayVolumes;
+					}
+				};
+				a.Click += delegate ( EditorAction.ClickContext context )
+				{
+					var scene = context.ObjectsInFocus.DocumentWindow.Document.ResultComponent as Component_Scene;
+					var document = context.ObjectsInFocus.DocumentWindow.Document;
+
+					var oldValue = scene.DisplayVolumes;
+
+					scene.DisplayVolumes = !scene.DisplayVolumes;
+
+					var property = (Metadata.Property)scene.MetadataGetMemberBySignature( "property:DisplayVolumes" );
+					var undoItem = new UndoActionPropertiesChange.Item( scene, property, oldValue, new object[ 0 ] );
+					var undoAction = new UndoActionPropertiesChange( new UndoActionPropertiesChange.Item[] { undoItem } );
+					document.UndoSystem.CommitAction( undoAction );
+					document.Modified = true;
+				};
+				EditorActions.Register( a );
+			}
+
 			//Scene Display Sensors
 			{
 				var a = new EditorAction();
@@ -4036,10 +4072,21 @@ namespace NeoAxis.Editor
 						var directory = Path.Combine( VirtualFileSystem.Directories.Project, "Caches\\Files" );
 						if( Directory.Exists( directory ) )
 						{
+							//dds cache
 							foreach( var fullPath in Directory.GetFiles( directory, "*.dds", SearchOption.AllDirectories ) )
 							{
 								var fileName = fullPath.Substring( directory.Length + 1 );
 								fileName = fileName.Substring( 0, fileName.Length - 4 );
+
+								if( !VirtualFile.Exists( fileName ) )
+									list.Add( fullPath );
+							}
+
+							//preview images
+							foreach( var fullPath in Directory.GetFiles( directory, "*.preview.png", SearchOption.AllDirectories ) )
+							{
+								var fileName = fullPath.Substring( directory.Length + 1 );
+								fileName = fileName.Substring( 0, fileName.Length - 12 );
 
 								if( !VirtualFile.Exists( fileName ) )
 									list.Add( fullPath );

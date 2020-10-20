@@ -277,6 +277,18 @@ namespace NeoAxis
 			get { return PlatformFunctionality.Get().GetAllDisplays(); }
 		}
 
+		public static RectangleI AllDisplaysBounds
+		{
+			get
+			{
+				var displays = AllDisplays;
+				var result = displays[ 0 ].Bounds;
+				for( int n = 1; n < displays.Count; n++ )
+					result.Add( displays[ n ].Bounds );
+				return result;
+			}
+		}
+
 		public static bool ChangeVideoMode( Vector2I mode )
 		{
 			if( !PlatformFunctionality.Get().ChangeVideoMode( mode ) )

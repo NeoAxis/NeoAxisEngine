@@ -157,6 +157,8 @@ namespace NeoAxis
 		}
 		static List<OcclusionQueryItem> occlusionQueries = new List<OcclusionQueryItem>();
 
+		static int lastFrameNumber;
+
 		///////////////////////////////////////////////
 
 		class CallbackHandler : ICallbackHandler
@@ -1059,8 +1061,14 @@ namespace NeoAxis
 		internal static int CallBgfxFrame()
 		{
 			int result = Bgfx.Frame();
+			lastFrameNumber = result;
 			UpdateOcclusionQuery();
 			return result;
+		}
+
+		public static int LastFrameNumber
+		{
+			get { return lastFrameNumber; }
 		}
 
 		public delegate void OcclusionQueryResult( object callbackParameter, int passingPixels );

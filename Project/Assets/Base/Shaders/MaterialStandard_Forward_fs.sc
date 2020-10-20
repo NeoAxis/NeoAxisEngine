@@ -98,6 +98,8 @@ void main()
 	vec3 worldPosition = v_worldPosition;
 	vec3 inputWorldNormal = normalize(v_worldNormal);
 
+	cutVolumes(worldPosition);
+
 	vec3 toCamera = u_viewportOwnerCameraPosition - worldPosition.xyz;
 	float cameraDistance = length(toCamera);
 	toCamera = normalize(toCamera);

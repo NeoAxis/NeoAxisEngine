@@ -156,7 +156,7 @@ namespace NeoAxis.Editor
 			//TODO: make BaseWindowConfig, use fabric method for WindowConfig creation and move this logic to base class.
 			if( window is DocumentWindow docWindow )
 				WindowConfig.FromDocumentWindow( docWindow ).Save( e.XmlWriter );
-			window.OnSaving( e.XmlWriter );
+			//window.OnSaving( e.XmlWriter );
 		}
 
 		protected override void OnDockWindowLoading( DockWindow window, DockPageLoadingEventArgs e )
@@ -171,10 +171,10 @@ namespace NeoAxis.Editor
 			}
 			else
 			{
-				// window already created.
+				//window already created
 			}
 
-			window.OnLoading( e.XmlReader );
+			//window.OnLoading( e.XmlReader );
 		}
 
 		protected override void OnDockWindowCloseRequest( DockWindow window, out bool cancel )

@@ -17,6 +17,7 @@ namespace NeoAxis
 	/// </summary>
 	[EditorDocumentWindow( typeof( Component_Import3D_Editor ) )]
 	[EditorPreviewControl( typeof( Component_Import3D_Preview ) )]
+	[EditorPreviewImage( typeof( Component_Import3D_PreviewImage ) )]
 	[EditorSettingsCell( typeof( Component_Import3D_SettingsCell ) )]
 	public class Component_Import3D : Component
 	{

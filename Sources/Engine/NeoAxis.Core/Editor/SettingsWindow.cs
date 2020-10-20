@@ -489,19 +489,20 @@ namespace NeoAxis.Editor
 		{
 			base.OnKryptonPageParentChanged();
 
-			//recreate panels when parent of KryptonPage was changed. need to restore _COMPOSITED flag, working tooltips
-			if( KryptonPage != null && KryptonPage.Parent == null )
-			{
-				if( SelectedPanel != null )
-				{
-					needRecreatePanels = true;
-					needRecreatePanelsDocumentWindow = SelectedPanel.documentWindow;
-					needRecreatePanelsSelectObjects = SelectedPanel.selectedObjectsSet.ToArray();
+			//!!!!new. with that open in auto hide works bad
 
-					RemoveCachedPanels();
-				}
-			}
+			////recreate panels when parent of KryptonPage was changed. need to restore _COMPOSITED flag
+			//if( KryptonPage != null && KryptonPage.Parent == null )
+			//{
+			//	if( SelectedPanel != null )
+			//	{
+			//		needRecreatePanels = true;
+			//		needRecreatePanelsDocumentWindow = SelectedPanel.documentWindow;
+			//		needRecreatePanelsSelectObjects = SelectedPanel.selectedObjectsSet.ToArray();
+
+			//		RemoveCachedPanels();
+			//	}
+			//}
 		}
-
 	}
 }

@@ -26,6 +26,10 @@ uniform vec4 u_fogSettings[FOG_SETTING_SIZE];
 #define u_fogHeight u_fogSettings[2].x
 #define u_fogHeightScale u_fogSettings[2].y
 
+#ifdef GLOBAL_CUT_VOLUME_SUPPORT
+uniform vec4 u_viewportCutVolumeSettings;
+uniform mat4 u_viewportCutVolumeData[GLOBAL_CUT_VOLUME_MAX_COUNT];
+#endif
 
 #ifdef GLSL
 	#define getFragCoord() vec4(gl_FragCoord.x, u_viewportSize.y - gl_FragCoord.y, gl_FragCoord.z, gl_FragCoord.w)

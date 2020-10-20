@@ -311,6 +311,22 @@ namespace NeoAxis
 				Bottom = a.Bottom;
 		}
 
+		public void Expand( int d )
+		{
+			Left -= d;
+			Top -= d;
+			Right += d;
+			Bottom += d;
+		}
+
+		public void Expand( Vector2I d )
+		{
+			Left -= d.X;
+			Top -= d.Y;
+			Right += d.X;
+			Bottom += d.Y;
+		}
+
 		public bool IsCleared()
 		{
 			return Left > Right;

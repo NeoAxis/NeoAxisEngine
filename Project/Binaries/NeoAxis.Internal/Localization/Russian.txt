@@ -375,6 +375,7 @@ ContextMenu|Scale|Масштабировать
 ContextMenu|Select...|Выбрать...
 ContextMenu|Select|Выделять
 ContextMenu|Settings|Настройки
+ContextMenu|Separate Settings|Настройки отдельно
 ContextMenu|Add C# files to Project.csproj|Добавить C# файлы в Project.csproj
 ContextMenu|New Resource|Новый ресурс
 ContextMenu|Remove C# files from Project.csproj|Удалить C# файлы из Project.csproj
@@ -514,6 +515,7 @@ ContentBrowser.Group|UI|Пользовательский интерфейс
 ContentBrowser.Group|Favorites|Избранное
 ContentBrowser.Group|All types|Все типы
 ContentBrowser.Group|Assets|Активы
+ContentBrowser.Group|Volumes|Объёмы
 
 EditorAction.Description|Adds a collision body to selected objects.|Добавляет физическое тело к выделенным объектам.
 EditorAction.Description|Add Paint Layer\nAdds a masked paint layer.|Добавить слой краски\nДобавляет красящий слой.
@@ -697,6 +699,7 @@ EditorAction.Name|Text Info|Текстовая информация
 EditorAction.Name|X|X
 EditorAction.Name|Y|Y
 EditorAction.Name|Z|Z
+EditorAction.Name|Volumes|Объёмы
 
 SetReferenceWindow|Can make relative file path|Разрешить выставлять относительный путь к файлу
 SetReferenceWindow|Close|Закрыть
@@ -875,6 +878,7 @@ ProjectSettings.Property|Properties Max Count Collection Items To Display|Максим
 ProjectSettings.Property|Rotation Sensitivity|Чувствительность вращения
 ProjectSettings.Property|Run Simulation In Fullscreen|Запускать симуляцию в полноэкранном режиме
 ProjectSettings.Property|Scene Show Area Color|Цвет областей
+ProjectSettings.Property|Scene Show Volume Color|Цвет объёмов
 ProjectSettings.Property|Scene Show Decal Color|Цвет декалей
 ProjectSettings.Property|Scene Show Light Color|Цвет источников света
 ProjectSettings.Property|Scene Show Object In Space Bounds Color|Цвет габаритов объектов

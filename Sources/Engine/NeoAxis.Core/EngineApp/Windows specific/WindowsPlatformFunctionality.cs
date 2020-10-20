@@ -1394,7 +1394,7 @@ namespace NeoAxis
 									if( bytes > 0 )
 									{
 										char[] characters = new char[ bytes / 2 ];
-										fixed ( char* pCharacters = characters )
+										fixed( char* pCharacters = characters )
 										{
 											ImmGetCompositionString( context, GCS_RESULTSTR, pCharacters, (uint)bytes );
 										}
@@ -1844,23 +1844,21 @@ namespace NeoAxis
 			}
 		}
 
-		public override void CreatedWindow_UpdateSystemCursorFileName()
+		public override IntPtr GetSystemCursorByFileName( string virtualFileName )
 		{
-			string fileName = EngineApp.SystemCursorFileName;
-
 			IntPtr hCursor = IntPtr.Zero;
 
-			if( !string.IsNullOrEmpty( fileName ) )
+			if( !string.IsNullOrEmpty( virtualFileName ) )
 			{
-				if( !loadedSystemCursors.TryGetValue( fileName, out hCursor ) )
+				if( !loadedSystemCursors.TryGetValue( virtualFileName, out hCursor ) )
 				{
 					hCursor = IntPtr.Zero;
 
 					string realFileName;
-					if( Path.IsPathRooted( fileName ) )
-						realFileName = fileName;
+					if( Path.IsPathRooted( virtualFileName ) )
+						realFileName = virtualFileName;
 					else
-						realFileName = VirtualPathUtility.GetRealPathByVirtual( fileName );
+						realFileName = VirtualPathUtility.GetRealPathByVirtual( virtualFileName );
 
 					if( File.Exists( realFileName ) )
 					{
@@ -1872,7 +1870,7 @@ namespace NeoAxis
 						//load from virtual file system
 
 						string tempRealFileName = VirtualPathUtility.GetRealPathByVirtual(
-							string.Format( "user:_Temp_{0}", Path.GetFileName( fileName ) ) );
+							string.Format( "user:_Temp_{0}", Path.GetFileName( virtualFileName ) ) );
 
 						try
 						{
@@ -1882,7 +1880,7 @@ namespace NeoAxis
 
 							byte[] data;
 
-							using( VirtualFileStream stream = VirtualFile.Open( fileName ) )
+							using( VirtualFileStream stream = VirtualFile.Open( virtualFileName ) )
 							{
 								data = new byte[ stream.Length ];
 								if( stream.Read( data, 0, (int)stream.Length ) != stream.Length )
@@ -1898,9 +1896,16 @@ namespace NeoAxis
 						catch { }
 					}
 
-					loadedSystemCursors.Add( fileName, hCursor );
+					loadedSystemCursors.Add( virtualFileName, hCursor );
 				}
 			}
+
+			return hCursor;
+		}
+
+		public override void CreatedWindow_UpdateSystemCursorFileName()
+		{
+			var hCursor = GetSystemCursorByFileName( EngineApp.SystemCursorFileName );
 			if( hCursor == IntPtr.Zero )
 				hCursor = hCursorArrow;
 

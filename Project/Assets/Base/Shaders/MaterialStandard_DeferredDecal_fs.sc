@@ -56,6 +56,8 @@ void main()
 	float rawDepth = texture2D(s_depthTexture, screenPosition).r;
 	vec3 worldPosition = reconstructWorldPosition(u_invViewProj, screenPosition, rawDepth);
 
+	cutVolumes(worldPosition);
+	
 	vec2 decalTexCoord;
 	{
 		vec4 objectPosition = mul(u_decalMatrix, vec4(worldPosition, 1));

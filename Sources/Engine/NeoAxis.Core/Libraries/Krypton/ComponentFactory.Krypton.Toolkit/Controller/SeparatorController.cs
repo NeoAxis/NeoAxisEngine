@@ -544,8 +544,11 @@ namespace ComponentFactory.Krypton.Toolkit
             }
 
             // Enforce the increments on the deltas
-            xDelta -= xDelta % _separatorIncrements;
-            yDelta -= yDelta % _separatorIncrements;
+            if( _separatorIncrements != 0 )
+            {
+                xDelta -= xDelta % _separatorIncrements;
+                yDelta -= yDelta % _separatorIncrements;
+            }
 
             // Return the top left point of the client by the delta
             return new Point(Target.ClientLocation.X + xDelta,

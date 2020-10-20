@@ -821,9 +821,9 @@
 		#endregion
 
 		private NeoAxis.Editor.BackstageMenu.MyKryptonNavigator kryptonNavigator1;
-		private ComponentFactory.Krypton.Navigator.BackstagePage kryptonPageInfo;
-		private ComponentFactory.Krypton.Navigator.BackstagePage kryptonPageNew;
-		private ComponentFactory.Krypton.Navigator.BackstagePage kryptonPageExit;
+		public ComponentFactory.Krypton.Navigator.BackstagePage kryptonPageInfo;
+		public ComponentFactory.Krypton.Navigator.BackstagePage kryptonPageNew;
+		public ComponentFactory.Krypton.Navigator.BackstagePage kryptonPageExit;
 		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabel1;
 		private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonBack;
 		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabel2;
@@ -831,7 +831,7 @@
 		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabel4;
 		private ComponentFactory.Krypton.Toolkit.KryptonTextBox kryptonTextBoxNewFolder;
 		private ContentBrowser objectsBrowserNew;
-		private ComponentFactory.Krypton.Navigator.BackstagePage kryptonPageBuild;
+		public ComponentFactory.Krypton.Navigator.BackstagePage kryptonPageBuild;
 		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabel5;
 		private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonNewCreate;
 		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabel6;
@@ -852,12 +852,12 @@
 		private ComponentFactory.Krypton.Toolkit.KryptonTextBox kryptonTextBoxPackageDestinationFolder;
 		private ContentBrowser contentBrowserPackage;
 		private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonPackageCreateAndRun;
-		private ComponentFactory.Krypton.Navigator.KryptonPage kryptonPageAbout;
+		public ComponentFactory.Krypton.Navigator.KryptonPage kryptonPageAbout;
 		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabel13;
 		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabel12;
 		private ComponentFactory.Krypton.Toolkit.KryptonLinkLabel kryptonLinkLabel1;
 		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabelEngineVersion;
-		private ComponentFactory.Krypton.Navigator.KryptonPage kryptonPageLogin;
+		public ComponentFactory.Krypton.Navigator.KryptonPage kryptonPageLogin;
 		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabelLoginError;
 		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabel15;
 		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabelLicense;

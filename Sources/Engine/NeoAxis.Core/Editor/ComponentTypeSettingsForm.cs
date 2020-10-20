@@ -195,7 +195,7 @@ namespace NeoAxis.Editor
 
 				//!!!!что еще? от базового класс Type Settings
 
-				if( property != null && EditorUtility.IsMemberVisible( property ) )
+				if( property != null && EditorUtility.IsMemberVisible( component, property ) )
 				{
 					bool value = !ComponentUtility.TypeSettingsPrivateObjectsContains( component.TypeSettingsPrivateObjects, property );
 					//bool value = !component._TypeSettingsIsPrivateObject( property, false );

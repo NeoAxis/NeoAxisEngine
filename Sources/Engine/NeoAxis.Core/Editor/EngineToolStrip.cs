@@ -12,10 +12,9 @@ namespace NeoAxis.Editor
 		ToolStripItem mouseOverItem = null;
 		Point mouseOverPoint;
 		Timer timer;
-		public ToolTip Tooltip;
-		public int ToolTipInterval = 4000;
-		public string ToolTipText;
-		public bool ToolTipShowUp;
+		EngineToolTip toolTip;
+		string toolTipText;
+		//public bool ToolTipShowUp;
 
 		//
 
@@ -27,8 +26,7 @@ namespace NeoAxis.Editor
 			timer.Enabled = false;
 			timer.Interval = SystemInformation.MouseHoverTime;
 			timer.Tick += new EventHandler( timer_Tick );
-			Tooltip = new ToolTip();
-			EditorThemeUtility.ApplyDarkThemeToToolTip( Tooltip );
+			toolTip = new EngineToolTip();
 		}
 
 		protected override void OnMouseMove( MouseEventArgs mea )
@@ -40,8 +38,8 @@ namespace NeoAxis.Editor
 			{
 				mouseOverItem = newMouseOverItem;
 				mouseOverPoint = mea.Location;
-				if( Tooltip != null )
-					Tooltip.Hide( this );
+				if( toolTip != null )
+					toolTip.Hide( this );
 				timer.Stop();
 				timer.Start();
 			}
@@ -51,24 +49,16 @@ namespace NeoAxis.Editor
 		{
 			base.OnMouseClick( e );
 			ToolStripItem newMouseOverItem = this.GetItemAt( e.Location );
-			if( newMouseOverItem != null && Tooltip != null )
-			{
-				Tooltip.Hide( this );
-			}
-		}
-
-		protected override void OnMouseUp( MouseEventArgs mea )
-		{
-			base.OnMouseUp( mea );
-			ToolStripItem newMouseOverItem = this.GetItemAt( mea.Location );
+			if( newMouseOverItem != null && toolTip != null )
+				toolTip.Hide( this );
 		}
 
 		protected override void OnMouseLeave( EventArgs e )
 		{
 			base.OnMouseLeave( e );
 			timer.Stop();
-			if( Tooltip != null )
-				Tooltip.Hide( this );
+			if( toolTip != null )
+				toolTip.Hide( this );
 			mouseOverPoint = new Point( -50, -50 );
 			mouseOverItem = null;
 		}
@@ -79,40 +69,25 @@ namespace NeoAxis.Editor
 			try
 			{
 				Point currentMouseOverPoint;
-				if( ToolTipShowUp )
-					currentMouseOverPoint = this.PointToClient( new Point( Control.MousePosition.X, Control.MousePosition.Y - Cursor.Current.Size.Height + Cursor.Current.HotSpot.Y ) );
-				else
-					currentMouseOverPoint = this.PointToClient( new Point( Control.MousePosition.X, Control.MousePosition.Y + Cursor.Current.Size.Height - Cursor.Current.HotSpot.Y ) );
+				//if( ToolTipShowUp )
+				//	currentMouseOverPoint = this.PointToClient( new Point( Control.MousePosition.X, Control.MousePosition.Y - Cursor.Current.Size.Height + Cursor.Current.HotSpot.Y ) );
+				//else
+				currentMouseOverPoint = this.PointToClient( new Point( Control.MousePosition.X, Control.MousePosition.Y + Cursor.Current.Size.Height - Cursor.Current.HotSpot.Y ) );
 
 				if( mouseOverItem == null )
 				{
-					if( ToolTipText != null && ToolTipText.Length > 0 )
-					{
-						if( Tooltip == null )
-						{
-							Tooltip = new ToolTip();
-							EditorThemeUtility.ApplyDarkThemeToToolTip( Tooltip );
-						}
-						Tooltip.Show( ToolTipText, this, currentMouseOverPoint, ToolTipInterval );
-					}
+					if( toolTipText != null && toolTipText.Length > 0 )
+						toolTip.SetToolTip( this, toolTipText );
 				}
 				else if( ( !( mouseOverItem is ToolStripDropDownButton ) && !( mouseOverItem is ToolStripSplitButton ) ) ||
 					( ( mouseOverItem is ToolStripDropDownButton ) && !( (ToolStripDropDownButton)mouseOverItem ).DropDown.Visible ) ||
 					( ( ( mouseOverItem is ToolStripSplitButton ) && !( (ToolStripSplitButton)mouseOverItem ).DropDown.Visible ) ) )
 				{
-					if( mouseOverItem.ToolTipText != null && mouseOverItem.ToolTipText.Length > 0 && Tooltip != null )
-					{
-						if( Tooltip == null )
-						{
-							Tooltip = new ToolTip();
-							EditorThemeUtility.ApplyDarkThemeToToolTip( Tooltip );
-						}
-						Tooltip.Show( mouseOverItem.ToolTipText, this, currentMouseOverPoint, ToolTipInterval );
-					}
+					if( mouseOverItem.ToolTipText != null && mouseOverItem.ToolTipText.Length > 0 && toolTip != null )
+						toolTip.SetToolTip( this, mouseOverItem.ToolTipText );
 				}
 			}
-			catch
-			{ }
+			catch { }
 		}
 
 		protected override void Dispose( bool disposing )
@@ -121,7 +96,7 @@ namespace NeoAxis.Editor
 			if( disposing )
 			{
 				timer.Dispose();
-				Tooltip.Dispose();
+				toolTip.Dispose();
 			}
 		}
 	}

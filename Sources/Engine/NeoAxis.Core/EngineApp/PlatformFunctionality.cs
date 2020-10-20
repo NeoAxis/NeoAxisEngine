@@ -98,6 +98,8 @@ namespace NeoAxis
 		//!!!!new
 		public abstract bool ApplicationIsActivated();
 
+		public virtual IntPtr GetSystemCursorByFileName( string virtualFileName ) { return IntPtr.Zero; }
+
 		public abstract void CreatedWindow_UpdateShowSystemCursor( bool forceUpdate );
 		public abstract void CreatedWindow_UpdateSystemCursorFileName();
 

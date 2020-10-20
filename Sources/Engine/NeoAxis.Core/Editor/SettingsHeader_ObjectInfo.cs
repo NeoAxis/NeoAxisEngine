@@ -28,7 +28,6 @@ namespace NeoAxis.Editor
 
 			toolTip1.SetToolTip( buttonTypeSettings, EditorLocalization.Translate( "SettingsWindow", "Type Settings" ) );
 			toolTip1.SetToolTip( buttonTypeSettingsDefaultValue, EditorLocalization.Translate( "SettingsWindow", "Reset Type Settings to default." ) );
-			EditorThemeUtility.ApplyDarkThemeToToolTip( toolTip1 );
 		}
 
 		private void buttonMove_Click( object sender, EventArgs e )
@@ -191,7 +190,7 @@ namespace NeoAxis.Editor
 		{
 			var component = GetTypeSettingsComponent();
 
-			bool canReset = component != null && component.TypeSettingsPrivateObjects != null;
+			bool canReset = component != null && component.TypeSettingsPrivateObjects != null && EditorUtility.AllowConfigureComponentTypeSettings;
 			if( buttonTypeSettingsDefaultValue.Enabled != canReset )
 				buttonTypeSettingsDefaultValue.Enabled = canReset;
 			if( buttonTypeSettingsDefaultValue.Visible != canReset )
@@ -206,7 +205,13 @@ namespace NeoAxis.Editor
 					buttonTypeSettingsDefaultValue.Values.Image = canReset ? EditorResourcesCache.GetImage( EditorAPI.DPIScale >= 2.0 ? "DefaultValueCircle_Big" : "DefaultValueCircle3" ) : null;
 			}
 
-			buttonTypeSettings.Enabled = component != null;
+			var enabled = component != null && EditorUtility.AllowConfigureComponentTypeSettings;
+			if( buttonTypeSettings.Enabled != enabled )
+				buttonTypeSettings.Enabled = enabled;
+
+			var visible = EditorUtility.AllowConfigureComponentTypeSettings;
+			if( buttonTypeSettings.Visible != visible )
+				buttonTypeSettings.Visible = visible;
 
 			//object obj = null;
 			//if( SettingsPanel.selectedObjects.Length == 1 )

@@ -13,6 +13,10 @@ namespace NeoAxis.Editor
 {
 	public static class EditorUtility
 	{
+		public static bool AllowConfigureComponentTypeSettings = true;
+
+		//
+
 		internal static Metadata.GetMembersContext getMemberContextNoFilter = new Metadata.GetMembersContext( false );
 
 		public static Component CloneComponent( Component source )
@@ -351,15 +355,23 @@ namespace NeoAxis.Editor
 			return -1;
 		}
 
-		public static bool IsMemberVisible( Metadata.Member member )
-		{
-			if( member is Metadata.Property property )
-				return property.Browsable && !property.HasIndexers && !property.Static /*!!!! && !property.ReadOnly */;
-			else if( member is Metadata.Event evnt )
-				return !evnt.Static;
+		public delegate void IsMemberVisibleOverrideDelegate( object obj, Metadata.Member member, ref bool visible );
+		public static event IsMemberVisibleOverrideDelegate IsMemberVisibleOverride;
 
-			Log.Fatal( "internal error." );
-			return true;
+		public static bool IsMemberVisible( object obj, Metadata.Member member )
+		{
+			bool result = true;
+
+			if( member is Metadata.Property property )
+				result = property.Browsable && !property.HasIndexers && !property.Static /*!!!! && !property.ReadOnly */;
+			else if( member is Metadata.Event evnt )
+				result = !evnt.Static;
+			else
+				Log.Fatal( "internal error." );
+
+			IsMemberVisibleOverride?.Invoke( obj, member, ref result );
+
+			return result;
 		}
 
 		public static Type GetTypeByName( string typeName )
@@ -448,6 +460,18 @@ namespace NeoAxis.Editor
 		{
 			var result = true;
 			EditorActionVisibleFilter?.Invoke( action, ref result );
+			return result;
+		}
+
+		///////////////////////////////////////////////
+
+		public delegate void ResourcesWindowItemVisibleFilterDelegate( ResourcesWindowItems.Item item, ref bool visible );
+		public static event ResourcesWindowItemVisibleFilterDelegate ResourcesWindowItemVisibleFilter;
+
+		public static bool PerformResourcesWindowItemVisibleFilter( ResourcesWindowItems.Item item )
+		{
+			var result = true;
+			ResourcesWindowItemVisibleFilter?.Invoke( item, ref result );
 			return result;
 		}
 

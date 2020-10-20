@@ -12,6 +12,10 @@ namespace NeoAxis.Editor
 {
 	public partial class SettingsCell_Properties : SettingsCell
 	{
+		public static bool AllowConfigureEvents = true;
+
+		//
+
 		bool propertiesHaveBeenUpdated;
 
 		bool currentEvents;
@@ -51,6 +55,13 @@ namespace NeoAxis.Editor
 			hierarchicalContainerEvents.OverridePropertyDisplayName += HierarchicalContainer1_OverridePropertyDisplayName;
 			hierarchicalContainerEvents.OverrideMemberDescription += HierarchicalContainer1_OverrideMemberDescription;
 
+			if( !AllowConfigureEvents )
+			{
+				toolStrip1.Visible = false;
+				toolStripButtonEvents.Enabled = false;
+				toolStripButtonProperties.Enabled = false;
+			}
+
 			UpdateControlsBounds();
 		}
 
@@ -67,7 +78,7 @@ namespace NeoAxis.Editor
 				if( Provider?.DocumentWindow?.Document != null && Provider.DocumentWindow.Document.SpecialMode == "ProjectSettingsUserMode" )
 					showToolbar = false;
 
-				toolStrip1.Visible = showToolbar;
+				toolStrip1.Visible = showToolbar && AllowConfigureEvents;
 
 				UpdateControlsBounds();
 
@@ -166,8 +177,16 @@ namespace NeoAxis.Editor
 
 		void UpdateControlsBounds()
 		{
-			hierarchicalContainerProperties.SetBounds( 0, toolStrip1.Bounds.Bottom, Size.Width, Size.Height - toolStrip1.Bounds.Bottom );
-			hierarchicalContainerEvents.SetBounds( 0, toolStrip1.Bounds.Bottom, Size.Width, Size.Height - toolStrip1.Bounds.Bottom );
+			if( AllowConfigureEvents )
+			{
+				hierarchicalContainerProperties.SetBounds( 0, toolStrip1.Bounds.Bottom, Size.Width, Size.Height - toolStrip1.Bounds.Bottom );
+				hierarchicalContainerEvents.SetBounds( 0, toolStrip1.Bounds.Bottom, Size.Width, Size.Height - toolStrip1.Bounds.Bottom );
+			}
+			else
+			{
+				hierarchicalContainerProperties.SetBounds( 0, toolStrip1.Bounds.Top, Size.Width, Size.Height - toolStrip1.Bounds.Top );
+				hierarchicalContainerEvents.SetBounds( 0, toolStrip1.Bounds.Top, Size.Width, Size.Height - toolStrip1.Bounds.Top );
+			}
 		}
 
 		protected override void OnResize( EventArgs e )

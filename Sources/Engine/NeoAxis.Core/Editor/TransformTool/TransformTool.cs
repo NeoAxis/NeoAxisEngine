@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.IO;
 using ComponentFactory.Krypton.Toolkit;
 using NeoAxis.Widget;
+using System.Runtime.InteropServices;
 
 namespace NeoAxis.Editor
 {
@@ -79,6 +80,11 @@ namespace NeoAxis.Editor
 
 		///////////////////////////////////////////
 
+		//!!!!!!
+
+		[DllImport( "user32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
+		static extern IntPtr LoadCursorFromFile( string lpFileName );
+
 		public TransformTool( EngineViewportControl viewportControl )
 		{
 			this.viewportControl = viewportControl;
@@ -96,11 +102,31 @@ namespace NeoAxis.Editor
 			try
 			{
 				if( moveCursor == null )
-					moveCursor = new Cursor( new MemoryStream( NeoAxis.Properties.Resources.MoveCursor ) );
+				{
+					var hCursor = PlatformFunctionality.Get().GetSystemCursorByFileName( @"Base\UI\Cursors\Move.cur" );
+					if( hCursor != IntPtr.Zero )
+						moveCursor = new Cursor( hCursor );
+					else
+						moveCursor = new Cursor( new MemoryStream( NeoAxis.Properties.Resources.MoveCursor ) );
+				}
+
 				if( rotateCursor == null )
-					rotateCursor = new Cursor( new MemoryStream( NeoAxis.Properties.Resources.RotateCursor ) );
+				{
+					var hCursor = PlatformFunctionality.Get().GetSystemCursorByFileName( @"Base\UI\Cursors\Rotate.cur" );
+					if( hCursor != IntPtr.Zero )
+						rotateCursor = new Cursor( hCursor );
+					else
+						rotateCursor = new Cursor( new MemoryStream( NeoAxis.Properties.Resources.RotateCursor ) );
+				}
+
 				if( scaleCursor == null )
-					scaleCursor = new Cursor( new MemoryStream( NeoAxis.Properties.Resources.ScaleCursor ) );
+				{
+					var hCursor = PlatformFunctionality.Get().GetSystemCursorByFileName( @"Base\UI\Cursors\Scale.cur" );
+					if( hCursor != IntPtr.Zero )
+						scaleCursor = new Cursor( hCursor );
+					else
+						scaleCursor = new Cursor( new MemoryStream( NeoAxis.Properties.Resources.ScaleCursor ) );
+				}
 			}
 			catch { }
 		}

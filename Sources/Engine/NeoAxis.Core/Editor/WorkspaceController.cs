@@ -24,6 +24,7 @@ namespace NeoAxis.Editor
 		protected EditorForm editorForm;
 		protected KryptonDockingManager dockingManager;
 		protected KryptonDockableWorkspace dockableWorkspaceControl;
+		protected KryptonDockingControl dockingControl;
 
 		protected Dictionary<KryptonPage, DockWindow> dockWindows = new Dictionary<KryptonPage, DockWindow>();
 
@@ -42,12 +43,49 @@ namespace NeoAxis.Editor
 			if( window == null )
 				throw new ArgumentNullException( nameof( window ) );
 
-			var space = dockingManager.FindPageElement( window.KryptonPage ) as KryptonDockingSpace;
-			space.SelectPage( window.KryptonPage.UniqueName );
+			//show if hided
+			if( !window.Visible )
+				EditorForm.Instance.WorkspaceController.SetDockWindowVisibility( window, true );
 
-			// focus window
-			var cell = space.CellForPage( window.KryptonPage.UniqueName );
-			cell.Focus();
+			//slide out auto hidden page
+			if( dockingControl != null )
+			{
+				var autoHiddenGroup = dockingManager.FindPageElement( window.KryptonPage ) as KryptonDockingAutoHiddenGroup;
+				if( autoHiddenGroup != null )
+				{
+					foreach( var element in dockingControl )
+					{
+						var dockingEdge = element as KryptonDockingEdge;
+						if( dockingEdge != null )
+						{
+							//find KryptonDockingEdgeAutoHidden
+							KryptonDockingEdgeAutoHidden edgeAutoHidden = null;
+							foreach( var e in dockingEdge )
+							{
+								if( e is KryptonDockingEdgeAutoHidden )
+								{
+									edgeAutoHidden = (KryptonDockingEdgeAutoHidden)e;
+									break;
+								}
+							}
+
+							if( edgeAutoHidden != null )
+								edgeAutoHidden.SlidePageOut( window.KryptonPage, true );
+						}
+					}
+				}
+			}
+
+			//select page
+			var space = dockingManager.FindPageElement( window.KryptonPage ) as KryptonDockingSpace;
+			if( space != null )
+			{
+				space.SelectPage( window.KryptonPage.UniqueName );
+
+				//focus window
+				var cell = space.CellForPage( window.KryptonPage.UniqueName );
+				cell?.Focus();
+			}
 		}
 
 		public ICollection<DockWindow> GetDockWindows()
@@ -109,8 +147,8 @@ namespace NeoAxis.Editor
 
 			if( this is WorkspaceControllerForForm )
 			{
-				var controlElement = new KryptonDockingControl( "DockingControl", ownerControl, dockingWorkspace );
-				dockingManager.Add( controlElement );
+				dockingControl = new KryptonDockingControl( "DockingControl", ownerControl, dockingWorkspace );
+				dockingManager.Add( dockingControl );
 			}
 
 			var floatingElement = new KryptonDockingFloating( "DockingFloating", editorForm );
@@ -277,16 +315,22 @@ namespace NeoAxis.Editor
 			{
 				int index = GetDockWindowIndex( oldWindow );
 				if( index == -1 )
-					throw new Exception( $"Window {oldWindow} not found !" );
-				RemoveDockWindow( oldWindow, disposeOldWindow );
-				InsertToWorkspace( newWindow, select, index );
+					Log.Warning( $"Window {oldWindow} not found." );
+				else
+				{
+					RemoveDockWindow( oldWindow, disposeOldWindow );
+					InsertToWorkspace( newWindow, select, index );
+				}
 			}
 		}
 
 		int GetDockWindowIndex( DockWindow window )
 		{
 			var cell = GetWorkspaceCell( window );
-			return cell.Pages.IndexOf( window.KryptonPage );
+			if( cell != null )
+				return cell.Pages.IndexOf( window.KryptonPage );
+			else
+				return -1;
 		}
 
 		bool IsWindowFloating( DockWindow window )
@@ -330,14 +374,7 @@ namespace NeoAxis.Editor
 
 		public void LoadLayoutFromFile( string filename )
 		{
-			//try
-			//{
 			dockingManager.LoadConfigFromFile( filename );
-			//}
-			//catch( Exception e )
-			//{
-			//	Log.Fatal( e.Message );
-			//}
 		}
 
 		public void SaveLayoutToFile( string filename )
@@ -369,7 +406,13 @@ namespace NeoAxis.Editor
 				Debug.Assert( string.IsNullOrEmpty( uniqueName ) );
 
 			KryptonPage page = existPage ?? CreatePage( uniqueName, createCloseButton );
+			page.associatedDockWindow = window;
+
 			window.Dock = DockStyle.Fill;
+
+			var size = window.DefaultAutoHiddenSlideSize;
+			page.AutoHiddenSlideSize = new Size( size.X, size.Y );
+
 			page.Controls.Add( window );
 			return page;
 		}
@@ -401,8 +444,10 @@ namespace NeoAxis.Editor
 		protected KryptonWorkspaceCell GetWorkspaceCell( DockWindow window )
 		{
 			var space = dockingManager.FindPageElement( window.KryptonPage ) as KryptonDockingSpace;
-			var cell = space.CellForPage( window.KryptonPage.UniqueName );
-			return cell;
+			if( space != null )
+				return space.CellForPage( window.KryptonPage.UniqueName );
+			else
+				return null;
 		}
 
 		protected virtual void OnDockWindowCloseRequest( DockWindow window, out bool cancel )

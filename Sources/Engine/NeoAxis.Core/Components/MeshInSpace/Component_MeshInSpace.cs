@@ -41,6 +41,11 @@ namespace NeoAxis
 		bool paintLayersNeedUpdate = true;
 		Component_RenderingPipeline.RenderSceneData.LayerItem[] paintLayers;
 
+		//!!!!new
+		bool transparentRenderingAddOffsetWhenSortByDistance;
+		//[Browsable( false )]
+		//public bool TransparentRenderingAddOffsetWhenSortByDistance { get; set; }
+
 		/////////////////////////////////////////
 
 		////!!!!так?
@@ -294,6 +299,7 @@ namespace NeoAxis
 									item.ReplaceMaterialSelectively[ n ] = ReplaceMaterialSelectively[ n ].Value;
 							}
 							item.Color = Color;
+							item.TransparentRenderingAddOffsetWhenSortByDistance = transparentRenderingAddOffsetWhenSortByDistance;
 
 							var lods = mesh.Result.MeshData.LODs;
 
@@ -1368,5 +1374,11 @@ namespace NeoAxis
 		{
 			paintLayersNeedUpdate = true;
 		}
+
+		public void SetTransparentRenderingAddOffsetWhenSortByDistance( bool value )
+		{
+			transparentRenderingAddOffsetWhenSortByDistance = value;
+		}
+
 	}
 }

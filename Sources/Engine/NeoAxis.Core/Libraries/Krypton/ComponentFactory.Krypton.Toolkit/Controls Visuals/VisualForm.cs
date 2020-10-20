@@ -807,35 +807,39 @@ namespace ComponentFactory.Krypton.Toolkit
         protected void InvalidateNonClient(Rectangle invalidRect,
                                            bool excludeClientArea)
         {
-            if (!IsDisposed && !Disposing && IsHandleCreated)
+            try
             {
-                if (invalidRect.IsEmpty)
+                if( !IsDisposed && !Disposing && IsHandleCreated )
                 {
-                    Padding realWindowBorders = WindowMargin;
-                    Rectangle realWindowRectangle = RealWindowRectangle;
-
-                    invalidRect = new Rectangle(-realWindowBorders.Left,
-                                                -realWindowBorders.Top,
-                                                realWindowRectangle.Width,
-                                                realWindowRectangle.Height);
-                }
-
-                using (Region invalidRegion = new Region(invalidRect))
-                {
-                    if (excludeClientArea)
-                        invalidRegion.Exclude(ClientRectangle);
-
-                    using (Graphics g = Graphics.FromHwnd(Handle))
+                    if( invalidRect.IsEmpty )
                     {
-                        IntPtr hRgn = invalidRegion.GetHrgn(g);
+                        Padding realWindowBorders = WindowMargin;
+                        Rectangle realWindowRectangle = RealWindowRectangle;
 
-                        PI.RedrawWindow(Handle, IntPtr.Zero, hRgn,
-                                        (uint)(PI.RDW_FRAME | PI.RDW_UPDATENOW | PI.RDW_INVALIDATE));
+                        invalidRect = new Rectangle( -realWindowBorders.Left,
+                                                    -realWindowBorders.Top,
+                                                    realWindowRectangle.Width,
+                                                    realWindowRectangle.Height );
+                    }
 
-                        PI.DeleteObject(hRgn);
+                    using( Region invalidRegion = new Region( invalidRect ) )
+                    {
+                        if( excludeClientArea )
+                            invalidRegion.Exclude( ClientRectangle );
+
+                        using( Graphics g = Graphics.FromHwnd( Handle ) )
+                        {
+                            IntPtr hRgn = invalidRegion.GetHrgn( g );
+
+                            PI.RedrawWindow( Handle, IntPtr.Zero, hRgn,
+                                            (uint)( PI.RDW_FRAME | PI.RDW_UPDATENOW | PI.RDW_INVALIDATE ) );
+
+                            PI.DeleteObject( hRgn );
+                        }
                     }
                 }
             }
+            catch { }
         }
 
         /// <summary>

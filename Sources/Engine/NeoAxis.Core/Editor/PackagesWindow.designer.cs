@@ -30,7 +30,7 @@
         {
 			this.components = new System.ComponentModel.Container();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
-			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+			this.toolTip1 = new NeoAxis.Editor.EngineToolTip( this.components);
 			this.buttonUpdateList = new ComponentFactory.Krypton.Toolkit.KryptonButton();
 			this.labelRestart = new System.Windows.Forms.Label();
 			this.kryptonButtonDelete = new ComponentFactory.Krypton.Toolkit.KryptonButton();
@@ -346,7 +346,7 @@
 
 		#endregion
 		private System.Windows.Forms.Timer timer1;
-		private System.Windows.Forms.ToolTip toolTip1;
+		private NeoAxis.Editor.EngineToolTip toolTip1;
 		private System.Windows.Forms.Label labelRestart;
 		private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonDelete;
 		private ComponentFactory.Krypton.Toolkit.KryptonSplitContainer kryptonSplitContainer1;

@@ -17,6 +17,7 @@ namespace NeoAxis
 	[ResourceFileExtension( "material" )]
 	[EditorDocumentWindow( typeof( Component_Material_DocumentWindow ) )]
 	[EditorPreviewControl( typeof( Component_Material_PreviewControl ) )]
+	[EditorPreviewImage( typeof( Component_Material_PreviewImage ) )]
 	[EditorSettingsCell( typeof( Component_Material_SettingsCell ) )]
 	[EditorNewObjectSettings( typeof( NewObjectSettingsMaterial ) )]
 	public partial class Component_Material : Component_ResultCompile<Component_Material.CompiledMaterialData>, IComponent_EditorUpdateWhenDocumentModified

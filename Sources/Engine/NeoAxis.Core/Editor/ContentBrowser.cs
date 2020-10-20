@@ -19,6 +19,8 @@ namespace NeoAxis.Editor
 	/// </summary>
 	public partial class ContentBrowser : EUserControl
 	{
+		public static bool AllowAllTypes = true;
+
 		static List<ContentBrowser> allInstances = new List<ContentBrowser>();
 
 		static List<ContentBrowserFilteringMode> filteringModes = new List<ContentBrowserFilteringMode>();
@@ -106,6 +108,8 @@ namespace NeoAxis.Editor
 		EngineListView.ModeClass/*Type*/ listViewModeOverride;
 
 		KryptonBreadCrumb breadCrumb;
+
+		internal bool needUpdateImages;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -288,6 +292,16 @@ namespace NeoAxis.Editor
 
 			public abstract IList<Item> GetChildren( bool onlyAlreadyCreated );// bool forceUpdate );
 
+			public delegate void GetChildrenFilterEventDelegate( Item item, ref IList<Item> list );
+			public static event GetChildrenFilterEventDelegate GetChildrenFilterEvent;
+
+			public IList<Item> GetChildrenFilter( bool onlyAlreadyCreated )
+			{
+				var result = GetChildren( onlyAlreadyCreated );
+				GetChildrenFilterEvent?.Invoke( this, ref result );
+				return result;
+			}
+
 			//!!!!всегда ли вызывается
 			public abstract void Dispose();
 
@@ -320,7 +334,7 @@ namespace NeoAxis.Editor
 
 			public void GetChildrenOnlyAlreadyCreatedRecursive( List<Item> result )
 			{
-				foreach( var child in GetChildren( true ) )
+				foreach( var child in GetChildrenFilter( true ) )
 				{
 					result.Add( child );
 					child.GetChildrenOnlyAlreadyCreatedRecursive( result );
@@ -360,9 +374,18 @@ namespace NeoAxis.Editor
 			{
 				if( owner.nodeByItem.TryGetValue( this, out var itemNode ) )
 				{
-					var image = owner.imageHelper.GetImageScaledForTreeView( imageKey, showDisabled );
+					Image image = null;
+
+					//preview image
+					var fileItem = this as ContentBrowserItem_File;
+					if( fileItem != null && !fileItem.IsDirectory )
+						image = PreviewImagesManager.GetImageForResource( fileItem.FullPath, true );
+
+					if( image == null )
+						image = owner.imageHelper.GetImageScaledForTreeView( imageKey, showDisabled );
 					if( image == null )
 						image = ContentBrowserImageHelperBasicImages.Helper.GetImageScaledForTreeView( imageKey, showDisabled );
+
 					itemNode.Image = image;
 				}
 			}
@@ -719,9 +742,6 @@ namespace NeoAxis.Editor
 				//breadCrumb.StatePressed.BreadCrumb.Border.Color1 = Color.FromArgb( 60, 60, 60 );
 				//breadCrumb.StateDisabled.BreadCrumb.Back.Color1 = Color.Red;
 				//breadCrumb.StateDisabled.BreadCrumb.Border.Color1 = Color.Red;
-
-				EditorThemeUtility.ApplyDarkThemeToToolTip( toolTip1 );
-				EditorThemeUtility.ApplyDarkThemeToToolTip( toolTip2 );
 			}
 
 			//!!!!так?
@@ -910,7 +930,7 @@ namespace NeoAxis.Editor
 				}
 
 				//add nodes
-				foreach( var childItem in item.GetChildren( false ) )
+				foreach( var childItem in item.GetChildrenFilter( false ) )
 					AddItem( item, childItem, -1, setDataContext );
 			}
 		}
@@ -951,9 +971,9 @@ namespace NeoAxis.Editor
 			}
 
 			//add dummy node
-			if( item.GetChildren( false ).Count != 0 )
+			if( item.GetChildrenFilter( false ).Count != 0 )
 				itemNode.Nodes.Add( new DummyTreeNode() );
-			//foreach( var child in item.GetChildren() )// false ) )
+			//foreach( var child in item.GetChildrenFiltered() )// false ) )
 			//	AddItem( item, child, -1 );
 
 			//expand nodes
@@ -1055,7 +1075,7 @@ namespace NeoAxis.Editor
 				return;
 			}
 
-			var newItems = item.GetChildren( false );
+			var newItems = item.GetChildrenFilter( false );
 
 			//!!!!было. тормозит при открытии мемберов (небольшое изменение)
 			//treeView.BeginUpdate();
@@ -1568,7 +1588,7 @@ namespace NeoAxis.Editor
 		//		//!!!!
 		//		Log.Warning( "impl" );
 
-		//		return item.Parent.GetChildren( false ).IndexOf( item );
+		//		return item.Parent.GetChildrenFiltered( false ).IndexOf( item );
 		//	}
 		//	else
 		//		return rootItems.IndexOf( item );
@@ -1657,6 +1677,15 @@ namespace NeoAxis.Editor
 			//white blinking
 			if( !listView.Visible )
 				listView.Visible = true;
+
+			//update images
+			if( needUpdateImages )
+			{
+				needUpdateImages = false;
+				foreach( var item in GetAllItems() )
+					item.UpdateImage();
+				UpdateListImages();
+			}
 
 			lastUpdateTime = EngineApp.GetSystemTime();
 		}
@@ -1839,7 +1868,7 @@ namespace NeoAxis.Editor
 		//				allow = false;
 		//		}
 
-		//		bool remove = !allow && item.GetChildren( true ).Count == 0;
+		//		bool remove = !allow && item.GetChildrenFiltered( true ).Count == 0;
 		//		if( remove )
 		//		{
 		//			var parent = item.Parent;
@@ -1885,8 +1914,8 @@ namespace NeoAxis.Editor
 						allow = false;
 				}
 
-				bool remove = !allow && item.GetChildren( false ).Count == 0;
-				//bool remove = !allow && item.GetChildren( true ).Count == 0;
+				bool remove = !allow && item.GetChildrenFilter( false ).Count == 0;
+				//bool remove = !allow && item.GetChildrenFiltered( true ).Count == 0;
 				if( remove )
 				{
 					var parent = item.Parent;
@@ -1964,11 +1993,11 @@ namespace NeoAxis.Editor
 						allow = false;
 				}
 
-				//bool existChildren = item.GetChildren().Count != 0;
+				//bool existChildren = item.GetChildrenFiltered().Count != 0;
 				//bool existChildren = false;
 				//{
 				//	//skip DUMMY
-				//	foreach( var i in item.GetChildren() )
+				//	foreach( var i in item.GetChildrenFiltered() )
 				//	{
 				//		var virtualItem = i as ContentBrowserItem_Virtual;
 				//		if( virtualItem == null || !virtualItem.Dummy )
@@ -1980,7 +2009,7 @@ namespace NeoAxis.Editor
 				//}
 
 				//bool remove = !existChildren && !allow;
-				bool remove = !allow && item.GetChildren( true ).Count == 0;
+				bool remove = !allow && item.GetChildrenFilter( true ).Count == 0;
 				if( remove )
 				{
 					var parent = item.Parent;
@@ -2146,6 +2175,10 @@ namespace NeoAxis.Editor
 
 				foreach( var item in ResourcesWindowItems.Items )
 				{
+					//custom filtering
+					if( !EditorUtility.PerformResourcesWindowItemVisibleFilter( item ) )
+						continue;
+
 					//skip
 					bool skip = false;
 					if( Mode == ModeEnum.SetReference )
@@ -2273,7 +2306,7 @@ namespace NeoAxis.Editor
 
 			/////////////////////////////////////
 			//Favorites
-			if( ( Mode == ModeEnum.Resources && ( FilteringMode == null || FilteringMode.AddGroupsBaseTypesAddonsProject ) ) || ( Mode == ModeEnum.SetReference && MetadataManager.GetTypeOfNetType( typeof( Metadata.TypeInfo ) ).IsAssignableFrom( SetReferenceModeData.DemandedType ) && !setReferenceModeData.selectTypeWindow ) )
+			if( EditorFavorites.AllowFavorites && ( ( Mode == ModeEnum.Resources && ( FilteringMode == null || FilteringMode.AddGroupsBaseTypesAddonsProject ) ) || ( Mode == ModeEnum.SetReference && MetadataManager.GetTypeOfNetType( typeof( Metadata.TypeInfo ) ).IsAssignableFrom( SetReferenceModeData.DemandedType ) && !setReferenceModeData.selectTypeWindow ) ) )
 			{
 				favoritesItem = new ContentBrowserItem_Virtual( this, null, EditorLocalization.Translate( "ContentBrowser.Group", "Favorites" ) );
 				favoritesItem.imageKey = "Folder";
@@ -2424,7 +2457,7 @@ namespace NeoAxis.Editor
 
 			/////////////////////////////////////
 			//All types
-			if( ( Mode == ModeEnum.Resources || Mode == ModeEnum.SetReference ) && ( FilteringMode == null || FilteringMode.AddGroupAllTypes ) )
+			if( AllowAllTypes && ( ( Mode == ModeEnum.Resources || Mode == ModeEnum.SetReference ) && ( FilteringMode == null || FilteringMode.AddGroupAllTypes ) ) )
 			{
 				ContentBrowserItem_Virtual classesItem = null;
 
@@ -2539,11 +2572,11 @@ namespace NeoAxis.Editor
 
 					//!!!!может не так
 					//expand at startup class items for filtering mode
-					var children = classesItem.GetChildren( true );
+					var children = classesItem.GetChildrenFilter( true );
 					if( children.Count == 1 )
 					{
 						classesItem.expandAtStartup = true;
-						if( children[ 0 ].GetChildren( true ).Count <= 10 )
+						if( children[ 0 ].GetChildrenFilter( true ).Count <= 10 )
 							children[ 0 ].expandAtStartup = true;
 					}
 				}
@@ -2551,13 +2584,13 @@ namespace NeoAxis.Editor
 				//expand for select type mode
 				if( Mode == ModeEnum.SetReference && setReferenceModeData.selectTypeWindow )
 				{
-					var children = classesItem.GetChildren( true );
+					var children = classesItem.GetChildrenFilter( true );
 					if( children.Count < 20 )
 					{
 						classesItem.expandAtStartup = true;
 						if( children.Count == 1 )
 						{
-							if( children[ 0 ].GetChildren( true ).Count <= 10 )
+							if( children[ 0 ].GetChildrenFilter( true ).Count <= 10 )
 								children[ 0 ].expandAtStartup = true;
 						}
 					}
@@ -2715,7 +2748,7 @@ namespace NeoAxis.Editor
 
 			//			//!!!!
 			//			//select new item
-			//			SelectItems( new Item[] { parentItem.GetChildren( false )[ lastCount ] } );
+			//			SelectItems( new Item[] { parentItem.GetChildrenFiltered( false )[ lastCount ] } );
 			//		}
 
 			//		return;
@@ -3540,15 +3573,21 @@ namespace NeoAxis.Editor
 							items.Add( item );
 						}
 
-						//!!!!!
 						//Settings
 						{
-							//!!!!! imageListContextMenu.Images[ "Delete_16.png" ],
-							//!!!!!name
 							var item = new KryptonContextMenuItem( Translate( "Settings" ), EditorResourcesCache.Settings,
 								delegate ( object s, EventArgs e2 )
 								{
-									//!!!!
+									EditorAPI.SelectDockWindow( EditorAPI.FindWindow<SettingsWindow>() );
+								} );
+							items.Add( item );
+						}
+
+						//Separate Settings
+						{
+							var item = new KryptonContextMenuItem( Translate( "Separate Settings" ), EditorResourcesCache.Settings,
+								delegate ( object s, EventArgs e2 )
+								{
 									if( componentItem != null )
 									{
 										bool canUseAlreadyOpened = !ModifierKeys.HasFlag( Keys.Shift );
@@ -3560,7 +3599,6 @@ namespace NeoAxis.Editor
 										Log.Warning( "impl" );
 									}
 								} );
-
 							item.Enabled = componentItem.Component != null && !componentItem.Component.EditorReadOnlyInHierarchy && documentOfComponent != null;
 
 							var res = ComponentUtility.GetResourceInstanceByComponent( componentItem.Component );
@@ -4427,46 +4465,49 @@ namespace NeoAxis.Editor
 					}
 
 					//Favorites
-					if( contentItem.Parent != favoritesItem )
+					if( EditorFavorites.AllowFavorites )
 					{
-						//Add to Favorites
+						if( contentItem.Parent != favoritesItem )
+						{
+							//Add to Favorites
 
-						var item = new KryptonContextMenuItem( Translate( "Add to Favorites" ), EditorResourcesCache.Add,
-						   delegate ( object s, EventArgs e2 )
-						   {
-							   EditorFavorites.Add( typeItem.Type );
+							var item = new KryptonContextMenuItem( Translate( "Add to Favorites" ), EditorResourcesCache.Add,
+							   delegate ( object s, EventArgs e2 )
+							   {
+								   EditorFavorites.Add( typeItem.Type );
 
-							   //!!!!можно обновлять не полностью
-							   if( EditorAPI.FindWindow<ResourcesWindow>().ContentBrowser1 != this )
-								   EditorAPI.FindWindow<ResourcesWindow>().ContentBrowser1.UpdateData();
-							   UpdateData();
-						   } );
-						item.Enabled =
-							MetadataManager.GetTypeOfNetType( typeof( Component ) ).IsAssignableFrom( typeItem.Type ) &&
-							!EditorFavorites.Contains( typeItem.Type );
-						// ||
-						//MetadataManager.GetTypeOfNetType( typeof( NewResourceType ) ).IsAssignableFrom( typeItem.Type );
-						items.Add( item );
-					}
-					else
-					{
-						//Remove from Favorites
+								   //!!!!можно обновлять не полностью
+								   if( EditorAPI.FindWindow<ResourcesWindow>().ContentBrowser1 != this )
+									   EditorAPI.FindWindow<ResourcesWindow>().ContentBrowser1.UpdateData();
+								   UpdateData();
+							   } );
+							item.Enabled =
+								MetadataManager.GetTypeOfNetType( typeof( Component ) ).IsAssignableFrom( typeItem.Type ) &&
+								!EditorFavorites.Contains( typeItem.Type );
+							// ||
+							//MetadataManager.GetTypeOfNetType( typeof( NewResourceType ) ).IsAssignableFrom( typeItem.Type );
+							items.Add( item );
+						}
+						else
+						{
+							//Remove from Favorites
 
-						var item = new KryptonContextMenuItem( Translate( "Remove from Favorites" ), EditorResourcesCache.Delete,
-						   delegate ( object s, EventArgs e2 )
-						   {
-							   EditorFavorites.Remove( typeItem.Type );
+							var item = new KryptonContextMenuItem( Translate( "Remove from Favorites" ), EditorResourcesCache.Delete,
+							   delegate ( object s, EventArgs e2 )
+							   {
+								   EditorFavorites.Remove( typeItem.Type );
 
-							   //!!!!можно обновлять не полностью
-							   if( EditorAPI.FindWindow<ResourcesWindow>().ContentBrowser1 != this )
-								   EditorAPI.FindWindow<ResourcesWindow>().ContentBrowser1.UpdateData();
-							   UpdateData();
-						   } );
-						item.Enabled =
-							MetadataManager.GetTypeOfNetType( typeof( Component ) ).IsAssignableFrom( typeItem.Type );
-						// ||
-						//MetadataManager.GetTypeOfNetType( typeof( NewResourceType ) ).IsAssignableFrom( typeItem.Type );
-						items.Add( item );
+								   //!!!!можно обновлять не полностью
+								   if( EditorAPI.FindWindow<ResourcesWindow>().ContentBrowser1 != this )
+									   EditorAPI.FindWindow<ResourcesWindow>().ContentBrowser1.UpdateData();
+								   UpdateData();
+							   } );
+							item.Enabled =
+								MetadataManager.GetTypeOfNetType( typeof( Component ) ).IsAssignableFrom( typeItem.Type );
+							// ||
+							//MetadataManager.GetTypeOfNetType( typeof( NewResourceType ) ).IsAssignableFrom( typeItem.Type );
+							items.Add( item );
+						}
 					}
 				}
 			}
@@ -4606,7 +4647,7 @@ namespace NeoAxis.Editor
 					}
 
 					var fileItem = item as ContentBrowserItem_File;
-					if( fileItem != null )
+					if( fileItem != null && fileItem.FullPath != VirtualFileSystem.Directories.Assets )
 						resultItemsToDelete.Add( fileItem );
 				}
 			}
@@ -4694,7 +4735,7 @@ namespace NeoAxis.Editor
 				{
 					if( item.Parent != null )
 					{
-						int index = item.Parent.GetChildren( true ).IndexOf( item );
+						int index = item.Parent.GetChildrenFilter( true ).IndexOf( item );
 						if( itemWithMinIndex == null || index < minIndex )
 						{
 							itemWithMinIndex = item;
@@ -4705,7 +4746,7 @@ namespace NeoAxis.Editor
 				if( itemWithMinIndex != null )
 				{
 					if( minIndex > 0 )
-						itemToSelectAfterDelection = itemWithMinIndex.Parent.GetChildren( true )[ minIndex - 1 ];
+						itemToSelectAfterDelection = itemWithMinIndex.Parent.GetChildrenFilter( true )[ minIndex - 1 ];
 					else
 						itemToSelectAfterDelection = itemWithMinIndex.Parent;
 				}
@@ -4943,7 +4984,7 @@ namespace NeoAxis.Editor
 				//var memberItem = item as ContentBrowserItem_Member;
 				//if( memberItem != null )
 				//{
-				//	foreach( var item2 in memberItem.GetChildren() )
+				//	foreach( var item2 in memberItem.GetChildrenFiltered() )
 				//		item2.PerformChildrenChanged();
 				//}
 			}
@@ -5031,9 +5072,9 @@ namespace NeoAxis.Editor
 			//toolStripButtonOptions.Visible = Options.OptionsButton;
 
 			toolStripSeparatorFilteringMode.Visible = false;//Options.ShowFilteringModeButton;
-			toolStripDropDownButtonFilteringMode.Visible = Options.FilteringModeButton && Mode == ModeEnum.Resources;
+			toolStripDropDownButtonFilteringMode.Visible = ContentBrowserOptions.AllowFilteringModeButton && Options.FilteringModeButton && Mode == ModeEnum.Resources;
 
-			toolStripButtonShowMembers.Visible = Options.MembersButton && Mode == ModeEnum.Objects;
+			toolStripButtonShowMembers.Visible = ContentBrowserOptions.AllowMembersButton && Options.MembersButton && Mode == ModeEnum.Objects;
 
 			toolStripSeparatorOpen.Visible = Options.OpenButton && ( Mode == ModeEnum.Resources || Mode == ModeEnum.SetReference );
 			toolStripButtonOpen.Visible = Options.OpenButton && ( Mode == ModeEnum.Resources || Mode == ModeEnum.SetReference );
@@ -6284,7 +6325,7 @@ namespace NeoAxis.Editor
 			{
 				//_File
 				var fileItem = selectedItems[ 0 ] as ContentBrowserItem_File;
-				if( fileItem != null )
+				if( fileItem != null && fileItem.FullPath != VirtualFileSystem.Directories.Assets )
 					return true;
 
 				//_Component
@@ -6663,7 +6704,7 @@ namespace NeoAxis.Editor
 				//			var newItems = new List<ListItem>();
 
 				//			var selectedItem = GetTreeSelectedItems()[ 0 ];
-				//			foreach( var childItem in selectedItem.GetChildren( true ) )
+				//			foreach( var childItem in selectedItem.GetChildrenFiltered( true ) )
 				//			{
 				//				var listItem = new ListItem( childItem );
 				//				newItems.Add( listItem );
@@ -6733,7 +6774,7 @@ namespace NeoAxis.Editor
 						{
 							var selectedItem = GetTreeSelectedItems()[ 0 ];
 
-							foreach( var childItem in selectedItem.GetChildren( true ) )
+							foreach( var childItem in selectedItem.GetChildrenFilter( true ) )
 							{
 								var listItem = new EngineListView.Item( listView );
 								listItem.Tag = childItem;
@@ -6934,7 +6975,7 @@ namespace NeoAxis.Editor
 				}
 
 				bool handled = false;
-				if( item.GetChildren( true ).Count == 0 || item.chooseByDoubleClickAndReturnKey )
+				if( item.GetChildrenFilter( true ).Count == 0 || item.chooseByDoubleClickAndReturnKey )
 				{
 					//restore selection
 					var listItem = GetListItemByItem( item );
@@ -6947,7 +6988,7 @@ namespace NeoAxis.Editor
 
 				if( !handled )
 				{
-					if( item.GetChildren( true ).Count != 0 )
+					if( item.GetChildrenFilter( true ).Count != 0 )
 					{
 						SelectItems( new Item[] { item }, true, true );
 
@@ -7087,6 +7128,8 @@ namespace NeoAxis.Editor
 					}
 				}
 
+				listView.Mode?.Init();
+
 				UpdateListImages();
 			}
 		}
@@ -7095,9 +7138,18 @@ namespace NeoAxis.Editor
 		{
 			var item = (Item)listItem.Tag;
 
-			var image = imageHelper.GetImage( item.imageKey, currentListImageSizeScaled, item.ShowDisabled );
+			Image image = null;
+
+			//preview image
+			var fileItem = item as ContentBrowserItem_File;
+			if( fileItem != null && !fileItem.IsDirectory )
+				image = PreviewImagesManager.GetImageForResource( fileItem.FullPath, false );
+
+			if( image == null )
+				image = imageHelper.GetImage( item.imageKey, currentListImageSizeScaled, item.ShowDisabled );
 			if( image == null )
 				image = ContentBrowserImageHelperBasicImages.Helper.GetImage( item.imageKey, currentListImageSizeScaled, item.ShowDisabled );
+
 			listItem.Image = image;
 		}
 

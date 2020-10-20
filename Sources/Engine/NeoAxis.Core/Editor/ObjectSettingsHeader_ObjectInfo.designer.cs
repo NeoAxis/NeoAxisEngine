@@ -34,7 +34,7 @@
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.buttonTypeSettingsDefaultValue = new ComponentFactory.Krypton.Toolkit.KryptonButton();
 			this.buttonTypeSettings = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+			this.toolTip1 = new NeoAxis.Editor.EngineToolTip(this.components);
 			this.SuspendLayout();
 			// 
 			// kryptonLabel1
@@ -121,6 +121,6 @@
 		private System.Windows.Forms.Timer timer1;
 		private ComponentFactory.Krypton.Toolkit.KryptonButton buttonTypeSettingsDefaultValue;
 		private ComponentFactory.Krypton.Toolkit.KryptonButton buttonTypeSettings;
-		private System.Windows.Forms.ToolTip toolTip1;
+		private NeoAxis.Editor.EngineToolTip toolTip1;
 	}
 }

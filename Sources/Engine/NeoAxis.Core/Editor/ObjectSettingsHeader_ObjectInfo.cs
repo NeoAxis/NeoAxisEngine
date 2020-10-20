@@ -30,7 +30,6 @@ namespace NeoAxis.Editor
 				return;
 
 			EditorThemeUtility.ApplyDarkThemeToForm( this );
-			EditorThemeUtility.ApplyDarkThemeToToolTip( toolTip1 );
 
 			toolTip1.SetToolTip( buttonTypeSettings, EditorLocalization.Translate( "SettingsWindow", "Type Settings" ) );
 			toolTip1.SetToolTip( buttonTypeSettingsDefaultValue, EditorLocalization.Translate( "SettingsWindow", "Reset Type Settings to default." ) );
@@ -228,7 +227,7 @@ namespace NeoAxis.Editor
 		{
 			var component = GetTypeSettingsComponent();
 
-			bool canReset = component != null && component.TypeSettingsPrivateObjects != null;
+			bool canReset = component != null && component.TypeSettingsPrivateObjects != null && EditorUtility.AllowConfigureComponentTypeSettings;
 			if( buttonTypeSettingsDefaultValue.Enabled != canReset )
 				buttonTypeSettingsDefaultValue.Enabled = canReset;
 			if( buttonTypeSettingsDefaultValue.Visible != canReset )
@@ -243,10 +242,14 @@ namespace NeoAxis.Editor
 					buttonTypeSettingsDefaultValue.Values.Image = canReset ? EditorResourcesCache.GetImage( EditorAPI.DPIScale >= 2.0 ? "DefaultValueCircle_Big" : "DefaultValueCircle3" ) : null;
 			}
 
-			buttonTypeSettings.Enabled = component != null;
+			var enabled = component != null && EditorUtility.AllowConfigureComponentTypeSettings;
+			if( buttonTypeSettings.Enabled != enabled )
+				buttonTypeSettings.Enabled = enabled;
 
 			bool projectSettings = ObjectSettingsWindow?.Document?.SpecialMode == "ProjectSettingsUserMode";
-			buttonTypeSettings.Visible = !projectSettings;
+			var visible = !projectSettings && EditorUtility.AllowConfigureComponentTypeSettings;
+			if( buttonTypeSettings.Visible != visible )
+				buttonTypeSettings.Visible = visible;
 		}
 
 		private void timer1_Tick( object sender, EventArgs e )

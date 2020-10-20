@@ -50,8 +50,8 @@ namespace NeoAxis.Editor
 		Point splitterDragPos = Point.Empty;
 		ContentModeEnum contentMode = ContentModeEnum.Properties;
 
-		internal static int CreatedControlsCount { get; set; } = 0;
-		internal static int CreatedItemsCount { get; set; } = 0;
+		//internal static int CreatedControlsCount { get; set; } = 0;
+		//internal static int CreatedItemsCount { get; set; } = 0;
 
 		double lastUpdateTime;
 
@@ -556,7 +556,7 @@ namespace NeoAxis.Editor
 				if( contentMode == ContentModeEnum.Events && !( member is Metadata.Event ) )
 					continue;
 
-				if( EditorUtility.IsMemberVisible( member ) )
+				if( EditorUtility.IsMemberVisible( firstObject, member ) )
 				{
 					bool skip = false;
 

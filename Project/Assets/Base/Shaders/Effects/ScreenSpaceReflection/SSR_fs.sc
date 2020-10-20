@@ -14,13 +14,15 @@ SAMPLER2D(s_gBuffer0Texture, 7);
 
 uniform mat4 invViewProj;
 
-uniform vec4 edgeFactorPower;
+uniform vec4/*float*/ edgeFactorPower;
 uniform vec4 colorTextureSize;
-uniform vec4 zNear;
-uniform vec4 zFar;
-uniform vec4 fov;
-uniform vec4 aspectRatio;
-uniform vec4 cameraPosition;
+uniform vec4/*float*/ zNear;
+uniform vec4/*float*/ zFar;
+uniform vec4/*float*/ fov;
+uniform vec4/*float*/ aspectRatio;
+uniform vec4/*vec3*/ cameraPosition;
+uniform vec4/*float*/ initialStepScale;
+uniform vec4/*float*/ worldThickness;
 
 #include "../../PBRFilament/common_types.sh"
 #include "../../PBRFilament/common_math.sh"
@@ -74,37 +76,25 @@ vec2 getScreenCoord(vec3 pos)
 
 vec2 snapToPixel(vec2 coord)
 {
-	coord.x = (floor(coord.x *  colorTextureSize.x) + 0.5) /  colorTextureSize.x;
+	coord.x = (floor(coord.x * colorTextureSize.x) + 0.5) / colorTextureSize.x;
 	coord.y = (floor(coord.y * colorTextureSize.y) + 0.5) / colorTextureSize.y;
 	return coord;
 }
 
-//#define stepSize   0.02 // step size for raymarching
-//#define maxsteps   50   // maximum amount of steps for raymarching
-//#define stepSize   0.005 // step size for raymarching
-//#define maxsteps   200   // maximum amount of steps for raymarching
-//!!!!
-#define startScale 4.0   // initial scale of step size for raymarching
-#define depth      0.5   // thickness of the world
-
 vec3 raymarch(vec3 position, vec3 direction)
 {
-	float stepSize = 1.0f / (float)MAX_STEPS;	
+	float stepSize = 1.0f / (float)MAX_STEPS;
 	
-	direction = direction * stepSize;//stepSize;
-	float stepScale = startScale;
+	direction = direction * stepSize;
+	float stepScale = initialStepScale.x;
 
-	for (int steps = 0; steps < MAX_STEPS/*maxsteps*/; steps++)
+	for (int steps = 0; steps < MAX_STEPS; steps++)
 	{
 		vec3 deltapos = direction * stepScale * position.z;
 		position += deltapos;
 		vec2 screencoord = getScreenCoord(position);
 
-		bool OOB = false; // OUT OF BOUNDS
-		OOB = OOB || (screencoord.x < 0.0) || (screencoord.x > 1.0); // X
-		OOB = OOB || (screencoord.y < 0.0) || (screencoord.y > 1.0); // Y
-		OOB = OOB || (position.z >  zFar.x ) || (position.z <  zNear.x); // Z
-		if (OOB)
+		if( screencoord.x < 0.0 || screencoord.x > 1.0 || screencoord.y < 0.0 || screencoord.y > 1.0 || position.z >  zFar.x  || position.z <  zNear.x)
 			return vec3_splat(0);
 
 		screencoord = snapToPixel(screencoord);
@@ -117,7 +107,7 @@ vec3 raymarch(vec3 position, vec3 direction)
 				position -= deltapos;
 				stepScale *= 0.5;
 			}
-			else if (penetration < depth)
+			else if (penetration < worldThickness.x)
 				return position;
 		}
 	}
@@ -154,7 +144,6 @@ vec3 glossyReflection(vec3 position, vec3 normal, vec3 view, vec3 specIBL)
 
 vec3 specularIBL(vec2 texCoords)
 {
-	//!!!!
 	vec3 baseColor = decodeRGBE8(texture2D(s_gBuffer0Texture, texCoords));
 	//vec3 baseColor = texture2D(s_gBuffer0Texture, texCoords).rgb;
 	//vec3 baseColor = texture2D(s_colorTexture, texCoords).rgb;

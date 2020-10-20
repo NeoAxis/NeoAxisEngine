@@ -80,6 +80,10 @@
       <DependentUpon>Component_Font_PreviewControl.cs</DependentUpon>
     </Compile>
     <Compile Update="Components\GroupOfObjects\Component_GroupOfObjectsElement_SettingsCell.cs" />
+    <Compile Update="Components\Material\Component_Material_PreviewImage.cs" />
+    <Compile Update="Components\Material\Component_Material_PreviewControl - Copy.designer.cs">
+      <DependentUpon>Component_Material_PreviewControl.cs</DependentUpon>
+    </Compile>
     <Compile Update="Components\Mesh\Component_MeshModifier_SettingsCell.cs" />
     <Compile Update="Components\ParticleSystem\Component_ParticleSystem_SettingsCell.cs" />
     <Compile Update="Components\ParticleSystem\Component_ParticleSystem_DocumentWindow.cs">
@@ -129,6 +133,10 @@
     </Compile>
     <Compile Update="Components\ReflectionProbe\Component_ReflectionProbe_SettingsCell.cs" />
     <Compile Update="Components\Terrain\Component_Terrain_SettingsCell.cs" />
+    <Compile Update="Editor\EngineToolTip\EngineToolTipForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Editor\PreviewImageGenerator.cs" />
     <Compile Update="Editor\CanvasBasedPreview.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -704,6 +712,9 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Components\Material\Component_Material_DocumentWindow.resx">
       <DependentUpon>Component_Material_DocumentWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Components\Material\Component_Material_PreviewControl - Copy.resx">
+      <DependentUpon>Component_Material_PreviewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Components\ParticleSystem\Component_ParticleSystem_PreviewControl.resx">
       <DependentUpon>Component_ParticleSystem_PreviewControl.cs</DependentUpon>

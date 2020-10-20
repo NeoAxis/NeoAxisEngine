@@ -234,7 +234,8 @@ namespace NeoAxis.Editor
 			if( EditorAPI.DarkTheme && !control.OwnerDraw )
 			{
 				control.OwnerDraw = true;
-				control.BackColor = Color.FromArgb( 20, 20, 20 );
+				control.BackColor = Color.FromArgb( 10, 10, 10 );
+				//control.BackColor = Color.FromArgb( 20, 20, 20 );
 				//control.BackColor = Color.FromArgb( 54, 54, 54 );
 				control.ForeColor = Color.FromArgb( 230, 230, 230 );
 				control.Draw += ToolTip1_Draw;

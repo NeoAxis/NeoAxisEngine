@@ -53,8 +53,6 @@ namespace NeoAxis.Editor
 			{
 				EditorThemeUtility.ApplyDarkThemeToForm( kryptonSplitContainer1.Panel1 );
 				EditorThemeUtility.ApplyDarkThemeToForm( kryptonSplitContainer1.Panel2 );
-
-				EditorThemeUtility.ApplyDarkThemeToToolTip( toolTip1 );
 			}
 
 			double distance = 22.0 * EditorAPI.DPIScale;

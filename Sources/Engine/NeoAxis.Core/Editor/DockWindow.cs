@@ -250,19 +250,24 @@ namespace NeoAxis.Editor
 			return null;
 		}
 
-		internal virtual void OnSaving( XmlWriter xmlWriter )
-		{
-		}
+		//internal virtual void OnSaving( XmlWriter xmlWriter )
+		//{
+		//}
 
-		internal virtual void OnLoading( XmlReader xmlReader )
-		{
-		}
+		//internal virtual void OnLoading( XmlReader xmlReader )
+		//{
+		//}
 
 		protected virtual void OnKryptonPageParentChanged() { }
 
 		private void KryptonPage_ParentChanged( object sender, EventArgs e )
 		{
 			OnKryptonPageParentChanged();
+		}
+
+		public virtual Vector2I DefaultAutoHiddenSlideSize
+		{
+			get { return ( new Vector2( 280, 200 ) * EditorAPI.DPIScale ).ToVector2I(); }
 		}
 	}
 }

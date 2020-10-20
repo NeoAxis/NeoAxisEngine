@@ -17,6 +17,11 @@ namespace NeoAxis.Editor
 	/// </summary>
 	public class ContentBrowserOptions : Metadata.IMetadataProvider
 	{
+		public static bool AllowFilteringModeButton = true;
+		public static bool AllowMembersButton = true;
+
+		/////////////////////////////////////////
+
 		ContentBrowser owner;
 
 		/////////////////////////////////////////
@@ -81,7 +86,7 @@ namespace NeoAxis.Editor
 		[DefaultValue( ContentBrowser.ListModeEnum.Auto )]
 		public ContentBrowser.ListModeEnum ListMode { get; set; } = ContentBrowser.ListModeEnum.Auto;
 
-		const int ListImageSizeDefault = 26;//32;
+		const int ListImageSizeDefault = 32;
 		[DefaultValue( ListImageSizeDefault )]
 		[Range( 10/*16*/, 128 )]
 		public int ListImageSize { get; set; } = ListImageSizeDefault;
@@ -91,7 +96,7 @@ namespace NeoAxis.Editor
 		[Range( 50/*64*/, 2000 )]
 		public int ListColumnWidth { get; set; } = ListColumnWidthDefault;
 
-		const int TileImageSizeDefault = 26;//32;//48;
+		const int TileImageSizeDefault = 32;//48;
 		[DefaultValue( TileImageSizeDefault )]
 		[Range( 10/*16*/, 128 )]
 		public int TileImageSize { get; set; } = TileImageSizeDefault;
@@ -158,12 +163,12 @@ namespace NeoAxis.Editor
 					break;
 
 				case nameof( FilteringModeButton ):
-					if( owner.Mode != ContentBrowser.ModeEnum.Resources )
+					if( owner.Mode != ContentBrowser.ModeEnum.Resources || !AllowFilteringModeButton )
 						skip = true;
 					break;
 
 				case nameof( MembersButton ):
-					if( owner.Mode != ContentBrowser.ModeEnum.Objects )
+					if( owner.Mode != ContentBrowser.ModeEnum.Objects || !AllowMembersButton )
 						skip = true;
 					break;
 

@@ -59,6 +59,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libbulletc", "Engine\External\Bullet\BulletSharpPInvoke\libbulletc\build\libbulletc.UWP_x64.vcxproj", "{CAE16A26-6C73-4BBB-B044-0A1AB1E9BA51}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoAxis.CoreExtension.UWP", "..\Project\Sources\NeoAxis.CoreExtension\NeoAxis.CoreExtension.UWP.csproj", "{5AC5DA1A-BB1C-419E-A8F6-ECE12B62E731}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EAC808E4-37A9-4C48-833B-A125CB1AA4AD} = {EAC808E4-37A9-4C48-833B-A125CB1AA4AD}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project.UWP", "..\Project\Project.UWP.csproj", "{1479C4F8-80D1-4313-9657-ACC6FB8815EB}"
 	ProjectSection(ProjectDependencies) = postProject

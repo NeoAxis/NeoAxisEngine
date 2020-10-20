@@ -20,6 +20,11 @@ namespace NeoAxis.Editor
 			: base( browser.GetListView() )
 		{
 			this.browser = browser;
+			Init();
+		}
+
+		public override void Init()
+		{
 			imageSize = (int)( (float)browser.Options.ListImageSize * EditorAPI.DPIScale );
 
 			ItemSize = new Vector2I( (int)( (float)browser.Options.ListColumnWidth * EditorAPI.DPIScale ), imageSize + (int)( EditorAPI.DPIScale * 10.0f ) );
@@ -137,6 +142,11 @@ namespace NeoAxis.Editor
 			: base( browser.GetListView() )
 		{
 			this.browser = browser;
+			Init();
+		}
+
+		public override void Init()
+		{
 			imageSize = (int)( (float)browser.Options.TileImageSize * EditorAPI.DPIScale );
 
 			// image size + side padding + two lines of text for height
@@ -203,6 +213,11 @@ namespace NeoAxis.Editor
 			: base( browser.GetListView() )
 		{
 			this.browser = browser;
+			Init();
+		}
+
+		public override void Init()
+		{
 			imageSize = (int)( (float)browser.Options.TileImageSize * EditorAPI.DPIScale );
 
 			ItemSize = ( EditorAPI.DPIScale * new Vector2( 60, 41 ) ).ToVector2I();

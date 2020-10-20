@@ -609,9 +609,10 @@ namespace NeoAxis
 			}
 		}
 
-		void AddObjectScreenLabel( RenderingContext context )//, out Rectangle labelScreenRectangle )
+		void AddObjectScreenLabel( ViewportRenderingContext context )//, out Rectangle labelScreenRectangle )
 		{
-			var viewport = context.viewport;
+			var context2 = context.objectInSpaceRenderingContext;
+			var viewport = context2.viewport;
 			var t = Transform.Value;
 			var pos = t.Position;
 
@@ -636,20 +637,22 @@ namespace NeoAxis
 						var rect = new Rectangle( screenPosition - screenSize * .5, screenPosition + screenSize * .5 ).ToRectangleF();
 
 						ColorValue color;
-						if( context.selectedObjects.Contains( this ) )
+						if( context2.selectedObjects.Contains( this ) )
 							color = ProjectSettings.Get.SelectedColor;
-						else if( context.canSelectObjects.Contains( this ) )
+						else if( context2.canSelectObjects.Contains( this ) )
 							color = ProjectSettings.Get.CanSelectColor;
 						else
 							color = ProjectSettings.Get.ScreenLabelColor;
 
-						context.displayLabelsCounter++;
+						context2.displayLabelsCounter++;
 
 						var item = new Viewport.LastFrameScreenLabelItem();
 						item.ObjectInSpace = this;
+						item.DistanceToCamera = (float)( Transform.Value.Position - context.Owner.CameraSettings.Position ).Length();
 						item.ScreenRectangle = rect;
 						item.Color = color;
 						viewport.LastFrameScreenLabels.Add( item );
+						viewport.LastFrameScreenLabelByObjectInSpace[ this ] = item;
 
 						//var texture = ResourceManager.LoadResource<Component_Image>( "Base\\UI\\Images\\Circle.png" );
 						//viewport.CanvasRenderer.AddQuad( rect, new RectangleF( 0, 0, 1, 1 ), texture, color, true );
@@ -749,7 +752,7 @@ namespace NeoAxis
 					//label
 					if( scene.DisplayLabels && EnabledSelectionByCursor && !context2.disableShowingLabelForThisObject && viewport.AllowRenderScreenLabels && context2.viewport.CanvasRenderer != null && context2.displayLabelsCounter < context2.displayLabelsMax )
 					{
-						AddObjectScreenLabel( context2 );
+						AddObjectScreenLabel( context );
 
 						//if( DrawObjectScreenLabel( context2, out Rectangle labelScreenRectangle ) )
 						//{

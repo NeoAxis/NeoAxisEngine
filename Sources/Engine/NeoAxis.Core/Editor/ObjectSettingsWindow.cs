@@ -470,7 +470,7 @@ namespace NeoAxis.Editor
 		{
 			base.OnKryptonPageParentChanged();
 
-			//recreate panels when parent of KryptonPage was changed. need to restore _COMPOSITED flag, working tooltips
+			//recreate panels when parent of KryptonPage was changed. need to restore _COMPOSITED flag
 			if( KryptonPage != null && KryptonPage.Parent == null )
 			{
 				if( SelectedPanel != null )

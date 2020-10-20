@@ -622,6 +622,20 @@ namespace NeoAxis
 				return 0;
 			}
 
+			//!!!!new
+			public bool GetObjectGroupBoundingBoxCenter( ref Vector2I index, out Vector3 center )
+			{
+				switch( index.X )
+				{
+				case 0: center = renderSceneData.Meshes.Data[ index.Y ].BoundingBoxCenter; return true;
+				case 1: center = renderSceneData.Billboards.Data[ index.Y ].BoundingBoxCenter; return true;
+					//case 2: center = renderSceneData.Lights[ index.Y ].
+					//case 3: center = renderSceneData.ReflectionProbes[ index.Y ].distanceToCamera;
+				}
+				center = Vector3.Zero;
+				return false;
+			}
+
 			public float GetObjectGroupDistanceToPointSquared( ref Vector2I index, ref Vector3 point )
 			{
 				switch( index.X )
@@ -2710,6 +2724,20 @@ namespace NeoAxis
 				shadowTexture = context.RenderTarget2D_Alloc( new Vector2I( textureSize, textureSize ), textureFormat );
 			else if( lightData.Type == Component_Light.TypeEnum.Directional )
 				shadowTexture = context.RenderTarget2D_Alloc( new Vector2I( textureSize, textureSize ), textureFormat, arrayLayers: ShadowDirectionalLightCascades );
+
+			//add to namedTextures
+			{
+				var prefix = "shadow" + lightData.Type.ToString();
+				for( int counter = 1; ; counter++ )
+				{
+					var name = prefix + counter.ToString();
+					if( !context.objectsDuringUpdate.namedTextures.ContainsKey( name ) )
+					{
+						context.objectsDuringUpdate.namedTextures[ name ] = shadowTexture;
+						break;
+					}
+				}
+			}
 
 			//create depth texture
 			var shadowTextureDepth = context.RenderTarget2D_Alloc( new Vector2I( textureSize, textureSize ), PixelFormat.Depth24S8 );
@@ -5136,14 +5164,62 @@ namespace NeoAxis
 			}
 		}
 
+		struct Render3DSceneForwardTransparentItem
+		{
+			public Vector2I index;
+			public float distance;
+		}
+
+		//!!!!new
+		void ApplyTransparentRenderingAddOffsetWhenSortByDistance( FrameData frameData, ref Render3DSceneForwardTransparentItem item )
+		{
+			bool applied = false;
+
+			//!!!!slowly. много раз вызывается при сортировке
+
+			//apply TransparentRenderingAddOffsetWhenSortByDistance
+			switch( item.index.X )
+			{
+			case 0:
+				if( frameData.RenderSceneData.Meshes.Data[ item.index.Y ].TransparentRenderingAddOffsetWhenSortByDistance )
+				{
+					item.distance += 100000;
+					applied = true;
+				}
+				break;
+			}
+
+			//apply TransparentRenderingAddOffsetWhenSortByDistanceVolumes
+			if( !applied )
+			{
+				var list = frameData.RenderSceneData.TransparentRenderingAddOffsetWhenSortByDistanceVolumes;
+				if( list.Count != 0 )
+				{
+					if( frameData.GetObjectGroupBoundingBoxCenter( ref item.index, out var center ) )
+					{
+						for( int n = 0; n < list.Count; n++ )
+						{
+							ref var box = ref list.Data[ n ].Box;
+
+							if( box.Contains( ref center ) )
+							{
+								item.distance += 200000;
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+
 		public unsafe virtual void Render3DSceneForwardTransparent( ViewportRenderingContext context, FrameData frameData )
 		{
 			Viewport viewportOwner = context.Owner;
 
 			//get renderableGroupsToDraw
-			Vector2I[] renderableGroupsToDraw;
+			Render3DSceneForwardTransparentItem/*Vector2I*/[] renderableGroupsToDraw;
 			{
-				var list = new OpenList<Vector2I>( frameData.RenderableGroupsInFrustum.Count );
+				var list = new OpenList<Render3DSceneForwardTransparentItem/*Vector2I*/>( frameData.RenderableGroupsInFrustum.Count );
 
 				foreach( var renderableGroup in frameData.RenderableGroupsInFrustum )
 				{
@@ -5161,23 +5237,41 @@ namespace NeoAxis
 					}
 
 					if( add )
-						list.Add( renderableGroup );
+					{
+						var item = new Render3DSceneForwardTransparentItem();
+						item.index = renderableGroup;
+						item.distance = frameData.GetObjectGroupDistanceToCamera( ref item.index );
+						ApplyTransparentRenderingAddOffsetWhenSortByDistance( frameData, ref item );
+
+						list.Add( item );
+						//list.Add( renderableGroup );
+					}
 				}
 
 				renderableGroupsToDraw = list.ToArray();
 			}
 
 			//sort by distance
-			CollectionUtility.MergeSort( renderableGroupsToDraw, delegate ( Vector2I a, Vector2I b )
+			CollectionUtility.MergeSort( renderableGroupsToDraw, delegate ( Render3DSceneForwardTransparentItem a, Render3DSceneForwardTransparentItem b )
 			{
-				var distanceA = frameData.GetObjectGroupDistanceToCamera( ref a );
-				var distanceB = frameData.GetObjectGroupDistanceToCamera( ref b );
-				if( distanceA > distanceB )
+				if( a.distance > b.distance )
 					return -1;
-				if( distanceA < distanceB )
+				if( a.distance < b.distance )
 					return 1;
 				return 0;
 			}, true );
+
+			////sort by distance
+			//CollectionUtility.MergeSort( renderableGroupsToDraw, delegate ( Vector2I a, Vector2I b )
+			//{
+			//	var distanceA = frameData.GetObjectGroupDistanceToCamera( ref a );
+			//	var distanceB = frameData.GetObjectGroupDistanceToCamera( ref b );
+			//	if( distanceA > distanceB )
+			//		return -1;
+			//	if( distanceA < distanceB )
+			//		return 1;
+			//	return 0;
+			//}, true );
 
 			LightItem lightItemBinded = null;
 			Component_Material.CompiledMaterialData materialBinded = null;
@@ -5194,7 +5288,7 @@ namespace NeoAxis
 			//draw
 			for( int nRenderableGroupsToDraw = 0; nRenderableGroupsToDraw < renderableGroupsToDraw.Length; nRenderableGroupsToDraw++ )
 			{
-				var renderableGroup = renderableGroupsToDraw[ nRenderableGroupsToDraw ];
+				var renderableGroup = renderableGroupsToDraw[ nRenderableGroupsToDraw ].index;
 
 				if( renderableGroup.X == 0 )
 				{
@@ -5222,7 +5316,7 @@ namespace NeoAxis
 							if( additionInstancingRendered >= InstancingMaxCount )
 								break;
 
-							var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw2 ];
+							var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw2 ].index;
 							if( renderableGroup2.X == 0 )
 							{
 								ref var meshItem2_2 = ref frameData.Meshes.Data[ renderableGroup2.Y ];
@@ -5264,7 +5358,7 @@ namespace NeoAxis
 							int currentMatrix = 0;
 							for( int n = 0; n < instanceCount; n++ )
 							{
-								var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw + n ];
+								var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw + n ].index;
 
 								ref var meshItem_2 = ref frameData.RenderSceneData.Meshes.Data[ renderableGroup2.Y ];
 								meshItem_2.GetInstancingData( out instancingData[ currentMatrix++ ] );
@@ -5441,7 +5535,7 @@ namespace NeoAxis
 							if( additionInstancingRendered >= InstancingMaxCount )
 								break;
 
-							var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw2 ];
+							var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw2 ].index;
 							if( renderableGroup2.X == 1 )
 							{
 								ref var billboardItem2_2 = ref frameData.Billboards.Data[ renderableGroup2.Y ];
@@ -5483,7 +5577,7 @@ namespace NeoAxis
 							int currentMatrix = 0;
 							for( int n = 0; n < instanceCount; n++ )
 							{
-								var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw + n ];
+								var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw + n ].index;
 
 								ref var billboardItem_2 = ref frameData.RenderSceneData.Billboards.Data[ renderableGroup2.Y ];
 								billboardItem_2.GetInstancingData( out instancingData[ currentMatrix++ ] );
@@ -5598,8 +5692,8 @@ namespace NeoAxis
 			}
 
 			context.RenderQuadToCurrentViewport( shader, blending );//, flipY );
-			//context.RenderQuadToCurrentViewport( shader, CanvasRenderer.BlendingType.Opaque );
-			//context.RenderQuadToCurrentViewport( shader );
+																	//context.RenderQuadToCurrentViewport( shader, CanvasRenderer.BlendingType.Opaque );
+																	//context.RenderQuadToCurrentViewport( shader );
 		}
 
 		void RenderDeferredBackgroundColor( ViewportRenderingContext context )
@@ -6244,8 +6338,7 @@ namespace NeoAxis
 
 			RenderBegin?.Invoke( this, context, frameData );
 
-			//!!!!new
-			// Set viewport to give the ability to use compute shaders.
+			//set viewport to give the ability to use compute shaders
 			{
 				//!!!!double
 				var owner = context.Owner;
@@ -6255,11 +6348,25 @@ namespace NeoAxis
 				context.SetViewport( owner, viewMatrix, projectionMatrix, 0, ColorValue.Zero );
 			}
 
-			//!!!!new
 			SetViewportOwnerSettingsUniform( context );
 
 			//get lists of visible objects
 			PrepareListsOfObjects( context, frameData );
+
+			//additional actions after PrepareListsOfObjects sorted by camera distance from far to near
+			{
+				CollectionUtility.MergeSort( context.FrameData.RenderSceneData.ActionsToDoAfterPrepareListsOfObjectsSortedByDistance, delegate ( RenderSceneData.ActionToDoAfterPrepareListsOfObjectsSortedByDistance item1, RenderSceneData.ActionToDoAfterPrepareListsOfObjectsSortedByDistance item2 )
+				{
+					if( item1.DistanceToCamera > item2.DistanceToCamera )
+						return -1;
+					if( item1.DistanceToCamera < item2.DistanceToCamera )
+						return 1;
+					return 0;
+				}, true );
+
+				foreach( var item in context.FrameData.RenderSceneData.ActionsToDoAfterPrepareListsOfObjectsSortedByDistance )
+					item.Action( context );
+			}
 
 			//display additional data
 			if( context.Owner.AttachedScene != null && context.Owner.Simple3DRenderer != null )
@@ -6271,7 +6378,8 @@ namespace NeoAxis
 				if( context.Owner.AttachedScene.GetDisplayDevelopmentDataInThisApplication() && context.Owner.AttachedScene.DisplayObjectInSpaceBounds )
 					DisplayObjectInSpaceBounds( context, frameData );
 
-				//display object's labels
+				//sort and display object's labels
+				SortObjectInSpaceLabels( context, frameData );
 				DisplayObjectInSpaceLabels( context, frameData );
 			}
 
@@ -6290,8 +6398,8 @@ namespace NeoAxis
 				context.SetUniform( "u_viewProjPrevious", ParameterType.Matrix4x4, 1, &matrixF );
 			}
 
-			//SetViewportOwnerSettingsUniform( context );
 			SetFogUniform( context, frameData.Fog );
+			SetCutVolumeSettingsUniforms( context );
 
 			Bgfx.SetDebugFeatures( DebugMode.Value == DebugModeEnum.Wireframe ? DebugFeatures.Wireframe : DebugFeatures.None );
 
@@ -6371,6 +6479,34 @@ namespace NeoAxis
 			if( vec4Count != 3 )
 				Log.Fatal( "Component_RenderingPipeline: Render: vec4Count != 3." );
 			context.SetUniform( "u_viewportOwnerSettings", ParameterType.Vector4, vec4Count, &data );
+		}
+
+		unsafe void SetCutVolumeSettingsUniforms( ViewportRenderingContext context )
+		{
+			var GLOBAL_CUT_VOLUME_MAX_COUNT = 10;
+
+			var list = context.FrameData.RenderSceneData.CutVolumes;
+			var count = Math.Min( list.Count, GLOBAL_CUT_VOLUME_MAX_COUNT );
+
+			var settings = new Vector4F( count, 0, 0, 0 );
+			var data = stackalloc Matrix4F[ GLOBAL_CUT_VOLUME_MAX_COUNT ];
+
+			for( int n = 0; n < count; n++ )
+			{
+				ref var item = ref list.Data[ n ];
+
+				item.Transform.ToMatrix4().GetInverse( out var inv );
+
+				//!!!!double
+				inv.ToMatrix4F( out data[ n ] );
+
+				//save shape type in the matrix
+				data[ n ].Item3.W = (int)item.Shape;
+			}
+
+			context.SetUniform( "u_viewportCutVolumeSettings", ParameterType.Vector4, 1, &settings );
+			if( count != 0 )
+				context.SetUniform( "u_viewportCutVolumeData", ParameterType.Matrix4x4, GLOBAL_CUT_VOLUME_MAX_COUNT, data );
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

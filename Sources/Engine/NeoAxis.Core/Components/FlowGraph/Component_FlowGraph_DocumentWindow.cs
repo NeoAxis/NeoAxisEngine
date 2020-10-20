@@ -328,20 +328,24 @@ namespace NeoAxis.Editor
 				items.Add( item );
 			}
 
-			//!!!!!
 			//Settings
 			{
 				var item = new KryptonContextMenuItem( TranslateContextMenu( "Settings" ), EditorResourcesCache.Settings, delegate ( object s, EventArgs e2 )
 				{
-					//!!!!new
-					bool canUseAlreadyOpened = !ModifierKeys.HasFlag( Keys.Shift );
-					//!!!!"true"
-
-					EditorAPI.ShowObjectSettingsWindow( Document, oneSelectedComponent, canUseAlreadyOpened );
+					EditorAPI.SelectDockWindow( EditorAPI.FindWindow<SettingsWindow>() );
 				} );
-				//!!!!!
-				//!!!!если много выделенных
-				item.Enabled = oneSelectedComponent != null;
+				items.Add( item );
+			}
+
+			//Separate Settings
+			{
+				var item = new KryptonContextMenuItem( TranslateContextMenu( "Separate Settings" ), EditorResourcesCache.Settings, delegate ( object s, EventArgs e2 )
+				{
+					var obj = oneSelectedComponent ?? ObjectOfWindow;
+					bool canUseAlreadyOpened = !ModifierKeys.HasFlag( Keys.Shift );
+					EditorAPI.ShowObjectSettingsWindow( Document, obj, canUseAlreadyOpened );
+				} );
+				item.Enabled = oneSelectedComponent != null || SelectedObjects.Length == 0;
 				items.Add( item );
 			}
 

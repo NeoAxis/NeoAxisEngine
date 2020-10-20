@@ -40,7 +40,7 @@
 			this.contentBrowserOpenScene = new NeoAxis.Editor.ContentBrowser();
 			this.kryptonButtonOpenScene = new ComponentFactory.Krypton.Toolkit.KryptonButton();
 			this.kryptonButtonOpenStore = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+			this.toolTip1 = new NeoAxis.Editor.EngineToolTip( this.components);
 			this.kryptonLabel4 = new ComponentFactory.Krypton.Toolkit.KryptonLabel();
 			this.kryptonCheckBoxMinimizeRibbon = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
 			this.kryptonCheckBoxShowQATBelowRibbon = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
@@ -232,7 +232,7 @@
 		private ContentBrowser contentBrowserOpenScene;
 		private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonOpenScene;
 		private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonOpenStore;
-		private System.Windows.Forms.ToolTip toolTip1;
+		private NeoAxis.Editor.EngineToolTip toolTip1;
 		private ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabel4;
 		private ComponentFactory.Krypton.Toolkit.KryptonCheckBox kryptonCheckBoxMinimizeRibbon;
 		private ComponentFactory.Krypton.Toolkit.KryptonCheckBox kryptonCheckBoxShowQATBelowRibbon;

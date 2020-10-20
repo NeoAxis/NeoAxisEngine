@@ -29,8 +29,8 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			this.labelName = new System.Windows.Forms.Label();
-			this.propertyToolTip = new System.Windows.Forms.ToolTip(this.components);
+			this.labelName = new System.Windows.Forms.LabelExtended();
+			this.propertyToolTip = new NeoAxis.Editor.EngineToolTip(this.components);
 			this.SuspendLayout();
 			// 
 			// labelName
@@ -57,9 +57,9 @@
 		#endregion
 		//public ComponentFactory.Krypton.Toolkit.KryptonButton buttonReference;
 		//public ComponentFactory.Krypton.Toolkit.KryptonButton buttonExpand;
-		private System.Windows.Forms.Label labelName;
+		private System.Windows.Forms.LabelExtended labelName;
 		//private ComponentFactory.Krypton.Toolkit.KryptonButton buttonDefaultValue;
 		//public ComponentFactory.Krypton.Toolkit.KryptonButton buttonType;
-		private System.Windows.Forms.ToolTip propertyToolTip;
+		private NeoAxis.Editor.EngineToolTip propertyToolTip;
 	}
 }

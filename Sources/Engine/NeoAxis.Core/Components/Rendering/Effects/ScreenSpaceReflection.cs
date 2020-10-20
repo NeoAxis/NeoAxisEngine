@@ -19,7 +19,6 @@ namespace NeoAxis
 		/// <summary>
 		/// The intensity of the effect.
 		/// </summary>
-		[Serialize]
 		[DefaultValue( 1.0 )]
 		[Range( 0, 1 )]
 		[Category( "Effect" )]
@@ -31,6 +30,34 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
 		public event Action<Component_RenderingEffect_ScreenSpaceReflection> IntensityChanged;
 		ReferenceField<double> _intensity = 1.0;
+
+		/// <summary>
+		/// Initial scale of step size for raymarching.
+		/// </summary>
+		[DefaultValue( 1.0 )]
+		[Range( 0.1, 4, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
+		public Reference<double> InitialStepScale
+		{
+			get { if( _initialStepScale.BeginGet() ) InitialStepScale = _initialStepScale.Get( this ); return _initialStepScale.value; }
+			set { if( _initialStepScale.BeginSet( ref value ) ) { try { InitialStepScaleChanged?.Invoke( this ); } finally { _initialStepScale.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="InitialStepScale"/> property value changes.</summary>
+		public event Action<Component_RenderingEffect_ScreenSpaceReflection> InitialStepScaleChanged;
+		ReferenceField<double> _initialStepScale = 1.0;
+
+		/// <summary>
+		/// Thickness of the world for raymarching.
+		/// </summary>
+		[DefaultValue( 1.0 )]
+		[Range( 0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 4 )]
+		public Reference<double> WorldThickness
+		{
+			get { if( _worldThickness.BeginGet() ) WorldThickness = _worldThickness.Get( this ); return _worldThickness.value; }
+			set { if( _worldThickness.BeginSet( ref value ) ) { try { WorldThicknessChanged?.Invoke( this ); } finally { _worldThickness.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="WorldThickness"/> property value changes.</summary>
+		public event Action<Component_RenderingEffect_ScreenSpaceReflection> WorldThicknessChanged;
+		ReferenceField<double> _worldThickness = 1.0;
 
 		public enum QualityEnum
 		{
@@ -44,8 +71,8 @@ namespace NeoAxis
 		/// <summary>
 		/// The quality of the effect.
 		/// </summary>
-		[Serialize]
 		[DefaultValue( QualityEnum.Medium )]
+		[DisplayName( "Quality (Steps)" )]
 		public Reference<QualityEnum> Quality
 		{
 			get { if( _quality.BeginGet() ) Quality = _quality.Get( this ); return _quality.value; }
@@ -59,7 +86,6 @@ namespace NeoAxis
 		/// Minimal power of blur.
 		/// </summary>
 		[DefaultValue( 1.0 )]
-		[Serialize]
 		[Range( 0, 10 )]
 		public Reference<double> BlurRoughnessMin
 		{
@@ -74,7 +100,6 @@ namespace NeoAxis
 		/// Maximal power of blur.
 		/// </summary>
 		[DefaultValue( 5.0 )]
-		[Serialize]
 		[Range( 0, 10 )]
 		public Reference<double> BlurRoughnessMax
 		{
@@ -89,7 +114,6 @@ namespace NeoAxis
 		/// The blur downscaling mode used.
 		/// </summary>
 		[DefaultValue( Component_RenderingPipeline_Basic.DownscalingModeEnum.Auto )]
-		[Serialize]
 		public Reference<Component_RenderingPipeline_Basic.DownscalingModeEnum> BlurDownscalingMode
 		{
 			get { if( _blurDownscalingMode.BeginGet() ) BlurDownscalingMode = _blurDownscalingMode.Get( this ); return _blurDownscalingMode.value; }
@@ -103,7 +127,6 @@ namespace NeoAxis
 		/// The level of blur texture downscaling.
 		/// </summary>
 		[DefaultValue( 0 )]
-		[Serialize]
 		[Range( 0, 6 )]
 		public Reference<int> BlurDownscalingValue
 		{
@@ -114,8 +137,6 @@ namespace NeoAxis
 		public event Action<Component_RenderingEffect_ScreenSpaceReflection> BlurDownscalingValueChanged;
 		ReferenceField<int> _blurDownscalingValue = 0;
 
-		//!!!!name
-		[Serialize]
 		[DefaultValue( 8.0 )]
 		[Range( 0, 40 )]
 		public Reference<double> EdgeFactorPower
@@ -217,12 +238,22 @@ namespace NeoAxis
 					int maxSteps = 50;
 					switch( Quality.Value )
 					{
-					case QualityEnum.Lowest: maxSteps = 20; break;
-					case QualityEnum.Low: maxSteps = 50; break;
-					case QualityEnum.Medium: maxSteps = 80; break;
-					case QualityEnum.High: maxSteps = 120; break;
-					case QualityEnum.Highest: maxSteps = 160; break;
+					case QualityEnum.Lowest: maxSteps = 15; break;
+					case QualityEnum.Low: maxSteps = 25; break;
+					case QualityEnum.Medium: maxSteps = 40; break;
+					case QualityEnum.High: maxSteps = 60; break;
+					case QualityEnum.Highest: maxSteps = 100; break;
 					}
+
+					//int maxSteps = 50;
+					//switch( Quality.Value )
+					//{
+					//case QualityEnum.Lowest: maxSteps = 20; break;
+					//case QualityEnum.Low: maxSteps = 50; break;
+					//case QualityEnum.Medium: maxSteps = 80; break;
+					//case QualityEnum.High: maxSteps = 120; break;
+					//case QualityEnum.Highest: maxSteps = 160; break;
+					//}
 
 					shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "MAX_STEPS", maxSteps.ToString() ) );
 
@@ -266,6 +297,8 @@ namespace NeoAxis
 					shader.Parameters.Set( "invViewProj", invViewProjMatrix );
 					shader.Parameters.Set( "cameraPosition", cameraPosition );
 					shader.Parameters.Set( "edgeFactorPower", (float)EdgeFactorPower );
+					shader.Parameters.Set( "initialStepScale", (float)InitialStepScale.Value );
+					shader.Parameters.Set( "worldThickness", (float)WorldThickness.Value );
 
 					shader.Parameters.Set( "colorTextureSize", new Vector4F( (float)actualTexture.Result.ResultSize.X, (float)actualTexture.Result.ResultSize.Y, 0.0f, 0.0f ) );
 					shader.Parameters.Set( "zNear", zNear );

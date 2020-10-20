@@ -208,8 +208,16 @@ namespace NeoAxis.Editor
 			}
 		}
 
+		public delegate void PrintFilterDelegate( string text, LogType type, ref bool skip );
+		public static event PrintFilterDelegate PrintFilter;
+
 		public void Print( string text, LogType type )
 		{
+			bool skip = false;
+			PrintFilter?.Invoke( text, type, ref skip );
+			if( skip )
+				return;
+
 			//max item count
 			while( contentBrowser1.RootItems.Count >= maxItemCount )
 				contentBrowser1.RemoveItem( contentBrowser1.RootItems[ 0 ] );

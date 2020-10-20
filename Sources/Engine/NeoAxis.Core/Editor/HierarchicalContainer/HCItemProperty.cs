@@ -906,6 +906,7 @@ namespace NeoAxis.Editor
 										{
 											var realFileName = VirtualPathUtility.GetRealPathByVirtual( fileName );
 											EditorAPI.SelectFilesOrDirectoriesInMainResourcesWindow( new string[] { realFileName } );
+											EditorAPI.SelectDockWindow( EditorAPI.FindWindow<ResourcesWindow>() );
 										}
 									}
 								}
@@ -976,6 +977,7 @@ namespace NeoAxis.Editor
 											{
 												var realFileName = VirtualPathUtility.GetRealPathByVirtual( fileName );
 												EditorAPI.SelectFilesOrDirectoriesInMainResourcesWindow( new string[] { realFileName } );
+												EditorAPI.SelectDockWindow( EditorAPI.FindWindow<ResourcesWindow>() );
 											}
 										}
 									}

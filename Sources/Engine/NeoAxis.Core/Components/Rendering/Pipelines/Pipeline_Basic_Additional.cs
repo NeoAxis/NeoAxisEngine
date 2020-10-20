@@ -129,23 +129,41 @@ namespace NeoAxis
 			}
 		}
 
+		void SortObjectInSpaceLabels( ViewportRenderingContext context, FrameData frameData )
+		{
+			CollectionUtility.MergeSort( context.Owner.LastFrameScreenLabels,
+				delegate ( Viewport.LastFrameScreenLabelItem item1, Viewport.LastFrameScreenLabelItem item2 )
+			{
+				if( item1.DistanceToCamera > item2.DistanceToCamera )
+					return -1;
+				if( item1.DistanceToCamera < item2.DistanceToCamera )
+					return 1;
+				return 0;
+			}, true );
+		}
+
 		void DisplayObjectInSpaceLabels( ViewportRenderingContext context, FrameData frameData )
 		{
 			var triangles = new List<CanvasRenderer.TriangleVertex>( context.Owner.LastFrameScreenLabels.Count * 6 );
 
 			foreach( var label in context.Owner.LastFrameScreenLabels )
 			{
-				var v0 = new CanvasRenderer.TriangleVertex( label.ScreenRectangle.LeftTop, label.Color, new Vector2F( 0, 0 ) );
-				var v1 = new CanvasRenderer.TriangleVertex( label.ScreenRectangle.RightTop, label.Color, new Vector2F( 1, 0 ) );
-				var v2 = new CanvasRenderer.TriangleVertex( label.ScreenRectangle.RightBottom, label.Color, new Vector2F( 1, 1 ) );
-				var v3 = new CanvasRenderer.TriangleVertex( label.ScreenRectangle.LeftBottom, label.Color, new Vector2F( 0, 1 ) );
+				if( label.Color.Alpha > 0 )
+				{
+					var rect = label.ScreenRectangle.ToRectangleF();
 
-				triangles.Add( v0 );
-				triangles.Add( v1 );
-				triangles.Add( v2 );
-				triangles.Add( v2 );
-				triangles.Add( v3 );
-				triangles.Add( v0 );
+					var v0 = new CanvasRenderer.TriangleVertex( rect.LeftTop, label.Color, new Vector2F( 0, 0 ) );
+					var v1 = new CanvasRenderer.TriangleVertex( rect.RightTop, label.Color, new Vector2F( 1, 0 ) );
+					var v2 = new CanvasRenderer.TriangleVertex( rect.RightBottom, label.Color, new Vector2F( 1, 1 ) );
+					var v3 = new CanvasRenderer.TriangleVertex( rect.LeftBottom, label.Color, new Vector2F( 0, 1 ) );
+
+					triangles.Add( v0 );
+					triangles.Add( v1 );
+					triangles.Add( v2 );
+					triangles.Add( v2 );
+					triangles.Add( v3 );
+					triangles.Add( v0 );
+				}
 			}
 
 			if( triangles.Count != 0 )

@@ -616,11 +616,24 @@ namespace NeoAxis.Editor
 				var obj = item.ObjectInSpace;
 				if( !context.CheckOnlyObjectsWithEnabledSelectionByCursorFlag || obj.EnabledSelectionByCursor )// obj.EnabledInHierarchy && obj.VisibleInHierarchy && obj.CanBeSelected )
 				{
-					if( MathAlgorithms.CheckPointInsideEllipse( item.ScreenRectangle, mouse ) )
+					bool found = false;
+
+					switch( item.Shape )
+					{
+					case Viewport.LastFrameScreenLabelItem.ShapeEnum.Ellipse:
+						found = MathAlgorithms.CheckPointInsideEllipse( item.ScreenRectangle, mouse );
+						break;
+					case Viewport.LastFrameScreenLabelItem.ShapeEnum.Rectangle:
+						found = item.ScreenRectangle.Contains( mouse );
+						break;
+					}
+
+					if( found )
 					{
 						context.ResultObject = obj;
 						return;
 					}
+
 				}
 			}
 
@@ -1247,7 +1260,7 @@ namespace NeoAxis.Editor
 					//update items
 					var items = new List<(string, Image)>();
 					foreach( var item in terrainPaintLayersCachedList )
-						items.Add( (item.Text, PreviewIconsManager.GetIcon( item.Obj )) );
+						items.Add( (item.Text, PreviewImagesManager.GetImageForPaintLayer( item.Obj )) );
 					context.Action.ListBox.Items = items;
 
 					//update selected item
@@ -1481,10 +1494,20 @@ namespace NeoAxis.Editor
 			{
 				var item = new KryptonContextMenuItem( TranslateContextMenu( "Settings" ), EditorResourcesCache.Settings, delegate ( object s, EventArgs e2 )
 				{
-					bool canUseAlreadyOpened = !ModifierKeys.HasFlag( Keys.Shift );
-					EditorAPI.ShowObjectSettingsWindow( Document, oneSelectedComponent, canUseAlreadyOpened );
+					EditorAPI.SelectDockWindow( EditorAPI.FindWindow<SettingsWindow>() );
 				} );
-				item.Enabled = oneSelectedComponent != null;
+				items.Add( item );
+			}
+
+			//Separate Settings
+			{
+				var item = new KryptonContextMenuItem( TranslateContextMenu( "Separate Settings" ), EditorResourcesCache.Settings, delegate ( object s, EventArgs e2 )
+				{
+					var obj = oneSelectedComponent ?? ObjectOfWindow;
+					bool canUseAlreadyOpened = !ModifierKeys.HasFlag( Keys.Shift );
+					EditorAPI.ShowObjectSettingsWindow( Document, obj, canUseAlreadyOpened );
+				} );
+				item.Enabled = oneSelectedComponent != null || SelectedObjects.Length == 0;
 				items.Add( item );
 			}
 
@@ -4467,7 +4490,7 @@ namespace NeoAxis.Editor
 		void UpdateTerrainPaintLayersSelected()
 		{
 			var action = EditorActions.GetByName( "Terrain Paint Layers" );
-			if( action != null )
+			if( action != null && !action.CompletelyDisabled )
 			{
 				var newIndex = action.ListBox.SelectedIndex;
 				if( newIndex >= 0 && newIndex < terrainPaintLayersCachedList.Count )

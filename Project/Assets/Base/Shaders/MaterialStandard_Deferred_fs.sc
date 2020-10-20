@@ -45,6 +45,8 @@ void main()
 	vec3 worldPosition = v_worldPosition;
 	vec3 inputWorldNormal = normalize(v_worldNormal);
 
+	cutVolumes(worldPosition);
+	
 	//displacement
 	vec2 displacementOffset = vec2_splat(0);
 #if defined(DISPLACEMENT_CODE_BODY) && defined(DISPLACEMENT)

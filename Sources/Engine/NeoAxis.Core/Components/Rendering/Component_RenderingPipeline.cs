@@ -193,6 +193,7 @@ namespace NeoAxis
 			set { if( _lODScale.BeginSet( ref value ) ) { try { LODScaleChanged?.Invoke( this ); } finally { _lODScale.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODScale"/> property value changes.</summary>
+		[DisplayName( "LOD Scale Changed" )]
 		public event Action<Component_RenderingPipeline> LODScaleChanged;
 		ReferenceField<double> _lODScale = 1.0;
 
@@ -209,6 +210,7 @@ namespace NeoAxis
 			set { if( _lODRange.BeginSet( ref value ) ) { try { LODRangeChanged?.Invoke( this ); } finally { _lODRange.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODRange"/> property value changes.</summary>
+		[DisplayName( "LOD Range Changed" )]
 		public event Action<Component_RenderingPipeline> LODRangeChanged;
 		ReferenceField<RangeI> _lODRange = new RangeI( 0, 10 );
 
@@ -239,6 +241,7 @@ namespace NeoAxis
 			get { if( _lODTransitionTime.BeginGet() ) LODTransitionTime = _lODTransitionTime.Get( this ); return _lODTransitionTime.value; }
 			set { if( _lODTransitionTime.BeginSet( ref value ) ) { try { LODTransitionTimeChanged?.Invoke( this ); } finally { _lODTransitionTime.EndSet(); } } }
 		}
+		[DisplayName( "LOD Transition Time Changed" )]
 		public event Action<Component_RenderingPipeline> LODTransitionTimeChanged;
 		ReferenceField<double> _lODTransitionTime = 1.0;
 
@@ -271,6 +274,15 @@ namespace NeoAxis
 			public OpenList<LightItem> Lights = new OpenList<LightItem>( 256 );
 			public OpenList<ReflectionProbeItem> ReflectionProbes = new OpenList<ReflectionProbeItem>( 128 );
 			public OpenList<DecalItem> Decals = new OpenList<DecalItem>( 512 );
+			public OpenList<CutVolumeItem> CutVolumes = new OpenList<CutVolumeItem>();
+			public OpenList<TransparentRenderingAddOffsetWhenSortByDistanceVolumeItem> TransparentRenderingAddOffsetWhenSortByDistanceVolumes = new OpenList<TransparentRenderingAddOffsetWhenSortByDistanceVolumeItem>( 4 );
+
+			public struct ActionToDoAfterPrepareListsOfObjectsSortedByDistance
+			{
+				public float DistanceToCamera;
+				public Action<ViewportRenderingContext> Action;
+			}
+			public List<ActionToDoAfterPrepareListsOfObjectsSortedByDistance> ActionsToDoAfterPrepareListsOfObjectsSortedByDistance = new List<ActionToDoAfterPrepareListsOfObjectsSortedByDistance>();
 
 			/// <summary>
 			/// Prepared mesh item data for scene rendering.
@@ -304,6 +316,9 @@ namespace NeoAxis
 
 				//!!!!GC. fixed array. или уже подготовленный массив выставляется
 				public LayerItem[] Layers;
+
+				//!!!!new
+				public bool TransparentRenderingAddOffsetWhenSortByDistance;
 
 				//public MeshInstanceData? MeshInstanceOne;
 				//public MeshInstanceData[] MeshInstanceArray;
@@ -798,6 +813,18 @@ namespace NeoAxis
 				public ColorValue Color;
 				public Component_Decal.NormalsModeEnum NormalsMode;
 				public double SortOrder;
+			}
+
+			public struct CutVolumeItem
+			{
+				public Component_CutVolume.ShapeEnum Shape;
+				public Transform Transform;
+			}
+
+			public struct TransparentRenderingAddOffsetWhenSortByDistanceVolumeItem
+			{
+				//!!!!add more shapes
+				public Box Box;
 			}
 
 			/// <summary>

@@ -442,10 +442,17 @@ namespace NeoAxis
 					{
 						context2.displaySensorsCounter++;
 
-						var displayColor = DisplayColor.Value;
-						if( displayColor.Alpha != 0 )
+						ColorValue color;
+						if( context2.selectedObjects.Contains( this ) )
+							color = ProjectSettings.Get.SelectedColor;
+						else if( context2.canSelectObjects.Contains( this ) )
+							color = ProjectSettings.Get.CanSelectColor;
+						else
+							color = DisplayColor.Value;
+
+						if( color.Alpha != 0 )
 						{
-							context.Owner.Simple3DRenderer.SetColor( displayColor, displayColor * ProjectSettings.Get.HiddenByOtherObjectsColorMultiplier );
+							context.Owner.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.HiddenByOtherObjectsColorMultiplier );
 							RenderShape( context2 );
 						}
 					}

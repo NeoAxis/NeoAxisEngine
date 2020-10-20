@@ -105,7 +105,7 @@ namespace NeoAxis.Editor
 				{
 					var action = EditorActions.GetByName( actionItem.Name );
 
-					if( action != null && action.QatSupport && actionItem.Enabled && EditorUtility.PerformEditorActionVisibleFilter( action ) )
+					if( action != null && !action.CompletelyDisabled && action.QatSupport && actionItem.Enabled && EditorUtility.PerformEditorActionVisibleFilter( action ) )
 						AddActionToQAT( action );
 				}
 

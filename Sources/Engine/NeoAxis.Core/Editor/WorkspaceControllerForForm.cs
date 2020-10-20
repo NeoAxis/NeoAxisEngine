@@ -154,15 +154,16 @@ namespace NeoAxis.Editor
 
 		public override void SelectDockWindow( DockWindow window )
 		{
-			if( window is DocumentWindow wnd && wnd.IsWindowInWorkspace )
+			if( window != null )
 			{
-				var workspaceWindow = FindWorkspaceWindow( wnd );
-				if( workspaceWindow != null )
-					workspaceWindow.WorkspaceController.SelectDockWindow( window );
-			}
-			else
-			{
-				base.SelectDockWindow( window );
+				if( window is DocumentWindow wnd && wnd.IsWindowInWorkspace )
+				{
+					var workspaceWindow = FindWorkspaceWindow( wnd );
+					if( workspaceWindow != null )
+						workspaceWindow.WorkspaceController.SelectDockWindow( window );
+				}
+				else
+					base.SelectDockWindow( window );
 			}
 		}
 
@@ -313,7 +314,7 @@ namespace NeoAxis.Editor
 			//TODO: make BaseWindowConfig, use fabric method for WindowConfig creation and move this logic to base class.
 			if( window is IDocumentWindow docWindow )
 				WindowConfig.FromDocumentWindow( docWindow ).Save( e.XmlWriter );
-			window.OnSaving( e.XmlWriter );
+			//window.OnSaving( e.XmlWriter );
 		}
 
 		protected override void OnDockWindowLoading( DockWindow window, DockPageLoadingEventArgs e )
@@ -355,11 +356,105 @@ namespace NeoAxis.Editor
 			}
 			else
 			{
-				//ok, window already created
+				//window already created
 			}
 
-			window?.OnLoading( e.XmlReader );
+			//window?.OnLoading( e.XmlReader );
 		}
+
+		public void SaveAdditionalConfig()
+		{
+			var configBlock = EngineConfig.TextBlock;
+
+			var old = configBlock.FindChild( "Docking" );
+			if( old != null )
+				configBlock.DeleteChild( old );
+
+			EditorAPI.GetRestartApplication( out _, out var resetWindowsSettings );
+			if( !resetWindowsSettings )
+			{
+				var block = configBlock.AddChild( "Docking" );
+
+				//save auto hided sizes
+				if( dockingControl != null )
+				{
+					//get auto hide pages
+					var autoHidePageNames = new ESet<string>();
+					foreach( var element in dockingControl )
+					{
+						var dockingEdge = element as KryptonDockingEdge;
+						if( dockingEdge != null )
+						{
+							foreach( var e in dockingEdge )
+							{
+								var edgeAutoHidden = e as KryptonDockingEdgeAutoHidden;
+								if( edgeAutoHidden != null )
+								{
+									foreach( var e2 in edgeAutoHidden )
+									{
+										var autoHiddenGroup = e2 as KryptonDockingAutoHiddenGroup;
+										if( autoHiddenGroup != null )
+										{
+											foreach( var page in autoHiddenGroup.AutoHiddenGroupControl.Pages )
+												autoHidePageNames.AddWithCheckAlreadyContained( page.UniqueName );
+										}
+									}
+								}
+							}
+						}
+					}
+
+					//get all pages
+					var allPages = new Dictionary<string, KryptonPage>();
+					foreach( var page in DockingManager.Pages )
+						allPages[ page.UniqueName ] = page;
+
+					//save
+					foreach( var name in autoHidePageNames )
+					{
+						if( allPages.TryGetValue( name, out var page ) )
+						{
+							var pageBlock = block.AddChild( "Page" );
+							pageBlock.SetAttribute( "Name", page.UniqueName );
+							pageBlock.SetAttribute( "AutoHiddenSlideSize", $"{page.AutoHiddenSlideSize.Width} {page.AutoHiddenSlideSize.Height}" );
+						}
+					}
+				}
+			}
+		}
+
+		protected override KryptonPage CreatePage( DockWindow window, bool createCloseButton, KryptonPage existPage = null )
+		{
+			var page = base.CreatePage( window, createCloseButton, existPage );
+
+			//read auto hide size from config
+			var configBlock = EngineConfig.TextBlock;
+			var block = configBlock.FindChild( "Docking" );
+			if( block != null )
+			{
+				foreach( var pageBlock in block.Children )
+				{
+					if( pageBlock.Name == "Page" )
+					{
+						var name = pageBlock.GetAttribute( "Name" );
+						if( page.UniqueName == name )
+						{
+							try
+							{
+								var size = Vector2I.Parse( pageBlock.GetAttribute( "AutoHiddenSlideSize" ) );
+								page.AutoHiddenSlideSize = new Size( size.X, size.Y );
+							}
+							catch { }
+
+							break;
+						}
+					}
+				}
+			}
+
+			return page;
+		}
+
 	}
 
 	//public class WorkspaceDockingManager : KryptonDockingManager
