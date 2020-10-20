@@ -20,6 +20,9 @@ namespace NeoAxis
 			Shader = shaderDefault;
 		}
 
+		/// <summary>
+		/// The number of levels.
+		/// </summary>
 		[DefaultValue( 10.0 )]
 		[Range( 1, 20 )]
 		public Reference<double> Levels

@@ -20,6 +20,9 @@ namespace NeoAxis
 			Shader = shaderDefault;
 		}
 
+		/// <summary>
+		/// The strength of the effect.
+		/// </summary>
 		[DefaultValue( 1.0 )]
 		[Range( 0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
 		public Reference<double> Amount

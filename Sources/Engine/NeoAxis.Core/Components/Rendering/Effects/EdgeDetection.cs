@@ -27,6 +27,9 @@ namespace NeoAxis
 		public event Action<Component_RenderingEffect_EdgeDetection> IntensityChanged;
 		ReferenceField<double> _intensity = 1;
 
+		/// <summary>
+		/// The threshold value when determining edges by distance.
+		/// </summary>
 		[DefaultValue( 1.0 )]
 		[Range( 0.1, 10000.0, RangeAttribute.ConvenientDistributionEnum.Exponential, 10 )]
 		public Reference<double> DepthThreshold
@@ -38,6 +41,9 @@ namespace NeoAxis
 		public event Action<Component_RenderingEffect_EdgeDetection> DepthThresholdChanged;
 		ReferenceField<double> _depthThreshold = 1.0;
 
+		/// <summary>
+		/// The threshold value when determining edges by normals.
+		/// </summary>
 		[DefaultValue( 1.0 )]
 		[Range( 0.01, 1 )]
 		public Reference<double> NormalsThreshold
@@ -49,6 +55,9 @@ namespace NeoAxis
 		public event Action<Component_RenderingEffect_EdgeDetection> NormalsThresholdChanged;
 		ReferenceField<double> _normalsThreshold = 1.0;
 
+		/// <summary>
+		/// The color of edges.
+		/// </summary>
 		[DefaultValue( "0 0 0" )]
 		public Reference<ColorValue> EdgeColor
 		{
@@ -59,6 +68,9 @@ namespace NeoAxis
 		public event Action<Component_RenderingEffect_EdgeDetection> EdgeColorChanged;
 		ReferenceField<ColorValue> _edgeColor = new ColorValue( 0, 0, 0 );
 
+		/// <summary>
+		/// The thickness of edges.
+		/// </summary>
 		[DefaultValue( 2.0 )]
 		[Range( 1.0, 8.0 )]
 		public Reference<double> Thickness
@@ -70,6 +82,9 @@ namespace NeoAxis
 		public event Action<Component_RenderingEffect_EdgeDetection> ThicknessChanged;
 		ReferenceField<double> _thickness = 2.0;
 
+		/// <summary>
+		/// The maximum visible distance.
+		/// </summary>
 		[DefaultValue( 30.0 )]
 		[Range( 0, 1000, RangeAttribute.ConvenientDistributionEnum.Exponential, 5 )]
 		public Reference<double> MaxDistance
