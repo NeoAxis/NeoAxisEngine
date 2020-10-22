@@ -37,7 +37,7 @@
 			// 
 			// kryptonButtonCancel
 			// 
-			this.kryptonButtonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			//this.kryptonButtonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.kryptonButtonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.kryptonButtonCancel.Location = new System.Drawing.Point(334, 581);
 			this.kryptonButtonCancel.Name = "kryptonButtonCancel";
@@ -48,7 +48,7 @@
 			// 
 			// kryptonButtonOK
 			// 
-			this.kryptonButtonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			//this.kryptonButtonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.kryptonButtonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.kryptonButtonOK.Location = new System.Drawing.Point(211, 581);
 			this.kryptonButtonOK.Name = "kryptonButtonOK";
@@ -59,7 +59,7 @@
 			// 
 			// kryptonButtonReset
 			// 
-			this.kryptonButtonReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			//this.kryptonButtonReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.kryptonButtonReset.Location = new System.Drawing.Point(12, 581);
 			this.kryptonButtonReset.Name = "kryptonButtonReset";
 			this.kryptonButtonReset.Size = new System.Drawing.Size(117, 32);
@@ -85,9 +85,9 @@
 			// 
 			// hierarchicalContainer1
 			// 
-			this.hierarchicalContainer1.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-			| System.Windows.Forms.AnchorStyles.Left )
-			| System.Windows.Forms.AnchorStyles.Right ) ) );
+			//this.hierarchicalContainer1.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
+			//| System.Windows.Forms.AnchorStyles.Left )
+			//| System.Windows.Forms.AnchorStyles.Right ) ) );
 			this.hierarchicalContainer1.ContentMode = NeoAxis.Editor.HierarchicalContainer.ContentModeEnum.Properties;
 			this.hierarchicalContainer1.Location = new System.Drawing.Point(12, 39);
 			this.hierarchicalContainer1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);

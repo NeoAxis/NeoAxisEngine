@@ -15,6 +15,9 @@ namespace NeoAxis.Editor
 		public KryptonRibbonGroupListBoxControl()
 		{
 			InitializeComponent();
+
+			if( kryptonLabel1.Height < kryptonLabel1.PreferredSize.Height )
+				kryptonLabel1.Height = kryptonLabel1.PreferredSize.Height;
 		}
 
 		protected override CreateParams CreateParams

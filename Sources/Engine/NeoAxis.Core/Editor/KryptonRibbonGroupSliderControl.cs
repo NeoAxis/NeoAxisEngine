@@ -30,6 +30,9 @@ namespace NeoAxis.Editor
 			InitializeComponent();
 
 			EditorThemeUtility.ApplyDarkThemeToForm( this );
+
+			if( kryptonLabel1.Height < kryptonLabel1.PreferredSize.Height )
+				kryptonLabel1.Height = kryptonLabel1.PreferredSize.Height;
 		}
 
 		public void Init( double minimum, double maximum, double exponentialPower )

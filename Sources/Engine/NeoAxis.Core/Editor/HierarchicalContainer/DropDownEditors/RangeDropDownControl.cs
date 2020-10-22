@@ -65,6 +65,11 @@ namespace NeoAxis.Editor
 			InitializeComponent();
 
 			EditorThemeUtility.ApplyDarkThemeToForm( this );
+
+			if( minLabel.Height < minLabel.PreferredSize.Height )
+				minLabel.Height = minLabel.PreferredSize.Height;
+			if( maxLabel.Height < maxLabel.PreferredSize.Height )
+				maxLabel.Height = maxLabel.PreferredSize.Height;
 		}
 
 		public RangeDropDownControl( HCItemProperty itemProperty )
@@ -75,7 +80,7 @@ namespace NeoAxis.Editor
 
 			this.itemProperty = itemProperty;
 
-			rangeAttr = (RangeAttribute)itemProperty.Property.GetCustomAttributes( typeof( RangeAttribute) ).FirstOrDefault();
+			rangeAttr = (RangeAttribute)itemProperty.Property.GetCustomAttributes( typeof( RangeAttribute ) ).FirstOrDefault();
 			if( rangeAttr == null )
 				rangeAttr = new RangeAttribute( 0, 100 ); // default
 

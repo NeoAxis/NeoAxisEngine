@@ -42,6 +42,9 @@ namespace NeoAxis.Editor
 
 			EditorThemeUtility.ApplyDarkThemeToForm( this );
 
+			if( labelName.Height < labelName.PreferredHeight )
+				labelName.Height = labelName.PreferredHeight;
+
 			//!!!!
 			//BackColor = Random.Generate(ColorValue.Zero, ColorValue.One).ToColor();
 		}

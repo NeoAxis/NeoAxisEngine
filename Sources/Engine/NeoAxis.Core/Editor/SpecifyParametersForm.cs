@@ -152,10 +152,13 @@ namespace NeoAxis.Editor
 			labelError.Text = "";
 
 			EditorThemeUtility.ApplyDarkThemeToForm( this );
+			labelError.ForeColor = Color.Red;
 		}
 
 		private void OKCancelTextBoxForm_Load( object sender, EventArgs e )
 		{
+			UpdateControls();
+
 			loaded = true;
 
 			//Translate();
@@ -228,6 +231,22 @@ namespace NeoAxis.Editor
 					return;
 				}
 			}
+		}
+
+		void UpdateControls()
+		{
+			buttonCancel.Location = new Point( ClientSize.Width - buttonCancel.Size.Width - DpiHelper.Default.ScaleValue( 12 ), ClientSize.Height - buttonCancel.Size.Height - DpiHelper.Default.ScaleValue( 12 ) );
+			buttonOK.Location = new Point( buttonCancel.Location.X - buttonOK.Size.Width - DpiHelper.Default.ScaleValue( 8 ), buttonCancel.Location.Y );
+			labelError.Location = new Point( labelError.Location.X, buttonOK.Location.Y + DpiHelper.Default.ScaleValue( 3 ) );
+			hierarchicalContainer1.Size = new Size( ClientSize.Width - DpiHelper.Default.ScaleValue( 12 ) - hierarchicalContainer1.Location.X, buttonOK.Location.Y - DpiHelper.Default.ScaleValue( 8 ) - hierarchicalContainer1.Location.Y );
+		}
+
+		protected override void OnResize( EventArgs e )
+		{
+			base.OnResize( e );
+
+			if( IsHandleCreated )
+				UpdateControls();
 		}
 
 		//void Translate()

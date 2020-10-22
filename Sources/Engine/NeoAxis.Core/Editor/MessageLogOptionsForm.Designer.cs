@@ -34,9 +34,9 @@
 			// 
 			// hierarchicalContainer1
 			// 
-			this.hierarchicalContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			//this.hierarchicalContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+   //         | System.Windows.Forms.AnchorStyles.Left) 
+   //         | System.Windows.Forms.AnchorStyles.Right)));
 			this.hierarchicalContainer1.ContentMode = NeoAxis.Editor.HierarchicalContainer.ContentModeEnum.Properties;
 			this.hierarchicalContainer1.DisplayGroups = false;
 			this.hierarchicalContainer1.Location = new System.Drawing.Point(0, 14);
@@ -49,7 +49,7 @@
 			// 
 			// buttonClose
 			// 
-			this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			//this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.buttonClose.Location = new System.Drawing.Point(433, 358);
 			this.buttonClose.Name = "buttonClose";
@@ -62,6 +62,8 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this.buttonClose;
+			this.AcceptButton = this.buttonClose;
 			this.ClientSize = new System.Drawing.Size(562, 402);
 			this.Controls.Add(this.buttonClose);
 			this.Controls.Add(this.hierarchicalContainer1);

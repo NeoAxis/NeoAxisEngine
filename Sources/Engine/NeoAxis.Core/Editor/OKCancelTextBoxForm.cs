@@ -49,6 +49,8 @@ namespace NeoAxis.Editor
 		{
 			loaded = true;
 
+			UpdateControls();
+
 			//Translate();
 		}
 
@@ -88,6 +90,21 @@ namespace NeoAxis.Editor
 					return;
 				}
 			}
+		}
+
+		void UpdateControls()
+		{
+			buttonCancel.Location = new Point( ClientSize.Width - buttonCancel.Size.Width - DpiHelper.Default.ScaleValue( 12 ), ClientSize.Height - buttonCancel.Size.Height - DpiHelper.Default.ScaleValue( 12 ) );
+			buttonOK.Location = new Point( buttonCancel.Location.X - buttonOK.Size.Width - DpiHelper.Default.ScaleValue( 8 ), buttonCancel.Location.Y );
+			textBoxName.Width = ClientSize.Width - textBoxName.Location.X - DpiHelper.Default.ScaleValue( 12 );
+		}
+
+		protected override void OnResize( EventArgs e )
+		{
+			base.OnResize( e );
+
+			if( IsHandleCreated )
+				UpdateControls();
 		}
 
 		//void Translate()

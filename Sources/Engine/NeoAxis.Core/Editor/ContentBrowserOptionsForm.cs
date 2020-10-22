@@ -47,6 +47,8 @@ namespace NeoAxis.Editor
 
 		private void ContentBrowserOptionsForm_Load( object sender, EventArgs e )
 		{
+			UpdateControls();
+
 			//if( Browser != null )
 			//{
 			//	object[] objects = new object[ 1 ];
@@ -70,5 +72,20 @@ namespace NeoAxis.Editor
 			displayName = EditorLocalization.Translate( "ContentBrowser.Options", displayName );
 			description = EditorLocalization.Translate( "ContentBrowser.Options", description );
 		}
+
+		void UpdateControls()
+		{
+			buttonClose.Location = new Point( ClientSize.Width - buttonClose.Size.Width - DpiHelper.Default.ScaleValue( 12 ), ClientSize.Height - buttonClose.Size.Height - DpiHelper.Default.ScaleValue( 12 ) );
+			hierarchicalContainer1.Size = new Size( ClientSize.Width - DpiHelper.Default.ScaleValue( 12 ) - hierarchicalContainer1.Location.X, buttonClose.Location.Y - DpiHelper.Default.ScaleValue( 8 ) - hierarchicalContainer1.Location.Y );
+		}
+
+		protected override void OnResize( EventArgs e )
+		{
+			base.OnResize( e );
+
+			if( IsHandleCreated )
+				UpdateControls();
+		}
+
 	}
 }

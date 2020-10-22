@@ -36,7 +36,7 @@ namespace NeoAxis.Editor
 			// 
 			// buttonOK
 			// 
-			this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			//this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.buttonOK.Location = new System.Drawing.Point(283, 432);
 			this.buttonOK.Margin = new System.Windows.Forms.Padding(4);
@@ -47,7 +47,7 @@ namespace NeoAxis.Editor
 			// 
 			// buttonCancel
 			// 
-			this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			//this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.buttonCancel.Location = new System.Drawing.Point(409, 432);
 			this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
@@ -58,7 +58,7 @@ namespace NeoAxis.Editor
 			// 
 			// labelError
 			// 
-			this.labelError.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			//this.labelError.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.labelError.AutoSize = true;
 			this.labelError.ForeColor = System.Drawing.Color.Red;
 			this.labelError.Location = new System.Drawing.Point(16, 411);
@@ -70,9 +70,9 @@ namespace NeoAxis.Editor
 			// 
 			// hierarchicalContainer1
 			// 
-			this.hierarchicalContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			//this.hierarchicalContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+   //         | System.Windows.Forms.AnchorStyles.Left) 
+   //         | System.Windows.Forms.AnchorStyles.Right)));
 			this.hierarchicalContainer1.Location = new System.Drawing.Point(19, 16);
 			this.hierarchicalContainer1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.hierarchicalContainer1.Name = "hierarchicalContainer1";
@@ -92,13 +92,14 @@ namespace NeoAxis.Editor
 			this.Controls.Add(this.labelError);
 			this.Controls.Add(this.buttonCancel);
 			this.Controls.Add(this.buttonOK);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+			//this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.Margin = new System.Windows.Forms.Padding(4);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "SpecifyParametersForm";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
+			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Form";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.RenameResourceDialog_FormClosing);

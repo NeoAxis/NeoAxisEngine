@@ -28,6 +28,7 @@ namespace NeoAxis.Editor
 
 		private void ContentBrowserOptionsForm_Load( object sender, EventArgs e )
 		{
+			UpdateControls();
 		}
 
 		private void buttonClose_Click( object sender, EventArgs e )
@@ -150,5 +151,21 @@ namespace NeoAxis.Editor
 
 			ContentBrowserUtility.SelectComponentItems( Browser, toSelect.ToArray() );
 		}
+
+		void UpdateControls()
+		{
+			buttonClose.Location = new Point( ClientSize.Width - buttonClose.Size.Width - DpiHelper.Default.ScaleValue( 12 ), ClientSize.Height - buttonClose.Size.Height - DpiHelper.Default.ScaleValue( 12 ) );
+			kryptonButtonSearch.Location = new Point( buttonClose.Location.X - kryptonButtonSearch.Size.Width - DpiHelper.Default.ScaleValue( 8 ), buttonClose.Location.Y );
+			kryptonTextBoxFilterByName.Width = ClientSize.Width - kryptonTextBoxFilterByName.Location.X - DpiHelper.Default.ScaleValue( 12 );
+		}
+
+		protected override void OnResize( EventArgs e )
+		{
+			base.OnResize( e );
+
+			if( IsHandleCreated )
+				UpdateControls();
+		}
+
 	}
 }

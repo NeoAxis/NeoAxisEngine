@@ -25,7 +25,7 @@ namespace NeoAxis.Editor
 
 			label2.Location = new Point( 0, DpiHelper.Default.ScaleValue( 3 ) );
 			label2.AutoSize = false;
-			label2.Height = DpiHelper.Default.ScaleValue( 18 );
+			label2.Height = Math.Max( DpiHelper.Default.ScaleValue( 18 ), label2.PreferredSize.Height );
 		}
 
 		//public Label Label1

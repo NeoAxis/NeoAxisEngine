@@ -33,6 +33,11 @@ namespace NeoAxis.Editor
 
 			toolTip1.SetToolTip( buttonTypeSettings, EditorLocalization.Translate( "SettingsWindow", "Type Settings" ) );
 			toolTip1.SetToolTip( buttonTypeSettingsDefaultValue, EditorLocalization.Translate( "SettingsWindow", "Reset Type Settings to default." ) );
+
+			if( kryptonLabel1.Height < kryptonLabel1.PreferredSize.Height )
+				kryptonLabel1.Height = kryptonLabel1.PreferredSize.Height;
+			if( kryptonLabel2.Height < kryptonLabel2.PreferredSize.Height )
+				kryptonLabel2.Height = kryptonLabel2.PreferredSize.Height;
 		}
 
 		private void buttonMove_Click( object sender, EventArgs e )

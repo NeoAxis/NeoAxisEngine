@@ -36,7 +36,7 @@
 			// 
 			// buttonClose
 			// 
-			this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			//this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.buttonClose.Location = new System.Drawing.Point(433, 431);
 			this.buttonClose.Name = "buttonClose";
@@ -47,7 +47,7 @@
 			// 
 			// kryptonButtonSearch
 			// 
-			this.kryptonButtonSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			//this.kryptonButtonSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.kryptonButtonSearch.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.kryptonButtonSearch.Location = new System.Drawing.Point(310, 431);
 			this.kryptonButtonSearch.Name = "kryptonButtonSearch";
@@ -58,8 +58,8 @@
 			// 
 			// kryptonTextBoxFilterByName
 			// 
-			this.kryptonTextBoxFilterByName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			//this.kryptonTextBoxFilterByName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+   //         | System.Windows.Forms.AnchorStyles.Right)));
 			this.kryptonTextBoxFilterByName.Location = new System.Drawing.Point(12, 37);
 			this.kryptonTextBoxFilterByName.Name = "kryptonTextBoxFilterByName";
 			this.kryptonTextBoxFilterByName.Size = new System.Drawing.Size(538, 23);

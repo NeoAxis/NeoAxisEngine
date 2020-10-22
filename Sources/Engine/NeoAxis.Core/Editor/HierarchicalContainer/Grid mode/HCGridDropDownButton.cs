@@ -30,7 +30,7 @@ namespace NeoAxis.Editor
 
 			kryptonDropButton.Location = new Point( 0, DpiHelper.Default.ScaleValue( 3 ) );
 			kryptonDropButton.AutoSize = false;
-			kryptonDropButton.Height = DpiHelper.Default.ScaleValue( 18 );
+			kryptonDropButton.Height = Math.Max( DpiHelper.Default.ScaleValue( 18 ), kryptonDropButton.PreferredSize.Height );
 		}
 
 		public KryptonDropButton Button

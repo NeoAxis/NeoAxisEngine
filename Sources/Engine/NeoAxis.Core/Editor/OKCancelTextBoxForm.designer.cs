@@ -37,7 +37,7 @@ namespace NeoAxis.Editor
 			// 
 			// buttonOK
 			// 
-			this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			//this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.buttonOK.Location = new System.Drawing.Point(197, 87);
 			this.buttonOK.Margin = new System.Windows.Forms.Padding(4);
@@ -48,7 +48,7 @@ namespace NeoAxis.Editor
 			// 
 			// buttonCancel
 			// 
-			this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			//this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.buttonCancel.Location = new System.Drawing.Point(323, 87);
 			this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
@@ -69,8 +69,8 @@ namespace NeoAxis.Editor
 			// 
 			// textBoxName
 			// 
-			this.textBoxName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			//this.textBoxName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+   //         | System.Windows.Forms.AnchorStyles.Right)));
 			this.textBoxName.Location = new System.Drawing.Point(20, 31);
 			this.textBoxName.Margin = new System.Windows.Forms.Padding(4);
 			this.textBoxName.Name = "textBoxName";

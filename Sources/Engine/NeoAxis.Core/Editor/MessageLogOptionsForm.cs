@@ -37,6 +37,8 @@ namespace NeoAxis.Editor
 			object[] objects = new object[ 1 ];
 			objects[ 0 ] = Options;
 			hierarchicalContainer1.SetData( null, objects );
+
+			UpdateControls();
 		}
 
 		private void buttonClose_Click( object sender, EventArgs e )
@@ -58,6 +60,20 @@ namespace NeoAxis.Editor
 		string Translate( string text )
 		{
 			return EditorLocalization.Translate( "MessageLogOptionsForm", text );
+		}
+
+		void UpdateControls()
+		{
+			buttonClose.Location = new Point( ClientSize.Width - buttonClose.Size.Width - DpiHelper.Default.ScaleValue( 12 ), ClientSize.Height - buttonClose.Size.Height - DpiHelper.Default.ScaleValue( 12 ) );
+			hierarchicalContainer1.Size = new Size( ClientSize.Width - DpiHelper.Default.ScaleValue( 12 ) - hierarchicalContainer1.Location.X, buttonClose.Location.Y - DpiHelper.Default.ScaleValue( 8 ) - hierarchicalContainer1.Location.Y );
+		}
+
+		protected override void OnResize( EventArgs e )
+		{
+			base.OnResize( e );
+
+			if( IsHandleCreated )
+				UpdateControls();
 		}
 	}
 }

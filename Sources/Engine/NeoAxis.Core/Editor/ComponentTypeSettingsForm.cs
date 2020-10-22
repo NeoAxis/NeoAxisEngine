@@ -158,6 +158,8 @@ namespace NeoAxis.Editor
 			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
+			UpdateControls();
+
 			//ESet<string> addedComponentNames = new ESet<string>();
 
 			foreach( var child in component.Components )
@@ -272,21 +274,20 @@ namespace NeoAxis.Editor
 			displayName = EditorLocalization.Translate( "TypeSettingsForm", displayName );
 		}
 
-		//void UpdateControlsBounds()
-		//{
-		//	if( hierarchicalContainer1 != null )
-		//	{
-		//		hierarchicalContainer1.Size = new Size(
-		//			kryptonButtonCancel.Bounds.Right - hierarchicalContainer1.Location.X,
-		//			kryptonButtonOK.Location.Y - 12 - hierarchicalContainer1.Location.Y );
-		//	}
-		//}
+		void UpdateControls()
+		{
+			kryptonButtonCancel.Location = new Point( ClientSize.Width - kryptonButtonCancel.Size.Width - DpiHelper.Default.ScaleValue( 12 ), ClientSize.Height - kryptonButtonCancel.Size.Height - DpiHelper.Default.ScaleValue( 12 ) );
+			kryptonButtonOK.Location = new Point( kryptonButtonCancel.Location.X - kryptonButtonOK.Size.Width - DpiHelper.Default.ScaleValue( 8 ), kryptonButtonCancel.Location.Y );
+			kryptonButtonReset.Location = new Point( kryptonButtonReset.Location.X, kryptonButtonOK.Location.Y );
+			hierarchicalContainer1.Size = new Size( ClientSize.Width - DpiHelper.Default.ScaleValue( 12 ) - hierarchicalContainer1.Location.X, kryptonButtonOK.Location.Y - DpiHelper.Default.ScaleValue( 8 ) - hierarchicalContainer1.Location.Y );
+		}
 
-		//protected override void OnResize( EventArgs e )
-		//{
-		//	base.OnResize( e );
+		protected override void OnResize( EventArgs e )
+		{
+			base.OnResize( e );
 
-		//	UpdateControlsBounds();
-		//}
+			if( IsHandleCreated )
+				UpdateControls();
+		}
 	}
 }

@@ -63,12 +63,12 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.contentBrowser1.CanSelectObjectSettings = false;
 			this.contentBrowser1.FilteringMode = null;
-			this.contentBrowser1.Location = new System.Drawing.Point(4, 4);
+			this.contentBrowser1.Location = new System.Drawing.Point(12, 4);
 			this.contentBrowser1.Margin = new System.Windows.Forms.Padding(4);
 			this.contentBrowser1.Mode = NeoAxis.Editor.ContentBrowser.ModeEnum.SetReference;
 			this.contentBrowser1.Name = "contentBrowser1";
 			this.contentBrowser1.ReadOnlyHierarchy = false;
-			this.contentBrowser1.Size = new System.Drawing.Size(531, 514);
+			this.contentBrowser1.Size = new System.Drawing.Size(523, 514);
 			this.contentBrowser1.TabIndex = 0;
 			this.contentBrowser1.ThisIsSettingsWindow = false;
 			this.contentBrowser1.ItemAfterSelect += new NeoAxis.Editor.ContentBrowser.ItemAfterSelectDelegate(this.contentBrowser1_ItemAfterSelect);
