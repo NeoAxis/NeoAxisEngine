@@ -48,6 +48,8 @@ The engine is a free and open source product, although it has a non-standard lic
 
 Not free case is when you use the source code of the editor to create apps (custom licensing).
 
+<h2>License details</h2>
+
 Shortly about the license. You can use NeoAxis Engine for free without any future royalties and distribute source codes subject to the following conditions:
 <ul>
 <li>1. When publishing your product, need to add "Made with NeoAxis Engine (<span>www</span>.neoaxis.com)" with the product information and in its credits.
