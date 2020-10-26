@@ -71,6 +71,7 @@ www.neoaxis.com/LICENSE.txt
 That's right. However, we will be glad of any help with the development of the engine, including its popularization.</li>
 
 <li><b>What is the easiest way to explain the license?</b>
+
 The engine is a free and open source product. Need mentions the engine in your project. The editor is not completely open source, it is royalty-free app with source code provided.</li>
 
 <li><b>What is the difference between the version on the GitHub and the installer from www.neoaxis.com?</b>
