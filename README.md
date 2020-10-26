@@ -44,13 +44,7 @@ To compile project assemblies you can use Visual Studio Code, Rider. Use NeoAxis
 
 <h2>License</h2>
 
-The engine is a free and open source product, although it has a non-standard license.
-
-The editor of the engine is not completely open source, however it is royalty-free.
-
-<h2>License details</h2>
-
-Shortly about the license. You can use NeoAxis Engine for free without any future royalties and distribute source codes subject to the following conditions:
+You can use NeoAxis Engine for free without any future royalties and distribute source codes subject to the following conditions:
 <ul>
 <li>1. When publishing your product, need to add "Made with NeoAxis Engine (<span>www</span>.neoaxis.com)" with the product information and in its credits.
 </li>
@@ -75,6 +69,9 @@ www.neoaxis.com/LICENSE.txt
 <li><b>Did I understand correctly that the NeoAxis Engine is provided free of charge with full source code, while the no any royalties? I should not even add splash screen when starting my game, just mention it in the credits?</b>
 
 That's right. However, we will be glad of any help with the development of the engine, including its popularization.</li>
+
+<li><b>What is the easiest way to explain the license?</b>
+The engine is a free and open source product. Need mentions the engine in your project. The editor is not completely open source, it is royalty-free app with source code provided.</li>
 
 <li><b>What is the difference between the version on the GitHub and the installer from www.neoaxis.com?</b>
 
