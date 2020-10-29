@@ -281,14 +281,24 @@ namespace NeoAxis.Editor
 			case "Save As":
 				{
 #if !DEPLOY
-					var dialog = new CommonSaveFileDialog();
+					var dialog = new SaveFileDialog();
 					dialog.InitialDirectory = Path.GetDirectoryName( RealFileName );
-					dialog.DefaultFileName = Path.GetFileName( RealFileName );
-					dialog.Filters.Add( new CommonFileDialogFilter( "All Files", ".*" ) );
-					if( dialog.ShowDialog() != CommonFileDialogResult.Ok )
+					dialog.FileName = RealFileName;
+					dialog.Filter = "All files (*.*)|*.*";
+					dialog.RestoreDirectory = true;
+					if( dialog.ShowDialog() != DialogResult.OK )
 						return;
 
 					var saveAsFileName = dialog.FileName;
+
+					//var dialog = new CommonSaveFileDialog();
+					//dialog.InitialDirectory = Path.GetDirectoryName( RealFileName );
+					//dialog.DefaultFileName = Path.GetFileName( RealFileName );
+					//dialog.Filters.Add( new CommonFileDialogFilter( "All Files", ".*" ) );
+					//if( dialog.ShowDialog() != CommonFileDialogResult.Ok )
+					//	return;
+
+					//var saveAsFileName = dialog.FileName;
 
 					//if( File.Exists( saveAsFileName ) )
 					//{
