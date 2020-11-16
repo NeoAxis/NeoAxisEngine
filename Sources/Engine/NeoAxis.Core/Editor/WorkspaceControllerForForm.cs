@@ -299,7 +299,7 @@ namespace NeoAxis.Editor
 			if( window is WorkspaceWindow workspaceWindow )
 			{
 				var mainWindow = workspaceWindow.GetMainWindow();
-				cancel = editorForm.ShowDialogAndSaveDocument( mainWindow ) == null;
+				cancel = editorForm.ShowDialogAndSaveDocument( mainWindow );
 			}
 			else
 			{

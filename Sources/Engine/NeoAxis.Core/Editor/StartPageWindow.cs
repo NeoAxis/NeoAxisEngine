@@ -25,6 +25,9 @@ namespace NeoAxis.Editor
 
 		//
 
+		public delegate void UpdateNewScenesDelegate( ref List<ContentBrowser.Item> list );
+		public static event UpdateNewScenesDelegate UpdateNewScenes;
+
 		public StartPageWindow()
 		{
 			InitializeComponent();
@@ -129,6 +132,8 @@ namespace NeoAxis.Editor
 				//	items.Add( item );
 				//}
 
+				UpdateNewScenes?.Invoke( ref items );
+
 				if( items.Count != 0 )
 				{
 					contentBrowserNewScene.SetData( items, false );
@@ -172,6 +177,9 @@ namespace NeoAxis.Editor
 			timer1.Start();
 
 			UpdateControls();
+
+			if( EditorActions.GetByName( "Store" ) != null && EditorActions.GetByName( "Store" ).CompletelyDisabled )
+				kryptonButtonOpenStore.Visible = false;
 		}
 
 		void UpdateControls()

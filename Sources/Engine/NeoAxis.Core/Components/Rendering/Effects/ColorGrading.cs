@@ -13,6 +13,7 @@ namespace NeoAxis
 	/// Screen effect of adding the color correction to the image.
 	/// </summary>
 	[DefaultOrderOfEffect( 8 )]
+	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class Component_RenderingEffect_ColorGrading : Component_RenderingEffect_Simple
 	{
 		const string shaderDefault = @"Base\Shaders\Effects\ColorGrading_fs.sc";
@@ -25,7 +26,7 @@ namespace NeoAxis
 		}
 
 		////!!!!возможность: или белая, или черная текстуры подставлять вместо ""
-		const string lookupTableDefault = @"Base\Images\Color grading LUTs\No effect.png";
+		const string lookupTableDefault = @"Base\Images\Color grading LUTs\Sepia.png";
 		/// <summary>
 		/// The lookup texture (LUT) used.
 		/// </summary>
@@ -108,6 +109,11 @@ namespace NeoAxis
 		public override bool LimitedDevicesSupport
 		{
 			get { return true; }
+		}
+
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "ScreenEffect", true );
 		}
 	}
 }

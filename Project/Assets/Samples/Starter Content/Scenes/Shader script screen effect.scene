@@ -1,6 +1,6 @@
 .component NeoAxis.Component_Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1174, 842\"><KW V=\"1\" A=\"4F5B11A47160402907B369EE0DC1691B\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WS UN=\"42CA4A84922549A3E8B8BEF98505E5A0\" S=\"T,0,50:T,0,50\" D=\"Vertical\"><WC UN=\"8A564A7ACA74467143B61C0C36CE3DE1\" S=\"T,0,50:T,0,503\" NM=\"BarTabGroup\" AR=\"True\" SP=\"4F5B11A47160402907B369EE0DC1691B\"><KP UN=\"4F5B11A47160402907B369EE0DC1691B\" S=\"False\"><CPD ObjPath=\"\" /></KP></WC><WS UN=\"AB526B3FAA724EC5FDBD04DD1C07DE70\" S=\"T,0,50:T,0,334\" D=\"Horizontal\"><WC UN=\"869FEC1F20C241C795BF34BC1E16E522\" S=\"T,0,478:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"EDB2BCE14E7A4AD1CAA6312ADEEC398C\"><KP UN=\"EDB2BCE14E7A4AD1CAA6312ADEEC398C\" S=\"False\"><CPD ObjPath=\"$Rendering Pipeline\\$Scene Effects\\$Code Generated\\$Shader graph\" /></KP></WC><WC UN=\"98E47F278F96490A98806130ADA5BC5C\" S=\"T,0,691:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"8D494E1A9886456F77B34CB02E499BCA\"><KP UN=\"8D494E1A9886456F77B34CB02E499BCA\" S=\"False\"><CPD ObjPath=\"$Rendering Pipeline\\$Scene Effects\\$Code Generated\\$Shader graph\\$Node Shader 1\\$Shader\" /></KP></WC></WS></WS></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1205, 842\"><KW V=\"1\" A=\"4F5B11A47160402907B369EE0DC1691B\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WS UN=\"42CA4A84922549A3E8B8BEF98505E5A0\" S=\"T,0,50:T,0,50\" D=\"Vertical\"><WC UN=\"8A564A7ACA74467143B61C0C36CE3DE1\" S=\"T,0,50:T,0,503\" NM=\"BarTabGroup\" AR=\"True\" SP=\"4F5B11A47160402907B369EE0DC1691B\"><KP UN=\"4F5B11A47160402907B369EE0DC1691B\" S=\"False\"><CPD ObjPath=\"\" /></KP></WC><WS UN=\"AB526B3FAA724EC5FDBD04DD1C07DE70\" S=\"T,0,50:T,0,334\" D=\"Horizontal\"><WC UN=\"869FEC1F20C241C795BF34BC1E16E522\" S=\"T,0,478:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"EDB2BCE14E7A4AD1CAA6312ADEEC398C\"><KP UN=\"EDB2BCE14E7A4AD1CAA6312ADEEC398C\" S=\"False\"><CPD ObjPath=\"$Rendering Pipeline\\$Scene Effects\\$Code Generated\\$Shader graph\" /></KP></WC><WC UN=\"98E47F278F96490A98806130ADA5BC5C\" S=\"T,0,691:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"8D494E1A9886456F77B34CB02E499BCA\"><KP UN=\"8D494E1A9886456F77B34CB02E499BCA\" S=\"False\"><CPD ObjPath=\"$Rendering Pipeline\\$Scene Effects\\$Code Generated\\$Shader graph\\$Node Shader 1\\$Shader\" /></KP></WC></WS></WS></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -21,6 +21,17 @@
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
 		Brightness = 20000
+	}
+	.component NeoAxis.Component_Light
+	{
+		Name = Light 1
+		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
+		Type = Directional
+		Brightness = 140000
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 91.429
 	}
 	.component NeoAxis.Component_RenderingPipeline_Default
 	{
@@ -48,6 +59,7 @@
 			.component NeoAxis.Component_RenderingEffect_ToneMapping
 			{
 				Name = Tone Mapping
+				Intensity = 0.5
 			}
 			.component NeoAxis.Component_RenderingEffect_ToLDR
 			{
@@ -181,17 +193,6 @@
 	.component NeoAxis.Component_GameMode
 	{
 		Name = Game Mode
-	}
-	.component NeoAxis.Component_Light
-	{
-		Name = Light 1
-		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
-		Type = Directional
-		Brightness = 140000
-		AttenuationFar = 100
-		AttenuationPower = 1.5
-		SpotlightInnerAngle = 80
-		SpotlightOuterAngle = 91.429
 	}
 	.component NeoAxis.Component_Light
 	{

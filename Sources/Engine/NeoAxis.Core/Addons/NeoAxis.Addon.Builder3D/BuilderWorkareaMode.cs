@@ -662,8 +662,10 @@ namespace NeoAxis.Addon.Builder3D
 			}
 		}
 
-		protected override void OnGetTextInfoRightBottomCorner( List<string> lines )
+		protected override void OnGetTextInfoCenterBottomCorner( List<string> lines )
 		{
+			base.OnGetTextInfoCenterBottomCorner( lines );
+
 			var meshToEdit = GetMeshToEdit();
 			if( meshToEdit != null )
 				if( !CommonFunctions.CheckValidMesh( meshToEdit, out var error ) )

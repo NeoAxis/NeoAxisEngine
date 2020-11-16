@@ -89,6 +89,8 @@ namespace NeoAxis
 
 				selectedIndex = value;
 
+				UpdateControls();
+
 				//update buttons
 				var buttons = GetAllButtons();
 				for( int n = 0; n < buttons.Count; n++ )

@@ -413,4 +413,17 @@ namespace NeoAxis.Editor
 			get { return propertyName; }
 		}
 	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/// <summary>
+	/// An attribute to mark components to show warning when component creating if another component with same type already exists.
+	/// </summary>
+	public class WhenCreatingShowWarningIfItAlreadyExistsAttribute : Attribute
+	{
+		public WhenCreatingShowWarningIfItAlreadyExistsAttribute()
+		{
+		}
+	}
+
 }

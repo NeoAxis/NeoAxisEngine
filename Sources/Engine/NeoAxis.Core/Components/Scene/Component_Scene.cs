@@ -18,7 +18,7 @@ using BulletSharp.SoftBody;
 namespace NeoAxis
 {
 	/// <summary>
-	/// Component representing a scene.
+	/// Represents a scene.
 	/// </summary>
 	[ResourceFileExtension( "scene" )]
 	[EditorDocumentWindow( typeof( Component_Scene_DocumentWindow ) )]
@@ -2351,12 +2351,20 @@ namespace NeoAxis
 			Physics2DSimulate();
 		}
 
+		public delegate void GetDisplayDevelopmentDataInThisApplicationOverrideDelegate( Component_Scene sender, ref bool display );
+		public event GetDisplayDevelopmentDataInThisApplicationOverrideDelegate GetDisplayDevelopmentDataInThisApplicationOverride;
+
 		public bool GetDisplayDevelopmentDataInThisApplication()
 		{
+			bool result;
 			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
-				return DisplayDevelopmentDataInSimulation;
+				result = DisplayDevelopmentDataInSimulation;
 			else
-				return DisplayDevelopmentDataInEditor;
+				result = DisplayDevelopmentDataInEditor;
+
+			GetDisplayDevelopmentDataInThisApplicationOverride?.Invoke( this, ref result );
+
+			return result;
 		}
 
 		protected virtual void OnRender( Viewport viewport )

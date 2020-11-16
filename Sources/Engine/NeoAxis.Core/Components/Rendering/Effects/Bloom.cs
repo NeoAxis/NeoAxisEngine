@@ -13,6 +13,7 @@ namespace NeoAxis
 	/// Screen effect for adding a bloom of the image. 
 	/// </summary>
 	[DefaultOrderOfEffect( 2 )]
+	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class Component_RenderingEffect_Bloom : Component_RenderingEffect// Component_RenderingEffect_Simple
 	{
 		//!!!!property names

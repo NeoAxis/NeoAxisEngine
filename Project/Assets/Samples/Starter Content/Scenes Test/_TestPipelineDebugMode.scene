@@ -22,6 +22,17 @@
 		Type = Ambient
 		Brightness = 20000
 	}
+	.component NeoAxis.Component_Light
+	{
+		Name = Light1
+		Transform = "3.81787770755498 -8.90664677665524 6.07779981242504; -0.777263812916992 -0.327989357646962 0.520495652713384 0.131788549982693; 1 1 1"
+		Type = Directional
+		Brightness = 346459.78125
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 90
+	}
 	.component NeoAxis.Component_RenderingPipeline_Default
 	{
 		Name = Rendering Pipeline
@@ -69,17 +80,6 @@
 	.component NeoAxis.Component_GameMode
 	{
 		Name = Game Mode
-	}
-	.component NeoAxis.Component_Light
-	{
-		Name = Light1
-		Transform = "3.81787770755498 -8.90664677665524 6.07779981242504; -0.777263812916992 -0.327989357646962 0.520495652713384 0.131788549982693; 1 1 1"
-		Type = Directional
-		Brightness = 346459.78125
-		AttenuationFar = 100
-		AttenuationPower = 1.5
-		SpotlightInnerAngle = 80
-		SpotlightOuterAngle = 90
 	}
 	.component NeoAxis.Component_Material
 	{

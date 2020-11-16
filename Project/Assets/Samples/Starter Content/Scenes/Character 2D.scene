@@ -1,6 +1,6 @@
 .component NeoAxis.Component_Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1175, 842\"><KW V=\"1\" A=\"18B8A10B53774B0856A1C63CAA95F8A8\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"A72CDF4597AA43952E97B840C78E266C\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"18B8A10B53774B0856A1C63CAA95F8A8\"><KP UN=\"18B8A10B53774B0856A1C63CAA95F8A8\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"F656603AF66A4F1E72BF98B1382136FA\" S=\"False\"><CPD ObjPath=\"$Regulator Switch\\$$n1$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1205, 842\"><KW V=\"1\" A=\"18B8A10B53774B0856A1C63CAA95F8A8\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"A72CDF4597AA43952E97B840C78E266C\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"18B8A10B53774B0856A1C63CAA95F8A8\"><KP UN=\"18B8A10B53774B0856A1C63CAA95F8A8\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"F656603AF66A4F1E72BF98B1382136FA\" S=\"False\"><CPD ObjPath=\"$Regulator Switch\\$$n1$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	Mode = _2D
 	DisplayPhysicalObjects = True
 	DisplaySensors = True
@@ -26,7 +26,7 @@
 	{
 		Name = Camera Editor 2D
 		Visible = False
-		Transform = "2.65011425027668 3.02480347899168 10; -0.5 0.5 0.5 0.5; 1 1 1"
+		Transform = "2.65011425027668 3.02480347899168 10; 0.5 -0.5 -0.5 -0.5; 1 1 1"
 		Projection = Orthographic
 		Height = 16.8586419336498
 		FixedUp = 0 1 0
@@ -38,6 +38,21 @@
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
 		Brightness = 30000
+	}
+	.component NeoAxis.Component_Light
+	{
+		Name = Light 1
+		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
+		Type = Directional
+		Brightness = 200000
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 91.429
+		Visible
+		{
+			GetByReference = "root:$Button\\Activated"
+		}
 	}
 	.component NeoAxis.Component_RenderingPipeline_Default
 	{
@@ -101,21 +116,6 @@
 		ObjectControlledByPlayer
 		{
 			GetByReference = "this:..\\$Character 2D"
-		}
-	}
-	.component NeoAxis.Component_Light
-	{
-		Name = Light 1
-		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
-		Type = Directional
-		Brightness = 200000
-		AttenuationFar = 100
-		AttenuationPower = 1.5
-		SpotlightInnerAngle = 80
-		SpotlightOuterAngle = 91.429
-		Visible
-		{
-			GetByReference = "root:$Button\\Activated"
 		}
 	}
 	.component NeoAxis.Component_Light
@@ -1127,7 +1127,7 @@
 			{
 				Name = Attach Transform Offset
 				PositionOffset = 0.05 0 0
-				RotationOffset = 0.923879532511287 0 0 0.38268343236509
+				RotationOffset = 0.923879532511287 0 -0 0.38268343236509
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -1251,7 +1251,7 @@
 			{
 				Name = Attach Transform Offset
 				PositionOffset = 0.01 -0.0282842712474619 0.0282842712474619
-				RotationOffset = 0.923879532511287 0 0 0.38268343236509
+				RotationOffset = 0.923879532511287 0 -0 0.38268343236509
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -1291,7 +1291,7 @@
 			{
 				Name = Attach Transform Offset
 				PositionOffset = 0.01 0.0282842712474619 0.0282842712474619
-				RotationOffset = 0.38268343236509 0 0 0.923879532511287
+				RotationOffset = 0.38268343236509 0 -0 0.923879532511287
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -1330,7 +1330,7 @@
 			{
 				Name = Attach Transform Offset
 				PositionOffset = 0.06 -0.0282842712474619 0.0282842712474619
-				RotationOffset = 0.923879532511287 0 0 0.38268343236509
+				RotationOffset = 0.923879532511287 0 -0 0.38268343236509
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"

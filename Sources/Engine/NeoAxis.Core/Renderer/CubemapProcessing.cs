@@ -363,6 +363,9 @@ namespace NeoAxis
 						sizeEnv = MathEx.NextPowerOfTwo( sourceSize.X / 3 );
 					}
 
+					if( sizeEnv > 512 )
+						sizeEnv = 512;
+
 					if( sizeEnv == 0 )
 						sizeEnv = 1;
 				}

@@ -13,6 +13,7 @@ namespace NeoAxis
 	/// Gaussian blur screen effect.
 	/// </summary>
 	[DefaultOrderOfEffect( 11 )]
+	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class Component_RenderingEffect_GaussianBlur : Component_RenderingEffect// Component_RenderingEffect_Simple
 	{
 		/// <summary>
@@ -330,6 +331,11 @@ namespace NeoAxis
 		public override bool LimitedDevicesSupport
 		{
 			get { return true; }
+		}
+
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "ScreenEffect", true );
 		}
 	}
 }

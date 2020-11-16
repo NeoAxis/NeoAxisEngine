@@ -8,11 +8,11 @@ namespace NeoAxis
 	{
 		/// <summary>No filtering, used for <b>FilterType.Mip</b> to turn off mipmapping.</summary>
 		None,// = Ogre::FO_NONE,
-			 /// <summary>Use the closest pixel.</summary>
+		/// <summary>Use the closest pixel.</summary>
 		Point,// = Ogre::FO_POINT,
-			  /// <summary>Average of a 2x2 pixel area, denotes bilinear for <b>FilterType.Min</b> and <b>FilterType.Mag</b>, trilinear for <b>FilterType.Mip</b>.</summary>
+		/// <summary>Average of a 2x2 pixel area, denotes bilinear for <b>FilterType.Min</b> and <b>FilterType.Mag</b>, trilinear for <b>FilterType.Mip</b>.</summary>
 		Linear,// = Ogre::FO_LINEAR,
-			   /// <summary>Similar to FO_LINEAR, but compensates for the angle of the texture plane.</summary>
+		/// <summary>Similar to FO_LINEAR, but compensates for the angle of the texture plane.</summary>
 		Anisotropic,// = Ogre::FO_ANISOTROPIC
 	}
 
@@ -22,9 +22,9 @@ namespace NeoAxis
 	{
 		/// <summary>The color buffer.</summary>
 		Color = 0x1,//Ogre::FBT_COLOUR,
-					/// <summary>The depth buffer.</summary>
+		/// <summary>The depth buffer.</summary>
 		Depth = 0x2,//Ogre::FBT_DEPTH,
-					/// <summary>The stencil buffer.</summary>
+		/// <summary>The stencil buffer.</summary>
 		Stencil = 0x4,//Ogre::FBT_STENCIL,
 
 		All = Color | Depth | Stencil,
@@ -37,13 +37,13 @@ namespace NeoAxis
 	{
 		/// <summary>A list of points, 1 vertex per point.</summary>
 		PointList = 1,//Ogre::RenderOperation::OT_POINT_LIST,
-					  /// <summary>A list of lines, 2 vertices per line.</summary>
+		/// <summary>A list of lines, 2 vertices per line.</summary>
 		LineList = 2,//Ogre::RenderOperation::OT_LINE_LIST,
-					 /// <summary>A strip of connected lines, 1 vertex per line plus 1 start vertex.</summary>
+		/// <summary>A strip of connected lines, 1 vertex per line plus 1 start vertex.</summary>
 		LineStrip = 3,//Ogre::RenderOperation::OT_LINE_STRIP,
-					  /// <summary>A list of triangles, 3 vertices per triangle.</summary>
+		/// <summary>A list of triangles, 3 vertices per triangle.</summary>
 		TriangleList = 4,//Ogre::RenderOperation::OT_TRIANGLE_LIST,
-						 /// <summary>A strip of triangles, 3 vertices for the first triangle, and 1 per triangle after that.</summary>
+		/// <summary>A strip of triangles, 3 vertices for the first triangle, and 1 per triangle after that.</summary>
 		TriangleStrip = 5,//Ogre::RenderOperation::OT_TRIANGLE_STRIP,
 						  //				  /// <summary>A fan of triangles, 3 vertices for the first triangle, and 1 per triangle after that.</summary>
 						  //TriangleFan = 6,//Ogre::RenderOperation::OT_TRIANGLE_FAN
@@ -124,17 +124,48 @@ namespace NeoAxis
 	/// <summary>
 	/// Texture addressing modes.
 	/// </summary>
+	[Flags]
 	public enum TextureAddressingMode
 	{
-		/// <summary>Texture wraps at values over 1.0.</summary>
-		Wrap,// = Ogre::TextureUnitState::TAM_WRAP,
-			 /// <summary>Texture mirrors (flips) at joins over 1.0.</summary>
-		Mirror,// = Ogre::TextureUnitState::TAM_MIRROR,
-			   /// <summary>Texture clamps at 1.0.</summary>
-		Clamp,// = Ogre::TextureUnitState::TAM_CLAMP,
-			  /// <summary>Texture coordinates outside the range [0.0, 1.0] are set to the border colour.</summary>
-		Border,// = Ogre::TextureUnitState::TAM_BORDER
+		WrapU = 1,
+		WrapV = 2,
+		WrapW = 4,
+		/// <summary>Texture wraps at values outside 0.0-1.0.</summary>
+		Wrap = WrapU | WrapV | WrapW,
+
+		MirrorU = 8,
+		MirrorV = 16,
+		MirrorW = 32,
+		/// <summary>Texture mirrors (flips) at joins over 1.0.</summary>
+		Mirror = MirrorU | MirrorV | MirrorW,
+
+		ClampU = 64,
+		ClampV = 128,
+		ClampW = 256,
+		/// <summary>Texture clamps at 1.0.</summary>
+		Clamp = ClampU | ClampV | ClampW,
+
+		BorderU = 512,
+		BorderV = 1024,
+		BorderW = 2048,
+		/// <summary>Texture coordinates outside the range [0.0, 1.0] are set to the border colour.</summary>
+		Border = BorderU | BorderV | BorderW,
 	}
+
+	///// <summary>
+	///// Texture addressing modes.
+	///// </summary>
+	//public enum TextureAddressingMode
+	//{
+	//	/// <summary>Texture wraps at values over 1.0.</summary>
+	//	Wrap,// = Ogre::TextureUnitState::TAM_WRAP,
+	//		 /// <summary>Texture mirrors (flips) at joins over 1.0.</summary>
+	//	Mirror,// = Ogre::TextureUnitState::TAM_MIRROR,
+	//		   /// <summary>Texture clamps at 1.0.</summary>
+	//	Clamp,// = Ogre::TextureUnitState::TAM_CLAMP,
+	//		  /// <summary>Texture coordinates outside the range [0.0, 1.0] are set to the border colour.</summary>
+	//	Border,// = Ogre::TextureUnitState::TAM_BORDER
+	//}
 
 	//!!!!тут?
 	public enum GetRenderSceneDataMode

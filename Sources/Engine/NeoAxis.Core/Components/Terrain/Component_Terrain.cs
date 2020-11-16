@@ -956,11 +956,11 @@ namespace NeoAxis
 												{
 													var transform = hole.TransformV;
 
-													var boolVertices = new Net3dBool.Vector3[ mesh.Result.ExtractedVertices.Length ];
+													var boolVertices = new Net3dBool.Vector3[ mesh.Result.ExtractedVerticesPositions.Length ];
 													for( int n = 0; n < boolVertices.Length; n++ )
 													{
 														//!!!!slowly
-														var v = transform * mesh.Result.ExtractedVertices[ n ].Position;
+														var v = transform * mesh.Result.ExtractedVerticesPositions[ n ];
 														boolVertices[ n ] = new Net3dBool.Vector3( v.X, v.Y, v.Z );
 													}
 													holeSolid = new Net3dBool.Solid( boolVertices, mesh.Result.ExtractedIndices );

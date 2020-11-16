@@ -31,6 +31,10 @@ namespace NeoAxis
 
 		OcclusionQuery? currentOcclusionQuery;
 
+		//!!!!impl
+		//int nonOverlappingGroupCounter;
+		//int nonOverlappingGroup;
+
 		Stack<Item_DynamicallyCreated> freeItemsDynamicallyCreated = new Stack<Item_DynamicallyCreated>();
 		List<Item> items = new List<Item>();
 
@@ -97,6 +101,7 @@ namespace NeoAxis
 			public bool depthTest;
 			public bool depthWrite;
 			public OcclusionQuery? occlusionQuery;
+			//public int nonOverlappingGroup;
 
 			public Matrix4 transform;
 			public bool transformIsIdentity;
@@ -193,6 +198,17 @@ namespace NeoAxis
 		{
 			currentOcclusionQuery = query;
 		}
+
+		//public override void EnableNonOverlappingGroup()
+		//{
+		//	nonOverlappingGroupCounter++;
+		//	nonOverlappingGroup = nonOverlappingGroupCounter;
+		//}
+
+		//public override void DisableNonOverlappingGroup()
+		//{
+		//	nonOverlappingGroup = 0;
+		//}
 
 		//public override void SetSpecialDepthSettings( bool depthTest, bool depthWrite )
 		//{
@@ -902,6 +918,7 @@ namespace NeoAxis
 						lastItem.depthTest == currentDepthTest &&
 						lastItem.depthWrite == currentDepthWrite &&
 						Equal( lastItem.occlusionQuery, currentOcclusionQuery ) &&
+						//lastItem.nonOverlappingGroup == nonOverlappingGroup &&
 						lastItem.vertexCount + 2 <= constBufferVertexCount &&
 						lastItem.indexCount + 2 <= constBufferIndexCount )
 					{
@@ -921,6 +938,7 @@ namespace NeoAxis
 					item.depthTest = currentDepthTest;
 					item.depthWrite = currentDepthWrite;
 					item.occlusionQuery = currentOcclusionQuery;
+					//item.nonOverlappingGroup = nonOverlappingGroup;
 					item.transform = Matrix4.Identity;
 					item.transformIsIdentity = true;
 					item.culling = false;
@@ -933,7 +951,7 @@ namespace NeoAxis
 
 				unsafe
 				{
-					fixed ( byte* pVertices2 = item.vertices )
+					fixed( byte* pVertices2 = item.vertices )
 					{
 						Vertex* pVertices = (Vertex*)pVertices2;
 						Vertex* pVertex = pVertices + item.vertexCount;
@@ -975,6 +993,7 @@ namespace NeoAxis
 						lastItem.depthTest == currentDepthTest &&
 						lastItem.depthWrite == currentDepthWrite &&
 						Equal( lastItem.occlusionQuery, currentOcclusionQuery ) &&
+						//lastItem.nonOverlappingGroup == nonOverlappingGroup &&
 						( ( lastItem.transformIsIdentity && transformIsIdentity ) || lastItem.transform == transform ) &&
 						lastItem.wireframe == wireframe &&
 						lastItem.culling == culling )
@@ -1052,6 +1071,7 @@ namespace NeoAxis
 					item.depthTest = currentDepthTest;
 					item.depthWrite = currentDepthWrite;
 					item.occlusionQuery = currentOcclusionQuery;
+					//item.nonOverlappingGroup = nonOverlappingGroup;
 					item.vertexCount = 0;
 					item.indexCount = 0;
 					item.actualIndexData = false;
@@ -1069,7 +1089,7 @@ namespace NeoAxis
 					int index1 = indices[ nTriangle * 3 + 1 ];
 					int index2 = indices[ nTriangle * 3 + 2 ];
 
-					fixed ( byte* pVertices2 = item.vertices )
+					fixed( byte* pVertices2 = item.vertices )
 					{
 						Vertex* pVertices = (Vertex*)pVertices2;
 						Vertex* pVertex = pVertices + item.vertexCount;
@@ -1088,7 +1108,7 @@ namespace NeoAxis
 				}
 				else
 				{
-					fixed ( byte* pVertices2 = item.vertices )
+					fixed( byte* pVertices2 = item.vertices )
 					{
 						Vertex* pVertices = (Vertex*)pVertices2;
 						Vertex* pVertex = pVertices + item.vertexCount;
@@ -1133,6 +1153,7 @@ namespace NeoAxis
 						lastItem.depthTest == currentDepthTest &&
 						lastItem.depthWrite == currentDepthWrite &&
 						Equal( lastItem.occlusionQuery, currentOcclusionQuery ) &&
+						//lastItem.nonOverlappingGroup == nonOverlappingGroup &&
 						( ( lastItem.transformIsIdentity && transformIsIdentity ) || lastItem.transform == transform ) &&
 						lastItem.wireframe == wireframe &&
 						lastItem.culling == culling )
@@ -1210,6 +1231,7 @@ namespace NeoAxis
 					item.depthTest = currentDepthTest;
 					item.depthWrite = currentDepthWrite;
 					item.occlusionQuery = currentOcclusionQuery;
+					//item.nonOverlappingGroup = nonOverlappingGroup;
 					item.vertexCount = 0;
 					item.indexCount = 0;
 					item.actualIndexData = false;
@@ -1227,7 +1249,7 @@ namespace NeoAxis
 					int index1 = indices[ nTriangle * 3 + 1 ];
 					int index2 = indices[ nTriangle * 3 + 2 ];
 
-					fixed ( byte* pVertices2 = item.vertices )
+					fixed( byte* pVertices2 = item.vertices )
 					{
 						Vertex* pVertices = (Vertex*)pVertices2;
 						Vertex* pVertex = pVertices + item.vertexCount;
@@ -1246,7 +1268,7 @@ namespace NeoAxis
 				}
 				else
 				{
-					fixed ( byte* pVertices2 = item.vertices )
+					fixed( byte* pVertices2 = item.vertices )
 					{
 						Vertex* pVertices = (Vertex*)pVertices2;
 						Vertex* pVertex = pVertices + item.vertexCount;
@@ -1318,7 +1340,7 @@ namespace NeoAxis
 							int* dest = (int*)NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Utility, destInBytes );
 
 							int destCount;
-							fixed ( int* pIndices = indicesArray )
+							fixed( int* pIndices = indicesArray )
 							{
 								destCount = (int)Bgfx.TopologyConvert( TopologyConvert.TriListToLineList, (IntPtr)dest, (uint)destInBytes, (IntPtr)pIndices, (uint)indices.Count, true );
 							}
@@ -1566,6 +1588,8 @@ namespace NeoAxis
 			items.Clear();
 
 			SetColor( new ColorValue( 1, 1, 1 ) );
+			//nonOverlappingGroupCounter = 0;
+			//nonOverlappingGroup = 0;
 		}
 
 		void RenderSystemEvent( RenderSystemEvent name )
@@ -1670,6 +1694,12 @@ namespace NeoAxis
 					depthTextureAvailable = false;
 				}
 			}
+
+			//Bgfx.SetStencil(StencilFlags.
+
+			//!!!!
+			//context.SetViewport( simpleDataTexture.Result.GetRenderTarget().Viewports[ 0 ], viewMatrix, projectionMatrix, FrameBufferTypes.Color, new ColorValue( 0, 0, 0, 0 ) );
+			//Bgfx.SetStencil( zzzzz, zzzzzz );
 
 			foreach( var renderableItem in preparedRenderables )
 			{
@@ -1889,6 +1919,7 @@ namespace NeoAxis
 						lastItem.depthTest == currentDepthTest &&
 						lastItem.depthWrite == currentDepthWrite &&
 						Equal( lastItem.occlusionQuery, currentOcclusionQuery ) &&
+						//lastItem.nonOverlappingGroup == nonOverlappingGroup &&
 						lastItem.vertexCount + 2 <= constBufferVertexCount &&
 						lastItem.indexCount + 2 <= constBufferIndexCount )
 					{
@@ -1908,6 +1939,7 @@ namespace NeoAxis
 					item.depthTest = currentDepthTest;
 					item.depthWrite = currentDepthWrite;
 					item.occlusionQuery = currentOcclusionQuery;
+					//item.nonOverlappingGroup = nonOverlappingGroup;
 					item.transform = Matrix4.Identity;
 					item.transformIsIdentity = true;
 					item.culling = false;
@@ -1920,7 +1952,7 @@ namespace NeoAxis
 
 				unsafe
 				{
-					fixed ( byte* pVertices2 = item.vertices )
+					fixed( byte* pVertices2 = item.vertices )
 					{
 						Vertex* pVertices = (Vertex*)pVertices2;
 						Vertex* pVertex = pVertices + item.vertexCount;
@@ -1965,6 +1997,7 @@ namespace NeoAxis
 					item.depthTest = currentDepthTest;
 					item.depthWrite = currentDepthWrite;
 					item.occlusionQuery = currentOcclusionQuery;
+					//item.nonOverlappingGroup = nonOverlappingGroup;
 					item.vertexCount = 0;
 					item.indexCount = 0;
 					item.actualIndexData = false;
@@ -1984,7 +2017,7 @@ namespace NeoAxis
 						int index1 = indices[ nTriangle * 3 + 1 ];
 						int index2 = indices[ nTriangle * 3 + 2 ];
 
-						fixed ( byte* pVertices2 = item.vertices )
+						fixed( byte* pVertices2 = item.vertices )
 						{
 							Vertex* pVertices = (Vertex*)pVertices2;
 							Vertex* pVertex = pVertices + item.vertexCount;
@@ -1997,7 +2030,7 @@ namespace NeoAxis
 					}
 					else
 					{
-						fixed ( byte* pVertices2 = item.vertices )
+						fixed( byte* pVertices2 = item.vertices )
 						{
 							Vertex* pVertices = (Vertex*)pVertices2;
 							Vertex* pVertex = pVertices + item.vertexCount;
@@ -2044,6 +2077,7 @@ namespace NeoAxis
 					item.depthTest = currentDepthTest;
 					item.depthWrite = currentDepthWrite;
 					item.occlusionQuery = currentOcclusionQuery;
+					//item.nonOverlappingGroup = nonOverlappingGroup;
 					item.vertexCount = 0;
 					item.indexCount = 0;
 					item.actualIndexData = false;
@@ -2063,7 +2097,7 @@ namespace NeoAxis
 						int index1 = indices[ nTriangle * 3 + 1 ];
 						int index2 = indices[ nTriangle * 3 + 2 ];
 
-						fixed ( byte* pVertices2 = item.vertices )
+						fixed( byte* pVertices2 = item.vertices )
 						{
 							Vertex* pVertices = (Vertex*)pVertices2;
 							Vertex* pVertex = pVertices + item.vertexCount;
@@ -2076,7 +2110,7 @@ namespace NeoAxis
 					}
 					else
 					{
-						fixed ( byte* pVertices2 = item.vertices )
+						fixed( byte* pVertices2 = item.vertices )
 						{
 							Vertex* pVertices = (Vertex*)pVertices2;
 							Vertex* pVertex = pVertices + item.vertexCount;
@@ -2142,7 +2176,7 @@ namespace NeoAxis
 					int destCount;
 					unsafe
 					{
-						fixed ( int* pDest = dest, pIndices = indicesArray )
+						fixed( int* pDest = dest, pIndices = indicesArray )
 						{
 							destCount = (int)Bgfx.TopologyConvert( TopologyConvert.TriListToLineList, (IntPtr)pDest, (uint)dest.Length * sizeof( uint ), (IntPtr)pIndices, (uint)indices.Count, true );
 						}
@@ -2239,6 +2273,7 @@ namespace NeoAxis
 			item.depthTest = currentDepthTest;
 			item.depthWrite = currentDepthWrite;
 			item.occlusionQuery = currentOcclusionQuery;
+			//item.nonOverlappingGroup = nonOverlappingGroup;
 			item.transform = transform;
 			//!!!!
 			item.transformIsIdentity = false;

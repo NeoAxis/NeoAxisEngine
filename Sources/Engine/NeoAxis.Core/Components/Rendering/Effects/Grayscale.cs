@@ -13,6 +13,7 @@ namespace NeoAxis
 	/// Screen effect that turns the image into the grayscale.
 	/// </summary>
 	[DefaultOrderOfEffect( 9 )]
+	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class Component_RenderingEffect_Grayscale : Component_RenderingEffect_Simple
 	{
 		const string shaderDefault = @"Base\Shaders\Effects\Grayscale_fs.sc";
@@ -25,6 +26,11 @@ namespace NeoAxis
 		public override bool LimitedDevicesSupport
 		{
 			get { return true; }
+		}
+
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "ScreenEffect", true );
 		}
 	}
 }

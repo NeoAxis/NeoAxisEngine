@@ -289,18 +289,18 @@ namespace NeoAxis
 				}
 			}
 
-			protected override void OnGetTextInfoRightBottomCorner( List<string> lines )
+			protected override void OnGetTextInfoCenterBottomCorner( List<string> lines )
 			{
-				base.OnGetTextInfoRightBottomCorner( lines );
+				base.OnGetTextInfoCenterBottomCorner( lines );
 
 				if( heightStage )
 				{
-					lines.Add( "Specify height of the object." );
+					lines.Add( "Now specify the height of the object." );
 					lines.Add( "Press Space, Return or click mouse button to finish creation." );
 				}
 				else
 				{
-					lines.Add( "Specify points of the object." );
+					lines.Add( "Specify points of the object by clicking." );
 					lines.Add( "Press Space or Return to finish creation of the points." );
 				}
 			}

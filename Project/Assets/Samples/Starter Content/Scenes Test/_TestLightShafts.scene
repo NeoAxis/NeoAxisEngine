@@ -22,6 +22,17 @@
 		Type = Ambient
 		Brightness = 20000
 	}
+	.component NeoAxis.Component_Light
+	{
+		Name = Light 1
+		Transform = "-2.1941677467666 17.967131049201 7.70118557995291; -0.184121876535036 -0.102973589951945 0.688452682383832 -0.693922530598432; 1 1 1"
+		Type = Directional
+		Brightness = 140000
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 91.429
+	}
 	.component NeoAxis.Component_RenderingPipeline_Default
 	{
 		Name = Rendering Pipeline
@@ -53,6 +64,7 @@
 			.component NeoAxis.Component_RenderingEffect_ToneMapping
 			{
 				Name = Tone Mapping
+				Intensity = 0.5
 			}
 			.component NeoAxis.Component_RenderingEffect_ToLDR
 			{
@@ -76,17 +88,6 @@
 	.component NeoAxis.Component_GameMode
 	{
 		Name = Game Mode
-	}
-	.component NeoAxis.Component_Light
-	{
-		Name = Light 1
-		Transform = "-2.1941677467666 17.967131049201 7.70118557995291; -0.184121876535036 -0.102973589951945 0.688452682383832 -0.693922530598432; 1 1 1"
-		Type = Directional
-		Brightness = 140000
-		AttenuationFar = 100
-		AttenuationPower = 1.5
-		SpotlightInnerAngle = 80
-		SpotlightOuterAngle = 91.429
 	}
 	.component NeoAxis.Component_Light
 	{
@@ -312,5 +313,11 @@
 				Name = Mesh Geometry
 			}
 		}
+	}
+	.component NeoAxis.Component_Fog
+	{
+		Name = Fog
+		Color = 0.2081961 0.07690196 0.7882353
+		Density = 0.04991782084280319
 	}
 }

@@ -36,7 +36,7 @@ namespace NeoAxis
 			{
 				if( member is Metadata.Property )
 				{
-					if( member.Name == "Name" || member.Name == "Enabled" )
+					if( member.Name == "Name" || member.Name == "Enabled" || member.Name == "ScreenLabel" )
 						skip = true;
 				}
 			}

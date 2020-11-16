@@ -98,7 +98,7 @@ namespace NeoAxis
 										{
 											if( Name == "General" )
 											{
-												var categories = new string[] { "General", "Editor", "Colors", "Project Application", "Play", "Rendering", "Preview", "Import Content", "Simulation" };
+												var categories = new string[] { "General", "Editor", "Colors", "Project Application", "Play", "Rendering", "Preview", "Import Content", "Simulation", "Screen Labels" };
 												if( categories.Contains( attrib.Category ) )
 													add = true;
 											}

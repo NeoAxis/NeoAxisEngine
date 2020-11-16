@@ -230,7 +230,7 @@
 				EditorScrollPosition = 0 0
 				SourceImage
 				{
-					GetByReference = "Samples\\Starter Content\\Textures\\Lens flares\\starring.png"
+					GetByReference = "Base\\Images\\Lens flares\\starring.png"
 				}
 			}
 		}

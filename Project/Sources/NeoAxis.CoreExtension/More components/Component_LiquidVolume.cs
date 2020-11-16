@@ -246,5 +246,9 @@ namespace NeoAxis
 				surfaceMesh.ShouldRecompile = true;
 		}
 
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "Volume" );
+		}
 	}
 }

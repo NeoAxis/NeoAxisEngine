@@ -13,6 +13,7 @@ namespace NeoAxis
 	/// Anti-aliasing screen effect.
 	/// </summary>
 	[DefaultOrderOfEffect( 5 )]
+	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class Component_RenderingEffect_Antialiasing : Component_RenderingEffect
 	{
 		/// <summary>

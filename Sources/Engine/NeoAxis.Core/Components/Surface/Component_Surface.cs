@@ -12,9 +12,9 @@ using NeoAxis.Editor;
 namespace NeoAxis
 {
 	/// <summary>
-	/// A definition of surface type which contains material, set of meshes and other objects. Surfaces are used for painting and object creation by means brush.
+	/// A component defines how a surface looks on another geometries. It is looks like a material, but with more features.
 	/// </summary>
-	[ResourceFileExtension( "surface" )]
+	[ ResourceFileExtension( "surface" )]
 	[EditorDocumentWindow( typeof( Component_Surface_DocumentWindow ) )]
 	[EditorPreviewControl( typeof( Component_Surface_PreviewControl ) )]
 	public class Component_Surface : Component

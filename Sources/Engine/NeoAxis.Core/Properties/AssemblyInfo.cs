@@ -45,8 +45,8 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion( "2020.7.1.0" )]
-[assembly: AssemblyFileVersion( "2020.7.1.0" )]
+[assembly: AssemblyVersion( "2020.8.1.0" )]
+[assembly: AssemblyFileVersion( "2020.8.1.0" )]
 
 //!!!!new
 [assembly: CLSCompliant( false )]

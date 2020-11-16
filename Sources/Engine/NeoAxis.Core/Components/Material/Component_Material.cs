@@ -12,7 +12,7 @@ using NeoAxis.Editor;
 namespace NeoAxis
 {
 	/// <summary>
-	/// Base class of all materials.
+	/// Defines how a geometry looks.
 	/// </summary>
 	[ResourceFileExtension( "material" )]
 	[EditorDocumentWindow( typeof( Component_Material_DocumentWindow ) )]
@@ -26,6 +26,8 @@ namespace NeoAxis
 		const bool shaderGenerationEnable = true;
 		const bool shaderGenerationPrintLog = false;
 		//const bool shaderGenerationPrintLog = true;
+
+		static ESet<Component_Material> instances = new ESet<Component_Material>();
 
 		/////////////////////////////////////////
 
@@ -1220,6 +1222,20 @@ namespace NeoAxis
 
 		///////////////////////////////////////////////
 
+		public Component_Material()
+		{
+			lock( instances )
+				instances.Add( this );
+		}
+
+		protected override void OnDispose()
+		{
+			base.OnDispose();
+
+			lock( instances )
+				instances.Remove( this );
+		}
+
 		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
 		{
 			base.OnMetadataGetMembersFilter( context, member, ref skip );
@@ -1579,6 +1595,12 @@ namespace NeoAxis
 		}
 
 		/////////////////////////////////////////
+
+		public static Component_Material[] GetInstances()
+		{
+			lock( instances )
+				return instances.ToArray();
+		}
 
 		protected virtual string OnCheckDeferredShadingSupport()
 		{

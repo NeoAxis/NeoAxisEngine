@@ -40,6 +40,17 @@
 		Type = Ambient
 		Brightness = 30000
 	}
+	.component NeoAxis.Component_Light
+	{
+		Name = Light 1
+		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
+		Type = Directional
+		Brightness = 200000
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 91.429
+	}
 	.component NeoAxis.Component_RenderingPipeline_Default
 	{
 		Name = Rendering Pipeline
@@ -99,17 +110,6 @@
 	.component NeoAxis.Component_GameMode
 	{
 		Name = Game Mode
-	}
-	.component NeoAxis.Component_Light
-	{
-		Name = Light 1
-		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
-		Type = Directional
-		Brightness = 200000
-		AttenuationFar = 100
-		AttenuationPower = 1.5
-		SpotlightInnerAngle = 80
-		SpotlightOuterAngle = 91.429
 	}
 	.component NeoAxis.Component_Light
 	{
@@ -479,15 +479,12 @@
 	{
 		Name = Sensor 2D 2
 		Transform = "-0.167791027388974 5.99644191647414 -0.497812647409326; 0 0 0.191514828031679 0.981489720090841; 1.32999999262393 7.88689980970174 1.32999999262393"
+		SourceData = PhysicsObjects
 		DisplayObjects = True
 		Objects
 		{
-			Count = 2
+			Count = 1
 			0 "NeoAxis.Reference<NeoAxis.Component_ObjectInSpace>"
-			{
-				GetByReference = "root:$Ground"
-			}
-			1 "NeoAxis.Reference<NeoAxis.Component_ObjectInSpace>"
 			{
 				GetByReference = "root:$Rigid Body 2D 2"
 			}

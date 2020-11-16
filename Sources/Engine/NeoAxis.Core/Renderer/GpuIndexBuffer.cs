@@ -17,6 +17,7 @@ namespace NeoAxis
 
 		IDisposable realObject;
 		bool dynamic_needUpdateNative;
+		bool realObject16Bit;
 
 		//
 
@@ -74,6 +75,16 @@ namespace NeoAxis
 			get { return flags; }
 		}
 
+		public IDisposable RealObject
+		{
+			get { return realObject; }
+		}
+
+		public bool RealObject16Bit
+		{
+			get { return realObject16Bit; }
+		}
+
 		public void SetData( int[] indices, int indexCountActual = -1 )
 		{
 			if( !( Flags.HasFlag( GpuBufferFlags.Dynamic ) || ( realObject == null && !Flags.HasFlag( GpuBufferFlags.Dynamic ) && !Flags.HasFlag( GpuBufferFlags.ComputeWrite ) ) ) )
@@ -102,7 +113,7 @@ namespace NeoAxis
 
 			unsafe
 			{
-				fixed ( int* pIndices = this.indices )
+				fixed( int* pIndices = this.indices )
 					NativeUtility.CopyMemory( (IntPtr)pIndices, indices, indexCount * sizeof( int ) );
 			}
 			indexCountActual = indexCount;
@@ -156,6 +167,7 @@ namespace NeoAxis
 					//dynamic buffers are always 32-bit
 					realObject = new SharpBgfx.DynamicIndexBuffer( indices.Length, nativeFlags );
 					dynamic_needUpdateNative = true;
+					realObject16Bit = false;
 				}
 
 				if( !Flags.HasFlag( GpuBufferFlags.ComputeWrite ) )
@@ -198,6 +210,7 @@ namespace NeoAxis
 						var memory = RendererMemoryUtility.AllocateAutoReleaseMemoryBlock( indices );
 						realObject = new SharpBgfx.IndexBuffer( memory, SharpBgfx.BufferFlags.Index32 | SharpBgfx.BufferFlags.ComputeRead/* | SharpBgfx.BufferFlags.ComputeTypeFloat*/ );
 					}
+					realObject16Bit = use16Bit;
 				}
 			}
 

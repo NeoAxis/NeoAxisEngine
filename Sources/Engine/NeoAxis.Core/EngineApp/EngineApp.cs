@@ -89,6 +89,9 @@ namespace NeoAxis
 		static bool engineTimeManualValueAndDisableAutoUpdate;
 		static object timeLocker = new object();
 
+		//auto unload textures
+		static double lastEngineTimeToAutoUnloadTextures;
+
 		////gamma
 		//double gamma = 1.0f;
 		//bool gammChanged;
@@ -1884,6 +1887,20 @@ namespace NeoAxis
 			//!!!!тут?
 			//!!!!!где-то еще?
 			VirtualFileWatcher.ProcessEvents();
+
+			//auto unload textures
+			if( EngineTime - lastEngineTimeToAutoUnloadTextures > 1.0 )
+			{
+				double interval;
+				if( ApplicationType == ApplicationTypeEnum.Editor )
+					interval = EngineSettings.Init.AutoUnloadTexturesNotUsedForLongTimeInSecondsInEditor;
+				else
+					interval = EngineSettings.Init.AutoUnloadTexturesNotUsedForLongTimeInSecondsInSimulation;
+
+				GpuTexture.UnloadNotUsedForLongTime( interval );
+
+				lastEngineTimeToAutoUnloadTextures = EngineTime;
+			}
 
 			//update sound world
 			//soundPerformanceCounter.Start();

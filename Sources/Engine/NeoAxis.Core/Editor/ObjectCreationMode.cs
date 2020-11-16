@@ -71,6 +71,15 @@ namespace NeoAxis.Editor
 			GetTextInfoRightBottomCorner?.Invoke( this, lines );
 		}
 
+		protected virtual void OnGetTextInfoCenterBottomCorner( List<string> lines ) { }
+		public delegate void GetTextInfoCenterBottomCornerDelegate( ObjectCreationMode sender, List<string> lines );
+		public event GetTextInfoCenterBottomCornerDelegate GetTextInfoCenterBottomCorner;
+		internal void PerformGetTextInfoCenterBottomCorner( List<string> lines )
+		{
+			OnGetTextInfoCenterBottomCorner( lines );
+			GetTextInfoCenterBottomCorner?.Invoke( this, lines );
+		}
+
 		protected virtual bool OnKeyDown( Viewport viewport, KeyEvent e ) { return false; }
 		public delegate void KeyDownUpDelegate( ObjectCreationMode sender, Viewport viewport, KeyEvent e, ref bool handled );
 		public event KeyDownUpDelegate KeyDown;

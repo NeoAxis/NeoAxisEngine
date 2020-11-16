@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.IO;
 using System.Drawing.Design;
+using System.Globalization;
 
 namespace NeoAxis
 {
@@ -38,6 +39,17 @@ namespace NeoAxis
 					{
 						var settingsComponent2 = ComponentUtility.CreateComponent<Component_ProjectSettings>( null, true, true );
 						settingsComponent2.Name = "Root";
+
+						//detect language
+						try
+						{
+							var ci = CultureInfo.InstalledUICulture;
+
+							if( ci.EnglishName.Contains( "Russian" ) )
+								settingsComponent2.Language = Component_ProjectSettings.LanguageEnum.Russian;
+
+						}
+						catch { }
 
 						var pageNames = new List<string>();
 						pageNames.Add( "General" );

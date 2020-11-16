@@ -810,6 +810,14 @@ namespace NeoAxis
 			v = DefaultSettingsConfig.GetAttribute( "ScriptingCompileProjectSolutionAtStartup" );
 			if( !string.IsNullOrEmpty( v ) )
 				EngineSettings.Init.ScriptingCompileProjectSolutionAtStartup = bool.Parse( v );
+
+			v = DefaultSettingsConfig.GetAttribute( "AutoUnloadTexturesNotUsedForLongTimeInSecondsInEditor" );
+			if( !string.IsNullOrEmpty( v ) )
+				EngineSettings.Init.AutoUnloadTexturesNotUsedForLongTimeInSecondsInEditor = double.Parse( v );
+
+			v = DefaultSettingsConfig.GetAttribute( "AutoUnloadTexturesNotUsedForLongTimeInSecondsInSimulation" );
+			if( !string.IsNullOrEmpty( v ) )
+				EngineSettings.Init.AutoUnloadTexturesNotUsedForLongTimeInSecondsInSimulation = double.Parse( v );
 		}
 
 		public static Thread MainThread

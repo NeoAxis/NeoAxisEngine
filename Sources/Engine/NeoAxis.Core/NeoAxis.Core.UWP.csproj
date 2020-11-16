@@ -289,6 +289,7 @@
     <Compile Include="Editor\DockWindow.cs" />
     <Compile Include="Editor\DockWindow.designer.cs" />
     <Compile Include="Editor\DockWindowEventArgs.cs" />
+    <Compile Include="Editor\DocumentationLinksManager.cs" />
     <Compile Include="Editor\DocumentInstance.cs" />
     <Compile Include="Editor\DocumentWindow.cs" />
     <Compile Include="Editor\DocumentWindow.designer.cs" />
@@ -840,6 +841,8 @@
     <Compile Include="Components\Rendering\Component_RenderingEffect_Simple.cs" />
     <Compile Include="Components\Rendering\Component_RenderingEffect_Simple_SettingsCell.cs" />
     <Compile Include="Components\Rendering\Component_RenderingPipeline.cs" />
+    <Compile Include="Components\RenderToFile\Component_RenderToFile.cs" />
+    <Compile Include="Components\RenderToFile\Component_RenderToFile_SettingsCell.cs" />
     <Compile Include="Components\Scene\Component_Scene.cs" />
     <Compile Include="Components\Scene\Component_Scene_DocumentWindow.cs" />
     <Compile Include="Components\Scene\Component_Scene_DocumentWindow.designer.cs" />
@@ -920,6 +923,10 @@
     <Compile Include="Editor\ScreenNotifications\ScreenNotifications.cs" />
     <Compile Include="Editor\TransformTool\TransformTool.cs" />
     <Compile Include="Editor\TransformTool\TransformToolConfig.cs" />
+    <Compile Include="Editor\TransformTool\TransformTool_PositionMode.cs" />
+    <Compile Include="Editor\TransformTool\TransformTool_PositionRotationMode.cs" />
+    <Compile Include="Editor\TransformTool\TransformTool_RotationMode.cs" />
+    <Compile Include="Editor\TransformTool\TransformTool_ScaleMode.cs" />
     <Compile Include="Editor\Utility\Win32Utility.cs" />
     <Compile Include="EngineApp\Android specific\AndroidInputDeviceManager.cs" />
     <Compile Include="EngineApp\Android specific\AndroidPlatformFunctionality.cs" />
@@ -1871,6 +1878,11 @@
     <Compile Include="Components\Rendering\Pipelines\Pipeline_Default.cs" />
     <Compile Include="Components\Rendering\Sky\Component_Sky.cs" />
     <Compile Include="Components\Rendering\Sky\Component_Skybox.cs" />
+    <Compile Include="Components\Rendering\Sky\Component_Skybox_DocumentWindow.cs" />
+    <Compile Include="Components\Rendering\Sky\Component_Skybox_DocumentWindow.designer.cs" />
+    <Compile Include="Components\Rendering\Sky\Component_Skybox_PreviewControl.cs" />
+    <Compile Include="Components\Rendering\Sky\Component_Skybox_PreviewControl.designer.cs" />
+    <Compile Include="Components\Rendering\Sky\Component_Skybox_PreviewImage.cs" />
     <Compile Include="Components\Rendering\Sky\Component_Skybox_SettingsCell.cs" />
     <Compile Include="Components\Scripting\Core\CompiledScript.cs" />
     <Compile Include="Components\Scripting\Core\ScriptAssemblyNameResolver.cs" />

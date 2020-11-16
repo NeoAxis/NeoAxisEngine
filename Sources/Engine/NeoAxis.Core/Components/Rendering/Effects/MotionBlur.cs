@@ -13,6 +13,7 @@ namespace NeoAxis
 	/// Per-object motion blur.
 	/// </summary>
 	[DefaultOrderOfEffect( 1.5 )]
+	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class Component_RenderingEffect_MotionBlur : Component_RenderingEffect
 	{
 		/// <summary>

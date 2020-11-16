@@ -14,6 +14,7 @@ namespace NeoAxis
 	/// Screen space reflection screen effect.
 	/// </summary>
 	[DefaultOrderOfEffect( 0 )]
+	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class Component_RenderingEffect_ScreenSpaceReflection : Component_RenderingEffect
 	{
 		/// <summary>
@@ -394,6 +395,11 @@ namespace NeoAxis
 				//result
 				sceneTexture = actualTexture;
 			}
+		}
+
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "ScreenEffect", true );
 		}
 	}
 }

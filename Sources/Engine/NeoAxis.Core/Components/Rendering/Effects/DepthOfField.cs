@@ -13,6 +13,7 @@ namespace NeoAxis
 	/// Depth of field screen effect.
 	/// </summary>
 	[DefaultOrderOfEffect( 7 )]
+	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class Component_RenderingEffect_DepthOfField : Component_RenderingEffect
 	{
 		//!!!!downscale
@@ -661,5 +662,9 @@ namespace NeoAxis
 			get { return true; }
 		}
 
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "ScreenEffect", true );
+		}
 	}
 }

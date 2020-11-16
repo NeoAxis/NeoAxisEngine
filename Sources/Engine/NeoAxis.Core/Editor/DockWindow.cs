@@ -21,6 +21,9 @@ namespace NeoAxis.Editor
 		string windowTitle = "";
 		Image windowImage;
 
+		[Browsable( false )]
+		public EDialogResult? ShowDialogAndSaveDocumentAutoAnswer { get; set; }
+
 		//!!!!deleted
 		//bool closing;
 

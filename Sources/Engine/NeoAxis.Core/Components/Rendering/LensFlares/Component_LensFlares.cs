@@ -7,7 +7,7 @@ using NeoAxis.Editor;
 namespace NeoAxis
 {
 	/// <summary>
-	/// Lens flares effect of the light.
+	/// Lens flares effect of the light. The component must be a child of Light.
 	/// </summary>
 	[EditorNewObjectSettings( typeof( NewObjectSettingsLensFlares ) )]
 	public class Component_LensFlares : Component//, IComponent_LightChild
@@ -68,98 +68,98 @@ namespace NeoAxis
 
 			flare = CreateComponent<Component_LensFlare>();
 			flare.Name = ComponentUtility.GetNewObjectUniqueName( flare );
-			flare.Image = ReferenceUtility.MakeReference( @"Samples\Starter Content\Textures\Lens flares\hexangle.png" );
+			flare.Image = ReferenceUtility.MakeReference( @"Base\Images\Lens flares\hexangle.png" );
 			flare.Color = new ColorValue( 1, 0.4980392f, 0.4980392f, 0.05882353f );
 			flare.Size = new Vector2( 0.05f, 0.05f );
 			flare.Position = -0.1f;
 
 			flare = CreateComponent<Component_LensFlare>();
 			flare.Name = ComponentUtility.GetNewObjectUniqueName( flare );
-			flare.Image = ReferenceUtility.MakeReference( @"Samples\Starter Content\Textures\Lens flares\hexangle.png" );
+			flare.Image = ReferenceUtility.MakeReference( @"Base\Images\Lens flares\hexangle.png" );
 			flare.Color = new ColorValue( 0.4980392f, 1, 0.4980392f, 0.05882353f );
 			flare.Size = new Vector2( 0.05f, 0.05f );
 			flare.Position = -2;
 
 			flare = CreateComponent<Component_LensFlare>();
 			flare.Name = ComponentUtility.GetNewObjectUniqueName( flare );
-			flare.Image = ReferenceUtility.MakeReference( @"Samples\Starter Content\Textures\Lens flares\hexangle.png" );
+			flare.Image = ReferenceUtility.MakeReference( @"Base\Images\Lens flares\hexangle.png" );
 			flare.Color = new ColorValue( 1, 1, 1, 0.05882353f );
 			flare.Size = new Vector2( 0.08f, 0.08f );
 			flare.Position = -1.5f;
 
 			flare = CreateComponent<Component_LensFlare>();
 			flare.Name = ComponentUtility.GetNewObjectUniqueName( flare );
-			flare.Image = ReferenceUtility.MakeReference( @"Samples\Starter Content\Textures\Lens flares\hexangle.png" );
+			flare.Image = ReferenceUtility.MakeReference( @"Base\Images\Lens flares\hexangle.png" );
 			flare.Color = new ColorValue( 1, 1, 1, 0.05882353f );
 			flare.Size = new Vector2( 0.1f, 0.1f );
 			flare.Position = -1.7f;
 
 			flare = CreateComponent<Component_LensFlare>();
 			flare.Name = ComponentUtility.GetNewObjectUniqueName( flare );
-			flare.Image = ReferenceUtility.MakeReference( @"Samples\Starter Content\Textures\Lens flares\hexangle.png" );
+			flare.Image = ReferenceUtility.MakeReference( @"Base\Images\Lens flares\hexangle.png" );
 			flare.Color = new ColorValue( 1, 0.4980392f, 0.4980392f, 0.05882353f );
 			flare.Size = new Vector2( 0.06f, 0.06f );
 			flare.Position = -3;
 
 			flare = CreateComponent<Component_LensFlare>();
 			flare.Name = ComponentUtility.GetNewObjectUniqueName( flare );
-			flare.Image = ReferenceUtility.MakeReference( @"Samples\Starter Content\Textures\Lens flares\hexangle.png" );
+			flare.Image = ReferenceUtility.MakeReference( @"Base\Images\Lens flares\hexangle.png" );
 			flare.Color = new ColorValue( 1, 1, 0.4980392f, 0.05882353f );
 			flare.Size = new Vector2( 0.05f, 0.05f );
 			flare.Position = -.5f;
 
 			flare = CreateComponent<Component_LensFlare>();
 			flare.Name = ComponentUtility.GetNewObjectUniqueName( flare );
-			flare.Image = ReferenceUtility.MakeReference( @"Samples\Starter Content\Textures\Lens flares\hexangle.png" );
+			flare.Image = ReferenceUtility.MakeReference( @"Base\Images\Lens flares\hexangle.png" );
 			flare.Color = new ColorValue( 1, 1, 1, 0.05882353f );
 			flare.Size = new Vector2( 0.09f, 0.09f );
 			flare.Position = -2.1f;
 
 			flare = CreateComponent<Component_LensFlare>();
 			flare.Name = ComponentUtility.GetNewObjectUniqueName( flare );
-			flare.Image = ReferenceUtility.MakeReference( @"Samples\Starter Content\Textures\Lens flares\hexangle.png" );
+			flare.Image = ReferenceUtility.MakeReference( @"Base\Images\Lens flares\hexangle.png" );
 			flare.Color = new ColorValue( 1, 1, 1, 0.05882353f );
 			flare.Size = new Vector2( 0.08f, 0.08f );
 			flare.Position = -.65f;
 
 			flare = CreateComponent<Component_LensFlare>();
 			flare.Name = ComponentUtility.GetNewObjectUniqueName( flare );
-			flare.Image = ReferenceUtility.MakeReference( @"Samples\Starter Content\Textures\Lens flares\hexangle.png" );
+			flare.Image = ReferenceUtility.MakeReference( @"Base\Images\Lens flares\hexangle.png" );
 			flare.Color = new ColorValue( 0.4980392f, 1, 0.4980392f, 0.05882353f );
 			flare.Size = new Vector2( 0.05f, 0.05f );
 			flare.Position = -.86f;
 
 			flare = CreateComponent<Component_LensFlare>();
 			flare.Name = ComponentUtility.GetNewObjectUniqueName( flare );
-			flare.Image = ReferenceUtility.MakeReference( @"Samples\Starter Content\Textures\Lens flares\hexangle.png" );
+			flare.Image = ReferenceUtility.MakeReference( @"Base\Images\Lens flares\hexangle.png" );
 			flare.Color = new ColorValue( 1, 1, 1, 0.05882353f );
 			flare.Size = new Vector2( 0.12f, 0.12f );
 			flare.Position = -5;
 
 			flare = CreateComponent<Component_LensFlare>();
 			flare.Name = ComponentUtility.GetNewObjectUniqueName( flare );
-			flare.Image = ReferenceUtility.MakeReference( @"Samples\Starter Content\Textures\Lens flares\hexangle.png" );
+			flare.Image = ReferenceUtility.MakeReference( @"Base\Images\Lens flares\hexangle.png" );
 			flare.Color = new ColorValue( 1, 1, 1, 0.05882353f );
 			flare.Size = new Vector2( 0.04f, 0.04f );
 			flare.Position = .3f;
 
 			flare = CreateComponent<Component_LensFlare>();
 			flare.Name = ComponentUtility.GetNewObjectUniqueName( flare );
-			flare.Image = ReferenceUtility.MakeReference( @"Samples\Starter Content\Textures\Lens flares\hexangle.png" );
+			flare.Image = ReferenceUtility.MakeReference( @"Base\Images\Lens flares\hexangle.png" );
 			flare.Color = new ColorValue( 0.4980392f, 1, 0.4980392f, 0.05882353f );
 			flare.Size = new Vector2( 0.03f, 0.03f );
 			flare.Position = .6f;
 
 			flare = CreateComponent<Component_LensFlare>();
 			flare.Name = ComponentUtility.GetNewObjectUniqueName( flare );
-			flare.Image = ReferenceUtility.MakeReference( @"Samples\Starter Content\Textures\Lens flares\hexangle.png" );
+			flare.Image = ReferenceUtility.MakeReference( @"Base\Images\Lens flares\hexangle.png" );
 			flare.Color = new ColorValue( 1, 1, 1, 0.05882353f );
 			flare.Size = new Vector2( 0.06f, 0.06f );
 			flare.Position = .1f;
 
 			flare = CreateComponent<Component_LensFlare>();
 			flare.Name = ComponentUtility.GetNewObjectUniqueName( flare );
-			flare.Image = ReferenceUtility.MakeReference( @"Samples\Starter Content\Textures\Lens flares\hexangle.png" );
+			flare.Image = ReferenceUtility.MakeReference( @"Base\Images\Lens flares\hexangle.png" );
 			flare.Color = new ColorValue( 1, 1, 1, 0.05882353f );
 			flare.Size = new Vector2( 0.04f, 0.04f );
 			flare.Position = -.35f;
@@ -231,6 +231,14 @@ namespace NeoAxis
 				}
 			}
 
+		}
+
+		public override void NewObjectSetDefaultConfiguration( bool createdFromNewObjectWindow = false )
+		{
+			base.NewObjectSetDefaultConfiguration( createdFromNewObjectWindow );
+
+			if( !createdFromNewObjectWindow )
+				CreateDefaultFlares();
 		}
 	}
 }

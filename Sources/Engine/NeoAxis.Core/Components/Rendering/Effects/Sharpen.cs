@@ -13,6 +13,7 @@ namespace NeoAxis
     /// Screen effect for adding sharpness to the image.
     /// </summary>
 	[DefaultOrderOfEffect( 6 )]
+	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class Component_RenderingEffect_Sharpen : Component_RenderingEffect_Simple
 	{
 		const string shaderDefault = @"Base\Shaders\Effects\Sharpen_fs.sc";

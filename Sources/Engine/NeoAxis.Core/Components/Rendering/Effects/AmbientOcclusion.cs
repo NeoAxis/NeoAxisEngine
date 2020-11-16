@@ -14,6 +14,7 @@ namespace NeoAxis
 	/// Ambient occlusion screen effect (ASSAO).
 	/// </summary>
 	[DefaultOrderOfEffect( 1 )]
+	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class Component_RenderingEffect_AmbientOcclusion : Component_RenderingEffect
 	{
 		//!!!!TO DO: use mipmaps for render target

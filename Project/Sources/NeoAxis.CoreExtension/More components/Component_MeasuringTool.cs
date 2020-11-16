@@ -306,6 +306,10 @@ namespace NeoAxis
 			}
 		}
 
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "MeasuringTool" );
+		}
 	}
 
 	/// <summary>
@@ -313,6 +317,25 @@ namespace NeoAxis
 	/// </summary>
 	public class Component_MeasuringToolEndPoint : Component_ObjectInSpace
 	{
+		protected override void OnTransformChanged()
+		{
+			base.OnTransformChanged();
+
+			var start = Parent as Component_MeasuringTool;
+			start?.SpaceBoundsUpdate();
+		}
+
+		protected override void OnSpaceBoundsUpdate( ref SpaceBounds newBounds )
+		{
+			base.OnSpaceBoundsUpdate( ref newBounds );
+
+			var b = new Bounds( TransformV.Position );
+			b.Expand( 0.05 );
+			////add arrows thickness
+			//b.Expand( Thickness );
+			newBounds = new SpaceBounds( b );
+		}
+
 		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
 		{
 			base.OnGetRenderSceneData( context, mode );
@@ -324,6 +347,11 @@ namespace NeoAxis
 				if( !ParentScene.GetDisplayDevelopmentDataInThisApplication() )
 					context2.disableShowingLabelForThisObject = true;
 			}
+		}
+
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "MeasuringToolEndPoint" );
 		}
 	}
 

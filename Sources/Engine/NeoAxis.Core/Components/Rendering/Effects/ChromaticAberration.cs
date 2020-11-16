@@ -9,6 +9,7 @@ namespace NeoAxis
 	/// Chromatic aberration screen effect.
 	/// </summary>
 	[DefaultOrderOfEffect( 7.1 )]
+	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class Component_RenderingEffect_ChromaticAberration : Component_RenderingEffect_Simple
 	{
 		const string shaderDefault = @"Base\Shaders\Effects\ChromaticAberration_fs.sc";
@@ -39,6 +40,11 @@ namespace NeoAxis
 		public override bool LimitedDevicesSupport
 		{
 			get { return true; }
+		}
+
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "ScreenEffect", true );
 		}
 	}
 }

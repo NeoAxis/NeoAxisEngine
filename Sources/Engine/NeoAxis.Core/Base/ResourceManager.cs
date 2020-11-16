@@ -627,6 +627,8 @@ namespace NeoAxis
 			RegisterType( "Surface", new string[] { "surface" }, typeof( Resource ) );
 			RegisterType( "Sprite", new string[] { "sprite" }, typeof( Resource ) );
 			//RegisterType( "Shader", new string[] { "shader" }, typeof( Resource ) );
+			RegisterType( "Skybox", new string[] { "skybox" }, typeof( Resource ) );
+			RegisterType( "Light", new string[] { "light" }, typeof( Resource ) );
 		}
 
 		internal static void DisposeAllResources()

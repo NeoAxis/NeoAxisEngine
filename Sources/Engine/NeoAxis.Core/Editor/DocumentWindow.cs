@@ -441,6 +441,7 @@ namespace NeoAxis.Editor
 			}
 
 			//Separate Settings
+			if( EditorUtility.AllowSeparateSettings )
 			{
 				var item = new KryptonContextMenuItem( TranslateContextMenu( "Separate Settings" ), EditorResourcesCache.Settings, delegate ( object s, EventArgs e2 )
 				{

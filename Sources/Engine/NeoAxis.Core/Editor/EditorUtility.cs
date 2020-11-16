@@ -14,6 +14,7 @@ namespace NeoAxis.Editor
 	public static class EditorUtility
 	{
 		public static bool AllowConfigureComponentTypeSettings = true;
+		public static bool AllowSeparateSettings = true;
 
 		//
 

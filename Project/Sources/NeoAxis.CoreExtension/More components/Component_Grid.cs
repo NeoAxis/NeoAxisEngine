@@ -196,5 +196,17 @@ namespace NeoAxis
 				}
 			}
 		}
+
+		public override void NewObjectSetDefaultConfiguration( bool createdFromNewObjectWindow = false )
+		{
+			base.NewObjectSetDefaultConfiguration( createdFromNewObjectWindow );
+
+			Transform = new Transform( TransformV.Position, TransformV.Rotation, new Vector3( 10, 10, 1 ) );
+		}
+
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "Grid" );
+		}
 	}
 }

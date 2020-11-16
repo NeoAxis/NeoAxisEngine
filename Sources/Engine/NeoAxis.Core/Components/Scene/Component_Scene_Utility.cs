@@ -49,6 +49,21 @@ namespace NeoAxis
 				//particle system specific
 				if( !( objectInSpace is Component_ParticleSystemInSpace ) )
 					localBounds = objectInSpace.SpaceBounds.CalculatedBoundingBox - objectInSpace.Transform.Value.Position;
+
+				//Light, Camera, Decal, Grid specific. use bounds without scaling
+
+				if( objectInSpace is Component_Light || objectInSpace is Component_Camera )
+				{
+					var bounds = new Bounds( objectInSpace.TransformV.Position );
+					bounds.Expand( 0.5 );
+					localBounds = bounds - objectInSpace.Transform.Value.Position;
+				}
+				else if( objectInSpace is Component_Decal || objectInSpace is Component_SoundSource || objectInSpace.GetType().Name == "Component_Grid" )
+				{
+					var bounds = new Bounds( objectInSpace.TransformV.Position );
+					bounds.Expand( 0.25 );
+					localBounds = bounds - objectInSpace.Transform.Value.Position;
+				}
 			}
 			if( localBounds.GetSize().X < 0.001 )
 				localBounds.Expand( new Vector3( 0.001, 0, 0 ) );

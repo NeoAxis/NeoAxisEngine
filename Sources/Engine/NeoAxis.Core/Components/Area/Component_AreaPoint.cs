@@ -33,5 +33,10 @@ namespace NeoAxis
 				return false;
 			return base.OnEnabledSelectionByCursor();
 		}
+
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "AreaPoint" );
+		}
 	}
 }

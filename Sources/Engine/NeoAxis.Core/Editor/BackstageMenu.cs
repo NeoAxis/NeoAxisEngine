@@ -162,6 +162,8 @@ namespace NeoAxis.Editor
 			}
 
 			LoginLoad();
+			if( DefaultPage == kryptonPageBuild )
+				PackagingInit();
 
 			timer1.Start();
 		}
@@ -704,7 +706,7 @@ namespace NeoAxis.Editor
 
 		string GetNeoAxisProjectsFolder()
 		{
-			return Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.MyDocuments ), "NeoAxis Projects" );
+			return Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.MyDocuments ), "NeoAxis" );
 		}
 
 		protected override CreateParams CreateParams

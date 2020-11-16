@@ -206,6 +206,16 @@ namespace NeoAxis
 				{
 					switch( format )
 					{
+					case PixelFormat.Float32RGBA:
+						{
+							var p = (Vector4F*)pData + position.Y * size.X + position.X;
+							p->X = value.X;
+							p->Y = value.Y;
+							p->Z = value.Z;
+							p->W = value.W;
+						}
+						break;
+
 					case PixelFormat.Float32RGB:
 						{
 							var p = (Vector3F*)pData + position.Y * size.X + position.X;

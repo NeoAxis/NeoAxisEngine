@@ -150,11 +150,11 @@ namespace NeoAxis
 				}
 			}
 
-			protected override void OnGetTextInfoRightBottomCorner( List<string> lines )
+			protected override void OnGetTextInfoCenterBottomCorner( List<string> lines )
 			{
-				base.OnGetTextInfoRightBottomCorner( lines );
+				base.OnGetTextInfoCenterBottomCorner( lines );
 
-				lines.Add( "Specify points of the area." );
+				lines.Add( "Specify points of the area by clicking." );
 				lines.Add( "Press Space or Return to finish creation." );
 			}
 
@@ -286,5 +286,9 @@ namespace NeoAxis
 			return base.OnEnabledSelectionByCursor();
 		}
 
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "Area" );
+		}
 	}
 }

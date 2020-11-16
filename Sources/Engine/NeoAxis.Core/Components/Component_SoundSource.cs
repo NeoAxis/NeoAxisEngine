@@ -507,6 +507,15 @@ namespace NeoAxis
 				Update();
 		}
 
+		protected override void OnSpaceBoundsUpdate( ref SpaceBounds newBounds )
+		{
+			base.OnSpaceBoundsUpdate( ref newBounds );
+
+			var scale = TransformV.Scale.MaxComponent();
+			double far = AttenuationFar * scale;
+			newBounds = new SpaceBounds( new Sphere( TransformV.Position, far ) );
+		}
+
 		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
 		{
 			base.OnGetRenderSceneData( context, mode );
@@ -654,6 +663,11 @@ namespace NeoAxis
 			sound = null;
 			replayIntervalRemainingTime = 0;
 			lastChannelTime = 0;
+		}
+
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "SoundSource" );
 		}
 	}
 }

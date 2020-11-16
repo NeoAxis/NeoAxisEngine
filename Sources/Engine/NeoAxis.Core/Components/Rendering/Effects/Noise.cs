@@ -13,6 +13,7 @@ namespace NeoAxis
 	/// Rendering effect to show random noise on the screen.
 	/// </summary>
 	[DefaultOrderOfEffect( 10 )]
+	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class Component_RenderingEffect_Noise : Component_RenderingEffect_Simple
 	{
 		const string shaderDefault = @"Base\Shaders\Effects\Noise_fs.sc";
@@ -114,5 +115,9 @@ namespace NeoAxis
 			get { return true; }
 		}
 
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "ScreenEffect", true );
+		}
 	}
 }

@@ -453,7 +453,7 @@ namespace NeoAxis.Editor
 		protected virtual void OnDockWindowCloseRequest( DockWindow window, out bool cancel )
 		{
 			if( window is DocumentWindow )
-				cancel = editorForm.ShowDialogAndSaveDocument( window ) == null;
+				cancel = editorForm.ShowDialogAndSaveDocument( window );
 			else
 				cancel = false; // for non document windows.
 		}

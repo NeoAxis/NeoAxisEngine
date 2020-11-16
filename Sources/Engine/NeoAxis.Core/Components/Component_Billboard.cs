@@ -371,5 +371,13 @@ namespace NeoAxis
 		{
 			SceneLODUtility.ResetLodTransitionStates( ref renderingContextItems, resetOnlySpecifiedContext );
 		}
+
+		public override void NewObjectSetDefaultConfiguration( bool createdFromNewObjectWindow = false )
+		{
+			base.NewObjectSetDefaultConfiguration( createdFromNewObjectWindow );
+
+			Material = ReferenceUtility.MakeReference( @"Base\Components\Billboard default.material" );
+		}
+
 	}
 }

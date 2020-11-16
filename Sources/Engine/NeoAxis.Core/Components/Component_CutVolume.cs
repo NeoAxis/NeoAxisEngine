@@ -164,5 +164,9 @@ namespace NeoAxis
 			}
 		}
 
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "Volume" );
+		}
 	}
 }

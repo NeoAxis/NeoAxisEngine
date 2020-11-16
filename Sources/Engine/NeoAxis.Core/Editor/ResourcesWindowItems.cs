@@ -213,13 +213,13 @@ namespace NeoAxis.Editor
 				Items.Add( new Item( group + @"\Scene", typeof( Component_Scene ) ) );
 				Items.Add( new Item( group + @"\Material", typeof( Component_Material ) ) );
 				Items.Add( new Item( group + @"\Surface", typeof( Component_Surface ) ) );
-				Items.Add( new Item( group + @"\Cubemap", typeof( Component_Image ) ) );
+				Items.Add( new Item( group + @"\Image", typeof( Component_Image ) ) );
+				Items.Add( new Item( group + @"\Mesh", typeof( Component_Mesh ) ) );
+				Items.Add( new Item( group + @"\Mesh In Space Animation Controller", typeof( Component_MeshInSpaceAnimationController ) ) );
 				Items.Add( new Item( group + @"\Paint Layer", typeof( Component_PaintLayer ) ) );
 
 				if( MetadataManager.GetType( "NeoAxis.Component_RenderingPipeline_Default" ) != null )
 					Items.Add( new Item( group + @"\Rendering Pipeline Default", MetadataManager.GetType( "NeoAxis.Component_RenderingPipeline_Default" ).GetNetType() ) );
-
-				Items.Add( new Item( group + @"\Mesh", typeof( Component_Mesh ) ) );
 
 				////Mesh modifiers
 				//var groupMeshModifiers = @"Base\Scene common\Mesh modifiers";
@@ -236,16 +236,18 @@ namespace NeoAxis.Editor
 			{
 				var group = @"Base\Scene objects";
 
-
 				Items.Add( new Item( group + @"\Object In Space", typeof( Component_ObjectInSpace ) ) );
 				Items.Add( new Item( group + @"\Group Of Objects", typeof( Component_GroupOfObjects ) ) );
 				Items.Add( new Item( group + @"\Layer", typeof( Component_Layer ) ) );
-				Items.Add( new Item( group + @"\Mesh In Space", typeof( Component_MeshInSpace ) ) );
-				Items.Add( new Item( group + @"\Mesh In Space Animation Controller", typeof( Component_MeshInSpaceAnimationController ) ) );
-				Items.Add( new Item( group + @"\Particle System In Space", typeof( Component_ParticleSystemInSpace ) ) );
-				Items.Add( new Item( group + @"\Light", typeof( Component_Light ) ) );
-				Items.Add( new Item( group + @"\Camera", typeof( Component_Camera ) ) );
+				Items.Add( new Item( group + @"\Skybox", typeof( Component_Skybox ) ) );
+				Items.Add( new Item( group + @"\Fog", typeof( Component_Fog ) ) );
 				Items.Add( new Item( group + @"\Terrain", typeof( Component_Terrain ) ) );
+				//Items.Add( new Item( group + @"\Mesh In Space", typeof( Component_MeshInSpace ) ) );
+				//Items.Add( new Item( group + @"\Mesh In Space Animation Controller", typeof( Component_MeshInSpaceAnimationController ) ) );
+				//Items.Add( new Item( group + @"\Particle System In Space", typeof( Component_ParticleSystemInSpace ) ) );
+				Items.Add( new Item( group + @"\Light", typeof( Component_Light ) ) );
+				Items.Add( new Item( group + @"\Lens Flares", typeof( Component_LensFlares ) ) );
+				Items.Add( new Item( group + @"\Camera", typeof( Component_Camera ) ) );
 				Items.Add( new Item( group + @"\Billboard", typeof( Component_Billboard ) ) );
 				Items.Add( new Item( group + @"\Decal", typeof( Component_Decal ) ) );
 				Items.Add( new Item( group + @"\Reflection Probe", typeof( Component_ReflectionProbe ) ) );
@@ -254,12 +256,12 @@ namespace NeoAxis.Editor
 				if( MetadataManager.GetType( "NeoAxis.Component_RenderTargetInSpace" ) != null )
 					Items.Add( new Item( group + @"\Render Target In Space", MetadataManager.GetType( "NeoAxis.Component_RenderTargetInSpace" ).GetNetType() ) );
 
-				if( MetadataManager.GetType( "NeoAxis.Component_Skybox" ) != null )
-					Items.Add( new Item( group + @"\Environment\Skybox", MetadataManager.GetType( "NeoAxis.Component_Skybox" ).GetNetType() ) );
-				if( MetadataManager.GetType( "NeoAxis.Component_Fog" ) != null )
-					Items.Add( new Item( group + @"\Environment\Fog", MetadataManager.GetType( "NeoAxis.Component_Fog" ).GetNetType() ) );
-				if( MetadataManager.GetType( "NeoAxis.Component_LensFlares" ) != null )
-					Items.Add( new Item( group + @"\Environment\Lens Flares", MetadataManager.GetType( "NeoAxis.Component_LensFlares" ).GetNetType() ) );
+				//if( MetadataManager.GetType( "NeoAxis.Component_Skybox" ) != null )
+				//	Items.Add( new Item( group + @"\Environment\Skybox", MetadataManager.GetType( "NeoAxis.Component_Skybox" ).GetNetType() ) );
+				//if( MetadataManager.GetType( "NeoAxis.Component_Fog" ) != null )
+				//	Items.Add( new Item( group + @"\Environment\Fog", MetadataManager.GetType( "NeoAxis.Component_Fog" ).GetNetType() ) );
+				//if( MetadataManager.GetType( "NeoAxis.Component_LensFlares" ) != null )
+				//	Items.Add( new Item( group + @"\Environment\Lens Flares", MetadataManager.GetType( "NeoAxis.Component_LensFlares" ).GetNetType() ) );
 
 				Items.Add( new Item( group + @"\Areas\Area", typeof( Component_Area ) ) );
 				Items.Add( new Item( group + @"\Areas\Surface Area", typeof( Component_SurfaceArea ) ) );
@@ -279,6 +281,8 @@ namespace NeoAxis.Editor
 					Items.Add( new Item( group + @"\Additional\Grid", MetadataManager.GetType( "NeoAxis.Component_Grid" ).GetNetType() ) );
 				if( MetadataManager.GetType( "NeoAxis.Component_CurveInSpace" ) != null )
 					Items.Add( new Item( group + @"\Additional\Curve In Space", MetadataManager.GetType( "NeoAxis.Component_CurveInSpace" ).GetNetType() ) );
+
+				Items.Add( new Item( group + @"\Additional\Render To File", typeof( Component_RenderToFile ) ) );
 
 				//Items.Add( new Item( group + @"\Object In Space", typeof( Component_ObjectInSpace ) ) );
 				//Items.Add( new Item( group + @"\Group Of Objects", typeof( Component_GroupOfObjects ) ) );

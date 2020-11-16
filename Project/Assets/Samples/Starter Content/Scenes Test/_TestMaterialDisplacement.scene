@@ -1,6 +1,6 @@
 .component NeoAxis.Component_Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1174, 842\"><KW V=\"1\" A=\"C40228283138419F958633B26D98AF94\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"D17AB664BA074A629A89680592587ED9\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"C40228283138419F958633B26D98AF94\"><KP UN=\"C40228283138419F958633B26D98AF94\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"A928D9D40B0A48694B9D78C4472AEEE0\" S=\"False\"><CPD ObjPath=\"$Material Stone Wall\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1205, 842\"><KW V=\"1\" A=\"C40228283138419F958633B26D98AF94\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"D17AB664BA074A629A89680592587ED9\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"C40228283138419F958633B26D98AF94\"><KP UN=\"C40228283138419F958633B26D98AF94\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"A928D9D40B0A48694B9D78C4472AEEE0\" S=\"False\"><CPD ObjPath=\"$Material Stone Wall\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -21,6 +21,17 @@
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
 		Brightness = 3201.078401357
+	}
+	.component NeoAxis.Component_Light
+	{
+		Name = Light 1
+		Transform = "9.75475720954856 3.73778708017938 2.12042392794883; -0.282460146391003 -0.777405628966068 0.426413206968169 -0.366099072213747; 1 1 1"
+		Type = Directional
+		Brightness = 315574.942776224
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 91.429
 	}
 	.component NeoAxis.Component_RenderingPipeline_Default
 	{
@@ -71,17 +82,6 @@
 	.component NeoAxis.Component_GameMode
 	{
 		Name = Game Mode
-	}
-	.component NeoAxis.Component_Light
-	{
-		Name = Light 1
-		Transform = "9.75475720954856 3.73778708017938 2.12042392794883; -0.282460146391003 -0.777405628966068 0.426413206968169 -0.366099072213747; 1 1 1"
-		Type = Directional
-		Brightness = 315574.942776224
-		AttenuationFar = 100
-		AttenuationPower = 1.5
-		SpotlightInnerAngle = 80
-		SpotlightOuterAngle = 91.429
 	}
 	.component NeoAxis.Component_Light
 	{

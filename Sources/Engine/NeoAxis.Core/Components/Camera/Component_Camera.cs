@@ -37,7 +37,7 @@ namespace NeoAxis
 		public Reference<ProjectionType> Projection
 		{
 			get { if( _projection.BeginGet() ) Projection = _projection.Get( this ); return _projection.value; }
-			set { if( _projection.BeginSet( ref value ) ) { try { ProjectionChanged?.Invoke( this ); } finally { _projection.EndSet(); } } }
+			set { if( _projection.BeginSet( ref value ) ) { try { ProjectionChanged?.Invoke( this ); SpaceBoundsUpdate(); } finally { _projection.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Projection"/> property value changes.</summary>
 		public event Action<Component_Camera> ProjectionChanged;
@@ -52,7 +52,7 @@ namespace NeoAxis
 		public Reference<Degree> FieldOfView
 		{
 			get { if( _fieldOfView.BeginGet() ) FieldOfView = _fieldOfView.Get( this ); return _fieldOfView.value; }
-			set { if( _fieldOfView.BeginSet( ref value ) ) { try { FieldOfViewChanged?.Invoke( this ); } finally { _fieldOfView.EndSet(); } } }
+			set { if( _fieldOfView.BeginSet( ref value ) ) { try { FieldOfViewChanged?.Invoke( this ); SpaceBoundsUpdate(); } finally { _fieldOfView.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FieldOfView"/> property value changes.</summary>
 		public event Action<Component_Camera> FieldOfViewChanged;
@@ -233,6 +233,13 @@ namespace NeoAxis
 			return base.OnEnabledSelectionByCursor();
 		}
 
+		protected override void OnSpaceBoundsUpdate( ref SpaceBounds newBounds )
+		{
+			base.OnSpaceBoundsUpdate( ref newBounds );
+
+			newBounds = new SpaceBounds( GetVisualBounds() );
+		}
+
 		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
 		{
 			base.OnGetRenderSceneData( context, mode );
@@ -241,11 +248,22 @@ namespace NeoAxis
 			{
 				var context2 = context.objectInSpaceRenderingContext;
 
+				//context.
+
 				bool show = ( ParentScene.GetDisplayDevelopmentDataInThisApplication() && ParentScene.DisplayCameras ) ||
 					context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this;
 				if( show )
 				{
-					if( context2.displayCamerasCounter < context2.displayCamerasMax )
+					var skip = false;
+
+					var cameraSettings = context.Owner.CameraSettings;
+					//!!!!
+					if( ( cameraSettings.Position - TransformV.Position ).Length() < 0.5 )
+					{
+						skip = true;
+					}
+
+					if( !skip && context2.displayCamerasCounter < context2.displayCamerasMax )
 					{
 						context2.displayCamerasCounter++;
 
@@ -265,6 +283,12 @@ namespace NeoAxis
 				//if( !show )
 				//	context.disableShowingLabelForThisObject = true;
 			}
+		}
+
+		//!!!!
+		double GetVisualLength()
+		{
+			return 5;
 		}
 
 		public void DebugDraw( Viewport viewport )
@@ -310,9 +334,7 @@ namespace NeoAxis
 					{
 						for( int n = 4; n < 8; n++ )
 						{
-							//!!!!
-							double distance = 5;
-
+							double distance = GetVisualLength();
 							var dir = ( frustumPoints[ n ] - pos ).GetNormalize() * distance;
 							var p = pos + dir * distance;
 							points[ n ] = p;
@@ -334,6 +356,64 @@ namespace NeoAxis
 				}
 				break;
 			}
+		}
+
+		public Bounds GetVisualBounds()
+		{
+			var transform = Transform.Value;
+			var pos = transform.Position;
+			var rot = transform.Rotation;
+
+			var bounds = new Bounds( pos );
+
+			double aspectRatio = AspectRatio;
+			if( aspectRatio == 0 )
+				aspectRatio = 1;
+
+			double halfWidth;
+			double halfHeight;
+			if( Projection.Value == ProjectionType.Perspective )
+			{
+				double tan = Math.Tan( FieldOfView.Value.InRadians() / 2 );
+				halfWidth = tan * FarClipPlane.Value * aspectRatio;
+				halfHeight = tan * FarClipPlane.Value;
+			}
+			else
+			{
+				halfWidth = Height * .5 * aspectRatio;
+				halfHeight = Height * .5;
+			}
+			var frustum = new Frustum( true, Projection.Value, pos, rot, NearClipPlane.Value, FarClipPlane.Value, halfWidth, halfHeight );
+			var frustumPoints = frustum.Points;
+
+			switch( Projection.Value )
+			{
+			case ProjectionType.Perspective:
+				{
+					var points = new Vector3[ 8 ];
+					{
+						for( int n = 4; n < 8; n++ )
+						{
+							double distance = GetVisualLength();
+							var dir = ( frustumPoints[ n ] - pos ).GetNormalize() * distance;
+							var p = pos + dir * distance;
+							points[ n ] = p;
+						}
+					}
+
+					for( int n = 4; n < 8; n++ )
+						bounds.Add( points[ n ] );
+				}
+				break;
+
+			case ProjectionType.Orthographic:
+				{
+					//!!!!
+				}
+				break;
+			}
+
+			return bounds;
 		}
 
 		[Category( "Exposure" )]
@@ -363,6 +443,11 @@ namespace NeoAxis
 				//var result = Math.Pow( 2.0, Ev100 - 2.0 ) * Exposure;
 				return result;
 			}
+		}
+
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "Camera" );
 		}
 	}
 }

@@ -100,6 +100,30 @@ namespace NeoAxis.Editor
 			KryptonContextMenuItem item;
 			string text;
 
+			//Select
+			text = Translate( "Select" );
+			item = new KryptonContextMenuItem( text, null, delegate ( object sender, EventArgs e )
+			{
+				EditorAPI.EditorActionClick( EditorAction.HolderEnum.ContextMenu, "Select" );
+			} );
+			item.Checked = transformTool.Mode == TransformTool.ModeEnum.None;
+			//item.Checked = workareaModeName == "Transform Select";
+			item.Image = EditorResourcesCache.Select;
+			item.ShortcutKeyDisplayString = EditorActions.GetFirstShortcutKeyString( "Select" );
+			items.Add( item );
+
+			//Move & Rotate
+			text = Translate( "Move && Rotate" );
+			item = new KryptonContextMenuItem( text, null, delegate ( object sender, EventArgs e )
+			{
+				EditorAPI.EditorActionClick( EditorAction.HolderEnum.ContextMenu, "Move & Rotate" );
+			} );
+			item.Checked = transformTool.Mode == TransformTool.ModeEnum.PositionRotation;
+			//item.Checked = workareaModeName == "Transform Move";
+			item.Image = EditorResourcesCache.MoveRotate;
+			item.ShortcutKeyDisplayString = EditorActions.GetFirstShortcutKeyString( "Move & Rotate" );
+			items.Add( item );
+
 			//Move
 			text = Translate( "Move" );
 			item = new KryptonContextMenuItem( text, null, delegate ( object sender, EventArgs e )
@@ -134,18 +158,6 @@ namespace NeoAxis.Editor
 			//item.Checked = workareaModeName == "Transform Scale";
 			item.Image = EditorResourcesCache.Scale;
 			item.ShortcutKeyDisplayString = EditorActions.GetFirstShortcutKeyString( "Scale" );
-			items.Add( item );
-
-			//Select
-			text = Translate( "Select" );
-			item = new KryptonContextMenuItem( text, null, delegate ( object sender, EventArgs e )
-			{
-				EditorAPI.EditorActionClick( EditorAction.HolderEnum.ContextMenu, "Select" );
-			} );
-			item.Checked = transformTool.Mode == TransformTool.ModeEnum.None;
-			//item.Checked = workareaModeName == "Transform Select";
-			item.Image = EditorResourcesCache.Select;
-			item.ShortcutKeyDisplayString = EditorActions.GetFirstShortcutKeyString( "Select" );
 			items.Add( item );
 		}
 

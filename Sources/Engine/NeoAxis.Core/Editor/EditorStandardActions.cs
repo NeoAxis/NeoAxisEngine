@@ -374,6 +374,22 @@ namespace NeoAxis.Editor
 				EditorActions.Register( a );
 			}
 
+			//Move & Rotate
+			{
+				var a = new EditorAction();
+				a.Name = "Move & Rotate";
+				a.CommonType = EditorAction.CommonTypeEnum.General;
+				a.Description = "Movement & rotation mode of the transform tool.";
+				a.ImageSmall = Properties.Resources.MoveRotate_16;
+				a.ImageBig = Properties.Resources.MoveRotate_32;
+				a.ImageBig_Dark = Properties.Resources.MoveRotate_32_Dark;
+				a.RibbonText = ("Move", "Rotate");
+				a.ShortcutKeys = new Keys[] { Keys.T };
+				a.QatSupport = true;
+				a.QatAddByDefault = true;
+				EditorActions.Register( a );
+			}
+
 			//Move
 			{
 				var a = new EditorAction();
@@ -383,7 +399,7 @@ namespace NeoAxis.Editor
 				a.ImageSmall = Properties.Resources.Move_16;
 				a.ImageBig = Properties.Resources.Move_32;
 				a.ImageBig_Dark = Properties.Resources.Move_32_Dark;
-				a.ShortcutKeys = new Keys[] { Keys.T };
+				a.ShortcutKeys = new Keys[] { Keys.Y };
 				a.QatSupport = true;
 				a.QatAddByDefault = true;
 				EditorActions.Register( a );
@@ -397,7 +413,7 @@ namespace NeoAxis.Editor
 				a.Description = "Rotation mode of the transform tool.";
 				a.ImageSmall = Properties.Resources.Rotate_16;
 				a.ImageBig = Properties.Resources.Rotate_32;
-				a.ShortcutKeys = new Keys[] { Keys.Y };
+				a.ShortcutKeys = new Keys[] { Keys.U };
 				a.QatSupport = true;
 				a.QatAddByDefault = true;
 				EditorActions.Register( a );
@@ -412,7 +428,7 @@ namespace NeoAxis.Editor
 				a.ImageSmall = Properties.Resources.Scale_16;
 				a.ImageBig = Properties.Resources.Scale_32;
 				a.ImageBig_Dark = Properties.Resources.Scale_32_Dark;
-				a.ShortcutKeys = new Keys[] { Keys.U };
+				a.ShortcutKeys = new Keys[] { Keys.I };
 				a.QatSupport = true;
 				a.QatAddByDefault = true;
 				EditorActions.Register( a );
@@ -4262,7 +4278,9 @@ namespace NeoAxis.Editor
 			//Load Camera Settings
 			{
 				var a = new EditorAction();
-				a.Name = "Load Camera Settings";
+				a.Name = "Load Settings From Camera";
+				//a.Name = "Load selected camera settings to viewport";
+				//a.Name = "Load Camera Settings";
 				a.Description = "Copy camera settings of the current viewport from selected camera.";
 				//a.ImageSmall = Properties.Resources.Default_16;
 				//a.ImageBig = Properties.Resources.Default_32;
@@ -4301,7 +4319,9 @@ namespace NeoAxis.Editor
 			//Save Camera Settings
 			{
 				var a = new EditorAction();
-				a.Name = "Save Camera Settings";
+				a.Name = "Save Settings To Camera";
+				//a.Name = "Save viewport settings to selected camera";
+				//a.Name = "Save Camera Settings";
 				a.Description = "Copy camera settings of the current viewport to selected camera.";
 				//a.ImageSmall = Properties.Resources.Default_16;
 				//a.ImageBig = Properties.Resources.Default_32;

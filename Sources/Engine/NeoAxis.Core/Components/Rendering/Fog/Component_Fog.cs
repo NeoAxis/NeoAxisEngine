@@ -13,6 +13,7 @@ namespace NeoAxis
 	/// <summary>
 	/// The fog effect in the scene.
 	/// </summary>
+	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class Component_Fog : Component
 	{
 		[Flags]
@@ -167,6 +168,11 @@ namespace NeoAxis
 				else
 					scene.CachedObjectsInSpaceToFastFindByRenderingPipeline.Remove( this );
 			}
+		}
+
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "Fog", true );
 		}
 	}
 }

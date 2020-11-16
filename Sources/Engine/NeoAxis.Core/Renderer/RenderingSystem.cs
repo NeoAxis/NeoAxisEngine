@@ -841,7 +841,7 @@ namespace NeoAxis
 			{
 				var item = items[ n ];
 				var attachment = new Attachment();
-				attachment.Texture = item.texture.Result.RealObject;
+				attachment.Texture = item.texture.Result.GetRealObject( true );
 				attachment.Mip = item.mip;
 				attachment.Layer = item.layer;
 				attachment.Access = ComputeBufferAccess.Write;
@@ -1058,7 +1058,7 @@ namespace NeoAxis
 			return ConvertColorValue( ref color );
 		}
 
-		internal static int CallBgfxFrame()
+		public static int CallBgfxFrame()
 		{
 			int result = Bgfx.Frame();
 			lastFrameNumber = result;

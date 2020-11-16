@@ -12,7 +12,7 @@ using NeoAxis.Editor;
 namespace NeoAxis
 {
 	/// <summary>
-	/// Represents an image or GPU texture data.
+	/// Represents a 2D or cubemap image. The component is useful to make cubemap textures from 6 2D images.
 	/// </summary>
 	[ResourceFileExtension( "image" )]
 	[EditorDocumentWindow( typeof( Component_Image_DocumentWindow ) )]
@@ -47,39 +47,12 @@ namespace NeoAxis
 		ReferenceField<ReferenceValueType_Resource> _loadFile;
 
 		/// <summary>
-		/// File name to load a cube texture from, Positive X side.
-		/// </summary>
-		[Serialize]
-		[DefaultValue( null )]
-		[Category( "Load" )]
-		[DisplayName( "Load Cube X+" )]
-		public Reference<ReferenceValueType_Resource> LoadCubePositiveX
-		{
-			get { if( _loadCubePositiveX.BeginGet() ) LoadCubePositiveX = _loadCubePositiveX.Get( this ); return _loadCubePositiveX.value; }
-			set
-			{
-				if( _loadCubePositiveX.BeginSet( ref value ) )
-				{
-					try
-					{
-						LoadCubePositiveXChanged?.Invoke( this );
-						ShouldRecompile = true;
-					}
-					finally { _loadCubePositiveX.EndSet(); }
-				}
-			}
-		}
-		/// <summary>Occurs when the <see cref="LoadCubePositiveX"/> property value changes.</summary>
-		public event Action<Component_Image> LoadCubePositiveXChanged;
-		ReferenceField<ReferenceValueType_Resource> _loadCubePositiveX;
-
-		/// <summary>
 		/// File name to load a cube texture from, Negative X side.
 		/// </summary>
 		[Serialize]
 		[DefaultValue( null )]
 		[Category( "Load" )]
-		[DisplayName( "Load Cube X-" )]
+		[DisplayName( "Load Cube -X" )]
 		public Reference<ReferenceValueType_Resource> LoadCubeNegativeX
 		{
 			get { if( _loadCubeNegativeX.BeginGet() ) LoadCubeNegativeX = _loadCubeNegativeX.Get( this ); return _loadCubeNegativeX.value; }
@@ -101,39 +74,12 @@ namespace NeoAxis
 		ReferenceField<ReferenceValueType_Resource> _loadCubeNegativeX;
 
 		/// <summary>
-		/// File name to load a cube texture from, Positive Y side.
-		/// </summary>
-		[Serialize]
-		[DefaultValue( null )]
-		[Category( "Load" )]
-		[DisplayName( "Load Cube Y+" )]
-		public Reference<ReferenceValueType_Resource> LoadCubePositiveY
-		{
-			get { if( _loadCubePositiveY.BeginGet() ) LoadCubePositiveY = _loadCubePositiveY.Get( this ); return _loadCubePositiveY.value; }
-			set
-			{
-				if( _loadCubePositiveY.BeginSet( ref value ) )
-				{
-					try
-					{
-						LoadCubePositiveYChanged?.Invoke( this );
-						ShouldRecompile = true;
-					}
-					finally { _loadCubePositiveY.EndSet(); }
-				}
-			}
-		}
-		/// <summary>Occurs when the <see cref="LoadCubePositiveY"/> property value changes.</summary>
-		public event Action<Component_Image> LoadCubePositiveYChanged;
-		ReferenceField<ReferenceValueType_Resource> _loadCubePositiveY;
-
-		/// <summary>
 		/// File name to load a cube texture from, Negative Y side.
 		/// </summary>
 		[Serialize]
 		[DefaultValue( null )]
 		[Category( "Load" )]
-		[DisplayName( "Load Cube Y-" )]
+		[DisplayName( "Load Cube -Y" )]
 		public Reference<ReferenceValueType_Resource> LoadCubeNegativeY
 		{
 			get { if( _loadCubeNegativeY.BeginGet() ) LoadCubeNegativeY = _loadCubeNegativeY.Get( this ); return _loadCubeNegativeY.value; }
@@ -155,39 +101,12 @@ namespace NeoAxis
 		ReferenceField<ReferenceValueType_Resource> _loadCubeNegativeY;
 
 		/// <summary>
-		/// File name to load a cube texture from, Positive Z side.
-		/// </summary>
-		[Serialize]
-		[DefaultValue( null )]
-		[Category( "Load" )]
-		[DisplayName( "Load Cube Z+" )]
-		public Reference<ReferenceValueType_Resource> LoadCubePositiveZ
-		{
-			get { if( _loadCubePositiveZ.BeginGet() ) LoadCubePositiveZ = _loadCubePositiveZ.Get( this ); return _loadCubePositiveZ.value; }
-			set
-			{
-				if( _loadCubePositiveZ.BeginSet( ref value ) )
-				{
-					try
-					{
-						LoadCubePositiveZChanged?.Invoke( this );
-						ShouldRecompile = true;
-					}
-					finally { _loadCubePositiveZ.EndSet(); }
-				}
-			}
-		}
-		/// <summary>Occurs when the <see cref="LoadCubePositiveZ"/> property value changes.</summary>
-		public event Action<Component_Image> LoadCubePositiveZChanged;
-		ReferenceField<ReferenceValueType_Resource> _loadCubePositiveZ;
-
-		/// <summary>
 		/// File name to load a cube texture from, Negative Z side.
 		/// </summary>
 		[Serialize]
 		[DefaultValue( null )]
 		[Category( "Load" )]
-		[DisplayName( "Load Cube Z-" )]
+		[DisplayName( "Load Cube -Z" )]
 		public Reference<ReferenceValueType_Resource> LoadCubeNegativeZ
 		{
 			get { if( _loadCubeNegativeZ.BeginGet() ) LoadCubeNegativeZ = _loadCubeNegativeZ.Get( this ); return _loadCubeNegativeZ.value; }
@@ -207,6 +126,87 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="LoadCubeNegativeZ"/> property value changes.</summary>
 		public event Action<Component_Image> LoadCubeNegativeZChanged;
 		ReferenceField<ReferenceValueType_Resource> _loadCubeNegativeZ;
+
+		/// <summary>
+		/// File name to load a cube texture from, Positive X side.
+		/// </summary>
+		[Serialize]
+		[DefaultValue( null )]
+		[Category( "Load" )]
+		[DisplayName( "Load Cube +X" )]
+		public Reference<ReferenceValueType_Resource> LoadCubePositiveX
+		{
+			get { if( _loadCubePositiveX.BeginGet() ) LoadCubePositiveX = _loadCubePositiveX.Get( this ); return _loadCubePositiveX.value; }
+			set
+			{
+				if( _loadCubePositiveX.BeginSet( ref value ) )
+				{
+					try
+					{
+						LoadCubePositiveXChanged?.Invoke( this );
+						ShouldRecompile = true;
+					}
+					finally { _loadCubePositiveX.EndSet(); }
+				}
+			}
+		}
+		/// <summary>Occurs when the <see cref="LoadCubePositiveX"/> property value changes.</summary>
+		public event Action<Component_Image> LoadCubePositiveXChanged;
+		ReferenceField<ReferenceValueType_Resource> _loadCubePositiveX;
+
+		/// <summary>
+		/// File name to load a cube texture from, Positive Y side.
+		/// </summary>
+		[Serialize]
+		[DefaultValue( null )]
+		[Category( "Load" )]
+		[DisplayName( "Load Cube +Y" )]
+		public Reference<ReferenceValueType_Resource> LoadCubePositiveY
+		{
+			get { if( _loadCubePositiveY.BeginGet() ) LoadCubePositiveY = _loadCubePositiveY.Get( this ); return _loadCubePositiveY.value; }
+			set
+			{
+				if( _loadCubePositiveY.BeginSet( ref value ) )
+				{
+					try
+					{
+						LoadCubePositiveYChanged?.Invoke( this );
+						ShouldRecompile = true;
+					}
+					finally { _loadCubePositiveY.EndSet(); }
+				}
+			}
+		}
+		/// <summary>Occurs when the <see cref="LoadCubePositiveY"/> property value changes.</summary>
+		public event Action<Component_Image> LoadCubePositiveYChanged;
+		ReferenceField<ReferenceValueType_Resource> _loadCubePositiveY;
+
+		/// <summary>
+		/// File name to load a cube texture from, Positive Z side.
+		/// </summary>
+		[Serialize]
+		[DefaultValue( null )]
+		[Category( "Load" )]
+		[DisplayName( "Load Cube +Z" )]
+		public Reference<ReferenceValueType_Resource> LoadCubePositiveZ
+		{
+			get { if( _loadCubePositiveZ.BeginGet() ) LoadCubePositiveZ = _loadCubePositiveZ.Get( this ); return _loadCubePositiveZ.value; }
+			set
+			{
+				if( _loadCubePositiveZ.BeginSet( ref value ) )
+				{
+					try
+					{
+						LoadCubePositiveZChanged?.Invoke( this );
+						ShouldRecompile = true;
+					}
+					finally { _loadCubePositiveZ.EndSet(); }
+				}
+			}
+		}
+		/// <summary>Occurs when the <see cref="LoadCubePositiveZ"/> property value changes.</summary>
+		public event Action<Component_Image> LoadCubePositiveZChanged;
+		ReferenceField<ReferenceValueType_Resource> _loadCubePositiveZ;
 
 		/////////////////////////////////////////
 

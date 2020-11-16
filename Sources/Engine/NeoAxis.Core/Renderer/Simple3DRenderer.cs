@@ -48,6 +48,9 @@ namespace NeoAxis
 
 		public abstract void SetOcclusionQuery( SharpBgfx.OcclusionQuery? query );
 
+		//public abstract void EnableNonOverlappingGroup();
+		//public abstract void DisableNonOverlappingGroup();
+
 		/////////////////////////////////////////
 
 		///// <summary>

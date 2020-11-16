@@ -21,7 +21,12 @@ namespace NeoAxis
 		[DefaultValue( null )]
 		public Reference<Component_Material> Material
 		{
-			get { if( _material.BeginGet() ) Material = _material.Get( this ); return _material.value; }
+			get
+			{
+				//!!!!fast exit optimization
+
+				if( _material.BeginGet() ) Material = _material.Get( this ); return _material.value;
+			}
 			set { if( _material.BeginSet( ref value ) ) { try { MaterialChanged?.Invoke( this ); } finally { _material.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Material"/> property value changes.</summary>
@@ -228,6 +233,19 @@ namespace NeoAxis
 			//			skip = true;
 			//		break;
 			//}
+		}
+
+		public override void NewObjectSetDefaultConfiguration( bool createdFromNewObjectWindow = false )
+		{
+			base.NewObjectSetDefaultConfiguration( createdFromNewObjectWindow );
+
+			Transform = new Transform( TransformV.Position, Quaternion.LookAt( new Vector3( 0, 0, -1 ), new Vector3( 0, 1, 0 ) ) );
+			Material = ReferenceUtility.MakeReference( @"Base\Components\Decal default.material" );
+		}
+
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "Decal" );
 		}
 	}
 }

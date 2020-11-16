@@ -13,16 +13,13 @@ void main()
 #ifdef GLOBAL_FOG_SUPPORT
 
 	float rawDepth = texture2D(s_depthTexture, v_texCoord0).x;
+
+	float backgroundFactor = 1.0;
+	if(rawDepth >= 1.0)
+		backgroundFactor = affectBackground.x;
 	
-	float value;
-	if(rawDepth < 1.0)
-	{
-		vec3 worldPosition = reconstructWorldPosition(u_invViewProj, v_texCoord0, rawDepth);
-		value = 1.0 - getFogFactor(worldPosition);
-	}
-	else
-		value = affectBackground.x;
-	
+	vec3 worldPosition = reconstructWorldPosition(u_invViewProj, v_texCoord0, rawDepth);
+	float value = 1.0 - getFogFactor(worldPosition, backgroundFactor);
 	gl_FragColor = vec4(u_fogColor.rgb, value);
 
 #else

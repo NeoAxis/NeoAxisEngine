@@ -193,6 +193,7 @@ namespace NeoAxis.Editor
 					tab.Groups.Add( group );
 
 					group.AddAction( "Select" );
+					group.AddAction( "Move & Rotate" );
 					group.AddAction( "Move" );
 					group.AddAction( "Rotate" );
 					group.AddAction( "Scale" );

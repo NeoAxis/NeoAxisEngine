@@ -10,7 +10,7 @@ using System.IO;
 namespace NeoAxis
 {
 	/// <summary>
-	/// Specifies a paint layer for the terrain or for the mesh.
+	/// Specifies a layer for the terrain or for the mesh. It defined by a material and a mask.
 	/// </summary>
 	public class Component_PaintLayer : Component
 	{

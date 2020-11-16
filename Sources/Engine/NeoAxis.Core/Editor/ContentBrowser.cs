@@ -3584,6 +3584,7 @@ namespace NeoAxis.Editor
 						}
 
 						//Separate Settings
+						if( EditorUtility.AllowSeparateSettings )
 						{
 							var item = new KryptonContextMenuItem( Translate( "Separate Settings" ), EditorResourcesCache.Settings,
 								delegate ( object s, EventArgs e2 )
@@ -4448,7 +4449,8 @@ namespace NeoAxis.Editor
 				{
 					//New resource
 					{
-						var item = new KryptonContextMenuItem( Translate( "New Resource of This Type" ), EditorResourcesCache.New,
+						//var item = new KryptonContextMenuItem( Translate( "New Resource of This Type" ), EditorResourcesCache.New,
+						var item = new KryptonContextMenuItem( Translate( "New Resource" ), EditorResourcesCache.New,
 						   delegate ( object s, EventArgs e2 )
 						   {
 							   var initData = new NewObjectWindow.CreationDataClass();
@@ -4509,6 +4511,22 @@ namespace NeoAxis.Editor
 							items.Add( item );
 						}
 					}
+
+					//Learn more about the type
+					{
+						var type = typeItem.Type;
+						var link = DocumentationLinksManager.GetFullLinkForType( type.GetNetType() );
+
+						var item = new KryptonContextMenuItem( Translate( "Learn More" ), EditorResourcesCache.Help,
+						   delegate ( object s, EventArgs e2 )
+						   {
+							   if( !string.IsNullOrEmpty( link ) )
+								   Process.Start( new ProcessStartInfo( link ) { UseShellExecute = true } );
+						   } );
+						item.Enabled = !string.IsNullOrEmpty( link );
+						items.Add( item );
+					}
+
 				}
 			}
 

@@ -31,6 +31,7 @@ namespace NeoAxis.Editor
 		//!!!!Move_32_Dark, Scale_32_Dark
 		public static readonly Image Move = RenderStandard.GetImageForDispalyScale( Resources.Move_16, Resources.Move_32 );
 		public static readonly Image Rotate = RenderStandard.GetImageForDispalyScale( Resources.Rotate_16, Resources.Rotate_32 );
+		public static readonly Image MoveRotate = RenderStandard.GetImageForDispalyScale( Resources.MoveRotate_16, Resources.MoveRotate_32 );
 		public static readonly Image Scale = RenderStandard.GetImageForDispalyScale( Resources.Scale_16, Resources.Scale_32 );
 		public static readonly Image Select = RenderStandard.GetImageForDispalyScale( Resources.Select_16, Resources.Select_32 );
 
@@ -52,6 +53,7 @@ namespace NeoAxis.Editor
 		public static readonly Image Type = RenderStandard.GetImageForDispalyScale( Resources.Class, Resources.Class_32 );
 
 		public static readonly Image Focus = RenderStandard.GetImageForDispalyScale( Resources.Focus_16, Resources.Focus_32 );
+		public static readonly Image Help = RenderStandard.GetImageForDispalyScale( Resources.Help_16, Resources.Help_32 );
 
 		//
 

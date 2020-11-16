@@ -13,6 +13,7 @@ namespace NeoAxis
 	/// Rendering effect to show darkened corners on the screen.
 	/// </summary>
 	[DefaultOrderOfEffect( 13 )]
+	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class Component_RenderingEffect_Vignetting : Component_RenderingEffect_Simple
 	{
 		const string shaderDefault = @"Base\Shaders\Effects\Vignetting_fs.sc";
@@ -98,6 +99,11 @@ namespace NeoAxis
 		public override bool LimitedDevicesSupport
 		{
 			get { return true; }
+		}
+
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "ScreenEffect", true );
 		}
 	}
 }

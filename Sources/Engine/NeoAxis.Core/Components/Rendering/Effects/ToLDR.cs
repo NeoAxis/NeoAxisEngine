@@ -13,6 +13,7 @@ namespace NeoAxis
     /// Screen effect for converting scene to low dynamic range.
     /// </summary>
 	[DefaultOrderOfEffect( 4 )]
+	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class Component_RenderingEffect_ToLDR : Component_RenderingEffect
 	{
 		protected override void OnRender( ViewportRenderingContext context, Component_RenderingPipeline.IFrameData frameData, ref Component_Image actualTexture )

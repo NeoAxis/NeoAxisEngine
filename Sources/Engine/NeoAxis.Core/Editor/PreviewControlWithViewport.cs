@@ -277,6 +277,12 @@ namespace NeoAxis.Editor
 			set { cameraRotationMode = value; }
 		}
 
+		public SphericalDirection CameraDirection
+		{
+			get { return cameraDirection; }
+			set { cameraDirection = value; }
+		}
+
 		public Component_Scene CreateScene( bool enable )
 		{
 			DestroyScene();

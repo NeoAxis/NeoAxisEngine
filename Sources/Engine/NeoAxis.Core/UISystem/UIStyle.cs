@@ -446,12 +446,12 @@ namespace NeoAxis
 			}
 		}
 
-		static Vector2 Multiply( Rectangle rectangle, Vector2 value )
+		protected static Vector2 Multiply( Rectangle rectangle, Vector2 value )
 		{
 			return new Vector2( rectangle.LeftTop + rectangle.Size * value );
 		}
 
-		static Rectangle Multiply( Rectangle rectangle, Rectangle value )
+		protected static Rectangle Multiply( Rectangle rectangle, Rectangle value )
 		{
 			return new Rectangle( Multiply( rectangle, value.LeftTop ), Multiply( rectangle, value.RightBottom ) );
 		}

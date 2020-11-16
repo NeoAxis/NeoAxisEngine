@@ -5,7 +5,7 @@
 	.component NeoAxis.Component
 	{
 		Name = Materials
-		.component "Samples\\Starter Content\\Materials\\Vegetation Animation.material"
+		.component "Base\\Material templates\\Vegetation Animation.material"
 		{
 			Name = Material 1
 			BlendMode = Masked

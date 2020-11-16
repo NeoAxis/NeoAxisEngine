@@ -962,10 +962,21 @@ namespace NeoAxis
 		{
 			var emitter = CreateComponent<Component_ParticleEmitter>();
 			emitter.Name = "Emitter";
+			emitter.Material = ReferenceUtility.MakeReference( @"Base\Components\Particle system default.material" );
+			emitter.DispersionAngle = new Component_ParticleEmitter.SingleProperty( 10 );
 
 			var shape = emitter.CreateComponent<Component_ParticleEmitterShape_Point>();
 			shape.Name = "Point Shape";
 			shape.Transform = new Transform( Vector3.Zero, new Angles( 0, 90, 0 ).ToQuaternion() );
+
+			var colorMultiplier = emitter.CreateComponent<Component_ParticleColorMultiplierByTime>();
+			colorMultiplier.Name = "Color Multiplier By Time";
+			colorMultiplier.Channels = Component_ParticleColorMultiplierByTime.ChannelsEnum.Alpha;
+			colorMultiplier.Type = Component_ParticleColorMultiplierByTime.TypeEnum.Curve;
+			colorMultiplier.Curve.Add( new CurvePoint( 0, 0 ) );
+			colorMultiplier.Curve.Add( new CurvePoint( 1, 1 ) );
+			colorMultiplier.Curve.Add( new CurvePoint( 2, 1 ) );
+			colorMultiplier.Curve.Add( new CurvePoint( 3, 0 ) );
 		}
 
 	}

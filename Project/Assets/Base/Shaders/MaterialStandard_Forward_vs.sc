@@ -93,8 +93,7 @@ void main()
 	//fog
 #ifdef GLOBAL_FOG_SUPPORT
 	#if defined(BLEND_MODE_TRANSPARENT) || defined(BLEND_MODE_ADD)
-	//#ifdef BLEND_MODE_TRANSPARENT
-		v_fogFactor = getFogFactor(v_worldPosition);
+		v_fogFactor = getFogFactor(v_worldPosition, 1.0);
 	#endif
 #endif
 

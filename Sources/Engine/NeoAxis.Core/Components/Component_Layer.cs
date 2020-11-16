@@ -11,7 +11,7 @@ using System.Drawing.Design;
 namespace NeoAxis
 {
 	/// <summary>
-	/// Class for grouping components.
+	/// A class for grouping components of the scene.
 	/// </summary>
 	public class Component_Layer : Component, IComponent_VisibleInHierarchy, IComponent_CanBeSelectedInHierarchy
 	{

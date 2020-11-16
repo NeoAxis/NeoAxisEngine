@@ -64,11 +64,11 @@ namespace NeoAxis
 		/// </summary>
 		public class LastFrameScreenLabelItem
 		{
-			//!!!!обязательно ли Object in space
-			public Component_ObjectInSpace ObjectInSpace;
+			public Component Object;
 			public float DistanceToCamera;
 			public Rectangle ScreenRectangle;
 			public ColorValue Color;
+			public bool AlwaysVisible;
 
 			public enum ShapeEnum
 			{
@@ -77,8 +77,8 @@ namespace NeoAxis
 			}
 			public ShapeEnum Shape = ShapeEnum.Ellipse;
 		}
-		List<LastFrameScreenLabelItem> lastFrameScreenLabels = new List<LastFrameScreenLabelItem>();
-		Dictionary<Component_ObjectInSpace, LastFrameScreenLabelItem> lastFrameScreenLabelByObjectInSpace = new Dictionary<Component_ObjectInSpace, LastFrameScreenLabelItem>();
+		LinkedList<LastFrameScreenLabelItem> lastFrameScreenLabels = new LinkedList<LastFrameScreenLabelItem>();
+		Dictionary<Component, LastFrameScreenLabelItem> lastFrameScreenLabelByObjectInSpace = new Dictionary<Component, LastFrameScreenLabelItem>();
 
 		//!!!!new. так?
 		bool allowRenderScreenLabels = true;
@@ -1750,17 +1750,17 @@ namespace NeoAxis
 		/// <summary>
 		/// The list of object labels on the screen that were shown in the last frame.
 		/// </summary>
-		public List<LastFrameScreenLabelItem> LastFrameScreenLabels
+		public LinkedList<LastFrameScreenLabelItem> LastFrameScreenLabels
 		{
 			get { return lastFrameScreenLabels; }
 		}
 
-		public Dictionary<Component_ObjectInSpace, LastFrameScreenLabelItem> LastFrameScreenLabelByObjectInSpace
+		public Dictionary<Component, LastFrameScreenLabelItem> LastFrameScreenLabelByObjectInSpace
 		{
 			get { return lastFrameScreenLabelByObjectInSpace; }
 		}
 
-		public LastFrameScreenLabelItem GetLastFrameScreenLabelByObjectInSpace( Component_ObjectInSpace obj )
+		public LastFrameScreenLabelItem GetLastFrameScreenLabelByObjectInSpace( Component obj )
 		{
 			lastFrameScreenLabelByObjectInSpace.TryGetValue( obj, out var item );
 			return item;

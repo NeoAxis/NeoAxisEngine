@@ -13,6 +13,7 @@ namespace NeoAxis
     /// Radial blur screen effect.
     /// </summary>
 	[DefaultOrderOfEffect( 12 )]
+	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class Component_RenderingEffect_RadialBlur : Component_RenderingEffect_Simple
 	{
 		const string shaderDefault = @"Base\Shaders\Effects\RadialBlur_fs.sc";
@@ -55,6 +56,11 @@ namespace NeoAxis
 		public override bool LimitedDevicesSupport
 		{
 			get { return true; }
+		}
+
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "ScreenEffect", true );
 		}
 	}
 }

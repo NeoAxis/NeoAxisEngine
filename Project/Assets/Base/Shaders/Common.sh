@@ -118,18 +118,16 @@ vec3 flipCubemapCoords(vec3 uvw)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #ifdef GLOBAL_FOG_SUPPORT
-float getFogFactor(vec3 worldPosition)
+float getFogFactor(vec3 worldPosition, float backgroundFactor)
 {
-	float fog = 0.0;
-
-	int distanceMode = int(u_fogDistanceMode);
-	int heightMode = int(u_fogHeightMode);
-	
-	//BRANCH?
-	if(distanceMode != 0 || heightMode != 0)
+	BRANCH
+	if(u_fogDistanceMode != 0.0 || u_fogHeightMode != 0.0)
 	{
-		fog = 1.0;
-
+		int distanceMode = int(u_fogDistanceMode);
+		int heightMode = int(u_fogHeightMode);
+		
+		float fog = 0.0;
+		
 		//Exp, Exp2
 		bool modeExp = distanceMode == 1;
 		bool modeExp2 = distanceMode == 2;
@@ -138,21 +136,25 @@ float getFogFactor(vec3 worldPosition)
 			float cameraDistance = length(worldPosition - u_viewportOwnerCameraPosition);
 
 			float distance = cameraDistance - u_fogStartDistance;
-			if(distance < 0.0) distance = 0.0;
+			if(distance < 0.0)
+				distance = 0.0;
 			float m = distance * u_fogDensity;
 			if( modeExp2 )
 				m *= m;
 			fog = 1.0 - saturate(1.0 / exp( m * log( 2.718281828 )));
+			fog *= backgroundFactor;
 		}
 
 		//Height
 		if(heightMode != 0)
-			fog *= saturate((u_fogHeight - worldPosition.z) / u_fogHeightScale);
+			fog = saturate(fog + saturate((u_fogHeight - worldPosition.z) / u_fogHeightScale));
 
 		fog *= u_fogColor.w;
+		
+		return 1.0 - fog;
 	}
-
-	return 1.0 - fog;
+	else
+		return 1.0;
 }
 #endif
 

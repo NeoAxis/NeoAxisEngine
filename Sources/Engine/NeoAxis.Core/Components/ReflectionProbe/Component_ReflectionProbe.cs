@@ -72,7 +72,7 @@ namespace NeoAxis
 		/// The cubemap texture of reflection data used by the probe.
 		/// </summary>
 		[Category( "Resource" )]
-		[DefaultValueReference( @"Samples\Starter Content\Environments\Forest.image" )]
+		[DefaultValueReference( @"Base\Environments\Forest.image" )]
 		public Reference<Component_Image> Cubemap
 		{
 			get { if( _cubemap.BeginGet() ) Cubemap = _cubemap.Get( this ); return _cubemap.value; }
@@ -91,7 +91,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="Cubemap"/> property value changes.</summary>
 		public event Action<Component_ReflectionProbe> CubemapChanged;
-		ReferenceField<Component_Image> _cubemap = new Reference<Component_Image>( null, @"Samples\Starter Content\Environments\Forest.image" );
+		ReferenceField<Component_Image> _cubemap = new Reference<Component_Image>( null, @"Base\Environments\Forest.image" );
 
 		///// <summary>
 		///// The cubemap texture of irradiance data used by the probe.
@@ -643,16 +643,16 @@ namespace NeoAxis
 					viewport.RenderingContext.MultiRenderTarget_DestroyAll();
 					viewport.RenderingContext.DynamicTexture_DestroyAll();
 
-					texture.Result.RealObject.BlitTo( viewport.RenderingContext.CurrentViewNumber, textureRead.Result.RealObject, 0, 0 );
+					texture.Result.GetRealObject( true ).BlitTo( viewport.RenderingContext.CurrentViewNumber, textureRead.Result.GetRealObject( true ), 0, 0 );
 
 					//get data
 					var totalBytes = PixelFormatUtility.GetNumElemBytes( format ) * size * size;
 					var data = new byte[ totalBytes ];
 					unsafe
 					{
-						fixed ( byte* pBytes = data )
+						fixed( byte* pBytes = data )
 						{
-							var demandedFrame = textureRead.Result.RealObject.Read( (IntPtr)pBytes, 0 );
+							var demandedFrame = textureRead.Result.GetRealObject( true ).Read( (IntPtr)pBytes, 0 );
 
 							while( RenderingSystem.CallBgfxFrame() < demandedFrame )
 							{
@@ -663,16 +663,48 @@ namespace NeoAxis
 					Vector2I index = Vector2I.Zero;
 					switch( face )
 					{
-					case 0: index = new Vector2I( 2, 1 ); break;
-					case 1: index = new Vector2I( 0, 1 ); break;
+					case 1: index = new Vector2I( 2, 1 ); break;
+					case 0: index = new Vector2I( 0, 1 ); break;
 					case 2: index = new Vector2I( 1, 0 ); break;
 					case 3: index = new Vector2I( 1, 2 ); break;
 					case 4: index = new Vector2I( 1, 1 ); break;
 					case 5: index = new Vector2I( 3, 1 ); break;
 					}
+					//switch( face )
+					//{
+					//case 0: index = new Vector2I( 2, 1 ); break;
+					//case 1: index = new Vector2I( 0, 1 ); break;
+					//case 2: index = new Vector2I( 1, 0 ); break;
+					//case 3: index = new Vector2I( 1, 2 ); break;
+					//case 4: index = new Vector2I( 1, 1 ); break;
+					//case 5: index = new Vector2I( 3, 1 ); break;
+					//}
 
 					var faceImage = new ImageUtility.Image2D( format, new Vector2I( size, size ), data );
-					image2D.Blit( index * size, faceImage );
+
+					//flip by X
+					var faceImageFlip = new ImageUtility.Image2D( format, new Vector2I( size, size ) );
+					for( int y = 0; y < size; y++ )
+					{
+						for( int x = 0; x < size; x++ )
+						{
+							var pixel = faceImage.GetPixel( new Vector2I( x, y ) );
+							faceImageFlip.SetPixel( new Vector2I( size - 1 - x, y ), pixel );
+						}
+					}
+
+					image2D.Blit( index * size, faceImageFlip );
+				}
+
+				//reset alpha channel
+				for( int y = 0; y < image2D.Size.Y; y++ )
+				{
+					for( int x = 0; x < image2D.Size.X; x++ )
+					{
+						var pixel = image2D.GetPixel( new Vector2I( x, y ) );
+						pixel.W = 1.0f;
+						image2D.SetPixel( new Vector2I( x, y ), pixel );
+					}
 				}
 
 				var destRealFileName = VirtualPathUtility.GetRealPathByVirtual( GetDestVirtualFileName() );
@@ -816,6 +848,11 @@ namespace NeoAxis
 						processedIrradianceCubemap = ResourceManager.LoadResource<Component_Image>( irrVirtualFileName );
 				}
 			}
+		}
+
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "ReflectionProbe" );
 		}
 	}
 }

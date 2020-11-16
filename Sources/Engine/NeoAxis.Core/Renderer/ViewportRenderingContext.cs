@@ -951,18 +951,47 @@ namespace NeoAxis
 			TextureFlags flags = TextureFlags.None;
 
 			//adressing mode
-			switch( value.AddressingMode )
+			if( ( value.AddressingMode & TextureAddressingMode.Mirror ) != 0 )
 			{
-			case TextureAddressingMode.Mirror:
-				flags |= TextureFlags.MirrorU | TextureFlags.MirrorV | TextureFlags.MirrorW;
-				break;
-			case TextureAddressingMode.Clamp:
-				flags |= TextureFlags.ClampU | TextureFlags.ClampV | TextureFlags.ClampW;
-				break;
-			case TextureAddressingMode.Border:
-				flags |= TextureFlags.BorderU | TextureFlags.BorderV | TextureFlags.BorderW;
-				break;
+				if( ( value.AddressingMode & TextureAddressingMode.MirrorU ) != 0 )
+					flags |= TextureFlags.MirrorU;
+				if( ( value.AddressingMode & TextureAddressingMode.MirrorV ) != 0 )
+					flags |= TextureFlags.MirrorV;
+				if( ( value.AddressingMode & TextureAddressingMode.MirrorW ) != 0 )
+					flags |= TextureFlags.MirrorW;
 			}
+			if( ( value.AddressingMode & TextureAddressingMode.Clamp ) != 0 )
+			{
+				if( ( value.AddressingMode & TextureAddressingMode.ClampU ) != 0 )
+					flags |= TextureFlags.ClampU;
+				if( ( value.AddressingMode & TextureAddressingMode.ClampV ) != 0 )
+					flags |= TextureFlags.ClampV;
+				if( ( value.AddressingMode & TextureAddressingMode.ClampW ) != 0 )
+					flags |= TextureFlags.ClampW;
+			}
+			if( ( value.AddressingMode & TextureAddressingMode.Border ) != 0 )
+			{
+				if( ( value.AddressingMode & TextureAddressingMode.BorderU ) != 0 )
+					flags |= TextureFlags.BorderU;
+				if( ( value.AddressingMode & TextureAddressingMode.BorderV ) != 0 )
+					flags |= TextureFlags.BorderV;
+				if( ( value.AddressingMode & TextureAddressingMode.BorderW ) != 0 )
+					flags |= TextureFlags.BorderW;
+			}
+
+			////adressing mode
+			//switch( value.AddressingMode )
+			//{
+			//case TextureAddressingMode.Mirror:
+			//	flags |= TextureFlags.MirrorU | TextureFlags.MirrorV | TextureFlags.MirrorW;
+			//	break;
+			//case TextureAddressingMode.Clamp:
+			//	flags |= TextureFlags.ClampU | TextureFlags.ClampV | TextureFlags.ClampW;
+			//	break;
+			//case TextureAddressingMode.Border:
+			//	flags |= TextureFlags.BorderU | TextureFlags.BorderV | TextureFlags.BorderW;
+			//	break;
+			//}
 
 			//filtering
 			if( value.FilteringMin == FilterOption.Point )
@@ -991,7 +1020,7 @@ namespace NeoAxis
 			//!!!!impl border color
 			//!!!!еще есть настройки MSAA
 
-			var realObject = value.Texture?.Result?.RealObject;
+			var realObject = value.Texture?.Result?.GetRealObject( true );
 			if( realObject != null )
 				Bgfx.SetTexture( (byte)value.TextureUnit, Uniform.Invalid, realObject, flags );
 		}

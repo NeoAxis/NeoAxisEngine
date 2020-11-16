@@ -75,8 +75,14 @@ namespace NeoAxis.Editor
 			if( document.SpecialMode == "ProjectSettingsUserMode" )
 				ReadOnlyHierarchy = true;
 
-			if( document.SpecialMode != "ProjectSettingsUserMode" )
+			if( document.SpecialMode == "ProjectSettingsUserMode" )
 			{
+				kryptonButtonClose.Values.Text = EditorLocalization.Translate( "General", "Cancel" );
+			}
+			else
+			{
+				kryptonButtonOK.Enabled = false;
+				kryptonButtonOK.Visible = false;
 				kryptonButtonApply.Enabled = false;
 				kryptonButtonApply.Visible = false;
 			}
@@ -435,9 +441,23 @@ namespace NeoAxis.Editor
 			}
 		}
 
+		private void kryptonButtonClose_Click( object sender, EventArgs e )
+		{
+			if( Document.SpecialMode == "ProjectSettingsUserMode" )
+				ShowDialogAndSaveDocumentAutoAnswer = EDialogResult.No;
+			Close();
+		}
+
 		private void kryptonButtonOK_Click( object sender, EventArgs e )
 		{
+			if( Document.SpecialMode == "ProjectSettingsUserMode" )
+				ShowDialogAndSaveDocumentAutoAnswer = EDialogResult.Yes;
 			Close();
+		}
+
+		private void kryptonButtonApply_Click( object sender, EventArgs e )
+		{
+			Document.Save();
 		}
 
 		public override ObjectsInFocus GetObjectsInFocus()
@@ -448,11 +468,6 @@ namespace NeoAxis.Editor
 		protected override bool CanUpdateSettingsWindowsSelectedObjects()
 		{
 			return false;
-		}
-
-		private void kryptonButtonApply_Click( object sender, EventArgs e )
-		{
-			Document.Save();
 		}
 
 		//!!!!

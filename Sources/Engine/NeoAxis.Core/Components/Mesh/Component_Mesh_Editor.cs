@@ -189,10 +189,12 @@ namespace NeoAxis.Editor
 				//vertex color
 				if( Mesh.EditorDisplayVertexColor )
 				{
-					var vertices = new Simple3DRenderer.Vertex[ selectedLOD.ExtractedVertices.Length ];
+					var extractedVertices = selectedLOD.GetExtractedVertices( true );
+
+					var vertices = new Simple3DRenderer.Vertex[ extractedVertices.Length ];
 					for( int n = 0; n < vertices.Length; n++ )
 					{
-						var sourceVertex = selectedLOD.ExtractedVertices[ n ];
+						ref var sourceVertex = ref extractedVertices[ n ];
 
 						var vertex = new Simple3DRenderer.Vertex();
 						vertex.position = sourceVertex.Position;
@@ -237,7 +239,7 @@ namespace NeoAxis.Editor
 					var size3 = meshBounds.CalculatedBoundingBox.GetSize();
 					var scale = (float)Math.Max( size3.X, Math.Max( size3.Y, size3.Z ) ) / 30;
 					Viewport.Simple3DRenderer.SetColor( new ColorValue( 0, 1, 0, 0.7 ) );
-					foreach( var vertex in selectedLOD.ExtractedVertices )
+					foreach( var vertex in selectedLOD.GetExtractedVertices( true ) )
 					{
 						if( vertex.Normal != Vector3F.Zero )
 							Viewport.Simple3DRenderer.AddLineThin( vertex.Position, vertex.Position + vertex.Normal * scale );
@@ -250,7 +252,7 @@ namespace NeoAxis.Editor
 					var size3 = meshBounds.CalculatedBoundingBox.GetSize();
 					var scale = (float)Math.Max( size3.X, Math.Max( size3.Y, size3.Z ) ) / 30;
 					Viewport.Simple3DRenderer.SetColor( new ColorValue( 1, 0, 0, 0.7 ) );
-					foreach( var vertex in selectedLOD.ExtractedVertices )
+					foreach( var vertex in selectedLOD.GetExtractedVertices( true ) )
 					{
 						if( vertex.Tangent != Vector4F.Zero )
 							Viewport.Simple3DRenderer.AddLineThin( vertex.Position, vertex.Position + vertex.Tangent.ToVector3F() * scale );
@@ -263,7 +265,7 @@ namespace NeoAxis.Editor
 					var size3 = meshBounds.CalculatedBoundingBox.GetSize();
 					var scale = (float)Math.Max( size3.X, Math.Max( size3.Y, size3.Z ) ) / 30;
 					Viewport.Simple3DRenderer.SetColor( new ColorValue( 0, 0, 1, 0.7 ) );
-					foreach( var vertex in selectedLOD.ExtractedVertices )
+					foreach( var vertex in selectedLOD.GetExtractedVertices( true ) )
 					{
 						if( vertex.Normal != Vector3F.Zero && vertex.Tangent != Vector4F.Zero )
 						{
@@ -366,7 +368,7 @@ namespace NeoAxis.Editor
 				//selected triangle data
 				if( triangleIndex != -1 )
 				{
-					var vertices = selectedLOD.ExtractedVertices;
+					var vertices = selectedLOD.GetExtractedVertices( true );
 					var indices = selectedLOD.ExtractedIndices;
 
 					int index0 = indices[ triangleIndex * 3 + 0 ];
@@ -588,7 +590,7 @@ namespace NeoAxis.Editor
 
 				if( ( meshData.ExtractedVerticesComponents & component ) != 0 )
 				{
-					var uvArray = (Vector2F[])StandardVertex.ExtractOneComponentArray( meshData.ExtractedVertices, component );
+					var uvArray = (Vector2F[])StandardVertex.ExtractOneComponentArray( meshData.GetExtractedVertices( true ), component );
 
 					//bool valid = Array.Exists( uvArray, item => item != Vec2F.Zero );
 					//if( valid )

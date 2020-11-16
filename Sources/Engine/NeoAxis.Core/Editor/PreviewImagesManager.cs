@@ -161,9 +161,9 @@ namespace NeoAxis.Editor
 						viewport.RenderingContext.MultiRenderTarget_DestroyAll();
 						viewport.RenderingContext.DynamicTexture_DestroyAll();
 
-						texture.Result.RealObject.BlitTo( viewport.RenderingContext.CurrentViewNumber, textureRead.Result.RealObject, 0, 0 );
+						texture.Result.GetRealObject( true ).BlitTo( viewport.RenderingContext.CurrentViewNumber, textureRead.Result.GetRealObject( true ), 0, 0 );
 
-						demandedFrame = textureRead.Result.RealObject.Read( imageData, 0 );
+						demandedFrame = textureRead.Result.GetRealObject( true ).Read( imageData, 0 );
 					}
 					else
 						ClearTask();
@@ -377,10 +377,9 @@ namespace NeoAxis.Editor
 
 		internal static void Init()
 		{
-			var types = new string[] { "Material", "Image", "Mesh", "Import 3D" };
+			var types = new string[] { "Material", "Image", "Mesh", "Import 3D", "Skybox" };
 			//!!!!
 			//Character
-			//Skybox
 			//Character2D
 			//Surface
 			//Sprite

@@ -20,7 +20,7 @@ namespace NeoAxis
 	//!!!!по ссылке получать результат. т.е. например переопределить, чтобы внутри меша (детей) генерилось как-то по другому
 
 	/// <summary>
-	/// The construct of mesh geometries.
+	/// Represents a 3D mesh in the engine. The child mesh geometries defines the mesh data.
 	/// </summary>
 	[ResourceFileExtension( "mesh" )]
 	[EditorDocumentWindow( typeof( Component_Mesh_Editor ) )]
@@ -29,6 +29,10 @@ namespace NeoAxis
 	[EditorSettingsCell( typeof( Component_Mesh_SettingsCell ) )]
 	public partial class Component_Mesh : Component_ResultCompile<Component_Mesh.CompiledData>
 	{
+		static ESet<Component_Mesh> instances = new ESet<Component_Mesh>();
+
+		//
+
 		//!!!!ссылочное? тогда видимое в редакторе. свойство мешать будет?
 		[Browsable( false )]
 		[Cloneable]
@@ -560,7 +564,7 @@ namespace NeoAxis
 			{
 				if( !owner.CalculateExtractedDataAndBounds )
 				{
-					extractedVertices = new StandardVertex[ 0 ];
+					//extractedVertices = new StandardVertex[ 0 ];
 					extractedVerticesComponents = 0;
 					extractedVerticesPositions = new Vector3F[ 0 ];
 					extractedIndices = new int[ 0 ];
@@ -574,7 +578,7 @@ namespace NeoAxis
 					{
 						if( buffer.Vertices == null )
 						{
-							extractedVertices = new StandardVertex[ 0 ];
+							//extractedVertices = new StandardVertex[ 0 ];
 							extractedVerticesComponents = 0;
 							extractedVerticesPositions = new Vector3F[ 0 ];
 							extractedIndices = new int[ 0 ];
@@ -583,7 +587,7 @@ namespace NeoAxis
 					}
 					if( oper.IndexBuffer != null && oper.IndexBuffer.Indices == null )
 					{
-						extractedVertices = new StandardVertex[ 0 ];
+						//extractedVertices = new StandardVertex[ 0 ];
 						extractedVerticesComponents = 0;
 						extractedVerticesPositions = new Vector3F[ 0 ];
 						extractedIndices = new int[ 0 ];
@@ -600,7 +604,7 @@ namespace NeoAxis
 					totalIndices += oper.IndexCount;
 				}
 
-				extractedVertices = new StandardVertex[ totalVertices ];
+				//extractedVertices = new StandardVertex[ totalVertices ];
 				extractedVerticesComponents = 0;
 				extractedVerticesPositions = new Vector3F[ totalVertices ];
 				extractedIndices = new int[ totalIndices ];
@@ -626,13 +630,275 @@ namespace NeoAxis
 
 							int destIndex = startIndex;
 							foreach( var p in values )
+								extractedVerticesPositions[ destIndex++ ] = p;
+
+							//var buffer = oper.VertexBuffers[ element.Source ];
+							//var values = buffer.ExtractChannel<Vector3F>( element.Offset );
+
+							//int destIndex = startIndex;
+							//foreach( var p in values )
+							//{
+							//	extractedVertices[ destIndex++ ].Position = p;
+							//	////!!!!slowly
+							//	//extractedVertices[ destIndex++ ].Position = ( item.transform * p.ToVector3() ).ToVector3F();
+							//}
+
+							extractedVerticesComponents |= StandardVertex.Components.Position;
+						}
+					}
+
+					//Normal
+					{
+						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.Normal, out VertexElement element ) &&
+							element.Type == VertexElementType.Float3 )
+						{
+							//var buffer = oper.VertexBuffers[ element.Source ];
+							//var values = buffer.ExtractChannel<Vector3F>( element.Offset );
+
+							//int destIndex = startIndex;
+							//foreach( var p in values )
+							//{
+							//	extractedVertices[ destIndex++ ].Normal = p;
+
+							//	////!!!!slowly
+							//	////!!!!true?
+
+							//	//var v = ( item.transform.Rotation * p.ToVector3() ).ToVector3F();
+							//	////if( normalizeNormalsTangents )
+							//	//v.Normalize();
+							//	//extractedVertices[ destIndex++ ].Normal = v;
+							//}
+
+							extractedVerticesComponents |= StandardVertex.Components.Normal;
+						}
+					}
+
+					//Tangent
+					{
+						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.Tangent, out VertexElement element ) &&
+							element.Type == VertexElementType.Float4 )
+						{
+							//var buffer = oper.VertexBuffers[ element.Source ];
+							//var values = buffer.ExtractChannel<Vector4F>( element.Offset );
+
+							//int destIndex = startIndex;
+							//foreach( var p in values )
+							//{
+							//	extractedVertices[ destIndex++ ].Tangent = p;
+
+							//	////!!!!slowly
+							//	////!!!!true?
+
+							//	//var v = ( item.transform.Rotation * p.ToVector3F().ToVector3() ).ToVector3F();
+							//	////if( normalizeNormalsTangents )
+							//	//v.Normalize();
+							//	//extractedVertices[ destIndex++ ].Tangent = new Vector4F( v, p.W );
+							//}
+
+							extractedVerticesComponents |= StandardVertex.Components.Tangent;
+						}
+					}
+
+					//Color
+					{
+						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.Color0, out VertexElement element ) )
+						{
+							if( element.Type == VertexElementType.Float4 )
+							{
+								//var buffer = oper.VertexBuffers[ element.Source ];
+								//var values = buffer.ExtractChannel<Vector4F>( element.Offset );
+								//int destIndex = startIndex;
+								//foreach( var p in values )
+								//	extractedVertices[ destIndex++ ].Color = p.ToColorValue();
+								extractedVerticesComponents |= StandardVertex.Components.Color;
+							}
+							else if( element.Type == VertexElementType.ColorABGR )
+							{
+								//!!!!check
+
+								//var buffer = oper.VertexBuffers[ element.Source ];
+								//var values = buffer.ExtractChannel<uint>( element.Offset );
+								//int destIndex = startIndex;
+								//foreach( var p in values )
+								//	extractedVertices[ destIndex++ ].Color = new ColorValue( ColorByte.FromABGR( p ) );
+								extractedVerticesComponents |= StandardVertex.Components.Color;
+							}
+							else if( element.Type == VertexElementType.ColorARGB )
+							{
+								//!!!!check
+
+								//var buffer = oper.VertexBuffers[ element.Source ];
+								//var values = buffer.ExtractChannel<uint>( element.Offset );
+								//int destIndex = startIndex;
+								//foreach( var p in values )
+								//	extractedVertices[ destIndex++ ].Color = new ColorValue( ColorByte.FromARGB( p ) );
+								extractedVerticesComponents |= StandardVertex.Components.Color;
+							}
+						}
+					}
+
+					//TexCoord0
+					{
+						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.TextureCoordinate0, out VertexElement element ) &&
+							element.Type == VertexElementType.Float2 )
+						{
+							//var buffer = oper.VertexBuffers[ element.Source ];
+							//var values = buffer.ExtractChannel<Vector2F>( element.Offset );
+							//int destIndex = startIndex;
+							//foreach( var p in values )
+							//	extractedVertices[ destIndex++ ].TexCoord0 = p;
+							extractedVerticesComponents |= StandardVertex.Components.TexCoord0;
+						}
+					}
+
+					//TexCoord1
+					{
+						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.TextureCoordinate1, out VertexElement element ) &&
+							element.Type == VertexElementType.Float2 )
+						{
+							//var buffer = oper.VertexBuffers[ element.Source ];
+							//var values = buffer.ExtractChannel<Vector2F>( element.Offset );
+							//int destIndex = startIndex;
+							//foreach( var p in values )
+							//	extractedVertices[ destIndex++ ].TexCoord1 = p;
+							extractedVerticesComponents |= StandardVertex.Components.TexCoord1;
+						}
+					}
+
+					//TexCoord2
+					{
+						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.TextureCoordinate2, out VertexElement element ) &&
+							element.Type == VertexElementType.Float2 )
+						{
+							//var buffer = oper.VertexBuffers[ element.Source ];
+							//var values = buffer.ExtractChannel<Vector2F>( element.Offset );
+							//int destIndex = startIndex;
+							//foreach( var p in values )
+							//	extractedVertices[ destIndex++ ].TexCoord2 = p;
+							extractedVerticesComponents |= StandardVertex.Components.TexCoord2;
+						}
+					}
+
+					//TexCoord3
+					{
+						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.TextureCoordinate3, out VertexElement element ) &&
+							element.Type == VertexElementType.Float2 )
+						{
+							//var buffer = oper.VertexBuffers[ element.Source ];
+							//var values = buffer.ExtractChannel<Vector2F>( element.Offset );
+							//int destIndex = startIndex;
+							//foreach( var p in values )
+							//	extractedVertices[ destIndex++ ].TexCoord3 = p;
+							extractedVerticesComponents |= StandardVertex.Components.TexCoord3;
+						}
+					}
+
+					//BlendIndices
+					{
+						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.BlendIndices, out VertexElement element ) &&
+							element.Type == VertexElementType.Integer4 )
+						{
+							//var buffer = oper.VertexBuffers[ element.Source ];
+							//var values = buffer.ExtractChannel<Vector4I>( element.Offset );
+							//int destIndex = startIndex;
+							//foreach( var p in values )
+							//	extractedVertices[ destIndex++ ].BlendIndices = p;
+							extractedVerticesComponents |= StandardVertex.Components.BlendIndices;
+						}
+					}
+
+					//BlendWeights
+					{
+						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.BlendWeights, out VertexElement element ) &&
+							element.Type == VertexElementType.Float4 )
+						{
+							//var buffer = oper.VertexBuffers[ element.Source ];
+							//var values = buffer.ExtractChannel<Vector4F>( element.Offset );
+							//int destIndex = startIndex;
+							//foreach( var p in values )
+							//	extractedVertices[ destIndex++ ].BlendWeights = p;
+							extractedVerticesComponents |= StandardVertex.Components.BlendWeights;
+						}
+					}
+
+					currentVertex += oper.VertexCount;
+
+					//indices
+					{
+						//!!!!если нет, то генерить?
+						var indices2 = oper.IndexBuffer.Indices;
+						foreach( var index in indices2 )
+							extractedIndices[ currentIndex++ ] = startIndex + index;
+					}
+				}
+
+				//for( int n = 0; n < ExtractedVerticesPositions.Length; n++ )
+				//	extractedVerticesPositions[ n ] = extractedVertices[ n ].Position;
+
+				if( currentVertex != totalVertices )
+					Log.Fatal( "Component_Mesh.CompiledData: ExtractData: currentVertex != totalVertices." );
+				if( currentIndex != totalIndices )
+					Log.Fatal( "Component_Mesh.CompiledData: ExtractData: currentIndex != totalIndices." );
+			}
+
+			void PrepareExtractedVertices()
+			{
+				if( !owner.CalculateExtractedDataAndBounds )
+				{
+					extractedVertices = new StandardVertex[ 0 ];
+					return;
+				}
+
+				//check no data
+				foreach( var oper in MeshData.RenderOperations )
+				{
+					foreach( var buffer in oper.VertexBuffers )
+					{
+						if( buffer.Vertices == null )
+						{
+							extractedVertices = new StandardVertex[ 0 ];
+							return;
+						}
+					}
+					if( oper.IndexBuffer != null && oper.IndexBuffer.Indices == null )
+					{
+						extractedVertices = new StandardVertex[ 0 ];
+						return;
+					}
+				}
+
+
+				int totalVertices = 0;
+				foreach( var oper in MeshData.RenderOperations )
+					totalVertices += oper.VertexCount;
+
+				extractedVertices = new StandardVertex[ totalVertices ];
+
+				int currentVertex = 0;
+
+				foreach( var oper in MeshData.RenderOperations )
+				{
+					int startIndex = currentVertex;
+
+					//!!!!
+					if( oper.VertexStartOffset != 0 )
+						Log.Fatal( "impl. oper.vertexStartOffset != 0" );
+
+					//Position
+					{
+						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.Position, out VertexElement element ) &&
+							element.Type == VertexElementType.Float3 )
+						{
+							var buffer = oper.VertexBuffers[ element.Source ];
+							var values = buffer.ExtractChannel<Vector3F>( element.Offset );
+
+							int destIndex = startIndex;
+							foreach( var p in values )
 							{
 								extractedVertices[ destIndex++ ].Position = p;
 								////!!!!slowly
 								//extractedVertices[ destIndex++ ].Position = ( item.transform * p.ToVector3() ).ToVector3F();
 							}
-
-							extractedVerticesComponents |= StandardVertex.Components.Position;
 						}
 					}
 
@@ -657,8 +923,6 @@ namespace NeoAxis
 								//v.Normalize();
 								//extractedVertices[ destIndex++ ].Normal = v;
 							}
-
-							extractedVerticesComponents |= StandardVertex.Components.Normal;
 						}
 					}
 
@@ -683,8 +947,6 @@ namespace NeoAxis
 								//v.Normalize();
 								//extractedVertices[ destIndex++ ].Tangent = new Vector4F( v, p.W );
 							}
-
-							extractedVerticesComponents |= StandardVertex.Components.Tangent;
 						}
 					}
 
@@ -699,7 +961,6 @@ namespace NeoAxis
 								int destIndex = startIndex;
 								foreach( var p in values )
 									extractedVertices[ destIndex++ ].Color = p.ToColorValue();
-								extractedVerticesComponents |= StandardVertex.Components.Color;
 							}
 							else if( element.Type == VertexElementType.ColorABGR )
 							{
@@ -710,7 +971,6 @@ namespace NeoAxis
 								int destIndex = startIndex;
 								foreach( var p in values )
 									extractedVertices[ destIndex++ ].Color = new ColorValue( ColorByte.FromABGR( p ) );
-								extractedVerticesComponents |= StandardVertex.Components.Color;
 							}
 							else if( element.Type == VertexElementType.ColorARGB )
 							{
@@ -721,7 +981,6 @@ namespace NeoAxis
 								int destIndex = startIndex;
 								foreach( var p in values )
 									extractedVertices[ destIndex++ ].Color = new ColorValue( ColorByte.FromARGB( p ) );
-								extractedVerticesComponents |= StandardVertex.Components.Color;
 							}
 						}
 					}
@@ -736,7 +995,6 @@ namespace NeoAxis
 							int destIndex = startIndex;
 							foreach( var p in values )
 								extractedVertices[ destIndex++ ].TexCoord0 = p;
-							extractedVerticesComponents |= StandardVertex.Components.TexCoord0;
 						}
 					}
 
@@ -750,7 +1008,6 @@ namespace NeoAxis
 							int destIndex = startIndex;
 							foreach( var p in values )
 								extractedVertices[ destIndex++ ].TexCoord1 = p;
-							extractedVerticesComponents |= StandardVertex.Components.TexCoord1;
 						}
 					}
 
@@ -764,7 +1021,6 @@ namespace NeoAxis
 							int destIndex = startIndex;
 							foreach( var p in values )
 								extractedVertices[ destIndex++ ].TexCoord2 = p;
-							extractedVerticesComponents |= StandardVertex.Components.TexCoord2;
 						}
 					}
 
@@ -778,7 +1034,6 @@ namespace NeoAxis
 							int destIndex = startIndex;
 							foreach( var p in values )
 								extractedVertices[ destIndex++ ].TexCoord3 = p;
-							extractedVerticesComponents |= StandardVertex.Components.TexCoord3;
 						}
 					}
 
@@ -792,7 +1047,6 @@ namespace NeoAxis
 							int destIndex = startIndex;
 							foreach( var p in values )
 								extractedVertices[ destIndex++ ].BlendIndices = p;
-							extractedVerticesComponents |= StandardVertex.Components.BlendIndices;
 						}
 					}
 
@@ -806,33 +1060,21 @@ namespace NeoAxis
 							int destIndex = startIndex;
 							foreach( var p in values )
 								extractedVertices[ destIndex++ ].BlendWeights = p;
-							extractedVerticesComponents |= StandardVertex.Components.BlendWeights;
 						}
 					}
 
 					currentVertex += oper.VertexCount;
-
-					//indices
-					{
-						//!!!!если нет, то генерить?
-						var indices2 = oper.IndexBuffer.Indices;
-						foreach( var index in indices2 )
-							extractedIndices[ currentIndex++ ] = startIndex + index;
-					}
 				}
 
-				for( int n = 0; n < ExtractedVerticesPositions.Length; n++ )
-					extractedVerticesPositions[ n ] = extractedVertices[ n ].Position;
-
 				if( currentVertex != totalVertices )
-					Log.Fatal( "Component_Mesh.CompiledData: ExtractData: currentVertex != totalVertices." );
-				if( currentIndex != totalIndices )
-					Log.Fatal( "Component_Mesh.CompiledData: ExtractData: currentIndex != totalIndices." );
+					Log.Fatal( "Component_Mesh.CompiledData: PrepareExtractedVertices: currentVertex != totalVertices." );
 			}
 
-			public StandardVertex[] ExtractedVertices
+			public StandardVertex[] GetExtractedVertices( bool canPrepare )
 			{
-				get { return extractedVertices; }
+				if( extractedVertices == null && canPrepare )
+					PrepareExtractedVertices();
+				return extractedVertices;
 			}
 
 			public StandardVertex.Components ExtractedVerticesComponents
@@ -1059,12 +1301,29 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		public static Component_Mesh[] GetInstances()
+		{
+			lock( instances )
+				return instances.ToArray();
+		}
+
 		public Component_Mesh()
 		{
+			lock( instances )
+				instances.Add( this );
+
 			//_include = new ReferenceList<Component_Mesh>( this, delegate ()
 			//{
 			//	IncludeChanged?.Invoke( this );
 			//} );
+		}
+
+		protected override void OnDispose()
+		{
+			base.OnDispose();
+
+			lock( instances )
+				instances.Remove( this );
 		}
 
 		/////////////////////////////////////////

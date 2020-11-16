@@ -18,7 +18,7 @@ namespace NeoAxis
 	[ResourceFileExtension( "ui" )]
 	[EditorDocumentWindow( typeof( UIControl_DocumentWindow ) )]
 	//[EditorNewObjectSettings( typeof( UIControl_NewObjectSettings ) )]
-	public class UIControl : Component//, IComponent_VisibleInHierarchy, IComponent_CanBeSelectedInHierarchy
+	public class UIControl : Component, IComponent_VisibleInHierarchy//, IComponent_CanBeSelectedInHierarchy
 	{
 		//!!!!всё тут
 

@@ -250,6 +250,15 @@ namespace NeoAxis.Editor
 			base.GetTextInfoRightBottomCorner( lines );
 		}
 
+		protected override void GetTextInfoCenterBottomCorner( List<string> lines )
+		{
+			editor.PerformOnGetTextInfoCenterBottomCorner( lines );
+		}
+		public void PerformBaseGetTextInfoCenterBottomCorner( List<string> lines )
+		{
+			base.GetTextInfoCenterBottomCorner( lines );
+		}
+
 		private void DocumentWindowWithViewport_CanvasBasedEditor_SelectedObjectsChanged( DocumentWindow sender, object[] oldSelectedObjects )
 		{
 			editor.PerformSelectedObjectsChanged( oldSelectedObjects );
@@ -1266,6 +1275,15 @@ namespace NeoAxis.Editor
 		internal void PerformOnGetTextInfoRightBottomCorner( List<string> lines )
 		{
 			OnGetTextInfoRightBottomCorner( lines );
+		}
+
+		protected virtual void OnGetTextInfoCenterBottomCorner( List<string> lines )
+		{
+			owner.PerformBaseGetTextInfoCenterBottomCorner( lines );
+		}
+		internal void PerformOnGetTextInfoCenterBottomCorner( List<string> lines )
+		{
+			OnGetTextInfoCenterBottomCorner( lines );
 		}
 
 		public void AddScreenMessage( string text, ColorValue color )

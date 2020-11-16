@@ -35,8 +35,8 @@
 			// 
 			// previewButton
 			// 
-			this.previewButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.previewButton.Location = new System.Drawing.Point(203, 3);
+			//this.previewButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.previewButton.Location = new System.Drawing.Point(68, 3);
 			this.previewButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.previewButton.Name = "previewButton";
 			this.previewButton.Size = new System.Drawing.Size(27, 22);
@@ -45,26 +45,29 @@
 			// 
 			// trackBarPower
 			// 
-			this.trackBarPower.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.trackBarPower.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+			 | System.Windows.Forms.AnchorStyles.Right ) ) );
+			//this.trackBarPower.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.trackBarPower.DrawBackground = true;
-			this.trackBarPower.Location = new System.Drawing.Point(232, 4);
+			this.trackBarPower.Location = new System.Drawing.Point(98, 4);
 			this.trackBarPower.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.trackBarPower.Name = "trackBarPower";
-			this.trackBarPower.Size = new System.Drawing.Size(71, 20);
+			this.trackBarPower.Size = new System.Drawing.Size(209, 20);
 			this.trackBarPower.TabIndex = 2;
 			this.trackBarPower.TickStyle = System.Windows.Forms.TickStyle.None;
 			this.trackBarPower.TrackBarSize = ComponentFactory.Krypton.Toolkit.PaletteTrackBarSize.Small;
 			// 
 			// textBox1
 			// 
-			this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			//this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+   //         | System.Windows.Forms.AnchorStyles.Right)));
 			this.textBox1.Location = new System.Drawing.Point( 0, 4 );
 			//this.textBox1.Location = new System.Drawing.Point(0, 3);
 			this.textBox1.LikeLabel = false;
 			this.textBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.textBox1.Name = "textBox1";
-			this.textBox1.Size = new System.Drawing.Size(200, 22);
+			this.textBox1.Size = new System.Drawing.Size( 64, 22 );
+			//this.textBox1.Size = new System.Drawing.Size(200, 22);
 			this.textBox1.TabIndex = 0;
 			// 
 			// HCGridColorValuePowered

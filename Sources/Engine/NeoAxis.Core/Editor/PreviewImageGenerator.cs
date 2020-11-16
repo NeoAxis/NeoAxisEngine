@@ -274,6 +274,12 @@ namespace NeoAxis.Editor
 			set { cameraDistance = value; }
 		}
 
+		public SphericalDirection CameraDirection
+		{
+			get { return cameraDirection; }
+			set { cameraDirection = value; }
+		}
+
 		//protected virtual void GetTextInfoLeftTopCorner( List<string> lines )
 		//{
 		//}

@@ -205,6 +205,7 @@ Ribbon.Action|Add\nProperty|Добавить\nСвойство
 Ribbon.Action|Find\nResource|Найти\nРесурс
 Ribbon.Action|Start\nPage|Стартовая\nСтраница
 Ribbon.Action|Build|Построить
+Ribbon.Action|Move\nRotate|Двигать\nВращать
 
 Windows|Preview|Предпросмотр
 Windows|Resources|Ресурсы
@@ -279,7 +280,7 @@ ContentBrowser|Date|Дата
 ContentBrowser|External app|Внешнее приложение
 ContentBrowser|Import|Импорт
 ContentBrowser|Name|Имя
-ContentBrowser|New Resource of This Type|Новый ресурс этого типа
+ContentBrowser|Learn More|Узнать больше
 ContentBrowser|Open Folder in Explorer|Открыть папку в проводнике
 ContentBrowser|Open with|Открыть в
 ContentBrowser|Properties|Свойства
@@ -366,7 +367,7 @@ ContextMenu|Copy|Копировать
 ContextMenu|Cut|Вырезать
 ContextMenu|Delete|Удалить
 ContextMenu|Editor|Редактор
-ContextMenu|Move|Перемещать
+ContextMenu|Move|Двигать
 ContextMenu|New Object|Новый объект
 ContextMenu|Paste|Вставить
 ContextMenu|Rename|Переименовать
@@ -385,6 +386,7 @@ ContextMenu|Attach Second to First|Прикрепить второй к первому
 ContextMenu|Detach from Another Object|Открепить от другого объекта
 ContextMenu|Image Compression|Сжатие изображения
 ContextMenu|Process Environment Cubemap|Обработка кубемапы окружения
+ContextMenu|Move && Rotate|Двигать и вращать
 
 NewObjectWindow|New Object|Новый объект
 NewObjectWindow|Close|Закрыть
@@ -398,8 +400,8 @@ NewObjectWindow|The file name is not specified.|Имя файла не указано.
 DocumentWindow|Are you sure you want to delete '{0}'?|Вы уверены, что хотите удалить '{0}'?
 DocumentWindow|Are you sure you want to delete selected objects?|Вы уверены, что хотите удалить выбранные объекты?
 
-SceneDocumentWindow|Creating an object by brush|Создание объекта кистью
-SceneDocumentWindow|Creating an object by click|Создание объекта по клику
+SceneDocumentWindow|Creating objects by brush.|Создание объектов кистью.
+SceneDocumentWindow|Creating objects by mouse clicking.|Создание объектов по клику мышки.
 SceneDocumentWindow|Draw calls|Вызовов отрисовки
 SceneDocumentWindow|Dynamic textures|Динамических текстур
 SceneDocumentWindow|FPS|Кадров в секунду
@@ -640,11 +642,12 @@ EditorAction.Description|Opens Sources solution in an external IDE.|Открывает ре
 EditorAction.Description|Opens the package manager.|Открывает менеджер пакетов.
 EditorAction.Description|Opens the start page.|Открывает стартовую страницу.
 EditorAction.Description|Opens the Tips window.|Открывает окно советов.
+EditorAction.Description|Movement & rotation mode of the transform tool.|Режим перемещения и вращения инструмента преобразования.
 
 EditorAction.Name|Duplicate|Дублировать
 EditorAction.Name|Delete|Удалить
 EditorAction.Name|Import Resource|Импорт ресурса
-EditorAction.Name|Move|Переместить
+EditorAction.Name|Move|Перемещать
 EditorAction.Name|New Resource|Новый ресурс
 EditorAction.Name|Play|Запустить
 EditorAction.Name|Project Settings|Настройки проекта
@@ -659,6 +662,7 @@ EditorAction.Name|Scale|Масштабировать
 EditorAction.Name|Select|Выделять
 EditorAction.Name|Transform Using Local Coordinates|Преобразование с использованием локальных координат
 EditorAction.Name|Undo|Отменить
+EditorAction.Name|Move & Rotate|Перемещать и вращать
 
 EditorAction.Name|Arch|Арка
 EditorAction.Name|Box|Коробка
@@ -829,6 +833,7 @@ ProjectSettings.Group|Shader Editor|Редактор шейдеров
 ProjectSettings.Group|Text Editor|Текстовый редактор
 ProjectSettings.Group|UI Editor: General|Редактор интерфейсов: Общее
 ProjectSettings.Group|UI Editor: Snapping|Редактор интерфейсов: Выравнивание
+ProjectSettings.Group|Screen Labels|Экранные метки
 
 ProjectSettings.Page|All|Все
 ProjectSettings.Page|C# Editor|С# редактор
@@ -902,6 +907,17 @@ ProjectSettings.Property|Theme|Тема
 ProjectSettings.Property|Units Measure: Step Movement|Units мера: Шаг перемещения
 ProjectSettings.Property|Word Wrap|Переносить слова
 ProjectSettings.Property|Language|Язык
+ProjectSettings.Property|Autorun Scene|Автозапускаемая сцена
+ProjectSettings.Property|Custom Windows Style|Специальный стиль окон
+ProjectSettings.Property|Extended Mode (Restart to apply changes)|Расширенный режим (Нужно перезагрузить приложение)
+ProjectSettings.Property|Language (Restart to apply changes)|Язык (Нужно перезагрузить приложение)
+ProjectSettings.Property|Theme (Restart to apply changes)|Тема (Нужно перезагрузить приложение)
+ProjectSettings.Property|Screen Label Display Icons|Показывать иконки
+ProjectSettings.Property|Screen Label Max Distance|Максимальная видимая дистанция
+ProjectSettings.Property|Screen Label Max Size|Максимальный размер
+ProjectSettings.Property|Screen Label Min Size Factor|Множитель минимального размера
+ProjectSettings.Property|Window Size|Размер окна
+ProjectSettings.Property|Window State|Состояние окна
 
 ProjectSettings.Description|The language of the editor. Restart the editor to apply changes.|Язык редактора. Перезапустите редактор, чтобы применить изменения.
 

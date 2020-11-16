@@ -1326,5 +1326,17 @@ namespace NeoAxis
 					scene.CachedObjectsInSpaceToFastFindByRenderingPipeline.Remove( this );
 			}
 		}
+
+		public override void NewObjectSetDefaultConfiguration( bool createdFromNewObjectWindow = false )
+		{
+			base.NewObjectSetDefaultConfiguration( createdFromNewObjectWindow );
+
+			AttenuationFar = 10;
+		}
+
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "Light", Type.Value <= TypeEnum.Directional );
+		}
 	}
 }

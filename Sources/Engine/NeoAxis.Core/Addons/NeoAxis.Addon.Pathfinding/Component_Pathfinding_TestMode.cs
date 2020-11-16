@@ -283,39 +283,44 @@ namespace NeoAxis.Addon.Pathfinding
 			//return ToolsLocalization.Translate( "RecastTestArea", text );
 		}
 
-		protected override void OnGetTextInfoRightBottomCorner( List<string> lines )
+		protected override void OnGetTextInfoCenterBottomCorner( List<string> lines )
 		{
+			base.OnGetTextInfoCenterBottomCorner( lines );
+
 			//UI
 			//if( toolType == TestToolTypes.DirectPathfind )
 			//{
+
 			if( pathTest )
 			{
-				lines.Add( string.Format( Translate( "Time: {0} seconds" ), time.ToString( "F8" ) ) );
-
 				//we check if the path will lead us close enough to where we wanted
 				if( found )
 				{
 					if( IsFutileFound() )
-						lines.Add( Translate( "Path found, but didn't reach close enough to end point" ) );
+						lines.Add( Translate( "The path was found, but did not get close enough to the end point." ) );
 					else
-						lines.Add( Translate( "Path found" ) );
-
-					lines.Add( string.Format( Translate( "Points: {0}" ), path.Length ) );
+						lines.Add( Translate( "The path was found." ) );
 				}
 				else
 				{
-					lines.Add( Translate( "Path not found" ) );
-
+					lines.Add( Translate( "The path was not found." ) );
 					if( !string.IsNullOrEmpty( error ) )
 						lines.Add( "Error: " + error );
 				}
+
+				lines.Add( "" );
+				lines.Add( string.Format( Translate( "Search time: {0} seconds." ), time.ToString( "F8" ) ) );
+				if( found )
+					lines.Add( string.Format( Translate( "Points in the path: {0}." ), path.Length ) );
 			}
 			else
-				lines.Add( Translate( "Specify start and end points with the mouse" ) );
-			//}
+			{
+				lines.Add( "Pathfinding Test Mode" );
+				lines.Add( "" );
+				lines.Add( Translate( "Specify start and end points by clicking and holding mouse button." ) );
+			}
 
-			lines.Add( "" );
-			lines.Add( "Pathfinding Test" );
+			//}
 		}
 	}
 }

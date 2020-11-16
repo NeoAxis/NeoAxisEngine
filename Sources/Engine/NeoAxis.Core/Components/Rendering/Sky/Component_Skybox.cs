@@ -16,11 +16,16 @@ namespace NeoAxis
 	/// Implements the sky is using cubemap or panoramic image.
 	/// </summary>
 	[EditorSettingsCell( typeof( Component_Skybox_SettingsCell ) )]
+	[EditorDocumentWindow( typeof( Component_Skybox_DocumentWindow ) )]
+	[EditorPreviewControl( typeof( Component_Skybox_PreviewControl ) )]
+	[EditorPreviewImage( typeof( Component_Skybox_PreviewImage ) )]
+	[WhenCreatingShowWarningIfItAlreadyExists]
 	public class Component_Skybox : Component_Sky
 	{
-		static GpuMaterialPass materialPass;
+		static GpuMaterialPass materialPassCube;
+		static GpuMaterialPass materialPass2D;
 
-		Component_Mesh mesh;
+		static Component_Mesh mesh;
 		//Component_Image createdCubemap;
 		//bool createdCubemapNeedUpdate = true;
 
@@ -33,7 +38,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The texture used by the skybox.
 		/// </summary>
-		[DefaultValueReference( @"Samples\Starter Content\Environments\Forest.image" )]//[DefaultValue( null )]
+		[DefaultValueReference( @"Base\Environments\Forest.image" )]//[DefaultValue( null )]
 		public Reference<Component_Image> Cubemap
 		{
 			get { if( _cubemap.BeginGet() ) Cubemap = _cubemap.Get( this ); return _cubemap.value; }
@@ -53,7 +58,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="Cubemap"/> property value changes.</summary>
 		public event Action<Component_Skybox> CubemapChanged;
-		ReferenceField<Component_Image> _cubemap = new Reference<Component_Image>( null, @"Samples\Starter Content\Environments\Forest.image" );
+		ReferenceField<Component_Image> _cubemap = new Reference<Component_Image>( null, @"Base\Environments\Forest.image" );
 
 		///// <summary>
 		///// Positive X side of the texture used by the skybox.
@@ -256,7 +261,24 @@ namespace NeoAxis
 		public event Action<Component_Skybox> MultiplierReflectionChanged;
 		ReferenceField<ColorValuePowered> _multiplierReflection = new ColorValuePowered( 1, 1, 1 );
 
-		[Category( "Special" )]
+		/// <summary>
+		/// Whether to use the processed cubemap for the background instead of the original image.
+		/// </summary>
+		[Category( "Advanced" )]
+		[DefaultValue( false )]
+		public Reference<bool> AlwaysUseProcessedCubemap
+		{
+			get { if( _alwaysUseProcessedCubemap.BeginGet() ) AlwaysUseProcessedCubemap = _alwaysUseProcessedCubemap.Get( this ); return _alwaysUseProcessedCubemap.value; }
+			set { if( _alwaysUseProcessedCubemap.BeginSet( ref value ) ) { try { AlwaysUseProcessedCubemapChanged?.Invoke( this ); } finally { _alwaysUseProcessedCubemap.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="AlwaysUseProcessedCubemap"/> property value changes.</summary>
+		public event Action<Component_Skybox> AlwaysUseProcessedCubemapChanged;
+		ReferenceField<bool> _alwaysUseProcessedCubemap = false;
+
+		/// <summary>
+		/// Whether to allow processing the specified cubemap to 6-sided cubemap.
+		/// </summary>
+		[Category( "Advanced" )]
 		[DefaultValue( true )]
 		public Reference<bool> AllowProcessEnvironmentCubemap
 		{
@@ -327,7 +349,7 @@ namespace NeoAxis
 		//}
 
 		[Browsable( false )]
-		public Component_Mesh Mesh
+		public static Component_Mesh Mesh
 		{
 			get { return mesh; }
 		}
@@ -336,17 +358,20 @@ namespace NeoAxis
 		{
 			base.OnEnabled();
 
-			mesh = ComponentUtility.CreateComponent<Component_Mesh>( null, true, false );
-			mesh.CreateComponent<Component_MeshGeometry_Box>();
-			mesh.Enabled = true;
+			if( mesh == null )
+			{
+				mesh = ComponentUtility.CreateComponent<Component_Mesh>( null, true, false );
+				mesh.CreateComponent<Component_MeshGeometry_Box>();
+				mesh.Enabled = true;
+			}
 
 			processedCubemapNeedUpdate = true;
 		}
 
 		protected override void OnDisabled()
 		{
-			mesh?.Dispose();
-			mesh = null;
+			//mesh?.Dispose();
+			//mesh = null;
 
 			//CreatedCubemapDispose();
 
@@ -405,38 +430,61 @@ namespace NeoAxis
 
 			if( mesh != null )
 			{
-				var pass = GetMaterialPass();
-				if( pass != null )
+				////!!!!
+				//CreatedCubemapUpdate();
+
+				//!!!!double
+				Matrix4F worldMatrix = Matrix4.FromTranslate( context.Owner.CameraSettings.Position ).ToMatrix4F();
+
+				foreach( var item in mesh.Result.MeshData.RenderOperations )
 				{
-					////!!!!
-					//CreatedCubemapUpdate();
+					ParameterContainer generalContainer = new ParameterContainer();
+					generalContainer.Set( "multiplier", Multiplier.Value.ToColorValue() );
+					GetRotationMatrix( out var rotation );
+					generalContainer.Set( "rotation", rotation );// Matrix3.FromRotateByZ( Rotation.Value.InRadians() ).ToMatrix3F() );
 
-					//!!!!double
-					Matrix4F worldMatrix = Matrix4.FromTranslate( context.Owner.CameraSettings.Position ).ToMatrix4F();
+					Component_Image tex = null;
+					//!!!!hack. by idea need mirror 6-sided loaded cubemaps
+					bool flipCubemap = false;
 
-					foreach( var item in mesh.Result.MeshData.RenderOperations )
+					if( AlwaysUseProcessedCubemap )
+						tex = processedEnvironmentCubemap;
+					if( tex == null )
 					{
-						ParameterContainer generalContainer = new ParameterContainer();
-						generalContainer.Set( "multiplier", Multiplier.Value.ToColorValue() );
-						GetRotationMatrix( out var rotation );
-						generalContainer.Set( "rotation", rotation );// Matrix3.FromRotateByZ( Rotation.Value.InRadians() ).ToMatrix3F() );
+						tex = Cubemap;
+						if( tex != null && tex.AnyCubemapSideIsSpecified() )
+							flipCubemap = true;
+					}
+					if( tex == null )
+						tex = processedEnvironmentCubemap;
+					if( tex == null )
+						tex = ResourceUtility.BlackTextureCube;
 
-						Component_Image tex = null;
+					generalContainer.Set( "flipCubemap", new Vector4F( flipCubemap ? -1 : 1, 0, 0, 0 ) );
 
-						//!!!!сделать GetResultEnvironmentCubemap()?
-						//!!!!!!где еще его использовать
-						if( processedEnvironmentCubemap != null )
-							tex = processedEnvironmentCubemap;
-						//else if( AnyCubemapSideIsSpecified() )
-						//	tex = createdCubemap;
-						else
-							tex = Cubemap;
-						if( tex == null )
-							tex = ResourceUtility.BlackTextureCube;
+					////!!!!сделать GetResultEnvironmentCubemap()?
+					////!!!!!!где еще его использовать
+					//if( processedEnvironmentCubemap != null )
+					//	tex = processedEnvironmentCubemap;
+					////else if( AnyCubemapSideIsSpecified() )
+					////	tex = createdCubemap;
+					//else
+					//	tex = Cubemap;
+					//if( tex == null )
+					//	tex = ResourceUtility.BlackTextureCube;
 
-						if( tex.Result != null && tex.Result.TextureType == Component_Image.TypeEnum.Cube )
+					if( tex.Result != null )
+					{
+						var cube = tex.Result.TextureType == Component_Image.TypeEnum.Cube;
+
+						var pass = GetMaterialPass( cube );
+						if( pass != null )
 						{
-							var addressingMode = TextureAddressingMode.Clamp;
+							TextureAddressingMode addressingMode;
+							if( cube )
+								addressingMode = TextureAddressingMode.Wrap;
+							else
+								addressingMode = TextureAddressingMode.WrapU | TextureAddressingMode.ClampV;
 
 							context.BindTexture( new ViewportRenderingContext.BindTextureData( 0/*"skyboxTexture"*/, tex, addressingMode, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
 
@@ -456,12 +504,15 @@ namespace NeoAxis
 			Matrix3.FromRotateByZ( Rotation.Value.InRadians() ).ToMatrix3F( out result );
 		}
 
-		static GpuMaterialPass GetMaterialPass()
+		static GpuMaterialPass GetMaterialPass( bool cube )
 		{
-			if( materialPass == null )
+			if( cube && materialPassCube == null || !cube && materialPass2D == null )
 			{
 				//generate compile arguments
 				var generalDefines = new List<(string, string)>();
+
+				if( !cube )
+					generalDefines.Add( ("USE_2D", "") );
 
 				//vertex program
 				GpuProgram vertexProgram = GpuProgramManager.GetProgram( $"Skybox_Vertex_", GpuProgramType.Vertex,
@@ -486,10 +537,13 @@ namespace NeoAxis
 				pass.DepthCheck = true;
 				pass.DepthWrite = false;
 
-				materialPass = pass;
+				if( cube )
+					materialPassCube = pass;
+				else
+					materialPass2D = pass;
 			}
 
-			return materialPass;
+			return cube ? materialPassCube : materialPass2D;
 		}
 
 		void UpdateProcessedCubemaps()

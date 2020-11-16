@@ -435,5 +435,21 @@ namespace NeoAxis
 				yield return list[ n ];
 		}
 
+		/// <summary>
+		/// Returns reversed linked list.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="list"></param>
+		/// <returns></returns>
+		public static IEnumerable<T> GetReverse<T>( this LinkedList<T> list )
+		{
+			var i = list.Last;
+			while( i != null )
+			{
+				yield return i.Value;
+				i = i.Previous;
+			}
+		}
+
 	}
 }

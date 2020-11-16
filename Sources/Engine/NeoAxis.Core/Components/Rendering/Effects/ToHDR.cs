@@ -12,6 +12,7 @@ namespace NeoAxis
 	/// <summary>
 	/// Screen effect for converting scene to high dynamic range.
 	/// </summary>
+	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class Component_RenderingEffect_ToHDR : Component_RenderingEffect
 	{
 		protected override void OnRender( ViewportRenderingContext context, Component_RenderingPipeline.IFrameData frameData, ref Component_Image actualTexture )

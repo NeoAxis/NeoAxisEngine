@@ -14,6 +14,7 @@ namespace NeoAxis
 	/// Screen effect for rendering lens effects of the camera (lens flares).
 	/// </summary>
 	[DefaultOrderOfEffect( 2.7 )]
+	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class Component_RenderingEffect_LensEffects : Component_RenderingEffect
 	{
 		/// <summary>

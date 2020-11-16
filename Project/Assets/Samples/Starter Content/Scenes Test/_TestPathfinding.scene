@@ -42,6 +42,7 @@
 			.component NeoAxis.Component_RenderingEffect_ToneMapping
 			{
 				Name = Tone Mapping
+				Intensity = 0.5
 			}
 			.component NeoAxis.Component_RenderingEffect_Sharpen
 			{

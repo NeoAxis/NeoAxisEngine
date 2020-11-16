@@ -129,6 +129,15 @@ namespace NeoAxis.Editor
 				GetTextInfoRightBottomCorner?.Invoke( this, lines );
 			}
 
+			protected virtual void OnGetTextInfoCenterBottomCorner( List<string> lines ) { }
+			public delegate void GetTextInfoCenterBottomCornerDelegate( WorkareaModeClass sender, List<string> lines );
+			public event GetTextInfoCenterBottomCornerDelegate GetTextInfoCenterBottomCorner;
+			internal void PerformGetTextInfoCenterBottomCorner( List<string> lines )
+			{
+				OnGetTextInfoCenterBottomCorner( lines );
+				GetTextInfoCenterBottomCorner?.Invoke( this, lines );
+			}
+
 			protected virtual bool OnKeyDown( Viewport viewport, KeyEvent e ) { return false; }
 			public delegate void KeyDownUpDelegate( WorkareaModeClass sender, Viewport viewport, KeyEvent e, ref bool handled );
 			public event KeyDownUpDelegate KeyDown;
@@ -1090,6 +1099,21 @@ namespace NeoAxis.Editor
 			//}
 		}
 
+		void DrawGetTextInfoCenterBottomCorner()
+		{
+			var fontSize = GetFontSize() * 1.3;
+
+			var lines = new List<string>();
+			GetTextInfoCenterBottomCorner( lines );
+			AddTextLinesWithShadow( null, fontSize, lines, new Rectangle( 0, 0.7, 1.0, 1.0 ), EHorizontalAlignment.Center, EVerticalAlignment.Center, new ColorValue( 1, 1, 1 ) );
+
+			////workarea mode text on screen
+			//if( workareaMode != null && !string.IsNullOrEmpty( workareaMode.TextOnScreen ) )
+			//{
+			//	AddTextWithShadow( null, workareaMode.TextOnScreen, new Vec2( 0.99, 0.99 ), EHorizontalAlign.Center, EVerticalAlign.Bottom, new ColorValue( 1, 1, 1 ) );
+			//}
+		}
+
 		void DrawScreenMessages()
 		{
 			//var font = EditorFont;
@@ -1216,6 +1240,12 @@ namespace NeoAxis.Editor
 			objectCreationMode?.PerformGetTextInfoRightBottomCorner( lines );
 		}
 
+		protected virtual void GetTextInfoCenterBottomCorner( List<string> lines )
+		{
+			workareaMode?.PerformGetTextInfoCenterBottomCorner( lines );
+			objectCreationMode?.PerformGetTextInfoCenterBottomCorner( lines );
+		}
+
 		//!!!!объединить, два метода никчему? методы виртуальные, может таки надо. потом видно будет
 		protected virtual void Viewport_UpdateBeforeOutput2( Viewport viewport )
 		{
@@ -1224,6 +1254,7 @@ namespace NeoAxis.Editor
 
 			DrawGetTextInfoLeftTopCorner();
 			DrawGetTextInfoRightBottomCorner();
+			DrawGetTextInfoCenterBottomCorner();
 
 			DrawScreenMessages();
 

@@ -836,10 +836,35 @@ namespace NeoAxis
 		/// <param name="checkChildren"></param>
 		/// <param name="onlyEnabledInHierarchy"></param>
 		/// <returns></returns>
-		public Component GetComponent( Metadata.TypeInfo componentClass, bool checkChildren = false, bool onlyEnabledInHierarchy = false )
+		public Component GetComponent( Metadata.TypeInfo componentClass, bool checkChildren = false, bool onlyEnabledInHierarchy = false/*, bool depthFirstSearch = false*/ )
 		{
 			if( components.Count != 0 )
 			{
+				//!!!!no bool reverse
+
+				//if( depthFirstSearch )
+				//{
+				//	foreach( Component component in components )
+				//	{
+				//		//!!!!( componentClass == typeof( Component ) ||
+				//		//!!!!!!ниже еще
+
+				//		if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
+				//		{
+				//			if( componentClass.IsAssignableFrom( component.BaseType ) )
+				//				return component;
+
+				//			if( checkChildren )
+				//			{
+				//				Component component2 = component.GetComponent( componentClass, true, onlyEnabledInHierarchy, true );
+				//				if( component2 != null )
+				//					return component2;
+				//			}
+				//		}
+				//	}
+				//}
+				//else
+				//{
 				foreach( Component component in components )
 				{
 					//!!!!( componentClass == typeof( Component ) ||
@@ -860,6 +885,7 @@ namespace NeoAxis
 						}
 					}
 				}
+				//}
 			}
 			return null;
 		}
@@ -909,58 +935,97 @@ namespace NeoAxis
 			//return (T)GetComponent( typeof( T ), checkChildren, onlyEnabledInHierarchy );
 		}
 
-		void GetComponentsRecursive<T>( Metadata.TypeInfo componentClass, bool reverse, bool checkChildren, bool onlyEnabledInHierarchy, ref List<T> list )
-			where T : class//Component
+		void GetComponentsRecursive<T>( Metadata.TypeInfo componentClass, bool reverse, bool checkChildren, bool onlyEnabledInHierarchy, bool depthFirstSearch, ref List<T> list ) where T : class //Component
 		{
 			if( components.Count != 0 )
 			{
 				var items = ( reverse && components.Count > 1 ) ? components.Reverse() : components;
 
-				foreach( Component component in items )
-				{
-					if( ( !onlyEnabledInHierarchy || component.EnabledInHierarchy ) && componentClass.IsAssignableFrom( component.BaseType ) )
-					{
-						if( list == null )
-							list = new List<T>( 32 );
-						list.Add( (T)(object)component );
-						//list.Add( (T)component );
-					}
-				}
-				if( checkChildren )
+				if( depthFirstSearch )
 				{
 					foreach( Component component in items )
 					{
 						if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
-							component.GetComponentsRecursive( componentClass, reverse, true, onlyEnabledInHierarchy, ref list );
+						{
+							if( componentClass.IsAssignableFrom( component.BaseType ) )
+							{
+								if( list == null )
+									list = new List<T>( 32 );
+								list.Add( (T)(object)component );
+								//list.Add( (T)component );
+							}
+							if( checkChildren )
+								component.GetComponentsRecursive( componentClass, reverse, true, onlyEnabledInHierarchy, true, ref list );
+						}
+					}
+				}
+				else
+				{
+					foreach( Component component in items )
+					{
+						if( ( !onlyEnabledInHierarchy || component.EnabledInHierarchy ) && componentClass.IsAssignableFrom( component.BaseType ) )
+						{
+							if( list == null )
+								list = new List<T>( 32 );
+							list.Add( (T)(object)component );
+							//list.Add( (T)component );
+						}
+					}
+					if( checkChildren )
+					{
+						foreach( Component component in items )
+						{
+							if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
+								component.GetComponentsRecursive( componentClass, reverse, true, onlyEnabledInHierarchy, false, ref list );
+						}
 					}
 				}
 			}
 		}
 
-		void GetComponentsRecursive<T>( Type componentClass, bool reverse, bool checkChildren, bool onlyEnabledInHierarchy, ref List<T> list )
-			where T : class
-			//where T : Component
+		void GetComponentsRecursive<T>( Type componentClass, bool reverse, bool checkChildren, bool onlyEnabledInHierarchy, bool depthFirstSearch, ref List<T> list ) where T : class //where T : Component
 		{
 			if( components.Count != 0 )
 			{
 				var items = ( reverse && components.Count > 1 ) ? components.Reverse() : components;
 
-				foreach( Component component in items )
-				{
-					if( ( !onlyEnabledInHierarchy || component.EnabledInHierarchy ) && ( componentClass == typeof( Component ) || componentClass.IsAssignableFrom( component.GetType() ) ) )
-					{
-						if( list == null )
-							list = new List<T>( 32 );
-						list.Add( (T)(object)component );
-						//list.Add( (T)component );
-					}
-				}
-				if( checkChildren )
+				if( depthFirstSearch )
 				{
 					foreach( Component component in items )
 					{
 						if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
-							component.GetComponentsRecursive( componentClass, reverse, true, onlyEnabledInHierarchy, ref list );
+						{
+							if( componentClass == typeof( Component ) || componentClass.IsAssignableFrom( component.GetType() ) )
+							{
+								if( list == null )
+									list = new List<T>( 32 );
+								list.Add( (T)(object)component );
+								//list.Add( (T)component );
+							}
+							if( checkChildren )
+								component.GetComponentsRecursive( componentClass, reverse, true, onlyEnabledInHierarchy, true, ref list );
+						}
+					}
+				}
+				else
+				{
+					foreach( Component component in items )
+					{
+						if( ( !onlyEnabledInHierarchy || component.EnabledInHierarchy ) && ( componentClass == typeof( Component ) || componentClass.IsAssignableFrom( component.GetType() ) ) )
+						{
+							if( list == null )
+								list = new List<T>( 32 );
+							list.Add( (T)(object)component );
+							//list.Add( (T)component );
+						}
+					}
+					if( checkChildren )
+					{
+						foreach( Component component in items )
+						{
+							if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
+								component.GetComponentsRecursive( componentClass, reverse, true, onlyEnabledInHierarchy, false, ref list );
+						}
 					}
 				}
 			}
@@ -974,10 +1039,10 @@ namespace NeoAxis
 		/// <param name="checkChildren"></param>
 		/// <param name="onlyEnabledInHierarchy"></param>
 		/// <returns></returns>
-		public Component[] GetComponents( Metadata.TypeInfo componentClass, bool reverse = false, bool checkChildren = false, bool onlyEnabledInHierarchy = false )
+		public Component[] GetComponents( Metadata.TypeInfo componentClass, bool reverse = false, bool checkChildren = false, bool onlyEnabledInHierarchy = false, bool depthFirstSearch = false )
 		{
 			List<Component> list = null;
-			GetComponentsRecursive( componentClass, reverse, checkChildren, onlyEnabledInHierarchy, ref list );
+			GetComponentsRecursive( componentClass, reverse, checkChildren, onlyEnabledInHierarchy, depthFirstSearch, ref list );
 			return list != null ? list.ToArray() : Array.Empty<Component>();
 		}
 
@@ -989,10 +1054,10 @@ namespace NeoAxis
 		/// <param name="checkChildren"></param>
 		/// <param name="onlyEnabledInHierarchy"></param>
 		/// <returns></returns>
-		public Component[] GetComponents( Type componentClass, bool reverse = false, bool checkChildren = false, bool onlyEnabledInHierarchy = false )
+		public Component[] GetComponents( Type componentClass, bool reverse = false, bool checkChildren = false, bool onlyEnabledInHierarchy = false, bool depthFirstSearch = false )
 		{
 			List<Component> list = null;
-			GetComponentsRecursive( componentClass, reverse, checkChildren, onlyEnabledInHierarchy, ref list );
+			GetComponentsRecursive( componentClass, reverse, checkChildren, onlyEnabledInHierarchy, depthFirstSearch, ref list );
 			return list != null ? list.ToArray() : Array.Empty<Component>();
 		}
 
@@ -1003,9 +1068,9 @@ namespace NeoAxis
 		/// <param name="checkChildren"></param>
 		/// <param name="onlyEnabledInHierarchy"></param>
 		/// <returns></returns>
-		public Component[] GetComponents( bool reverse = false, bool checkChildren = false, bool onlyEnabledInHierarchy = false )
+		public Component[] GetComponents( bool reverse = false, bool checkChildren = false, bool onlyEnabledInHierarchy = false, bool depthFirstSearch = false )
 		{
-			return GetComponents( typeof( Component ), reverse, checkChildren, onlyEnabledInHierarchy );
+			return GetComponents( typeof( Component ), reverse, checkChildren, onlyEnabledInHierarchy, depthFirstSearch );
 		}
 
 		/// <summary>
@@ -1016,32 +1081,47 @@ namespace NeoAxis
 		/// <param name="checkChildren"></param>
 		/// <param name="onlyEnabledInHierarchy"></param>
 		/// <returns></returns>
-		public T[] GetComponents<T>( bool reverse = false, bool checkChildren = false, bool onlyEnabledInHierarchy = false ) where T : class //Component
+		public T[] GetComponents<T>( bool reverse = false, bool checkChildren = false, bool onlyEnabledInHierarchy = false, bool depthFirstSearch = false ) where T : class //Component
 		{
 			List<T> list = null;
-			GetComponentsRecursive( typeof( T ), reverse, checkChildren, onlyEnabledInHierarchy, ref list );
+			GetComponentsRecursive( typeof( T ), reverse, checkChildren, onlyEnabledInHierarchy, depthFirstSearch, ref list );
 			return list != null ? list.ToArray() : Array.Empty<T>(); //new T[ 0 ];
 		}
 
-		void GetComponentsRecursive<T>( Type componentClass, bool reverse, bool checkChildren, bool onlyEnabledInHierarchy, Action<T> action )
-			where T : class
-			//where T : Component
+		void GetComponentsRecursive<T>( Type componentClass, bool reverse, bool checkChildren, bool onlyEnabledInHierarchy, bool depthFirstSearch, Action<T> action ) where T : class //where T : Component
 		{
 			if( components.Count != 0 )
 			{
 				var items = ( reverse && components.Count > 1 ) ? components.Reverse() : components;
 
-				foreach( Component component in items )
-				{
-					if( ( !onlyEnabledInHierarchy || component.EnabledInHierarchy ) && ( componentClass == typeof( Component ) || componentClass.IsAssignableFrom( component.GetType() ) ) )
-						action( (T)(object)component );
-				}
-				if( checkChildren )
+				if( depthFirstSearch )
 				{
 					foreach( Component component in items )
 					{
 						if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
-							component.GetComponentsRecursive( componentClass, reverse, true, onlyEnabledInHierarchy, action );
+						{
+							if( componentClass == typeof( Component ) || componentClass.IsAssignableFrom( component.GetType() ) )
+								action( (T)(object)component );
+
+							if( checkChildren )
+								component.GetComponentsRecursive( componentClass, reverse, true, onlyEnabledInHierarchy, true, action );
+						}
+					}
+				}
+				else
+				{
+					foreach( Component component in items )
+					{
+						if( ( !onlyEnabledInHierarchy || component.EnabledInHierarchy ) && ( componentClass == typeof( Component ) || componentClass.IsAssignableFrom( component.GetType() ) ) )
+							action( (T)(object)component );
+					}
+					if( checkChildren )
+					{
+						foreach( Component component in items )
+						{
+							if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
+								component.GetComponentsRecursive( componentClass, reverse, true, onlyEnabledInHierarchy, false, action );
+						}
 					}
 				}
 			}
@@ -1067,10 +1147,11 @@ namespace NeoAxis
 		/// <param name="reverse"></param>
 		/// <param name="checkChildren"></param>
 		/// <param name="onlyEnabledInHierarchy"></param>
+		/// <param name="depthFirstSearch"></param>
 		/// <param name="action"></param>
-		public void GetComponents( bool reverse, bool checkChildren, bool onlyEnabledInHierarchy, Action<Component> action )
+		public void GetComponents( bool reverse, bool checkChildren, bool onlyEnabledInHierarchy, bool depthFirstSearch, Action<Component> action )
 		{
-			GetComponentsRecursive( typeof( Component ), reverse, checkChildren, onlyEnabledInHierarchy, action );
+			GetComponentsRecursive( typeof( Component ), reverse, checkChildren, onlyEnabledInHierarchy, depthFirstSearch, action );
 		}
 
 		/// <summary>
@@ -1080,10 +1161,11 @@ namespace NeoAxis
 		/// <param name="reverse"></param>
 		/// <param name="checkChildren"></param>
 		/// <param name="onlyEnabledInHierarchy"></param>
+		/// <param name="depthFirstSearch"></param>
 		/// <param name="action"></param>
-		public void GetComponents<T>( bool reverse, bool checkChildren, bool onlyEnabledInHierarchy, Action<T> action ) where T : class
+		public void GetComponents<T>( bool reverse, bool checkChildren, bool onlyEnabledInHierarchy, bool depthFirstSearch, Action<T> action ) where T : class
 		{
-			GetComponentsRecursive( typeof( T ), reverse, checkChildren, onlyEnabledInHierarchy, action );
+			GetComponentsRecursive( typeof( T ), reverse, checkChildren, onlyEnabledInHierarchy, depthFirstSearch, action );
 		}
 
 		//public IEnumerable< Component> GetComponentsWhere( bool reverse = false, bool checkChildren = false, bool onlyEnabledInHierarchy = false, Func<TSource, bool> predicate )
@@ -2057,6 +2139,19 @@ namespace NeoAxis
 		/// Occurs when component name is changed.
 		/// </summary>
 		public event Action<Component> NameChanged;
+
+		/// <summary>
+		/// Sets the display of the on-screen label of the object in the scene editor.
+		/// </summary>
+		[DefaultValue( ScreenLabelEnum.Auto )]
+		public Reference<ScreenLabelEnum> ScreenLabel
+		{
+			get { if( _screenLabel.BeginGet() ) ScreenLabel = _screenLabel.Get( this ); return _screenLabel.value; }
+			set { if( _screenLabel.BeginSet( ref value ) ) { try { ScreenLabelChanged?.Invoke( this ); } finally { _screenLabel.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ScreenLabel"/> property value changes.</summary>
+		public event Action<Component> ScreenLabelChanged;
+		ReferenceField<ScreenLabelEnum> _screenLabel = ScreenLabelEnum.Auto;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -3783,5 +3878,23 @@ namespace NeoAxis
 				return false;
 			}
 		}
+
+		public struct ScreenLabelInfo
+		{
+			public string LabelName;
+			public bool DisplayInCorner;
+
+			public ScreenLabelInfo( string labelName, bool displayInCorner = false )
+			{
+				LabelName = labelName;
+				DisplayInCorner = displayInCorner;
+			}
+		}
+
+		public virtual ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo();
+		}
+
 	}
 }

@@ -9,6 +9,7 @@ namespace NeoAxis
 	/// Posterization screen effect.
 	/// </summary>
 	[DefaultOrderOfEffect( 8.1 )]
+	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class Component_RenderingEffect_Posterize : Component_RenderingEffect_Simple
 	{
 		const string shaderDefault = @"Base\Shaders\Effects\Posterize_fs.sc";
@@ -39,6 +40,11 @@ namespace NeoAxis
 		public override bool LimitedDevicesSupport
 		{
 			get { return true; }
+		}
+
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "ScreenEffect", true );
 		}
 	}
 }

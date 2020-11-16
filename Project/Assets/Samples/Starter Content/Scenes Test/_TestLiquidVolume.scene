@@ -21,6 +21,17 @@
 		Type = Ambient
 		Brightness = 30000
 	}
+	.component NeoAxis.Component_Light
+	{
+		Name = Light 1
+		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; 0.754406150151168 -0.346223835921248 -0.381635976365512 -0.406637919527451; 1 1 1"
+		Type = Directional
+		Brightness = 130000
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 91.429
+	}
 	.component NeoAxis.Component_RenderingPipeline_Default
 	{
 		Name = Rendering Pipeline
@@ -57,6 +68,7 @@
 			.component NeoAxis.Component_RenderingEffect_ToneMapping
 			{
 				Name = Tone Mapping
+				Intensity = 0.5
 			}
 			.component NeoAxis.Component_RenderingEffect_ToLDR
 			{
@@ -78,17 +90,6 @@
 		{
 			Name = Final Image Effects
 		}
-	}
-	.component NeoAxis.Component_Light
-	{
-		Name = Light 1
-		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; 0.754406150151168 -0.346223835921248 -0.381635976365512 -0.406637919527451; 1 1 1"
-		Type = Directional
-		Brightness = 130000
-		AttenuationFar = 100
-		AttenuationPower = 1.5
-		SpotlightInnerAngle = 80
-		SpotlightOuterAngle = 91.429
 	}
 	.component NeoAxis.Component_Light
 	{

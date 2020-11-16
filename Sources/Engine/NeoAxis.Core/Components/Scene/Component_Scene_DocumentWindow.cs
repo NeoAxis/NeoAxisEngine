@@ -50,7 +50,7 @@ namespace NeoAxis.Editor
 		bool transformToolModifyCloned;
 		bool transformToolNeedCallOnMouseMove;
 		Vector2 transformToolNeedCallOnMouseMovePosition;
-		TransformTool.ModeEnum transformToolModeRestore = TransformTool.ModeEnum.Position;
+		TransformTool.ModeEnum transformToolModeRestore = TransformTool.ModeEnum.PositionRotation;
 
 		//createObjectsDestination
 		List<(Component Obj, string Text)> createObjectsDestinationCachedList = new List<(Component, string)>();
@@ -84,6 +84,13 @@ namespace NeoAxis.Editor
 		List<(Component obj, bool wasEnabled)> createByBrushComponentsToDelete = new List<(Component obj, bool wasEnabled)>();
 
 		bool skipSelectionByButtonInMouseUp;
+
+		EngineToolTip screenLabelToolTip = new EngineToolTip();
+		Component screenLabelToolTipComponent;
+		string screenLabelToolTipText = "";
+
+		public static List<Type> CanvasWidgetsToCreate { get; } = new List<Type>();
+		public List<CanvasWidget> CanvasWidgets { get; } = new List<CanvasWidget>();
 
 		/////////////////////////////////////
 
@@ -188,12 +195,34 @@ namespace NeoAxis.Editor
 
 		/////////////////////////////////////////
 
+		public abstract class CanvasWidget
+		{
+			Component_Scene_DocumentWindow window;
+
+			//
+
+			protected CanvasWidget( Component_Scene_DocumentWindow window )
+			{
+				this.window = window;
+			}
+
+			public Component_Scene_DocumentWindow Window
+			{
+				get { return window; }
+			}
+
+			public abstract void OnUpdate( Component_Scene_DocumentWindow window, ref double screenPositionY );
+		}
+
+		/////////////////////////////////////////
+
 		public class GetMouseOverObjectToSelectByClickContext
 		{
 			public bool CheckOnlyObjectsWithEnabledSelectionByCursorFlag = true;
 
 			public object ResultObject;//public Component_ObjectInSpace ResultObject;
 			public Vector3? ResultPosition;
+			public Viewport.LastFrameScreenLabelItem ScreenLabelItem;
 		}
 
 		/////////////////////////////////////////
@@ -224,7 +253,7 @@ namespace NeoAxis.Editor
 				Log.Fatal( "scene == null" );
 
 			transformTool = new TransformTool( ViewportControl );
-			transformTool.Mode = TransformTool.ModeEnum.Position;
+			transformTool.Mode = TransformTool.ModeEnum.PositionRotation;
 
 			transformTool.ModifyBegin += TransformToolModifyBegin;
 			transformTool.ModifyCommit += TransformToolModifyCommit;
@@ -236,10 +265,15 @@ namespace NeoAxis.Editor
 
 			if( ObjectOfWindow != null )
 				SelectObjects( new object[] { ObjectOfWindow } );
+
+			Scene.RenderEvent += Scene_RenderEvent;
 		}
 
 		protected override void OnDestroy()
 		{
+			if( Scene != null )
+				Scene.RenderEvent -= Scene_RenderEvent;
+
 			if( transformTool != null )
 			{
 				transformTool.ModifyBegin -= TransformToolModifyBegin;
@@ -247,6 +281,8 @@ namespace NeoAxis.Editor
 				transformTool.ModifyCancel -= TransformToolModifyCancel;
 				transformTool.CloneAndSelectObjects -= TransformToolCloneAndSelectObjects;
 			}
+
+			screenLabelToolTip?.Dispose();
 
 			base.OnDestroy();
 		}
@@ -257,6 +293,16 @@ namespace NeoAxis.Editor
 
 			////connect scene to viewport
 			//ViewportControl.Viewport.AttachedScene = Scene;
+
+			foreach( var type in CanvasWidgetsToCreate )
+			{
+				try
+				{
+					var widget = (CanvasWidget)type.InvokeMember( "", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance, null, null, new object[] { this } );
+					CanvasWidgets.Add( widget );
+				}
+				catch { }
+			}
 		}
 
 		protected override void Viewport_KeyDown( Viewport viewport, KeyEvent e, ref bool handled )
@@ -334,6 +380,14 @@ namespace NeoAxis.Editor
 
 		protected override void Viewport_MouseDown( Viewport viewport, EMouseButtons button, ref bool handled )
 		{
+			//code from Viewport.PerformMouseDown
+			if( viewport.UIContainer != null && viewport.UIContainer.PerformMouseDown( button ) )
+			{
+				handled = true;
+				return;
+			}
+
+
 			base.Viewport_MouseDown( viewport, button, ref handled );
 			if( handled )
 				return;
@@ -406,6 +460,9 @@ namespace NeoAxis.Editor
 				handled = true;
 				return;
 			}
+
+			//always set handled to disable calling uiContainer.PerformMouseDown. it is already called in the beginning of this method
+			handled = true;
 		}
 
 		protected override void Viewport_MouseUp( Viewport viewport, EMouseButtons button, ref bool handled )
@@ -582,6 +639,8 @@ namespace NeoAxis.Editor
 
 			CreateByBrushPaintingTick( viewport, delta );
 
+			UpdateScreenLabelTooltip();
+
 			//if( firstTick )
 			//{
 			//	firstTick = false;
@@ -613,8 +672,10 @@ namespace NeoAxis.Editor
 			//get by screen label
 			foreach( var item in viewport.LastFrameScreenLabels.GetReverse() )
 			{
-				var obj = item.ObjectInSpace;
-				if( !context.CheckOnlyObjectsWithEnabledSelectionByCursorFlag || obj.EnabledSelectionByCursor )// obj.EnabledInHierarchy && obj.VisibleInHierarchy && obj.CanBeSelected )
+				var obj = item.Object;
+				var objectInSpace = obj as Component_ObjectInSpace;
+
+				if( objectInSpace != null && ( !context.CheckOnlyObjectsWithEnabledSelectionByCursorFlag || objectInSpace.EnabledSelectionByCursor ) || objectInSpace == null || item.AlwaysVisible )
 				{
 					bool found = false;
 
@@ -631,6 +692,7 @@ namespace NeoAxis.Editor
 					if( found )
 					{
 						context.ResultObject = obj;
+						context.ScreenLabelItem = item;
 						return;
 					}
 
@@ -731,11 +793,103 @@ namespace NeoAxis.Editor
 			GetMouseOverObjectInSpaceToSelectByClick( context );
 		}
 
-		public object GetMouseOverObjectToSelectByClick()
+		public object GetMouseOverObjectToSelectByClick( out GetMouseOverObjectToSelectByClickContext context )
 		{
-			var context = new GetMouseOverObjectToSelectByClickContext();
+			context = new GetMouseOverObjectToSelectByClickContext();
 			GetMouseOverObjectToSelectByClick( context );
 			return context.ResultObject;
+		}
+
+		public object GetMouseOverObjectToSelectByClick()
+		{
+			GetMouseOverObjectToSelectByClick( out var context );
+			return context.ResultObject;
+		}
+
+		void AddScreenLabels( Viewport viewport, ref double screenPositionY )
+		{
+			var context = viewport.RenderingContext;
+			var context2 = context.objectInSpaceRenderingContext;
+
+			var settings = ProjectSettings.Get;
+			var maxSize = settings.ScreenLabelMaxSize.Value;
+			Vector2 sizeInPixels = new Vector2( maxSize, maxSize );
+			Vector2 screenSize = sizeInPixels / viewport.SizeInPixels.ToVector2();
+
+
+			var list = new List<Component>();
+
+			{
+				Component_Camera cameraEditor = Scene.Mode.Value == Component_Scene.ModeEnum._3D ? Scene.CameraEditor : Scene.CameraEditor2D;
+
+				//!!!!slowly
+				foreach( var obj in Scene.GetComponents( checkChildren: true, depthFirstSearch: true ) )
+				{
+					var display = obj.ScreenLabel.Value;
+					if( display != ScreenLabelEnum.NeverDisplay )
+					{
+						var info = obj.GetScreenLabelInfo();
+
+						//display current camera always in the corner
+						if( cameraEditor != null && obj == cameraEditor )
+							info.DisplayInCorner = true;
+
+						if( display == ScreenLabelEnum.AlwaysDisplay )
+							info.DisplayInCorner = true;
+
+						if( info.DisplayInCorner )
+							list.Add( obj );
+					}
+				}
+			}
+
+			//double pos = 1.0 - screenSize.X * 0.25;
+
+			for( int n = list.Count - 1; n >= 0; n-- )
+			{
+				var obj = list[ n ];
+
+				//var rect = new Rectangle( pos - screenSize.X, screenSize.Y * 0.25, pos, screenSize.Y * 1.25 ).ToRectangleF();
+
+				//pos -= screenSize.X * 1.25;
+
+				ColorValue color;
+				if( context2.selectedObjects.Contains( obj ) )
+					color = ProjectSettings.Get.SelectedColor;
+				else if( context2.canSelectObjects.Contains( obj ) )
+					color = ProjectSettings.Get.CanSelectColor;
+				else
+					color = ProjectSettings.Get.ScreenLabelColor;
+
+				var item = new Viewport.LastFrameScreenLabelItem();
+				item.Object = obj;
+				item.DistanceToCamera = -1;
+				//item.ScreenRectangle = rect;
+				item.Color = color;
+				if( !obj.EnabledInHierarchy )
+					item.Color.Alpha *= 0.5f;
+
+				item.AlwaysVisible = true;
+				viewport.LastFrameScreenLabels.AddLast( item );
+				viewport.LastFrameScreenLabelByObjectInSpace[ obj ] = item;
+
+				//screenPositionY = item.ScreenRectangle.Bottom;
+			}
+
+			if( list.Count != 0 )
+				screenPositionY = screenSize.Y * 1.25;
+		}
+
+		private void Scene_RenderEvent( Component_Scene sender, Viewport viewport )
+		{
+			double screenPositionY = 0;
+
+			//screen labels
+			if( Scene.GetDisplayDevelopmentDataInThisApplication() && Scene.DisplayLabels && viewport.AllowRenderScreenLabels && viewport.CanvasRenderer != null )
+				AddScreenLabels( viewport, ref screenPositionY );
+
+			foreach( var widget in CanvasWidgets )
+				widget.OnUpdate( this, ref screenPositionY );
 		}
 
 		protected override void Viewport_UpdateGetObjectInSceneRenderingContext( Viewport viewport, ref Component_ObjectInSpace.RenderingContext context )
@@ -761,7 +915,7 @@ namespace NeoAxis.Editor
 					foreach( var obj in SelectByRectangle_GetObjectsInSpace() )
 					{
 						if( !context.selectedObjects.Contains( obj ) )
-							context.canSelectObjects.Add( obj );
+							context.canSelectObjects.AddWithCheckAlreadyContained( obj );
 					}
 				}
 
@@ -790,7 +944,7 @@ namespace NeoAxis.Editor
 						if( obj != null )
 						{
 							if( !context.selectedObjects.Contains( obj ) )
-								context.canSelectObjects.Add( obj );
+								context.canSelectObjects.AddWithCheckAlreadyContained( obj );
 						}
 					}
 				}
@@ -807,6 +961,16 @@ namespace NeoAxis.Editor
 				else
 					context.objectToCreate = objectToCreate;
 			}
+
+			//drop Component_LensFlares to Component_Light
+			if( createByDropEntered && objectToCreate != null && objectToCreate is Component_LensFlares )
+			{
+				var overObject = GetMouseOverObjectToSelectByClick() as Component;
+
+				if( overObject != null && overObject is Component_Light )
+					context.canSelectObjects.AddWithCheckAlreadyContained( overObject );
+			}
+
 		}
 
 		protected override void Viewport_UpdateBeforeOutput( Viewport viewport )
@@ -814,6 +978,9 @@ namespace NeoAxis.Editor
 			base.Viewport_UpdateBeforeOutput( viewport );
 
 			var renderer = viewport.CanvasRenderer;
+
+			//render UI controls
+			viewport.UIContainer.PerformRenderUI( renderer );
 
 			//draw selection rectangle
 			if( selectByRectangle_Enabled && selectByRectangle_Activated && AllowSelectObjects )
@@ -880,14 +1047,14 @@ namespace NeoAxis.Editor
 
 		public List<object> GetObjectsInSpaceToSelectByRectangle( Rectangle rectangle )//, bool skipChildrenOfResultObjects )
 		{
-			var allSet = new ESet<Component_ObjectInSpace>();
+			var allSet = new ESet<Component>();
 
 			//get by screen label
 			foreach( var item in ViewportControl.Viewport.LastFrameScreenLabels.GetReverse() )
 			{
-				var obj = item.ObjectInSpace;
-				//if( obj.EnabledInHierarchy && obj.VisibleInHierarchy && obj.CanBeSelected )
-				if( obj.EnabledSelectionByCursor )
+				var obj = item.Object;
+				var objectInSpace = item.Object as Component_ObjectInSpace;
+				if( objectInSpace != null && objectInSpace.EnabledSelectionByCursor || objectInSpace == null || item.AlwaysVisible )
 				{
 					if( rectangle.Contains( item.ScreenRectangle.GetCenter() ) )
 						allSet.AddWithCheckAlreadyContained( obj );
@@ -1142,6 +1309,11 @@ namespace NeoAxis.Editor
 				context.Checked = transformTool != null && transformTool.Mode == TransformTool.ModeEnum.None;
 				break;
 
+			case "Move & Rotate":
+				context.Enabled = true;
+				context.Checked = transformTool != null && transformTool.Mode == TransformTool.ModeEnum.PositionRotation;
+				break;
+
 			case "Move":
 				context.Enabled = true;
 				context.Checked = transformTool != null && transformTool.Mode == TransformTool.ModeEnum.Position;
@@ -1286,6 +1458,15 @@ namespace NeoAxis.Editor
 					if( transformTool.Mode == TransformTool.ModeEnum.Undefined )
 						WorkareaModeSet( "" );
 					transformTool.Mode = TransformTool.ModeEnum.None;
+				}
+				break;
+
+			case "Move & Rotate":
+				if( transformTool != null )
+				{
+					if( transformTool.Mode == TransformTool.ModeEnum.Undefined )
+						WorkareaModeSet( "" );
+					transformTool.Mode = TransformTool.ModeEnum.PositionRotation;
 				}
 				break;
 
@@ -1500,6 +1681,7 @@ namespace NeoAxis.Editor
 			}
 
 			//Separate Settings
+			if( EditorUtility.AllowSeparateSettings )
 			{
 				var item = new KryptonContextMenuItem( TranslateContextMenu( "Separate Settings" ), EditorResourcesCache.Settings, delegate ( object s, EventArgs e2 )
 				{
@@ -1837,6 +2019,7 @@ namespace NeoAxis.Editor
 						objectTypeToCreate = null;
 						objectToCreate = null;
 						createByDropEntered = false;
+						EditorAPI.SelectDockWindow( this );
 						return;
 					}
 				}
@@ -2002,8 +2185,15 @@ namespace NeoAxis.Editor
 				var particleInSpace = createTo.CreateComponent<Component_ParticleSystemInSpace>( -1, false );
 				newObject = particleInSpace;
 
-				//!!!!ссылка такая для всех?
-				particleInSpace.ParticleSystem = new Reference<Component_ParticleSystem>( null, referenceToObject );
+				if( MetadataManager.GetTypeOfNetType( typeof( Component_ParticleSystem ) ) == objectType && string.IsNullOrEmpty( referenceToObject ) )
+				{
+					var particleSystem = particleInSpace.CreateComponent<Component_ParticleSystem>();
+					particleSystem.Name = "Particle System";
+					particleSystem.NewObjectSetDefaultConfiguration();
+					particleInSpace.ParticleSystem = ReferenceUtility.MakeThisReference( particleInSpace, particleSystem );
+				}
+				else
+					particleInSpace.ParticleSystem = new Reference<Component_ParticleSystem>( null, referenceToObject );
 			}
 
 			//Component_CollisionShape
@@ -2330,6 +2520,22 @@ namespace NeoAxis.Editor
 				//};
 			}
 
+			//drop Component_LensFlares to Component_Light
+			if( objectToCreate != null && objectToCreate is Component_LensFlares )
+			{
+				var overObject = GetMouseOverObjectToSelectByClick() as Component;
+
+				Component needParent = Scene;
+				if( overObject != null && overObject is Component_Light )
+					needParent = overObject;
+
+				if( objectToCreate.Parent != needParent )
+				{
+					objectToCreate.RemoveFromParent( false );
+					needParent.AddComponent( objectToCreate );
+				}
+			}
+
 			////!!!!тут удаляется. создается в _Create. может можно в одном месте это всё
 			////Component_MeshInSpace.IMeshInSpaceChild as child of Component_MeshInSpace
 			//if( dragDropCreateObject != null && dragDropCreateObject is Component_MeshInSpace.IMeshInSpaceChild meshInSpaceChild )
@@ -2529,6 +2735,17 @@ namespace NeoAxis.Editor
 
 								setPropertyVisualizeCanSelectObject = null;
 							}
+
+							//drop Material to Component_Decal.Material
+							var overDecal = overObject as Component_Decal;
+							if( overDecal != null )
+							{
+								setPropertyObject = overDecal;
+								setProperty = (Metadata.Property)overDecal.MetadataGetMemberBySignature( "property:Material" );
+								setPropertyValue = ReferenceUtility.MakeReference( typeof( Component_Material ), null, referenceValue );
+
+								setPropertyVisualizeCanSelectObject = null;
+							}
 						}
 
 						//drop Material from Component_Import3D to
@@ -2568,6 +2785,17 @@ namespace NeoAxis.Editor
 								{
 									setPropertyObject = overBillboard;
 									setProperty = (Metadata.Property)overBillboard.MetadataGetMemberBySignature( "property:Material" );
+									setPropertyValue = ReferenceUtility.MakeReference( typeof( Component_Material ), null, referenceValue2 );
+
+									setPropertyVisualizeCanSelectObject = null;
+								}
+
+								//drop Material to Component_Decal.Material
+								var overDecal = overObject as Component_Decal;
+								if( overDecal != null )
+								{
+									setPropertyObject = overDecal;
+									setProperty = (Metadata.Property)overDecal.MetadataGetMemberBySignature( "property:Material" );
 									setPropertyValue = ReferenceUtility.MakeReference( typeof( Component_Material ), null, referenceValue2 );
 
 									setPropertyVisualizeCanSelectObject = null;
@@ -2812,14 +3040,58 @@ namespace NeoAxis.Editor
 			}
 		}
 
-		protected override void GetTextInfoRightBottomCorner( List<string> lines )
+		static Type GetTypeWhereDefinedWhenCreatingShowWarningIfItAlreadyExistsAttribute( Component obj )
 		{
-			base.GetTextInfoRightBottomCorner( lines );
+			var type = obj.GetType();
+			if( type.GetCustomAttribute( typeof( WhenCreatingShowWarningIfItAlreadyExistsAttribute ), true ) != null )
+			{
+				var types = new Stack<Type>();
+				{
+					var t = type;
+					while( t != null )
+					{
+						types.Push( t );
+						t = t.BaseType;
+					}
+				}
+
+				while( types.Count != 0 )
+				{
+					var t = types.Pop();
+					if( t.GetCustomAttribute( typeof( WhenCreatingShowWarningIfItAlreadyExistsAttribute ), true ) != null )
+						return t;
+				}
+			}
+
+			return null;
+		}
+
+		protected override void GetTextInfoCenterBottomCorner( List<string> lines )
+		{
+			base.GetTextInfoCenterBottomCorner( lines );
 
 			if( createByClickEntered )
-				lines.Add( Translate( "Creating an object by click" ) );
+				lines.Add( Translate( "Creating objects by mouse clicking." ) );
 			if( createByBrushEntered )
-				lines.Add( Translate( "Creating an object by brush" ) );
+				lines.Add( Translate( "Creating objects by brush." ) );
+
+			//warning component already exists
+			if( createByDropEntered && objectToCreate != null )
+			{
+				try
+				{
+					var type = GetTypeWhereDefinedWhenCreatingShowWarningIfItAlreadyExistsAttribute( objectToCreate );
+					if( type != null && Scene.GetComponents( type, checkChildren: true ).Length > 1 )
+					{
+						var name = TypeUtility.GetUserFriendlyNameForInstanceOfType( type );
+
+						if( lines.Count != 0 )
+							lines.Add( "" );
+						lines.Add( $"Another {name} component already exists." );
+					}
+				}
+				catch { }
+			}
 
 			AddScreenMessagesFromTerrain( lines );
 
@@ -4605,11 +4877,36 @@ namespace NeoAxis.Editor
 				var displayMessage = !list.SequenceEqual( list2 );
 				if( displayMessage )
 				{
+					if( lines.Count != 0 )
+						lines.Add( "" );
 					lines.Add( "The layers of this terrain are displayed in a different sequence than they are defined" );
 					lines.Add( "in the list because the materials of the layers drawn at different stages of rendering" );
 					lines.Add( "(deferred, opacity forward, transparent)." );
 					//lines.Add( "The layers of this terrain are displayed in a different sequence than they are defined in the list because the materials of the layers drawn at different stages of rendering (deferred, opacity forward, transparent)." );
 				}
+			}
+		}
+
+		void UpdateScreenLabelTooltip()
+		{
+			Component component = null;
+			string text = "";
+
+			var overObject = GetMouseOverObjectToSelectByClick( out var context );
+			if( overObject != null && context.ScreenLabelItem != null )
+			{
+				component = context.ResultObject as Component;
+				if( component != null )
+					text = !string.IsNullOrEmpty( component.Name ) ? component.Name : component.ToString();
+			}
+
+			if( screenLabelToolTipComponent != component || screenLabelToolTipText != text )
+			{
+				screenLabelToolTipComponent = component;
+				screenLabelToolTipText = text;
+
+				screenLabelToolTip.Hide( ViewportControl );
+				screenLabelToolTip.SetToolTip( ViewportControl, screenLabelToolTipText );
 			}
 		}
 

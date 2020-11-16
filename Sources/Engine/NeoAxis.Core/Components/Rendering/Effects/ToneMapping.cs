@@ -14,6 +14,7 @@ namespace NeoAxis
 	/// </summary>
 	[NewObjectDefaultName( "Tone Mapping" )]
 	[DefaultOrderOfEffect( 3 )]
+	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class Component_RenderingEffect_ToneMapping : Component_RenderingEffect
 	{
 		/// <summary>
@@ -163,5 +164,9 @@ namespace NeoAxis
 			get { return true; }
 		}
 
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "ToneMapping", true );
+		}
 	}
 }

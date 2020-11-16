@@ -88,6 +88,11 @@ namespace NeoAxis
 			get { return flags; }
 		}
 
+		public IDisposable RealObject
+		{
+			get { return realObject; }
+		}
+
 		public void SetData( byte[] vertices, int vertexCountActual = -1 )
 		{
 			if( !( Flags.HasFlag( GpuBufferFlags.Dynamic ) || ( realObject == null && !Flags.HasFlag( GpuBufferFlags.Dynamic ) && !Flags.HasFlag( GpuBufferFlags.ComputeWrite ) ) ) )

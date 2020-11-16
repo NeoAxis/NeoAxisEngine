@@ -33,5 +33,10 @@ namespace NeoAxis
 		public abstract void Render( Component_RenderingPipeline pipeline, ViewportRenderingContext context, Component_RenderingPipeline.IFrameData frameData );//, Viewport renderToViewport );// ref Component_Texture actualTexture );
 
 		public abstract void GetEnvironmentTextureData( out Component_RenderingPipeline.EnvironmentTextureData environmentCubemap, out Component_RenderingPipeline.EnvironmentTextureData irradianceCubemap );
+
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "Sky", true );
+		}
 	}
 }

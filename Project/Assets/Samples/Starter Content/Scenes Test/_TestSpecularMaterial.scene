@@ -1,6 +1,6 @@
 .component NeoAxis.Component_Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1174, 842\"><KW V=\"1\" A=\"5EC6510336774B6537AE72829AE39093\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"22847A1136734772678F5B3D8FE6D29B\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"5EC6510336774B6537AE72829AE39093\"><KP UN=\"5EC6510336774B6537AE72829AE39093\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"678D435D51D8440437909CF7DD1C0C20\" S=\"False\"><CPD ObjPath=\"$SpecularMaterial\\$Shader graph\" /></KP><KP UN=\"0242E87018694D4A519040530FF898C7\" S=\"False\"><CPD ObjPath=\"$Rendering Pipeline\\$Specular Material Deferred\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1205, 842\"><KW V=\"1\" A=\"5EC6510336774B6537AE72829AE39093\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"22847A1136734772678F5B3D8FE6D29B\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"5EC6510336774B6537AE72829AE39093\"><KP UN=\"5EC6510336774B6537AE72829AE39093\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"678D435D51D8440437909CF7DD1C0C20\" S=\"False\"><CPD ObjPath=\"$SpecularMaterial\\$Shader graph\" /></KP><KP UN=\"0242E87018694D4A519040530FF898C7\" S=\"False\"><CPD ObjPath=\"$Rendering Pipeline\\$Specular Material Deferred\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -22,6 +22,17 @@
 		Type = Ambient
 		Brightness = 5177.583776749
 	}
+	.component NeoAxis.Component_Light
+	{
+		Name = Light1
+		Transform = "3.81787770755498 -4.02738720650646 30.8437317105508; -0.787517077619836 -0.26232887070058 0.556485675305445 0.0363883117761065; 1 1 1"
+		Type = Directional
+		Brightness = 185562.860593824
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 90
+	}
 	.component NeoAxis.Component_RenderingPipeline_Default
 	{
 		Name = Rendering Pipeline
@@ -37,6 +48,7 @@
 			{
 				Enabled = False
 				Name = Tone Mapping
+				Intensity = 0.5
 			}
 			.component NeoAxis.Component_RenderingEffect_ToLDR
 			{
@@ -70,10 +82,6 @@
 			Enabled = False
 			Name = Specular Material Deferred
 			ShadingModel = Specular
-			Normal
-			{
-				GetByReference = "this:$Shader graph\\$Node Texture Sample 2\\$Texture Sample\\RGBA"
-			}
 			BaseColor
 			{
 				GetByReference = "this:$Shader graph\\$Node Texture Sample 1\\$Texture Sample\\RGBA"
@@ -81,6 +89,10 @@
 			Roughness
 			{
 				GetByReference = "this:$Shader graph\\$Node Texture Sample 3\\$Texture Sample\\R"
+			}
+			Normal
+			{
+				GetByReference = "this:$Shader graph\\$Node Texture Sample 2\\$Texture Sample\\RGBA"
 			}
 			.component NeoAxis.Component_FlowGraph
 			{
@@ -162,17 +174,6 @@
 	.component NeoAxis.Component_GameMode
 	{
 		Name = Game Mode
-	}
-	.component NeoAxis.Component_Light
-	{
-		Name = Light1
-		Transform = "3.81787770755498 -4.02738720650646 30.8437317105508; -0.787517077619836 -0.26232887070058 0.556485675305445 0.0363883117761065; 1 1 1"
-		Type = Directional
-		Brightness = 185562.860593824
-		AttenuationFar = 100
-		AttenuationPower = 1.5
-		SpotlightInnerAngle = 80
-		SpotlightOuterAngle = 90
 	}
 	.component NeoAxis.Component_Material
 	{
@@ -472,10 +473,6 @@
 	{
 		Name = SpecularMaterial
 		ShadingModel = Specular
-		Normal
-		{
-			GetByReference = "this:$Shader graph\\$Node Texture Sample 3\\$Texture Sample\\RGBA"
-		}
 		BaseColor
 		{
 			GetByReference = "this:$Shader graph\\$Node Texture Sample 1\\$Texture Sample\\RGBA"
@@ -483,6 +480,10 @@
 		Roughness
 		{
 			GetByReference = "this:$Shader graph\\$Node Texture Sample 4\\$Texture Sample\\R"
+		}
+		Normal
+		{
+			GetByReference = "this:$Shader graph\\$Node Texture Sample 3\\$Texture Sample\\RGBA"
 		}
 		.component NeoAxis.Component_FlowGraph
 		{

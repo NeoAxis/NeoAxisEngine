@@ -13,6 +13,7 @@ namespace NeoAxis
 	/// Screen effect for adding light shafts (god rays).
 	/// </summary>
 	[DefaultOrderOfEffect( 2.5 )]
+	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class Component_RenderingEffect_LightShafts : Component_RenderingEffect
 	{
 		/// <summary>
@@ -361,5 +362,9 @@ namespace NeoAxis
 			get { return true; }
 		}
 
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "ScreenEffect", true );
+		}
 	}
 }

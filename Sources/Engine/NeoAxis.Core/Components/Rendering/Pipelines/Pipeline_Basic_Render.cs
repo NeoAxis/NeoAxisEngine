@@ -4472,6 +4472,12 @@ namespace NeoAxis
 			if( deferredShadingData == null )
 				InitDeferredShadingData();
 
+			////!!!!temp
+			////save depth buffer to texture
+			//PhysicallyCorrectRendering_RenderLightsDeferred( context, out var handled );
+			//if( handled )
+			//	return;
+
 			//!!!!
 			//stencil optimization. сначала проход заполнить стенсиль проверяя depth. второй проход с проверкой
 
@@ -5955,6 +5961,10 @@ namespace NeoAxis
 					context.DynamicTexture_Free( gBuffer4TextureCopy );
 				}
 
+				////!!!!temp
+				////save depth buffer to texture
+				//PhysicallyCorrectRendering_CallSaveDepthBufferToTexture( context );
+
 				var deferredLightTexture = context.RenderTarget2D_Alloc( destinationSize, GetHighDynamicRange() ? PixelFormat.Float16RGBA : PixelFormat.A8R8G8B8 );
 
 				//lighting pass for deferred shading
@@ -6021,30 +6031,6 @@ namespace NeoAxis
 				}
 			}
 
-			//fog
-			if( frameData.Fog != null )
-			{
-				context.SetViewport( sceneTexture.Result.GetRenderTarget().Viewports[ 0 ], viewMatrix, projectionMatrix );
-
-				CanvasRenderer.ShaderItem shader = new CanvasRenderer.ShaderItem();
-				shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
-				shader.FragmentProgramFileName = @"Base\Shaders\Effects\Fog_fs.sc";
-
-				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"depthTexture"*/,
-					depthTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
-				//shader.Parameters.Set( "0"/*"depthTexture"*/, new GpuMaterialPass.TextureParameterValue( depthTexture,
-				//	TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
-
-				shader.Parameters.Set( "affectBackground", new Vector4F( (float)frameData.Fog.AffectBackground.Value, 0, 0, 0 ) );
-
-				////!!!!new
-				//Matrix4F viewProjMatrix = projectionMatrix * viewMatrix;
-				//Matrix4F invViewProjMatrix = viewProjMatrix.GetInverse();
-				//shader.Parameters.Set( "invViewProj", invViewProjMatrix );
-
-				context.RenderQuadToCurrentViewport( shader, CanvasRenderer.BlendingType.AlphaBlend );
-			}
-
 			//render transparent layers on opaque base objects (forward)
 			if( DebugDrawForwardTransparentPass && DebugDrawLayers )
 			{
@@ -6072,6 +6058,25 @@ namespace NeoAxis
 			//? AO не должен создавать, подменять sceneTexture
 			if( owner.Mode == Viewport.ModeEnum.Default )
 				RenderEffectsInternal( context, frameData, "Scene Effects", ref sceneTexture, true );
+
+			//fog
+			if( frameData.Fog != null )
+			{
+				context.SetViewport( sceneTexture.Result.GetRenderTarget().Viewports[ 0 ], viewMatrix, projectionMatrix );
+
+				CanvasRenderer.ShaderItem shader = new CanvasRenderer.ShaderItem();
+				shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+				shader.FragmentProgramFileName = @"Base\Shaders\Effects\Fog_fs.sc";
+
+				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"depthTexture"*/,
+					depthTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
+				//shader.Parameters.Set( "0"/*"depthTexture"*/, new GpuMaterialPass.TextureParameterValue( depthTexture,
+				//	TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
+
+				shader.Parameters.Set( "affectBackground", new Vector4F( (float)frameData.Fog.AffectBackground.Value, 0, 0, 0 ) );
+
+				context.RenderQuadToCurrentViewport( shader, CanvasRenderer.BlendingType.AlphaBlend );
+			}
 
 			//render transparent objects (forward)
 			if( DebugDrawForwardTransparentPass )
@@ -6379,8 +6384,8 @@ namespace NeoAxis
 					DisplayObjectInSpaceBounds( context, frameData );
 
 				//sort and display object's labels
-				SortObjectInSpaceLabels( context, frameData );
-				DisplayObjectInSpaceLabels( context, frameData );
+				SortObjectInSpaceLabels( context );
+				DisplayObjectInSpaceLabels( context );
 			}
 
 			//render UI. must call before PrepareListsOfObjects.

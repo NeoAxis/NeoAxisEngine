@@ -31,6 +31,26 @@ namespace NeoAxis
 		//public event Action<Component_RenderingPipeline> BackgroundColorChanged;
 		//ReferenceField<ColorValue> _backgroundColor = new ColorValue( 0, 0, 0 );
 
+		//public enum RenderingMethodEnum
+		//{
+		//	RealTime,
+		//	PhysicallyCorrect,
+		//}
+
+		///// <summary>
+		///// A method for obtaining the resulting image of a scene.
+		///// </summary>
+		//[DefaultValue( RenderingMethodEnum.RealTime )]
+		//[Category( "General" )]
+		//public Reference<RenderingMethodEnum> RenderingMethod
+		//{
+		//	get { if( _renderingMethod.BeginGet() ) RenderingMethod = _renderingMethod.Get( this ); return _renderingMethod.value; }
+		//	set { if( _renderingMethod.BeginSet( ref value ) ) { try { RenderingMethodChanged?.Invoke( this ); } finally { _renderingMethod.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="RenderingMethod"/> property value changes.</summary>
+		//public event Action<Component_RenderingPipeline> RenderingMethodChanged;
+		//ReferenceField<RenderingMethodEnum> _renderingMethod = RenderingMethodEnum.RealTime;
+
 		/// <summary>
 		/// Enables the deferred shading. When Auto mode is enabled, deferred shading is enabled, but other than Intel GPUs.
 		/// </summary>
@@ -952,6 +972,11 @@ namespace NeoAxis
 			if( result == AutoTrueFalse.Auto )
 				result = SystemSettings.LimitedDevice ? AutoTrueFalse.False : AutoTrueFalse.True;
 			return result == AutoTrueFalse.True;
+		}
+
+		//!!!!
+		public virtual void PhysicallyCorrectRendering_ResetFrame()
+		{
 		}
 	}
 }

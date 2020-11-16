@@ -2620,6 +2620,36 @@ namespace NeoAxis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap MoveRotate_16 {
+            get {
+                object obj = ResourceManager.GetObject("MoveRotate_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap MoveRotate_32 {
+            get {
+                object obj = ResourceManager.GetObject("MoveRotate_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap MoveRotate_32_Dark {
+            get {
+                object obj = ResourceManager.GetObject("MoveRotate_32_Dark", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap MoveSnap_16 {
             get {
                 object obj = ResourceManager.GetObject("MoveSnap_16", resourceCulture);

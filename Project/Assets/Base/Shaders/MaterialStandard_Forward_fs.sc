@@ -450,16 +450,12 @@ void main()
 
 	//fog
 #ifdef GLOBAL_FOG_SUPPORT
-	//#if defined(BLEND_MODE_OPAQUE) || defined(BLEND_MODE_MASKED)
-	//	resultColor.rgb *= v_fogFactor;
-	//	#ifdef LIGHT_TYPE_AMBIENT
-	//		resultColor.rgb += u_fogColor.rgb * (1.0 - v_fogFactor);
-	//	#endif
-	//#endif
-	#if defined(BLEND_MODE_TRANSPARENT) || defined(BLEND_MODE_ADD)
-	//#ifdef BLEND_MODE_TRANSPARENT
-		resultColor.rgb *= v_fogFactor;
+	#ifdef BLEND_MODE_TRANSPARENT
+		resultColor *= v_fogFactor;
 		resultColor.rgb += u_fogColor.rgb * (1.0 - v_fogFactor);
+	#endif
+	#ifdef BLEND_MODE_ADD
+		resultColor *= v_fogFactor;
 	#endif
 #endif
 

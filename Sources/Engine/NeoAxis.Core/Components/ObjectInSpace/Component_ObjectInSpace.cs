@@ -620,18 +620,15 @@ namespace NeoAxis
 			{
 				if( new Rectangle( 0, 0, 1, 1 ).Contains( ref screenPosition ) )
 				{
-					//!!!!в конфиг
-					//!!!!может указывать в пикселях? или вертикальным размером?
-					//!!!!графиком настраивать
-					//!!!!может картинку рисовать, может разным цветом
-					Vector2 maxSize = new Vector2( 20, 20 );
-					Vector2 minSize = new Vector2( 5, 5 );
-					double maxDistance = 100;
+					var settings = ProjectSettings.Get;
+					var maxSize = settings.ScreenLabelMaxSize.Value;
+					var minSize = settings.ScreenLabelMinSizeFactor.Value * maxSize;
+					var maxDistance = settings.ScreenLabelMaxDistance.Value;
 
 					double distance = ( pos - viewport.CameraSettings.Position ).Length();
 					if( distance < maxDistance )
 					{
-						Vector2 sizeInPixels = Vector2.Lerp( maxSize, minSize, distance / maxDistance );
+						Vector2 sizeInPixels = Vector2.Lerp( new Vector2( maxSize, maxSize ), new Vector2( minSize, minSize ), distance / maxDistance );
 						Vector2 screenSize = sizeInPixels / viewport.SizeInPixels.ToVector2();
 
 						var rect = new Rectangle( screenPosition - screenSize * .5, screenPosition + screenSize * .5 ).ToRectangleF();
@@ -647,11 +644,25 @@ namespace NeoAxis
 						context2.displayLabelsCounter++;
 
 						var item = new Viewport.LastFrameScreenLabelItem();
-						item.ObjectInSpace = this;
+						item.Object = this;
 						item.DistanceToCamera = (float)( Transform.Value.Position - context.Owner.CameraSettings.Position ).Length();
 						item.ScreenRectangle = rect;
 						item.Color = color;
-						viewport.LastFrameScreenLabels.Add( item );
+
+						//remove display in corner
+						if( viewport.LastFrameScreenLabelByObjectInSpace.ContainsKey( this ) )
+						{
+							foreach( var item2 in viewport.LastFrameScreenLabels )
+							{
+								if( item2.Object == this )
+								{
+									viewport.LastFrameScreenLabels.Remove( item2 );
+									break;
+								}
+							}
+						}
+
+						viewport.LastFrameScreenLabels.AddLast( item );
 						viewport.LastFrameScreenLabelByObjectInSpace[ this ] = item;
 
 						//var texture = ResourceManager.LoadResource<Component_Image>( "Base\\UI\\Images\\Circle.png" );
@@ -750,7 +761,9 @@ namespace NeoAxis
 					//}
 
 					//label
-					if( scene.DisplayLabels && EnabledSelectionByCursor && !context2.disableShowingLabelForThisObject && viewport.AllowRenderScreenLabels && context2.viewport.CanvasRenderer != null && context2.displayLabelsCounter < context2.displayLabelsMax )
+					var display = ScreenLabel.Value;
+
+					if( scene.DisplayLabels && EnabledSelectionByCursor && ( !context2.disableShowingLabelForThisObject || display == ScreenLabelEnum.AlwaysDisplay ) && display != ScreenLabelEnum.NeverDisplay && viewport.AllowRenderScreenLabels && context2.viewport.CanvasRenderer != null && context2.displayLabelsCounter < context2.displayLabelsMax )
 					{
 						AddObjectScreenLabel( context );
 

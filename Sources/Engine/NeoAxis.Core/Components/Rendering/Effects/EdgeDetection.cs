@@ -9,6 +9,7 @@ namespace NeoAxis
 	/// Edge detection screen effect.
 	/// </summary>
 	[DefaultOrderOfEffect( 7.9 )]
+	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class Component_RenderingEffect_EdgeDetection : Component_RenderingEffect
 	{
 		/// <summary>
@@ -149,6 +150,11 @@ namespace NeoAxis
 		public override bool LimitedDevicesSupport
 		{
 			get { return true; }
+		}
+
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "ScreenEffect", true );
 		}
 	}
 }

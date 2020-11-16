@@ -43,5 +43,10 @@ namespace NeoAxis
 					context2.disableShowingLabelForThisObject = true;
 			}
 		}
+
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "CurveInSpacePoint" );
+		}
 	}
 }

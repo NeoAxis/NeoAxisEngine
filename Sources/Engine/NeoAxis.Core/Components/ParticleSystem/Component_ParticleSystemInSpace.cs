@@ -1671,5 +1671,10 @@ namespace NeoAxis
 			//	batch = null;
 			//}
 		}
+
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "ParticleSystemInSpace" );
+		}
 	}
 }

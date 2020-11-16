@@ -558,5 +558,10 @@ namespace NeoAxis
 			if( point != null )
 				point.Transform = new Transform( Transform.Value.Position + new Vector3( 1, 0, 0 ), Quaternion.Identity );
 		}
+
+		public override ScreenLabelInfo GetScreenLabelInfo()
+		{
+			return new ScreenLabelInfo( "CurveInSpace" );
+		}
 	}
 }

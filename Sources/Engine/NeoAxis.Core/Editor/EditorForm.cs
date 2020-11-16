@@ -349,8 +349,7 @@ namespace NeoAxis.Editor
 
 		private void EditorForm_FormClosing( object sender, FormClosingEventArgs e )
 		{
-			bool? result = ShowDialogAndSaveDocuments( workspaceController.GetDockWindows() );
-			if( result == null )
+			if( ShowDialogAndSaveDocuments( workspaceController.GetDockWindows() ) )
 			{
 				e.Cancel = true;
 				return;
@@ -412,7 +411,8 @@ namespace NeoAxis.Editor
 
 		// сохранить только выбранные окна. не обязательно все. например может использоваться
 		// из метода "Закрыть все окна кроме текущего".
-		internal bool? ShowDialogAndSaveDocuments( IEnumerable<DockWindow> windows )
+		//return: Cancel
+		bool ShowDialogAndSaveDocuments( IEnumerable<DockWindow> windows )
 		{
 			var unsavedDocs = new List<DocumentInstance>();
 
@@ -432,11 +432,11 @@ namespace NeoAxis.Editor
 			switch( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNoCancel ) )
 			{
 			case EDialogResult.Cancel:
-				return null;
+				return true;
 			case EDialogResult.Yes:
 				//!!!!check error, return null
 				unsavedDocs.ForEach( doc => doc.Save() );
-				return true;
+				return false;
 			case EDialogResult.No:
 				return false;
 			}
@@ -444,7 +444,8 @@ namespace NeoAxis.Editor
 			return false;
 		}
 
-		internal bool? ShowDialogAndSaveDocument( DockWindow window )
+		//return: Cancel
+		internal bool ShowDialogAndSaveDocument( DockWindow window )
 		{
 			var documentWindow = window as DocumentWindow;
 			if( documentWindow == null )
@@ -453,21 +454,28 @@ namespace NeoAxis.Editor
 			// If the page is dirty then we need to ask if it should be saved
 			if( documentWindow.IsMainWindowInWorkspace && !documentWindow.IsDocumentSaved() )
 			{
-				var text = EditorLocalization.Translate( "General", "Save changes to the following files?" ) + "\n";
-				text += "\n" + documentWindow.Document.Name;
+				EDialogResult result;
+				if( window.ShowDialogAndSaveDocumentAutoAnswer.HasValue )
+					result = window.ShowDialogAndSaveDocumentAutoAnswer.Value;
+				else
+				{
+					var text = EditorLocalization.Translate( "General", "Save changes to the following files?" ) + "\n";
+					text += "\n" + documentWindow.Document.Name;
+					result = EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNoCancel );
+				}
 
-				switch( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNoCancel ) )
+				switch( result )
 				{
 				case EDialogResult.Cancel:
 
 					//!!!!тут?
 					EditorAPI.SetRestartApplication( false );
 
-					return null;
+					return true;
 				case EDialogResult.Yes:
 					//!!!!check error, return null
 					documentWindow.SaveDocument();
-					return true;
+					return false;
 				case EDialogResult.No:
 					return false;
 				}

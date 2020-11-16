@@ -14,7 +14,7 @@ namespace NeoAxis.Addon.Pathfinding
 		ProcedureUI.Button buttonBuild;
 		ProcedureUI.Button buttonTest;
 
-		TransformTool.ModeEnum transformToolModeRestore = TransformTool.ModeEnum.Position;
+		TransformTool.ModeEnum transformToolModeRestore = TransformTool.ModeEnum.PositionRotation;
 		//string workareaModeNameRestore = "";
 		//DocumentWindowWithViewport.WorkareaModeClass workareaModeRestore;
 

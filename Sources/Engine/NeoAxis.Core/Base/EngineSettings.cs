@@ -36,6 +36,9 @@ namespace NeoAxis
 			public static int SoundMaxReal3DChannels = 50;
 
 			public static bool ScriptingCompileProjectSolutionAtStartup = true;
+
+			public static double AutoUnloadTexturesNotUsedForLongTimeInSecondsInEditor = 300;
+			public static double AutoUnloadTexturesNotUsedForLongTimeInSecondsInSimulation = 300;
 		}
 
 		////!!!!DebugRendering?

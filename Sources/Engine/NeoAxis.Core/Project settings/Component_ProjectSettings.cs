@@ -68,7 +68,7 @@ namespace NeoAxis
 					if( !ExtendedMode && HidePropertiesForSpecialAppMode.Contains( member.Name ) )
 						skip = true;
 
-					if( member.Name == "Name" || member.Name == "Enabled" )
+					if( member.Name == "Name" || member.Name == "Enabled" || member.Name == "ScreenLabel" )
 						skip = true;
 
 					if( EditorAPI.DarkTheme )
@@ -111,11 +111,11 @@ namespace NeoAxis
 		}
 
 		/// <summary>
-		/// Enables the extended mode of the app. All features of NeoAxis Engine is activated in this mode.
+		/// Enables the extended mode of the editor. All features of NeoAxis Engine is activated in this mode.
 		/// </summary>
 		[DefaultValue( false )]
 		[Category( "General" )]
-		[DisplayName( "Extended Mode (Restart the app to apply changes)" )]
+		[DisplayName( "Extended Mode (Restart to apply changes)" )]
 		public Reference<bool> ExtendedMode
 		{
 			get { if( _extendedMode.BeginGet() ) ExtendedMode = _extendedMode.Get( this ); return _extendedMode.value; }
@@ -153,6 +153,7 @@ namespace NeoAxis
 		/// </summary>
 		[DefaultValue( LanguageEnum.English )]
 		[Category( "Editor" )]
+		[DisplayName( "Language (Restart to apply changes)" )]
 		public Reference<LanguageEnum> Language
 		{
 			get { if( _language.BeginGet() ) Language = _language.Get( this ); return _language.value; }
@@ -276,6 +277,7 @@ namespace NeoAxis
 		/// </summary>
 		[DefaultValue( ThemeEnum.Dark )]
 		[Category( "Colors" )]
+		[DisplayName( "Theme (Restart to apply changes)" )]
 		public Reference<ThemeEnum> Theme
 		{
 			get { if( _theme.BeginGet() ) Theme = _theme.Get( this ); return _theme.value; }
@@ -537,34 +539,6 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="SceneShowSoundSourceColor"/> property value changes.</summary>
 		public event Action<Component_ProjectSettings> SceneShowSoundSourceColorChanged;
 		ReferenceField<ColorValue> _sceneShowSoundSourceColor = new ColorValue( 0, 0, 1 );
-
-		//ScreenLabelColor
-		ReferenceField<ColorValue> _screenLabelColor = new ColorValue( 1, 1, 1 );
-		/// <summary>
-		/// The color of UI label objects in the scene view.
-		/// </summary>
-		[DefaultValue( "1 1 1" )]
-		[Category( "Colors" )]
-		public Reference<ColorValue> ScreenLabelColor
-		{
-			get
-			{
-				if( _screenLabelColor.BeginGet() )
-					ScreenLabelColor = _screenLabelColor.Get( this );
-				return _screenLabelColor.value;
-			}
-			set
-			{
-				if( _screenLabelColor.BeginSet( ref value ) )
-				{
-					try { ScreenLabelColorChanged?.Invoke( this ); }
-					finally { _screenLabelColor.EndSet(); }
-				}
-			}
-		}
-		/// <summary>Occurs when the <see cref="ScreenLabelColor"/> property value changes.</summary>
-		public event Action<Component_ProjectSettings> ScreenLabelColorChanged;
-
 
 		//SceneShowObjectInSpaceBoundsColor
 		ReferenceField<ColorValue> _sceneShowObjectInSpaceBoundsColor = new ColorValue( 1, 1, 0, .8 );
@@ -872,6 +846,71 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		//!!!!descriptions
+
+		[DefaultValue( 24 )]
+		[Category( "Screen Labels" )]
+		[Range( 10.0, 100.0, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		public Reference<double> ScreenLabelMaxSize
+		{
+			get { if( _screenLabelMaxSize.BeginGet() ) ScreenLabelMaxSize = _screenLabelMaxSize.Get( this ); return _screenLabelMaxSize.value; }
+			set { if( _screenLabelMaxSize.BeginSet( ref value ) ) { try { ScreenLabelMaxSizeChanged?.Invoke( this ); } finally { _screenLabelMaxSize.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ScreenLabelMaxSize"/> property value changes.</summary>
+		public event Action<Component_ProjectSettings> ScreenLabelMaxSizeChanged;
+		ReferenceField<double> _screenLabelMaxSize = 24;
+
+		[DefaultValue( 0.25 )]
+		[Category( "Screen Labels" )]
+		[Range( 0, 1 )]
+		public Reference<double> ScreenLabelMinSizeFactor
+		{
+			get { if( _screenLabelMinSizeFactor.BeginGet() ) ScreenLabelMinSizeFactor = _screenLabelMinSizeFactor.Get( this ); return _screenLabelMinSizeFactor.value; }
+			set { if( _screenLabelMinSizeFactor.BeginSet( ref value ) ) { try { ScreenLabelMinSizeFactorChanged?.Invoke( this ); } finally { _screenLabelMinSizeFactor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ScreenLabelMinSizeFactor"/> property value changes.</summary>
+		public event Action<Component_ProjectSettings> ScreenLabelMinSizeFactorChanged;
+		ReferenceField<double> _screenLabelMinSizeFactor = 0.25;
+
+		[DefaultValue( 100 )]
+		[Category( "Screen Labels" )]
+		[Range( 1, 1000, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		public Reference<double> ScreenLabelMaxDistance
+		{
+			get { if( _screenLabelMaxDistance.BeginGet() ) ScreenLabelMaxDistance = _screenLabelMaxDistance.Get( this ); return _screenLabelMaxDistance.value; }
+			set { if( _screenLabelMaxDistance.BeginSet( ref value ) ) { try { ScreenLabelMaxDistanceChanged?.Invoke( this ); } finally { _screenLabelMaxDistance.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ScreenLabelMaxDistance"/> property value changes.</summary>
+		public event Action<Component_ProjectSettings> ScreenLabelMaxDistanceChanged;
+		ReferenceField<double> _screenLabelMaxDistance = 100;
+
+		/// <summary>
+		/// The color of screen labels.
+		/// </summary>
+		[DefaultValue( "1 1 1" )]
+		[Category( "Screen Labels" )]
+		public Reference<ColorValue> ScreenLabelColor
+		{
+			get { if( _screenLabelColor.BeginGet() ) ScreenLabelColor = _screenLabelColor.Get( this ); return _screenLabelColor.value; }
+			set { if( _screenLabelColor.BeginSet( ref value ) ) { try { ScreenLabelColorChanged?.Invoke( this ); } finally { _screenLabelColor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ScreenLabelColor"/> property value changes.</summary>
+		public event Action<Component_ProjectSettings> ScreenLabelColorChanged;
+		ReferenceField<ColorValue> _screenLabelColor = new ColorValue( 1, 1, 1 );
+
+		[DefaultValue( true )]
+		[Category( "Screen Labels" )]
+		public Reference<bool> ScreenLabelDisplayIcons
+		{
+			get { if( _screenLabelDisplayIcons.BeginGet() ) ScreenLabelDisplayIcons = _screenLabelDisplayIcons.Get( this ); return _screenLabelDisplayIcons.value; }
+			set { if( _screenLabelDisplayIcons.BeginSet( ref value ) ) { try { ScreenLabelDisplayIconsChanged?.Invoke( this ); } finally { _screenLabelDisplayIcons.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ScreenLabelDisplayIcons"/> property value changes.</summary>
+		public event Action<Component_ProjectSettings> ScreenLabelDisplayIconsChanged;
+		ReferenceField<bool> _screenLabelDisplayIcons = true;
+
+		/////////////////////////////////////////
+
 		/// <summary>
 		/// The snap value applied when object is moved.
 		/// </summary>
@@ -1007,11 +1046,11 @@ namespace NeoAxis
 		}
 
 		//TransformToolShadowIntensity
-		ReferenceField<double> _transformToolShadowIntensity = 0.2;
+		ReferenceField<double> _transformToolShadowIntensity = 0.3;
 		/// <summary>
 		/// The intensity of the shadows drawn by the transform tool.
 		/// </summary>
-		[DefaultValue( 0.2 )]//0.3
+		[DefaultValue( 0.3 )]
 		[Category( "Scene Editor: Transform Tool" )]
 		[DisplayName( "Shadow Intensity" )]
 		[Range( 0, 1 )]

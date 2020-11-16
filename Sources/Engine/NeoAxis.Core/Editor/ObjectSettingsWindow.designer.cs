@@ -33,10 +33,11 @@
 			this.objectsBrowser1 = new NeoAxis.Editor.ContentBrowser();
 			this.panelSettings = new System.Windows.Forms.Panel();
 			this.objectSettingsHeader_ObjectInfo1 = new NeoAxis.Editor.ObjectSettingsHeader_ObjectInfo();
-			this.kryptonButtonOK = new ComponentFactory.Krypton.Toolkit.KryptonButton();
+			this.kryptonButtonClose = new ComponentFactory.Krypton.Toolkit.KryptonButton();
 			this.kryptonSplitContainer1 = new ComponentFactory.Krypton.Toolkit.KryptonSplitContainer();
+			this.kryptonButtonOK = new ComponentFactory.Krypton.Toolkit.KryptonButton();
 			this.kryptonButtonApply = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer1)).BeginInit();
+			( (System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer1.Panel1)).BeginInit();
 			this.kryptonSplitContainer1.Panel1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer1.Panel2)).BeginInit();
@@ -86,15 +87,15 @@
 			this.objectSettingsHeader_ObjectInfo1.Size = new System.Drawing.Size(880, 26);
 			this.objectSettingsHeader_ObjectInfo1.TabIndex = 0;
 			// 
-			// kryptonButtonOK
+			// kryptonButtonClose
 			// 
-			this.kryptonButtonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.kryptonButtonOK.Location = new System.Drawing.Point(740, 589);
-			this.kryptonButtonOK.Name = "kryptonButtonOK";
-			this.kryptonButtonOK.Size = new System.Drawing.Size(147, 32);
-			this.kryptonButtonOK.TabIndex = 2;
-			this.kryptonButtonOK.Values.Text = "Close";
-			this.kryptonButtonOK.Click += new System.EventHandler(this.kryptonButtonOK_Click);
+			this.kryptonButtonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.kryptonButtonClose.Location = new System.Drawing.Point(770, 589);
+			this.kryptonButtonClose.Name = "kryptonButtonClose";
+			this.kryptonButtonClose.Size = new System.Drawing.Size(117, 32);
+			this.kryptonButtonClose.TabIndex = 3;
+			this.kryptonButtonClose.Values.Text = "Close";
+			this.kryptonButtonClose.Click += new System.EventHandler(this.kryptonButtonClose_Click);
 			// 
 			// kryptonSplitContainer1
 			// 
@@ -124,24 +125,35 @@
 			this.kryptonSplitContainer1.StateNormal.Back.ImageStyle = ComponentFactory.Krypton.Toolkit.PaletteImageStyle.Inherit;
 			this.kryptonSplitContainer1.TabIndex = 2;
 			// 
+			// kryptonButtonOK
+			// 
+			this.kryptonButtonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.kryptonButtonOK.Location = new System.Drawing.Point( 644, 589);
+			this.kryptonButtonOK.Name = "kryptonButtonOK";
+			this.kryptonButtonOK.Size = new System.Drawing.Size(117, 32);
+			this.kryptonButtonOK.TabIndex = 2;
+			this.kryptonButtonOK.Values.Text = "OK";
+			this.kryptonButtonOK.Click += new System.EventHandler(this.kryptonButtonOK_Click);
+			// 
 			// kryptonButtonApply
 			// 
-			this.kryptonButtonApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.kryptonButtonApply.Location = new System.Drawing.Point(584, 589);
+			this.kryptonButtonApply.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right ) ) );
+			this.kryptonButtonApply.Location = new System.Drawing.Point( 518, 589 );
 			this.kryptonButtonApply.Name = "kryptonButtonApply";
-			this.kryptonButtonApply.Size = new System.Drawing.Size(147, 32);
+			this.kryptonButtonApply.Size = new System.Drawing.Size( 117, 32 );
 			this.kryptonButtonApply.TabIndex = 1;
 			this.kryptonButtonApply.Values.Text = "Apply";
-			this.kryptonButtonApply.Click += new System.EventHandler(this.kryptonButtonApply_Click);
+			this.kryptonButtonApply.Click += new System.EventHandler( this.kryptonButtonApply_Click );
 			// 
 			// ObjectSettingsWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.kryptonButtonApply);
+			this.Controls.Add(this.kryptonButtonOK);
+			this.Controls.Add( this.kryptonButtonApply );
 			this.Controls.Add(this.kryptonSplitContainer1);
 			this.Controls.Add(this.objectSettingsHeader_ObjectInfo1);
-			this.Controls.Add(this.kryptonButtonOK);
+			this.Controls.Add(this.kryptonButtonClose);
 			this.Name = "ObjectSettingsWindow";
 			this.Size = new System.Drawing.Size(900, 632);
 			this.WindowTitle = "Object Settings";
@@ -161,8 +173,9 @@
 		private ContentBrowser objectsBrowser1;
 		private ObjectSettingsHeader_ObjectInfo objectSettingsHeader_ObjectInfo1;
 		private System.Windows.Forms.Panel panelSettings;
-		private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonOK;
+		private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonClose;
 		private ComponentFactory.Krypton.Toolkit.KryptonSplitContainer kryptonSplitContainer1;
+		private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonOK;
 		private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonApply;
 	}
 }
