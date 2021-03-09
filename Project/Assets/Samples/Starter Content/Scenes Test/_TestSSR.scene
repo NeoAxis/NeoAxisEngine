@@ -1,6 +1,6 @@
 .component NeoAxis.Component_Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1194, 842\"><KW V=\"1\" A=\"75A91A96794E414A09A2B12F0BFB597D\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"05EEC8DB64254BB64290533DB5F3D9EF\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"75A91A96794E414A09A2B12F0BFB597D\"><KP UN=\"75A91A96794E414A09A2B12F0BFB597D\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"C42D4348B80D4EC47095F1FB003E4098\" S=\"False\"><CPD ObjPath=\"$Material Floor\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1178, 842\"><KW V=\"1\" A=\"75A91A96794E414A09A2B12F0BFB597D\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"05EEC8DB64254BB64290533DB5F3D9EF\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"75A91A96794E414A09A2B12F0BFB597D\"><KP UN=\"75A91A96794E414A09A2B12F0BFB597D\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"C42D4348B80D4EC47095F1FB003E4098\" S=\"False\"><CPD ObjPath=\"$Material Floor\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	BackgroundColor = 1 1 1
 	RenderingPipeline
 	{
@@ -14,7 +14,7 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "16.5392776527373 0.696980527899666 -14.8141864955869; -0.166290002507263 -0.00685637829605346 0.985215959888262 -0.0406218847943568; 1 1 1"
+		Transform = "16.5392776527373 0.696980527899666 -14.8141864955869; -0.166290002507263 -0.00685637829605292 0.985215959888263 -0.0406218847943538; 1 1 1"
 	}
 	.component NeoAxis.Component_Light
 	{
@@ -95,6 +95,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -104,7 +111,7 @@
 				Dimensions = 10 10
 				Material
 				{
-					GetByReference = "Samples\\Starter Content\\Materials\\Concrete 3x3 meters\\Concrete 3x3 meters.material"
+					GetByReference = "Content\\Materials\\Basic Library\\Concrete\\Concrete Floor 01.material"
 				}
 			}
 		}
@@ -145,6 +152,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -171,6 +185,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -181,7 +202,7 @@
 				UVTilesPerUnit = 0.5 0.5
 				Material
 				{
-					GetByReference = "Samples\\Starter Content\\Materials\\Painted Large Bricks 2x2 meters\\Painted Large Bricks 2x2 meters.material"
+					GetByReference = "Content\\Materials\\Basic Library\\Brick\\Yellow Brick.material"
 				}
 			}
 		}
@@ -220,6 +241,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -230,7 +258,7 @@
 				UVTilesPerUnit = 0.5 0.5
 				Material
 				{
-					GetByReference = "Samples\\Starter Content\\Materials\\Painted Large Bricks 2x2 meters\\Painted Large Bricks 2x2 meters.material"
+					GetByReference = "Content\\Materials\\Basic Library\\Brick\\Yellow Brick.material"
 				}
 			}
 		}
@@ -272,6 +300,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 	}
 	.component NeoAxis.Component_MeshInSpace
 	{
@@ -284,6 +319,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 	}
 	.component NeoAxis.Component_MeshInSpace
@@ -298,11 +340,18 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 	}
 	.component NeoAxis.Component_Material
 	{
 		Name = Material Floor
-		Metallic = 0.81
+		Metallic = 0.7
 		RayTracingReflection = 1
 		BaseColor
 		{
@@ -348,7 +397,7 @@
 					Location3 = 0 0 0
 					Texture
 					{
-						GetByReference = "Samples\\Starter Content\\Materials\\Concrete 3x3 meters\\Concrete6_1024_normal.dds"
+						GetByReference = "Content\\Materials\\Basic Library\\Concrete\\Textures\\concrete_floor_01_nor_2k.jpg"
 					}
 				}
 			}
@@ -367,7 +416,7 @@
 					Location3 = 0 0 0
 					Texture
 					{
-						GetByReference = "Samples\\Starter Content\\Materials\\Concrete 3x3 meters\\Concrete6_1024_albedo.dds"
+						GetByReference = "Content\\Materials\\Basic Library\\Concrete\\Textures\\concrete_floor_01_diff_2k.jpg"
 					}
 				}
 			}
@@ -386,7 +435,7 @@
 					Location3 = 0 0 0
 					Texture
 					{
-						GetByReference = "Samples\\Starter Content\\Materials\\Concrete 3x3 meters\\Concrete6_1024_roughness.dds"
+						GetByReference = "Content\\Materials\\Basic Library\\Concrete\\Textures\\concrete_floor_01_rough_2k.jpg"
 					}
 				}
 			}

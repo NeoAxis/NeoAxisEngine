@@ -1,0 +1,33 @@
+.component NeoAxis.Component_PlantType
+{
+	MatureAge = 100
+	MatureHeight = 25 35
+	PredefinedConfiguration = CommonOak
+	SegmentsByMeter = 3
+	LODDistance = 30
+	.component NeoAxis.Component_PlantMaterial
+	{
+		Name = Bark Material
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Common oak\\Data\\Bark.material"
+		}
+	}
+	.component NeoAxis.Component_PlantMaterial
+	{
+		Name = Twig Material
+		PartType = BranchWithLeaves
+		LeafCount = 11
+		UVFrontPosition = 0.941 0.252
+		UVFrontDirection = 180
+		UVLengthRange = -0.025 0.926
+		UVWidth = 0.47
+		UVBack = True
+		UVBackPosition = 0.941 0.748
+		UVBackDirection = 180
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Common oak\\Data\\Leaves.material"
+		}
+	}
+}

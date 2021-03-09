@@ -1,5 +1,5 @@
-$input a_position, a_normal, a_tangent, a_indices, a_weight, a_texcoord0, a_texcoord1, a_texcoord2, a_texcoord3, a_color0, i_data0, i_data1, i_data2, i_data3
-$output v_depth, v_texCoord01, v_color0, v_texCoord23, v_colorParameter
+$input a_position, a_normal, a_tangent, a_indices, a_weight, a_texcoord0, a_texcoord1, a_texcoord2, a_color0, i_data0, i_data1, i_data2, i_data3, i_data4
+$output v_depth, v_texCoord01, v_color0, v_texCoord23, v_colorParameter, v_worldPosition, v_lodValueVisibilityDistanceReceiveDecals
 
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "Common.sh"
@@ -39,11 +39,13 @@ void main()
 		v_colorParameter.y = float((data & uint(0x0000ff00)) >> 8);
 		v_colorParameter.x = float((data & uint(0x000000ff)) >> 0);
 		v_colorParameter = pow2(v_colorParameter / 255.0, 2.0) * 10.0;
+		v_lodValueVisibilityDistanceReceiveDecals = i_data4;
 	}
 	else
 	{
 		worldMatrix = u_model[0];
 		v_colorParameter = u_renderOperationData[4];
+		v_lodValueVisibilityDistanceReceiveDecals = vec4(u_renderOperationData[2].w, u_renderOperationData[1].y, u_renderOperationData[1].x, 0);
 	}
 	
 	billboardRotateWorldMatrix(u_renderOperationData[0], worldMatrix, true, u_cameraPosition.xyz);
@@ -52,13 +54,15 @@ void main()
 	vec2 c_texCoord0 = a_texcoord0;
 	vec2 c_texCoord1 = a_texcoord1;
 	vec2 c_texCoord2 = a_texcoord2;
-	vec2 c_texCoord3 = a_texcoord3;
-	vec2 c_unwrappedUV = getUnwrappedUV(c_texCoord0, c_texCoord1, c_texCoord2, c_texCoord3, u_renderOperationData[3].x);
+	//vec2 c_texCoord3 = a_texcoord3;
+	vec2 c_unwrappedUV = getUnwrappedUV(c_texCoord0, c_texCoord1, c_texCoord2/*, c_texCoord3*/, u_renderOperationData[3].x);
 	vec4 c_color0 = (u_renderOperationData[3].y > 0.0) ? a_color0 : vec4_splat(1);
 	vec3 positionOffset = vec3(0,0,0);
 #ifdef VERTEX_CODE_BODY
+	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(_sampler, _uv, u_removeTextureTiling)
 	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2D(_sampler, _uv)
 	VERTEX_CODE_BODY
+	#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
 	#undef CODE_BODY_TEXTURE2D
 #endif
 	worldPosition.xyz += positionOffset;
@@ -77,8 +81,10 @@ void main()
 	v_texCoord01.xy = a_texcoord0;
 	v_texCoord01.zw = a_texcoord1;
 	v_texCoord23.xy = a_texcoord2;
-	v_texCoord23.zw = a_texcoord3;
+	v_texCoord23.zw = vec2_splat(0);//a_texcoord3;
 	v_color0 = (u_renderOperationData[3].y > 0.0) ? a_color0 : vec4_splat(1);
+	
+	v_worldPosition = worldPosition.xyz;
 }
 
 

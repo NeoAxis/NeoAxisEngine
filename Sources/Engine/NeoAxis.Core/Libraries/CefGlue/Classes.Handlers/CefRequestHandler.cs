@@ -1,4 +1,4 @@
-namespace Xilium.CefGlue
+﻿namespace Xilium.CefGlue
 {
     using System;
     using System.Collections.Generic;
@@ -42,29 +42,74 @@ namespace Xilium.CefGlue
         }
 
 
-        private int on_before_resource_load(cef_request_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_request_t* request)
+        private int on_open_urlfrom_tab(cef_request_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_string_t* target_url, CefWindowOpenDisposition target_disposition, int user_gesture)
+        {
+            CheckSelf(self);
+
+            var m_browser = CefBrowser.FromNative(browser);
+            var m_frame = CefFrame.FromNative(frame);
+            var m_targetUrl = cef_string_t.ToString(target_url);
+            var m_userGesture = user_gesture != 0;
+
+            var m_result = OnOpenUrlFromTab(m_browser, m_frame, m_targetUrl, target_disposition, m_userGesture);
+
+            return m_result ? 1 : 0;
+        }
+
+        /// <summary>
+        /// Called on the UI thread before OnBeforeBrowse in certain limited cases
+        /// where navigating a new or different browser might be desirable. This
+        /// includes user-initiated navigation that might open in a special way (e.g.
+        /// links clicked via middle-click or ctrl + left-click) and certain types of
+        /// cross-origin navigation initiated from the renderer process (e.g.
+        /// navigating the top-level frame to/from a file URL). The |browser| and
+        /// |frame| values represent the source of the navigation. The
+        /// |target_disposition| value indicates where the user intended to navigate
+        /// the browser based on standard Chromium behaviors (e.g. current tab,
+        /// new tab, etc). The |user_gesture| value will be true if the browser
+        /// navigated via explicit user gesture (e.g. clicking a link) or false if it
+        /// navigated automatically (e.g. via the DomContentLoaded event). Return true
+        /// to cancel the navigation or false to allow the navigation to proceed in the
+        /// source browser's top-level frame.
+        /// </summary>
+        protected virtual bool OnOpenUrlFromTab(CefBrowser browser, CefFrame frame, string targetUrl, CefWindowOpenDisposition targetDisposition, bool userGesture)
+        {
+            return false;
+        }
+
+
+        private CefReturnValue on_before_resource_load(cef_request_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_request_t* request, cef_request_callback_t* callback)
         {
             CheckSelf(self);
 
             var m_browser = CefBrowser.FromNative(browser);
             var m_frame = CefFrame.FromNative(frame);
             var m_request = CefRequest.FromNative(request);
+            var m_callback = CefRequestCallback.FromNative(callback);
 
-            var result = OnBeforeResourceLoad(m_browser, m_frame, m_request);
+            var result = OnBeforeResourceLoad(m_browser, m_frame, m_request, m_callback);
 
-            m_request.Dispose();
+            if (result != CefReturnValue.ContinueAsync)
+            {
+                m_browser.Dispose();
+                m_frame.Dispose();
+                m_request.Dispose();
+                m_callback.Dispose();
+            }
 
-            return result ? 1 : 0;
+            return result;
         }
 
         /// <summary>
         /// Called on the IO thread before a resource request is loaded. The |request|
-        /// object may be modified. To cancel the request return true otherwise return
-        /// false.
+        /// object may be modified. Return RV_CONTINUE to continue the request
+        /// immediately. Return RV_CONTINUE_ASYNC and call CefRequestCallback::
+        /// Continue() at a later time to continue or cancel the request
+        /// asynchronously. Return RV_CANCEL to cancel the request immediately.
         /// </summary>
-        protected virtual bool OnBeforeResourceLoad(CefBrowser browser, CefFrame frame, CefRequest request)
+        protected virtual CefReturnValue OnBeforeResourceLoad(CefBrowser browser, CefFrame frame, CefRequest request, CefRequestCallback callback)
         {
-            return false;
+            return CefReturnValue.Continue;
         }
 
 
@@ -95,17 +140,17 @@ namespace Xilium.CefGlue
         }
 
 
-        private void on_resource_redirect(cef_request_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_string_t* old_url, cef_string_t* new_url)
+        private void on_resource_redirect(cef_request_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_request_t* request, cef_string_t* new_url)
         {
             CheckSelf(self);
 
             var m_browser = CefBrowser.FromNative(browser);
             var m_frame = CefFrame.FromNative(frame);
-            var m_oldUrl = cef_string_t.ToString(old_url);
+            var m_request = CefRequest.FromNative(request);
             var m_newUrl = cef_string_t.ToString(new_url);
 
             var o_newUrl = m_newUrl;
-            OnResourceRedirect(m_browser, m_frame, m_oldUrl, ref m_newUrl);
+            OnResourceRedirect(m_browser, m_frame, m_request, ref m_newUrl);
 
             if ((object)m_newUrl != (object)o_newUrl)
             {
@@ -114,11 +159,91 @@ namespace Xilium.CefGlue
         }
 
         /// <summary>
-        /// Called on the IO thread when a resource load is redirected. The |old_url|
-        /// parameter will contain the old URL. The |new_url| parameter will contain
-        /// the new URL and can be changed if desired.
+        /// Called on the IO thread when a resource load is redirected. The |request|
+        /// parameter will contain the old URL and other request-related information.
+        /// The |new_url| parameter will contain the new URL and can be changed if
+        /// desired. The |request| object cannot be modified in this callback.
         /// </summary>
-        protected virtual void OnResourceRedirect(CefBrowser browser, CefFrame frame, string oldUrl, ref string newUrl)
+        protected virtual void OnResourceRedirect(CefBrowser browser, CefFrame frame, CefRequest request, ref string newUrl)
+        {
+        }
+
+
+        private int on_resource_response(cef_request_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_request_t* request, cef_response_t* response)
+        {
+            CheckSelf(self);
+
+            var m_browser = CefBrowser.FromNative(browser);
+            var m_frame = CefFrame.FromNative(frame);
+            var m_request = CefRequest.FromNative(request);
+            var m_response = CefResponse.FromNative(response);
+
+            var m_result = OnResourceResponse(m_browser, m_frame, m_request, m_response);
+
+            return m_result ? 1 : 0;
+        }
+
+        /// <summary>
+        /// Called on the IO thread when a resource response is received. To allow the
+        /// resource to load normally return false. To redirect or retry the resource
+        /// modify |request| (url, headers or post body) and return true. The
+        /// |response| object cannot be modified in this callback.
+        /// </summary>
+        protected virtual bool OnResourceResponse(CefBrowser browser, CefFrame frame, CefRequest request, CefResponse response)
+        {
+            return false;
+        }
+
+
+        private cef_response_filter_t* get_resource_response_filter(cef_request_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_request_t* request, cef_response_t* response)
+        {
+            CheckSelf(self);
+
+            var mBrowser = CefBrowser.FromNative(browser);
+            var mFrame = CefFrame.FromNative(frame);
+            var mRequest = CefRequest.FromNative(request);
+            var mResponse = CefResponse.FromNative(response);
+
+            var result = GetResourceResponseFilter(mBrowser, mFrame, mRequest, mResponse);
+
+            if (result != null)
+            {
+                return result.ToNative();
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Called on the IO thread to optionally filter resource response content.
+        /// |request| and |response| represent the request and response respectively
+        /// and cannot be modified in this callback.
+        /// </summary>
+        protected virtual CefResponseFilter GetResourceResponseFilter(CefBrowser browser, CefFrame frame, CefRequest request, CefResponse response)
+        {
+            return null;
+        }
+
+
+        private void on_resource_load_complete(cef_request_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_request_t* request, cef_response_t* response, CefUrlRequestStatus status, long received_content_length)
+        {
+            CheckSelf(self);
+
+            var mBrowser = CefBrowser.FromNative(browser);
+            var mFrame = CefFrame.FromNative(frame);
+            var mRequest = CefRequest.FromNative(request);
+            var mResponse = CefResponse.FromNative(response);
+
+            OnResourceLoadComplete(mBrowser, mFrame, mRequest, mResponse, status, received_content_length);
+        }
+
+        /// <summary>
+        /// Called on the IO thread when a resource load has completed. |request| and
+        /// |response| represent the request and response respectively and cannot be
+        /// modified in this callback. |status| indicates the load completion status.
+        /// |received_content_length| is the number of response bytes actually read.
+        /// </summary>
+        protected virtual void OnResourceLoadComplete(CefBrowser browser, CefFrame frame, CefRequest request, CefResponse response, CefUrlRequestStatus status, long receivedContentLength)
         {
         }
 
@@ -142,9 +267,13 @@ namespace Xilium.CefGlue
         /// <summary>
         /// Called on the IO thread when the browser needs credentials from the user.
         /// |isProxy| indicates whether the host is a proxy server. |host| contains the
-        /// hostname and |port| contains the port number. Return true to continue the
-        /// request and call CefAuthCallback::Continue() when the authentication
-        /// information is available. Return false to cancel the request.
+        /// hostname and |port| contains the port number. |realm| is the realm of the
+        /// challenge and may be empty. |scheme| is the authentication scheme used,
+        /// such as "basic" or "digest", and will be empty if the source of the request
+        /// is an FTP server. Return true to continue the request and call
+        /// CefAuthCallback::Continue() either in this method or at a later time when
+        /// the authentication information is available. Return false to cancel the
+        /// request immediately.
         /// </summary>
         protected virtual bool GetAuthCredentials(CefBrowser browser, CefFrame frame, bool isProxy, string host, int port, string realm, string scheme, CefAuthCallback callback)
         {
@@ -152,13 +281,13 @@ namespace Xilium.CefGlue
         }
 
 
-        private int on_quota_request(cef_request_handler_t* self, cef_browser_t* browser, cef_string_t* origin_url, long new_size, cef_quota_callback_t* callback)
+        private int on_quota_request(cef_request_handler_t* self, cef_browser_t* browser, cef_string_t* origin_url, long new_size, cef_request_callback_t* callback)
         {
             CheckSelf(self);
 
             var m_browser = CefBrowser.FromNative(browser);
             var m_origin_url = cef_string_t.ToString(origin_url);
-            var m_callback = CefQuotaCallback.FromNative(callback);
+            var m_callback = CefRequestCallback.FromNative(callback);
 
             var result = OnQuotaRequest(m_browser, m_origin_url, new_size, m_callback);
 
@@ -169,11 +298,11 @@ namespace Xilium.CefGlue
         /// Called on the IO thread when JavaScript requests a specific storage quota
         /// size via the webkitStorageInfo.requestQuota function. |origin_url| is the
         /// origin of the page making the request. |new_size| is the requested quota
-        /// size in bytes. Return true and call CefQuotaCallback::Continue() either in
-        /// this method or at a later time to grant or deny the request. Return false
-        /// to cancel the request.
+        /// size in bytes. Return true to continue the request and call
+        /// CefRequestCallback::Continue() either in this method or at a later time to
+        /// grant or deny the request. Return false to cancel the request immediately.
         /// </summary>
-        protected virtual bool OnQuotaRequest(CefBrowser browser, string originUrl, long newSize, CefQuotaCallback callback)
+        protected virtual bool OnQuotaRequest(CefBrowser browser, string originUrl, long newSize, CefRequestCallback callback)
         {
             callback.Continue(true);
             return true;
@@ -206,52 +335,29 @@ namespace Xilium.CefGlue
         }
 
 
-        private int on_certificate_error(cef_request_handler_t* self, CefErrorCode cert_error, cef_string_t* request_url, cef_allow_certificate_error_callback_t* callback)
+        private int on_certificate_error(cef_request_handler_t* self, cef_browser_t* browser, CefErrorCode cert_error, cef_string_t* request_url, cef_sslinfo_t* ssl_info, cef_request_callback_t* callback)
         {
             CheckSelf(self);
 
+            var m_browser = CefBrowser.FromNative(browser);
             var m_request_url = cef_string_t.ToString(request_url);
-            var m_callback = CefAllowCertificateErrorCallback.FromNativeOrNull(callback);
+            var m_ssl_info = CefSslInfo.FromNative(ssl_info);
+            var m_callback = CefRequestCallback.FromNativeOrNull(callback);
 
-            var result = OnCertificateError(cert_error, m_request_url, m_callback);
+            var result = OnCertificateError(m_browser, cert_error, m_request_url, m_ssl_info, m_callback);
 
             return result ? 1 : 0;
         }
 
         /// <summary>
         /// Called on the UI thread to handle requests for URLs with an invalid
-        /// SSL certificate. Return true and call CefAllowCertificateErrorCallback::
-        /// Continue() either in this method or at a later time to continue or cancel
-        /// the request. Return false to cancel the request immediately. If |callback|
-        /// is empty the error cannot be recovered from and the request will be
-        /// canceled automatically. If CefSettings.ignore_certificate_errors is set
-        /// all invalid certificates will be accepted without calling this method.
+        /// SSL certificate. Return true and call CefRequestCallback::Continue() either
+        /// in this method or at a later time to continue or cancel the request. Return
+        /// false to cancel the request immediately. If
+        /// CefSettings.ignore_certificate_errors is set all invalid certificates will
+        /// be accepted without calling this method.
         /// </summary>
-        protected virtual bool OnCertificateError(CefErrorCode certError, string requestUrl, CefAllowCertificateErrorCallback callback)
-        {
-            return false;
-        }
-
-
-        private int on_before_plugin_load(cef_request_handler_t* self, cef_browser_t* browser, cef_string_t* url, cef_string_t* policy_url, cef_web_plugin_info_t* info)
-        {
-            CheckSelf(self);
-
-            var m_browser = CefBrowser.FromNative(browser);
-            var m_url = cef_string_t.ToString(url);
-            var m_policy_url = cef_string_t.ToString(policy_url);
-            var m_info = CefWebPluginInfo.FromNative(info);
-
-            var result = OnBeforePluginLoad(m_browser, m_url, m_policy_url, m_info);
-
-            return result ? 1 : 0;
-        }
-
-        /// <summary>
-        /// Called on the browser process IO thread before a plugin is loaded. Return
-        /// true to block loading of the plugin.
-        /// </summary>
-        protected virtual bool OnBeforePluginLoad(CefBrowser browser, string url, string policyUrl, CefWebPluginInfo info)
+        protected virtual bool OnCertificateError(CefBrowser browser, CefErrorCode certError, string requestUrl, CefSslInfo sslInfo, CefRequestCallback callback)
         {
             return false;
         }
@@ -272,6 +378,24 @@ namespace Xilium.CefGlue
         /// |plugin_path| is the path of the plugin that crashed.
         /// </summary>
         protected virtual void OnPluginCrashed(CefBrowser browser, string pluginPath)
+        {
+        }
+
+
+        private void on_render_view_ready(cef_request_handler_t* self, cef_browser_t* browser)
+        {
+            CheckSelf(self);
+
+            var m_browser = CefBrowser.FromNative(browser);
+            OnRenderViewReady(m_browser);
+        }
+
+        /// <summary>
+        /// Called on the browser process UI thread when the render view associated
+        /// with |browser| is ready to receive/handle IPC messages in the render
+        /// process.
+        /// </summary>
+        protected virtual void OnRenderViewReady(CefBrowser browser)
         {
         }
 

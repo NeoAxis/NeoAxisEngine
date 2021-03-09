@@ -25,6 +25,15 @@ namespace NeoAxis.Editor
 			UpdateDisplayObject();
 			Scene.Enabled = true;
 			SetCameraByBounds( Scene.CalculateTotalBoundsOfObjectsInSpace() );
+
+			var import = ObjectOfPreview as Component_Import3D;
+			var mesh = import?.GetComponent( "Mesh" ) as Component_Mesh;
+			if( mesh != null && mesh.EditorCameraTransform != null )
+			{
+				var tr = mesh.EditorCameraTransform;
+				CameraInitialDistance = ( tr.Position - CameraLookTo ).Length();
+				CameraDirection = SphericalDirection.FromVector( CameraLookTo - tr.Position );
+			}
 		}
 
 		protected override void OnSceneViewportUpdateGetCameraSettings( ref bool processed )

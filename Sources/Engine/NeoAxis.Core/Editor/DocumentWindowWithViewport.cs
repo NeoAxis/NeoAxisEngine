@@ -858,6 +858,22 @@ namespace NeoAxis.Editor
 			}
 		}
 
+		bool IsKeyPressed_NoControl( EKeys key )
+		{
+			if( viewportControl != null )
+			{
+				var viewport = viewportControl.viewport;
+				if( viewport != null && viewport.IsKeyPressed( key ) )
+				{
+					if( viewport.GetKeyDownTime( key ) > viewport.GetKeyDownTime( EKeys.Control ) )
+						if( viewport.GetKeyDownTime( key ) < viewport.GetKeyUpTime( EKeys.Control ) )
+							return false;
+					return true;
+				}
+			}
+			return false;
+		}
+
 		protected virtual void Viewport_Tick( Viewport viewport, float delta )
 		{
 			if( viewportControl != null )
@@ -941,21 +957,21 @@ namespace NeoAxis.Editor
 						//move
 						if( scene.Mode.Value == Component_Scene.ModeEnum._3D )
 						{
-							if( viewport.IsMouseButtonPressed( EMouseButtons.Left ) || viewport.IsMouseButtonPressed( EMouseButtons.Middle ) || viewport.IsMouseButtonPressed( EMouseButtons.Right ) )
-							{
-								if( viewport.IsKeyPressed( EKeys.W ) || viewport.IsKeyPressed( EKeys.NumPad8 ) )
-									pos += dir.GetVector() * moveStep;
-								if( ( viewport.IsKeyPressed( EKeys.S ) ) || viewport.IsKeyPressed( EKeys.NumPad2 ) )
-									pos -= dir.GetVector() * moveStep;
-								if( viewport.IsKeyPressed( EKeys.A ) || viewport.IsKeyPressed( EKeys.NumPad4 ) )
-									pos += new SphericalDirection( dir.Horizontal + Math.PI / 2, 0 ).GetVector() * moveStep;
-								if( viewport.IsKeyPressed( EKeys.D ) || viewport.IsKeyPressed( EKeys.NumPad6 ) )
-									pos += new SphericalDirection( dir.Horizontal - Math.PI / 2, 0 ).GetVector() * moveStep;
-								if( viewport.IsKeyPressed( EKeys.E ) || viewport.IsKeyPressed( EKeys.NumPad9 ) )
-									pos += new SphericalDirection( dir.Horizontal, dir.Vertical + Math.PI / 2 ).GetVector() * moveStep;
-								if( viewport.IsKeyPressed( EKeys.Q ) || viewport.IsKeyPressed( EKeys.NumPad3 ) )
-									pos += new SphericalDirection( dir.Horizontal, dir.Vertical - Math.PI / 2 ).GetVector() * moveStep;
-							}
+							//if( viewport.IsMouseButtonPressed( EMouseButtons.Left ) || viewport.IsMouseButtonPressed( EMouseButtons.Middle ) || viewport.IsMouseButtonPressed( EMouseButtons.Right ) )
+							//{
+							if( IsKeyPressed_NoControl( EKeys.W ) || viewport.IsKeyPressed( EKeys.NumPad8 ) )
+								pos += dir.GetVector() * moveStep;
+							if( IsKeyPressed_NoControl( EKeys.S ) || viewport.IsKeyPressed( EKeys.NumPad2 ) )
+								pos -= dir.GetVector() * moveStep;
+							if( IsKeyPressed_NoControl( EKeys.A ) || viewport.IsKeyPressed( EKeys.NumPad4 ) )
+								pos += new SphericalDirection( dir.Horizontal + Math.PI / 2, 0 ).GetVector() * moveStep;
+							if( IsKeyPressed_NoControl( EKeys.D ) || viewport.IsKeyPressed( EKeys.NumPad6 ) )
+								pos += new SphericalDirection( dir.Horizontal - Math.PI / 2, 0 ).GetVector() * moveStep;
+							if( IsKeyPressed_NoControl( EKeys.E ) || viewport.IsKeyPressed( EKeys.NumPad9 ) )
+								pos += new SphericalDirection( dir.Horizontal, dir.Vertical + Math.PI / 2 ).GetVector() * moveStep;
+							if( IsKeyPressed_NoControl( EKeys.Q ) || viewport.IsKeyPressed( EKeys.NumPad3 ) )
+								pos += new SphericalDirection( dir.Horizontal, dir.Vertical - Math.PI / 2 ).GetVector() * moveStep;
+							//}
 
 							if( viewport.IsKeyPressed( EKeys.Up ) )
 								pos += dir.GetVector() * moveStep;
@@ -990,21 +1006,21 @@ namespace NeoAxis.Editor
 						}
 						else
 						{
-							if( viewport.IsMouseButtonPressed( EMouseButtons.Left ) || viewport.IsMouseButtonPressed( EMouseButtons.Middle ) || viewport.IsMouseButtonPressed( EMouseButtons.Right ) )
-							{
-								if( viewport.IsKeyPressed( EKeys.W ) || viewport.IsKeyPressed( EKeys.NumPad8 ) )
-									pos += new SphericalDirection( dir.Horizontal + Math.PI / 2, 0 ).GetVector() * moveStep;
-								if( ( viewport.IsKeyPressed( EKeys.S ) ) || viewport.IsKeyPressed( EKeys.NumPad2 ) )
-									pos += new SphericalDirection( dir.Horizontal - Math.PI / 2, 0 ).GetVector() * moveStep;
-								if( viewport.IsKeyPressed( EKeys.A ) || viewport.IsKeyPressed( EKeys.NumPad4 ) )
-									pos += new SphericalDirection( dir.Horizontal, dir.Vertical - Math.PI / 2 ).GetVector() * moveStep;
-								if( viewport.IsKeyPressed( EKeys.D ) || viewport.IsKeyPressed( EKeys.NumPad6 ) )
-									pos += new SphericalDirection( dir.Horizontal, dir.Vertical + Math.PI / 2 ).GetVector() * moveStep;
-								if( viewport.IsKeyPressed( EKeys.E ) || viewport.IsKeyPressed( EKeys.NumPad9 ) )
-									height += heightScale;
-								if( viewport.IsKeyPressed( EKeys.Q ) || viewport.IsKeyPressed( EKeys.NumPad3 ) )
-									height -= heightScale;
-							}
+							//if( viewport.IsMouseButtonPressed( EMouseButtons.Left ) || viewport.IsMouseButtonPressed( EMouseButtons.Middle ) || viewport.IsMouseButtonPressed( EMouseButtons.Right ) )
+							//{
+							if( IsKeyPressed_NoControl( EKeys.W ) || viewport.IsKeyPressed( EKeys.NumPad8 ) )
+								pos += new SphericalDirection( dir.Horizontal + Math.PI / 2, 0 ).GetVector() * moveStep;
+							if( IsKeyPressed_NoControl( EKeys.S ) || viewport.IsKeyPressed( EKeys.NumPad2 ) )
+								pos += new SphericalDirection( dir.Horizontal - Math.PI / 2, 0 ).GetVector() * moveStep;
+							if( IsKeyPressed_NoControl( EKeys.A ) || viewport.IsKeyPressed( EKeys.NumPad4 ) )
+								pos += new SphericalDirection( dir.Horizontal, dir.Vertical - Math.PI / 2 ).GetVector() * moveStep;
+							if( IsKeyPressed_NoControl( EKeys.D ) || viewport.IsKeyPressed( EKeys.NumPad6 ) )
+								pos += new SphericalDirection( dir.Horizontal, dir.Vertical + Math.PI / 2 ).GetVector() * moveStep;
+							if( IsKeyPressed_NoControl( EKeys.E ) || viewport.IsKeyPressed( EKeys.NumPad9 ) )
+								height += heightScale;
+							if( IsKeyPressed_NoControl( EKeys.Q ) || viewport.IsKeyPressed( EKeys.NumPad3 ) )
+								height -= heightScale;
+							//}
 
 							if( viewport.IsKeyPressed( EKeys.Up ) )
 								pos += new SphericalDirection( dir.Horizontal + Math.PI / 2, 0 ).GetVector() * moveStep;
@@ -1557,6 +1573,7 @@ namespace NeoAxis.Editor
 					scene.BackgroundColor = new ColorValue( 40.0 / 255 * c, 40.0 / 255 * c, 40.0 / 255 * c );
 				else
 					scene.BackgroundColor = new ColorValue( 22.0 / 255 * c, 44.0 / 255 * c, 66.0 / 255 * c );
+				scene.BackgroundColorAffectLighting = 1;
 				scene.BackgroundColorEnvironmentOverride = new ColorValue( 0.8, 0.8, 0.8 );
 
 				var backgroundEffects = pipeline.CreateComponent<Component>();

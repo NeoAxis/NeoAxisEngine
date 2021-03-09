@@ -935,7 +935,7 @@ namespace ComponentFactory.Krypton.Toolkit
                 if (WindowState != FormWindowState.Minimized && !DesignMode)
                     Size = SizeFromClientSize(ClientSize);
 
-            if (!IsHandleCreated)
+            if (!IsHandleCreated && !IsDisposed)
                 base.CreateHandle();
 
             _creatingHandle = false;

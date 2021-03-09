@@ -179,7 +179,7 @@ vec3 specularIBL(vec2 texCoords)
 
 	EnvironmentTextureData data;
 	data.rotation = mat3(1,0,0,0,1,0,0,0,1);
-	data.multiplier = vec3_splat(1);
+	data.multiplierAndAffect = vec4_splat(1);
 	
 	return getSpecularIrradiance(pixel, s_environmentTexture, data);
 	//return iblDiffuse(material, pixel) + iblSpecular(material, pixel, vec3_splat(0), 0);

@@ -159,7 +159,7 @@ namespace SharpBgfx {
         /// <summary>
         /// Eighth texture coordinate channel (arbitrary data).
         /// </summary>
-        TexCoord7
+        TexCoord7,
     }
 
     /// <summary>

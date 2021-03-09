@@ -23,6 +23,7 @@ namespace NeoAxis
 		const string registryPath = @"SOFTWARE\NeoAxis";
 
 		static volatile string requestedFullLicenseInfo_License = "";
+		static volatile ESet<string> requestedFullLicenseInfo_PurchasedProducts = new ESet<string>();
 		static volatile string requestedFullLicenseInfo_TokenTransactions = "";
 		static volatile string requestedFullLicenseInfo_Error = "";
 		//static double licenseInfoLastUpdateTime;
@@ -102,14 +103,14 @@ namespace NeoAxis
 				var email = param2[ "Email" ];
 				var hash = param2[ "Hash" ];
 
-				var email64 = Convert.ToBase64String( Encoding.UTF8.GetBytes( email.ToLower() ) ).Replace( "=", "" );
+				var email64 = Convert.ToBase64String( Encoding.UTF8.GetBytes( email/*.ToLower()*/ ) ).Replace( "=", "" );
 				var hash64 = Convert.ToBase64String( Encoding.UTF8.GetBytes( hash ) ).Replace( "=", "" );
 
 				string data = $"email={email64}&hash={hash64}";
 				byte[] dataStream = Encoding.UTF8.GetBytes( data );
 
 				{
-					WebRequest request = WebRequest.Create( @"https://www.neoaxis.com/api/get_license" );
+					WebRequest request = WebRequest.Create( @"https://store.neoaxis.com/api/check_login/" );
 					request.Method = "POST";
 					request.ContentType = "application/x-www-form-urlencoded";
 					request.ContentLength = dataStream.Length;
@@ -124,12 +125,14 @@ namespace NeoAxis
 						text = reader.ReadToEnd();
 
 					requestedFullLicenseInfo_Error = "";
-					if( text.Contains( "Pro" ) )
-						requestedFullLicenseInfo_License = "Pro";
-					else if( text.Contains( "Personal" ) )
-						requestedFullLicenseInfo_License = "Personal";
-					else if( !string.IsNullOrEmpty( text ) )
-						requestedFullLicenseInfo_License = text;
+					//if( text.Contains( "Pro" ) )
+					//	requestedFullLicenseInfo_License = "Pro";
+					//else if( text.Contains( "Personal" ) )
+					//	requestedFullLicenseInfo_License = "Personal";
+					//else if( !string.IsNullOrEmpty( text ) )
+					//	requestedFullLicenseInfo_License = text;
+					if( text.Contains( "True" ) )
+						requestedFullLicenseInfo_License = "Registered";
 					else
 					{
 						requestedFullLicenseInfo_License = "";
@@ -137,8 +140,30 @@ namespace NeoAxis
 					}
 				}
 
+				//get purchased products
 				{
-					WebRequest request = WebRequest.Create( @"https://www.neoaxis.com/api/get_token_transactions" );
+					WebRequest request = WebRequest.Create( @"https://store.neoaxis.com/api/get_purchased_products/" );
+					request.Method = "POST";
+					request.ContentType = "application/x-www-form-urlencoded";
+					request.ContentLength = dataStream.Length;
+					Stream newStream = request.GetRequestStream();
+					newStream.Write( dataStream, 0, dataStream.Length );
+					newStream.Close();
+
+					string text;
+					using( var response = (HttpWebResponse)request.GetResponse() )
+					using( var stream = response.GetResponseStream() )
+					using( var reader = new StreamReader( stream ) )
+						text = reader.ReadToEnd();
+
+					var products = text.Trim().Split( new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries );
+					foreach( var product in products )
+						requestedFullLicenseInfo_PurchasedProducts.AddWithCheckAlreadyContained( product );
+				}
+
+				//get token transactions
+				{
+					WebRequest request = WebRequest.Create( @"https://store.neoaxis.com/api/get_token_transactions/" );
 					request.Method = "POST";
 					request.ContentType = "application/x-www-form-urlencoded";
 					request.ContentLength = dataStream.Length;
@@ -156,14 +181,18 @@ namespace NeoAxis
 				}
 
 				//SaveLicenseCertificate2();
-				EngineApp.needReadLicenseCertificate = true;
+				//EngineApp.needReadLicenseCertificate = true;
 			}
-			catch { }
+			catch //(Exception e)
+			{
+				//Log.Warning( e.Message );
+			}
 		}
 
 		public static void RequestFullLicenseInfo()
 		{
 			requestedFullLicenseInfo_License = "";
+			requestedFullLicenseInfo_PurchasedProducts.Clear();
 			requestedFullLicenseInfo_TokenTransactions = "";
 
 			if( !GetCurrentLicense( out var email, out var hash ) )
@@ -177,11 +206,12 @@ namespace NeoAxis
 			thread1.Start( param );
 		}
 
-		public static bool GetRequestedFullLicenseInfo( out string license, out string tokenTransactions, out string error )
+		public static bool GetRequestedFullLicenseInfo( out string license, out ESet<string> purchasedProducts, out string tokenTransactions, out string error )
 		{
 			if( !string.IsNullOrEmpty( requestedFullLicenseInfo_License ) || !string.IsNullOrEmpty( requestedFullLicenseInfo_Error ) )
 			{
 				license = requestedFullLicenseInfo_License;
+				purchasedProducts = requestedFullLicenseInfo_PurchasedProducts;
 				tokenTransactions = requestedFullLicenseInfo_TokenTransactions;
 				error = requestedFullLicenseInfo_Error;
 				//pro = requestedFullLicenseInfo_License.Contains( "Pro" );
@@ -190,6 +220,7 @@ namespace NeoAxis
 			else
 			{
 				license = "";
+				purchasedProducts = new ESet<string>();
 				tokenTransactions = "";
 				error = "";
 				//pro = false;
@@ -197,40 +228,40 @@ namespace NeoAxis
 			}
 		}
 
-		public static bool SaveLicenseCertificate( string realFileName, string email, string engineVersion, string license, string machineId, DateTime expirationDate, out string error )
-		{
-			//!!!!на сервере генерировать
+		//public static bool SaveLicenseCertificate( string realFileName, string email, string engineVersion, string license, string machineId, DateTime expirationDate, out string error )
+		//{
+		//	//!!!!на сервере генерировать
 
-			var email2 = email.ToLower();
+		//	var email2 = email.ToLower();
 
-			//!!!!не так. GetHashCode может поменяться
-			//CRC32
-			var verification = "Check";
-			//var verification = email2.GetHashCode() ^ engineVersion.GetHashCode() ^ license.GetHashCode() ^ expirationDate.GetHashCode();
+		//	//!!!!не так. GetHashCode может поменяться
+		//	//CRC32
+		//	var verification = "Check";
+		//	//var verification = email2.GetHashCode() ^ engineVersion.GetHashCode() ^ license.GetHashCode() ^ expirationDate.GetHashCode();
 
-			string str = "NeoAxis Certificate version 1";
-			str += "\n" + email2;
-			str += "\n" + engineVersion;
-			str += "\n" + license;
-			str += "\n" + machineId;
-			str += "\n" + expirationDate.ToString( "MM/dd/yyyy" );
-			str += "\n" + verification;
+		//	string str = "NeoAxis Certificate version 1";
+		//	str += "\n" + email2;
+		//	str += "\n" + engineVersion;
+		//	str += "\n" + license;
+		//	str += "\n" + machineId;
+		//	str += "\n" + expirationDate.ToString( "MM/dd/yyyy" );
+		//	str += "\n" + verification;
 
-			var base64 = Convert.ToBase64String( Encoding.UTF8.GetBytes( str ) );
+		//	var base64 = Convert.ToBase64String( Encoding.UTF8.GetBytes( str ) );
 
-			try
-			{
-				File.WriteAllText( realFileName, base64 );
-			}
-			catch( Exception e )
-			{
-				error = e.Message;
-				return false;
-			}
+		//	try
+		//	{
+		//		File.WriteAllText( realFileName, base64 );
+		//	}
+		//	catch( Exception e )
+		//	{
+		//		error = e.Message;
+		//		return false;
+		//	}
 
-			error = "";
-			return true;
-		}
+		//	error = "";
+		//	return true;
+		//}
 
 		public static string GetMachineId()
 		{

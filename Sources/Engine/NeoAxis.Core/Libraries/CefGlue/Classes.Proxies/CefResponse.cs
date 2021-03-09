@@ -1,4 +1,4 @@
-namespace Xilium.CefGlue
+﻿namespace Xilium.CefGlue
 {
     using System;
     using System.Collections.Generic;
@@ -29,6 +29,17 @@ namespace Xilium.CefGlue
         public bool IsReadOnly
         {
             get { return cef_response_t.is_read_only(_self) != 0; }
+        }
+
+        /// <summary>
+        /// Gets or sets the response error code.
+        /// Returns ERR_NONE if there was no error.
+        /// This can be used by custom scheme handlers to return errors during initial request processing.
+        /// </summary>
+        public CefErrorCode Error
+        {
+            get { return cef_response_t.get_error(_self); }
+            set { cef_response_t.set_error(_self, value); }
         }
 
         /// <summary>

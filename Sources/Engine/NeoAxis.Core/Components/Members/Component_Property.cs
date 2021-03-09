@@ -13,7 +13,7 @@ using System.Collections.Concurrent;
 namespace NeoAxis
 {
 	/// <summary>
-	/// The component for adding virtual property to the parent component.
+	/// The component for adding a virtual property to the parent component.
 	/// </summary>
 	//[EditorNewObjectSettings( typeof( NewObjectSettingsProperty ) )]//!!!!impl
 	public class Component_Property : Component_Member
@@ -414,7 +414,7 @@ namespace NeoAxis
 		//DefaultValueSpecified
 		ReferenceField<bool> _defaultValueSpecified;
 		/// <summary>
-		/// Whether the property have a default value.
+		/// Whether the property has a default value.
 		/// </summary>
 		[Serialize]
 		[DefaultValue( false )]

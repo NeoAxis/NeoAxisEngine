@@ -61,6 +61,7 @@ namespace NeoAxis.Import.FBX
 			return new ColorValue( color.mRed, color.mGreen, color.mBlue, color.mAlpha );
 		}
 
+		//!!!!slowly
 		public static Vector3 ToVector3( this FbxVector4 value )
 		{
 			SWIGTYPE_p_double data = value.mData;
@@ -68,6 +69,7 @@ namespace NeoAxis.Import.FBX
 			return new Vector3( d.getitem( 0 ), d.getitem( 1 ), d.getitem( 2 ) );
 		}
 
+		//!!!!slowly
 		public static Vector3F ToVector3F( this FbxVector4 value )
 		{
 			SWIGTYPE_p_double data = value.mData;
@@ -75,6 +77,7 @@ namespace NeoAxis.Import.FBX
 			return new Vector3F( (float)d.getitem( 0 ), (float)d.getitem( 1 ), (float)d.getitem( 2 ) );
 		}
 
+		//!!!!slowly
 		public static Vector4 ToVector4( this FbxVector4 value )
 		{
 			SWIGTYPE_p_double data = value.mData;

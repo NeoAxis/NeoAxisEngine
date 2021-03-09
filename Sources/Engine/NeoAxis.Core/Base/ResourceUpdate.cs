@@ -30,8 +30,6 @@ namespace NeoAxis
 
 		private static void VirtualFileWatcher_Update( FileSystemEventArgs args )
 		{
-			//!!!!так?
-
 			switch( args.ChangeType )
 			{
 			case WatcherChangeTypes.Created:

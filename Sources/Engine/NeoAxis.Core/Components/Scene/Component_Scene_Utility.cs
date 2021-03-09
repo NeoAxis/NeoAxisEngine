@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NeoAxis
 {
-	static class Component_Scene_Utility
+	public static class Component_Scene_Utility
 	{
 		//!!!!подобное для Brush режима
 		//public delegate void CalculateCreateObjectPositionUnderCursorEventDelegate( Component_ObjectInSpace objectInSpace, ref bool found, ref Vector3 position );

@@ -183,11 +183,12 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		//!!!!
 		/// <summary>
-		/// Specifies the quality for procedural generation of 3D models and other assets. A value of 0.75 is optimal for real-time graphics. The higher values are more applicable for non real-time rendering.
+		/// Specifies the quality for procedural generation of 3D models and other assets. A value of 0.5 is optimal for real-time graphics. The higher values are more applicable for non real-time rendering.
 		/// </summary>
 		[Category( "Procedural Generation" )]
-		[DefaultValue( 0.75 )]
+		[DefaultValue( 0.5 )]
 		[Range( 0, 1 )]
 		public Reference<double> ProceduralGenerationQuality
 		{
@@ -196,7 +197,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="ProceduralGenerationQuality"/> property value changes.</summary>
 		public event Action<Component_RenderingPipeline> ProceduralGenerationQualityChanged;
-		ReferenceField<double> _proceduralGenerationQuality = 0.75;
+		ReferenceField<double> _proceduralGenerationQuality = 0.5;
 
 		/////////////////////////////////////////
 
@@ -206,7 +207,7 @@ namespace NeoAxis
 		[Category( "Level Of Detail" )]
 		[DefaultValue( 1.0 )]
 		[DisplayName( "LOD Scale" )]
-		[Range( 0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		[Range( 0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
 		public Reference<double> LODScale
 		{
 			get { if( _lODScale.BeginGet() ) LODScale = _lODScale.Get( this ); return _lODScale.value; }
@@ -249,21 +250,21 @@ namespace NeoAxis
 		//public event Action<Component_RenderingPipeline> LODAutoDistanceChanged;
 		//ReferenceField<double> _lODAutoDistance = 20.0;
 
-		/// <summary>
-		/// Specifies the transition time between levels of detail.
-		/// </summary>
-		[Category( "Level Of Detail" )]
-		[DefaultValue( 1.0 )]
-		[DisplayName( "LOD Transition Time" )]
-		[Range( 0, 2 )]
-		public Reference<double> LODTransitionTime
-		{
-			get { if( _lODTransitionTime.BeginGet() ) LODTransitionTime = _lODTransitionTime.Get( this ); return _lODTransitionTime.value; }
-			set { if( _lODTransitionTime.BeginSet( ref value ) ) { try { LODTransitionTimeChanged?.Invoke( this ); } finally { _lODTransitionTime.EndSet(); } } }
-		}
-		[DisplayName( "LOD Transition Time Changed" )]
-		public event Action<Component_RenderingPipeline> LODTransitionTimeChanged;
-		ReferenceField<double> _lODTransitionTime = 1.0;
+		///// <summary>
+		///// Specifies the transition time between levels of detail.
+		///// </summary>
+		//[Category( "Level Of Detail" )]
+		//[DefaultValue( 1.0 )]
+		//[DisplayName( "LOD Transition Time" )]
+		//[Range( 0, 2 )]
+		//public Reference<double> LODTransitionTime
+		//{
+		//	get { if( _lODTransitionTime.BeginGet() ) LODTransitionTime = _lODTransitionTime.Get( this ); return _lODTransitionTime.value; }
+		//	set { if( _lODTransitionTime.BeginSet( ref value ) ) { try { LODTransitionTimeChanged?.Invoke( this ); } finally { _lODTransitionTime.EndSet(); } } }
+		//}
+		//[DisplayName( "LOD Transition Time Changed" )]
+		//public event Action<Component_RenderingPipeline> LODTransitionTimeChanged;
+		//ReferenceField<double> _lODTransitionTime = 1.0;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -309,11 +310,9 @@ namespace NeoAxis
 			/// </summary>
 			public struct MeshItem
 			{
-				//!!!!меньше занимать памяти
-
 				public object Creator;
 				public object AnyData;
-				//!!!!double
+				//!!!!sense? take by BoundingSphere.Origin
 				public Vector3 BoundingBoxCenter;//public Bounds BoundingBox;
 				public Sphere BoundingSphere;
 
@@ -325,34 +324,21 @@ namespace NeoAxis
 				public AnimationDataClass AnimationData;
 
 				public IMeshData MeshData;
-				//public Component_Mesh Mesh;
 
 				public Matrix4F Transform;
 				public Vector3F PositionPreviousFrame;
 
 				public GpuVertexBuffer BatchingInstanceBuffer;
 
+				public float VisibilityDistance;
+				public bool OnlyForShadowGeneration;
 				public float LODValue;
 
-				//!!!!GC. fixed array. или уже подготовленный массив выставляется
 				public LayerItem[] Layers;
+				public CutVolumeItem[] CutVolumes;
+				public List<ObjectSpecialRenderingEffect> SpecialEffects;
 
-				//!!!!new
 				public bool TransparentRenderingAddOffsetWhenSortByDistance;
-
-				//public MeshInstanceData? MeshInstanceOne;
-				//public MeshInstanceData[] MeshInstanceArray;
-
-				////////
-
-				//public struct MeshInstanceData
-				//{
-				//	public Vector3 Position;
-				//	//Matrix3F RotationScale;
-				//	public QuaternionF Rotation;
-				//	public Vector3F Scale;
-				//	//public ColorValue VertexColorMultiplier;//!!!!additional data?
-				//}
 
 				//!!!!without class?
 				/// <summary>
@@ -380,12 +366,17 @@ namespace NeoAxis
 					data.Color = c.ToColorPacked();
 					//data.Color = ( Color * 0.25f ).ToColorPacked();
 					//data.Color = Color;
+
+					data.LodValue = LODValue;
+					data.VisibilityDistance = VisibilityDistance;
+					data.ReceiveDecals = ReceiveDecals ? 1.0f : 0.0f;
+					data.Unused = 0;
 				}
 
 				public unsafe bool CanUseInstancingForTransparentWith( ref MeshItem meshItem )
 				{
-					if( BoundingBoxCenter != meshItem.BoundingBoxCenter )
-						return false;
+					//if( BoundingBoxCenter != meshItem.BoundingBoxCenter )
+					//	return false;
 					if( BoundingSphere != meshItem.BoundingSphere )
 						return false;
 					if( CastShadows != meshItem.CastShadows )
@@ -415,8 +406,17 @@ namespace NeoAxis
 					if( MeshData != meshItem.MeshData )
 						return false;
 
-					if( LODValue != meshItem.LODValue )
+					//!!!!
+					if( OnlyForShadowGeneration != meshItem.OnlyForShadowGeneration )
 						return false;
+
+					//if( VisibilityDistance != meshItem.VisibilityDistance )
+					//	return false;
+
+					//if( LODValue != meshItem.LODValue )
+					//	return false;
+					//if( LODRange != meshItem.LODRange )
+					//	return false;
 					//if( LODValue != 0 || meshItem.LODValue != 0 )
 					//	return false;
 
@@ -450,8 +450,6 @@ namespace NeoAxis
 				public VertexElement[] VertexStructure;
 				public bool VertexStructureContainsColor;
 				public UnwrappedUVEnum UnwrappedUV;
-
-				//!!!!
 
 				public IList<GpuVertexBuffer> VertexBuffers;
 				public int VertexStartOffset;
@@ -493,6 +491,16 @@ namespace NeoAxis
 						return true;
 					return false;
 				}
+
+				public void DisposeBuffers()
+				{
+					if( VertexBuffers != null )
+					{
+						for( int n = 0; n < VertexBuffers.Count; n++ )
+							VertexBuffers[ n ]?.Dispose();
+					}
+					IndexBuffer?.Dispose();
+				}
 			}
 
 			/// <summary>
@@ -501,7 +509,7 @@ namespace NeoAxis
 			public struct IMeshDataLODLevel
 			{
 				public Component_Mesh Mesh;
-				public float DistanceSquared;
+				public float Distance;//Squared;
 			}
 
 			/// <summary>
@@ -514,8 +522,11 @@ namespace NeoAxis
 				List<MeshDataRenderOperation> RenderOperations { get; }
 				//IList<MeshDataRenderOperation> RenderOperations { get; }
 				SpaceBounds SpaceBounds { get; }
+				float VisibilityDistance { get; }
+				bool CastShadows { get; }
 				IMeshDataLODLevel[] LODs { get; }
 				int BillboardMode { get; }
+				float BillboardShadowOffset { get; }
 				LayerItem[] PaintLayers { get; }
 
 				bool ContainsDisposedBuffers();
@@ -645,8 +656,6 @@ namespace NeoAxis
 			/// </summary>
 			public struct BillboardItem
 			{
-				//!!!!меньше занимать памяти
-
 				public object Creator;
 				public object AnyData;
 				//!!!!double
@@ -654,6 +663,7 @@ namespace NeoAxis
 				public Sphere BoundingSphere;
 
 				public bool CastShadows;
+				public float ShadowOffset;
 				public bool ReceiveDecals;
 				public Component_Material Material;
 
@@ -665,7 +675,11 @@ namespace NeoAxis
 				//!!!!
 				//public BillboardData[] BillboardArray;
 
-				public float LODValue;
+				public float VisibilityDistance;
+				//public RangeF LODRange;//public float LODValue;
+
+				public CutVolumeItem[] CutVolumes;
+				public List<ObjectSpecialRenderingEffect> SpecialEffects;
 
 				//
 
@@ -727,6 +741,11 @@ namespace NeoAxis
 					data.Color = c.ToColorPacked();
 					//data.Color = ( Color * 0.25f ).ToColorPacked();
 					//data.Color = BillboardOne.Color;
+
+					data.LodValue = 0;
+					data.VisibilityDistance = VisibilityDistance;
+					data.ReceiveDecals = ReceiveDecals ? 1.0f : 0.0f;
+					data.Unused = 0;
 				}
 
 				public unsafe bool CanUseInstancingForTransparentWith( ref BillboardItem billboardItem )
@@ -742,8 +761,10 @@ namespace NeoAxis
 					if( Material != billboardItem.Material )
 						return false;
 
-					if( LODValue != billboardItem.LODValue )
-						return false;
+					//if( LODRange != billboardItem.LODRange )
+					//	return false;
+					//if( LODValue != billboardItem.LODValue )
+					//	return false;
 					//if( LODValue != 0 || billboardItem.LODValue != 0 )
 					//	return false;
 
@@ -787,7 +808,6 @@ namespace NeoAxis
 				public float ShadowBias;
 				public float ShadowNormalBias;
 				public Component_Image Mask;
-				//!!!!
 				public double MaskScale;
 				//public Vec2 maskPosition;
 				//public Vec2 maskScale;
@@ -811,6 +831,8 @@ namespace NeoAxis
 				public Sphere Sphere;
 				public Component_Image CubemapEnvironment;
 				public Component_Image CubemapIrradiance;
+				public Matrix3F Rotation;
+				public Vector3F Multiplier;
 			}
 
 			/// <summary>
@@ -833,12 +855,21 @@ namespace NeoAxis
 				public ColorValue Color;
 				public Component_Decal.NormalsModeEnum NormalsMode;
 				public double SortOrder;
+
+				public float VisibilityDistance;
 			}
 
+			//!!!!need add support for billboards, particles
 			public struct CutVolumeItem
 			{
 				public Component_CutVolume.ShapeEnum Shape;
 				public Transform Transform;
+				public Plane Plane;
+
+				public bool Equals( ref CutVolumeItem other )
+				{
+					return Shape == other.Shape && Transform == other.Transform && Plane == other.Plane;
+				}
 			}
 
 			public struct TransparentRenderingAddOffsetWhenSortByDistanceVolumeItem
@@ -854,17 +885,24 @@ namespace NeoAxis
 			public struct ObjectInstanceData
 			{
 				public Matrix3x4F Transform;
+
 				//можно было бы хранить смещение, тогда 16-bit точности хватило бы. хотя в 16-bit долго конвертировать
 				public Vector3F PositionPreviousFrame;
 				public ColorByte Color;
-				//public float Unused;
+
+				public float LodValue;
+				public float VisibilityDistance;
+				public float ReceiveDecals;
+				public float Unused;
 
 				//
 
-				public void Init( ref Matrix4F transform, ref Vector3F positionPreviousFrame, ref ColorValue color )
+				public void Init( ref Matrix4F transform, ref Vector3F positionPreviousFrame, ref ColorValue color, float lodValue, float visibilityDistance, bool receiveDecals )
 				{
 					transform.GetTranspose( out Transform );
+
 					PositionPreviousFrame = positionPreviousFrame;
+
 					//Unused = 0;
 					//!!!!slowly?
 					ColorValue c;
@@ -875,6 +913,11 @@ namespace NeoAxis
 					Color = c.ToColorPacked();
 					//Color = ( color * 0.25f ).ToColorPacked();
 					//Color = new ColorByte( color );
+
+					LodValue = lodValue;
+					VisibilityDistance = visibilityDistance;
+					ReceiveDecals = receiveDecals ? 1.0f : 0.0f;
+					Unused = 0;
 				}
 			}
 
@@ -883,10 +926,63 @@ namespace NeoAxis
 			/// </summary>
 			public struct LayerItem
 			{
-				public Component_Material Material;
+				public Component_Material OriginalMaterial;
+				public Component_PaintLayer.BlendModeEnum BlendMode;
+				public Component_Material.CompiledMaterialData Material;
 				public Component_Image Mask;
 				public long UniqueMaskDataCounter;
 				public ColorValue Color;
+
+				public void SetMaterialWithAbilityToCompileTransparentMaskVariation( Component_Material material, Component_PaintLayer.BlendModeEnum blendMode )
+				{
+					OriginalMaterial = material;
+					BlendMode = blendMode;
+
+					if( material != null )
+					{
+						if( material.BlendMode.Value == Component_Material.BlendModeEnum.Opaque || !material.Opacity.ReferenceSpecified )
+						{
+							var useTransparent = false;
+							switch( blendMode )
+							{
+							case Component_PaintLayer.BlendModeEnum.Auto: useTransparent = material.Result != null && material.Result.Transparent; break;
+							case Component_PaintLayer.BlendModeEnum.Masked: useTransparent = false; break;
+							case Component_PaintLayer.BlendModeEnum.Transparent: useTransparent = true; break;
+							}
+
+							Material = material.Compile( useTransparent ? Component_Material.CompiledMaterialData.SpecialMode.PaintLayerTransparent : Component_Material.CompiledMaterialData.SpecialMode.PaintLayerMasked );
+						}
+						else
+							Material = material.Result;
+					}
+				}
+
+				public override bool Equals( object obj )
+				{
+					if( obj is LayerItem )
+					{
+						var obj2 = (LayerItem)obj;
+						return OriginalMaterial == obj2.OriginalMaterial && BlendMode == obj2.BlendMode && Mask == obj2.Mask && UniqueMaskDataCounter == obj2.UniqueMaskDataCounter && Color == obj2.Color;
+					}
+					else
+						return false;
+				}
+
+				public override int GetHashCode()
+				{
+					var result = 0;
+					if( OriginalMaterial != null )
+						result ^= OriginalMaterial.GetHashCode();
+					result ^= BlendMode.GetHashCode();
+					if( Mask != null )
+						result ^= Mask.GetHashCode();
+					unchecked
+					{
+						result ^= (int)UniqueMaskDataCounter;
+					}
+					result ^= Color.GetHashCode();
+					return result;
+				}
 			}
 		}
 
@@ -899,20 +995,20 @@ namespace NeoAxis
 		{
 			public Component_Image texture;
 			public Matrix3F rotation;
-			public Vector3F multiplier;
+			public Vector4F multiplierAndAffect;
 
-			public EnvironmentTextureData( Component_Image texture, ref Matrix3F rotation, ref Vector3F multiplier )
+			public EnvironmentTextureData( Component_Image texture, float affect, ref Matrix3F rotation, ref Vector3F multiplier )
 			{
 				this.texture = texture;
 				this.rotation = rotation;
-				this.multiplier = multiplier;
+				this.multiplierAndAffect = new Vector4F( multiplier, affect );
 			}
 
-			public EnvironmentTextureData( Component_Image texture )
+			public EnvironmentTextureData( Component_Image texture, float affect )
 			{
 				this.texture = texture;
 				this.rotation = Matrix3F.Identity;
-				this.multiplier = Vector3F.One;
+				this.multiplierAndAffect = new Vector4F( Vector3F.One, affect );
 			}
 		}
 
@@ -974,9 +1070,9 @@ namespace NeoAxis
 			return result == AutoTrueFalse.True;
 		}
 
-		//!!!!
-		public virtual void PhysicallyCorrectRendering_ResetFrame()
-		{
-		}
+		////!!!!
+		//public virtual void PhysicallyCorrectRendering_ResetFrame()
+		//{
+		//}
 	}
 }

@@ -95,7 +95,7 @@ namespace NeoAxis
 		ReferenceField<UIMeasureValueVector2> _offset = new UIMeasureValueVector2( UIMeasure.Units, 0, 0 );
 
 		/// <summary>
-		/// Wordwrap the text to fit within the width of control.
+		/// Wordwrap the text to fit within the width of the control.
 		/// </summary>
 		[DefaultValue( false )]
 		[Serialize]
@@ -210,7 +210,7 @@ namespace NeoAxis
 
 		//!!!!тут?
 		/// <summary>
-		/// Restrict text to a rectangle region.
+		/// Restrict text to a rectangular region.
 		/// </summary>
 		[DefaultValue( false )]
 		[Serialize]

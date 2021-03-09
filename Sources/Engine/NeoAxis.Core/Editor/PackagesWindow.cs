@@ -22,6 +22,7 @@ namespace NeoAxis.Editor
 	/// <summary>
 	/// Represents the package manager.
 	/// </summary>
+	[RestoreDockWindowAfterEditorReload]
 	public partial class PackagesWindow : DocumentWindow
 	{
 		PackageManager.PackageInfo selectedPackage;
@@ -29,16 +30,18 @@ namespace NeoAxis.Editor
 		volatile List<PackageManager.PackageInfo> downloadedListOfPackages;
 		volatile bool needUpdateList;
 
-		volatile string downloadingPackageName = "";
+		volatile string downloadingPackageIdentifier = "";
 		volatile string downloadingAddress = "";
 		volatile string downloadingDestinationPath = "";
 		volatile float downloadProgress;
-
+		volatile bool downloadingInstallAfterDownload;
 		volatile WebClient downloadingClient;
 
 		volatile bool needUpdatePackageControls;
 
 		string needSelectPackage;
+		string needSelectPackageDownloadAndInstall;
+		string needSelectPackageAndInstall;
 
 		/////////////////////////////////////////
 
@@ -116,7 +119,7 @@ namespace NeoAxis.Editor
 			}
 
 			bool downloading = false;
-			if( !string.IsNullOrEmpty( downloadingAddress ) && selectedPackage != null && selectedPackage.Name == downloadingPackageName )
+			if( !string.IsNullOrEmpty( downloadingAddress ) && selectedPackage != null && selectedPackage.Identifier == downloadingPackageIdentifier )
 				downloading = true;
 
 			if( progressBarPackageProgress.Visible != downloading )
@@ -128,14 +131,14 @@ namespace NeoAxis.Editor
 
 			var panelSize = kryptonSplitContainer1.Panel2.Size;
 
-			labelExPackageName.Size = new Size( panelSize.Width - labelExPackageName.Location.X, labelExPackageName.Size.Height );
-			labelExPackageDeveloper.Size = new Size( panelSize.Width - labelExPackageDeveloper.Location.X, labelExPackageDeveloper.Size.Height );
-			labelExPackageVersion.Size = new Size( panelSize.Width - labelExPackageVersion.Location.X, labelExPackageVersion.Size.Height );
-			labelExPackageSize.Size = new Size( panelSize.Width - labelExPackageSize.Location.X, labelExPackageSize.Size.Height );
-			labelExPackageStatus.Size = new Size( panelSize.Width - labelExPackageStatus.Location.X, labelExPackageStatus.Size.Height );
-			progressBarPackageProgress.Size = new Size( panelSize.Width - progressBarPackageProgress.Location.X, progressBarPackageProgress.Size.Height );
+			labelExPackageName.Size = new Size( (int)( panelSize.Width - labelExPackageName.Location.X - EditorAPI.DPIScale * 8 ), labelExPackageName.Size.Height );
+			labelExPackageDeveloper.Size = new Size( (int)( panelSize.Width - labelExPackageDeveloper.Location.X - EditorAPI.DPIScale * 8 ), labelExPackageDeveloper.Size.Height );
+			labelExPackageVersion.Size = new Size( (int)( panelSize.Width - labelExPackageVersion.Location.X - EditorAPI.DPIScale * 8 ), labelExPackageVersion.Size.Height );
+			labelExPackageSize.Size = new Size( (int)( panelSize.Width - labelExPackageSize.Location.X - EditorAPI.DPIScale * 8 ), labelExPackageSize.Size.Height );
+			labelExPackageStatus.Size = new Size( (int)( panelSize.Width - labelExPackageStatus.Location.X - EditorAPI.DPIScale * 8 ), labelExPackageStatus.Size.Height );
+			progressBarPackageProgress.Size = new Size( (int)( panelSize.Width - progressBarPackageProgress.Location.X - EditorAPI.DPIScale * 8 ), progressBarPackageProgress.Size.Height );
 
-			labelExPackageInfo.Size = new Size( panelSize.Width - labelExPackageInfo.Location.X, panelSize.Height - labelExPackageInfo.Location.Y );
+			labelExPackageInfo.Size = new Size( (int)( panelSize.Width - labelExPackageInfo.Location.X - EditorAPI.DPIScale * 8 ), panelSize.Height - labelExPackageInfo.Location.Y );
 		}
 
 		private void timer1_Tick( object sender, EventArgs e )
@@ -160,10 +163,47 @@ namespace NeoAxis.Editor
 				foreach( var item in contentBrowser1.GetAllItems() )
 				{
 					var info = item.Tag as PackageManager.PackageInfo;
-					if( info != null && info.Name == needSelectPackage )
+					if( info != null && info.Identifier == needSelectPackage )
 					{
 						contentBrowser1.SelectItems( new ContentBrowser.Item[] { item } );
 						needSelectPackage = null;
+						break;
+					}
+				}
+			}
+
+			if( !string.IsNullOrEmpty( needSelectPackageDownloadAndInstall ) )
+			{
+				foreach( var item in contentBrowser1.GetAllItems() )
+				{
+					var info = item.Tag as PackageManager.PackageInfo;
+					if( info != null && info.Identifier == needSelectPackageDownloadAndInstall )
+					{
+						contentBrowser1.SelectItems( new ContentBrowser.Item[] { item } );
+						needSelectPackageDownloadAndInstall = null;
+
+						TryStartDownload( true );
+
+						break;
+					}
+				}
+			}
+
+			if( !string.IsNullOrEmpty( needSelectPackageAndInstall ) )
+			{
+				foreach( var item in contentBrowser1.GetAllItems() )
+				{
+					var info = item.Tag as PackageManager.PackageInfo;
+					if( info != null && info.Identifier == needSelectPackageAndInstall )
+					{
+						contentBrowser1.SelectItems( new ContentBrowser.Item[] { item } );
+						needSelectPackageAndInstall = null;
+
+						//install
+						UpdatePackageControls();
+						if( kryptonButtonInstall.Enabled )
+							kryptonButtonInstall_Click( null, null );
+
 						break;
 					}
 				}
@@ -183,15 +223,15 @@ namespace NeoAxis.Editor
 
 			foreach( var info in PackageManager.GetPackagesInfo() )
 			{
-				if( !alreadyAdded.Contains( info.Name ) )
+				if( !alreadyAdded.Contains( info.Identifier ) )
 				{
 					var item = new ContentBrowserItem_Virtual( contentBrowser1, null, info.ToString() );
 					item.Tag = info;
-					item.ShowDisabled = !PackageManager.IsInstalled( info.Name );
+					item.ShowDisabled = !PackageManager.IsInstalled( info.Identifier );
 					//item.imageKey = PackageManager.IsInstalled( info.Name ) ? null : "DefaultDisabled";
 					items.Add( item );
 
-					alreadyAdded.AddWithCheckAlreadyContained( info.Name );
+					alreadyAdded.AddWithCheckAlreadyContained( info.Identifier );
 				}
 			}
 
@@ -199,15 +239,15 @@ namespace NeoAxis.Editor
 			{
 				foreach( var info in downloadedListOfPackages )
 				{
-					if( !alreadyAdded.Contains( info.Name ) )
+					if( !alreadyAdded.Contains( info.Identifier ) )
 					{
 						var item = new ContentBrowserItem_Virtual( contentBrowser1, null, info.ToString() );
 						item.Tag = info;
-						item.ShowDisabled = !PackageManager.IsInstalled( info.Name );
+						item.ShowDisabled = !PackageManager.IsInstalled( info.Identifier );
 						//item.imageKey = PackageManager.IsInstalled( info.Name ) ? null : "DefaultDisabled";
 						items.Add( item );
 
-						alreadyAdded.AddWithCheckAlreadyContained( info.Name );
+						alreadyAdded.AddWithCheckAlreadyContained( info.Identifier );
 					}
 				}
 			}
@@ -275,6 +315,19 @@ namespace NeoAxis.Editor
 			return text;
 		}
 
+		static bool IsPurchasedProduct( string productIdentifier )
+		{
+			if( LoginUtility.GetCurrentLicense( out var email, out _ ) )
+			{
+				if( LoginUtility.GetRequestedFullLicenseInfo( out var license, out var purchasedProducts, out _, out _ ) )
+				{
+					if( !string.IsNullOrEmpty( license ) )
+						return purchasedProducts.Contains( productIdentifier );
+				}
+			}
+			return false;
+		}
+
 		void UpdatePackageControls()
 		{
 			if( selectedPackage != null )
@@ -285,7 +338,7 @@ namespace NeoAxis.Editor
 				string text = "";
 				//string text = selectedPackage.Name + " " + selectedPackage.Version + "\r\n\r\n";
 
-				var description = HtmlToPlainText( selectedPackage.Description ).Trim( new char[] { ' ', '\r', '\n' } );
+				var description = HtmlToPlainText( selectedPackage.ShortDescription ).Trim( new char[] { ' ', '\r', '\n' } );
 				if( !string.IsNullOrEmpty( description ) )
 					text += description + "\r\n\r\n";
 				else if( archiveInfo != null )
@@ -311,7 +364,14 @@ namespace NeoAxis.Editor
 				//else
 				//	text += "Unable to read package info. " + error;
 
-				labelExPackageName.Text = selectedPackage.GetDisplayName();
+				labelExPackageName.Text = selectedPackage.Identifier.Replace( '_', ' ' );
+
+				//!!!!separate line
+				if( !string.IsNullOrEmpty( selectedPackage.FreeDownload ) )
+					labelExPackageName.Text += " - Free";
+				else if( selectedPackage.CostNumber > 0 )
+					labelExPackageName.Text += " - $" + selectedPackage.CostNumber.ToString() + "";
+
 
 				if( !string.IsNullOrEmpty( selectedPackage.Author ) )
 					labelExPackageDeveloper.Text = selectedPackage.Author;
@@ -336,16 +396,14 @@ namespace NeoAxis.Editor
 
 				labelExPackageInfo.Text = text;
 
-				bool installed = PackageManager.IsInstalled( selectedPackage.Name );
+				bool installed = PackageManager.IsInstalled( selectedPackage.Identifier );
 				bool downloaded = !installed && archiveInfo != null;
 
 				bool downloading = false;
-				if( !string.IsNullOrEmpty( downloadingAddress ) && selectedPackage.Name == downloadingPackageName )
+				if( !string.IsNullOrEmpty( downloadingAddress ) && selectedPackage.Identifier == downloadingPackageIdentifier )
 					downloading = true;
 
-				bool canDownload = !string.IsNullOrEmpty( selectedPackage.Download );// || selectedPackage.OnlyPro && EngineApp.IsProPlan && selectedPackage.SecureDownload;
-
-				bool subscribeToPro = false;//selectedPackage.OnlyPro && !EngineApp.IsProPlan;
+				bool canDownload = !string.IsNullOrEmpty( selectedPackage.FreeDownload ) || selectedPackage.SecureDownload && IsPurchasedProduct( selectedPackage.Identifier );
 
 				if( installed )
 				{
@@ -354,13 +412,16 @@ namespace NeoAxis.Editor
 				}
 				else if( downloaded )
 				{
-					labelExPackageStatus.Text = "Downloaded, but not installed";// "Downloaded";
-					labelExPackageStatus.StateCommon.Content.Color1 = Color.Red;
+					labelExPackageStatus.Text = "Downloaded, but not installed";
+					if( EditorAPI.DarkTheme )
+						labelExPackageStatus.StateCommon.Content.Color1 = Color.Yellow;
+					else
+						labelExPackageStatus.StateCommon.Content.Color1 = Color.Red;
 				}
 				else if( downloading )
 				{
 					labelExPackageStatus.Text = "Downloading";
-					labelExPackageStatus.StateCommon.Content.Color1 = Color.Green;// Color.Red;
+					labelExPackageStatus.StateCommon.Content.Color1 = Color.Green;
 				}
 				else if( canDownload )
 				{
@@ -378,25 +439,26 @@ namespace NeoAxis.Editor
 					labelExPackageStatus.StateCommon.Content.Color1 = Color.Red;
 				}
 
-				if( subscribeToPro )
-				{
-					kryptonButtonBuy.Text = "Subscribe to Pro";
-					kryptonButtonBuy.Enabled = true;
-					kryptonButtonBuy.Tag = "SubscribeToPro";
-				}
-				else
-				{
-					//!!!!
-					kryptonButtonBuy.Text = "Buy";
-					kryptonButtonBuy.Enabled = false;// !installed && info != null;
-					kryptonButtonBuy.Tag = null;
-				}
+				kryptonButtonBuy.Enabled = selectedPackage.CostNumber > 0 && !canDownload;
 
-				kryptonButtonDownload.Enabled = !installed && canDownload;
-				kryptonButtonInstall.Enabled = !installed && archiveInfo != null;
+				var anotherPackageDownloading = !string.IsNullOrEmpty( downloadingAddress ) && selectedPackage.Identifier != downloadingPackageIdentifier;
+				var thisPackageDownloading = !string.IsNullOrEmpty( downloadingAddress ) && selectedPackage.Identifier == downloadingPackageIdentifier;
+
+				kryptonButtonDownload.Enabled = !installed && canDownload && !anotherPackageDownloading;
+				kryptonButtonInstall.Enabled = ( !installed && archiveInfo != null || kryptonButtonDownload.Enabled ) && !thisPackageDownloading;
+				//kryptonButtonInstall.Enabled = !installed && archiveInfo != null;
 				kryptonButtonUninstall.Enabled = installed;// && archiveInfo != null;
-				kryptonButtonDelete.Enabled = !installed && File.Exists( selectedPackage.FullFilePath );
+				kryptonButtonDelete.Enabled = /*!installed && */File.Exists( selectedPackage.FullFilePath );
 
+				if( canDownload )
+					kryptonButtonInstall.Text = "Download && Install";
+				else
+					kryptonButtonInstall.Text = "Install";
+
+				if( installed )
+					kryptonButtonDelete.Text = "Uninstall && Delete";
+				else
+					kryptonButtonDelete.Text = "Delete";
 			}
 
 			kryptonSplitContainer1.Panel2.Visible = selectedPackage != null;
@@ -415,27 +477,364 @@ namespace NeoAxis.Editor
 			return EditorLocalization.Translate( "PackagesWindow", text );
 		}
 
-		private void kryptonButtonInstall_Click( object sender, EventArgs e )
+		void UpdateListItemsProperties()
 		{
-			var info = PackageManager.ReadPackageArchiveInfo( selectedPackage.FullFilePath, out var error );
-			if( info == null )
+			bool needRefresh = false;
+
+			foreach( var item in contentBrowser1.GetAllItems() )
+			{
+				var info = item.Tag as PackageManager.PackageInfo;
+				if( info != null )
+				{
+					item.ShowDisabled = !PackageManager.IsInstalled( info.Identifier );
+
+					//var newValue = PackageManager.IsInstalled( info.Name ) ? null : "DefaultDisabled";
+
+					//if( item.imageKey != newValue )
+					//{
+					//	item.imageKey = newValue;
+					//	//!!!!можно поддержать обновление imageKey
+					//	needRefresh = true;
+					//}
+				}
+			}
+			contentBrowser1.Invalidate();
+
+			if( needRefresh )
+				needUpdateList = true;
+		}
+
+		void ThreadGetStoreItems()
+		{
+			try
+			{
+				string xml = "";
+				string url = @"https://store.neoaxis.com/api/get_store_items";
+
+				var request = (HttpWebRequest)WebRequest.Create( url );
+
+				using( var response = (HttpWebResponse)request.GetResponse() )
+				using( var stream = response.GetResponseStream() )
+				using( var reader = new StreamReader( stream ) )
+					xml = reader.ReadToEnd();
+
+				XmlDocument xDoc = new XmlDocument();
+				xDoc.LoadXml( xml );
+
+				var packages = new List<PackageManager.PackageInfo>();
+
+				foreach( XmlNode itemNode in xDoc.GetElementsByTagName( "item" ) )
+				{
+					var info = new PackageManager.PackageInfo();
+					//info.Name = "None";
+					//info.Version = "1.0.0.0";
+
+					foreach( XmlNode child in itemNode.ChildNodes )
+					{
+						if( child.Name == "identifier" )
+							info.Identifier = child.InnerText;
+						if( child.Name == "title" )
+							info.Title = child.InnerText;
+						if( child.Name == "author" )
+							info.Author = child.InnerText;
+						if( child.Name == "version" )
+							info.Version = child.InnerText;
+						if( child.Name == "size" )
+						{
+							double.TryParse( child.InnerText, out var size );
+							info.Size = (long)size;
+						}
+						if( child.Name == "free_download" )
+							info.FreeDownload = child.InnerText;
+						if( child.Name == "secure_download" && !string.IsNullOrEmpty( child.InnerText ) )
+							info.SecureDownload = (bool)SimpleTypes.ParseValue( typeof( bool ), child.InnerText );
+						if( child.Name == "short_description" )
+							info.ShortDescription = child.InnerText;
+						if( child.Name == "full_description" )
+							info.FullDescription = child.InnerText;
+						if( child.Name == "permalink" )
+							info.Permalink = child.InnerText;
+						if( child.Name == "cost" )
+							info.Cost = child.InnerText;
+						if( child.Name == "date" )
+							info.Date = child.InnerText;
+						if( child.Name == "files" )
+							info.Files = child.InnerText;
+					}
+
+					packages.Add( info );
+				}
+
+				//sort by date
+				CollectionUtility.MergeSort( packages, delegate ( PackageManager.PackageInfo p1, PackageManager.PackageInfo p2 )
+				{
+					if( p1.Date != p2.Date )
+						return -string.Compare( p1.Date, p2.Date );
+					return 0;
+				} );
+
+				downloadedListOfPackages = packages;
+
+				needUpdateList = true;
+			}
+			catch { }
+		}
+
+		void PerformRefreshList()
+		{
+			LoginUtility.RequestFullLicenseInfo();
+			Thread.Sleep( 500 );
+
+			UpdateList();
+
+			Thread thread1 = new Thread( ThreadGetStoreItems );
+			thread1.Start();
+		}
+
+		private void buttonUpdateList_Click( object sender, EventArgs e )
+		{
+			PerformRefreshList();
+		}
+
+		string GetSizeAsString( long size )
+		{
+			if( size == 0 )
+				return "";
+
+			var s = size / 1024 / 1024;
+			if( s >= 1 )
+				return s.ToString() + " MB";
+			else
+			{
+				s = size / 1024;
+				return s.ToString() + " KB";
+			}
+		}
+
+		string GetDateAsString( string value )
+		{
+			var v2 = value.Replace( "-", "" );
+			DateTime dt = DateTime.ParseExact( v2, "yyyyMMdd", CultureInfo.InvariantCulture );
+			return dt.ToString( "dd MMMM yyyy", CultureInfo.InvariantCulture );
+			//return dt.ToString();
+		}
+
+		void TryStartDownload( bool installAfterDownload )
+		{
+			//check already downloading
+			if( !string.IsNullOrEmpty( downloadingAddress ) )
 				return;
 
+			if( selectedPackage != null )
+			{
+				bool canDownload = !string.IsNullOrEmpty( selectedPackage.FreeDownload ) || selectedPackage.SecureDownload && IsPurchasedProduct( selectedPackage.Identifier );
+
+				if( canDownload )
+				{
+					downloadingPackageIdentifier = selectedPackage.Identifier;
+
+					if( !string.IsNullOrEmpty( selectedPackage.FreeDownload ) )
+					{
+						downloadingAddress = selectedPackage.FreeDownload;
+						downloadingDestinationPath = Path.Combine( PackageManager.PackagesFolder, Path.GetFileName( downloadingAddress ) );
+					}
+					else if( selectedPackage.SecureDownload )
+					{
+						if( !LoginUtility.GetCurrentLicense( out var email, out var hash ) )
+							return;
+
+						var productIdentifier = selectedPackage.Identifier;
+						var version = selectedPackage.Version;
+
+						var email64 = Convert.ToBase64String( Encoding.UTF8.GetBytes( email/*.ToLower()*/ ) ).Replace( "=", "" );
+						var hash64 = Convert.ToBase64String( Encoding.UTF8.GetBytes( hash ) ).Replace( "=", "" );
+						var product64 = Convert.ToBase64String( Encoding.UTF8.GetBytes( productIdentifier ) ).Replace( "=", "" );
+						var action64 = Convert.ToBase64String( Encoding.UTF8.GetBytes( "download" ) ).Replace( "=", "" );
+						//var version64 = Convert.ToBase64String( Encoding.UTF8.GetBytes( version ) ).Replace( "=", "" );
+
+						downloadingAddress = $@"https://store.neoaxis.com/api/secure_download?email={email64}&hash={hash64}&product={product64}&action={action64}";
+
+						var fileName = $"{productIdentifier}-{version}.neoaxispackage";
+						downloadingDestinationPath = Path.Combine( PackageManager.PackagesFolder, fileName );
+					}
+
+					downloadProgress = 0;
+					downloadingInstallAfterDownload = installAfterDownload;
+
+					Thread thread1 = new Thread( ThreadDownload );
+					thread1.Start();
+
+					UpdatePackageControls();
+				}
+			}
+		}
+
+		private void kryptonButtonDownload_Click( object sender, EventArgs e )
+		{
+			if( !string.IsNullOrEmpty( downloadingAddress ) )
+			{
+				downloadingClient?.CancelAsync();
+				downloadingPackageIdentifier = "";
+				downloadingAddress = "";
+				//downloadingDestinationPath = "";
+				downloadProgress = 0;
+				downloadingInstallAfterDownload = false;
+				downloadingClient = null;
+
+				needUpdatePackageControls = true;
+
+				return;
+			}
+
+			TryStartDownload( false );
+		}
+
+		void ThreadDownload()
+		{
+			//var fileName = Path.Combine( PackageManager.PackagesFolder, Path.GetFileName( downloadingAddress ) );
+			var cancelled = false;
+			Exception error = null;
+
+			try
+			{
+				using( WebClient client = new WebClient() )
+				{
+					downloadingClient = client;
+
+					var tempFileName = Path.GetTempFileName();
+
+					client.DownloadProgressChanged += delegate ( object sender, DownloadProgressChangedEventArgs e )
+					{
+						//check already ended
+						if( cancelled )
+							return;
+
+						if( e.TotalBytesToReceive != 0 )
+							downloadProgress = MathEx.Saturate( (float)e.BytesReceived / (float)e.TotalBytesToReceive );
+					};
+
+					client.DownloadFileCompleted += delegate ( object sender, AsyncCompletedEventArgs e )
+					{
+						//check already ended
+						if( cancelled )
+							return;
+
+						//releases blocked thread
+						lock( e.UserState )
+							Monitor.Pulse( e.UserState );
+
+						cancelled = e.Cancelled;
+						error = e.Error;
+
+						//copy to destination path
+						if( !cancelled && error == null )
+							File.Copy( tempFileName, downloadingDestinationPath, true );
+
+						try
+						{
+							File.Delete( tempFileName );
+						}
+						catch { }
+					};
+
+					using( var task = client.DownloadFileTaskAsync( new Uri( downloadingAddress ), tempFileName ) )
+					{
+						while( !string.IsNullOrEmpty( downloadingAddress ) && !task.Wait( 10 ) )
+						{
+						}
+					}
+
+					//var syncObject = new object();
+					//lock( syncObject )
+					//{
+					//	client.DownloadFileAsync( new Uri( downloadingAddress ), downloadingDestinationPath, syncObject );
+
+					//	//This would block the thread until download completes
+					//	Monitor.Wait( syncObject );
+					//}
+
+					downloadingClient = null;
+				}
+			}
+			catch( Exception e )
+			{
+				Log.Warning( e.Message );
+				return;
+			}
+			finally
+			{
+				try
+				{
+					if( !cancelled )
+					{
+						if( File.Exists( downloadingDestinationPath ) && new FileInfo( downloadingDestinationPath ).Length == 0 )
+						{
+							File.Delete( downloadingDestinationPath );
+							cancelled = true;
+						}
+					}
+					if( !cancelled && !File.Exists( downloadingDestinationPath ) )
+						cancelled = true;
+
+					if( cancelled || error != null )
+					{
+						if( File.Exists( downloadingDestinationPath ) )
+							File.Delete( downloadingDestinationPath );
+					}
+				}
+				catch { }
+
+				if( error != null && !cancelled )
+					Log.Warning( ( error.InnerException ?? error ).Message );
+
+				//auto install after download
+				if( downloadingInstallAfterDownload )
+					needSelectPackageAndInstall = downloadingPackageIdentifier;
+
+				downloadingPackageIdentifier = "";
+				downloadingAddress = "";
+				downloadingDestinationPath = "";
+				downloadProgress = 0;
+				downloadingInstallAfterDownload = false;
+				downloadingClient = null;
+			}
+
+			needUpdateList = true;
+
+			if( !cancelled )
+			{
+				if( error != null )
+					ScreenNotifications.Show( EditorLocalization.Translate( "General", "Error downloading the package." ), true );
+				else
+					ScreenNotifications.Show( EditorLocalization.Translate( "General", "The package has been successfully downloaded." ) );
+			}
+		}
+
+		private void kryptonButtonInstall_Click( object sender, EventArgs e )
+		{
+			var archiveInfo = PackageManager.ReadPackageArchiveInfo( selectedPackage.FullFilePath, out var error );
+			if( archiveInfo == null )
+			{
+				//Download & Install
+				TryStartDownload( true );
+				return;
+			}
+
 			var filesToCopy = new List<string>();
-			foreach( var file in info.Files )
+			foreach( var file in archiveInfo.Files )
 			{
 				var fullName = Path.Combine( VirtualFileSystem.Directories.Project, file );
 				filesToCopy.Add( fullName );
 			}
 
-			var text = string.Format( Translate( "Install {0}?\n\n{1} files will created." ), selectedPackage.GetDisplayName(), filesToCopy.Count );
-			//var text = string.Format( Translate( "Install {0}?\r\n\r\n{1} files will created." ), selectedPackage.Name, filesToCopy.Count );
-			//var text = $"Install {selectedPackage.Name}?\r\n\r\n{filesToCopy.Count} files will created.";
-
+			var text = string.Format( Translate( "Install {0}?\n\n{1} files will created." ), selectedPackage.Title, filesToCopy.Count );
 			if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) != EDialogResult.Yes )
 				return;
 
 			var notification = ScreenNotifications.ShowSticky( "Installing the package..." );
+
+			//disable file watcher for preview images
+			PreviewImagesManager.EnableVirtualFileWatcherUpdate = false;
 
 			try
 			{
@@ -458,7 +857,12 @@ namespace NeoAxis.Editor
 					}
 				}
 
-				PackageManager.ChangeInstalledState( selectedPackage.Name, true );
+				PackageManager.ChangeInstalledState( selectedPackage.Identifier, true );
+
+				//process updated files by file watcher
+				Thread.Sleep( 1000 );
+				VirtualFileWatcher.ProcessEvents();
+
 			}
 			catch( Exception e2 )
 			{
@@ -467,14 +871,18 @@ namespace NeoAxis.Editor
 			}
 			finally
 			{
+				//restore file watcher for preview images
+				PreviewImagesManager.EnableVirtualFileWatcherUpdate = true;
+
 				notification.Close();
 			}
 
-			if( !string.IsNullOrEmpty( info.AddCSharpFilesToProject ) )
+
+			if( !string.IsNullOrEmpty( archiveInfo.AddCSharpFilesToProject ) )
 			{
 				var toAdd = new ESet<string>();
 
-				var path = Path.Combine( VirtualFileSystem.Directories.Assets, info.AddCSharpFilesToProject );
+				var path = Path.Combine( VirtualFileSystem.Directories.Assets, archiveInfo.AddCSharpFilesToProject );
 				if( Directory.Exists( path ) )
 				{
 					var fullPaths = CSharpProjectFileUtility.GetProjectFileCSFiles( false, true );
@@ -509,14 +917,14 @@ namespace NeoAxis.Editor
 
 			needUpdateList = true;
 
-			if( info.MustRestart )
+			if( archiveInfo.MustRestart )
 				ShowRestartLabel();
 
-			if( !string.IsNullOrEmpty( info.OpenAfterInstall ) )
+			if( !string.IsNullOrEmpty( archiveInfo.OpenAfterInstall ) )
 			{
-				var realFileName = VirtualPathUtility.GetRealPathByVirtual( info.OpenAfterInstall );
+				var realFileName = VirtualPathUtility.GetRealPathByVirtual( archiveInfo.OpenAfterInstall );
 
-				if( info.MustRestart )
+				if( archiveInfo.MustRestart )
 				{
 					EditorSettingsSerialization.OpenFileAtStartup = realFileName;
 				}
@@ -530,7 +938,7 @@ namespace NeoAxis.Editor
 			ScreenNotifications.Show( EditorLocalization.Translate( "General", "The package has been successfully installed." ) );
 
 			//restart application
-			if( info.MustRestart )
+			if( archiveInfo.MustRestart )
 			{
 				var text2 = EditorLocalization.Translate( "General", "To apply changes need restart the editor. Restart?" );
 				if( EditorMessageBox.ShowQuestion( text2, EMessageBoxButtons.YesNo ) == EDialogResult.Yes )
@@ -543,7 +951,7 @@ namespace NeoAxis.Editor
 			return !Directory.EnumerateFileSystemEntries( path ).Any();
 		}
 
-		private void kryptonButtonUninstall_Click( object sender, EventArgs e )
+		bool TryUninstall()
 		{
 			var filesToDelete = new List<string>();
 			bool mustRestart = false;
@@ -558,7 +966,7 @@ namespace NeoAxis.Editor
 				{
 					ScreenNotifications.Show( "Could not read the package info.", true );
 					Log.Warning( error );
-					return;
+					return false;
 				}
 
 				foreach( var file in info.Files )
@@ -589,11 +997,11 @@ namespace NeoAxis.Editor
 			}
 
 			if( filesToDelete.Count == 0 )
-				return;
+				return false;
 
-			var text = string.Format( Translate( "Uninstall {0}?\n\n{1} files will deleted." ), selectedPackage.GetDisplayName(), filesToDelete.Count );
+			var text = string.Format( Translate( "Uninstall {0}?\n\n{1} files will deleted." ), selectedPackage.Title, filesToDelete.Count );
 			if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) != EDialogResult.Yes )
-				return;
+				return false;
 
 			var filesToDeletionAtStartup = new List<string>();
 
@@ -665,12 +1073,12 @@ namespace NeoAxis.Editor
 					}
 				}
 
-				PackageManager.ChangeInstalledState( selectedPackage.Name, false );
+				PackageManager.ChangeInstalledState( selectedPackage.Identifier, false );
 			}
 			catch( Exception e2 )
 			{
 				EditorMessageBox.ShowWarning( e2.Message );
-				return;
+				return false;
 			}
 
 			if( filesToDeletionAtStartup.Count != 0 )
@@ -682,320 +1090,44 @@ namespace NeoAxis.Editor
 				ShowRestartLabel();
 
 			ScreenNotifications.Show( EditorLocalization.Translate( "General", "The package has been successfully uninstalled." ) );
+			return true;
 		}
 
-		void UpdateListItemsProperties()
+		private void kryptonButtonUninstall_Click( object sender, EventArgs e )
 		{
-			bool needRefresh = false;
-
-			foreach( var item in contentBrowser1.GetAllItems() )
-			{
-				var info = item.Tag as PackageManager.PackageInfo;
-				if( info != null )
-				{
-					item.ShowDisabled = !PackageManager.IsInstalled( info.Name );
-
-					//var newValue = PackageManager.IsInstalled( info.Name ) ? null : "DefaultDisabled";
-
-					//if( item.imageKey != newValue )
-					//{
-					//	item.imageKey = newValue;
-					//	//!!!!можно поддержать обновление imageKey
-					//	needRefresh = true;
-					//}
-				}
-			}
-			contentBrowser1.Invalidate();
-
-			if( needRefresh )
-				needUpdateList = true;
-		}
-
-		void ThreadGetStoreItems()
-		{
-			try
-			{
-				string xml = "";
-				string url = @"https://www.neoaxis.com/api/get_store_items";
-
-				var request = (HttpWebRequest)WebRequest.Create( url );
-
-				using( var response = (HttpWebResponse)request.GetResponse() )
-				using( var stream = response.GetResponseStream() )
-				using( var reader = new StreamReader( stream ) )
-					xml = reader.ReadToEnd();
-
-				XmlDocument xDoc = new XmlDocument();
-				xDoc.LoadXml( xml );
-
-				var packages = new List<PackageManager.PackageInfo>();
-
-				foreach( XmlNode itemNode in xDoc.GetElementsByTagName( "item" ) )
-				{
-					var info = new PackageManager.PackageInfo();
-					//info.Name = "None";
-					//info.Version = "1.0.0.0";
-
-					foreach( XmlNode child in itemNode.ChildNodes )
-					{
-						if( child.Name == "name" )
-							info.Name = child.InnerText;
-						if( child.Name == "author" )
-							info.Author = child.InnerText;
-						if( child.Name == "version" )
-							info.Version = child.InnerText;
-						//if( child.Name == "only_pro" && !string.IsNullOrEmpty( child.InnerText ) )
-						//	info.OnlyPro = (bool)SimpleTypes.ParseValue( typeof( bool ), child.InnerText );
-						if( child.Name == "size" )
-						{
-							double.TryParse( child.InnerText, out var size );
-							info.Size = (long)size;
-						}
-						if( child.Name == "download" )
-							info.Download = child.InnerText;
-						if( child.Name == "secure_download" && !string.IsNullOrEmpty( child.InnerText ) )
-							info.SecureDownload = (bool)SimpleTypes.ParseValue( typeof( bool ), child.InnerText );
-						if( child.Name == "description" )
-							info.Description = child.InnerText;
-						if( child.Name == "date" )
-							info.Date = child.InnerText;
-						if( child.Name == "files" )
-							info.Files = child.InnerText;
-					}
-
-					packages.Add( info );
-				}
-
-				//sort by date
-				CollectionUtility.MergeSort( packages, delegate ( PackageManager.PackageInfo p1, PackageManager.PackageInfo p2 )
-				{
-					if( p1.Date != p2.Date )
-						return -string.Compare( p1.Date, p2.Date );
-					return 0;
-				} );
-
-				downloadedListOfPackages = packages;
-
-				needUpdateList = true;
-			}
-			catch { }
-		}
-
-		void PerformRefreshList()
-		{
-			UpdateList();
-
-			Thread thread1 = new Thread( ThreadGetStoreItems );
-			thread1.Start();
-		}
-
-		private void buttonUpdateList_Click( object sender, EventArgs e )
-		{
-			PerformRefreshList();
-		}
-
-		string GetSizeAsString( long size )
-		{
-			if( size == 0 )
-				return "";
-
-			var s = size / 1024 / 1024;
-			if( s >= 1 )
-				return s.ToString() + " MB";
-			else
-			{
-				s = size / 1024;
-				return s.ToString() + " KB";
-			}
-		}
-
-		string GetDateAsString( string value )
-		{
-			var v2 = value.Replace( "-", "" );
-			DateTime dt = DateTime.ParseExact( v2, "yyyyMMdd", CultureInfo.InvariantCulture );
-			return dt.ToString( "dd MMMM yyyy", CultureInfo.InvariantCulture );
-			//return dt.ToString();
-		}
-
-		private void kryptonButtonDownload_Click( object sender, EventArgs e )
-		{
-			if( !string.IsNullOrEmpty( downloadingAddress ) )
-			{
-				downloadingClient?.CancelAsync();
-				downloadingPackageName = "";
-				downloadingAddress = "";
-				//downloadingDestinationPath = "";
-				downloadProgress = 0;
-				downloadingClient = null;
-				return;
-			}
-
-			if( selectedPackage != null && ( !string.IsNullOrEmpty( selectedPackage.Download )/* || selectedPackage.OnlyPro && EngineApp.IsProPlan && selectedPackage.SecureDownload*/ ) )
-			{
-				downloadingPackageName = selectedPackage.Name;
-
-				if( !string.IsNullOrEmpty( selectedPackage.Download ) )
-				{
-					downloadingAddress = selectedPackage.Download;
-					downloadingDestinationPath = Path.Combine( PackageManager.PackagesFolder, Path.GetFileName( downloadingAddress ) );
-				}
-				//else if( selectedPackage.OnlyPro && EngineApp.IsProPlan && selectedPackage.SecureDownload )
-				//{
-				//	if( !LoginUtility.GetCurrentLicense( out var email, out var hash ) )
-				//		return;
-
-				//	var item = selectedPackage.Name.Replace( ' ', '_' );
-				//	var version = selectedPackage.Version;
-
-				//	var email64 = Convert.ToBase64String( Encoding.UTF8.GetBytes( email.ToLower() ) ).Replace( "=", "" );
-				//	var hash64 = Convert.ToBase64String( Encoding.UTF8.GetBytes( hash ) ).Replace( "=", "" );
-				//	var item64 = Convert.ToBase64String( Encoding.UTF8.GetBytes( item ) ).Replace( "=", "" );
-				//	var version64 = Convert.ToBase64String( Encoding.UTF8.GetBytes( version ) ).Replace( "=", "" );
-
-				//	downloadingAddress = $@"https://www.neoaxis.com/api/secure_download?email={email64}&hash={hash64}&item={item64}&version={version64}";
-
-				//	var fileName = $"{item}-{version}.neoaxispackage";
-				//	downloadingDestinationPath = Path.Combine( PackageManager.PackagesFolder, fileName );
-				//}
-
-				downloadProgress = 0;
-
-				Thread thread1 = new Thread( ThreadDownload );
-				thread1.Start();
-
-				UpdatePackageControls();
-			}
-		}
-
-		void ThreadDownload()
-		{
-			//var fileName = Path.Combine( PackageManager.PackagesFolder, Path.GetFileName( downloadingAddress ) );
-			var cancelled = false;
-			Exception error = null;
-
-			try
-			{
-				using( WebClient client = new WebClient() )
-				{
-					downloadingClient = client;
-
-					var tempFileName = Path.GetTempFileName();
-
-					client.DownloadProgressChanged += delegate ( object sender, DownloadProgressChangedEventArgs e )
-					{
-						//check already ended
-						if( cancelled )
-							return;
-
-						if( e.TotalBytesToReceive != 0 )
-							downloadProgress = MathEx.Saturate( (float)e.BytesReceived / (float)e.TotalBytesToReceive );
-					};
-
-					client.DownloadFileCompleted += delegate ( object sender, AsyncCompletedEventArgs e )
-					{
-						//check already ended
-						if( cancelled )
-							return;
-
-						//releases blocked thread
-						lock( e.UserState )
-							Monitor.Pulse( e.UserState );
-
-						cancelled = e.Cancelled;
-						error = e.Error;
-
-						//copy to destination path
-						if( !cancelled && error == null )
-							File.Copy( tempFileName, downloadingDestinationPath );
-
-						try
-						{
-							File.Delete( tempFileName );
-						}
-						catch { }
-					};
-
-					using( var task = client.DownloadFileTaskAsync( new Uri( downloadingAddress ), tempFileName ) )
-					{
-						while( !string.IsNullOrEmpty( downloadingAddress ) && !task.Wait( 10 ) )
-						{
-						}
-					}
-
-					//var syncObject = new object();
-					//lock( syncObject )
-					//{
-					//	client.DownloadFileAsync( new Uri( downloadingAddress ), downloadingDestinationPath, syncObject );
-
-					//	//This would block the thread until download completes
-					//	Monitor.Wait( syncObject );
-					//}
-
-					downloadingClient = null;
-				}
-			}
-			catch( Exception e )
-			{
-				Log.Warning( e.Message );
-				return;
-			}
-			finally
-			{
-				try
-				{
-					if( !cancelled )
-					{
-						if( File.Exists( downloadingDestinationPath ) && new FileInfo( downloadingDestinationPath ).Length == 0 )
-						{
-							File.Delete( downloadingDestinationPath );
-							cancelled = true;
-						}
-					}
-					if( !cancelled && !File.Exists( downloadingDestinationPath ) )
-						cancelled = true;
-
-					if( cancelled || error != null )
-					{
-						if( File.Exists( downloadingDestinationPath ) )
-							File.Delete( downloadingDestinationPath );
-					}
-				}
-				catch { }
-
-				if( error != null && !cancelled )
-					Log.Warning( ( error.InnerException ?? error ).Message );
-
-				downloadingPackageName = "";
-				downloadingAddress = "";
-				downloadingDestinationPath = "";
-				downloadProgress = 0;
-				downloadingClient = null;
-			}
-
-			needUpdateList = true;
-
-			if( !cancelled )
-			{
-				if( error != null )
-					ScreenNotifications.Show( EditorLocalization.Translate( "General", "Error downloading the package." ), true );
-				else
-					ScreenNotifications.Show( EditorLocalization.Translate( "General", "The package has been successfully downloaded." ) );
-			}
+			TryUninstall();
 		}
 
 		private void kryptonButtonDelete_Click( object sender, EventArgs e )
 		{
 			if( selectedPackage == null )
 				return;
+
+			bool installed = PackageManager.IsInstalled( selectedPackage.Identifier );
+
+			//Uninstall & Delete
+			var skipDeleteMessage = false;
+			if( installed )
+			{
+				if( !TryUninstall() )
+					return;
+				skipDeleteMessage = true;
+			}
+
+			//check can delete
 			if( !File.Exists( selectedPackage.FullFilePath ) )
 				return;
 
-			var template = Translate( "Are you sure you want to delete \'{0}\'?" );
-			var text = string.Format( template, selectedPackage.FullFilePath );
+			//ask to delete
+			if( !skipDeleteMessage )
+			{
+				var template = Translate( "Are you sure you want to delete \'{0}\'?" );
+				var text = string.Format( template, selectedPackage.FullFilePath );
+				if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) == EDialogResult.No )
+					return;
+			}
 
-			if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) == EDialogResult.No )
-				return;
-
+			//delete
 			try
 			{
 				File.Delete( selectedPackage.FullFilePath );
@@ -1031,23 +1163,25 @@ namespace NeoAxis.Editor
 			}
 		}
 
-		public void NeedSelectPackage( string packageName )
+		public void NeedSelectPackage( string packageIdentifier, bool downloadAndInstall )
 		{
 			//can be available later, after download the list of packages from the server.
-			needSelectPackage = packageName;
+			if( downloadAndInstall )
+				needSelectPackageDownloadAndInstall = packageIdentifier;
+			else
+				needSelectPackage = packageIdentifier;
 		}
 
 		private void kryptonButtonBuy_Click( object sender, EventArgs e )
 		{
-			var tagStr = kryptonButtonBuy.Tag as string;
-			if( tagStr != null && tagStr == "SubscribeToPro" )
+			if( selectedPackage != null )
 			{
-				Process.Start( new ProcessStartInfo( "https://www.neoaxis.com/licensing" ) { UseShellExecute = true } );
-				return;
+				var link = selectedPackage.Permalink;
+				if( string.IsNullOrEmpty( link ) )
+					link = "https://store.neoaxis.com";
+
+				Process.Start( new ProcessStartInfo( link ) { UseShellExecute = true } );
 			}
-
-			//!!!!
-
 		}
 
 		protected override void OnResize( EventArgs e )

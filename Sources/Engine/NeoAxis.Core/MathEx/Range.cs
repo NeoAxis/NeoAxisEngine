@@ -216,7 +216,7 @@ namespace NeoAxis
 			{
 				if( index < 0 || index > 1 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( double* v = &this.Minimum )
+				fixed( double* v = &this.Minimum )
 				{
 					return v[ index ];
 				}
@@ -225,7 +225,7 @@ namespace NeoAxis
 			{
 				if( index < 0 || index > 1 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( double* v = &this.Minimum )
+				fixed( double* v = &this.Minimum )
 				{
 					v[ index ] = value;
 				}
@@ -272,6 +272,11 @@ namespace NeoAxis
 			result.Minimum = (int)Minimum;
 			result.Maximum = (int)Maximum;
 			return result;
+		}
+
+		public double GetCenter()
+		{
+			return ( Minimum + Maximum ) / 2;
 		}
 	}
 }

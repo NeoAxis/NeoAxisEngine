@@ -14,8 +14,8 @@ uniform vec4 u_reflectionProbeData;
 
 uniform mat3 u_environmentTextureRotation;
 uniform mat3 u_environmentTextureIBLRotation;
-uniform vec4 /*vec3*/ u_environmentTextureMultiplier;
-uniform vec4 /*vec3*/ u_environmentTextureIBLMultiplier;
+uniform vec4 u_environmentTextureMultiplierAndAffect;
+uniform vec4 u_environmentTextureIBLMultiplierAndAffect;
 
 SAMPLER2D(s_sceneTexture, 0);
 SAMPLER2D(s_normalTexture, 1);
@@ -23,10 +23,13 @@ SAMPLER2D(s_gBuffer2Texture, 2);
 SAMPLER2D(s_gBuffer3Texture, 9);
 SAMPLER2D(s_depthTexture, 3);
 SAMPLER2D(s_gBuffer4Texture, 10);
+SAMPLER2D(s_gBuffer5Texture, 11);
 
 SAMPLERCUBE(s_environmentTexture, 6);
 SAMPLERCUBE(s_environmentTextureIBL, 7);
 SAMPLER2D(s_brdfLUT, 8);
+
+#define SHADING_MODEL_SUBSURFACE
 
 #include "PBRFilament/common_types.sh"
 #include "PBRFilament/common_math.sh"
@@ -57,16 +60,39 @@ void main()
 
 	vec4 gBuffer2Data = texture2D(s_gBuffer2Texture, v_texCoord0);
 	vec4 gBuffer3Data = texture2D(s_gBuffer3Texture, v_texCoord0);
+	vec4 gBuffer4Data = texture2D(s_gBuffer4Texture, v_texCoord0);
+	vec4 gBuffer5Data = texture2D(s_gBuffer5Texture, v_texCoord0);
 
+	vec4 tangent = gBuffer4Data * 2.0 - 1.0;
+	tangent.xyz = normalize(tangent.xyz);
+
+	int shadingModel = int(round(gBuffer5Data.x * 10.0));	
+	bool receiveDecals = gBuffer5Data.y == 1.0;
+	float thickness = gBuffer5Data.z;
+	float subsurfacePower = gBuffer5Data.w * 15.0;
+	
+	bool shadingModelSubsurface = shadingModel == 1;
+	bool shadingModelSimple = shadingModel == 4;
+	
+	vec3 subsurfaceColor = vec3_splat(0);
+	vec3 emissive = vec3_splat(0);
+	{
+		vec3 v = decodeRGBE8(gBuffer3Data);
+		if(shadingModelSubsurface)
+			subsurfaceColor = v;
+		else
+			emissive = v;
+	}
+	
+	/*
 	//get GBuffer 4
 	vec4 tangent;
 	bool shadingModelSimple;
 	bool receiveDecals;
 	vec4 gBuffer4Data = texture2D(s_gBuffer4Texture, v_texCoord0);
 	decodeGBuffer4(gBuffer4Data, tangent, shadingModelSimple, receiveDecals);
-
-	//vec4 tangent = texture2D(s_tangentTexture, v_texCoord0) * 2 - 1;
-	//tangent.xyz = normalize(tangent.xyz);
+	*/
+	
 	vec3 bitangent = normalize(cross(tangent.xyz, normal) * tangent.w);
 
 	vec3 toCamera = u_viewportOwnerCameraPosition - worldPosition.xyz;
@@ -75,7 +101,6 @@ void main()
 
 	//light color
 	vec3 lightColor = u_lightPower.rgb * u_cameraExposure;
-
 
 	
 	vec4 resultColor = vec4_splat(0);
@@ -87,12 +112,8 @@ void main()
 	}
 	else
 	{
-		//Lit shading model
-		
-		//!!!!
-		// дл€ relfection probe надо тут использовать собственный параметр
-		// чтобы у них могла быть €ркость отлична€ от ambient
-
+		//Lit, Subsurface shading models
+				
 		float metallic = gBuffer2Data.x;
 		float roughness = gBuffer2Data.y;
 		float ambientOcclusion = gBuffer2Data.z;
@@ -103,34 +124,31 @@ void main()
 
 		MaterialInputs material;
 
-		material.baseColor        = vec4(baseColor, 0.0);
-		material.roughness        = roughness;
-		material.metallic         = metallic;
-		material.reflectance      = reflectance;
+		material.baseColor = vec4(baseColor, 0.0);
+		material.roughness = roughness;
+		material.metallic = metallic;
+		material.reflectance = reflectance;
 		material.ambientOcclusion = ambientOcclusion;
-		//material.emissive         = vec4(emissive, 0.0);
 
 		material.anisotropyDirection = vec3_splat(0);
 		material.anisotropy = 0;
 
-		#if defined(SHADING_MODEL_SUBSURFACE)
-			material.thickness = 0;
-			material.subsurfacePower = 0;
-			material.subsurfaceColor = vec3_splat(0);
-		#endif
+		//#if defined(SHADING_MODEL_SUBSURFACE)
+		material.thickness = thickness;
+		material.subsurfacePower = subsurfacePower;
+		material.subsurfaceColor = subsurfaceColor;
+		//#endif
 
 		material.clearCoat = 0;
 		material.clearCoatRoughness = 0;
 		material.clearCoatNormal = vec3_splat(0);
 
+		/*
 		#if defined(SHADING_MODEL_CLOTH)
-			material.sheenColor = vec3_splat(0);
-		
-			#if defined(MATERIAL_HAS_SUBSURFACE_COLOR)
-				material.subsurfaceColor = vec3_splat(0);
-			#endif
-
+			material.sheenColor = vec3_splat(0);		
+			material.subsurfaceColor = vec3_splat(0);
 		#endif
+		*/
 
 		setupPBRFilamentParams(material, tangent.xyz, bitangent, normal, vec3_splat(0), toLight, toCamera, gl_FrontFacing);
 
@@ -139,27 +157,26 @@ void main()
 
 		EnvironmentTextureData data1;
 		data1.rotation = u_environmentTextureRotation;
-		data1.multiplier = u_environmentTextureMultiplier;
+		data1.multiplierAndAffect = u_environmentTextureMultiplierAndAffect;
 		
 		EnvironmentTextureData dataIBL;
 		dataIBL.rotation = u_environmentTextureIBLRotation;
-		dataIBL.multiplier = u_environmentTextureIBLMultiplier;
+		dataIBL.multiplierAndAffect = u_environmentTextureIBLMultiplierAndAffect;
 			
-		resultColor.rgb = iblDiffuse(material, pixel, s_environmentTextureIBL, dataIBL, s_environmentTexture, data1) +
+		resultColor.rgb = iblDiffuse(material, pixel, s_environmentTextureIBL, dataIBL, s_environmentTexture, data1, shadingModelSubsurface) +
 			iblSpecular(material, pixel, vec3_splat(0), 0, s_environmentTexture, data1);
 
 		resultColor.rgb *= lightColor;
 	}
-		
+
 	//emissive
-	resultColor.rgb += decodeRGBE8(gBuffer3Data) * u_emissiveMaterialsFactor;//gBuffer3Data.rgb
+	resultColor.rgb += emissive * u_emissiveMaterialsFactor;
 
 	BRANCH
 	if(u_reflectionProbeRadius > 0)
 	{
 		float blendingStartsAt = 0.8;
-		// позже лучше сделать отдельный входной параметр вместо 0.8
-		float alpha = (u_reflectionProbeRadius - distanceToProbe) / ((1 - blendingStartsAt) * u_reflectionProbeRadius);
+		float alpha = (u_reflectionProbeRadius - distanceToProbe) / ((1.0 - blendingStartsAt) * u_reflectionProbeRadius);
 		resultColor.a = saturate(alpha);
 	}
 

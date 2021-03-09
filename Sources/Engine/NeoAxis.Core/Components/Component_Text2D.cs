@@ -375,9 +375,9 @@ namespace NeoAxis
 			}
 		}
 
-		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
+		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
-			base.OnGetRenderSceneData( context, mode );
+			base.OnGetRenderSceneData( context, mode, modeGetObjectsItem );
 
 			if( mode == GetRenderSceneDataMode.InsideFrustum && context.Owner.CanvasRenderer != null && context.Owner.Simple3DRenderer != null )
 			{

@@ -15,6 +15,7 @@ namespace NeoAxis.Editor
 	/// <summary>
 	/// Represents the Start Page.
 	/// </summary>
+	[RestoreDockWindowAfterEditorReload]
 	public partial class StartPageWindow : DocumentWindow, ControlDoubleBufferComposited.IDoubleBufferComposited
 	{
 		string[] currentOpenScenes = new string[ 0 ];
@@ -42,8 +43,7 @@ namespace NeoAxis.Editor
 			contentBrowserNewScene.Options.ListMode = ContentBrowser.ListModeEnum.Tiles;
 			contentBrowserNewScene.UseSelectedTreeNodeAsRootForList = false;
 			contentBrowserNewScene.Options.Breadcrumb = false;
-			contentBrowserNewScene.Options.TileImageSize = 100;
-			//contentBrowserNewScene.Options.TileImageSize = 128;
+			contentBrowserNewScene.Options.TileImageSize = 90;// 100;
 
 			//add items
 			try
@@ -211,7 +211,7 @@ namespace NeoAxis.Editor
 
 		private void kryptonButtonOpenStore_Click( object sender, EventArgs e )
 		{
-			EditorAPI.OpenStore();
+			EditorAPI.OpenStore( true );
 		}
 
 		private void kryptonButtonLightTheme_Click( object sender, EventArgs e )
@@ -296,13 +296,23 @@ namespace NeoAxis.Editor
 					string name = template.Name + ".scene";
 					var sourceFile = VirtualPathUtility.GetRealPathByVirtual( @"Base\Tools\NewResourceTemplates\" + name );
 
-					var text = VirtualFile.ReadAllText( sourceFile );
+					//copy scene file
+
+					var text = File.ReadAllText( sourceFile );
 
 					var directoryName = Path.GetDirectoryName( realFileName );
 					if( !Directory.Exists( directoryName ) )
 						Directory.CreateDirectory( directoryName );
 
 					File.WriteAllText( realFileName, text );
+
+					//copy additional folder if exist
+					var sourceFolderPath = sourceFile + "_Files";
+					if( Directory.Exists( sourceFolderPath ) )
+					{
+						var destFolderPath = realFileName + "_Files";
+						IOUtility.CopyDirectory( sourceFolderPath, destFolderPath );
+					}
 
 					EditorAPI.SelectFilesOrDirectoriesInMainResourcesWindow( new string[] { realFileName } );
 					EditorAPI.OpenFileAsDocument( realFileName, true, true );

@@ -20,6 +20,8 @@ namespace NeoAxis
 	/// </summary>
 	public partial class UIWebBrowser : UIControl
 	{
+		//readonly double[] PredefinedZoomPercentTable = new double[] { 25, 33, 50, 67, 75, 80, 90, 100, 110, 125, 150, 175, 200, 250, 300, 400, 500 };
+
 		static bool isCefRuntimeInitialized;
 
 		CefBrowser browser;
@@ -29,15 +31,16 @@ namespace NeoAxis
 
 		Component_Image texture;
 		Vector2I textureSize;
-		bool needUpdateTexture;
-		bool needInvalidate = true;
-		bool needRecreateTexture;
+		//bool needUpdateTexture;
+		//bool needInvalidate = true;
+		//bool needRecreateTexture;
 
 		string title;
 
 		object renderBufferLock = new object();
 		byte[] renderBuffer;
 		Vector2I renderBufferForSize;
+		bool renderBufferNeedUpdate;
 
 		volatile Cursor currentCursor;
 
@@ -121,34 +124,30 @@ namespace NeoAxis
 		/// <summary>
 		/// The zoom ratio of the browser.
 		/// </summary>
-		[DefaultValue( 0.0 )]
+		[DefaultValue( 1.0 )]
 		[Serialize]
-		[Range( -10.0f, 10.0f )]
+		[Range( 0.25, 5.0 )]
 		public Reference<double> Zoom
 		{
 			get { if( _zoom.BeginGet() ) Zoom = _zoom.Get( this ); return _zoom.value; }
-			set
-			{
-				if( _zoom.BeginSet( ref value ) )
-				{
-					try
-					{
-						ZoomChanged?.Invoke( this );
-
-						if( browserHost != null )
-						{
-							browserHost.SetZoomLevel( Zoom );
-							needInvalidate = true;
-						}
-					}
-					finally { _zoom.EndSet(); }
-				}
-			}
+			set { if( _zoom.BeginSet( ref value ) ) { try { ZoomChanged?.Invoke( this ); UpdateZoom(); } finally { _zoom.EndSet(); } } }
 		}
 		public event Action<UIWebBrowser> ZoomChanged;
-		ReferenceField<double> _zoom = 0.0;
+		ReferenceField<double> _zoom = 1.0;
 
-		//!!!!
+		/// <summary>
+		/// Whether to allow change zoom by Ctrl+mouse wheel, reset zoom by Ctrl+0.
+		/// </summary>
+		[DefaultValue( true )]
+		public Reference<bool> AllowZoomByKeysAndMouse
+		{
+			get { if( _allowZoomByKeysAndMouse.BeginGet() ) AllowZoomByKeysAndMouse = _allowZoomByKeysAndMouse.Get( this ); return _allowZoomByKeysAndMouse.value; }
+			set { if( _allowZoomByKeysAndMouse.BeginSet( ref value ) ) { try { AllowZoomByKeysAndMouseChanged?.Invoke( this ); } finally { _allowZoomByKeysAndMouse.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="AllowZoomByKeysAndMouse"/> property value changes.</summary>
+		public event Action<UIWebBrowser> AllowZoomByKeysAndMouseChanged;
+		ReferenceField<bool> _allowZoomByKeysAndMouse = true;
+
 		//int renderingIn3DHeightInPixels = 800;
 		//bool renderingIn3DMipmaps;
 
@@ -241,8 +240,8 @@ namespace NeoAxis
 
 		void RenderSystem_RenderSystemEvent( RenderSystemEvent name )
 		{
-			if( name == RenderSystemEvent.DeviceRestored )
-				needUpdateTexture = true;
+			//if( name == RenderSystemEvent.DeviceRestored )
+			//	needUpdateTexture = true;
 		}
 
 		static void InitializeCefRuntime()
@@ -307,6 +306,8 @@ namespace NeoAxis
 				LogFile = realLogFileName,
 				BrowserSubprocessPath = "",
 				CachePath = "",
+
+				//NoSandbox = true,
 			};
 
 			///// <summary>
@@ -339,11 +340,17 @@ namespace NeoAxis
 			isCefRuntimeInitialized = true;
 		}
 
-		static void ShutdownCefRuntime()
+		public static void ShutdownCefRuntime()
 		{
-			// shutdown CEF
-			CefRuntime.Shutdown();
-			isCefRuntimeInitialized = false;
+			if( isCefRuntimeInitialized )
+			{
+				try
+				{
+					CefRuntime.Shutdown();
+				}
+				catch { }
+				isCefRuntimeInitialized = false;
+			}
 		}
 
 		void CreateBrowser()
@@ -419,8 +426,9 @@ namespace NeoAxis
 			this.browser = browser;
 			this.browserHost = browser.GetHost();
 
-			needInvalidate = true;
-			browserHost.SetZoomLevel( Zoom );
+			//needInvalidate = true;
+			UpdateZoom();
+			//browserHost.SetZoomLevel( Zoom );
 
 			BrowserCreated?.Invoke( this );
 
@@ -495,7 +503,7 @@ namespace NeoAxis
 		internal void OnLoadEnd( CefFrame frame, int httpStatusCode )
 		{
 			LoadEnd?.Invoke( this, frame, httpStatusCode );
-			needInvalidate = true;
+			//needInvalidate = true;
 		}
 
 		public delegate void LoadErrorDelegate( UIWebBrowser sender, CefFrame frame, CefErrorCode errorCode, string errorText, string failedUrl );
@@ -567,7 +575,7 @@ namespace NeoAxis
 		{
 			if( type == CefPaintElementType.View )
 			{
-				if( texture != null && width != 0 && height != 0 && width == viewSize.X && height == viewSize.Y )
+				if( /*texture != null &&*/ width != 0 && height != 0 )//&& width == viewSize.X && height == viewSize.Y )
 				{
 					//TO DO: dirtyRects
 
@@ -578,16 +586,22 @@ namespace NeoAxis
 
 						lock( renderBufferLock )
 						{
-							Vector2I newSize = new Vector2I( width, height );
-							if( renderBuffer == null || sourceBufferSize != renderBuffer.Length || renderBufferForSize != newSize )
-							{
-								renderBuffer = new byte[ sourceBufferSize ];
-								renderBufferForSize = newSize;
-							}
+							renderBuffer = new byte[ sourceBufferSize ];
+							renderBufferForSize = new Vector2I( width, height );
 							Marshal.Copy( buffer, renderBuffer, 0, sourceBufferSize );
+
+							//Vector2I newSize = new Vector2I( width, height );
+							//if( renderBuffer == null || sourceBufferSize != renderBuffer.Length || renderBufferForSize != newSize )
+							//{
+							//	renderBuffer = new byte[ sourceBufferSize ];
+							//	renderBufferForSize = newSize;
+							//}
+							//Marshal.Copy( buffer, renderBuffer, 0, sourceBufferSize );
+
+							renderBufferNeedUpdate = true;
 						}
 
-						needUpdateTexture = true;
+						//needUpdateTexture = true;
 					}
 					catch( Exception ex )
 					{
@@ -601,28 +615,30 @@ namespace NeoAxis
 			}
 		}
 
-		void UpdateTexture()
+		void UpdateTextureIfNeed()
 		{
 			lock( renderBufferLock )
 			{
-				if( renderBuffer != null && renderBufferForSize == ViewSize && renderBuffer.Length == ViewSize.X * ViewSize.Y * 4 )
+				if( renderBufferNeedUpdate )
 				{
-					try
+					if( renderBuffer != null && renderBufferForSize == ViewSize && renderBuffer.Length == ViewSize.X * ViewSize.Y * 4 )
 					{
-						var gpuTexture = texture.Result;
-						if( gpuTexture != null )
+						try
 						{
-							//!!!!sense to copy?
-							//!!!!slowly?
-							var data = (byte[])renderBuffer.Clone();
+							var gpuTexture = texture?.Result;
+							if( gpuTexture != null )
+							{
+								var d = new GpuTexture.SurfaceData[] { new GpuTexture.SurfaceData( 0, 0, renderBuffer ) };
+								gpuTexture.SetData( d );
 
-							var d = new GpuTexture.SurfaceData[] { new GpuTexture.SurfaceData( 0, 0, data ) };
-							gpuTexture.SetData( d );
+								renderBuffer = null;
+								renderBufferNeedUpdate = false;
+							}
 						}
-					}
-					catch( Exception ex )
-					{
-						Log.Error( "UIWebBrowser: Caught exception in UpdateTexture: " + ex.Message );
+						catch( Exception ex )
+						{
+							Log.Error( "UIWebBrowser: Caught exception in UpdateTexture: " + ex.Message );
+						}
 					}
 				}
 			}
@@ -719,7 +735,7 @@ namespace NeoAxis
 				}
 
 				//create texture
-				if( texture == null || textureSize != size || needRecreateTexture )
+				if( texture == null || textureSize != size )//|| needRecreateTexture )
 				{
 					if( texture != null )
 					{
@@ -759,24 +775,25 @@ namespace NeoAxis
 					//		1, 0, PixelFormat.A8R8G8B8, Texture.Usage.DynamicWriteOnlyDiscardable );
 					//}
 
-					needUpdateTexture = true;
-					needRecreateTexture = false;
+					//needUpdateTexture = true;
+					//needRecreateTexture = false;
 				}
 
-				if( needInvalidate )
-				{
-					browserHost.SetZoomLevel( Zoom );
-					browserHost.Invalidate( new CefRectangle( 0, 0, 100000, 100000 ), CefPaintElementType.View );
-					needInvalidate = false;
-				}
+				//if( needInvalidate )
+				//{
+				browserHost?.Invalidate( CefPaintElementType.View );
+				//	needInvalidate = false;
+				//}
 
 				//update texture
-				if( /*browser.IsDirty ||*/ needUpdateTexture )
-				{
-					if( texture != null )
-						UpdateTexture();
-					needUpdateTexture = false;
-				}
+				if( texture != null )
+					UpdateTextureIfNeed();
+				//if( /*browser.IsDirty ||*/ needUpdateTexture )
+				//{
+				//	if( texture != null )
+				//		UpdateTexture();
+				//	needUpdateTexture = false;
+				//}
 			}
 
 			//draw texture
@@ -798,7 +815,7 @@ namespace NeoAxis
 				GetScreenRectangle( out var rect );
 
 				Component_Image tex = null;
-				if( renderBuffer != null && renderBufferForSize == ViewSize && renderBuffer.Length == ViewSize.X * ViewSize.Y * 4 )
+				if( renderBufferForSize == ViewSize )
 					tex = texture;
 				if( tex == null )
 					tex = ResourceUtility.WhiteTexture2D;
@@ -862,24 +879,46 @@ namespace NeoAxis
 			return CefMouseButtonType.Left;
 		}
 
-		static CefEventFlags GetCurrentKeyboardModifiers()
+		CefEventFlags GetCurrentKeyboardModifiers()
 		{
-			CefEventFlags result = new CefEventFlags();
+			var result = new CefEventFlags();
 
-			//!!!!надо
-			////Log.Fatal( "impl" );
-			//if( EngineApp.Instance.IsKeyPressed( EKeys.Alt ) )
-			//	result |= CefEventFlags.AltDown;
-			//if( EngineApp.Instance.IsKeyPressed( EKeys.Shift ) )
-			//	result |= CefEventFlags.ShiftDown;
-			//if( EngineApp.Instance.IsKeyPressed( EKeys.Control ) )
-			//	result |= CefEventFlags.ControlDown;
-			//if( EngineApp.Instance.IsKeyPressed( EKeys.LWin ) ||
-			//	EngineApp.Instance.IsKeyPressed( EKeys.RWin ) ||
-			//	EngineApp.Instance.IsKeyPressed( EKeys.Command ) )
-			//{
-			//	result |= CefEventFlags.CommandDown;
-			//}
+			var viewport = ParentContainer?.Viewport;
+			if( viewport != null )
+			{
+				if( viewport.IsKeyLocked( EKeys.CapsLock ) )
+					result |= CefEventFlags.CapsLockOn;
+
+				if( viewport.IsKeyPressed( EKeys.Shift ) )
+					result |= CefEventFlags.ShiftDown;
+				if( viewport.IsKeyPressed( EKeys.Control ) )
+					result |= CefEventFlags.ControlDown;
+				if( viewport.IsKeyPressed( EKeys.Alt ) )
+					result |= CefEventFlags.AltDown;
+
+				if( viewport.IsMouseButtonPressed( EMouseButtons.Left ) )
+					result |= CefEventFlags.LeftMouseButton;
+				if( viewport.IsMouseButtonPressed( EMouseButtons.Middle ) )
+					result |= CefEventFlags.MiddleMouseButton;
+				if( viewport.IsMouseButtonPressed( EMouseButtons.Right ) )
+					result |= CefEventFlags.RightMouseButton;
+
+				if( viewport.IsKeyPressed( EKeys.Command ) )
+					result |= CefEventFlags.CommandDown;
+				//if( EngineApp.Instance.IsKeyPressed( EKeys.LWin ) ||
+				//	EngineApp.Instance.IsKeyPressed( EKeys.RWin ) ||
+				//	EngineApp.Instance.IsKeyPressed( EKeys.Command ) )
+				//{
+				//	result |= CefEventFlags.CommandDown;
+				//}
+
+				if( viewport.IsKeyLocked( EKeys.NumLock ) )
+					result |= CefEventFlags.NumLockOn;
+
+				//    IsKeyPad = 1 << 9,
+				//    IsLeft = 1 << 10,
+				//    IsRight = 1 << 11,
+			}
 
 			return result;
 		}
@@ -986,6 +1025,36 @@ namespace NeoAxis
 				{
 					Log.Error( "UIWebBrowser: Caught exception in OnMouseWheel: " + ex.Message );
 				}
+
+				if( AllowZoomByKeysAndMouse )
+				{
+					if( GetCurrentKeyboardModifiers().HasFlag( CefEventFlags.ControlDown ) )
+					{
+						var zoom = Zoom.Value;
+
+						if( delta > 0 )
+						{
+							int steps = delta / 120;
+							if( steps == 0 )
+								steps = 1;
+
+							zoom *= 1.1 * steps;
+
+						}
+						else if( delta < 0 )
+						{
+							int steps = -delta / 120;
+							if( steps == 0 )
+								steps = 1;
+
+							zoom /= 1.1 * steps;
+						}
+
+						zoom = MathEx.Clamp( zoom, 0.25, 5.0 );
+
+						Zoom = zoom;
+					}
+				}
 			}
 
 			return result;
@@ -1023,7 +1092,7 @@ namespace NeoAxis
 						EventType = CefKeyEventType.RawKeyDown,
 						WindowsKeyCode = (int)e.Key /*KeyInterop.VirtualKeyFromKey(arg.Key == Key.System ? arg.SystemKey : arg.Key)*/,
 						NativeKeyCode = (int)e.Key,/*0*/
-												   /*IsSystemKey = e.Key == EKeys.System*/
+						/*IsSystemKey = e.Key == EKeys.System*/
 					};
 
 					keyEvent.Modifiers = GetCurrentKeyboardModifiers();
@@ -1036,6 +1105,12 @@ namespace NeoAxis
 				}
 
 				//arg.Handled = HandledKeys.Contains(arg.Key);
+
+				if( AllowZoomByKeysAndMouse )
+				{
+					if( e.Key == EKeys.D0 && GetCurrentKeyboardModifiers().HasFlag( CefEventFlags.ControlDown ) )
+						Zoom = 1;
+				}
 
 				return true;
 			}
@@ -1089,7 +1164,7 @@ namespace NeoAxis
 						EventType = CefKeyEventType.KeyUp,
 						WindowsKeyCode = (int)e.Key /*KeyInterop.VirtualKeyFromKey(arg.Key == Key.System ? arg.SystemKey : arg.Key)*/,
 						NativeKeyCode = (int)e.Key,/*0*/
-												   /*IsSystemKey = e.Key == EKeys.System*/
+						/*IsSystemKey = e.Key == EKeys.System*/
 					};
 
 					keyEvent.Modifiers = GetCurrentKeyboardModifiers();
@@ -1305,6 +1380,17 @@ namespace NeoAxis
 		internal void PerformDownloadUpdated( CefDownloadItem downloadItem, CefDownloadItemCallback callback )
 		{
 			DownloadUpdated?.Invoke( this, downloadItem, callback );
+		}
+
+		void UpdateZoom()
+		{
+			if( browserHost != null )
+			{
+				var level = ( Zoom.Value * 100 - 100 ) / 25.0;
+				browserHost.SetZoomLevel( level );
+
+				//needInvalidate = true;
+			}
 		}
 
 	}

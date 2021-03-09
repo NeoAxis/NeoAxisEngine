@@ -767,10 +767,10 @@ namespace NeoAxis.Editor
 				string text;
 				string tokenTransactions = "";
 				string error = "";
-				if( LoginUtility.GetCurrentLicense( out var email, out var hash ) )
+				if( LoginUtility.GetCurrentLicense( out var email, out _ ) )
 				{
 					text = email;
-					if( LoginUtility.GetRequestedFullLicenseInfo( out var license, out tokenTransactions, out var error2 ) )
+					if( LoginUtility.GetRequestedFullLicenseInfo( out var license, out _, out tokenTransactions, out var error2 ) )
 					{
 						text += " ";//+ license;
 						if( !string.IsNullOrEmpty( license ) )
@@ -835,7 +835,7 @@ namespace NeoAxis.Editor
 
 		private void kryptonButtonRegister_Click( object sender, EventArgs e )
 		{
-			Process.Start( new ProcessStartInfo( "https://www.neoaxis.com/user" ) { UseShellExecute = true } );
+			Process.Start( new ProcessStartInfo( "https://store.neoaxis.com/my-account/" ) { UseShellExecute = true } );
 		}
 
 		bool IsPlatformInstalled( SystemSettings.Platform platform )

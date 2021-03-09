@@ -12,7 +12,7 @@ namespace NeoAxis.Import.FBX
 	//Assimp algorithm
 	static class CalcTangentsProcess
 	{
-		const float AngleEpsilon = 0.9999f;
+		//const float AngleEpsilon = 0.9999f;
 
 		public delegate Vector2F GetTextureCoord( ref StandardVertex vertex );
 
@@ -141,72 +141,72 @@ namespace NeoAxis.Import.FBX
 			}
 		}
 
-		/// <summary>
-		/// </summary>
-		/// <param name="vertices"></param>
-		/// <param name="vertexFinder"></param>
-		/// <param name="tangents"></param>
-		/// <param name="bitangents"></param>
-		/// <param name="posEpsilon"></param>
-		/// <param name="maxSmoothingAngleInRadians">Maximum smoothing angle, in radians.</param>
-		public static void SmoothTangents( VertexInfo[] vertices, SpatialSort vertexFinder, Vector3F[] tangents, Vector3F[] bitangents, float posEpsilon, float maxSmoothingAngleInRadians = (float)( 45f * Math.PI / 180 ) )
-		{
-			float fLimit = MathEx.Cos( maxSmoothingAngleInRadians );
-			var closeVertices = new List<int>();
-			bool[] vertexDone = new bool[ vertices.Length ];
-			// in the second pass we now smooth out all tangents and bitangents at the same local position
-			// if they are not too far off.
-			for( int i = 0; i < vertices.Length; i++ )
-			{
-				if( vertexDone[ i ] )
-					continue;
+		///// <summary>
+		///// </summary>
+		///// <param name="vertices"></param>
+		///// <param name="vertexFinder"></param>
+		///// <param name="tangents"></param>
+		///// <param name="bitangents"></param>
+		///// <param name="posEpsilon"></param>
+		///// <param name="maxSmoothingAngleInRadians">Maximum smoothing angle, in radians.</param>
+		//public static void SmoothTangents( VertexInfo[] vertices, SpatialSort vertexFinder, Vector3F[] tangents, Vector3F[] bitangents, float posEpsilon, float maxSmoothingAngleInRadians = (float)( 45f * Math.PI / 180 ) )
+		//{
+		//	float fLimit = MathEx.Cos( maxSmoothingAngleInRadians );
+		//	var closeVertices = new List<int>();
+		//	bool[] vertexDone = new bool[ vertices.Length ];
+		//	// in the second pass we now smooth out all tangents and bitangents at the same local position
+		//	// if they are not too far off.
+		//	for( int i = 0; i < vertices.Length; i++ )
+		//	{
+		//		if( vertexDone[ i ] )
+		//			continue;
 
-				Vector3F origPos = vertices[ i ].Vertex.Position;
-				Vector3F origNorm = vertices[ i ].Vertex.Normal;
-				Vector3F origTang = tangents[ i ];
-				Vector3F origBitang = bitangents[ i ];
+		//		Vector3F origPos = vertices[ i ].Vertex.Position;
+		//		Vector3F origNorm = vertices[ i ].Vertex.Normal;
+		//		Vector3F origTang = tangents[ i ];
+		//		Vector3F origBitang = bitangents[ i ];
 
-				// find all vertices close to that position
-				var verticesFound = vertexFinder.FindPositions( origPos, posEpsilon );
-				closeVertices.Clear();
-				closeVertices.Add( i );
+		//		// find all vertices close to that position
+		//		var verticesFound = vertexFinder.FindPositions( origPos, posEpsilon );
+		//		closeVertices.Clear();
+		//		closeVertices.Add( i );
 
-				// look among them for other vertices sharing the same normal and a close-enough tangent/bitangent
-				for( int b = 0; b < verticesFound.Count; b++ )
-				{
-					int idx = verticesFound[ b ];
-					if( vertexDone[ idx ] )
-						continue;
-					if( Vector3F.Dot( vertices[ idx ].Vertex.Normal, origNorm ) < AngleEpsilon )
-						continue;
-					if( Vector3F.Dot( tangents[ idx ], origTang ) < fLimit )
-						continue;
-					if( Vector3F.Dot( bitangents[ idx ], origBitang ) < fLimit )
-						continue;
+		//		// look among them for other vertices sharing the same normal and a close-enough tangent/bitangent
+		//		for( int b = 0; b < verticesFound.Count; b++ )
+		//		{
+		//			int idx = verticesFound[ b ];
+		//			if( vertexDone[ idx ] )
+		//				continue;
+		//			if( Vector3F.Dot( vertices[ idx ].Vertex.Normal, origNorm ) < AngleEpsilon )
+		//				continue;
+		//			if( Vector3F.Dot( tangents[ idx ], origTang ) < fLimit )
+		//				continue;
+		//			if( Vector3F.Dot( bitangents[ idx ], origBitang ) < fLimit )
+		//				continue;
 
-					// it's similar enough -> add it to the smoothing group
-					closeVertices.Add( idx );
-					vertexDone[ idx ] = true;
-				}
+		//			// it's similar enough -> add it to the smoothing group
+		//			closeVertices.Add( idx );
+		//			vertexDone[ idx ] = true;
+		//		}
 
-				// smooth the tangents and bitangents of all vertices that were found to be close enough
-				Vector3F smoothTangent = new Vector3F();
-				Vector3F smoothBitangent = new Vector3F();
-				for( int b = 0; b < closeVertices.Count; ++b )
-				{
-					smoothTangent += tangents[ closeVertices[ b ] ];
-					smoothBitangent += bitangents[ closeVertices[ b ] ];
-				}
-				smoothTangent.Normalize();
-				smoothBitangent.Normalize();
+		//		// smooth the tangents and bitangents of all vertices that were found to be close enough
+		//		Vector3F smoothTangent = new Vector3F();
+		//		Vector3F smoothBitangent = new Vector3F();
+		//		for( int b = 0; b < closeVertices.Count; ++b )
+		//		{
+		//			smoothTangent += tangents[ closeVertices[ b ] ];
+		//			smoothBitangent += bitangents[ closeVertices[ b ] ];
+		//		}
+		//		smoothTangent.Normalize();
+		//		smoothBitangent.Normalize();
 
-				// and write it back into all affected tangents
-				for( int b = 0; b < closeVertices.Count; ++b )
-				{
-					tangents[ closeVertices[ b ] ] = smoothTangent;
-					bitangents[ closeVertices[ b ] ] = smoothBitangent;
-				}
-			}
-		}
+		//		// and write it back into all affected tangents
+		//		for( int b = 0; b < closeVertices.Count; ++b )
+		//		{
+		//			tangents[ closeVertices[ b ] ] = smoothTangent;
+		//			bitangents[ closeVertices[ b ] ] = smoothBitangent;
+		//		}
+		//	}
+		//}
 	}
 }

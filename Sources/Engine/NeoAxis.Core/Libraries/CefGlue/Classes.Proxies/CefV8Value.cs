@@ -1,4 +1,4 @@
-namespace Xilium.CefGlue
+﻿namespace Xilium.CefGlue
 {
     using System;
     using System.Collections.Generic;
@@ -77,7 +77,7 @@ namespace Xilium.CefGlue
 
         /// <summary>
         /// Create a new CefV8Value object of type Date. This method should only be
-        /// called from within the scope of a CefV8ContextHandler, CefV8Handler or
+        /// called from within the scope of a CefRenderProcessHandler, CefV8Handler or
         /// CefV8Accessor callback, or in combination with calling Enter() and Exit()
         /// on a stored CefV8Context reference.
         /// </summary>
@@ -106,11 +106,11 @@ namespace Xilium.CefGlue
         /// <summary>
         /// Create a new CefV8Value object of type object with optional accessor. This
         /// method should only be called from within the scope of a
-        /// CefV8ContextHandler, CefV8Handler or CefV8Accessor callback, or in
+        /// CefRenderProcessHandler, CefV8Handler or CefV8Accessor callback, or in
         /// combination with calling Enter() and Exit() on a stored CefV8Context
         /// reference.
         /// </summary>
-        public static CefV8Value CreateObject(CefV8Accessor accessor)
+        public static CefV8Value CreateObject(CefV8Accessor accessor = null)
         {
             return CefV8Value.FromNative(
                 cef_v8value_t.create_object(accessor != null ? accessor.ToNative() : null)
@@ -120,7 +120,7 @@ namespace Xilium.CefGlue
         /// <summary>
         /// Create a new CefV8Value object of type array with the specified |length|.
         /// If |length| is negative the returned array will have length 0. This method
-        /// should only be called from within the scope of a CefV8ContextHandler,
+        /// should only be called from within the scope of a CefRenderProcessHandler,
         /// CefV8Handler or CefV8Accessor callback, or in combination with calling
         /// Enter() and Exit() on a stored CefV8Context reference.
         /// </summary>
@@ -133,7 +133,7 @@ namespace Xilium.CefGlue
 
         /// <summary>
         /// Create a new CefV8Value object of type function. This method should only be
-        /// called from within the scope of a CefV8ContextHandler, CefV8Handler or
+        /// called from within the scope of a CefRenderProcessHandler, CefV8Handler or
         /// CefV8Accessor callback, or in combination with calling Enter() and Exit()
         /// on a stored CefV8Context reference.
         /// </summary>
@@ -452,7 +452,7 @@ namespace Xilium.CefGlue
         /// is thrown. For read-only values this method will return true even though
         /// assignment failed.
         /// </summary>
-        public bool SetValue(string key, CefV8Value value, CefV8PropertyAttribute attribute)
+        public bool SetValue(string key, CefV8Value value, CefV8PropertyAttribute attribute = CefV8PropertyAttribute.None)
         {
             fixed (char* key_str = key)
             {
@@ -479,7 +479,7 @@ namespace Xilium.CefGlue
         /// incorrectly or an exception is thrown. For read-only values this method
         /// will return true even though assignment failed.
         /// </summary>
-        public bool SetValue(string key, CefV8AccessControl settings, CefV8PropertyAttribute attribute)
+        public bool SetValue(string key, CefV8AccessControl settings, CefV8PropertyAttribute attribute = CefV8PropertyAttribute.None)
         {
             fixed (char* key_str = key)
             {

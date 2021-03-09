@@ -112,11 +112,18 @@
 		}
 		ReplaceMaterial
 		{
-			GetByReference = "Samples\\Starter Content\\Materials\\Dirt\\Dirt.material"
+			GetByReference = "Content\\Materials\\Basic Library\\Ground\\Forest Ground 03.material"
 		}
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Component_Mesh
 		{

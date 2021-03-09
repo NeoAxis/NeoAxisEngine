@@ -121,7 +121,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light4
-		Transform = "13.0484878794768 -2.71432365730669 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "13.0484878794768 -2.71432365730669 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -130,7 +130,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light17
-		Transform = "8.49020881061456 -2.71432365730669 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "8.49020881061456 -2.71432365730669 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -139,7 +139,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light24
-		Transform = "8.49020881061456 1.07552918414397 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "8.49020881061456 1.07552918414397 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -148,7 +148,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light31
-		Transform = "13.4377498701134 1.07552918414397 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "13.4377498701134 1.07552918414397 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -157,7 +157,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light38
-		Transform = "8.94190689043466 -3.6970747512597 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "8.94190689043466 -3.6970747512597 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -166,7 +166,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light45
-		Transform = "8.54637752387416 -0.15617612713014 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "8.54637752387416 -0.15617612713014 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -175,7 +175,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light52
-		Transform = "11.5441821893107 1.70623024809068 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "11.5441821893107 1.70623024809068 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -184,7 +184,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light59
-		Transform = "14.48446959862 1.68612332470073 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "14.48446959862 1.68612332470073 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -193,7 +193,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light66
-		Transform = "10.6815101855891 -3.65536900028752 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "10.6815101855891 -3.65536900028752 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -202,7 +202,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light73
-		Transform = "13.294999392482 -1.75748370282203 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "13.294999392482 -1.75748370282203 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -211,7 +211,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light80
-		Transform = "13.3468701628507 -3.64556862411433 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "13.3468701628507 -3.64556862411433 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -220,7 +220,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light11
-		Transform = "17.588850819335 -5.1587527017767 -11.1786755075366; -0.208201986445305 0.127846461911573 0.886486516276674 0.392999836484149; 9.34217968343362 9.34217968343362 9.34217968343362"
+		Transform = "17.588850819335 -5.1587527017767 -11.023948024528; -0.208201986445305 0.127846461911573 0.886486516276674 0.392999836484149; 9.34217968343362 9.34217968343362 9.34217968343362"
 		Type = Spotlight
 		Brightness = 256906.360508832
 		AttenuationNear = 0.484
@@ -229,7 +229,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light 9
-		Transform = "15.0144691346646 -6.83908290470507 -10.8588174882777; -0.172305822592415 0.18462943632714 0.707387482718696 0.660170905171669; 9.34217968343362 9.34217968343362 9.34217968343362"
+		Transform = "15.0144691346646 -6.83908290470507 -10.7040900052691; -0.172305822592415 0.18462943632714 0.707387482718696 0.660170905171669; 9.34217968343362 9.34217968343362 9.34217968343362"
 		Type = Spotlight
 		Brightness = 256906.360508832
 		AttenuationNear = 0.484
@@ -238,7 +238,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light 10
-		Transform = "19.3051454918641 0.862933956566764 -12.0917938593719; -0.207438040659926 0.00356386045156865 0.976244264935805 -0.0624811440820598; 9.34217968343362 9.34217968343362 9.34217968343362"
+		Transform = "19.3051454918641 0.862933956566764 -11.9370663763633; -0.207438040659926 0.00356386045156865 0.976244264935805 -0.0624811440820598; 9.34217968343362 9.34217968343362 9.34217968343362"
 		Type = Spotlight
 		Brightness = 256906.360508832
 		AttenuationNear = 0.484
@@ -247,7 +247,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light5
-		Transform = "13.4188798518482 -1.01697334814903 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "13.4188798518482 -1.01697334814903 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -256,7 +256,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light18
-		Transform = "8.86060078298596 -1.01697334814903 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "8.86060078298596 -1.01697334814903 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -265,7 +265,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light25
-		Transform = "8.86060078298596 2.77287949330163 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "8.86060078298596 2.77287949330163 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -274,7 +274,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light32
-		Transform = "13.8081418424848 2.77287949330163 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "13.8081418424848 2.77287949330163 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -283,7 +283,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light39
-		Transform = "9.31229886280606 -1.99972444210204 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "9.31229886280606 -1.99972444210204 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -292,7 +292,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light46
-		Transform = "8.91676949624556 1.54117418202752 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "8.91676949624556 1.54117418202752 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -301,7 +301,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light53
-		Transform = "11.9145741616821 3.40358055724834 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "11.9145741616821 3.40358055724834 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -310,7 +310,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light60
-		Transform = "14.8548615709914 3.38347363385839 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "14.8548615709914 3.38347363385839 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -319,7 +319,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light67
-		Transform = "11.0519021579605 -1.95801869112986 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "11.0519021579605 -1.95801869112986 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -328,7 +328,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light74
-		Transform = "13.6653913648534 -0.0601333936643673 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "13.6653913648534 -0.0601333936643673 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -337,7 +337,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light81
-		Transform = "13.7172621352221 -1.94821831495667 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "13.7172621352221 -1.94821831495667 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -346,7 +346,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light6
-		Transform = "14.8908431631971 -0.0864821403652734 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "14.8908431631971 -0.0864821403652734 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -355,7 +355,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light12
-		Transform = "10.3325640943349 -0.0864821403652734 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "10.3325640943349 -0.0864821403652734 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -364,7 +364,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light19
-		Transform = "10.3325640943349 3.70337070108538 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "10.3325640943349 3.70337070108538 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -373,7 +373,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light26
-		Transform = "15.2801051538337 3.70337070108538 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "15.2801051538337 3.70337070108538 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -382,7 +382,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light33
-		Transform = "10.784262174155 -1.06923323431828 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "10.784262174155 -1.06923323431828 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -391,7 +391,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light40
-		Transform = "10.3887328075945 2.47166538981128 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "10.3887328075945 2.47166538981128 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -400,7 +400,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light47
-		Transform = "13.386537473031 4.3340717650321 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "13.386537473031 4.3340717650321 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -409,7 +409,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light54
-		Transform = "16.3268248823403 4.31396484164214 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "16.3268248823403 4.31396484164214 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -418,7 +418,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light61
-		Transform = "12.5238654693094 -1.02752748334611 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "12.5238654693094 -1.02752748334611 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -427,7 +427,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light68
-		Transform = "15.1373546762023 0.870357814119389 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "15.1373546762023 0.870357814119389 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -436,7 +436,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light75
-		Transform = "15.189225446571 -1.01772710717291 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "15.189225446571 -1.01772710717291 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -445,7 +445,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light7
-		Transform = "14.8269646729029 -1.82285174593423 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "14.8269646729029 -1.82285174593423 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 515000
 		Color = 0.9643922 1 0.1054118
@@ -455,7 +455,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light15
-		Transform = "10.2686856040407 -1.82285174593423 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "10.2686856040407 -1.82285174593423 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 515000
 		Color = 0.9643922 1 0.1054118
@@ -465,7 +465,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light 2
-		Transform = "8.62825847023625 4.05566343515062 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "8.62825847023625 4.05566343515062 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 515000
 		Color = 0.9643922 1 0.1054118
@@ -475,7 +475,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light 3
-		Transform = "8.12705310908015 2.19078142307396 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "8.12705310908015 2.19078142307396 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 515000
 		Color = 0.9643922 1 0.1054118
@@ -485,7 +485,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light 4
-		Transform = "10.7075495404847 4.55961361654343 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "10.7075495404847 4.55961361654343 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 515000
 		Color = 0.9643922 1 0.1054118
@@ -495,7 +495,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light 5
-		Transform = "12.7039027340874 4.44649979702445 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "12.7039027340874 4.44649979702445 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 515000
 		Color = 0.9643922 1 0.1054118
@@ -505,7 +505,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light 6
-		Transform = "8.04856444346718 -0.451516005288084 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "8.04856444346718 -0.451516005288084 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 515000
 		Color = 0.9643922 1 0.1054118
@@ -515,7 +515,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light 7
-		Transform = "11.173240609168 -0.540192741164375 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "11.173240609168 -0.540192741164375 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 515000
 		Color = 0.9643922 1 0.1054118
@@ -525,7 +525,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light 8
-		Transform = "12.8784498530053 0.115512012512539 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "12.8784498530053 0.115512012512539 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 515000
 		Color = 0.9643922 1 0.1054118
@@ -535,7 +535,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light22
-		Transform = "10.2686856040407 1.96700109551643 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "10.2686856040407 1.96700109551643 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 515000
 		Color = 0.9643922 1 0.1054118
@@ -545,7 +545,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light29
-		Transform = "15.2162266635395 1.96700109551643 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "15.2162266635395 1.96700109551643 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 515000
 		Color = 0.9643922 1 0.1054118
@@ -555,7 +555,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light36
-		Transform = "10.7203836838608 -2.80560283988724 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "10.7203836838608 -2.80560283988724 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 515000
 		Color = 0.9643922 1 0.1054118
@@ -565,7 +565,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light43
-		Transform = "10.3248543173003 0.73529578424232 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "10.3248543173003 0.73529578424232 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 515000
 		Color = 0.9643922 1 0.1054118
@@ -575,7 +575,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light50
-		Transform = "13.3226589827368 2.59770215946314 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "13.3226589827368 2.59770215946314 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 515000
 		Color = 0.9643922 1 0.1054118
@@ -585,7 +585,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light57
-		Transform = "16.2629463920461 2.57759523607319 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "16.2629463920461 2.57759523607319 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 515000
 		Color = 0.9643922 1 0.1054118
@@ -595,7 +595,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light64
-		Transform = "12.4599869790152 -2.76389708891506 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "12.4599869790152 -2.76389708891506 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 515000
 		Color = 0.9643922 1 0.1054118
@@ -605,7 +605,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light71
-		Transform = "15.0734761859081 -0.866011791449568 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "15.0734761859081 -0.866011791449568 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 515000
 		Color = 0.9643922 1 0.1054118
@@ -615,7 +615,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light78
-		Transform = "15.1253469562767 -2.75409671274187 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "15.1253469562767 -2.75409671274187 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 515000
 		Color = 0.9643922 1 0.1054118
@@ -625,7 +625,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light8
-		Transform = "14.2765200338983 -3.3513731511397 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "14.2765200338983 -3.3513731511397 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -634,7 +634,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light16
-		Transform = "9.71824096503606 -3.3513731511397 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "9.71824096503606 -3.3513731511397 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -643,7 +643,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light23
-		Transform = "9.71824096503606 0.438479690310956 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "9.71824096503606 0.438479690310956 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -652,7 +652,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light30
-		Transform = "14.6657820245349 0.438479690310956 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "14.6657820245349 0.438479690310956 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -661,7 +661,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light37
-		Transform = "10.1699390448562 -4.33412424509271 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "10.1699390448562 -4.33412424509271 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -670,7 +670,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light44
-		Transform = "9.77440967829566 -0.79322562096315 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "9.77440967829566 -0.79322562096315 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -679,7 +679,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light51
-		Transform = "12.7722143437322 1.06918075425767 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "12.7722143437322 1.06918075425767 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -688,7 +688,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light58
-		Transform = "15.7125017530415 1.04907383086772 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "15.7125017530415 1.04907383086772 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -697,7 +697,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light65
-		Transform = "11.9095423400106 -4.29241849412053 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "11.9095423400106 -4.29241849412053 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -706,7 +706,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light72
-		Transform = "14.5230315469035 -2.39453319665504 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "14.5230315469035 -2.39453319665504 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -715,7 +715,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light79
-		Transform = "14.5749023172722 -4.28261811794734 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "14.5749023172722 -4.28261811794734 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -724,7 +724,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light9
-		Transform = "16.0559061145216 -2.68016177788465 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "16.0559061145216 -2.68016177788465 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -733,7 +733,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light14
-		Transform = "11.4976270456594 -2.68016177788465 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "11.4976270456594 -2.68016177788465 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -742,7 +742,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light21
-		Transform = "11.4976270456594 1.10969106356601 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "11.4976270456594 1.10969106356601 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -751,7 +751,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light28
-		Transform = "16.4451681051582 1.10969106356601 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "16.4451681051582 1.10969106356601 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -760,7 +760,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light35
-		Transform = "11.9493251254795 -3.66291287183766 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "11.9493251254795 -3.66291287183766 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -769,7 +769,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light42
-		Transform = "11.553795758919 -0.1220142477081 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "11.553795758919 -0.1220142477081 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -778,7 +778,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light49
-		Transform = "14.5516004243555 1.74039212751272 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "14.5516004243555 1.74039212751272 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -787,7 +787,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light56
-		Transform = "17.0588677230018 1.72028520412277 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "17.0588677230018 1.72028520412277 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -796,7 +796,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light63
-		Transform = "13.6889284206339 -3.62120712086548 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "13.6889284206339 -3.62120712086548 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -805,7 +805,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light70
-		Transform = "16.3024176275268 -1.72332182339999 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "16.3024176275268 -1.72332182339999 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -814,7 +814,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light77
-		Transform = "16.3542883978955 -3.61140674469229 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "16.3542883978955 -3.61140674469229 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -823,7 +823,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light10
-		Transform = "16.2283450189036 -1.08302491152342 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "16.2283450189036 -1.08302491152342 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -832,7 +832,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light13
-		Transform = "11.6700659500414 -1.08302491152342 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "11.6700659500414 -1.08302491152342 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -841,7 +841,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light20
-		Transform = "11.6700659500414 2.70682792992724 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "11.6700659500414 2.70682792992724 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -850,7 +850,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light27
-		Transform = "16.6176070095402 2.70682792992724 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "16.6176070095402 2.70682792992724 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -859,7 +859,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light34
-		Transform = "12.1217640298615 -2.06577600547643 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "12.1217640298615 -2.06577600547643 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -868,7 +868,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light41
-		Transform = "11.726234663301 1.47512261865313 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "11.726234663301 1.47512261865313 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -877,7 +877,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light48
-		Transform = "14.7240393287375 3.33752899387395 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "14.7240393287375 3.33752899387395 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -886,7 +886,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light55
-		Transform = "17.2313066273838 3.317422070484 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "17.2313066273838 3.317422070484 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -895,7 +895,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light62
-		Transform = "13.8613673250159 -2.02407025450425 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "13.8613673250159 -2.02407025450425 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -904,7 +904,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light69
-		Transform = "16.4748565319088 -0.126184957038758 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "16.4748565319088 -0.126184957038758 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -913,7 +913,7 @@
 	.component NeoAxis.Component_Light
 	{
 		Name = Light76
-		Transform = "16.5267273022775 -2.01426987833106 -16.470321490668; 0 0 0 1; 1 1 1"
+		Transform = "16.5267273022775 -2.01426987833106 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
@@ -940,6 +940,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -949,7 +956,7 @@
 				Dimensions = 10 10
 				Material
 				{
-					GetByReference = "Samples\\Starter Content\\Materials\\Concrete 3x3 meters\\Concrete 3x3 meters.material"
+					GetByReference = "Content\\Materials\\Basic Library\\Concrete\\Concrete Floor 01.material"
 				}
 			}
 		}
@@ -988,6 +995,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -1015,6 +1029,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -1025,7 +1046,7 @@
 				UVTilesPerUnit = 0.5 0.5
 				Material
 				{
-					GetByReference = "Samples\\Starter Content\\Materials\\Painted Large Bricks 2x2 meters\\Painted Large Bricks 2x2 meters.material"
+					GetByReference = "Content\\Materials\\Basic Library\\Brick\\Yellow Brick.material"
 				}
 			}
 		}
@@ -1064,6 +1085,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -1074,7 +1102,7 @@
 				UVTilesPerUnit = 0.5 0.5
 				Material
 				{
-					GetByReference = "Samples\\Starter Content\\Materials\\Painted Large Bricks 2x2 meters\\Painted Large Bricks 2x2 meters.material"
+					GetByReference = "Content\\Materials\\Basic Library\\Brick\\Yellow Brick.material"
 				}
 			}
 		}
@@ -1112,6 +1140,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -1133,6 +1168,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -1153,6 +1195,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Component_Mesh
 		{

@@ -15,7 +15,9 @@ namespace NeoAxis
 	/// Abstract object in the scene.
 	/// </summary>
 	[ResourceFileExtension( "objectInSpace" )]
-	[EditorPreviewControl( typeof( Component_ObjectInSpace_PreviewControl ) )]
+	[EditorDocumentWindow( typeof( Component_ObjectInSpace_Editor ), true )]
+	[EditorPreviewControl( typeof( Component_ObjectInSpace_Preview ) )]
+	[EditorPreviewImage( typeof( Component_ObjectInSpace_PreviewImage ) )]
 	public class Component_ObjectInSpace : Component, IComponent_VisibleInHierarchy, IComponent_CanBeSelectedInHierarchy//, Component_Scene_DocumentWindow.ICanDropToScene
 	{
 		Component_Scene parentSceneCached;
@@ -149,7 +151,7 @@ namespace NeoAxis
 		//!!!!
 
 		/// <summary>
-		/// Whether the object is selectable in scene view.
+		/// Whether the object is selectable in the scene view.
 		/// </summary>
 		[Serialize]
 		[DefaultValue( true )]
@@ -719,20 +721,20 @@ namespace NeoAxis
 
 		internal int _internalRenderSceneIndex = -1;
 
-		public virtual void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode ) { }
+		public virtual void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem ) { }
 
-		public delegate void GetRenderSceneDataDelegate( Component_ObjectInSpace sender, ViewportRenderingContext context, GetRenderSceneDataMode mode );
+		public delegate void GetRenderSceneDataDelegate( Component_ObjectInSpace sender, ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem );
 		public event GetRenderSceneDataDelegate GetRenderSceneDataBefore;
 		public event GetRenderSceneDataDelegate GetRenderSceneData;
 
-		internal void PerformGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
+		internal void PerformGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
 			//reset this object parameters
 			context.objectInSpaceRenderingContext.disableShowingLabelForThisObject = false;
 
-			GetRenderSceneDataBefore?.Invoke( this, context, mode );
-			OnGetRenderSceneData( context, mode );
-			GetRenderSceneData?.Invoke( this, context, mode );
+			GetRenderSceneDataBefore?.Invoke( this, context, mode, modeGetObjectsItem );
+			OnGetRenderSceneData( context, mode, modeGetObjectsItem );
+			GetRenderSceneData?.Invoke( this, context, mode, modeGetObjectsItem );
 
 			//object space bounds, render screen label if not displayed
 			if( mode == GetRenderSceneDataMode.InsideFrustum )

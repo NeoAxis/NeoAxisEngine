@@ -1,4 +1,4 @@
-namespace Xilium.CefGlue
+﻿namespace Xilium.CefGlue
 {
     using System;
     using System.Collections.Generic;
@@ -129,6 +129,18 @@ namespace Xilium.CefGlue
             get
             {
                 var n_result = cef_download_item_t.get_url(_self);
+                return cef_string_userfree.ToString(n_result);
+            }
+        }
+
+        /// <summary>
+        /// Returns the original URL before any redirections.
+        /// </summary>
+        public string OriginalUrl
+        {
+            get
+            {
+                var n_result = cef_download_item_t.get_original_url(_self);
                 return cef_string_userfree.ToString(n_result);
             }
         }

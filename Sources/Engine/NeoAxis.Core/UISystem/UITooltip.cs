@@ -8,7 +8,7 @@ using System.ComponentModel;
 namespace NeoAxis
 {
 	/// <summary>
-	/// Represents a pop-up window that displays a brief description of a control's purpose when the user rests the pointer on the control. Add this object as child to <see cref="UIControl"/>.
+	/// Represents a pop-up window that displays a brief description of a control's purpose when the user rests the pointer on the control. Add this object as a child to <see cref="UIControl"/>.
 	/// </summary>
 	public class UITooltip : Component
 	{

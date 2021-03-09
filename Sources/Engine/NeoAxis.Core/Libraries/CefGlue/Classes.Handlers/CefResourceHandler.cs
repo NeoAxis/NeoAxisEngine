@@ -1,4 +1,4 @@
-namespace Xilium.CefGlue
+﻿namespace Xilium.CefGlue
 {
     using System;
     using System.Collections.Generic;
@@ -13,6 +13,39 @@ namespace Xilium.CefGlue
     /// </summary>
     public abstract unsafe partial class CefResourceHandler
     {
+        private volatile bool _keepObject;
+
+        public void KeepObject()
+        {
+            if (!_keepObject)
+            {
+                lock (SyncRoot)
+                {
+                    if (!_keepObject)
+                    {
+                        add_ref(_self);
+                        _keepObject = true;
+                    }
+                }
+            }
+        }
+
+        public void ReleaseObject()
+        {
+            if (_keepObject)
+            {
+                lock (SyncRoot)
+                {
+                    if (_keepObject)
+                    {
+                        release(_self);
+                        _keepObject = false;
+                    }
+                }
+            }
+        }
+
+
         private int process_request(cef_resource_handler_t* self, cef_request_t* request, cef_callback_t* callback)
         {
             CheckSelf(self);
@@ -60,7 +93,8 @@ namespace Xilium.CefGlue
         /// false or the specified number of bytes have been read. Use the |response|
         /// object to set the mime type, http status code and other optional header
         /// values. To redirect the request to a new URL set |redirectUrl| to the new
-        /// URL.
+        /// URL. If an error occured while setting up the request you can call
+        /// SetError() on |response| to indicate the error condition.
         /// </summary>
         protected abstract void GetResponseHeaders(CefResponse response, out long responseLength, out string redirectUrl);
 

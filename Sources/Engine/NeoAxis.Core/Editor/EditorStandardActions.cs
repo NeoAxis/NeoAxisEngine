@@ -1534,6 +1534,59 @@ namespace NeoAxis.Editor
 			//	EditorActions.Register( a );
 			//}
 
+
+			//Debug Rendering Mode
+			foreach( var mode in (Component_RenderingPipeline_Basic.DebugModeEnum[])Enum.GetValues( typeof( Component_RenderingPipeline_Basic.DebugModeEnum ) ) )
+			{
+				var modeName = TypeUtility.DisplayNameAddSpaces( mode.ToString() );
+
+				var a = new EditorAction();
+				a.Name = "Rendering Debug Mode " + modeName;
+				a.ImageSmall = Properties.Resources.Default_16;
+				a.ImageBig = Properties.Resources.Default_32;
+				a.QatSupport = true;
+				a.RibbonText = (modeName, "");
+				a.ContextMenuText = modeName;
+				a.UserData = mode;
+				a.GetState += delegate ( EditorAction.GetStateContext context )
+				{
+					var scene = context.ObjectsInFocus.DocumentWindow?.Document.ResultComponent as Component_Scene;
+					var pipeline = scene?.RenderingPipeline.Value as Component_RenderingPipeline_Basic;
+
+					if( pipeline != null )
+					{
+						var mode2 = (Component_RenderingPipeline_Basic.DebugModeEnum)context.Action.UserData;
+
+						context.Enabled = true;
+
+						if( pipeline.DebugMode.Value == mode2 )
+							context.Checked = true;
+					}
+				};
+				a.Click += delegate ( EditorAction.ClickContext context )
+				{
+					var scene = context.ObjectsInFocus.DocumentWindow?.Document.ResultComponent as Component_Scene;
+					var pipeline = scene?.RenderingPipeline.Value as Component_RenderingPipeline_Basic;
+
+					if( pipeline != null )
+					{
+						var document = context.ObjectsInFocus.DocumentWindow.Document;
+
+						var oldValue = pipeline.DebugMode;
+
+						var mode2 = (Component_RenderingPipeline_Basic.DebugModeEnum)context.Action.UserData;
+						pipeline.DebugMode = mode2;
+
+						var property = (Metadata.Property)pipeline.MetadataGetMemberBySignature( "property:DebugMode" );
+						var undoItem = new UndoActionPropertiesChange.Item( pipeline, property, oldValue, new object[ 0 ] );
+						var undoAction = new UndoActionPropertiesChange( new UndoActionPropertiesChange.Item[] { undoItem } );
+						document.UndoSystem.CommitAction( undoAction );
+						document.Modified = true;
+					}
+				};
+				EditorActions.Register( a );
+			}
+
 			//Snap All Axes
 			{
 				var a = new EditorAction();
@@ -2036,6 +2089,18 @@ namespace NeoAxis.Editor
 				a.ListBox.Mode = EditorAction.ListBoxSettings.ModeEnum.Tiles;
 				a.Description = "The list of layers to paint.";
 				a.RibbonText = ("Layers", "");
+				EditorActions.Register( a );
+			}
+
+			//Terrain Paint Add Layer
+			{
+				var a = new EditorAction();
+				a.Name = "Terrain Paint Add Layer";
+				a.ImageSmall = NeoAxis.Properties.Resources.Layers_16;
+				a.ImageBig = NeoAxis.Properties.Resources.Layers_32;
+				a.QatSupport = true;
+				a.Description = "Add Paint Layer\nAdds a paint layer to the terrain.";
+				a.RibbonText = ("Add", "Layer");
 				EditorActions.Register( a );
 			}
 

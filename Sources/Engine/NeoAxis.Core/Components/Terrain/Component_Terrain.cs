@@ -318,7 +318,7 @@ namespace NeoAxis
 		ReferenceField<Component_Material> _material = null;
 
 		/// <summary>
-		/// The number of UV tiles per unit.
+		/// The number of UV tiles per unit for texture coordinates 0.
 		/// </summary>
 		[DefaultValue( "1 1" )]
 		[Serialize]
@@ -346,7 +346,7 @@ namespace NeoAxis
 		ReferenceField<Vector2> _materialUV0 = Vector2.One;
 
 		/// <summary>
-		/// The number of UV tiles per unit.
+		/// The number of UV tiles per unit for texture coordinates 1.
 		/// </summary>
 		[DefaultValue( "1 1" )]
 		[Serialize]
@@ -372,6 +372,68 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="MaterialUV1"/> property value changes.</summary>
 		public event Action<Component_Terrain> MaterialUV1Changed;
 		ReferenceField<Vector2> _materialUV1 = Vector2.One;
+
+		/// <summary>
+		/// The intensity of the curvature in the calculation of texture coordinates. The curvature is intended to reduce the tiling effect.
+		/// </summary>
+		[DefaultValue( 0.0 )]
+		[Range( 0, 4 )]
+		[DisplayName( "Material UV Curvature Intensity" )]
+		[Category( "Display" )]
+		public Reference<double> MaterialUVCurvatureIntensity
+		{
+			get { if( _materialUVCurvatureIntensity.BeginGet() ) MaterialUVCurvatureIntensity = _materialUVCurvatureIntensity.Get( this ); return _materialUVCurvatureIntensity.value; }
+			set { if( _materialUVCurvatureIntensity.BeginSet( ref value ) ) { try { MaterialUVCurvatureIntensityChanged?.Invoke( this ); RecreateInternalData(); } finally { _materialUVCurvatureIntensity.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="MaterialUVCurvatureIntensity"/> property value changes.</summary>
+		public event Action<Component_Terrain> MaterialUVCurvatureIntensityChanged;
+		ReferenceField<double> _materialUVCurvatureIntensity = 0.0;
+
+		/// <summary>
+		/// The frequency of the curvature in the calculation of texture coordinates. The randomness is intended to reduce the tiling effect.
+		/// </summary>
+		[DefaultValue( 0.1 )]
+		[Range( 0, 1, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		[DisplayName( "Material UV Curvature Frequency" )]
+		[Category( "Display" )]
+		public Reference<double> MaterialUVCurvatureFrequency
+		{
+			get { if( _materialUVCurvatureFrequency.BeginGet() ) MaterialUVCurvatureFrequency = _materialUVCurvatureFrequency.Get( this ); return _materialUVCurvatureFrequency.value; }
+			set { if( _materialUVCurvatureFrequency.BeginSet( ref value ) ) { try { MaterialUVCurvatureFrequencyChanged?.Invoke( this ); RecreateInternalData(); } finally { _materialUVCurvatureFrequency.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="MaterialUVCurvatureFrequency"/> property value changes.</summary>
+		public event Action<Component_Terrain> MaterialUVCurvatureFrequencyChanged;
+		ReferenceField<double> _materialUVCurvatureFrequency = 0.1;
+
+		/// <summary>
+		/// The base color multiplier.
+		/// </summary>
+		[DefaultValue( "1 1 1" )]
+		[Category( "Display" )]
+		public Reference<ColorValue> Color
+		{
+			get { if( _color.BeginGet() ) Color = _color.Get( this ); return _color.value; }
+			set
+			{
+				if( _color.BeginSet( ref value ) )
+				{
+					try
+					{
+						ColorChanged?.Invoke( this );
+
+						foreach( var tile in GetTiles() )
+						{
+							if( tile.ObjectInSpace != null )
+								tile.ObjectInSpace.Color = _color.value;
+						}
+					}
+					finally { _color.EndSet(); }
+				}
+			}
+		}
+		/// <summary>Occurs when the <see cref="Color"/> property value changes.</summary>
+		public event Action<Component_Terrain> ColorChanged;
+		ReferenceField<ColorValue> _color = ColorValue.One;
 
 		public enum PaintMaskSizeEnum
 		{
@@ -495,7 +557,7 @@ namespace NeoAxis
 		ReferenceField<bool> _collision = true;
 
 		/// <summary>
-		/// The physical material used by the rigidbody.
+		/// The physical material used by the rigid body.
 		/// </summary>
 		[Serialize]
 		[DefaultValue( null )]
@@ -521,7 +583,7 @@ namespace NeoAxis
 		ReferenceField<Component_PhysicalMaterial> _collisionMaterial;
 
 		/// <summary>
-		/// The type of friction applied on the rigidbody.
+		/// The type of friction applied on the rigid body.
 		/// </summary>
 		[DefaultValue( Component_PhysicalMaterial.FrictionModeEnum.Simple )]
 		[Serialize]
@@ -547,7 +609,7 @@ namespace NeoAxis
 		ReferenceField<Component_PhysicalMaterial.FrictionModeEnum> _collisionFrictionMode = Component_PhysicalMaterial.FrictionModeEnum.Simple;
 
 		/// <summary>
-		/// The amount of friction applied on the rigidbody.
+		/// The amount of friction applied on the rigid body.
 		/// </summary>
 		[Serialize]
 		[DefaultValue( 0.5 )]
@@ -574,7 +636,7 @@ namespace NeoAxis
 		ReferenceField<double> _collisionFriction = 0.5;
 
 		/// <summary>
-		/// The amount of directional friction applied on the rigidbody.
+		/// The amount of directional friction applied on the rigid body.
 		/// </summary>
 		[DefaultValue( "1 1 1" )]
 		[Serialize]
@@ -587,17 +649,21 @@ namespace NeoAxis
 			{
 				if( _collisionAnisotropicFriction.BeginSet( ref value ) )
 				{
-					try { CollisionAnisotropicFrictionChanged?.Invoke( this ); }
+					try
+					{
+						CollisionAnisotropicFrictionChanged?.Invoke( this );
+						SetCollisionMaterial();
+					}
 					finally { _collisionAnisotropicFriction.EndSet(); }
 				}
 			}
 		}
-		/// <summary>Occurs when the <see cref="AnisotropicFriction"/> property value changes.</summary>
+		/// <summary>Occurs when the <see cref="CollisionAnisotropicFriction"/> property value changes.</summary>
 		public event Action<Component_Terrain> CollisionAnisotropicFrictionChanged;
 		ReferenceField<Vector3> _collisionAnisotropicFriction = Vector3.One;
 
 		/// <summary>
-		/// The amount of friction applied when rigidbody is spinning.
+		/// The amount of friction applied when rigid body is spinning.
 		/// </summary>
 		[DefaultValue( 0.5 )]
 		[Serialize]
@@ -624,7 +690,7 @@ namespace NeoAxis
 		ReferenceField<double> _collisionSpinningFriction = 0.5;
 
 		/// <summary>
-		/// The amount of friction applied when rigidbody is rolling.
+		/// The amount of friction applied when rigid body is rolling.
 		/// </summary>
 		[DefaultValue( 0.5 )]
 		[Serialize]
@@ -651,7 +717,7 @@ namespace NeoAxis
 		ReferenceField<double> _collisionRollingFriction = 0.5;
 
 		/// <summary>
-		/// The ratio of the final relative velocity to initial relative velocity of the rigidbody after collision.
+		/// The ratio of the final relative velocity to initial relative velocity of the rigid body after collision.
 		/// </summary>
 		[Serialize]
 		[DefaultValue( 0.0 )]
@@ -866,6 +932,8 @@ namespace NeoAxis
 					cachedBoundsSizeInv = 1.0 / boundsSize;
 				var materialUV0 = owner.MaterialUV0.Value;
 				var materialUV1 = owner.MaterialUV1.Value;
+				var materialUVCurvatureIntensity = (float)owner.MaterialUVCurvatureIntensity.Value;
+				var materialUVCurvatureFrequency = (float)owner.MaterialUVCurvatureFrequency.Value;
 
 
 				//calculate Vertices, Indices
@@ -880,6 +948,17 @@ namespace NeoAxis
 					bounds.Add( ref Vertices[ n ] );
 				Bounds = new SpaceBounds( bounds );
 				Position = bounds.GetCenter();
+
+				void AddCurvature( ref Vertex vertex )
+				{
+					var offset = new Vector2F( MathEx.Sin( vertex.Position.Y * materialUVCurvatureFrequency ), MathEx.Sin( vertex.Position.X * materialUVCurvatureFrequency ) ) * materialUVCurvatureIntensity;
+					//var offset = new Vector2F( MathEx.Sin( vertex.Position.Y * materialUVCurvatureFrequency ), MathEx.Cos( vertex.Position.X * materialUVCurvatureFrequency ) ) * materialUVCurvatureIntensity;
+					vertex.TexCoord0 += offset;
+					vertex.TexCoord1 += offset;
+
+					//vertex.TexCoord0 += new Vector2F( MathEx.Sin( vertex.Position.Y * materialUVCurvatureFrequency ), MathEx.Cos( vertex.Position.X * materialUVCurvatureFrequency ) ) * materialUVCurvatureIntensity;
+					//vertex.TexCoord1 += new Vector2F( MathEx.Sin( vertex.Position.Y * materialUVCurvatureFrequency ), MathEx.Cos( vertex.Position.X * materialUVCurvatureFrequency ) ) * materialUVCurvatureIntensity;
+				}
 
 				//calculate vertex buffer data
 				var vertices = new Vertex[ Vertices.Length ];
@@ -902,6 +981,7 @@ namespace NeoAxis
 						vertex.TexCoord1 = new Vector2( uv1.X, 1.0 - uv1.Y ).ToVector2F();
 						var uv2 = offset * cachedBoundsSizeInv;
 						vertex.TexCoord2 = new Vector2( uv2.X, 1.0 - uv2.Y ).ToVector2F();
+						AddCurvature( ref vertex );
 					} );
 				}
 
@@ -1035,6 +1115,7 @@ namespace NeoAxis
 										vertex.TexCoord1 = new Vector2( uv1.X, 1.0 - uv1.Y ).ToVector2F();
 										var uv2 = offset * cachedBoundsSizeInv;
 										vertex.TexCoord2 = new Vector2( uv2.X, 1.0 - uv2.Y ).ToVector2F();
+										AddCurvature( ref vertex );
 									} );
 								}
 
@@ -1095,6 +1176,7 @@ namespace NeoAxis
 									vertex.TexCoord1 = new Vector2( uv1.X, 1.0 - uv1.Y ).ToVector2F();
 									var uv2 = offset * cachedBoundsSizeInv;
 									vertex.TexCoord2 = new Vector2( uv2.X, 1.0 - uv2.Y ).ToVector2F();
+									AddCurvature( ref vertex );
 								} );
 							}
 
@@ -1104,10 +1186,10 @@ namespace NeoAxis
 				}
 
 				//set out verticesBytes
-				fixed ( Vertex* pVertices = vertices )
+				fixed( Vertex* pVertices = vertices )
 				{
 					verticesBytes = new byte[ vertices.Length * sizeof( Vertex ) ];
-					fixed ( byte* pVerticesBytes = verticesBytes )
+					fixed( byte* pVerticesBytes = verticesBytes )
 						NativeUtility.CopyMemory( pVerticesBytes, pVertices, verticesBytes.Length );
 				}
 
@@ -1212,15 +1294,16 @@ namespace NeoAxis
 								vertex.TexCoord1 = new Vector2( uv1.X, 1.0 - uv1.Y ).ToVector2F();
 								var uv2 = offset * cachedBoundsSizeInv;
 								vertex.TexCoord2 = new Vector2( uv2.X, 1.0 - uv2.Y ).ToVector2F();
+								AddCurvature( ref vertex );
 							} );
 						}
 
 						//set out verticesBytes
 						byte[] lodVerticesBytes;
-						fixed ( Vertex* pVertices = lodVertices )
+						fixed( Vertex* pVertices = lodVertices )
 						{
 							lodVerticesBytes = new byte[ lodVertices.Length * sizeof( Vertex ) ];
-							fixed ( byte* pVerticesBytes = lodVerticesBytes )
+							fixed( byte* pVerticesBytes = lodVerticesBytes )
 								NativeUtility.CopyMemory( pVerticesBytes, pVertices, lodVerticesBytes.Length );
 						}
 
@@ -1499,11 +1582,13 @@ namespace NeoAxis
 				{
 					ObjectInSpace.Visible = owner.Visible;
 					ObjectInSpace.ReplaceMaterial = owner.Material;
+					ObjectInSpace.Color = owner.Color;
 					ObjectInSpace.CastShadows = owner.CastShadows;
 					ObjectInSpace.ReceiveDecals = owner.ReceiveDecals;
 				}
-				//!!!!только нужные добавлять
-				ObjectInSpace.PaintLayersReplace = owner.currentLayers;
+
+				UpdateLayers();
+				//ObjectInSpace.PaintLayersReplace = owner.currentLayers;
 
 				//update rendering data status
 				RenderingDataCreatedWithExtractData = meshExtractData;
@@ -1534,7 +1619,7 @@ namespace NeoAxis
 					newBounds = sector.Bounds;
 			}
 
-			private void ObjectInSpace_GetRenderSceneData( Component_ObjectInSpace sender, ViewportRenderingContext context, GetRenderSceneDataMode mode )
+			private void ObjectInSpace_GetRenderSceneData( Component_ObjectInSpace sender, ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 			{
 				if( owner.Visible )
 				{
@@ -1644,8 +1729,86 @@ namespace NeoAxis
 			{
 				if( ObjectInSpace != null )
 				{
-					//!!!!только нужные добавлять
-					ObjectInSpace.PaintLayersReplace = owner.currentLayers;
+					//if( allowSkipPaintLayers )
+					//{
+
+					if( owner.currentLayers != null && owner.currentLayers.Length != 0 )
+					{
+						var newList = new List<Component_RenderingPipeline.RenderSceneData.LayerItem>();
+
+						var bounds = Bounds.CalculatedBoundingBox;
+
+						foreach( var layer in owner.currentLayers )
+						{
+							var skip = false;
+
+							byte[] layerMask = null;
+							{
+								var data = layer.Mask?.Result?.GetData();
+								if( data != null && data.Length != 0 )
+									layerMask = data[ 0 ].data;
+							}
+
+							var maskSize = owner.GetPaintMaskSizeInteger();
+
+							if( layerMask != null && layerMask.Length == maskSize * maskSize )
+							{
+								var min = owner.GetMaskIndexByPosition( bounds.Minimum.ToVector2() ) - new Vector2I( 1, 1 );
+								var max = owner.GetMaskIndexByPosition( bounds.Maximum.ToVector2() ) + new Vector2I( 2, 2 );
+								MathEx.Clamp( min.X, 0, maskSize - 1 );
+								MathEx.Clamp( min.Y, 0, maskSize - 1 );
+								MathEx.Clamp( max.X, 0, maskSize - 1 );
+								MathEx.Clamp( max.Y, 0, maskSize - 1 );
+
+								//copy from Component_PaintLayer.GetMaskValue
+								byte GetMaskValue( Vector2I position )
+								{
+									int size = maskSize;// GetSqrt( Mask.Value.Length );
+									if( size > 0 )
+									{
+										var position2 = new Vector2I( MathEx.Clamp( position.X, 0, size - 1 ), MathEx.Clamp( position.Y, 0, size - 1 ) );
+										return layerMask[ ( size - 1 - position2.Y ) * size + position2.X ];
+										//float v = layerMask[ ( size - 1 - position2.Y ) * size + position2.X ];
+										//return v * ( 1.0f / 255.0f );
+									}
+									return 0;
+								}
+
+								var allZero = true;
+
+								for( int y = min.Y; y <= max.Y; y++ )
+								{
+									for( int x = min.X; x <= max.X; x++ )
+									{
+										var maskIndex = new Vector2I( x, y );
+
+										if( GetMaskValue( maskIndex ) != 0 )
+										{
+											allZero = false;
+											break;
+										}
+									}
+								}
+
+								if( allZero )
+									skip = true;
+							}
+
+							if( !skip )
+								newList.Add( layer );
+						}
+
+						if( newList.Count != 0 )
+							ObjectInSpace.PaintLayersReplace = newList.Count != owner.currentLayers.Length ? newList.ToArray() : owner.currentLayers;
+						else
+							ObjectInSpace.PaintLayersReplace = null;
+					}
+					else
+						ObjectInSpace.PaintLayersReplace = null;
+
+					//}
+					//else
+					//	ObjectInSpace.PaintLayersReplace = owner.currentLayers;
 				}
 			}
 
@@ -1713,6 +1876,12 @@ namespace NeoAxis
 					if( !Collision || CollisionMaterial.Value != null )
 						skip = true;
 					break;
+
+				case nameof( MaterialUVCurvatureFrequency ):
+					if( MaterialUVCurvatureIntensity.Value == 0 )
+						skip = true;
+					break;
+
 				}
 			}
 		}
@@ -1779,7 +1948,7 @@ namespace NeoAxis
 						return false;
 					}
 
-					fixed ( byte* pData2 = data )
+					fixed( byte* pData2 = data )
 					{
 						float* pData = (float*)pData2;
 
@@ -1803,7 +1972,7 @@ namespace NeoAxis
 						return false;
 					}
 
-					fixed ( byte* pData2 = data )
+					fixed( byte* pData2 = data )
 					{
 						float* pData = (float*)pData2;
 
@@ -1888,8 +2057,8 @@ namespace NeoAxis
 									var count = verticesBytes.Length / sizeof( Vector3 );
 
 									vertices = new Vector3[ count ];
-									fixed ( Vector3* pVertices = vertices )
-									fixed ( byte* pVerticesBytes = verticesBytes )
+									fixed( Vector3* pVertices = vertices )
+									fixed( byte* pVerticesBytes = verticesBytes )
 										NativeUtility.CopyMemory( pVertices, pVerticesBytes, verticesBytes.Length );
 								}
 							}
@@ -1944,7 +2113,7 @@ namespace NeoAxis
 					}
 				}
 
-				fixed ( float* pData = data )
+				fixed( float* pData = data )
 				{
 					if( !ImageUtility.Save( realFileName, (IntPtr)pData, new Vector2I( length, length ), 1, PixelFormat.Float32R, 1, 0, out error ) )
 						return false;
@@ -2001,10 +2170,10 @@ namespace NeoAxis
 						var vertices = pair.Value.vertices;
 
 						byte[] verticesBytes;
-						fixed ( Vector3* pVertices = vertices )
+						fixed( Vector3* pVertices = vertices )
 						{
 							verticesBytes = new byte[ vertices.Length * sizeof( Vector3 ) ];
-							fixed ( byte* pVerticesBytes = verticesBytes )
+							fixed( byte* pVerticesBytes = verticesBytes )
 								NativeUtility.CopyMemory( pVerticesBytes, pVertices, verticesBytes.Length );
 						}
 
@@ -7516,7 +7685,7 @@ namespace NeoAxis
 					if( image != null )
 					{
 						var item = new Component_RenderingPipeline.RenderSceneData.LayerItem();
-						item.Material = layer.Material;
+						item.SetMaterialWithAbilityToCompileTransparentMaskVariation( layer.Material, layer.BlendMode );
 						item.Mask = image;
 						item.UniqueMaskDataCounter = uniqueMaskDataCounter;
 						item.Color = layer.Color;

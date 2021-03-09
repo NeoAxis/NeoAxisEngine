@@ -1,4 +1,4 @@
-$input v_depth
+$input v_depth, v_worldPosition, v_lodValueVisibilityDistanceReceiveDecals
 
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "Common.sh"
@@ -11,8 +11,19 @@ uniform vec4/*float*/ u_farClipDistance;
 
 void main()
 {
-	smoothLOD(getFragCoord(), u_renderOperationData[2].w);
+	float cameraDistance = length(u_viewportOwnerCameraPosition - v_worldPosition);
+	
+	//lod
+	float lodValue = v_lodValueVisibilityDistanceReceiveDecals.x;
+	smoothLOD(getFragCoord(), lodValue);
+	
+	//fading by visibility distance
+	float visibilityDistance = v_lodValueVisibilityDistanceReceiveDecals.y;
+	float visibilityDistanceFactor = getVisibilityDistanceFactor(visibilityDistance, cameraDistance);
+	smoothLOD(getFragCoord(), 1.0f - visibilityDistanceFactor);
 
+	cutVolumes(v_worldPosition);
+	
 	vec2 depth = v_depth;
 	//!!!!
 	//depth.x += u_shadowBias.x + u_shadowBias.y * fwidth(depth.x);

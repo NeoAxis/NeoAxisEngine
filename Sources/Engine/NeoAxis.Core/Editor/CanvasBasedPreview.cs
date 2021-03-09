@@ -488,10 +488,28 @@ namespace NeoAxis.Editor
 			set { owner.SceneNeedDispose = value; }
 		}
 
+		public Vector3 CameraLookTo
+		{
+			get { return owner.CameraLookTo; }
+			set { owner.CameraLookTo = value; }
+		}
+
+		public double CameraInitialDistance
+		{
+			get { return owner.CameraInitialDistance; }
+			set { owner.CameraInitialDistance = value; }
+		}
+
 		public bool CameraRotationMode
 		{
 			get { return owner.CameraRotationMode; }
 			set { owner.CameraRotationMode = value; }
+		}
+
+		public SphericalDirection CameraDirection
+		{
+			get { return owner.CameraDirection; }
+			set { owner.CameraDirection = value; }
 		}
 
 		public Component_Scene CreateScene( bool enable )

@@ -87,7 +87,7 @@ namespace NeoAxis
 		ReferenceField<MotionTypeEnum> _motionType = MotionTypeEnum.Static;// Dynamic;
 
 		/// <summary>
-		/// The mass of the rigidbody.
+		/// The mass of the rigid body.
 		/// </summary>
 		[Serialize]
 		[DefaultValue( 1.0 )]
@@ -120,7 +120,7 @@ namespace NeoAxis
 		ReferenceField<bool> _enableGravity = true;
 
 		/// <summary>
-		/// Whether the rigidbody is affected by the gravity.
+		/// Whether the rigid body is affected by the gravity.
 		/// </summary>
 		[Serialize]
 		[DefaultValue( true )]
@@ -227,7 +227,7 @@ namespace NeoAxis
 		public event Action<Component_RigidBody> AngularDampingChanged;
 
 		/// <summary>
-		/// The physical material used by the rigidbody.
+		/// The physical material used by the rigid body.
 		/// </summary>
 		[Serialize]
 		[DefaultValue( null )]
@@ -254,7 +254,7 @@ namespace NeoAxis
 		ReferenceField<Component_PhysicalMaterial> _material;
 
 		/// <summary>
-		/// The type of friction applied on the rigidbody.
+		/// The type of friction applied on the rigid body.
 		/// </summary>
 		[DefaultValue( Component_PhysicalMaterial.FrictionModeEnum.Simple )]
 		[Serialize]
@@ -281,7 +281,7 @@ namespace NeoAxis
 		ReferenceField<Component_PhysicalMaterial.FrictionModeEnum> _materialFrictionMode = Component_PhysicalMaterial.FrictionModeEnum.Simple;
 
 		/// <summary>
-		/// The amount of friction applied on the rigidbody.
+		/// The amount of friction applied on the rigid body.
 		/// </summary>
 		[Serialize]
 		[DefaultValue( 0.5 )]
@@ -309,7 +309,7 @@ namespace NeoAxis
 		ReferenceField<double> _materialFriction = 0.5;
 
 		/// <summary>
-		/// The amount of directional friction applied on the rigidbody.
+		/// The amount of directional friction applied on the rigid body.
 		/// </summary>
 		[DefaultValue( "1 1 1" )]
 		[Serialize]
@@ -332,7 +332,7 @@ namespace NeoAxis
 		ReferenceField<Vector3> _materialAnisotropicFriction = Vector3.One;
 
 		/// <summary>
-		/// The amount of friction applied when rigidbody is spinning.
+		/// The amount of friction applied when rigid body is spinning.
 		/// </summary>
 		[DefaultValue( 0.5 )]
 		[Serialize]
@@ -360,7 +360,7 @@ namespace NeoAxis
 		ReferenceField<double> _materialSpinningFriction = 0.5;
 
 		/// <summary>
-		/// The amount of friction applied when rigidbody is rolling.
+		/// The amount of friction applied when rigid body is rolling.
 		/// </summary>
 		[DefaultValue( 0.5 )]
 		[Serialize]
@@ -388,7 +388,7 @@ namespace NeoAxis
 		ReferenceField<double> _materialRollingFriction = 0.5;
 
 		/// <summary>
-		/// The ratio of the final relative velocity to initial relative velocity of the rigidbody after collision.
+		/// The ratio of the final relative velocity to initial relative velocity of the rigid body after collision.
 		/// </summary>
 		[Serialize]
 		[DefaultValue( 0.0 )]
@@ -418,7 +418,7 @@ namespace NeoAxis
 		//CCD
 		ReferenceField<bool> _ccd = false;
 		/// <summary>
-		/// Whether the rigidbody is using continious collision detection.
+		/// Whether the rigid body is using continious collision detection.
 		/// </summary>
 		[DefaultValue( false )]
 		[Serialize]
@@ -517,7 +517,7 @@ namespace NeoAxis
 		//CenterOfMassManual
 		ReferenceField<bool> _centerOfMassManual = false;
 		/// <summary>
-		/// Whether the rigidbody is using manual center of mass.
+		/// Whether the rigid body is using manual center of mass.
 		/// </summary>
 		[DefaultValue( false )]
 		[Serialize]
@@ -882,7 +882,7 @@ namespace NeoAxis
 		////Useful for Collision Definition.
 		//ReferenceField<bool> _canCreate = true;
 		///// <summary>
-		///// Is it possible to create rigidbody?
+		///// Is it possible to create rigid body?
 		///// </summary>
 		//[DefaultValue( true )]
 		//[Serialize]
@@ -1743,9 +1743,9 @@ namespace NeoAxis
 			}
 		}
 
-		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
+		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
-			base.OnGetRenderSceneData( context, mode );
+			base.OnGetRenderSceneData( context, mode, modeGetObjectsItem );
 
 			if( mode == GetRenderSceneDataMode.InsideFrustum )
 			{
@@ -1866,13 +1866,29 @@ namespace NeoAxis
 			}
 		}
 
-		public void ApplyForce( Vector3 force, Vector3 relativePosition )
+		public void Activate()
 		{
 			if( rigidBody != null )
 			{
+				rigidBody.ForceActivationState( ActivationState.ActiveTag );
+				rigidBody.Activate();
+			}
+		}
+
+		public void WantsDeactivation()
+		{
+			rigidBody?.ForceActivationState( ActivationState.WantsDeactivation );
+		}
+
+		public void ApplyForce( Vector3 force, Vector3 relativePosition )
+		{
+			if( rigidBody != null && MotionType.Value == MotionTypeEnum.Dynamic && force != Vector3.Zero )
+			{
+				Activate();
+
 				BulletPhysicsUtility.Convert( ref force, out var bForce );
 				BulletPhysicsUtility.Convert( ref relativePosition, out var bRelPos );
-				rigidBody.ApplyForceRef( ref bForce, ref bRelPos );
+				rigidBody?.ApplyForceRef( ref bForce, ref bRelPos );
 			}
 		}
 	}

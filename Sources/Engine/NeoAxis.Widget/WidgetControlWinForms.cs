@@ -31,7 +31,7 @@ namespace NeoAxis.Widget
 		[Browsable( false )]
 		public bool MainWidget
 		{
-			get { return allInstances.Count == 0 || allInstances[ 0 ] == this; }
+			get { return AllInstances.Count == 0 || AllInstances[ 0 ] == this; }
 		}
 
 		private void WidgetControl_Load( object sender, EventArgs e )

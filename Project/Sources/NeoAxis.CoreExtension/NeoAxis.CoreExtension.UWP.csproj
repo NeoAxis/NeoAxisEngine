@@ -107,6 +107,8 @@
     <Compile Include="Utility\DocumentationLinks.cs" />
     <Compile Include="Utility\EngineConsole.cs" />
     <Compile Include="Utility\ScreenMessages.cs" />
+    <Compile Include="World generator\Component_WorldGenerator.cs" />
+    <Compile Include="World generator\Component_WorldGenerator_SettingsCell.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">

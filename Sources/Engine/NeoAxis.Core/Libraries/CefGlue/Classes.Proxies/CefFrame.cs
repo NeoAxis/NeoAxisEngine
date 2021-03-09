@@ -1,4 +1,4 @@
-namespace Xilium.CefGlue
+﻿namespace Xilium.CefGlue
 {
     using System;
     using System.Collections.Generic;
@@ -199,7 +199,8 @@ namespace Xilium.CefGlue
         }
 
         /// <summary>
-        /// Returns the globally unique identifier for this frame.
+        /// Returns the globally unique identifier for this frame or &lt; 0 if the
+        /// underlying frame does not yet exist.
         /// </summary>
         public long Identifier
         {

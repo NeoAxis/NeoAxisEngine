@@ -338,6 +338,11 @@ namespace NeoAxis.Editor
 												item.imageKey = "Material";
 											else if( resourceType.Name == "Scene" )
 												item.imageKey = "Scene";
+											else if( resourceType.Name == "Product" )
+												item.imageKey = "Product";
+											else if( resourceType.Name == "Store Product" )
+												item.imageKey = "Store Product";
+
 											//else if( resourceType.Name == "Character" )
 											//	item.imageKey = "Character";
 										}

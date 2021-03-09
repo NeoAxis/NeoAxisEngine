@@ -422,6 +422,19 @@ namespace NeoAxis.Editor
 				items.Add( item );
 			}
 
+			//Export to File
+			{
+				var item = new KryptonContextMenuItem( TranslateContextMenu( "Export to File" ), null, delegate ( object s, EventArgs e2 )
+				{
+					EditorUtility.ExportComponentToFile( oneSelectedComponent );
+				} );
+				item.Enabled = oneSelectedComponent != null;
+				items.Add( item );
+			}
+
+			//separator
+			items.Add( new KryptonContextMenuSeparator() );
+
 			//Delete
 			{
 				var item = new KryptonContextMenuItem( TranslateContextMenu( "Delete" ), EditorResourcesCache.Delete, delegate ( object s, EventArgs e2 )

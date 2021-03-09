@@ -8,6 +8,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.ComponentModel;
+using System.Linq;
 
 namespace NeoAxis.Editor
 {
@@ -474,6 +475,64 @@ namespace NeoAxis.Editor
 			var result = true;
 			ResourcesWindowItemVisibleFilter?.Invoke( item, ref result );
 			return result;
+		}
+
+		///////////////////////////////////////////////
+
+		static string GetFixedName( string name )
+		{
+			char[] invalidChars = Path.GetInvalidFileNameChars();
+			string trimmedName = name.Trim();
+			StringBuilder builder = new StringBuilder();
+			foreach( char c in trimmedName )
+			{
+				char fixedChar = c;
+				if( Array.IndexOf<char>( invalidChars, fixedChar ) != -1 )
+					fixedChar = '_';
+				builder.Append( fixedChar );
+			}
+			return builder.ToString();
+		}
+
+		public static void ExportComponentToFile( Component component )
+		{
+#if !DEPLOY
+			var componentFolder = "";
+			{
+				var fileName = ComponentUtility.GetOwnedFileNameOfComponent( component );
+				if( !string.IsNullOrEmpty( fileName ) )
+					componentFolder = Path.GetDirectoryName( VirtualPathUtility.GetRealPathByVirtual( fileName ) );
+			}
+
+			var name = component.Name;
+			if( string.IsNullOrEmpty( name ) )
+				name = "Component";
+
+			var extension = "component";
+			{
+				var attribs = component.GetType().GetCustomAttributes<ResourceFileExtensionAttribute>().ToArray();
+				if( attribs.Length != 0 )
+					extension = attribs[ 0 ].Extension;
+			}
+
+			var initialFileName = GetFixedName( name + "." + extension );
+
+			var dialog = new SaveFileDialog();
+			dialog.InitialDirectory = componentFolder;
+			dialog.FileName = initialFileName;
+			dialog.Filter = "All files (*.*)|*.*";
+			dialog.RestoreDirectory = true;
+			if( dialog.ShowDialog() != DialogResult.OK )
+				return;
+
+			var saveAsFileName = dialog.FileName;
+
+			if( !ComponentUtility.SaveComponentToFile( component, saveAsFileName, null, out var error ) )
+			{
+				EditorMessageBox.ShowWarning( error );
+			}
+
+#endif
 		}
 
 	}

@@ -17,6 +17,7 @@ namespace NeoAxis.Editor
 	public abstract class TransformToolObject
 	{
 		object controlledObject;
+		//bool modifying;
 
 		//
 
@@ -36,9 +37,17 @@ namespace NeoAxis.Editor
 		public abstract Quaternion Rotation { get; set; }
 		public abstract Vector3 Scale { get; set; }
 
+		//public bool Modifying
+		//{
+		//	get { return modifying; }
+		//}
+
 		public virtual void OnModifyBegin() { }
 		public virtual void OnModifyCommit() { }
 		public virtual void OnModifyCancel() { }
+		//public virtual void OnModifyBegin() { modifying = true; }
+		//public virtual void OnModifyCommit() { modifying = false; }
+		//public virtual void OnModifyCancel() { modifying = false; }
 	}
 
 	/// <summary>
@@ -83,6 +92,7 @@ namespace NeoAxis.Editor
 		public TransformTool( EngineViewportControl viewportControl )
 		{
 			this.viewportControl = viewportControl;
+			viewportControl.TransformTool = this;
 
 			modeObjects[ 0 ] = new ModeClass();
 			modeObjects[ 1 ] = new PositionModeClass();
@@ -225,6 +235,8 @@ namespace NeoAxis.Editor
 
 				return false;
 			}
+
+			public virtual void OnUpdateInitialObjectsTransform() { }
 
 			public virtual bool OnMouseUp( EMouseButtons button )
 			{
@@ -676,6 +688,13 @@ namespace NeoAxis.Editor
 				handled = true;
 		}
 
+		public void PerformUpdateInitialObjectsTransform()
+		{
+			if( !Active )
+				return;
+			modeObjects[ (int)mode ].OnUpdateInitialObjectsTransform();
+		}
+
 		public void PerformMouseUp( EMouseButtons button, ref bool handled )
 		{
 			if( !Active )
@@ -753,17 +772,21 @@ namespace NeoAxis.Editor
 		//	return gizmoObject;
 		//}
 
-		public delegate void ChangeMofidyStateDelegate();
+		public delegate void ChangeMofidyStateDelegate( TransformTool sender );
 		public event ChangeMofidyStateDelegate ModifyBegin;
 		public event ChangeMofidyStateDelegate ModifyCommit;
 		public event ChangeMofidyStateDelegate ModifyCancel;
+		public static event ChangeMofidyStateDelegate AllInstances_ModifyBegin;
+		public static event ChangeMofidyStateDelegate AllInstances_ModifyCommit;
+		public static event ChangeMofidyStateDelegate AllInstances_ModifyCancel;
 
 		void OnModifyBegin()
 		{
 			foreach( TransformToolObject obj in Objects )
 				obj.OnModifyBegin();
 
-			ModifyBegin?.Invoke();
+			ModifyBegin?.Invoke( this );
+			AllInstances_ModifyBegin?.Invoke( this );
 		}
 
 		void OnModifyCommit()
@@ -771,7 +794,8 @@ namespace NeoAxis.Editor
 			foreach( TransformToolObject obj in Objects )
 				obj.OnModifyCommit();
 
-			ModifyCommit?.Invoke();
+			ModifyCommit?.Invoke( this );
+			AllInstances_ModifyCommit?.Invoke( this );
 		}
 
 		void OnModifyCancel()
@@ -779,7 +803,8 @@ namespace NeoAxis.Editor
 			foreach( TransformToolObject obj in Objects )
 				obj.OnModifyCancel();
 
-			ModifyCancel?.Invoke();
+			ModifyCancel?.Invoke( this );
+			AllInstances_ModifyCancel?.Invoke( this );
 		}
 
 		double GetSnapMove()
@@ -911,16 +936,6 @@ namespace NeoAxis.Editor
 			get { return modeObjects[ (int)mode ].OnMouseOverAxis(); }
 		}
 
-		//public TransformToolObject GetObjectByControlledObject( object controlledObject )
-		//{
-		//	foreach( var obj in Objects )
-		//	{
-		//		if( ReferenceEquals( obj.ControlledObject, controlledObject ) )
-		//			return obj;
-		//	}
-		//	return null;
-		//}
-
 		bool SceneMode2D
 		{
 			get
@@ -931,5 +946,18 @@ namespace NeoAxis.Editor
 				return false;
 			}
 		}
+
+		//public TransformToolObject GetObjectByControlledObject( object controlledObject )
+		//{
+		//	//!!!!slowly
+
+		//	foreach( var obj in Objects )
+		//	{
+		//		if( ReferenceEquals( obj.ControlledObject, controlledObject ) )
+		//			return obj;
+		//	}
+		//	return null;
+		//}
+
 	}
 }

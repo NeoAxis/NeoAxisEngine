@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace NeoAxis
 {
 	/// <summary>
-	/// The event trigger in the scene.
+	/// The event trigger in the scene. The sensor allows you to select scene objects by a given volume or ray.
 	/// </summary>
 	public class Component_Sensor : Component_ObjectInSpace
 	{
@@ -424,9 +424,9 @@ namespace NeoAxis
 				Update();
 		}
 
-		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
+		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
-			base.OnGetRenderSceneData( context, mode );
+			base.OnGetRenderSceneData( context, mode, modeGetObjectsItem );
 
 			//if( WhenUpdate.Value.HasFlag( WhenUpdateEnum.Render ) )
 			//	Update();

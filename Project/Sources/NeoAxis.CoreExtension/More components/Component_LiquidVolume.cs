@@ -127,9 +127,9 @@ namespace NeoAxis
 			//}
 		}
 
-		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
+		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
-			base.OnGetRenderSceneData( context, mode );
+			base.OnGetRenderSceneData( context, mode, modeGetObjectsItem );
 
 			if( EnabledInHierarchy && VisibleInHierarchy )
 			{

@@ -26,7 +26,7 @@ namespace NeoAxis.UIWebBrowserControl
 			owner.OnLoadError( frame, errorCode, errorText, failedUrl );
 		}
 
-		protected override void OnLoadStart( CefBrowser browser, CefFrame frame )
+		protected override void OnLoadStart( CefBrowser browser, CefFrame frame, CefTransitionType transitionType )
 		{
 			owner.OnLoadStart( frame );
 		}

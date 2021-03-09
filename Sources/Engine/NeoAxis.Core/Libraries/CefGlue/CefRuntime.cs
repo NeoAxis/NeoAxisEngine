@@ -76,25 +76,47 @@
         /// <exception cref="InvalidOperationException"></exception>
         public static void Load()
         {
+            Load(null);
+        }
+
+        /// <summary>
+        /// Loads CEF runtime from specified path.
+        /// </summary>
+        /// <exception cref="DllNotFoundException"></exception>
+        /// <exception cref="CefVersionMismatchException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        public static void Load(string path)
+        {
             if (_loaded) return;
 
-            CheckVersion();
+            if (!string.IsNullOrEmpty(path))
+            {
+                if (Platform == CefRuntimePlatform.Windows)
+                    LoadLibraryWindows(path);
+                else
+                    throw new PlatformNotSupportedException("CEF Runtime can't be initialized on altered path on this platform. Use CefRuntime.Load() instead.");
+            }
+
+			//!!!!betauser
+            //CheckVersion();
 
             _loaded = true;
+        }
+
+        private static void LoadLibraryWindows(string path)
+        {
+            Xilium.CefGlue.Platform.Windows.NativeMethods.LoadLibraryEx(
+                System.IO.Path.Combine(path, "libcef.dll"),
+                IntPtr.Zero,
+                Xilium.CefGlue.Platform.Windows.LoadLibraryFlags.LOAD_WITH_ALTERED_SEARCH_PATH
+                );
         }
 
         #region cef_version
 
         private static void CheckVersion()
         {
-            try
-            {
-                CheckVersionByApiHash();
-            }
-            catch (NotSupportedException) // TODO: once load options will be implemented, we can control how perform version
-            {
-                CheckVersionByBuildRevision();
-            }
+            CheckVersionByApiHash();
         }
 
         private static void CheckVersionByApiHash()
@@ -123,16 +145,8 @@
 
             if (string.Compare(actual, expected, StringComparison.OrdinalIgnoreCase) != 0)
             {
-                throw ExceptionBuilder.RuntimeVersionApiHashMismatch(actual, expected);
-            }
-        }
-
-        private static void CheckVersionByBuildRevision()
-        {
-            var revision = libcef.build_revision();
-            if (revision != libcef.CEF_REVISION)
-            {
-                throw ExceptionBuilder.RuntimeVersionBuildRevisionMismatch(revision, libcef.CEF_REVISION);
+                var expectedVersion = libcef.CEF_VERSION;
+                throw ExceptionBuilder.RuntimeVersionApiHashMismatch(actual, expected, expectedVersion);
             }
         }
 
@@ -237,11 +251,17 @@
 
         /// <summary>
         /// Perform a single iteration of CEF message loop processing. This function is
-        /// used to integrate the CEF message loop into an existing application message
-        /// loop. Care must be taken to balance performance against excessive CPU usage.
-        /// This function should only be called on the main application thread and only
-        /// if CefInitialize() is called with a CefSettings.multi_threaded_message_loop
-        /// value of false. This function will not block.
+        /// provided for cases where the CEF message loop must be integrated into an
+        /// existing application message loop. Use of this function is not recommended
+        /// for most users; use either the CefRunMessageLoop() function or
+        /// CefSettings.multi_threaded_message_loop if possible. When using this function
+        /// care must be taken to balance performance against excessive CPU usage. It is
+        /// recommended to enable the CefSettings.external_message_pump option when using
+        /// this function so that CefBrowserProcessHandler::OnScheduleMessagePumpWork()
+        /// callbacks can facilitate the scheduling process. This function should only be
+        /// called on the main application thread and only if CefInitialize() is called
+        /// with a CefSettings.multi_threaded_message_loop value of false. This function
+        /// will not block.
         /// </summary>
         public static void DoMessageLoopWork()
         {
@@ -278,6 +298,16 @@
         public static void SetOSModalLoop(bool osModalLoop)
         {
             libcef.set_osmodal_loop(osModalLoop ? 1 : 0);
+        }
+
+        /// <summary>
+        /// Call during process startup to enable High-DPI support on Windows 7 or newer.
+        /// Older versions of Windows should be left DPI-unaware because they do not
+        /// support DirectWrite and GDI fonts are kerned very badly.
+        /// </summary>
+        public static void EnableHighDpiSupport()
+        {
+            libcef.enable_highdpi_support();
         }
 
         #endregion
@@ -493,18 +523,205 @@
 
         #endregion
 
-        #region cef_url
-        // TODO: CefRuntime.ParseUrl
-        // TODO: CefRuntime.CreateUrl
-        /*
-        // CefParseURL
-        [DllImport(libcef.DllName, EntryPoint = "cef_parse_url", CallingConvention = libcef.CEF_CALL)]
-        public static extern int parse_url(cef_string_t* url, cef_urlparts_t* parts);
+        #region cef_parser
 
-        // CefCreateURL
-        [DllImport(libcef.DllName, EntryPoint = "cef_create_url", CallingConvention = libcef.CEF_CALL)]
-        public static extern int create_url(cef_urlparts_t* parts, cef_string_t* url);
-        */
+        // Methods from cef_parser.h.
+
+        /// <summary>
+        /// Parse the specified |url| into its component parts.
+        /// Returns false if the URL is empty or invalid.
+        /// </summary>
+        public static bool ParseUrl(string url, out CefUrlParts parts)
+        {
+            fixed (char* url_str = url)
+            {
+                var n_url = new cef_string_t(url_str, url != null ? url.Length : 0);
+                var n_parts = new cef_urlparts_t();
+
+                var result = libcef.parse_url(&n_url, &n_parts) != 0;
+
+                parts = result ? CefUrlParts.FromNative(&n_parts) : null;
+                cef_urlparts_t.Clear(&n_parts);
+                return result;
+            }
+        }
+
+        public static bool CreateUrl(CefUrlParts parts, out string url)
+        {
+            if (parts == null) throw new ArgumentNullException("parts");
+
+            var n_parts = parts.ToNative();
+            var n_url = new cef_string_t();
+
+            var result = libcef.create_url(&n_parts, &n_url) != 0;
+
+            url = result ? cef_string_t.ToString(&n_url) : null;
+
+            cef_urlparts_t.Clear(&n_parts);
+            libcef.string_clear(&n_url);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns the mime type for the specified file extension or an empty string if
+        /// unknown.
+        /// </summary>
+        public static string GetMimeType(string extension)
+        {
+            fixed (char* extension_str = extension)
+            {
+                var n_extension = new cef_string_t(extension_str, extension != null ? extension.Length : 0);
+
+                var n_result = libcef.get_mime_type(&n_extension);
+                return cef_string_userfree.ToString(n_result);
+            }
+        }
+
+        /// <summary>
+        /// Get the extensions associated with the given mime type. This should be passed
+        /// in lower case. There could be multiple extensions for a given mime type, like
+        /// "html,htm" for "text/html", or "txt,text,html,..." for "text/*". Any existing
+        /// elements in the provided vector will not be erased.
+        /// </summary>
+        public static string[] GetExtensionsForMimeType(string mimeType)
+        {
+            fixed (char* mimeType_str = mimeType)
+            {
+                var n_mimeType = new cef_string_t(mimeType_str, mimeType != null ? mimeType.Length : 0);
+
+                var n_list = libcef.string_list_alloc();
+                libcef.get_extensions_for_mime_type(&n_mimeType, n_list);
+                var result = cef_string_list.ToArray(n_list);
+                libcef.string_list_free(n_list);
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Encodes |data| as a base64 string.
+        /// </summary>
+        public static unsafe string Base64Encode(void* data, int size)
+        {
+            var n_result = libcef.base64encode(data, (UIntPtr)size);
+            return cef_string_userfree.ToString(n_result);
+        }
+
+        public static string Base64Encode(byte[] bytes, int offset, int length)
+        {
+            // TODO: check bounds
+
+            fixed (byte* bytes_ptr = &bytes[offset])
+            {
+                return Base64Encode(bytes_ptr, length);
+            }
+        }
+
+        public static string Base64Encode(byte[] bytes)
+        {
+            return Base64Encode(bytes, 0, bytes.Length);
+        }
+
+        /// <summary>
+        /// Decodes the base64 encoded string |data|. The returned value will be NULL if
+        /// the decoding fails.
+        /// </summary>
+        public static CefBinaryValue Base64Decode(string data)
+        {
+            fixed (char* data_str = data)
+            {
+                var n_data = new cef_string_t(data_str, data != null ? data.Length : 0);
+                return CefBinaryValue.FromNative(libcef.base64decode(&n_data));
+            }
+        }
+
+
+        /// <summary>
+        /// Escapes characters in |text| which are unsuitable for use as a query
+        /// parameter value. Everything except alphanumerics and -_.!~*'() will be
+        /// converted to "%XX". If |use_plus| is true spaces will change to "+". The
+        /// result is basically the same as encodeURIComponent in Javacript.
+        /// </summary>
+        public static string UriEncode(string text, bool usePlus)
+        {
+            fixed (char* text_str = text)
+            {
+                var n_text = new cef_string_t(text_str, text != null ? text.Length : 0);
+
+                var n_result = libcef.uriencode(&n_text, usePlus ? 1 : 0);
+                return cef_string_userfree.ToString(n_result);
+            }
+        }
+
+        /// <summary>
+        /// Unescapes |text| and returns the result. Unescaping consists of looking for
+        /// the exact pattern "%XX" where each X is a hex digit and converting to the
+        /// character with the numerical value of those digits (e.g. "i%20=%203%3b"
+        /// unescapes to "i = 3;"). If |convert_to_utf8| is true this function will
+        /// attempt to interpret the initial decoded result as UTF-8. If the result is
+        /// convertable into UTF-8 it will be returned as converted. Otherwise the
+        /// initial decoded result will be returned.  The |unescape_rule| parameter
+        /// supports further customization the decoding process.
+        /// </summary>
+        public static string UriDecode(string text, bool convertToUtf8, CefUriUnescapeRules unescapeRule)
+        {
+            fixed (char* text_str = text)
+            {
+                var n_text = new cef_string_t(text_str, text != null ? text.Length : 0);
+
+                var n_result = libcef.uridecode(&n_text, convertToUtf8 ? 1 : 0, unescapeRule);
+                return cef_string_userfree.ToString(n_result);
+            }
+        }
+
+        /// <summary>
+        /// Parses the specified |json_string| and returns a dictionary or list
+        /// representation. If JSON parsing fails this method returns NULL.
+        /// </summary>
+        public static CefValue ParseJson(string value, CefJsonParserOptions options)
+        {
+            fixed (char* value_str = value)
+            {
+                var n_value = new cef_string_t(value_str, value != null ? value.Length : 0);
+                var n_result = libcef.parse_json(&n_value, options);
+                return CefValue.FromNativeOrNull(n_result);
+            }
+        }
+
+        /// <summary>
+        /// Parses the specified |json_string| and returns a dictionary or list
+        /// representation. If JSON parsing fails this method returns NULL and populates
+        /// |error_code_out| and |error_msg_out| with an error code and a formatted error
+        /// message respectively.
+        /// </summary>
+        public static CefValue ParseJsonAndReturnError(string value, CefJsonParserOptions options, out CefJsonParserError errorCode, out string errorMessage)
+        {
+            fixed (char* value_str = value)
+            {
+                var n_value = new cef_string_t(value_str, value != null ? value.Length : 0);
+
+                CefJsonParserError n_error_code;
+                cef_string_t n_error_msg;
+                var n_result = libcef.parse_jsonand_return_error(&n_value, options, & n_error_code, &n_error_msg);
+
+                var result = CefValue.FromNativeOrNull(n_result);
+                errorCode = n_error_code;
+                errorMessage = cef_string_userfree.ToString((cef_string_userfree*)&n_error_msg);
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Generates a JSON string from the specified root |node| which should be a
+        /// dictionary or list value. Returns an empty string on failure. This method
+        /// requires exclusive access to |node| including any underlying data.
+        /// </summary>
+        public static string WriteJson(CefValue value, CefJsonWriterOptions options)
+        {
+            if (value == null) throw new ArgumentNullException("value");
+            var n_result = libcef.write_json(value.ToNative(), options);
+            return cef_string_userfree.ToString(n_result);
+        }
 
         #endregion
 
@@ -612,54 +829,6 @@
         }
 
         /// <summary>
-        /// Add a plugin path (directory + file). This change may not take affect until
-        /// after CefRefreshWebPlugins() is called. Can be called on any thread in the
-        /// browser process.
-        /// </summary>
-        public static void AddWebPluginPath(string path)
-        {
-            if (string.IsNullOrEmpty(path)) throw new ArgumentNullException("path");
-
-            fixed (char* path_str = path)
-            {
-                var n_path = new cef_string_t(path_str, path.Length);
-                libcef.add_web_plugin_path(&n_path);
-            }
-        }
-
-        /// <summary>
-        /// Add a plugin directory. This change may not take affect until after
-        /// CefRefreshWebPlugins() is called. Can be called on any thread in the browser
-        /// process.
-        /// </summary>
-        public static void AddWebPluginDirectory(string directory)
-        {
-            if (string.IsNullOrEmpty(directory)) throw new ArgumentNullException("path");
-
-            fixed (char* directory_str = directory)
-            {
-                var n_directory = new cef_string_t(directory_str, directory.Length);
-                libcef.add_web_plugin_directory(&n_directory);
-            }
-        }
-
-        /// <summary>
-        /// Remove a plugin path (directory + file). This change may not take affect
-        /// until after CefRefreshWebPlugins() is called. Can be called on any thread in
-        /// the browser process.
-        /// </summary>
-        public static void RemoveWebPluginPath(string path)
-        {
-            if (string.IsNullOrEmpty(path)) throw new ArgumentNullException("path");
-
-            fixed (char* path_str = path)
-            {
-                var n_path = new cef_string_t(path_str, path.Length);
-                libcef.remove_web_plugin_path(&n_path);
-            }
-        }
-
-        /// <summary>
         /// Unregister an internal plugin. This may be undone the next time
         /// CefRefreshWebPlugins() is called. Can be called on any thread in the browser
         /// process.
@@ -672,21 +841,6 @@
             {
                 var n_path = new cef_string_t(path_str, path.Length);
                 libcef.unregister_internal_web_plugin(&n_path);
-            }
-        }
-
-        /// <summary>
-        /// Force a plugin to shutdown. Can be called on any thread in the browser
-        /// process but will be executed on the IO thread.
-        /// </summary>
-        public static void ForceWebPluginShutdown(string path)
-        {
-            if (string.IsNullOrEmpty(path)) throw new ArgumentNullException("path");
-
-            fixed (char* path_str = path)
-            {
-                var n_path = new cef_string_t(path_str, path.Length);
-                libcef.force_web_plugin_shutdown(&n_path);
             }
         }
 
@@ -718,6 +872,60 @@
             {
                 var n_path = new cef_string_t(path_str, path.Length);
                 libcef.is_web_plugin_unstable(&n_path, callback.ToNative());
+            }
+        }
+
+        /// <summary>
+        /// Register the Widevine CDM plugin.
+        ///
+        /// The client application is responsible for downloading an appropriate
+        /// platform-specific CDM binary distribution from Google, extracting the
+        /// contents, and building the required directory structure on the local machine.
+        /// The CefBrowserHost::StartDownload method and CefZipArchive class can be used
+        /// to implement this functionality in CEF. Contact Google via
+        /// https://www.widevine.com/contact.html for details on CDM download.
+        ///
+        /// |path| is a directory that must contain the following files:
+        ///   1. manifest.json file from the CDM binary distribution (see below).
+        ///   2. widevinecdm file from the CDM binary distribution (e.g.
+        ///      widevinecdm.dll on on Windows, libwidevinecdm.dylib on OS X,
+        ///      libwidevinecdm.so on Linux).
+        ///   3. widevidecdmadapter file from the CEF binary distribution (e.g.
+        ///      widevinecdmadapter.dll on Windows, widevinecdmadapter.plugin on OS X,
+        ///      libwidevinecdmadapter.so on Linux).
+        ///
+        /// If any of these files are missing or if the manifest file has incorrect
+        /// contents the registration will fail and |callback| will receive a |result|
+        /// value of CEF_CDM_REGISTRATION_ERROR_INCORRECT_CONTENTS.
+        ///
+        /// The manifest.json file must contain the following keys:
+        ///   A. "os": Supported OS (e.g. "mac", "win" or "linux").
+        ///   B. "arch": Supported architecture (e.g. "ia32" or "x64").
+        ///   C. "x-cdm-module-versions": Module API version (e.g. "4").
+        ///   D. "x-cdm-interface-versions": Interface API version (e.g. "8").
+        ///   E. "x-cdm-host-versions": Host API version (e.g. "8").
+        ///   F. "version": CDM version (e.g. "1.4.8.903").
+        ///   G. "x-cdm-codecs": List of supported codecs (e.g. "vp8,vp9.0,avc1").
+        ///
+        /// A through E are used to verify compatibility with the current Chromium
+        /// version. If the CDM is not compatible the registration will fail and
+        /// |callback| will receive a |result| value of
+        /// CEF_CDM_REGISTRATION_ERROR_INCOMPATIBLE.
+        ///
+        /// |callback| will be executed asynchronously once registration is complete.
+        ///
+        /// On Linux this function must be called before CefInitialize() and the
+        /// registration cannot be changed during runtime. If registration is not
+        /// supported at the time that CefRegisterWidevineCdm() is called then |callback|
+        /// will receive a |result| value of CEF_CDM_REGISTRATION_ERROR_NOT_SUPPORTED.
+        /// </summary>
+        public static void CefRegisterWidevineCdm(string path, CefRegisterCdmCallback callback = null)
+        {
+            fixed (char* path_str = path)
+            {
+                var n_path = new cef_string_t(path_str, path.Length);
+                libcef.register_widevine_cdm(&n_path,
+                    callback != null ? callback.ToNative() : null);
             }
         }
 
@@ -775,5 +983,15 @@
         {
             if (!_loaded) Load();
         }
+
+        #region linux
+
+        /////
+        //// Return the singleton X11 display shared with Chromium. The display is not
+        //// thread-safe and must only be accessed on the browser process UI thread.
+        /////
+        //CEF_EXPORT XDisplay* cef_get_xdisplay();
+
+        #endregion
     }
 }

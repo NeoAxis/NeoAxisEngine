@@ -65,7 +65,7 @@ namespace NeoAxis
 		ReferenceField<MotionTypeEnum> _motionType = MotionTypeEnum.Static;// Dynamic;
 
 		/// <summary>
-		/// The mass of the rigidbody.
+		/// The mass of the rigid body.
 		/// </summary>
 		[DefaultValue( 1.0 )]
 		[Category( "Rigid Body 2D" )]
@@ -146,7 +146,7 @@ namespace NeoAxis
 		ReferenceField<Vector2> _localCenter;
 
 		/// <summary>
-		/// Whether the rigidbody is affected by the gravity.
+		/// Whether the rigid body is affected by the gravity.
 		/// </summary>
 		[DefaultValue( true )]
 		[Category( "Rigid Body 2D" )]
@@ -874,9 +874,9 @@ namespace NeoAxis
 			}
 		}
 
-		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
+		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
-			base.OnGetRenderSceneData( context, mode );
+			base.OnGetRenderSceneData( context, mode, modeGetObjectsItem );
 
 			if( mode == GetRenderSceneDataMode.InsideFrustum )
 			{

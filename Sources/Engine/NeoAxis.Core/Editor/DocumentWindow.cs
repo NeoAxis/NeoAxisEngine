@@ -750,13 +750,8 @@ namespace NeoAxis.Editor
 
 		public virtual bool CanCloneObjects( out List<Component> resultObjectsToClone )
 		{
-			resultObjectsToClone = new List<Component>();
+			resultObjectsToClone = new List<Component>( SelectedObjects.Length );
 
-			//!!!!mutliselection
-
-			//!!!!вложеные друг в друга убрать. где еще так
-
-			//!!!!или из transform tool брать?
 			foreach( var obj in SelectedObjects )
 			{
 				var component = obj as Component;
@@ -764,24 +759,43 @@ namespace NeoAxis.Editor
 					resultObjectsToClone.Add( component );
 			}
 
+			//remove children which inside selected parents
+			resultObjectsToClone = ComponentUtility.GetComponentsWithoutChildren( resultObjectsToClone );
+
 			if( resultObjectsToClone.Count == 0 )
 				return false;
 
 			return true;
 		}
 
+		public static void AddClonedSelectableChildrenToList( List<Component> list, Component component )
+		{
+			foreach( var childComponent in component.GetComponents() )
+			{
+				if( childComponent.DisplayInEditor && childComponent.TypeSettingsIsPublic() && EditorUtility.PerformComponentDisplayInEditorFilter( childComponent ) )
+				{
+					//CurveInSpace specific
+					if( childComponent is Component_CurveInSpacePoint )
+					{
+						list.Add( childComponent );
+
+						AddClonedSelectableChildrenToList( list, childComponent );
+					}
+				}
+			}
+		}
+
 		public virtual void TryCloneObjects()
 		{
-			//!!!!!игнорить выделенные-вложенные. где еще так
-
 			if( !CanCloneObjects( out var objectsToClone ) )
 				return;
 
-			List<Component> newObjects = new List<Component>();
+			var newObjects = new List<Component>();
 			foreach( var obj in objectsToClone )
 			{
 				var newObject = EditorUtility.CloneComponent( obj );
 				newObjects.Add( newObject );
+				AddClonedSelectableChildrenToList( newObjects, newObject );
 			}
 
 			//select objects
@@ -807,14 +821,17 @@ namespace NeoAxis.Editor
 
 		public virtual bool CanDeleteObjects( out List<object> resultObjectsToDelete )
 		{
-			resultObjectsToDelete = new List<object>();
+			var resultObjectsToDelete2 = new List<Component>();
 
 			foreach( var obj in SelectedObjects )
 			{
 				var component = obj as Component;
 				if( component != null && component.Parent != null )
-					resultObjectsToDelete.Add( component );
+					resultObjectsToDelete2.Add( component );
 			}
+
+			//remove children which inside selected parents
+			resultObjectsToDelete = ComponentUtility.GetComponentsWithoutChildren( resultObjectsToDelete2 ).Cast<object>().ToList();
 
 			if( resultObjectsToDelete.Count == 0 )
 				return false;
@@ -824,8 +841,6 @@ namespace NeoAxis.Editor
 
 		public virtual bool TryDeleteObjects()
 		{
-			//!!!!!игнорить выделенные-вложенные. где еще так
-
 			if( !CanDeleteObjects( out var objectsToDelete ) )
 				return false;
 

@@ -115,7 +115,7 @@ namespace NeoAxis
 		////////////////
 
 		/// <summary>
-		/// The sound played when mouse pointer enters the button.
+		/// The sound played when the mouse pointer enters the button.
 		/// </summary>
 		[DefaultValue( null )]
 		public Reference<Component_Sound> ButtonSoundMouseEnter
@@ -127,7 +127,7 @@ namespace NeoAxis
 		ReferenceField<Component_Sound> _buttonSoundMouseEnter;
 
 		/// <summary>
-		/// The sound played when mouse pointer leaves the button.
+		/// The sound played when the mouse pointer leaves the button.
 		/// </summary>
 		[DefaultValue( null )]
 		public Reference<Component_Sound> ButtonSoundMouseLeave
@@ -139,7 +139,7 @@ namespace NeoAxis
 		ReferenceField<Component_Sound> _buttonSoundMouseLeave;
 
 		/// <summary>
-		/// The sound played when user clicks on the button.
+		/// The sound played when the user clicks on the button.
 		/// </summary>
 		[DefaultValue( null )]
 		public Reference<Component_Sound> ButtonSoundClick
@@ -153,7 +153,7 @@ namespace NeoAxis
 		/////////////////////////////////////////
 
 		/// <summary>
-		/// The sound played when mouse pointer enters the button of context menu.
+		/// The sound played when the mouse pointer enters the button of context menu.
 		/// </summary>
 		[DefaultValue( null )]
 		public Reference<Component_Sound> ContextMenuButtonSoundMouseEnter
@@ -165,7 +165,7 @@ namespace NeoAxis
 		ReferenceField<Component_Sound> _contextMenuButtonSoundMouseEnter;
 
 		/// <summary>
-		/// The sound played when mouse pointer leaves the button of context menu.
+		/// The sound played when the mouse pointer leaves the button of context menu.
 		/// </summary>
 		[DefaultValue( null )]
 		public Reference<Component_Sound> ContextMenuButtonSoundMouseLeave
@@ -177,7 +177,7 @@ namespace NeoAxis
 		ReferenceField<Component_Sound> _contextMenuButtonSoundMouseLeave;
 
 		/// <summary>
-		/// The sound played when user clicks on the button of context menu.
+		/// The sound played when the user clicks on the button of context menu.
 		/// </summary>
 		[DefaultValue( null )]
 		public Reference<Component_Sound> ContextMenuButtonSoundClick
@@ -239,7 +239,7 @@ namespace NeoAxis
 		////////////////
 
 		/// <summary>
-		/// The sound played when mouse pointer enters the check.
+		/// The sound played when the mouse pointer enters the check.
 		/// </summary>
 		[DefaultValue( null )]
 		public Reference<Component_Sound> CheckSoundMouseEnter
@@ -251,7 +251,7 @@ namespace NeoAxis
 		ReferenceField<Component_Sound> _checkSoundMouseEnter;
 
 		/// <summary>
-		/// The sound played when mouse pointer leaves the check.
+		/// The sound played when the mouse pointer leaves the check.
 		/// </summary>
 		[DefaultValue( null )]
 		public Reference<Component_Sound> CheckSoundMouseLeave

@@ -21,7 +21,6 @@ namespace NeoAxis.Editor
 			Axes selectedAxes;
 			string helpText = "";
 
-			//TransformOfObject[] initialObjectsTransform;
 			Vector3 modifyPosition;
 			Axis selectedAxis = Axis.None;
 			Vector2 selectedScreenLinePointInPixels;
@@ -410,6 +409,16 @@ namespace NeoAxis.Editor
 				}
 
 				return false;
+			}
+
+			public override void OnUpdateInitialObjectsTransform()
+			{
+				initialObjectsTransform = new TransformOfObject[ Owner.Objects.Count ];
+				for( int n = 0; n < Owner.Objects.Count; n++ )
+				{
+					TransformToolObject obj = Owner.Objects[ n ];
+					initialObjectsTransform[ n ] = new TransformOfObject( obj.Position, obj.Rotation, obj.Scale );
+				}
 			}
 
 			bool Rotation_OnTryBeginModify()

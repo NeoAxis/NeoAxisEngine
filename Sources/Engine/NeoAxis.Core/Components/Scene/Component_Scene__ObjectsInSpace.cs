@@ -125,6 +125,67 @@ namespace NeoAxis
 				this.VisibleOnly = visibleOnly;
 				this.Ray = ray;
 			}
+
+			bool BoundsPlanesIntersects( Bounds bounds, Plane[] planes )
+			{
+				var boundsCenter = bounds.GetCenter();
+				var boundsHalfSize = bounds.Maximum - boundsCenter;
+				foreach( var plane in planes )
+					if( plane.GetSide( boundsCenter, boundsHalfSize ) == Plane.Side.Positive )
+						return false;
+				return true;
+			}
+
+			public bool Intersects( ref Bounds bounds )
+			{
+				if( Bounds != null && Planes != null )
+				{
+					//Planes + Bounds
+					if( Bounds.Value.Intersects( ref bounds ) || BoundsPlanesIntersects( bounds, Planes ) )
+						return true;
+				}
+				else if( Planes != null )
+				{
+					//Planes
+					if( BoundsPlanesIntersects( bounds, Planes ) )
+						return true;
+				}
+				else if( Frustum != null )
+				{
+					//Frustum
+					Bounds frustumBounds = new Bounds( Frustum.Points[ 0 ] );
+					for( int n = 1; n < 8; n++ )
+						frustumBounds.Add( Frustum.Points[ n ] );
+					if( frustumBounds.Intersects( ref bounds ) || BoundsPlanesIntersects( bounds, Frustum.Planes ) )
+						return true;
+				}
+				else if( Bounds != null )
+				{
+					//Bounds
+					if( Bounds.Value.Intersects( ref bounds ) )
+						return true;
+				}
+				else if( Box != null )
+				{
+					//Box
+					if( Box.Value.Intersects( ref bounds ) )
+						return true;
+				}
+				else if( Sphere != null )
+				{
+					//Sphere
+					if( Sphere.Value.Intersects( ref bounds ) )
+						return true;
+				}
+				else if( Ray != null )
+				{
+					//Ray
+					if( bounds.Intersects( Ray.Value ) )
+						return true;
+				}
+
+				return false;
+			}
 		}
 
 		/////////////////////////////////////////
@@ -433,7 +494,7 @@ namespace NeoAxis
 					else
 					{
 						var array2 = new int[ outputCount ];
-						fixed ( int* pArray2 = array2 )
+						fixed( int* pArray2 = array2 )
 							if( octree.GetObjects( item.Planes, item.Bounds.Value, groupMask, OctreeContainer.ModeEnum.All, pArray2, outputCount, out var outputCount2 ) )
 								resultArray = GetObjectsInSpace_FromOctree_GetResult( item, pArray2, outputCount );
 					}
@@ -448,7 +509,7 @@ namespace NeoAxis
 					else
 					{
 						var array2 = new int[ outputCount ];
-						fixed ( int* pArray2 = array2 )
+						fixed( int* pArray2 = array2 )
 							if( octree.GetObjects( item.Planes, groupMask, OctreeContainer.ModeEnum.All, pArray2, outputCount, out var outputCount2 ) )
 								resultArray = GetObjectsInSpace_FromOctree_GetResult( item, pArray2, outputCount );
 					}
@@ -463,7 +524,7 @@ namespace NeoAxis
 					else
 					{
 						var array2 = new int[ outputCount ];
-						fixed ( int* pArray2 = array2 )
+						fixed( int* pArray2 = array2 )
 							if( octree.GetObjects( item.Frustum, groupMask, OctreeContainer.ModeEnum.All, pArray2, outputCount, out var outputCount2 ) )
 								resultArray = GetObjectsInSpace_FromOctree_GetResult( item, pArray2, outputCount );
 					}
@@ -478,7 +539,7 @@ namespace NeoAxis
 					else
 					{
 						var array2 = new int[ outputCount ];
-						fixed ( int* pArray2 = array2 )
+						fixed( int* pArray2 = array2 )
 							if( octree.GetObjects( item.Bounds.Value, groupMask, OctreeContainer.ModeEnum.All, pArray2, outputCount, out var outputCount2 ) )
 								resultArray = GetObjectsInSpace_FromOctree_GetResult( item, pArray2, outputCount );
 					}
@@ -493,7 +554,7 @@ namespace NeoAxis
 					else
 					{
 						var array2 = new int[ outputCount ];
-						fixed ( int* pArray2 = array2 )
+						fixed( int* pArray2 = array2 )
 							if( octree.GetObjects( item.Box.Value, groupMask, OctreeContainer.ModeEnum.All, pArray2, outputCount, out var outputCount2 ) )
 								resultArray = GetObjectsInSpace_FromOctree_GetResult( item, pArray2, outputCount );
 					}
@@ -508,7 +569,7 @@ namespace NeoAxis
 					else
 					{
 						var array2 = new int[ outputCount ];
-						fixed ( int* pArray2 = array2 )
+						fixed( int* pArray2 = array2 )
 							if( octree.GetObjects( item.Sphere.Value, groupMask, OctreeContainer.ModeEnum.All, pArray2, outputCount, out var outputCount2 ) )
 								resultArray = GetObjectsInSpace_FromOctree_GetResult( item, pArray2, outputCount );
 					}
@@ -523,7 +584,7 @@ namespace NeoAxis
 					else
 					{
 						var array2 = new OctreeContainer.GetObjectsRayOutputData[ outputCount ];
-						fixed ( OctreeContainer.GetObjectsRayOutputData* pArray2 = array2 )
+						fixed( OctreeContainer.GetObjectsRayOutputData* pArray2 = array2 )
 							if( octree.GetObjects( item.Ray.Value, groupMask, OctreeContainer.ModeEnum.All, pArray2, outputCount, out var outputCount2 ) )
 								resultArray = GetObjectsInSpace_FromOctree_GetResultRay( item, pArray2, outputCount );
 					}

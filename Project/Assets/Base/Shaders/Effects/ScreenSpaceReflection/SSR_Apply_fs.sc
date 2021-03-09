@@ -62,12 +62,11 @@ void main()
 
 		MaterialInputs material;
 
-		material.baseColor         = vec4(baseColor, 0.0);
-		material.roughness         = roughness;
-		material.metallic          = metallic;
-		material.reflectance       = reflectance;
-		material.ambientOcclusion  = ambientOcclusion;
-		//material.emissive        = vec4(emissive, 0.0);
+		material.baseColor = vec4(baseColor, 0.0);
+		material.roughness = roughness;
+		material.metallic = metallic;
+		material.reflectance = reflectance;
+		material.ambientOcclusion = ambientOcclusion;
 
 		material.anisotropy = 0.0f;
 		material.anisotropyDirection = vec3_splat(0);
@@ -83,7 +82,7 @@ void main()
 
 		EnvironmentTextureData data;
 		data.rotation = mat3(1,0,0,0,1,0,0,0,1);
-		data.multiplier = vec3_splat(1);
+		data.multiplierAndAffect = vec4_splat(1);
 
 		vec3 specularUsual;
 		{

@@ -146,7 +146,7 @@
 				UVTilesPerUnit = 0.333 0.333
 				Material
 				{
-					GetByReference = "Samples\\Starter Content\\Materials\\Concrete 3x3 meters\\Concrete 3x3 meters.material"
+					GetByReference = "Content\\Materials\\Basic Library\\Concrete\\Concrete Floor 01.material"
 				}
 			}
 		}

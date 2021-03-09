@@ -1,4 +1,4 @@
-namespace Xilium.CefGlue
+﻿namespace Xilium.CefGlue
 {
     using System;
     using System.Collections.Generic;
@@ -89,6 +89,23 @@ namespace Xilium.CefGlue
         /// Return the handler for drag events.
         /// </summary>
         protected virtual CefDragHandler GetDragHandler()
+        {
+            return null;
+        }
+
+
+        private cef_find_handler_t* get_find_handler(cef_client_t* self)
+        {
+            CheckSelf(self);
+
+            var result = GetFindHandler();
+            return result != null ? result.ToNative() : null;
+        }
+
+        /// <summary>
+        /// Return the handler for find result events.
+        /// </summary>
+        protected virtual CefFindHandler GetFindHandler()
         {
             return null;
         }

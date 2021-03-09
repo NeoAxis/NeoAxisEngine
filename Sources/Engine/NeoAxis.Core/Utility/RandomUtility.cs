@@ -9,7 +9,7 @@ namespace NeoAxis
 	/// </summary>
 	public static class RandomUtility
 	{
-		public unsafe static int GetRandomIndexByProbabilities( Random random, double* probabilities, int length )
+		public /*unsafe */static int GetRandomIndexByProbabilities( Random random, double[]/***/ probabilities, int length )
 		{
 			int result = 0;
 

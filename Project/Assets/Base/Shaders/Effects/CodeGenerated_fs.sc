@@ -26,8 +26,10 @@ void main()
 	vec4 c_color0 = sourceColor;
 	vec4 color = u_paramColor;
 #ifdef FRAGMENT_CODE_BODY
+	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(_sampler, _uv, u_removeTextureTiling)
 	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2D(_sampler, _uv)
 	FRAGMENT_CODE_BODY
+	#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
 	#undef CODE_BODY_TEXTURE2D
 #endif
 

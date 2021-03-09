@@ -21,6 +21,8 @@ namespace NeoAxis.Import
 			public bool updateMeshes = true;
 			public bool updateObjectsInSpace = true;
 
+			public Dictionary<string, string> meshGeometryMaterialsToRestore = new Dictionary<string, string>();
+
 			public Component_Import3D component;
 			public string virtualFileName;
 			//public bool loadAnimations;
@@ -47,33 +49,29 @@ namespace NeoAxis.Import
 			public ColorValue? BaseColor;
 			public string BaseColorTexture;
 			public string MetallicTexture;
+			public string MetallicTextureChannel = "R";
 			public string RoughnessTexture;
+			public string RoughnessTextureChannel = "R";
 			public string NormalTexture;
 			public string DisplacementTexture;
+			public string DisplacementTextureChannel = "R";
 			public string AmbientOcclusionTexture;
+			public string AmbientOcclusionTextureChannel = "R";
 			public string EmissiveTexture;
 			public string OpacityTexture;
+			public string OpacityTextureChannel = "R";
 
-			public int GetTextureCount()
+			public int GetTextureUsedCount()
 			{
-				int result = 0;
-				if( !string.IsNullOrEmpty( BaseColorTexture ) )
-					result++;
-				if( !string.IsNullOrEmpty( MetallicTexture ) )
-					result++;
-				if( !string.IsNullOrEmpty( RoughnessTexture ) )
-					result++;
-				if( !string.IsNullOrEmpty( NormalTexture ) )
-					result++;
-				if( !string.IsNullOrEmpty( DisplacementTexture ) )
-					result++;
-				if( !string.IsNullOrEmpty( AmbientOcclusionTexture ) )
-					result++;
-				if( !string.IsNullOrEmpty( EmissiveTexture ) )
-					result++;
-				if( !string.IsNullOrEmpty( OpacityTexture ) )
-					result++;
-				return result;
+				var names = new string[] { BaseColorTexture, MetallicTexture, RoughnessTexture, NormalTexture, DisplacementTexture, AmbientOcclusionTexture, EmissiveTexture, OpacityTexture };
+
+				var added = new ESet<string>();
+				foreach( var name in names )
+				{
+					if( !string.IsNullOrEmpty( name ) )
+						added.AddWithCheckAlreadyContained( name );
+				}
+				return added.Count;
 			}
 		}
 
@@ -120,22 +118,36 @@ namespace NeoAxis.Import
 			}
 
 			const int step = 9;
-			Vector2I position = new Vector2I( -20, -data.GetTextureCount() * step / 2 );
+			Vector2I position = new Vector2I( -20, -data.GetTextureUsedCount() * step / 2 );
+
+
+			var addedTextures = new Dictionary<string, Component_ShaderTextureSample>();
+
+			Component_ShaderTextureSample GetOrCreateTextureSample( string channelDisplayName, string textureName )
+			{
+				if( !addedTextures.TryGetValue( textureName, out var sample ) )
+				{
+					var node = graph.CreateComponent<Component_FlowGraphNode>();
+					node.Name = "Node Texture Sample " + channelDisplayName;//"BaseColor";
+					node.Position = position;
+					position.Y += step;
+
+					sample = node.CreateComponent<Component_ShaderTextureSample>();
+					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
+					sample.Texture = new Reference<Component_Image>( null, textureName );// data.BaseColorTexture );
+
+					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
+
+					addedTextures[ textureName ] = sample;
+				}
+
+				return sample;
+			}
 
 			//BaseColor
 			if( !string.IsNullOrEmpty( data.BaseColorTexture ) )
 			{
-				var node = graph.CreateComponent<Component_FlowGraphNode>();
-				node.Name = "Node Texture Sample " + "BaseColor";
-				node.Position = position;
-				position.Y += step;
-
-				var sample = node.CreateComponent<Component_ShaderTextureSample>();
-				sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
-				sample.Texture = new Reference<Component_Image>( null, data.BaseColorTexture );
-
-				node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
-
+				var sample = GetOrCreateTextureSample( "Base Color", data.BaseColorTexture );
 				material.BaseColor = ReferenceUtility.MakeThisReference( material, sample, "RGBA" );
 			}
 			else if( data.BaseColor.HasValue )
@@ -144,120 +156,50 @@ namespace NeoAxis.Import
 			//Metallic
 			if( !string.IsNullOrEmpty( data.MetallicTexture ) )
 			{
-				var node = graph.CreateComponent<Component_FlowGraphNode>();
-				node.Name = "Node Texture Sample " + "Metallic";
-				node.Position = position;
-				position.Y += step;
-
-				var sample = node.CreateComponent<Component_ShaderTextureSample>();
-				sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
-				sample.Texture = new Reference<Component_Image>( null, data.MetallicTexture );
-
-				node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
-
-				material.Metallic = ReferenceUtility.MakeThisReference( material, sample, "R" );
+				var sample = GetOrCreateTextureSample( "Metallic", data.MetallicTexture );
+				material.Metallic = ReferenceUtility.MakeThisReference( material, sample, data.MetallicTextureChannel );
 			}
 
 			//Roughness
 			if( !string.IsNullOrEmpty( data.RoughnessTexture ) )
 			{
-				var node = graph.CreateComponent<Component_FlowGraphNode>();
-				node.Name = "Node Texture Sample " + "Roughness";
-				node.Position = position;
-				position.Y += step;
-
-				var sample = node.CreateComponent<Component_ShaderTextureSample>();
-				sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
-				sample.Texture = new Reference<Component_Image>( null, data.RoughnessTexture );
-
-				node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
-
-				material.Roughness = ReferenceUtility.MakeThisReference( material, sample, "R" );
+				var sample = GetOrCreateTextureSample( "Roughness", data.RoughnessTexture );
+				material.Roughness = ReferenceUtility.MakeThisReference( material, sample, data.RoughnessTextureChannel );
 			}
 
 			//Normal
 			if( !string.IsNullOrEmpty( data.NormalTexture ) )
 			{
-				var node = graph.CreateComponent<Component_FlowGraphNode>();
-				node.Name = "Node Texture Sample " + "Normal";
-				node.Position = position;
-				position.Y += step;
-
-				var sample = node.CreateComponent<Component_ShaderTextureSample>();
-				sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
-				sample.Texture = new Reference<Component_Image>( null, data.NormalTexture );
-
-				node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
-
+				var sample = GetOrCreateTextureSample( "Normal", data.NormalTexture );
 				material.Normal = ReferenceUtility.MakeThisReference( material, sample, "RGBA" );
 			}
 
 			//Displacement
 			if( !string.IsNullOrEmpty( data.DisplacementTexture ) )
 			{
-				var node = graph.CreateComponent<Component_FlowGraphNode>();
-				node.Name = "Node Texture Sample " + "Displacement";
-				node.Position = position;
-				position.Y += step;
-
-				var sample = node.CreateComponent<Component_ShaderTextureSample>();
-				sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
-				sample.Texture = new Reference<Component_Image>( null, data.DisplacementTexture );
-
-				node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
-
-				material.Displacement = ReferenceUtility.MakeThisReference( material, sample, "R" );
+				var sample = GetOrCreateTextureSample( "Displacement", data.DisplacementTexture );
+				material.Displacement = ReferenceUtility.MakeThisReference( material, sample, data.DisplacementTextureChannel );
 			}
 
 			//AmbientOcclusion
 			if( !string.IsNullOrEmpty( data.AmbientOcclusionTexture ) )
 			{
-				var node = graph.CreateComponent<Component_FlowGraphNode>();
-				node.Name = "Node Texture Sample " + "AmbientOcclusion";
-				node.Position = position;
-				position.Y += step;
-
-				var sample = node.CreateComponent<Component_ShaderTextureSample>();
-				sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
-				sample.Texture = new Reference<Component_Image>( null, data.AmbientOcclusionTexture );
-
-				node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
-
-				material.AmbientOcclusion = ReferenceUtility.MakeThisReference( material, sample, "R" );
+				var sample = GetOrCreateTextureSample( "Ambient Occlusion", data.AmbientOcclusionTexture );
+				material.AmbientOcclusion = ReferenceUtility.MakeThisReference( material, sample, data.AmbientOcclusionTextureChannel );
 			}
 
 			//Emissive
 			if( !string.IsNullOrEmpty( data.EmissiveTexture ) )
 			{
-				var node = graph.CreateComponent<Component_FlowGraphNode>();
-				node.Name = "Node Texture Sample " + "Emissive";
-				node.Position = position;
-				position.Y += step;
-
-				var sample = node.CreateComponent<Component_ShaderTextureSample>();
-				sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
-				sample.Texture = new Reference<Component_Image>( null, data.EmissiveTexture );
-
-				node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
-
+				var sample = GetOrCreateTextureSample( "Emissive", data.EmissiveTexture );
 				material.Emissive = ReferenceUtility.MakeThisReference( material, sample, "RGBA" );
 			}
 
 			//Opacity
 			if( !string.IsNullOrEmpty( data.OpacityTexture ) )
 			{
-				var node = graph.CreateComponent<Component_FlowGraphNode>();
-				node.Name = "Node Texture Sample " + "Opacity";
-				node.Position = position;
-				position.Y += step;
-
-				var sample = node.CreateComponent<Component_ShaderTextureSample>();
-				sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
-				sample.Texture = new Reference<Component_Image>( null, data.OpacityTexture );
-
-				node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
-
-				material.Opacity = ReferenceUtility.MakeThisReference( material, sample, "R" );
+				var sample = GetOrCreateTextureSample( "Opacity", data.OpacityTexture );
+				material.Opacity = ReferenceUtility.MakeThisReference( material, sample, data.OpacityTextureChannel );
 			}
 
 			material.Enabled = true;

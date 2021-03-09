@@ -100,6 +100,7 @@ vec3 reconstructWorldPosition(mat4 invViewProj, vec2 texCoord, float rawDepth)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/*
 float encodeBitsToByte(bool v1, bool v2)
 {
 	float v = v1 ? 0.75 : 0.25;
@@ -114,9 +115,11 @@ void decodeBitsFromByte(float source, out bool v1, out bool v2)
 	v1 = abs(v) > 0.5;
 	v2 = v > 0.0;
 }
+*/
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/*
 vec4 encodeGBuffer4(vec4 tangent, bool shadingModelSimple, bool receiveDecals)
 {
 	vec4 result;
@@ -139,6 +142,7 @@ void decodeGBuffer4(vec4 source, out vec4 tangent, out bool shadingModelSimple, 
 
 	shadingModelSimple = !any2(source.xyz);
 }
+*/
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -146,17 +150,19 @@ struct EnvironmentTextureData
 {
 	//samplerCube texture;
 	mat3 rotation;
-	vec3 multiplier;
+	vec4 multiplierAndAffect;
 };
 
 vec3 getEnvironmentValue(samplerCube tex, EnvironmentTextureData data, vec3 texCoord)
 {
-	return textureCube(tex, flipCubemapCoords(mul(data.rotation, texCoord))).rgb * data.multiplier;
+	vec3 v = textureCube(tex, flipCubemapCoords2(mul(data.rotation, texCoord))).rgb * data.multiplierAndAffect.xyz;
+	return lerp(vec3_splat(1), v, data.multiplierAndAffect.w);
 }
 
 vec3 getEnvironmentValueLod(samplerCube tex, EnvironmentTextureData data, vec3 texCoord, float lod)
 {
-	return textureCubeLod(tex, flipCubemapCoords(mul(data.rotation, texCoord)), lod).rgb * data.multiplier;
+	vec3 v = textureCubeLod(tex, flipCubemapCoords2(mul(data.rotation, texCoord)), lod).rgb * data.multiplierAndAffect.xyz;
+	return lerp(vec3_splat(1), v, data.multiplierAndAffect.w);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -189,14 +195,47 @@ void cutVolumes(vec3 worldPosition)
 				if(length(p) < 0.5)
 					discard;
 			}
-			else
+			else if(shape == 2.0)
 			{
 				//Cylinder
 				if(p.x < 0.5 && length(p.yz) < 0.5)
 					discard;
+			}
+			else
+			{
+				//Plane
+				vec4 plane = m[0];
+				clip(dot(plane, vec4(worldPosition, 1.0)));
 			}
 		}
 	}
 
 #endif
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*
+float getLodValue(float lodRangeMin, float lodRangeMax, float cameraDistance)
+{
+	float min2 = lodRangeMin * 0.9f;
+	float max2 = lodRangeMax * 0.9f;
+
+	if(cameraDistance > max2)
+	{
+		//if(cameraDistance < lodRangeMax)
+			return saturate( (cameraDistance - max2) / (lodRangeMax - max2) );
+		//else
+		//	return 1.0;
+	}
+	else if(cameraDistance < lodRangeMin)
+	{
+		if(cameraDistance > min2)
+			return -saturate( (cameraDistance - min2) / (lodRangeMin - min2) );
+		else
+			return 1.0;
+	}
+	else
+		return 0.0;
+}
+*/

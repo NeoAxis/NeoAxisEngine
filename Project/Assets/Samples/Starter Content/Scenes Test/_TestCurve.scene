@@ -19,7 +19,7 @@
 		Name = Ambient Light
 		Transform = "22.5263621686492 -12.0811848058869 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 30000
+		Brightness = 40000
 	}
 	.component NeoAxis.Component_Light
 	{

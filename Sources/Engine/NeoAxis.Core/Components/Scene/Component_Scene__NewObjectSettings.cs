@@ -109,12 +109,22 @@ namespace NeoAxis
 							string name = Template.Name + ".scene";
 							var sourceFile = VirtualPathUtility.GetRealPathByVirtual( @"Base\Tools\NewResourceTemplates\" + name );
 
-							var text = VirtualFile.ReadAllText( sourceFile );
+							//copy scene file
+
+							var text = File.ReadAllText( sourceFile );
 
 							if( CreateCSharpClass )
 								text = text.Replace( ".component NeoAxis.Component_Scene", ".component " + csharpClassName );
 
 							File.WriteAllText( context.fileCreationRealFileName, text );
+
+							//copy additional folder if exist
+							var sourceFolderPath = sourceFile + "_Files";
+							if( Directory.Exists( sourceFolderPath ) )
+							{
+								var destFolderPath = context.fileCreationRealFileName + "_Files";
+								IOUtility.CopyDirectory( sourceFolderPath, destFolderPath );
+							}
 						}
 
 						//cs file

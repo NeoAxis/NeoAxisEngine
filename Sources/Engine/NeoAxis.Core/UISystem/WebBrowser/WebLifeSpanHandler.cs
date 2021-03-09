@@ -29,7 +29,7 @@ namespace NeoAxis.UIWebBrowserControl
 			return false;
 		}
 
-		protected override bool OnBeforePopup( CefBrowser browser, CefFrame frame, string targetUrl, string targetFrameName, CefPopupFeatures popupFeatures, CefWindowInfo windowInfo, ref CefClient client, CefBrowserSettings settings, ref bool noJavascriptAccess )
+		protected override bool OnBeforePopup( CefBrowser browser, CefFrame frame, string targetUrl, string targetFrameName, CefWindowOpenDisposition targetDisposition, bool userGesture, CefPopupFeatures popupFeatures, CefWindowInfo windowInfo, ref CefClient client, CefBrowserSettings settings, ref bool noJavascriptAccess )
 		{
 			var e = new UIWebBrowser.BeforePopupEventArgs( frame, targetUrl, targetFrameName, popupFeatures, windowInfo, client, settings,
 					 noJavascriptAccess );

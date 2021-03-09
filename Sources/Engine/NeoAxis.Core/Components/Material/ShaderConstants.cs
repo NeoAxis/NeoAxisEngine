@@ -114,14 +114,14 @@ namespace NeoAxis
 			get { return Vector2.Zero; }
 		}
 
-		/// <summary>
-		/// Gets texture coordinate 3 of a vertex. Works only in vertex and fragment shaders.
-		/// </summary>
-		[ShaderGenerationFunction( "c_texCoord3" )]
-		public static Vector2 TexCoord3
-		{
-			get { return Vector2.Zero; }
-		}
+		///// <summary>
+		///// Gets texture coordinate 3 of a vertex. Works only in vertex and fragment shaders.
+		///// </summary>
+		//[ShaderGenerationFunction( "c_texCoord3" )]
+		//public static Vector2 TexCoord3
+		//{
+		//	get { return Vector2.Zero; }
+		//}
 
 		/// <summary>
 		/// Gets texture coordinate unwrapped UV of a vertex. Works only in vertex and fragment shaders.

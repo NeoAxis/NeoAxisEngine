@@ -23,7 +23,7 @@ namespace NeoAxis
 		double transformPositionByTime2_Time;
 		Vector3[] transformPositionByTime2_Position;
 
-		List<SceneLODUtility.RenderingContextItem> billboardRenderingContextItems;
+		//List<SceneLODUtility.RenderingContextItem> billboardRenderingContextItems;
 
 		Emitter[] Emitters;
 		Particle[] Objects;
@@ -172,6 +172,22 @@ namespace NeoAxis
 		public event Action<Component_ParticleSystemInSpace> ActivatedChanged;
 		ReferenceField<bool> _activated = true;
 
+		/// <summary>
+		/// Specifies settings for special object effects, such as an outline effect.
+		/// </summary>
+		[Cloneable( CloneType.Deep )]
+		public Reference<List<ObjectSpecialRenderingEffect>> SpecialEffects
+		{
+			get { if( _specialEffects.BeginGet() ) SpecialEffects = _specialEffects.Get( this ); return _specialEffects.value; }
+			set { if( _specialEffects.BeginSet( ref value ) ) { try { SpecialEffectsChanged?.Invoke( this ); } finally { _specialEffects.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="SpecialEffects"/> property value changes.</summary>
+		public event Action<Component_ParticleSystemInSpace> SpecialEffectsChanged;
+		ReferenceField<List<ObjectSpecialRenderingEffect>> _specialEffects = new List<ObjectSpecialRenderingEffect>();
+
+		[Browsable( false )]
+		public Component_RenderingPipeline.RenderSceneData.CutVolumeItem[] CutVolumes { get; set; }
+
 		public float PlayingTime
 		{
 			get { return playingTime; }
@@ -192,7 +208,7 @@ namespace NeoAxis
 			public float Duration;
 			public float AvailableTimeToSpawn;
 
-			public List<SceneLODUtility.RenderingContextItem> meshRenderingContextItems;
+			//public List<SceneLODUtility.RenderingContextItem> meshRenderingContextItems;
 		}
 
 		/////////////////////////////////////////
@@ -255,7 +271,7 @@ namespace NeoAxis
 
 		class MeshLodItem
 		{
-			public SceneLODUtility.RenderingContextItem contextItem;
+			//public SceneLODUtility.RenderingContextItem contextItem;
 			public int itemLod = 0;
 			public float itemLodValue = 0;
 			public int item2Lod = 0;
@@ -263,9 +279,9 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
+		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
-			base.OnGetRenderSceneData( context, mode );
+			base.OnGetRenderSceneData( context, mode, modeGetObjectsItem );
 
 			//update old positions for motion blur
 			var time = context.Owner.LastUpdateTime;
@@ -314,222 +330,188 @@ namespace NeoAxis
 					//var context2 = context.objectInSpaceRenderingContext;
 					//context2.disableShowingLabelForThisObject = true;
 
+					var cameraSettings = context.Owner.CameraSettings;
 					var tr = Transform.Value;
 					ref var trMatrix = ref tr.ToMatrix4();
 					//!!!!double
 					trMatrix.ToMatrix4F( out var trMatrixF );
-					var trPosition = tr.Position;
 
-					//update and get LOD info
-					var maxDistance = Math.Min( VisibilityDistance, currentParticleSystem.Owner.VisibilityDistance );
-					var billboardLodContextItem = SceneLODUtility.UpdateAndGetContextItem( ref billboardRenderingContextItems, context, null, maxDistance, ref trPosition );
+					var cameraDistanceMinSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, SpaceBounds );
+					var visibilityDistance = Math.Min( VisibilityDistance, currentParticleSystem.Owner.VisibilityDistance );
 
-					bool skip = false;
-					//!!!!impl для мешей. сейчас резко появляются из far если меши
-					if( billboardLodContextItem.currentLOD == -1 && billboardLodContextItem.transitionTime == 0 )
-						skip = true;
-
-					if( !skip )
+					if( cameraDistanceMinSquared < visibilityDistance * visibilityDistance || mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum )
 					{
-						MeshLodItem[] meshEmitterLodContexts = null;
+						var cameraDistanceMin = MathEx.Sqrt( cameraDistanceMinSquared );
+						var cameraDistanceMaxSquared = SceneLODUtility.GetCameraDistanceMax( cameraSettings, SpaceBounds );
+						cameraDistanceMaxSquared *= cameraDistanceMaxSquared;
 
 						var replaceMaterial = ReplaceMaterial.Value;
 						var color = Color.Value;
 
-						//bool batching = particleSystemResult.Owner.Batching;
+						//PositionPreviousFrame
+						var previousTime = time - context.Owner.LastUpdateTimeStep;
+						GetTransformPositionByTime( previousTime, out var previousPositions );
 
-						//if( batching )
-						//{
-						//}
-						//else
+
+						SceneLODUtility.LodState?[] meshEmitterLodStates = null;
+
+						//init general parameters of billboard item
+						var billboardItem = new Component_RenderingPipeline.RenderSceneData.BillboardItem();
+						billboardItem.Creator = this;
+						billboardItem.BoundingSphere = SpaceBounds.CalculatedBoundingSphere;
+						billboardItem.BoundingBoxCenter = billboardItem.BoundingSphere.Origin;
+						//SpaceBounds.CalculatedBoundingBox.GetCenter( out billboardItem.BoundingBoxCenter );
+
+						//!!!!
+						billboardItem.ShadowOffset = (float)1.0;
+						billboardItem.VisibilityDistance = (float)visibilityDistance;
+						billboardItem.CutVolumes = CutVolumes;
+
+						var specialEffects = SpecialEffects.Value;
+						if( specialEffects != null && specialEffects.Count != 0 )
+							billboardItem.SpecialEffects = specialEffects;
+
+
+						//init general parameters of mesh item
+						var meshItem = new Component_RenderingPipeline.RenderSceneData.MeshItem();
+						meshItem.Creator = this;
+						meshItem.BoundingBoxCenter = billboardItem.BoundingBoxCenter;
+						meshItem.BoundingSphere = billboardItem.BoundingSphere;
+						meshItem.VisibilityDistance = (float)visibilityDistance;
+						meshItem.CutVolumes = CutVolumes;
+
+						if( specialEffects != null && specialEffects.Count != 0 )
+							meshItem.SpecialEffects = specialEffects;
+
+						//!!!!slowly? ObjectsGetAll
+						foreach( var particleIndex in ObjectsGetAll() )
 						{
-							//PositionPreviousFrame
-							var previousTime = time - context.Owner.LastUpdateTimeStep;
-							GetTransformPositionByTime( previousTime, out var previousPositions );
+							ref var particle = ref Objects[ particleIndex ];
 
-							//init general parameters of billboard item
-							var billboardItem = new Component_RenderingPipeline.RenderSceneData.BillboardItem();
-							billboardItem.Creator = this;
-							SpaceBounds.CalculatedBoundingBox.GetCenter( out billboardItem.BoundingBoxCenter );
-							billboardItem.BoundingSphere = SpaceBounds.CalculatedBoundingSphere;
-
+							if( particle.Emitter < currentParticleSystem.Emitters.Length )
 							{
-								//get data for rendering
-								float itemLodValue = 0;
+								var compiledEmitter = currentParticleSystem.Emitters[ particle.Emitter ];
+
+								var renderingMode = compiledEmitter.Owner.RenderingMode.Value;
+								if( renderingMode == Component_ParticleEmitter.RenderingModeEnum.Billboard )
 								{
-									if( billboardLodContextItem.currentLOD == 0 && billboardLodContextItem.toLOD == -1 )
-										itemLodValue = billboardLodContextItem.transitionTime;
-									else if( billboardLodContextItem.currentLOD == -1 && billboardLodContextItem.toLOD == 0 )
-										itemLodValue = -billboardLodContextItem.transitionTime;
-								}
-								//set LOD value
-								billboardItem.LODValue = itemLodValue;
-							}
+									//Billboard rendering mode
 
-							//init general parameters of mesh item
-							var meshItem = new Component_RenderingPipeline.RenderSceneData.MeshItem();
-							meshItem.Creator = this;
-							meshItem.BoundingBoxCenter = billboardItem.BoundingBoxCenter;
-							meshItem.BoundingSphere = billboardItem.BoundingSphere;
+									billboardItem.CastShadows = compiledEmitter.CastShadows && CastShadows;
 
-							//!!!!slowly? ObjectsGetAll
-							foreach( var particleIndex in ObjectsGetAll() )
-							{
-								ref var particle = ref Objects[ particleIndex ];
-
-								if( particle.Emitter < currentParticleSystem.Emitters.Length )
-								{
-									var compiledEmitter = currentParticleSystem.Emitters[ particle.Emitter ];
-
-									var renderingMode = compiledEmitter.Owner.RenderingMode.Value;
-									if( renderingMode == Component_ParticleEmitter.RenderingModeEnum.Billboard )
+									if( mode == GetRenderSceneDataMode.InsideFrustum || ( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum && billboardItem.CastShadows ) )
 									{
-										//Billboard rendering mode
+										billboardItem.ReceiveDecals = compiledEmitter.ReceiveDecals && ReceiveDecals;
+										billboardItem.Material = replaceMaterial ?? compiledEmitter.Material;
 
-										billboardItem.CastShadows = compiledEmitter.CastShadows && CastShadows;
+										//Position
+										Vector3 p;
+										if( currentParticleSystem.SimulationSpace == Component_ParticleSystem.SimulationSpaceEnum.Local )
+											Matrix4.Multiply( ref trMatrix, ref particle.Position, out p );
+										else
+											p = particle.Position;
+										//!!!!double
+										billboardItem.Position = p.ToVector3F();
 
-										if( mode == GetRenderSceneDataMode.InsideFrustum || ( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum && billboardItem.CastShadows ) )
+										//Size
+										if( currentParticleSystem.SimulationSpace == Component_ParticleSystem.SimulationSpaceEnum.Local )
 										{
-											billboardItem.ReceiveDecals = compiledEmitter.ReceiveDecals && ReceiveDecals;
-											billboardItem.Material = replaceMaterial ?? compiledEmitter.Material;
+											billboardItem.Size = new Vector2F( particle.Size * Math.Max( (float)tr.Scale.X, (float)tr.Scale.Y ), particle.Size * (float)tr.Scale.Z );
+										}
+										else
+											billboardItem.Size = new Vector2F( particle.Size, particle.Size );
 
-											//Position
-											Vector3 p;
-											if( currentParticleSystem.SimulationSpace == Component_ParticleSystem.SimulationSpaceEnum.Local )
-												Matrix4.Multiply( ref trMatrix, ref particle.Position, out p );
-											else
-												p = particle.Position;
-											//!!!!double
-											billboardItem.Position = p.ToVector3F();
+										if( billboardItem.Size.X > 0 && billboardItem.Size.Y > 0 )
+										{
+											//Rotation
+											//!!!!slowly
+											billboardItem.Rotation = MathEx.DegreeToRadian( particle.Rotation.ToAngles().Roll );
 
-											//Size
-											if( currentParticleSystem.SimulationSpace == Component_ParticleSystem.SimulationSpaceEnum.Local )
+											//Color
+											billboardItem.Color = particle.Color * color;
+
+											//PositionPreviousFrame
+											if( previousPositions != null && particleIndex < previousPositions.Length )
 											{
-												billboardItem.Size = new Vector2F( particle.Size * Math.Max( (float)tr.Scale.X, (float)tr.Scale.Y ), particle.Size * (float)tr.Scale.Z );
-											}
-											else
-												billboardItem.Size = new Vector2F( particle.Size, particle.Size );
-
-											if( billboardItem.Size.X > 0 && billboardItem.Size.Y > 0 )
-											{
-												//Rotation
-												//!!!!slowly
-												billboardItem.Rotation = MathEx.DegreeToRadian( particle.Rotation.ToAngles().Roll );
-
-												//Color
-												billboardItem.Color = particle.Color * color;
-
-												//PositionPreviousFrame
-												if( previousPositions != null && particleIndex < previousPositions.Length )
+												var p2 = previousPositions[ particleIndex ];
+												if( !double.IsNaN( p2.X ) )
 												{
-													var p2 = previousPositions[ particleIndex ];
-													if( !double.IsNaN( p2.X ) )
-													{
-														//!!!!double
-														billboardItem.PositionPreviousFrame = p2.ToVector3F();
-													}
-													else
-														billboardItem.PositionPreviousFrame = billboardItem.Position;
+													//!!!!double
+													billboardItem.PositionPreviousFrame = p2.ToVector3F();
 												}
 												else
 													billboardItem.PositionPreviousFrame = billboardItem.Position;
-
-												//add
-												context.FrameData.RenderSceneData.Billboards.Add( ref billboardItem );
 											}
+											else
+												billboardItem.PositionPreviousFrame = billboardItem.Position;
+
+											//add
+											context.FrameData.RenderSceneData.Billboards.Add( ref billboardItem );
 										}
 									}
-									else if( renderingMode == Component_ParticleEmitter.RenderingModeEnum.Mesh )
-									{
-										//Mesh rendering mode
+								}
+								else if( renderingMode == Component_ParticleEmitter.RenderingModeEnum.Mesh )
+								{
+									//Mesh rendering mode
 
-										var mesh = compiledEmitter.Mesh;
-										if( mesh == null || mesh.Result == null )
-											mesh = ResourceUtility.MeshInvalid;
+									var mesh = compiledEmitter.Mesh;
+									if( mesh == null || mesh.Result == null )
+										mesh = ResourceUtility.MeshInvalid;
+
+
+									meshItem.MeshData = mesh.Result.MeshData;
+									meshItem.CastShadows = compiledEmitter.CastShadows && CastShadows;
+									meshItem.ReceiveDecals = compiledEmitter.ReceiveDecals && ReceiveDecals;
+									meshItem.ReplaceMaterial = replaceMaterial ?? compiledEmitter.Material;
+									meshItem.Color = particle.Color * color;
+
+									var lods = meshItem.MeshData.LODs;
+									ref var emitter = ref Emitters[ particle.Emitter ];
+
+									int item0BillboardMode = 0;
+
+
+									if( meshEmitterLodStates == null )
+										meshEmitterLodStates = new SceneLODUtility.LodState?[ Emitters.Length ];
+
+									SceneLODUtility.LodState lodState;
+									if( meshEmitterLodStates[ particle.Emitter ] != null )
+										lodState = meshEmitterLodStates[ particle.Emitter ].Value;
+									else
+									{
+										SceneLODUtility.GetDemandedLODs( context, mesh, cameraDistanceMinSquared, cameraDistanceMaxSquared, out lodState );
+										meshEmitterLodStates[ particle.Emitter ] = lodState;
+									}
+
+									for( int nLodItem = 0; nLodItem < lodState.Count; nLodItem++ )
+									{
+										lodState.GetItem( nLodItem, out var lodLevel, out var lodRange );
 
 
 										meshItem.MeshData = mesh.Result.MeshData;
-										meshItem.CastShadows = compiledEmitter.CastShadows && CastShadows;
-										meshItem.ReceiveDecals = compiledEmitter.ReceiveDecals && ReceiveDecals;
-										meshItem.ReplaceMaterial = replaceMaterial ?? compiledEmitter.Material;
-										meshItem.Color = particle.Color * color;
-
-										var lods = meshItem.MeshData.LODs;
-										ref var emitter = ref Emitters[ particle.Emitter ];
-
-										if( meshEmitterLodContexts == null )
-											meshEmitterLodContexts = new MeshLodItem[ Emitters.Length ];
-
-										MeshLodItem lodMeshItem = null;
-										if( meshEmitterLodContexts[ particle.Emitter ] != null )
-											lodMeshItem = meshEmitterLodContexts[ particle.Emitter ];
-										else
+										if( lodLevel > 0 )
 										{
-											lodMeshItem = new MeshLodItem();
-											lodMeshItem.contextItem = SceneLODUtility.UpdateAndGetContextItem( ref emitter.meshRenderingContextItems, context, mesh, maxDistance, ref trPosition );
-
-											//get data for rendering
-											//lodMeshItem.itemLod = 0;
-											//lodMeshItem.itemLodValue = 0;
-											//lodMeshItem.item2Lod = 0;
+											ref var lod = ref lods[ lodLevel - 1 ];
+											var lodMeshData = lod.Mesh?.Result?.MeshData;
+											if( lodMeshData != null )
 											{
-												int maxLOD = lods != null ? lods.Length : 0;
-
-												lodMeshItem.itemLod = lodMeshItem.contextItem.currentLOD;
-												if( lodMeshItem.itemLod > maxLOD )
-													lodMeshItem.itemLod = maxLOD;
-												lodMeshItem.item2Lod = lodMeshItem.contextItem.toLOD;
-												if( lodMeshItem.item2Lod > maxLOD )
-													lodMeshItem.item2Lod = maxLOD;
-												lodMeshItem.itemLodValue = lodMeshItem.contextItem.transitionTime;
+												meshItem.MeshData = lodMeshData;
+												meshItem.CastShadows = compiledEmitter.CastShadows && CastShadows && lodMeshData.CastShadows;
 											}
-
-											meshEmitterLodContexts[ particle.Emitter ] = lodMeshItem;
 										}
 
-										bool skip2 = false;
-										if( lodMeshItem.contextItem.currentLOD == -1 && lodMeshItem.contextItem.transitionTime == 0 )
-											skip2 = true;
+										meshItem.CastShadows = compiledEmitter.CastShadows && CastShadows && meshItem.MeshData.CastShadows;
+										meshItem.LODValue = SceneLODUtility.GetLodValue( lodRange, cameraDistanceMin );
+										//meshItem.LODRange = lodRange;
 
-										if( !skip2 )
+
+										var skipItem = false;
+
+										//calculate MeshInstanceOne
+										if( nLodItem == 0 )
+											item0BillboardMode = meshItem.MeshData.BillboardMode;
+										if( nLodItem == 0 || item0BillboardMode != meshItem.MeshData.BillboardMode )
 										{
-											//var lods = meshItem.MeshData.LODs;
-
-											////get data for rendering
-											//int itemLod = 0;
-											//float itemLodValue = 0;
-											//int item2Lod = 0;
-											//{
-											//	int maxLOD = lods != null ? lods.Length : 0;
-
-											//	itemLod = contextItem.currentLOD;
-											//	if( itemLod > maxLOD )
-											//		itemLod = maxLOD;
-											//	item2Lod = contextItem.toLOD;
-											//	if( item2Lod > maxLOD )
-											//		item2Lod = maxLOD;
-											//	itemLodValue = contextItem.transitionTime;
-											//}
-
-											//select LOD
-											if( lodMeshItem.itemLod > 0 )
-											{
-												ref var lod = ref lods[ lodMeshItem.itemLod - 1 ];
-												var lodMeshData = lod.Mesh?.Result?.MeshData;
-												if( lodMeshData != null )
-												{
-													meshItem.MeshData = lodMeshData;
-													meshItem.CastShadows = compiledEmitter.CastShadows && CastShadows && lod.Mesh.CastShadows;
-												}
-											}
-
-											//set LOD value
-											meshItem.LODValue = lodMeshItem.itemLodValue;
-
-											bool skipItem1 = false;
-											bool skipItem2 = false;
-
-											//calculate MeshInstanceOne
 											if( meshItem.MeshData.BillboardMode != 0 )
 											{
 												//Position
@@ -572,7 +554,7 @@ namespace NeoAxis
 													result.Item3.W = 1;
 												}
 												else
-													skipItem1 = true;
+													skipItem = true;
 											}
 											else
 											{
@@ -589,7 +571,11 @@ namespace NeoAxis
 												else
 													meshItem.Transform = new Matrix4F( ref mat3, ref positionF );
 											}
+										}
 
+										//add to render
+										if( !skipItem )
+										{
 											//PositionPreviousFrame
 											if( previousPositions != null && particleIndex < previousPositions.Length )
 											{
@@ -608,113 +594,12 @@ namespace NeoAxis
 											////layers
 											//meshItem.Layers = Layers;
 
-											//add first item
-											if( lodMeshItem.itemLod >= 0 && !skipItem1 )
-											{
-												////set AnimationData from event
-												//GetRenderSceneDataAddToFrameData?.Invoke( this, context, mode, ref meshItem );
 
-												//add the item to render
-												context.FrameData.RenderSceneData.Meshes.Add( ref meshItem );
-											}
+											////set AnimationData from event
+											//GetRenderSceneDataAddToFrameData?.Invoke( this, context, mode, ref meshItem );
 
-											//add second item
-											if( lodMeshItem.item2Lod >= 0 && lodMeshItem.itemLodValue != 0 )
-											{
-												var item0BillboardMode = meshItem.MeshData.BillboardMode;
-
-												meshItem.MeshData = mesh.Result.MeshData;
-												meshItem.CastShadows = compiledEmitter.CastShadows && CastShadows;
-
-												//select LOD
-												if( lodMeshItem.item2Lod != 0 )
-												{
-													ref var lod = ref lods[ lodMeshItem.item2Lod - 1 ];
-													var lodMeshData = lod.Mesh?.Result?.MeshData;
-													if( lodMeshData != null )
-													{
-														meshItem.MeshData = lodMeshData;
-														meshItem.CastShadows = compiledEmitter.CastShadows && CastShadows && lod.Mesh.CastShadows;
-													}
-												}
-
-												//set LOD value
-												meshItem.LODValue = -meshItem.LODValue;
-
-												//calculate MeshInstanceOne
-												if( item0BillboardMode != meshItem.MeshData.BillboardMode )
-												{
-													//set matrix
-													if( meshItem.MeshData.BillboardMode != 0 )
-													{
-														//Position
-														Vector3 position;
-														if( currentParticleSystem.SimulationSpace == Component_ParticleSystem.SimulationSpaceEnum.Local )
-															Matrix4.Multiply( ref trMatrix, ref particle.Position, out position );
-														else
-															position = particle.Position;
-
-														//Size
-														Vector2F size;
-														if( currentParticleSystem.SimulationSpace == Component_ParticleSystem.SimulationSpaceEnum.Local )
-														{
-															var scale = tr.Scale;
-															var scaleH = (float)Math.Max( scale.X, scale.Y );
-															size = new Vector2F( particle.Size * scaleH, particle.Size * (float)scale.Z );
-														}
-														else
-															size = new Vector2F( particle.Size, particle.Size );
-
-														if( size.X > 0 && size.Y > 0 )
-														{
-															ref var result = ref meshItem.Transform;
-															result.Item0.X = size.X;
-															result.Item0.Y = 0;
-															result.Item0.Z = 0;
-															result.Item0.W = 0;
-															result.Item1.X = 0;
-															result.Item1.Y = size.X;
-															result.Item1.Z = 0;
-															result.Item1.W = 0;
-															result.Item2.X = 0;
-															result.Item2.Y = 0;
-															result.Item2.Z = size.Y;
-															result.Item2.W = 0;
-															//!!!!double
-															result.Item3.X = (float)position.X;
-															result.Item3.Y = (float)position.Y;
-															result.Item3.Z = (float)position.Z;
-															result.Item3.W = 1;
-														}
-														else
-															skipItem2 = true;
-													}
-													else
-													{
-														//Transform
-														Matrix3F.FromScale( particle.Size, out var scl );
-														Matrix3F.Multiply( ref particle.Rotation, ref scl, out var mat3 );
-														//!!!!double
-														var positionF = particle.Position.ToVector3F();
-														if( currentParticleSystem.SimulationSpace == Component_ParticleSystem.SimulationSpaceEnum.Local )
-														{
-															var mat4 = new Matrix4F( ref mat3, ref positionF );
-															Matrix4F.Multiply( ref trMatrixF, ref mat4, out meshItem.Transform );
-														}
-														else
-															meshItem.Transform = new Matrix4F( ref mat3, ref positionF );
-													}
-												}
-
-												if( !skipItem2 )
-												{
-													////set AnimationData from event
-													//GetRenderSceneDataAddToFrameData?.Invoke( this, context, mode, ref meshItem );
-
-													//add the item to render
-													context.FrameData.RenderSceneData.Meshes.Add( ref meshItem );
-												}
-											}
+											//add the item to render
+											context.FrameData.RenderSceneData.Meshes.Add( ref meshItem );
 										}
 									}
 								}
@@ -965,19 +850,19 @@ namespace NeoAxis
 			return false;
 		}
 
-		public void ResetLodTransitionStates( ViewportRenderingContext resetOnlySpecifiedContext = null )
-		{
-			SceneLODUtility.ResetLodTransitionStates( ref billboardRenderingContextItems, resetOnlySpecifiedContext );
+		//public void ResetLodTransitionStates( ViewportRenderingContext resetOnlySpecifiedContext = null )
+		//{
+		//	SceneLODUtility.ResetLodTransitionStates( ref billboardRenderingContextItems, resetOnlySpecifiedContext );
 
-			if( Emitters != null )
-			{
-				for( int nEmitter = 0; nEmitter < Emitters.Length; nEmitter++ )
-				{
-					ref var emitter = ref Emitters[ nEmitter ];
-					SceneLODUtility.ResetLodTransitionStates( ref emitter.meshRenderingContextItems, resetOnlySpecifiedContext );
-				}
-			}
-		}
+		//	if( Emitters != null )
+		//	{
+		//		for( int nEmitter = 0; nEmitter < Emitters.Length; nEmitter++ )
+		//		{
+		//			ref var emitter = ref Emitters[ nEmitter ];
+		//			SceneLODUtility.ResetLodTransitionStates( ref emitter.meshRenderingContextItems, resetOnlySpecifiedContext );
+		//		}
+		//	}
+		//}
 
 		void RemovedObjectsInit()
 		{
@@ -1002,7 +887,7 @@ namespace NeoAxis
 			if( count != 0 )
 			{
 				var array = new Particle[ count ];
-				fixed ( Particle* pArray = array )
+				fixed( Particle* pArray = array )
 					NativeUtility.CopyMemory( pArray, data, array.Length * sizeof( Particle ) );
 				Objects = array;
 			}
@@ -1019,13 +904,13 @@ namespace NeoAxis
 
 		public unsafe void ObjectsSet( ArraySegment<Particle> data )//, bool fullRecreateInternalData )
 		{
-			fixed ( Particle* pData = data.Array )
+			fixed( Particle* pData = data.Array )
 				ObjectsSet( pData + data.Offset, data.Count );//, fullRecreateInternalData );
 		}
 
 		public unsafe void ObjectsSet( Particle[] data )//, bool fullRecreateInternalData )
 		{
-			fixed ( Particle* pData = data )
+			fixed( Particle* pData = data )
 				ObjectsSet( pData, data.Length );//, fullRecreateInternalData );
 		}
 
@@ -1078,13 +963,13 @@ namespace NeoAxis
 
 		public unsafe void/*int[]*/ ObjectsAdd( ArraySegment<Particle> data )
 		{
-			fixed ( Particle* pData = data.Array )
+			fixed( Particle* pData = data.Array )
 				ObjectsAdd( pData + data.Offset, data.Count );
 		}
 
 		public unsafe void/*int[]*/ ObjectsAdd( Particle[] data )
 		{
-			fixed ( Particle* pData = data )
+			fixed( Particle* pData = data )
 				ObjectsAdd( pData, data.Length );
 		}
 
@@ -1114,13 +999,13 @@ namespace NeoAxis
 
 		public unsafe void ObjectsRemove( ArraySegment<int> indexes )
 		{
-			fixed ( int* pData = indexes.Array )
+			fixed( int* pData = indexes.Array )
 				ObjectsRemove( pData + indexes.Offset, indexes.Count );
 		}
 
 		public unsafe void ObjectsRemove( int[] indexes )
 		{
-			fixed ( int* pData = indexes )
+			fixed( int* pData = indexes )
 				ObjectsRemove( pData, indexes.Length );
 		}
 
@@ -1258,6 +1143,14 @@ namespace NeoAxis
 				}
 			}
 
+			double[] tempDoubleArray = null;
+			double[] GetTempDoubleArray( int minSize )
+			{
+				if( tempDoubleArray == null || tempDoubleArray.Length < minSize )
+					tempDoubleArray = new double[ minSize ];
+				return tempDoubleArray;
+			}
+
 			//emit particles
 			if( !playingEnded && Activated )
 			{
@@ -1321,13 +1214,14 @@ namespace NeoAxis
 									int shapeIndex;
 									if( shapes.Length > 1 )
 									{
-										unsafe
-										{
-											var groupProbabilities = stackalloc double[ shapes.Length ];
-											for( int n = 0; n < shapes.Length; n++ )
-												groupProbabilities[ n ] = shapes[ n ].Probability;
-											shapeIndex = RandomUtility.GetRandomIndexByProbabilities( random, groupProbabilities, shapes.Length );
-										}
+										//unsafe
+										//{
+										var groupProbabilities = GetTempDoubleArray( shapes.Length );
+										//var groupProbabilities = stackalloc double[ shapes.Length ];
+										for( int n = 0; n < shapes.Length; n++ )
+											groupProbabilities[ n ] = shapes[ n ].Probability;
+										shapeIndex = RandomUtility.GetRandomIndexByProbabilities( random, groupProbabilities, shapes.Length );
+										//}
 									}
 									else
 										shapeIndex = 0;

@@ -414,6 +414,16 @@ namespace NeoAxis.Editor
 				items.Add( item );
 			}
 
+			//Export to File
+			{
+				var item = new KryptonContextMenuItem( TranslateContextMenu( "Export to File" ), null, delegate ( object s, EventArgs e2 )
+				{
+					EditorUtility.ExportComponentToFile( oneSelectedComponent );
+				} );
+				item.Enabled = oneSelectedComponent != null;
+				items.Add( item );
+			}
+
 			//separator
 			items.Add( new KryptonContextMenuSeparator() );
 
@@ -2317,6 +2327,8 @@ namespace NeoAxis.Editor
 					resultObjectsToDelete.Add( referenceItem );
 			}
 
+			//!!!!!игнорить выделенные-вложенные
+
 			if( resultObjectsToDelete.Count == 0 )
 				return false;
 
@@ -2325,8 +2337,6 @@ namespace NeoAxis.Editor
 
 		public override bool TryDeleteObjects()
 		{
-			//!!!!!игнорить выделенные-вложенные. где еще так
-
 			if( !CanDeleteObjects( out List<object> objectsToDelete ) )
 				return false;
 
@@ -2442,6 +2452,9 @@ namespace NeoAxis.Editor
 					}
 				}
 			}
+
+			//remove children which inside selected parents
+			resultObjectsToClone = ComponentUtility.GetComponentsWithoutChildren( resultObjectsToClone );
 
 			if( resultObjectsToClone.Count == 0 )
 				return false;

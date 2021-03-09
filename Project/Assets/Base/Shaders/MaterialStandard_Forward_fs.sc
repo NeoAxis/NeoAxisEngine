@@ -1,4 +1,4 @@
-$input v_texCoord01, v_worldPosition, v_worldNormal, v_depth, v_tangent, v_bitangent, v_fogFactor, v_color0, v_eyeTangentSpace, v_normalTangentSpace, v_position, v_previousPosition, v_texCoord23, v_colorParameter
+$input v_texCoord01, v_worldPosition, v_worldNormal, v_depth, v_tangent, v_bitangent, v_fogFactor, v_color0, v_eyeTangentSpace, v_normalTangentSpace, v_position, v_previousPosition, v_texCoord23, v_colorParameter, v_lodValueVisibilityDistanceReceiveDecals
 
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "Common.sh"
@@ -25,8 +25,8 @@ SAMPLERCUBE(s_environmentTextureIBL2, 5);
 
 uniform mat3 u_environmentTexture1Rotation;
 uniform mat3 u_environmentTexture2Rotation;
-uniform vec4 /*vec3*/ u_environmentTexture1Multiplier;
-uniform vec4 /*vec3*/ u_environmentTexture2Multiplier;
+uniform vec4 u_environmentTexture1MultiplierAndAffect;
+uniform vec4 u_environmentTexture2MultiplierAndAffect;
 uniform vec4 u_environmentBlendingFactor;//.x. factor of the environment1 for reflection probes blending.
 
 SAMPLER2D(s_brdfLUT, 6);
@@ -81,16 +81,14 @@ SAMPLER2D(s_brdfLUT, 6);
 
 void main()
 {
-	bool isLayer = u_renderOperationData[3].z != 0.0;
-	
+	//lod
+	float lodValue = v_lodValueVisibilityDistanceReceiveDecals.x;
 	#if defined(BLEND_MODE_OPAQUE) || defined(BLEND_MODE_MASKED)
-		smoothLOD(getFragCoord(), u_renderOperationData[2].w);
-	#endif
-	#if defined(BLEND_MODE_TRANSPARENT) || defined(BLEND_MODE_ADD)
-	if(isLayer)
-		smoothLOD(getFragCoord(), u_renderOperationData[2].w);
+		smoothLOD(getFragCoord(), lodValue);
 	#endif
 
+	bool isLayer = u_renderOperationData[3].z != 0.0;
+	
 	//get material data
 	vec4 materialStandardFragment[MATERIAL_STANDARD_FRAGMENT_SIZE];
 	getMaterialData(s_materials, u_renderOperationData, materialStandardFragment);	
@@ -107,7 +105,9 @@ void main()
 	//displacement
 	vec2 displacementOffset = vec2_splat(0);
 #if defined(DISPLACEMENT_CODE_BODY) && defined(DISPLACEMENT)
-	displacementOffset = getParallaxOcclusionMappingOffset(v_texCoord01.xy, v_eyeTangentSpace, v_normalTangentSpace, u_materialDisplacementScale);
+	BRANCH
+	if(u_displacementScale != 0.0)
+		displacementOffset = getParallaxOcclusionMappingOffset(v_texCoord01.xy, v_eyeTangentSpace, v_normalTangentSpace, u_materialDisplacementScale * u_displacementScale, u_displacementMaxSteps);
 #endif //DISPLACEMENT_CODE_BODY
 	
 	//lightWorldDirection
@@ -197,24 +197,38 @@ void main()
 	vec2 c_texCoord0 = v_texCoord01.xy - displacementOffset;
 	vec2 c_texCoord1 = v_texCoord01.zw - displacementOffset;
 	vec2 c_texCoord2 = v_texCoord23.xy - displacementOffset;
-	vec2 c_texCoord3 = v_texCoord23.zw - displacementOffset;
-	vec2 c_unwrappedUV = getUnwrappedUV(c_texCoord0, c_texCoord1, c_texCoord2, c_texCoord3, u_renderOperationData[3].x);
+	//vec2 c_texCoord3 = v_texCoord23.zw - displacementOffset;
+	vec2 c_unwrappedUV = getUnwrappedUV(c_texCoord0, c_texCoord1, c_texCoord2/*, c_texCoord3*/, u_renderOperationData[3].x);
 	vec4 c_color0 = v_color0;
 #ifdef FRAGMENT_CODE_BODY
+	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(_sampler, _uv, u_removeTextureTiling)
 	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2D(_sampler, _uv)
 	FRAGMENT_CODE_BODY
+	#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
 	#undef CODE_BODY_TEXTURE2D
 #endif
 
 	//apply color parameter
+
 	baseColor *= v_colorParameter.xyz;
 	if(u_materialUseVertexColor != 0.0)
 		baseColor *= v_color0.xyz;
 	baseColor = max(baseColor, vec3_splat(0));
+	
 	opacity *= v_colorParameter.w;
 	if(u_materialUseVertexColor != 0.0)
 		opacity *= v_color0.w;
 	opacity = saturate(opacity);
+	
+	sheenColor *= v_colorParameter.xyz;
+	if(u_materialUseVertexColor != 0.0)
+		sheenColor *= v_color0.xyz;
+	sheenColor = max(sheenColor, vec3_splat(0));
+	
+	subsurfaceColor *= v_colorParameter.xyz;
+	if(u_materialUseVertexColor != 0.0)
+		subsurfaceColor *= v_color0.xyz;
+	subsurfaceColor = max(subsurfaceColor, vec3_splat(0));	
 
 	//opacity dithering
 #ifdef OPACITY_DITHERING
@@ -298,11 +312,11 @@ void main()
 			#else				
 				EnvironmentTextureData data1;
 				data1.rotation = u_environmentTexture1Rotation;
-				data1.multiplier = u_environmentTexture1Multiplier.xyz;
+				data1.multiplierAndAffect = u_environmentTexture1MultiplierAndAffect;
 				
 				EnvironmentTextureData data2;
 				data2.rotation = u_environmentTexture2Rotation;
-				data2.multiplier = u_environmentTexture2Multiplier.xyz;
+				data2.multiplierAndAffect = u_environmentTexture2MultiplierAndAffect;
 				
 				vec3 envColor1 = iblEnvironment_SpecularSM(vec3_splat(0), 0.0, s_environmentTexture1, data1, lightColor);
 				vec3 envColor2 = iblEnvironment_SpecularSM(vec3_splat(0), 0.0, s_environmentTexture2, data2, lightColor);
@@ -315,16 +329,16 @@ void main()
 
 		#elif SHADING_MODEL_SIMPLE
 			//Simple model
-			resultColor.rgb = baseColor * lightColor;			
+			resultColor.rgb = baseColor * lightColor;
 		#else
 			//PBR
 
 			MaterialInputs material;
 
-			material.baseColor        = vec4(baseColor, 0.0);
-			material.roughness        = roughness;
-			material.metallic         = metallic;
-			material.reflectance      = reflectance;
+			material.baseColor = vec4(baseColor, 0.0);
+			material.roughness = roughness;
+			material.metallic = metallic;
+			material.reflectance = reflectance;
 			material.ambientOcclusion = ambientOcclusion;
 			//material.emissive         = vec4(emissive, 0.0);
 
@@ -343,11 +357,7 @@ void main()
 
 			#if defined(SHADING_MODEL_CLOTH)
 				material.sheenColor = sheenColor;
-
-				#if defined(MATERIAL_HAS_SUBSURFACE_COLOR)
-					material.subsurfaceColor = subsurfaceColor;
-				#endif
-
+				material.subsurfaceColor = subsurfaceColor;
 			#endif
 
 			setupPBRFilamentParams(material, tangent, bitangent, normal, inputWorldNormal, toLight, toCamera, gl_FrontFacing);
@@ -361,15 +371,15 @@ void main()
 				
 				EnvironmentTextureData data1;
 				data1.rotation = u_environmentTexture1Rotation;
-				data1.multiplier = u_environmentTexture1Multiplier.xyz;
+				data1.multiplierAndAffect = u_environmentTexture1MultiplierAndAffect;
 				
 				EnvironmentTextureData data2;
 				data2.rotation = u_environmentTexture2Rotation;
-				data2.multiplier = u_environmentTexture2Multiplier.xyz;
+				data2.multiplierAndAffect = u_environmentTexture2MultiplierAndAffect;
 
-				vec3 color1 = iblDiffuse(material, pixel, s_environmentTextureIBL1, data1, s_environmentTexture1, data1) + 
+				vec3 color1 = iblDiffuse(material, pixel, s_environmentTextureIBL1, data1, s_environmentTexture1, data1, true) + 
 					iblSpecular(material, pixel, vec3_splat(0), 0.0, s_environmentTexture1, data1);
-				vec3 color2 = iblDiffuse(material, pixel, s_environmentTextureIBL2, data2, s_environmentTexture2, data2) + 
+				vec3 color2 = iblDiffuse(material, pixel, s_environmentTextureIBL2, data2, s_environmentTexture2, data2, true) + 
 					iblSpecular(material, pixel, vec3_splat(0), 0.0, s_environmentTexture2, data2);
 			
 				//vec3 color1 = iblDiffuse(material, pixel, s_environmentTextureIBL1, s_environmentTexture1) +
@@ -415,10 +425,16 @@ void main()
 	#ifdef BLEND_MODE_TRANSPARENT
 		resultColor.a = opacity;
 	#endif
+	
+	//lod
+	//#if defined(BLEND_MODE_OPAQUE) || defined(BLEND_MODE_MASKED)
+	//	smoothLOD(getFragCoord(), lodValue);
+	//#endif
 	#if defined(BLEND_MODE_TRANSPARENT) || defined(BLEND_MODE_ADD)
-		if(!isLayer)
+		if(isLayer)
+			smoothLOD(getFragCoord(), lodValue);
+		else
 		{
-			float lodValue = u_renderOperationData[2].w;
 			if(lodValue != 0.0)
 			{
 				if(lodValue > 0.0)
@@ -429,6 +445,16 @@ void main()
 		}
 	#endif
 
+	//fading by visibility distance
+	float visibilityDistance = v_lodValueVisibilityDistanceReceiveDecals.y;
+	float visibilityDistanceFactor = getVisibilityDistanceFactor(visibilityDistance, cameraDistance);
+	#if defined(BLEND_MODE_OPAQUE) || defined(BLEND_MODE_MASKED)
+		smoothLOD(getFragCoord(), 1.0f - visibilityDistanceFactor);
+	#endif
+	#if defined(BLEND_MODE_TRANSPARENT) || defined(BLEND_MODE_ADD)	
+		resultColor.a *= visibilityDistanceFactor;
+	#endif
+	
 /*
 	//_MaterialBlend mask
 	#if defined(USAGEMODE_MATERIALBLENDFIRST) || defined(USAGEMODE_MATERIALBLENDNOTFIRST)

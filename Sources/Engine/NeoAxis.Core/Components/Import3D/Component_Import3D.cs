@@ -295,6 +295,31 @@ namespace NeoAxis
 					settings.updateMeshes = reimportSettings.UpdateMeshes;
 					settings.updateObjectsInSpace = reimportSettings.UpdateObjectsInSpace;
 
+					//save binding of materials settings
+					if( !settings.updateMaterials )
+					{
+						var c = GetComponent( "Mesh" );
+						if( c != null )
+						{
+							foreach( var geometry in c.GetComponents<Component_MeshGeometry>( checkChildren: true ) )
+							{
+								var key = geometry.GetPathFromRoot();
+								if( !string.IsNullOrEmpty( key ) && geometry.Material.ReferenceSpecified )
+									settings.meshGeometryMaterialsToRestore[ key ] = geometry.Material.GetByReference;
+							}
+						}
+						c = GetComponent( "Meshes" );
+						if( c != null )
+						{
+							foreach( var geometry in c.GetComponents<Component_MeshGeometry>( checkChildren: true ) )
+							{
+								var key = geometry.GetPathFromRoot();
+								if( !string.IsNullOrEmpty( key ) && geometry.Material.ReferenceSpecified )
+									settings.meshGeometryMaterialsToRestore[ key ] = geometry.Material.GetByReference;
+							}
+						}
+					}
+
 					//remove old objects
 					if( settings.updateObjectsInSpace )
 					{
@@ -390,6 +415,21 @@ namespace NeoAxis
 							}
 						}
 					}
+
+					//restore materials of mesh geometries
+					if( !settings.updateMaterials )
+					{
+						foreach( var item in settings.meshGeometryMaterialsToRestore )
+						{
+							var key = item.Key;
+							var value = item.Value;
+
+							var c = GetComponentByPath( key ) as Component_MeshGeometry;
+							if( c != null )
+								c.Material = new Reference<Component_Material>( null, value );
+						}
+					}
+
 				}
 				finally
 				{

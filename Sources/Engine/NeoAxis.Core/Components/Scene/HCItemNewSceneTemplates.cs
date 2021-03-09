@@ -37,8 +37,7 @@ namespace NeoAxis.Editor
 			contentBrowser1.Options.ListMode = ContentBrowser.ListModeEnum.Tiles;
 			contentBrowser1.UseSelectedTreeNodeAsRootForList = false;
 			contentBrowser1.Options.Breadcrumb = false;
-			contentBrowser1.Options.TileImageSize = 100;
-			//contentBrowser1.Options.TileImageSize = 128;
+			contentBrowser1.Options.TileImageSize = 80;
 			contentBrowser1.ShowToolBar = false;
 			contentBrowser1.ItemAfterSelect += Browser_ItemAfterSelect;
 			userControl.Controls.Add( this.contentBrowser1 );

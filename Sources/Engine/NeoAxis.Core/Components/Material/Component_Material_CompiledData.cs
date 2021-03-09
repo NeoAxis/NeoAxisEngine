@@ -62,8 +62,9 @@ namespace NeoAxis
 
 			//need to get non referenced values (dynamic)
 			public Component_Material owner;
-			public UsageMode usageMode;
+			public SpecialMode specialMode;
 			public CompileExtensionData extensionData;
+			public BlendModeEnum blendMode;
 
 			public ShaderGenerator.ResultData vertexGeneratedCode;
 			public ShaderGenerator.ResultData displacementGeneratedCode;
@@ -129,10 +130,11 @@ namespace NeoAxis
 
 			/////////////////////////////////////
 
-			//!!!!
-			public enum UsageMode
+			public enum SpecialMode
 			{
 				Usual,
+				PaintLayerMasked,
+				PaintLayerTransparent,
 				//MaterialBlendFirst,
 				//MaterialBlendNotFirst,
 			}
@@ -231,9 +233,9 @@ namespace NeoAxis
 				if( !owner.BaseColor.ReferenceSpecified )
 					dynamicParametersUniformToUpdate |= DynamicParametersUniformToUpdate.BaseColor;
 
-				if( owner.BlendMode.Value != BlendModeEnum.Opaque && !owner.Opacity.ReferenceSpecified )
+				if( blendMode != BlendModeEnum.Opaque && !owner.Opacity.ReferenceSpecified )
 					dynamicParametersUniformToUpdate |= DynamicParametersUniformToUpdate.Opacity;
-				if( ( owner.BlendMode.Value == BlendModeEnum.Masked /*|| owner.BlendMode.Value == BlendModeEnum.MaskedLayer*/ ) && !owner.OpacityMaskThreshold.ReferenceSpecified )
+				if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer*/ ) && !owner.OpacityMaskThreshold.ReferenceSpecified )
 					dynamicParametersUniformToUpdate |= DynamicParametersUniformToUpdate.OpacityMaskThreshold;
 				if( !owner.DisplacementScale.ReferenceSpecified )
 					dynamicParametersUniformToUpdate |= DynamicParametersUniformToUpdate.DisplacementScale;
@@ -1024,7 +1026,7 @@ namespace NeoAxis
 				//}
 			}
 
-			public unsafe void BindCurrentFrameData( ViewportRenderingContext context, bool specialShadowCaster, bool setUniforms, bool bindTextures )
+			public unsafe void BindCurrentFrameData( ViewportRenderingContext context, bool specialShadowCaster, bool setUniformsBindTextures )//, bool bindTextures )
 			{
 				CurrentFrameData data;
 				if( specialShadowCaster )
@@ -1032,7 +1034,7 @@ namespace NeoAxis
 				else
 					data = currentFrameData;
 
-				if( setUniforms )
+				if( setUniformsBindTextures )
 				{
 					var uniforms = data.Uniforms;
 					if( uniforms != null )
@@ -1048,10 +1050,12 @@ namespace NeoAxis
 
 					if( data.FallbackUniformContainer != null )
 						context.BindParameterContainer( data.FallbackUniformContainer );
-				}
 
-				if( bindTextures )
-				{
+					//}
+
+					//if( bindTextures )
+					//{
+
 					var textures = data.Textures;
 					if( textures != null )
 					{

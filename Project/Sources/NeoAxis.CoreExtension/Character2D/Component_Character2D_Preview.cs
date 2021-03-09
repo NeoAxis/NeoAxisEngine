@@ -29,6 +29,12 @@ namespace NeoAxis.Editor
 
 				SetCameraByBounds( scene.CalculateTotalBoundsOfObjectsInSpace(), mode2D: true );
 			}
+			else
+			{
+				ViewportControl.AllowCreateRenderWindow = false;
+				ObjectEx.PropertySet( ViewportControl, "Visible", false );
+				//ViewportControl.Visible = false;
+			}
 		}
 
 		protected override void OnViewportUpdateBeforeOutput()

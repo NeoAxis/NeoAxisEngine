@@ -14,9 +14,10 @@ namespace NeoAxis
 	/// <summary>
 	/// A component defines how a surface looks on another geometries. It is looks like a material, but with more features.
 	/// </summary>
-	[ ResourceFileExtension( "surface" )]
+	[ResourceFileExtension( "surface" )]
 	[EditorDocumentWindow( typeof( Component_Surface_DocumentWindow ) )]
 	[EditorPreviewControl( typeof( Component_Surface_PreviewControl ) )]
+	[EditorPreviewImage( typeof( Component_Surface_PreviewImage ) )]
 	public class Component_Surface : Component
 	{
 		//[DefaultValue( null )]

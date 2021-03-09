@@ -135,7 +135,7 @@ namespace NeoAxis
 		//ReturnValue
 		ReferenceField<bool> _returnValue = false;
 		/// <summary>
-		/// Whether the parameter have the return value.
+		/// Whether the parameter has a return value.
 		/// </summary>
 		[DefaultValue( false )]
 		[Serialize]

@@ -29,6 +29,7 @@ namespace NeoAxis
 			bool reflectionEnabled;
 			Plane reflectionPlane;
 			Component_RenderingPipeline renderingPipelineOverride;
+			bool renderSky;
 
 			Quaternion rotation;
 			internal Vector3 up;
@@ -49,13 +50,13 @@ namespace NeoAxis
 
 				Transform t = camera.Transform;
 
-				Init( viewport, /*camera, */frustumCullingTest, camera.AspectRatio, camera.FieldOfView, camera.NearClipPlane, camera.FarClipPlane, t.Position, t.Rotation.GetForward()/* camera.Direction*/, camera.FixedUp, camera.Projection, camera.Height, camera.Exposure, camera.EmissiveFactor, false, new Plane(), camera.RenderingPipelineOverride );
+				Init( viewport, /*camera, */frustumCullingTest, camera.AspectRatio, camera.FieldOfView, camera.NearClipPlane, camera.FarClipPlane, t.Position, t.Rotation.GetForward()/* camera.Direction*/, camera.FixedUp, camera.Projection, camera.Height, camera.Exposure, camera.EmissiveFactor, false, new Plane(), camera.RenderingPipelineOverride, true );
 			}
 
 			public CameraSettingsClass( Viewport viewport, double aspectRatio, Degree fieldOfView, double nearClipDistance, double farClipDistance,
-				Vector3 position, Vector3 direction, Vector3 fixedUp, ProjectionType projection, double height, double exposure, double emissiveFactor, bool reflectionEnabled = false, Plane reflectionPlane = new Plane(), bool frustumCullingTest = false, Component_RenderingPipeline renderingPipelineOverride = null )
+				Vector3 position, Vector3 direction, Vector3 fixedUp, ProjectionType projection, double height, double exposure, double emissiveFactor, bool reflectionEnabled = false, Plane reflectionPlane = new Plane(), bool frustumCullingTest = false, Component_RenderingPipeline renderingPipelineOverride = null, bool renderSky = true )
 			{
-				Init( viewport, /*null, */frustumCullingTest, aspectRatio, fieldOfView, nearClipDistance, farClipDistance, position, direction, fixedUp, projection, height, exposure, emissiveFactor, reflectionEnabled, reflectionPlane, renderingPipelineOverride );
+				Init( viewport, /*null, */frustumCullingTest, aspectRatio, fieldOfView, nearClipDistance, farClipDistance, position, direction, fixedUp, projection, height, exposure, emissiveFactor, reflectionEnabled, reflectionPlane, renderingPipelineOverride, renderSky );
 			}
 
 			//public CameraSettingsClass( Viewport viewport, double aspectRatio, Degree fieldOfView, double nearClipDistance, double farClipDistance,
@@ -74,7 +75,7 @@ namespace NeoAxis
 			//		projection, height, reflectionEnabled, reflectionPlane );
 			//}
 
-			void Init( Viewport viewport, /*Component_Camera sourceCamera, */bool frustumCullingTest, double aspectRatio, Degree fieldOfView, double nearClipDistance, double farClipDistance, Vector3 position, Vector3 direction, Vector3 fixedUp, ProjectionType projection, double height, double exposure, double emissiveFactor, bool reflectionEnabled, Plane reflectionPlane, Component_RenderingPipeline renderingPipelineOverride )
+			void Init( Viewport viewport, /*Component_Camera sourceCamera, */bool frustumCullingTest, double aspectRatio, Degree fieldOfView, double nearClipDistance, double farClipDistance, Vector3 position, Vector3 direction, Vector3 fixedUp, ProjectionType projection, double height, double exposure, double emissiveFactor, bool reflectionEnabled, Plane reflectionPlane, Component_RenderingPipeline renderingPipelineOverride, bool renderSky )
 			{
 				this.viewport = viewport;
 				//this.sourceCamera = sourceCamera;
@@ -108,6 +109,7 @@ namespace NeoAxis
 				this.reflectionEnabled = reflectionEnabled;
 				this.reflectionPlane = reflectionPlane;
 				this.renderingPipelineOverride = renderingPipelineOverride;
+				this.renderSky = renderSky;
 
 				//!!!!!!
 				if( this.reflectionEnabled )
@@ -279,6 +281,11 @@ namespace NeoAxis
 			public Component_RenderingPipeline RenderingPipelineOverride
 			{
 				get { return renderingPipelineOverride; }
+			}
+
+			public bool RenderSky
+			{
+				get { return renderSky; }
 			}
 
 			/// <summary>

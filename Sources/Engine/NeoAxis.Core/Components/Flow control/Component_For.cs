@@ -60,7 +60,7 @@ namespace NeoAxis
 		ReferenceField<int> _lastIndex = 0;
 
 		/// <summary>
-		/// The action to perform for each collection element from specified indices range.
+		/// The action to perform for each collection element from the specified indices range.
 		/// </summary>
 		[DefaultValue( null )]
 		public Reference<FlowInput> LoopBody

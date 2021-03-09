@@ -455,7 +455,7 @@ namespace NeoAxis
 
 		//
 
-		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
+		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
 			lastDisableShowingLabelForThisObject = false;
 

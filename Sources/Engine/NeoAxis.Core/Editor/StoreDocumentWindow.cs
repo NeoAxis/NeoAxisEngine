@@ -14,9 +14,12 @@ namespace NeoAxis.Editor
 	/// <summary>
 	/// Represents the Store Window.
 	/// </summary>
+	[RestoreDockWindowAfterEditorReload]
 	public partial class StoreDocumentWindow : DocumentWindowWithViewport
 	{
-		const string homeURL = "https://www.neoaxis.com/store/contents";
+		public const string homeURL = "https://store.neoaxis.com";
+		public const string homeURLBasicContent = "https://store.neoaxis.com/product-category/basic-content/";
+		readonly bool toolbarAutoHide = false;
 
 		//UIControl storeControl;
 		UIWebBrowser browser;
@@ -25,7 +28,7 @@ namespace NeoAxis.Editor
 
 		volatile bool addressWasChanged;
 
-		volatile string needOpenPackage;
+		volatile string needDownloadPackage;
 
 		//
 
@@ -48,6 +51,9 @@ namespace NeoAxis.Editor
 			UpdateControls();
 		}
 
+		[Browsable( false )]
+		public string StartURL { get; set; } = homeURL;
+
 		protected override void ViewportControl_ViewportCreated( EngineViewportControl sender )
 		{
 			base.ViewportControl_ViewportCreated( sender );
@@ -62,7 +68,7 @@ namespace NeoAxis.Editor
 			//}
 
 			browser = uiContainer.CreateComponent<UIWebBrowser>( enabled: false );
-			browser.StartURL = homeURL;
+			browser.StartURL = StartURL;
 			browser.Enabled = true;
 
 			browser.AddressChanged += Browser_AddressChanged;
@@ -87,28 +93,35 @@ namespace NeoAxis.Editor
 
 		void UpdateToolBarVisibility()
 		{
-			var coordinates = panelToolbar.PointToClient( Cursor.Position );
-
-			Rectangle r = new Rectangle( 0, 0, panelToolbar.Size.Width, 0 );
-			var mustVisible = r.GetPointDistance( new Vector2( coordinates.X, coordinates.Y ) ) < 10;
-
-			if( panelToolbar.Visible )
+			if( toolbarAutoHide )
 			{
-				Rectangle r2 = new Rectangle( 0, 0, panelToolbar.Size.Width, panelToolbar.Size.Height );
-				if( r2.Contains( new Vector2( coordinates.X, coordinates.Y ) ) )
+				var coordinates = panelToolbar.PointToClient( Cursor.Position );
+
+				Rectangle r = new Rectangle( 0, 0, panelToolbar.Size.Width, 0 );
+				var mustVisible = r.GetPointDistance( new Vector2( coordinates.X, coordinates.Y ) ) < 10;
+
+				if( panelToolbar.Visible )
+				{
+					Rectangle r2 = new Rectangle( 0, 0, panelToolbar.Size.Width, panelToolbar.Size.Height );
+					if( r2.Contains( new Vector2( coordinates.X, coordinates.Y ) ) )
+						mustVisible = true;
+				}
+
+				if( kryptonTextBoxAddress.Focused )
 					mustVisible = true;
+
+				if( mustVisible )
+					toolbarMustVisibleForTime = Time.Current;
+
+				var visible = toolbarMustVisibleForTime > Time.Current - 2.0;
+
+				if( panelToolbar.Visible != visible )
+					panelToolbar.Visible = visible;
 			}
-
-			if( kryptonTextBoxAddress.Focused )
-				mustVisible = true;
-
-			if( mustVisible )
-				toolbarMustVisibleForTime = Time.Current;
-
-			var visible = toolbarMustVisibleForTime > Time.Current - 2.0;
-
-			if( panelToolbar.Visible != visible )
-				panelToolbar.Visible = visible;
+			else
+			{
+				panelToolbar.Visible = true;
+			}
 		}
 
 		void UpdateControls()
@@ -123,6 +136,20 @@ namespace NeoAxis.Editor
 			}
 
 			kryptonTextBoxAddress.Width = Width - kryptonTextBoxAddress.Location.X - 6;
+
+			if( !toolbarAutoHide )
+			{
+				if( ViewportControl != null )
+				{
+					var parentSize = ViewportControl.Parent.ClientSize;
+
+					ViewportControl.Dock = DockStyle.None;
+					ViewportControl.Location = new Point( 0, panelToolbar.Height );
+					ViewportControl.Size = new Size( parentSize.Width, parentSize.Height - panelToolbar.Height );
+				}
+				//if( browser != null )
+				//	browser.Margin = new UIMeasureValueRectangle( UIMeasure.Pixels, new Rectangle( 0, panelToolbar.Height, 0, 0 ) );
+			}
 		}
 
 		private void timer1_Tick( object sender, EventArgs e )
@@ -141,10 +168,10 @@ namespace NeoAxis.Editor
 					ViewportControl.Cursor = browser.CurrentCursor;
 			}
 
-			if( !string.IsNullOrEmpty( needOpenPackage ) )
+			if( !string.IsNullOrEmpty( needDownloadPackage ) )
 			{
-				EditorAPI.OpenPackages( needOpenPackage );
-				needOpenPackage = null;
+				EditorAPI.OpenPackages( needDownloadPackage, true );
+				needDownloadPackage = null;
 			}
 		}
 
@@ -183,6 +210,11 @@ namespace NeoAxis.Editor
 			browser.LoadURL( homeURL );
 		}
 
+		public void LoadURL( string url )
+		{
+			browser.LoadURL( url );
+		}
+
 		private void Browser_DownloadBefore( UIWebBrowser sender, Xilium.CefGlue.CefDownloadItem downloadItem, string suggestedName, Xilium.CefGlue.CefBeforeDownloadCallback callback )
 		{
 			try
@@ -192,12 +224,7 @@ namespace NeoAxis.Editor
 					var fileBase = Path.GetFileNameWithoutExtension( suggestedName );
 					var strings = fileBase.Split( new char[] { '-' }, StringSplitOptions.RemoveEmptyEntries );
 					if( strings.Length >= 2 )
-					{
-						var packageName = strings[ 0 ].Replace( '_', ' ' );
-
-						needOpenPackage = packageName;
-						//EditorAPI.OpenPackages( packageName );
-					}
+						needDownloadPackage = strings[ 0 ];//.Replace( '_', ' ' );
 				}
 			}
 			catch( Exception e )

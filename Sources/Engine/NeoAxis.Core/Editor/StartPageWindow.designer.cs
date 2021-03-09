@@ -159,12 +159,12 @@
 			// kryptonButtonOpenStore
 			// 
 			this.kryptonButtonOpenStore.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.kryptonButtonOpenStore.Location = new System.Drawing.Point(810, 23);
+			this.kryptonButtonOpenStore.Location = new System.Drawing.Point(780, 23);
 			this.kryptonButtonOpenStore.Margin = new System.Windows.Forms.Padding(4);
 			this.kryptonButtonOpenStore.Name = "kryptonButtonOpenStore";
-			this.kryptonButtonOpenStore.Size = new System.Drawing.Size(117, 32);
+			this.kryptonButtonOpenStore.Size = new System.Drawing.Size(147, 32);
 			this.kryptonButtonOpenStore.TabIndex = 4;
-			this.kryptonButtonOpenStore.Values.Text = "Open Store";
+			this.kryptonButtonOpenStore.Values.Text = "Get Basic Content";// Open Store";
 			this.kryptonButtonOpenStore.Click += new System.EventHandler(this.kryptonButtonOpenStore_Click);
 			// 
 			// kryptonLabel4

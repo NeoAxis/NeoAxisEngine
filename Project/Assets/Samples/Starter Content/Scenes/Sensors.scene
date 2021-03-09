@@ -21,7 +21,7 @@
 		Name = Ambient Light
 		Transform = "-27.7871391969358 -22.3112535611728 24.8527169920668; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 20000
+		Brightness = 50000
 	}
 	.component NeoAxis.Component_RenderingPipeline_Default
 	{
@@ -92,7 +92,7 @@
 				UVTilesPerUnit = 0.333 0.333
 				Material
 				{
-					GetByReference = "Samples\\Starter Content\\Materials\\Concrete 3x3 meters\\Concrete 3x3 meters.material"
+					GetByReference = "Content\\Materials\\Basic Library\\Concrete\\Concrete Floor 01.material"
 				}
 			}
 		}

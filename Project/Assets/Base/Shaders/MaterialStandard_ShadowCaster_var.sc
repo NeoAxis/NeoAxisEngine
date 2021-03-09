@@ -6,15 +6,17 @@ vec4 a_weight : BLENDWEIGHT;
 vec2 a_texcoord0 : TEXCOORD0;
 vec2 a_texcoord1 : TEXCOORD1;
 vec2 a_texcoord2 : TEXCOORD2;
-vec2 a_texcoord3 : TEXCOORD3;
 vec4 a_color0 : COLOR0;
 vec4 i_data0 : TEXCOORD7;
 vec4 i_data1 : TEXCOORD6;
 vec4 i_data2 : TEXCOORD5;
 vec4 i_data3 : TEXCOORD4;
+vec4 i_data4 : TEXCOORD3;
 
 vec4 v_texCoord01 : TEXCOORD0;
 vec2 v_depth : TEXCOORD1;
 vec4 v_color0 : TEXCOORD2;
 vec4 v_texCoord23 : TEXCOORD3;
 vec4 v_colorParameter : TEXCOORD4;
+vec3 v_worldPosition : TEXCOORD5;
+vec4 v_lodValueVisibilityDistanceReceiveDecals : TEXCOORD6;

@@ -193,7 +193,7 @@ namespace NeoAxis
 			//process geometry
 			if( MergeEqualVerticesRemoveInvalidTriangles )
 			{
-				MathAlgorithms.MergeEqualVerticesRemoveInvalidTriangles( sourceVertices, sourceIndices, epsilon, out processedVertices, out processedIndices, out processedTrianglesToSourceIndex );
+				MathAlgorithms.MergeEqualVerticesRemoveInvalidTriangles( sourceVertices, sourceIndices, epsilon, epsilon, out processedVertices, out processedIndices, out processedTrianglesToSourceIndex );
 			}
 			else
 			{

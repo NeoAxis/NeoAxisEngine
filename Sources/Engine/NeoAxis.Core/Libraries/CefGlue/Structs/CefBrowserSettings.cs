@@ -35,6 +35,19 @@
             return _self;
         }
 
+        /// <summary>
+        /// The maximum rate in frames per second (fps) that CefRenderHandler::OnPaint
+        /// will be called for a windowless browser. The actual fps may be lower if
+        /// the browser cannot generate frames at the requested rate. The minimum
+        /// value is 1 and the maximum value is 60 (default 30). This value can also be
+        /// changed dynamically via CefBrowserHost::SetWindowlessFrameRate.
+        /// </summary>
+        public int WindowlessFrameRate
+        {
+            get { return _self->windowless_frame_rate; }
+            set { _self->windowless_frame_rate = value; }
+        }
+
         // The below values map to WebPreferences settings.
 
         #region Font Settings
@@ -147,8 +160,9 @@
         /// <summary>
         /// Controls whether JavaScript can be used to close windows that were not
         /// opened via JavaScript. JavaScript can still be used to close windows that
-        /// were opened via JavaScript. Also configurable using the
-        /// "disable-javascript-close-windows" command-line switch.
+        /// were opened via JavaScript or that have no back/forward history. Also
+        /// configurable using the "disable-javascript-close-windows" command-line
+        /// switch.
         /// </summary>
         public CefState JavaScriptCloseWindows
         {
@@ -186,16 +200,6 @@
         {
             get { return _self->caret_browsing; }
             set { _self->caret_browsing = value; }
-        }
-
-        /// <summary>
-        /// Controls whether the Java plugin will be loaded. Also configurable using
-        /// the "disable-java" command-line switch.
-        /// </summary>
-        public CefState Java
-        {
-            get { return _self->java; }
-            set { _self->java = value; }
         }
 
         /// <summary>
@@ -324,18 +328,6 @@
         }
 
         /// <summary>
-        /// Controls whether content that depends on accelerated compositing can be
-        /// used. Note that accelerated compositing requires hardware support and may
-        /// not work on all systems even when enabled. Also configurable using the
-        /// "disable-accelerated-compositing" command-line switch.
-        /// </summary>
-        public CefState AcceleratedCompositing
-        {
-            get { return _self->accelerated_compositing; }
-            set { _self->accelerated_compositing = value; }
-        }
-
-        /// <summary>
         /// Opaque background color used for the browser before a document is loaded
         /// and when no document color is specified. By default the background color
         /// will be the same as CefSettings.background_color. Only the RGB compontents
@@ -346,6 +338,18 @@
         {
             get { return new CefColor(_self->background_color); }
             set { _self->background_color = value.ToArgb(); }
+        }
+
+        /// <summary>
+        /// Comma delimited ordered list of language codes without any whitespace that
+        /// will be used in the "Accept-Language" HTTP header. May be set globally
+        /// using the CefBrowserSettings.accept_language_list value. If both values are
+        /// empty then "en-US,en" will be used.
+        /// </summary>
+        public string AcceptLanguageList
+        {
+            get { return cef_string_t.ToString(&_self->accept_language_list); }
+            set { cef_string_t.Copy(value, &_self->accept_language_list); }
         }
     }
 }

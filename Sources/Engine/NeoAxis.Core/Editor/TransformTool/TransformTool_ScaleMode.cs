@@ -189,6 +189,16 @@ namespace NeoAxis.Editor
 				return base.OnTryBeginModify();
 			}
 
+			public override void OnUpdateInitialObjectsTransform()
+			{
+				initialObjectsTransform = new TransformOfObject[ Owner.Objects.Count ];
+				for( int n = 0; n < Owner.Objects.Count; n++ )
+				{
+					TransformToolObject obj = Owner.Objects[ n ];
+					initialObjectsTransform[ n ] = new TransformOfObject( obj.Position, obj.Rotation, obj.Scale );
+				}
+			}
+
 			protected override void OnCommitModify()
 			{
 				base.OnCommitModify();

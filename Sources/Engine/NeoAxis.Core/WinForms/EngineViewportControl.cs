@@ -21,7 +21,7 @@ namespace NeoAxis.Widget
 	/// </summary>
 	public partial class EngineViewportControl : EUserControl
 	{
-		public static List<EngineViewportControl> allInstances = new List<EngineViewportControl>();
+		static List<EngineViewportControl> allInstances = new List<EngineViewportControl>();
 
 		//render window and camera
 		internal RenderWindow renderWindow;
@@ -50,6 +50,9 @@ namespace NeoAxis.Widget
 		static Cursor hidedCursor;
 
 		int paintBackgroundCounter;
+
+		[Browsable( false )]
+		public object TransformTool { get; set; }
 
 		/////////////////////////////////////////
 

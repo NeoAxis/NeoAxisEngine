@@ -14,7 +14,8 @@ namespace NeoAxis
 		{
 			Box,
 			Sphere,//Ellipsoid,
-			Cylinder
+			Cylinder,
+			Plane
 		}
 
 		/// <summary>
@@ -99,9 +100,9 @@ namespace NeoAxis
 			}
 		}
 
-		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
+		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
-			base.OnGetRenderSceneData( context, mode );
+			base.OnGetRenderSceneData( context, mode, modeGetObjectsItem );
 
 			if( EnabledInHierarchy && VisibleInHierarchy )
 			{
@@ -129,6 +130,8 @@ namespace NeoAxis
 						item.Transform = new Transform( tr.Position, tr.Rotation, new Vector3( tr.Scale.X, sclYZ, sclYZ ) );
 					}
 					break;
+
+					//!!!!Plane
 				}
 
 				context.FrameData.RenderSceneData.CutVolumes.Add( item );

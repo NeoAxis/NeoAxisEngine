@@ -188,7 +188,90 @@ namespace NeoAxis
 					//!!!!
 
 					default:
-						throw new Exception( $"ImageUtility: SetPixel: Format \"{format}\" is not supported." );
+						throw new Exception( $"ImageUtility: GetPixel: Format \"{format}\" is not supported." );
+						//Log.Fatal( "ImageUtility: SetPixel: Format is not supported." );
+						//break;
+					}
+				}
+
+				return value;
+			}
+
+			public unsafe ColorByte GetPixelByte( Vector2I position )
+			{
+				if( position.X < 0 || position.X >= size.X || position.Y < 0 || position.Y >= size.Y )
+					return ColorByte.Zero;
+
+				ColorByte value = ColorByte.One;
+
+				fixed( byte* pData = data )
+				{
+					switch( format )
+					{
+					//case PixelFormat.Float32RGBA:
+					//	{
+					//		var p = (Vector4F*)pData + position.Y * size.X + position.X;
+					//		value.X = p->X;
+					//		value.Y = p->Y;
+					//		value.Z = p->Z;
+					//		value.W = p->W;
+					//	}
+					//	break;
+
+					//case PixelFormat.Float32RGB:
+					//	{
+					//		var p = (Vector3F*)pData + position.Y * size.X + position.X;
+					//		value.X = p->X;
+					//		value.Y = p->Y;
+					//		value.Z = p->Z;
+					//	}
+					//	break;
+
+					//case PixelFormat.R8G8B8:
+					//	{
+					//		var p = pData + ( position.Y * size.X + position.X ) * 3;
+					//		value.X = (float)p[ 2 ] / 255.0f;
+					//		value.Y = (float)p[ 1 ] / 255.0f;
+					//		value.Z = (float)p[ 0 ] / 255.0f;
+					//	}
+					//	break;
+
+					////!!!!check
+
+					//case PixelFormat.X8R8G8B8:
+					//	{
+					//		var p = pData + ( position.Y * size.X + position.X ) * 4;
+					//		value.X = (float)p[ 2 ] / 255.0f;
+					//		value.Y = (float)p[ 1 ] / 255.0f;
+					//		value.Z = (float)p[ 0 ] / 255.0f;
+					//	}
+					//	break;
+
+					case PixelFormat.A8R8G8B8:
+						{
+							var p = pData + ( position.Y * size.X + position.X ) * 4;
+							value = new ColorByte( p[ 2 ], p[ 1 ], p[ 0 ], p[ 3 ] );
+							//value.W = (float)p[ 3 ] / 255.0f;
+							//value.X = (float)p[ 2 ] / 255.0f;
+							//value.Y = (float)p[ 1 ] / 255.0f;
+							//value.Z = (float)p[ 0 ] / 255.0f;
+						}
+						break;
+
+					//case PixelFormat.L8:
+					//	{
+					//		var p = pData + ( position.Y * size.X + position.X );
+					//		var v = (float)p[ 0 ] / 255.0f;
+					//		value.X = v;
+					//		value.Y = v;
+					//		value.Z = v;
+					//	}
+					//	break;
+
+					//!!!!
+
+					default:
+						throw new Exception( $"ImageUtility: GetPixel: Format \"{format}\" is not supported." );
 						//Log.Fatal( "ImageUtility: SetPixel: Format is not supported." );
 						//break;
 					}
@@ -232,6 +315,56 @@ namespace NeoAxis
 							p[ 2 ] = (byte)MathEx.Clamp( (int)( value.X * 255.0 ), 0, 255 );
 							p[ 1 ] = (byte)MathEx.Clamp( (int)( value.Y * 255.0 ), 0, 255 );
 							p[ 0 ] = (byte)MathEx.Clamp( (int)( value.Z * 255.0 ), 0, 255 );
+						}
+						break;
+
+					default:
+						throw new Exception( $"ImageUtility: SetPixel: Format \"{format}\" is not supported." );
+						//Log.Fatal( "ImageUtility: SetPixel: Format is not supported." );
+						//break;
+					}
+				}
+			}
+
+			public unsafe void SetPixel( Vector2I position, ColorByte value )
+			{
+				if( position.X < 0 || position.X >= size.X || position.Y < 0 || position.Y >= size.Y )
+					return;
+
+				fixed( byte* pData = data )
+				{
+					switch( format )
+					{
+					//case PixelFormat.Float32RGBA:
+					//	{
+					//		var p = (Vector4F*)pData + position.Y * size.X + position.X;
+					//		p->X = value.X;
+					//		p->Y = value.Y;
+					//		p->Z = value.Z;
+					//		p->W = value.W;
+					//	}
+					//	break;
+
+					//case PixelFormat.Float32RGB:
+					//	{
+					//		var p = (Vector3F*)pData + position.Y * size.X + position.X;
+					//		p->X = value.X;
+					//		p->Y = value.Y;
+					//		p->Z = value.Z;
+					//	}
+					//	break;
+
+					case PixelFormat.A8R8G8B8:
+						{
+							var p = pData + ( position.Y * size.X + position.X ) * 4;
+							p[ 3 ] = value.Alpha;
+							p[ 2 ] = value.Red;
+							p[ 1 ] = value.Green;
+							p[ 0 ] = value.Blue;
+							//p[ 3 ] = (byte)MathEx.Clamp( (int)( value.W * 255.0 ), 0, 255 );
+							//p[ 2 ] = (byte)MathEx.Clamp( (int)( value.X * 255.0 ), 0, 255 );
+							//p[ 1 ] = (byte)MathEx.Clamp( (int)( value.Y * 255.0 ), 0, 255 );
+							//p[ 0 ] = (byte)MathEx.Clamp( (int)( value.Z * 255.0 ), 0, 255 );
 						}
 						break;
 

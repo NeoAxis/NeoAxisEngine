@@ -29,7 +29,7 @@ namespace NeoAxis
 		ReferenceField<Component_Image> _sourceImage;
 
 		/// <summary>
-		/// The uv coordinates of the image texture.
+		/// The UV coordinates of the image texture.
 		/// </summary>
 		[DefaultValue( "0 0 1 1" )]
 		[Serialize]

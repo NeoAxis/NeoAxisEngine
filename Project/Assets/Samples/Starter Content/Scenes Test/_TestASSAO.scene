@@ -20,7 +20,7 @@
 		Name = Ambient Light
 		Transform = "-27.7871391969358 37.4683781031502 14.686420383686; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 20000
+		Brightness = 40000
 	}
 	.component NeoAxis.Component_RenderingPipeline_Default
 	{
@@ -162,7 +162,7 @@
 				Dimensions = 10 10
 				Material
 				{
-					GetByReference = "Samples\\Starter Content\\Materials\\Concrete 3x3 meters\\Concrete 3x3 meters.material"
+					GetByReference = "Content\\Materials\\Basic Library\\Concrete\\Concrete Floor 01.material"
 				}
 			}
 		}
@@ -238,7 +238,7 @@
 				UVTilesPerUnit = 0.5 0.5
 				Material
 				{
-					GetByReference = "Samples\\Starter Content\\Materials\\Painted Large Bricks 2x2 meters\\Painted Large Bricks 2x2 meters.material"
+					GetByReference = "Content\\Materials\\Basic Library\\Brick\\Yellow Brick.material"
 				}
 			}
 		}
@@ -287,7 +287,7 @@
 				UVTilesPerUnit = 0.5 0.5
 				Material
 				{
-					GetByReference = "Samples\\Starter Content\\Materials\\Painted Large Bricks 2x2 meters\\Painted Large Bricks 2x2 meters.material"
+					GetByReference = "Content\\Materials\\Basic Library\\Brick\\Yellow Brick.material"
 				}
 			}
 		}

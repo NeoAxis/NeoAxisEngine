@@ -64,9 +64,9 @@ namespace NeoAxis
 			obj._internalRenderSceneIndex = v;
 		}
 
-		public static void PerformGetRenderSceneData( Component_ObjectInSpace obj, ViewportRenderingContext context, GetRenderSceneDataMode mode )
+		public static void PerformGetRenderSceneData( Component_ObjectInSpace obj, ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
-			obj.PerformGetRenderSceneData( context, mode );
+			obj.PerformGetRenderSceneData( context, mode, modeGetObjectsItem );
 		}
 	}
 }

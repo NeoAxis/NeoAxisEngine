@@ -271,6 +271,20 @@ namespace NeoAxis.Editor
 		}
 
 		[Browsable( false )]
+		public Vector3 CameraLookTo
+		{
+			get { return cameraLookTo; }
+			set { cameraLookTo = value; }
+		}
+
+		[Browsable( false )]
+		public double CameraInitialDistance
+		{
+			get { return cameraInitialDistance; }
+			set { cameraInitialDistance = value; }
+		}
+
+		[Browsable( false )]
 		public bool CameraRotationMode
 		{
 			get { return cameraRotationMode; }
@@ -311,6 +325,8 @@ namespace NeoAxis.Editor
 					scene.BackgroundColor = new ColorValue( 40.0 / 255 * c, 40.0 / 255 * c, 40.0 / 255 * c );
 				else
 					scene.BackgroundColor = new ColorValue( 22.0 / 255 * c, 44.0 / 255 * c, 66.0 / 255 * c );
+				scene.BackgroundColorAffectLighting = 1;
+				//scene.BackgroundColorEnvironmentOverride = new ColorValue( 0.5, 0.5, 0.5 );
 				scene.BackgroundColorEnvironmentOverride = new ColorValue( 0.8, 0.8, 0.8 );
 
 				var backgroundEffects = pipeline.CreateComponent<Component>();

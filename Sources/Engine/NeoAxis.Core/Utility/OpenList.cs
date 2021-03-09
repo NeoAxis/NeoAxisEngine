@@ -40,6 +40,13 @@ namespace NeoAxis
 			Add( ref item );
 		}
 
+		public void AddRange( IEnumerable<T> collection )
+		{
+			//!!!!slowly
+			foreach( var item in collection )
+				Add( item );
+		}
+
 		public T[] ToArray()
 		{
 			var result = new T[ Count ];

@@ -17,6 +17,10 @@ namespace NeoAxis.Addon.Builder3D
 	/// </summary>
 	public class Assembly_Builder3D : AssemblyUtility.AssemblyRegistration
 	{
+		static EditorRibbonDefaultConfiguration.Group ribbonGroupForMeshModifiers;
+
+		//
+
 		public override void OnRegister()
 		{
 			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
@@ -556,7 +560,7 @@ namespace NeoAxis.Addon.Builder3D
 				EditorActions.Register( a );
 			}
 
-			foreach( var type in GetAllMeshModifiers() )
+			foreach( var type in GetAllMeshModifiers( Assembly.GetExecutingAssembly() ) )
 				RegisterNewMeshModifier( type );
 
 			//Add Paint Layer
@@ -576,18 +580,19 @@ namespace NeoAxis.Addon.Builder3D
 
 		private static void AssemblyUtility_RegisterAssemblyEvent( Assembly assembly )
 		{
-			//add new mesh modifiers
-			foreach( var netType in assembly.GetTypes() )
+			//Core assembly already registered
+			if( assembly == Assembly.GetExecutingAssembly() )
+				return;
+
+			foreach( var type in GetAllMeshModifiers( assembly ) )
 			{
-				try
+				RegisterNewMeshModifier( type );
+
+				if( ribbonGroupForMeshModifiers != null )
 				{
-					if( typeof( Component_MeshModifier ).IsAssignableFrom( netType ) && !netType.IsAbstract )
-					{
-						var type = MetadataManager.GetTypeOfNetType( netType );
-						RegisterNewMeshModifier( type );
-					}
+					var name = type.GetUserFriendlyNameForInstance();
+					ribbonGroupForMeshModifiers.AddAction( "Builder 3D New Mesh Modifier " + name );
 				}
-				catch { }
 			}
 		}
 
@@ -747,7 +752,9 @@ namespace NeoAxis.Addon.Builder3D
 				groupDevData.DropDownGroupImageLarge = NeoAxis.Properties.Resources.Modify_32;
 				groupDevData.DropDownGroupDescription = "Add Mesh Modifier\nAdds a mesh modifier to the object.";
 
-				foreach( var type in GetAllMeshModifiers() )
+				ribbonGroupForMeshModifiers = groupDevData;
+
+				foreach( var type in GetAllMeshModifiers( Assembly.GetExecutingAssembly() ) )
 				{
 					var name = type.GetUserFriendlyNameForInstance();
 					groupDevData.AddAction( "Builder 3D New Mesh Modifier " + name );
@@ -839,14 +846,22 @@ namespace NeoAxis.Addon.Builder3D
 			EditorActions.Register( a );
 		}
 
-		static List<Metadata.TypeInfo> GetAllMeshModifiers()
+		static List<Metadata.TypeInfo> GetAllMeshModifiers( Assembly assembly )
 		{
 			var result = new List<Metadata.TypeInfo>();
 
-			foreach( var type in MetadataManager.NetTypes )
+			foreach( var netType in assembly.GetTypes() )
 			{
-				if( MetadataManager.GetTypeOfNetType( typeof( Component_MeshModifier ) ).IsAssignableFrom( type ) && !type.Abstract )
-					result.Add( type );
+				try
+				{
+					if( typeof( Component_MeshModifier ).IsAssignableFrom( netType ) && !netType.IsAbstract )
+					{
+						var type = MetadataManager.GetTypeOfNetType( netType );
+						if( type != null )
+							result.Add( type );
+					}
+				}
+				catch { }
 			}
 
 			CollectionUtility.InsertionSort( result, delegate ( Metadata.TypeInfo type1, Metadata.TypeInfo type2 )

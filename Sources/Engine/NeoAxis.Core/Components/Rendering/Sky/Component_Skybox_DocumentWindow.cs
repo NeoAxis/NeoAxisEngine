@@ -75,7 +75,7 @@ namespace NeoAxis.Editor
 				instanceInScene.Cubemap = Skybox.Cubemap;
 				instanceInScene.Rotation = Skybox.Rotation;
 				instanceInScene.Multiplier = Skybox.Multiplier;
-				instanceInScene.MultiplierReflection = Skybox.MultiplierReflection;
+				instanceInScene.LightingMultiplier = Skybox.LightingMultiplier;
 				instanceInScene.AlwaysUseProcessedCubemap = Skybox.AlwaysUseProcessedCubemap;
 				instanceInScene.AllowProcessEnvironmentCubemap = Skybox.AllowProcessEnvironmentCubemap;
 

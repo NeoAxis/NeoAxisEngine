@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -67,9 +67,6 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Components\Camera\Component_Camera_PreviewControl.resx">
-      <DependentUpon>Component_Camera_PreviewControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Components\FlowGraph\Component_FlowGraph_DocumentWindow.resx">
       <DependentUpon>Component_FlowGraph_DocumentWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -82,9 +79,6 @@
     <EmbeddedResource Include="Components\Material\Component_Material_DocumentWindow.resx">
       <DependentUpon>Component_Material_DocumentWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Components\ObjectInSpace\Component_ObjectInSpace_PreviewControl.resx">
-      <DependentUpon>Component_ObjectInSpace_PreviewControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Components\ParticleSystem\Component_ParticleSystem_PreviewControl.resx">
       <DependentUpon>Component_ParticleSystem_PreviewControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -93,9 +87,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Components\Sound\Component_Sound_PreviewControl.resx">
       <DependentUpon>Component_Sound_PreviewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Components\Sprite\Component_Sprite_PreviewControl.resx">
-      <DependentUpon>Component_Sprite_PreviewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Components\Surface\Component_Surface_DocumentWindow.resx">
       <DependentUpon>Component_Surface_DocumentWindow.cs</DependentUpon>
@@ -264,14 +255,26 @@
     <Compile Include="DebugInfo\DebugInfoPage_RenderStatistics.cs" />
     <Compile Include="DebugInfo\DebugInfoPage_Scene.cs" />
     <Compile Include="DebugInfo\DebugInfoPage_Sound.cs" />
-    <Compile Include="Editor\BackstageMenu.cs" />
+    <Compile Include="Editor\BackstageMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\BackstageMenu.designer.cs" />
-    <Compile Include="Editor\BordersContainer.cs" />
-    <Compile Include="Editor\CanvasBasedEditor.cs" />
-    <Compile Include="Editor\CanvasBasedPreview.cs" />
-    <Compile Include="Editor\ComponentTypeSettingsForm.cs" />
+    <Compile Include="Editor\BordersContainer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Editor\CanvasBasedEditor.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Editor\CanvasBasedPreview.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Editor\ComponentTypeSettingsForm.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\ComponentTypeSettingsForm.Designer.cs" />
-    <Compile Include="Editor\ContentBrowser.cs" />
+    <Compile Include="Editor\ContentBrowser.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\ContentBrowser.designer.cs" />
     <Compile Include="Editor\ContentBrowserFilteringMode.cs" />
     <Compile Include="Editor\ContentBrowserImageHelper.cs" />
@@ -279,21 +282,33 @@
     <Compile Include="Editor\ContentBrowserItems_Solution.cs" />
     <Compile Include="Editor\ContentBrowserListViewModes.cs" />
     <Compile Include="Editor\ContentBrowserOptions.cs" />
-    <Compile Include="Editor\ContentBrowserOptionsForm.cs" />
+    <Compile Include="Editor\ContentBrowserOptionsForm.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\ContentBrowserOptionsForm.Designer.cs" />
-    <Compile Include="Editor\ContentBrowserSearchForm.cs" />
+    <Compile Include="Editor\ContentBrowserSearchForm.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\ContentBrowserSearchForm.Designer.cs" />
     <Compile Include="Editor\ContentBrowserUtility.cs" />
-    <Compile Include="Editor\DebugInfoWindow.cs" />
+    <Compile Include="Editor\DebugInfoWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\DebugInfoWindow.designer.cs" />
-    <Compile Include="Editor\DockWindow.cs" />
+    <Compile Include="Editor\DockWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\DockWindow.designer.cs" />
     <Compile Include="Editor\DockWindowEventArgs.cs" />
     <Compile Include="Editor\DocumentationLinksManager.cs" />
     <Compile Include="Editor\DocumentInstance.cs" />
-    <Compile Include="Editor\DocumentWindow.cs" />
+    <Compile Include="Editor\DocumentWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\DocumentWindow.designer.cs" />
-    <Compile Include="Editor\DocumentWindowWithViewport.cs" />
+    <Compile Include="Editor\DocumentWindowWithViewport.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\DocumentWindowWithViewport.designer.cs" />
     <Compile Include="Editor\EditorActions.cs" />
     <Compile Include="Editor\EditorAPI.cs" />
@@ -303,10 +318,16 @@
     <Compile Include="Editor\EditorContextMenu.cs" />
     <Compile Include="Editor\EditorContextMenuWinForms.cs" />
     <Compile Include="Editor\EditorFavorites.cs" />
-    <Compile Include="Editor\EditorForm.cs" />
+    <Compile Include="Editor\EditorForm.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\EditorForm.designer.cs" />
-    <Compile Include="Editor\EditorForm.QAT.cs" />
-    <Compile Include="Editor\EditorForm.Ribbon.cs" />
+    <Compile Include="Editor\EditorForm.QAT.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Editor\EditorForm.Ribbon.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\EditorImportResource.cs" />
     <Compile Include="Editor\EditorMessageBox.cs" />
     <Compile Include="Editor\EditorResourcesCache.cs" />
@@ -314,112 +335,200 @@
     <Compile Include="Editor\EditorSettingsSerialization.cs" />
     <Compile Include="Editor\EditorStandardActions.cs" />
     <Compile Include="Editor\EditorUtility.cs" />
-    <Compile Include="Editor\EngineForm.cs" />
+    <Compile Include="Editor\EngineForm.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\EngineForm.Designer.cs" />
     <Compile Include="Editor\EngineLabel.cs" />
-    <Compile Include="Editor\EngineListView.cs" />
-    <Compile Include="Editor\EngineProgressBar.cs" />
-    <Compile Include="Editor\EngineScrollBar.cs" />
+    <Compile Include="Editor\EngineListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Editor\EngineProgressBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Editor\EngineScrollBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\EngineTextBox.cs" />
-    <Compile Include="Editor\EngineToolStrip.cs" />
+    <Compile Include="Editor\EngineToolStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\ExtensionMethods.cs" />
-    <Compile Include="Editor\FolderBrowserDialogEx.cs" />
-    <Compile Include="Editor\ForeachDocumentWindowContainer.cs" />
+    <Compile Include="Editor\FolderBrowserDialogEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Editor\ForeachDocumentWindowContainer.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\ForeachDocumentWindowContainer.designer.cs" />
     <Compile Include="Editor\IDocumentWindow.cs" />
     <Compile Include="Editor\ImageCollection.cs" />
-    <Compile Include="Editor\ImportWindow.cs" />
+    <Compile Include="Editor\ImportWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\ImportWindow.Designer.cs" />
     <Compile Include="Editor\KryptonConfigGenerator.cs" />
     <Compile Include="Editor\KryptonRibbonGroupListBox.cs" />
     <Compile Include="Editor\KryptonRibbonGroupListBox.Designer.cs" />
-    <Compile Include="Editor\KryptonRibbonGroupListBoxControl.cs" />
+    <Compile Include="Editor\KryptonRibbonGroupListBoxControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\KryptonRibbonGroupListBoxControl.Designer.cs" />
     <Compile Include="Editor\KryptonRibbonGroupSlider.cs" />
     <Compile Include="Editor\KryptonRibbonGroupSlider.Designer.cs" />
-    <Compile Include="Editor\KryptonRibbonGroupSliderControl.cs" />
+    <Compile Include="Editor\KryptonRibbonGroupSliderControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\KryptonRibbonGroupSliderControl.Designer.cs" />
-    <Compile Include="Editor\LabelExtended.cs" />
+    <Compile Include="Editor\LabelExtended.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\LowProfileDockableWorkspace.cs" />
     <Compile Include="Editor\MessageLogOptions.cs" />
-    <Compile Include="Editor\MessageLogOptionsForm.cs" />
+    <Compile Include="Editor\MessageLogOptionsForm.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\MessageLogOptionsForm.Designer.cs" />
-    <Compile Include="Editor\MessageLogWindow.cs" />
+    <Compile Include="Editor\MessageLogWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\MessageLogWindow.designer.cs" />
-    <Compile Include="Editor\NewObjectCell.cs" />
+    <Compile Include="Editor\NewObjectCell.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\NewObjectCell.designer.cs" />
     <Compile Include="Editor\NewObjectSettings.cs" />
-    <Compile Include="Editor\NewObjectSettingsCell.cs" />
+    <Compile Include="Editor\NewObjectSettingsCell.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\NewObjectSettingsCell.designer.cs" />
-    <Compile Include="Editor\NewObjectWindow.cs" />
+    <Compile Include="Editor\NewObjectWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\NewObjectWindow.Designer.cs" />
     <Compile Include="Editor\ObjectCreationMode.cs" />
-    <Compile Include="Editor\ObjectSettingsHeader.cs" />
+    <Compile Include="Editor\ObjectSettingsHeader.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\ObjectSettingsHeader.designer.cs" />
-    <Compile Include="Editor\ObjectSettingsHeader_ObjectInfo.cs" />
+    <Compile Include="Editor\ObjectSettingsHeader_ObjectInfo.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\ObjectSettingsHeader_ObjectInfo.designer.cs" />
-    <Compile Include="Editor\ObjectSettingsWindow.cs" />
+    <Compile Include="Editor\ObjectSettingsWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\ObjectSettingsWindow.designer.cs" />
-    <Compile Include="Editor\ObjectsWindow.cs" />
+    <Compile Include="Editor\ObjectsWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\ObjectsWindow.designer.cs" />
-    <Compile Include="Editor\OKCancelTextBoxForm.cs" />
+    <Compile Include="Editor\OKCancelTextBoxForm.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\OKCancelTextBoxForm.designer.cs" />
-    <Compile Include="Editor\OutputWindow.cs" />
+    <Compile Include="Editor\OutputWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\OutputWindow.designer.cs" />
     <Compile Include="Editor\PackageManager.cs" />
-    <Compile Include="Editor\PackagesWindow.cs" />
+    <Compile Include="Editor\PackagesWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\PackagesWindow.designer.cs" />
-    <Compile Include="Editor\PreviewControl.cs" />
+    <Compile Include="Editor\PreviewControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\PreviewControl.designer.cs" />
-    <Compile Include="Editor\PreviewControlWithViewport.cs" />
+    <Compile Include="Editor\PreviewControlWithViewport.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\PreviewControlWithViewport.designer.cs" />
     <Compile Include="Editor\PreviewImageGenerator.cs" />
     <Compile Include="Editor\PreviewImagesManager.cs" />
-    <Compile Include="Editor\PreviewWindow.cs" />
+    <Compile Include="Editor\PreviewWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\PreviewWindow.designer.cs" />
-    <Compile Include="Editor\ResourcesWindow.cs" />
+    <Compile Include="Editor\ResourcesWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\ResourcesWindow.designer.cs" />
     <Compile Include="Editor\ResourcesWindowItems.cs" />
     <Compile Include="Editor\RunSimulation.cs" />
-    <Compile Include="Editor\SelectTypeWindow.cs" />
+    <Compile Include="Editor\SelectTypeWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\SelectTypeWindow.Designer.cs" />
-    <Compile Include="Editor\SetReferenceWindow.cs" />
+    <Compile Include="Editor\SetReferenceWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\SetReferenceWindow.Designer.cs" />
-    <Compile Include="Editor\SettingsCell.cs" />
+    <Compile Include="Editor\SettingsCell.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\SettingsCell.designer.cs" />
-    <Compile Include="Editor\SettingsCellProcedureUI.cs" />
+    <Compile Include="Editor\SettingsCellProcedureUI.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\SettingsCellProcedureUI.designer.cs" />
-    <Compile Include="Editor\SettingsCell_Properties.cs" />
+    <Compile Include="Editor\SettingsCell_Properties.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\SettingsCell_Properties.designer.cs" />
-    <Compile Include="Editor\SettingsHeader.cs" />
+    <Compile Include="Editor\SettingsHeader.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\SettingsHeader.designer.cs" />
-    <Compile Include="Editor\SettingsHeader_Components.cs" />
+    <Compile Include="Editor\SettingsHeader_Components.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\SettingsHeader_Components.designer.cs" />
-    <Compile Include="Editor\SettingsHeader_ObjectInfo.cs" />
+    <Compile Include="Editor\SettingsHeader_ObjectInfo.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\SettingsHeader_ObjectInfo.designer.cs" />
-    <Compile Include="Editor\SettingsLevel2Window.cs" />
+    <Compile Include="Editor\SettingsLevel2Window.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\SettingsLevel2Window.designer.cs" />
     <Compile Include="Editor\SettingsProvider.cs" />
-    <Compile Include="Editor\SettingsWindow.cs" />
+    <Compile Include="Editor\SettingsWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\SettingsWindow.designer.cs" />
-    <Compile Include="Editor\SolutionExplorer.cs" />
+    <Compile Include="Editor\SolutionExplorer.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\SolutionExplorer.designer.cs" />
-    <Compile Include="Editor\SpecifyParametersForm.cs" />
+    <Compile Include="Editor\SpecifyParametersForm.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\SpecifyParametersForm.designer.cs" />
-    <Compile Include="Editor\SplashForm.cs" />
+    <Compile Include="Editor\SplashForm.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\SplashForm.Designer.cs" />
-    <Compile Include="Editor\StartPageWindow.cs" />
+    <Compile Include="Editor\StartPageWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\StartPageWindow.designer.cs" />
-    <Compile Include="Editor\StoreDocumentWindow.cs" />
+    <Compile Include="Editor\StoreDocumentWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\StoreDocumentWindow.designer.cs" />
-    <Compile Include="Editor\TipsWindow.cs" />
+    <Compile Include="Editor\TipsWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\TipsWindow.designer.cs" />
     <Compile Include="Editor\ToolStripBreadCrumbHost.cs" />
     <Compile Include="Editor\WinFormsProcedureUI.cs" />
     <Compile Include="Editor\WorkspaceController.cs" />
     <Compile Include="Editor\WorkspaceControllerForForm.cs" />
     <Compile Include="Editor\WorkspaceControllerForWindow.cs" />
-    <Compile Include="Editor\WorkspaceWindow.cs" />
+    <Compile Include="Editor\WorkspaceWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\WorkspaceWindow.designer.cs" />
     <Compile Include="EngineApp\EngineApp.cs" />
     <Compile Include="EngineApp\EngineBackgroundTasks.cs" />
@@ -521,10 +630,14 @@
     <Compile Include="Project settings\Component_ProjectSettings_Page.cs" />
     <Compile Include="Project settings\Component_ProjectSettings_PageBasic.cs" />
     <Compile Include="Project settings\HCItemProjectRibbonAndToolbarActions.cs" />
-    <Compile Include="Project settings\HCItemProjectRibbonAndToolbarActionsForm.cs" />
+    <Compile Include="Project settings\HCItemProjectRibbonAndToolbarActionsForm.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Project settings\HCItemProjectRibbonAndToolbarActionsForm.Designer.cs" />
     <Compile Include="Project settings\HCItemProjectShortcuts.cs" />
-    <Compile Include="Project settings\HCItemProjectShortcutsForm.cs" />
+    <Compile Include="Project settings\HCItemProjectShortcutsForm.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Project settings\HCItemProjectShortcutsForm.Designer.cs" />
     <Compile Include="Project settings\ProjectSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -581,7 +694,9 @@
     <Compile Include="UISystem\UIContextMenu.cs" />
     <Compile Include="UISystem\UIControl.cs" />
     <Compile Include="UISystem\UIControlsWorld.cs" />
-    <Compile Include="UISystem\UIControl_DocumentWindow.cs" />
+    <Compile Include="UISystem\UIControl_DocumentWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UISystem\UIControl_DocumentWindow.designer.cs" />
     <Compile Include="UISystem\UIEdit.cs" />
     <Compile Include="UISystem\UIGrid.cs" />
@@ -655,9 +770,13 @@
     <Compile Include="Utility\VisualStudioSolutionUtility.cs" />
     <Compile Include="Utility\WindowsClipboard.cs" />
     <Compile Include="Utility\XmlDocumentationFiles.cs" />
-    <Compile Include="WinForms\EngineViewportControl.cs" />
+    <Compile Include="WinForms\EngineViewportControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WinForms\EngineViewportControl.designer.cs" />
-    <Compile Include="WinForms\EUserControl.cs" />
+    <Compile Include="WinForms\EUserControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WinForms\EUserControl.designer.cs" />
     <Compile Include="WinForms\WinFormsUtility.cs" />
     <Compile Include="Addons\NeoAxis.Addon.Builder3D\Actions.cs" />
@@ -680,14 +799,17 @@
     <Compile Include="Components\Area\Component_AreaPoint.cs" />
     <Compile Include="Components\Build\Component_Product.cs" />
     <Compile Include="Components\Build\Component_Product_Android.cs" />
-    <Compile Include="Components\Build\Component_Product_DocumentWindow.cs" />
+    <Compile Include="Components\Build\Component_Product_DocumentWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\Build\Component_Product_DocumentWindow.designer.cs" />
     <Compile Include="Components\Build\Component_Product_UWP.cs" />
     <Compile Include="Components\Build\Component_Product_Windows.cs" />
     <Compile Include="Components\Build\ProductBuildInstance.cs" />
     <Compile Include="Components\Camera\Component_Camera.cs" />
-    <Compile Include="Components\Camera\Component_Camera_PreviewControl.cs" />
-    <Compile Include="Components\Camera\Component_Camera_PreviewControl.designer.cs" />
+    <Compile Include="Components\Camera\Component_Camera_Preview.cs" />
+    <Compile Include="Components\ComputeUsingThreads\Component_ComputeUsingThreads.cs" />
+    <Compile Include="Components\ComputeUsingThreads\Component_ComputeUsingThreads_SettingsCell.cs" />
     <Compile Include="Components\CurveInSpace\Component_CurveInSpace.cs" />
     <Compile Include="Components\CurveInSpace\Component_CurveInSpacePoint.cs" />
     <Compile Include="Components\Flow control\Component_ConvertTo.cs" />
@@ -711,11 +833,15 @@
     <Compile Include="Components\FlowGraph\Component_FlowGraphNodeStyle.cs" />
     <Compile Include="Components\FlowGraph\Component_FlowGraphSpecialization.cs" />
     <Compile Include="Components\FlowGraph\Component_FlowGraphStyle.cs" />
-    <Compile Include="Components\FlowGraph\Component_FlowGraph_DocumentWindow.cs" />
+    <Compile Include="Components\FlowGraph\Component_FlowGraph_DocumentWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\FlowGraph\Component_FlowGraph_DocumentWindow.designer.cs" />
     <Compile Include="Components\FlowGraph\FlowGraphCommon.cs" />
     <Compile Include="Components\Font\Component_Font.cs" />
-    <Compile Include="Components\Font\Component_Font_PreviewControl.cs" />
+    <Compile Include="Components\Font\Component_Font_PreviewControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\Font\Component_Font_PreviewControl.designer.cs" />
     <Compile Include="Components\Font\Resource_Font.cs" />
     <Compile Include="Components\GroupOfObjects\Component_GroupOfObjects.cs" />
@@ -725,9 +851,13 @@
     <Compile Include="Components\GroupOfObjects\Component_GroupOfObjects_GetObjects.cs" />
     <Compile Include="Components\GroupOfObjects\Component_GroupOfObjects_SettingsCell.cs" />
     <Compile Include="Components\Image\Component_Image.cs" />
-    <Compile Include="Components\Image\Component_Image_DocumentWindow.cs" />
+    <Compile Include="Components\Image\Component_Image_DocumentWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\Image\Component_Image_DocumentWindow.designer.cs" />
-    <Compile Include="Components\Image\Component_Image_PreviewControl.cs" />
+    <Compile Include="Components\Image\Component_Image_PreviewControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\Image\Component_Image_PreviewControl.designer.cs" />
     <Compile Include="Components\Image\Component_Image_PreviewImage.cs" />
     <Compile Include="Components\Image\Component_Image_Settings.cs" />
@@ -743,9 +873,13 @@
     <Compile Include="Components\Material\Component_Material.cs" />
     <Compile Include="Components\Material\Component_MaterialBlend.cs" />
     <Compile Include="Components\Material\Component_Material_CompiledData.cs" />
-    <Compile Include="Components\Material\Component_Material_DocumentWindow.cs" />
+    <Compile Include="Components\Material\Component_Material_DocumentWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\Material\Component_Material_DocumentWindow.designer.cs" />
-    <Compile Include="Components\Material\Component_Material_PreviewControl.cs" />
+    <Compile Include="Components\Material\Component_Material_PreviewControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\Material\Component_Material_PreviewControl.designer.cs" />
     <Compile Include="Components\Material\Component_Material_PreviewImage.cs" />
     <Compile Include="Components\Material\Component_Material_SettingsCell.cs" />
@@ -778,22 +912,28 @@
     <Compile Include="Components\Mesh\Component_SkeletonAnimation.cs" />
     <Compile Include="Components\Mesh\Component_SkeletonAnimationTrack.cs" />
     <Compile Include="Components\Mesh\Component_SkeletonBone.cs" />
+    <Compile Include="Components\Mesh\MeshExportImport.cs" />
     <Compile Include="Components\MeshInSpace\Component_MeshInSpace.cs" />
     <Compile Include="Components\MeshInSpace\Component_MeshInSpaceAnimationController.cs" />
     <Compile Include="Components\MeshInSpace\Component_MeshInSpace_EditorExtensions.cs" />
     <Compile Include="Components\ObjectInSpace\Component_ObjectInSpace.cs" />
+    <Compile Include="Components\ObjectInSpace\Component_ObjectInSpace_Editor.cs" />
     <Compile Include="Components\ObjectInSpace\Component_ObjectInSpace_EditorExtensions.cs" />
-    <Compile Include="Components\ObjectInSpace\Component_ObjectInSpace_PreviewControl.cs" />
-    <Compile Include="Components\ObjectInSpace\Component_ObjectInSpace_PreviewControl.designer.cs" />
+    <Compile Include="Components\ObjectInSpace\Component_ObjectInSpace_Preview.cs" />
+    <Compile Include="Components\ObjectInSpace\Component_ObjectInSpace_PreviewImage.cs" />
     <Compile Include="Components\ObjectInSpace\Component_ObjectInSpace_Utility.cs" />
     <Compile Include="Components\ParticleSystem\Component_ParticleEmitter.cs" />
     <Compile Include="Components\ParticleSystem\Component_ParticleModule.cs" />
     <Compile Include="Components\ParticleSystem\Component_ParticleSystem.cs" />
     <Compile Include="Components\ParticleSystem\Component_ParticleSystemInSpace.cs" />
     <Compile Include="Components\ParticleSystem\Component_ParticleSystemInSpace_SettingsCell.cs" />
-    <Compile Include="Components\ParticleSystem\Component_ParticleSystem_DocumentWindow.cs" />
+    <Compile Include="Components\ParticleSystem\Component_ParticleSystem_DocumentWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\ParticleSystem\Component_ParticleSystem_DocumentWindow.designer.cs" />
-    <Compile Include="Components\ParticleSystem\Component_ParticleSystem_PreviewControl.cs" />
+    <Compile Include="Components\ParticleSystem\Component_ParticleSystem_PreviewControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\ParticleSystem\Component_ParticleSystem_PreviewControl.designer.cs" />
     <Compile Include="Components\ParticleSystem\Component_ParticleSystem_SettingsCell.cs" />
     <Compile Include="Components\Physics\BulletPhysicsUtility.cs" />
@@ -841,10 +981,13 @@
     <Compile Include="Components\Rendering\Component_RenderingEffect_Simple.cs" />
     <Compile Include="Components\Rendering\Component_RenderingEffect_Simple_SettingsCell.cs" />
     <Compile Include="Components\Rendering\Component_RenderingPipeline.cs" />
+    <Compile Include="Components\Rendering\ObjectSpecialRenderingEffects.cs" />
     <Compile Include="Components\RenderToFile\Component_RenderToFile.cs" />
     <Compile Include="Components\RenderToFile\Component_RenderToFile_SettingsCell.cs" />
     <Compile Include="Components\Scene\Component_Scene.cs" />
-    <Compile Include="Components\Scene\Component_Scene_DocumentWindow.cs" />
+    <Compile Include="Components\Scene\Component_Scene_DocumentWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\Scene\Component_Scene_DocumentWindow.designer.cs" />
     <Compile Include="Components\Scene\Component_Scene_Utility.cs" />
     <Compile Include="Components\Scene\Component_Scene__NewObjectSettings.cs" />
@@ -859,25 +1002,40 @@
     <Compile Include="Components\ShaderScript\Component_ShaderScript.cs" />
     <Compile Include="Components\ShaderScript\Component_ShaderScript_SettingsCell.cs" />
     <Compile Include="Components\Sound\Component_Sound.cs" />
-    <Compile Include="Components\Sound\Component_Sound_PreviewControl.cs" />
+    <Compile Include="Components\Sound\Component_Sound_PreviewControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\Sound\Component_Sound_PreviewControl.designer.cs" />
     <Compile Include="Components\Sprite\Component_Sprite.cs" />
     <Compile Include="Components\Sprite\Component_SpriteAnimation.cs" />
     <Compile Include="Components\Sprite\Component_SpriteAnimationController.cs" />
-    <Compile Include="Components\Sprite\Component_Sprite_DocumentWindow.cs" />
+    <Compile Include="Components\Sprite\Component_Sprite_DocumentWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\Sprite\Component_Sprite_DocumentWindow.designer.cs" />
-    <Compile Include="Components\Sprite\Component_Sprite_PreviewControl.cs" />
-    <Compile Include="Components\Sprite\Component_Sprite_PreviewControl.designer.cs" />
+    <Compile Include="Components\Sprite\Component_Sprite_Preview.cs" />
     <Compile Include="Components\Sprite\SpriteMeshManager.cs" />
+    <Compile Include="Components\StoreProduct\Component_StoreProduct.cs" />
+    <Compile Include="Components\StoreProduct\Component_StoreProduct_DocumentWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\StoreProduct\Component_StoreProduct_DocumentWindow.designer.cs" />
+    <Compile Include="Components\StoreProduct\Component_StoreProduct_EditorExtensions.cs" />
+    <Compile Include="Components\StoreProduct\Component_StoreProduct_SettingsCell.cs" />
     <Compile Include="Components\Surface\Component_Surface.cs" />
     <Compile Include="Components\Surface\Component_SurfaceElement.cs" />
     <Compile Include="Components\Surface\Component_SurfaceGroupOfElements.cs" />
     <Compile Include="Components\Surface\Component_SurfaceLayer.cs" />
     <Compile Include="Components\Surface\Component_SurfaceUtility.cs" />
-    <Compile Include="Components\Surface\Component_Surface_DocumentWindow.cs" />
+    <Compile Include="Components\Surface\Component_Surface_DocumentWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\Surface\Component_Surface_DocumentWindow.designer.cs" />
-    <Compile Include="Components\Surface\Component_Surface_PreviewControl.cs" />
+    <Compile Include="Components\Surface\Component_Surface_PreviewControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\Surface\Component_Surface_PreviewControl.designer.cs" />
+    <Compile Include="Components\Surface\Component_Surface_PreviewImage.cs" />
     <Compile Include="Components\SurfaceArea\Component_SurfaceArea.cs" />
     <Compile Include="Components\SurfaceArea\Component_SurfaceArea_SettingsCell.cs" />
     <Compile Include="Components\Terrain\Component_Terrain.cs" />
@@ -886,12 +1044,16 @@
     <Compile Include="Components\Terrain\Component_Terrain_Undo.cs" />
     <Compile Include="Components\Timeline\Component_Timeline.cs" />
     <Compile Include="Editor\EngineToolTip\EngineToolTip.cs" />
-    <Compile Include="Editor\EngineToolTip\EngineToolTipForm.cs" />
+    <Compile Include="Editor\EngineToolTip\EngineToolTipForm.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\EngineToolTip\EngineToolTipForm.designer.cs" />
     <Compile Include="Editor\EngineToolTip\EngineToolTipManager.cs" />
     <Compile Include="Editor\HierarchicalContainer\HCColorPreviewButton.cs" />
     <Compile Include="Editor\HierarchicalContainer\HCCommon.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HCDropDownControl.cs" />
+    <Compile Include="Editor\HierarchicalContainer\HCDropDownControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\HierarchicalContainer\HCExtensions.cs" />
     <Compile Include="Editor\HierarchicalContainer\HCItemCheckBox.cs" />
     <Compile Include="Editor\HierarchicalContainer\HCItemCollection.cs" />
@@ -907,18 +1069,30 @@
     <Compile Include="Editor\HierarchicalContainer\HCItemTextBoxNumeric.cs" />
     <Compile Include="Editor\HierarchicalContainer\HCItemTextBoxSelect.cs" />
     <Compile Include="Editor\HierarchicalContainer\HCItemUserControl.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HierarchicalContainer.cs" />
+    <Compile Include="Editor\HierarchicalContainer\HierarchicalContainer.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\HierarchicalContainer\HierarchicalContainer.designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HierarchicalContainer.Item.cs" />
+    <Compile Include="Editor\HierarchicalContainer\HierarchicalContainer.Item.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\ResourcesToCreate\NewResourceType.cs" />
     <Compile Include="Editor\ResourcesToCreate\NewResourceType_CSharpClass.cs" />
-    <Compile Include="Editor\ResourcesToCreate\NewResourceType_CSharpClassLibrary_Cell.cs" />
+    <Compile Include="Editor\ResourcesToCreate\NewResourceType_CSharpClassLibrary_Cell.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\ResourcesToCreate\NewResourceType_CSharpClassLibrary_Cell.designer.cs" />
-    <Compile Include="Editor\ResourcesToCreate\NewResourceType_FlowGraphLibrary_Cell.cs" />
+    <Compile Include="Editor\ResourcesToCreate\NewResourceType_FlowGraphLibrary_Cell.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\ResourcesToCreate\NewResourceType_FlowGraphLibrary_Cell.designer.cs" />
-    <Compile Include="Editor\ResourcesToCreate\NewResourceType_TextFile_Cell.cs" />
+    <Compile Include="Editor\ResourcesToCreate\NewResourceType_TextFile_Cell.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\ResourcesToCreate\NewResourceType_TextFile_Cell.designer.cs" />
-    <Compile Include="Editor\ScreenNotifications\ScreenNotificationForm.cs" />
+    <Compile Include="Editor\ScreenNotifications\ScreenNotificationForm.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\ScreenNotifications\ScreenNotificationForm.designer.cs" />
     <Compile Include="Editor\ScreenNotifications\ScreenNotifications.cs" />
     <Compile Include="Editor\TransformTool\TransformTool.cs" />
@@ -963,7 +1137,9 @@
     <Compile Include="Libraries\Aether.Physics2D\Settings.cs" />
     <Compile Include="Libraries\Aga.Controls\BitmapHelper.cs" />
     <Compile Include="Libraries\Aga.Controls\GifDecoder.cs" />
-    <Compile Include="Libraries\Aga.Controls\NumericTextBox.cs" />
+    <Compile Include="Libraries\Aga.Controls\NumericTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Aga.Controls\PerformanceAnalyzer.cs" />
     <Compile Include="Libraries\Aga.Controls\ResourceHelper.cs" />
     <Compile Include="Libraries\Aga.Controls\StringCollectionEditor.cs" />
@@ -1715,14 +1891,22 @@
     <Compile Include="Libraries\TextureTools\DDSTextureTools.cs" />
     <Compile Include="Libraries\TextureTools\DDSWriter.cs" />
     <Compile Include="Libraries\TextureTools\NvidiaTextureTools.cs" />
-    <Compile Include="MathEx\ColorValue\ColorGradientControl.cs" />
+    <Compile Include="MathEx\ColorValue\ColorGradientControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MathEx\ColorValue\ColorValue.cs" />
     <Compile Include="MathEx\ColorValue\ColorValuePowered.cs" />
-    <Compile Include="MathEx\ColorValue\ColorValuePoweredSelectControl.cs" />
+    <Compile Include="MathEx\ColorValue\ColorValuePoweredSelectControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MathEx\ColorValue\ColorValuePoweredSelectControl.designer.cs" />
-    <Compile Include="MathEx\ColorValue\ColorValuePoweredSelectForm.cs" />
+    <Compile Include="MathEx\ColorValue\ColorValuePoweredSelectForm.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MathEx\ColorValue\ColorValuePoweredSelectForm.designer.cs" />
-    <Compile Include="MathEx\ColorValue\ColorWheel.cs" />
+    <Compile Include="MathEx\ColorValue\ColorWheel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MathEx\ColorValue\HSVColor.cs" />
     <Compile Include="MathEx\Curve\Curve.cs" />
     <Compile Include="MathEx\Curve\CurveBezier.cs" />
@@ -1858,6 +2042,7 @@
     <Compile Include="Components\Rendering\Effects\LightShafts.cs" />
     <Compile Include="Components\Rendering\Effects\MotionBlur.cs" />
     <Compile Include="Components\Rendering\Effects\Noise.cs" />
+    <Compile Include="Components\Rendering\Effects\Outline.cs" />
     <Compile Include="Components\Rendering\Effects\Pixelate.cs" />
     <Compile Include="Components\Rendering\Effects\Posterize.cs" />
     <Compile Include="Components\Rendering\Effects\RadialBlur.cs" />
@@ -1878,9 +2063,13 @@
     <Compile Include="Components\Rendering\Pipelines\Pipeline_Default.cs" />
     <Compile Include="Components\Rendering\Sky\Component_Sky.cs" />
     <Compile Include="Components\Rendering\Sky\Component_Skybox.cs" />
-    <Compile Include="Components\Rendering\Sky\Component_Skybox_DocumentWindow.cs" />
+    <Compile Include="Components\Rendering\Sky\Component_Skybox_DocumentWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\Rendering\Sky\Component_Skybox_DocumentWindow.designer.cs" />
-    <Compile Include="Components\Rendering\Sky\Component_Skybox_PreviewControl.cs" />
+    <Compile Include="Components\Rendering\Sky\Component_Skybox_PreviewControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\Rendering\Sky\Component_Skybox_PreviewControl.designer.cs" />
     <Compile Include="Components\Rendering\Sky\Component_Skybox_PreviewImage.cs" />
     <Compile Include="Components\Rendering\Sky\Component_Skybox_SettingsCell.cs" />
@@ -1894,38 +2083,68 @@
     <Compile Include="Components\Scripting\Core\ScriptingCSharpEngine.cs" />
     <Compile Include="Components\Scripting\Core\ScriptUtility.cs" />
     <Compile Include="Components\Scripting\Editor\ContentBrowserFilteringMode_CSharp.cs" />
-    <Compile Include="Editor\HierarchicalContainer\DropDownEditors\EnumDropDownControl.cs" />
+    <Compile Include="Editor\HierarchicalContainer\DropDownEditors\EnumDropDownControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\HierarchicalContainer\DropDownEditors\EnumDropDownControl.designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\DropDownEditors\RangeDropDownControl.cs" />
+    <Compile Include="Editor\HierarchicalContainer\DropDownEditors\RangeDropDownControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\HierarchicalContainer\DropDownEditors\RangeDropDownControl.designer.cs" />
     <Compile Include="Editor\HierarchicalContainer\DropDownHolder\GripBounds.cs" />
     <Compile Include="Editor\HierarchicalContainer\DropDownHolder\HCDropDownHolderImpl.cs" />
-    <Compile Include="Editor\HierarchicalContainer\DropDownHolder\HCFormDropDownHolder.cs" />
+    <Compile Include="Editor\HierarchicalContainer\DropDownHolder\HCFormDropDownHolder.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\HierarchicalContainer\DropDownHolder\HCToolStripDropDownHolder.cs" />
     <Compile Include="Editor\HierarchicalContainer\DropDownHolder\IDropDownHolder.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridCheckBox.cs" />
+    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridCheckBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridCheckBox.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridCollection.cs" />
+    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridCollection.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridCollection.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridColorValue.cs" />
+    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridColorValue.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridColorValue.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridColorValuePowered.cs" />
+    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridColorValuePowered.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridColorValuePowered.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridDropDownButton.cs" />
+    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridDropDownButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridDropDownButton.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridEvent.cs" />
+    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridEvent.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridEvent.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridGroup.cs" />
+    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridGroup.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridGroup.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridLabel.cs" />
+    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridLabel.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridProperty.cs" />
+    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridProperty.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridProperty.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridTextBox.cs" />
+    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridTextBox.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxNumeric.cs" />
+    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxNumeric.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxNumeric.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxSelect.cs" />
+    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxSelect.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxSelect.Designer.cs" />
     <Compile Include="FileSystem\Archives\_DISABLED\Package.cs" />
     <Compile Include="FileSystem\Archives\_DISABLED\ZipPackage.cs" />
@@ -2019,7 +2238,9 @@
     <Compile Include="Libraries\Aga.Controls\Tree\Node.cs" />
     <Compile Include="Libraries\Aga.Controls\Tree\NodeControlInfo.cs" />
     <Compile Include="Libraries\Aga.Controls\Tree\SortedTreeModel.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeColumn.cs" />
+    <Compile Include="Libraries\Aga.Controls\Tree\TreeColumn.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Aga.Controls\Tree\TreeColumnCollection.cs" />
     <Compile Include="Libraries\Aga.Controls\Tree\TreeColumnEventArgs.cs" />
     <Compile Include="Libraries\Aga.Controls\Tree\TreeListAdapter.cs" />
@@ -2030,12 +2251,22 @@
     <Compile Include="Libraries\Aga.Controls\Tree\TreeNodeAdvMouseEventArgs.cs" />
     <Compile Include="Libraries\Aga.Controls\Tree\TreePath.cs" />
     <Compile Include="Libraries\Aga.Controls\Tree\TreePathEventArgs.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.cs" />
+    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Designer.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Draw.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Editor.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Input.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Properties.cs" />
+    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Draw.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Editor.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Input.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Properties.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdvCancelEventArgs.cs" />
     <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdvEventArgs.cs" />
     <Compile Include="Libraries\Aga.Controls\Tree\TreeViewRowDrawEventArgs.cs" />
@@ -2219,7 +2450,6 @@
     <Compile Include="Libraries\BulletSharp\SoftBody\SoftRigidDynamicsWorld.cs" />
     <Compile Include="Libraries\BulletSharp\SoftBody\SoftSoftCollisionAlgorithm.cs" />
     <Compile Include="Libraries\BulletSharp\SoftBody\SparseSdf.cs" />
-    <Compile Include="Libraries\CefGlue\Classes.g\CefAllowCertificateErrorCallback.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefApp.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefAuthCallback.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefBeforeDownloadCallback.g.cs" />
@@ -2235,26 +2465,29 @@
     <Compile Include="Libraries\CefGlue\Classes.g\CefContextMenuParams.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefCookieManager.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefCookieVisitor.g.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.g\CefDeleteCookiesCallback.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefDialogHandler.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefDictionaryValue.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefDisplayHandler.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefDomDocument.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefDomEvent.g.cs" />
-    <Compile Include="Libraries\CefGlue\Classes.g\CefDomEventListener.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefDomNode.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefDomVisitor.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefDownloadHandler.g.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.g\CefDownloadImageCallback.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefDownloadItem.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefDownloadItemCallback.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefDragData.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefDragHandler.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefEndTracingCallback.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefFileDialogCallback.g.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.g\CefFindHandler.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefFocusHandler.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefFrame.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefGeolocationCallback.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefGeolocationHandler.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefGetGeolocationCallback.g.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.g\CefImage.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefJSDialogCallback.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefJSDialogHandler.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefKeyboardHandler.g.cs" />
@@ -2262,23 +2495,39 @@
     <Compile Include="Libraries\CefGlue\Classes.g\CefListValue.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefLoadHandler.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefMenuModel.g.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.g\CefMenuModelDelegate.g.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.g\CefNavigationEntry.g.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.g\CefNavigationEntryVisitor.g.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.g\CefPdfPrintCallback.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefPostData.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefPostDataElement.g.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.g\CefPrintDialogCallback.g.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.g\CefPrintHandler.g.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.g\CefPrintJobCallback.g.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.g\CefPrintSettings.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefProcessMessage.g.cs" />
-    <Compile Include="Libraries\CefGlue\Classes.g\CefQuotaCallback.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefReadHandler.g.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.g\CefRegisterCdmCallback.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefRenderHandler.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefRenderProcessHandler.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefRequest.g.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.g\CefRequestCallback.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefRequestContext.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefRequestContextHandler.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefRequestHandler.g.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.g\CefResolveCallback.g.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.g\CefResourceBundle.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefResourceBundleHandler.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefResourceHandler.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefResponse.g.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.g\CefResponseFilter.g.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.g\CefRunContextMenuCallback.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefRunFileDialogCallback.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefSchemeHandlerFactory.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefSchemeRegistrar.g.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.g\CefSetCookieCallback.g.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.g\CefSslCertPrincipal.g.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.g\CefSslInfo.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefStreamReader.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefStreamWriter.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefStringVisitor.g.cs" />
@@ -2294,6 +2543,7 @@
     <Compile Include="Libraries\CefGlue\Classes.g\CefV8StackFrame.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefV8StackTrace.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefV8Value.g.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.g\CefValue.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefWebPluginInfo.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefWebPluginInfoVisitor.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefWebPluginUnstableCallback.g.cs" />
@@ -2306,13 +2556,15 @@
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefCompletionCallback.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefContextMenuHandler.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefCookieVisitor.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.Handlers\CefDeleteCookiesCallback.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefDialogHandler.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefDisplayHandler.cs" />
-    <Compile Include="Libraries\CefGlue\Classes.Handlers\CefDomEventListener.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefDomVisitor.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefDownloadHandler.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.Handlers\CefDownloadImageCallback.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefDragHandler.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefEndTracingCallback.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.Handlers\CefFindHandler.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefFocusHandler.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefGeolocationHandler.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefGetGeolocationCallback.cs" />
@@ -2320,15 +2572,23 @@
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefKeyboardHandler.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefLifeSpanHandler.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefLoadHandler.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.Handlers\CefMenuModelDelegate.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.Handlers\CefNavigationEntryVisitor.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.Handlers\CefPdfPrintCallback.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.Handlers\CefPrintHandler.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefReadHandler.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.Handlers\CefRegisterCdmCallback.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefRenderHandler.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefRenderProcessHandler.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefRequestContextHandler.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefRequestHandler.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.Handlers\CefResolveCallback.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefResourceBundleHandler.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefResourceHandler.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.Handlers\CefResponseFilter.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefRunFileDialogCallback.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefSchemeHandlerFactory.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.Handlers\CefSetCookieCallback.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefStringVisitor.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefTask.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefUrlRequestClient.cs" />
@@ -2338,7 +2598,6 @@
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefWebPluginInfoVisitor.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefWebPluginUnstableCallback.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Handlers\CefWriteHandler.cs" />
-    <Compile Include="Libraries\CefGlue\Classes.Proxies\CefAllowCertificateErrorCallback.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefAuthCallback.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefBeforeDownloadCallback.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefBinaryValue.cs" />
@@ -2350,7 +2609,6 @@
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefCookieManager.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefDictionaryValue.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefDomDocument.cs" />
-    <Compile Include="Libraries\CefGlue\Classes.Proxies\CefDomEvent.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefDomNode.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefDownloadItem.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefDownloadItemCallback.cs" />
@@ -2358,17 +2616,26 @@
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefFileDialogCallback.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefFrame.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefGeolocationCallback.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.Proxies\CefImage.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefJSDialogCallback.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefListValue.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefMenuModel.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.Proxies\CefNavigationEntry.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefPostData.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefPostDataElement.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.Proxies\CefPrintDialogCallback.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.Proxies\CefPrintJobCallback.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.Proxies\CefPrintSettings.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefProcessMessage.cs" />
-    <Compile Include="Libraries\CefGlue\Classes.Proxies\CefQuotaCallback.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefRequest.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.Proxies\CefRequestCallback.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefRequestContext.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.Proxies\CefResourceBundle.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefResponse.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.Proxies\CefRunContextMenuCallback.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefSchemeRegistrar.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.Proxies\CefSslCertPrincipal.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.Proxies\CefSslInfo.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefStreamReader.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefStreamWriter.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefTaskRunner.cs" />
@@ -2378,46 +2645,68 @@
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefV8StackFrame.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefV8StackTrace.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefV8Value.cs" />
+    <Compile Include="Libraries\CefGlue\Classes.Proxies\CefValue.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefWebPluginInfo.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefXmlReader.cs" />
     <Compile Include="Libraries\CefGlue\Classes.Proxies\CefZipReader.cs" />
+    <Compile Include="Libraries\CefGlue\Enums\CefAlphaType.cs" />
+    <Compile Include="Libraries\CefGlue\Enums\CefCdmRegistrationError.cs" />
+    <Compile Include="Libraries\CefGlue\Enums\CefCertStatus.cs" />
+    <Compile Include="Libraries\CefGlue\Enums\CefColorModel.cs" />
+    <Compile Include="Libraries\CefGlue\Enums\CefColorType.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefContextMenuEditStateFlags.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefContextMenuMediaStateFlags.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefContextMenuMediaType.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefContextMenuTypeFlags.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefContextSafetyImplementation.cs" />
+    <Compile Include="Libraries\CefGlue\Enums\CefCrossAxisAlignment.cs" />
+    <Compile Include="Libraries\CefGlue\Enums\CefCursorType.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefDomDocumentType.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefDomEventCategory.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefDomEventPhase.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefDomNodeType.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefDragOperationsMask.cs" />
+    <Compile Include="Libraries\CefGlue\Enums\CefDuplexMode.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefErrorCode.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefEventFlags.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefFileDialogMode.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefFocusSource.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefGeopositionErrorCode.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefJSDialogType.cs" />
+    <Compile Include="Libraries\CefGlue\Enums\CefJsonParserError.cs" />
+    <Compile Include="Libraries\CefGlue\Enums\CefJsonParserOptions.cs" />
+    <Compile Include="Libraries\CefGlue\Enums\CefJsonWriterOptions.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefKeyEventType.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefLogSeverity.cs" />
+    <Compile Include="Libraries\CefGlue\Enums\CefMainAxisAlignment.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefMenuId.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefMenuItemType.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefMouseButtonType.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefNavigationType.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefPaintElementType.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefPathKey.cs" />
+    <Compile Include="Libraries\CefGlue\Enums\CefPdfPrintMarginType.cs" />
+    <Compile Include="Libraries\CefGlue\Enums\CefPluginPolicy.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefPostDataElementType.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefProcessId.cs" />
+    <Compile Include="Libraries\CefGlue\Enums\CefReferrerPolicy.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefResourceType.cs" />
+    <Compile Include="Libraries\CefGlue\Enums\CefResponseFilterStatus.cs" />
+    <Compile Include="Libraries\CefGlue\Enums\CefReturnValue.cs" />
+    <Compile Include="Libraries\CefGlue\Enums\CefScaleFactor.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefState.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefStorageType.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefTerminationStatus.cs" />
+    <Compile Include="Libraries\CefGlue\Enums\CefTextStyle.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefThreadId.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefTransitionType.cs" />
+    <Compile Include="Libraries\CefGlue\Enums\CefUriUnescapeRules.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefUrlRequestFlags.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefUrlRequestStatus.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefV8AccessControl.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefV8PropertyAttribute.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefValueType.cs" />
+    <Compile Include="Libraries\CefGlue\Enums\CefWindowOpenDisposition.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefXmlEncodingType.cs" />
     <Compile Include="Libraries\CefGlue\Enums\CefXmlNodeType.cs" />
     <Compile Include="Libraries\CefGlue\Exceptions\CefRuntimeException.cs" />
@@ -2433,14 +2722,23 @@
     <Compile Include="Libraries\CefGlue\Structs\CefBrowserSettings.cs" />
     <Compile Include="Libraries\CefGlue\Structs\CefColor.cs" />
     <Compile Include="Libraries\CefGlue\Structs\CefCookie.cs" />
+    <Compile Include="Libraries\CefGlue\Structs\CefCursorInfo.cs" />
+    <Compile Include="Libraries\CefGlue\Structs\CefDraggableRegion.cs" />
     <Compile Include="Libraries\CefGlue\Structs\CefGeoposition.cs" />
+    <Compile Include="Libraries\CefGlue\Structs\CefInsets.cs" />
     <Compile Include="Libraries\CefGlue\Structs\CefKeyEvent.cs" />
     <Compile Include="Libraries\CefGlue\Structs\CefMainArgs.cs" />
     <Compile Include="Libraries\CefGlue\Structs\CefMouseEvent.cs" />
+    <Compile Include="Libraries\CefGlue\Structs\CefPdfPrintSettings.cs" />
+    <Compile Include="Libraries\CefGlue\Structs\CefPoint.cs" />
     <Compile Include="Libraries\CefGlue\Structs\CefPopupFeatures.cs" />
+    <Compile Include="Libraries\CefGlue\Structs\CefRange.cs" />
     <Compile Include="Libraries\CefGlue\Structs\CefRectangle.cs" />
+    <Compile Include="Libraries\CefGlue\Structs\CefRequestContextSettings.cs" />
     <Compile Include="Libraries\CefGlue\Structs\CefScreenInfo.cs" />
     <Compile Include="Libraries\CefGlue\Structs\CefSettings.cs" />
+    <Compile Include="Libraries\CefGlue\Structs\CefSize.cs" />
+    <Compile Include="Libraries\CefGlue\Structs\CefUrlParts.cs" />
     <Compile Include="Libraries\CefGlue\Structs\CefWindowInfo.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ControlDoubleBufferComposited.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\KryptonCursors.cs" />
@@ -2833,29 +3131,59 @@
     <Compile Include="Libraries\Aga.Controls\Tree\Input\NormalInputState.cs" />
     <Compile Include="Libraries\Aga.Controls\Tree\Input\ReorderColumnState.cs" />
     <Compile Include="Libraries\Aga.Controls\Tree\Input\ResizeColumnState.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\BaseTextControl.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\BindableControl.cs" />
+    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\BaseTextControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\BindableControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\DrawEventArgs.cs" />
     <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\DrawIconEventArgs.cs" />
     <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\DrawTextEventArgs.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\EditableControl.cs" />
+    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\EditableControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\EditEventArgs.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\ExpandingIcon.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\InteractiveControl.cs" />
+    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\ExpandingIcon.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\InteractiveControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\LabelEventArgs.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeCheckBox.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeComboBox.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeControl.cs" />
+    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeCheckBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeControlsCollection.cs" />
     <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeControlValueEventArgs.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeDecimalTextBox.cs" />
+    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeDecimalTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeEventArgs.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeIcon.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeIntegerTextBox.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeNumericUpDown.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodePlusMinus.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeStateIcon.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeTextBox.cs" />
+    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeIcon.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeIntegerTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeNumericUpDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodePlusMinus.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeStateIcon.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\BulletSharp\Collision\GImpact\BoxCollision.cs" />
     <Compile Include="Libraries\BulletSharp\Collision\GImpact\CompoundFromGImpact.cs" />
     <Compile Include="Libraries\BulletSharp\Collision\GImpact\GImpactBvh.cs" />
@@ -2883,7 +3211,6 @@
     <Compile Include="Libraries\CefGlue\Interop\Base\cef_string_multimap.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Base\cef_string_t.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Base\cef_string_userfree.cs" />
-    <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_allow_certificate_error_callback_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_app_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_auth_callback_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_before_download_callback_t.g.cs" />
@@ -2899,6 +3226,7 @@
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_context_menu_params_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_cookie_manager_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_cookie_visitor_t.g.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_delete_cookies_callback_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_dialog_handler_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_dictionary_value_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_display_handler_t.g.cs" />
@@ -2908,41 +3236,60 @@
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_domnode_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_domvisitor_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_download_handler_t.g.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_download_image_callback_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_download_item_callback_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_download_item_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_drag_data_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_drag_handler_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_end_tracing_callback_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_file_dialog_callback_t.g.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_find_handler_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_focus_handler_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_frame_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_geolocation_callback_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_geolocation_handler_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_get_geolocation_callback_t.g.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_image_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_jsdialog_callback_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_jsdialog_handler_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_keyboard_handler_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_life_span_handler_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_list_value_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_load_handler_t.g.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_menu_model_delegate_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_menu_model_t.g.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_navigation_entry_t.g.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_navigation_entry_visitor_t.g.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_pdf_print_callback_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_post_data_element_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_post_data_t.g.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_print_dialog_callback_t.g.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_print_handler_t.g.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_print_job_callback_t.g.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_print_settings_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_process_message_t.g.cs" />
-    <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_quota_callback_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_read_handler_t.g.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_register_cdm_callback_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_render_handler_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_render_process_handler_t.g.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_request_callback_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_request_context_handler_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_request_context_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_request_handler_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_request_t.g.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_resolve_callback_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_resource_bundle_handler_t.g.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_resource_bundle_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_resource_handler_t.g.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_response_filter_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_response_t.g.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_run_context_menu_callback_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_run_file_dialog_callback_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_scheme_handler_factory_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_scheme_registrar_t.g.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_set_cookie_callback_t.g.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_sslcert_principal_t.g.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_sslinfo_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_stream_reader_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_stream_writer_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_string_visitor_t.g.cs" />
@@ -2958,6 +3305,7 @@
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_v8stack_frame_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_v8stack_trace_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_v8value_t.g.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_value_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_web_plugin_info_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_web_plugin_info_visitor_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_web_plugin_unstable_callback_t.g.cs" />
@@ -2966,14 +3314,21 @@
     <Compile Include="Libraries\CefGlue\Interop\Classes.g\cef_zip_reader_t.g.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Structs\cef_browser_settings_t.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Structs\cef_cookie_t.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Structs\cef_cursor_info_t.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Structs\cef_draggable_region_t.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Structs\cef_geoposition_t.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Structs\cef_key_event_t.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Structs\cef_main_args_t.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Structs\cef_mouse_event_t.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Structs\cef_pdf_print_settings_t.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Structs\cef_point_t.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Structs\cef_popup_features_t.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Structs\cef_range_t.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Structs\cef_rect_t.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Structs\cef_request_context_settings_t.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Structs\cef_screen_info_t.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Structs\cef_settings_t.cs" />
+    <Compile Include="Libraries\CefGlue\Interop\Structs\cef_size_t.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Structs\cef_time_t.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Structs\cef_urlparts_t.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Structs\cef_window_info_t.cs" />
@@ -2982,6 +3337,7 @@
     <Compile Include="Libraries\CefGlue\Platform\Linux\CefWindowInfoLinuxImpl.cs" />
     <Compile Include="Libraries\CefGlue\Platform\Mac\CefWindowInfoMacImpl.cs" />
     <Compile Include="Libraries\CefGlue\Platform\Windows\CefWindowInfoWindowsImpl.cs" />
+    <Compile Include="Libraries\CefGlue\Platform\Windows\LoadLibraryFlags.cs" />
     <Compile Include="Libraries\CefGlue\Platform\Windows\NativeMethods.cs" />
     <Compile Include="Libraries\CefGlue\Platform\Windows\WindowStyles.cs" />
     <Compile Include="Libraries\CefGlue\Platform\Windows\WindowStylesEx.cs" />
@@ -2995,7 +3351,9 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Navigator\KryptonNavigatorDesigner.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Navigator\KryptonPageActionList.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Navigator\KryptonPageDesigner.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Navigator\KryptonPageFormEditFlags.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Navigator\KryptonPageFormEditFlags.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Navigator\KryptonPageFormEditFlags.Designer.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Navigator\NavigatorPageCollectionEditor.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Properties\Resources.Designer.cs" />
@@ -3044,7 +3402,9 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\KryptonCheckBoxDesigner.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\KryptonCheckButtonActionList.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\KryptonCheckButtonCollectionEditor.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\KryptonCheckButtonCollectionForm.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\KryptonCheckButtonCollectionForm.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\KryptonCheckButtonCollectionForm.Designer.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\KryptonCheckButtonDesigner.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\KryptonCheckedListBoxActionList.cs" />
@@ -3123,7 +3483,9 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\KryptonWrapLabelActionList.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\KryptonWrapLabelDesigner.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\PaletteDrawBordersEditor.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\PaletteDrawBordersSelector.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\PaletteDrawBordersSelector.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Toolkit\PaletteDrawBordersSelector.Designer.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Workspace\KryptonWorkspaceActionList.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Design\Workspace\KryptonWorkspaceCellDesigner.cs" />
@@ -3147,9 +3509,15 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Dragging\DockingDragTargetProvider.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Dragging\DragTargetControlEdge.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Dragging\DragTargetNull.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Base\DockingElement.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Base\DockingElementClosedCollection.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Base\DockingElementOpenCollection.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Base\DockingElement.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Base\DockingElementClosedCollection.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Base\DockingElementOpenCollection.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Impl\KryptonDockingAutoHiddenGroup.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Impl\KryptonDockingControl.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Impl\KryptonDockingDockspace.cs" />
@@ -3193,20 +3561,34 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\General\Definitions.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\General\DockingHelper.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\General\DockingMultiUpdate.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\General\ObscureControl.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\General\ObscureControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\General\PlatformInvoke.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Palette\DockingManagerStrings.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Properties\Resources.Designer.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\ViewDraw\ViewDrawAutoHiddenTab.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavClose.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavContext.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavFixed.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavClose.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavContext.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavFixed.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavFixedConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavigator.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavigator.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavManagerLayoutBar.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavManagerLayoutHeaderBar.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavNext.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavPrevious.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavNext.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavPrevious.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavRemap.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Controller\DragViewController.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Controller\OutlookMiniController.cs" />
@@ -3233,8 +3615,12 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DragTarget.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DragTargetNavigatorTransfer.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DropDockingIndicatorsRounded.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DropDockingIndicatorsSquare.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DropSolidWindow.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DropDockingIndicatorsSquare.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DropSolidWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\PageDragEndData.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\EventArgs\CloseActionEventArgs.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\EventArgs\ContextActionEventArgs.cs" />
@@ -3338,15 +3724,29 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Layout\ViewLayoutPageHide.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Layout\ViewLayoutPageShow.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Layout\ViewLayoutPopupPage.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecAppMenu.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecExpandRibbon.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecAppMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecExpandRibbon.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecManagerLayoutAppButton.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecManagerLayoutRibbon.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecMdiChildClose.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecMdiChildFixed.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecMdiChildMin.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecMdiChildRestore.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecMinimizeRibbon.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecMdiChildClose.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecMdiChildFixed.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecMdiChildMin.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecMdiChildRestore.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecMinimizeRibbon.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecViewAppButton.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecViewRibbon.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\AppButtonController.cs" />
@@ -3396,8 +3796,12 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Ribbon\KryptonRibbonRecentDocCollection.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Ribbon\KryptonRibbonTab.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Ribbon\KryptonRibbonTabCollection.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\BackstageAppMenu.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\KeyTipControl.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\BackstageAppMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\KeyTipControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\VisualPopupAppMenu.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\VisualPopupGroup.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\VisualPopupMinimized.cs" />
@@ -3591,15 +3995,31 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonTitle.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\AccurateText\AccurateText.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\AccurateText\AccurateTextMemento.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpec.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecAny.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecCalendar.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpec.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecAny.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecCalendar.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecCollection.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecFormFixed.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecFormWindowClose.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecFormWindowMax.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecFormWindowMin.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecHeaderGroup.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecFormFixed.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecFormWindowClose.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecFormWindowMax.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecFormWindowMin.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecHeaderGroup.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecManagerBase.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecManagerDraw.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecManagerLayout.cs" />
@@ -3616,7 +4036,9 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ContextMenu\KryptonContextMenuHeading.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ContextMenu\KryptonContextMenuImageSelect.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ContextMenu\KryptonContextMenuItem.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ContextMenu\KryptonContextMenuItemBase.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ContextMenu\KryptonContextMenuItemBase.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ContextMenu\KryptonContextMenuItems.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ContextMenu\KryptonContextMenuLinkLabel.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ContextMenu\KryptonContextMenuMonthCalendar.cs" />
@@ -3643,7 +4065,9 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controller\TrackPositionController.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonBorderEdge.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonBreadCrumb.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonBreadCrumbItem.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonBreadCrumbItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonButton.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonCheckBox.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonCheckButton.cs" />
@@ -3658,7 +4082,9 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonDateTimePicker.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonDomainUpDown.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonDropButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonForm.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonForm.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonGroup.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonGroupBox.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonGroupPanel.cs" />
@@ -3668,8 +4094,12 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonLabel.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonLinkLabel.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonListBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonListItem.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonManager.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonListItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonManager.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonMaskedTextBox.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonMessageBox.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonMonthCalendar.cs" />
@@ -3695,16 +4125,24 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualControl.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualControlBase.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualControlContainment.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualForm.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualForm.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPanel.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopup.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopupManager.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopupShadow.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopupSimpleShadow.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopupShadow.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopupSimpleShadow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopupTooltip.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualSimple.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualSimpleBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualTaskDialog.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualTaskDialog.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\ButtonSpecFormFixedConverter.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\ButtonStyleConverter.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\DataGridViewStyleConverter.cs" />
@@ -3770,7 +4208,9 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\KryptonControlCollection.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\KryptonDefaultColorAttribute.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\KryptonReadOnlyControls.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\ModalWaitDialog.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\ModalWaitDialog.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\ModalWaitDialog.Designer.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\NullContentValues.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\OperationThread.cs" />
@@ -3782,10 +4222,18 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\TypedCollection.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\TypedRestrictCollection.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteDefinitions.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Builtin\PaletteBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Builtin\PaletteNeoAxisBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Builtin\PaletteNeoAxisBlack.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Builtin\PaletteNeoAxisBlue.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Builtin\PaletteBase.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Builtin\PaletteNeoAxisBase.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Builtin\PaletteNeoAxisBlack.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Builtin\PaletteNeoAxisBlue.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonInternalKCT.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteButtonSpecBase.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteButtonSpecs.cs" />
@@ -3938,17 +4386,27 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\KryptonOffice2010Renderer.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\KryptonProfessionalRenderer.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\KryptonStandardRenderer.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderBase.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderBase.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderContext.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderDefinitions.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderDragDockingData.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderExpertHelpers.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderGlassHelpers.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderMementos.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderNeoAxis.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderOffice2010.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderProfessional.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderStandard.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderNeoAxis.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderOffice2010.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderProfessional.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderStandard.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Values\AdjustableContentValue.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Values\ButtonImageStates.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Values\ButtonValues.cs" />
@@ -3974,7 +4432,9 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewComposite.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewContext.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewContextMenuManager.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewControl.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewDecorator.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewLeaf.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewManager.cs" />
@@ -4235,7 +4695,9 @@
     <Compile Include="Libraries\Aether.Physics2D\Common\Decomposition\Seidel\Triangulator.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Common\Decomposition\Seidel\XNode.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Common\Decomposition\Seidel\YNode.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\ShadowsV2\DropShadow.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\ShadowsV2\DropShadow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\ShadowsV2\DropShadowManager.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\ShadowsV2\ImageMaps.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\ShadowsV2\ShadowImageCache.cs" />

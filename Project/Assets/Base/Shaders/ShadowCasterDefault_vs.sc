@@ -1,5 +1,5 @@
-$input a_position, a_indices, a_weight, i_data0, i_data1, i_data2
-$output v_depth
+$input a_position, a_indices, a_weight, i_data0, i_data1, i_data2, i_data3, i_data4
+$output v_depth, v_worldPosition, v_lodValueVisibilityDistanceReceiveDecals
 
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "Common.sh"
@@ -23,9 +23,13 @@ void main()
 	{
 		//instancing
 		worldMatrix = mtxFromRows(i_data0, i_data1, i_data2, vec4(0,0,0,1));
+		v_lodValueVisibilityDistanceReceiveDecals = i_data4;
 	}
 	else
+	{
 		worldMatrix = u_model[0];
+		v_lodValueVisibilityDistanceReceiveDecals = vec4(u_renderOperationData[2].w, u_renderOperationData[1].y, u_renderOperationData[1].x, 0);
+	}
 	
 	billboardRotateWorldMatrix(u_renderOperationData[0], worldMatrix, true, u_cameraPosition.xyz);
 	vec4 worldPosition = mul(worldMatrix, vec4(positionLocal, 1.0));
@@ -39,4 +43,6 @@ void main()
 	#else
 		v_depth = vec2(gl_Position.z, gl_Position.w);
 	#endif
+	
+	v_worldPosition = worldPosition.xyz;
 }

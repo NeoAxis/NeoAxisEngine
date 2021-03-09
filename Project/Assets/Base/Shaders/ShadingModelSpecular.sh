@@ -45,7 +45,6 @@ vec3 iblEnvironment_SpecularSM(vec3 replaceSpecularIrradianceValue, float replac
 	vec3 r = reflect(-shading_V_sm, shading_normal_sm);
 
 	vec3 reflectionCM = getEnvironmentValue(environmentTexture, environmentTextureData, r);
-	//vec3 reflectionCM = textureCube(environmentTexture, flipCubemapCoords(r)).rgb;
 
 	vec3 envReflection = mix(reflectionCM, replaceSpecularIrradianceValue, replaceSpecularIrradianceFactor);
 

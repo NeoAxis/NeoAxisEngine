@@ -25,6 +25,8 @@ namespace NeoAxis
 			get { return "Base\\ProjectSettings.component"; }
 		}
 
+		public static Component_ProjectSettings.ThemeEnum DefaultThemeWhenNoFile = Component_ProjectSettings.ThemeEnum.Dark;
+
 		/// <summary>
 		/// Gets instance of the settings.
 		/// </summary>
@@ -39,6 +41,9 @@ namespace NeoAxis
 					{
 						var settingsComponent2 = ComponentUtility.CreateComponent<Component_ProjectSettings>( null, true, true );
 						settingsComponent2.Name = "Root";
+
+						//default theme
+						settingsComponent2.Theme = DefaultThemeWhenNoFile;
 
 						//detect language
 						try

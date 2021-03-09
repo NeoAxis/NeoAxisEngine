@@ -1,4 +1,4 @@
-namespace Xilium.CefGlue
+﻿namespace Xilium.CefGlue
 {
     using System;
     using System.Collections.Generic;
@@ -155,6 +155,29 @@ namespace Xilium.CefGlue
         }
 
         /// <summary>
+        /// Returns the text of the misspelled word, if any, that the context menu was
+        /// invoked on.
+        /// </summary>
+        public string GetMisspelledWord()
+        {
+            var n_result = cef_context_menu_params_t.get_misspelled_word(_self);
+            return cef_string_userfree.ToString(n_result);
+        }
+
+        /// <summary>
+        /// Returns true if suggestions exist, false otherwise. Fills in |suggestions|
+        /// from the spell check service for the misspelled word if there is one.
+        /// </summary>
+        public string[] GetDictionarySuggestions()
+        {
+            var n_suggestions = libcef.string_list_alloc();
+            cef_context_menu_params_t.get_dictionary_suggestions(_self, n_suggestions);
+            var suggestions = cef_string_list.ToArray(n_suggestions);
+            libcef.string_list_free(n_suggestions);
+            return suggestions;
+        }
+
+        /// <summary>
         /// Returns true if the context menu was invoked on an editable node.
         /// </summary>
         public bool IsEditable
@@ -164,11 +187,11 @@ namespace Xilium.CefGlue
 
         /// <summary>
         /// Returns true if the context menu was invoked on an editable node where
-        /// speech-input is enabled.
+        /// spell-check is enabled.
         /// </summary>
-        public bool IsSpeechInputEnabled
+        public bool IsSpellCheckEnabled
         {
-            get { return cef_context_menu_params_t.is_speech_input_enabled(_self) != 0; }
+            get { return cef_context_menu_params_t.is_spell_check_enabled(_self) != 0; }
         }
 
         /// <summary>
@@ -178,6 +201,23 @@ namespace Xilium.CefGlue
         public CefContextMenuEditStateFlags EditState
         {
             get { return cef_context_menu_params_t.get_edit_state_flags(_self); }
+        }
+
+        /// <summary>
+        /// Returns true if the context menu contains items specified by the renderer
+        /// process (for example, plugin placeholder or pepper plugin menu items).
+        /// </summary>
+        public bool IsCustomMenu
+        {
+            get { return cef_context_menu_params_t.is_custom_menu(_self) != 0; }
+        }
+
+        /// <summary>
+        /// Returns true if the context menu was invoked from a pepper plugin.
+        /// </summary>
+        public bool IsPepperMenu
+        {
+            get { return cef_context_menu_params_t.is_pepper_menu(_self) != 0; }
         }
     }
 }

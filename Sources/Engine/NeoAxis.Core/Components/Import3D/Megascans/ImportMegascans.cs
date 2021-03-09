@@ -944,7 +944,8 @@ namespace NeoAxis.Import
 			var geometry = parent.CreateComponent<Component_MeshGeometry>();
 			geometry.Name = GetFixedName( geom.Name );
 
-			CalcIndices.CalculateIndicesBySpatialSort( geom, out StandardVertex[] vertices, out int[] indices );
+			CalcIndices.CalculateIndicesAndMergeEqualVertices( geom, out StandardVertex[] vertices, out int[] indices );
+			//CalcIndices.CalculateIndicesBySpatialSort( geom, out StandardVertex[] vertices, out int[] indices );
 			//CalcIndices.CalculateIndicesByOctree( m, out StandardVertexF[] verticesO, out int[] indicesO );
 
 			geometry.SetVertexDataWithRemovingHoles( vertices, geom.VertexComponents );

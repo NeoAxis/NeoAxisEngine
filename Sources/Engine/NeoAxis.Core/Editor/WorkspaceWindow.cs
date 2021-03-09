@@ -8,7 +8,7 @@ using ComponentFactory.Krypton.Toolkit;
 
 namespace NeoAxis.Editor
 {
-	partial class WorkspaceWindow : DockWindow, IDocumentWindow
+	public partial class WorkspaceWindow : DockWindow, IDocumentWindow
 	{
 		WorkspaceControllerForWindow workspaceController;
 

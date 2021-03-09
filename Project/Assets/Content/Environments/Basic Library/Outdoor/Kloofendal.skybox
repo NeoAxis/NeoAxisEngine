@@ -1,0 +1,8 @@
+.component NeoAxis.Component_Skybox
+{
+	Multiplier = "1 1 1; 2"
+	Cubemap
+	{
+		GetByReference = "Content\\Environments\\Basic Library\\Outdoor\\Textures\\kloofendal_48d_partly_cloudy_4k.hdr"
+	}
+}

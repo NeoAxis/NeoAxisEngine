@@ -1,5 +1,6 @@
 .component NeoAxis.Component_Scene
 {
+	BackgroundColorAffectLighting = 1
 	DisplayDevelopmentDataInSimulation = True
 	DisplayLights = True
 	DisplayReflectionProbes = True
@@ -136,7 +137,7 @@
 				UVTilesPerUnit = 0.333 0.333
 				Material
 				{
-					GetByReference = "Samples\\Starter Content\\Materials\\Concrete 3x3 meters\\Concrete 3x3 meters.material"
+					GetByReference = "Content\\Materials\\Basic Library\\Concrete\\Concrete Floor 01.material"
 				}
 			}
 		}
@@ -247,6 +248,7 @@
 	.component NeoAxis.Component_Skybox
 	{
 		Name = Skybox
+		AffectLighting = 1
 		Cubemap
 		{
 			GetByReference = "Base\\Environments\\Gradient.image"

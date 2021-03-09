@@ -22,7 +22,7 @@ namespace NeoAxis
 		double transformPositionByTime2_Time;
 		Vector3 transformPositionByTime2_Position;
 
-		List<SceneLODUtility.RenderingContextItem> renderingContextItems;
+		//List<SceneLODUtility.RenderingContextItem> renderingContextItems;
 
 		/////////////////////////////////////////
 
@@ -145,6 +145,20 @@ namespace NeoAxis
 		ReferenceField<bool> _castShadows = true;
 
 		/// <summary>
+		/// Indent multiplier when rendering shadows to fix overlapping effect of the object with the shadow.
+		/// </summary>
+		[DefaultValue( 1.0 )]
+		[Range( 0, 1 )]
+		public Reference<double> ShadowOffset
+		{
+			get { if( _shadowOffset.BeginGet() ) ShadowOffset = _shadowOffset.Get( this ); return _shadowOffset.value; }
+			set { if( _shadowOffset.BeginSet( ref value ) ) { try { ShadowOffsetChanged?.Invoke( this ); } finally { _shadowOffset.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ShadowOffset"/> property value changes.</summary>
+		public event Action<Component_Billboard> ShadowOffsetChanged;
+		ReferenceField<double> _shadowOffset = 1.0;
+
+		/// <summary>
 		/// Whether to can apply decals the billboard.
 		/// </summary>
 		[DefaultValue( true )]
@@ -156,6 +170,22 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="ReceiveDecals"/> property value changes.</summary>
 		public event Action<Component_Billboard> ReceiveDecalsChanged;
 		ReferenceField<bool> _receiveDecals = true;
+
+		/// <summary>
+		/// Specifies settings for special object effects, such as an outline effect.
+		/// </summary>
+		[Cloneable( CloneType.Deep )]
+		public Reference<List<ObjectSpecialRenderingEffect>> SpecialEffects
+		{
+			get { if( _specialEffects.BeginGet() ) SpecialEffects = _specialEffects.Get( this ); return _specialEffects.value; }
+			set { if( _specialEffects.BeginSet( ref value ) ) { try { SpecialEffectsChanged?.Invoke( this ); } finally { _specialEffects.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="SpecialEffects"/> property value changes.</summary>
+		public event Action<Component_Billboard> SpecialEffectsChanged;
+		ReferenceField<List<ObjectSpecialRenderingEffect>> _specialEffects = new List<ObjectSpecialRenderingEffect>();
+
+		[Browsable( false )]
+		public Component_RenderingPipeline.RenderSceneData.CutVolumeItem[] CutVolumes { get; set; }
 
 		/////////////////////////////////////////
 
@@ -225,8 +255,10 @@ namespace NeoAxis
 			}
 		}
 
-		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
+		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
+			base.OnGetRenderSceneData( context, mode, modeGetObjectsItem );
+
 			var time = context.Owner.LastUpdateTime;
 			if( time != transformPositionByTime1_Time )
 			{
@@ -249,36 +281,50 @@ namespace NeoAxis
 
 				var tr = Transform.Value;
 				var cameraSettings = context.Owner.CameraSettings;
-				var trPosition = tr.Position;
 
-				//update and get LOD info
-				var contextItem = SceneLODUtility.UpdateAndGetContextItem( ref renderingContextItems, context, null, VisibilityDistance, ref trPosition );
+				var cameraDistanceMinSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, SpaceBounds );
+				var visibilityDistance = VisibilityDistance.Value;
 
-				bool skip = false;
-				if( contextItem.currentLOD == -1 && contextItem.transitionTime == 0 )
-					skip = true;
-
-				if( !skip )
+				if( cameraDistanceMinSquared < visibilityDistance * visibilityDistance || mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum )
 				{
+					var allowOutlineSelect = context.renderingPipeline.UseRenderTargets && ProjectSettings.Get.SceneEditorSelectOutlineEffectEnabled;
+
 					var item = new Component_RenderingPipeline.RenderSceneData.BillboardItem();
 					item.Creator = this;
 					SpaceBounds.CalculatedBoundingBox.GetCenter( out item.BoundingBoxCenter );
 					item.BoundingSphere = SpaceBounds.CalculatedBoundingSphere;
 					item.CastShadows = CastShadows;
+					item.ShadowOffset = (float)ShadowOffset.Value;
 					item.ReceiveDecals = ReceiveDecals;
 					item.Material = Material;
+					item.VisibilityDistance = (float)visibilityDistance;
+					item.CutVolumes = CutVolumes;
 
-					//get data for rendering
-					float itemLodValue = 0;
+					var specialEffects = SpecialEffects.Value;
+					if( specialEffects != null && specialEffects.Count != 0 )
+						item.SpecialEffects = specialEffects;
+
+					//display outline effect of editor selection
+					if( mode == GetRenderSceneDataMode.InsideFrustum && allowOutlineSelect && context2.selectedObjects.Contains( this ) )
 					{
-						if( contextItem.currentLOD == 0 && contextItem.toLOD == -1 )
-							itemLodValue = contextItem.transitionTime;
-						else if( contextItem.currentLOD == -1 && contextItem.toLOD == 0 )
-							itemLodValue = -contextItem.transitionTime;
-					}
+						if( context2.displayBillboardsCounter < context2.displayBillboardsMax )
+						{
+							context2.displayBillboardsCounter++;
 
-					//set LOD value
-					item.LODValue = itemLodValue;
+							var color = ProjectSettings.Get.SelectedColor.Value;
+							//color.Alpha *= .5f;
+
+							var effect = new ObjectSpecialRenderingEffect_Outline();
+							effect.Group = int.MaxValue;
+							effect.Color = color;
+
+							if( item.SpecialEffects != null )
+								item.SpecialEffects = new List<ObjectSpecialRenderingEffect>( item.SpecialEffects );
+							else
+								item.SpecialEffects = new List<ObjectSpecialRenderingEffect>();
+							item.SpecialEffects.Add( effect );
+						}
+					}
 
 					//!!!!double
 					item.Position = tr.Position.ToVector3F();
@@ -298,7 +344,7 @@ namespace NeoAxis
 					//display editor selection
 					if( mode == GetRenderSceneDataMode.InsideFrustum )
 					{
-						if( context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) )// || context.dragDropCreateObject == this )
+						if( ( !allowOutlineSelect && context2.selectedObjects.Contains( this ) ) || context2.canSelectObjects.Contains( this ) )// || context.dragDropCreateObject == this )
 						{
 							if( context2.displayBillboardsCounter < context2.displayBillboardsMax )
 							{
@@ -367,10 +413,10 @@ namespace NeoAxis
 			return false;
 		}
 
-		public void ResetLodTransitionStates( ViewportRenderingContext resetOnlySpecifiedContext = null )
-		{
-			SceneLODUtility.ResetLodTransitionStates( ref renderingContextItems, resetOnlySpecifiedContext );
-		}
+		//public void ResetLodTransitionStates( ViewportRenderingContext resetOnlySpecifiedContext = null )
+		//{
+		//	SceneLODUtility.ResetLodTransitionStates( ref renderingContextItems, resetOnlySpecifiedContext );
+		//}
 
 		public override void NewObjectSetDefaultConfiguration( bool createdFromNewObjectWindow = false )
 		{
@@ -379,5 +425,20 @@ namespace NeoAxis
 			Material = ReferenceUtility.MakeReference( @"Base\Components\Billboard default.material" );
 		}
 
+		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
+		{
+			base.OnMetadataGetMembersFilter( context, member, ref skip );
+
+			if( member is Metadata.Property )
+			{
+				switch( member.Name )
+				{
+				case nameof( ShadowOffset ):
+					if( !CastShadows )
+						skip = true;
+					break;
+				}
+			}
+		}
 	}
 }

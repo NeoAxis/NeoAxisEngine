@@ -111,7 +111,7 @@ namespace NeoAxis
 		}
 
 		/// <summary>
-		/// Enables the extended mode of the editor. All features of NeoAxis Engine is activated in this mode.
+		/// Enables the extended mode of the editor. All features of NeoAxis Engine are activated in this mode.
 		/// </summary>
 		[DefaultValue( false )]
 		[Category( "General" )]
@@ -778,7 +778,7 @@ namespace NeoAxis
 		/////////////////////////////////////////
 
 		[Category( "Preview" )]
-		[DefaultValue( 30000.0 )]
+		[DefaultValue( 50000.0 )]
 		[Range( 0, 100000 )]
 		public Reference<double> PreviewAmbientLightBrightness
 		{
@@ -787,10 +787,10 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="PreviewAmbientLightBrightness"/> property value changes.</summary>
 		public event Action<Component_ProjectSettings> PreviewAmbientLightBrightnessChanged;
-		ReferenceField<double> _previewAmbientLightBrightness = 30000.0;
+		ReferenceField<double> _previewAmbientLightBrightness = 50000.0;
 
 		[Category( "Preview" )]
-		[DefaultValue( 250000.0 )]
+		[DefaultValue( 200000.0 )]
 		[Range( 0, 1000000 )]
 		public Reference<double> PreviewDirectionalLightBrightness
 		{
@@ -799,7 +799,19 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="PreviewDirectionalLightBrightness"/> property value changes.</summary>
 		public event Action<Component_ProjectSettings> PreviewDirectionalLightBrightnessChanged;
-		ReferenceField<double> _previewDirectionalLightBrightness = 250000.0;
+		ReferenceField<double> _previewDirectionalLightBrightness = 200000.0;
+
+		[DefaultValueReference( @"Base\Environments\Forest.image" )]
+		[Category( "Preview" )]
+		[DisplayName( "Material Preview Environment for Light Theme" )]
+		public Reference<Component_Image> MaterialPreviewEnvironmentLightTheme
+		{
+			get { if( _materialPreviewEnvironmentLightTheme.BeginGet() ) MaterialPreviewEnvironmentLightTheme = _materialPreviewEnvironmentLightTheme.Get( this ); return _materialPreviewEnvironmentLightTheme.value; }
+			set { if( _materialPreviewEnvironmentLightTheme.BeginSet( ref value ) ) { try { MaterialPreviewEnvironmentLightThemeChanged?.Invoke( this ); } finally { _materialPreviewEnvironmentLightTheme.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="MaterialPreviewEnvironmentLightTheme"/> property value changes.</summary>
+		public event Action<Component_ProjectSettings> MaterialPreviewEnvironmentLightThemeChanged;
+		ReferenceField<Component_Image> _materialPreviewEnvironmentLightTheme = new Reference<Component_Image>( null, @"Base\Environments\Forest.image" );
 
 		[DefaultValueReference( @"Base\Tools\Material Preview\Sphere.mesh" )]
 		[Category( "Preview" )]
@@ -812,19 +824,7 @@ namespace NeoAxis
 		public event Action<Component_ProjectSettings> MaterialPreviewMeshChanged;
 		ReferenceField<Component_Mesh> _materialPreviewMesh = new Reference<Component_Mesh>( null, @"Base\Tools\Material Preview\Sphere.mesh" );
 
-		[DefaultValueReference( @"Base\Environments\Gradient.image" )]
-		[Category( "Preview" )]
-		[DisplayName( "Material Preview Environment for Light Theme" )]
-		public Reference<Component_Image> MaterialPreviewEnvironmentLightTheme
-		{
-			get { if( _materialPreviewEnvironmentLightTheme.BeginGet() ) MaterialPreviewEnvironmentLightTheme = _materialPreviewEnvironmentLightTheme.Get( this ); return _materialPreviewEnvironmentLightTheme.value; }
-			set { if( _materialPreviewEnvironmentLightTheme.BeginSet( ref value ) ) { try { MaterialPreviewEnvironmentLightThemeChanged?.Invoke( this ); } finally { _materialPreviewEnvironmentLightTheme.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="MaterialPreviewEnvironmentLightTheme"/> property value changes.</summary>
-		public event Action<Component_ProjectSettings> MaterialPreviewEnvironmentLightThemeChanged;
-		ReferenceField<Component_Image> _materialPreviewEnvironmentLightTheme = new Reference<Component_Image>( null, @"Base\Environments\Gradient.image" );
-
-		[DefaultValueReference( @"Base\Environments\Gradient.image" )]
+		[DefaultValueReference( @"Base\Environments\Forest.image" )]
 		[Category( "Preview" )]
 		[DisplayName( "Material Preview Environment for Dark Theme" )]
 		public Reference<Component_Image> MaterialPreviewEnvironmentDarkTheme
@@ -834,7 +834,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="MaterialPreviewEnvironmentDarkTheme"/> property value changes.</summary>
 		public event Action<Component_ProjectSettings> MaterialPreviewEnvironmentDarkThemeChanged;
-		ReferenceField<Component_Image> _materialPreviewEnvironmentDarkTheme = new Reference<Component_Image>( null, @"Base\Environments\Gradient.image" );
+		ReferenceField<Component_Image> _materialPreviewEnvironmentDarkTheme = new Reference<Component_Image>( null, @"Base\Environments\Forest.image" );
 
 		public Reference<Component_Image> GetMaterialPreviewEnvironment()
 		{
@@ -843,6 +843,31 @@ namespace NeoAxis
 			else
 				return MaterialPreviewEnvironmentLightTheme;
 		}
+
+		[DefaultValue( "1 1 1" )]
+		[ApplicableRangeColorValuePower( 0, 4 )]
+		[ColorValueNoAlpha]
+		[Category( "Preview" )]
+		public Reference<ColorValuePowered> MaterialPreviewEnvironmentMultiplier
+		{
+			get { if( _materialPreviewEnvironmentMultiplier.BeginGet() ) MaterialPreviewEnvironmentMultiplier = _materialPreviewEnvironmentMultiplier.Get( this ); return _materialPreviewEnvironmentMultiplier.value; }
+			set { if( _materialPreviewEnvironmentMultiplier.BeginSet( ref value ) ) { try { MaterialPreviewEnvironmentMultiplierChanged?.Invoke( this ); } finally { _materialPreviewEnvironmentMultiplier.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="MaterialPreviewEnvironmentMultiplier"/> property value changes.</summary>
+		public event Action<Component_ProjectSettings> MaterialPreviewEnvironmentMultiplierChanged;
+		ReferenceField<ColorValuePowered> _materialPreviewEnvironmentMultiplier = new ColorValuePowered( 1, 1, 1 );
+
+		[DefaultValue( 0.5 )]
+		[Range( 0, 1 )]
+		[Category( "Preview" )]
+		public Reference<double> MaterialPreviewEnvironmentAffectLighting
+		{
+			get { if( _materialPreviewEnvironmentAffectLighting.BeginGet() ) MaterialPreviewEnvironmentAffectLighting = _materialPreviewEnvironmentAffectLighting.Get( this ); return _materialPreviewEnvironmentAffectLighting.value; }
+			set { if( _materialPreviewEnvironmentAffectLighting.BeginSet( ref value ) ) { try { MaterialPreviewEnvironmentAffectLightingChanged?.Invoke( this ); } finally { _materialPreviewEnvironmentAffectLighting.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="MaterialPreviewEnvironmentAffectLighting"/> property value changes.</summary>
+		public event Action<Component_ProjectSettings> MaterialPreviewEnvironmentAffectLightingChanged;
+		ReferenceField<double> _materialPreviewEnvironmentAffectLighting = 0.5;
 
 		/////////////////////////////////////////
 
@@ -887,7 +912,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The color of screen labels.
 		/// </summary>
-		[DefaultValue( "1 1 1" )]
+		[DefaultValue( "1 1 1 0.5" )]
 		[Category( "Screen Labels" )]
 		public Reference<ColorValue> ScreenLabelColor
 		{
@@ -896,7 +921,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="ScreenLabelColor"/> property value changes.</summary>
 		public event Action<Component_ProjectSettings> ScreenLabelColorChanged;
-		ReferenceField<ColorValue> _screenLabelColor = new ColorValue( 1, 1, 1 );
+		ReferenceField<ColorValue> _screenLabelColor = new ColorValue( 1, 1, 1, 0.5 );
 
 		[DefaultValue( true )]
 		[Category( "Screen Labels" )]
@@ -1337,6 +1362,37 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="SceneEditorSelectByDoubleClickRadius"/> property value changes.</summary>
 		public event Action<Component_ProjectSettings> SceneEditorSelectByDoubleClickRadiusChanged;
 		ReferenceField<double> _sceneEditorSelectByDoubleClickRadius = 20.0;
+
+		/// <summary>
+		/// Whether to allow using outline effect for selected objects.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Scene Editor: Select" )]
+		[DisplayName( "Outline Effect Enabled" )]
+		public Reference<bool> SceneEditorSelectOutlineEffectEnabled
+		{
+			get { if( _sceneEditorSelectOutlineEffectEnabled.BeginGet() ) SceneEditorSelectOutlineEffectEnabled = _sceneEditorSelectOutlineEffectEnabled.Get( this ); return _sceneEditorSelectOutlineEffectEnabled.value; }
+			set { if( _sceneEditorSelectOutlineEffectEnabled.BeginSet( ref value ) ) { try { SceneEditorSelectOutlineEffectEnabledChanged?.Invoke( this ); } finally { _sceneEditorSelectOutlineEffectEnabled.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="SceneEditorSelectOutlineEffectEnabled"/> property value changes.</summary>
+		public event Action<Component_ProjectSettings> SceneEditorSelectOutlineEffectEnabledChanged;
+		ReferenceField<bool> _sceneEditorSelectOutlineEffectEnabled = true;
+
+		/// <summary>
+		/// The size of the outline effect.
+		/// </summary>
+		[DefaultValue( 1.0 )]
+		[Range( 0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 4 )]
+		[Category( "Scene Editor: Select" )]
+		[DisplayName( "Outline Effect Scale" )]
+		public Reference<double> SceneEditorSelectOutlineEffectScale
+		{
+			get { if( _sceneEditorSelectOutlineEffectScale.BeginGet() ) SceneEditorSelectOutlineEffectScale = _sceneEditorSelectOutlineEffectScale.Get( this ); return _sceneEditorSelectOutlineEffectScale.value; }
+			set { if( _sceneEditorSelectOutlineEffectScale.BeginSet( ref value ) ) { try { SceneEditorSelectOutlineEffectScaleChanged?.Invoke( this ); } finally { _sceneEditorSelectOutlineEffectScale.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="SceneEditorSelectOutlineEffectScale"/> property value changes.</summary>
+		public event Action<Component_ProjectSettings> SceneEditorSelectOutlineEffectScaleChanged;
+		ReferenceField<double> _sceneEditorSelectOutlineEffectScale = 1.0;
 
 		/////////////////////////////////////////
 

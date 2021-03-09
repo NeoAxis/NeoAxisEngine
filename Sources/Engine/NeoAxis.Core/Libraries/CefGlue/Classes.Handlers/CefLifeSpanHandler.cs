@@ -1,4 +1,4 @@
-namespace Xilium.CefGlue
+﻿namespace Xilium.CefGlue
 {
     using System;
     using System.Collections.Generic;
@@ -13,7 +13,7 @@ namespace Xilium.CefGlue
     /// </summary>
     public abstract unsafe partial class CefLifeSpanHandler
     {
-        private int on_before_popup(cef_life_span_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_string_t* target_url, cef_string_t* target_frame_name, cef_popup_features_t* popupFeatures, cef_window_info_t* windowInfo, cef_client_t** client, cef_browser_settings_t* settings, int* no_javascript_access)
+        private int on_before_popup(cef_life_span_handler_t* self, cef_browser_t* browser, cef_frame_t* frame, cef_string_t* target_url, cef_string_t* target_frame_name, CefWindowOpenDisposition target_disposition, int user_gesture, cef_popup_features_t* popupFeatures, cef_window_info_t* windowInfo, cef_client_t** client, cef_browser_settings_t* settings, int* no_javascript_access)
         {
             CheckSelf(self);
 
@@ -21,6 +21,7 @@ namespace Xilium.CefGlue
             var m_frame = CefFrame.FromNative(frame);
             var m_targetUrl = cef_string_t.ToString(target_url);
             var m_targetFrameName = cef_string_t.ToString(target_frame_name);
+            var m_userGesture = user_gesture != 0;
             var m_popupFeatures = new CefPopupFeatures(popupFeatures);
             var m_windowInfo = CefWindowInfo.FromNative(windowInfo);
             var m_client = CefClient.FromNative(*client);
@@ -28,7 +29,7 @@ namespace Xilium.CefGlue
             var m_noJavascriptAccess = (*no_javascript_access) != 0;
 
             var o_client = m_client;
-            var result = OnBeforePopup(m_browser, m_frame, m_targetUrl, m_targetFrameName, m_popupFeatures, m_windowInfo, ref m_client, m_settings, ref m_noJavascriptAccess);
+            var result = OnBeforePopup(m_browser, m_frame, m_targetUrl, m_targetFrameName, target_disposition, m_userGesture, m_popupFeatures, m_windowInfo, ref m_client, m_settings, ref m_noJavascriptAccess);
 
             if ((object)o_client != m_client && m_client != null)
             {
@@ -45,19 +46,26 @@ namespace Xilium.CefGlue
         }
 
         /// <summary>
-        /// Called on the IO thread before a new popup window is created. The |browser|
-        /// and |frame| parameters represent the source of the popup request. The
-        /// |target_url| and |target_frame_name| values may be empty if none were
-        /// specified with the request. The |popupFeatures| structure contains
+        /// Called on the IO thread before a new popup browser is created. The
+        /// |browser| and |frame| values represent the source of the popup request. The
+        /// |target_url| and |target_frame_name| values indicate where the popup
+        /// browser should navigate and may be empty if not specified with the request.
+        /// The |target_disposition| value indicates where the user intended to open
+        /// the popup (e.g. current tab, new tab, etc). The |user_gesture| value will
+        /// be true if the popup was opened via explicit user gesture (e.g. clicking a
+        /// link) or false if the popup opened automatically (e.g. via the
+        /// DomContentLoaded event). The |popupFeatures| structure contains additional
         /// information about the requested popup window. To allow creation of the
-        /// popup window optionally modify |windowInfo|, |client|, |settings| and
+        /// popup browser optionally modify |windowInfo|, |client|, |settings| and
         /// |no_javascript_access| and return false. To cancel creation of the popup
-        /// window return true. The |client| and |settings| values will default to the
-        /// source browser's values. The |no_javascript_access| value indicates whether
-        /// the new browser window should be scriptable and in the same process as the
-        /// source browser.
+        /// browser return true. The |client| and |settings| values will default to the
+        /// source browser's values. If the |no_javascript_access| value is set to
+        /// false the new browser will not be scriptable and may not be hosted in the
+        /// same renderer process as the source browser. Any modifications to
+        /// |windowInfo| will be ignored if the parent browser is wrapped in a
+        /// CefBrowserView.
         /// </summary>
-        protected virtual bool OnBeforePopup(CefBrowser browser, CefFrame frame, string targetUrl, string targetFrameName, CefPopupFeatures popupFeatures, CefWindowInfo windowInfo, ref CefClient client, CefBrowserSettings settings, ref bool noJavascriptAccess)
+        protected virtual bool OnBeforePopup(CefBrowser browser, CefFrame frame, string targetUrl, string targetFrameName, CefWindowOpenDisposition targetDisposition, bool userGesture, CefPopupFeatures popupFeatures, CefWindowInfo windowInfo, ref CefClient client, CefBrowserSettings settings, ref bool noJavascriptAccess)
         {
             return false;
         }
@@ -73,30 +81,11 @@ namespace Xilium.CefGlue
         }
 
         /// <summary>
-        /// Called after a new browser is created.
+        /// Called after a new browser is created. This callback will be the first
+        /// notification that references |browser|.
         /// </summary>
         protected virtual void OnAfterCreated(CefBrowser browser)
         {
-        }
-
-
-        private int run_modal(cef_life_span_handler_t* self, cef_browser_t* browser)
-        {
-            CheckSelf(self);
-
-            var m_browser = CefBrowser.FromNative(browser);
-
-            return RunModal(m_browser) ? 1 : 0;
-        }
-
-        /// <summary>
-        /// Called when a modal window is about to display and the modal loop should
-        /// begin running. Return false to use the default modal loop implementation or
-        /// true to use a custom implementation.
-        /// </summary>
-        protected virtual bool RunModal(CefBrowser browser)
-        {
-            return false;
         }
 
 
@@ -111,35 +100,64 @@ namespace Xilium.CefGlue
 
         /// <summary>
         /// Called when a browser has recieved a request to close. This may result
-        /// directly from a call to CefBrowserHost::CloseBrowser() or indirectly if the
-        /// browser is a top-level OS window created by CEF and the user attempts to
-        /// close the window. This method will be called after the JavaScript
-        /// 'onunload' event has been fired. It will not be called for browsers after
-        /// the associated OS window has been destroyed (for those browsers it is no
-        /// longer possible to cancel the close).
-        /// If CEF created an OS window for the browser returning false will send an OS
-        /// close notification to the browser window's top-level owner (e.g. WM_CLOSE
-        /// on Windows, performClose: on OS-X and "delete_event" on Linux). If no OS
-        /// window exists (window rendering disabled) returning false will cause the
-        /// browser object to be destroyed immediately. Return true if the browser is
-        /// parented to another window and that other window needs to receive close
-        /// notification via some non-standard technique.
-        /// If an application provides its own top-level window it should handle OS
-        /// close notifications by calling CefBrowserHost::CloseBrowser(false) instead
-        /// of immediately closing (see the example below). This gives CEF an
-        /// opportunity to process the 'onbeforeunload' event and optionally cancel the
-        /// close before DoClose() is called.
-        /// The CefLifeSpanHandler::OnBeforeClose() method will be called immediately
-        /// before the browser object is destroyed. The application should only exit
-        /// after OnBeforeClose() has been called for all existing browsers.
-        /// If the browser represents a modal window and a custom modal loop
-        /// implementation was provided in CefLifeSpanHandler::RunModal() this callback
-        /// should be used to restore the opener window to a usable state.
-        /// By way of example consider what should happen during window close when the
-        /// browser is parented to an application-provided top-level OS window.
-        /// 1.  User clicks the window close button which sends an OS close
-        /// notification (e.g. WM_CLOSE on Windows, performClose: on OS-X and
-        /// "delete_event" on Linux).
+        /// directly from a call to CefBrowserHost::*CloseBrowser() or indirectly if
+        /// the browser is parented to a top-level window created by CEF and the user
+        /// attempts to close that window (by clicking the 'X', for example). The
+        /// DoClose() method will be called after the JavaScript 'onunload' event has
+        /// been fired.
+        /// An application should handle top-level owner window close notifications by
+        /// calling CefBrowserHost::TryCloseBrowser() or
+        /// CefBrowserHost::CloseBrowser(false) instead of allowing the window to close
+        /// immediately (see the examples below). This gives CEF an opportunity to
+        /// process the 'onbeforeunload' event and optionally cancel the close before
+        /// DoClose() is called.
+        /// When windowed rendering is enabled CEF will internally create a window or
+        /// view to host the browser. In that case returning false from DoClose() will
+        /// send the standard close notification to the browser's top-level owner
+        /// window (e.g. WM_CLOSE on Windows, performClose: on OS X, "delete_event" on
+        /// Linux or CefWindowDelegate::CanClose() callback from Views). If the
+        /// browser's host window/view has already been destroyed (via view hierarchy
+        /// tear-down, for example) then DoClose() will not be called for that browser
+        /// since is no longer possible to cancel the close.
+        /// When windowed rendering is disabled returning false from DoClose() will
+        /// cause the browser object to be destroyed immediately.
+        /// If the browser's top-level owner window requires a non-standard close
+        /// notification then send that notification from DoClose() and return true.
+        /// The CefLifeSpanHandler::OnBeforeClose() method will be called after
+        /// DoClose() (if DoClose() is called) and immediately before the browser
+        /// object is destroyed. The application should only exit after OnBeforeClose()
+        /// has been called for all existing browsers.
+        /// The below examples describe what should happen during window close when the
+        /// browser is parented to an application-provided top-level window.
+        /// Example 1: Using CefBrowserHost::TryCloseBrowser(). This is recommended for
+        /// clients using standard close handling and windows created on the browser
+        /// process UI thread.
+        /// 1.  User clicks the window close button which sends a close notification to
+        /// the application's top-level window.
+        /// 2.  Application's top-level window receives the close notification and
+        /// calls TryCloseBrowser() (which internally calls CloseBrowser(false)).
+        /// TryCloseBrowser() returns false so the client cancels the window close.
+        /// 3.  JavaScript 'onbeforeunload' handler executes and shows the close
+        /// confirmation dialog (which can be overridden via
+        /// CefJSDialogHandler::OnBeforeUnloadDialog()).
+        /// 4.  User approves the close.
+        /// 5.  JavaScript 'onunload' handler executes.
+        /// 6.  CEF sends a close notification to the application's top-level window
+        /// (because DoClose() returned false by default).
+        /// 7.  Application's top-level window receives the close notification and
+        /// calls TryCloseBrowser(). TryCloseBrowser() returns true so the client
+        /// allows the window close.
+        /// 8.  Application's top-level window is destroyed.
+        /// 9.  Application's OnBeforeClose() handler is called and the browser object
+        /// is destroyed.
+        /// 10. Application exits by calling CefQuitMessageLoop() if no other browsers
+        /// exist.
+        /// Example 2: Using CefBrowserHost::CloseBrowser(false) and implementing the
+        /// DoClose() callback. This is recommended for clients using non-standard
+        /// close handling or windows that were not created on the browser process UI
+        /// thread.
+        /// 1.  User clicks the window close button which sends a close notification to
+        /// the application's top-level window.
         /// 2.  Application's top-level window receives the close notification and:
         /// A. Calls CefBrowserHost::CloseBrowser(false).
         /// B. Cancels the window close.
@@ -151,12 +169,12 @@ namespace Xilium.CefGlue
         /// 6.  Application's DoClose() handler is called. Application will:
         /// A. Set a flag to indicate that the next close attempt will be allowed.
         /// B. Return false.
-        /// 7.  CEF sends an OS close notification.
-        /// 8.  Application's top-level window receives the OS close notification and
+        /// 7.  CEF sends an close notification to the application's top-level window.
+        /// 8.  Application's top-level window receives the close notification and
         /// allows the window to close based on the flag from #6B.
-        /// 9.  Browser OS window is destroyed.
-        /// 10. Application's CefLifeSpanHandler::OnBeforeClose() handler is called and
-        /// the browser object is destroyed.
+        /// 9.  Application's top-level window is destroyed.
+        /// 10. Application's OnBeforeClose() handler is called and the browser object
+        /// is destroyed.
         /// 11. Application exits by calling CefQuitMessageLoop() if no other browsers
         /// exist.
         /// </summary>
@@ -178,9 +196,8 @@ namespace Xilium.CefGlue
         /// <summary>
         /// Called just before a browser is destroyed. Release all references to the
         /// browser object and do not attempt to execute any methods on the browser
-        /// object after this callback returns. If this is a modal window and a custom
-        /// modal loop implementation was provided in RunModal() this callback should
-        /// be used to exit the custom modal loop. See DoClose() documentation for
+        /// object after this callback returns. This callback will be the last
+        /// notification that references |browser|. See DoClose() documentation for
         /// additional usage information.
         /// </summary>
         protected virtual void OnBeforeClose(CefBrowser browser)

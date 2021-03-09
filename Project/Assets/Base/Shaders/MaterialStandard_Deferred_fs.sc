@@ -1,4 +1,4 @@
-$input v_texCoord01, v_worldPosition, v_worldNormal, v_depth, v_tangent, v_bitangent, v_color0, v_eyeTangentSpace, v_normalTangentSpace, v_position, v_previousPosition, v_texCoord23, v_colorParameter
+$input v_texCoord01, v_worldPosition, v_worldNormal, v_depth, v_tangent, v_bitangent, v_color0, v_eyeTangentSpace, v_normalTangentSpace, v_position, v_previousPosition, v_texCoord23, v_colorParameter, v_lodValueVisibilityDistanceReceiveDecals
 
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "Common.sh"
@@ -36,8 +36,6 @@ SAMPLER2D(s_materials, 1);
 
 void main()
 {
-	smoothLOD(getFragCoord(), u_renderOperationData[2].w);
-	
 	//get material data
 	vec4 materialStandardFragment[MATERIAL_STANDARD_FRAGMENT_SIZE];
 	getMaterialData(s_materials, u_renderOperationData, materialStandardFragment);	
@@ -46,11 +44,28 @@ void main()
 	vec3 inputWorldNormal = normalize(v_worldNormal);
 
 	cutVolumes(worldPosition);
+
+	vec3 toCamera = u_viewportOwnerCameraPosition - worldPosition.xyz;
+	float cameraDistance = length(toCamera);
+	toCamera = normalize(toCamera);
+
+	//lod
+	float lodValue = v_lodValueVisibilityDistanceReceiveDecals.x;
+	smoothLOD(getFragCoord(), lodValue);
+
+	//fading by visibility distance
+	float visibilityDistance = v_lodValueVisibilityDistanceReceiveDecals.y;
+	float visibilityDistanceFactor = getVisibilityDistanceFactor(visibilityDistance, cameraDistance);
+	smoothLOD(getFragCoord(), 1.0f - visibilityDistanceFactor);
 	
 	//displacement
 	vec2 displacementOffset = vec2_splat(0);
 #if defined(DISPLACEMENT_CODE_BODY) && defined(DISPLACEMENT)
-	displacementOffset = getParallaxOcclusionMappingOffset(v_texCoord01.xy, v_eyeTangentSpace, v_normalTangentSpace, u_materialDisplacementScale);
+	BRANCH
+	if(u_displacementScale != 0.0)
+	{
+		displacementOffset = getParallaxOcclusionMappingOffset(v_texCoord01.xy, v_eyeTangentSpace, v_normalTangentSpace, u_materialDisplacementScale * u_displacementScale, u_displacementMaxSteps);
+	}
 #endif //DISPLACEMENT_CODE_BODY
 	
 	//get material parameters
@@ -78,26 +93,40 @@ void main()
 	vec2 c_texCoord0 = v_texCoord01.xy - displacementOffset;
 	vec2 c_texCoord1 = v_texCoord01.zw - displacementOffset;
 	vec2 c_texCoord2 = v_texCoord23.xy - displacementOffset;
-	vec2 c_texCoord3 = v_texCoord23.zw - displacementOffset;
-	vec2 c_unwrappedUV = getUnwrappedUV(c_texCoord0, c_texCoord1, c_texCoord2, c_texCoord3, u_renderOperationData[3].x);
+	//vec2 c_texCoord3 = v_texCoord23.zw - displacementOffset;
+	vec2 c_unwrappedUV = getUnwrappedUV(c_texCoord0, c_texCoord1, c_texCoord2/*, c_texCoord3*/, u_renderOperationData[3].x);
 	
 	vec4 c_color0 = v_color0;
 #ifdef FRAGMENT_CODE_BODY
+	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(_sampler, _uv, u_removeTextureTiling)
 	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2D(_sampler, _uv)
 	FRAGMENT_CODE_BODY
+	#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
 	#undef CODE_BODY_TEXTURE2D
 #endif
 
 	//apply color parameter
+	
 	baseColor *= v_colorParameter.xyz;
 	if(u_materialUseVertexColor != 0.0)
 		baseColor *= v_color0.xyz;
 	baseColor = max(baseColor, vec3_splat(0));
+	
 	opacity *= v_colorParameter.w;
 	if(u_materialUseVertexColor != 0.0)
 		opacity *= v_color0.w;
 	opacity = saturate(opacity);
 
+	sheenColor *= v_colorParameter.xyz;
+	if(u_materialUseVertexColor != 0.0)
+		sheenColor *= v_color0.xyz;
+	sheenColor = max(sheenColor, vec3_splat(0));
+	
+	subsurfaceColor *= v_colorParameter.xyz;
+	if(u_materialUseVertexColor != 0.0)
+		subsurfaceColor *= v_color0.xyz;
+	subsurfaceColor = max(subsurfaceColor, vec3_splat(0));	
+	
 	//opacity dithering
 #ifdef OPACITY_DITHERING
 	opacity = dither(getFragCoord(), opacity);
@@ -129,28 +158,36 @@ void main()
 		normal = -normal;
 #endif
 
-	bool shadingModelSimple = false;
-	
+	bool receiveDecals = u_materialReceiveDecals != 0 && v_lodValueVisibilityDistanceReceiveDecals.z != 0;
+	//bool shadingModelSimple = false;
+
+#ifndef SHADING_MODEL_SUBSURFACE
+	thickness = 0;
+	subsurfacePower = 0;
+#endif
 #ifdef SHADING_MODEL_SIMPLE
-	shadingModelSimple = true;
+	//shadingModelSimple = true;
 	reflectance = 0;
 	metallic = 0;
 	roughness = 0;
 	ambientOcclusion = 0;
 	rayTracingReflection = 0;
-#endif //SHADING_MODEL_SIMPLE
-
-	bool receiveDecals = u_materialReceiveDecals != 0 && u_renderOperationData[1].x != 0;
+#endif
 
 	gl_FragData[0] = encodeRGBE8(baseColor);
 	gl_FragData[1] = vec4(normal * 0.5 + 0.5, reflectance);
-	gl_FragData[2] = vec4(metallic, roughness, ambientOcclusion, rayTracingReflection);
+	gl_FragData[2] = vec4(metallic, roughness, ambientOcclusion, rayTracingReflection);	
+#ifdef SHADING_MODEL_SUBSURFACE
+	gl_FragData[3] = encodeRGBE8(subsurfaceColor);
+#else
 	gl_FragData[3] = encodeRGBE8(emissive);
-	gl_FragData[4] = encodeGBuffer4(tangent, shadingModelSimple, receiveDecals);
+#endif
+	gl_FragData[4] = tangent * 0.5 + 0.5;//gl_FragData[4] = encodeGBuffer4(tangent, shadingModelSimple, receiveDecals);
+	gl_FragData[5] = vec4(float(SHADING_MODEL_INDEX) / 10.0, receiveDecals ? 1.0 : 0.0, thickness, subsurfacePower / 15.0);
 	
 	//motion vector
 	vec2 aa = (v_position.xy / v_position.w) * 0.5 + 0.5;
 	vec2 bb = (v_previousPosition.xy / v_previousPosition.w) * 0.5 + 0.5;
 	vec2 velocity = aa - bb;
-	gl_FragData[5] = vec4(velocity.x,velocity.y,0,0);	
+	gl_FragData[6] = vec4(velocity.x,velocity.y,0,0);	
 }

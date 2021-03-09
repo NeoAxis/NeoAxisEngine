@@ -40,6 +40,8 @@ namespace NeoAxis
 		object lockerKeysMouse = new object();
 		bool[] mouseButtons = new bool[ 5 ];
 		bool[] keys;
+		double[] keysDownTime;
+		double[] keysUpTime;
 		Vector2 mousePosition = new Vector2( -10000, -10000 );
 		bool mouseRelativeMode;
 		Vector2 restoreMousePosAfterRelativeMode;
@@ -663,9 +665,17 @@ namespace NeoAxis
 			lock( lockerKeysMouse )
 			{
 				if( keys == null )
+				{
 					keys = new bool[ GetEKeysMaxIndex() + 1 ];
+					keysDownTime = new double[ GetEKeysMaxIndex() + 1 ];
+					keysUpTime = new double[ GetEKeysMaxIndex() + 1 ];
+				}
 
-				keys[ (int)e.Key ] = true;
+				if( !keys[ (int)e.Key ] )
+				{
+					keys[ (int)e.Key ] = true;
+					keysDownTime[ (int)e.Key ] = EngineApp.EngineTime;
+				}
 			}
 
 			KeyDown?.Invoke( this, e, ref handled );
@@ -707,12 +717,17 @@ namespace NeoAxis
 			lock( lockerKeysMouse )
 			{
 				if( keys == null )
+				{
 					keys = new bool[ GetEKeysMaxIndex() + 1 ];
+					keysDownTime = new double[ GetEKeysMaxIndex() + 1 ];
+					keysUpTime = new double[ GetEKeysMaxIndex() + 1 ];
+				}
 
 				if( !keys[ (int)e.Key ] )
 					return;
 
 				keys[ (int)e.Key ] = false;
+				keysUpTime[ (int)e.Key ] = EngineApp.EngineTime;
 			}
 
 			KeyUp?.Invoke( this, e, ref handled );
@@ -901,6 +916,28 @@ namespace NeoAxis
 					return keys[ (int)key ];
 				else
 					return false;
+			}
+		}
+
+		public double GetKeyDownTime( EKeys key )
+		{
+			lock( lockerKeysMouse )
+			{
+				if( keysDownTime != null )
+					return keysDownTime[ (int)key ];
+				else
+					return 0;
+			}
+		}
+
+		public double GetKeyUpTime( EKeys key )
+		{
+			lock( lockerKeysMouse )
+			{
+				if( keysUpTime != null )
+					return keysUpTime[ (int)key ];
+				else
+					return 0;
 			}
 		}
 

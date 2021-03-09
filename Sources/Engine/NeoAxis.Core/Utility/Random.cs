@@ -82,8 +82,7 @@ namespace NeoAxis
 		/// maxValue must be greater than or equal to zero.
 		/// </param>
 		/// <returns>
-		/// A 32-bit signed integer greater than or equal to zero, and less or equal than maxValue;
-		/// that is, the range of return values includes zero but not maxValue.
+		/// A 32-bit signed integer greater than or equal to zero, and less or equal than maxValue. The range of return values includes zero and maxValue.
 		/// </returns>
 		/// <exception cref="System.ArgumentOutOfRangeException" >maxValue is less than zero.</exception>
 		public int Next( int maxValue )

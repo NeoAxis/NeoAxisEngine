@@ -46,6 +46,11 @@ namespace NeoAxis.Editor
 				if( ObjectOfWindow != null )
 					SelectObjects( new object[] { ObjectOfWindow } );
 			}
+			else
+			{
+				ViewportControl.AllowCreateRenderWindow = false;
+				ViewportControl.Visible = false;
+			}
 		}
 
 		protected override void OnDestroy()

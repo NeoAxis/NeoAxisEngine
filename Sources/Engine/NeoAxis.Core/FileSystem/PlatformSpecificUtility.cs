@@ -54,6 +54,9 @@ namespace NeoAxis
 		[DllImport( "kernel32.dll", EntryPoint = "LoadLibrary", CharSet = CharSet.Unicode )]
 		static extern IntPtr Win32LoadLibrary( string lpLibFileName );
 
+		[DllImport( "kernel32.dll" )]
+		static extern uint GetLastError();
+
 		public override string GetExecutableDirectoryPath()
 		{
 			var result = "";
@@ -92,7 +95,15 @@ namespace NeoAxis
 
 		public override IntPtr LoadLibrary( string path )
 		{
-			return Win32LoadLibrary( path );
+			var result = Win32LoadLibrary( path );
+
+			//if( result == IntPtr.Zero )
+			//{
+			//	var error = GetLastError().ToString();
+			//Log.Info( "Last error: " + error );
+			//}
+
+			return result;
 		}
 	}
 

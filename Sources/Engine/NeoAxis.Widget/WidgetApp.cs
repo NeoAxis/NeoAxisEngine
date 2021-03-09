@@ -108,7 +108,7 @@ namespace NeoAxis.Widget
 				List<EngineViewportControl> toRender = new List<EngineViewportControl>();
 				List<EngineViewportControl> unvisible = new List<EngineViewportControl>();
 
-				foreach( var control in EngineViewportControl.allInstances )
+				foreach( var control in EngineViewportControl.AllInstances )
 				{
 					if( control.IsAllowRender() )
 					{

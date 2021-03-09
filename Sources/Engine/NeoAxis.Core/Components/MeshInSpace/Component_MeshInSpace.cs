@@ -36,7 +36,7 @@ namespace NeoAxis
 		public delegate void GetRenderSceneDataAddToFrameDataDelegate( Component_MeshInSpace sender, ViewportRenderingContext context, GetRenderSceneDataMode mode, ref Component_RenderingPipeline.RenderSceneData.MeshItem item );
 		public event GetRenderSceneDataAddToFrameDataDelegate GetRenderSceneDataAddToFrameData;
 
-		List<SceneLODUtility.RenderingContextItem> renderingContextItems;
+		//List<SceneLODUtility.RenderingContextItem> renderingContextItems;
 
 		bool paintLayersNeedUpdate = true;
 		Component_RenderingPipeline.RenderSceneData.LayerItem[] paintLayers;
@@ -178,8 +178,19 @@ namespace NeoAxis
 		public event Action<Component_MeshInSpace> ReceiveDecalsChanged;
 		ReferenceField<bool> _receiveDecals = true;
 
-		//!!!!так?
-		//!!!!слои эти в эвенте GetRenderSceneDataAddToFrameData можно добавлять
+		/// <summary>
+		/// Specifies settings for special object effects, such as an outline effect.
+		/// </summary>
+		[Cloneable( CloneType.Deep )]
+		public Reference<List<ObjectSpecialRenderingEffect>> SpecialEffects
+		{
+			get { if( _specialEffects.BeginGet() ) SpecialEffects = _specialEffects.Get( this ); return _specialEffects.value; }
+			set { if( _specialEffects.BeginSet( ref value ) ) { try { SpecialEffectsChanged?.Invoke( this ); } finally { _specialEffects.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="SpecialEffects"/> property value changes.</summary>
+		public event Action<Component_MeshInSpace> SpecialEffectsChanged;
+		ReferenceField<List<ObjectSpecialRenderingEffect>> _specialEffects = new List<ObjectSpecialRenderingEffect>();
+
 		[Browsable( false )]
 		public Component_RenderingPipeline.RenderSceneData.LayerItem[] PaintLayersReplace
 		{
@@ -191,6 +202,9 @@ namespace NeoAxis
 			}
 		}
 		Component_RenderingPipeline.RenderSceneData.LayerItem[] paintLayersReplace;
+
+		[Browsable( false )]
+		public Component_RenderingPipeline.RenderSceneData.CutVolumeItem[] CutVolumes { get; set; }
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -227,9 +241,9 @@ namespace NeoAxis
 			}
 		}
 
-		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
+		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
-			base.OnGetRenderSceneData( context, mode );
+			base.OnGetRenderSceneData( context, mode, modeGetObjectsItem );
 
 			var time = context.Owner.LastUpdateTime;
 			if( time != transformPositionByTime1_Time )
@@ -262,33 +276,29 @@ namespace NeoAxis
 					var context2 = context.objectInSpaceRenderingContext;
 					context2.disableShowingLabelForThisObject = true;
 
-					if( mode == GetRenderSceneDataMode.InsideFrustum || ( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum && mesh.CastShadows ) )
+					if( mode == GetRenderSceneDataMode.InsideFrustum || ( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum && mesh.Result.MeshData.CastShadows ) )
 					{
 						var cameraSettings = context.Owner.CameraSettings;
 						var tr = Transform.Value;
-						var trPosition = tr.Position;
 
-						//update and get LOD info
-						var positionLOD = cameraSettings.Position;
-						var objBounds = SpaceBounds.CalculatedBoundingBox;
-						MathEx.Clamp( ref positionLOD.X, objBounds.Minimum.X, objBounds.Maximum.X );
-						MathEx.Clamp( ref positionLOD.Y, objBounds.Minimum.Y, objBounds.Maximum.Y );
-						MathEx.Clamp( ref positionLOD.Z, objBounds.Minimum.Z, objBounds.Maximum.Z );
-						var contextItem = SceneLODUtility.UpdateAndGetContextItem( ref renderingContextItems, context, mesh, VisibilityDistance, ref positionLOD );
-						//var contextItem = SceneLODUtility.UpdateAndGetContextItem( ref renderingContextItems, context, mesh, VisibilityDistance, ref trPosition );
+						var cameraDistanceMinSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, SpaceBounds );
+						var visibilityDistance = Math.Min( VisibilityDistance, mesh.Result.MeshData.VisibilityDistance );
 
-						bool skip = false;
-						if( contextItem.currentLOD == -1 && contextItem.transitionTime == 0 )
-							skip = true;
-
-						if( !skip )
+						if( cameraDistanceMinSquared < visibilityDistance * visibilityDistance || mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum )
 						{
+							var cameraDistanceMin = MathEx.Sqrt( cameraDistanceMinSquared );
+							var cameraDistanceMaxSquared = SceneLODUtility.GetCameraDistanceMax( cameraSettings, SpaceBounds );
+							cameraDistanceMaxSquared *= cameraDistanceMaxSquared;
+
+							var allowOutlineSelect = Math.Max( context2.selectedObjects.Count, context2.canSelectObjects.Count ) <= 1000 && context.renderingPipeline.UseRenderTargets && ProjectSettings.Get.SceneEditorSelectOutlineEffectEnabled;
+
 							var item = new Component_RenderingPipeline.RenderSceneData.MeshItem();
 							item.Creator = this;
-							SpaceBounds.CalculatedBoundingBox.GetCenter( out item.BoundingBoxCenter );
 							item.BoundingSphere = SpaceBounds.CalculatedBoundingSphere;
-							item.MeshData = mesh.Result.MeshData;
-							item.CastShadows = CastShadows && mesh.CastShadows;
+							item.BoundingBoxCenter = item.BoundingSphere.Origin;
+							//SpaceBounds.CalculatedBoundingBox.GetCenter( out item.BoundingBoxCenter );
+							//item.MeshData = mesh.Result.MeshData;
+							//item.CastShadows = CastShadows && item.MeshData.CastShadows;
 							item.ReceiveDecals = ReceiveDecals;
 							item.ReplaceMaterial = ReplaceMaterial;
 							if( ReplaceMaterialSelectively.Count != 0 )
@@ -300,78 +310,28 @@ namespace NeoAxis
 							}
 							item.Color = Color;
 							item.TransparentRenderingAddOffsetWhenSortByDistance = transparentRenderingAddOffsetWhenSortByDistance;
+							item.VisibilityDistance = (float)visibilityDistance;
+							item.CutVolumes = CutVolumes;
 
-							var lods = mesh.Result.MeshData.LODs;
+							var specialEffects = SpecialEffects.Value;
+							if( specialEffects != null && specialEffects.Count != 0 )
+								item.SpecialEffects = specialEffects;
 
-							//get data for rendering
-							int itemLod = 0;
-							float itemLodValue = 0;
-							int item2Lod = 0;
+							//display outline effect of editor selection
+							if( mode == GetRenderSceneDataMode.InsideFrustum && allowOutlineSelect && context2.selectedObjects.Contains( this ) )
 							{
-								int maxLOD = lods != null ? lods.Length : 0;
+								var color = ProjectSettings.Get.SelectedColor.Value;
+								//color.Alpha *= .5f;
 
-								itemLod = contextItem.currentLOD;
-								if( itemLod > maxLOD )
-									itemLod = maxLOD;
-								item2Lod = contextItem.toLOD;
-								if( item2Lod > maxLOD )
-									item2Lod = maxLOD;
-								itemLodValue = contextItem.transitionTime;
-							}
+								var effect = new ObjectSpecialRenderingEffect_Outline();
+								effect.Group = int.MaxValue;
+								effect.Color = color;
 
-							//select LOD
-							if( itemLod > 0 )
-							{
-								ref var lod = ref lods[ itemLod - 1 ];
-								var lodMeshData = lod.Mesh?.Result?.MeshData;
-								if( lodMeshData != null )
-								{
-									item.MeshData = lodMeshData;
-									item.CastShadows = CastShadows && lod.Mesh.CastShadows;
-								}
-							}
-
-							//set LOD value
-							item.LODValue = itemLodValue;
-
-							//calculate MeshInstanceOne
-							if( item.MeshData.BillboardMode != 0 )
-							{
-								var position = tr.Position;
-								var scale = tr.Scale;
-								var scaleH = (float)Math.Max( scale.X, scale.Y );
-
-								ref var result = ref item.Transform;
-								result.Item0.X = scaleH;
-								result.Item0.Y = 0;
-								result.Item0.Z = 0;
-								result.Item0.W = 0;
-								result.Item1.X = 0;
-								result.Item1.Y = scaleH;
-								result.Item1.Z = 0;
-								result.Item1.W = 0;
-								result.Item2.X = 0;
-								result.Item2.Y = 0;
-								result.Item2.Z = (float)scale.Z;
-								result.Item2.W = 0;
-								//!!!!double
-								result.Item3.X = (float)position.X;
-								result.Item3.Y = (float)position.Y;
-								result.Item3.Z = (float)position.Z;
-								result.Item3.W = 1;
-
-								//var scaleX = Math.Max( tr.Scale.X, tr.Scale.Y );
-								//var scale = new Vector3( scaleX, scaleX, tr.Scale.Z );
-								//Matrix3.FromScale( ref scale, out var mat3 );
-								//var matrix = new Matrix4( mat3, tr.Position );
-								//double
-								//matrix.ToMatrix4F( out item.MeshInstanceOne );
-							}
-							else
-							{
-								ref var matrix = ref tr.ToMatrix4();
-								//!!!!double
-								matrix.ToMatrix4F( out item.Transform );
+								if( item.SpecialEffects != null )
+									item.SpecialEffects = new List<ObjectSpecialRenderingEffect>( item.SpecialEffects );
+								else
+									item.SpecialEffects = new List<ObjectSpecialRenderingEffect>();
+								item.SpecialEffects.Add( effect );
 							}
 
 							//PositionPreviousFrame
@@ -381,58 +341,33 @@ namespace NeoAxis
 							//!!!!double
 							item.PositionPreviousFrame = previousPosition.ToVector3F();
 
-							//layers
-							{
-								var a1 = item.MeshData.PaintLayers;
-								var a2 = GetPaintLayers();
-								if( a1 != null && a2 != null )
-								{
-									var z = new Component_RenderingPipeline.RenderSceneData.LayerItem[ a1.Length + a2.Length ];
-									a1.CopyTo( z, 0 );
-									a2.CopyTo( z, a1.Length );
-									item.Layers = z;
-								}
-								else
-									item.Layers = a1 ?? a2;
-							}
 
-							//add first item
-							if( itemLod >= 0 )
-							{
-								//set AnimationData from event
-								GetRenderSceneDataAddToFrameData?.Invoke( this, context, mode, ref item );
+							int item0BillboardMode = 0;
 
-								//add the item to render
-								context.FrameData.RenderSceneData.Meshes.Add( ref item );
-							}
-
-							//add second item
-							if( item2Lod >= 0 && itemLodValue != 0 )
+							SceneLODUtility.GetDemandedLODs( context, mesh, cameraDistanceMinSquared, cameraDistanceMaxSquared, out var lodState );
+							for( int nLodItem = 0; nLodItem < lodState.Count; nLodItem++ )
 							{
-								var item0BillboardMode = item.MeshData.BillboardMode;
+								lodState.GetItem( nLodItem, out var lodLevel, out var lodRange );
+
 
 								item.MeshData = mesh.Result.MeshData;
-								item.CastShadows = CastShadows && mesh.CastShadows;
-
-								//select LOD
-								if( item2Lod != 0 )
+								if( lodLevel > 0 )
 								{
-									ref var lod = ref lods[ item2Lod - 1 ];
+									ref var lod = ref mesh.Result.MeshData.LODs[ lodLevel - 1 ];
 									var lodMeshData = lod.Mesh?.Result?.MeshData;
 									if( lodMeshData != null )
-									{
 										item.MeshData = lodMeshData;
-										item.CastShadows = CastShadows && lod.Mesh.CastShadows;
-									}
 								}
 
-								//set LOD value
-								item.LODValue = -item.LODValue;
+								item.CastShadows = CastShadows && item.MeshData.CastShadows;
+								item.LODValue = SceneLODUtility.GetLodValue( lodRange, cameraDistanceMin );
+								//item.LODRange = lodRange;
 
 								//calculate MeshInstanceOne
-								if( item0BillboardMode != item.MeshData.BillboardMode )
+								if( nLodItem == 0 )
+									item0BillboardMode = item.MeshData.BillboardMode;
+								if( nLodItem == 0 || item0BillboardMode != item.MeshData.BillboardMode )
 								{
-									//set matrix
 									if( item.MeshData.BillboardMode != 0 )
 									{
 										var position = tr.Position;
@@ -473,21 +408,36 @@ namespace NeoAxis
 									}
 								}
 
-								//set AnimationData from event
-								GetRenderSceneDataAddToFrameData?.Invoke( this, context, mode, ref item );
+								//layers
+								{
+									var a1 = item.MeshData.PaintLayers;
+									var a2 = GetPaintLayers();
+									if( a1 != null && a2 != null )
+									{
+										var z = new Component_RenderingPipeline.RenderSceneData.LayerItem[ a1.Length + a2.Length ];
+										a1.CopyTo( z, 0 );
+										a2.CopyTo( z, a1.Length );
+										item.Layers = z;
+									}
+									else
+										item.Layers = a1 ?? a2;
+								}
 
-								//add the item to render
-								context.FrameData.RenderSceneData.Meshes.Add( ref item );
+								//add to render
+								{
+									//set AnimationData from event
+									GetRenderSceneDataAddToFrameData?.Invoke( this, context, mode, ref item );
+
+									//add the item to render
+									context.FrameData.RenderSceneData.Meshes.Add( ref item );
+								}
 							}
 
 
 							//display editor selection
 							if( mode == GetRenderSceneDataMode.InsideFrustum )
 							{
-								//var context2 = context.objectInSpaceRenderingContext;
-								//context2.disableShowingLabelForThisObject = true;
-
-								if( context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) )
+								if( ( !allowOutlineSelect && context2.selectedObjects.Contains( this ) ) || context2.canSelectObjects.Contains( this ) )
 								{
 									ColorValue color;
 									if( context2.selectedObjects.Contains( this ) )
@@ -506,12 +456,7 @@ namespace NeoAxis
 										else
 										{
 											bool twoSided = IsTwoSided( mesh, ReplaceMaterial ) || ParentScene.Mode.Value == Component_Scene.ModeEnum._2D;
-
 											renderer.AddMesh( mesh.Result, item.Transform, false, !twoSided );
-
-											//!!!!double
-											//item.MeshInstanceOne.ToMatrix4( out var worldMatrix2 );
-											//renderer.AddMesh( mesh.Result, Transform.Value.ToMatrix4(), false, true );
 										}
 									}
 								}
@@ -1322,10 +1267,10 @@ namespace NeoAxis
 			return false;
 		}
 
-		public void ResetLodTransitionStates( ViewportRenderingContext resetOnlySpecifiedContext = null )
-		{
-			SceneLODUtility.ResetLodTransitionStates( ref renderingContextItems, resetOnlySpecifiedContext );
-		}
+		//public void ResetLodTransitionStates( ViewportRenderingContext resetOnlySpecifiedContext = null )
+		//{
+		//	SceneLODUtility.ResetLodTransitionStates( ref renderingContextItems, resetOnlySpecifiedContext );
+		//}
 
 		Component_RenderingPipeline.RenderSceneData.LayerItem[] CalculatePaintLayersByComponents()
 		{
@@ -1340,7 +1285,7 @@ namespace NeoAxis
 					if( image != null )
 					{
 						var item = new Component_RenderingPipeline.RenderSceneData.LayerItem();
-						item.Material = layer.Material;
+						item.SetMaterialWithAbilityToCompileTransparentMaskVariation( layer.Material, layer.BlendMode );
 						item.Mask = image;
 						item.UniqueMaskDataCounter = uniqueMaskDataCounter;
 						item.Color = layer.Color;

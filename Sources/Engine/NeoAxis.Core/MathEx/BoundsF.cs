@@ -75,7 +75,7 @@ namespace NeoAxis
 			{
 				if( index < 0 || index > 1 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( Vector3F* v = &this.Minimum )
+				fixed( Vector3F* v = &this.Minimum )
 				{
 					return v[ index ];
 				}
@@ -84,7 +84,7 @@ namespace NeoAxis
 			{
 				if( index < 0 || index > 1 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( Vector3F* v = &this.Minimum )
+				fixed( Vector3F* v = &this.Minimum )
 				{
 					v[ index ] = value;
 				}
@@ -286,8 +286,14 @@ namespace NeoAxis
 
 		public bool Contains( Vector3F p )
 		{
-			if( p.X < Minimum.X || p.Y < Minimum.Y || p.Z < Minimum.Z
-				|| p.X > Maximum.X || p.Y > Maximum.Y || p.Z > Maximum.Z )
+			if( p.X < Minimum.X || p.Y < Minimum.Y || p.Z < Minimum.Z || p.X > Maximum.X || p.Y > Maximum.Y || p.Z > Maximum.Z )
+				return false;
+			return true;
+		}
+
+		public bool Contains( ref Vector3F p )
+		{
+			if( p.X < Minimum.X || p.Y < Minimum.Y || p.Z < Minimum.Z || p.X > Maximum.X || p.Y > Maximum.Y || p.Z > Maximum.Z )
 				return false;
 			return true;
 		}

@@ -12,7 +12,7 @@ namespace NeoAxis
 	/// <summary>
 	/// Screen effect that shows internal render targets.
 	/// </summary>
-	[DefaultOrderOfEffect( 14 )]
+	[DefaultOrderOfEffect( 15 )]
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class Component_RenderingEffect_ShowRenderTarget : Component_RenderingEffect
 	{

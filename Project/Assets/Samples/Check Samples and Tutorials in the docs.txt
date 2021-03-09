@@ -1,0 +1,7 @@
+Samples and Tutorials
+The article contains a list of scenes and other resources, that may be useful as descriptive examples.
+https://www.neoaxis.com/docs/html/Samples_and_Tutorials.htm
+
+Scripting Basic Knowledge
+The page contains some basic advices on scripting.
+https://www.neoaxis.com/docs/html/Scripting_Basic_Knowledge.htm

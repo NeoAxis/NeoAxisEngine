@@ -137,7 +137,7 @@ namespace NeoAxis
 		}
 
 		/// <summary>
-		/// Allows to configure in which cases the handler will be enabled. Editor - in the editor; Simulation - when Play; Resource - when the object is loaded as resource; Instance - usual instance of the object.
+		/// Allows to configure in which cases the handler will be enabled. Editor - in the editor; Simulation - when Play; Resource - when the object is loaded as a resource; Instance - usual instance of the object.
 		/// </summary>
 		[FlowGraphBrowsable( false )]
 		[DefaultValue( WhenEnableEnum.Simulation | WhenEnableEnum.Instance )]

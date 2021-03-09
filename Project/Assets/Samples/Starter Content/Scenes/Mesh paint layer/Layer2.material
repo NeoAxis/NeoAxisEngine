@@ -1,9 +1,9 @@
-.component "Base\\Material templates\\Paint Layer.material"
+.component NeoAxis.Component_Material
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1180, 842\"><KW V=\"1\" A=\"9DA4715C6D4C4C0C43B0D0CCC5C51E77\"><CGD /><WS UN=\"0D8C930482BF4FF7AD9DBFB8619C1C81\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"166C22D4790F4A3382AA33140D5F30C0\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"9DA4715C6D4C4C0C43B0D0CCC5C51E77\"><KP UN=\"A2695EF65C6646529D87C6C0D56F90AD\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"9DA4715C6D4C4C0C43B0D0CCC5C51E77\" S=\"False\"><CPD ObjPath=\"$$n1$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1174, 842\"><KW V=\"1\" A=\"38010E9E041C4956B1882FA53523F8F7\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"FA974C97355346C0ED990E8B1E19049D\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"38010E9E041C4956B1882FA53523F8F7\"><KP UN=\"AADD42D09733492DA48363893ABF811C\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"38010E9E041C4956B1882FA53523F8F7\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	BaseColor
 	{
-		GetByReference = "this:$$n1$Shader graph\\$Node Texture Sample 1\\$Texture Sample\\RGBA"
+		GetByReference = "this:$Shader graph\\$Node Texture Sample 1\\$Texture Sample\\RGBA"
 	}
 	.component NeoAxis.Component_FlowGraph
 	{

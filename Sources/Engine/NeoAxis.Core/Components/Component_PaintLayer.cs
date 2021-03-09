@@ -91,6 +91,26 @@ namespace NeoAxis
 		public event Action<Component_PaintLayer> ColorChanged;
 		ReferenceField<ColorValue> _color = ColorValue.One;
 
+		public enum BlendModeEnum
+		{
+			Auto,
+			Masked,
+			Transparent,
+		}
+
+		/// <summary>
+		/// The technique of rendering of the layer.
+		/// </summary>
+		[DefaultValue( BlendModeEnum.Auto )]
+		public Reference<BlendModeEnum> BlendMode
+		{
+			get { if( _blendMode.BeginGet() ) BlendMode = _blendMode.Get( this ); return _blendMode.value; }
+			set { if( _blendMode.BeginSet( ref value ) ) { try { BlendModeChanged?.Invoke( this ); ShouldParentUpdate(); } finally { _blendMode.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="BlendMode"/> property value changes.</summary>
+		public event Action<Component_PaintLayer> BlendModeChanged;
+		ReferenceField<BlendModeEnum> _blendMode = BlendModeEnum.Auto;
+
 		/////////////////////////////////////////
 
 		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )

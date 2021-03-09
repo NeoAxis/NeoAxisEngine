@@ -143,6 +143,8 @@ namespace NeoAxis
 
 						//!!!!так копировать?
 						meshInSpace.Mesh = surfaceElementMesh.Mesh;
+						if( meshInSpace.Mesh.Value == null )
+							meshInSpace.Mesh = ResourceUtility.MeshInvalid;
 
 						//!!!!так копировать?
 						if( surfaceElementMesh.ReplaceMaterial.ReferenceSpecified )

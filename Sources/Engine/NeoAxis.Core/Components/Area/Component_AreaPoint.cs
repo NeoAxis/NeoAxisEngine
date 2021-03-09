@@ -14,7 +14,7 @@ namespace NeoAxis
 	/// </summary>
 	public class Component_AreaPoint : Component_ObjectInSpace
 	{
-		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
+		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
 			var area = Parent as Component_Area;
 			if( area != null )

@@ -1,6 +1,6 @@
 .component NeoAxis.Component_Material
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1174, 842\"><KW V=\"1\" A=\"935F41D5F8924088E990092813AAF122\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"9B2AA197D7124031528FFF073059F308\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"935F41D5F8924088E990092813AAF122\"><KP UN=\"935F41D5F8924088E990092813AAF122\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"C2C184A794BE491AEB90B31271DFB854\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1178, 842\"><KW V=\"1\" A=\"C2C184A794BE491AEB90B31271DFB854\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"9B2AA197D7124031528FFF073059F308\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"C2C184A794BE491AEB90B31271DFB854\"><KP UN=\"935F41D5F8924088E990092813AAF122\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"C2C184A794BE491AEB90B31271DFB854\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	TypeSettingsPrivateObjects
 	{
 		Length = 16
@@ -74,7 +74,7 @@
 				Location3 = 0 0 0
 				Texture
 				{
-					GetByReference = "Samples\\Starter Content\\Materials\\Concrete 3x3 meters\\Concrete6_1024_albedo.dds"
+					GetByReference = "Content\\Materials\\Basic Library\\Concrete\\Textures\\concrete_floor_01_diff_2k.jpg"
 				}
 			}
 		}
@@ -115,10 +115,6 @@
 		Type
 		{
 			GetByReference = NeoAxis.ColorValue
-		}
-		Indexers
-		{
-			Count = 0
 		}
 	}
 }

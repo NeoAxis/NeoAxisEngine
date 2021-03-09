@@ -140,6 +140,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -150,7 +157,7 @@
 				UVTilesPerUnit = 0.333 0.333
 				Material
 				{
-					GetByReference = "Samples\\Starter Content\\Materials\\Concrete 3x3 meters\\Concrete 3x3 meters.material"
+					GetByReference = "Content\\Materials\\Basic Library\\Concrete\\Concrete Floor 01.material"
 				}
 			}
 		}
@@ -189,6 +196,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -199,7 +213,7 @@
 				UVTilesPerUnit = 0.5 0.5
 				Material
 				{
-					GetByReference = "Samples\\Starter Content\\Materials\\Painted Large Bricks 2x2 meters\\Painted Large Bricks 2x2 meters.material"
+					GetByReference = "Base\\Materials\\Gray.material"
 				}
 			}
 		}
@@ -238,6 +252,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -248,7 +269,7 @@
 				UVTilesPerUnit = 0.5 0.5
 				Material
 				{
-					GetByReference = "Samples\\Starter Content\\Materials\\Painted Large Bricks 2x2 meters\\Painted Large Bricks 2x2 meters.material"
+					GetByReference = "Base\\Materials\\Gray.material"
 				}
 			}
 		}
@@ -287,6 +308,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -297,7 +325,7 @@
 				UVTilesPerUnit = 0.5 0.5
 				Material
 				{
-					GetByReference = "Samples\\Starter Content\\Materials\\Painted Large Bricks 2x2 meters\\Painted Large Bricks 2x2 meters.material"
+					GetByReference = "Base\\Materials\\Gray.material"
 				}
 			}
 		}
@@ -336,6 +364,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -346,7 +381,7 @@
 				UVTilesPerUnit = 0.5 0.5
 				Material
 				{
-					GetByReference = "Samples\\Starter Content\\Materials\\Painted Large Bricks 2x2 meters\\Painted Large Bricks 2x2 meters.material"
+					GetByReference = "Base\\Materials\\Gray.material"
 				}
 			}
 		}
@@ -384,6 +419,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 	}
 	.component NeoAxis.Component_MeshInSpace
 	{
@@ -396,6 +438,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 	}
 	.component NeoAxis.Component_MeshInSpace
@@ -410,6 +459,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 	}
 	.component NeoAxis.Component_MeshInSpace
 	{
@@ -422,6 +478,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 	}
 	.component NeoAxis.Component_MeshInSpace
@@ -436,6 +499,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 	}
 	.component NeoAxis.Component_MeshInSpace
 	{
@@ -448,6 +518,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 	}
 	.component NeoAxis.Component_MeshInSpace
@@ -462,6 +539,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 	}
 	.component NeoAxis.Component_MeshInSpace
 	{
@@ -474,6 +558,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 	}
 	.component NeoAxis.Component_MeshInSpace
@@ -488,6 +579,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 	}
 	.component NeoAxis.Component_MeshInSpace
 	{
@@ -500,6 +598,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 	}
 	.component NeoAxis.Component_MeshInSpace
@@ -514,6 +619,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 	}
 	.component NeoAxis.Component_MeshInSpace
 	{
@@ -526,6 +638,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 	}
 	.component NeoAxis.Component_MeshInSpace
@@ -540,6 +659,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 	}
 	.component NeoAxis.Component_MeshInSpace
 	{
@@ -552,6 +678,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 	}
 	.component NeoAxis.Component_MeshInSpace
@@ -566,6 +699,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 	}
 	.component NeoAxis.Component_MeshInSpace
 	{
@@ -578,6 +718,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 	}
 	.component NeoAxis.Component_MeshInSpace
@@ -592,6 +739,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 	}
 	.component NeoAxis.Component_MeshInSpace
 	{
@@ -605,6 +759,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 	}
 	.component NeoAxis.Component_MeshInSpace
 	{
@@ -617,6 +778,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 	}
 	.component NeoAxis.Component_MeshInSpace
@@ -635,6 +803,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 	}
 	.component NeoAxis.Component_MeshInSpace
 	{
@@ -647,6 +822,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 	}
 	.component NeoAxis.Component_MeshInSpace
@@ -665,6 +847,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 	}
 	.component NeoAxis.Component_MeshInSpace
 	{
@@ -677,6 +866,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 	}
 	.component NeoAxis.Component_MeshInSpace
@@ -691,6 +887,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 	}
 	.component NeoAxis.Component_MeshInSpace
 	{
@@ -704,6 +907,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 	}
 	.component NeoAxis.Component_MeshInSpace
 	{
@@ -716,6 +926,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 	}
 }

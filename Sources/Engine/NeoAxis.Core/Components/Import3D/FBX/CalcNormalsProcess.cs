@@ -6,7 +6,7 @@ namespace NeoAxis.Import.FBX
 	//Based on:  GenVertexNormalsProcess.h,GenFaceNormalsProcess.h,  Кроме этого есть : FixNormalsStep.h, , 
 	static class CalcNormalsProcess
 	{
-		const float DefaultSmoothingAngleInRadians = (float)( 175f * Math.PI / 180 );
+		//const float DefaultSmoothingAngleInRadians = (float)( 175f * Math.PI / 180 );
 
 		public static void CalculateNormals( VertexInfo[] vertices, bool normalizeVectorNormal )
 		{
@@ -35,77 +35,77 @@ namespace NeoAxis.Import.FBX
 				vertices[ i ].Vertex.Normal = normal;
 		}
 
-		public static void SmoothNormals( VertexInfo[] vertices, SpatialSort vertexFinder, float posEpsilon, float maxSmoothingAngleInRadians = DefaultSmoothingAngleInRadians )
-		{
-			var pcNew = new Vector3F[ vertices.Length ];
-			if( DefaultSmoothingAngleInRadians <= maxSmoothingAngleInRadians )
-			{
-				// There is no angle limit. Thus all vertices with positions close
-				// to each other will receive the same vertex normal. This allows us
-				// to optimize the whole algorithm a little bit ...
-				var abHad = new bool[ vertices.Length ];
-				for( int i = 0; i < vertices.Length; ++i )
-				{
-					if( abHad[ i ] )
-						continue;
+		//public static void SmoothNormals( VertexInfo[] vertices, SpatialSort vertexFinder, float posEpsilon, float maxSmoothingAngleInRadians = DefaultSmoothingAngleInRadians )
+		//{
+		//	var pcNew = new Vector3F[ vertices.Length ];
+		//	if( DefaultSmoothingAngleInRadians <= maxSmoothingAngleInRadians )
+		//	{
+		//		// There is no angle limit. Thus all vertices with positions close
+		//		// to each other will receive the same vertex normal. This allows us
+		//		// to optimize the whole algorithm a little bit ...
+		//		var abHad = new bool[ vertices.Length ];
+		//		for( int i = 0; i < vertices.Length; ++i )
+		//		{
+		//			if( abHad[ i ] )
+		//				continue;
 
-					// Get all vertices that share this one ...
-					var verticesFound = vertexFinder.FindPositions( vertices[ i ].Vertex.Position, posEpsilon );
+		//			// Get all vertices that share this one ...
+		//			var verticesFound = vertexFinder.FindPositions( vertices[ i ].Vertex.Position, posEpsilon );
 
-					Vector3F pcNor = new Vector3F();
-					for( int a = 0; a < verticesFound.Count; ++a )
-					{
-						Vector3F v = vertices[ verticesFound[ a ] ].Vertex.Normal;
-						if( !float.IsNaN( v.X ) )
-							pcNor += v;
-					}
-					if( Vector3F.AnyNonZero( pcNor ) )
-						pcNor.Normalize();
+		//			Vector3F pcNor = new Vector3F();
+		//			for( int a = 0; a < verticesFound.Count; ++a )
+		//			{
+		//				Vector3F v = vertices[ verticesFound[ a ] ].Vertex.Normal;
+		//				if( !float.IsNaN( v.X ) )
+		//					pcNor += v;
+		//			}
+		//			if( Vector3F.AnyNonZero( pcNor ) )
+		//				pcNor.Normalize();
 
-					// Write the smoothed normal back to all affected normals
-					for( int a = 0; a < verticesFound.Count; ++a )
-					{
-						int vidx = verticesFound[ a ];
-						pcNew[ vidx ] = pcNor;
-						abHad[ vidx ] = true;
-					}
-				}
-			}
-			else
-			{
-				// Slower code path if a smooth angle is set. There are many ways to achieve
-				// the effect, this one is the most straightforward one.
+		//			// Write the smoothed normal back to all affected normals
+		//			for( int a = 0; a < verticesFound.Count; ++a )
+		//			{
+		//				int vidx = verticesFound[ a ];
+		//				pcNew[ vidx ] = pcNor;
+		//				abHad[ vidx ] = true;
+		//			}
+		//		}
+		//	}
+		//	else
+		//	{
+		//		// Slower code path if a smooth angle is set. There are many ways to achieve
+		//		// the effect, this one is the most straightforward one.
 
-				float fLimit = MathEx.Cos( maxSmoothingAngleInRadians );
-				for( int i = 0; i < vertices.Length; ++i )
-				{
-					// Get all vertices that share this one ...
-					var verticesFound = vertexFinder.FindPositions( vertices[ i ].Vertex.Position, posEpsilon );
+		//		float fLimit = MathEx.Cos( maxSmoothingAngleInRadians );
+		//		for( int i = 0; i < vertices.Length; ++i )
+		//		{
+		//			// Get all vertices that share this one ...
+		//			var verticesFound = vertexFinder.FindPositions( vertices[ i ].Vertex.Position, posEpsilon );
 
-					Vector3F vr = vertices[ i ].Vertex.Normal;
-					float vrlen = vr.Length();
+		//			Vector3F vr = vertices[ i ].Vertex.Normal;
+		//			float vrlen = vr.Length();
 
-					Vector3F pcNor = new Vector3F();
-					for( int a = 0; a < verticesFound.Count; ++a )
-					{
-						Vector3F v = vertices[ verticesFound[ a ] ].Vertex.Normal;
+		//			Vector3F pcNor = new Vector3F();
+		//			for( int a = 0; a < verticesFound.Count; ++a )
+		//			{
+		//				Vector3F v = vertices[ verticesFound[ a ] ].Vertex.Normal;
 
-						// check whether the angle between the two normals is not too large
-						// HACK: if v.x is qnan the dot product will become qnan, too
-						//   therefore the comparison against fLimit should be false
-						//   in every case.
-						if( Vector3F.Dot( v, vr ) >= fLimit * vrlen * v.Length() )
-							pcNor += v;
-					}
-					if( Vector3F.AnyNonZero( pcNor ) )
-						pcNor.Normalize();
-					pcNew[ i ] = pcNor;
-				}
-			}
+		//				// check whether the angle between the two normals is not too large
+		//				// HACK: if v.x is qnan the dot product will become qnan, too
+		//				//   therefore the comparison against fLimit should be false
+		//				//   in every case.
+		//				if( Vector3F.Dot( v, vr ) >= fLimit * vrlen * v.Length() )
+		//					pcNor += v;
+		//			}
+		//			if( Vector3F.AnyNonZero( pcNor ) )
+		//				pcNor.Normalize();
+		//			pcNew[ i ] = pcNor;
+		//		}
+		//	}
 
-			for( int i = 0; i < vertices.Length; i++ )
-				vertices[ i ].Vertex.Normal = pcNew[ i ];
-		}
+		//	for( int i = 0; i < vertices.Length; i++ )
+		//		vertices[ i ].Vertex.Normal = pcNew[ i ];
+		//}
 
 		/// <summary>
 		/// Whether to invert all normals in mesh with infacing normals

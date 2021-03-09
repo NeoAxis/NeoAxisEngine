@@ -21,7 +21,6 @@ void main()
 	billboardRotateWorldMatrix(renderOperationData, worldMatrix, false, vec3_splat(0));
 	
 	vec4 worldPosition = mul(worldMatrix, vec4(a_position, 1.0));
-	//vec4 worldPosition = mul(u_model[0], vec4(a_position, 1.0));
 
 	//!!!!good?
 	const float depthOffset = -.05f;

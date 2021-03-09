@@ -136,6 +136,20 @@ namespace NeoAxis
 		ReferenceField<bool> _castShadows = true;
 
 		/// <summary>
+		/// Indent multiplier when rendering shadows to fix overlapping effect of the object with the shadow.
+		/// </summary>
+		[DefaultValue( 1.0 )]
+		[Range( 0, 1 )]
+		public Reference<double> BillboardShadowOffset
+		{
+			get { if( _billboardShadowOffset.BeginGet() ) BillboardShadowOffset = _billboardShadowOffset.Get( this ); return _billboardShadowOffset.value; }
+			set { if( _billboardShadowOffset.BeginSet( ref value ) ) { try { BillboardShadowOffsetChanged?.Invoke( this ); } finally { _billboardShadowOffset.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="BillboardShadowOffset"/> property value changes.</summary>
+		public event Action<Component_Mesh> BillboardShadowOffsetChanged;
+		ReferenceField<double> _billboardShadowOffset = 1.0;
+
+		/// <summary>
 		/// Maximum visibility range of the object.
 		/// </summary>
 		[DefaultValue( 10000.0 )]
@@ -166,8 +180,8 @@ namespace NeoAxis
 		/// </summary>
 		[Serialize]
 		[Browsable( false )]
-		[DefaultValue( false )]
-		public bool EditorDisplayPivot { get; set; }
+		[DefaultValue( true )]
+		public bool EditorDisplayPivot { get; set; } = true;
 
 		/// <summary>
 		/// Whether to display mesh bounds in editor.
@@ -265,6 +279,10 @@ namespace NeoAxis
 		[DefaultValue( "" )]
 		public string EditorPlayAnimation { get; set; } = "";
 
+		[Serialize]
+		[Browsable( false )]
+		public Transform EditorCameraTransform;
+
 		[Browsable( false )]
 		public bool AllowDisposeBuffers { get; set; } = true;
 
@@ -278,6 +296,8 @@ namespace NeoAxis
 			Component_Mesh owner;
 
 			MeshDataClass meshData = new MeshDataClass();
+
+			List<IDisposable> objectsToDispose;
 
 			////!!!!
 			//bool meshDataDisposeBuffersByCreator = true;
@@ -434,8 +454,11 @@ namespace NeoAxis
 				public List<Component_RenderingPipeline.RenderSceneData.MeshDataRenderOperation> RenderOperations { get; } = new List<Component_RenderingPipeline.RenderSceneData.MeshDataRenderOperation>();
 				//public IList<Component_RenderingPipeline.RenderSceneData.MeshDataRenderOperation> RenderOperations { get; } = new List<Component_RenderingPipeline.RenderSceneData.MeshDataRenderOperation>();
 				public SpaceBounds SpaceBounds { get; set; }
+				public float VisibilityDistance { get; set; }
+				public bool CastShadows { get; set; }
 				public Component_RenderingPipeline.RenderSceneData.IMeshDataLODLevel[] LODs { get; set; }
 				public int BillboardMode { get; set; }
+				public float BillboardShadowOffset { get; set; }
 				public Component_RenderingPipeline.RenderSceneData.LayerItem[] PaintLayers { get; set; }
 
 				public StructureClass Structure { get; set; }
@@ -455,14 +478,7 @@ namespace NeoAxis
 				public void DisposeBuffers()
 				{
 					foreach( var oper in RenderOperations )
-					{
-						if( oper.VertexBuffers != null )
-						{
-							for( int n = 0; n < oper.VertexBuffers.Count; n++ )
-								oper.VertexBuffers[ n ]?.Dispose();
-						}
-						oper.IndexBuffer?.Dispose();
-					}
+						oper.DisposeBuffers();
 				}
 			}
 
@@ -481,6 +497,12 @@ namespace NeoAxis
 			public virtual void Dispose()
 			{
 				//!!!!threading: как будет, если из другого потока еще юзаем, но меш обновился
+
+				if( objectsToDispose != null )
+				{
+					foreach( var obj in objectsToDispose )
+						obj.Dispose();
+				}
 
 				//if( meshDataDisposeBuffersByCreator )
 				if( Owner.AllowDisposeBuffers )
@@ -540,6 +562,16 @@ namespace NeoAxis
 			public MeshDataClass MeshData
 			{
 				get { return meshData; }
+			}
+
+			public List<IDisposable> ObjectsToDispose
+			{
+				get
+				{
+					if( objectsToDispose == null )
+						objectsToDispose = new List<IDisposable>();
+					return objectsToDispose;
+				}
 			}
 
 			//public List<RenderOperationItem> RenderOperations
@@ -1402,6 +1434,9 @@ namespace NeoAxis
 				//compiledData.MeshData.BoundingBox = bounds;
 				//compiledData.MeshData.BoundingSphere = sphere;
 
+				compiledData.MeshData.VisibilityDistance = (float)VisibilityDistance;
+				compiledData.MeshData.CastShadows = CastShadows;
+
 				//!!!!тут?
 				//LODs
 				if( compiledData.MeshData.LODs == null )
@@ -1425,7 +1460,8 @@ namespace NeoAxis
 							{
 								var item = new Component_RenderingPipeline.RenderSceneData.IMeshDataLODLevel();
 								item.Mesh = lod.Mesh;
-								item.DistanceSquared = (float)( lod.Distance * lod.Distance );
+								item.Distance = (float)lod.Distance;
+								//item.DistanceSquared = (float)( lod.Distance * lod.Distance );
 
 								lods[ current ] = item;
 								current++;
@@ -1435,10 +1471,14 @@ namespace NeoAxis
 						//sort by distance
 						CollectionUtility.InsertionSort( lods, delegate ( Component_RenderingPipeline.RenderSceneData.IMeshDataLODLevel l1, Component_RenderingPipeline.RenderSceneData.IMeshDataLODLevel l2 )
 						 {
-							 if( l1.DistanceSquared < l2.DistanceSquared )
+							 if( l1.Distance < l2.Distance )
 								 return -1;
-							 if( l1.DistanceSquared > l2.DistanceSquared )
+							 if( l1.Distance > l2.Distance )
 								 return 1;
+							 //if( l1.DistanceSquared < l2.DistanceSquared )
+							 // return -1;
+							 //if( l1.DistanceSquared > l2.DistanceSquared )
+							 // return 1;
 							 return 0;
 						 } );
 
@@ -1469,6 +1509,8 @@ namespace NeoAxis
 					}
 					else
 						compiledData.MeshData.BillboardMode = 1;// -MathEx.PI / 2.0f + MathEx.PI * 2.0f;
+
+					compiledData.MeshData.BillboardShadowOffset = (float)BillboardShadowOffset.Value;
 				}
 
 				//Paint layers
@@ -1484,7 +1526,7 @@ namespace NeoAxis
 							if( image != null )
 							{
 								var item = new Component_RenderingPipeline.RenderSceneData.LayerItem();
-								item.Material = layer.Material;
+								item.SetMaterialWithAbilityToCompileTransparentMaskVariation( layer.Material, layer.BlendMode );
 								item.Mask = image;
 								item.UniqueMaskDataCounter = uniqueMaskDataCounter;
 								item.Color = layer.Color;
@@ -1809,6 +1851,27 @@ namespace NeoAxis
 			}
 
 			return true;
+		}
+
+		public bool ExportToFBX( string realFileName, out string error )
+		{
+			return MeshExportImport.ExportToFBX( this, realFileName, out error );
+		}
+
+		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
+		{
+			base.OnMetadataGetMembersFilter( context, member, ref skip );
+
+			if( member is Metadata.Property )
+			{
+				switch( member.Name )
+				{
+				case nameof( BillboardShadowOffset ):
+					if( !Billboard || !CastShadows )
+						skip = true;
+					break;
+				}
+			}
 		}
 	}
 }

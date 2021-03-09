@@ -1,4 +1,4 @@
-namespace Xilium.CefGlue
+﻿namespace Xilium.CefGlue
 {
     using System;
     using System.Collections.Generic;
@@ -160,7 +160,7 @@ namespace Xilium.CefGlue
 
         /// <summary>
         /// Called when the browser wants to move or resize the popup widget. |rect|
-        /// contains the new location and size.
+        /// contains the new location and size in view coordinates.
         /// </summary>
         protected abstract void OnPopupSize(CefBrowser browser, CefRectangle rect);
 
@@ -190,28 +190,35 @@ namespace Xilium.CefGlue
         }
 
         /// <summary>
-        /// Called when an element should be painted. |type| indicates whether the
-        /// element is the view or the popup widget. |buffer| contains the pixel data
-        /// for the whole image. |dirtyRects| contains the set of rectangles that need
-        /// to be repainted. On Windows |buffer| will be |width|*|height|*4 bytes
-        /// in size and represents a BGRA image with an upper-left origin.
+        /// Called when an element should be painted. Pixel values passed to this
+        /// method are scaled relative to view coordinates based on the value of
+        /// CefScreenInfo.device_scale_factor returned from GetScreenInfo. |type|
+        /// indicates whether the element is the view or the popup widget. |buffer|
+        /// contains the pixel data for the whole image. |dirtyRects| contains the set
+        /// of rectangles in pixel coordinates that need to be repainted. |buffer| will
+        /// be |width|*|height|*4 bytes in size and represents a BGRA image with an
+        /// upper-left origin.
         /// </summary>
         protected abstract void OnPaint(CefBrowser browser, CefPaintElementType type, CefRectangle[] dirtyRects, IntPtr buffer, int width, int height);
 
 
-        private void on_cursor_change(cef_render_handler_t* self, cef_browser_t* browser, IntPtr cursor)
+        private void on_cursor_change(cef_render_handler_t* self, cef_browser_t* browser, IntPtr cursor, CefCursorType type, cef_cursor_info_t* custom_cursor_info)
         {
             CheckSelf(self);
 
             var m_browser = CefBrowser.FromNative(browser);
+            var m_cefCursorInfo = type == CefCursorType.Custom ? new CefCursorInfo(custom_cursor_info) : null;
 
-            OnCursorChange(m_browser, cursor);
+            OnCursorChange(m_browser, cursor, type, m_cefCursorInfo);
+
+            if (m_cefCursorInfo != null) m_cefCursorInfo.Dispose();
         }
 
         /// <summary>
-        /// Called when the browser window's cursor has changed.
+        /// Called when the browser's cursor has changed. If |type| is CT_CUSTOM then
+        /// |custom_cursor_info| will be populated with the custom cursor information.
         /// </summary>
-        protected abstract void OnCursorChange(CefBrowser browser, IntPtr cursorHandle);
+        protected abstract void OnCursorChange(CefBrowser browser, IntPtr cursorHandle, CefCursorType type, CefCursorInfo customCursorInfo);
 
 
         private int start_dragging(cef_render_handler_t* self, cef_browser_t* browser, cef_drag_data_t* drag_data, CefDragOperationsMask allowed_ops, int x, int y)
@@ -229,6 +236,7 @@ namespace Xilium.CefGlue
         /// <summary>
         /// Called when the user starts dragging content in the web view. Contextual
         /// information about the dragged content is supplied by |drag_data|.
+        /// (|x|, |y|) is the drag start location in screen coordinates.
         /// OS APIs that run a system message loop may be used within the
         /// StartDragging call.
         /// Return false to abort the drag operation. Don't call any of
@@ -255,7 +263,7 @@ namespace Xilium.CefGlue
 
         /// <summary>
         /// Called when the web view wants to update the mouse cursor during a
-        /// drag and drop operation. |operation| describes the allowed operation
+        /// drag & drop operation. |operation| describes the allowed operation
         /// (none, move, copy, link).
         /// </summary>
         protected virtual void UpdateDragCursor(CefBrowser browser, CefDragOperationsMask operation)
@@ -263,18 +271,18 @@ namespace Xilium.CefGlue
         }
 
 
-        private void on_scroll_offset_changed(cef_render_handler_t* self, cef_browser_t* browser)
+        private void on_scroll_offset_changed(cef_render_handler_t* self, cef_browser_t* browser, double x, double y)
         {
             CheckSelf(self);
 
             var m_browser = CefBrowser.FromNative(browser);
 
-            OnScrollOffsetChanged(m_browser);
+            OnScrollOffsetChanged(m_browser, x, y);
         }
 
         /// <summary>
         /// Called when the scroll offset has changed.
         /// </summary>
-        protected abstract void OnScrollOffsetChanged(CefBrowser browser);
+        protected abstract void OnScrollOffsetChanged(CefBrowser browser, double x, double y);
     }
 }

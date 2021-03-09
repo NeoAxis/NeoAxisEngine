@@ -106,8 +106,8 @@ namespace NeoAxis
 		//internal const double splashScreenTotalTime = 4;
 		internal static double splashScreenStartTime;
 
-		static string license = "Personal";
-		static internal volatile bool needReadLicenseCertificate;
+		//static string license = "Personal";
+		//static internal volatile bool needReadLicenseCertificate;
 
 		static Assembly projectAssembly;
 
@@ -1608,6 +1608,8 @@ namespace NeoAxis
 			//!!!!было
 			//UIControlsWorld.Shutdown();
 
+			UIWebBrowser.ShutdownCefRuntime();
+
 			ResourceManager.DisposeAllResources();
 
 			SoundWorld.Shutdown();
@@ -1933,12 +1935,12 @@ namespace NeoAxis
 			//!!!!!
 			EngineThreading.ExecuteQueuedActionsFromMainThread();
 
-			if( needReadLicenseCertificate )
-			{
-				needReadLicenseCertificate = false;
-				//!!!!
-				//ReadLicenseCertificate();
-			}
+			//if( needReadLicenseCertificate )
+			//{
+			//	needReadLicenseCertificate = false;
+			//	//!!!!
+			//	//ReadLicenseCertificate();
+			//}
 		}
 
 		static bool WindowCreateOrAttach()
@@ -2628,10 +2630,10 @@ namespace NeoAxis
 			}
 		}
 
-		public static string License
-		{
-			get { return license; }
-		}
+		//public static string License
+		//{
+		//	get { return license; }
+		//}
 
 		//public static bool IsProPlan
 		//{

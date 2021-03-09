@@ -514,25 +514,25 @@ namespace NeoAxis
 		//}
 
 		[AutoConvertType]
-		public Vector4 ToVec4()
+		public Vector4 ToVector4()
 		{
 			return new Vector4( (double)Red / 255.0f, (double)Green / 255.0f, (double)Blue / 255.0f, (double)Alpha / 255.0f );
 		}
 
 		[AutoConvertType]
-		public Vector3 ToVec3()
+		public Vector3 ToVector3()
 		{
 			return new Vector3( (float)Red / 255.0f, (float)Green / 255.0f, (float)Blue / 255.0f );
 		}
 
 		[AutoConvertType]
-		public Vector4F ToVec4F()
+		public Vector4F ToVector4F()
 		{
 			return new Vector4F( (float)Red / 255.0f, (float)Green / 255.0f, (float)Blue / 255.0f, (float)Alpha / 255.0f );
 		}
 
 		[AutoConvertType]
-		public Vector3F ToVec3F()
+		public Vector3F ToVector3F()
 		{
 			return new Vector3F( (float)Red / 255.0f, (float)Green / 255.0f, (float)Blue / 255.0f );
 		}

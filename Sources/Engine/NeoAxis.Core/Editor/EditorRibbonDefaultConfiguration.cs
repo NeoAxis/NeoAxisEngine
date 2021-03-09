@@ -423,52 +423,69 @@ namespace NeoAxis.Editor
 					var group = new Group( "Display" );
 					tab.Groups.Add( group );
 
-					var groupDevData = new Group( "Display Development Data" );
-					group.Children.Add( groupDevData );
-					groupDevData.DropDownGroupText = ("Development", /*"  " +*/ "Data");
-					groupDevData.DropDownGroupImageLarge = Properties.Resources.ArrangeUp_32;
-					groupDevData.DropDownGroupDescription = "Specifies the display settings of the development data.";
-					//groupDevData.ShowArrow = true;
+					{
+						var groupDevData = new Group( "Display Development Data" );
+						group.Children.Add( groupDevData );
+						groupDevData.DropDownGroupText = ("Development", /*"  " +*/ "Data");
+						groupDevData.DropDownGroupImageLarge = Properties.Resources.ArrangeUp_32;
+						groupDevData.DropDownGroupDescription = "Specifies the display settings of the development data.";
+						//groupDevData.ShowArrow = true;
 
-					groupDevData.AddAction( "Scene Display Development Data In Editor" );
-					groupDevData.AddAction( "Scene Display Development Data In Simulation" );
-					groupDevData.AddSeparator();
-					groupDevData.AddAction( "Scene Display Text Info" );
-					groupDevData.AddAction( "Scene Display Labels" );
-					groupDevData.AddAction( "Scene Display Lights" );
-					groupDevData.AddAction( "Scene Display Decals" );
-					groupDevData.AddAction( "Scene Display Reflection Probes" );
-					groupDevData.AddAction( "Scene Display Cameras" );
+						groupDevData.AddAction( "Scene Display Development Data In Editor" );
+						groupDevData.AddAction( "Scene Display Development Data In Simulation" );
+						groupDevData.AddSeparator();
+						groupDevData.AddAction( "Scene Display Text Info" );
+						groupDevData.AddAction( "Scene Display Labels" );
+						groupDevData.AddAction( "Scene Display Lights" );
+						groupDevData.AddAction( "Scene Display Decals" );
+						groupDevData.AddAction( "Scene Display Reflection Probes" );
+						groupDevData.AddAction( "Scene Display Cameras" );
 
-					groupDevData.AddAction( "Scene Display Physical Objects" );
-					//groupDevData.AddAction( "Scene Display Physics Static" );
-					//groupDevData.AddAction( "Scene Display Physics Dynamic" );
-					//groupDevData.AddAction( "Scene Display Physics Internal" );
-					groupDevData.AddAction( "Scene Display Areas" );
-					groupDevData.AddAction( "Scene Display Volumes" );
-					groupDevData.AddAction( "Scene Display Sensors" );
-					groupDevData.AddAction( "Scene Display Sound Sources" );
-					groupDevData.AddAction( "Scene Display Object In Space Bounds" );
-					groupDevData.AddAction( "Scene Display Scene Octree" );
-					groupDevData.AddAction( "Scene Frustum Culling Test" );
-					//groupDevData.AddAction("Scene Display Development Data In Simulation" );
+						groupDevData.AddAction( "Scene Display Physical Objects" );
+						//groupDevData.AddAction( "Scene Display Physics Static" );
+						//groupDevData.AddAction( "Scene Display Physics Dynamic" );
+						//groupDevData.AddAction( "Scene Display Physics Internal" );
+						groupDevData.AddAction( "Scene Display Areas" );
+						groupDevData.AddAction( "Scene Display Volumes" );
+						groupDevData.AddAction( "Scene Display Sensors" );
+						groupDevData.AddAction( "Scene Display Sound Sources" );
+						groupDevData.AddAction( "Scene Display Object In Space Bounds" );
+						groupDevData.AddAction( "Scene Display Scene Octree" );
+						groupDevData.AddAction( "Scene Frustum Culling Test" );
+						//groupDevData.AddAction("Scene Display Development Data In Simulation" );
 
-					//var group = new Group( "Display Development Data" );
-					//tab.Groups.Add( group );
-					//group.AddAction( "Scene Display Development Data" );
-					//group.AddAction( "Scene Display Text Info" );
-					//group.AddAction( "Scene Display Labels" );
-					//group.AddAction( "Scene Display Lights" );
-					//group.AddAction( "Scene Display Reflection Probes" );
-					//group.AddAction( "Scene Display Cameras" );
-					//group.AddAction( "Scene Display Physics Static" );
-					//group.AddAction( "Scene Display Physics Dynamic" );
-					//group.AddAction( "Scene Display Physics Internal" );
-					//group.AddAction( "Scene Display Sound Sources" );
-					//group.AddAction( "Scene Display Object In Space Bounds" );
-					//group.AddAction( "Scene Display Scene Octree" );
-					//group.AddAction( "Scene Frustum Culling Test" );
-					////group.AddAction("Scene Display Development Data In Simulation" );
+						//var group = new Group( "Display Development Data" );
+						//tab.Groups.Add( group );
+						//group.AddAction( "Scene Display Development Data" );
+						//group.AddAction( "Scene Display Text Info" );
+						//group.AddAction( "Scene Display Labels" );
+						//group.AddAction( "Scene Display Lights" );
+						//group.AddAction( "Scene Display Reflection Probes" );
+						//group.AddAction( "Scene Display Cameras" );
+						//group.AddAction( "Scene Display Physics Static" );
+						//group.AddAction( "Scene Display Physics Dynamic" );
+						//group.AddAction( "Scene Display Physics Internal" );
+						//group.AddAction( "Scene Display Sound Sources" );
+						//group.AddAction( "Scene Display Object In Space Bounds" );
+						//group.AddAction( "Scene Display Scene Octree" );
+						//group.AddAction( "Scene Frustum Culling Test" );
+						////group.AddAction("Scene Display Development Data In Simulation" );
+					}
+
+					{
+						var groupDevData = new Group( "Debug Mode" );
+						group.Children.Add( groupDevData );
+						groupDevData.DropDownGroupText = ("Debug", "Mode");
+						groupDevData.DropDownGroupImageLarge = Properties.Resources.RenderingDebugMode_32;
+						groupDevData.DropDownGroupDescription = "Changes the debug mode of the rendering pipeline.";
+						//groupDevData.ShowArrow = true;
+
+						foreach( var mode in (Component_RenderingPipeline_Basic.DebugModeEnum[])Enum.GetValues( typeof( Component_RenderingPipeline_Basic.DebugModeEnum ) ) )
+						{
+							var modeName = TypeUtility.DisplayNameAddSpaces( mode.ToString() );
+							groupDevData.AddAction( "Rendering Debug Mode " + modeName );
+						}
+					}
 				}
 
 				//Snap
@@ -574,6 +591,7 @@ namespace NeoAxis.Editor
 					group.AddAction( "Terrain Paint Smooth" );
 					group.AddAction( "Terrain Paint Flatten" );
 					group.AddAction( "Terrain Paint Layers" );
+					group.AddAction( "Terrain Paint Add Layer" );
 				}
 
 			}

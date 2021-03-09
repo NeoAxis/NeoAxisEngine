@@ -260,7 +260,7 @@ namespace NeoAxis.Editor
 			{
 				if( control.LabelName.Text != DisplayName )
 					control.LabelName.Text = DisplayName;
-				control.LabelNameSetToolTip( Description );
+				control.LabelNameSetToolTip( !string.IsNullOrEmpty( Description ) ? Description : DisplayName );
 			}
 
 			var netType = Property.Type.GetNetType();

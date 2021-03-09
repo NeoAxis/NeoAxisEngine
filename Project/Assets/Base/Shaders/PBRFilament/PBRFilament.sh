@@ -1,7 +1,6 @@
 //#define GEOMETRIC_SPECULAR_AA_ROUGHNESS
 
 #define MATERIAL_HAS_AMBIENT_OCCLUSION
-#define MATERIAL_HAS_SUBSURFACE_COLOR
 
 #define MIN_ROUGHNESS              0.045
 #define MIN_LINEAR_ROUGHNESS       0.002025
@@ -39,9 +38,6 @@ struct MaterialInputs {
 
 #if defined(SHADING_MODEL_CLOTH)
 	vec3 sheenColor;
-#endif
-
-#if defined(MATERIAL_HAS_SUBSURFACE_COLOR) && !defined(SHADING_MODEL_SUBSURFACE)
 	vec3 subsurfaceColor;
 #endif
 
@@ -69,13 +65,13 @@ struct PixelParams {
 	float subsurfacePower;
 #endif
 
-#if defined(SHADING_MODEL_CLOTH) && defined(MATERIAL_HAS_SUBSURFACE_COLOR)
+#if defined(SHADING_MODEL_CLOTH)
 	vec3 subsurfaceColor;
 #endif
 };
 
 // Filament Params:
-                        // These variables should be in a struct but some GPU drivers ignore the
+// These variables should be in a struct but some GPU drivers ignore the
 // precision qualifier on individual struct members
 HIGHP mat3 shading_tangentToWorld;
 vec3 shading_normal;
@@ -113,7 +109,6 @@ vec3 PrefilteredDFG(float roughness, float NoV)
 vec3 diffuseIrradiance(const vec3 n, samplerCube environmentTextureIBL, EnvironmentTextureData environmentTextureIBLData)
 {
 	return getEnvironmentValue(environmentTextureIBL, environmentTextureIBLData, n);	
-	//return textureCube(environmentTextureIBL, flipCubemapCoords(n)).rgb;
 }
 
 vec3 specularIrradiance(const vec3 r, float roughness, samplerCube environmentTexture, EnvironmentTextureData environmentTextureData)
@@ -129,7 +124,6 @@ vec3 specularIrradiance(const vec3 r, float roughness, samplerCube environmentTe
 	lod = texDim.z * roughness;
 #endif	
 	return getEnvironmentValueLod(environmentTexture, environmentTextureData, r, lod);
-	//return textureCubeLod(environmentTexture, flipCubemapCoords(r), lod).rgb;
 }
 
 vec3 specularIrradiance_Offset(const vec3 r, float roughness, float offset, samplerCube environmentTexture, EnvironmentTextureData environmentTextureData)
@@ -145,7 +139,6 @@ vec3 specularIrradiance_Offset(const vec3 r, float roughness, float offset, samp
 	lod = texDim.z * roughness * roughness;
 #endif
 	return getEnvironmentValueLod(environmentTexture, environmentTextureData, r, lod + offset);
-	//return textureCubeLod(environmentTexture, flipCubemapCoords(r), lod + offset).rgb;
 }
 
 vec3 getSpecularDominantDirection(vec3 n, vec3 r, float linearRoughness)
@@ -207,7 +200,7 @@ vec3 getReflectedVector(const PixelParams pixel, const vec3 n)
 
 void evaluateClothIndirectDiffuseBRDF(const PixelParams pixel, inout float diffuse)
 {
-#if defined(SHADING_MODEL_CLOTH) && defined(MATERIAL_HAS_SUBSURFACE_COLOR)
+#if defined(SHADING_MODEL_CLOTH)
 	// Simulate subsurface scattering with a wrap diffuse term
 	diffuse *= Fd_Wrap(shading_NoV, 0.5);
 #endif
@@ -232,6 +225,24 @@ void iblClearCoatSpecular(const PixelParams pixel, float specularAO, inout vec3 
 	Fr += specularIrradiance(clearCoatR, pixel.clearCoatRoughness, environmentTexture, environmentTextureData) * (specularAO * Fc);
 }
 
+#if defined(SHADING_MODEL_SUBSURFACE)
+void iblSubsurfaceDiffuse(const PixelParams pixel, const vec3 diffuseIrradiance, inout vec3 Fd, samplerCube environmentTexture, EnvironmentTextureData environmentTextureData)
+{
+	vec3 viewIndependent = diffuseIrradiance;
+	vec3 viewDependent = specularIrradiance_Offset(-shading_view, pixel.roughness, 1.0 + pixel.thickness, environmentTexture, environmentTextureData);
+	float attenuation = (1.0 - pixel.thickness) / (2.0 * PI);
+	Fd += pixel.subsurfaceColor * (viewIndependent + viewDependent) * attenuation;
+}
+#endif
+
+#if defined(SHADING_MODEL_CLOTH)
+void iblClothDiffuse(const PixelParams pixel, const vec3 diffuseIrradiance, inout vec3 Fd, samplerCube environmentTexture, EnvironmentTextureData environmentTextureData)
+{
+	Fd *= saturate(pixel.subsurfaceColor + shading_NoV);
+}
+#endif
+
+/*
 void iblSubsurfaceDiffuse(const PixelParams pixel, const vec3 diffuseIrradiance, inout vec3 Fd, samplerCube environmentTexture, EnvironmentTextureData environmentTextureData)
 {
 #if defined(SHADING_MODEL_SUBSURFACE)
@@ -239,12 +250,13 @@ void iblSubsurfaceDiffuse(const PixelParams pixel, const vec3 diffuseIrradiance,
 	vec3 viewDependent = specularIrradiance_Offset(-shading_view, pixel.roughness, 1.0 + pixel.thickness, environmentTexture, environmentTextureData);
 	float attenuation = (1.0 - pixel.thickness) / (2.0 * PI);
 	Fd += pixel.subsurfaceColor * (viewIndependent + viewDependent) * attenuation;
-#elif defined(SHADING_MODEL_CLOTH) && defined(MATERIAL_HAS_SUBSURFACE_COLOR)
+#elif defined(SHADING_MODEL_CLOTH)
 	Fd *= saturate(pixel.subsurfaceColor + shading_NoV);
 #endif
 }
+*/
 
-vec3 iblDiffuse(const MaterialInputs material, const PixelParams pixel, samplerCube environmentTextureIBL, EnvironmentTextureData environmentTextureIBLData, samplerCube environmentTexture, EnvironmentTextureData environmentTextureData)
+vec3 iblDiffuse(const MaterialInputs material, const PixelParams pixel, samplerCube environmentTextureIBL, EnvironmentTextureData environmentTextureIBLData, samplerCube environmentTexture, EnvironmentTextureData environmentTextureData, bool shadingModelSubsurface)
 {
 	vec3 n = shading_normal;
 
@@ -261,7 +273,16 @@ vec3 iblDiffuse(const MaterialInputs material, const PixelParams pixel, samplerC
 #ifdef MATERIAL_HAS_CLEAR_COAT
 	iblClearCoatDiffuse(pixel, Fd);
 #endif
-	iblSubsurfaceDiffuse(pixel, diffuseIrr, Fd, environmentTexture, environmentTextureData);
+
+#if defined(SHADING_MODEL_SUBSURFACE)
+	BRANCH
+	if(shadingModelSubsurface)
+		iblSubsurfaceDiffuse(pixel, diffuseIrr, Fd, environmentTexture, environmentTextureData);
+#endif
+
+#if defined(SHADING_MODEL_CLOTH)
+	iblClothDiffuse(pixel, diffuseIrr, Fd, environmentTexture, environmentTextureData);
+#endif
 
 	return Fd * IBL_LUMINANCE;
 }
@@ -350,10 +371,7 @@ void getPBRFilamentPixelParams(const MaterialInputs material, out PixelParams pi
 #else
 	pixel.diffuseColor = baseColor.rgb;
 	pixel.f0 = material.sheenColor;
-
-	#if defined(MATERIAL_HAS_SUBSURFACE_COLOR)
-		pixel.subsurfaceColor = material.subsurfaceColor;
-	#endif
+	pixel.subsurfaceColor = material.subsurfaceColor;
 #endif
 
 	// Clamp the roughness to a minimum value to avoid divisions by 0 in the
@@ -575,25 +593,19 @@ vec3 surfaceShadingCloth(const PixelParams pixel)
 
 	// diffuse BRDF
 	float diffuseC = diffuse(pixel.linearRoughness, shading_NoV, shading_NoL, shading_LoH);
-#if defined(MATERIAL_HAS_SUBSURFACE_COLOR)
 	// Energy conservative wrap diffuse to simulate subsurface scattering
 	diffuseC *= Fd_Wrap(dot(shading_normal, shading_L), 0.5);
-#endif
 
 	// We do not multiply the diffuse term by the Fresnel term as discussed in
 	// Neubelt and Pettineo 2013, "Crafting a Next-gen Material Pipeline for The Order: 1886"
 	// The effect is fairly subtle and not deemed worth the cost for mobile
 	vec3 Fd = diffuseC * pixel.diffuseColor;
 
-#if defined(MATERIAL_HAS_SUBSURFACE_COLOR)
 	// Cheap subsurface scatter
 	Fd *= saturate(pixel.subsurfaceColor + shading_NoL);
 	// We need to apply NoL separately to the specular lobe since we already took
 	// it into account in the diffuse lobe
 	vec3 color = Fd + Fr * shading_NoL;
-#else
-	vec3 color = (Fd + Fr) * shading_NoL;
-#endif
 
 	return color;
 }

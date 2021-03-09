@@ -389,6 +389,20 @@ namespace NeoAxis.Editor
 					itemNode.Image = image;
 				}
 			}
+
+			public ICollection<Item> GetAllParents( bool makeOrderFromTopToBottom )
+			{
+				var list = new List<Item>();
+				var current = Parent;
+				while( current != null )
+				{
+					list.Add( current );
+					current = current.Parent;
+				}
+				if( makeOrderFromTopToBottom )
+					list.Reverse();
+				return list;//.ToArray();
+			}
 		}
 
 		//!!!!
@@ -3681,6 +3695,16 @@ namespace NeoAxis.Editor
 							items.Add( item );
 						}
 
+						//Export to File
+						{
+							var item = new KryptonContextMenuItem( Translate( "Export to File" ), null, delegate ( object s, EventArgs e2 )
+							{
+								EditorUtility.ExportComponentToFile( componentItem.Component );
+							} );
+							item.Enabled = true;//oneSelectedComponent != null;
+							items.Add( item );
+						}
+
 						//separator
 						items.Add( new KryptonContextMenuSeparator() );
 
@@ -4670,6 +4694,9 @@ namespace NeoAxis.Editor
 				}
 			}
 
+			//remove children which inside selected parents
+			resultItemsToDelete = GetItemsWithoutChildren( resultItemsToDelete );
+
 			if( resultItemsToDelete.Count == 0 )
 				return false;
 
@@ -4879,6 +4906,24 @@ namespace NeoAxis.Editor
 				SelectItems( new Item[] { itemToSelectAfterDelection }, false, true );
 		}
 
+		static List<Item> GetItemsWithoutChildren( ICollection<Item> list )
+		{
+			var set = new ESet<Item>( list.Count );
+			set.AddRangeWithCheckAlreadyContained( list );
+
+			var newList = new List<Item>( list.Count );
+
+			foreach( var obj in list )
+			{
+				var allParents = obj.GetAllParents( false );
+
+				if( !allParents.Any( p => set.Contains( p ) ) )
+					newList.Add( obj );
+			}
+
+			return newList;
+		}
+
 		public bool CanCloneObjects( out List<Item> resultItemsToClone )
 		{
 			resultItemsToClone = new List<Item>();
@@ -4887,10 +4932,6 @@ namespace NeoAxis.Editor
 				return false;
 			if( documentWindow == null || documentWindow.Document == null )
 				return false;
-
-			//!!!!mutliselection
-
-			//!!!!вложенные друг в друга
 
 			foreach( var item in SelectedItems )
 			{
@@ -4917,6 +4958,9 @@ namespace NeoAxis.Editor
 				//if( fileItem != null )
 				//	resultItemsToDelete.Add( fileItem );
 			}
+
+			//remove children which inside selected parents
+			resultItemsToClone = GetItemsWithoutChildren( resultItemsToClone );
 
 			if( resultItemsToClone.Count == 0 )
 				return false;

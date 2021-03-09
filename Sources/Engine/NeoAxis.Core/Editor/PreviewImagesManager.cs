@@ -32,6 +32,8 @@ namespace NeoAxis.Editor
 		//key: virtual file name
 		static Dictionary<string, LoadedPreviewItem> loadedPreviews = new Dictionary<string, LoadedPreviewItem>();
 
+		public static bool EnableVirtualFileWatcherUpdate { get; set; } = true;
+
 		///////////////////////////////////////////////
 
 		class ImageToProcessItem
@@ -126,15 +128,18 @@ namespace NeoAxis.Editor
 			static void CreatePreviewGeneratorForResource( string virtualFileName, out object objectOfPreview, out PreviewImageGenerator generator )
 			{
 				generator = null;
+				objectOfPreview = null;
 
 				var resource = ResourceManager.LoadResource( virtualFileName, true );
-
-				objectOfPreview = resource.ResultComponent;
-				if( objectOfPreview != null )
+				if( resource != null )
 				{
-					var previewClass = GetPreviewClass( objectOfPreview );
-					if( previewClass != null )
-						generator = (PreviewImageGenerator)Activator.CreateInstance( previewClass );
+					objectOfPreview = resource.ResultComponent;
+					if( objectOfPreview != null )
+					{
+						var previewClass = GetPreviewClass( objectOfPreview );
+						if( previewClass != null )
+							generator = (PreviewImageGenerator)Activator.CreateInstance( previewClass );
+					}
 				}
 			}
 
@@ -377,11 +382,10 @@ namespace NeoAxis.Editor
 
 		internal static void Init()
 		{
-			var types = new string[] { "Material", "Image", "Mesh", "Import 3D", "Skybox" };
+			var types = new string[] { "Material", "Image", "Mesh", "Import 3D", "Skybox", "Object In Space", "Surface" };
 			//!!!!
 			//Character
 			//Character2D
-			//Surface
 			//Sprite
 
 			foreach( var typeName in types )
@@ -390,10 +394,14 @@ namespace NeoAxis.Editor
 				if( type != null )
 					RegisterResourceType( type );
 			}
+
+			VirtualFileWatcher.Update += VirtualFileWatcher_Update;
 		}
 
 		internal static void Shutdown()
 		{
+			VirtualFileWatcher.Update -= VirtualFileWatcher_Update;
+
 			try
 			{
 				foreach( var processor in processors )
@@ -406,6 +414,13 @@ namespace NeoAxis.Editor
 		public static void RegisterResourceType( ResourceManager.ResourceType resourceType )
 		{
 			supportedResourceTypes.AddWithCheckAlreadyContained( resourceType );
+		}
+
+		public static void RegisterResourceType( string resourceTypeName )
+		{
+			var type = ResourceManager.GetTypeByName( resourceTypeName );
+			if( type != null )
+				RegisterResourceType( type );
 		}
 
 		public static bool IsResourceTypeSupported( ResourceManager.ResourceType resourceType )
@@ -436,7 +451,6 @@ namespace NeoAxis.Editor
 			cacheNotExists = false;
 
 			var item = GetLoadedPreview( virtualFileName );
-
 			if( item == null || item.needReload )
 			{
 				var cacheFileName = GetCacheFileNameByResourceVirtualFileName( virtualFileName );
@@ -663,6 +677,41 @@ namespace NeoAxis.Editor
 			//	return Properties.Resources.Delete_32;
 			//}
 
+		}
+
+		public static void NeedRegenerateFile( string virtualFileName )
+		{
+			var item = GetLoadedPreview( virtualFileName );
+			if( item != null )
+			{
+				//!!!!может не сразу обновлять, с задержкой
+
+				var realFileName = VirtualPathUtility.GetRealPathByVirtual( virtualFileName );
+				AddResourceToProcess( realFileName );
+			}
+			else
+			{
+				//delete old preview png
+
+				var cacheFileName = GetCacheFileNameByResourceVirtualFileName( virtualFileName );
+				try
+				{
+					if( File.Exists( cacheFileName ) )
+						File.Delete( cacheFileName );
+				}
+				catch { }
+			}
+		}
+
+		private static void VirtualFileWatcher_Update( FileSystemEventArgs args )
+		{
+			if( EnableVirtualFileWatcherUpdate )
+			{
+				//regenerate preview images
+				var virtualPath = VirtualPathUtility.GetVirtualPathByReal( args.FullPath );
+				if( !string.IsNullOrEmpty( virtualPath ) )
+					NeedRegenerateFile( virtualPath );
+			}
 		}
 
 	}

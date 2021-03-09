@@ -16,15 +16,19 @@ namespace NeoAxis.Editor
 		public class PackageInfo
 		{
 			public string FullFilePath;
-			public string Name;
+
+			public string Identifier;
+			public string Title;
+
 			public string Version;
 
-			//!!!!
 			public string Author;
-			public string Description;
-			//public bool OnlyPro;
+			public string ShortDescription;
+			public string FullDescription;
+			public string Permalink;
+			public string Cost;
 			public long Size;
-			public string Download;
+			public string FreeDownload;
 			public bool SecureDownload;
 			//!!!!string
 			public string Date;
@@ -32,12 +36,19 @@ namespace NeoAxis.Editor
 
 			public override string ToString()
 			{
-				return GetDisplayName();// + " " + Version;
+				return Identifier.Replace( '_', ' ' );
+				//return Title;// + " " + Version;
 			}
 
-			public string GetDisplayName()
+			public int CostNumber
 			{
-				return Name.Replace( '_', ' ' );
+				get
+				{
+					var result = 0;
+					if( !string.IsNullOrEmpty( Cost ) )
+						int.TryParse( Cost, out result );
+					return result;
+				}
 			}
 		}
 
@@ -80,7 +91,8 @@ namespace NeoAxis.Editor
 						{
 							var info = new PackageInfo();
 							info.FullFilePath = fileName;
-							info.Name = strings[ 0 ].Replace( '_', ' ' );
+							info.Identifier = strings[ 0 ];
+							info.Title = strings[ 0 ].Replace( '_', ' ' );
 							info.Version = strings[ 1 ];
 							result.Add( info );
 						}
@@ -90,7 +102,7 @@ namespace NeoAxis.Editor
 
 			CollectionUtility.MergeSort( result, delegate ( PackageInfo p1, PackageInfo p2 )
 			{
-				return string.Compare( p1.Name, p2.Name );
+				return string.Compare( p1.Identifier, p2.Identifier );
 			} );
 
 			return result;

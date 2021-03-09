@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.IO;
+using System.Linq;
 
 namespace NeoAxis
 {
@@ -976,5 +977,24 @@ namespace NeoAxis
 			}
 			return false;
 		}
+
+		public static List<Component> GetComponentsWithoutChildren( ICollection<Component> list )
+		{
+			var set = new ESet<Component>( list.Count );
+			set.AddRangeWithCheckAlreadyContained( list );
+
+			var newList = new List<Component>( list.Count );
+
+			foreach( var obj in list )
+			{
+				var allParents = obj.GetAllParents( false );
+
+				if( !allParents.Any( p => set.Contains( p ) ) )
+					newList.Add( obj );
+			}
+
+			return newList;
+		}
+
 	}
 }

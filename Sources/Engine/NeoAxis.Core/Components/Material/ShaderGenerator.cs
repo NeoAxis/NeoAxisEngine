@@ -122,7 +122,32 @@ namespace NeoAxis
 			}
 		}
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////
+
+		[Browsable( false )]
+		public class PaintLayerOpacityPropertyWithMask : Component
+		{
+			public PaintLayerOpacityPropertyWithMask()
+			{
+			}
+
+			public void Init()
+			{
+				var sample = CreateComponent<Component_ShaderTextureSample>();
+				sample.TextureType = Component_ShaderTextureSample.TextureTypeEnum.Mask;
+
+				Opacity = ReferenceUtility.MakeThisReference( this, sample, "R" );
+			}
+
+			public Reference<double> Opacity
+			{
+				get { if( _opacity.BeginGet() ) Opacity = _opacity.Get( this ); return _opacity.value; }
+				set { if( _opacity.BeginSet( ref value ) ) { _opacity.EndSet(); } }
+			}
+			ReferenceField<double> _opacity = 1;
+		}
+
+		///////////////////////////////////////////////
 
 		static void GetTemplate( Component component, out string template, out Type autoConstantType, out string autoConstantName )//, out Type outputType )
 		{
@@ -330,7 +355,7 @@ namespace NeoAxis
 						{
 							if( s.Length != 0 )
 								s.Append( returnLine );
-							var typeString = GetTypeString( item.type, false );
+							//var typeString = GetTypeString( item.type, false );
 							//!!!!bgfx
 							//!!!!mat3, mat4 еще
 							var line = string.Format( "uniform vec4 {0};", item.nameInShader );
@@ -347,7 +372,7 @@ namespace NeoAxis
 
 							if( s.Length != 0 )
 								s.Append( returnLine );
-							var typeString = GetTypeString( item.type, false );
+							//var typeString = GetTypeString( item.type, false );
 							//!!!!bgfx
 							//!!!!mat3, mat4 еще
 							var line = string.Format( "uniform vec4 {0};", item.nameInShader );
@@ -568,7 +593,11 @@ namespace NeoAxis
 								else
 									nameInShader = "sourceTexture";
 
-								var constructBody = string.Format( "CODE_BODY_TEXTURE2D({0}, {1})", nameInShader, locationStr );
+								string constructBody;
+								if( shaderTextureSample.RemoveTiling )
+									constructBody = string.Format( "CODE_BODY_TEXTURE2D_REMOVE_TILING({0}, {1})", nameInShader, locationStr );
+								else
+									constructBody = string.Format( "CODE_BODY_TEXTURE2D({0}, {1})", nameInShader, locationStr );
 								//var constructBody = string.Format( "texture2D({0}, {1})", nameInShader, locationStr );
 								//var constructBody = string.Format( "{0}.Sample( {1}Sampler, {2} )", nameInShader, nameInShader, locationStr );
 								if( postfix != "" )

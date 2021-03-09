@@ -1,4 +1,4 @@
-$input v_depth, v_texCoord01, v_color0, v_texCoord23, v_colorParameter
+$input v_depth, v_texCoord01, v_color0, v_texCoord23, v_colorParameter, v_worldPosition, v_lodValueVisibilityDistanceReceiveDecals
 
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "Common.sh"
@@ -25,7 +25,11 @@ SAMPLER2D(s_materials, 1);
 
 void main()
 {
-	smoothLOD(getFragCoord(), u_renderOperationData[2].w);
+	//lod
+	float lodValue = v_lodValueVisibilityDistanceReceiveDecals.x;
+	smoothLOD(getFragCoord(), lodValue);
+
+	cutVolumes(v_worldPosition);
 	
 	//get material data
 	vec4 materialStandardFragment[MATERIAL_STANDARD_FRAGMENT_SIZE];
@@ -43,12 +47,14 @@ void main()
 	vec2 c_texCoord0 = v_texCoord01.xy;
 	vec2 c_texCoord1 = v_texCoord01.zw;
 	vec2 c_texCoord2 = v_texCoord23.xy;
-	vec2 c_texCoord3 = v_texCoord23.zw;
-	vec2 c_unwrappedUV = getUnwrappedUV(c_texCoord0, c_texCoord1, c_texCoord2, c_texCoord3, u_renderOperationData[3].x);
+	//vec2 c_texCoord3 = v_texCoord23.zw;
+	vec2 c_unwrappedUV = getUnwrappedUV(c_texCoord0, c_texCoord1, c_texCoord2/*, c_texCoord3*/, u_renderOperationData[3].x);
 	vec4 c_color0 = v_color0;
 #ifdef FRAGMENT_CODE_BODY
+	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(_sampler, _uv, u_removeTextureTiling)
 	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2D(_sampler, _uv)
 	FRAGMENT_CODE_BODY
+	#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
 	#undef CODE_BODY_TEXTURE2D
 #endif
 
@@ -58,6 +64,18 @@ void main()
 		opacity *= v_color0.w;
 	opacity = saturate(opacity);
 
+	float cameraDistance = length(u_viewportOwnerCameraPosition - v_worldPosition);
+
+	//fading by visibility distance
+	float visibilityDistance = v_lodValueVisibilityDistanceReceiveDecals.y;
+	float visibilityDistanceFactor = getVisibilityDistanceFactor(visibilityDistance, cameraDistance);
+	#if defined(BLEND_MODE_OPAQUE) || defined(BLEND_MODE_MASKED)
+		smoothLOD(getFragCoord(), 1.0f - visibilityDistanceFactor);
+	#endif
+	#if defined(BLEND_MODE_TRANSPARENT) || defined(BLEND_MODE_ADD)	
+		opacity *= visibilityDistanceFactor;
+	#endif
+	
 //	//opacity dithering
 //#ifdef OPACITY_DITHERING
 //	opacity = dither(getFragCoord(), opacity);

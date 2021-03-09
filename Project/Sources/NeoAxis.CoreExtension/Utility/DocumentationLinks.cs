@@ -15,6 +15,7 @@ namespace NeoAxis.Editor
 			("Component",typeof(Component)),
 			("Text File",typeof(NewResourceType_TextFile)),
 			("Component Host",typeof(Component_ComponentHost)),
+			("Compute Using Threads",typeof(Component_ComputeUsingThreads)),
 
 			//=== Scripting ===
 			("CSharp File",typeof(NewResourceType_CSharpClass)),
@@ -102,7 +103,9 @@ namespace NeoAxis.Editor
 			("Text 2D",typeof(Component_Text2D)),
 			("Measuring Tool",typeof(Component_MeasuringTool)),
 			("Grid",typeof(Component_Grid)),
-			("Curve In Space",typeof(Component_CurveInSpace)), 
+			("Curve In Space",typeof(Component_CurveInSpace)),
+			("Render To File",typeof(Component_RenderToFile)),
+			("World Generator",typeof(Component_WorldGenerator)), 
 
 			//=== Primitives ===
 			("Arch",typeof(Component_MeshGeometry_Arch)),
@@ -168,6 +171,7 @@ namespace NeoAxis.Editor
 			("Light Shafts",typeof(Component_RenderingEffect_LightShafts)),
 			("Motion Blur",typeof(Component_RenderingEffect_MotionBlur)),
 			("Noise",typeof(Component_RenderingEffect_Noise)),
+			("Outline",typeof(Component_RenderingEffect_Outline)),
 			("Pixelate",typeof(Component_RenderingEffect_Pixelate)),
 			("Posterize",typeof(Component_RenderingEffect_Posterize)),
 			("Radial Blur",typeof(Component_RenderingEffect_RadialBlur)),
@@ -176,7 +180,7 @@ namespace NeoAxis.Editor
 			("Show Render Target",typeof(Component_RenderingEffect_ShowRenderTarget)),
 			("To LDR",typeof(Component_RenderingEffect_ToLDR)),
 			("Tone Mapping",typeof(Component_RenderingEffect_ToneMapping)),
-			("Vignetting",typeof(Component_RenderingEffect_Vignetting)), 
+			("Vignetting",typeof(Component_RenderingEffect_Vignetting)),
 
 			//=== Game framework ===
 			("Game Mode",typeof(Component_GameMode)),

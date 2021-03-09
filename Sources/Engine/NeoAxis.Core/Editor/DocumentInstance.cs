@@ -180,15 +180,19 @@ namespace NeoAxis.Editor
 			//!!!!?
 			if( LoadedResource != null && LoadedResource.ResultComponent != null && LoadedResource.Owner.LoadFromFile )
 			{
+				string realPathWithoutAddFileExtension;
 				string realPath;
 				if( !string.IsNullOrEmpty( saveAsFileName ) )
 				{
+					realPathWithoutAddFileExtension = saveAsFileName;
 					realPath = saveAsFileName;
 				}
 				else
 				{
-					string name = LoadedResource.Owner.Name + LoadedResource.Owner.GetSaveAddFileExtension();
-					realPath = VirtualPathUtility.GetRealPathByVirtual( name );
+					realPathWithoutAddFileExtension = VirtualPathUtility.GetRealPathByVirtual( LoadedResource.Owner.Name );
+					realPath = realPathWithoutAddFileExtension + LoadedResource.Owner.GetSaveAddFileExtension();
+					//string name = LoadedResource.Owner.Name + LoadedResource.Owner.GetSaveAddFileExtension();
+					//realPath = VirtualPathUtility.GetRealPathByVirtual( name );
 				}
 
 				//!!!!new
@@ -204,7 +208,7 @@ namespace NeoAxis.Editor
 					return false;
 				}
 
-				PreviewImagesManager.AddResourceToProcess( realPath );
+				PreviewImagesManager.AddResourceToProcess( realPathWithoutAddFileExtension );
 
 				return true;
 			}

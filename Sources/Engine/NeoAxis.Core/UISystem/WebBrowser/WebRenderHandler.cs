@@ -61,12 +61,12 @@ namespace NeoAxis.UIWebBrowserControl
 			owner.HandlePaint( browser, type, dirtyRects, buffer, width, height );
 		}
 
-		protected override void OnCursorChange( CefBrowser browser, IntPtr cursorHandle )
+		protected override void OnCursorChange( CefBrowser browser, IntPtr cursorHandle, CefCursorType type, CefCursorInfo customCursorInfo )
 		{
 			owner.HandleCursorChange( cursorHandle );
 		}
 
-		protected override void OnScrollOffsetChanged( CefBrowser browser )
+		protected override void OnScrollOffsetChanged( CefBrowser browser, double x, double y )
 		{
 		}
 	}

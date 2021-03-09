@@ -14,7 +14,7 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "10.9173234399277 -8.86791390130767 18.5278863588321; -0.282036195177354 0.21191911237647 0.748065543524827 0.562088798154131; 1 1 1"
+		Transform = "9.81085046054705 -11.5888116935244 20.6525920399321; -0.283389724934259 0.210232518704558 0.751471754669701 0.557478926789581; 1 1 1"
 	}
 	.component NeoAxis.Component_Light
 	{
@@ -82,17 +82,24 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
 			.component NeoAxis.Component_MeshGeometry_Plane
 			{
 				Name = Mesh Geometry
-				Dimensions = 50 50
+				Dimensions = 200 200
 				UVTilesPerUnit = 0.333 0.333
 				Material
 				{
-					GetByReference = "Samples\\Starter Content\\Materials\\Concrete 3x3 meters\\Concrete 3x3 meters.material"
+					GetByReference = "Content\\Materials\\Basic Library\\Concrete\\Concrete Floor 01.material"
 				}
 			}
 		}
@@ -122,6 +129,7 @@
 	}
 	.component NeoAxis.Component_MeshInSpace
 	{
+		Enabled = False
 		Name = Mesh in Space 20
 		CanBeSelected = False
 		Transform = "0 25 10; 0.707106781186547 0 0 0.707106781186548; 1 1 1"
@@ -133,6 +141,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -143,7 +158,7 @@
 				UVTilesPerUnit = 0.5 0.5
 				Material
 				{
-					GetByReference = "Samples\\Starter Content\\Materials\\Painted Large Bricks 2x2 meters\\Painted Large Bricks 2x2 meters.material"
+					GetByReference = "Content\\Materials\\Basic Library\\Brick\\Yellow Brick.material"
 				}
 			}
 		}
@@ -173,6 +188,7 @@
 	}
 	.component NeoAxis.Component_MeshInSpace
 	{
+		Enabled = False
 		Name = Mesh in Space 12
 		CanBeSelected = False
 		Transform = "0 -25 10; -0.707106781186547 0 0 0.707106781186548; 1 1 1"
@@ -184,6 +200,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -194,7 +217,7 @@
 				UVTilesPerUnit = 0.5 0.5
 				Material
 				{
-					GetByReference = "Samples\\Starter Content\\Materials\\Painted Large Bricks 2x2 meters\\Painted Large Bricks 2x2 meters.material"
+					GetByReference = "Content\\Materials\\Basic Library\\Brick\\Yellow Brick.material"
 				}
 			}
 		}
@@ -224,6 +247,7 @@
 	}
 	.component NeoAxis.Component_MeshInSpace
 	{
+		Enabled = False
 		Name = Mesh in Space 13
 		CanBeSelected = False
 		Transform = "-25 0 10; 0.5 0.5 0.5 0.5; 1 1 1"
@@ -235,6 +259,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -245,7 +276,7 @@
 				UVTilesPerUnit = 0.5 0.5
 				Material
 				{
-					GetByReference = "Samples\\Starter Content\\Materials\\Painted Large Bricks 2x2 meters\\Painted Large Bricks 2x2 meters.material"
+					GetByReference = "Content\\Materials\\Basic Library\\Brick\\Yellow Brick.material"
 				}
 			}
 		}
@@ -275,6 +306,7 @@
 	}
 	.component NeoAxis.Component_MeshInSpace
 	{
+		Enabled = False
 		Name = Mesh in Space 14
 		CanBeSelected = False
 		Transform = "25 0 10; 0.5 0.5 -0.5 -0.5; 1 1 1"
@@ -286,6 +318,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -296,7 +335,7 @@
 				UVTilesPerUnit = 0.5 0.5
 				Material
 				{
-					GetByReference = "Samples\\Starter Content\\Materials\\Painted Large Bricks 2x2 meters\\Painted Large Bricks 2x2 meters.material"
+					GetByReference = "Content\\Materials\\Basic Library\\Brick\\Yellow Brick.material"
 				}
 			}
 		}

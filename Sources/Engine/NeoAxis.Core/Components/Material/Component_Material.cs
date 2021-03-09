@@ -505,9 +505,10 @@ namespace NeoAxis
 		ReferenceField<AnisotropyDirectionBasisEnum> _anisotropyDirectionBasis = AnisotropyDirectionBasisEnum.Tangent;
 
 		/// <summary>
-		/// Object thickness. Used for subsurface scattering only.
+		/// A thickness factor of the surface for subsurface scattering rendering.
 		/// </summary>
 		[DefaultValue( 0.5 )]
+		[Range( 0, 1 )]
 		[Serialize]
 		[Category( "Shading" )]
 		public Reference<double> Thickness
@@ -520,10 +521,10 @@ namespace NeoAxis
 		ReferenceField<double> _thickness = 0.5;
 
 		/// <summary>
-		/// Amount of subsurface scattering.
+		/// A power parameter for subsurface scattering rendering.
 		/// </summary>
 		[DefaultValue( 12.234 )]
-		[Range( 0, 14 )]
+		[Range( 0, 15 )]
 		[Serialize]
 		[Category( "Shading" )]
 		public Reference<double> SubsurfacePower
@@ -937,9 +938,9 @@ namespace NeoAxis
 			[DisplayName( "Normal" )]
 			public bool NormalDisabled { get; } = false;
 
-			[DefaultValue( false )]
+			[DefaultValue( true )]
 			[Category( "Automatic Tuning" )]
-			public bool Displacement { get; set; } = false;
+			public bool Displacement { get; set; } = true;
 			[DefaultValue( false )]
 			[Category( "Automatic Tuning" )]
 			[DisplayName( "Displacement" )]
@@ -1398,7 +1399,7 @@ namespace NeoAxis
 		{
 			if( Result != null )
 				return;
-			Result = Compile( CompiledMaterialData.UsageMode.Usual );
+			Result = Compile( CompiledMaterialData.SpecialMode.Usual );
 		}
 
 		string GetDisplayName()
@@ -1476,7 +1477,16 @@ namespace NeoAxis
 				properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Normal ) )) );
 
 				properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( BaseColor ) )) );
-				properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Opacity ) )) );
+
+				if( ( compiledData.specialMode == CompiledMaterialData.SpecialMode.PaintLayerMasked || compiledData.specialMode == CompiledMaterialData.SpecialMode.PaintLayerTransparent ) && !Opacity.ReferenceSpecified )
+				{
+					var obj = new ShaderGenerator.PaintLayerOpacityPropertyWithMask();
+					obj.Init();
+					properties.Add( (obj, (Metadata.Property)obj.MetadataGetMemberBySignature( "property:" + nameof( Opacity ) )) );
+				}
+				else
+					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Opacity ) )) );
+
 				properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( OpacityMaskThreshold ) )) );
 
 				properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Metallic ) )) );
@@ -1602,15 +1612,28 @@ namespace NeoAxis
 				return instances.ToArray();
 		}
 
-		protected virtual string OnCheckDeferredShadingSupport()
+		protected virtual string OnCheckDeferredShadingSupport( CompiledMaterialData compiledData )
 		{
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
 				return "Android";
 
-			if( BlendMode.Value == BlendModeEnum.Transparent || BlendMode.Value == BlendModeEnum.Add )
+			if( compiledData.blendMode == BlendModeEnum.Transparent || compiledData.blendMode == BlendModeEnum.Add )
 				return "Blend Mode";
-			if( ShadingModel.Value != ShadingModelEnum.Lit && ShadingModel.Value != ShadingModelEnum.Simple )
+
+			switch( ShadingModel.Value )
+			{
+			case ShadingModelEnum.Subsurface:
+				if( Emissive.ReferenceSpecified || Emissive.Value.ToVector3() != Vector3.Zero )
+					return "Subsurface + Emissive";
+				break;
+			case ShadingModelEnum.Cloth:
+			case ShadingModelEnum.Specular:
+			case ShadingModelEnum.Unlit:
 				return "Shading Model";
+			}
+			//if( ShadingModel.Value != ShadingModelEnum.Lit && ShadingModel.Value != ShadingModelEnum.Simple )
+			//	return "Shading Model";
+
 			if( ClearCoat.ReferenceSpecified || ClearCoat.Value != 0 )
 				return "Clear Coat";
 			if( Anisotropy.ReferenceSpecified || Anisotropy.Value != 0 )
@@ -1620,86 +1643,102 @@ namespace NeoAxis
 			return "";
 		}
 
-		public delegate void CheckDeferredShadingSupportEventDelegate( Component_Material sender, ref string reason );
+		public delegate void CheckDeferredShadingSupportEventDelegate( Component_Material sender, CompiledMaterialData compiledData, ref string reason );
 		public event CheckDeferredShadingSupportEventDelegate CheckDeferredShadingSupportEvent;
 
-		string PerformCheckDeferredShadingSupport()
+		string PerformCheckDeferredShadingSupport( CompiledMaterialData compiledData )
 		{
-			string reason = OnCheckDeferredShadingSupport();
+			string reason = OnCheckDeferredShadingSupport( compiledData );
 			if( !string.IsNullOrEmpty( reason ) )
 				return reason;
-			CheckDeferredShadingSupportEvent?.Invoke( this, ref reason );
+			CheckDeferredShadingSupportEvent?.Invoke( this, compiledData, ref reason );
 			return reason;
 		}
 
 		/////////////////////////////////////////
 
-		protected virtual string OnCheckReceiveDecalsSupport()
+		protected virtual string OnCheckReceiveDecalsSupport( CompiledMaterialData compiledData )
 		{
 			if( !ReceiveDecals )
 				return "Receive Decals";
-			if( !string.IsNullOrEmpty( PerformCheckDeferredShadingSupport() ) )
+			if( !string.IsNullOrEmpty( PerformCheckDeferredShadingSupport( compiledData ) ) )
 				return "Deferred Shading";
 			return "";
 		}
 
-		public delegate void CheckReceiveDecalsSupportEventDelegate( Component_Material sender, ref string reason );
+		public delegate void CheckReceiveDecalsSupportEventDelegate( Component_Material sender, CompiledMaterialData compiledData, ref string reason );
 		public event CheckReceiveDecalsSupportEventDelegate CheckReceiveDecalsSupportEvent;
 
-		string PerformCheckReceiveDecalsSupport()
+		string PerformCheckReceiveDecalsSupport( CompiledMaterialData compiledData )
 		{
-			string reason = OnCheckReceiveDecalsSupport();
+			string reason = OnCheckReceiveDecalsSupport( compiledData );
 			if( !string.IsNullOrEmpty( reason ) )
 				return reason;
-			CheckReceiveDecalsSupportEvent?.Invoke( this, ref reason );
+			CheckReceiveDecalsSupportEvent?.Invoke( this, compiledData, ref reason );
 			return reason;
 		}
 
 		/////////////////////////////////////////
 
-		protected virtual string OnCheckDecalSupport()
+		protected virtual string OnCheckDecalSupport( CompiledMaterialData compiledData )
 		{
 			//if( !ReceiveDecals )
 			//	return "Receive Decals";
-			if( !string.IsNullOrEmpty( PerformCheckDeferredShadingSupport() ) )
+			if( !string.IsNullOrEmpty( PerformCheckDeferredShadingSupport( compiledData ) ) )
 				return "Deferred Shading";
 			return "";
 		}
 
-		public delegate void CheckDecalSupportEventDelegate( Component_Material sender, ref string reason );
+		public delegate void CheckDecalSupportEventDelegate( Component_Material sender, CompiledMaterialData compiledData, ref string reason );
 		public event CheckDecalSupportEventDelegate CheckDecalSupportEvent;
 
-		string PerformCheckDecalSupport()
+		string PerformCheckDecalSupport( CompiledMaterialData compiledData )
 		{
-			string reason = OnCheckDecalSupport();
+			string reason = OnCheckDecalSupport( compiledData );
 			if( !string.IsNullOrEmpty( reason ) )
 				return reason;
-			CheckDecalSupportEvent?.Invoke( this, ref reason );
+			CheckDecalSupportEvent?.Invoke( this, compiledData, ref reason );
 			return reason;
 		}
 
 		/////////////////////////////////////////
 
-		public virtual CompiledMaterialData Compile( CompiledMaterialData.UsageMode usageMode, CompileExtensionData extensionData = null )
+		public virtual CompiledMaterialData Compile( CompiledMaterialData.SpecialMode specialMode, CompileExtensionData extensionData = null )
 		{
 			var result = new CompiledMaterialData();
 			result.owner = this;
-			result.usageMode = usageMode;
+			result.specialMode = specialMode;
 			result.extensionData = extensionData;
 
-			result.Transparent = BlendMode.Value == BlendModeEnum.Transparent || BlendMode.Value == BlendModeEnum.Add;
+			var blendMode = BlendMode.Value;
+			var opacityDithering = OpacityDithering.Value;
+
+			if( BlendMode.Value == BlendModeEnum.Opaque )
+			{
+				if( specialMode == CompiledMaterialData.SpecialMode.PaintLayerMasked )
+				{
+					blendMode = BlendModeEnum.Masked;
+					opacityDithering = true;
+				}
+				else if( specialMode == CompiledMaterialData.SpecialMode.PaintLayerTransparent )
+					blendMode = BlendModeEnum.Transparent;
+			}
+
+			result.blendMode = blendMode;
+
+			result.Transparent = blendMode == BlendModeEnum.Transparent || blendMode == BlendModeEnum.Add;
 			result.ShadingModel = ShadingModel.Value;
 
 			//deferred shading
-			result.deferredShadingSupportReason = PerformCheckDeferredShadingSupport();
+			result.deferredShadingSupportReason = PerformCheckDeferredShadingSupport( result );
 			result.deferredShadingSupport = string.IsNullOrEmpty( result.deferredShadingSupportReason );
 
 			//receive decals
-			result.receiveDecalsSupportReason = PerformCheckReceiveDecalsSupport();
+			result.receiveDecalsSupportReason = PerformCheckReceiveDecalsSupport( result );
 			result.receiveDecalsSupport = string.IsNullOrEmpty( result.receiveDecalsSupportReason );
 
 			//decal
-			result.decalSupportReason = PerformCheckDecalSupport();
+			result.decalSupportReason = PerformCheckDecalSupport( result );
 			result.decalSupport = string.IsNullOrEmpty( result.decalSupportReason );
 
 			//!!!!
@@ -1707,7 +1746,7 @@ namespace NeoAxis
 			{
 
 				//!!!!что еще?
-				bool needSpecialShadowCaster = PositionOffset.ReferenceSpecified || BlendMode.Value == BlendModeEnum.Masked /*|| BlendMode.Value == BlendModeEnum.MaskedLayer */|| BlendMode.Value == BlendModeEnum.Transparent;
+				bool needSpecialShadowCaster = PositionOffset.ReferenceSpecified || blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */|| blendMode == BlendModeEnum.Transparent;
 
 				//shader generation
 				if( shaderGenerationCompile )
@@ -1747,10 +1786,11 @@ namespace NeoAxis
 						var fragmentDefines = new List<(string, string)>( 8 );
 						{
 							var generalDefines = new List<(string, string)>( 16 );
-							generalDefines.Add( ("USAGE_MODE_" + usageMode.ToString().ToUpper(), "") );
+							//generalDefines.Add( ("USAGE_MODE_" + usageMode.ToString().ToUpper(), "") );
 							generalDefines.Add( ("LIGHT_TYPE_" + lightType.ToString().ToUpper(), "") );
-							generalDefines.Add( ("BLEND_MODE_" + BlendMode.Value.ToString().ToUpper(), "") );
+							generalDefines.Add( ("BLEND_MODE_" + blendMode.ToString().ToUpper(), "") );
 							generalDefines.Add( ("SHADING_MODEL_" + ShadingModel.Value.ToString().ToUpper(), "") );
+							generalDefines.Add( ("SHADING_MODEL_INDEX", ( (int)ShadingModel.Value ).ToString()) );
 							if( TwoSided && TwoSidedFlipNormals )
 								generalDefines.Add( ("TWO_SIDED_FLIP_NORMALS", "") );
 
@@ -1764,7 +1804,7 @@ namespace NeoAxis
 
 							if( Displacement.ReferenceSpecified )
 								generalDefines.Add( ("DISPLACEMENT", "") );
-							if( ( BlendMode.Value == BlendModeEnum.Masked /*|| BlendMode.Value == BlendModeEnum.MaskedLayer */) && OpacityDithering )
+							if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering )
 								generalDefines.Add( ("OPACITY_DITHERING", "") );
 
 							//receive shadows support
@@ -1867,7 +1907,7 @@ namespace NeoAxis
 							//else
 							//	group.passesWithoutShadows.Add( pass );
 
-							if( BlendMode.Value == BlendModeEnum.Opaque || BlendMode.Value == BlendModeEnum.Masked /*|| BlendMode.Value == BlendModeEnum.MaskedLayer*/ )
+							if( blendMode == BlendModeEnum.Opaque || blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer*/ )
 							{
 								if( lightType == Component_Light.TypeEnum.Ambient )
 								{
@@ -1894,7 +1934,7 @@ namespace NeoAxis
 								//	pass.DestinationBlendFactor = SceneBlendFactor.Zero;
 								//}
 							}
-							else if( BlendMode.Value == BlendModeEnum.Transparent )
+							else if( blendMode == BlendModeEnum.Transparent )
 							{
 								//!!!!usageMode
 
@@ -1911,7 +1951,7 @@ namespace NeoAxis
 									pass.DestinationBlendFactor = SceneBlendFactor.One;
 								}
 							}
-							else if( BlendMode.Value == BlendModeEnum.Add )
+							else if( blendMode == BlendModeEnum.Add )
 							{
 								pass.DepthWrite = false;
 								pass.SourceBlendFactor = SceneBlendFactor.One;
@@ -1953,9 +1993,9 @@ namespace NeoAxis
 						{
 							var generalDefines = new List<(string, string)>();
 							generalDefines.Add( ("LIGHT_TYPE_" + lightType.ToString().ToUpper(), "") );
-							generalDefines.Add( ("BLEND_MODE_" + BlendMode.Value.ToString().ToUpper(), "") );
+							generalDefines.Add( ("BLEND_MODE_" + blendMode.ToString().ToUpper(), "") );
 
-							if( ( BlendMode.Value == BlendModeEnum.Masked /*|| BlendMode.Value == BlendModeEnum.MaskedLayer */) && OpacityDithering )
+							if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering )
 								generalDefines.Add( ("OPACITY_DITHERING", "") );
 
 							vertexDefines.AddRange( generalDefines );
@@ -2037,14 +2077,15 @@ namespace NeoAxis
 					var fragmentDefines = new List<(string, string)>( 8 );
 					{
 						var generalDefines = new List<(string, string)>();
-						generalDefines.Add( ("BLEND_MODE_" + BlendMode.Value.ToString().ToUpper(), "") );
+						generalDefines.Add( ("BLEND_MODE_" + blendMode.ToString().ToUpper(), "") );
 						generalDefines.Add( ("SHADING_MODEL_" + ShadingModel.Value.ToString().ToUpper(), "") );
+						generalDefines.Add( ("SHADING_MODEL_INDEX", ( (int)ShadingModel.Value ).ToString()) );
 						if( TwoSided && TwoSidedFlipNormals )
 							generalDefines.Add( ("TWO_SIDED_FLIP_NORMALS", "") );
 
 						if( Displacement.ReferenceSpecified )
 							generalDefines.Add( ("DISPLACEMENT", "") );
-						if( ( BlendMode.Value == BlendModeEnum.Masked /*|| BlendMode.Value == BlendModeEnum.MaskedLayer */) && OpacityDithering )
+						if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering )
 							generalDefines.Add( ("OPACITY_DITHERING", "") );
 
 						////receive shadows support
@@ -2162,14 +2203,15 @@ namespace NeoAxis
 					var fragmentDefines = new List<(string, string)>( 8 );
 					{
 						var generalDefines = new List<(string, string)>();
-						generalDefines.Add( ("BLEND_MODE_" + BlendMode.Value.ToString().ToUpper(), "") );
+						generalDefines.Add( ("BLEND_MODE_" + blendMode.ToString().ToUpper(), "") );
 						generalDefines.Add( ("SHADING_MODEL_" + ShadingModel.Value.ToString().ToUpper(), "") );
+						generalDefines.Add( ("SHADING_MODEL_INDEX", ( (int)ShadingModel.Value ).ToString()) );
 						if( TwoSided && TwoSidedFlipNormals )
 							generalDefines.Add( ("TWO_SIDED_FLIP_NORMALS", "") );
 
 						if( Displacement.ReferenceSpecified )
 							generalDefines.Add( ("DISPLACEMENT", "") );
-						if( ( BlendMode.Value == BlendModeEnum.Masked /*|| BlendMode.Value == BlendModeEnum.MaskedLayer */) && OpacityDithering )
+						if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering )
 							generalDefines.Add( ("OPACITY_DITHERING", "") );
 
 						vertexDefines.AddRange( generalDefines );
@@ -2257,7 +2299,7 @@ namespace NeoAxis
 						pass.CullingMode = CullingMode.Anticlockwise;
 
 						////!!!!temp
-						//pass.SettempAlphaToCoverage( BlendMode.Value == BlendModeEnum.Masked );
+						//pass.SettempAlphaToCoverage( blendMode == BlendModeEnum.Masked );
 
 						if( AdvancedBlending )
 						{
@@ -2502,7 +2544,8 @@ namespace NeoAxis
 
 		public override void NewObjectSetDefaultConfiguration( bool createdFromNewObjectWindow )
 		{
-			if( !createdFromNewObjectWindow )
+			//don't create another shader graph if already exists in a base type
+			if( !createdFromNewObjectWindow && GetComponent<Component_FlowGraph>( "Shader graph" ) == null )
 				NewObjectCreateShaderGraph();
 		}
 

@@ -599,6 +599,18 @@ namespace NeoAxis
 			result.Z = 1.0f - ( X * X + Y * Y ) * 2.0f;
 		}
 
+		public Vector3 GetLeft()
+		{
+			//!!!!slowly
+			return this * new Vector3F( 0, 1, 0 );
+		}
+
+		public Vector3 GetRight()
+		{
+			//!!!!slowly
+			return this * new Vector3F( 0, -1, 0 );
+		}
+
 		/// <summary>
 		/// Similar to Mat3F.LookAt( direction, Vec3F.ZAxis ) with fix for vertical direction.
 		/// </summary>

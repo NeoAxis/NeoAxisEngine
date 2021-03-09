@@ -63,7 +63,7 @@ namespace NeoAxis
 			{
 				Version v = Assembly.GetExecutingAssembly().GetName().Version;
 				var result = NameWithoutVersion + $" {v.Major}.{v.Minor}";
-				if( !SpecialAppMode )
+				if( OriginalName == "NeoAxis Engine" )//if( !SpecialAppMode )
 					result += $" ({WWW})";
 				return result;
 			}

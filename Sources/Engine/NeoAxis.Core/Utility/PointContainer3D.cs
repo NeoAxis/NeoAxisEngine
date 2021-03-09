@@ -5,9 +5,7 @@ using System.Text;
 
 namespace NeoAxis
 {
-	//!!!!
-
-	class PointContainer3D
+	public class PointContainer3D
 	{
 		Bounds bounds;
 		double sizeX;

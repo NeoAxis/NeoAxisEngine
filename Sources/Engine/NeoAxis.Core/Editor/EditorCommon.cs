@@ -17,15 +17,18 @@ namespace NeoAxis.Editor
 	{
 		Type documentClass;
 		string documentClassName;
+		bool onlyWhenRootComponent;
 
-		public EditorDocumentWindowAttribute( Type documentClass )
+		public EditorDocumentWindowAttribute( Type documentClass, bool onlyWhenRootComponent = false )
 		{
 			this.documentClass = documentClass;
+			this.onlyWhenRootComponent = onlyWhenRootComponent;
 		}
 
-		public EditorDocumentWindowAttribute( string documentClassName )
+		public EditorDocumentWindowAttribute( string documentClassName, bool onlyWhenRootComponent = false )
 		{
 			this.documentClassName = documentClassName;
+			this.onlyWhenRootComponent = onlyWhenRootComponent;
 		}
 
 		public Type DocumentClass
@@ -36,6 +39,11 @@ namespace NeoAxis.Editor
 		public string DocumentClassName
 		{
 			get { return documentClassName; }
+		}
+
+		public bool OnlyWhenRootComponent
+		{
+			get { return onlyWhenRootComponent; }
 		}
 	}
 
@@ -422,6 +430,15 @@ namespace NeoAxis.Editor
 	public class WhenCreatingShowWarningIfItAlreadyExistsAttribute : Attribute
 	{
 		public WhenCreatingShowWarningIfItAlreadyExistsAttribute()
+		{
+		}
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public class RestoreDockWindowAfterEditorReloadAttribute : Attribute
+	{
+		public RestoreDockWindowAfterEditorReloadAttribute()
 		{
 		}
 	}

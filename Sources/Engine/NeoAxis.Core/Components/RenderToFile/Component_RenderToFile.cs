@@ -4,23 +4,43 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using NeoAxis.Editor;
 
+
+//!!!!рендеринть в большую картинку, потом уменьшать
+
+//!!!!выставлять параметры в пайплайне. лучше качество
+
+//!!!!HDR. сохранять видимо в .hdr файл
+
+//!!!!выбирать из списка + ManualResolution? для видео полезно
+//!!!!default
+//[DefaultValue( "4096 3072" )]
+
 namespace NeoAxis
 {
 	/// <summary>
-	/// A tool for rendering a scene to a file.
+	/// A tool for rendering a scene to a file. It intended to create screenshots and to create materials.
 	/// </summary>
 	[EditorSettingsCell( typeof( Component_RenderToFile_SettingsCell ) )]
 	public class Component_RenderToFile : Component
 	{
-		//!!!!рендеринть в большую картинку, потом уменьшать
+		public enum ModeEnum
+		{
+			Screenshot,
+			Material,
+		}
 
-		//!!!!выставлять параметры в пайплайне. лучше качество
-
-		//!!!!HDR. сохранять видимо в .hdr файл
-
-		//!!!!выбирать из списка + ManualResolution? для видео полезно
-		//!!!!default
-		//[DefaultValue( "4096 3072" )]
+		/// <summary>
+		/// The type of generated data. Use MaterialTextures to generate materials with textures.
+		/// </summary>
+		[DefaultValue( ModeEnum.Screenshot )]
+		public Reference<ModeEnum> Mode
+		{
+			get { if( _mode.BeginGet() ) Mode = _mode.Get( this ); return _mode.value; }
+			set { if( _mode.BeginSet( ref value ) ) { try { ModeChanged?.Invoke( this ); } finally { _mode.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Mode"/> property value changes.</summary>
+		public event Action<Component_RenderToFile> ModeChanged;
+		ReferenceField<ModeEnum> _mode = ModeEnum.Screenshot;
 
 		/// <summary>
 		/// The size of the resulting image.
@@ -39,7 +59,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The file name to be output.
 		/// </summary>
-		[DefaultValue( "" )]//[DefaultValue( @"C:\_Test\Test.png" )]
+		[DefaultValue( "" )]
 		public Reference<string> OutputFileName
 		{
 			get { if( _outputFileName.BeginGet() ) OutputFileName = _outputFileName.Get( this ); return _outputFileName.value; }
@@ -47,7 +67,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="OutputFileName"/> property value changes.</summary>
 		public event Action<Component_RenderToFile> OutputFileNameChanged;
-		ReferenceField<string> _outputFileName = "";//@"C:\_Test\Test.png";
+		ReferenceField<string> _outputFileName = "";
 
 		/// <summary>
 		/// The camera for which the display is being performed. If no camera is specified, the editor's current camera is used.
@@ -75,7 +95,36 @@ namespace NeoAxis
 		public event Action<Component_RenderToFile> DisplayDevelopmentDataChanged;
 		ReferenceField<bool> _displayDevelopmentData = false;
 
+		/// <summary>
+		/// Whether to fill transparent pixels of generated textures by near pixels to make mipmapping work good.
+		/// </summary>
+		[DefaultValue( false )]
+		public Reference<bool> FillTransparentPixelsByNearPixels
+		{
+			get { if( _fillTransparentPixelsByNearPixels.BeginGet() ) FillTransparentPixelsByNearPixels = _fillTransparentPixelsByNearPixels.Get( this ); return _fillTransparentPixelsByNearPixels.value; }
+			set { if( _fillTransparentPixelsByNearPixels.BeginSet( ref value ) ) { try { FillTransparentPixelsByNearPixelsChanged?.Invoke( this ); } finally { _fillTransparentPixelsByNearPixels.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="FillTransparentPixelsByNearPixels"/> property value changes.</summary>
+		public event Action<Component_RenderToFile> FillTransparentPixelsByNearPixelsChanged;
+		ReferenceField<bool> _fillTransparentPixelsByNearPixels = false;
+
 		//
+
+		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
+		{
+			base.OnMetadataGetMembersFilter( context, member, ref skip );
+
+			if( member is Metadata.Property )
+			{
+				switch( member.Name )
+				{
+				case nameof( FillTransparentPixelsByNearPixels ):
+					if( Mode.Value != ModeEnum.Material )
+						skip = true;
+					break;
+				}
+			}
+		}
 
 		public override ScreenLabelInfo GetScreenLabelInfo()
 		{

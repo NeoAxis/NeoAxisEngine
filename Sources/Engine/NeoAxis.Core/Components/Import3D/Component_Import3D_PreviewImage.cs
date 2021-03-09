@@ -22,6 +22,14 @@ namespace NeoAxis.Editor
 			Scene.Enabled = true;
 
 			SetCameraByBounds( Scene.CalculateTotalBoundsOfObjectsInSpace(), 2.6 );// 1.7 );
+
+			var mesh = import.GetComponent( "Mesh" ) as Component_Mesh;
+			if( mesh != null && mesh.EditorCameraTransform != null )
+			{
+				var tr = mesh.EditorCameraTransform;
+				CameraDistance = ( tr.Position - CameraLookTo ).Length();
+				CameraDirection = SphericalDirection.FromVector( CameraLookTo - tr.Position );
+			}
 		}
 	}
 }

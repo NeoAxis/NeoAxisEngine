@@ -11,7 +11,7 @@ $input v_texCoord0
 
 uniform vec4/*vec3*/ multiplier;
 uniform mat3 rotation;
-uniform vec4/*float*/ flipCubemap;
+uniform vec4/*float*/ stretch;
 
 vec2 toRadialCoords(vec3 coords)
 {
@@ -25,16 +25,14 @@ vec2 toRadialCoords(vec3 coords)
 void main()
 {
 	vec3 color;
-	
+	vec3 texCoord = flipCubemapCoords2(mul(rotation, v_texCoord0));
 	#ifdef USE_2D
-		vec3 texCoord = flipCubemapCoords(mul(rotation, v_texCoord0));
-		vec2 texCoord2 = toRadialCoords(texCoord);
-		color = texture2DLod(s_skyboxTexture, texCoord2, 0).rgb;
+		vec2 r = toRadialCoords(texCoord);
+		r.y /= stretch.x;
+		color = texture2DLod(s_skyboxTexture, r, 0).rgb;
 	#else
-		vec3 texCoord = mul(rotation, v_texCoord0);
-		texCoord.y *= flipCubemap.x;
-		color = textureCubeLod(s_skyboxTexture, flipCubemapCoords(texCoord), 0).rgb;	
+		color = textureCubeLod(s_skyboxTexture, texCoord, 0).rgb;	
 	#endif
-
+	
 	gl_FragColor = vec4(color * multiplier.rgb, 1);
 }

@@ -60,7 +60,10 @@ namespace NeoAxis.Editor
 		{
 			var window = FindWindow<ResourcesWindow>();
 			if( window != null )//&& window.Visible )
+			{
 				window.ContentBrowser1?.NeedSelectFilesOrDirectories( realPaths, expandNodes );
+				SelectDockWindow( window );
+			}
 		}
 
 		//!!!!по сути не надо указывать documentWindow
@@ -808,15 +811,23 @@ namespace NeoAxis.Editor
 				{
 					var attrib = attribs[ 0 ];
 
+					Type type;
+
 					if( !string.IsNullOrEmpty( attrib.DocumentClassName ) )
 					{
-						var type = EditorUtility.GetTypeByName( attrib.DocumentClassName );
-						if( type == null )
+						var type2 = EditorUtility.GetTypeByName( attrib.DocumentClassName );
+						if( type2 == null )
 							Log.Warning( $"PreviewWindow: GetDocumentWindowClass: Class with name \"{attrib.DocumentClassName}\" is not found." );
-						return type;
+						type = type2;
 					}
 					else
-						return attrib.DocumentClass;
+						type = attrib.DocumentClass;
+
+					if( type != null && attrib.OnlyWhenRootComponent && obj is Component c && c.Parent != null )
+						type = null;
+
+					if( type != null )
+						return type;
 				}
 			}
 			return null;
@@ -849,13 +860,15 @@ namespace NeoAxis.Editor
 			return result;
 		}
 
-		public static DocumentInstance OpenStore()
+		public static DocumentInstance OpenStore( bool openBasicContent = false )
 		{
 			//select already opened
 			var w = FindWindow<StoreDocumentWindow>();
 			if( w != null )
 			{
 				SelectDockWindow( w );
+				if( openBasicContent )
+					w.LoadURL( StoreDocumentWindow.homeURLBasicContent );
 				return w.Document;
 			}
 
@@ -864,6 +877,8 @@ namespace NeoAxis.Editor
 
 			var window = new StoreDocumentWindow();
 			window.InitDocumentWindow( document, null, false, null );
+			if( openBasicContent )
+				window.StartURL = StoreDocumentWindow.homeURLBasicContent;
 
 			EditorForm.Instance.WorkspaceController.AddDockWindow( window, false, true );
 
@@ -909,7 +924,7 @@ namespace NeoAxis.Editor
 				OpenStartPage();
 		}
 
-		public static DocumentInstance OpenPackages( string selectPackage )
+		public static DocumentInstance OpenPackages( string selectPackage, bool downloadAndInstall )
 		{
 			//select already opened
 			var w = FindWindow<PackagesWindow>();
@@ -917,7 +932,7 @@ namespace NeoAxis.Editor
 			{
 				SelectDockWindow( w );
 				if( !string.IsNullOrEmpty( selectPackage ) )
-					w.NeedSelectPackage( selectPackage );
+					w.NeedSelectPackage( selectPackage, downloadAndInstall );
 				return w.Document;
 			}
 
@@ -930,7 +945,7 @@ namespace NeoAxis.Editor
 			EditorForm.Instance.WorkspaceController.AddDockWindow( window, false, true );
 
 			if( !string.IsNullOrEmpty( selectPackage ) )
-				window.NeedSelectPackage( selectPackage );
+				window.NeedSelectPackage( selectPackage, downloadAndInstall );
 
 			return document;
 		}
@@ -941,7 +956,7 @@ namespace NeoAxis.Editor
 			if( w != null )
 				w.Close();
 			else
-				OpenPackages( null );
+				OpenPackages( null, false );
 		}
 
 		public static Keys[] GetActionShortcuts( string name )

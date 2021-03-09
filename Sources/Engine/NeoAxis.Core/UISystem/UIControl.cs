@@ -383,7 +383,7 @@ namespace NeoAxis
 		//ReferenceField<Rect> _marginValue;
 
 		///// <summary>
-		///// Specifies the the ordering of overlapping controls.
+		///// Specifies the ordering of overlapping controls.
 		///// </summary>
 		//[DefaultValue( 0 )]
 		//[DisplayName( "Z Order" )]

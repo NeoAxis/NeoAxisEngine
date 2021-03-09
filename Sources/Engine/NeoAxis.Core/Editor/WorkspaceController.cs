@@ -17,7 +17,7 @@ using System.Xml;
 
 namespace NeoAxis.Editor
 {
-	abstract class WorkspaceController : IDisposable
+	public abstract class WorkspaceController : IDisposable
 	{
 		protected bool disposing;
 		protected Control ownerControl;

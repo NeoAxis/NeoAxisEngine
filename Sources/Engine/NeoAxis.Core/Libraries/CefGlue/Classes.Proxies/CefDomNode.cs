@@ -1,4 +1,4 @@
-namespace Xilium.CefGlue
+﻿namespace Xilium.CefGlue
 {
     using System;
     using System.Collections.Generic;
@@ -202,26 +202,6 @@ namespace Xilium.CefGlue
                 return CefDomNode.FromNativeOrNull(
                     cef_domnode_t.get_last_child(_self)
                     );
-            }
-        }
-
-        /// <summary>
-        /// Add an event listener to this node for the specified event type. If
-        /// |useCapture| is true then this listener will be considered a capturing
-        /// listener. Capturing listeners will recieve all events of the specified
-        /// type before the events are dispatched to any other event targets beneath
-        /// the current node in the tree. Events which are bubbling upwards through
-        /// the tree will not trigger a capturing listener. Separate calls to this
-        /// method can be used to register the same listener with and without capture.
-        /// See WebCore/dom/EventNames.h for the list of supported event types.
-        /// </summary>
-        public void AddEventListener(string eventType, CefDomEventListener listener, bool useCapture)
-        {
-            fixed (char* eventType_str = eventType)
-            {
-                var n_eventType = new cef_string_t(eventType_str, eventType.Length);
-
-                cef_domnode_t.add_event_listener(_self, &n_eventType, listener.ToNative(), useCapture ? 1 : 0);
             }
         }
 

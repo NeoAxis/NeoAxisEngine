@@ -1812,19 +1812,6 @@ namespace NeoAxis.Import
 			return new Color4D( value.X, value.Y, value.Z, value.W );
 		}
 
-		//public static Matrix4x4 ToMatrix4x4( Matrix4F m ) // TEST
-		//{
-		//	var ret = Matrix4x4.Identity;
-		//	for( int i = 0; i < 4; i++ )
-		//	{
-		//		for( int j = 0; j < 4; j++ )
-		//		{
-		//			ret[ i, j ] = m[ i + 1, j + 1 ];
-		//		}
-		//	}
-		//	return ret;
-		//}
-
 		public static Assimp.Quaternion ToQuaternion( QuaternionF value )
 		{
 			return new Assimp.Quaternion( value.X, value.Y, value.Z, value.W );
@@ -1890,162 +1877,90 @@ namespace NeoAxis.Import
 							data.BaseColor = new ColorValue( scale.X, scale.Y, scale.Z );
 						}
 
-						//BaseColorTexture
-						for( int nTexCoord = 0; nTexCoord < 4; nTexCoord++ )
+
+						//!!!!support texture coord channels. right now support only channel 0
+
+
+						var textureTypes = new List<TextureType>();
+						textureTypes.Add( TextureType.Diffuse );
+						textureTypes.Add( TextureType.Normals );
+						textureTypes.Add( TextureType.Emissive );
+						textureTypes.Add( TextureType.Lightmap );
+						textureTypes.Add( TextureType.AmbientOcclusion );
+						textureTypes.Add( TextureType.Metalness );
+						textureTypes.Add( TextureType.Roughness );
+						textureTypes.Add( TextureType.Displacement );
+						textureTypes.Add( TextureType.Height );
+						textureTypes.Add( TextureType.Opacity );
+
+
+						foreach( var textureType in textureTypes )
 						{
-							aiMaterial.GetMaterialTexture( TextureType.Diffuse, nTexCoord, out var slot );
-
-							if( !string.IsNullOrEmpty( slot.FilePath ) && nTexCoord == 0 )
+							for( int nTexCoord = 0; nTexCoord < 4; nTexCoord++ )
 							{
-								var filePath = slot.FilePath;
-								if( filePath.Length > 2 && filePath.Substring( 0, 2 ) == "./" )
-									filePath = filePath.Substring( 2 );
+								aiMaterial.GetMaterialTexture( textureType, nTexCoord, out var slot );
 
-								var fullPath = Path.Combine( importContext.directoryName, filePath );
-								if( VirtualFile.Exists( fullPath ) )
+								if( !string.IsNullOrEmpty( slot.FilePath ) && nTexCoord == 0 )
 								{
-									data.BaseColorTexture = fullPath;
-									//data.BaseColorTexture = "relative:" + filePath;
+									var filePath = slot.FilePath;
+									if( filePath.Length > 2 && filePath.Substring( 0, 2 ) == "./" )
+										filePath = filePath.Substring( 2 );
+
+									var fullPath = Path.Combine( importContext.directoryName, filePath );
+									if( VirtualFile.Exists( fullPath ) )
+									{
+
+										switch( textureType )
+										{
+										case TextureType.Diffuse:
+											data.BaseColorTexture = fullPath;
+											break;
+
+										case TextureType.Normals:
+											data.NormalTexture = fullPath;
+											break;
+
+										case TextureType.Emissive:
+											data.EmissiveTexture = fullPath;
+											break;
+
+										case TextureType.Metalness:
+											data.MetallicTexture = fullPath;
+											break;
+
+										case TextureType.Roughness:
+											data.RoughnessTexture = fullPath;
+											break;
+
+										case TextureType.Displacement:
+										case TextureType.Height:
+											data.DisplacementTexture = fullPath;
+											break;
+
+										case TextureType.Opacity:
+											data.OpacityTexture = fullPath;
+											break;
+
+										case TextureType.Lightmap:
+										case TextureType.AmbientOcclusion:
+											data.AmbientOcclusionTexture = fullPath;
+
+											//Apps specific (Sketchfab)
+											if( filePath.ToLower().Contains( "_metallicroughness." ) )
+											{
+												data.RoughnessTexture = fullPath;
+												data.RoughnessTextureChannel = "G";
+												data.MetallicTexture = fullPath;
+												data.MetallicTextureChannel = "B";
+											}
+
+											break;
+										}
+
+									}
 								}
 							}
 						}
-
-
-						//NormalTexture
-						for( int nTexCoord = 0; nTexCoord < 4; nTexCoord++ )
-						{
-							aiMaterial.GetMaterialTexture( TextureType.Normals, nTexCoord, out var slot );
-
-							if( !string.IsNullOrEmpty( slot.FilePath ) && nTexCoord == 0 )
-							{
-								var filePath = slot.FilePath;
-								if( filePath.Length > 2 && filePath.Substring( 0, 2 ) == "./" )
-									filePath = filePath.Substring( 2 );
-
-								var fullPath = Path.Combine( importContext.directoryName, filePath );
-								if( VirtualFile.Exists( fullPath ) )
-								{
-									data.NormalTexture = fullPath;
-									//data.NormalTexture = "relative:" + filePath;
-								}
-							}
-						}
-
-						//EmissiveTexture
-						for( int nTexCoord = 0; nTexCoord < 4; nTexCoord++ )
-						{
-							aiMaterial.GetMaterialTexture( TextureType.Emissive, nTexCoord, out var slot );
-
-							if( !string.IsNullOrEmpty( slot.FilePath ) && nTexCoord == 0 )
-							{
-								var filePath = slot.FilePath;
-								if( filePath.Length > 2 && filePath.Substring( 0, 2 ) == "./" )
-									filePath = filePath.Substring( 2 );
-
-								var fullPath = Path.Combine( importContext.directoryName, filePath );
-								if( VirtualFile.Exists( fullPath ) )
-								{
-									data.EmissiveTexture = fullPath;
-									//data.EmissiveTexture = "relative:" + filePath;
-								}
-							}
-						}
-
-
-
-						//data.Opacity = aiMaterial.Opacity;
-
-						////specular color
-						//if( aiMaterial.HasColorSpecular )
-						//{
-						//	ColorValue scale = aiMaterial.ColorSpecular.ToColorValue();
-						//	if( scale != new ColorValue( 0, 0, 0 ) )
-						//	{
-						//		float power = Math.Max( Math.Max( scale.Red, scale.Green ), scale.Blue );
-						//		if( power > 1 )
-						//		{
-						//			scale.Red /= power;
-						//			scale.Green /= power;
-						//			scale.Blue /= power;
-						//			block.SetAttribute( "specularPower", power.ToString() );
-						//		}
-						//		block.SetAttribute( "specularColor", scale.ToString() );
-
-						//		//specular shininess
-						//		float shininess = aiMaterial.ShininessStrength * 20;
-						//		block.SetAttribute( "specularShininess", shininess.ToString() );
-						//	}
-						//}
-
-						////emission color
-						//if( aiMaterial.HasColorEmissive )
-						//{
-						//	ColorValue scale = aiMaterial.ColorEmissive.ToColorValue();
-						//	if( scale != new ColorValue( 0, 0, 0 ) )
-						//	{
-						//		float power = Math.Max( Math.Max( scale.Red, scale.Green ), scale.Blue );
-						//		if( power > 1 )
-						//		{
-						//			scale.Red /= power;
-						//			scale.Green /= power;
-						//			scale.Blue /= power;
-						//			block.SetAttribute( "emissionPower", power.ToString() );
-						//		}
-						//		block.SetAttribute( "emissionColor", scale.ToString() );
-						//	}
-						//}
-
-						////specular map
-						//{
-						//	TextureSlot slot;
-						//	aiMaterial.GetMaterialTexture( TextureType.Specular, 0, out slot );
-
-						//	if( slot.FilePath != null )
-						//	{
-						//		string map = slot.FilePath;
-						//		TextBlock mapBlock = block.AddChild( "specularMap" );
-						//		mapBlock.SetAttribute( "texture", "<BASE_MAP>" + map );
-						//	}
-						//}
-
-						////emission map
-						//{
-						//	TextureSlot slot;
-						//	aiMaterial.GetMaterialTexture( TextureType.Emissive, 0, out slot );
-
-						//	if( slot.FilePath != null )
-						//	{
-						//		string map = slot.FilePath;
-						//		TextBlock mapBlock = block.AddChild( "emissionMap" );
-						//		mapBlock.SetAttribute( "texture", "<BASE_MAP>" + map );
-						//	}
-						//}
-
-						////normal map
-						//{
-						//	TextureSlot slot;
-						//	aiMaterial.GetMaterialTexture( TextureType.Normals, 0, out slot );
-
-						//	if( slot.FilePath != null )
-						//	{
-						//		string map = slot.FilePath;
-						//		TextBlock mapBlock = block.AddChild( "normalMap" );
-						//		mapBlock.SetAttribute( "texture", "<NORMAL_MAP>" + map );
-						//	}
-						//}
-
-						////height map
-						//{
-						//	TextureSlot slot;
-						//	aiMaterial.GetMaterialTexture( TextureType.Height, 0, out slot );
-
-						//	if( slot.FilePath != null )
-						//	{
-						//		string map = slot.FilePath;
-						//		TextBlock mapBlock = block.AddChild( "heightMap" );
-						//		mapBlock.SetAttribute( "texture", "<BASE_MAP>" + map );
-						//	}
-						//}
 
 					}
 					catch( Exception e )

@@ -69,6 +69,20 @@ namespace NeoAxis
 		public event Action<Component_Scene> BackgroundColorChanged;
 		ReferenceField<ColorValue> _backgroundColor = new ColorValue( 0.9, 0.9, 0.9 );
 
+		/// <summary>
+		/// Whether to affect the background color to ambient lighting.
+		/// </summary>
+		[DefaultValue( 1.0 )]
+		[Range( 0, 1 )]
+		public Reference<double> BackgroundColorAffectLighting
+		{
+			get { if( _backgroundColorAffectLighting.BeginGet() ) BackgroundColorAffectLighting = _backgroundColorAffectLighting.Get( this ); return _backgroundColorAffectLighting.value; }
+			set { if( _backgroundColorAffectLighting.BeginSet( ref value ) ) { try { BackgroundColorAffectLightingChanged?.Invoke( this ); } finally { _backgroundColorAffectLighting.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="BackgroundColorAffectLighting"/> property value changes.</summary>
+		public event Action<Component_Scene> BackgroundColorAffectLightingChanged;
+		ReferenceField<double> _backgroundColorAffectLighting = 1.0;
+
 		[Browsable( false )]
 		public ColorValue? BackgroundColorEnvironmentOverride { get; set; }
 
@@ -184,7 +198,7 @@ namespace NeoAxis
 
 		//!!!!default
 		/// <summary>
-		/// The number of simulation substeps performed by the physics system per one update.
+		/// The number of simulation sub-steps performed by the physics system per one update.
 		/// </summary>
 		[DefaultValue( 2 )]
 		[Serialize]
@@ -818,7 +832,7 @@ namespace NeoAxis
 		//DisplaySceneOctree
 		ReferenceField<bool> _displaySceneOctree;
 		/// <summary>
-		/// Whether to display scene octree.
+		/// Whether to display the scene octree.
 		/// </summary>
 		[Serialize]
 		[DefaultValue( false )]

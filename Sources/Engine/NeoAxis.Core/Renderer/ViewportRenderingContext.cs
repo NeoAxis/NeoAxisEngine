@@ -54,6 +54,8 @@ namespace NeoAxis
 		//custom cached data
 		public Dictionary<string, object> anyData = new Dictionary<string, object>();
 
+		public Component_RenderingPipeline.RenderSceneData.CutVolumeItem[] currentCutVolumes;
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		public enum DynamicTextureType
@@ -324,7 +326,6 @@ namespace NeoAxis
 			int numMips;
 			if( mipmaps )
 			{
-				int max = size.MaxComponent();
 				float kInvLogNat2 = 1.4426950408889634073599246810019f;
 				numMips = 1 + (int)( Math.Log( size.MaxComponent() ) * kInvLogNat2 );
 			}
@@ -773,10 +774,7 @@ namespace NeoAxis
 			renderer.PopBlendingType();
 			renderer.PopShader();
 
-			//!!!!!!так?
-			double time = Owner.LastUpdateTime;
-			//!!!!можно ли чистить? или позже надо?
-			renderer._ViewportRendering_RenderToCurrentViewport( this, true, time );
+			renderer._ViewportRendering_RenderToCurrentViewport( this, true, Owner.LastUpdateTime );
 		}
 
 		public void RenderTrianglesToCurrentViewport( CanvasRenderer.ShaderItem shader, IList<CanvasRenderer.TriangleVertex> vertices, CanvasRenderer.BlendingType blending = CanvasRenderer.BlendingType.Opaque )
@@ -790,10 +788,7 @@ namespace NeoAxis
 			renderer.PopBlendingType();
 			renderer.PopShader();
 
-			//!!!!!!так?
-			double time = Owner.LastUpdateTime;
-			//!!!!можно ли чистить? или позже надо?
-			renderer._ViewportRendering_RenderToCurrentViewport( this, true, time );
+			renderer._ViewportRendering_RenderToCurrentViewport( this, true, Owner.LastUpdateTime );
 		}
 
 		public void SetVertexBuffer( int stream, GpuVertexBuffer buffer, int startVertex = 0, int count = -1 )
@@ -1218,10 +1213,12 @@ namespace NeoAxis
 
 			pass.RenderingProcess_SetRenderState( renderOperation, occlusionQuery == null );
 
+			var discardFlags = /*DiscardFlags.Bindings | */DiscardFlags.IndexBuffer | DiscardFlags.InstanceData | DiscardFlags.State | DiscardFlags.Transform | DiscardFlags.VertexStreams;
+
 			if( occlusionQuery != null )
-				Bgfx.Submit( CurrentViewNumber, pass.LinkedProgram.RealObject, occlusionQuery.Value, 0, DiscardFlags.All );
+				Bgfx.Submit( CurrentViewNumber, pass.LinkedProgram.RealObject, occlusionQuery.Value, 0, discardFlags );// DiscardFlags.All );
 			else
-				Bgfx.Submit( CurrentViewNumber, pass.LinkedProgram.RealObject, 0, DiscardFlags.All );
+				Bgfx.Submit( CurrentViewNumber, pass.LinkedProgram.RealObject, 0, discardFlags );// DiscardFlags.All );
 
 			//Bgfx.Submit( CurrentViewNumber, pass.LinkedProgram.RealObject, preserveState: true );
 
@@ -1250,6 +1247,13 @@ namespace NeoAxis
 			if( owner.AttachedScene != null )
 				return owner.AttachedScene.BackgroundColor;
 			return owner.BackgroundColorDefault;
+		}
+
+		public float GetBackgroundColorAffectLighting()
+		{
+			if( owner.AttachedScene != null )
+				return (float)owner.AttachedScene.BackgroundColorAffectLighting.Value;
+			return 0;
 		}
 
 		public bool DynamicTexturesAreExists()

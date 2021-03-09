@@ -93,6 +93,35 @@ namespace NeoAxis
 		public event Action<Component_ReflectionProbe> CubemapChanged;
 		ReferenceField<Component_Image> _cubemap = new Reference<Component_Image>( null, @"Base\Environments\Forest.image" );
 
+		/// <summary>
+		/// The horizontal rotation of the cubemap.
+		/// </summary>
+		[DefaultValue( 0.0 )]
+		[Range( 0, 360 )]
+		public Reference<Degree> Rotation
+		{
+			get { if( _rotation.BeginGet() ) Rotation = _rotation.Get( this ); return _rotation.value; }
+			set { if( _rotation.BeginSet( ref value ) ) { try { RotationChanged?.Invoke( this ); } finally { _rotation.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Rotation"/> property value changes.</summary>
+		public event Action<Component_ReflectionProbe> RotationChanged;
+		ReferenceField<Degree> _rotation;
+
+		/// <summary>
+		/// A cubemap color multiplier.
+		/// </summary>
+		[DefaultValue( "1 1 1" )]
+		[ApplicableRangeColorValuePower( 0, 4 )]
+		[ColorValueNoAlpha]
+		public Reference<ColorValuePowered> Multiplier
+		{
+			get { if( _multiplier.BeginGet() ) Multiplier = _multiplier.Get( this ); return _multiplier.value; }
+			set { if( _multiplier.BeginSet( ref value ) ) { try { MultiplierChanged?.Invoke( this ); } finally { _multiplier.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Multiplier"/> property value changes.</summary>
+		public event Action<Component_ReflectionProbe> MultiplierChanged;
+		ReferenceField<ColorValuePowered> _multiplier = new ColorValuePowered( 1, 1, 1 );
+
 		///// <summary>
 		///// The cubemap texture of irradiance data used by the probe.
 		///// </summary>
@@ -232,6 +261,20 @@ namespace NeoAxis
 		public event Action<Component_ReflectionProbe> FarClipPlaneChanged;
 		ReferenceField<double> _farClipPlane = 100;
 
+		/// <summary>
+		/// Whether to render sky of the scene.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Capture" )]
+		public Reference<bool> RenderSky
+		{
+			get { if( _renderSky.BeginGet() ) RenderSky = _renderSky.Get( this ); return _renderSky.value; }
+			set { if( _renderSky.BeginSet( ref value ) ) { try { RenderSkyChanged?.Invoke( this ); } finally { _renderSky.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="RenderSky"/> property value changes.</summary>
+		public event Action<Component_ReflectionProbe> RenderSkyChanged;
+		ReferenceField<bool> _renderSky = true;
+
 		//!!!!
 		//capture settings:
 		//Resolution - в анрыле это общая настройка двига. можно по ссылке указать
@@ -260,6 +303,7 @@ namespace NeoAxis
 				//case nameof( Realtime ):
 				case nameof( NearClipPlane ):
 				case nameof( FarClipPlane ):
+				case nameof( RenderSky ):
 					if( Mode.Value != ModeEnum.Capture )
 						skip = true;
 					break;
@@ -347,7 +391,12 @@ namespace NeoAxis
 			UpdateProcessedCubemaps();
 		}
 
-		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
+		public void GetRotationMatrix( out Matrix3F result )
+		{
+			Matrix3.FromRotateByZ( Rotation.Value.InRadians() ).ToMatrix3F( out result );
+		}
+
+		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
 			if( mode == GetRenderSceneDataMode.InsideFrustum )
 			{
@@ -370,6 +419,9 @@ namespace NeoAxis
 						item.CubemapEnvironment = Cubemap;
 
 					item.CubemapIrradiance = processedIrradianceCubemap;
+
+					GetRotationMatrix( out item.Rotation );
+					item.Multiplier = Multiplier.Value.ToVector3F();
 
 					//item.CubemapEnvironment = Cubemap;
 					//item.CubemapIrradiance = CubemapIrradiance;
@@ -635,7 +687,12 @@ namespace NeoAxis
 
 					//!!!!renderingPipelineOverride
 
-					var cameraSettings = new Viewport.CameraSettingsClass( viewport, 1, 90, NearClipPlane.Value, FarClipPlane.Value, position, dir, up, ProjectionType.Perspective, 1, 1, 1 );
+					var scene = ParentScene;
+					var cameraEditor = scene.Mode.Value == Component_Scene.ModeEnum._2D ? scene.CameraEditor2D.Value : scene.CameraEditor.Value;
+					if( cameraEditor == null )
+						cameraEditor = new Component_Camera();
+
+					var cameraSettings = new Viewport.CameraSettingsClass( viewport, 1, 90, NearClipPlane.Value, FarClipPlane.Value, position, dir, up, ProjectionType.Perspective, 1, cameraEditor.Exposure, cameraEditor.EmissiveFactor, renderSky: RenderSky );
 
 					viewport.Update( true, cameraSettings );
 
@@ -714,6 +771,16 @@ namespace NeoAxis
 
 				if( !ImageUtility.Save( destRealFileName, image2D.Data, image2D.Size, 1, image2D.Format, 1, 0, out var error ) )
 					throw new Exception( error );
+
+				//delete Gen files
+				var names = new string[] { "_Gen.info", "_GenEnv.dds", "_GenIrr.dds" };
+				foreach( var name in names )
+				{
+					var fileName2 = VirtualPathUtility.GetRealPathByVirtual( destRealFileName + name );
+					if( File.Exists( fileName2 ) )
+						File.Delete( fileName2 );
+				}
+
 			}
 			catch( Exception e )
 			{

@@ -1,4 +1,4 @@
-namespace Xilium.CefGlue
+﻿namespace Xilium.CefGlue
 {
     using System;
     using System.Collections.Generic;
@@ -17,6 +17,22 @@ namespace Xilium.CefGlue
         public void Cancel()
         {
             cef_download_item_callback_t.cancel(_self);
+        }
+
+        /// <summary>
+        /// Call to pause the download.
+        /// </summary>
+        public void Pause()
+        {
+            cef_download_item_callback_t.pause(_self);
+        }
+
+        /// <summary>
+        /// Call to resume the download.
+        /// </summary>
+        public void Resume()
+        {
+            cef_download_item_callback_t.resume(_self);
         }
     }
 }

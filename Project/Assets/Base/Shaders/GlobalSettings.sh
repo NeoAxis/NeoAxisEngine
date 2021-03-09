@@ -8,13 +8,17 @@
 #endif
 
 #ifdef GLSL
-	#define DISPLACEMENT_STEPS 16
+	#define DISPLACEMENT_MAX_STEPS 16
 #else
-	#define DISPLACEMENT_STEPS 32
+	#define DISPLACEMENT_MAX_STEPS 32
 #endif
 
 #ifdef HLSL
 	#define GLOBAL_CUT_VOLUME_SUPPORT 1
 	//also need change 'GLOBAL_CUT_VOLUME_MAX_COUNT' in SetCutVolumeSettingsUniforms method of Pipeline_Basic_Render.cs.
 	#define GLOBAL_CUT_VOLUME_MAX_COUNT 10
+#endif
+
+#ifdef HLSL
+	#define GLOBAL_REMOVE_TEXTURE_TILING 1
 #endif

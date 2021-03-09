@@ -253,8 +253,6 @@ namespace NeoAxis
 			//add to result
 			if( vertexStructureV != null && vertexStructureV.Length != 0 && verticesV != null && verticesV.Length != 0 && ( indicesV == null || indicesV.Length != 0 ) )
 			{
-				//!!!!еще чтобы был с позициями?
-
 				vertexStructureV.GetInfo( out var vertexSize, out var holes );
 				//if( !holes )
 				{
@@ -263,32 +261,7 @@ namespace NeoAxis
 					var op = new Component_RenderingPipeline.RenderSceneData.MeshDataRenderOperation( this );
 
 					op.VertexStructure = vertexStructureV;
-
 					op.VertexStructureContainsColor = op.VertexStructure.Any( e => e.Semantic == VertexElementSemantic.Color0 );
-					////disable if all data equal zero. it is means no data.
-					//if( op.VertexStructureContainsColor )
-					//{
-					//	if( vertexStructureV.GetElementBySemantic( VertexElementSemantic.Color0, out var element ) )
-					//	{
-					//		var size = element.GetSizeInBytes();
-					//		int vertexOffset = element.Offset;
-					//		for( int nVertex = 0; nVertex < vertexCount; nVertex++ )
-					//		{
-					//			for( int n = 0; n < size; n++ )
-					//			{
-					//				if( verticesV[ vertexOffset + n ] != 0 )
-					//				{
-					//					//found non zero
-					//					goto exit;
-					//				}
-					//			}
-					//			vertexOffset += vertexSize;
-					//		}
-					//		op.VertexStructureContainsColor = false;
-					//		exit:;
-					//	}
-					//}
-
 					op.UnwrappedUV = unwrappedUVV;
 
 					var vertexDeclaration = op.VertexStructure.CreateVertexDeclaration( 0 );
@@ -311,40 +284,57 @@ namespace NeoAxis
 					//!!!!может мержить когда несколько. индексы MeshGeometry в RawVertices
 					if( compiledData.MeshData.Structure == null )
 						compiledData.MeshData.Structure = structure;
+				}
+				//else
+				//{
+				//	//!!!!!error
+				//}
+			}
+		}
 
-					//var op = new Component_Mesh.CompiledData.RenderOperation();
-					//op.creator = this;
+		internal void CompileDataOfThisObject( out Component_RenderingPipeline.RenderSceneData.MeshDataRenderOperation operation )
+		{
+			operation = null;
 
-					//op.vertexStructure = vertexStructureV;
-					//List<GpuVertexBuffer> l = new List<GpuVertexBuffer>();
+			VertexElement[] vertexStructureV = VertexStructure;
+			UnwrappedUVEnum unwrappedUVV = UnwrappedUV;
+			byte[] verticesV = Vertices;
+			int[] indicesV = Indices;
+			Component_Material materialV = Material;
+			Component_Mesh.StructureClass structure = null;
 
-					////!!!!make copy of arrays?
+			OnGetDataOfThisObject( ref vertexStructureV, ref verticesV, ref indicesV, ref materialV, ref structure );
+			GetDataOfThisObjectEvent?.Invoke( this, ref vertexStructureV, ref verticesV, ref indicesV, ref materialV, ref structure );
 
-					//var vertexDeclaration = op.vertexStructure.CreateVertexDeclaration( 0 );
+			//add to result
+			if( vertexStructureV != null && vertexStructureV.Length != 0 && verticesV != null && verticesV.Length != 0 && ( indicesV == null || indicesV.Length != 0 ) )
+			{
+				vertexStructureV.GetInfo( out var vertexSize, out var holes );
+				//if( !holes )
+				{
+					int vertexCount = verticesV.Length / vertexSize;
 
-					//l.Add( GpuBufferManager.CreateVertexBuffer( verticesV, vertexDeclaration, false ) );
-					//op.vertexBuffers = l;
-					//op.vertexStartOffset = 0;
-					//op.vertexCount = vertexCount;
+					var op = new Component_RenderingPipeline.RenderSceneData.MeshDataRenderOperation( this );
+					op.VertexStructure = vertexStructureV;
+					op.VertexStructureContainsColor = op.VertexStructure.Any( e => e.Semantic == VertexElementSemantic.Color0 );
+					op.UnwrappedUV = unwrappedUVV;
 
-					//if( indicesV != null )
-					//{
-					//	op.indexBuffer = GpuBufferManager.CreateIndexBuffer( indicesV, false );
-					//	op.indexStartOffset = 0;
-					//	op.indexCount = indicesV.Length;
-					//}
+					var vertexDeclaration = op.VertexStructure.CreateVertexDeclaration( 0 );
+					op.VertexBuffers = new GpuVertexBuffer[] { GpuBufferManager.CreateVertexBuffer( verticesV, vertexDeclaration ) };
+					op.VertexStartOffset = 0;
+					op.VertexCount = vertexCount;
 
-					////!!!!так?
-					//op.material = materialV;
+					if( indicesV != null )
+					{
+						op.IndexBuffer = GpuBufferManager.CreateIndexBuffer( indicesV );
+						op.IndexStartOffset = 0;
+						op.IndexCount = indicesV.Length;
+					}
 
-					//var item = new Component_Mesh.CompiledData.RenderOperationItem();
-					//item.operation = op;
-					////!!!!
-					////item.transform = TransformOfData;//TransformRelativeToParent;
-					//compiledData.RenderOperations.Add( item );
+					//!!!!так?
+					op.Material = materialV;
 
-					////op.transform = Transform;
-					////compiledData.RenderOperations.Add( op );
+					operation = op;
 				}
 				//else
 				//{
@@ -458,7 +448,7 @@ namespace NeoAxis
 			byte[] destArray = new byte[ vertices.Length * vertexSize ];
 			unsafe
 			{
-				fixed ( byte* pDestArray = destArray )
+				fixed( byte* pDestArray = destArray )
 				{
 					byte* destVertex = pDestArray;
 
@@ -555,7 +545,7 @@ namespace NeoAxis
 							if( VertexElement.GetSizeInBytes( element.Type ) == sizeof( T ) )
 							{
 								T[] result = new T[ vertexCount ];
-								fixed ( byte* pVertices = vertices )
+								fixed( byte* pVertices = vertices )
 								{
 									byte* src = pVertices + element.Offset;
 									for( int n = 0; n < vertexCount; n++ )
@@ -588,7 +578,7 @@ namespace NeoAxis
 					{
 						if( VertexElement.GetSizeInBytes( element.Type ) == sizeof( T ) )
 						{
-							fixed ( byte* pVertices = writeToVertices )
+							fixed( byte* pVertices = writeToVertices )
 							{
 								byte* src = pVertices + element.Offset;
 								for( int n = 0; n < vertexCount; n++ )

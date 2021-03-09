@@ -1,7 +1,7 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 
 //!!!! later maybe split to vertex, fragment
-uniform vec4 u_viewportOwnerSettings[3];
+uniform vec4 u_viewportOwnerSettings[4];
 #define u_viewportOwnerCameraPosition u_viewportOwnerSettings[0].xyz
 #define u_viewportOwnerNearClipDistance u_viewportOwnerSettings[0].w
 #define u_viewportOwnerFarClipDistance u_viewportOwnerSettings[1].x
@@ -11,6 +11,9 @@ uniform vec4 u_viewportOwnerSettings[3];
 //#define u_cameraEv100 u_viewportOwnerSettings[1].w
 #define u_viewportOwnerShadowFarDistance u_viewportOwnerSettings[2].xyz
 #define u_cameraExposure u_viewportOwnerSettings[2].w
+#define u_displacementScale u_viewportOwnerSettings[3].x
+#define u_displacementMaxSteps int(u_viewportOwnerSettings[3].y)
+#define u_removeTextureTiling u_viewportOwnerSettings[3].z
 
 uniform vec4 u_viewportSettings[1];
 #define u_viewportSize u_viewportSettings[0].xy

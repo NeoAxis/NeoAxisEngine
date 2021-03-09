@@ -33,6 +33,19 @@ namespace NeoAxis
 		public event Action<Component_ShaderTextureSample> TextureChanged;
 		ReferenceField<Component_Image> _texture;
 
+		/// <summary>
+		/// Whether to use a special technique to remove texture tiling.
+		/// </summary>
+		[DefaultValue( false )]
+		[FlowGraphBrowsable( false )]
+		public Reference<bool> RemoveTiling
+		{
+			get { if( _removeTiling.BeginGet() ) RemoveTiling = _removeTiling.Get( this ); return _removeTiling.value; }
+			set { if( _removeTiling.BeginSet( ref value ) ) { try { RemoveTilingChanged?.Invoke( this ); } finally { _removeTiling.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="RemoveTiling"/> property value changes.</summary>
+		public event Action<Component_ShaderTextureSample> RemoveTilingChanged;
+		ReferenceField<bool> _removeTiling = false;
 
 
 		//!!!!sampler state

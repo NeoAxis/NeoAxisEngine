@@ -62,7 +62,13 @@ namespace NeoAxis
 			{
 				var bounds = Bounds.Cleared;
 				foreach( var vertex in vertices )
+				{
+					//!!!!new
+					if( float.IsNaN( vertex.X ) || float.IsNaN( vertex.Y ) || float.IsNaN( vertex.Z ) )
+						continue;
+
 					bounds.Add( vertex );
+				}
 
 				var initSettings = new OctreeContainer.InitSettings();
 				initSettings.InitialOctreeBounds = bounds;
@@ -75,6 +81,14 @@ namespace NeoAxis
 					var vertex0 = vertices[ indices[ nTriangle * 3 + 0 ] ];
 					var vertex1 = vertices[ indices[ nTriangle * 3 + 1 ] ];
 					var vertex2 = vertices[ indices[ nTriangle * 3 + 2 ] ];
+
+					//!!!!new
+					if( float.IsNaN( vertex0.X ) || float.IsNaN( vertex0.Y ) || float.IsNaN( vertex0.Z ) )
+						continue;
+					if( float.IsNaN( vertex1.X ) || float.IsNaN( vertex1.Y ) || float.IsNaN( vertex1.Z ) )
+						continue;
+					if( float.IsNaN( vertex2.X ) || float.IsNaN( vertex2.Y ) || float.IsNaN( vertex2.Z ) )
+						continue;
 
 					var triangleBounds = new Bounds( vertex0 );
 					triangleBounds.Add( vertex1 );

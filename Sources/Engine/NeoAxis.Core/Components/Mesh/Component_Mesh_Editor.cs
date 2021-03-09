@@ -71,6 +71,9 @@ namespace NeoAxis.Editor
 				Viewport.CameraSettings = new Viewport.CameraSettingsClass( Viewport, Scene.CameraEditor );
 			}
 
+			if( Scene.CameraEditor.Value != null )
+				Mesh.EditorCameraTransform = Scene.CameraEditor.Value.Transform;
+
 			firstCameraUpdate = false;
 		}
 
@@ -105,8 +108,13 @@ namespace NeoAxis.Editor
 			camera.NearClipPlane = Math.Max( distance / 10000, 0.01 );//.1;
 			camera.FarClipPlane = Math.Max( 1000, distance * 2 );
 
-			camera.Transform = new Transform( from, Quaternion.LookAt( ( to - from ).GetNormalize(), Vector3.ZAxis ) );
+			if( Mesh.EditorCameraTransform != null )
+				camera.Transform = Mesh.EditorCameraTransform;
+			else
+				camera.Transform = new Transform( from, Quaternion.LookAt( ( to - from ).GetNormalize(), Vector3.ZAxis ) );
+
 			camera.FixedUp = Vector3.ZAxis;
+
 		}
 
 		T[] ExtractChannel<T>( byte[] vertices, int vertexSize, int vertexCount, int startOffsetInBytes ) where T : unmanaged
@@ -561,8 +569,8 @@ namespace NeoAxis.Editor
 				if( data != null )
 				{
 					lines.Add( Translate( "Level of detail" ) + ": " + GetSelectedLODIndex().ToString() );
-					lines.Add( Translate( "Vertices" ) + ": " + data.ExtractedVerticesPositions.Length.ToString() );
 					lines.Add( Translate( "Triangles" ) + ": " + ( data.ExtractedIndices.Length / 3 ).ToString() );
+					lines.Add( Translate( "Vertices" ) + ": " + data.ExtractedVerticesPositions.Length.ToString() );
 					lines.Add( Translate( "Render operations" ) + ": " + data.MeshData.RenderOperations.Count.ToString() );
 					lines.Add( Translate( "Bounding box size" ) + ": " + data.SpaceBounds.BoundingBox.Value.GetSize().ToString( 3 ) );
 					lines.Add( Translate( "Bounding sphere radius" ) + ": " + data.SpaceBounds.BoundingSphere.Value.Radius.ToString( "N3" ) );

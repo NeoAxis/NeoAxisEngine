@@ -10,8 +10,8 @@ namespace NeoAxis
 	/// Sprite in the scene.
 	/// </summary>
 	[ResourceFileExtension( "sprite" )]
-	[EditorDocumentWindow( typeof( Component_Sprite_DocumentWindow ) )]
-	[EditorPreviewControl( typeof( Component_Sprite_PreviewControl ) )]
+	[EditorDocumentWindow( typeof( Component_Sprite_DocumentWindow ), true )]
+	[EditorPreviewControl( typeof( Component_Sprite_Preview ) )]
 	[AddToResourcesWindow( @"Base\2D\Sprite", -8000 )]
 	public class Component_Sprite : Component_MeshInSpace
 	{

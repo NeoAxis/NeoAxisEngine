@@ -231,7 +231,21 @@ namespace NeoAxis
 		ReferenceField<Degree> _rotation;
 
 		/// <summary>
-		/// The overlay color of the skybox.
+		/// Vertical stretch multiplier.
+		/// </summary>
+		[DefaultValue( 1.0 )]
+		[Range( 0.8, 1.2 )]
+		public Reference<double> Stretch
+		{
+			get { if( _stretch.BeginGet() ) Stretch = _stretch.Get( this ); return _stretch.value; }
+			set { if( _stretch.BeginSet( ref value ) ) { try { StretchChanged?.Invoke( this ); } finally { _stretch.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Stretch"/> property value changes.</summary>
+		public event Action<Component_Skybox> StretchChanged;
+		ReferenceField<double> _stretch = 1.0;
+
+		/// <summary>
+		/// A skybox color multiplier.
 		/// </summary>
 		[DefaultValue( "1 1 1" )]
 		[ApplicableRangeColorValuePower( 0, 4 )]
@@ -245,21 +259,73 @@ namespace NeoAxis
 		public event Action<Component_Skybox> MultiplierChanged;
 		ReferenceField<ColorValuePowered> _multiplier = new ColorValuePowered( 1, 1, 1 );
 
-		//!!!!?
 		/// <summary>
-		/// The overlay color of the reflection of the skybox.
+		/// Whether to affect to ambient lighting.
+		/// </summary>
+		[DefaultValue( 1.0 )]
+		[Range( 0, 1 )]
+		public Reference<double> AffectLighting
+		{
+			get { if( _affectLighting.BeginGet() ) AffectLighting = _affectLighting.Get( this ); return _affectLighting.value; }
+			set { if( _affectLighting.BeginSet( ref value ) ) { try { AffectLightingChanged?.Invoke( this ); } finally { _affectLighting.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="AffectLighting"/> property value changes.</summary>
+		public event Action<Component_Skybox> AffectLightingChanged;
+		ReferenceField<double> _affectLighting = 1.0;
+
+		/// <summary>
+		/// The texture used for the reflection. When it is null, the specified cubemap at <see cref="Cubemap"/> property is used for lighting.
+		/// </summary>
+		[DefaultValue( null )]
+		public Reference<Component_Image> LightingCubemap
+		{
+			get { if( _lightingCubemap.BeginGet() ) LightingCubemap = _lightingCubemap.Get( this ); return _lightingCubemap.value; }
+			set
+			{
+				if( _lightingCubemap.BeginSet( ref value ) )
+				{
+					try
+					{
+						LightingCubemapChanged?.Invoke( this );
+						//createdCubemapNeedUpdate = true;
+						processedCubemapNeedUpdate = true;
+					}
+					finally { _lightingCubemap.EndSet(); }
+				}
+			}
+		}
+		/// <summary>Occurs when the <see cref="LightingCubemap"/> property value changes.</summary>
+		public event Action<Component_Skybox> LightingCubemapChanged;
+		ReferenceField<Component_Image> _lightingCubemap = null;
+
+		/// <summary>
+		/// The horizontal rotation of the lighting cubemap.
+		/// </summary>
+		[DefaultValue( 0.0 )]
+		[Range( 0, 360 )]
+		public Reference<Degree> LightingCubemapRotation
+		{
+			get { if( _lightingCubemapRotation.BeginGet() ) LightingCubemapRotation = _lightingCubemapRotation.Get( this ); return _lightingCubemapRotation.value; }
+			set { if( _lightingCubemapRotation.BeginSet( ref value ) ) { try { LightingCubemapRotationChanged?.Invoke( this ); } finally { _lightingCubemapRotation.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LightingCubemapRotation"/> property value changes.</summary>
+		public event Action<Component_Skybox> LightingCubemapRotationChanged;
+		ReferenceField<Degree> _lightingCubemapRotation;
+
+		/// <summary>
+		/// A skybox color multiplier that affects ambient lighting.
 		/// </summary>
 		[DefaultValue( "1 1 1" )]
 		[ApplicableRangeColorValuePower( 0, 4 )]
 		[ColorValueNoAlpha]
-		public Reference<ColorValuePowered> MultiplierReflection
+		public Reference<ColorValuePowered> LightingMultiplier
 		{
-			get { if( _multiplierReflection.BeginGet() ) MultiplierReflection = _multiplierReflection.Get( this ); return _multiplierReflection.value; }
-			set { if( _multiplierReflection.BeginSet( ref value ) ) { try { MultiplierReflectionChanged?.Invoke( this ); } finally { _multiplierReflection.EndSet(); } } }
+			get { if( _lightingMultiplier.BeginGet() ) LightingMultiplier = _lightingMultiplier.Get( this ); return _lightingMultiplier.value; }
+			set { if( _lightingMultiplier.BeginSet( ref value ) ) { try { LightingMultiplierChanged?.Invoke( this ); } finally { _lightingMultiplier.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="MultiplierReflection"/> property value changes.</summary>
-		public event Action<Component_Skybox> MultiplierReflectionChanged;
-		ReferenceField<ColorValuePowered> _multiplierReflection = new ColorValuePowered( 1, 1, 1 );
+		/// <summary>Occurs when the <see cref="LightingMultiplier"/> property value changes.</summary>
+		public event Action<Component_Skybox> LightingMultiplierChanged;
+		ReferenceField<ColorValuePowered> _lightingMultiplier = new ColorValuePowered( 1, 1, 1 );
 
 		/// <summary>
 		/// Whether to use the processed cubemap for the background instead of the original image.
@@ -321,32 +387,45 @@ namespace NeoAxis
 		//	return true;
 		//}
 
-		//protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
-		//{
-		//	base.OnMetadataGetMembersFilter( context, member, ref skip );
+		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
+		{
+			base.OnMetadataGetMembersFilter( context, member, ref skip );
 
-		//	var p = member as Metadata.Property;
-		//	if( p != null )
-		//	{
-		//		switch( p.Name )
-		//		{
-		//		case nameof( Cubemap ):
-		//			if( AnyCubemapSideIsSpecified() )
-		//				skip = true;
-		//			break;
+			var p = member as Metadata.Property;
+			if( p != null )
+			{
+				switch( p.Name )
+				{
+				case nameof( LightingCubemap ):
+				case nameof( LightingMultiplier ):
+					if( AffectLighting.Value == 0 )
+						skip = true;
+					break;
 
-		//		case nameof( CubemapPositiveX ):
-		//		case nameof( CubemapNegativeX ):
-		//		case nameof( CubemapPositiveY ):
-		//		case nameof( CubemapNegativeY ):
-		//		case nameof( CubemapPositiveZ ):
-		//		case nameof( CubemapNegativeZ ):
-		//			if( Cubemap.Value != null )
-		//				skip = true;
-		//			break;
-		//		}
-		//	}
-		//}
+				case nameof( LightingCubemapRotation ):
+					if( !LightingCubemap.ReferenceSpecified && LightingCubemap.Value == null )
+						skip = true;
+					if( AffectLighting.Value == 0 )
+						skip = true;
+					break;
+
+					//case nameof( Cubemap ):
+					//	if( AnyCubemapSideIsSpecified() )
+					//		skip = true;
+					//	break;
+
+					//case nameof( CubemapPositiveX ):
+					//case nameof( CubemapNegativeX ):
+					//case nameof( CubemapPositiveY ):
+					//case nameof( CubemapNegativeY ):
+					//case nameof( CubemapPositiveZ ):
+					//case nameof( CubemapNegativeZ ):
+					//	if( Cubemap.Value != null )
+					//		skip = true;
+					//	break;
+				}
+			}
+		}
 
 		[Browsable( false )]
 		public static Component_Mesh Mesh
@@ -442,25 +521,26 @@ namespace NeoAxis
 					generalContainer.Set( "multiplier", Multiplier.Value.ToColorValue() );
 					GetRotationMatrix( out var rotation );
 					generalContainer.Set( "rotation", rotation );// Matrix3.FromRotateByZ( Rotation.Value.InRadians() ).ToMatrix3F() );
+					generalContainer.Set( "stretch", (float)Stretch.Value );
 
 					Component_Image tex = null;
-					//!!!!hack. by idea need mirror 6-sided loaded cubemaps
-					bool flipCubemap = false;
+					////!!!!hack. by idea need mirror 6-sided loaded cubemaps
+					//bool flipCubemap = false;
 
 					if( AlwaysUseProcessedCubemap )
 						tex = processedEnvironmentCubemap;
 					if( tex == null )
 					{
 						tex = Cubemap;
-						if( tex != null && tex.AnyCubemapSideIsSpecified() )
-							flipCubemap = true;
+						//if( tex != null && tex.AnyCubemapSideIsSpecified() )
+						//	flipCubemap = true;
 					}
 					if( tex == null )
 						tex = processedEnvironmentCubemap;
 					if( tex == null )
 						tex = ResourceUtility.BlackTextureCube;
 
-					generalContainer.Set( "flipCubemap", new Vector4F( flipCubemap ? -1 : 1, 0, 0, 0 ) );
+					//generalContainer.Set( "flipCubemap", new Vector4F( flipCubemap ? -1 : 1, 0, 0, 0 ) );
 
 					////!!!!сделать GetResultEnvironmentCubemap()?
 					////!!!!!!где еще его использовать
@@ -502,6 +582,11 @@ namespace NeoAxis
 		public void GetRotationMatrix( out Matrix3F result )
 		{
 			Matrix3.FromRotateByZ( Rotation.Value.InRadians() ).ToMatrix3F( out result );
+		}
+
+		public void GetLightingCubemapRotationMatrix( out Matrix3F result )
+		{
+			Matrix3.FromRotateByZ( LightingCubemapRotation.Value.InRadians() ).ToMatrix3F( out result );
 		}
 
 		static GpuMaterialPass GetMaterialPass( bool cube )
@@ -571,10 +656,14 @@ namespace NeoAxis
 			processedEnvironmentCubemap = null;
 			processedIrradianceCubemap = null;
 
-			var sourceFileName = Cubemap.Value?.LoadFile.Value?.ResourceName;
+			var useCubemap = LightingCubemap;
+			if( !useCubemap.ReferenceSpecified && useCubemap.Value == null )
+				useCubemap = Cubemap;
+
+			var sourceFileName = useCubemap.Value?.LoadFile.Value?.ResourceName;
 			if( string.IsNullOrEmpty( sourceFileName ) )
 			{
-				var getByReference = Cubemap.GetByReference;
+				var getByReference = useCubemap.GetByReference;
 				if( !string.IsNullOrEmpty( getByReference ) )
 				{
 					try
@@ -618,20 +707,40 @@ namespace NeoAxis
 		//	irradianceCubemap = processedIrradianceCubemap;
 		//}
 
-		public override void GetEnvironmentTextureData( out Component_RenderingPipeline.EnvironmentTextureData environmentCubemap, out Component_RenderingPipeline.EnvironmentTextureData irradianceCubemap )
+		public override bool GetEnvironmentTextureData( out Component_RenderingPipeline.EnvironmentTextureData environmentCubemap, out Component_RenderingPipeline.EnvironmentTextureData irradianceCubemap )
 		{
-			GetRotationMatrix( out var rotation );
-			var multiplier = Multiplier.Value.ToVector3F() * MultiplierReflection.Value.ToVector3F();
+			var affect = (float)AffectLighting.Value;
+			if( affect > 0 )
+			{
+				Vector3F multiplier;
+				Matrix3F rotation;
+				if( LightingCubemap.ReferenceSpecified || LightingCubemap.Value != null )
+				{
+					multiplier = LightingMultiplier.Value.ToVector3F();
+					GetLightingCubemapRotationMatrix( out rotation );
+				}
+				else
+				{
+					multiplier = Multiplier.Value.ToVector3F() * LightingMultiplier.Value.ToVector3F();
+					GetRotationMatrix( out rotation );
+				}
 
-			if( processedEnvironmentCubemap != null )
-				environmentCubemap = new Component_RenderingPipeline.EnvironmentTextureData( processedEnvironmentCubemap, ref rotation, ref multiplier );
-			else
-				environmentCubemap = new Component_RenderingPipeline.EnvironmentTextureData( ResourceUtility.GrayTextureCube );
+				if( processedEnvironmentCubemap != null )
+					environmentCubemap = new Component_RenderingPipeline.EnvironmentTextureData( processedEnvironmentCubemap, affect, ref rotation, ref multiplier );
+				else
+					environmentCubemap = new Component_RenderingPipeline.EnvironmentTextureData( ResourceUtility.GrayTextureCube, affect );
 
-			if( processedIrradianceCubemap != null )
-				irradianceCubemap = new Component_RenderingPipeline.EnvironmentTextureData( processedIrradianceCubemap, ref rotation, ref multiplier );
-			else
-				irradianceCubemap = new Component_RenderingPipeline.EnvironmentTextureData( ResourceUtility.GrayTextureCube );
+				if( processedIrradianceCubemap != null )
+					irradianceCubemap = new Component_RenderingPipeline.EnvironmentTextureData( processedIrradianceCubemap, affect, ref rotation, ref multiplier );
+				else
+					irradianceCubemap = new Component_RenderingPipeline.EnvironmentTextureData( ResourceUtility.GrayTextureCube, affect );
+
+				return true;
+			}
+
+			environmentCubemap = new Component_RenderingPipeline.EnvironmentTextureData();
+			irradianceCubemap = new Component_RenderingPipeline.EnvironmentTextureData();
+			return false;
 		}
 	}
 }

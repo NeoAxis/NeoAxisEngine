@@ -31,16 +31,6 @@ namespace Xilium.CefGlue
         ReportUploadProgress = 1 << 3,
 
         /// <summary>
-        /// If set load timing info will be collected for the request.
-        /// </summary>
-        ReportLoadTiming = 1 << 4,
-
-        /// <summary>
-        /// If set the headers sent and received for the request will be recorded.
-        /// </summary>
-        ReportRawHeaders = 1 << 5,
-
-        /// <summary>
         /// If set the <c>CefUrlRequestClient.OnDownloadData</c> method will not be called.
         /// </summary>
         NoDownloadData = 1 << 6,

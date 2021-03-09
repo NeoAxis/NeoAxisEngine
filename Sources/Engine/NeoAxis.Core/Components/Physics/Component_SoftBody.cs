@@ -1714,7 +1714,7 @@ namespace NeoAxis
 
 						//!!!!могут быть специально подготовленные для soft body данные в меше
 
-						MathAlgorithms.MergeEqualVerticesRemoveInvalidTriangles( sourceVertices, sourceIndices, 0.0001f, out processedVertices, out processedIndices, out processedTrianglesToSourceIndex );
+						MathAlgorithms.MergeEqualVerticesRemoveInvalidTriangles( sourceVertices, sourceIndices, 0.0001f, 0.0001f, out processedVertices, out processedIndices, out processedTrianglesToSourceIndex );
 
 						////!!!!maybe temp. not good implementation. not same as bullet
 						////calculate processed normals
@@ -2057,9 +2057,9 @@ namespace NeoAxis
 			}
 		}
 
-		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
+		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
-			base.OnGetRenderSceneData( context, mode );
+			base.OnGetRenderSceneData( context, mode, modeGetObjectsItem );
 
 			if( mode == GetRenderSceneDataMode.InsideFrustum )
 			{

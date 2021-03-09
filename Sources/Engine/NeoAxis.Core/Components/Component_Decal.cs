@@ -137,7 +137,7 @@ namespace NeoAxis
 			renderer.AddLine( points[ 3 ], points[ 7 ], -1 );
 		}
 
-		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
+		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
 			if( EnabledInHierarchy && VisibleInHierarchy && mode == GetRenderSceneDataMode.InsideFrustum )
 			{
@@ -165,6 +165,8 @@ namespace NeoAxis
 						item.Color = Color;
 						item.NormalsMode = NormalsMode.Value;
 						item.SortOrder = SortOrder;
+
+						item.VisibilityDistance = (float)maxDistance;
 
 						context.FrameData.RenderSceneData.Decals.Add( ref item );
 					}

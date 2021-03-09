@@ -1,4 +1,4 @@
-namespace Xilium.CefGlue
+﻿namespace Xilium.CefGlue
 {
     using System;
     using System.Collections.Generic;
@@ -75,6 +75,43 @@ namespace Xilium.CefGlue
         }
 
         /// <summary>
+        /// Set the referrer URL and policy. If non-empty the referrer URL must be
+        /// fully qualified with an HTTP or HTTPS scheme component. Any username,
+        /// password or ref component will be removed.
+        /// </summary>
+        public void SetReferrer(string referrerUrl, CefReferrerPolicy policy)
+        {
+            fixed (char* referrerUrl_str = referrerUrl)
+            {
+                var n_referrerUrl = new cef_string_t(referrerUrl_str, referrerUrl != null ? referrerUrl.Length : 0);
+                cef_request_t.set_referrer(_self, &n_referrerUrl, policy);
+            }
+        }
+
+        /// <summary>
+        /// Get the referrer URL.
+        /// </summary>
+        public string ReferrerURL
+        {
+            get
+            {
+                var n_result = cef_request_t.get_referrer_url(_self);
+                return cef_string_userfree.ToString(n_result);
+            }
+        }
+
+        /// <summary>
+        /// Get the referrer policy.
+        /// </summary>
+        public CefReferrerPolicy ReferrerPolicy
+        {
+            get
+            {
+                return cef_request_t.get_referrer_policy(_self);
+            }
+        }
+
+        /// <summary>
         /// Get the post data.
         /// </summary>
         public CefPostData PostData
@@ -93,7 +130,7 @@ namespace Xilium.CefGlue
         }
 
         /// <summary>
-        /// Get the header values.
+        /// Get the header values. Will not include the Referer value if any.
         /// </summary>
         public NameValueCollection GetHeaderMap()
         {
@@ -105,7 +142,8 @@ namespace Xilium.CefGlue
         }
 
         /// <summary>
-        /// Set the header values.
+        /// Set the header values. If a Referer value exists in the header map it will
+        /// be removed and ignored.
         /// </summary>
         public void SetHeaderMap(NameValueCollection headers)
         {
@@ -162,8 +200,8 @@ namespace Xilium.CefGlue
         }
 
         /// <summary>
-        /// Get the resource type for this request. Accurate resource type information
-        /// may only be available in the browser process.
+        /// Get the resource type for this request. Only available in the browser
+        /// process.
         /// </summary>
         public CefResourceType ResourceType
         {
@@ -183,6 +221,19 @@ namespace Xilium.CefGlue
             get
             {
                 return cef_request_t.get_transition_type(_self);
+            }
+        }
+
+        /// <summary>
+        /// Returns the globally unique identifier for this request or 0 if not
+        /// specified. Can be used by CefRequestHandler implementations in the browser
+        /// process to track a single request across multiple callbacks.
+        /// </summary>
+        public ulong Identifier
+        {
+            get
+            {
+                return cef_request_t.get_identifier(_self);
             }
         }
     }

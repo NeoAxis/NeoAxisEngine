@@ -487,6 +487,7 @@ namespace NeoAxis
 	class TextBlockParser
 	{
 		string streamString;
+		int streamStringLength;
 		int streamPosition;
 		string error;
 		int linePosition;
@@ -497,7 +498,7 @@ namespace NeoAxis
 
 		bool StreamEOF
 		{
-			get { return streamPosition >= streamString.Length; }
+			get { return streamPosition >= streamStringLength; }
 		}
 
 		bool StreamReadChar( out char character )
@@ -613,8 +614,7 @@ namespace NeoAxis
 
 					if( c == '\n' )
 						linePosition++;
-
-					if( c == '=' || c == '{' || c == '}' )
+					else if( c == '=' || c == '{' || c == '}' )
 					{
 						if( lex.Length != 0 )
 						{
@@ -770,11 +770,14 @@ namespace NeoAxis
 				Log.Fatal( "TextBlock: Parse: \"str\" is null." );
 
 			streamString = str;
+			streamStringLength = streamString.Length;
 			streamPosition = 0;
 			error = null;
 			linePosition = 1;
 			root = new TextBlock();
-			lexStringBuilder = new StringBuilder( Math.Max( str.Length, 4 ) );
+			//!!!!
+			lexStringBuilder = new StringBuilder( 128 );
+			//lexStringBuilder = new StringBuilder( Math.Max( str.Length, 4 ) );
 
 			bool ret = LoadChild( root, true );
 			if( !ret )

@@ -624,6 +624,7 @@ namespace NeoAxis
 			RegisterType( "C# Script", new string[] { "csscript" }, typeof( Resource ) );
 			RegisterType( "Flow Graph", new string[] { "flowgraph" }, typeof( Resource ) );
 			RegisterType( "Product", new string[] { "product" }, typeof( Resource ) );
+			RegisterType( "Store Product", new string[] { "store" }, typeof( Resource ) );
 			RegisterType( "Surface", new string[] { "surface" }, typeof( Resource ) );
 			RegisterType( "Sprite", new string[] { "sprite" }, typeof( Resource ) );
 			//RegisterType( "Shader", new string[] { "shader" }, typeof( Resource ) );

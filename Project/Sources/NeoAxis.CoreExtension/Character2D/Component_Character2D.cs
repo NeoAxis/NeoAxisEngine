@@ -12,7 +12,7 @@ namespace NeoAxis
 	/// </summary>
 	[AddToResourcesWindow( @"Base\2D\Character 2D", -7899 )]
 	[ResourceFileExtension( "character" )]
-	[EditorDocumentWindow( typeof( Component_Character2D_Editor ) )]
+	[EditorDocumentWindow( typeof( Component_Character2D_Editor ), true )]
 	[EditorPreviewControl( typeof( Component_Character2D_Preview ) )]
 	[NewObjectDefaultName( "Character 2D" )]
 	public class Component_Character2D : Component_ObjectInSpace
@@ -173,7 +173,7 @@ namespace NeoAxis
 		/// The maximum angle of the surface on which the character can stand.
 		/// </summary>
 		[Category( "Basic" )]
-		[DefaultValue( 45 )]
+		[DefaultValue( 50 )]
 		public Reference<Degree> MaxSlopeAngle
 		{
 			get { if( _maxSlopeAngle.BeginGet() ) MaxSlopeAngle = _maxSlopeAngle.Get( this ); return _maxSlopeAngle.value; }
@@ -181,7 +181,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="MaxSlopeAngle"/> property value changes.</summary>
 		public event Action<Component_Character2D> MaxSlopeAngleChanged;
-		ReferenceField<Degree> _maxSlopeAngle = new Degree( 45 );
+		ReferenceField<Degree> _maxSlopeAngle = new Degree( 50 );
 
 		/// <summary>
 		/// The position of the eyes relative to the position of the character.
@@ -1849,9 +1849,9 @@ namespace NeoAxis
 			renderer.AddLine( points[ 3 ], points[ 7 ], -1 );
 		}
 
-		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
+		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
-			base.OnGetRenderSceneData( context, mode );
+			base.OnGetRenderSceneData( context, mode, modeGetObjectsItem );
 
 			if( mode == GetRenderSceneDataMode.InsideFrustum )
 			{

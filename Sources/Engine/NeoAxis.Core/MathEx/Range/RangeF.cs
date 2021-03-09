@@ -273,5 +273,10 @@ namespace NeoAxis
 			return new Range( v );
 		}
 #endif
+
+		public float GetCenter()
+		{
+			return ( Minimum + Maximum ) / 2;
+		}
 	}
 }

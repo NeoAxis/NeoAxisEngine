@@ -108,35 +108,65 @@ namespace NeoAxis
 			//}
 		}
 
+		public void GetCalculatedBoundingBox( out Bounds result )
+		{
+			if( !calculatedBoundingBox_Bool )
+			{
+				if( boundingBox.HasValue )
+					calculatedBoundingBox = boundingBox.Value;
+				else
+					boundingSphere.Value.ToBounds( out calculatedBoundingBox );
+				calculatedBoundingBox_Bool = true;
+			}
+			result = calculatedBoundingBox;
+		}
+
 		public Bounds CalculatedBoundingBox
 		{
 			get
 			{
-				if( !calculatedBoundingBox_Bool )
-				{
-					if( boundingBox.HasValue )
-						calculatedBoundingBox = boundingBox.Value;
-					else
-						calculatedBoundingBox = boundingSphere.Value.ToBounds();
-					calculatedBoundingBox_Bool = true;
-				}
-				return calculatedBoundingBox;
+				GetCalculatedBoundingBox( out var result );
+				return result;
 			}
+		}
+
+		//public double CalculatedBoundingBoxMaxSide
+		//{
+		//	get
+		//	{
+		//		if( !calculatedBoundingBox_Bool )
+		//		{
+		//			if( boundingBox.HasValue )
+		//				calculatedBoundingBox = boundingBox.Value;
+		//			else
+		//				calculatedBoundingBox = boundingSphere.Value.ToBounds();
+		//			calculatedBoundingBox_Bool = true;
+		//		}
+		//		//!!!!can be cached
+		//		calculatedBoundingBox.GetSize( out var size );
+		//		return size.MaxComponent();
+		//	}
+		//}
+
+		public void GetCalculatedBoundingSphere( out Sphere result )
+		{
+			if( !calculatedBoundingSphere_Bool )
+			{
+				if( boundingSphere.HasValue )
+					calculatedBoundingSphere = boundingSphere.Value;
+				else
+					calculatedBoundingSphere = boundingBox.Value.GetBoundingSphere();
+				calculatedBoundingSphere_Bool = true;
+			}
+			result = calculatedBoundingSphere;
 		}
 
 		public Sphere CalculatedBoundingSphere
 		{
 			get
 			{
-				if( !calculatedBoundingSphere_Bool )
-				{
-					if( boundingSphere.HasValue )
-						calculatedBoundingSphere = boundingSphere.Value;
-					else
-						calculatedBoundingSphere = boundingBox.Value.GetBoundingSphere();
-					calculatedBoundingSphere_Bool = true;
-				}
-				return calculatedBoundingSphere;
+				GetCalculatedBoundingSphere( out var result );
+				return result;
 			}
 		}
 

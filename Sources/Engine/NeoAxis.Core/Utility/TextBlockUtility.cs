@@ -27,20 +27,23 @@ namespace NeoAxis
 
 			try
 			{
-				using( Stream stream = VirtualFile.Open( path ) )
+				var bytes = VirtualFile.ReadAllBytes( path );
+				var stream = new MemoryVirtualFileStream( bytes );
+
+				//using( Stream stream = VirtualFile.Open( path ) )
+				//{
+				using( StreamReader streamReader = new StreamReader( stream ) )
 				{
-					using( StreamReader streamReader = new StreamReader( stream ) )
+					string error;
+					TextBlock textBlock = TextBlock.Parse( streamReader.ReadToEnd(), out error );
+					if( textBlock == null )
 					{
-						string error;
-						TextBlock textBlock = TextBlock.Parse( streamReader.ReadToEnd(), out error );
-						if( textBlock == null )
-						{
-							errorString = $"Unable to load file \'{path}\'. " + error;
-							return null;
-						}
-						return textBlock;
+						errorString = $"Unable to load file \'{path}\'. " + error;
+						return null;
 					}
+					return textBlock;
 				}
+				//}
 			}
 			catch( FileNotFoundException )
 			{
@@ -95,21 +98,23 @@ namespace NeoAxis
 
 			try
 			{
-				using( FileStream stream = new FileStream( path,
-					FileMode.Open, FileAccess.Read, FileShare.Read ) )
+				var bytes = File.ReadAllBytes( path );
+				var stream = new MemoryVirtualFileStream( bytes );
+
+				//using( FileStream stream = new FileStream( path, FileMode.Open, FileAccess.Read, FileShare.Read ) )
+				//{
+				using( StreamReader streamReader = new StreamReader( stream ) )
 				{
-					using( StreamReader streamReader = new StreamReader( stream ) )
+					string error;
+					TextBlock textBlock = TextBlock.Parse( streamReader.ReadToEnd(), out error );
+					if( textBlock == null )
 					{
-						string error;
-						TextBlock textBlock = TextBlock.Parse( streamReader.ReadToEnd(), out error );
-						if( textBlock == null )
-						{
-							errorString = $"Unable to load file \'{path}\'. " + error;
-							return null;
-						}
-						return textBlock;
+						errorString = $"Unable to load file \'{path}\'. " + error;
+						return null;
 					}
+					return textBlock;
 				}
+				//}
 			}
 			catch( FileNotFoundException )
 			{

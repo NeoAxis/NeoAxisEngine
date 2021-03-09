@@ -161,6 +161,8 @@ namespace NeoAxis.Editor
 			Helper.AddImage( "Mesh", Properties.Resources.Mesh_16, Properties.Resources.Mesh_32 );
 			Helper.AddImage( "Material", Properties.Resources.Material_16, Properties.Resources.Material_32 );
 			Helper.AddImage( "Scene", Properties.Resources.Scene_16, Properties.Resources.Scene_32 );
+			Helper.AddImage( "Product", Properties.Resources.Package_16, Properties.Resources.Package_32 );
+			Helper.AddImage( "Store Product", Properties.Resources.Package_16, Properties.Resources.Package_32 );
 
 			Helper.AddImage( "Cog", Properties.Resources.Cog_16, Properties.Resources.Cog_32 );
 

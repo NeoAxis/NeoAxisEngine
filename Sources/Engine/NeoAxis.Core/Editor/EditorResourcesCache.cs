@@ -55,6 +55,8 @@ namespace NeoAxis.Editor
 		public static readonly Image Focus = RenderStandard.GetImageForDispalyScale( Resources.Focus_16, Resources.Focus_32 );
 		public static readonly Image Help = RenderStandard.GetImageForDispalyScale( Resources.Help_16, Resources.Help_32 );
 
+		public static readonly Image Save = RenderStandard.GetImageForDispalyScale( Resources.Save_16, Resources.Save_32 );
+
 		//
 
 		public static Image GetImage( string name )

@@ -101,10 +101,10 @@
 			// kryptonButtonDelete
 			// 
 			this.kryptonButtonDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.kryptonButtonDelete.Location = new System.Drawing.Point(953, 186);
+			this.kryptonButtonDelete.Location = new System.Drawing.Point(923, 186);
 			this.kryptonButtonDelete.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
 			this.kryptonButtonDelete.Name = "kryptonButtonDelete";
-			this.kryptonButtonDelete.Size = new System.Drawing.Size(117, 32);
+			this.kryptonButtonDelete.Size = new System.Drawing.Size(147, 32);
 			this.kryptonButtonDelete.TabIndex = 4;
 			this.kryptonButtonDelete.Values.Text = "Delete";
 			this.kryptonButtonDelete.Visible = false;
@@ -133,7 +133,7 @@
 			this.kryptonSplitContainer1.Panel2.Controls.Add(this.labelExPackageDeveloper);
 			this.kryptonSplitContainer1.Panel2.Controls.Add(this.labelExPackageName);
 			this.kryptonSplitContainer1.Panel2.Controls.Add(this.labelExPackageInfo);
-			this.kryptonSplitContainer1.Size = new System.Drawing.Size(905, 732);
+			this.kryptonSplitContainer1.Size = new System.Drawing.Size(890, 732);
 			this.kryptonSplitContainer1.SplitterDistance = 297;
 			this.kryptonSplitContainer1.SplitterPercent = 0.32817679558011048D;
 			this.kryptonSplitContainer1.TabIndex = 9;
@@ -196,7 +196,7 @@
 			this.labelExPackageSize.Location = new System.Drawing.Point(7, 124);
 			this.labelExPackageSize.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
 			this.labelExPackageSize.Name = "labelExPackageSize";
-			this.labelExPackageSize.Size = new System.Drawing.Size(592, 26);
+			this.labelExPackageSize.Size = new System.Drawing.Size(562, 26);
 			this.labelExPackageSize.StateCommon.Content.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.labelExPackageSize.TabIndex = 3;
 			this.labelExPackageSize.Text = "Size";
@@ -215,7 +215,7 @@
 			this.labelExPackageStatus.Location = new System.Drawing.Point(7, 151);
 			this.labelExPackageStatus.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
 			this.labelExPackageStatus.Name = "labelExPackageStatus";
-			this.labelExPackageStatus.Size = new System.Drawing.Size(592, 26);
+			this.labelExPackageStatus.Size = new System.Drawing.Size(562, 26);
 			this.labelExPackageStatus.StateCommon.Content.Color1 = System.Drawing.Color.Red;
 			this.labelExPackageStatus.StateCommon.Content.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.labelExPackageStatus.TabIndex = 4;
@@ -227,7 +227,7 @@
 			this.labelExPackageVersion.Location = new System.Drawing.Point(7, 100);
 			this.labelExPackageVersion.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
 			this.labelExPackageVersion.Name = "labelExPackageVersion";
-			this.labelExPackageVersion.Size = new System.Drawing.Size(592, 26);
+			this.labelExPackageVersion.Size = new System.Drawing.Size(562, 26);
 			this.labelExPackageVersion.StateCommon.Content.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.labelExPackageVersion.TabIndex = 2;
 			this.labelExPackageVersion.Text = "Version";
@@ -238,7 +238,7 @@
 			this.labelExPackageDeveloper.Location = new System.Drawing.Point(7, 69);
 			this.labelExPackageDeveloper.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
 			this.labelExPackageDeveloper.Name = "labelExPackageDeveloper";
-			this.labelExPackageDeveloper.Size = new System.Drawing.Size(592, 31);
+			this.labelExPackageDeveloper.Size = new System.Drawing.Size(562, 31);
 			this.labelExPackageDeveloper.StateCommon.Content.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.labelExPackageDeveloper.TabIndex = 1;
 			this.labelExPackageDeveloper.Text = "Developer";
@@ -249,7 +249,7 @@
 			this.labelExPackageName.Location = new System.Drawing.Point(7, 23);
 			this.labelExPackageName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
 			this.labelExPackageName.Name = "labelExPackageName";
-			this.labelExPackageName.Size = new System.Drawing.Size(592, 47);
+			this.labelExPackageName.Size = new System.Drawing.Size(562, 47);
 			this.labelExPackageName.StateCommon.Content.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.labelExPackageName.TabIndex = 0;
 			this.labelExPackageName.Text = "Name";
@@ -261,17 +261,17 @@
 			this.labelExPackageInfo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
 			this.labelExPackageInfo.Multiline = true;
 			this.labelExPackageInfo.Name = "labelExPackageInfo";
-			this.labelExPackageInfo.Size = new System.Drawing.Size(592, 543);
+			this.labelExPackageInfo.Size = new System.Drawing.Size(562, 543);
 			this.labelExPackageInfo.StateCommon.Content.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F);
 			this.labelExPackageInfo.TabIndex = 6;
 			// 
 			// kryptonButtonUninstall
 			// 
 			this.kryptonButtonUninstall.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.kryptonButtonUninstall.Location = new System.Drawing.Point(953, 148);
+			this.kryptonButtonUninstall.Location = new System.Drawing.Point( 923, 148);
 			this.kryptonButtonUninstall.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
 			this.kryptonButtonUninstall.Name = "kryptonButtonUninstall";
-			this.kryptonButtonUninstall.Size = new System.Drawing.Size(117, 32);
+			this.kryptonButtonUninstall.Size = new System.Drawing.Size(147, 32);
 			this.kryptonButtonUninstall.TabIndex = 3;
 			this.kryptonButtonUninstall.Values.Text = "Uninstall";
 			this.kryptonButtonUninstall.Click += new System.EventHandler(this.kryptonButtonUninstall_Click);
@@ -279,10 +279,10 @@
 			// kryptonButtonInstall
 			// 
 			this.kryptonButtonInstall.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.kryptonButtonInstall.Location = new System.Drawing.Point(953, 111);
+			this.kryptonButtonInstall.Location = new System.Drawing.Point( 923, 111);
 			this.kryptonButtonInstall.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
 			this.kryptonButtonInstall.Name = "kryptonButtonInstall";
-			this.kryptonButtonInstall.Size = new System.Drawing.Size(117, 32);
+			this.kryptonButtonInstall.Size = new System.Drawing.Size(147, 32);
 			this.kryptonButtonInstall.TabIndex = 2;
 			this.kryptonButtonInstall.Values.Text = "Install";
 			this.kryptonButtonInstall.Click += new System.EventHandler(this.kryptonButtonInstall_Click);
@@ -290,10 +290,10 @@
 			// kryptonButtonDownload
 			// 
 			this.kryptonButtonDownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.kryptonButtonDownload.Location = new System.Drawing.Point(953, 71);
+			this.kryptonButtonDownload.Location = new System.Drawing.Point( 923, 71);
 			this.kryptonButtonDownload.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
 			this.kryptonButtonDownload.Name = "kryptonButtonDownload";
-			this.kryptonButtonDownload.Size = new System.Drawing.Size(117, 32);
+			this.kryptonButtonDownload.Size = new System.Drawing.Size(147, 32);
 			this.kryptonButtonDownload.TabIndex = 1;
 			this.kryptonButtonDownload.Values.Text = "Download";
 			this.kryptonButtonDownload.Click += new System.EventHandler(this.kryptonButtonDownload_Click);
@@ -301,10 +301,10 @@
 			// kryptonButtonBuy
 			// 
 			this.kryptonButtonBuy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.kryptonButtonBuy.Location = new System.Drawing.Point(953, 33);
+			this.kryptonButtonBuy.Location = new System.Drawing.Point( 923, 33);
 			this.kryptonButtonBuy.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
 			this.kryptonButtonBuy.Name = "kryptonButtonBuy";
-			this.kryptonButtonBuy.Size = new System.Drawing.Size(117, 32);
+			this.kryptonButtonBuy.Size = new System.Drawing.Size(147, 32);
 			this.kryptonButtonBuy.TabIndex = 0;
 			this.kryptonButtonBuy.Values.Text = "Buy";
 			this.kryptonButtonBuy.Click += new System.EventHandler(this.kryptonButtonBuy_Click);

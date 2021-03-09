@@ -12,7 +12,7 @@ namespace NeoAxis
 	/// </summary>
 	[AddToResourcesWindow( @"Base\3D\Character", -8999 )]
 	[ResourceFileExtension( "character" )]
-	[EditorDocumentWindow( typeof( Component_Character_Editor ) )]
+	[EditorDocumentWindow( typeof( Component_Character_Editor ), true )]
 	public class Component_Character : Component_ObjectInSpace
 	{
 		Component_RigidBody mainBody;
@@ -71,13 +71,16 @@ namespace NeoAxis
 		//wiggle camera when walking
 		float wiggleWhenWalkingSpeedFactor;
 
+		//first person camera offset
+		double firstPersonCameraOffsetZ;
+
 		/////////////////////////////////////////
 		//Basic
 
 		/// <summary>
 		/// The height of the character.
 		/// </summary>
-		[Category( "Basic" )]
+		[ Category( "Basic" )]
 		[DefaultValue( 1.8 )]
 		public Reference<double> Height
 		{
@@ -170,7 +173,7 @@ namespace NeoAxis
 		/// The maximum angle of the surface on which the character can stand.
 		/// </summary>
 		[Category( "Basic" )]
-		[DefaultValue( 45 )]
+		[DefaultValue( 50 )]
 		public Reference<Degree> MaxSlopeAngle
 		{
 			get { if( _maxSlopeAngle.BeginGet() ) MaxSlopeAngle = _maxSlopeAngle.Get( this ); return _maxSlopeAngle.value; }
@@ -178,13 +181,13 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="MaxSlopeAngle"/> property value changes.</summary>
 		public event Action<Component_Character> MaxSlopeAngleChanged;
-		ReferenceField<Degree> _maxSlopeAngle = new Degree( 45 );
+		ReferenceField<Degree> _maxSlopeAngle = new Degree( 50 );
 
 		/// <summary>
 		/// The position of the eyes relative to the position of the character.
 		/// </summary>
 		[Category( "Basic" )]
-		[DefaultValue( "0.18 0 0.58" )]
+		[DefaultValue( "0.23 0 0.58" )]
 		public Reference<Vector3> EyePosition
 		{
 			get { if( _eyePosition.BeginGet() ) EyePosition = _eyePosition.Get( this ); return _eyePosition.value; }
@@ -192,7 +195,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="EyePosition"/> property value changes.</summary>
 		public event Action<Component_Character> EyePositionChanged;
-		ReferenceField<Vector3> _eyePosition = new Vector3( 0.18, 0, 0.58 );
+		ReferenceField<Vector3> _eyePosition = new Vector3( 0.23, 0, 0.58 );
 
 		/// <summary>
 		/// Whether to consider the speed of the body on which the character is standing.
@@ -1032,6 +1035,7 @@ namespace NeoAxis
 			CalculateGroundRelativeVelocity();
 
 			TickWiggleWhenWalkingSpeedFactor();
+			TickFirstPersonCameraOffset();
 
 			if( moveVectorTimer != 0 )
 				moveVectorTimer--;
@@ -1175,10 +1179,7 @@ namespace NeoAxis
 					force *= scaleFactor;
 
 					if( GetLinearVelocity().ToVector2().Length() < maxSpeed )
-					{
-						mainBody.RigidBody?.ForceActivationState( BulletSharp.ActivationState.ActiveTag );
 						mainBody.ApplyForce( new Vector3( forceVec.X, forceVec.Y, 0 ) * force * Time.SimulationDelta, Vector3.Zero );
-					}
 				}
 			}
 
@@ -1203,8 +1204,7 @@ namespace NeoAxis
 			//wake up when ground is moving
 			if( !mainBody.Active && groundBody != null && groundBody.Active && ( groundBody.LinearVelocity.Value.LengthSquared() > .3f || groundBody.AngularVelocity.Value.LengthSquared() > .3f ) )
 			{
-				mainBody.RigidBody?.ForceActivationState( BulletSharp.ActivationState.ActiveTag );
-				mainBody.RigidBody?.Activate();
+				mainBody.Activate();
 			}
 
 			CalculateMainBodyGroundDistanceAndGroundBody();//out var addForceOnBigSlope );
@@ -1248,6 +1248,7 @@ namespace NeoAxis
 
 								forceIsOnGroundRemainingTime = 0.5;//0.2;
 								disableGravityRemainingTime = 0.5;
+								firstPersonCameraOffsetZ = Math.Min( tr.Position.Z - newPosition.Z, firstPersonCameraOffsetZ );
 							}
 
 							//if( !keepDisableControlPhysicsModelPushedToWorldFlag )
@@ -1321,9 +1322,9 @@ namespace NeoAxis
 					allowToSleepTime = 0;
 
 				if( allowToSleepTime > Time.SimulationDelta * 2.5f )
-					mainBody.RigidBody?.ForceActivationState( BulletSharp.ActivationState.WantsDeactivation );
+					mainBody.WantsDeactivation();
 				else
-					mainBody.RigidBody?.ForceActivationState( BulletSharp.ActivationState.ActiveTag );
+					mainBody.Activate();
 				//mainBody.Sleeping = allowToSleepTime > Time.SimulationDelta * 2.5f;
 			}
 
@@ -1677,7 +1678,7 @@ namespace NeoAxis
 
 				UpdateMainBodyDamping();
 
-				mainBody.RigidBody?.ForceActivationState( BulletSharp.ActivationState.ActiveTag );
+				mainBody.Activate();
 
 				SoundPlay( JumpSound );
 
@@ -1936,9 +1937,9 @@ namespace NeoAxis
 			renderer.AddLine( points[ 3 ], points[ 7 ], -1 );
 		}
 
-		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
+		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
-			base.OnGetRenderSceneData( context, mode );
+			base.OnGetRenderSceneData( context, mode, modeGetObjectsItem );
 
 			if( mode == GetRenderSceneDataMode.InsideFrustum )
 			{
@@ -2064,13 +2065,26 @@ namespace NeoAxis
 			}
 		}
 
+		void TickFirstPersonCameraOffset()
+		{
+			if( firstPersonCameraOffsetZ < 0 )
+			{
+				var speed = Height.Value * 0.5;
+
+				firstPersonCameraOffsetZ += Time.SimulationDelta * speed;
+
+				if( firstPersonCameraOffsetZ > 0 )
+					firstPersonCameraOffsetZ = 0;
+			}
+		}
+
 		public void GetFirstPersonCameraPosition( out Vector3 position, out Vector3 forward, out Vector3 up )
 		{
 			var tr = TransformV;
 
-			position = tr * EyePosition.Value;
-			forward = Vector3.XAxis;
-			up = Vector3.ZAxis;
+			position = tr * EyePosition.Value + new Vector3( 0, 0, firstPersonCameraOffsetZ );
+			//forward = Vector3.XAxis;
+			//up = Vector3.ZAxis;
 
 			//!!!!coefficient in properties
 

@@ -78,8 +78,7 @@ namespace NeoAxis.Editor
 				Items.Add( new Item( group + @"\Executable App", typeof( NewResourceType_ExecutableApp ), disabled: true ) );
 
 				Items.Add( new Item( group + @"\Advanced\Component Host", typeof( Component_ComponentHost ) ) );
-
-				//!!!!Image
+				Items.Add( new Item( group + @"\Advanced\Compute Using Threads", typeof( Component_ComputeUsingThreads ) ) );
 			}
 
 			//Scripting
@@ -284,6 +283,9 @@ namespace NeoAxis.Editor
 
 				Items.Add( new Item( group + @"\Additional\Render To File", typeof( Component_RenderToFile ) ) );
 
+				if( MetadataManager.GetType( "NeoAxis.Component_WorldGenerator" ) != null )
+					Items.Add( new Item( group + @"\Additional\World Generator", MetadataManager.GetType( "NeoAxis.Component_WorldGenerator" ).GetNetType() ) );
+
 				//Items.Add( new Item( group + @"\Object In Space", typeof( Component_ObjectInSpace ) ) );
 				//Items.Add( new Item( group + @"\Group Of Objects", typeof( Component_GroupOfObjects ) ) );
 				//Items.Add( new Item( group + @"\Layer", typeof( Component_Layer ) ) );
@@ -417,6 +419,7 @@ namespace NeoAxis.Editor
 					list.Add( ("Light Shafts", "Component_RenderingEffect_LightShafts") );
 					//list.Add( ("Motion Blur", "Component_RenderingEffect_MotionBlur") );
 					list.Add( ("Noise", "Component_RenderingEffect_Noise") );
+					list.Add( ("Outline", "Component_RenderingEffect_Outline") );
 					list.Add( ("Pixelate", "Component_RenderingEffect_Pixelate") );
 					list.Add( ("Posterize", "Component_RenderingEffect_Posterize") );
 					list.Add( ("Radial Blur", "Component_RenderingEffect_RadialBlur") );

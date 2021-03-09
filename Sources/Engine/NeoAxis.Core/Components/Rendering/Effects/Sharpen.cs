@@ -38,9 +38,9 @@ namespace NeoAxis
 		public event Action<Component_RenderingEffect_Sharpen> SharpStrengthChanged;
 		ReferenceField<double> _sharpStrength = 0.5;
 
-        /// <summary>
-        /// The treshold at which the sharpness will be clamped.
-        /// </summary>
+		/// <summary>
+		/// The threshold at which the sharpness will be clamped.
+		/// </summary>
 		[Serialize]
 		[DefaultValue( .035 )]
 		[Range( 0, 1 )]

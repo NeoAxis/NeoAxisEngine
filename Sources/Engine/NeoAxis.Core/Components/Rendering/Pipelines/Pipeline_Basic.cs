@@ -64,7 +64,6 @@ namespace NeoAxis
 		{
 			Low,
 			High,
-			//!!!!
 		}
 
 		/// <summary>
@@ -126,7 +125,6 @@ namespace NeoAxis
 		public event Action<Component_RenderingPipeline_Basic> ShadowDirectionalLightMaxCountChanged;
 		ReferenceField<int> _shadowDirectionalLightMaxCount = 1;
 
-		//!!!!default value
 		/// <summary>
 		/// The size of a shadow texture for Directional Lights.
 		/// </summary>
@@ -163,7 +161,6 @@ namespace NeoAxis
 		public event Action<Component_RenderingPipeline_Basic> ShadowDirectionalLightCascadesChanged;
 		ReferenceField<int> _shadowDirectionalLightCascades = 3;
 
-		//!!!!default
 		/// <summary>
 		/// Defines shadow cascades distribution for Directional Lights. The distance of the current cascade, multiplied by this value gives distance to the next cascade.
 		/// </summary>
@@ -229,7 +226,6 @@ namespace NeoAxis
 		public event Action<Component_RenderingPipeline_Basic> ShadowDirectionalLightCascadeVisualizeChanged;
 		ReferenceField<bool> _shadowDirectionalLightCascadeVisualize = false;
 
-		//!!!!default value, applicable range
 		/// <summary>
 		/// Maximum distance to camera where shadows from Directional Lights will be cast.
 		/// </summary>
@@ -302,6 +298,55 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="ShadowSpotlightTextureSize"/> property value changes.</summary>
 		public event Action<Component_RenderingPipeline_Basic> ShadowSpotlightTextureSizeChanged;
 		ReferenceField<ShadowTextureSize> _shadowSpotlightTextureSize = ShadowTextureSize._1024;
+
+		/////////////////////////////////////////
+
+		/// <summary>
+		/// The maximal number of iterations for the displacement mapping.
+		/// </summary>
+		[DefaultValue( 24 )]
+		[Category( "Displacement Mapping" )]
+		[Range( 8, 32 )]
+		public Reference<int> DisplacementMappingMaxSteps
+		{
+			get { if( _displacementMappingMaxSteps.BeginGet() ) DisplacementMappingMaxSteps = _displacementMappingMaxSteps.Get( this ); return _displacementMappingMaxSteps.value; }
+			set { if( _displacementMappingMaxSteps.BeginSet( ref value ) ) { try { DisplacementMappingMaxStepsChanged?.Invoke( this ); } finally { _displacementMappingMaxSteps.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="DisplacementMappingMaxSteps"/> property value changes.</summary>
+		public event Action<Component_RenderingPipeline_Basic> DisplacementMappingMaxStepsChanged;
+		ReferenceField<int> _displacementMappingMaxSteps = 24;
+
+		/// <summary>
+		/// The height multiplier for the displacement mapping.
+		/// </summary>
+		[DefaultValue( 1.0 )]
+		[Category( "Displacement Mapping" )]
+		[Range( 0, 2 )]
+		public Reference<double> DisplacementMappingScale
+		{
+			get { if( _displacementMappingScale.BeginGet() ) DisplacementMappingScale = _displacementMappingScale.Get( this ); return _displacementMappingScale.value; }
+			set { if( _displacementMappingScale.BeginSet( ref value ) ) { try { DisplacementMappingScaleChanged?.Invoke( this ); } finally { _displacementMappingScale.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="DisplacementMappingScale"/> property value changes.</summary>
+		public event Action<Component_RenderingPipeline_Basic> DisplacementMappingScaleChanged;
+		ReferenceField<double> _displacementMappingScale = 1.0;
+
+		/////////////////////////////////////////
+
+		/// <summary>
+		/// The intesity of the technique to remove texture tiling.
+		/// </summary>
+		[DefaultValue( 1.0 )]
+		[Category( "Materials" )]
+		[Range( 0, 1 )]
+		public Reference<double> RemoveTextureTiling
+		{
+			get { if( _removeTextureTiling.BeginGet() ) RemoveTextureTiling = _removeTextureTiling.Get( this ); return _removeTextureTiling.value; }
+			set { if( _removeTextureTiling.BeginSet( ref value ) ) { try { RemoveTextureTilingChanged?.Invoke( this ); } finally { _removeTextureTiling.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="RemoveTextureTiling"/> property value changes.</summary>
+		public event Action<Component_RenderingPipeline_Basic> RemoveTextureTilingChanged;
+		ReferenceField<double> _removeTextureTiling = 1.0;
 
 		/////////////////////////////////////////
 
@@ -478,7 +523,7 @@ namespace NeoAxis
 			_2048,
 			_4096,
 			_8192,
-			//_16384,//!!!!как проверять хватит ли памяти
+			//_16384,
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

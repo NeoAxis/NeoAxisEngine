@@ -13,6 +13,7 @@ namespace NeoAxis.Import.FBX
 			var transform = additionalTransform * FbxMath.EvaluateGlobalTransform( node ).ToMatrix4();
 			transform = transform * FbxMath.GetGeometryOffset( node ).ToMatrix4();
 			var converter = new FbxGeometryConverter( manager );
+
 			bool success = false;
 			try
 			{
@@ -25,6 +26,7 @@ namespace NeoAxis.Import.FBX
 			}
 			if( !success || mesh == null )
 				return null;
+
 			MeshData data = ReadTriangles( mesh, node );
 			var ret = ReadMaterialsAndSplitByMaterials( data );
 			foreach( var m in ret )
@@ -51,14 +53,14 @@ namespace NeoAxis.Import.FBX
 
 			if( 3 <= data.PolygonSize )
 			{
-				ReadNormals( data, importOptions, uvSetIndexForNormalsAndTangents, data.CalcCache, ref transform );
+				ReadNormals( data, importOptions, uvSetIndexForNormalsAndTangents, /*data.CalcCache, */ref transform );
 				if( importOptions.ImportPostProcessFlags.HasFlag( ImportPostProcessFlags.FixInfacingNormals ) && data.NormalsSource != TangentsAndNormalsSource.None )
 				{
 					if( CalcNormalsProcess.FixInfacingNormals( data.Vertices ) )
 						FbxImportLog.LogMessage( data.Node, "Infacing Normals Fixed" );
 				}
 
-				ReadTangents( data, importOptions, uvSetIndexForNormalsAndTangents, data.CalcCache, ref transform );
+				ReadTangents( data, importOptions, uvSetIndexForNormalsAndTangents, /*data.CalcCache, */ref transform );
 			}
 		}
 
@@ -101,13 +103,13 @@ namespace NeoAxis.Import.FBX
 			}
 		}
 
-		static void ReadNormals( MeshData data, ImportOptions importOptions, int uvSetIndex, CalcMeshCache context, ref Matrix4 transform )
+		static void ReadNormals( MeshData data, ImportOptions importOptions, int uvSetIndex, /*CalcMeshCache context, */ref Matrix4 transform )
 		{
 			var source = ReadRawNormals( data, importOptions, uvSetIndex );
 			if( source == TangentsAndNormalsSource.None )
 				return;
-			if( importOptions.ImportPostProcessFlags.HasFlag( ImportPostProcessFlags.SmoothNormals ) && source != TangentsAndNormalsSource.FromFile )
-				CalcNormalsProcess.SmoothNormals( data.Vertices, context.VertexFinder, context.PositionEpsilon );
+			//if( importOptions.ImportPostProcessFlags.HasFlag( ImportPostProcessFlags.SmoothNormals ) && source != TangentsAndNormalsSource.FromFile )
+			//	CalcNormalsProcess.SmoothNormals( data.Vertices, context.VertexFinder, context.PositionEpsilon );
 
 			bool normalWarningSent = false;
 			//If the normals are loded by FBX - the original vertex coordinates were used (not transformed)
@@ -164,7 +166,7 @@ namespace NeoAxis.Import.FBX
 			return TangentsAndNormalsSource.Calculated;
 		}
 
-		static void ReadTangents( MeshData data, ImportOptions importOptions, int uvSetIndex, CalcMeshCache context, ref Matrix4 transform )
+		static void ReadTangents( MeshData data, ImportOptions importOptions, int uvSetIndex, /*CalcMeshCache context, */ref Matrix4 transform )
 		{
 			data.TangentsSource = TangentsAndNormalsSource.None;
 			if( !data.VertexComponents.HasFlag( StandardVertex.Components.Normal ) )
@@ -175,8 +177,8 @@ namespace NeoAxis.Import.FBX
 			var source = ReadRawTangents( data, importOptions, uvSetIndex, out Vector3F[] tangents, out Vector3F[] bitangents );
 			if( source == TangentsAndNormalsSource.None )
 				return;
-			if( importOptions.ImportPostProcessFlags.HasFlag( ImportPostProcessFlags.SmoothTangents ) && source != TangentsAndNormalsSource.FromFile )
-				CalcTangentsProcess.SmoothTangents( data.Vertices, context.VertexFinder, tangents, bitangents, context.PositionEpsilon );
+			//if( importOptions.ImportPostProcessFlags.HasFlag( ImportPostProcessFlags.SmoothTangents ) && source != TangentsAndNormalsSource.FromFile )
+			//	CalcTangentsProcess.SmoothTangents( data.Vertices, context.VertexFinder, tangents, bitangents, context.PositionEpsilon );
 
 			//If mesh is loded by FBX - the original vertex coordinates were used (not transformed)
 			if( source == TangentsAndNormalsSource.FromFile /*|| source == TangentsAndNormalsSource.CalculatedByFbxSdk*/ )

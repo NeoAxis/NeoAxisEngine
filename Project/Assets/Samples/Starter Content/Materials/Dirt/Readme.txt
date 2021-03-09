@@ -1,1 +1,0 @@
-https://www.cgbookcase.com/textures/dirt-02

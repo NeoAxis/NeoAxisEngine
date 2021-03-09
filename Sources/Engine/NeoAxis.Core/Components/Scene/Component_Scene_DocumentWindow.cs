@@ -53,9 +53,9 @@ namespace NeoAxis.Editor
 		TransformTool.ModeEnum transformToolModeRestore = TransformTool.ModeEnum.PositionRotation;
 
 		//createObjectsDestination
-		List<(Component Obj, string Text)> createObjectsDestinationCachedList = new List<(Component, string)>();
+		List<(CreateObjectsDestinationModeEnum Mode, Component Obj, string Text)> createObjectsDestinationCachedList = new List<(CreateObjectsDestinationModeEnum, Component, string)>();
 		double createObjectsDestinationLastUpdateTime;
-		Component createObjectsDestinationSelected;
+		(CreateObjectsDestinationModeEnum Mode, Component Obj) createObjectsDestinationSelected;
 
 		//terrainPaintLayers
 		List<(Component_PaintLayer Obj, string Text)> terrainPaintLayersCachedList = new List<(Component_PaintLayer, string)>();
@@ -99,6 +99,15 @@ namespace NeoAxis.Editor
 			Drop,
 			Click,
 			Brush
+		}
+
+		/////////////////////////////////////////
+
+		enum CreateObjectsDestinationModeEnum
+		{
+			Auto,
+			Root,
+			Component,
 		}
 
 		/////////////////////////////////////////
@@ -1015,7 +1024,8 @@ namespace NeoAxis.Editor
 
 			//Gizmo.Instance.IsMouseOverAxisToActivation()
 
-			transformTool.PerformRender();
+			if( !selectByRectangle_Activated )
+				transformTool.PerformRender();
 
 			CreateByBrushRender( viewport );
 		}
@@ -1024,7 +1034,8 @@ namespace NeoAxis.Editor
 		{
 			base.Viewport_UpdateBeforeOutput2( viewport );
 
-			transformTool.PerformOnRenderUI();
+			if( !selectByRectangle_Activated )
+				transformTool.PerformOnRenderUI();
 		}
 
 		public Rectangle SelectByRectangle_GetRectangle()
@@ -1087,11 +1098,14 @@ namespace NeoAxis.Editor
 				bool skip = false;
 				foreach( var parent in obj.GetAllParents( true ) )
 				{
-					var parent2 = parent as Component_ObjectInSpace;
-					if( parent2 != null && allSet.Contains( parent2 ) )
+					if( !IsObjectSelected( parent ) )
 					{
-						skip = true;
-						break;
+						var parent2 = parent as Component_ObjectInSpace;
+						if( parent2 != null && allSet.Contains( parent2 ) )
+						{
+							skip = true;
+							break;
+						}
 					}
 				}
 
@@ -1161,13 +1175,13 @@ namespace NeoAxis.Editor
 			}
 		}
 
-		protected virtual void TransformToolModifyBegin()
+		protected virtual void TransformToolModifyBegin( TransformTool sender )
 		{
 			if( WorkareaMode != null && WorkareaMode.PerformTransformToolModifyBegin() )
 				return;
 		}
 
-		protected virtual void TransformToolModifyCommit()
+		protected virtual void TransformToolModifyCommit( TransformTool sender )
 		{
 			if( WorkareaMode != null && WorkareaMode.PerformTransformToolModifyCommit() )
 				return;
@@ -1226,7 +1240,7 @@ namespace NeoAxis.Editor
 			transformToolModifyCloned = false;
 		}
 
-		protected virtual void TransformToolModifyCancel()
+		protected virtual void TransformToolModifyCancel( TransformTool sender )
 		{
 			if( WorkareaMode != null && WorkareaMode.PerformTransformToolModifyCancel() )
 				return;
@@ -1264,30 +1278,32 @@ namespace NeoAxis.Editor
 			if( WorkareaMode != null && WorkareaMode.PerformTransformToolCloneAndSelectObjects() )
 				return;
 
-			//!!!!что с вложенными или еще какими-то особыми случаями
-
 			ContentBrowserUtility.AllContentBrowsers_SuspendChildrenChangedEvent();
 
-			var newObjects = new List<object>();
+			var objectsToClone = new List<Component>();
 			foreach( var toolObject in transformTool.Objects )
 			{
 				var toolObject2 = toolObject as TransformToolObject_ObjectInSpace;
 				if( toolObject2 != null )
-				{
-					var obj = toolObject2.SelectedObject;
+					objectsToClone.Add( toolObject2.SelectedObject );
+			}
 
-					var newObject = EditorUtility.CloneComponent( obj );
-					newObjects.Add( newObject );
+			//remove children which inside selected parents
+			objectsToClone = ComponentUtility.GetComponentsWithoutChildren( objectsToClone );
 
-					//newObject.Editor_BeginTransformModifying();
-				}
+			var newObjects = new List<Component>();
+			foreach( var obj in objectsToClone )
+			{
+				var newObject = EditorUtility.CloneComponent( obj );
+				newObjects.Add( newObject );
+				AddClonedSelectableChildrenToList( newObjects, newObject );
 			}
 
 			Scene.HierarchyController?.ProcessDelayedOperations();
 			ContentBrowserUtility.AllContentBrowsers_ResumeChildrenChangedEvent();
 
 			//select objects
-			SelectObjects( newObjects, updateSettingsWindowSelectObjects: false );
+			SelectObjects( newObjects.Cast<object>().ToArray(), updateSettingsWindowSelectObjects: false );
 
 			//add screen message
 			EditorUtility.ShowScreenNotificationObjectsCloned( newObjects.Count );
@@ -1295,6 +1311,7 @@ namespace NeoAxis.Editor
 			transformToolModifyCloned = true;
 
 			UpdateTransformToolObjects();
+			transformTool.PerformUpdateInitialObjectsTransform();
 		}
 
 		public override void EditorActionGetState( EditorAction.GetStateContext context )
@@ -1384,7 +1401,7 @@ namespace NeoAxis.Editor
 						context.Action.ListBox.Items = items;
 
 						//update selected item
-						var selectIndex = createObjectsDestinationCachedList.FindIndex( a => a.Obj == createObjectsDestinationSelected );
+						var selectIndex = createObjectsDestinationCachedList.FindIndex( a => a.Mode == createObjectsDestinationSelected.Mode && a.Obj == createObjectsDestinationSelected.Obj );
 						if( selectIndex == -1 )
 							selectIndex = 0;
 						context.Action.ListBox.SelectIndex = selectIndex;
@@ -1443,6 +1460,9 @@ namespace NeoAxis.Editor
 				}
 				break;
 
+			case "Terrain Paint Add Layer":
+				context.Enabled = true;
+				break;
 			}
 		}
 
@@ -1543,9 +1563,12 @@ namespace NeoAxis.Editor
 				{
 					var newIndex = context.Action.ListBox.SelectedIndex;
 					if( newIndex >= 0 && newIndex < createObjectsDestinationCachedList.Count )
-						createObjectsDestinationSelected = createObjectsDestinationCachedList[ newIndex ].Obj;
+					{
+						var item = createObjectsDestinationCachedList[ newIndex ];
+						createObjectsDestinationSelected = (item.Mode, item.Obj);
+					}
 					else
-						createObjectsDestinationSelected = null;
+						createObjectsDestinationSelected = (CreateObjectsDestinationModeEnum.Auto, null);
 				}
 				break;
 
@@ -1613,17 +1636,46 @@ namespace NeoAxis.Editor
 				}
 				break;
 
-				//case "Terrain Paint Layers":
-				//if( context.Action.ListBox.LastSelectedIndexChangedByUser )
-				//{
-				//	var newIndex = context.Action.ListBox.SelectedIndex;
-				//	if( newIndex >= 0 && newIndex < terrainPaintLayersCachedList.Count )
-				//		terrainPaintLayersSelected = terrainPaintLayersCachedList[ newIndex ].Obj;
-				//	else
-				//		terrainPaintLayersSelected = null;
-				//}
-				//break;
+			//case "Terrain Paint Layers":
+			//if( context.Action.ListBox.LastSelectedIndexChangedByUser )
+			//{
+			//	var newIndex = context.Action.ListBox.SelectedIndex;
+			//	if( newIndex >= 0 && newIndex < terrainPaintLayersCachedList.Count )
+			//		terrainPaintLayersSelected = terrainPaintLayersCachedList[ newIndex ].Obj;
+			//	else
+			//		terrainPaintLayersSelected = null;
+			//}
+			//break;
 
+			case "Terrain Paint Add Layer":
+				{
+					var rootComponent = EditorForm.Instance.WorkspaceController.SelectedDocumentWindow?.ObjectOfWindow as Component_Scene;
+					var terrain = rootComponent?.GetComponent<Component_Terrain>( true );
+
+					//var terrains = SelectedObjects.OfType<Component_Terrain>().ToArray();
+					//if( terrains.Length != 0 )
+					if( terrain != null )
+					{
+						var newObjects = new List<Component>();
+
+						//foreach( var terrain in terrains )
+						{
+							var layer = terrain.CreateComponent<Component_PaintLayer>( enabled: false );
+							layer.Name = EditorUtility.GetUniqueFriendlyName( layer );
+							layer.Enabled = true;
+
+							newObjects.Add( layer );
+						}
+
+						Focus();
+
+						//undo
+						var action = new UndoActionComponentCreateDelete( Document, newObjects, true );
+						Document.CommitUndoAction( action );
+						SelectObjects( newObjects.ToArray() );
+					}
+				}
+				break;
 			}
 		}
 
@@ -1757,6 +1809,16 @@ namespace NeoAxis.Editor
 				} );
 				item.ShortcutKeyDisplayString = EditorActions.GetFirstShortcutKeyString( "Duplicate" );
 				item.Enabled = EditorAPI.EditorActionGetState( EditorAction.HolderEnum.ContextMenu, "Duplicate" ).Enabled;
+				items.Add( item );
+			}
+
+			//Export to File
+			{
+				var item = new KryptonContextMenuItem( TranslateContextMenu( "Export to File" ), null, delegate ( object s, EventArgs e2 )
+				{
+					EditorUtility.ExportComponentToFile( oneSelectedComponent );
+				} );
+				item.Enabled = oneSelectedComponent != null;
 				items.Add( item );
 			}
 
@@ -2053,8 +2115,19 @@ namespace NeoAxis.Editor
 			return null;
 		}
 
+		public delegate void CreateObjectWhatTypeWillCreatedEventDelegate( Metadata.TypeInfo objectType, string referenceToObject, ref Metadata.TypeInfo type );
+		public static event CreateObjectWhatTypeWillCreatedEventDelegate CreateObjectWhatTypeWillCreatedEvent;
+
 		Metadata.TypeInfo CreateObjectWhatTypeWillCreated( Metadata.TypeInfo objectType, string referenceToObject )
 		{
+			//add-ons support
+			{
+				Metadata.TypeInfo type = null;
+				CreateObjectWhatTypeWillCreatedEvent?.Invoke( objectType, referenceToObject, ref type );
+				if( type != null )
+					return type;
+			}
+
 			//Component_MeshGeometry_Procedural
 			if( MetadataManager.GetTypeOfNetType( typeof( Component_MeshGeometry_Procedural ) ).IsAssignableFrom( objectType ) )
 				return MetadataManager.GetTypeOfNetType( typeof( Component_MeshInSpace ) );
@@ -2128,6 +2201,9 @@ namespace NeoAxis.Editor
 			return null;
 		}
 
+		public delegate void CreateObjectByCreationDataEventDelegate( Metadata.TypeInfo objectType, string referenceToObject, Component createTo, ref Component newObject );
+		public static event CreateObjectByCreationDataEventDelegate CreateObjectByCreationDataEvent;
+
 		Component CreateObjectByCreationData( Metadata.TypeInfo objectType, string referenceToObject )
 		{
 			Component createTo = CreateObjectGetDestinationSelected() as Component_Layer;
@@ -2153,6 +2229,9 @@ namespace NeoAxis.Editor
 			//	var objectInSpace = Scene.CreateComponent( objectType, -1, false );
 			//	newObject = objectInSpace;
 			//}
+
+			//add-ons support
+			CreateObjectByCreationDataEvent?.Invoke( objectType, referenceToObject, createTo, ref newObject );
 
 			//Component_MeshGeometry_Procedural
 			if( newObject == null && MetadataManager.GetTypeOfNetType( typeof( Component_MeshGeometry_Procedural ) ).IsAssignableFrom( objectType ) )
@@ -3453,7 +3532,7 @@ namespace NeoAxis.Editor
 			{
 				//when destination != null
 
-				(var objectType, var referenceToObject) = EditorAPI.GetSelectedObjectToCreate();
+				(var objectType, var referenceToObject) = GetSelectedObjectToCreateWithCheckSelectedElementOfGroupOfObjects();
 				if( objectType != null )
 				{
 					//mesh
@@ -3499,7 +3578,7 @@ namespace NeoAxis.Editor
 			{
 				//when toGroupOfObjects == null
 
-				(var objectType, var referenceToObject) = EditorAPI.GetSelectedObjectToCreate();
+				(var objectType, var referenceToObject) = GetSelectedObjectToCreateWithCheckSelectedElementOfGroupOfObjects();
 				if( objectType != null )
 				{
 					if( MetadataManager.GetTypeOfNetType( typeof( Component_Surface ) ).IsAssignableFrom( objectType ) )
@@ -3643,7 +3722,7 @@ namespace NeoAxis.Editor
 					{
 						//creating
 
-						(var objectType, var referenceToObject) = EditorAPI.GetSelectedObjectToCreate();
+						(var objectType, var referenceToObject) = GetSelectedObjectToCreateWithCheckSelectedElementOfGroupOfObjects();
 						if( objectType != null )
 						{
 							//mesh
@@ -4026,7 +4105,7 @@ namespace NeoAxis.Editor
 					{
 						//deleting
 
-						(var objectType, var referenceToObject) = EditorAPI.GetSelectedObjectToCreate();
+						(var objectType, var referenceToObject) = GetSelectedObjectToCreateWithCheckSelectedElementOfGroupOfObjects();
 						if( objectType != null )
 						{
 							int elementIndex = -1;
@@ -4138,7 +4217,7 @@ namespace NeoAxis.Editor
 					{
 						//creating
 
-						(var objectType, var referenceToObject) = EditorAPI.GetSelectedObjectToCreate();
+						(var objectType, var referenceToObject) = GetSelectedObjectToCreateWithCheckSelectedElementOfGroupOfObjects();
 						if( objectType != null )
 						{
 							Component createTo = CreateObjectGetDestinationSelected() as Component_Layer;
@@ -4228,7 +4307,7 @@ namespace NeoAxis.Editor
 															if( ( center.ToVector2() - obj.TransformV.Position.ToVector2() ).Length() <= surfaceGroup.MinDistanceBetweenObjects )
 															{
 																var meshInSpace = obj as Component_MeshInSpace;
-																if( meshInSpace != null && surfaceAllMeshesSet.Contains( meshInSpace.Mesh ) )
+																if( meshInSpace != null && meshInSpace.Mesh.Value != null && surfaceAllMeshesSet.Contains( meshInSpace.Mesh ) )
 																{
 																	free = false;
 																	break;
@@ -4430,7 +4509,7 @@ namespace NeoAxis.Editor
 					{
 						//deleting
 
-						(var objectType, var referenceToObject) = EditorAPI.GetSelectedObjectToCreate();
+						(var objectType, var referenceToObject) = GetSelectedObjectToCreateWithCheckSelectedElementOfGroupOfObjects();
 						if( objectType != null )
 						{
 							if( MetadataManager.GetTypeOfNetType( typeof( Component_Surface ) ).IsAssignableFrom( objectType ) )
@@ -4462,7 +4541,7 @@ namespace NeoAxis.Editor
 										if( ( center.ToVector2() - obj.TransformV.Position.ToVector2() ).Length() <= toolRadius )
 										{
 											var meshInSpace = obj as Component_MeshInSpace;
-											if( meshInSpace != null && surfaceAllMeshesSet.Contains( meshInSpace.Mesh ) )
+											if( meshInSpace != null && meshInSpace.Mesh.Value != null && surfaceAllMeshesSet.Contains( meshInSpace.Mesh ) )
 												objectsToDelete.Add( obj );
 										}
 									}
@@ -4671,26 +4750,99 @@ namespace NeoAxis.Editor
 				foreach( var obj in Scene.GetComponents( checkChildren: true, onlyEnabledInHierarchy: true ) )
 				{
 					if( ( obj is Component_GroupOfObjects obj2 && obj2.EditorAllowUsePaintBrush ) || obj is Component_Layer )
-						list.Add( obj );
+						if( obj.DisplayInEditor )
+							list.Add( obj );
 				}
 				//var list = Scene.GetComponents<Component_GroupOfObjects>( checkChildren: true, onlyEnabledInHierarchy: true );
 
 				createObjectsDestinationCachedList.Clear();
-				createObjectsDestinationCachedList.Add( (null, EditorLocalization.Translate( "General", "Root" )) );
+				createObjectsDestinationCachedList.Add( (CreateObjectsDestinationModeEnum.Auto, null, EditorLocalization.Translate( "General", "Auto" )) );
+				createObjectsDestinationCachedList.Add( (CreateObjectsDestinationModeEnum.Root, null, EditorLocalization.Translate( "General", "Root" )) );
 				foreach( var obj in list )
-					createObjectsDestinationCachedList.Add( (obj, obj.Name) );
+					createObjectsDestinationCachedList.Add( (CreateObjectsDestinationModeEnum.Component, obj, obj.Name) );
 			}
 		}
 
 		Component CreateObjectGetDestinationSelected()
 		{
-			if( createObjectsDestinationSelected != null )
+			//disable disposed selected object
+			if( createObjectsDestinationSelected.Obj != null )
 			{
-				if( createObjectsDestinationSelected.Disposed || createObjectsDestinationSelected.ParentRoot != Scene )
-					createObjectsDestinationSelected = null;
+				if( createObjectsDestinationSelected.Obj.Disposed || createObjectsDestinationSelected.Obj.ParentRoot != Scene )
+					createObjectsDestinationSelected = (CreateObjectsDestinationModeEnum.Auto, null);
 			}
 
-			return createObjectsDestinationSelected;
+			Component result = createObjectsDestinationSelected.Obj;
+
+			if( createObjectsDestinationSelected.Mode == CreateObjectsDestinationModeEnum.Auto )
+			{
+				//when brush mode is enabled use group of objects for meshes, surfaces
+				if( CreateObjectsMode == CreateObjectsModeEnum.Brush )
+				{
+
+					Component_GroupOfObjects groupOfObjects = null;
+					{
+						foreach( var obj in Scene.GetComponents( checkChildren: true, onlyEnabledInHierarchy: true ) )
+						{
+							if( obj is Component_GroupOfObjects obj2 && obj2.EditorAllowUsePaintBrush && obj.DisplayInEditor )
+							{
+								groupOfObjects = obj2;
+								break;
+							}
+						}
+					}
+
+					if( groupOfObjects != null )
+					{
+						(var objectType, var referenceToObject) = GetSelectedObjectToCreateWithCheckSelectedElementOfGroupOfObjects();
+						if( objectType != null )
+						{
+							//mesh
+							{
+								Component_Mesh mesh = null;
+								Metadata.TypeInfo meshGeometryProcedural = null;
+								{
+									var componentType = objectType as Metadata.ComponentTypeInfo;
+									if( componentType != null && componentType.BasedOnObject != null )
+									{
+										//Component_Mesh
+										mesh = componentType.BasedOnObject as Component_Mesh;
+
+										//Component_Import3D
+										if( componentType.BasedOnObject is Component_Import3D )
+											mesh = componentType.BasedOnObject.GetComponent( "Mesh" ) as Component_Mesh;
+									}
+
+									//Component_MeshGeometry_Procedural
+									if( MetadataManager.GetTypeOfNetType( typeof( Component_MeshGeometry_Procedural ) ).IsAssignableFrom( objectType ) )
+										meshGeometryProcedural = objectType;
+								}
+
+								if( mesh != null || meshGeometryProcedural != null )
+									result = groupOfObjects;
+							}
+
+							//surface
+							{
+								Component_Surface surface = null;
+								{
+									var componentType = objectType as Metadata.ComponentTypeInfo;
+									if( componentType != null && componentType.BasedOnObject != null )
+										surface = componentType.BasedOnObject as Component_Surface;
+								}
+
+								if( surface != null )
+									result = groupOfObjects;
+							}
+						}
+					}
+
+				}
+			}
+
+			return result;
+
+			//return createObjectsDestinationSelected;
 
 			//Component_GroupOfObjects result = null;
 
@@ -4908,6 +5060,51 @@ namespace NeoAxis.Editor
 				screenLabelToolTip.Hide( ViewportControl );
 				screenLabelToolTip.SetToolTip( ViewportControl, screenLabelToolTipText );
 			}
+		}
+
+		(Metadata.TypeInfo objectType, string referenceToObject) GetSelectedObjectToCreateWithCheckSelectedElementOfGroupOfObjects()
+		{
+			(Metadata.TypeInfo objectType, string referenceToObject) result = EditorAPI.GetSelectedObjectToCreate();
+
+			Component oneSelectedComponent = null;
+			if( SelectedObjects.Length == 1 )
+				oneSelectedComponent = SelectedObjects[ 0 ] as Component;
+
+			//group of objects elements
+			if( oneSelectedComponent != null )
+			{
+				//mesh element
+				{
+					var element = oneSelectedComponent as Component_GroupOfObjectsElement_Mesh;
+					if( element != null )
+					{
+						var mesh = element.Mesh.Value;
+						if( mesh != null )
+						{
+							var type = mesh.GetProvidedType();
+							if( type != null )
+								result = (type, element.Mesh.GetByReference);
+						}
+					}
+				}
+
+				//surface element
+				{
+					var element = oneSelectedComponent as Component_GroupOfObjectsElement_Surface;
+					if( element != null )
+					{
+						var surface = element.Surface.Value;
+						if( surface != null )
+						{
+							var type = surface.GetProvidedType();
+							if( type != null )
+								result = (type, element.Surface.GetByReference);
+						}
+					}
+				}
+			}
+
+			return result;
 		}
 
 	}

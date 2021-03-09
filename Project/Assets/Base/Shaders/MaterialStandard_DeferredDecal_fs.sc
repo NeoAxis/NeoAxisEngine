@@ -1,4 +1,4 @@
-$input v_texCoord01, v_worldPosition, v_worldNormal, v_depth, v_tangent, v_bitangent, v_color0, v_eyeTangentSpace, v_normalTangentSpace, v_texCoord23, v_colorParameter
+$input v_texCoord01, v_worldPosition, v_worldNormal, v_depth, v_tangent, v_bitangent, v_color0, v_eyeTangentSpace, v_normalTangentSpace, v_texCoord23, v_colorParameter, v_lodValueVisibilityDistanceReceiveDecals
 
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "Common.sh"
@@ -14,6 +14,7 @@ uniform vec4 u_decalNormalTangent[2];
 SAMPLER2D(s_depthTexture, 2);
 SAMPLER2D(s_gBuffer1TextureCopy, 3);
 SAMPLER2D(s_gBuffer4TextureCopy, 4);
+SAMPLER2D(s_gBuffer5TextureCopy, 5);
 
 #ifdef DISPLACEMENT_CODE_PARAMETERS
 	DISPLACEMENT_CODE_PARAMETERS
@@ -57,6 +58,10 @@ void main()
 	vec3 worldPosition = reconstructWorldPosition(u_invViewProj, screenPosition, rawDepth);
 
 	cutVolumes(worldPosition);
+
+	vec3 toCamera = u_viewportOwnerCameraPosition - worldPosition.xyz;
+	float cameraDistance = length(toCamera);
+	toCamera = normalize(toCamera);
 	
 	vec2 decalTexCoord;
 	{
@@ -74,10 +79,22 @@ void main()
 	
 	//get source normal
 	{
-		vec4 normal_and_reflectance = texture2D(s_gBuffer1TextureCopy, screenPosition);	
+		vec4 normal_and_reflectance = texture2D(s_gBuffer1TextureCopy, screenPosition);
 		sourceNormal = normalize(normal_and_reflectance.rgb * 2 - 1);
 	}
 	
+	//get source tangent
+	vec4 gBuffer4DataCopy = texture2D(s_gBuffer4TextureCopy, screenPosition);
+	sourceTangent = gBuffer4DataCopy * 2.0 - 1.0;
+	sourceTangent.xyz = normalize(sourceTangent.xyz);
+	
+	//get receive decals, discard
+	vec4 gBuffer5DataCopy = texture2D(s_gBuffer5TextureCopy, screenPosition);
+	bool receiveDecals2 = gBuffer5DataCopy.y == 1.0;
+	if(!receiveDecals2)
+		discard;
+
+	/*
 	//get source tangent, check receive decals flag
 	{
 		//vec4 tangentDummy;
@@ -89,6 +106,7 @@ void main()
 			discard;
 		sourceTangent.xyz = normalize(sourceTangent.xyz);
 	}
+	*/
 	
 	//NormalsMode.VectorOfDecal
 	if(any(u_decalNormalTangent[0]))
@@ -100,7 +118,9 @@ void main()
 	//displacement
 	vec2 displacementOffset = vec2_splat(0);
 #if defined(DISPLACEMENT_CODE_BODY) && defined(DISPLACEMENT)
-	displacementOffset = getParallaxOcclusionMappingOffset(decalTexCoord/*v_texCoord01.xy*/, v_eyeTangentSpace, v_normalTangentSpace, u_materialDisplacementScale);
+	BRANCH
+	if(u_displacementScale != 0.0)
+		displacementOffset = getParallaxOcclusionMappingOffset(decalTexCoord/*v_texCoord01.xy*/, v_eyeTangentSpace, v_normalTangentSpace, u_materialDisplacementScale * u_displacementScale, u_displacementMaxSteps);
 #endif //DISPLACEMENT_CODE_BODY
 	
 	//get material parameters
@@ -128,25 +148,39 @@ void main()
 	vec2 c_texCoord0 = decalTexCoord/*v_texCoord01.xy*/ - displacementOffset;
 	vec2 c_texCoord1 = decalTexCoord/*v_texCoord01.zw*/ - displacementOffset;
 	vec2 c_texCoord2 = decalTexCoord/*v_texCoord23.xy*/ - displacementOffset;
-	vec2 c_texCoord3 = decalTexCoord/*v_texCoord23.zw*/ - displacementOffset;
-	vec2 c_unwrappedUV = getUnwrappedUV(c_texCoord0, c_texCoord1, c_texCoord2, c_texCoord3, u_renderOperationData[3].x);	
+	//vec2 c_texCoord3 = decalTexCoord/*v_texCoord23.zw*/ - displacementOffset;
+	vec2 c_unwrappedUV = getUnwrappedUV(c_texCoord0, c_texCoord1, c_texCoord2/*, c_texCoord3*/, u_renderOperationData[3].x);	
 	vec4 c_color0 = v_color0;
 #ifdef FRAGMENT_CODE_BODY
+	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(_sampler, _uv, u_removeTextureTiling)
 	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2D(_sampler, _uv)
 	FRAGMENT_CODE_BODY
+	#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
 	#undef CODE_BODY_TEXTURE2D
 #endif
 
 	//apply color parameter
+	
 	baseColor *= v_colorParameter.xyz;
 	if(u_materialUseVertexColor != 0.0)
 		baseColor *= v_color0.xyz;
 	baseColor = max(baseColor, vec3_splat(0));
+	
 	opacity *= v_colorParameter.w;
 	if(u_materialUseVertexColor != 0.0)
 		opacity *= v_color0.w;
 	opacity = saturate(opacity);
 
+	sheenColor *= v_colorParameter.xyz;
+	if(u_materialUseVertexColor != 0.0)
+		sheenColor *= v_color0.xyz;
+	sheenColor = max(sheenColor, vec3_splat(0));
+	
+	subsurfaceColor *= v_colorParameter.xyz;
+	if(u_materialUseVertexColor != 0.0)
+		subsurfaceColor *= v_color0.xyz;
+	subsurfaceColor = max(subsurfaceColor, vec3_splat(0));	
+	
 	//opacity dithering
 #ifdef OPACITY_DITHERING
 	opacity = dither(getFragCoord(), opacity);
@@ -156,6 +190,11 @@ void main()
 #ifdef BLEND_MODE_MASKED
 	clip(opacity - opacityMaskThreshold);
 #endif
+
+	//fading by visibility distance
+	float visibilityDistance = v_lodValueVisibilityDistanceReceiveDecals.y;
+	float visibilityDistanceFactor = getVisibilityDistanceFactor(visibilityDistance, cameraDistance);
+	smoothLOD(getFragCoord(), 1.0f - visibilityDistanceFactor);
 
 	//get result tangent
 	vec4 tangent;
@@ -237,23 +276,31 @@ void main()
 		normal = mul(normal2, tangentToView);
 	}
 	*/
+
+	bool receiveDecals = false;// = u_materialReceiveDecals != 0 && u_renderOperationData[1].x != 0;
+	//bool shadingModelSimple = false;
 	
-	bool shadingModelSimple = false;
-	
+#ifndef SHADING_MODEL_SUBSURFACE
+	thickness = 0;
+	subsurfacePower = 0;
+#endif
 #ifdef SHADING_MODEL_SIMPLE
-	shadingModelSimple = true;
+	//shadingModelSimple = true;
 	reflectance = 0;
 	metallic = 0;
 	roughness = 0;
 	ambientOcclusion = 0;
 	rayTracingReflection = 0;
-#endif //SHADING_MODEL_SIMPLE
-
-	//bool receiveDecals = u_materialReceiveDecals != 0 && u_renderOperationData[1].x != 0;
+#endif
 
 	gl_FragData[0] = encodeRGBE8(baseColor);
 	gl_FragData[1] = vec4(normal * 0.5 + 0.5, reflectance);
 	gl_FragData[2] = vec4(metallic, roughness, ambientOcclusion, rayTracingReflection);
+#ifdef SHADING_MODEL_SUBSURFACE
+	gl_FragData[3] = encodeRGBE8(subsurfaceColor);
+#else
 	gl_FragData[3] = encodeRGBE8(emissive);
-	gl_FragData[4] = encodeGBuffer4(tangent, shadingModelSimple, false/*receiveDecals*/);
+#endif
+	gl_FragData[4] = tangent * 0.5 + 0.5;//gl_FragData[4] = encodeGBuffer4(tangent, shadingModelSimple, false/*receiveDecals*/);
+	gl_FragData[5] = vec4(float(SHADING_MODEL_INDEX), receiveDecals ? 1.0 : 0.0, thickness, subsurfacePower / 15.0);
 }

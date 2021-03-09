@@ -11,6 +11,8 @@ namespace Xilium.CefGlue.Interop
     {
         public UIntPtr size;
 
+        public int windowless_frame_rate;
+
         public cef_string_t standard_font_family;
         public cef_string_t fixed_font_family;
         public cef_string_t serif_font_family;
@@ -31,7 +33,6 @@ namespace Xilium.CefGlue.Interop
         public CefState javascript_access_clipboard;
         public CefState javascript_dom_paste;
         public CefState caret_browsing;
-        public CefState java;
         public CefState plugins;
         public CefState universal_access_from_file_urls;
         public CefState file_access_from_file_urls;
@@ -44,9 +45,10 @@ namespace Xilium.CefGlue.Interop
         public CefState databases;
         public CefState application_cache;
         public CefState webgl;
-        public CefState accelerated_compositing;
 
         public uint background_color;
+
+        public cef_string_t accept_language_list;
 
         #region Alloc & Free
         private static int _sizeof;

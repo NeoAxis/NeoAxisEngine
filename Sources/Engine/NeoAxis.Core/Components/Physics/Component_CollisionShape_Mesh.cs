@@ -214,7 +214,7 @@ namespace NeoAxis
 			if( MergeEqualVerticesRemoveInvalidTriangles )
 			{
 				//!!!!slowly. later use cached precalculated bullet shape.
-				MathAlgorithms.MergeEqualVerticesRemoveInvalidTriangles( sourceVertices, sourceIndices, epsilon, out processedVertices, out processedIndices, out processedTrianglesToSourceIndex );
+				MathAlgorithms.MergeEqualVerticesRemoveInvalidTriangles( sourceVertices, sourceIndices, epsilon, epsilon, out processedVertices, out processedIndices, out processedTrianglesToSourceIndex );
 			}
 			else
 			{

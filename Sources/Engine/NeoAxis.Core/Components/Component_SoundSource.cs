@@ -516,9 +516,9 @@ namespace NeoAxis
 			newBounds = new SpaceBounds( new Sphere( TransformV.Position, far ) );
 		}
 
-		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
+		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
-			base.OnGetRenderSceneData( context, mode );
+			base.OnGetRenderSceneData( context, mode, modeGetObjectsItem );
 
 			//if( EnabledInHierarchyAndIsNotResource )
 			//	Update();

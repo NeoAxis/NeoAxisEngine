@@ -67,12 +67,7 @@
     <Compile Update="Components\Build\Component_Product_DocumentWindow.designer.cs">
       <DependentUpon>Component_Product_DocumentWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="Components\Camera\Component_Camera_PreviewControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Components\Camera\Component_Camera_PreviewControl.designer.cs">
-      <DependentUpon>Component_Camera_PreviewControl.cs</DependentUpon>
-    </Compile>
+    <Compile Update="Components\Camera\Component_Camera_PreviewControl.cs" />
     <Compile Update="Components\Font\Component_Font_PreviewControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -105,11 +100,9 @@
     <Compile Update="Components\Sprite\Component_Sprite_DocumentWindow.designer.cs">
       <DependentUpon>Component_Sprite_DocumentWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="Components\Sprite\Component_Sprite_PreviewControl.cs">
+    <Compile Update="Components\Sprite\Component_Sprite_PreviewControl.cs" />
+    <Compile Update="Components\StoreProduct\Component_StoreProduct_DocumentWindow.cs">
       <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Components\Sprite\Component_Sprite_PreviewControl.designer.cs">
-      <DependentUpon>Component_Sprite_PreviewControl.cs</DependentUpon>
     </Compile>
     <Compile Update="Components\SurfaceArea\Component_SurfaceArea_SettingsCell.cs" />
     <Compile Update="Components\Surface\Component_Surface_DocumentWindow.cs">
@@ -315,12 +308,7 @@
     <Compile Update="Components\Sound\Component_Sound_PreviewControl.designer.cs">
       <DependentUpon>Component_Sound_PreviewControl.cs</DependentUpon>
     </Compile>
-    <Compile Update="Components\ObjectInSpace\Component_ObjectInSpace_PreviewControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Components\ObjectInSpace\Component_ObjectInSpace_PreviewControl.designer.cs">
-      <DependentUpon>Component_ObjectInSpace_PreviewControl.cs</DependentUpon>
-    </Compile>
+    <Compile Update="Components\ObjectInSpace\Component_ObjectInSpace_PreviewControl.cs" />
     <Compile Update="Components\Material\Component_Material_SettingsCell.cs" />
     <Compile Update="Components\Image\Component_Image_PreviewControl.cs">
       <SubType>UserControl</SubType>
@@ -704,9 +692,6 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="Components\Camera\Component_Camera_PreviewControl.resx">
-      <DependentUpon>Component_Camera_PreviewControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Update="Components\Font\Component_Font_PreviewControl.resx">
       <DependentUpon>Component_Font_PreviewControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -721,9 +706,6 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Components\Scene\Component_Scene_DocumentWindow.resx">
       <DependentUpon>Component_Scene_DocumentWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Components\Sprite\Component_Sprite_PreviewControl.resx">
-      <DependentUpon>Component_Sprite_PreviewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Components\Surface\Component_Surface_DocumentWindow.resx">
       <DependentUpon>Component_Surface_DocumentWindow.cs</DependentUpon>
@@ -754,9 +736,6 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Components\Material\Component_Material_PreviewControl.resx">
       <DependentUpon>Component_Material_PreviewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Components\ObjectInSpace\Component_ObjectInSpace_PreviewControl.resx">
-      <DependentUpon>Component_ObjectInSpace_PreviewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Components\Sound\Component_Sound_PreviewControl.resx">
       <DependentUpon>Component_Sound_PreviewControl.cs</DependentUpon>

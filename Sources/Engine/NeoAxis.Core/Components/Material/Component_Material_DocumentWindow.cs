@@ -19,8 +19,11 @@ namespace NeoAxis.Editor
 
 		Component_Mesh previewMeshUsed;
 		Component_Mesh defaultMesh;
+
 		Reference<Component_Image> previewEnvironmentUsed;
-		Component skybox;
+		ColorValuePowered previewEnvironmentMultiplierUsed;
+		double previewEnvironmentAffectLightingUsed = -1;
+		Component_Skybox skybox;
 
 		//
 
@@ -91,12 +94,7 @@ namespace NeoAxis.Editor
 				}
 			}
 
-			//check update preview environment
-			{
-				var env = ProjectSettings.Get.GetMaterialPreviewEnvironment();
-				if( !previewEnvironmentUsed.Equals( env ) )
-					UpdatePreviewEnvironment();
-			}
+			UpdatePreviewEnvironment();
 
 			if( needCameraUpdate && scene.CameraEditor.Value != null )
 			{
@@ -242,23 +240,28 @@ namespace NeoAxis.Editor
 		void UpdatePreviewEnvironment()
 		{
 			var env = ProjectSettings.Get.GetMaterialPreviewEnvironment();
+			var multiplier = ProjectSettings.Get.MaterialPreviewEnvironmentMultiplier.Value;
+			var affect = ProjectSettings.Get.MaterialPreviewEnvironmentAffectLighting.Value;
 
-			previewEnvironmentUsed = env;
-
-			if( env.Value != null )
+			if( !previewEnvironmentUsed.Equals( env ) || previewEnvironmentMultiplierUsed != multiplier || previewEnvironmentAffectLightingUsed != affect )
 			{
-				var type = MetadataManager.GetType( "NeoAxis.Component_Skybox" );
-				if( type != null )
+				previewEnvironmentUsed = env;
+				previewEnvironmentMultiplierUsed = multiplier;
+				previewEnvironmentAffectLightingUsed = affect;
+
+				if( env.Value != null )
 				{
 					if( skybox == null )
-						skybox = Scene.CreateComponent( type );
-					skybox.PropertySet( "Cubemap", env );
+						skybox = Scene.CreateComponent<Component_Skybox>();
+					skybox.Cubemap = env;
+					skybox.Multiplier = multiplier;
+					skybox.AffectLighting = affect;
 				}
-			}
-			else
-			{
-				skybox?.Dispose();
-				skybox = null;
+				else
+				{
+					skybox?.Dispose();
+					skybox = null;
+				}
 			}
 		}
 	}

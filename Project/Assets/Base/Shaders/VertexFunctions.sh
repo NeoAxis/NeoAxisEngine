@@ -97,7 +97,7 @@ void billboardRotateWorldMatrix(vec4 renderOperationData, inout mat4 worldMatrix
 			
 		//add offset to shadow caster
 		BRANCH
-		if(shadowCaster)
+		if(shadowCaster && renderOperationData.w != 0.0)
 		{
 			vec3 worldPosition;
 			for(int n=0;n<3;n++)

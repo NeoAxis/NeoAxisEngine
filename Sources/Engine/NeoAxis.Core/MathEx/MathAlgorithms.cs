@@ -505,6 +505,56 @@ namespace NeoAxis
 			return true;
 		}
 
+		/// <summary>
+		/// Original indices array will not changed.
+		/// </summary>
+		/// <param name="vertices"></param>
+		/// <param name="indices"></param>
+		/// <param name="processedTrianglesToSourceIndex"></param>
+		/// <param name="epsilon"></param>
+		/// <returns></returns>
+		public static bool RemoveCollinearDegenerateTriangles( StandardVertex[] vertices, ref int[] indices, out int[] processedTrianglesToSourceIndex, float epsilon = float.Epsilon )
+		{
+			int[] tempIndices = new int[ indices.Length ];
+			int indexCount = 0;
+
+			processedTrianglesToSourceIndex = new int[ indices.Length / 3 ];
+
+			for( int index = 0; index < indices.Length; index += 3 )
+			{
+				int index0 = indices[ index + 0 ];
+				int index1 = indices[ index + 1 ];
+				int index2 = indices[ index + 2 ];
+
+				ref var p0 = ref vertices[ index0 ].Position;
+				ref var p1 = ref vertices[ index1 ].Position;
+				ref var p2 = ref vertices[ index2 ].Position;
+
+				if( !IsCollinearTriangle( ref p0, ref p1, ref p2, epsilon ) && !IsDegenerateTriangle( ref p0, ref p1, ref p2, epsilon ) )
+				{
+					//map new triangle to old triangle index
+					processedTrianglesToSourceIndex[ indexCount / 3 ] = index / 3;
+
+					tempIndices[ indexCount++ ] = index0;
+					tempIndices[ indexCount++ ] = index1;
+					tempIndices[ indexCount++ ] = index2;
+				}
+			}
+
+			//nothing changed
+			if( indexCount == indices.Length )
+			{
+				processedTrianglesToSourceIndex = null;
+				return false;
+			}
+
+			Array.Resize( ref processedTrianglesToSourceIndex, indexCount / 3 );
+			Array.Resize( ref tempIndices, indexCount );
+
+			indices = tempIndices;
+			return true;
+		}
+
 		public static int[] RemoveDegenerateTriangles( Vector3F[] vertices, int[] indices )
 		{
 			int[] tempIndices = new int[ indices.Length ];
@@ -1718,8 +1768,67 @@ namespace NeoAxis
 			{
 				vertices = newVertices.ToArray();
 
+				var newIndices = new int[ indices.Length ];
 				for( int n = 0; n < indices.Length; n++ )
-					indices[ n ] = vertexMapping[ indices[ n ] ];
+					newIndices[ n ] = vertexMapping[ indices[ n ] ];
+				indices = newIndices;
+			}
+		}
+
+		static void MergeEqualVerticesSortByAxisMethod( ref StandardVertex[] vertices, ref int[] indices, float epsilon, int axis )
+		{
+			var verticesLocal = vertices;
+
+			var vertices2 = new int[ vertices.Length ];
+			for( int n = 0; n < vertices2.Length; n++ )
+				vertices2[ n ] = n;
+
+			CollectionUtility.MergeSort( vertices2, delegate ( int index1, int index2 )
+			{
+				var v1 = verticesLocal[ index1 ].Position[ axis ];
+				var v2 = verticesLocal[ index2 ].Position[ axis ];
+
+				if( v1 < v2 )
+					return -1;
+				if( v1 > v2 )
+					return 1;
+				return 0;
+
+			}, true );
+
+			var newVertices = new List<StandardVertex>( vertices.Length );
+			var vertexMapping = new Dictionary<int, int>( vertices.Length );
+			bool found = false;
+
+			StandardVertex current = new StandardVertex( new Vector3F( float.MinValue, 0, 0 ) );
+			//var current = new Vector3( float.MinValue, 0, 0 );
+
+			foreach( var index in vertices2 )
+			{
+				ref var v = ref verticesLocal[ index ];
+
+				if( current.Equals( ref v, epsilon ) )
+				{
+					vertexMapping[ index ] = newVertices.Count - 1;
+					found = true;
+				}
+				else
+				{
+					newVertices.Add( v );
+					vertexMapping[ index ] = newVertices.Count - 1;
+
+					current = v;
+				}
+			}
+
+			if( found )
+			{
+				vertices = newVertices.ToArray();
+
+				var newIndices = new int[ indices.Length ];
+				for( int n = 0; n < indices.Length; n++ )
+					newIndices[ n ] = vertexMapping[ indices[ n ] ];
+				indices = newIndices;
 			}
 		}
 
@@ -1840,8 +1949,10 @@ namespace NeoAxis
 			{
 				vertices = newVertices.ToArray();
 
+				var newIndices = new int[ indices.Length ];
 				for( int n = 0; n < indices.Length; n++ )
-					indices[ n ] = vertexMapping[ indices[ n ] ];
+					newIndices[ n ] = vertexMapping[ indices[ n ] ];
+				indices = newIndices;
 			}
 		}
 
@@ -1911,6 +2022,74 @@ namespace NeoAxis
 					indices = newIndices.ToArray();
 				}
 			}
+		}
+
+		/// <summary>
+		/// Original arrays will not changed.
+		/// </summary>
+		/// <param name="vertices"></param>
+		/// <param name="indices"></param>
+		/// <param name="epsilon"></param>
+		public static void MergeEqualVertices( ref StandardVertex[] vertices, ref int[] indices, float epsilon )//, bool fastMethod = true )
+		{
+			if( vertices.Length == 0 || indices.Length == 0 )
+				return;
+
+			//if( fastMethod )
+			//{
+			MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, epsilon, 0 );
+			MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, epsilon, 1 );
+			MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, epsilon, 2 );
+			//}
+			//else
+			//{
+			//	var found = false;
+			//	var newVertices = new List<Vector3F>( vertices.Length );
+			//	var newIndices = new List<int>( indices.Length );
+
+			//	var bounds = Bounds.Cleared;
+			//	foreach( var vertex in vertices )
+			//		bounds.Add( vertex );
+			//	bounds.Expand( epsilon * 2 );
+
+			//	var initSettings = new OctreeContainer.InitSettings();
+			//	initSettings.InitialOctreeBounds = bounds;
+			//	initSettings.OctreeBoundsRebuildExpand = Vector3.Zero;
+			//	initSettings.MinNodeSize = bounds.GetSize() / 50;
+			//	var octreeContainer = new OctreeContainer( initSettings );
+
+			//	foreach( var index in indices )
+			//	{
+			//		var p = vertices[ index ];
+			//		var b = new Bounds( p - new Vector3F( epsilon, epsilon, epsilon ), p + new Vector3F( epsilon, epsilon, epsilon ) );
+
+			//		int newIndex;
+
+			//		//!!!!check by Vec3 position
+			//		int[] result = octreeContainer.GetObjects( b, 0xFFFFFFFF, OctreeContainer.ModeEnum.All );
+			//		if( result.Length != 0 )
+			//		{
+			//			found = true;
+			//			newIndex = result[ 0 ];
+			//		}
+			//		else
+			//		{
+			//			newIndex = newVertices.Count;
+			//			octreeContainer.AddObject( b, 1 );
+			//			newVertices.Add( p );
+			//		}
+
+			//		newIndices.Add( newIndex );
+			//	}
+
+			//	octreeContainer.Dispose();
+
+			//	if( found )
+			//	{
+			//		vertices = newVertices.ToArray();
+			//		indices = newIndices.ToArray();
+			//	}
+			//}
 		}
 
 		//public static void MergeEqualVertices( ref Vec3[] vertices, double epsilon )
@@ -1989,8 +2168,74 @@ namespace NeoAxis
 				}
 			}
 
+			var newIndices = new int[ indices.Length ];
 			for( int n = 0; n < indices.Length; n++ )
-				indices[ n ] = vertexMapping[ indices[ n ] ];
+				newIndices[ n ] = vertexMapping[ indices[ n ] ];
+			indices = newIndices;
+
+			//var newVertices = new List<Vector3F>( vertices.Length );
+			//for( int n = 0; n < vertices.Length; n++ )
+			//	if( bits[ n ] )
+			//		newVertices.Add( vertices[ n ] );
+
+			//var newIndices = (int[])indices.Clone();
+			//for( int nVertex = vertices.Length - 1; nVertex >= 0; nVertex-- )
+			//{
+			//	if( !bits[ nVertex ] )
+			//	{
+			//		for( int n = 0; n < newIndices.Length; n++ )
+			//		{
+			//			if( newIndices[ n ] > nVertex )
+			//				newIndices[ n ]--;
+			//		}
+			//	}
+			//}
+
+			vertices = newVertices.ToArray();
+			//indices = newIndices;
+			return true;
+		}
+
+		/// <summary>
+		/// Original arrays will not changed.
+		/// </summary>
+		/// <param name="vertices"></param>
+		/// <param name="indices"></param>
+		/// <returns></returns>
+		public static bool RemoveUnusedVertices( ref StandardVertex[] vertices, ref int[] indices )
+		{
+			//check exists unused
+			var bits = new bool[ vertices.Length ];
+			foreach( var index in indices )
+				bits[ index ] = true;
+			bool found = false;
+			for( int n = 0; n < bits.Length; n++ )
+			{
+				if( !bits[ n ] )
+				{
+					found = true;
+					break;
+				}
+			}
+			if( !found )
+				return false;
+
+			var newVertices = new List<StandardVertex>( vertices.Length );
+			var vertexMapping = new Dictionary<int, int>( vertices.Length );
+
+			for( int n = 0; n < vertices.Length; n++ )
+			{
+				if( bits[ n ] )
+				{
+					newVertices.Add( vertices[ n ] );
+					vertexMapping[ n ] = newVertices.Count - 1;
+				}
+			}
+
+			var newIndices = new int[ indices.Length ];
+			for( int n = 0; n < indices.Length; n++ )
+				newIndices[ n ] = vertexMapping[ indices[ n ] ];
+			indices = newIndices;
 
 			//var newVertices = new List<Vector3F>( vertices.Length );
 			//for( int n = 0; n < vertices.Length; n++ )
@@ -2038,15 +2283,42 @@ namespace NeoAxis
 		/// <param name="processedVertices"></param>
 		/// <param name="processedIndices"></param>
 		/// <param name="processedTrianglesToSourceIndex"></param>
-		public static void MergeEqualVerticesRemoveInvalidTriangles( Vector3F[] sourceVertices, int[] sourceIndices, float epsilon, out Vector3F[] processedVertices, out int[] processedIndices, out int[] processedTrianglesToSourceIndex )
+		public static void MergeEqualVerticesRemoveInvalidTriangles( Vector3F[] sourceVertices, int[] sourceIndices, float emptySquareEpsilon, float positionEpsilon, out Vector3F[] processedVertices, out int[] processedIndices, out int[] processedTrianglesToSourceIndex )
 		{
 			var vertices = sourceVertices;
 			var indices = sourceIndices;
 			int[] trianglesToSourceIndex;
 
-			RemoveCollinearDegenerateTriangles( vertices, ref indices, out trianglesToSourceIndex, epsilon );
+			RemoveCollinearDegenerateTriangles( vertices, ref indices, out trianglesToSourceIndex, emptySquareEpsilon );
 			RemoveUnusedVertices( ref vertices, ref indices );
-			MergeEqualVertices( ref vertices, ref indices, epsilon, true );
+			MergeEqualVertices( ref vertices, ref indices, positionEpsilon, true );
+			CheckValidVertexIndexBuffer( vertices.Length, indices, true );
+
+			processedVertices = vertices;
+			processedIndices = indices;
+			processedTrianglesToSourceIndex = trianglesToSourceIndex;
+		}
+
+		/// <summary>
+		/// If no changes then return same arrays.
+		/// </summary>
+		/// <param name="sourceVertices"></param>
+		/// <param name="sourceIndices"></param>
+		/// <param name="epsilon"></param>
+		/// <param name="processedVertices"></param>
+		/// <param name="processedIndices"></param>
+		/// <param name="processedTrianglesToSourceIndex"></param>
+		public static void MergeEqualVerticesRemoveInvalidTriangles( StandardVertex[] sourceVertices, int[] sourceIndices, float emptySquareEpsilon, float vertexEpsilon, out StandardVertex[] processedVertices, out int[] processedIndices, out int[] processedTrianglesToSourceIndex )
+		{
+			var vertices = sourceVertices;
+			var indices = sourceIndices;
+			int[] trianglesToSourceIndex;
+
+			//!!!!optimization: use indexes of vertex data. no copy data in memory
+
+			RemoveCollinearDegenerateTriangles( vertices, ref indices, out trianglesToSourceIndex, emptySquareEpsilon );
+			RemoveUnusedVertices( ref vertices, ref indices );
+			MergeEqualVertices( ref vertices, ref indices, vertexEpsilon );//, true );
 			CheckValidVertexIndexBuffer( vertices.Length, indices, true );
 
 			processedVertices = vertices;

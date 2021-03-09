@@ -265,8 +265,15 @@ namespace NeoAxis.Editor
 		{
 			if( GetToolPosition( viewport, out var terrain, out var center ) )
 			{
-				//!!!!из опций брать
-				var color = new ColorValue( 1, 1, 0 );
+				var deleting = false;
+				if( Mode == ModeEnum.PaintPaint )
+					deleting = ( Control.ModifierKeys & Keys.Shift ) != 0;
+				if( Mode == ModeEnum.PaintClear )
+					deleting = ( Control.ModifierKeys & Keys.Shift ) == 0;
+
+				//!!!!в настройки редактора
+				var color = !deleting ? new ColorValue( 1, 1, 0 ) : new ColorValue( 1, 0, 0 );
+
 				//ColorValue color = GetCurrentToolType() == ToolTypes.Paint ? new ColorValue( 0, 1, 0 ) : new ColorValue( 1, 1, 0 );
 				viewport.Simple3DRenderer.SetColor( color, color * new ColorValue( 1, 1, 1, 0.5 ) );
 
@@ -586,7 +593,6 @@ namespace NeoAxis.Editor
 				}
 
 				var updateRectangle = new RectangleI( indexMin, indexMax );
-
 				terrain.UpdateRenderingData( updateRectangle, false, false, false );
 
 				bool foundItemForTerrain = false;

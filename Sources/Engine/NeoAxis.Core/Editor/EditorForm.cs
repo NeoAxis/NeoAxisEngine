@@ -399,7 +399,7 @@ namespace NeoAxis.Editor
 			}
 
 			//destroy all viewport controls
-			foreach( var control in EngineViewportControl.allInstances.ToArray() )
+			foreach( var control in EngineViewportControl.AllInstances.ToArray() )
 				control.Dispose();
 
 			PreviewImagesManager.Shutdown();
@@ -691,7 +691,7 @@ namespace NeoAxis.Editor
 				List<EngineViewportControl> toRender = new List<EngineViewportControl>();
 				List<EngineViewportControl> unvisible = new List<EngineViewportControl>();
 
-				foreach( var control in EngineViewportControl.allInstances )
+				foreach( var control in EngineViewportControl.AllInstances )
 				{
 					if( control.IsAllowRender() )
 					{
@@ -822,7 +822,7 @@ namespace NeoAxis.Editor
 		//}
 
 		[Browsable( false )]
-		internal WorkspaceControllerForForm WorkspaceController
+		public WorkspaceControllerForForm WorkspaceController
 		{
 			get { return workspaceController; }
 		}

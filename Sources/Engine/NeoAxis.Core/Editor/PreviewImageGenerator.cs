@@ -123,9 +123,14 @@ namespace NeoAxis.Editor
 				//!!!!что еще отключать?
 				pipeline.DeferredShading = AutoTrueFalse.False;
 				pipeline.LODRange = new RangeI( 0, 0 );
-				pipeline.UseRenderTargets = false;
+				//pipeline.UseRenderTargets = false;
 
 				scene.BackgroundColor = new ColorValue( 0, 0, 0, 0 );
+				scene.BackgroundColorAffectLighting = 1;
+				//scene.BackgroundColorAffectLighting = 0.5;
+				//scene.BackgroundColorEnvironmentOverride = new ColorValue( 0.5, 0.5, 0.5 );
+				//scene.BackgroundColorEnvironmentOverride = new ColorValue( 1, 1, 1 );
+				//scene.BackgroundColorEnvironmentOverride = new ColorValue( 0.75, 0.75, 0.75 );
 				scene.BackgroundColorEnvironmentOverride = new ColorValue( 0.8, 0.8, 0.8 );
 				//scene.BackgroundColorEnvironmentOverride = new ColorValue( 0, 0, 0, 0 );
 
@@ -266,6 +271,12 @@ namespace NeoAxis.Editor
 			cameraDistance = distance;
 
 			//gridHeight = bounds.Minimum.Z - .01f;
+		}
+
+		public Vector3 CameraLookTo
+		{
+			get { return cameraLookTo; }
+			set { cameraLookTo = value; }
 		}
 
 		public double CameraDistance

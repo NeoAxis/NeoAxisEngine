@@ -22,13 +22,13 @@ namespace NeoAxis
 		static Uniform? u_reflectionProbeData;
 		static Uniform? u_environmentTextureRotation;
 		static Uniform? u_environmentTextureIBLRotation;
-		static Uniform? u_environmentTextureMultiplier;
-		static Uniform? u_environmentTextureIBLMultiplier;
+		static Uniform? u_environmentTextureMultiplierAndAffect;
+		static Uniform? u_environmentTextureIBLMultiplierAndAffect;
 
 		static Uniform? u_environmentTexture1Rotation;
 		static Uniform? u_environmentTexture2Rotation;
-		static Uniform? u_environmentTexture1Multiplier;
-		static Uniform? u_environmentTexture2Multiplier;
+		static Uniform? u_environmentTexture1MultiplierAndAffect;
+		static Uniform? u_environmentTexture2MultiplierAndAffect;
 		static Uniform? u_environmentBlendingFactor;
 
 		static Uniform? u_renderOperationData;
@@ -141,7 +141,7 @@ namespace NeoAxis
 			public struct MeshItem
 			{
 				public FlagsEnum Flags;
-				public float DistanceToCamera;
+				public float DistanceToCameraSquared;
 				public int PointSpotLightCount;
 				public unsafe fixed int PointSpotLightsFixed[ 6 ];
 				public List<int> PointSpotLightsMore;
@@ -231,7 +231,7 @@ namespace NeoAxis
 			public struct BillboardItem
 			{
 				public FlagsEnum Flags;
-				public float DistanceToCamera;
+				public float DistanceToCameraSquared;
 				public int PointSpotLightCount;
 				public unsafe fixed int PointSpotLightsFixed[ 6 ];
 				public List<int> PointSpotLightsMore;
@@ -342,7 +342,7 @@ namespace NeoAxis
 
 					//!!!!так?
 					//meshItem.BoundingBoxCenter.GetCenter( out var center );
-					data.DistanceToCamera = (float)( meshItem.BoundingBoxCenter - cameraPosition ).Length();
+					data.DistanceToCameraSquared = (float)( meshItem.BoundingBoxCenter - cameraPosition ).LengthSquared();
 
 					//Flags
 					bool lit = false;
@@ -387,7 +387,7 @@ namespace NeoAxis
 
 						foreach( var layer in meshItem.Layers )
 						{
-							var materialData = layer.Material?.Result;
+							var materialData = layer.Material;//?.Result;
 							if( materialData == null )
 								materialData = ResourceUtility.MaterialNull.Result;
 
@@ -444,7 +444,7 @@ namespace NeoAxis
 					//data2.BoundingBox.GetCenter( out var center );
 
 					var data = new BillboardItem();
-					data.DistanceToCamera = (float)( data2.BoundingBoxCenter - cameraPosition ).Length();
+					data.DistanceToCameraSquared = (float)( data2.BoundingBoxCenter - cameraPosition ).LengthSquared();
 
 					//Flags
 					bool lit = false;
@@ -544,7 +544,7 @@ namespace NeoAxis
 				AddItems( context, 0, 0, 0, 0, lights, lights2, 0, 0, 0, 0, false );
 			}
 
-			public int RegisterObjectInSpace( ViewportRenderingContext context, Component_ObjectInSpace objectInSpace, GetRenderSceneDataMode mode )
+			public int RegisterObjectInSpace( ViewportRenderingContext context, Component_ObjectInSpace objectInSpace, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 			{
 				if( ComponentsHidePublic.GetRenderSceneIndex( objectInSpace ) == -1 )
 				{
@@ -554,7 +554,7 @@ namespace NeoAxis
 					int reflectionProbes = RenderSceneData.ReflectionProbes.Count;
 					int decals = RenderSceneData.Decals.Count;
 
-					ComponentsHidePublic.PerformGetRenderSceneData( objectInSpace, context, mode );
+					ComponentsHidePublic.PerformGetRenderSceneData( objectInSpace, context, mode, modeGetObjectsItem );
 
 					int meshes2 = RenderSceneData.Meshes.Count;
 					int billboards2 = RenderSceneData.Billboards.Count;
@@ -610,14 +610,14 @@ namespace NeoAxis
 				//objectInSpaceData = ObjectInSpaceData[ objectInSpace._InternalRenderSceneIndex ];
 			}
 
-			public float GetObjectGroupDistanceToCamera( ref Vector2I index )
+			public float GetObjectGroupDistanceToCameraSquared( ref Vector2I index )
 			{
 				switch( index.X )
 				{
-				case 0: return Meshes.Data[ index.Y ].DistanceToCamera;
-				case 1: return Billboards.Data[ index.Y ].DistanceToCamera;
-				case 2: return Lights[ index.Y ].distanceToCamera;
-				case 3: return ReflectionProbes[ index.Y ].distanceToCamera;
+				case 0: return Meshes.Data[ index.Y ].DistanceToCameraSquared;
+				case 1: return Billboards.Data[ index.Y ].DistanceToCameraSquared;
+				case 2: return Lights[ index.Y ].distanceToCameraSquared;
+				case 3: return ReflectionProbes[ index.Y ].distanceToCameraSquared;
 				}
 				return 0;
 			}
@@ -694,7 +694,7 @@ namespace NeoAxis
 			public RenderSceneData.LightItem data;
 
 			//precalculated data
-			public float distanceToCamera;
+			public float distanceToCameraSquared;
 
 			//shadows
 			public bool prepareShadows;
@@ -793,9 +793,9 @@ namespace NeoAxis
 				this.data = data;
 
 				if( data.Type == Component_Light.TypeEnum.Directional )
-					distanceToCamera = 10000000.0f;
+					distanceToCameraSquared = 10000000000.0f;
 				else //if( data.transform != null )
-					distanceToCamera = (float)( context.Owner.CameraSettings.Position - data.Position ).Length();
+					distanceToCameraSquared = (float)( context.Owner.CameraSettings.Position - data.Position ).LengthSquared();
 			}
 
 			//!!!!
@@ -1151,7 +1151,7 @@ namespace NeoAxis
 		public class ReflectionProbeItem
 		{
 			public RenderSceneData.ReflectionProbeItem data;
-			public float distanceToCamera;
+			public float distanceToCameraSquared;
 
 			////uniforms
 			////public static Uniform reflectionProbeDataVertexUniform;
@@ -1193,7 +1193,7 @@ namespace NeoAxis
 			public ReflectionProbeItem( RenderSceneData.ReflectionProbeItem data, ViewportRenderingContext context )
 			{
 				this.data = data;
-				distanceToCamera = (float)( context.Owner.CameraSettings.Position - data.Sphere.Origin ).Length();
+				distanceToCameraSquared = (float)( context.Owner.CameraSettings.Position - data.Sphere.Origin ).LengthSquared();
 
 				if( data.Sphere.Radius <= 0 )
 					Log.Fatal( "Component_RenderingPipeline_Basic: ReflectionProbeItem: Constructor: data.Sphere.Radius <= 0." );
@@ -1648,7 +1648,7 @@ namespace NeoAxis
 			var ambientDirectionalLights = new List<Component_Light>();
 			foreach( var c in scene.CachedObjectsInSpaceToFastFindByRenderingPipeline )//scene.GetComponents( false, true, true, delegate ( Component c )
 			{
-				if( c is Component_Sky sky )
+				if( c is Component_Sky sky && viewportOwner.CameraSettings.RenderSky )
 				{
 					if( frameData.Sky == null )
 						frameData.Sky = sky;
@@ -1672,28 +1672,30 @@ namespace NeoAxis
 			//Component_Scene.GetRenderSceneData
 			frameData.SceneGetRenderSceneData( context, scene );
 
-			//add ambient, directional lights
-			foreach( var light in ambientDirectionalLights )
-				frameData.RegisterObjectInSpace( context, light, GetRenderSceneDataMode.InsideFrustum );
-
-			//get visible objects
 			{
-				//!!!!фильтры. еще что-то. может группы в octree юзать
-
 				var cameraFrustum = viewportOwner.CameraSettings.Frustum;
-
 				var getObjectsItem = new Component_Scene.GetObjectsInSpaceItem( Component_Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, cameraFrustum );
-				scene.GetObjectsInSpace( getObjectsItem );
 
-				for( int nObject = 0; nObject < getObjectsItem.Result.Length; nObject++ )
+				//add ambient, directional lights
+				foreach( var light in ambientDirectionalLights )
+					frameData.RegisterObjectInSpace( context, light, GetRenderSceneDataMode.InsideFrustum, getObjectsItem );
+
+				//get visible objects
 				{
-					var obj = getObjectsItem.Result[ nObject ].Object;
-					if( obj.EnabledInHierarchy && obj.VisibleInHierarchy )
-					{
-						//if( ComponentsHidePublic.GetRenderSceneIndex( obj ) != -1 )
-						//	Log.Fatal( "Component_RenderingPipeline_Render: PrepareListOfObjects: obj._internalRenderSceneIndex != -1." );
+					//!!!!фильтры. еще что-то. может группы в octree юзать
 
-						var objIndex = frameData.RegisterObjectInSpace( context, obj, GetRenderSceneDataMode.InsideFrustum );
+					scene.GetObjectsInSpace( getObjectsItem );
+
+					for( int nObject = 0; nObject < getObjectsItem.Result.Length; nObject++ )
+					{
+						var obj = getObjectsItem.Result[ nObject ].Object;
+						if( obj.EnabledInHierarchy && obj.VisibleInHierarchy )
+						{
+							//if( ComponentsHidePublic.GetRenderSceneIndex( obj ) != -1 )
+							//	Log.Fatal( "Component_RenderingPipeline_Render: PrepareListOfObjects: obj._internalRenderSceneIndex != -1." );
+
+							var objIndex = frameData.RegisterObjectInSpace( context, obj, GetRenderSceneDataMode.InsideFrustum, getObjectsItem );
+						}
 					}
 				}
 			}
@@ -1747,9 +1749,9 @@ namespace NeoAxis
 						return -1;
 					if( (int)light1.data.Type > (int)light2.data.Type )
 						return 1;
-					if( light1.distanceToCamera < light2.distanceToCamera )
+					if( light1.distanceToCameraSquared < light2.distanceToCameraSquared )
 						return -1;
-					if( light1.distanceToCamera > light2.distanceToCamera )
+					if( light1.distanceToCameraSquared > light2.distanceToCameraSquared )
 						return 1;
 					return 0;
 				} );
@@ -1966,6 +1968,7 @@ namespace NeoAxis
 										//if( !cascadeFrustum.Intersects( box ) )
 										//	continue;
 									}
+
 								}
 
 								Parallel.For( 0, objectsData.Length, Calculate );
@@ -1979,7 +1982,7 @@ namespace NeoAxis
 									{
 										var obj = getObjectsItem.Result[ nObject ].Object;
 
-										var objIndex = frameData.RegisterObjectInSpace( context, obj, GetRenderSceneDataMode.ShadowCasterOutsideFrustum );
+										var objIndex = frameData.RegisterObjectInSpace( context, obj, GetRenderSceneDataMode.ShadowCasterOutsideFrustum, getObjectsItem );
 										ref var data = ref frameData.ObjectInSpaces.Data[ objIndex ];
 
 										if( data.ContainsData )
@@ -2130,7 +2133,7 @@ namespace NeoAxis
 							var obj = getObjectsItem.Result[ nObject ].Object;
 							if( obj.VisibleInHierarchy )
 							{
-								var objIndex = frameData.RegisterObjectInSpace( context, obj, GetRenderSceneDataMode.ShadowCasterOutsideFrustum );//, false );
+								var objIndex = frameData.RegisterObjectInSpace( context, obj, GetRenderSceneDataMode.ShadowCasterOutsideFrustum, getObjectsItem );//, false );
 								ref var data = ref frameData.ObjectInSpaces.Data[ objIndex ];
 
 								if( data.ContainsData )
@@ -2205,7 +2208,7 @@ namespace NeoAxis
 							var obj = getObjectsItem.Result[ nObject ].Object;
 							if( obj.VisibleInHierarchy )
 							{
-								var objIndex = frameData.RegisterObjectInSpace( context, obj, GetRenderSceneDataMode.ShadowCasterOutsideFrustum );//, false );
+								var objIndex = frameData.RegisterObjectInSpace( context, obj, GetRenderSceneDataMode.ShadowCasterOutsideFrustum, getObjectsItem );//, false );
 								ref var data = ref frameData.ObjectInSpaces.Data[ objIndex ];
 
 								if( data.ContainsData )
@@ -2322,13 +2325,14 @@ namespace NeoAxis
 				context.SetIndexBuffer( indexBuffer, op.IndexStartOffset, op.IndexCount );
 		}
 
-		public void RenderOperation( ViewportRenderingContext context, RenderSceneData.MeshDataRenderOperation op, GpuMaterialPass pass, List<ParameterContainer> parameterContainers, GpuVertexBuffer instanceBuffer = null, int instanceCount = -1 )
+		public void RenderOperation( ViewportRenderingContext context, RenderSceneData.MeshDataRenderOperation op, GpuMaterialPass pass, List<ParameterContainer> parameterContainers, RenderSceneData.CutVolumeItem[] cutVolumes = null, GpuVertexBuffer instanceBuffer = null, int instanceCount = -1 )
 		{
 			if( ContainsDisposedVertexIndexBuffers( op ) )
 				return;
 			if( instanceBuffer != null && instanceBuffer.Disposed )
 				return;
 
+			SetCutVolumeSettingsUniforms( context, cutVolumes, false );
 			SetVertexIndexBuffers( context, op );
 
 			if( instanceBuffer != null )
@@ -2347,11 +2351,12 @@ namespace NeoAxis
 			}
 		}
 
-		public void RenderOperation( ViewportRenderingContext context, RenderSceneData.MeshDataRenderOperation op, GpuMaterialPass pass, List<ParameterContainer> parameterContainers, ref InstanceDataBuffer instanceBuffer, int instanceCount )
+		public void RenderOperation( ViewportRenderingContext context, RenderSceneData.MeshDataRenderOperation op, GpuMaterialPass pass, List<ParameterContainer> parameterContainers, RenderSceneData.CutVolumeItem[] cutVolumes, ref InstanceDataBuffer instanceBuffer, int instanceCount )
 		{
 			if( ContainsDisposedVertexIndexBuffers( op ) )
 				return;
 
+			SetCutVolumeSettingsUniforms( context, cutVolumes, false );
 			SetVertexIndexBuffers( context, op );
 			Bgfx.SetInstanceDataBuffer( ref instanceBuffer, 0, instanceCount );
 			context.SetPassAndSubmit( pass, RenderOperationType.TriangleList, parameterContainers );
@@ -2416,7 +2421,7 @@ namespace NeoAxis
 			return material;
 		}
 
-		static Component_Material.CompiledMaterialData GetMeshMaterialData( ref RenderSceneData.MeshItem meshItem, RenderSceneData.MeshDataRenderOperation operation, int operationIndex, bool materialDataMustBePrepared )
+		public static Component_Material.CompiledMaterialData GetMeshMaterialData( ref RenderSceneData.MeshItem meshItem, RenderSceneData.MeshDataRenderOperation operation, int operationIndex, bool materialDataMustBePrepared )
 		{
 			var materialData = GetMeshMaterial2( ref meshItem, operation, operationIndex )?.Result;
 
@@ -2467,7 +2472,7 @@ namespace NeoAxis
 			return billboardItem.Material;
 		}
 
-		static Component_Material.CompiledMaterialData GetBillboardMaterialData( ref RenderSceneData.BillboardItem billboardItem, bool materialDataMustBePrepared )
+		public static Component_Material.CompiledMaterialData GetBillboardMaterialData( ref RenderSceneData.BillboardItem billboardItem, bool materialDataMustBePrepared )
 		{
 			var materialData = GetBillboardMaterial2( ref billboardItem )?.Result;
 
@@ -2510,14 +2515,14 @@ namespace NeoAxis
 			return materialData;
 		}
 
-		static Component_Material GetLayerMaterial2( ref RenderSceneData.LayerItem layerItem )
+		static Component_Material.CompiledMaterialData GetLayerMaterial2( ref RenderSceneData.LayerItem layerItem )
 		{
 			return layerItem.Material;
 		}
 
 		static Component_Material.CompiledMaterialData GetLayerMaterialData( ref RenderSceneData.LayerItem layerItem, bool materialDataMustBePrepared )
 		{
-			var materialData = GetLayerMaterial2( ref layerItem )?.Result;
+			var materialData = GetLayerMaterial2( ref layerItem );//?.Result;
 
 			//check for updated during rendering frame
 			if( materialData != null && materialDataMustBePrepared && materialData.currentFrameIndex == -1 )
@@ -2985,7 +2990,8 @@ namespace NeoAxis
 										if( materialData.specialShadowCasterData == null )
 											materialData = ResourceUtility.MaterialNull.Result;
 
-										bool instancing = Instancing && meshItem.AnimationData == null && meshItem.BatchingInstanceBuffer == null && meshItem.LODValue == 0;
+										bool instancing = Instancing && meshItem.AnimationData == null && meshItem.BatchingInstanceBuffer == null && meshItem.CutVolumes == null;
+
 										outputInstancingManager.Add( renderableGroup, nOperation, oper, materialData, instancing );
 									}
 								}
@@ -3005,7 +3011,8 @@ namespace NeoAxis
 											materialData = ResourceUtility.MaterialNull.Result;
 
 										//!!!!или если уже собран из GroupOfObjects
-										bool instancing = Instancing && billboardItem.LODValue == 0;
+
+										bool instancing = Instancing && billboardItem.CutVolumes == null;
 										outputInstancingManager.Add( renderableGroup, nOperation, oper, materialData, instancing );
 									}
 								}
@@ -3040,8 +3047,7 @@ namespace NeoAxis
 										{
 											bool materialWasChanged = materialBinded != materialData;
 											materialBinded = materialData;
-											//!!!!не биндить текстуры если тот же материал
-											materialData.BindCurrentFrameData( context, true, materialWasChanged, true );
+											materialData.BindCurrentFrameData( context, true, materialWasChanged );
 										}
 
 										//bind operation data
@@ -3052,7 +3058,7 @@ namespace NeoAxis
 											ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ firstRenderableItem.Y ];
 											var meshData = meshItem.MeshData;
 
-											BindRenderOperationData( context, frameData, specialShadowCasterData != null ? materialData : null, true, meshItem.AnimationData, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, outputItem.operation.UnwrappedUV, ref meshItem.Color, outputItem.operation.VertexStructureContainsColor, false );
+											BindRenderOperationData( context, frameData, specialShadowCasterData != null ? materialData : null, true, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, outputItem.operation.UnwrappedUV, ref meshItem.Color, outputItem.operation.VertexStructureContainsColor, false, meshItem.VisibilityDistance );
 										}
 										else if( firstRenderableItem.X == 1 )
 										{
@@ -3060,11 +3066,11 @@ namespace NeoAxis
 											ref var billboardItem = ref frameData.RenderSceneData.Billboards.Data[ firstRenderableItem.Y ];
 											var meshData = Component_Billboard.GetBillboardMesh().Result.MeshData;
 
-											BindRenderOperationData( context, frameData, specialShadowCasterData != null ? materialData : null, true, null, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, billboardItem.LODValue, outputItem.operation.UnwrappedUV, ref billboardItem.Color, outputItem.operation.VertexStructureContainsColor, false );
+											BindRenderOperationData( context, frameData, specialShadowCasterData != null ? materialData : null, true, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, 0, outputItem.operation.UnwrappedUV, ref billboardItem.Color, outputItem.operation.VertexStructureContainsColor, false, billboardItem.VisibilityDistance );
 										}
 
 										//no sense to use RenderSceneData.InstancingObjectData
-										int instanceStride = sizeof( Matrix3x4F );
+										int instanceStride = sizeof( RenderSceneData.ObjectInstanceData );
 										int instanceCount = outputItem.renderableItemsCount;
 
 										if( InstanceDataBuffer.GetAvailableSpace( instanceCount, instanceStride ) == instanceCount )
@@ -3072,7 +3078,7 @@ namespace NeoAxis
 											var instanceBuffer = new InstanceDataBuffer( instanceCount, instanceStride );
 
 											//get instancing matrices
-											Matrix3x4F* pMatrices = (Matrix3x4F*)instanceBuffer.Data;
+											RenderSceneData.ObjectInstanceData* instancingData = (RenderSceneData.ObjectInstanceData*)instanceBuffer.Data;
 											int currentMatrix = 0;
 											for( int nRenderableItem = 0; nRenderableItem < instanceCount; nRenderableItem++ )
 											{
@@ -3082,17 +3088,17 @@ namespace NeoAxis
 												{
 													//meshes
 													ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ renderableItem.Y ];
-													meshItem.Transform.GetTranspose( out pMatrices[ currentMatrix++ ] );
+													meshItem.GetInstancingData( out instancingData[ currentMatrix++ ] );
 												}
 												else if( renderableItem.X == 1 )
 												{
 													//billboards
 													ref var billboardItem = ref frameData.RenderSceneData.Billboards.Data[ renderableItem.Y ];
-													billboardItem.GetWorldMatrixTranspose( out pMatrices[ currentMatrix++ ] );
+													billboardItem.GetInstancingData( out instancingData[ currentMatrix++ ] );
 												}
 											}
 
-											RenderOperation( context, outputItem.operation, pass, null, ref instanceBuffer, instanceCount );
+											RenderOperation( context, outputItem.operation, pass, null, null, ref instanceBuffer, instanceCount );
 										}
 										//else
 										//	Log.Fatal( "InstanceDataBuffer.GetAvailableSpace( instanceCount, instanceStride ) != instanceCount." );
@@ -3114,8 +3120,7 @@ namespace NeoAxis
 											{
 												bool materialWasChanged = materialBinded != materialData;
 												materialBinded = materialData;
-												//!!!!не биндить текстуры если тот же материал
-												materialData.BindCurrentFrameData( context, true, materialWasChanged && nRenderableItem == 0, true );
+												materialData.BindCurrentFrameData( context, true, materialWasChanged && nRenderableItem == 0 );
 											}
 
 											//bind render operation data, set matrix
@@ -3127,13 +3132,13 @@ namespace NeoAxis
 
 												var batchInstancing = meshItem.BatchingInstanceBuffer != null;
 
-												BindRenderOperationData( context, frameData, specialShadowCasterData != null ? materialData : null, batchInstancing, meshItem.AnimationData, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, outputItem.operation.UnwrappedUV, ref meshItem.Color, outputItem.operation.VertexStructureContainsColor, false );
+												BindRenderOperationData( context, frameData, specialShadowCasterData != null ? materialData : null, batchInstancing, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, outputItem.operation.UnwrappedUV, ref meshItem.Color, outputItem.operation.VertexStructureContainsColor, false, meshItem.VisibilityDistance );
 
 												if( !batchInstancing )
 													fixed( Matrix4F* p = &meshItem.Transform )
 														Bgfx.SetTransform( (float*)p );
 
-												RenderOperation( context, outputItem.operation, pass, null, meshItem.BatchingInstanceBuffer );
+												RenderOperation( context, outputItem.operation, pass, null, meshItem.CutVolumes, meshItem.BatchingInstanceBuffer );
 											}
 											else if( renderableItem.X == 1 )
 											{
@@ -3141,12 +3146,12 @@ namespace NeoAxis
 												ref var billboardItem = ref frameData.RenderSceneData.Billboards.Data[ renderableItem.Y ];
 												var meshData = Component_Billboard.GetBillboardMesh().Result.MeshData;
 
-												BindRenderOperationData( context, frameData, specialShadowCasterData != null ? materialData : null, false, null, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, billboardItem.LODValue, outputItem.operation.UnwrappedUV, ref billboardItem.Color, outputItem.operation.VertexStructureContainsColor, false );
+												BindRenderOperationData( context, frameData, specialShadowCasterData != null ? materialData : null, false, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, 0, outputItem.operation.UnwrappedUV, ref billboardItem.Color, outputItem.operation.VertexStructureContainsColor, false, billboardItem.VisibilityDistance );
 
 												billboardItem.GetWorldMatrix( out var worldMatrix );
 												Bgfx.SetTransform( (float*)&worldMatrix );
 
-												RenderOperation( context, outputItem.operation, pass, null );
+												RenderOperation( context, outputItem.operation, pass, null, billboardItem.CutVolumes );
 											}
 										}
 									}
@@ -3200,7 +3205,6 @@ namespace NeoAxis
 					//					bool materialWasChanged = materialBinded != materialData;
 					//					materialBinded = materialData;
 
-					//					//!!!!не биндить текстуры если тот же материал
 					//					materialData.BindCurrentFrameData( context, true, materialWasChanged, true );
 					//				}
 
@@ -3248,7 +3252,6 @@ namespace NeoAxis
 					//					bool materialWasChanged = materialBinded != materialData;
 					//					materialBinded = materialData;
 
-					//					//!!!!не биндить текстуры если тот же материал
 					//					materialData.BindCurrentFrameData( context, true, materialWasChanged, true );
 					//				}
 
@@ -3311,11 +3314,11 @@ namespace NeoAxis
 			//sort by distance
 			CollectionUtility.MergeSort( renderableGroupsToDraw, delegate ( Vector2I a, Vector2I b )
 			{
-				var distanceA = frameData.GetObjectGroupDistanceToCamera( ref a );
-				var distanceB = frameData.GetObjectGroupDistanceToCamera( ref b );
-				if( distanceA < distanceB )
+				var distanceASquared = frameData.GetObjectGroupDistanceToCameraSquared( ref a );
+				var distanceBSquared = frameData.GetObjectGroupDistanceToCameraSquared( ref b );
+				if( distanceASquared < distanceBSquared )
 					return -1;
-				if( distanceA > distanceB )
+				if( distanceASquared > distanceBSquared )
 					return 1;
 				return 0;
 			}, true );
@@ -3342,15 +3345,18 @@ namespace NeoAxis
 							ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ renderableGroup.Y ];
 							var meshData = meshItem.MeshData;
 
-							for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
+							if( !meshItem.OnlyForShadowGeneration )
 							{
-								var oper = meshData.RenderOperations[ nOperation ];
-
-								var materialData = GetMeshMaterialData( ref meshItem, oper, nOperation, true );
-								if( materialData.deferredShadingSupport )
+								for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
 								{
-									bool instancing = Instancing && meshItem.AnimationData == null && meshItem.BatchingInstanceBuffer == null && meshItem.LODValue == 0;
-									outputInstancingManager.Add( renderableGroup, nOperation, oper, materialData, instancing );
+									var oper = meshData.RenderOperations[ nOperation ];
+
+									var materialData = GetMeshMaterialData( ref meshItem, oper, nOperation, true );
+									if( materialData.deferredShadingSupport )
+									{
+										bool instancing = Instancing && meshItem.AnimationData == null && meshItem.BatchingInstanceBuffer == null && meshItem.CutVolumes == null;
+										outputInstancingManager.Add( renderableGroup, nOperation, oper, materialData, instancing );
+									}
 								}
 							}
 						}
@@ -3368,8 +3374,7 @@ namespace NeoAxis
 								var materialData = GetBillboardMaterialData( ref billboardItem, true );
 								if( materialData.deferredShadingSupport )
 								{
-									//!!!!или если уже собран из GroupOfObjects
-									bool instancing = Instancing && billboardItem.LODValue == 0;
+									bool instancing = Instancing && billboardItem.CutVolumes == null;
 									outputInstancingManager.Add( renderableGroup, nOperation, oper, materialData, instancing );
 								}
 							}
@@ -3398,8 +3403,7 @@ namespace NeoAxis
 								//with instancing
 
 								//bind material data
-								//!!!!не биндить текстуры если тот же материал
-								materialData.BindCurrentFrameData( context, false, materialWasChanged, true );
+								materialData.BindCurrentFrameData( context, false, materialWasChanged );
 
 								//bind operation data
 								var firstRenderableItem = outputItem.renderableItemFirst;
@@ -3409,7 +3413,7 @@ namespace NeoAxis
 									ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ firstRenderableItem.Y ];
 									var meshData = meshItem.MeshData;
 
-									BindRenderOperationData( context, frameData, materialData, true, meshItem.AnimationData, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, outputItem.operation.UnwrappedUV, ref meshItem.Color, outputItem.operation.VertexStructureContainsColor, false );
+									BindRenderOperationData( context, frameData, materialData, true, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, outputItem.operation.UnwrappedUV, ref meshItem.Color, outputItem.operation.VertexStructureContainsColor, false, meshItem.VisibilityDistance );
 								}
 								else if( firstRenderableItem.X == 1 )
 								{
@@ -3417,7 +3421,7 @@ namespace NeoAxis
 									ref var billboardItem = ref frameData.RenderSceneData.Billboards.Data[ firstRenderableItem.Y ];
 									var meshData = Component_Billboard.GetBillboardMesh().Result.MeshData;
 
-									BindRenderOperationData( context, frameData, materialData, true, null, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, billboardItem.LODValue, outputItem.operation.UnwrappedUV, ref billboardItem.Color, outputItem.operation.VertexStructureContainsColor, false );
+									BindRenderOperationData( context, frameData, materialData, true, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, 0, outputItem.operation.UnwrappedUV, ref billboardItem.Color, outputItem.operation.VertexStructureContainsColor, false, billboardItem.VisibilityDistance );
 								}
 
 								int instanceStride = sizeof( RenderSceneData.ObjectInstanceData );
@@ -3448,7 +3452,7 @@ namespace NeoAxis
 										}
 									}
 
-									RenderOperation( context, outputItem.operation, pass, null, ref instanceBuffer, instanceCount );
+									RenderOperation( context, outputItem.operation, pass, null, null, ref instanceBuffer, instanceCount );
 								}
 								//else
 								//	Log.Fatal( "InstanceDataBuffer.GetAvailableSpace( instanceCount, instanceStride ) != instanceCount." );
@@ -3466,8 +3470,7 @@ namespace NeoAxis
 										renderableItem = outputItem.renderableItemFirst;
 
 									//bind material data
-									//!!!!не биндить текстуры если тот же материал
-									materialData.BindCurrentFrameData( context, false, materialWasChanged && nRenderableItem == 0, true );
+									materialData.BindCurrentFrameData( context, false, materialWasChanged && nRenderableItem == 0 );
 
 									//bind render operation data, set matrix
 									if( renderableItem.X == 0 )
@@ -3478,13 +3481,13 @@ namespace NeoAxis
 
 										var batchInstancing = meshItem.BatchingInstanceBuffer != null;
 
-										BindRenderOperationData( context, frameData, materialData, batchInstancing, meshItem.AnimationData, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, outputItem.operation.UnwrappedUV, ref meshItem.Color, outputItem.operation.VertexStructureContainsColor, false );
+										BindRenderOperationData( context, frameData, materialData, batchInstancing, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, outputItem.operation.UnwrappedUV, ref meshItem.Color, outputItem.operation.VertexStructureContainsColor, false, meshItem.VisibilityDistance );
 
 										if( !batchInstancing )
 											fixed( Matrix4F* p = &meshItem.Transform )
 												Bgfx.SetTransform( (float*)p );
 
-										RenderOperation( context, outputItem.operation, pass, null, meshItem.BatchingInstanceBuffer );
+										RenderOperation( context, outputItem.operation, pass, null, meshItem.CutVolumes, meshItem.BatchingInstanceBuffer );
 									}
 									else if( renderableItem.X == 1 )
 									{
@@ -3492,12 +3495,12 @@ namespace NeoAxis
 										ref var billboardItem = ref frameData.RenderSceneData.Billboards.Data[ renderableItem.Y ];
 										var meshData = Component_Billboard.GetBillboardMesh().Result.MeshData;
 
-										BindRenderOperationData( context, frameData, materialData, false, null, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, billboardItem.LODValue, outputItem.operation.UnwrappedUV, ref billboardItem.Color, outputItem.operation.VertexStructureContainsColor, false );
+										BindRenderOperationData( context, frameData, materialData, false, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, 0, outputItem.operation.UnwrappedUV, ref billboardItem.Color, outputItem.operation.VertexStructureContainsColor, false, billboardItem.VisibilityDistance );
 
 										billboardItem.GetWorldMatrix( out var worldMatrix );
 										Bgfx.SetTransform( (float*)&worldMatrix );
 
-										RenderOperation( context, outputItem.operation, pass, null );
+										RenderOperation( context, outputItem.operation, pass, null, billboardItem.CutVolumes );
 									}
 								}
 							}
@@ -3540,7 +3543,7 @@ namespace NeoAxis
 										materialBinded = materialData;
 
 										//bind material data
-										materialData.BindCurrentFrameData( context, false, materialWasChanged, true );
+										materialData.BindCurrentFrameData( context, false, materialWasChanged );
 										materialData.BindCurrentFrameData_MaskTextures( context, layer.Mask );
 
 										if( !batchInstancing )
@@ -3553,9 +3556,9 @@ namespace NeoAxis
 										{
 											var oper = meshData.RenderOperations[ nOperation ];
 
-											BindRenderOperationData( context, frameData, materialData, batchInstancing, meshItem.AnimationData, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, oper.UnwrappedUV, ref color, oper.VertexStructureContainsColor, true );
+											BindRenderOperationData( context, frameData, materialData, batchInstancing, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, oper.UnwrappedUV, ref color, oper.VertexStructureContainsColor, true, meshItem.VisibilityDistance );
 
-											RenderOperation( context, oper, materialData.deferredShadingPass, null, meshItem.BatchingInstanceBuffer );
+											RenderOperation( context, oper, materialData.deferredShadingPass, null, meshItem.CutVolumes, meshItem.BatchingInstanceBuffer );
 										}
 									}
 								}
@@ -3591,7 +3594,6 @@ namespace NeoAxis
 			//				bool materialWasChanged = materialBinded != materialData;
 			//				materialBinded = materialData;
 
-			//				//!!!!не биндить текстуры если тот же материал
 			//				materialData.BindCurrentFrameData( context, false, materialWasChanged, true );
 
 			//				//!!!!
@@ -3671,7 +3673,6 @@ namespace NeoAxis
 			//						bool materialWasChanged = materialBinded != materialData;
 			//						materialBinded = materialData;
 
-			//						//!!!!не биндить текстуры если тот же материал
 			//						materialData.BindCurrentFrameData( context, false, materialWasChanged, true );
 
 			//						BindRenderOperationData( context, frameData, materialData, false, meshItem.AnimationData, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius );
@@ -3707,7 +3708,6 @@ namespace NeoAxis
 			//						bool materialWasChanged = materialBinded != materialData;
 			//						materialBinded = materialData;
 
-			//						//!!!!не биндить текстуры если тот же материал
 			//						materialData.BindCurrentFrameData( context, false, materialWasChanged, true );
 
 			//						BindRenderOperationData( context, frameData, materialData, false, null, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius );
@@ -3763,7 +3763,6 @@ namespace NeoAxis
 			//					bool materialWasChanged = materialBinded != materialData;
 			//					materialBinded = materialData;
 
-			//					//!!!!не биндить текстуры если тот же материал
 			//					materialData.BindCurrentFrameData( context, false, materialWasChanged, true );
 
 			//					BindRenderOperationData( context, frameData, materialData, false, meshItem.AnimationData, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius );
@@ -3805,7 +3804,6 @@ namespace NeoAxis
 			//					bool materialWasChanged = materialBinded != materialData;
 			//					materialBinded = materialData;
 
-			//					//!!!!не биндить текстуры если тот же материал
 			//					materialData.BindCurrentFrameData( context, false, materialWasChanged, true );
 
 			//					BindRenderOperationData( context, frameData, materialData, false, null, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius );
@@ -3829,7 +3827,7 @@ namespace NeoAxis
 			decalMesh.Enabled = true;
 		}
 
-		public unsafe virtual void RenderDecalsDeferred( ViewportRenderingContext context, FrameData frameData, Component_Image depthTexture, Component_Image gBuffer1TextureCopy, Component_Image gBuffer4TextureCopy )
+		public unsafe virtual void RenderDecalsDeferred( ViewportRenderingContext context, FrameData frameData, Component_Image depthTexture, Component_Image gBuffer1TextureCopy, Component_Image gBuffer4TextureCopy, Component_Image gBuffer5TextureCopy )
 		{
 			if( frameData.Decals.Count == 0 )
 				return;
@@ -3889,14 +3887,13 @@ namespace NeoAxis
 						materialBinded = materialData;
 
 						//bind material data
-						//!!!!не биндить текстуры если тот же материал
-						materialData.BindCurrentFrameData( context, false, materialWasChanged, true );
+						materialData.BindCurrentFrameData( context, false, materialWasChanged );
 
 						//var receiveAnotherDecals = true;
 
 						var zeroVector = Vector3F.Zero;
 
-						BindRenderOperationData( context, frameData, materialData, false, null, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius, false/*receiveAnotherDecals*/, ref zeroVector, 0, oper.UnwrappedUV, ref decalData.Color, oper.VertexStructureContainsColor, false );
+						BindRenderOperationData( context, frameData, materialData, false, null, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, false/*receiveAnotherDecals*/, ref zeroVector, 0, oper.UnwrappedUV, ref decalData.Color, oper.VertexStructureContainsColor, false, decalData.VisibilityDistance );
 
 						//!!!!double
 
@@ -3945,8 +3942,9 @@ namespace NeoAxis
 						context.BindTexture( new ViewportRenderingContext.BindTextureData( 2/* "depthTexture"*/, depthTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
 						context.BindTexture( new ViewportRenderingContext.BindTextureData( 3/* "gBuffer1TextureCopy"*/, gBuffer1TextureCopy, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
 						context.BindTexture( new ViewportRenderingContext.BindTextureData( 4/* "gBuffer4TextureCopy"*/, gBuffer4TextureCopy, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+						context.BindTexture( new ViewportRenderingContext.BindTextureData( 5/* "gBuffer5TextureCopy"*/, gBuffer5TextureCopy, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
 
-						RenderOperation( context, oper, pass, null );
+						RenderOperation( context, oper, pass, null, null );
 
 						////!!!!или если уже собран из GroupOfObjects
 						//bool instancing = Instancing && meshItem.AnimationData == null;
@@ -4106,10 +4104,8 @@ namespace NeoAxis
 			}
 		}
 
-		unsafe void RenderEnvironmentLightDeferred( ViewportRenderingContext context, FrameData frameData, Component_Image sceneTexture, Component_Image normalTexture, Component_Image gBuffer2Texture, Component_Image gBuffer3Texture, Component_Image gBuffer4Texture, Component_Image depthTexture )
+		unsafe void RenderEnvironmentLightDeferred( ViewportRenderingContext context, FrameData frameData, Component_Image sceneTexture, Component_Image normalTexture, Component_Image gBuffer2Texture, Component_Image gBuffer3Texture, Component_Image gBuffer4Texture, Component_Image gBuffer5Texture, Component_Image depthTexture )
 		{
-			Viewport viewportOwner = context.Owner;
-
 			var ambientLight = frameData.Lights[ frameData.LightsInFrustumSorted[ 0 ] ];
 			ambientLight.Bind( this, context );
 
@@ -4135,6 +4131,9 @@ namespace NeoAxis
 				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 10/* "gBuffer4Texture"*/,
 					gBuffer4Texture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
 
+				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 11/* "gBuffer5Texture"*/,
+					gBuffer5Texture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
 				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 8/*"s_brdfLUT"*/,
 					BrdfLUT, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
 			}
@@ -4145,10 +4144,12 @@ namespace NeoAxis
 				u_environmentTextureRotation = GpuProgramManager.RegisterUniform( "u_environmentTextureRotation", UniformType.Matrix3x3, 1 );
 			if( u_environmentTextureIBLRotation == null )
 				u_environmentTextureIBLRotation = GpuProgramManager.RegisterUniform( "u_environmentTextureIBLRotation", UniformType.Matrix3x3, 1 );
-			if( u_environmentTextureMultiplier == null )
-				u_environmentTextureMultiplier = GpuProgramManager.RegisterUniform( "u_environmentTextureMultiplier", UniformType.Vector4, 1 );
-			if( u_environmentTextureIBLMultiplier == null )
-				u_environmentTextureIBLMultiplier = GpuProgramManager.RegisterUniform( "u_environmentTextureIBLMultiplier", UniformType.Vector4, 1 );
+			if( u_environmentTextureMultiplierAndAffect == null )
+				u_environmentTextureMultiplierAndAffect = GpuProgramManager.RegisterUniform( "u_environmentTextureMultiplierAndAffect", UniformType.Vector4, 1 );
+			if( u_environmentTextureIBLMultiplierAndAffect == null )
+				u_environmentTextureIBLMultiplierAndAffect = GpuProgramManager.RegisterUniform( "u_environmentTextureIBLMultiplierAndAffect", UniformType.Vector4, 1 );
+
+			GetBackgroundEnvironmentTextures( context, frameData, out var ambientLightTexture, out var ambientLightTextureIBL );
 
 			//ambient light
 			{
@@ -4158,24 +4159,22 @@ namespace NeoAxis
 
 				var container = new ParameterContainer();
 
-				// bind env textures
+				//bind env textures, parameters
 				{
-					GetBackgroundEnvironmentTextures( context, frameData, out var texture, out var textureIBL );
-
 					container.Set( new ViewportRenderingContext.BindTextureData( 6/*"s_environmentTexture"*/,
-						texture.Value.texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+						ambientLightTexture.Value.texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
 
 					container.Set( new ViewportRenderingContext.BindTextureData( 7/*"environmentTextureIBL"*/,
-						textureIBL.Value.texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+						ambientLightTextureIBL.Value.texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
 
-					var environmentTextureRotation = texture.Value.rotation;
-					var environmentTextureIBLRotation = textureIBL.Value.rotation;
-					var environmentTextureMultiplier = texture.Value.multiplier;
-					var environmentTextureIBLMultiplier = textureIBL.Value.multiplier;
+					var environmentTextureRotation = ambientLightTexture.Value.rotation;
+					var environmentTextureIBLRotation = ambientLightTextureIBL.Value.rotation;
+					var environmentTextureMultiplierAndAffect = ambientLightTexture.Value.multiplierAndAffect;
+					var environmentTextureIBLMultiplierAndAffect = ambientLightTextureIBL.Value.multiplierAndAffect;
 					Bgfx.SetUniform( u_environmentTextureRotation.Value, &environmentTextureRotation, 1 );
 					Bgfx.SetUniform( u_environmentTextureIBLRotation.Value, &environmentTextureIBLRotation, 1 );
-					Bgfx.SetUniform( u_environmentTextureMultiplier.Value, &environmentTextureMultiplier, 1 );
-					Bgfx.SetUniform( u_environmentTextureIBLMultiplier.Value, &environmentTextureIBLMultiplier, 1 );
+					Bgfx.SetUniform( u_environmentTextureMultiplierAndAffect.Value, &environmentTextureMultiplierAndAffect, 1 );
+					Bgfx.SetUniform( u_environmentTextureIBLMultiplierAndAffect.Value, &environmentTextureIBLMultiplierAndAffect, 1 );
 				}
 
 				var shader = new CanvasRenderer.ShaderItem();
@@ -4198,17 +4197,28 @@ namespace NeoAxis
 
 				var container = new ParameterContainer();
 
-				var texture = item.data.CubemapEnvironment;
-				if( texture == null )
-					texture = ResourceUtility.GrayTextureCube;
-				container.Set( new ViewportRenderingContext.BindTextureData( 6/*"s_environmentTexture"*/,
-					texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+				//bind env textures, parameters
+				{
+					//use reflection from the reflection probe
+					var texture = item.data.CubemapEnvironment;
+					if( texture == null )
+						texture = ResourceUtility.GrayTextureCube;
+					container.Set( new ViewportRenderingContext.BindTextureData( 6/*"s_environmentTexture"*/,
+						texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
 
-				var textureIBL = item.data.CubemapIrradiance;
-				if( textureIBL == null )
-					textureIBL = ResourceUtility.GrayTextureCube;
-				container.Set( new ViewportRenderingContext.BindTextureData( 7/*"environmentTextureIBL"*/,
-					textureIBL, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+					//use lighting from the ambient light
+					container.Set( new ViewportRenderingContext.BindTextureData( 7/*"environmentTextureIBL"*/,
+						ambientLightTextureIBL.Value.texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+
+					var environmentTextureRotation = item.data.Rotation;
+					var environmentTextureIBLRotation = ambientLightTextureIBL.Value.rotation;
+					var environmentTextureMultiplierAndAffect = new Vector4F( item.data.Multiplier, 1 );
+					var environmentTextureIBLMultiplierAndAffect = ambientLightTextureIBL.Value.multiplierAndAffect;
+					Bgfx.SetUniform( u_environmentTextureRotation.Value, &environmentTextureRotation, 1 );
+					Bgfx.SetUniform( u_environmentTextureIBLRotation.Value, &environmentTextureIBLRotation, 1 );
+					Bgfx.SetUniform( u_environmentTextureMultiplierAndAffect.Value, &environmentTextureMultiplierAndAffect, 1 );
+					Bgfx.SetUniform( u_environmentTextureIBLMultiplierAndAffect.Value, &environmentTextureIBLMultiplierAndAffect, 1 );
+				}
 
 				var shader = new CanvasRenderer.ShaderItem();
 				shader.CompiledVertexProgram = passItem.vertexProgram;
@@ -4225,7 +4235,7 @@ namespace NeoAxis
 			}
 		}
 
-		unsafe void RenderDirectLightDeferred( ViewportRenderingContext context, FrameData frameData, Component_Image sceneTexture, Component_Image normalTexture, Component_Image gBuffer2Texture, Component_Image gBuffer3Texture, Component_Image gBuffer4Texture, Component_Image depthTexture, LightItem lightItem )
+		unsafe void RenderDirectLightDeferred( ViewportRenderingContext context, FrameData frameData, Component_Image sceneTexture, Component_Image normalTexture, Component_Image gBuffer2Texture, Component_Image gBuffer3Texture, Component_Image gBuffer4Texture, Component_Image gBuffer5Texture, Component_Image depthTexture, LightItem lightItem )
 		{
 			Viewport viewportOwner = context.Owner;
 
@@ -4386,6 +4396,9 @@ namespace NeoAxis
 						generalContainer.Set( new ViewportRenderingContext.BindTextureData( 10/* "gBuffer4Texture"*/, gBuffer4Texture,
 							TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
 
+						generalContainer.Set( new ViewportRenderingContext.BindTextureData( 11/* "gBuffer5Texture"*/, gBuffer5Texture,
+							TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
 						//light mask
 						if( lightItem.data.Type != Component_Light.TypeEnum.Ambient )
 						{
@@ -4467,7 +4480,7 @@ namespace NeoAxis
 			}
 		}
 
-		public unsafe virtual void RenderLightsDeferred( ViewportRenderingContext context, FrameData frameData, Component_Image sceneTexture, Component_Image normalTexture, Component_Image gBuffer2Texture, Component_Image gBuffer3Texture, Component_Image gBuffer4Texture, Component_Image depthTexture )
+		public unsafe virtual void RenderLightsDeferred( ViewportRenderingContext context, FrameData frameData, Component_Image sceneTexture, Component_Image normalTexture, Component_Image gBuffer2Texture, Component_Image gBuffer3Texture, Component_Image gBuffer4Texture, Component_Image gBuffer5Texture, Component_Image depthTexture )
 		{
 			if( deferredShadingData == null )
 				InitDeferredShadingData();
@@ -4486,13 +4499,13 @@ namespace NeoAxis
 				var lightItem = frameData.Lights[ lightIndex ];
 
 				if( lightItem.data.Type == Component_Light.TypeEnum.Ambient )
-					RenderEnvironmentLightDeferred( context, frameData, sceneTexture, normalTexture, gBuffer2Texture, gBuffer3Texture, gBuffer4Texture, depthTexture );
+					RenderEnvironmentLightDeferred( context, frameData, sceneTexture, normalTexture, gBuffer2Texture, gBuffer3Texture, gBuffer4Texture, gBuffer5Texture, depthTexture );
 				else
-					RenderDirectLightDeferred( context, frameData, sceneTexture, normalTexture, gBuffer2Texture, gBuffer3Texture, gBuffer4Texture, depthTexture, lightItem );
+					RenderDirectLightDeferred( context, frameData, sceneTexture, normalTexture, gBuffer2Texture, gBuffer3Texture, gBuffer4Texture, gBuffer5Texture, depthTexture, lightItem );
 			}
 		}
 
-		unsafe void ForwardBindGeneralTexturesUniforms( ViewportRenderingContext context, FrameData frameData, ref Sphere objectSphere, LightItem lightItem, bool receiveShadows, bool setUniforms )
+		public unsafe void ForwardBindGeneralTexturesUniforms( ViewportRenderingContext context, FrameData frameData, ref Sphere objectSphere, LightItem lightItem, bool receiveShadows, bool setUniforms )
 		{
 			GetEnvironmentTexturesByBoundingSphereIntersection( context, frameData, ref objectSphere/*meshItem.BoundingSphere*/, out var texture1, out var textureIBL1, out var texture2, out var textureIBL2, out var environmentBlendingFactor );
 
@@ -4512,19 +4525,19 @@ namespace NeoAxis
 						u_environmentTexture1Rotation = GpuProgramManager.RegisterUniform( "u_environmentTexture1Rotation", UniformType.Matrix3x3, 1 );
 					if( u_environmentTexture2Rotation == null )
 						u_environmentTexture2Rotation = GpuProgramManager.RegisterUniform( "u_environmentTexture2Rotation", UniformType.Matrix3x3, 1 );
-					if( u_environmentTexture1Multiplier == null )
-						u_environmentTexture1Multiplier = GpuProgramManager.RegisterUniform( "u_environmentTexture1Multiplier", UniformType.Vector4, 1 );
-					if( u_environmentTexture2Multiplier == null )
-						u_environmentTexture2Multiplier = GpuProgramManager.RegisterUniform( "u_environmentTexture2Multiplier", UniformType.Vector4, 1 );
+					if( u_environmentTexture1MultiplierAndAffect == null )
+						u_environmentTexture1MultiplierAndAffect = GpuProgramManager.RegisterUniform( "u_environmentTexture1MultiplierAndAffect", UniformType.Vector4, 1 );
+					if( u_environmentTexture2MultiplierAndAffect == null )
+						u_environmentTexture2MultiplierAndAffect = GpuProgramManager.RegisterUniform( "u_environmentTexture2MultiplierAndAffect", UniformType.Vector4, 1 );
 
 					var rotation1 = texture1.Value.rotation;
 					var rotation2 = texture2.Value.rotation;
-					var multiplier1 = texture1.Value.multiplier;
-					var multiplier2 = texture2.Value.multiplier;
+					var multiplier1 = texture1.Value.multiplierAndAffect;
+					var multiplier2 = texture2.Value.multiplierAndAffect;
 					Bgfx.SetUniform( u_environmentTexture1Rotation.Value, &rotation1, 1 );
 					Bgfx.SetUniform( u_environmentTexture2Rotation.Value, &rotation2, 1 );
-					Bgfx.SetUniform( u_environmentTexture1Multiplier.Value, &multiplier1, 1 );
-					Bgfx.SetUniform( u_environmentTexture2Multiplier.Value, &multiplier2, 1 );
+					Bgfx.SetUniform( u_environmentTexture1MultiplierAndAffect.Value, &multiplier1, 1 );
+					Bgfx.SetUniform( u_environmentTexture2MultiplierAndAffect.Value, &multiplier2, 1 );
 				}
 			}
 
@@ -4634,11 +4647,11 @@ namespace NeoAxis
 			//sort by distance
 			CollectionUtility.MergeSort( renderableGroupsToDraw, delegate ( Vector2I a, Vector2I b )
 			{
-				var distanceA = frameData.GetObjectGroupDistanceToCamera( ref a );
-				var distanceB = frameData.GetObjectGroupDistanceToCamera( ref b );
-				if( distanceA < distanceB )
+				var distanceASquared = frameData.GetObjectGroupDistanceToCameraSquared( ref a );
+				var distanceBSquared = frameData.GetObjectGroupDistanceToCameraSquared( ref b );
+				if( distanceASquared < distanceBSquared )
 					return -1;
-				if( distanceA > distanceB )
+				if( distanceASquared > distanceBSquared )
 					return 1;
 				return 0;
 			}, true );
@@ -4684,20 +4697,23 @@ namespace NeoAxis
 									ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ renderableGroup.Y ];
 									var meshData = meshItem.MeshData;
 
-									for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
+									if( !meshItem.OnlyForShadowGeneration )
 									{
-										var oper = meshData.RenderOperations[ nOperation ];
-										var materialData = GetMeshMaterialData( ref meshItem, oper, nOperation, true );
-
-										bool add = !materialData.Transparent;
-										if( materialData.deferredShadingSupport && GetDeferredShading() && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
-											add = false;
-										if( add )
+										for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
 										{
-											if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
+											var oper = meshData.RenderOperations[ nOperation ];
+											var materialData = GetMeshMaterialData( ref meshItem, oper, nOperation, true );
+
+											bool add = !materialData.Transparent;
+											if( materialData.deferredShadingSupport && GetDeferredShading() && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
+												add = false;
+											if( add )
 											{
-												bool instancing = Instancing && meshItem.AnimationData == null && meshItem.BatchingInstanceBuffer == null && meshItem.LODValue == 0;
-												outputInstancingManager.Add( renderableGroup, nOperation, oper, materialData, instancing );
+												if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
+												{
+													bool instancing = Instancing && meshItem.AnimationData == null && meshItem.BatchingInstanceBuffer == null && meshItem.CutVolumes == null;
+													outputInstancingManager.Add( renderableGroup, nOperation, oper, materialData, instancing );
+												}
 											}
 										}
 									}
@@ -4734,7 +4750,7 @@ namespace NeoAxis
 											if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
 											{
 												//!!!!или если уже собран из GroupOfObjects
-												bool instancing = Instancing && billboardItem.LODValue == 0;
+												bool instancing = Instancing && billboardItem.CutVolumes == null;
 												outputInstancingManager.Add( renderableGroup, nOperation, oper, materialData, instancing );
 											}
 										}
@@ -4784,8 +4800,7 @@ namespace NeoAxis
 
 									bool materialWasChanged = materialBinded != materialData;
 									materialBinded = materialData;
-									//!!!!не биндить текстуры если тот же материал
-									materialData.BindCurrentFrameData( context, false, materialWasChanged, true );
+									materialData.BindCurrentFrameData( context, false, materialWasChanged );
 
 									//bind operation data
 									var firstRenderableItem = outputItem.renderableItemFirst;
@@ -4797,7 +4812,7 @@ namespace NeoAxis
 
 										ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, true );
 
-										BindRenderOperationData( context, frameData, materialData, true, meshItem.AnimationData, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, outputItem.operation.UnwrappedUV, ref meshItem.Color, outputItem.operation.VertexStructureContainsColor, false );
+										BindRenderOperationData( context, frameData, materialData, true, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, outputItem.operation.UnwrappedUV, ref meshItem.Color, outputItem.operation.VertexStructureContainsColor, false, meshItem.VisibilityDistance );
 									}
 									else if( firstRenderableItem.X == 1 )
 									{
@@ -4807,7 +4822,7 @@ namespace NeoAxis
 
 										ForwardBindGeneralTexturesUniforms( context, frameData, ref billboardItem.BoundingSphere, lightItem, receiveShadows, true );
 
-										BindRenderOperationData( context, frameData, materialData, true, null, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, billboardItem.LODValue, outputItem.operation.UnwrappedUV, ref billboardItem.Color, outputItem.operation.VertexStructureContainsColor, false );
+										BindRenderOperationData( context, frameData, materialData, true, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, 0, outputItem.operation.UnwrappedUV, ref billboardItem.Color, outputItem.operation.VertexStructureContainsColor, false, billboardItem.VisibilityDistance );
 									}
 
 									int instanceStride = sizeof( RenderSceneData.ObjectInstanceData );
@@ -4838,7 +4853,7 @@ namespace NeoAxis
 											}
 										}
 
-										RenderOperation( context, outputItem.operation, pass, null, ref instanceBuffer, instanceCount );
+										RenderOperation( context, outputItem.operation, pass, null, null, ref instanceBuffer, instanceCount );
 									}
 									//else
 									//	Log.Fatal( "InstanceDataBuffer.GetAvailableSpace( instanceCount, instanceStride ) != instanceCount." );
@@ -4858,8 +4873,7 @@ namespace NeoAxis
 										//bind material data
 										bool materialWasChanged = materialBinded != materialData;
 										materialBinded = materialData;
-										//!!!!не биндить текстуры если тот же материал
-										materialData.BindCurrentFrameData( context, false, materialWasChanged && nRenderableItem == 0, true );
+										materialData.BindCurrentFrameData( context, false, materialWasChanged && nRenderableItem == 0 );
 
 										//bind render operation data, set matrix
 										if( renderableItem.X == 0 )
@@ -4872,13 +4886,13 @@ namespace NeoAxis
 
 											var batchInstancing = meshItem.BatchingInstanceBuffer != null;
 
-											BindRenderOperationData( context, frameData, materialData, batchInstancing, meshItem.AnimationData, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, outputItem.operation.UnwrappedUV, ref meshItem.Color, outputItem.operation.VertexStructureContainsColor, false );
+											BindRenderOperationData( context, frameData, materialData, batchInstancing, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, outputItem.operation.UnwrappedUV, ref meshItem.Color, outputItem.operation.VertexStructureContainsColor, false, meshItem.VisibilityDistance );
 
 											if( !batchInstancing )
 												fixed( Matrix4F* p = &meshItem.Transform )
 													Bgfx.SetTransform( (float*)p );
 
-											RenderOperation( context, outputItem.operation, pass, null, meshItem.BatchingInstanceBuffer );
+											RenderOperation( context, outputItem.operation, pass, null, meshItem.CutVolumes, meshItem.BatchingInstanceBuffer );
 										}
 										else if( renderableItem.X == 1 )
 										{
@@ -4888,12 +4902,12 @@ namespace NeoAxis
 
 											ForwardBindGeneralTexturesUniforms( context, frameData, ref billboardItem.BoundingSphere, lightItem, receiveShadows, nRenderableItem == 0 );
 
-											BindRenderOperationData( context, frameData, materialData, false, null, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, billboardItem.LODValue, outputItem.operation.UnwrappedUV, ref billboardItem.Color, outputItem.operation.VertexStructureContainsColor, false );
+											BindRenderOperationData( context, frameData, materialData, false, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, 0, outputItem.operation.UnwrappedUV, ref billboardItem.Color, outputItem.operation.VertexStructureContainsColor, false, billboardItem.VisibilityDistance );
 
 											billboardItem.GetWorldMatrix( out var worldMatrix );
 											Bgfx.SetTransform( (float*)&worldMatrix );
 
-											RenderOperation( context, outputItem.operation, pass, null );
+											RenderOperation( context, outputItem.operation, pass, null, billboardItem.CutVolumes );
 										}
 									}
 								}
@@ -4987,7 +5001,7 @@ namespace NeoAxis
 
 													bool materialWasChanged = materialBinded != materialData;
 													materialBinded = materialData;
-													materialData.BindCurrentFrameData( context, false, materialWasChanged, true );
+													materialData.BindCurrentFrameData( context, false, materialWasChanged );
 													materialData.BindCurrentFrameData_MaskTextures( context, layer.Mask );
 
 
@@ -5005,9 +5019,9 @@ namespace NeoAxis
 													{
 														var oper = meshData.RenderOperations[ nOperation ];
 
-														BindRenderOperationData( context, frameData, materialData, batchInstancing, meshItem.AnimationData, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, oper.UnwrappedUV, ref color, oper.VertexStructureContainsColor, true );
+														BindRenderOperationData( context, frameData, materialData, batchInstancing, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, oper.UnwrappedUV, ref color, oper.VertexStructureContainsColor, true, meshItem.VisibilityDistance );
 
-														RenderOperation( context, oper, pass, null, meshItem.BatchingInstanceBuffer );
+														RenderOperation( context, oper, pass, null, meshItem.CutVolumes, meshItem.BatchingInstanceBuffer );
 													}
 
 												}
@@ -5057,11 +5071,11 @@ namespace NeoAxis
 			//sort by distance
 			CollectionUtility.MergeSort( renderableGroupsToDraw, delegate ( Vector2I a, Vector2I b )
 			{
-				var distanceA = frameData.GetObjectGroupDistanceToCamera( ref a );
-				var distanceB = frameData.GetObjectGroupDistanceToCamera( ref b );
-				if( distanceA > distanceB )
+				var distanceASquared = frameData.GetObjectGroupDistanceToCameraSquared( ref a );
+				var distanceBSquared = frameData.GetObjectGroupDistanceToCameraSquared( ref b );
+				if( distanceASquared > distanceBSquared )
 					return -1;
-				if( distanceA < distanceB )
+				if( distanceASquared < distanceBSquared )
 					return 1;
 				return 0;
 			}, true );
@@ -5078,6 +5092,14 @@ namespace NeoAxis
 				ambientDirectionalLightCount++;
 			}
 
+			int[] tempIntArray = Array.Empty<int>();
+			int[] GetTempIntArray( int minSize )
+			{
+				if( tempIntArray.Length < minSize )
+					tempIntArray = new int[ minSize ];
+				return tempIntArray;
+			}
+
 			//draw
 			foreach( var renderableGroup in renderableGroupsToDraw )
 			{
@@ -5091,7 +5113,7 @@ namespace NeoAxis
 
 					//!!!!не всегда нужно
 					var affectedLightsCount = ambientDirectionalLightCount + meshItem2.PointSpotLightCount;
-					var affectedLights = stackalloc int[ affectedLightsCount ];
+					var affectedLights = GetTempIntArray( affectedLightsCount );//var affectedLights = stackalloc int[ affectedLightsCount ];
 					for( int n = 0; n < ambientDirectionalLightCount; n++ )
 						affectedLights[ n ] = frameData.LightsInFrustumSorted[ n ];
 					for( int n = 0; n < meshItem2.PointSpotLightCount; n++ )
@@ -5145,7 +5167,7 @@ namespace NeoAxis
 									materialBinded = materialData;
 
 									//bind material data
-									materialData.BindCurrentFrameData( context, false, materialWasChanged, true );
+									materialData.BindCurrentFrameData( context, false, materialWasChanged );
 									materialData.BindCurrentFrameData_MaskTextures( context, layer.Mask );
 
 									fixed( Matrix4F* p = &meshItem.Transform )
@@ -5157,9 +5179,9 @@ namespace NeoAxis
 									{
 										var oper = meshData.RenderOperations[ nOperation ];
 
-										BindRenderOperationData( context, frameData, materialData, false, meshItem.AnimationData, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, oper.UnwrappedUV, ref color, oper.VertexStructureContainsColor, true );
+										BindRenderOperationData( context, frameData, materialData, false, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, oper.UnwrappedUV, ref color, oper.VertexStructureContainsColor, true, meshItem.VisibilityDistance );
 
-										RenderOperation( context, oper, pass, null );
+										RenderOperation( context, oper, pass, null, meshItem.CutVolumes );
 									}
 								}
 							}
@@ -5173,7 +5195,7 @@ namespace NeoAxis
 		struct Render3DSceneForwardTransparentItem
 		{
 			public Vector2I index;
-			public float distance;
+			public float distanceSquared;
 		}
 
 		//!!!!new
@@ -5189,7 +5211,8 @@ namespace NeoAxis
 			case 0:
 				if( frameData.RenderSceneData.Meshes.Data[ item.index.Y ].TransparentRenderingAddOffsetWhenSortByDistance )
 				{
-					item.distance += 100000;
+					//!!!!good?
+					item.distanceSquared += 10000000;
 					applied = true;
 				}
 				break;
@@ -5209,7 +5232,8 @@ namespace NeoAxis
 
 							if( box.Contains( ref center ) )
 							{
-								item.distance += 200000;
+								//!!!!good?
+								item.distanceSquared += 20000000;
 								break;
 							}
 						}
@@ -5246,7 +5270,7 @@ namespace NeoAxis
 					{
 						var item = new Render3DSceneForwardTransparentItem();
 						item.index = renderableGroup;
-						item.distance = frameData.GetObjectGroupDistanceToCamera( ref item.index );
+						item.distanceSquared = frameData.GetObjectGroupDistanceToCameraSquared( ref item.index );
 						ApplyTransparentRenderingAddOffsetWhenSortByDistance( frameData, ref item );
 
 						list.Add( item );
@@ -5260,9 +5284,9 @@ namespace NeoAxis
 			//sort by distance
 			CollectionUtility.MergeSort( renderableGroupsToDraw, delegate ( Render3DSceneForwardTransparentItem a, Render3DSceneForwardTransparentItem b )
 			{
-				if( a.distance > b.distance )
+				if( a.distanceSquared > b.distanceSquared )
 					return -1;
-				if( a.distance < b.distance )
+				if( a.distanceSquared < b.distanceSquared )
 					return 1;
 				return 0;
 			}, true );
@@ -5291,6 +5315,14 @@ namespace NeoAxis
 				ambientDirectionalLightCount++;
 			}
 
+			int[] tempIntArray = null;
+			int[] GetTempIntArray( int minSize )
+			{
+				if( tempIntArray == null || tempIntArray.Length < minSize )
+					tempIntArray = new int[ minSize ];
+				return tempIntArray;
+			}
+
 			//draw
 			for( int nRenderableGroupsToDraw = 0; nRenderableGroupsToDraw < renderableGroupsToDraw.Length; nRenderableGroupsToDraw++ )
 			{
@@ -5306,7 +5338,7 @@ namespace NeoAxis
 
 					//!!!!не всегда нужно
 					var affectedLightsCount = ambientDirectionalLightCount + meshItem2.PointSpotLightCount;
-					var affectedLights = stackalloc int[ affectedLightsCount ];
+					var affectedLights = GetTempIntArray( affectedLightsCount );//var affectedLights = stackalloc int[ affectedLightsCount ];
 					for( int n = 0; n < ambientDirectionalLightCount; n++ )
 						affectedLights[ n ] = frameData.LightsInFrustumSorted[ n ];
 					for( int n = 0; n < meshItem2.PointSpotLightCount; n++ )
@@ -5376,135 +5408,137 @@ namespace NeoAxis
 
 
 					//render mesh item
-					for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
+					if( !meshItem.OnlyForShadowGeneration )
 					{
-						var oper = meshData.RenderOperations[ nOperation ];
-						var materialData = GetMeshMaterialData( ref meshItem, oper, nOperation, true );
-
-						bool add = materialData.Transparent;
-						if( materialData.deferredShadingSupport && GetDeferredShading() && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
-							add = false;
-						if( !add )
-							continue;
-
-						for( int nAffectedLightIndex = 0; nAffectedLightIndex < affectedLightsCount; nAffectedLightIndex++ )
+						for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
 						{
-							var lightIndex = affectedLights[ nAffectedLightIndex ];
-							var lightItem = frameData.Lights[ lightIndex ];
+							var oper = meshData.RenderOperations[ nOperation ];
+							var materialData = GetMeshMaterialData( ref meshItem, oper, nOperation, true );
 
-							if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
+							bool add = materialData.Transparent;
+							if( materialData.deferredShadingSupport && GetDeferredShading() && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
+								add = false;
+							if( !add )
+								continue;
+
+							for( int nAffectedLightIndex = 0; nAffectedLightIndex < affectedLightsCount; nAffectedLightIndex++ )
 							{
-								//set lightItem uniforms
-								if( lightItemBinded != lightItem )
-								{
-									lightItem.Bind( this, context );
-									lightItemBinded = lightItem;
-								}
+								var lightIndex = affectedLights[ nAffectedLightIndex ];
+								var lightItem = frameData.Lights[ lightIndex ];
 
-								var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
-								bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadowsLow != null;
-
-								GpuMaterialPass pass;
-								if( receiveShadows )
+								if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
 								{
-									if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
-										pass = passesGroup.passWithShadowsHigh;
+									//set lightItem uniforms
+									if( lightItemBinded != lightItem )
+									{
+										lightItem.Bind( this, context );
+										lightItemBinded = lightItem;
+									}
+
+									var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
+									bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadowsLow != null;
+
+									GpuMaterialPass pass;
+									if( receiveShadows )
+									{
+										if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
+											pass = passesGroup.passWithShadowsHigh;
+										else
+											pass = passesGroup.passWithShadowsLow;
+									}
 									else
-										pass = passesGroup.passWithShadowsLow;
-								}
-								else
-									pass = passesGroup.passWithoutShadows;
+										pass = passesGroup.passWithoutShadows;
 
-								ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, true );
+									ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, true );
 
-								bool materialWasChanged = materialBinded != materialData;
-								materialBinded = materialData;
+									bool materialWasChanged = materialBinded != materialData;
+									materialBinded = materialData;
 
-								//!!!!не биндить текстуры если тот же материал
-								materialData.BindCurrentFrameData( context, false, materialWasChanged, true );
+									materialData.BindCurrentFrameData( context, false, materialWasChanged );
 
-								BindRenderOperationData( context, frameData, materialData, instancing, meshItem.AnimationData, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, oper.UnwrappedUV, ref meshItem.Color, oper.VertexStructureContainsColor, false );
+									BindRenderOperationData( context, frameData, materialData, instancing, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, oper.UnwrappedUV, ref meshItem.Color, oper.VertexStructureContainsColor, false, meshItem.VisibilityDistance );
 
-								if( instancing )
-								{
-									if( instanceBuffer != InstanceDataBuffer.Invalid )
-										RenderOperation( context, oper, pass, null, ref instanceBuffer, instanceCount );
-								}
-								else
-								{
-									fixed( Matrix4F* p = &meshItem.Transform )
-										Bgfx.SetTransform( (float*)p );
-									RenderOperation( context, oper, pass, null );
+									if( instancing )
+									{
+										if( instanceBuffer != InstanceDataBuffer.Invalid )
+											RenderOperation( context, oper, pass, null, null, ref instanceBuffer, instanceCount );
+									}
+									else
+									{
+										fixed( Matrix4F* p = &meshItem.Transform )
+											Bgfx.SetTransform( (float*)p );
+										RenderOperation( context, oper, pass, null, meshItem.CutVolumes );
+									}
 								}
 							}
 						}
-					}
 
-					//render layers
-					if( meshItem2.Flags.HasFlag( FrameData.MeshItem.FlagsEnum.ContainsTransparentLayersOnTransparentBaseObjects ) && DebugDrawLayers )
-					{
-						if( meshItem.Layers != null )
+						//render layers
+						if( meshItem2.Flags.HasFlag( FrameData.MeshItem.FlagsEnum.ContainsTransparentLayersOnTransparentBaseObjects ) && DebugDrawLayers )
 						{
-							for( int nLayer = 0; nLayer < meshItem.Layers.Length; nLayer++ )
+							if( meshItem.Layers != null )
 							{
-								ref var layer = ref meshItem.Layers[ nLayer ];
-								var materialData = GetLayerMaterialData( ref layer, true );
-
-								bool add = materialData.Transparent;
-								if( materialData.deferredShadingSupport && GetDeferredShading() && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
-									add = false;
-								if( !add )
-									continue;
-
-								for( int nAffectedLightIndex = 0; nAffectedLightIndex < affectedLightsCount; nAffectedLightIndex++ )
+								for( int nLayer = 0; nLayer < meshItem.Layers.Length; nLayer++ )
 								{
-									var lightIndex = affectedLights[ nAffectedLightIndex ];
-									var lightItem = frameData.Lights[ lightIndex ];
+									ref var layer = ref meshItem.Layers[ nLayer ];
+									var materialData = GetLayerMaterialData( ref layer, true );
 
-									if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
+									bool add = materialData.Transparent;
+									if( materialData.deferredShadingSupport && GetDeferredShading() && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
+										add = false;
+									if( !add )
+										continue;
+
+									for( int nAffectedLightIndex = 0; nAffectedLightIndex < affectedLightsCount; nAffectedLightIndex++ )
 									{
-										//set lightItem uniforms
-										if( lightItemBinded != lightItem )
-										{
-											lightItem.Bind( this, context );
-											lightItemBinded = lightItem;
-										}
+										var lightIndex = affectedLights[ nAffectedLightIndex ];
+										var lightItem = frameData.Lights[ lightIndex ];
 
-										var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
-										bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadowsLow != null;
-
-										GpuMaterialPass pass;
-										if( receiveShadows )
+										if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
 										{
-											if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
-												pass = passesGroup.passWithShadowsHigh;
+											//set lightItem uniforms
+											if( lightItemBinded != lightItem )
+											{
+												lightItem.Bind( this, context );
+												lightItemBinded = lightItem;
+											}
+
+											var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
+											bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadowsLow != null;
+
+											GpuMaterialPass pass;
+											if( receiveShadows )
+											{
+												if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
+													pass = passesGroup.passWithShadowsHigh;
+												else
+													pass = passesGroup.passWithShadowsLow;
+											}
 											else
-												pass = passesGroup.passWithShadowsLow;
-										}
-										else
-											pass = passesGroup.passWithoutShadows;
+												pass = passesGroup.passWithoutShadows;
 
-										ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, true );
+											ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, true );
 
-										bool materialWasChanged = materialBinded != materialData;
-										materialBinded = materialData;
+											bool materialWasChanged = materialBinded != materialData;
+											materialBinded = materialData;
 
-										//bind material data
-										materialData.BindCurrentFrameData( context, false, materialWasChanged, true );
-										materialData.BindCurrentFrameData_MaskTextures( context, layer.Mask );
+											//bind material data
+											materialData.BindCurrentFrameData( context, false, materialWasChanged );
+											materialData.BindCurrentFrameData_MaskTextures( context, layer.Mask );
 
-										fixed( Matrix4F* p = &meshItem.Transform )
-											Bgfx.SetTransform( (float*)p );
+											fixed( Matrix4F* p = &meshItem.Transform )
+												Bgfx.SetTransform( (float*)p );
 
-										var color = meshItem.Color * layer.Color;
+											var color = meshItem.Color * layer.Color;
 
-										for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
-										{
-											var oper = meshData.RenderOperations[ nOperation ];
+											for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
+											{
+												var oper = meshData.RenderOperations[ nOperation ];
 
-											BindRenderOperationData( context, frameData, materialData, false, meshItem.AnimationData, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, oper.UnwrappedUV, ref color, oper.VertexStructureContainsColor, true );
+												BindRenderOperationData( context, frameData, materialData, false, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, oper.UnwrappedUV, ref color, oper.VertexStructureContainsColor, true, meshItem.VisibilityDistance );
 
-											RenderOperation( context, oper, pass, null );
+												RenderOperation( context, oper, pass, null, meshItem.CutVolumes );
+											}
 										}
 									}
 								}
@@ -5523,7 +5557,7 @@ namespace NeoAxis
 
 					//!!!!не всегда нужно
 					var affectedLightsCount = ambientDirectionalLightCount + billboardItem2.PointSpotLightCount;
-					var affectedLights = stackalloc int[ affectedLightsCount ];
+					var affectedLights = GetTempIntArray( affectedLightsCount );//var affectedLights = stackalloc int[ affectedLightsCount ];
 					for( int n = 0; n < ambientDirectionalLightCount; n++ )
 						affectedLights[ n ] = frameData.LightsInFrustumSorted[ n ];
 					for( int n = 0; n < billboardItem2.PointSpotLightCount; n++ )
@@ -5639,21 +5673,20 @@ namespace NeoAxis
 								bool materialWasChanged = materialBinded != materialData;
 								materialBinded = materialData;
 
-								//!!!!не биндить текстуры если тот же материал
-								materialData.BindCurrentFrameData( context, false, materialWasChanged, true );
+								materialData.BindCurrentFrameData( context, false, materialWasChanged );
 
-								BindRenderOperationData( context, frameData, materialData, instancing, null, meshData.BillboardMode, meshData.SpaceBounds.BoundingSphere.Value.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, billboardItem.LODValue, oper.UnwrappedUV, ref billboardItem.Color, oper.VertexStructureContainsColor, false );
+								BindRenderOperationData( context, frameData, materialData, instancing, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, 0, oper.UnwrappedUV, ref billboardItem.Color, oper.VertexStructureContainsColor, false, billboardItem.VisibilityDistance );
 
 								if( instancing )
 								{
 									if( instanceBuffer != InstanceDataBuffer.Invalid )
-										RenderOperation( context, oper, pass, null, ref instanceBuffer, instanceCount );
+										RenderOperation( context, oper, pass, null, null, ref instanceBuffer, instanceCount );
 								}
 								else
 								{
 									billboardItem.GetWorldMatrix( out var worldMatrix );
 									Bgfx.SetTransform( (float*)&worldMatrix );
-									RenderOperation( context, oper, pass, null );
+									RenderOperation( context, oper, pass, null, null );
 								}
 							}
 						}
@@ -5766,7 +5799,7 @@ namespace NeoAxis
 					containers.Add( generalContainer );
 
 					Bgfx.SetTransform( (float*)&worldMatrix );
-					RenderOperation( context, item, deferredShadingData.clearBackgroundPass, containers );
+					RenderOperation( context, item, deferredShadingData.clearBackgroundPass, containers, null );
 				}
 			}
 		}
@@ -5868,7 +5901,7 @@ namespace NeoAxis
 				context.SetViewport( sceneDepthMRT.Viewports[ 0 ], Matrix4F.Identity, Matrix4F.Identity, FrameBufferTypes.Depth, ColorValue.Zero );
 			}
 
-			//!!!!convert float. где еще. relative camera position
+			//!!!!double
 			Matrix4F viewMatrix = owner.CameraSettings.ViewMatrix.ToMatrix4F();
 			Matrix4F projectionMatrix = owner.CameraSettings.ProjectionMatrix.ToMatrix4F();
 
@@ -5885,6 +5918,8 @@ namespace NeoAxis
 			{
 				context.objectsDuringUpdate.namedTextures[ "gBuffer0Texture" ] = sceneTexture;
 				context.objectsDuringUpdate.namedTextures[ "gBuffer1Texture" ] = normalTexture;
+
+				//!!!!maybe clear all together
 
 				var gBuffer2Texture = context.RenderTarget2D_Alloc( destinationSize, PixelFormat.A8R8G8B8 );
 				context.objectsDuringUpdate.namedTextures[ "gBuffer2Texture" ] = gBuffer2Texture;
@@ -5905,8 +5940,15 @@ namespace NeoAxis
 				context.SetViewport( gBuffer4Texture.Result.GetRenderTarget().Viewports[ 0 ], Matrix4F.Identity, Matrix4F.Identity,
 					FrameBufferTypes.Color, ColorValue.Zero );
 
+				//create GBuffer 5 texture
+				var gBuffer5Texture = context.RenderTarget2D_Alloc( destinationSize, PixelFormat.A8R8G8B8 );
+				context.objectsDuringUpdate.namedTextures[ "gBuffer5Texture" ] = gBuffer5Texture;
+				//no sense to clear, but clean gbuffer
+				context.SetViewport( gBuffer5Texture.Result.GetRenderTarget().Viewports[ 0 ], Matrix4F.Identity, Matrix4F.Identity,
+					FrameBufferTypes.Color, ColorValue.Zero );
+
 				if( motionTexture != null )
-					context.objectsDuringUpdate.namedTextures[ "gBuffer5Texture" ] = motionTexture;
+					context.objectsDuringUpdate.namedTextures[ "gBuffer6Texture" ] = motionTexture;
 
 				//create scene, normal, depth MRT
 				MultiRenderTarget deferredMRT;
@@ -5917,6 +5959,7 @@ namespace NeoAxis
 					items.Add( new MultiRenderTarget.Item( gBuffer2Texture ) );
 					items.Add( new MultiRenderTarget.Item( gBuffer3Texture ) );
 					items.Add( new MultiRenderTarget.Item( gBuffer4Texture ) );
+					items.Add( new MultiRenderTarget.Item( gBuffer5Texture ) );
 					if( motionTexture != null )
 						items.Add( new MultiRenderTarget.Item( motionTexture ) );
 					items.Add( new MultiRenderTarget.Item( depthTexture ) );
@@ -5942,6 +5985,12 @@ namespace NeoAxis
 					//, Matrix4F.Identity, Matrix4F.Identity, FrameBufferTypes.Color, ColorValue.Zero );
 					CopyToCurrentViewport( context, gBuffer4Texture );
 
+					//make copy of gBuffer5Texture
+					var gBuffer5TextureCopy = context.RenderTarget2D_Alloc( destinationSize, gBuffer5Texture.Result.ResultFormat );
+					context.SetViewport( gBuffer5TextureCopy.Result.GetRenderTarget().Viewports[ 0 ] );
+					//, Matrix4F.Identity, Matrix4F.Identity, FrameBufferTypes.Color, ColorValue.Zero );
+					CopyToCurrentViewport( context, gBuffer5Texture );
+
 					//create scene, normal MRT
 					MultiRenderTarget deferredMRT2;
 					{
@@ -5951,14 +6000,16 @@ namespace NeoAxis
 						items.Add( new MultiRenderTarget.Item( gBuffer2Texture ) );
 						items.Add( new MultiRenderTarget.Item( gBuffer3Texture ) );
 						items.Add( new MultiRenderTarget.Item( gBuffer4Texture ) );
+						items.Add( new MultiRenderTarget.Item( gBuffer5Texture ) );
 						deferredMRT2 = context.MultiRenderTarget_Create( items.ToArray() );
 					}
 
 					context.SetViewport( deferredMRT2.Viewports[ 0 ], viewMatrix, projectionMatrix );
-					RenderDecalsDeferred( context, frameData, depthTexture, gBuffer1TextureCopy, gBuffer4TextureCopy );
+					RenderDecalsDeferred( context, frameData, depthTexture, gBuffer1TextureCopy, gBuffer4TextureCopy, gBuffer5TextureCopy );
 
 					context.DynamicTexture_Free( gBuffer1TextureCopy );
 					context.DynamicTexture_Free( gBuffer4TextureCopy );
+					context.DynamicTexture_Free( gBuffer5TextureCopy );
 				}
 
 				////!!!!temp
@@ -5969,7 +6020,7 @@ namespace NeoAxis
 
 				//lighting pass for deferred shading
 				context.SetViewport( deferredLightTexture.Result.GetRenderTarget().Viewports[ 0 ], viewMatrix, projectionMatrix, FrameBufferTypes.Color, ColorValue.Zero );
-				RenderLightsDeferred( context, frameData, sceneTexture, normalTexture, gBuffer2Texture, gBuffer3Texture, gBuffer4Texture, depthTexture );
+				RenderLightsDeferred( context, frameData, sceneTexture, normalTexture, gBuffer2Texture, gBuffer3Texture, gBuffer4Texture, gBuffer5Texture, depthTexture );
 
 				//copy result of deferred shading to sceneTexture. save gBuffer0Texture
 				sceneTexture = deferredLightTexture;
@@ -6125,6 +6176,10 @@ namespace NeoAxis
 
 				RenderEffectsInternal( context, frameData, "Scene Effects", ref sceneTexture, false );
 			}
+
+			//outline effect for selected objects
+			if( context.objectInSpaceRenderingContext.selectedObjects.Count != 0 )
+				RenderOutlineEffectForSelectedObjects( context, frameData, ref sceneTexture );
 
 			//convert to LDR
 			ConvertToLDR( context, ref sceneTexture );
@@ -6404,7 +6459,7 @@ namespace NeoAxis
 			}
 
 			SetFogUniform( context, frameData.Fog );
-			SetCutVolumeSettingsUniforms( context );
+			SetCutVolumeSettingsUniforms( context, null, true );
 
 			Bgfx.SetDebugFeatures( DebugMode.Value == DebugModeEnum.Wireframe ? DebugFeatures.Wireframe : DebugFeatures.None );
 
@@ -6441,10 +6496,13 @@ namespace NeoAxis
 			public Vector3F shadowFarDistance;
 			public float cameraExposure;
 
-			//public float unused1;
+			public float displacementScale;
+			public float displacementMaxSteps;
+			public float removeTextureTiling;
+			public float unused1;
 		}
 
-		unsafe void SetViewportOwnerSettingsUniform( ViewportRenderingContext context )
+		public unsafe void SetViewportOwnerSettingsUniform( ViewportRenderingContext context, DebugModeEnum? overrideDebugMode = null )
 		{
 			//!!!!double
 
@@ -6453,7 +6511,7 @@ namespace NeoAxis
 			data.nearClipDistance = (float)context.Owner.CameraSettings.NearClipDistance;
 			data.farClipDistance = (float)context.Owner.CameraSettings.FarClipDistance;
 			data.fieldOfView = (float)context.Owner.CameraSettings.FieldOfView.InRadians();
-			data.debugMode = (float)DebugMode.Value;
+			data.debugMode = (float)( overrideDebugMode.HasValue ? overrideDebugMode.Value : DebugMode.Value );
 
 			//shadowFarDistance
 			{
@@ -6469,28 +6527,62 @@ namespace NeoAxis
 
 			data.emissiveMaterialsFactor = (float)context.Owner.CameraSettings.EmissiveFactor;
 			data.cameraExposure = (float)context.Owner.CameraSettings.Exposure;
-			//var camera = context.Owner.CameraSettings.SourceCamera;
-			//if( camera != null )
-			//{
-			//	data.emissiveMaterialsFactor = (float)camera.EmissiveFactor;
-			//	//data.cameraEv100 = (float)camera.Ev100;
-			//	data.cameraExposure = (float)camera.Exposure;// GetExposure();
-
-			//	//!!!!
-			//	//Log.Info( data.cameraExposure.ToString( "0.###########" ) );
-			//}
+			data.displacementScale = (float)DisplacementMappingScale;
+			data.displacementMaxSteps = DisplacementMappingMaxSteps;
+			data.removeTextureTiling = (float)RemoveTextureTiling;
 
 			int vec4Count = sizeof( ViewportOwnerSettingsUniform ) / sizeof( Vector4F );
-			if( vec4Count != 3 )
-				Log.Fatal( "Component_RenderingPipeline: Render: vec4Count != 3." );
+			if( vec4Count != 4 )
+				Log.Fatal( "Component_RenderingPipeline: Render: vec4Count != 4." );
 			context.SetUniform( "u_viewportOwnerSettings", ParameterType.Vector4, vec4Count, &data );
 		}
 
-		unsafe void SetCutVolumeSettingsUniforms( ViewportRenderingContext context )
+		static bool IsEqualCutVolumes( RenderSceneData.CutVolumeItem[] array1, RenderSceneData.CutVolumeItem[] array2 )
 		{
-			var GLOBAL_CUT_VOLUME_MAX_COUNT = 10;
+			if( array1 == null && array2 == null )
+				return true;
+			if( array1 != null && array2 == null )
+				return false;
+			if( array1 == null && array2 != null )
+				return false;
+			if( array1.Length != array2.Length )
+				return false;
+			for( int n = 0; n < array1.Length; n++ )
+				if( !array1[ n ].Equals( ref array2[ n ] ) )
+					return false;
+			return true;
+		}
+
+		OpenList<RenderSceneData.CutVolumeItem> tempCutVolumes;
+
+		unsafe void SetCutVolumeSettingsUniforms( ViewportRenderingContext context, RenderSceneData.CutVolumeItem[] cutVolumes, bool forceUpdate )
+		{
+			var needUpdate = !IsEqualCutVolumes( context.currentCutVolumes, cutVolumes ) || forceUpdate;
+			if( !needUpdate )
+				return;
+
+			context.currentCutVolumes = cutVolumes;
+
 
 			var list = context.FrameData.RenderSceneData.CutVolumes;
+			if( cutVolumes != null )
+			{
+				if( tempCutVolumes == null )
+					tempCutVolumes = new OpenList<RenderSceneData.CutVolumeItem>();
+				tempCutVolumes.Clear();
+
+				for( int n = 0; n < list.Count; n++ )
+					tempCutVolumes.Add( ref list.Data[ n ] );
+				for( int n = 0; n < cutVolumes.Length; n++ )
+					tempCutVolumes.Add( ref cutVolumes[ n ] );
+
+				list = tempCutVolumes;
+			}
+
+
+			//also need change 'GLOBAL_CUT_VOLUME_MAX_COUNT' in Assets\Base\Shaders\GlobalSettings.sh.
+			var GLOBAL_CUT_VOLUME_MAX_COUNT = 10;
+
 			var count = Math.Min( list.Count, GLOBAL_CUT_VOLUME_MAX_COUNT );
 
 			var settings = new Vector4F( count, 0, 0, 0 );
@@ -6500,10 +6592,18 @@ namespace NeoAxis
 			{
 				ref var item = ref list.Data[ n ];
 
-				item.Transform.ToMatrix4().GetInverse( out var inv );
+				if( item.Shape == Component_CutVolume.ShapeEnum.Plane )
+				{
+					//!!!!double
+					new Matrix4F( item.Plane.ToPlaneF().ToVector4F(), Vector4F.Zero, Vector4F.Zero, Vector4F.Zero ).GetTranspose( out data[ n ] );
+				}
+				else
+				{
+					item.Transform.ToMatrix4().GetInverse( out var inv );
 
-				//!!!!double
-				inv.ToMatrix4F( out data[ n ] );
+					//!!!!double
+					inv.ToMatrix4F( out data[ n ] );
+				}
 
 				//save shape type in the matrix
 				data[ n ].Item3.W = (int)item.Shape;
@@ -6521,10 +6621,12 @@ namespace NeoAxis
 			//Sky
 			if( context.Owner.AttachedScene != null && frameData.Sky != null )
 			{
-				frameData.Sky.GetEnvironmentTextureData( out var texture2, out var textureIBL2 );
-				texture = texture2;
-				textureIBL = textureIBL2;
-				return;
+				if( frameData.Sky.GetEnvironmentTextureData( out var texture2, out var textureIBL2 ) )
+				{
+					texture = texture2;
+					textureIBL = textureIBL2;
+					return;
+				}
 
 				//var skybox = frameData.Sky as Component_Skybox;
 				//if( skybox != null )
@@ -6555,10 +6657,12 @@ namespace NeoAxis
 				else
 					color = context.GetBackgroundColor();
 
+				var affect = context.GetBackgroundColorAffectLighting();
+
 				var rotation = Matrix3F.Identity;
 				var multiplier = color.ToVector3F();
-				texture = new EnvironmentTextureData( ResourceUtility.WhiteTextureCube, ref rotation, ref multiplier );
-				textureIBL = new EnvironmentTextureData( ResourceUtility.WhiteTextureCube, ref rotation, ref multiplier );
+				texture = new EnvironmentTextureData( ResourceUtility.WhiteTextureCube, affect, ref rotation, ref multiplier );
+				textureIBL = new EnvironmentTextureData( ResourceUtility.WhiteTextureCube, affect, ref rotation, ref multiplier );
 			}
 		}
 
@@ -6612,21 +6716,21 @@ namespace NeoAxis
 				if( probe1 != null && probe2 != null )
 				{
 					if( probe1.data.CubemapEnvironment != null )
-						texture1 = new EnvironmentTextureData( probe1.data.CubemapEnvironment );
+						texture1 = new EnvironmentTextureData( probe1.data.CubemapEnvironment, 1, ref probe1.data.Rotation, ref probe1.data.Multiplier );
 					if( probe1.data.CubemapIrradiance != null )
-						textureIBL1 = new EnvironmentTextureData( probe1.data.CubemapIrradiance );
+						textureIBL1 = new EnvironmentTextureData( probe1.data.CubemapIrradiance, 1, ref probe1.data.Rotation, ref probe1.data.Multiplier );
 					if( probe2.data.CubemapEnvironment != null )
-						texture2 = new EnvironmentTextureData( probe2.data.CubemapEnvironment );
+						texture2 = new EnvironmentTextureData( probe2.data.CubemapEnvironment, 1, ref probe2.data.Rotation, ref probe2.data.Multiplier );
 					if( probe2.data.CubemapIrradiance != null )
-						textureIBL2 = new EnvironmentTextureData( probe2.data.CubemapIrradiance );
+						textureIBL2 = new EnvironmentTextureData( probe2.data.CubemapIrradiance, 1, ref probe2.data.Rotation, ref probe2.data.Multiplier );
 					blendingFactor = (float)( probe1Intensity / ( probe1Intensity + probe2Intensity ) );
 				}
 				else if( probe1 != null )
 				{
 					if( probe1.data.CubemapEnvironment != null )
-						texture1 = new EnvironmentTextureData( probe1.data.CubemapEnvironment );
+						texture1 = new EnvironmentTextureData( probe1.data.CubemapEnvironment, 1, ref probe1.data.Rotation, ref probe1.data.Multiplier );
 					if( probe1.data.CubemapIrradiance != null )
-						textureIBL1 = new EnvironmentTextureData( probe1.data.CubemapIrradiance );
+						textureIBL1 = new EnvironmentTextureData( probe1.data.CubemapIrradiance, 1, ref probe1.data.Rotation, ref probe1.data.Multiplier );
 					blendingFactor = (float)probe1Intensity;
 				}
 			}
@@ -6780,7 +6884,7 @@ namespace NeoAxis
 			}
 		}
 
-		unsafe void BindRenderOperationData( ViewportRenderingContext context, FrameData frameData, Component_Material.CompiledMaterialData materialData, bool instancing, RenderSceneData.MeshItem.AnimationDataClass meshItemAnimationData, int billboardMode, double billboardRadius, bool receiveDecals, ref Vector3F previousWorldPosition, float lodValue, UnwrappedUVEnum unwrappedUV, ref ColorValue color, bool vertexStructureContainsColor, bool isLayer )
+		public unsafe void BindRenderOperationData( ViewportRenderingContext context, FrameData frameData, Component_Material.CompiledMaterialData materialData, bool instancing, RenderSceneData.MeshItem.AnimationDataClass meshItemAnimationData, int billboardMode, double billboardRadius, bool receiveDecals, ref Vector3F previousWorldPosition, float lodValue, UnwrappedUVEnum unwrappedUV, ref ColorValue color, bool vertexStructureContainsColor, bool isLayer, float visibilityDistance )
 		{
 			//!!!!can merge with bit flags
 			Vector4F data0 = Vector4F.Zero;
@@ -6788,6 +6892,7 @@ namespace NeoAxis
 			Vector4F data2 = Vector4F.Zero;
 			Vector4F data3 = Vector4F.Zero;
 			Vector4F data4;
+
 			if( materialData != null )
 				data0.X = materialData.currentFrameIndex;
 			if( instancing )
@@ -6799,8 +6904,11 @@ namespace NeoAxis
 				data0.Z = billboardMode;
 				data0.W = (float)billboardRadius;
 			}
+
 			if( receiveDecals )
 				data1.X = 1;
+			data1.Y = visibilityDistance;
+
 			data2 = new Vector4F( previousWorldPosition, lodValue );
 
 			data3.X = (int)unwrappedUV;
@@ -6922,6 +7030,15 @@ namespace NeoAxis
 			}
 
 			return result == AutoTrueFalse.True;
+		}
+
+		void RenderOutlineEffectForSelectedObjects( ViewportRenderingContext context, FrameData frameData, ref Component_Image actualTexture )
+		{
+			var outline = new Component_RenderingEffect_Outline();
+			outline.GroupsInterval = new RangeI( int.MaxValue, int.MaxValue );
+			outline.Scale = ProjectSettings.Get.SceneEditorSelectOutlineEffectScale;
+
+			outline.Render( context, frameData, ref actualTexture );
 		}
 	}
 }

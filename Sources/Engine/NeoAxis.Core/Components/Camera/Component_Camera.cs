@@ -14,7 +14,7 @@ namespace NeoAxis
 	/// <summary>
 	/// Representation of a player's point of view.
 	/// </summary>
-	[EditorPreviewControl( typeof( Component_Camera_PreviewControl ) )]
+	[EditorPreviewControl( typeof( Component_Camera_Preview ) )]
 	public class Component_Camera : Component_ObjectInSpace
 	{
 		//!!!!
@@ -240,9 +240,9 @@ namespace NeoAxis
 			newBounds = new SpaceBounds( GetVisualBounds() );
 		}
 
-		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
+		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
-			base.OnGetRenderSceneData( context, mode );
+			base.OnGetRenderSceneData( context, mode, modeGetObjectsItem );
 
 			if( mode == GetRenderSceneDataMode.InsideFrustum )
 			{

@@ -22,7 +22,7 @@ namespace NeoAxis
 		public Reference<double> Time
 		{
 			get { if( _time.BeginGet() ) Time = _time.Get( this ); return _time.value; }
-			set { if( _time.BeginSet( ref value ) ) { try { TimeChanged?.Invoke( this ); } finally { _time.EndSet(); } } }
+			set { if( _time.BeginSet( ref value ) ) { try { TimeChanged?.Invoke( this ); DataWasChanged(); } finally { _time.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Time"/> property value changes.</summary>
 		public event Action<Component_CurveInSpacePoint> TimeChanged;
@@ -31,9 +31,18 @@ namespace NeoAxis
 		//!!!!need "double?" support for properties
 		//RoundedLineCurvatureRadius
 
-		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode )
+		//
+
+		protected override void OnEnabledInHierarchyChanged()
 		{
-			base.OnGetRenderSceneData( context, mode );
+			base.OnEnabledInHierarchyChanged();
+
+			DataWasChanged();
+		}
+
+		public override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
+		{
+			base.OnGetRenderSceneData( context, mode, modeGetObjectsItem );
 
 			if( mode == GetRenderSceneDataMode.InsideFrustum )
 			{
@@ -47,6 +56,19 @@ namespace NeoAxis
 		public override ScreenLabelInfo GetScreenLabelInfo()
 		{
 			return new ScreenLabelInfo( "CurveInSpacePoint" );
+		}
+
+		protected override void OnTransformChanged()
+		{
+			base.OnTransformChanged();
+
+			DataWasChanged();
+		}
+
+		public void DataWasChanged()
+		{
+			var obj = Parent as Component_CurveInSpace;
+			obj?.DataWasChanged();
 		}
 	}
 }

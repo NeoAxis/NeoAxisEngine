@@ -193,6 +193,19 @@ namespace NeoAxis
 		public event Action<Component_Constraint> OverrideNumberSolverIterationsChanged;
 		ReferenceField<int> _overrideNumberSolverIterations = -1;
 
+		/// <summary>
+		/// Whether to activate sleeping bodies when any motor of the constraint is enabled.
+		/// </summary>
+		[DefaultValue( false )]
+		public Reference<bool> AutoActivateBodies
+		{
+			get { if( _autoActivateBodies.BeginGet() ) AutoActivateBodies = _autoActivateBodies.Get( this ); return _autoActivateBodies.value; }
+			set { if( _autoActivateBodies.BeginSet( ref value ) ) { try { AutoActivateBodiesChanged?.Invoke( this ); } finally { _autoActivateBodies.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="AutoActivateBodies"/> property value changes.</summary>
+		public event Action<Component_Constraint> AutoActivateBodiesChanged;
+		ReferenceField<bool> _autoActivateBodies = false;
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		public Component_Scene.PhysicsWorldDataClass GetPhysicsWorldData()
@@ -473,6 +486,30 @@ namespace NeoAxis
 			//create when must be created. can happen after undo of deletion physical body.
 			if( EnabledInHierarchy && !created && GetPhysicsWorldData() != null )
 				CreateConstraint();
+		}
+
+		protected override void OnSimulationStep()
+		{
+			base.OnSimulationStep();
+
+			if( created && AutoActivateBodies )
+			{
+				if( LinearAxisXMotorTargetVelocity != 0 && LinearAxisXMotorMaxForce != 0 ||
+					LinearAxisYMotorTargetVelocity != 0 && LinearAxisYMotorMaxForce != 0 ||
+					LinearAxisZMotorTargetVelocity != 0 && LinearAxisZMotorMaxForce != 0 ||
+					AngularAxisXMotorTargetVelocity != 0 && AngularAxisXMotorMaxForce != 0 ||
+					AngularAxisYMotorTargetVelocity != 0 && AngularAxisYMotorMaxForce != 0 ||
+					AngularAxisZMotorTargetVelocity != 0 && AngularAxisZMotorMaxForce != 0 )
+				{
+					var bodyA = creationBodyA as Component_RigidBody;
+					if( bodyA != null && bodyA.MotionType.Value == Component_RigidBody.MotionTypeEnum.Dynamic && !bodyA.Active )
+						bodyA.Activate();
+
+					var bodyB = creationBodyB as Component_RigidBody;
+					if( bodyB != null && bodyB.MotionType.Value == Component_RigidBody.MotionTypeEnum.Dynamic && !bodyB.Active )
+						bodyB.Activate();
+				}
+			}
 		}
 
 		public void Render( ViewportRenderingContext context, out int verticesRendered )

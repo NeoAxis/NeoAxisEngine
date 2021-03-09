@@ -324,10 +324,7 @@ namespace NeoAxis
 					{
 						character.GetFirstPersonCameraPosition( out var position, out var forward, out var up );
 
-						var eyePosition = character.TransformV * character.EyePosition.Value;
-						var direction = character.LookToDirection.GetVector();
-
-						result = new Viewport.CameraSettingsClass( viewport, cameraDefault.AspectRatio, cameraDefault.FieldOfView, cameraDefault.NearClipPlane, cameraDefault.FarClipPlane, eyePosition, direction, up, ProjectionType.Perspective, 1, cameraDefault.Exposure, cameraDefault.EmissiveFactor );
+						result = new Viewport.CameraSettingsClass( viewport, cameraDefault.AspectRatio, cameraDefault.FieldOfView, cameraDefault.NearClipPlane, cameraDefault.FarClipPlane, position, forward, up, ProjectionType.Perspective, 1, cameraDefault.Exposure, cameraDefault.EmissiveFactor );
 					}
 
 				}

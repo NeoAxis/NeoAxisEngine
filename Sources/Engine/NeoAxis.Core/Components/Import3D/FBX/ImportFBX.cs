@@ -33,6 +33,7 @@ namespace NeoAxis.Import.FBX
 			public string directoryName;
 			public Component materialsGroup;
 			public EDictionary<int, Component_Material> materialByIndex = new EDictionary<int, Component_Material>();
+			public Component_Material defaultMaterial;
 		}
 
 		static bool HasTransformMatrixNegParity( Matrix3F m )
@@ -171,7 +172,7 @@ namespace NeoAxis.Import.FBX
 
 			//create Materials group
 			context.materialsGroup = context.settings.component.GetComponent( "Materials" );
-			if( context.materialsGroup == null && materialsData.Count != 0 && settings.updateMaterials )
+			if( context.materialsGroup == null /*&& materialsData.Count != 0*/ && settings.updateMaterials )
 			{
 				context.materialsGroup = context.settings.component.CreateComponent<Component>();
 				context.materialsGroup.Name = "Materials";
@@ -396,7 +397,8 @@ namespace NeoAxis.Import.FBX
 			var geometry = parent.CreateComponent<Component_MeshGeometry>();
 			geometry.Name = ImportGeneral.GetFixedName( geom.Name );
 
-			CalcIndices.CalculateIndicesBySpatialSort( geom, out StandardVertex[] vertices, out int[] indices );
+			CalcIndices.CalculateIndicesAndMergeEqualVertices( geom, out StandardVertex[] vertices, out int[] indices );
+			//CalcIndices.CalculateIndicesBySpatialSort( geom, out StandardVertex[] vertices, out int[] indices );
 			//CalcIndices.CalculateIndicesByOctree( m, out StandardVertexF[] verticesO, out int[] indicesO );
 
 			if( newIndexFromOldIndex != null )
@@ -418,6 +420,20 @@ namespace NeoAxis.Import.FBX
 			geometry.Indices = indices;
 
 			importContext.materialByIndex.TryGetValue( geom.MaterialIndex, out Component_Material material );
+
+			if( material == null )
+			{
+				if( importContext.settings.updateMaterials )
+				{
+					if( importContext.defaultMaterial == null && importContext.materialsGroup != null )
+					{
+						importContext.defaultMaterial = importContext.materialsGroup.CreateComponent<Component_Material>();
+						importContext.defaultMaterial.Name = "Default";
+					}
+					geometry.Material = importContext.defaultMaterial;
+				}
+			}
+
 			if( material != null )
 				geometry.Material = ReferenceUtility.MakeRootReference( material );
 		}
@@ -435,7 +451,7 @@ namespace NeoAxis.Import.FBX
 
 			var oldBones = new Dictionary<Component_SkeletonBone, SkeletonBone>();
 			foreach( var firstLevelBone in skeleton.RootBone.Children )
-				InitBoneRecursive( skeletonComponent, firstLevelBone, skeleton, oldBones, additionalTransform);
+				InitBoneRecursive( skeletonComponent, firstLevelBone, skeleton, oldBones, additionalTransform );
 
 			var allBones = skeletonComponent.GetBones(); //contains information about new bone indices
 			int maxOldIndex = oldBones.Count == 0 ? -1 : oldBones.Values.Select( _ => skeleton.GetBoneIndexByNode( _.Node ) ).Max();

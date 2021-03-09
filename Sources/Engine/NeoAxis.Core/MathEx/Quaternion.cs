@@ -606,6 +606,18 @@ namespace NeoAxis
 			result.Z = 1.0 - ( X * X + Y * Y ) * 2.0;
 		}
 
+		public Vector3 GetLeft()
+		{
+			//!!!!slowly
+			return this * new Vector3( 0, 1, 0 );
+		}
+
+		public Vector3 GetRight()
+		{
+			//!!!!slowly
+			return this * new Vector3( 0, -1, 0 );
+		}
+
 		/// <summary>
 		/// Similar to Quat.LookAt( direction, Vec3.ZAxis ) with fix for vertical direction.
 		/// </summary>

@@ -32,17 +32,17 @@ namespace NeoAxis.Import.FBX
 		public TangentsAndNormalsSource NormalsSource;
 		public TangentsAndNormalsSource TangentsSource;
 
-		CalcMeshCache calcCache;
+		//CalcMeshCache calcCache;
 
-		public CalcMeshCache CalcCache
-		{
-			get
-			{
-				if( calcCache == null )
-					calcCache = new CalcMeshCache( Vertices );
-				return calcCache;
-			}
-		}
+		//public CalcMeshCache CalcCache
+		//{
+		//	get
+		//	{
+		//		if( calcCache == null )
+		//			calcCache = new CalcMeshCache( Vertices );
+		//		return calcCache;
+		//	}
+		//}
 
 		//public void ClearCache()
 		//{
@@ -85,37 +85,37 @@ namespace NeoAxis.Import.FBX
 		public ImportPostProcessFlags ImportPostProcessFlags;
 	}
 
-	//caches the calculations for sharing between CalculateNormals and CalculateTangents, and can be used for the index calculation
-	class CalcMeshCache
-	{
-		readonly VertexInfo[] vertices;
-		public CalcMeshCache( VertexInfo[] vertices )
-		{
-			this.vertices = vertices;
-		}
+	////caches the calculations for sharing between CalculateNormals and CalculateTangents, and can be used for the index calculation
+	//class CalcMeshCache
+	//{
+	//	readonly VertexInfo[] vertices;
+	//	public CalcMeshCache( VertexInfo[] vertices )
+	//	{
+	//		this.vertices = vertices;
+	//	}
 
-		SpatialSort vertexFinder;
-		float? positionEpsilon;
+	//	SpatialSort vertexFinder;
+	//	float? positionEpsilon;
 
-		// a helper to quickly find locally close vertices among the vertex array
-		public SpatialSort VertexFinder
-		{
-			get
-			{
-				if( vertexFinder == null )
-					vertexFinder = new SpatialSort( vertices );
-				return vertexFinder;
-			}
-		}
+	//	// a helper to quickly find locally close vertices among the vertex array
+	//	public SpatialSort VertexFinder
+	//	{
+	//		get
+	//		{
+	//			if( vertexFinder == null )
+	//				vertexFinder = new SpatialSort( vertices );
+	//			return vertexFinder;
+	//		}
+	//	}
 
-		public float PositionEpsilon
-		{
-			get
-			{
-				if( positionEpsilon == null )
-					positionEpsilon = FbxMath.ComputePositionEpsilon( vertices );
-				return positionEpsilon.Value;
-			}
-		}
-	}
+	//	public float PositionEpsilon
+	//	{
+	//		get
+	//		{
+	//			if( positionEpsilon == null )
+	//				positionEpsilon = FbxMath.ComputePositionEpsilon( vertices );
+	//			return positionEpsilon.Value;
+	//		}
+	//	}
+	//}
 }

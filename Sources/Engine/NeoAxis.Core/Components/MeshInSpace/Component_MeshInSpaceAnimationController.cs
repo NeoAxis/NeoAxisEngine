@@ -126,7 +126,7 @@ namespace NeoAxis
 		ReferenceField<Component_Skeleton> _replaceSkeleton;
 
 		/// <summary>
-		/// Whether to display skeleton.
+		/// Whether to display the skeleton.
 		/// </summary>
 		[DefaultValue( false )]
 		public Reference<bool> DisplaySkeleton
@@ -215,7 +215,7 @@ namespace NeoAxis
 			}
 		}
 
-		void ParentMeshInSpace_GetRenderSceneDataBefore( Component_ObjectInSpace sender, ViewportRenderingContext context, GetRenderSceneDataMode mode )
+		void ParentMeshInSpace_GetRenderSceneDataBefore( Component_ObjectInSpace sender, ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
 			//check need modifiable mesh
 			bool needModifiableMesh = CheckNeedModifiableMesh();

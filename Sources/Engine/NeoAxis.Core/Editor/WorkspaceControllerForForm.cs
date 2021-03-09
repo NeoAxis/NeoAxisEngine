@@ -18,7 +18,7 @@ namespace NeoAxis.Editor
 	///// <summary>
 	///// Workspace controller for main form.
 	///// </summary>
-	class WorkspaceControllerForForm : WorkspaceController
+	public class WorkspaceControllerForForm : WorkspaceController
 	{
 		//!!!!
 		//public List<DockWindow> lastSelectedDockWindows = new List<DockWindow>();
@@ -339,9 +339,11 @@ namespace NeoAxis.Editor
 				}
 				else
 				{
-					//!!!!только такие? hardcoded?
-					if( config.Type == typeof( StoreDocumentWindow ) || config.Type == typeof( StartPageWindow ) || config.Type == typeof( PackagesWindow ) )
+					if( config.Type != null && config.Type.GetCustomAttribute<RestoreDockWindowAfterEditorReloadAttribute>( true ) != null )
 					{
+						//if( config.Type == typeof( StoreDocumentWindow ) || config.Type == typeof( StartPageWindow ) || config.Type == typeof( PackagesWindow ) )
+						//{
+
 						var document = new DocumentInstance( "", null, "" );
 						EditorAPI.Documents.Add( document );
 
