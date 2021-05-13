@@ -1,3 +1,0 @@
-"DEBUG" compilation constant should not be used for ICSharpCode.AvalonEdit project.
-Otherwise, we will get an exception when checking thread access and the highlighting will not work.
-see TextDocument.VerifyAccess.  

@@ -19,14 +19,18 @@
     <OutputPath>..\..\Binaries\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Sources\Engine\NeoAxis.Core\NeoAxis.Core.csproj" />
-    <ProjectReference Include="..\..\..\Sources\Engine\NeoAxis.Widget\NeoAxis.Widget.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
   <ApplicationDefinition Include="App.xaml" />
 	</ItemGroup>
+  <ItemGroup>
+    <Reference Include="NeoAxis.Core">
+      <HintPath>..\..\Binaries\NeoAxis.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="NeoAxis.Widget">
+      <HintPath>..\..\Binaries\NeoAxis.Widget.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

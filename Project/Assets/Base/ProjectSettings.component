@@ -3,9 +3,13 @@
 	Name = Root
 	WindowState = Maximized
 	SceneEditorStepMovement = 0.25
+	AutorunScene
+	{
+		GetByReference = "______Characters\\_Characters.scene"
+	}
 	RibbonAndToolbarActions
 	{
-		UseDefaultSettings = True
+		UseDefaultSettings = False
 		RibbonTabs
 		{
 			Count = 9
@@ -198,7 +202,7 @@
 						Enabled = True
 						Actions
 						{
-							Count = 2
+							Count = 3
 							0
 							{
 								Type = Action
@@ -211,6 +215,12 @@
 								Name = Packages
 								Enabled = True
 							}
+							2
+							{
+								Type = Action
+								Name = Sketchfab Import
+								Enabled = True
+							}
 						}
 					}
 					7
@@ -220,7 +230,7 @@
 						Enabled = True
 						Actions
 						{
-							Count = 2
+							Count = 3
 							0
 							{
 								Type = Action
@@ -231,6 +241,12 @@
 							{
 								Type = Action
 								Name = Tips
+								Enabled = True
+							}
+							2
+							{
+								Type = Action
+								Name = Network Manager
 								Enabled = True
 							}
 						}
@@ -442,7 +458,7 @@
 						Enabled = True
 						Actions
 						{
-							Count = 11
+							Count = 13
 							0
 							{
 								Type = Action
@@ -507,6 +523,18 @@
 							{
 								Type = Action
 								Name = Tips
+								Enabled = True
+							}
+							11
+							{
+								Type = Action
+								Name = Stores Window
+								Enabled = True
+							}
+							12
+							{
+								Type = Action
+								Name = New Docking Window
 								Enabled = True
 							}
 						}

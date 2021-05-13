@@ -39,8 +39,9 @@ namespace NeoAxis
 		//[FieldSerialize( FieldSerializeSerializationTypes.World )]
 		double jumpDisableRemainingTime;
 
-		SphericalDirection lookToDirection;
-		Radian horizontalDirectionForUpdateRotation;
+		SphericalDirection currentTurnToDirection;
+		SphericalDirection requiredTurnToDirection;
+		//Radian horizontalDirectionForUpdateRotation;
 
 		//moveVector
 		int moveVectorTimer;//is disabled when equal 0
@@ -71,8 +72,14 @@ namespace NeoAxis
 		//wiggle camera when walking
 		float wiggleWhenWalkingSpeedFactor;
 
-		//first person camera offset
-		double firstPersonCameraOffsetZ;
+		//smooth camera
+		double smoothCameraOffsetZ;
+		Vector3? initialTransformOffsetPositionInSimulation;
+
+		//play one animation
+		Component_Animation playOneAnimation = null;
+		double playOneAnimationSpeed = 1;
+		double playOneAnimationRemainingTime;
 
 		/////////////////////////////////////////
 		//Basic
@@ -80,7 +87,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The height of the character.
 		/// </summary>
-		[ Category( "Basic" )]
+		[Category( "Basic" )]
 		[DefaultValue( 1.8 )]
 		public Reference<double> Height
 		{
@@ -397,6 +404,23 @@ namespace NeoAxis
 		ReferenceField<double> _runForce = 150000;
 
 		/////////////////////////////////////////
+		//Turning
+
+		/// <summary>
+		/// The speed of rotation of the character around its axis.
+		/// </summary>
+		[Category( "Turning" )]
+		[DefaultValue( 90.0 )]
+		public Reference<Degree> TurningSpeed
+		{
+			get { if( _turningSpeed.BeginGet() ) TurningSpeed = _turningSpeed.Get( this ); return _turningSpeed.value; }
+			set { if( _turningSpeed.BeginSet( ref value ) ) { try { TurningSpeedChanged?.Invoke( this ); } finally { _turningSpeed.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="TurningSpeed"/> property value changes.</summary>
+		public event Action<Component_Character> TurningSpeedChanged;
+		ReferenceField<Degree> _turningSpeed = new Degree( 90.0 );
+
+		/////////////////////////////////////////
 		//Fly control
 
 		/// <summary>
@@ -486,7 +510,7 @@ namespace NeoAxis
 		/////////////////////////////////////////
 		//Crouching
 
-		//!!!!is disabled
+		//!!!!crouching is disabled
 		[Browsable( false )]
 		[Category( "Crouching" )]
 		[DefaultValue( false )]
@@ -669,6 +693,361 @@ namespace NeoAxis
 		public event Action<Component_Character> FlyAnimationChanged;
 		ReferenceField<Component_Animation> _flyAnimation = null;
 
+		/// <summary>
+		/// Character jump animation.
+		/// </summary>
+		[Category( "Animation" )]
+		[DefaultValue( null )]
+		public Reference<Component_Animation> JumpAnimation
+		{
+			get { if( _jumpAnimation.BeginGet() ) JumpAnimation = _jumpAnimation.Get( this ); return _jumpAnimation.value; }
+			set { if( _jumpAnimation.BeginSet( ref value ) ) { try { JumpAnimationChanged?.Invoke( this ); } finally { _jumpAnimation.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="JumpAnimation"/> property value changes.</summary>
+		public event Action<Component_Character> JumpAnimationChanged;
+		ReferenceField<Component_Animation> _jumpAnimation = null;
+
+		/// <summary>
+		/// Character left turn animation.
+		/// </summary>
+		[Category( "Animation" )]
+		[DefaultValue( null )]
+		public Reference<Component_Animation> LeftTurnAnimation
+		{
+			get { if( _leftTurnAnimation.BeginGet() ) LeftTurnAnimation = _leftTurnAnimation.Get( this ); return _leftTurnAnimation.value; }
+			set { if( _leftTurnAnimation.BeginSet( ref value ) ) { try { LeftTurnAnimationChanged?.Invoke( this ); } finally { _leftTurnAnimation.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LeftTurnAnimation"/> property value changes.</summary>
+		public event Action<Component_Character> LeftTurnAnimationChanged;
+		ReferenceField<Component_Animation> _leftTurnAnimation = null;
+
+		/// <summary>
+		/// Character left turn animation.
+		/// </summary>
+		[Category( "Animation" )]
+		[DefaultValue( null )]
+		public Reference<Component_Animation> RightTurnAnimation
+		{
+			get { if( _rightTurnAnimation.BeginGet() ) RightTurnAnimation = _rightTurnAnimation.Get( this ); return _rightTurnAnimation.value; }
+			set { if( _rightTurnAnimation.BeginSet( ref value ) ) { try { RightTurnAnimationChanged?.Invoke( this ); } finally { _rightTurnAnimation.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="RightTurnAnimation"/> property value changes.</summary>
+		public event Action<Component_Character> RightTurnAnimationChanged;
+		ReferenceField<Component_Animation> _rightTurnAnimation = null;
+
+		/////////////////////////////////////////
+
+		//[Category( "Skeleton State" )]
+		//[DefaultValue( "NaN NaN NaN" )]
+		//public Reference<Vector3> TorsoLookAt
+		//{
+		//	get { if( _torsoLookAt.BeginGet() ) TorsoLookAt = _torsoLookAt.Get( this ); return _torsoLookAt.value; }
+		//	set { if( _torsoLookAt.BeginSet( ref value ) ) { try { TorsoLookAtChanged?.Invoke( this ); } finally { _torsoLookAt.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="TorsoLookAt"/> property value changes.</summary>
+		//public event Action<Component_Character> TorsoLookAtChanged;
+		//ReferenceField<Vector3> _torsoLookAt = new Vector3( double.NaN, double.NaN, double.NaN );
+
+		//[Category( "Skeleton State" )]
+		//[DefaultValue( "spine" )] //!!!!? chest
+		//public Reference<string> TorsoBone
+		//{
+		//	get { if( _torsoBone.BeginGet() ) TorsoBone = _torsoBone.Get( this ); return _torsoBone.value; }
+		//	set { if( _torsoBone.BeginSet( ref value ) ) { try { TorsoBoneChanged?.Invoke( this ); } finally { _torsoBone.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="TorsoBone"/> property value changes.</summary>
+		//public event Action<Component_Character> TorsoBoneChanged;
+		//ReferenceField<string> _torsoBone = "spine";
+
+		/// <summary>
+		/// The name of the left hand bone.
+		/// </summary>
+		[Category( "Skeleton State" )]
+		[DefaultValue( "mixamorig:LeftHand" )]
+		public Reference<string> LeftHandBone
+		{
+			get { if( _leftHandBone.BeginGet() ) LeftHandBone = _leftHandBone.Get( this ); return _leftHandBone.value; }
+			set { if( _leftHandBone.BeginSet( ref value ) ) { try { LeftHandBoneChanged?.Invoke( this ); } finally { _leftHandBone.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LeftHandBone"/> property value changes.</summary>
+		public event Action<Component_Character> LeftHandBoneChanged;
+		ReferenceField<string> _leftHandBone = "mixamorig:LeftHand";
+
+		/// <summary>
+		/// Left hand control ratio.
+		/// </summary>
+		[Category( "Skeleton State" )]
+		[Range( 0, 1 )]
+		[DefaultValue( 0.0 )]
+		public Reference<double> LeftHandFactor
+		{
+			get { if( _leftHandFactor.BeginGet() ) LeftHandFactor = _leftHandFactor.Get( this ); return _leftHandFactor.value; }
+			set { if( _leftHandFactor.BeginSet( ref value ) ) { try { LeftHandFactorChanged?.Invoke( this ); } finally { _leftHandFactor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LeftHandFactor"/> property value changes.</summary>
+		public event Action<Component_Character> LeftHandFactorChanged;
+		ReferenceField<double> _leftHandFactor = 0.0;
+
+		/// <summary>
+		/// Left hand target position.
+		/// </summary>
+		[Category( "Skeleton State" )]
+		[DefaultValue( "0 0 0" )]
+		public Reference<Vector3> LeftHandPosition
+		{
+			get { if( _leftHandPosition.BeginGet() ) LeftHandPosition = _leftHandPosition.Get( this ); return _leftHandPosition.value; }
+			set { if( _leftHandPosition.BeginSet( ref value ) ) { try { LeftHandPositionChanged?.Invoke( this ); } finally { _leftHandPosition.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LeftHandPosition"/> property value changes.</summary>
+		public event Action<Component_Character> LeftHandPositionChanged;
+		ReferenceField<Vector3> _leftHandPosition = new Vector3( double.NaN, double.NaN, double.NaN );
+
+		//!!!!
+		//[Category( "Skeleton State" )]
+		//[DefaultValue( "0 0 0 1" )]
+		//public Reference<Quaternion> LeftHandRotation
+		//{
+		//	get { if( _leftHandRotation.BeginGet() ) LeftHandRotation = _leftHandRotation.Get( this ); return _leftHandRotation.value; }
+		//	set { if( _leftHandRotation.BeginSet( ref value ) ) { try { LeftHandRotationChanged?.Invoke( this ); } finally { _leftHandRotation.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="LeftHandRotation"/> property value changes.</summary>
+		//public event Action<Component_Character> LeftHandRotationChanged;
+		//ReferenceField<Quaternion> _leftHandRotation = new Quaternion( 0, 0, 0, 1 );
+
+
+		/// <summary>
+		/// The name of the right hand bone.
+		/// </summary>
+		[Category( "Skeleton State" )]
+		[DefaultValue( "mixamorig:RightHand" )]
+		public Reference<string> RightHandBone
+		{
+			get { if( _rightHandBone.BeginGet() ) RightHandBone = _rightHandBone.Get( this ); return _rightHandBone.value; }
+			set { if( _rightHandBone.BeginSet( ref value ) ) { try { RightHandBoneChanged?.Invoke( this ); } finally { _rightHandBone.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="RightHandBone"/> property value changes.</summary>
+		public event Action<Component_Character> RightHandBoneChanged;
+		ReferenceField<string> _rightHandBone = "mixamorig:RightHand";
+
+		/// <summary>
+		/// Right hand control ratio.
+		/// </summary>
+		[Category( "Skeleton State" )]
+		[Range( 0, 1 )]
+		[DefaultValue( 0.0 )]
+		public Reference<double> RightHandFactor
+		{
+			get { if( _rightHandFactor.BeginGet() ) RightHandFactor = _rightHandFactor.Get( this ); return _rightHandFactor.value; }
+			set { if( _rightHandFactor.BeginSet( ref value ) ) { try { RightHandFactorChanged?.Invoke( this ); } finally { _rightHandFactor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="RightHandFactor"/> property value changes.</summary>
+		public event Action<Component_Character> RightHandFactorChanged;
+		ReferenceField<double> _rightHandFactor = 0.0;
+
+		/// <summary>
+		/// Right hand target position.
+		/// </summary>
+		[Category( "Skeleton State" )]
+		[DefaultValue( "0 0 0" )]
+		public Reference<Vector3> RightHandPosition
+		{
+			get { if( _rightHandPosition.BeginGet() ) RightHandPosition = _rightHandPosition.Get( this ); return _rightHandPosition.value; }
+			set { if( _rightHandPosition.BeginSet( ref value ) ) { try { RightHandPositionChanged?.Invoke( this ); } finally { _rightHandPosition.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="RightHandPosition"/> property value changes.</summary>
+		public event Action<Component_Character> RightHandPositionChanged;
+		ReferenceField<Vector3> _rightHandPosition = new Vector3( double.NaN, double.NaN, double.NaN );
+
+		//!!!!
+		//[Category( "Skeleton State" )]
+		//[DefaultValue( "0 0 0 1" )]
+		//public Reference<Quaternion> RightHandRotation
+		//{
+		//	get { if( _rightHandRotation.BeginGet() ) RightHandRotation = _rightHandRotation.Get( this ); return _rightHandRotation.value; }
+		//	set { if( _rightHandRotation.BeginSet( ref value ) ) { try { RightHandRotationChanged?.Invoke( this ); } finally { _rightHandRotation.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="RightHandRotation"/> property value changes.</summary>
+		//public event Action<Component_Character> RightHandRotationChanged;
+		//ReferenceField<Quaternion> _rightHandRotation = new Quaternion( 0, 0, 0, 1 );
+
+		/// <summary>
+		/// The name of the head body.
+		/// </summary>
+		[Category( "Skeleton State" )]
+		[DefaultValue( "mixamorig:Head" )]
+		public Reference<string> HeadBone
+		{
+			get { if( _headBone.BeginGet() ) HeadBone = _headBone.Get( this ); return _headBone.value; }
+			set { if( _headBone.BeginSet( ref value ) ) { try { HeadBoneChanged?.Invoke( this ); } finally { _headBone.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="HeadBone"/> property value changes.</summary>
+		public event Action<Component_Character> HeadBoneChanged;
+		ReferenceField<string> _headBone = "mixamorig:Head";
+
+		/// <summary>
+		/// Head control ratio.
+		/// </summary>
+		[Category( "Skeleton State" )]
+		[Range( 0, 1 )]
+		[DefaultValue( 0.0 )]
+		public Reference<double> HeadFactor
+		{
+			get { if( _headFactor.BeginGet() ) HeadFactor = _headFactor.Get( this ); return _headFactor.value; }
+			set { if( _headFactor.BeginSet( ref value ) ) { try { HeadFactorChanged?.Invoke( this ); } finally { _headFactor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="HeadFactor"/> property value changes.</summary>
+		public event Action<Component_Character> HeadFactorChanged;
+		ReferenceField<double> _headFactor = 0.0;
+
+		/// <summary>
+		/// Target position of the head.
+		/// </summary>
+		[Category( "Skeleton State" )]
+		[DefaultValue( "0 0 0" )]
+		public Reference<Vector3> HeadLookAt
+		{
+			get { if( _headLookAt.BeginGet() ) HeadLookAt = _headLookAt.Get( this ); return _headLookAt.value; }
+			set { if( _headLookAt.BeginSet( ref value ) ) { try { HeadLookAtChanged?.Invoke( this ); } finally { _headLookAt.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="HeadLookAt"/> property value changes.</summary>
+		public event Action<Component_Character> HeadLookAtChanged;
+		ReferenceField<Vector3> _headLookAt = new Vector3( double.NaN, double.NaN, double.NaN );
+
+
+
+		//[Category( "Skeleton State" )]
+		//[DefaultValue( 0.0 )]
+		//[Range( -0.25, 1 )]
+		//public Reference<double> LeftHandThumbFingerFlexion
+		//{
+		//	get { if( _leftHandThumbFingerFlexion.BeginGet() ) LeftHandThumbFingerFlexion = _leftHandThumbFingerFlexion.Get( this ); return _leftHandThumbFingerFlexion.value; }
+		//	set { if( _leftHandThumbFingerFlexion.BeginSet( ref value ) ) { try { LeftHandThumbFingerFlexionChanged?.Invoke( this ); } finally { _leftHandThumbFingerFlexion.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="LeftHandThumbFingerFlexion"/> property value changes.</summary>
+		//public event Action<Component_Character> LeftHandThumbFingerFlexionChanged;
+		//ReferenceField<double> _leftHandThumbFingerFlexion = 0.0;
+
+		//[Category( "Skeleton State" )]
+		//[DefaultValue( 0.0 )]
+		//[Range( -0.25, 1 )]
+		//public Reference<double> LeftHandIndexFingerFlexion
+		//{
+		//	get { if( _leftHandIndexFingerFlexion.BeginGet() ) LeftHandIndexFingerFlexion = _leftHandIndexFingerFlexion.Get( this ); return _leftHandIndexFingerFlexion.value; }
+		//	set { if( _leftHandIndexFingerFlexion.BeginSet( ref value ) ) { try { LeftHandIndexFingerFlexionChanged?.Invoke( this ); } finally { _leftHandIndexFingerFlexion.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="LeftHandIndexFingerFlexion"/> property value changes.</summary>
+		//public event Action<Component_Character> LeftHandIndexFingerFlexionChanged;
+		//ReferenceField<double> _leftHandIndexFingerFlexion = 0.0;
+
+		//[Category( "Skeleton State" )]
+		//[DefaultValue( 0.0 )]
+		//[Range( -0.25, 1 )]
+		//public Reference<double> LeftHandMiddleFingerFlexion
+		//{
+		//	get { if( _leftHandMiddleFingerFlexion.BeginGet() ) LeftHandMiddleFingerFlexion = _leftHandMiddleFingerFlexion.Get( this ); return _leftHandMiddleFingerFlexion.value; }
+		//	set { if( _leftHandMiddleFingerFlexion.BeginSet( ref value ) ) { try { LeftHandMiddleFingerFlexionChanged?.Invoke( this ); } finally { _leftHandMiddleFingerFlexion.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="LeftHandMiddleFingerFlexion"/> property value changes.</summary>
+		//public event Action<Component_Character> LeftHandMiddleFingerFlexionChanged;
+		//ReferenceField<double> _leftHandMiddleFingerFlexion = 0.0;
+
+		//[Category( "Skeleton State" )]
+		//[DefaultValue( 0.0 )]
+		//[Range( -0.25, 1 )]
+		//public Reference<double> LeftHandRingFingerFlexion
+		//{
+		//	get { if( _leftHandRingFingerFlexion.BeginGet() ) LeftHandRingFingerFlexion = _leftHandRingFingerFlexion.Get( this ); return _leftHandRingFingerFlexion.value; }
+		//	set { if( _leftHandRingFingerFlexion.BeginSet( ref value ) ) { try { LeftHandRingFingerFlexionChanged?.Invoke( this ); } finally { _leftHandRingFingerFlexion.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="LeftHandRingFingerFlexion"/> property value changes.</summary>
+		//public event Action<Component_Character> LeftHandRingFingerFlexionChanged;
+		//ReferenceField<double> _leftHandRingFingerFlexion = 0.0;
+
+		//[Category( "Skeleton State" )]
+		//[DefaultValue( 0.0 )]
+		//[Range( -0.25, 1 )]
+		//public Reference<double> LeftHandPinkyFingerFlexion
+		//{
+		//	get { if( _leftHandPinkyFingerFlexion.BeginGet() ) LeftHandPinkyFingerFlexion = _leftHandPinkyFingerFlexion.Get( this ); return _leftHandPinkyFingerFlexion.value; }
+		//	set { if( _leftHandPinkyFingerFlexion.BeginSet( ref value ) ) { try { LeftHandPinkyFingerFlexionChanged?.Invoke( this ); } finally { _leftHandPinkyFingerFlexion.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="LeftHandPinkyFingerFlexion"/> property value changes.</summary>
+		//public event Action<Component_Character> LeftHandPinkyFingerFlexionChanged;
+		//ReferenceField<double> _leftHandPinkyFingerFlexion = 0.0;
+
+
+		//[Category( "Skeleton State" )]
+		//[DefaultValue( 0.0 )]
+		//[Range( -0.25, 1 )]
+		//public Reference<double> RightHandThumbFingerFlexion
+		//{
+		//	get { if( _rightHandThumbFingerFlexion.BeginGet() ) RightHandThumbFingerFlexion = _rightHandThumbFingerFlexion.Get( this ); return _rightHandThumbFingerFlexion.value; }
+		//	set { if( _rightHandThumbFingerFlexion.BeginSet( ref value ) ) { try { RightHandThumbFingerFlexionChanged?.Invoke( this ); } finally { _rightHandThumbFingerFlexion.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="RightHandThumbFingerFlexion"/> property value changes.</summary>
+		//public event Action<Component_Character> RightHandThumbFingerFlexionChanged;
+		//ReferenceField<double> _rightHandThumbFingerFlexion = 0.0;
+
+		//[Category( "Skeleton State" )]
+		//[DefaultValue( 0.0 )]
+		//[Range( -0.25, 1 )]
+		//public Reference<double> RightHandIndexFingerFlexion
+		//{
+		//	get { if( _rightHandIndexFingerFlexion.BeginGet() ) RightHandIndexFingerFlexion = _rightHandIndexFingerFlexion.Get( this ); return _rightHandIndexFingerFlexion.value; }
+		//	set { if( _rightHandIndexFingerFlexion.BeginSet( ref value ) ) { try { RightHandIndexFingerFlexionChanged?.Invoke( this ); } finally { _rightHandIndexFingerFlexion.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="RightHandIndexFingerFlexion"/> property value changes.</summary>
+		//public event Action<Component_Character> RightHandIndexFingerFlexionChanged;
+		//ReferenceField<double> _rightHandIndexFingerFlexion = 0.0;
+
+		//[Category( "Skeleton State" )]
+		//[DefaultValue( 0.0 )]
+		//[Range( -0.25, 1 )]
+		//public Reference<double> RightHandMiddleFingerFlexion
+		//{
+		//	get { if( _rightHandMiddleFingerFlexion.BeginGet() ) RightHandMiddleFingerFlexion = _rightHandMiddleFingerFlexion.Get( this ); return _rightHandMiddleFingerFlexion.value; }
+		//	set { if( _rightHandMiddleFingerFlexion.BeginSet( ref value ) ) { try { RightHandMiddleFingerFlexionChanged?.Invoke( this ); } finally { _rightHandMiddleFingerFlexion.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="RightHandMiddleFingerFlexion"/> property value changes.</summary>
+		//public event Action<Component_Character> RightHandMiddleFingerFlexionChanged;
+		//ReferenceField<double> _rightHandMiddleFingerFlexion = 0.0;
+
+		//[Category( "Skeleton State" )]
+		//[DefaultValue( 0.0 )]
+		//[Range( -0.25, 1 )]
+		//public Reference<double> RightHandRingFingerFlexion
+		//{
+		//	get { if( _rightHandRingFingerFlexion.BeginGet() ) RightHandRingFingerFlexion = _rightHandRingFingerFlexion.Get( this ); return _rightHandRingFingerFlexion.value; }
+		//	set { if( _rightHandRingFingerFlexion.BeginSet( ref value ) ) { try { RightHandRingFingerFlexionChanged?.Invoke( this ); } finally { _rightHandRingFingerFlexion.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="RightHandRingFingerFlexion"/> property value changes.</summary>
+		//public event Action<Component_Character> RightHandRingFingerFlexionChanged;
+		//ReferenceField<double> _rightHandRingFingerFlexion = 0.0;
+
+		//[Category( "Skeleton State" )]
+		//[DefaultValue( 0.0 )]
+		//[Range( -0.25, 1 )]
+		//public Reference<double> RightHandPinkyFingerFlexion
+		//{
+		//	get { if( _rightHandPinkyFingerFlexion.BeginGet() ) RightHandPinkyFingerFlexion = _rightHandPinkyFingerFlexion.Get( this ); return _rightHandPinkyFingerFlexion.value; }
+		//	set { if( _rightHandPinkyFingerFlexion.BeginSet( ref value ) ) { try { RightHandPinkyFingerFlexionChanged?.Invoke( this ); } finally { _rightHandPinkyFingerFlexion.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="RightHandPinkyFingerFlexion"/> property value changes.</summary>
+		//public event Action<Component_Character> RightHandPinkyFingerFlexionChanged;
+		//ReferenceField<double> _rightHandPinkyFingerFlexion = 0.0;
+
+		//!!!!
+		//[Category( "Skeleton State" )]
+		//[DefaultValue( null )]
+		//public Reference<Component_ObjectInSpace> EyesLookAt
+		//{
+		//	get { if( _eyesLookAt.BeginGet() ) EyesLookAt = _eyesLookAt.Get( this ); return _eyesLookAt.value; }
+		//	set { if( _eyesLookAt.BeginSet( ref value ) ) { try { EyesLookAtChanged?.Invoke( this ); } finally { _eyesLookAt.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="EyesLookAt"/> property value changes.</summary>
+		//public event Action<Component_Character> EyesLookAtChanged;
+		//ReferenceField<Component_ObjectInSpace> _eyesLookAt = null;
+
 		/////////////////////////////////////////
 		//Crawl
 
@@ -727,6 +1106,9 @@ namespace NeoAxis
 				case nameof( RunAnimation ):
 				case nameof( RunAnimationSpeed ):
 				case nameof( FlyAnimation ):
+				case nameof( JumpAnimation ):
+				case nameof( LeftTurnAnimation ):
+				case nameof( RightTurnAnimation ):
 					if( !Animate )
 						skip = true;
 					break;
@@ -741,7 +1123,7 @@ namespace NeoAxis
 			if( EnabledInHierarchy )
 			{
 				var tr = GetTransform();
-				SetLookToDirection( SphericalDirection.FromVector( tr.Rotation.GetForward() ) );
+				SetTurnToDirection( SphericalDirection.FromVector( tr.Rotation.GetForward() ), true );
 
 				//if( FindCollisionBody() == null )
 				UpdateCollisionBody();
@@ -751,6 +1133,9 @@ namespace NeoAxis
 
 				if( ParentScene != null )
 					ParentScene.PhysicsSimulationStepAfter += ParentScene_PhysicsSimulationStepAfter;
+
+				if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+					TickAnimate( 0.001f );
 			}
 			else
 			{
@@ -852,7 +1237,7 @@ namespace NeoAxis
 			//HookColisionEvents();
 
 			//set reference. lock Transform of the character to Transform of the body
-				Transform = ReferenceUtility.MakeThisReference( this, body, "Transform" );
+			Transform = ReferenceUtility.MakeThisReference( this, body, "Transform" );
 		}
 
 		void DestroyCollisionBody()
@@ -912,29 +1297,40 @@ namespace NeoAxis
 		}
 
 		[Browsable( false )]
-		public SphericalDirection LookToDirection
+		public SphericalDirection CurrentTurnToDirection
 		{
-			get { return lookToDirection; }
+			get { return currentTurnToDirection; }
 		}
 
-		public void SetLookToDirection( SphericalDirection value )
+		[Browsable( false )]
+		public SphericalDirection RequiredTurnToDirection
 		{
-			lookToDirection = value;
-
-			var diff = lookToDirection.GetVector();
-			horizontalDirectionForUpdateRotation = Math.Atan2( diff.Y, diff.X );
-
-			UpdateRotation();// true );
+			get { return requiredTurnToDirection; }
 		}
 
-		public void SetLookToDirection( Vector3 value )
+		public void SetTurnToDirection( SphericalDirection value, bool turnInstantly )
 		{
-			SetLookToDirection( SphericalDirection.FromVector( value ) );
+			requiredTurnToDirection = value;
+			if( turnInstantly )
+				currentTurnToDirection = requiredTurnToDirection;
+
+			//var diff = turnToDirection.GetVector();
+			//horizontalDirectionForUpdateRotation = Math.Atan2( diff.Y, diff.X );
+
+			if( turnInstantly )
+				UpdateRotation();// true );
+		}
+
+		public void SetTurnToDirection( Vector3 value, bool turnInstantly )
+		{
+			SetTurnToDirection( SphericalDirection.FromVector( value ), turnInstantly );
 		}
 
 		public void UpdateRotation()// bool allowUpdateOldRotation )
 		{
-			var halfAngle = horizontalDirectionForUpdateRotation * 0.5;
+			var diff = CurrentTurnToDirection.GetVector();
+			var halfAngle = Math.Atan2( diff.Y, diff.X ) * 0.5;
+			//var halfAngle = horizontalDirectionForUpdateRotation * 0.5;
 			Quaternion rot = new Quaternion( new Vector3( 0, 0, Math.Sin( halfAngle ) ), Math.Cos( halfAngle ) );
 
 			const float epsilon = .0001f;
@@ -982,6 +1378,11 @@ namespace NeoAxis
 			return mainBodyGroundDistanceNoScale - maxThreshold < distanceFromPositionToFloor && groundBody != null;
 		}
 
+		public bool IsOnGroundWithLatency()
+		{
+			return elapsedTimeSinceLastGroundContact < 0.25 || IsOnGround();
+		}
+
 		public double GetElapsedTimeSinceLastGroundContact()
 		{
 			return elapsedTimeSinceLastGroundContact;
@@ -1019,6 +1420,7 @@ namespace NeoAxis
 
 			TickMovement();
 			TickPhysicsForce();
+			TickCurrentTurnToDirection();
 
 			UpdateRotation();// true );
 			if( JumpSupport )
@@ -1035,7 +1437,7 @@ namespace NeoAxis
 			CalculateGroundRelativeVelocity();
 
 			TickWiggleWhenWalkingSpeedFactor();
-			TickFirstPersonCameraOffset();
+			TickSmoothCameraOffset();
 
 			if( moveVectorTimer != 0 )
 				moveVectorTimer--;
@@ -1068,6 +1470,8 @@ namespace NeoAxis
 				if( disableGravityRemainingTime < 0 )
 					disableGravityRemainingTime = 0;
 			}
+
+			UpdateTransformOffsetInSimulation();
 
 			//Log.Info( GetLinearVelocity().ToVector2().ToString() + " " + GetLinearVelocity().Length().ToString() );
 		}
@@ -1248,7 +1652,7 @@ namespace NeoAxis
 
 								forceIsOnGroundRemainingTime = 0.5;//0.2;
 								disableGravityRemainingTime = 0.5;
-								firstPersonCameraOffsetZ = Math.Min( tr.Position.Z - newPosition.Z, firstPersonCameraOffsetZ );
+								smoothCameraOffsetZ = Math.Min( tr.Position.Z - newPosition.Z, smoothCameraOffsetZ );
 							}
 
 							//if( !keepDisableControlPhysicsModelPushedToWorldFlag )
@@ -1682,6 +2086,8 @@ namespace NeoAxis
 
 				SoundPlay( JumpSound );
 
+				StartPlayOneAnimation( JumpAnimation );
+
 				OnJump();
 			}
 		}
@@ -2005,6 +2411,23 @@ namespace NeoAxis
 				//	renderer.AddArrow( ray.Origin, ray.GetEndPoint(), 0, 0, true, 0 );
 				//}
 
+				//!!!!debug
+				if( _tempDebug.Count != 0 )
+				{
+					var meshInSpace = GetComponent<Component_MeshInSpace>( onlyEnabledInHierarchy: true );
+					if( meshInSpace != null )
+					{
+						foreach( var p in _tempDebug )
+						{
+							var viewport = context.Owner;
+							viewport.Simple3DRenderer.SetColor( new ColorValue( 1, 0, 0 ) );
+
+							var pp = meshInSpace.TransformV * p;
+
+							viewport.Simple3DRenderer.AddSphere( new Sphere( pp, 0.01 ) );
+						}
+					}
+				}
 			}
 
 			//protected override void OnRenderFrame()
@@ -2065,24 +2488,29 @@ namespace NeoAxis
 			}
 		}
 
-		void TickFirstPersonCameraOffset()
+		void TickSmoothCameraOffset()
 		{
-			if( firstPersonCameraOffsetZ < 0 )
+			if( smoothCameraOffsetZ < 0 )
 			{
 				var speed = Height.Value * 0.5;
 
-				firstPersonCameraOffsetZ += Time.SimulationDelta * speed;
+				smoothCameraOffsetZ += Time.SimulationDelta * speed;
 
-				if( firstPersonCameraOffsetZ > 0 )
-					firstPersonCameraOffsetZ = 0;
+				if( smoothCameraOffsetZ > 0 )
+					smoothCameraOffsetZ = 0;
 			}
+		}
+
+		Vector3 GetSmoothCameraOffset()
+		{
+			return new Vector3( 0, 0, smoothCameraOffsetZ );
 		}
 
 		public void GetFirstPersonCameraPosition( out Vector3 position, out Vector3 forward, out Vector3 up )
 		{
 			var tr = TransformV;
 
-			position = tr * EyePosition.Value + new Vector3( 0, 0, firstPersonCameraOffsetZ );
+			position = tr * EyePosition.Value + GetSmoothCameraOffset();
 			//forward = Vector3.XAxis;
 			//up = Vector3.ZAxis;
 
@@ -2129,7 +2557,28 @@ namespace NeoAxis
 			}
 
 			//calculate forward
-			forward = lookToDirection.GetVector();
+			forward = CurrentTurnToDirection.GetVector();
+		}
+
+		public Vector3 GetSmoothPosition()
+		{
+			return TransformV.Position + GetSmoothCameraOffset();
+		}
+
+		void UpdateTransformOffsetInSimulation()
+		{
+			var meshInSpace = GetComponent<Component_MeshInSpace>( onlyEnabledInHierarchy: true );
+			if( meshInSpace != null )
+			{
+				var transformOffset = meshInSpace.GetComponent<Component_TransformOffset>( onlyEnabledInHierarchy: true );
+				if( transformOffset != null )
+				{
+					if( initialTransformOffsetPositionInSimulation == null )
+						initialTransformOffsetPositionInSimulation = transformOffset.PositionOffset;
+
+					transformOffset.PositionOffset = initialTransformOffsetPositionInSimulation.Value + GetSmoothCameraOffset();
+				}
+			}
 		}
 
 		public Component_MeshInSpaceAnimationController GetAnimationController()
@@ -2150,12 +2599,272 @@ namespace NeoAxis
 				{
 					controller.PlayAnimation = null;
 					controller.Speed = 1;
+					controller.SetAnimationState( null, false );
 				}
 			}
 		}
 
+		//!!!!temp
+		List<Vector3> _tempDebug = new List<Vector3>();
+
+		protected virtual void AdditionalBoneTransformsUpdate( Component_MeshInSpaceAnimationController controller, Component_MeshInSpaceAnimationController.AnimationStateClass animationState, Component_Skeleton skeleton, Component_SkeletonAnimationTrack.CalculateBoneTransformsItem[] result, ref bool updateTwice )
+		{
+			//!!!!
+			_tempDebug.Clear();
+
+			var meshInSpace = GetComponent<Component_MeshInSpace>( onlyEnabledInHierarchy: true );
+			if( meshInSpace == null )
+				return;
+			if( controller.Bones == null )
+				return;
+
+			var inverseTransformCalculated = false;
+			Matrix4 inverseTransform = Matrix4.Zero;
+
+			//hands
+			for( int nSide = 0; nSide < 2; nSide++ )
+			{
+				var left = nSide == 0;
+
+				var factor = left ? LeftHandFactor.Value : RightHandFactor.Value;
+				if( factor > 0 )
+				{
+					var worldHandPosition = left ? LeftHandPosition.Value : RightHandPosition.Value;
+
+					//update skeleton twice because during calculation the data of bone transforms taken from previous update
+					updateTwice = true;
+
+					//inverseTransform
+					if( !inverseTransformCalculated )
+					{
+						meshInSpace.TransformV.ToMatrix4().GetInverse( out inverseTransform );
+						inverseTransformCalculated = true;
+					}
+
+					var localHandPosition = inverseTransform * worldHandPosition;
+
+					//!!!!
+					//_tempDebug.Add( localHandPosition );
+
+
+					var handBoneIndex = controller.GetBoneIndex( left ? LeftHandBone : RightHandBone );
+					if( handBoneIndex >= 0 && handBoneIndex < result.Length )
+					{
+						var handBoneComponent = controller.Bones[ handBoneIndex ];
+
+						var foreArmBoneComponent = handBoneComponent.Parent as Component_SkeletonBone;
+						if( foreArmBoneComponent != null )
+						{
+							var foreArmBoneIndex = controller.GetBoneIndex( foreArmBoneComponent.Name );
+							if( foreArmBoneIndex >= 0 && foreArmBoneIndex < result.Length )
+							{
+								var armBoneComponent = foreArmBoneComponent.Parent as Component_SkeletonBone;
+								if( armBoneComponent != null )
+								{
+									var armBoneIndex = controller.GetBoneIndex( armBoneComponent.Name );
+									if( armBoneIndex >= 0 && armBoneIndex < result.Length )
+									{
+										var shoulderBoneComponent = armBoneComponent.Parent as Component_SkeletonBone;
+										if( shoulderBoneComponent != null )
+										{
+											var shoulderBoneIndex = controller.GetBoneIndex( shoulderBoneComponent.Name );
+											if( shoulderBoneIndex >= 0 && shoulderBoneIndex < result.Length )
+											{
+												ref var handBone = ref result[ handBoneIndex ];
+												ref var foreArmBone = ref result[ foreArmBoneIndex ];
+												ref var armBone = ref result[ armBoneIndex ];
+												ref var shoulderBone = ref result[ shoulderBoneIndex ];
+
+												Matrix4F handBoneMatrix = Matrix4F.Identity;
+												Matrix4F foreArmBoneMatrix = Matrix4F.Identity;
+												Matrix4F armBoneMatrix = Matrix4F.Identity;
+												Matrix4F shoulderBoneMatrix = Matrix4F.Identity;
+
+												if( controller.GetBoneGlobalTransform( handBoneIndex, ref handBoneMatrix ) &&
+													controller.GetBoneGlobalTransform( foreArmBoneIndex, ref foreArmBoneMatrix ) &&
+													controller.GetBoneGlobalTransform( armBoneIndex, ref armBoneMatrix ) &&
+													controller.GetBoneGlobalTransform( shoulderBoneIndex, ref shoulderBoneMatrix ) )
+												{
+													var handBonePosition = handBoneMatrix.GetTranslation();
+													var foreArmBonePosition = foreArmBoneMatrix.GetTranslation();
+													var armBonePosition = armBoneMatrix.GetTranslation();
+													//var shoulderBonePosition = shoulderBoneMatrix.GetTranslation();
+
+													Vector3 requiredForeArmBonePosition;
+													{
+														var bone1Length = ( foreArmBonePosition - armBonePosition ).Length();
+														var bone2Length = ( handBonePosition - foreArmBonePosition ).Length();
+														var totalLength = bone1Length + bone2Length;
+														var bone1Factor = bone1Length / totalLength;
+														//var bone2Factor = bone2Length / totalLength;
+
+														var requiredLength = ( localHandPosition - armBonePosition ).Length();
+
+														if( requiredLength >= totalLength )
+														{
+															//flat
+															requiredForeArmBonePosition = ( armBonePosition + localHandPosition ) * 0.5;
+														}
+														else
+														{
+															//bend
+
+															var a = bone1Length;
+															var b = bone2Length;
+															var c = requiredLength;
+
+															var p = 0.5 * ( a + b + c );
+															var h = ( 2.0 * Math.Sqrt( p * ( p - a ) * ( p - b ) * ( p - c ) ) ) / a;
+
+															requiredForeArmBonePosition = Vector3.Lerp( armBonePosition, localHandPosition, bone1Factor );
+															requiredForeArmBonePosition.Z -= h;
+														}
+
+														//_tempDebug.Add( requiredForeArmBonePosition );
+													}
+
+													//_tempDebug.Add( foreArmBonePosition );
+
+
+													//calculate arm bone
+													{
+														var dir = ( requiredForeArmBonePosition - armBonePosition ).GetNormalize();
+
+														shoulderBoneMatrix.Decompose( out _, out QuaternionF shoulderRot, out _ );
+														var dirLocal = shoulderRot.GetInverse() * dir.ToVector3F();
+														if( !left )
+															dirLocal = -dirLocal;
+
+														var upLocal = shoulderRot.GetInverse() * ( new Vector3F( 0, left ? -1 : 1, 1 ).GetNormalize() );
+
+														var newRotation = QuaternionF.LookAt( dirLocal, upLocal );
+														armBone.Rotation = QuaternionF.Slerp( armBone.Rotation, newRotation, (float)factor );
+													}
+
+													//calculate fore arm bone
+													{
+														var dir = ( localHandPosition - foreArmBonePosition ).GetNormalize();
+
+														armBoneMatrix.Decompose( out _, out QuaternionF armRot, out _ );
+														var dirLocal = armRot.GetInverse() * dir.ToVector3F();
+														if( !left )
+															dirLocal = -dirLocal;
+
+														var upLocal = armRot.GetInverse() * ( new Vector3F( 0, left ? -1 : 1, 1 ).GetNormalize() );
+
+														var newRotation = QuaternionF.LookAt( dirLocal, upLocal );
+														foreArmBone.Rotation = QuaternionF.Slerp( foreArmBone.Rotation, newRotation, (float)factor );
+													}
+
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			//head
+			{
+				var factor = HeadFactor.Value;
+				if( factor > 0 )
+				{
+					var worldLookAt = HeadLookAt.Value;
+
+					//update skeleton twice because during calculation the data of bone transforms taken from previous update
+					updateTwice = true;
+
+					//inverseTransform
+					if( !inverseTransformCalculated )
+					{
+						meshInSpace.TransformV.ToMatrix4().GetInverse( out inverseTransform );
+						inverseTransformCalculated = true;
+					}
+
+					var localLookAt = inverseTransform * worldLookAt;
+
+					//!!!!
+					//_tempDebug.Add( localHandPosition );
+
+
+					var headBoneIndex = controller.GetBoneIndex( HeadBone );
+					if( headBoneIndex >= 0 && headBoneIndex < result.Length )
+					{
+						var headBoneComponent = controller.Bones[ headBoneIndex ];
+
+						var neckBoneComponent = headBoneComponent.Parent as Component_SkeletonBone;
+						if( neckBoneComponent != null )
+						{
+							var neckBoneIndex = controller.GetBoneIndex( neckBoneComponent.Name );
+							if( neckBoneIndex >= 0 && neckBoneIndex < result.Length )
+							{
+								ref var headBone = ref result[ headBoneIndex ];
+								ref var neckBone = ref result[ neckBoneIndex ];
+
+								Matrix4F headBoneMatrix = Matrix4F.Identity;
+								Matrix4F neckBoneMatrix = Matrix4F.Identity;
+
+								if( controller.GetBoneGlobalTransform( headBoneIndex, ref headBoneMatrix ) &&
+									controller.GetBoneGlobalTransform( neckBoneIndex, ref neckBoneMatrix ) )
+								{
+									var headBonePosition = headBoneMatrix.GetTranslation();
+									//var neckBonePosition = neckBoneMatrix.GetTranslation();
+
+
+									//!!!!simple implementation
+
+									var dir = ( localLookAt - headBonePosition ).GetNormalize();
+									var sphericalDir = SphericalDirectionF.FromVector( dir.ToVector3F() );
+
+									var newRotation = QuaternionF.FromRotateByY( -sphericalDir.Horizontal ) * QuaternionF.FromRotateByX( sphericalDir.Vertical );
+
+
+									//var rot = QuaternionF.LookAt( dir.ToVector3F(), new Vector3F( 0, 0, 1 ) );
+
+									//var newRotation = rot * QuaternionF.FromRotateByY( MathEx.PI / 2 );// Quaternion.FromRotateByX( EngineApp.EngineTime ).ToQuaternionF();
+
+									//headBoneMatrix.Decompose( out _, out QuaternionF headRot, out _ );
+									//neckBoneMatrix.Decompose( out _, out QuaternionF neckRot, out _ );
+									//var dirLocal = neckRot.GetInverse() * dir.ToVector3F();
+
+									//neckRot *= QuaternionF.FromRotateByY( MathEx.PI / 2 ) * QuaternionF.FromRotateByX( MathEx.PI / 2 );
+									//headRot *= QuaternionF.FromRotateByY( MathEx.PI / 2 ) * QuaternionF.FromRotateByX( MathEx.PI / 2 );
+
+									//_tempDebug.Add( headBonePosition + neckRot.GetForward() );
+									//_tempDebug.Add( headBonePosition + neckRot.GetUp() * 0.5f );
+
+									//var newRotation = headBone.Rotation * neckRot.GetInverse() * rot;
+
+									//var upLocal = neckRot.GetInverse() * ( new Vector3F( 0, 1, 0 ).GetNormalize() );
+
+									//var newRotation = Quaternion.FromRotateByX( EngineApp.EngineTime ).ToQuaternionF();
+
+									//var newRotation = neckRot.GetInverse() * QuaternionF.FromRotateByX( -MathEx.PI / 2 ) * Quaternion.FromRotateByY( -sphericalDir.Horizontal ).ToQuaternionF();
+
+
+									headBone.Rotation = QuaternionF.Slerp( headBone.Rotation, newRotation, (float)factor );
+								}
+							}
+						}
+					}
+				}
+			}
+
+		}
+
 		void TickAnimate( float delta )
 		{
+			//play one animation
+			if( playOneAnimation != null )
+			{
+				playOneAnimationRemainingTime -= delta;
+				if( playOneAnimationRemainingTime <= 0 )
+					StartPlayOneAnimation( null );
+			}
+
 			if( Animate )
 			{
 				var controller = GetAnimationController();
@@ -2163,8 +2872,9 @@ namespace NeoAxis
 				{
 					Component_Animation animation = null;
 					double speed = 1;
+					bool autoRewind = true;
 
-					if( IsOnGround() )
+					if( IsOnGroundWithLatency() )
 					{
 						var localVelocity = GetTransform().Rotation.GetInverse() * GetLinearVelocity();
 						var linearSpeedNoScale = ( localVelocity.X + Math.Abs( localVelocity.Y ) * 0.5 ) / GetScaleFactor();
@@ -2192,6 +2902,25 @@ namespace NeoAxis
 									speed = WalkAnimationSpeed * linearSpeedNoScale;
 							}
 						}
+
+						//Left Turn, Right Turn
+						if( animation == null )
+						{
+							//!!!!vertical
+							if( currentTurnToDirection.Horizontal != requiredTurnToDirection.Horizontal && IsOnGround() )
+							//if( currentTurnToDirection != requiredTurnToDirection && IsOnGround() )
+							{
+								bool leftTurn;
+								{
+									var angle = requiredTurnToDirection.Horizontal - currentTurnToDirection.Horizontal;
+									var d = Math.Sin( angle );
+									leftTurn = d > 0;
+								}
+
+								animation = leftTurn ? LeftTurnAnimation : RightTurnAnimation;
+							}
+						}
+
 					}
 					else
 						animation = FlyAnimation;
@@ -2199,9 +2928,64 @@ namespace NeoAxis
 					if( animation == null )
 						animation = IdleAnimation;
 
+					//play one animation
+					if( playOneAnimation != null )
+					{
+						animation = playOneAnimation;
+						speed = playOneAnimationSpeed;
+						autoRewind = false;
+					}
+
+					var state = new Component_MeshInSpaceAnimationController.AnimationStateClass();
+					state.Animations.Add( new Component_MeshInSpaceAnimationController.AnimationStateClass.AnimationItem() { Animation = animation, Speed = speed, AutoRewind = autoRewind } );
+
+					state.AdditionalBoneTransformsUpdate = AdditionalBoneTransformsUpdate;
+
+
+					//var headLookAt = HeadLookAt.Value;
+					//if( headLookAt != null )
+					//{
+					//	state.HeadLookAt = headLookAt.TransformV.Position;
+					//	state.HeadBone = HeadBone;
+					//}
+
+					//var leftHandTransform = LeftHandTransform.Value;
+					//if( leftHandTransform != null )
+					//{
+					//	var tr = leftHandTransform.TransformV;
+					//	state.LeftHandTransform = true;
+					//	state.LeftHandPosition = tr.Position;
+					//	state.LeftHandRotation = tr.Rotation;
+					//	state.LeftHandBone = LeftHandBone;
+					//}
+
+					//var rightHandTransform = RightHandTransform.Value;
+					//if( rightHandTransform != null )
+					//{
+					//	var tr = rightHandTransform.TransformV;
+					//	state.RightHandTransform = true;
+					//	state.RightHandPosition = tr.Position;
+					//	state.RightHandRotation = tr.Rotation;
+					//	state.RightHandBone = RightHandBone;
+					//}
+
+					//state.LeftHandThumbFingerFlexion = LeftHandThumbFingerFlexion;
+					//state.LeftHandIndexFingerFlexion = LeftHandIndexFingerFlexion;
+					//state.LeftHandMiddleFingerFlexion = LeftHandMiddleFingerFlexion;
+					//state.LeftHandRingFingerFlexion = LeftHandRingFingerFlexion;
+					//state.LeftHandPinkyFingerFlexion = LeftHandPinkyFingerFlexion;
+
+					//state.RightHandThumbFingerFlexion = RightHandThumbFingerFlexion;
+					//state.RightHandIndexFingerFlexion = RightHandIndexFingerFlexion;
+					//state.RightHandMiddleFingerFlexion = RightHandMiddleFingerFlexion;
+					//state.RightHandRingFingerFlexion = RightHandRingFingerFlexion;
+					//state.RightHandPinkyFingerFlexion = RightHandPinkyFingerFlexion;
+
 					//update controller
-					controller.PlayAnimation = animation;
-					controller.Speed = speed;
+
+					controller.SetAnimationState( state, true );
+					//controller.PlayAnimation = animation;
+					//controller.Speed = speed;
 				}
 			}
 		}
@@ -2239,10 +3023,15 @@ namespace NeoAxis
 				FlyControlSupport = true;
 				JumpSupport = true;
 				Animate = true;
-				IdleAnimation = new Reference<Component_Animation>( null, "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Root|Idle" );
-				WalkAnimation = new Reference<Component_Animation>( null, "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Root|Walk_loop" );
-				RunAnimation = new Reference<Component_Animation>( null, "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Root|Run_loop" );
-				RunAnimationSpeed = 0.5;
+				IdleAnimation = new Reference<Component_Animation>( null, "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Idle" );
+				WalkAnimation = new Reference<Component_Animation>( null, "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Walk" );
+				RunAnimation = new Reference<Component_Animation>( null, "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Run" );
+				FlyAnimation = new Reference<Component_Animation>( null, "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Fly" );
+				JumpAnimation = new Reference<Component_Animation>( null, "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Jump" );
+				LeftTurnAnimation = new Reference<Component_Animation>( null, "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Left Turn" );
+				RightTurnAnimation = new Reference<Component_Animation>( null, "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Right Turn" );
+				WalkAnimationSpeed = 0.55;
+				RunAnimationSpeed = 0.2;
 			}
 		}
 
@@ -2396,7 +3185,7 @@ namespace NeoAxis
 
 						offset.PositionOffset = new Vector3( 0, 0, 0.3 );
 
-						offset.RotationOffset = Quaternion.FromRotateByY( LookToDirection.Vertical );
+						offset.RotationOffset = Quaternion.FromRotateByY( CurrentTurnToDirection.Vertical );
 					}
 				}
 			}
@@ -2405,6 +3194,70 @@ namespace NeoAxis
 		public void SoundPlay( Component_Sound sound )
 		{
 			ParentScene?.SoundPlay( sound, TransformV.Position );
+		}
+
+		public void StartPlayOneAnimation( Component_Animation animation, double speed = 1.0 )
+		{
+			playOneAnimation = animation;
+			playOneAnimationSpeed = speed;
+
+			if( playOneAnimation != null )
+			{
+				playOneAnimationRemainingTime = playOneAnimation.Length * playOneAnimationSpeed;
+
+				var controller = GetAnimationController();
+				if( controller != null && playOneAnimationRemainingTime > controller.InterpolationTime.Value )
+					playOneAnimationRemainingTime -= controller.InterpolationTime.Value;
+			}
+			else
+				playOneAnimationRemainingTime = 0;
+		}
+
+		[Browsable( false )]
+		public Component_Animation PlayOneAnimation
+		{
+			get { return playOneAnimation; }
+		}
+
+		[Browsable( false )]
+		public double PlayOneAnimationSpeed
+		{
+			get { return playOneAnimationSpeed; }
+		}
+
+		[Browsable( false )]
+		public double PlayOneAnimationRemainingTime
+		{
+			get { return playOneAnimationRemainingTime; }
+		}
+
+		void TickCurrentTurnToDirection()
+		{
+			//!!!!vertical
+			if( currentTurnToDirection.Horizontal != requiredTurnToDirection.Horizontal && IsOnGround() )
+			//if( currentTurnToDirection != requiredTurnToDirection && IsOnGround() )
+			{
+				var step = (double)TurningSpeed.Value.InRadians() * Time.SimulationDelta;
+
+				bool leftTurn;
+				{
+					var angle = requiredTurnToDirection.Horizontal - currentTurnToDirection.Horizontal;
+					var d = Math.Sin( angle );
+					leftTurn = d > 0;
+				}
+
+				currentTurnToDirection.Horizontal += leftTurn ? step : -step;
+
+				bool newLeftTurn;
+				{
+					var angle = requiredTurnToDirection.Horizontal - currentTurnToDirection.Horizontal;
+					var d = Math.Sin( angle );
+					newLeftTurn = d > 0;
+				}
+
+				if( newLeftTurn != leftTurn )
+					currentTurnToDirection.Horizontal = requiredTurnToDirection.Horizontal;
+			}
 		}
 	}
 }

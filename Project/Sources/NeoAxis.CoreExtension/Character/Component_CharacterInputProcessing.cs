@@ -163,7 +163,7 @@ namespace NeoAxis
 					run = IsKeyPressed( EKeys.Shift );
 
 				character.SetMoveVector( vector, run );
-				character.SetLookToDirection( lookDirection );
+				character.SetTurnToDirection( lookDirection, true );
 
 				//firing
 				if( IsMouseButtonPressed( EMouseButtons.Left ) && firing )

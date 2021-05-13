@@ -595,6 +595,14 @@
 		{
 			GetByReference = "Base\\Sprites\\Penguin\\Animation Jump.component"
 		}
+		LeftTurnAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Left Turn"
+		}
+		RightTurnAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Right Turn"
+		}
 		.component NeoAxis.Component_RigidBody2D
 		{
 			Name = Collision Body
@@ -816,6 +824,14 @@
 		JumpAnimation
 		{
 			GetByReference = "Base\\Sprites\\Penguin\\Animation Jump.component"
+		}
+		LeftTurnAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Left Turn"
+		}
+		RightTurnAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Right Turn"
 		}
 		.component NeoAxis.Component_RigidBody2D
 		{

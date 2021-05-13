@@ -67,12 +67,18 @@ namespace Project
 			{
 				instance = this;
 
+				//disable the Menu button on PC
 				if( !SystemSettings.MobileDevice )
 				{
 					var button = GetComponent( "Button Menu" );
 					if( button != null )
 						button.Enabled = false;
 				}
+
+				//disable the Cutscene control
+				var cutscene = GetComponent( "Cutscene" );
+				if( cutscene != null )
+					cutscene.Enabled = false;
 			}
 
 			base.OnAddedToParent();
@@ -240,6 +246,56 @@ namespace Project
 			// Scene simulation.
 			if( scene != null && scene.HierarchyController != null )
 				scene.HierarchyController.PerformSimulationSteps();
+
+			//Cutscene update
+			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && gameMode != null )
+			{
+				var cutscene = GetComponent( "Cutscene" ) as UIControl;
+				if( cutscene != null )
+				{
+					cutscene.ColorMultiplier = new ColorValue( 1, 1, 1, gameMode.CutsceneGuiFadingFactor );
+					cutscene.Enabled = gameMode.CutsceneGuiFadingFactor > 0;
+
+					var textControl = cutscene.Components[ "Bottom\\Text" ] as UIText;
+					if( textControl != null )
+						textControl.Text = gameMode.CutsceneText;
+				}
+			}
+
+			//screen fading
+			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && gameMode != null )
+			{
+				var screenFadingCurrentColor = gameMode.ScreenFadingCurrentColor;
+
+				for( int n = 0; n < 4; n++ )
+				{
+					var current = gameMode.ScreenFadingCurrentColor[ n ];
+					var target = gameMode.ScreenFadingTargetColor[ n ];
+
+					if( current != target )
+					{
+						if( current < target )
+						{
+							current += (float)gameMode.ScreenFadingSpeed * delta;
+							if( current > target )
+								current = target;
+						}
+						else
+						{
+							current -= (float)gameMode.ScreenFadingSpeed * delta;
+							if( current < target )
+								current = target;
+						}
+
+						screenFadingCurrentColor[ n ] = current;
+					}
+				}
+
+				gameMode.ScreenFadingCurrentColor = screenFadingCurrentColor;
+			}
+
+			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+				UpdateCursorVisibility();
 		}
 
 		protected override void OnRenderUI( CanvasRenderer renderer )
@@ -248,6 +304,10 @@ namespace Project
 
 			//Game mode
 			gameMode?.PerformRenderUI( this, renderer );
+
+			//screen fading
+			if( gameMode != null && gameMode.ScreenFadingCurrentColor.Alpha > 0 )
+				renderer.AddQuad( new Rectangle( 0, 0, 1, 1 ), gameMode.ScreenFadingCurrentColor );
 		}
 
 		public void SetScene( Component_Scene scene, bool canChangeUIControl )
@@ -444,14 +504,30 @@ namespace Project
 					return false;
 				if( GetComponent<UIWindow>( checkChildren: true, onlyEnabledInHierarchy: true ) != null )
 					return false;
+				if( gameMode != null && gameMode.CutsceneStarted )
+					return false;
 				return true;
-				//return !EngineConsole.Active && menuWindow == null;
 			}
 		}
 
 		public void ButtonMenu_Click( NeoAxis.UIButton sender )
 		{
 			OpenOrCloseMenu();
+		}
+
+		void UpdateCursorVisibility()
+		{
+			var show = true;
+
+			if( gameMode != null && ( gameMode.CutsceneStarted || gameMode.CutsceneGuiFadingFactor > 0 ) )
+				show = false;
+
+			if( EngineConsole.Active )
+				show = true;
+			if( GetComponent<UIWindow>( checkChildren: true, onlyEnabledInHierarchy: true ) != null )
+				show = true;
+
+			EngineApp.ShowCursor = show;
 		}
 	}
 }

@@ -6,6 +6,42 @@
 	{
 		GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
 	}
+	.component NeoAxis.UIControl
+	{
+		Name = Cutscene
+		Size = Parent 1 1
+		EditorScrollPosition = 0 0
+		.component NeoAxis.UIControl
+		{
+			Name = Top
+			Size = Units 10000 60
+			HorizontalAlignment = Center
+			Margin = Units 0 0 0 0
+			BackgroundColor = 0 0 0 0.5030196
+			EditorScrollPosition = 0 0
+		}
+		.component NeoAxis.UIControl
+		{
+			Name = Bottom
+			Size = Units 10000 250
+			HorizontalAlignment = Center
+			VerticalAlignment = Bottom
+			Margin = Units 0 0 0 0
+			BackgroundColor = 0 0 0 0.5030196
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text
+				Text = Cutscene text
+				Size = Units 400 30
+				HorizontalAlignment = Center
+				VerticalAlignment = Center
+				EditorScrollPosition = 0 0
+				FontSize = Screen 0.04
+				Shadow = True
+			}
+		}
+	}
 	.component NeoAxis.UIButton
 	{
 		Name = Button Menu

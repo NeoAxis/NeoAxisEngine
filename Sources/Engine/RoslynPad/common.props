@@ -1,8 +1,0 @@
-<Project>
-	<PropertyGroup>
-		<Features>strict</Features>
-		<Deterministic>True</Deterministic>
-		<EditorPackageVersion>1.0.6</EditorPackageVersion>
-		<LangVersion>latest</LangVersion>
-	</PropertyGroup>
-</Project>

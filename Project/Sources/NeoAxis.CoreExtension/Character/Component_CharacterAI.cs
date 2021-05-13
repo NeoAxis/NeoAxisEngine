@@ -283,6 +283,8 @@ namespace NeoAxis
 							target = moveToPosition.Target;
 
 						var diff = target - character.TransformV.Position;
+						if( diff.X == 0 && diff.Y == 0 )
+							diff.X += 0.001;
 						var distanceXY = diff.ToVector2().Length();
 						var distanceZ = Math.Abs( diff.Z );
 
@@ -304,14 +306,55 @@ namespace NeoAxis
 									diff = vector;
 							}
 
-							if( diff.X != 0 || diff.Y != 0 )
-							{
-								character.SetLookToDirection( diff );
-								character.SetMoveVector( diff.ToVector2().GetNormalize(), moveTo.Run );
-							}
+							character.SetTurnToDirection( diff, false );
+
+							//!!!!лучше реже вызывать, тут реже обновлять таск. внутри в SetMoveVector таймер другой будет. где еще так
+							character.SetMoveVector( diff.ToVector2().GetNormalize(), moveTo.Run );
 						}
 					}
 				}
+
+				//TurnToPosition, TurnToObject
+				var turnTo = task as Component_CharacterAITask_TurnTo;
+				if( turnTo != null )
+				{
+					var turnToObject = turnTo as Component_CharacterAITask_TurnToObject;
+					if( turnToObject != null && ( turnToObject.Target.Value == null || !turnToObject.Target.Value.EnabledInHierarchy ) )
+					{
+						//no target
+						if( task.DeleteTaskWhenReach )
+							task.Dispose();
+					}
+					else
+					{
+						Vector3 target = Vector3.Zero;
+						if( turnToObject != null )
+							target = turnToObject.Target.Value.TransformV.Position;
+						else if( turnTo is Component_CharacterAITask_TurnToPosition turnToPosition )
+							target = turnToPosition.Target;
+
+						var diff = ( target - character.TransformV.Position ).ToVector2();
+						if( diff.X == 0 && diff.Y == 0 )
+							diff.X += 0.001;
+						diff.Normalize();
+
+						var current = character.CurrentTurnToDirection.GetVector().ToVector2().GetNormalize();
+
+						if( current.Equals( diff, 0.001 ) )
+						{
+							//reach
+							if( task.DeleteTaskWhenReach )
+								task.Dispose();
+						}
+						else
+						{
+							//turn character
+							character.SetTurnToDirection( new Vector3( diff, 0 ), turnTo.TurnInstantly );
+						}
+					}
+				}
+
+				//add new tasks here or use OnPerformTaskSimulationStep. see Component_CharacterAITask_PressButton as example
 
 			}
 		}

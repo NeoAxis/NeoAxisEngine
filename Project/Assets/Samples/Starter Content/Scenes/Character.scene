@@ -1,6 +1,6 @@
 .component NeoAxis.Component_Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1205, 842\"><KW V=\"1\" A=\"2CABB93EFA594714F0AE454C73589B95\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"3380822B186E41A3B0AF1BCE3A2E7635\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"2CABB93EFA594714F0AE454C73589B95\"><KP UN=\"2CABB93EFA594714F0AE454C73589B95\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"2FC76A6B8D48421BCAA3FD59DD0F7CB3\" S=\"False\"><CPD ObjPath=\"$Button\\$$n1$C# Script\" /></KP><KP UN=\"BF7F219544234EEACA946AE1342D9CB4\" S=\"False\"><CPD ObjPath=\"$Regulator Switch\\$$n1$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1166, 842\"><KW V=\"1\" A=\"2CABB93EFA594714F0AE454C73589B95\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"3380822B186E41A3B0AF1BCE3A2E7635\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"2CABB93EFA594714F0AE454C73589B95\"><KP UN=\"2CABB93EFA594714F0AE454C73589B95\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"2FC76A6B8D48421BCAA3FD59DD0F7CB3\" S=\"False\"><CPD ObjPath=\"$Button\\$$n1$C# Script\" /></KP><KP UN=\"BF7F219544234EEACA946AE1342D9CB4\" S=\"False\"><CPD ObjPath=\"$Regulator Switch\\$$n1$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	DisplayPhysicalObjects = True
 	RenderingPipeline
 	{
@@ -122,6 +122,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -182,6 +189,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -216,6 +230,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Component_Mesh
 		{
@@ -252,6 +273,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -284,6 +312,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Component_Mesh
 		{
@@ -319,6 +354,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Component_Mesh
 		{
@@ -424,6 +466,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -458,6 +507,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Component_Mesh
 		{
@@ -494,6 +550,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -528,6 +591,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Component_Mesh
 		{
@@ -565,6 +635,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -601,6 +678,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -635,6 +719,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Component_Mesh
 		{
@@ -679,6 +770,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -721,6 +819,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Component_Mesh
 		{
@@ -765,6 +870,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -807,6 +919,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Component_Mesh
 		{
@@ -851,6 +970,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -893,6 +1019,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Component_Mesh
 		{
@@ -937,6 +1070,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -979,6 +1119,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Component_Mesh
 		{
@@ -1023,6 +1170,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -1065,6 +1219,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Component_Mesh
 		{
@@ -1109,6 +1270,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -1152,6 +1320,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -1194,6 +1369,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -1218,22 +1400,39 @@
 		FlyControlSupport = True
 		JumpSupport = True
 		Animate = True
-		RunAnimationSpeed = 0.5
+		WalkAnimationSpeed = 0.55
+		RunAnimationSpeed = 0.2
 		Transform
 		{
 			GetByReference = "this:$Collision Body\\Transform"
 		}
 		IdleAnimation
 		{
-			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Root|Idle"
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Idle"
 		}
 		WalkAnimation
 		{
-			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Root|Walk_loop"
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Walk"
 		}
 		RunAnimation
 		{
-			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Root|Run_loop"
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Run"
+		}
+		FlyAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Fly"
+		}
+		JumpAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Jump"
+		}
+		LeftTurnAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Left Turn"
+		}
+		RightTurnAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Right Turn"
 		}
 		.component NeoAxis.Component_RigidBody
 		{
@@ -1272,6 +1471,13 @@
 			{
 				Count = 0
 			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
 			.component NeoAxis.Component_MeshInSpaceAnimationController
 			{
 				Name = Mesh In Space Animation Controller
@@ -1298,22 +1504,39 @@
 		FlyControlSupport = True
 		JumpSupport = True
 		Animate = True
-		RunAnimationSpeed = 0.5
+		WalkAnimationSpeed = 0.57
+		RunAnimationSpeed = 0.2
 		Transform
 		{
 			GetByReference = "this:$Collision Body\\Transform"
 		}
 		IdleAnimation
 		{
-			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Root|Idle"
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Idle"
 		}
 		WalkAnimation
 		{
-			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Root|Walk_loop"
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Walk"
 		}
 		RunAnimation
 		{
-			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Root|Run_loop"
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Run"
+		}
+		FlyAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Fly"
+		}
+		JumpAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Jump"
+		}
+		LeftTurnAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Left Turn"
+		}
+		RightTurnAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Right Turn"
 		}
 		.component NeoAxis.Component_RigidBody
 		{
@@ -1351,6 +1574,13 @@
 			ReplaceMaterialSelectively
 			{
 				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
 			}
 			.component NeoAxis.Component_MeshInSpaceAnimationController
 			{
@@ -1390,22 +1620,39 @@
 		FlyControlSupport = True
 		JumpSupport = True
 		Animate = True
-		RunAnimationSpeed = 0.5
+		WalkAnimationSpeed = 0.55
+		RunAnimationSpeed = 0.2
 		Transform
 		{
 			GetByReference = "this:$Collision Body\\Transform"
 		}
 		IdleAnimation
 		{
-			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Root|Idle"
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Idle"
 		}
 		WalkAnimation
 		{
-			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Root|Walk_loop"
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Walk"
 		}
 		RunAnimation
 		{
-			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Root|Run_loop"
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Run"
+		}
+		FlyAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Fly"
+		}
+		JumpAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Jump"
+		}
+		LeftTurnAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Left Turn"
+		}
+		RightTurnAnimation
+		{
+			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Right Turn"
 		}
 		.component NeoAxis.Component_RigidBody
 		{
@@ -1444,6 +1691,13 @@
 			{
 				Count = 0
 			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
 			.component NeoAxis.Component_MeshInSpaceAnimationController
 			{
 				Name = Mesh In Space Animation Controller
@@ -1477,6 +1731,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -1504,6 +1765,13 @@
 			ReplaceMaterialSelectively
 			{
 				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
 			}
 			.component NeoAxis.Component_Mesh
 			{
@@ -1543,6 +1811,13 @@
 			ReplaceMaterialSelectively
 			{
 				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
 			}
 			.component NeoAxis.Component_Mesh
 			{
@@ -1598,7 +1873,7 @@
 		.component NeoAxis.Component_CSharpScript
 		{
 			Name = C# Script
-			Code = "public void Button_Click(NeoAxis.Component_ButtonInSpace sender)\r\n{\r\n\tvar scene = sender.ParentScene;\r\n\r\n\tvar light = scene.GetComponent(\"Light 1\") as Component_Light;\r\n\tif (light != null)\r\n\t\tlight.Enabled = sender.Activated;\r\n}\r\n"
+			Code = "public void Button_Click(NeoAxis.Component_ButtonInSpace sender)\r\n{\r\n\tvar scene = sender.ParentScene;\r\n\r\n\tvar light = scene.GetComponent(\"Directional Light\") as Component_Light;\r\n\tif (light != null)\r\n\t\tlight.Enabled = sender.Activated;\r\n}\r\n"
 			Exit
 			{
 			}
@@ -1632,6 +1907,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -1659,6 +1941,13 @@
 			ReplaceMaterialSelectively
 			{
 				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
 			}
 			.component NeoAxis.Component_Mesh
 			{
@@ -1702,6 +1991,13 @@
 			{
 				Count = 0
 			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
 			.component NeoAxis.Component_Mesh
 			{
 				Name = Mesh
@@ -1743,6 +2039,13 @@
 			ReplaceMaterialSelectively
 			{
 				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
 			}
 			.component NeoAxis.Component_Mesh
 			{
@@ -1786,6 +2089,13 @@
 			{
 				Count = 0
 			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
 			.component NeoAxis.Component_Mesh
 			{
 				Name = Mesh
@@ -1826,6 +2136,13 @@
 			{
 				Count = 0
 			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
 			.component NeoAxis.Component_Mesh
 			{
 				Name = Mesh
@@ -1864,6 +2181,13 @@
 			ReplaceMaterialSelectively
 			{
 				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
 			}
 			.component NeoAxis.Component_Mesh
 			{
@@ -1917,7 +2241,7 @@
 		.component NeoAxis.Component_CSharpScript
 		{
 			Name = C# Script
-			Code = "public void RegulatorSwitch_ValueChanged(NeoAxis.Component_RegulatorSwitchInSpace obj)\r\n{\r\n\tvar scene = obj.ParentScene;\r\n\r\n\tvar light = scene.GetComponent(\"Light 1\") as Component_Light;\r\n\tif (light != null)\r\n\t\tlight.Color = new ColorValue(1.0, 1.0, 1.0 - obj.Value);\r\n}\r\n"
+			Code = "public void RegulatorSwitch_ValueChanged(NeoAxis.Component_RegulatorSwitchInSpace obj)\r\n{\r\n\tvar scene = obj.ParentScene;\r\n\r\n\tvar light = scene.GetComponent(\"Directional Light\") as Component_Light;\r\n\tif (light != null)\r\n\t\tlight.Color = new ColorValue(1.0, 1.0, 1.0 - obj.Value);\r\n}\r\n"
 			Exit
 			{
 			}
@@ -1950,6 +2274,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -1979,6 +2310,13 @@
 			ReplaceMaterialSelectively
 			{
 				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
 			}
 			.component NeoAxis.Component_Mesh
 			{

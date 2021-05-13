@@ -1,0 +1,123 @@
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+using System;
+using System.ComponentModel;
+using System.Collections.Generic;
+using System.Linq;
+using NeoAxis.Editor;
+
+namespace NeoAxis
+{
+	/// <summary>
+	/// The task of the character to press button.
+	/// </summary>
+	[AddToResourcesWindow( @"Base\3D\Character AI Press Button", -8992 )]
+	[NewObjectDefaultName( "Press Button" )]
+	public class Component_CharacterAITask_PressButton : Component_AITask
+	{
+		const double totalTime = 2;
+		const double clickTime = 1;
+		const double clickPressingMoveTime = 0.4;
+		const double clickPressingOffset = 0.3;
+		const double handBoneOffset = 0.15;
+
+		///////////////////////////////////////////////
+
+		[Browsable( false )]
+		[Serialize]
+		[DefaultValue( 0 )]
+		public double currentTime;
+
+		/// <summary>
+		/// The target object.
+		/// </summary>
+		[DefaultValue( null )]
+		public Reference<Component_ButtonInSpace> Target
+		{
+			get { if( _target.BeginGet() ) Target = _target.Get( this ); return _target.value; }
+			set { if( _target.BeginSet( ref value ) ) { try { TargetChanged?.Invoke( this ); } finally { _target.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Target"/> property value changes.</summary>
+		public event Action<Component_CharacterAITask_PressButton> TargetChanged;
+		ReferenceField<Component_ButtonInSpace> _target = null;
+
+		///////////////////////////////////////////////
+
+		void GetPressingFactorByTime( double time, out double pressingFactor, out double skinningFactor )
+		{
+			var curve = new CurveLine();
+			curve.AddPoint( 0, new Vector3( 0, 0, 0 ) );
+			curve.AddPoint( clickTime - clickPressingMoveTime, new Vector3( 0, 1, 0 ) );
+			curve.AddPoint( clickTime, new Vector3( 1, 1, 0 ) );
+			curve.AddPoint( clickTime + clickPressingMoveTime, new Vector3( 0, 1, 0 ) );
+			curve.AddPoint( totalTime, new Vector3( 0, 0, 0 ) );
+
+			var value = curve.CalculateValueByTime( time );
+			pressingFactor = value.X;
+			skinningFactor = value.Y;
+		}
+
+		protected override void OnPerformTaskSimulationStep()
+		{
+			base.OnPerformTaskSimulationStep();
+
+			var ai = FindParent<Component_CharacterAI>();
+			if( ai != null )
+			{
+
+				//!!!!check if far away to press. walk or stop
+
+				var target = Target.Value;
+				if( target == null || !target.EnabledInHierarchy )
+				{
+					//no target
+					ResetCharacterState( ai );
+					if( DeleteTaskWhenReach )
+						Dispose();
+				}
+				else
+				{
+					var previousTime = currentTime;
+					currentTime += Time.SimulationDelta;
+
+					//update character state
+					var character = ai.Character;
+					if( character != null )
+					{
+						GetPressingFactorByTime( currentTime, out var pressingFactor, out var skinningFactor );
+
+						var tr = target.TransformV;
+						var clickPoint = tr.Position + tr.Rotation * new Vector3( handBoneOffset, 0, 0 );
+						var clickFrom = clickPoint + tr.Rotation * new Vector3( clickPressingOffset, 0, 0 );
+
+						character.RightHandFactor = skinningFactor;
+						character.RightHandPosition = Vector3.Lerp( clickFrom, clickPoint, pressingFactor );
+					}
+
+					if( currentTime >= totalTime )
+					{
+						//task is done
+						ResetCharacterState( ai );
+						if( DeleteTaskWhenReach )
+							Dispose();
+					}
+					else
+					{
+						//click the button
+						if( currentTime >= clickTime && previousTime < clickTime )
+							target.ClickingBegin();
+					}
+				}
+			}
+		}
+
+		void ResetCharacterState( Component_CharacterAI ai )
+		{
+			var character = ai.Character;
+			if( character != null )
+			{
+				character.RightHandFactor = 0;
+				character.RightHandPosition = Vector3.Zero;
+			}
+		}
+	}
+}

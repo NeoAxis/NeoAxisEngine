@@ -41,7 +41,8 @@ namespace NeoAxis.Editor
 			("For",typeof(Component_For)),
 			("Sequence",typeof(Component_Sequence)),
 			("Flow Start",typeof(Component_FlowStart)),
-			("Convert To",typeof(Component_ConvertTo)), 
+			("Convert To",typeof(Component_ConvertTo)),
+			("Sleep",typeof(Component_Sleep)),
 
 			//=== UI ===
 			("UIControl",typeof(UIControl)),
@@ -101,6 +102,7 @@ namespace NeoAxis.Editor
 			("Sensor",typeof(Component_Sensor)),
 			("Destroying Sensor",typeof(Component_DestroyingSensor)),
 			("Text 2D",typeof(Component_Text2D)),
+			("Text 3D",typeof(Component_Text3D)),
 			("Measuring Tool",typeof(Component_MeasuringTool)),
 			("Grid",typeof(Component_Grid)),
 			("Curve In Space",typeof(Component_CurveInSpace)),
@@ -199,6 +201,8 @@ namespace NeoAxis.Editor
 			("Character AI",typeof(Component_CharacterAI)),
 			("Character AI Move To Position",typeof(Component_CharacterAITask_MoveToPosition)),
 			("Character AI Move To Object",typeof(Component_CharacterAITask_MoveToObject)),
+			("Character AI Turn To Position",typeof(Component_CharacterAITask_TurnToPosition)),
+			("Character AI Turn To Object",typeof(Component_CharacterAITask_TurnToObject)),
 			("Weapon",typeof(Component_Weapon)), 
 
 			//=== 2D ===

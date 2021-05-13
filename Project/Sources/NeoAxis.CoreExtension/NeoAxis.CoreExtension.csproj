@@ -12,7 +12,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DocumentationFile>..\..\Binaries\NeoAxis.CoreExtension.xml</DocumentationFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <NoWarn>CS1591;CS1573;CS0649;CS0414;CS1589;CS1574;CS1587</NoWarn>
+    <NoWarn>CS1591;CS1573;CS0649;CS0414;CS1589;CS1574;CS1587;CS1572</NoWarn>
     <LangVersion>latest</LangVersion>
     <CodeAnalysisRuleSet />
   </PropertyGroup>
@@ -20,7 +20,7 @@
     <Optimize>false</Optimize>
     <OutputPath>..\..\Binaries\</OutputPath>
     <DefineConstants>TRACE;WINDOWS</DefineConstants>
-    <NoWarn>CS1591;CS1573;CS0649;CS0414;CS1589;CS1574;CS1587</NoWarn>
+    <NoWarn>CS1591;CS1573;CS0649;CS0414;CS1589;CS1574;CS1587;CS1572</NoWarn>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <DocumentationFile>..\..\Binaries\NeoAxis.CoreExtension.xml</DocumentationFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

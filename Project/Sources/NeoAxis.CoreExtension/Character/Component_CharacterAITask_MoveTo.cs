@@ -28,7 +28,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The required distance to the point to complete the task.
 		/// </summary>
-		[DefaultValue( 1.0 )]
+		[DefaultValue( 0.5 )]
 		[Range( 0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
 		public Reference<double> DistanceToReach
 		{
@@ -37,7 +37,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="DistanceToReach"/> property value changes.</summary>
 		public event Action<Component_CharacterAITask_MoveTo> DistanceToReachChanged;
-		ReferenceField<double> _distanceToReach = 1.0;
+		ReferenceField<double> _distanceToReach = 0.5;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -17,7 +17,11 @@
     <OutputPath>..\..\Binaries\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Sources\Engine\NeoAxis.Core\NeoAxis.Core.csproj" />
-    <ProjectReference Include="..\..\..\Sources\Engine\NeoAxis.Widget\NeoAxis.Widget.csproj" />
+    <Reference Include="NeoAxis.Core">
+      <HintPath>..\..\Binaries\NeoAxis.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="NeoAxis.Widget">
+      <HintPath>..\..\Binaries\NeoAxis.Widget.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
