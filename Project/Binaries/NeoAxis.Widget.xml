@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>NeoAxis.Widget</name>
+    </assembly>
+    <members>
+        <member name="T:NeoAxis.Widget.WidgetApp">
+            <summary>
+            Class for initialization an engine widget for Windows Forms and WPF.
+            </summary>
+        </member>
+        <member name="T:NeoAxis.Widget.WidgetControlWinForms">
+            <summary>
+            Represents an engine widget for Windows Forms.
+            </summary>
+        </member>
+        <member name="F:NeoAxis.Widget.WidgetControlWinForms.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:NeoAxis.Widget.WidgetControlWinForms.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:NeoAxis.Widget.WidgetControlWinForms.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:NeoAxis.Widget.WidgetControlWPF">
+            <summary>
+            Represents an engine widget for WPF.
+            </summary>
+            <summary>
+            WidgetControlWPF
+            </summary>
+        </member>
+        <member name="M:NeoAxis.Widget.WidgetControlWPF.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+    </members>
+</doc>
