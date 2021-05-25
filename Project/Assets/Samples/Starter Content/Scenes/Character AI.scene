@@ -1,6 +1,6 @@
 .component NeoAxis.Component_Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1166, 842\"><KW V=\"1\" A=\"753675821D3D4864C598A4CF85FBC750\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"D4B72E7FD9B247A81E8E6C34D3B88874\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"753675821D3D4864C598A4CF85FBC750\"><KP UN=\"753675821D3D4864C598A4CF85FBC750\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"CDCBE92292624FA1BAAD447ED8455689\" S=\"False\"><CPD ObjPath=\"$Button\\$$n1$C# Script\" /></KP><KP UN=\"654BBC52A8A9476DB398309225BD08C4\" S=\"False\"><CPD ObjPath=\"$Regulator Switch\\$$n1$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1147, 842\"><KW V=\"1\" A=\"753675821D3D4864C598A4CF85FBC750\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"D4B72E7FD9B247A81E8E6C34D3B88874\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"753675821D3D4864C598A4CF85FBC750\"><KP UN=\"753675821D3D4864C598A4CF85FBC750\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"CDCBE92292624FA1BAAD447ED8455689\" S=\"False\"><CPD ObjPath=\"$Button\\$$n1$C# Script\" /></KP><KP UN=\"654BBC52A8A9476DB398309225BD08C4\" S=\"False\"><CPD ObjPath=\"$Regulator Switch\\$$n1$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	DisplayDevelopmentDataInSimulation = True
 	RenderingPipeline
 	{
@@ -188,8 +188,6 @@
 		Animate = True
 		WalkAnimationSpeed = 0.57
 		RunAnimationSpeed = 0.2
-		LeftHandPosition = NaN NaN NaN
-		RightHandPosition = NaN NaN NaN
 		HeadLookAt = NaN NaN NaN
 		Transform
 		{
@@ -923,7 +921,7 @@
 	.component NeoAxis.Component_ObjectInSpace
 	{
 		Name = Object In Space 2
-		Transform = "-1.30927543479852 3.62456273118626 0.0578020071987823; 0 0 0 1; 1 1 1"
+		Transform = "-1.02491395777911 3.64190598272946 0.0578020071987823; 0 0 0 1; 1 1 1"
 	}
 	.component NeoAxis.Component_MeshInSpace
 	{

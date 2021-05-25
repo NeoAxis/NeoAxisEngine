@@ -222,13 +222,13 @@
 		{
 			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Right Turn"
 		}
-		LeftHandPosition
+		LeftHandTransform
 		{
-			GetByReference = "root:$Object In Space 4\\TransformV\\Position"
+			GetByReference = "root:$Object In Space 4\\Transform"
 		}
-		RightHandPosition
+		RightHandTransform
 		{
-			GetByReference = "root:$Object In Space 3\\TransformV\\Position"
+			GetByReference = "root:$Object In Space 3\\Transform"
 		}
 		HeadLookAt
 		{
@@ -350,7 +350,7 @@
 	.component NeoAxis.Component_ObjectInSpace
 	{
 		Name = Object In Space 3
-		Transform = "-1.9290422686418 1.4190769027649 1.73260721344696; 0 0 0.865040047194489 0.501702817163465; 1 1 1"
+		Transform = "-1.87610280061295 1.1805527039683 1.73260721344696; 0 0 0.865040047194489 0.501702817163465; 1 1 1"
 	}
 	.component NeoAxis.Component_ObjectInSpace
 	{

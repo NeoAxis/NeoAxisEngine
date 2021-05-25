@@ -789,20 +789,36 @@ namespace NeoAxis
 		ReferenceField<double> _leftHandFactor = 0.0;
 
 		/// <summary>
-		/// Left hand target position.
+		/// Left hand target transform in the world coordinates. X - forward, -Z - palm.
 		/// </summary>
 		[Category( "Skeleton State" )]
-		[DefaultValue( "0 0 0" )]
-		public Reference<Vector3> LeftHandPosition
+		[DefaultValue( NeoAxis.Transform.IdentityAsString )]
+		public Reference<Transform> LeftHandTransform
 		{
-			get { if( _leftHandPosition.BeginGet() ) LeftHandPosition = _leftHandPosition.Get( this ); return _leftHandPosition.value; }
-			set { if( _leftHandPosition.BeginSet( ref value ) ) { try { LeftHandPositionChanged?.Invoke( this ); } finally { _leftHandPosition.EndSet(); } } }
+			get { if( _leftHandTransform.BeginGet() ) LeftHandTransform = _leftHandTransform.Get( this ); return _leftHandTransform.value; }
+			set { if( _leftHandTransform.BeginSet( ref value ) ) { try { LeftHandTransformChanged?.Invoke( this ); } finally { _leftHandTransform.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="LeftHandPosition"/> property value changes.</summary>
-		public event Action<Component_Character> LeftHandPositionChanged;
-		ReferenceField<Vector3> _leftHandPosition = new Vector3( double.NaN, double.NaN, double.NaN );
+		/// <summary>Occurs when the <see cref="LeftHandTransform"/> property value changes.</summary>
+		public event Action<Component_Character> LeftHandTransformChanged;
+		ReferenceField<Transform> _leftHandTransform = NeoAxis.Transform.Identity;
 
-		//!!!!
+		///// <summary>
+		///// Left hand target position in the world coordinates.
+		///// </summary>
+		//[Category( "Skeleton State" )]
+		//[DefaultValue( "0 0 0" )]
+		//public Reference<Vector3> LeftHandPosition
+		//{
+		//	get { if( _leftHandPosition.BeginGet() ) LeftHandPosition = _leftHandPosition.Get( this ); return _leftHandPosition.value; }
+		//	set { if( _leftHandPosition.BeginSet( ref value ) ) { try { LeftHandPositionChanged?.Invoke( this ); } finally { _leftHandPosition.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="LeftHandPosition"/> property value changes.</summary>
+		//public event Action<Component_Character> LeftHandPositionChanged;
+		//ReferenceField<Vector3> _leftHandPosition = new Vector3( 0, 0, 0 );
+
+		///// <summary>
+		///// Left hand rotation in the world coordinates. X - forward, -Z - palm.
+		///// </summary>
 		//[Category( "Skeleton State" )]
 		//[DefaultValue( "0 0 0 1" )]
 		//public Reference<Quaternion> LeftHandRotation
@@ -813,7 +829,6 @@ namespace NeoAxis
 		///// <summary>Occurs when the <see cref="LeftHandRotation"/> property value changes.</summary>
 		//public event Action<Component_Character> LeftHandRotationChanged;
 		//ReferenceField<Quaternion> _leftHandRotation = new Quaternion( 0, 0, 0, 1 );
-
 
 		/// <summary>
 		/// The name of the right hand bone.
@@ -845,20 +860,36 @@ namespace NeoAxis
 		ReferenceField<double> _rightHandFactor = 0.0;
 
 		/// <summary>
-		/// Right hand target position.
+		/// Right hand target transform in the world coordinates. X - forward, -Z - palm.
 		/// </summary>
 		[Category( "Skeleton State" )]
-		[DefaultValue( "0 0 0" )]
-		public Reference<Vector3> RightHandPosition
+		[DefaultValue( NeoAxis.Transform.IdentityAsString )]
+		public Reference<Transform> RightHandTransform
 		{
-			get { if( _rightHandPosition.BeginGet() ) RightHandPosition = _rightHandPosition.Get( this ); return _rightHandPosition.value; }
-			set { if( _rightHandPosition.BeginSet( ref value ) ) { try { RightHandPositionChanged?.Invoke( this ); } finally { _rightHandPosition.EndSet(); } } }
+			get { if( _rightHandTransform.BeginGet() ) RightHandTransform = _rightHandTransform.Get( this ); return _rightHandTransform.value; }
+			set { if( _rightHandTransform.BeginSet( ref value ) ) { try { RightHandTransformChanged?.Invoke( this ); } finally { _rightHandTransform.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="RightHandPosition"/> property value changes.</summary>
-		public event Action<Component_Character> RightHandPositionChanged;
-		ReferenceField<Vector3> _rightHandPosition = new Vector3( double.NaN, double.NaN, double.NaN );
+		/// <summary>Occurs when the <see cref="RightHandTransform"/> property value changes.</summary>
+		public event Action<Component_Character> RightHandTransformChanged;
+		ReferenceField<Transform> _rightHandTransform = NeoAxis.Transform.Identity;
 
-		//!!!!
+		///// <summary>
+		///// Right hand target position in the world coordinates.
+		///// </summary>
+		//[Category( "Skeleton State" )]
+		//[DefaultValue( "0 0 0" )]
+		//public Reference<Vector3> RightHandPosition
+		//{
+		//	get { if( _rightHandPosition.BeginGet() ) RightHandPosition = _rightHandPosition.Get( this ); return _rightHandPosition.value; }
+		//	set { if( _rightHandPosition.BeginSet( ref value ) ) { try { RightHandPositionChanged?.Invoke( this ); } finally { _rightHandPosition.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="RightHandPosition"/> property value changes.</summary>
+		//public event Action<Component_Character> RightHandPositionChanged;
+		//ReferenceField<Vector3> _rightHandPosition = new Vector3( 0, 0, 0 );
+
+		///// <summary>
+		///// Right hand rotation in the world coordinates. X - forward, -Z - palm.
+		///// </summary>
 		//[Category( "Skeleton State" )]
 		//[DefaultValue( "0 0 0 1" )]
 		//public Reference<Quaternion> RightHandRotation
@@ -911,7 +942,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="HeadLookAt"/> property value changes.</summary>
 		public event Action<Component_Character> HeadLookAtChanged;
-		ReferenceField<Vector3> _headLookAt = new Vector3( double.NaN, double.NaN, double.NaN );
+		ReferenceField<Vector3> _headLookAt = new Vector3( 0, 0, 0 );
 
 
 
@@ -2607,7 +2638,7 @@ namespace NeoAxis
 		//!!!!temp
 		List<Vector3> _tempDebug = new List<Vector3>();
 
-		protected virtual void AdditionalBoneTransformsUpdate( Component_MeshInSpaceAnimationController controller, Component_MeshInSpaceAnimationController.AnimationStateClass animationState, Component_Skeleton skeleton, Component_SkeletonAnimationTrack.CalculateBoneTransformsItem[] result, ref bool updateTwice )
+		protected virtual void AdditionalBoneTransformsUpdate( Component_MeshInSpaceAnimationController controller, Component_MeshInSpaceAnimationController.AnimationStateClass animationState, Component_Skeleton skeleton, Component_SkeletonAnimationTrack.CalculateBoneTransformsItem[] result, ref bool updateTwice, int updateIteration )
 		{
 			//!!!!
 			_tempDebug.Clear();
@@ -2629,133 +2660,223 @@ namespace NeoAxis
 				var factor = left ? LeftHandFactor.Value : RightHandFactor.Value;
 				if( factor > 0 )
 				{
-					var worldHandPosition = left ? LeftHandPosition.Value : RightHandPosition.Value;
-
 					//update skeleton twice because during calculation the data of bone transforms taken from previous update
 					updateTwice = true;
 
-					//inverseTransform
-					if( !inverseTransformCalculated )
+					if( updateIteration == 1 )
 					{
-						meshInSpace.TransformV.ToMatrix4().GetInverse( out inverseTransform );
-						inverseTransformCalculated = true;
-					}
+						var worldHandTransform = left ? LeftHandTransform.Value : RightHandTransform.Value;
+						//var worldHandPosition = left ? LeftHandPosition.Value : RightHandPosition.Value;
 
-					var localHandPosition = inverseTransform * worldHandPosition;
-
-					//!!!!
-					//_tempDebug.Add( localHandPosition );
-
-
-					var handBoneIndex = controller.GetBoneIndex( left ? LeftHandBone : RightHandBone );
-					if( handBoneIndex >= 0 && handBoneIndex < result.Length )
-					{
-						var handBoneComponent = controller.Bones[ handBoneIndex ];
-
-						var foreArmBoneComponent = handBoneComponent.Parent as Component_SkeletonBone;
-						if( foreArmBoneComponent != null )
+						//inverseTransform
+						if( !inverseTransformCalculated )
 						{
-							var foreArmBoneIndex = controller.GetBoneIndex( foreArmBoneComponent.Name );
-							if( foreArmBoneIndex >= 0 && foreArmBoneIndex < result.Length )
+							meshInSpace.TransformV.ToMatrix4().GetInverse( out inverseTransform );
+							inverseTransformCalculated = true;
+						}
+
+						var objectHandPosition = inverseTransform * worldHandTransform.Position;
+						var objectHandRotation = Quaternion.LookAt( inverseTransform * worldHandTransform.Rotation.GetForward(), inverseTransform * worldHandTransform.Rotation.GetUp() );
+
+						//!!!!
+						//_tempDebug.Add( localHandPosition );
+
+
+						var handBoneIndex = controller.GetBoneIndex( left ? LeftHandBone : RightHandBone );
+						if( handBoneIndex >= 0 && handBoneIndex < result.Length )
+						{
+							var handBoneComponent = controller.Bones[ handBoneIndex ];
+
+							var foreArmBoneComponent = handBoneComponent.Parent as Component_SkeletonBone;
+							if( foreArmBoneComponent != null )
 							{
-								var armBoneComponent = foreArmBoneComponent.Parent as Component_SkeletonBone;
-								if( armBoneComponent != null )
+								var foreArmBoneIndex = controller.GetBoneIndex( foreArmBoneComponent.Name );
+								if( foreArmBoneIndex >= 0 && foreArmBoneIndex < result.Length )
 								{
-									var armBoneIndex = controller.GetBoneIndex( armBoneComponent.Name );
-									if( armBoneIndex >= 0 && armBoneIndex < result.Length )
+									var armBoneComponent = foreArmBoneComponent.Parent as Component_SkeletonBone;
+									if( armBoneComponent != null )
 									{
-										var shoulderBoneComponent = armBoneComponent.Parent as Component_SkeletonBone;
-										if( shoulderBoneComponent != null )
+										var armBoneIndex = controller.GetBoneIndex( armBoneComponent.Name );
+										if( armBoneIndex >= 0 && armBoneIndex < result.Length )
 										{
-											var shoulderBoneIndex = controller.GetBoneIndex( shoulderBoneComponent.Name );
-											if( shoulderBoneIndex >= 0 && shoulderBoneIndex < result.Length )
+											var shoulderBoneComponent = armBoneComponent.Parent as Component_SkeletonBone;
+											if( shoulderBoneComponent != null )
 											{
-												ref var handBone = ref result[ handBoneIndex ];
-												ref var foreArmBone = ref result[ foreArmBoneIndex ];
-												ref var armBone = ref result[ armBoneIndex ];
-												ref var shoulderBone = ref result[ shoulderBoneIndex ];
-
-												Matrix4F handBoneMatrix = Matrix4F.Identity;
-												Matrix4F foreArmBoneMatrix = Matrix4F.Identity;
-												Matrix4F armBoneMatrix = Matrix4F.Identity;
-												Matrix4F shoulderBoneMatrix = Matrix4F.Identity;
-
-												if( controller.GetBoneGlobalTransform( handBoneIndex, ref handBoneMatrix ) &&
-													controller.GetBoneGlobalTransform( foreArmBoneIndex, ref foreArmBoneMatrix ) &&
-													controller.GetBoneGlobalTransform( armBoneIndex, ref armBoneMatrix ) &&
-													controller.GetBoneGlobalTransform( shoulderBoneIndex, ref shoulderBoneMatrix ) )
+												var shoulderBoneIndex = controller.GetBoneIndex( shoulderBoneComponent.Name );
+												if( shoulderBoneIndex >= 0 && shoulderBoneIndex < result.Length )
 												{
-													var handBonePosition = handBoneMatrix.GetTranslation();
-													var foreArmBonePosition = foreArmBoneMatrix.GetTranslation();
-													var armBonePosition = armBoneMatrix.GetTranslation();
-													//var shoulderBonePosition = shoulderBoneMatrix.GetTranslation();
+													ref var handBone = ref result[ handBoneIndex ];
+													ref var foreArmBone = ref result[ foreArmBoneIndex ];
+													ref var armBone = ref result[ armBoneIndex ];
+													ref var shoulderBone = ref result[ shoulderBoneIndex ];
 
-													Vector3 requiredForeArmBonePosition;
+													Matrix4F handBoneMatrix = Matrix4F.Identity;
+													Matrix4F foreArmBoneMatrix = Matrix4F.Identity;
+													Matrix4F armBoneMatrix = Matrix4F.Identity;
+													Matrix4F shoulderBoneMatrix = Matrix4F.Identity;
+
+													if( controller.GetBoneGlobalTransform( handBoneIndex, ref handBoneMatrix ) &&
+														controller.GetBoneGlobalTransform( foreArmBoneIndex, ref foreArmBoneMatrix ) &&
+														controller.GetBoneGlobalTransform( armBoneIndex, ref armBoneMatrix ) &&
+														controller.GetBoneGlobalTransform( shoulderBoneIndex, ref shoulderBoneMatrix ) )
 													{
-														var bone1Length = ( foreArmBonePosition - armBonePosition ).Length();
-														var bone2Length = ( handBonePosition - foreArmBonePosition ).Length();
-														var totalLength = bone1Length + bone2Length;
-														var bone1Factor = bone1Length / totalLength;
-														//var bone2Factor = bone2Length / totalLength;
+														var handBonePosition = handBoneMatrix.GetTranslation();
+														var foreArmBonePosition = foreArmBoneMatrix.GetTranslation();
+														var armBonePosition = armBoneMatrix.GetTranslation();
+														//var shoulderBonePosition = shoulderBoneMatrix.GetTranslation();
 
-														var requiredLength = ( localHandPosition - armBonePosition ).Length();
-
-														if( requiredLength >= totalLength )
+														Vector3 requiredForeArmBonePosition;
 														{
-															//flat
-															requiredForeArmBonePosition = ( armBonePosition + localHandPosition ) * 0.5;
+															var bone1Length = ( foreArmBonePosition - armBonePosition ).Length();
+															var bone2Length = ( handBonePosition - foreArmBonePosition ).Length();
+															var totalLength = bone1Length + bone2Length;
+															var requiredLength = ( objectHandPosition - armBonePosition ).Length();
+
+															if( requiredLength >= totalLength )
+															{
+																//flat
+																requiredForeArmBonePosition = ( armBonePosition + objectHandPosition ) * 0.5;
+															}
+															else
+															{
+																//bend
+
+																var a = requiredLength;
+																var b = bone1Length;
+																var c = bone2Length;
+																var p = 0.5 * ( a + b + c );
+																var h = ( 2.0 * Math.Sqrt( p * ( p - a ) * ( p - b ) * ( p - c ) ) ) / a;
+
+																//h = b * sin(yAngle)
+																var yAngle = Math.Asin( h / b );
+
+																var dir = ( objectHandPosition - armBonePosition ).GetNormalize();
+																var sphericalDir = SphericalDirection.FromVector( dir );
+																sphericalDir.Vertical -= yAngle;
+
+																requiredForeArmBonePosition = armBonePosition + sphericalDir.GetVector().GetNormalize() * bone1Length;
+															}
+
+															//_tempDebug.Add( requiredForeArmBonePosition );
 														}
-														else
-														{
-															//bend
 
-															var a = bone1Length;
-															var b = bone2Length;
-															var c = requiredLength;
+														//_tempDebug.Add( foreArmBonePosition );
 
-															var p = 0.5 * ( a + b + c );
-															var h = ( 2.0 * Math.Sqrt( p * ( p - a ) * ( p - b ) * ( p - c ) ) ) / a;
-
-															requiredForeArmBonePosition = Vector3.Lerp( armBonePosition, localHandPosition, bone1Factor );
-															requiredForeArmBonePosition.Z -= h;
-														}
-
+														//_tempDebug.Add( armBonePosition );
 														//_tempDebug.Add( requiredForeArmBonePosition );
+														//_tempDebug.Add( localHandPosition );
+
+														QuaternionF armRotationOffset;
+
+														//calculate arm bone
+														{
+															var dir = ( requiredForeArmBonePosition - armBonePosition ).GetNormalize();
+
+															armBoneMatrix.Decompose( out _, out QuaternionF objectArmRotation, out _ );
+
+															shoulderBoneMatrix.Decompose( out _, out QuaternionF objectShoulderRotation, out _ );
+															var objectShoulderRotationInv = objectShoulderRotation.GetInverse();
+
+															//!!!!take into account the starting angles. now hands are always down, idle
+
+															var sphericalDir = SphericalDirection.FromVector( dir );
+
+															armRotationOffset =
+																QuaternionF.FromRotateByZ( (float)-sphericalDir.Horizontal ) *
+																QuaternionF.FromRotateByY( (float)sphericalDir.Vertical + MathEx.PI / 2 );
+
+															var rot = armRotationOffset * objectArmRotation;
+
+															var newRotation = objectShoulderRotationInv * rot;
+															armBone.Rotation = QuaternionF.Slerp( armBone.Rotation, newRotation, (float)factor );
+														}
+
+														QuaternionF foreArmRotationOffset;
+
+														//calculate fore arm bone
+														{
+															var dir = ( objectHandPosition - requiredForeArmBonePosition ).GetNormalize();
+
+															foreArmBoneMatrix.Decompose( out _, out QuaternionF objectForeArmRotation, out _ );
+
+															armBoneMatrix.Decompose( out _, out QuaternionF objectArmRotation, out _ );
+															var objectArmRotationInv = objectArmRotation.GetInverse();
+
+															//!!!!take into account the starting angles. now hands are always down, idle
+
+															var sphericalDir = SphericalDirection.FromVector( dir );
+
+															foreArmRotationOffset = armRotationOffset.GetInverse() *
+																QuaternionF.FromRotateByZ( (float)-sphericalDir.Horizontal ) *
+																QuaternionF.FromRotateByY( (float)sphericalDir.Vertical + MathEx.PI / 2 );
+
+															var rot = foreArmRotationOffset * objectForeArmRotation;
+
+															//var rot = armRotationOffset.GetInverse() *
+															//	QuaternionF.FromRotateByZ( (float)-sphericalDir.Horizontal ) *
+															//	QuaternionF.FromRotateByY( (float)sphericalDir.Vertical + MathEx.PI / 2 ) *
+															//	objectForeArmRotation;
+
+															var newRotation = objectArmRotationInv * rot;
+															foreArmBone.Rotation = QuaternionF.Slerp( foreArmBone.Rotation, newRotation, (float)factor );
+														}
+
+														////calculate hand bone
+														//{
+														//	handBoneMatrix.Decompose( out _, out QuaternionF objectHandRotationM, out _ );
+
+														//	foreArmBoneMatrix.Decompose( out _, out QuaternionF objectForeArmRotation, out _ );
+														//	var objectForeArmRotationInv = objectForeArmRotation.GetInverse();
+
+														//	var rot = foreArmRotationOffset.GetInverse() *
+														//		//QuaternionF.FromRotateByY( (float)MathEx.PI / 2 ) *
+														//		QuaternionF.FromRotateByZ( (float)EngineApp.EngineTime ) *
+														//		objectHandRotationM;
+
+														//	//var rot = foreArmRotationOffset * objectHandRotationM;
+
+														//	var newRotation = objectForeArmRotationInv * rot;
+														//	handBone.Rotation = QuaternionF.Slerp( handBone.Rotation, newRotation, (float)factor );
+
+														//	//handBone.Rotation = QuaternionF.FromRotateByX( (float)MathEx.PI / 2 );
+
+														//	//handBone.Rotation = QuaternionF.FromRotateByX( (float)EngineApp.EngineTime );
+														//}
+
+
+
+
+														////calculate arm bone
+														//{
+														//	var dir = ( requiredForeArmBonePosition - armBonePosition ).GetNormalize();
+
+														//	shoulderBoneMatrix.Decompose( out _, out QuaternionF shoulderRot, out _ );
+														//	var dirLocal = shoulderRot.GetInverse() * dir.ToVector3F();
+														//	if( !left )
+														//		dirLocal = -dirLocal;
+
+														//	var upLocal = shoulderRot.GetInverse() * ( new Vector3F( 0, left ? -1 : 1, 1 ).GetNormalize() );
+
+														//	var newRotation = QuaternionF.LookAt( dirLocal, upLocal );
+														//	armBone.Rotation = QuaternionF.Slerp( armBone.Rotation, newRotation, (float)factor );
+														//}
+
+														////calculate fore arm bone
+														//{
+														//	var dir = ( localHandPosition - foreArmBonePosition ).GetNormalize();
+
+														//	armBoneMatrix.Decompose( out _, out QuaternionF armRot, out _ );
+														//	var dirLocal = armRot.GetInverse() * dir.ToVector3F();
+														//	if( !left )
+														//		dirLocal = -dirLocal;
+
+														//	var upLocal = armRot.GetInverse() * ( new Vector3F( 0, left ? -1 : 1, 1 ).GetNormalize() );
+
+														//	var newRotation = QuaternionF.LookAt( dirLocal, upLocal );
+														//	foreArmBone.Rotation = QuaternionF.Slerp( foreArmBone.Rotation, newRotation, (float)factor );
+														//}
+
 													}
-
-													//_tempDebug.Add( foreArmBonePosition );
-
-
-													//calculate arm bone
-													{
-														var dir = ( requiredForeArmBonePosition - armBonePosition ).GetNormalize();
-
-														shoulderBoneMatrix.Decompose( out _, out QuaternionF shoulderRot, out _ );
-														var dirLocal = shoulderRot.GetInverse() * dir.ToVector3F();
-														if( !left )
-															dirLocal = -dirLocal;
-
-														var upLocal = shoulderRot.GetInverse() * ( new Vector3F( 0, left ? -1 : 1, 1 ).GetNormalize() );
-
-														var newRotation = QuaternionF.LookAt( dirLocal, upLocal );
-														armBone.Rotation = QuaternionF.Slerp( armBone.Rotation, newRotation, (float)factor );
-													}
-
-													//calculate fore arm bone
-													{
-														var dir = ( localHandPosition - foreArmBonePosition ).GetNormalize();
-
-														armBoneMatrix.Decompose( out _, out QuaternionF armRot, out _ );
-														var dirLocal = armRot.GetInverse() * dir.ToVector3F();
-														if( !left )
-															dirLocal = -dirLocal;
-
-														var upLocal = armRot.GetInverse() * ( new Vector3F( 0, left ? -1 : 1, 1 ).GetNormalize() );
-
-														var newRotation = QuaternionF.LookAt( dirLocal, upLocal );
-														foreArmBone.Rotation = QuaternionF.Slerp( foreArmBone.Rotation, newRotation, (float)factor );
-													}
-
 												}
 											}
 										}
@@ -2772,80 +2893,83 @@ namespace NeoAxis
 				var factor = HeadFactor.Value;
 				if( factor > 0 )
 				{
-					var worldLookAt = HeadLookAt.Value;
-
 					//update skeleton twice because during calculation the data of bone transforms taken from previous update
 					updateTwice = true;
 
-					//inverseTransform
-					if( !inverseTransformCalculated )
+					if( updateIteration == 1 )
 					{
-						meshInSpace.TransformV.ToMatrix4().GetInverse( out inverseTransform );
-						inverseTransformCalculated = true;
-					}
+						var worldLookAt = HeadLookAt.Value;
 
-					var localLookAt = inverseTransform * worldLookAt;
-
-					//!!!!
-					//_tempDebug.Add( localHandPosition );
-
-
-					var headBoneIndex = controller.GetBoneIndex( HeadBone );
-					if( headBoneIndex >= 0 && headBoneIndex < result.Length )
-					{
-						var headBoneComponent = controller.Bones[ headBoneIndex ];
-
-						var neckBoneComponent = headBoneComponent.Parent as Component_SkeletonBone;
-						if( neckBoneComponent != null )
+						//inverseTransform
+						if( !inverseTransformCalculated )
 						{
-							var neckBoneIndex = controller.GetBoneIndex( neckBoneComponent.Name );
-							if( neckBoneIndex >= 0 && neckBoneIndex < result.Length )
+							meshInSpace.TransformV.ToMatrix4().GetInverse( out inverseTransform );
+							inverseTransformCalculated = true;
+						}
+
+						var localLookAt = inverseTransform * worldLookAt;
+
+						//!!!!
+						//_tempDebug.Add( localHandPosition );
+
+
+						var headBoneIndex = controller.GetBoneIndex( HeadBone );
+						if( headBoneIndex >= 0 && headBoneIndex < result.Length )
+						{
+							var headBoneComponent = controller.Bones[ headBoneIndex ];
+
+							var neckBoneComponent = headBoneComponent.Parent as Component_SkeletonBone;
+							if( neckBoneComponent != null )
 							{
-								ref var headBone = ref result[ headBoneIndex ];
-								ref var neckBone = ref result[ neckBoneIndex ];
-
-								Matrix4F headBoneMatrix = Matrix4F.Identity;
-								Matrix4F neckBoneMatrix = Matrix4F.Identity;
-
-								if( controller.GetBoneGlobalTransform( headBoneIndex, ref headBoneMatrix ) &&
-									controller.GetBoneGlobalTransform( neckBoneIndex, ref neckBoneMatrix ) )
+								var neckBoneIndex = controller.GetBoneIndex( neckBoneComponent.Name );
+								if( neckBoneIndex >= 0 && neckBoneIndex < result.Length )
 								{
-									var headBonePosition = headBoneMatrix.GetTranslation();
-									//var neckBonePosition = neckBoneMatrix.GetTranslation();
+									ref var headBone = ref result[ headBoneIndex ];
+									ref var neckBone = ref result[ neckBoneIndex ];
+
+									Matrix4F headBoneMatrix = Matrix4F.Identity;
+									Matrix4F neckBoneMatrix = Matrix4F.Identity;
+
+									if( controller.GetBoneGlobalTransform( headBoneIndex, ref headBoneMatrix ) &&
+										controller.GetBoneGlobalTransform( neckBoneIndex, ref neckBoneMatrix ) )
+									{
+										var headBonePosition = headBoneMatrix.GetTranslation();
+										//var neckBonePosition = neckBoneMatrix.GetTranslation();
 
 
-									//!!!!simple implementation
+										//!!!!simple implementation
 
-									var dir = ( localLookAt - headBonePosition ).GetNormalize();
-									var sphericalDir = SphericalDirectionF.FromVector( dir.ToVector3F() );
+										var dir = ( localLookAt - headBonePosition ).GetNormalize();
+										var sphericalDir = SphericalDirectionF.FromVector( dir.ToVector3F() );
 
-									var newRotation = QuaternionF.FromRotateByY( -sphericalDir.Horizontal ) * QuaternionF.FromRotateByX( sphericalDir.Vertical );
-
-
-									//var rot = QuaternionF.LookAt( dir.ToVector3F(), new Vector3F( 0, 0, 1 ) );
-
-									//var newRotation = rot * QuaternionF.FromRotateByY( MathEx.PI / 2 );// Quaternion.FromRotateByX( EngineApp.EngineTime ).ToQuaternionF();
-
-									//headBoneMatrix.Decompose( out _, out QuaternionF headRot, out _ );
-									//neckBoneMatrix.Decompose( out _, out QuaternionF neckRot, out _ );
-									//var dirLocal = neckRot.GetInverse() * dir.ToVector3F();
-
-									//neckRot *= QuaternionF.FromRotateByY( MathEx.PI / 2 ) * QuaternionF.FromRotateByX( MathEx.PI / 2 );
-									//headRot *= QuaternionF.FromRotateByY( MathEx.PI / 2 ) * QuaternionF.FromRotateByX( MathEx.PI / 2 );
-
-									//_tempDebug.Add( headBonePosition + neckRot.GetForward() );
-									//_tempDebug.Add( headBonePosition + neckRot.GetUp() * 0.5f );
-
-									//var newRotation = headBone.Rotation * neckRot.GetInverse() * rot;
-
-									//var upLocal = neckRot.GetInverse() * ( new Vector3F( 0, 1, 0 ).GetNormalize() );
-
-									//var newRotation = Quaternion.FromRotateByX( EngineApp.EngineTime ).ToQuaternionF();
-
-									//var newRotation = neckRot.GetInverse() * QuaternionF.FromRotateByX( -MathEx.PI / 2 ) * Quaternion.FromRotateByY( -sphericalDir.Horizontal ).ToQuaternionF();
+										var newRotation = QuaternionF.FromRotateByY( -sphericalDir.Horizontal ) * QuaternionF.FromRotateByX( sphericalDir.Vertical );
 
 
-									headBone.Rotation = QuaternionF.Slerp( headBone.Rotation, newRotation, (float)factor );
+										//var rot = QuaternionF.LookAt( dir.ToVector3F(), new Vector3F( 0, 0, 1 ) );
+
+										//var newRotation = rot * QuaternionF.FromRotateByY( MathEx.PI / 2 );// Quaternion.FromRotateByX( EngineApp.EngineTime ).ToQuaternionF();
+
+										//headBoneMatrix.Decompose( out _, out QuaternionF headRot, out _ );
+										//neckBoneMatrix.Decompose( out _, out QuaternionF neckRot, out _ );
+										//var dirLocal = neckRot.GetInverse() * dir.ToVector3F();
+
+										//neckRot *= QuaternionF.FromRotateByY( MathEx.PI / 2 ) * QuaternionF.FromRotateByX( MathEx.PI / 2 );
+										//headRot *= QuaternionF.FromRotateByY( MathEx.PI / 2 ) * QuaternionF.FromRotateByX( MathEx.PI / 2 );
+
+										//_tempDebug.Add( headBonePosition + neckRot.GetForward() );
+										//_tempDebug.Add( headBonePosition + neckRot.GetUp() * 0.5f );
+
+										//var newRotation = headBone.Rotation * neckRot.GetInverse() * rot;
+
+										//var upLocal = neckRot.GetInverse() * ( new Vector3F( 0, 1, 0 ).GetNormalize() );
+
+										//var newRotation = Quaternion.FromRotateByX( EngineApp.EngineTime ).ToQuaternionF();
+
+										//var newRotation = neckRot.GetInverse() * QuaternionF.FromRotateByX( -MathEx.PI / 2 ) * Quaternion.FromRotateByY( -sphericalDir.Horizontal ).ToQuaternionF();
+
+
+										headBone.Rotation = QuaternionF.Slerp( headBone.Rotation, newRotation, (float)factor );
+									}
 								}
 							}
 						}

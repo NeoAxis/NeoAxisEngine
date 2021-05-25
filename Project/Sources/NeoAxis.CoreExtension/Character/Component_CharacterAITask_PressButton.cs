@@ -18,7 +18,8 @@ namespace NeoAxis
 		const double clickTime = 1;
 		const double clickPressingMoveTime = 0.4;
 		const double clickPressingOffset = 0.3;
-		const double handBoneOffset = 0.15;
+		const double buttonPressOffset = 0.05;
+		const double handBoneOffset = 0.2;
 
 		///////////////////////////////////////////////
 
@@ -86,11 +87,11 @@ namespace NeoAxis
 						GetPressingFactorByTime( currentTime, out var pressingFactor, out var skinningFactor );
 
 						var tr = target.TransformV;
-						var clickPoint = tr.Position + tr.Rotation * new Vector3( handBoneOffset, 0, 0 );
+						var clickPoint = tr.Position + tr.Rotation * new Vector3( buttonPressOffset + handBoneOffset, 0, 0 );
 						var clickFrom = clickPoint + tr.Rotation * new Vector3( clickPressingOffset, 0, 0 );
 
 						character.RightHandFactor = skinningFactor;
-						character.RightHandPosition = Vector3.Lerp( clickFrom, clickPoint, pressingFactor );
+						character.RightHandTransform = new Transform( Vector3.Lerp( clickFrom, clickPoint, pressingFactor ), character.TransformV.Rotation );
 					}
 
 					if( currentTime >= totalTime )
@@ -116,7 +117,7 @@ namespace NeoAxis
 			if( character != null )
 			{
 				character.RightHandFactor = 0;
-				character.RightHandPosition = Vector3.Zero;
+				character.RightHandTransform = Transform.Identity;
 			}
 		}
 	}

@@ -110,6 +110,32 @@ namespace NeoAxis
 		public event Action<Component_RegulatorSwitchInSpace> SoundTickFrequencyChanged;
 		ReferenceField<double> _soundTickFrequency = 0.05;
 
+		/// <summary>
+		/// The offset by X from the switch to the center of the valve.
+		/// </summary>
+		[DefaultValue( 0.1 )]
+		public Reference<double> ValveOffset
+		{
+			get { if( _valveOffset.BeginGet() ) ValveOffset = _valveOffset.Get( this ); return _valveOffset.value; }
+			set { if( _valveOffset.BeginSet( ref value ) ) { try { ValveOffsetChanged?.Invoke( this ); } finally { _valveOffset.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ValveOffset"/> property value changes.</summary>
+		public event Action<Component_RegulatorSwitchInSpace> ValveOffsetChanged;
+		ReferenceField<double> _valveOffset = 0.1;
+
+		/// <summary>
+		/// The radius of the valve.
+		/// </summary>
+		[DefaultValue( 0.1 )]
+		public Reference<double> ValveRadius
+		{
+			get { if( _valveRadius.BeginGet() ) ValveRadius = _valveRadius.Get( this ); return _valveRadius.value; }
+			set { if( _valveRadius.BeginSet( ref value ) ) { try { ValveRadiusChanged?.Invoke( this ); } finally { _valveRadius.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ValveRadius"/> property value changes.</summary>
+		public event Action<Component_RegulatorSwitchInSpace> ValveRadiusChanged;
+		ReferenceField<double> _valveRadius = 0.1;
+
 		/////////////////////////////////////////
 
 		[Browsable( false )]
@@ -168,6 +194,28 @@ namespace NeoAxis
 			return MathEx.Lerp( AngleRange.Value.Minimum, AngleRange.Value.Maximum, GetValueFactor() );
 		}
 
+		void SimulateTickSound( double oldValue, double newValue )
+		{
+			bool play = false;
+
+			if( SoundTickFrequency > 0 )
+			{
+				for( var tickTime = ValueRange.Value.Minimum; tickTime <= ValueRange.Value.Maximum; tickTime += SoundTickFrequency )
+				{
+					var before = oldValue < tickTime;
+					var after = newValue < tickTime;
+					if( before != after )
+					{
+						play = true;
+						break;
+					}
+				}
+			}
+
+			if( play )
+				SoundPlay( SoundTick );
+		}
+
 		void Simulate( float delta )
 		{
 			if( Changing )
@@ -186,28 +234,35 @@ namespace NeoAxis
 				//update value
 				Value = newValue;
 
-				//play tick sound
-				{
-					bool play = false;
-
-					if( SoundTickFrequency > 0 )
-					{
-						for( var tickTime = ValueRange.Value.Minimum; tickTime <= ValueRange.Value.Maximum; tickTime += SoundTickFrequency )
-						{
-							var before = oldValue < tickTime;
-							var after = newValue < tickTime;
-							if( before != after )
-							{
-								play = true;
-								break;
-							}
-						}
-					}
-
-					if( play )
-						SoundPlay( SoundTick );
-				}
+				SimulateTickSound( oldValue, newValue );
 			}
+		}
+
+		public void SumulateRequiredValue( double requiredValue, float delta )
+		{
+			var oldValue = Value.Value;
+
+			//calculate new value
+			var newValue = oldValue;
+			var step = ChangeSpeed * delta;
+			if( newValue < requiredValue )
+			{
+				newValue += step;
+				if( newValue > requiredValue )
+					newValue = requiredValue;
+			}
+			else
+			{
+				newValue -= step;
+				if( newValue < requiredValue )
+					newValue = requiredValue;
+			}
+			newValue = MathEx.Clamp( newValue, ValueRange.Value.Minimum, ValueRange.Value.Maximum );
+
+			//update value
+			Value = newValue;
+
+			SimulateTickSound( oldValue, newValue );
 		}
 
 		protected override void OnUpdate( float delta )
