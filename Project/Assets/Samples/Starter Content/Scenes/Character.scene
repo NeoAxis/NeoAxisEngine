@@ -1,7 +1,6 @@
 .component NeoAxis.Component_Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1147, 842\"><KW V=\"1\" A=\"2CABB93EFA594714F0AE454C73589B95\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"3380822B186E41A3B0AF1BCE3A2E7635\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"2CABB93EFA594714F0AE454C73589B95\"><KP UN=\"2CABB93EFA594714F0AE454C73589B95\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"2FC76A6B8D48421BCAA3FD59DD0F7CB3\" S=\"False\"><CPD ObjPath=\"$Button\\$$n1$C# Script\" /></KP><KP UN=\"BF7F219544234EEACA946AE1342D9CB4\" S=\"False\"><CPD ObjPath=\"$Regulator Switch\\$$n1$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
-	DisplayPhysicalObjects = True
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1174, 842\"><KW V=\"1\" A=\"2CABB93EFA594714F0AE454C73589B95\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"3380822B186E41A3B0AF1BCE3A2E7635\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"2CABB93EFA594714F0AE454C73589B95\"><KP UN=\"2CABB93EFA594714F0AE454C73589B95\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"2FC76A6B8D48421BCAA3FD59DD0F7CB3\" S=\"False\"><CPD ObjPath=\"$Button\\$$n1$C# Script\" /></KP><KP UN=\"BF7F219544234EEACA946AE1342D9CB4\" S=\"False\"><CPD ObjPath=\"$Regulator Switch\\$$n1$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -21,7 +20,7 @@
 		Name = Ambient Light
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 30000
+		Brightness = 40000
 	}
 	.component NeoAxis.Component_Light
 	{

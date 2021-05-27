@@ -93,8 +93,23 @@
     <Content Include="..\..\Binaries\NeoAxis.DefaultSettings.config">
       <Link>NeoAxis.DefaultSettings.config</Link>
     </Content>
-    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\*.dll">
-      <Link>%(Filename)%(Extension)</Link>
+    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\NeoAxis.Core.dll">
+      <Link>NeoAxis.Core.dll</Link>
+    </Content>
+    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\NeoAxis.CoreExtension.dll">
+      <Link>NeoAxis.CoreExtension.dll</Link>
+    </Content>
+    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\NeoAxis.Implementation.UWP.dll">
+      <Link>NeoAxis.Implementation.UWP.dll</Link>
+    </Content>
+    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\NeoAxis.Stubs.dll">
+      <Link>NeoAxis.Stubs.dll</Link>
+    </Content>
+    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\Project.dll">
+      <Link>Project.dll</Link>
+    </Content>
+    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\System.Runtime.dll">
+      <Link>System.Runtime.dll</Link>
     </Content>
     <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\*.pdb">
       <Link>%(Filename)%(Extension)</Link>

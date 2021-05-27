@@ -564,7 +564,11 @@ namespace NeoAxis
 			renderer.AddQuad( new Rectangle( 0, .5f, 1, .508f ), new ColorValue( 0.29f, 0.6f, 0.86f, 0.9f * transparency ) );
 
 			//draw background info
-			string staticText = "Press \"~\" or \"F12\" to hide console\r\nPress \"Ctrl + ~\" to hide and disable auto opening";
+			string staticText;
+			if( SystemSettings.MobileDevice )
+				staticText = "Click to the console to hide it";
+			else
+				staticText = "Press \"~\" or \"F12\" to hide console\r\nPress \"Ctrl + ~\" to hide and disable auto opening";
 			renderer.AddTextWordWrap( staticText, new RectangleF( 0, 0, .995f, .495f ), EHorizontalAlignment.Right, false, EVerticalAlignment.Bottom, 0,
 				new ColorValue( 0.8, 0.8, 0.8, transparency ) );
 

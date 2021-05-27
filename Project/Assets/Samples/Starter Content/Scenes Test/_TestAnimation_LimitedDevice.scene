@@ -1,6 +1,6 @@
 .component NeoAxis.Component_Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1205, 842\"><KW V=\"1\" A=\"9548DCD6D149499BE584418DFC2068A8\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"7957DABB94FF4DB255877C2A7B895295\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"9548DCD6D149499BE584418DFC2068A8\"><KP UN=\"9548DCD6D149499BE584418DFC2068A8\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"25B96ED2DE084CC80781AA9F00E91F93\" S=\"False\"><CPD ObjPath=\"$Opacity Change\" /></KP><KP UN=\"02E5CBADE9584119259C83EBD3C481F4\" S=\"False\"><CPD ObjPath=\"$Opacity Change\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1174, 842\"><KW V=\"1\" A=\"9548DCD6D149499BE584418DFC2068A8\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"7957DABB94FF4DB255877C2A7B895295\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"9548DCD6D149499BE584418DFC2068A8\"><KP UN=\"9548DCD6D149499BE584418DFC2068A8\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"25B96ED2DE084CC80781AA9F00E91F93\" S=\"False\"><CPD ObjPath=\"$Opacity Change\" /></KP><KP UN=\"02E5CBADE9584119259C83EBD3C481F4\" S=\"False\"><CPD ObjPath=\"$Opacity Change\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -20,7 +20,7 @@
 		Name = Ambient Light
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 26286.674882642998
+		Brightness = 40000
 	}
 	.component NeoAxis.Component_Light
 	{
@@ -84,13 +84,19 @@
 	.component NeoAxis.Component_GameMode
 	{
 		Name = Game Mode
+		CutsceneStarted = False
+		CutsceneGuiFadingFactor = 0
+		CutsceneGuiFadingSpeed = 0
+		ScreenFadingCurrentColor = 0 0 0 0
+		ScreenFadingTargetColor = 0 0 0 0
+		ScreenFadingSpeed = 0
 	}
 	.component NeoAxis.Component_Light
 	{
 		Name = Light 2
 		Transform = "-13.1743988018492 -33.0476964207837 39.8190565014688; -0.652509760369867 -0.513060032128782 0.536036061986784 -0.153836784625045; 1 1 1"
 		Type = Spotlight
-		Brightness = 181697.10330455095
+		Brightness = 300000
 		AttenuationFar = 505.521
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 85.263
@@ -101,6 +107,7 @@
 		Name = Ground
 		CanBeSelected = False
 		Transform = "0 0 0; 0 0 0 1; 1 1 1"
+		Color = 1 0.5490196 0
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -108,6 +115,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Component_Mesh
 		{
@@ -117,6 +131,10 @@
 				Name = Mesh Geometry
 				Dimensions = 100 100
 				UVTilesPerUnit = 0.25 0.25
+				Material
+				{
+					GetByReference = "Base\\Materials\\White.material"
+				}
 			}
 		}
 		.component NeoAxis.Component_RigidBody
@@ -145,7 +163,6 @@
 	{
 		Name = Mesh In Space
 		Transform = "0.18648041969305 2.76890046417393 -0.249546182406922; 0 0 -0.184583359329841 0.982816861606734; 1 1 1"
-		Color = 0.2318431 1 0.1077647
 		Mesh
 		{
 			GetByReference = "Samples\\Starter Content\\Scenes Test\\TurboSquid\\babyElephant_rigged_animated.fbx|$Mesh"
@@ -153,6 +170,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Component_MeshInSpaceAnimationController
 		{
@@ -180,6 +204,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_MeshInSpaceAnimationController
 		{
 			Name = Mesh In Space Animation Controller
@@ -205,6 +236,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Component_MeshInSpaceAnimationController
 		{
