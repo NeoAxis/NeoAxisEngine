@@ -47,7 +47,6 @@
 			Name = Scene Effects
 			.component NeoAxis.Component_RenderingEffect_AmbientOcclusion
 			{
-				Enabled = False
 				Name = Ambient Occlusion
 			}
 			.component NeoAxis.Component_RenderingEffect_MotionBlur
