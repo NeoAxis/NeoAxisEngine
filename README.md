@@ -1,8 +1,8 @@
 <b>NeoAxis Engine</b> is a universal platform for making real-time 3D, 2D projects and window apps.
 
-<a href="https://www.neoaxis.com/">www.neoaxis.com</a>
-
 The platform is intended to develop all kinds of 3D and 2D projects such as computer games, simulators, visual trainers, VR systems and to develop window apps with rich graphics.
+
+<a href="https://www.neoaxis.com/">www.neoaxis.com</a>
 
 <ul>
 <li>Unique modern architecture of the engine.</li>
@@ -37,9 +37,7 @@ The platform is intended to develop all kinds of 3D and 2D projects such as comp
 <li>The native core for Windows is already compiled.</li>
 <li>Download Sci-fi Demo and Nature Demo from the Asset Store window inside the editor.</li>
 </ul>
-How build for other platforms see https://www.neoaxis.com/docs/html/Platforms.htm
-
-To compile project assemblies you can use Visual Studio Code or another C# IDE. Use NeoAxis.Managed.ProjectOnly.AnyIDE.sln.
+How build for other platforms see https://www.neoaxis.com/docs/html/Platforms.htm. To compile project assemblies you can use Visual Studio Code or another C# IDE. Use NeoAxis.Managed.ProjectOnly.AnyIDE.sln.
 
 <h2>Programming tips</h2>
 <ul>
@@ -50,7 +48,7 @@ To compile project assemblies you can use Visual Studio Code or another C# IDE. 
 
 <h2>License</h2>
 
-NeoAxis Engine is distributed under the NeoAxis Engine License. https://www.neoaxis.com/licensing
+NeoAxis Engine is distributed under the NeoAxis Engine End User License Agreement. https://www.neoaxis.com/licensing
 
 <h2>Frequently Asked Questions</h2>
 <ul>
