@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="bimg">
+      <UniqueIdentifier>{C499947C-B0D0-950D-59BD-7B1045D3110F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bimg\include">
+      <UniqueIdentifier>{C4B083E1-B013-1386-5999-4B3C45DBDE08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bimg\include\bimg">
+      <UniqueIdentifier>{DF233DA7-4B3A-3B3D-94B1-C65E00070CC5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bimg\src">
+      <UniqueIdentifier>{E8464885-D413-A390-FD2C-9138E958D81E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bimg\3rdparty">
+      <UniqueIdentifier>{D9A59272-4566-0EA9-0EA1-57267A205385}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bimg\3rdparty\libsquish">
+      <UniqueIdentifier>{09F71129-752E-5AC0-7E38-BEE3EAEE80B9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bimg\3rdparty\edtaa3">
+      <UniqueIdentifier>{472C2EE9-33BB-B7B2-DCD9-CBADC847C858}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bimg\3rdparty\etc1">
+      <UniqueIdentifier>{8260EBC1-6E44-AC17-D7A4-A66AC3A79699}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bimg\3rdparty\etc2">
+      <UniqueIdentifier>{8360EBC1-6F44-AC17-D8A4-A66AC4A79699}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bimg\3rdparty\nvtt">
+      <UniqueIdentifier>{E15AF0C1-CD3E-B117-369F-AB6A22A29B99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bimg\3rdparty\nvtt\bc6h">
+      <UniqueIdentifier>{8087C97B-ECBE-1113-F5C8-7536617F380C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bimg\3rdparty\nvtt\bc7">
+      <UniqueIdentifier>{1904A9A6-05FE-D1F8-EE6A-6809DA033865}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bimg\3rdparty\nvtt\nvmath">
+      <UniqueIdentifier>{0B3BBDB1-77FD-F03B-C0AD-7FC82CAFC919}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bimg\3rdparty\nvtt\nvcore">
+      <UniqueIdentifier>{8AFAB7B1-F6BC-EB3B-3F6D-7AC8AB6EC419}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bimg\3rdparty\pvrtc">
+      <UniqueIdentifier>{E4DF1F00-5041-FD0D-D9AE-43C0450F34CD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bimg\3rdparty\astc">
+      <UniqueIdentifier>{202DE9C1-0C11-AA17-7571-A46A61749499}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bimg\3rdparty\tinyexr">
+      <UniqueIdentifier>{08C0E79C-742C-A397-3D20-3BF5A94BC5FF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bimg\3rdparty\iqa">
+      <UniqueIdentifier>{D02AE824-3C41-E6BA-85B8-71DCF10DB742}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bimg\3rdparty\iqa\include">
+      <UniqueIdentifier>{D08DAD1E-3C50-E1A8-8500-7035F101BA86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bimg\3rdparty\iqa\source">
+      <UniqueIdentifier>{DDB09B10-C9D5-EA90-F220-D020DEA4E9AE}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\bimg\include\bimg\bimg.h">
+      <Filter>bimg\include\bimg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\include\bimg\decode.h">
+      <Filter>bimg\include\bimg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\include\bimg\encode.h">
+      <Filter>bimg\include\bimg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\libsquish\alpha.h">
+      <Filter>bimg\3rdparty\libsquish</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\libsquish\clusterfit.h">
+      <Filter>bimg\3rdparty\libsquish</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\libsquish\colourblock.h">
+      <Filter>bimg\3rdparty\libsquish</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\libsquish\colourfit.h">
+      <Filter>bimg\3rdparty\libsquish</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\libsquish\colourset.h">
+      <Filter>bimg\3rdparty\libsquish</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\libsquish\config.h">
+      <Filter>bimg\3rdparty\libsquish</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\libsquish\maths.h">
+      <Filter>bimg\3rdparty\libsquish</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\libsquish\rangefit.h">
+      <Filter>bimg\3rdparty\libsquish</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\libsquish\simd.h">
+      <Filter>bimg\3rdparty\libsquish</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\libsquish\simd_float.h">
+      <Filter>bimg\3rdparty\libsquish</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\libsquish\singlecolourfit.h">
+      <Filter>bimg\3rdparty\libsquish</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\libsquish\squish.h">
+      <Filter>bimg\3rdparty\libsquish</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\edtaa3\edtaa3func.h">
+      <Filter>bimg\3rdparty\edtaa3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\etc1\etc1.h">
+      <Filter>bimg\3rdparty\etc1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\etc2\Math.hpp">
+      <Filter>bimg\3rdparty\etc2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\etc2\ProcessCommon.hpp">
+      <Filter>bimg\3rdparty\etc2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\etc2\ProcessRGB.hpp">
+      <Filter>bimg\3rdparty\etc2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\etc2\Tables.hpp">
+      <Filter>bimg\3rdparty\etc2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\etc2\Types.hpp">
+      <Filter>bimg\3rdparty\etc2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\etc2\Vector.hpp">
+      <Filter>bimg\3rdparty\etc2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvtt.h">
+      <Filter>bimg\3rdparty\nvtt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\bc6h\bits.h">
+      <Filter>bimg\3rdparty\nvtt\bc6h</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\bc6h\shapes_two.h">
+      <Filter>bimg\3rdparty\nvtt\bc6h</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\bc6h\tile.h">
+      <Filter>bimg\3rdparty\nvtt\bc6h</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\bc6h\zoh.h">
+      <Filter>bimg\3rdparty\nvtt\bc6h</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\bc6h\zoh_utils.h">
+      <Filter>bimg\3rdparty\nvtt\bc6h</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\avpcl.h">
+      <Filter>bimg\3rdparty\nvtt\bc7</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\avpcl_utils.h">
+      <Filter>bimg\3rdparty\nvtt\bc7</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\bits.h">
+      <Filter>bimg\3rdparty\nvtt\bc7</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\endpts.h">
+      <Filter>bimg\3rdparty\nvtt\bc7</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\shapes_three.h">
+      <Filter>bimg\3rdparty\nvtt\bc7</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\shapes_two.h">
+      <Filter>bimg\3rdparty\nvtt\bc7</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\tile.h">
+      <Filter>bimg\3rdparty\nvtt\bc7</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\array.h">
+      <Filter>bimg\3rdparty\nvtt\nvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\debug.h">
+      <Filter>bimg\3rdparty\nvtt\nvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\defsgnucdarwin.h">
+      <Filter>bimg\3rdparty\nvtt\nvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\defsgnuclinux.h">
+      <Filter>bimg\3rdparty\nvtt\nvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\defsgnucwin32.h">
+      <Filter>bimg\3rdparty\nvtt\nvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\defsvcwin32.h">
+      <Filter>bimg\3rdparty\nvtt\nvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\foreach.h">
+      <Filter>bimg\3rdparty\nvtt\nvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\hash.h">
+      <Filter>bimg\3rdparty\nvtt\nvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\memory.h">
+      <Filter>bimg\3rdparty\nvtt\nvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\nvcore.h">
+      <Filter>bimg\3rdparty\nvtt\nvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\posh.h">
+      <Filter>bimg\3rdparty\nvtt\nvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\stdstream.h">
+      <Filter>bimg\3rdparty\nvtt\nvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\stream.h">
+      <Filter>bimg\3rdparty\nvtt\nvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\strlib.h">
+      <Filter>bimg\3rdparty\nvtt\nvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvcore\utils.h">
+      <Filter>bimg\3rdparty\nvtt\nvcore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvmath\fitting.h">
+      <Filter>bimg\3rdparty\nvtt\nvmath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvmath\matrix.h">
+      <Filter>bimg\3rdparty\nvtt\nvmath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvmath\nvmath.h">
+      <Filter>bimg\3rdparty\nvtt\nvmath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvmath\plane.h">
+      <Filter>bimg\3rdparty\nvtt\nvmath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\nvtt\nvmath\vector.h">
+      <Filter>bimg\3rdparty\nvtt\nvmath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\AlphaBitmap.h">
+      <Filter>bimg\3rdparty\pvrtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\Bitmap.h">
+      <Filter>bimg\3rdparty\pvrtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\BitScale.h">
+      <Filter>bimg\3rdparty\pvrtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\BitUtility.h">
+      <Filter>bimg\3rdparty\pvrtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\ColorRgba.h">
+      <Filter>bimg\3rdparty\pvrtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\Interval.h">
+      <Filter>bimg\3rdparty\pvrtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\MortonTable.h">
+      <Filter>bimg\3rdparty\pvrtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\Point2.h">
+      <Filter>bimg\3rdparty\pvrtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\PvrTcDecoder.h">
+      <Filter>bimg\3rdparty\pvrtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\PvrTcEncoder.h">
+      <Filter>bimg\3rdparty\pvrtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\PvrTcPacket.h">
+      <Filter>bimg\3rdparty\pvrtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\RgbaBitmap.h">
+      <Filter>bimg\3rdparty\pvrtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\pvrtc\RgbBitmap.h">
+      <Filter>bimg\3rdparty\pvrtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc\astc_codec_internals.h">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc\astc_lib.h">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc\mathlib.h">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc\softfloat.h">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc\vectypes.h">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\tinyexr\tinyexr.h">
+      <Filter>bimg\3rdparty\tinyexr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\iqa\include\convolve.h">
+      <Filter>bimg\3rdparty\iqa\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\iqa\include\decimate.h">
+      <Filter>bimg\3rdparty\iqa\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\iqa\include\iqa.h">
+      <Filter>bimg\3rdparty\iqa\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\iqa\include\iqa_os.h">
+      <Filter>bimg\3rdparty\iqa\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\iqa\include\math_utils.h">
+      <Filter>bimg\3rdparty\iqa\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\iqa\include\ssim.h">
+      <Filter>bimg\3rdparty\iqa\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\bimg\src\image_encode.cpp">
+      <Filter>bimg\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\src\image_cubemap_filter.cpp">
+      <Filter>bimg\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\libsquish\alpha.cpp">
+      <Filter>bimg\3rdparty\libsquish</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\libsquish\clusterfit.cpp">
+      <Filter>bimg\3rdparty\libsquish</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\libsquish\colourblock.cpp">
+      <Filter>bimg\3rdparty\libsquish</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\libsquish\colourfit.cpp">
+      <Filter>bimg\3rdparty\libsquish</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\libsquish\colourset.cpp">
+      <Filter>bimg\3rdparty\libsquish</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\libsquish\maths.cpp">
+      <Filter>bimg\3rdparty\libsquish</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\libsquish\rangefit.cpp">
+      <Filter>bimg\3rdparty\libsquish</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\libsquish\singlecolourfit.cpp">
+      <Filter>bimg\3rdparty\libsquish</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\libsquish\squish.cpp">
+      <Filter>bimg\3rdparty\libsquish</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\edtaa3\edtaa3func.cpp">
+      <Filter>bimg\3rdparty\edtaa3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\etc1\etc1.cpp">
+      <Filter>bimg\3rdparty\etc1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\etc2\ProcessRGB.cpp">
+      <Filter>bimg\3rdparty\etc2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\etc2\Tables.cpp">
+      <Filter>bimg\3rdparty\etc2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\nvtt.cpp">
+      <Filter>bimg\3rdparty\nvtt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc6h\zoh.cpp">
+      <Filter>bimg\3rdparty\nvtt\bc6h</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc6h\zohone.cpp">
+      <Filter>bimg\3rdparty\nvtt\bc6h</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc6h\zohtwo.cpp">
+      <Filter>bimg\3rdparty\nvtt\bc6h</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc6h\zoh_utils.cpp">
+      <Filter>bimg\3rdparty\nvtt\bc6h</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\avpcl.cpp">
+      <Filter>bimg\3rdparty\nvtt\bc7</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\avpcl_mode0.cpp">
+      <Filter>bimg\3rdparty\nvtt\bc7</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\avpcl_mode1.cpp">
+      <Filter>bimg\3rdparty\nvtt\bc7</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\avpcl_mode2.cpp">
+      <Filter>bimg\3rdparty\nvtt\bc7</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\avpcl_mode3.cpp">
+      <Filter>bimg\3rdparty\nvtt\bc7</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\avpcl_mode4.cpp">
+      <Filter>bimg\3rdparty\nvtt\bc7</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\avpcl_mode5.cpp">
+      <Filter>bimg\3rdparty\nvtt\bc7</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\avpcl_mode6.cpp">
+      <Filter>bimg\3rdparty\nvtt\bc7</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\avpcl_mode7.cpp">
+      <Filter>bimg\3rdparty\nvtt\bc7</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\bc7\avpcl_utils.cpp">
+      <Filter>bimg\3rdparty\nvtt\bc7</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\nvtt\nvmath\fitting.cpp">
+      <Filter>bimg\3rdparty\nvtt\nvmath</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\pvrtc\BitScale.cpp">
+      <Filter>bimg\3rdparty\pvrtc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\pvrtc\MortonTable.cpp">
+      <Filter>bimg\3rdparty\pvrtc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\pvrtc\PvrTcDecoder.cpp">
+      <Filter>bimg\3rdparty\pvrtc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\pvrtc\PvrTcEncoder.cpp">
+      <Filter>bimg\3rdparty\pvrtc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\pvrtc\PvrTcPacket.cpp">
+      <Filter>bimg\3rdparty\pvrtc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_averages_and_directions.cpp">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_block_sizes2.cpp">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_color_quantize.cpp">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_color_unquantize.cpp">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_compress_symbolic.cpp">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_compute_variance.cpp">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_decompress_symbolic.cpp">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_encoding_choice_error.cpp">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_find_best_partitioning.cpp">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_ideal_endpoints_and_weights.cpp">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_imageblock.cpp">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_integer_sequence.cpp">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_kmeans_partitioning.cpp">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_lib.cpp">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_partition_tables.cpp">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_percentile_tables.cpp">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_pick_best_endpoint_format.cpp">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_quantization.cpp">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_symbolic_physical.cpp">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_weight_align.cpp">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\astc_weight_quant_xfer_tables.cpp">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\mathlib.cpp">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc\softfloat.cpp">
+      <Filter>bimg\3rdparty\astc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\iqa\source\convolve.c">
+      <Filter>bimg\3rdparty\iqa\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\iqa\source\decimate.c">
+      <Filter>bimg\3rdparty\iqa\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\iqa\source\math_utils.c">
+      <Filter>bimg\3rdparty\iqa\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\iqa\source\mse.c">
+      <Filter>bimg\3rdparty\iqa\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\iqa\source\ms_ssim.c">
+      <Filter>bimg\3rdparty\iqa\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\iqa\source\psnr.c">
+      <Filter>bimg\3rdparty\iqa\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\iqa\source\ssim.c">
+      <Filter>bimg\3rdparty\iqa\source</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="3rdparty">
+      <UniqueIdentifier>{3E7DA5C5-2A4A-00D1-5363-EE783F8F355F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\fcpp">
+      <UniqueIdentifier>{03E5F540-6FA5-7177-38E0-BAF4A45FB653}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\3rdparty\fcpp\cpp.h">
+      <Filter>3rdparty\fcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\fcpp\cppadd.h">
+      <Filter>3rdparty\fcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\fcpp\cppdef.h">
+      <Filter>3rdparty\fcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\fcpp\fpp.h">
+      <Filter>3rdparty\fcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\fcpp\FPPBase.h">
+      <Filter>3rdparty\fcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\fcpp\fpp_pragmas.h">
+      <Filter>3rdparty\fcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\fcpp\FPP_protos.h">
+      <Filter>3rdparty\fcpp</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp1.c">
+      <Filter>3rdparty\fcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp2.c">
+      <Filter>3rdparty\fcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp3.c">
+      <Filter>3rdparty\fcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp4.c">
+      <Filter>3rdparty\fcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp5.c">
+      <Filter>3rdparty\fcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp6.c">
+      <Filter>3rdparty\fcpp</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="bimg">
+      <UniqueIdentifier>{C499947C-B0D0-950D-59BD-7B1045D3110F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bimg\tools">
+      <UniqueIdentifier>{B15586F8-9D0D-C845-0615-A1A1F2EB6236}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bimg\tools\texturec">
+      <UniqueIdentifier>{E1976BA6-4DF9-48B4-D666-8F6642C77F73}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\bimg\tools\texturec\texturec.cpp">
+      <Filter>bimg\tools\texturec</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
