@@ -75,6 +75,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{22D36718-F401-4CD8-8528-D52D87095FD0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoAxis.Addon.ExampleEditorWinForms", "Project\Sources\NeoAxis.Addon.ExampleEditorWinForms\NeoAxis.Addon.ExampleEditorWinForms.csproj", "{5574FF96-B051-4F66-BCEF-090AC75E9056}"
+	ProjectSection(ProjectDependencies) = postProject
+		{765CBD47-5D68-403F-98E3-46B43C10342F} = {765CBD47-5D68-403F-98E3-46B43C10342F}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoAxis.Addon.Sketchfab", "Sources\Engine\Addons\NeoAxis.Addon.Sketchfab\NeoAxis.Addon.Sketchfab.csproj", "{0C3F019E-E955-4310-B722-06E0A53F8DDD}"
 	ProjectSection(ProjectDependencies) = postProject

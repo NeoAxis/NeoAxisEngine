@@ -24,13 +24,5 @@ Package
 }
 Package
 {
-	Name = Sci_fi_Demo
-}
-Package
-{
-	Name = Nature_Demo
-}
-Package
-{
 	Name = Common_Oak_60bade6d04d6
 }
