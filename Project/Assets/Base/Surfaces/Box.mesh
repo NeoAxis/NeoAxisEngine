@@ -1,0 +1,12 @@
+// Made with NeoAxis Engine 2021.3.
+
+.component NeoAxis.Component_Mesh
+{
+	Name = Mesh
+	EditorCameraTransform = "0.397003657324996 -0.337265374106147 0.227531927343594; -0.221349569630256 0.0801618454990017 0.913815142541014 0.330938561992163; 1 1 1"
+	.component NeoAxis.Component_MeshGeometry_Box
+	{
+		Name = Box
+		Dimensions = 0.2 0.2 0.2
+	}
+}

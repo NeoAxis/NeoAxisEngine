@@ -1,8 +1,12 @@
+// Made with NeoAxis Engine 2021.3.
+
 .component NeoAxis.Component_Surface
 {
+	EditorCameraTransform = "31.258390481968 -104.224895731867 65.1072734047996; -0.234631111802128 0.166640828369292 0.780805081629883 0.554547112692732; 1 1 1"
 	.component NeoAxis.Component_SurfaceGroupOfElements
 	{
 		Name = Group 1
+		OccupiedAreaRadius = 3
 		MinDistanceBetweenObjects = 6
 		RotateAroundItsAxis = True
 		MaxIncline = 5
@@ -38,6 +42,7 @@
 	.component NeoAxis.Component_SurfaceGroupOfElements
 	{
 		Name = Group 2
+		OccupiedAreaRadius = 4
 		MinDistanceBetweenObjects = 10
 		RotateAroundItsAxis = True
 		MaxIncline = 5
@@ -73,6 +78,7 @@
 	.component NeoAxis.Component_SurfaceGroupOfElements
 	{
 		Name = Group 3
+		OccupiedAreaRadius = 6
 		MinDistanceBetweenObjects = 12
 		RotateAroundItsAxis = True
 		MaxIncline = 5

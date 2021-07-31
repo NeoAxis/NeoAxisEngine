@@ -39,7 +39,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <DefineConstants>TRACE</DefineConstants>
@@ -51,11 +51,20 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>false</UseDotNetNativeToolchain>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Implementation\EngineApp\UWP Specific\AppViewUWP.cs" />
+    <Compile Include="Implementation\EngineApp\UWP Specific\FunctionalityUWP.cs" />
+    <Compile Include="Implementation\EngineApp\UWP Specific\FunctionalityUWP.Cursor.cs" />
+    <Compile Include="Implementation\EngineApp\UWP Specific\FunctionalityUWP.Input.cs" />
+    <Compile Include="Implementation\EngineApp\UWP Specific\FunctionalityUWP.Utility.cs" />
+    <Compile Include="Implementation\EngineApp\UWP Specific\FunctionalityUWP.Video.cs" />
+    <Compile Include="Implementation\FileSystem\DebugUtil.cs" />
+    <Compile Include="Implementation\FileSystem\PlatformSpecificUtilityUWP.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -127,10 +136,6 @@
     <Reference Include="NeoAxis.Core, Version=2020.5.1.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\NeoAxis.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="NeoAxis.Implementation.UWP, Version=2019.2.4.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\NeoAxis.Implementation.UWP.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

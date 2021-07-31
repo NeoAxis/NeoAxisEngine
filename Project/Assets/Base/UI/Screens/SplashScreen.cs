@@ -1,3 +1,4 @@
+// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +9,9 @@ namespace Project
 {
 	public class SplashScreen : UIControl
 	{
-		const bool enablePoweredByTime = false;
+		Component_ProjectSettings.EngineSplashScreenStyleEnum drawSplashScreen = Component_ProjectSettings.EngineSplashScreenStyleEnum.Disabled;
+
+		int resetTimeCounter = 3;
 
 		///////////////////////////////////////////
 
@@ -17,13 +20,15 @@ namespace Project
 
 		///////////////////////////////////////////
 
-		[Serialize]
-		[DefaultValue( enablePoweredByTime ? 2.0 : 0.0 )]
-		public double PoweredByTime { get; set; } = enablePoweredByTime ? 2.0 : 0.0;
+		[Browsable( false )]
+		public double PoweredByTime
+		{
+			get { return drawSplashScreen != Component_ProjectSettings.EngineSplashScreenStyleEnum.Disabled ? 2.0 : 0.0; }
+		}
 
 		[Serialize]
-		[DefaultValue( 1.0 )]
-		public double ProjectTime { get; set; } = 1.0;
+		[DefaultValue( 2.0 )]
+		public double ProjectTime { get; set; } = 2.0;
 
 		[Serialize]
 		[DefaultValue( 0.5 )]
@@ -33,8 +38,15 @@ namespace Project
 
 		protected override void OnEnabledInSimulation()
 		{
-			PreloadImage();
-			ResetCreateTime();
+			var originalDrawSplashScreen = ProjectSettings.Get.EngineSplashScreenStyle.Value;
+
+			//get drawing engine splash settings. engine splash for Windows is rendered from another place
+			if( SystemSettings.CurrentPlatform != SystemSettings.Platform.Windows )
+				drawSplashScreen = originalDrawSplashScreen;
+
+			//update background color
+			if( originalDrawSplashScreen == Component_ProjectSettings.EngineSplashScreenStyleEnum.WhiteBackground )
+				BackgroundColor = new ColorValue( 1, 1, 1 );
 		}
 
 		protected override bool OnKeyDown( KeyEvent e )
@@ -65,20 +77,6 @@ namespace Project
 			return false;
 		}
 
-		void PreloadImage()
-		{
-			var image = Components[ "PoweredBy" ] as UIImage;
-			if( image != null )
-			{
-				var v = image.SourceImage;
-			}
-			image = Components[ "Project" ] as UIImage;
-			if( image != null )
-			{
-				var v = image.SourceImage;
-			}
-		}
-
 		protected override void OnUpdate( float delta )
 		{
 			base.OnUpdate( delta );
@@ -87,13 +85,13 @@ namespace Project
 			{
 				if( gotoMainMenuUpdated )
 				{
-					// Restore cursor visibility.
+					//restore cursor visibility
 					EngineApp.ShowCursor = true;
 
 					SimulationApp.ChangeUIScreen( @"Base\UI\Screens\MainMenuScreen.ui" );
 				}
 
-				if( Time > GetTotalTime() )
+				if( resetTimeCounter == 0 && Time > GetTotalTime() )
 					gotoMainMenu = true;
 			}
 		}
@@ -116,12 +114,9 @@ namespace Project
 			curve.AddPoint( 1.0 + FadingTime + PoweredByTime + FadingTime + 1.0 + FadingTime + ProjectTime, new Vector3( 0, 1, 0 ) );
 			curve.AddPoint( 1.0 + FadingTime + PoweredByTime + FadingTime + 1.0 + FadingTime + ProjectTime + FadingTime, new Vector3( 0, 0, 0 ) );
 
-			var value = curve.CalculateValueByTime( Time );
+			var value = curve.CalculateValueByTime( resetTimeCounter != 0 ? 0 : Time );
 			poweredBy = MathEx.Saturate( value.X );
 			project = MathEx.Saturate( value.Y );
-
-			if( !enablePoweredByTime )
-				poweredBy = 0;
 
 			if( gotoMainMenu )
 			{
@@ -134,9 +129,19 @@ namespace Project
 		{
 			GetImagesTransparency( out var poweredBy, out var project );
 
-			var image = Components[ "PoweredBy" ] as UIImage;
+			var image = Components[ "PoweredBy_BlackBackground" ] as UIImage;
 			if( image != null )
+			{
+				image.Visible = drawSplashScreen == Component_ProjectSettings.EngineSplashScreenStyleEnum.BlackBackground;
 				image.ColorMultiplier = new ColorValue( 1, 1, 1, poweredBy );
+			}
+
+			image = Components[ "PoweredBy_WhiteBackground" ] as UIImage;
+			if( image != null )
+			{
+				image.Visible = drawSplashScreen == Component_ProjectSettings.EngineSplashScreenStyleEnum.WhiteBackground;
+				image.ColorMultiplier = new ColorValue( 1, 1, 1, poweredBy );
+			}
 
 			image = Components[ "Project" ] as UIImage;
 			if( image != null )
@@ -155,8 +160,15 @@ namespace Project
 				if( gotoMainMenu )
 					gotoMainMenuUpdated = true;
 
-				// Hide cursor.
+				//hide cursor
 				EngineApp.ShowCursor = false;
+
+				//reset time for waiting to load images
+				if( resetTimeCounter > 0 )
+				{
+					resetTimeCounter--;
+					ResetCreateTime();
+				}
 			}
 		}
 	}

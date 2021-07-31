@@ -1,4 +1,4 @@
-﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -126,6 +126,11 @@ namespace NeoAxis.Player.Android
 		{
 			//preload NeoAxis.CoreExtension.dll
 			AssemblyUtility.RegisterAssembly( typeof( CanvasRendererUtility ).Assembly, "" );
+
+#if EXTENDED
+			//preload NeoAxis.Extended.dll
+			AssemblyUtility.RegisterAssembly( typeof( Component_RenderTargetInSpace ).Assembly, "" );
+#endif
 
 			//preload Project.dll
 			AssemblyUtility.RegisterAssembly( typeof( Project.SimulationApp ).Assembly, "" );

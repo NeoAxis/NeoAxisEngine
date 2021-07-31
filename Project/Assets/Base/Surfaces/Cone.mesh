@@ -1,0 +1,14 @@
+// Made with NeoAxis Engine 2021.3.
+
+.component NeoAxis.Component_Mesh
+{
+	Name = Mesh
+	EditorCameraTransform = "0.253239617760045 -0.219095708875615 0.125812070830262; -0.215173293707926 0.0767415850503281 0.916981459822485 0.327041564851732; 1 1 1"
+	.component NeoAxis.Component_MeshGeometry_Cone
+	{
+		Name = Cone
+		Radius = 0.1
+		Height = 0.2
+		Segments = 12
+	}
+}

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "NeoAxis.Player": {
+      "commandName": "Project",
+      "commandLineArgs": "-play \"Content\\Models\\Industrial\\_Samples\\Worker.scene\""
+    }
+  }
+}

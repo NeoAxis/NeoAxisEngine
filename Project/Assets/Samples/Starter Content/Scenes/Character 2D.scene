@@ -1,6 +1,8 @@
+// Made with NeoAxis Engine 2021.2.
+
 .component NeoAxis.Component_Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1205, 842\"><KW V=\"1\" A=\"18B8A10B53774B0856A1C63CAA95F8A8\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"A72CDF4597AA43952E97B840C78E266C\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"18B8A10B53774B0856A1C63CAA95F8A8\"><KP UN=\"18B8A10B53774B0856A1C63CAA95F8A8\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"F656603AF66A4F1E72BF98B1382136FA\" S=\"False\"><CPD ObjPath=\"$Regulator Switch\\$$n1$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1138, 842\"><KW V=\"1\" A=\"18B8A10B53774B0856A1C63CAA95F8A8\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"A72CDF4597AA43952E97B840C78E266C\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"18B8A10B53774B0856A1C63CAA95F8A8\"><KP UN=\"18B8A10B53774B0856A1C63CAA95F8A8\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"F656603AF66A4F1E72BF98B1382136FA\" S=\"False\"><CPD ObjPath=\"$Regulator Switch\\$$n1$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	Mode = _2D
 	DisplayPhysicalObjects = True
 	DisplaySensors = True
@@ -113,6 +115,12 @@
 	.component NeoAxis.Component_GameMode
 	{
 		Name = Game Mode
+		CutsceneStarted = False
+		CutsceneGuiFadingFactor = 0
+		CutsceneGuiFadingSpeed = 0
+		ScreenFadingCurrentColor = 0 0 0 0
+		ScreenFadingTargetColor = 0 0 0 0
+		ScreenFadingSpeed = 0
 		ObjectControlledByPlayer
 		{
 			GetByReference = "this:..\\$Character 2D"
@@ -141,6 +149,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Component_Mesh
 		{
@@ -185,6 +200,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -219,6 +241,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -247,6 +276,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Component_Mesh
 		{
@@ -285,6 +321,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -321,6 +364,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Component_Mesh
 		{
@@ -359,6 +409,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -395,6 +452,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Component_Mesh
 		{
@@ -433,6 +497,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -469,6 +540,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Component_Mesh
 		{
@@ -507,6 +585,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -543,6 +628,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Component_Mesh
 		{
@@ -595,14 +687,6 @@
 		{
 			GetByReference = "Base\\Sprites\\Penguin\\Animation Jump.component"
 		}
-		LeftTurnAnimation
-		{
-			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Left Turn"
-		}
-		RightTurnAnimation
-		{
-			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Right Turn"
-		}
 		.component NeoAxis.Component_RigidBody2D
 		{
 			Name = Collision Body
@@ -632,6 +716,13 @@
 			ReplaceMaterialSelectively
 			{
 				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
 			}
 			.component NeoAxis.Component_SpriteAnimationController
 			{
@@ -665,6 +756,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		IdleAnimation
 		{
@@ -704,6 +802,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Component_Mesh
 		{
@@ -825,14 +930,6 @@
 		{
 			GetByReference = "Base\\Sprites\\Penguin\\Animation Jump.component"
 		}
-		LeftTurnAnimation
-		{
-			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Left Turn"
-		}
-		RightTurnAnimation
-		{
-			GetByReference = "Base\\Models\\Human.fbx|$Mesh\\$Animations\\$Right Turn"
-		}
 		.component NeoAxis.Component_RigidBody2D
 		{
 			Name = Collision Body
@@ -863,6 +960,13 @@
 			ReplaceMaterialSelectively
 			{
 				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
 			}
 			.component NeoAxis.Component_SpriteAnimationController
 			{
@@ -932,7 +1036,7 @@
 	{
 		Name = Text 2D 5
 		Transform = "11.0247061935846 -0.919558113560584 4; 0 0 0 1; 1 1 1"
-		Text = "Button\\nClick mouse button"
+		Text = "Button\r\nClick mouse button"
 	}
 	.component NeoAxis.Component_Text2D
 	{
@@ -964,6 +1068,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -991,6 +1102,13 @@
 			ReplaceMaterialSelectively
 			{
 				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
 			}
 			.component NeoAxis.Component_Mesh
 			{
@@ -1030,6 +1148,13 @@
 			ReplaceMaterialSelectively
 			{
 				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
 			}
 			.component NeoAxis.Component_Mesh
 			{
@@ -1096,6 +1221,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Component_Mesh
 		{
 			Name = Mesh
@@ -1123,6 +1255,13 @@
 			ReplaceMaterialSelectively
 			{
 				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
 			}
 			.component NeoAxis.Component_Mesh
 			{
@@ -1166,6 +1305,13 @@
 			{
 				Count = 0
 			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
 			.component NeoAxis.Component_Mesh
 			{
 				Name = Mesh
@@ -1207,6 +1353,13 @@
 			ReplaceMaterialSelectively
 			{
 				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
 			}
 			.component NeoAxis.Component_Mesh
 			{
@@ -1250,6 +1403,13 @@
 			{
 				Count = 0
 			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
 			.component NeoAxis.Component_Mesh
 			{
 				Name = Mesh
@@ -1290,6 +1450,13 @@
 			{
 				Count = 0
 			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
 			.component NeoAxis.Component_Mesh
 			{
 				Name = Mesh
@@ -1328,6 +1495,13 @@
 			ReplaceMaterialSelectively
 			{
 				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
 			}
 			.component NeoAxis.Component_Mesh
 			{

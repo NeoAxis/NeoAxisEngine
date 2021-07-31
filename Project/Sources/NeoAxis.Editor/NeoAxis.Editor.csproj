@@ -4,6 +4,7 @@
 	<UseWindowsForms>true</UseWindowsForms>
 	<UseWPF>true</UseWPF>	
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <OutputType>WinExe</OutputType>

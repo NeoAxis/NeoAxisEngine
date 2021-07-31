@@ -1,0 +1,10 @@
+// Made with NeoAxis Engine 2021.3.
+
+.component NeoAxis.Component_Learning
+{
+	SelectedPage = 0
+	DoneList
+	{
+		Count = 0
+	}
+}

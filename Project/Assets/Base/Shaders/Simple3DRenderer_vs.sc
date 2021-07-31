@@ -1,7 +1,7 @@
 $input a_position, a_color0, a_color1
 $output v_pos, v_colorVisible, v_colorInvisible
 
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "Common.sh"
 #include "VertexFunctions.sh"
 

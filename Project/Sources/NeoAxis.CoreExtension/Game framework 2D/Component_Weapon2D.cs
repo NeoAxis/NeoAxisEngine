@@ -1,4 +1,4 @@
-﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -380,7 +380,7 @@ namespace NeoAxis
 			return true;
 		}
 
-		public void ObjectInteractionGetInfo( UIControl playScreen, Component_GameMode gameMode, ref IComponent_InteractiveObject_ObjectInfo info )
+		public void ObjectInteractionGetInfo( UIControl playScreen, IComponent_GameMode gameMode, ref IComponent_InteractiveObject_ObjectInfo info )
 		{
 			//take by a character
 			var character = gameMode.ObjectControlledByPlayer.Value as Component_Character2D;
@@ -393,7 +393,7 @@ namespace NeoAxis
 			}
 		}
 
-		public virtual bool ObjectInteractionInputMessage( UIControl playScreen, Component_GameMode gameMode, InputMessage message )
+		public virtual bool ObjectInteractionInputMessage( UIControl playScreen, IComponent_GameMode gameMode, InputMessage message )
 		{
 			var mouseDown = message as InputMessageMouseButtonDown;
 			if( mouseDown != null )
@@ -414,15 +414,15 @@ namespace NeoAxis
 			return false;
 		}
 
-		public void ObjectInteractionEnter( Component_GameMode.ObjectInteractionContextClass context )
+		public void ObjectInteractionEnter( Component_GameMode_ObjectInteractionContextClass context )
 		{
 		}
 
-		public void ObjectInteractionExit( Component_GameMode.ObjectInteractionContextClass context )
+		public void ObjectInteractionExit( Component_GameMode_ObjectInteractionContextClass context )
 		{
 		}
 
-		public void ObjectInteractionUpdate( Component_GameMode.ObjectInteractionContextClass context )
+		public void ObjectInteractionUpdate( Component_GameMode_ObjectInteractionContextClass context )
 		{
 		}
 

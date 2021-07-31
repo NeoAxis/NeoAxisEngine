@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\bullet3\Extras\Serialize\BulletXmlWorldImporter\btBulletXmlWorldImporter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\bullet3\Extras\Serialize\BulletXmlWorldImporter\string_split.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\bullet3\Extras\Serialize\BulletXmlWorldImporter\tinyxml.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\bullet3\Extras\Serialize\BulletXmlWorldImporter\tinystr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\bullet3\Extras\Serialize\BulletXmlWorldImporter\tinyxmlerror.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\bullet3\Extras\Serialize\BulletXmlWorldImporter\tinyxmlparser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\bullet3\Extras\Serialize\BulletXmlWorldImporter\btBulletXmlWorldImporter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\bullet3\Extras\Serialize\BulletXmlWorldImporter\string_split.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\bullet3\Extras\Serialize\BulletXmlWorldImporter\tinyxml.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\bullet3\Extras\Serialize\BulletXmlWorldImporter\tinystr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="F:\Dev5\Sources\Engine\External\Bullet\bullet3\Extras\Serialize\BulletXmlWorldImporter\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{5022E08E-5A53-336C-8272-6A201898009C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{1940CEEF-DDFA-3CE9-99B0-8ACD6B8B6607}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

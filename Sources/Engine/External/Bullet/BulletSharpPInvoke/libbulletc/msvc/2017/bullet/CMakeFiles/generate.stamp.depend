@@ -1,0 +1,13 @@
+# CMake generation dependency list for this directory.
+E:/Projects2/bullet3/CMakeLists.txt
+C:/Program Files/CMake/share/cmake-3.9/Modules/FindOpenGL.cmake
+C:/Program Files/CMake/share/cmake-3.9/Modules/FindPackageHandleStandardArgs.cmake
+C:/Program Files/CMake/share/cmake-3.9/Modules/FindPackageMessage.cmake
+C:/Program Files/CMake/share/cmake-3.9/Modules/FindPythonInterp.cmake
+C:/Program Files/CMake/share/cmake-3.9/Modules/FindPackageHandleStandardArgs.cmake
+C:/Program Files/CMake/share/cmake-3.9/Modules/FindPackageMessage.cmake
+E:/Projects2/bullet3/build3/cmake/FindPythonLibs.cmake
+E:/Projects2/bullet3/build3/cmake/SelectLibraryConfigurations.cmake
+C:/Program Files/CMake/share/cmake-3.9/Modules/FindPackageHandleStandardArgs.cmake
+C:/Program Files/CMake/share/cmake-3.9/Modules/FindPackageMessage.cmake
+E:/Projects2/bullet3/BulletConfig.cmake.in

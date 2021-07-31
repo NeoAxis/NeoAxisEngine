@@ -1,8 +1,11 @@
+// Made with NeoAxis Engine 2021.2.
+
 .component NeoAxis.Component_Product_Android
 {
 	ProductName = Simple Game
 	SortOrderInEditor = 3
 	SelectedAssets = "Base;Samples\\Simple Game"
+	ExcludedAssets = "Base\\Models;Base\\Environments"
 	FileCache = False
 	ShaderCache = False
 }

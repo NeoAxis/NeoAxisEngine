@@ -37,7 +37,9 @@ The platform is intended to develop all kinds of 3D and 2D projects such as comp
 <li>The native core for Windows is already compiled.</li>
 <li>Download Sci-fi Demo and Nature Demo from the Asset Store window inside the editor.</li>
 </ul>
-How build for other platforms see https://www.neoaxis.com/docs/html/Platforms.htm. To compile project assemblies you can use Visual Studio Code or another C# IDE. Use NeoAxis.Managed.ProjectOnly.AnyIDE.sln.
+How build for other platforms see https://www.neoaxis.com/docs/html/Platforms.htm.
+
+To compile project assemblies you can use Visual Studio Code or another C# IDE. Use NeoAxis.Managed.ProjectOnly.AnyIDE.sln.
 
 <h2>Programming tips</h2>
 <ul>

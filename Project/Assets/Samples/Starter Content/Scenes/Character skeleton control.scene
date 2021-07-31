@@ -161,10 +161,6 @@
 				}
 			}
 		}
-		.component NeoAxis.Addon.Pathfinding.Component_Pathfinding_GeometryTag
-		{
-			Name = Pathfinding GeometryTag
-		}
 	}
 	.component NeoAxis.Component_GroupOfObjects
 	{

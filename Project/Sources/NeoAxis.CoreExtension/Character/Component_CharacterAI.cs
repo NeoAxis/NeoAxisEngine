@@ -1,10 +1,9 @@
-﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
 using NeoAxis.Editor;
-using NeoAxis.Addon.Pathfinding;
 
 namespace NeoAxis
 {
@@ -37,14 +36,14 @@ namespace NeoAxis
 		/// </summary>
 		[DefaultValue( null )]
 		[Category( "Character AI" )]
-		public Reference<Component_Pathfinding> PathfindingSpecific
+		public Reference<Component_ObjectInSpace/*Component_Pathfinding*/> PathfindingSpecific
 		{
 			get { if( _pathfindingSpecific.BeginGet() ) PathfindingSpecific = _pathfindingSpecific.Get( this ); return _pathfindingSpecific.value; }
 			set { if( _pathfindingSpecific.BeginSet( ref value ) ) { try { PathfindingSpecificChanged?.Invoke( this ); } finally { _pathfindingSpecific.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PathfindingSpecific"/> property value changes.</summary>
 		public event Action<Component_CharacterAI> PathfindingSpecificChanged;
-		ReferenceField<Component_Pathfinding> _pathfindingSpecific = null;
+		ReferenceField<Component_ObjectInSpace/*Component_Pathfinding*/> _pathfindingSpecific = null;
 
 		[DefaultValue( false )]
 		[Category( "Character AI" )]
@@ -86,7 +85,7 @@ namespace NeoAxis
 				currentIndex = 0;
 			}
 
-			public void Update( Component_Pathfinding pathfinding, float delta, double distanceToReach, Vector3 from, Vector3 target )
+			public void Update( IComponent_Pathfinding pathfinding, float delta, double distanceToReach, Vector3 from, Vector3 target )
 			{
 				//wait before last path find
 				if( updateRemainingTime > 0 )
@@ -132,7 +131,7 @@ namespace NeoAxis
 				//check if need update path
 				if( path == null && updateRemainingTime == 0 )
 				{
-					var context = new Component_Pathfinding.FindPathContext();
+					var context = new Component_Pathfinding_FindPathContext();
 					context.Start = from;
 					context.End = target;
 
@@ -397,14 +396,14 @@ namespace NeoAxis
 			return task;
 		}
 
-		public Component_Pathfinding GetPathfinding()
+		public IComponent_Pathfinding GetPathfinding()
 		{
-			var result = PathfindingSpecific.Value;
+			var result = PathfindingSpecific.Value as IComponent_Pathfinding;
 			if( result == null )
 			{
 				var scene = FindParent<Component_Scene>();
 				if( scene != null )
-					result = Component_Pathfinding.Instances.FirstOrDefault( p => p.ParentRoot == scene );
+					result = PathfindingUtility.Instances.FirstOrDefault( p => ( (Component_ObjectInSpace)p ).ParentRoot == scene );
 			}
 			return result;
 		}

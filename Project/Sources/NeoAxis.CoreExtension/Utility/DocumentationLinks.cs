@@ -1,7 +1,6 @@
-﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using NeoAxis.Addon.Pathfinding;
 
 namespace NeoAxis.Editor
 {
@@ -11,11 +10,44 @@ namespace NeoAxis.Editor
 		{
 			var items = new (string, Type)[]
 			{
+
+				//from Extended
+			("Component Host",typeof(Component_ComponentHost)),
+			("Compute Using Threads",typeof(Component_ComputeUsingThreads)),
+			("UIVideo",typeof(UIVideo)),
+			("UIRenderTarget",typeof(UIRenderTarget)),
+			("Terrain",typeof(Component_Terrain)),
+			("Render Target In Space",typeof(Component_RenderTargetInSpace)),
+			("Area",typeof(Component_Area)),
+			("Surface Area",typeof(Component_SurfaceArea)),
+			("Cut Volume",typeof(Component_CutVolume)),
+			("Liquid Volume",typeof(Component_LiquidVolume)),
+			("Sensor",typeof(Component_Sensor)),
+			("Destroying Sensor",typeof(Component_DestroyingSensor)),
+			("Text 3D",typeof(Component_Text3D)),
+			("Measuring Tool",typeof(Component_MeasuringTool)),
+			("Grid",typeof(Component_Grid)),
+			("Render To File",typeof(Component_RenderToFile)),
+			("World Generator",typeof(Component_WorldGenerator)),
+			("Soft Body",typeof(Component_SoftBody)),
+			("Chromatic Aberration",typeof(Component_RenderingEffect_ChromaticAberration)),
+			("Edge Detection",typeof(Component_RenderingEffect_EdgeDetection)),
+			("Pixelate",typeof(Component_RenderingEffect_Pixelate)),
+			("Posterize",typeof(Component_RenderingEffect_Posterize)),
+			("Radial Blur",typeof(Component_RenderingEffect_RadialBlur)),
+			("Screen Space Reflection",typeof(Component_RenderingEffect_ScreenSpaceReflection)),
+			("Pathfinding",typeof(Component_Pathfinding)),
+			("Pathfinding Geometry",typeof(Component_Pathfinding_Geometry)),
+			("Pathfinding Geometry Tag",typeof(Component_Pathfinding_GeometryTag)),
+
+
+
+
 			//=== Common ===
 			("Component",typeof(Component)),
 			("Text File",typeof(NewResourceType_TextFile)),
-			("Component Host",typeof(Component_ComponentHost)),
-			("Compute Using Threads",typeof(Component_ComputeUsingThreads)),
+			//("Component Host",typeof(Component_ComponentHost)),
+			//("Compute Using Threads",typeof(Component_ComputeUsingThreads)),
 
 			//=== Scripting ===
 			("CSharp File",typeof(NewResourceType_CSharpClass)),
@@ -58,9 +90,9 @@ namespace NeoAxis.Editor
 			("UICombo",typeof(UICombo)),
 			("UIList",typeof(UIList)),
 			("UIGrid",typeof(UIGrid)),
-			("UIVideo",typeof(UIVideo)),
+			//("UIVideo",typeof(UIVideo)),
 			("UIWebBrowser",typeof(UIWebBrowser)),
-			("UIRenderTarget",typeof(UIRenderTarget)),
+			//("UIRenderTarget",typeof(UIRenderTarget)),
 			("UITabControl",typeof(UITabControl)),
 			("UIGrid",typeof(UIGrid)),
 			("UIToolbar",typeof(UIToolbar)),
@@ -86,28 +118,28 @@ namespace NeoAxis.Editor
 			("Particle System In Space",typeof(Component_ParticleSystemInSpace)),
 			("Light",typeof(Component_Light)),
 			("Camera",typeof(Component_Camera)),
-			("Terrain",typeof(Component_Terrain)),
+			//("Terrain",typeof(Component_Terrain)),
 			("Billboard",typeof(Component_Billboard)),
 			("Decal",typeof(Component_Decal)),
 			("Reflection Probe",typeof(Component_ReflectionProbe)),
 			("Sound Source",typeof(Component_SoundSource)),
-			("Render Target In Space",typeof(Component_RenderTargetInSpace)),
+			//("Render Target In Space",typeof(Component_RenderTargetInSpace)),
 			("Skybox",typeof(Component_Skybox)),
 			("Fog",typeof(Component_Fog)),
 			("Lens Flares",typeof(Component_LensFlares)),
-			("Area",typeof(Component_Area)),
-			("Surface Area",typeof(Component_SurfaceArea)),
-			("Cut Volume",typeof(Component_CutVolume)),
-			("Liquid Volume",typeof(Component_LiquidVolume)),
-			("Sensor",typeof(Component_Sensor)),
-			("Destroying Sensor",typeof(Component_DestroyingSensor)),
+			//("Area",typeof(Component_Area)),
+			//("Surface Area",typeof(Component_SurfaceArea)),
+			//("Cut Volume",typeof(Component_CutVolume)),
+			//("Liquid Volume",typeof(Component_LiquidVolume)),
+			//("Sensor",typeof(Component_Sensor)),
+			//("Destroying Sensor",typeof(Component_DestroyingSensor)),
 			("Text 2D",typeof(Component_Text2D)),
-			("Text 3D",typeof(Component_Text3D)),
-			("Measuring Tool",typeof(Component_MeasuringTool)),
-			("Grid",typeof(Component_Grid)),
+			//("Text 3D",typeof(Component_Text3D)),
+			//("Measuring Tool",typeof(Component_MeasuringTool)),
+			//("Grid",typeof(Component_Grid)),
 			("Curve In Space",typeof(Component_CurveInSpace)),
-			("Render To File",typeof(Component_RenderToFile)),
-			("World Generator",typeof(Component_WorldGenerator)), 
+			//("Render To File",typeof(Component_RenderToFile)),
+			//("World Generator",typeof(Component_WorldGenerator)), 
 
 			//=== Primitives ===
 			("Arch",typeof(Component_MeshGeometry_Arch)),
@@ -133,9 +165,9 @@ namespace NeoAxis.Editor
 			("Capsule Shape",typeof(Component_CollisionShape_Capsule)),
 			("Mesh Shape",typeof(Component_CollisionShape_Mesh)),
 			("Physical Material",typeof(Component_PhysicalMaterial)),
-			("Soft Body",typeof(Component_SoftBody)),
+			//("Soft Body",typeof(Component_SoftBody)),
 			("Constraint",typeof(Component_Constraint)),
-			("Sensor",typeof(Component_Sensor)), 
+			//("Sensor",typeof(Component_Sensor)), 
 
 			//=== Particles ===
 			("Particle System",typeof(Component_ParticleSystem)),
@@ -163,10 +195,10 @@ namespace NeoAxis.Editor
 			("Ambient Occlusion",typeof(Component_RenderingEffect_AmbientOcclusion)),
 			("Antialiasing",typeof(Component_RenderingEffect_Antialiasing)),
 			("Bloom",typeof(Component_RenderingEffect_Bloom)),
-			("Chromatic Aberration",typeof(Component_RenderingEffect_ChromaticAberration)),
+			//("Chromatic Aberration",typeof(Component_RenderingEffect_ChromaticAberration)),
 			("Color Grading",typeof(Component_RenderingEffect_ColorGrading)),
 			("Depth Of Field",typeof(Component_RenderingEffect_DepthOfField)),
-			("Edge Detection",typeof(Component_RenderingEffect_EdgeDetection)),
+			//("Edge Detection",typeof(Component_RenderingEffect_EdgeDetection)),
 			("Gaussian Blur",typeof(Component_RenderingEffect_GaussianBlur)),
 			("Grayscale",typeof(Component_RenderingEffect_Grayscale)),
 			("Lens Effects",typeof(Component_RenderingEffect_LensEffects)),
@@ -174,10 +206,10 @@ namespace NeoAxis.Editor
 			("Motion Blur",typeof(Component_RenderingEffect_MotionBlur)),
 			("Noise",typeof(Component_RenderingEffect_Noise)),
 			("Outline",typeof(Component_RenderingEffect_Outline)),
-			("Pixelate",typeof(Component_RenderingEffect_Pixelate)),
-			("Posterize",typeof(Component_RenderingEffect_Posterize)),
-			("Radial Blur",typeof(Component_RenderingEffect_RadialBlur)),
-			("Screen Space Reflection",typeof(Component_RenderingEffect_ScreenSpaceReflection)),
+			//("Pixelate",typeof(Component_RenderingEffect_Pixelate)),
+			//("Posterize",typeof(Component_RenderingEffect_Posterize)),
+			//("Radial Blur",typeof(Component_RenderingEffect_RadialBlur)),
+			//("Screen Space Reflection",typeof(Component_RenderingEffect_ScreenSpaceReflection)),
 			("Sharpen",typeof(Component_RenderingEffect_Sharpen)),
 			("Show Render Target",typeof(Component_RenderingEffect_ShowRenderTarget)),
 			("To LDR",typeof(Component_RenderingEffect_ToLDR)),
@@ -189,9 +221,9 @@ namespace NeoAxis.Editor
 			("Input Processing",typeof(Component_InputProcessing)),
 			("Camera Management",typeof(Component_CameraManagement)),
 			("AI",typeof(Component_AI)),
-			("Pathfinding",typeof(Component_Pathfinding)),
-			("Pathfinding Geometry",typeof(Component_Pathfinding_Geometry)),
-			("Pathfinding Geometry Tag",typeof(Component_Pathfinding_GeometryTag)),
+			//("Pathfinding",typeof(Component_Pathfinding)),
+			//("Pathfinding Geometry",typeof(Component_Pathfinding_Geometry)),
+			//("Pathfinding Geometry Tag",typeof(Component_Pathfinding_GeometryTag)),
 			("Button In Space",typeof(Component_ButtonInSpace)),
 			("Regulator Switch In Space",typeof(Component_RegulatorSwitchInSpace)), 
 

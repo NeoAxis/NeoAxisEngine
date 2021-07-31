@@ -1,4 +1,4 @@
-﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ namespace NeoAxis
 	/// The object to interact Player app with the scene.
 	/// </summary>
 	[AddToResourcesWindow( @"Base\Game framework\Game Mode", -9999 )]
-	public class Component_GameMode : Component
+	public class Component_GameMode : Component, IComponent_GameMode
 	{
 		//input
 		bool inputEnabled;
@@ -285,7 +285,7 @@ namespace NeoAxis
 		//ReferenceField<bool> _displayHelpText = true;
 
 		[Browsable( false )]
-		public ObjectInteractionContextClass ObjectInteractionContext { get; set; }
+		public Component_GameMode_ObjectInteractionContextClass ObjectInteractionContext { get; set; }
 
 		//cutscene
 		[Browsable( false )]
@@ -324,27 +324,6 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="ReplaceCamera"/> property value changes.</summary>
 		public event Action<Component_GameMode> ReplaceCameraChanged;
 		ReferenceField<Component_Camera> _replaceCamera = null;
-
-		/////////////////////////////////////////
-
-		public class ObjectInteractionContextClass
-		{
-			public IComponent_InteractiveObject Obj;
-			public object AnyData;
-			public UIControl PlayScreen;
-			public Component_GameMode GameMode;
-			public Viewport Viewport;
-
-			public ObjectInteractionContextClass( IComponent_InteractiveObject obj, UIControl playScreen, Component_GameMode gameMode, Viewport viewport )
-			{
-				Obj = obj;
-				PlayScreen = playScreen;
-				GameMode = gameMode;
-				Viewport = viewport;
-			}
-
-			public virtual void Dispose() { }
-		}
 
 		/////////////////////////////////////////
 
@@ -1111,7 +1090,7 @@ namespace NeoAxis
 				//create new
 				if( overObject != null )
 				{
-					ObjectInteractionContext = new ObjectInteractionContextClass( overObject, playScreen, this, viewport );
+					ObjectInteractionContext = new Component_GameMode_ObjectInteractionContextClass( overObject, playScreen, this, viewport );
 					ObjectInteractionContext.Obj.ObjectInteractionEnter( ObjectInteractionContext );
 				}
 			}

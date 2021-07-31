@@ -1,1 +1,2 @@
+Stores window in the editor.
 https://store.neoaxis.com/

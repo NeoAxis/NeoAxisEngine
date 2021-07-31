@@ -1,8 +1,12 @@
+// Made with NeoAxis Engine 2021.3.
+
 .component NeoAxis.Component_Surface
 {
+	EditorCameraTransform = "1.15239258636921 -1.67636923071015 1.51823747674854; -0.325450140923235 0.164925496097034 0.830511523687694 0.420870996306634; 1 1 1"
 	.component NeoAxis.Component_SurfaceGroupOfElements
 	{
 		Name = Group 1
+		OccupiedAreaRadius = 0.12
 		MinDistanceBetweenObjects = 0.2
 		RotateAroundItsAxis = True
 		MaxIncline = 20
@@ -12,7 +16,7 @@
 			Name = Mesh 1
 			Mesh
 			{
-				GetByReference = "Samples\\Starter Content\\Models\\Ribbon Grass\\tbdpec3r.json|$Meshes\\$Mesh 1"
+				GetByReference = "Samples\\Starter Content\\Models\\Ribbon Grass\\Mesh 1.mesh"
 			}
 		}
 		.component NeoAxis.Component_SurfaceElement_Mesh
@@ -20,7 +24,7 @@
 			Name = Mesh 2
 			Mesh
 			{
-				GetByReference = "Samples\\Starter Content\\Models\\Ribbon Grass\\tbdpec3r.json|$Meshes\\$Mesh 2"
+				GetByReference = "Samples\\Starter Content\\Models\\Ribbon Grass\\Mesh 2.mesh"
 			}
 		}
 		.component NeoAxis.Component_SurfaceElement_Mesh
@@ -28,7 +32,7 @@
 			Name = Mesh 3
 			Mesh
 			{
-				GetByReference = "Samples\\Starter Content\\Models\\Ribbon Grass\\tbdpec3r.json|$Meshes\\$Mesh 3"
+				GetByReference = "Samples\\Starter Content\\Models\\Ribbon Grass\\Mesh 3.mesh"
 			}
 		}
 		.component NeoAxis.Component_SurfaceElement_Mesh
@@ -36,7 +40,7 @@
 			Name = Mesh 4
 			Mesh
 			{
-				GetByReference = "Samples\\Starter Content\\Models\\Ribbon Grass\\tbdpec3r.json|$Meshes\\$Mesh 4"
+				GetByReference = "Samples\\Starter Content\\Models\\Ribbon Grass\\Mesh 4.mesh"
 			}
 		}
 		.component NeoAxis.Component_SurfaceElement_Mesh
@@ -44,7 +48,7 @@
 			Name = Mesh 5
 			Mesh
 			{
-				GetByReference = "Samples\\Starter Content\\Models\\Ribbon Grass\\tbdpec3r.json|$Meshes\\$Mesh 5"
+				GetByReference = "Samples\\Starter Content\\Models\\Ribbon Grass\\Mesh 5.mesh"
 			}
 		}
 		.component NeoAxis.Component_SurfaceElement_Mesh
@@ -52,7 +56,7 @@
 			Name = Mesh 6
 			Mesh
 			{
-				GetByReference = "Samples\\Starter Content\\Models\\Ribbon Grass\\tbdpec3r.json|$Meshes\\$Mesh 6"
+				GetByReference = "Samples\\Starter Content\\Models\\Ribbon Grass\\Mesh 6.mesh"
 			}
 		}
 	}

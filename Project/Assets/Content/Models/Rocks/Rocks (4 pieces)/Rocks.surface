@@ -1,9 +1,12 @@
+// Made with NeoAxis Engine 2021.3.
+
 .component NeoAxis.Component_Surface
 {
+	EditorCameraTransform = "13.5916060977021 -19.550358835253 13.9411986970496; -0.285758937697935 0.149158847647722 0.839179860790949 0.438030397275159; 1 1 1"
 	.component NeoAxis.Component_SurfaceGroupOfElements
 	{
 		Name = Group 1
-		MinDistanceBetweenObjects = 8
+		OccupiedAreaRadius = 1.2
 		RotateAroundItsAxis = True
 		MaxIncline = 180
 		ScaleRange = 0.7 1.3

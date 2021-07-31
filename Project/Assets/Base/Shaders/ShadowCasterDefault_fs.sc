@@ -1,6 +1,6 @@
 $input v_depth, v_worldPosition, v_lodValueVisibilityDistanceReceiveDecals
 
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "Common.sh"
 #include "FragmentFunctions.sh"
 

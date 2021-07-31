@@ -1,7 +1,7 @@
 $input a_position, a_indices, a_weight, i_data0, i_data1, i_data2, i_data3, i_data4
 $output v_depth, v_worldPosition, v_lodValueVisibilityDistanceReceiveDecals
 
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "Common.sh"
 #include "VertexFunctions.sh"
 

@@ -3,5 +3,6 @@
 	ProductName = Simple Game
 	SortOrderInEditor = 1
 	SelectedAssets = "Base;Samples\\Simple Game"
+	ExcludedAssets = "Base\\Models;Base\\Environments"
 	FileCache = False
 }

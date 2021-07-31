@@ -1,23 +1,40 @@
+// Made with NeoAxis Engine 2021.2.
+
 .component Project.SplashScreen
 {
 	Size = Parent 1 1
+	EditorScrollPosition = 0 0
 	.component NeoAxis.UIImage
 	{
-		Name = PoweredBy
-		Size = Units 800 300
+		Name = PoweredBy_BlackBackground
+		Size = Units 800 312
 		HorizontalAlignment = Center
 		VerticalAlignment = Center
+		EditorScrollPosition = 0 0
 		SourceImage
 		{
-			GetByReference = "Base\\UI\\Images\\PoweredBy.png"
+			GetByReference = "Base\\UI\\Images\\PoweredBy_BlackBackground.png"
+		}
+	}
+	.component NeoAxis.UIImage
+	{
+		Name = PoweredBy_WhiteBackground
+		Size = Units 800 312
+		HorizontalAlignment = Center
+		VerticalAlignment = Center
+		EditorScrollPosition = 0 0
+		SourceImage
+		{
+			GetByReference = "Base\\UI\\Images\\PoweredBy_WhiteBackground.png"
 		}
 	}
 	.component NeoAxis.UIImage
 	{
 		Name = Project
-		Size = Units 800 300
+		Size = Units 640 240
 		HorizontalAlignment = Center
 		VerticalAlignment = Center
+		EditorScrollPosition = 0 0
 		SourceImage
 		{
 			GetByReference = "Base\\UI\\Images\\Project.png"

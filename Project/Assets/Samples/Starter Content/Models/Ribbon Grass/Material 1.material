@@ -1,0 +1,142 @@
+// Made with NeoAxis Engine 2021.2.
+
+.component "Base\\Material templates\\Vegetation Animation.material"
+{
+	Name = Material 1
+	BlendMode = Masked
+	TwoSided = True
+	OpacityMaskThreshold = 0.1
+	BaseColor
+	{
+		GetByReference = "this:$Material 1 shader graph\\$Node Texture Sample BaseColor\\$Shader Texture Sample\\RGBA"
+	}
+	Roughness
+	{
+		GetByReference = "this:$Material 1 shader graph\\$Node Texture Sample Roughness\\$Shader Texture Sample\\R"
+	}
+	Normal
+	{
+		GetByReference = "this:$Material 1 shader graph\\$Node Texture Sample Normal\\$Shader Texture Sample\\RGBA"
+	}
+	AmbientOcclusion
+	{
+		GetByReference = "this:$Material 1 shader graph\\$Node Texture Sample AmbientOcclusion\\$Shader Texture Sample\\R"
+	}
+	Opacity
+	{
+		GetByReference = "this:$Material 1 shader graph\\$Node Texture Sample Opacity\\$Shader Texture Sample\\R"
+	}
+	.component NeoAxis.Component_FlowGraph
+	{
+		Name = Material 1 shader graph
+		EditorScrollPosition = 0 0
+		Specialization
+		{
+			GetByReference = NeoAxis.Component_FlowGraphSpecialization_Shader|Instance
+		}
+		.component NeoAxis.Component_FlowGraphNode
+		{
+			Name = Node Material 1
+			Position = 10 -7
+			ControlledObject
+			{
+				GetByReference = "this:..\\.."
+			}
+		}
+		.component NeoAxis.Component_FlowGraphNode
+		{
+			Name = Node Texture Sample BaseColor
+			Position = -20 -22
+			ControlledObject
+			{
+				GetByReference = "this:$Shader Texture Sample"
+			}
+			.component NeoAxis.Component_ShaderTextureSample
+			{
+				Name = Shader Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Samples\\Starter Content\\Models\\Ribbon Grass\\Textures\\Atlas\\smencbp_2K_Albedo.jpg"
+				}
+			}
+		}
+		.component NeoAxis.Component_FlowGraphNode
+		{
+			Name = Node Texture Sample Roughness
+			Position = -20 -13
+			ControlledObject
+			{
+				GetByReference = "this:$Shader Texture Sample"
+			}
+			.component NeoAxis.Component_ShaderTextureSample
+			{
+				Name = Shader Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Samples\\Starter Content\\Models\\Ribbon Grass\\Textures\\Atlas\\smencbp_2K_Roughness.jpg"
+				}
+			}
+		}
+		.component NeoAxis.Component_FlowGraphNode
+		{
+			Name = Node Texture Sample Normal
+			Position = -20 -4
+			ControlledObject
+			{
+				GetByReference = "this:$Shader Texture Sample"
+			}
+			.component NeoAxis.Component_ShaderTextureSample
+			{
+				Name = Shader Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Samples\\Starter Content\\Models\\Ribbon Grass\\Textures\\Atlas\\smencbp_2K_Normal.jpg"
+				}
+			}
+		}
+		.component NeoAxis.Component_FlowGraphNode
+		{
+			Name = Node Texture Sample AmbientOcclusion
+			Position = -20 5
+			ControlledObject
+			{
+				GetByReference = "this:$Shader Texture Sample"
+			}
+			.component NeoAxis.Component_ShaderTextureSample
+			{
+				Name = Shader Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Samples\\Starter Content\\Models\\Ribbon Grass\\Textures\\Atlas\\smencbp_2K_AO.jpg"
+				}
+			}
+		}
+		.component NeoAxis.Component_FlowGraphNode
+		{
+			Name = Node Texture Sample Opacity
+			Position = -20 14
+			ControlledObject
+			{
+				GetByReference = "this:$Shader Texture Sample"
+			}
+			.component NeoAxis.Component_ShaderTextureSample
+			{
+				Name = Shader Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Samples\\Starter Content\\Models\\Ribbon Grass\\Textures\\Atlas\\smencbp_2K_Opacity.jpg"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,148 @@
+.component NeoAxis.UIControl
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1195, 842\"><KW V=\"1\" A=\"EEA741103C5C4955289CD8492690B2C0\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"A8D10A17BD5B46B7F8B70E6C6EA40D1E\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"EEA741103C5C4955289CD8492690B2C0\"><KP UN=\"EEA741103C5C4955289CD8492690B2C0\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"585704556160495E2B9FA9AE0A1C5B7F\" S=\"False\"><CPD ObjPath=\"$Button Do\\$C# Script\" /></KP><KP UN=\"B8D3A675B43A462049A1F5B6A8A8DBEB\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	Size = Units 440 190
+	BackgroundColor = 0.5843138 0.5843138 0.5843138
+	EditorScrollPosition = -21.0046323218706 -12.6209876081335
+	EditorZoomIndex = 12
+	Title = Scene Creation
+	Description = How to create scenes. How to create objects in the scene. How to work with transform tool.
+	"Learn Link" = "https://www.neoaxis.com/docs/html/Scene_Editor.htm"
+	TypeSettingsPrivateObjects
+	{
+		Length = 6
+		0 = $Text Title
+		1 = $Button Do
+		2 = $Check Done
+		3 = $Text Description
+		4 = $Button Image
+		5 = Size
+	}
+	.component NeoAxis.UIText
+	{
+		Name = Text Title
+		Size = Units 420 35
+		HorizontalAlignment = Center
+		Margin = Units 0 4 0 0
+		EditorScrollPosition = 0 0
+		FontSize = Screen 0.025
+		Text
+		{
+			GetByReference = "this:..\\Title"
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Do
+		Text = Learn
+		Size = Units 200 40
+		Margin = Units 10 140 140 0
+		EditorScrollPosition = 0 0
+		.component NeoAxis.Component_CSharpScript
+		{
+			Name = C# Script
+			Code = "public void ButtonDo_Click(NeoAxis.UIButton sender)\r\n{\r\n\tvar parent = sender.Parent;\r\n\tvar link = parent.PropertyGet<string>(\"Learn Link\");\r\n\tSystem.Diagnostics.Process.Start( new System.Diagnostics.ProcessStartInfo( link ) { UseShellExecute = true } );\r\n}\r\n"
+			Exit
+			{
+			}
+			.component NeoAxis.Component_EventHandler
+			{
+				Name = Event Handler Click
+				WhenEnable = Editor, Simulation, Instance
+				Event
+				{
+					GetByReference = "this:..\\..\\event:Click"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\method:ButtonDo_Click(NeoAxis.UIButton)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.UICheck
+	{
+		Name = Check Done
+		Text = Done
+		Size = Units 25 25
+		Margin = Units 300 148.96167285852655 0 0
+		EditorScrollPosition = 0 0
+	}
+	.component NeoAxis.UIText
+	{
+		Name = Text Description
+		Size = Units 320 90
+		Margin = Units 110 40 0 0
+		EditorScrollPosition = 0 0
+		TextHorizontalAlignment = Left
+		TextVerticalAlignment = Top
+		WordWrap = True
+		Text
+		{
+			GetByReference = "this:..\\Description"
+		}
+	}
+	.component NeoAxis.UIImage
+	{
+		Name = Button Image
+		Size = Units 90 90
+		Margin = Units 10 30 0 0
+		EditorScrollPosition = 0 0
+		SourceImage
+		{
+			GetByReference = "Base\\Learning\\Book.png"
+		}
+	}
+	.component NeoAxis.Component_Property
+	{
+		Name = Title
+		Type
+		{
+			GetByReference = System.String
+		}
+	}
+	.component NeoAxis.Component_Property
+	{
+		Name = Description
+		Type
+		{
+			GetByReference = System.String
+		}
+	}
+	.component NeoAxis.Component_Property
+	{
+		Name = Learn Link
+		Type
+		{
+			GetByReference = System.String
+		}
+	}
+	.component NeoAxis.Component_CSharpScript
+	{
+		Name = C# Script
+		Code = "public void _UpdateEvent(NeoAxis.Component sender, float delta)\r\n{\r\n\tvar control = (UIControl)sender;\r\n\tcontrol.ColorMultiplier = control.ReadOnly ? new ColorValue(0.5, 0.5, 0.5) : new ColorValue(1, 1, 1);\r\n}\r\n"
+		__parameter_Delta = 0
+		Exit
+		{
+		}
+		.component NeoAxis.Component_EventHandler
+		{
+			Name = Event Handler UpdateEvent
+			WhenEnable = Editor, Simulation, Instance
+			Event
+			{
+				GetByReference = "this:..\\..\\event:UpdateEvent"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\method:_UpdateEvent(NeoAxis.Component,System.Single)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+}

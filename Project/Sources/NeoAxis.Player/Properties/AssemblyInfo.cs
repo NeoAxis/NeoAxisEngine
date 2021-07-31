@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "NeoAxis Group Ltd." )]
 [assembly: AssemblyProduct( "NeoAxis.Player" )]
-[assembly: AssemblyCopyright( "Copyright © 2019 NeoAxis Group Ltd." )]
+[assembly: AssemblyCopyright( "Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica." )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
@@ -29,5 +29,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion( "2021.2.1.0" )]
-[assembly: AssemblyFileVersion( "2021.2.1.0" )]
+[assembly: AssemblyVersion( "2021.3.1.0" )]
+[assembly: AssemblyFileVersion( "2021.3.1.0" )]

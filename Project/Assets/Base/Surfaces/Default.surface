@@ -1,8 +1,12 @@
+// Made with NeoAxis Engine 2021.3.
+
 .component NeoAxis.Component_Surface
 {
+	EditorCameraTransform = "3.88028743056432 -3.22731229682894 2.55050522457307; -0.283880997186505 0.0985794239879789 0.901000079601821 0.312877824653819; 1 1 1"
 	.component NeoAxis.Component_SurfaceGroupOfElements
 	{
 		Name = Group 1
+		OccupiedAreaRadius = 0.3
 		MinDistanceBetweenObjects = 0.5
 		PositionZRange = 0.1 0.1
 		.component NeoAxis.Component_SurfaceElement_Mesh
@@ -10,16 +14,7 @@
 			Name = Mesh 1
 			Mesh
 			{
-				GetByReference = "this:$Mesh"
-			}
-			.component NeoAxis.Component_Mesh
-			{
-				Name = Mesh
-				.component NeoAxis.Component_MeshGeometry_Box
-				{
-					Name = Box
-					Dimensions = 0.2 0.2 0.2
-				}
+				GetByReference = "Base\\Surfaces\\Box.mesh"
 			}
 		}
 		.component NeoAxis.Component_SurfaceElement_Mesh
@@ -27,18 +22,7 @@
 			Name = Mesh 2
 			Mesh
 			{
-				GetByReference = "this:$Mesh"
-			}
-			.component NeoAxis.Component_Mesh
-			{
-				Name = Mesh
-				.component NeoAxis.Component_MeshGeometry_Cone
-				{
-					Name = Cone
-					Radius = 0.1
-					Height = 0.2
-					Segments = 12
-				}
+				GetByReference = "Base\\Surfaces\\Cone.mesh"
 			}
 		}
 	}

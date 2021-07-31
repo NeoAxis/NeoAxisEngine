@@ -1,4 +1,4 @@
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -190,7 +190,6 @@ namespace Project
 			EngineApp.RegisterConfigParameter += EngineApp_RegisterConfigParameter;
 
 			EngineConsole.Init();
-			//!!!!
 			//GameControlsManager.Init();
 
 			//UIControl engineLoadingWindow = ResourceManager.LoadSeparateInstance<UIControl>( "Base\\UI\\Windows\\EngineLoadingWindow.ui", false, null );
@@ -203,7 +202,6 @@ namespace Project
 			EngineApp.Tick += EngineApp_Tick;
 
 			////finish initialization of materials and hide loading window.
-			////!!!!!!
 			////LongOperationCallbackManager.Unsubscribe();
 			//if( engineLoadingWindow != null )
 			//	engineLoadingWindow.RemoveFromParent( true );
@@ -221,9 +219,6 @@ namespace Project
 				MainViewport.JoystickEvent += MainViewport_JoystickEvent;
 				MainViewport.Touch += MainViewport_Touch;
 				MainViewport.SpecialInputDeviceEvent += MainViewport_SpecialInputDeviceEvent;
-
-				//!!!!!Tick +=
-
 				MainViewport.UpdateBegin += MainViewport_UpdateBegin;
 				MainViewport.UpdateBeforeOutput += MainViewport_UpdateBeforeOutput;
 				MainViewport.UpdateEnd += MainViewport_UpdateEnd;
@@ -257,10 +252,7 @@ namespace Project
 
 		static bool IsNeedDisableKeyboardAndMouseInput()
 		{
-			//!!!!
 			return false;
-
-			//!!!!
 			//return IsScreenFadingOut();
 		}
 
@@ -279,7 +271,6 @@ namespace Project
 				handled = true;
 				return;
 			}
-
 
 		}
 
@@ -350,8 +341,6 @@ namespace Project
 			//disable input processing
 			if( IsNeedDisableKeyboardAndMouseInput() )
 			{
-				//!!!!handled
-
 				//handled = true;
 				return;
 			}
@@ -442,7 +431,6 @@ namespace Project
 			//configure cursor file name
 			EngineApp.SystemCursorFileName = "Base\\UI\\Cursors\\DefaultSystem.cur";
 
-			//!!!!
 			//Draw UI controls
 			MainViewport.UIContainer.PerformRenderUI( MainViewport.CanvasRenderer );
 
@@ -486,7 +474,6 @@ namespace Project
 		{
 		}
 
-		//!!!!!
 		//protected override void OnSystemPause( bool pause )
 		//{
 		//	base.OnSystemPause( pause );
@@ -495,10 +482,8 @@ namespace Project
 		//		EntitySystemWorld.Instance.SystemPauseOfSimulation = pause;
 		//}
 
-		////!!!!!
 		//bool IsScreenFadingOut()
 		//{
-		//	//!!!!!
 		//	//if( needMapLoadName != null || needRunExampleOfProceduralMapCreation || needWorldLoadName != null )
 		//	//	return true;
 		//	//if( needFadingOutAndExit )
@@ -535,7 +520,6 @@ namespace Project
 			//{
 			//	handled = true;
 
-			//	//!!!!!
 			//	//find already created MessageBoxWindow
 			//	foreach( UIControl control in MainViewport.UIContainer.GetComponents<UIControl>( false ) )
 			//	{
@@ -543,11 +527,9 @@ namespace Project
 			//			return;
 			//	}
 
-			//	//!!!!!
 			//	bool insideTheGame = false;
 			//	//bool insideTheGame = GameWindow.Instance != null;
 
-			//	//!!!!!
 			//	//if( insideTheGame )
 			//	//{
 			//	//	if( Map.Instance != null )
@@ -565,7 +547,6 @@ namespace Project
 			//	//		EntitySystemWorld.Instance.WorldDestroy();
 			//	//}
 
-			//	//!!!!!
 			//	//GameEngineApp.Instance.Server_DestroyServer( "Error on the server" );
 			//	//GameEngineApp.Instance.Client_DisconnectFromServer();
 
@@ -581,7 +562,6 @@ namespace Project
 			//		}
 			//		else
 			//		{
-			//			//!!!!!
 			//			////destroy Lobby Window
 			//			//foreach( UIControl control in MainViewport.ControlManager.Controls )
 			//			//{
@@ -593,14 +573,12 @@ namespace Project
 			//			//}
 			//		}
 
-			//		//!!!!!
 			//		//if( EntitySystemWorld.Instance == null )
 			//		//{
 			//		//	EngineApp.Instance.NeedExit = true;
 			//		//	return;
 			//		//}
 
-			//		//!!!!
 			//		////create main menu
 			//		//if( MainMenuWindow.Instance == null )
 			//		//	MainViewport.UIContainer.AddComponent( new MainMenuWindow() );

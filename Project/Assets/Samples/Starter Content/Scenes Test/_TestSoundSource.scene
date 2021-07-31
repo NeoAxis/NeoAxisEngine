@@ -59,12 +59,6 @@
 				Name = Color Grading
 				Shader = "Base\\Shaders\\Effects\\ColorGrading_fs.sc"
 			}
-			.component NeoAxis.Component_RenderingEffect_RadialBlur
-			{
-				Enabled = False
-				Name = Radial Blur
-				Shader = "Base\\Shaders\\Effects\\RadialBlur_fs.sc"
-			}
 			.component NeoAxis.Component_RenderingEffect_Antialiasing
 			{
 				Enabled = False

@@ -1,3 +1,5 @@
+// Made with NeoAxis Engine 2021.3.
+
 .component NeoAxis.Component_ProjectSettings
 {
 	Name = Root

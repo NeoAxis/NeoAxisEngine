@@ -1,4 +1,4 @@
-﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -42,8 +42,8 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion( "2021.2.1.0" )]
-[assembly: AssemblyFileVersion( "2021.2.1.0" )]
+[assembly: AssemblyVersion( "2021.3.1.0" )]
+[assembly: AssemblyFileVersion( "2021.3.1.0" )]
 
 //!!!!new
 [assembly: CLSCompliant( false )]

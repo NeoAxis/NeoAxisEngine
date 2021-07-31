@@ -161,11 +161,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>rem Full Project
-"$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Tools\PlatformTools\PrepareAssetsForDebug\Binaries\PrepareAssetsForDebug.exe" -product "Base\Build\Full Project Android.product" -destinationFolder "..\..\..\..\..\..\Sources\NeoAxis.Player.Android\Assets"
+    <PreBuildEvent>set Product=Base\Build\Simple Game Android.product
+rem set Product=Base\Build\Full Project Android.product
 
-rem Simple Game
-rem "$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Tools\PlatformTools\PrepareAssetsForDebug\Binaries\PrepareAssetsForDebug.exe" -product "Base\Build\Simple Game Android.product" -destinationFolder "..\..\..\..\..\..\Sources\NeoAxis.Player.Android\Assets"
+if exist "$(ProjectDir)..\..\Binaries\NeoAxis.Editor.exe" "$(ProjectDir)..\..\Binaries\NeoAxis.Editor.exe" -prepareProductAssetsAndroid "%25Product%25" -destinationFolder "$(ProjectDir)Assets"
 </PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

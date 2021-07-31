@@ -1,0 +1,8 @@
+# top-most EditorConfig file
+root = true
+
+[*.cs]
+indent_style = space
+indent_size = 4
+charset = utf-8-bom
+end_of_line = lf

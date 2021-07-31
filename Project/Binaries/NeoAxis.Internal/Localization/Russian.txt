@@ -206,9 +206,12 @@ Ribbon.Action|Find\nResource|Найти\nРесурс
 Ribbon.Action|Start\nPage|Стартовая\nСтраница
 Ribbon.Action|Build|Построить
 Ribbon.Action|Move\nRotate|Двигать\nВращать
+Ribbon.Action|Stores|Магазины
+Ribbon.Action|Debug\nMode|Режим\nОтладки
 
 Windows|Preview|Предпросмотр
 Windows|Resources|Ресурсы
+Windows|Stores|Магазины
 Windows|Objects|Объекты
 Windows|Settings|Настройки
 Windows|Debug Info|Отладка
@@ -248,6 +251,7 @@ General|Update|Обновить
 General|Auto update|Автообновление
 General|Delete selected objects?|Удалить выделенные объекты?
 General|Delete|Удалить
+General|Extended|Расширенная
 
 ContentBrowser|Duplicate|Дублировать
 ContentBrowser|Copy|Копировать
@@ -918,6 +922,8 @@ ProjectSettings.Property|Screen Label Max Size|Максимальный размер
 ProjectSettings.Property|Screen Label Min Size Factor|Множитель минимального размера
 ProjectSettings.Property|Window Size|Размер окна
 ProjectSettings.Property|Window State|Состояние окна
+ProjectSettings.Property|Show Centering Borders|Показать центрирующие границы
+ProjectSettings.Property|Custom Windows Style (Restart to apply changes)|Собственный стиль окон (Нужно перезагрузить приложение)
 
 ProjectSettings.Description|The language of the editor. Restart the editor to apply changes.|Язык редактора. Перезапустите редактор, чтобы применить изменения.
 
@@ -979,3 +985,9 @@ StartPageWindow|Editor configuration|Конфигурация редактора
 StartPageWindow|Minimize the Ribbon|Минимизировать ленту
 StartPageWindow|New resource|Новый ресурс
 StartPageWindow|Show Quick Access Toolbar below the Ribbon|Показывать панель быстрого доступа под лентой
+StartPageWindow|Get Content|Контент
+
+StoresWindow|Filter|Фильтр
+StoresWindow|Options|Настройки
+StoresWindow|Refresh|Обновить
+StoresWindow|Stores|Магазины

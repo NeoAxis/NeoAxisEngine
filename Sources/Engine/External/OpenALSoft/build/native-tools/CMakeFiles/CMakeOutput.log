@@ -1,0 +1,381 @@
+The system is: Windows - 10.0.17134 - AMD64
+Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+Compiler:  
+Build flags: 
+Id flags:  
+
+The output was:
+0
+Microsoft (R) Build Engine version 15.9.21+g9802d43bc3 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 8/16/2019 3:55:54 PM.
+Project "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\3.13.4\CompilerIdC\CompilerIdC.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "Debug\".
+  Creating directory "Debug\CompilerIdC.tlog\".
+InitializeBuildStatus:
+  Creating "Debug\CompilerIdC.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\HostX86\x86\CL.exe /c /nologo /W0 /WX- /diagnostics:classic /Od /Oy- /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc141.pdb" /Gd /TC /analyze- /FC /errorReport:queue CMakeCCompilerId.c
+  CMakeCCompilerId.c
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\HostX86\x86\link.exe /ERRORREPORT:QUEUE /OUT:".\CompilerIdC.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\CompilerIdC.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\CompilerIdC.lib" /MACHINE:X86 /SAFESEH Debug\CMakeCCompilerId.obj
+  CompilerIdC.vcxproj -> F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\3.13.4\CompilerIdC\.\CompilerIdC.exe
+PostBuildEvent:
+  for %%i in (cl.exe) do @echo CMAKE_C_COMPILER=%%~$PATH:i
+  :VCEnd
+  CMAKE_C_COMPILER=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\Hostx86\x86\cl.exe
+FinalizeBuildStatus:
+  Deleting file "Debug\CompilerIdC.tlog\unsuccessfulbuild".
+  Touching "Debug\CompilerIdC.tlog\CompilerIdC.lastbuildstate".
+Done Building Project "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\3.13.4\CompilerIdC\CompilerIdC.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.01
+
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.exe"
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.vcxproj"
+
+The C compiler identification is MSVC, found in "F:/Dev5/Sources/Engine/External/OpenALSoft/build/native-tools/CMakeFiles/3.13.4/CompilerIdC/CompilerIdC.exe"
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+Compiler:  
+Build flags: 
+Id flags:  
+
+The output was:
+0
+Microsoft (R) Build Engine version 15.9.21+g9802d43bc3 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 8/16/2019 3:55:56 PM.
+Project "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\3.13.4\CompilerIdCXX\CompilerIdCXX.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "Debug\".
+  Creating directory "Debug\CompilerIdCXX.tlog\".
+InitializeBuildStatus:
+  Creating "Debug\CompilerIdCXX.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\HostX86\x86\CL.exe /c /nologo /W0 /WX- /diagnostics:classic /Od /Oy- /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc141.pdb" /Gd /TP /analyze- /FC /errorReport:queue CMakeCXXCompilerId.cpp
+  CMakeCXXCompilerId.cpp
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\HostX86\x86\link.exe /ERRORREPORT:QUEUE /OUT:".\CompilerIdCXX.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\CompilerIdCXX.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\CompilerIdCXX.lib" /MACHINE:X86 /SAFESEH Debug\CMakeCXXCompilerId.obj
+  CompilerIdCXX.vcxproj -> F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\3.13.4\CompilerIdCXX\.\CompilerIdCXX.exe
+PostBuildEvent:
+  for %%i in (cl.exe) do @echo CMAKE_CXX_COMPILER=%%~$PATH:i
+  :VCEnd
+  CMAKE_CXX_COMPILER=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\Hostx86\x86\cl.exe
+FinalizeBuildStatus:
+  Deleting file "Debug\CompilerIdCXX.tlog\unsuccessfulbuild".
+  Touching "Debug\CompilerIdCXX.tlog\CompilerIdCXX.lastbuildstate".
+Done Building Project "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\3.13.4\CompilerIdCXX\CompilerIdCXX.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.34
+
+
+Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.exe"
+
+Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.vcxproj"
+
+The CXX compiler identification is MSVC, found in "F:/Dev5/Sources/Engine/External/OpenALSoft/build/native-tools/CMakeFiles/3.13.4/CompilerIdCXX/CompilerIdCXX.exe"
+
+Determining if the C compiler works passed with the following output:
+Change Dir: F:/Dev5/Sources/Engine/External/OpenALSoft/build/native-tools/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/MSBuild/15.0/Bin/MSBuild.exe" "cmTC_fd398.vcxproj" "/p:Configuration=Debug" "/p:Platform=Win32" "/p:VisualStudioVersion=15.0"
+Microsoft (R) Build Engine version 15.9.21+g9802d43bc3 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 8/16/2019 3:55:58 PM.
+Project "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\cmTC_fd398.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_fd398.dir\Debug\".
+  Creating directory "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_fd398.dir\Debug\cmTC_fd398.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_fd398.dir\Debug\cmTC_fd398.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\HostX86\x86\CL.exe /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_fd398.dir\Debug\\" /Fd"cmTC_fd398.dir\Debug\vc141.pdb" /Gd /TC /analyze- /errorReport:queue "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\testCCompiler.c"
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.16.27031.1 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_fd398.dir\Debug\\" /Fd"cmTC_fd398.dir\Debug\vc141.pdb" /Gd /TC /analyze- /errorReport:queue "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\testCCompiler.c"
+  testCCompiler.c
+  
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\HostX86\x86\link.exe /ERRORREPORT:QUEUE /OUT:"F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\Debug\cmTC_fd398.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/Dev5/Sources/Engine/External/OpenALSoft/build/native-tools/CMakeFiles/CMakeTmp/Debug/cmTC_fd398.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/Dev5/Sources/Engine/External/OpenALSoft/build/native-tools/CMakeFiles/CMakeTmp/Debug/cmTC_fd398.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_fd398.dir\Debug\testCCompiler.obj
+  cmTC_fd398.vcxproj -> F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\Debug\cmTC_fd398.exe
+FinalizeBuildStatus:
+  Deleting file "cmTC_fd398.dir\Debug\cmTC_fd398.tlog\unsuccessfulbuild".
+  Touching "cmTC_fd398.dir\Debug\cmTC_fd398.tlog\cmTC_fd398.lastbuildstate".
+Done Building Project "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\cmTC_fd398.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.26
+
+
+Detecting C compiler ABI info compiled with the following output:
+Change Dir: F:/Dev5/Sources/Engine/External/OpenALSoft/build/native-tools/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/MSBuild/15.0/Bin/MSBuild.exe" "cmTC_192ac.vcxproj" "/p:Configuration=Debug" "/p:Platform=Win32" "/p:VisualStudioVersion=15.0"
+Microsoft (R) Build Engine version 15.9.21+g9802d43bc3 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 8/16/2019 3:56:00 PM.
+Project "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\cmTC_192ac.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_192ac.dir\Debug\".
+  Creating directory "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_192ac.dir\Debug\cmTC_192ac.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_192ac.dir\Debug\cmTC_192ac.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\HostX86\x86\CL.exe /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_192ac.dir\Debug\\" /Fd"cmTC_192ac.dir\Debug\vc141.pdb" /Gd /TC /analyze- /errorReport:queue "C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeCCompilerABI.c"
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.16.27031.1 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_192ac.dir\Debug\\" /Fd"cmTC_192ac.dir\Debug\vc141.pdb" /Gd /TC /analyze- /errorReport:queue "C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeCCompilerABI.c"
+  CMakeCCompilerABI.c
+  
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\HostX86\x86\link.exe /ERRORREPORT:QUEUE /OUT:"F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\Debug\cmTC_192ac.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/Dev5/Sources/Engine/External/OpenALSoft/build/native-tools/CMakeFiles/CMakeTmp/Debug/cmTC_192ac.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/Dev5/Sources/Engine/External/OpenALSoft/build/native-tools/CMakeFiles/CMakeTmp/Debug/cmTC_192ac.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_192ac.dir\Debug\CMakeCCompilerABI.obj
+  cmTC_192ac.vcxproj -> F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\Debug\cmTC_192ac.exe
+FinalizeBuildStatus:
+  Deleting file "cmTC_192ac.dir\Debug\cmTC_192ac.tlog\unsuccessfulbuild".
+  Touching "cmTC_192ac.dir\Debug\cmTC_192ac.tlog\cmTC_192ac.lastbuildstate".
+Done Building Project "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\cmTC_192ac.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.24
+
+
+
+
+Detecting C [] compiler features compiled with the following output:
+Change Dir: F:/Dev5/Sources/Engine/External/OpenALSoft/build/native-tools/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/MSBuild/15.0/Bin/MSBuild.exe" "cmTC_6e81f.vcxproj" "/p:Configuration=Debug" "/p:Platform=Win32" "/p:VisualStudioVersion=15.0"
+Microsoft (R) Build Engine version 15.9.21+g9802d43bc3 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 8/16/2019 3:56:01 PM.
+Project "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\cmTC_6e81f.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_6e81f.dir\Debug\".
+  Creating directory "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_6e81f.dir\Debug\cmTC_6e81f.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_6e81f.dir\Debug\cmTC_6e81f.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\HostX86\x86\CL.exe /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_6e81f.dir\Debug\\" /Fd"cmTC_6e81f.dir\Debug\vc141.pdb" /Gd /TC /analyze- /errorReport:queue "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\feature_tests.c"
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.16.27031.1 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_6e81f.dir\Debug\\" /Fd"cmTC_6e81f.dir\Debug\vc141.pdb" /Gd /TC /analyze- /errorReport:queue "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\feature_tests.c"
+  feature_tests.c
+  
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\HostX86\x86\link.exe /ERRORREPORT:QUEUE /OUT:"F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\Debug\cmTC_6e81f.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/Dev5/Sources/Engine/External/OpenALSoft/build/native-tools/CMakeFiles/CMakeTmp/Debug/cmTC_6e81f.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/Dev5/Sources/Engine/External/OpenALSoft/build/native-tools/CMakeFiles/CMakeTmp/Debug/cmTC_6e81f.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_6e81f.dir\Debug\feature_tests.obj
+  cmTC_6e81f.vcxproj -> F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\Debug\cmTC_6e81f.exe
+FinalizeBuildStatus:
+  Deleting file "cmTC_6e81f.dir\Debug\cmTC_6e81f.tlog\unsuccessfulbuild".
+  Touching "cmTC_6e81f.dir\Debug\cmTC_6e81f.tlog\cmTC_6e81f.lastbuildstate".
+Done Building Project "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\cmTC_6e81f.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.28
+
+
+    Feature record: C_FEATURE:1c_function_prototypes
+    Feature record: C_FEATURE:1c_variadic_macros
+Determining if the CXX compiler works passed with the following output:
+Change Dir: F:/Dev5/Sources/Engine/External/OpenALSoft/build/native-tools/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/MSBuild/15.0/Bin/MSBuild.exe" "cmTC_6375e.vcxproj" "/p:Configuration=Debug" "/p:Platform=Win32" "/p:VisualStudioVersion=15.0"
+Microsoft (R) Build Engine version 15.9.21+g9802d43bc3 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 8/16/2019 3:56:03 PM.
+Project "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\cmTC_6375e.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_6375e.dir\Debug\".
+  Creating directory "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_6375e.dir\Debug\cmTC_6375e.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_6375e.dir\Debug\cmTC_6375e.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\HostX86\x86\CL.exe /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_6375e.dir\Debug\\" /Fd"cmTC_6375e.dir\Debug\vc141.pdb" /Gd /TP /analyze- /errorReport:queue "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\testCXXCompiler.cxx"
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.16.27031.1 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_6375e.dir\Debug\\" /Fd"cmTC_6375e.dir\Debug\vc141.pdb" /Gd /TP /analyze- /errorReport:queue "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\testCXXCompiler.cxx"
+  testCXXCompiler.cxx
+  
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\HostX86\x86\link.exe /ERRORREPORT:QUEUE /OUT:"F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\Debug\cmTC_6375e.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/Dev5/Sources/Engine/External/OpenALSoft/build/native-tools/CMakeFiles/CMakeTmp/Debug/cmTC_6375e.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/Dev5/Sources/Engine/External/OpenALSoft/build/native-tools/CMakeFiles/CMakeTmp/Debug/cmTC_6375e.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_6375e.dir\Debug\testCXXCompiler.obj
+  cmTC_6375e.vcxproj -> F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\Debug\cmTC_6375e.exe
+FinalizeBuildStatus:
+  Deleting file "cmTC_6375e.dir\Debug\cmTC_6375e.tlog\unsuccessfulbuild".
+  Touching "cmTC_6375e.dir\Debug\cmTC_6375e.tlog\cmTC_6375e.lastbuildstate".
+Done Building Project "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\cmTC_6375e.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.27
+
+
+Detecting CXX compiler ABI info compiled with the following output:
+Change Dir: F:/Dev5/Sources/Engine/External/OpenALSoft/build/native-tools/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/MSBuild/15.0/Bin/MSBuild.exe" "cmTC_62408.vcxproj" "/p:Configuration=Debug" "/p:Platform=Win32" "/p:VisualStudioVersion=15.0"
+Microsoft (R) Build Engine version 15.9.21+g9802d43bc3 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 8/16/2019 3:56:05 PM.
+Project "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\cmTC_62408.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_62408.dir\Debug\".
+  Creating directory "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_62408.dir\Debug\cmTC_62408.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_62408.dir\Debug\cmTC_62408.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\HostX86\x86\CL.exe /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_62408.dir\Debug\\" /Fd"cmTC_62408.dir\Debug\vc141.pdb" /Gd /TP /analyze- /errorReport:queue "C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeCXXCompilerABI.cpp"
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.16.27031.1 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_62408.dir\Debug\\" /Fd"cmTC_62408.dir\Debug\vc141.pdb" /Gd /TP /analyze- /errorReport:queue "C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeCXXCompilerABI.cpp"
+  CMakeCXXCompilerABI.cpp
+  
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\HostX86\x86\link.exe /ERRORREPORT:QUEUE /OUT:"F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\Debug\cmTC_62408.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/Dev5/Sources/Engine/External/OpenALSoft/build/native-tools/CMakeFiles/CMakeTmp/Debug/cmTC_62408.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/Dev5/Sources/Engine/External/OpenALSoft/build/native-tools/CMakeFiles/CMakeTmp/Debug/cmTC_62408.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_62408.dir\Debug\CMakeCXXCompilerABI.obj
+  cmTC_62408.vcxproj -> F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\Debug\cmTC_62408.exe
+FinalizeBuildStatus:
+  Deleting file "cmTC_62408.dir\Debug\cmTC_62408.tlog\unsuccessfulbuild".
+  Touching "cmTC_62408.dir\Debug\cmTC_62408.tlog\cmTC_62408.lastbuildstate".
+Done Building Project "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\cmTC_62408.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.25
+
+
+
+
+Detecting CXX [] compiler features compiled with the following output:
+Change Dir: F:/Dev5/Sources/Engine/External/OpenALSoft/build/native-tools/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/MSBuild/15.0/Bin/MSBuild.exe" "cmTC_56c1a.vcxproj" "/p:Configuration=Debug" "/p:Platform=Win32" "/p:VisualStudioVersion=15.0"
+Microsoft (R) Build Engine version 15.9.21+g9802d43bc3 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 8/16/2019 3:56:06 PM.
+Project "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\cmTC_56c1a.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_56c1a.dir\Debug\".
+  Creating directory "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_56c1a.dir\Debug\cmTC_56c1a.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_56c1a.dir\Debug\cmTC_56c1a.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\HostX86\x86\CL.exe /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_56c1a.dir\Debug\\" /Fd"cmTC_56c1a.dir\Debug\vc141.pdb" /Gd /TP /analyze- /errorReport:queue "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\feature_tests.cxx"
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.16.27031.1 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_56c1a.dir\Debug\\" /Fd"cmTC_56c1a.dir\Debug\vc141.pdb" /Gd /TP /analyze- /errorReport:queue "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\feature_tests.cxx"
+  feature_tests.cxx
+  
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\HostX86\x86\link.exe /ERRORREPORT:QUEUE /OUT:"F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\Debug\cmTC_56c1a.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/Dev5/Sources/Engine/External/OpenALSoft/build/native-tools/CMakeFiles/CMakeTmp/Debug/cmTC_56c1a.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/Dev5/Sources/Engine/External/OpenALSoft/build/native-tools/CMakeFiles/CMakeTmp/Debug/cmTC_56c1a.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_56c1a.dir\Debug\feature_tests.obj
+  cmTC_56c1a.vcxproj -> F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\Debug\cmTC_56c1a.exe
+FinalizeBuildStatus:
+  Deleting file "cmTC_56c1a.dir\Debug\cmTC_56c1a.tlog\unsuccessfulbuild".
+  Touching "cmTC_56c1a.dir\Debug\cmTC_56c1a.tlog\cmTC_56c1a.lastbuildstate".
+Done Building Project "F:\Dev5\Sources\Engine\External\OpenALSoft\build\native-tools\CMakeFiles\CMakeTmp\cmTC_56c1a.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.28
+
+
+    Feature record: CXX_FEATURE:1cxx_aggregate_default_initializers
+    Feature record: CXX_FEATURE:1cxx_alias_templates
+    Feature record: CXX_FEATURE:1cxx_alignas
+    Feature record: CXX_FEATURE:1cxx_alignof
+    Feature record: CXX_FEATURE:1cxx_attributes
+    Feature record: CXX_FEATURE:1cxx_attribute_deprecated
+    Feature record: CXX_FEATURE:1cxx_auto_type
+    Feature record: CXX_FEATURE:1cxx_binary_literals
+    Feature record: CXX_FEATURE:1cxx_constexpr
+    Feature record: CXX_FEATURE:1cxx_contextual_conversions
+    Feature record: CXX_FEATURE:1cxx_decltype
+    Feature record: CXX_FEATURE:1cxx_decltype_auto
+    Feature record: CXX_FEATURE:1cxx_decltype_incomplete_return_types
+    Feature record: CXX_FEATURE:1cxx_default_function_template_args
+    Feature record: CXX_FEATURE:1cxx_defaulted_functions
+    Feature record: CXX_FEATURE:1cxx_defaulted_move_initializers
+    Feature record: CXX_FEATURE:1cxx_delegating_constructors
+    Feature record: CXX_FEATURE:1cxx_deleted_functions
+    Feature record: CXX_FEATURE:1cxx_digit_separators
+    Feature record: CXX_FEATURE:1cxx_enum_forward_declarations
+    Feature record: CXX_FEATURE:1cxx_explicit_conversions
+    Feature record: CXX_FEATURE:1cxx_extended_friend_declarations
+    Feature record: CXX_FEATURE:1cxx_extern_templates
+    Feature record: CXX_FEATURE:1cxx_final
+    Feature record: CXX_FEATURE:1cxx_func_identifier
+    Feature record: CXX_FEATURE:1cxx_generalized_initializers
+    Feature record: CXX_FEATURE:1cxx_generic_lambdas
+    Feature record: CXX_FEATURE:1cxx_inheriting_constructors
+    Feature record: CXX_FEATURE:1cxx_inline_namespaces
+    Feature record: CXX_FEATURE:1cxx_lambdas
+    Feature record: CXX_FEATURE:1cxx_lambda_init_captures
+    Feature record: CXX_FEATURE:1cxx_local_type_template_args
+    Feature record: CXX_FEATURE:1cxx_long_long_type
+    Feature record: CXX_FEATURE:1cxx_noexcept
+    Feature record: CXX_FEATURE:1cxx_nonstatic_member_init
+    Feature record: CXX_FEATURE:1cxx_nullptr
+    Feature record: CXX_FEATURE:1cxx_override
+    Feature record: CXX_FEATURE:1cxx_range_for
+    Feature record: CXX_FEATURE:1cxx_raw_string_literals
+    Feature record: CXX_FEATURE:1cxx_reference_qualified_functions
+    Feature record: CXX_FEATURE:1cxx_return_type_deduction
+    Feature record: CXX_FEATURE:1cxx_right_angle_brackets
+    Feature record: CXX_FEATURE:1cxx_rvalue_references
+    Feature record: CXX_FEATURE:1cxx_sizeof_member
+    Feature record: CXX_FEATURE:1cxx_static_assert
+    Feature record: CXX_FEATURE:1cxx_strong_enums
+    Feature record: CXX_FEATURE:1cxx_template_template_parameters
+    Feature record: CXX_FEATURE:1cxx_thread_local
+    Feature record: CXX_FEATURE:1cxx_trailing_return_types
+    Feature record: CXX_FEATURE:1cxx_unicode_literals
+    Feature record: CXX_FEATURE:1cxx_uniform_initialization
+    Feature record: CXX_FEATURE:1cxx_unrestricted_unions
+    Feature record: CXX_FEATURE:1cxx_user_literals
+    Feature record: CXX_FEATURE:1cxx_variable_templates
+    Feature record: CXX_FEATURE:1cxx_variadic_macros
+    Feature record: CXX_FEATURE:1cxx_variadic_templates

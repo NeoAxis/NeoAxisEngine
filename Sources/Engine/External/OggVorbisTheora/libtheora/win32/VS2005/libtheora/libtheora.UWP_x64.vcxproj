@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <Keyword>DynamicLibrary</Keyword>
+    <RootNamespace>libtheora_UWP_x64</RootNamespace>
+    <ProjectName>libtheora</ProjectName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <AppContainerApplication>true</AppContainerApplication>
+    <ApplicationType>Windows Store</ApplicationType>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.17134.0</WindowsTargetPlatformMinVersion>
+    <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
+    <ProjectGuid>{BEDA4F3A-03D1-4540-9459-86E9BEE622E7}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <GenerateManifest>false</GenerateManifest>
+    <IgnoreImportLibrary>false</IgnoreImportLibrary>
+    <OutDir>$(SolutionDir)_Compilation\UWP\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_Compilation\UWP\$(Platform)\$(MSBuildProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <AdditionalIncludeDirectories>..\..\..\include;..\..\..\..\..\..\NeoAxis.Core.Native\MemoryManager;..\..\..\..\libogg\include;..\..\..\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <SDLCheck>false</SDLCheck>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
+      <ModuleDefinitionFile>..\..\libtheora.def</ModuleDefinitionFile>
+      <AdditionalLibraryDirectories>$(SolutionDir)Engine\Lib\UWP\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>WindowsApp.lib;%(AdditionalDependencies);NativeMemoryManager.lib;libogg.lib</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy "$(OutDir)$(TargetName).lib" "$(SolutionDir)Engine\Lib\UWP\$(Platform)"
+rem copy $(OutDir)$(TargetName)$(TargetExt) "..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\lib\analyze.c" />
+    <ClCompile Include="..\..\..\lib\apiwrapper.c" />
+    <ClCompile Include="..\..\..\lib\bitpack.c" />
+    <ClCompile Include="..\..\..\lib\cpu.c" />
+    <ClCompile Include="..\..\..\lib\decapiwrapper.c" />
+    <ClCompile Include="..\..\..\lib\decinfo.c" />
+    <ClCompile Include="..\..\..\lib\decode.c" />
+    <ClCompile Include="..\..\..\lib\dequant.c" />
+    <ClCompile Include="..\..\..\lib\encapiwrapper.c" />
+    <ClCompile Include="..\..\..\lib\encfrag.c" />
+    <ClCompile Include="..\..\..\lib\encinfo.c" />
+    <ClCompile Include="..\..\..\lib\encode.c" />
+    <ClCompile Include="..\..\..\lib\enquant.c" />
+    <ClCompile Include="..\..\..\lib\fdct.c" />
+    <ClCompile Include="..\..\..\lib\fragment.c" />
+    <ClCompile Include="..\..\..\lib\huffdec.c" />
+    <ClCompile Include="..\..\..\lib\huffenc.c" />
+    <ClCompile Include="..\..\..\lib\idct.c" />
+    <ClCompile Include="..\..\..\lib\theora_info.c" />
+    <ClCompile Include="..\..\..\lib\internal.c" />
+    <ClCompile Include="..\..\..\lib\mathops.c" />
+    <ClCompile Include="..\..\..\lib\mcenc.c" />
+    <ClCompile Include="..\..\..\lib\x86_vc\mmxencfrag.c" />
+    <ClCompile Include="..\..\..\lib\x86_vc\mmxfdct.c" />
+    <ClCompile Include="..\..\..\lib\x86_vc\mmxfrag.c" />
+    <ClCompile Include="..\..\..\lib\x86_vc\mmxidct.c" />
+    <ClCompile Include="..\..\..\lib\x86_vc\mmxstate.c" />
+    <ClCompile Include="..\..\..\lib\quant.c" />
+    <ClCompile Include="..\..\..\lib\rate.c" />
+    <ClCompile Include="..\..\..\lib\state.c" />
+    <ClCompile Include="..\..\..\lib\tokenize.c" />
+    <ClCompile Include="..\..\..\lib\x86_vc\x86enc.c" />
+    <ClCompile Include="..\..\..\lib\x86_vc\x86state.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\libtheora.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\lib\apiwrapper.h" />
+    <ClInclude Include="..\..\..\lib\bitpack.h" />
+    <ClInclude Include="..\..\..\lib\cpu.h" />
+    <ClInclude Include="..\..\..\lib\dct.h" />
+    <ClInclude Include="..\..\..\lib\decint.h" />
+    <ClInclude Include="..\..\..\lib\dequant.h" />
+    <ClInclude Include="..\..\..\lib\encint.h" />
+    <ClInclude Include="..\..\..\lib\enquant.h" />
+    <ClInclude Include="..\..\..\lib\huffdec.h" />
+    <ClInclude Include="..\..\..\lib\huffenc.h" />
+    <ClInclude Include="..\..\..\lib\huffman.h" />
+    <ClInclude Include="..\..\..\lib\internal.h" />
+    <ClInclude Include="..\..\..\lib\mathops.h" />
+    <ClInclude Include="..\..\..\lib\x86_vc\mmxfrag.h" />
+    <ClInclude Include="..\..\..\lib\x86_vc\mmxloop.h" />
+    <ClInclude Include="..\..\..\lib\modedec.h" />
+    <ClInclude Include="..\..\..\lib\ocintrin.h" />
+    <ClInclude Include="..\..\..\lib\quant.h" />
+    <ClInclude Include="..\..\..\lib\x86_vc\x86enc.h" />
+    <ClInclude Include="..\..\..\lib\x86_vc\x86int.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\libogg\win32\VS2003\libogg\libogg.UWP_x64.vcxproj">
+      <Project>{e598d9d7-63c8-49ad-9226-5799a4e2d185}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

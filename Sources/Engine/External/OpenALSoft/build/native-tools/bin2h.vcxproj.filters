@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\native-tools\bin2h.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="F:\Dev5\Sources\Engine\External\OpenALSoft\native-tools\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{E5514A95-F2E2-3701-B616-64D3B87D52B4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

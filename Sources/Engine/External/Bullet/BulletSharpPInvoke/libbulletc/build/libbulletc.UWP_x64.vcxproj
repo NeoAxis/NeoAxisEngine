@@ -1,0 +1,550 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <Keyword>DynamicLibrary</Keyword>
+    <RootNamespace>libbulletc_UWP_x64</RootNamespace>
+    <ProjectName>libbulletc</ProjectName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <AppContainerApplication>true</AppContainerApplication>
+    <ApplicationType>Windows Store</ApplicationType>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.17134.0</WindowsTargetPlatformMinVersion>
+    <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
+    <ProjectGuid>{CAE16A26-6C73-4BBB-B044-0A1AB1E9BA51}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <GenerateManifest>false</GenerateManifest>
+    <IgnoreImportLibrary>false</IgnoreImportLibrary>
+    <OutDir>$(SolutionDir)_Compilation\UWP\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_Compilation\UWP\$(Platform)\$(MSBuildProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <AdditionalIncludeDirectories>..\..\..\bullet3\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;BT_USE_DOUBLE_PRECISION;_WIN64;CMAKE_INTDIR="Release";libbulletc_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>false</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
+      <AdditionalLibraryDirectories>$(SolutionDir)Engine\Lib\UWP\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>WindowsApp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy "$(OutDir)$(TargetName)$(TargetExt)" "..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\BroadphaseCollision\btAxisSweep3.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\BroadphaseCollision\btBroadphaseProxy.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\BroadphaseCollision\btCollisionAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\BroadphaseCollision\btDbvt.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\BroadphaseCollision\btDbvtBroadphase.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\BroadphaseCollision\btDispatcher.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\BroadphaseCollision\btOverlappingPairCache.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\BroadphaseCollision\btQuantizedBvh.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\BroadphaseCollision\btSimpleBroadphase.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btActivatingCollisionAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btBox2dBox2dCollisionAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btBoxBoxCollisionAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btBoxBoxDetector.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btCollisionDispatcher.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btCollisionDispatcherMt.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btCollisionObject.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btCollisionWorld.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btCollisionWorldImporter.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btCompoundCollisionAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btCompoundCompoundCollisionAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btConvex2dConvex2dAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btConvexConcaveCollisionAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btConvexConvexAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btConvexPlaneCollisionAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btDefaultCollisionConfiguration.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btEmptyCollisionAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btGhostObject.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btHashedSimplePairCache.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btInternalEdgeUtility.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btManifoldResult.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btSimulationIslandManager.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btSphereBoxCollisionAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btSphereSphereCollisionAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btSphereTriangleCollisionAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\btUnionFind.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionDispatch\SphereTriangleDetector.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btBox2dShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btBoxShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btBvhTriangleMeshShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btCapsuleShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btCollisionShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btCompoundShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btConcaveShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btConeShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btConvex2dShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btConvexHullShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btConvexInternalShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btConvexPointCloudShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btConvexPolyhedron.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btConvexShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btConvexTriangleMeshShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btCylinderShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btEmptyShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btHeightfieldTerrainShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btMinkowskiSumShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btMultimaterialTriangleMeshShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btMultiSphereShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btOptimizedBvh.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btPolyhedralConvexShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btScaledBvhTriangleMeshShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btShapeHull.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btSphereShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btStaticPlaneShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btStridingMeshInterface.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btTetrahedronShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btTriangleBuffer.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btTriangleCallback.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btTriangleIndexVertexArray.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btTriangleIndexVertexMaterialArray.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btTriangleMesh.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btTriangleMeshShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\CollisionShapes\btUniformScalingShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\Gimpact\btContactProcessing.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\Gimpact\btGenericPoolAllocator.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\Gimpact\btGImpactBvh.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\Gimpact\btGImpactCollisionAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\Gimpact\btGImpactQuantizedBvh.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\Gimpact\btGImpactShape.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\Gimpact\btTriangleShapeEx.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\Gimpact\gim_box_set.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\Gimpact\gim_contact.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\Gimpact\gim_memory.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\Gimpact\gim_tri_collision.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\NarrowPhaseCollision\btContinuousConvexCollision.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\NarrowPhaseCollision\btConvexCast.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\NarrowPhaseCollision\btGjkConvexCast.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\NarrowPhaseCollision\btGjkEpa2.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\NarrowPhaseCollision\btGjkEpaPenetrationDepthSolver.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\NarrowPhaseCollision\btGjkPairDetector.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\NarrowPhaseCollision\btMinkowskiPenetrationDepthSolver.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\NarrowPhaseCollision\btPersistentManifold.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\NarrowPhaseCollision\btPolyhedralContactClipping.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\NarrowPhaseCollision\btRaycastCallback.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\NarrowPhaseCollision\btSubSimplexConvexCast.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletCollision\NarrowPhaseCollision\btVoronoiSimplexSolver.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\Character\btKinematicCharacterController.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\ConstraintSolver\btConeTwistConstraint.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\ConstraintSolver\btContactConstraint.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\ConstraintSolver\btFixedConstraint.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\ConstraintSolver\btGearConstraint.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\ConstraintSolver\btGeneric6DofConstraint.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\ConstraintSolver\btGeneric6DofSpring2Constraint.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\ConstraintSolver\btGeneric6DofSpringConstraint.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\ConstraintSolver\btHinge2Constraint.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\ConstraintSolver\btHingeConstraint.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\ConstraintSolver\btNNCGConstraintSolver.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\ConstraintSolver\btPoint2PointConstraint.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\ConstraintSolver\btSequentialImpulseConstraintSolver.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\ConstraintSolver\btSliderConstraint.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\ConstraintSolver\btSolve2LinearConstraint.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\ConstraintSolver\btTypedConstraint.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\ConstraintSolver\btUniversalConstraint.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\Dynamics\btDiscreteDynamicsWorld.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\Dynamics\btDiscreteDynamicsWorldMt.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\Dynamics\btRigidBody.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\Dynamics\btSimpleDynamicsWorld.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\Dynamics\btSimulationIslandManagerMt.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\Featherstone\btMultiBody.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\Featherstone\btMultiBodyConstraint.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\Featherstone\btMultiBodyConstraintSolver.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\Featherstone\btMultiBodyDynamicsWorld.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\Featherstone\btMultiBodyFixedConstraint.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\Featherstone\btMultiBodyGearConstraint.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\Featherstone\btMultiBodyJointLimitConstraint.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\Featherstone\btMultiBodyJointMotor.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\Featherstone\btMultiBodyPoint2Point.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\Featherstone\btMultiBodySliderConstraint.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\MLCPSolvers\btDantzigLCP.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\MLCPSolvers\btLemkeAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\MLCPSolvers\btMLCPSolver.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\Vehicle\btRaycastVehicle.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletDynamics\Vehicle\btWheelInfo.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletSoftBody\btDefaultSoftBodySolver.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletSoftBody\btSoftBody.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletSoftBody\btSoftBodyConcaveCollisionAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletSoftBody\btSoftBodyHelpers.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletSoftBody\btSoftBodyRigidBodyCollisionConfiguration.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletSoftBody\btSoftMultiBodyDynamicsWorld.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletSoftBody\btSoftRigidCollisionAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletSoftBody\btSoftRigidDynamicsWorld.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\BulletSoftBody\btSoftSoftCollisionAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\LinearMath\btAlignedAllocator.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\LinearMath\btConvexHull.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\LinearMath\btConvexHullComputer.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\LinearMath\btGeometryUtil.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\LinearMath\btPolarDecomposition.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\LinearMath\btQuickprof.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\LinearMath\btSerializer.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\LinearMath\btSerializer64.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\LinearMath\btThreads.cpp" />
+    <ClCompile Include="..\..\..\bullet3\src\LinearMath\btVector3.cpp" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\dllmain.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\conversion.h" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\main.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\collections.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\collections.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btActionInterface_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btActionInterface_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btAlignedObjectArray_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btAlignedObjectArray_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btAxisSweep3_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btAxisSweep3_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btBox2dBox2dCollisionAlgorithm_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btBox2dBox2dCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btBox2dShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btBox2dShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btBoxBoxCollisionAlgorithm_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btBoxBoxCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btBoxBoxDetector_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btBoxBoxDetector_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btBoxCollision_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btBoxCollision_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btBoxShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btBoxShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btBroadphaseInterface_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btBroadphaseInterface_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btBroadphaseProxy_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btBroadphaseProxy_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btBulletFile_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btBulletFile_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btBulletWorldImporter_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btBulletWorldImporter_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btBulletXmlWorldImporter_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btBulletXmlWorldImporter_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btBvhTriangleMeshShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btBvhTriangleMeshShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCapsuleShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCapsuleShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCharacterControllerInterface_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCharacterControllerInterface_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCollisionAlgorithm_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCollisionConfiguration_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCollisionConfiguration_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCollisionCreateFunc_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCollisionCreateFunc_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCollisionDispatcher_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCollisionDispatcher_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCollisionDispatcherMt_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCollisionDispatcherMt_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCollisionObject_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCollisionObject_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCollisionObjectWrapper_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCollisionObjectWrapper_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCollisionShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCollisionShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCollisionWorld_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCollisionWorld_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCompoundCollisionAlgorithm_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCompoundCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCompoundCompoundCollisionAlgorithm_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCompoundCompoundCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCompoundFromGimpact_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCompoundFromGimpact_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCompoundShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCompoundShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConcaveShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConcaveShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConeShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConeShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConeTwistConstraint_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConeTwistConstraint_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConstraintSolver_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConstraintSolver_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btContactConstraint_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btContactConstraint_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btContactSolverInfo_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btContactSolverInfo_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btContinuousConvexCollision_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btContinuousConvexCollision_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvex2dConvex2dAlgorithm_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvex2dConvex2dAlgorithm_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvex2dShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvex2dShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvexCast_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvexCast_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvexConcaveCollisionAlgorithm_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvexConcaveCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvexConvexAlgorithm_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvexConvexAlgorithm_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvexHullShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvexHullShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvexInternalShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvexInternalShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvexPenetrationDepthSolver_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvexPenetrationDepthSolver_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvexPlaneCollisionAlgorithm_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvexPlaneCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvexPointCloudShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvexPointCloudShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvexPolyhedron_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvexPolyhedron_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvexShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvexShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvexTriangleMeshShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btConvexTriangleMeshShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCpuFeatureUtility_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCpuFeatureUtility_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCylinderShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btCylinderShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btDantzigSolver_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btDantzigSolver_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btDbvt_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btDbvt_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btDbvtBroadphase_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btDbvtBroadphase_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btDefaultCollisionConfiguration_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btDefaultCollisionConfiguration_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btDefaultMotionState_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btDefaultMotionState_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btDefaultSoftBodySolver_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btDefaultSoftBodySolver_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btDiscreteCollisionDetectorInterface_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btDiscreteCollisionDetectorInterface_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btDiscreteDynamicsWorld_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btDiscreteDynamicsWorld_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btDiscreteDynamicsWorldMt_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btDiscreteDynamicsWorldMt_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btDispatcher_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btDispatcher_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btDynamicsWorld_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btDynamicsWorld_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btEmptyCollisionAlgorithm_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btEmptyCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btEmptyShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btEmptyShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btFixedConstraint_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btFixedConstraint_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGearConstraint_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGearConstraint_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGeneric6DofConstraint_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGeneric6DofConstraint_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGeneric6DofSpring2Constraint_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGeneric6DofSpring2Constraint_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGeneric6DofSpringConstraint_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGeneric6DofSpringConstraint_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGeometryUtil_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGeometryUtil_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGhostObject_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGhostObject_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGImpactBvh_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGImpactBvh_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGImpactCollisionAlgorithm_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGImpactCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGImpactQuantizedBvh_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGImpactQuantizedBvh_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGImpactShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGImpactShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGjkConvexCast_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGjkConvexCast_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGjkEpaPenetrationDepthSolver_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGjkEpaPenetrationDepthSolver_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGjkPairDetector_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btGjkPairDetector_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btHeightfieldTerrainShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btHeightfieldTerrainShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btHinge2Constraint_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btHinge2Constraint_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btHingeConstraint_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btHingeConstraint_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btIDebugDraw_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btIDebugDraw_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btKinematicCharacterController_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btKinematicCharacterController_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btLemkeSolver_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btLemkeSolver_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btManifoldPoint_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btManifoldPoint_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btManifoldResult_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btManifoldResult_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMinkowskiPenetrationDepthSolver_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMinkowskiPenetrationDepthSolver_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMinkowskiSumShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMinkowskiSumShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMLCPSolver_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMLCPSolver_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMLCPSolverInterface_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMLCPSolverInterface_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMotionState_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMotionState_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiBody_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiBody_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiBodyConstraint_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiBodyConstraint_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiBodyConstraintSolver_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiBodyConstraintSolver_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiBodyDynamicsWorld_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiBodyDynamicsWorld_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiBodyFixedConstraint_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiBodyFixedConstraint_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiBodyJointLimitConstraint_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiBodyJointLimitConstraint_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiBodyJointMotor_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiBodyJointMotor_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiBodyLink_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiBodyLink_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiBodyLinkCollider_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiBodyLinkCollider_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiBodyPoint2Point_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiBodyPoint2Point_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiBodySliderConstraint_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiBodySliderConstraint_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiBodySolverConstraint_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiBodySolverConstraint_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultimaterialTriangleMeshShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultimaterialTriangleMeshShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiSphereShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btMultiSphereShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btNNCGConstraintSolver_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btNNCGConstraintSolver_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btOptimizedBvh_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btOptimizedBvh_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btOverlappingPairCache_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btOverlappingPairCache_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btOverlappingPairCallback_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btOverlappingPairCallback_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btPersistentManifold_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btPersistentManifold_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btPoint2PointConstraint_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btPoint2PointConstraint_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btPointCollector_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btPointCollector_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btPolarDecomposition_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btPolarDecomposition_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btPolyhedralConvexShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btPolyhedralConvexShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btQuantizedBvh_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btQuantizedBvh_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btRaycastVehicle_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btRaycastVehicle_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btRigidBody_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btRigidBody_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btScaledBvhTriangleMeshShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btScaledBvhTriangleMeshShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSequentialImpulseConstraintSolver_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSequentialImpulseConstraintSolver_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSerializer_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSerializer_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btShapeHull_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btShapeHull_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSimulationIslandManager_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSimulationIslandManager_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSliderConstraint_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSliderConstraint_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSoftBody_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSoftBody_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSoftBodyConcaveCollisionAlgorithm_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSoftBodyConcaveCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSoftBodyHelpers_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSoftBodyHelpers_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSoftBodyRigidBodyCollisionConfiguration_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSoftBodyRigidBodyCollisionConfiguration_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSoftBodySolvers_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSoftBodySolvers_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSoftRigidCollisionAlgorithm_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSoftRigidCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSoftRigidDynamicsWorld_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSoftRigidDynamicsWorld_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSoftSoftCollisionAlgorithm_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSoftSoftCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSparseSdf3_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSparseSdf3_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSphereBoxCollisionAlgorithm_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSphereBoxCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSphereShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSphereShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSphereSphereCollisionAlgorithm_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSphereSphereCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSphereTriangleCollisionAlgorithm_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btSphereTriangleCollisionAlgorithm_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btStaticPlaneShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btStaticPlaneShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btStridingMeshInterface_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btStridingMeshInterface_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btTetrahedronShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btTetrahedronShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btThreads_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btThreads_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btTransformUtil_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btTransformUtil_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btTriangleBuffer_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btTriangleBuffer_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btTriangleCallback_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btTriangleCallback_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btTriangleIndexVertexArray_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btTriangleIndexVertexArray_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btTriangleIndexVertexMaterialArray_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btTriangleIndexVertexMaterialArray_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btTriangleMesh_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btTriangleMesh_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btTriangleMeshShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btTriangleMeshShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btTriangleShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btTriangleShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btTriangleShapeEx_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btTriangleShapeEx_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btTypedConstraint_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btTypedConstraint_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btUniformScalingShape_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btUniformScalingShape_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btUnionFind_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btUnionFind_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btUniversalConstraint_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btUniversalConstraint_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btVehicleRaycaster_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btVehicleRaycaster_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btVoronoiSimplexSolver_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btVoronoiSimplexSolver_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btWheelInfo_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btWheelInfo_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btWorldImporter_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\btWorldImporter_wrap.h" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\hacdHACD_wrap.cpp" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\Bullet\BulletSharpPInvoke\libbulletc\src\hacdHACD_wrap.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

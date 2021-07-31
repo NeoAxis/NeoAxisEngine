@@ -1,6 +1,6 @@
 $input v_depth, v_texCoord01, v_color0, v_texCoord23, v_colorParameter, v_worldPosition, v_lodValueVisibilityDistanceReceiveDecals
 
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "Common.sh"
 #include "UniformsFragment.sh"
 #include "FragmentFunctions.sh"
