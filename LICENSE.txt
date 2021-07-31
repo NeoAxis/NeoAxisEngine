@@ -2,35 +2,37 @@ NeoAxis Engine End User License Agreement
 
 1. LICENSE AGREEMENT
 
-This document is an agreement between NeoAxis Group Ltd, 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica ("Licensor") and Licensee (you) regarding the use of the NeoAxis Engine by Licensee.
+This document is an agreement between NeoAxis Group Ltd, 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica ("Licensor") and Licensee (you) regarding the use of the NeoAxis Engine software and additional products (Technology) by Licensee.
 
-It is a legal document that explains your rights and obligations related to your use of the NeoAxis Engine. By downloading or using this software, you are agreeing to be bound by the terms of this Agreement. If you do not or cannot agree to the terms of this Agreement, please do not download or use this software.
+It is a legal document that explains your rights and obligations related to your use of the Technology for it. By downloading or using this software, you are agreeing to be bound by the terms of this Agreement. If you do not or cannot agree to the terms of this Agreement, please do not download or use this software.
 
 The License becomes effective on the date you accept this Agreement or download the Engine Code.
 
 2. LICENSE GRANT
 
-Permission is hereby granted, free of charge, to you obtaining a copy of this software and associated documentation files ("Software"), to deal in the Software, including the rights to use, copy, modify, merge, publish, distribute, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to you obtaining a copy of this software and associated documentation files, to deal in the software, including the rights to use, copy, modify, merge, publish, distribute, and/or sell copies of the software, and to permit persons to whom the software is furnished to do so, subject to the following conditions:
 
 A. All redistributions must retain all occurrences of the above copyright notice and website addresses that are currently in place.
 
 B. Modified versions in binary form must be plainly marked as such, and must not be misrepresented as being the original software.
 
-C. You can change the engine logo (the underlined name NeoAxis), which appears at the launch of the application, only if you have a purchased product "NeoAxis Pro". It can be purchased only through www.neoaxis.com or through authorized resellers of the NeoAxis Group Ltd.
+C. You can change the engine logo "Made with NeoAxis", which appears at the launch of the application created by the Technology, only if you have an active subscription to the Additional Content "NeoAxis Pro". It can be purchased only through www.neoaxis.com or through authorized resellers of the NeoAxis Group Ltd.
 
-D. You can distribute the original or modified part of the Source Code which is only available upon purchase only to those who have the same license. It can be purchased only through www.neoaxis.com or through authorized resellers of the NeoAxis Group Ltd.
+D. Additional Content which is provided for an additional fee, can be redistributed in their Source Code form only to those that have purchased the same products. They cannot be distributed in their Source Code form with a Product.
 
-E. You can't use the Editor, or it's part, in your product. This requires a separate license from the NeoAxis Group Ltd. To put it more precisely, the application must use the Editor's part to executing its task. If inside this application contains the Editor, but without using it, this is not considered to be using of the Editor, which means that the condition does not need to be fulfilled for this application.
+E. Certain Additional Content is distributed under the "Free to use with NeoAxis" license. This means that the product can only be used with the Engine Code.
 
-If you do not accept these conditions or it is not enforceable in your jurisdiction, then you may not use the Software.
+F. You agree to pay the Licensor a royalty equal to 3% of all worldwide gross revenue from each Product, excluding the first $300,000 USD in the lifetime of a Product. In includes gross revenue from any and all sales of a Product to end users through any and all media, revenue from any and all in-app purchases, in-app advertising, affiliate programs, downloadable content, microtransactions, subscriptions, sale, transfer, from advance payments, exchange of content created by end users, revenue in any other form. Payment must be made to the Licensor within 1 month after getting revenue.
+
+If you do not accept these conditions or it is not enforceable in your jurisdiction, then you may not use the software.
 
 3. COPYRIGHT
 
-Except where otherwise noted, all of the documentation and software included in the NeoAxis Engine is copyrighted by NeoAxis Group Ltd.
+Except where otherwise noted, all the documentation and software included in the NeoAxis Engine are copyrighted by NeoAxis Group Ltd.
 
 4. OWNERSHIP
 
-The title and ownership of the software shall remain with Licensor. All rights to patents, copyrights, or any other intellectual property rights shall remain with the Licensor, or their respective owner.
+The title and ownership of the software shall remain with the Licensor. All rights to patents, copyrights, or any other intellectual property rights shall remain with the Licensor, or their respective owner.
 
 5. DISCLAIMER OF WARRANTY
 
@@ -42,15 +44,19 @@ Licensee agrees that use of the Software is at their own risk. In no event shall
 
 7. DEFINITIONS
 
-"Editor" means part of the Source Code of the NeoAxis Engine or object code compiled from it that implements functional of "NeoAxis.Editor.exe" application (the main application for developing NeoAxis Engine based projects). These include all C# files that have type definitions in the "NeoAxis.Editor" namespace of the Source Code of the NeoAxis Engine. For example, such files are in the "Sources\Engine\NeoAxis.Core\Editor" folder with "cs" file extension. A compiled version that contains the code of "NeoAxis.Editor" namespace in the developer's API is also considered part of the Editor.
+"Additional Content" is add-on or content which is using the Engine Code that is provided for an additional fee or for free under this license through www.neoaxis.com or through authorized resellers of the NeoAxis Group Ltd.
 
-"Engine Code" means the Source Code and object code of the NeoAxis Engine, including any future versions, as made available to you by NeoAxis Group Ltd under this Agreement, and any object code compiled from that Source Code.
+"Engine Code" means the Source Code and object code of the NeoAxis Engine software, including any future versions, as made available to you by NeoAxis Group Ltd under this Agreement, and any object code compiled from that Source Code.
+
+"Product" means any product developed under this Agreement that is made using the Technology or that combines the Technology with any other software or content.
 
 "Source Code" means the human readable form of a software program, including all modules it contains, plus any associated resource files, scripts used to control compilation.
 
+"Technology" means any or all of the original or modified Engine Code and the Additional Content.
+
 8. MISCELLANEOUS
 
-This Agreement and any document or information referred to in this Agreement constitute the entire agreement between you and NeoAxis Group Ltd relating to the subject matter covered by this Agreement. All other communications, proposals, and representations with respect to the subject matter covered by this Agreement are excluded.
+This Agreement and any documents or information referred to in this Agreement constitute the entire agreement between you and NeoAxis Group Ltd relating to the subject matter covered by this Agreement. All other communications, proposals, and representations with respect to the subject matter covered by this Agreement are excluded.
 
 If any provision in this agreement is unenforceable or invalid, it shall not affect the rest of the agreement. The licensee agrees to replace any unenforceable or invalid provision with a valid provision that upholds the intent of the provision to the greatest extent possible.
 
