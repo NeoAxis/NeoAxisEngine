@@ -22,7 +22,7 @@ D. Additional Content which is provided for an additional fee, can be redistribu
 
 E. Certain Additional Content is distributed under the "Free to use with NeoAxis" license. This means that the product can only be used with the Engine Code.
 
-F. You agree to pay the Licensor a royalty equal to 3% of all worldwide gross revenue from each Product, excluding the first $300,000 USD in the lifetime of a Product. In includes gross revenue from any and all sales of a Product to end users through any and all media, revenue from any and all in-app purchases, in-app advertising, affiliate programs, downloadable content, microtransactions, subscriptions, sale, transfer, from advance payments, exchange of content created by end users, revenue in any other form. Payment must be made to the Licensor within 1 month after getting revenue.
+F. You agree to pay the Licensor a royalty equal to 3% of all worldwide gross revenue from each Product, excluding the first $200,000 USD in the lifetime of a Product. In includes gross revenue from any and all sales of a Product to end users through any and all media, revenue from any and all in-app purchases, in-app advertising, affiliate programs, downloadable content, microtransactions, subscriptions, sale, transfer, from advance payments, exchange of content created by end users, revenue in any other form. Payment must be made to the Licensor within 1 month after getting revenue.
 
 If you do not accept these conditions or it is not enforceable in your jurisdiction, then you may not use the software.
 
