@@ -15,7 +15,7 @@ The platform is intended to develop all kinds of 3D and 2D projects such as comp
 
 <h2>Video review</h2>
 
-<div class="image" align="center"><a href="https://www.youtube.com/watch?v=nlSIoIIBAuo"><img src="https://www.neoaxis.com/httpdocs/video/NeoAxis.jpg" alt="" width="1000" vspace="10"></a></div>
+<div class="image" align="center"><a href="https://www.youtube.com/watch?v=nlSIoIIBAuo"><img src="https://www.neoaxis.com/video/NeoAxis.jpg" alt="" width="1000" vspace="10"></a></div>
 
 <h2>Supported platforms by the editor</h2>
 <ul>
@@ -32,12 +32,14 @@ The platform is intended to develop all kinds of 3D and 2D projects such as comp
 </ul>
 
 <h2>Building (very easy)</h2>
+For Windows:
 <ul>
 <li>You need Visual Studio 2019 with .NET Core 3.1. Use NeoAxis.Managed.sln.</li>
 <li>The native core for Windows is already compiled.</li>
 <li>Download Sci-fi Demo and Nature Demo from the Asset Store window inside the editor.</li>
 </ul>
 
+More:
 <ul>
 <li>How build for other platforms see https://www.neoaxis.com/docs/html/Platforms.htm.</li>
 <li>To compile project assemblies you can use Visual Studio Code or another C# IDE. Use NeoAxis.Managed.ProjectOnly.AnyIDE.sln.</li>
