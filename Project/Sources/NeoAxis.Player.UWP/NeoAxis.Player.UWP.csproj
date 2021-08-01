@@ -108,9 +108,6 @@
     <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\NeoAxis.CoreExtension.dll">
       <Link>NeoAxis.CoreExtension.dll</Link>
     </Content>
-    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\NeoAxis.Implementation.UWP.dll">
-      <Link>NeoAxis.Implementation.UWP.dll</Link>
-    </Content>
     <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\NeoAxis.Stubs.dll">
       <Link>NeoAxis.Stubs.dll</Link>
     </Content>
