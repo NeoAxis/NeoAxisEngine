@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -69,18 +69,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Components\Font\Component_Font_PreviewControl.resx">
       <DependentUpon>Component_Font_PreviewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Components\Image\Component_Image_PreviewControl.resx">
-      <DependentUpon>Component_Image_PreviewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Components\Material\Component_Material_DocumentWindow.resx">
-      <DependentUpon>Component_Material_DocumentWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Components\ParticleSystem\Component_ParticleSystem_PreviewControl.resx">
-      <DependentUpon>Component_ParticleSystem_PreviewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Components\Sound\Component_Sound_PreviewControl.resx">
-      <DependentUpon>Component_Sound_PreviewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\NeoAxis.Core.UWP.rd.xml" />
     <EmbeddedResource Include="WinForms\EngineViewportControl.resx">
@@ -3997,9 +3985,6 @@
     <Compile Include="Libraries\Aether.Physics2D\Common\Decomposition\CDT\Delaunay\Sweep\PointOnEdgeException.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Components\Material\Component_Material_PreviewControl.resx">
-      <DependentUpon>Component_Material_PreviewControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
