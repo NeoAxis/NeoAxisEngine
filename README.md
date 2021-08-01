@@ -32,6 +32,7 @@ The platform is intended to develop all kinds of 3D and 2D projects such as comp
 </ul>
 
 <h2>Building (very easy)</h2>
+
 For Windows:
 <ul>
 <li>You need Visual Studio 2019 with .NET Core 3.1. Use NeoAxis.Managed.sln.</li>
