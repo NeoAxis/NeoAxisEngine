@@ -18,7 +18,7 @@ B. Modified versions in binary form must be plainly marked as such, and must not
 
 C. You can change the engine logo "Made with NeoAxis", which appears at the launch of the application created by the Technology, only if you have an active subscription to the Additional Content "NeoAxis Pro". It can be purchased only through www.neoaxis.com or through authorized resellers of the NeoAxis Group Ltd.
 
-D. Additional Content which is provided for an additional fee, can be redistributed in their Source Code form only to those that have purchased the same products. They cannot be distributed in their Source Code form with a Product.
+D. Additional Content which is provided for an additional fee, can be redistributed in their Source Code form only to those that have purchased the same products. It cannot be distributed in their Source Code form with a Product.
 
 E. Certain Additional Content is distributed under the "Free to use with NeoAxis" license. This means that the product can only be used with the Engine Code.
 
