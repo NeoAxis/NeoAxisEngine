@@ -35,7 +35,7 @@ The platform is intended to develop all kinds of 3D and 2D projects such as comp
 
 For Windows:
 <ul>
-<li>You need Visual Studio 2019 with .NET Core 3.1. Use NeoAxis.Managed.sln.</li>
+<li>You need Visual Studio 2019 with .NET Core 3.1. Use NeoAxis.Managed.Sources.sln.</li>
 <li>The native core for Windows is already compiled.</li>
 <li>Download Sci-fi Demo and Nature Demo from the Asset Store window inside the editor.</li>
 </ul>
