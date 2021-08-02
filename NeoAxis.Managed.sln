@@ -1,0 +1,89 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30309.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoAxis.Editor", "Project\Sources\NeoAxis.Editor\NeoAxis.Editor.csproj", "{D6AED473-C978-4330-9697-82F26B40831E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5574FF96-B051-4F66-BCEF-090AC75E9056} = {5574FF96-B051-4F66-BCEF-090AC75E9056}
+		{AEF6B4B4-F0F7-4209-94D8-DC6AA7BB9674} = {AEF6B4B4-F0F7-4209-94D8-DC6AA7BB9674}
+		{876CBDEC-8F38-453F-9BE5-D90A6AF28D10} = {876CBDEC-8F38-453F-9BE5-D90A6AF28D10}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoAxis.Player", "Project\Sources\NeoAxis.Player\NeoAxis.Player.csproj", "{24A5C49F-93D1-4369-8B1E-2272F0302E93}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D6AED473-C978-4330-9697-82F26B40831E} = {D6AED473-C978-4330-9697-82F26B40831E}
+		{77A0E3BB-AD36-4128-9790-966770EAC238} = {77A0E3BB-AD36-4128-9790-966770EAC238}
+		{876CBDEC-8F38-453F-9BE5-D90A6AF28D10} = {876CBDEC-8F38-453F-9BE5-D90A6AF28D10}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoAxis.CoreExtension", "Project\Sources\NeoAxis.CoreExtension\NeoAxis.CoreExtension.csproj", "{876CBDEC-8F38-453F-9BE5-D90A6AF28D10}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Project", "Project\Project.csproj", "{77A0E3BB-AD36-4128-9790-966770EAC238}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D6AED473-C978-4330-9697-82F26B40831E} = {D6AED473-C978-4330-9697-82F26B40831E}
+		{876CBDEC-8F38-453F-9BE5-D90A6AF28D10} = {876CBDEC-8F38-453F-9BE5-D90A6AF28D10}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoAxis.Addon.ExampleEditorEngineGUI", "Project\Sources\NeoAxis.Addon.ExampleEditorEngineGUI\NeoAxis.Addon.ExampleEditorEngineGUI.csproj", "{AEF6B4B4-F0F7-4209-94D8-DC6AA7BB9674}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleWidgetWinForms", "Project\Sources\SampleWidgetWinForms\SampleWidgetWinForms.csproj", "{72EACA0E-B21D-4027-9B0D-3144E9B2A58E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D6AED473-C978-4330-9697-82F26B40831E} = {D6AED473-C978-4330-9697-82F26B40831E}
+		{876CBDEC-8F38-453F-9BE5-D90A6AF28D10} = {876CBDEC-8F38-453F-9BE5-D90A6AF28D10}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleWidgetWPF", "Project\Sources\SampleWidgetWPF\SampleWidgetWPF.csproj", "{732AFF3C-F9D4-4B77-ACCC-7DFF8EACC774}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D6AED473-C978-4330-9697-82F26B40831E} = {D6AED473-C978-4330-9697-82F26B40831E}
+		{876CBDEC-8F38-453F-9BE5-D90A6AF28D10} = {876CBDEC-8F38-453F-9BE5-D90A6AF28D10}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoAxis.Addon.ExampleEditorWinForms", "Project\Sources\NeoAxis.Addon.ExampleEditorWinForms\NeoAxis.Addon.ExampleEditorWinForms.csproj", "{5574FF96-B051-4F66-BCEF-090AC75E9056}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D6AED473-C978-4330-9697-82F26B40831E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6AED473-C978-4330-9697-82F26B40831E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6AED473-C978-4330-9697-82F26B40831E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6AED473-C978-4330-9697-82F26B40831E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24A5C49F-93D1-4369-8B1E-2272F0302E93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24A5C49F-93D1-4369-8B1E-2272F0302E93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24A5C49F-93D1-4369-8B1E-2272F0302E93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24A5C49F-93D1-4369-8B1E-2272F0302E93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{876CBDEC-8F38-453F-9BE5-D90A6AF28D10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{876CBDEC-8F38-453F-9BE5-D90A6AF28D10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{876CBDEC-8F38-453F-9BE5-D90A6AF28D10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{876CBDEC-8F38-453F-9BE5-D90A6AF28D10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77A0E3BB-AD36-4128-9790-966770EAC238}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77A0E3BB-AD36-4128-9790-966770EAC238}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77A0E3BB-AD36-4128-9790-966770EAC238}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77A0E3BB-AD36-4128-9790-966770EAC238}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEF6B4B4-F0F7-4209-94D8-DC6AA7BB9674}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEF6B4B4-F0F7-4209-94D8-DC6AA7BB9674}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEF6B4B4-F0F7-4209-94D8-DC6AA7BB9674}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEF6B4B4-F0F7-4209-94D8-DC6AA7BB9674}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72EACA0E-B21D-4027-9B0D-3144E9B2A58E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72EACA0E-B21D-4027-9B0D-3144E9B2A58E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72EACA0E-B21D-4027-9B0D-3144E9B2A58E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72EACA0E-B21D-4027-9B0D-3144E9B2A58E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{732AFF3C-F9D4-4B77-ACCC-7DFF8EACC774}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{732AFF3C-F9D4-4B77-ACCC-7DFF8EACC774}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{732AFF3C-F9D4-4B77-ACCC-7DFF8EACC774}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{732AFF3C-F9D4-4B77-ACCC-7DFF8EACC774}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5574FF96-B051-4F66-BCEF-090AC75E9056}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5574FF96-B051-4F66-BCEF-090AC75E9056}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5574FF96-B051-4F66-BCEF-090AC75E9056}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5574FF96-B051-4F66-BCEF-090AC75E9056}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {81D26196-B170-4684-AA5E-EADD96B9C5EE}
+	EndGlobalSection
+EndGlobal
