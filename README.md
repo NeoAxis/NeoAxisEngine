@@ -1,14 +1,14 @@
-<b>NeoAxis Engine</b> is a universal platform for making real-time 3D, 2D projects and window apps.
+<b>NeoAxis Engine</b> is a versatile real-time platform for making 3D, 2D games and apps.
 
-The platform is intended to develop all kinds of 3D and 2D projects such as computer games, simulators, visual trainers, VR systems and to develop window apps with rich graphics.
+The platform is intended to develop all kinds of 3D and 2D projects such as computer games, simulators, visual trainers, VR systems and to develop apps with rich graphics.
 
 <a href="https://www.neoaxis.com/">www.neoaxis.com</a>
 
 <ul>
-<li>Unique modern architecture of the engine.</li>
-<li>Universal solution for mobile and AAA projects.</li>
-<li>Complete set of visual tools, no-code visual scripting.</li>
-<li>.NET based C# scripting with the power and flexibility of C++.</li>
+<li>The most open real-time .NET development platform.</li>
+<li>All power of advanced source-provided solution under your control.</li>
+<li>A complete suite of development tools for real-time 3D project creators.</li>
+<li>Open for the integration of third-party services and stores.</li>
 </ul>
 
 <div class="image" align="center"><a href="https://www.neoaxis.com/images/2021_2/NeoAxis_2021_2_CharacterScene.png"><img src="https://www.neoaxis.com/images/2021_2/NeoAxis_2021_2_CharacterScene.jpg" alt="" width="1000" vspace="10"></a></div>
