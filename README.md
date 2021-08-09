@@ -2,6 +2,8 @@
 
 <a href="https://www.neoaxis.com/">www.neoaxis.com</a>
 
+[![Join the chat at https://discord.gg/NdCej26](https://img.shields.io/discord/639722941411753984?color=%237289DA&label=neoaxis&logo=discord&logoColor=white)](https://discord.gg/NdCej26)
+
 <ul>
 <li>The most open real-time .NET development platform.</li>
 <li>All power of advanced source-provided solution under your control.</li>
