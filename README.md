@@ -1,7 +1,5 @@
 <b>NeoAxis Engine</b> is a versatile real-time platform for making 3D, 2D games and apps.
 
-The platform is intended to develop all kinds of 3D and 2D projects such as computer games, simulators, visual trainers, VR systems and to develop apps with rich graphics.
-
 <a href="https://www.neoaxis.com/">www.neoaxis.com</a>
 
 <ul>
@@ -20,7 +18,6 @@ The platform is intended to develop all kinds of 3D and 2D projects such as comp
 <h2>Supported platforms by the editor</h2>
 <ul>
 <li>Windows 7+ x64</li>
-<li>...</li>
 </ul>
 
 <h2>Target supported platforms</h2>
@@ -28,7 +25,6 @@ The platform is intended to develop all kinds of 3D and 2D projects such as comp
 <li>Windows 7+ x64</li>
 <li>Android 8.0+ ARM64 (Oreo)</li>
 <li>UWP x64 (Universal Windows, Xbox, Windows Store)</li>
-<li>...</li>
 </ul>
 
 <h2>Building (very easy)</h2>
