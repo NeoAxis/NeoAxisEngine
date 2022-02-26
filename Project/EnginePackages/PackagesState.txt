@@ -22,11 +22,3 @@ Package
 {
 	Name = Basic_Materials_2K_Concrete_Floor_01
 }
-Package
-{
-	Name = Common_Oak_60bade6d04d6
-}
-Package
-{
-	Name = Sci_fi_Demo
-}
