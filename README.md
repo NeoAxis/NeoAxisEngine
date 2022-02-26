@@ -13,10 +13,6 @@
 
 <div class="image" align="center"><a href="https://www.neoaxis.com/images/2021_2/NeoAxis_2021_2_CharacterScene.png"><img src="https://www.neoaxis.com/images/2021_2/NeoAxis_2021_2_CharacterScene.jpg" alt="" width="1000" vspace="10"></a></div>
 
-<h2>Video review</h2>
-
-<div class="image" align="center"><a href="https://www.youtube.com/watch?v=nlSIoIIBAuo"><img src="https://www.neoaxis.com/video/NeoAxis.jpg" alt="" width="1000" vspace="10"></a></div>
-
 <h2>Supported platforms by the editor</h2>
 <ul>
 <li>Windows 7+ x64</li>
@@ -27,6 +23,7 @@
 <li>Windows 7+ x64</li>
 <li>Android 8.0+ ARM32 and ARM64</li>
 <li>UWP x64 (Universal Windows, Xbox, Windows Store)</li>
+<li>iOS and other coming soon.</li>
 </ul>
 
 <h2>Building (very easy)</h2>
