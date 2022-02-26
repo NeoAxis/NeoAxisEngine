@@ -3,7 +3,7 @@
 <a href="https://www.neoaxis.com/">www.neoaxis.com</a>
 
 <ul>
-<li>The most open real-time .NET development platform.</li>
+<li>The most open and powerful real-time .NET development platform.</li>
 <li>All power of advanced source-provided solution under your control.</li>
 <li>A complete suite of development tools for real-time 3D project creators.</li>
 <li>Open for the integration of third-party services and stores.</li>
@@ -25,7 +25,7 @@
 <h2>Target supported platforms</h2>
 <ul>
 <li>Windows 7+ x64</li>
-<li>Android 8.0+ ARM64 (Oreo)</li>
+<li>Android 8.0+ ARM32 and ARM64</li>
 <li>UWP x64 (Universal Windows, Xbox, Windows Store)</li>
 </ul>
 
@@ -35,7 +35,7 @@ For Windows:
 <ul>
 <li>You need Visual Studio 2019 with .NET Core 3.1. Use NeoAxis.Managed.Sources.sln.</li>
 <li>The native core for Windows is already compiled.</li>
-<li>Download Sci-fi Demo and Nature Demo from the Asset Store window inside the editor.</li>
+<li>Download Sci-fi Demo, Nature Demo and other content from the Asset Store window inside the editor.</li>
 </ul>
 
 More:
@@ -59,7 +59,7 @@ NeoAxis Engine is distributed under the NeoAxis Engine End User License Agreemen
 <ul>
 <li><b>What is the difference between the version on the GitHub and the installer from www.neoaxis.com?</b>
 
-It is the same. The GitHub version has slightly more recent updates. Although you will need to additionally download Sci-fi Demo and Nature Demo inside the editor from Stores window if you want to look at them.
+It is the same. The GitHub version has slightly more recent updates.
 
 <li><b>Is the stable version on the GitHub?</b>
 
