@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Aga.Controls.Tree.NodeControls;
+using Internal.Aga.Controls.Tree.NodeControls;
 using System.Drawing;
 
-namespace Aga.Controls.Tree
+namespace Internal.Aga.Controls.Tree
 {
 	public struct NodeControlInfo
 	{

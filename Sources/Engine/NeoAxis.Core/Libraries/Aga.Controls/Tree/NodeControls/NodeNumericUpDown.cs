@@ -7,7 +7,7 @@ using System.Reflection;
 using System.ComponentModel;
 using System.Drawing.Design;
 
-namespace Aga.Controls.Tree.NodeControls
+namespace Internal.Aga.Controls.Tree.NodeControls
 {
 	public class NodeNumericUpDown : BaseTextControl
 	{

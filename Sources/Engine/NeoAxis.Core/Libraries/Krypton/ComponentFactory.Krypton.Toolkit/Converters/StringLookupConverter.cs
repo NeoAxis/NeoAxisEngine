@@ -11,7 +11,7 @@
 using System;
 using System.ComponentModel;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     /// <summary>
     /// Helper base class used to convert from to/from a table of value,string pairs.

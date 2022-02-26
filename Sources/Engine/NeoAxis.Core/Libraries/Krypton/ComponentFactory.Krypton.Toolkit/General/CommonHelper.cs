@@ -28,7 +28,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Security;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     #region Delegates
     /// <summary>
@@ -77,7 +77,7 @@ namespace ComponentFactory.Krypton.Toolkit
         private static Point _nullPoint = new Point(Int32.MaxValue, Int32.MaxValue);
         private static Rectangle _nullRectangle = new Rectangle(Int32.MaxValue, Int32.MaxValue, 0, 0);
         private static DoubleConverter _dc = new DoubleConverter();
-#if !ANDROID
+#if !ANDROID && !IOS
         private static SizeConverter _sc = new SizeConverter();
         private static PointConverter _pc = new PointConverter();
 #endif
@@ -1413,7 +1413,7 @@ namespace ComponentFactory.Krypton.Toolkit
         /// <returns>Culture invariant string representation.</returns>
         public static string SizeToString(Size s)
         {
-#if ANDROID
+#if ANDROID || IOS
             return "";
 #else
             return _sc.ConvertToInvariantString(s);
@@ -1427,7 +1427,7 @@ namespace ComponentFactory.Krypton.Toolkit
         /// <returns>Size value.</returns>
         public static Size StringToSize(string s)
         {
-#if ANDROID
+#if ANDROID || IOS
             return new Size( 0, 0 );
 #else
             return (Size)_sc.ConvertFromInvariantString(s);
@@ -1441,7 +1441,7 @@ namespace ComponentFactory.Krypton.Toolkit
         /// <returns>Culture invariant string representation.</returns>
         public static string PointToString(Point s)
         {
-#if ANDROID
+#if ANDROID || IOS
             return "";
 #else
             return _pc.ConvertToInvariantString(s);
@@ -1455,7 +1455,7 @@ namespace ComponentFactory.Krypton.Toolkit
         /// <returns>Point value.</returns>
         public static Point StringToPoint(string s)
         {
-#if ANDROID
+#if ANDROID || IOS
             return new Point( 0, 0 );
 #else
             return (Point)_pc.ConvertFromInvariantString(s);

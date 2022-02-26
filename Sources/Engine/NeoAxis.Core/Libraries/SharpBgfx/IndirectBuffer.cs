@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SharpBgfx {
+namespace Internal.SharpBgfx {
     /// <summary>
     /// Represents a buffer that can contain indirect drawing commands created and processed entirely on the GPU.
     /// </summary>

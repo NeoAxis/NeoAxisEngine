@@ -19,7 +19,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Diagnostics;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
 	/// <summary>
 	/// Manage a collection of references that must be one of a restricted set of types.

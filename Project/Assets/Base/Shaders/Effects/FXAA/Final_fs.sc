@@ -1,6 +1,6 @@
 $input v_texCoord0
 
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "../../Common.sh"
 
 SAMPLER2D(s_sourceTexture, 0);
@@ -8,9 +8,16 @@ uniform vec4 viewportSize;
 uniform vec4/*float*/ intensity;
 
 
-//!!!!
-#define FXAA_PC 1
-#define FXAA_HLSL_5 1
+#ifdef HLSL
+	#define FXAA_PC 1
+	#define FXAA_HLSL_5 1
+#endif
+
+#ifdef GLSL
+	#define FXAA_PC 1
+	#define FXAA_GLSL_130 1
+#endif
+
 //#define FXAA_GREEN_AS_LUMA 1
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2070,15 +2077,22 @@ void main()
 {
 	vec4 sourceColor = texture2D(s_sourceTexture, v_texCoord0);
 
+#ifdef HLSL
 	FxaaTex InputFXAATex = { s_sourceTextureSampler, s_sourceTextureTexture };
-	//FxaaTex InputFXAATex = { sourceTextureSampler, sourceTexture };
+#endif
 
 	vec4 color = FxaaPixelShader(
 		v_texCoord0,							// FxaaFloat2 pos,
 		FxaaFloat4(0.0f, 0.0f, 0.0f, 0.0f),		// FxaaFloat4 fxaaConsolePosPos,
+#ifdef HLSL
 		InputFXAATex,							// FxaaTex tex,
 		InputFXAATex,							// FxaaTex fxaaConsole360TexExpBiasNegOne,
 		InputFXAATex,							// FxaaTex fxaaConsole360TexExpBiasNegTwo,
+#else
+		s_sourceTexture,
+		s_sourceTexture,
+		s_sourceTexture,
+#endif
 		viewportSize.zw,							// FxaaFloat2 fxaaQualityRcpFrame,
 		FxaaFloat4(0.0f, 0.0f, 0.0f, 0.0f),		// FxaaFloat4 fxaaConsoleRcpFrameOpt,
 		FxaaFloat4(0.0f, 0.0f, 0.0f, 0.0f),		// FxaaFloat4 fxaaConsoleRcpFrameOpt2,

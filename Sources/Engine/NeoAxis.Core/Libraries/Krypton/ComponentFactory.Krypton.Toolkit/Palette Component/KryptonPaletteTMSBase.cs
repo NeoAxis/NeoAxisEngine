@@ -18,7 +18,7 @@ using System.ComponentModel.Design;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
 	/// <summary>
 	/// Base class for the palette TMS storage classes to derive from.

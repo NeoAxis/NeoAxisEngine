@@ -1,8 +1,9 @@
-﻿//
+#if !NO_UI_WEB_BROWSER
+//
 // This file manually written from cef/include/internal/cef_types.h.
 // C API name: cef_cdm_registration_error_t.
 //
-namespace Xilium.CefGlue
+namespace Internal.Xilium.CefGlue
 {
     /// <summary>
     /// Error codes for CDM registration. See cef_web_plugin.h for details.
@@ -30,3 +31,5 @@ namespace Xilium.CefGlue
         NotSupported,
     }
 }
+
+#endif

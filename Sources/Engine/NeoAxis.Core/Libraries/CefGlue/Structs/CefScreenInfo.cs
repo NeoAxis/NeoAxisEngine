@@ -1,7 +1,8 @@
-﻿namespace Xilium.CefGlue
+#if !NO_UI_WEB_BROWSER
+namespace Internal.Xilium.CefGlue
 {
     using System;
-    using Xilium.CefGlue.Interop;
+    using Internal.Xilium.CefGlue.Interop;
 
     /// <summary>
     /// Screen information used when window rendering is disabled. This structure is
@@ -110,3 +111,5 @@
         }
     }
 }
+
+#endif

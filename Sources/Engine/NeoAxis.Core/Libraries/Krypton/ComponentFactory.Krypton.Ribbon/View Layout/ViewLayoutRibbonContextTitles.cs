@@ -18,9 +18,9 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Toolkit;
 
-namespace ComponentFactory.Krypton.Ribbon
+namespace Internal.ComponentFactory.Krypton.Ribbon
 {
     /// <summary>
     /// Ribbon layout that creates and positions context title drawing elements.

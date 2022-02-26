@@ -16,9 +16,9 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Diagnostics;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Toolkit;
 
-namespace ComponentFactory.Krypton.Navigator
+namespace Internal.ComponentFactory.Krypton.Navigator
 {
 	/// <summary>
 	/// Base class for storage and mapping of navigator header values.

@@ -19,6 +19,7 @@
 
 //!!!!betauser
 #include "special.h"
+//#include <bx/float4x4_t.h>
 
 //!!!!betauser
 #ifdef __ANDROID__
@@ -5448,3 +5449,9 @@ BGFX_C_API void* bgfx_call_special(const char* name, void* parameter1, void* par
 {
 	return call_special(name, parameter1, parameter2, parameter3, parameter4);
 }
+
+////!!!!betauser
+//BGFX_C_API void bgfx_float4x4_mul(void* _result, void* _a, void* _b)
+//{
+//	bx::float4x4_mul((bx::float4x4_t*)_result, (const bx::float4x4_t*)_a, (const bx::float4x4_t*)_b);
+//}

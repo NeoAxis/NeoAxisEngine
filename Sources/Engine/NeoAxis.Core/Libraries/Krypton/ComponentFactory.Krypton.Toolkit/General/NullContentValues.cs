@@ -15,7 +15,7 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections.Generic;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     /// <summary>
     /// Implements the IContentValues interface by providing null information.

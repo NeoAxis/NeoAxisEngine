@@ -17,7 +17,7 @@ using System.Text;
 using System.Diagnostics;
 using System.ComponentModel;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
 	/// <summary>
 	/// Base class from which all view types derive.

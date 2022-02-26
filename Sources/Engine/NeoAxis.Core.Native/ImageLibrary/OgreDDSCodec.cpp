@@ -40,6 +40,9 @@ THE SOFTWARE.
 #ifdef PLATFORM_ANDROID
 #	include <codecvt>
 #endif
+#ifdef PLATFORM_IOS
+#	include <codecvt>
+#endif
 
 namespace Ogre {
 	// Internal DDS structure definitions
@@ -427,7 +430,7 @@ namespace Ogre {
 			{
 				// Write the file
 				std::ofstream of;
-#	ifdef PLATFORM_ANDROID
+#	if defined(PLATFORM_ANDROID) || defined(PLATFORM_IOS)
 				using convert_type = std::codecvt_utf8<wchar_t>;
 				std::wstring_convert<convert_type, wchar_t> converter;
 				std::string fl = converter.to_bytes(outFileName);

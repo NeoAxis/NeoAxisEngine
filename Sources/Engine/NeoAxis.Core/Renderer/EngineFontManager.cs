@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -54,7 +54,7 @@ namespace NeoAxis
 		{
 			//this.defaultLanguage = defaultLanguage;
 
-			EngineBackgroundTasks.Update += EngineBackgroundTasks_Update;
+			//EngineBackgroundTasks.Update += EngineBackgroundTasks_Update;
 		}
 
 		static void ShutdownInternal()
@@ -63,7 +63,7 @@ namespace NeoAxis
 
 			ShutdownFreeTypeLibrary();
 
-			EngineBackgroundTasks.Update -= EngineBackgroundTasks_Update;
+			//EngineBackgroundTasks.Update -= EngineBackgroundTasks_Update;
 		}
 
 		///// <summary>
@@ -328,10 +328,10 @@ namespace NeoAxis
 		//		font.CheckAndRemoveNotNeededVariants();
 		//}
 
-		//!!!!
-		static private void EngineBackgroundTasks_Update()
-		{
-			//CheckAndRemoveNotNeededVariants();
-		}
+		////!!!!
+		//static private void EngineBackgroundTasks_Update()
+		//{
+		//	//CheckAndRemoveNotNeededVariants();
+		//}
 	}
 }

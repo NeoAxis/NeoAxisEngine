@@ -1,9 +1,10 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     /// <summary>
     /// Abstract class with workflow method to be used in pipeline implementation
@@ -175,3 +176,4 @@ namespace LiteDB.Engine
         }
     }
 }
+#endif

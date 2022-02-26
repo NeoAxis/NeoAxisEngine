@@ -14,7 +14,7 @@ using System.ComponentModel.Design;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     /// <summary>
     /// Restrict a controls collection of child controls.

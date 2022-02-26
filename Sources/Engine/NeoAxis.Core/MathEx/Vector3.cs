@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
@@ -564,7 +564,7 @@ namespace NeoAxis
 			{
 				if( index < 0 || index > 2 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( double* v = &this.X )
+				fixed( double* v = &this.X )
 				{
 					return v[ index ];
 				}
@@ -573,7 +573,7 @@ namespace NeoAxis
 			{
 				if( index < 0 || index > 2 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( double* v = &this.X )
+				fixed( double* v = &this.X )
 				{
 					v[ index ] = value;
 				}
@@ -933,6 +933,20 @@ namespace NeoAxis
 		}
 
 		/// <summary>
+		/// Converts the current instance of <see cref="Vector3"/> into the equivalent <see cref="Vector3F"/> structure.
+		/// </summary>
+		/// <returns>The equivalent <see cref="Vector3F"/> structure.</returns>
+		[AutoConvertType]
+		public Vector3H ToVector3H()
+		{
+			Vector3H result;
+			result.X = new HalfType( X );
+			result.Y = new HalfType( Y );
+			result.Z = new HalfType( Z );
+			return result;
+		}
+
+		/// <summary>
 		/// Converts the current instance of <see cref="Vector3"/> into the equivalent <see cref="Vector3I"/> structure.
 		/// </summary>
 		/// <returns>The equivalent <see cref="Vector3I"/> structure.</returns>
@@ -1230,6 +1244,16 @@ namespace NeoAxis
 		public double MaxComponent()
 		{
 			return Math.Max( X, Math.Max( Y, Z ) );
+		}
+
+		public bool Equals( ref Vector3 v )
+		{
+			return X == v.X && Y == v.Y && Z == v.Z;
+		}
+
+		public static bool Equals( ref Vector3 v1, ref Vector3 v2 )
+		{
+			return v1.X == v2.X && v1.Y == v2.Y && v1.Z == v2.Z;
 		}
 	}
 }

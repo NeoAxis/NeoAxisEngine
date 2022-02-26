@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -157,7 +157,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="name">The attribute name.</param>
 		/// <returns><b>true</b> if the block exists; otherwise, <b>false</b>.</returns>
-		public bool IsAttributeExist( string name )
+		public bool AttributeExists( string name )
 		{
 			for( int n = 0; n < attributes.Count; n++ )
 			{
@@ -168,7 +168,14 @@ namespace NeoAxis
 			return false;
 		}
 
-		void SetAttribute( string name, ArraySegment<byte> value, bool cloneArray, bool checkNameForAlreadyAvailable )
+		/// <summary>
+		/// Sets an attribute.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="value"></param>
+		/// <param name="cloneArray"></param>
+		/// <param name="replaceWithSameName"></param>
+		void SetAttribute( string name, ArraySegment<byte> value, bool cloneArray, bool replaceWithSameName )
 		{
 			if( string.IsNullOrEmpty( name ) )
 				Log.Fatal( "DataBlock: SetAttribute: \"name\" is null or empty." );
@@ -187,7 +194,7 @@ namespace NeoAxis
 				newValue = value;
 			}
 
-			if( checkNameForAlreadyAvailable )
+			if( replaceWithSameName )
 			{
 				for( int n = 0; n < attributes.Count; n++ )
 				{
@@ -203,23 +210,6 @@ namespace NeoAxis
 			a.name = name;
 			a.value = newValue;
 			attributes.Add( a );
-		}
-
-		/// <summary>
-		/// Sets attribute. If such already there is that rewrites him.
-		/// </summary>
-		/// <param name="name">The attribute name.</param>
-		/// <param name="value">The attribute value.</param>
-		/// <param name="cloneArray"></param>
-		public void SetAttribute( string name, ArraySegment<byte> value, bool cloneArray )
-		{
-			SetAttribute( name, value, cloneArray, true );
-		}
-
-		public void SetAttributeWithoutCheckForAlreadyAvailableAttributeName( string name,
-			ArraySegment<byte> value, bool cloneArray )
-		{
-			SetAttribute( name, value, cloneArray, false );
 		}
 
 		/// <summary>
@@ -513,7 +503,7 @@ namespace NeoAxis
 				ArraySegment<byte> value = new ArraySegment<byte>( reader.Data, reader.DataPosition,
 					length );
 
-				SetAttributeWithoutCheckForAlreadyAvailableAttributeName( attributeName, value, false );
+				SetAttribute( attributeName, value, false, true );
 
 				reader.SkipBytes( length );
 				if( reader.Overflow )
@@ -543,19 +533,19 @@ namespace NeoAxis
 			uint version = reader.ReadVariableUInt32();
 			if( reader.Overflow )
 			{
-				error = "Unexpected end of data";
+				error = "Unexpected end of data.";
 				return null;
 			}
 
 			if( version != 0 )
 			{
-				error = string.Format( "Unknown format version \"{0}\"", version );
+				error = string.Format( "Unknown format version \"{0}\".", version );
 				return null;
 			}
 
 			if( !block.ParseFromDataReader( reader ) )
 			{
-				error = "Unexpected end of data";
+				error = "Unexpected end of data.";
 				return null;
 			}
 

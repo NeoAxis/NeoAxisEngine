@@ -1,7 +1,7 @@
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class PointCollector : DiscreteCollisionDetectorInterface.Result
 	{
@@ -22,22 +22,22 @@ namespace BulletSharp
 			set => btPointCollector_setHasResult(Native, value);
 		}
 
-		public Vector3 NormalOnBInWorld
+		public BVector3 NormalOnBInWorld
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btPointCollector_getNormalOnBInWorld(Native, out value);
 				return value;
 			}
 			set => btPointCollector_setNormalOnBInWorld(Native, ref value);
 		}
 
-		public Vector3 PointInWorld
+		public BVector3 PointInWorld
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btPointCollector_getPointInWorld(Native, out value);
 				return value;
 			}

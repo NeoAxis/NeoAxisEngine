@@ -13,10 +13,10 @@ using System.Text;
 using System.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
-using ComponentFactory.Krypton.Toolkit;
-using ComponentFactory.Krypton.Navigator;
+using Internal.ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Navigator;
 
-namespace ComponentFactory.Krypton.Workspace
+namespace Internal.ComponentFactory.Krypton.Workspace
 {
     #region CompactFlags
     /// <summary>

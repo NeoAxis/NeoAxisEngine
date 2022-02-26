@@ -18,9 +18,9 @@ using System.ComponentModel.Design;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Diagnostics;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Toolkit;
 
-namespace ComponentFactory.Krypton.Ribbon
+namespace Internal.ComponentFactory.Krypton.Ribbon
 {
 	/// <summary>
 	/// Storage for application button related properties.
@@ -285,7 +285,7 @@ namespace ComponentFactory.Krypton.Ribbon
         [Category("Values")]
         [Description("Recent document entries for the application buttton.")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        [Editor("ComponentFactory.Krypton.Ribbon.KryptonRibbonRecentDocCollectionEditor, ComponentFactory.Krypton.Design, Version=125.0.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e", typeof(UITypeEditor))]
+        //[Editor("ComponentFactory.Krypton.Ribbon.KryptonRibbonRecentDocCollectionEditor, ComponentFactory.Krypton.Design, Version=125.0.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e", typeof(UITypeEditor))]
         public virtual KryptonRibbonRecentDocCollection AppButtonRecentDocs
         {
             get { return _appButtonRecentDocs; }

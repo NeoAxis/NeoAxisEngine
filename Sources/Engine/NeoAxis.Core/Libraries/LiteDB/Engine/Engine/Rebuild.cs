@@ -1,9 +1,10 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     public partial class LiteEngine
     {
@@ -142,3 +143,4 @@ namespace LiteDB.Engine
         }
     }
 }
+#endif

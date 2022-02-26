@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,8 +9,6 @@ using NeoAxis.Editor;
 
 namespace NeoAxis
 {
-	//!!!!убрать sealed? поставил sealed т.к. в гриде появляется выбор типа. но Transform персоздаётся при изменении свойств, т.к. иммутабельный.
-
 	//!!!!new: immutable. тогда можно ChangedEvent
 
 	/// <summary>
@@ -33,6 +31,8 @@ namespace NeoAxis
 
 		public static readonly Transform Identity = new Transform( Vector3.Zero, Quaternion.Identity, Vector3.One );
 		public const string IdentityAsString = "0 0 0; 0 0 0 1; 1 1 1";
+		public static readonly Transform Zero = new Transform( Vector3.Zero, Quaternion.Zero, Vector3.Zero );
+		public const string ZeroAsString = "0 0 0; 0 0 0 0; 0 0 0";
 
 		//
 
@@ -171,7 +171,7 @@ namespace NeoAxis
 		{
 			if( ReferenceEquals( this, a ) )
 				return true;
-			return position == a.position && rotation == a.rotation && scale == a.scale;
+			return position.Equals( ref a.position ) && rotation.Equals( ref a.rotation ) && scale.Equals( ref a.scale );
 		}
 
 		public static bool operator ==( Transform a, Transform b )
@@ -205,11 +205,11 @@ namespace NeoAxis
 			if( ReferenceEquals( this, a ) )
 				return true;
 
-			if( !position.Equals( a.position, epsilon ) )
+			if( !position.Equals( ref a.position, epsilon ) )
 				return false;
-			if( !rotation.Equals( a.rotation, epsilon ) )
+			if( !rotation.Equals( ref a.rotation, epsilon ) )
 				return false;
-			if( !scale.Equals( a.scale, epsilon ) )
+			if( !scale.Equals( ref a.scale, epsilon ) )
 				return false;
 			return true;
 		}
@@ -222,33 +222,80 @@ namespace NeoAxis
 			return transform.matrix4 * v;
 		}
 
-		public static Bounds operator *( Transform transform, Bounds v )
+		public void Multiply( ref Bounds bounds, out Bounds result )
 		{
 			//!!!!slowly
 
-			transform.CalculateMatrix4();
+			CalculateMatrix4();
 
-			Vector3[] points = v.ToPoints();
-			var b2 = Bounds.Cleared;
-			foreach( var p in points )
-				b2.Add( transform.matrix4 * p );
-			return b2;
+			unsafe
+			{
+				Vector3* points = stackalloc Vector3[ 8 ];
+				bounds.ToPoints( points );
+				result = new Bounds( matrix4 * points[ 0 ] );
+				for( int n = 1; n < 8; n++ )
+				{
+					Matrix4.Multiply( ref matrix4, ref points[ n ], out var point );
+					result.Add( ref point );
+					//b2.Add( transform.matrix4 * points[ n ] );
+				}
+			}
+
+			//Vector3[] points = v.ToPoints();
+			//var b2 = Bounds.Cleared;
+			//foreach( var p in points )
+			//	b2.Add( transform.matrix4 * p );
+			//return b2;
+		}
+
+		public static Bounds operator *( Transform transform, Bounds v )
+		{
+			transform.Multiply( ref v, out var result );
+			return result;
+
+			//transform.CalculateMatrix4();
+
+			//Vector3[] points = v.ToPoints();
+			//var b2 = Bounds.Cleared;
+			//foreach( var p in points )
+			//	b2.Add( transform.matrix4 * p );
+			//return b2;
+		}
+
+		public void Multiply( ref Sphere sphere, out Sphere result )
+		{
+			//!!!!так?
+
+			CalculateMatrix4();
+
+			var c = matrix4 * sphere.Center;
+
+			var max = Math.Max( Scale.X, Math.Max( Scale.Y, Scale.Z ) );
+			var r = sphere.Radius * max;
+
+			result = new Sphere( c, r );
+
+			//var b = transform * v.ToBounds();
+			//return b.ToBoundingSphere();
 		}
 
 		public static Sphere operator *( Transform transform, Sphere v )
 		{
-			//!!!!так?
+			transform.Multiply( ref v, out var result );
+			return result;
 
-			transform.CalculateMatrix4();
-			var c = transform.matrix4 * v.Origin;
+			////!!!!так?
 
-			var max = Math.Max( transform.Scale.X, Math.Max( transform.Scale.Y, transform.Scale.Z ) );
-			var r = v.Radius * max;
+			//transform.CalculateMatrix4();
+			//var c = transform.matrix4 * v.Center;
 
-			return new Sphere( c, r );
+			//var max = Math.Max( transform.Scale.X, Math.Max( transform.Scale.Y, transform.Scale.Z ) );
+			//var r = v.Radius * max;
 
-			//var b = transform * v.ToBounds();
-			//return b.ToBoundingSphere();
+			//return new Sphere( c, r );
+
+			////var b = transform * v.ToBounds();
+			////return b.ToBoundingSphere();
 		}
 
 		void CalculateMatrix4()
@@ -381,8 +428,6 @@ namespace NeoAxis
 		//!!!!default values
 		public Transform ApplyOffset( Vector3 positionOffset, Quaternion rotationOffset, Vector3 scaleOffset )
 		{
-			//!!!!slowly
-
 			Vector3 pos = Position;
 			Quaternion rot = Rotation;
 			Vector3 scl = Scale;

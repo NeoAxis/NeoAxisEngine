@@ -1,12 +1,13 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     /// <summary>
     /// Lock service are collection-based locks. Lock will support any threads reading at same time. Writing operations will be locked
@@ -149,3 +150,4 @@ namespace LiteDB.Engine
         }
     }
 }
+#endif

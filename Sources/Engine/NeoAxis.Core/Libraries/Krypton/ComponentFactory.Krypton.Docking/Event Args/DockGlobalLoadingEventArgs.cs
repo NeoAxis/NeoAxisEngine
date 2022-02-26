@@ -14,7 +14,7 @@ using System.Xml;
 using System.Drawing;
 using System.Diagnostics;
 
-namespace ComponentFactory.Krypton.Docking
+namespace Internal.ComponentFactory.Krypton.Docking
 {
 	/// <summary>
     /// Event data for loading global docking configuration.

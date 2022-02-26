@@ -1,11 +1,7 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
-using System.Drawing.Design;
 using System.ComponentModel;
-using System.Reflection;
 
 namespace NeoAxis
 {
@@ -14,7 +10,7 @@ namespace NeoAxis
 	/// </summary>
 	[DefaultOrderOfEffect( 2 )]
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
-	public class Component_RenderingEffect_Bloom : Component_RenderingEffect// Component_RenderingEffect_Simple
+	public class RenderingEffect_Bloom : RenderingEffect// RenderingEffect_Simple
 	{
 		//!!!!property names
 		//!!!!default values
@@ -32,7 +28,7 @@ namespace NeoAxis
 			set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_Bloom> IntensityChanged;
+		public event Action<RenderingEffect_Bloom> IntensityChanged;
 		ReferenceField<double> _intensity = 1;
 
 		/// <summary>
@@ -47,7 +43,7 @@ namespace NeoAxis
 			set { if( _brightThreshold.BeginSet( ref value ) ) { try { BrightThresholdChanged?.Invoke( this ); } finally { _brightThreshold.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BrightThreshold"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_Bloom> BrightThresholdChanged;
+		public event Action<RenderingEffect_Bloom> BrightThresholdChanged;
 		ReferenceField<double> _brightThreshold = 1.2;
 
 		/// <summary>
@@ -62,7 +58,7 @@ namespace NeoAxis
 			set { if( _scale.BeginSet( ref value ) ) { try { ScaleChanged?.Invoke( this ); } finally { _scale.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Scale"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_Bloom> ScaleChanged;
+		public event Action<RenderingEffect_Bloom> ScaleChanged;
 		ReferenceField<double> _scale = 1.25;
 
 		/// <summary>
@@ -77,22 +73,22 @@ namespace NeoAxis
 			set { if( _blurFactor.BeginSet( ref value ) ) { try { BlurFactorChanged?.Invoke( this ); } finally { _blurFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BlurFactor"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_Bloom> BlurFactorChanged;
+		public event Action<RenderingEffect_Bloom> BlurFactorChanged;
 		ReferenceField<double> _blurFactor = 5;
 
 		/// <summary>
 		/// The blur downscaling mode used.
 		/// </summary>
-		[DefaultValue( Component_RenderingPipeline_Basic.DownscalingModeEnum.Auto )]
+		[DefaultValue( RenderingPipeline_Basic.DownscalingModeEnum.Auto )]
 		[Serialize]
-		public Reference<Component_RenderingPipeline_Basic.DownscalingModeEnum> BlurDownscalingMode
+		public Reference<RenderingPipeline_Basic.DownscalingModeEnum> BlurDownscalingMode
 		{
 			get { if( _blurDownscalingMode.BeginGet() ) BlurDownscalingMode = _blurDownscalingMode.Get( this ); return _blurDownscalingMode.value; }
 			set { if( _blurDownscalingMode.BeginSet( ref value ) ) { try { BlurDownscalingModeChanged?.Invoke( this ); } finally { _blurDownscalingMode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BlurDownscalingMode"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_Bloom> BlurDownscalingModeChanged;
-		ReferenceField<Component_RenderingPipeline_Basic.DownscalingModeEnum> _blurDownscalingMode = Component_RenderingPipeline_Basic.DownscalingModeEnum.Auto;
+		public event Action<RenderingEffect_Bloom> BlurDownscalingModeChanged;
+		ReferenceField<RenderingPipeline_Basic.DownscalingModeEnum> _blurDownscalingMode = RenderingPipeline_Basic.DownscalingModeEnum.Auto;
 
 		/// <summary>
 		/// The level of blur texture downscaling.
@@ -106,7 +102,7 @@ namespace NeoAxis
 			set { if( _blurDownscalingValue.BeginSet( ref value ) ) { try { BlurDownscalingValueChanged?.Invoke( this ); } finally { _blurDownscalingValue.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BlurDownscalingValue"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_Bloom> BlurDownscalingValueChanged;
+		public event Action<RenderingEffect_Bloom> BlurDownscalingValueChanged;
 		ReferenceField<int> _blurDownscalingValue = 0;
 
 		/////////////////////////////////////////
@@ -121,7 +117,7 @@ namespace NeoAxis
 				switch( p.Name )
 				{
 				case nameof( BlurDownscalingValue ):
-					if( BlurDownscalingMode.Value == Component_RenderingPipeline_Basic.DownscalingModeEnum.Auto )
+					if( BlurDownscalingMode.Value == RenderingPipeline_Basic.DownscalingModeEnum.Auto )
 						skip = true;
 					break;
 				}
@@ -130,9 +126,12 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		protected override void OnRender( ViewportRenderingContext context, Component_RenderingPipeline.IFrameData frameData, ref Component_Image actualTexture )
+		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
 		{
 			base.OnRender( context, frameData, ref actualTexture );
+
+			if( Intensity <= 0 )
+				return;
 
 			//PixelFormat.A8R8G8B8 );
 
@@ -155,8 +154,8 @@ namespace NeoAxis
 			}
 
 			//blur
-			var pipeline = (Component_RenderingPipeline_Basic)context.RenderingPipeline;
-			var blurTexture = pipeline.GaussianBlur( context, this, brightTexture, BlurFactor, BlurDownscalingMode, BlurDownscalingValue );
+			var pipeline = (RenderingPipeline_Basic)context.RenderingPipeline;
+			var blurTexture = pipeline.GaussianBlur( context, brightTexture, BlurFactor, BlurDownscalingMode, BlurDownscalingValue );
 			context.DynamicTexture_Free( brightTexture );
 
 			//create final

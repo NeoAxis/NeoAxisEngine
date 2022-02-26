@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,11 +10,11 @@ using System.Windows.Forms;
 #if WINDOWS
 using DirectInput;
 #endif
-using ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Toolkit;
 using System.IO;
 using System.Diagnostics;
 
-namespace NeoAxis.Widget
+namespace NeoAxis.Editor
 {
 	/// <summary>
 	/// Represents a viewport of the engine for Windows Forms application.
@@ -72,6 +72,13 @@ namespace NeoAxis.Widget
 		{
 			get { return allowCreateRenderWindow; }
 			set { allowCreateRenderWindow = value; }
+		}
+
+		[Browsable( false )]
+		public bool Visible
+		{
+			get { return base.Visible; }
+			set { base.Visible = value; }
 		}
 
 		protected override void OnLoad( EventArgs e )
@@ -271,9 +278,9 @@ namespace NeoAxis.Widget
 			if( Viewport != null )
 			{
 				var drawSplashScreen = DrawSplashScreen;
-				if( drawSplashScreen != Component_ProjectSettings.EngineSplashScreenStyleEnum.Disabled )
+				if( drawSplashScreen != ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.Disabled )
 				{
-					var color = drawSplashScreen == Component_ProjectSettings.EngineSplashScreenStyleEnum.BlackBackground ? Color.Black : Color.White;
+					var color = drawSplashScreen == ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.BlackBackground ? Color.Black : Color.White;
 					using( var brush = new SolidBrush( color ) )
 					{
 						//e.Graphics.FillRectangle( brush, ClientRectangle );
@@ -281,21 +288,23 @@ namespace NeoAxis.Widget
 						var screenSize = Viewport.SizeInPixels;
 						var center = new Vector2( screenSize.X / 2, screenSize.Y / 2 );
 
-						var image = EngineInfo.GetSplashLogoImage( drawSplashScreen );
-						var imageSize = new Vector2F( image.Width, image.Height );
+						using( var image = EngineInfo.GetSplashLogoImage( drawSplashScreen ) )
+						{
+							var imageSize = new Vector2F( image.Width, image.Height );
 
-						var destRect = new System.Drawing.RectangleF( (float)center.X - imageSize.X / 2, (float)center.Y - imageSize.Y / 2, imageSize.X, imageSize.Y );
+							var destRect = new System.Drawing.RectangleF( (float)center.X - imageSize.X / 2, (float)center.Y - imageSize.Y / 2, imageSize.X, imageSize.Y );
 
-						if( destRect.Left > 0 )
-							e.Graphics.FillRectangle( brush, 0, 0, destRect.Left, screenSize.Y );
-						if( destRect.Right < screenSize.X )
-							e.Graphics.FillRectangle( brush, destRect.Right, 0, screenSize.X - destRect.Right, screenSize.Y );
-						if( destRect.Top > 0 )
-							e.Graphics.FillRectangle( brush, 0, 0, screenSize.X, destRect.Top );
-						if( destRect.Bottom < screenSize.Y )
-							e.Graphics.FillRectangle( brush, 0, destRect.Bottom, screenSize.X, screenSize.Y - destRect.Bottom );
+							if( destRect.Left > 0 )
+								e.Graphics.FillRectangle( brush, 0, 0, destRect.Left, screenSize.Y );
+							if( destRect.Right < screenSize.X )
+								e.Graphics.FillRectangle( brush, destRect.Right, 0, screenSize.X - destRect.Right, screenSize.Y );
+							if( destRect.Top > 0 )
+								e.Graphics.FillRectangle( brush, 0, 0, screenSize.X, destRect.Top );
+							if( destRect.Bottom < screenSize.Y )
+								e.Graphics.FillRectangle( brush, 0, destRect.Bottom, screenSize.X, screenSize.Y - destRect.Bottom );
 
-						e.Graphics.DrawImage( image, destRect, new System.Drawing.RectangleF( 0, 0, imageSize.X, imageSize.Y ), GraphicsUnit.Pixel );
+							e.Graphics.DrawImage( image, destRect, new System.Drawing.RectangleF( 0, 0, imageSize.X, imageSize.Y ), GraphicsUnit.Pixel );
+						}
 					}
 				}
 			}
@@ -820,7 +829,7 @@ namespace NeoAxis.Widget
 
 		public void TryRender()
 		{
-			if( DrawSplashScreen != Component_ProjectSettings.EngineSplashScreenStyleEnum.Disabled )
+			if( DrawSplashScreen != ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.Disabled )
 				return;
 
 			if( !IsAllowRender() )
@@ -871,7 +880,7 @@ namespace NeoAxis.Widget
 					EngineApp.DoTick();
 
 					//!!!!так ли. где еще
-					if( DrawSplashScreen == Component_ProjectSettings.EngineSplashScreenStyleEnum.Disabled )
+					if( DrawSplashScreen == ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.Disabled )
 						viewport.PerformTick( (float)step );
 
 					//!!!!
@@ -937,13 +946,13 @@ namespace NeoAxis.Widget
 		}
 
 		[Browsable( false )]
-		internal Component_ProjectSettings.EngineSplashScreenStyleEnum DrawSplashScreen
+		internal ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum DrawSplashScreen
 		{
 			get
 			{
 				if( IsWidget )//&& !ProjectSettings.Get.CustomizeSplashScreen )
 				{
-					var result = ProjectSettings.Get.EngineSplashScreenStyle.Value;
+					var result = ProjectSettings.Get.CustomSplashScreen.EngineSplashScreenStyle.Value;
 
 					if( EngineApp.EngineTime != 0 )
 					{
@@ -956,7 +965,7 @@ namespace NeoAxis.Widget
 
 						//double totalTime = EngineApp.IsProPlan ? ProjectSettings.Get.EngineSplashScreenTime.Value : ProjectSettings.Get.EngineSplashScreenTimeReadOnly;
 						if( EngineApp.EngineTime - splashScreenStartTime > totalTime )
-							result = Component_ProjectSettings.EngineSplashScreenStyleEnum.Disabled;
+							result = ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.Disabled;
 					}
 					//else
 					//	return true;
@@ -964,7 +973,7 @@ namespace NeoAxis.Widget
 					return result;
 				}
 
-				return Component_ProjectSettings.EngineSplashScreenStyleEnum.Disabled;
+				return ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.Disabled;
 			}
 		}
 

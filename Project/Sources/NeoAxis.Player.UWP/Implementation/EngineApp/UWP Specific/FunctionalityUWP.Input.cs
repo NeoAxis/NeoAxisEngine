@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,6 +15,7 @@ using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.Graphics.Display;
 using Windows.System;
+using Internal;
 
 namespace NeoAxis
 {
@@ -102,7 +103,7 @@ namespace NeoAxis
 
 		public override void CreatedWindow_UpdateShowSystemCursor( bool forceUpdate )
 		{
-			bool show = EngineApp._IsRealShowSystemCursor();
+			bool show = EngineApp.IsRealShowSystemCursor();
 
 			if( createdWindow_UpdateShowSystemCursor != show || forceUpdate )
 			{
@@ -284,7 +285,7 @@ namespace NeoAxis
 					if( !mouse.Equals( lastMousePositionForCheckMouseOutsideWindow, .0001f ) )
 					{
 						lastMousePositionForCheckMouseOutsideWindow = mouse;
-						EngineApp.CreatedInsideEngineWindow._ProcessMouseMoveEvent();
+						EngineApp.CreatedInsideEngineWindow.ProcessMouseMoveEvent();
 					}
 				}
 			}

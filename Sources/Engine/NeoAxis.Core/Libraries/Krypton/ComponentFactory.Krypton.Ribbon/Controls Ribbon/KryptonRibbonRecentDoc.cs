@@ -16,9 +16,9 @@ using System.Drawing.Design;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Diagnostics;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Toolkit;
 
-namespace ComponentFactory.Krypton.Ribbon
+namespace Internal.ComponentFactory.Krypton.Ribbon
 {
     /// <summary>
     /// Represents a single recent document entry in the ribbon application button menu.

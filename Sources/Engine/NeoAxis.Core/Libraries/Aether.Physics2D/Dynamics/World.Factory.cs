@@ -7,13 +7,15 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using tainicom.Aether.Physics2D.Collision.Shapes;
-using tainicom.Aether.Physics2D.Common;
-using tainicom.Aether.Physics2D.Common.Decomposition;
-using tainicom.Aether.Physics2D.Dynamics.Joints;
+using Internal.tainicom.Aether.Physics2D.Collision.Shapes;
+using Internal.tainicom.Aether.Physics2D.Common;
+using Internal.tainicom.Aether.Physics2D.Common.Decomposition;
+using Internal.tainicom.Aether.Physics2D.Dynamics.Joints;
+#if XNAAPI
+using Vector2 = Microsoft.Xna.Framework.Vector2;
+#endif
 
-namespace tainicom.Aether.Physics2D.Dynamics
+namespace Internal.tainicom.Aether.Physics2D.Dynamics
 {
     public partial class World
     {
@@ -24,7 +26,11 @@ namespace tainicom.Aether.Physics2D.Dynamics
             body.Rotation = rotation;            
             body.BodyType = bodyType;
             
+#if LEGACY_ASYNCADDREMOVE
             AddAsync(body);
+#else
+            Add(body);
+#endif
 
             return body;
         }

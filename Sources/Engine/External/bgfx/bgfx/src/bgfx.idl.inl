@@ -1085,6 +1085,31 @@ BGFX_C_API void bgfx_set_texture(uint8_t _stage, bgfx_uniform_handle_t _sampler,
 	bgfx::setTexture(_stage, sampler.cpp, handle.cpp, _flags);
 }
 
+//!!!!betauser
+BGFX_C_API void bgfx_set_textures(uint32_t* data, int count)
+{
+	uint32_t* pointer = data;
+
+	for (int n = 0; n < count; n++)
+	{
+		uint8_t _stage = (uint8_t)*pointer;
+		pointer++;
+
+		bgfx_uniform_handle_t _sampler;
+		_sampler.idx =(uint16_t)*pointer;
+		pointer++;
+
+		bgfx_texture_handle_t _handle;
+		_handle.idx = (uint16_t)*pointer;
+		pointer++;
+
+		uint32_t _flags = *pointer;
+		pointer++;
+
+		bgfx_set_texture(_stage, _sampler, _handle, _flags);
+	}
+}
+
 BGFX_C_API void bgfx_touch(bgfx_view_id_t _id)
 {
 	bgfx::touch((bgfx::ViewId)_id);

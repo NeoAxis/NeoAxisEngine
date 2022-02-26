@@ -1,9 +1,9 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
-namespace NeoAxis.Input
+namespace NeoAxis
 {
 	public enum JoystickButtons
 	{
@@ -131,7 +131,7 @@ namespace NeoAxis.Input
 		//!!!!more properties
 
 		public Vector2I PositionInPixels;
-		public Vector2F Position;
+		public Vector2 Position;
 		//!!!!
 		public object PointerIdentifier;
 

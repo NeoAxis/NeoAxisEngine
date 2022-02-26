@@ -1,6 +1,6 @@
 $input v_texCoord0
 
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "../../Common.sh"
 #include "ASSAO_Helpers.sh"
 
@@ -26,7 +26,7 @@ void main()
 
 	vec2 uv0 = (vec2)pixPosHalf * halfViewportPixelSize.xy;
 
-	vec2 centerVal = bgfxTexture2DArray(s_depthHalfTextureArray, vec3(uv0, (float)ic));
+	vec2 centerVal = texture2DArray(s_depthHalfTextureArray, vec3(uv0, (float)ic));
     
 	ao = centerVal.x;
 
@@ -44,13 +44,13 @@ void main()
 	// calculate final sampling offsets and sample using bilinear filter
 
 	vec2  uvH = (getFragCoord().xy + vec2(fmx + fmxe - 0.5, 0.5 - fmy)) * 0.5 * halfViewportPixelSize;
-	float aoH = bgfxTexture2DArray(s_depthHalfTextureArrayL, vec3(uvH, (float)ih)).x;
+	float aoH = texture2DArray(s_depthHalfTextureArrayL, vec3(uvH, (float)ih)).x;
 
 	vec2  uvV = (getFragCoord().xy + vec2(0.5 - fmx, fmy - 0.5 + fmye)) * 0.5 * halfViewportPixelSize;
-	float aoV = bgfxTexture2DArray(s_depthHalfTextureArrayL, vec3(uvV, (float)iv)).x;
+	float aoV = texture2DArray(s_depthHalfTextureArrayL, vec3(uvV, (float)iv)).x;
 
 	vec2  uvD = (getFragCoord().xy + vec2(fmx - 0.5 + fmxe, fmy - 0.5 + fmye)) * 0.5 * halfViewportPixelSize;
-	float aoD = bgfxTexture2DArray(s_depthHalfTextureArrayL, vec3(uvD, (float)id)).x;
+	float aoD = texture2DArray(s_depthHalfTextureArrayL, vec3(uvD, (float)id)).x;
 
 	// reduce weight for samples near edge - if the edge is on both sides, weight goes to 0
 	vec4 blendWeights;

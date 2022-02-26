@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -6,8 +6,8 @@ using System.Runtime.InteropServices;
 using System.Drawing.Design;
 using System.ComponentModel;
 using System.Reflection;
-using BulletSharp;
-using BulletSharp.Math;
+using Internal.BulletSharp;
+using Internal.BulletSharp.Math;
 
 namespace NeoAxis
 {
@@ -59,14 +59,13 @@ namespace NeoAxis
 		/// </summary>
 		public class ResultItem
 		{
-			public Component_ObjectInSpace Body { get; set; }
-			public Component_CollisionShape Shape { get; set; }
-			public Vector3 Position { get; set; }
-			public Vector3 Normal { get; set; }
-			public double DistanceScale { get; set; }
-			public int TriangleIndexSource { get; set; }
-			public int TriangleIndexProcessed { get; set; }
-
+			public PhysicalBody Body;
+			public CollisionShape Shape;
+			public Vector3 Position;
+			public Vector3 Normal;
+			public double DistanceScale;
+			public int TriangleIndexSource;
+			public int TriangleIndexProcessed;
 		}
 
 		////////////////
@@ -135,8 +134,8 @@ namespace NeoAxis
 		/// </summary>
 		public class ResultItem
 		{
-			public Component_PhysicalBody Body { get; set; }
-			public Component_CollisionShape Shape { get; set; }
+			public PhysicalBody Body { get; set; }
+			public CollisionShape Shape { get; set; }
 
 			public Vector3 LocalPointA { get; set; }
 			public Vector3 PositionWorldOnA { get; set; }
@@ -179,8 +178,8 @@ namespace NeoAxis
 			geometry.Radius += 0.001;
 
 			var collisionObject = new CollisionObject();
-			collisionObject.CollisionShape = new BulletSharp.SphereShape( sphere.Radius );
-			collisionObject.WorldTransform = Matrix.Translation( BulletPhysicsUtility.Convert( sphere.Origin ) );
+			collisionObject.CollisionShape = new Internal.BulletSharp.SphereShape( sphere.Radius );
+			collisionObject.WorldTransform = BMatrix.Translation( BulletPhysicsUtility.Convert( sphere.Center ) );
 			Construct( collisionFilterGroup, collisionFilterMask, mode, collisionObject, true, point => geometry.Contains( point ) );
 		}
 
@@ -190,7 +189,7 @@ namespace NeoAxis
 			geometry.Extents += new Vector3( 0.001, 0.001, 0.001 );
 
 			var collisionObject = new CollisionObject();
-			collisionObject.CollisionShape = new BulletSharp.BoxShape( BulletPhysicsUtility.Convert( box.Extents ) );
+			collisionObject.CollisionShape = new Internal.BulletSharp.BoxShape( BulletPhysicsUtility.Convert( box.Extents ) );
 			collisionObject.WorldTransform = BulletPhysicsUtility.Convert( new Matrix4( box.Axis, box.Center ) );
 			Construct( collisionFilterGroup, collisionFilterMask, mode, collisionObject, true, point => geometry.Contains( point ) );
 		}
@@ -201,7 +200,7 @@ namespace NeoAxis
 			geometry.Expand( 0.001 );
 
 			var collisionObject = new CollisionObject();
-			collisionObject.CollisionShape = new BulletSharp.BoxShape( BulletPhysicsUtility.Convert( bounds.GetSize() * 0.5 ) );
+			collisionObject.CollisionShape = new Internal.BulletSharp.BoxShape( BulletPhysicsUtility.Convert( bounds.GetSize() * 0.5 ) );
 			collisionObject.WorldTransform = BulletPhysicsUtility.Convert( Matrix4.FromTranslate( bounds.GetCenter() ) );
 			Construct( collisionFilterGroup, collisionFilterMask, mode, collisionObject, true, point => geometry.Contains( point ) );
 		}
@@ -215,12 +214,12 @@ namespace NeoAxis
 
 			if( capsule.Point1.ToVector2().Equals( capsule.Point2.ToVector2(), 0.0001 ) )
 			{
-				collisionObject.CollisionShape = new BulletSharp.CapsuleShapeZ( capsule.Radius, capsule.GetLength() );
+				collisionObject.CollisionShape = new Internal.BulletSharp.CapsuleShapeZ( capsule.Radius, capsule.GetLength() );
 				collisionObject.WorldTransform = BulletPhysicsUtility.Convert( Matrix4.FromTranslate( capsule.GetCenter() ) );
 			}
 			else
 			{
-				collisionObject.CollisionShape = new BulletSharp.CapsuleShapeX( capsule.Radius, capsule.GetLength() );
+				collisionObject.CollisionShape = new Internal.BulletSharp.CapsuleShapeX( capsule.Radius, capsule.GetLength() );
 				collisionObject.WorldTransform = BulletPhysicsUtility.Convert( new Matrix4( Quaternion.FromDirectionZAxisUp( capsule.GetDirection() ).ToMatrix3(), capsule.GetCenter() ) );
 			}
 
@@ -241,12 +240,12 @@ namespace NeoAxis
 
 			if( cylinder.Point1.ToVector2().Equals( cylinder.Point2.ToVector2(), 0.0001 ) )
 			{
-				collisionObject.CollisionShape = new BulletSharp.CylinderShapeZ( cylinder.Radius, cylinder.Radius, cylinder.GetLength() * 0.5 );
+				collisionObject.CollisionShape = new Internal.BulletSharp.CylinderShapeZ( cylinder.Radius, cylinder.Radius, cylinder.GetLength() * 0.5 );
 				collisionObject.WorldTransform = BulletPhysicsUtility.Convert( Matrix4.FromTranslate( cylinder.GetCenter() ) );
 			}
 			else
 			{
-				collisionObject.CollisionShape = new BulletSharp.CylinderShapeX( cylinder.GetLength() * 0.5, cylinder.Radius, cylinder.Radius );
+				collisionObject.CollisionShape = new Internal.BulletSharp.CylinderShapeX( cylinder.GetLength() * 0.5, cylinder.Radius, cylinder.Radius );
 				collisionObject.WorldTransform = BulletPhysicsUtility.Convert( new Matrix4( Quaternion.FromDirectionZAxisUp( cylinder.GetDirection() ).ToMatrix3(), cylinder.GetCenter() ) );
 			}
 
@@ -256,7 +255,7 @@ namespace NeoAxis
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	//!!!!â Component_Scene?
+	//!!!!â Scene?
 	/// <summary>
 	/// The data to perform a search query of physical objects at a specified volume which is defined as transfer an object from one point to another.
 	/// </summary>
@@ -306,8 +305,8 @@ namespace NeoAxis
 		/// </summary>
 		public class ResultItem
 		{
-			public Component_ObjectInSpace Body { get; set; }
-			public Component_CollisionShape Shape { get; set; }
+			public ObjectInSpace Body { get; set; }
+			public CollisionShape Shape { get; set; }
 			public Vector3 Position { get; set; }
 			public Vector3 Normal { get; set; }
 			public double DistanceScale { get; set; }
@@ -347,7 +346,7 @@ namespace NeoAxis
 			transformedFrom = originalFrom * offset;
 			transformedTo = originalTo * offset;
 
-			Shape = new BulletSharp.BoxShape( BulletPhysicsUtility.Convert( box.Extents ) );
+			Shape = new Internal.BulletSharp.BoxShape( BulletPhysicsUtility.Convert( box.Extents ) );
 			ShapeAutoDispose = true;
 		}
 
@@ -370,7 +369,7 @@ namespace NeoAxis
 			}
 
 			var halfSize = bounds.GetSize() / 2;
-			Shape = new BulletSharp.BoxShape( BulletPhysicsUtility.Convert( halfSize ) );
+			Shape = new Internal.BulletSharp.BoxShape( BulletPhysicsUtility.Convert( halfSize ) );
 			ShapeAutoDispose = true;
 		}
 
@@ -385,14 +384,14 @@ namespace NeoAxis
 			transformedFrom = originalFrom;
 			transformedTo = originalTo;
 
-			Vector3 offset = sphere.Origin;
+			Vector3 offset = sphere.Center;
 			if( offset != Vector3.Zero )
 			{
 				transformedFrom.SetTranslation( transformedFrom.GetTranslation() + offset );
 				transformedTo.SetTranslation( transformedTo.GetTranslation() + offset );
 			}
 
-			Shape = new BulletSharp.SphereShape( sphere.Radius );
+			Shape = new Internal.BulletSharp.SphereShape( sphere.Radius );
 			ShapeAutoDispose = true;
 		}
 	}
@@ -402,22 +401,22 @@ namespace NeoAxis
 	/// <summary>
 	/// An interface for accessing a component of a physical object.
 	/// </summary>
-	public interface Component_IPhysicalObject
+	public interface IPhysicalObject
 	{
 		void Render( ViewportRenderingContext context, out int verticesRendered );
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public interface IComponent_SoftBody
-	{
-		[Browsable( false )]
-		CollisionObject BulletBody { get; }
+	//public interface ISoftBody
+	//{
+	//	[Browsable( false )]
+	//	CollisionObject BulletBody { get; }
 
-		Vector3 GetNodePosition( int nodeIndex );
-		int FindClosestNodeIndex( Vector3 worldPosition );
+	//	Vector3 GetNodePosition( int nodeIndex );
+	//	int FindClosestNodeIndex( Vector3 worldPosition );
 
-		bool GetProcessedData( out Vector3F[] processedVertices, /*out Vec3F[] processedVerticesNormals, */out int[] processedIndices, out int[] processedTrianglesToSourceIndex );
-	}
+	//	bool GetProcessedData( out Vector3F[] processedVertices, /*out Vec3F[] processedVerticesNormals, */out int[] processedIndices, out int[] processedTrianglesToSourceIndex );
+	//}
 
 }

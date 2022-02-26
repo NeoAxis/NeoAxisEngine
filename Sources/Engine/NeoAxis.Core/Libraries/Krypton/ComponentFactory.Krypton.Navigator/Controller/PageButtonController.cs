@@ -13,9 +13,9 @@ using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Toolkit;
 
-namespace ComponentFactory.Krypton.Navigator
+namespace Internal.ComponentFactory.Krypton.Navigator
 {
 	/// <summary>
 	/// Handle a button by ensuring that contained button specs are not treated as part of the button itself.

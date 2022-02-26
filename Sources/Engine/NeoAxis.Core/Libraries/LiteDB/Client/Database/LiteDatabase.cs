@@ -1,13 +1,14 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using LiteDB.Engine;
-using static LiteDB.Constants;
+using Internal.LiteDB.Engine;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     /// <summary>
     /// The LiteDB database. Used for create a LiteDB instance and use all storage resources. It's the database connection
@@ -63,7 +64,7 @@ namespace LiteDB
         /// <param name="logStream">LogStream reference </param>
         public LiteDatabase(Stream stream, BsonMapper mapper = null, Stream logStream = null)
         {
-            var settings = new EngineSettings
+            var settings = new Engine.EngineSettings
             {
                 DataStream = stream ?? throw new ArgumentNullException(nameof(stream)),
                 LogStream = logStream
@@ -384,3 +385,5 @@ namespace LiteDB
         }
     }
 }
+
+#endif

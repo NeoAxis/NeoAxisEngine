@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ComponentFactory.Krypton.Toolkit.Properties {
+namespace Internal.ComponentFactory.Krypton.Toolkit.Properties {
     using System;
     
     

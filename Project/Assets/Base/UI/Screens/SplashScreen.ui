@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2021.2.
+// Made with NeoAxis Engine 2022.1.
 
 .component Project.SplashScreen
 {
@@ -7,7 +7,7 @@
 	.component NeoAxis.UIImage
 	{
 		Name = PoweredBy_BlackBackground
-		Size = Units 800 312
+		Size = Units 666 260
 		HorizontalAlignment = Center
 		VerticalAlignment = Center
 		EditorScrollPosition = 0 0
@@ -19,7 +19,7 @@
 	.component NeoAxis.UIImage
 	{
 		Name = PoweredBy_WhiteBackground
-		Size = Units 800 312
+		Size = Units 666 260
 		HorizontalAlignment = Center
 		VerticalAlignment = Center
 		EditorScrollPosition = 0 0
@@ -31,7 +31,7 @@
 	.component NeoAxis.UIImage
 	{
 		Name = Project
-		Size = Units 640 240
+		Size = Units 533 200
 		HorizontalAlignment = Center
 		VerticalAlignment = Center
 		EditorScrollPosition = 0 0

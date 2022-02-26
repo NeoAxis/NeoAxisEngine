@@ -13,9 +13,9 @@ using System.IO;
 using System.Xml;
 using System.Drawing;
 using System.Diagnostics;
-using ComponentFactory.Krypton.Navigator;
+using Internal.ComponentFactory.Krypton.Navigator;
 
-namespace ComponentFactory.Krypton.Docking
+namespace Internal.ComponentFactory.Krypton.Docking
 {
 	/// <summary>
     /// Event data for saving docking page configuration.

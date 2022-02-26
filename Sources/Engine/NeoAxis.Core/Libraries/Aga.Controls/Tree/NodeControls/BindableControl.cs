@@ -4,7 +4,7 @@ using System.Text;
 using System.Reflection;
 using System.ComponentModel;
 
-namespace Aga.Controls.Tree.NodeControls
+namespace Internal.Aga.Controls.Tree.NodeControls
 {
 	public abstract class BindableControl : NodeControl
 	{

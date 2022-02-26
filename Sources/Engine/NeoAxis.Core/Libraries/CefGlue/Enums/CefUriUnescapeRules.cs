@@ -1,8 +1,9 @@
-﻿//
+#if !NO_UI_WEB_BROWSER
+//
 // This file manually written from cef/include/internal/cef_types.h.
 // C API name: cef_uri_unescape_rule_t.
 //
-namespace Xilium.CefGlue
+namespace Internal.Xilium.CefGlue
 {
     using System;
 
@@ -70,3 +71,5 @@ namespace Xilium.CefGlue
         ReplacePlusWithSpace = 1 << 5,
     }
 }
+
+#endif

@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.ComponentModel;
 
-namespace Aga.Controls.Tree.NodeControls
+namespace Internal.Aga.Controls.Tree.NodeControls
 {
 	[DesignTimeVisible(false), ToolboxItem(false)]
 	public abstract class NodeControl : Component

@@ -10,7 +10,7 @@
 
 using System;
 
-namespace ComponentFactory.Krypton.Navigator
+namespace Internal.ComponentFactory.Krypton.Navigator
 {
 	/// <summary>
 	/// Details for a close button action event.

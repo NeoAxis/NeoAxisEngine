@@ -1,10 +1,11 @@
-﻿using LiteDB.Engine;
+#if !NO_LITE_DB
+using Internal.LiteDB.Engine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     /// <summary>
     /// Class is a result from optimized QueryBuild. Indicate how engine must run query - there is no more decisions to engine made, must only execute as query was defined
@@ -227,3 +228,4 @@ namespace LiteDB
         }
     }
 }
+#endif

@@ -1,10 +1,11 @@
-﻿//
+#if !NO_UI_WEB_BROWSER
+//
 // This file manually written from cef/include/internal/cef_time.h.
 //
 // See also:
 //   /Interop/Structs/cef_time_t.cs
 //
-namespace Xilium.CefGlue.Interop
+namespace Internal.Xilium.CefGlue.Interop
 {
     using System;
     using System.Runtime.InteropServices;
@@ -43,3 +44,5 @@ namespace Xilium.CefGlue.Interop
         */
     }
 }
+
+#endif

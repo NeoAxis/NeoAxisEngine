@@ -16,9 +16,9 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.ComponentModel;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Toolkit;
 
-namespace ComponentFactory.Krypton.Navigator
+namespace Internal.ComponentFactory.Krypton.Navigator
 {
 	/// <summary>
 	/// Navigator view element for drawing an overflow item for the Outlook mode.

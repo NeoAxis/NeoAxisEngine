@@ -1,3 +1,5 @@
+// Made with NeoAxis Engine 2022.1.
+
 .component Project.SimpleGameGUI
 {
 	Size = Parent 1 1
@@ -6,15 +8,16 @@
 	{
 		Name = Button Next Level
 		Text = Next Level
-		Size = Units 200 40
-		HorizontalAlignment = Right
-		Margin = Units 0 100 100 0
+		Size = Units 300 60
+		HorizontalAlignment = Center
+		VerticalAlignment = Bottom
+		Margin = Units 0 0 0 100
 		EditorScrollPosition = 0 0
 		Style
 		{
 			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
 		}
-		.component NeoAxis.Component_EventHandler
+		.component NeoAxis.EventHandlerComponent
 		{
 			Name = Event Handler Click
 			Event
@@ -32,6 +35,7 @@
 	}
 	.component NeoAxis.UIButton
 	{
+		Enabled = False
 		Name = Button Exit
 		Text = Exit
 		Size = Units 200 40
@@ -42,7 +46,7 @@
 		{
 			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
 		}
-		.component NeoAxis.Component_EventHandler
+		.component NeoAxis.EventHandlerComponent
 		{
 			Name = Event Handler Click
 			Event

@@ -1,6 +1,6 @@
 using System.Windows.Forms;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     partial class ModalWaitDialog
     {

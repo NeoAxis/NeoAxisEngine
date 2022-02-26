@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 
@@ -29,7 +29,7 @@ namespace NeoAxis
 		//internal SimulationTypes simulationType;
 		//internal SimulationStatuses simulationStatus = SimulationStatuses.StillNotSimulated;
 
-		//!!!!serilization
+		//!!!!serialization
 		ESet<Flow> sleepingFlows = new ESet<Flow>();
 
 		//
@@ -135,11 +135,6 @@ namespace NeoAxis
 		//	get { return simulationTickDelta; }
 		//}
 
-		//!!!!
-		////!!!!как отписываться при разрушении объекта?
-		//public delegate void SimulationTickDelegate( Component_Map map );//!!!!, float simulationTickDelta );
-		//public event SimulationTickDelegate SimulationTick;
-
 		//void SimulationStep()
 		//{
 		////send WorldTick message
@@ -231,7 +226,7 @@ namespace NeoAxis
 				simulationTime = time;
 
 			//loop
-			double delta = ProjectSettings.Get.SimulationStepsPerSecondInv;
+			double delta = ProjectSettings.Get.General.SimulationStepsPerSecondInv;
 			while( time > simulationTime + delta )
 			{
 				simulationTime += delta;

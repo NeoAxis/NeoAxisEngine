@@ -10,9 +10,9 @@
 
 using System;
 using System.Drawing;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Toolkit;
 
-namespace ComponentFactory.Krypton.Navigator
+namespace Internal.ComponentFactory.Krypton.Navigator
 {
 	/// <summary>
     /// Details for an event that provides pages and cell associated with a page dragging event.

@@ -26,10 +26,12 @@
 */
 
 using System.Diagnostics;
-using tainicom.Aether.Physics2D.Common;
-using Microsoft.Xna.Framework;
+using Internal.tainicom.Aether.Physics2D.Common;
+#if XNAAPI
+using Vector2 = Microsoft.Xna.Framework.Vector2;
+#endif
 
-namespace tainicom.Aether.Physics2D.Collision.Shapes
+namespace Internal.tainicom.Aether.Physics2D.Collision.Shapes
 {
     /// <summary>
     /// A chain shape is a free form sequence of line segments.

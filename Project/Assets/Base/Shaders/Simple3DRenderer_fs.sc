@@ -1,10 +1,13 @@
-$input v_pos, v_colorVisible, v_colorInvisible
+$input v_worldPosition_depth, v_colorVisible, v_colorInvisible
 
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "Common.sh"
 #include "FragmentFunctions.sh"
 
-SAMPLER2D(s_depthTexture, 0);
+//!!!!need get depth from geometry in GLSL. right now depth check is skipped
+#ifndef GLSL
+	SAMPLER2D(s_depthTexture, 0);
+#endif
 
 uniform vec4 u_simple3DRendererVertex[3];
 #define u_color u_simple3DRendererVertex[0]
@@ -14,18 +17,28 @@ uniform vec4 u_simple3DRendererVertex[3];
 
 void main()
 {
+	cutVolumes(v_worldPosition_depth.xyz);
+
 	bool visible = true;
+//!!!!need get depth from geometry in GLSL. right now depth check is skipped
+#ifndef GLSL
 	if(u_depthTextureAvailable > 0.0)
-	{	
-		vec2 ndc = v_pos.xy/v_pos.w;
-#ifdef HLSL
-		// flip ndc y coord to match directx v tex coord
-		ndc.y = -ndc.y;
-#endif
-		float rawDepth = texture2D(s_depthTexture, 0.5*ndc + 0.5).r;
+	{
+		vec2 texCoord = getFragCoord().xy * u_viewportSizeInv;
+		float rawDepth = texture2D(s_depthTexture, texCoord).r;
 		float depth = getDepthValue(rawDepth, u_viewportOwnerNearClipDistance, u_viewportOwnerFarClipDistance);
-		if(depth < v_pos.z) visible = false;
-	}	
+
+		//!!!!
+		float offset = 0.05;
+
+		if(depth < v_worldPosition_depth.w - offset)
+			visible = false;
+		
+		//float originalZ = gl_FragCoord.z / gl_FragCoord.w;
+		//if(depth < originalZ - offset)
+		//	visible = false;	
+	}
+#endif
 	
 	if(visible)
 		gl_FragColor = v_colorVisible;

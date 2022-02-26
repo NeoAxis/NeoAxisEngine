@@ -37,7 +37,7 @@ Project: https://github.com/MatterHackers/agg-sharp (an included library)
 
 using System;
 
-namespace Net3dBool
+namespace Internal.Net3dBool
 {
     public enum Status { UNKNOWN, INSIDE, OUTSIDE, SAME, OPPOSITE, BOUNDARY };
 

@@ -1,5 +1,5 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-using ComponentFactory.Krypton.Toolkit;
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+using Internal.ComponentFactory.Krypton.Toolkit;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -114,16 +114,16 @@ namespace NeoAxis.Editor
 			}
 		}
 
-		List<Component_EventHandler> GetEventHandlersToEdit()
+		List<EventHandlerComponent> GetEventHandlersToEdit()
 		{
-			var result = new List<Component_EventHandler>();
+			var result = new List<EventHandlerComponent>();
 
 			var c = GetOneControlledObject<Component>();
 			if( c != null )
 			{
 				//!!!!slowly?
 
-				foreach( var handler in c.ParentRoot.GetComponents<Component_EventHandler>( checkChildren: true ) )
+				foreach( var handler in c.ParentRoot.GetComponents<EventHandlerComponent>( checkChildren: true ) )
 				{
 					var eventValue = handler.Event.Value;
 					if( eventValue != null )
@@ -134,7 +134,7 @@ namespace NeoAxis.Editor
 				}
 
 				//var valueToCheck = "this:..\\event:" + _event.Name;
-				//foreach( var handler in c.GetComponents<Component_EventHandler>() )
+				//foreach( var handler in c.GetComponents<EventHandler>() )
 				//{
 				//	if( handler.Event.GetByReference == valueToCheck )
 				//		result.Add( handler );
@@ -160,10 +160,10 @@ namespace NeoAxis.Editor
 					var componentToSelect = (Component)( (KryptonContextMenuItem)s ).Tag;
 
 					//if component in the flow graph, then activate flow graph window
-					var parentNode = componentToSelect.Parent as Component_FlowGraphNode;
+					var parentNode = componentToSelect.Parent as FlowGraphNode;
 					if( parentNode != null )
 					{
-						var graph = parentNode.Parent as Component_FlowGraph;
+						var graph = parentNode.Parent as FlowGraph;
 						if( graph != null )
 							EditorAPI.OpenDocumentWindowForObject( Owner.DocumentWindow.Document, graph );
 					}
@@ -183,14 +183,15 @@ namespace NeoAxis.Editor
 			return EditorLocalization.Translate( "SettingsWindow", text );
 		}
 
-		Component_FlowGraphNode AddFlowGraphNode( Component_FlowGraph graph, Component subscribeTo )
+		FlowGraphNode AddFlowGraphNode( FlowGraph graph, Component subscribeTo )
 		{
-			var node = graph.CreateComponent<Component_FlowGraphNode>( enabled: false );
+			var node = graph.CreateComponent<FlowGraphNode>( enabled: false );
 			node.Name = node.BaseType.GetUserFriendlyNameForInstance();
 			node.Position = graph.EditorScrollPosition.ToVector2I();
 
-			var handler = node.CreateComponent<Component_EventHandler>();
-			handler.Name = handler.BaseType.GetUserFriendlyNameForInstance() + " " + _event.Name;
+			var handler = node.CreateComponent<EventHandlerComponent>();
+			handler.Name = "Event Handler " + _event.Name;
+			//handler.Name = handler.BaseType.GetUserFriendlyNameForInstance() + " " + _event.Name;
 			handler.Event = ReferenceUtility.MakeReference<ReferenceValueType_Event>(
 				null, ReferenceUtility.CalculateThisReference( handler, subscribeTo, _event.Signature ) );
 
@@ -281,8 +282,9 @@ namespace NeoAxis.Editor
 			var newObjects = new List<Component>();
 
 			//create handler
-			var handler = subscribeTo.CreateComponent<Component_EventHandler>( enabled: false );
-			handler.Name = handler.BaseType.GetUserFriendlyNameForInstance() + " " + _event.Name;
+			var handler = subscribeTo.CreateComponent<EventHandlerComponent>( enabled: false );
+			handler.Name = "Event Handler " + _event.Name;
+			//handler.Name = handler.BaseType.GetUserFriendlyNameForInstance() + " " + _event.Name;
 			handler.Event = ReferenceUtility.MakeReference<ReferenceValueType_Event>( null,
 				ReferenceUtility.CalculateThisReference( handler, subscribeTo, _event.Signature ) );
 			handler.HandlerMethod = ReferenceUtility.MakeReference<ReferenceValueType_Method>( null,
@@ -384,13 +386,13 @@ namespace NeoAxis.Editor
 							var document = Owner.DocumentWindow.Document;
 
 							//create script
-							var script = parent.CreateComponent<Component_CSharpScript>( enabled: false );
+							var script = parent.CreateComponent<CSharpScript>( enabled: false );
 							script.Name = script.BaseType.GetUserFriendlyNameForInstance();
 							script.Code = "class _Temp{\r\n}";
 							script.Enabled = true;
 
 							//activate flow graph window
-							var scriptDocumentWindow = EditorAPI.OpenDocumentWindowForObject( document, script ) as Component_CSharpScript_DocumentWindow;
+							var scriptDocumentWindow = EditorAPI.OpenDocumentWindowForObject( document, script ) as CSharpScriptEditor;
 
 							Owner.DocumentWindow.SelectObjects( new object[] { script } );
 
@@ -430,8 +432,9 @@ namespace NeoAxis.Editor
 
 							//create event handler
 							{
-								var handler = script.CreateComponent<Component_EventHandler>( enabled: false );
-								handler.Name = handler.BaseType.GetUserFriendlyNameForInstance() + " " + _event.Name;
+								var handler = script.CreateComponent<EventHandlerComponent>( enabled: false );
+								handler.Name = "Event Handler " + _event.Name;
+								//handler.Name = handler.BaseType.GetUserFriendlyNameForInstance() + " " + _event.Name;
 								handler.Event = ReferenceUtility.MakeReference<ReferenceValueType_Event>( null,
 									ReferenceUtility.CalculateThisReference( handler, subscribeTo, _event.Signature ) );
 								handler.HandlerMethod = ReferenceUtility.MakeReference<ReferenceValueType_Method>( null,
@@ -451,14 +454,14 @@ namespace NeoAxis.Editor
 				}
 
 				//add handler to one of already created C# scripts
-				foreach( var script in subscribeTo.ParentRoot.GetComponents<Component_CSharpScript>( false, true ) )
+				foreach( var script in subscribeTo.ParentRoot.GetComponents<CSharpScript>( false, true ) )
 				{
 					if( script.TypeSettingsIsPublic() )
 					{
 						var text = string.Format( Translate( "Add Handler to \'{0}\'" ), script.GetPathFromRoot( true ) );
 						var item = new KryptonContextMenuItem( text, null, delegate ( object s, EventArgs e2 )
 						{
-							var script2 = (Component_CSharpScript)( (KryptonContextMenuItem)s ).Tag;
+							var script2 = (CSharpScript)( (KryptonContextMenuItem)s ).Tag;
 							var document = Owner.DocumentWindow.Document;
 
 							var oldCode = script2.Code;
@@ -466,7 +469,7 @@ namespace NeoAxis.Editor
 							script2.Code = "class _Temp{\r\n}";
 
 							//activate flow graph window
-							var scriptDocumentWindow = EditorAPI.OpenDocumentWindowForObject( document, script2 ) as Component_CSharpScript_DocumentWindow;
+							var scriptDocumentWindow = EditorAPI.OpenDocumentWindowForObject( document, script2 ) as CSharpScriptEditor;
 
 							Owner.DocumentWindow.SelectObjects( new object[] { script2 } );
 
@@ -531,10 +534,11 @@ namespace NeoAxis.Editor
 							}
 
 							//create event handler
-							Component_EventHandler handler;
+							EventHandlerComponent handler;
 							{
-								handler = script2.CreateComponent<Component_EventHandler>( enabled: false );
-								handler.Name = handler.BaseType.GetUserFriendlyNameForInstance() + " " + _event.Name;
+								handler = script2.CreateComponent<EventHandlerComponent>( enabled: false );
+								handler.Name = "Event Handler " + _event.Name;
+								//handler.Name = handler.BaseType.GetUserFriendlyNameForInstance() + " " + _event.Name;
 								handler.Event = ReferenceUtility.MakeReference<ReferenceValueType_Event>( null,
 									ReferenceUtility.CalculateThisReference( handler, subscribeTo, _event.Signature ) );
 								handler.HandlerMethod = ReferenceUtility.MakeReference<ReferenceValueType_Method>( null,
@@ -582,7 +586,7 @@ namespace NeoAxis.Editor
 							var parent = (Component)( (KryptonContextMenuItem)s ).Tag;
 
 							//create flow graph
-							var graph = parent.CreateComponent<Component_FlowGraph>( enabled: false );
+							var graph = parent.CreateComponent<FlowGraph>( enabled: false );
 							graph.Name = graph.BaseType.GetUserFriendlyNameForInstance();
 							graph.Enabled = true;
 
@@ -605,14 +609,14 @@ namespace NeoAxis.Editor
 				}
 
 				//add handler to one of already created flow graph
-				foreach( var graph in subscribeTo.ParentRoot.GetComponents<Component_FlowGraph>( false, true ) )
+				foreach( var graph in subscribeTo.ParentRoot.GetComponents<FlowGraph>( false, true ) )
 				{
 					if( graph.TypeSettingsIsPublic() )
 					{
 						var text = string.Format( Translate( "Add Handler to \'{0}\'" ), graph.GetPathFromRoot( true ) );
 						var item = new KryptonContextMenuItem( text, null, delegate ( object s, EventArgs e2 )
 						{
-							var graph2 = (Component_FlowGraph)( (KryptonContextMenuItem)s ).Tag;
+							var graph2 = (FlowGraph)( (KryptonContextMenuItem)s ).Tag;
 
 							//create node with handler
 							var node = AddFlowGraphNode( graph2, subscribeTo );
@@ -641,7 +645,7 @@ namespace NeoAxis.Editor
 			//	{
 			//		var newObjects = new List<Component>();
 
-			//		var handler = subscribeTo.CreateComponent<Component_EventHandler>( enable: false );
+			//		var handler = subscribeTo.CreateComponent<EventHandler>( enable: false );
 			//		handler.Name = handler.BaseType.GetUserFriendlyNameForInstance() + " " + _event.Name;
 			//		handler.Event = ReferenceUtility.MakeReference<ReferenceValueType_Event>( null,
 			//			ReferenceUtility.CalculateThisReference( handler, subscribeTo, _event.Signature ) );

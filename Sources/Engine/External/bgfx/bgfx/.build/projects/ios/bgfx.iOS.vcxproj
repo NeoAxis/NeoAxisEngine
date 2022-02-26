@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|ARM64">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM64">
+      <Configuration>Release</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\astc_file.cc" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\codec.cc" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\endpoint_codec.cc" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\footprint.cc" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\integer_sequence_codec.cc" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\intermediate_astc_block.cc" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\logical_astc_block.cc" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\partition.cc" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\physical_astc_block.cc" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\quantization.cc" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\weight_infill.cc" />
+    <ClCompile Include="..\..\..\..\bimg\src\image.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\src\image_gnf.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\allocator.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\bx.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\commandline.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\crtnone.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\debug.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\dtoa.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\easing.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\file.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\filepath.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\hash.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\math.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\mutex.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\os.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\process.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\semaphore.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\settings.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\sort.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\string.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\thread.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\timer.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\url.cpp" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp1.c" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp2.c" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp3.c" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp4.c" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp5.c" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp6.c" />
+    <ClCompile Include="..\..\..\src\amalgamated.cpp" />
+    <ClCompile Include="..\..\..\src\bgfx.cpp" />
+    <ClCompile Include="..\..\..\src\debug_renderdoc.cpp" />
+    <ClCompile Include="..\..\..\src\dxgi.cpp" />
+    <ClCompile Include="..\..\..\src\glcontext_egl.cpp" />
+    <ClCompile Include="..\..\..\src\glcontext_glx.cpp" />
+    <ClCompile Include="..\..\..\src\glcontext_html5.cpp" />
+    <ClCompile Include="..\..\..\src\glcontext_wgl.cpp" />
+    <ClCompile Include="..\..\..\src\nvapi.cpp" />
+    <ClCompile Include="..\..\..\src\renderer_d3d11.cpp" />
+    <ClCompile Include="..\..\..\src\renderer_d3d12.cpp" />
+    <ClCompile Include="..\..\..\src\renderer_d3d9.cpp" />
+    <ClCompile Include="..\..\..\src\renderer_gl.cpp" />
+    <ClCompile Include="..\..\..\src\renderer_gnm.cpp" />
+    <ClCompile Include="..\..\..\src\renderer_noop.cpp" />
+    <ClCompile Include="..\..\..\src\renderer_nvn.cpp" />
+    <ClCompile Include="..\..\..\src\renderer_vk.cpp" />
+    <ClCompile Include="..\..\..\src\renderer_webgpu.cpp" />
+    <ClCompile Include="..\..\..\src\shader.cpp" />
+    <ClCompile Include="..\..\..\src\shader_dx9bc.cpp" />
+    <ClCompile Include="..\..\..\src\shader_dxbc.cpp" />
+    <ClCompile Include="..\..\..\src\shader_spirv.cpp" />
+    <ClCompile Include="..\..\..\src\special.cpp" />
+    <ClCompile Include="..\..\..\src\topology.cpp" />
+    <ClCompile Include="..\..\..\src\vertexlayout.cpp" />
+    <ClCompile Include="..\..\..\tools\shaderc\Library.cpp" />
+    <ClCompile Include="..\..\..\tools\shaderc\LibraryBase.cpp" />
+    <ClCompile Include="..\..\..\tools\shaderc\shaderc.cpp" />
+    <ClCompile Include="..\..\..\tools\shaderc\shaderc_glsl.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\include\astc-codec\astc-codec.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\base\bit_stream.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\base\bottom_n.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\base\math_utils.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\base\optional.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\base\string_utils.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\base\type_traits.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\base\uint128.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\base\utils.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\astc_file.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\codec.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\endpoint_codec.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\footprint.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\integer_sequence_codec.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\intermediate_astc_block.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\logical_astc_block.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\partition.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\physical_astc_block.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\quantization.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\test\image_utils.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\types.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\weight_infill.h" />
+    <ClInclude Include="..\..\..\..\bimg\include\bimg\bimg.h" />
+    <ClInclude Include="..\..\..\..\bimg\include\bimg\decode.h" />
+    <ClInclude Include="..\..\..\..\bimg\include\bimg\encode.h" />
+    <ClInclude Include="..\..\..\..\bimg\src\bimg_p.h" />
+    <ClInclude Include="..\..\..\..\bimg\src\config.h" />
+    <ClInclude Include="..\..\..\..\bx\3rdparty\ini\ini.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\allocator.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\bx.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\commandline.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\config.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\cpu.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\debug.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\easing.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\endian.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\error.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\file.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\filepath.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\float4x4_t.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\handlealloc.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\hash.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\macros.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\maputil.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\math.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\mpscqueue.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\mutex.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\os.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\pixelformat.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\platform.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\process.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\readerwriter.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\ringbuffer.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\rng.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\semaphore.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\settings.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\simd_t.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\sort.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\spscqueue.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\string.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\thread.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\timer.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\uint32_t.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\url.h" />
+    <ClInclude Include="..\..\..\..\bx\include\tinystl\allocator.h" />
+    <ClInclude Include="..\..\..\..\bx\include\tinystl\buffer.h" />
+    <ClInclude Include="..\..\..\..\bx\include\tinystl\hash.h" />
+    <ClInclude Include="..\..\..\..\bx\include\tinystl\hash_base.h" />
+    <ClInclude Include="..\..\..\..\bx\include\tinystl\new.h" />
+    <ClInclude Include="..\..\..\..\bx\include\tinystl\stddef.h" />
+    <ClInclude Include="..\..\..\..\bx\include\tinystl\string.h" />
+    <ClInclude Include="..\..\..\..\bx\include\tinystl\traits.h" />
+    <ClInclude Include="..\..\..\..\bx\include\tinystl\unordered_map.h" />
+    <ClInclude Include="..\..\..\..\bx\include\tinystl\unordered_set.h" />
+    <ClInclude Include="..\..\..\..\bx\include\tinystl\vector.h" />
+    <ClInclude Include="..\..\..\..\bx\src\bx_p.h" />
+    <ClInclude Include="..\..\..\3rdparty\fcpp\cpp.h" />
+    <ClInclude Include="..\..\..\3rdparty\fcpp\cppadd.h" />
+    <ClInclude Include="..\..\..\3rdparty\fcpp\cppdef.h" />
+    <ClInclude Include="..\..\..\3rdparty\fcpp\fpp.h" />
+    <ClInclude Include="..\..\..\3rdparty\fcpp\FPPBase.h" />
+    <ClInclude Include="..\..\..\3rdparty\fcpp\fpp_pragmas.h" />
+    <ClInclude Include="..\..\..\3rdparty\fcpp\FPP_protos.h" />
+    <ClInclude Include="..\..\..\3rdparty\khronos\GLES3\gl3.h" />
+    <ClInclude Include="..\..\..\3rdparty\khronos\GLES3\gl31.h" />
+    <ClInclude Include="..\..\..\3rdparty\khronos\GLES3\gl32.h" />
+    <ClInclude Include="..\..\..\3rdparty\khronos\GLES3\gl3ext.h" />
+    <ClInclude Include="..\..\..\3rdparty\khronos\GLES3\gl3platform.h" />
+    <ClInclude Include="..\..\..\3rdparty\khronos\KHR\khrplatform.h" />
+    <ClInclude Include="..\..\..\include\bgfx\bgfx.h" />
+    <ClInclude Include="..\..\..\include\bgfx\c99\bgfx.h" />
+    <ClInclude Include="..\..\..\include\bgfx\defines.h" />
+    <ClInclude Include="..\..\..\include\bgfx\embedded_shader.h" />
+    <ClInclude Include="..\..\..\include\bgfx\platform.h" />
+    <ClInclude Include="..\..\..\src\bgfx_p.h" />
+    <ClInclude Include="..\..\..\src\charset.h" />
+    <ClInclude Include="..\..\..\src\config.h" />
+    <ClInclude Include="..\..\..\src\debug_renderdoc.h" />
+    <ClInclude Include="..\..\..\src\dxgi.h" />
+    <ClInclude Include="..\..\..\src\emscripten.h" />
+    <ClInclude Include="..\..\..\src\fs_clear0.bin.h" />
+    <ClInclude Include="..\..\..\src\fs_clear1.bin.h" />
+    <ClInclude Include="..\..\..\src\fs_clear2.bin.h" />
+    <ClInclude Include="..\..\..\src\fs_clear3.bin.h" />
+    <ClInclude Include="..\..\..\src\fs_clear4.bin.h" />
+    <ClInclude Include="..\..\..\src\fs_clear5.bin.h" />
+    <ClInclude Include="..\..\..\src\fs_clear6.bin.h" />
+    <ClInclude Include="..\..\..\src\fs_clear7.bin.h" />
+    <ClInclude Include="..\..\..\src\fs_debugfont.bin.h" />
+    <ClInclude Include="..\..\..\src\glcontext_eagl.h" />
+    <ClInclude Include="..\..\..\src\glcontext_egl.h" />
+    <ClInclude Include="..\..\..\src\glcontext_glx.h" />
+    <ClInclude Include="..\..\..\src\glcontext_html5.h" />
+    <ClInclude Include="..\..\..\src\glcontext_nsgl.h" />
+    <ClInclude Include="..\..\..\src\glcontext_wgl.h" />
+    <ClInclude Include="..\..\..\src\glimports.h" />
+    <ClInclude Include="..\..\..\src\nvapi.h" />
+    <ClInclude Include="..\..\..\src\renderer.h" />
+    <ClInclude Include="..\..\..\src\renderer_d3d.h" />
+    <ClInclude Include="..\..\..\src\renderer_d3d11.h" />
+    <ClInclude Include="..\..\..\src\renderer_d3d12.h" />
+    <ClInclude Include="..\..\..\src\renderer_d3d9.h" />
+    <ClInclude Include="..\..\..\src\renderer_gl.h" />
+    <ClInclude Include="..\..\..\src\renderer_mtl.h" />
+    <ClInclude Include="..\..\..\src\renderer_vk.h" />
+    <ClInclude Include="..\..\..\src\renderer_webgpu.h" />
+    <ClInclude Include="..\..\..\src\shader.h" />
+    <ClInclude Include="..\..\..\src\shader_dx9bc.h" />
+    <ClInclude Include="..\..\..\src\shader_dxbc.h" />
+    <ClInclude Include="..\..\..\src\shader_spirv.h" />
+    <ClInclude Include="..\..\..\src\special.h" />
+    <ClInclude Include="..\..\..\src\topology.h" />
+    <ClInclude Include="..\..\..\src\version.h" />
+    <ClInclude Include="..\..\..\src\vertexlayout.h" />
+    <ClInclude Include="..\..\..\src\vs_clear.bin.h" />
+    <ClInclude Include="..\..\..\src\vs_debugfont.bin.h" />
+    <ClInclude Include="..\..\..\tools\shaderc\LibraryBase.h" />
+    <ClInclude Include="..\..\..\tools\shaderc\shaderc.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\allocator.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\bx.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\cpu.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\easing.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\endian.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\error.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\float4x4_t.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\handlealloc.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\hash.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\math.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\mpscqueue.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\mutex.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\pixelformat.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\readerwriter.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\ringbuffer.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\rng.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\simd128_langext.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\simd128_neon.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\simd128_ref.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\simd128_sse.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\simd128_swizzle.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\simd256_avx.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\simd256_ref.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\simd_ni.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\sort.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\spscqueue.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\string.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\inline\uint32_t.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\src\bgfx.idl.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <Keyword>iOS</Keyword>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <ApplicationType>iOS</ApplicationType>
+    <ApplicationTypeRevision>1.0</ApplicationTypeRevision>
+    <ProjectGuid>{C10FE723-571D-4DA5-80ED-97B1C5F8FF7A}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
+    <iOSConfigurationType>StaticLibrary</iOSConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>XCode_6_1</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
+    <iOSConfigurationType>StaticLibrary</iOSConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>XCode_6_1</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <OutDir>$(SolutionDir)_Compilation\iOS\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_Compilation\iOS\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <IncludePath>../../../include;../../../../../../NativeMemoryManager;../../../../bx/include;../../../../bx/3rdparty;../../../../bimg/include;../../../../bimg/3rdparty;../../../../bimg/3rdparty/astc-codec/include;../../../../bimg/3rdparty/astc-codec;../../../3rdparty/khronos</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <PreprocessorDefinitions>__APPLE__;NDEBUG;IOS;BGFX_CONFIG_RENDERER_OPENGLES=30;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>-D PLATFORM=1 %(AdditionalOptions)</AdditionalOptions>
+      <ExceptionHandling>Enabled</ExceptionHandling>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <PreprocessorDefinitions>__APPLE__;</PreprocessorDefinitions>
+      <AdditionalOptions>-D PLATFORM=1 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

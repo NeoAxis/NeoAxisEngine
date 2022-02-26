@@ -16,9 +16,9 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Diagnostics;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Toolkit;
 
-namespace ComponentFactory.Krypton.Workspace
+namespace Internal.ComponentFactory.Krypton.Workspace
 {
 	/// <summary>
 	/// Storage for workspace context menu for pages.

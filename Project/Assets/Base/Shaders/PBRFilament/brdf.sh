@@ -26,18 +26,20 @@
 // Fresnel functions
 #define SPECULAR_F_SCHLICK          0
 
-//!!!!new
-#define BRDF_DIFFUSE                DIFFUSE_BURLEY
-//#define BRDF_DIFFUSE                DIFFUSE_LAMBERT
-
-#if defined(TARGET_MOBILE)
-#define BRDF_SPECULAR_D             SPECULAR_D_GGX
-#define BRDF_SPECULAR_V             SPECULAR_V_SMITH_GGX_FAST
-#define BRDF_SPECULAR_F             SPECULAR_F_SCHLICK
+#if GLOBAL_MATERIAL_SHADING == GLOBAL_MATERIAL_SHADING_BASIC
+	#define BRDF_DIFFUSE                DIFFUSE_LAMBERT
 #else
-#define BRDF_SPECULAR_D             SPECULAR_D_GGX
-#define BRDF_SPECULAR_V             SPECULAR_V_SMITH_GGX
-#define BRDF_SPECULAR_F             SPECULAR_F_SCHLICK
+	#define BRDF_DIFFUSE                DIFFUSE_BURLEY
+#endif
+
+#if GLOBAL_MATERIAL_SHADING == GLOBAL_MATERIAL_SHADING_BASIC
+	#define BRDF_SPECULAR_D             SPECULAR_D_GGX
+	#define BRDF_SPECULAR_V             SPECULAR_V_SMITH_GGX_FAST
+	#define BRDF_SPECULAR_F             SPECULAR_F_SCHLICK
+#else
+	#define BRDF_SPECULAR_D             SPECULAR_D_GGX
+	#define BRDF_SPECULAR_V             SPECULAR_V_SMITH_GGX
+	#define BRDF_SPECULAR_F             SPECULAR_F_SCHLICK
 #endif
 
 #define BRDF_CLEAR_COAT_D           SPECULAR_D_GGX
@@ -68,7 +70,7 @@ float D_GGX(float linearRoughness, float NoH, const vec3 h) {
     // enough precision).
     // Overall this yields better performance, keeping all computations in mediump
 //!!!!betauser
-//#if defined(TARGET_MOBILE)
+//#if defined(MOBILE)
 //    vec3 NxH = cross(shading_normal, h);
 //    float oneMinusNoHSquared = dot(NxH, NxH);
 //#else
@@ -175,7 +177,7 @@ float visibility(float linearRoughness, float NoV, float NoL, float LoH) {
 
 vec3 fresnel(const vec3 f0, float LoH) {
 #if BRDF_SPECULAR_F == SPECULAR_F_SCHLICK
-#if defined(TARGET_MOBILE)
+#if GLOBAL_MATERIAL_SHADING == GLOBAL_MATERIAL_SHADING_BASIC
     return F_Schlick(f0, LoH); // f90 = 1.0
 #else
     float f90 = saturate(dot(f0, vec3_splat(50.0 * 0.33)));
@@ -272,7 +274,7 @@ float f0ToIor(float f0) {
 vec3 f0ClearCoatToSurface(const vec3 f0) {
     // Approximation of iorTof0(f0ToIor(f0), 1.5)
     // This assumes that the clear coat layer has an IOR of 1.5
-#if defined(TARGET_MOBILE)
+#if GLOBAL_MATERIAL_SHADING == GLOBAL_MATERIAL_SHADING_BASIC
     return saturate(f0 * (f0 * 0.526868 + 0.529324) - 0.0482256);
 #else
     return saturate(f0 * (f0 * (0.941892 - 0.263008 * f0) + 0.346479) - 0.0285998);

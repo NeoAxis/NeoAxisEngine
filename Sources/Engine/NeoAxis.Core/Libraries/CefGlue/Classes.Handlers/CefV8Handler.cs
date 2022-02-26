@@ -1,10 +1,11 @@
-﻿namespace Xilium.CefGlue
+#if !NO_UI_WEB_BROWSER
+namespace Internal.Xilium.CefGlue
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Runtime.InteropServices;
-    using Xilium.CefGlue.Interop;
+    using Internal.Xilium.CefGlue.Interop;
 
     /// <summary>
     /// Interface that should be implemented to handle V8 function calls. The methods
@@ -62,3 +63,5 @@
         protected abstract bool Execute(string name, CefV8Value obj, CefV8Value[] arguments, out CefV8Value returnValue, out string exception);
     }
 }
+
+#endif

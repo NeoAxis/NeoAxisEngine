@@ -10,12 +10,14 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using tainicom.Aether.Physics2D.Collision.Shapes;
-using tainicom.Aether.Physics2D.Dynamics;
-using tainicom.Aether.Physics2D.Dynamics.Joints;
-using Microsoft.Xna.Framework;
+using Internal.tainicom.Aether.Physics2D.Collision.Shapes;
+using Internal.tainicom.Aether.Physics2D.Dynamics;
+using Internal.tainicom.Aether.Physics2D.Dynamics.Joints;
+#if XNAAPI
+using Vector2 = Microsoft.Xna.Framework.Vector2;
+#endif
 
-namespace tainicom.Aether.Physics2D.Common
+namespace Internal.tainicom.Aether.Physics2D.Common
 {
     /// <summary>
     /// Serialize the world into an XML file
@@ -151,11 +153,11 @@ namespace tainicom.Aether.Physics2D.Common
             }
 
             _writer.WriteStartElement("Bindings");
-            for (int i = 0; i < body.FixtureList.Count; i++)
+            for (int i = 0; i < body.FixtureList._list.Count; i++)
             {
                 _writer.WriteStartElement("Pair");
-                _writer.WriteAttributeString("FixtureId", fixtures.IndexOf(body.FixtureList[i]).ToString());
-                _writer.WriteAttributeString("ShapeId", shapes.IndexOf(body.FixtureList[i].Shape).ToString());
+                _writer.WriteAttributeString("FixtureId", fixtures.IndexOf(body.FixtureList._list[i]).ToString());
+                _writer.WriteAttributeString("ShapeId", shapes.IndexOf(body.FixtureList._list[i].Shape).ToString());
                 _writer.WriteEndElement();
             }
 
@@ -338,33 +340,6 @@ namespace tainicom.Aether.Physics2D.Common
         private static string FloatToString(float value)
         {
             return value.ToString(System.Globalization.CultureInfo.InvariantCulture);
-        }
-
-        private static String Join(List<Fixture> fixtures, IEnumerable<Fixture> values)
-        {
-            using (var en = values.GetEnumerator())
-            {
-                if (!en.MoveNext())
-                    return String.Empty;
-
-                StringBuilder result = new StringBuilder();
-                if (en.Current != null)
-                {
-                    var fixture = en.Current;
-                    var fixtureId = fixtures.IndexOf(fixture);
-                    result.Append(fixtureId.ToString());
-                }
-
-                while (en.MoveNext())
-                {
-                    result.Append("|");
-
-                    var fixture = en.Current;
-                    var fixtureId = fixtures.IndexOf(fixture);
-                    result.Append(fixtureId.ToString());
-                }
-                return result.ToString();
-            }
         }
 
         internal static void Serialize(World world, Stream stream)
@@ -1099,7 +1074,9 @@ namespace tainicom.Aether.Physics2D.Common
                 }
             }
 
+#if LEGACY_ASYNCADDREMOVE
             world.ProcessChanges();
+#endif
         }
 
         private static Vector2 ReadVector(XMLFragmentElement node)

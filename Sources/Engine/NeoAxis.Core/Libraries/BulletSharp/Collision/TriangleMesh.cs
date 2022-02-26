@@ -1,8 +1,8 @@
 using System;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class TriangleMesh : TriangleIndexVertexArray
 	{
@@ -21,14 +21,14 @@ namespace BulletSharp
 			btTriangleMesh_addIndex(Native, index);
 		}
 
-	   public void AddTriangleRef(ref Vector3 vertex0, ref Vector3 vertex1, ref Vector3 vertex2,
+	   public void AddTriangleRef(ref BVector3 vertex0, ref BVector3 vertex1, ref BVector3 vertex2,
 		   bool removeDuplicateVertices = false)
 	   {
 		   btTriangleMesh_addTriangle(Native, ref vertex0, ref vertex1, ref vertex2,
 			   removeDuplicateVertices);
 	   }
 
-		public void AddTriangle(Vector3 vertex0, Vector3 vertex1, Vector3 vertex2,
+		public void AddTriangle(BVector3 vertex0, BVector3 vertex1, BVector3 vertex2,
 			bool removeDuplicateVertices = false)
 		{
 			btTriangleMesh_addTriangle(Native, ref vertex0, ref vertex1, ref vertex2,
@@ -40,12 +40,12 @@ namespace BulletSharp
 			btTriangleMesh_addTriangleIndices(Native, index1, index2, index3);
 		}
 
-		public int FindOrAddVertexRef(Vector3 vertex, bool removeDuplicateVertices)
+		public int FindOrAddVertexRef(BVector3 vertex, bool removeDuplicateVertices)
 		{
 			return btTriangleMesh_findOrAddVertex(Native, ref vertex, removeDuplicateVertices);
 		}
 
-		public int FindOrAddVertex(Vector3 vertex, bool removeDuplicateVertices)
+		public int FindOrAddVertex(BVector3 vertex, bool removeDuplicateVertices)
 		{
 			return btTriangleMesh_findOrAddVertex(Native, ref vertex, removeDuplicateVertices);
 		}

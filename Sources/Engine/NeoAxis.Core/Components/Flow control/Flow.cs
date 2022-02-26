@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -266,8 +266,8 @@ namespace NeoAxis
 				CurrentFlow.variables[ name ] = stringValue;
 		}
 
-		//!!!!for Component_SetVariable
-		public static void SetVariableToCurrentFlow( Component_DeclareVariable variable, object value )
+		//!!!!for SetVariable
+		public static void SetVariableToCurrentFlow( FlowDeclareVariable variable, object value )
 		{
 			if( CurrentFlow != null )
 				CurrentFlow.variables[ variable.GetVariableName() ] = value;

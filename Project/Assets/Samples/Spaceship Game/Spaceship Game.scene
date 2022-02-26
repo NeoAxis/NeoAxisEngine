@@ -1,0 +1,695 @@
+// Made with NeoAxis Engine 2022.1.
+
+.component NeoAxis.Scene
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1143, 842\"><KW V=\"1\" A=\"22296A4D49194EF268976ABF602970A9\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WS UN=\"0456B00D96B149C79998AD980C2D0279\" S=\"T,0,50:T,0,50\" D=\"Vertical\"><WC UN=\"E1F301B07EC6487188AB196DB53D79FB\" S=\"T,0,50:T,0,525\" NM=\"BarTabGroup\" AR=\"True\" SP=\"22296A4D49194EF268976ABF602970A9\"><KP UN=\"22296A4D49194EF268976ABF602970A9\" S=\"False\"><CPD ObjPath=\"\" /></KP></WC><WC UN=\"E6FC5A17B2B942946E971FA482395C42\" S=\"T,0,50:T,0,312\" NM=\"BarTabGroup\" AR=\"True\" SP=\"A50D235CAA3D4B3DAABD1FE0551E9D07\"><KP UN=\"A50D235CAA3D4B3DAABD1FE0551E9D07\" S=\"False\"><CPD ObjPath=\"$Spaceship\\$Input Processing\\$C# Script\" /></KP></WC></WS></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	Mode = _2D
+	Gravity2D = 0 0
+	RenderingPipeline
+	{
+		GetByReference = "root:$Rendering Pipeline"
+	}
+	UIScreen
+	{
+		GetByReference = "Samples\\Spaceship Game\\SpaceshipGameGUI.ui"
+	}
+	CameraEditor
+	{
+		GetByReference = "this:$Camera Editor"
+	}
+	CameraEditor2D
+	{
+		GetByReference = "this:$Camera Editor 2D"
+	}
+	.component NeoAxis.Camera
+	{
+		Name = Camera Editor
+		Visible = False
+		Transform = "1.89958026685646 -0.0516537388745354 9.49924296492695; -0.496861866182531 0.498124853090597 0.501855494600084 0.50313117495022; 1 1 1"
+		Height = 12
+	}
+	.component NeoAxis.Camera
+	{
+		Name = Camera Editor 2D
+		Visible = False
+		CanBeSelected = False
+		Transform = "1.97405084745763 1.13144877726394 10; 0.5 -0.5 -0.5 -0.5; 1 1 1"
+		Projection = Orthographic
+		Height = 14.1456899419427
+		FixedUp = 0 1 0
+		FarClipPlane = 100
+	}
+	.component NeoAxis.Light
+	{
+		Name = Ambient Light
+		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
+		Type = Ambient
+		Brightness = 30000
+	}
+	.component NeoAxis.Light
+	{
+		Name = Light 1
+		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
+		Type = Directional
+		Brightness = 130000
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 91.429
+	}
+	.component NeoAxis.RenderingPipeline_Basic
+	{
+		Name = Rendering Pipeline
+		DeferredShading = False
+		Shadows = False
+		ProvideColorDepthTextureCopy = False
+		.component NeoAxis.Component
+		{
+			Name = Background Effects
+		}
+		.component NeoAxis.Component
+		{
+			Name = Scene Effects
+			.component NeoAxis.RenderingEffect_AmbientOcclusion
+			{
+				Enabled = False
+				Name = Ambient Occlusion
+			}
+			.component NeoAxis.RenderingEffect_MotionBlur
+			{
+				Enabled = False
+				Name = Motion Blur
+			}
+			.component NeoAxis.RenderingEffect_Bloom
+			{
+				Enabled = False
+				Name = Bloom
+			}
+			.component NeoAxis.RenderingEffect_LensEffects
+			{
+				Enabled = False
+				Name = Lens Effects
+			}
+			.component NeoAxis.RenderingEffect_ToneMapping
+			{
+				Enabled = False
+				Name = Tone Mapping
+				Intensity = 0.5
+			}
+			.component NeoAxis.RenderingEffect_ToLDR
+			{
+				Name = To LDR
+			}
+			.component NeoAxis.RenderingEffect_Antialiasing
+			{
+				Name = Antialiasing
+				MotionTechnique = None
+			}
+			.component NeoAxis.RenderingEffect_ResolutionUpscale
+			{
+				Name = Resolution Upscale
+			}
+			.component NeoAxis.RenderingEffect_Sharpen
+			{
+				Name = Sharpen
+			}
+		}
+		.component NeoAxis.Component
+		{
+			Name = Final Image Effects
+		}
+	}
+	.component NeoAxis.GameMode
+	{
+		Name = Game Mode
+		CutsceneStarted = False
+		CutsceneGuiFadingFactor = 0
+		CutsceneGuiFadingSpeed = 0
+		ScreenFadingCurrentColor = 0 0 0 0
+		ScreenFadingTargetColor = 0 0 0 0
+		ScreenFadingSpeed = 0
+		ObjectControlledByPlayer
+		{
+			GetByReference = "this:..\\$Spaceship"
+		}
+	}
+	.component NeoAxis.Sprite
+	{
+		Name = Spaceship
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "Samples\\Starter Content\\Models\\Spaceship\\Spaceship.fbx|$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.RigidBody2D
+		{
+			Name = Collision Body
+			Transform = "2.27723759820109 1.77330378085272 0; 0 0 0 1; 0.3 0.3 0.3"
+			MotionType = Dynamic
+			.component NeoAxis.CollisionShape2D_Mesh
+			{
+				CollidesWith = All
+				ShapeType = Convex
+				Vertices
+				{
+					Value
+					{
+						Length = 17
+						0 = -0.01063809 0 0
+						1 = -4.285601 -0.2550586 0
+						2 = -4.285601 0.2550586 0
+						3 = -4.27088 0.3219237 0
+						4 = -3.19795 2.220455 0
+						5 = -1.281155 3.08217 0
+						6 = 0.09934998 3.08217 0
+						7 = 4.281492 1.332099 0
+						8 = 4.284039 1.312811 0
+						9 = 4.285601 1.210653 0
+						10 = 4.285601 -1.210653 0
+						11 = 4.284039 -1.312811 0
+						12 = 4.281492 -1.332099 0
+						13 = 0.09934998 -3.08217 0
+						14 = -1.281155 -3.08217 0
+						15 = -3.19795 -2.220455 0
+						16 = -4.27088 -0.3219237 0
+					}
+				}
+				Indices
+				{
+					Value
+					{
+						Length = 48
+						.elements = 0 1 2 0 2 3 0 3 4 0 4 5 0 5 6 0 6 7 0 7 8 0 8 9 0 9 10 0 10 11 0 11 12 0 12 13 0 13 14 0 14 15 0 15 16 0 16 1
+					}
+				}
+			}
+		}
+		.component NeoAxis.InputProcessing
+		{
+			Name = Input Processing
+			.component NeoAxis.CSharpScript
+			{
+				Name = C# Script
+				Code = "public double LastSpeedingUp;\r\npublic double LastTurning;\r\n\r\npublic void InputProcessing_SimulationStep(NeoAxis.Component obj)\r\n{\r\n\tvar sender = (NeoAxis.InputProcessing)obj;\r\n\r\n\tLastSpeedingUp = 0;\r\n\tLastTurning = 0;\r\n\r\n\t//get access to the ship\r\n\tvar ship = sender.Parent;\r\n\tif (ship == null)\r\n\t\treturn;\r\n\r\n\t//control the ship\r\n\tvar body = ship.GetComponent<RigidBody2D>();\r\n\tif (body != null)\r\n\t{\r\n\t\t//keyboard\r\n\r\n\t\t//fly forward\r\n\t\tif (sender.IsKeyPressed(EKeys.W) || sender.IsKeyPressed(EKeys.Up) || sender.IsKeyPressed(EKeys.NumPad8))\r\n\t\t{\r\n\t\t\tvar dir = body.TransformV.Rotation.GetForward().ToVector2();\r\n\t\t\tbody.ApplyForce(dir * 1.0);\t\t\r\n\t\t\tLastSpeedingUp += 1.0;\r\n\t\t}\r\n\r\n\t\t//fly back\r\n\t\tif (sender.IsKeyPressed(EKeys.S) || sender.IsKeyPressed(EKeys.Down) || sender.IsKeyPressed(EKeys.NumPad2))\r\n\t\t{\r\n\t\t\tvar dir = body.TransformV.Rotation.GetForward().ToVector2();\r\n\t\t\tbody.ApplyForce(dir * -1.0);\t\t\t\r\n\t\t\tLastSpeedingUp -= 1.0;\r\n\t\t}\r\n\r\n\t\t//turn left\r\n\t\tif (sender.IsKeyPressed(EKeys.A) || sender.IsKeyPressed(EKeys.Left) || sender.IsKeyPressed(EKeys.NumPad4))\r\n\t\t{\r\n\t\t\tbody.ApplyTorque(1.0);\r\n\t\t\tLastTurning += 1.0;\r\n\t\t}\r\n\r\n\t\t//turn right\r\n\t\tif (sender.IsKeyPressed(EKeys.D) || sender.IsKeyPressed(EKeys.Right) || sender.IsKeyPressed(EKeys.NumPad6))\r\n\t\t{\r\n\t\t\tbody.ApplyTorque(-1.0);\r\n\t\t\tLastTurning -= 1.0;\r\n\t\t}\r\n\r\n\t\t//movement by joystick axes\r\n\t\tif (Math.Abs(sender.JoystickAxes[0]) >= 0.01)\r\n\t\t{\r\n\t\t\tbody.ApplyTorque(-sender.JoystickAxes[0]);\r\n\t\t\tLastTurning -= sender.JoystickAxes[0];\r\n\t\t}\r\n\t\tif (Math.Abs(sender.JoystickAxes[1]) >= 0.01)\r\n\t\t{\r\n\t\t\tvar dir = body.TransformV.Rotation.GetForward().ToVector2();\r\n\t\t\tbody.ApplyForce(dir * sender.JoystickAxes[1]);\r\n\t\t\tLastSpeedingUp += sender.JoystickAxes[1];\r\n\t\t}\r\n\t\t//JoystickAxes\r\n\t\t//JoystickButtons\r\n\t\t//JoystickPOVs\r\n\t\t//JoystickSliders\r\n\t\t//IsJoystickButtonPressed\r\n\t\t//GetJoystickAxis\r\n\t\t//GetJoystickPOV\r\n\t\t//GetJoystickSlider\r\n\r\n\r\n\t\t//multi-touch\r\n\r\n\t\t//debug to control by mouse\r\n\t\t//Vector2[] touchPositions = new Vector2[0];\t\t\r\n\t\t//if(sender.IsMouseButtonPressed(EMouseButtons.Left))\r\n\t\t//\ttouchPositions = new Vector2[] { sender.MousePosition };\r\n\t\t\r\n\t\tforeach(var data in sender.TouchPointers)\r\n\t\t{\r\n\t\t\tvar touchPosition = data.Position; \r\n\r\n\t\t\tif(touchPosition.X < 0.5 && touchPosition.Y > 0.4)\r\n\t\t\t{\r\n\t\t\t\t//fly forward, back\r\n\t\t\t\t{\r\n\t\t\t\t\tvar factor = 1.0 - (touchPosition.Y - 0.6) / 0.4;\r\n\t\t\t\t\tvar force = factor * 2.0 - 1.0;\r\n\t\t\t\t\tforce *= 1.2;\r\n\t\t\t\t\tforce = MathEx.Clamp(force, -1.0, 1.0);\r\n\r\n\t\t\t\t\tvar dir = body.TransformV.Rotation.GetForward().ToVector2();\r\n\t\t\t\t\tbody.ApplyForce(dir * force);\r\n\r\n\t\t\t\t\tLastSpeedingUp += force;\r\n\t\t\t\t}\r\n\t\t\t\t\r\n\t\t\t\t//turn left, right\r\n\t\t\t\t{\r\n\t\t\t\t\tvar factor = 1.0 - MathEx.Clamp(touchPosition.X / 0.2, 0, 1);\r\n\t\t\t\t\tvar force = factor * 2.0 - 1.0;\t\t\t\t\t\r\n\t\t\t\t\tforce *= 1.2;\r\n\t\t\t\t\tforce = MathEx.Clamp(force, -1.0, 1.0);\r\n\t\t\t\t\t\r\n\t\t\t\t\tbody.ApplyTorque(force);\r\n\t\r\n\t\t\t\t\tLastTurning += force;\r\n\t\t\t\t}\r\n\t\t\t}\r\n\t\t}\r\n\r\n\t}\r\n\t\r\n}\r\n\r\npublic void InputProcessing_InputMessageEvent(NeoAxis.InputProcessing sender, NeoAxis.GameMode gameMode, NeoAxis.InputMessage message)\r\n{\r\n\t////get access to the ship\r\n\t//var ship = sender.Parent;\r\n\t//if (ship == null)\r\n\t//\treturn;\r\n\r\n\t//var keyDown = message as InputMessageKeyDown;\r\n\t//if(keyDown != null)\r\n\t//{\r\n\t//\tif(keyDown.Key == EKeys.Space)\r\n\t//\t{\r\n\t//\t\t//var body = ship.GetComponent<RigidBody2D>();\r\n\t//\t\t//if (body != null)\r\n\t//\t\t//{\r\n\t//\t\t//\tbody.ApplyForce(new Vector2(1, 0));\r\n\t//\t\t//}\r\n\t//\t}\r\n\t//}\r\n}\r\n"
+				LastSpeedingUp = 0
+				LastTurning = 0
+				Exit
+				{
+				}
+				.component NeoAxis.EventHandlerComponent
+				{
+					Name = Event Handler InputMessageEvent
+					Event
+					{
+						GetByReference = "this:..\\..\\event:InputMessageEvent"
+					}
+					HandlerMethod
+					{
+						GetByReference = "this:..\\method:InputProcessing_InputMessageEvent(NeoAxis.InputProcessing,NeoAxis.InputMessage)"
+					}
+					HandlerFlow
+					{
+					}
+				}
+				.component NeoAxis.EventHandlerComponent
+				{
+					Name = Event Handler SimulationStep
+					Event
+					{
+						GetByReference = "this:..\\..\\event:SimulationStep"
+					}
+					HandlerMethod
+					{
+						GetByReference = "this:..\\method:InputProcessing_SimulationStep(NeoAxis.Component)"
+					}
+					HandlerFlow
+					{
+					}
+				}
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Ground
+		CanBeSelected = False
+		Transform = "0 0 -2; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 100 100
+				UVTilesPerUnit = 0.25 0.25
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Enabled = False
+			Name = Collision Body
+			Transform
+			{
+				GetByReference = "this:..\\Transform"
+			}
+			.component NeoAxis.CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.GroupOfObjects
+	{
+		Name = Group Of Objects
+		BaseObjects
+		{
+			Count = 1
+			0 "NeoAxis.Reference<NeoAxis.Component>"
+			{
+				GetByReference = "root:$Ground"
+			}
+		}
+	}
+	.component NeoAxis.Sprite
+	{
+		Name = Sprite 4
+		Color = 0.9727451 0.9879216 1
+		Transform
+		{
+			GetByReference = "this:$Rigid Body 2D\\Transform"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material White"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.RigidBody2D
+		{
+			Name = Rigid Body 2D
+			Transform = "2 -5 0; 0 0 0 1; 16 1 1"
+			.component NeoAxis.CollisionShape2D_Box
+			{
+				Name = CollisionShape2D Box
+				CollidesWith = All
+			}
+		}
+	}
+	.component NeoAxis.Sprite
+	{
+		Name = Sprite 17
+		Color = 0.9727451 0.9879216 1
+		Transform
+		{
+			GetByReference = "this:$Rigid Body 2D\\Transform"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material White"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.RigidBody2D
+		{
+			Name = Rigid Body 2D
+			Transform = "2 7.21435958086566 0; 0 0 0 1; 16 1 1"
+			.component NeoAxis.CollisionShape2D_Box
+			{
+				Name = CollisionShape2D Box
+				CollidesWith = All
+			}
+		}
+	}
+	.component NeoAxis.Material
+	{
+		Name = Material White
+		ShadingModel = Unlit
+		.component NeoAxis.FlowGraph
+		{
+			Name = Shader graph
+			EditorScrollPosition = 0 0
+			Specialization
+			{
+				GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+			}
+			.component NeoAxis.FlowGraphNode
+			{
+				Name = Node Material White
+				Position = 10 -7
+				ControlledObject
+				{
+					GetByReference = "this:..\\.."
+				}
+			}
+		}
+	}
+	.component NeoAxis.Sprite
+	{
+		Name = Sprite
+		Color = 1 1 0
+		Transform
+		{
+			GetByReference = "this:$Rigid Body 2D\\Transform"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.RigidBody2D
+		{
+			Name = Rigid Body 2D
+			Transform = "7.13033472297093 0.242158990088935 0; 0 0 0 1; 2.90999995730817 2.90999995730817 2.90999995730817"
+			MotionType = Dynamic
+			.component NeoAxis.CollisionShape2D_Box
+			{
+				Name = Box Shape
+				CollidesWith = All
+			}
+		}
+	}
+	.component NeoAxis.Sprite
+	{
+		Name = Sprite 14
+		Color = 1 1 0
+		Transform
+		{
+			GetByReference = "this:$Rigid Body 2D\\Transform"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.RigidBody2D
+		{
+			Name = Rigid Body 2D
+			Transform = "-3.13580842707532 -1.16719019231864 0; 0 0 0 1; 2.90999995730817 2.90999995730817 2.90999995730817"
+			MotionType = Dynamic
+			.component NeoAxis.CollisionShape2D_Box
+			{
+				Name = Box Shape
+				CollidesWith = All
+			}
+		}
+	}
+	.component NeoAxis.Sprite
+	{
+		Name = Sprite 2
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Samples\\Starter Content\\Materials\\Planets\\Planet2.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.RigidBody2D
+		{
+			Name = Collision Body
+			Transform = "-4.00605898673705 4.11544118199109 0; 0 0 0 1; 1 1 1"
+			MotionType = Dynamic
+			.component NeoAxis.CollisionShape2D_Ellipse
+			{
+				CollidesWith = All
+			}
+		}
+	}
+	.component NeoAxis.Sprite
+	{
+		Name = Sprite 3
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Samples\\Starter Content\\Materials\\Planets\\Planet1.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.RigidBody2D
+		{
+			Name = Collision Body
+			Transform = "-1.25682065163992 5.08980604884077 0; 0 0 0 1; 1 1 1"
+			MotionType = Dynamic
+			.component NeoAxis.CollisionShape2D_Ellipse
+			{
+				CollidesWith = All
+			}
+		}
+	}
+	.component NeoAxis.Sprite
+	{
+		Name = Sprite 5
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Samples\\Starter Content\\Materials\\Planets\\Planet2.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.RigidBody2D
+		{
+			Name = Collision Body
+			Transform = "2.46683127058024 3.97624620101257 0; 0 0 0 1; 1 1 1"
+			MotionType = Dynamic
+			.component NeoAxis.CollisionShape2D_Ellipse
+			{
+				CollidesWith = All
+			}
+		}
+	}
+	.component NeoAxis.Sprite
+	{
+		Name = Sprite 6
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Samples\\Starter Content\\Materials\\Planets\\Planet2.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.RigidBody2D
+		{
+			Name = Collision Body
+			Transform = "5.89467906813806 5.21160165719699 0; 0.00618460249210226 -0.00000000000000014 -0.618439633731056 0.785807972804178; 1 1 1"
+			MotionType = Dynamic
+			.component NeoAxis.CollisionShape2D_Ellipse
+			{
+				CollidesWith = All
+			}
+		}
+	}
+	.component NeoAxis.Sprite
+	{
+		Name = Sprite 9
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Samples\\Starter Content\\Materials\\Planets\\Planet2.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.RigidBody2D
+		{
+			Name = Collision Body
+			Transform = "1.77082156549236 -2.14833296204257 0; 0.00618460249210226 -0.00000000000000014 -0.618439633731056 0.785807972804178; 1 1 1"
+			MotionType = Dynamic
+			.component NeoAxis.CollisionShape2D_Ellipse
+			{
+				CollidesWith = All
+			}
+		}
+	}
+	.component NeoAxis.Sprite
+	{
+		Name = Sprite 7
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Samples\\Starter Content\\Materials\\Planets\\Planet2.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.RigidBody2D
+		{
+			Name = Collision Body
+			Transform = "8.88752080001595 2.74089074482816 0; 0 0 0 1; 1 1 1"
+			MotionType = Dynamic
+			.component NeoAxis.CollisionShape2D_Ellipse
+			{
+				CollidesWith = All
+			}
+		}
+	}
+	.component NeoAxis.Sprite
+	{
+		Name = Sprite 8
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Samples\\Starter Content\\Materials\\Planets\\Planet1.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.RigidBody2D
+		{
+			Name = Collision Body
+			Transform = "6.06868149441004 -2.98350284791372 0; 0 0 0 1; 1 1 1"
+			MotionType = Dynamic
+			.component NeoAxis.CollisionShape2D_Ellipse
+			{
+				CollidesWith = All
+			}
+		}
+	}
+}

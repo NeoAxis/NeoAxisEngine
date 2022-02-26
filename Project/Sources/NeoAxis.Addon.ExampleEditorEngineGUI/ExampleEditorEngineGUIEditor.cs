@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,9 +16,9 @@ namespace NeoAxis.Addon.ExampleEditorEngineGUI
 		{
 		}
 
-		public Component_ExampleEditorEngineGUI ExampleEditorEngineGUI
+		public ExampleEditorEngineGUI ExampleEditorEngineGUI
 		{
-			get { return ObjectOfEditor as Component_ExampleEditorEngineGUI; }
+			get { return ObjectOfEditor as ExampleEditorEngineGUI; }
 		}
 
 		protected override void OnViewportCreated()

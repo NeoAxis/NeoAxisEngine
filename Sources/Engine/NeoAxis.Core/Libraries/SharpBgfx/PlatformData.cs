@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace SharpBgfx {
+namespace Internal.SharpBgfx {
     /// <summary>
     /// Contains platform-specific data used to hook into the bgfx library.
     /// </summary>

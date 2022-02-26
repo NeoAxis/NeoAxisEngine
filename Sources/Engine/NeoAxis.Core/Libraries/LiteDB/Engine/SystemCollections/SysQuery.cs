@@ -1,11 +1,12 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     /// <summary>
     /// This class implement $query experimental system function to run sub-queries. It's experimental only - possible not be present in final release
@@ -37,3 +38,4 @@ namespace LiteDB.Engine
         }
     }
 }
+#endif

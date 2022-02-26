@@ -5,11 +5,14 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
-using tainicom.Aether.Physics2D.Collision.Shapes;
-using tainicom.Aether.Physics2D.Dynamics;
-using Microsoft.Xna.Framework;
+using Internal.tainicom.Aether.Physics2D.Collision.Shapes;
+using Internal.tainicom.Aether.Physics2D.Common;
+using Internal.tainicom.Aether.Physics2D.Dynamics;
+#if XNAAPI
+using Vector2 = Microsoft.Xna.Framework.Vector2;
+#endif
 
-namespace tainicom.Aether.Physics2D.Common.PolygonManipulation
+namespace Internal.tainicom.Aether.Physics2D.Common.PolygonManipulation
 {
     public static class CuttingTools
     {

@@ -1,10 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
 using System.IO;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class StridingMeshInterface : IDisposable // abstract
 	{
@@ -39,7 +39,7 @@ namespace BulletSharp
 			return new UnmanagedMemoryStream((byte*)vertexBase.ToPointer(), length, length, FileAccess.ReadWrite);
 		}
 
-		public void CalculateAabbBruteForce(out Vector3 aabbMin, out Vector3 aabbMax)
+		public void CalculateAabbBruteForce(out BVector3 aabbMin, out BVector3 aabbMax)
 		{
 			btStridingMeshInterface_calculateAabbBruteForce(Native, out aabbMin,
 				out aabbMax);
@@ -68,13 +68,13 @@ namespace BulletSharp
 				out numFaces, out indicesType, subpart);
 		}
 
-		public void GetPremadeAabb(out Vector3 aabbMin, out Vector3 aabbMax)
+		public void GetPremadeAabb(out BVector3 aabbMin, out BVector3 aabbMax)
 		{
 			btStridingMeshInterface_getPremadeAabb(Native, out aabbMin, out aabbMax);
 		}
 
 		public void InternalProcessAllTriangles(InternalTriangleIndexCallback callback,
-			Vector3 aabbMin, Vector3 aabbMax)
+			BVector3 aabbMin, BVector3 aabbMax)
 		{
 			btStridingMeshInterface_InternalProcessAllTriangles(Native, callback._native,
 				ref aabbMin, ref aabbMax);
@@ -95,12 +95,12 @@ namespace BulletSharp
 			return Marshal.PtrToStringAnsi(btStridingMeshInterface_serialize(Native, dataBuffer, serializer._native));
 		}
 
-		public void SetPremadeAabb(ref Vector3 aabbMin, ref Vector3 aabbMax)
+		public void SetPremadeAabb(ref BVector3 aabbMin, ref BVector3 aabbMax)
 		{
 			btStridingMeshInterface_setPremadeAabb(Native, ref aabbMin, ref aabbMax);
 		}
 
-		public void SetPremadeAabb(Vector3 aabbMin, Vector3 aabbMax)
+		public void SetPremadeAabb(BVector3 aabbMin, BVector3 aabbMax)
 		{
 			btStridingMeshInterface_setPremadeAabb(Native, ref aabbMin, ref aabbMax);
 		}
@@ -119,11 +119,11 @@ namespace BulletSharp
 
 		public int NumSubParts => btStridingMeshInterface_getNumSubParts(Native);
 
-		public Vector3 Scaling
+		public BVector3 Scaling
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btStridingMeshInterface_getScaling(Native, out value);
 				return value;
 			}

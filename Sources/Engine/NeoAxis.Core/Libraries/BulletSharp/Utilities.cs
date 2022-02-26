@@ -20,7 +20,7 @@
 * THE SOFTWARE.
 */
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
     static class Utilities
     {

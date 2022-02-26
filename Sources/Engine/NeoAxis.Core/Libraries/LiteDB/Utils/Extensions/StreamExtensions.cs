@@ -1,8 +1,9 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.IO;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     internal static class StreamExtensions
     {
@@ -22,3 +23,4 @@ namespace LiteDB
         }
     }
 }
+#endif

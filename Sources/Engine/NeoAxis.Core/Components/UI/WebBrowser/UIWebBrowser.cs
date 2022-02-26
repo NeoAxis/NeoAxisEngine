@@ -1,13 +1,18 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
-using Xilium.CefGlue;
 using System.Drawing;
 using System.Collections.Generic;
 using System.IO;
+#if !NO_UI_WEB_BROWSER
+using Internal.Xilium.CefGlue;
 using NeoAxis.UIWebBrowserControl;
+#endif
 using System.Windows.Forms;
+
+#pragma warning disable CS0169
+#pragma warning disable CS0067
 
 namespace NeoAxis
 {
@@ -20,12 +25,14 @@ namespace NeoAxis
 
 		static bool isCefRuntimeInitialized;
 
+#if !NO_UI_WEB_BROWSER
 		CefBrowser browser;
 		CefBrowserHost browserHost;
+#endif
 
 		Vector2I viewSize;
 
-		Component_Image texture;
+		ImageComponent texture;
 		Vector2I textureSize;
 		//bool needUpdateTexture;
 		//bool needInvalidate = true;
@@ -211,7 +218,17 @@ namespace NeoAxis
 		/// The CefBrowser used by the browser.
 		/// </summary>
 		[Browsable( false )]
-		public CefBrowser Browser { get { return browser; } }
+		public object/*CefBrowser */CefBrowser
+		{
+			get
+			{
+#if !NO_UI_WEB_BROWSER
+				return browser;
+#else
+				return null;
+#endif
+			}
+		}
 
 		protected override void OnEnabled()
 		{
@@ -222,7 +239,9 @@ namespace NeoAxis
 		{
 			RenderingSystem.RenderSystemEvent -= RenderSystem_RenderSystemEvent;
 
+#if !NO_UI_WEB_BROWSER
 			DestroyBrowser();
+#endif
 
 			//never called
 			//WebCore.Shutdown();
@@ -242,8 +261,9 @@ namespace NeoAxis
 
 		static void InitializeCefRuntime()
 		{
-			if( !IsSupportedByThisPlatform() )
-				return;
+#if !NO_UI_WEB_BROWSER
+			//if( !IsSupportedByPlatform() )
+			//	return;
 
 			if( isCefRuntimeInitialized )
 			{
@@ -252,7 +272,7 @@ namespace NeoAxis
 			}
 
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
-				NativeLibraryManager.PreLoadLibrary( Path.Combine( "CefGlue", "libcef" ) );
+				NativeUtility.PreloadLibrary( Path.Combine( "CefGlue", "libcef" ) );
 
 			//delete log file
 			string realLogFileName = VirtualPathUtility.GetRealPathByVirtual( "user:Logs\\UIWebBrowser_CefGlue.log" );
@@ -334,10 +354,12 @@ namespace NeoAxis
 			}
 
 			isCefRuntimeInitialized = true;
+#endif
 		}
 
 		public static void ShutdownCefRuntime()
 		{
+#if !NO_UI_WEB_BROWSER
 			if( isCefRuntimeInitialized )
 			{
 				try
@@ -347,8 +369,10 @@ namespace NeoAxis
 				catch { }
 				isCefRuntimeInitialized = false;
 			}
+#endif
 		}
 
+#if !NO_UI_WEB_BROWSER
 		void CreateBrowser()
 		{
 			if( !isCefRuntimeInitialized )
@@ -414,9 +438,11 @@ namespace NeoAxis
 				}
 			}
 		}
+#endif
 
 		public event Action<UIWebBrowser> BrowserCreated;
 
+#if !NO_UI_WEB_BROWSER
 		internal void HandleAfterCreated( CefBrowser browser )
 		{
 			this.browser = browser;
@@ -431,10 +457,12 @@ namespace NeoAxis
 			if( string.IsNullOrEmpty( StartURL ) && string.IsNullOrEmpty( StartFile ) && !string.IsNullOrEmpty( StartString ) )
 				LoadString( StartString );
 		}
+#endif
 
-		public delegate void BeforePopupDelegate( UIWebBrowser sender, BeforePopupEventArgs args );
+		public delegate void BeforePopupDelegate( UIWebBrowser sender, object/*BeforePopupEventArgs*/ beforePopupEventArgs );
 		public event BeforePopupDelegate BeforePopup;
 
+#if !NO_UI_WEB_BROWSER
 		internal void OnBeforePopup( BeforePopupEventArgs e )
 		{
 			BeforePopup?.Invoke( this, e );
@@ -445,6 +473,7 @@ namespace NeoAxis
 				e.Handled = true;
 			}
 		}
+#endif
 
 		public delegate void TitleChangedDelegate( UIWebBrowser sender, string title );
 		public event TitleChangedDelegate TitleChanged;
@@ -485,26 +514,31 @@ namespace NeoAxis
 			LoadingStateChanged?.Invoke( this, loading, canGoBack, canGoForward );
 		}
 
-		public delegate void LoadStartDelegate( UIWebBrowser sender, CefFrame frame );
+		public delegate void LoadStartDelegate( UIWebBrowser sender, object/*CefFrame*/ cefFrame );
 		public event LoadStartDelegate LoadStart;
 
+#if !NO_UI_WEB_BROWSER
 		internal void OnLoadStart( CefFrame frame )
 		{
 			LoadStart?.Invoke( this, frame );
 		}
+#endif
 
-		public delegate void LoadEndDelegate( UIWebBrowser sender, CefFrame frame, int httpStatusCode );
+		public delegate void LoadEndDelegate( UIWebBrowser sender, object/*CefFrame*/ cefFrame, int httpStatusCode );
 		public event LoadEndDelegate LoadEnd;
 
+#if !NO_UI_WEB_BROWSER
 		internal void OnLoadEnd( CefFrame frame, int httpStatusCode )
 		{
 			LoadEnd?.Invoke( this, frame, httpStatusCode );
 			//needInvalidate = true;
 		}
+#endif
 
-		public delegate void LoadErrorDelegate( UIWebBrowser sender, CefFrame frame, CefErrorCode errorCode, string errorText, string failedUrl );
+		public delegate void LoadErrorDelegate( UIWebBrowser sender, object/*CefFrame*/ cefFrame, object/*CefErrorCode*/ cefErrorCode, string errorText, string failedUrl );
 		public event LoadErrorDelegate LoadError;
 
+#if !NO_UI_WEB_BROWSER
 		internal void OnLoadError( CefFrame frame, CefErrorCode errorCode, string errorText, string failedUrl )
 		{
 			LoadError?.Invoke( this, frame, errorCode, errorText, failedUrl );
@@ -624,7 +658,7 @@ namespace NeoAxis
 							var gpuTexture = texture?.Result;
 							if( gpuTexture != null )
 							{
-								var d = new GpuTexture.SurfaceData[] { new GpuTexture.SurfaceData( 0, 0, renderBuffer ) };
+								var d = new GpuTexture.SurfaceData[] { new GpuTexture.SurfaceData( renderBuffer ) };
 								gpuTexture.SetData( d );
 
 								renderBuffer = null;
@@ -701,19 +735,24 @@ namespace NeoAxis
 
 			return result;
 		}
+#endif
 
 		protected virtual void OnResized( Vector2I oldSize, Vector2I newSize )
 		{
+#if !NO_UI_WEB_BROWSER
 			if( newSize.X > 0 && newSize.Y > 0 )
 			{
 				// If the window has already been created, just resize it
 				browserHost?.WasResized();
 			}
+#endif
 		}
 
 		protected override void OnRenderUI( CanvasRenderer renderer )
 		{
 			base.OnRenderUI( renderer );
+
+#if !NO_UI_WEB_BROWSER
 
 			Vector2I size = GetNeededSize();
 
@@ -746,12 +785,12 @@ namespace NeoAxis
 					//if( ControlManager != null && ControlManager is UI3DControlContainer )
 					//	mipmaps = renderingIn3DMipmaps;
 
-					var usage = Component_Image.Usages.WriteOnly;
+					var usage = ImageComponent.Usages.WriteOnly;
 					if( mipmaps )
-						usage |= Component_Image.Usages.AutoMipmaps;
+						usage |= ImageComponent.Usages.AutoMipmaps;
 
-					texture = ComponentUtility.CreateComponent<Component_Image>( null, true, false );
-					texture.CreateType = Component_Image.TypeEnum._2D;
+					texture = ComponentUtility.CreateComponent<ImageComponent>( null, true, false );
+					texture.CreateType = ImageComponent.TypeEnum._2D;
 					texture.CreateSize = textureSize;
 					texture.CreateMipmaps = mipmaps;// ? -1 : 0;
 					texture.CreateFormat = PixelFormat.A8R8G8B8;
@@ -810,7 +849,7 @@ namespace NeoAxis
 
 				GetScreenRectangle( out var rect );
 
-				Component_Image tex = null;
+				ImageComponent tex = null;
 				if( renderBufferForSize == ViewSize )
 					tex = texture;
 				if( tex == null )
@@ -850,14 +889,17 @@ namespace NeoAxis
 					renderer.AddQuad( rect, new Rectangle( 0, 0, 1, 1 ), tex, color, true );
 				//}
 			}
+#endif
 
-			if( !IsSupportedByThisPlatform() )
+			if( !IsSupportedByPlatform() )
 			{
-				var text = string.Format( "UIWebBrowser: {0} is not supported.", SystemSettings.CurrentPlatform );
+				var text = string.Format( "UIWebBrowser: {0} is not supported or disabled.", SystemSettings.CurrentPlatform );
 				var center = GetScreenRectangle().GetCenter();
 				renderer.AddText( text, center, EHorizontalAlignment.Center, EVerticalAlignment.Center, new ColorValue( 1, 0, 0 ) );
 			}
 		}
+
+#if !NO_UI_WEB_BROWSER
 
 		static bool IsSupportedMouseButton( EMouseButtons button )
 		{
@@ -925,9 +967,11 @@ namespace NeoAxis
 			var mouseEvent = new CefMouseEvent( (int)pos.X, (int)pos.Y, GetCurrentKeyboardModifiers() );
 			return mouseEvent;
 		}
+#endif
 
 		protected override bool OnMouseDown( EMouseButtons button )
 		{
+#if !NO_UI_WEB_BROWSER
 			if( EnabledInHierarchy && VisibleInHierarchy && browserHost != null && new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) )
 			{
 				try
@@ -952,6 +996,7 @@ namespace NeoAxis
 				//!!!!
 				Unfocus();
 			}
+#endif
 
 			return base.OnMouseDown( button );
 		}
@@ -960,6 +1005,7 @@ namespace NeoAxis
 		{
 			//bool result = base.OnMouseUp( button );
 
+#if !NO_UI_WEB_BROWSER
 			if( EnabledInHierarchy && VisibleInHierarchy && browserHost != null && IsSupportedMouseButton( button ) )
 			{
 				try
@@ -978,6 +1024,7 @@ namespace NeoAxis
 
 				return true;
 			}
+#endif
 
 			return false;
 			//return result;
@@ -985,6 +1032,7 @@ namespace NeoAxis
 
 		protected override bool OnMouseDoubleClick( EMouseButtons button )
 		{
+#if !NO_UI_WEB_BROWSER
 			if( EnabledInHierarchy && VisibleInHierarchy && browserHost != null && new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) )
 			{
 				try
@@ -1003,6 +1051,7 @@ namespace NeoAxis
 
 				return true;
 			}
+#endif
 
 			return base.OnMouseDoubleClick( button );
 		}
@@ -1011,6 +1060,7 @@ namespace NeoAxis
 		{
 			bool result = base.OnMouseWheel( delta );
 
+#if !NO_UI_WEB_BROWSER
 			if( EnabledInHierarchy && VisibleInHierarchy && browserHost != null && new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) )
 			{
 				try
@@ -1052,6 +1102,7 @@ namespace NeoAxis
 					}
 				}
 			}
+#endif
 
 			return result;
 		}
@@ -1060,6 +1111,7 @@ namespace NeoAxis
 		{
 			base.OnMouseMove( mouse );
 
+#if !NO_UI_WEB_BROWSER
 			if( EnabledInHierarchy && VisibleInHierarchy && browserHost != null )
 			{
 				try
@@ -1072,10 +1124,12 @@ namespace NeoAxis
 					Log.Error( "UIWebBrowser: Caught exception in OnMouseMove: " + ex.Message );
 				}
 			}
+#endif
 		}
 
 		protected override bool OnKeyDown( KeyEvent e )
 		{
+#if !NO_UI_WEB_BROWSER
 			if( Focused && EnabledInHierarchy && VisibleInHierarchy && browserHost != null )
 			{
 				browserHost.SendFocusEvent( true );
@@ -1110,12 +1164,14 @@ namespace NeoAxis
 
 				return true;
 			}
+#endif
 
 			return base.OnKeyDown( e );
 		}
 
 		protected override bool OnKeyPress( KeyPressEvent e )
 		{
+#if !NO_UI_WEB_BROWSER
 			if( Focused && EnabledInHierarchy && VisibleInHierarchy && browserHost != null )
 			{
 				browserHost.SendFocusEvent( true );
@@ -1142,12 +1198,14 @@ namespace NeoAxis
 
 				return true;
 			}
+#endif
 
 			return base.OnKeyPress( e );
 		}
 
 		protected override bool OnKeyUp( KeyEvent e )
 		{
+#if !NO_UI_WEB_BROWSER
 			if( EnabledInHierarchy && VisibleInHierarchy && browserHost != null )
 			{
 				browserHost.SendFocusEvent( true );
@@ -1174,12 +1232,14 @@ namespace NeoAxis
 
 				//arg.Handled = true;
 			}
+#endif
 
 			return base.OnKeyUp( e );
 		}
 
 		public void LoadURL( string url )
 		{
+#if !NO_UI_WEB_BROWSER
 			// Remove leading whitespace from the URL
 			string url2 = url.TrimStart();
 
@@ -1187,6 +1247,7 @@ namespace NeoAxis
 				url2 = "about:blank";
 
 			browser?.GetMainFrame().LoadUrl( url2 );
+#endif
 		}
 
 		static string GetURLByFileName( string virtualOrRealFileName )
@@ -1234,6 +1295,7 @@ namespace NeoAxis
 
 		public void LoadString( string content, string url = "about:blank" )
 		{
+#if !NO_UI_WEB_BROWSER
 			// Remove leading whitespace from the URL
 			string url2 = url.TrimStart();
 
@@ -1241,6 +1303,7 @@ namespace NeoAxis
 				url2 = "about:blank";
 
 			browser?.GetMainFrame().LoadString( content, url2 );
+#endif
 		}
 
 		//public void LoadHTML( string html, string frameName )
@@ -1256,7 +1319,9 @@ namespace NeoAxis
 
 		public void ExecuteJavaScript( string code, string url, int line )
 		{
+#if !NO_UI_WEB_BROWSER
 			browser?.GetMainFrame().ExecuteJavaScript( code, url, line );
+#endif
 		}
 
 		[Browsable( false )]
@@ -1264,16 +1329,20 @@ namespace NeoAxis
 		{
 			get
 			{
+#if !NO_UI_WEB_BROWSER
 				if( browser != null )
 					return browser.CanGoBack;
 				else
-					return false;
+#endif
+				return false;
 			}
 		}
 
 		public void GoBack()
 		{
+#if !NO_UI_WEB_BROWSER
 			browser?.GoBack();
+#endif
 		}
 
 		[Browsable( false )]
@@ -1281,26 +1350,34 @@ namespace NeoAxis
 		{
 			get
 			{
+#if !NO_UI_WEB_BROWSER
 				if( browser != null )
 					return browser.CanGoForward;
 				else
-					return false;
+#endif
+				return false;
 			}
 		}
 
 		public void GoForward()
 		{
+#if !NO_UI_WEB_BROWSER
 			browser?.GoForward();
+#endif
 		}
 
 		public void Stop()
 		{
+#if !NO_UI_WEB_BROWSER
 			browser?.StopLoad();
+#endif
 		}
 
 		public void Reload()
 		{
+#if !NO_UI_WEB_BROWSER
 			browser?.Reload();
+#endif
 		}
 
 		//[Browsable( false )]
@@ -1327,18 +1404,21 @@ namespace NeoAxis
 		{
 			get
 			{
+#if !NO_UI_WEB_BROWSER
 				if( browser != null )
 					return browser.GetMainFrame().Url;
+#endif
 				return "";
 			}
 		}
 
-		public static bool IsSupportedByThisPlatform()
+		public static bool IsSupportedByPlatform()
 		{
-			//!!!!!
-			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.MacOS )
-				return false;
+#if !NO_UI_WEB_BROWSER
 			return true;
+#else
+			return false;
+#endif
 		}
 
 		[Browsable( false )]
@@ -1349,11 +1429,13 @@ namespace NeoAxis
 
 		internal void HandleCursorChange( IntPtr cursorHandle )
 		{
+#if !NO_UI_WEB_BROWSER
 			try
 			{
 				currentCursor = new Cursor( cursorHandle );
 			}
 			catch { }
+#endif
 		}
 
 		[Browsable( false )]
@@ -1362,24 +1444,29 @@ namespace NeoAxis
 			get { return currentCursor; }
 		}
 
-		public delegate void DownloadBeforeDelegate( UIWebBrowser sender, CefDownloadItem downloadItem, string suggestedName, CefBeforeDownloadCallback callback );
+		public delegate void DownloadBeforeDelegate( UIWebBrowser sender, object/*CefDownloadItem*/ cefDownloadItem, string suggestedName, object/*CefBeforeDownloadCallback*/ cefBeforeDownloadCallback );
 		public event DownloadBeforeDelegate DownloadBefore;
 
+#if !NO_UI_WEB_BROWSER
 		internal void PerformDownloadBefore( CefDownloadItem downloadItem, string suggestedName, CefBeforeDownloadCallback callback )
 		{
 			DownloadBefore?.Invoke( this, downloadItem, suggestedName, callback );
 		}
+#endif
 
-		public delegate void DownloadUpdatedDelegate( UIWebBrowser sender, CefDownloadItem downloadItem, CefDownloadItemCallback callback );
+		public delegate void DownloadUpdatedDelegate( UIWebBrowser sender, object/*CefDownloadItem*/ cefDownloadItem, object/*CefDownloadItemCallback*/ cefDownloadItemCallback );
 		public event DownloadUpdatedDelegate DownloadUpdated;
 
+#if !NO_UI_WEB_BROWSER
 		internal void PerformDownloadUpdated( CefDownloadItem downloadItem, CefDownloadItemCallback callback )
 		{
 			DownloadUpdated?.Invoke( this, downloadItem, callback );
 		}
+#endif
 
 		void UpdateZoom()
 		{
+#if !NO_UI_WEB_BROWSER
 			if( browserHost != null )
 			{
 				var level = ( Zoom.Value * 100 - 100 ) / 25.0;
@@ -1387,7 +1474,11 @@ namespace NeoAxis
 
 				//needInvalidate = true;
 			}
+#endif
 		}
 
 	}
 }
+
+#pragma warning restore CS0169
+#pragma warning restore CS0067

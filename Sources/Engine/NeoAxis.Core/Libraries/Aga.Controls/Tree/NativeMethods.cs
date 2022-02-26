@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 
 
-namespace Aga.Controls.Tree
+namespace Internal.Aga.Controls.Tree
 {
 	internal static class NativeMethods
 	{

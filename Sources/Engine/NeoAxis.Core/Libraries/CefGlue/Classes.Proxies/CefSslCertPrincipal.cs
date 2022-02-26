@@ -1,10 +1,11 @@
-﻿namespace Xilium.CefGlue
+#if !NO_UI_WEB_BROWSER
+namespace Internal.Xilium.CefGlue
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Runtime.InteropServices;
-    using Xilium.CefGlue.Interop;
+    using Internal.Xilium.CefGlue.Interop;
 
     /// <summary>
     /// Class representing the issuer or subject field of an X.509 certificate.
@@ -133,3 +134,5 @@
         }
     }
 }
+
+#endif

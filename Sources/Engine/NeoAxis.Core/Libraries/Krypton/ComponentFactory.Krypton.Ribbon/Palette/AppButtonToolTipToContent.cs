@@ -12,9 +12,9 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Toolkit;
 
-namespace ComponentFactory.Krypton.Ribbon
+namespace Internal.ComponentFactory.Krypton.Ribbon
 {
     /// <summary>
     /// Map application button tooltip values to content values.

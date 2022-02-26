@@ -1,14 +1,16 @@
+// Made with NeoAxis Engine 2022.1.
+
 .component Project.MainMenuScreen
 {
 	Size = Parent 1 1
 	EditorScrollPosition = 0 0
 	BackgroundScene
 	{
-		GetByReference = "Samples\\Starter Content\\Scenes\\Scripting C#.scene"
+		GetByReference = "Samples\\Starter Content\\Scenes\\Character.scene"
 	}
 	BackgroundSceneLimitedDevice
 	{
-		GetByReference = "Samples\\Starter Content\\Scenes Test\\_TestAnimation_LimitedDevice.scene"
+		GetByReference = "Samples\\Starter Content\\Scenes Test\\_TestAnimation.scene"
 	}
 	.component NeoAxis.UIControl
 	{
@@ -23,7 +25,7 @@
 	{
 		Name = Button Scenes
 		Text = Scenes
-		Size = Units 200 40
+		Size = Units 150 40
 		VerticalAlignment = Bottom
 		Margin = Units 10 10 10 10
 		EditorScrollPosition = 0 0
@@ -36,9 +38,9 @@
 	{
 		Name = Button Options
 		Text = Options
-		Size = Units 200 40
+		Size = Units 150 40
 		VerticalAlignment = Bottom
-		Margin = Units 220 10 10 10
+		Margin = Units 170 10 10 10
 		EditorScrollPosition = 0 0
 		Style
 		{
@@ -49,7 +51,7 @@
 	{
 		Name = Button Exit
 		Text = Exit
-		Size = Units 200 40
+		Size = Units 150 40
 		HorizontalAlignment = Right
 		VerticalAlignment = Bottom
 		Margin = Units 0 0 10 10
@@ -109,8 +111,8 @@
 	}
 	.component NeoAxis.UIButton
 	{
-		Name = Button Play Spaceship 2D
-		Text = Spaceship 2D
+		Name = Button Play Spaceship Game
+		Text = Spaceship Game
 		Size = Units 200 40
 		Margin = Units 10 830 130 318.058171164124
 		EditorScrollPosition = 0 0
@@ -121,8 +123,8 @@
 	}
 	.component NeoAxis.UIButton
 	{
-		Name = Button Play Character 2D
-		Text = Character 2D
+		Name = Button Play Platform Game
+		Text = Platform Game
 		Size = Units 200 40
 		Margin = Units 10 880 130 318.058171164124
 		EditorScrollPosition = 0 0
@@ -130,15 +132,5 @@
 		{
 			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
 		}
-	}
-	.component NeoAxis.UIText
-	{
-		Name = Text Simple Game Comment
-		Text = Adapted for mobile devices
-		Size = Units 280.0449709064039 30
-		Margin = Units 221.66978964627805 738.2657756121698 0 0
-		EditorScrollPosition = 0 0
-		TextHorizontalAlignment = Left
-		Shadow = True
 	}
 }

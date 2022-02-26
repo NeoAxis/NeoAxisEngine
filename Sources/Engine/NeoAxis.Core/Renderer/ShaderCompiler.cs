@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -42,7 +42,7 @@ namespace NeoAxis
 
 		[DllImport( Wrapper.library, EntryPoint = "ShaderC_New", CallingConvention = OgreWrapper.convention )]
 		unsafe static extern IntPtr New( ShaderType shaderType, ShaderModel shaderModel, [MarshalAs( UnmanagedType.LPWStr )] string shaderFile,
-			[MarshalAs( UnmanagedType.LPWStr )] string varyingFile );
+			[MarshalAs( UnmanagedType.LPWStr )] string varyingFile, [MarshalAs( UnmanagedType.U1 )] bool optimize );
 
 		[DllImport( Wrapper.library, EntryPoint = "ShaderC_Delete", CallingConvention = OgreWrapper.convention )]
 		unsafe static extern void Delete( IntPtr instance );
@@ -81,17 +81,19 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		public static void Compile( ShaderModel shaderModel, ShaderType shaderType, string shaderFile, string varyingFile, ICollection<(string, string)> defines, out byte[] compiledData, out string error )
+		public static void Compile( ShaderModel shaderModel, ShaderType shaderType, string shaderFile, string varyingFile, ICollection<(string, string)> defines, bool optimize, out byte[] compiledData, out string error )
 		{
 			compiledData = null;
 			error = "";
 
+#if !NO_LITE_DB
 			//try get from shader cache
-			if( EngineSettings.Init.UseShaderCache )
+			if( EngineApp.InitSettings.UseShaderCache )
 			{
 				if( ShaderCache.GetFromCache( shaderModel, shaderType, VirtualPathUtility.GetVirtualPathByReal( shaderFile ), VirtualPathUtility.GetVirtualPathByReal( varyingFile ), defines, out compiledData ) )
 					return;
 			}
+#endif
 
 			//make sure you use precompiled shaders
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
@@ -99,13 +101,11 @@ namespace NeoAxis
 
 			if( !libraryLoaded )
 			{
-				NativeLibraryManager.PreLoadLibrary( Wrapper.library );
+				NativeUtility.PreloadLibrary( Wrapper.library );
 				libraryLoaded = true;
 			}
 
-			var instance = New( shaderType, shaderModel, shaderFile, varyingFile );
-
-			//AddDefine( instance, shaderType.ToString().ToUpper(), "1" );
+			var instance = New( shaderType, shaderModel, shaderFile, varyingFile, optimize );
 
 			if( defines != null )
 			{
@@ -118,7 +118,27 @@ namespace NeoAxis
 				}
 			}
 
+			////!!!!
+			//var time = DateTime.Now;
+
+
 			bool success = Compile( instance );
+
+
+			////!!!!
+			//var d = "";
+			//if( defines != null )
+			//{
+			//	foreach( var define in defines )
+			//	{
+			//		var value = define.Item2;
+			//		if( string.IsNullOrEmpty( value ) )
+			//			value = "1";
+			//		d += " " + define.Item1 + "=" + value + "; ";
+			//	}
+			//}
+			//Log.Info( ( DateTime.Now - time ).TotalSeconds.ToString() + " " + shaderType.ToString() + " " + System.IO.Path.GetFileName( shaderFile ) + " " + d );
+
 
 			if( success )
 			{
@@ -131,12 +151,13 @@ namespace NeoAxis
 
 			Delete( instance );
 
+#if !NO_LITE_DB
 			//write to shader cache
-			if( EngineSettings.Init.UseShaderCache )
+			if( EngineApp.InitSettings.UseShaderCache && optimize && success )
 			{
-				if( success )
-					ShaderCache.AddToCache( shaderModel, shaderType, VirtualPathUtility.GetVirtualPathByReal( shaderFile ), VirtualPathUtility.GetVirtualPathByReal( varyingFile ), defines, compiledData );
+				ShaderCache.AddToCache( shaderModel, shaderType, VirtualPathUtility.GetVirtualPathByReal( shaderFile ), VirtualPathUtility.GetVirtualPathByReal( varyingFile ), defines, compiledData );
 			}
+#endif
 		}
 	}
 }

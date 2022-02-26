@@ -11,9 +11,9 @@
 using System;
 using System.Drawing;
 using System.Diagnostics;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Toolkit;
 
-namespace ComponentFactory.Krypton.Docking
+namespace Internal.ComponentFactory.Krypton.Docking
 {
 	/// <summary>
     /// Event arguments for events that need to provide a store page reference.

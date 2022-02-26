@@ -27,7 +27,7 @@
 		HorizontalAlignment = Center
 		Margin = Units 150 200 150 0
 		EditorScrollPosition = 0 0
-		.component NeoAxis.Component_EventHandler
+		.component NeoAxis.EventHandlerComponent
 		{
 			Name = Event Handler Click
 			Event
@@ -51,7 +51,7 @@
 		HorizontalAlignment = Center
 		Margin = Units 40 200 260 0
 		EditorScrollPosition = 0 0
-		.component NeoAxis.Component_EventHandler
+		.component NeoAxis.EventHandlerComponent
 		{
 			Name = Event Handler Click
 			Event
@@ -75,7 +75,7 @@
 		HorizontalAlignment = Center
 		Margin = Units -70 200 380 0
 		EditorScrollPosition = 0 0
-		.component NeoAxis.Component_EventHandler
+		.component NeoAxis.EventHandlerComponent
 		{
 			Name = Event Handler Click
 			Event
@@ -99,7 +99,7 @@
 		HorizontalAlignment = Center
 		Margin = Units 160 200 150 0
 		EditorScrollPosition = 0 0
-		.component NeoAxis.Component_EventHandler
+		.component NeoAxis.EventHandlerComponent
 		{
 			Name = Event Handler Click
 			Event
@@ -123,7 +123,7 @@
 		HorizontalAlignment = Center
 		Margin = Units 380 200 -60 0
 		EditorScrollPosition = 0 0
-		.component NeoAxis.Component_EventHandler
+		.component NeoAxis.EventHandlerComponent
 		{
 			Name = Event Handler Click
 			Event
@@ -147,7 +147,7 @@
 		HorizontalAlignment = Center
 		Margin = Units 260 200 40 0
 		EditorScrollPosition = 0 0
-		.component NeoAxis.Component_EventHandler
+		.component NeoAxis.EventHandlerComponent
 		{
 			Name = Event Handler Click
 			Event

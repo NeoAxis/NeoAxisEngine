@@ -18,7 +18,7 @@ using System.ComponentModel.Design;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     /// <summary>
     /// Add conversion to a string for display in properties window at design time.

@@ -16,9 +16,9 @@ using System.Windows.Forms;
 using System.Text;
 using System.Diagnostics;
 using System.ComponentModel;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Toolkit;
 
-namespace ComponentFactory.Krypton.Docking
+namespace Internal.ComponentFactory.Krypton.Docking
 {
     /// <summary>
     /// Helper class used inside a 'using' statement to notify start and end of a multi-part update.

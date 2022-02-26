@@ -5,10 +5,10 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using Aga.Controls.Properties;
+using Internal.Aga.Controls.Properties;
 using System.ComponentModel;
 
-namespace Aga.Controls.Tree.NodeControls
+namespace Internal.Aga.Controls.Tree.NodeControls
 {
 	public class NodeIcon : BindableControl
 	{

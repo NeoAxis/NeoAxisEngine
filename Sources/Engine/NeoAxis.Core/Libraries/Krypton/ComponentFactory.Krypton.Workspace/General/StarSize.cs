@@ -10,7 +10,7 @@
 
 using System;
 
-namespace ComponentFactory.Krypton.Workspace
+namespace Internal.ComponentFactory.Krypton.Workspace
 {
     /// <summary>
     /// A size where the width and height are in star notation.

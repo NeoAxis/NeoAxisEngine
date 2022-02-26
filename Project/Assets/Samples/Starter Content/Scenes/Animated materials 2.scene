@@ -1,4 +1,4 @@
-.component NeoAxis.Component_Scene
+.component NeoAxis.Scene
 {
 	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1176, 842\"><KW V=\"1\" A=\"DB4AC180ECEE4059F5BDABD7BE864529\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"55B592D7E59C4714F985926F12589070\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"DB4AC180ECEE4059F5BDABD7BE864529\"><KP UN=\"DB4AC180ECEE4059F5BDABD7BE864529\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"AA5AAD9622144A6BF2ABCA50D8C9CEE9\" S=\"False\"><CPD ObjPath=\"$Opacity Change\\$Shader graph\" /></KP><KP UN=\"5BF21E898CF546C75FA11A2D527498D7\" S=\"False\"><CPD ObjPath=\"$Position Change\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	BackgroundColor = 1 1 1
@@ -10,20 +10,20 @@
 	{
 		GetByReference = "this:$Camera Editor"
 	}
-	.component NeoAxis.Component_Camera
+	.component NeoAxis.Camera
 	{
 		Name = Camera Editor
 		Visible = False
 		Transform = "13.1630493702579 -2.71185701488534 -13.5822827309574; -0.190176023209726 0.0998442719282868 0.864728984350923 0.453991173022853; 1 1 1"
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Ambient Light
 		Transform = "-27.7871391969358 37.4683781031502 14.686420383686; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
 		Brightness = 7290
 	}
-	.component NeoAxis.Component_RenderingPipeline_Default
+	.component NeoAxis.RenderingPipeline_Basic
 	{
 		Name = Rendering Pipeline
 		ShadowDirectionalLightCascades = 1
@@ -35,27 +35,31 @@
 		.component NeoAxis.Component
 		{
 			Name = Scene Effects
-			.component NeoAxis.Component_RenderingEffect_AmbientOcclusion
+			.component NeoAxis.RenderingEffect_AmbientOcclusion
 			{
 				Name = Ambient Occlusion
 				Intensity = 0.657
 			}
-			.component NeoAxis.Component_RenderingEffect_Antialiasing
+			.component NeoAxis.RenderingEffect_Antialiasing
 			{
 				Name = Antialiasing
 			}
-			.component NeoAxis.Component_RenderingEffect_Sharpen
+			.component NeoAxis.RenderingEffect_ResolutionUpscale
+			{
+				Name = Resolution Upscale
+			}
+			.component NeoAxis.RenderingEffect_Sharpen
 			{
 				Name = Sharpen
 				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
 			}
 		}
 	}
-	.component NeoAxis.Component_GameMode
+	.component NeoAxis.GameMode
 	{
 		Name = Game Mode
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light1
 		Transform = "21.096603415861 -4.02738720650646 -4.54723975048288; -0.385544653371362 -0.735088364894102 0.426206952042812 -0.359649899324952; 1 1 1"
@@ -66,7 +70,7 @@
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 90
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light2
 		Transform = "16.2614505529656 1.98343514224467 -13.6195803875689; 0 0 0 1; 1 1 1"
@@ -74,7 +78,7 @@
 		Brightness = 279839.871757908
 		AttenuationFar = 20
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light3
 		Transform = "9.45344240293682 -4.18588145995731 -13.760985157176; 0 0 0 1; 1 1 1"
@@ -82,7 +86,7 @@
 		Brightness = 106423.382038007
 		AttenuationFar = 20
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space 31
 		CanBeSelected = False
@@ -95,10 +99,10 @@
 		{
 			Count = 0
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = Mesh Geometry
 				Dimensions = 10 10
@@ -108,14 +112,14 @@
 				}
 			}
 		}
-		.component NeoAxis.Component_RigidBody
+		.component NeoAxis.RigidBody
 		{
 			Name = Collision Body
 			Transform
 			{
 				GetByReference = "this:..\\Transform"
 			}
-			.component NeoAxis.Component_CollisionShape_Mesh
+			.component NeoAxis.CollisionShape_Mesh
 			{
 				Mesh
 				{
@@ -130,7 +134,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space 2
 		CanBeSelected = False
@@ -143,10 +147,10 @@
 		{
 			Count = 0
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = Mesh Geometry
 				Dimensions = 150 150
@@ -157,7 +161,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space 20
 		CanBeSelected = False
@@ -170,10 +174,10 @@
 		{
 			Count = 0
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = Mesh Geometry
 				Dimensions = 10 6
@@ -184,14 +188,14 @@
 				}
 			}
 		}
-		.component NeoAxis.Component_RigidBody
+		.component NeoAxis.RigidBody
 		{
 			Name = Collision Body
 			Transform
 			{
 				GetByReference = "this:..\\Transform"
 			}
-			.component NeoAxis.Component_CollisionShape_Mesh
+			.component NeoAxis.CollisionShape_Mesh
 			{
 				Mesh
 				{
@@ -206,7 +210,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space 21
 		CanBeSelected = False
@@ -219,10 +223,10 @@
 		{
 			Count = 0
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = Mesh Geometry
 				Dimensions = 10 6
@@ -233,14 +237,14 @@
 				}
 			}
 		}
-		.component NeoAxis.Component_RigidBody
+		.component NeoAxis.RigidBody
 		{
 			Name = Collision Body
 			Transform
 			{
 				GetByReference = "this:..\\Transform"
 			}
-			.component NeoAxis.Component_CollisionShape_Mesh
+			.component NeoAxis.CollisionShape_Mesh
 			{
 				Mesh
 				{
@@ -255,7 +259,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space
 		Transform = "11.1869343976728 -1.55209984770736 -14.081213231529; 0 0 -0.225923352038041 0.974145081085921; 1 1 1"
@@ -272,7 +276,7 @@
 			Count = 0
 		}
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space3
 		Transform = "12.9785571120324 -0.0567169279395623 -14.1702480027789; 0 0 -0.744636866182353 0.667469802704306; 1 1 1"
@@ -289,7 +293,7 @@
 			Count = 0
 		}
 	}
-	.component NeoAxis.Component_Material
+	.component NeoAxis.Material
 	{
 		Name = Opacity Change
 		BlendMode = Masked
@@ -325,16 +329,16 @@
 		{
 			GetByReference = "this:$Shader graph\\$Node Invoke Member 4\\$Invoke Member\\__parameter_ReturnValue"
 		}
-		.component NeoAxis.Component_FlowGraph
+		.component NeoAxis.FlowGraph
 		{
 			Name = Shader graph
 			EditorScrollPosition = 20.6883747757495 2.94841297927921
 			EditorZoomIndex = 5
 			Specialization
 			{
-				GetByReference = NeoAxis.Component_FlowGraphSpecialization_Shader|Instance
+				GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node SF_Drone_ZR7
 				Position = 30 -19
@@ -343,7 +347,7 @@
 					GetByReference = "this:..\\.."
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Invoke Member 2
 				Position = 6 16
@@ -351,7 +355,7 @@
 				{
 					GetByReference = "this:$Invoke Member"
 				}
-				.component NeoAxis.Component_InvokeMember
+				.component NeoAxis.InvokeMember
 				{
 					Name = Invoke Member
 					Member
@@ -367,7 +371,7 @@
 					}
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Invoke Member 3
 				Position = 7 20
@@ -375,7 +379,7 @@
 				{
 					GetByReference = "this:$Invoke Member"
 				}
-				.component NeoAxis.Component_InvokeMember
+				.component NeoAxis.InvokeMember
 				{
 					Name = Invoke Member
 					__parameter_V2 = 0.5
@@ -392,7 +396,7 @@
 					}
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Invoke Member 4
 				Position = 9 25
@@ -400,7 +404,7 @@
 				{
 					GetByReference = "this:$Invoke Member"
 				}
-				.component NeoAxis.Component_InvokeMember
+				.component NeoAxis.InvokeMember
 				{
 					Name = Invoke Member
 					__parameter_V2 = 0.5
@@ -417,7 +421,7 @@
 					}
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Shader Parameter 1
 				Position = 4 12
@@ -425,7 +429,7 @@
 				{
 					GetByReference = "this:$Shader Parameter"
 				}
-				.component NeoAxis.Component_ShaderParameter
+				.component NeoAxis.ShaderParameter
 				{
 					Name = Shader Parameter
 					Source
@@ -434,7 +438,7 @@
 					}
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Texture Sample 6
 				Position = 1 -13
@@ -442,7 +446,7 @@
 				{
 					GetByReference = "this:$Texture Sample"
 				}
-				.component NeoAxis.Component_ShaderTextureSample
+				.component NeoAxis.ShaderTextureSample
 				{
 					Name = Texture Sample
 					Location2 = 0 0
@@ -453,7 +457,7 @@
 					}
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Texture Sample 1
 				Position = -18 -28
@@ -461,7 +465,7 @@
 				{
 					GetByReference = "this:$Texture Sample"
 				}
-				.component NeoAxis.Component_ShaderTextureSample
+				.component NeoAxis.ShaderTextureSample
 				{
 					Name = Texture Sample
 					Location2 = 0 0
@@ -472,7 +476,7 @@
 					}
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Texture Sample 2
 				Position = -18 -19
@@ -480,7 +484,7 @@
 				{
 					GetByReference = "this:$Texture Sample"
 				}
-				.component NeoAxis.Component_ShaderTextureSample
+				.component NeoAxis.ShaderTextureSample
 				{
 					Name = Texture Sample
 					Location2 = 0 0
@@ -491,7 +495,7 @@
 					}
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Texture Sample 3
 				Position = -18 -10
@@ -499,7 +503,7 @@
 				{
 					GetByReference = "this:$Texture Sample"
 				}
-				.component NeoAxis.Component_ShaderTextureSample
+				.component NeoAxis.ShaderTextureSample
 				{
 					Name = Texture Sample
 					Location2 = 0 0
@@ -510,7 +514,7 @@
 					}
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Texture Sample 4
 				Position = -18 -1
@@ -518,7 +522,7 @@
 				{
 					GetByReference = "this:$Texture Sample"
 				}
-				.component NeoAxis.Component_ShaderTextureSample
+				.component NeoAxis.ShaderTextureSample
 				{
 					Name = Texture Sample
 					Location2 = 0 0
@@ -529,7 +533,7 @@
 					}
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Texture Sample 5
 				Position = -18 8
@@ -537,7 +541,7 @@
 				{
 					GetByReference = "this:$Texture Sample"
 				}
-				.component NeoAxis.Component_ShaderTextureSample
+				.component NeoAxis.ShaderTextureSample
 				{
 					Name = Texture Sample
 					Location2 = 0 0
@@ -548,7 +552,7 @@
 					}
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Texture Sample 7
 				Position = -18 17
@@ -556,7 +560,7 @@
 				{
 					GetByReference = "this:$Texture Sample"
 				}
-				.component NeoAxis.Component_ShaderTextureSample
+				.component NeoAxis.ShaderTextureSample
 				{
 					Name = Texture Sample
 					Location2 = 0 0
@@ -567,7 +571,7 @@
 					}
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Texture Sample 8
 				Position = -18 26
@@ -575,7 +579,7 @@
 				{
 					GetByReference = "this:$Texture Sample"
 				}
-				.component NeoAxis.Component_ShaderTextureSample
+				.component NeoAxis.ShaderTextureSample
 				{
 					Name = Texture Sample
 					Location2 = 0 0
@@ -588,7 +592,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_Material
+	.component NeoAxis.Material
 	{
 		Name = Position Change
 		BlendMode = Masked
@@ -624,16 +628,16 @@
 		{
 			GetByReference = "this:$Shader graph\\$Node Invoke Member 1\\$Invoke Member\\__returnvalue_ReturnValue"
 		}
-		.component NeoAxis.Component_FlowGraph
+		.component NeoAxis.FlowGraph
 		{
 			Name = Shader graph
 			EditorScrollPosition = 16.5141236245814 0.918768690472761
 			EditorZoomIndex = 5
 			Specialization
 			{
-				GetByReference = NeoAxis.Component_FlowGraphSpecialization_Shader|Instance
+				GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node SF_Drone_ZR7
 				Position = 30 -19
@@ -642,7 +646,7 @@
 					GetByReference = "this:..\\.."
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Invoke Member 2
 				Position = 6 16
@@ -650,7 +654,7 @@
 				{
 					GetByReference = "this:$Invoke Member"
 				}
-				.component NeoAxis.Component_InvokeMember
+				.component NeoAxis.InvokeMember
 				{
 					Name = Invoke Member
 					Member
@@ -666,7 +670,7 @@
 					}
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Invoke Member 3
 				Position = 7 20
@@ -674,7 +678,7 @@
 				{
 					GetByReference = "this:$Invoke Member"
 				}
-				.component NeoAxis.Component_InvokeMember
+				.component NeoAxis.InvokeMember
 				{
 					Name = Invoke Member
 					__parameter_V2 = 0.5
@@ -691,7 +695,7 @@
 					}
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Invoke Member 4
 				Position = 9 25
@@ -699,7 +703,7 @@
 				{
 					GetByReference = "this:$Invoke Member"
 				}
-				.component NeoAxis.Component_InvokeMember
+				.component NeoAxis.InvokeMember
 				{
 					Name = Invoke Member
 					__parameter_V2 = 0.5
@@ -716,7 +720,7 @@
 					}
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Shader Parameter 1
 				Position = 4 12
@@ -724,7 +728,7 @@
 				{
 					GetByReference = "this:$Shader Parameter"
 				}
-				.component NeoAxis.Component_ShaderParameter
+				.component NeoAxis.ShaderParameter
 				{
 					Name = Shader Parameter
 					Source
@@ -733,7 +737,7 @@
 					}
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Invoke Member 1
 				Position = 22 3
@@ -741,7 +745,7 @@
 				{
 					GetByReference = "this:$Invoke Member"
 				}
-				.component NeoAxis.Component_InvokeMember
+				.component NeoAxis.InvokeMember
 				{
 					Name = Invoke Member
 					__parameter_X = 0
@@ -759,7 +763,7 @@
 					}
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Invoke Member 5
 				Position = 22 10
@@ -767,7 +771,7 @@
 				{
 					GetByReference = "this:$Invoke Member"
 				}
-				.component NeoAxis.Component_InvokeMember
+				.component NeoAxis.InvokeMember
 				{
 					Name = Invoke Member
 					__parameter_V2 = 0.05
@@ -784,7 +788,7 @@
 					}
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Texture Sample 1
 				Position = -19 -30
@@ -792,7 +796,7 @@
 				{
 					GetByReference = "this:$Texture Sample"
 				}
-				.component NeoAxis.Component_ShaderTextureSample
+				.component NeoAxis.ShaderTextureSample
 				{
 					Name = Texture Sample
 					Location2 = 0 0
@@ -803,7 +807,7 @@
 					}
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Texture Sample 2
 				Position = -19 -21
@@ -811,7 +815,7 @@
 				{
 					GetByReference = "this:$Texture Sample"
 				}
-				.component NeoAxis.Component_ShaderTextureSample
+				.component NeoAxis.ShaderTextureSample
 				{
 					Name = Texture Sample
 					Location2 = 0 0
@@ -822,7 +826,7 @@
 					}
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Texture Sample 3
 				Position = -19 -12
@@ -830,7 +834,7 @@
 				{
 					GetByReference = "this:$Texture Sample"
 				}
-				.component NeoAxis.Component_ShaderTextureSample
+				.component NeoAxis.ShaderTextureSample
 				{
 					Name = Texture Sample
 					Location2 = 0 0
@@ -841,7 +845,7 @@
 					}
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Texture Sample 4
 				Position = -19 -3
@@ -849,7 +853,7 @@
 				{
 					GetByReference = "this:$Texture Sample"
 				}
-				.component NeoAxis.Component_ShaderTextureSample
+				.component NeoAxis.ShaderTextureSample
 				{
 					Name = Texture Sample
 					Location2 = 0 0
@@ -860,7 +864,7 @@
 					}
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Texture Sample 5
 				Position = -19 6
@@ -868,7 +872,7 @@
 				{
 					GetByReference = "this:$Texture Sample"
 				}
-				.component NeoAxis.Component_ShaderTextureSample
+				.component NeoAxis.ShaderTextureSample
 				{
 					Name = Texture Sample
 					Location2 = 0 0
@@ -879,7 +883,7 @@
 					}
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Texture Sample 6
 				Position = -19 15
@@ -887,7 +891,7 @@
 				{
 					GetByReference = "this:$Texture Sample"
 				}
-				.component NeoAxis.Component_ShaderTextureSample
+				.component NeoAxis.ShaderTextureSample
 				{
 					Name = Texture Sample
 					Location2 = 0 0
@@ -898,7 +902,7 @@
 					}
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Texture Sample 7
 				Position = -19 24
@@ -906,7 +910,7 @@
 				{
 					GetByReference = "this:$Texture Sample"
 				}
-				.component NeoAxis.Component_ShaderTextureSample
+				.component NeoAxis.ShaderTextureSample
 				{
 					Name = Texture Sample
 					Location2 = 0 0
@@ -919,7 +923,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_GroupOfObjects
+	.component NeoAxis.GroupOfObjects
 	{
 		Name = Group Of Objects
 		BaseObjects
@@ -927,7 +931,7 @@
 			Count = 0
 		}
 	}
-	.component NeoAxis.Component_Text2D
+	.component NeoAxis.Text2D
 	{
 		Name = Text 2D
 		Transform = "11.1869343976728 -1.55209984770736 -13.581213231529; 0 0 -0.225923352038041 0.974145081085921; 1 1 1"
@@ -935,7 +939,7 @@
 		Back = True
 		BackColor = 0 0.5017255 0.7803922
 	}
-	.component NeoAxis.Component_Text2D
+	.component NeoAxis.Text2D
 	{
 		Name = Text 2D 2
 		Transform = "12.9785571120324 -0.0567169279395623 -13.6702480027789; 0 0 -0.790661180973323 0.612253948049231; 1 1 1"

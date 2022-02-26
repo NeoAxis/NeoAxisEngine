@@ -1,8 +1,9 @@
-﻿//
+#if !NO_UI_WEB_BROWSER
+//
 // This file manually written from cef/include/internal/cef_types.h.
 // C API name: cef_window_open_disposition_t.
 //
-namespace Xilium.CefGlue
+namespace Internal.Xilium.CefGlue
 {
     /// <summary>
     /// The manner in which a link click should be opened.
@@ -22,3 +23,5 @@ namespace Xilium.CefGlue
         IgnoreAction,
     }
 }
+
+#endif

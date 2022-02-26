@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-namespace Aga.Controls.Tree
+namespace Internal.Aga.Controls.Tree
 {
 	internal abstract class InputState
 	{

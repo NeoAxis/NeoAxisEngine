@@ -1,11 +1,9 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.ComponentModel;
 using NeoAxis;
-using NeoAxis.Input;
 
 namespace Project
 {
@@ -16,16 +14,17 @@ namespace Project
 		string playFileName = "";
 
 		//load scene
-		Component_Scene scene;
+		Scene scene;
 		Viewport sceneViewport;
-		Component_GameMode gameMode;
-		bool gameModeLastSentInputEnabled;
-		bool gameModeLastSentMouseRelativeMode;
+		GameMode gameMode;
 
 		//load UI control
 		UIControl uiControl;
 
 		UIWindow menuWindow;
+
+		bool firstRender = true;
+		double fadeInTimer;
 
 		///////////////////////////////////////////
 
@@ -45,13 +44,13 @@ namespace Project
 		}
 
 		[Browsable( false )]
-		public Component_Scene Scene
+		public Scene Scene
 		{
 			get { return scene; }
 		}
 
 		[Browsable( false )]
-		public Component_GameMode GameMode
+		public GameMode GameMode
 		{
 			get { return gameMode; }
 		}
@@ -67,6 +66,7 @@ namespace Project
 			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
 			{
 				instance = this;
+				GameMode.UpdatePlayScreen( instance );
 
 				//disable the Menu button on PC
 				if( !SystemSettings.MobileDevice )
@@ -92,7 +92,10 @@ namespace Project
 			base.OnRemovedFromParent( oldParent );
 
 			if( instance == this )
+			{
 				instance = null;
+				GameMode.UpdatePlayScreen( instance );
+			}
 		}
 
 		protected override bool OnKeyDown( KeyEvent e )
@@ -105,7 +108,7 @@ namespace Project
 
 			//!!!!SupressKeyPress
 			//Game mode
-			if( gameMode != null && gameMode.ProcessInputMessage( this, new InputMessageKeyDown( e.Key ) ) )
+			if( gameMode != null && gameMode.ProcessInputMessage( new InputMessageKeyDown( e.Key ) ) )
 				return true;
 
 			return base.OnKeyDown( e );
@@ -114,7 +117,7 @@ namespace Project
 		protected override bool OnKeyPress( KeyPressEvent e )
 		{
 			//Game mode
-			if( gameMode != null && gameMode.ProcessInputMessage( this, new InputMessageKeyPress( e.KeyChar ) ) )
+			if( gameMode != null && gameMode.ProcessInputMessage( new InputMessageKeyPress( e.KeyChar ) ) )
 				return true;
 
 			return base.OnKeyPress( e );
@@ -123,7 +126,7 @@ namespace Project
 		protected override bool OnKeyUp( KeyEvent e )
 		{
 			//Game mode
-			if( gameMode != null && gameMode.ProcessInputMessage( this, new InputMessageKeyUp( e.Key ) ) )
+			if( gameMode != null && gameMode.ProcessInputMessage( new InputMessageKeyUp( e.Key ) ) )
 				return true;
 
 			return base.OnKeyUp( e );
@@ -132,7 +135,7 @@ namespace Project
 		protected override bool OnMouseDown( EMouseButtons button )
 		{
 			//Game mode
-			if( gameMode != null && gameMode.ProcessInputMessage( this, new InputMessageMouseButtonDown( button ) ) )
+			if( gameMode != null && gameMode.ProcessInputMessage( new InputMessageMouseButtonDown( button ) ) )
 				return true;
 
 			return base.OnMouseDown( button );
@@ -141,7 +144,7 @@ namespace Project
 		protected override bool OnMouseUp( EMouseButtons button )
 		{
 			//Game mode
-			if( gameMode != null && gameMode.ProcessInputMessage( this, new InputMessageMouseButtonUp( button ) ) )
+			if( gameMode != null && gameMode.ProcessInputMessage( new InputMessageMouseButtonUp( button ) ) )
 				return true;
 
 			return base.OnMouseUp( button );
@@ -150,7 +153,7 @@ namespace Project
 		protected override bool OnMouseDoubleClick( EMouseButtons button )
 		{
 			//Game mode
-			if( gameMode != null && gameMode.ProcessInputMessage( this, new InputMessageMouseDoubleClick( button ) ) )
+			if( gameMode != null && gameMode.ProcessInputMessage( new InputMessageMouseDoubleClick( button ) ) )
 				return true;
 
 			return base.OnMouseDoubleClick( button );
@@ -161,13 +164,13 @@ namespace Project
 			base.OnMouseMove( mouse );
 
 			//Game mode
-			gameMode?.ProcessInputMessage( this, new InputMessageMouseMove( mouse ) );
+			gameMode?.ProcessInputMessage( new InputMessageMouseMove( mouse ) );
 		}
 
 		protected override bool OnMouseWheel( int delta )
 		{
 			//Game mode
-			if( gameMode != null && gameMode.ProcessInputMessage( this, new InputMessageMouseWheel( delta ) ) )
+			if( gameMode != null && gameMode.ProcessInputMessage( new InputMessageMouseWheel( delta ) ) )
 				return true;
 
 			return base.OnMouseWheel( delta );
@@ -176,7 +179,7 @@ namespace Project
 		protected override bool OnJoystickEvent( JoystickInputEvent e )
 		{
 			//Game mode
-			if( gameMode != null && gameMode.ProcessInputMessage( this, new InputMessageJoystick( e ) ) )
+			if( gameMode != null && gameMode.ProcessInputMessage( new InputMessageJoystick( e ) ) )
 				return true;
 
 			return base.OnJoystickEvent( e );
@@ -185,7 +188,7 @@ namespace Project
 		protected override bool OnTouch( TouchData e )
 		{
 			//Game mode
-			if( gameMode != null && gameMode.ProcessInputMessage( this, new InputMessageTouch( e ) ) )
+			if( gameMode != null && gameMode.ProcessInputMessage( new InputMessageTouch( e ) ) )
 				return true;
 
 			return base.OnTouch( e );
@@ -194,7 +197,7 @@ namespace Project
 		protected override bool OnSpecialInputDeviceEvent( InputEvent e )
 		{
 			//Game mode
-			if( gameMode != null && gameMode.ProcessInputMessage( this, new InputMessageSpecialInputDevice( e ) ) )
+			if( gameMode != null && gameMode.ProcessInputMessage( new InputMessageSpecialInputDevice( e ) ) )
 				return true;
 
 			return base.OnSpecialInputDeviceEvent( e );
@@ -212,12 +215,8 @@ namespace Project
 			{
 				var inputEnabled = InputEnabled;
 
-				//send input enabled changed
-				if( gameMode != null && gameModeLastSentInputEnabled != inputEnabled )
-				{
-					gameModeLastSentInputEnabled = inputEnabled;
-					gameMode.ProcessInputMessage( this, new InputMessageInputEnabledChanged( inputEnabled ) );
-				}
+				//send input enabled changed. sends each update
+				gameMode?.ProcessInputMessage( new InputMessageInputEnabledChanged( inputEnabled ) );
 
 				//update mouse relative mode
 				{
@@ -226,12 +225,8 @@ namespace Project
 					else
 						sceneViewport.MouseRelativeMode = false;
 
-					//send message
-					if( gameMode != null && gameModeLastSentMouseRelativeMode != sceneViewport.MouseRelativeMode )
-					{
-						gameModeLastSentMouseRelativeMode = sceneViewport.MouseRelativeMode;
-						gameMode.ProcessInputMessage( this, new InputMessageMouseRelativeModeChanged( gameModeLastSentMouseRelativeMode ) );
-					}
+					//send message. sends each update
+					gameMode?.ProcessInputMessage( new InputMessageMouseRelativeModeChanged( sceneViewport.MouseRelativeMode ) );
 				}
 			}
 
@@ -245,8 +240,8 @@ namespace Project
 				SoundWorld.SetListenerReset();
 
 			// Scene simulation.
-			if( scene != null && scene.HierarchyController != null )
-				scene.HierarchyController.PerformSimulationSteps();
+			scene?.HierarchyController?.PerformSimulationSteps();
+			ParentRoot.HierarchyController?.PerformSimulationSteps();
 
 			//Cutscene update
 			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && gameMode != null )
@@ -297,6 +292,9 @@ namespace Project
 
 			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
 				UpdateCursorVisibility();
+
+			if( !firstRender )
+				fadeInTimer += delta;
 		}
 
 		protected override void OnRenderUI( CanvasRenderer renderer )
@@ -304,25 +302,52 @@ namespace Project
 			base.OnRenderUI( renderer );
 
 			//Game mode
-			gameMode?.PerformRenderUI( this, renderer );
+			gameMode?.PerformRenderUI( renderer );
 
 			//screen fading
 			if( gameMode != null && gameMode.ScreenFadingCurrentColor.Alpha > 0 )
 				renderer.AddQuad( new Rectangle( 0, 0, 1, 1 ), gameMode.ScreenFadingCurrentColor );
 		}
 
-		public void SetScene( Component_Scene scene, bool canChangeUIControl )
+		double GetFadeInAlpha()
+		{
+			var curve = new CurveLine();
+			curve.AddPoint( 0, new Vector3( 1, 0, 0 ) );
+			curve.AddPoint( 0.1, new Vector3( 1, 0, 0 ) );
+			curve.AddPoint( 1.0, new Vector3( 0, 0, 0 ) );
+
+			var value = curve.CalculateValueByTime( fadeInTimer );
+			return MathEx.Saturate( value.X );
+		}
+
+		protected override void OnAfterRenderUIWithChildren( CanvasRenderer renderer )
+		{
+			base.OnAfterRenderUIWithChildren( renderer );
+
+			//fade in at start
+			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && EngineApp.RenderVideoToFileData == null )
+			{
+				var alpha = GetFadeInAlpha();
+				if( alpha != 0 )
+					renderer.AddQuad( new Rectangle( 0, 0, 1, 1 ), new Rectangle( 0, 0, 1, 1 ), null, new ColorValue( 0, 0, 0, alpha ) );
+			}
+
+			firstRender = false;
+		}
+
+		public void SetScene( Scene scene, bool canChangeUIControl )
 		{
 			this.scene = scene;
 
 			sceneViewport = ParentContainer.Viewport;
 			scene.ViewportUpdateBegin += Scene_ViewportUpdateBegin;
 			scene.ViewportUpdateGetCameraSettings += Scene_ViewportUpdateGetCameraSettings;
-			scene.RenderEvent += Scene_RenderEvent;
+			//scene.RenderEvent += Scene_RenderEvent;
 			sceneViewport.AttachedScene = scene;
+			sceneViewport.NotifyInstantCameraMovement();
 
 			//init GameMode
-			gameMode = scene.GetComponent<Component_GameMode>( onlyEnabledInHierarchy: true );
+			gameMode = scene.GetComponent<GameMode>( onlyEnabledInHierarchy: true );
 
 			// Load UI screen of the scene.
 			if( canChangeUIControl )
@@ -352,31 +377,37 @@ namespace Project
 		{
 			DestroyScene();
 
-			scene = ResourceManager.LoadSeparateInstance<Component_Scene>( PlayFileName, true, null );//, out var error );
+			scene = ResourceManager.LoadSeparateInstance<Scene>( PlayFileName, true, null );//, out var error );
 			if( scene == null )
 				return false;
+
 			//if( !string.IsNullOrEmpty( error ) )
 			//{
 			//	Log.Error( error );
 			//	return;
 			//}
 
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
+
 			SetScene( scene, canChangeUIControl );
 
 			return true;
 		}
 
-		private void Scene_ViewportUpdateBegin( Component_Scene scene, Viewport viewport, Viewport.CameraSettingsClass overrideCameraSettings )
+		private void Scene_ViewportUpdateBegin( Scene scene, Viewport viewport, Viewport.CameraSettingsClass overrideCameraSettings )
 		{
-			ProjectUtility.UpdateSceneAntialiasingByAppSettings( scene );
+			SimulationApp.UpdateSceneAntialiasingByAppSettings( scene );
+			SimulationApp.UpdateSceneResolutionUpscaleByAppSettings( scene );
+			SimulationApp.UpdateSceneSharpnessByAppSettings( scene );
 		}
 
-		private void Scene_ViewportUpdateGetCameraSettings( Component_Scene scene, Viewport viewport, ref bool processed )
+		private void Scene_ViewportUpdateGetCameraSettings( Scene scene, Viewport viewport, ref bool processed )
 		{
 			// Get default camera or the camera from the editor.
-			Component_Camera camera = scene.CameraDefault;
+			Camera camera = scene.CameraDefault;
 			if( camera == null )
-				camera = scene.Mode.Value == Component_Scene.ModeEnum._3D ? scene.CameraEditor : scene.CameraEditor2D;
+				camera = scene.Mode.Value == Scene.ModeEnum._3D ? scene.CameraEditor : scene.CameraEditor2D;
 
 			// Get camera settings by game mode.
 			if( gameMode != null )
@@ -391,8 +422,8 @@ namespace Project
 			}
 
 			// Create new camera:
-			//camera = (Component_Camera)camera.Clone();
-			////camera = new Component_Camera();
+			//camera = (Camera)camera.Clone();
+			////camera = new Camera();
 			//camera.Transform = new Transform( cameraPosition, Quaternion.LookAt( ( lookTo - cameraPosition ).GetNormalize(), up ) );
 			//camera.FixedUp = up;
 
@@ -403,25 +434,32 @@ namespace Project
 			}
 		}
 
-		private void Scene_RenderEvent( Component_Scene sender, Viewport viewport )
-		{
-			// Game mode.
-			gameMode?.PerformRender( this, viewport );
-		}
+		//private void Scene_RenderEvent( Scene sender, Viewport viewport )
+		//{
+		//	// Game mode.
+		//	gameMode?.PerformRender( viewport );
+		//}
 
 		public void DestroyScene()
 		{
 			if( sceneViewport != null )
 			{
 				scene.ViewportUpdateGetCameraSettings -= Scene_ViewportUpdateGetCameraSettings;
-				scene.RenderEvent -= Scene_RenderEvent;
+				//scene.RenderEvent -= Scene_RenderEvent;
 				sceneViewport = null;
 			}
 			if( scene != null )
 			{
 				scene.Dispose();
 				scene = null;
+
+				GC.Collect();
+				GC.WaitForPendingFinalizers();
 			}
+
+			//unload GPU resources. disable it when need faster switching between scenes
+			GpuTexture.UnloadAllUnloadable();
+			GpuBufferManager.DestroyNativeObjects();
 		}
 
 		bool LoadUIControl()
@@ -439,7 +477,7 @@ namespace Project
 
 		public void DestroyUIControl()
 		{
-			if( uiControl != null )
+			if( uiControl != null && uiControl.Parent == this )
 			{
 				RemoveComponent( uiControl, false );
 				uiControl = null;
@@ -450,7 +488,7 @@ namespace Project
 		{
 			DestroyLoadedObject( canChangeUIControl );
 
-			playFileName = fileName;
+			playFileName = PathUtility.NormalizePath( fileName );
 
 			SoundWorld.SetListenerReset();
 

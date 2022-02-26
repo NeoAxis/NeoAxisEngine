@@ -10,7 +10,7 @@
 
 using System;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     /// <summary>
     /// Attribute that marks properties for persistence inside the Krypton palette.

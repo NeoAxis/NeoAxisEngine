@@ -16,10 +16,10 @@ using System.Drawing.Design;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Diagnostics;
-using ComponentFactory.Krypton.Toolkit;
-using ComponentFactory.Krypton.Navigator;
+using Internal.ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Navigator;
 
-namespace ComponentFactory.Krypton.Workspace
+namespace Internal.ComponentFactory.Krypton.Workspace
 {
     /// <summary>
     /// Collection of workspace items.

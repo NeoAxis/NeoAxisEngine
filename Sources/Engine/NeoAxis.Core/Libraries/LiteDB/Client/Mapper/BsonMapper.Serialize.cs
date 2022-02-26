@@ -1,11 +1,12 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     public partial class BsonMapper
     {
@@ -210,3 +211,4 @@ namespace LiteDB
         }
     }
 }
+#endif

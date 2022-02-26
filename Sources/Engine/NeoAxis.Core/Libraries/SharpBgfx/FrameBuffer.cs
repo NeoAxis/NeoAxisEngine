@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SharpBgfx {
+namespace Internal.SharpBgfx {
     /// <summary>
     /// Represents a framebuffer attachment.
     /// </summary>

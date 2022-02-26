@@ -6,7 +6,9 @@
 #include "bx_p.h"
 #include <bx/allocator.h>
 
+#ifndef IOS
 #include <malloc.h>
+#endif
 
 //!!!!betauser
 #if BX_PLATFORM_WINDOWS //#ifndef __ANDROID__
@@ -61,7 +63,7 @@ namespace bx
 		{
 			if (BX_CONFIG_ALLOCATOR_NATURAL_ALIGNMENT >= _align)
 			{
-				return Memory_Alloc(MemoryAllocationType_Renderer, _size, __FILE__, __LINE__);
+				return Memory_Alloc(MemoryAllocationType_Renderer, (int)_size, __FILE__, __LINE__);
 			}
 
 //#	if BX_COMPILER_MSVC
@@ -74,7 +76,7 @@ namespace bx
 
 		if (BX_CONFIG_ALLOCATOR_NATURAL_ALIGNMENT >= _align)
 		{
-			return Memory_Realloc(MemoryAllocationType_Renderer, _ptr, _size, __FILE__, __LINE__);
+			return Memory_Realloc(MemoryAllocationType_Renderer, _ptr, (int)_size, __FILE__, __LINE__);
 		}
 
 //#	if BX_COMPILER_MSVC

@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -13,7 +13,7 @@ namespace MyOggDecoder
 		IntPtr buffer;
 
 		bool needUpdateTexture;
-		Component_Image texture;
+		NeoAxis.ImageComponent texture;
 		PixelFormat textureFormat;
 
 		//
@@ -80,16 +80,16 @@ namespace MyOggDecoder
 		{
 			Vector2I textureSize = new Vector2I( Round2( size.X ), Round2( size.Y ) );
 
-			texture = ComponentUtility.CreateComponent<Component_Image>( null, true, false );
-			texture.CreateType = Component_Image.TypeEnum._2D;
+			texture = ComponentUtility.CreateComponent<ImageComponent>( null, true, false );
+			texture.CreateType = ImageComponent.TypeEnum._2D;
 			texture.CreateSize = textureSize;
 			texture.CreateMipmaps = false;// 0;
 										  //!!!!
 			texture.CreateFormat = PixelFormat.A8R8G8B8;
-			texture.CreateUsage = Component_Image.Usages.Dynamic | Component_Image.Usages.WriteOnly;
+			texture.CreateUsage = ImageComponent.Usages.Dynamic | ImageComponent.Usages.WriteOnly;
 			texture.Enabled = true;
 
-			//if( !c.Create( Component_Texture.TypeEnum.Type2D, textureSize, 1, 0, PixelFormat.A8R8G8B8, GpuTexture.Usages.DynamicWriteOnly ) )
+			//if( !c.Create( Texture.TypeEnum.Type2D, textureSize, 1, 0, PixelFormat.A8R8G8B8, GpuTexture.Usages.DynamicWriteOnly ) )
 			//{
 			//	texture.Dispose();
 			//	return false;
@@ -99,7 +99,7 @@ namespace MyOggDecoder
 
 			int totalSize = PixelFormatUtility.GetNumElemBytes( gpuTexture.ResultFormat ) * gpuTexture.ResultSize.X * gpuTexture.ResultSize.Y;
 			byte[] data = new byte[ totalSize ];
-			var d = new GpuTexture.SurfaceData[] { new GpuTexture.SurfaceData( 0, 0, data ) };
+			var d = new GpuTexture.SurfaceData[] { new GpuTexture.SurfaceData( data ) };
 			gpuTexture.SetData( d );
 
 			textureFormat = texture.CreateFormat;
@@ -168,13 +168,13 @@ namespace MyOggDecoder
 
 			//pixelBuffer.Unlock();
 
-			var d = new GpuTexture.SurfaceData[] { new GpuTexture.SurfaceData( 0, 0, data ) };
+			var d = new GpuTexture.SurfaceData[] { new GpuTexture.SurfaceData( data ) };
 			gpuTexture.SetData( d );
 
 			needUpdateTexture = false;
 		}
 
-		public Component_Image GetUpdatedTexture()
+		public NeoAxis.ImageComponent GetUpdatedTexture()
 		{
 			if( buffer == IntPtr.Zero )
 				return null;

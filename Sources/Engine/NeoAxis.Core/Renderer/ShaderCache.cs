@@ -1,4 +1,5 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿#if !NO_LITE_DB
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,8 +7,9 @@ using System.Text;
 using System.IO.Compression;
 using System.Linq;
 using System.Security.Cryptography;
-using SharpBgfx;
-using LiteDB;
+using Internal.SharpBgfx;
+using Internal.LiteDB;
+using System.Threading;
 
 namespace NeoAxis
 {
@@ -17,6 +19,7 @@ namespace NeoAxis
 		static LiteDatabase database;
 		static Dictionary<string, string> shaderFileHashes = new Dictionary<string, string>();
 		static Dictionary<string, string[]> shaderFileIncludedFiles = new Dictionary<string, string[]>();
+		static object lockObject = new object();
 
 		/////////////////////////////////////////
 
@@ -78,30 +81,48 @@ namespace NeoAxis
 							if( !Directory.Exists( folder ) )
 								Directory.CreateDirectory( folder );
 
-							var supportShared = 
-								SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows || 
+							var supportShared =
+								SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows ||
 								SystemSettings.CurrentPlatform == SystemSettings.Platform.MacOS;
 							var connectionType = supportShared ? "shared" : "direct";
 
 							var connectionString = $"Filename={fileName};Connection={connectionType};Upgrade=true";
 							if( readOnly )
 								connectionString += ";ReadOnly=true";
-							database = new LiteDatabase( connectionString );
 
-							//var options = new LiteDB.FileOptions();
-							////in UWP we do not have write access to the application folder
-							//if( readOnly )
-							//	options.FileMode = LiteDB.FileMode.ReadOnly;
-
-							//database = new LiteDatabase( new FileDiskService( fileName, options ) );
-
-							//!!!!
-							//in UWP we do not have write access to the application folder
-							//even if we set FileMode = LiteDB.FileMode.ReadOnly, EnsureIndex() method writes to disk. it is a LiteDB issue?
-							if( !readOnly )
+							int attemp = 0;
+							again:
+							try
 							{
-								var collection = database.GetCollection<DatabaseItem>( "items" );
-								collection.EnsureIndex( "KeyIndex" );
+								database = new LiteDatabase( connectionString );
+
+								//var options = new LiteDB.FileOptions();
+								////in UWP we do not have write access to the application folder
+								//if( readOnly )
+								//	options.FileMode = LiteDB.FileMode.ReadOnly;
+
+								//database = new LiteDatabase( new FileDiskService( fileName, options ) );
+
+								//!!!!
+								//in UWP we do not have write access to the application folder
+								//even if we set FileMode = LiteDB.FileMode.ReadOnly, EnsureIndex() method writes to disk. it is a LiteDB issue?
+								if( !readOnly )
+								{
+									var collection = database.GetCollection<DatabaseItem>( "items" );
+									collection.EnsureIndex( "KeyIndex" );
+								}
+
+							}
+							catch( Exception e2 )
+							{
+								if( attemp < 3 )
+								{
+									attemp++;
+									Thread.Sleep( 500 );
+									goto again;
+								}
+								else
+									throw e2;
 							}
 						}
 					}
@@ -116,13 +137,20 @@ namespace NeoAxis
 
 		public static void Shutdown()
 		{
-			if( database != null )
+			lock( lockObject )
 			{
-				//!!!!вызывать, если менялось что-то
-				//database.Shrink();
+				if( database != null )
+				{
+					try
+					{
+						//!!!!вызывать, если менялось что-то
+						//database.Shrink();
 
-				database.Dispose();
-				database = null;
+						database.Dispose();
+					}
+					catch { }
+					database = null;
+				}
 			}
 		}
 
@@ -182,86 +210,60 @@ namespace NeoAxis
 			return b.ToString();
 		}
 
-		static byte[] Zip( byte[] data )
+		public static bool GetFromCache( ShaderCompiler.ShaderModel shaderModel, ShaderCompiler.ShaderType shaderType, string shaderFile, string varyingFile, ICollection<(string, string)> defines, out byte[] compiledData )
 		{
-			using( var memoryStream = new MemoryStream() )
+			lock( lockObject )
 			{
-				using( var zipArchive = new ZipArchive( memoryStream, ZipArchiveMode.Create, true ) )
+				Init();
+				if( database == null )
 				{
-					var file = zipArchive.CreateEntry( "file" );
-					using( var entryStream = file.Open() )
-						entryStream.Write( data, 0, data.Length );
+					compiledData = null;
+					return false;
 				}
-				return memoryStream.ToArray();
-			}
-		}
 
-		static byte[] Unzip( byte[] data )
-		{
-			using( var zippedStream = new MemoryStream( data ) )
-			{
-				using( var archive = new ZipArchive( zippedStream ) )
+				try
 				{
-					var entry = archive.Entries.FirstOrDefault();
-					using( var stream = entry.Open() )
+					var collection = database.GetCollection<DatabaseItem>( "items" );
+
+					var key = GetKey( shaderModel, shaderType, shaderFile, varyingFile, defines );
+					var keyIndex = StringUtility.GetStableHashCode( key );
+
+					var items = collection.Find( Query.EQ( "KeyIndex", keyIndex ) );
+					foreach( var item in items )
 					{
-						using( var memoryStream = new MemoryStream() )
+						if( item.Key == key )
 						{
-							stream.CopyTo( memoryStream );
-							return memoryStream.ToArray();
+							compiledData = IOUtility.Unzip( item.Data );
+							return true;
 						}
 					}
 				}
-			}
-		}
+				catch { }
 
-		public static bool GetFromCache( ShaderCompiler.ShaderModel shaderModel, ShaderCompiler.ShaderType shaderType, string shaderFile, string varyingFile, ICollection<(string, string)> defines, out byte[] compiledData )
-		{
-			Init();
-			if( database == null )
-			{
 				compiledData = null;
 				return false;
 			}
-
-			var collection = database.GetCollection<DatabaseItem>( "items" );
-
-			var key = GetKey( shaderModel, shaderType, shaderFile, varyingFile, defines );
-			var keyIndex = key.GetStableHashCode();
-
-			var items = collection.Find( Query.EQ( "KeyIndex", keyIndex ) );
-			foreach( var item in items )
-			{
-				if( item.Key == key )
-				{
-					compiledData = Unzip( item.Data );
-					return true;
-				}
-			}
-
-			compiledData = null;
-			return false;
 		}
 
 		public static void AddToCache( ShaderCompiler.ShaderModel shaderModel, ShaderCompiler.ShaderType shaderType, string shaderFile, string varyingFile, ICollection<(string, string)> defines, byte[] compiledData )
 		{
-			Init();
-			if( database == null )
-				return;
-
-			var item = new DatabaseItem();
-			item.Key = GetKey( shaderModel, shaderType, shaderFile, varyingFile, defines );
-			item.KeyIndex = item.Key.GetStableHashCode();
-			item.Data = Zip( compiledData );
-
-			var collection = database.GetCollection<DatabaseItem>( "items" );
-
-			try
+			lock( lockObject )
 			{
-				collection.Insert( item );
-			}
-			catch
-			{
+				Init();
+				if( database == null )
+					return;
+
+				var item = new DatabaseItem();
+				item.Key = GetKey( shaderModel, shaderType, shaderFile, varyingFile, defines );
+				item.KeyIndex = StringUtility.GetStableHashCode( item.Key );
+				item.Data = IOUtility.Zip( compiledData );
+
+				try
+				{
+					var collection = database.GetCollection<DatabaseItem>( "items" );
+					collection.Insert( item );
+				}
+				catch { }
 			}
 		}
 
@@ -298,8 +300,11 @@ namespace NeoAxis
 
 		public static void ClearShaderFileHashesAndIncludesFilesCache()
 		{
-			shaderFileHashes.Clear();
-			shaderFileIncludedFiles.Clear();
+			lock( lockObject )
+			{
+				shaderFileHashes.Clear();
+				shaderFileIncludedFiles.Clear();
+			}
 		}
 
 		static List<string> GetIncludedFilesOnlyInThisFile( string virtualFileName )
@@ -379,3 +384,4 @@ namespace NeoAxis
 		}
 	}
 }
+#endif

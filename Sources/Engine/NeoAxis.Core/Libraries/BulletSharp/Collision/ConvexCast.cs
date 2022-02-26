@@ -1,8 +1,8 @@
 using System;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class ConvexCast : IDisposable
 	{
@@ -25,7 +25,7 @@ namespace BulletSharp
 				btConvexCast_CastResult_DebugDraw(Native, fraction);
 			}
 
-			public void DrawCoordSystem(Matrix trans)
+			public void DrawCoordSystem(BMatrix trans)
 			{
 				btConvexCast_CastResult_drawCoordSystem(Native, ref trans);
 			}
@@ -43,8 +43,8 @@ namespace BulletSharp
 
 			public IDebugDraw DebugDrawer
 			{
-				get => BulletSharp.DebugDraw.GetManaged(btConvexCast_CastResult_getDebugDrawer(Native));
-				set => btConvexCast_CastResult_setDebugDrawer(Native, BulletSharp.DebugDraw.GetUnmanaged(value));
+				get => Internal.BulletSharp.DebugDraw.GetManaged(btConvexCast_CastResult_getDebugDrawer(Native));
+				set => btConvexCast_CastResult_setDebugDrawer(Native, Internal.BulletSharp.DebugDraw.GetUnmanaged(value));
 			}
 
 			public double Fraction
@@ -53,44 +53,44 @@ namespace BulletSharp
 				set => btConvexCast_CastResult_setFraction(Native, value);
 			}
 
-			public Vector3 HitPoint
+			public BVector3 HitPoint
 			{
 				get
 				{
-					Vector3 value;
+					BVector3 value;
 					btConvexCast_CastResult_getHitPoint(Native, out value);
 					return value;
 				}
 				set => btConvexCast_CastResult_setHitPoint(Native, ref value);
 			}
 
-			public Matrix HitTransformA
+			public BMatrix HitTransformA
 			{
 				get
 				{
-					Matrix value;
+					BMatrix value;
 					btConvexCast_CastResult_getHitTransformA(Native, out value);
 					return value;
 				}
 				set => btConvexCast_CastResult_setHitTransformA(Native, ref value);
 			}
 
-			public Matrix HitTransformB
+			public BMatrix HitTransformB
 			{
 				get
 				{
-					Matrix value;
+					BMatrix value;
 					btConvexCast_CastResult_getHitTransformB(Native, out value);
 					return value;
 				}
 				set => btConvexCast_CastResult_setHitTransformB(Native, ref value);
 			}
 
-			public Vector3 Normal
+			public BVector3 Normal
 			{
 				get
 				{
-					Vector3 value;
+					BVector3 value;
 					btConvexCast_CastResult_getNormal(Native, out value);
 					return value;
 				}
@@ -125,7 +125,7 @@ namespace BulletSharp
 			Native = native;
 		}
 
-		public bool CalcTimeOfImpact(Matrix fromA, Matrix toA, Matrix fromB, Matrix toB,
+		public bool CalcTimeOfImpact(BMatrix fromA, BMatrix toA, BMatrix fromB, BMatrix toB,
 			CastResult result)
 		{
 			return btConvexCast_calcTimeOfImpact(Native, ref fromA, ref toA, ref fromB,

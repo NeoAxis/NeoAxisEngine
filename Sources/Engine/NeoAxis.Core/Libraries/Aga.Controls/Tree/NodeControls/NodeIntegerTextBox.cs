@@ -4,7 +4,7 @@ using System.Text;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace Aga.Controls.Tree.NodeControls
+namespace Internal.Aga.Controls.Tree.NodeControls
 {
 
 	public class NodeIntegerTextBox : NodeTextBox

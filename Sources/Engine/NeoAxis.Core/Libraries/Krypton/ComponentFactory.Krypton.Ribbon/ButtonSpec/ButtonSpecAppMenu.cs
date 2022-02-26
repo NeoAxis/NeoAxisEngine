@@ -16,9 +16,9 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Collections.Generic;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Toolkit;
 
-namespace ComponentFactory.Krypton.Ribbon
+namespace Internal.ComponentFactory.Krypton.Ribbon
 {
     /// <summary>
     /// Button specification appropriate for an application menu

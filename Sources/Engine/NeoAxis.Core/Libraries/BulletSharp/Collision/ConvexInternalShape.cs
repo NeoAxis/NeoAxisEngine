@@ -1,9 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public abstract class ConvexInternalShape : ConvexShape
 	{
@@ -17,32 +17,32 @@ namespace BulletSharp
 			btConvexInternalShape_setSafeMargin(Native, minDimension, defaultMarginMultiplier);
 		}
 
-		public void SetSafeMarginRef(ref Vector3 halfExtents, double defaultMarginMultiplier = 0.1f)
+		public void SetSafeMarginRef(ref BVector3 halfExtents, double defaultMarginMultiplier = 0.1f)
 		{
 			btConvexInternalShape_setSafeMargin2(Native, ref halfExtents, defaultMarginMultiplier);
 		}
 
-		public void SetSafeMargin(Vector3 halfExtents, double defaultMarginMultiplier = 0.1f)
+		public void SetSafeMargin(BVector3 halfExtents, double defaultMarginMultiplier = 0.1f)
 		{
 			btConvexInternalShape_setSafeMargin2(Native, ref halfExtents, defaultMarginMultiplier);
 		}
 
-		public Vector3 ImplicitShapeDimensions
+		public BVector3 ImplicitShapeDimensions
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btConvexInternalShape_getImplicitShapeDimensions(Native, out value);
 				return value;
 			}
 			set { btConvexInternalShape_setImplicitShapeDimensions(Native, ref value); }
 		}
 
-		public Vector3 LocalScalingNV
+		public BVector3 LocalScalingNV
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btConvexInternalShape_getLocalScalingNV(Native, out value);
 				return value;
 			}

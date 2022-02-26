@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ComponentFactory.Krypton.Navigator.Properties {
+namespace Internal.ComponentFactory.Krypton.Navigator.Properties {
     using System;
     
     

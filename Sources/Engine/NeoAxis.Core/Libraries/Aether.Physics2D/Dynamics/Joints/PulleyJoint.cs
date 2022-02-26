@@ -27,11 +27,12 @@
 
 using System;
 using System.Diagnostics;
-using tainicom.Aether.Physics2D.Common;
-using tainicom.Aether.Physics2D.Common.Maths;
-using Microsoft.Xna.Framework;
+using Internal.tainicom.Aether.Physics2D.Common;
+#if XNAAPI
+using Vector2 = Microsoft.Xna.Framework.Vector2;
+#endif
 
-namespace tainicom.Aether.Physics2D.Dynamics.Joints
+namespace Internal.tainicom.Aether.Physics2D.Dynamics.Joints
 {
     // Pulley:
     // length1 = norm(p1 - s1)

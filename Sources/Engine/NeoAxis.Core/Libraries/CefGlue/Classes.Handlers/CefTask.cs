@@ -1,8 +1,9 @@
-﻿namespace Xilium.CefGlue
+#if !NO_UI_WEB_BROWSER
+namespace Internal.Xilium.CefGlue
 {
     using System;
     using System.Collections.Generic;
-    using Xilium.CefGlue.Interop;
+    using Internal.Xilium.CefGlue.Interop;
 
     /// <summary>
     /// Implement this interface for asynchronous task execution. If the task is
@@ -27,3 +28,5 @@
         protected abstract void Execute();
     }
 }
+
+#endif

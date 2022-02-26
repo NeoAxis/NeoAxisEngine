@@ -4,9 +4,12 @@
  */
 
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+using Internal.tainicom.Aether.Physics2D.Common;
+#if XNAAPI
+using Vector2 = Microsoft.Xna.Framework.Vector2;
+#endif
 
-namespace tainicom.Aether.Physics2D.Common.ConvexHull
+namespace Internal.tainicom.Aether.Physics2D.Common.ConvexHull
 {
     /// <summary>
     /// Andrew's Monotone Chain Convex Hull algorithm.

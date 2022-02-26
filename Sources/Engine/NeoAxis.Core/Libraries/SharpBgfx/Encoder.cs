@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SharpBgfx {
+namespace Internal.SharpBgfx {
     /// <summary>
     /// An interface for encoding a list of commands from multiple threads.
     /// Dispose of the encoder to finish submitting calls from the current thread.

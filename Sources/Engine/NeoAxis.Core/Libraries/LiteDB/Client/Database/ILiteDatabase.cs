@@ -1,9 +1,10 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
 using System.IO;
-using LiteDB.Engine;
+using Internal.LiteDB.Engine;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     public interface ILiteDatabase : IDisposable
     {
@@ -149,3 +150,4 @@ namespace LiteDB
         Collation Collation { get; }
     }
 }
+#endif

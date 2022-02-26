@@ -12,7 +12,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     /// <summary>
     /// Create a default value attribute for color property.

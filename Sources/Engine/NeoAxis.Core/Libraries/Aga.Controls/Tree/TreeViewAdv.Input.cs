@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
-using Aga.Controls.Tree.NodeControls;
+using Internal.Aga.Controls.Tree.NodeControls;
 using System.Drawing.Imaging;
 using System.Threading;
 
-namespace Aga.Controls.Tree
+namespace Internal.Aga.Controls.Tree
 {
 	public partial class TreeViewAdv
 	{

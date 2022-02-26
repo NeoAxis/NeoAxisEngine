@@ -1,4 +1,5 @@
-﻿namespace Xilium.CefGlue.Platform.Windows
+#if !NO_UI_WEB_BROWSER
+namespace Internal.Xilium.CefGlue.Platform.Windows
 {
     using System;
     using System.Collections.Generic;
@@ -14,3 +15,5 @@
         public static extern IntPtr LoadLibraryEx(string lpFileName, IntPtr hReservedNull, LoadLibraryFlags dwFlags);
     }
 }
+
+#endif

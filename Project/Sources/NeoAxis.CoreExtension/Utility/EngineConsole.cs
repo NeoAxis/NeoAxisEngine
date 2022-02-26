@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -6,19 +6,21 @@ using System.Linq;
 
 namespace NeoAxis
 {
+	/// <summary>
+	/// The console of the Player app.
+	/// </summary>
 	public static class EngineConsole
 	{
 		//visual
 		static bool needLoadTextureAndFont = true;
-		static Component_Font font;
+		static FontComponent font;
 		static double fontSize = 0.025;
-		static Component_Image texture;
+		static ImageComponent texture;
 
 		static Vector2 textureOffset;
 		static float maxTransparency = .9f;
 
 		//commands
-		static Command.Method defaultCommandHandler;
 		static List<Command> commands = new List<Command>();
 
 		//actions
@@ -83,6 +85,32 @@ namespace NeoAxis
 				get { return userData; }
 			}
 		}
+
+		///////////////////////////////////////////
+
+		public delegate void ExecuteStringEventDelegate( string text, ref bool skip );
+		public static event ExecuteStringEventDelegate ExecuteStringEvent;
+
+		public delegate void UnknownCommandHandlerDelegate( string name, string arguments, ref bool handled );
+		public static event UnknownCommandHandlerDelegate UnknownCommandHandler;
+
+		public delegate void KeyDownDelegate( KeyEvent e, ref bool handled, ref bool result );
+		public static event KeyDownDelegate KeyDown;
+
+		public delegate void KeyPressDelegate( KeyPressEvent e, ref bool handled, ref bool result );
+		public static event KeyPressDelegate KeyPress;
+
+		public delegate void MouseWheelDelegate( int delta, ref bool handled, ref bool result );
+		public static event MouseWheelDelegate MouseWheel;
+
+		public delegate void TouchDelegate( TouchData e, ref bool handled, ref bool result );
+		public static event TouchDelegate Touch;
+
+		public delegate void TickDelegate( float delta, ref bool handled );
+		public static event TickDelegate Tick;
+
+		public delegate void RenderUIDelegate( ref bool handled );
+		public static event RenderUIDelegate RenderUI;
 
 		///////////////////////////////////////////
 
@@ -172,12 +200,6 @@ namespace NeoAxis
 				commands.Remove( command );
 		}
 
-		static Command.Method DefaultCommandHandler
-		{
-			get { return defaultCommandHandler; }
-			set { defaultCommandHandler = value; }
-		}
-
 		public static ReadOnlyCollection<Command> Commands
 		{
 			get { return commands.AsReadOnly(); }
@@ -236,55 +258,59 @@ namespace NeoAxis
 			Print( string.Format( format, arguments ) );
 		}
 
-		public static bool ExecuteString( string str )
+		public static bool ExecuteString( string text )
 		{
-			if( str == null )
+			if( text == null )
 				return false;
 
-			str = str.Trim();
+			var textFixed = text.Trim();
+			if( textFixed == "" )
+				return false;
 
-			if( str == "" )
+			var skip = false;
+			ExecuteStringEvent?.Invoke( textFixed, ref skip );
+			if( skip )
 				return false;
 
 			string name;
-			string args;
+			string arguments;
 			{
-				int index = str.IndexOf( ' ' );
+				int index = textFixed.IndexOf( ' ' );
 
 				if( index != -1 )
 				{
-					name = str.Substring( 0, index );
-					args = str.Substring( index + 1, str.Length - index - 1 );
+					name = textFixed.Substring( 0, index );
+					arguments = textFixed.Substring( index + 1, textFixed.Length - index - 1 );
 				}
 				else
 				{
-					name = str;
-					args = "";
+					name = textFixed;
+					arguments = "";
 				}
 			}
 
 			name = name.Trim();
-			args = args.Trim();
+			arguments = arguments.Trim();
 
-			history.Add( str );
+			history.Add( textFixed );
 			currentHistoryIndex = history.Count;
 			while( history.Count > 256 )
 				history.RemoveAt( 0 );
 
-			Command command = GetCommandByName( name );
+			var command = GetCommandByName( name );
 			if( command == null )
 			{
-				if( defaultCommandHandler != null )
-					defaultCommandHandler( str );
-				else
-					Print( string.Format( "Unknown command \"{0}\"", name ), new ColorValue( 1, 0, 0 ) );
+				var handled = false;
+				UnknownCommandHandler?.Invoke( name, arguments, ref handled );
+				if( !handled )
+					Print( string.Format( "Unknown command \"{0}\".", name ), new ColorValue( 1, 0, 0 ) );
 				return false;
 			}
 
 			if( command.Handler != null )
-				command.Handler( args );
+				command.Handler( arguments );
 			if( command.ExtendedHandler != null )
-				command.ExtendedHandler( args, command.UserData );
+				command.ExtendedHandler( arguments, command.UserData );
 
 			return true;
 		}
@@ -297,6 +323,14 @@ namespace NeoAxis
 
 		public static bool PerformKeyDown( KeyEvent e )
 		{
+			{
+				var handled = false;
+				var result = true;
+				KeyDown?.Invoke( e, ref handled, ref result );
+				if( handled )
+					return result;
+			}
+
 			if( e.Key == EKeys.Oemtilde || e.Key == EKeys.Paragraph || e.Key == EKeys.F12 )
 			{
 				e.SuppressKeyPress = true;
@@ -392,8 +426,7 @@ namespace NeoAxis
 						{
 							string name = commands[ n ].Name;
 
-							if( name.Length >= str.Length && string.Equals( name.Substring(
-								0, str.Length ), str, StringComparison.OrdinalIgnoreCase ) )
+							if( name.Length >= str.Length && string.Equals( name.Substring( 0, str.Length ), str, StringComparison.OrdinalIgnoreCase ) )
 							{
 								count++;
 								lastFounded = commands[ n ].Name;
@@ -408,8 +441,7 @@ namespace NeoAxis
 							{
 								string name = commands[ n ].Name;
 
-								if( name.Length >= str.Length && string.Equals( name.Substring(
-									0, str.Length ), str, StringComparison.OrdinalIgnoreCase ) )
+								if( name.Length >= str.Length && string.Equals( name.Substring( 0, str.Length ), str, StringComparison.OrdinalIgnoreCase ) )
 								{
 									list.Add( name );
 								}
@@ -453,12 +485,20 @@ namespace NeoAxis
 
 		public static bool PerformKeyPress( KeyPressEvent e )
 		{
+			{
+				var handled = false;
+				var result = true;
+				KeyPress?.Invoke( e, ref handled, ref result );
+				if( handled )
+					return result;
+			}
+
 			if( !active )
 				return false;
 
 			if( currentString.Length < 1024 )
 			{
-				bool allowCharacter = false;
+				bool allowCharacter;
 
 				if( font != null )
 					allowCharacter = e.KeyChar >= 32 && font.IsCharacterInitialized( e.KeyChar );
@@ -474,6 +514,14 @@ namespace NeoAxis
 
 		public static bool PerformMouseWheel( int delta )
 		{
+			{
+				var handled = false;
+				var result = true;
+				MouseWheel?.Invoke( delta, ref handled, ref result );
+				if( handled )
+					return result;
+			}
+
 			if( !active )
 				return false;
 
@@ -487,11 +535,19 @@ namespace NeoAxis
 			return true;
 		}
 
-		public static bool PerformTouch( Input.TouchData e )
+		public static bool PerformTouch( TouchData e )
 		{
+			{
+				var handled = false;
+				var result = true;
+				Touch?.Invoke( e, ref handled, ref result );
+				if( handled )
+					return result;
+			}
+
 			switch( e.Action )
 			{
-			case Input.TouchData.ActionEnum.Down:
+			case TouchData.ActionEnum.Down:
 				if( Active && e.Position.Y < 0.5 )
 				{
 					Active = false;
@@ -503,8 +559,15 @@ namespace NeoAxis
 			return false;
 		}
 
-		public static void PerformTick( double delta )
+		public static void PerformTick( float delta )
 		{
+			{
+				var handled = false;
+				Tick?.Invoke( delta, ref handled );
+				if( handled )
+					return;
+			}
+
 			if( active )
 			{
 				transparency += delta;
@@ -528,6 +591,11 @@ namespace NeoAxis
 
 		public static void PerformRenderUI()
 		{
+			var handled = false;
+			RenderUI?.Invoke( ref handled );
+			if( handled )
+				return;
+
 			CanvasRenderer renderer = MainViewport.CanvasRenderer;
 
 			if( transparency == 0.0f )
@@ -538,8 +606,7 @@ namespace NeoAxis
 				needLoadTextureAndFont = true;
 			if( needLoadTextureAndFont )
 			{
-				texture = ResourceManager.LoadResource<Component_Image>( "Base\\UI\\Images\\Console.png" );
-				//texture = ResourceManager.LoadResource<Component_Image>( "Base\\UI\\Images\\Console.jpg" );
+				texture = ResourceManager.LoadResource<ImageComponent>( "Base\\UI\\Images\\Console.png" );
 
 				font = renderer.DefaultFont;
 				//font = EngineFontManager.Instance.LoadFont( "Default", .025f );
@@ -591,10 +658,8 @@ namespace NeoAxis
 				str = currentString + "_";
 
 			renderer.PushClipRectangle( new RectangleF( 0, 0, .975f, 1 ) );
-			renderer.AddText( font, fontSize, str, new Vector2F( x, y ) + shadowOffset, EHorizontalAlignment.Left,
-				EVerticalAlignment.Center, new ColorValue( 0, 0, 0, transparency / 2 ) );
-			renderer.AddText( font, fontSize, str, new Vector2F( x, y ), EHorizontalAlignment.Left,
-				EVerticalAlignment.Center, new ColorValue( 1, 1, 1, transparency ) );
+			renderer.AddText( font, fontSize, str, new Vector2F( x, y ) + shadowOffset, EHorizontalAlignment.Left, EVerticalAlignment.Center, new ColorValue( 0, 0, 0, transparency / 2 ) );
+			renderer.AddText( font, fontSize, str, new Vector2F( x, y ), EHorizontalAlignment.Left, EVerticalAlignment.Center, new ColorValue( 1, 1, 1, transparency ) );
 			renderer.PopClipRectangle();
 
 			y -= fontheight + fontheight * .5f;
@@ -609,10 +674,8 @@ namespace NeoAxis
 
 				float y2 = y - fontheight * ( lineCount - 1 ) / 2;
 
-				renderer.AddText( font, fontSize, text, new Vector2F( x, y2 ) + shadowOffset, EHorizontalAlignment.Left,
-					EVerticalAlignment.Center, strings[ n ].color * new ColorValue( 0, 0, 0, transparency / 2 ) );
-				renderer.AddText( font, fontSize, text, new Vector2F( x, y2 ), EHorizontalAlignment.Left,
-					EVerticalAlignment.Center, strings[ n ].color * new ColorValue( 1, 1, 1, transparency ) );
+				renderer.AddText( font, fontSize, text, new Vector2F( x, y2 ) + shadowOffset, EHorizontalAlignment.Left, EVerticalAlignment.Center, strings[ n ].color * new ColorValue( 0, 0, 0, transparency / 2 ) );
+				renderer.AddText( font, fontSize, text, new Vector2F( x, y2 ), EHorizontalAlignment.Left, EVerticalAlignment.Center, strings[ n ].color * new ColorValue( 1, 1, 1, transparency ) );
 				y -= fontheight * lineCount;
 			}
 		}
@@ -624,8 +687,7 @@ namespace NeoAxis
 			if( string.IsNullOrEmpty( arguments ) )
 			{
 				object value = parameter.GetValue();
-				Print( string.Format( "Value: \"{0}\", Default value: \"{1}\"",
-					value != null ? value : "(null)", parameter.DefaultValue ) );
+				Print( string.Format( "Value: \"{0}\", Default value: \"{1}\"", value != null ? value : "(null)", parameter.DefaultValue ) );
 				return;
 			}
 
@@ -633,16 +695,14 @@ namespace NeoAxis
 			{
 				if( parameter.Field != null )
 				{
-					object value = SimpleTypes.ParseValue( parameter.Field.FieldType,
-						arguments );
+					object value = SimpleTypes.ParseValue( parameter.Field.FieldType, arguments );
 					if( value == null )
 						throw new Exception( "Not simple type" );
 					parameter.Field.SetValue( null, value );
 				}
 				else if( parameter.Property != null )
 				{
-					object value = SimpleTypes.ParseValue( parameter.Property.PropertyType,
-						arguments );
+					object value = SimpleTypes.ParseValue( parameter.Property.PropertyType, arguments );
 					if( value == null )
 						throw new Exception( "Not simple type" );
 					parameter.Property.SetValue( null, value, null );
@@ -692,7 +752,7 @@ namespace NeoAxis
 
 		static void OnConsoleCommands( string arguments )
 		{
-			Print( "List of commands:" );
+			Print( "The list of commands:" );
 			foreach( Command command in commands )
 			{
 				string text = command.Name;
@@ -726,9 +786,7 @@ namespace NeoAxis
 				}
 			}
 			else
-			{
 				Print( string.Format( "Value: \"{0}\", Default value: \"{1}\"", EngineApp.FullscreenEnabled, true ) );
-			}
 		}
 
 		static void OnConsoleVideoMode( string arguments )
@@ -741,8 +799,7 @@ namespace NeoAxis
 
 					if( EngineApp.FullscreenEnabled && !SystemSettings.VideoModeExists( mode ) )
 					{
-						string text = string.Format( "Cannot change screen resolution to \"{0}x{1}\". " +
-							"This resolution is not supported by the system.", mode.X, mode.Y );
+						string text = string.Format( "Cannot change screen resolution to \"{0}x{1}\". This resolution is not supported by the system.", mode.X, mode.Y );
 						Log.Warning( text );
 						return;
 					}
@@ -757,9 +814,7 @@ namespace NeoAxis
 				}
 			}
 			else
-			{
 				Print( string.Format( "Value: \"{0}\"", EngineApp.FullscreenSize ) );
-			}
 		}
 
 		//static void OnLogNativeMemoryStatistics( string arguments )

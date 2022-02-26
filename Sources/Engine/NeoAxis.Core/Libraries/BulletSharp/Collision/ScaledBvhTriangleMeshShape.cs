@@ -1,11 +1,11 @@
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class ScaledBvhTriangleMeshShape : ConcaveShape
 	{
-		public ScaledBvhTriangleMeshShape(BvhTriangleMeshShape childShape, Vector3 localScaling)
+		public ScaledBvhTriangleMeshShape(BvhTriangleMeshShape childShape, BVector3 localScaling)
 			: base(btScaledBvhTriangleMeshShape_new(childShape.Native, ref localScaling))
 		{
 			ChildShape = childShape;

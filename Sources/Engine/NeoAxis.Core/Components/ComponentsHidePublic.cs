@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -44,27 +44,27 @@ namespace NeoAxis
 		}
 
 		/////////////////////////////////////////
-		//Component_Scene
+		//Scene
 
-		public static void PerformGetRenderSceneData( Component_Scene obj, ViewportRenderingContext context )
+		public static void PerformGetRenderSceneData( Scene obj, ViewportRenderingContext context )
 		{
 			obj.PerformGetRenderSceneData( context );
 		}
 
 		/////////////////////////////////////////
-		//Component_ObjectInSpace
+		//ObjectInSpace
 
-		public static int GetRenderSceneIndex( Component_ObjectInSpace obj )
+		public static int GetRenderSceneIndex( ObjectInSpace obj )
 		{
 			return obj._internalRenderSceneIndex;
 		}
 
-		public static void SetRenderSceneIndex( Component_ObjectInSpace obj, int v )
+		public static void SetRenderSceneIndex( ObjectInSpace obj, int v )
 		{
 			obj._internalRenderSceneIndex = v;
 		}
 
-		public static void PerformGetRenderSceneData( Component_ObjectInSpace obj, ViewportRenderingContext context, GetRenderSceneDataMode mode, Component_Scene.GetObjectsInSpaceItem modeGetObjectsItem )
+		public static void PerformGetRenderSceneData( ObjectInSpace obj, ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
 			obj.PerformGetRenderSceneData( context, mode, modeGetObjectsItem );
 		}

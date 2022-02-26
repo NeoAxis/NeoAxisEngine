@@ -1,12 +1,7 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
-using System.Drawing.Design;
 using System.ComponentModel;
-using System.Reflection;
-using System.IO;
 
 namespace NeoAxis
 {
@@ -15,12 +10,12 @@ namespace NeoAxis
 	/// </summary>
 	[DefaultOrderOfEffect( 1 )]
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
-	public class Component_RenderingEffect_AmbientOcclusion : Component_RenderingEffect
+	public class RenderingEffect_AmbientOcclusion : RenderingEffect
 	{
 		//!!!!TO DO: use mipmaps for render target
 		//!!!!TO DO: Gather?
 
-		bool? shadersAvailable;
+		//bool? shadersAvailable;
 
 		/// <summary>
 		/// The intensity of the effect.
@@ -35,7 +30,7 @@ namespace NeoAxis
 			set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_AmbientOcclusion> IntensityChanged;
+		public event Action<RenderingEffect_AmbientOcclusion> IntensityChanged;
 		ReferenceField<double> _intensity = 1;
 
 		public enum QualityEnum
@@ -58,7 +53,7 @@ namespace NeoAxis
 			set { if( _quality.BeginSet( ref value ) ) { try { QualityChanged?.Invoke( this ); } finally { _quality.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Quality"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_AmbientOcclusion> QualityChanged;
+		public event Action<RenderingEffect_AmbientOcclusion> QualityChanged;
 		ReferenceField<QualityEnum> _quality = QualityEnum.Medium;
 
 		/// <summary>
@@ -81,7 +76,7 @@ namespace NeoAxis
 			}
 		}
 		/// <summary>Occurs when the <see cref="AdaptiveQualityLimit"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_AmbientOcclusion> AdaptiveQualityLimitChanged;
+		public event Action<RenderingEffect_AmbientOcclusion> AdaptiveQualityLimitChanged;
 		ReferenceField<double> _adaptiveQualityLimit = 0.45;
 
 		/// <summary>
@@ -105,7 +100,7 @@ namespace NeoAxis
 			}
 		}
 		/// <summary>Occurs when the <see cref="Radius"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_AmbientOcclusion> RadiusChanged;
+		public event Action<RenderingEffect_AmbientOcclusion> RadiusChanged;
 		ReferenceField<double> _radius = 1.2;
 
 		/// <summary>
@@ -129,14 +124,14 @@ namespace NeoAxis
 			}
 		}
 		/// <summary>Occurs when the <see cref="Multiplier"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_AmbientOcclusion> MultiplierChanged;
+		public event Action<RenderingEffect_AmbientOcclusion> MultiplierChanged;
 		ReferenceField<double> _multiplier = 1.5;
 
 		/// <summary>
 		/// Pow modifier of effect strength.
 		/// </summary>
 		[Serialize]
-		[DefaultValue( 1.5 )]
+		[DefaultValue( 2.0 )]
 		[Range( 0.5, 10 )]
 		public Reference<double> Power
 		{
@@ -153,8 +148,8 @@ namespace NeoAxis
 			}
 		}
 		/// <summary>Occurs when the <see cref="Power"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_AmbientOcclusion> PowerChanged;
-		ReferenceField<double> _power = 1.5;
+		public event Action<RenderingEffect_AmbientOcclusion> PowerChanged;
+		ReferenceField<double> _power = 2.0;
 
 		/// <summary>
 		/// Distance from which the effect to start fading out.
@@ -177,7 +172,7 @@ namespace NeoAxis
 			}
 		}
 		/// <summary>Occurs when the <see cref="FadeOutFrom"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_AmbientOcclusion> FadeOutFromChanged;
+		public event Action<RenderingEffect_AmbientOcclusion> FadeOutFromChanged;
 		ReferenceField<double> _fadeOutFrom = 50;
 
 		/// <summary>
@@ -201,15 +196,15 @@ namespace NeoAxis
 			}
 		}
 		/// <summary>Occurs when the <see cref="FadeOutTo"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_AmbientOcclusion> FadeOutToChanged;
+		public event Action<RenderingEffect_AmbientOcclusion> FadeOutToChanged;
 		ReferenceField<double> _fadeOutTo = 300;
 
 		/// <summary>
-		/// Used for high-res detail AO using neighboring depth pixels: adds a lot of detail but also reduces temporal stability (adds aliasing).
+		/// Used for high-res detail AO using neighboring depth pixels. Adds a lot of detail but also reduces temporal stability (adds aliasing).
 		/// </summary>
 		[Serialize]
 		[DefaultValue( 0.5 )]
-		[Range( 0, 5 )]
+		[Range( 0, 5, RangeAttribute.ConvenientDistributionEnum.Exponential )]
 		public Reference<double> DetailStrength
 		{
 			get { if( _detailStrength.BeginGet() ) DetailStrength = _detailStrength.Get( this ); return _detailStrength.value; }
@@ -225,8 +220,22 @@ namespace NeoAxis
 			}
 		}
 		/// <summary>Occurs when the <see cref="DetailStrength"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_AmbientOcclusion> DetailStrengthChanged;
+		public event Action<RenderingEffect_AmbientOcclusion> DetailStrengthChanged;
 		ReferenceField<double> _detailStrength = 0.5;
+
+		/// <summary>
+		/// Maximal distance of detail strength effect.
+		/// </summary>
+		[DefaultValue( 40.0 )]
+		[Range( 1, 100, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		public Reference<double> DetailStrengthDistance
+		{
+			get { if( _detailStrengthDistance.BeginGet() ) DetailStrengthDistance = _detailStrengthDistance.Get( this ); return _detailStrengthDistance.value; }
+			set { if( _detailStrengthDistance.BeginSet( ref value ) ) { try { DetailStrengthDistanceChanged?.Invoke( this ); } finally { _detailStrengthDistance.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="DetailStrengthDistance"/> property value changes.</summary>
+		public event Action<RenderingEffect_AmbientOcclusion> DetailStrengthDistanceChanged;
+		ReferenceField<double> _detailStrengthDistance = 40.0;
 
 		/// <summary>
 		/// Number of edge-sensitive smart blur passes to apply. Quality 0 is an exception with only one 'dumb' blur pass is used.
@@ -249,7 +258,7 @@ namespace NeoAxis
 			}
 		}
 		/// <summary>Occurs when the <see cref="BlurAmount"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_AmbientOcclusion> BlurAmountChanged;
+		public event Action<RenderingEffect_AmbientOcclusion> BlurAmountChanged;
 		ReferenceField<int> _blurAmount = 2;
 
 		/// <summary>
@@ -272,7 +281,7 @@ namespace NeoAxis
 			}
 		}
 		/// <summary>Occurs when the <see cref="Sharpness"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_AmbientOcclusion> SharpnessChanged;
+		public event Action<RenderingEffect_AmbientOcclusion> SharpnessChanged;
 		ReferenceField<double> _sharpness = 0.98;
 
 		//[DefaultValue( false )]
@@ -282,7 +291,7 @@ namespace NeoAxis
 		//	get { if( _expandResolution.BeginGet() ) ExpandResolution = _expandResolution.Get( this ); return _expandResolution.value; }
 		//	set { if( _expandResolution.BeginSet( ref value ) ) { try { ExpandResolutionChanged?.Invoke( this ); } finally { _expandResolution.EndSet(); } } }
 		//}
-		//public event Action<Component_RenderingEffect_AmbientOcclusion> ExpandResolutionChanged;
+		//public event Action<RenderingEffect_AmbientOcclusion> ExpandResolutionChanged;
 		//ReferenceField<bool> _expandResolution = false;
 
 		/// <summary>
@@ -296,7 +305,7 @@ namespace NeoAxis
 			set { if( _showAO.BeginSet( ref value ) ) { try { ShowAOChanged?.Invoke( this ); } finally { _showAO.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShowAO"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_AmbientOcclusion> ShowAOChanged;
+		public event Action<RenderingEffect_AmbientOcclusion> ShowAOChanged;
 		ReferenceField<bool> _showAO;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -350,28 +359,31 @@ namespace NeoAxis
 			}
 		}
 
-		[Browsable( false )]
-		public bool ShadersAvailable
-		{
-			get
-			{
-				if( shadersAvailable == null )
-					shadersAvailable = VirtualFile.Exists( @"Base\Shaders\Effects\ASSAO\PrepareDepths_fs.sc" );
-				return shadersAvailable.Value;
-			}
-		}
+		//[Browsable( false )]
+		//public bool ShadersAvailable
+		//{
+		//	get
+		//	{
+		//		if( shadersAvailable == null )
+		//			shadersAvailable = VirtualFile.Exists( @"Base\Shaders\Effects\ASSAO\PrepareDepths_fs.sc" );
+		//		return shadersAvailable.Value;
+		//	}
+		//}
 
-		unsafe protected override void OnRender( ViewportRenderingContext context, Component_RenderingPipeline.IFrameData frameData, ref Component_Image actualTexture )
+		unsafe protected override void OnRender( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
 		{
 			base.OnRender( context, frameData, ref actualTexture );
+
+			if( Intensity <= 0 )
+				return;
 
 			//is not supported
 			if( !context.RenderingPipeline.GetUseMultiRenderTargets() )
 				return;
 
-			//check shaders available
-			if( !ShadersAvailable )
-				return;
+			////check shaders available
+			//if( !ShadersAvailable )
+			//	return;
 
 			//downscale for SSAA
 			var actualTextureSource = actualTexture;
@@ -436,6 +448,7 @@ namespace NeoAxis
 			float effectFadeOutAdd = (float)FadeOutFrom / ( (float)FadeOutTo - (float)FadeOutFrom ) + 1.0f;
 
 			float detailAOStrength = (float)DetailStrength;
+			float detailAOStrengthDistance = (float)DetailStrengthDistance;
 			float effectShadowStrength = (float)Multiplier;
 			float effectShadowClamp = 1.0f;
 			float effectShadowPow = (float)Power;
@@ -446,7 +459,7 @@ namespace NeoAxis
 
 			// First Pass: Prepare 4 Depth half-Buffers:
 
-			Component_Image[] halfDepths = new Component_Image[ 4 ];
+			ImageComponent[] halfDepths = new ImageComponent[ 4 ];
 			for( int i = 0; i < 4; i++ )
 				halfDepths[ i ] = context.RenderTarget2D_Alloc( actualTexture.Result.ResultSize / 2, PixelFormat.Float16R );
 
@@ -464,7 +477,7 @@ namespace NeoAxis
 				shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
 				shader.FragmentProgramFileName = @"Base\Shaders\Effects\ASSAO\PrepareDepths_fs.sc";
 
-				context.objectsDuringUpdate.namedTextures.TryGetValue( "depthTexture", out Component_Image depthTexture );
+				context.ObjectsDuringUpdate.namedTextures.TryGetValue( "depthTexture", out ImageComponent depthTexture );
 
 				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0, depthTexture,
 					TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
@@ -478,7 +491,7 @@ namespace NeoAxis
 
 			// Second Pass: prepare 4 Mip-Maps for each Half-Depth-Map:
 
-			Component_Image[,] depthMipMaps = null;
+			ImageComponent[,] depthMipMaps = null;
 
 			if( Quality.Value > QualityEnum.Medium )
 			{
@@ -489,7 +502,7 @@ namespace NeoAxis
 
 				// Prepare MipMaps textures:
 
-				depthMipMaps = new Component_Image[ 4, 4 ];
+				depthMipMaps = new ImageComponent[ 4, 4 ];
 
 				for( int d = 0; d < 4; d++ )
 				{
@@ -531,17 +544,12 @@ namespace NeoAxis
 				}
 			}
 
-			Component_Image SSAOTextureArray = new Component_Image();
-
-			Component_Image SSAOBaseTextureArray = null;
+			ImageComponent SSAOBaseTextureArray = null;
 			if( Quality.Value == QualityEnum.HighestAdaptive )
-			{
-				SSAOBaseTextureArray = new Component_Image();
 				SSAOBaseTextureArray = context.RenderTarget2D_Alloc( actualTexture.Result.ResultSize / 2, PixelFormat.R8G8_UInt, 0, false, /*0,*/ 4 );
-			}
 
-			Component_Image importanceMap = null;
-			Component_Image averageImportance = null;
+			ImageComponent importanceMap = null;
+			ImageComponent averageImportance = null;
 
 			// Generate Importance Map for Highest/Adaptive Quality mode:
 			if( Quality.Value == QualityEnum.HighestAdaptive )
@@ -563,7 +571,7 @@ namespace NeoAxis
 						shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
 						shader.FragmentProgramFileName = @"Base\Shaders\Effects\ASSAO\GenerateSSAO_AdaptiveBase_fs.sc";
 
-						context.objectsDuringUpdate.namedTextures.TryGetValue( "normalTexture", out Component_Image normalTexture );
+						context.ObjectsDuringUpdate.namedTextures.TryGetValue( "normalTexture", out ImageComponent normalTexture );
 
 						for( int m = 0; m < 4; m++ )
 						{
@@ -590,7 +598,6 @@ namespace NeoAxis
 						shader.Parameters.Set( "effectShadowStrength", effectShadowStrength );
 						shader.Parameters.Set( "effectShadowClamp", effectShadowClamp );
 						shader.Parameters.Set( "effectShadowPow", effectShadowPow );
-						shader.Parameters.Set( "detailAOStrength", detailAOStrength );
 						shader.Parameters.Set( "itViewMatrix", itViewMatrix );
 
 						context.RenderQuadToCurrentViewport( shader );
@@ -678,7 +685,7 @@ namespace NeoAxis
 
 			// Third Pass: Generate 4 SSAO buffers:
 
-			Component_Image blurPingTexture = null, blurPongTexture = null;
+			ImageComponent blurPingTexture = null, blurPongTexture = null;
 
 			if( BlurAmount.Value > 0 )
 			{
@@ -686,7 +693,7 @@ namespace NeoAxis
 				blurPongTexture = context.RenderTarget2D_Alloc( actualTexture.Result.ResultSize / 2, PixelFormat.R8G8_UInt );
 			}
 
-			SSAOTextureArray = context.RenderTarget2D_Alloc( actualTexture.Result.ResultSize / 2, PixelFormat.R8G8_UInt, 0, false, /*0,*/ 4 );
+			var SSAOTextureArray = context.RenderTarget2D_Alloc( actualTexture.Result.ResultSize / 2, PixelFormat.R8G8_UInt, 0, false, /*0,*/ 4 );
 
 			for( int pass = 0; pass < 4; pass++ )
 			{
@@ -720,7 +727,7 @@ namespace NeoAxis
 					else if( Quality.Value == QualityEnum.HighestAdaptive )
 						shader.FragmentProgramFileName = @"Base\Shaders\Effects\ASSAO\GenerateSSAO_HAQ_fs.sc";
 
-					context.objectsDuringUpdate.namedTextures.TryGetValue( "normalTexture", out Component_Image normalTexture );
+					context.ObjectsDuringUpdate.namedTextures.TryGetValue( "normalTexture", out ImageComponent normalTexture );
 
 					if( Quality.Value > QualityEnum.Medium )
 					{
@@ -772,6 +779,7 @@ namespace NeoAxis
 					shader.Parameters.Set( "effectShadowClamp", effectShadowClamp );
 					shader.Parameters.Set( "effectShadowPow", effectShadowPow );
 					shader.Parameters.Set( "detailAOStrength", detailAOStrength );
+					shader.Parameters.Set( "detailAOStrengthDistance", detailAOStrengthDistance );
 					shader.Parameters.Set( "itViewMatrix", itViewMatrix );
 
 					if( Quality.Value == QualityEnum.HighestAdaptive )
@@ -947,12 +955,12 @@ namespace NeoAxis
 			actualTexture = finalTexture;
 		}
 
-		protected override void OnEditorGetTextInfoCenterBottomCorner( List<string> lines )
-		{
-			base.OnEditorGetTextInfoCenterBottomCorner( lines );
+		//protected override void OnEditorGetTextInfoCenterBottomCorner( List<string> lines )
+		//{
+		//	base.OnEditorGetTextInfoCenterBottomCorner( lines );
 
-			if( !ShadersAvailable )
-				lines.Add( "No files of the effect, use the Extended edition." );
-		}
+		//	if( !ShadersAvailable )
+		//		lines.Add( "No files of the effect, use the Extended edition." );
+		//}
 	}
 }

@@ -1,19 +1,19 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Security;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public abstract class MotionState : IDisposable
 	{
 		internal IntPtr _native;
 
 		[UnmanagedFunctionPointer(Native.Conv), SuppressUnmanagedCodeSecurity]
-		private delegate void GetWorldTransformUnmanagedDelegate(out Matrix worldTrans);
+		private delegate void GetWorldTransformUnmanagedDelegate(out BMatrix worldTrans);
 		[UnmanagedFunctionPointer(Native.Conv), SuppressUnmanagedCodeSecurity]
-		private delegate void SetWorldTransformUnmanagedDelegate(ref Matrix worldTrans);
+		private delegate void SetWorldTransformUnmanagedDelegate(ref BMatrix worldTrans);
 
 		private GetWorldTransformUnmanagedDelegate _getWorldTransform;
 		private SetWorldTransformUnmanagedDelegate _setWorldTransform;
@@ -33,24 +33,24 @@ namespace BulletSharp
 				Marshal.GetFunctionPointerForDelegate(_setWorldTransform));
 		}
 
-		void GetWorldTransformUnmanaged(out Matrix worldTrans)
+		void GetWorldTransformUnmanaged(out BMatrix worldTrans)
 		{
 			GetWorldTransform(out worldTrans);
 		}
 
-		void SetWorldTransformUnmanaged(ref Matrix worldTrans)
+		void SetWorldTransformUnmanaged(ref BMatrix worldTrans)
 		{
 			SetWorldTransform(ref worldTrans);
 		}
 
-		public abstract void GetWorldTransform(out Matrix worldTrans);
-		public abstract void SetWorldTransform(ref Matrix worldTrans);
+		public abstract void GetWorldTransform(out BMatrix worldTrans);
+		public abstract void SetWorldTransform(ref BMatrix worldTrans);
 
-		public Matrix WorldTransform
+		public BMatrix WorldTransform
 		{
 			get
 			{
-				Matrix transform;
+				BMatrix transform;
 				GetWorldTransform(out transform);
 				return transform;
 			}

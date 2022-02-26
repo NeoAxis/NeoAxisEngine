@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel.Design;
 
-namespace Aga.Controls
+namespace Internal.Aga.Controls
 {
 	public class StringCollectionEditor : CollectionEditor
 	{

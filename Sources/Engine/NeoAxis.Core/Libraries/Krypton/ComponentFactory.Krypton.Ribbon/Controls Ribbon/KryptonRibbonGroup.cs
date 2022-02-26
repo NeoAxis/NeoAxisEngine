@@ -16,16 +16,16 @@ using System.Drawing.Design;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Diagnostics;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Toolkit;
 
-namespace ComponentFactory.Krypton.Ribbon
+namespace Internal.ComponentFactory.Krypton.Ribbon
 {
     /// <summary>
     /// Represents a single ribbon group.
     /// </summary>
     [ToolboxItem(false)]
     [ToolboxBitmap(typeof(KryptonRibbonGroup), "ToolboxBitmaps.KryptonRibbonGroup.bmp")]
-    [Designer("ComponentFactory.Krypton.Ribbon.KryptonRibbonGroupDesigner, ComponentFactory.Krypton.Design, Version=125.0.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e")]
+    //[Designer("ComponentFactory.Krypton.Ribbon.KryptonRibbonGroupDesigner, ComponentFactory.Krypton.Design, Version=125.0.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e")]
     [DefaultEvent("DialogBoxLauncherClick")]
     [DefaultProperty("TextLine1")]
     [DesignerCategory("code")]
@@ -440,7 +440,7 @@ namespace ComponentFactory.Krypton.Ribbon
         [Category("Visuals")]
         [Description("Collection of ribbon group items.")]
         [MergableProperty(false)]
-        [Editor("ComponentFactory.Krypton.Ribbon.KryptonRibbonGroupContainerCollectionEditor, ComponentFactory.Krypton.Design, Version=125.0.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e", typeof(UITypeEditor))]
+        //[Editor("ComponentFactory.Krypton.Ribbon.KryptonRibbonGroupContainerCollectionEditor, ComponentFactory.Krypton.Design, Version=125.0.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e", typeof(UITypeEditor))]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public KryptonRibbonGroupContainerCollection Items
         {

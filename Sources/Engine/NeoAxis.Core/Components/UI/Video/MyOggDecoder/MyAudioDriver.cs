@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
@@ -10,7 +10,7 @@ namespace MyOggDecoder
 {
 	class MyAudioDriver : AudioDriver
 	{
-		Sound sound;
+		SoundData sound;
 		SoundVirtualChannel channel;
 
 		//

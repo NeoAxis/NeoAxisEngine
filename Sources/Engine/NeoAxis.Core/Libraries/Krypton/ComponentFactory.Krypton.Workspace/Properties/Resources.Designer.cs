@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ComponentFactory.Krypton.Workspace.Properties {
+namespace Internal.ComponentFactory.Krypton.Workspace.Properties {
     using System;
     
     

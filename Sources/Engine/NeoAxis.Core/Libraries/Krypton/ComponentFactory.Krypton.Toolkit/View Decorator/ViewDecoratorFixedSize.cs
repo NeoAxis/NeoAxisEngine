@@ -16,7 +16,7 @@ using System.Windows.Forms;
 using System.Text;
 using System.Diagnostics;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
 	/// <summary>
 	/// Override the contained child to present a fixed size.

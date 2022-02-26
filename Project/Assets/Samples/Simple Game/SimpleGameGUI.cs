@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.IO;
 using NeoAxis;
-using NeoAxis.Input;
 
 namespace Project
 {
@@ -24,10 +23,10 @@ namespace Project
 		void InitializeSceneEvents()
 		{
 			// Subscribe to Render event of the scene.
-			Component_Scene.First.RenderEvent += SceneRenderEvent;
+			Scene.First.RenderEvent += SceneRenderEvent;
 		}
 
-		void SceneRenderEvent(Component_Scene scene, Viewport viewport)
+		void SceneRenderEvent(Scene scene, Viewport viewport)
 		{
 			// Find object by the cursor. 
 			var obj = GetObjectByCursor(viewport);
@@ -40,10 +39,10 @@ namespace Project
 			}
 		}
 
-		List<Component_ObjectInSpace> GetObjectsThanCanBeSelected()
+		List<ObjectInSpace> GetObjectsThanCanBeSelected()
 		{
-			var result = new List<Component_ObjectInSpace>();
-			foreach (var obj in Component_Scene.First.GetComponents<Component_MeshInSpace>())
+			var result = new List<ObjectInSpace>();
+			foreach (var obj in Scene.First.GetComponents<MeshInSpace>())
 			{
 				// Skip ground.
 				if (obj.Name != "Ground")
@@ -52,20 +51,20 @@ namespace Project
 			return result;
 		}
 
-		Component_ObjectInSpace GetObjectByCursor(Viewport viewport)
+		ObjectInSpace GetObjectByCursor(Viewport viewport)
 		{
 			var mouse = MousePosition;
 			if( touchPosition != null )
 				mouse = touchPosition.Value;
 
 			// Get scene object.
-			var scene = Component_Scene.First;
+			var scene = Scene.First;
 
 			// Get world ray by cursor position.
 			var ray = viewport.CameraSettings.GetRayByScreenCoordinates(mouse);
 
 			// Get objects by the ray.
-			var item = new Component_Scene.GetObjectsInSpaceItem(Component_Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, ray);
+			var item = new Scene.GetObjectsInSpaceItem(Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, ray);
 			scene.GetObjectsInSpace(item);
 
 			// To test by physical objects:
@@ -113,6 +112,9 @@ namespace Project
 				// Destroy the object.
 				obj.RemoveFromParent( false );
 
+				// Play sound.
+				ParentContainer.PlaySound(@"Base\UI\Styles\Sounds\ButtonClick.ogg");
+				
 				// Show screen messages.
 				var objectsLeft = GetObjectsThanCanBeSelected().Count;
 				ScreenMessages.Add( $"Objects left: {objectsLeft}" );
@@ -128,13 +130,18 @@ namespace Project
 
 			return base.OnMouseDown(button);
 		}
+		
+		bool IsAnyWindowOpened()
+		{
+			return ParentRoot.GetComponent<UIWindow>(true, true) != null;
+		}
 
 		protected override bool OnTouch( TouchData e )
 		{
 			switch( e.Action )
 			{
 			case TouchData.ActionEnum.Down:
-				if( touchDown == null )
+				if( touchDown == null && !IsAnyWindowOpened() )
 				{
 					touchDown = e.PointerIdentifier;
 					touchPosition = e.Position;
@@ -169,7 +176,7 @@ namespace Project
 			// Get next level file name.
 			string nextLevel;
 			{
-				var currentLevel = VirtualPathUtility.NormalizePath( Component_Scene.First.HierarchyController.CreatedByResource.Owner.Name );
+				var currentLevel = VirtualPathUtility.NormalizePath( Scene.First.HierarchyController.CreatedByResource.Owner.Name );
 				var fileName = Path.GetFileName( VirtualPathUtility.NormalizePath( currentLevel ) );
 				string numberStr = new String(fileName.Where(Char.IsDigit).ToArray());
 				int number = int.Parse(numberStr) + 1;
@@ -190,9 +197,9 @@ namespace Project
 				ScreenMessages.Add("No more levels.");
 		}
 
-        public void ButtonExit_Click(NeoAxis.UIButton sender)
+		/*public void ButtonExit_Click(NeoAxis.UIButton sender)
         {
 			SimulationApp.ChangeUIScreen( @"Base\UI\Screens\MainMenuScreen.ui" );
-        }
+        }*/
     }
 }

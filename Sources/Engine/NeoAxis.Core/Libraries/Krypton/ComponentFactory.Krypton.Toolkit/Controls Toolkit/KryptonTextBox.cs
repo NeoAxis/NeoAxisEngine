@@ -20,7 +20,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
 	/// <summary>
     /// Provide a TextBox with Krypton styling applied.
@@ -30,7 +30,7 @@ namespace ComponentFactory.Krypton.Toolkit
     [DefaultEvent("TextChanged")]
 	[DefaultProperty("Text")]
     [DefaultBindingProperty("Text")]
-    [Designer("ComponentFactory.Krypton.Toolkit.KryptonTextBoxDesigner, ComponentFactory.Krypton.Design, Version=125.0.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e")]
+    //[Designer("ComponentFactory.Krypton.Toolkit.KryptonTextBoxDesigner, ComponentFactory.Krypton.Design, Version=125.0.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e")]
     [DesignerCategory("code")]
     [Description("Enables the user to enter text, and provides multiline editing and password character masking.")]
     [ClassInterface(ClassInterfaceType.AutoDispatch)]
@@ -38,6 +38,9 @@ namespace ComponentFactory.Krypton.Toolkit
     public class KryptonTextBox : VisualControlBase,
                                   IContainedInputControl
     {
+        //!!!!betauser
+        bool disableTextChanged;
+
         #region Classes
         private class InternalTextBox : TextBox
         {
@@ -108,7 +111,26 @@ namespace ComponentFactory.Krypton.Toolkit
             #region Protected
             public override Size GetPreferredSize(Size proposedSize)
             {
-                return base.GetPreferredSize(proposedSize);
+                //!!!!betauser. fix invalid height when Text is empty
+
+                var empty = Text.Length == 0;
+                if( empty )
+                {
+                    _kryptonTextBox.disableTextChanged = true;
+                    Text = "!";
+                }
+
+                var result = base.GetPreferredSize( proposedSize );
+
+                if( empty )
+                {
+                    Text = "";
+                    _kryptonTextBox.disableTextChanged = false;
+                }
+
+                return result;
+
+                //return base.GetPreferredSize(proposedSize);
             }
 
             /// <summary>
@@ -1945,6 +1967,10 @@ namespace ComponentFactory.Krypton.Toolkit
 
         private void OnTextBoxTextChanged(object sender, EventArgs e)
         {
+            //!!!!betauser
+            if( disableTextChanged )
+                return;
+
             OnTextChanged(e);
         }
 

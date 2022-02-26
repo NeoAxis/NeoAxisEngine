@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -28,6 +28,60 @@ namespace NeoAxis
 			positions[ 5 ] = new Vector3( -half.X, -half.Y, half.Z );
 			positions[ 6 ] = new Vector3( -half.X, half.Y, -half.Z );
 			positions[ 7 ] = new Vector3( -half.X, half.Y, half.Z );
+
+			indices = new int[] {
+				0, 3, 1,
+				0, 2, 3,
+				3, 6, 7,
+				3, 2, 6,
+				1, 7, 5,
+				1, 3, 7,
+				4, 7, 6,
+				4, 5, 7,
+				1, 4, 0,
+				5, 4, 1,
+				4, 2, 0,
+				4, 6, 2 };
+		}
+
+		public static void GenerateBox( Bounds bounds, out Vector3[] positions, out int[] indices )
+		{
+			positions = new Vector3[ 8 ];
+			positions[ 0 ] = new Vector3( bounds.Maximum.X, bounds.Minimum.Y, bounds.Minimum.Z );
+			positions[ 1 ] = new Vector3( bounds.Maximum.X, bounds.Minimum.Y, bounds.Maximum.Z );
+			positions[ 2 ] = new Vector3( bounds.Maximum.X, bounds.Maximum.Y, bounds.Minimum.Z );
+			positions[ 3 ] = new Vector3( bounds.Maximum.X, bounds.Maximum.Y, bounds.Maximum.Z );
+			positions[ 4 ] = new Vector3( bounds.Minimum.X, bounds.Minimum.Y, bounds.Minimum.Z );
+			positions[ 5 ] = new Vector3( bounds.Minimum.X, bounds.Minimum.Y, bounds.Maximum.Z );
+			positions[ 6 ] = new Vector3( bounds.Minimum.X, bounds.Maximum.Y, bounds.Minimum.Z );
+			positions[ 7 ] = new Vector3( bounds.Minimum.X, bounds.Maximum.Y, bounds.Maximum.Z );
+
+			indices = new int[] {
+				0, 3, 1,
+				0, 2, 3,
+				3, 6, 7,
+				3, 2, 6,
+				1, 7, 5,
+				1, 3, 7,
+				4, 7, 6,
+				4, 5, 7,
+				1, 4, 0,
+				5, 4, 1,
+				4, 2, 0,
+				4, 6, 2 };
+		}
+
+		public static void GenerateBox( BoundsF bounds, out Vector3F[] positions, out int[] indices )
+		{
+			positions = new Vector3F[ 8 ];
+			positions[ 0 ] = new Vector3F( bounds.Maximum.X, bounds.Minimum.Y, bounds.Minimum.Z );
+			positions[ 1 ] = new Vector3F( bounds.Maximum.X, bounds.Minimum.Y, bounds.Maximum.Z );
+			positions[ 2 ] = new Vector3F( bounds.Maximum.X, bounds.Maximum.Y, bounds.Minimum.Z );
+			positions[ 3 ] = new Vector3F( bounds.Maximum.X, bounds.Maximum.Y, bounds.Maximum.Z );
+			positions[ 4 ] = new Vector3F( bounds.Minimum.X, bounds.Minimum.Y, bounds.Minimum.Z );
+			positions[ 5 ] = new Vector3F( bounds.Minimum.X, bounds.Minimum.Y, bounds.Maximum.Z );
+			positions[ 6 ] = new Vector3F( bounds.Minimum.X, bounds.Maximum.Y, bounds.Minimum.Z );
+			positions[ 7 ] = new Vector3F( bounds.Minimum.X, bounds.Maximum.Y, bounds.Maximum.Z );
 
 			indices = new int[] {
 				0, 3, 1,

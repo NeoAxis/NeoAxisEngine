@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 
 namespace NeoAxis
@@ -168,9 +168,13 @@ namespace NeoAxis
 	public enum UnwrappedUVEnum
 	{
 		None,
+		[DisplayNameEnum( "Texture Coordinate 0" )]
 		TextureCoordinate0,
+		[DisplayNameEnum( "Texture Coordinate 1" )]
 		TextureCoordinate1,
+		[DisplayNameEnum( "Texture Coordinate 2" )]
 		TextureCoordinate2,
+		[DisplayNameEnum( "Texture Coordinate 3" )]
 		TextureCoordinate3,
 	}
 
@@ -179,7 +183,15 @@ namespace NeoAxis
 		Box,
 		Sphere,//Ellipsoid,
 		Cylinder,
-		Plane
+		//Plane
+	}
+
+	public enum OccluderShape
+	{
+		Box,
+		//Sphere,//Ellipsoid,
+		//Cylinder,
+		////Plane
 	}
 
 }

@@ -26,7 +26,7 @@
 */
 
 
-namespace tainicom.Aether.Physics2D.Dynamics
+namespace Internal.tainicom.Aether.Physics2D.Dynamics
 {
     /// <summary>
     /// The body type.

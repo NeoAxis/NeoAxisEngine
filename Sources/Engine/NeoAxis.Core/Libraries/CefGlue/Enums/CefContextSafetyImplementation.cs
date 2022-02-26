@@ -1,4 +1,5 @@
-﻿namespace Xilium.CefGlue
+#if !NO_UI_WEB_BROWSER
+namespace Internal.Xilium.CefGlue
 {
     /// <summary>
     /// CEF offers two context safety implementations with different performance characteristics.
@@ -25,3 +26,5 @@
         Disabled = -1,
     }
 }
+
+#endif

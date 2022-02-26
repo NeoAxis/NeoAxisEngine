@@ -21,7 +21,7 @@ using System.Diagnostics;
 using Microsoft.Win32;
 using System.Security;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     /// <summary>
     /// Draws the window chrome using a Krypton palette.

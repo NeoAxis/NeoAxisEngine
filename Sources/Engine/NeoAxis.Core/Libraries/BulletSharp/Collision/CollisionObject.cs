@@ -1,9 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public enum ActivationState
 	{
@@ -118,12 +118,12 @@ namespace BulletSharp
 			btCollisionObject_forceActivationState(Native, newState);
 		}
 
-		public bool GetCustomDebugColor(out Vector3 colorRgb)
+		public bool GetCustomDebugColor(out BVector3 colorRgb)
 		{
 			return btCollisionObject_getCustomDebugColor(Native, out colorRgb);
 		}
 
-		public void GetWorldTransform(out Matrix transform)
+		public void GetWorldTransform(out BMatrix transform)
 		{
 			btCollisionObject_getWorldTransform(Native, out transform);
 		}
@@ -163,13 +163,13 @@ namespace BulletSharp
 			btCollisionObject_serializeSingleObject(Native, serializer._native);
 		}
 
-		public void SetAnisotropicFrictionRef(ref Vector3 anisotropicFriction,
+		public void SetAnisotropicFrictionRef(ref BVector3 anisotropicFriction,
 			AnisotropicFrictionFlags frictionMode = AnisotropicFrictionFlags.Friction)
 		{
 			btCollisionObject_setAnisotropicFriction(Native, ref anisotropicFriction, frictionMode);
 		}
 
-		public void SetAnisotropicFriction(Vector3 anisotropicFriction,
+		public void SetAnisotropicFriction(BVector3 anisotropicFriction,
 			AnisotropicFrictionFlags frictionMode = AnisotropicFrictionFlags.Friction)
 		{
 			btCollisionObject_setAnisotropicFriction(Native, ref anisotropicFriction,
@@ -181,7 +181,7 @@ namespace BulletSharp
 			btCollisionObject_setContactStiffnessAndDamping(Native, stiffness, damping);
 		}
 
-		public void SetCustomDebugColor(Vector3 colorRgb)
+		public void SetCustomDebugColor(BVector3 colorRgb)
 		{
 			btCollisionObject_setCustomDebugColor(Native, ref colorRgb);
 		}
@@ -197,11 +197,11 @@ namespace BulletSharp
 			set => btCollisionObject_setActivationState(Native, value);
 		}
 
-		public Vector3 AnisotropicFriction
+		public BVector3 AnisotropicFriction
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btCollisionObject_getAnisotropicFriction(Native, out value);
 				return value;
 			}
@@ -286,33 +286,33 @@ namespace BulletSharp
 
 		public CollisionObjectTypes InternalType => btCollisionObject_getInternalType(Native);
 
-		public Vector3 InterpolationAngularVelocity
+		public BVector3 InterpolationAngularVelocity
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btCollisionObject_getInterpolationAngularVelocity(Native, out value);
 				return value;
 			}
 			set => btCollisionObject_setInterpolationAngularVelocity(Native, ref value);
 		}
 
-		public Vector3 InterpolationLinearVelocity
+		public BVector3 InterpolationLinearVelocity
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btCollisionObject_getInterpolationLinearVelocity(Native, out value);
 				return value;
 			}
 			set => btCollisionObject_setInterpolationLinearVelocity(Native, ref value);
 		}
 
-		public Matrix InterpolationWorldTransform
+		public BMatrix InterpolationWorldTransform
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btCollisionObject_getInterpolationWorldTransform(Native, out value);
 				return value;
 			}
@@ -371,11 +371,11 @@ namespace BulletSharp
 			set => btCollisionObject_setWorldArrayIndex(Native, value);
 		}
 
-		public Matrix WorldTransform
+		public BMatrix WorldTransform
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btCollisionObject_getWorldTransform(Native, out value);
 				return value;
 			}

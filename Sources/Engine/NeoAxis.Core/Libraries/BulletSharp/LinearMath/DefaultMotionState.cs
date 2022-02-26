@@ -1,8 +1,8 @@
 using System;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class DefaultMotionState : MotionState
 	{
@@ -11,53 +11,53 @@ namespace BulletSharp
 		{
 		}
 
-		public DefaultMotionState(Matrix startTrans)
+		public DefaultMotionState(BMatrix startTrans)
 			: base(btDefaultMotionState_new2(ref startTrans))
 		{
 		}
 
-		public DefaultMotionState(Matrix startTrans, Matrix centerOfMassOffset)
+		public DefaultMotionState(BMatrix startTrans, BMatrix centerOfMassOffset)
 			: base(btDefaultMotionState_new3(ref startTrans, ref centerOfMassOffset))
 		{
 		}
 
-		public override void GetWorldTransform(out Matrix worldTrans)
+		public override void GetWorldTransform(out BMatrix worldTrans)
 		{
 			btMotionState_getWorldTransform(_native, out worldTrans);
 		}
 
-		public override void SetWorldTransform(ref Matrix worldTrans)
+		public override void SetWorldTransform(ref BMatrix worldTrans)
 		{
 			btMotionState_setWorldTransform(_native, ref worldTrans);
 		}
 
-		public Matrix CenterOfMassOffset
+		public BMatrix CenterOfMassOffset
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btDefaultMotionState_getCenterOfMassOffset(_native, out value);
 				return value;
 			}
 			set => btDefaultMotionState_setCenterOfMassOffset(_native, ref value);
 		}
 
-		public Matrix GraphicsWorldTrans
+		public BMatrix GraphicsWorldTrans
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btDefaultMotionState_getGraphicsWorldTrans(_native, out value);
 				return value;
 			}
 			set => btDefaultMotionState_setGraphicsWorldTrans(_native, ref value);
 		}
 
-		public Matrix StartWorldTrans
+		public BMatrix StartWorldTrans
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btDefaultMotionState_getStartWorldTrans(_native, out value);
 				return value;
 			}

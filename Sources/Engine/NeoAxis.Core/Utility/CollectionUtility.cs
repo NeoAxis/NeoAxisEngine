@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -50,6 +50,47 @@ namespace NeoAxis
 				array[ low + k ] = aux[ k ];
 		}
 
+		unsafe static void MergeSort( int* array, int low, int high, IComparer<int> comparer )
+		{
+			int n = high - low;
+			if( n <= 1 )
+				return;
+
+			int mid = low + n / 2;
+
+			MergeSort( array, low, mid, comparer );
+			MergeSort( array, mid, high, comparer );
+
+			//int[] aux = new int[ n ];
+
+			//!!!!тоже крешится
+			//var aux = (int*)NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Utility, n * 4 );
+
+			var useStack = n < 4096;
+			int* aux = stackalloc int[ useStack ? n : 0 ];
+			if( !useStack )
+				aux = (int*)NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Utility, n * 4 );
+
+			//int[] aux = new int[ n ];
+
+			int i = low, j = mid;
+			for( int k = 0; k < n; k++ )
+			{
+				if( i == mid ) aux[ k ] = array[ j++ ];
+				else if( j == high ) aux[ k ] = array[ i++ ];
+				else if( comparer.Compare( array[ j ], array[ i ] ) < 0 ) aux[ k ] = array[ j++ ];
+				else aux[ k ] = array[ i++ ];
+			}
+
+			for( int k = 0; k < n; k++ )
+				array[ low + k ] = aux[ k ];
+
+			//NativeUtility.Free( aux );
+
+			if( !useStack )
+				NativeUtility.Free( aux );
+		}
+
 		/// <summary>
 		/// Merge sort is a efficient sorting method. It divides input array in two halves, calls itself for the two halves and then merges the two sorted halves. Stable sort.
 		/// </summary>
@@ -78,6 +119,39 @@ namespace NeoAxis
 				Sto.StoParallelMergeSortExtension.ParallelMergeSort( array, comparer );
 			else
 				MergeSort( array, new ComparisonComparer<T>( comparer ), multithreaded );
+		}
+
+		//!!!!threading
+		/// <summary>
+		/// Merge sort is a efficient sorting method. It divides input array in two halves, calls itself for the two halves and then merges the two sorted halves. Stable sort.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="array"></param>
+		/// <param name="comparer"></param>
+		/// <param name="multithreaded"></param>
+		public unsafe static void MergeSort( int* array, int count, IComparer<int> comparer )//, bool multithreaded = false )
+		{
+			//!!!!impl
+			//if( multithreaded )
+			//	Sto.StoParallelMergeSortExtension.ParallelMergeSort( array, comparer );
+			//else
+			MergeSort( array, 0, count, comparer );
+		}
+
+		//!!!!threading
+		/// <summary>
+		/// Merge sort is a efficient sorting method. It divides input array in two halves, calls itself for the two halves and then merges the two sorted halves. Stable sort.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="array"></param>
+		/// <param name="comparer"></param>
+		/// <param name="multithreaded"></param>
+		public unsafe static void MergeSort( int* array, int count, Comparison<int> comparer )//, bool multithreaded = false )
+		{
+			//if( multithreaded )
+			//	Sto.StoParallelMergeSortExtension.ParallelMergeSort( array, comparer );
+			//else
+			MergeSort( array, count, new ComparisonComparer<int>( comparer ) );//, multithreaded );
 		}
 
 		/// <summary>
@@ -160,54 +234,6 @@ namespace NeoAxis
 		{
 			SelectionSort( array, new ComparisonComparer<T>( comparer ) );
 		}
-
-		//!!!!было
-		//!!!!что с поточностью тут?
-
-		//public static T[] AddElement<T>( T[] array, T element )
-		//{
-		//	//!!!!!? в InsertElement тоже?. или Fatal?
-		//	if( array == null )
-		//		return new T[] { element };
-
-		//	T[] newArray = new T[ array.Length + 1 ];
-		//	for( int n = 0; n < array.Length; n++ )
-		//		newArray[ n ] = array[ n ];
-		//	newArray[ newArray.Length - 1 ] = element;
-		//	return newArray;
-		//}
-
-		//public static T[] InsertElement<T>( T[] array, T element, int index )
-		//{
-		//	if( index < 0 || index > array.Length )
-		//		Log.Fatal( "ArrayUtils: InsertElement: index < 0 || index > array.Length." );
-
-		//	T[] newArray = new T[ array.Length + 1 ];
-		//	for( int n = 0; n < index; n++ )
-		//		newArray[ n ] = array[ n ];
-		//	newArray[ index ] = element;
-		//	for( int n = index + 1; n < newArray.Length; n++ )
-		//		newArray[ n ] = array[ n - 1 ];
-		//	return newArray;
-		//}
-
-		//public static T[] RemoveElement<T>( T[] array, int index )
-		//{
-		//	if( index < 0 || index >= array.Length )
-		//		Log.Fatal( "ArrayUtils: RemoveElement: index < 0 || index >= array.Length." );
-
-		//	T[] newArray = new T[ array.Length - 1 ];
-		//	int newIndex = 0;
-		//	for( int n = 0; n < array.Length; n++ )
-		//	{
-		//		if( n != index )
-		//		{
-		//			newArray[ newIndex ] = array[ n ];
-		//			newIndex++;
-		//		}
-		//	}
-		//	return newArray;
-		//}
 
 		/// <summary>
 		/// Merges two arrays into one.
@@ -393,7 +419,7 @@ namespace NeoAxis
 
 			IComparable<T> comparerTest = list[ 0 ] as IComparable<T>;
 			if( comparerTest == null )
-				Log.Fatal( "CollectionUtility: SelectionSort: Item not have IComparable<T> interface." );
+				throw new Exception( "Item type must have a IComparable<T> interface." );
 
 			int count = list.Count;
 
@@ -451,5 +477,29 @@ namespace NeoAxis
 			}
 		}
 
+		public static T[] FromByteArray<T>( byte[] array ) where T : unmanaged
+		{
+			unsafe
+			{
+				int count = array.Length / sizeof( T );
+				var result = new T[ count ];
+				fixed( byte* pArray = array )
+				fixed( T* pResult = result )
+					NativeUtility.CopyMemory( pResult, pArray, count * sizeof( T ) );
+				return result;
+			}
+		}
+
+		public static byte[] ToByteArray<T>( T[] array ) where T : unmanaged
+		{
+			unsafe
+			{
+				var result = new byte[ array.Length * sizeof( T ) ];
+				fixed( T* pArray = array )
+				fixed( byte* pResult = result )
+					NativeUtility.CopyMemory( pResult, pArray, result.Length );
+				return result;
+			}
+		}
 	}
 }

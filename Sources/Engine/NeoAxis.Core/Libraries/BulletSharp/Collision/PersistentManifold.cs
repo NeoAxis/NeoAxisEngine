@@ -1,10 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Security;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public delegate void ContactDestroyedEventHandler(Object userPersistantData);
 	public delegate void ContactProcessedEventHandler(ManifoldPoint cp, CollisionObject body0, CollisionObject body1);
@@ -21,9 +21,9 @@ namespace BulletSharp
 		private static IntPtr _contactDestroyedUnmanagedPtr;
 		private static IntPtr _contactProcessedUnmanagedPtr;
 
-		[UnmanagedFunctionPointer(BulletSharp.Native.Conv), SuppressUnmanagedCodeSecurity]
+		[UnmanagedFunctionPointer(Internal.BulletSharp.Native.Conv), SuppressUnmanagedCodeSecurity]
 		private delegate bool ContactDestroyedUnmanagedDelegate(IntPtr userPersistantData);
-		[UnmanagedFunctionPointer(BulletSharp.Native.Conv), SuppressUnmanagedCodeSecurity]
+		[UnmanagedFunctionPointer(Internal.BulletSharp.Native.Conv), SuppressUnmanagedCodeSecurity]
 		private delegate bool ContactProcessedUnmanagedDelegate(IntPtr cp, IntPtr body0, IntPtr body1);
 
 		private static bool ContactDestroyedUnmanaged(IntPtr userPersistentData)
@@ -126,12 +126,12 @@ namespace BulletSharp
 			return new ManifoldPoint(btPersistentManifold_getContactPoint(Native, index), true);
 		}
 
-		public void RefreshContactPointsRef(ref Matrix trA, ref Matrix trB)
+		public void RefreshContactPointsRef(ref BMatrix trA, ref BMatrix trB)
 		{
 			btPersistentManifold_refreshContactPoints(Native, ref trA, ref trB);
 		}
 
-		public void RefreshContactPoints(Matrix trA, Matrix trB)
+		public void RefreshContactPoints(BMatrix trA, BMatrix trB)
 		{
 			btPersistentManifold_refreshContactPoints(Native, ref trA, ref trB);
 		}

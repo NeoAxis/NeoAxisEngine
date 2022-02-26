@@ -4,13 +4,16 @@
  */
 
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using tainicom.Aether.Physics2D.Collision;
-using tainicom.Aether.Physics2D.Collision.Shapes;
-using tainicom.Aether.Physics2D.Common.PhysicsLogic;
-using tainicom.Aether.Physics2D.Dynamics;
+using Internal.tainicom.Aether.Physics2D.Collision;
+using Internal.tainicom.Aether.Physics2D.Collision.Shapes;
+using Internal.tainicom.Aether.Physics2D.Common;
+using Internal.tainicom.Aether.Physics2D.Common.PhysicsLogic;
+using Internal.tainicom.Aether.Physics2D.Dynamics;
+#if XNAAPI
+using Vector2 = Microsoft.Xna.Framework.Vector2;
+#endif
 
-namespace tainicom.Aether.Physics2D.Controllers
+namespace Internal.tainicom.Aether.Physics2D.Controllers
 {
     public sealed class BuoyancyController : Controller
     {
@@ -92,10 +95,8 @@ namespace tainicom.Aether.Physics2D.Controllers
                 float area = 0;
                 float mass = 0;
 
-                for (int j = 0; j < body.FixtureList.Count; j++)
+                foreach (Fixture fixture in body.FixtureList)
                 {
-                    Fixture fixture = body.FixtureList[j];
-
                     if (fixture.Shape.ShapeType != ShapeType.Polygon && fixture.Shape.ShapeType != ShapeType.Circle)
                         continue;
 
@@ -125,8 +126,8 @@ namespace tainicom.Aether.Physics2D.Controllers
                 body.ApplyForce(buoyancyForce, massc);
 
                 //Linear drag
-                Vector2 dragForce = body.GetLinearVelocityFromWorldPoint(areac) - Velocity;
-                dragForce *= -LinearDragCoefficient * area;
+                Vector2 dragVelocity = body.GetLinearVelocityFromWorldPoint(areac) - Velocity;
+                Vector2 dragForce = dragVelocity * (-LinearDragCoefficient * area);
                 body.ApplyForce(dragForce, areac);
 
                 //Angular drag

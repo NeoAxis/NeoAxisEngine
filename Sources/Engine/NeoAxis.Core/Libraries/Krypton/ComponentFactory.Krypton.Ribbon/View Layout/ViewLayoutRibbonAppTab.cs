@@ -17,9 +17,9 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Reflection;
 using System.Diagnostics;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Toolkit;
 
-namespace ComponentFactory.Krypton.Ribbon
+namespace Internal.ComponentFactory.Krypton.Ribbon
 {
 	/// <summary>
 	/// Layout area for the application tab.

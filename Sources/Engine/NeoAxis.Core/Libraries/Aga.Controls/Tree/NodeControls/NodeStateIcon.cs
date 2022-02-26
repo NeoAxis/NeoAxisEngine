@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
-using Aga.Controls.Properties;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.Aga.Controls.Properties;
+using Internal.ComponentFactory.Krypton.Toolkit;
 
-namespace Aga.Controls.Tree.NodeControls
+namespace Internal.Aga.Controls.Tree.NodeControls
 {
 	public class NodeStateIcon: NodeIcon
 	{

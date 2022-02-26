@@ -1,0 +1,21 @@
+// Made with NeoAxis Engine 2021.3.
+
+.component NeoAxis.Component_Explosion
+{
+	Transform = "0 0 0; 0 0 0 1; 1 1 1"
+	Radius = 3
+	Impulse = 100
+	Damage = 5
+	Objects
+	{
+		Count = 2
+		0
+		{
+			GetByReference = "Content\\Weapons\\Default\\Bullet 2\\Hit explosion.wav"
+		}
+		1
+		{
+			GetByReference = "Content\\Weapons\\Default\\Bullet 2\\Hit particle.objectInSpace"
+		}
+	}
+}

@@ -1,7 +1,7 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 
 //!!!! later maybe split to vertex, fragment
-uniform vec4 u_viewportOwnerSettings[4];
+uniform vec4 u_viewportOwnerSettings[7];
 #define u_viewportOwnerCameraPosition u_viewportOwnerSettings[0].xyz
 #define u_viewportOwnerNearClipDistance u_viewportOwnerSettings[0].w
 #define u_viewportOwnerFarClipDistance u_viewportOwnerSettings[1].x
@@ -14,13 +14,20 @@ uniform vec4 u_viewportOwnerSettings[4];
 #define u_displacementScale u_viewportOwnerSettings[3].x
 #define u_displacementMaxSteps int(u_viewportOwnerSettings[3].y)
 #define u_removeTextureTiling u_viewportOwnerSettings[3].z
+#define u_provideColorDepthTextureCopy u_viewportOwnerSettings[3].w
+#define u_viewportOwnerCameraDirection u_viewportOwnerSettings[4].xyz
+#define u_engineTime u_viewportOwnerSettings[4].w
+#define u_viewportOwnerCameraUp u_viewportOwnerSettings[5].xyz
+#define u_mipBias u_viewportOwnerSettings[5].w
+#define u_windSpeed u_viewportOwnerSettings[6].xy
+#define u_shadowObjectVisibilityDistanceFactor u_viewportOwnerSettings[6].z
 
 uniform vec4 u_viewportSettings[1];
 #define u_viewportSize u_viewportSettings[0].xy
 #define u_viewportSizeInv u_viewportSettings[0].zw
 
-#define FOG_SETTING_SIZE 3
-uniform vec4 u_fogSettings[FOG_SETTING_SIZE];
+#ifdef GLOBAL_FOG
+uniform vec4 u_fogSettings[3];
 #define u_fogColor u_fogSettings[0]
 #define u_fogDistanceMode u_fogSettings[1].x
 #define u_fogStartDistance u_fogSettings[1].y
@@ -28,10 +35,11 @@ uniform vec4 u_fogSettings[FOG_SETTING_SIZE];
 #define u_fogHeightMode u_fogSettings[1].w
 #define u_fogHeight u_fogSettings[2].x
 #define u_fogHeightScale u_fogSettings[2].y
+#endif
 
-#ifdef GLOBAL_CUT_VOLUME_SUPPORT
+#if GLOBAL_CUT_VOLUME_MAX_AMOUNT > 0
 uniform vec4 u_viewportCutVolumeSettings;
-uniform mat4 u_viewportCutVolumeData[GLOBAL_CUT_VOLUME_MAX_COUNT];
+uniform mat4 u_viewportCutVolumeData[GLOBAL_CUT_VOLUME_MAX_AMOUNT];
 #endif
 
 #ifdef GLSL

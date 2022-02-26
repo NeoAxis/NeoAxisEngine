@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #if UWP
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Diagnostics;
 using DirectInput;
 using XInputNativeWrapper;
 
-namespace NeoAxis.Input
+namespace NeoAxis
 {
 	// we need to use https://docs.microsoft.com/en-us/uwp/api/windows.gaming.input
 
@@ -29,7 +29,7 @@ namespace NeoAxis.Input
 
 		unsafe internal override bool OnInit()
 		{
-			NativeLibraryManager.PreLoadLibrary( "NeoAxisCoreNative" );
+			NativeUtility.PreloadLibrary( "NeoAxisCoreNative" );
 
 			try
 			{

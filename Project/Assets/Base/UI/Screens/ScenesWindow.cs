@@ -1,7 +1,6 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using NeoAxis;
 
@@ -9,12 +8,15 @@ namespace Project
 {
 	public class ScenesWindow : UIWindow
 	{
+		List<string> fullPaths = new List<string>();
 		//static double savedScrollPosition;
 
 		//
 
 		protected override void OnEnabledInSimulation()
 		{
+			fullPaths.Clear();
+
 			if( Components[ "Button Load" ] != null )
 				( (UIButton)Components[ "Button Load" ] ).Click += ButtonLoad_Click;
 			if( Components[ "Button Close" ] != null )
@@ -25,16 +27,26 @@ namespace Project
 			{
 				var files = VirtualDirectory.GetFiles( "", "*.scene", SearchOption.AllDirectories );
 
+				var showOnlyFileNames = SystemSettings.MobileDevice;
+
 				CollectionUtility.MergeSort( files, delegate ( string name1, string name2 )
 				{
 					var s1 = name1.Replace( "\\", " \\" ).Replace( "/", " /" );
 					var s2 = name2.Replace( "\\", " \\" ).Replace( "/", " /" );
+					if( showOnlyFileNames )
+					{
+						s1 = Path.GetFileName( s1 );
+						s2 = Path.GetFileName( s2 );
+					}
 					return string.Compare( s1, s2 );
 				} );
 
 				foreach( var file in files )
 				{
-					list.Items.Add( file );
+					fullPaths.Add( file );
+
+					string itemText = showOnlyFileNames ? Path.GetFileName( file ) : file;
+					list.Items.Add( itemText );
 
 					if( PlayScreen.Instance != null && string.Compare( PlayScreen.Instance.PlayFileName, file, true ) == 0 )
 						list.SelectedIndex = list.Items.Count - 1;
@@ -67,9 +79,9 @@ namespace Project
 		void ButtonLoad_Click( UIButton sender )
 		{
 			var list = GetComponent<UIList>( "List" );
-			if( list != null && list.SelectedItem != null )
+			if( list != null && list.SelectedIndex != -1 )
 			{
-				var playFile = list.SelectedItem;
+				var playFile = fullPaths[ list.SelectedIndex ];//list.SelectedItem;
 				SimulationApp.PlayFile( playFile );
 			}
 		}

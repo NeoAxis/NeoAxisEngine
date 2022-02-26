@@ -38,7 +38,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 
-namespace Net3dBool
+namespace Internal.Net3dBool
 {
     [Flags]
     public enum IntersectionType { None = 0, FrontFace = 1, BackFace = 2, Both = FrontFace | BackFace };

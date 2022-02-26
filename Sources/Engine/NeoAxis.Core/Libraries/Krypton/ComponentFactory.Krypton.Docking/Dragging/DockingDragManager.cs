@@ -12,9 +12,9 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Security.Permissions;
-using ComponentFactory.Krypton.Navigator;
+using Internal.ComponentFactory.Krypton.Navigator;
 
-namespace ComponentFactory.Krypton.Docking
+namespace Internal.ComponentFactory.Krypton.Docking
 {
     /// <summary>
     /// Manage a docking dragging operation.

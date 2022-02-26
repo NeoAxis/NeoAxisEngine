@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Security;
 
-namespace SharpBgfx {
+namespace Internal.SharpBgfx {
     /// <summary>
     /// Provides an interface for programs to respond to callbacks from the bgfx library.
     /// </summary>

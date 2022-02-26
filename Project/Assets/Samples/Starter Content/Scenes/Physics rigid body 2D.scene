@@ -1,4 +1,6 @@
-.component NeoAxis.Component_Scene
+// Made with NeoAxis Engine 2022.1.
+
+.component NeoAxis.Scene
 {
 	Mode = _2D
 	DisplayDevelopmentDataInSimulation = True
@@ -15,13 +17,13 @@
 	{
 		GetByReference = "this:$Camera Editor 2D"
 	}
-	.component NeoAxis.Component_Camera
+	.component NeoAxis.Camera
 	{
 		Name = Camera Editor
 		Visible = False
 		Transform = "2.54755444460002 -2.98353098885791 3.3491828452653; -0.205306458415661 0.203494233957238 0.679913375290773 0.673911831755226; 1 1 1"
 	}
-	.component NeoAxis.Component_Camera
+	.component NeoAxis.Camera
 	{
 		Name = Camera Editor 2D
 		Visible = False
@@ -29,32 +31,35 @@
 		Projection = Orthographic
 		Height = 18.0586419336498
 		FixedUp = 0 1 0
+		NearClipPlane = 0.1
 		FarClipPlane = 100
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Ambient Light
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
 		Brightness = 30000
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light 1
 		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
 		Type = Directional
-		Brightness = 200000
+		Brightness = 150000
 		AttenuationFar = 100
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 91.429
 	}
-	.component NeoAxis.Component_RenderingPipeline_Default
+	.component NeoAxis.RenderingPipeline_Basic
 	{
 		Name = Rendering Pipeline
+		DeferredShading = False
 		Shadows = False
 		ShadowFarDistance = 15
 		ShadowDirectionalLightCascades = 1
+		ProvideColorDepthTextureCopy = False
 		.component NeoAxis.Component
 		{
 			Name = Background Effects
@@ -62,42 +67,46 @@
 		.component NeoAxis.Component
 		{
 			Name = Scene Effects
-			.component NeoAxis.Component_RenderingEffect_AmbientOcclusion
+			.component NeoAxis.RenderingEffect_AmbientOcclusion
 			{
 				Enabled = False
 				Name = Ambient Occlusion
 			}
-			.component NeoAxis.Component_RenderingEffect_MotionBlur
+			.component NeoAxis.RenderingEffect_MotionBlur
 			{
 				Enabled = False
 				Name = Motion Blur
 			}
-			.component NeoAxis.Component_RenderingEffect_Bloom
+			.component NeoAxis.RenderingEffect_Bloom
 			{
 				Enabled = False
 				Name = Bloom
 			}
-			.component NeoAxis.Component_RenderingEffect_LensEffects
+			.component NeoAxis.RenderingEffect_LensEffects
 			{
 				Enabled = False
 				Name = Lens Effects
 			}
-			.component NeoAxis.Component_RenderingEffect_ToneMapping
+			.component NeoAxis.RenderingEffect_ToneMapping
 			{
+				Enabled = False
 				Name = Tone Mapping
 			}
-			.component NeoAxis.Component_RenderingEffect_ToLDR
+			.component NeoAxis.RenderingEffect_ToLDR
 			{
 				Name = To LDR
 			}
-			.component NeoAxis.Component_RenderingEffect_Antialiasing
+			.component NeoAxis.RenderingEffect_Antialiasing
 			{
 				Name = Antialiasing
 			}
-			.component NeoAxis.Component_RenderingEffect_Sharpen
+			.component NeoAxis.RenderingEffect_ResolutionUpscale
+			{
+				Name = Resolution Upscale
+			}
+			.component NeoAxis.RenderingEffect_Sharpen
 			{
 				Name = Sharpen
-				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
 			}
 		}
 		.component NeoAxis.Component
@@ -105,22 +114,17 @@
 			Name = Final Image Effects
 		}
 	}
-	.component NeoAxis.Component_GameMode
+	.component NeoAxis.GameMode
 	{
 		Name = Game Mode
+		CutsceneStarted = False
+		CutsceneGuiFadingFactor = 0
+		CutsceneGuiFadingSpeed = 0
+		ScreenFadingCurrentColor = 0 0 0 0
+		ScreenFadingTargetColor = 0 0 0 0
+		ScreenFadingSpeed = 0
 	}
-	.component NeoAxis.Component_Light
-	{
-		Enabled = False
-		Name = Light 2
-		Transform = "-16.276133519817 -13.7764744895929 22.8055842838911; -0.800753779408636 -0.218616030310482 0.553641801455134 0.066941554624803; 1 1 1"
-		Type = Spotlight
-		AttenuationFar = 100
-		AttenuationPower = 1.5
-		SpotlightInnerAngle = 80
-		SpotlightOuterAngle = 91.429
-	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Ground
 		CanBeSelected = False
@@ -133,10 +137,17 @@
 		{
 			Count = 0
 		}
-		.component NeoAxis.Component_Mesh
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = Mesh Geometry
 				Dimensions = 100 100
@@ -147,7 +158,7 @@
 				}
 			}
 		}
-		.component NeoAxis.Component_RigidBody
+		.component NeoAxis.RigidBody
 		{
 			Enabled = False
 			Name = Collision Body
@@ -155,7 +166,7 @@
 			{
 				GetByReference = "this:..\\Transform"
 			}
-			.component NeoAxis.Component_CollisionShape_Mesh
+			.component NeoAxis.CollisionShape_Mesh
 			{
 				Mesh
 				{
@@ -170,7 +181,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_GroupOfObjects
+	.component NeoAxis.GroupOfObjects
 	{
 		Name = Group Of Objects
 		BaseObjects
@@ -182,132 +193,143 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_RigidBody2D
+	.component NeoAxis.RigidBody2D
 	{
 		Name = Rigid Body 2D
 		Transform = "-4.53033692229285 2.46502634699947 -0.997401454117092; 0 0 0 1; 1.94999997876585 1.94999997876585 1.94999997876585"
 		MotionType = Dynamic
 		ContactsDisplay = True
-		.component NeoAxis.Component_CollisionShape2D_Box
+		.component NeoAxis.CollisionShape2D_Box
 		{
 			Name = Collision Shape
 			Restitution = 0.5
+			CollidesWith = All
 		}
 	}
-	.component NeoAxis.Component_RigidBody2D
+	.component NeoAxis.RigidBody2D
 	{
 		Name = Rigid Body 2D 6
 		Transform = "-4.53033692229285 10.6150072671739 -0.997401454117092; 0 0 0 1; 1.94999997876585 1.94999997876585 1.94999997876585"
 		ContactsDisplay = True
-		.component NeoAxis.Component_CollisionShape2D_Box
+		.component NeoAxis.CollisionShape2D_Box
 		{
 			Name = Collision Shape
 			Restitution = 0.5
+			CollidesWith = All
 		}
 	}
-	.component NeoAxis.Component_RigidBody2D
+	.component NeoAxis.RigidBody2D
 	{
 		Name = Rigid Body 2D 10
 		Transform = "-4.53033692229285 6.58291144350868 -0.997401454117092; 0 0 0 1; 1.94999997876585 1.94999997876585 1.94999997876585"
 		ContactsDisplay = True
-		.component NeoAxis.Component_CollisionShape2D_Box
+		.component NeoAxis.CollisionShape2D_Box
 		{
 			Name = Collision Shape
 			Restitution = 0.5
+			CollidesWith = All
 		}
 	}
-	.component NeoAxis.Component_RigidBody2D
+	.component NeoAxis.RigidBody2D
 	{
 		Name = Rigid Body 2D 12
 		Transform = "2.99804818588166 6.58291144350868 -0.997401454117092; 0 0 0 1; 1.94999997876585 1.94999997876585 1.94999997876585"
 		ContactsDisplay = True
-		.component NeoAxis.Component_CollisionShape2D_Box
+		.component NeoAxis.CollisionShape2D_Box
 		{
 			Name = Collision Shape
 			Restitution = 0.5
+			CollidesWith = All
 		}
 	}
-	.component NeoAxis.Component_RigidBody2D
+	.component NeoAxis.RigidBody2D
 	{
 		Name = Rigid Body 2D 13
 		Transform = "6.51558424782074 6.58291144350868 -0.997401454117092; 0 0 0 1; 1.94999997876585 1.94999997876585 1.94999997876585"
 		MotionType = Dynamic
 		ContactsDisplay = True
-		.component NeoAxis.Component_CollisionShape2D_Box
+		.component NeoAxis.CollisionShape2D_Box
 		{
 			Name = Collision Shape
 			Restitution = 0.5
+			CollidesWith = All
 		}
 	}
-	.component NeoAxis.Component_RigidBody2D
+	.component NeoAxis.RigidBody2D
 	{
 		Name = Rigid Body 2D 11
 		Transform = "-1.03424925097534 6.58291144350868 -0.997401454117092; 0 0 0 1; 1.94999997876585 1.94999997876585 1.94999997876585"
 		MotionType = Dynamic
 		ContactsDisplay = True
-		.component NeoAxis.Component_CollisionShape2D_Box
+		.component NeoAxis.CollisionShape2D_Box
 		{
 			Name = Collision Shape
 			Restitution = 0.5
+			CollidesWith = All
 		}
 	}
-	.component NeoAxis.Component_RigidBody2D
+	.component NeoAxis.RigidBody2D
 	{
 		Name = Rigid Body 2D 8
 		Transform = "3.03285194868498 10.8300113016126 -0.997401454117092; 0 0 -0.0619973512274198 0.998076313936356; 1.94999997876585 1.94999997876585 1.94999997876585"
 		ContactsDisplay = True
-		.component NeoAxis.Component_CollisionShape2D_Box
+		.component NeoAxis.CollisionShape2D_Box
 		{
 			Name = Collision Shape
 			Restitution = 0.5
+			CollidesWith = All
 		}
 	}
-	.component NeoAxis.Component_RigidBody2D
+	.component NeoAxis.RigidBody2D
 	{
 		Name = Rigid Body 2D 9
 		Transform = "6.48078048501742 10.4000032327353 -0.997401454117092; 0 0 -0.0619973512274198 0.998076313936356; 1.94999997876585 1.94999997876585 1.94999997876585"
 		MotionType = Dynamic
 		ContactsDisplay = True
-		.component NeoAxis.Component_CollisionShape2D_Box
+		.component NeoAxis.CollisionShape2D_Box
 		{
 			Name = Collision Shape
 			Restitution = 0.5
+			CollidesWith = All
 		}
 	}
-	.component NeoAxis.Component_RigidBody2D
+	.component NeoAxis.RigidBody2D
 	{
 		Name = Rigid Body 2D 7
 		Transform = "-1.03424925097534 10.6150072671739 -0.997401454117092; 0 0 0 1; 1.94999997876585 1.94999997876585 1.94999997876585"
 		MotionType = Dynamic
 		ContactsDisplay = True
-		.component NeoAxis.Component_CollisionShape2D_Box
+		.component NeoAxis.CollisionShape2D_Box
 		{
 			Name = Collision Shape
 			Restitution = 0.5
+			CollidesWith = All
 		}
 	}
-	.component NeoAxis.Component_RigidBody2D
+	.component NeoAxis.RigidBody2D
 	{
 		Name = Rigid Body 2D 2
 		Transform = "-1.09489832540827 2.5050706271269 -0.99838190150143; 0 0 0 1; 2.02999997697771 2.02999997697771 2.02999997697771"
 		MotionType = Dynamic
 		ContactsDisplay = True
-		.component NeoAxis.Component_CollisionShape2D_Ellipse
+		.component NeoAxis.CollisionShape2D_Ellipse
 		{
 			Name = Collision Shape
 			Restitution = 0.5
+			CollidesWith = All
 		}
 	}
-	.component NeoAxis.Component_RigidBody2D
+	.component NeoAxis.RigidBody2D
 	{
 		Name = Rigid Body 2D 4
 		Transform = "4.01173240504535 -1.11713105814075 -0.998478570044274; 0 0 0 1; 21.8332793834621 1 15.1999996826053"
-		.component NeoAxis.Component_CollisionShape2D_Box
+		.component NeoAxis.CollisionShape2D_Box
 		{
 			Name = Collision Shape
+			CollidesWith = All
 		}
 	}
-	.component NeoAxis.Component_Sprite
+	.component NeoAxis.Sprite
 	{
 		Name = Sprite 16
 		Transform
@@ -322,15 +344,23 @@
 		{
 			Count = 0
 		}
-		.component NeoAxis.Component_RigidBody2D
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.RigidBody2D
 		{
 			Name = Collision Body
 			Transform = "5.35682071697751 2.49653382895608 0; 0 0 0 1; 0.3 0.3 0.3"
 			MotionType = Dynamic
 			ContactsDisplay = True
-			.component NeoAxis.Component_CollisionShape2D_Mesh
+			.component NeoAxis.CollisionShape2D_Mesh
 			{
 				Restitution = 0.5
+				CollidesWith = All
 				ShapeType = Convex
 				Vertices
 				{
@@ -366,50 +396,8 @@
 				}
 			}
 		}
-		.component NeoAxis.Component_InputProcessing
-		{
-			Name = Input Processing
-			.component NeoAxis.Component_CSharpScript
-			{
-				Name = C# Script
-				Code = "public void InputProcessing_InputMessageEvent(NeoAxis.Component_InputProcessing sender, UIControl playScreen, NeoAxis.InputMessage message)\r\n{\r\n\t//get access to the ship\r\n\tvar ship = sender.Parent;\r\n\tif (ship == null)\r\n\t\treturn;\r\n\r\n\t/*\r\n\t\tvar keyDown = message as InputMessageKeyDown;\r\n\t\tif(keyDown != null)\r\n\t\t{\r\n\t\t\tif(keyDown.Key == EKeys.Space)\r\n\t\t\t{\r\n\t\t\t\t//var body = ship.GetComponent<Component_RigidBody2D>();\r\n\t\t\t\t//if (body != null)\r\n\t\t\t\t//{\r\n\t\t\t\t//\tbody.ApplyForce(new Vector2(1, 0));\r\n\t\t\t\t//}\r\n\t\t\t}\r\n\t\t}\r\n\t*/\r\n\r\n}\r\n\r\npublic void InputProcessing_SimulationStep(NeoAxis.Component obj)\r\n{\r\n\tvar sender = (NeoAxis.Component_InputProcessing)obj;\r\n\r\n\t//get access to the ship\r\n\tvar ship = sender.Parent;\r\n\tif (ship == null)\r\n\t\treturn;\r\n\r\n\t//control the ship\r\n\tvar body = ship.GetComponent<Component_RigidBody2D>();\r\n\tif (body != null)\r\n\t{\r\n\t\t//fly front\r\n\t\tif (sender.IsKeyPressed(EKeys.W) || sender.IsKeyPressed(EKeys.Up))\r\n\t\t{\r\n\t\t\tvar dir = body.TransformV.Rotation.GetForward().ToVector2();\r\n\t\t\tbody.ApplyForce(dir * 1.0);\r\n\t\t}\r\n\r\n\t\t//fly back\r\n\t\tif (sender.IsKeyPressed(EKeys.S) || sender.IsKeyPressed(EKeys.Down))\r\n\t\t{\r\n\t\t\tvar dir = body.TransformV.Rotation.GetForward().ToVector2();\r\n\t\t\tbody.ApplyForce(dir * -1.0);\r\n\t\t}\r\n\r\n\t\t//turn left\r\n\t\tif (sender.IsKeyPressed(EKeys.A) || sender.IsKeyPressed(EKeys.Left))\r\n\t\t\tbody.ApplyTorque(1.0);\r\n\r\n\t\t//turn right\r\n\t\tif (sender.IsKeyPressed(EKeys.D) || sender.IsKeyPressed(EKeys.Right))\r\n\t\t\tbody.ApplyTorque(-1.0);\r\n\t}\r\n\r\n}\r\n"
-				Exit
-				{
-				}
-				.component NeoAxis.Component_EventHandler
-				{
-					Name = Event Handler InputMessageEvent
-					Event
-					{
-						GetByReference = "this:..\\..\\event:InputMessageEvent"
-					}
-					HandlerMethod
-					{
-						GetByReference = "this:..\\method:InputProcessing_InputMessageEvent(NeoAxis.Component_InputProcessing,NeoAxis.InputMessage)"
-					}
-					HandlerFlow
-					{
-					}
-				}
-				.component NeoAxis.Component_EventHandler
-				{
-					Name = Event Handler SimulationStep
-					Event
-					{
-						GetByReference = "this:..\\..\\event:SimulationStep"
-					}
-					HandlerMethod
-					{
-						GetByReference = "this:..\\method:InputProcessing_SimulationStep(NeoAxis.Component)"
-					}
-					HandlerFlow
-					{
-					}
-				}
-			}
-		}
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Plane
 		Transform
@@ -428,10 +416,17 @@
 		{
 			Count = 0
 		}
-		.component NeoAxis.Component_Mesh
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry
+			.component NeoAxis.MeshGeometry
 			{
 				Name = Mesh Geometry
 				VertexStructure
@@ -476,7 +471,8 @@
 					Value
 					{
 						Length = 6144
-						.elements = "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AAAAAP0tZKUAAAAAAACAPwAAgD8AAAAAAAAAAAAAgL8AAIA/AACAPwAAgD8AAIA/AACAPgAAQD8AAIC+AAAAAAAAAAD9LWSlAAAAAAAAgD8AAIA/AAAAAAAAAAAAAIC/AACAPwAAgD8AAIA/AACAPwAAgD4AAAA/AACAvgAAgL4AAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAACAvwAAgD8AAIA/AACAPwAAgD8AAIA+AABAPwAAAAAAAIC+AAAAAAAAAAAAAAAAAACAPwAAgD8AAAAAAAAAAAAAgL8AAIA/AACAPwAAgD8AAIA/AAAAPwAAQD8AAIC+AAAAAAAAAAAAAAAAAAAAAAAAgD8AAIA/AAAAAAAAAAAAAIC/AACAPwAAgD8AAIA/AACAPwAAgD4AAAA/AACAvgAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAACAvwAAgD8AAIA/AACAPwAAgD8AAIA+AAAAPwAAAAAAAIC+AAAAAAAAAAAAAAAAAACAPwAAgD8AAAAAAAAAAAAAgL8AAIA/AACAPwAAgD8AAIA/AAAAPwAAQD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAgD8AAIA/AAAAAAAAAAAAAIC/AACAPwAAgD8AAIA/AACAPwAAAD8AAAA/AAAAAAAAgL4AAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAACAvwAAgD8AAIA/AACAPwAAgD8AAAA/AABAPwAAgD4AAIC+AAAAAAAAAAAAAAAAAACAPwAAgD8AAAAAAAAAAAAAgL8AAIA/AACAPwAAgD8AAIA/AABAPwAAQD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAgD8AAIA/AAAAAAAAAAAAAIC/AACAPwAAgD8AAIA/AACAPwAAAD8AAAA/AAAAAAAAAAAAAAAATAQkJ0wEJCf//38/AACAPwAAAAAAAAAAAACAvwAAgD8AAIA/AACAPwAAgD8AAAA/AAAAPwAAgD4AAIC+AAAAAEwEJCdMBCQn//9/PwAAgD8AAAAAAAAAAAAAgL8AAIA/AACAPwAAgD8AAIA/AABAPwAAQD8smw8+nx4DvgAAAKRMBCQnTAQkJ///fz8AAIA/AAAAAAAAAAAAAIC/AACAPwAAgD8AAIA/AACAPwAAQD8AAAA/AACAPgAAgL4AAAAA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"
+						.elements = "UEsDBBQAAAAIAOaYQVRGs7NoIgMAAAAYAAAEAAAAZmlsZa2YT0gUURzHHyhseTExIyP6u2OQBlGCEuvbOXgoCsqg7A8RlEEdpA7dOjQiK65Qh2AlMyl0h5TAe1lbHdJKFMqsVNC8rB40WATpUjYzr9n5vR0P83362Mey++azn+/Mvt+PYRarZlIvJ8dTjLGkNe1hWK+omO4w3njf0TUjOnGTK/IGt9+vLWVS8fgFRb8u8bdnj5iNW5tNhKf5MV7kt6bF2pMxnJf9n042JZ/F6iF/38efkSvdywo8i+bmx/26xNsjva0A4ml+jHfzO+sKfpuX/R3To3uXCkKQv/jDUx6PTyrwui8/7td95/9tuRLiaX6M1+k+VPDrPn935/6eyrFqyG/VPz9XPaPAG778uF/3nX9sUwXE0/wYL+1DBb/IQPvnpbaQWdp6NBxw/7Dc+sd4Uf/tI0OpqYmSiJqfSfyfAw3m/+MD8zQ/xtP+JwbOy35yPOB31hV4t3/ksir518KvNf9qIyi/Hn65/oPz+jrmF+NEfnifPVdW7gK8lx/jRf6KzkL+ZEee0z9wXvbbBz441KyB1y+qxhu+/LifSfyZutbwroE5iKf5MV78xvzvh7wk0fva+gz6xR6g/TPddt3sH44lA+4fllv/GC/qvy8xn3pf28jV/Aan/I3e7WD/l2sX46X+zdX41XoH6l9r//Dy4343v+C3/Dim2RPjvYHx2fxl3+v3OP8/zsv+R5FRh0f6J61/jNd9+XG/cw2zPP7/Gzyn/wG8yD+cvspbQnM1arzsv7h4West6kgiftr/MN7w5cf9Bqf8r+chrSFvGuJpfowX+ReqZvjX8f4aNV7un01dO83a0nzg/luuf4wX9X/QevaxUP5Z0c8Y5c9qx5Mbdm8OWv/uWjY/xov8p8vrUtbzAwW/23s8/2OjTBu88wW6frT+MV7UP82P+xmj/Fjmnnb+1mH0/LP5MV7kH5xKRDb2ddnXQYGX/fcHysOvMqcgP61/jNd9+XE/Y5QH73+cdZof473+N/vuhcL9l+7zt2dKtODPf4Wf9j+MF3uQ5sf9Ir/L9xQXlRW2mMj9P6P5MV7kT4wM8b+8xfK/VeAZ+wdQSwECFAAUAAAACADmmEFURrOzaCIDAAAAGAAABAAAAAAAAAAAAAAAAAAAAAAAZmlsZVBLBQYAAAAAAQABADIAAABEAwAAAAA="
+						.elementsZip = True
 					}
 				}
 				Indices
@@ -494,15 +490,16 @@
 				Faces = 1 96 0 0 0 1 0 1 5 0 2 5 0 3 1 0 4 6 0 5 1 0 6 2 0 7 6 0 8 6 0 9 2 0 10 7 0 11 2 0 12 3 0 13 7 0 14 7 0 15 3 0 16 8 0 17 3 0 18 4 0 19 8 0 20 8 0 21 4 0 22 9 0 23 5 0 24 6 0 25 10 0 26 10 0 27 6 0 28 11 0 29 6 0 30 7 0 31 11 0 32 11 0 33 7 0 34 12 0 35 7 0 36 8 0 37 12 0 38 12 0 39 8 0 40 13 0 41 8 0 42 9 0 43 13 0 44 13 0 45 9 0 46 14 0 47 10 0 48 11 0 49 15 0 50 15 0 51 11 0 52 16 0 53 11 0 54 12 0 55 16 0 56 16 0 57 12 0 58 17 0 59 12 0 60 13 0 61 17 0 62 17 0 63 13 0 64 18 0 65 13 0 66 14 0 67 18 0 68 18 0 69 14 0 70 19 0 71 15 0 72 16 0 73 20 0 74 20 0 75 16 0 76 21 0 77 16 0 78 17 0 79 21 0 80 21 0 81 17 0 82 22 0 83 17 0 84 18 0 85 22 0 86 22 0 87 18 0 88 23 0 89 18 0 90 19 0 91 23 0 92 23 0 93 19 0 94 24 0 95 0
 			}
 		}
-		.component NeoAxis.Component_RigidBody2D
+		.component NeoAxis.RigidBody2D
 		{
 			Name = Collision Body
 			Transform = "9.07504730605524 2.46990926782667 -0.499865609843898; 0 0 0 1; 2.03330397244451 2.03330397244451 2.03330397244451"
 			MotionType = Dynamic
 			ContactsDisplay = True
-			.component NeoAxis.Component_CollisionShape2D_Mesh
+			.component NeoAxis.CollisionShape2D_Mesh
 			{
 				Restitution = 0.5
+				CollidesWith = All
 				ShapeType = TriangleMesh
 				Mesh
 				{
@@ -517,37 +514,40 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_RigidBody2D
+	.component NeoAxis.RigidBody2D
 	{
 		Name = Rigid Body 2D 3
 		Transform = "12.705223285865 2.48048909329295 -0.997908651555472; 0 0 0.349444757437277 0.936956968862286; 1.14130434610957 2.75099995324016 2.09999997541308"
 		MotionType = Dynamic
 		ContactsDisplay = True
-		.component NeoAxis.Component_CollisionShape2D_Box
+		.component NeoAxis.CollisionShape2D_Box
 		{
 			Name = Collision Shape
 			Restitution = 0.5
+			CollidesWith = All
 		}
-		.component NeoAxis.Component_CollisionShape2D_Ellipse
+		.component NeoAxis.CollisionShape2D_Ellipse
 		{
 			Name = Ellipse Shape
 			Restitution = 0.5
+			CollidesWith = All
 			Dimensions = 2 0.5
 		}
 	}
-	.component NeoAxis.Component_RigidBody2D
+	.component NeoAxis.RigidBody2D
 	{
 		Name = Rigid Body 2D 5
 		Transform = "2.08825803704126 2.48048909329295 -0.996719577016071; 0 0 0 1; 1 1 1"
 		MotionType = Dynamic
 		ContactsDisplay = True
-		.component NeoAxis.Component_CollisionShape2D_Capsule
+		.component NeoAxis.CollisionShape2D_Capsule
 		{
 			Name = Collision Shape
 			Restitution = 0.5
+			CollidesWith = All
 		}
 	}
-	.component NeoAxis.Component_Constraint2D_Revolute
+	.component NeoAxis.Constraint2D_Revolute
 	{
 		Name = Revolute Constraint 2D
 		Transform = "-2.7822930866341 10.6150072671739 -0.997401454117092; 0 0 0 1; 1 1 1"
@@ -563,7 +563,7 @@
 			GetByReference = "this:..\\$Rigid Body 2D 7"
 		}
 	}
-	.component NeoAxis.Component_Constraint2D_Distance
+	.component NeoAxis.Constraint2D_Distance
 	{
 		Name = Distance Constraint 2D 4
 		Transform = "12.1529134213722 6.91961013353441 0; 0 0 -0.599270136872563 0.800546877486097; 2.23999997228384 2.23999997228384 2.23999997228384"
@@ -576,7 +576,7 @@
 			GetByReference = "this:..\\$Rigid Body 2D 17"
 		}
 	}
-	.component NeoAxis.Component_Constraint2D_Distance
+	.component NeoAxis.Constraint2D_Distance
 	{
 		Name = Distance Constraint 2D 3
 		Transform = "13.2467813430728 9.34315709137577 0; 0 0 -0.82290277263769 0.568182212661751; 2.34999996982515 2.34999996982515 2.34999996982515"
@@ -589,50 +589,54 @@
 			GetByReference = "this:..\\$Rigid Body 2D 16"
 		}
 	}
-	.component NeoAxis.Component_RigidBody2D
+	.component NeoAxis.RigidBody2D
 	{
 		Name = Rigid Body 2D 14
 		Transform = "11.8740843432917 11.8899885521047 0; 0 0 0.0101383044200705 0.999948606071075; 0.573529414568343 0.573529414568343 0.573529414568343"
-		.component NeoAxis.Component_CollisionShape2D_Box
+		.component NeoAxis.CollisionShape2D_Box
 		{
 			Name = Collision Shape
 			Restitution = 0.5
+			CollidesWith = All
 		}
 	}
-	.component NeoAxis.Component_RigidBody2D
+	.component NeoAxis.RigidBody2D
 	{
 		Name = Rigid Body 2D 15
 		Transform = "13.1395393899649 9.45039368243069 0; 0 0 0.0101383044200705 0.999948606071075; 0.573529414568343 0.573529414568343 0.573529414568343"
 		MotionType = Dynamic
-		.component NeoAxis.Component_CollisionShape2D_Box
+		.component NeoAxis.CollisionShape2D_Box
 		{
 			Name = Collision Shape
 			Restitution = 0.5
+			CollidesWith = All
 		}
 	}
-	.component NeoAxis.Component_RigidBody2D
+	.component NeoAxis.RigidBody2D
 	{
 		Name = Rigid Body 2D 16
 		Transform = "12.2816037651017 7.00539940637835 0; 0 0 0.0101383044200705 0.999948606071075; 0.573529414568343 0.573529414568343 0.573529414568343"
 		MotionType = Dynamic
-		.component NeoAxis.Component_CollisionShape2D_Box
+		.component NeoAxis.CollisionShape2D_Box
 		{
 			Name = Collision Shape
 			Restitution = 0.5
+			CollidesWith = All
 		}
 	}
-	.component NeoAxis.Component_RigidBody2D
+	.component NeoAxis.RigidBody2D
 	{
 		Name = Rigid Body 2D 17
 		Transform = "12.9465038743707 4.62474708495896 0; 0 0 0.0101383044200705 0.999948606071075; 0.573529414568343 0.573529414568343 0.573529414568343"
 		MotionType = Dynamic
-		.component NeoAxis.Component_CollisionShape2D_Box
+		.component NeoAxis.CollisionShape2D_Box
 		{
 			Name = Collision Shape
 			Restitution = 0.5
+			CollidesWith = All
 		}
 	}
-	.component NeoAxis.Component_Constraint2D_Distance
+	.component NeoAxis.Constraint2D_Distance
 	{
 		Name = Distance Constraint 2D
 		Transform = "11.8311875620485 11.8685412338937 0; 0 0 -0.522177388867998 0.852836897979326; 2.59459258539914 2.59459258539914 2.59459258539914"
@@ -645,7 +649,7 @@
 			GetByReference = "this:..\\$Rigid Body 2D 15"
 		}
 	}
-	.component NeoAxis.Component_Constraint2D_Prismatic
+	.component NeoAxis.Constraint2D_Prismatic
 	{
 		Name = Prismatic Constraint 2D
 		Transform = "4.7568162168512 10.6150072671739 -0.997401454117092; 0 0 -0.0619973512274198 0.998076313936356; 1 1 1"
@@ -661,7 +665,7 @@
 			GetByReference = "this:..\\$Rigid Body 2D 9"
 		}
 	}
-	.component NeoAxis.Component_Constraint2D_Weld
+	.component NeoAxis.Constraint2D_Weld
 	{
 		Name = Weld Constraint 2D
 		Transform = "-2.7822930866341 6.58291144350868 -0.997401454117092; 0 0 0 1; 1 1 1"
@@ -675,7 +679,7 @@
 			GetByReference = "this:..\\$Rigid Body 2D 11"
 		}
 	}
-	.component NeoAxis.Component_Constraint2D_Fixed
+	.component NeoAxis.Constraint2D_Fixed
 	{
 		Name = Fixed Constraint 2D
 		Transform = "4.7568162168512 6.58291144350868 -0.997401454117092; 0 0 0 1; 1 1 1"

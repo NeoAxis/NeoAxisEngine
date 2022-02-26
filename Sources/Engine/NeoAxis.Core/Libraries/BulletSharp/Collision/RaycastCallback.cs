@@ -1,7 +1,7 @@
 using System;
-using BulletSharp.Math;
+using Internal.BulletSharp.Math;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public abstract class TriangleRaycastCallback : TriangleCallback
 	{
@@ -16,22 +16,22 @@ namespace BulletSharp
             Terminator = -1
 		}
 
-        public TriangleRaycastCallback(ref Vector3 from, ref Vector3 to, EFlags flags)
+        public TriangleRaycastCallback(ref BVector3 from, ref BVector3 to, EFlags flags)
         {
             HitFraction = 1.0f;
         }
 
-        public TriangleRaycastCallback(ref Vector3 from, ref Vector3 to)
+        public TriangleRaycastCallback(ref BVector3 from, ref BVector3 to)
             : this(ref from, ref to, EFlags.None)
         {
         }
 
-        public override void ProcessTriangle(ref Vector3 point0, ref Vector3 point1, ref Vector3 point2, int partId, int triangleIndex)
+        public override void ProcessTriangle(ref BVector3 point0, ref BVector3 point1, ref BVector3 point2, int partId, int triangleIndex)
         {
-            Vector3 v10 = point1 - point0;
-            Vector3 v20 = point2 - point0;
+            BVector3 v10 = point1 - point0;
+            BVector3 v20 = point2 - point0;
 
-            Vector3 triangleNormal = v10.Cross(v20);
+            BVector3 triangleNormal = v10.Cross(v20);
 
             double dist;
             point0.Dot(ref triangleNormal, out dist);
@@ -61,23 +61,23 @@ namespace BulletSharp
             {
                 double edgeTolerance = triangleNormal.LengthSquared;
                 edgeTolerance *= -0.0001f;
-                Vector3 point = Vector3.Lerp(From, To, distance);
+                BVector3 point = BVector3.Lerp(From, To, distance);
                 {
-                    Vector3 v0p; v0p = point0 - point;
-                    Vector3 v1p; v1p = point1 - point;
-                    Vector3 cp0; cp0 = v0p.Cross(v1p);
+                    BVector3 v0p; v0p = point0 - point;
+                    BVector3 v1p; v1p = point1 - point;
+                    BVector3 cp0; cp0 = v0p.Cross(v1p);
 
                     double dot;
                     cp0.Dot(ref triangleNormal, out dot);
                     if (dot >= edgeTolerance)
                     {
-                        Vector3 v2p; v2p = point2 - point;
-                        Vector3 cp1;
+                        BVector3 v2p; v2p = point2 - point;
+                        BVector3 cp1;
                         cp1 = v1p.Cross(v2p);
                         cp1.Dot(ref triangleNormal, out dot);
                         if (dot >= edgeTolerance)
                         {
-                            Vector3 cp2;
+                            BVector3 cp2;
                             cp2 = v2p.Cross(v0p);
 
                             cp2.Dot(ref triangleNormal, out dot);
@@ -100,17 +100,17 @@ namespace BulletSharp
             }
         }
 
-        public abstract double ReportHit(ref Vector3 hitNormalLocal, double hitFraction, int partId, int triangleIndex);
+        public abstract double ReportHit(ref BVector3 hitNormalLocal, double hitFraction, int partId, int triangleIndex);
 
         public EFlags Flags { get; set; }
-        public Vector3 From { get; set; }
+        public BVector3 From { get; set; }
         public double HitFraction { get; set; }
-        public Vector3 To { get; set; }
+        public BVector3 To { get; set; }
 	}
 
 	public abstract class TriangleConvexcastCallback : TriangleCallback
 	{
-        public TriangleConvexcastCallback(ConvexShape convexShape, ref Matrix convexShapeFrom, ref Matrix convexShapeTo, ref Matrix triangleToWorld, double triangleCollisionMargin)
+        public TriangleConvexcastCallback(ConvexShape convexShape, ref BMatrix convexShapeFrom, ref BMatrix convexShapeTo, ref BMatrix triangleToWorld, double triangleCollisionMargin)
         {
             ConvexShape = convexShape;
             ConvexShapeFrom = convexShapeFrom;
@@ -122,19 +122,19 @@ namespace BulletSharp
             HitFraction = 1.0f;
         }
 
-        public override void ProcessTriangle(ref Vector3 point0, ref Vector3 point1, ref Vector3 point2, int partId, int triangleIndex)
+        public override void ProcessTriangle(ref BVector3 point0, ref BVector3 point1, ref BVector3 point2, int partId, int triangleIndex)
         {
             throw new NotImplementedException();
         }
 
-        public abstract double ReportHit(ref Vector3 hitNormalLocal, ref Vector3 hitPointLocal, double hitFraction, int partId, int triangleIndex);
+        public abstract double ReportHit(ref BVector3 hitNormalLocal, ref BVector3 hitPointLocal, double hitFraction, int partId, int triangleIndex);
 
         public double AllowedPenetration { get; set; }
         public ConvexShape ConvexShape { get; set; }
-        public Matrix ConvexShapeFrom { get; set; }
-        public Matrix ConvexShapeTo { get; set; }
+        public BMatrix ConvexShapeFrom { get; set; }
+        public BMatrix ConvexShapeTo { get; set; }
         public double HitFraction { get; set; }
         public double TriangleCollisionMargin { get; set; }
-        public Matrix TriangleToWorld { get; set; }
+        public BMatrix TriangleToWorld { get; set; }
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Text;
 using System.ComponentModel;
@@ -8,14 +8,14 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.IO;
 using System.Linq;
-using SharpBgfx;
+using Internal.SharpBgfx;
 
 namespace NeoAxis
 {
 	/// <summary>
 	/// Represents a shader generation tool for materials and effects.
 	/// </summary>
-	public class ShaderGenerator
+	/*public */class ShaderGenerator
 	{
 		//!!!!другой алгоритм генерить, чтобы не было дублирований
 
@@ -31,7 +31,7 @@ namespace NeoAxis
 		Stack<VariableToCreate> variablesToCreateInQueue = new Stack<VariableToCreate>();
 		List<string> resultCodeLines = new List<string>();
 
-		ESet<Component_ShaderScript> addedShaderScripts = new ESet<Component_ShaderScript>();
+		ESet<ShaderScript> addedShaderScripts = new ESet<ShaderScript>();
 
 		ResultData resultData;
 
@@ -42,17 +42,17 @@ namespace NeoAxis
 		/// </summary>
 		public class ResultData
 		{
-			public string parametersBody;
-			public string samplersBody;
-			public string shaderScripts;
-			public string codeBody;
+			public string parametersBody = string.Empty;
+			public string samplersBody = string.Empty;
+			public string shaderScripts = string.Empty;
+			public string codeBody = string.Empty;
 
 			/// <summary>
 			/// Represents a parameter for <see cref="ResultData"/>.
 			/// </summary>
 			public class ParameterItem
 			{
-				public Component_ShaderParameter component;
+				public ShaderParameter component;
 				public Type type;
 				public string nameInShader;
 
@@ -67,7 +67,7 @@ namespace NeoAxis
 			/// </summary>
 			public class TextureItem
 			{
-				public Component_ShaderTextureSample component;
+				public ShaderTextureSample component;
 				//!!!!что с семплерами
 				public string nameInShader;
 				//!!!!
@@ -133,8 +133,8 @@ namespace NeoAxis
 
 			public void Init()
 			{
-				var sample = CreateComponent<Component_ShaderTextureSample>();
-				sample.TextureType = Component_ShaderTextureSample.TextureTypeEnum.Mask;
+				var sample = CreateComponent<ShaderTextureSample>();
+				sample.TextureType = ShaderTextureSample.TextureTypeEnum.Mask;
 
 				Opacity = ReferenceUtility.MakeThisReference( this, sample, "R" );
 			}
@@ -155,7 +155,7 @@ namespace NeoAxis
 			autoConstantName = null;
 			//outputType = null;
 
-			var invokeMember = component as Component_InvokeMember;
+			var invokeMember = component as InvokeMember;
 			if( invokeMember != null && invokeMember.MemberObject != null )
 			{
 				//ShaderGenerationFunctionAttribute
@@ -179,10 +179,10 @@ namespace NeoAxis
 
 				//ShaderGenerationAutoContantAttribute
 				{
-					var attribs = invokeMember.MemberObject.GetCustomAttributes( typeof( ShaderGenerationAutoConstantAttributeAttribute ), true );
+					var attribs = invokeMember.MemberObject.GetCustomAttributes( typeof( ShaderGenerationAutoConstantAttribute ), true );
 					if( attribs.Length != 0 )
 					{
-						var attrib = (ShaderGenerationAutoConstantAttributeAttribute)attribs[ 0 ];
+						var attrib = (ShaderGenerationAutoConstantAttribute)attribs[ 0 ];
 						template = attrib.Name;
 						autoConstantType = attrib.Type;
 						autoConstantName = attrib.Name;
@@ -193,13 +193,13 @@ namespace NeoAxis
 
 				//switch( invokeMember.TempMember )
 				//{
-				//case Component_InvokeMember.TEMP_MemberEnum.Double1Abs: return "abs({Value})";
-				//case Component_InvokeMember.TEMP_MemberEnum.Vec3Construct: return "vec3({X}, {Y}, {Z})";
-				//case Component_InvokeMember.TEMP_MemberEnum.Vec3Multiply: return "{V1} * {V2}";
+				//case InvokeMember.TEMP_MemberEnum.Double1Abs: return "abs({Value})";
+				//case InvokeMember.TEMP_MemberEnum.Vec3Construct: return "vec3({X}, {Y}, {Z})";
+				//case InvokeMember.TEMP_MemberEnum.Vec3Multiply: return "{V1} * {V2}";
 				//}
 			}
 
-			var shaderScript = component as Component_ShaderScript;
+			var shaderScript = component as ShaderScript;
 			if( shaderScript != null && shaderScript.CompiledScript != null )
 			{
 				var compiledScript = shaderScript.CompiledScript;
@@ -473,8 +473,8 @@ namespace NeoAxis
 						var component = outObject as Component;
 						if( component != null )
 						{
-							var shaderParameter = component as Component_ShaderParameter;
-							var shaderTextureSample = component as Component_ShaderTextureSample;
+							var shaderParameter = component as ShaderParameter;
+							var shaderTextureSample = component as ShaderTextureSample;
 							if( shaderParameter != null )
 							{
 								//shader parameter
@@ -516,7 +516,7 @@ namespace NeoAxis
 								//!!!!sampler: пока так
 
 								bool useSourceTexture;
-								if( shaderTextureSample.TextureType.Value == Component_ShaderTextureSample.TextureTypeEnum.Mask )
+								if( shaderTextureSample.TextureType.Value == ShaderTextureSample.TextureTypeEnum.Mask )
 									useSourceTexture = false;
 								else
 									useSourceTexture = !shaderTextureSample.Texture.ReferenceSpecified;
@@ -547,7 +547,7 @@ namespace NeoAxis
 										resultData.textures.Add( item );
 
 										//mask texture
-										if( item.component.TextureType.Value == Component_ShaderTextureSample.TextureTypeEnum.Mask )
+										if( item.component.TextureType.Value == ShaderTextureSample.TextureTypeEnum.Mask )
 										{
 											if( resultData.texturesMask == null )
 												resultData.texturesMask = new List<ResultData.TextureItem>();
@@ -581,10 +581,10 @@ namespace NeoAxis
 								}
 								else
 								{
-									if( shaderTextureSample.TextureType.Value == Component_ShaderTextureSample.TextureTypeEnum.Mask )
-										locationStr = "c_unwrappedUV";
+									if( shaderTextureSample.TextureType.Value == ShaderTextureSample.TextureTypeEnum.Mask )
+										locationStr = "unwrappedUV";
 									else
-										locationStr = "c_texCoord0";
+										locationStr = "texCoord0";
 								}
 
 								string nameInShader;
@@ -594,7 +594,9 @@ namespace NeoAxis
 									nameInShader = "sourceTexture";
 
 								string constructBody;
-								if( shaderTextureSample.RemoveTiling )
+								if( shaderTextureSample.TextureType.Value == ShaderTextureSample.TextureTypeEnum.Mask )
+									constructBody = string.Format( "CODE_BODY_TEXTURE2D_MASK_OPACITY({0}, {1})", nameInShader, locationStr );
+								else if( shaderTextureSample.RemoveTiling )
 									constructBody = string.Format( "CODE_BODY_TEXTURE2D_REMOVE_TILING({0}, {1})", nameInShader, locationStr );
 								else
 									constructBody = string.Format( "CODE_BODY_TEXTURE2D({0}, {1})", nameInShader, locationStr );
@@ -677,7 +679,7 @@ namespace NeoAxis
 								}
 
 								//add shader script to result data
-								var shaderScript = component as Component_ShaderScript;
+								var shaderScript = component as ShaderScript;
 								if( shaderScript != null && shaderScript.CompiledScript != null )
 								{
 									if( !addedShaderScripts.Contains( shaderScript ) )
@@ -687,7 +689,7 @@ namespace NeoAxis
 										if( resultData.shaderScripts == null )
 											resultData.shaderScripts = "";
 										if( !string.IsNullOrEmpty( resultData.shaderScripts ) )
-											resultData.shaderScripts += "\r\r";//"\r\n\r\n";
+											resultData.shaderScripts += "\r\n";// "\r\r";//"\r\n\r\n";
 										resultData.shaderScripts += shaderScript.CompiledScript.Body;
 									}
 								}

@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,7 +10,7 @@ namespace NeoAxis
 	/// <summary>
 	/// The implementation of the Octree container.
 	/// </summary>
-	public class OctreeContainer
+	public class OctreeContainer : IDisposable
 	{
 		IntPtr nativeObject;
 
@@ -37,14 +37,14 @@ namespace NeoAxis
 		static extern void OctreeContainer_RebuildTree( IntPtr container );
 
 		[DllImport( OgreWrapper.library, CallingConvention = CallingConvention.Cdecl ), SuppressUnmanagedCodeSecurity]
-		static extern int OctreeContainer_AddObject( IntPtr container, ref Vector3 boundsMin, ref Vector3 boundsMax, int group );
+		static extern int OctreeContainer_AddObject( IntPtr container, ref Vector3 boundsMin, ref Vector3 boundsMax, uint groupMask );
 
 		[DllImport( OgreWrapper.library, CallingConvention = CallingConvention.Cdecl ), SuppressUnmanagedCodeSecurity]
 		static extern void OctreeContainer_RemoveObject( IntPtr container, int objectIndex );
 
 		[DllImport( OgreWrapper.library, CallingConvention = CallingConvention.Cdecl ), SuppressUnmanagedCodeSecurity]
 		static extern void OctreeContainer_UpdateObject( IntPtr container, int objectIndex, ref Vector3 boundsMin,
-			ref Vector3 boundsMax, int group );
+			ref Vector3 boundsMax, uint groupMask );
 
 		[DllImport( OgreWrapper.library, CallingConvention = CallingConvention.Cdecl ), SuppressUnmanagedCodeSecurity]
 		static extern unsafe void OctreeContainer_GetDebugRenderLines( IntPtr container, out IntPtr outputData,
@@ -114,6 +114,7 @@ namespace NeoAxis
 			public int planesUseAdditionalBounds;
 			public Ray ray;
 			public ModeEnum mode;
+			public IntPtr extensionData;
 		}
 
 		///////////////////////////////////////////
@@ -208,7 +209,7 @@ namespace NeoAxis
 			if( !neoAxisProprietaryLibraryLoaded )
 			{
 				neoAxisProprietaryLibraryLoaded = true;
-				NativeLibraryManager.PreLoadLibrary( OgreWrapper.library );
+				NativeUtility.PreloadLibrary( OgreWrapper.library );
 			}
 		}
 
@@ -270,18 +271,18 @@ namespace NeoAxis
 			OctreeContainer_RebuildTree( nativeObject );
 		}
 
-		public int AddObject( Bounds bounds, int group )
+		public int AddObject( Bounds bounds, uint groupMask )
 		{
 			if( bounds.IsCleared() )
 				Log.Fatal( "OctreeContainer: AddObject: Invalid bounds." );
-			if( group < 0 )
-				Log.Fatal( "OctreeContainer: AddObject: group < 0." );
-			if( group >= 32 )
-				Log.Fatal( "OctreeContainer: AddObject: group >= 32." );
+			//if( group < 0 )
+			//	Log.Fatal( "OctreeContainer: AddObject: group < 0." );
+			//if( group >= 32 )
+			//	Log.Fatal( "OctreeContainer: AddObject: group >= 32." );
 
 			Vector3 boundsMin = bounds.Minimum;
 			Vector3 boundsMax = bounds.Maximum;
-			return OctreeContainer_AddObject( nativeObject, ref boundsMin, ref boundsMax, group );
+			return OctreeContainer_AddObject( nativeObject, ref boundsMin, ref boundsMax, groupMask );
 		}
 
 		public void RemoveObject( int objectIndex )
@@ -289,18 +290,18 @@ namespace NeoAxis
 			OctreeContainer_RemoveObject( nativeObject, objectIndex );
 		}
 
-		public void UpdateObject( int objectIndex, Bounds bounds, int group )
+		public void UpdateObject( int objectIndex, Bounds bounds, uint groupMask )
 		{
 			if( bounds.IsCleared() )
 				Log.Fatal( "OctreeContainer: UpdateObject: Invalid bounds." );
-			if( group < 0 )
-				Log.Fatal( "OctreeContainer: UpdateObject: group < 0." );
-			if( group >= 32 )
-				Log.Fatal( "OctreeContainer: UpdateObject: group >= 32." );
+			//if( group < 0 )
+			//	Log.Fatal( "OctreeContainer: UpdateObject: group < 0." );
+			//if( group >= 32 )
+			//	Log.Fatal( "OctreeContainer: UpdateObject: group >= 32." );
 
 			Vector3 boundsMin = bounds.Minimum;
 			Vector3 boundsMax = bounds.Maximum;
-			OctreeContainer_UpdateObject( nativeObject, objectIndex, ref boundsMin, ref boundsMax, group );
+			OctreeContainer_UpdateObject( nativeObject, objectIndex, ref boundsMin, ref boundsMax, groupMask );
 		}
 
 		public void DebugRender( Viewport viewport )
@@ -318,7 +319,7 @@ namespace NeoAxis
 
 					//!!!!new ColorValue( 1, 1, 1, 0.25f )
 					//viewport.Simple3DRenderer.SetColor( color, color * new ColorValue( 1, 1, 1, 0.25f ) );
-					viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.HiddenByOtherObjectsColorMultiplier * new ColorValue( 1, 1, 1, 0.5 ) );
+					viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier * new ColorValue( 1, 1, 1, 0.5 ) );
 					viewport.Simple3DRenderer.AddLineThin( lines[ n ].start, lines[ n ].end );
 					//camera.DebugGeometry.AddBounds( new Bounds( lines[ n ].start, lines[ n ].end ) );
 				}
@@ -358,7 +359,7 @@ namespace NeoAxis
 			inputData.groupMask = groupMask;
 			inputData.mode = mode;
 			inputData.type = GetObjectsTypes.Sphere;
-			inputData.sphereCenter = sphere.Origin;
+			inputData.sphereCenter = sphere.Center;
 			inputData.sphereRadius = sphere.Radius;
 			//fix invalid radius
 			if( inputData.sphereRadius < 0 )
@@ -383,7 +384,7 @@ namespace NeoAxis
 			inputData.mode = mode;
 			inputData.type = GetObjectsTypes.Planes;
 			inputData.planeCount = planes.Length;
-			fixed ( Plane* pPlanes = planes )
+			fixed( Plane* pPlanes = planes )
 			{
 				inputData.planes = (IntPtr)pPlanes;
 				inputData.planesUseAdditionalBounds = 0;
@@ -391,29 +392,30 @@ namespace NeoAxis
 			}
 		}
 
-		public unsafe bool GetObjects( Plane[] planes, Bounds bounds, uint groupMask, ModeEnum mode, int* outputArray, int outputArrayLength, out int outputCount )
+		public unsafe bool GetObjects( Plane[] planes, Bounds bounds, uint groupMask, ModeEnum mode, int* outputArray, int outputArrayLength, out int outputCount, IntPtr extensionData )
 		{
 			GetObjectsInputData inputData = new GetObjectsInputData();
 			inputData.groupMask = groupMask;
 			inputData.mode = mode;
 			inputData.type = GetObjectsTypes.Planes;
 			inputData.planeCount = planes.Length;
-			fixed ( Plane* pPlanes = planes )
+			fixed( Plane* pPlanes = planes )
 			{
 				inputData.planes = (IntPtr)pPlanes;
 				inputData.planesUseAdditionalBounds = 1;
 				inputData.bounds = bounds;
+				inputData.extensionData = extensionData;
 				return GetObjects( ref inputData, outputArray, outputArrayLength, out outputCount );
 			}
 		}
 
-		public unsafe bool GetObjects( Frustum frustum, uint groupMask, ModeEnum mode, int* outputArray, int outputArrayLength, out int outputCount )
+		public unsafe bool GetObjects( Frustum frustum, uint groupMask, ModeEnum mode, int* outputArray, int outputArrayLength, out int outputCount, IntPtr extensionData )
 		{
 			Plane[] planes = frustum.Planes;
 			Bounds bounds = new Bounds( frustum.Points[ 0 ] );
 			for( int n = 1; n < 8; n++ )
 				bounds.Add( frustum.Points[ n ] );
-			return GetObjects( planes, bounds, groupMask, mode, outputArray, outputArrayLength, out outputCount );
+			return GetObjects( planes, bounds, groupMask, mode, outputArray, outputArrayLength, out outputCount, extensionData );
 		}
 
 		unsafe bool GetObjectsRay( ref GetObjectsInputData inputData, GetObjectsRayOutputData* outputArray, int outputArrayLength, out int outputCount )
@@ -441,7 +443,7 @@ namespace NeoAxis
 		{
 			if( outputArray != null )
 			{
-				fixed ( int* pOutputArray = outputArray )
+				fixed( int* pOutputArray = outputArray )
 				{
 					outputCount = OctreeContainer_GetObjects( nativeObject, ref inputData, pOutputArray, outputArray.Length );
 					if( outputCount <= outputArray.Length )
@@ -521,7 +523,7 @@ namespace NeoAxis
 			inputData.groupMask = groupMask;
 			inputData.mode = mode;
 			inputData.type = GetObjectsTypes.Sphere;
-			inputData.sphereCenter = sphere.Origin;
+			inputData.sphereCenter = sphere.Center;
 			inputData.sphereRadius = sphere.Radius;
 			//fix invalid radius
 			if( inputData.sphereRadius < 0 )
@@ -535,7 +537,7 @@ namespace NeoAxis
 			inputData.groupMask = groupMask;
 			inputData.mode = mode;
 			inputData.type = GetObjectsTypes.Sphere;
-			inputData.sphereCenter = sphere.Origin;
+			inputData.sphereCenter = sphere.Center;
 			inputData.sphereRadius = sphere.Radius;
 			//fix invalid radius
 			if( inputData.sphereRadius < 0 )
@@ -563,7 +565,7 @@ namespace NeoAxis
 			return GetObjects( ref inputData );
 		}
 
-		public bool GetObjects( Frustum frustum, uint groupMask, ModeEnum mode, int[] outputArray, out int outputCount )
+		public bool GetObjects( Frustum frustum, uint groupMask, ModeEnum mode, int[] outputArray, out int outputCount, IntPtr extensionData )
 		{
 			Plane[] planes = frustum.Planes;
 
@@ -578,17 +580,18 @@ namespace NeoAxis
 			inputData.planeCount = planes.Length;
 			unsafe
 			{
-				fixed ( Plane* pPlanes = planes )
+				fixed( Plane* pPlanes = planes )
 				{
 					inputData.planes = (IntPtr)pPlanes;
 					inputData.planesUseAdditionalBounds = 1;
 					inputData.bounds = bounds;
+					inputData.extensionData = extensionData;
 					return GetObjects( ref inputData, outputArray, out outputCount );
 				}
 			}
 		}
 
-		public int[] GetObjects( Frustum frustum, uint groupMask, ModeEnum mode )
+		public int[] GetObjects( Frustum frustum, uint groupMask, ModeEnum mode, IntPtr extensionData )
 		{
 			Plane[] planes = frustum.Planes;
 
@@ -603,11 +606,12 @@ namespace NeoAxis
 			inputData.planeCount = planes.Length;
 			unsafe
 			{
-				fixed ( Plane* pPlanes = planes )
+				fixed( Plane* pPlanes = planes )
 				{
 					inputData.planes = (IntPtr)pPlanes;
 					inputData.planesUseAdditionalBounds = 1;
 					inputData.bounds = bounds;
+					inputData.extensionData = extensionData;
 					return GetObjects( ref inputData );
 				}
 			}
@@ -622,7 +626,7 @@ namespace NeoAxis
 			inputData.planeCount = planes.Length;
 			unsafe
 			{
-				fixed ( Plane* pPlanes = planes )
+				fixed( Plane* pPlanes = planes )
 				{
 					inputData.planes = (IntPtr)pPlanes;
 					inputData.planesUseAdditionalBounds = 0;
@@ -640,7 +644,7 @@ namespace NeoAxis
 			inputData.planeCount = planes.Length;
 			unsafe
 			{
-				fixed ( Plane* pPlanes = planes )
+				fixed( Plane* pPlanes = planes )
 				{
 					inputData.planes = (IntPtr)pPlanes;
 					inputData.planesUseAdditionalBounds = 0;
@@ -649,7 +653,7 @@ namespace NeoAxis
 			}
 		}
 
-		public bool GetObjects( Plane[] planes, Bounds bounds, uint groupMask, ModeEnum mode, int[] outputArray, out int outputCount )
+		public bool GetObjects( Plane[] planes, Bounds bounds, uint groupMask, ModeEnum mode, int[] outputArray, out int outputCount, IntPtr extensionData )
 		{
 			GetObjectsInputData inputData = new GetObjectsInputData();
 			inputData.groupMask = groupMask;
@@ -658,17 +662,18 @@ namespace NeoAxis
 			inputData.planeCount = planes.Length;
 			unsafe
 			{
-				fixed ( Plane* pPlanes = planes )
+				fixed( Plane* pPlanes = planes )
 				{
 					inputData.planes = (IntPtr)pPlanes;
 					inputData.planesUseAdditionalBounds = 1;
 					inputData.bounds = bounds;
+					inputData.extensionData = extensionData;
 					return GetObjects( ref inputData, outputArray, out outputCount );
 				}
 			}
 		}
 
-		public int[] GetObjects( Plane[] planes, Bounds bounds, uint groupMask, ModeEnum mode )
+		public int[] GetObjects( Plane[] planes, Bounds bounds, uint groupMask, ModeEnum mode, IntPtr extensionData )
 		{
 			GetObjectsInputData inputData = new GetObjectsInputData();
 			inputData.groupMask = groupMask;
@@ -677,11 +682,12 @@ namespace NeoAxis
 			inputData.planeCount = planes.Length;
 			unsafe
 			{
-				fixed ( Plane* pPlanes = planes )
+				fixed( Plane* pPlanes = planes )
 				{
 					inputData.planes = (IntPtr)pPlanes;
 					inputData.planesUseAdditionalBounds = 1;
 					inputData.bounds = bounds;
+					inputData.extensionData = extensionData;
 					return GetObjects( ref inputData );
 				}
 			}
@@ -691,7 +697,7 @@ namespace NeoAxis
 		{
 			if( outputArray != null )
 			{
-				fixed ( GetObjectsRayOutputData* pOutputArray = outputArray )
+				fixed( GetObjectsRayOutputData* pOutputArray = outputArray )
 				{
 					outputCount = OctreeContainer_GetObjectsRay( nativeObject, ref inputData, pOutputArray, outputArray.Length );
 					if( outputCount <= outputArray.Length )
@@ -756,10 +762,14 @@ namespace NeoAxis
 			OctreeContainer_GetStatistics( nativeObject, out objectCount, out octreeBounds, out octreeNodeCount );
 		}
 
+		public void GetOctreeBoundsWithBoundsOfObjectsOutsideOctree( out Bounds bounds )
+		{
+			OctreeContainer_GetOctreeBoundsWithBoundsOfObjectsOutsideOctree( nativeObject, out bounds );
+		}
+
 		public Bounds GetOctreeBoundsWithBoundsOfObjectsOutsideOctree()
 		{
-			Bounds bounds;
-			OctreeContainer_GetOctreeBoundsWithBoundsOfObjectsOutsideOctree( nativeObject, out bounds );
+			GetOctreeBoundsWithBoundsOfObjectsOutsideOctree( out var bounds );
 			return bounds;
 		}
 	}

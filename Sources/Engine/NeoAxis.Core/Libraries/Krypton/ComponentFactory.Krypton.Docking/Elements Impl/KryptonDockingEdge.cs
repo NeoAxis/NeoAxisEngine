@@ -14,10 +14,10 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.ComponentModel;
-using ComponentFactory.Krypton.Toolkit;
-using ComponentFactory.Krypton.Navigator;
+using Internal.ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Navigator;
 
-namespace ComponentFactory.Krypton.Docking
+namespace Internal.ComponentFactory.Krypton.Docking
 {
     /// <summary>
     /// Provides docking functionality for a specific edge of a control.

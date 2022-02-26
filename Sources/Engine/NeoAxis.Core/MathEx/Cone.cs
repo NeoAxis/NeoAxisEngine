@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
@@ -125,7 +125,7 @@ namespace NeoAxis
 			double invSin = 1.0 / sinAngle;
 			double cosSqr = cosAngle * cosAngle;
 
-			Vector3 cmv = sphere.Origin - Origin;
+			Vector3 cmv = sphere.Center - Origin;
 			Vector3 d = cmv + ( sphere.Radius * invSin ) * Axis;
 			double lengthSqr = d.LengthSquared();
 			double e = Vector3.Dot( d, Axis );

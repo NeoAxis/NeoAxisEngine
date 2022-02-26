@@ -1,6 +1,7 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     /// <summary>
     /// Interface for abstract document lookup that can be direct from datafile or by virtual collections
@@ -11,3 +12,4 @@ namespace LiteDB.Engine
         BsonDocument Load(PageAddress rawId);
     }
 }
+#endif

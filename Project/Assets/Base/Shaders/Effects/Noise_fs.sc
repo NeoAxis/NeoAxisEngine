@@ -1,6 +1,6 @@
 $input v_texCoord0
 
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "../Common.sh"
 
 SAMPLER2D(s_sourceTexture, 0);
@@ -13,6 +13,7 @@ uniform vec4 noiseTextureSize;
 uniform vec4 seeds;
 
 //https://stackoverflow.com/questions/5149544/can-i-generate-a-random-number-inside-a-pixel-shader
+//Output interval: 0 - 1
 float random2( vec2 p )
 {
 	vec2 k1 = vec2(

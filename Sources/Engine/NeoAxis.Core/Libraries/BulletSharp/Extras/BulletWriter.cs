@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
-using BulletSharp.Math;
+using Internal.BulletSharp.Math;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
     class BulletWriter : BinaryWriter
     {
@@ -29,7 +29,7 @@ namespace BulletSharp
             Write(value);
         }
 
-        public void Write(Matrix value)
+        public void Write(BMatrix value)
         {
             Write(value.M11);
             Write(value.M21);
@@ -49,7 +49,7 @@ namespace BulletSharp
             Write(1);
         }
 
-        public void Write(Matrix value, int position)
+        public void Write(BMatrix value, int position)
         {
             BaseStream.Position = position;
             Write(value);
@@ -73,7 +73,7 @@ namespace BulletSharp
             Write(value);
         }
 
-        public void Write(Vector3 value)
+        public void Write(BVector3 value)
         {
             Write(value.X);
             Write(value.Y);
@@ -81,7 +81,7 @@ namespace BulletSharp
             BaseStream.Position += 4; // Write(value.W);
         }
 
-        public void Write(Vector3 value, int position)
+        public void Write(BVector3 value, int position)
         {
             BaseStream.Position = position;
             Write(value);

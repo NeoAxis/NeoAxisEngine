@@ -30,20 +30,20 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using tainicom.Aether.Physics2D.Collision;
-using tainicom.Aether.Physics2D.Collision.Shapes;
-using tainicom.Aether.Physics2D.Common;
-using tainicom.Aether.Physics2D.Dynamics.Contacts;
-using Microsoft.Xna.Framework;
+using Internal.tainicom.Aether.Physics2D.Collision;
+using Internal.tainicom.Aether.Physics2D.Collision.Shapes;
+using Internal.tainicom.Aether.Physics2D.Common;
+using Internal.tainicom.Aether.Physics2D.Dynamics.Contacts;
+#if XNAAPI
+using Vector2 = Microsoft.Xna.Framework.Vector2;
+#endif
 
-namespace tainicom.Aether.Physics2D.Dynamics
+namespace Internal.tainicom.Aether.Physics2D.Dynamics
 {
     /// <summary>
     /// A fixture is used to attach a Shape to a body for collision detection. A fixture
     /// inherits its transform from its parent. Fixtures hold additional non-geometric data
     /// such as friction, collision filters, etc.
-    /// Fixtures are created via Body.CreateFixture.
-    /// Warning: You cannot reuse fixtures.
     /// </summary>
     public class Fixture
     {
@@ -84,7 +84,7 @@ namespace tainicom.Aether.Physics2D.Dynamics
 
         internal Fixture() // Note: This is internal because it's used by Deserialization.
         {   
-            _collisionCategories = Category.Category1;
+            _collisionCategories = Category.Cat1;
             _collidesWith = Category.All;
             _collisionGroup = 0;
 

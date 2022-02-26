@@ -1,8 +1,9 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     public interface ILiteCollection<T>
     {
@@ -331,3 +332,4 @@ namespace LiteDB
         K Max<K>(Expression<Func<T, K>> keySelector);
     }
 }
+#endif

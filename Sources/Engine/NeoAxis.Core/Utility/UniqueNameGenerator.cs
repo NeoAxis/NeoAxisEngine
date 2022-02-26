@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,7 +8,7 @@ namespace NeoAxis
 	/// <summary>
 	/// Class for generating unique names.
 	/// </summary>
-	public class UniqueNameGenerator
+	/*public */class UniqueNameGenerator
 	{
 		long counter1;
 		long counter2;

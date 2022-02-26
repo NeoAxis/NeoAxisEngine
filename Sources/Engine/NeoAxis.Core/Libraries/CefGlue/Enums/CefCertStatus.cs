@@ -1,8 +1,9 @@
-﻿//
+#if !NO_UI_WEB_BROWSER
+//
 // This file manually written from cef/include/internal/cef_types.h.
 // C API name: cef_cert_status_t.
 //
-namespace Xilium.CefGlue
+namespace Internal.Xilium.CefGlue
 {
     /// <summary>
     /// Supported certificate status code values. See net\cert\cert_status_flags.h
@@ -37,3 +38,5 @@ namespace Xilium.CefGlue
         CTComplianceFailed = 1 << 20,
     }
 }
+
+#endif

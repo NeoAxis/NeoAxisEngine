@@ -1,14 +1,19 @@
-$input v_texCoord01, v_worldPosition, v_worldNormal, v_depth, v_tangent, v_bitangent, v_fogFactor, v_color0, v_eyeTangentSpace, v_normalTangentSpace, v_position, v_previousPosition, v_texCoord23, v_colorParameter, v_lodValueVisibilityDistanceReceiveDecals
+$input v_texCoord01, v_worldPosition_depth, v_worldNormal, v_tangent, v_bitangent, v_fogFactor, v_color0, v_eyeTangentSpace, v_normalTangentSpace, v_position, v_previousPosition, v_texCoord23, v_colorParameter, v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor, v_billboardDataIndexes, v_billboardDataFactors, v_billboardDataAngles, v_billboardRotation
 
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+#define FORWARD 1
 #include "Common.sh"
 #include "UniformsFragment.sh"
 #include "FragmentFunctions.sh"
 
 uniform vec4 u_lightDataFragment[LIGHTDATA_FRAGMENT_SIZE];
 uniform vec4 u_renderOperationData[5];
+uniform vec4 u_materialCustomParameters[2];
 
 SAMPLER2D(s_materials, 1);
+#ifdef GLOBAL_BILLBOARD_DATA
+	SAMPLER2DARRAY(s_billboardData, 2);
+#endif
 
 #ifdef DISPLACEMENT_CODE_PARAMETERS
 	DISPLACEMENT_CODE_PARAMETERS
@@ -17,28 +22,25 @@ SAMPLER2D(s_materials, 1);
 	FRAGMENT_CODE_PARAMETERS
 #endif
 
-// environment cubemaps. second set of cubemaps is used for reflection probes blending.
-SAMPLERCUBE(s_environmentTexture1, 2);
-SAMPLERCUBE(s_environmentTextureIBL1, 3);
+//environment cubemaps
+SAMPLERCUBE(s_environmentTexture1, 3);
 SAMPLERCUBE(s_environmentTexture2, 4);
-SAMPLERCUBE(s_environmentTextureIBL2, 5);
 
-uniform mat3 u_environmentTexture1Rotation;
-uniform mat3 u_environmentTexture2Rotation;
-uniform vec4 u_environmentTexture1MultiplierAndAffect;
-uniform vec4 u_environmentTexture2MultiplierAndAffect;
-uniform vec4 u_environmentBlendingFactor;//.x. factor of the environment1 for reflection probes blending.
+uniform vec4 u_forwardEnvironmentData[5];
+#define u_forwardEnvironmentDataRotation1 u_forwardEnvironmentData[0]
+#define u_forwardEnvironmentDataMultiplierAndAffect1 u_forwardEnvironmentData[1]
+#define u_forwardEnvironmentDataRotation2 u_forwardEnvironmentData[2]
+#define u_forwardEnvironmentDataMultiplierAndAffect2 u_forwardEnvironmentData[3]
+#define u_forwardEnvironmentDataBlendingFactor u_forwardEnvironmentData[4].x
+uniform vec4 u_forwardEnvironmentIrradiance1[9];
+uniform vec4 u_forwardEnvironmentIrradiance2[9];
 
+SAMPLER2D(s_colorDepthTextureCopy, 5);
 SAMPLER2D(s_brdfLUT, 6);
 
-#include "PBRFilament/common_types.sh"
 #include "PBRFilament/common_math.sh"
 #include "PBRFilament/brdf.sh"
 #include "PBRFilament/PBRFilament.sh"
-
-#ifdef SHADING_MODEL_SPECULAR
-	#include "ShadingModelSpecular.sh"
-#endif
 
 #ifdef GLOBAL_LIGHT_MASK_SUPPORT
 	#ifdef LIGHT_TYPE_POINT
@@ -50,9 +52,26 @@ SAMPLER2D(s_brdfLUT, 6);
 
 #ifdef SHADOW_MAP
 	#ifdef LIGHT_TYPE_POINT
-		SAMPLERCUBESHADOW(s_shadowMapShadow, 8);
+		#ifdef SHADOW_TEXTURE_FORMAT_BYTE4 //GLOBAL_SHADOW_TECHNIQUE_EVSM
+				SAMPLERCUBE(s_shadowMapShadow, 8);
+		#else
+				SAMPLERCUBESHADOW(s_shadowMapShadow, 8);
+		#endif		
 	#else
-		SAMPLER2DARRAYSHADOW(s_shadowMapArrayShadow, 8);
+		//!!!!shadow2DArray works wrong on mobile. no cascades for directional light
+		#ifdef GLSL
+			#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
+				SAMPLER2D(s_shadowMapShadow, 8);
+			#else
+				SAMPLER2DSHADOW(s_shadowMapShadow, 8);
+			#endif
+		#else
+			#ifdef SHADOW_TEXTURE_FORMAT_BYTE4 //GLOBAL_SHADOW_TECHNIQUE_EVSM
+				SAMPLER2DARRAY(s_shadowMapShadow, 8);
+			#else
+				SAMPLER2DARRAYSHADOW(s_shadowMapShadow, 8);
+			#endif
+		#endif
 	#endif
 #endif
 
@@ -81,20 +100,24 @@ SAMPLER2D(s_brdfLUT, 6);
 
 void main()
 {
-	//lod
-	float lodValue = v_lodValueVisibilityDistanceReceiveDecals.x;
+	vec4 fragCoord = getFragCoord();
+
+	//lod for opaque
+#ifdef GLOBAL_SMOOTH_LOD
+	float lodValue = v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor.x;
 	#if defined(BLEND_MODE_OPAQUE) || defined(BLEND_MODE_MASKED)
-		smoothLOD(getFragCoord(), lodValue);
+		smoothLOD(fragCoord, lodValue);
 	#endif
+#endif
 
 	bool isLayer = u_renderOperationData[3].z != 0.0;
 	
 	//get material data
 	vec4 materialStandardFragment[MATERIAL_STANDARD_FRAGMENT_SIZE];
-	getMaterialData(s_materials, u_renderOperationData, materialStandardFragment);	
+	getMaterialData(s_materials, u_renderOperationData, materialStandardFragment);
 	
-	vec3 worldPosition = v_worldPosition;
-	vec3 inputWorldNormal = normalize(v_worldNormal);
+	vec3 worldPosition = v_worldPosition_depth.xyz;
+	MEDIUMP vec3 inputWorldNormal = normalize(v_worldNormal);
 
 	cutVolumes(worldPosition);
 
@@ -102,38 +125,42 @@ void main()
 	float cameraDistance = length(toCamera);
 	toCamera = normalize(toCamera);
 
+	float billboardDataMode = u_renderOperationData[1].w;
+	
 	//displacement
 	vec2 displacementOffset = vec2_splat(0);
 #if defined(DISPLACEMENT_CODE_BODY) && defined(DISPLACEMENT)
 	BRANCH
-	if(u_displacementScale != 0.0)
+	if(u_displacementScale != 0.0 && billboardDataMode == 0.0)
 		displacementOffset = getParallaxOcclusionMappingOffset(v_texCoord01.xy, v_eyeTangentSpace, v_normalTangentSpace, u_materialDisplacementScale * u_displacementScale, u_displacementMaxSteps);
 #endif //DISPLACEMENT_CODE_BODY
 	
+	vec3 lightPositionMinusWorldPosition = u_lightPosition.xyz - worldPosition;
+	
 	//lightWorldDirection
-	vec3 lightWorldDirection;
+	MEDIUMP vec3 lightWorldDirection;
 	#ifdef LIGHT_TYPE_DIRECTIONAL
 		lightWorldDirection = -u_lightDirection;
 	#else
-		lightWorldDirection = normalize(u_lightPosition.xyz - worldPosition);
+		lightWorldDirection = normalize(lightPositionMinusWorldPosition);//u_lightPosition.xyz - worldPosition);
 	#endif
 
 	//objectLightAttenuation
-	float objectLightAttenuation = 1.0;
+	MEDIUMP float objectLightAttenuation = 1.0;
 	#if defined(LIGHT_TYPE_SPOTLIGHT) || defined(LIGHT_TYPE_POINT)
-		float lightDistance = length(u_lightPosition.xyz - worldPosition);
+		float lightDistance = length(lightPositionMinusWorldPosition);//u_lightPosition.xyz - worldPosition);
 		objectLightAttenuation = getLightAttenuation(u_lightAttenuation, lightDistance);
 	#endif
 	#ifdef LIGHT_TYPE_SPOTLIGHT
 		// factor in spotlight angle
-		float rho0 = saturate(dot(-u_lightDirection, lightWorldDirection));
+		MEDIUMP float rho0 = saturate(dot(-u_lightDirection, lightWorldDirection));
 		// factor = (rho - cos(outer/2)) / (cos(inner/2) - cos(outer/2)) ^ falloff 
-		float spotFactor0 = saturate(pow(saturate(rho0 - u_lightSpot.y) / (u_lightSpot.x - u_lightSpot.y), u_lightSpot.z));
+		MEDIUMP float spotFactor0 = saturate(pow(saturate(rho0 - u_lightSpot.y) / (u_lightSpot.x - u_lightSpot.y), u_lightSpot.z));
 		objectLightAttenuation *= spotFactor0;
 	#endif
 
-	vec3 lightMaskMultiplier = vec3(1,1,1);
-	float shadowMultiplier = 1.0;
+	MEDIUMP vec3 lightMaskMultiplier = vec3(1,1,1);
+	MEDIUMP float shadowMultiplier = 1.0;
 	
 	//!!!!
 	//BRANCH
@@ -143,7 +170,7 @@ void main()
 	#ifdef GLOBAL_LIGHT_MASK_SUPPORT
 		{
 		#ifdef LIGHT_TYPE_POINT
-			vec3 dir = normalize(worldPosition - u_lightPosition.xyz);
+			vec3 dir = normalize(-lightPositionMinusWorldPosition);//worldPosition - u_lightPosition.xyz);
 			dir = mul(u_lightMaskMatrix, vec4(dir, 0)).xyz;
 			//!!!!flipped cubemaps, already applied in lightMaskTextureMatrixArray.
 			//dir = float3(-dir.y, dir.z, dir.x);
@@ -160,50 +187,60 @@ void main()
 
 		//shadows
 		#ifdef SHADOW_MAP
-			shadowMultiplier = getShadowMultiplier(worldPosition, cameraDistance, v_depth, lightWorldDirection, v_worldNormal);
+			shadowMultiplier = getShadowMultiplier(worldPosition, cameraDistance, v_worldPosition_depth.w, lightWorldDirection, v_worldNormal, vec2_splat(0.0), fragCoord);
 		#endif
 	}
 
 	//light color
-	vec3 lightColor = vec3(1,1,1);
+	MEDIUMP vec3 lightColor = vec3(1,1,1);
 	#ifndef SHADING_MODEL_UNLIT
 		lightColor = u_lightPower.rgb * u_cameraExposure * objectLightAttenuation * lightMaskMultiplier * shadowMultiplier;
 	#endif
 
 	//get material parameters
-	vec3 normal = vec3_splat(0);
-	vec3 baseColor = u_materialBaseColor;
-	float opacity = u_materialOpacity;
-	float opacityMaskThreshold = u_materialOpacityMaskThreshold;
-	float metallic = u_materialMetallic;
-	float roughness = u_materialRoughness;
-	float reflectance = u_materialReflectance;
-	float clearCoat = u_materialClearCoat;
-	float clearCoatRoughness = u_materialClearCoatRoughness;
-	vec3 clearCoatNormal = vec3_splat(0);
-	float anisotropy = u_materialAnisotropy;
-	vec3 anisotropyDirection = vec3_splat(0);// = u_materialAnisotropyDirection;
-	float anisotropyDirectionBasis = u_materialAnisotropyDirectionBasis;
-	float thickness = u_materialThickness;
-	float subsurfacePower = u_materialSubsurfacePower;
-	vec3 sheenColor = u_materialSheenColor;
-	vec3 subsurfaceColor = u_materialSubsurfaceColor;
-	float ambientOcclusion = 1.0;
-	float rayTracingReflection = u_materialRayTracingReflection;
-	vec3 emissive = u_materialEmissive;
-	float shininess = u_materialShininess;
+	MEDIUMP vec3 normal = vec3_splat(0);
+	MEDIUMP vec3 baseColor = u_materialBaseColor;
+	MEDIUMP float opacity = u_materialOpacity;
+	MEDIUMP float opacityMaskThreshold = u_materialOpacityMaskThreshold;
+	MEDIUMP float metallic = u_materialMetallic;
+	MEDIUMP float roughness = u_materialRoughness;
+	MEDIUMP float reflectance = u_materialReflectance;
+	MEDIUMP float clearCoat = u_materialClearCoat;
+	MEDIUMP float clearCoatRoughness = u_materialClearCoatRoughness;
+	MEDIUMP vec3 clearCoatNormal = vec3_splat(0);
+	MEDIUMP float anisotropy = u_materialAnisotropy;
+	MEDIUMP vec3 anisotropyDirection = vec3_splat(0);// = u_materialAnisotropyDirection;
+	MEDIUMP float anisotropyDirectionBasis = u_materialAnisotropyDirectionBasis;
+	MEDIUMP float thickness = u_materialThickness;
+	MEDIUMP float subsurfacePower = u_materialSubsurfacePower;
+	MEDIUMP vec3 sheenColor = u_materialSheenColor;
+	MEDIUMP vec3 subsurfaceColor = u_materialSubsurfaceColor;
+	MEDIUMP float ambientOcclusion = 1.0;
+	MEDIUMP float rayTracingReflection = u_materialRayTracingReflection;
+	MEDIUMP vec3 emissive = u_materialEmissive;
+	float softParticlesDistance = u_materialSoftParticlesDistance;
+	vec4 customParameter1 = u_materialCustomParameters[0];
+	vec4 customParameter2 = u_materialCustomParameters[1];
 
 	//get material parameters (procedure generated code)
-	vec2 c_texCoord0 = v_texCoord01.xy - displacementOffset;
-	vec2 c_texCoord1 = v_texCoord01.zw - displacementOffset;
-	vec2 c_texCoord2 = v_texCoord23.xy - displacementOffset;
-	//vec2 c_texCoord3 = v_texCoord23.zw - displacementOffset;
-	vec2 c_unwrappedUV = getUnwrappedUV(c_texCoord0, c_texCoord1, c_texCoord2/*, c_texCoord3*/, u_renderOperationData[3].x);
-	vec4 c_color0 = v_color0;
+	MEDIUMP vec2 texCoord0 = v_texCoord01.xy - displacementOffset;
+	MEDIUMP vec2 texCoord1 = v_texCoord01.zw - displacementOffset;
+	MEDIUMP vec2 texCoord2 = v_texCoord23.xy - displacementOffset;
+	//vec2 texCoord3 = v_texCoord23.zw - displacementOffset;
+	
+	//billboard with geometry data mode
+#ifdef GLOBAL_BILLBOARD_DATA
+	billboardDataModeCalculateParameters(billboardDataMode, s_billboardData, fragCoord, v_billboardDataIndexes, v_billboardDataFactors, v_billboardDataAngles, v_billboardRotation, inputWorldNormal, texCoord0, texCoord1, texCoord2);
+#endif
+	
+	MEDIUMP vec2 unwrappedUV = getUnwrappedUV(texCoord0, texCoord1, texCoord2/*, texCoord3*/, u_renderOperationData[3].x);
+	MEDIUMP vec4 color0 = v_color0;
 #ifdef FRAGMENT_CODE_BODY
+	#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(_sampler, _uv, u_renderOperationData[3].z, 0/*gl_PrimitiveID*/)
 	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(_sampler, _uv, u_removeTextureTiling)
-	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2D(_sampler, _uv)
+	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(_sampler, _uv, u_mipBias)
 	FRAGMENT_CODE_BODY
+	#undef CODE_BODY_TEXTURE2D_MASK_OPACITY
 	#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
 	#undef CODE_BODY_TEXTURE2D
 #endif
@@ -212,35 +249,40 @@ void main()
 
 	baseColor *= v_colorParameter.xyz;
 	if(u_materialUseVertexColor != 0.0)
-		baseColor *= v_color0.xyz;
+		baseColor *= color0.xyz;
 	baseColor = max(baseColor, vec3_splat(0));
 	
 	opacity *= v_colorParameter.w;
 	if(u_materialUseVertexColor != 0.0)
-		opacity *= v_color0.w;
+		opacity *= color0.w;
 	opacity = saturate(opacity);
 	
+#ifdef SHADING_MODEL_CLOTH
 	sheenColor *= v_colorParameter.xyz;
 	if(u_materialUseVertexColor != 0.0)
-		sheenColor *= v_color0.xyz;
+		sheenColor *= color0.xyz;
 	sheenColor = max(sheenColor, vec3_splat(0));
-	
+#endif	
+
+#if defined(SHADING_MODEL_SUBSURFACE) || defined(SHADING_MODEL_CLOTH)
 	subsurfaceColor *= v_colorParameter.xyz;
 	if(u_materialUseVertexColor != 0.0)
-		subsurfaceColor *= v_color0.xyz;
+		subsurfaceColor *= color0.xyz;
 	subsurfaceColor = max(subsurfaceColor, vec3_splat(0));	
+#endif
 
 	//opacity dithering
 #ifdef OPACITY_DITHERING
-	opacity = dither(getFragCoord(), opacity);
+	opacity = dither(fragCoord, opacity);
 #endif
 
 	//opacity masked clipping
 #ifdef BLEND_MODE_MASKED
-	clip(opacity - opacityMaskThreshold);
+	if(billboardDataMode == 0.0)
+		clip(opacity - opacityMaskThreshold);
 #endif
 
-	vec4 resultColor = vec4_splat(0);
+	MEDIUMP vec4 resultColor = vec4_splat(0);
 
 #ifndef SHADING_MODEL_UNLIT
 
@@ -252,10 +294,11 @@ void main()
 	anisotropyDirection = normalize(anisotropyDirection);
 
 	//get result world normal
-	vec3 tangent = normalize(v_tangent);
-	vec3 bitangent = normalize(v_bitangent);
+	MEDIUMP vec3 tangent = normalize(v_tangent);
+	MEDIUMP vec3 bitangent = normalize(v_bitangent);
 
-	if(any2(normal))
+#if defined(GLOBAL_NORMAL_MAPPING) && GLOBAL_MATERIAL_SHADING != GLOBAL_MATERIAL_SHADING_SIMPLE
+	if(any2(normal) && billboardDataMode == 0.0)
 	{
 		mat3 tbn = transpose(mtxFromRows(tangent, bitangent, inputWorldNormal));
 		normal = expand(normal);
@@ -264,6 +307,9 @@ void main()
 	}
 	else
 		normal = inputWorldNormal;
+#else
+		normal = inputWorldNormal;
+#endif
 #ifdef TWO_SIDED_FLIP_NORMALS
 	if(gl_FrontFacing)//if(!gl_FrontFacing)
 		normal = -normal;
@@ -282,12 +328,12 @@ void main()
 	
 	//!!!!
 	//BRANCH
-	//if(any2(lightColor) && ambientOcclusion != 0 )
+	//if(any2(lightColor))
 	{
 		//toLight
 		vec3 toLight;
 		#if defined(LIGHT_TYPE_SPOTLIGHT) || defined(LIGHT_TYPE_POINT)
-			toLight = u_lightPosition.xyz - worldPosition;
+			toLight = lightPositionMinusWorldPosition;//u_lightPosition.xyz - worldPosition;
 		#elif LIGHT_TYPE_DIRECTIONAL
 			toLight = -u_lightDirection;
 		#else
@@ -295,44 +341,19 @@ void main()
 		#endif
 		toLight = normalize(toLight);
 
-		#ifdef SHADING_MODEL_SPECULAR
-			//Specular model
-
-			Material_SpecularSM_Inputs material;
-
-			material.diffuseColor = baseColor;
-			material.specularColor = vec3_splat(roughness);
-			material.shininess = shininess;//u_materialShininess;
-			material.AO = ambientOcclusion;
-
-			prepare_SpecularSM(normal, toLight, toCamera);
-
-			#if defined(LIGHT_TYPE_SPOTLIGHT) || defined(LIGHT_TYPE_POINT) || defined(LIGHT_TYPE_DIRECTIONAL)
-				resultColor.rgb = surfaceShading_SpecularSM(material, lightColor);
-			#else				
-				EnvironmentTextureData data1;
-				data1.rotation = u_environmentTexture1Rotation;
-				data1.multiplierAndAffect = u_environmentTexture1MultiplierAndAffect;
-				
-				EnvironmentTextureData data2;
-				data2.rotation = u_environmentTexture2Rotation;
-				data2.multiplierAndAffect = u_environmentTexture2MultiplierAndAffect;
-				
-				vec3 envColor1 = iblEnvironment_SpecularSM(vec3_splat(0), 0.0, s_environmentTexture1, data1, lightColor);
-				vec3 envColor2 = iblEnvironment_SpecularSM(vec3_splat(0), 0.0, s_environmentTexture2, data2, lightColor);
-				
-				//vec3 envColor1 = iblEnvironment_SpecularSM(vec3_splat(0), 0, s_environmentTexture1, lightColor);
-				//vec3 envColor2 = iblEnvironment_SpecularSM(vec3_splat(0), 0, s_environmentTexture2, lightColor);
-
-				resultColor.rgb = mix(envColor2, envColor1, u_environmentBlendingFactor.x);
-			#endif
-
-		#elif SHADING_MODEL_SIMPLE
+		#ifdef SHADING_MODEL_SIMPLE
 			//Simple model
 			resultColor.rgb = baseColor * lightColor;
 		#else
 			//PBR
 
+#if GLOBAL_MATERIAL_SHADING == GLOBAL_MATERIAL_SHADING_SIMPLE
+			resultColor.rgb = baseColor * lightColor;
+			#if defined(LIGHT_TYPE_SPOTLIGHT) || defined(LIGHT_TYPE_POINT) || defined(LIGHT_TYPE_DIRECTIONAL)
+				resultColor.rgb *= saturate(dot(normal, lightWorldDirection) / PI);
+			#endif
+#else
+		
 			MaterialInputs material;
 
 			material.baseColor = vec4(baseColor, 0.0);
@@ -368,33 +389,28 @@ void main()
 			#if defined(LIGHT_TYPE_SPOTLIGHT) || defined(LIGHT_TYPE_POINT) || defined(LIGHT_TYPE_DIRECTIONAL)
 				resultColor.rgb = surfaceShading(pixel);
 			#else
-				
+
 				EnvironmentTextureData data1;
-				data1.rotation = u_environmentTexture1Rotation;
-				data1.multiplierAndAffect = u_environmentTexture1MultiplierAndAffect;
+				data1.rotation = u_forwardEnvironmentDataRotation1;
+				data1.multiplierAndAffect = u_forwardEnvironmentDataMultiplierAndAffect1;
 				
 				EnvironmentTextureData data2;
-				data2.rotation = u_environmentTexture2Rotation;
-				data2.multiplierAndAffect = u_environmentTexture2MultiplierAndAffect;
+				data2.rotation = u_forwardEnvironmentDataRotation2;
+				data2.multiplierAndAffect = u_forwardEnvironmentDataMultiplierAndAffect2;
 
-				vec3 color1 = iblDiffuse(material, pixel, s_environmentTextureIBL1, data1, s_environmentTexture1, data1, true) + 
+				vec3 color1 = iblDiffuse(material, pixel, u_forwardEnvironmentIrradiance1, data1, s_environmentTexture1, data1, true) + 
 					iblSpecular(material, pixel, vec3_splat(0), 0.0, s_environmentTexture1, data1);
-				vec3 color2 = iblDiffuse(material, pixel, s_environmentTextureIBL2, data2, s_environmentTexture2, data2, true) + 
+				vec3 color2 = iblDiffuse(material, pixel, u_forwardEnvironmentIrradiance2, data2, s_environmentTexture2, data2, true) + 
 					iblSpecular(material, pixel, vec3_splat(0), 0.0, s_environmentTexture2, data2);
 			
-				//vec3 color1 = iblDiffuse(material, pixel, s_environmentTextureIBL1, s_environmentTexture1) +
-				//	iblSpecular(material, pixel, vec3_splat(0), 0, s_environmentTexture1);
-
-				//vec3 color2 = iblDiffuse(material, pixel, s_environmentTextureIBL2, s_environmentTexture2) +
-				//	iblSpecular(material, pixel, vec3_splat(0), 0, s_environmentTexture2);
-				
-
-				resultColor.rgb = mix(color2, color1, u_environmentBlendingFactor.x);
+				resultColor.rgb = mix(color2, color1, u_forwardEnvironmentDataBlendingFactor);
 				//resultColor.rgb = u_envFactor * color1 + (1 - u_envFactor) * color2;
+				
 			#endif
 			
 			resultColor.rgb *= lightColor;
-
+#endif
+			
 		#endif //PBR
 
 	}
@@ -426,34 +442,71 @@ void main()
 		resultColor.a = opacity;
 	#endif
 	
-	//lod
-	//#if defined(BLEND_MODE_OPAQUE) || defined(BLEND_MODE_MASKED)
-	//	smoothLOD(getFragCoord(), lodValue);
-	//#endif
+	//lod for transparent
+#ifdef GLOBAL_SMOOTH_LOD
 	#if defined(BLEND_MODE_TRANSPARENT) || defined(BLEND_MODE_ADD)
 		if(isLayer)
-			smoothLOD(getFragCoord(), lodValue);
+			smoothLOD(fragCoord, lodValue);
 		else
 		{
 			if(lodValue != 0.0)
 			{
+				MEDIUMP float factor;
 				if(lodValue > 0.0)
-					resultColor.a *= 1.0 - lodValue;
+					factor = 1.0 - lodValue;
 				else
-					resultColor.a *= -lodValue;
+					factor = -lodValue;
+
+				#if defined(BLEND_MODE_TRANSPARENT)
+					resultColor.a *= factor;
+				#endif
+				#if defined(BLEND_MODE_ADD)	
+					resultColor.rgb *= factor;
+				#endif
 			}
 		}
 	#endif
+#endif
 
 	//fading by visibility distance
-	float visibilityDistance = v_lodValueVisibilityDistanceReceiveDecals.y;
-	float visibilityDistanceFactor = getVisibilityDistanceFactor(visibilityDistance, cameraDistance);
+#ifdef GLOBAL_FADE_BY_VISIBILITY_DISTANCE
+	float visibilityDistance = v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor.y;
+	MEDIUMP float visibilityDistanceFactor = getVisibilityDistanceFactor(visibilityDistance, cameraDistance);
 	#if defined(BLEND_MODE_OPAQUE) || defined(BLEND_MODE_MASKED)
-		smoothLOD(getFragCoord(), 1.0f - visibilityDistanceFactor);
+		smoothLOD(fragCoord, 1.0f - visibilityDistanceFactor);
 	#endif
-	#if defined(BLEND_MODE_TRANSPARENT) || defined(BLEND_MODE_ADD)	
+	#if defined(BLEND_MODE_TRANSPARENT)
 		resultColor.a *= visibilityDistanceFactor;
 	#endif
+	#if defined(BLEND_MODE_ADD)	
+		resultColor.rgb *= visibilityDistanceFactor;
+	#endif
+#endif
+
+	//soft particles
+#ifdef SOFT_PARTICLES
+	BRANCH
+	if(u_provideColorDepthTextureCopy > 0.0)
+	{
+		//get depth
+		MEDIUMP vec2 texCoord = fragCoord.xy * u_viewportSizeInv;
+		//float rawDepth = texture2D(s_colorDepthTextureCopy, texCoord).g;
+		float rawDepth = texture2D(s_colorDepthTextureCopy, texCoord).w;
+		float depth = getDepthValue(rawDepth, u_viewportOwnerNearClipDistance, u_viewportOwnerFarClipDistance);
+
+		MEDIUMP float softParticlesFactor = saturate((depth - v_worldPosition_depth.w) / softParticlesDistance);
+		
+		#if defined(BLEND_MODE_OPAQUE) || defined(BLEND_MODE_MASKED)
+			smoothLOD(fragCoord, 1.0f - softParticlesFactor);
+		#endif
+		#if defined(BLEND_MODE_TRANSPARENT)
+			resultColor.a *= softParticlesFactor;
+		#endif
+		#if defined(BLEND_MODE_ADD)	
+			resultColor.rgb *= softParticlesFactor;
+		#endif
+	}
+#endif
 	
 /*
 	//_MaterialBlend mask
@@ -475,7 +528,7 @@ void main()
 */
 
 	//fog
-#ifdef GLOBAL_FOG_SUPPORT
+#ifdef GLOBAL_FOG
 	#ifdef BLEND_MODE_TRANSPARENT
 		resultColor *= v_fogFactor;
 		resultColor.rgb += u_fogColor.rgb * (1.0 - v_fogFactor);
@@ -486,6 +539,7 @@ void main()
 #endif
 
 	//debug mode
+#ifdef GLOBAL_DEBUG_MODE
 	BRANCH
 	if(u_viewportOwnerDebugMode != DebugMode_None)
 	{
@@ -499,29 +553,38 @@ void main()
 			case DebugMode_Roughness: resultColor.rgb = vec3_splat(roughness); break;
 			case DebugMode_Reflectance: resultColor.rgb = vec3_splat(reflectance); break;
 			case DebugMode_Emissive: resultColor.rgb = emissive; break;
-			case DebugMode_Normal: resultColor.rgb = normal * 0.5 + 0.5; break;
+			case DebugMode_Normal: resultColor.rgb = inputWorldNormal * 0.5 + 0.5; break;//resultColor.rgb = normal * 0.5 + 0.5; break;
+			case DebugMode_SubsurfaceColor: resultColor.rgb = subsurfaceColor; break;
+			case DebugMode_TextureCoordinate0: resultColor.rgb = vec3(v_texCoord01.xy, 0); break;
+			case DebugMode_TextureCoordinate1: resultColor.rgb = vec3(v_texCoord01.zw, 0); break;
+			case DebugMode_TextureCoordinate2: resultColor.rgb = vec3(v_texCoord23.xy, 0); break;
 			}
 		#else
 			if(u_viewportOwnerDebugMode != DebugMode_Wireframe)
 				resultColor = vec4_splat(0);
 		#endif
 	}
+#endif
 
 	gl_FragData[0] = resultColor;
+#ifndef MOBILE
 	#ifdef LIGHT_TYPE_AMBIENT
 		gl_FragData[1] = vec4(normal * 0.5 + 0.5, resultColor.a);
 	#else
 		gl_FragData[1] = vec4(0,0,0,0);
 	#endif
+#endif
 	
 	//motion vector
+#ifdef GLOBAL_MOTION_VECTOR
 	#ifdef LIGHT_TYPE_AMBIENT
 		vec2 aa = (v_position.xy / v_position.w) * 0.5 + 0.5;
 		vec2 bb = (v_previousPosition.xy / v_previousPosition.w) * 0.5 + 0.5;
-		vec2 velocity = aa - bb;
+		vec2 velocity = (aa - bb) * v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor.w;
 		gl_FragData[2] = vec4(velocity.x,velocity.y,0.0,resultColor.a);
 	#else
 		gl_FragData[2] = vec4(0,0,0,0);
 	#endif
+#endif
 	
 }

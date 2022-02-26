@@ -5,12 +5,16 @@ vec2 getParallaxOcclusionMappingOffset(vec2 texCoord, vec3 eye, vec3 normal, flo
 {
 	float heightScale;// = 0.05;
 	{
-		vec2 c_texCoord0 = vec2_splat(0);//dummy
+		vec2 texCoord0 = vec2_splat(0);//dummy
 		float displacement = 0.0;//dummy
 		float displacementScale = materialDisplacementScale;//u_materialDisplacementScale;
-		#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2D(_sampler, _uv)
-		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2D(_sampler, _uv)
+		vec4 customParameter1 = u_materialCustomParameters[0];
+		vec4 customParameter2 = u_materialCustomParameters[1];
+		#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(_sampler, _uv, 0, 0)
+		#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DBias(_sampler, _uv, u_mipBias)
+		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(_sampler, _uv, u_mipBias)
 		DISPLACEMENT_CODE_BODY
+		#undef CODE_BODY_TEXTURE2D_MASK_OPACITY
 		#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
 		#undef CODE_BODY_TEXTURE2D
 		heightScale = displacementScale;
@@ -90,7 +94,11 @@ vec2 getParallaxOcclusionMappingOffset(vec2 texCoord, vec3 eye, vec3 normal, flo
 	// We express the sampling rate as a linear function of the angle between 
 	// the geometric normal and the view direction ray:
 
+#ifdef GLSL
+	int numSteps = min(DISPLACEMENT_MAX_STEPS, maxSteps);
+#else
 	const int numSteps = min(DISPLACEMENT_MAX_STEPS, maxSteps);
+#endif
 	//const int maxSamples = 32;
 	//const int minSamples = 10;
 	//int numSteps = int(lerp( maxSamples, minSamples, dot( eye, normal ) ));
@@ -128,12 +136,14 @@ vec2 getParallaxOcclusionMappingOffset(vec2 texCoord, vec3 eye, vec3 normal, flo
 		
 		texCurrentOffset -= texOffsetPerStep;
 
-		vec2 c_texCoord0 = texCurrentOffset;
+		vec2 texCoord0 = texCurrentOffset;
 		float displacement = 0.0;
 		float displacementScale = 0.0;//dummy
+		#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(_sampler, _uv, 0, 0)
 		#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DGrad(_sampler, _uv, dx, dy)
 		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DGrad(_sampler, _uv, dx, dy)
 		DISPLACEMENT_CODE_BODY
+		#undef CODE_BODY_TEXTURE2D_MASK_OPACITY
 		#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
 		#undef CODE_BODY_TEXTURE2D
 		float currHeight = displacement;

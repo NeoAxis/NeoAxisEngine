@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,6 +10,7 @@ using Windows.UI.ViewManagement;
 using Windows.Graphics.Display;
 using Windows.UI.Input;
 using Windows.Foundation;
+using Internal;
 
 namespace NeoAxis
 {
@@ -159,7 +160,7 @@ namespace NeoAxis
 
 		private void CoreWindow_PointerMoved( CoreWindow sender, PointerEventArgs args )
 		{
-			EngineApp.CreatedInsideEngineWindow._ProcessMouseMoveEvent();
+			EngineApp.CreatedInsideEngineWindow.ProcessMouseMoveEvent();
 		}
 
 		private void CoreWindow_PointerWheelChanged( CoreWindow sender, PointerEventArgs args )
@@ -313,7 +314,7 @@ namespace NeoAxis
 		{
 			windowVisible = args.Visible;
 
-			EngineApp._EnginePause_UpdateState( false, !args.Visible );
+			EngineApp.EnginePauseUpdateState( false, !args.Visible );
 		}
 
 		private void CoreWindow_Activated( CoreWindow sender, WindowActivatedEventArgs args )
@@ -324,7 +325,7 @@ namespace NeoAxis
 			{
 				//!!!!просто обновляем. ведь внутри и так проверка есть. еще можно зафорсить. но не будет ли так, 
 				//что отключится слишком быстро? нужно там где включает ставить флаг -> ChangeVUdeMode.
-				EngineApp._EnginePause_UpdateState( false, true );
+				EngineApp.EnginePauseUpdateState( false, true );
 
 				// do stuff
 			}
@@ -381,7 +382,7 @@ namespace NeoAxis
 					coreWindow.Dispatcher.ProcessEvents( CoreProcessEventsOption.ProcessAllIfPresent );
 
 
-					EngineApp._UpdateEngineTime();
+					EngineApp.UpdateEngineTime();
 					double time = EngineApp.EngineTime;
 					bool needSleep = EngineApp.MaxFPS != 0 && time < maxFPSLastRenderTime + 1.0f / EngineApp.MaxFPS;
 
@@ -394,12 +395,12 @@ namespace NeoAxis
 					{
 						maxFPSLastRenderTime = time;
 
-						EngineApp._CreatedWindow_ApplicationIdle( false );
+						EngineApp.CreatedWindowApplicationIdle( false );
 
 						if( isSizeChanged )
 						{
 							isSizeChanged = false;
-							EngineApp._CreatedWindow_ProcessResize();
+							EngineApp.CreatedWindowProcessResize();
 						}
 					}
 
@@ -455,7 +456,7 @@ namespace NeoAxis
 				( rectangle.Bottom - rectangle.Top ) / scaleFactor ) );
 
 			//!!!!!так?
-			EngineApp._CreatedWindow_ProcessResize();
+			EngineApp.CreatedWindowProcessResize();
 		}
 
 		//!!!!?

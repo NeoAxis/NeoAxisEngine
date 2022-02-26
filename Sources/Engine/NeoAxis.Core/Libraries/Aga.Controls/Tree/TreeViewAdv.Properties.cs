@@ -6,10 +6,10 @@ using System.Drawing;
 using System.Drawing.Design;
 using System.Windows.Forms;
 
-using Aga.Controls.Tree.NodeControls;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.Aga.Controls.Tree.NodeControls;
+using Internal.ComponentFactory.Krypton.Toolkit;
 
-namespace Aga.Controls.Tree
+namespace Internal.Aga.Controls.Tree
 {
 	public partial class TreeViewAdv
 	{

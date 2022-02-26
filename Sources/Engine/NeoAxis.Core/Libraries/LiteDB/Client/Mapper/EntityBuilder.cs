@@ -1,11 +1,12 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     /// <summary>
     /// Helper class to modify your entity mapping to document. Can be used instead attribute decorates
@@ -109,3 +110,4 @@ namespace LiteDB
         }
     }
 }
+#endif

@@ -1,3 +1,5 @@
+// Copyright (c) 2021 Kastellanos Nikolaos
+
 /* Original source Farseer Physics Engine:
  * Copyright (c) 2014 Ian Qvist, http://farseerphysics.codeplex.com
  * Microsoft Permissive License (Ms-PL) v1.1
@@ -27,9 +29,12 @@
 
 using System;
 using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using Internal.tainicom.Aether.Physics2D.Common;
+#if XNAAPI
+using Vector2 = Microsoft.Xna.Framework.Vector2;
+#endif
 
-namespace tainicom.Aether.Physics2D.Dynamics.Joints
+namespace Internal.tainicom.Aether.Physics2D.Dynamics.Joints
 {
     public enum JointType
     {
@@ -97,6 +102,7 @@ namespace tainicom.Aether.Physics2D.Dynamics.Joints
 
     public abstract class Joint
     {
+        internal World _world;
         private float _breakpoint;
         private double _breakpointSquared;
 
@@ -134,6 +140,11 @@ namespace tainicom.Aether.Physics2D.Dynamics.Joints
         {
             BodyA = body;
         }
+
+        /// <summary>
+        /// Get the parent World of this joint. This is null if the joint is not attached.
+        /// </summary>
+        public World World { get { return _world; } }
 
         /// <summary>
         /// Gets or sets the type of the joint.

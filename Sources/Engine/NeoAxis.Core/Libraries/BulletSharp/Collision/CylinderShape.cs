@@ -1,9 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class CylinderShape : ConvexInternalShape
 	{
@@ -12,7 +12,7 @@ namespace BulletSharp
 		{
 		}
 
-		public CylinderShape(Vector3 halfExtents)
+		public CylinderShape(BVector3 halfExtents)
 			: base(btCylinderShape_new(ref halfExtents))
 		{
 		}
@@ -22,21 +22,21 @@ namespace BulletSharp
 		{
 		}
 
-		public Vector3 HalfExtentsWithMargin
+		public BVector3 HalfExtentsWithMargin
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btCylinderShape_getHalfExtentsWithMargin(Native, out value);
 				return value;
 			}
 		}
 
-		public Vector3 HalfExtentsWithoutMargin
+		public BVector3 HalfExtentsWithoutMargin
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btCylinderShape_getHalfExtentsWithoutMargin(Native, out value);
 				return value;
 			}
@@ -49,7 +49,7 @@ namespace BulletSharp
 
 	public class CylinderShapeX : CylinderShape
 	{
-		public CylinderShapeX(Vector3 halfExtents)
+		public CylinderShapeX(BVector3 halfExtents)
 			: base(btCylinderShapeX_new(ref halfExtents))
 		{
 		}
@@ -62,7 +62,7 @@ namespace BulletSharp
 
 	public class CylinderShapeZ : CylinderShape
 	{
-		public CylinderShapeZ(Vector3 halfExtents)
+		public CylinderShapeZ(BVector3 halfExtents)
 			: base(btCylinderShapeZ_new(ref halfExtents))
 		{
 		}

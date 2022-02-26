@@ -1,8 +1,8 @@
-using BulletSharp.Math;
+using Internal.BulletSharp.Math;
 using System;
-using static BulletSharp.UnsafeNativeMethods;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class Face : IDisposable
 	{
@@ -72,15 +72,15 @@ namespace BulletSharp
 			btConvexPolyhedron_initialize(Native);
 		}
 
-		public void ProjectRef(ref Matrix trans, ref Vector3 dir, out double minProj, out double maxProj,
-			out Vector3 witnesPtMin, out Vector3 witnesPtMax)
+		public void ProjectRef(ref BMatrix trans, ref BVector3 dir, out double minProj, out double maxProj,
+			out BVector3 witnesPtMin, out BVector3 witnesPtMax)
 		{
 			btConvexPolyhedron_project(Native, ref trans, ref dir, out minProj,
 				out maxProj, out witnesPtMin, out witnesPtMax);
 		}
 
-		public void Project(Matrix trans, Vector3 dir, out double minProj, out double maxProj,
-			out Vector3 witnesPtMin, out Vector3 witnesPtMax)
+		public void Project(BMatrix trans, BVector3 dir, out double minProj, out double maxProj,
+			out BVector3 witnesPtMin, out BVector3 witnesPtMax)
 		{
 			btConvexPolyhedron_project(Native, ref trans, ref dir, out minProj,
 				out maxProj, out witnesPtMin, out witnesPtMax);
@@ -91,11 +91,11 @@ namespace BulletSharp
 			return btConvexPolyhedron_testContainment(Native);
 		}
 
-		public Vector3 Extents
+		public BVector3 Extents
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btConvexPolyhedron_getExtents(Native, out value);
 				return value;
 			}
@@ -107,33 +107,33 @@ namespace BulletSharp
 			get { return btConvexPolyhedron_getFaces(Native); }
 		}
 		*/
-		public Vector3 LocalCenter
+		public BVector3 LocalCenter
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btConvexPolyhedron_getLocalCenter(Native, out value);
 				return value;
 			}
 			set => btConvexPolyhedron_setLocalCenter(Native, ref value);
 		}
 
-		public Vector3 C
+		public BVector3 C
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btConvexPolyhedron_getMC(Native, out value);
 				return value;
 			}
 			set => btConvexPolyhedron_setMC(Native, ref value);
 		}
 
-		public Vector3 E
+		public BVector3 E
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btConvexPolyhedron_getME(Native, out value);
 				return value;
 			}

@@ -1,4 +1,5 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -6,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     /// <summary>
     /// Implement custom fast/in memory mapped disk access
@@ -349,3 +350,5 @@ namespace LiteDB.Engine
         }
     }
 }
+
+#endif

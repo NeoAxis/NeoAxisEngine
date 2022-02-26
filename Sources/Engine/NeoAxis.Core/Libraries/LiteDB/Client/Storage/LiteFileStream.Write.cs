@@ -1,9 +1,10 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.IO;
 using System.Linq;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     public partial class LiteFileStream<TFileId> : Stream
     {
@@ -75,3 +76,4 @@ namespace LiteDB
         }
     }
 }
+#endif

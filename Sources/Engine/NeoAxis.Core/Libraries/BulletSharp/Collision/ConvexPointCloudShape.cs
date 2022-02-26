@@ -1,8 +1,8 @@
 using System;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class ConvexPointCloudShape : PolyhedralConvexAabbCachingShape
 	{
@@ -13,7 +13,7 @@ namespace BulletSharp
 		{
 		}
 
-		public ConvexPointCloudShape(Vector3Array points, int numPoints, Vector3 localScaling,
+		public ConvexPointCloudShape(Vector3Array points, int numPoints, BVector3 localScaling,
 			bool computeAabb = true)
 			: base(btConvexPointCloudShape_new2(points._native, numPoints, ref localScaling,
 				computeAabb))
@@ -21,14 +21,14 @@ namespace BulletSharp
 			_unscaledPoints = points;
 		}
 
-		public void GetScaledPoint(int index, out Vector3 value)
+		public void GetScaledPoint(int index, out BVector3 value)
 		{
 			btConvexPointCloudShape_getScaledPoint(Native, index, out value);
 		}
 
-		public Vector3 GetScaledPoint(int index)
+		public BVector3 GetScaledPoint(int index)
 		{
-			Vector3 value;
+			BVector3 value;
 			btConvexPointCloudShape_getScaledPoint(Native, index, out value);
 			return value;
 		}
@@ -40,7 +40,7 @@ namespace BulletSharp
 			_unscaledPoints = points;
 		}
 
-		public void SetPoints(Vector3Array points, int numPoints, bool computeAabb, Vector3 localScaling)
+		public void SetPoints(Vector3Array points, int numPoints, bool computeAabb, BVector3 localScaling)
 		{
 			btConvexPointCloudShape_setPoints2(Native, points._native, numPoints,
 				computeAabb, ref localScaling);

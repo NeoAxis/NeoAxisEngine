@@ -1,6 +1,6 @@
 $input v_texCoord0
 
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "../../Common.sh"
 
 uniform vec4 halfViewportPixelSize;
@@ -15,10 +15,10 @@ vec4 FetchSSAOMapArray(vec2 TexCoords, int layer)
 
     float l = (float)layer;
 
-    res.x = bgfxTexture2DArray(s_halfSSAOMapArray, vec3(TexCoords + vec2(0.0,                     halfViewportPixelSize.y), l)).x;
-    res.y = bgfxTexture2DArray(s_halfSSAOMapArray, vec3(TexCoords + vec2(halfViewportPixelSize.x, halfViewportPixelSize.y), l)).x;
-    res.z = bgfxTexture2DArray(s_halfSSAOMapArray, vec3(TexCoords + vec2(halfViewportPixelSize.x, 0.0                    ), l)).x;
-    res.w = bgfxTexture2DArray(s_halfSSAOMapArray, vec3(TexCoords + vec2(0.0,                     0.0                    ), l)).x;
+    res.x = texture2DArray(s_halfSSAOMapArray, vec3(TexCoords + vec2(0.0,                     halfViewportPixelSize.y), l)).x;
+    res.y = texture2DArray(s_halfSSAOMapArray, vec3(TexCoords + vec2(halfViewportPixelSize.x, halfViewportPixelSize.y), l)).x;
+    res.z = texture2DArray(s_halfSSAOMapArray, vec3(TexCoords + vec2(halfViewportPixelSize.x, 0.0                    ), l)).x;
+    res.w = texture2DArray(s_halfSSAOMapArray, vec3(TexCoords + vec2(0.0,                     0.0                    ), l)).x;
 
     return res;
 }

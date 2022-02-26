@@ -14,7 +14,7 @@ using System.Xml;
 using System.Drawing;
 using System.Diagnostics;
 
-namespace ComponentFactory.Krypton.Workspace
+namespace Internal.ComponentFactory.Krypton.Workspace
 {
 	/// <summary>
 	/// Event data for persisting extra data for a workspace.

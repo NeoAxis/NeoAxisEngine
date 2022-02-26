@@ -1,9 +1,10 @@
-﻿using LiteDB.Engine;
+#if !NO_LITE_DB
+using Internal.LiteDB.Engine;
 using System;
 using System.Collections.Generic;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     public sealed partial class LiteCollection<T> : ILiteCollection<T>
     {
@@ -65,3 +66,4 @@ namespace LiteDB
         }
     }
 }
+#endif

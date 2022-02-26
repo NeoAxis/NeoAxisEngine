@@ -1,9 +1,10 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     public interface ILiteQueryable<T> : ILiteQueryableResult<T>
     {
@@ -54,3 +55,4 @@ namespace LiteDB
         bool Exists();
     }
 }
+#endif

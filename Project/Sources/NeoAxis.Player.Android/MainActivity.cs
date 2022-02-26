@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using Android.App;
 using Android.OS;
@@ -100,7 +100,7 @@ namespace NeoAxis.Player.Android
 		{
 			base.OnPause();
 
-			EngineApp._EnginePause_UpdateState( false, true );
+			EngineApp.EnginePauseUpdateState( false, true );
 
 #if OPENGLES
 			glSurfaceView.OnPause();

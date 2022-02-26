@@ -1,4 +1,5 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,9 +9,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     /// <summary>
     /// Internal database pragmas persisted inside header page
@@ -196,3 +197,4 @@ namespace LiteDB.Engine
         }
     }
 }
+#endif

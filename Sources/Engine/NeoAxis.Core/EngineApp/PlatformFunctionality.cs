@@ -1,10 +1,11 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
+using NeoAxis;
 
-namespace NeoAxis
+namespace Internal//NeoAxis
 {
 	/// <summary>
 	/// Internal class for implementing the target platform.
@@ -125,7 +126,7 @@ namespace NeoAxis
 		//!!!!!
 		public abstract bool ShowMessageBoxYesNoQuestion( string text, string caption );
 
-		public abstract IntPtr CallSpecialPlatformSpecificMethod( string message, IntPtr param );
+		public abstract IntPtr CallPlatformSpecificMethod( string message, IntPtr param );
 
 		public abstract IList<SystemSettings.DisplayInfo> GetAllDisplays();
 
@@ -133,29 +134,34 @@ namespace NeoAxis
 
 		///////////////////////////////////////////
 
-		public static PlatformFunctionality Get()
+		public static PlatformFunctionality Instance
 		{
-			if( instance == null )
+			get
 			{
-				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
+				if( instance == null )
 				{
+					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
+					{
 #if WINDOWS
-					instance = new WindowsPlatformFunctionality();
+						instance = new WindowsPlatformFunctionality();
 #endif
+					}
+					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
+						Log.Fatal( "PlatformFunctionality: Get: Instance must be already initialized." );
+					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
+						Log.Fatal( "PlatformFunctionality: Get: Instance must be already initialized." );
+					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
+						Log.Fatal( "PlatformFunctionality: Get: Instance must be already initialized." );
+					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.MacOS )
+					{
+						Log.Fatal( "MacOSXInputDeviceManager impl." );
+						//instance = new MacOSXPlatformFunctionality();
+					}
+					else
+						Log.Fatal( "PlatformFunctionality: Get: Unknown platform." );
 				}
-				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
-					Log.Fatal( "PlatformFunctionality: Get: Instance must be already initialized." );
-				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
-					Log.Fatal( "PlatformFunctionality: Get: Instance must be already initialized." );
-				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.MacOS )
-				{
-					Log.Fatal( "MacOSXInputDeviceManager impl." );
-					//instance = new MacOSXPlatformFunctionality();
-				}
-				else
-					Log.Fatal( "PlatformFunctionality: Get: Unknown platform." );
+				return instance;
 			}
-			return instance;
 		}
 	}
 }

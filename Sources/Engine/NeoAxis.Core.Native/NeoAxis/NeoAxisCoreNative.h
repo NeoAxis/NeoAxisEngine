@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #pragma once
 
 #ifdef _WIN32
@@ -32,8 +32,15 @@
 #   else
 #       define PLATFORM_WINDOWS
 #   endif
-#elif defined( __APPLE_CC__)
-#	define PLATFORM_MACOS
+#elif defined( __APPLE__)
+	#include <TargetConditionals.h>
+	#if TARGET_OS_IPHONE
+		#define PLATFORM_IOS
+	#elif TARGET_OS_MAC
+		#define PLATFORM_OSX
+	#else
+		#error "Unknown Apple platform"
+	#endif
 #elif defined(__ANDROID__)
 #   define PLATFORM_ANDROID
 #else
@@ -125,11 +132,11 @@
 //#include <cmath>
 //#include <algorithm>
 //#include <sstream>
-//#ifdef PLATFORM_MACOS
+//#ifdef PLATFORM_OSX
 //	#include <new>
 //#endif
 //
-//#ifdef PLATFORM_MACOS
+//#ifdef PLATFORM_OSX
 //	#define isfinite std::isfinite
 //#endif
 //

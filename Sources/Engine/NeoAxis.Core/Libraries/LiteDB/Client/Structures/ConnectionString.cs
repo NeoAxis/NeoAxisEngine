@@ -1,10 +1,11 @@
-﻿using LiteDB.Engine;
+#if !NO_LITE_DB
+using Internal.LiteDB.Engine;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     /// <summary>
     /// Manage ConnectionString to connect and create databases. Connection string are NameValue using Name1=Value1; Name2=Value2
@@ -103,7 +104,7 @@ namespace LiteDB
         /// </summary>
         internal ILiteEngine CreateEngine()
         {
-            var settings = new EngineSettings
+            var settings = new Engine.EngineSettings
             {
                 Filename = this.Filename,
                 Password = this.Password,
@@ -128,3 +129,4 @@ namespace LiteDB
         }
     }
 }
+#endif

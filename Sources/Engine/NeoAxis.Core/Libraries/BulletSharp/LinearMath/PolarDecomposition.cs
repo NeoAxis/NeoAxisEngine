@@ -1,8 +1,8 @@
 using System;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class PolarDecomposition : IDisposable
 	{
@@ -13,7 +13,7 @@ namespace BulletSharp
 			_native = btPolarDecomposition_new(tolerance, (uint)maxIterations);
 		}
 
-		public uint Decompose(ref Matrix a, out Matrix u, out Matrix h)
+		public uint Decompose(ref BMatrix a, out BMatrix u, out BMatrix h)
 		{
 			return btPolarDecomposition_decompose(_native, ref a, out u, out h);
 		}

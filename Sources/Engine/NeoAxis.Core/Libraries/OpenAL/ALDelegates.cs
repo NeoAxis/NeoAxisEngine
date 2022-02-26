@@ -30,7 +30,7 @@ namespace Tao.OpenAl
 	using System;
 	using System.Runtime.InteropServices;
 
-	internal static class Delegates
+	/*internal */static class Delegates
 	{
 		static Delegates()
 		{

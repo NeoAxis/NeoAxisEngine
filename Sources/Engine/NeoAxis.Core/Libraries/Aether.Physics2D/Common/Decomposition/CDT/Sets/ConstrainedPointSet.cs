@@ -36,7 +36,7 @@
 
 using System.Collections.Generic;
 
-namespace tainicom.Aether.Physics2D.Common.Decomposition.CDT.Sets
+namespace Internal.tainicom.Aether.Physics2D.Common.Decomposition.CDT.Sets
 {
     /*
      * Extends the PointSet by adding some Constraints on how it will be triangulated<br>

@@ -1,10 +1,11 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Security.Cryptography;
 using System.IO;
 using System.Text;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     /// <summary>
     /// Encryption AES wrapper to encrypt data pages
@@ -100,3 +101,4 @@ namespace LiteDB
         }
     }
 }
+#endif

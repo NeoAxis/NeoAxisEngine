@@ -21,17 +21,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Diagnostics;
-using ComponentFactory.Krypton.Toolkit;
-using ComponentFactory.Krypton.Navigator;
+using Internal.ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Navigator;
 
-namespace ComponentFactory.Krypton.Workspace
+namespace Internal.ComponentFactory.Krypton.Workspace
 {
     /// <summary>
     /// Represents an individual workspace cell.
     /// </summary>
     [ToolboxItem(false)]
     [ToolboxBitmap(typeof(KryptonWorkspaceCell), "ToolboxBitmaps.KryptonWorkspaceCell.bmp")]
-    [Designer("ComponentFactory.Krypton.Workspace.KryptonWorkspaceCellDesigner, ComponentFactory.Krypton.Design, Version=125.0.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e")]
+    //[Designer("ComponentFactory.Krypton.Workspace.KryptonWorkspaceCellDesigner, ComponentFactory.Krypton.Design, Version=125.0.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e")]
     [DesignerCategory("code")]
     [DesignTimeVisible(false)]
     [DefaultProperty("Pages")]

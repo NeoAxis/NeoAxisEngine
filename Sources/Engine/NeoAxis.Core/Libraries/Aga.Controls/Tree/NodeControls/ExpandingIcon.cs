@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace Aga.Controls.Tree.NodeControls
+namespace Internal.Aga.Controls.Tree.NodeControls
 {
 	/// <summary>
 	/// Displays an animated icon for those nodes, who are in expanding state. 

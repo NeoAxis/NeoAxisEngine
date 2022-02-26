@@ -26,11 +26,13 @@
 */
 
 using System;
-using tainicom.Aether.Physics2D.Common;
-using tainicom.Aether.Physics2D.Common.Maths;
-using Microsoft.Xna.Framework;
+using Internal.tainicom.Aether.Physics2D.Common;
+#if XNAAPI
+using Vector2 = Microsoft.Xna.Framework.Vector2;
+using Vector3 = Microsoft.Xna.Framework.Vector3;
+#endif
 
-namespace tainicom.Aether.Physics2D.Dynamics.Joints
+namespace Internal.tainicom.Aether.Physics2D.Dynamics.Joints
 {
     // Linear constraint (point-to-line)
     // d = pB - pA = xB + rB - xA - rA
@@ -330,7 +332,7 @@ namespace tainicom.Aether.Physics2D.Dynamics.Joints
                     float C = Vector2.Dot(d1, _ax);
 
                     // Frequency
-                    float omega = 2.0f * MathHelper.Pi * Frequency;
+                    float omega = Constant.Tau * Frequency;
 
                     // Damping coefficient
                     float d = 2.0f * _springMass * DampingRatio * omega;

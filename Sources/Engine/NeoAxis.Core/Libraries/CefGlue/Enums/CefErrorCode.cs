@@ -1,8 +1,9 @@
-﻿//
+#if !NO_UI_WEB_BROWSER
+//
 // This file manually written from cef/include/internal/cef_types.h.
 // C API name: cef_handler_errorcode_t.
 //
-namespace Xilium.CefGlue
+namespace Internal.Xilium.CefGlue
 {
     /// <summary>
     /// Supported error code values.
@@ -73,3 +74,5 @@ namespace Xilium.CefGlue
         InsecureResponse = -501,
     }
 }
+
+#endif

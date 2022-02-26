@@ -1,16 +1,12 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Drawing.Design;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Reflection;
 using System.IO;
-using SharpBgfx;
+using Internal.SharpBgfx;
 using System.Security.Cryptography;
 using NeoAxis.Editor;
+using Internal;
 
 namespace NeoAxis
 {
@@ -19,7 +15,7 @@ namespace NeoAxis
 	/// </summary>
 	public class GpuTexture : ThreadSafeDisposable
 	{
-		static ESet<GpuTexture> instances = new ESet<GpuTexture>();
+		static ESet<GpuTexture> all = new ESet<GpuTexture>();
 
 		//constants
 		public enum ModeEnum
@@ -32,7 +28,7 @@ namespace NeoAxis
 		string[] loadFileNames;
 		string componentTextureVirtualFileName;
 
-		Component_Image.TypeEnum textureType = Component_Image.TypeEnum._2D;
+		ImageComponent.TypeEnum textureType = ImageComponent.TypeEnum._2D;
 		Vector2I sourceSize;
 		Vector2I resultSize;
 		int depth;
@@ -43,10 +39,10 @@ namespace NeoAxis
 		Usages usage;
 		int fullSceneAntialiasing;
 
-		Texture realObject;
-		bool realObjectUnloadSupport;
-		bool realObjectUnloaded;
-		double realObjectLastUsedTime;
+		Texture nativeObject;
+		bool nativeObjectUnloadSupport;
+		bool nativeObjectUnloaded;
+		double nativeObjectLastUsedTime;
 
 		//!!!!опционально не хранить данные. восстанавливать когда device lost.
 		SurfaceData[] data;
@@ -130,6 +126,8 @@ namespace NeoAxis
 			/// </summary>
 			ReadBack = 0x400,
 
+			ComputeWrite = 0x800,
+
 			///// <summary>
 			///// Default to automatic mipmap generation static textures.
 			///// </summary>
@@ -143,15 +141,25 @@ namespace NeoAxis
 		/// </summary>
 		public class SurfaceData
 		{
-			public int face;
-			public int mip;
-			public byte[] data;
+			public ArraySegment<byte> Data { get; }
+			public int ArrayLayer { get; }
+			public int Face { get; }
+			public int MipLevel { get; }
 
-			public SurfaceData( int face, int mip, byte[] data )
+			public SurfaceData( ArraySegment<byte> data, int arrayLayer = 0, int face = 0, int mipLevel = 0 )
 			{
-				this.face = face;
-				this.mip = mip;
-				this.data = data;
+				Data = data;
+				ArrayLayer = arrayLayer;
+				Face = face;
+				MipLevel = mipLevel;
+			}
+
+			public SurfaceData( byte[] data, int arrayLayer = 0, int face = 0, int mipLevel = 0 )
+			{
+				Data = new ArraySegment<byte>( data );
+				ArrayLayer = arrayLayer;
+				Face = face;
+				MipLevel = mipLevel;
 			}
 		}
 
@@ -190,7 +198,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		unsafe internal GpuTexture( Component_Image.TypeEnum type, Vector2I size, int depth, bool mipmaps, int arrayLayers, PixelFormat format,
+		unsafe internal GpuTexture( ImageComponent.TypeEnum type, Vector2I size, int depth, bool mipmaps, int arrayLayers, PixelFormat format,
 			Usages usage, int fullSceneAntialiasing, out string error )
 		{
 			error = "";
@@ -211,7 +219,7 @@ namespace NeoAxis
 				mode = ModeEnum.RenderTarget;
 				CreateNativeObject();
 
-				if( realObject == null )
+				if( nativeObject == null )
 				{
 					//!!!!
 					error = "Unable to create render target.";
@@ -224,20 +232,16 @@ namespace NeoAxis
 				//native object will created later
 			}
 
-			lock( instances )
-				instances.Add( this );
+			lock( all )
+				all.Add( this );
 		}
 
 		void CreateNativeObject()
 		{
 			EngineThreading.CheckMainThread();
 
-			if( realObject != null )
-				Log.Fatal( "Texture: Create: The texture data is already initialized. realObject != null." );
-
-			//!!!!
-			//fullSceneAntialiasing
-			//что еще?
+			if( nativeObject != null )
+				Log.Fatal( "Texture: Create: The texture data is already initialized. nativeObject != null." );
 
 			TextureFormat realFormat = ConvertFormat( ResultFormat );
 
@@ -250,6 +254,9 @@ namespace NeoAxis
 				//else
 				flags |= TextureFlags.RenderTarget;
 			}
+
+			if( ( usage & Usages.ComputeWrite ) != 0 )
+				flags |= TextureFlags.ComputeWrite;
 
 			if( ( usage & Usages.BlitDestination ) != 0 )
 				flags |= TextureFlags.BlitDestination;
@@ -279,19 +286,19 @@ namespace NeoAxis
 
 			switch( textureType )
 			{
-			case Component_Image.TypeEnum._2D:
-				realObject = Texture.Create2D( resultSize.X, resultSize.Y, mipmaps, arrayLayers, realFormat, flags );
-				realObjectLastUsedTime = EngineApp.EngineTime;
+			case ImageComponent.TypeEnum._2D:
+				nativeObject = Texture.Create2D( resultSize.X, resultSize.Y, mipmaps, arrayLayers, realFormat, flags );
+				nativeObjectLastUsedTime = EngineApp.EngineTime;
 				break;
 
-			case Component_Image.TypeEnum._3D:
-				realObject = Texture.Create3D( resultSize.X, resultSize.Y, depth, mipmaps, realFormat, flags );
-				realObjectLastUsedTime = EngineApp.EngineTime;
+			case ImageComponent.TypeEnum._3D:
+				nativeObject = Texture.Create3D( resultSize.X, resultSize.Y, depth, mipmaps, realFormat, flags );
+				nativeObjectLastUsedTime = EngineApp.EngineTime;
 				break;
 
-			case Component_Image.TypeEnum.Cube:
-				realObject = Texture.CreateCube( resultSize.X, mipmaps, arrayLayers, realFormat, flags );
-				realObjectLastUsedTime = EngineApp.EngineTime;
+			case ImageComponent.TypeEnum.Cube:
+				nativeObject = Texture.CreateCube( resultSize.X, mipmaps, arrayLayers, realFormat, flags );
+				nativeObjectLastUsedTime = EngineApp.EngineTime;
 				break;
 			}
 		}
@@ -302,8 +309,8 @@ namespace NeoAxis
 			this.loadFileNames = loadFileNames;
 			this.componentTextureVirtualFileName = componentTextureVirtualFileName;
 
-			lock( instances )
-				instances.Add( this );
+			lock( all )
+				all.Add( this );
 		}
 
 		public static GpuTexture CreateFromFile( string virtualFileName, out string error )
@@ -317,11 +324,11 @@ namespace NeoAxis
 				if( ImageUtility.GetImageFlags( virtualFileName, out ImageUtility.ImageFlags flags, out error ) )
 				{
 					if( flags.HasFlag( ImageUtility.ImageFlags.Cubemap ) )
-						result.TextureType = Component_Image.TypeEnum.Cube;
+						result.TextureType = ImageComponent.TypeEnum.Cube;
 					else if( flags.HasFlag( ImageUtility.ImageFlags.Texture3D ) )
-						result.TextureType = Component_Image.TypeEnum._3D;
+						result.TextureType = ImageComponent.TypeEnum._3D;
 					else
-						result.TextureType = Component_Image.TypeEnum._2D;
+						result.TextureType = ImageComponent.TypeEnum._2D;
 				}
 			}
 
@@ -333,17 +340,17 @@ namespace NeoAxis
 			return result;
 		}
 
-		public static GpuTexture CreateVolume( string virtualFileName, out string error )
-		{
-			//!!!!
-			throw new NotImplementedException();
-		}
+		//!!!!
+		//public static GpuTexture CreateVolume( string virtualFileName, out string error )
+		//{
+		//	throw new NotImplementedException();
+		//}
 
 		//// name + postfixes or DDS.
 		//public static GpuTexture CreateCube( string virtualFileName, out string error )
 		//{
 		//	var result = new GpuTexture( virtualFileName );
-		//	result.TextureType = Component_Texture.TypeEnum.Cube;
+		//	result.TextureType = Texture.TypeEnum.Cube;
 
 		//	if( !result.Load( out error ) )
 		//	{
@@ -357,7 +364,7 @@ namespace NeoAxis
 		public static GpuTexture CreateCube( string[] virtualFileNames, string componentTextureVirtualFileName, out string error )
 		{
 			var result = new GpuTexture( virtualFileNames, componentTextureVirtualFileName );
-			result.TextureType = Component_Image.TypeEnum.Cube;
+			result.TextureType = ImageComponent.TypeEnum.Cube;
 
 			if( !result.Load( out error ) )
 			{
@@ -535,14 +542,14 @@ namespace NeoAxis
 			return true;
 		}
 
-		void UpdateTextureTypeFromRealObject()
+		void UpdateTextureTypeFromNativeObject()
 		{
-			if( realObject.IsCubeMap )
-				textureType = Component_Image.TypeEnum.Cube;
-			else if( realObject.Depth != 1 )
-				textureType = Component_Image.TypeEnum._3D;
+			if( nativeObject.IsCubeMap )
+				textureType = ImageComponent.TypeEnum.Cube;
+			else if( nativeObject.Depth != 1 )
+				textureType = ImageComponent.TypeEnum._3D;
 			else
-				textureType = Component_Image.TypeEnum._2D;
+				textureType = ImageComponent.TypeEnum._2D;
 		}
 
 		bool LoadResultData( string fileName, bool isVirtualFileName, out string error )
@@ -553,25 +560,24 @@ namespace NeoAxis
 			else
 				data = File.ReadAllBytes( fileName );
 
-			//!!!!надо ли чистить? везде так
 			var memory = MemoryBlock.FromArray( data );
-			realObject = Texture.FromFile( memory, TextureFlags.None, 0 );
+			nativeObject = Texture.FromFile( memory, TextureFlags.None, 0 );
 			//SharpBgfx bug fix
-			if( realObject != null && TextureType == Component_Image.TypeEnum.Cube )
-				realObject.IsCubeMap = true;
-			realObjectLastUsedTime = EngineApp.EngineTime;
+			if( nativeObject != null && TextureType == ImageComponent.TypeEnum.Cube )
+				nativeObject.IsCubeMap = true;
+			nativeObjectLastUsedTime = EngineApp.EngineTime;
 
-			if( realObject == null )
+			if( nativeObject == null )
 			{
 				error = "Unable to read texture data.";
 				return false;
 			}
 
-			UpdateTextureTypeFromRealObject();
-			resultSize = new Vector2I( realObject.Width, realObject.Height );
-			depth = realObject.Depth;
-			resultFormat = ConvertFormat( realObject.Format );
-			mipmaps = realObject.MipLevels > 1;
+			UpdateTextureTypeFromNativeObject();
+			resultSize = new Vector2I( nativeObject.Width, nativeObject.Height );
+			depth = nativeObject.Depth;
+			resultFormat = ConvertFormat( nativeObject.Format );
+			mipmaps = nativeObject.MipLevels > 1;
 			usage = Usages.Static;
 
 			error = "";
@@ -617,7 +623,7 @@ namespace NeoAxis
 			//int firstSize = 0;
 			//PixelFormat firstFormat = PixelFormat.Unknown;
 
-			if( loadFileNames.Length == 1 )// textureType == Component_Texture.TypeEnum._2D )
+			if( loadFileNames.Length == 1 )// textureType == Texture.TypeEnum._2D )
 			{
 				if( !ImageUtility.LoadFromVirtualFile( loadFileNames[ 0 ], out var data2, out size, out var depth, out format, out var faces, out var mips, out error ) )
 				{
@@ -629,7 +635,7 @@ namespace NeoAxis
 				error = "";
 				return true;
 			}
-			else if( loadFileNames.Length == 6 ) //if( textureType == Component_Texture.TypeEnum.Cube )
+			else if( loadFileNames.Length == 6 ) //if( textureType == Texture.TypeEnum.Cube )
 			{
 				size = Vector2I.Zero;
 				format = PixelFormat.Unknown;
@@ -740,10 +746,10 @@ namespace NeoAxis
 		{
 			EngineThreading.CheckMainThread();
 
-			if( realObject != null )
-				Log.Fatal( "Texture: Load: realObject != null." );
+			if( nativeObject != null )
+				Log.Fatal( "Texture: Load: nativeObject != null." );
 
-			realObjectUnloadSupport = true;
+			nativeObjectUnloadSupport = true;
 
 			//!!!!все форматы
 
@@ -777,7 +783,7 @@ namespace NeoAxis
 					//!!!!!опцией продукта?
 
 					//!!!!Android readonly?
-					bool readOnly = SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP || SystemSettings.CurrentPlatform == SystemSettings.Platform.Android;
+					bool readOnly = SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP || SystemSettings.CurrentPlatform == SystemSettings.Platform.Android || SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS;
 					if( readOnly )
 						forceNoCompression = true;
 				}
@@ -817,7 +823,7 @@ namespace NeoAxis
 				{
 					if( !forceNoCompression )
 					{
-						useCompression = Component_Image_Settings.GetParameter( componentTextureVirtualFileName, "Compression", out _ );
+						useCompression = ImageSettingsFile.GetParameter( componentTextureVirtualFileName, "Compression", out _ );
 						if( useCompression == "Auto" || useCompression == "" )
 						{
 							//Auto
@@ -918,15 +924,15 @@ namespace NeoAxis
 									var newData = new byte[ sourceSize.X * sourceSize.Y * 4 * 2 ];
 									fixed( byte* pNewData2 = newData )
 									{
-										Half* pNewData = (Half*)pNewData2;
+										HalfType* pNewData = (HalfType*)pNewData2;
 
 										int destPos = 0;
 										for( int sourcePos = 0; sourcePos < data.Length / 2; sourcePos += 3 )
 										{
-											pNewData[ destPos++ ] = new Half( (float)pData[ sourcePos + 0 ] / ushort.MaxValue );
-											pNewData[ destPos++ ] = new Half( (float)pData[ sourcePos + 1 ] / ushort.MaxValue );
-											pNewData[ destPos++ ] = new Half( (float)pData[ sourcePos + 2 ] / ushort.MaxValue );
-											pNewData[ destPos++ ] = new Half( 1.0f );
+											pNewData[ destPos++ ] = new HalfType( (float)pData[ sourcePos + 0 ] / ushort.MaxValue );
+											pNewData[ destPos++ ] = new HalfType( (float)pData[ sourcePos + 1 ] / ushort.MaxValue );
+											pNewData[ destPos++ ] = new HalfType( (float)pData[ sourcePos + 2 ] / ushort.MaxValue );
+											pNewData[ destPos++ ] = new HalfType( 1.0f );
 										}
 									}
 
@@ -937,15 +943,15 @@ namespace NeoAxis
 						resultFormat = PixelFormat.Float16RGBA;
 					}
 
-					if( loadFileNames.Length == 1 )// textureType == Component_Texture.TypeEnum._2D )
+					if( loadFileNames.Length == 1 )// textureType == Texture.TypeEnum._2D )
 					{
 						//!!!!можно сразу в конечный массив записывать
 						var newData = GenerateMipmaps( sourceData, resultSize, resultFormat );
 						var totalData = MergeByteArrays( newData );
 
 						var memory = MemoryBlock.FromArray( totalData );
-						realObject = Texture.Create2D( resultSize.X, resultSize.Y, true, 1, ConvertFormat( resultFormat ), TextureFlags.None, memory );
-						realObjectLastUsedTime = EngineApp.EngineTime;
+						nativeObject = Texture.Create2D( resultSize.X, resultSize.Y, true, 1, ConvertFormat( resultFormat ), TextureFlags.None, memory );
+						nativeObjectLastUsedTime = EngineApp.EngineTime;
 					}
 					else if( loadFileNames.Length == 6 )
 					{
@@ -955,24 +961,24 @@ namespace NeoAxis
 						//var totalData = MergeByteArrays( sourceData );
 
 						var memory = MemoryBlock.FromArray( totalData );
-						realObject = Texture.CreateCube( resultSize.X, true, 1, ConvertFormat( resultFormat ), TextureFlags.None, memory );
-						realObjectLastUsedTime = EngineApp.EngineTime;
+						nativeObject = Texture.CreateCube( resultSize.X, true, 1, ConvertFormat( resultFormat ), TextureFlags.None, memory );
+						nativeObjectLastUsedTime = EngineApp.EngineTime;
 						//realObject = Texture.CreateCube( resultSize.X, false, 1, ConvertFormat( resultFormat ), TextureFlags.None, memory );
 
 						//SharpBgfx bug fix
-						if( realObject != null )
-							realObject.IsCubeMap = true;
+						if( nativeObject != null )
+							nativeObject.IsCubeMap = true;
 					}
 
-					if( realObject == null )
+					if( nativeObject == null )
 						return false;
 
 					//get properties
-					UpdateTextureTypeFromRealObject();
+					UpdateTextureTypeFromNativeObject();
 					//resultSize = sourceSize;
-					depth = realObject.Depth;
+					depth = nativeObject.Depth;
 					//resultFormat = sourceFormat;
-					mipmaps = realObject.MipLevels > 1;
+					mipmaps = nativeObject.MipLevels > 1;
 					usage = Usages.Static;
 					return true;
 				}
@@ -980,7 +986,7 @@ namespace NeoAxis
 				{
 					//compression
 
-					if( textureType == Component_Image.TypeEnum._2D )
+					if( textureType == ImageComponent.TypeEnum._2D )
 					{
 						DDSTextureTools.DDSImage.FormatEnum ddsFormat = DDSTextureTools.DDSImage.FormatEnum.DXT1;
 						bool normalMap = false;
@@ -1015,29 +1021,25 @@ namespace NeoAxis
 
 		protected unsafe override void OnDispose()
 		{
-			if( realObject != null )
+			if( nativeObject != null )
 			{
 				//after shutdown check
 				if( RenderingSystem.Disposed )
-				{
-					//waiting for .NET Standard 2.0
-					Log.Fatal( "Renderer: Dispose after Shutdown." );
-					//Log.Fatal( "Renderer: Dispose after Shutdown: {0}()", System.Reflection.MethodInfo.GetCurrentMethod().Name );
-				}
+					Log.Fatal( "GpuTexture: Dispose after shutdown." );
 
 				//!!!!везде такое
-				EngineThreading.ExecuteFromMainThreadLater( delegate ( Texture realObject2, List<RenderTargetItem> renderTargets2 )
+				EngineThreading.ExecuteFromMainThreadLater( delegate ( Texture nativeObject2, List<RenderTargetItem> renderTargets2 )
 				{
 					foreach( var target in renderTargets2 )
 						target.RenderTarget.DisposeInternal();
-					realObject2.Dispose();
-				}, realObject, renderTargets );
+					nativeObject2.Dispose();
+				}, nativeObject, renderTargets );
 
-				realObject = null;
+				nativeObject = null;
 				renderTargets.Clear();
 
-				lock( instances )
-					instances.Remove( this );
+				lock( all )
+					all.Remove( this );
 			}
 
 			//base.OnDispose();
@@ -1101,7 +1103,12 @@ namespace NeoAxis
 			get { return depth; }
 		}
 
-		public Component_Image.TypeEnum TextureType
+		public int ArrayLayers
+		{
+			get { return arrayLayers; }
+		}
+
+		public ImageComponent.TypeEnum TextureType
 		{
 			get { return textureType; }
 			set { textureType = value; }
@@ -1128,7 +1135,7 @@ namespace NeoAxis
 		///// <returns>
 		///// <b>true</b> if the format is natively supported, <b>false</b> if a fallback would be used.
 		///// </returns>
-		//public static bool IsFormatSupported( Component_Texture.TypeEnum textureType, PixelFormat format, GpuTexture.Usages usage )
+		//public static bool IsFormatSupported( Texture.TypeEnum textureType, PixelFormat format, GpuTexture.Usages usage )
 		//{
 		//	unsafe
 		//	{
@@ -1150,7 +1157,7 @@ namespace NeoAxis
 		///// <returns>
 		///// <b>true</b> if the format is natively supported, <b>false</b> if a fallback would be used.
 		///// </returns>
-		//public static bool IsEquivalentFormatSupported( Component_Texture.TypeEnum textureType, PixelFormat format, GpuTexture.Usages usage )
+		//public static bool IsEquivalentFormatSupported( Texture.TypeEnum textureType, PixelFormat format, GpuTexture.Usages usage )
 		//{
 		//	unsafe
 		//	{
@@ -1175,7 +1182,7 @@ namespace NeoAxis
 			//!!!!
 			EngineThreading.CheckMainThread();
 
-			if( realObject == null )
+			if( nativeObject == null )
 				return null;
 
 			foreach( var item2 in renderTargets )
@@ -1188,7 +1195,7 @@ namespace NeoAxis
 			//var buffer = new FrameBuffer( new Texture[] { realObject } );
 
 			var attachment = new Attachment();
-			attachment.Texture = realObject;
+			attachment.Texture = nativeObject;
 			attachment.Mip = mip;
 			attachment.Layer = slice;
 			attachment.Access = ComputeBufferAccess.Write;
@@ -1223,10 +1230,10 @@ namespace NeoAxis
 
 			if( mode == ModeEnum.Create )
 			{
-				if( realObject == null )
+				if( nativeObject == null )
 					CreateNativeObject();
 
-				if( realObject != null && needUpdateNative )
+				if( nativeObject != null && needUpdateNative )
 				{
 					var d = data;// newData.Set( null );
 					if( d != null )
@@ -1238,26 +1245,27 @@ namespace NeoAxis
 						{
 							switch( TextureType )
 							{
-							case Component_Image.TypeEnum._2D:
+							case ImageComponent.TypeEnum._2D:
 								{
 									//!!!!
 									int pitch = ushort.MaxValue;
 
-									var memory = RendererMemoryUtility.AllocateAutoReleaseMemoryBlock( item.data );
-									//var memory = MemoryBlock.FromArray( item.data );
-									realObject.Update2D( 0, item.mip, 0, 0, ResultSize.X, ResultSize.Y, memory, pitch );
+									var memory = MemoryBlock.FromArray( item.Data );
+									//var memory = RendererMemoryUtility.AllocateAutoReleaseMemoryBlock( item.Data );
+									nativeObject.Update2D( item.ArrayLayer, item.MipLevel, 0, 0, ResultSize.X, ResultSize.Y, memory, pitch );
 								}
 								break;
 
-							case Component_Image.TypeEnum.Cube:
+							case ImageComponent.TypeEnum.Cube:
 								{
 									//!!!!check face order
 
 									//!!!!
 									int pitch = ushort.MaxValue;
 
-									var memory = RendererMemoryUtility.AllocateAutoReleaseMemoryBlock( item.data );
-									realObject.UpdateCube( (CubeMapFace)item.face, 0, item.mip, 0, 0, ResultSize.X, ResultSize.Y, memory, pitch );
+									var memory = MemoryBlock.FromArray( item.Data );
+									//var memory = RendererMemoryUtility.AllocateAutoReleaseMemoryBlock( item.Data );
+									nativeObject.UpdateCube( (CubeMapFace)item.Face, item.ArrayLayer, item.MipLevel, 0, 0, ResultSize.X, ResultSize.Y, memory, pitch );
 								}
 								break;
 
@@ -1278,7 +1286,7 @@ namespace NeoAxis
 			}
 		}
 
-		public void SetData( SurfaceData[] data )
+		public void SetData( SurfaceData[] data, bool prepareNativeObject = true )
 		{
 			if( mode != ModeEnum.Create )
 				Log.Fatal( "GpuTexture: SetData: Unable to set data for loaded or render target textures." );
@@ -1287,8 +1295,8 @@ namespace NeoAxis
 			needUpdateNative = true;
 			//newData.Set( data );
 
-			//!!!!temp?
-			PrepareNativeObject();
+			if( prepareNativeObject )
+				PrepareNativeObject();
 		}
 
 		/// <summary>
@@ -1317,20 +1325,20 @@ namespace NeoAxis
 		//	}
 		//}
 
-		public Texture GetRealObject( bool withUpdate )
+		public Texture GetNativeObject( bool withUpdate )
 		{
-			if( realObject == null && withUpdate && realObjectUnloaded )
+			if( nativeObject == null && withUpdate && nativeObjectUnloaded )
 				RestoreUnloaded();
 
 			if( withUpdate )
-				realObjectLastUsedTime = EngineApp.EngineTime;
-			return realObject;
+				nativeObjectLastUsedTime = EngineApp.EngineTime;
+			return nativeObject;
 		}
 
-		public static GpuTexture[] GetInstances()
+		public static GpuTexture[] GetAll()
 		{
-			lock( instances )
-				return instances.ToArray();
+			lock( all )
+				return all.ToArray();
 		}
 
 		void RestoreUnloaded()
@@ -1344,14 +1352,14 @@ namespace NeoAxis
 				}
 			}
 
-			realObjectUnloaded = false;
+			nativeObjectUnloaded = false;
 		}
 
 		public void Unload()
 		{
-			if( realObject != null )
+			if( nativeObject != null )
 			{
-				realObject.Dispose();
+				nativeObject.Dispose();
 				//EngineThreading.ExecuteFromMainThreadLater( delegate ( Texture realObject2, List<RenderTargetItem> renderTargets2 )
 				//{
 				//	foreach( var target in renderTargets2 )
@@ -1359,10 +1367,10 @@ namespace NeoAxis
 				//	realObject2.Dispose();
 				//}, realObject, renderTargets );
 
-				realObject = null;
+				nativeObject = null;
 			}
 
-			realObjectUnloaded = true;
+			nativeObjectUnloaded = true;
 		}
 
 		/// <summary>
@@ -1371,15 +1379,19 @@ namespace NeoAxis
 		/// <param name="howLongHasNotBeenUsedInSeconds"></param>
 		public static void UnloadNotUsedForLongTime( double howLongHasNotBeenUsedInSeconds )
 		{
-			foreach( var texture in GetInstances() )
+			foreach( var texture in GetAll() )
 			{
-				if( texture.realObjectUnloadSupport && !texture.realObjectUnloaded )
+				if( texture.nativeObjectUnloadSupport && !texture.nativeObjectUnloaded )
 				{
-					if( EngineApp.EngineTime - texture.realObjectLastUsedTime > howLongHasNotBeenUsedInSeconds )
+					if( EngineApp.EngineTime - texture.nativeObjectLastUsedTime > howLongHasNotBeenUsedInSeconds )
 						texture.Unload();
 				}
 			}
 		}
 
+		public static void UnloadAllUnloadable()
+		{
+			UnloadNotUsedForLongTime( -1 );
+		}
 	}
 }

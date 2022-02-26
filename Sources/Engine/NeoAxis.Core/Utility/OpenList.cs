@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,6 +17,12 @@ namespace NeoAxis
 		public OpenList( int capacity )
 		{
 			Data = new T[ capacity ];
+		}
+
+		public OpenList( T[] array )
+		{
+			Data = array;
+			Count = array.Length;
 		}
 
 		public OpenList()
@@ -54,6 +60,11 @@ namespace NeoAxis
 			return result;
 		}
 
+		public ArraySegment<T> ArraySegment
+		{
+			get { return new ArraySegment<T>( Data, 0, Count ); }
+		}
+
 		/// <summary>
 		/// Clears the list. The method only sets the Count to 0. Values of items are not reset to default.
 		/// </summary>
@@ -61,7 +72,5 @@ namespace NeoAxis
 		{
 			Count = 0;
 		}
-
-		//!!!!AddRange
 	}
 }

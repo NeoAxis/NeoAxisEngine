@@ -1,10 +1,11 @@
-﻿namespace Xilium.CefGlue
+#if !NO_UI_WEB_BROWSER
+namespace Internal.Xilium.CefGlue
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Runtime.InteropServices;
-    using Xilium.CefGlue.Interop;
+    using Internal.Xilium.CefGlue.Interop;
 
     /// <summary>
     /// Class used to represent a frame in the browser window. When used in the
@@ -272,3 +273,5 @@
         }
     }
 }
+
+#endif

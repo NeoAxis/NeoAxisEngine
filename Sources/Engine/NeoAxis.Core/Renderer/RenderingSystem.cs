@@ -1,11 +1,11 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.IO;
-using SharpBgfx;
+using Internal.SharpBgfx;
 
 namespace NeoAxis
 {
@@ -145,8 +145,6 @@ namespace NeoAxis
 
 		static bool disposed;
 
-		static Metadata.TypeInfo renderingPipelineDefault;
-
 		//occlusion query
 		static int canCreateOcclusionQueriesCounter;
 		class OcclusionQueryItem
@@ -173,7 +171,7 @@ namespace NeoAxis
 
 			public unsafe void ReportDebug( string fileName, int line, string format, IntPtr args )
 			{
-				if( EngineSettings.Init.RendererReportDebugToLog )
+				if( EngineApp.InitSettings.RendererReportDebugToLog )
 				{
 					sbyte* buffer = stackalloc sbyte[ 1024 ];
 					NativeMethods.bgfx_vsnprintf( buffer, new IntPtr( 1024 ), format, args );
@@ -189,7 +187,7 @@ namespace NeoAxis
 				Debug.Write( text );
 				if( errorType == ErrorType.DebugCheck )
 				{
-					if( EngineSettings.Init.RendererReportDebugToLog ) //!!!! should we use RendererReportDebugToLog ? this is important warning/error.
+					if( EngineApp.InitSettings.RendererReportDebugToLog ) //!!!! should we use RendererReportDebugToLog ? this is important warning/error.
 						Log.Warning( "Renderer: Bgfx: " + text ); //TODO: replace to Log.Warn
 
 					// Debug.Fail terminate app in UWP
@@ -212,17 +210,16 @@ namespace NeoAxis
 
 		///////////////////////////////////////////////
 
-		//!!!!!!
-		[DllImport( "kernel32.dll", EntryPoint = "SetDllDirectory", CharSet = CharSet.Unicode )]
-		static extern bool SetDllDirectory( string lpPathName );
+		//[DllImport( "kernel32.dll", EntryPoint = "SetDllDirectory", CharSet = CharSet.Unicode )]
+		//static extern bool SetDllDirectory( string lpPathName );
 
 		static bool nativeDLLsPreloaded;
 		internal static void NativeDLLsPreload()
 		{
 			if( !nativeDLLsPreloaded )
 			{
-				NativeLibraryManager.PreLoadLibrary( "NeoAxisCoreNative" );
-				NativeLibraryManager.PreLoadLibrary( SharpBgfx.NativeMethods.DllName );
+				NativeUtility.PreloadLibrary( "NeoAxisCoreNative" );
+				NativeUtility.PreloadLibrary( Internal.SharpBgfx.NativeMethods.DllName );
 				nativeDLLsPreloaded = true;
 			}
 		}
@@ -253,7 +250,7 @@ namespace NeoAxis
 			return result;
 		}
 
-		internal static void _PostInitRendererAddition()
+		internal static void PostInitRendererAddition()
 		{
 			rendererAdditionInitialized = true;
 		}
@@ -480,9 +477,9 @@ namespace NeoAxis
 		//}
 
 		/// <summary>
-		/// Gets the render targets collection.
+		/// Gets all the render targets collection.
 		/// </summary>
-		public static RenderTarget[] GetRenderTargets()
+		public static RenderTarget[] GetAllRenderTargets()
 		{
 			lock( renderTargets )
 				return renderTargets.ToArray();
@@ -491,34 +488,34 @@ namespace NeoAxis
 		/// <summary>
 		/// Gets the viewports collection.
 		/// </summary>
-		public static Viewport[] GetViewports()
+		public static Viewport[] GetAllViewports()
 		{
 			lock( viewports )
 				return viewports.ToArray();
 		}
 
-		public static bool _InvisibleInternalLogMessages
+		internal static bool InvisibleInternalLogMessages
 		{
 			get { return invisibleInternalLogMessages; }
 			set { invisibleInternalLogMessages = value; }
 		}
 
-		public static bool _EnableInternalLogMessages
+		internal static bool EnableInternalLogMessages
 		{
 			get { return enableInternalLogMessages; }
 			set { enableInternalLogMessages = value; }
 		}
 
-		public delegate void _InternalLogMessageDelegate( String message );
-		public static event _InternalLogMessageDelegate _InternalLogMessage;
+		internal delegate void _InternalLogMessageDelegate( string message );
+		internal static event _InternalLogMessageDelegate InternalLogMessage;
 
 		internal static ResetFlags GetApplicationWindowResetFlags()
 		{
 			ResetFlags flags = 0;
-			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && EngineSettings.Init.SimulationVSync )
+			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && EngineApp.InitSettings.SimulationVSync )
 				flags |= ResetFlags.Vsync;
-			if( EngineSettings.Init.AnisotropicFiltering )
-				flags |= ResetFlags.MaxAnisotropy;
+			//if( EngineApp.InitSettings.AnisotropicFiltering )
+			flags |= ResetFlags.MaxAnisotropy;
 
 			//!!!!
 			//flags |= ResetFlags.SrgbBackbuffer;
@@ -533,7 +530,6 @@ namespace NeoAxis
 		{
 			OgreNativeWrapper.CheckNativeBridge( (int)ParameterType.TextureCube );// GpuProgramParameters.GetAutoConstantTypeCount() );
 
-			//!!!!new UWP
 			var path = VirtualFileSystem.Directories.PlatformSpecific;
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
 				path = VirtualFileSystem.MakePathRelative( path );
@@ -545,13 +541,20 @@ namespace NeoAxis
 			//set backend for Android
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
 			{
-				EngineSettings.Init.RendererBackend = RendererBackend.OpenGLES;
+				EngineApp.InitSettings.RendererBackend = RendererBackend.OpenGLES;
 				//EngineSettings.Init.RendererBackend = RendererBackend.Vulkan;
+				//EngineSettings.Init.RendererBackend = RendererBackend.Noop;
+			}
+			//set backend for iOS
+			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
+			{
+				EngineApp.InitSettings.RendererBackend = RendererBackend.OpenGLES;
+				//EngineSettings.Init.RendererBackend = RendererBackend.Metal;
 				//EngineSettings.Init.RendererBackend = RendererBackend.Noop;
 			}
 
 			//set platform data
-			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android && EngineSettings.Init.RendererBackend == RendererBackend.OpenGLES )
+			if( ( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android || SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS ) && EngineApp.InitSettings.RendererBackend == RendererBackend.OpenGLES )
 			{
 				//Android, OpenGLES
 				Bgfx.SetPlatformData( new PlatformData { Context = (IntPtr)1 } );
@@ -559,14 +562,14 @@ namespace NeoAxis
 			else
 				Bgfx.SetPlatformData( new PlatformData { WindowHandle = EngineApp.ApplicationWindowHandle } );
 
-			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && EngineSettings.Init.SimulationTripleBuffering )
+			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && EngineApp.InitSettings.SimulationTripleBuffering )
 				Bgfx.SetTripleBuffering();
 
 			//Log.InvisibleInfo( "Renderer backend: " + EngineSettings.Init.RendererBackend.ToString() );
 
 			var initSettings = new InitSettings
 			{
-				Backend = EngineSettings.Init.RendererBackend,
+				Backend = EngineApp.InitSettings.RendererBackend,
 				CallbackHandler = new CallbackHandler(),
 
 				////!!!!в релизе можно включить. в NeoAxis.DefaultSettings.config
@@ -764,7 +767,7 @@ namespace NeoAxis
 			EngineThreading.CheckMainThread();
 
 
-			if( !_EnableInternalLogMessages )
+			if( !EnableInternalLogMessages )
 				return;
 
 			string text = "Renderer: " + message;
@@ -788,7 +791,7 @@ namespace NeoAxis
 					}
 				}
 
-				if( !_InvisibleInternalLogMessages )
+				if( !InvisibleInternalLogMessages )
 				{
 					if( !resourcesInitialized )
 					{
@@ -810,8 +813,8 @@ namespace NeoAxis
 					}
 				}
 
-				if( _InternalLogMessage != null )
-					_InternalLogMessage( t );
+				if( InternalLogMessage != null )
+					InternalLogMessage( t );
 
 				internalLogMessageCalled = true;
 			}
@@ -821,8 +824,8 @@ namespace NeoAxis
 
 			if( !internalLogMessageCalled )
 			{
-				if( _InternalLogMessage != null )
-					_InternalLogMessage( text );
+				if( InternalLogMessage != null )
+					InternalLogMessage( text );
 			}
 		}
 
@@ -845,7 +848,7 @@ namespace NeoAxis
 			{
 				var item = items[ n ];
 				var attachment = new Attachment();
-				attachment.Texture = item.texture.Result.GetRealObject( true );
+				attachment.Texture = item.texture.Result.GetNativeObject( true );
 				attachment.Mip = item.mip;
 				attachment.Layer = item.layer;
 				attachment.Access = ComputeBufferAccess.Write;
@@ -906,18 +909,9 @@ namespace NeoAxis
 			get { return disposed; }
 		}
 
-		public static Metadata.TypeInfo RenderingPipelineDefault
+		public static Metadata.TypeInfo RenderingPipelineBasic
 		{
-			get
-			{
-				if( renderingPipelineDefault == null )
-				{
-					renderingPipelineDefault = MetadataManager.GetType( "NeoAxis.Component_RenderingPipeline_Default" );
-					if( renderingPipelineDefault == null )
-						Log.Fatal( "RendererWord: RenderingPipelineDefault: Get: No \'NeoAxis.Component_RenderingPipeline_Default\' type." );
-				}
-				return renderingPipelineDefault;
-			}
+			get { return MetadataManager.GetTypeOfNetType( typeof( RenderingPipeline_Basic ) ); }
 		}
 
 		public static bool BackendNull
@@ -1111,7 +1105,7 @@ namespace NeoAxis
 			{
 				foreach( var item in occlusionQueries )
 				{
-					if( item.query.Result == SharpBgfx.OcclusionQueryResult.Visible )
+					if( item.query.Result == Internal.SharpBgfx.OcclusionQueryResult.Visible )
 						item.callback( item.callbackParameter, item.query.PassingPixels );
 				}
 
@@ -1122,5 +1116,280 @@ namespace NeoAxis
 				canCreateOcclusionQueriesCounter = 0;
 			}
 		}
+
+		//the parameters must be cached
+
+		static ProjectSettingsPage_Rendering.ShadowTechniqueEnum? shadowTechnique;
+		public static ProjectSettingsPage_Rendering.ShadowTechniqueEnum ShadowTechnique
+		{
+			get
+			{
+				if( shadowTechnique == null )
+				{
+					if( SystemSettings.LimitedDevice )
+						shadowTechnique = ProjectSettings.Get.Rendering.ShadowTechniqueLimitedDevice;
+					else
+						shadowTechnique = ProjectSettings.Get.Rendering.ShadowTechnique;
+				}
+				return shadowTechnique.Value;
+			}
+		}
+
+		static ProjectSettingsPage_Rendering.ShadowTextureFormatEnum? shadowTextureFormat;
+		public static ProjectSettingsPage_Rendering.ShadowTextureFormatEnum ShadowTextureFormat
+		{
+			get
+			{
+				if( shadowTextureFormat == null )
+				{
+					if( SystemSettings.LimitedDevice )
+						shadowTextureFormat = ProjectSettings.Get.Rendering.ShadowTextureFormatLimitedDevice;
+					else
+						shadowTextureFormat = ProjectSettings.Get.Rendering.ShadowTextureFormat;
+				}
+				return shadowTextureFormat.Value;
+			}
+		}
+
+		static ProjectSettingsPage_Rendering.CompressVerticesEnum? compressVertices;
+		public static ProjectSettingsPage_Rendering.CompressVerticesEnum CompressVertices
+		{
+			get
+			{
+				if( compressVertices == null )
+				{
+					if( SystemSettings.LimitedDevice )
+						compressVertices = ProjectSettings.Get.Rendering.CompressVerticesLimitedDevice;
+					else
+						compressVertices = ProjectSettings.Get.Rendering.CompressVertices;
+				}
+				return compressVertices.Value;
+			}
+		}
+
+		static bool? debugMode;
+		public static bool DebugMode
+		{
+			get
+			{
+				if( debugMode == null )
+				{
+					if( SystemSettings.LimitedDevice )
+						debugMode = ProjectSettings.Get.Rendering.DebugModeLimitedDevice;
+					else
+						debugMode = ProjectSettings.Get.Rendering.DebugMode;
+				}
+				return debugMode.Value;
+			}
+		}
+
+		static bool? lightMask;
+		public static bool LightMask
+		{
+			get
+			{
+				if( lightMask == null )
+				{
+					if( SystemSettings.LimitedDevice )
+						lightMask = ProjectSettings.Get.Rendering.LightMaskLimitedDevice;
+					else
+						lightMask = ProjectSettings.Get.Rendering.LightMask;
+				}
+				return lightMask.Value;
+			}
+		}
+
+		static int? displacementMaxSteps;
+		public static int DisplacementMaxSteps
+		{
+			get
+			{
+				if( displacementMaxSteps == null )
+				{
+					if( SystemSettings.LimitedDevice )
+						displacementMaxSteps = ProjectSettings.Get.Rendering.DisplacementMaxStepsLimitedDevice;
+					else
+						displacementMaxSteps = ProjectSettings.Get.Rendering.DisplacementMaxSteps;
+				}
+				return displacementMaxSteps.Value;
+			}
+		}
+
+		static bool? removeTextureTiling;
+		public static bool RemoveTextureTiling
+		{
+			get
+			{
+				if( removeTextureTiling == null )
+				{
+					if( SystemSettings.LimitedDevice )
+						removeTextureTiling = ProjectSettings.Get.Rendering.RemoveTextureTilingLimitedDevice;
+					else
+						removeTextureTiling = ProjectSettings.Get.Rendering.RemoveTextureTiling;
+				}
+				return removeTextureTiling.Value;
+			}
+		}
+
+		static bool? motionVector;
+		public static bool MotionVector
+		{
+			get
+			{
+				if( motionVector == null )
+				{
+					if( SystemSettings.LimitedDevice )
+						motionVector = ProjectSettings.Get.Rendering.MotionVectorLimitedDevice;
+					else
+						motionVector = ProjectSettings.Get.Rendering.MotionVector;
+				}
+				return motionVector.Value;
+			}
+		}
+
+		static int? cutVolumeMaxAmount;
+		public static int CutVolumeMaxAmount
+		{
+			get
+			{
+				if( cutVolumeMaxAmount == null )
+				{
+					if( SystemSettings.LimitedDevice )
+						cutVolumeMaxAmount = ProjectSettings.Get.Rendering.CutVolumeMaxAmountLimitedDevice;
+					else
+						cutVolumeMaxAmount = ProjectSettings.Get.Rendering.CutVolumeMaxAmount;
+				}
+				return cutVolumeMaxAmount.Value;
+			}
+		}
+
+		static bool? fadeByVisibilityDistance;
+		public static bool FadeByVisibilityDistance
+		{
+			get
+			{
+				if( fadeByVisibilityDistance == null )
+				{
+					if( SystemSettings.LimitedDevice )
+						fadeByVisibilityDistance = ProjectSettings.Get.Rendering.FadeByVisibilityDistanceLimitedDevice;
+					else
+						fadeByVisibilityDistance = ProjectSettings.Get.Rendering.FadeByVisibilityDistance;
+				}
+				return fadeByVisibilityDistance.Value;
+			}
+		}
+
+		static bool? fog;
+		public static bool Fog
+		{
+			get
+			{
+				if( fog == null )
+				{
+					if( SystemSettings.LimitedDevice )
+						fog = ProjectSettings.Get.Rendering.FogLimitedDevice;
+					else
+						fog = ProjectSettings.Get.Rendering.Fog;
+				}
+				return fog.Value;
+			}
+		}
+
+		static bool? smoothLOD;
+		public static bool SmoothLOD
+		{
+			get
+			{
+				if( smoothLOD == null )
+				{
+					if( SystemSettings.LimitedDevice )
+						smoothLOD = ProjectSettings.Get.Rendering.SmoothLODLimitedDevice;
+					else
+						smoothLOD = ProjectSettings.Get.Rendering.SmoothLOD;
+				}
+				return smoothLOD.Value;
+			}
+		}
+
+		static bool? normalMapping;
+		public static bool NormalMapping
+		{
+			get
+			{
+				if( normalMapping == null )
+				{
+					if( SystemSettings.LimitedDevice )
+						normalMapping = ProjectSettings.Get.Rendering.NormalMappingLimitedDevice;
+					else
+						normalMapping = ProjectSettings.Get.Rendering.NormalMapping;
+				}
+				return normalMapping.Value;
+			}
+		}
+
+		static bool? skeletalAnimation;
+		public static bool SkeletalAnimation
+		{
+			get
+			{
+				if( skeletalAnimation == null )
+				{
+					if( SystemSettings.LimitedDevice )
+						skeletalAnimation = ProjectSettings.Get.Rendering.SkeletalAnimationLimitedDevice;
+					else
+						skeletalAnimation = ProjectSettings.Get.Rendering.SkeletalAnimation;
+				}
+				return skeletalAnimation.Value;
+			}
+		}
+
+		static bool? billboardData;
+		public static bool BillboardData
+		{
+			get
+			{
+				if( billboardData == null )
+				{
+					if( SystemSettings.LimitedDevice )
+						billboardData = ProjectSettings.Get.Rendering.BillboardDataLimitedDevice;
+					else
+						billboardData = ProjectSettings.Get.Rendering.BillboardData;
+				}
+				return billboardData.Value;
+			}
+		}
+
+		static ProjectSettingsPage_Rendering.MaterialShadingEnum? materialShading;
+		public static ProjectSettingsPage_Rendering.MaterialShadingEnum MaterialShading
+		{
+			get
+			{
+				if( materialShading == null )
+				{
+					if( SystemSettings.LimitedDevice )
+						materialShading = ProjectSettings.Get.Rendering.MaterialShadingLimitedDevice;
+					else
+						materialShading = ProjectSettings.Get.Rendering.MaterialShading;
+				}
+				return materialShading.Value;
+			}
+		}
+
+		static bool? anisotropicFiltering;
+		public static bool AnisotropicFiltering
+		{
+			get
+			{
+				if( anisotropicFiltering == null )
+				{
+					if( SystemSettings.LimitedDevice )
+						anisotropicFiltering = ProjectSettings.Get.Rendering.AnisotropicFilteringLimitedDevice;
+					else
+						anisotropicFiltering = ProjectSettings.Get.Rendering.AnisotropicFiltering;
+				}
+				return anisotropicFiltering.Value;
+			}
+		}
+
 	}
 }

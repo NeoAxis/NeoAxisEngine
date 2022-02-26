@@ -1,11 +1,12 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     internal static class DictionaryExtensions
     {
@@ -194,3 +195,4 @@ namespace LiteDB
         }
     }
 }
+#endif

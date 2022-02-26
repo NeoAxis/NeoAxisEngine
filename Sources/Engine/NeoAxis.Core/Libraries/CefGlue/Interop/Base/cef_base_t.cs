@@ -1,4 +1,5 @@
-﻿namespace Xilium.CefGlue.Interop
+#if !NO_UI_WEB_BROWSER
+namespace Internal.Xilium.CefGlue.Interop
 {
     using System;
     using System.Collections.Generic;
@@ -33,3 +34,5 @@
         public delegate int has_one_ref_delegate(cef_base_t* self);
     }
 }
+
+#endif

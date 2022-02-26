@@ -23,11 +23,11 @@ using System.Diagnostics;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
-using ComponentFactory.Krypton.Toolkit;
-using ComponentFactory.Krypton.Navigator;
-using ComponentFactory.Krypton.Workspace;
+using Internal.ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Navigator;
+using Internal.ComponentFactory.Krypton.Workspace;
 
-namespace ComponentFactory.Krypton.Docking
+namespace Internal.ComponentFactory.Krypton.Docking
 {
     /// <summary>
     /// Manages a hierarchy of docking elements to provide docking windows functionality.

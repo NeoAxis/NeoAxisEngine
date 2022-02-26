@@ -15,7 +15,7 @@ using System.Drawing.Text;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     /// <summary>
     /// Encapsulate the information needed to draw text using the AccurateText class.

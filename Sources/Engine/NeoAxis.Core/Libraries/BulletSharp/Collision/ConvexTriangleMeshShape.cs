@@ -1,8 +1,8 @@
 using System;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class ConvexTriangleMeshShape : PolyhedralConvexAabbCachingShape
 	{
@@ -19,7 +19,7 @@ namespace BulletSharp
 			_meshInterface = meshInterface;
 		}
 
-		public void CalculatePrincipalAxisTransform(Matrix principal, out Vector3 inertia,
+		public void CalculatePrincipalAxisTransform(BMatrix principal, out BVector3 inertia,
 			out double volume)
 		{
 			btConvexTriangleMeshShape_calculatePrincipalAxisTransform(Native, ref principal,

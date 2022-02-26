@@ -35,7 +35,8 @@ namespace RoslynPad.Roslyn
 				typeof(Enumerable),
 				typeof(IEnumerable),
 				typeof(Path),
-				typeof(Assembly)
+				typeof(Assembly),
+				typeof(SearchOption)
 			 }, assemblyReferences: new[]
 			 {
 				typeof(Microsoft.CSharp.RuntimeBinder.Binder).GetTypeInfo().Assembly

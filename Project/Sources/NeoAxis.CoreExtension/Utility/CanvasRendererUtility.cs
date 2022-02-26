@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 
@@ -9,11 +9,11 @@ namespace NeoAxis
 	/// </summary>
 	public static class CanvasRendererUtility
 	{
-		const float shadowDistanceInPixels = 1;
+		public static Vector2 ShadowOffsetInPixels = new Vector2( 1, 1 );
 
 		//
 
-		public static void AddTextWithShadow( Viewport viewport, Component_Font font, double fontSize, string text, Vector2 position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color )
+		public static void AddTextWithShadow( Viewport viewport, FontComponent font, double fontSize, string text, Vector2 position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color )
 		{
 			var renderer = viewport.CanvasRenderer;
 
@@ -24,7 +24,7 @@ namespace NeoAxis
 			if( fontSize < 0 )
 				fontSize = renderer.DefaultFontSize;
 
-			Vector2 shadowOffset = shadowDistanceInPixels / viewport.SizeInPixels.ToVector2();
+			Vector2 shadowOffset = ShadowOffsetInPixels / viewport.SizeInPixels.ToVector2();
 			renderer.AddText( font, fontSize, text, position + shadowOffset, horizontalAlign, verticalAlign, new ColorValue( 0, 0, 0, color.Alpha / 2 ) );
 			renderer.AddText( font, fontSize, text, position, horizontalAlign, verticalAlign, color );
 		}
@@ -34,7 +34,7 @@ namespace NeoAxis
 			AddTextWithShadow( viewport, null, -1, text, position, horizontalAlign, verticalAlign, color );
 		}
 
-		public static void AddTextLinesWithShadow( Viewport viewport, Component_Font font, double fontSize, IList<string> lines, Rectangle rectangle, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color )
+		public static void AddTextLinesWithShadow( Viewport viewport, FontComponent font, double fontSize, IList<string> lines, Rectangle rectangle, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color )
 		{
 			if( lines.Count == 0 )
 				return;
@@ -48,7 +48,7 @@ namespace NeoAxis
 			if( fontSize < 0 )
 				fontSize = renderer.DefaultFontSize;
 
-			Vector2 shadowOffset = shadowDistanceInPixels / viewport.SizeInPixels.ToVector2();
+			Vector2 shadowOffset = ShadowOffsetInPixels / viewport.SizeInPixels.ToVector2();
 			float linesHeight = (float)lines.Count * (float)fontSize;
 
 			double posY = 0;
@@ -96,7 +96,7 @@ namespace NeoAxis
 			AddTextLinesWithShadow( viewport, null, -1, lines, rectangle, horizontalAlign, verticalAlign, color );
 		}
 
-		public static int AddTextWordWrapWithShadow( Viewport viewport, Component_Font font, double fontSize, string text, Rectangle rectangle, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color )
+		public static int AddTextWordWrapWithShadow( Viewport viewport, FontComponent font, double fontSize, string text, Rectangle rectangle, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color )
 		{
 			var renderer = viewport.CanvasRenderer;
 

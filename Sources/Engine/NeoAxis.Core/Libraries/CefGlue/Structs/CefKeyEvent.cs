@@ -1,7 +1,8 @@
-﻿namespace Xilium.CefGlue
+#if !NO_UI_WEB_BROWSER
+namespace Internal.Xilium.CefGlue
 {
     using System;
-    using Xilium.CefGlue.Interop;
+    using Internal.Xilium.CefGlue.Interop;
 
     public sealed class CefKeyEvent
     {
@@ -134,3 +135,5 @@
         #endregion
     }
 }
+
+#endif

@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "OgreStableHeaders.h"
 #include "OgreDebugKeys.h"
 #include "OgreException.h"
@@ -72,15 +72,19 @@ void Fatal(const Ogre::WString& text)
 
 void DebugMessage(const char* text)
 {
-#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
+#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+	printf("NeoAxisCoreNative fatal error: %s\n", text);
+	//char tempBuffer[4096];
+	//sprintf(tempBuffer, "OgreMain fatal error: %s\n", text);
+	//printf(ANDROID_LOG_ERROR, "NeoAxis Engine", tempBuffer);
+#elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE
 	CFStringRef textRef = CFStringCreateWithCString(NULL, text, kCFStringEncodingUTF8);
 	CFUserNotificationDisplayAlert(0, kCFUserNotificationStopAlertLevel, NULL, NULL, NULL,
 		CFSTR("Fatal"), textRef, CFSTR("OK"), NULL, NULL, NULL);
 	CFRelease(textRef);
 #elif defined ANDROID
-	//TO DO: vladimir need visual box
 	char tempBuffer[4096];
-	sprintf(tempBuffer, "OgreMain fatal error: %s\n", text);
+	sprintf(tempBuffer, "NeoAxisCoreNative fatal error: %s\n", text);
 	__android_log_write(ANDROID_LOG_ERROR, "NeoAxis Engine", tempBuffer);
 #elif OGRE_PLATFORM == OGRE_PLATFORM_WIN32
 	MessageBox(NULL, text, "Fatal", MB_OK | MB_ICONEXCLAMATION);

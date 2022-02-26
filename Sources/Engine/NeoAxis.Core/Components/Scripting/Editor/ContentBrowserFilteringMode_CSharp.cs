@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 
@@ -65,7 +65,7 @@ namespace NeoAxis.Editor
 
 	class EditorExtensions_CSharp : EditorExtensions
 	{
-		public override void Register()
+		public override void OnRegister()
 		{
 			ContentBrowser.FilteringModes.Add( new ContentBrowserFilteringMode_CSharp() );
 		}

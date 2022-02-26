@@ -6,7 +6,7 @@
 //using System.Text;
 //using System.Windows.Forms;
 
-//namespace Aga.Controls.Tree
+//namespace Internal.Aga.Controls.Tree
 //{
 //	// TODO: share code with Krypton DpiHelper.  special Shared project or shared folder ?
 

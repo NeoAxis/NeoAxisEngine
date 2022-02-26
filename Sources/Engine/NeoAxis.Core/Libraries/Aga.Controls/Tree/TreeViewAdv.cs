@@ -8,11 +8,11 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Collections;
 
-using Aga.Controls.Tree.NodeControls;
-using Aga.Controls.Threading;
+using Internal.Aga.Controls.Tree.NodeControls;
+using Internal.Aga.Controls.Threading;
 using System.Runtime.InteropServices;
 
-namespace Aga.Controls.Tree
+namespace Internal.Aga.Controls.Tree
 {
 	/// <summary>
 	/// Extensible advanced <see cref="TreeView"/> implemented in 100% managed C# code.

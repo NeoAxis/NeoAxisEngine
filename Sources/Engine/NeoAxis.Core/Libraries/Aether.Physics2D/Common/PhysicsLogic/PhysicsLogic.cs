@@ -3,9 +3,9 @@
  * Microsoft Permissive License (Ms-PL) v1.1
  */
 
-using tainicom.Aether.Physics2D.Dynamics;
+using Internal.tainicom.Aether.Physics2D.Dynamics;
 
-namespace tainicom.Aether.Physics2D.Common.PhysicsLogic
+namespace Internal.tainicom.Aether.Physics2D.Common.PhysicsLogic
 {
     public abstract class PhysicsLogic : FilterData
     {

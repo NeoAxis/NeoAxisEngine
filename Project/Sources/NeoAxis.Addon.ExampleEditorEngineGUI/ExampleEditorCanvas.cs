@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,8 +10,8 @@ using NeoAxis.Editor;
 namespace NeoAxis.Addon.ExampleEditorEngineGUI
 {
 	[AddToResourcesWindow( @"Addons\Example Editor Canvas" )]
-	[EditorDocumentWindow( typeof( ExampleEditorCanvasEditor ) )]
-	public class Component_ExampleEditorCanvas : Component
+	[EditorControl( typeof( ExampleEditorCanvasEditor ) )]
+	public class ExampleEditorCanvas : Component
 	{
 		[Browsable( false )]
 		[Serialize]
@@ -28,7 +28,7 @@ namespace NeoAxis.Addon.ExampleEditorEngineGUI
 			set { if( _displayCircle.BeginSet( ref value ) ) { try { DisplayCircleChanged?.Invoke( this ); } finally { _displayCircle.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayCircle"/> property value changes.</summary>
-		public event Action<Component_ExampleEditorCanvas> DisplayCircleChanged;
+		public event Action<ExampleEditorCanvas> DisplayCircleChanged;
 		ReferenceField<bool> _displayCircle = true;
 	}
 }

@@ -1,11 +1,12 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     /// <summary>
     /// Storage is a special collection to store files and streams.
@@ -247,3 +248,4 @@ namespace LiteDB
         #endregion
     }
 }
+#endif

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
-namespace Aga.Controls.Threading
+namespace Internal.Aga.Controls.Threading
 {
 	public class AbortableThreadPool
 	{

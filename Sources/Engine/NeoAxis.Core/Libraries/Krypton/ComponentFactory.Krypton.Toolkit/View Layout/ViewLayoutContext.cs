@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
 	/// <summary>
 	/// Encapsulates context for view layout operations.

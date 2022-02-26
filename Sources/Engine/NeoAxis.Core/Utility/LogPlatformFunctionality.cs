@@ -1,10 +1,11 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
+using NeoAxis;
 
-namespace NeoAxis
+namespace Internal//NeoAxis
 {
 	/// <summary>
 	/// Internal class for implementing the target platform.
@@ -22,18 +23,23 @@ namespace NeoAxis
 
 		public abstract EDialogResult ShowMessageBox( string text, string caption, EMessageBoxButtons buttons = EMessageBoxButtons.OK );
 
-		public static LogPlatformFunctionality Get()
+		public static LogPlatformFunctionality Instance
 		{
-			if( instance == null )
+			get
 			{
-				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.MacOS )
-					instance = new LogPlatformFunctionalityMacOSX();
-				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
-					Log.Fatal( "LogPlatformFunctionality: Get: Instance must be already initialized." );
-				else
-					instance = new LogPlatformFunctionalityWindows();
+				if( instance == null )
+				{
+					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.MacOS )
+						instance = new LogPlatformFunctionalityMacOSX();
+					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
+						Log.Fatal( "LogPlatformFunctionality: Get: Instance must be already initialized." );
+					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
+						Log.Fatal( "LogPlatformFunctionality: Get: Instance must be already initialized." );
+					else
+						instance = new LogPlatformFunctionalityWindows();
+				}
+				return instance;
 			}
-			return instance;
 		}
 	}
 

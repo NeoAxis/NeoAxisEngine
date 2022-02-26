@@ -1,4 +1,4 @@
-.component NeoAxis.Component_Font
+.component NeoAxis.FontComponent
 {
 	CharacterRanges
 	{

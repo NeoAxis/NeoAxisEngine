@@ -1,11 +1,10 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-using SharpBgfx;
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Internal.SharpBgfx;
 
 namespace NeoAxis
 {
@@ -101,15 +100,9 @@ namespace NeoAxis
 		public static void Fill2DTriangle( Vector2I point0, Vector2I point1, Vector2I point2, RectangleI clipRectangle, DrawPixelDelegate drawPixelCallback )
 		{
 			if( clipRectangle.Left < 0 )
-			{
-				throw new NotSupportedException(
-					"Geometry2D.FillTriangle: clipRectangle.Left < 0 is not supported." );
-			}
+				throw new NotSupportedException( "MathAlgorithms: Fill2DTriangle: clipRectangle.Left < 0 is not supported." );
 			if( clipRectangle.Top < 0 )
-			{
-				throw new NotSupportedException(
-					"Geometry2D.FillTriangle: clipRectangle.Top < 0 is not supported." );
-			}
+				throw new NotSupportedException( "MathAlgorithms: Fill2DTriangle: clipRectangle.Top < 0 is not supported." );
 
 			int minY = Math.Min( Math.Min( point0.Y, point1.Y ), point2.Y );
 			int maxY = Math.Max( Math.Max( point0.Y, point1.Y ), point2.Y );
@@ -149,8 +142,7 @@ namespace NeoAxis
 			return result;
 		}
 
-		public static void ProjectPointToLine( ref Vector2F lineStart, ref Vector2F lineEnd, ref Vector2F point,
-			out Vector2F result )
+		public static void ProjectPointToLine( ref Vector2F lineStart, ref Vector2F lineEnd, ref Vector2F point, out Vector2F result )
 		{
 			Vector2F d;
 			Vector2F.Subtract( ref lineEnd, ref lineStart, out d );
@@ -173,8 +165,7 @@ namespace NeoAxis
 			return result;
 		}
 
-		public static void ProjectPointToLine( ref Vector3F lineStart, ref Vector3F lineEnd, ref Vector3F point,
-			out Vector3F result )
+		public static void ProjectPointToLine( ref Vector3F lineStart, ref Vector3F lineEnd, ref Vector3F point, out Vector3F result )
 		{
 			Vector3F d;
 			Vector3F.Subtract( ref lineEnd, ref lineStart, out d );
@@ -342,21 +333,17 @@ namespace NeoAxis
 			return true;
 		}
 
-		public static bool IntersectLineLine( Vector2F pt11, Vector2F pt12, Vector2F pt21, Vector2F pt22,
-			out float scale )
+		public static bool IntersectLineLine( Vector2F pt11, Vector2F pt12, Vector2F pt21, Vector2F pt22, out float scale )
 		{
-			float d = ( pt12.Y - pt11.Y ) * ( pt21.X - pt22.X ) -
-				( pt21.Y - pt22.Y ) * ( pt12.X - pt11.X );
+			float d = ( pt12.Y - pt11.Y ) * ( pt21.X - pt22.X ) - ( pt21.Y - pt22.Y ) * ( pt12.X - pt11.X );
 			if( d == 0.0f )
 			{
 				scale = 0;
 				return false;
 			}
 
-			float d1 = ( pt12.Y - pt11.Y ) * ( pt21.X - pt11.X ) -
-				( pt21.Y - pt11.Y ) * ( pt12.X - pt11.X );
-			float d2 = ( pt21.Y - pt11.Y ) * ( pt21.X - pt22.X ) -
-				( pt21.Y - pt22.Y ) * ( pt21.X - pt11.X );
+			float d1 = ( pt12.Y - pt11.Y ) * ( pt21.X - pt11.X ) - ( pt21.Y - pt11.Y ) * ( pt12.X - pt11.X );
+			float d2 = ( pt21.Y - pt11.Y ) * ( pt21.X - pt22.X ) - ( pt21.Y - pt22.Y ) * ( pt21.X - pt11.X );
 
 			float dInv = 1.0f / d;
 			float t1 = d1 * dInv;
@@ -371,21 +358,17 @@ namespace NeoAxis
 			return true;
 		}
 
-		public static bool IntersectRayRay( Vector2F pt11, Vector2F pt12, Vector2F pt21,
-			Vector2F pt22, out Vector2F intersectPoint )
+		public static bool IntersectRayRay( Vector2F pt11, Vector2F pt12, Vector2F pt21, Vector2F pt22, out Vector2F intersectPoint )
 		{
-			float d = ( pt12.Y - pt11.Y ) * ( pt21.X - pt22.X ) -
-				( pt21.Y - pt22.Y ) * ( pt12.X - pt11.X );
+			float d = ( pt12.Y - pt11.Y ) * ( pt21.X - pt22.X ) - ( pt21.Y - pt22.Y ) * ( pt12.X - pt11.X );
 			if( d == 0.0f )
 			{
 				intersectPoint = Vector2F.Zero;
 				return false;
 			}
 
-			float d1 = ( pt12.Y - pt11.Y ) * ( pt21.X - pt11.X ) -
-				( pt21.Y - pt11.Y ) * ( pt12.X - pt11.X );
-			float d2 = ( pt21.Y - pt11.Y ) * ( pt21.X - pt22.X ) -
-				( pt21.Y - pt22.Y ) * ( pt21.X - pt11.X );
+			float d1 = ( pt12.Y - pt11.Y ) * ( pt21.X - pt11.X ) - ( pt21.Y - pt11.Y ) * ( pt12.X - pt11.X );
+			float d2 = ( pt21.Y - pt11.Y ) * ( pt21.X - pt22.X ) - ( pt21.Y - pt22.Y ) * ( pt21.X - pt11.X );
 
 			float dInv = 1.0f / d;
 			//float t1 = d1 * dInv;
@@ -396,8 +379,7 @@ namespace NeoAxis
 			return true;
 		}
 
-		public static int IntersectRectangleLine( RectangleF rectangle, Vector2F pt1, Vector2F pt2,
-			out Vector2F intersectPoint1, out Vector2F intersectPoint2 )
+		public static int IntersectRectangleLine( RectangleF rectangle, Vector2F pt1, Vector2F pt2, out Vector2F intersectPoint1, out Vector2F intersectPoint2 )
 		{
 			intersectPoint1 = Vector2F.Zero;
 			intersectPoint2 = Vector2F.Zero;
@@ -555,7 +537,7 @@ namespace NeoAxis
 			return true;
 		}
 
-		public static int[] RemoveDegenerateTriangles( Vector3F[] vertices, int[] indices )
+		public static int[] RemoveDegenerateTriangles( Vector3F[] vertices, int[] indices, float epsilon = float.Epsilon )
 		{
 			int[] tempIndices = new int[ indices.Length ];
 			int indexCount = 0;
@@ -570,7 +552,7 @@ namespace NeoAxis
 				Vector3F p1 = vertices[ index1 ];
 				Vector3F p2 = vertices[ index2 ];
 
-				if( !IsDegenerateTriangle( ref p0, ref p1, ref p2 ) )
+				if( !IsDegenerateTriangle( ref p0, ref p1, ref p2, epsilon ) )
 				{
 					tempIndices[ indexCount++ ] = index0;
 					tempIndices[ indexCount++ ] = index1;
@@ -620,8 +602,7 @@ namespace NeoAxis
 			return MathEx.Acos( cos );
 		}
 
-		public static Vector3F CalculateTangentSpaceVector( Vector3F position1, Vector2F texCoord1,
-			Vector3F position2, Vector2F texCoord2, Vector3F position3, Vector2F texCoord3 )
+		public static Vector3F CalculateTangentSpaceVector( Vector3F position1, Vector2F texCoord1, Vector3F position2, Vector2F texCoord2, Vector3F position3, Vector2F texCoord3 )
 		{
 			Vector3F result;
 			CalculateTangentSpaceVector( ref position1, ref texCoord1, ref position2,
@@ -629,9 +610,7 @@ namespace NeoAxis
 			return result;
 		}
 
-		public static void CalculateTangentSpaceVector( ref Vector3F position1, ref Vector2F texCoord1,
-			ref Vector3F position2, ref Vector2F texCoord2, ref Vector3F position3, ref Vector2F texCoord3,
-			out Vector3F result )
+		public static void CalculateTangentSpaceVector( ref Vector3F position1, ref Vector2F texCoord1, ref Vector3F position2, ref Vector2F texCoord2, ref Vector3F position3, ref Vector2F texCoord3, out Vector3F result )
 		{
 			//side0 is the vector along one side of the triangle of vertices passed in, 
 			//and side1 is the vector along another side. Taking the cross product of these returns the normal.
@@ -677,8 +656,7 @@ namespace NeoAxis
 			result = tangent;
 		}
 
-		public static int IntersectCircleLine( Vector2F center, float radius, Vector2F point1, Vector2F point2,
-			out float outScale1, out float outScale2 )
+		public static int IntersectCircleLine( Vector2F center, float radius, Vector2F point1, Vector2F point2, out float outScale1, out float outScale2 )
 		{
 			outScale1 = 0;
 			outScale2 = 0;
@@ -848,8 +826,7 @@ namespace NeoAxis
 			return result;
 		}
 
-		public static void ProjectPointToLine( ref Vector2 lineStart, ref Vector2 lineEnd, ref Vector2 point,
-			out Vector2 result )
+		public static void ProjectPointToLine( ref Vector2 lineStart, ref Vector2 lineEnd, ref Vector2 point, out Vector2 result )
 		{
 			Vector2 d;
 			Vector2.Subtract( ref lineEnd, ref lineStart, out d );
@@ -872,8 +849,7 @@ namespace NeoAxis
 			return result;
 		}
 
-		public static void ProjectPointToLine( ref Vector3 lineStart, ref Vector3 lineEnd, ref Vector3 point,
-			out Vector3 result )
+		public static void ProjectPointToLine( ref Vector3 lineStart, ref Vector3 lineEnd, ref Vector3 point, out Vector3 result )
 		{
 			Vector3 d;
 			Vector3.Subtract( ref lineEnd, ref lineStart, out d );
@@ -1012,21 +988,17 @@ namespace NeoAxis
 			return IntersectTriangleRay( ref p0, ref p1, ref p2, ref ray, out scale );
 		}
 
-		public static bool IntersectLineLine( Vector2 pt11, Vector2 pt12, Vector2 pt21,
-		Vector2 pt22, out Vector2 intersectPoint )
+		public static bool IntersectLineLine( Vector2 pt11, Vector2 pt12, Vector2 pt21, Vector2 pt22, out Vector2 intersectPoint )
 		{
-			double d = ( pt12.Y - pt11.Y ) * ( pt21.X - pt22.X ) -
-				( pt21.Y - pt22.Y ) * ( pt12.X - pt11.X );
+			double d = ( pt12.Y - pt11.Y ) * ( pt21.X - pt22.X ) - ( pt21.Y - pt22.Y ) * ( pt12.X - pt11.X );
 			if( d == 0.0 )
 			{
 				intersectPoint = Vector2.Zero;
 				return false;
 			}
 
-			double d1 = ( pt12.Y - pt11.Y ) * ( pt21.X - pt11.X ) -
-				( pt21.Y - pt11.Y ) * ( pt12.X - pt11.X );
-			double d2 = ( pt21.Y - pt11.Y ) * ( pt21.X - pt22.X ) -
-				( pt21.Y - pt22.Y ) * ( pt21.X - pt11.X );
+			double d1 = ( pt12.Y - pt11.Y ) * ( pt21.X - pt11.X ) - ( pt21.Y - pt11.Y ) * ( pt12.X - pt11.X );
+			double d2 = ( pt21.Y - pt11.Y ) * ( pt21.X - pt22.X ) - ( pt21.Y - pt22.Y ) * ( pt21.X - pt11.X );
 
 			double dInv = 1.0 / d;
 			double t1 = d1 * dInv;
@@ -1042,21 +1014,17 @@ namespace NeoAxis
 			return true;
 		}
 
-		public static bool IntersectLineLine( Vector2 pt11, Vector2 pt12, Vector2 pt21, Vector2 pt22,
-			out double scale )
+		public static bool IntersectLineLine( Vector2 pt11, Vector2 pt12, Vector2 pt21, Vector2 pt22, out double scale )
 		{
-			double d = ( pt12.Y - pt11.Y ) * ( pt21.X - pt22.X ) -
-				( pt21.Y - pt22.Y ) * ( pt12.X - pt11.X );
+			double d = ( pt12.Y - pt11.Y ) * ( pt21.X - pt22.X ) - ( pt21.Y - pt22.Y ) * ( pt12.X - pt11.X );
 			if( d == 0.0 )
 			{
 				scale = 0;
 				return false;
 			}
 
-			double d1 = ( pt12.Y - pt11.Y ) * ( pt21.X - pt11.X ) -
-				( pt21.Y - pt11.Y ) * ( pt12.X - pt11.X );
-			double d2 = ( pt21.Y - pt11.Y ) * ( pt21.X - pt22.X ) -
-				( pt21.Y - pt22.Y ) * ( pt21.X - pt11.X );
+			double d1 = ( pt12.Y - pt11.Y ) * ( pt21.X - pt11.X ) - ( pt21.Y - pt11.Y ) * ( pt12.X - pt11.X );
+			double d2 = ( pt21.Y - pt11.Y ) * ( pt21.X - pt22.X ) - ( pt21.Y - pt22.Y ) * ( pt21.X - pt11.X );
 
 			double dInv = 1.0 / d;
 			double t1 = d1 * dInv;
@@ -1071,21 +1039,17 @@ namespace NeoAxis
 			return true;
 		}
 
-		public static bool IntersectRayRay( Vector2 pt11, Vector2 pt12, Vector2 pt21,
-			Vector2 pt22, out Vector2 intersectPoint )
+		public static bool IntersectRayRay( Vector2 pt11, Vector2 pt12, Vector2 pt21, Vector2 pt22, out Vector2 intersectPoint )
 		{
-			double d = ( pt12.Y - pt11.Y ) * ( pt21.X - pt22.X ) -
-				( pt21.Y - pt22.Y ) * ( pt12.X - pt11.X );
+			double d = ( pt12.Y - pt11.Y ) * ( pt21.X - pt22.X ) - ( pt21.Y - pt22.Y ) * ( pt12.X - pt11.X );
 			if( d == 0.0 )
 			{
 				intersectPoint = Vector2.Zero;
 				return false;
 			}
 
-			double d1 = ( pt12.Y - pt11.Y ) * ( pt21.X - pt11.X ) -
-				( pt21.Y - pt11.Y ) * ( pt12.X - pt11.X );
-			double d2 = ( pt21.Y - pt11.Y ) * ( pt21.X - pt22.X ) -
-				( pt21.Y - pt22.Y ) * ( pt21.X - pt11.X );
+			double d1 = ( pt12.Y - pt11.Y ) * ( pt21.X - pt11.X ) - ( pt21.Y - pt11.Y ) * ( pt12.X - pt11.X );
+			double d2 = ( pt21.Y - pt11.Y ) * ( pt21.X - pt22.X ) - ( pt21.Y - pt22.Y ) * ( pt21.X - pt11.X );
 
 			double dInv = 1.0 / d;
 			//double t1 = d1 * dInv;
@@ -1096,8 +1060,7 @@ namespace NeoAxis
 			return true;
 		}
 
-		public static int IntersectRectangleLine( Rectangle rectangle, Vector2 pt1, Vector2 pt2,
-			out Vector2 intersectPoint1, out Vector2 intersectPoint2 )
+		public static int IntersectRectangleLine( Rectangle rectangle, Vector2 pt1, Vector2 pt2, out Vector2 intersectPoint1, out Vector2 intersectPoint2 )
 		{
 			intersectPoint1 = Vector2.Zero;
 			intersectPoint2 = Vector2.Zero;
@@ -1220,18 +1183,14 @@ namespace NeoAxis
 			return Math.Acos( cos );
 		}
 
-		public static Vector3 CalculateTangentSpaceVector( Vector3 position1, Vector2 texCoord1,
-			Vector3 position2, Vector2 texCoord2, Vector3 position3, Vector2 texCoord3 )
+		public static Vector3 CalculateTangentSpaceVector( Vector3 position1, Vector2 texCoord1, Vector3 position2, Vector2 texCoord2, Vector3 position3, Vector2 texCoord3 )
 		{
 			Vector3 result;
-			CalculateTangentSpaceVector( ref position1, ref texCoord1, ref position2,
-				ref texCoord2, ref position3, ref texCoord3, out result );
+			CalculateTangentSpaceVector( ref position1, ref texCoord1, ref position2, ref texCoord2, ref position3, ref texCoord3, out result );
 			return result;
 		}
 
-		public static void CalculateTangentSpaceVector( ref Vector3 position1, ref Vector2 texCoord1,
-			ref Vector3 position2, ref Vector2 texCoord2, ref Vector3 position3, ref Vector2 texCoord3,
-			out Vector3 result )
+		public static void CalculateTangentSpaceVector( ref Vector3 position1, ref Vector2 texCoord1, ref Vector3 position2, ref Vector2 texCoord2, ref Vector3 position3, ref Vector2 texCoord3, out Vector3 result )
 		{
 			//side0 is the vector along one side of the triangle of vertices passed in, 
 			//and side1 is the vector along another side. Taking the cross product of these returns the normal.
@@ -1277,8 +1236,7 @@ namespace NeoAxis
 			result = tangent;
 		}
 
-		public static int IntersectCircleLine( Vector2 center, double radius, Vector2 point1, Vector2 point2,
-			out double outScale1, out double outScale2 )
+		public static int IntersectCircleLine( Vector2 center, double radius, Vector2 point1, Vector2 point2, out double outScale1, out double outScale2 )
 		{
 			outScale1 = 0;
 			outScale2 = 0;
@@ -1454,7 +1412,7 @@ namespace NeoAxis
 			return ( ( normalized.X * normalized.X ) / ( xRadius * xRadius ) ) + ( ( normalized.Y * normalized.Y ) / ( yRadius * yRadius ) ) <= 1.0;
 		}
 
-		public static Sphere BoundingSphereFromPoints( Vector3[] points )
+		public static Sphere BoundingSphereFromPoints( IEnumerable<Vector3> points )
 		{
 			//!!!!can be better
 
@@ -1475,7 +1433,7 @@ namespace NeoAxis
 			return new Sphere( center, Math.Sqrt( radiusSquared ) );
 		}
 
-		public static SphereF BoundingSphereFromPoints( Vector3F[] points )
+		public static SphereF BoundingSphereFromPoints( IEnumerable<Vector3F> points )
 		{
 			//!!!!can be better
 
@@ -1775,7 +1733,7 @@ namespace NeoAxis
 			}
 		}
 
-		static void MergeEqualVerticesSortByAxisMethod( ref StandardVertex[] vertices, ref int[] indices, float epsilon, int axis )
+		static void MergeEqualVerticesSortByAxisMethod( ref StandardVertex[] vertices, ref int[] indices, float epsilonPosition, float epsilonOtherChannels, int axis )
 		{
 			var verticesLocal = vertices;
 
@@ -1807,7 +1765,7 @@ namespace NeoAxis
 			{
 				ref var v = ref verticesLocal[ index ];
 
-				if( current.Equals( ref v, epsilon ) )
+				if( current.Equals( ref v, epsilonPosition, epsilonOtherChannels ) )
 				{
 					vertexMapping[ index ] = newVertices.Count - 1;
 					found = true;
@@ -2029,17 +1987,17 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="vertices"></param>
 		/// <param name="indices"></param>
-		/// <param name="epsilon"></param>
-		public static void MergeEqualVertices( ref StandardVertex[] vertices, ref int[] indices, float epsilon )//, bool fastMethod = true )
+		/// <param name="positionEpsilon"></param>
+		public static void MergeEqualVertices( ref StandardVertex[] vertices, ref int[] indices, float positionEpsilon, float otherChannelsEpsilon )//, bool fastMethod = true )
 		{
 			if( vertices.Length == 0 || indices.Length == 0 )
 				return;
 
 			//if( fastMethod )
 			//{
-			MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, epsilon, 0 );
-			MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, epsilon, 1 );
-			MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, epsilon, 2 );
+			MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, positionEpsilon, otherChannelsEpsilon, 0 );
+			MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, positionEpsilon, otherChannelsEpsilon, 1 );
+			MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, positionEpsilon, otherChannelsEpsilon, 2 );
 			//}
 			//else
 			//{
@@ -2289,10 +2247,15 @@ namespace NeoAxis
 			var indices = sourceIndices;
 			int[] trianglesToSourceIndex;
 
+			MergeEqualVertices( ref vertices, ref indices, positionEpsilon, true );
 			RemoveCollinearDegenerateTriangles( vertices, ref indices, out trianglesToSourceIndex, emptySquareEpsilon );
 			RemoveUnusedVertices( ref vertices, ref indices );
-			MergeEqualVertices( ref vertices, ref indices, positionEpsilon, true );
 			CheckValidVertexIndexBuffer( vertices.Length, indices, true );
+
+			//RemoveCollinearDegenerateTriangles( vertices, ref indices, out trianglesToSourceIndex, emptySquareEpsilon );
+			//RemoveUnusedVertices( ref vertices, ref indices );
+			//MergeEqualVertices( ref vertices, ref indices, positionEpsilon, true );
+			//CheckValidVertexIndexBuffer( vertices.Length, indices, true );
 
 			processedVertices = vertices;
 			processedIndices = indices;
@@ -2308,7 +2271,7 @@ namespace NeoAxis
 		/// <param name="processedVertices"></param>
 		/// <param name="processedIndices"></param>
 		/// <param name="processedTrianglesToSourceIndex"></param>
-		public static void MergeEqualVerticesRemoveInvalidTriangles( StandardVertex[] sourceVertices, int[] sourceIndices, float emptySquareEpsilon, float vertexEpsilon, out StandardVertex[] processedVertices, out int[] processedIndices, out int[] processedTrianglesToSourceIndex )
+		public static void MergeEqualVerticesRemoveInvalidTriangles( StandardVertex[] sourceVertices, int[] sourceIndices, float emptySquareEpsilon, float vertexPositionEpsilon, float vertexOtherChannelsEpsilon, out StandardVertex[] processedVertices, out int[] processedIndices, out int[] processedTrianglesToSourceIndex )
 		{
 			var vertices = sourceVertices;
 			var indices = sourceIndices;
@@ -2316,10 +2279,15 @@ namespace NeoAxis
 
 			//!!!!optimization: use indexes of vertex data. no copy data in memory
 
+			MergeEqualVertices( ref vertices, ref indices, vertexPositionEpsilon, vertexOtherChannelsEpsilon );//, true );
 			RemoveCollinearDegenerateTriangles( vertices, ref indices, out trianglesToSourceIndex, emptySquareEpsilon );
 			RemoveUnusedVertices( ref vertices, ref indices );
-			MergeEqualVertices( ref vertices, ref indices, vertexEpsilon );//, true );
 			CheckValidVertexIndexBuffer( vertices.Length, indices, true );
+
+			//RemoveCollinearDegenerateTriangles( vertices, ref indices, out trianglesToSourceIndex, emptySquareEpsilon );
+			//RemoveUnusedVertices( ref vertices, ref indices );
+			//MergeEqualVertices( ref vertices, ref indices, vertexEpsilon );//, true );
+			//CheckValidVertexIndexBuffer( vertices.Length, indices, true );
 
 			processedVertices = vertices;
 			processedIndices = indices;
@@ -2542,5 +2510,147 @@ namespace NeoAxis
 			return result;
 		}
 
+		public static Vector3[] ClipPolygonByPlane( Vector3[] vertices, Plane plane )
+		{
+			if( vertices.Length == 0 )
+				return Array.Empty<Vector3>();
+
+			var vertexCount = vertices.Length;
+
+			unsafe
+			{
+				double* distances = stackalloc double[ vertexCount ];
+				for( int i = 0; i < vertexCount; i++ )
+					distances[ i ] = plane.GetDistance( vertices[ i ] );
+
+				//!!!!GC
+				var result = new List<Vector3>( vertices.Length + 2 );
+
+				for( int i = 0, j = vertexCount - 1; i < vertexCount; j = i, i++ )
+				{
+					bool inj = distances[ j ] >= 0;
+					bool ini = distances[ i ] >= 0;
+
+					if( inj != ini )
+					{
+						double s = distances[ j ] / ( distances[ j ] - distances[ i ] );
+						var outVertex = vertices[ j ] + ( vertices[ i ] - vertices[ j ] ) * s;
+						result.Add( outVertex );
+					}
+
+					if( ini )
+						result.Add( vertices[ i ] );
+				}
+
+				if( result.Count == 0 )
+					return Array.Empty<Vector3>();
+				return result.ToArray();
+			}
+		}
+
+		public static void ConvexHullFromMesh( Vector3[] vertices, int[] indices, out Vector3[] resultVertices, out int[] resultIndices, double epsilon = 1e-10 )
+		{
+			ConvexHullAlgorithm.Calculate( vertices, indices, out resultVertices, out resultIndices, epsilon );
+		}
+
+		public static void ConvexHullFromMesh( Vector3[] vertices, out Vector3[] resultVertices, out int[] resultIndices, double epsilon = 1e-10 )
+		{
+			ConvexHullAlgorithm.Calculate( vertices, null, out resultVertices, out resultIndices, epsilon );
+		}
+
+		public static void ConvexHullFromMesh( Vector3[] vertices, int[] indices, out Vector3[] resultVertices, out int[] resultIndices, out Plane[] resultPlanes, double epsilon = 1e-10 )
+		{
+			ConvexHullAlgorithm.Calculate( vertices, indices, out resultVertices, out resultIndices, out resultPlanes, epsilon );
+		}
+
+		public static void ConvexHullFromMesh( Vector3[] vertices, out Vector3[] resultVertices, out int[] resultIndices, out Plane[] resultPlanes, double epsilon = 1e-10 )
+		{
+			ConvexHullAlgorithm.Calculate( vertices, null, out resultVertices, out resultIndices, out resultPlanes, epsilon );
+		}
+
+		//public static void ConvexHullFromMesh( Vector3[] vertices, int[] indices, out Plane[] resultPlanes, double epsilon = 1e-10 )
+		//{
+		//	ConvexHullAlgorithm.Calculate( vertices, indices, out resultVertices, out resultIndices, out resultPlanes, epsilon );
+		//}
+
+		//public static void ConvexHullFromMesh( Vector3[] vertices, out Plane[] resultPlanes, double epsilon = 1e-10 )
+		//{
+		//	ConvexHullAlgorithm.Calculate( vertices, out resultVertices, out resultIndices, out resultPlanes, epsilon );
+		//}
+
+		public static unsafe ConvexDecomposition.Cluster[] ConvexDecompose( Vector3F[] vertices, int[] indices, int maxConvexHulls, int maxConvexTriangles = 64, double minConvexVolume = 0.0001, bool convexApproximation = true, int maxResolution = 100000, double maxConcavity = 0.0025, double alpha = 0.05, double beta = 0.05, int planeDownsampling = 4, int hullDownsampling = 4, bool normalizeMesh = false, bool tetrahedronMode = false )
+		{
+			return ConvexDecomposition.Decompose( vertices, indices, maxConvexHulls, maxConvexTriangles, minConvexVolume, convexApproximation, maxResolution, maxConcavity, alpha, beta, planeDownsampling, hullDownsampling, normalizeMesh, tetrahedronMode );
+		}
+
+		public static bool PointInTriangle( ref Vector2 point, ref Vector2 v1, ref Vector2 v2, ref Vector2 v3 )
+		{
+			double Sign( ref Vector2 p1, ref Vector2 p2, ref Vector2 p3 )
+			{
+				return ( p1.X - p3.X ) * ( p2.Y - p3.Y ) - ( p2.X - p3.X ) * ( p1.Y - p3.Y );
+			}
+
+			var d1 = Sign( ref point, ref v1, ref v2 );
+			var d2 = Sign( ref point, ref v2, ref v3 );
+			var d3 = Sign( ref point, ref v3, ref v1 );
+
+			var has_neg = ( d1 < 0 ) || ( d2 < 0 ) || ( d3 < 0 );
+			var has_pos = ( d1 > 0 ) || ( d2 > 0 ) || ( d3 > 0 );
+
+			return !( has_neg && has_pos );
+		}
+
+		public static bool PointInTriangle( Vector2 point, Vector2 v1, Vector2 v2, Vector2 v3 )
+		{
+			return PointInTriangle( ref point, ref v1, ref v2, ref v3 );
+		}
+
+		/// <summary>
+		/// Computes barycentric coordinates (u, v, w) for point with respect to triangle.
+		/// </summary>
+		/// <param name="vertex0"></param>
+		/// <param name="vertex1"></param>
+		/// <param name="vertex2"></param>
+		/// <param name="point"></param>
+		/// <param name="u"></param>
+		/// <param name="v"></param>
+		/// <param name="w"></param>
+		public static void CalculateBarycentricCoordinates( ref Vector3F vertex0, ref Vector3F vertex1, ref Vector3F vertex2, ref Vector3F point, out float u, out float v, out float w )
+		{
+			Vector3F v0 = vertex1 - vertex0, v1 = vertex2 - vertex0, v2 = point - vertex0;
+			float d00 = Vector3F.Dot( ref v0, ref v0 );
+			float d01 = Vector3F.Dot( ref v0, ref v1 );
+			float d11 = Vector3F.Dot( ref v1, ref v1 );
+			float d20 = Vector3F.Dot( ref v2, ref v0 );
+			float d21 = Vector3F.Dot( ref v2, ref v1 );
+			float denom = d00 * d11 - d01 * d01;
+			if( denom != 0 )
+			{
+				v = ( d11 * d20 - d01 * d21 ) / denom;
+				w = ( d00 * d21 - d01 * d20 ) / denom;
+				u = 1.0f - v - w;
+			}
+			else
+			{
+				v = 1;
+				w = 0;
+				u = 0;
+			}
+		}
+
+		/// <summary>
+		/// Computes barycentric coordinates (u, v, w) for point with respect to triangle.
+		/// </summary>
+		/// <param name="vertex0"></param>
+		/// <param name="vertex1"></param>
+		/// <param name="vertex2"></param>
+		/// <param name="point"></param>
+		/// <param name="u"></param>
+		/// <param name="v"></param>
+		/// <param name="w"></param>
+		public static void CalculateBarycentricCoordinates( Vector3F vertex0, Vector3F vertex1, Vector3F vertex2, Vector3F point, out float u, out float v, out float w )
+		{
+			CalculateBarycentricCoordinates( ref vertex0, ref vertex1, ref vertex2, ref point, out u, out v, out w );
+		}
 	}
 }

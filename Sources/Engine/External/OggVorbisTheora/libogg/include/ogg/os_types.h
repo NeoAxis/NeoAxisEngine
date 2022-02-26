@@ -35,6 +35,9 @@
 #ifdef _WIN32
 	#include <malloc.h>
 #endif
+#ifdef IOS
+    #include <string.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include "MemoryManager.h"

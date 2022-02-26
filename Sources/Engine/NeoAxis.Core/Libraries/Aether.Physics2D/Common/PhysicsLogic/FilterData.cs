@@ -3,9 +3,9 @@
  * Microsoft Permissive License (Ms-PL) v1.1
  */
 
-using tainicom.Aether.Physics2D.Dynamics;
+using Internal.tainicom.Aether.Physics2D.Dynamics;
 
-namespace tainicom.Aether.Physics2D.Common.PhysicsLogic
+namespace Internal.tainicom.Aether.Physics2D.Common.PhysicsLogic
 {
     /// <summary>
     /// Contains filter data that can determine whether an object should be processed or not.
@@ -42,9 +42,6 @@ namespace tainicom.Aether.Physics2D.Common.PhysicsLogic
         public virtual bool IsActiveOn(Body body)
         {
             if (body == null || !body.Enabled || body.BodyType == BodyType.Static)
-                return false;
-
-            if (body.FixtureList == null)
                 return false;
 
             foreach (Fixture fixture in body.FixtureList)

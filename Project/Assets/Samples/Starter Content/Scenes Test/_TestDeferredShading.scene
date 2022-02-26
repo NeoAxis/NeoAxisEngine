@@ -1,4 +1,4 @@
-.component NeoAxis.Component_Scene
+.component NeoAxis.Scene
 {
 	BackgroundColor = 0 0 0
 	DisplayTextInfo = True
@@ -10,21 +10,21 @@
 	{
 		GetByReference = "this:$Camera Editor"
 	}
-	.component NeoAxis.Component_Camera
+	.component NeoAxis.Camera
 	{
 		Name = Camera Editor
 		Visible = False
 		Transform = "17.9057720937299 -5.57771294955442 -11.5459934905413; -0.244602938612948 0.102820593801257 0.888821460791292 0.373622454824521; 1 1 1"
 		FieldOfView = 70
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Ambient Light
 		Transform = "-27.7871391969358 37.4683781031502 14.686420383686; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
 		Brightness = 4094.691316893
 	}
-	.component NeoAxis.Component_RenderingPipeline_Default
+	.component NeoAxis.RenderingPipeline_Basic
 	{
 		Name = Rendering Pipeline
 		ShadowDirectionalLightCascades = 1
@@ -36,16 +36,20 @@
 		.component NeoAxis.Component
 		{
 			Name = Scene Effects
-			.component NeoAxis.Component_RenderingEffect_Sharpen
+			.component NeoAxis.RenderingEffect_Antialiasing
+			{
+				Name = Antialiasing
+			}
+			.component NeoAxis.RenderingEffect_ResolutionUpscale
+			{
+				Name = Resolution Upscale
+			}
+			.component NeoAxis.RenderingEffect_Sharpen
 			{
 				Name = Sharpen
 				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
 			}
-			.component NeoAxis.Component_RenderingEffect_Antialiasing
-			{
-				Name = Antialiasing
-			}
-			.component NeoAxis.Component_RenderingEffect_ShowRenderTarget
+			.component NeoAxis.RenderingEffect_ShowRenderTarget
 			{
 				Enabled = False
 				Name = Show Render Target
@@ -53,11 +57,11 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_GameMode
+	.component NeoAxis.GameMode
 	{
 		Name = Game Mode
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Enabled = False
 		Name = Light1
@@ -69,18 +73,18 @@
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 90
 	}
-	.component NeoAxis.Component_Material
+	.component NeoAxis.Material
 	{
 		Name = Material Standard
 		BaseColor
 		{
 			GetByReference = "this:$Flowchart\\$Node Shader Texture Sample 1\\$Shader Texture Sample\\RGBA"
 		}
-		.component NeoAxis.Component_FlowGraph
+		.component NeoAxis.FlowGraph
 		{
 			Name = Flowchart
 			EditorScrollPosition = 7.18518518518518 -0.796296296296294
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Flowchart Node
 				Position = 13 -10
@@ -89,7 +93,7 @@
 					GetByReference = "this:..\\.."
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Shader Texture Sample 1
 				Position = -12 -13
@@ -97,7 +101,7 @@
 				{
 					GetByReference = "this:$Shader Texture Sample"
 				}
-				.component NeoAxis.Component_ShaderTextureSample
+				.component NeoAxis.ShaderTextureSample
 				{
 					Name = Shader Texture Sample
 					Location2 = 0 0
@@ -110,7 +114,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Enabled = False
 		Name = Light2
@@ -118,7 +122,7 @@
 		Type = Point
 		Brightness = 514788.5
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light4
 		Transform = "13.0484878794768 -2.71432365730669 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -127,7 +131,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light17
 		Transform = "8.49020881061456 -2.71432365730669 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -136,7 +140,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light24
 		Transform = "8.49020881061456 1.07552918414397 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -145,7 +149,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light31
 		Transform = "13.4377498701134 1.07552918414397 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -154,7 +158,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light38
 		Transform = "8.94190689043466 -3.6970747512597 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -163,7 +167,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light45
 		Transform = "8.54637752387416 -0.15617612713014 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -172,7 +176,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light52
 		Transform = "11.5441821893107 1.70623024809068 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -181,7 +185,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light59
 		Transform = "14.48446959862 1.68612332470073 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -190,7 +194,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light66
 		Transform = "10.6815101855891 -3.65536900028752 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -199,7 +203,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light73
 		Transform = "13.294999392482 -1.75748370282203 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -208,7 +212,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light80
 		Transform = "13.3468701628507 -3.64556862411433 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -217,7 +221,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light11
 		Transform = "17.588850819335 -5.1587527017767 -11.023948024528; -0.208201986445305 0.127846461911573 0.886486516276674 0.392999836484149; 9.34217968343362 9.34217968343362 9.34217968343362"
@@ -226,7 +230,7 @@
 		AttenuationNear = 0.484
 		AttenuationFar = 4.624
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light 9
 		Transform = "15.0144691346646 -6.83908290470507 -10.7040900052691; -0.172305822592415 0.18462943632714 0.707387482718696 0.660170905171669; 9.34217968343362 9.34217968343362 9.34217968343362"
@@ -235,7 +239,7 @@
 		AttenuationNear = 0.484
 		AttenuationFar = 4.624
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light 10
 		Transform = "19.3051454918641 0.862933956566764 -11.9370663763633; -0.207438040659926 0.00356386045156865 0.976244264935805 -0.0624811440820598; 9.34217968343362 9.34217968343362 9.34217968343362"
@@ -244,7 +248,7 @@
 		AttenuationNear = 0.484
 		AttenuationFar = 4.624
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light5
 		Transform = "13.4188798518482 -1.01697334814903 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -253,7 +257,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light18
 		Transform = "8.86060078298596 -1.01697334814903 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -262,7 +266,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light25
 		Transform = "8.86060078298596 2.77287949330163 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -271,7 +275,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light32
 		Transform = "13.8081418424848 2.77287949330163 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -280,7 +284,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light39
 		Transform = "9.31229886280606 -1.99972444210204 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -289,7 +293,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light46
 		Transform = "8.91676949624556 1.54117418202752 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -298,7 +302,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light53
 		Transform = "11.9145741616821 3.40358055724834 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -307,7 +311,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light60
 		Transform = "14.8548615709914 3.38347363385839 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -316,7 +320,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light67
 		Transform = "11.0519021579605 -1.95801869112986 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -325,7 +329,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light74
 		Transform = "13.6653913648534 -0.0601333936643673 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -334,7 +338,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light81
 		Transform = "13.7172621352221 -1.94821831495667 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -343,7 +347,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light6
 		Transform = "14.8908431631971 -0.0864821403652734 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -352,7 +356,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light12
 		Transform = "10.3325640943349 -0.0864821403652734 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -361,7 +365,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light19
 		Transform = "10.3325640943349 3.70337070108538 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -370,7 +374,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light26
 		Transform = "15.2801051538337 3.70337070108538 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -379,7 +383,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light33
 		Transform = "10.784262174155 -1.06923323431828 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -388,7 +392,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light40
 		Transform = "10.3887328075945 2.47166538981128 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -397,7 +401,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light47
 		Transform = "13.386537473031 4.3340717650321 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -406,7 +410,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light54
 		Transform = "16.3268248823403 4.31396484164214 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -415,7 +419,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light61
 		Transform = "12.5238654693094 -1.02752748334611 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -424,7 +428,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light68
 		Transform = "15.1373546762023 0.870357814119389 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -433,7 +437,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light75
 		Transform = "15.189225446571 -1.01772710717291 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -442,7 +446,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light7
 		Transform = "14.8269646729029 -1.82285174593423 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -452,7 +456,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light15
 		Transform = "10.2686856040407 -1.82285174593423 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -462,7 +466,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light 2
 		Transform = "8.62825847023625 4.05566343515062 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -472,7 +476,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light 3
 		Transform = "8.12705310908015 2.19078142307396 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -482,7 +486,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light 4
 		Transform = "10.7075495404847 4.55961361654343 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -492,7 +496,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light 5
 		Transform = "12.7039027340874 4.44649979702445 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -502,7 +506,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light 6
 		Transform = "8.04856444346718 -0.451516005288084 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -512,7 +516,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light 7
 		Transform = "11.173240609168 -0.540192741164375 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -522,7 +526,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light 8
 		Transform = "12.8784498530053 0.115512012512539 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -532,7 +536,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light22
 		Transform = "10.2686856040407 1.96700109551643 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -542,7 +546,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light29
 		Transform = "15.2162266635395 1.96700109551643 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -552,7 +556,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light36
 		Transform = "10.7203836838608 -2.80560283988724 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -562,7 +566,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light43
 		Transform = "10.3248543173003 0.73529578424232 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -572,7 +576,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light50
 		Transform = "13.3226589827368 2.59770215946314 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -582,7 +586,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light57
 		Transform = "16.2629463920461 2.57759523607319 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -592,7 +596,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light64
 		Transform = "12.4599869790152 -2.76389708891506 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -602,7 +606,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light71
 		Transform = "15.0734761859081 -0.866011791449568 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -612,7 +616,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light78
 		Transform = "15.1253469562767 -2.75409671274187 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -622,7 +626,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light8
 		Transform = "14.2765200338983 -3.3513731511397 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -631,7 +635,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light16
 		Transform = "9.71824096503606 -3.3513731511397 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -640,7 +644,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light23
 		Transform = "9.71824096503606 0.438479690310956 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -649,7 +653,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light30
 		Transform = "14.6657820245349 0.438479690310956 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -658,7 +662,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light37
 		Transform = "10.1699390448562 -4.33412424509271 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -667,7 +671,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light44
 		Transform = "9.77440967829566 -0.79322562096315 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -676,7 +680,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light51
 		Transform = "12.7722143437322 1.06918075425767 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -685,7 +689,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light58
 		Transform = "15.7125017530415 1.04907383086772 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -694,7 +698,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light65
 		Transform = "11.9095423400106 -4.29241849412053 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -703,7 +707,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light72
 		Transform = "14.5230315469035 -2.39453319665504 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -712,7 +716,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light79
 		Transform = "14.5749023172722 -4.28261811794734 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -721,7 +725,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light9
 		Transform = "16.0559061145216 -2.68016177788465 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -730,7 +734,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light14
 		Transform = "11.4976270456594 -2.68016177788465 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -739,7 +743,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light21
 		Transform = "11.4976270456594 1.10969106356601 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -748,7 +752,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light28
 		Transform = "16.4451681051582 1.10969106356601 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -757,7 +761,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light35
 		Transform = "11.9493251254795 -3.66291287183766 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -766,7 +770,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light42
 		Transform = "11.553795758919 -0.1220142477081 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -775,7 +779,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light49
 		Transform = "14.5516004243555 1.74039212751272 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -784,7 +788,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light56
 		Transform = "17.0588677230018 1.72028520412277 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -793,7 +797,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light63
 		Transform = "13.6889284206339 -3.62120712086548 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -802,7 +806,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light70
 		Transform = "16.3024176275268 -1.72332182339999 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -811,7 +815,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light77
 		Transform = "16.3542883978955 -3.61140674469229 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -820,7 +824,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light10
 		Transform = "16.2283450189036 -1.08302491152342 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -829,7 +833,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light13
 		Transform = "11.6700659500414 -1.08302491152342 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -838,7 +842,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light20
 		Transform = "11.6700659500414 2.70682792992724 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -847,7 +851,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light27
 		Transform = "16.6176070095402 2.70682792992724 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -856,7 +860,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light34
 		Transform = "12.1217640298615 -2.06577600547643 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -865,7 +869,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light41
 		Transform = "11.726234663301 1.47512261865313 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -874,7 +878,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light48
 		Transform = "14.7240393287375 3.33752899387395 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -883,7 +887,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light55
 		Transform = "17.2313066273838 3.317422070484 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -892,7 +896,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light62
 		Transform = "13.8613673250159 -2.02407025450425 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -901,7 +905,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light69
 		Transform = "16.4748565319088 -0.126184957038758 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -910,7 +914,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light76
 		Transform = "16.5267273022775 -2.01426987833106 -16.3155940076594; 0 0 0 1; 1 1 1"
@@ -919,7 +923,7 @@
 		AttenuationNear = 0.484
 		Shadows = False
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Enabled = False
 		Name = Light3
@@ -927,7 +931,7 @@
 		Type = Point
 		Brightness = 616298.8125
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space 31
 		CanBeSelected = False
@@ -947,10 +951,10 @@
 				Count = 0
 			}
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = Mesh Geometry
 				Dimensions = 10 10
@@ -960,14 +964,14 @@
 				}
 			}
 		}
-		.component NeoAxis.Component_RigidBody
+		.component NeoAxis.RigidBody
 		{
 			Name = Collision Body
 			Transform
 			{
 				GetByReference = "this:..\\Transform"
 			}
-			.component NeoAxis.Component_CollisionShape_Mesh
+			.component NeoAxis.CollisionShape_Mesh
 			{
 				Mesh
 				{
@@ -982,7 +986,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space 2
 		CanBeSelected = False
@@ -1002,10 +1006,10 @@
 				Count = 0
 			}
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = Mesh Geometry
 				Dimensions = 150 150
@@ -1016,7 +1020,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space 20
 		CanBeSelected = False
@@ -1036,10 +1040,10 @@
 				Count = 0
 			}
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = Mesh Geometry
 				Dimensions = 10 6
@@ -1050,14 +1054,14 @@
 				}
 			}
 		}
-		.component NeoAxis.Component_RigidBody
+		.component NeoAxis.RigidBody
 		{
 			Name = Collision Body
 			Transform
 			{
 				GetByReference = "this:..\\Transform"
 			}
-			.component NeoAxis.Component_CollisionShape_Mesh
+			.component NeoAxis.CollisionShape_Mesh
 			{
 				Mesh
 				{
@@ -1072,7 +1076,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space 21
 		CanBeSelected = False
@@ -1092,10 +1096,10 @@
 				Count = 0
 			}
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = Mesh Geometry
 				Dimensions = 10 6
@@ -1106,14 +1110,14 @@
 				}
 			}
 		}
-		.component NeoAxis.Component_RigidBody
+		.component NeoAxis.RigidBody
 		{
 			Name = Collision Body
 			Transform
 			{
 				GetByReference = "this:..\\Transform"
 			}
-			.component NeoAxis.Component_CollisionShape_Mesh
+			.component NeoAxis.CollisionShape_Mesh
 			{
 				Mesh
 				{
@@ -1128,7 +1132,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Cylinder
 		Transform = "10.5565338356582 1.51424122261084 -16.4441650386763; 0 0 0 1; 0.684931511672829 0.684931511672829 0.684931511672829"
@@ -1147,16 +1151,16 @@
 				Count = 0
 			}
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Cylinder
+			.component NeoAxis.MeshGeometry_Cylinder
 			{
 				Name = Mesh Geometry
 			}
 		}
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Sphere
 		Transform = "9.80485860946954 -2.7190117353762 -16.3895084443255; 0 0 0 1; 0.740740745033257 0.740740745033257 0.740740745033257"
@@ -1175,16 +1179,16 @@
 				Count = 0
 			}
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Sphere
+			.component NeoAxis.MeshGeometry_Sphere
 			{
 				Name = Mesh Geometry
 			}
 		}
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Box
 		Transform = "15.3016859579371 3.02630494395936 -16.4633183354752; 0 0 0 1; 0.653594776302458 0.653594776302458 0.653594776302458"
@@ -1203,10 +1207,10 @@
 				Count = 0
 			}
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Box
+			.component NeoAxis.MeshGeometry_Box
 			{
 				Name = Mesh Geometry
 			}

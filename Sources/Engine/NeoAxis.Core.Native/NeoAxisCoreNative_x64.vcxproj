@@ -64,8 +64,8 @@
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>ImageLibrary;..\NativeMemoryManager;..\External\FreeImage\Source;..\External\FreeType\include;NeoAxis;NeoAxis\hacd\HACD_Lib\inc;NativeWrapper;MemoryManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_USRDLL;_MT;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;FREEIMAGE_LIB;NATIVEMEMORYMANAGER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>ImageLibrary;..\NativeMemoryManager;..\External\FreeImage\Source;..\External\FreeType\include;NeoAxis;NeoAxis\hacd\HACD_Lib\inc;NativeWrapper;MemoryManager;MaskedOcclusionCulling;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_USRDLL;_MT;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;FREEIMAGE_LIB;NATIVEMEMORYMANAGER_EXPORTS;XAtlasCPPDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -112,8 +112,8 @@ copy ..\..\_Compilation\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>ImageLibrary;..\NativeMemoryManager;..\External\FreeImage\Source;..\External\FreeType\include;NeoAxis;NeoAxis\hacd\HACD_Lib\inc;NativeWrapper;MemoryManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_USRDLL;_MT;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;OGRE_MEMORY_TRACKER_DEBUG_MODE;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;FREEIMAGE_LIB;NATIVEMEMORYMANAGER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>ImageLibrary;..\NativeMemoryManager;..\External\FreeImage\Source;..\External\FreeType\include;NeoAxis;NeoAxis\hacd\HACD_Lib\inc;NativeWrapper;MemoryManager;MaskedOcclusionCulling;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_USRDLL;_MT;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;OGRE_MEMORY_TRACKER_DEBUG_MODE;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;FREEIMAGE_LIB;NATIVEMEMORYMANAGER_EXPORTS;XAtlasCPPDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
@@ -199,6 +199,9 @@ copy ..\..\_Compilation\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\
     <ClCompile Include="ImageLibrary\OgreVector3D.cpp" />
     <ClCompile Include="ImageLibrary\OgreVector4.cpp" />
     <ClCompile Include="ImageLibrary\YUVToRGBConverter.cpp" />
+    <ClCompile Include="MaskedOcclusionCulling\FrameRecorder.cpp" />
+    <ClCompile Include="MaskedOcclusionCulling\MaskedOcclusionCulling.cpp" />
+    <ClCompile Include="MaskedOcclusionCulling\MaskedOcclusionCullingWrapper.cpp" />
     <ClCompile Include="MemoryManager\CRTMemoryManager.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -217,6 +220,9 @@ copy ..\..\_Compilation\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\
     <ClCompile Include="MemoryManager\TCMallocMemoryManager.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="MeshOptimizer\overdrawoptimizer.cpp" />
+    <ClCompile Include="MeshOptimizer\vcacheoptimizer.cpp" />
+    <ClCompile Include="MeshOptimizer\vfetchoptimizer.cpp" />
     <ClCompile Include="NativeWrapper\FreeType_Wrapper.cpp" />
     <ClCompile Include="NativeWrapper\MiniDump.cpp" />
     <ClCompile Include="NativeWrapper\MyOgreLogListener.cpp" />
@@ -234,7 +240,6 @@ copy ..\..\_Compilation\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\
     <ClCompile Include="NeoAxis\OBB.cpp" />
     <ClCompile Include="NeoAxis\OBBD.cpp" />
     <ClCompile Include="NeoAxis\OctreeContainer.cpp" />
-    <ClCompile Include="NeoAxis\SoftwareOcclusionBuffer.cpp" />
     <ClCompile Include="NeoAxis\StringUtils.cpp" />
     <ClCompile Include="NeoAxis\UtilsNativeWrapper.cpp" />
     <ClCompile Include="NeoAxis\Vector3I.cpp" />
@@ -336,11 +341,14 @@ copy ..\..\_Compilation\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\
     <ClInclude Include="ImageLibrary\OgreVector3D.h" />
     <ClInclude Include="ImageLibrary\OgreVector4.h" />
     <ClInclude Include="ImageLibrary\YUVToRGBConverter.h" />
+    <ClInclude Include="MaskedOcclusionCulling\FrameRecorder.h" />
+    <ClInclude Include="MaskedOcclusionCulling\MaskedOcclusionCulling.h" />
     <ClInclude Include="MemoryManager\MemoryManager.h" />
     <ClInclude Include="MemoryManager\MemoryManagerInternal.h" />
     <ClInclude Include="MemoryManager\MemoryManagerInternal_precompiled.h" />
     <ClInclude Include="MemoryManager\MemoryManager_ManageNew.h" />
     <ClInclude Include="MemoryManager\MemoryManager_SimpleNew.h" />
+    <ClInclude Include="MeshOptimizer\meshoptimizer.h" />
     <ClInclude Include="NativeWrapper\AdditionalMathFunctions.h" />
     <ClInclude Include="NativeWrapper\FreeType_Wrapper.h" />
     <ClInclude Include="NativeWrapper\MiniDump.h" />
@@ -369,7 +377,6 @@ copy ..\..\_Compilation\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\
     <ClInclude Include="NeoAxis\OBB.h" />
     <ClInclude Include="NeoAxis\OBBD.h" />
     <ClInclude Include="NeoAxis\OctreeContainer.h" />
-    <ClInclude Include="NeoAxis\SoftwareOcclusionBuffer.h" />
     <ClInclude Include="NeoAxis\StringUtils.h" />
     <ClInclude Include="NeoAxis\UtilsNativeWrapper.h" />
     <ClInclude Include="NeoAxis\Vector3I.h" />
@@ -394,6 +401,8 @@ copy ..\..\_Compilation\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\
     <ClInclude Include="NeoAxis\vhacd\VHACD.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="MaskedOcclusionCulling\CompilerSpecific.inl" />
+    <None Include="MaskedOcclusionCulling\MaskedOcclusionCullingCommon.inl" />
     <None Include="NeoAxis\vhacd\src\FloatMath.inl" />
     <None Include="NeoAxis\vhacd\src\vhacdCircularList.inl" />
     <None Include="NeoAxis\vhacd\src\vhacdVector.inl" />

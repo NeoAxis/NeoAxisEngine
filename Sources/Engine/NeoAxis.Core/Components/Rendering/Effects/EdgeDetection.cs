@@ -1,4 +1,4 @@
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,7 +10,7 @@ namespace NeoAxis
 	/// </summary>
 	[DefaultOrderOfEffect( 7.9 )]
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
-	public class Component_RenderingEffect_EdgeDetection : Component_RenderingEffect
+	public class RenderingEffect_EdgeDetection : RenderingEffect
 	{
 		/// <summary>
 		/// The intensity of the effect.
@@ -25,7 +25,7 @@ namespace NeoAxis
 			set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_EdgeDetection> IntensityChanged;
+		public event Action<RenderingEffect_EdgeDetection> IntensityChanged;
 		ReferenceField<double> _intensity = 1;
 
 		/// <summary>
@@ -39,7 +39,7 @@ namespace NeoAxis
 			set { if( _depthThreshold.BeginSet( ref value ) ) { try { DepthThresholdChanged?.Invoke( this ); } finally { _depthThreshold.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DepthThreshold"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_EdgeDetection> DepthThresholdChanged;
+		public event Action<RenderingEffect_EdgeDetection> DepthThresholdChanged;
 		ReferenceField<double> _depthThreshold = 1.0;
 
 		/// <summary>
@@ -53,7 +53,7 @@ namespace NeoAxis
 			set { if( _normalsThreshold.BeginSet( ref value ) ) { try { NormalsThresholdChanged?.Invoke( this ); } finally { _normalsThreshold.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="NormalsThreshold"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_EdgeDetection> NormalsThresholdChanged;
+		public event Action<RenderingEffect_EdgeDetection> NormalsThresholdChanged;
 		ReferenceField<double> _normalsThreshold = 1.0;
 
 		/// <summary>
@@ -66,7 +66,7 @@ namespace NeoAxis
 			set { if( _edgeColor.BeginSet( ref value ) ) { try { EdgeColorChanged?.Invoke( this ); } finally { _edgeColor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="EdgeColor"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_EdgeDetection> EdgeColorChanged;
+		public event Action<RenderingEffect_EdgeDetection> EdgeColorChanged;
 		ReferenceField<ColorValue> _edgeColor = new ColorValue( 0, 0, 0 );
 
 		/// <summary>
@@ -80,7 +80,7 @@ namespace NeoAxis
 			set { if( _thickness.BeginSet( ref value ) ) { try { ThicknessChanged?.Invoke( this ); } finally { _thickness.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Thickness"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_EdgeDetection> ThicknessChanged;
+		public event Action<RenderingEffect_EdgeDetection> ThicknessChanged;
 		ReferenceField<double> _thickness = 2.0;
 
 		/// <summary>
@@ -94,14 +94,17 @@ namespace NeoAxis
 			set { if( _maxDistance.BeginSet( ref value ) ) { try { MaxDistanceChanged?.Invoke( this ); } finally { _maxDistance.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MaxDistance"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_EdgeDetection> MaxDistanceChanged;
+		public event Action<RenderingEffect_EdgeDetection> MaxDistanceChanged;
 		ReferenceField<double> _maxDistance = 30.0;
 
 		/////////////////////////////////////////
 
-		protected override void OnRender( ViewportRenderingContext context, Component_RenderingPipeline.IFrameData frameData, ref Component_Image actualTexture )
+		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
 		{
 			base.OnRender( context, frameData, ref actualTexture );
+
+			if( Intensity <= 0 )
+				return;
 
 			//create final
 			var finalTexture = context.RenderTarget2D_Alloc( actualTexture.Result.ResultSize, actualTexture.Result.ResultFormat );
@@ -115,14 +118,11 @@ namespace NeoAxis
 				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/, actualTexture,
 					TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
 
-				context.objectsDuringUpdate.namedTextures.TryGetValue( "depthTexture", out var depthTexture );
-				//if( depthTexture == null )
-				//{
-				//}
+				context.ObjectsDuringUpdate.namedTextures.TryGetValue( "depthTexture", out var depthTexture );
 				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1/*"depthTexture"*/, depthTexture,
 					TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
 
-				context.objectsDuringUpdate.namedTextures.TryGetValue( "normalTexture", out var normalTexture );
+				context.ObjectsDuringUpdate.namedTextures.TryGetValue( "normalTexture", out var normalTexture );
 				if( normalTexture == null )
 					normalTexture = ResourceUtility.WhiteTexture2D;
 				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 2/*"normalTexture"*/, normalTexture,

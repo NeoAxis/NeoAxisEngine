@@ -1,12 +1,19 @@
-$input v_texCoord01, v_worldPosition, v_worldNormal, v_depth, v_tangent, v_bitangent, v_color0, v_eyeTangentSpace, v_normalTangentSpace, v_position, v_previousPosition, v_texCoord23, v_colorParameter, v_lodValueVisibilityDistanceReceiveDecals
+$input v_texCoord01, v_worldPosition_depth, v_worldNormal, v_tangent, v_bitangent, v_color0, v_eyeTangentSpace, v_normalTangentSpace, v_position, v_previousPosition, v_texCoord23, v_colorParameter, v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor, v_billboardDataIndexes, v_billboardDataFactors, v_billboardDataAngles, v_billboardRotation
 
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+#define DEFERRED 1
 #include "Common.sh"
 #include "UniformsFragment.sh"
 #include "FragmentFunctions.sh"
 
 uniform vec4 u_renderOperationData[5];
+uniform vec4 u_materialCustomParameters[2];
 SAMPLER2D(s_materials, 1);
+#ifdef BILLBOARD
+#ifdef GLOBAL_BILLBOARD_DATA
+	SAMPLER2DARRAY(s_billboardData, 2);
+#endif
+#endif
 
 #ifdef DISPLACEMENT_CODE_PARAMETERS
 	DISPLACEMENT_CODE_PARAMETERS
@@ -36,11 +43,13 @@ SAMPLER2D(s_materials, 1);
 
 void main()
 {
+	vec4 fragCoord = getFragCoord();
+	
 	//get material data
 	vec4 materialStandardFragment[MATERIAL_STANDARD_FRAGMENT_SIZE];
-	getMaterialData(s_materials, u_renderOperationData, materialStandardFragment);	
+	getMaterialData(s_materials, u_renderOperationData, materialStandardFragment);
 	
-	vec3 worldPosition = v_worldPosition;
+	vec3 worldPosition = v_worldPosition_depth.xyz;
 	vec3 inputWorldNormal = normalize(v_worldNormal);
 
 	cutVolumes(worldPosition);
@@ -50,23 +59,29 @@ void main()
 	toCamera = normalize(toCamera);
 
 	//lod
-	float lodValue = v_lodValueVisibilityDistanceReceiveDecals.x;
-	smoothLOD(getFragCoord(), lodValue);
+#ifdef GLOBAL_SMOOTH_LOD
+	float lodValue = v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor.x;
+	smoothLOD(fragCoord, lodValue);
+#endif
 
 	//fading by visibility distance
-	float visibilityDistance = v_lodValueVisibilityDistanceReceiveDecals.y;
+#ifdef GLOBAL_FADE_BY_VISIBILITY_DISTANCE
+	float visibilityDistance = v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor.y;
 	float visibilityDistanceFactor = getVisibilityDistanceFactor(visibilityDistance, cameraDistance);
-	smoothLOD(getFragCoord(), 1.0f - visibilityDistanceFactor);
+	smoothLOD(fragCoord, 1.0f - visibilityDistanceFactor);
+#endif
+	
+	float billboardDataMode = u_renderOperationData[1].w;
 	
 	//displacement
 	vec2 displacementOffset = vec2_splat(0);
 #if defined(DISPLACEMENT_CODE_BODY) && defined(DISPLACEMENT)
 	BRANCH
-	if(u_displacementScale != 0.0)
+	if(u_displacementScale != 0.0 && billboardDataMode == 0.0)
 	{
 		displacementOffset = getParallaxOcclusionMappingOffset(v_texCoord01.xy, v_eyeTangentSpace, v_normalTangentSpace, u_materialDisplacementScale * u_displacementScale, u_displacementMaxSteps);
 	}
-#endif //DISPLACEMENT_CODE_BODY
+#endif
 	
 	//get material parameters
 	vec3 normal = vec3_splat(0);
@@ -88,19 +103,31 @@ void main()
 	float ambientOcclusion = 1;
 	float rayTracingReflection = u_materialRayTracingReflection;
 	vec3 emissive = u_materialEmissive;
+	vec4 customParameter1 = u_materialCustomParameters[0];
+	vec4 customParameter2 = u_materialCustomParameters[1];
 	
 	//get material parameters (procedure generated code)
-	vec2 c_texCoord0 = v_texCoord01.xy - displacementOffset;
-	vec2 c_texCoord1 = v_texCoord01.zw - displacementOffset;
-	vec2 c_texCoord2 = v_texCoord23.xy - displacementOffset;
-	//vec2 c_texCoord3 = v_texCoord23.zw - displacementOffset;
-	vec2 c_unwrappedUV = getUnwrappedUV(c_texCoord0, c_texCoord1, c_texCoord2/*, c_texCoord3*/, u_renderOperationData[3].x);
+	vec2 texCoord0 = v_texCoord01.xy - displacementOffset;
+	vec2 texCoord1 = v_texCoord01.zw - displacementOffset;
+	vec2 texCoord2 = v_texCoord23.xy - displacementOffset;
+	//vec2 texCoord3 = v_texCoord23.zw - displacementOffset;
+
+#ifdef BILLBOARD	
+#ifdef GLOBAL_BILLBOARD_DATA
+	//billboard with geometry data mode
+	billboardDataModeCalculateParameters(billboardDataMode, s_billboardData, fragCoord, v_billboardDataIndexes, v_billboardDataFactors, v_billboardDataAngles, v_billboardRotation, inputWorldNormal, texCoord0, texCoord1, texCoord2);
+#endif
+#endif
 	
-	vec4 c_color0 = v_color0;
+	vec2 unwrappedUV = getUnwrappedUV(texCoord0, texCoord1, texCoord2/*, texCoord3*/, u_renderOperationData[3].x);
+	
+	vec4 color0 = v_color0;
 #ifdef FRAGMENT_CODE_BODY
+	#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(_sampler, _uv, u_renderOperationData[3].z, 0/*gl_PrimitiveID*/)
 	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(_sampler, _uv, u_removeTextureTiling)
-	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2D(_sampler, _uv)
+	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(_sampler, _uv, u_mipBias)
 	FRAGMENT_CODE_BODY
+	#undef CODE_BODY_TEXTURE2D_MASK_OPACITY
 	#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
 	#undef CODE_BODY_TEXTURE2D
 #endif
@@ -109,32 +136,35 @@ void main()
 	
 	baseColor *= v_colorParameter.xyz;
 	if(u_materialUseVertexColor != 0.0)
-		baseColor *= v_color0.xyz;
+		baseColor *= color0.xyz;
 	baseColor = max(baseColor, vec3_splat(0));
 	
 	opacity *= v_colorParameter.w;
 	if(u_materialUseVertexColor != 0.0)
-		opacity *= v_color0.w;
+		opacity *= color0.w;
 	opacity = saturate(opacity);
 
-	sheenColor *= v_colorParameter.xyz;
-	if(u_materialUseVertexColor != 0.0)
-		sheenColor *= v_color0.xyz;
-	sheenColor = max(sheenColor, vec3_splat(0));
+	//sheenColor *= v_colorParameter.xyz;
+	//if(u_materialUseVertexColor != 0.0)
+	//	sheenColor *= color0.xyz;
+	//sheenColor = max(sheenColor, vec3_splat(0));
 	
+#ifdef SHADING_MODEL_SUBSURFACE
 	subsurfaceColor *= v_colorParameter.xyz;
 	if(u_materialUseVertexColor != 0.0)
-		subsurfaceColor *= v_color0.xyz;
-	subsurfaceColor = max(subsurfaceColor, vec3_splat(0));	
+		subsurfaceColor *= color0.xyz;
+	subsurfaceColor = max(subsurfaceColor, vec3_splat(0));
+#endif
 	
 	//opacity dithering
 #ifdef OPACITY_DITHERING
-	opacity = dither(getFragCoord(), opacity);
+	opacity = dither(fragCoord, opacity);
 #endif
 
 	//opacity masked threshold
 #ifdef BLEND_MODE_MASKED
-	clip(opacity - opacityMaskThreshold);
+	if(billboardDataMode == 0.0)
+		clip(opacity - opacityMaskThreshold);
 #endif
 
 	//get result tangent
@@ -143,9 +173,10 @@ void main()
 	tangent.w = v_tangent.w;
 	
 	//get result world normal
-	vec3 bitangent = normalize(v_bitangent);
-	if(any(normal))
+#if defined(GLOBAL_NORMAL_MAPPING) && GLOBAL_MATERIAL_SHADING != GLOBAL_MATERIAL_SHADING_SIMPLE
+	if(any2(normal) && billboardDataMode == 0.0)
 	{
+		vec3 bitangent = normalize(v_bitangent);
 		mat3 tbn = transpose(mtxFromRows(tangent.xyz, bitangent, inputWorldNormal));
 		normal = expand(normal);
 		normal.z = sqrt(max(1.0 - dot(normal.xy, normal.xy), 0.0));
@@ -153,12 +184,15 @@ void main()
 	}
 	else
 		normal = inputWorldNormal;
+#else
+	normal = inputWorldNormal;
+#endif
 #ifdef TWO_SIDED_FLIP_NORMALS
 	if(gl_FrontFacing)//if(!gl_FrontFacing)
 		normal = -normal;
 #endif
 
-	bool receiveDecals = u_materialReceiveDecals != 0 && v_lodValueVisibilityDistanceReceiveDecals.z != 0;
+	bool receiveDecals = u_materialReceiveDecals != 0 && v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor.z != 0;
 	//bool shadingModelSimple = false;
 
 #ifndef SHADING_MODEL_SUBSURFACE
@@ -183,11 +217,13 @@ void main()
 	gl_FragData[3] = encodeRGBE8(emissive);
 #endif
 	gl_FragData[4] = tangent * 0.5 + 0.5;//gl_FragData[4] = encodeGBuffer4(tangent, shadingModelSimple, receiveDecals);
-	gl_FragData[5] = vec4(float(SHADING_MODEL_INDEX) / 10.0, receiveDecals ? 1.0 : 0.0, thickness, subsurfacePower / 15.0);
+	gl_FragData[5] = vec4(float(SHADING_MODEL_INDEX) / 8.0, receiveDecals ? 1.0 : 0.0, thickness, subsurfacePower / 15.0);
 	
 	//motion vector
+#ifdef GLOBAL_MOTION_VECTOR
 	vec2 aa = (v_position.xy / v_position.w) * 0.5 + 0.5;
 	vec2 bb = (v_previousPosition.xy / v_previousPosition.w) * 0.5 + 0.5;
-	vec2 velocity = aa - bb;
-	gl_FragData[6] = vec4(velocity.x,velocity.y,0,0);	
+	vec2 velocity = (aa - bb) * v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor.w;
+	gl_FragData[6] = vec4(velocity.x,velocity.y,0,0);
+#endif
 }

@@ -1,8 +1,8 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
-using SharpBgfx;
+using Internal.SharpBgfx;
 
 namespace NeoAxis
 {
@@ -20,11 +20,11 @@ namespace NeoAxis
 		/// </summary>
 		public class Item
 		{
-			public Component_Image texture;
+			public ImageComponent texture;
 			public int mip;
 			public int layer;
 
-			public Item( Component_Image texture, int mip = 0, int layer = 0 )
+			public Item( ImageComponent texture, int mip = 0, int layer = 0 )
 			{
 				this.texture = texture;
 				this.mip = mip;

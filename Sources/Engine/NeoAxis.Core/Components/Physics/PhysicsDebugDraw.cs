@@ -1,9 +1,9 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Security;
 using System.Runtime.InteropServices;
-using BulletSharp;
-using BulletSharp.Math;
+using Internal.BulletSharp;
+using Internal.BulletSharp.Math;
 
 namespace NeoAxis
 {
@@ -21,7 +21,7 @@ namespace NeoAxis
 		{
 		}
 
-		public override void DrawLine( ref BulletSharp.Math.Vector3 from, ref BulletSharp.Math.Vector3 to, ref BulletSharp.Math.Vector3 color )
+		public override void DrawLine( ref Internal.BulletSharp.Math.BVector3 from, ref Internal.BulletSharp.Math.BVector3 to, ref Internal.BulletSharp.Math.BVector3 color )
 		{
 			if( verticesRenderedCounterLimit != -1 && verticesRenderedCounter > verticesRenderedCounterLimit )
 				return;
@@ -35,7 +35,7 @@ namespace NeoAxis
 			}
 		}
 
-		public override void Draw3dText( ref BulletSharp.Math.Vector3 location, string textString )
+		public override void Draw3dText( ref Internal.BulletSharp.Math.BVector3 location, string textString )
 		{
 		}
 

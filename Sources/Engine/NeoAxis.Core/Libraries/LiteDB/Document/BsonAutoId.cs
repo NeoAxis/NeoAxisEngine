@@ -1,4 +1,5 @@
-﻿namespace LiteDB
+#if !NO_LITE_DB
+namespace Internal.LiteDB
 {
     /// <summary>
     /// All supported BsonTypes supported in AutoId insert operation
@@ -11,3 +12,4 @@
         Guid = 11
     }
 }
+#endif

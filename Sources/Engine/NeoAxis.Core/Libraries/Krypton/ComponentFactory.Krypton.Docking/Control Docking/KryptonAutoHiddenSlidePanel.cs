@@ -22,11 +22,11 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Security;
 using System.Security.Permissions;
-using ComponentFactory.Krypton.Toolkit;
-using ComponentFactory.Krypton.Navigator;
-using ComponentFactory.Krypton.Workspace;
+using Internal.ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Navigator;
+using Internal.ComponentFactory.Krypton.Workspace;
 
-namespace ComponentFactory.Krypton.Docking
+namespace Internal.ComponentFactory.Krypton.Docking
 {
     /// <summary>
     /// Extends the KryptonPanel to work as a panel for hosting the display of a sliding in/out page.

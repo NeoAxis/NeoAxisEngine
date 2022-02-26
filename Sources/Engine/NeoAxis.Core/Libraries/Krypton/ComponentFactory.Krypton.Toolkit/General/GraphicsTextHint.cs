@@ -12,7 +12,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Text;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
 	/// <summary>
 	/// Apply a requested text rendering hint to a graphics instance.

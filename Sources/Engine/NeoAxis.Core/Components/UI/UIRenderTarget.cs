@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,7 +11,7 @@ namespace NeoAxis
 	/// </summary>
 	public class UIRenderTarget : UIControl
 	{
-		Component_Image createdImage;
+		ImageComponent createdImage;
 		Vector2I createdForSize;
 		bool createdForHDR;
 
@@ -23,8 +23,8 @@ namespace NeoAxis
 
 		//bool uiControlUpdating;
 
-		Component_Scene createdScene;
-		Component_Scene createdSceneSource;
+		Scene createdScene;
+		Scene createdSceneSource;
 
 		//double lastVisibleTime;
 
@@ -44,17 +44,17 @@ namespace NeoAxis
 		//ReferenceField<Vector2I> _renderTargetSize = new Vector2I( 512, 512 );
 
 		/// <summary>
-		/// Whether the high dynamic range is enabled.
+		/// Whether the high dynamic range is enabled. For Auto mode HDR is disabled on limited devices (mobile).
 		/// </summary>
-		[DefaultValue( true )]
-		public Reference<bool> HDR
+		[DefaultValue( AutoTrueFalse.Auto )]
+		public Reference<AutoTrueFalse> HDR
 		{
 			get { if( _hdr.BeginGet() ) HDR = _hdr.Get( this ); return _hdr.value; }
 			set { if( _hdr.BeginSet( ref value ) ) { try { HDRChanged?.Invoke( this ); } finally { _hdr.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HDR"/> property value changes.</summary>
 		public event Action<UIRenderTarget> HDRChanged;
-		ReferenceField<bool> _hdr = true;
+		ReferenceField<AutoTrueFalse> _hdr = AutoTrueFalse.Auto;
 
 		///// <summary>
 		///// The aspect ratio of the camera.
@@ -113,28 +113,28 @@ namespace NeoAxis
 		/// </summary>
 		[DefaultValue( null )]
 		[Category( "Scene" )]
-		public Reference<Component_Scene> Scene
+		public Reference<Scene> Scene
 		{
 			get { if( _scene.BeginGet() ) Scene = _scene.Get( this ); return _scene.value; }
 			set { if( _scene.BeginSet( ref value ) ) { try { SceneChanged?.Invoke( this ); UpdateAttachedScene(); } finally { _scene.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Scene"/> property value changes.</summary>
 		public event Action<UIRenderTarget> SceneChanged;
-		ReferenceField<Component_Scene> _scene = null;
+		ReferenceField<Scene> _scene = null;
 
 		/// <summary>
 		/// The camera to use for displaying scene.
 		/// </summary>
 		[DefaultValue( null )]
 		[Category( "Scene" )]
-		public Reference<Component_Camera> Camera
+		public Reference<Camera> Camera
 		{
 			get { if( _camera.BeginGet() ) Camera = _camera.Get( this ); return _camera.value; }
 			set { if( _camera.BeginSet( ref value ) ) { try { CameraChanged?.Invoke( this ); } finally { _camera.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Camera"/> property value changes.</summary>
 		public event Action<UIRenderTarget> CameraChanged;
-		ReferenceField<Component_Camera> _camera = null;
+		ReferenceField<Camera> _camera = null;
 
 		/// <summary>
 		/// The camera to use for displaying scene, specified by name.
@@ -227,7 +227,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		protected virtual Component_Camera OnGetCamera()
+		protected virtual Camera OnGetCamera()
 		{
 			//default behavior
 			if( createdViewport != null && createdViewport.AttachedScene != null )
@@ -244,7 +244,7 @@ namespace NeoAxis
 				//CameraByName property
 				if( !string.IsNullOrEmpty( CameraByName ) )
 				{
-					var camera = scene.GetComponent( CameraByName, onlyEnabledInHierarchy: true ) as Component_Camera;
+					var camera = scene.GetComponent( CameraByName, onlyEnabledInHierarchy: true ) as Camera;
 					if( camera != null )
 						return camera;
 				}
@@ -253,7 +253,7 @@ namespace NeoAxis
 				{
 					var camera = scene.CameraDefault.Value;
 					if( camera == null )
-						camera = scene.Mode.Value == Component_Scene.ModeEnum._2D ? scene.CameraEditor2D : scene.CameraEditor;
+						camera = scene.Mode.Value == NeoAxis.Scene.ModeEnum._2D ? scene.CameraEditor2D : scene.CameraEditor;
 					if( camera != null )
 						return camera;
 				}
@@ -262,10 +262,10 @@ namespace NeoAxis
 			return null;
 		}
 
-		public delegate void GetCameraEventDelegate( UIRenderTarget sender, ref Component_Camera camera );
+		public delegate void GetCameraEventDelegate( UIRenderTarget sender, ref Camera camera );
 		public event GetCameraEventDelegate GetCameraEvent;
 
-		public Component_Camera GetCamera()
+		public Camera GetCamera()
 		{
 			var result = OnGetCamera();
 			GetCameraEvent?.Invoke( this, ref result );
@@ -405,7 +405,7 @@ namespace NeoAxis
 		}
 
 		[Browsable( false )]
-		public Component_Image CreatedImage
+		public ImageComponent CreatedImage
 		{
 			get { return createdImage; }
 		}
@@ -422,23 +422,31 @@ namespace NeoAxis
 		//	get { return createdControl; }
 		//}
 
+		public bool GetHDR()
+		{
+			var hdr = HDR.Value;
+			if( hdr == AutoTrueFalse.Auto )
+				hdr = SystemSettings.LimitedDevice ? AutoTrueFalse.False : AutoTrueFalse.True;
+			return hdr == AutoTrueFalse.True;
+		}
+
 		void CreateRenderTarget()
 		{
 			DestroyRenderTarget();
 
 			var size = GetDemandedSize();
-			var hdr = HDR.Value;
+			var hdr = GetHDR();
 
 			var mipmaps = false;
 
-			createdImage = ComponentUtility.CreateComponent<Component_Image>( null, true, false );
-			createdImage.CreateType = Component_Image.TypeEnum._2D;
+			createdImage = ComponentUtility.CreateComponent<ImageComponent>( null, true, false );
+			createdImage.CreateType = ImageComponent.TypeEnum._2D;
 			createdImage.CreateSize = size;
 			createdImage.CreateMipmaps = mipmaps;
 			createdImage.CreateFormat = hdr ? PixelFormat.Float32RGBA : PixelFormat.A8R8G8B8;
-			var usage = Component_Image.Usages.RenderTarget;
+			var usage = ImageComponent.Usages.RenderTarget;
 			if( mipmaps )
-				usage |= Component_Image.Usages.AutoMipmaps;
+				usage |= ImageComponent.Usages.AutoMipmaps;
 			createdImage.CreateUsage = usage;
 			createdImage.CreateFSAA = 0;
 			createdImage.Enabled = true;
@@ -456,7 +464,7 @@ namespace NeoAxis
 
 		void RecreateRenderTargetIfNeeded()
 		{
-			if( createdImage == null || createdForSize != GetDemandedSize() || createdForHDR != HDR.Value )
+			if( createdImage == null || createdForSize != GetDemandedSize() || createdForHDR != GetHDR() )
 				CreateRenderTarget();
 		}
 
@@ -478,7 +486,7 @@ namespace NeoAxis
 
 			if( createdViewport != null )
 			{
-				Component_Scene scene = null;
+				Scene scene = null;
 				if( DisplayScene )
 					scene = Scene.ReferenceSpecified ? Scene.Value : null;//ParentScene;
 
@@ -503,7 +511,7 @@ namespace NeoAxis
 		}
 
 		[Browsable( false )]
-		public Component_Scene CreatedScene
+		public Scene CreatedScene
 		{
 			get { return createdScene; }
 		}
@@ -534,16 +542,16 @@ namespace NeoAxis
 		public delegate void SceneCreatedDelegate( UIRenderTarget sender );
 		public event SceneCreatedDelegate SceneCreated;
 
-		public delegate void SceneDestroyedDelegate( UIRenderTarget sender, Component_Scene destroyedScene );
+		public delegate void SceneDestroyedDelegate( UIRenderTarget sender, Scene destroyedScene );
 		public event SceneDestroyedDelegate SceneDestroyed;
 
-		void SceneCreate( Component_Scene source )
+		void SceneCreate( Scene source )
 		{
 			SceneDestroy();
 
 			var fileName = ComponentUtility.GetOwnedFileNameOfComponent( source );
 			if( !string.IsNullOrEmpty( fileName ) && VirtualFile.Exists( fileName ) )
-				createdScene = ResourceManager.LoadSeparateInstance<Component>( fileName, true, null ) as Component_Scene;
+				createdScene = ResourceManager.LoadSeparateInstance<Component>( fileName, true, null ) as Scene;
 
 			if( createdScene != null )
 				SceneCreated?.Invoke( this );
@@ -565,7 +573,7 @@ namespace NeoAxis
 			}
 		}
 
-		void SceneRecreateIfNeeded( Component_Scene source )
+		void SceneRecreateIfNeeded( Scene source )
 		{
 			if( source != null )
 			{

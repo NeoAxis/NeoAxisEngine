@@ -1,12 +1,13 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Collections;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     internal static class TypeInfoExtensions
     {
@@ -27,3 +28,5 @@ namespace LiteDB
         }
     }
 }
+
+#endif

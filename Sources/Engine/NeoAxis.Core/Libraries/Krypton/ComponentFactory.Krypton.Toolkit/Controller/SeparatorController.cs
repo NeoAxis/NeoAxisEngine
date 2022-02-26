@@ -15,7 +15,7 @@ using System.Security;
 using System.Security.Permissions;
 using System.Diagnostics;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     #region ISeparatorSource
     /// <summary>

@@ -1,4 +1,4 @@
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,15 +10,15 @@ namespace NeoAxis
 	/// </summary>
 	[DefaultOrderOfEffect( 8.2 )]
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
-	public class Component_RenderingEffect_Pixelate : Component_RenderingEffect_Simple
+	public class RenderingEffect_Pixelate : RenderingEffect_Simple
 	{
 		const string shaderDefault = @"Base\Shaders\Effects\Pixelate_fs.sc";
 
 		//
 
-		public Component_RenderingEffect_Pixelate()
+		public RenderingEffect_Pixelate()
 		{
-			Shader = shaderDefault;
+			ShaderFile = shaderDefault;
 		}
 
 		/// <summary>
@@ -32,7 +32,7 @@ namespace NeoAxis
 			set { if( _cells.BeginSet( ref value ) ) { try { CellsChanged?.Invoke( this ); } finally { _cells.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Cells"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_Pixelate> CellsChanged;
+		public event Action<RenderingEffect_Pixelate> CellsChanged;
 		ReferenceField<double> _cells = 100;
 
 		/////////////////////////////////////////

@@ -1,0 +1,41 @@
+// Made with NeoAxis Engine 2021.4.
+
+.component NeoAxis.Surface
+{
+	EditorCameraTransform = "-2.17127655147919 -7.96965334889308 3.87351869759773; -0.178812783181239 0.233406000077643 0.581267046617006 0.758733318245534; 1 1 1"
+	.component NeoAxis.SurfaceGroupOfElements
+	{
+		Name = Group Young
+		Probability = 0.5
+		OccupiedAreaRadius = 0.3
+		RotateAroundItsAxis = True
+		MaxIncline = 5
+		ScaleRange = 0.7 1.3
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 1
+			ReceiveDecals = False
+			Mesh
+			{
+				GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Poa annua\\Poa annua 1 Group 2 Young.mesh"
+			}
+		}
+	}
+	.component NeoAxis.SurfaceGroupOfElements
+	{
+		Name = Group Mature
+		OccupiedAreaRadius = 0.5
+		RotateAroundItsAxis = True
+		MaxIncline = 5
+		ScaleRange = 0.7 1.3
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 1
+			ReceiveDecals = False
+			Mesh
+			{
+				GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Poa annua\\Poa annua 1 Group 3 Mature.mesh"
+			}
+		}
+	}
+}

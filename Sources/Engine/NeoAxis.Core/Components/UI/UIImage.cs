@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,13 +20,13 @@ namespace NeoAxis
 		/// </summary>
 		[Serialize]
 		[Category( "Image" )]
-		public Reference<Component_Image> SourceImage
+		public Reference<ImageComponent> SourceImage
 		{
 			get { if( _sourceImage.BeginGet() ) SourceImage = _sourceImage.Get( this ); return _sourceImage.value; }
 			set { if( _sourceImage.BeginSet( ref value ) ) { try { SourceImageChanged?.Invoke( this ); } finally { _sourceImage.EndSet(); } } }
 		}
 		public event Action<UIImage> SourceImageChanged;
-		ReferenceField<Component_Image> _sourceImage;
+		ReferenceField<ImageComponent> _sourceImage;
 
 		/// <summary>
 		/// The UV coordinates of the image texture.
@@ -41,6 +41,20 @@ namespace NeoAxis
 		}
 		public event Action<UIImage> TextureCoordinatesChanged;
 		ReferenceField<Rectangle> _textureCoordinates = new Rectangle( 0, 0, 1, 1 );
+
+		/// <summary>
+		/// The rotation of UV coordinates around the center.
+		/// </summary>
+		[DefaultValue( 0.0 )]
+		[Range( 0, 360 )]
+		public Reference<Degree> TextureCoordinatesRotation
+		{
+			get { if( _textureCoordinatesRotation.BeginGet() ) TextureCoordinatesRotation = _textureCoordinatesRotation.Get( this ); return _textureCoordinatesRotation.value; }
+			set { if( _textureCoordinatesRotation.BeginSet( ref value ) ) { try { TextureCoordinatesRotationChanged?.Invoke( this ); } finally { _textureCoordinatesRotation.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="TextureCoordinatesRotation"/> property value changes.</summary>
+		public event Action<UIImage> TextureCoordinatesRotationChanged;
+		ReferenceField<Degree> _textureCoordinatesRotation = new Degree( 0 );
 
 		/// <summary>
 		/// Specifies the clamp texture address mode.
@@ -81,7 +95,7 @@ namespace NeoAxis
 			//!!!!неправильной текстурой рисовать, чтобы видно было что ошибка? везде так
 			//!!!!!заранее при загрузке?
 
-			Component_Image texture = SourceImage;
+			ImageComponent texture = SourceImage;
 
 			////!!!!?
 			//GpuTexture gpuTexture = ResourceUtils.GetTextureCompiledData( texture );
@@ -112,7 +126,49 @@ namespace NeoAxis
 				if( filtering == CanvasRenderer.TextureFilteringMode.Point )
 					renderer.PushTextureFilteringMode( CanvasRenderer.TextureFilteringMode.Point );
 
-				renderer.AddQuad( rect, TextureCoordinates.Value, texture, ColorValue.One, Clamp );
+				var texCoords = TextureCoordinates.Value;
+				var rotation = TextureCoordinatesRotation.Value;
+
+				if( rotation != 0 )
+				{
+					var rectF = rect.ToRectangleF();
+					var texCoordsF = texCoords.ToRectangleF();
+
+					var vertices = new CanvasRenderer.TriangleVertex[ 4 ];
+
+					ref var v0 = ref vertices[ 0 ];
+					v0.position = rectF.LeftTop;
+					v0.texCoord = texCoordsF.LeftTop;
+					ref var v1 = ref vertices[ 1 ];
+					v1.position = rectF.RightTop;
+					v1.texCoord = texCoordsF.RightTop;
+					ref var v2 = ref vertices[ 2 ];
+					v2.position = rectF.RightBottom;
+					v2.texCoord = texCoordsF.RightBottom;
+					ref var v3 = ref vertices[ 3 ];
+					v3.position = rectF.LeftBottom;
+					v3.texCoord = texCoordsF.LeftBottom;
+
+					var texCoordsCenter = texCoordsF.GetCenter();
+					var matrix = Matrix2F.FromRotate( rotation.InRadians().ToRadianF() );
+
+					for( int n = 0; n < 4; n++ )
+					{
+						ref var v = ref vertices[ n ];
+
+						v.color = ColorValue.One;
+
+						v.texCoord -= texCoordsCenter;
+						v.texCoord = matrix * v.texCoord;
+						v.texCoord += texCoordsCenter;
+					}
+
+					var indices = new int[] { 0, 1, 2, 2, 3, 0 };
+					renderer.AddTriangles( vertices, indices, texture, Clamp );
+				}
+				else
+					renderer.AddQuad( rect, texCoords, texture, ColorValue.One, Clamp );
+
 				//renderer.AddQuad( rect, texCoord, texture, color, backTextureTile ? false : true );
 
 				if( filtering == CanvasRenderer.TextureFilteringMode.Point )

@@ -22,7 +22,7 @@
 			Exit
 			{
 			}
-			.component NeoAxis.Component_EventHandler
+			.component NeoAxis.EventHandlerComponent
 			{
 				Name = Event Handler Click
 				Event

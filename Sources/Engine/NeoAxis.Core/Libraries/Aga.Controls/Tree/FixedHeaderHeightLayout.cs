@@ -1,4 +1,4 @@
-namespace Aga.Controls.Tree
+namespace Internal.Aga.Controls.Tree
 {
 	class FixedHeaderHeightLayout : IHeaderLayout
 	{

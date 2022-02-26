@@ -11,7 +11,7 @@
 using System;
 using System.Drawing;
 
-namespace ComponentFactory.Krypton.Navigator
+namespace Internal.ComponentFactory.Krypton.Navigator
 {
 	/// <summary>
 	/// Details for a popup page event.

@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 
 #define LIGHTDATA_FRAGMENT_SIZE 29
 //#define LIGHTDATA_FRAGMENT_SIZE 28
@@ -22,6 +22,8 @@
 #define u_lightShadowUnitDistanceTexelSizes u_lightDataFragment[27]
 #define u_lightShadowBias u_lightDataFragment[28].x
 #define u_lightShadowNormalBias u_lightDataFragment[28].y
+#define u_lightSourceRadiusOrAngle u_lightDataFragment[28].z
+#define u_lightShadowContactLength u_lightDataFragment[28].w
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //#define REFLECTION_PROBE_DATA_FRAGMENT_SIZE 2
@@ -48,10 +50,11 @@
 #define u_materialSubsurfacePower materialStandardFragment[6].x
 #define u_materialRayTracingReflection materialStandardFragment[6].y
 #define u_materialAnisotropyDirectionBasis materialStandardFragment[6].z
-#define u_materialShininess materialStandardFragment[6].w
+//#define u_materialShininess materialStandardFragment[6].w
 #define u_materialDisplacementScale materialStandardFragment[7].x
 #define u_materialReceiveDecals materialStandardFragment[7].y
 #define u_materialUseVertexColor materialStandardFragment[7].z
+#define u_materialSoftParticlesDistance materialStandardFragment[7].w
 
 
 //#if defined(USAGEMODE_MATERIALBLENDFIRST) || defined(USAGEMODE_MATERIALBLENDNOTFIRST)
@@ -63,6 +66,7 @@ void getMaterialData(sampler2D materials, vec4 renderOperationData[5], out vec4 
 {
 #ifdef GLSL
 	float materialIndex = renderOperationData[0].x;
+	UNROLL
 	for(int n=0;n<MATERIAL_STANDARD_FRAGMENT_SIZE;n++)
 	{
 		int x = int(mod(materialIndex, 64.0) * 8.0 + float(n));
@@ -71,6 +75,7 @@ void getMaterialData(sampler2D materials, vec4 renderOperationData[5], out vec4 
 	}
 #else
 	int materialIndex = int(renderOperationData[0].x);
+	UNROLL
 	for(int n=0;n<MATERIAL_STANDARD_FRAGMENT_SIZE;n++)
 		materialStandardFragment[n] = texelFetch(materials, ivec2((int)(materialIndex % 64) * 8 + n, (int)(materialIndex / 64)), 0);	
 #endif	

@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #if !NO_EMIT
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -45,7 +45,7 @@ namespace NeoAxis
 
 		static List<(string Name, string Type)> GetContextVars()// Type contextType )
 		{
-			var contextType = typeof( CSharpScriptContext );
+			var contextType = typeof( CSharpScript.Context );
 
 			var result = new List<(string Name, string Type)>();
 

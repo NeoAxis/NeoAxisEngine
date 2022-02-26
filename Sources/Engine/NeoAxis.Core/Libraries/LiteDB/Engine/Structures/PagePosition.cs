@@ -1,8 +1,9 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     /// <summary>
     /// Represents a page position after save in disk. Used in WAL files where PageID do not match with PagePosition
@@ -57,3 +58,4 @@ namespace LiteDB.Engine
         }
     }
 }
+#endif

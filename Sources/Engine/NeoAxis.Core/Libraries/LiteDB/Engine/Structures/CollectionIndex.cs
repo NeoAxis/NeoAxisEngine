@@ -1,9 +1,10 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Text;
 using System.Text.RegularExpressions;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     internal class CollectionIndex
     {
@@ -131,3 +132,4 @@ namespace LiteDB.Engine
         }
     }
 }
+#endif

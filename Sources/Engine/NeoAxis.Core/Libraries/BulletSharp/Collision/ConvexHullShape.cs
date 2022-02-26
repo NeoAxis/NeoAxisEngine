@@ -1,10 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class ConvexHullShape : PolyhedralConvexAabbCachingShape
 	{
@@ -26,13 +26,13 @@ namespace BulletSharp
 		{
 		}
 
-		public ConvexHullShape(IEnumerable<Vector3> points, int numPoints)
+		public ConvexHullShape(IEnumerable<BVector3> points, int numPoints)
 			: base(btConvexHullShape_new())
 		{
 			int i = 0;
-			foreach (Vector3 v in points)
+			foreach (BVector3 v in points)
 			{
-				Vector3 viter = v;
+				BVector3 viter = v;
 				AddPointRef(ref viter, false);
 				i++;
 				if (i == numPoints)
@@ -43,35 +43,35 @@ namespace BulletSharp
 			RecalcLocalAabb();
 		}
 
-		public ConvexHullShape(IEnumerable<Vector3> points)
+		public ConvexHullShape(IEnumerable<BVector3> points)
 			: base(btConvexHullShape_new())
 		{
-			foreach (Vector3 v in points)
+			foreach (BVector3 v in points)
 			{
-				Vector3 viter = v;
+				BVector3 viter = v;
 				AddPointRef(ref viter, false);
 			}
 			RecalcLocalAabb();
 		}
 
-		public void AddPointRef(ref Vector3 point, bool recalculateLocalAabb = true)
+		public void AddPointRef(ref BVector3 point, bool recalculateLocalAabb = true)
 		{
 			btConvexHullShape_addPoint(Native, ref point, recalculateLocalAabb);
 		}
 
-		public void AddPoint(Vector3 point, bool recalculateLocalAabb = true)
+		public void AddPoint(BVector3 point, bool recalculateLocalAabb = true)
 		{
 			btConvexHullShape_addPoint(Native, ref point, recalculateLocalAabb);
 		}
 
-		public void GetScaledPoint(int i, out Vector3 value)
+		public void GetScaledPoint(int i, out BVector3 value)
 		{
 			btConvexHullShape_getScaledPoint(Native, i, out value);
 		}
 
-		public Vector3 GetScaledPoint(int i)
+		public BVector3 GetScaledPoint(int i)
 		{
-			Vector3 value;
+			BVector3 value;
 			btConvexHullShape_getScaledPoint(Native, i, out value);
 			return value;
 		}

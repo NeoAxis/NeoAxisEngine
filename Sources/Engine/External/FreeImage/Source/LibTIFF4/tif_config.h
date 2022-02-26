@@ -17,8 +17,10 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #define HAVE_SYS_TYPES_H 1
 
+#ifndef IOS
 /* Define to 1 if you have the <io.h> header file. */
 #define HAVE_IO_H 1
+#endif
 
 #ifndef ANDROID
 /* Define to 1 if you have the <search.h> header file. */

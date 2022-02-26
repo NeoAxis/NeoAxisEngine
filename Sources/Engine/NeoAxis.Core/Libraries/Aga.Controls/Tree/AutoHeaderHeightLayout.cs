@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace Aga.Controls.Tree
+namespace Internal.Aga.Controls.Tree
 {
 	using System.Drawing;
 

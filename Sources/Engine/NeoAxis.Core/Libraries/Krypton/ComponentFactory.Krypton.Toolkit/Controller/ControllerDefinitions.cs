@@ -13,7 +13,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Text;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     #region IMouseController
     /// <summary>

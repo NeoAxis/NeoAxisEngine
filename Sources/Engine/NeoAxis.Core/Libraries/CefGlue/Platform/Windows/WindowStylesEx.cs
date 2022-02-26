@@ -1,4 +1,5 @@
-﻿namespace Xilium.CefGlue.Platform.Windows
+#if !NO_UI_WEB_BROWSER
+namespace Internal.Xilium.CefGlue.Platform.Windows
 {
     using System;
     using System.Collections.Generic;
@@ -118,3 +119,5 @@
         WS_EX_WINDOWEDGE = 0x00000100
     }
 }
+
+#endif

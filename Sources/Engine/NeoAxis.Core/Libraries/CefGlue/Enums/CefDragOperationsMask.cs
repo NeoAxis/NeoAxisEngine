@@ -1,8 +1,9 @@
-﻿//
+#if !NO_UI_WEB_BROWSER
+//
 // This file manually written from cef/include/internal/cef_types.h.
 // C API name: cef_drag_operations_mask.
 //
-namespace Xilium.CefGlue
+namespace Internal.Xilium.CefGlue
 {
     using System;
 
@@ -23,3 +24,5 @@ namespace Xilium.CefGlue
         Every = UInt32.MaxValue,
     }
 }
+
+#endif

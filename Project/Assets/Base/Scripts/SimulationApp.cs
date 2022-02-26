@@ -1,7 +1,6 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using NeoAxis;
 
@@ -46,12 +45,44 @@ namespace Project
 			}
 		}
 
-		static string antialiasing = "";
+		static string antialiasingBasic = "";
 		[EngineConfig]
-		public static string Antialiasing
+		public static string AntialiasingBasic
 		{
-			get { return antialiasing; }
-			set { antialiasing = value; }
+			get { return antialiasingBasic; }
+			set { antialiasingBasic = value; }
+		}
+
+		static string antialiasingMotion = "";
+		[EngineConfig]
+		public static string AntialiasingMotion
+		{
+			get { return antialiasingMotion; }
+			set { antialiasingMotion = value; }
+		}
+
+		static string resolutionUpscaleMode = "";
+		[EngineConfig]
+		public static string ResolutionUpscaleMode
+		{
+			get { return resolutionUpscaleMode; }
+			set { resolutionUpscaleMode = value; }
+		}
+
+		static string resolutionUpscaleTechnique = "";
+		[EngineConfig]
+		public static string ResolutionUpscaleTechnique
+		{
+			get { return resolutionUpscaleTechnique; }
+			set { resolutionUpscaleTechnique = value; }
+		}
+
+		static double sharpness = -1.0;
+		[EngineConfig]
+		public static double Sharpness
+		{
+			get { return sharpness; }
+			set { sharpness = value; }
 		}
 
 		[EngineConfig]
@@ -128,25 +159,25 @@ namespace Project
 					EngineApp.InitSettings.CreateWindowState = EngineApp.WindowStateEnum.Normal;
 			}
 			if( !VerticalSync )
-				EngineSettings.Init.SimulationVSync = false;
+				EngineApp.InitSettings.SimulationVSync = false;
 
 			//get from project settings
 			{
 				var windowStateString = ProjectSettings.ReadParameterFromFile( "WindowState" );
 				if( !string.IsNullOrEmpty( windowStateString ) )
 				{
-					if( Enum.TryParse<Component_ProjectSettings.WindowStateEnum>( windowStateString, out var windowState ) )
+					if( Enum.TryParse<ProjectSettingsPage_General.WindowStateEnum>( windowStateString, out var windowState ) )
 					{
-						if( windowState != Component_ProjectSettings.WindowStateEnum.Auto )
+						if( windowState != ProjectSettingsPage_General.WindowStateEnum.Auto )
 						{
 							switch( windowState )
 							{
-							case Component_ProjectSettings.WindowStateEnum.Normal:
+							case ProjectSettingsPage_General.WindowStateEnum.Normal:
 								{
 									EngineApp.InitSettings.CreateWindowFullscreen = false;
 									EngineApp.InitSettings.CreateWindowState = EngineApp.WindowStateEnum.Normal;
 
-									var windowSizeString = ProjectSettings.ReadParameterFromFile( "WindowSize", Component_ProjectSettings.WindowSizeDefault.ToString() );
+									var windowSizeString = ProjectSettings.ReadParameterFromFile( "WindowSize", ProjectSettingsPage_General.WindowSizeDefault.ToString() );
 									if( !string.IsNullOrEmpty( windowSizeString ) )
 									{
 										try
@@ -158,17 +189,17 @@ namespace Project
 								}
 								break;
 
-							case Component_ProjectSettings.WindowStateEnum.Minimized:
+							case ProjectSettingsPage_General.WindowStateEnum.Minimized:
 								EngineApp.InitSettings.CreateWindowFullscreen = false;
 								EngineApp.InitSettings.CreateWindowState = EngineApp.WindowStateEnum.Minimized;
 								break;
 
-							case Component_ProjectSettings.WindowStateEnum.Maximized:
+							case ProjectSettingsPage_General.WindowStateEnum.Maximized:
 								EngineApp.InitSettings.CreateWindowFullscreen = false;
 								EngineApp.InitSettings.CreateWindowState = EngineApp.WindowStateEnum.Maximized;
 								break;
 
-							case Component_ProjectSettings.WindowStateEnum.Fullscreen:
+							case ProjectSettingsPage_General.WindowStateEnum.Fullscreen:
 								EngineApp.InitSettings.CreateWindowFullscreen = true;
 								break;
 							}
@@ -192,7 +223,7 @@ namespace Project
 			EngineConsole.Init();
 			//GameControlsManager.Init();
 
-			//UIControl engineLoadingWindow = ResourceManager.LoadSeparateInstance<UIControl>( "Base\\UI\\Windows\\EngineLoadingWindow.ui", false, null );
+			//UIControl engineLoadingWindow = ResourceManager.LoadSeparateInstance<UIControl>( @"Base\UI\Windows\EngineLoadingWindow.ui", false, null );
 			//if( engineLoadingWindow != null )
 			//	MainViewport.UIContainer.AddComponent( engineLoadingWindow );
 
@@ -207,26 +238,24 @@ namespace Project
 			//	engineLoadingWindow.RemoveFromParent( true );
 
 			//subscribe to main viewport events
-			{
-				MainViewport.KeyDown += MainViewport_KeyDown;
-				MainViewport.KeyPress += MainViewport_KeyPress;
-				MainViewport.KeyUp += MainViewport_KeyUp;
-				MainViewport.MouseDown += MainViewport_MouseDown;
-				MainViewport.MouseUp += MainViewport_MouseUp;
-				MainViewport.MouseDoubleClick += MainViewport_MouseDoubleClick;
-				MainViewport.MouseMove += MainViewport_MouseMove;
-				MainViewport.MouseWheel += MainViewport_MouseWheel;
-				MainViewport.JoystickEvent += MainViewport_JoystickEvent;
-				MainViewport.Touch += MainViewport_Touch;
-				MainViewport.SpecialInputDeviceEvent += MainViewport_SpecialInputDeviceEvent;
-				MainViewport.UpdateBegin += MainViewport_UpdateBegin;
-				MainViewport.UpdateBeforeOutput += MainViewport_UpdateBeforeOutput;
-				MainViewport.UpdateEnd += MainViewport_UpdateEnd;
-			}
+			MainViewport.KeyDown += MainViewport_KeyDown;
+			MainViewport.KeyPress += MainViewport_KeyPress;
+			MainViewport.KeyUp += MainViewport_KeyUp;
+			MainViewport.MouseDown += MainViewport_MouseDown;
+			MainViewport.MouseUp += MainViewport_MouseUp;
+			MainViewport.MouseDoubleClick += MainViewport_MouseDoubleClick;
+			MainViewport.MouseMove += MainViewport_MouseMove;
+			MainViewport.MouseWheel += MainViewport_MouseWheel;
+			MainViewport.JoystickEvent += MainViewport_JoystickEvent;
+			MainViewport.Touch += MainViewport_Touch;
+			MainViewport.SpecialInputDeviceEvent += MainViewport_SpecialInputDeviceEvent;
+			MainViewport.UpdateBegin += MainViewport_UpdateBegin;
+			MainViewport.UpdateBeforeOutput += MainViewport_UpdateBeforeOutput;
+			MainViewport.UpdateEnd += MainViewport_UpdateEnd;
 
 			//change application title
 			if( EngineApp.CreatedInsideEngineWindow != null )
-				EngineApp.CreatedInsideEngineWindow.Title = ProjectSettings.Get.ProjectName;
+				EngineApp.CreatedInsideEngineWindow.Title = ProjectSettings.Get.General.ProjectName;
 
 			//update sound volume
 			if( EngineApp.DefaultSoundChannelGroup != null )
@@ -234,11 +263,10 @@ namespace Project
 
 			//create music channel group
 			musicChannelGroup = SoundWorld.CreateChannelGroup( "Music" );
-			if( musicChannelGroup != null )
-			{
-				SoundWorld.MasterChannelGroup.AddGroup( musicChannelGroup );
-				musicChannelGroup.Volume = musicVolume;
-			}
+			SoundWorld.MasterChannelGroup.AddGroup( musicChannelGroup );
+			musicChannelGroup.Volume = musicVolume;
+
+			EngineApp.EnginePausedChanged += EngineApp_EnginePausedChanged;
 		}
 
 		public static void EngineApp_AppDestroy()
@@ -258,7 +286,7 @@ namespace Project
 
 		private static void MainViewport_KeyDown( Viewport viewport, KeyEvent e, ref bool handled )
 		{
-			//Engine console
+			//engine console
 			if( EngineConsole.PerformKeyDown( e ) )
 			{
 				handled = true;
@@ -271,12 +299,11 @@ namespace Project
 				handled = true;
 				return;
 			}
-
 		}
 
 		private static void MainViewport_KeyPress( Viewport viewport, KeyPressEvent e, ref bool handled )
 		{
-			//Engine console
+			//engine console
 			if( EngineConsole.PerformKeyPress( e ) )
 			{
 				handled = true;
@@ -289,7 +316,6 @@ namespace Project
 				handled = true;
 				return;
 			}
-
 		}
 
 		private static void MainViewport_KeyUp( Viewport viewport, KeyEvent e, ref bool handled )
@@ -300,7 +326,6 @@ namespace Project
 				handled = true;
 				return;
 			}
-
 		}
 
 		private static void MainViewport_MouseDown( Viewport viewport, EMouseButtons button, ref bool handled )
@@ -311,7 +336,6 @@ namespace Project
 				handled = true;
 				return;
 			}
-
 		}
 
 		private static void MainViewport_MouseUp( Viewport viewport, EMouseButtons button, ref bool handled )
@@ -322,7 +346,6 @@ namespace Project
 				handled = true;
 				return;
 			}
-
 		}
 
 		private static void MainViewport_MouseDoubleClick( Viewport viewport, EMouseButtons button, ref bool handled )
@@ -333,7 +356,6 @@ namespace Project
 				handled = true;
 				return;
 			}
-
 		}
 
 		private static void MainViewport_MouseMove( Viewport viewport, Vector2 mouse )//, ref bool handled )
@@ -344,12 +366,11 @@ namespace Project
 				//handled = true;
 				return;
 			}
-
 		}
 
 		private static void MainViewport_MouseWheel( Viewport viewport, int delta, ref bool handled )
 		{
-			//Engine console
+			//engine console
 			if( EngineConsole.PerformMouseWheel( delta ) )
 			{
 				handled = true;
@@ -362,10 +383,9 @@ namespace Project
 				handled = true;
 				return;
 			}
-
 		}
 
-		private static void MainViewport_JoystickEvent( Viewport viewport, NeoAxis.Input.JoystickInputEvent e, ref bool handled )
+		private static void MainViewport_JoystickEvent( Viewport viewport, JoystickInputEvent e, ref bool handled )
 		{
 			//disable input processing
 			if( IsNeedDisableKeyboardAndMouseInput() )
@@ -373,12 +393,11 @@ namespace Project
 				handled = true;
 				return;
 			}
-
 		}
 
-		private static void MainViewport_Touch( Viewport viewport, NeoAxis.Input.TouchData e, ref bool handled )
+		private static void MainViewport_Touch( Viewport viewport, TouchData e, ref bool handled )
 		{
-			//Engine console
+			//engine console
 			if( EngineConsole.PerformTouch( e ) )
 			{
 				handled = true;
@@ -391,10 +410,9 @@ namespace Project
 				handled = true;
 				return;
 			}
-
 		}
 
-		private static void MainViewport_SpecialInputDeviceEvent( Viewport viewport, NeoAxis.Input.InputEvent e, ref bool handled )
+		private static void MainViewport_SpecialInputDeviceEvent( Viewport viewport, InputEvent e, ref bool handled )
 		{
 			//disable input processing
 			if( IsNeedDisableKeyboardAndMouseInput() )
@@ -402,7 +420,6 @@ namespace Project
 				handled = true;
 				return;
 			}
-
 		}
 
 		private static void EngineApp_Tick( float delta )
@@ -429,7 +446,7 @@ namespace Project
 		static void MainViewport_RenderUI()
 		{
 			//configure cursor file name
-			EngineApp.SystemCursorFileName = "Base\\UI\\Cursors\\DefaultSystem.cur";
+			EngineApp.SystemCursorFileName = @"Base\UI\Cursors\DefaultSystem.cur";
 
 			//Draw UI controls
 			MainViewport.UIContainer.PerformRenderUI( MainViewport.CanvasRenderer );
@@ -450,8 +467,10 @@ namespace Project
 					lines.Add( "Draw calls: " + statistics.DrawCalls.ToString() );
 					lines.Add( "Render targets: " + statistics.RenderTargets.ToString() );
 					lines.Add( "Dynamic textures: " + statistics.DynamicTextures.ToString() );
+					lines.Add( "Compute write images: " + statistics.ComputeWriteImages.ToString() );
 					lines.Add( "Lights: " + statistics.Lights.ToString() );
 					lines.Add( "Reflection probes: " + statistics.ReflectionProbes.ToString() );
+					lines.Add( "Occlusion culling buffers: " + statistics.OcclusionCullingBuffers.ToString() );
 
 					var renderer = MainViewport.CanvasRenderer;
 					var fontSize = renderer.DefaultFontSize;
@@ -461,7 +480,7 @@ namespace Project
 				}
 			}
 
-			//Engine console
+			//engine console
 			EngineConsole.PerformRenderUI();
 		}
 
@@ -493,7 +512,6 @@ namespace Project
 
 		static void InvisibleLog_Handlers_InfoHandler( string text, ref bool dumpToLogFile )
 		{
-			//EngineConsole.Print( text );
 		}
 
 		static void Log_Handlers_InfoHandler( string text, ref bool dumpToLogFile )
@@ -591,23 +609,11 @@ namespace Project
 
 		static void Log_Handlers_FatalHandler( string text, string createdLogFilePath, ref bool handled )
 		{
-			//if( MainViewport != null && MainViewport.UIContainer != null )
-			//{
-			//	//find already created MessageBoxWindow
-			//	foreach( UIControl control in MainViewport.UIContainer.GetComponents<UIControl>( false ) )
-			//	{
-			//		if( control is MessageBoxWindow && !control.RemoveFromParentQueued )
-			//		{
-			//			handled = true;
-			//			return;
-			//		}
-			//	}
-			//}
 		}
 
 		static void FirstTickActions()
 		{
-			string playFile = "";
+			string playFile;
 
 			if( SystemSettings.CommandLineParameters.TryGetValue( "-play", out playFile ) )
 			{
@@ -619,9 +625,9 @@ namespace Project
 				catch { }
 			}
 
-			if( string.IsNullOrEmpty( playFile ) && ProjectSettings.Get.AutorunScene.ReferenceSpecified )
+			if( string.IsNullOrEmpty( playFile ) && ProjectSettings.Get.General.AutorunScene.ReferenceSpecified )
 			{
-				var res = ProjectSettings.Get.AutorunScene.Value;
+				var res = ProjectSettings.Get.General.AutorunScene.Value;
 				if( res != null && VirtualFile.Exists( res.ResourceName ) )
 					playFile = res.ResourceName;
 			}
@@ -633,8 +639,8 @@ namespace Project
 			else
 			{
 				//default start screen
-				if( !string.IsNullOrEmpty( ProjectSettings.Get.InitialUIScreen.GetByReference ) )
-					ChangeUIScreen( ProjectSettings.Get.InitialUIScreen.GetByReference );
+				if( !string.IsNullOrEmpty( ProjectSettings.Get.General.InitialUIScreen.GetByReference ) )
+					ChangeUIScreen( ProjectSettings.Get.General.InitialUIScreen.GetByReference );
 			}
 		}
 
@@ -649,8 +655,86 @@ namespace Project
 					if( playScreen != null )
 					{
 						playScreen.Load( virtualFileName, true );
+
+						GC.Collect();
+						GC.WaitForPendingFinalizers();
+
 						playScreen.ResetCreateTime();
 					}
+				}
+			}
+		}
+
+		private static void EngineApp_EnginePausedChanged( bool pause )
+		{
+			//reset motion blur
+			if( RenderingSystem.ApplicationRenderTarget != null )
+			{
+				foreach( var viewport in RenderingSystem.ApplicationRenderTarget.Viewports )
+					viewport.NotifyInstantCameraMovement();
+			}
+		}
+
+		public static void UpdateSceneAntialiasingByAppSettings( Scene scene )
+		{
+			var pipeline = scene.RenderingPipeline.Value;
+			if( pipeline != null )
+			{
+				var effect = pipeline.GetComponent<RenderingEffect_Antialiasing>( true );
+				if( effect != null )
+				{
+					if( Enum.TryParse<RenderingEffect_Antialiasing.BasicTechniqueEnum>( AntialiasingBasic.Replace( " ", "" ), true, out var basic ) )
+						effect.BasicTechnique = basic;
+					else
+						effect.BasicTechnique = effect.BasicTechniqueAfterLoading;
+
+					if( Enum.TryParse<RenderingEffect_Antialiasing.MotionTechniqueEnum>( AntialiasingMotion.Replace( " ", "" ), true, out var motion ) )
+						effect.MotionTechnique = motion;
+					else
+						effect.MotionTechnique = effect.MotionTechniqueAfterLoading;
+				}
+			}
+		}
+
+		public static void UpdateSceneResolutionUpscaleByAppSettings( Scene scene )
+		{
+			var pipeline = scene.RenderingPipeline.Value;
+			if( pipeline != null )
+			{
+				var effect = pipeline.GetComponent<RenderingEffect_ResolutionUpscale>( true );
+				if( effect != null )
+				{
+					if( Enum.TryParse<RenderingEffect_ResolutionUpscale.ModeEnum>( ResolutionUpscaleMode.Replace( " ", "" ), true, out var mode ) )
+						effect.Mode = mode;
+					else
+						effect.Mode = effect.ModeAfterLoading;
+
+					var techniqueString = ResolutionUpscaleTechnique;
+					if( techniqueString == "Lanczos 2" )
+						techniqueString = "Lanczos2";
+					if( techniqueString == "AMD FSR 1.0" )
+						techniqueString = "AMDFSR1";
+
+					if( Enum.TryParse<RenderingEffect_ResolutionUpscale.TechniqueEnum>( techniqueString, true, out var technique ) )
+						effect.Technique = technique;
+					else
+						effect.Technique = effect.TechniqueAfterLoading;
+				}
+			}
+		}
+
+		public static void UpdateSceneSharpnessByAppSettings( Scene scene )
+		{
+			var pipeline = scene.RenderingPipeline.Value;
+			if( pipeline != null )
+			{
+				var effect = pipeline.GetComponent<RenderingEffect_Sharpen>( true );
+				if( effect != null )
+				{
+					if( Sharpness >= 0 )
+						effect.Strength = Sharpness;
+					else
+						effect.Strength = effect.StrengthAfterLoading;
 				}
 			}
 		}

@@ -4,7 +4,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
 
-namespace Aga.Controls
+namespace Internal.Aga.Controls
 {
 	public static class TextHelper
 	{

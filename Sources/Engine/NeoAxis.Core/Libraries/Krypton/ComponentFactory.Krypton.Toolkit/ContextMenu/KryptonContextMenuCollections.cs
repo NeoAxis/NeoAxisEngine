@@ -17,12 +17,12 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Diagnostics;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     /// <summary>
     /// Manage the items that can be added to a top level context menu collection.
     /// </summary>
-    [Editor("ComponentFactory.Krypton.Toolkit.KryptonContextMenuCollectionEditor, ComponentFactory.Krypton.Design, Version=125.0.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e", typeof(UITypeEditor))]
+    //[Editor("ComponentFactory.Krypton.Toolkit.KryptonContextMenuCollectionEditor, ComponentFactory.Krypton.Design, Version=125.0.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e", typeof(UITypeEditor))]
     public class KryptonContextMenuCollection : TypedRestrictCollection<KryptonContextMenuItemBase>
     {
         #region Static Fields
@@ -34,7 +34,7 @@ namespace ComponentFactory.Krypton.Toolkit
                                                              typeof(KryptonContextMenuCheckButton),
                                                              typeof(KryptonContextMenuRadioButton),
                                                              typeof(KryptonContextMenuColorColumns),
-                                                             typeof(KryptonContextMenuMonthCalendar),
+                                                             //typeof(KryptonContextMenuMonthCalendar),
                                                              typeof(KryptonContextMenuImageSelect)};
         #endregion
 

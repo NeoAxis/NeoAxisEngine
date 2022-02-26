@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Globalization;
 using Windows.UI.Popups;
 using System.Runtime.InteropServices;
+using Internal;
 
 namespace NeoAxis
 {
@@ -28,7 +29,7 @@ namespace NeoAxis
 			if( stopwatch == null )
 			{
 				stopwatch = new Stopwatch();
-				Debug.Assert( Stopwatch.IsHighResolution );
+				//Debug.Assert( Stopwatch.IsHighResolution );
 				stopwatch.Start();
 			}
 
@@ -115,7 +116,7 @@ namespace NeoAxis
 			englishName = CultureInfo.CurrentUICulture.EnglishName;
 		}
 
-		public override IntPtr CallSpecialPlatformSpecificMethod( string message, IntPtr param )
+		public override IntPtr CallPlatformSpecificMethod( string message, IntPtr param )
 		{
 			return IntPtr.Zero;
 		}

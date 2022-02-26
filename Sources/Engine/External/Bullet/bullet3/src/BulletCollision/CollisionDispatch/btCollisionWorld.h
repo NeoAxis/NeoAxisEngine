@@ -529,6 +529,7 @@ public:
 
 	std::vector<btCollisionObject*> lastActivatedCollisionObjects;
 
+#pragma pack(push, 1)
 	struct CollectContactsItem
 	{
 		int simulationSubStep;
@@ -545,6 +546,8 @@ public:
 		};
 		Contact contacts[4];
 	};
+#pragma pack(pop)
+
 	std::vector<CollectContactsItem> lastCollectedContacts;
 };
 

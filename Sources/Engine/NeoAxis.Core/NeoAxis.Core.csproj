@@ -48,23 +48,24 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Editor\Components\WorldGenerator\**" />
     <Compile Remove="obj\**" />
     <Compile Remove="Properties\Android\**" />
+    <EmbeddedResource Remove="Editor\Components\WorldGenerator\**" />
     <EmbeddedResource Remove="obj\**" />
     <EmbeddedResource Remove="Properties\Android\**" />
+    <None Remove="Editor\Components\WorldGenerator\**" />
     <None Remove="obj\**" />
     <None Remove="Properties\Android\**" />
+    <Page Remove="Editor\Components\WorldGenerator\**" />
     <Page Remove="Properties\Android\**" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Components\Build\Component_Product_DocumentWindow.cs" />
-    <Compile Update="Components\Build\Component_Product_DocumentWindow.designer.cs">
-      <DependentUpon>Component_Product_DocumentWindow.cs</DependentUpon>
-    </Compile>
+    <Compile Update="Components\Build\ProductEditor.cs" />
     <Compile Update="Components\Camera\Component_Camera_PreviewControl.cs" />
-    <Compile Update="Components\Font\Component_Font_PreviewControl.cs" />
-    <Compile Update="Components\Font\Component_Font_PreviewControl.designer.cs">
-      <DependentUpon>Component_Font_PreviewControl.cs</DependentUpon>
+    <Compile Update="Components\Font\FontPreview.cs" />
+    <Compile Update="Components\Font\FontPreview.designer.cs">
+      <DependentUpon>FontPreview.cs</DependentUpon>
     </Compile>
     <Compile Update="Components\GroupOfObjects\Component_GroupOfObjectsElement_SettingsCell.cs" />
     <Compile Update="Components\Material\Component_Material_PreviewImage.cs" />
@@ -82,9 +83,9 @@
       <DependentUpon>Component_ParticleSystem_PreviewControl.cs</DependentUpon>
     </Compile>
     <Compile Update="Components\ParticleSystem\Component_ParticleSystemInSpace_SettingsCell.cs" />
-    <Compile Update="Components\Sprite\Component_Sprite_DocumentWindow.cs" />
-    <Compile Update="Components\Sprite\Component_Sprite_DocumentWindow.designer.cs">
-      <DependentUpon>Component_Sprite_DocumentWindow.cs</DependentUpon>
+    <Compile Update="Components\Sprite\SpriteEditor.cs" />
+    <Compile Update="Components\Sprite\SpriteEditor.designer.cs">
+      <DependentUpon>SpriteEditor.cs</DependentUpon>
     </Compile>
     <Compile Update="Components\Sprite\Component_Sprite_PreviewControl.cs" />
     <Compile Update="Components\Stores\Component_StoreItem_PreviewControl.cs" />
@@ -103,16 +104,12 @@
     <Compile Update="Editor\EngineToolTip\EngineToolTipForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Editor\HierarchicalContainer\DropDownEditors\MultilineTextDropDownControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\DropDownEditors\MultilineTextDropDownControl.cs" />
     <Compile Update="Editor\HierarchicalContainer\DropDownEditors\MultilineTextDropDownControl.designer.cs">
       <DependentUpon>MultilineTextDropDownControl.cs</DependentUpon>
     </Compile>
     <Compile Update="Editor\PreviewImageGenerator.cs" />
-    <Compile Update="Editor\CanvasBasedPreview.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\CanvasBasedPreview.cs" />
     <Compile Update="Editor\ContentBrowserSearchForm.cs" />
     <Compile Update="Editor\ContentBrowserSearchForm.Designer.cs">
       <DependentUpon>ContentBrowserSearchForm.cs</DependentUpon>
@@ -140,15 +137,11 @@
     <Compile Update="Editor\KryptonRibbonGroupListBox.Designer.cs">
       <DependentUpon>KryptonRibbonGroupListBox.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\KryptonRibbonGroupListBoxControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\KryptonRibbonGroupListBoxControl.cs" />
     <Compile Update="Editor\KryptonRibbonGroupListBoxControl.Designer.cs">
       <DependentUpon>KryptonRibbonGroupListBoxControl.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\ResourcesToCreate\NewResourceType_CSharpClassLibrary_Cell.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\ResourcesToCreate\NewResourceType_CSharpClassLibrary_Cell.cs" />
     <Compile Update="Editor\ResourcesToCreate\NewResourceType_CSharpClassLibrary_Cell.designer.cs">
       <DependentUpon>NewResourceType_CSharpClassLibrary_Cell.cs</DependentUpon>
     </Compile>
@@ -165,21 +158,15 @@
     <Compile Update="Editor\StartPageWindow.designer.cs">
       <DependentUpon>StartPageWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\Store\StoresWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\Store\StoresWindow.cs" />
     <Compile Update="Editor\Store\StoresWindow.designer.cs">
       <DependentUpon>StoresWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\TipsWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\TipsWindow.cs" />
     <Compile Update="Editor\TipsWindow.designer.cs">
       <DependentUpon>TipsWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\SettingsCellProcedureUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\SettingsCellProcedureUI.cs" />
     <Compile Update="Editor\SettingsCellProcedureUI.designer.cs">
       <DependentUpon>SettingsCellProcedureUI.cs</DependentUpon>
     </Compile>
@@ -218,22 +205,14 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Update="Editor\ColorValue\ColorValuePoweredSelectForm.cs" />
-    <Compile Update="Editor\ColorValue\ColorValuePoweredSelectForm.designer.cs">
-      <DependentUpon>ColorValuePoweredSelectForm.cs</DependentUpon>
-    </Compile>
     <Compile Update="Components\Import3D\Component_Import3D_DocumentWindow.cs" />
     <Compile Update="Components\Import3D\Component_Import3D_PreviewControl.cs" />
     <Compile Update="Components\Import3D\Component_Import3D_SettingsCell.cs" />
-    <Compile Update="Editor\Project settings\HCItemProjectShortcutsForm.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\Project settings\HCItemProjectShortcutsForm.cs" />
     <Compile Update="Editor\Project settings\HCItemProjectShortcutsForm.Designer.cs">
       <DependentUpon>HCItemProjectShortcutsForm.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\Project settings\HCItemProjectRibbonAndToolbarActionsForm.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\Project settings\HCItemProjectRibbonAndToolbarActionsForm.cs" />
     <Compile Update="Editor\Project settings\HCItemProjectRibbonAndToolbarActionsForm.Designer.cs">
       <DependentUpon>HCItemProjectRibbonAndToolbarActionsForm.cs</DependentUpon>
     </Compile>
@@ -241,30 +220,20 @@
     <Compile Update="Editor\MessageLogOptionsForm.Designer.cs">
       <DependentUpon>MessageLogOptionsForm.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\HierarchicalContainer\DropDownHolder\HCFormDropDownHolder.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Editor\ImportWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\DropDownHolder\HCFormDropDownHolder.cs" />
+    <Compile Update="Editor\ImportWindow.cs" />
     <Compile Update="Editor\ImportWindow.Designer.cs">
       <DependentUpon>ImportWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\OutputWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\OutputWindow.cs" />
     <Compile Update="Editor\OutputWindow.designer.cs">
       <DependentUpon>OutputWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\SolutionExplorer.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\SolutionExplorer.cs" />
     <Compile Update="Editor\SolutionExplorer.designer.cs">
       <DependentUpon>SolutionExplorer.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\Store\StoreDocumentWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\Store\StoreDocumentWindow.cs" />
     <Compile Update="Editor\Store\StoreDocumentWindow.designer.cs">
       <DependentUpon>StoreDocumentWindow.cs</DependentUpon>
     </Compile>
@@ -273,9 +242,7 @@
     <Compile Update="Editor\ComponentTypeSettingsForm.Designer.cs">
       <DependentUpon>ComponentTypeSettingsForm.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\ObjectSettingsHeader_ObjectInfo.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\ObjectSettingsHeader_ObjectInfo.cs" />
     <Compile Update="Editor\ObjectSettingsHeader_ObjectInfo.designer.cs">
       <DependentUpon>ObjectSettingsHeader_ObjectInfo.cs</DependentUpon>
     </Compile>
@@ -292,45 +259,31 @@
     <Compile Update="Editor\BordersContainer.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridEvent.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridEvent.cs" />
     <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridEvent.Designer.cs">
       <DependentUpon>HCGridEvent.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridDropDownButton.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridDropDownButton.cs" />
     <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridDropDownButton.Designer.cs">
       <DependentUpon>HCGridDropDownButton.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridCollection.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Editor\HierarchicalContainer\DropDownEditors\RangeDropDownControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridCollection.cs" />
+    <Compile Update="Editor\HierarchicalContainer\DropDownEditors\RangeDropDownControl.cs" />
     <Compile Update="Editor\HierarchicalContainer\DropDownEditors\RangeDropDownControl.designer.cs">
       <DependentUpon>RangeDropDownControl.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\HierarchicalContainer\DropDownEditors\EnumDropDownControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\DropDownEditors\EnumDropDownControl.cs" />
     <Compile Update="Editor\HierarchicalContainer\DropDownEditors\EnumDropDownControl.designer.cs">
       <DependentUpon>EnumDropDownControl.cs</DependentUpon>
     </Compile>
     <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridCollection.Designer.cs">
       <DependentUpon>HCGridCollection.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\DebugInfoWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\DebugInfoWindow.cs" />
     <Compile Update="Editor\DebugInfoWindow.designer.cs">
       <DependentUpon>DebugInfoWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\SelectTypeWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\SelectTypeWindow.cs" />
     <Compile Update="Editor\SelectTypeWindow.Designer.cs">
       <DependentUpon>SelectTypeWindow.cs</DependentUpon>
     </Compile>
@@ -338,15 +291,11 @@
     <Compile Update="Editor\SpecifyParametersForm.designer.cs">
       <DependentUpon>SpecifyParametersForm.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\ResourcesToCreate\NewResourceType_FlowGraphLibrary_Cell.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\ResourcesToCreate\NewResourceType_FlowGraphLibrary_Cell.cs" />
     <Compile Update="Editor\ResourcesToCreate\NewResourceType_FlowGraphLibrary_Cell.designer.cs">
       <DependentUpon>NewResourceType_FlowGraphLibrary_Cell.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\ResourcesToCreate\NewResourceType_TextFile_Cell.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\ResourcesToCreate\NewResourceType_TextFile_Cell.cs" />
     <Compile Update="Editor\ResourcesToCreate\NewResourceType_TextFile_Cell.designer.cs">
       <DependentUpon>NewResourceType_TextFile_Cell.cs</DependentUpon>
     </Compile>
@@ -360,9 +309,7 @@
     <Compile Update="Editor\ScreenNotifications\ScreenNotificationForm.designer.cs">
       <DependentUpon>ScreenNotificationForm.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\NewObjectSettingsCell.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\NewObjectSettingsCell.cs" />
     <Compile Update="Editor\NewObjectSettingsCell.designer.cs">
       <DependentUpon>NewObjectSettingsCell.cs</DependentUpon>
     </Compile>
@@ -370,76 +317,52 @@
     <Compile Update="Editor\ContentBrowserOptionsForm.Designer.cs">
       <DependentUpon>ContentBrowserOptionsForm.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\WorkspaceWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\WorkspaceWindow.cs" />
     <Compile Update="Editor\WorkspaceWindow.designer.cs">
       <DependentUpon>WorkspaceWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridColorValuePowered.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridColorValuePowered.cs" />
     <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridColorValuePowered.Designer.cs">
       <DependentUpon>HCGridColorValuePowered.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridColorValue.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridColorValue.cs" />
     <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridColorValue.Designer.cs">
       <DependentUpon>HCGridColorValue.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxSelect.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxSelect.cs" />
     <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxSelect.Designer.cs">
       <DependentUpon>HCGridTextBoxSelect.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxNumeric.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxNumeric.cs" />
     <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxNumeric.Designer.cs">
       <DependentUpon>HCGridTextBoxNumeric.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridTextBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridTextBox.cs" />
     <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridTextBox.Designer.cs">
       <DependentUpon>HCGridTextBox.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridLabel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridLabel.cs" />
     <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridLabel.Designer.cs">
       <DependentUpon>HCGridLabel.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridCheckBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridCheckBox.cs" />
     <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridCheckBox.Designer.cs">
       <DependentUpon>HCGridCheckBox.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridGroup.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridGroup.cs" />
     <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridGroup.Designer.cs">
       <DependentUpon>HCGridGroup.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridProperty.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridProperty.cs" />
     <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridProperty.Designer.cs">
       <DependentUpon>HCGridProperty.cs</DependentUpon>
     </Compile>
     <Compile Update="Editor\HierarchicalContainer\HCDropDownControl.cs" />
-    <Compile Update="Editor\HierarchicalContainer\HierarchicalContainer.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\HierarchicalContainer.cs" />
     <Compile Update="Editor\HierarchicalContainer\HierarchicalContainer.designer.cs">
       <DependentUpon>HierarchicalContainer.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\SettingsHeader_Components.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\SettingsHeader_Components.cs" />
     <Compile Update="Editor\SettingsHeader_Components.designer.cs">
       <DependentUpon>SettingsHeader_Components.cs</DependentUpon>
     </Compile>
@@ -447,17 +370,9 @@
     <Compile Update="Components\Material\Component_Material_DocumentWindow.designer.cs">
       <DependentUpon>Component_Material_DocumentWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\SetReferenceWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\SetReferenceWindow.cs" />
     <Compile Update="Editor\SetReferenceWindow.Designer.cs">
       <DependentUpon>SetReferenceWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\ColorValue\ColorValuePoweredSelectControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Editor\ColorValue\ColorValuePoweredSelectControl.designer.cs">
-      <DependentUpon>ColorValuePoweredSelectControl.cs</DependentUpon>
     </Compile>
     <Compile Update="Components\FlowGraph\Component_FlowGraph_DocumentWindow.designer.cs">
       <DependentUpon>Component_FlowGraph_DocumentWindow.cs</DependentUpon>
@@ -473,75 +388,51 @@
     </Compile>
     <Compile Update="Components\Mesh\Component_Mesh_DocumentWindow.cs" />
     <Compile Update="Components\Scene\Component_Scene_DocumentWindow.cs" />
-    <Compile Update="Editor\NewObjectWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\NewObjectWindow.cs" />
     <Compile Update="Editor\NewObjectWindow.Designer.cs">
       <DependentUpon>NewObjectWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\PreviewControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\PreviewControl.cs" />
     <Compile Update="Editor\PreviewControl.designer.cs">
       <DependentUpon>PreviewControl.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\PreviewControlWithViewport.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\PreviewControlWithViewport.cs" />
     <Compile Update="Editor\PreviewControlWithViewport.designer.cs">
       <DependentUpon>PreviewControlWithViewport.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\DocumentWindowWithViewport.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\DocumentWindowWithViewport.cs" />
     <Compile Update="Editor\DocumentWindowWithViewport.designer.cs">
       <DependentUpon>DocumentWindowWithViewport.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\DockWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\DockWindow.cs" />
     <Compile Update="Editor\DockWindow.designer.cs">
       <DependentUpon>DockWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\MessageLogWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\MessageLogWindow.cs" />
     <Compile Update="Editor\MessageLogWindow.designer.cs">
       <DependentUpon>MessageLogWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\ResourcesWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\ResourcesWindow.cs" />
     <Compile Update="Editor\ResourcesWindow.designer.cs">
       <DependentUpon>ResourcesWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\NewObjectCell.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\NewObjectCell.cs" />
     <Compile Update="Editor\NewObjectCell.designer.cs">
       <DependentUpon>NewObjectCell.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\ObjectSettingsHeader.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\ObjectSettingsHeader.cs" />
     <Compile Update="Editor\ObjectSettingsHeader.designer.cs">
       <DependentUpon>ObjectSettingsHeader.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\SettingsHeader.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\SettingsHeader.cs" />
     <Compile Update="Editor\SettingsHeader.designer.cs">
       <DependentUpon>SettingsHeader.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\SettingsLevel2Window.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\SettingsLevel2Window.cs" />
     <Compile Update="Editor\SettingsLevel2Window.designer.cs">
       <DependentUpon>SettingsLevel2Window.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\ObjectSettingsWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\ObjectSettingsWindow.cs" />
     <Compile Update="Editor\ObjectSettingsWindow.designer.cs">
       <DependentUpon>ObjectSettingsWindow.cs</DependentUpon>
     </Compile>
@@ -551,28 +442,20 @@
     <Compile Update="Components\UI\UIControl_DocumentWindow.designer.cs">
       <DependentUpon>UIControl_DocumentWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\SettingsCell_Properties.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\SettingsCell_Properties.cs" />
     <Compile Update="Editor\SettingsCell_Properties.designer.cs">
       <DependentUpon>SettingsCell_Properties.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\SettingsHeader_ObjectInfo.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\SettingsHeader_ObjectInfo.cs" />
     <Compile Update="Editor\SettingsHeader_ObjectInfo.designer.cs">
       <DependentUpon>SettingsHeader_ObjectInfo.cs</DependentUpon>
     </Compile>
     <Compile Update="Components\Mesh\Component_Mesh_SettingsCell.cs" />
-    <Compile Update="Editor\PreviewWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\PreviewWindow.cs" />
     <Compile Update="Editor\PreviewWindow.designer.cs">
       <DependentUpon>PreviewWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\SettingsCell.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\SettingsCell.cs" />
     <Compile Update="Editor\SettingsCell.designer.cs">
       <DependentUpon>SettingsCell.cs</DependentUpon>
     </Compile>
@@ -582,27 +465,19 @@
     <Compile Update="WinForms\EUserControl.designer.cs">
       <DependentUpon>EUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\ObjectsWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\ObjectsWindow.cs" />
     <Compile Update="Editor\ObjectsWindow.designer.cs">
       <DependentUpon>ObjectsWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\ForeachDocumentWindowContainer.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\ForeachDocumentWindowContainer.cs" />
     <Compile Update="Editor\ForeachDocumentWindowContainer.designer.cs">
       <DependentUpon>ForeachDocumentWindowContainer.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\DocumentWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\DocumentWindow.cs" />
     <Compile Update="Editor\DocumentWindow.designer.cs">
       <DependentUpon>DocumentWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="WinForms\EngineViewportControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="WinForms\EngineViewportControl.cs" />
     <Compile Update="WinForms\EngineViewportControl.designer.cs">
       <DependentUpon>EngineViewportControl.cs</DependentUpon>
     </Compile>
@@ -610,15 +485,11 @@
     <Compile Update="Editor\BackstageMenu.designer.cs">
       <DependentUpon>BackstageMenu.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\SettingsWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\SettingsWindow.cs" />
     <Compile Update="Editor\SettingsWindow.designer.cs">
       <DependentUpon>SettingsWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\ContentBrowser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Editor\ContentBrowser.cs" />
     <Compile Update="Editor\ContentBrowser.designer.cs">
       <DependentUpon>ContentBrowser.cs</DependentUpon>
     </Compile>
@@ -636,19 +507,13 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Update="Editor\ColorValue\ColorGradientControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Editor\ColorValue\ColorWheel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="Components\Font\Component_Font_PreviewControl.resx">
-      <DependentUpon>Component_Font_PreviewControl.cs</DependentUpon>
+    <EmbeddedResource Update="Components\Font\FontPreview.resx">
+      <DependentUpon>FontPreview.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Components\Material\Component_Material_DocumentWindow.resx">
       <DependentUpon>Component_Material_DocumentWindow.cs</DependentUpon>

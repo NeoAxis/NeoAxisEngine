@@ -11,7 +11,7 @@
 using System;
 using System.ComponentModel;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     /// <summary>
     /// Custom type converter so that ButtonStyle values appear as neat text at design time.

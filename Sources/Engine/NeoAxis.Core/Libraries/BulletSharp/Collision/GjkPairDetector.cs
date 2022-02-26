@@ -1,8 +1,8 @@
 using System;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class GjkPairDetector : DiscreteCollisionDetectorInterface
 	{
@@ -53,11 +53,11 @@ namespace BulletSharp
 			btGjkPairDetector_setPenetrationDepthSolver(Native, penetrationDepthSolver.Native);
 		}
 
-		public Vector3 CachedSeparatingAxis
+		public BVector3 CachedSeparatingAxis
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btGjkPairDetector_getCachedSeparatingAxis(Native, out value);
 				return value;
 			}

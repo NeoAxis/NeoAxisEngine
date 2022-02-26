@@ -1,5 +1,5 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-using ComponentFactory.Krypton.Toolkit;
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+using Internal.ComponentFactory.Krypton.Toolkit;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Utils;
@@ -114,19 +114,19 @@ namespace NeoAxis.Editor
 			return result;
 		}
 
-		public Component_Image PrintToTexture( string script, Vector2I size )
+		public ImageComponent PrintToTexture( string script, Vector2I size )
 		{
 			var data = PrintToByteArray( script, new Size( size.X, size.Y ) );
 
-			var texture = ComponentUtility.CreateComponent<Component_Image>( null, true, false );
+			var texture = ComponentUtility.CreateComponent<ImageComponent>( null, true, false );
 
-			texture.CreateType = Component_Image.TypeEnum._2D;
+			texture.CreateType = ImageComponent.TypeEnum._2D;
 			texture.CreateSize = new Vector2I( (int)size.X, (int)size.Y );
 			texture.CreateFormat = PixelFormat.A8R8G8B8;
-			texture.CreateUsage = Component_Image.Usages.WriteOnly;
+			texture.CreateUsage = ImageComponent.Usages.WriteOnly;
 			texture.Enabled = true;
 
-			texture.Result.SetData( new GpuTexture.SurfaceData[] { new GpuTexture.SurfaceData( 0, 0, data ) } );
+			texture.Result.SetData( new GpuTexture.SurfaceData[] { new GpuTexture.SurfaceData( data ) } );
 			return texture;
 		}
 
@@ -142,7 +142,7 @@ namespace NeoAxis.Editor
 			var visual = new DrawingVisual();
 			using( var drawingContext = visual.RenderOpen() )
 			{
-				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.CSharpEditorBackgroundColorDarkTheme : ProjectSettings.Get.CSharpEditorBackgroundColorLightTheme;
+				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.CSharpEditor.CSharpEditorBackgroundColorDarkTheme : ProjectSettings.Get.CSharpEditor.CSharpEditorBackgroundColorLightTheme;
 
 				var packed = color.Value.ToColorPacked();
 				var brush = new SolidColorBrush( Color.FromArgb( packed.Alpha, packed.Red, packed.Green, packed.Blue ) );

@@ -1,9 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public abstract class CollisionShape : IDisposable
 	{
@@ -36,14 +36,14 @@ namespace BulletSharp
 			}
 		}
 
-		public Vector3 CalculateLocalInertia(double mass)
+		public BVector3 CalculateLocalInertia(double mass)
 		{
-			Vector3 inertia;
+			BVector3 inertia;
 			btCollisionShape_calculateLocalInertia(Native, mass, out inertia);
 			return inertia;
 		}
 
-		public void CalculateLocalInertia(double mass, out Vector3 inertia)
+		public void CalculateLocalInertia(double mass, out BVector3 inertia)
 		{
 			btCollisionShape_calculateLocalInertia(Native, mass, out inertia);
 		}
@@ -53,30 +53,30 @@ namespace BulletSharp
 			return btCollisionShape_calculateSerializeBufferSize(Native);
 		}
 
-		public void CalculateTemporalAabbRef(ref Matrix curTrans, ref Vector3 linvel, ref Vector3 angvel,
-			double timeStep, out Vector3 temporalAabbMin, out Vector3 temporalAabbMax)
+		public void CalculateTemporalAabbRef(ref BMatrix curTrans, ref BVector3 linvel, ref BVector3 angvel,
+			double timeStep, out BVector3 temporalAabbMin, out BVector3 temporalAabbMax)
 		{
 			btCollisionShape_calculateTemporalAabb(Native, ref curTrans, ref linvel, ref angvel, timeStep, out temporalAabbMin, out temporalAabbMax);
 		}
 
-		public void CalculateTemporalAabb(Matrix curTrans, Vector3 linvel, Vector3 angvel,
-			double timeStep, out Vector3 temporalAabbMin, out Vector3 temporalAabbMax)
+		public void CalculateTemporalAabb(BMatrix curTrans, BVector3 linvel, BVector3 angvel,
+			double timeStep, out BVector3 temporalAabbMin, out BVector3 temporalAabbMax)
 		{
 			btCollisionShape_calculateTemporalAabb(Native, ref curTrans, ref linvel,
 				ref angvel, timeStep, out temporalAabbMin, out temporalAabbMax);
 		}
 
-		public void GetAabbRef(ref Matrix t, out Vector3 aabbMin, out Vector3 aabbMax)
+		public void GetAabbRef(ref BMatrix t, out BVector3 aabbMin, out BVector3 aabbMax)
 		{
 			btCollisionShape_getAabb(Native, ref t, out aabbMin, out aabbMax);
 		}
 
-		public void GetAabb(Matrix t, out Vector3 aabbMin, out Vector3 aabbMax)
+		public void GetAabb(BMatrix t, out BVector3 aabbMin, out BVector3 aabbMax)
 		{
 			btCollisionShape_getAabb(Native, ref t, out aabbMin, out aabbMax);
 		}
 
-		public void GetBoundingSphere(out Vector3 center, out double radius)
+		public void GetBoundingSphere(out BVector3 center, out double radius)
 		{
 			btCollisionShape_getBoundingSphere(Native, out center, out radius);
 		}
@@ -113,11 +113,11 @@ namespace BulletSharp
 
 		public double AngularMotionDisc => btCollisionShape_getAngularMotionDisc(Native);
 
-		public Vector3 AnisotropicRollingFrictionDirection
+		public BVector3 AnisotropicRollingFrictionDirection
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btCollisionShape_getAnisotropicRollingFrictionDirection(Native, out value);
 				return value;
 			}
@@ -141,11 +141,11 @@ namespace BulletSharp
 
 		public bool IsSoftBody => btCollisionShape_isSoftBody(Native);
 
-		public Vector3 LocalScaling
+		public BVector3 LocalScaling
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btCollisionShape_getLocalScaling(Native, out value);
 				return value;
 			}

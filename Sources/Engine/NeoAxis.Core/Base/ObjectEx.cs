@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -7,7 +7,7 @@ using System.Text;
 namespace NeoAxis
 {
 	/// <summary>
-	/// Helper class for working with .NET objects.
+	/// A helper class for working with .NET objects.
 	/// </summary>
 	public static class ObjectEx
 	{

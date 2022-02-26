@@ -1,0 +1,144 @@
+// Made with NeoAxis Engine 2021.4.
+
+.component NeoAxis.Material
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1143, 842\"><KW V=\"1\" A=\"B7778FF725F84E81D0A78E5FCEF483E0\"><CGD /><WS UN=\"062D670C8A0343CC1893B25EF3972E2C\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WS UN=\"1980E203CDA3409CA2A23621E460084E\" S=\"T,0,50:T,0,50\" D=\"Vertical\"><WC UN=\"A2DAC0262BD74D44BCBD1E90288432A1\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"B7778FF725F84E81D0A78E5FCEF483E0\"><KP UN=\"14ADEA43406944C14ABC4F16A42BB698\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"B7778FF725F84E81D0A78E5FCEF483E0\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC><WC UN=\"B0F10C774477406E7A835D107A65A193\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"33EB8921702B4E6487944F0AFA0C88B0\"><KP UN=\"33EB8921702B4E6487944F0AFA0C88B0\" S=\"False\"><CPD ObjPath=\"$Fragment code\" /></KP></WC></WS></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	BlendMode = Transparent
+	AdvancedScripting = True
+	TypeSettingsPrivateObjects
+	{
+		Length = 2
+		0 = $Shader graph for Position Offset
+		1 = PositionOffset
+	}
+	FragmentFunctions
+	{
+		GetByReference = "this:$Fragment functions\\Code"
+	}
+	FragmentCode
+	{
+		GetByReference = "this:$Fragment code\\Code"
+	}
+	CustomParameter1
+	{
+		GetByReference = "this:$Shader graph\\$Node Invoke Member 1\\$Invoke Member\\__returnvalue_ReturnValue"
+	}
+	.component NeoAxis.FlowGraph
+	{
+		Name = Shader graph
+		EditorScrollPosition = -3.42613153980151 -0.932348510614722
+		Specialization
+		{
+			GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = "Node "
+			Position = 9 -10
+			ControlledObject
+			{
+				GetByReference = "this:..\\.."
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Shader Parameter 4
+			Position = -26 -3
+			Comment = Refraction
+			ControlledObject
+			{
+				GetByReference = "this:$Shader Parameter"
+			}
+			.component NeoAxis.ShaderParameter
+			{
+				Name = Shader Parameter
+				Source
+				{
+					GetByReference = "this:..\\..\\..\\Refraction"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Invoke Member 1
+			Position = -11 -8
+			ControlledObject
+			{
+				GetByReference = "this:$Invoke Member"
+			}
+			.component NeoAxis.InvokeMember
+			{
+				Name = Invoke Member
+				__parameter_Z = 0
+				__parameter_W = 0
+				Member
+				{
+					GetByReference = "NeoAxis.Vector4|method:.ctor(System.Double,System.Double,System.Double,System.Double)"
+				}
+				Exit
+				{
+				}
+				__parameter_X
+				{
+					GetByReference = "this:..\\..\\$Node Shader Parameter 2\\$Shader Parameter\\Output"
+				}
+				__parameter_Y
+				{
+					GetByReference = "this:..\\..\\$Node Shader Parameter 4\\$Shader Parameter\\Output"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Shader Parameter 2
+			Position = -26 -8
+			Comment = Infiltration
+			ControlledObject
+			{
+				GetByReference = "this:$Shader Parameter"
+			}
+			.component NeoAxis.ShaderParameter
+			{
+				Name = Shader Parameter
+				Source
+				{
+					GetByReference = "this:..\\..\\..\\Infiltration"
+				}
+			}
+		}
+	}
+	.component NeoAxis.VirtualProperty
+	{
+		Name = Infiltration
+		Category = Refraction
+		DefaultValueSpecified = True
+		DefaultValue = 0.5
+		Type
+		{
+			GetByReference = System.Double
+		}
+	}
+	.component NeoAxis.VirtualProperty
+	{
+		Name = Refraction
+		Category = Refraction
+		DefaultValueSpecified = True
+		DefaultValue = 1
+		Type
+		{
+			GetByReference = System.Double
+		}
+	}
+	.component NeoAxis.ShaderScript
+	{
+		Name = Fragment functions
+		Type = Embedded
+		Code = 
+	}
+	.component NeoAxis.ShaderScript
+	{
+		Name = Fragment code
+		Type = Embedded
+		Code = "#ifdef FORWARD\r\n\r\nfloat infiltration = customParameter1.x;\r\nfloat refraction = customParameter1.y; \r\n\r\nvec2 texCoord = fragCoord.xy * u_viewportSizeInv;\r\nfloat aspectRatio = float(u_viewportSize.y) / float(u_viewportSize.x); \r\n\r\nfloat scale = 0.02;\r\n\r\ntexCoord.xy += inputWorldNormal.xy * vec2(aspectRatio * scale, scale) * refraction;\r\n\r\nvec3 color = texture2D(s_colorDepthTextureCopy, texCoord).rgb;\r\n\r\nbaseColor = lerp(baseColor, color, infiltration);\r\n\r\n#endif\r\n"
+	}
+}

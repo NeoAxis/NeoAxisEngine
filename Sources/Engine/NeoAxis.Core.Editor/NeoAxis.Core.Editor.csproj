@@ -15,7 +15,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <DocumentationFile>..\..\..\Project\Binaries\NeoAxis.Core.Editor.xml</DocumentationFile>
-    <NoWarn>CS0618;CS1591</NoWarn>
+    <NoWarn>CS0618;CS1591;CS0108</NoWarn>
     <CodeAnalysisRuleSet />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -23,7 +23,7 @@
     <OutputPath>..\..\..\Project\Binaries\</OutputPath>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <NoWarn>CS0618;CS1591</NoWarn>
+    <NoWarn>CS0618;CS1591;CS0108</NoWarn>
     <DocumentationFile>..\..\..\Project\Binaries\NeoAxis.Core.Editor.xml</DocumentationFile>
     <CodeAnalysisRuleSet />
   </PropertyGroup>
@@ -31,17 +31,31 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Update="Components\Scripting\Component_CSharpScript_DocumentWindow.cs" />
-    <Compile Update="Components\Scripting\Component_CSharpScript_DocumentWindow.designer.cs">
-      <DependentUpon>Component_CSharpScript_DocumentWindow.cs</DependentUpon>
+    <Compile Update="Components\Scripting\CSharpScriptEditor.cs" />
+    <Compile Update="Components\Scripting\CSharpScriptEditor.designer.cs">
+      <DependentUpon>CSharpScriptEditor.cs</DependentUpon>
     </Compile>
-    <Compile Update="Components\Scripting\Component_CSharpScript_PreviewControl.cs" />
-    <Compile Update="Components\Scripting\Component_CSharpScript_PreviewControl.designer.cs">
-      <DependentUpon>Component_CSharpScript_PreviewControl.cs</DependentUpon>
+    <Compile Update="Components\Scripting\CSharpScriptPreview.cs" />
+    <Compile Update="Components\Scripting\CSharpScriptPreview.designer.cs">
+      <DependentUpon>CSharpScriptPreview.cs</DependentUpon>
     </Compile>
-    <Compile Update="Components\ShaderScript\Component_ShaderScript_DocumentWindow.cs" />
-    <Compile Update="Components\ShaderScript\Component_ShaderScript_DocumentWindow.designer.cs">
-      <DependentUpon>Component_ShaderScript_DocumentWindow.cs</DependentUpon>
+    <Compile Update="Components\ShaderScript\ShaderScriptEditor.cs" />
+    <Compile Update="Components\ShaderScript\ShaderScriptEditor.designer.cs">
+      <DependentUpon>ShaderScriptEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\ColorValue\ColorGradientControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Editor\ColorValue\ColorValuePoweredSelectControl.cs" />
+    <Compile Update="Editor\ColorValue\ColorValuePoweredSelectControl.designer.cs">
+      <DependentUpon>ColorValuePoweredSelectControl.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\ColorValue\ColorValuePoweredSelectForm.cs" />
+    <Compile Update="Editor\ColorValue\ColorValuePoweredSelectForm.designer.cs">
+      <DependentUpon>ColorValuePoweredSelectForm.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\ColorValue\ColorWheel.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Editor\HierarchicalContainer\DropDownEditors\ScriptDropDownControl.cs" />
     <Compile Update="Editor\HierarchicalContainer\DropDownEditors\ScriptDropDownControl.designer.cs">
@@ -83,14 +97,14 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="Components\Scripting\Component_CSharpScript_DocumentWindow.resx">
-      <DependentUpon>Component_CSharpScript_DocumentWindow.cs</DependentUpon>
+    <EmbeddedResource Update="Components\Scripting\CSharpScriptEditor.resx">
+      <DependentUpon>CSharpScriptEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="Components\Scripting\Component_CSharpScript_PreviewControl.resx">
-      <DependentUpon>Component_CSharpScript_PreviewControl.cs</DependentUpon>
+    <EmbeddedResource Update="Components\Scripting\CSharpScriptPreview.resx">
+      <DependentUpon>CSharpScriptPreview.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="Components\ShaderScript\Component_ShaderScript_DocumentWindow.resx">
-      <DependentUpon>Component_ShaderScript_DocumentWindow.cs</DependentUpon>
+    <EmbeddedResource Update="Components\ShaderScript\ShaderScriptEditor.resx">
+      <DependentUpon>ShaderScriptEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Editor\HierarchicalContainer\DropDownEditors\ScriptDropDownControl.resx">
       <DependentUpon>ScriptDropDownControl.cs</DependentUpon>

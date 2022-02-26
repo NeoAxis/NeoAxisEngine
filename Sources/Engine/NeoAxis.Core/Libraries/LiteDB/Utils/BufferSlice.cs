@@ -1,4 +1,5 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,9 +9,9 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     /// <summary>
     /// Internal class that implement same idea from ArraySegment[byte] but use a class (not a struct). Works for byte[] only
@@ -128,3 +129,4 @@ namespace LiteDB
         }
     }
 }
+#endif

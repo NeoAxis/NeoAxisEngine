@@ -1,8 +1,8 @@
 using System;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class MultiBodySolverConstraint : IDisposable
 	{
@@ -16,22 +16,22 @@ namespace BulletSharp
 			Native = btMultiBodySolverConstraint_new();
 		}
 
-		public Vector3 AngularComponentA
+		public BVector3 AngularComponentA
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btMultiBodySolverConstraint_getAngularComponentA(Native, out value);
 				return value;
 			}
 			set => btMultiBodySolverConstraint_setAngularComponentA(Native, ref value);
 		}
 
-		public Vector3 AngularComponentB
+		public BVector3 AngularComponentB
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btMultiBodySolverConstraint_getAngularComponentB(Native, out value);
 				return value;
 			}
@@ -56,22 +56,22 @@ namespace BulletSharp
 			set => btMultiBodySolverConstraint_setCfm(Native, value);
 		}
 
-		public Vector3 ContactNormal1
+		public BVector3 ContactNormal1
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btMultiBodySolverConstraint_getContactNormal1(Native, out value);
 				return value;
 			}
 			set => btMultiBodySolverConstraint_setContactNormal1(Native, ref value);
 		}
 
-		public Vector3 ContactNormal2
+		public BVector3 ContactNormal2
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btMultiBodySolverConstraint_getContactNormal2(Native, out value);
 				return value;
 			}
@@ -196,22 +196,22 @@ namespace BulletSharp
 			set => btMultiBodySolverConstraint_setOverrideNumSolverIterations(Native, value);
 		}
 
-		public Vector3 Relpos1CrossNormal
+		public BVector3 Relpos1CrossNormal
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btMultiBodySolverConstraint_getRelpos1CrossNormal(Native, out value);
 				return value;
 			}
 			set => btMultiBodySolverConstraint_setRelpos1CrossNormal(Native, ref value);
 		}
 
-		public Vector3 Relpos2CrossNormal
+		public BVector3 Relpos2CrossNormal
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btMultiBodySolverConstraint_getRelpos2CrossNormal(Native, out value);
 				return value;
 			}

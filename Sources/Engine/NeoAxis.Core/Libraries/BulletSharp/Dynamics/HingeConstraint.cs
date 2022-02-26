@@ -1,9 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	[Flags]
 	public enum HingeFlags
@@ -22,8 +22,8 @@ namespace BulletSharp
 		{
 		}
 
-		public HingeConstraint(RigidBody rigidBodyA, RigidBody rigidBodyB, Vector3 pivotInA,
-			Vector3 pivotInB, Vector3 axisInA, Vector3 axisInB, bool useReferenceFrameA = false)
+		public HingeConstraint(RigidBody rigidBodyA, RigidBody rigidBodyB, BVector3 pivotInA,
+			BVector3 pivotInB, BVector3 axisInA, BVector3 axisInB, bool useReferenceFrameA = false)
 			: base(btHingeConstraint_new(rigidBodyA.Native, rigidBodyB.Native,
 				ref pivotInA, ref pivotInB, ref axisInA, ref axisInB, useReferenceFrameA))
 		{
@@ -31,7 +31,7 @@ namespace BulletSharp
 			_rigidBodyB = rigidBodyB;
 		}
 
-		public HingeConstraint(RigidBody rigidBodyA, Vector3 pivotInA, Vector3 axisInA,
+		public HingeConstraint(RigidBody rigidBodyA, BVector3 pivotInA, BVector3 axisInA,
 			bool useReferenceFrameA = false)
 			: base(btHingeConstraint_new2(rigidBodyA.Native, ref pivotInA, ref axisInA,
 				useReferenceFrameA))
@@ -40,8 +40,8 @@ namespace BulletSharp
 			_rigidBodyB = GetFixedBody();
 		}
 
-		public HingeConstraint(RigidBody rigidBodyA, RigidBody rigidBodyB, Matrix rigidBodyAFrame,
-			Matrix rigidBodyBFrame, bool useReferenceFrameA = false)
+		public HingeConstraint(RigidBody rigidBodyA, RigidBody rigidBodyB, BMatrix rigidBodyAFrame,
+			BMatrix rigidBodyBFrame, bool useReferenceFrameA = false)
 			: base(btHingeConstraint_new3(rigidBodyA.Native, rigidBodyB.Native,
 				ref rigidBodyAFrame, ref rigidBodyBFrame, useReferenceFrameA))
 		{
@@ -49,7 +49,7 @@ namespace BulletSharp
 			_rigidBodyB = rigidBodyB;
 		}
 
-		public HingeConstraint(RigidBody rigidBodyA, Matrix rigidBodyAFrame, bool useReferenceFrameA = false)
+		public HingeConstraint(RigidBody rigidBodyA, BMatrix rigidBodyAFrame, bool useReferenceFrameA = false)
 			: base(btHingeConstraint_new4(rigidBodyA.Native, ref rigidBodyAFrame,
 				useReferenceFrameA))
 		{
@@ -63,12 +63,12 @@ namespace BulletSharp
 				maxMotorImpulse);
 		}
 
-		public double GetHingeAngleRef(ref Matrix transA, ref Matrix transB)
+		public double GetHingeAngleRef(ref BMatrix transA, ref BMatrix transB)
 		{
 			return btHingeConstraint_getHingeAngle(Native, ref transA, ref transB);
 		}
 
-		public double GetHingeAngle(Matrix transA, Matrix transB)
+		public double GetHingeAngle(BMatrix transA, BMatrix transB)
 		{
 			return btHingeConstraint_getHingeAngle(Native, ref transA, ref transB);
 		}
@@ -78,43 +78,43 @@ namespace BulletSharp
 			btHingeConstraint_getInfo1NonVirtual(Native, info._native);
 		}
 
-		public void GetInfo2Internal(ConstraintInfo2 info, Matrix transA, Matrix transB,
-			Vector3 angVelA, Vector3 angVelB)
+		public void GetInfo2Internal(ConstraintInfo2 info, BMatrix transA, BMatrix transB,
+			BVector3 angVelA, BVector3 angVelB)
 		{
 			btHingeConstraint_getInfo2Internal(Native, info._native, ref transA,
 				ref transB, ref angVelA, ref angVelB);
 		}
 
-		public void GetInfo2InternalUsingFrameOffset(ConstraintInfo2 info, Matrix transA,
-			Matrix transB, Vector3 angVelA, Vector3 angVelB)
+		public void GetInfo2InternalUsingFrameOffset(ConstraintInfo2 info, BMatrix transA,
+			BMatrix transB, BVector3 angVelA, BVector3 angVelB)
 		{
 			btHingeConstraint_getInfo2InternalUsingFrameOffset(Native, info._native,
 				ref transA, ref transB, ref angVelA, ref angVelB);
 		}
 
-		public void GetInfo2NonVirtual(ConstraintInfo2 info, Matrix transA, Matrix transB,
-			Vector3 angVelA, Vector3 angVelB)
+		public void GetInfo2NonVirtual(ConstraintInfo2 info, BMatrix transA, BMatrix transB,
+			BVector3 angVelA, BVector3 angVelB)
 		{
 			btHingeConstraint_getInfo2NonVirtual(Native, info._native, ref transA,
 				ref transB, ref angVelA, ref angVelB);
 		}
 
-		public void SetAxisRef(ref Vector3 axisInA)
+		public void SetAxisRef(ref BVector3 axisInA)
 		{
 			btHingeConstraint_setAxis(Native, ref axisInA);
 		}
 
-		public void SetAxis(Vector3 axisInA)
+		public void SetAxis(BVector3 axisInA)
 		{
 			btHingeConstraint_setAxis(Native, ref axisInA);
 		}
 
-		public void SetFramesRef(ref Matrix frameA, ref Matrix frameB)
+		public void SetFramesRef(ref BMatrix frameA, ref BMatrix frameB)
 		{
 			btHingeConstraint_setFrames(Native, ref frameA, ref frameB);
 		}
 
-		public void SetFrames(Matrix frameA, Matrix frameB)
+		public void SetFrames(BMatrix frameA, BMatrix frameB)
 		{
 			btHingeConstraint_setFrames(Native, ref frameA, ref frameB);
 		}
@@ -146,22 +146,22 @@ namespace BulletSharp
 			btHingeConstraint_setMotorTarget(Native, targetAngle, deltaTime);
 		}
 
-		public void SetMotorTargetRef(ref Quaternion qAinB, double deltaTime)
+		public void SetMotorTargetRef(ref BQuaternion qAinB, double deltaTime)
 		{
 			btHingeConstraint_setMotorTarget2(Native, ref qAinB, deltaTime);
 		}
 
-		public void SetMotorTarget(Quaternion qAinB, double deltaTime)
+		public void SetMotorTarget(BQuaternion qAinB, double deltaTime)
 		{
 			btHingeConstraint_setMotorTarget2(Native, ref qAinB, deltaTime);
 		}
 
-		public void TestLimitRef(ref Matrix transA, ref Matrix transB)
+		public void TestLimitRef(ref BMatrix transA, ref BMatrix transB)
 		{
 			btHingeConstraint_testLimit(Native, ref transA, ref transB);
 		}
 
-		public void TestLimit(Matrix transA, Matrix transB)
+		public void TestLimit(BMatrix transA, BMatrix transB)
 		{
 			btHingeConstraint_testLimit(Native, ref transA, ref transB);
 		}
@@ -171,11 +171,11 @@ namespace BulletSharp
 			btHingeConstraint_updateRHS(Native, timeStep);
 		}
 
-		public Matrix AFrame
+		public BMatrix AFrame
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btHingeConstraint_getAFrame(Native, out value);
 				return value;
 			}
@@ -187,11 +187,11 @@ namespace BulletSharp
 			set => btHingeConstraint_setAngularOnly(Native, value);
 		}
 
-		public Matrix BFrame
+		public BMatrix BFrame
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btHingeConstraint_getBFrame(Native, out value);
 				return value;
 			}
@@ -205,21 +205,21 @@ namespace BulletSharp
 
 		public HingeFlags Flags => btHingeConstraint_getFlags(Native);
 
-		public Matrix FrameOffsetA
+		public BMatrix FrameOffsetA
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btHingeConstraint_getFrameOffsetA(Native, out value);
 				return value;
 			}
 		}
 
-		public Matrix FrameOffsetB
+		public BMatrix FrameOffsetB
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btHingeConstraint_getFrameOffsetB(Native, out value);
 				return value;
 			}
@@ -267,7 +267,7 @@ namespace BulletSharp
 	public class HingeAccumulatedAngleConstraint : HingeConstraint
 	{
 		public HingeAccumulatedAngleConstraint(RigidBody rigidBodyA, RigidBody rigidBodyB,
-			Vector3 pivotInA, Vector3 pivotInB, Vector3 axisInA, Vector3 axisInB, bool useReferenceFrameA = false)
+			BVector3 pivotInA, BVector3 pivotInB, BVector3 axisInA, BVector3 axisInB, bool useReferenceFrameA = false)
 			: base(btHingeAccumulatedAngleConstraint_new(rigidBodyA.Native, rigidBodyB.Native,
 				ref pivotInA, ref pivotInB, ref axisInA, ref axisInB, useReferenceFrameA))
 		{
@@ -275,8 +275,8 @@ namespace BulletSharp
 			_rigidBodyB = rigidBodyB;
 		}
 
-		public HingeAccumulatedAngleConstraint(RigidBody rigidBodyA, Vector3 pivotInA,
-			Vector3 axisInA, bool useReferenceFrameA = false)
+		public HingeAccumulatedAngleConstraint(RigidBody rigidBodyA, BVector3 pivotInA,
+			BVector3 axisInA, bool useReferenceFrameA = false)
 			: base(btHingeAccumulatedAngleConstraint_new2(rigidBodyA.Native, ref pivotInA,
 				ref axisInA, useReferenceFrameA))
 		{
@@ -285,7 +285,7 @@ namespace BulletSharp
 		}
 
 		public HingeAccumulatedAngleConstraint(RigidBody rigidBodyA, RigidBody rigidBodyB,
-			Matrix rigidBodyAFrame, Matrix rigidBodyBFrame, bool useReferenceFrameA = false)
+			BMatrix rigidBodyAFrame, BMatrix rigidBodyBFrame, bool useReferenceFrameA = false)
 			: base(btHingeAccumulatedAngleConstraint_new3(rigidBodyA.Native, rigidBodyB.Native,
 				ref rigidBodyAFrame, ref rigidBodyBFrame, useReferenceFrameA))
 		{
@@ -293,7 +293,7 @@ namespace BulletSharp
 			_rigidBodyB = rigidBodyB;
 		}
 
-		public HingeAccumulatedAngleConstraint(RigidBody rigidBodyA, Matrix rigidBodyAFrame,
+		public HingeAccumulatedAngleConstraint(RigidBody rigidBodyA, BMatrix rigidBodyAFrame,
 			bool useReferenceFrameA = false)
 			: base(btHingeAccumulatedAngleConstraint_new4(rigidBodyA.Native, ref rigidBodyAFrame,
 				useReferenceFrameA))

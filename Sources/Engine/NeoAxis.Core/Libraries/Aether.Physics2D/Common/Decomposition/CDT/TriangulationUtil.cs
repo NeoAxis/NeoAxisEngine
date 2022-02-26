@@ -34,7 +34,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace tainicom.Aether.Physics2D.Common.Decomposition.CDT
+namespace Internal.tainicom.Aether.Physics2D.Common.Decomposition.CDT
 {
     /**
      * @author Thomas Åhlén, thahlen@gmail.com

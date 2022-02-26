@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
@@ -12,7 +12,7 @@ namespace NeoAxis
 	[StructLayout( LayoutKind.Sequential )]
 	public struct SphereF
 	{
-		public Vector3F Origin;
+		public Vector3F Center;
 		public float Radius;
 
 		public static readonly SphereF Zero = new SphereF( Vector3F.Zero, 0.0f );
@@ -20,13 +20,13 @@ namespace NeoAxis
 
 		public SphereF( SphereF source )
 		{
-			Origin = source.Origin;
+			Center = source.Center;
 			Radius = source.Radius;
 		}
 
-		public SphereF( Vector3F origin, float radius )
+		public SphereF( Vector3F center, float radius )
 		{
-			this.Origin = origin;
+			this.Center = center;
 			this.Radius = radius;
 		}
 
@@ -37,22 +37,22 @@ namespace NeoAxis
 
 		public override int GetHashCode()
 		{
-			return ( Origin.GetHashCode() ^ Radius.GetHashCode() );
+			return ( Center.GetHashCode() ^ Radius.GetHashCode() );
 		}
 
 		public static bool operator ==( SphereF v1, SphereF v2 )
 		{
-			return ( v1.Origin == v2.Origin && v1.Radius == v2.Radius );
+			return ( v1.Center == v2.Center && v1.Radius == v2.Radius );
 		}
 
 		public static bool operator !=( SphereF v1, SphereF v2 )
 		{
-			return ( v1.Origin != v2.Origin || v1.Radius != v2.Radius );
+			return ( v1.Center != v2.Center || v1.Radius != v2.Radius );
 		}
 
 		public bool Equals( SphereF v, float epsilon )
 		{
-			if( !Origin.Equals( ref v.Origin, epsilon ) )
+			if( !Center.Equals( ref v.Center, epsilon ) )
 				return false;
 			if( Math.Abs( Radius - v.Radius ) > epsilon )
 				return false;
@@ -68,30 +68,30 @@ namespace NeoAxis
 		public BoundsF ToBounds()
 		{
 			BoundsF result;
-			result.Minimum.X = Origin.X - Radius;
-			result.Minimum.Y = Origin.Y - Radius;
-			result.Minimum.Z = Origin.Z - Radius;
-			result.Maximum.X = Origin.X + Radius;
-			result.Maximum.Y = Origin.Y + Radius;
-			result.Maximum.Z = Origin.Z + Radius;
+			result.Minimum.X = Center.X - Radius;
+			result.Minimum.Y = Center.Y - Radius;
+			result.Minimum.Z = Center.Z - Radius;
+			result.Maximum.X = Center.X + Radius;
+			result.Maximum.Y = Center.Y + Radius;
+			result.Maximum.Z = Center.Z + Radius;
 			return result;
 		}
 
 		public void ToBounds( out BoundsF result )
 		{
-			result.Minimum.X = Origin.X - Radius;
-			result.Minimum.Y = Origin.Y - Radius;
-			result.Minimum.Z = Origin.Z - Radius;
-			result.Maximum.X = Origin.X + Radius;
-			result.Maximum.Y = Origin.Y + Radius;
-			result.Maximum.Z = Origin.Z + Radius;
+			result.Minimum.X = Center.X - Radius;
+			result.Minimum.Y = Center.Y - Radius;
+			result.Minimum.Z = Center.Z - Radius;
+			result.Maximum.X = Center.X + Radius;
+			result.Maximum.Y = Center.Y + Radius;
+			result.Maximum.Z = Center.Z + Radius;
 		}
 
 		public bool Contains( Vector3F p )
 		{
-			float x = p.X - Origin.X;
-			float y = p.Y - Origin.Y;
-			float z = p.Z - Origin.Z;
+			float x = p.X - Center.X;
+			float y = p.Y - Center.Y;
+			float z = p.Z - Center.Z;
 			float lengthSqr = x * x + y * y + z * z;
 			if( lengthSqr > Radius * Radius )
 				return false;
@@ -100,9 +100,9 @@ namespace NeoAxis
 
 		public bool Intersects( ref SphereF s )
 		{
-			float x = s.Origin.X - Origin.X;
-			float y = s.Origin.Y - Origin.Y;
-			float z = s.Origin.Z - Origin.Z;
+			float x = s.Center.X - Center.X;
+			float y = s.Center.Y - Center.Y;
+			float z = s.Center.Z - Center.Z;
 			float lengthSqr = x * x + y * y + z * z;
 			float r = s.Radius + Radius;
 			if( lengthSqr > r * r )
@@ -122,7 +122,7 @@ namespace NeoAxis
 
 		public bool Contains( ref SphereF s )
 		{
-			return ( Origin - s.Origin ).Length() + s.Radius <= Radius;
+			return ( Center - s.Center ).Length() + s.Radius <= Radius;
 		}
 
 		public bool Contains( SphereF s )
@@ -267,9 +267,9 @@ namespace NeoAxis
 		public bool Intersects( ref TriangleF triangle )
 		{
 			Vector3F point;
-			ClosestPtPointTriangle( ref Origin, ref triangle.A, ref triangle.B, ref triangle.C, out point );
+			ClosestPtPointTriangle( ref Center, ref triangle.A, ref triangle.B, ref triangle.C, out point );
 			Vector3F v;
-			Vector3F.Subtract( ref point, ref Origin, out v );
+			Vector3F.Subtract( ref point, ref Center, out v );
 			return v.LengthSquared() <= Radius * Radius;
 		}
 
@@ -282,36 +282,36 @@ namespace NeoAxis
 		{
 			float distanceSqr = 0;
 
-			if( Origin.X < bounds.Minimum.X )
+			if( Center.X < bounds.Minimum.X )
 			{
-				float s = Origin.X - bounds.Minimum.X;
+				float s = Center.X - bounds.Minimum.X;
 				distanceSqr += s * s;
 			}
-			else if( Origin.X > bounds.Maximum.X )
+			else if( Center.X > bounds.Maximum.X )
 			{
-				float s = Origin.X - bounds.Maximum.X;
-				distanceSqr += s * s;
-			}
-
-			if( Origin.Y < bounds.Minimum.Y )
-			{
-				float s = Origin.Y - bounds.Minimum.Y;
-				distanceSqr += s * s;
-			}
-			else if( Origin.Y > bounds.Maximum.Y )
-			{
-				float s = Origin.Y - bounds.Maximum.Y;
+				float s = Center.X - bounds.Maximum.X;
 				distanceSqr += s * s;
 			}
 
-			if( Origin.Z < bounds.Minimum.Z )
+			if( Center.Y < bounds.Minimum.Y )
 			{
-				float s = Origin.Z - bounds.Minimum.Z;
+				float s = Center.Y - bounds.Minimum.Y;
 				distanceSqr += s * s;
 			}
-			else if( Origin.Z > bounds.Maximum.Z )
+			else if( Center.Y > bounds.Maximum.Y )
 			{
-				float s = Origin.Z - bounds.Maximum.Z;
+				float s = Center.Y - bounds.Maximum.Y;
+				distanceSqr += s * s;
+			}
+
+			if( Center.Z < bounds.Minimum.Z )
+			{
+				float s = Center.Z - bounds.Minimum.Z;
+				distanceSqr += s * s;
+			}
+			else if( Center.Z > bounds.Maximum.Z )
+			{
+				float s = Center.Z - bounds.Maximum.Z;
 				distanceSqr += s * s;
 			}
 
@@ -330,7 +330,7 @@ namespace NeoAxis
 
 			//Vec3 diff = origin - box.center;
 			Vector3F diff;
-			Vector3F.Subtract( ref Origin, ref box.Center, out diff );
+			Vector3F.Subtract( ref Center, ref box.Center, out diff );
 
 			//Vec3 localSpherePosition = inverseBoxAxis * diff;
 			Vector3F localSpherePosition;
@@ -362,8 +362,8 @@ namespace NeoAxis
 
 		public bool Intersects( Line3F line )
 		{
-			Vector3F s = line.Start - Origin;
-			Vector3F e = line.End - Origin;
+			Vector3F s = line.Start - Center;
+			Vector3F e = line.End - Center;
 			Vector3F r = e - s;
 			float a = Vector3F.Dot( -s, r );
 			if( a <= 0 )
@@ -383,7 +383,7 @@ namespace NeoAxis
 
 		public bool Intersects( RayF ray, out float scale1, out float scale2 )
 		{
-			Vector3F p = ray.Origin - Origin;
+			Vector3F p = ray.Origin - Center;
 			double a = Vector3F.Dot( ray.Direction, ray.Direction );
 			double b = Vector3F.Dot( ray.Direction, p );
 			double c = Vector3F.Dot( p, p ) - Radius * Radius;
@@ -403,7 +403,7 @@ namespace NeoAxis
 
 		public bool Intersects( RayF ray )
 		{
-			Vector3F p = ray.Origin - Origin;
+			Vector3F p = ray.Origin - Center;
 			double a = Vector3F.Dot( ray.Direction, ray.Direction );
 			double b = Vector3F.Dot( ray.Direction, p );
 			double c = Vector3F.Dot( p, p ) - Radius * Radius;
@@ -417,7 +417,7 @@ namespace NeoAxis
 		public Sphere ToSphere()
 		{
 			Sphere result;
-			result.Origin = Origin.ToVector3();
+			result.Center = Center.ToVector3();
 			result.Radius = Radius;
 			return result;
 		}
@@ -438,8 +438,8 @@ namespace NeoAxis
 			if( a == b )
 				return a;
 
-			var c1 = a.Origin;
-			var c2 = b.Origin;
+			var c1 = a.Center;
+			var c2 = b.Center;
 			var r1 = a.Radius;
 			var r2 = b.Radius;
 

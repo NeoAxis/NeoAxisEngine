@@ -62,7 +62,7 @@ namespace System.CodeDom
 
 }
 
-#if ANDROID
+#if ANDROID || IOS
 
 namespace System.Data
 {

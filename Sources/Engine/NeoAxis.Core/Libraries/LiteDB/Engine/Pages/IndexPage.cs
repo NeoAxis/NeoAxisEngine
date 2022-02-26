@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+#if !NO_LITE_DB
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     /// <summary>
     /// The IndexPage thats stores object data.
@@ -85,3 +86,4 @@ namespace LiteDB.Engine
         }
     }
 }
+#endif

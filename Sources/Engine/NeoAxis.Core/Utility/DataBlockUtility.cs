@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -34,10 +34,7 @@ namespace NeoAxis
 				string error;
 				DataBlock dataBlock = DataBlock.Parse( data, false, out error );
 				if( dataBlock == null )
-				{
-					errorString = string.Format( "Parsing data block failed \"{0}\" ({1}).",
-						path, error );
-				}
+					errorString = string.Format( "Parsing data block failed \"{0}\" ({1}).", path, error );
 
 				return dataBlock;
 			}
@@ -85,10 +82,7 @@ namespace NeoAxis
 				string error;
 				DataBlock dataBlock = DataBlock.Parse( data, false, out error );
 				if( dataBlock == null )
-				{
-					errorString = string.Format( "Parsing data block failed \"{0}\" ({1}).",
-						path, error );
-				}
+					errorString = string.Format( "Parsing data block failed \"{0}\" ({1}).", path, error );
 
 				return dataBlock;
 			}

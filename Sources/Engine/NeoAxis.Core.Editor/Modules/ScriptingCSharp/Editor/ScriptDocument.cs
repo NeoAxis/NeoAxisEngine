@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -14,7 +14,7 @@ namespace NeoAxis.Editor
 		public abstract string LoadText();
 		//public abstract bool SaveText( Microsoft.CodeAnalysis.Text.SourceText text ); //TODO: change text arg type to string?
 
-		public event EventHandler CodeChanged;
+		public event System.EventHandler CodeChanged;
 		protected void RaiseCodeChanged( EventArgs e )
 		{
 			CodeChanged?.Invoke( this, e );

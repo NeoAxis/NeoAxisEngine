@@ -1,4 +1,5 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -8,9 +9,9 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     /// <summary>
     /// Delegate function to get compiled enumerable expression
@@ -461,3 +462,4 @@ namespace LiteDB
         }
     }
 }
+#endif

@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Windows.Media;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Toolkit;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Search;
 using RoslynPad.Editor;
@@ -154,10 +154,10 @@ namespace NeoAxis.Editor
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			this.kryptonSplitContainer = new ComponentFactory.Krypton.Toolkit.KryptonSplitContainer();
-			this.kryptonSplitContainerSub1 = new ComponentFactory.Krypton.Toolkit.KryptonSplitContainer();
+			this.kryptonSplitContainer = new Internal.ComponentFactory.Krypton.Toolkit.KryptonSplitContainer();
+			this.kryptonSplitContainerSub1 = new Internal.ComponentFactory.Krypton.Toolkit.KryptonSplitContainer();
 			this.engineScrollBarVertical = new NeoAxis.Editor.EngineScrollBar();
-			this.kryptonSplitContainerSub2 = new ComponentFactory.Krypton.Toolkit.KryptonSplitContainer();
+			this.kryptonSplitContainerSub2 = new Internal.ComponentFactory.Krypton.Toolkit.KryptonSplitContainer();
 			this.engineScrollBarHorizontal = new NeoAxis.Editor.EngineScrollBar();
 			this.timer1 = new System.Windows.Forms.Timer( this.components );
 			( (System.ComponentModel.ISupportInitialize)( this.kryptonSplitContainer ) ).BeginInit();
@@ -432,7 +432,7 @@ namespace NeoAxis.Editor
 		void UpdateBackgroundForeground()
 		{
 			{
-				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditorBackgroundColorDarkTheme : ProjectSettings.Get.TextEditorBackgroundColorLightTheme;
+				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditor.TextEditorBackgroundColorDarkTheme : ProjectSettings.Get.TextEditor.TextEditorBackgroundColorLightTheme;
 				if( backgroundColor != color )
 				{
 					backgroundColor = color;
@@ -442,7 +442,7 @@ namespace NeoAxis.Editor
 			}
 
 			{
-				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditorForegroundColorDarkTheme : ProjectSettings.Get.TextEditorForegroundColorLightTheme;
+				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditor.TextEditorForegroundColorDarkTheme : ProjectSettings.Get.TextEditor.TextEditorForegroundColorLightTheme;
 				if( cursorColor != color )
 				{
 					cursorColor = color;
@@ -452,7 +452,7 @@ namespace NeoAxis.Editor
 			}
 
 			{
-				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditorSearchBackgroundDarkTheme.Value : ProjectSettings.Get.TextEditorSearchBackgroundLightTheme.Value;
+				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditor.TextEditorSearchBackgroundDarkTheme.Value : ProjectSettings.Get.TextEditor.TextEditorSearchBackgroundLightTheme.Value;
 				var packed = color.ToColorPacked();
 				Editor.TextArea.SearchBackgroundBrush = new System.Windows.Media.SolidColorBrush( System.Windows.Media.Color.FromArgb( packed.Alpha, packed.Red, packed.Green, packed.Blue ) );
 			}
@@ -460,29 +460,29 @@ namespace NeoAxis.Editor
 
 		void UpdateFont()
 		{
-			if( currentFont != ProjectSettings.Get.TextEditorFont )
+			if( currentFont != ProjectSettings.Get.TextEditor.TextEditorFont )
 			{
-				currentFont = ProjectSettings.Get.TextEditorFont;
+				currentFont = ProjectSettings.Get.TextEditor.TextEditorFont;
 
 				try
 				{
-					Editor.FontFamily = new System.Windows.Media.FontFamily( ProjectSettings.Get.TextEditorFont );
+					Editor.FontFamily = new System.Windows.Media.FontFamily( ProjectSettings.Get.TextEditor.TextEditorFont );
 				}
 				catch { }
 			}
 
-			if( currentFontSize != ProjectSettings.Get.TextEditorFontSize )
+			if( currentFontSize != ProjectSettings.Get.TextEditor.TextEditorFontSize )
 			{
-				currentFontSize = ProjectSettings.Get.TextEditorFontSize;
+				currentFontSize = ProjectSettings.Get.TextEditor.TextEditorFontSize;
 
 				try
 				{
-					Editor.FontSize = ProjectSettings.Get.TextEditorFontSize;
+					Editor.FontSize = ProjectSettings.Get.TextEditor.TextEditorFontSize;
 				}
 				catch { }
 			}
 
-			var selectionBackground = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditorSelectionBackgroundDarkTheme.Value : ProjectSettings.Get.TextEditorSelectionBackgroundLightTheme.Value;
+			var selectionBackground = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditor.TextEditorSelectionBackgroundDarkTheme.Value : ProjectSettings.Get.TextEditor.TextEditorSelectionBackgroundLightTheme.Value;
 			if( currentSelectionBackground != selectionBackground )
 			{
 				currentSelectionBackground = selectionBackground;
@@ -495,7 +495,7 @@ namespace NeoAxis.Editor
 				catch { }
 			}
 
-			var selectionForeground = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditorSelectionForegroundDarkTheme.Value : ProjectSettings.Get.TextEditorSelectionForegroundLightTheme.Value;
+			var selectionForeground = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditor.TextEditorSelectionForegroundDarkTheme.Value : ProjectSettings.Get.TextEditor.TextEditorSelectionForegroundLightTheme.Value;
 			if( currentSelectionForeground != selectionForeground )
 			{
 				currentSelectionForeground = selectionForeground;

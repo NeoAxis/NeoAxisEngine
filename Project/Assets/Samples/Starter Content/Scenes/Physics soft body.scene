@@ -1,5 +1,8 @@
-.component NeoAxis.Component_Scene
+// Made with NeoAxis Engine 2022.1.
+
+.component NeoAxis.Scene
 {
+	PhysicsNumberIterations = 1
 	DisplayDevelopmentDataInSimulation = True
 	DisplayPhysicalObjects = True
 	RenderingPipeline
@@ -10,20 +13,20 @@
 	{
 		GetByReference = "this:$Camera Editor"
 	}
-	.component NeoAxis.Component_Camera
+	.component NeoAxis.Camera
 	{
 		Name = Camera Editor
 		Visible = False
 		Transform = "9.81085046054705 -11.5888116935244 20.6525920399321; -0.283389724934259 0.210232518704558 0.751471754669701 0.557478926789581; 1 1 1"
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Ambient Light
 		Transform = "-27.7871391969358 -22.3112535611728 24.8527169920668; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
 		Brightness = 20000
 	}
-	.component NeoAxis.Component_RenderingPipeline_Default
+	.component NeoAxis.RenderingPipeline_Basic
 	{
 		Name = Rendering Pipeline
 		ShadowDirectionalLightCascades = 1
@@ -35,22 +38,31 @@
 		.component NeoAxis.Component
 		{
 			Name = Scene Effects
-			.component NeoAxis.Component_RenderingEffect_Sharpen
-			{
-				Name = Sharpen
-				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
-			}
-			.component NeoAxis.Component_RenderingEffect_Antialiasing
+			.component NeoAxis.RenderingEffect_Antialiasing
 			{
 				Name = Antialiasing
 			}
+			.component NeoAxis.RenderingEffect_ResolutionUpscale
+			{
+				Name = Resolution Upscale
+			}
+			.component NeoAxis.RenderingEffect_Sharpen
+			{
+				Name = Sharpen
+			}
 		}
 	}
-	.component NeoAxis.Component_GameMode
+	.component NeoAxis.GameMode
 	{
 		Name = Game Mode
+		CutsceneStarted = False
+		CutsceneGuiFadingFactor = 0
+		CutsceneGuiFadingSpeed = 0
+		ScreenFadingCurrentColor = 0 0 0 0
+		ScreenFadingTargetColor = 0 0 0 0
+		ScreenFadingSpeed = 0
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light1
 		Transform = "3.81787770755498 -4.02738720650646 30.8437317105508; -0.787517077619836 -0.26232887070058 0.556485675305445 0.0363883117761065; 1 1 1"
@@ -61,7 +73,7 @@
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 90
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light2
 		Transform = "0 0 30; 0 0 0 1; 1 1 1"
@@ -69,7 +81,7 @@
 		Brightness = 514788.5
 		AttenuationFar = 93.025
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space 31
 		CanBeSelected = False
@@ -89,10 +101,10 @@
 				Count = 0
 			}
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = Mesh Geometry
 				Dimensions = 200 200
@@ -103,7 +115,7 @@
 				}
 			}
 		}
-		.component NeoAxis.Component_RigidBody
+		.component NeoAxis.RigidBody
 		{
 			Name = Collision Body
 			Visible = False
@@ -112,7 +124,7 @@
 			{
 				GetByReference = "this:..\\Transform"
 			}
-			.component NeoAxis.Component_CollisionShape_Mesh
+			.component NeoAxis.CollisionShape_Mesh
 			{
 				Mesh
 				{
@@ -127,7 +139,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Enabled = False
 		Name = Mesh in Space 20
@@ -148,10 +160,10 @@
 				Count = 0
 			}
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = Mesh Geometry
 				Dimensions = 50 20
@@ -162,7 +174,7 @@
 				}
 			}
 		}
-		.component NeoAxis.Component_RigidBody
+		.component NeoAxis.RigidBody
 		{
 			Name = Collision Body
 			Visible = False
@@ -171,7 +183,7 @@
 			{
 				GetByReference = "this:..\\Transform"
 			}
-			.component NeoAxis.Component_CollisionShape_Mesh
+			.component NeoAxis.CollisionShape_Mesh
 			{
 				Mesh
 				{
@@ -186,7 +198,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Enabled = False
 		Name = Mesh in Space 12
@@ -207,10 +219,10 @@
 				Count = 0
 			}
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = Mesh Geometry
 				Dimensions = 50 20
@@ -221,7 +233,7 @@
 				}
 			}
 		}
-		.component NeoAxis.Component_RigidBody
+		.component NeoAxis.RigidBody
 		{
 			Name = Collision Body
 			Visible = False
@@ -230,7 +242,7 @@
 			{
 				GetByReference = "this:..\\Transform"
 			}
-			.component NeoAxis.Component_CollisionShape_Mesh
+			.component NeoAxis.CollisionShape_Mesh
 			{
 				Mesh
 				{
@@ -245,7 +257,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Enabled = False
 		Name = Mesh in Space 13
@@ -266,10 +278,10 @@
 				Count = 0
 			}
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = Mesh Geometry
 				Dimensions = 50 20
@@ -280,7 +292,7 @@
 				}
 			}
 		}
-		.component NeoAxis.Component_RigidBody
+		.component NeoAxis.RigidBody
 		{
 			Name = Collision Body
 			Visible = False
@@ -289,7 +301,7 @@
 			{
 				GetByReference = "this:..\\Transform"
 			}
-			.component NeoAxis.Component_CollisionShape_Mesh
+			.component NeoAxis.CollisionShape_Mesh
 			{
 				Mesh
 				{
@@ -304,7 +316,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Enabled = False
 		Name = Mesh in Space 14
@@ -325,10 +337,10 @@
 				Count = 0
 			}
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = Mesh Geometry
 				Dimensions = 50 20
@@ -339,7 +351,7 @@
 				}
 			}
 		}
-		.component NeoAxis.Component_RigidBody
+		.component NeoAxis.RigidBody
 		{
 			Name = Collision Body
 			Visible = False
@@ -348,7 +360,7 @@
 			{
 				GetByReference = "this:..\\Transform"
 			}
-			.component NeoAxis.Component_CollisionShape_Mesh
+			.component NeoAxis.CollisionShape_Mesh
 			{
 				Mesh
 				{
@@ -363,27 +375,28 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 18
 		Transform = "17.4191765328768 5.21505817485306 13.1941742201258; 0 0 0 1; 2.76355973373376 0.241101247638476 0.489095386496242"
-		.component NeoAxis.Component_CollisionShape_Box
+		.component NeoAxis.CollisionShape_Box
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 21
 		CanBeSelected = False
 		Transform = "-0.23095817633772 5.26290599127901 5.4822555850612; 0.13661380122876 0 0 0.990624383565148; 42.4524399481592 12.3734396256586 0.705882394042437"
-		.component NeoAxis.Component_CollisionShape_Box
+		.component NeoAxis.CollisionShape_Box
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_SoftBody
+	.component NeoAxis.SoftBody
 	{
+		Enabled = False
 		Name = Soft Body
 		Transform = "-7.87109230908252 8.29316113713309 9.76129469352481; 0 0 0 1; 2.8421052321998 2.8421052321998 2.8421052321998"
 		BendingConstraintDistance = 0
@@ -391,10 +404,10 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Sphere
+			.component NeoAxis.MeshGeometry_Sphere
 			{
 				Name = MeshGeometry_Sphere
 				SphereType = IcoSphere
@@ -402,7 +415,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_SoftBody
+	.component NeoAxis.SoftBody
 	{
 		Name = Soft Body4
 		Transform = "-2.84294375230641 8.3001330950865 9.80398612380727; 0 0 0 1; 2.8421052321998 2.8421052321998 2.8421052321998"
@@ -410,10 +423,10 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Sphere
+			.component NeoAxis.MeshGeometry_Sphere
 			{
 				Name = MeshGeometry_Sphere
 				SphereType = IcoSphere
@@ -421,25 +434,26 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_SoftBody
+	.component NeoAxis.SoftBody
 	{
+		Enabled = False
 		Name = Soft Body2
 		Transform = "-11.7443496513579 8.18895465806482 15.3588258906463; 0.209075015472805 0.00000000000000001 -0.00000000000000061 0.977899605227983; 2.8421052321998 2.8421052321998 2.8421052321998"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = MeshGeometry_Plane
 				Segments = 8 10
 			}
 		}
 	}
-	.component NeoAxis.Component_SoftBody
+	.component NeoAxis.SoftBody
 	{
 		Name = Soft Body3
 		Transform = "-8.22313641028328 8.18895465806482 15.3588258906463; 0.209075015472805 0.00000000000000001 -0.00000000000000061 0.977899605227983; 2.8421052321998 2.8421052321998 2.8421052321998"
@@ -448,17 +462,17 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = MeshGeometry_Plane
 				Segments = 10 10
 			}
 		}
 	}
-	.component NeoAxis.Component_SoftBody
+	.component NeoAxis.SoftBody
 	{
 		Name = Soft Body8
 		Transform = "13.15189406933 5.34570191067023 9.96519519958502; 0 0 0 1; 2.8421052321998 2.8421052321998 2.8421052321998"
@@ -467,35 +481,36 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = MeshGeometry_Plane
 				Segments = 20 20
 			}
 		}
 	}
-	.component NeoAxis.Component_SoftBody
+	.component NeoAxis.SoftBody
 	{
+		Enabled = False
 		Name = Soft Body10
 		Transform = "9.05266953541857 5.34570191067023 9.96519519958502; 0 0 0 1; 2.8421052321998 2.8421052321998 2.8421052321998"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = MeshGeometry_Plane
 				Segments = 20 20
 			}
 		}
 	}
-	.component NeoAxis.Component_SoftBody
+	.component NeoAxis.SoftBody
 	{
 		Name = Soft Body11
 		Transform = "3.33374587016213 5.34570191067023 9.96519519958502; 0 0 0 1; 2.8421052321998 2.8421052321998 2.8421052321998"
@@ -504,17 +519,17 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = MeshGeometry_Plane
 				Segments = 20 20
 			}
 		}
 	}
-	.component NeoAxis.Component_SoftBody
+	.component NeoAxis.SoftBody
 	{
 		Name = Soft Body9
 		Transform = "17.3956152429761 5.34570191067023 11.4348139749298; 0.755939223521776 0 0 0.654641803081116; 2.8421052321998 2.8421052321998 2.8421052321998"
@@ -523,17 +538,17 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = MeshGeometry_Plane
 				Segments = 20 20
 			}
 		}
 	}
-	.component NeoAxis.Component_Constraint
+	.component NeoAxis.Constraint
 	{
 		Name = Constraint
 		Transform = "11.7501490274613 6.79062351641572 9.98747780372237; 0 0 0 1; 1 1 1"
@@ -542,8 +557,9 @@
 			GetByReference = "this:..\\$Soft Body8"
 		}
 	}
-	.component NeoAxis.Component_Constraint
+	.component NeoAxis.Constraint
 	{
+		Enabled = False
 		Name = Constraint8
 		Transform = "7.65092449354994 6.79062351641572 9.98747780372237; 0 0 0 1; 1 1 1"
 		BodyA
@@ -551,7 +567,7 @@
 			GetByReference = "this:..\\$Soft Body10"
 		}
 	}
-	.component NeoAxis.Component_Constraint
+	.component NeoAxis.Constraint
 	{
 		Name = Constraint2
 		Transform = "14.5757032180154 6.79062351641572 9.98747780372237; 0 0 0 1; 1 1 1"
@@ -560,8 +576,9 @@
 			GetByReference = "this:..\\$Soft Body8"
 		}
 	}
-	.component NeoAxis.Component_Constraint
+	.component NeoAxis.Constraint
 	{
+		Enabled = False
 		Name = Constraint7
 		Transform = "10.476478684104 6.79062351641572 9.98747780372237; 0 0 0 1; 1 1 1"
 		BodyA
@@ -569,7 +586,7 @@
 			GetByReference = "this:..\\$Soft Body10"
 		}
 	}
-	.component NeoAxis.Component_Constraint
+	.component NeoAxis.Constraint
 	{
 		Name = Constraint3
 		Transform = "14.5757032180154 3.9327606499494 9.98747780372237; 0 0 0 1; 1 1 1"
@@ -578,8 +595,9 @@
 			GetByReference = "this:..\\$Soft Body8"
 		}
 	}
-	.component NeoAxis.Component_Constraint
+	.component NeoAxis.Constraint
 	{
+		Enabled = False
 		Name = Constraint6
 		Transform = "10.476478684104 3.9327606499494 9.98747780372237; 0 0 0 1; 1 1 1"
 		BodyA
@@ -587,7 +605,7 @@
 			GetByReference = "this:..\\$Soft Body10"
 		}
 	}
-	.component NeoAxis.Component_Constraint
+	.component NeoAxis.Constraint
 	{
 		Name = Constraint4
 		Transform = "11.69293130565 3.9327606499494 9.98747780372237; 0 0 0 1; 1 1 1"
@@ -596,8 +614,9 @@
 			GetByReference = "this:..\\$Soft Body8"
 		}
 	}
-	.component NeoAxis.Component_Constraint
+	.component NeoAxis.Constraint
 	{
+		Enabled = False
 		Name = Constraint5
 		Transform = "7.59370677173857 3.9327606499494 9.98747780372237; 0 0 0 1; 1 1 1"
 		BodyA
@@ -605,17 +624,17 @@
 			GetByReference = "this:..\\$Soft Body10"
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body
 		Transform = "13.0976255397962 5.59851607877121 12.2967798990466; 0 0 0 1; 1 1 1"
 		MotionType = Dynamic
-		.component NeoAxis.Component_CollisionShape_Sphere
+		.component NeoAxis.CollisionShape_Sphere
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_Constraint
+	.component NeoAxis.Constraint
 	{
 		Name = Constraint 2
 		Transform = "15.9469566492144 5.28038004276165 12.8032634672606; 0 0 0 1; 1 1 1"
@@ -628,7 +647,7 @@
 			GetByReference = "this:..\\$Soft Body9"
 		}
 	}
-	.component NeoAxis.Component_Constraint
+	.component NeoAxis.Constraint
 	{
 		Name = Constraint 3
 		Transform = "18.8314295117692 5.28038004276165 12.8032634672606; 0 0 0 1; 1 1 1"
@@ -641,7 +660,7 @@
 			GetByReference = "this:..\\$Soft Body9"
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body2
 		Transform = "16.6594982388547 -2.59759349213507 11.4950645271802; 0 0 0 1; 0.552486193371665 0.552486193371665 0.552486193371665"
@@ -654,27 +673,27 @@
 		AngularSleepingThreshold = 0
 		LinearVelocity = 0 2 0
 		AngularVelocity = 0.1 0.3 0.4
-		.component NeoAxis.Component_CollisionShape_Box
+		.component NeoAxis.CollisionShape_Box
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 3
 		Transform = "3.15881506459332 5.29297301073592 9.11492262874186; 0 0.707106781186547 0 0.707106781186548; 1 1 1"
-		.component NeoAxis.Component_CollisionShape_Cylinder
+		.component NeoAxis.CollisionShape_Cylinder
 		{
 			Name = Collision Shape
 			Radius = 0.2
 			Height = 6
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 2
 		Transform = "-8.22736751392768 4.03106783206954 12.8394726043951; 0.00000000000000067 1 0 0.00000000000000072; 1 1 1"
-		.component NeoAxis.Component_CollisionShape_Cylinder
+		.component NeoAxis.CollisionShape_Cylinder
 		{
 			Name = Collision Shape
 			Radius = 0.1

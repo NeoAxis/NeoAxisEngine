@@ -4,7 +4,7 @@ using System.Text;
 using System.Drawing;
 using System.Drawing.Imaging;
 
-namespace Aga.Controls.Tree.NodeControls
+namespace Internal.Aga.Controls.Tree.NodeControls
 {
 	public class DrawIconEventArgs : DrawEventArgs
 	{

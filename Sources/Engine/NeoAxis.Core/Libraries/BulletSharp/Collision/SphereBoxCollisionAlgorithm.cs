@@ -1,8 +1,8 @@
 using System;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class SphereBoxCollisionAlgorithm : ActivatingCollisionAlgorithm
 	{
@@ -37,8 +37,8 @@ namespace BulletSharp
 		{
 		}
 
-		public bool GetSphereDistanceRef(CollisionObjectWrapper boxObjWrap, out Vector3 v3PointOnBox,
-			out Vector3 normal, out double penetrationDepth, Vector3 v3SphereCenter,
+		public bool GetSphereDistanceRef(CollisionObjectWrapper boxObjWrap, out BVector3 v3PointOnBox,
+			out BVector3 normal, out double penetrationDepth, BVector3 v3SphereCenter,
 			double fRadius, double maxContactDistance)
 		{
 			return btSphereBoxCollisionAlgorithm_getSphereDistance(Native, boxObjWrap.Native,
@@ -46,8 +46,8 @@ namespace BulletSharp
 				fRadius, maxContactDistance);
 		}
 
-		public bool GetSphereDistance(CollisionObjectWrapper boxObjWrap, out Vector3 v3PointOnBox,
-			out Vector3 normal, out double penetrationDepth, Vector3 v3SphereCenter,
+		public bool GetSphereDistance(CollisionObjectWrapper boxObjWrap, out BVector3 v3PointOnBox,
+			out BVector3 normal, out double penetrationDepth, BVector3 v3SphereCenter,
 			double fRadius, double maxContactDistance)
 		{
 			return btSphereBoxCollisionAlgorithm_getSphereDistance(Native, boxObjWrap.Native,
@@ -55,15 +55,15 @@ namespace BulletSharp
 				fRadius, maxContactDistance);
 		}
 
-		public double GetSpherePenetrationRef(ref Vector3 boxHalfExtent, ref Vector3 sphereRelPos,
-			out Vector3 closestPoint, out Vector3 normal)
+		public double GetSpherePenetrationRef(ref BVector3 boxHalfExtent, ref BVector3 sphereRelPos,
+			out BVector3 closestPoint, out BVector3 normal)
 		{
 			return btSphereBoxCollisionAlgorithm_getSpherePenetration(Native, ref boxHalfExtent,
 				ref sphereRelPos, out closestPoint, out normal);
 		}
 
-		public double GetSpherePenetration(Vector3 boxHalfExtent, Vector3 sphereRelPos,
-			out Vector3 closestPoint, out Vector3 normal)
+		public double GetSpherePenetration(BVector3 boxHalfExtent, BVector3 sphereRelPos,
+			out BVector3 closestPoint, out BVector3 normal)
 		{
 			return btSphereBoxCollisionAlgorithm_getSpherePenetration(Native, ref boxHalfExtent,
 				ref sphereRelPos, out closestPoint, out normal);

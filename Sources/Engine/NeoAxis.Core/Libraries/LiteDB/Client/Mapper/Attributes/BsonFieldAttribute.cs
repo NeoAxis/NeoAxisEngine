@@ -1,7 +1,8 @@
-﻿using System;
-using static LiteDB.Constants;
+#if !NO_LITE_DB
+using System;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     /// <summary>
     /// Set a name to this property in BsonDocument
@@ -20,3 +21,4 @@ namespace LiteDB
         }
     }
 }
+#endif

@@ -1,7 +1,8 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     public interface ILiteEngine : IDisposable
     {
@@ -31,3 +32,4 @@ namespace LiteDB.Engine
         bool Pragma(string name, BsonValue value);
     }
 }
+#endif

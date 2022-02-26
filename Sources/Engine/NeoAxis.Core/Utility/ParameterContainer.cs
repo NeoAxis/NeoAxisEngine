@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.IO;
 using System.Collections.ObjectModel;
 using System.Drawing.Design;
 using System.Runtime.InteropServices;
-using SharpBgfx;
+using Internal.SharpBgfx;
 
 namespace NeoAxis
 {
@@ -282,10 +282,10 @@ namespace NeoAxis
 				//		{
 				//			switch( gpuTexture.TextureType )
 				//			{
-				//			//case Component_Texture.TypeEnum._1D: type = ParameterType.Texture1D; break;
-				//			case Component_Image.TypeEnum._2D: type = ParameterType.Texture2D; break;
-				//			case Component_Image.TypeEnum._3D: type = ParameterType.Texture3D; break;
-				//			case Component_Image.TypeEnum.Cube: type = ParameterType.TextureCube; break;
+				//			//case ImageComponent.TypeEnum._1D: type = ParameterType.Texture1D; break;
+				//			case ImageComponent.TypeEnum._2D: type = ParameterType.Texture2D; break;
+				//			case ImageComponent.TypeEnum._3D: type = ParameterType.Texture3D; break;
+				//			case ImageComponent.TypeEnum.Cube: type = ParameterType.TextureCube; break;
 				//			}
 				//		}
 				//	}

@@ -214,9 +214,6 @@
     <ClCompile Include="NeoAxis\OctreeContainer.cpp">
       <Filter>NeoAxis</Filter>
     </ClCompile>
-    <ClCompile Include="NeoAxis\SoftwareOcclusionBuffer.cpp">
-      <Filter>NeoAxis</Filter>
-    </ClCompile>
     <ClCompile Include="NeoAxis\StringUtils.cpp">
       <Filter>NeoAxis</Filter>
     </ClCompile>
@@ -258,6 +255,24 @@
     </ClCompile>
     <ClCompile Include="NeoAxis\vhacd\src\vhacdVolume.cpp">
       <Filter>NeoAxis\vhacd</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshOptimizer\vcacheoptimizer.cpp">
+      <Filter>MeshOptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshOptimizer\overdrawoptimizer.cpp">
+      <Filter>MeshOptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshOptimizer\vfetchoptimizer.cpp">
+      <Filter>MeshOptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="MaskedOcclusionCulling\FrameRecorder.cpp">
+      <Filter>MaskedOcclusionCulling</Filter>
+    </ClCompile>
+    <ClCompile Include="MaskedOcclusionCulling\MaskedOcclusionCulling.cpp">
+      <Filter>MaskedOcclusionCulling</Filter>
+    </ClCompile>
+    <ClCompile Include="MaskedOcclusionCulling\MaskedOcclusionCullingWrapper.cpp">
+      <Filter>MaskedOcclusionCulling</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -615,9 +630,6 @@
     <ClInclude Include="NeoAxis\OctreeContainer.h">
       <Filter>NeoAxis</Filter>
     </ClInclude>
-    <ClInclude Include="NeoAxis\SoftwareOcclusionBuffer.h">
-      <Filter>NeoAxis</Filter>
-    </ClInclude>
     <ClInclude Include="NeoAxis\StringUtils.h">
       <Filter>NeoAxis</Filter>
     </ClInclude>
@@ -684,6 +696,15 @@
     <ClInclude Include="NeoAxis\vhacd\src\vhacdVolume.h">
       <Filter>NeoAxis\vhacd</Filter>
     </ClInclude>
+    <ClInclude Include="MeshOptimizer\meshoptimizer.h">
+      <Filter>MeshOptimizer</Filter>
+    </ClInclude>
+    <ClInclude Include="MaskedOcclusionCulling\FrameRecorder.h">
+      <Filter>MaskedOcclusionCulling</Filter>
+    </ClInclude>
+    <ClInclude Include="MaskedOcclusionCulling\MaskedOcclusionCulling.h">
+      <Filter>MaskedOcclusionCulling</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MemoryManager">
@@ -701,6 +722,15 @@
     <Filter Include="NeoAxis\vhacd">
       <UniqueIdentifier>{d0468eb4-eed8-487e-8e42-4dd9b9904992}</UniqueIdentifier>
     </Filter>
+    <Filter Include="XAtlas">
+      <UniqueIdentifier>{4e040daf-5699-49e2-a3f1-1f1d74d3487a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MeshOptimizer">
+      <UniqueIdentifier>{54d2fec4-56cb-4aaa-a817-496829cd0354}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MaskedOcclusionCulling">
+      <UniqueIdentifier>{bc642ca4-a772-4da3-85c6-016a495d20e9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="NeoAxis\vhacd\src\FloatMath.inl">
@@ -711,6 +741,12 @@
     </None>
     <None Include="NeoAxis\vhacd\src\vhacdVector.inl">
       <Filter>NeoAxis\vhacd</Filter>
+    </None>
+    <None Include="MaskedOcclusionCulling\CompilerSpecific.inl">
+      <Filter>MaskedOcclusionCulling</Filter>
+    </None>
+    <None Include="MaskedOcclusionCulling\MaskedOcclusionCullingCommon.inl">
+      <Filter>MaskedOcclusionCulling</Filter>
     </None>
   </ItemGroup>
 </Project>

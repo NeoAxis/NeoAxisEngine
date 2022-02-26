@@ -1,11 +1,12 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     /// <summary>
     /// Interface factory to provider new Stream instances for datafile/walfile resources. It's useful to multiple threads can read same datafile
@@ -49,3 +50,4 @@ namespace LiteDB.Engine
         bool CloseOnDispose { get; }
     }
 }
+#endif

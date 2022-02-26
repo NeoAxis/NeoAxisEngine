@@ -1,0 +1,10 @@
+// Made with NeoAxis Engine 2022.1.
+
+.component NeoAxis.Product_iOS
+{
+	Name = NeoAxis Mobile Demo
+	SortOrder = -1800
+	Paths = "Assets\\Base\r\nAssets\\Samples\\Simple Game\r\nAssets\\Samples\\Spaceship Game\r\nAssets\\Samples\\Platform Game\r\nAssets\\Content\\2D\\Penguin\r\nAssets\\Content\\2D\\Weapon\r\n\r\n// Assets\\Samples\\Starter Content\r\nAssets\\Samples\\Starter Content\\Scenes\\Physics rigid body 2D.scene\r\nAssets\\Samples\\Starter Content\\Scenes\\Sensors 2D.scene\r\nAssets\\Samples\\Starter Content\\Scenes\\Vegetation material.scene\r\nAssets\\Samples\\Starter Content\\Models\\Fir Tree\r\nAssets\\Samples\\Starter Content\\Scenes Test\\_TestAnimation.scene\r\nAssets\\Samples\\Starter Content\\Scenes Test\\TurboSquid\r\nAssets\\Samples\\Starter Content\\Materials\r\nAssets\\Samples\\Starter Content\\Models\\Spaceship\r\n\r\nexclude:Assets\\Base\\Build\r\nexclude:Assets\\Base\\Tools\r\nexclude:Assets\\Base\\Learning\r\nexclude:Assets\\Base\\Fonts\\FlowGraphEditor.ttf\r\nexclude:Assets\\Base\\Fonts\\FlowGraphEditor.ttf.settings\r\n"
+	FileCache = False
+	ShaderCache = False
+}

@@ -1,6 +1,7 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     public interface IBsonDataReader : IDisposable
     {
@@ -13,3 +14,4 @@ namespace LiteDB
         bool Read();
     }
 }
+#endif

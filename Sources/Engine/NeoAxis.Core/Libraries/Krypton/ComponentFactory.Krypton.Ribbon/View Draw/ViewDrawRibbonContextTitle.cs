@@ -17,10 +17,10 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Windows.Forms.VisualStyles;
 using System.Runtime.InteropServices;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Toolkit;
 using System.Security;
 
-namespace ComponentFactory.Krypton.Ribbon
+namespace Internal.ComponentFactory.Krypton.Ribbon
 {
 	/// <summary>
 	/// Draws a context title.

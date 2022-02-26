@@ -1,5 +1,6 @@
-﻿using System;
-using Xilium.CefGlue;
+﻿#if !NO_UI_WEB_BROWSER
+using System;
+using Internal.Xilium.CefGlue;
 
 namespace NeoAxis//.UIWebBrowserControl
 {
@@ -50,3 +51,4 @@ namespace NeoAxis//.UIWebBrowserControl
 		}
 	}
 }
+#endif

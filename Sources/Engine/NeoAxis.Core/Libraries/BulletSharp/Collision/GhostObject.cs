@@ -1,8 +1,8 @@
-using BulletSharp.Math;
+using Internal.BulletSharp.Math;
 using System;
-using static BulletSharp.UnsafeNativeMethods;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class GhostObject : CollisionObject
 	{
@@ -24,15 +24,15 @@ namespace BulletSharp
 				(thisProxy != null) ? thisProxy.Native : IntPtr.Zero);
 		}
 
-		public void ConvexSweepTestRef(ConvexShape castShape, ref Matrix convexFromWorld,
-			ref Matrix convexToWorld, ConvexResultCallback resultCallback, double allowedCcdPenetration = 0)
+		public void ConvexSweepTestRef(ConvexShape castShape, ref BMatrix convexFromWorld,
+			ref BMatrix convexToWorld, ConvexResultCallback resultCallback, double allowedCcdPenetration = 0)
 		{
 			btGhostObject_convexSweepTest(Native, castShape.Native, ref convexFromWorld,
 				ref convexToWorld, resultCallback.Native, allowedCcdPenetration);
 		}
 
-		public void ConvexSweepTest(ConvexShape castShape, Matrix convexFromWorld,
-			Matrix convexToWorld, ConvexResultCallback resultCallback, double allowedCcdPenetration = 0)
+		public void ConvexSweepTest(ConvexShape castShape, BMatrix convexFromWorld,
+			BMatrix convexToWorld, ConvexResultCallback resultCallback, double allowedCcdPenetration = 0)
 		{
 			btGhostObject_convexSweepTest(Native, castShape.Native, ref convexFromWorld,
 				ref convexToWorld, resultCallback.Native, allowedCcdPenetration);
@@ -44,12 +44,12 @@ namespace BulletSharp
 				Native, index));
 		}
 
-		public void RayTestRef(ref Vector3 rayFromWorld, ref Vector3 rayToWorld, RayResultCallback resultCallback)
+		public void RayTestRef(ref BVector3 rayFromWorld, ref BVector3 rayToWorld, RayResultCallback resultCallback)
 		{
 			btGhostObject_rayTest(Native, ref rayFromWorld, ref rayToWorld, resultCallback.Native);
 		}
 
-		public void RayTest(Vector3 rayFromWorld, Vector3 rayToWorld, RayResultCallback resultCallback)
+		public void RayTest(BVector3 rayFromWorld, BVector3 rayToWorld, RayResultCallback resultCallback)
 		{
 			btGhostObject_rayTest(Native, ref rayFromWorld, ref rayToWorld, resultCallback.Native);
 		}

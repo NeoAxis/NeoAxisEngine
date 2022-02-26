@@ -1,0 +1,216 @@
+// Made with NeoAxis Engine 2021.4.
+
+.component NeoAxis.Material
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1154, 842\"><KW V=\"1\" A=\"B7778FF725F84E81D0A78E5FCEF483E0\"><CGD /><WS UN=\"062D670C8A0343CC1893B25EF3972E2C\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"A2DAC0262BD74D44BCBD1E90288432A1\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"B7778FF725F84E81D0A78E5FCEF483E0\"><KP UN=\"14ADEA43406944C14ABC4F16A42BB698\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"B7778FF725F84E81D0A78E5FCEF483E0\" S=\"False\"><CPD ObjPath=\"$Shader graph for Position Offset\" /></KP><KP UN=\"E075E5EA2C9E4B671B8A3CBB25F7743A\" S=\"False\"><CPD ObjPath=\"$Shader graph for Position Offset\\$Node Shader 2\\$Shader\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	UseVertexColor = False
+	TypeSettingsPrivateObjects
+	{
+		Length = 2
+		0 = $Shader graph for Position Offset
+		1 = PositionOffset
+	}
+	PositionOffset
+	{
+		GetByReference = "this:$Shader graph for Position Offset\\$Node Shader 2\\$Shader\\__parameter_ReturnValue"
+	}
+	.component NeoAxis.FlowGraph
+	{
+		Name = Shader graph for Position Offset
+		EditorScrollPosition = -2.05882352941177 -6.88235294117648
+		Specialization
+		{
+			GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = "Node "
+			Position = 9 -10
+			ControlledObject
+			{
+				GetByReference = "this:..\\.."
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Invoke Member 2
+			Position = -25 -4
+			Comment = Get vertex position
+			ControlledObject
+			{
+				GetByReference = "this:$Invoke Member"
+			}
+			.component NeoAxis.InvokeMember
+			{
+				Name = Invoke Member
+				Member
+				{
+					GetByReference = "NeoAxis.ShaderConstants|property:VertexPosition"
+				}
+				Exit
+				{
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Shader 2
+			Position = -8 -11
+			ControlledObject
+			{
+				GetByReference = "this:$Shader"
+			}
+			.component NeoAxis.ShaderScript
+			{
+				Name = Shader
+				Code = "vec3 getScale(mat3 m)\r\n{\r\n    float sx = length(vec3(m[0][0], m[0][1], m[0][2]));\r\n    float sy = length(vec3(m[1][0], m[1][1], m[1][2]));\r\n    float sz = length(vec3(m[2][0], m[2][1], m[2][2]));\r\n    return vec3(sx, sy, sz);\r\n}\r\n\r\n/*!public*/ vec3 Method(float windEffectFactor, float bendabilityFactor, bool detailBending, mat4 worldMatrix, vec3 vertexPosition, vec3 vertexNormal, vec4 vertexColor)\r\n{\r\n\tfloat timeMinus = -u_engineTime;\r\n\r\n\t// Get object world position. Use it to get random value.\r\n\tvec3 objectWorldPosition = mul(worldMatrix, vec4(vertexPosition, 1.0)).xyz;\r\n\r\n\tvec3 scale = getScale(toMat3(worldMatrix));\r\n\tvec3 vertexPositionScaled = vertexPosition * scale;\r\n\t\r\n\t// Calculate wave speed for leafs.\r\n\tvec2 windEffect = u_windSpeed * windEffectFactor; \r\n\tvec2 waveSpeed = vec2( 0.1 + 3.0 * length(windEffect), 0.2 + 3.0 * length(windEffect) );\r\n\r\n\t//Main Bending\r\n\r\n\t//constants. can be parameters of the method.\r\n\tfloat bendScale = 0.005 * windEffectFactor;\r\n\tfloat bendVariation = 0.005 * windEffectFactor;\r\n\tfloat bendFrequency = 1.0 * windEffectFactor;\r\n\r\n\t//calculate main bending strength\r\n\tfloat mainBendingPhase = sin(timeMinus * bendFrequency * length(u_windSpeed) + dot(objectWorldPosition, vec3_splat(1)));\r\n\tfloat variationPhase = (dot(cos(timeMinus), mainBendingPhase) * .25f + .5f);\r\n\tfloat bendStrength = bendScale + bendVariation * variationPhase * mainBendingPhase;\r\n\t\r\n\t//calculate vertex distance and bending factor\r\n\tfloat fLength = length(vertexPositionScaled);\r\n\tfloat fBF = vertexPositionScaled.z * bendStrength;\r\n\r\n\tvertexPositionScaled /= bendabilityFactor;\r\n\r\n\t//smooth bending factor and increase its nearby height limit.\r\n\tfBF += 1.0;\r\n\tfBF *= fBF;\r\n\tfBF = fBF * fBF - fBF;\r\n\t\r\n\t//displace position\r\n\tvec3 vNewPos = vertexPositionScaled;\r\n\tvNewPos.xy += u_windSpeed * fBF;\r\n\r\n\t//rescale - this keeps the plant parts from \"stretching\" by shortening the z (height) while they move about the xy.\r\n\tvec3 localPosition = normalize(vNewPos) * fLength;\r\n\r\n\t//Detail Bending\r\n\tif(detailBending)\r\n\t{\r\n\t\t//constants. can be parameters of the method.\r\n\t\tfloat branchAmplitude = 0.01;\r\n\t\tfloat leafAmplitude = 0.01;\r\n\t\tfloat branchFrequency = 1.0;\r\n\t\tfloat leafFrequency = 1.0;\r\n\t\r\n\t\t//calculate different phases\r\n\t\tfloat fTreePhase = dot(vertexPositionScaled, vec3_splat(1));\r\n\t\tfloat fBranchPhase = vertexColor.g + fTreePhase;\r\n\t\tfloat fLeafPhase = dot(vertexPositionScaled, vec3_splat(fBranchPhase));\r\n\r\n\t\t//make some waves\r\n\t\tvec2 vWavesIn = waveSpeed * (timeMinus + vec2(fLeafPhase * leafFrequency, fBranchPhase * branchFrequency ));\r\n\t\tvec4 vWaves = frac( vWavesIn.xxyy * vec4(1.975, 0.793, 0.375, 0.193) );\r\n\r\n\t\t//apply the triangle wave and smooth function\r\n\t\tvec4 triangleWave = abs( frac( vWaves + vec4_splat(0.5) ) * 2.0 - 1.0 );\r\n\t\tvWaves = triangleWave * triangleWave * (3.0 - 2.0 * triangleWave);\r\n\t\t\r\n\t\t//calculate resulting wave strength for two dimensions\r\n\t\tvec2 vWavesSum = vWaves.xz + vWaves.yw;  \r\n\r\n\t\tlocalPosition += vWavesSum.xxy * vec3(vertexColor.r * leafAmplitude * vertexNormal.xy, vertexColor.b * branchAmplitude);\r\n\t}\r\n\r\n\tvertexPositionScaled *= bendabilityFactor;\r\n\r\n\treturn localPosition - vertexPositionScaled;\r\n}\r\n"
+				__parameter_DetailBending = False
+				__parameter_WindEffectFactor
+				{
+					GetByReference = "this:..\\..\\$Node Shader Parameter 4\\$Shader Parameter\\Output"
+				}
+				__parameter_BendabilityFactor
+				{
+					GetByReference = "this:..\\..\\$Node Shader Parameter 5\\$Shader Parameter\\Output"
+				}
+				__parameter_WorldMatrix
+				{
+					GetByReference = "this:..\\..\\$Node Invoke Member 3\\$Invoke Member\\__value_Value"
+				}
+				__parameter_VertexPosition
+				{
+					GetByReference = "this:..\\..\\$Node Invoke Member 2\\$Invoke Member\\__value_Value"
+				}
+				__parameter_VertexNormal
+				{
+					GetByReference = "this:..\\..\\$Node Invoke Member 4\\$Invoke Member\\__value_Value"
+				}
+				__parameter_VertexColor
+				{
+					GetByReference = "this:..\\..\\$Node Invoke Member 5\\$Invoke Member\\__value_Value"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Shader Parameter 4
+			Position = -12 -25
+			Comment = Wind effect
+			ControlledObject
+			{
+				GetByReference = "this:$Shader Parameter"
+			}
+			.component NeoAxis.ShaderParameter
+			{
+				Name = Shader Parameter
+				Source
+				{
+					GetByReference = "this:..\\..\\..\\Wind Effect"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Shader Parameter 5
+			Position = -12 -20
+			Comment = Bendability
+			ControlledObject
+			{
+				GetByReference = "this:$Shader Parameter"
+			}
+			.component NeoAxis.ShaderParameter
+			{
+				Name = Shader Parameter
+				Source
+				{
+					GetByReference = "this:..\\..\\..\\Bendability"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Invoke Member 3
+			Position = -25 -8
+			Comment = Get world matrix
+			ControlledObject
+			{
+				GetByReference = "this:$Invoke Member"
+			}
+			.component NeoAxis.InvokeMember
+			{
+				Name = Invoke Member
+				Member
+				{
+					GetByReference = "NeoAxis.ShaderConstants|property:WorldMatrix"
+				}
+				Exit
+				{
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Invoke Member 4
+			Position = -25 0
+			Comment = Get vertex normal
+			ControlledObject
+			{
+				GetByReference = "this:$Invoke Member"
+			}
+			.component NeoAxis.InvokeMember
+			{
+				Name = Invoke Member
+				Member
+				{
+					GetByReference = "NeoAxis.ShaderConstants|property:VertexNormal"
+				}
+				Exit
+				{
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Invoke Member 5
+			Position = -25 4
+			Comment = Get vertex color to parametrize detail bending
+			ControlledObject
+			{
+				GetByReference = "this:$Invoke Member"
+			}
+			.component NeoAxis.InvokeMember
+			{
+				Name = Invoke Member
+				Member
+				{
+					GetByReference = "NeoAxis.ShaderConstants|property:Color0"
+				}
+				Exit
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.VirtualProperty
+	{
+		Name = Wind Effect
+		Category = Vegetation Animation
+		DefaultValueSpecified = True
+		DefaultValue = 1
+		Type
+		{
+			GetByReference = System.Double
+		}
+	}
+	.component NeoAxis.VirtualProperty
+	{
+		Name = Bendability
+		Category = Vegetation Animation
+		DefaultValueSpecified = True
+		DefaultValue = 1
+		Type
+		{
+			GetByReference = System.Double
+		}
+	}
+}

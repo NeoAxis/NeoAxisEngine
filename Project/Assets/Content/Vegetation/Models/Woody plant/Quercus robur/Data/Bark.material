@@ -1,0 +1,115 @@
+.component "Base\\Material templates\\Vegetation.material"
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1176, 842\"><KW V=\"1\" A=\"3A73AA1C15A640AB9BB510CE9FBF76CC\"><CGD /><WS UN=\"93A5D7AAE53B48EA77BF3666629729DA\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"93D0D4847CA54B1DCDA13411F4473974\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"3A73AA1C15A640AB9BB510CE9FBF76CC\"><KP UN=\"655CCCEA13664E7F9FA05D3019C2DFB8\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"3A73AA1C15A640AB9BB510CE9FBF76CC\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	Bendability = 0.2
+	BaseColor
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample 1\\$Texture Sample\\RGBA"
+	}
+	Roughness
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample 2\\$Texture Sample\\R"
+	}
+	Normal
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample 3\\$Texture Sample\\RGBA"
+	}
+	AmbientOcclusion
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample 4\\$Texture Sample\\R"
+	}
+	.component NeoAxis.Component_FlowGraph
+	{
+		Name = Shader graph
+		EditorScrollPosition = 0 0
+		Specialization
+		{
+			GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+		}
+		.component NeoAxis.Component_FlowGraphNode
+		{
+			Name = "Node "
+			Position = 10 -7
+			ControlledObject
+			{
+				GetByReference = "this:..\\.."
+			}
+		}
+		.component NeoAxis.Component_FlowGraphNode
+		{
+			Name = Node Texture Sample 1
+			Position = -20 -19
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.Component_ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Bark_03_2K_Base_Color.jpg"
+				}
+			}
+		}
+		.component NeoAxis.Component_FlowGraphNode
+		{
+			Name = Node Texture Sample 2
+			Position = -20 -10
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.Component_ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Bark_03_2K_Roughness.jpg"
+				}
+			}
+		}
+		.component NeoAxis.Component_FlowGraphNode
+		{
+			Name = Node Texture Sample 3
+			Position = -20 -1
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.Component_ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Bark_03_2K_Normal.jpg"
+				}
+			}
+		}
+		.component NeoAxis.Component_FlowGraphNode
+		{
+			Name = Node Texture Sample 4
+			Position = -20 8
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.Component_ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Bark_03_2K_AO.jpg"
+				}
+			}
+		}
+	}
+}

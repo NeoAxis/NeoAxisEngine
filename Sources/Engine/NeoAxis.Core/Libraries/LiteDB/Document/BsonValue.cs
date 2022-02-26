@@ -1,12 +1,13 @@
-﻿using LiteDB.Engine;
+#if !NO_LITE_DB
+using Internal.LiteDB.Engine;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     /// <summary>
     /// Represent a Bson Value used in BsonDocument
@@ -684,3 +685,5 @@ namespace LiteDB
 
     }
 }
+
+#endif

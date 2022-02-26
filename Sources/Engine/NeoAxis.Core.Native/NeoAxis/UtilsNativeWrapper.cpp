@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "OgreStableHeaders.h"
 #include "NeoAxisCoreNative.h"
 #include "UtilsNativeWrapper.h"
@@ -99,54 +99,54 @@ EXPORT int NativeUtils_CalculateHash( void* buffer, int length )
 	return hash;
 }
 
-#if defined(PLATFORM_MACOS) || defined(PLATFORM_ANDROID)
-
-EXPORT void* UtilsNativeWrapper_pthread_mutex_init()
-{
-	pthread_mutexattr_t attr;
-	pthread_mutexattr_init(&attr);
-	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-
-	//!!!!
-#ifndef ANDROID
-	pthread_mutex_t* mutex = (pthread_mutex_t*)NativeUtils_Alloc(MemoryAllocationType_Utility, sizeof(pthread_mutex_t));
-#else
-	pthread_mutex_t* mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
-#endif
-
-	int result = pthread_mutex_init(mutex, &attr);
-	if(result != 0)
-	{
-		NativeUtils_Free(mutex);
-		return NULL;
-	}
-
-	return mutex;
-}
-
-EXPORT void UtilsNativeWrapper_pthread_mutex_destroy(void* mutex)
-{
-	pthread_mutex_destroy((pthread_mutex_t*)mutex);
-	NativeUtils_Free(mutex);
-}
-
-EXPORT bool UtilsNativeWrapper_pthread_mutex_lock(void* mutex)
-{
-	int result = pthread_mutex_lock((pthread_mutex_t*)mutex);
-	if(result != 0)
-		return false;
-	return true;
-}
-
-EXPORT bool UtilsNativeWrapper_pthread_mutex_unlock(void* mutex)
-{
-	int result = pthread_mutex_unlock((pthread_mutex_t*)mutex);
-	if(result != 0)
-		return false;
-	return true;
-}
-
-#endif
+//#if defined(PLATFORM_OSX) || defined(PLATFORM_ANDROID)
+//
+//EXPORT void* UtilsNativeWrapper_pthread_mutex_init()
+//{
+//	pthread_mutexattr_t attr;
+//	pthread_mutexattr_init(&attr);
+//	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+//
+//	//!!!!
+//#ifndef ANDROID
+//	pthread_mutex_t* mutex = (pthread_mutex_t*)NativeUtils_Alloc(MemoryAllocationType_Utility, sizeof(pthread_mutex_t));
+//#else
+//	pthread_mutex_t* mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
+//#endif
+//
+//	int result = pthread_mutex_init(mutex, &attr);
+//	if(result != 0)
+//	{
+//		NativeUtils_Free(mutex);
+//		return NULL;
+//	}
+//
+//	return mutex;
+//}
+//
+//EXPORT void UtilsNativeWrapper_pthread_mutex_destroy(void* mutex)
+//{
+//	pthread_mutex_destroy((pthread_mutex_t*)mutex);
+//	NativeUtils_Free(mutex);
+//}
+//
+//EXPORT bool UtilsNativeWrapper_pthread_mutex_lock(void* mutex)
+//{
+//	int result = pthread_mutex_lock((pthread_mutex_t*)mutex);
+//	if(result != 0)
+//		return false;
+//	return true;
+//}
+//
+//EXPORT bool UtilsNativeWrapper_pthread_mutex_unlock(void* mutex)
+//{
+//	int result = pthread_mutex_unlock((pthread_mutex_t*)mutex);
+//	if(result != 0)
+//		return false;
+//	return true;
+//}
+//
+//#endif
 
 EXPORT int FloatingPointModel_GetValue()
 {

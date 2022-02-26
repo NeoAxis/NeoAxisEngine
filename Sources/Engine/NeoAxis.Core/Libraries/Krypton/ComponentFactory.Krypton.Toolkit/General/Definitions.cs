@@ -16,7 +16,7 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Collections.Generic;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
 	#region IContentValues
 	/// <summary>
@@ -1745,24 +1745,24 @@ namespace ComponentFactory.Krypton.Toolkit
     public class DateTimeList : List<DateTime> { };
     #endregion
 
-    #region Type MonthCalendarButtonSpecCollection
-    /// <summary>
-    /// Collection for managing ButtonSpecAny instances.
-    /// </summary>
-    public class MonthCalendarButtonSpecCollection : ButtonSpecCollection<ButtonSpecAny>
-    {
-        #region Identity
-        /// <summary>
-        /// Initialize a new instance of the MonthCalendarButtonSpecCollection class.
-        /// </summary>
-        /// <param name="owner">Reference to owning object.</param>
-        public MonthCalendarButtonSpecCollection(ViewLayoutMonths owner)
-            : base(owner)
-        {
-        }
-        #endregion
-    }
-    #endregion
+    //#region Type MonthCalendarButtonSpecCollection
+    ///// <summary>
+    ///// Collection for managing ButtonSpecAny instances.
+    ///// </summary>
+    //public class MonthCalendarButtonSpecCollection : ButtonSpecCollection<ButtonSpecAny>
+    //{
+    //    #region Identity
+    //    /// <summary>
+    //    /// Initialize a new instance of the MonthCalendarButtonSpecCollection class.
+    //    /// </summary>
+    //    /// <param name="owner">Reference to owning object.</param>
+    //    public MonthCalendarButtonSpecCollection(ViewLayoutMonths owner)
+    //        : base(owner)
+    //    {
+    //    }
+    //    #endregion
+    //}
+    //#endregion
 
     #region Delegates
     /// <summary>

@@ -1,8 +1,9 @@
-﻿//
+#if !NO_UI_WEB_BROWSER
+//
 // This file manually written from cef/include/internal/cef_types.h.
 // C API name: cef_response_filter_status_t.
 //
-namespace Xilium.CefGlue
+namespace Internal.Xilium.CefGlue
 {
     /// <summary>
     /// Return values for CefResponseFilter::Filter().
@@ -27,3 +28,5 @@ namespace Xilium.CefGlue
         Error,
     }
 }
+
+#endif

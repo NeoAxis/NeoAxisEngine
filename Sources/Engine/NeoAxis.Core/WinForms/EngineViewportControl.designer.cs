@@ -1,4 +1,4 @@
-namespace NeoAxis.Widget
+namespace NeoAxis.Editor
 {
 	partial class EngineViewportControl
 	{

@@ -1,10 +1,9 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
-using NeoAxis.Input;
 
 namespace NeoAxis
 {
@@ -124,7 +123,7 @@ namespace NeoAxis
 				//create down button
 				{
 					var image = obj.CreateComponent<UIImage>();
-					image.SourceImage = new Reference<Component_Image>( null, @"Base\UI\Images\ComboBoxButton.png" );
+					image.SourceImage = new Reference<ImageComponent>( null, @"Base\UI\Images\ComboBoxButton.png" );
 					image.HorizontalAlignment = EHorizontalAlignment.Right;
 					image.Size = new UIMeasureValueVector2( UIMeasure.Screen, new Vector2( 0, 0 ) );
 					image.CanBeSelected = false;

@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -42,6 +42,19 @@ namespace NeoAxis
 		}
 		public event Action<UIEdit> MaxCharacterCountChanged;
 		ReferenceField<int> _maxCharacterCount = 1000000;
+
+		/// <summary>
+		/// The character used to mask characters of a password.
+		/// </summary>
+		[DefaultValue( '\0' )]
+		public Reference<char> PasswordCharacter
+		{
+			get { if( _passwordCharacter.BeginGet() ) PasswordCharacter = _passwordCharacter.Get( this ); return _passwordCharacter.value; }
+			set { if( _passwordCharacter.BeginSet( ref value ) ) { try { PasswordCharacterChanged?.Invoke( this ); } finally { _passwordCharacter.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PasswordCharacter"/> property value changes.</summary>
+		public event Action<UIEdit> PasswordCharacterChanged;
+		ReferenceField<char> _passwordCharacter = '\0';
 
 		///////////////////////////////////////////
 
@@ -379,6 +392,8 @@ namespace NeoAxis
 			get
 			{
 				string text = Text;
+				if( PasswordCharacter.Value != '\0' )
+					text = new string( PasswordCharacter.Value, text.Length );
 				if( Focused && !ReadOnly )
 					text += "_";
 				//OnUpdatingTextControl( ref text );

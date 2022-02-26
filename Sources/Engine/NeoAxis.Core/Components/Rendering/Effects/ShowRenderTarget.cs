@@ -1,11 +1,7 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
-using System.Drawing.Design;
 using System.ComponentModel;
-using System.Reflection;
 
 namespace NeoAxis
 {
@@ -14,7 +10,7 @@ namespace NeoAxis
 	/// </summary>
 	[DefaultOrderOfEffect( 15 )]
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
-	public class Component_RenderingEffect_ShowRenderTarget : Component_RenderingEffect
+	public class RenderingEffect_ShowRenderTarget : RenderingEffect
 	{
 		/// <summary>
 		/// The intensity of the effect.
@@ -29,7 +25,7 @@ namespace NeoAxis
 			set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_ShowRenderTarget> IntensityChanged;
+		public event Action<RenderingEffect_ShowRenderTarget> IntensityChanged;
 		ReferenceField<double> _intensity = 1;
 
 		//Texture
@@ -43,6 +39,7 @@ namespace NeoAxis
 			ShadowDirectionalLightSplit3,
 			ShadowDirectionalLightSplit4,
 			ShadowSpotlight,
+			ShadowPointLight,
 		}
 
 		/// <summary>
@@ -56,7 +53,7 @@ namespace NeoAxis
 			set { if( _texture.BeginSet( ref value ) ) { try { TextureChanged?.Invoke( this ); } finally { _texture.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Texture"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_ShowRenderTarget> TextureChanged;
+		public event Action<RenderingEffect_ShowRenderTarget> TextureChanged;
 		ReferenceField<TextureType> _texture = TextureType.Normal;
 
 		/// <summary>
@@ -76,7 +73,7 @@ namespace NeoAxis
 			}
 		}
 		/// <summary>Occurs when the <see cref="DepthMultiplier"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_ShowRenderTarget> DepthMultiplierChanged;
+		public event Action<RenderingEffect_ShowRenderTarget> DepthMultiplierChanged;
 		ReferenceField<double> _depthMultiplier = 10;
 
 		/// <summary>
@@ -96,7 +93,7 @@ namespace NeoAxis
 			}
 		}
 		/// <summary>Occurs when the <see cref="MotionMultiplier"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_ShowRenderTarget> MotionMultiplierChanged;
+		public event Action<RenderingEffect_ShowRenderTarget> MotionMultiplierChanged;
 		ReferenceField<double> _motionMultiplier = 1000;
 
 		/// <summary>
@@ -116,7 +113,7 @@ namespace NeoAxis
 			}
 		}
 		/// <summary>Occurs when the <see cref="ShadowMultiplier"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_ShowRenderTarget> ShadowMultiplierChanged;
+		public event Action<RenderingEffect_ShowRenderTarget> ShadowMultiplierChanged;
 		ReferenceField<double> _shadowMultiplier = 1;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -146,9 +143,12 @@ namespace NeoAxis
 			}
 		}
 
-		protected override void OnRender( ViewportRenderingContext context, Component_RenderingPipeline.IFrameData frameData, ref Component_Image actualTexture )
+		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
 		{
 			base.OnRender( context, frameData, ref actualTexture );
+
+			if( Intensity <= 0 )
+				return;
 
 			//create final
 			var finalTexture = context.RenderTarget2D_Alloc( actualTexture.Result.ResultSize, PixelFormat.A8R8G8B8 );
@@ -190,8 +190,13 @@ namespace NeoAxis
 					textureName = "shadowSpotlight1";
 					multiplier = ShadowMultiplier;
 					break;
+
+				case TextureType.ShadowPointLight:
+					textureName = "shadowPoint1";
+					multiplier = ShadowMultiplier;
+					break;
 				}
-				context.objectsDuringUpdate.namedTextures.TryGetValue( textureName, out var showTexture );
+				context.ObjectsDuringUpdate.namedTextures.TryGetValue( textureName, out var showTexture );
 				if( showTexture == null )
 				{
 					context.DynamicTexture_Free( finalTexture );
@@ -200,6 +205,9 @@ namespace NeoAxis
 
 				if( Texture.Value.ToString().Contains( "ShadowDirectionalLight" ) )
 					shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "SHADOW_DIRECTIONAL_LIGHT" ) );
+
+				if( Texture.Value.ToString().Contains( "ShadowPointLight" ) )
+					shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "SHADOW_POINT_LIGHT" ) );
 
 				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/, actualTexture,
 					TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );

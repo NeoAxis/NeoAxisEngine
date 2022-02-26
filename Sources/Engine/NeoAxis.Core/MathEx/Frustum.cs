@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
@@ -51,7 +51,7 @@ namespace NeoAxis
 			this.halfWidth = halfWidth;
 			this.halfHeight = halfHeight;
 
-			Matrix3 mat = rotation.ToMatrix3();
+			rotation.ToMatrix3( out var mat );
 			_axis = new Matrix3( mat.Item0, -mat.Item1, mat.Item2 );
 			_axis.GetTranspose( out _axisTransposed );
 			invFarDistance = 1.0f / far;
@@ -1027,9 +1027,11 @@ namespace NeoAxis
 		{
 			if( projection == ProjectionType.Perspective )
 			{
-				foreach( Plane plane in Planes )
+				var planes = Planes;
+				for( int n = 0; n < planes.Length; n++ )
 				{
-					if( plane.GetDistance( ref sphere.Origin ) > sphere.Radius )
+					ref var plane = ref planes[ n ];
+					if( plane.GetDistance( ref sphere.Center ) > sphere.Radius )
 						return false;
 				}
 				return true;

@@ -1,12 +1,13 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     internal class SysPageList : SystemCollection
     {
@@ -108,3 +109,4 @@ namespace LiteDB.Engine
         }
     }
 }
+#endif

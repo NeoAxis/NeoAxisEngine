@@ -6,7 +6,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace tainicom.Aether.Physics2D.Fluids
+namespace Internal.tainicom.Aether.Physics2D.Fluids
 {
     public class SpatialTable : IEnumerable<Particle>
     {

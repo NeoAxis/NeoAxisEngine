@@ -1,7 +1,8 @@
 $input v_texCoord0
 
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "../../Common.sh"
+#include "../../FragmentFunctions.sh"
 #include "ASSAO_Helpers.sh"
 
 uniform vec4 NDCToViewMul;
@@ -18,6 +19,7 @@ uniform vec4 effectShadowStrength;
 uniform vec4 effectShadowClamp;
 uniform vec4 effectShadowPow;
 uniform vec4 detailAOStrength;
+uniform vec4 detailAOStrengthDistance;
 uniform mat4 itViewMatrix;
 
 SAMPLER2D(s_depthTexture, 0);
@@ -46,6 +48,9 @@ static const vec4 g_samplePatternMain[MAIN_DISK_SAMPLE_COUNT] =
 
 vec3 NDCToViewspace(vec2 pos, float viewspaceDepth)
 {
+	//!!!!betauser
+	pos = clamp(pos, viewportPixelSize.xy, vec2_splat(1.0) - viewportPixelSize.xy);
+	
     vec3 ret;
 
     ret.xy = (NDCToViewMul.xy * pos.xy + NDCToViewAdd.xy) * viewspaceDepth;

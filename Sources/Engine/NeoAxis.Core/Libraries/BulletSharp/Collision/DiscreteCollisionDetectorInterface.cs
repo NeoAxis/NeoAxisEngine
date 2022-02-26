@@ -1,8 +1,8 @@
 using System;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public abstract class DiscreteCollisionDetectorInterface : IDisposable
 	{
@@ -21,22 +21,22 @@ namespace BulletSharp
 				set => btDiscreteCollisionDetectorInterface_ClosestPointInput_setMaximumDistanceSquared(Native, value);
 			}
 
-			public Matrix TransformA
+			public BMatrix TransformA
 			{
 				get
 				{
-					Matrix value;
+					BMatrix value;
 					btDiscreteCollisionDetectorInterface_ClosestPointInput_getTransformA(Native, out value);
 					return value;
 				}
 				set => btDiscreteCollisionDetectorInterface_ClosestPointInput_setTransformA(Native, ref value);
 			}
 
-			public Matrix TransformB
+			public BMatrix TransformB
 			{
 				get
 				{
-					Matrix value;
+					BMatrix value;
 					btDiscreteCollisionDetectorInterface_ClosestPointInput_getTransformB(Native, out value);
 					return value;
 				}
@@ -73,7 +73,7 @@ namespace BulletSharp
 				Native = native;
 			}
 
-			public void AddContactPoint(Vector3 normalOnBInWorld, Vector3 pointInWorld,
+			public void AddContactPoint(BVector3 normalOnBInWorld, BVector3 pointInWorld,
 				double depth)
 			{
 				btDiscreteCollisionDetectorInterface_Result_addContactPoint(Native,
@@ -160,11 +160,11 @@ namespace BulletSharp
 		{
 		}
 		*/
-		public Vector3 ClosestPointInB
+		public BVector3 ClosestPointInB
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btStorageResult_getClosestPointInB(Native, out value);
 				return value;
 			}
@@ -177,11 +177,11 @@ namespace BulletSharp
 			set => btStorageResult_setDistance(Native, value);
 		}
 
-		public Vector3 NormalOnSurfaceB
+		public BVector3 NormalOnSurfaceB
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btStorageResult_getNormalOnSurfaceB(Native, out value);
 				return value;
 			}

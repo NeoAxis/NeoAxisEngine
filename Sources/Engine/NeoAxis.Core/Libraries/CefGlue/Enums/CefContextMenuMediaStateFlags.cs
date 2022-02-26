@@ -1,8 +1,9 @@
-﻿//
+#if !NO_UI_WEB_BROWSER
+//
 // This file manually written from cef/include/internal/cef_types.h.
 // C API name: cef_context_menu_media_state_flags_t.
 //
-namespace Xilium.CefGlue
+namespace Internal.Xilium.CefGlue
 {
     using System;
 
@@ -25,3 +26,5 @@ namespace Xilium.CefGlue
         CanRotate = 1 << 9,
     }
 }
+
+#endif

@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 
 // MIT License - Copyright (C) The Mono.Xna Team
 // This file is subject to the terms and conditions defined in
@@ -582,6 +582,20 @@ namespace NeoAxis
 			var g = (byte)( ( 0x0000FF00 & value ) >> 8 );
 			var b = (byte)( 0x000000FF & value );
 			return new ColorByte( r, g, b, a );
+		}
+
+		public uint ToABGR()
+		{
+			//!!!!check
+
+			return _packedValue;
+		}
+
+		public uint ToARGB()
+		{
+			//!!!!check
+
+			return (uint)( Alpha << 24 | Red << 16 | Green << 8 | Blue );
 		}
 	}
 }

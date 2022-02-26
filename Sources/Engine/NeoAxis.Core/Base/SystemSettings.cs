@@ -1,10 +1,11 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Collections.ObjectModel;
 using System.Reflection;
+using Internal;
 
 namespace NeoAxis
 {
@@ -32,6 +33,9 @@ namespace NeoAxis
 			UWP,
 			Android,
 			iOS,
+			
+			//!!!!
+			Store,
 
 			//!!!!Special,
 		}
@@ -40,7 +44,7 @@ namespace NeoAxis
 
 		public enum NetRuntimeType
 		{
-			NetFramework,
+			Net,
 			Mono,
 		}
 
@@ -189,7 +193,7 @@ namespace NeoAxis
 				platform = Platform.Windows;
 #endif
 
-			netRuntime = Type.GetType( "Mono.Runtime", false ) != null ? NetRuntimeType.Mono : NetRuntimeType.NetFramework;
+			netRuntime = Type.GetType( "Mono.Runtime", false ) != null ? NetRuntimeType.Mono : NetRuntimeType.Net;
 		}
 
 		public static Platform CurrentPlatform
@@ -241,7 +245,7 @@ namespace NeoAxis
 		static void GenerateVideoModes()
 		{
 			//generate list
-			videoModes = PlatformFunctionality.Get().GetVideoModes();
+			videoModes = PlatformFunctionality.Instance.GetVideoModes();
 
 			//safe list
 			if( videoModes.Count == 0 )
@@ -274,7 +278,7 @@ namespace NeoAxis
 		/// </summary>
 		public static IList<DisplayInfo> AllDisplays
 		{
-			get { return PlatformFunctionality.Get().GetAllDisplays(); }
+			get { return PlatformFunctionality.Instance.GetAllDisplays(); }
 		}
 
 		public static RectangleI AllDisplaysBounds
@@ -291,7 +295,7 @@ namespace NeoAxis
 
 		public static bool ChangeVideoMode( Vector2I mode )
 		{
-			if( !PlatformFunctionality.Get().ChangeVideoMode( mode ) )
+			if( !PlatformFunctionality.Instance.ChangeVideoMode( mode ) )
 				return false;
 			videoModeChanged = mode;
 			return true;
@@ -301,14 +305,14 @@ namespace NeoAxis
 		{
 			if( videoModeChanged != null )
 			{
-				PlatformFunctionality.Get().RestoreVideoMode();
+				PlatformFunctionality.Instance.RestoreVideoMode();
 				videoModeChanged = null;
 			}
 		}
 
 		public static void SetGamma( float value )
 		{
-			PlatformFunctionality.Get().SetGamma( value );
+			PlatformFunctionality.Instance.SetGamma( value );
 			gammaChanged = value;
 		}
 
@@ -316,7 +320,7 @@ namespace NeoAxis
 		{
 			if( gammaChanged != null )
 			{
-				PlatformFunctionality.Get().SetGamma( 1 );
+				PlatformFunctionality.Instance.SetGamma( 1 );
 				gammaChanged = null;
 			}
 		}

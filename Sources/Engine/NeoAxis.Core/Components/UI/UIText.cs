@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -18,13 +18,13 @@ namespace NeoAxis
 		/// The font of rendered text.
 		/// </summary>
 		[DefaultValue( null )]
-		public Reference<Component_Font> Font
+		public Reference<FontComponent> Font
 		{
 			get { if( _font.BeginGet() ) Font = _font.Get( this ); return _font.value; }
 			set { if( _font.BeginSet( ref value ) ) { try { FontChanged?.Invoke( this ); } finally { _font.EndSet(); } } }
 		}
 		public event Action<UIText> FontChanged;
-		ReferenceField<Component_Font> _font = null;
+		ReferenceField<FontComponent> _font = null;
 
 		/// <summary>
 		/// Font size of rendered text.
@@ -590,7 +590,7 @@ namespace NeoAxis
 			}
 		}
 
-		//public Component_Font GetFont()
+		//public Font GetFont()
 		//{
 		//	xx
 		//	var font = Font.Value;

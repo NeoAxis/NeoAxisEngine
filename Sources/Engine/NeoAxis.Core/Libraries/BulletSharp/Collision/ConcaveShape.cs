@@ -1,8 +1,8 @@
 using System;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public enum PhyScalarType
 	{
@@ -21,8 +21,8 @@ namespace BulletSharp
 		{
 		}
 
-		public void ProcessAllTriangles(TriangleCallback callback, Vector3 aabbMin,
-			Vector3 aabbMax)
+		public void ProcessAllTriangles(TriangleCallback callback, BVector3 aabbMin,
+			BVector3 aabbMax)
 		{
 			btConcaveShape_processAllTriangles(Native, callback.Native, ref aabbMin,
 				ref aabbMax);

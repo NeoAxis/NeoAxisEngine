@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using static BulletSharp.UnsafeNativeMethods;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public enum DispatchFunc
 	{
@@ -39,8 +39,8 @@ namespace BulletSharp
 
 		public IDebugDraw DebugDraw
 		{
-			get => BulletSharp.DebugDraw.GetManaged(btDispatcherInfo_getDebugDraw(Native));
-			set => btDispatcherInfo_setDebugDraw(Native, BulletSharp.DebugDraw.GetUnmanaged(value));
+			get => Internal.BulletSharp.DebugDraw.GetManaged(btDispatcherInfo_getDebugDraw(Native));
+			set => btDispatcherInfo_setDebugDraw(Native, Internal.BulletSharp.DebugDraw.GetUnmanaged(value));
 		}
 
 		public DispatchFunc DispatchFunc

@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Text;
 using System.Drawing;
@@ -18,7 +18,7 @@ namespace NeoAxis.Editor
 	public partial class CSharpDocumentWindow : DocumentWindow
 	{
 		[EngineConfig( "AddPropertyCode", "ClassName" )]
-		public static string addPropertyCode_ClassName = "Component_";
+		public static string addPropertyCode_ClassName = "";//"Component_";
 
 		[EngineConfig( "AddPropertyCode", "PropertyName" )]
 		public static string addPropertyCode_PropertyName = "Name";
@@ -102,7 +102,7 @@ namespace NeoAxis.Editor
 
 		public class AddPropertyCodeSettings
 		{
-			[DefaultValue( "Component_" )]
+			[DefaultValue( "" )]//[DefaultValue( "Component_" )]
 			[Category( "Settings" )]
 			//[Description( "" )]
 			public string ClassName
@@ -110,7 +110,8 @@ namespace NeoAxis.Editor
 				get { return className; }
 				set { className = value; }
 			}
-			string className = "Component_";
+			string className = "";
+			//string className = "Component_";
 
 			[DefaultValue( "Name" )]
 			[Category( "Settings" )]

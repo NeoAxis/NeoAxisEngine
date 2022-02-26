@@ -27,7 +27,7 @@ SOFTWARE.
 using System;
 using System.Runtime.InteropServices;
 
-namespace Net3dBool
+namespace Internal.Net3dBool
 {
     /// <summary>
     /// Represents a 3D vector using three double-precision floating-point numbers.

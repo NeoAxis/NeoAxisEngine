@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 // based on https://github.com/pvginkel/CustomChrome
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     enum DropShadowBorder
     {

@@ -4,13 +4,16 @@
  */
 
 using System.Collections.Generic;
-using tainicom.Aether.Physics2D.Collision;
-using tainicom.Aether.Physics2D.Common.Decomposition;
-using tainicom.Aether.Physics2D.Common.PolygonManipulation;
-using tainicom.Aether.Physics2D.Dynamics;
-using Microsoft.Xna.Framework;
+using Internal.tainicom.Aether.Physics2D.Collision;
+using Internal.tainicom.Aether.Physics2D.Common;
+using Internal.tainicom.Aether.Physics2D.Common.Decomposition;
+using Internal.tainicom.Aether.Physics2D.Common.PolygonManipulation;
+using Internal.tainicom.Aether.Physics2D.Dynamics;
+#if XNAAPI
+using Vector2 = Microsoft.Xna.Framework.Vector2;
+#endif
 
-namespace tainicom.Aether.Physics2D.Common.TextureTools
+namespace Internal.tainicom.Aether.Physics2D.Common.TextureTools
 {
     /// <summary>
     /// Simple class to maintain a terrain. It can keep track

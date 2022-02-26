@@ -1,31 +1,31 @@
-using BulletSharp.Math;
+using Internal.BulletSharp.Math;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
     public class KinematicCharacterController : ICharacterController
     {
-        protected Vector3 ComputeReflectionDirection(ref Vector3 direction, ref Vector3 normal)
+        protected BVector3 ComputeReflectionDirection(ref BVector3 direction, ref BVector3 normal)
         {
             double dot;
-            Vector3.Dot(ref direction, ref normal, out dot);
+            BVector3.Dot(ref direction, ref normal, out dot);
             return direction - (2.0f * dot) * normal;
         }
 
-        protected Vector3 ParallelComponent(ref Vector3 direction, ref Vector3 normal)
+        protected BVector3 ParallelComponent(ref BVector3 direction, ref BVector3 normal)
         {
             double magnitude;
-            Vector3.Dot(ref direction, ref normal, out magnitude);
+            BVector3.Dot(ref direction, ref normal, out magnitude);
             return normal * magnitude;
         }
 
-        protected Vector3 PerpindicularComponent(ref Vector3 direction, ref Vector3 normal)
+        protected BVector3 PerpindicularComponent(ref BVector3 direction, ref BVector3 normal)
         {
             return direction - ParallelComponent(ref direction, ref normal);
         }
 
         protected bool RecoverFromPenetration(CollisionWorld collisionWorld)
         {
-            Vector3 minAabb, maxAabb;
+            BVector3 minAabb, maxAabb;
             m_convexShape.GetAabb(m_ghostObject.WorldTransform, out minAabb, out maxAabb);
             collisionWorld.Broadphase.SetAabbRef(m_ghostObject.BroadphaseHandle,
                          ref minAabb,
@@ -86,7 +86,7 @@ namespace BulletSharp
                     //manifold.ClearManifold();
                 }
             }
-            Matrix newTrans = m_ghostObject.WorldTransform;
+            BMatrix newTrans = m_ghostObject.WorldTransform;
             newTrans.Origin = m_currentPosition;
             m_ghostObject.WorldTransform = newTrans;
             //	printf("m_touchingNormal = %f,%f,%f\n",m_touchingNormal[0],m_touchingNormal[1],m_touchingNormal[2]);
@@ -96,12 +96,12 @@ namespace BulletSharp
         protected void StepUp(CollisionWorld collisionWorld)
         {
             // phase 1: up
-            Matrix start, end;
+            BMatrix start, end;
             m_targetPosition = m_currentPosition + upAxisDirection[m_upAxis] * (m_stepHeight + (m_verticalOffset > 0.0f ? m_verticalOffset : 0.0f));
 
             /* FIXME: Handle penetration properly */
-            start = Matrix.Translation(m_currentPosition + upAxisDirection[m_upAxis] * (m_convexShape.Margin + m_addedMargin));
-            end = Matrix.Translation(m_targetPosition);
+            start = BMatrix.Translation(m_currentPosition + upAxisDirection[m_upAxis] * (m_convexShape.Margin + m_addedMargin));
+            end = BMatrix.Translation(m_targetPosition);
 
             KinematicClosestNotMeConvexResultCallback callback = new KinematicClosestNotMeConvexResultCallback(m_ghostObject, -upAxisDirection[m_upAxis], 0.7071f);
             callback.CollisionFilterGroup = GhostObject.BroadphaseHandle.CollisionFilterGroup;
@@ -119,13 +119,13 @@ namespace BulletSharp
             if (callback.HasHit)
             {
                 // Only modify the position if the hit was a slope and not a wall or ceiling.
-                if (Vector3.Dot(callback.HitNormalWorld, upAxisDirection[m_upAxis]) > 0.0)
+                if (BVector3.Dot(callback.HitNormalWorld, upAxisDirection[m_upAxis]) > 0.0)
                 {
                     // we moved up only a fraction of the step height
                     m_currentStepOffset = m_stepHeight * callback.ClosestHitFraction;
                     if (m_interpolateUp)
                     {
-                        Vector3.Lerp(ref m_currentPosition, ref m_targetPosition, callback.ClosestHitFraction, out m_currentPosition);
+                        BVector3.Lerp(ref m_currentPosition, ref m_targetPosition, callback.ClosestHitFraction, out m_currentPosition);
                     }
                     else
                     {
@@ -142,18 +142,18 @@ namespace BulletSharp
             }
 
         }
-        protected void UpdateTargetPositionBasedOnCollision(ref Vector3 hitNormal, double tangentMag, double normalMag)
+        protected void UpdateTargetPositionBasedOnCollision(ref BVector3 hitNormal, double tangentMag, double normalMag)
         {
-            Vector3 movementDirection = m_targetPosition - m_currentPosition;
+            BVector3 movementDirection = m_targetPosition - m_currentPosition;
             double movementLength = movementDirection.Length;
             if (movementLength > MathUtil.SIMD_EPSILON)
             {
                 movementDirection.Normalize();
 
-                Vector3 reflectDir = ComputeReflectionDirection(ref movementDirection, ref hitNormal);
+                BVector3 reflectDir = ComputeReflectionDirection(ref movementDirection, ref hitNormal);
                 reflectDir.Normalize();
 
-                Vector3 parallelDir, perpindicularDir;
+                BVector3 parallelDir, perpindicularDir;
 
                 parallelDir = ParallelComponent(ref reflectDir, ref hitNormal);
                 perpindicularDir = PerpindicularComponent(ref reflectDir, ref hitNormal);
@@ -169,7 +169,7 @@ namespace BulletSharp
                 */
                 if (normalMag != 0.0f)
                 {
-                    Vector3 perpComponent = perpindicularDir * (normalMag * movementLength);
+                    BVector3 perpComponent = perpindicularDir * (normalMag * movementLength);
                     //			printf("perpComponent=%f,%f,%f\n",perpComponent[0],perpComponent[1],perpComponent[2]);
                     m_targetPosition += perpComponent;
                 }
@@ -180,11 +180,11 @@ namespace BulletSharp
             }
         }
 
-        protected void StepForwardAndStrafe(CollisionWorld collisionWorld, ref Vector3 walkMove)
+        protected void StepForwardAndStrafe(CollisionWorld collisionWorld, ref BVector3 walkMove)
         {
             //	printf("originalDir=%f,%f,%f\n",originalDir[0],originalDir[1],originalDir[2]);
             // phase 2: forward and strafe
-            Matrix start = Matrix.Identity, end = Matrix.Identity;
+            BMatrix start = BMatrix.Identity, end = BMatrix.Identity;
             m_targetPosition = m_currentPosition + walkMove;
 
             double fraction = 1.0f;
@@ -194,7 +194,7 @@ namespace BulletSharp
             if (m_touchingContact)
             {
                 double dot;
-                Vector3.Dot(ref m_normalizedDirection, ref m_touchingNormal, out dot);
+                BVector3.Dot(ref m_normalizedDirection, ref m_touchingNormal, out dot);
                 if (dot > 0.0f)
                 {
                     //interferes with step movement
@@ -209,7 +209,7 @@ namespace BulletSharp
                 start.Origin = (m_currentPosition);
                 end.Origin = (m_targetPosition);
 
-                Vector3 sweepDirNegative = m_currentPosition - m_targetPosition;
+                BVector3 sweepDirNegative = m_currentPosition - m_targetPosition;
 
                 KinematicClosestNotMeConvexResultCallback callback = new KinematicClosestNotMeConvexResultCallback(m_ghostObject, sweepDirNegative, 0f);
                 callback.CollisionFilterGroup = GhostObject.BroadphaseHandle.CollisionFilterGroup;
@@ -239,16 +239,16 @@ namespace BulletSharp
                     // we moved only a fraction
                     double hitDistance = (callback.HitPointWorld - m_currentPosition).Length;
 
-                    Vector3 hitNormalWorld = callback.HitNormalWorld;
+                    BVector3 hitNormalWorld = callback.HitNormalWorld;
                     UpdateTargetPositionBasedOnCollision(ref hitNormalWorld, 0f, 1f);
-                    Vector3 currentDir = m_targetPosition - m_currentPosition;
+                    BVector3 currentDir = m_targetPosition - m_currentPosition;
                     distance2 = currentDir.LengthSquared;
                     if (distance2 > MathUtil.SIMD_EPSILON)
                     {
                         currentDir.Normalize();
                         /* See Quake2: "If velocity is against original velocity, stop ead to avoid tiny oscilations in sloping corners." */
                         double dot;
-                        Vector3.Dot(ref currentDir, ref m_normalizedDirection, out dot);
+                        BVector3.Dot(ref currentDir, ref m_normalizedDirection, out dot);
                         if (dot <= 0.0f)
                         {
                             break;
@@ -274,7 +274,7 @@ namespace BulletSharp
         }
         protected void StepDown(CollisionWorld collisionWorld, double dt)
         {
-            Matrix start, end, end_double;
+            BMatrix start, end, end_double;
             bool runonce = false;
 
             // phase 3: down
@@ -284,7 +284,7 @@ namespace BulletSharp
             btVector3 gravity_drop = getUpAxisDirections()[m_upAxis] * downVelocity; 
             m_targetPosition -= (step_drop + gravity_drop);*/
 
-            Vector3 orig_position = m_targetPosition;
+            BVector3 orig_position = m_targetPosition;
 
             double downVelocity = (m_verticalVelocity < 0.0f ? -m_verticalVelocity : 0.0f) * dt;
             if (downVelocity > 0.0 && downVelocity > m_fallSpeed
@@ -293,7 +293,7 @@ namespace BulletSharp
                 downVelocity = m_fallSpeed;
             }
 
-            Vector3 step_drop = upAxisDirection[m_upAxis] * (m_currentStepOffset + downVelocity);
+            BVector3 step_drop = upAxisDirection[m_upAxis] * (m_currentStepOffset + downVelocity);
             m_targetPosition -= step_drop;
 
             KinematicClosestNotMeConvexResultCallback callback = new KinematicClosestNotMeConvexResultCallback(m_ghostObject, upAxisDirection[m_upAxis], m_maxSlopeCosine);
@@ -306,11 +306,11 @@ namespace BulletSharp
 
             while (true)
             {
-                start = Matrix.Translation(m_currentPosition);
-                end = Matrix.Translation(m_targetPosition);
+                start = BMatrix.Translation(m_currentPosition);
+                end = BMatrix.Translation(m_targetPosition);
 
                 //set double test for 2x the step drop, to check for a large drop vs small drop
-                end_double = Matrix.Translation(m_targetPosition - step_drop);
+                end_double = BMatrix.Translation(m_targetPosition - step_drop);
 
                 if (m_useGhostObjectSweepTest)
                 {
@@ -350,7 +350,7 @@ namespace BulletSharp
                     m_targetPosition = orig_position;
                     downVelocity = m_stepHeight;
 
-                    Vector3 step_drop2 = upAxisDirection[m_upAxis] * (m_currentStepOffset + downVelocity);
+                    BVector3 step_drop2 = upAxisDirection[m_upAxis] * (m_currentStepOffset + downVelocity);
                     m_targetPosition -= step_drop2;
                     runonce = true;
                     continue; //re-run previous tests
@@ -369,17 +369,17 @@ namespace BulletSharp
                 {
                     if (full_drop == true)
                     {
-                        Vector3.Lerp(ref m_currentPosition, ref m_targetPosition, callback.ClosestHitFraction, out m_currentPosition);
+                        BVector3.Lerp(ref m_currentPosition, ref m_targetPosition, callback.ClosestHitFraction, out m_currentPosition);
                     }
                     else
                     {
                         //due to errors in the closestHitFraction variable when used with large polygons, calculate the hit fraction manually
-                        Vector3.Lerp(ref m_currentPosition, ref m_targetPosition, fraction, out m_currentPosition);
+                        BVector3.Lerp(ref m_currentPosition, ref m_targetPosition, fraction, out m_currentPosition);
                     }
                 }
                 else
                 {
-                    Vector3.Lerp(ref m_currentPosition, ref m_targetPosition, callback.ClosestHitFraction, out m_currentPosition);
+                    BVector3.Lerp(ref m_currentPosition, ref m_targetPosition, callback.ClosestHitFraction, out m_currentPosition);
                 }
 
                 full_drop = false;
@@ -415,7 +415,7 @@ namespace BulletSharp
         {
             m_upAxis = upAxis;
             m_addedMargin = 0.02f;
-            m_walkDirection = Vector3.Zero;
+            m_walkDirection = BVector3.Zero;
             m_useGhostObjectSweepTest = true;
             m_ghostObject = ghostObject;
             m_stepHeight = stepHeight;
@@ -462,19 +462,19 @@ namespace BulletSharp
         {
         }
 
-        public virtual void SetWalkDirection(ref Vector3 walkDirection)
+        public virtual void SetWalkDirection(ref BVector3 walkDirection)
         {
             m_useWalkDirection = true;
             m_walkDirection = walkDirection;
             m_normalizedDirection = GetNormalizedVector(ref m_walkDirection);
         }
 
-        public virtual void SetWalkDirection(Vector3 walkDirection)
+        public virtual void SetWalkDirection(BVector3 walkDirection)
         {
             SetWalkDirection(ref walkDirection);
         }
 
-        public void SetVelocityForTimeInterval(ref Vector3 velocity, double timeInterval)
+        public void SetVelocityForTimeInterval(ref BVector3 velocity, double timeInterval)
         {
             //	printf("setVelocity!\n");
             //	printf("  interval: %f\n", timeInterval);
@@ -487,7 +487,7 @@ namespace BulletSharp
             m_velocityTimeInterval = timeInterval;
         }
 
-        public void SetVelocityForTimeInterval(Vector3 velocity, double timeInterval)
+        public void SetVelocityForTimeInterval(BVector3 velocity, double timeInterval)
         {
             SetVelocityForTimeInterval(ref velocity, timeInterval);
         }
@@ -498,7 +498,7 @@ namespace BulletSharp
             m_verticalOffset = 0.0f;
             m_wasOnGround = false;
             m_wasJumping = false;
-            m_walkDirection = Vector3.Zero;
+            m_walkDirection = BVector3.Zero;
             m_velocityTimeInterval = 0.0f;
 
             //clear pair cache
@@ -509,9 +509,9 @@ namespace BulletSharp
             }
         }
 
-        public void Warp(ref Vector3 origin)
+        public void Warp(ref BVector3 origin)
         {
-            m_ghostObject.WorldTransform = Matrix.Translation(origin);
+            m_ghostObject.WorldTransform = BMatrix.Translation(origin);
         }
 
         public void PreStep(CollisionWorld collisionWorld)
@@ -558,7 +558,7 @@ namespace BulletSharp
             m_verticalOffset = m_verticalVelocity * dt;
 
 
-            Matrix xform = m_ghostObject.WorldTransform;
+            BMatrix xform = m_ghostObject.WorldTransform;
 
             //	printf("walkDirection(%f,%f,%f)\n",walkDirection[0],walkDirection[1],walkDirection[2]);
             //	printf("walkSpeed=%f\n",walkSpeed);
@@ -577,7 +577,7 @@ namespace BulletSharp
                 m_velocityTimeInterval -= dt;
 
                 // how far will we move while we are moving?
-                Vector3 move = m_walkDirection * dtMoving;
+                BVector3 move = m_walkDirection * dtMoving;
 
                 // printf("  dtMoving: %f", dtMoving);
 
@@ -628,7 +628,7 @@ namespace BulletSharp
 
         }
 
-        public void Jump(Vector3 v)
+        public void Jump(BVector3 v)
         {
             Jump();
         }
@@ -662,13 +662,13 @@ namespace BulletSharp
             get { return m_verticalVelocity == 0.0f && m_verticalOffset == 0.0f; }
         }
 
-        public static Vector3 GetNormalizedVector(ref Vector3 v)
+        public static BVector3 GetNormalizedVector(ref BVector3 v)
         {
             if (v.Length < MathUtil.SIMD_EPSILON)
             {
-                return Vector3.Zero;
+                return BVector3.Zero;
             }
-            return Vector3.Normalize(v);
+            return BVector3.Normalize(v);
         }
 
 
@@ -694,19 +694,19 @@ namespace BulletSharp
         protected double m_addedMargin;//@todo: remove this and fix the code
 
         ///this is the desired walk direction, set by the user
-        protected Vector3 m_walkDirection;
-        protected Vector3 m_normalizedDirection;
+        protected BVector3 m_walkDirection;
+        protected BVector3 m_normalizedDirection;
 
         //some internal variables
-        protected Vector3 m_currentPosition;
+        protected BVector3 m_currentPosition;
         double m_currentStepOffset;
-        protected Vector3 m_targetPosition;
+        protected BVector3 m_targetPosition;
 
         ///keep track of the contact manifolds
         protected AlignedManifoldArray m_manifoldArray = new AlignedManifoldArray();
 
         protected bool m_touchingContact;
-        protected Vector3 m_touchingNormal;
+        protected BVector3 m_touchingNormal;
         protected bool m_wasOnGround;
         protected bool m_wasJumping;
 
@@ -722,7 +722,7 @@ namespace BulletSharp
 
 
 
-        protected static Vector3[] upAxisDirection = { new Vector3(1, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1) };
+        protected static BVector3[] upAxisDirection = { new BVector3(1, 0, 0), new BVector3(0, 1, 0), new BVector3(0, 0, 1) };
 
     }
 
@@ -735,7 +735,7 @@ namespace BulletSharp
     ///Support ducking
     public class KinematicClosestNotMeRayResultCallback : ClosestRayResultCallback
     {
-        static Vector3 zero = new Vector3();
+        static BVector3 zero = new BVector3();
 
         public KinematicClosestNotMeRayResultCallback(CollisionObject me)
             : base(ref zero, ref zero)
@@ -756,9 +756,9 @@ namespace BulletSharp
 
     public class KinematicClosestNotMeConvexResultCallback : ClosestConvexResultCallback
     {
-        static Vector3 zero = new Vector3();
+        static BVector3 zero = new BVector3();
 
-        public KinematicClosestNotMeConvexResultCallback(CollisionObject me, Vector3 up, double minSlopeDot)
+        public KinematicClosestNotMeConvexResultCallback(CollisionObject me, BVector3 up, double minSlopeDot)
             : base(ref zero, ref zero)
         {
             _me = me;
@@ -778,7 +778,7 @@ namespace BulletSharp
                 return 1.0f;
             }
 
-            Vector3 hitNormalWorld;
+            BVector3 hitNormalWorld;
             if (normalInWorldSpace)
             {
                 hitNormalWorld = convexResult.HitNormalLocal;
@@ -786,11 +786,11 @@ namespace BulletSharp
             else
             {
                 // need to transform normal into worldspace
-                hitNormalWorld = Vector3.TransformCoordinate(convexResult.HitNormalLocal, convexResult.HitCollisionObject.WorldTransform.Basis);
+                hitNormalWorld = BVector3.TransformCoordinate(convexResult.HitNormalLocal, convexResult.HitCollisionObject.WorldTransform.Basis);
             }
 
             double dotUp;
-            Vector3.Dot(ref _up, ref hitNormalWorld, out dotUp);
+            BVector3.Dot(ref _up, ref hitNormalWorld, out dotUp);
             if (dotUp < _minSlopeDot)
             {
                 return 1.0f;
@@ -800,7 +800,7 @@ namespace BulletSharp
         }
 
         protected CollisionObject _me;
-        protected Vector3 _up;
+        protected BVector3 _up;
         protected double _minSlopeDot;
     }
 }

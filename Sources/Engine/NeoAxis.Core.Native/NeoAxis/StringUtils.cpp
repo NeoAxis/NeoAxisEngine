@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "OgreStableHeaders.h"
 #include "StringUtils.h"
 
@@ -9,7 +9,7 @@
 	#define NOMINMAX
 	#include <windows.h>
 #endif
-#ifdef PLATFORM_MACOS
+#ifdef PLATFORM_OSX
 	#include <errno.h>
 	#include <iconv.h>	
 	#import <Carbon/Carbon.h>
@@ -19,7 +19,11 @@
 #	include <codecvt>
 #endif
 
-#ifdef PLATFORM_MACOS
+#ifdef PLATFORM_IOS
+	#include <iconv.h>	
+#endif
+
+#if defined(PLATFORM_OSX) || defined(PLATFORM_IOS)
 
 template <class In, class Out>
 void ConvertString(iconv_t cd, const In& in, Out* out, const typename Out::value_type errorSign)

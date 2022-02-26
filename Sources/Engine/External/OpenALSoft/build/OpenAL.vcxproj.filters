@@ -1,136 +1,379 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="..\common\alcomplex.cpp" />
-    <ClCompile Include="..\common\alexcpt.cpp" />
-    <ClCompile Include="..\common\almalloc.cpp" />
-    <ClCompile Include="..\common\dynload.cpp" />
-    <ClCompile Include="..\common\strutils.cpp" />
-    <ClCompile Include="..\common\threads.cpp" />
-    <ClCompile Include="..\al\auxeffectslot.cpp" />
-    <ClCompile Include="..\al\buffer.cpp" />
-    <ClCompile Include="..\al\effect.cpp" />
-    <ClCompile Include="..\al\error.cpp" />
-    <ClCompile Include="..\al\event.cpp" />
-    <ClCompile Include="..\al\extension.cpp" />
-    <ClCompile Include="..\al\filter.cpp" />
-    <ClCompile Include="..\al\listener.cpp" />
-    <ClCompile Include="..\al\source.cpp" />
-    <ClCompile Include="..\al\state.cpp" />
-    <ClCompile Include="..\alc\alc.cpp" />
-    <ClCompile Include="..\alc\alu.cpp" />
-    <ClCompile Include="..\alc\alconfig.cpp" />
-    <ClCompile Include="..\alc\ambdec.cpp" />
-    <ClCompile Include="..\alc\bformatdec.cpp" />
-    <ClCompile Include="..\alc\bs2b.cpp" />
-    <ClCompile Include="..\alc\converter.cpp" />
-    <ClCompile Include="..\alc\effects\autowah.cpp" />
-    <ClCompile Include="..\alc\effects\chorus.cpp" />
-    <ClCompile Include="..\alc\effects\compressor.cpp" />
-    <ClCompile Include="..\alc\effects\dedicated.cpp" />
-    <ClCompile Include="..\alc\effects\distortion.cpp" />
-    <ClCompile Include="..\alc\effects\echo.cpp" />
-    <ClCompile Include="..\alc\effects\equalizer.cpp" />
-    <ClCompile Include="..\alc\effects\fshifter.cpp" />
-    <ClCompile Include="..\alc\effects\modulator.cpp" />
-    <ClCompile Include="..\alc\effects\null.cpp" />
-    <ClCompile Include="..\alc\effects\pshifter.cpp" />
-    <ClCompile Include="..\alc\effects\reverb.cpp" />
-    <ClCompile Include="..\alc\effects\vmorpher.cpp" />
-    <ClCompile Include="..\alc\filters\biquad.cpp" />
-    <ClCompile Include="..\alc\filters\nfc.cpp" />
-    <ClCompile Include="..\alc\filters\splitter.cpp" />
-    <ClCompile Include="..\alc\helpers.cpp" />
-    <ClCompile Include="..\alc\hrtf.cpp" />
-    <ClCompile Include="..\alc\mastering.cpp" />
-    <ClCompile Include="..\alc\mixvoice.cpp" />
-    <ClCompile Include="..\alc\panning.cpp" />
-    <ClCompile Include="..\alc\ringbuffer.cpp" />
-    <ClCompile Include="..\alc\uhjfilter.cpp" />
-    <ClCompile Include="..\alc\uiddefs.cpp" />
-    <ClCompile Include="..\alc\mixer\mixer_c.cpp" />
-    <ClCompile Include="..\alc\mixer\mixer_sse.cpp" />
-    <ClCompile Include="..\alc\mixer\mixer_sse2.cpp" />
-    <ClCompile Include="..\alc\mixer\mixer_sse3.cpp" />
-    <ClCompile Include="..\alc\mixer\mixer_sse41.cpp" />
-    <ClCompile Include="..\alc\backends\base.cpp" />
-    <ClCompile Include="..\alc\backends\loopback.cpp" />
-    <ClCompile Include="..\alc\backends\null.cpp" />
-    <ClCompile Include="..\alc\backends\winmm.cpp" />
-    <ClCompile Include="..\alc\backends\dsound.cpp" />
-    <ClCompile Include="..\alc\backends\wasapi.cpp" />
-    <ClCompile Include="..\alc\backends\wave.cpp" />
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\common\alcomplex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\common\alexcpt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\common\almalloc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\common\dynload.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\common\strutils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\common\threads.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\al\auxeffectslot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\al\buffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\al\effect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\al\error.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\al\event.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\al\extension.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\al\filter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\al\listener.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\al\source.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\al\state.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\alc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\alu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\alconfig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\ambdec.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\bformatdec.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\bs2b.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\converter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\effects\autowah.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\effects\chorus.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\effects\compressor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\effects\dedicated.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\effects\distortion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\effects\echo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\effects\equalizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\effects\fshifter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\effects\modulator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\effects\null.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\effects\pshifter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\effects\reverb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\effects\vmorpher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\filters\biquad.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\filters\nfc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\filters\splitter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\helpers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\hrtf.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\mastering.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\mixvoice.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\panning.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\ringbuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\uhjfilter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\uiddefs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\mixer\mixer_c.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\mixer\mixer_sse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\mixer\mixer_sse2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\mixer\mixer_sse3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\mixer\mixer_sse41.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\backends\base.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\backends\loopback.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\backends\null.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\backends\winmm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\backends\dsound.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\backends\wasapi.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\backends\wave.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\common\albyte.h" />
-    <ClInclude Include="..\common\alcomplex.h" />
-    <ClInclude Include="..\common\alexcpt.h" />
-    <ClInclude Include="..\common\almalloc.h" />
-    <ClInclude Include="..\common\alnumeric.h" />
-    <ClInclude Include="..\common\aloptional.h" />
-    <ClInclude Include="..\common\alspan.h" />
-    <ClInclude Include="..\common\atomic.h" />
-    <ClInclude Include="..\common\dynload.h" />
-    <ClInclude Include="..\common\endiantest.h" />
-    <ClInclude Include="..\common\intrusive_ptr.h" />
-    <ClInclude Include="..\common\math_defs.h" />
-    <ClInclude Include="..\common\opthelpers.h" />
-    <ClInclude Include="..\common\strutils.h" />
-    <ClInclude Include="..\common\threads.h" />
-    <ClInclude Include="..\common\vecmat.h" />
-    <ClInclude Include="..\common\vector.h" />
-    <ClInclude Include="..\al\auxeffectslot.h" />
-    <ClInclude Include="..\al\buffer.h" />
-    <ClInclude Include="..\al\effect.h" />
-    <ClInclude Include="..\al\event.h" />
-    <ClInclude Include="..\al\filter.h" />
-    <ClInclude Include="..\al\listener.h" />
-    <ClInclude Include="..\al\source.h" />
-    <ClInclude Include="..\alc\alcmain.h" />
-    <ClInclude Include="..\alc\alu.h" />
-    <ClInclude Include="..\alc\alconfig.h" />
-    <ClInclude Include="..\alc\alcontext.h" />
-    <ClInclude Include="..\alc\ambdec.h" />
-    <ClInclude Include="..\alc\ambidefs.h" />
-    <ClInclude Include="..\alc\bformatdec.h" />
-    <ClInclude Include="..\alc\bs2b.h" />
-    <ClInclude Include="..\alc\compat.h" />
-    <ClInclude Include="..\alc\converter.h" />
-    <ClInclude Include="..\alc\cpu_caps.h" />
-    <ClInclude Include="..\alc\devformat.h" />
-    <ClInclude Include="..\alc\effects\base.h" />
-    <ClInclude Include="..\alc\filters\biquad.h" />
-    <ClInclude Include="..\alc\filters\nfc.h" />
-    <ClInclude Include="..\alc\filters\splitter.h" />
-    <ClInclude Include="..\alc\fpu_modes.h" />
-    <ClInclude Include="..\alc\hrtf.h" />
-    <ClInclude Include="..\alc\inprogext.h" />
-    <ClInclude Include="..\alc\logging.h" />
-    <ClInclude Include="..\alc\mastering.h" />
-    <ClInclude Include="..\alc\ringbuffer.h" />
-    <ClInclude Include="..\alc\uhjfilter.h" />
-    <ClInclude Include="..\alc\mixer\defs.h" />
-    <ClInclude Include="..\alc\mixer\hrtfbase.h" />
-    <ClInclude Include="..\alc\backends\base.h" />
-    <ClInclude Include="..\alc\backends\loopback.h" />
-    <ClInclude Include="..\alc\backends\null.h" />
-    <ClInclude Include="..\alc\backends\winmm.h" />
-    <ClInclude Include="..\alc\backends\dsound.h" />
-    <ClInclude Include="..\alc\backends\wasapi.h" />
-    <ClInclude Include="..\alc\backends\wave.h" />
-    <ClInclude Include="..\build\default-44100.mhr.h" />
-    <ClInclude Include="..\build\default-48000.mhr.h" />
-    <ClInclude Include="..\build\bsinc_inc.h" />
-    <ClInclude Include="config.h" />
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\common\albyte.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\common\alcomplex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\common\alexcpt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\common\almalloc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\common\alnumeric.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\common\aloptional.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\common\alspan.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\common\atomic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\common\dynload.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\common\endiantest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\common\intrusive_ptr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\common\math_defs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\common\opthelpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\common\strutils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\common\threads.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\common\vecmat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\common\vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\al\auxeffectslot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\al\buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\al\effect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\al\event.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\al\filter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\al\listener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\al\source.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\alcmain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\alu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\alconfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\alcontext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\ambdec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\ambidefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\bformatdec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\bs2b.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\compat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\converter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\cpu_caps.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\devformat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\effects\base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\filters\biquad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\filters\nfc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\filters\splitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\fpu_modes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\hrtf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\inprogext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\logging.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\mastering.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\ringbuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\uhjfilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\mixer\defs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\mixer\hrtfbase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\backends\base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\backends\loopback.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\backends\null.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\backends\winmm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\backends\dsound.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\backends\wasapi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\alc\backends\wave.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\build\default-44100.mhr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\build\default-48000.mhr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F:\Dev5\Sources\Engine\External\OpenALSoft\build\bsinc_inc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\build\CMakeFiles\394239626b048b73cb3908ac6ca8d7c5\default-44100.mhr.h.rule" />
-    <CustomBuild Include="..\build\CMakeFiles\394239626b048b73cb3908ac6ca8d7c5\default-48000.mhr.h.rule" />
-    <CustomBuild Include="..\build\CMakeFiles\394239626b048b73cb3908ac6ca8d7c5\bsinc_inc.h.rule" />
-    <CustomBuild Include="..\CMakeLists.txt" />
+    <CustomBuild Include="F:\Dev5\Sources\Engine\External\OpenALSoft\build\CMakeFiles\394239626b048b73cb3908ac6ca8d7c5\default-44100.mhr.h.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="F:\Dev5\Sources\Engine\External\OpenALSoft\build\CMakeFiles\394239626b048b73cb3908ac6ca8d7c5\default-48000.mhr.h.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="F:\Dev5\Sources\Engine\External\OpenALSoft\build\CMakeFiles\394239626b048b73cb3908ac6ca8d7c5\bsinc_inc.h.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="F:\Dev5\Sources\Engine\External\OpenALSoft\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\resources\openal32.rc" />
+    <ResourceCompile Include="F:\Dev5\Sources\Engine\External\OpenALSoft\resources\openal32.rc">
+      <Filter>Source Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CMake Rules">

@@ -16,9 +16,9 @@ using System.Drawing.Design;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Diagnostics;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Toolkit;
 
-namespace ComponentFactory.Krypton.Ribbon
+namespace Internal.ComponentFactory.Krypton.Ribbon
 {
     /// <summary>
     /// Manage the items that can be added to a ribbon group triple container.
@@ -31,12 +31,12 @@ namespace ComponentFactory.Krypton.Ribbon
                                                              typeof(KryptonRibbonGroupCheckBox),
                                                              typeof(KryptonRibbonGroupComboBox),
                                                              typeof(KryptonRibbonGroupCustomControl),
-                                                             typeof(KryptonRibbonGroupDateTimePicker),
+                                                             //typeof(KryptonRibbonGroupDateTimePicker),
                                                              typeof(KryptonRibbonGroupDomainUpDown),
                                                              typeof(KryptonRibbonGroupLabel),
                                                              typeof(KryptonRibbonGroupNumericUpDown),
                                                              typeof(KryptonRibbonGroupRadioButton),
-                                                             typeof(KryptonRibbonGroupRichTextBox),
+                                                             //typeof(KryptonRibbonGroupRichTextBox),
                                                              typeof(KryptonRibbonGroupTextBox),
                                                              typeof(KryptonRibbonGroupTrackBar),
                                                              typeof(KryptonRibbonGroupMaskedTextBox)

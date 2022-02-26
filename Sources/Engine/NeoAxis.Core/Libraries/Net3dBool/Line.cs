@@ -37,7 +37,7 @@ Project: https://github.com/MatterHackers/agg-sharp (an included library)
 
 using System;
 
-namespace Net3dBool
+namespace Internal.Net3dBool
 {
     /// <summary>
     /// Representation of a 3d line or a ray(represented by a direction and a point).

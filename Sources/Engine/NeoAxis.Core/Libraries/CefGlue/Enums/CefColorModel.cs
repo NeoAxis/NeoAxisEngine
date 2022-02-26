@@ -1,8 +1,9 @@
-﻿//
+#if !NO_UI_WEB_BROWSER
+//
 // This file manually written from cef/include/internal/cef_types.h.
 // C API name: cef_color_model_t.
 //
-namespace Xilium.CefGlue
+namespace Internal.Xilium.CefGlue
 {
     /// <summary>
     /// Print job color mode values.
@@ -36,3 +37,5 @@ namespace Xilium.CefGlue
         ProcessColorModel_Rgb,        // Used in canon printer ppds
     }
 }
+
+#endif

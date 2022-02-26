@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using System.Security.Permissions;
 using System.Drawing;
 
-namespace Aga.Controls.Tree
+namespace Internal.Aga.Controls.Tree
 {
 	internal class ResizeColumnState: ColumnState
 	{

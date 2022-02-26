@@ -1,4 +1,5 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,9 +10,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     /// <summary>
     /// Implement disk write queue and async writer thread - used only for write on LOG file
@@ -127,3 +128,4 @@ namespace LiteDB.Engine
         }
     }
 }
+#endif

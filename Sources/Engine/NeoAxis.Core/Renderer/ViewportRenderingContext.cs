@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Drawing.Design;
 using System.ComponentModel;
 using System.Reflection;
-using SharpBgfx;
+using Internal.SharpBgfx;
 using System.Linq;
 
 namespace NeoAxis
@@ -36,25 +36,37 @@ namespace NeoAxis
 		//List<MultiRenderTargetItem> multiRenderTargetsAllocated = new List<MultiRenderTargetItem>();
 		//ESet<MultiRenderTargetItem> multiRenderTargetsFree = new ESet<MultiRenderTargetItem>();
 
+		List<OcclusionCullingBufferItem> occlusionCullingBuffersAllocated = new List<OcclusionCullingBufferItem>();
+		ESet<OcclusionCullingBufferItem> occlusionCullingBuffersFree = new ESet<OcclusionCullingBufferItem>();
+
 		//update each frame
 		//!!!!public
-		public object uniquePerFrameObjectToDetectNewFrame;
+		internal object uniquePerFrameObjectToDetectNewFrame;
 		//!!!!в FrameData перенести может
-		public ObjectsDuringUpdateClass objectsDuringUpdate;
-		public StatisticsClass updateStatisticsCurrent = new StatisticsClass();
-		public StatisticsClass updateStatisticsPrevious = new StatisticsClass();
-		internal Component_RenderingPipeline renderingPipeline;
-		public Component_RenderingPipeline.IFrameData FrameData;
-		public Component_ObjectInSpace.RenderingContext objectInSpaceRenderingContext;
+		public ObjectsDuringUpdateClass ObjectsDuringUpdate;
+		internal StatisticsClass updateStatisticsCurrent = new StatisticsClass();
+		internal StatisticsClass updateStatisticsPrevious = new StatisticsClass();
+		internal RenderingPipeline renderingPipeline;
+		public RenderingPipeline.IFrameData FrameData;
+		public ObjectInSpace.RenderingContext ObjectInSpaceRenderingContext;
 
 		//update many times during frame rendering
 		Viewport currentViewport;
 		internal int currentViewNumber = -1;
 
 		//custom cached data
-		public Dictionary<string, object> anyData = new Dictionary<string, object>();
+		public Dictionary<string, object> AnyData = new Dictionary<string, object>();
+		public Dictionary<string, ImageComponent> AnyImageAutoDispose = new Dictionary<string, ImageComponent>();
 
-		public Component_RenderingPipeline.RenderSceneData.CutVolumeItem[] currentCutVolumes;
+		internal RenderingPipeline.RenderSceneData.CutVolumeItem[] CurrentCutVolumes;
+
+		internal Vector2I SizeInPixelsLowResolutionBeforeUpscale;
+
+		//optimization
+		internal Viewport.CameraSettingsClass OwnerCameraSettings;
+		internal Vector3 OwnerCameraSettingsPosition;
+		internal double ShadowObjectVisibilityDistanceFactor = 1;
+		Curve1F getVisibilityDistanceByObjectSize;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -62,6 +74,7 @@ namespace NeoAxis
 		{
 			RenderTarget,
 			DynamicTexture,
+			ComputeWrite,
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,7 +83,7 @@ namespace NeoAxis
 		{
 			//creation data
 			public DynamicTextureType type;
-			public Component_Image.TypeEnum imageType;
+			public ImageComponent.TypeEnum imageType;
 			public Vector2I size;
 			public PixelFormat format;
 			public int fsaaLevel;
@@ -79,8 +92,16 @@ namespace NeoAxis
 			public bool createSimple3DRenderer;
 			public bool createCanvasRenderer;
 
-			public Component_Image image;
+			public ImageComponent image;
 
+			public bool usedLastUpdate;
+		}
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		class OcclusionCullingBufferItem
+		{
+			public OcclusionCullingBuffer buffer;
 			public bool usedLastUpdate;
 		}
 
@@ -91,7 +112,7 @@ namespace NeoAxis
 		/// </summary>
 		public class ObjectsDuringUpdateClass
 		{
-			public Dictionary<string, Component_Image> namedTextures = new Dictionary<string, Component_Image>();
+			public Dictionary<string, ImageComponent> namedTextures = new Dictionary<string, ImageComponent>();
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,8 +131,10 @@ namespace NeoAxis
 			public int DrawCalls;
 			public int RenderTargets;
 			public int DynamicTextures;
+			public int ComputeWriteImages;
 			public int Lights;
 			public int ReflectionProbes;
+			public int OcclusionCullingBuffers;
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -171,13 +194,13 @@ namespace NeoAxis
 			public int TextureUnit;
 
 			//!!!!какие-то параметры могут быть тоже составными
-			public Component_Image Texture;
+			public ImageComponent Texture;
 			public TextureAddressingMode AddressingMode;
 			public FilterOption FilteringMin;
 			public FilterOption FilteringMag;
 			public FilterOption FilteringMip;
-			public ColorValue BorderColor;
-			public TextureFlags AdditionFlags;
+			//public ColorValue BorderColor;
+			public TextureFlags AdditionalFlags;
 
 			//!!!!
 			//int numMipmaps;
@@ -191,7 +214,7 @@ namespace NeoAxis
 			//{
 			//}
 
-			//public TextureParameterValue( Component_Image texture, TextureAddressingMode addressingMode, FilterOption filteringMin, FilterOption filteringMag, FilterOption filteringMip, ColorValue borderColor )
+			//public TextureParameterValue( Image texture, TextureAddressingMode addressingMode, FilterOption filteringMin, FilterOption filteringMag, FilterOption filteringMip, ColorValue borderColor )
 			//{
 			//	this.texture = texture;
 			//	this.addressingMode = addressingMode;
@@ -201,7 +224,7 @@ namespace NeoAxis
 			//	this.borderColor = borderColor;
 			//}
 
-			public BindTextureData( int textureUnit, Component_Image texture, TextureAddressingMode addressingMode, FilterOption filteringMin, FilterOption filteringMag, FilterOption filteringMip )
+			public BindTextureData( int textureUnit, ImageComponent texture, TextureAddressingMode addressingMode, FilterOption filteringMin, FilterOption filteringMag, FilterOption filteringMip, TextureFlags additionFlags = 0 )
 			{
 				this.TextureUnit = textureUnit;
 
@@ -211,8 +234,8 @@ namespace NeoAxis
 				this.FilteringMag = filteringMag;
 				this.FilteringMip = filteringMip;
 
-				this.BorderColor = new ColorValue( 0, 0, 0, 0 );
-				this.AdditionFlags = 0;
+				//this.BorderColor = new ColorValue( 0, 0, 0, 0 );
+				this.AdditionalFlags = additionFlags;
 			}
 
 			//public Texture Texture
@@ -241,13 +264,17 @@ namespace NeoAxis
 		/// </summary>
 		public event Action<ViewportRenderingContext> Disposing;
 
-		//!!!!!вызывать еще где-то?
 		public virtual void Dispose()
 		{
 			Disposing?.Invoke( this );
 
 			MultiRenderTarget_DestroyAll();
 			DynamicTexture_DestroyAll();
+			OcclusionCullingBuffer_DestroyAll();
+
+			foreach( var image in AnyImageAutoDispose.Values )
+				image.Dispose();
+			AnyImageAutoDispose.Clear();
 
 			if( renderer != null )
 			{
@@ -263,7 +290,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		Component_Image DynamicTexture_GetFree( DynamicTextureType type, Component_Image.TypeEnum imageType, Vector2I size, PixelFormat format, int fsaaLevel, bool mipmaps, int arrayLayers, bool createSimple3DRenderer, bool createCanvasRenderer )
+		ImageComponent DynamicTexture_GetFree( DynamicTextureType type, ImageComponent.TypeEnum imageType, Vector2I size, PixelFormat format, int fsaaLevel, bool mipmaps, int arrayLayers, bool createSimple3DRenderer, bool createCanvasRenderer )
 		{
 			//var item = renderTargetsFree.Find( i => i.type == type && i.size == size && i.format == format && i.fsaaLevel == fsaaLevel );
 			DynamicTextureItem item = null;
@@ -285,12 +312,14 @@ namespace NeoAxis
 			return null;
 		}
 
-		public Component_Image DynamicTexture_Alloc( DynamicTextureType type, Component_Image.TypeEnum imageType, Vector2I size, PixelFormat format, int fsaaLevel, bool mipmaps, int arrayLayers = 1, bool createSimple3DRenderer = false, bool createCanvasRenderer = false )
+		public ImageComponent DynamicTexture_Alloc( DynamicTextureType type, ImageComponent.TypeEnum imageType, Vector2I size, PixelFormat format, int fsaaLevel, bool mipmaps, int arrayLayers = 1, bool createSimple3DRenderer = false, bool createCanvasRenderer = false )
 		{
 			if( type == DynamicTextureType.RenderTarget )
 				UpdateStatisticsCurrent.RenderTargets++;
-			else
+			else if( type == DynamicTextureType.DynamicTexture )
 				UpdateStatisticsCurrent.DynamicTextures++;
+			else
+				UpdateStatisticsCurrent.ComputeWriteImages++;
 
 			//find free
 			{
@@ -300,18 +329,24 @@ namespace NeoAxis
 			}
 
 			//!!!!need hierarchy controller?
-			Component_Image texture = ComponentUtility.CreateComponent<Component_Image>( null, true, false );
+			ImageComponent texture = ComponentUtility.CreateComponent<ImageComponent>( null, true, false );
 			texture.CreateType = imageType;
 			texture.CreateSize = size;
 			texture.CreateMipmaps = mipmaps;
 			texture.CreateArrayLayers = arrayLayers;
 			texture.CreateFormat = format;
 			if( type == DynamicTextureType.DynamicTexture )
-				texture.CreateUsage = Component_Image.Usages.Dynamic | Component_Image.Usages.WriteOnly;
+				texture.CreateUsage = ImageComponent.Usages.Dynamic | ImageComponent.Usages.WriteOnly;
+			else if( type == DynamicTextureType.ComputeWrite )
+				texture.CreateUsage = ImageComponent.Usages.ComputeWrite | ImageComponent.Usages.WriteOnly;
 			else
-				texture.CreateUsage = Component_Image.Usages.RenderTarget;
+				texture.CreateUsage = ImageComponent.Usages.RenderTarget;
 			texture.CreateFSAA = fsaaLevel;
 			texture.Enabled = true;
+
+			//!!!!
+			if( type == DynamicTextureType.ComputeWrite )
+				texture.Result.PrepareNativeObject();
 
 			//!!!!!как проверять ошибки создания текстур? везде так
 			//if( texture == null )
@@ -321,7 +356,7 @@ namespace NeoAxis
 			//	return null;
 			//}
 
-			int faces = imageType == Component_Image.TypeEnum.Cube ? 6 : arrayLayers;
+			int faces = imageType == ImageComponent.TypeEnum.Cube ? 6 : arrayLayers;
 
 			int numMips;
 			if( mipmaps )
@@ -369,18 +404,18 @@ namespace NeoAxis
 			return texture;
 		}
 
-		public Component_Image RenderTarget2D_Alloc( Vector2I size, PixelFormat format, int fsaaLevel = 0, bool mipmaps = false, int arrayLayers = 1, bool createSimple3DRenderer = false, bool createCanvasRenderer = false )
+		public ImageComponent RenderTarget2D_Alloc( Vector2I size, PixelFormat format, int fsaaLevel = 0, bool mipmaps = false, int arrayLayers = 1, bool createSimple3DRenderer = false, bool createCanvasRenderer = false )
 		{
-			return DynamicTexture_Alloc( DynamicTextureType.RenderTarget, Component_Image.TypeEnum._2D, size, format, fsaaLevel, mipmaps, arrayLayers, createSimple3DRenderer, createCanvasRenderer );
+			return DynamicTexture_Alloc( DynamicTextureType.RenderTarget, ImageComponent.TypeEnum._2D, size, format, fsaaLevel, mipmaps, arrayLayers, createSimple3DRenderer, createCanvasRenderer );
 		}
 
 		//!!!!check arrayLayers
-		public Component_Image RenderTargetCube_Alloc( Vector2I size, PixelFormat format, int fsaaLevel = 0, bool mipmaps = false, int arrayLayers = 1, bool createSimple3DRenderer = false, bool createCanvasRenderer = false )
+		public ImageComponent RenderTargetCube_Alloc( Vector2I size, PixelFormat format, int fsaaLevel = 0, bool mipmaps = false, int arrayLayers = 1, bool createSimple3DRenderer = false, bool createCanvasRenderer = false )
 		{
-			return DynamicTexture_Alloc( DynamicTextureType.RenderTarget, Component_Image.TypeEnum.Cube, size, format, fsaaLevel, mipmaps, arrayLayers, createSimple3DRenderer, createCanvasRenderer );
+			return DynamicTexture_Alloc( DynamicTextureType.RenderTarget, ImageComponent.TypeEnum.Cube, size, format, fsaaLevel, mipmaps, arrayLayers, createSimple3DRenderer, createCanvasRenderer );
 		}
 
-		public void DynamicTexture_Free( Component_Image texture )
+		public void DynamicTexture_Free( ImageComponent texture )
 		{
 			var item = dynamicTexturesAllocated.Find( i => i.image == texture );
 			//RenderTargetItem item = null;
@@ -505,17 +540,17 @@ namespace NeoAxis
 		//	var item = new MultiRenderTargetItem();
 		//	item.size = size;
 		//	item.formats = formats;
-		//	item.targets = new Component_Texture[ formats.Length ];
+		//	item.targets = new Texture[ formats.Length ];
 
 		//	for( int n = 0; n < item.targets.Length; n++ )
 		//	{
 		//		//!!!!need hierarchy controller?
-		//		Component_Texture texture = ComponentUtils.CreateComponent<Component_Texture>( null, true, false );
-		//		texture.CreateType = Component_Texture.TypeEnum._2D;
+		//		Texture texture = ComponentUtils.CreateComponent<Texture>( null, true, false );
+		//		texture.CreateType = Texture.TypeEnum._2D;
 		//		texture.CreateSize = size;
 		//		texture.CreateMipmaps = false;//0;
 		//		texture.CreateFormat = formats[ n ];
-		//		texture.CreateUsage = Component_Texture.Usages.RenderTarget;
+		//		texture.CreateUsage = Texture.Usages.RenderTarget;
 		//		texture.CreateFSAA = 0;// fsaaLevel;
 		//		texture.Enabled = true;
 
@@ -593,6 +628,101 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		OcclusionCullingBuffer OcclusionCullingBuffer_GetFree( Vector2I size )
+		{
+			OcclusionCullingBufferItem item = null;
+			foreach( var i in occlusionCullingBuffersFree )
+			{
+				if( i.buffer.Size == size )
+				{
+					item = i;
+					break;
+				}
+			}
+
+			if( item != null )
+			{
+				occlusionCullingBuffersFree.Remove( item );
+				item.usedLastUpdate = true;
+				return item.buffer;
+			}
+			return null;
+		}
+
+		public OcclusionCullingBuffer OcclusionCullingBuffer_Alloc( Vector2I size )
+		{
+			UpdateStatisticsCurrent.OcclusionCullingBuffers++;
+
+			//find free
+			{
+				var buffer2 = OcclusionCullingBuffer_GetFree( size );
+				if( buffer2 != null )
+					return buffer2;
+			}
+
+			var buffer = OcclusionCullingBuffer.Create();
+			buffer.SetResolution( size );
+
+			//add to list of allocated
+			var item = new OcclusionCullingBufferItem();
+			item.buffer = buffer;
+			occlusionCullingBuffersAllocated.Add( item );
+
+			item.usedLastUpdate = true;
+			return buffer;
+		}
+
+		public void OcclusionCullingBuffer_Free( OcclusionCullingBuffer buffer )
+		{
+			var item = occlusionCullingBuffersAllocated.Find( i => i.buffer == buffer );
+
+			if( item == null )
+				Log.Fatal( "ViewportRenderingContext: OcclusionCullingBuffer_Free: The buffer is not allocated." );
+			if( occlusionCullingBuffersFree.Contains( item ) )
+				Log.Fatal( "ViewportRenderingContext: OcclusionCullingBuffer_Free: The buffer is already free." );
+
+			occlusionCullingBuffersFree.Add( item );
+		}
+
+		public void OcclusionCullingBuffer_FreeAllEndUpdate()
+		{
+			//free all
+			foreach( var item in occlusionCullingBuffersAllocated )
+			{
+				if( !occlusionCullingBuffersFree.Contains( item ) )
+					OcclusionCullingBuffer_Free( item.buffer );
+			}
+
+			//destroy not used at this frame
+			var copy = new List<OcclusionCullingBufferItem>( occlusionCullingBuffersAllocated );
+			foreach( var item in copy )
+			{
+				if( !item.usedLastUpdate )
+					OcclusionCullingBuffer_Destroy( item );
+			}
+
+			//clear usedLastUpdate
+			foreach( var item in occlusionCullingBuffersAllocated )
+				item.usedLastUpdate = false;
+		}
+
+		void OcclusionCullingBuffer_Destroy( OcclusionCullingBufferItem item )
+		{
+			occlusionCullingBuffersFree.Remove( item );
+
+			item.buffer.Dispose();
+			occlusionCullingBuffersAllocated.Remove( item );
+		}
+
+		public void OcclusionCullingBuffer_DestroyAll()
+		{
+			var copy = new List<OcclusionCullingBufferItem>( occlusionCullingBuffersAllocated );
+			foreach( var item in copy )
+				OcclusionCullingBuffer_Destroy( item );
+		}
+
+		/////////////////////////////////////////
+
 		public Viewport CurrentViewport
 		{
 			get { return currentViewport; }
@@ -652,8 +782,7 @@ namespace NeoAxis
 			public Vector2F sizeInv;
 		}
 
-		public void SetViewport( Viewport viewport, Matrix4F viewMatrix, Matrix4F projectionMatrix,
-			FrameBufferTypes clearBuffers, ColorValue clearBackgroundColor, float clearDepthValue = 1, byte clearStencilValue = 0 )
+		public void SetViewport( Viewport viewport, Matrix4F viewMatrix, Matrix4F projectionMatrix, FrameBufferTypes clearBuffers, ColorValue clearBackgroundColor, float clearDepthValue = 1, byte clearStencilValue = 0 )
 		{
 			currentViewport = viewport;
 			currentViewNumber++;
@@ -722,7 +851,7 @@ namespace NeoAxis
 
 				int vec4Count = sizeof( ViewportSettingsUniform ) / sizeof( Vector4F );
 				if( vec4Count != 1 )
-					Log.Fatal( "Component_RenderingPipeline: Render: vec4Count != 1." );
+					Log.Fatal( "RenderingPipeline: Render: vec4Count != 1." );
 				SetUniform( "u_viewportSettings", ParameterType.Vector4, vec4Count, &data );
 			}
 		}
@@ -735,6 +864,14 @@ namespace NeoAxis
 		public void SetViewport( Viewport viewport )
 		{
 			SetViewport( viewport, Matrix4F.Identity, Matrix4F.Identity );
+		}
+
+		public void SetComputeView()
+		{
+			currentViewport = null;
+			currentViewNumber++;
+
+			Bgfx.ResetView( CurrentViewNumber );
 		}
 
 		//public void ClearCurrentViewport( FrameBufferTypes buffers, ColorValue backgroundColor, float depth = 1, uint stencil = 0 )
@@ -758,23 +895,23 @@ namespace NeoAxis
 
 		//!!!!!как тут это всё с Viewport и multirendertarget?
 		//!!!!!для RenderQuad добавить "RectI? scissorRectangle"?
-		public void RenderQuadToCurrentViewport( CanvasRenderer.ShaderItem shader, CanvasRenderer.BlendingType blending = CanvasRenderer.BlendingType.Opaque )//, bool flipY = false )
+		public void RenderQuadToCurrentViewport( CanvasRenderer.ShaderItem shader, CanvasRenderer.BlendingType blending = CanvasRenderer.BlendingType.Opaque, bool flipY = false )
 		{
 			if( currentViewport == null )
 				Log.Fatal( "ViewportRenderingContext: RenderQuadToCurrentViewport: CurrentViewport == null." );
 
 			renderer.PushShader( shader );
-			renderer.PushBlendingType( blending );// GuiRenderer.BlendingType.Opaque );
+			renderer.PushBlendingType( blending );
 
-			//if( flipY )
-			//	renderer.AddQuad( new Rectangle( 0, 0, 1, 1 ), new Rectangle( 0, 1, 1, 0 ), null, new ColorValue( 1, 1, 1 ), false );
-			//else
-			renderer.AddQuad( new Rectangle( 0, 0, 1, 1 ), new Rectangle( 0, 0, 1, 1 ), null, new ColorValue( 1, 1, 1 ), false );
+			if( flipY )
+				renderer.AddQuad( new Rectangle( 0, 0, 1, 1 ), new Rectangle( 0, 1, 1, 0 ), null, new ColorValue( 1, 1, 1 ), false );
+			else
+				renderer.AddQuad( new Rectangle( 0, 0, 1, 1 ), new Rectangle( 0, 0, 1, 1 ), null, new ColorValue( 1, 1, 1 ), false );
 
 			renderer.PopBlendingType();
 			renderer.PopShader();
 
-			renderer._ViewportRendering_RenderToCurrentViewport( this, true, Owner.LastUpdateTime );
+			renderer.ViewportRendering_RenderToCurrentViewport( this, true, Owner.LastUpdateTime );
 		}
 
 		public void RenderTrianglesToCurrentViewport( CanvasRenderer.ShaderItem shader, IList<CanvasRenderer.TriangleVertex> vertices, CanvasRenderer.BlendingType blending = CanvasRenderer.BlendingType.Opaque )
@@ -788,7 +925,7 @@ namespace NeoAxis
 			renderer.PopBlendingType();
 			renderer.PopShader();
 
-			renderer._ViewportRendering_RenderToCurrentViewport( this, true, Owner.LastUpdateTime );
+			renderer.ViewportRendering_RenderToCurrentViewport( this, true, Owner.LastUpdateTime );
 		}
 
 		public void SetVertexBuffer( int stream, GpuVertexBuffer buffer, int startVertex = 0, int count = -1 )
@@ -936,75 +1073,66 @@ namespace NeoAxis
 		//	return null;
 		//}
 
-		public void BindTexture( ref BindTextureData value )
+		internal unsafe void BindTexture( int textureUnit, ImageComponent texture, TextureAddressingMode addressingMode, FilterOption filteringMin, FilterOption filteringMag, FilterOption filteringMip, TextureFlags additionalFlags, ref uint* writeToPointer, ref int writeToPointerCount )
 		{
-			//!!!!new
-			if( value.Texture == null )
-				Log.Fatal( "ViewportRenderingContext: BindTexture: value.Texture == null." );
+			if( texture == null )
+				Log.Fatal( "ViewportRenderingContext: BindTexture: texture == null." );
 
 			//sampler settings
 			TextureFlags flags = TextureFlags.None;
 
 			//adressing mode
-			if( ( value.AddressingMode & TextureAddressingMode.Mirror ) != 0 )
+			if( addressingMode != TextureAddressingMode.Wrap )
 			{
-				if( ( value.AddressingMode & TextureAddressingMode.MirrorU ) != 0 )
-					flags |= TextureFlags.MirrorU;
-				if( ( value.AddressingMode & TextureAddressingMode.MirrorV ) != 0 )
-					flags |= TextureFlags.MirrorV;
-				if( ( value.AddressingMode & TextureAddressingMode.MirrorW ) != 0 )
-					flags |= TextureFlags.MirrorW;
+				if( ( addressingMode & TextureAddressingMode.Mirror ) != 0 )
+				{
+					if( ( addressingMode & TextureAddressingMode.MirrorU ) != 0 )
+						flags |= TextureFlags.MirrorU;
+					if( ( addressingMode & TextureAddressingMode.MirrorV ) != 0 )
+						flags |= TextureFlags.MirrorV;
+					if( ( addressingMode & TextureAddressingMode.MirrorW ) != 0 )
+						flags |= TextureFlags.MirrorW;
+				}
+				if( ( addressingMode & TextureAddressingMode.Clamp ) != 0 )
+				{
+					if( ( addressingMode & TextureAddressingMode.ClampU ) != 0 )
+						flags |= TextureFlags.ClampU;
+					if( ( addressingMode & TextureAddressingMode.ClampV ) != 0 )
+						flags |= TextureFlags.ClampV;
+					if( ( addressingMode & TextureAddressingMode.ClampW ) != 0 )
+						flags |= TextureFlags.ClampW;
+				}
+				if( ( addressingMode & TextureAddressingMode.Border ) != 0 )
+				{
+					if( ( addressingMode & TextureAddressingMode.BorderU ) != 0 )
+						flags |= TextureFlags.BorderU;
+					if( ( addressingMode & TextureAddressingMode.BorderV ) != 0 )
+						flags |= TextureFlags.BorderV;
+					if( ( addressingMode & TextureAddressingMode.BorderW ) != 0 )
+						flags |= TextureFlags.BorderW;
+				}
 			}
-			if( ( value.AddressingMode & TextureAddressingMode.Clamp ) != 0 )
-			{
-				if( ( value.AddressingMode & TextureAddressingMode.ClampU ) != 0 )
-					flags |= TextureFlags.ClampU;
-				if( ( value.AddressingMode & TextureAddressingMode.ClampV ) != 0 )
-					flags |= TextureFlags.ClampV;
-				if( ( value.AddressingMode & TextureAddressingMode.ClampW ) != 0 )
-					flags |= TextureFlags.ClampW;
-			}
-			if( ( value.AddressingMode & TextureAddressingMode.Border ) != 0 )
-			{
-				if( ( value.AddressingMode & TextureAddressingMode.BorderU ) != 0 )
-					flags |= TextureFlags.BorderU;
-				if( ( value.AddressingMode & TextureAddressingMode.BorderV ) != 0 )
-					flags |= TextureFlags.BorderV;
-				if( ( value.AddressingMode & TextureAddressingMode.BorderW ) != 0 )
-					flags |= TextureFlags.BorderW;
-			}
-
-			////adressing mode
-			//switch( value.AddressingMode )
-			//{
-			//case TextureAddressingMode.Mirror:
-			//	flags |= TextureFlags.MirrorU | TextureFlags.MirrorV | TextureFlags.MirrorW;
-			//	break;
-			//case TextureAddressingMode.Clamp:
-			//	flags |= TextureFlags.ClampU | TextureFlags.ClampV | TextureFlags.ClampW;
-			//	break;
-			//case TextureAddressingMode.Border:
-			//	flags |= TextureFlags.BorderU | TextureFlags.BorderV | TextureFlags.BorderW;
-			//	break;
-			//}
 
 			//filtering
-			if( value.FilteringMin == FilterOption.Point )
-				flags |= TextureFlags.MinFilterPoint;
-			else if( value.FilteringMin == FilterOption.Anisotropic )
+
+			if( filteringMin == FilterOption.Anisotropic )
 				flags |= TextureFlags.MinFilterAnisotropic;
+			else if( filteringMin == FilterOption.Point )
+				flags |= TextureFlags.MinFilterPoint;
 
-			if( value.FilteringMag == FilterOption.Point )
-				flags |= TextureFlags.MagFilterPoint;
-			else if( value.FilteringMag == FilterOption.Anisotropic )
+			if( filteringMag == FilterOption.Anisotropic )
 				flags |= TextureFlags.MagFilterAnisotropic;
+			else if( filteringMag == FilterOption.Point )
+				flags |= TextureFlags.MagFilterPoint;
 
-			if( value.FilteringMip == FilterOption.Point )
+			if( filteringMip == FilterOption.Point )
 				flags |= TextureFlags.MipFilterPoint;
 			//else if( value.filteringMip == FilterOption.Anisotropic )
 			//	flags |= TextureFlags.MipFilterAnisotropic;
 
-			flags |= value.AdditionFlags;
+			flags |= additionalFlags;
+
+
 			//if( value.texture?.Result?.SourceFormat == PixelFormat.Float32R &&
 			//	value.texture?.Result?.ResultSize.X == value.texture?.Result?.ResultSize.Y )
 			//	flags |= TextureFlags.BGFX_SAMPLER_COMPARE_LEQUAL;
@@ -1015,15 +1143,46 @@ namespace NeoAxis
 			//!!!!impl border color
 			//!!!!еще есть настройки MSAA
 
-			var realObject = value.Texture?.Result?.GetRealObject( true );
+			var realObject = texture?.Result?.GetNativeObject( true );
 			if( realObject != null )
-				Bgfx.SetTexture( (byte)value.TextureUnit, Uniform.Invalid, realObject, flags );
+			{
+				if( writeToPointer != null )
+				{
+					*writeToPointer++ = (uint)textureUnit;
+					*writeToPointer++ = Uniform.Invalid.handle;
+					*writeToPointer++ = realObject.handle;
+					*writeToPointer++ = (uint)flags;
+					writeToPointerCount++;
+				}
+				else
+					Bgfx.SetTexture( (byte)textureUnit, Uniform.Invalid, realObject, flags );
+			}
 		}
 
-		public void BindTexture( BindTextureData value )
+		internal unsafe void BindTexture( ref BindTextureData value, ref uint* writeToPointer, ref int writeToPointerCount )
 		{
-			BindTexture( ref value );
+			BindTexture( value.TextureUnit, value.Texture, value.AddressingMode, value.FilteringMin, value.FilteringMag, value.FilteringMip, value.AdditionalFlags, ref writeToPointer, ref writeToPointerCount );
 		}
+
+		public void BindTexture( int textureUnit, ImageComponent texture, TextureAddressingMode addressingMode, FilterOption filteringMin, FilterOption filteringMag, FilterOption filteringMip, TextureFlags additionalFlags = 0 )
+		{
+			unsafe
+			{
+				uint* dummy1 = null;
+				int dummy2 = 0;
+				BindTexture( textureUnit, texture, addressingMode, filteringMin, filteringMag, filteringMip, additionalFlags, ref dummy1, ref dummy2 );
+			}
+		}
+
+		public void BindTexture( ref BindTextureData value )
+		{
+			BindTexture( value.TextureUnit, value.Texture, value.AddressingMode, value.FilteringMin, value.FilteringMag, value.FilteringMip, value.AdditionalFlags );
+		}
+
+		//public void BindTexture( BindTextureData value )
+		//{
+		//	BindTexture( ref value );
+		//}
 
 		public void BindParameterContainer( ParameterContainer container )
 		{
@@ -1235,7 +1394,7 @@ namespace NeoAxis
 			get { return updateStatisticsPrevious; }
 		}
 
-		public Component_RenderingPipeline RenderingPipeline
+		public RenderingPipeline RenderingPipeline
 		{
 			get { return renderingPipeline; }
 		}
@@ -1259,6 +1418,140 @@ namespace NeoAxis
 		public bool DynamicTexturesAreExists()
 		{
 			return dynamicTexturesAllocated.Count != 0 || multiRenderTargets.Count != 0;
+		}
+
+		public void UpdateGetVisibilityDistanceByObjectSize()
+		{
+			Curve1F function = null;
+
+			if( OwnerCameraSettings.Projection != ProjectionType.Orthographic )
+			{
+				function = new CurveLine1F();
+				//function = new CurveCubicSpline1F();
+
+				var cameraSettings = OwnerCameraSettings;
+
+				var offset = RenderingPipeline.MinimumVisibleSizeOfObjects.Value / (double)cameraSettings.Viewport.SizeInPixels.Y * 0.5;
+				var ray1 = cameraSettings.GetRayByScreenCoordinates( new Vector2( 0.5, 0.5 - offset ) );
+				var ray2 = cameraSettings.GetRayByScreenCoordinates( new Vector2( 0.5, 0.5 + offset ) );
+
+
+				var distance = Owner.CameraSettings.FarClipDistance;
+
+				for( int n = 0; n < 15; n++ )
+				{
+					var pos = cameraSettings.Position + cameraSettings.Rotation * ( Vector3.XAxis * distance );
+
+					var plane = Plane.FromPointAndNormal( pos, cameraSettings.Rotation * Vector3.XAxis );
+
+					plane.Intersects( ref ray1, out Vector3 intersect1 );
+					plane.Intersects( ref ray2, out Vector3 intersect2 );
+
+					var objectSize = ( intersect1 - intersect2 ).Length();
+
+					function.AddPoint( (float)objectSize, (float)distance );
+
+
+					distance *= 0.5;
+
+
+
+					//var pos = cameraSettings.Position + cameraSettings.Rotation * ( Vector3.XAxis * distance );
+					//var offset = cameraSettings.Frustum.Up * minimumVisibleSizeOfObjects * 0.5;
+					//var point1 = pos - offset;
+					//var point2 = pos + offset;
+
+					//var points = new Vector3[ 2 ];
+					//points[ 0 ] = point1;
+					//points[ 1 ] = point2;
+
+					////var cameraDistanceMinSquared2 = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref group.BoundingBox );
+					////var cameraDistanceMin = Math.Sqrt( cameraDistanceMinSquared2 );
+
+					////var points = SpaceBounds.CalculatedBoundingBox.ToPoints();
+
+					//var min = 10000.0;
+					//var max = -10000.0;
+
+					//foreach( var p in points )
+					//{
+					//	if( cameraSettings.ProjectToScreenCoordinates( p, out var screenP ) )
+					//	{
+					//		if( screenP.Y < min )
+					//			min = screenP.Y;
+					//		if( screenP.Y > max )
+					//			max = screenP.Y;
+					//	}
+					//}
+
+					//var heightInPixels = ( max - min ) * cameraSettings.Viewport.SizeInPixels.Y;
+
+					//var objectSize = zzzzz;
+
+					//function.AddPoint( (float)objectSize, (float)distance );
+
+
+					//var pos = cameraSettings.Position + cameraSettings.Rotation * ( Vector3.XAxis * distance );
+					//zzzzz;
+					//var offset = cameraSettings.Frustum.Up * minimumVisibleSizeOfObjects * 0.5;
+					//var point1 = pos - offset;
+					//var point2 = pos + offset;
+
+					//var points = new Vector3[ 2 ];
+					//points[ 0 ] = point1;
+					//points[ 1 ] = point2;
+
+					////var cameraDistanceMinSquared2 = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref group.BoundingBox );
+					////var cameraDistanceMin = Math.Sqrt( cameraDistanceMinSquared2 );
+
+					////var points = SpaceBounds.CalculatedBoundingBox.ToPoints();
+
+					//var min = 10000.0;
+					//var max = -10000.0;
+
+					//foreach( var p in points )
+					//{
+					//	if( cameraSettings.ProjectToScreenCoordinates( p, out var screenP ) )
+					//	{
+					//		if( screenP.Y < min )
+					//			min = screenP.Y;
+					//		if( screenP.Y > max )
+					//			max = screenP.Y;
+					//	}
+					//}
+
+					//var heightInPixels = ( max - min ) * cameraSettings.Viewport.SizeInPixels.Y;
+
+					//var objectSize = zzzzz;
+
+					//function.AddPoint( (float)objectSize, (float)distance );
+					////function.AddPoint( (float)heightInPixels, (float)distance );
+					////function.AddPoint( (float)distance, ZZZZZZZ );
+
+					//distance *= 0.5;
+				}
+			}
+
+			getVisibilityDistanceByObjectSize = function;
+		}
+
+		public double GetVisibilityDistanceByObjectSize( double objectSize )
+		{
+			if( getVisibilityDistanceByObjectSize != null )
+				return getVisibilityDistanceByObjectSize.CalculateValueByTime( (float)objectSize );
+			else
+				return OwnerCameraSettings.FarClipDistance * 1.1;
+		}
+
+		public double GetShadowVisibilityDistance( double visibilityDistance )
+		{
+			return visibilityDistance * ShadowObjectVisibilityDistanceFactor;
+		}
+
+		public double GetShadowVisibilityDistanceSquared( double visibilityDistance )
+		{
+			var v = visibilityDistance * ShadowObjectVisibilityDistanceFactor;
+			return v * v;
 		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿namespace Xilium.CefGlue
+#if !NO_UI_WEB_BROWSER
+namespace Internal.Xilium.CefGlue
 {
     using System;
 
@@ -18,3 +19,5 @@
         System,
     }
 }
+
+#endif

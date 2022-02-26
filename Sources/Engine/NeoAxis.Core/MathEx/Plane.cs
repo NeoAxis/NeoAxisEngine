@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
@@ -339,7 +339,7 @@ namespace NeoAxis
 			{
 				if( index < 0 || index > 3 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( double* v = &this.A )
+				fixed( double* v = &this.A )
 				{
 					return v[ index ];
 				}
@@ -348,7 +348,7 @@ namespace NeoAxis
 			{
 				if( index < 0 || index > 3 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( double* v = &this.A )
+				fixed( double* v = &this.A )
 				{
 					v[ index ] = value;
 				}
@@ -608,8 +608,7 @@ namespace NeoAxis
 		/// <param name="point1">The second point defining the plane.</param>
 		/// <param name="point2">The third point defining the plane.</param>
 		/// <param name="result">When the method completes, contains the resulting plane.</param>
-		public static void FromPoints( ref Vector3 point0, ref Vector3 point1, ref Vector3 point2,
-			out Plane result )
+		public static void FromPoints( ref Vector3 point0, ref Vector3 point1, ref Vector3 point2, out Plane result )
 		{
 			Vector3 edge1;
 			Vector3.Subtract( ref point1, ref point0, out edge1 );

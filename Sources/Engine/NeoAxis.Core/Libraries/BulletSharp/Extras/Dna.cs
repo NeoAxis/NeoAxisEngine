@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
     public class Dna
     {

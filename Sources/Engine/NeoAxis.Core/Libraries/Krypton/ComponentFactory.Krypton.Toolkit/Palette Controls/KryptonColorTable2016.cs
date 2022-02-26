@@ -20,7 +20,7 @@ using System.Diagnostics;
 using Microsoft.Win32;
 using System.Security;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     /// <summary>
     /// Provide KryptonColorTable2016 values using an array of Color values as the source.

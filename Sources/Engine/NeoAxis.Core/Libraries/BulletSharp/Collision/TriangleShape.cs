@@ -1,8 +1,8 @@
 using System;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class TriangleShape : PolyhedralConvexShape
 	{
@@ -18,17 +18,17 @@ namespace BulletSharp
 		{
 		}
 
-		public TriangleShape(Vector3 p0, Vector3 p1, Vector3 p2)
+		public TriangleShape(BVector3 p0, BVector3 p1, BVector3 p2)
 			: base(btTriangleShape_new2(ref p0, ref p1, ref p2))
 		{
 		}
 
-		public void CalcNormal(out Vector3 normal)
+		public void CalcNormal(out BVector3 normal)
 		{
 			btTriangleShape_calcNormal(Native, out normal);
 		}
 
-		public void GetPlaneEquation(int i, out Vector3 planeNormal, out Vector3 planeSupport)
+		public void GetPlaneEquation(int i, out BVector3 planeNormal, out BVector3 planeSupport)
 		{
 			btTriangleShape_getPlaneEquation(Native, i, out planeNormal, out planeSupport);
 		}

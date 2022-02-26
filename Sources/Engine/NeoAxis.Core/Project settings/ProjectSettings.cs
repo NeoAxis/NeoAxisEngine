@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -10,7 +10,7 @@ namespace NeoAxis
 	/// </summary>
 	public static class ProjectSettings
 	{
-		static Component_ProjectSettings settingsComponent;
+		static ProjectSettingsComponent settingsComponent;
 
 		//
 
@@ -19,12 +19,12 @@ namespace NeoAxis
 			get { return "Base\\ProjectSettings.component"; }
 		}
 
-		public static Component_ProjectSettings.ThemeEnum DefaultThemeWhenNoFile = Component_ProjectSettings.ThemeEnum.Dark;
+		public static ProjectSettingsPage_General.ThemeEnum DefaultThemeWhenNoFile = ProjectSettingsPage_General.ThemeEnum.Dark;
 
 		/// <summary>
 		/// Gets instance of the settings.
 		/// </summary>
-		public static Component_ProjectSettings Get
+		public static ProjectSettingsComponent Get
 		{
 			get
 			{
@@ -33,11 +33,62 @@ namespace NeoAxis
 					//create default settings
 					if( !VirtualFile.Exists( FileName ) )
 					{
-						var settingsComponent2 = ComponentUtility.CreateComponent<Component_ProjectSettings>( null, true, true );
+						var settingsComponent2 = ComponentUtility.CreateComponent<ProjectSettingsComponent>( null, true, true );
 						settingsComponent2.Name = "Root";
 
+						{
+							var page = settingsComponent2.CreateComponent<ProjectSettingsPage_General>();
+							page.Name = "General";
+						}
+
+						{
+							var page = settingsComponent2.CreateComponent<ProjectSettingsPage_SceneEditor>();
+							page.Name = "Scene Editor";
+						}
+
+						{
+							var page = settingsComponent2.CreateComponent<ProjectSettingsPage_UIEditor>();
+							page.Name = "UI Editor";
+						}
+
+						{
+							var page = settingsComponent2.CreateComponent<ProjectSettingsPage_CSharpEditor>();
+							page.Name = "C# Editor";
+						}
+
+						{
+							var page = settingsComponent2.CreateComponent<ProjectSettingsPage_ShaderEditor>();
+							page.Name = "Shader Editor";
+						}
+
+						{
+							var page = settingsComponent2.CreateComponent<ProjectSettingsPage_TextEditor>();
+							page.Name = "Text Editor";
+						}
+
+						{
+							var page = settingsComponent2.CreateComponent<ProjectSettingsPage_RibbonAndToolbar>();
+							page.Name = "Ribbon and Toolbar";
+						}
+
+						{
+							var page = settingsComponent2.CreateComponent<ProjectSettingsPage_Shortcuts>();
+							page.Name = "Shortcuts";
+						}
+
+						{
+							var page = settingsComponent2.CreateComponent<ProjectSettingsPage_Rendering>();
+							page.Name = "Rendering";
+						}
+
+						{
+							var page = settingsComponent2.CreateComponent<ProjectSettingsPage_CustomSplashScreen>();
+							page.Name = "Custom Splash Screen";
+						}
+
+
 						//default theme
-						settingsComponent2.Theme = DefaultThemeWhenNoFile;
+						settingsComponent2.General.Theme = DefaultThemeWhenNoFile;
 
 						//detect language
 						try
@@ -45,27 +96,10 @@ namespace NeoAxis
 							var ci = CultureInfo.InstalledUICulture;
 
 							if( ci.EnglishName.Contains( "Russian" ) )
-								settingsComponent2.Language = Component_ProjectSettings.LanguageEnum.Russian;
-
+								settingsComponent2.General.Language = ProjectSettingsPage_General.LanguageEnum.Russian;
 						}
 						catch { }
 
-						var pageNames = new List<string>();
-						pageNames.Add( "General" );
-						pageNames.Add( "Scene Editor" );
-						pageNames.Add( "UI Editor" );
-						pageNames.Add( "C# Editor" );
-						pageNames.Add( "Shader Editor" );
-						pageNames.Add( "Text Editor" );
-						pageNames.Add( "Ribbon and Toolbar" );
-						pageNames.Add( "Shortcuts" );
-						pageNames.Add( "Custom Splash Screen" );
-
-						foreach( var name in pageNames )
-						{
-							var page = settingsComponent2.CreateComponent<Component_ProjectSettings_PageBasic>();
-							page.Name = name;
-						}
 
 						var realFileName = VirtualPathUtility.GetRealPathByVirtual( FileName );
 						if( !ComponentUtility.SaveComponentToFile( settingsComponent2, realFileName, null, out var error ) )
@@ -79,15 +113,15 @@ namespace NeoAxis
 					{
 						try
 						{
-							settingsComponent = ResourceManager.LoadResource<Component_ProjectSettings>( FileName );
+							settingsComponent = ResourceManager.LoadResource<ProjectSettingsComponent>( FileName );
 						}
 						catch( Exception )
 						{
-							settingsComponent = ComponentUtility.CreateComponent<Component_ProjectSettings>( null, true, true );
+							settingsComponent = ComponentUtility.CreateComponent<ProjectSettingsComponent>( null, true, true );
 						}
 					}
 					else
-						settingsComponent = ComponentUtility.CreateComponent<Component_ProjectSettings>( null, true, true );
+						settingsComponent = ComponentUtility.CreateComponent<ProjectSettingsComponent>( null, true, true );
 				}
 
 				return settingsComponent;

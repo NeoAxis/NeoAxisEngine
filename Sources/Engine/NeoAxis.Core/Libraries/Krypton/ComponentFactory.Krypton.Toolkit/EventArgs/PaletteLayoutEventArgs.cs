@@ -10,7 +10,7 @@
 
 using System;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
 	/// <summary>
 	/// Details for palette layout events.

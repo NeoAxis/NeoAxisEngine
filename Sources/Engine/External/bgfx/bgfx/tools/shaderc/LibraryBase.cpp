@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "LibraryBase.h"
 #include <bx/debug.h>
 
@@ -37,7 +37,56 @@ void LogLongText(std::string s)
 
 #endif
 
+#ifdef IOS
+#include <iconv.h>	
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+#ifdef IOS
+
+template <class In, class Out>
+void ConvertString(iconv_t cd, const In& in, Out* out, const typename Out::value_type errorSign)
+{
+	typedef typename In::value_type InType;
+	typedef typename Out::value_type OutType;
+
+	char* inPointer = (char*)in.data();
+	size_t inLength = in.length() * sizeof(InType);
+
+	const size_t bufferSize = 4096;
+	OutType buffer[bufferSize];
+
+	out->clear();
+
+	while (inLength != 0)
+	{
+		char* tempPointer = (char*)buffer;
+		size_t tempLength = bufferSize * sizeof(OutType);
+
+		size_t result = iconv(cd, &inPointer, &inLength, &tempPointer, &tempLength);
+		size_t n = (OutType*)(tempPointer)-buffer;
+
+		out->append(buffer, n);
+
+		if (result == (size_t)-1)
+		{
+			if (errno == EINVAL || errno == EILSEQ)
+			{
+				out->append(1, errorSign);
+				inPointer += sizeof(InType);
+				inLength -= sizeof(InType);
+			}
+			else if (errno == E2BIG && n == 0)
+			{
+				Fatal("iconv: The buffer is too small.");
+			}
+		}
+	}
+}
+
+#endif
+
 
 std::string ConvertStringToUTF8(const std::wstring& str)
 {

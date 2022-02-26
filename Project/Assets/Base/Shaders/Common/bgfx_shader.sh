@@ -42,7 +42,7 @@
  || BGFX_SHADER_LANGUAGE_METAL
 #	define CONST(_x) static const _x
 #	define dFdx(_x) ddx(_x)
-#	define dFdy(_y) ddy(-_y)
+#	define dFdy(_y) ddy(-(_y))
 #	define inversesqrt(_x) rsqrt(_x)
 #	define fract(_x) frac(_x)
 
@@ -61,8 +61,8 @@
 #		if BGFX_SHADER_LANGUAGE_HLSL > 4 || BGFX_SHADER_LANGUAGE_PSSL || BGFX_SHADER_LANGUAGE_SPIRV || BGFX_SHADER_LANGUAGE_METAL
 #			define dFdxCoarse(_x) ddx_coarse(_x)
 #			define dFdxFine(_x)   ddx_fine(_x)
-#			define dFdyCoarse(_y) ddy_coarse(-_y)
-#			define dFdyFine(_y)   ddy_fine(-_y)
+#			define dFdyCoarse(_y) ddy_coarse(-(_y))
+#			define dFdyFine(_y)   ddy_fine(-(_y))
 #		endif // BGFX_SHADER_LANGUAGE_HLSL > 4
 
 #		if BGFX_SHADER_LANGUAGE_HLSL || BGFX_SHADER_LANGUAGE_SPIRV || BGFX_SHADER_LANGUAGE_METAL
@@ -293,7 +293,7 @@ vec4 bgfxTexelFetchOffset(BgfxSampler2D _sampler, ivec2 _coord, int _lod, ivec2 
 	return _sampler.m_texture.Load(ivec3(_coord, _lod), _offset );
 }
 
-vec2 bgfxTextureSize(BgfxSampler2D _sampler, int _lod)
+ivec2 bgfxTextureSize(BgfxSampler2D _sampler, int _lod)
 {
 	////!!!!betauser
 	//uint x, y, z, levels;
@@ -301,7 +301,21 @@ vec2 bgfxTextureSize(BgfxSampler2D _sampler, int _lod)
 	//return vec2((float)x, (float)y);
 	vec2 result;
 	_sampler.m_texture.GetDimensions(result.x, result.y);
-	return result;
+	return ivec2(result);
+	//return result;
+}
+
+//!!!!betauser
+ivec3 bgfxTextureArraySize(BgfxSampler2DArray _sampler, int _lod)
+{
+	////!!!!betauser
+	//uint x, y, z, levels;
+	//_sampler.m_texture.GetDimensions((uint)_lod, x, y, z, levels);
+	//return vec2((float)x, (float)y);
+	vec3 result;
+	_sampler.m_texture.GetDimensions(result.x, result.y, result.z);
+	return ivec3(result);
+	//return result;
 }
 
 vec4 bgfxTextureGather(BgfxSampler2D _sampler, vec2 _coord)
@@ -449,6 +463,7 @@ vec3 bgfxTextureSize(BgfxSamplerCube _sampler, int _lod)
 #		define texelFetch(_sampler, _coord, _lod) bgfxTexelFetch(_sampler, _coord, _lod)
 #		define texelFetchOffset(_sampler, _coord, _lod, _offset) bgfxTexelFetchOffset(_sampler, _coord, _lod, _offset)
 #		define textureSize(_sampler, _lod) bgfxTextureSize(_sampler, _lod)
+#		define textureArraySize(_sampler, _lod) bgfxTextureArraySize(_sampler, _lod)
 #		define textureGather(_sampler, _coord) bgfxTextureGather(_sampler, _coord)
 #		define textureGatherOffset(_sampler, _coord, _offset) bgfxTextureGatherOffset(_sampler, _coord, _offset)
 #	else
@@ -571,12 +586,17 @@ vec4  mod(vec4  _a, vec4  _b) { return _a - _b * floor(_a / _b); }
 #	define SAMPLER2DMS(_name, _reg)     layout(binding=_reg) uniform sampler2DMS _name
 #	define SAMPLER3D(_name, _reg)       layout(binding=_reg) uniform sampler3D _name
 #	define SAMPLERCUBE(_name, _reg)     layout(binding=_reg) uniform samplerCube _name
+//!!!!
+//#	define SAMPLER2DSHADOW(_name, _reg) layout(binding=_reg) uniform HIGHP sampler2DShadow _name
+//#	define SAMPLERCUBESHADOW(_name, _reg) layout(binding=_reg) uniform highp samplerCubeShadow _name
 #	define SAMPLER2DSHADOW(_name, _reg) layout(binding=_reg) uniform sampler2DShadow _name
 #	define SAMPLERCUBESHADOW(_name, _reg) layout(binding=_reg) uniform samplerCubeShadow _name
 
 #	define SAMPLER2DARRAY(_name, _reg)       layout(binding=_reg) uniform sampler2DArray _name
 #	define SAMPLER2DMSARRAY(_name, _reg)     layout(binding=_reg) uniform sampler2DMSArray _name
 #	define SAMPLERCUBEARRAY(_name, _reg)     layout(binding=_reg) uniform samplerCubeArray _name
+//!!!!
+//#	define SAMPLER2DARRAYSHADOW(_name, _reg) layout(binding=_reg) uniform highp sampler2DArrayShadow _name
 #	define SAMPLER2DARRAYSHADOW(_name, _reg) layout(binding=_reg) uniform sampler2DArrayShadow _name
 
 #		define ISAMPLER2D(_name, _reg) layout(binding=_reg) uniform isampler2D _name
@@ -605,11 +625,11 @@ vec4  mod(vec4  _a, vec4  _b) { return _a - _b * floor(_a / _b); }
 #	define texture2DBias(_sampler, _coord, _bias)      texture2D(_sampler, _coord, _bias)
 #	define textureCubeBias(_sampler, _coord, _bias)    textureCube(_sampler, _coord, _bias)
 
-#	if BGFX_SHADER_LANGUAGE_GLSL >= 130
+//#	if BGFX_SHADER_LANGUAGE_GLSL >= 130
 #		define texture2D(_sampler, _coord)      texture(_sampler, _coord)
 #		define texture2DArray(_sampler, _coord) texture(_sampler, _coord)
 #		define texture3D(_sampler, _coord)      texture(_sampler, _coord)
-#	endif // BGFX_SHADER_LANGUAGE_GLSL >= 130
+//#	endif // BGFX_SHADER_LANGUAGE_GLSL >= 130
 
 //!!!!betauser
 #define textureCubeLod(_sampler, _coord, _level) textureLod(_sampler, _coord, float(_level))
@@ -754,6 +774,24 @@ mat3 mtxFromRows(float _00, float _01, float _02, float _10, float _11, float _1
 }
 
 
+#define bool2 bvec2
+#define bool3 bvec3
+#define bool4 bvec4
+
+#define int2 ivec2
+#define int3 ivec3
+#define int4 ivec4
+
+#define uint2 uvec2
+#define uint3 uvec3
+#define uint4 uvec4
+
+#define float2 vec2
+#define float3 vec3
+#define float4 vec4
+
+#define float3x3 mat3
+#define float4x4 mat4
 
 
 #endif // __cplusplus

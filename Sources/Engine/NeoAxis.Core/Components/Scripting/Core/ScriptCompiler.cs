@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #if !NO_EMIT
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+//using System.Runtime.Loader;
 using System.Text;
 
 namespace NeoAxis
@@ -22,7 +23,40 @@ namespace NeoAxis
 
 		public static ScriptOptions Settings { get; set; } = ScriptOptions.Default;
 
-		//
+		///////////////////////////////////////////////
+
+		//// This is a collectible (unloadable) AssemblyLoadContext that loads the dependencies
+		//// of the plugin from the plugin's binary directory.
+		//class HostAssemblyLoadContext : AssemblyLoadContext
+		//{
+		//	// Resolver of the locations of the assemblies that are dependencies of the
+		//	// main plugin assembly.
+		//	private AssemblyDependencyResolver _resolver;
+
+		//	public HostAssemblyLoadContext( string pluginPath ) : base( isCollectible: true )
+		//	{
+		//		_resolver = new AssemblyDependencyResolver( pluginPath );
+		//	}
+
+		//	// The Load method override causes all the dependencies present in the plugin's binary directory to get loaded
+		//	// into the HostAssemblyLoadContext together with the plugin assembly itself.
+		//	// NOTE: The Interface assembly must not be present in the plugin's binary directory, otherwise we would
+		//	// end up with the assembly being loaded twice. Once in the default context and once in the HostAssemblyLoadContext.
+		//	// The types present on the host and plugin side would then not match even though they would have the same names.
+		//	protected override Assembly Load( AssemblyName name )
+		//	{
+		//		string assemblyPath = _resolver.ResolveAssemblyToPath( name );
+		//		if( assemblyPath != null )
+		//		{
+		//			//Console.WriteLine( $"Loading assembly {assemblyPath} into the HostAssemblyLoadContext" );
+		//			return LoadFromAssemblyPath( assemblyPath );
+		//		}
+
+		//		return null;
+		//	}
+		//}
+
+		///////////////////////////////////////////////
 
 		string GetScriptTempFileName()
 		{
@@ -65,7 +99,7 @@ namespace NeoAxis
 					options = Settings.WithFilePath( scriptFile ?? tempScriptFile );
 				}
 
-				var compilation = CSharpScript.Create( scriptText, options ).GetCompilation();
+				var compilation = Microsoft.CodeAnalysis.CSharp.Scripting.CSharpScript.Create( scriptText, options ).GetCompilation();
 
 				if( DebugBuild )
 				{
@@ -107,6 +141,31 @@ namespace NeoAxis
 				{
 					if( emitInMemory )
 					{
+
+						//!!!!to implement unloading need change ScriptCache
+
+
+						//var context = new HostAssemblyLoadContext( VirtualFileSystem.Directories.Binaries );
+
+						//Assembly assembly = null;
+
+						////use _assemblyLoader.LoadAssemblyFromStream see RoslynPad
+						//peStream.Seek( 0, SeekOrigin.Begin );
+						//if( DebugBuild )
+						//{
+						//	pdbStream.Seek( 0, SeekOrigin.Begin );
+
+						//	context.LoadFromStream( zzz );
+						//	//return AppDomain.CurrentDomain.Load( peStream.GetBuffer(), pdbStream.GetBuffer() );
+						//}
+						//else
+						//	return AppDomain.CurrentDomain.Load( peStream.GetBuffer() );
+
+						//zzzzz;
+
+						//return assembly;
+
+
 						//use _assemblyLoader.LoadAssemblyFromStream see RoslynPad
 						peStream.Seek( 0, SeekOrigin.Begin );
 						if( DebugBuild )
@@ -114,8 +173,8 @@ namespace NeoAxis
 							pdbStream.Seek( 0, SeekOrigin.Begin );
 							return AppDomain.CurrentDomain.Load( peStream.GetBuffer(), pdbStream.GetBuffer() );
 						}
-
-						return AppDomain.CurrentDomain.Load( peStream.GetBuffer() );
+						else
+							return AppDomain.CurrentDomain.Load( peStream.GetBuffer() );
 					}
 					else
 					{

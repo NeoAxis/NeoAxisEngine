@@ -1,12 +1,13 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     internal partial class BsonExpressionMethods
     {
@@ -155,3 +156,5 @@ namespace LiteDB
         #endregion
     }
 }
+
+#endif

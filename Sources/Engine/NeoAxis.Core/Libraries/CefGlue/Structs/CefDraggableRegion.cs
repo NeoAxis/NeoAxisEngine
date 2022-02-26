@@ -1,9 +1,10 @@
-﻿namespace Xilium.CefGlue
+#if !NO_UI_WEB_BROWSER
+namespace Internal.Xilium.CefGlue
 {
     using System;
     using System.Collections.Generic;
     using System.Text;
-    using Xilium.CefGlue.Interop;
+    using Internal.Xilium.CefGlue.Interop;
 
     public sealed class CefDraggableRegion
     {
@@ -31,3 +32,5 @@
         public bool Draggable { get { return _draggable; } }
     }
 }
+
+#endif

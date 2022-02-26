@@ -1,7 +1,7 @@
 using System;
-using static BulletSharp.UnsafeNativeMethods;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public abstract class MultiBodyConstraint : IDisposable
 	{
@@ -28,7 +28,7 @@ namespace BulletSharp
 		*/
 		public void DebugDraw(IDebugDraw drawer)
 		{
-			btMultiBodyConstraint_debugDraw(Native, BulletSharp.DebugDraw.GetUnmanaged(drawer));
+			btMultiBodyConstraint_debugDraw(Native, Internal.BulletSharp.DebugDraw.GetUnmanaged(drawer));
 		}
 
 		public void FinalizeMultiDof()

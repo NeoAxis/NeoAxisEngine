@@ -1,10 +1,11 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     /// <summary>
     /// Implement similar as ArrayPool for byte array
@@ -37,3 +38,4 @@ namespace LiteDB.Engine
         }
     }
 }
+#endif

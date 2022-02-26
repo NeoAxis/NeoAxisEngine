@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -64,7 +64,7 @@ namespace NeoAxis
 			return builder.ToString();
 		}
 
-		public static void _DecodeDelimiterFormatString( StringBuilder outBuilder, string text )
+		internal static void DecodeDelimiterFormatString( StringBuilder outBuilder, string text )
 		{
 			for( int n = 0; n < text.Length; n++ )
 			{
@@ -125,7 +125,7 @@ namespace NeoAxis
 		public static string DecodeDelimiterFormatString( string text )
 		{
 			StringBuilder builder = new StringBuilder( "", text.Length + 2 );
-			_DecodeDelimiterFormatString( builder, text );
+			DecodeDelimiterFormatString( builder, text );
 			return builder.ToString();
 		}
 
@@ -182,16 +182,16 @@ namespace NeoAxis
 			//return *ret;
 		}
 
-		public unsafe static bool StringToInts( string s, int[] result )
+		public unsafe static bool StringToIntegers( string s, int[] result )
 		//public unsafe static int[] StringToInts( string s, int length )
 		{
 			//int[] ints = new int[ length ];
 			int index = 0;
 			int startpos = 0;
 
-			fixed ( char* pStringBuffer = s )
+			fixed( char* pStringBuffer = s )
 			{
-				fixed ( int* pIntBuffer = result )//fixed ( int* pIntBuffer = ints )
+				fixed( int* pIntBuffer = result )//fixed ( int* pIntBuffer = ints )
 				{
 					for( int n = 0; n < s.Length; n++ )
 					{
@@ -232,20 +232,19 @@ namespace NeoAxis
 			return text;
 		}
 
-		//!!!!
-		public static int GetStableHashCode( this string str )
+		public static int GetStableHashCode( string str )
 		{
 			unchecked
 			{
 				int hash1 = 5381;
 				int hash2 = hash1;
 
-				for( int i = 0; i < str.Length && str[i] != '\0'; i += 2 )
+				for( int i = 0; i < str.Length && str[ i ] != '\0'; i += 2 )
 				{
-					hash1 = ( ( hash1 << 5 ) + hash1 ) ^ str[i];
-					if( i == str.Length - 1 || str[i + 1] == '\0' )
+					hash1 = ( ( hash1 << 5 ) + hash1 ) ^ str[ i ];
+					if( i == str.Length - 1 || str[ i + 1 ] == '\0' )
 						break;
-					hash2 = ( ( hash2 << 5 ) + hash2 ) ^ str[i + 1];
+					hash2 = ( ( hash2 << 5 ) + hash2 ) ^ str[ i + 1 ];
 				}
 
 				return hash1 + ( hash2 * 1566083941 );
@@ -255,6 +254,17 @@ namespace NeoAxis
 		public static string Construct( string value )
 		{
 			return value;
+		}
+
+		public static string EncodeToBase64URL( string value )
+		{
+			return Convert.ToBase64String( Encoding.UTF8.GetBytes( value ) ).Replace( "=", "" ).Replace( '+', '-' ).Replace( '/', '_' );
+		}
+
+		public static string DecodeFromBase64URL( string base64URL )
+		{
+			var v = base64URL.Replace( '-', '+' ).Replace( '_', '/' ).PadRight( 4 * ( ( base64URL.Length + 3 ) / 4 ), '=' );
+			return Encoding.UTF8.GetString( Convert.FromBase64String( v ) );
 		}
 	}
 }

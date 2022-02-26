@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -35,10 +35,10 @@ namespace NeoAxis
 		static internal List<SoundVirtualChannel> activeVirtual3DChannels = new List<SoundVirtualChannel>();
 
 		//sounds
-		static internal Dictionary<string, Sound> sounds = new Dictionary<string, Sound>( 64 );
+		static internal Dictionary<string, SoundData> sounds = new Dictionary<string, SoundData>( 64 );
 
 		//listener
-		static Component_Scene listenerCurrentScene;
+		static Scene listenerCurrentScene;
 		static Vector3 listenerPosition;
 		static Vector3 listenerVelocity;
 		static Quaternion listenerRotation;
@@ -66,8 +66,8 @@ namespace NeoAxis
 
 			CreateSoundWorldInstance();
 
-			var maxReal2DChannels = EngineSettings.Init.SoundMaxReal2DChannels;
-			var maxReal3DChannels = EngineSettings.Init.SoundMaxReal3DChannels;
+			var maxReal2DChannels = EngineApp.InitSettings.SoundMaxReal2DChannels;
+			var maxReal3DChannels = EngineApp.InitSettings.SoundMaxReal3DChannels;
 
 			if( instance == null || !instance.InitLibrary( mainWindowHandle, maxReal2DChannels, maxReal3DChannels ) )
 			{
@@ -85,18 +85,18 @@ namespace NeoAxis
 
 			instance.InitInternal( maxReal2DChannels, maxReal3DChannels );
 
-			if( _Instance != null )
-				Log.InvisibleInfo( string.Format( "Sound system is initialized (Driver: {0})", _Instance._DriverName ) );
+			if( Internal_Instance != null )
+				Log.InvisibleInfo( string.Format( "Sound system is initialized (Driver: {0})", Internal_Instance.Internal_DriverName ) );
 		}
 
 		static void CreateSoundWorldInstance()
 		{
-			if( string.Compare( EngineSettings.Init.SoundSystemDLL, "null", true ) != 0 )
+			if( string.Compare( EngineApp.InitSettings.SoundSystemDLL, "null", true ) != 0 )
 			{
 				string fullPath = "";
-				if( !string.IsNullOrEmpty( EngineSettings.Init.SoundSystemDLL ) )
+				if( !string.IsNullOrEmpty( EngineApp.InitSettings.SoundSystemDLL ) )
 				{
-					string fullPath2 = Path.Combine( VirtualFileSystem.Directories.Binaries, EngineSettings.Init.SoundSystemDLL );
+					string fullPath2 = Path.Combine( VirtualFileSystem.Directories.Binaries, EngineApp.InitSettings.SoundSystemDLL );
 					if( File.Exists( fullPath2 ) )
 						fullPath = fullPath2;
 				}
@@ -105,7 +105,7 @@ namespace NeoAxis
 				{
 					try
 					{
-						Assembly assembly = AssemblyUtility.LoadAssemblyByRealFileName( fullPath, false );
+						Assembly assembly = Internal.AssemblyUtility.LoadAssemblyByRealFileName( fullPath, false );
 
 						Type foundType = null;
 						foreach( Type type in assembly.GetTypes() )
@@ -153,7 +153,7 @@ namespace NeoAxis
 			}
 		}
 
-		public static SoundWorld _Instance
+		public static SoundWorld Internal_Instance
 		{
 			get { return instance; }
 		}
@@ -180,13 +180,13 @@ namespace NeoAxis
 		//   get;
 		//}
 
-		protected abstract string[] _RecordDrivers
+		protected abstract string[] Internal_RecordDrivers
 		{
 			get;
 		}
 		public static string[] RecordDrivers
 		{
-			get { return _Instance._RecordDrivers; }
+			get { return Internal_Instance.Internal_RecordDrivers; }
 		}
 
 		//public abstract int PlaybackDriver
@@ -195,22 +195,22 @@ namespace NeoAxis
 		//   set;
 		//}
 
-		protected abstract int _RecordDriver
+		protected abstract int Internal_RecordDriver
 		{
 			get;
 			set;
 		}
 		public static int RecordDriver
 		{
-			get { return instance._RecordDriver; }
-			set { instance._RecordDriver = value; }
+			get { return instance.Internal_RecordDriver; }
+			set { instance.Internal_RecordDriver = value; }
 		}
 
 		public static void DisposeAllSounds()
 		{
 			while( sounds.Count != 0 )
 			{
-				Dictionary<String, Sound>.Enumerator enumerator = sounds.GetEnumerator();
+				Dictionary<String, SoundData>.Enumerator enumerator = sounds.GetEnumerator();
 				enumerator.MoveNext();
 				enumerator.Current.Value.Dispose();
 			}
@@ -226,7 +226,7 @@ namespace NeoAxis
 
 		protected abstract void OnUpdateLibrary();
 
-		public static void _Update( /*double time,*/ bool forceUpdateChannels = false )
+		public static void Internal_Update( /*double time,*/ bool forceUpdateChannels = false )
 		{
 			//check deleted scene
 			if( listenerCurrentScene != null && listenerCurrentScene.Disposed )
@@ -263,17 +263,17 @@ namespace NeoAxis
 		//	startTimeAfterEnginePauseUpdate = time;
 		//}
 
-		protected virtual Sound _SoundCreate( string fileName, SoundModes mode )
+		protected virtual SoundData Internal_SoundCreate( string fileName, SoundModes mode )
 		{
-			Sound sound;
+			SoundData sound;
 			string nameWithMode = fileName.ToLower() + " " + ( (int)mode & ~(int)SoundModes.Software ).ToString();
 			if( sounds.TryGetValue( nameWithMode, out sound ) )
 				return sound;
 			return null;
 		}
-		public static Sound SoundCreate( string fileName, SoundModes mode )
+		public static SoundData SoundCreate( string fileName, SoundModes mode )
 		{
-			return instance._SoundCreate( fileName, mode );
+			return instance.Internal_SoundCreate( fileName, mode );
 		}
 
 		//!!!!было. file stream менялся, пока отключено
@@ -284,11 +284,11 @@ namespace NeoAxis
 		//}
 
 		public delegate int DataReadDelegate( byte[] buffer, int bufferOffset, int length );
-		protected abstract Sound _SoundCreateDataBuffer( SoundModes mode, int channels, int frequency, int bufferSize, DataReadDelegate dataReadCallback );
+		protected abstract SoundData Internal_SoundCreateDataBuffer( SoundModes mode, int channels, int frequency, int bufferSize, DataReadDelegate dataReadCallback );
 
-		public static Sound SoundCreateDataBuffer( SoundModes mode, int channels, int frequency, int bufferSize, DataReadDelegate dataReadCallback )
+		public static SoundData SoundCreateDataBuffer( SoundModes mode, int channels, int frequency, int bufferSize, DataReadDelegate dataReadCallback )
 		{
-			return instance._SoundCreateDataBuffer( mode, channels, frequency, bufferSize, dataReadCallback );
+			return instance.Internal_SoundCreateDataBuffer( mode, channels, frequency, bufferSize, dataReadCallback );
 		}
 
 		public static SoundChannelGroup CreateChannelGroup( string name )
@@ -311,7 +311,7 @@ namespace NeoAxis
 
 		protected abstract void OnSetListener( Vector3 position, Vector3 velocity, Quaternion rotation );
 
-		public static void SetListener( Component_Scene currentScene, Vector3 position, Vector3 velocity, Quaternion rotation )
+		public static void SetListener( Scene currentScene, Vector3 position, Vector3 velocity, Quaternion rotation )
 		{
 			bool newScene = !ReferenceEquals( listenerCurrentScene, currentScene );
 			double saveVolume = 0;
@@ -335,7 +335,7 @@ namespace NeoAxis
 			if( newScene )
 			{
 				MasterChannelGroup.Volume = saveVolume;
-				_Update( true );
+				Internal_Update( true );
 			}
 		}
 
@@ -349,13 +349,13 @@ namespace NeoAxis
 			get { return masterChannelGroup; }
 		}
 
-		protected abstract string _DriverName
+		protected abstract string Internal_DriverName
 		{
 			get;
 		}
 		public static string DriverName
 		{
-			get { return instance._DriverName; }
+			get { return instance.Internal_DriverName; }
 		}
 
 		protected static VirtualFileStream CreateFileStream( string fileName )
@@ -405,7 +405,7 @@ namespace NeoAxis
 			get { return activeVirtual3DChannels.AsReadOnly(); }
 		}
 
-		public static SoundVirtualChannel SoundPlay( Component_Scene attachedToScene, Sound sound, SoundChannelGroup group, double priority, bool paused = false )
+		public static SoundVirtualChannel SoundPlay( Scene attachedToScene, SoundData sound, SoundChannelGroup group, double priority, bool paused = false )
 		{
 			if( sound == null )
 				return null;
@@ -511,21 +511,21 @@ namespace NeoAxis
 			channelsUpdating = false;
 		}
 
-		public static Dictionary<string, Sound>.ValueCollection Sounds
+		public static Dictionary<string, SoundData>.ValueCollection Sounds
 		{
 			get { return sounds.Values; }
 		}
 
-		protected abstract bool _RecordStart( Sound sound );
-		public static bool RecordStart( Sound sound ) { return instance._RecordStart( sound ); }
+		protected abstract bool Internal_RecordStart( SoundData sound );
+		public static bool RecordStart( SoundData sound ) { return instance.Internal_RecordStart( sound ); }
 
-		protected abstract void _RecordStop();
-		public static void RecordStop() { instance._RecordStop(); }
+		protected abstract void Internal_RecordStop();
+		public static void RecordStop() { instance.Internal_RecordStop(); }
 
-		protected abstract bool _IsRecording();
-		public static bool IsRecording() { return instance._IsRecording(); }
+		protected abstract bool Internal_IsRecording();
+		public static bool IsRecording() { return instance.Internal_IsRecording(); }
 
-		public static bool _SuspendWorkingWhenApplicationIsNotActive
+		public static bool Internal_SuspendWorkingWhenApplicationIsNotActive
 		{
 			get { return suspendWorkingWhenApplicationIsNotActive; }
 			set { suspendWorkingWhenApplicationIsNotActive = value; }
@@ -533,7 +533,7 @@ namespace NeoAxis
 
 		public virtual object CallCustomMethod( string message, object param ) { return null; }
 
-		public static Component_Scene ListenerCurrentScene
+		public static Scene ListenerCurrentScene
 		{
 			get { return listenerCurrentScene; }
 		}

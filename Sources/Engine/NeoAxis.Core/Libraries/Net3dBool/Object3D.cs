@@ -38,7 +38,7 @@ Project: https://github.com/MatterHackers/agg-sharp (an included library)
 using System;
 using System.Collections.Generic;
 
-namespace Net3dBool
+namespace Internal.Net3dBool
 {
     /// <summary>
     /// Data structure about a 3d solid to apply boolean operations in it.

@@ -1,9 +1,8 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
-using NeoAxis.Input;
 
 namespace NeoAxis
 {
@@ -350,7 +349,7 @@ namespace NeoAxis
 			if( !string.IsNullOrEmpty( currentCursor ) )//!!!!!EngineApp.Instance.ApplicationWindow.Focused/*IsWindowFocused()*/ && EngineApp.Instance.IsCreated && !LongOperationCallbackManager.DuringCallingCallback )
 			{
 				//!!!!Wait
-				var textureIns = ResourceManager.LoadResource<Component_Image>( currentCursor );
+				var textureIns = ResourceManager.LoadResource<ImageComponent>( currentCursor );
 				GpuTexture texture = textureIns?.Result;
 				if( texture != null )
 				{
@@ -433,7 +432,7 @@ namespace NeoAxis
 				return;
 
 			var mode = Transform3D != null ? SoundModes.Mode3D : 0;
-			Sound sound = SoundWorld.SoundCreate( name, mode );
+			SoundData sound = SoundWorld.SoundCreate( name, mode );
 			if( sound == null )
 				return;
 
@@ -450,7 +449,7 @@ namespace NeoAxis
 			}
 		}
 
-		public virtual void PlaySound( Component_Sound sound )
+		public virtual void PlaySound( Sound sound )
 		{
 			var mode = Transform3D != null ? SoundModes.Mode3D : 0;
 			var sound2 = sound?.Result?.LoadSoundByMode( mode );

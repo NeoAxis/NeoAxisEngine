@@ -1,0 +1,27 @@
+.component NeoAxis.Component_Image
+{
+	LoadCubePositiveX
+	{
+		GetByReference = "Content\\Environments\\Base\\Data\\Gradient_posx.png"
+	}
+	LoadCubeNegativeX
+	{
+		GetByReference = "Content\\Environments\\Base\\Data\\Gradient_negx.png"
+	}
+	LoadCubePositiveY
+	{
+		GetByReference = "Content\\Environments\\Base\\Data\\Gradient_posy.png"
+	}
+	LoadCubeNegativeY
+	{
+		GetByReference = "Content\\Environments\\Base\\Data\\Gradient_negy.png"
+	}
+	LoadCubePositiveZ
+	{
+		GetByReference = "Content\\Environments\\Base\\Data\\Gradient_posz.png"
+	}
+	LoadCubeNegativeZ
+	{
+		GetByReference = "Content\\Environments\\Base\\Data\\Gradient_negz.png"
+	}
+}

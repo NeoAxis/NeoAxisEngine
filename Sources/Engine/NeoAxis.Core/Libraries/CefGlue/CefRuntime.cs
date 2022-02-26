@@ -1,11 +1,12 @@
-﻿namespace Xilium.CefGlue
+#if !NO_UI_WEB_BROWSER
+namespace Internal.Xilium.CefGlue
 {
     using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Runtime.InteropServices;
     using System.Text;
-    using Xilium.CefGlue.Interop;
+    using Internal.Xilium.CefGlue.Interop;
 
     public static unsafe class CefRuntime
     {
@@ -105,10 +106,10 @@
 
         private static void LoadLibraryWindows(string path)
         {
-            Xilium.CefGlue.Platform.Windows.NativeMethods.LoadLibraryEx(
+            Internal.Xilium.CefGlue.Platform.Windows.NativeMethods.LoadLibraryEx(
                 System.IO.Path.Combine(path, "libcef.dll"),
                 IntPtr.Zero,
-                Xilium.CefGlue.Platform.Windows.LoadLibraryFlags.LOAD_WITH_ALTERED_SEARCH_PATH
+                Internal.Xilium.CefGlue.Platform.Windows.LoadLibraryFlags.LOAD_WITH_ALTERED_SEARCH_PATH
                 );
         }
 
@@ -995,3 +996,5 @@
         #endregion
     }
 }
+
+#endif

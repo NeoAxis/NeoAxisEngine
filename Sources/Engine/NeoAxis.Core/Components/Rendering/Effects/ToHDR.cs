@@ -1,11 +1,6 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
-using System.Drawing.Design;
-using System.ComponentModel;
-using System.Reflection;
 
 namespace NeoAxis
 {
@@ -13,9 +8,9 @@ namespace NeoAxis
 	/// Screen effect for converting scene to high dynamic range.
 	/// </summary>
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
-	public class Component_RenderingEffect_ToHDR : Component_RenderingEffect
+	public class RenderingEffect_ToHDR : RenderingEffect
 	{
-		protected override void OnRender( ViewportRenderingContext context, Component_RenderingPipeline.IFrameData frameData, ref Component_Image actualTexture )
+		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
 		{
 			var demandFormat = PixelFormat.Float16RGBA;
 

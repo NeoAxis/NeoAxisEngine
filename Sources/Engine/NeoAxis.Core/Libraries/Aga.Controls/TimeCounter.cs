@@ -4,7 +4,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aga.Controls
+namespace Internal.Aga.Controls
 {
 	/// <summary>
 	/// High resolution timer, used to test performance

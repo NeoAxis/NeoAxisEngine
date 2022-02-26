@@ -5,7 +5,7 @@
 
 using System.Collections.Generic;
 
-namespace tainicom.Aether.Physics2D.Common.Decomposition.Seidel
+namespace Internal.tainicom.Aether.Physics2D.Common.Decomposition.Seidel
 {
     // Directed Acyclic graph (DAG)
     // See "Computational Geometry", 3rd edition, by Mark de Berg et al, Chapter 6.2

@@ -15,7 +15,7 @@
 		HorizontalAlignment = Right
 		Margin = Units 500 30 30 0
 		EditorScrollPosition = 0 0
-		.component NeoAxis.Component_EventHandler
+		.component NeoAxis.EventHandlerComponent
 		{
 			Name = Event Handler Click
 			Event
@@ -321,7 +321,7 @@
 		HorizontalAlignment = Right
 		Margin = Units 720 170 30 0
 		EditorScrollPosition = 0 0
-		.component NeoAxis.Component_EventHandler
+		.component NeoAxis.EventHandlerComponent
 		{
 			Name = Event Handler Click
 			Event

@@ -1,22 +1,55 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 
 namespace NeoAxis
 {
 	/// <summary>
-	/// Represents a screen messages in the Player.
+	/// Represents the functionality of screen messages in the Player app.
 	/// </summary>
 	public static class ScreenMessages
 	{
-		class MessageItem
+		public static double MessageShowingTime { get; set; } = 5;
+
+		///////////////////////////////////////////////
+
+		public class MessageItem
 		{
-			public string Text;
-			public double TimeRemaining;
+			internal string text;
+			internal double timeRemaining;
+
+			public string Text { get { return text; } }
+			public double TimeRemaining { get { return timeRemaining; } }
+
+			internal MessageItem( string text, double timeRemaining )
+			{
+				this.text = text;
+				this.timeRemaining = timeRemaining;
+			}
 		}
 		static List<MessageItem> messages = new List<MessageItem>();
 
-		//
+		///////////////////////////////////////////////
+
+		public delegate void RenderUIDelegate( Viewport viewport, ref bool handled );
+		public static event RenderUIDelegate RenderUI;
+
+		public delegate void AddEventDelegate( ref string text, ref bool skip );
+		public static event AddEventDelegate AddEvent;
+
+		///////////////////////////////////////////////
+
+		public static MessageItem[] GetMessages()
+		{
+			lock( messages )
+				return messages.ToArray();
+		}
+
+		public static void Clear()
+		{
+			lock( messages )
+				messages.Clear();
+		}
 
 		public static void PerformTick( float delta )
 		{
@@ -24,7 +57,7 @@ namespace NeoAxis
 			{
 				for( int n = 0; n < messages.Count; n++ )
 				{
-					messages[ n ].TimeRemaining -= delta;
+					messages[ n ].timeRemaining -= delta;
 					if( messages[ n ].TimeRemaining <= 0 )
 					{
 						messages.RemoveAt( n );
@@ -36,6 +69,11 @@ namespace NeoAxis
 
 		public static void PerformRenderUI( Viewport viewport )
 		{
+			var handled = false;
+			RenderUI?.Invoke( viewport, ref handled );
+			if( handled )
+				return;
+
 			lock( messages )
 			{
 				var renderer = viewport.CanvasRenderer;
@@ -59,11 +97,15 @@ namespace NeoAxis
 
 		public static void Add( string text )
 		{
+			var text2 = text;
+			var skip = false;
+			AddEvent?.Invoke( ref text2, ref skip );
+			if( skip )
+				return;
+
 			lock( messages )
 			{
-				var message = new MessageItem();
-				message.Text = text;
-				message.TimeRemaining = 5;
+				var message = new MessageItem( text2, MessageShowingTime );
 				messages.Add( message );
 
 				while( messages.Count > 100 )

@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
@@ -485,7 +485,7 @@ namespace NeoAxis
 			{
 				if( index < 0 || index > 3 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( float* v = &this.Red )
+				fixed( float* v = &this.Red )
 				{
 					return v[ index ];
 				}
@@ -494,7 +494,7 @@ namespace NeoAxis
 			{
 				if( index < 0 || index > 3 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( float* v = &this.Red )
+				fixed( float* v = &this.Red )
 				{
 					v[ index ] = value;
 				}
@@ -591,6 +591,12 @@ namespace NeoAxis
 		}
 
 		[AutoConvertType]
+		public Vector3H ToVector3H()
+		{
+			return new Vector3H( Red, Green, Blue );
+		}
+
+		[AutoConvertType]
 		public Vector4F ToVector4F()
 		{
 			return new Vector4F( Red, Green, Blue, Alpha );
@@ -644,6 +650,16 @@ namespace NeoAxis
 		public static ColorValue Select( ColorValue v1, ColorValue v2, bool pick1 )
 		{
 			return pick1 ? v1 : v2;
+		}
+
+		public bool Equals( ref ColorValue v )
+		{
+			return Red == v.Red && Green == v.Green && Blue == v.Blue && Alpha == v.Alpha;
+		}
+
+		public static bool Equals( ref ColorValue v1, ref ColorValue v2 )
+		{
+			return v1.Red == v2.Red && v1.Green == v2.Green && v1.Blue == v2.Blue && v1.Alpha == v2.Alpha;
 		}
 	}
 }

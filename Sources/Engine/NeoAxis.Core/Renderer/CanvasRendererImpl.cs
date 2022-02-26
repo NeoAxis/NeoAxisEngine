@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using SharpBgfx;
+using Internal.SharpBgfx;
 
 namespace NeoAxis
 {
@@ -29,7 +29,7 @@ namespace NeoAxis
 		//!!!!!
 		//GuiSceneObject parentGuiSceneObjectFor3DRendering;
 
-		Component_Font defaultFont;
+		FontComponent defaultFont;
 
 		ShaderItem defaultShader = new ShaderItem();
 
@@ -68,7 +68,7 @@ namespace NeoAxis
 
 		//static double? logoInitialTime;
 		//static bool logoInitialTimeFinished;
-		//static Component_Image watermarkTexture;
+		//static Image watermarkTexture;
 
 		////////////////////////////////////////
 
@@ -158,7 +158,7 @@ namespace NeoAxis
 		{
 			public RectangleF rectangle;
 			public RectangleF textureCoordRectangle;
-			public Component_Image texture;
+			public ImageComponent texture;
 			public ColorValue color;
 			public bool clamp;
 
@@ -197,7 +197,7 @@ namespace NeoAxis
 
 		class TextItemKey : ItemKey
 		{
-			public Component_Font font;
+			public FontComponent font;
 			public double fontSize;
 			public string text;
 			public Vector2F startPosition;
@@ -268,7 +268,7 @@ namespace NeoAxis
 		class TrianglesItemKey : ItemKey
 		{
 			public TriangleVertex[] vertices;
-			public Component_Image texture;
+			public ImageComponent texture;
 			public bool clamp;
 
 			//
@@ -443,7 +443,7 @@ namespace NeoAxis
 			public double lastReleaseRenderTime;
 
 			public RenderOperationType renderOperation;
-			public Component_Image texture;
+			public ImageComponent texture;
 			public bool textureClamp;
 			public TextureFilteringMode textureFiltering;
 		}
@@ -523,7 +523,7 @@ namespace NeoAxis
 						else
 						{
 							vertexProgram = GpuProgramManager.GetProgram( "CanvasRenderer_Vertex_", GpuProgramType.Vertex,
-								shader.VertexProgramFileName, defines, out error );
+								shader.VertexProgramFileName, defines, true, out error );
 							if( !string.IsNullOrEmpty( error ) )
 							{
 								Log.Warning( error );
@@ -538,7 +538,7 @@ namespace NeoAxis
 						else
 						{
 							fragmentProgram = GpuProgramManager.GetProgram( "CanvasRenderer_Fragment_", GpuProgramType.Fragment,
-								shader.FragmentProgramFileName, defines, out error );
+								shader.FragmentProgramFileName, defines, true, out error );
 							if( !string.IsNullOrEmpty( error ) )
 							{
 								Log.Warning( error );
@@ -703,11 +703,7 @@ namespace NeoAxis
 			{
 				//after shutdown check
 				if( RenderingSystem.Disposed )
-				{
-					//waiting for .NET Standard 2.0
-					Log.Fatal( "Renderer: Dispose after Shutdown." );
-					//Log.Fatal( "Renderer: Dispose after Shutdown: {0}()", System.Reflection.MethodInfo.GetCurrentMethod().Name );
-				}
+					Log.Fatal( "CanvasRendererImpl: Dispose after shutdown." );
 
 				DestroyAllRenderableItems();
 
@@ -720,7 +716,7 @@ namespace NeoAxis
 			}
 		}
 
-		public override void AddQuad( RectangleF rectangle, RectangleF textureCoordRectangle, Component_Image texture, ColorValue color, bool clamp )
+		public override void AddQuad( RectangleF rectangle, RectangleF textureCoordRectangle, ImageComponent texture, ColorValue color, bool clamp )
 		{
 			//!!!!везде закомментил
 			//if( RenderSystem.Instance.IsDeviceLost() )
@@ -937,7 +933,7 @@ namespace NeoAxis
 			return result;
 		}
 
-		public override void AddText( Component_Font font, double fontSize, string text, Vector2F position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
+		public override void AddText( FontComponent font, double fontSize, string text, Vector2F position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
 		{
 			//if( RenderSystem.Instance.IsDeviceLost() )
 			//	return;
@@ -1031,7 +1027,7 @@ namespace NeoAxis
 				List<RenderableItem> renderableItems = new List<RenderableItem>();
 
 				var textures = compiledData.Textures;
-				//Component_Image[] textures = font.GetTextures( fontSize, this );
+				//Image[] textures = font.GetTextures( fontSize, this );
 				if( textures == null )
 					return;
 
@@ -1061,7 +1057,7 @@ namespace NeoAxis
 						if( !textureIndices[ fontTextureIndex ] )
 							continue;
 
-						Component_Image texture = textures[ fontTextureIndex ];
+						ImageComponent texture = textures[ fontTextureIndex ];
 						if( texture == null )
 							continue;
 
@@ -1221,7 +1217,7 @@ namespace NeoAxis
 			outItems.Add( item );
 		}
 
-		public override void AddTextLines( Component_Font font, double fontSize, IList<string> lines, Vector2F pos, EHorizontalAlignment horizontalAlign,
+		public override void AddTextLines( FontComponent font, double fontSize, IList<string> lines, Vector2F pos, EHorizontalAlignment horizontalAlign,
 			EVerticalAlignment verticalAlign, float textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
 		{
 			//if( RenderSystem.Instance.IsDeviceLost() )
@@ -1271,7 +1267,7 @@ namespace NeoAxis
 			}
 		}
 
-		public override int AddTextWordWrap( Component_Font font, double fontSize, string text, RectangleF rect, EHorizontalAlignment horizontalAlign,
+		public override int AddTextWordWrap( FontComponent font, double fontSize, string text, RectangleF rect, EHorizontalAlignment horizontalAlign,
 			bool alignByWidth, EVerticalAlignment verticalAlign, float textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
 		{
 			//if( RenderSystem.Instance.IsDeviceLost() )
@@ -1731,7 +1727,7 @@ namespace NeoAxis
 			} );
 		}
 
-		unsafe void AddTrianglesWithoutClipRectangles( IList<TriangleVertex> vertices, Component_Image texture, bool clamp )
+		unsafe void AddTrianglesWithoutClipRectangles( IList<TriangleVertex> vertices, ImageComponent texture, bool clamp )
 		{
 			if( vertices.Count == 0 )
 				return;
@@ -1840,7 +1836,7 @@ namespace NeoAxis
 			outItems.Add( item );
 		}
 
-		public override void AddFillEllipse( RectangleF rectangle, int segments, ColorValue color, Component_Image texture, RectangleF textureCoordRectangle, bool textureClamp )
+		public override void AddFillEllipse( RectangleF rectangle, int segments, ColorValue color, ImageComponent texture, RectangleF textureCoordRectangle, bool textureClamp )
 		{
 			if( segments < 3 )
 				Log.Fatal( "CanvasRenderer: AddFillEllipse: segments < 3." );
@@ -1897,6 +1893,40 @@ namespace NeoAxis
 			}
 
 			AddTriangles( vertices, texture, textureClamp );
+		}
+
+		public override void AddEllipse( RectangleF rectangle, int segments, ColorValue color )
+		{
+			if( segments < 3 )
+				Log.Fatal( "CanvasRenderer: AddEllipse: segments < 3." );
+			//if( RenderSystem.Instance.IsDeviceLost() )
+			//	return;
+			if( RenderingSystem.BackendNull )
+				return;
+
+			var center = rectangle.GetCenter();
+			var halfSize = rectangle.Size * 0.5f;
+
+			var lines = new LineItem[ segments ];
+
+			float step = MathEx.PI * 2 / (float)segments;
+			int steps = segments + 1;
+
+			float angle = 0;
+			Vector2F lastPoint = Vector2F.Zero;
+
+			for( int n = 0; n < steps; n++ )
+			{
+				var point = center + new Vector2F( MathEx.Cos( angle ), MathEx.Sin( angle ) ) * halfSize;
+
+				if( n != 0 )
+					lines[ n - 1 ] = new LineItem( lastPoint, point, color );
+
+				angle += step;
+				lastPoint = point;
+			}
+
+			AddLines( lines );
 		}
 
 		//static bool IsInside( Vec2F position, ref RectF clipRectangle, int clipSide )
@@ -2047,7 +2077,7 @@ namespace NeoAxis
 		//	}
 		//}
 
-		public override void AddTriangles( IList<TriangleVertex> vertices, Component_Image texture, bool clamp )
+		public override void AddTriangles( IList<TriangleVertex> vertices, ImageComponent texture, bool clamp )
 		{
 			if( vertices.Count == 0 )
 				return;
@@ -2099,7 +2129,7 @@ namespace NeoAxis
 			//		AddTrianglesWithoutClipRectangles( vertices, texture, clamp );
 		}
 
-		public override void AddTriangles( IList<TriangleVertex> vertices, IList<int> indices, Component_Image texture = null, bool clamp = false )
+		public override void AddTriangles( IList<TriangleVertex> vertices, IList<int> indices, ImageComponent texture = null, bool clamp = false )
 		{
 			if( indices != null )
 			{
@@ -2119,7 +2149,7 @@ namespace NeoAxis
 		/// <summary>
 		/// Gets or sets the default font.
 		/// </summary>
-		public override Component_Font DefaultFont
+		public override FontComponent DefaultFont
 		{
 			get { return defaultFont; }
 			set { defaultFont = value; }
@@ -2153,7 +2183,7 @@ namespace NeoAxis
 		{
 			//!!!!threading
 			//defaultFont
-			defaultFont = ResourceManager.LoadResource<Component_Font>( @"Base\Fonts\Default.ttf" );
+			defaultFont = ResourceManager.LoadResource<FontComponent>( @"Base\Fonts\Default.ttf" );
 			//defaultFont = EngineFontManager.Instance.LoadFont( "Default", DefaultFontSize );
 			//if( defaultFont == null )
 			//	defaultFont = EngineFontManager.Instance.LoadFont( "Default", "English", DefaultFontSize );
@@ -2178,14 +2208,14 @@ namespace NeoAxis
 		//					//create
 		//					if( watermarkTexture == null )
 		//					{
-		//						Component_Image texture;
+		//						Image texture;
 
 		//						if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP || SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
 		//						{
 		//							//load watermark from file for UWP
 
 		//							string name = viewport.SizeInPixels.X >= 1600 ? "Watermark.png" : "Watermark256.png";
-		//							texture = ResourceManager.LoadResource<Component_Image>( Path.Combine( @"Base\UI\Images\", name ) );
+		//							texture = ResourceManager.LoadResource<Image>( Path.Combine( @"Base\UI\Images\", name ) );
 		//							if( texture.Result == null )
 		//							{
 		//								//warn ? logo file not found / not loaded
@@ -2223,13 +2253,13 @@ namespace NeoAxis
 		//								}
 		//							}
 
-		//							texture = ComponentUtility.CreateComponent<Component_Image>( null, true, false );
+		//							texture = ComponentUtility.CreateComponent<Image>( null, true, false );
 
-		//							texture.CreateType = Component_Image.TypeEnum._2D;
+		//							texture.CreateType = Image.TypeEnum._2D;
 		//							texture.CreateSize = size;
 		//							texture.CreateMipmaps = false;
 		//							texture.CreateFormat = PixelFormat.A8R8G8B8;
-		//							texture.CreateUsage = Component_Image.Usages.WriteOnly;
+		//							texture.CreateUsage = Image.Usages.WriteOnly;
 		//							texture.Enabled = true;
 
 		//							texture.Result.SetData( new GpuTexture.SurfaceData[] { new GpuTexture.SurfaceData( 0, 0, data ) } );
@@ -2257,7 +2287,7 @@ namespace NeoAxis
 		//			}
 		//		}
 
-		public override unsafe void _ViewportRendering_RenderToCurrentViewport( ViewportRenderingContext context, bool clearData, double time )
+		public override unsafe void ViewportRendering_RenderToCurrentViewport( ViewportRenderingContext context, bool clearData, double time )
 		{
 			if( updateTime != time )
 				updateTimePrevious = updateTime;
@@ -2320,9 +2350,7 @@ namespace NeoAxis
 								texture = ResourceUtility.WhiteTexture2D;
 
 							var minMag = renderableItem.textureFiltering == TextureFilteringMode.Linear ? FilterOption.Linear : FilterOption.Point;
-							context.BindTexture( new ViewportRenderingContext.BindTextureData( 0,
-								texture, renderableItem.textureClamp ? TextureAddressingMode.Clamp : TextureAddressingMode.Wrap,
-								minMag, minMag, FilterOption.None ) );
+							context.BindTexture( 0, texture, renderableItem.textureClamp ? TextureAddressingMode.Clamp : TextureAddressingMode.Wrap, minMag, minMag, FilterOption.None );
 
 							//GpuMaterialPass.TextureParameterValue textureValue = new GpuMaterialPass.TextureParameterValue( texture,
 							//	renderableItem.textureClamp ? TextureAddressingMode.Clamp : TextureAddressingMode.Wrap,
@@ -2347,14 +2375,14 @@ namespace NeoAxis
 						//bind u_bc5UNorm_L8
 						{
 							bool bc5UNorm = false;
-							bool l = false;
+							bool luminance = false;
 							var result = renderableItem.texture?.Result;
 							if( result != null )
 							{
 								bc5UNorm = result.ResultFormat == PixelFormat.BC5_UNorm;
-								l = result.ResultFormat == PixelFormat.L8 || result.ResultFormat == PixelFormat.L16;
+								luminance = result.ResultFormat == PixelFormat.L8 || result.ResultFormat == PixelFormat.L16;
 							}
-							var value = new Vector4F( bc5UNorm ? 1 : 0, l ? 1 : 0, 0, 0 );
+							var value = new Vector4F( bc5UNorm ? 1 : 0, luminance ? 1 : 0, 0, 0 );
 							if( value != bc5UNormLBinded )
 							{
 								bc5UNormLBinded = value;
@@ -2423,7 +2451,7 @@ namespace NeoAxis
 			}
 
 			if( clearData )
-				Clear( updateTime );
+				ViewportRendering_Clear( updateTime );
 		}
 
 		void DestroyItem( Item item )
@@ -2504,7 +2532,7 @@ namespace NeoAxis
 		}
 
 		//!!!!public?
-		internal void Clear( double time )
+		internal void ViewportRendering_Clear( double time )
 		{
 			if( updateTime != time )
 				updateTimePrevious = updateTime;
@@ -2589,7 +2617,7 @@ namespace NeoAxis
 
 		internal void DestroyAllRenderableItems()
 		{
-			Clear( 0 );
+			ViewportRendering_Clear( 0 );
 			DestroyRenderableItemsInCaches( 0 );
 
 			//destroy free renderable items
@@ -2683,7 +2711,7 @@ namespace NeoAxis
 		}
 
 		//!!!!
-		//internal void RemoveCachedTexture( Component_Image texture )
+		//internal void RemoveCachedTexture( Image texture )
 		//{
 		//	//!!!!!!где юзается. медленно ведь
 
@@ -2798,7 +2826,7 @@ namespace NeoAxis
 
 			//create material
 			renderableItem.material = new MaterialData( isScreen, shader );
-			//renderableItem.material = ComponentUtility.CreateComponent<Component_CanvasRendererMaterial>( new object[] { isScreen, shader }, true, true );
+			//renderableItem.material = ComponentUtility.CreateComponent<CanvasRendererMaterial>( new object[] { isScreen, shader }, true, true );
 
 			//create renderable
 			//{
@@ -3015,7 +3043,7 @@ namespace NeoAxis
 			if( m == null )
 				return;
 			ShaderItem shader = m.Shader;
-			//ShaderItem shader = ( (Component_GuiRendererMaterial)renderableItem.material.ResultObject ).Shader;
+			//ShaderItem shader = ( (GuiRendererMaterial)renderableItem.material.ResultObject ).Shader;
 
 			//string sourceFileName = renderableItem.material.SourceFileName;
 			//int textureCount = renderableItem.material.TextureCount;
@@ -3050,7 +3078,7 @@ namespace NeoAxis
 		}
 
 		//!!!!
-		//public bool IsTextureCurrentlyIsUse( Component_Image texture )
+		//public bool IsTextureCurrentlyIsUse( Image texture )
 		//{
 		//	if( texture == null )
 		//		return false;
@@ -3131,7 +3159,7 @@ namespace NeoAxis
 				return new ColorValue( 1, 1, 1 );
 		}
 
-		void SetRenderableItemDynamicData( RenderableItem renderableItem, RenderOperationType renderOperation, Component_Image texture, bool clamp )
+		void SetRenderableItemDynamicData( RenderableItem renderableItem, RenderOperationType renderOperation, ImageComponent texture, bool clamp )
 		{
 			renderableItem.renderOperation = renderOperation;
 			renderableItem.texture = texture;

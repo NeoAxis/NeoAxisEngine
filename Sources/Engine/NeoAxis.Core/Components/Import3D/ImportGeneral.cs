@@ -1,11 +1,10 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using System.Xml;
 
-namespace NeoAxis.Import
+namespace NeoAxis//.Import
 {
 	/// <summary>
 	/// Base class for implementation content import.
@@ -23,7 +22,7 @@ namespace NeoAxis.Import
 
 			public Dictionary<string, string> meshGeometryMaterialsToRestore = new Dictionary<string, string>();
 
-			public Component_Import3D component;
+			public Import3D component;
 			public string virtualFileName;
 			//public bool loadAnimations;
 			public double frameStep;
@@ -41,7 +40,7 @@ namespace NeoAxis.Import
 		{
 			public int Index;
 			public string Name;
-			public Component_Material.ShadingModelEnum ShadingModel = Component_Material.ShadingModelEnum.Lit;
+			public Material.ShadingModelEnum ShadingModel = Material.ShadingModelEnum.Lit;
 			public bool TwoSided;
 
 			//!!!!type, opacity
@@ -93,25 +92,25 @@ namespace NeoAxis.Import
 			return builder.ToString();
 		}
 
-		public static Component_Material CreateMaterial( Component materialsGroup, MaterialData data )
+		public static Material CreateMaterial( Component materialsGroup, MaterialData data )
 		{
 			//create material
-			var material = materialsGroup.CreateComponent<Component_Material>( enabled: false );
+			var material = materialsGroup.CreateComponent<Material>( enabled: false );
 			material.Name = data.Name;
 			material.ShadingModel = data.ShadingModel;
 			material.TwoSided = data.TwoSided;
 			if( !string.IsNullOrEmpty( data.OpacityTexture ) )
-				material.BlendMode = Component_Material.BlendModeEnum.Masked;
+				material.BlendMode = Material.BlendModeEnum.Masked;
 
 			//create shader graph
-			Component_FlowGraph graph;
+			FlowGraph graph;
 			{
-				graph = material.CreateComponent<Component_FlowGraph>();
+				graph = material.CreateComponent<FlowGraph>();
 				graph.Name = material.Name + " shader graph";
-				graph.Specialization = ReferenceUtility.MakeReference<Component_FlowGraphSpecialization>( null,
-					MetadataManager.GetTypeOfNetType( typeof( Component_FlowGraphSpecialization_Shader ) ).Name + "|Instance" );
+				graph.Specialization = ReferenceUtility.MakeReference<FlowGraphSpecialization>( null,
+					MetadataManager.GetTypeOfNetType( typeof( FlowGraphSpecialization_Shader ) ).Name + "|Instance" );
 
-				var node = graph.CreateComponent<Component_FlowGraphNode>();
+				var node = graph.CreateComponent<FlowGraphNode>();
 				node.Name = "Node " + material.Name;
 				node.Position = new Vector2I( 10, -7 );
 				node.ControlledObject = ReferenceUtility.MakeThisReference( node, material );
@@ -121,20 +120,20 @@ namespace NeoAxis.Import
 			Vector2I position = new Vector2I( -20, -data.GetTextureUsedCount() * step / 2 );
 
 
-			var addedTextures = new Dictionary<string, Component_ShaderTextureSample>();
+			var addedTextures = new Dictionary<string, ShaderTextureSample>();
 
-			Component_ShaderTextureSample GetOrCreateTextureSample( string channelDisplayName, string textureName )
+			ShaderTextureSample GetOrCreateTextureSample( string channelDisplayName, string textureName )
 			{
 				if( !addedTextures.TryGetValue( textureName, out var sample ) )
 				{
-					var node = graph.CreateComponent<Component_FlowGraphNode>();
+					var node = graph.CreateComponent<FlowGraphNode>();
 					node.Name = "Node Texture Sample " + channelDisplayName;//"BaseColor";
 					node.Position = position;
 					position.Y += step;
 
-					sample = node.CreateComponent<Component_ShaderTextureSample>();
+					sample = node.CreateComponent<ShaderTextureSample>();
 					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
-					sample.Texture = new Reference<Component_Image>( null, textureName );// data.BaseColorTexture );
+					sample.Texture = new Reference<ImageComponent>( null, textureName );// data.BaseColorTexture );
 
 					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
 

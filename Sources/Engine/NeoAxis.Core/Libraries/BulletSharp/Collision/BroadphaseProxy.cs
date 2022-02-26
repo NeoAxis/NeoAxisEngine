@@ -1,8 +1,8 @@
 using System;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public enum BroadphaseNativeType
 	{
@@ -125,22 +125,22 @@ namespace BulletSharp
 			return btBroadphaseProxy_isSoftBody(proxyType);
 		}
 
-		public Vector3 AabbMax
+		public BVector3 AabbMax
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btBroadphaseProxy_getAabbMax(Native, out value);
 				return value;
 			}
 			set => btBroadphaseProxy_setAabbMax(Native, ref value);
 		}
 
-		public Vector3 AabbMin
+		public BVector3 AabbMin
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btBroadphaseProxy_getAabbMin(Native, out value);
 				return value;
 			}

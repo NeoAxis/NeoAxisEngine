@@ -1,9 +1,6 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
-using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.IO;
@@ -599,16 +596,16 @@ namespace NeoAxis
 
 		static void RegisterStandardTypes()
 		{
-			RegisterType( "Assembly", new string[] { "dll" }, typeof( Resource_Assembly ) );
+			RegisterType( "Assembly", new string[] { "dll" }, typeof( AssemblyResource ) );
 			RegisterType( "Component", new string[] { "component", "class", "type" }, typeof( Resource ) );
 
-			RegisterType( "Image", new string[] { "image", "jpg", "jif", "jpeg", "jpe", "tga", "targa", "dds", "png", "bmp", "psd", "hdr", "ico", "gif", "tif", "tiff", "exr", "j2k", "j2c", "jp2" }, typeof( Resource_Image ) );
+			RegisterType( "Image", new string[] { "image", "jpg", "jif", "jpeg", "jpe", "tga", "targa", "dds", "png", "bmp", "psd", "hdr", "ico", "gif", "tif", "tiff", "exr", "j2k", "j2c", "jp2" }, typeof( ImageResource ) );
 
-			RegisterType( "Sound", new string[] { "sound", "ogg", "wav" }, typeof( Resource_Sound ) );
+			RegisterType( "Sound", new string[] { "sound", "ogg", "wav" }, typeof( SoundResource ) );
 			RegisterType( "Material", new string[] { "material" }, typeof( Resource ) );
 			RegisterType( "Mesh", new string[] { "mesh" }, typeof( Resource ) );
 			RegisterType( "Particle System", new string[] { "particle", "particleSystem" }, typeof( Resource ) );
-			RegisterType( "Font", new string[] { "ttf" }, typeof( Resource_Font ) );
+			RegisterType( "Font", new string[] { "ttf" }, typeof( FontResource ) );
 			RegisterType( "Object In Space", new string[] { "objectInSpace" }, typeof( Resource ) );
 			RegisterType( "UI", new string[] { "ui" }, typeof( Resource ) );
 			RegisterType( "UI Style", new string[] { "uistyle" }, typeof( Resource ) );
@@ -623,6 +620,8 @@ namespace NeoAxis
 			RegisterType( "Skybox", new string[] { "skybox" }, typeof( Resource ) );
 			RegisterType( "Light", new string[] { "light" }, typeof( Resource ) );
 			RegisterType( "Learning", new string[] { "learning" }, typeof( Resource ) );
+
+			RegisterType( "Import 3D", new string[] { "fbx", "3d", "3ds", "ac", "ac3d", "acc", "ase", "ask", "b3d", /*"blend", */"bvh", "cob", "csm", "dae", "dxf", "enff", "hmp", "ifc", "irr", "irrmesh", "lwo", "lws", "lxo", "md2", "md3", "md5anim", "md5camera", "md5mesh", "mdc", "mdl", "mot", "ms3d", "ndo", "nff", "obj", "off", "pk3", "ply", "x", "q3d", "q3s", "assxml", "gltf", "glb", "json" }, typeof( Import3DResource ) );
 		}
 
 		internal static void DisposeAllResources()

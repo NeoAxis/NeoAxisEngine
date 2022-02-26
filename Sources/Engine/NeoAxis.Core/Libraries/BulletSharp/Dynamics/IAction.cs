@@ -1,9 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Security;
-using static BulletSharp.UnsafeNativeMethods;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public interface IAction
 	{

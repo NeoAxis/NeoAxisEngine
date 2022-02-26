@@ -1,11 +1,12 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     /// <summary>
     /// Get CultureInfo object from LCID code (not avaiable in .net standard 1.3)
@@ -493,3 +494,5 @@ namespace LiteDB
         }
     }
 }
+
+#endif

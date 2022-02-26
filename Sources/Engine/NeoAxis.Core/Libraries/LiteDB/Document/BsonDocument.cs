@@ -1,13 +1,14 @@
-﻿using LiteDB.Engine;
+#if !NO_LITE_DB
+using Internal.LiteDB.Engine;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     public class BsonDocument : BsonValue, IDictionary<string, BsonValue>
     {
@@ -170,3 +171,5 @@ namespace LiteDB
         }
     }
 }
+
+#endif

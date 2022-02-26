@@ -1,8 +1,9 @@
-﻿//
+#if !NO_UI_WEB_BROWSER
+//
 // This file manually written from cef/include/internal/cef_types.h.
 // C API name: cef_referrer_policy_t.
 //
-namespace Xilium.CefGlue
+namespace Internal.Xilium.CefGlue
 {
     /// <summary>
     /// Policy for how the Referrer HTTP header value will be sent during navigation.
@@ -46,3 +47,5 @@ namespace Xilium.CefGlue
         OriginWhenCrossOrigin,
     }
 }
+
+#endif

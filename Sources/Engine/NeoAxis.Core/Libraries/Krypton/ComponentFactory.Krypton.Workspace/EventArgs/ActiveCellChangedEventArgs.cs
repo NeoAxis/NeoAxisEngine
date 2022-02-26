@@ -12,7 +12,7 @@ using System;
 using System.Drawing;
 using System.Diagnostics;
 
-namespace ComponentFactory.Krypton.Workspace
+namespace Internal.ComponentFactory.Krypton.Workspace
 {
 	/// <summary>
 	/// Data associated with a change in the active cell.

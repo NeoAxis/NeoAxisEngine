@@ -1,10 +1,9 @@
-// Made with NeoAxis Engine 2021.2.
+// Made with NeoAxis Engine 2021.3.
 
-.component NeoAxis.Component_Product_Android
+.component NeoAxis.Product_Android
 {
-	ProductName = Full Project
-	SortOrderInEditor = -800
-	SelectedAssets = "Base;Samples\\Simple Game;Samples\\Addons;Samples\\Starter Content"
+	Name = Full Project
+	SortOrder = -2800
 	FileCache = False
 	ShaderCache = False
 }

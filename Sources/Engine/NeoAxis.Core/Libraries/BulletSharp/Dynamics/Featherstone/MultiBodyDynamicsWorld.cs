@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using static BulletSharp.UnsafeNativeMethods;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class MultiBodyDynamicsWorld : DiscreteDynamicsWorld
 	{

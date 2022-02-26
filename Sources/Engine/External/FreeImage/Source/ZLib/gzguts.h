@@ -35,6 +35,11 @@
 #  include <io.h>
 #endif
 
+//!!!!betauser
+#ifdef IOS
+#include <unistd.h>
+#endif
+
 #ifdef WINAPI_FAMILY
 #  define open _open
 #  define read _read

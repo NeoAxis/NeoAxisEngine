@@ -1,6 +1,6 @@
 $input v_color0, v_texCoord0
 
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "Common.sh"
 
 uniform vec4 u_canvasClipRectangle;
@@ -18,6 +18,7 @@ void main()
 	
 	vec4 rgba = texture2D(s_baseTexture, v_texCoord0);
 	
+#ifndef MOBILE
 	BRANCH
 	if(u_bc5UNorm_L.x > 0.0)
 	{
@@ -26,6 +27,7 @@ void main()
 		normal = normalize(normal);
 		rgba.z = normal.z * 0.5 + 0.5;
 	}
+#endif
 	
 	if(u_bc5UNorm_L.y > 0.0)
 		rgba = vec4(rgba.x, rgba.x, rgba.x, 1.0);

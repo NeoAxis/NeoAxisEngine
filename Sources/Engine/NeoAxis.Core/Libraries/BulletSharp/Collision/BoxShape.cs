@@ -1,11 +1,11 @@
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class BoxShape : PolyhedralConvexShape
 	{
-		public BoxShape(Vector3 boxHalfExtents)
+		public BoxShape(BVector3 boxHalfExtents)
 			: base(btBoxShape_new(ref boxHalfExtents))
 		{
 		}
@@ -20,26 +20,26 @@ namespace BulletSharp
 		{
 		}
 
-		public void GetPlaneEquation(out Vector4 plane, int i)
+		public void GetPlaneEquation(out BVector4 plane, int i)
 		{
 			btBoxShape_getPlaneEquation(Native, out plane, i);
 		}
 
-		public Vector3 HalfExtentsWithMargin
+		public BVector3 HalfExtentsWithMargin
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btBoxShape_getHalfExtentsWithMargin(Native, out value);
 				return value;
 			}
 		}
 
-		public Vector3 HalfExtentsWithoutMargin
+		public BVector3 HalfExtentsWithoutMargin
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btBoxShape_getHalfExtentsWithoutMargin(Native, out value);
 				return value;
 			}

@@ -15,15 +15,13 @@
 #define MEDIUMP_FLT_MAX    65504.0
 #define MEDIUMP_FLT_MIN    0.00006103515625
 
-#ifdef TARGET_MOBILE
-#define FLT_EPS            MEDIUMP_FLT_MIN
-#define saturateMediump(x) min(x, MEDIUMP_FLT_MAX)
+#ifdef MOBILE
+	#define FLT_EPS            MEDIUMP_FLT_MIN
+	#define saturateMediump(x) min(x, MEDIUMP_FLT_MAX)
 #else
-#define FLT_EPS            1e-5
-#define saturateMediump(x) x
+	#define FLT_EPS            1e-5
+	#define saturateMediump(x) x
 #endif
-
-#define saturate(x)        clamp(x, 0.0, 1.0)
 
 //------------------------------------------------------------------------------
 // Scalar operations
@@ -120,4 +118,3 @@ vec3 partialTransformVertexUnitQT(const vec3 v, const vec4 q, const vec3 t) {
     // this work only for unit-quaternions
     return 2.0f * halfPartialTransformVertexUnitQ(v, q) + t;
 }
-

@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle( "SampleWidgetWinForms" )]
 [assembly: AssemblyDescription( "" )]
 [assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "NeoAxis Group Ltd." )]
+[assembly: AssemblyCompany( "NeoAxis, Inc." )]
 [assembly: AssemblyProduct( "SampleWidgetWinForms" )]
-[assembly: AssemblyCopyright( "Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica." )]
+[assembly: AssemblyCopyright( "Copyright (C) NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica." )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion( "2021.3.1.0" )]
-[assembly: AssemblyFileVersion( "2021.3.1.0" )]
+[assembly: AssemblyVersion( "2022.1.1.0" )]
+[assembly: AssemblyFileVersion( "2022.1.1.0" )]

@@ -1,9 +1,10 @@
-﻿namespace Xilium.CefGlue
+#if !NO_UI_WEB_BROWSER
+namespace Internal.Xilium.CefGlue
 {
     using System;
     using System.Collections.Generic;
     using System.Text;
-    using Xilium.CefGlue.Interop;
+    using Internal.Xilium.CefGlue.Interop;
 
     /// <summary>
     /// Request context initialization settings. Specify NULL or 0 to get the
@@ -83,3 +84,5 @@
         }
     }
 }
+
+#endif

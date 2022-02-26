@@ -1,4 +1,4 @@
-.component "Base\\Material templates\\Vegetation Animation.material"
+.component "Base\\Material templates\\Vegetation.material"
 {
 	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1195, 842\"><KW V=\"1\" A=\"ACD29A5C79A840820EAD6FF01DF1C774\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"5D6B2C9ADB794A22418F2A5C3944B1CE\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"ACD29A5C79A840820EAD6FF01DF1C774\"><KP UN=\"D7E7CCABE139496F77A69EB5F94ED70E\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"ACD29A5C79A840820EAD6FF01DF1C774\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	BlendMode = Masked
@@ -17,7 +17,7 @@
 		EditorScrollPosition = 3.70588235294118 0
 		Specialization
 		{
-			GetByReference = NeoAxis.Component_FlowGraphSpecialization_Shader|Instance
+			GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
 		}
 		.component NeoAxis.Component_FlowGraphNode
 		{

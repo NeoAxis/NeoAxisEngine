@@ -1,26 +1,22 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Text;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Linq;
-using SharpBgfx;
+using System.Threading.Tasks;
+using Internal.SharpBgfx;
 
 namespace NeoAxis
 {
-	//!!!!threading
-
 	/// <summary>
-	/// GPU programs manager.
+	/// A class to manage GPU programs.
 	/// </summary>
 	public static class GpuProgramManager
 	{
 		static Dictionary<string, GpuProgram> programs = new Dictionary<string, GpuProgram>();
 		static Dictionary<(GpuProgram, GpuProgram), GpuLinkedProgram> linkedPrograms = new Dictionary<(GpuProgram, GpuProgram), GpuLinkedProgram>();
 
-		//!!!!пока так
 		static Dictionary<string, UniformItem> uniforms = new Dictionary<string, UniformItem>();
 
 		/////////////////////////////////////////
@@ -34,31 +30,179 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		public class GetProgramItem
+		{
+			public string NamePrefix { get; }
+			public GpuProgramType Type { get; }
+			public string SourceFile { get; }
+			/*string entryPoint, */
+			public ICollection<(string, string)> DefinesSource { get; }
+			public bool Optimize { get; }
+
+			public GpuProgram Program;
+			public string Error;
+
+			List<(string, string)> definesOutput;
+
+			//
+
+			public GetProgramItem( string namePrefix, GpuProgramType type, string sourceFile, /*string entryPoint, */ICollection<(string, string)> defines, bool optimize )
+			{
+				NamePrefix = namePrefix;
+				Type = type;
+				SourceFile = sourceFile;
+				/*string entryPoint, */
+				DefinesSource = defines;
+				Optimize = optimize;
+			}
+
+			internal string GetKey()
+			{
+				var compileArguments = "";
+				if( DefinesOutput != null )
+				{
+					var s = new StringBuilder();
+					foreach( var tuple in DefinesOutput )
+					{
+						s.Append( tuple.Item1 );
+						s.Append( "[#=]" );
+						if( string.IsNullOrEmpty( tuple.Item2 ) )
+							s.Append( "1" );
+						else
+							s.Append( tuple.Item2 );
+						s.Append( "[#R]" );
+					}
+					compileArguments = s.ToString();
+				}
+
+				var builder = new StringBuilder( NamePrefix.Length + SourceFile.Length + compileArguments.Length + 30 );
+				builder.Append( NamePrefix );
+				builder.Append( SourceFile );
+				//builder.Append( entryPoint );
+				builder.Append( Type.ToString() );
+				//keyBuilder.Append( profiles );
+				builder.Append( compileArguments );
+				builder.Append( Optimize.ToString() );
+				//if( replaceStrings != null )
+				//{
+				//	foreach( KeyValuePair<string, string> replaceString in replaceStrings )
+				//		keyBuilder.AppendFormat( "REPLACE{0}{1}", replaceString.Key, replaceString.Value );
+				//}
+
+				return builder.ToString();
+			}
+
+			public ICollection<(string, string)> DefinesOutput
+			{
+				get
+				{
+					if( definesOutput == null )
+					{
+						var list = new List<(string, string)>();
+
+						//global settings
+						{
+							switch( RenderingSystem.ShadowTechnique )
+							{
+							case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.Simple:
+								list.Add( ("GLOBAL_SHADOW_TECHNIQUE_SIMPLE", "1") );
+								break;
+							case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.PercentageCloserFiltering4:
+								list.Add( ("GLOBAL_SHADOW_TECHNIQUE_PCF4", "1") );
+								break;
+							case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.PercentageCloserFiltering8:
+								list.Add( ("GLOBAL_SHADOW_TECHNIQUE_PCF8", "1") );
+								break;
+							case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.PercentageCloserFiltering12:
+								list.Add( ("GLOBAL_SHADOW_TECHNIQUE_PCF12", "1") );
+								break;
+							case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.PercentageCloserFiltering16:
+								list.Add( ("GLOBAL_SHADOW_TECHNIQUE_PCF16", "1") );
+								break;
+								//case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.ContactHardening:
+								//	list.Add( ("GLOBAL_SHADOW_TECHNIQUE_CHS", "1") );
+								//	break;
+								//case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.ExponentialVarianceShadowMaps:
+								//	list.Add( ("GLOBAL_SHADOW_TECHNIQUE_EVSM", "1") );
+								//	break;
+							}
+
+							if( RenderingSystem.DebugMode )
+								list.Add( ("GLOBAL_DEBUG_MODE", "1") );
+
+							if( RenderingSystem.LightMask )
+								list.Add( ("GLOBAL_LIGHT_MASK_SUPPORT", "1") );
+
+							list.Add( ("DISPLACEMENT_MAX_STEPS", RenderingSystem.DisplacementMaxSteps.ToString()) );
+
+							if( RenderingSystem.RemoveTextureTiling )
+								list.Add( ("GLOBAL_REMOVE_TEXTURE_TILING", "1") );
+
+							if( RenderingSystem.MotionVector )
+								list.Add( ("GLOBAL_MOTION_VECTOR", "1") );
+
+							list.Add( ("GLOBAL_CUT_VOLUME_MAX_AMOUNT", RenderingSystem.CutVolumeMaxAmount.ToString()) );
+
+							if( RenderingSystem.FadeByVisibilityDistance )
+								list.Add( ("GLOBAL_FADE_BY_VISIBILITY_DISTANCE", "1") );
+
+							if( RenderingSystem.Fog )
+								list.Add( ("GLOBAL_FOG", "1") );
+
+							if( RenderingSystem.SmoothLOD )
+								list.Add( ("GLOBAL_SMOOTH_LOD", "1") );
+
+							if( RenderingSystem.NormalMapping )
+								list.Add( ("GLOBAL_NORMAL_MAPPING", "1") );
+
+							if( RenderingSystem.SkeletalAnimation )
+								list.Add( ("GLOBAL_SKELETAL_ANIMATION", "1") );
+
+							if( RenderingSystem.BillboardData )
+								list.Add( ("GLOBAL_BILLBOARD_DATA", "1") );
+
+							list.Add( ("GLOBAL_MATERIAL_SHADING", ( (int)RenderingSystem.MaterialShading ).ToString()) );
+
+							list.Add( ("SHADOW_TEXTURE_FORMAT_" + RenderingSystem.ShadowTextureFormat.ToString().ToUpper(), "1") );
+						}
+
+						if( DefinesSource != null )
+							list.AddRange( DefinesSource );
+
+						definesOutput = list;
+					}
+
+					return definesOutput;
+				}
+			}
+		}
+
+		/////////////////////////////////////////
+
 		internal static void Init()
 		{
 		}
 
 		internal static void Shutdown()
 		{
-			foreach( var linkedProgram in linkedPrograms.Values.ToArray() )
-				linkedProgram._Dispose();
-			linkedPrograms.Clear();
+			lock( linkedPrograms )
+			{
+				foreach( var linkedProgram in linkedPrograms.Values.ToArray() )
+					linkedProgram._Dispose();
+				linkedPrograms.Clear();
+			}
 
-			foreach( var program in programs.Values.ToArray() )
-				program._Dispose();
-			programs.Clear();
+			lock( programs )
+			{
+				foreach( var program in programs.Values.ToArray() )
+					program._Dispose();
+				programs.Clear();
+			}
 		}
 
-		//!!!!
-		//static double totalTime;
-
-		static byte[] GetShaderCompiledCode( GpuProgramType type, string sourceFile, ICollection<(string, string)> defines, out string error )
+		static byte[] GetShaderCompiledCode( GpuProgramType type, string sourceFile, ICollection<(string, string)> defines, bool optimize, out string error )
 		{
 			error = "";
-
-
-			//var t = DateTime.Now;
-
 
 			//shaderc.dll
 
@@ -102,7 +246,7 @@ namespace NeoAxis
 			else
 				Log.Fatal( "GpuProgramManager: Shader model is not specified. Bgfx.GetCurrentBackend() == {0}.", Bgfx.GetCurrentBackend() );
 
-			ShaderCompiler.Compile( model, (ShaderCompiler.ShaderType)type, realSourceFile, varyingFile, defines, out var data, out error );
+			ShaderCompiler.Compile( model, (ShaderCompiler.ShaderType)type, realSourceFile, varyingFile, defines, optimize, out var data, out error );
 			if( !string.IsNullOrEmpty( error ) )
 			{
 				//error = string.Format( "Shader file \'{0}\'.\n\n", sourceFile ) + error2;
@@ -110,179 +254,40 @@ namespace NeoAxis
 				return null;
 			}
 
-			//var tt = DateTime.Now - t;
-			//totalTime += tt.TotalSeconds;
-			//Log.Info( totalTime.ToString() );
-
-
 			return data;
-
-
-
-			//shaderc.exe
-
-			//var realSourceFile = VirtualPathUtils.GetRealPathByVirtual( sourceFile );
-			//var processFileName = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "shaderc.exe" );
-
-			//var tempOutFileName = VirtualPathUtils.GetRealPathByVirtual( "user:_TempShaderCompile.bin" );
-
-			//if( File.Exists( tempOutFileName ) )
-			//	File.Delete( tempOutFileName );
-
-			//try
-			//{
-			//	var arguments = string.Format( "-f \"{0}\"", realSourceFile );
-			//	arguments += string.Format( " -o \"{0}\"", tempOutFileName );
-			//	arguments += " --platform windows";
-
-			//	//defines
-			//	string definesString = "";
-			//	if( defines != null )
-			//	{
-			//		StringBuilder s = new StringBuilder();
-			//		bool addSemicolon = false;
-			//		foreach( var tuple in defines )
-			//		{
-			//			if( addSemicolon )
-			//				s.Append( ";" );
-			//			s.Append( tuple.Item1 );
-			//			s.Append( "=" );
-			//			if( string.IsNullOrEmpty( tuple.Item2 ) )
-			//				s.Append( "1" );
-			//			else
-			//				s.Append( tuple.Item2 );
-			//			addSemicolon = true;
-			//		}
-			//		definesString = s.ToString();
-			//	}
-			//	if( !string.IsNullOrEmpty( definesString ) )
-			//	{
-			//		//!!!!
-			//		arguments += " --define \"" + definesString + "\"";
-			//	}
-
-			//	arguments += " --type " + type.ToString().ToLower();
-
-			//	//varyingdef
-			//	{
-			//		var fileName = Path.GetFileName( realSourceFile );
-			//		if( fileName.Contains( "_fs.sc" ) )
-			//			fileName = fileName.Replace( "_fs.sc", "_var.sc" );
-			//		else if( fileName.Contains( "_vs.sc" ) )
-			//			fileName = fileName.Replace( "_vs.sc", "_var.sc" );
-			//		var varyingFile = Path.Combine( Path.GetDirectoryName( realSourceFile ), fileName );
-			//		if( File.Exists( varyingFile ) )
-			//			arguments += string.Format( " --varyingdef \"{0}\"", varyingFile );
-			//	}
-
-			//	var profile = "";
-			//	switch( type )
-			//	{
-			//	case GpuProgramType.Vertex: profile = "vs_5_0"; break;
-			//	case GpuProgramType.Fragment: profile = "ps_5_0"; break;
-			//	default: Log.Fatal( "GpuProgramManager: GetShaderCompiledCode: profile impl." ); break;
-			//	}
-			//	arguments += " -p " + profile;
-
-			//	//!!!!
-			//	arguments += " -O " + "0";
-
-			//	var startInfo = new ProcessStartInfo();
-			//	startInfo.FileName = processFileName;
-			//	startInfo.Arguments = arguments;
-			//	startInfo.UseShellExecute = false;
-			//	startInfo.RedirectStandardOutput = true;
-			//	startInfo.CreateNoWindow = true;
-
-			//	var process = new Process();
-			//	process.StartInfo = startInfo;
-			//	process.Start();
-			//	//process.WaitForExit();
-
-			//	var consoleOutput = "";
-			//	while( !process.StandardOutput.EndOfStream )
-			//	{
-			//		string line = process.StandardOutput.ReadLine();
-			//		consoleOutput += line + "\n";
-			//	}
-			//	Log.Info( consoleOutput );
-
-			//	//var process = Process.Start( processFileName, arguments );
-			//	//process.WaitForExit();
-
-			//	var result = File.ReadAllBytes( tempOutFileName );
-
-			//	File.Delete( tempOutFileName );
-
-			//	return result;
-			//}
-			//catch( Exception e )
-			//{
-			//	error = e.Message;
-			//	return null;
-			//}
 		}
 
-		public static GpuProgram GetProgram( string namePrefix, GpuProgramType type, string sourceFile, /*string entryPoint, */ICollection<(string, string)> defines, out string error )
+		public static GpuProgram GetProgram( GetProgramItem item, out string error )
+		//public static GpuProgram GetProgram( string namePrefix, GpuProgramType type, string sourceFile, /*string entryPoint, */ICollection<(string, string)> defines, bool optimize, out string error )
 		{
 			error = "";
 
 			if( Bgfx.GetCurrentBackend() == RendererBackend.Noop )
-				return new GpuProgram( type, new Shader() );
-
-			//!!!!
-			EngineThreading.CheckMainThread();
-
-			//!!!!
-			string compileArguments2 = "";
-			if( defines != null )
 			{
-				StringBuilder s = new StringBuilder();
-				foreach( var tuple in defines )
-				{
-					s.Append( tuple.Item1 );
-					s.Append( "[#=]" );
-					if( string.IsNullOrEmpty( tuple.Item2 ) )
-						s.Append( "1" );
-					else
-						s.Append( tuple.Item2 );
-					s.Append( "[#R]" );
-				}
-				compileArguments2 = s.ToString();
+				lock( programs )
+					return new GpuProgram( item.Type, new Shader() );
 			}
+
+			var key = item.GetKey();
 
 			//LongOperationCallbackManager.CallCallback( "GpuProgramCacheManager: AddProgram" );
 
-			string key;
-			{
-				var builder = new StringBuilder( namePrefix.Length + sourceFile.Length + compileArguments2.Length + 30 );
-				builder.Append( namePrefix );
-				builder.Append( sourceFile );
-				//builder.Append( entryPoint );
-				builder.Append( type.ToString() );
-				//keyBuilder.Append( profiles );
-				builder.Append( compileArguments2 );
-				//if( replaceStrings != null )
-				//{
-				//	foreach( KeyValuePair<string, string> replaceString in replaceStrings )
-				//		keyBuilder.AppendFormat( "REPLACE{0}{1}", replaceString.Key, replaceString.Value );
-				//}
+			GpuProgram program;
+			lock( programs )
+				programs.TryGetValue( key, out program );
 
-				key = builder.ToString();
-			}
-
-			if( !programs.TryGetValue( key, out var program ) )
+			if( program == null )
 			{
-				var data = GetShaderCompiledCode( type, sourceFile, defines, out var error2 );
+				var data = GetShaderCompiledCode( item.Type, item.SourceFile, item.DefinesOutput, item.Optimize, out var error2 );
 				if( data == null )
 				{
-					error = string.Format( "Shader file \'{0}\'\r", sourceFile );
-					error += string.Format( "Type \'{0}\'\r\r", type );
+					error = string.Format( "Shader file \'{0}\'\r", item.SourceFile );
+					error += string.Format( "Type \'{0}\'\r\r", item.Type );
 
 					error += "Defines:\r";
-					if( defines != null )
+					if( item.DefinesOutput != null )
 					{
-						foreach( var define in defines )
+						foreach( var define in item.DefinesOutput )
 						{
 							var value = define.Item2;
 							if( string.IsNullOrEmpty( value ) )
@@ -299,208 +304,76 @@ namespace NeoAxis
 					return null;
 				}
 
-				var realObject = new Shader( MemoryBlock.FromArray( data ) );
-				program = new GpuProgram( type, realObject );
+				lock( programs )
+				{
+					var realObject = new Shader( MemoryBlock.FromArray( data ) );
+					program = new GpuProgram( item.Type, realObject );
 
-
-				//string programName = _old_GpuProgramManager.Instance.GetUniqueName( namePrefix );
-
-				////Log.InvisibleInfo( string.Format( "Creating gpu program: {0}, {1}, {2}, {3}",
-				////   programName, Path.GetFileName( sourceFile ), profiles, compileArguments ) );
-
-				//string language = _old_GpuProgramManager.Instance.IsSyntaxSupported( "hlsl" ) ? "hlsl" : "hlsl2glsl";
-
-				//program = _old_GpuProgramManager.Instance.CreateHighLevelProgram( programName, language, programType );
-				//if( program == null )
-				//{
-				//	errorString = string.Format( "Unable to create high level program with name \"{0}\".", programName );
-				//	return null;
-				//}
-
-				////!!!!!было. хотя, возможно, полезно для ускорения
-				////string source;
-				////{
-				////	if( !cachedLoadedFiles.TryGetValue( sourceFile, out source ) )
-				////	{
-				////		try
-				////		{
-				////			using( Stream stream = VirtualFile.Open( sourceFile ) )
-				////			{
-				////				using( StreamReader streamReader = new StreamReader( stream ) )
-				////				{
-				////					source = streamReader.ReadToEnd();
-				////				}
-				////			}
-				////		}
-				////		catch( Exception e )
-				////		{
-				////			Log.Error( "{0} ({1}).", e.Message, sourceFile );
-				////			program.Dispose();
-				////			return null;
-				////		}
-
-				////		cachedLoadedFiles.Add( sourceFile, source );
-				////	}
-				////}
-
-				////if( replaceStrings != null )
-				////{
-				////	foreach( KeyValuePair<string, string> replaceString in replaceStrings )
-				////		source = source.Replace( replaceString.Key, replaceString.Value );
-				////}
-
-
-				//* from Evgeny
-
-				//				//!!!! Для отладки шейдеров нам нужна ссылка на исходник.
-				//				// Нужно ли вообще передавать уже считанный исходник, может быть достаточно имя файла ?
-				//#if DEBUG
-				//				program.SourceFile = sourceFile;
-				//#else
-				//				program.Source = source;
-				//#endif
-				//*/
-
-				////!!!!new. need?
-				//program.SourceFile = sourceFile;
-				////!!!!было
-				////program.Source = source;
-
-				//program.EntryPoint = entryPoint;
-
-				//foreach( string profile in profiles.Split() )
-				//{
-				//	if( _old_GpuProgramManager.Instance.IsSyntaxSupported( profile ) )
-				//	{
-				//		program.Target = profile;
-				//		break;
-				//	}
-				//}
-
-				//program.PreprocessorDefines = compileArguments2;
-
-				////Compile program
-
-				//Trace.Assert( lastRendererLogMessages.Count == 0 );
-				//RendererWorld._InternalLogMessage += RendererWorld_InternalLogMessage;
-				//RendererWorld._InvisibleInternalLogMessages = true;
-
-				//bool error = false;
-
-				//if( !program.Touch() )
-				//	error = true;
-
-				//if( program.HasCompileError() || error )
-				//{
-				//	string text = lastRendererLogMessages[ 0 ];
-
-				//	{
-				//		int clipIndex = text.IndexOf( "in D3D11HLSLProgram::loadFromSource" );
-				//		if( clipIndex != -1 )
-				//			text = text.Substring( 0, clipIndex );
-				//	}
-				//	{
-				//		int clipIndex = text.IndexOf( "in CgProgram::loadFromSource" );
-				//		if( clipIndex != -1 )
-				//			text = text.Substring( 0, clipIndex );
-				//	}
-
-				//	text = text.Trim();
-
-				//	errorString = text;
-				//}
-
-				//RendererWorld._InvisibleInternalLogMessages = false;
-				//RendererWorld._InternalLogMessage -= RendererWorld_InternalLogMessage;
-				//lastRendererLogMessages.Clear();
-
-				//if( program.HasCompileError() || error )
-				//{
-				//	program.Dispose();
-				//	return null;
-				//}
-
-				//!!!!!
-				////set auto parameters
-				//SetProgramAutoConstants( program.DefaultParameters );
-
-				programs.Add( key, program );
+					programs.Add( key, program );
+				}
 			}
 
 			return program;
 		}
 
-		public static GpuLinkedProgram GetLinkedProgram( GpuProgram vertexProgram, GpuProgram fragmentProgram )//, out string error )
+		public static GpuProgram GetProgram( string namePrefix, GpuProgramType type, string sourceFile, /*string entryPoint, */ICollection<(string, string)> defines, bool optimize, out string error )
 		{
-			//error = "";
+			return GetProgram( new GetProgramItem( namePrefix, type, sourceFile, defines, optimize ), out error );
+		}
 
+		public static void GetPrograms( ICollection<GetProgramItem> items )
+		{
+			//remove equal items
+			var items2 = new Dictionary<string, GetProgramItem>( items.Count );
+			foreach( var item in items )
+				items2[ item.GetKey() ] = item;
+
+			Parallel.ForEach( items2.Values.ToArray(), delegate ( GetProgramItem item )
+			{
+				GetProgram( item, out _ );
+			} );
+		}
+
+		public static GpuLinkedProgram GetLinkedProgram( GpuProgram vertexProgram, GpuProgram fragmentProgram )
+		{
 			if( vertexProgram == null )
 				Log.Fatal( "GpuProgramManager: GetLinkedProgram: vertexProgram == null." );
 			if( fragmentProgram == null )
 				Log.Fatal( "GpuProgramManager: GetLinkedProgram: fragmentProgram == null." );
 
-			//!!!!
-			EngineThreading.CheckMainThread();
-
-			var key = (vertexProgram, fragmentProgram);
-			if( !linkedPrograms.TryGetValue( key, out var program ) )
+			lock( linkedPrograms )
 			{
-				var programs = new GpuProgram[] { vertexProgram, fragmentProgram };
-				var realObject = new Program( vertexProgram.RealObject, fragmentProgram.RealObject );
-				program = new GpuLinkedProgram( programs, realObject );
-				linkedPrograms.Add( key, program );
+				var key = (vertexProgram, fragmentProgram);
+				if( !linkedPrograms.TryGetValue( key, out var program ) )
+				{
+					var programs = new GpuProgram[] { vertexProgram, fragmentProgram };
+					var realObject = new Program( vertexProgram.RealObject, fragmentProgram.RealObject );
+					program = new GpuLinkedProgram( programs, realObject );
+					linkedPrograms.Add( key, program );
+				}
+
+				return program;
 			}
-
-			return program;
 		}
-
-		//static UniformType ConvertType( Type type )
-		//{
-		//	if( type == typeof( int ) )
-		//		return UniformType.Int1;
-		//	if( type == typeof( Vec4F ) )
-		//		return UniformType.Vector4;
-		//	if( type == typeof( Mat3F ) )
-		//		return UniformType.Matrix3x3;
-		//	if( type == typeof( Mat4F ) )
-		//		return UniformType.Matrix4x4;
-		//	Log.Fatal( "GpuBufferManager: ConvertType: Invalid type \'{0}\'.", type );
-		//	return UniformType.Int1;
-		//}
-
-		////!!!!пока так
-		//public Uniform RegisterUniform( string name, Type type, int arraySize )
-		//{
-		//	if( !uniforms.TryGetValue( name, out var item ) )
-		//	{
-		//		item = new UniformItem();
-		//		item.uniform = new Uniform( name, ConvertType( type ), arraySize );
-		//		item.type = type;
-		//		item.arraySize = arraySize;
-		//		uniforms.Add( name, item );
-		//	}
-
-		//	if( item.type != type || item.arraySize != arraySize )
-		//		Log.Fatal( "GpuProgramManager: RegisterUniform: Uniforms with same name must have equal type and array size." );
-
-		//	return item.uniform;
-		//}
 
 		public static Uniform RegisterUniform( string name, UniformType type, int arraySize )
 		{
-			if( !uniforms.TryGetValue( name, out var item ) )
+			lock( uniforms )
 			{
-				item = new UniformItem();
-				item.uniform = new Uniform( name, type, arraySize );
-				item.type = type;
-				item.arraySize = arraySize;
-				uniforms.Add( name, item );
+				if( !uniforms.TryGetValue( name, out var item ) )
+				{
+					item = new UniformItem();
+					item.uniform = new Uniform( name, type, arraySize );
+					item.type = type;
+					item.arraySize = arraySize;
+					uniforms.Add( name, item );
+				}
+
+				if( item.type != type || item.arraySize != arraySize )
+					Log.Fatal( "GpuProgramManager: RegisterUniform: Uniforms with same name must have equal type and array size. Registered: name \'{0}\'; type \'{1}\'; array size \'{2}\'. Trying to register: type \'{3}\'; array size \'{4}\'", name, item.type, item.arraySize, type, arraySize );
+
+				return item.uniform;
 			}
-
-			if( item.type != type || item.arraySize != arraySize )
-				Log.Fatal( "GpuProgramManager: RegisterUniform: Uniforms with same name must have equal type and array size. Registered: name \'{0}\'; type \'{1}\'; array size \'{2}\'. Trying to register: type \'{3}\'; array size \'{4}\'", name, item.type, item.arraySize, type, arraySize );
-
-			return item.uniform;
 		}
 
 		public static string GetGpuProgramCompilationErrorText( Component component, string gpuProgramError )
@@ -517,14 +390,34 @@ namespace NeoAxis
 			return result;
 		}
 
-		public static ICollection<GpuProgram> Programs
+		public static GpuProgram[] GetPrograms()
 		{
-			get { return programs.Values; }
+			lock( programs )
+				return programs.Values.ToArray();
 		}
 
-		public static ICollection<GpuLinkedProgram> LinkedPrograms
+		public static int ProgramCount
 		{
-			get { return linkedPrograms.Values; }
+			get
+			{
+				lock( programs )
+					return programs.Values.Count;
+			}
+		}
+
+		public static GpuLinkedProgram[] GetLinkedPrograms()
+		{
+			lock( linkedPrograms )
+				return linkedPrograms.Values.ToArray();
+		}
+
+		public static int LinkedProgramCount
+		{
+			get
+			{
+				lock( linkedPrograms )
+					return linkedPrograms.Values.Count;
+			}
 		}
 	}
 }

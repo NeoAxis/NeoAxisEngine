@@ -21,11 +21,11 @@
 // * 3. This notice may not be removed or altered from any source distribution.
 // */
 
-using BulletSharp.Math;
+using Internal.BulletSharp.Math;
 using System;
 using System.Diagnostics;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
     public static class MathUtil
     {
@@ -91,17 +91,17 @@ namespace BulletSharp
             return a >= 0 ? b : c;
         }
 
-        public static int MaxAxis(ref Vector3 a)
+        public static int MaxAxis(ref BVector3 a)
         {
             return a.X < a.Y ? (a.Y < a.Z ? 2 : 1) : (a.X < a.Z ? 2 : 0);
         }
 
-        public static int MaxAxis(Vector4 a)
+        public static int MaxAxis(BVector4 a)
         {
             return MaxAxis(ref a);
         }
 
-        public static int MaxAxis(ref Vector4 a)
+        public static int MaxAxis(ref BVector4 a)
         {
             int maxIndex = -1;
             double maxVal = -BT_LARGE_DOUBLE;
@@ -128,15 +128,15 @@ namespace BulletSharp
             return maxIndex;
         }
 
-        public static int ClosestAxis(ref Vector4 a)
+        public static int ClosestAxis(ref BVector4 a)
         {
             return MaxAxis(AbsoluteVector4(ref a));
         }
 
 
-        public static Vector4 AbsoluteVector4(ref Vector4 vec)
+        public static BVector4 AbsoluteVector4(ref BVector4 vec)
         {
-            return new Vector4(System.Math.Abs(vec.X), System.Math.Abs(vec.Y), System.Math.Abs(vec.Z), System.Math.Abs(vec.W));
+            return new BVector4(System.Math.Abs(vec.X), System.Math.Abs(vec.Y), System.Math.Abs(vec.Z), System.Math.Abs(vec.W));
         }
 
         //        public static double VectorComponent(Vector3 v, int i)
@@ -427,7 +427,7 @@ namespace BulletSharp
         //            Debug.Assert(false);
         //        }
 
-        public static double Vector3Triple(ref Vector3 a, ref Vector3 b, ref Vector3 c)
+        public static double Vector3Triple(ref BVector3 a, ref BVector3 b, ref BVector3 c)
         {
             return a.X * (b.Y * c.Z - b.Z * c.Y) +
                 a.Y * (b.Z * c.X - b.X * c.Z) +
@@ -622,7 +622,7 @@ namespace BulletSharp
             return (value < min) ? min : (value > max) ? max : value;
         }
 
-        public static void VectorClampMax(ref Vector3 input, ref Vector3 bounds)
+        public static void VectorClampMax(ref BVector3 input, ref BVector3 bounds)
         {
             input.X = System.Math.Min(input.X, bounds.X);
             input.Y = System.Math.Min(input.Y, bounds.Y);
@@ -630,38 +630,38 @@ namespace BulletSharp
         }
 
 
-        public static void VectorClampMin(ref Vector3 input, ref Vector3 bounds)
+        public static void VectorClampMin(ref BVector3 input, ref BVector3 bounds)
         {
             input.X = System.Math.Max(input.X, bounds.X);
             input.Y = System.Math.Max(input.Y, bounds.Y);
             input.Z = System.Math.Max(input.Z, bounds.Z);
         }
 
-        public static void VectorMin(ref Vector3 input, ref Vector3 output)
+        public static void VectorMin(ref BVector3 input, ref BVector3 output)
         {
             output.X = System.Math.Min(input.X, output.X);
             output.Y = System.Math.Min(input.Y, output.Y);
             output.Z = System.Math.Min(input.Z, output.Z);
         }
 
-        public static void VectorMin(ref Vector3 input1, ref Vector3 input2, out Vector3 output)
+        public static void VectorMin(ref BVector3 input1, ref BVector3 input2, out BVector3 output)
         {
-            output = new Vector3(
+            output = new BVector3(
                 System.Math.Min(input1.X, input2.X),
                 System.Math.Min(input1.Y, input2.Y),
                 System.Math.Min(input1.Z, input2.Z));
         }
 
-        public static void VectorMax(ref Vector3 input, ref Vector3 output)
+        public static void VectorMax(ref BVector3 input, ref BVector3 output)
         {
             output.X = System.Math.Max(input.X, output.X);
             output.Y = System.Math.Max(input.Y, output.Y);
             output.Z = System.Math.Max(input.Z, output.Z);
         }
 
-        public static void VectorMax(ref Vector3 input1, ref Vector3 input2, out Vector3 output)
+        public static void VectorMax(ref BVector3 input1, ref BVector3 input2, out BVector3 output)
         {
-            output = new Vector3(
+            output = new BVector3(
                 System.Math.Max(input1.X, input2.X),
                 System.Math.Max(input1.Y, input2.Y),
                 System.Math.Max(input1.Z, input2.Z));
@@ -720,52 +720,52 @@ namespace BulletSharp
         //            return matrixOut;
         //        }
 
-        public static Quaternion ShortestArcQuat(ref Vector3 axisInA, ref Vector3 axisInB)
+        public static BQuaternion ShortestArcQuat(ref BVector3 axisInA, ref BVector3 axisInB)
         {
-            Vector3 c = Vector3.Cross(axisInA, axisInB);
+            BVector3 c = BVector3.Cross(axisInA, axisInB);
             double d;
-            Vector3.Dot(ref axisInA, ref axisInB, out d);
+            BVector3.Dot(ref axisInA, ref axisInB, out d);
 
             if (d < -1.0 + SIMD_EPSILON)
             {
-                return new Quaternion(0.0f, 1.0f, 0.0f, 0.0f); // just pick any vector
+                return new BQuaternion(0.0f, 1.0f, 0.0f, 0.0f); // just pick any vector
             }
 
             double s = (double)System.Math.Sqrt((1.0f + d) * 2.0f);
             double rs = 1.0f / s;
 
-            return new Quaternion(c.X * rs, c.Y * rs, c.Z * rs, s * 0.5f);
+            return new BQuaternion(c.X * rs, c.Y * rs, c.Z * rs, s * 0.5f);
 
         }
 
-        public static double QuatAngle(ref Quaternion quat)
+        public static double QuatAngle(ref BQuaternion quat)
         {
             return 2f * (double)System.Math.Acos(quat.W);
         }
 
-        public static Quaternion QuatFurthest(ref Quaternion input1, ref Quaternion input2)
+        public static BQuaternion QuatFurthest(ref BQuaternion input1, ref BQuaternion input2)
         {
-            Quaternion diff, sum;
+            BQuaternion diff, sum;
             diff = input1 - input2;
             sum = input1 + input2;
-            if (Quaternion.Dot(diff, diff) > Quaternion.Dot(sum, sum))
+            if (BQuaternion.Dot(diff, diff) > BQuaternion.Dot(sum, sum))
             {
                 return input2;
             }
             return (-input2);
         }
 
-        public static Vector3 QuatRotate(ref Quaternion rotation, ref Vector3 v)
+        public static BVector3 QuatRotate(ref BQuaternion rotation, ref BVector3 v)
         {
-            Quaternion q = QuatVectorMultiply(ref rotation, ref v);
+            BQuaternion q = QuatVectorMultiply(ref rotation, ref v);
             q *= QuaternionInverse(ref rotation);
-            return new Vector3(q.X, q.Y, q.Z);
+            return new BVector3(q.X, q.Y, q.Z);
         }
 
 
-        public static Quaternion QuatVectorMultiply(ref Quaternion q, ref Vector3 w)
+        public static BQuaternion QuatVectorMultiply(ref BQuaternion q, ref BVector3 w)
         {
-            return new Quaternion(q.W * w.X + q.Y * w.Z - q.Z * w.Y,
+            return new BQuaternion(q.W * w.X + q.Y * w.Z - q.Z * w.Y,
                                     q.W * w.Y + q.Z * w.X - q.X * w.Z,
                                     q.W * w.Z + q.X * w.Y - q.Y * w.X,
                                     -q.X * w.X - q.Y * w.Y - q.Z * w.Z);
@@ -866,15 +866,15 @@ namespace BulletSharp
 
 
 
-        public static void GetSkewSymmetricMatrix(ref Vector3 vecin, out Vector3 v0, out Vector3 v1, out Vector3 v2)
+        public static void GetSkewSymmetricMatrix(ref BVector3 vecin, out BVector3 v0, out BVector3 v1, out BVector3 v2)
         {
-            v0 = new Vector3(0f, -vecin.Z, vecin.Y);
-            v1 = new Vector3(vecin.Z, 0f, -vecin.X);
-            v2 = new Vector3(-vecin.Y, vecin.X, 0f);
+            v0 = new BVector3(0f, -vecin.Z, vecin.Y);
+            v1 = new BVector3(vecin.Z, 0f, -vecin.X);
+            v2 = new BVector3(-vecin.Y, vecin.X, 0f);
         }
 
         [Conditional("DEBUG")]
-        public static void ZeroCheckVector(ref Vector3 v)
+        public static void ZeroCheckVector(ref BVector3 v)
         {
             if (FuzzyZero(v.LengthSquared))
             {
@@ -883,7 +883,7 @@ namespace BulletSharp
         }
 
         [Conditional("DEBUG")]
-        public static void SanityCheckVector(ref Vector3 v)
+        public static void SanityCheckVector(ref BVector3 v)
         {
             if (double.IsNaN(v.X) || double.IsNaN(v.Y) || double.IsNaN(v.Z))
             {
@@ -1021,12 +1021,12 @@ namespace BulletSharp
         //            return v;
         //        }
 
-        public static Quaternion QuaternionInverse(ref Quaternion q)
+        public static BQuaternion QuaternionInverse(ref BQuaternion q)
         {
-            return new Quaternion(-q.X, -q.Y, -q.Z, q.W);
+            return new BQuaternion(-q.X, -q.Y, -q.Z, q.W);
         }
 
-        public static Quaternion QuaternionMultiply(ref Quaternion a, ref Quaternion b)
+        public static BQuaternion QuaternionMultiply(ref BQuaternion a, ref BQuaternion b)
         {
             return a * b;
             //return b * a;
@@ -1103,9 +1103,9 @@ namespace BulletSharp
         //        }
         */
 
-        public static Vector3 Vector4ToVector3(ref Vector4 v4)
+        public static BVector3 Vector4ToVector3(ref BVector4 v4)
         {
-            return new Vector3(v4.X, v4.Y, v4.Z);
+            return new BVector3(v4.X, v4.Y, v4.Z);
         }
 
 
@@ -1126,26 +1126,26 @@ namespace BulletSharp
         //        //    return Vector3.TransformNormal(ref v, ref mt);
         //        //}
 
-        public static bool IsAlmostZero(ref Vector3 v)
+        public static bool IsAlmostZero(ref BVector3 v)
         {
             if (System.Math.Abs(v.X) > 1e-6 || System.Math.Abs(v.Y) > 1e-6 || System.Math.Abs(v.Z) > 1e-6) return false;
             return true;
         }
 
 
-        public static Vector3 Vector3Lerp(ref Vector3 a, ref Vector3 b, double t)
+        public static BVector3 Vector3Lerp(ref BVector3 a, ref BVector3 b, double t)
         {
-            return new Vector3(
+            return new BVector3(
                 a.X + (b.X - a.X) * t,
                 a.Y + (b.Y - a.Y) * t,
                 a.Z + (b.Z - a.Z) * t);
         }
 
 
-        public static double Vector3Distance2XZ(Vector3 x, Vector3 y)
+        public static double Vector3Distance2XZ(BVector3 x, BVector3 y)
         {
-            Vector3 xa = new Vector3(x.X, 0, x.Z);
-            Vector3 ya = new Vector3(y.X, 0, y.Z);
+            BVector3 xa = new BVector3(x.X, 0, x.Z);
+            BVector3 ya = new BVector3(y.X, 0, y.Z);
             return (xa - ya).LengthSquared;
         }
 
@@ -1165,8 +1165,8 @@ namespace BulletSharp
         public const double SIMDSQRT12 = 0.7071067811865475244008443621048490f;
 
         public const double BT_LARGE_DOUBLE = 1e18f;
-        public static Vector3 MAX_VECTOR = new Vector3(BT_LARGE_DOUBLE);
-        public static Vector3 MIN_VECTOR = new Vector3(-BT_LARGE_DOUBLE);
+        public static BVector3 MAX_VECTOR = new BVector3(BT_LARGE_DOUBLE);
+        public static BVector3 MIN_VECTOR = new BVector3(-BT_LARGE_DOUBLE);
         public const double SIMD_2_PI = 6.283185307179586232f;
         public const double SIMD_PI = SIMD_2_PI * 0.5f;
         public const double SIMD_HALF_PI = SIMD_PI * 0.5f;

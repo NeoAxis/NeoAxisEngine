@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
@@ -36,8 +36,7 @@ namespace NeoAxis
 			this.Maximum = maximum;
 		}
 
-		public Bounds( double minimumX, double minimumY, double minimumZ,
-			double maximumX, double maximumY, double maximumZ )
+		public Bounds( double minimumX, double minimumY, double minimumZ, double maximumX, double maximumY, double maximumZ )
 		{
 			this.Minimum = new Vector3( minimumX, minimumY, minimumZ );
 			this.Maximum = new Vector3( maximumX, maximumY, maximumZ );
@@ -148,7 +147,7 @@ namespace NeoAxis
 			return Math.Sqrt( total );
 		}
 
-		public double GetRadius( Vector3 center )
+		public double GetRadius( ref Vector3 center )
 		{
 			double total = 0.0;
 			for( int i = 0; i < 3; i++ )
@@ -163,12 +162,21 @@ namespace NeoAxis
 			return Math.Sqrt( total );
 		}
 
+		public double GetRadius( Vector3 center )
+		{
+			return GetRadius( ref center );
+		}
+
+		public void GetBoundingSphere( out Sphere result )
+		{
+			GetCenter( out var c );
+			result = new Sphere( c, GetRadius( ref c ) );
+		}
+
 		public Sphere GetBoundingSphere()
 		{
-			//!!!!slowly
-
-			var c = GetCenter();
-			return new Sphere( c, GetRadius( c ) );
+			GetCenter( out var c );
+			return new Sphere( c, GetRadius( ref c ) );
 		}
 
 		public double GetVolume()
@@ -365,6 +373,17 @@ namespace NeoAxis
 		{
 			if( points == null || points.Length < 8 )
 				points = new Vector3[ 8 ];
+			for( int i = 0; i < 8; i++ )
+			{
+				//slowly
+				points[ i ].X = this[ ( i ^ ( i >> 1 ) ) & 1 ].X;
+				points[ i ].Y = this[ ( i >> 1 ) & 1 ].Y;
+				points[ i ].Z = this[ ( i >> 2 ) & 1 ].Z;
+			}
+		}
+
+		public unsafe void ToPoints( Vector3* points )
+		{
 			for( int i = 0; i < 8; i++ )
 			{
 				//slowly

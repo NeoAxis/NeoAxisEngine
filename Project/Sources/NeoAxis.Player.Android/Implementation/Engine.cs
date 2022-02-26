@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,7 +16,7 @@ using Android.Widget;
 using ICSharpCode.SharpZipLib.Zip;
 using Java.Nio;
 using Javax.Microedition.Khronos.Opengles;
-using NeoAxis.Input;
+using Internal;
 
 namespace NeoAxis.Player.Android
 {
@@ -354,11 +354,7 @@ namespace NeoAxis.Player.Android
 					}
 				}
 				break;
-
-			default:
-				return;
 			}
-
 		}
 
 		public static void ProcessTouchEvents()

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Collections.ObjectModel;
 
-namespace Aga.Controls.Tree
+namespace Internal.Aga.Controls.Tree
 {
 	/// <summary>
 	/// Provides a simple ready to use implementation of <see cref="ITreeModel"/>. Warning: this class is not optimized 

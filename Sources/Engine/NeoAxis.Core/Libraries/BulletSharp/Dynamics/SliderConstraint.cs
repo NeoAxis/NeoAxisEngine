@@ -1,9 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	[Flags]
 	public enum SliderFlags
@@ -25,8 +25,8 @@ namespace BulletSharp
 
 	public class SliderConstraint : TypedConstraint
 	{
-		public SliderConstraint(RigidBody rigidBodyA, RigidBody rigidBodyB, Matrix frameInA,
-			Matrix frameInB, bool useLinearReferenceFrameA)
+		public SliderConstraint(RigidBody rigidBodyA, RigidBody rigidBodyB, BMatrix frameInA,
+			BMatrix frameInB, bool useLinearReferenceFrameA)
 			: base(btSliderConstraint_new(rigidBodyA.Native, rigidBodyB.Native,
 				ref frameInA, ref frameInB, useLinearReferenceFrameA))
 		{
@@ -34,19 +34,19 @@ namespace BulletSharp
 			_rigidBodyB = rigidBodyB;
 		}
 
-		public SliderConstraint(RigidBody rigidBodyB, Matrix frameInB, bool useLinearReferenceFrameA)
+		public SliderConstraint(RigidBody rigidBodyB, BMatrix frameInB, bool useLinearReferenceFrameA)
 			: base(btSliderConstraint_new2(rigidBodyB.Native, ref frameInB, useLinearReferenceFrameA))
 		{
 			_rigidBodyA = GetFixedBody();
 			_rigidBodyB = rigidBodyB;
 		}
 
-		public void CalculateTransformsRef(ref Matrix transA, ref Matrix transB)
+		public void CalculateTransformsRef(ref BMatrix transA, ref BMatrix transB)
 		{
 			btSliderConstraint_calculateTransforms(Native, ref transA, ref transB);
 		}
 
-		public void CalculateTransforms(Matrix transA, Matrix transB)
+		public void CalculateTransforms(BMatrix transA, BMatrix transB)
 		{
 			btSliderConstraint_calculateTransforms(Native, ref transA, ref transB);
 		}
@@ -56,19 +56,19 @@ namespace BulletSharp
 			btSliderConstraint_getInfo1NonVirtual(Native, info._native);
 		}
 
-		public void GetInfo2NonVirtual(ConstraintInfo2 info, Matrix transA, Matrix transB,
-			Vector3 linVelA, Vector3 linVelB, double rbAinvMass, double rbBinvMass)
+		public void GetInfo2NonVirtual(ConstraintInfo2 info, BMatrix transA, BMatrix transB,
+			BVector3 linVelA, BVector3 linVelB, double rbAinvMass, double rbBinvMass)
 		{
 			btSliderConstraint_getInfo2NonVirtual(Native, info._native, ref transA,
 				ref transB, ref linVelA, ref linVelB, rbAinvMass, rbBinvMass);
 		}
 
-		public void SetFramesRef(ref Matrix frameA, ref Matrix frameB)
+		public void SetFramesRef(ref BMatrix frameA, ref BMatrix frameB)
 		{
 			btSliderConstraint_setFrames(Native, ref frameA, ref frameB);
 		}
 
-		public void SetFrames(Matrix frameA, Matrix frameB)
+		public void SetFrames(BMatrix frameA, BMatrix frameB)
 		{
 			btSliderConstraint_setFrames(Native, ref frameA, ref frameB);
 		}
@@ -83,21 +83,21 @@ namespace BulletSharp
 			btSliderConstraint_testLinLimits(Native);
 		}
 
-		public Vector3 AncorInA
+		public BVector3 AncorInA
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSliderConstraint_getAncorInA(Native, out value);
 				return value;
 			}
 		}
 
-		public Vector3 AncorInB
+		public BVector3 AncorInB
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSliderConstraint_getAncorInB(Native, out value);
 				return value;
 			}
@@ -107,21 +107,21 @@ namespace BulletSharp
 
 		public double AngularPosition => btSliderConstraint_getAngularPos(Native);
 
-		public Matrix CalculatedTransformA
+		public BMatrix CalculatedTransformA
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btSliderConstraint_getCalculatedTransformA(Native, out value);
 				return value;
 			}
 		}
 
-		public Matrix CalculatedTransformB
+		public BMatrix CalculatedTransformB
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btSliderConstraint_getCalculatedTransformB(Native, out value);
 				return value;
 			}
@@ -164,21 +164,21 @@ namespace BulletSharp
 		}
 
 		public SliderFlags Flags => btSliderConstraint_getFlags(Native);
-		public Matrix FrameOffsetA
+		public BMatrix FrameOffsetA
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btSliderConstraint_getFrameOffsetA(Native, out value);
 				return value;
 			}
 		}
 
-		public Matrix FrameOffsetB
+		public BMatrix FrameOffsetB
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btSliderConstraint_getFrameOffsetB(Native, out value);
 				return value;
 			}

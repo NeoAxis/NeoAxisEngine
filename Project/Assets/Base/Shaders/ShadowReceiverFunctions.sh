@@ -1,176 +1,687 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+
+
+#ifdef SHADOW_CONTACT
+
+/*
+float getDepth(vec2 uv)
+{
+	float rawDepth = texture2D(s_depthTexture, uv).r;
+	return getDepthValue(rawDepth, u_viewportOwnerNearClipDistance, u_viewportOwnerFarClipDistance);	
+}
+*/
+
+float getCameraDistance(vec2 uv)
+{
+	float rawDepth = texture2D(s_depthTexture, uv).r;
+	vec3 worldPosition = reconstructWorldPosition(invViewProj, uv, rawDepth);
+	return length(u_viewportOwnerCameraPosition.xyz - worldPosition);	
+}
+
+float screenFade(vec2 uv)
+{
+	vec2 fade = max(vec2_splat(0.0f), 12.0f * abs(uv - vec2_splat(0.5f)) - vec2_splat(5.0f));
+	return saturate(1.0f - dot(fade, fade));
+}
+
+float screenSpaceShadows(vec3 surfaceWorldPosition, vec3 directionFromPixelToLight, vec2 surfaceUV)
+{
+	const int stepCount = 12;
+	const float stepCountInv = 1.0 / float(stepCount);
+		
+	vec3 worldFrom = surfaceWorldPosition;
+	vec3 worldTo = surfaceWorldPosition + directionFromPixelToLight * u_lightShadowContactLength;
+	
+	vec2 uvFrom = surfaceUV;
+	vec2 uvTo = projectToScreenCoordinates(viewProj, worldTo);
+	
+	vec2 uvStep = (uvTo - uvFrom) * stepCountInv;
+	vec3 worldPositionStep = (worldTo - worldFrom) * stepCountInv;
+	
+	
+	vec2 uvRay = uvFrom;
+	vec3 worldPositionRay = worldFrom;
+	
+	float result = 0.0;	
+
+	//LOOP
+	for(int n=0;n<stepCount;n++)
+	{
+		uvRay += uvStep;
+		worldPositionRay += worldPositionStep;
+		
+		float cameraDistanceRay = length(u_viewportOwnerCameraPosition.xyz - worldPositionRay);
+
+		vec2 uv = uvRay;
+		//another way to use world position. it is slowler, however can be better in some cases
+		//vec2 uv = projectToScreenCoordinates(viewProj, worldPositionRay);
+
+		if(uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0)
+			break;
+		
+		float depthBufferCameraDistance = getCameraDistance(uv);
+		
+		float depthDelta = cameraDistanceRay - depthBufferCameraDistance;
+		
+		//!!!!
+		float thickness = u_lightShadowContactLength;
+		
+		//!!!!
+		if( depthDelta > 0.02 && abs(depthDelta) < thickness )
+		//if( depthDelta > 0.0 && abs(depthDelta) < thickness )
+		//if( depthDelta > 0.0 && depthDelta < thickness )
+		{
+			return screenFade(uv);
+			//return 1.0;
+		}
+
+
+		
+
+
+	//float depthFrom = getDepth( uvFrom );
+	//float depthTo = getDepth( uvTo );
+	//float depthStep = (depthTo - depthFrom) * 0.1;
+
+	//vec2 depthCurrent = depthFrom;
+	
+	//float cameraDistanceOriginal = length(u_viewportOwnerCameraPosition.xyz - worldFrom);
+	
+	//{
+		
+		//vec2 uv = uvFrom + uvStep * float(n);
+		//vec2 depth = depthFrom + depthStep * float(n);
+	
+		//float d = getDepth(uvCurrent);
+		
+		/*
+		float cameraDistance = getCameraDistance(uvRay);
+		//float rawDepth = texture2D(s_depthTexture, uvRay).r;
+		//vec3 worldPosition = reconstructWorldPosition(u_invViewProj, uvRay, rawDepth);
+		//float cameraDistance = length(u_viewportOwnerCameraPosition.xyz - worldPosition);
+		
+		//if(n == 0)
+		//	cameraDistanceOriginal = cameraDistance;
+		
+		float depthDelta = cameraDistanceRay - cameraDistance;
+		
+		//!!!!
+		bool occluded_by_the_original_pixel = abs(cameraDistanceRay - cameraDistanceOriginal) < 0.005;// g_sss_max_delta_from_original_depth;
+		
+		//!!!!
+		float const_thickness = u_lightShadowContactLength;
+		
+		if( depthDelta > 0.0 && depthDelta < const_thickness && occluded_by_the_original_pixel )
+		//if( depthDelta > 0.0 && depthDelta < const_thickness )//&& occluded_by_the_original_pixel )
+		//if( depthDelta > 0.0 )//!!!!&& depthDelta < const_thickness )//&& occluded_by_the_original_pixel )
+		{
+			return 1.0;
+		}
+		*/
+		
+		//if( cameraDistance < cameraDistanceCurrent )
+		//	return 0.0;
+				
+		//if( d > depthCurrent )
+		//	return 0.0;		
+		
+		//depthCurrent += depthStep;
+	}
+	
+	return 0.0;
+}
+
+#endif
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Directional and Spot lights
 
 #if defined(LIGHT_TYPE_DIRECTIONAL) || defined(LIGHT_TYPE_SPOTLIGHT)
 
-//default for Low
-float getShadowValueSimple(sampler2DArrayShadow shadowMapArray, int cascadeIndex, vec4 shadowUV)
+#ifdef GLOBAL_SHADOW_TECHNIQUE_SIMPLE
+
+float getShadowValueSimple(int cascadeIndex, vec4 shadowUV)
 {
 	float compareDepth = shadowUV.z / u_lightShadowMapFarClipDistance;
-	vec2 uv = shadowUV.xy / shadowUV.w;
+	vec2 texCoord = shadowUV.xy / shadowUV.w;
 
-#ifdef GLSL
-	float shadowFactor = shadow2DArray(shadowMapArray, vec4(uv, cascadeIndex, compareDepth));
-#else
-	float shadowFactor = shadow2DArray(shadowMapArray, vec4(uv, cascadeIndex, compareDepth)).r;
+#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
+	#ifdef GLSL
+		//!!!!shadow2DArray works wrong
+		vec4 shadowValue = texture2D(s_shadowMapShadow, texCoord);
+	#else
+		vec4 shadowValue = texture2DArray(s_shadowMapShadow, vec3(texCoord, cascadeIndex));
+	#endif
+	float shadowFactor = compareDepth < unpackRgbaToFloat(shadowValue) ? 1.0 : 0.0;
+#else	
+	#ifdef GLSL
+		//!!!!shadow2DArray works wrong
+		float shadowFactor = texture2D(s_shadowMapShadow, vec3(texCoord, compareDepth));
+		//float shadowFactor = shadow2DArray(s_shadowMapShadow, vec4(texCoord, compareDepth, float(cascadeIndex)));
+		//float shadowFactor = shadow2DArray(s_shadowMapShadow, vec4(texCoord, float(cascadeIndex), compareDepth));	
+	#else
+		float shadowFactor = shadow2DArray(s_shadowMapShadow, vec4(texCoord, cascadeIndex, compareDepth)).r;
+	#endif	
 #endif
-	return (1.0 - shadowFactor);
+
+	return 1.0 - shadowFactor;
+}
+#endif
+
+#if defined(GLOBAL_SHADOW_TECHNIQUE_PCF4) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF8) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF12) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF16)
+
+//!!!!
+
+//!!!!
+/*float avgBlockersDepthToPenumbra(float shadowMapView, float avgBlockersDepth)
+{
+  float penumbra = (shadowMapView - avgBlockersDepth) / avgBlockersDepth;
+  penumbra *= penumbra;
+  return saturate(80.0f * penumbra);
+}*/
+
+/*
+//!!!!original
+float avgBlockersDepthToPenumbra(float lightSize, float shadowMapView, float avgBlockersDepth)
+{
+  float penumbra = lightSize * (shadowMapView - avgBlockersDepth) / avgBlockersDepth;
+  return penumbra;
 }
 
-//default for High
-float getShadowValuePCF8TapFixedDisk4x(sampler2DArrayShadow shadowMapArray, int cascadeIndex, vec4 shadowUV)
+float calculatePenumbra(sampler2DArrayShadow shadowMapArray, vec2 shadowMapUV, int cascadeIndex, float shadowMapView, int samplesCount)
+{
+	float avgBlockersDepth = 0.0f;
+	float blockersCount = 0.0f;
+
+	
+	//!!!!
+	float penumbraFilterMaxSize = 4.0 / 1024.0;
+	//float penumbraFilterMaxSize = 8.0 / 1024.0;
+	//float penumbraFilterMaxSize = 1.0 * u_lightSourceRadiusOrAngle;
+	
+	
+	//!!!!UNROLL
+	for(int i = 0; i < samplesCount; i ++)
+	{
+		//!!!!noise
+		vec2 sampleUV = vogelDiskSample(i, samplesCount, 0.0);// gradientNoise);
+		//vec2 sampleUV = VogelDiskOffset(i, samplesCount, gradientNoise);
+		sampleUV = shadowMapUV + penumbraFilterMaxSize * sampleUV;
+
+		//!!!!GLSL
+		
+		//!!!!
+				
+#ifdef DEFERRED_DIRECT_LIGHT
+		float sampleDepth = texture2DArray(s_shadowMapShadow2, vec3(sampleUV, cascadeIndex)).x;
+#else
+		float sampleDepth = 0;
+#endif
+		
+		//return _sampler.m_texture.Sample(_sampler.m_sampler, _coord);
+		//float sampleDepth = shadowMapArray.m_texture.Sample(shadowMapArray.m_sampler, vec3(sampleUV, cascadeIndex)).x;
+		//float sampleDepth = texture2DArray(shadowMapArray, vec3(sampleUV, cascadeIndex)).x;
+		//float shadowFactor = shadow2DArray(shadowMapArray, vec4(texCoord, cascadeIndex, compareDepth)).r;
+		
+		//float sampleDepth = shadowMapTexture.SampleLevel(pointClampSampler, sampleUV, 0).x;
+
+		if(sampleDepth < shadowMapView)
+		{
+			avgBlockersDepth += sampleDepth;
+			blockersCount += 1.0f;
+		}
+	}
+
+	if(blockersCount > 0.0f)
+	{
+		avgBlockersDepth /= blockersCount;
+		
+		//float penumbra = shadowMapView - avgBlockersDepth;
+		
+		//penumbra *= u_lightShadowMapFarClipDistance;
+		
+		//penumbra *= u_lightSourceRadiusOrAngle;
+
+//!!!!		
+//#if defined(USE_FALLOFF)
+//	penumbra = 1.0 - pow(1.0 - penumbra, SoftnessFalloff);
+//#endif
+		
+		return avgBlockersDepthToPenumbra(u_lightSourceRadiusOrAngle, shadowMapView, avgBlockersDepth);
+		
+		//return penumbra;
+		
+		//return avgBlockersDepthToPenumbra(shadowMapView, penumbra);//avgBlockersDepth
+		
+		//return penumbra;
+		//return saturate(penumbra);
+		//return 1.0 - saturate(penumbra);
+		
+		//return avgBlockersDepthToPenumbra(shadowMapView, avgBlockersDepth);
+	}
+	else
+	{
+		//!!!!
+		return 1.0;
+		//return 0.0f;
+	}
+}
+*/
+
+//!!!!
+/*
+float calculatePenumbra(sampler2DArrayShadow shadowMapArray, vec2 shadowMapUV, int cascadeIndex, float shadowMapView, int samplesCount)
+{
+	float avgBlockersDepth = 0.0f;
+	float blockersCount = 0.0f;
+
+	
+	//!!!!
+	float penumbraFilterMaxSize = 4.0 / 2048.0;
+	//float penumbraFilterMaxSize = 8.0 / 1024.0;
+	//float penumbraFilterMaxSize = 1.0 * u_lightSourceRadiusOrAngle;
+	
+	
+	//!!!!UNROLL
+	for(int i = 0; i < samplesCount; i ++)
+	{
+		//!!!!noise
+		vec2 sampleUV = vogelDiskSample(i, samplesCount, 0.0);// gradientNoise);
+		//vec2 sampleUV = VogelDiskOffset(i, samplesCount, gradientNoise);
+		sampleUV = shadowMapUV + penumbraFilterMaxSize * sampleUV;
+
+		//!!!!GLSL
+		
+		//!!!!
+				
+#ifdef DEFERRED_DIRECT_LIGHT
+		float sampleDepth = texture2DArray(s_shadowMapShadow2, vec3(sampleUV, cascadeIndex)).x;
+#else
+		float sampleDepth = 0;
+#endif
+		
+		//return _sampler.m_texture.Sample(_sampler.m_sampler, _coord);
+		//float sampleDepth = shadowMapArray.m_texture.Sample(shadowMapArray.m_sampler, vec3(sampleUV, cascadeIndex)).x;
+		//float sampleDepth = texture2DArray(shadowMapArray, vec3(sampleUV, cascadeIndex)).x;
+		//float shadowFactor = shadow2DArray(shadowMapArray, vec4(texCoord, cascadeIndex, compareDepth)).r;
+		
+		//float sampleDepth = shadowMapTexture.SampleLevel(pointClampSampler, sampleUV, 0).x;
+
+		if(sampleDepth < shadowMapView)
+		{
+			avgBlockersDepth += sampleDepth;
+			blockersCount += 1.0f;
+		}
+	}
+
+	if(blockersCount > 0.0f)
+	{
+		avgBlockersDepth /= blockersCount;
+		
+		//!!!!
+		//float shadowMapViewD = shadowMapView;
+		//float avgBlockersDepthD = avgBlockersDepth;
+		float shadowMapViewD = getDepthValue(shadowMapView * u_lightShadowMapFarClipDistance, u_viewportOwnerNearClipDistance, u_lightShadowMapFarClipDistance);
+		float avgBlockersDepthD = getDepthValue(avgBlockersDepth * u_lightShadowMapFarClipDistance, u_viewportOwnerNearClipDistance, u_lightShadowMapFarClipDistance);
+		
+		//float lightSize = 1.0;
+		//float penumbra = lightSize * (shadowMapView - avgBlockersDepth) / avgBlockersDepth;
+		
+		float diff = shadowMapViewD - avgBlockersDepthD;
+		
+		//diff *= 100000;
+		
+		//penumbra *= u_lightShadowMapFarClipDistance;
+
+		float penumbra;
+		
+		//if(diff > 2.0 && diff < 3.0)
+		if(diff > 1.0)
+			penumbra = 3.0;
+		else
+			penumbra = 1.0;
+			
+//		if(abs(avgBlockersDepth) < 0.001)
+//			penumbra = 5.0;			
+			
+		//penumbra = 3.0;
+		
+		//if(penumbra > 3.0)
+		//	penumbra = 3.0;
+			
+		return penumbra;
+		
+		//penumbra *= u_lightSourceRadiusOrAngle;
+
+//!!!!		
+//#if defined(USE_FALLOFF)
+//	penumbra = 1.0 - pow(1.0 - penumbra, SoftnessFalloff);
+//#endif
+		
+		//return avgBlockersDepthToPenumbra(u_lightSourceRadiusOrAngle, shadowMapView, avgBlockersDepth);
+		
+		//return penumbra;
+		
+		//return avgBlockersDepthToPenumbra(shadowMapView, penumbra);//avgBlockersDepth
+		
+		//return penumbra;
+		//return saturate(penumbra);
+		//return 1.0 - saturate(penumbra);
+		
+		//return avgBlockersDepthToPenumbra(shadowMapView, avgBlockersDepth);
+	}
+	else
+	{
+		//!!!!
+		return 1.0;
+		//return 0.0f;
+	}
+}
+*/
+
+
+
+float getShadowValuePCF(int cascadeIndex, vec4 shadowUV)
 {
 	float compareDepth = shadowUV.z / u_lightShadowMapFarClipDistance;
 	vec2 shadowUVScaled = shadowUV.xy / shadowUV.w;
 
 	float scale = 2.0f / u_lightShadowTextureSize;
-	//float scale = u_lightShadowSoftness * 2.0f / u_lightShadowTextureSize;
-	//const float scale = 2.0f / u_lightShadowTextureSize;
+	
+	//!!!!
+	//scale *= u_lightSourceRadiusOrAngle;
 
-#ifdef GLSL
-	const vec2 poisson[8] = vec2[8]
-	(
-		vec2(     0.0,      0.0),
-		vec2( -0.18, -0.816),
-		vec2(-0.126,    0.8),
-		vec2(-0.854, -0.166),
-		vec2( 0.856,  -0.13),
-		vec2(-0.394,  0.032),
-		vec2( 0.178,   0.33),
-		vec2( 0.186, -0.324)
-	);
-#else
-	const vec2 poisson[8] =
-	{
-		vec2(     0.0,      0.0),
-		vec2( -0.18, -0.816),
-		vec2(-0.126,    0.8),
-		vec2(-0.854, -0.166),
-		vec2( 0.856,  -0.13),
-		vec2(-0.394,  0.032),
-		vec2( 0.178,   0.33),
-		vec2( 0.186, -0.324),
-	};
+#ifdef GLOBAL_SHADOW_TECHNIQUE_PCF4
+	const int sampleCount = 4;
+#endif
+#ifdef GLOBAL_SHADOW_TECHNIQUE_PCF8
+	const int sampleCount = 8;
+#endif
+#ifdef GLOBAL_SHADOW_TECHNIQUE_PCF12
+	const int sampleCount = 12;
+#endif
+#ifdef GLOBAL_SHADOW_TECHNIQUE_PCF16
+	const int sampleCount = 16;
 #endif
 
-	//8 tap filter
-
+	//!!!!	
+	float penumbra = 1.0;
+	//!!!!еще умножить на Softness
+	
+	/*
+	//!!!!
+	float shadowMapView = compareDepth;
+	//!!!!
+	penumbra = calculatePenumbra(s_shadowMapShadow, shadowUVScaled, cascadeIndex, shadowMapView, 16);
+	if(penumbra < 1.0)
+		penumbra = 1.0;
+	*/
+	
+	
+	
 	float shadow = 0.0;
-	for(int n = 0; n < 8; n++)
+	UNROLL
+	for(int n = 0; n < sampleCount; n++)
 	{
-		vec2 texCoord = shadowUVScaled.xy + poisson[n] * scale;
-#ifdef GLSL
-		float shadowFactor = shadow2DArray(shadowMapArray, vec4(texCoord, cascadeIndex, compareDepth));
-#else
-		float shadowFactor = shadow2DArray(shadowMapArray, vec4(texCoord, cascadeIndex, compareDepth)).r;
-#endif		
+		vec2 texCoord = shadowUVScaled.xy + vogelDiskSample(n, sampleCount, 0.0) * scale * penumbra;
+		
+#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
+	#ifdef GLSL
+		//!!!!shadow2DArray works wrong
+		vec4 shadowValue = texture2D(s_shadowMapShadow, texCoord);
+	#else
+		vec4 shadowValue = texture2DArray(s_shadowMapShadow, vec3(texCoord, cascadeIndex));
+	#endif
+	float shadowFactor = compareDepth < unpackRgbaToFloat(shadowValue) ? 1.0 : 0.0;	
+#else		
+	#ifdef GLSL
+			//!!!!shadow2DArray works wrong
+			float shadowFactor = texture2D(s_shadowMapShadow, vec3(texCoord, compareDepth));
+			//float shadowFactor = shadow2DArray(s_shadowMapShadow, vec4(texCoord, cascadeIndex, compareDepth));
+	#else
+			float shadowFactor = shadow2DArray(s_shadowMapShadow, vec4(texCoord, cascadeIndex, compareDepth)).r;
+	#endif	
+#endif
+
 		shadow += shadowFactor;
 	}
-	return (1.0 - shadow / 8.0);
+	
+	return 1.0 - shadow / float(sampleCount);
 }
+#endif
 
 /*
-float getShadowValuePCF4x4(sampler2DArray shadowMapArray, int cascadeIndex, vec4 shadowUV)
-{
-	float compareDepth = shadowUV.z / u_lightShadowMapFarClipDistance;
-	vec2 shadowUVScaled = shadowUV.xy / shadowUV.w;
+#ifdef GLOBAL_SHADOW_TECHNIQUE_CHS
 
-	//2x2 filter
+//!!!!
+// technique - all
+static const uint   g_shadow_samples                 = 3;
+static const float  g_shadow_filter_size             = 3.0f;
+static const float  g_shadow_cascade_blend_threshold = 0.8f;
+// technique - vogel
+static const uint   g_penumbra_samples                = 8;
+static const float  g_penumbra_filter_size            = 128.0f;
+// technique - pre-calculated
+static const float g_pcf_filter_size    = (sqrt((float)g_shadow_samples) - 1.0f) / 2.0f;
+static const float g_shadow_samples_rpc = 1.0f / (float)g_shadow_samples;
+
+static const float FLT_MIN             = 0.00000001f;
+static const float FLT_MAX_16          = 32767.0f;
+
+float compute_penumbra(sampler2DArrayShadow shadowMapArray, float vogel_angle, vec2 uv, int cascadeIndex, float compare)
+//float compute_penumbra(float vogel_angle, float3 uv, int cascadeIndex, float compare)
+{
+	float penumbra = 1.0f;
+	float blocker_depth_avg = 0.0f;
+	uint blocker_count = 0;
+
+	//!!!!
+	float g_shadow_texel_size = 1.0f / u_lightShadowTextureSize;
 	
-	//transform to texel space
-	vec2 texelPos = u_lightShadowTextureSize * shadowUVScaled.xy;
-	//determine the lerp amounts
-	vec2 lerps = frac( texelPos );
+	for(uint i = 0; i < g_penumbra_samples; i ++)
+	{
+		vec2 offset = vogelDiskSample(i, g_penumbra_samples, vogel_angle) * g_shadow_texel_size * g_penumbra_filter_size;
 
-	float pixelOffset = ( 1.0f / u_lightShadowTextureSize ) * .99f;
+		//!!!!GLSL
+		float depth = shadow2DArray(shadowMapArray, vec4(uv + offset, cascadeIndex, compare)).r;
+		//float depth = shadow_sample_depth(uv + float3(offset, 0.0f));
 
-	vec4 depths;
-	depths.x = texture2DArray(shadowMapArray, vec3(shadowUVScaled.xy, cascadeIndex)).r;
-	depths.y = texture2DArray(shadowMapArray, vec3(shadowUVScaled.xy + vec2(pixelOffset, 0), cascadeIndex)).r;
-	depths.z = texture2DArray(shadowMapArray, vec3(shadowUVScaled.xy + vec2(0, pixelOffset), cascadeIndex)).r;
-	depths.w = texture2DArray(shadowMapArray, vec3(shadowUVScaled.xy + vec2(pixelOffset, pixelOffset), cascadeIndex)).r;
-	//depths.x = texture2D(shadowMap, shadowUVScaled.xy ).r;
-	//depths.y = texture2D(shadowMap, shadowUVScaled.xy + vec2(pixelOffset, 0) ).r;
-	//depths.z = texture2D(shadowMap, shadowUVScaled.xy + vec2(0, pixelOffset) ).r;
-	//depths.w = texture2D(shadowMap, shadowUVScaled.xy + vec2(pixelOffset, pixelOffset) ).r;
+		if(depth > compare)
+		{
+			blocker_depth_avg += depth;
+			blocker_count++;
+		}
+	}
 
-	vec4 depthFlags = step( depths, compareDepth );
+	if (blocker_count != 0)
+	{
+		blocker_depth_avg /= (float)blocker_count;
 
-	return (float)lerp( 
-		lerp( depthFlags.x, depthFlags.y, lerps.x ),
-		lerp( depthFlags.z, depthFlags.w, lerps.x ),
-		lerps.y );
+		// Compute penumbra
+		penumbra = (compare - blocker_depth_avg) / (blocker_depth_avg + FLT_MIN);
+		penumbra *= penumbra;
+		penumbra *= 10.0f;
+	}
 
-//#endif
-
+	return clamp(penumbra, 1.0f, FLT_MAX_16);
 }
 
-//!!!!no fetch4, no post blur
-float getShadowValuePCF16TapFixedDisk(sampler2DArray shadowMapArray, int cascadeIndex, vec4 shadowUV)
+
+float getShadowValueCHS(sampler2DArrayShadow shadowMapArray, int cascadeIndex, vec4 shadowUV)
 {
 	float compareDepth = shadowUV.z / u_lightShadowMapFarClipDistance;
 	vec2 shadowUVScaled = shadowUV.xy / shadowUV.w;
+	
+	//!!!!
+	float g_shadow_texel_size = 1.0f / u_lightShadowTextureSize;
+	
+	
+	//!!!!
+	vec2 uv = shadowUVScaled;
+	float compare = compareDepth;
 
-	const float scale = 2.0f / u_lightShadowTextureSize;
+	
+	float shadow = 0.0f;
+	//!!!!!surface.uv?
+	//!!!!!!
+	//!!!!!!
+	//!!!!!!
+	//!!!!!!
+	//!!!!!!
+	//!!!!!!
+	//!!!!!!
+	float temporal_offset = get_noise_interleaved_gradient();//uv * g_resolution_rt);
+	//float temporal_offset = get_noise_interleaved_gradient(surface.uv * g_resolution_rt);
+	float temporal_angle  = temporal_offset * PI * 2.0;
 
-	const vec2 poisson[16] =
+	float penumbra;
+	#ifdef LIGHT_TYPE_DIRECTIONAL
+		penumbra = 1.0;
+	#else
+		penumbra = compute_penumbra(shadowMapArray, temporal_angle, uv, cascadeIndex, compare);
+	#endif
+
+	for (uint i = 0; i < g_shadow_samples; i++)
 	{
-		vec2(     0,      0),
-		vec2(-0.488, -0.748),
-		vec2( 0.704,   0.55),
-		vec2(-0.916, -0.002),
-		vec2( 0.724, -0.526),
-		vec2( -0.62, -0.336),
-		vec2( 0.114,  0.668),
-		vec2( 0.116, -0.694), 
-		vec2(-0.568,   0.41),
-		vec2(  0.69, -0.008),
-		vec2(-0.324,  0.866), 
-		vec2(-0.116, -0.308), 
-		vec2( 0.304,   0.31),
-		vec2(-0.432, -0.008),
-		vec2( 0.328,   -0.2),
-		vec2(-0.118,  0.376),
-	};
+		vec2 offset = vogelDiskSample(i, g_shadow_samples, temporal_angle) * g_shadow_texel_size * g_shadow_filter_size * penumbra;
 
-	//16 tap filter
+		//!!!!GLSL
+		shadow += shadow2DArray(shadowMapArray, vec4(uv + offset, cascadeIndex, compare)).r;
+		//shadow += shadow_compare_depth(uv + float3(offset, 0.0f), compare);
+	} 
 
-	float shadow = 0;
-	for(int n = 0; n < 16; n++)
-	{
-		vec2 texCoord = shadowUVScaled.xy + poisson[n] * scale;
-
-		float depth = texture2DArray(shadowMapArray, vec3(texCoord, cascadeIndex)).r;
-		//float depth = texture2D(shadowMap, texCoord ).r;
-		float depthFlag = step( depth, compareDepth );
-		
-		shadow += (float)depthFlag;
-	}
-	return shadow / 16;
+	return 1.0 - saturate(shadow * g_shadow_samples_rpc);
 }
+#endif
+*/
+
+
+/*#ifdef GLOBAL_SHADOW_TECHNIQUE_EVSM
+
+//!!!!не тут
+float2 GetEVSMExponents(float positiveExponent, float negativeExponent)
+{
+    const float maxExponent = 42.0f;
+
+    float2 lightSpaceExponents = float2(positiveExponent, negativeExponent);
+
+    // Clamp to maximum range of fp32/fp16 to prevent overflow/underflow
+    return min(lightSpaceExponents, maxExponent);
+}
+
+
+//!!!!не тут
+// Applies exponential warp to shadow map depth, input depth should be in [0, 1]
+float2 WarpDepth(float depth, float2 exponents)
+{
+	// Rescale depth into [-1, 1]
+	depth = 2.0f * depth - 1.0f;
+	float pos = exp( exponents.x * depth);
+	float neg = -exp(-exponents.y * depth);
+	return float2(pos, neg);
+}
+
+//!!!!не тут
+
+float Linstep(float a, float b, float v)
+{
+	return saturate((v - a) / (b - a));
+}
+
+// Reduces VSM light bleedning
+float ReduceLightBleeding(float pMax, float amount)
+{
+	// Remove the [0, amount] tail and linearly rescale (amount, 1].
+	return Linstep(amount, 1.0f, pMax);
+}
+
+float ChebyshevUpperBound(float2 moments, float mean, float minVariance, float lightBleedingReduction)
+{
+	// Compute variance
+	float variance = moments.y - (moments.x * moments.x);
+	variance = max(variance, minVariance);
+
+	// Compute probabilistic upper bound
+	float d = mean - moments.x;
+	float pMax = variance / (variance + (d * d));
+
+	pMax = ReduceLightBleeding(pMax, lightBleedingReduction);
+
+	// One-tailed Chebyshev
+	return (mean <= moments.x ? 1.0f : pMax);
+}
+
+float getShadowValueEVSM(sampler2DArray shadowMapArray, int cascadeIndex, vec4 shadowUV)
+{
+	float compareDepth = shadowUV.z / u_lightShadowMapFarClipDistance;
+	vec2 uv = shadowUV.xy / shadowUV.w;
+
+	//!!!!
+	
+	float VSMBias = 0.01f;
+	float LightBleedingReduction = 0.5;//0.0f;
+	
+	//!!!!
+	
+	float PositiveExponent = 40.0f;
+	float NegativeExponent = 5.0f;
+	
+	//!!!!
+	PositiveExponent *= 10.0;
+	
+	
+	float2 exponents = GetEVSMExponents(PositiveExponent, NegativeExponent);
+	float2 warpedDepth = WarpDepth(compareDepth, exponents);
+
+	//!!!!ddx
+	
+	float4 occluder = texture2DArray(shadowMapArray, vec3(uv, cascadeIndex));
+	//float4 occluder = ShadowMap.SampleGrad(VSMSampler, float3(shadowPos.xy, cascadeIdx), shadowPosDX.xy, shadowPosDY.xy);
+
+	// Derivative of warping at depth
+	float2 depthScale = VSMBias * 0.01f * exponents * warpedDepth;
+	float2 minVariance = depthScale * depthScale;
+
+	// Positive only
+	float r = ChebyshevUpperBound(occluder.xy, warpedDepth.x, minVariance.x, LightBleedingReduction);
+   // #endif
+
+   
+   return 1.0 - saturate( r );
+}
+#endif
 */
 
 #endif //LIGHT_TYPE_DIRECTIONAL || LIGHT_TYPE_SPOTLIGHT
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Point light
 
 #ifdef LIGHT_TYPE_POINT
 
-//default for Low
-float getShadowValuePointSimple(samplerCubeShadow shadowMap, vec4 shadowUV)
+#ifdef GLOBAL_SHADOW_TECHNIQUE_SIMPLE
+float getShadowValuePointSimple(vec4 shadowUV)
 {
-	//flipped cubemaps. conversion already done in the vertex shader.
 	float compareDepth = shadowUV.w / u_lightShadowMapFarClipDistance;
-	float shadowFactor = shadowCube(shadowMap, vec4(shadowUV.xyz, compareDepth));
-	return (1.0 - shadowFactor);
-}
 
-//default for High
-float getShadowValuePointPCF8TapFixedDisk4x(samplerCubeShadow shadowMap, vec4 shadowUV)
+	//flipped cubemaps. conversion already done in the vertex shader.	
+#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
+	vec4 shadowValue = textureCube(s_shadowMapShadow, shadowUV.xyz);
+	float shadowFactor = compareDepth < unpackRgbaToFloat(shadowValue) ? 1.0 : 0.0;
+#else	
+	#ifdef GLSL
+		float shadowFactor = shadowCube(s_shadowMapShadow, vec4(shadowUV.xyz, compareDepth));
+	#else
+		float shadowFactor = shadowCube(s_shadowMapShadow, vec4(shadowUV.xyz, compareDepth)).r;
+	#endif	
+#endif
+	
+	return 1.0 - shadowFactor;
+}
+#endif
+
+#if defined(GLOBAL_SHADOW_TECHNIQUE_PCF4) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF8) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF12) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF16)
+float getShadowValuePointPCF(vec4 shadowUV)
 {
 	vec3 ray = normalize(shadowUV.xyz);
 
@@ -216,40 +727,26 @@ float getShadowValuePointPCF8TapFixedDisk4x(samplerCubeShadow shadowMap, vec4 sh
 	//float scale = u_lightShadowSoftness * 1.5f;
 	//const float scale = 1.5;// = scale / u_lightShadowTextureSize;
 
-#ifdef GLSL
-	const vec2 poisson[8] = vec2[8]
-	(
-		vec2(     0.0,      0.0),
-		vec2( -0.18, -0.816),
-		vec2(-0.126,    0.8),
-		vec2(-0.854, -0.166),
-		vec2( 0.856,  -0.13),
-		vec2(-0.394,  0.032),
-		vec2( 0.178,   0.33),
-		vec2( 0.186, -0.324)
-	);
-#else
-	const vec2 poisson[8] =
-	{
-		vec2(     0.0,      0.0),
-		vec2( -0.18, -0.816),
-		vec2(-0.126,    0.8),
-		vec2(-0.854, -0.166),
-		vec2( 0.856,  -0.13),
-		vec2(-0.394,  0.032),
-		vec2( 0.178,   0.33),
-		vec2( 0.186, -0.324),
-	};
+#ifdef GLOBAL_SHADOW_TECHNIQUE_PCF4
+	const int sampleCount = 4;
 #endif
-
-	//8 tap filter
+#ifdef GLOBAL_SHADOW_TECHNIQUE_PCF8
+	const int sampleCount = 8;
+#endif
+#ifdef GLOBAL_SHADOW_TECHNIQUE_PCF12
+	const int sampleCount = 12;
+#endif
+#ifdef GLOBAL_SHADOW_TECHNIQUE_PCF16
+	const int sampleCount = 16;
+#endif
 
 	float compareDepth = shadowUV.w / u_lightShadowMapFarClipDistance;
 
 	float shadow = 0.0;
-	for(int n = 0; n < 8; n++)
+	UNROLL
+	for(int n = 0; n < sampleCount; n++)
 	{
-		vec2 offset2 = poisson[n] * scale;
+		vec2 offset2 = vogelDiskSample(n, sampleCount, 0.0) * scale;
 
 		vec3 offset;
 		if(planeX)
@@ -261,197 +758,45 @@ float getShadowValuePointPCF8TapFixedDisk4x(samplerCubeShadow shadowMap, vec4 sh
 
 		vec3 texCoord = texPos + offset;
 
-		//flipped cubemaps. conversion already done in the vertex shader.
-		float shadowFactor = shadowCube(shadowMap, vec4(texCoord, compareDepth));
+		//flipped cubemaps. conversion already done in the vertex shader.		
+	#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
+		vec4 shadowValue = textureCube(s_shadowMapShadow, texCoord);
+		float shadowFactor = compareDepth < unpackRgbaToFloat(shadowValue) ? 1.0 : 0.0;
+	#else
+		#ifdef GLSL
+			float shadowFactor = shadowCube(s_shadowMapShadow, vec4(texCoord, compareDepth));
+		#else
+			float shadowFactor = shadowCube(s_shadowMapShadow, vec4(texCoord, compareDepth)).r;
+		#endif
+	#endif
 
 		shadow += shadowFactor;
 	}
-	return (1.0 - shadow / 8.0);
-}
-
-/*
-float getShadowValueForPointLight2x2(samplerCube shadowMap, vec4 shadowUV)
-{
-	vec3 ray = normalize(shadowUV.xyz);
-
-	vec3 absRay = abs(ray);
-
-	vec3 planeNormal;
-	bool planeX = false;
-	bool planeY = false;
-	bool planeZ = false;
-
-	if(absRay.x > absRay.y && absRay.x > absRay.z)
-	{
-		planeX = true;
-		if(ray.x > 0)
-			planeNormal = vec3(1, 0, 0);
-		else
-			planeNormal = vec3(-1, 0, 0);
-	}
-	else if(absRay.y > absRay.z)
-	{
-		planeY = true;
-		if(ray.y > 0)
-			planeNormal = vec3(0, 1, 0);
-		else
-			planeNormal = vec3(0, -1, 0);
-	}
-	else
-	{
-		planeZ = true;
-		if(ray.z > 0)
-			planeNormal = vec3(0, 0, 1);
-		else
-			planeNormal = vec3(0, 0, -1);
-	}
 	
-	//detecting plane intersection point
-	float fraction = .5f / dot( planeNormal.rgb, ray );
-	vec3 intersectionPoint = ray * fraction;
-
-	vec3 texPos = intersectionPoint * u_lightShadowTextureSize;
-
-	//determine the lerp amounts
-	vec2 lerps;
-	{
-		vec2 v;
-		if(planeX)
-			v = texPos.yz;
-		else if(planeY)
-			v = texPos.xz;
-		else
-			v = texPos.xy;
-		lerps = frac(v);
-	}
-
-	float compareDepth = shadowUV.w / u_lightShadowMapFarClipDistance;
-
-	vec3 offset1, offset2;
-	if(planeX)
-	{
-		offset1 = vec3(0, 1, 0);
-		offset2 = vec3(0, 0, 1);
-	}
-	else if(planeY)
-	{
-		offset1 = vec3(1, 0, 0);
-		offset2 = vec3(0, 0, 1);
-	}
-	else
-	{
-		offset1 = vec3(1, 0, 0);
-		offset2 = vec3(0, 1, 0);
-	}
-
-	vec4 depths;
-	//flipped cubemaps. conversion already done in the vertex shader.
-	depths.x = textureCube(shadowMap, texPos ).r;
-	depths.y = textureCube(shadowMap, texPos + offset1 ).r;
-	depths.z = textureCube(shadowMap, texPos + offset2 ).r;
-	depths.w = textureCube(shadowMap, texPos + offset1 + offset2 ).r;
-
-	vec4 depthFlags = step( depths, compareDepth );
-	return lerp( 
-		lerp( depthFlags.x, depthFlags.y, lerps.x ),
-		lerp( depthFlags.z, depthFlags.w, lerps.x ),
-		lerps.y );
+	return 1.0 - shadow / float(sampleCount);
 }
+#endif
 
-float getShadowValueForPointLightPoisson16(samplerCube shadowMap, vec4 shadowUV)
+/*#ifdef GLOBAL_SHADOW_TECHNIQUE_CHS
+float getShadowValuePointCHS(vec4 shadowUV)
 {
-	vec3 ray = normalize(shadowUV.xyz);
-
-	vec3 absRay = abs(ray);
-
-	vec3 planeNormal;
-	bool planeX = false;
-	bool planeY = false;
-	bool planeZ = false;
-
-	if(absRay.x > absRay.y && absRay.x > absRay.z)
-	{
-		planeX = true;
-		if(ray.x > 0)
-			planeNormal = vec3(1, 0, 0);
-		else
-			planeNormal = vec3(-1, 0, 0);
-	}
-	else if(absRay.y > absRay.z)
-	{
-		planeY = true;
-		if(ray.y > 0)
-			planeNormal = vec3(0, 1, 0);
-		else
-			planeNormal = vec3(0, -1, 0);
-	}
-	else
-	{
-		planeZ = true;
-		if(ray.z > 0)
-			planeNormal = vec3(0, 0, 1);
-		else
-			planeNormal = vec3(0, 0, -1);
-	}
+	//!!!!
 	
-	//detecting plane intersection point
-	float fraction = .5f / dot( planeNormal.rgb, ray );
-	vec3 intersectionPoint = ray * fraction;
-
-	vec3 texPos = intersectionPoint * u_lightShadowTextureSize;
-
-	const float scale = 1.5;// = scale / u_lightShadowTextureSize;
-
-	const vec2 poisson[16] =
-	{
-		vec2(     0,      0),
-		vec2(-0.488, -0.748),
-		vec2( 0.704,   0.55),
-		vec2(-0.916, -0.002),
-		vec2( 0.724, -0.526),
-		vec2( -0.62, -0.336),
-		vec2( 0.114,  0.668),
-		vec2( 0.116, -0.694), 
-		vec2(-0.568,   0.41),
-		vec2(  0.69, -0.008),
-		vec2(-0.324,  0.866), 
-		vec2(-0.116, -0.308), 
-		vec2( 0.304,   0.31),
-		vec2(-0.432, -0.008),
-		vec2( 0.328,   -0.2),
-		vec2(-0.118,  0.376),
-	};
-
-	//16 tap filter
-
-	float compareDepth = shadowUV.w / u_lightShadowMapFarClipDistance;
-
-	float shadow = 0;
-	for(int n = 0; n < 16; n++)
-	{
-		vec2 offset2 = poisson[n] * scale;
-
-		vec3 offset;
-		if(planeX)
-			offset = vec3(0, offset2.x, offset2.y);
-		else if(planeY)
-			offset = vec3(offset2.x, 0, offset2.y);
-		else
-			offset = vec3(offset2.x, offset2.y, 0);
-
-		vec3 texCoord = texPos + offset;
-		
-		//flipped cubemaps. conversion already done in the vertex shader.
-		float depth = textureCube( shadowMap, texCoord ).r;
-		float depthFlag = step( depth, compareDepth );
-		
-		shadow += depthFlag;
-	}
-	return shadow / 16;
+	return 0;
 }
-*/
+#endif*/
+
+/*#ifdef GLOBAL_SHADOW_TECHNIQUE_EVSM
+float getShadowValuePointEVSM(vec4 shadowUV)
+{
+	return 0;
+}
+#endif*/
 
 #endif //LIGHT_TYPE_POINT
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//getShadowMultiplier
 
 float calcWorldTexelSize(float worldDistanceToSample, int cascadeIndex)
 {
@@ -463,38 +808,41 @@ float calcWorldTexelSize(float worldDistanceToSample, int cascadeIndex)
 		float unitTexelSize = u_lightShadowUnitDistanceTexelSizes[0];
 	#endif
 	return distScale * unitTexelSize;
-	//return 1.414213562f * (2.0f * distScale) / (u_proj[0][0] * u_lightShadowTextureSize.x);
-	//return 1.414213562f * (2.0f * distScale) / (u_lightShadowTextureViewProjMatrix0[0] * u_lightShadowTextureSize.x);
-
-	// наверное лучше world размер текселя на near clip plane посчитать на cpu и прокинуть в юниформ
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//getShadowMultiplier
-
-float getShadowMultiplier(vec3 worldPosition, float cameraDistance, float cascadeDepth, vec3 lightWorldDirection, vec3 worldNormal)
+float getShadowMultiplier(vec3 worldPosition, float cameraDistance, float cascadeDepth, vec3 lightWorldDirection, vec3 worldNormal, vec2 texCoord, vec4 fragCoord)
 {
 	float final;
 
 	int cascadeIndex = 0;
-	#ifdef LIGHT_TYPE_DIRECTIONAL		
-		if(cascadeDepth < u_lightShadowCascades.y)
-			cascadeIndex = 0;
-		else if(cascadeDepth < u_lightShadowCascades.z)
-			cascadeIndex = 1;
-		else if(cascadeDepth < u_lightShadowCascades.w)
-			cascadeIndex = 2;
-		else
-			cascadeIndex = 3;
-		int cascadeCount = int(u_lightShadowCascades.x) - 1;
-		cascadeIndex = min(cascadeIndex, cascadeCount);
-	#endif
-
+	#ifdef LIGHT_TYPE_DIRECTIONAL
+		BRANCH
+		if(cascadeDepth >= u_lightShadowCascades.y)
+		{
+			if(cascadeDepth < u_lightShadowCascades.z)
+				cascadeIndex = 1;
+			else if(cascadeDepth < u_lightShadowCascades.w)
+				cascadeIndex = 2;
+			else
+				cascadeIndex = 3;
+			
+			//overlap cascades			
+			const float cascadeOverlapping = 1.1;
+			float from = u_lightShadowCascades[cascadeIndex];
+			float to = from * cascadeOverlapping;
+			if(cascadeDepth < to)
+			{
+				float d = (cascadeDepth - from) / (to - from);
+				if(!getDitherBoolean(fragCoord, d))
+					cascadeIndex--;
+			}
+			int cascadeCount = int(u_lightShadowCascades.x) - 1;
+			cascadeIndex = min(cascadeIndex, cascadeCount);
+		}	
+	#endif	
 
 	worldNormal = normalize(worldNormal);
 	#ifdef LIGHT_TYPE_SPOTLIGHT
-		// для spotlight shadowmap тексели направлены вдоль направления источника света 
-		// (т.е. все тексели смотрят в одну сторону как у directional light)
 		vec3 shadowTexelNormal = normalize(-u_lightDirection);
 	#else
 		vec3 shadowTexelNormal = normalize(lightWorldDirection);
@@ -505,78 +853,110 @@ float getShadowMultiplier(vec3 worldPosition, float cameraDistance, float cascad
 	float tan = abs(NdotL) > 0.0 ? sine / NdotL : 0.0;
    	float worldTexelSize = calcWorldTexelSize(length(worldPosition - u_lightPosition.xyz), cascadeIndex); 
 
-	worldPosition.xyz += 2.0 * lightWorldDirection * u_lightShadowBias * clamp(tan, 0.9, 10.0) * worldTexelSize;
-	worldPosition.xyz += 2.5 * (worldNormal * u_lightShadowNormalBias) * clamp(sine, 0.1, 1.0) * worldTexelSize;
-	// clamp нужен, чтобы избежать артефактов, когда тексел с пола заезжает на стенку и недостаточно сильно
-	// выправляется bias-ом, 0.1 и 0.9 подобраны эмпирически, надо подумать, нельзя ли их привязать к
-	// более осмысленным константам
-	// множитель 2 стоит из тех же соображений. В идеале должно 1 хватить (если бы не артефакты на острых стыках граней)
+	vec3 worldPositionFixed = worldPosition;
+	worldPositionFixed += 2.0 * lightWorldDirection * u_lightShadowBias * clamp(tan, 0.9, 10.0) * worldTexelSize;
+	worldPositionFixed += 2.5 * (worldNormal * u_lightShadowNormalBias) * clamp(sine, 0.1, 1.0) * worldTexelSize;
 	
 #ifdef LIGHT_TYPE_POINT
 	//////////////////////////////////////////////////
 	//Point
 
 	vec4 shadowUV;
-	shadowUV.xyz = worldPosition - u_lightPosition.xyz;
+	shadowUV.xyz = worldPositionFixed - u_lightPosition.xyz;
 	shadowUV.w = length(shadowUV.xyz);
 	shadowUV.xyz = flipCubemapCoords(shadowUV.xyz);
 
-	#ifdef SHADOW_MAP_HIGH
-		final = getShadowValuePointPCF8TapFixedDisk4x(s_shadowMapShadow, shadowUV);
-	#else
-		final = getShadowValuePointSimple(s_shadowMapShadow, shadowUV);
+#ifdef GLSL
+	mat4 toImageSpace = mat4(
+		0.5, 0, 0, 0,
+		0, -0.5, 0, 0,
+		0, 0, 0.5, 0,
+		0, 0, 0, 1 );
+	shadowUV = mul(toImageSpace, shadowUV);	
+#endif
+	
+	#ifdef GLOBAL_SHADOW_TECHNIQUE_SIMPLE
+		final = getShadowValuePointSimple(shadowUV);
 	#endif
-		
+	#if defined(GLOBAL_SHADOW_TECHNIQUE_PCF4) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF8) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF12) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF16)
+		final = getShadowValuePointPCF(shadowUV);
+	#endif
+//	#ifdef GLOBAL_SHADOW_TECHNIQUE_CHS
+//		final = getShadowValuePointCHS(shadowUV);
+//	#endif
+//	#ifdef GLOBAL_SHADOW_TECHNIQUE_EVSM
+//		final = getShadowValuePointEVSM(shadowUV);
+//	#endif
+	
 #else
 	//////////////////////////////////////////////////
 	//Directional, Spot
 
-/*
-	int cascadeIndex = 0;	
-	#ifdef LIGHT_TYPE_DIRECTIONAL		
-		if(cascadeDepth < u_lightShadowCascades.y)
-			cascadeIndex = 0;
-		else if(cascadeDepth < u_lightShadowCascades.z)
-			cascadeIndex = 1;
-		else if(cascadeDepth < u_lightShadowCascades.w)
-			cascadeIndex = 2;
-		else
-			cascadeIndex = 3;
-		int cascadeCount = int(u_lightShadowCascades.x) - 1;
-		cascadeIndex = min(cascadeIndex, cascadeCount);
-	#endif
-*/
-
-	vec4 position4 = vec4(worldPosition, 1);
+	vec4 position4 = vec4(worldPositionFixed, 1);
 
 	mat4 lightShadowTextureViewProjMatrix;	
-	switch(cascadeIndex)
-	{
-		case 1: lightShadowTextureViewProjMatrix = u_lightShadowTextureViewProjMatrix1; break;
-		case 2: lightShadowTextureViewProjMatrix = u_lightShadowTextureViewProjMatrix2; break;
-		case 3: lightShadowTextureViewProjMatrix = u_lightShadowTextureViewProjMatrix3; break;
-		default: lightShadowTextureViewProjMatrix = u_lightShadowTextureViewProjMatrix0; break;
-	}
+	#ifdef LIGHT_TYPE_DIRECTIONAL
+		switch(cascadeIndex)
+		{
+			case 1: lightShadowTextureViewProjMatrix = u_lightShadowTextureViewProjMatrix1; break;
+			case 2: lightShadowTextureViewProjMatrix = u_lightShadowTextureViewProjMatrix2; break;
+			case 3: lightShadowTextureViewProjMatrix = u_lightShadowTextureViewProjMatrix3; break;
+			default: lightShadowTextureViewProjMatrix = u_lightShadowTextureViewProjMatrix0; break;
+		}
+	#else
+		lightShadowTextureViewProjMatrix = u_lightShadowTextureViewProjMatrix0;
+	#endif
+	
 	vec4 shadowUV = mul(lightShadowTextureViewProjMatrix, position4);
 
-	#ifdef SHADOW_MAP_HIGH
-		final = getShadowValuePCF8TapFixedDisk4x(s_shadowMapArrayShadow, cascadeIndex, shadowUV);
-	#else
-		final = getShadowValueSimple(s_shadowMapArrayShadow, cascadeIndex, shadowUV);
+	#ifdef GLOBAL_SHADOW_TECHNIQUE_SIMPLE
+		final = getShadowValueSimple(cascadeIndex, shadowUV);
 	#endif
+	#if defined(GLOBAL_SHADOW_TECHNIQUE_PCF4) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF8) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF12) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF16)
+		final = getShadowValuePCF(cascadeIndex, shadowUV);
+	#endif
+//	#ifdef GLOBAL_SHADOW_TECHNIQUE_CHS
+//		final = getShadowValueCHS(cascadeIndex, shadowUV);
+//	#endif
+//	#ifdef GLOBAL_SHADOW_TECHNIQUE_EVSM
+//		final = getShadowValueEVSM(cascadeIndex, shadowUV);
+//	#endif
+	
+	//contact shadows
+#ifdef SHADOW_CONTACT
+	//BRANCH
+	if(final < 1.0)//if(final > 0.0)
+	{
+		final = max(final, screenSpaceShadows(worldPosition, lightWorldDirection, texCoord));
+		//final = min(final, screenSpaceShadows(worldPosition, lightWorldDirection, texCoord));
+	}
+#endif
 
 	//visualize cascades
 	#ifdef LIGHT_TYPE_DIRECTIONAL
-	if(u_lightShadowCascadesVisualize > 0.0 && u_lightShadowCascades.x > 1.0)
+	BRANCH
+	if(u_lightShadowCascadesVisualize > 0.0)
 	{
-		if(cascadeDepth < u_lightShadowCascades.y)
-			final += .8f;
-		else if(cascadeDepth < u_lightShadowCascades.z)
-			final += .6f;
-		else if(cascadeDepth < u_lightShadowCascades.w)
-			final += .4f;
-		else
-			final += .2f;
+		if(u_lightShadowCascades.x > 1.0)
+		{
+			switch(cascadeIndex)
+			{
+				case 0: final += .8f; break;
+				case 1: final += .6f; break;
+				case 2: final += .4f; break;
+				default: final += .2f; break;
+			}
+			/*
+			if(cascadeDepth < u_lightShadowCascades.y)
+				final += .8f;
+			else if(cascadeDepth < u_lightShadowCascades.z)
+				final += .6f;
+			else if(cascadeDepth < u_lightShadowCascades.w)
+				final += .4f;
+			else
+				final += .2f;
+			*/
+		}
 	}
 	#endif
 	

@@ -13,7 +13,7 @@ using System.Drawing;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
 	/// <summary>
 	/// Represents a hue, saturation, luminance triple.

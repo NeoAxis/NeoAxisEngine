@@ -13,7 +13,7 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Drawing;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
 	/// <summary>
 	/// Details for an cancellable event that provides a position, offset and control value.

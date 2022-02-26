@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,22 +7,17 @@ namespace NeoAxis
 {
 	static class ResourceUpdate
 	{
-		//!!!!
-		//!!!!when to disable?
-		//static bool enabled;
-
-
-		internal static void Init()
+		public static void Init()
 		{
 			VirtualFileWatcher.Update += VirtualFileWatcher_Update;
 		}
 
-		internal static void Shutdown()
+		public static void Shutdown()
 		{
 			VirtualFileWatcher.Update -= VirtualFileWatcher_Update;
 		}
 
-		private static void VirtualFileWatcher_Update( FileSystemEventArgs args )
+		static void VirtualFileWatcher_Update( FileSystemEventArgs args )
 		{
 			switch( args.ChangeType )
 			{

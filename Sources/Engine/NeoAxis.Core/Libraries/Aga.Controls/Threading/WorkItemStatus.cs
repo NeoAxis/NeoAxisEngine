@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Aga.Controls.Threading
+namespace Internal.Aga.Controls.Threading
 {
 	public enum WorkItemStatus 
 	{ 

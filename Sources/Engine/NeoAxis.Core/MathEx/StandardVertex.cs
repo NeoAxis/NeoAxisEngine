@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,7 +9,7 @@ namespace NeoAxis
 	/// <summary>
 	/// The declaration of the standard vertex. This structure of the mesh vertex data can be used in most cases.
 	/// </summary>
-	[StructLayout( LayoutKind.Sequential )]
+	[StructLayout( LayoutKind.Sequential, Pack = 1 )]
 	public struct StandardVertex
 	{
 		public Vector3F Position;
@@ -55,7 +55,7 @@ namespace NeoAxis
 		/// <summary>
 		/// Represents a simplified version of <see cref="StandardVertex"/> with one channel of texture coordinates and without animation data.
 		/// </summary>
-		[StructLayout( LayoutKind.Sequential )]
+		[StructLayout( LayoutKind.Sequential, Pack = 1 )]
 		public struct StaticOneTexCoord
 		{
 			public Vector3F Position;
@@ -426,34 +426,34 @@ namespace NeoAxis
 			return ( v1.Position != v2.Position || v1.Normal != v2.Normal || v1.Tangent != v2.Tangent || v1.Color != v2.Color || v1.TexCoord0 != v2.TexCoord0 || v1.TexCoord1 != v2.TexCoord1 || v1.TexCoord2 != v2.TexCoord2 || v1.TexCoord3 != v2.TexCoord3 || v1.BlendIndices != v2.BlendIndices || v1.BlendWeights != v2.BlendWeights );
 		}
 
-		public bool Equals( ref StandardVertex v, float epsilon )
+		public bool Equals( ref StandardVertex v, float positionEpsilon, float otherChannelsEpsilon )
 		{
-			if( !Position.Equals( ref v.Position, epsilon ) )
+			if( !Position.Equals( ref v.Position, positionEpsilon ) )
 				return false;
-			if( !Normal.Equals( ref v.Normal, epsilon ) )
+			if( !Normal.Equals( ref v.Normal, otherChannelsEpsilon ) )
 				return false;
-			if( !Tangent.Equals( ref v.Tangent, epsilon ) )
+			if( !Tangent.Equals( ref v.Tangent, otherChannelsEpsilon ) )
 				return false;
-			if( !Color.Equals( ref v.Color, epsilon ) )
+			if( !Color.Equals( ref v.Color, otherChannelsEpsilon ) )
 				return false;
-			if( !TexCoord0.Equals( ref v.TexCoord0, epsilon ) )
+			if( !TexCoord0.Equals( ref v.TexCoord0, otherChannelsEpsilon ) )
 				return false;
-			if( !TexCoord1.Equals( ref v.TexCoord1, epsilon ) )
+			if( !TexCoord1.Equals( ref v.TexCoord1, otherChannelsEpsilon ) )
 				return false;
-			if( !TexCoord2.Equals( ref v.TexCoord2, epsilon ) )
+			if( !TexCoord2.Equals( ref v.TexCoord2, otherChannelsEpsilon ) )
 				return false;
-			if( !TexCoord3.Equals( ref v.TexCoord3, epsilon ) )
+			if( !TexCoord3.Equals( ref v.TexCoord3, otherChannelsEpsilon ) )
 				return false;
 			if( BlendIndices != v.BlendIndices )
 				return false;
-			if( !BlendWeights.Equals( ref v.BlendWeights, epsilon ) )
+			if( !BlendWeights.Equals( ref v.BlendWeights, otherChannelsEpsilon ) )
 				return false;
 			return true;
 		}
 
-		public bool Equals( StandardVertex v, float epsilon )
+		public bool Equals( StandardVertex v, float positionEpsilon, float otherChannelsEpsilon )
 		{
-			return Equals( ref v, epsilon );
+			return Equals( ref v, positionEpsilon, otherChannelsEpsilon );
 		}
 	}
 }

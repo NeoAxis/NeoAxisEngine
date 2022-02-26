@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Text;
 using System.Windows.Forms;
@@ -15,9 +15,9 @@ namespace NeoAxis.Addon.ExampleEditorWinForms
 			InitializeComponent();
 		}
 
-		public Component_ExampleEditorWinForms Component
+		public ExampleEditorWinForms Component
 		{
-			get { return (Component_ExampleEditorWinForms)ObjectOfWindow; }
+			get { return (ExampleEditorWinForms)ObjectOfWindow; }
 		}
 
 		protected override void OnLoad( EventArgs e )

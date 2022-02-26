@@ -1,9 +1,10 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
 using System.Text;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     /// <summary>
     /// Write data types/BSON data into byte[]. It's forward only and support multi buffer slice as source
@@ -484,3 +485,4 @@ namespace LiteDB.Engine
         }
     }
 }
+#endif

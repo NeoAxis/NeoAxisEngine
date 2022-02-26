@@ -39,7 +39,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Net3dBool
+namespace Internal.Net3dBool
 {
     /// <summary>
     /// Representation of a bound - the extremes of a 3d component for each coordinate.

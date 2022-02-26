@@ -3,11 +3,14 @@
  * Microsoft Permissive License (Ms-PL) v1.1
  */
 
-using tainicom.Aether.Physics2D.Dynamics;
-using tainicom.Aether.Physics2D.Dynamics.Joints;
-using Microsoft.Xna.Framework;
+using Internal.tainicom.Aether.Physics2D.Common;
+using Internal.tainicom.Aether.Physics2D.Dynamics;
+using Internal.tainicom.Aether.Physics2D.Dynamics.Joints;
+#if XNAAPI
+using Vector2 = Microsoft.Xna.Framework.Vector2;
+#endif
 
-namespace tainicom.Aether.Physics2D.Dynamics.Joints
+namespace Internal.tainicom.Aether.Physics2D.Dynamics.Joints
 {
     /// <summary>
     /// An easy to use factory for using joints.

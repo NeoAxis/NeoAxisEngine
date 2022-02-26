@@ -1,11 +1,11 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
-using SharpBgfx;
+using Internal.SharpBgfx;
 
 namespace NeoAxis
 {
@@ -278,7 +278,7 @@ namespace NeoAxis
 		/// <summary>
 		/// Gets or sets the default font.
 		/// </summary>
-		public abstract Component_Font DefaultFont
+		public abstract FontComponent DefaultFont
 		{
 			get;
 			set;
@@ -360,7 +360,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		public abstract void _ViewportRendering_RenderToCurrentViewport( ViewportRenderingContext context, bool clearData, double time );
+		public abstract void ViewportRendering_RenderToCurrentViewport( ViewportRenderingContext context, bool clearData, double time );
 
 		/////////////////////////////////////////
 
@@ -372,7 +372,7 @@ namespace NeoAxis
 		/// <param name="texture">The quad texture or <b>null</b>.</param>
 		/// <param name="color">The quad color.</param>
 		/// <param name="clamp">The texture clamp.</param>
-		public abstract void AddQuad( RectangleF rectangle, RectangleF textureCoordRectangle, Component_Image texture, ColorValue color, bool clamp );
+		public abstract void AddQuad( RectangleF rectangle, RectangleF textureCoordRectangle, ImageComponent texture, ColorValue color, bool clamp );
 		/// <summary>
 		/// Adds quad to rendering queue.
 		/// </summary>
@@ -381,7 +381,7 @@ namespace NeoAxis
 		/// <param name="texture">The quad texture or <b>null</b>.</param>
 		/// <param name="color">The quad color.</param>
 		/// <param name="clamp">The texture clamp.</param>
-		public void AddQuad( Rectangle rectangle, Rectangle textureCoordRectangle, Component_Image texture, ColorValue color, bool clamp )
+		public void AddQuad( Rectangle rectangle, Rectangle textureCoordRectangle, ImageComponent texture, ColorValue color, bool clamp )
 		{
 			AddQuad( rectangle.ToRectangleF(), textureCoordRectangle.ToRectangleF(), texture, color, clamp );
 		}
@@ -393,7 +393,7 @@ namespace NeoAxis
 		/// <param name="textureCoordRectangle">The texture coordinates.</param>
 		/// <param name="texture">The quad texture or <b>null</b>.</param>
 		/// <param name="color">The quad color.</param>
-		public void AddQuad( RectangleF rectangle, RectangleF textureCoordRectangle, Component_Image texture, ColorValue color )
+		public void AddQuad( RectangleF rectangle, RectangleF textureCoordRectangle, ImageComponent texture, ColorValue color )
 		{
 			AddQuad( rectangle, textureCoordRectangle, texture, color, true );
 		}
@@ -404,7 +404,7 @@ namespace NeoAxis
 		/// <param name="textureCoordRectangle">The texture coordinates.</param>
 		/// <param name="texture">The quad texture or <b>null</b>.</param>
 		/// <param name="color">The quad color.</param>
-		public void AddQuad( Rectangle rectangle, Rectangle textureCoordRectangle, Component_Image texture, ColorValue color )
+		public void AddQuad( Rectangle rectangle, Rectangle textureCoordRectangle, ImageComponent texture, ColorValue color )
 		{
 			AddQuad( rectangle.ToRectangleF(), textureCoordRectangle.ToRectangleF(), texture, color, true );
 		}
@@ -415,7 +415,7 @@ namespace NeoAxis
 		/// <param name="rectangle">The quad rectangle.</param>
 		/// <param name="textureCoordRectangle">The texture coordinates.</param>
 		/// <param name="texture">The quad texture or <b>null</b>.</param>
-		public void AddQuad( RectangleF rectangle, RectangleF textureCoordRectangle, Component_Image texture )
+		public void AddQuad( RectangleF rectangle, RectangleF textureCoordRectangle, ImageComponent texture )
 		{
 			AddQuad( rectangle, textureCoordRectangle, texture, new ColorValue( 1, 1, 1, 1 ), true );
 		}
@@ -425,7 +425,7 @@ namespace NeoAxis
 		/// <param name="rectangle">The quad rectangle.</param>
 		/// <param name="textureCoordRectangle">The texture coordinates.</param>
 		/// <param name="texture">The quad texture or <b>null</b>.</param>
-		public void AddQuad( Rectangle rectangle, Rectangle textureCoordRectangle, Component_Image texture )
+		public void AddQuad( Rectangle rectangle, Rectangle textureCoordRectangle, ImageComponent texture )
 		{
 			AddQuad( rectangle.ToRectangleF(), textureCoordRectangle.ToRectangleF(), texture, new ColorValue( 1, 1, 1, 1 ), true );
 		}
@@ -466,7 +466,7 @@ namespace NeoAxis
 		/// <param name="horizontalAlign">The text horizontal align.</param>
 		/// <param name="verticalAlign">The text vertical align.</param>
 		/// <param name="color">The text color.</param>
-		public abstract void AddText( Component_Font font, double fontSize, string text, Vector2F position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign );
+		public abstract void AddText( FontComponent font, double fontSize, string text, Vector2F position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign );
 		/// <summary>
 		/// Adds text to rendering queue.
 		/// </summary>
@@ -476,7 +476,7 @@ namespace NeoAxis
 		/// <param name="horizontalAlign">The text horizontal align.</param>
 		/// <param name="verticalAlign">The text vertical align.</param>
 		/// <param name="color">The text color.</param>
-		public void AddText( Component_Font font, double fontSize, string text, Vector2 position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
+		public void AddText( FontComponent font, double fontSize, string text, Vector2 position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
 		{
 			AddText( font, fontSize, text, position.ToVector2F(), horizontalAlign, verticalAlign, color, options );
 		}
@@ -560,7 +560,7 @@ namespace NeoAxis
 		/// <param name="verticalAlign">The text vertical align.</param>
 		/// <param name="textVerticalIndention">The vertical intention between lines.</param>
 		/// <param name="color">The text color.</param>
-		public abstract void AddTextLines( Component_Font font, double fontSize, IList<string> lines, Vector2F pos, EHorizontalAlignment horizontalAlign,
+		public abstract void AddTextLines( FontComponent font, double fontSize, IList<string> lines, Vector2F pos, EHorizontalAlignment horizontalAlign,
 			EVerticalAlignment verticalAlign, float textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign );
 		/// <summary>
 		/// Adds text lines to rendering queue.
@@ -572,7 +572,7 @@ namespace NeoAxis
 		/// <param name="verticalAlign">The text vertical align.</param>
 		/// <param name="textVerticalIndention">The vertical intention between lines.</param>
 		/// <param name="color">The text color.</param>
-		public void AddTextLines( Component_Font font, double fontSize, IList<string> lines, Vector2 pos, EHorizontalAlignment horizontalAlign,
+		public void AddTextLines( FontComponent font, double fontSize, IList<string> lines, Vector2 pos, EHorizontalAlignment horizontalAlign,
 			EVerticalAlignment verticalAlign, double textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
 		{
 			AddTextLines( font, fontSize, lines, pos.ToVector2F(), horizontalAlign, verticalAlign, (float)textVerticalIndention, color, options );
@@ -609,9 +609,9 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		public abstract int AddTextWordWrap( Component_Font font, double fontSize, string text, RectangleF rect, EHorizontalAlignment horizontalAlign,
+		public abstract int AddTextWordWrap( FontComponent font, double fontSize, string text, RectangleF rect, EHorizontalAlignment horizontalAlign,
 			bool alignByWidth, EVerticalAlignment verticalAlign, float textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign );
-		public int AddTextWordWrap( Component_Font font, double fontSize, string text, Rectangle rect, EHorizontalAlignment horizontalAlign,
+		public int AddTextWordWrap( FontComponent font, double fontSize, string text, Rectangle rect, EHorizontalAlignment horizontalAlign,
 			bool alignByWidth, EVerticalAlignment verticalAlign, double textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
 		{
 			return AddTextWordWrap( font, DefaultFontSize, text, rect.ToRectangleF(), horizontalAlign, alignByWidth, verticalAlign, (float)textVerticalIndention, color, options );
@@ -703,14 +703,14 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		public abstract void AddTriangles( IList<TriangleVertex> vertices, Component_Image texture = null, bool clamp = false );
+		public abstract void AddTriangles( IList<TriangleVertex> vertices, ImageComponent texture = null, bool clamp = false );
 
-		public abstract void AddTriangles( IList<TriangleVertex> vertices, IList<int> indices, Component_Image texture = null, bool clamp = false );
+		public abstract void AddTriangles( IList<TriangleVertex> vertices, IList<int> indices, ImageComponent texture = null, bool clamp = false );
 
 		/////////////////////////////////////////
 
-		public abstract void AddFillEllipse( RectangleF rectangle, int segments, ColorValue color, Component_Image texture, RectangleF textureCoordRectangle, bool textureClamp );
-		public void AddFillEllipse( Rectangle rectangle, int segments, ColorValue color, Component_Image texture, Rectangle textureCoordRectangle, bool textureClamp )
+		public abstract void AddFillEllipse( RectangleF rectangle, int segments, ColorValue color, ImageComponent texture, RectangleF textureCoordRectangle, bool textureClamp );
+		public void AddFillEllipse( Rectangle rectangle, int segments, ColorValue color, ImageComponent texture, Rectangle textureCoordRectangle, bool textureClamp )
 		{
 			AddFillEllipse( rectangle.ToRectangleF(), segments, color, texture, textureCoordRectangle.ToRectangleF(), textureClamp );
 		}
@@ -723,5 +723,33 @@ namespace NeoAxis
 		{
 			AddFillEllipse( rectangle.ToRectangleF(), segments, color, null, RectangleF.Zero, false );
 		}
+
+		/////////////////////////////////////////
+
+		/// <summary>
+		/// Adds an ellipse to rendering queue.
+		/// </summary>
+		/// <param name="rectangle">The rectangle.</param>
+		/// <param name="color">The text color.</param>
+		public abstract void AddEllipse( RectangleF rectangle, int segments, ColorValue color );
+		/// <summary>
+		/// Adds an ellipse to rendering queue.
+		/// </summary>
+		/// <param name="rectangle">The rectangle.</param>
+		/// <param name="color">The text color.</param>
+		public void AddEllipse( Rectangle rectangle, int segments, ColorValue color )
+		{
+			AddEllipse( rectangle.ToRectangleF(), segments, color );
+		}
+
+		//public void AddCircle( CircleF circle, int segments, ColorValue color )
+		//{
+		//	AddEllipse( circle.ToBounds(), segments, color );
+		//}
+
+		//public void AddCircle( Circle circle, int segments, ColorValue color )
+		//{
+		//	AddEllipse( circle.ToBounds(), segments, color );
+		//}
 	}
 }

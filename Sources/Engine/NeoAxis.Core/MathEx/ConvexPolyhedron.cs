@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -108,35 +108,6 @@ namespace NeoAxis
 			this.epsilon = epsilon;
 		}
 
-		//!!!!!было
-		//public ConvexPolyhedronD( Vec3[] vertices, Face[] faces, double epsilon )
-		//{
-		//	this.vertices = new Vec3D[ vertices.Length ];
-		//	for( int n = 0; n < vertices.Length; n++ )
-		//		this.vertices[ n ] = vertices[ n ].ToVec3D();
-		//	this.faces = faces;
-		//	this.epsilon = epsilon;
-		//}
-
-		//!!!!!было
-		//public ConvexPolyhedronD( Vec3[] vertices, int[] indices, double epsilon )
-		//{
-		//	this.vertices = new Vec3D[ vertices.Length ];
-		//	for( int n = 0; n < vertices.Length; n++ )
-		//		this.vertices[ n ] = vertices[ n ].ToVec3D();
-
-		//	faces = new Face[ indices.Length / 3 ];
-		//	for( int n = 0; n < faces.Length; n++ )
-		//	{
-		//		faces[ n ] = new Face(
-		//			indices[ n * 3 + 0 ],
-		//			indices[ n * 3 + 1 ],
-		//			indices[ n * 3 + 2 ] );
-		//	}
-
-		//	this.epsilon = epsilon;
-		//}
-
 		public Vector3[] Vertices
 		{
 			get { return vertices; }
@@ -240,15 +211,21 @@ namespace NeoAxis
 
 				if( nVertex1 < nVertex0 )
 				{
-					n = nVertex0; nVertex0 = nVertex1; nVertex1 = n;
+					n = nVertex0;
+					nVertex0 = nVertex1;
+					nVertex1 = n;
 				}
 				if( nVertex2 < nVertex0 )
 				{
-					n = nVertex0; nVertex0 = nVertex2; nVertex2 = n;
+					n = nVertex0;
+					nVertex0 = nVertex2;
+					nVertex2 = n;
 				}
 				if( nVertex2 < nVertex1 )
 				{
-					n = nVertex1; nVertex1 = nVertex2; nVertex2 = n;
+					n = nVertex1;
+					nVertex1 = nVertex2;
+					nVertex2 = n;
 				}
 
 				return ( nVertex0 * vertices.Length + nVertex1 ) * vertices.Length + nVertex2;
@@ -364,7 +341,7 @@ namespace NeoAxis
 
 		///////////////////////////////////////////
 
-		bool IsContainsPoint( Vector3 point )
+		bool ContainsPoint( Vector3 point )
 		{
 			//const double epsilon = .001;
 
@@ -377,24 +354,24 @@ namespace NeoAxis
 			return true;
 		}
 
-		bool IsIntersectsLine( Line3 line )
+		bool IntersectsLine( Line3 line )
 		{
-			if( IsContainsPoint( line.Start ) )
+			if( ContainsPoint( line.Start ) )
 				return true;
-			if( IsContainsPoint( line.End ) )
+			if( ContainsPoint( line.End ) )
 				return true;
 
 			Ray ray = new Ray( line.Start, line.End - line.Start );
 
 			foreach( Face face in Faces )
 			{
-				Vector3 triangle0 = vertices[ face.Vertex0 ];
-				Vector3 triangle1 = vertices[ face.Vertex1 ];
-				Vector3 triangle2 = vertices[ face.Vertex2 ];
+				ref Vector3 triangle0 = ref vertices[ face.Vertex0 ];
+				ref Vector3 triangle1 = ref vertices[ face.Vertex1 ];
+				ref Vector3 triangle2 = ref vertices[ face.Vertex2 ];
 
 				//need epsilon?
 				double scale;
-				if( MathAlgorithms.IntersectTriangleRay( triangle0, triangle1, triangle2, ray, out scale ) )
+				if( MathAlgorithms.IntersectTriangleRay( ref triangle0, ref triangle1, ref triangle2, ref ray, out scale ) )
 				{
 					if( scale >= 0 && scale <= 1 )
 						return true;
@@ -404,28 +381,28 @@ namespace NeoAxis
 			return false;
 		}
 
-		int WhichSide( Plane plane )
-		{
-			//const double epsilon = .001;
+		//int WhichSide( Plane plane )
+		//{
+		//	//const double epsilon = .001;
 
-			// S vertices are projected to the form P+t*D. Return value is +1 if all t > 0,
-			// -1 if all t < 0, 0 otherwise, in which case the line splits the polygon.
-			int positive = 0;
-			int negative = 0;
-			foreach( Vector3 vertex in vertices )
-			{
-				double distance = plane.GetDistance( vertex );
+		//	// S vertices are projected to the form P+t*D. Return value is +1 if all t > 0,
+		//	// -1 if all t < 0, 0 otherwise, in which case the line splits the polygon.
+		//	int positive = 0;
+		//	int negative = 0;
+		//	foreach( Vector3 vertex in vertices )
+		//	{
+		//		double distance = plane.GetDistance( vertex );
 
-				if( distance > epsilon )
-					positive++;
-				else if( distance < -epsilon )
-					negative++;
+		//		if( distance > epsilon )
+		//			positive++;
+		//		else if( distance < -epsilon )
+		//			negative++;
 
-				if( positive != 0 && negative != 0 )
-					return 0;
-			}
-			return ( positive != 0 ? 1 : -1 );
-		}
+		//		if( positive != 0 && negative != 0 )
+		//			return 0;
+		//	}
+		//	return ( positive != 0 ? 1 : -1 );
+		//}
 
 		public Vector3 GetApproximateConvexCentroid()
 		{
@@ -438,10 +415,10 @@ namespace NeoAxis
 		public static bool IsIntersects( ConvexPolyhedron polyhedron1, ConvexPolyhedron polyhedron2 )
 		{
 			Vector3 center1 = polyhedron1.GetApproximateConvexCentroid();
-			if( polyhedron2.IsContainsPoint( center1 ) )
+			if( polyhedron2.ContainsPoint( center1 ) )
 				return true;
 			Vector3 center2 = polyhedron2.GetApproximateConvexCentroid();
-			if( polyhedron1.IsContainsPoint( center2 ) )
+			if( polyhedron1.ContainsPoint( center2 ) )
 				return true;
 
 			//check for each edge interesction with polyhedron
@@ -453,7 +430,7 @@ namespace NeoAxis
 					Vector3 edge0 = polyhedron1.vertices[ edge.Vertex0 ];
 					Vector3 edge1 = polyhedron1.vertices[ edge.Vertex1 ];
 
-					if( polyhedron2.IsIntersectsLine( new Line3( edge0, edge1 ) ) )
+					if( polyhedron2.IntersectsLine( new Line3( edge0, edge1 ) ) )
 					{
 						intersectionDetected = true;
 						break;
@@ -467,7 +444,7 @@ namespace NeoAxis
 						Vector3 edge0 = polyhedron2.vertices[ edge.Vertex0 ];
 						Vector3 edge1 = polyhedron2.vertices[ edge.Vertex1 ];
 
-						if( polyhedron1.IsIntersectsLine( new Line3( edge0, edge1 ) ) )
+						if( polyhedron1.IntersectsLine( new Line3( edge0, edge1 ) ) )
 						{
 							intersectionDetected = true;
 							break;
@@ -509,8 +486,9 @@ namespace NeoAxis
 
 					if( vertexIndex1 < vertexIndex0 )
 					{
-						int z;
-						z = vertexIndex0; vertexIndex0 = vertexIndex1; vertexIndex1 = z;
+						var z = vertexIndex0; 
+						vertexIndex0 = vertexIndex1; 
+						vertexIndex1 = z;
 					}
 
 					int key = vertexIndex0 * vertices.Length + vertexIndex1;
@@ -549,12 +527,11 @@ namespace NeoAxis
 			{
 				Face face = faces[ n ];
 
-				Vector3 vertex0 = vertices[ face.Vertex0 ];
-				Vector3 vertex1 = vertices[ face.Vertex1 ];
-				Vector3 vertex2 = vertices[ face.Vertex2 ];
+				ref var vertex0 = ref vertices[ face.Vertex0 ];
+				ref var vertex1 = ref vertices[ face.Vertex1 ];
+				ref var vertex2 = ref vertices[ face.Vertex2 ];
 
-				Plane plane;
-				Plane.FromPoints( ref vertex0, ref vertex1, ref vertex2, out plane );
+				Plane.FromPoints( ref vertex0, ref vertex1, ref vertex2, out var plane );
 
 				facePlanes[ n ] = plane;
 			}

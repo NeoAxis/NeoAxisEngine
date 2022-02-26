@@ -1,9 +1,12 @@
+// Made with NeoAxis Engine 2022.1.
+
 .component Project.ScenesWindow
 {
 	Text = Scenes
 	Size = Units 1200 800
-	HorizontalAlignment = Center
-	VerticalAlignment = Center
+	HorizontalAlignment = Stretch
+	VerticalAlignment = Stretch
+	Margin = Units 50 50 50 110
 	EditorScrollPosition = 0 0
 	Style
 	{
@@ -13,7 +16,7 @@
 	{
 		Name = Button Close
 		Text = Close
-		Size = Units 200 40
+		Size = Units 150 40
 		HorizontalAlignment = Right
 		VerticalAlignment = Bottom
 		Margin = Units 0 0 20 20
@@ -23,16 +26,18 @@
 	{
 		Name = Button Load
 		Text = Load
-		Size = Units 200 40
-		HorizontalAlignment = Right
-		Margin = Units 0 50 20 0
+		Size = Units 150 40
+		VerticalAlignment = Bottom
+		Margin = Units 20 50 20 20
 		EditorScrollPosition = 0 0
 	}
 	.component NeoAxis.UIList
 	{
 		Name = List
 		Size = Units 945 730
-		Margin = Units 20 50 0 0
+		HorizontalAlignment = Stretch
+		VerticalAlignment = Stretch
+		Margin = Units 20 50 20 80
 		EditorScrollPosition = 0 0
 		Items
 		{

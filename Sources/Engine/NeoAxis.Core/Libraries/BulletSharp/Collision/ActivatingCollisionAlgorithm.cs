@@ -1,6 +1,6 @@
 using System;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public abstract class ActivatingCollisionAlgorithm : CollisionAlgorithm
 	{

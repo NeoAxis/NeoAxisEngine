@@ -55,6 +55,9 @@
     <ClCompile Include="ImageLibrary\OgreVector3D.cpp" />
     <ClCompile Include="ImageLibrary\OgreVector4.cpp" />
     <ClCompile Include="ImageLibrary\YUVToRGBConverter.cpp" />
+    <ClCompile Include="MaskedOcclusionCulling\FrameRecorder.cpp" />
+    <ClCompile Include="MaskedOcclusionCulling\MaskedOcclusionCulling.cpp" />
+    <ClCompile Include="MaskedOcclusionCulling\MaskedOcclusionCullingWrapper.cpp" />
     <ClCompile Include="MemoryManager\CRTMemoryManager.cpp" />
     <ClCompile Include="MemoryManager\MemoryManagerInternal.cpp" />
     <ClCompile Include="MemoryManager\MemoryManagerInternal_precompiled.cpp" />
@@ -78,7 +81,6 @@
     <ClCompile Include="NeoAxis\OBB.cpp" />
     <ClCompile Include="NeoAxis\OBBD.cpp" />
     <ClCompile Include="NeoAxis\OctreeContainer.cpp" />
-    <ClCompile Include="NeoAxis\SoftwareOcclusionBuffer.cpp" />
     <ClCompile Include="NeoAxis\StringUtils.cpp" />
     <ClCompile Include="NeoAxis\UtilsNativeWrapper.cpp" />
     <ClCompile Include="NeoAxis\Vector3I.cpp" />
@@ -180,6 +182,8 @@
     <ClInclude Include="ImageLibrary\OgreVector3D.h" />
     <ClInclude Include="ImageLibrary\OgreVector4.h" />
     <ClInclude Include="ImageLibrary\YUVToRGBConverter.h" />
+    <ClInclude Include="MaskedOcclusionCulling\FrameRecorder.h" />
+    <ClInclude Include="MaskedOcclusionCulling\MaskedOcclusionCulling.h" />
     <ClInclude Include="MemoryManager\MemoryManager.h" />
     <ClInclude Include="MemoryManager\MemoryManagerInternal.h" />
     <ClInclude Include="MemoryManager\MemoryManagerInternal_precompiled.h" />
@@ -213,7 +217,6 @@
     <ClInclude Include="NeoAxis\OBB.h" />
     <ClInclude Include="NeoAxis\OBBD.h" />
     <ClInclude Include="NeoAxis\OctreeContainer.h" />
-    <ClInclude Include="NeoAxis\SoftwareOcclusionBuffer.h" />
     <ClInclude Include="NeoAxis\StringUtils.h" />
     <ClInclude Include="NeoAxis\UtilsNativeWrapper.h" />
     <ClInclude Include="NeoAxis\Vector3I.h" />
@@ -238,6 +241,8 @@
     <ClInclude Include="NeoAxis\vhacd\VHACD.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="MaskedOcclusionCulling\CompilerSpecific.inl" />
+    <None Include="MaskedOcclusionCulling\MaskedOcclusionCullingCommon.inl" />
     <None Include="NeoAxis\vhacd\src\FloatMath.inl" />
     <None Include="NeoAxis\vhacd\src\vhacdCircularList.inl" />
     <None Include="NeoAxis\vhacd\src\vhacdVector.inl" />
@@ -291,7 +296,7 @@
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>ImageLibrary;..\NativeMemoryManager;..\External\FreeImage\Source;..\External\FreeType\include;NeoAxis;NeoAxis\hacd\HACD_Lib\inc;NativeWrapper;MemoryManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>ImageLibrary;..\NativeMemoryManager;..\External\FreeImage\Source;..\External\FreeType\include;NeoAxis;NeoAxis\hacd\HACD_Lib\inc;NativeWrapper;MemoryManager;MaskedOcclusionCulling;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_USRDLL;_MT;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;FREEIMAGE_LIB;_WINRT_DLL;NATIVEMEMORYMANAGER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>

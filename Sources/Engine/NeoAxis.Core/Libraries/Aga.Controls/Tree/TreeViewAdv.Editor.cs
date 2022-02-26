@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
-using Aga.Controls.Tree.NodeControls;
+using Internal.Aga.Controls.Tree.NodeControls;
 using System.Drawing;
 
-namespace Aga.Controls.Tree
+namespace Internal.Aga.Controls.Tree
 {
 	partial class TreeViewAdv
 	{

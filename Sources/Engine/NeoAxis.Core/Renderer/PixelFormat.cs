@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -359,11 +359,11 @@ namespace NeoAxis
 			return OgrePixelUtil.isDepth( format );
 		}
 
-		public static ColorValue UnpackColor( PixelFormat format, IntPtr source )
-		{
-			float r = 0, g = 0, b = 0, a = 1;
-			OgrePixelUtil.unpackColour( out r, out g, out b, out a, format, source );
-			return new ColorValue( r, g, b, a );
-		}
+		//public static ColorValue UnpackColor( PixelFormat format, IntPtr source )
+		//{
+		//	float r = 0, g = 0, b = 0, a = 1;
+		//	OgrePixelUtil.unpackColour( out r, out g, out b, out a, format, source );
+		//	return new ColorValue( r, g, b, a );
+		//}
 	}
 }

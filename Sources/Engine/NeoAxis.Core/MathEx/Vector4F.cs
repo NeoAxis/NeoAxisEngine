@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
@@ -553,7 +553,7 @@ namespace NeoAxis
 			{
 				if( index < 0 || index > 3 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( float* v = &this.X )
+				fixed( float* v = &this.X )
 				{
 					return v[ index ];
 				}
@@ -562,7 +562,7 @@ namespace NeoAxis
 			{
 				if( index < 0 || index > 3 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( float* v = &this.X )
+				fixed( float* v = &this.X )
 				{
 					v[ index ] = value;
 				}
@@ -1182,6 +1182,16 @@ namespace NeoAxis
 		public PlaneF ToPlane()
 		{
 			return new PlaneF( this );
+		}
+
+		public bool Equals( ref Vector4F v )
+		{
+			return X == v.X && Y == v.Y && Z == v.Z && W == v.W;
+		}
+
+		public static bool Equals( ref Vector4F v1, ref Vector4F v2 )
+		{
+			return v1.X == v2.X && v1.Y == v2.Y && v1.Z == v2.Z && v1.W == v2.W;
 		}
 	}
 }

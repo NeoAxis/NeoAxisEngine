@@ -1,6 +1,6 @@
 $input v_texCoord0
 
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "../../Common.sh"
 #include "../../FragmentFunctions.sh"
 
@@ -19,14 +19,13 @@ SAMPLER2D(s_depthTexture, 3);
 SAMPLER2D(s_normalTexture, 4);
 
 SAMPLERCUBE(s_environmentTexture, 5);
-SAMPLERCUBE(s_environmentTextureIBL, 6);
+//SAMPLERCUBE(s_environmentTextureIBL, 6);
 SAMPLER2D(s_brdfLUT, 7);
 
 SAMPLER2D(s_gBuffer2Texture, 8);
 
 SAMPLER2D(s_gBuffer0Texture, 9);
 
-#include "../../PBRFilament/common_types.sh"
 #include "../../PBRFilament/common_math.sh"
 #include "../../PBRFilament/brdf.sh"
 #include "../../PBRFilament/PBRFilament.sh"
@@ -82,7 +81,7 @@ void main()
 		setupPBRFilamentParams(material, vec3_splat(0), vec3_splat(0), normal, normal, toLight, toCamera, false);//gl_FrontFacing);
 
 		EnvironmentTextureData data;
-		data.rotation = mat3(1,0,0,0,1,0,0,0,1);
+		data.rotation = vec4(0,0,0,1);
 		data.multiplierAndAffect = vec4_splat(1);
 
 		vec3 specularUsual;

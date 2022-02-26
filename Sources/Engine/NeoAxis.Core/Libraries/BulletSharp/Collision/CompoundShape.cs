@@ -1,9 +1,9 @@
-using BulletSharp.Math;
+using Internal.BulletSharp.Math;
 using System;
 using System.Runtime.InteropServices;
-using static BulletSharp.UnsafeNativeMethods;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class CompoundShapeChild
 	{
@@ -49,11 +49,11 @@ namespace BulletSharp
 			set => btCompoundShapeChild_setNode(Native, (value != null) ? value.Native : IntPtr.Zero);
 		}
 
-		public Matrix Transform
+		public BMatrix Transform
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btCompoundShapeChild_getTransform(Native, out value);
 				return value;
 			}
@@ -71,18 +71,18 @@ namespace BulletSharp
 			_childList = new CompoundShapeChildArray(Native);
 		}
 
-		public void AddChildShapeRef(ref Matrix localTransform, CollisionShape shape)
+		public void AddChildShapeRef(ref BMatrix localTransform, CollisionShape shape)
 		{
 			_childList.AddChildShape(ref localTransform, shape);
 		}
 
-		public void AddChildShape(Matrix localTransform, CollisionShape shape)
+		public void AddChildShape(BMatrix localTransform, CollisionShape shape)
 		{
 			_childList.AddChildShape(ref localTransform, shape);
 		}
 
-	   public void CalculatePrincipalAxisTransform(double[] masses, ref Matrix principal,
-			out Vector3 inertia)
+	   public void CalculatePrincipalAxisTransform(double[] masses, ref BMatrix principal,
+			out BVector3 inertia)
 		{
 			btCompoundShape_calculatePrincipalAxisTransform(Native, masses,
 				ref principal, out inertia);
@@ -98,14 +98,14 @@ namespace BulletSharp
 			return _childList[index].ChildShape;
 		}
 
-		public void GetChildTransform(int index, out Matrix value)
+		public void GetChildTransform(int index, out BMatrix value)
 		{
 			btCompoundShape_getChildTransform(Native, index, out value);
 		}
 
-		public Matrix GetChildTransform(int index)
+		public BMatrix GetChildTransform(int index)
 		{
-			Matrix value;
+			BMatrix value;
 			btCompoundShape_getChildTransform(Native, index, out value);
 			return value;
 		}
@@ -125,7 +125,7 @@ namespace BulletSharp
 			_childList.RemoveChildShapeByIndex(childShapeIndex);
 		}
 
-		public void UpdateChildTransform(int childIndex, Matrix newChildTransform,
+		public void UpdateChildTransform(int childIndex, BMatrix newChildTransform,
 			bool shouldRecalculateLocalAabb = true)
 		{
 			btCompoundShape_updateChildTransform(Native, childIndex, ref newChildTransform,

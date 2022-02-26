@@ -1,9 +1,5 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.InteropServices;
-using System.Collections.ObjectModel;
 using System.Reflection;
 using System.ComponentModel;
 
@@ -549,6 +545,38 @@ namespace NeoAxis
 			}
 			else
 				return TypeUtility.DisplayNameAddSpaces( str );
+		}
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	[AttributeUsage( AttributeTargets.Class, AllowMultiple = true )]
+	public class AddToResourcesWindowAttribute : Attribute
+	{
+		string path;
+		double sortOrder;
+		bool disabled;
+
+		public AddToResourcesWindowAttribute( string path, double sortOrder = 0, bool disabled = false )
+		{
+			this.path = path;
+			this.sortOrder = sortOrder;
+			this.disabled = disabled;
+		}
+
+		public string Path
+		{
+			get { return path; }
+		}
+
+		public double SortOrder
+		{
+			get { return sortOrder; }
+		}
+
+		public bool Disabled
+		{
+			get { return disabled; }
 		}
 	}
 

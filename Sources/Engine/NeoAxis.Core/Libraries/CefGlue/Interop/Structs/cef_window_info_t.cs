@@ -1,8 +1,9 @@
-﻿//
+#if !NO_UI_WEB_BROWSER
+//
 // This file manually written from:
 //     cef/include/internal/cef_types_win.h.
 //
-namespace Xilium.CefGlue.Interop
+namespace Internal.Xilium.CefGlue.Interop
 {
     using System;
     using System.Runtime.InteropServices;
@@ -145,3 +146,5 @@ namespace Xilium.CefGlue.Interop
     }
 
 }
+
+#endif

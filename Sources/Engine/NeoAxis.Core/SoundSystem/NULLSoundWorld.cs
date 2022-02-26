@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -28,21 +28,21 @@ namespace NeoAxis
 		{
 		}
 
-		protected override Sound _SoundCreateDataBuffer( SoundModes mode, int channels, int frequency, int bufferSize, DataReadDelegate dataBufferCallback )
+		protected override SoundData Internal_SoundCreateDataBuffer( SoundModes mode, int channels, int frequency, int bufferSize, DataReadDelegate dataBufferCallback )
 		{
 			return null;
 		}
 
-		protected override bool _RecordStart( Sound sound )
+		protected override bool Internal_RecordStart( SoundData sound )
 		{
 			return false;
 		}
 
-		protected override void _RecordStop()
+		protected override void Internal_RecordStop()
 		{
 		}
 
-		protected override bool _IsRecording()
+		protected override bool Internal_IsRecording()
 		{
 			return false;
 		}
@@ -57,7 +57,7 @@ namespace NeoAxis
 		//   get { return new string[ 0 ]; }
 		//}
 
-		protected override string[] _RecordDrivers
+		protected override string[] Internal_RecordDrivers
 		{
 			get { return new string[ 0 ]; }
 		}
@@ -68,13 +68,13 @@ namespace NeoAxis
 		//   set { }
 		//}
 
-		protected override int _RecordDriver
+		protected override int Internal_RecordDriver
 		{
 			get { return -1; }
 			set { }
 		}
 
-		protected override string _DriverName
+		protected override string Internal_DriverName
 		{
 			get { return "NULL"; }
 		}

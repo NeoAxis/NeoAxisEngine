@@ -1,7 +1,8 @@
-﻿using System;
-using static LiteDB.Constants;
+#if !NO_LITE_DB
+using System;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     internal class DataBlock
     {
@@ -99,3 +100,4 @@ namespace LiteDB.Engine
         }
     }
 }
+#endif

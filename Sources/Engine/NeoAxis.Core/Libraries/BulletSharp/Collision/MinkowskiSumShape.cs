@@ -1,7 +1,7 @@
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class MinkowskiSumShape : ConvexInternalShape
 	{
@@ -16,22 +16,22 @@ namespace BulletSharp
 
 		public ConvexShape ShapeB { get; }
 
-		public Matrix TransformA
+		public BMatrix TransformA
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btMinkowskiSumShape_getTransformA(Native, out value);
 				return value;
 			}
 			set => btMinkowskiSumShape_setTransformA(Native, ref value);
 		}
 
-		public Matrix TransformB
+		public BMatrix TransformB
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btMinkowskiSumShape_GetTransformB(Native, out value);
 				return value;
 			}

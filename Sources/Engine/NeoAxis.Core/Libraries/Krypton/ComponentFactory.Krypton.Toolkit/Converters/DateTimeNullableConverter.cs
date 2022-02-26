@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     /// <summary>
     /// Add DBNull/Null conversion for date time types.

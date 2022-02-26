@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -205,14 +205,14 @@ namespace NeoAxis
 			{
 				if( index < 0 || index > 3 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( Vector4F* v = &this.Item0 )
+				fixed( Vector4F* v = &this.Item0 )
 					return v[ index ];
 			}
 			set
 			{
 				if( index < 0 || index > 3 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( Vector4F* v = &this.Item0 )
+				fixed( Vector4F* v = &this.Item0 )
 					v[ index ] = value;
 			}
 		}
@@ -1038,7 +1038,7 @@ namespace NeoAxis
 					throw new ArgumentOutOfRangeException( "row" );
 				if( column < 0 || column > 3 )
 					throw new ArgumentOutOfRangeException( "column" );
-				fixed ( float* v = &this.Item0.X )
+				fixed( float* v = &this.Item0.X )
 					return v[ row * 4 + column ];
 			}
 			set
@@ -1047,7 +1047,7 @@ namespace NeoAxis
 					throw new ArgumentOutOfRangeException( "row" );
 				if( column < 0 || column > 3 )
 					throw new ArgumentOutOfRangeException( "column" );
-				fixed ( float* v = &this.Item0.X )
+				fixed( float* v = &this.Item0.X )
 					v[ row * 4 + column ] = value;
 			}
 		}
@@ -1333,6 +1333,30 @@ namespace NeoAxis
 			result.Item3.Y = Item3.Y;
 			result.Item3.Z = Item3.Z;
 			result.Item3.W = Item3.W;
+		}
+
+		/// <summary>
+		/// Converts the current instance of <see cref="Matrix4F"/> to the matrix of <see cref="Matrix4H"/> format.
+		/// </summary>
+		/// <param name="result">When the method completes, contains the matrix of <see cref="Matrix4H"/> format.</param>
+		public void ToMatrix4H( out Matrix4H result )
+		{
+			result.Item0.X = new HalfType( Item0.X );
+			result.Item0.Y = new HalfType( Item0.Y );
+			result.Item0.Z = new HalfType( Item0.Z );
+			result.Item0.W = new HalfType( Item0.W );
+			result.Item1.X = new HalfType( Item1.X );
+			result.Item1.Y = new HalfType( Item1.Y );
+			result.Item1.Z = new HalfType( Item1.Z );
+			result.Item1.W = new HalfType( Item1.W );
+			result.Item2.X = new HalfType( Item2.X );
+			result.Item2.Y = new HalfType( Item2.Y );
+			result.Item2.Z = new HalfType( Item2.Z );
+			result.Item2.W = new HalfType( Item2.W );
+			result.Item3.X = new HalfType( Item3.X );
+			result.Item3.Y = new HalfType( Item3.Y );
+			result.Item3.Z = new HalfType( Item3.Z );
+			result.Item3.W = new HalfType( Item3.W );
 		}
 
 		/// <summary>

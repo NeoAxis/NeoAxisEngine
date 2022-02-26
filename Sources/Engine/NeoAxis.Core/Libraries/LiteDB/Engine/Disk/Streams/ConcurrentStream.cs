@@ -1,8 +1,9 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.IO;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     /// <summary>
     /// Implement internal thread-safe Stream using lock control - A single instance of ConcurrentStream are not multi thread,
@@ -78,3 +79,4 @@ namespace LiteDB.Engine
         }
     }
 }
+#endif

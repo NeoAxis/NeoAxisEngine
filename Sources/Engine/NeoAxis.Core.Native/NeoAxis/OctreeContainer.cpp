@@ -1,7 +1,8 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "OgreStableHeaders.h"
 #include "NeoAxisCoreNative.h"
 #include "OctreeContainer.h"
+#include "MaskedOcclusionCulling.h"
 #include <mutex>
 
 using namespace Ogre;
@@ -11,6 +12,35 @@ using namespace Ogre;
 class OctreeContainer;
 
 int GetObjectsRaySortCompare( const void* a, const void* b );
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//!!!!double
+void GetBoundsGeometryVertices(const BoundsD& bounds, Vector3* positions)
+{
+	positions[0] = Vector3(bounds.maximum.x, bounds.minimum.y, bounds.minimum.z);
+	positions[1] = Vector3(bounds.maximum.x, bounds.minimum.y, bounds.maximum.z);
+	positions[2] = Vector3(bounds.maximum.x, bounds.maximum.y, bounds.minimum.z);
+	positions[3] = Vector3(bounds.maximum.x, bounds.maximum.y, bounds.maximum.z);
+	positions[4] = Vector3(bounds.minimum.x, bounds.minimum.y, bounds.minimum.z);
+	positions[5] = Vector3(bounds.minimum.x, bounds.minimum.y, bounds.maximum.z);
+	positions[6] = Vector3(bounds.minimum.x, bounds.maximum.y, bounds.minimum.z);
+	positions[7] = Vector3(bounds.minimum.x, bounds.maximum.y, bounds.maximum.z);
+}
+
+static const unsigned int boundsGeometryIndices[36] = {
+	0, 3, 1,
+	0, 2, 3,
+	3, 6, 7,
+	3, 2, 6,
+	1, 7, 5,
+	1, 3, 7,
+	4, 7, 6,
+	4, 5, 7,
+	1, 4, 0,
+	5, 4, 1,
+	4, 2, 0,
+	4, 6, 2 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -36,6 +66,8 @@ public:
 		uint groupMask;
 		BoundsD bounds;
 		BoundsI nodeBoundsIndexes;
+		Vector3D boundsCenter;
+		Vector3D boundsHalfSize;
 
 		//inside octree data
 
@@ -96,8 +128,8 @@ public:
 		BoundsI indexBounds;
 		bool endNode;
 		BoundsD bounds;
-		//Vector3 boundsCenter;
-		//Vector3 boundsHalfSize;
+		Vector3D boundsCenter;
+		Vector3D boundsHalfSize;
 
 		//list of the objects which is fully contains the bounds of the node.
 		std::list<ObjectData*> bigObjects;
@@ -151,6 +183,18 @@ public:
 
 	/////////////////////////////////////////////
 
+	struct GetObjectsExtensionData
+	{
+		//int Mode;
+		void* occlusionCullingBuffer;
+		Ogre::Matrix4 viewProjectionMatrix;
+		//can use flags
+		int occlusionCullingBufferCullNodes;
+		int occlusionCullingBufferCullObjects;
+	};
+
+	/////////////////////////////////////////////
+
 	struct GetObjectsInputData
 	{
 		uint groupMask;
@@ -164,6 +208,7 @@ public:
 		int planesUseAdditionalBounds;
 		RayD ray;
 		ModeEnum mode;
+		GetObjectsExtensionData* extensionData;
 	};
 
 	/////////////////////////////////////////////
@@ -172,6 +217,7 @@ public:
 	{
 		std::vector<bool>* getObjectsChecked;
 		std::vector<int> getObjectsCheckedList;
+		GetObjectsExtensionData* extensionData;
 	};
 
 	/////////////////////////////////////////////
@@ -355,8 +401,7 @@ public:
 		Vector3D objectBoundsSize = objectData->bounds.getSize();
 		Vector3D nodeBoundsSize = node->bounds.getSize();
 
-		bool bigObject = objectBoundsSize.x > nodeBoundsSize.x || objectBoundsSize.y > nodeBoundsSize.y || 
-			objectBoundsSize.z > nodeBoundsSize.z;
+		bool bigObject = objectBoundsSize.x > nodeBoundsSize.x || objectBoundsSize.y > nodeBoundsSize.y || objectBoundsSize.z > nodeBoundsSize.z;
 		if( bigObject )
 		//if( objectData->bounds.contains( node->bounds ) )
 		{
@@ -527,7 +572,7 @@ public:
 			objectsOutsideOctree.erase( objectData->objectsOutsideOctreeListIterator );
 	}
 
-	int AddObject( const Vector3D& boundsMin, const Vector3D& boundsMax, int group )
+	int AddObject( const Vector3D& boundsMin, const Vector3D& boundsMax, uint groupMask )
 	{
 		BoundsD bounds( boundsMin, boundsMax );
 		if( bounds.getMinimum().x + .00001f > bounds.getMaximum().x )
@@ -559,8 +604,11 @@ public:
 		
 		//fill data
 		ObjectData* objectData = objects[ objectIndex ];
-		objectData->groupMask = (uint)( 1 << group );
+		objectData->groupMask = groupMask;// (uint)(1 << group);
 		objectData->bounds = bounds;
+		objectData->boundsCenter = bounds.getCenter();
+		objectData->boundsHalfSize = bounds.getMaximum() - objectData->boundsCenter;
+
 		GetEndNodeRangeByBoundsNotClamped( bounds, objectData->nodeBoundsIndexes );
 		objectData->flags = 0;
 
@@ -592,7 +640,7 @@ public:
 		objectsFreeIndexes.push( objectIndex );
 	}
 
-	void UpdateObject( int objectIndex, const Vector3D& boundsMin, const Vector3D& boundsMax, int group )
+	void UpdateObject( int objectIndex, const Vector3D& boundsMin, const Vector3D& boundsMax, uint groupMask )
 	{
 		if( objectIndex < 0 || objectIndex >= objects.size() )
 			Fatal( "OctreeContainer: UpdateObject: Invalid object index. objectIndex < 0 || objectIndex >= objects.size()." );
@@ -616,8 +664,10 @@ public:
 		if( !equalNodeIndexes )
 			RemoveObjectFromWorld( objectData );
 
-		objectData->groupMask = (uint)( 1 << group );
+		objectData->groupMask = groupMask;// (uint)(1 << group);
 		objectData->bounds = bounds;
+		objectData->boundsCenter = bounds.getCenter();
+		objectData->boundsHalfSize = bounds.getMaximum() - objectData->boundsCenter;
 		objectData->nodeBoundsIndexes = newNodeBoundsIndexes;
 
 		if( !equalNodeIndexes )
@@ -636,8 +686,13 @@ public:
 		GetObjectsTypes type;
 
 		virtual ~GetObjectsCheckShape() {}
-		virtual bool Intersects( const BoundsD& bounds ) = 0;
-		virtual bool Contains( const BoundsD& bounds ) = 0;
+
+		virtual bool Intersects( const BoundsD& bounds, const Vector3D& boundsCenter, const Vector3D& boundsHalfSize ) = 0;
+		virtual bool Contains( const BoundsD& bounds, const Vector3D& boundsCenter, const Vector3D& boundsHalfSize ) = 0;
+
+		virtual bool Intersects(const BoundsD& bounds ) = 0;
+		virtual bool Contains(const BoundsD& bounds ) = 0;
+
 		//check fully inside bounds
 		virtual bool InsideBounds( const BoundsD& bounds ) = 0;
 	};
@@ -654,16 +709,28 @@ public:
 			type = GetObjectsTypes_Bounds;
 		}
 
-		virtual bool Intersects( const BoundsD& bounds )
+		virtual bool Intersects( const BoundsD& bounds, const Vector3D& boundsCenter, const Vector3D& boundsHalfSize )
 		{
 			return getObjectsBounds.intersects( bounds );
 		}
 
-		virtual bool Contains( const BoundsD& bounds )
+		virtual bool Contains( const BoundsD& bounds, const Vector3D& boundsCenter, const Vector3D& boundsHalfSize )
 		{
 			//TO DO: никогда не будет contains если одна из сторон getObjectsBounds меньше размера ноды
 			//  где еще также сделать?
 			return getObjectsBounds.contains( bounds );
+		}
+
+		virtual bool Intersects(const BoundsD& bounds )
+		{
+			return getObjectsBounds.intersects(bounds);
+		}
+
+		virtual bool Contains(const BoundsD& bounds )
+		{
+			//TO DO: никогда не будет contains если одна из сторон getObjectsBounds меньше размера ноды
+			//  где еще также сделать?
+			return getObjectsBounds.contains(bounds);
 		}
 
 		virtual bool InsideBounds( const BoundsD& bounds )
@@ -686,20 +753,34 @@ public:
 			type = GetObjectsTypes_Sphere;
 		}
 
-		virtual bool Intersects( const BoundsD& bounds )
+		virtual bool Intersects( const BoundsD& bounds, const Vector3D& boundsCenter, const Vector3D& boundsHalfSize )
 		{
 			if( boundsOutsideSphere.intersects( bounds ) )
 			{
-				//TO DO: precalculate
 				AxisAlignedBoxD axisAlignedBox( bounds.minimum, bounds.maximum );
 				return getObjectsSphere.intersects( axisAlignedBox );
 			}
 			return false;
 		}
 
-		virtual bool Contains( const BoundsD& bounds )
+		virtual bool Contains( const BoundsD& bounds, const Vector3D& boundsCenter, const Vector3D& boundsHalfSize )
 		{
 			return boundsInsideSphere.contains( bounds );
+		}
+
+		virtual bool Intersects(const BoundsD& bounds )
+		{
+			if (boundsOutsideSphere.intersects(bounds))
+			{
+				AxisAlignedBoxD axisAlignedBox(bounds.minimum, bounds.maximum);
+				return getObjectsSphere.intersects(axisAlignedBox);
+			}
+			return false;
+		}
+
+		virtual bool Contains(const BoundsD& bounds )
+		{
+			return boundsInsideSphere.contains(bounds);
 		}
 
 		virtual bool InsideBounds( const BoundsD& bounds )
@@ -721,16 +802,28 @@ public:
 			type = GetObjectsTypes_Box;
 		}
 
-		virtual bool Intersects( const BoundsD& bounds )
+		virtual bool Intersects( const BoundsD& bounds, const Vector3D& boundsCenter, const Vector3D& boundsHalfSize )
 		{
 			if( boundsOutsideBox.intersects( bounds ) )
 				return getObjectsBox.intersects( bounds );
 			return false;
 		}
 
-		virtual bool Contains( const BoundsD& bounds )
+		virtual bool Contains( const BoundsD& bounds, const Vector3D& boundsCenter, const Vector3D& boundsHalfSize )
 		{
 			return getObjectsBox.contains( bounds );
+		}
+
+		virtual bool Intersects(const BoundsD& bounds )
+		{
+			if (boundsOutsideBox.intersects(bounds))
+				return getObjectsBox.intersects(bounds);
+			return false;
+		}
+
+		virtual bool Contains(const BoundsD& bounds )
+		{
+			return getObjectsBox.contains(bounds);
 		}
 
 		virtual bool InsideBounds( const BoundsD& bounds )
@@ -754,13 +847,10 @@ public:
 			type = GetObjectsTypes_Planes;
 		}
 
-		virtual bool Intersects( const BoundsD& bounds )
+		virtual bool Intersects( const BoundsD& bounds, const Vector3D& boundsCenter, const Vector3D& boundsHalfSize )
 		{
 			if( !additionalBoundsInitialized || additionalOutsideBounds.intersects( bounds ) )
 			{
-				//TO DO: precalculate
-				Vector3D boundsCenter = bounds.getCenter();
-				Vector3D boundsHalfSize = bounds.getMaximum() - boundsCenter;
 				for( int n = 0; n < planeCount; n++ )
 				{
 					if( planes[ n ].getSide( boundsCenter, boundsHalfSize ) == PlaneD::POSITIVE_SIDE )
@@ -771,14 +861,41 @@ public:
 			return false;
 		}
 
-		virtual bool Contains( const BoundsD& bounds )
+		virtual bool Contains( const BoundsD& bounds, const Vector3D& boundsCenter, const Vector3D& boundsHalfSize )
 		{
-			//TO DO: precalculate
-			Vector3D boundsCenter = bounds.getCenter();
-			Vector3D boundsHalfSize = bounds.getMaximum() - boundsCenter;
 			for( int n = 0; n < planeCount; n++ )
 			{
 				if( planes[ n ].getSide( boundsCenter, boundsHalfSize ) != PlaneD::NEGATIVE_SIDE )
+					return false;
+			}
+			return true;
+		}
+
+		virtual bool Intersects(const BoundsD& bounds )
+		{
+			if (!additionalBoundsInitialized || additionalOutsideBounds.intersects(bounds))
+			{
+				Vector3D boundsCenter = bounds.getCenter();
+				Vector3D boundsHalfSize = bounds.getMaximum() - boundsCenter;
+
+				for (int n = 0; n < planeCount; n++)
+				{
+					if (planes[n].getSide(boundsCenter, boundsHalfSize) == PlaneD::POSITIVE_SIDE)
+						return false;
+				}
+				return true;
+			}
+			return false;
+		}
+
+		virtual bool Contains(const BoundsD& bounds )
+		{
+			Vector3D boundsCenter = bounds.getCenter();
+			Vector3D boundsHalfSize = bounds.getMaximum() - boundsCenter;
+
+			for (int n = 0; n < planeCount; n++)
+			{
+				if (planes[n].getSide(boundsCenter, boundsHalfSize) != PlaneD::NEGATIVE_SIDE)
 					return false;
 			}
 			return true;
@@ -794,8 +911,64 @@ public:
 
 	/////////////////////////////////////////////
 
-	void GetObjectsNodeRecursive( GetObjectsContext* context, Node* node, GetObjectsCheckShape* checkShape, bool skipShapeCheck, uint groupMask, ModeEnum mode,
-		int* outputArray, int outputArraySize, int& resultCount, int& outputArrayIndex, int& nodesProcessed )
+	//!!!!может можно склеить ExtensionDataIntersects и ExtensionDataContains
+
+	bool ExtensionDataIntersects( GetObjectsContext* context, const BoundsD& bounds, bool isNode )
+	{
+		OctreeContainer::GetObjectsExtensionData* data = context->extensionData;
+		if (data != nullptr && (data->occlusionCullingBufferCullNodes && isNode || data->occlusionCullingBufferCullObjects && !isNode))
+		{
+			MaskedOcclusionCulling* buffer = (MaskedOcclusionCulling*)data->occlusionCullingBuffer;
+			float* modelToClipMatrix = (float*)&data->viewProjectionMatrix;
+
+
+			//!!!!double
+			Vector3 positions[8];
+			GetBoundsGeometryVertices(bounds, positions);
+
+			//for (int n = 0; n < 8; n++)
+			//{
+			//	Vector3 pos = data->viewProjectionMatrix * positions[n];
+			//	pos.z = 1.0f / pos.z;
+			//	positions[n] = pos;
+			//	//positions[n] = data->viewProjectionMatrix * positions[n];
+			//}
+
+			//Bounds b = Bounds(positions[0]);
+			//for (int n = 1; n < 8; n++)
+			//	b.add(positions[n]);
+
+			//MaskedOcclusionCulling::CullingResult result = buffer->TestRect(b.minimum.x, b.minimum.y, b.maximum.x, b.maximum.y, b.maximum.z);
+
+			MaskedOcclusionCulling::CullingResult result = buffer->TestTriangles((float*)&positions[0], &boundsGeometryIndices[0], 12, modelToClipMatrix, MaskedOcclusionCulling::BACKFACE_CW, MaskedOcclusionCulling::CLIP_PLANE_ALL, MaskedOcclusionCulling::VertexLayout(12, 4, 8));
+
+			//!!!!VIEW_CULLED
+
+			if (result == MaskedOcclusionCulling::OCCLUDED)
+				return false;
+			else
+				return true;
+		}
+
+		return true;
+	}
+
+	bool ExtensionDataContains( GetObjectsContext* context, const BoundsD& bounds )
+	{
+		OctreeContainer::GetObjectsExtensionData* data = context->extensionData;
+		if (data != nullptr )
+		{
+			//!!!!slowly
+			
+			//!!!!модифицированный TestRect
+
+			return false;
+		}
+
+		return true;
+	}
+
+	void GetObjectsNodeRecursive( GetObjectsContext* context, Node* node, GetObjectsCheckShape* checkShape, bool skipShapeCheck, uint groupMask, ModeEnum mode, int* outputArray, int outputArraySize, int& resultCount, int& outputArrayIndex, int& nodesProcessed )
 	{
 		nodesProcessed++;
 
@@ -804,9 +977,9 @@ public:
 		{
 			ObjectData* objectData = *it;
 
-			if( !(*context->getObjectsChecked)[objectData->index] )
+			if( (groupMask & objectData->groupMask) != 0 && !(*context->getObjectsChecked)[objectData->index] )
 			{
-				if( ( groupMask & objectData->groupMask ) != 0 && ( skipShapeCheck || checkShape->Intersects( objectData->bounds ) ) )
+				if( skipShapeCheck || checkShape->Intersects( objectData->bounds, objectData->boundsCenter, objectData->boundsHalfSize ) && ExtensionDataIntersects( context, objectData->bounds, false ) )
 				{
 					if (mode == ModeEnum_One && resultCount != 0)
 						break;
@@ -833,9 +1006,9 @@ public:
 		{
 			ObjectData* objectData = *it;
 
-			if (!(*context->getObjectsChecked)[objectData->index])
+			if ( (groupMask & objectData->groupMask) != 0 && !(*context->getObjectsChecked)[objectData->index])
 			{
-				if( ( groupMask & objectData->groupMask ) != 0 && ( skipShapeCheck || checkShape->Intersects( objectData->bounds ) ) )
+				if( skipShapeCheck || checkShape->Intersects( objectData->bounds, objectData->boundsCenter, objectData->boundsHalfSize ) && ExtensionDataIntersects( context, objectData->bounds, false ) )
 				{
 					if (mode == ModeEnum_One && resultCount != 0)
 						break;
@@ -871,11 +1044,11 @@ public:
 				//if( childNode && childNode->indexBoundsMinusOne.intersects( indexBounds ) )
 				//if( childNode && childNode->indexBounds.intersects( indexBounds ) )
 
-				if( childNode && ( skipShapeCheck || checkShape->Intersects( childNode->bounds ) ) )
+				if( childNode && ( skipShapeCheck || checkShape->Intersects( childNode->bounds, childNode->boundsCenter, childNode->boundsHalfSize ) && ExtensionDataIntersects( context, childNode->bounds, true ) ) )
 				{
 					bool childSkipShapeCheck;
 					if( !skipShapeCheck )
-						childSkipShapeCheck = checkShape->Contains( childNode->bounds );
+						childSkipShapeCheck = checkShape->Contains( childNode->bounds, childNode->boundsCenter, childNode->boundsHalfSize ) && ExtensionDataContains( context, childNode->bounds );
 					else
 						childSkipShapeCheck = true;
 
@@ -921,6 +1094,7 @@ public:
 		GetObjectsContext* context = new GetObjectsContext();
 		context->getObjectsChecked = GetObjectsFreeCheckedList();
 		context->getObjectsCheckedList.reserve(objects.size());
+		context->extensionData = inputData.extensionData;
 
 		//rebuild tree if need
 		CheckForRebuildTree();
@@ -1011,9 +1185,9 @@ public:
 			{
 				ObjectData* objectData = *it;
 
-				if (!(*context->getObjectsChecked)[objectData->index])
+				if ( (inputData.groupMask & objectData->groupMask) != 0 && !(*context->getObjectsChecked)[objectData->index])
 				{
-					if( ( inputData.groupMask & objectData->groupMask ) != 0 && checkShape->Intersects( objectData->bounds ) )
+					if( checkShape->Intersects( objectData->bounds, objectData->boundsCenter, objectData->boundsHalfSize ) && ExtensionDataIntersects( context, objectData->bounds, false ))
 					{
 						if (inputData.mode == ModeEnum_One && resultCount != 0)
 							break;
@@ -1057,9 +1231,9 @@ public:
 		{
 			ObjectData* objectData = *it;
 
-			if (!(*context->getObjectsChecked)[objectData->index])
+			if ( (groupMask & objectData->groupMask) != 0 && !(*context->getObjectsChecked)[objectData->index])
 			{
-				if( ( groupMask & objectData->groupMask ) != 0 && rayBounds.intersects( objectData->bounds ) )
+				if( rayBounds.intersects( objectData->bounds ) )
 				{
 					AxisAlignedBoxD axisAlignedBox( objectData->bounds.minimum, objectData->bounds.maximum );
 					std::pair<bool, Real> pair = ray.intersects( axisAlignedBox );
@@ -1086,9 +1260,9 @@ public:
 		{
 			ObjectData* objectData = *it;
 
-			if (!(*context->getObjectsChecked)[objectData->index])
+			if ( (groupMask & objectData->groupMask) != 0 && !(*context->getObjectsChecked)[objectData->index])
 			{
-				if( ( groupMask & objectData->groupMask ) != 0 && rayBounds.intersects( objectData->bounds ) )
+				if( rayBounds.intersects( objectData->bounds ) )
 				{
 					AxisAlignedBoxD axisAlignedBox( objectData->bounds.minimum, objectData->bounds.maximum );
 					std::pair<bool, Real> pair = ray.intersects( axisAlignedBox );
@@ -1134,6 +1308,7 @@ public:
 		GetObjectsContext* context = new GetObjectsContext();
 		context->getObjectsChecked = GetObjectsFreeCheckedList();
 		context->getObjectsCheckedList.reserve(objects.size());
+		context->extensionData = inputData.extensionData;
 
 		//rebuild tree if need
 		CheckForRebuildTree();
@@ -1167,9 +1342,9 @@ public:
 			{
 				ObjectData* objectData = *it;
 
-				if (!(*context->getObjectsChecked)[objectData->index])
+				if ( (inputData.groupMask & objectData->groupMask) != 0 && !(*context->getObjectsChecked)[objectData->index])
 				{
-					if( ( inputData.groupMask & objectData->groupMask ) != 0 && rayBounds.intersects( objectData->bounds ) )
+					if( rayBounds.intersects( objectData->bounds ) )
 					{
 						AxisAlignedBoxD axisAlignedBox( objectData->bounds.minimum, objectData->bounds.maximum );
 						std::pair<bool, Real> pair = inputData.ray.intersects( axisAlignedBox );
@@ -1458,6 +1633,8 @@ OctreeContainer::Node::Node( OctreeContainer* owner, Node* parent, const BoundsI
 	bounds = BoundsD(
 		owner->nodesBounds.getMinimum() + indexBounds.getMinimum().toVector3D() * owner->minNodeSize,
 		owner->nodesBounds.getMinimum() + indexBounds.getMaximum().toVector3D() * owner->minNodeSize );
+	boundsCenter = bounds.getCenter();
+	boundsHalfSize = bounds.getMaximum() - boundsCenter;
 
 	owner->totalNodeCount++;
 }
@@ -1520,9 +1697,9 @@ EXPORT void OctreeContainer_RebuildTree( OctreeContainer* container )
 	container->RebuildTree( false );
 }
 
-EXPORT int OctreeContainer_AddObject( OctreeContainer* container, const Vector3D& boundsMin, const Vector3D& boundsMax, int group )
+EXPORT int OctreeContainer_AddObject( OctreeContainer* container, const Vector3D& boundsMin, const Vector3D& boundsMax, uint groupMask )
 {
-	return container->AddObject( boundsMin, boundsMax, group );
+	return container->AddObject( boundsMin, boundsMax, groupMask );
 }
 
 EXPORT void OctreeContainer_RemoveObject( OctreeContainer* container, int objectIndex )
@@ -1531,9 +1708,9 @@ EXPORT void OctreeContainer_RemoveObject( OctreeContainer* container, int object
 }
 
 EXPORT void OctreeContainer_UpdateObject( OctreeContainer* container, int objectIndex, const Vector3D& boundsMin, 
-	const Vector3D& boundsMax, int group )
+	const Vector3D& boundsMax, uint groupMask )
 {
-	container->UpdateObject( objectIndex, boundsMin, boundsMax, group );
+	container->UpdateObject( objectIndex, boundsMin, boundsMax, groupMask );
 }
 
 EXPORT int OctreeContainer_GetObjects( OctreeContainer* container, const OctreeContainer::GetObjectsInputData& inputData, 

@@ -5,7 +5,7 @@
 
 using System.Collections.Generic;
 
-namespace tainicom.Aether.Physics2D.Common.Decomposition.Seidel
+namespace Internal.tainicom.Aether.Physics2D.Common.Decomposition.Seidel
 {
     internal class Edge
     {

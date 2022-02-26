@@ -1,75 +1,150 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 //using Microsoft.CodeAnalysis.MSBuild;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using Internal;
 
 namespace NeoAxis
 {
 	/// <summary>
-	/// Utility class to work with the Visual Studio solution files.
+	/// A utility class to compile Visual Studio solution files.
 	/// </summary>
-	public static class VisualStudioSolutionUtility
+	static class VisualStudioSolutionUtility
 	{
-		/// <summary>
-		/// Compilation settings of a solution.
-		/// </summary>
-		public class BuildConfig
+		const string BuildConfiguration = "Release";
+		const string Verbosity = "minimal";
+
+		//
+
+		public static bool BuildSolution( string solutionFullPath, string outputDirectoryOptional, bool rebuild )//, out string error )
 		{
-			public string Verbosity = "minimal";
-			public string BuildPlatform = "Any CPU";
-			public string BuildConfiguration = "Release";
+			//error = "";
 
-			//public bool CreateAppxPackage;
-			//public string CreateAppxBundle = "Always";
-			//public bool AppxPackageSigningEnabled;
-			//public string AppxBundlePlatforms = "x64";
+			var solutionFileName = Path.GetFileName( solutionFullPath );
 
-			public string OutDir;
-			public string OutputAssemblyName;
-		}
-
-		public static string GetDotNetExecutablePath()
-		{
-			return Path.Combine( VirtualFileSystem.Directories.EngineInternal, @"Platforms\Windows\dotnet\dotnet.exe" );
-		}
-
-		public static string GetMSBuildFolderPath()
-		{
-			//const bool InternalMsBuild = true;
-			//if( InternalMsBuild )
-			//{
-
-			//!!!!
-
-			//string path = Path.Combine( VirtualFileSystem.Directories.EngineInternal, @"Platforms\Windows\dotnet\sdk" );
-			string path = Path.Combine( VirtualFileSystem.Directories.EngineInternal, @"Platforms\Windows\dotnet\sdk\3.1.302" );
-			//string path = Path.Combine( VirtualFileSystem.Directories.EngineInternal, @"Tools\BuildTools\MSBuild\15.0\Bin" );
-
-			if( !Directory.Exists( path ) )
+			string arguments;
 			{
-				Log.Fatal( $"Could not locate the MSBuild tools. Directory is not exists \'{path}\'." );
-				//throw new Exception( "Could not locate the tools (MSBuild) path." );
-			}
-			return path;
-			//}
-			//else
-			//{
-			//	// installed tools search:
+				//!!!!юзает последнюю версию фрейморка. например Preview
+				//[-r | --runtime<RUNTIME_IDENTIFIER>]
 
-			//	string toolsPath = "";//ToolLocationHelper.GetPathToBuildToolsFile( "msbuild.exe", ToolLocationHelper.CurrentToolsVersion );
-			//	if( string.IsNullOrEmpty( toolsPath ) )
-			//	{
-			//		toolsPath = PollForToolsPath().FirstOrDefault();
-			//	}
-			//	if( string.IsNullOrEmpty( toolsPath ) )
-			//	{
-			//		throw new Exception( "Could not locate the tools (MSBuild) path." );
-			//	}
-			//	return Path.GetDirectoryName( toolsPath );
-			//}
+				var builder = new StringBuilder();
+				builder.Append( "build" );
+				builder.Append( $" \"{solutionFullPath}\"" );
+
+				builder.Append( $" --configuration {BuildConfiguration}" );
+				builder.Append( $" --framework netcoreapp3.1" );
+
+				if( !string.IsNullOrEmpty( outputDirectoryOptional ) )
+					builder.Append( $" --output \"{outputDirectoryOptional}\"" );
+
+				builder.Append( $" --verbosity {Verbosity}" );
+
+				//!!!!optional? с опцией если нет файла, то ошибка при загрузке редактора
+				//builder.Append( " --no-restore" );
+
+				if( rebuild )
+					builder.Append( " --no-incremental" );
+
+				arguments = builder.ToString();
+			}
+
+			var dotnetExePath = Path.Combine( VirtualFileSystem.Directories.EngineInternal, @"Platforms\Windows\dotnet\dotnet.exe" );
+
+			var success = ProcessUtility.RunAndWait( dotnetExePath, arguments, out var result ) == 0;
+			result = result.Trim( new char[] { '\r', '\n' } );
+
+			if( success )
+			{
+				//!!!!get compilation info?
+
+				Log.Info( $"\'{solutionFileName}\' was built successfully." );
+				return true;
+			}
+			else
+			{
+				if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+				{
+					var error = $"Unable to compile solution {solutionFileName}. Continue?\r\n\r\n{result}\r\n\r\nCommand line:\r\n{dotnetExePath} {arguments}\r\n\r\nSee details in the log.";
+
+					if( LogPlatformFunctionality.Instance.ShowMessageBox( error, "Error", EMessageBoxButtons.OKCancel ) == EDialogResult.Cancel )
+					{
+						Process.GetCurrentProcess().Kill();
+						Environment.Exit( 0 );
+					}
+				}
+				else
+				{
+					var error = $"Unable to compile solution {solutionFileName}.\r\n\r\n{result}\r\n\r\nCommand line:\r\n{dotnetExePath} {arguments}\r\n\r\nSee details in the log.";
+
+					Log.Error( error );
+				}
+
+				return false;
+			}
 		}
+
+
+		///// <summary>
+		///// Compilation settings of a solution.
+		///// </summary>
+		//public class BuildConfig
+		//{
+		//	public string Verbosity = "minimal";
+		//	public string BuildPlatform = "Any CPU";
+		//	public string BuildConfiguration = "Release";
+
+		//	//public bool CreateAppxPackage;
+		//	//public string CreateAppxBundle = "Always";
+		//	//public bool AppxPackageSigningEnabled;
+		//	//public string AppxBundlePlatforms = "x64";
+
+		//	zzzzzz;
+		//	public string OutputDirectory;
+		//	public string OutputAssemblyName;
+		//}
+
+		//static string GetDotNetExecutablePath()
+		//{
+		//	return Path.Combine( VirtualFileSystem.Directories.EngineInternal, @"Platforms\Windows\dotnet\dotnet.exe" );
+		//}
+
+		//public static string GetMSBuildFolderPath()
+		//{
+		//	//const bool InternalMsBuild = true;
+		//	//if( InternalMsBuild )
+		//	//{
+
+		//	//!!!!
+
+		//	//string path = Path.Combine( VirtualFileSystem.Directories.EngineInternal, @"Platforms\Windows\dotnet\sdk" );
+		//	string path = Path.Combine( VirtualFileSystem.Directories.EngineInternal, @"Platforms\Windows\dotnet\sdk\3.1.302" );
+		//	//string path = Path.Combine( VirtualFileSystem.Directories.EngineInternal, @"Tools\BuildTools\MSBuild\15.0\Bin" );
+
+		//	if( !Directory.Exists( path ) )
+		//	{
+		//		Log.Fatal( $"Could not locate the MSBuild tools. Directory is not exists \'{path}\'." );
+		//		//throw new Exception( "Could not locate the tools (MSBuild) path." );
+		//	}
+		//	return path;
+		//	//}
+		//	//else
+		//	//{
+		//	//	// installed tools search:
+
+		//	//	string toolsPath = "";//ToolLocationHelper.GetPathToBuildToolsFile( "msbuild.exe", ToolLocationHelper.CurrentToolsVersion );
+		//	//	if( string.IsNullOrEmpty( toolsPath ) )
+		//	//	{
+		//	//		toolsPath = PollForToolsPath().FirstOrDefault();
+		//	//	}
+		//	//	if( string.IsNullOrEmpty( toolsPath ) )
+		//	//	{
+		//	//		throw new Exception( "Could not locate the tools (MSBuild) path." );
+		//	//	}
+		//	//	return Path.GetDirectoryName( toolsPath );
+		//	//}
+		//}
 
 		//static string GetTargetFrameworkRootPath()
 		//{
@@ -141,154 +216,156 @@ namespace NeoAxis
 		//	return success;
 		//}
 
-		public static bool BuildSolution( string solutionDir, string productName, BuildConfig config, bool rebuild )
-		{
-			var fileName = $"{productName}.sln";
+		//public static bool BuildSolution( string solutionDir, string productName, BuildConfig config, bool rebuild )
+		//{
+		//	var fileName = $"{productName}.sln";
 
-			string arguments;
-			{
-				//!!!!юзает последнюю версию фрейморка. например Preview
-				//[-r | --runtime<RUNTIME_IDENTIFIER>]
+		//	string arguments;
+		//	{
+		//		//!!!!юзает последнюю версию фрейморка. например Preview
+		//		//[-r | --runtime<RUNTIME_IDENTIFIER>]
 
-				var builder = new StringBuilder();
-				builder.Append( "build" );
-				builder.Append( $" \"{solutionDir}\\{productName}.sln\"" );
+		//		var builder = new StringBuilder();
+		//		builder.Append( "build" );
+		//		zzzzzz;
+		//		builder.Append( $" \"{solutionDir}\\{productName}.sln\"" );
 
-				builder.Append( $" --configuration {config.BuildConfiguration}" );
-				builder.Append( $" --framework netcoreapp3.1" );
+		//		builder.Append( $" --configuration {config.BuildConfiguration}" );
+		//		builder.Append( $" --framework netcoreapp3.1" );
 
-				if( !string.IsNullOrEmpty( config.OutDir ) )
-					builder.Append( $" --output \"{config.OutDir}\"" );
+		//		zzzzzz;
+		//		if( !string.IsNullOrEmpty( config.OutputDirectory ) )
+		//			builder.Append( $" --output \"{config.OutputDirectory}\"" );
 
-				builder.Append( $" --verbosity {config.Verbosity}" );
+		//		builder.Append( $" --verbosity {config.Verbosity}" );
 
-				//!!!!optional?
-				//builder.Append( " --no-restore" );
+		//		//!!!!optional?
+		//		//builder.Append( " --no-restore" );
 
-				if( rebuild )
-					builder.Append( " --no-incremental" );
+		//		if( rebuild )
+		//			builder.Append( " --no-incremental" );
 
-				//builder.Append( $" /p:Platform=\"{config.BuildPlatform}\"" );
-				//if( !string.IsNullOrEmpty( config.OutputAssemblyName ) )
-				//	builder.Append( $" /p:AssemblyName=\"{config.OutputAssemblyName}\"" );
+		//		//builder.Append( $" /p:Platform=\"{config.BuildPlatform}\"" );
+		//		//if( !string.IsNullOrEmpty( config.OutputAssemblyName ) )
+		//		//	builder.Append( $" /p:AssemblyName=\"{config.OutputAssemblyName}\"" );
 
-				//builder.Append( $" /p:AppxPackage={config.CreateAppxPackage}" );
-				//builder.Append( $" /p:AppxBundlePlatforms=\"{config.AppxBundlePlatforms}\"" );
-				//builder.Append( $" /p:AppxBundle={config.CreateAppxBundle}" );
-				//builder.Append( $" /p:AppxPackageSigningEnabled={config.AppxPackageSigningEnabled}" );
+		//		//builder.Append( $" /p:AppxPackage={config.CreateAppxPackage}" );
+		//		//builder.Append( $" /p:AppxBundlePlatforms=\"{config.AppxBundlePlatforms}\"" );
+		//		//builder.Append( $" /p:AppxBundle={config.CreateAppxBundle}" );
+		//		//builder.Append( $" /p:AppxPackageSigningEnabled={config.AppxPackageSigningEnabled}" );
 
-				//// instead of TargetFrameworkRootPath we can also use FrameworkPathOverride prop but only for .net 4.x building. 
-				//// FrameworkPathOverride will not work for UWP app building.
-				//string frameworkRootPath = GetTargetFrameworkRootPath();
-				//if( Directory.Exists( frameworkRootPath ) )
-				//	builder.Append( $" /p:TargetFrameworkRootPath=\"{frameworkRootPath}\"" );
-				//else
-				//	Log.Info( $"Framework Root Path '{frameworkRootPath}' not found. will be used Targeting Pack installed in system." );
+		//		//// instead of TargetFrameworkRootPath we can also use FrameworkPathOverride prop but only for .net 4.x building. 
+		//		//// FrameworkPathOverride will not work for UWP app building.
+		//		//string frameworkRootPath = GetTargetFrameworkRootPath();
+		//		//if( Directory.Exists( frameworkRootPath ) )
+		//		//	builder.Append( $" /p:TargetFrameworkRootPath=\"{frameworkRootPath}\"" );
+		//		//else
+		//		//	Log.Info( $"Framework Root Path '{frameworkRootPath}' not found. will be used Targeting Pack installed in system." );
 
-				arguments = builder.ToString();
-			}
+		//		arguments = builder.ToString();
+		//	}
 
-			var msBuildExePath = GetDotNetExecutablePath();
-			var success = ProcessUtility.RunAndWait( msBuildExePath, arguments, out var result ) == 0;
+		//	var msBuildExePath = GetDotNetExecutablePath();
+		//	var success = ProcessUtility.RunAndWait( msBuildExePath, arguments, out var result ) == 0;
 
-			//var msBuildExePath = Path.Combine( GetDotNetExecutablePath(), Path.Combine( GetMSBuildFolderPath(), "MSBuild.dll" ) );
+		//	//var msBuildExePath = Path.Combine( GetDotNetExecutablePath(), Path.Combine( GetMSBuildFolderPath(), "MSBuild.dll" ) );
 
-			//var msBuildExePath = Path.Combine( GetMSBuildFolderPath(), "msbuild.exe" );
-			//var success = ProcessUtility.RunAndWait( msBuildExePath, arguments, out var result ) == 0;
+		//	//var msBuildExePath = Path.Combine( GetMSBuildFolderPath(), "msbuild.exe" );
+		//	//var success = ProcessUtility.RunAndWait( msBuildExePath, arguments, out var result ) == 0;
 
-			result = result.Trim( new char[] { '\r', '\n' } );
+		//	result = result.Trim( new char[] { '\r', '\n' } );
 
-			if( success )
-			{
-				//!!!!result ignored?
+		//	if( success )
+		//	{
+		//		//!!!!result ignored?
 
-				Log.Info( $"\'{fileName}\' was built successfully." );
-				return true;
-			}
-			else
-			{
-				if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
-				{
-					var error = $"Unable to compile solution \'{fileName}\'. Continue?\r\n\r\n{result}\r\n\r\nCommand line:\r\n{msBuildExePath} {arguments}\r\n\r\nSee details in log.";
+		//		Log.Info( $"\'{fileName}\' was built successfully." );
+		//		return true;
+		//	}
+		//	else
+		//	{
+		//		if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+		//		{
+		//			var error = $"Unable to compile solution \'{fileName}\'. Continue?\r\n\r\n{result}\r\n\r\nCommand line:\r\n{msBuildExePath} {arguments}\r\n\r\nSee details in log.";
 
-					if( LogPlatformFunctionality.Get().ShowMessageBox( error, "Error", EMessageBoxButtons.OKCancel ) == EDialogResult.Cancel )
-					{
-						Process.GetCurrentProcess().Kill();
-						Environment.Exit( 0 );
-					}
-				}
-				else
-				{
-					var error = $"Unable to compile solution \'{fileName}\'.\r\n\r\n{result}\r\n\r\nCommand line:\r\n{msBuildExePath} {arguments}\r\n\r\nSee details in log.";
-					Log.Error( error );
-				}
+		//			if( LogPlatformFunctionality.Instance.ShowMessageBox( error, "Error", EMessageBoxButtons.OKCancel ) == EDialogResult.Cancel )
+		//			{
+		//				Process.GetCurrentProcess().Kill();
+		//				Environment.Exit( 0 );
+		//			}
+		//		}
+		//		else
+		//		{
+		//			var error = $"Unable to compile solution \'{fileName}\'.\r\n\r\n{result}\r\n\r\nCommand line:\r\n{msBuildExePath} {arguments}\r\n\r\nSee details in log.";
+		//			Log.Error( error );
+		//		}
 
-				return false;
-			}
+		//		return false;
+		//	}
 
 
 
-			//var fileName = $"{productName}.sln";
+		//	//var fileName = $"{productName}.sln";
 
-			//string arguments;
-			//{
-			//	var builder = new StringBuilder();
-			//	builder.Append( $"\"{solutionDir}\\{productName}.sln\" /nologo /maxcpucount /t:Build" );
-			//	builder.Append( $" /p:SolutionDir=\"{solutionDir}\"" );
-			//	if( !string.IsNullOrEmpty( config.OutDir ) )
-			//		builder.Append( $" /p:OutDir=\"{config.OutDir}\"" );
-			//	builder.Append( $" /p:Configuration={config.BuildConfiguration}" );
-			//	builder.Append( $" /p:Platform=\"{config.BuildPlatform}\"" );
-			//	if( !string.IsNullOrEmpty( config.OutputAssemblyName ) )
-			//		builder.Append( $" /p:AssemblyName=\"{config.OutputAssemblyName}\"" );
+		//	//string arguments;
+		//	//{
+		//	//	var builder = new StringBuilder();
+		//	//	builder.Append( $"\"{solutionDir}\\{productName}.sln\" /nologo /maxcpucount /t:Build" );
+		//	//	builder.Append( $" /p:SolutionDir=\"{solutionDir}\"" );
+		//	//	if( !string.IsNullOrEmpty( config.OutDir ) )
+		//	//		builder.Append( $" /p:OutDir=\"{config.OutDir}\"" );
+		//	//	builder.Append( $" /p:Configuration={config.BuildConfiguration}" );
+		//	//	builder.Append( $" /p:Platform=\"{config.BuildPlatform}\"" );
+		//	//	if( !string.IsNullOrEmpty( config.OutputAssemblyName ) )
+		//	//		builder.Append( $" /p:AssemblyName=\"{config.OutputAssemblyName}\"" );
 
-			//	builder.Append( $" /p:AppxPackage={config.CreateAppxPackage}" );
-			//	builder.Append( $" /p:AppxBundlePlatforms=\"{config.AppxBundlePlatforms}\"" );
-			//	builder.Append( $" /p:AppxBundle={config.CreateAppxBundle}" );
-			//	builder.Append( $" /p:AppxPackageSigningEnabled={config.AppxPackageSigningEnabled}" );
+		//	//	builder.Append( $" /p:AppxPackage={config.CreateAppxPackage}" );
+		//	//	builder.Append( $" /p:AppxBundlePlatforms=\"{config.AppxBundlePlatforms}\"" );
+		//	//	builder.Append( $" /p:AppxBundle={config.CreateAppxBundle}" );
+		//	//	builder.Append( $" /p:AppxPackageSigningEnabled={config.AppxPackageSigningEnabled}" );
 
-			//	// instead of TargetFrameworkRootPath we can also use FrameworkPathOverride prop but only for .net 4.x building. 
-			//	// FrameworkPathOverride will not work for UWP app building.
-			//	string frameworkRootPath = GetTargetFrameworkRootPath();
-			//	if( Directory.Exists( frameworkRootPath ) )
-			//		builder.Append( $" /p:TargetFrameworkRootPath=\"{frameworkRootPath}\"" );
-			//	else
-			//		Log.Info( $"Framework Root Path '{frameworkRootPath}' not found. will be used Targeting Pack installed in system." );
+		//	//	// instead of TargetFrameworkRootPath we can also use FrameworkPathOverride prop but only for .net 4.x building. 
+		//	//	// FrameworkPathOverride will not work for UWP app building.
+		//	//	string frameworkRootPath = GetTargetFrameworkRootPath();
+		//	//	if( Directory.Exists( frameworkRootPath ) )
+		//	//		builder.Append( $" /p:TargetFrameworkRootPath=\"{frameworkRootPath}\"" );
+		//	//	else
+		//	//		Log.Info( $"Framework Root Path '{frameworkRootPath}' not found. will be used Targeting Pack installed in system." );
 
-			//	builder.Append( $" /Verbosity:{config.Verbosity}" );
+		//	//	builder.Append( $" /Verbosity:{config.Verbosity}" );
 
-			//	if( rebuild )
-			//		builder.Append( " /t:Rebuild" );
+		//	//	if( rebuild )
+		//	//		builder.Append( " /t:Rebuild" );
 
-			//	//const bool PerformanceSummary = false;
-			//	//if( PerformanceSummary )
-			//	//	builder.Append( $" /clp:performancesummary" );
+		//	//	//const bool PerformanceSummary = false;
+		//	//	//if( PerformanceSummary )
+		//	//	//	builder.Append( $" /clp:performancesummary" );
 
-			//	arguments = builder.ToString();
-			//}
+		//	//	arguments = builder.ToString();
+		//	//}
 
-			//var msBuildExePath = Path.Combine( GetDotNetExecutablePath(), Path.Combine( GetMSBuildFolderPath(), "MSBuild.dll" ) );
-			//var success = ProcessUtility.RunAndWait( msBuildExePath, arguments, out var result ) == 0;
+		//	//var msBuildExePath = Path.Combine( GetDotNetExecutablePath(), Path.Combine( GetMSBuildFolderPath(), "MSBuild.dll" ) );
+		//	//var success = ProcessUtility.RunAndWait( msBuildExePath, arguments, out var result ) == 0;
 
-			////var msBuildExePath = Path.Combine( GetMSBuildFolderPath(), "msbuild.exe" );
-			////var success = ProcessUtility.RunAndWait( msBuildExePath, arguments, out var result ) == 0;
+		//	////var msBuildExePath = Path.Combine( GetMSBuildFolderPath(), "msbuild.exe" );
+		//	////var success = ProcessUtility.RunAndWait( msBuildExePath, arguments, out var result ) == 0;
 
-			//result = result.Trim( new char[] { '\r', '\n' } );
+		//	//result = result.Trim( new char[] { '\r', '\n' } );
 
-			//if( success )
-			//{
-			//	//!!!!result ignored?
+		//	//if( success )
+		//	//{
+		//	//	//!!!!result ignored?
 
-			//	Log.Info( $"\'{fileName}\' was built successfully." );
-			//	return true;
-			//}
-			//else
-			//{
-			//	var error = $"Unable to compile solution \'{fileName}\'.\r\n\r\n{result}\r\n\r\nCommand line:\r\n{msBuildExePath} {arguments}\r\n\r\nSee details in log.";
-			//	Log.Error( error );
-			//	return false;
-			//}
-		}
+		//	//	Log.Info( $"\'{fileName}\' was built successfully." );
+		//	//	return true;
+		//	//}
+		//	//else
+		//	//{
+		//	//	var error = $"Unable to compile solution \'{fileName}\'.\r\n\r\n{result}\r\n\r\nCommand line:\r\n{msBuildExePath} {arguments}\r\n\r\nSee details in log.";
+		//	//	Log.Error( error );
+		//	//	return false;
+		//	//}
+		//}
 
 		////!!!!uy
 		////!!!!тут ли

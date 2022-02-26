@@ -1,13 +1,14 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     /// <summary>
     /// A public class that take care of all engine data structure access - it´s basic implementation of a NoSql database
@@ -178,3 +179,4 @@ namespace LiteDB.Engine
 
     }
 }
+#endif

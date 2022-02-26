@@ -457,7 +457,7 @@ namespace Ogre {
 		currentRoot = NULL;
     }
 
-#ifdef ANDROID
+#if defined(ANDROID) || defined(IOS)
 	int RoundBase2(int x)
 	{
 		int n = 1;
@@ -493,7 +493,7 @@ namespace Ogre {
 			//	"FreeImageCodec::decode");
 		}
 
-#ifdef ANDROID
+#if defined(ANDROID) || defined(IOS)
 		//here?
 		int width = FreeImage_GetWidth(fiBitmap);
 		int height = FreeImage_GetHeight(fiBitmap);
@@ -504,10 +504,9 @@ namespace Ogre {
 			FreeImage_Unload(oldFiBitmap);
 		}
 #endif
-
-#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
-	#error MAKE_SMTH_WITH_NON_POWER_OF_TWO_TEXTURES
-#endif
+//#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+//	#error MAKE_SMTH_WITH_NON_POWER_OF_TWO_TEXTURES
+//#endif
 
 		ImageData* imgData = OGRE_NEW ImageData();
 		MemoryDataStreamPtr output;

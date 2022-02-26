@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Reflection;
-using SharpBgfx;
+using Internal;
+using Internal.SharpBgfx;
 
 namespace NeoAxis
 {
@@ -245,7 +246,7 @@ namespace NeoAxis
 				if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
 					Editor.PackageManager.DeleteFilesAsStartup();
 
-				NativeLibraryManager.PreLoadLibrary( "NeoAxisCoreNative" );
+				NativeUtility.PreloadLibrary( "NeoAxisCoreNative" );
 
 				InitDefaultSettingsConfig();
 
@@ -295,7 +296,7 @@ namespace NeoAxis
 			ResourceManager.Shutdown();
 
 			VirtualFileWatcher.Shutdown();
-			CSharpProjectFileUtility.FileWatcherShutdown();
+			CSharpProjectFileUtility.Shutdown();
 
 			//!!!!!
 			//PackageManager.Shutdown();
@@ -736,7 +737,7 @@ namespace NeoAxis
 			set { defaultSettingsConfig = value; }
 		}
 
-		public static void RegisterAssemblies_IncludingFromDefaultSettingConfig()
+		public static void RegisterAssembliesIncludingFromDefaultSettingConfig()
 		{
 			//NeoAxis.Core.dll
 			AssemblyUtility.RegisterAssembly( Assembly.GetExecutingAssembly(), "" );
@@ -773,51 +774,51 @@ namespace NeoAxis
 		{
 			var v = DefaultSettingsConfig.GetAttribute( "RendererBackend" );
 			if( !string.IsNullOrEmpty( v ) )
-				EngineSettings.Init.RendererBackend = (RendererBackend)Enum.Parse( typeof( RendererBackend ), v );
+				EngineApp.InitSettings.RendererBackend = (RendererBackend)Enum.Parse( typeof( RendererBackend ), v );
 
 			v = DefaultSettingsConfig.GetAttribute( "SimulationVSync" );
 			if( !string.IsNullOrEmpty( v ) )
-				EngineSettings.Init.SimulationVSync = bool.Parse( v );
+				EngineApp.InitSettings.SimulationVSync = bool.Parse( v );
 
 			v = DefaultSettingsConfig.GetAttribute( "SimulationTripleBuffering" );
 			if( !string.IsNullOrEmpty( v ) )
-				EngineSettings.Init.SimulationTripleBuffering = bool.Parse( v );
+				EngineApp.InitSettings.SimulationTripleBuffering = bool.Parse( v );
 
 			v = DefaultSettingsConfig.GetAttribute( "RendererReportDebugToLog" );
 			if( !string.IsNullOrEmpty( v ) )
-				EngineSettings.Init.RendererReportDebugToLog = (bool)SimpleTypes.ParseValue( typeof( bool ), v );
+				EngineApp.InitSettings.RendererReportDebugToLog = (bool)SimpleTypes.ParseValue( typeof( bool ), v );
 
 			v = DefaultSettingsConfig.GetAttribute( "UseShaderCache" );
 			if( !string.IsNullOrEmpty( v ) )
-				EngineSettings.Init.UseShaderCache = (bool)SimpleTypes.ParseValue( typeof( bool ), v );
+				EngineApp.InitSettings.UseShaderCache = (bool)SimpleTypes.ParseValue( typeof( bool ), v );
 
-			v = DefaultSettingsConfig.GetAttribute( "AnisotropicFiltering" );
-			if( !string.IsNullOrEmpty( v ) )
-				EngineSettings.Init.AnisotropicFiltering = (bool)SimpleTypes.ParseValue( typeof( bool ), v );
+			//v = DefaultSettingsConfig.GetAttribute( "AnisotropicFiltering" );
+			//if( !string.IsNullOrEmpty( v ) )
+			//	EngineApp.InitSettings.AnisotropicFiltering = (bool)SimpleTypes.ParseValue( typeof( bool ), v );
 
 			v = DefaultSettingsConfig.GetAttribute( "SoundSystemDLL" );
 			if( !string.IsNullOrEmpty( v ) )
-				EngineSettings.Init.SoundSystemDLL = v;
+				EngineApp.InitSettings.SoundSystemDLL = v;
 
 			v = DefaultSettingsConfig.GetAttribute( "SoundMaxReal2DChannels" );
 			if( !string.IsNullOrEmpty( v ) )
-				EngineSettings.Init.SoundMaxReal2DChannels = int.Parse( v );
+				EngineApp.InitSettings.SoundMaxReal2DChannels = int.Parse( v );
 
 			v = DefaultSettingsConfig.GetAttribute( "SoundMaxReal3DChannels" );
 			if( !string.IsNullOrEmpty( v ) )
-				EngineSettings.Init.SoundMaxReal3DChannels = int.Parse( v );
+				EngineApp.InitSettings.SoundMaxReal3DChannels = int.Parse( v );
 
 			v = DefaultSettingsConfig.GetAttribute( "ScriptingCompileProjectSolutionAtStartup" );
 			if( !string.IsNullOrEmpty( v ) )
-				EngineSettings.Init.ScriptingCompileProjectSolutionAtStartup = bool.Parse( v );
+				EngineApp.InitSettings.ScriptingCompileProjectSolutionAtStartup = bool.Parse( v );
 
-			v = DefaultSettingsConfig.GetAttribute( "AutoUnloadTexturesNotUsedForLongTimeInSecondsInEditor" );
+			v = DefaultSettingsConfig.GetAttribute( "AutoUnloadGpuResourcesNotUsedForLongTimeInSecondsInEditor" );
 			if( !string.IsNullOrEmpty( v ) )
-				EngineSettings.Init.AutoUnloadTexturesNotUsedForLongTimeInSecondsInEditor = double.Parse( v );
+				EngineApp.InitSettings.AutoUnloadGpuResourcesNotUsedForLongTimeInSecondsInEditor = double.Parse( v );
 
-			v = DefaultSettingsConfig.GetAttribute( "AutoUnloadTexturesNotUsedForLongTimeInSecondsInSimulation" );
+			v = DefaultSettingsConfig.GetAttribute( "AutoUnloadGpuResourcesNotUsedForLongTimeInSecondsInSimulation" );
 			if( !string.IsNullOrEmpty( v ) )
-				EngineSettings.Init.AutoUnloadTexturesNotUsedForLongTimeInSecondsInSimulation = double.Parse( v );
+				EngineApp.InitSettings.AutoUnloadGpuResourcesNotUsedForLongTimeInSecondsInSimulation = double.Parse( v );
 		}
 
 		public static Thread MainThread

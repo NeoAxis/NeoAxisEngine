@@ -1,4 +1,4 @@
-.component NeoAxis.Component_Scene
+.component NeoAxis.Scene
 {
 	BackgroundColor = 0.3921569 0.5843138 0.9294118
 	DisplayDevelopmentDataInSimulation = True
@@ -12,20 +12,20 @@
 	{
 		GetByReference = "this:$Camera Editor"
 	}
-	.component NeoAxis.Component_Camera
+	.component NeoAxis.Camera
 	{
 		Name = Camera Editor
 		Visible = False
 		Transform = "-7.43100310590069 -22.2239720681118 13.1643769580772; -0.2809729276186 0.311497626938135 0.608004580530221 0.67405776637586; 1 1 1"
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Ambient Light
 		Transform = "-27.7871391969358 -22.3112535611728 24.8527169920668; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
 		Brightness = 20000
 	}
-	.component NeoAxis.Component_RenderingPipeline_Default
+	.component NeoAxis.RenderingPipeline_Basic
 	{
 		Name = Rendering Pipeline
 		Shadows = False
@@ -38,22 +38,26 @@
 		.component NeoAxis.Component
 		{
 			Name = Scene Effects
-			.component NeoAxis.Component_RenderingEffect_Sharpen
+			.component NeoAxis.RenderingEffect_Antialiasing
+			{
+				Name = Antialiasing
+			}
+			.component NeoAxis.RenderingEffect_ResolutionUpscale
+			{
+				Name = Resolution Upscale
+			}
+			.component NeoAxis.RenderingEffect_Sharpen
 			{
 				Name = Sharpen
 				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
 			}
-			.component NeoAxis.Component_RenderingEffect_Antialiasing
-			{
-				Name = Antialiasing
-			}
 		}
 	}
-	.component NeoAxis.Component_GameMode
+	.component NeoAxis.GameMode
 	{
 		Name = Game Mode
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light1
 		Transform = "3.81787770755498 -4.02738720650646 30.8437317105508; -0.787517077619836 -0.26232887070058 0.556485675305445 0.0363883117761065; 1 1 1"
@@ -64,18 +68,18 @@
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 90
 	}
-	.component NeoAxis.Component_Material
+	.component NeoAxis.Material
 	{
 		Name = Material Standard
 		BaseColor
 		{
 			GetByReference = "this:$Flowchart\\$Node Shader Texture Sample 1\\$Shader Texture Sample\\RGBA"
 		}
-		.component NeoAxis.Component_FlowGraph
+		.component NeoAxis.FlowGraph
 		{
 			Name = Flowchart
 			EditorScrollPosition = 7.18518518518518 -0.796296296296294
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Flowchart Node
 				Position = 13 -10
@@ -84,7 +88,7 @@
 					GetByReference = "this:..\\.."
 				}
 			}
-			.component NeoAxis.Component_FlowGraphNode
+			.component NeoAxis.FlowGraphNode
 			{
 				Name = Node Shader Texture Sample 1
 				Position = -12 -13
@@ -92,7 +96,7 @@
 				{
 					GetByReference = "this:$Shader Texture Sample"
 				}
-				.component NeoAxis.Component_ShaderTextureSample
+				.component NeoAxis.ShaderTextureSample
 				{
 					Name = Shader Texture Sample
 					Location2 = 0 0
@@ -105,7 +109,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light2
 		Transform = "0 0 30; 0 0 0 1; 1 1 1"
@@ -113,16 +117,16 @@
 		Brightness = 514788.5
 		AttenuationFar = 93.025
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 21
 		Transform = "-5.65488261715888 -11.0480902302604 0.393543450015718; 0 0.0807982647327685 0 0.996730475312245; 10.3311387535954 10.3311387535954 1"
-		.component NeoAxis.Component_CollisionShape_Box
+		.component NeoAxis.CollisionShape_Box
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_PhysicalMaterial
+	.component NeoAxis.PhysicalMaterial
 	{
 		Name = Ice Material
 		FrictionMode = Anisotropic
@@ -130,7 +134,7 @@
 		SpinningFriction = 0
 		RollingFriction = 1
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space 5
 		Transform
@@ -145,11 +149,11 @@
 		{
 			Count = 0
 		}
-		.component NeoAxis.Component_RigidBody
+		.component NeoAxis.RigidBody
 		{
 			Name = Collision Body
 			Transform = "-7.45037611135052 -13.1939074964589 7.57624702000708; 0 0 0.176157705342663 0.984361957233419; 1 1 1"
-			.component NeoAxis.Component_CollisionShape_Mesh
+			.component NeoAxis.CollisionShape_Mesh
 			{
 				ShapeType = TriangleMesh
 				Mesh
@@ -165,25 +169,25 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 2
 		Transform = "-6.42754532299271 -15.0641128544433 6.5816579360668; 0 0.386364424514051 0 0.922346210199796; 1 1 1"
-		.component NeoAxis.Component_CollisionShape_Cylinder
+		.component NeoAxis.CollisionShape_Cylinder
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 3
 		Transform = "-2.94792895933928 -10.7540474436204 6.75942064122824; -0.30433022639572 0.238034833232458 0.726510551064283 0.568247261904707; 1 1 1"
-		.component NeoAxis.Component_CollisionShape_Cylinder
+		.component NeoAxis.CollisionShape_Cylinder
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_Sensor
+	.component NeoAxis.Sensor
 	{
 		Name = Sensor
 		Transform = "-7.48916192205239 -15.4746070135224 6.55569805071609; 0 0 0.470712148081712 0.88228684317987; 4.78688516891098 4.78688516891098 4.78688516891098"
@@ -192,21 +196,21 @@
 		Objects
 		{
 			Count = 3
-			0 "NeoAxis.Reference<NeoAxis.Component_ObjectInSpace>"
+			0 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
 			{
 				GetByReference = "root:$Rigid Body 2"
 			}
-			1 "NeoAxis.Reference<NeoAxis.Component_ObjectInSpace>"
+			1 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
 			{
 				GetByReference = "root:$Mesh in Space 5\\$Collision Body"
 			}
-			2 "NeoAxis.Reference<NeoAxis.Component_ObjectInSpace>"
+			2 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
 			{
 				GetByReference = "root:$Soft Body"
 			}
 		}
 	}
-	.component NeoAxis.Component_SoftBody
+	.component NeoAxis.SoftBody
 	{
 		Name = Soft Body
 		Transform = "-9.05566176796184 -15.1730825334436 6.72450808824098; 0 0 0 1; 1 1 1"
@@ -214,10 +218,10 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Sphere
+			.component NeoAxis.MeshGeometry_Sphere
 			{
 				Name = MeshGeometry Sphere
 				SegmentsHorizontal = 17

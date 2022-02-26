@@ -1,10 +1,10 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
-using SharpBgfx;
+using Internal.SharpBgfx;
 using System.Linq;
 
 namespace NeoAxis
@@ -30,6 +30,7 @@ namespace NeoAxis
 		//bool specialDepthSettingsActivated;
 
 		OcclusionQuery? currentOcclusionQuery;
+		RenderingPipeline.RenderSceneData.CutVolumeItem[] currentCutVolumes;
 
 		//!!!!impl
 		//int nonOverlappingGroupCounter;
@@ -101,6 +102,7 @@ namespace NeoAxis
 			public bool depthTest;
 			public bool depthWrite;
 			public OcclusionQuery? occlusionQuery;
+			public RenderingPipeline.RenderSceneData.CutVolumeItem[] cutVolumes;
 			//public int nonOverlappingGroup;
 
 			public Matrix4 transform;
@@ -197,6 +199,11 @@ namespace NeoAxis
 		public override void SetOcclusionQuery( OcclusionQuery? query )
 		{
 			currentOcclusionQuery = query;
+		}
+
+		public override void SetCutVolumes( RenderingPipeline.RenderSceneData.CutVolumeItem[] cutVolumes )
+		{
+			currentCutVolumes = cutVolumes;
 		}
 
 		//public override void EnableNonOverlappingGroup()
@@ -822,8 +829,8 @@ namespace NeoAxis
 					//}
 					//else
 					//{
-					thicknessStart = GetThicknessByPixelSize( ref start, ProjectSettings.Get.LineThickness );
-					thicknessEnd = GetThicknessByPixelSize( ref end, ProjectSettings.Get.LineThickness );
+					thicknessStart = GetThicknessByPixelSize( ref start, ProjectSettings.Get.Rendering.LineThickness );
+					thicknessEnd = GetThicknessByPixelSize( ref end, ProjectSettings.Get.Rendering.LineThickness );
 					//}
 				}
 				else
@@ -918,6 +925,7 @@ namespace NeoAxis
 						lastItem.depthTest == currentDepthTest &&
 						lastItem.depthWrite == currentDepthWrite &&
 						Equal( lastItem.occlusionQuery, currentOcclusionQuery ) &&
+						RenderingPipeline.IsEqualCutVolumes( lastItem.cutVolumes, currentCutVolumes ) &&
 						//lastItem.nonOverlappingGroup == nonOverlappingGroup &&
 						lastItem.vertexCount + 2 <= constBufferVertexCount &&
 						lastItem.indexCount + 2 <= constBufferIndexCount )
@@ -938,6 +946,7 @@ namespace NeoAxis
 					item.depthTest = currentDepthTest;
 					item.depthWrite = currentDepthWrite;
 					item.occlusionQuery = currentOcclusionQuery;
+					item.cutVolumes = currentCutVolumes;
 					//item.nonOverlappingGroup = nonOverlappingGroup;
 					item.transform = Matrix4.Identity;
 					item.transformIsIdentity = true;
@@ -993,6 +1002,7 @@ namespace NeoAxis
 						lastItem.depthTest == currentDepthTest &&
 						lastItem.depthWrite == currentDepthWrite &&
 						Equal( lastItem.occlusionQuery, currentOcclusionQuery ) &&
+						RenderingPipeline.IsEqualCutVolumes( lastItem.cutVolumes, currentCutVolumes ) &&
 						//lastItem.nonOverlappingGroup == nonOverlappingGroup &&
 						( ( lastItem.transformIsIdentity && transformIsIdentity ) || lastItem.transform == transform ) &&
 						lastItem.wireframe == wireframe &&
@@ -1071,6 +1081,7 @@ namespace NeoAxis
 					item.depthTest = currentDepthTest;
 					item.depthWrite = currentDepthWrite;
 					item.occlusionQuery = currentOcclusionQuery;
+					item.cutVolumes = currentCutVolumes;
 					//item.nonOverlappingGroup = nonOverlappingGroup;
 					item.vertexCount = 0;
 					item.indexCount = 0;
@@ -1153,6 +1164,7 @@ namespace NeoAxis
 						lastItem.depthTest == currentDepthTest &&
 						lastItem.depthWrite == currentDepthWrite &&
 						Equal( lastItem.occlusionQuery, currentOcclusionQuery ) &&
+						RenderingPipeline.IsEqualCutVolumes( lastItem.cutVolumes, currentCutVolumes ) &&
 						//lastItem.nonOverlappingGroup == nonOverlappingGroup &&
 						( ( lastItem.transformIsIdentity && transformIsIdentity ) || lastItem.transform == transform ) &&
 						lastItem.wireframe == wireframe &&
@@ -1231,6 +1243,7 @@ namespace NeoAxis
 					item.depthTest = currentDepthTest;
 					item.depthWrite = currentDepthWrite;
 					item.occlusionQuery = currentOcclusionQuery;
+					item.cutVolumes = currentCutVolumes;
 					//item.nonOverlappingGroup = nonOverlappingGroup;
 					item.vertexCount = 0;
 					item.indexCount = 0;
@@ -1475,7 +1488,7 @@ namespace NeoAxis
 			//remove RenderSystem listener event for "DeviceRestored"
 			RenderingSystem.RenderSystemEvent -= RenderSystemEvent;
 
-			_Clear();
+			ViewportRendering_Clear();
 
 			while( freeRenderablesDynamicallyCreated.Count != 0 )
 			{
@@ -1554,12 +1567,12 @@ namespace NeoAxis
 				string error;
 
 				var vertexProgram = GpuProgramManager.GetProgram( "Simple3DRenderer_Vertex_", GpuProgramType.Vertex,
-					@"Base\Shaders\Simple3DRenderer_vs.sc", null, out error );
+					@"Base\Shaders\Simple3DRenderer_vs.sc", null, true, out error );
 				if( !string.IsNullOrEmpty( error ) )
 					Log.Fatal( error );
 
 				var fragmentProgram = GpuProgramManager.GetProgram( "Simple3DRenderer_Fragment_", GpuProgramType.Fragment,
-					@"Base\Shaders\Simple3DRenderer_fs.sc", null, out error );
+					@"Base\Shaders\Simple3DRenderer_fs.sc", null, true, out error );
 				if( !string.IsNullOrEmpty( error ) )
 					Log.Fatal( error );
 
@@ -1567,7 +1580,7 @@ namespace NeoAxis
 			}
 		}
 
-		public override void _Clear()
+		public override void ViewportRendering_Clear()
 		{
 			//free renderables
 			foreach( RenderableItem renderableItem in preparedRenderables )
@@ -1595,7 +1608,7 @@ namespace NeoAxis
 		void RenderSystemEvent( RenderSystemEvent name )
 		{
 			if( name == NeoAxis.RenderSystemEvent.DeviceRestored || name == NeoAxis.RenderSystemEvent.DeviceLost )
-				_Clear();
+				ViewportRendering_Clear();
 		}
 
 		unsafe RenderableItem_DynamicallyCreated GetFreeRenderableDynamicallyCreated()
@@ -1655,14 +1668,14 @@ namespace NeoAxis
 			//public Vector2F unused1;
 		}
 
-		public override bool _ViewportRendering_PrepareRenderables()
+		public override bool ViewportRendering_PrepareRenderables()
 		{
 			PrepareRenderables();
 
 			return preparedRenderables.Count != 0;
 		}
 
-		unsafe public override void _ViewportRendering_RenderToCurrentViewport( ViewportRenderingContext context )
+		unsafe public override void ViewportRendering_RenderToCurrentViewport( ViewportRenderingContext context )
 		{
 			if( preparedRenderables.Count == 0 )
 				return;
@@ -1682,10 +1695,10 @@ namespace NeoAxis
 			Simple3DRendererVertexData currentSimple3DRendererVertex = new Simple3DRendererVertexData();
 			currentSimple3DRendererVertex.color = new ColorValue( -10000, 0, 0, 0 );
 
-			Component_Image depthTexture;
+			ImageComponent depthTexture;
 			bool depthTextureAvailable;
 			{
-				context.objectsDuringUpdate.namedTextures.TryGetValue( "depthTexture", out depthTexture );
+				context.ObjectsDuringUpdate.namedTextures.TryGetValue( "depthTexture", out depthTexture );
 				if( depthTexture != null )
 					depthTextureAvailable = true;
 				else
@@ -1733,6 +1746,7 @@ namespace NeoAxis
 						pass.DestinationBlendFactor = SceneBlendFactor.OneMinusSourceAlpha;
 
 						pass.DepthCheck = false;
+
 						//pass.DepthCheck = true;
 						//if( iterationCount == 2 )
 						//	pass.DepthFunction = ( nIteration == 0 ) ? CompareFunction.Greater : CompareFunction.LessEqual;
@@ -1741,12 +1755,14 @@ namespace NeoAxis
 
 						//pass.DepthCheck = item.depthTest;
 
+						//depth write always disabled
 						pass.DepthWrite = item.depthWrite;
+
 						pass.CullingMode = item.culling ? CullingMode.Clockwise : CullingMode.None;
 					}
 
 					//bind depth texture
-					context.BindTexture( new ViewportRenderingContext.BindTextureData( 0/*"depthTexture"*/, depthTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+					context.BindTexture( 0/*"depthTexture"*/, depthTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point );
 
 					//set uniform
 					{
@@ -1797,6 +1813,8 @@ namespace NeoAxis
 					{
 						if( !renderableItem_DynamicallyCreated.vertexBuffer.Disposed )
 						{
+							context.renderingPipeline.SetCutVolumeSettingsUniforms( context, item_DynamicallyCreated.cutVolumes, false );
+
 							var operationType = item_DynamicallyCreated.type == Item_DynamicallyCreated.ItemType.Lines ? RenderOperationType.LineList : RenderOperationType.TriangleList;
 							context.SetVertexBuffer( 0, renderableItem_DynamicallyCreated.vertexBuffer, 0, renderableItem_DynamicallyCreated.vertexCount );
 							//!!!!глючит на HD7850
@@ -1817,6 +1835,8 @@ namespace NeoAxis
 
 						if( !data.ContainsDisposedBuffers() )
 						{
+							context.renderingPipeline.SetCutVolumeSettingsUniforms( context, item_VertexIndexData.cutVolumes, false );
+
 							for( int n = 0; n < data.VertexBuffers.Count; n++ )
 								context.SetVertexBuffer( n, data.VertexBuffers[ n ], data.VertexStartOffset, data.VertexCount );
 							if( data.IndexBuffer != null )
@@ -1919,6 +1939,7 @@ namespace NeoAxis
 						lastItem.depthTest == currentDepthTest &&
 						lastItem.depthWrite == currentDepthWrite &&
 						Equal( lastItem.occlusionQuery, currentOcclusionQuery ) &&
+						RenderingPipeline.IsEqualCutVolumes( lastItem.cutVolumes, currentCutVolumes ) &&
 						//lastItem.nonOverlappingGroup == nonOverlappingGroup &&
 						lastItem.vertexCount + 2 <= constBufferVertexCount &&
 						lastItem.indexCount + 2 <= constBufferIndexCount )
@@ -1939,6 +1960,7 @@ namespace NeoAxis
 					item.depthTest = currentDepthTest;
 					item.depthWrite = currentDepthWrite;
 					item.occlusionQuery = currentOcclusionQuery;
+					item.cutVolumes = currentCutVolumes;
 					//item.nonOverlappingGroup = nonOverlappingGroup;
 					item.transform = Matrix4.Identity;
 					item.transformIsIdentity = true;
@@ -1997,6 +2019,7 @@ namespace NeoAxis
 					item.depthTest = currentDepthTest;
 					item.depthWrite = currentDepthWrite;
 					item.occlusionQuery = currentOcclusionQuery;
+					item.cutVolumes = currentCutVolumes;
 					//item.nonOverlappingGroup = nonOverlappingGroup;
 					item.vertexCount = 0;
 					item.indexCount = 0;
@@ -2077,6 +2100,7 @@ namespace NeoAxis
 					item.depthTest = currentDepthTest;
 					item.depthWrite = currentDepthWrite;
 					item.occlusionQuery = currentOcclusionQuery;
+					item.cutVolumes = currentCutVolumes;
 					//item.nonOverlappingGroup = nonOverlappingGroup;
 					item.vertexCount = 0;
 					item.indexCount = 0;
@@ -2273,6 +2297,7 @@ namespace NeoAxis
 			item.depthTest = currentDepthTest;
 			item.depthWrite = currentDepthWrite;
 			item.occlusionQuery = currentOcclusionQuery;
+			item.cutVolumes = currentCutVolumes;
 			//item.nonOverlappingGroup = nonOverlappingGroup;
 			item.transform = transform;
 			//!!!!
@@ -2283,7 +2308,7 @@ namespace NeoAxis
 			items.Add( item );
 		}
 
-		public override void AddMesh( Component_Mesh.CompiledData meshData, ref Matrix4 transform, bool wireframe, bool culling )
+		public override void AddMesh( Mesh.CompiledData meshData, ref Matrix4 transform, bool wireframe, bool culling )
 		{
 			//!!!!может порядок менять полезно?
 

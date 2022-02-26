@@ -1,9 +1,8 @@
 #if WINDOWS
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using NeoAxis;
-using NeoAxis.Input;
 
 namespace DirectInput
 {
@@ -46,7 +45,7 @@ namespace DirectInput
 				return false;
 			}
 
-			NativeLibraryManager.PreLoadLibrary( "NeoAxisCoreNative" );
+			NativeUtility.PreloadLibrary( "NeoAxisCoreNative" );
 
 			instance = new DirectInputMouseDevice();
 			if( !instance.InitInternal( windowHandle, alreadyCreatedDirectInput ) )

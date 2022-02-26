@@ -15,6 +15,8 @@
 #   else
 #       define PLATFORM_WINDOWS
 #   endif
+#elif defined(IOS)
+#define PLATFORM_IOS
 #elif defined( __APPLE_CC__)
 #define PLATFORM_MACOS
 #elif defined(__ANDROID__)
@@ -98,6 +100,9 @@
 /* #undef HAVE_JACK */
 
 /* Define if we have the CoreAudio backend */
+#ifdef PLATFORM_IOS
+#define HAVE_COREAUDIO
+#endif
 /* #undef HAVE_COREAUDIO */
 
 /* Define if we have the OpenSL backend */
@@ -132,8 +137,10 @@
 /* Define if we have pthread_np.h */
 /* #undef HAVE_PTHREAD_NP_H */
 
+#ifndef PLATFORM_IOS
 /* Define if we have malloc.h */
 #define HAVE_MALLOC_H
+#endif
 
 /* Define if we have dirent.h */
 /* #undef HAVE_DIRENT_H */

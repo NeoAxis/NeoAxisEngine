@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #if OPENGLES
 
 using System;
@@ -86,7 +86,7 @@ namespace NeoAxis.Player.Android
 			Engine.ProcessTouchEvents();
 
 			//engine tick and render
-			EngineApp._CreatedWindow_ApplicationIdle( false );
+			EngineApp.CreatedWindowApplicationIdle( false );
 
 			if( EngineApp.NeedExit )
 				Java.Lang.JavaSystem.Exit( 0 );

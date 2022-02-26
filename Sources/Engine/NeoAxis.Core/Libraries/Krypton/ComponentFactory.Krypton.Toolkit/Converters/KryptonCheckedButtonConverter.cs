@@ -13,7 +13,7 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     internal class KryptonCheckedButtonConverter : ReferenceConverter
     {

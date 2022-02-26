@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
@@ -528,7 +528,7 @@ namespace NeoAxis
 			{
 				if( index < 0 || index > 2 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( float* v = &this.X )
+				fixed( float* v = &this.X )
 				{
 					return v[ index ];
 				}
@@ -537,7 +537,7 @@ namespace NeoAxis
 			{
 				if( index < 0 || index > 2 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( float* v = &this.X )
+				fixed( float* v = &this.X )
 				{
 					v[ index ] = value;
 				}

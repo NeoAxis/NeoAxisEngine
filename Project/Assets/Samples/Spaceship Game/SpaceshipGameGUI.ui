@@ -1,0 +1,15 @@
+// Made with NeoAxis Engine 2022.1.
+
+.component Project.SpaceshipGameGUI
+{
+	Size = Parent 1 1
+	EditorScrollPosition = 0 0
+	.component NeoAxis.UIControl
+	{
+		Name = Control
+		Size = Units 150 150
+		Margin = Units 20 20 0 0
+		BackgroundColor = 1 1 1 0.5
+		EditorScrollPosition = 0 0
+	}
+}

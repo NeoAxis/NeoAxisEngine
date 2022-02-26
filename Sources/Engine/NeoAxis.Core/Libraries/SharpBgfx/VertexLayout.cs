@@ -1,4 +1,4 @@
-﻿namespace SharpBgfx {
+﻿namespace Internal.SharpBgfx {
     /// <summary>
     /// Describes the layout of data in a vertex stream.
     /// </summary>
@@ -36,6 +36,13 @@
         public VertexLayout Add (VertexAttributeUsage attribute, int count, VertexAttributeType type, bool normalized = false, bool asInt = false) {
             NativeMethods.bgfx_vertex_layout_add(ref data, attribute, (byte)count, type, normalized, asInt);
             return this;
+        }
+
+        //!!!!betauser
+        public void Decode( VertexAttributeUsage attribute, out int count, out VertexAttributeType type, out bool normalized, out bool asInt )
+        {
+            NativeMethods.bgfx_vertex_layout_decode( ref data, attribute, out var countByte, out type, out normalized, out asInt );
+            count = countByte;
         }
 
         /// <summary>

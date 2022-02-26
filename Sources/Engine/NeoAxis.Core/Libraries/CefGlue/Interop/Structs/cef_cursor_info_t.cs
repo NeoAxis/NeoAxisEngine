@@ -1,4 +1,5 @@
-﻿namespace Xilium.CefGlue.Interop
+#if !NO_UI_WEB_BROWSER
+namespace Internal.Xilium.CefGlue.Interop
 {
     using System;
     using System.Runtime.InteropServices;
@@ -12,3 +13,5 @@
         public cef_size_t size;
     }
 }
+
+#endif

@@ -1,11 +1,7 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
-using System.Drawing.Design;
 using System.ComponentModel;
-using System.Reflection;
 
 namespace NeoAxis
 {
@@ -14,15 +10,15 @@ namespace NeoAxis
 	/// </summary>
 	[DefaultOrderOfEffect( 8 )]
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
-	public class Component_RenderingEffect_ColorGrading : Component_RenderingEffect_Simple
+	public class RenderingEffect_ColorGrading : RenderingEffect_Simple
 	{
 		const string shaderDefault = @"Base\Shaders\Effects\ColorGrading_fs.sc";
 
 		//
 
-		public Component_RenderingEffect_ColorGrading()
+		public RenderingEffect_ColorGrading()
 		{
-			Shader = shaderDefault;
+			ShaderFile = shaderDefault;
 		}
 
 		////!!!!возможность: или белая, или черная текстуры подставлять вместо ""
@@ -33,15 +29,15 @@ namespace NeoAxis
 		[DefaultValueReference( lookupTableDefault )]
 		//[DefaultValue( "reference:" + lookupTableDefault )]
 		//[DefaultValue( null )]
-		[Component_Image.BindSettings( TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.None, 1 )]
-		public Reference<Component_Image> LookupTable
+		[ImageComponent.BindSettings( TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.None, 1 )]
+		public Reference<ImageComponent> LookupTable
 		{
 			get { if( _lookupTable.BeginGet() ) LookupTable = _lookupTable.Get( this ); return _lookupTable.value; }
 			set { if( _lookupTable.BeginSet( ref value ) ) { try { LookupTableChanged?.Invoke( this ); } finally { _lookupTable.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LookupTable"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_ColorGrading> LookupTableChanged;
-		ReferenceField<Component_Image> _lookupTable = new Reference<Component_Image>( null, lookupTableDefault );
+		public event Action<RenderingEffect_ColorGrading> LookupTableChanged;
+		ReferenceField<ImageComponent> _lookupTable = new Reference<ImageComponent>( null, lookupTableDefault );
 
 		/// <summary>
 		/// The color multiplier.
@@ -55,7 +51,7 @@ namespace NeoAxis
 			set { if( _multiply.BeginSet( ref value ) ) { try { MultiplyChanged?.Invoke( this ); } finally { _multiply.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Multiply"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_ColorGrading> MultiplyChanged;
+		public event Action<RenderingEffect_ColorGrading> MultiplyChanged;
 		ReferenceField<ColorValuePowered> _multiply = new ColorValuePowered( 1, 1, 1 );
 
 		/// <summary>
@@ -69,7 +65,7 @@ namespace NeoAxis
 			set { if( _add.BeginSet( ref value ) ) { try { AddChanged?.Invoke( this ); } finally { _add.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Add"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_ColorGrading> AddChanged;
+		public event Action<RenderingEffect_ColorGrading> AddChanged;
 		ReferenceField<Vector3> _add = Vector3.Zero;
 
 		////Add
@@ -94,11 +90,11 @@ namespace NeoAxis
 		//		}
 		//	}
 		//}
-		//public event Action<Component_RenderingEffect_ColorGrading> AddChanged;
+		//public event Action<RenderingEffect_ColorGrading> AddChanged;
 
 		/////////////////////////////////////////
 
-		protected override void OnSetShaderParameters( ViewportRenderingContext context, Component_RenderingPipeline.IFrameData frameData, Component_Image actualTexture, CanvasRenderer.ShaderItem shader )
+		protected override void OnSetShaderParameters( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ImageComponent actualTexture, CanvasRenderer.ShaderItem shader )
 		{
 			base.OnSetShaderParameters( context, frameData, actualTexture, shader );
 

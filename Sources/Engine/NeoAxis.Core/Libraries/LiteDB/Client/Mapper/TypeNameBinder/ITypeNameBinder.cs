@@ -1,6 +1,7 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     public interface ITypeNameBinder
     {
@@ -8,3 +9,4 @@ namespace LiteDB
         Type GetType(string name);
     }
 }
+#endif

@@ -1,10 +1,11 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     /// <summary>
     /// Encrypted AES Stream
@@ -197,3 +198,4 @@ namespace LiteDB.Engine
         }
     }
 }
+#endif

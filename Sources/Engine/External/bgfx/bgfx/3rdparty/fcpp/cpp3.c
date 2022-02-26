@@ -41,7 +41,7 @@ ReturnCode fpp_openfile(struct Global *global, char *filename)
     fp = global->openfile(filename, "r", global->userdata);
   else {
     //!!!!
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(IOS)
     fp = fopen(filename, "r");
 #else
     wchar_t wfileName[PATH_MAX + 1];

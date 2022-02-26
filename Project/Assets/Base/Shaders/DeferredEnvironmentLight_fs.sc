@@ -1,6 +1,7 @@
 $input v_texCoord0
 
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+#define DEFERRED_ENVIRONMENT_LIGHT 1
 #include "Common.sh"
 #include "UniformsFragment.sh"
 #include "FragmentFunctions.sh"
@@ -12,10 +13,16 @@ uniform vec4 u_reflectionProbeData;
 #define u_reflectionProbeRadius u_reflectionProbeData.w
 //uniform vec4 u_reflectionProbeDataFragment[REFLECTION_PROBE_DATA_FRAGMENT_SIZE];
 
-uniform mat3 u_environmentTextureRotation;
-uniform mat3 u_environmentTextureIBLRotation;
-uniform vec4 u_environmentTextureMultiplierAndAffect;
-uniform vec4 u_environmentTextureIBLMultiplierAndAffect;
+uniform vec4 u_deferredEnvironmentData[4];
+#define u_deferredEnvironmentDataRotation u_deferredEnvironmentData[0]
+#define u_deferredEnvironmentDataMultiplierAndAffect u_deferredEnvironmentData[1]
+#define u_deferredEnvironmentDataIBLRotation u_deferredEnvironmentData[2]
+#define u_deferredEnvironmentDataIBLMultiplierAndAffect u_deferredEnvironmentData[3]
+uniform vec4 u_deferredEnvironmentIrradiance[9];
+//uniform mat3 u_environmentTextureRotation;
+//uniform mat3 u_environmentTextureIBLRotation;
+//uniform vec4 u_environmentTextureMultiplierAndAffect;
+//uniform vec4 u_environmentTextureIBLMultiplierAndAffect;
 
 SAMPLER2D(s_sceneTexture, 0);
 SAMPLER2D(s_normalTexture, 1);
@@ -26,12 +33,11 @@ SAMPLER2D(s_gBuffer4Texture, 10);
 SAMPLER2D(s_gBuffer5Texture, 11);
 
 SAMPLERCUBE(s_environmentTexture, 6);
-SAMPLERCUBE(s_environmentTextureIBL, 7);
+//SAMPLERCUBE(s_environmentTextureIBL, 7);
 SAMPLER2D(s_brdfLUT, 8);
 
 #define SHADING_MODEL_SUBSURFACE
 
-#include "PBRFilament/common_types.sh"
 #include "PBRFilament/common_math.sh"
 #include "PBRFilament/brdf.sh"
 #include "PBRFilament/PBRFilament.sh"
@@ -66,13 +72,13 @@ void main()
 	vec4 tangent = gBuffer4Data * 2.0 - 1.0;
 	tangent.xyz = normalize(tangent.xyz);
 
-	int shadingModel = int(round(gBuffer5Data.x * 10.0));	
+	int shadingModel = int(round(gBuffer5Data.x * 8.0));
 	bool receiveDecals = gBuffer5Data.y == 1.0;
 	float thickness = gBuffer5Data.z;
 	float subsurfacePower = gBuffer5Data.w * 15.0;
 	
 	bool shadingModelSubsurface = shadingModel == 1;
-	bool shadingModelSimple = shadingModel == 4;
+	bool shadingModelSimple = shadingModel == 3;
 	
 	vec3 subsurfaceColor = vec3_splat(0);
 	vec3 emissive = vec3_splat(0);
@@ -113,7 +119,11 @@ void main()
 	else
 	{
 		//Lit, Subsurface shading models
-				
+
+#if GLOBAL_MATERIAL_SHADING == GLOBAL_MATERIAL_SHADING_SIMPLE
+		resultColor.rgb = baseColor * lightColor;
+#else
+		
 		float metallic = gBuffer2Data.x;
 		float roughness = gBuffer2Data.y;
 		float ambientOcclusion = gBuffer2Data.z;
@@ -154,19 +164,20 @@ void main()
 
 		PixelParams pixel;
 		getPBRFilamentPixelParams(material, pixel);
-
+		
 		EnvironmentTextureData data1;
-		data1.rotation = u_environmentTextureRotation;
-		data1.multiplierAndAffect = u_environmentTextureMultiplierAndAffect;
+		data1.rotation = u_deferredEnvironmentDataRotation;//u_environmentTextureRotation;
+		data1.multiplierAndAffect = u_deferredEnvironmentDataMultiplierAndAffect;//u_environmentTextureMultiplierAndAffect;
 		
 		EnvironmentTextureData dataIBL;
-		dataIBL.rotation = u_environmentTextureIBLRotation;
-		dataIBL.multiplierAndAffect = u_environmentTextureIBLMultiplierAndAffect;
-			
-		resultColor.rgb = iblDiffuse(material, pixel, s_environmentTextureIBL, dataIBL, s_environmentTexture, data1, shadingModelSubsurface) +
+		dataIBL.rotation = u_deferredEnvironmentDataIBLRotation;//u_environmentTextureIBLRotation;
+		dataIBL.multiplierAndAffect = u_deferredEnvironmentDataIBLMultiplierAndAffect;//u_environmentTextureIBLMultiplierAndAffect;
+
+		resultColor.rgb = iblDiffuse(material, pixel, u_deferredEnvironmentIrradiance, dataIBL, s_environmentTexture, data1, shadingModelSubsurface) +
 			iblSpecular(material, pixel, vec3_splat(0), 0, s_environmentTexture, data1);
 
 		resultColor.rgb *= lightColor;
+#endif
 	}
 
 	//emissive

@@ -19,7 +19,7 @@ using System.Windows.Forms;
 using System.Reflection;
 using System.Diagnostics;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     internal class KryptonProfessionalRenderer : ToolStripProfessionalRenderer
     {

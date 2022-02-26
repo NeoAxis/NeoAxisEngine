@@ -1,6 +1,6 @@
 $input v_texCoord0
 
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "../../Common.sh"
 #include "../../FragmentFunctions.sh"
 
@@ -8,14 +8,14 @@ SAMPLER2D(s_sourceTexture, 0);
 SAMPLER2D(s_blurTexture, 1);
 SAMPLER2D(s_depthTexture, 2);
 uniform vec4/*float*/ intensity;
-uniform vec4 u_depthOfFieldProperties;
+uniform vec4 depthOfFieldProperties;
 
 void main()
 {
-	float focalDistance = u_depthOfFieldProperties.x;
-	float focalSize = u_depthOfFieldProperties.y;
-	float backgroundTransitionLength = u_depthOfFieldProperties.z;
-	float foregroundTransitionLength = u_depthOfFieldProperties.w;
+	float focalDistance = depthOfFieldProperties.x;
+	float focalSize = depthOfFieldProperties.y;
+	float backgroundTransitionLength = depthOfFieldProperties.z;
+	float foregroundTransitionLength = depthOfFieldProperties.w;
 
 	//get scene and blurred scene colors
 	vec4 sceneColor = texture2D(s_sourceTexture, v_texCoord0);

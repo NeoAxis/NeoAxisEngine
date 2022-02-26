@@ -1,7 +1,8 @@
+#if !NO_LITE_DB
 using System;
 using System.Reflection;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     public class DefaultTypeNameBinder : ITypeNameBinder
     {
@@ -16,3 +17,4 @@ namespace LiteDB
         public Type GetType(string name) => Type.GetType(name);
     }
 }
+#endif

@@ -12,7 +12,7 @@ using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
-namespace ComponentFactory.Krypton.Ribbon
+namespace Internal.ComponentFactory.Krypton.Ribbon
 {
     internal class PI
     {

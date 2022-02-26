@@ -1,10 +1,14 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "MemoryManagerInternal_precompiled.h"
 #pragma hdrstop
 #include "MemoryManagerInternal.h"
 #include "MiniDump.h"
 #include <exception>
 #include <iostream>
+
+#ifdef PLATFORM_IOS
+#import <os/log.h>
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,11 +28,17 @@ void Fatal(const char* text)
 	OutputDebugStringA("\n");
 	std::cerr << "Fatal: " << text << std::endl;
 	//throw std::exception(text);
-#elif defined(PLATFORM_MACOS)
+#elif defined(PLATFORM_OSX)
 	CFStringRef textRef = CFStringCreateWithCString(NULL, text, kCFStringEncodingASCII);
 	CFUserNotificationDisplayAlert(0, kCFUserNotificationStopAlertLevel, NULL, NULL, NULL, 
 		CFSTR("Fatal"), textRef, CFSTR("OK"), NULL, NULL, NULL);
 	CFRelease(textRef);
+#elif defined(PLATFORM_IOS)
+	//!!!!check
+	os_log_error(OS_LOG_DEFAULT, "NativeMemoryManager: Fatal: %s\n", text);
+	//char tempBuffer[4096];
+	//sprintf(tempBuffer, "NativeMemoryManager: Fatal: %s\n", text);
+	//os_log_error(OS_LOG_DEFAULT, tempBuffer);
 #elif defined(PLATFORM_ANDROID)
 //!!!!!!dr
 	char tempBuffer[4096];

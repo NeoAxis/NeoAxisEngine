@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using NeoAxis.Editor;
 using RoslynPad.Roslyn;
 //using RoslynPad.UI;
@@ -156,9 +156,9 @@ namespace NeoAxis.Editor
 		//{
 		//	try
 		//	{
-		//		CSharpEditorSettings.DisplayInfoMarkers = ProjectSettings.Get.CSharpEditor_DisplayInfoMarkers;
-		//		CSharpEditorSettings.DisplayWarningMarkers = ProjectSettings.Get.CSharpEditor_DisplayWarningMarkers;
-		//		CSharpEditorSettings.DisplayErrorMarkers = ProjectSettings.Get.CSharpEditor_DisplayErrorMarkers;
+		//		CSharpEditorSettings.DisplayInfoMarkers = ProjectSettings.Get.CSharpEditor.CSharpEditor_DisplayInfoMarkers;
+		//		CSharpEditorSettings.DisplayWarningMarkers = ProjectSettings.Get.CSharpEditor.CSharpEditor_DisplayWarningMarkers;
+		//		CSharpEditorSettings.DisplayErrorMarkers = ProjectSettings.Get.CSharpEditor.CSharpEditor_DisplayErrorMarkers;
 		//	}
 		//	catch { }
 		//}

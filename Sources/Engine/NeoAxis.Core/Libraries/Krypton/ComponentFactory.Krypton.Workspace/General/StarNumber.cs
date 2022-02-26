@@ -10,9 +10,9 @@
 
 using System;
 using System.Text;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Toolkit;
 
-namespace ComponentFactory.Krypton.Workspace
+namespace Internal.ComponentFactory.Krypton.Workspace
 {
     /// <summary>
     /// Handle a star number which consists of a number with optional asterisk at the end.

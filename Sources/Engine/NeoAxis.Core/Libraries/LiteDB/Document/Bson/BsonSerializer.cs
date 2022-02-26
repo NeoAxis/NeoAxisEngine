@@ -1,10 +1,11 @@
-﻿using LiteDB.Engine;
+#if !NO_LITE_DB
+using Internal.LiteDB.Engine;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     /// <summary>
     /// Class to call method for convert BsonDocument to/from byte[] - based on http://bsonspec.org/spec.html
@@ -43,3 +44,4 @@ namespace LiteDB
         }
     }
 }
+#endif

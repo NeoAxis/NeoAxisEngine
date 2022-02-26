@@ -1824,6 +1824,23 @@ namespace bgfx
 								);
 						}
 
+						//!!!!betauser
+						if (hasPrimitiveId)
+						{
+							if (hlsl > 3)
+							{
+								preprocessor.writef(
+									" \\\n\t%suint gl_PrimitiveID : SV_PrimitiveID"
+									, arg++ > 0 ? ", " : "  "
+								);
+							}
+							else
+							{
+								FPRINTF(stderr, "gl_PrimitiveID builtin is not supported by this D3D9 HLSL.\n");
+								return false;
+							}
+						}
+
 						if (hasFrontFacing)
 						{
 							if (hlsl == 3)
@@ -1842,21 +1859,22 @@ namespace bgfx
 							}
 						}
 
-						if (hasPrimitiveId)
-						{
-							if (hlsl > 3)
-							{
-								preprocessor.writef(
-									" \\\n\t%suint gl_PrimitiveID : SV_PrimitiveID"
-									, arg++ > 0 ? ", " : "  "
-									);
-							}
-							else
-							{
-								FPRINTF(stderr, "gl_PrimitiveID builtin is not supported by this D3D9 HLSL.\n");
-								return false;
-							}
-						}
+						//!!!!betauser
+						//if (hasPrimitiveId)
+						//{
+						//	if (hlsl > 3)
+						//	{
+						//		preprocessor.writef(
+						//			" \\\n\t%suint gl_PrimitiveID : SV_PrimitiveID"
+						//			, arg++ > 0 ? ", " : "  "
+						//			);
+						//	}
+						//	else
+						//	{
+						//		FPRINTF(stderr, "gl_PrimitiveID builtin is not supported by this D3D9 HLSL.\n");
+						//		return false;
+						//	}
+						//}
 
 						preprocessor.writef(
 							" \\\n\t)\n"

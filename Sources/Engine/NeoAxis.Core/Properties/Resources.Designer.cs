@@ -177,6 +177,166 @@ namespace NeoAxis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap AlignBottom_16 {
+            get {
+                object obj = ResourceManager.GetObject("AlignBottom_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AlignBottom_32 {
+            get {
+                object obj = ResourceManager.GetObject("AlignBottom_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AlignCenterHorizontal_16 {
+            get {
+                object obj = ResourceManager.GetObject("AlignCenterHorizontal_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AlignCenterHorizontal_32 {
+            get {
+                object obj = ResourceManager.GetObject("AlignCenterHorizontal_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AlignCenterVertical_16 {
+            get {
+                object obj = ResourceManager.GetObject("AlignCenterVertical_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AlignCenterVertical_32 {
+            get {
+                object obj = ResourceManager.GetObject("AlignCenterVertical_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AlignLeft_16 {
+            get {
+                object obj = ResourceManager.GetObject("AlignLeft_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AlignLeft_32 {
+            get {
+                object obj = ResourceManager.GetObject("AlignLeft_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AlignRight_16 {
+            get {
+                object obj = ResourceManager.GetObject("AlignRight_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AlignRight_32 {
+            get {
+                object obj = ResourceManager.GetObject("AlignRight_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AlignStretchHorizontal_16 {
+            get {
+                object obj = ResourceManager.GetObject("AlignStretchHorizontal_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AlignStretchHorizontal_32 {
+            get {
+                object obj = ResourceManager.GetObject("AlignStretchHorizontal_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AlignStretchVertical_16 {
+            get {
+                object obj = ResourceManager.GetObject("AlignStretchVertical_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AlignStretchVertical_32 {
+            get {
+                object obj = ResourceManager.GetObject("AlignStretchVertical_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AlignTop_16 {
+            get {
+                object obj = ResourceManager.GetObject("AlignTop_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AlignTop_32 {
+            get {
+                object obj = ResourceManager.GetObject("AlignTop_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap AllBorder {
             get {
                 object obj = ResourceManager.GetObject("AllBorder", resourceCulture);
@@ -530,6 +690,46 @@ namespace NeoAxis.Properties {
         public static System.Drawing.Bitmap Build_32_Dark {
             get {
                 object obj = ResourceManager.GetObject("Build_32_Dark", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap BuildAndUpdate_16 {
+            get {
+                object obj = ResourceManager.GetObject("BuildAndUpdate_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap BuildAndUpdate_16_Dark {
+            get {
+                object obj = ResourceManager.GetObject("BuildAndUpdate_16_Dark", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap BuildAndUpdate_32 {
+            get {
+                object obj = ResourceManager.GetObject("BuildAndUpdate_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap BuildAndUpdate_32_Dark {
+            get {
+                object obj = ResourceManager.GetObject("BuildAndUpdate_32_Dark", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -2363,6 +2563,26 @@ namespace NeoAxis.Properties {
         public static System.Drawing.Bitmap InvertSelection_32 {
             get {
                 object obj = ResourceManager.GetObject("InvertSelection_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap iOS_16 {
+            get {
+                object obj = ResourceManager.GetObject("iOS_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap iOS_32 {
+            get {
+                object obj = ResourceManager.GetObject("iOS_32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -5157,6 +5377,26 @@ namespace NeoAxis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap SimulatePhysics_16 {
+            get {
+                object obj = ResourceManager.GetObject("SimulatePhysics_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap SimulatePhysics_32 {
+            get {
+                object obj = ResourceManager.GetObject("SimulatePhysics_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap SmartArtLarge {
             get {
                 object obj = ResourceManager.GetObject("SmartArtLarge", resourceCulture);
@@ -5257,6 +5497,16 @@ namespace NeoAxis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap Splash {
+            get {
+                object obj = ResourceManager.GetObject("Splash", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap SplitVertices_32 {
             get {
                 object obj = ResourceManager.GetObject("SplitVertices_32", resourceCulture);
@@ -5340,6 +5590,26 @@ namespace NeoAxis.Properties {
         public static System.Drawing.Bitmap Stop_32 {
             get {
                 object obj = ResourceManager.GetObject("Stop_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Store_16 {
+            get {
+                object obj = ResourceManager.GetObject("Store_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Store_32 {
+            get {
+                object obj = ResourceManager.GetObject("Store_32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

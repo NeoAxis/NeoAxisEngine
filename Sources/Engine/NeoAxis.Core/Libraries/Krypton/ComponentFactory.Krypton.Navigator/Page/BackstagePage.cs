@@ -1,4 +1,4 @@
-﻿using ComponentFactory.Krypton.Navigator;
+﻿using Internal.ComponentFactory.Krypton.Navigator;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ComponentFactory.Krypton.Navigator
+namespace Internal.ComponentFactory.Krypton.Navigator
 {
 	/// <summary>
 	/// Page class used inside visual containers.

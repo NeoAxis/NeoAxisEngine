@@ -9,7 +9,7 @@
 // *****************************************************************************
 
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     internal enum SchemeOfficeColors
     {

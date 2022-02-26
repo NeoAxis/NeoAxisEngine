@@ -1,8 +1,9 @@
+#if !NO_LITE_DB
 using System;
 using System.Runtime.CompilerServices;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     internal class ArrayPool<T>
     {
@@ -109,3 +110,4 @@ namespace LiteDB
         }
     }
 }
+#endif

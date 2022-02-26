@@ -12,11 +12,11 @@ using System;
 using System.Drawing;
 using System.Diagnostics;
 using System.ComponentModel; 
-using ComponentFactory.Krypton.Toolkit;
-using ComponentFactory.Krypton.Navigator;
-using ComponentFactory.Krypton.Workspace;
+using Internal.ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Navigator;
+using Internal.ComponentFactory.Krypton.Workspace;
 
-namespace ComponentFactory.Krypton.Docking
+namespace Internal.ComponentFactory.Krypton.Docking
 {
 	/// <summary>
     /// Event arguments for events that need a page and context menu.

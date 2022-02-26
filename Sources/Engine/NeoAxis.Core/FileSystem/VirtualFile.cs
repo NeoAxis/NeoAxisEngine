@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -75,9 +75,17 @@ namespace NeoAxis
 					//{
 
 					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
+					{
+#if WINDOWS || UWP
 						stream = new Win32HandleVirtualFileStream( realPath );
+#endif
+					}
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.MacOS )
+					{
+#if MACOS
 						stream = new MacOSXVirtualFileStream( realPath );
+#endif
+					}
 					else
 						stream = new DefaultVirtualFileStream( realPath );
 

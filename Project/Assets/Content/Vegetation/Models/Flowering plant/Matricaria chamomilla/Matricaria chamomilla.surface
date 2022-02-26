@@ -1,0 +1,59 @@
+// Made with NeoAxis Engine 2021.4.
+
+.component NeoAxis.Surface
+{
+	EditorCameraTransform = "0.698159879036608 -6.13783103962954 2.9342973579803; -0.240772633856872 0.214370337050035 0.70699560886397 0.629468908227995; 1 1 1"
+	.component NeoAxis.SurfaceGroupOfElements
+	{
+		Name = Group Young
+		Probability = 0.5
+		OccupiedAreaRadius = 0.25
+		RotateAroundItsAxis = True
+		MaxIncline = 5
+		ScaleRange = 0.7 1.3
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 1
+			ReceiveDecals = False
+			Mesh
+			{
+				GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Matricaria chamomilla 1 Group 2 Young.mesh"
+			}
+		}
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 2
+			ReceiveDecals = False
+			Mesh
+			{
+				GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Matricaria chamomilla 2 Group 2 Young.mesh"
+			}
+		}
+	}
+	.component NeoAxis.SurfaceGroupOfElements
+	{
+		Name = Group Mature
+		OccupiedAreaRadius = 0.5
+		RotateAroundItsAxis = True
+		MaxIncline = 5
+		ScaleRange = 0.7 1.3
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 1
+			ReceiveDecals = False
+			Mesh
+			{
+				GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Matricaria chamomilla 1 Group 3 Mature.mesh"
+			}
+		}
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 2
+			ReceiveDecals = False
+			Mesh
+			{
+				GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Matricaria chamomilla 2 Group 3 Mature.mesh"
+			}
+		}
+	}
+}

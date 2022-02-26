@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 
@@ -57,14 +57,14 @@ namespace NeoAxis.Editor
 					return false;
 			}
 
-			//Component_ShaderTextureSample, Component_ShaderParameter
+			//ShaderTextureSample, ShaderParameter
 			var typeItem = item as ContentBrowserItem_Type;
 			if( typeItem != null )
 			{
 				var netType = typeItem.Type.GetNetType();
-				if( typeof( Component_ShaderTextureSample ).IsAssignableFrom( netType ) ||
-					typeof( Component_ShaderParameter ).IsAssignableFrom( netType ) ||
-					typeof( Component_ShaderScript ).IsAssignableFrom( netType ) )
+				if( typeof( ShaderTextureSample ).IsAssignableFrom( netType ) ||
+					typeof( ShaderParameter ).IsAssignableFrom( netType ) ||
+					typeof( ShaderScript ).IsAssignableFrom( netType ) )
 				{
 					return true;
 				}
@@ -80,7 +80,7 @@ namespace NeoAxis.Editor
 
 	class EditorExtensions_Shaders : EditorExtensions
 	{
-		public override void Register()
+		public override void OnRegister()
 		{
 			ContentBrowser.FilteringModes.Add( new ContentBrowserFilteringMode_Shaders() );
 		}

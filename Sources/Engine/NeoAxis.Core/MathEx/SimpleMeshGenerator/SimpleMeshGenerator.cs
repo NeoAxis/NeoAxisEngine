@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -113,27 +113,27 @@ namespace NeoAxis
 			return null;
 		}
 
-		public static Component_Mesh.StructureClass CreateMeshStructure( Face[] faces )
+		public static Mesh.StructureClass CreateMeshStructure( Face[] faces )
 		{
-			var result = new Component_Mesh.StructureClass();
+			var result = new Mesh.StructureClass();
 			int vertexMaxIndex = 0;
 
 			//faces
-			result.Faces = new Component_Mesh.StructureClass.Face[ faces.Length ];
+			result.Faces = new Mesh.StructureClass.Face[ faces.Length ];
 			for( int nFace = 0; nFace < faces.Length; nFace++ )
 			{
 				var face = faces[ nFace ];
 
-				var triangles2 = new Component_Mesh.StructureClass.FaceVertex[ face.Triangles.Length ];
+				var triangles2 = new Mesh.StructureClass.FaceVertex[ face.Triangles.Length ];
 				for( int n = 0; n < triangles2.Length; n++ )
 				{
 					var faceVertex = face.Triangles[ n ];
-					triangles2[ n ] = new Component_Mesh.StructureClass.FaceVertex( faceVertex.Vertex, 0, faceVertex.RawVertex );
+					triangles2[ n ] = new Mesh.StructureClass.FaceVertex( faceVertex.Vertex, 0, faceVertex.RawVertex );
 
 					vertexMaxIndex = Math.Max( vertexMaxIndex, faceVertex.Vertex );
 				}
 
-				result.Faces[ nFace ] = new Component_Mesh.StructureClass.Face( triangles2, null, 0 );
+				result.Faces[ nFace ] = new Mesh.StructureClass.Face( triangles2, null, 0 );
 			}
 
 			//edges
@@ -209,10 +209,10 @@ namespace NeoAxis
 				//	AddEdge( faceVertex2.Vertex, faceVertex0.Vertex );
 				//}
 			}
-			result.Edges = edges.Select( e => new Component_Mesh.StructureClass.Edge( e.X, e.Y ) ).ToArray();
+			result.Edges = edges.Select( e => new Mesh.StructureClass.Edge( e.X, e.Y ) ).ToArray();
 
 			//vertices
-			result.Vertices = new Component_Mesh.StructureClass.Vertex[ vertexMaxIndex + 1 ];
+			result.Vertices = new Mesh.StructureClass.Vertex[ vertexMaxIndex + 1 ];
 
 			return result;
 		}

@@ -1,10 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Security;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	[Flags]
 	public enum SixDofFlags
@@ -41,14 +41,14 @@ namespace BulletSharp
 			return btRotationalLimitMotor_needApplyTorques(Native);
 		}
 
-		public double SolveAngularLimitsRef(double timeStep, ref Vector3 axis, double jacDiagABInv,
+		public double SolveAngularLimitsRef(double timeStep, ref BVector3 axis, double jacDiagABInv,
 			RigidBody body0, RigidBody body1)
 		{
 			return btRotationalLimitMotor_solveAngularLimits(Native, timeStep, ref axis,
 				jacDiagABInv, body0.Native, body1.Native);
 		}
 
-		public double SolveAngularLimits(double timeStep, Vector3 axis, double jacDiagABInv,
+		public double SolveAngularLimits(double timeStep, BVector3 axis, double jacDiagABInv,
 			RigidBody body0, RigidBody body1)
 		{
 			return btRotationalLimitMotor_solveAngularLimits(Native, timeStep, ref axis,
@@ -213,8 +213,8 @@ namespace BulletSharp
 		}
 
 		public double SolveLinearAxisRef(double timeStep, double jacDiagABInv, RigidBody body1,
-			ref Vector3 pointInA, RigidBody body2, ref Vector3 pointInB, int limitIndex, ref Vector3 axisNormalOnA,
-			ref Vector3 anchorPos)
+			ref BVector3 pointInA, RigidBody body2, ref BVector3 pointInB, int limitIndex, ref BVector3 axisNormalOnA,
+			ref BVector3 anchorPos)
 		{
 			return btTranslationalLimitMotor_solveLinearAxis(Native, timeStep, jacDiagABInv,
 				body1.Native, ref pointInA, body2.Native, ref pointInB, limitIndex,
@@ -222,8 +222,8 @@ namespace BulletSharp
 		}
 
 		public double SolveLinearAxis(double timeStep, double jacDiagABInv, RigidBody body1,
-			Vector3 pointInA, RigidBody body2, Vector3 pointInB, int limitIndex, Vector3 axisNormalOnA,
-			Vector3 anchorPos)
+			BVector3 pointInA, RigidBody body2, BVector3 pointInB, int limitIndex, BVector3 axisNormalOnA,
+			BVector3 anchorPos)
 		{
 			return btTranslationalLimitMotor_solveLinearAxis(Native, timeStep, jacDiagABInv,
 				body1.Native, ref pointInA, body2.Native, ref pointInB, limitIndex,
@@ -236,11 +236,11 @@ namespace BulletSharp
 				testValue);
 		}
 
-		public Vector3 AccumulatedImpulse
+		public BVector3 AccumulatedImpulse
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btTranslationalLimitMotor_getAccumulatedImpulse(Native, out value);
 				return value;
 			}
@@ -252,22 +252,22 @@ namespace BulletSharp
 			get { return new IntArray(btTranslationalLimitMotor_getCurrentLimit(Native), 3); }
 		}
 		*/
-		public Vector3 CurrentLimitError
+		public BVector3 CurrentLimitError
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btTranslationalLimitMotor_getCurrentLimitError(Native, out value);
 				return value;
 			}
 			set => btTranslationalLimitMotor_setCurrentLimitError(Native, ref value);
 		}
 
-		public Vector3 CurrentLinearDiff
+		public BVector3 CurrentLinearDiff
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btTranslationalLimitMotor_getCurrentLinearDiff(Native, out value);
 				return value;
 			}
@@ -291,33 +291,33 @@ namespace BulletSharp
 			set => btTranslationalLimitMotor_setLimitSoftness(Native, value);
 		}
 
-		public Vector3 LowerLimit
+		public BVector3 LowerLimit
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btTranslationalLimitMotor_getLowerLimit(Native, out value);
 				return value;
 			}
 			set => btTranslationalLimitMotor_setLowerLimit(Native, ref value);
 		}
 
-		public Vector3 MaxMotorForce
+		public BVector3 MaxMotorForce
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btTranslationalLimitMotor_getMaxMotorForce(Native, out value);
 				return value;
 			}
 			set => btTranslationalLimitMotor_setMaxMotorForce(Native, ref value);
 		}
 
-		public Vector3 NormalCfm
+		public BVector3 NormalCfm
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btTranslationalLimitMotor_getNormalCFM(Native, out value);
 				return value;
 			}
@@ -330,44 +330,44 @@ namespace BulletSharp
 			set => btTranslationalLimitMotor_setRestitution(Native, value);
 		}
 
-		public Vector3 StopCfm
+		public BVector3 StopCfm
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btTranslationalLimitMotor_getStopCFM(Native, out value);
 				return value;
 			}
 			set => btTranslationalLimitMotor_setStopCFM(Native, ref value);
 		}
 
-		public Vector3 StopErp
+		public BVector3 StopErp
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btTranslationalLimitMotor_getStopERP(Native, out value);
 				return value;
 			}
 			set => btTranslationalLimitMotor_setStopERP(Native, ref value);
 		}
 
-		public Vector3 TargetVelocity
+		public BVector3 TargetVelocity
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btTranslationalLimitMotor_getTargetVelocity(Native, out value);
 				return value;
 			}
 			set => btTranslationalLimitMotor_setTargetVelocity(Native, ref value);
 		}
 
-		public Vector3 UpperLimit
+		public BVector3 UpperLimit
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btTranslationalLimitMotor_getUpperLimit(Native, out value);
 				return value;
 			}
@@ -409,7 +409,7 @@ namespace BulletSharp
 		}
 
 		public Generic6DofConstraint(RigidBody rigidBodyA, RigidBody rigidBodyB,
-			Matrix frameInA, Matrix frameInB, bool useLinearReferenceFrameA)
+			BMatrix frameInA, BMatrix frameInB, bool useLinearReferenceFrameA)
 			: base(btGeneric6DofConstraint_new(rigidBodyA.Native, rigidBodyB.Native,
 				ref frameInA, ref frameInB, useLinearReferenceFrameA))
 		{
@@ -417,7 +417,7 @@ namespace BulletSharp
 			_rigidBodyB = rigidBodyB;
 		}
 
-		public Generic6DofConstraint(RigidBody rigidBodyB, Matrix frameInB, bool useLinearReferenceFrameB)
+		public Generic6DofConstraint(RigidBody rigidBodyB, BMatrix frameInB, bool useLinearReferenceFrameB)
 			: base(btGeneric6DofConstraint_new2(rigidBodyB.Native, ref frameInB,
 				useLinearReferenceFrameB))
 		{
@@ -430,12 +430,12 @@ namespace BulletSharp
 			btGeneric6DofConstraint_calcAnchorPos(Native);
 		}
 
-		public void CalculateTransformsRef(ref Matrix transA, ref Matrix transB)
+		public void CalculateTransformsRef(ref BMatrix transA, ref BMatrix transB)
 		{
 			btGeneric6DofConstraint_calculateTransforms(Native, ref transA, ref transB);
 		}
 
-		public void CalculateTransforms(Matrix transA, Matrix transB)
+		public void CalculateTransforms(BMatrix transA, BMatrix transB)
 		{
 			btGeneric6DofConstraint_calculateTransforms(Native, ref transA, ref transB);
 		}
@@ -445,9 +445,9 @@ namespace BulletSharp
 			btGeneric6DofConstraint_calculateTransforms2(Native);
 		}
 
-		public int GetLimitMotorInfo2(RotationalLimitMotor limitMotor, Matrix transA,
-			Matrix transB, Vector3 linVelA, Vector3 linVelB, Vector3 angVelA, Vector3 angVelB,
-			ConstraintInfo2 info, int row, ref Vector3 ax1, int rotational, int rotAllowed = 0)
+		public int GetLimitMotorInfo2(RotationalLimitMotor limitMotor, BMatrix transA,
+			BMatrix transB, BVector3 linVelA, BVector3 linVelB, BVector3 angVelA, BVector3 angVelB,
+			ConstraintInfo2 info, int row, ref BVector3 ax1, int rotational, int rotAllowed = 0)
 		{
 			return btGeneric6DofConstraint_get_limit_motor_info2(Native, limitMotor.Native,
 				ref transA, ref transB, ref linVelA, ref linVelB, ref angVelA, ref angVelB,
@@ -459,9 +459,9 @@ namespace BulletSharp
 			return btGeneric6DofConstraint_getAngle(Native, axisIndex);
 		}
 
-		public Vector3 GetAxis(int axisIndex)
+		public BVector3 GetAxis(int axisIndex)
 		{
-			Vector3 value;
+			BVector3 value;
 			btGeneric6DofConstraint_getAxis(Native, axisIndex, out value);
 			return value;
 		}
@@ -471,8 +471,8 @@ namespace BulletSharp
 			btGeneric6DofConstraint_getInfo1NonVirtual(Native, info._native);
 		}
 
-		public void GetInfo2NonVirtual(ConstraintInfo2 info, Matrix transA, Matrix transB,
-			Vector3 linVelA, Vector3 linVelB, Vector3 angVelA, Vector3 angVelB)
+		public void GetInfo2NonVirtual(ConstraintInfo2 info, BMatrix transA, BMatrix transB,
+			BVector3 linVelA, BVector3 linVelB, BVector3 angVelA, BVector3 angVelB)
 		{
 			btGeneric6DofConstraint_getInfo2NonVirtual(Native, info._native, ref transA,
 				ref transB, ref linVelA, ref linVelB, ref angVelA, ref angVelB);
@@ -497,22 +497,22 @@ namespace BulletSharp
 			return btGeneric6DofConstraint_isLimited(Native, limitIndex);
 		}
 
-		public void SetAxisRef(ref Vector3 axis1, ref Vector3 axis2)
+		public void SetAxisRef(ref BVector3 axis1, ref BVector3 axis2)
 		{
 			btGeneric6DofConstraint_setAxis(Native, ref axis1, ref axis2);
 		}
 
-		public void SetAxis(Vector3 axis1, Vector3 axis2)
+		public void SetAxis(BVector3 axis1, BVector3 axis2)
 		{
 			btGeneric6DofConstraint_setAxis(Native, ref axis1, ref axis2);
 		}
 
-		public void SetFramesRef(ref Matrix frameA, ref Matrix frameB)
+		public void SetFramesRef(ref BMatrix frameA, ref BMatrix frameB)
 		{
 			btGeneric6DofConstraint_setFrames(Native, ref frameA, ref frameB);
 		}
 
-		public void SetFrames(Matrix frameA, Matrix frameB)
+		public void SetFrames(BMatrix frameA, BMatrix frameB)
 		{
 			btGeneric6DofConstraint_setFrames(Native, ref frameA, ref frameB);
 		}
@@ -532,43 +532,43 @@ namespace BulletSharp
 			btGeneric6DofConstraint_updateRHS(Native, timeStep);
 		}
 
-		public Vector3 AngularLowerLimit
+		public BVector3 AngularLowerLimit
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btGeneric6DofConstraint_getAngularLowerLimit(Native, out value);
 				return value;
 			}
 			set => btGeneric6DofConstraint_setAngularLowerLimit(Native, ref value);
 		}
 
-		public Vector3 AngularUpperLimit
+		public BVector3 AngularUpperLimit
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btGeneric6DofConstraint_getAngularUpperLimit(Native, out value);
 				return value;
 			}
 			set => btGeneric6DofConstraint_setAngularUpperLimit(Native, ref value);
 		}
 
-		public Matrix CalculatedTransformA
+		public BMatrix CalculatedTransformA
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btGeneric6DofConstraint_getCalculatedTransformA(Native, out value);
 				return value;
 			}
 		}
 
-		public Matrix CalculatedTransformB
+		public BMatrix CalculatedTransformB
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btGeneric6DofConstraint_getCalculatedTransformB(Native, out value);
 				return value;
 			}
@@ -576,42 +576,42 @@ namespace BulletSharp
 
 		public SixDofFlags Flags => btGeneric6DofConstraint_getFlags(Native);
 
-		public Matrix FrameOffsetA
+		public BMatrix FrameOffsetA
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btGeneric6DofConstraint_getFrameOffsetA(Native, out value);
 				return value;
 			}
 		}
 
-		public Matrix FrameOffsetB
+		public BMatrix FrameOffsetB
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btGeneric6DofConstraint_getFrameOffsetB(Native, out value);
 				return value;
 			}
 		}
 
-		public Vector3 LinearLowerLimit
+		public BVector3 LinearLowerLimit
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btGeneric6DofConstraint_getLinearLowerLimit(Native, out value);
 				return value;
 			}
 			set => btGeneric6DofConstraint_setLinearLowerLimit(Native, ref value);
 		}
 
-		public Vector3 LinearUpperLimit
+		public BVector3 LinearUpperLimit
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btGeneric6DofConstraint_getLinearUpperLimit(Native, out value);
 				return value;
 			}

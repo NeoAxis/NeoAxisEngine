@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -67,43 +67,161 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Character\Character.cs" />
+    <Compile Include="Character\CharacterAI.cs" />
+    <Compile Include="Character\CharacterAITask_MoveTo.cs" />
+    <Compile Include="Character\CharacterAITask_PressButton.cs" />
+    <Compile Include="Character\CharacterAITask_TurnSwitch.cs" />
+    <Compile Include="Character\CharacterAITask_TurnTo.cs" />
+    <Compile Include="Character\CharacterAITask_Wait.cs" />
     <Compile Include="Character\CharacterAssemblyRegistration.cs" />
-    <Compile Include="Character\Component_Character.cs" />
-    <Compile Include="Character\Component_CharacterAI.cs" />
-    <Compile Include="Character\Component_CharacterAITask_MoveTo.cs" />
-    <Compile Include="Character\Component_CharacterAITask_PressButton.cs" />
-    <Compile Include="Character\Component_CharacterAITask_TurnSwitch.cs" />
-    <Compile Include="Character\Component_CharacterAITask_TurnTo.cs" />
-    <Compile Include="Character\Component_CharacterAITask_Wait.cs" />
-    <Compile Include="Character\Component_CharacterInputProcessing.cs" />
-    <Compile Include="Character\Component_Character_Editor.cs" />
-    <Compile Include="Character2D\Component_Character2D.cs" />
-    <Compile Include="Character2D\Component_Character2DAI.cs" />
-    <Compile Include="Character2D\Component_Character2DAITask_MoveTo.cs" />
-    <Compile Include="Character2D\Component_Character2DInputProcessing.cs" />
-    <Compile Include="Character2D\Component_Character2D_Editor.cs" />
-    <Compile Include="Character2D\Component_Character2D_Preview.cs" />
-    <Compile Include="Game framework\Component_AI.cs" />
-    <Compile Include="Game framework\Component_AITask.cs" />
-    <Compile Include="Game framework\Component_ButtonInSpace.cs" />
-    <Compile Include="Game framework\Component_ButtonInSpace_SettingsCell.cs" />
-    <Compile Include="Game framework\Component_CameraManagement.cs" />
-    <Compile Include="Game framework\Component_GameMode.cs" />
-    <Compile Include="Game framework\Component_InputProcessing.cs" />
-    <Compile Include="Game framework\Component_RegulatorSwitchInSpace.cs" />
-    <Compile Include="Game framework 2D\Component_Weapon2D.cs" />
-    <Compile Include="Game framework 2D\IComponent_Item2D.cs" />
-    <Compile Include="Game framework 3D\Component_Weapon.cs" />
-    <Compile Include="Game framework 3D\IComponent_Item.cs" />
-    <Compile Include="Mesh modifiers\Component_MeshModifier_BoxUV.cs" />
-    <Compile Include="Mesh modifiers\Component_MeshModifier_RandomizePosition.cs" />
-    <Compile Include="Project settings\Component_ProjectSettings_Extension.cs" />
+    <Compile Include="Character\CharacterEditor.cs" />
+    <Compile Include="Character\CharacterInputProcessing.cs" />
+    <Compile Include="Character\CharacterPreview.cs" />
+    <Compile Include="Character\CharacterPreviewImage.cs" />
+    <Compile Include="Character2D\Character2D.cs" />
+    <Compile Include="Character2D\Character2DAI.cs" />
+    <Compile Include="Character2D\Character2DAITask_MoveTo.cs" />
+    <Compile Include="Character2D\Character2DAssemblyRegistration.cs" />
+    <Compile Include="Character2D\Character2DEditor.cs" />
+    <Compile Include="Character2D\Character2DInputProcessing.cs" />
+    <Compile Include="Character2D\Character2DPreview.cs" />
+    <Compile Include="Character2D\Character2DPreviewImage.cs" />
+    <Compile Include="Components\DestroyingSensor.cs" />
+    <Compile Include="Components\DestroyingSensor2D.cs" />
+    <Compile Include="Components\Grid.cs" />
+    <Compile Include="Components\LiquidVolume.cs" />
+    <Compile Include="Components\MeasuringTool.cs" />
+    <Compile Include="Components\RenderTargetInSpace.cs" />
+    <Compile Include="Components\Text2D.cs" />
+    <Compile Include="Components\Text3D.cs" />
+    <Compile Include="Game framework\AI.cs" />
+    <Compile Include="Game framework\AITask.cs" />
+    <Compile Include="Game framework\ButtonInSpace.cs" />
+    <Compile Include="Game framework\ButtonInSpaceSettingsCell.cs" />
+    <Compile Include="Game framework\CameraManagement.cs" />
+    <Compile Include="Game framework\GameMode.cs" />
+    <Compile Include="Game framework\InputMessage.cs" />
+    <Compile Include="Game framework\InputProcessing.cs" />
+    <Compile Include="Game framework\InteractiveObject.cs" />
+    <Compile Include="Game framework\ObjectInteractionContext.cs" />
+    <Compile Include="Game framework\RegulatorSwitchInSpace.cs" />
+    <Compile Include="Game framework 2D\IGameFrameworkItem2D.cs" />
+    <Compile Include="Game framework 2D\Weapon2D.cs" />
+    <Compile Include="Game framework 3D\Bullet.cs" />
+    <Compile Include="Game framework 3D\Door.cs" />
+    <Compile Include="Game framework 3D\Explosion.cs" />
+    <Compile Include="Game framework 3D\IGameFrameworkItem.cs" />
+    <Compile Include="Game framework 3D\Weapon.cs" />
+    <Compile Include="Mesh modifiers\MeshModifier_BoxUV.cs" />
+    <Compile Include="Mesh modifiers\MeshModifier_RandomizePosition.cs" />
+    <Compile Include="Project settings\ProjectSettingsPage_Extension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shaders\ShaderFunctions.cs" />
     <Compile Include="Utility\CanvasRendererUtility.cs" />
     <Compile Include="Utility\DocumentationLinks.cs" />
     <Compile Include="Utility\EngineConsole.cs" />
     <Compile Include="Utility\ScreenMessages.cs" />
+    <Compile Include="Vehicle\Vehicle.cs" />
+    <Compile Include="Vehicle\VehicleAI.cs" />
+    <Compile Include="Vehicle\VehicleAITask_MoveTo.cs" />
+    <Compile Include="Vehicle\VehicleAssemblyRegistration.cs" />
+    <Compile Include="Vehicle\VehicleCharacterSeat.cs" />
+    <Compile Include="Vehicle\VehicleEditor.cs" />
+    <Compile Include="Vehicle\VehicleInputProcessing.cs" />
+    <Compile Include="Vehicle\VehiclePreview.cs" />
+    <Compile Include="Vehicle\VehiclePreviewImage.cs" />
+    <Compile Include="Components\ComputeUsingThreads\ComputeUsingThreads.cs" />
+    <Compile Include="Components\ComputeUsingThreads\ComputeUsingThreadsSettingsCell.cs" />
+    <Compile Include="Components\Pathfinding\Pathfinding.cs" />
+    <Compile Include="Components\Pathfinding\PathfindingGeometry.cs" />
+    <Compile Include="Components\Pathfinding\PathfindingGeometryTag.cs" />
+    <Compile Include="Components\Pathfinding\PathfindingSettingsCell.cs" />
+    <Compile Include="Components\Pathfinding\PathfindingTestMode.cs" />
+    <Compile Include="Components\WorldGenerator\WorldGenerator.cs" />
+    <Compile Include="Components\WorldGenerator\WorldGeneratorSettingsCell.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Area.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\AreaGenerator.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Cell.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\CompactCell.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\CompactHeightfield.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\CompactSpan.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\CompactSpanReference.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Contour.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\ContourBuildFlags.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\ContourSet.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\ContourVertex.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Direction.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\EdgeFlags.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Heightfield.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Heightfield.Rasterization.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\HeightPatch.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\MathHelper.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\NavMesh.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\NavMeshBuilder.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\NavMeshGenerationSettings.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\NavMeshQuery.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\NodeFlags.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\NodePool.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\PolyBounds.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\PolyMesh.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\PolyMeshDetail.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\PolyVertex.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Region.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Span.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\SpanReference.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\TiledNavMesh.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Collections\BVTree.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Crowds\Agent.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Crowds\Crowd.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Crowds\CrowdAgentState.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Crowds\LocalBoundary.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Crowds\ObstacleAvoidanceQuery.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Crowds\PathCorridor.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Crowds\PathQueue.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Crowds\Status.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Crowds\TargetState.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Crowds\UpdateFlags.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Geometry\BBox2i.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Geometry\BBox3.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Geometry\Containment.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Geometry\Distance.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Geometry\Intersection.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Geometry\Triangle3.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Geometry\TriangleEnumerable.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Geometry\Vector2.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Geometry\Vector2i.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Geometry\Vector3.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Geometry\Vector3Extensions.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\IO\NavMeshConfigurationFile.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\IO\NavMeshSerializer.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\BoundarySide.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\FindPathOptions.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\Link.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\NavNode.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\NavPoint.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\NavPoly.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\NavPolyId.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\NavPolyIdManager.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\NavQueryFilter.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\NavTile.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\OffMeshConnection.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\Path.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\PathBuildFlags.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\PathfindingCommon.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\RaycastHit.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\RaycastOptions.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\StraightPathFlags.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Collections\Generic\BufferedQueue.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Collections\Generic\BufferedStack.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Collections\Generic\IValueWithCost.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Collections\Generic\PriorityQueue.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\Collections\Generic\ProximityGrid.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\IO\Binary\NavMeshBinarySerializer.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\IO\Json\AreaConverter.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\IO\Json\NavMeshJsonSerializer.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\IO\Json\PolyIdConverter.cs" />
+    <Compile Include="Components\Pathfinding\SharpNav\IO\Json\Vector3Converter.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
@@ -126,6 +244,9 @@
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>if EXIST "$(ProjectDir)NeoAxis.CoreExtension.csproj" ( if EXIST "$(ProjectDir)..\..\Binaries\NeoAxis.Editor.exe" ( "$(ProjectDir)..\..\Binaries\NeoAxis.Editor.exe" -platformProjectPatch "$(ProjectDir)NeoAxis.CoreExtension.UWP.csproj" -baseProject "$(ProjectDir)NeoAxis.CoreExtension.csproj" ) )</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

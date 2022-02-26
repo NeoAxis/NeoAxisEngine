@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
@@ -10,9 +10,9 @@ namespace NeoAxis
 	/// <summary>
 	/// Auxiliary class for working with mathematical types.
 	/// </summary>
-	public static class MathUtility
+	/*public */static class MathUtility
 	{
-		public static Vector2F[] ToVector2FArray( this Vector2[] source )
+		public static Vector2F[] ToVector2FArray( Vector2[] source )
 		{
 			var result = new Vector2F[ source.Length ];
 			for( int n = 0; n < source.Length; n++ )
@@ -20,7 +20,7 @@ namespace NeoAxis
 			return result;
 		}
 
-		public static Vector2[] ToVector2Array( this Vector2F[] source )
+		public static Vector2[] ToVector2Array( Vector2F[] source )
 		{
 			var result = new Vector2[ source.Length ];
 			for( int n = 0; n < source.Length; n++ )
@@ -28,7 +28,7 @@ namespace NeoAxis
 			return result;
 		}
 
-		public static Vector3F[] ToVector3FArray( this Vector3[] source )
+		public static Vector3F[] ToVector3FArray( Vector3[] source )
 		{
 			var result = new Vector3F[ source.Length ];
 			for( int n = 0; n < source.Length; n++ )
@@ -36,7 +36,7 @@ namespace NeoAxis
 			return result;
 		}
 
-		public static Vector3[] ToVector3Array( this Vector3F[] source )
+		public static Vector3[] ToVector3Array( Vector3F[] source )
 		{
 			var result = new Vector3[ source.Length ];
 			for( int n = 0; n < source.Length; n++ )
@@ -44,7 +44,7 @@ namespace NeoAxis
 			return result;
 		}
 
-		public static Vector4F[] ToVector4FArray( this Vector4[] source )
+		public static Vector4F[] ToVector4FArray( Vector4[] source )
 		{
 			var result = new Vector4F[ source.Length ];
 			for( int n = 0; n < source.Length; n++ )
@@ -52,7 +52,7 @@ namespace NeoAxis
 			return result;
 		}
 
-		public static Vector4[] ToVector4Array( this Vector4F[] source )
+		public static Vector4[] ToVector4Array( Vector4F[] source )
 		{
 			var result = new Vector4[ source.Length ];
 			for( int n = 0; n < source.Length; n++ )

@@ -1,9 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class MultiBody : IDisposable
 	{
@@ -15,28 +15,28 @@ namespace BulletSharp
 			Native = native;
 		}
 
-		public MultiBody(int nLinks, double mass, Vector3 inertia, bool fixedBase,
+		public MultiBody(int nLinks, double mass, BVector3 inertia, bool fixedBase,
 			bool canSleep)
 		{
 			Native = btMultiBody_new(nLinks, mass, ref inertia, fixedBase, canSleep);
 		}
 
-		public void AddBaseConstraintForce(Vector3 f)
+		public void AddBaseConstraintForce(BVector3 f)
 		{
 			btMultiBody_addBaseConstraintForce(Native, ref f);
 		}
 
-		public void AddBaseConstraintTorque(Vector3 t)
+		public void AddBaseConstraintTorque(BVector3 t)
 		{
 			btMultiBody_addBaseConstraintTorque(Native, ref t);
 		}
 
-		public void AddBaseForce(Vector3 f)
+		public void AddBaseForce(BVector3 f)
 		{
 			btMultiBody_addBaseForce(Native, ref f);
 		}
 
-		public void AddBaseTorque(Vector3 t)
+		public void AddBaseTorque(BVector3 t)
 		{
 			btMultiBody_addBaseTorque(Native, ref t);
 		}
@@ -56,22 +56,22 @@ namespace BulletSharp
 			btMultiBody_addJointTorqueMultiDof2(Native, i, dof, q);
 		}
 
-		public void AddLinkConstraintForce(int i, Vector3 f)
+		public void AddLinkConstraintForce(int i, BVector3 f)
 		{
 			btMultiBody_addLinkConstraintForce(Native, i, ref f);
 		}
 
-		public void AddLinkConstraintTorque(int i, Vector3 t)
+		public void AddLinkConstraintTorque(int i, BVector3 t)
 		{
 			btMultiBody_addLinkConstraintTorque(Native, i, ref t);
 		}
 
-		public void AddLinkForce(int i, Vector3 f)
+		public void AddLinkForce(int i, BVector3 f)
 		{
 			btMultiBody_addLinkForce(Native, i, ref f);
 		}
 
-		public void AddLinkTorque(int i, Vector3 t)
+		public void AddLinkTorque(int i, BVector3 t)
 		{
 			btMultiBody_addLinkTorque(Native, i, ref t);
 		}
@@ -196,16 +196,16 @@ namespace BulletSharp
 			return _links[index];
 		}
 
-		public Vector3 GetLinkForce(int i)
+		public BVector3 GetLinkForce(int i)
 		{
-			Vector3 value;
+			BVector3 value;
 			btMultiBody_getLinkForce(Native, i, out value);
 			return value;
 		}
 
-		public Vector3 GetLinkInertia(int i)
+		public BVector3 GetLinkInertia(int i)
 		{
-			Vector3 value;
+			BVector3 value;
 			btMultiBody_getLinkInertia(Native, i, out value);
 			return value;
 		}
@@ -215,9 +215,9 @@ namespace BulletSharp
 			return btMultiBody_getLinkMass(Native, i);
 		}
 
-		public Vector3 GetLinkTorque(int i)
+		public BVector3 GetLinkTorque(int i)
 		{
-			Vector3 value;
+			BVector3 value;
 			btMultiBody_getLinkTorque(Native, i, out value);
 			return value;
 		}
@@ -227,16 +227,16 @@ namespace BulletSharp
 			return btMultiBody_getParent(Native, linkNum);
 		}
 
-		public Quaternion GetParentToLocalRot(int i)
+		public BQuaternion GetParentToLocalRot(int i)
 		{
-			Quaternion value;
+			BQuaternion value;
 			btMultiBody_getParentToLocalRot(Native, i, out value);
 			return value;
 		}
 
-		public Vector3 GetRVector(int i)
+		public BVector3 GetRVector(int i)
 		{
-			Vector3 value;
+			BVector3 value;
 			btMultiBody_getRVector(Native, i, out value);
 			return value;
 		}
@@ -251,23 +251,23 @@ namespace BulletSharp
 			return btMultiBody_internalNeedsJointFeedback(Native);
 		}
 
-		public Vector3 LocalDirToWorld(int i, Vector3 vec)
+		public BVector3 LocalDirToWorld(int i, BVector3 vec)
 		{
-			Vector3 value;
+			BVector3 value;
 			btMultiBody_localDirToWorld(Native, i, ref vec, out value);
 			return value;
 		}
 
-		public Matrix LocalFrameToWorld(int i, Matrix mat)
+		public BMatrix LocalFrameToWorld(int i, BMatrix mat)
 		{
-			Matrix value;
+			BMatrix value;
 			btMultiBody_localFrameToWorld(Native, i, ref mat, out value);
 			return value;
 		}
 
-		public Vector3 LocalPosToWorld(int i, Vector3 vec)
+		public BVector3 LocalPosToWorld(int i, BVector3 vec)
 		{
-			Vector3 value;
+			BVector3 value;
 			btMultiBody_localPosToWorld(Native, i, ref vec, out value);
 			return value;
 		}
@@ -307,8 +307,8 @@ namespace BulletSharp
 			btMultiBody_setPosUpdated(Native, updated);
 		}
 
-		public void SetupFixed(int linkIndex, double mass, Vector3 inertia, int parent,
-			Quaternion rotParentToThis, Vector3 parentComToThisPivotOffset, Vector3 thisPivotToThisComOffset,
+		public void SetupFixed(int linkIndex, double mass, BVector3 inertia, int parent,
+			BQuaternion rotParentToThis, BVector3 parentComToThisPivotOffset, BVector3 thisPivotToThisComOffset,
 			bool deprecatedDisableParentCollision = true)
 		{
 			btMultiBody_setupFixed(Native, linkIndex, mass, ref inertia, parent,
@@ -316,33 +316,33 @@ namespace BulletSharp
 				deprecatedDisableParentCollision);
 		}
 
-		public void SetupPlanar(int i, double mass, Vector3 inertia, int parent, Quaternion rotParentToThis,
-			Vector3 rotationAxis, Vector3 parentComToThisComOffset, bool disableParentCollision = false)
+		public void SetupPlanar(int i, double mass, BVector3 inertia, int parent, BQuaternion rotParentToThis,
+			BVector3 rotationAxis, BVector3 parentComToThisComOffset, bool disableParentCollision = false)
 		{
 			btMultiBody_setupPlanar(Native, i, mass, ref inertia, parent, ref rotParentToThis,
 				ref rotationAxis, ref parentComToThisComOffset, disableParentCollision);
 		}
 
-		public void SetupPrismatic(int i, double mass, Vector3 inertia, int parent,
-			Quaternion rotParentToThis, Vector3 jointAxis, Vector3 parentComToThisPivotOffset,
-			Vector3 thisPivotToThisComOffset, bool disableParentCollision)
+		public void SetupPrismatic(int i, double mass, BVector3 inertia, int parent,
+			BQuaternion rotParentToThis, BVector3 jointAxis, BVector3 parentComToThisPivotOffset,
+			BVector3 thisPivotToThisComOffset, bool disableParentCollision)
 		{
 			btMultiBody_setupPrismatic(Native, i, mass, ref inertia, parent, ref rotParentToThis,
 				ref jointAxis, ref parentComToThisPivotOffset, ref thisPivotToThisComOffset,
 				disableParentCollision);
 		}
 
-		public void SetupRevolute(int linkIndex, double mass, Vector3 inertia, int parentIndex,
-			Quaternion rotParentToThis, Vector3 jointAxis, Vector3 parentComToThisPivotOffset,
-			Vector3 thisPivotToThisComOffset, bool disableParentCollision = false)
+		public void SetupRevolute(int linkIndex, double mass, BVector3 inertia, int parentIndex,
+			BQuaternion rotParentToThis, BVector3 jointAxis, BVector3 parentComToThisPivotOffset,
+			BVector3 thisPivotToThisComOffset, bool disableParentCollision = false)
 		{
 			btMultiBody_setupRevolute(Native, linkIndex, mass, ref inertia, parentIndex,
 				ref rotParentToThis, ref jointAxis, ref parentComToThisPivotOffset,
 				ref thisPivotToThisComOffset, disableParentCollision);
 		}
 
-		public void SetupSpherical(int linkIndex, double mass, Vector3 inertia, int parent,
-			Quaternion rotParentToThis, Vector3 parentComToThisPivotOffset, Vector3 thisPivotToThisComOffset,
+		public void SetupSpherical(int linkIndex, double mass, BVector3 inertia, int parent,
+			BQuaternion rotParentToThis, BVector3 parentComToThisPivotOffset, BVector3 thisPivotToThisComOffset,
 			bool disableParentCollision = false)
 		{
 			btMultiBody_setupSpherical(Native, linkIndex, mass, ref inertia, parent,
@@ -375,16 +375,16 @@ namespace BulletSharp
 			btMultiBody_wakeUp(Native);
 		}
 
-		public Vector3 WorldDirToLocal(int i, Vector3 vec)
+		public BVector3 WorldDirToLocal(int i, BVector3 vec)
 		{
-			Vector3 value;
+			BVector3 value;
 			btMultiBody_worldDirToLocal(Native, i, ref vec, out value);
 			return value;
 		}
 
-		public Vector3 WorldPosToLocal(int i, Vector3 vec)
+		public BVector3 WorldPosToLocal(int i, BVector3 vec)
 		{
-			Vector3 value;
+			BVector3 value;
 			btMultiBody_worldPosToLocal(Native, i, ref vec, out value);
 			return value;
 		}
@@ -395,11 +395,11 @@ namespace BulletSharp
 			set => btMultiBody_setAngularDamping(Native, value);
 		}
 
-		public Vector3 AngularMomentum
+		public BVector3 AngularMomentum
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btMultiBody_getAngularMomentum(Native, out value);
 				return value;
 			}
@@ -411,21 +411,21 @@ namespace BulletSharp
 			set => btMultiBody_setBaseCollider(Native, value.Native);
 		}
 
-		public Vector3 BaseForce
+		public BVector3 BaseForce
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btMultiBody_getBaseForce(Native, out value);
 				return value;
 			}
 		}
 
-		public Vector3 BaseInertia
+		public BVector3 BaseInertia
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btMultiBody_getBaseInertia(Native, out value);
 				return value;
 			}
@@ -444,54 +444,54 @@ namespace BulletSharp
 			set { btMultiBody_setBaseName(Native, value.Native); }
 		}
 		*/
-		public Vector3 BaseOmega
+		public BVector3 BaseOmega
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btMultiBody_getBaseOmega(Native, out value);
 				return value;
 			}
 			set => btMultiBody_setBaseOmega(Native, ref value);
 		}
 
-		public Vector3 BasePosition
+		public BVector3 BasePosition
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btMultiBody_getBasePos(Native, out value);
 				return value;
 			}
 			set => btMultiBody_setBasePos(Native, ref value);
 		}
 
-		public Vector3 BaseTorque
+		public BVector3 BaseTorque
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btMultiBody_getBaseTorque(Native, out value);
 				return value;
 			}
 		}
 
-		public Vector3 BaseVelocity
+		public BVector3 BaseVelocity
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btMultiBody_getBaseVel(Native, out value);
 				return value;
 			}
 			set => btMultiBody_setBaseVel(Native, ref value);
 		}
 
-		public Matrix BaseWorldTransform
+		public BMatrix BaseWorldTransform
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btMultiBody_getBaseWorldTransform(Native, out value);
 				return value;
 			}
@@ -599,11 +599,11 @@ namespace BulletSharp
 			get { return btMultiBody_getVelocityVector(Native); }
 		}
 		*/
-		public Quaternion WorldToBaseRot
+		public BQuaternion WorldToBaseRot
 		{
 			get
 			{
-				Quaternion value;
+				BQuaternion value;
 				btMultiBody_getWorldToBaseRot(Native, out value);
 				return value;
 			}

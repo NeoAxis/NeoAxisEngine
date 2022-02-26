@@ -1969,4 +1969,85 @@
   <data name="Union_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Union_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="SimulatePhysics_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SimulatePhysics_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SimulatePhysics_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SimulatePhysics_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AlignBottom_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AlignBottom_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AlignBottom_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AlignBottom_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AlignCenterHorizontal_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AlignCenterHorizontal_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AlignCenterHorizontal_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AlignCenterHorizontal_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AlignCenterVertical_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AlignCenterVertical_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AlignCenterVertical_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AlignCenterVertical_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AlignLeft_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AlignLeft_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AlignLeft_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AlignLeft_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AlignRight_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AlignRight_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AlignRight_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AlignRight_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AlignStretchHorizontal_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AlignStretchHorizontal_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AlignStretchHorizontal_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AlignStretchHorizontal_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AlignStretchVertical_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AlignStretchVertical_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AlignStretchVertical_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AlignStretchVertical_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AlignTop_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AlignTop_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AlignTop_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AlignTop_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Store_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Store_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Store_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Store_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BuildAndUpdate_32_Dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BuildAndUpdate_32_Dark.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BuildAndUpdate_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BuildAndUpdate_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BuildAndUpdate_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BuildAndUpdate_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BuildAndUpdate_16_Dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BuildAndUpdate_16_Dark.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Splash" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Splash.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iOS_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iOS_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iOS_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iOS_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

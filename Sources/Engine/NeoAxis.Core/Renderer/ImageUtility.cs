@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Runtime.InteropServices;
 using System.IO;
@@ -271,7 +271,7 @@ namespace NeoAxis
 					//!!!!
 
 					default:
-						throw new Exception( $"ImageUtility: GetPixel: Format \"{format}\" is not supported." );
+						throw new Exception( $"ImageUtility: GetPixelByte: Format \"{format}\" is not supported." );
 						//Log.Fatal( "ImageUtility: SetPixel: Format is not supported." );
 						//break;
 					}
@@ -405,8 +405,7 @@ namespace NeoAxis
 		/// <param name="numMipmaps">The number of mipmaps the image data has inside.</param>
 		/// <param name="error">Output error string.</param>
 		/// <returns><b>true</b> if image is loaded; otherwise, <b>false</b>.</returns>
-		public static bool LoadFromVirtualFile( string virtualFileName, out byte[] data, out Vector2I size, out int depth,
-			out PixelFormat format, out int numFaces, out int numMipmaps, out string error )
+		public static bool LoadFromVirtualFile( string virtualFileName, out byte[] data, out Vector2I size, out int depth, out PixelFormat format, out int numFaces, out int numMipmaps, out string error )
 		{
 			unsafe
 			{
@@ -452,9 +451,7 @@ namespace NeoAxis
 		/// <param name="numMipmaps">The number of mipmaps the image data has inside.</param>
 		/// <param name="error">Output error string.</param>
 		/// <returns><b>true</b> if image is loaded; otherwise, <b>false</b>.</returns>
-		public static bool LoadFromBuffer( byte[] sourceBuffer, string fileType, out byte[] data,
-			out Vector2I size, out int depth, out PixelFormat format, out int numFaces,
-			out int numMipmaps, out string error )
+		public static bool LoadFromBuffer( byte[] sourceBuffer, string fileType, out byte[] data, out Vector2I size, out int depth, out PixelFormat format, out int numFaces, out int numMipmaps, out string error )
 		{
 			unsafe
 			{
@@ -504,8 +501,7 @@ namespace NeoAxis
 		/// <param name="numMipmaps">The number of mipmaps the image data has inside.</param>
 		/// <param name="error">Output error string.</param>
 		/// <returns><b>true</b> if image is loaded; otherwise, <b>false</b>.</returns>
-		public static bool LoadFromRealFile( string realFileName, out byte[] data, out Vector2I size, out int depth,
-			out PixelFormat format, out int numFaces, out int numMipmaps, out string error )
+		public static bool LoadFromRealFile( string realFileName, out byte[] data, out Vector2I size, out int depth, out PixelFormat format, out int numFaces, out int numMipmaps, out string error )
 		{
 			byte[] buffer = null;
 			string fileType = null;
@@ -541,8 +537,7 @@ namespace NeoAxis
 		/// <param name="numMipmaps">The number of mipmaps the image data has inside.</param>
 		/// <param name="error">Output error string.</param>
 		/// <returns><b>true</b> if image is currently serialized; otherwise, <b>false</b>.</returns>
-		public static bool Save( string realFileName, IntPtr data, Vector2I size, int depth, PixelFormat format,
-		int numFaces, int numMipmaps, out string error )
+		public static bool Save( string realFileName, IntPtr data, Vector2I size, int depth, PixelFormat format, int numFaces, int numMipmaps, out string error )
 		{
 			error = null;
 
@@ -570,8 +565,7 @@ namespace NeoAxis
 		/// <param name="numMipmaps">The number of mipmaps the image data has inside.</param>
 		/// <param name="error">Output error string.</param>
 		/// <returns><b>true</b> if image is currently serialized; otherwise, <b>false</b>.</returns>
-		public static bool Save( string realFileName, byte[] data, Vector2I size, int depth, PixelFormat format,
-			int numFaces, int numMipmaps, out string error )
+		public static bool Save( string realFileName, byte[] data, Vector2I size, int depth, PixelFormat format, int numFaces, int numMipmaps, out string error )
 		{
 			unsafe
 			{

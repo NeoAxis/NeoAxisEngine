@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{3BC0AC7E-3B3B-4D3F-9CC0-B2BDECC460A6}</ProjectGuid>
@@ -24,19 +24,19 @@
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
     <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\..\Binaries\NeoAxis.Internal\Platforms\Android\Managed\</OutputPath>
     <DefineConstants>TRACE;DEBUG;OPENGLES</DefineConstants>
     <DebugType>portable</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <AotAssemblies>false</AotAssemblies>
     <EnableLLVM>false</EnableLLVM>
     <BundleAssemblies>false</BundleAssemblies>
-    <AndroidSupportedAbis>arm64-v8a</AndroidSupportedAbis>
+    <AndroidSupportedAbis>armeabi-v7a</AndroidSupportedAbis>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     <Debugger>Xamarin</Debugger>
@@ -46,15 +46,16 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <AndroidDexTool>d8</AndroidDexTool>
-    <AndroidUseAapt2>false</AndroidUseAapt2>
+    <AndroidUseAapt2>true</AndroidUseAapt2>
     <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
+    <NoWarn>CS0414</NoWarn>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <DebugSymbols>true</DebugSymbols>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <DebugSymbols>false</DebugSymbols>
     <OutputPath>..\..\Binaries\NeoAxis.Internal\Platforms\Android\Managed\</OutputPath>
     <DefineConstants>TRACE;OPENGLES</DefineConstants>
     <DebugType>PdbOnly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
@@ -68,7 +69,9 @@
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     <MandroidI18n />
     <AndroidDexTool>d8</AndroidDexTool>
-    <AndroidSupportedAbis>arm64-v8a</AndroidSupportedAbis>
+    <AndroidSupportedAbis>armeabi-v7a</AndroidSupportedAbis>
+    <NoWarn>CS0414</NoWarn>
+    <AndroidUseAapt2>true</AndroidUseAapt2>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="NeoAxis.Core">
@@ -94,6 +97,68 @@
     <Compile Include="Implementation\FunctionalityAndroid.Video.cs" />
     <Compile Include="Implementation\LogPlatformFunctionalityAndroid.cs" />
     <Compile Include="Implementation\PlatformSpecificUtilityAndroid.cs" />
+    <Compile Include="Implementation\SharpZipLib\BZip2\BZip2.cs" />
+    <Compile Include="Implementation\SharpZipLib\BZip2\BZip2Constants.cs" />
+    <Compile Include="Implementation\SharpZipLib\BZip2\BZip2Exception.cs" />
+    <Compile Include="Implementation\SharpZipLib\BZip2\BZip2InputStream.cs" />
+    <Compile Include="Implementation\SharpZipLib\BZip2\BZip2OutputStream.cs" />
+    <Compile Include="Implementation\SharpZipLib\Checksum\Adler32.cs" />
+    <Compile Include="Implementation\SharpZipLib\Checksum\BZip2Crc.cs" />
+    <Compile Include="Implementation\SharpZipLib\Checksum\Crc32.cs" />
+    <Compile Include="Implementation\SharpZipLib\Checksum\IChecksum.cs" />
+    <Compile Include="Implementation\SharpZipLib\Core\FileSystemScanner.cs" />
+    <Compile Include="Implementation\SharpZipLib\Core\INameTransform.cs" />
+    <Compile Include="Implementation\SharpZipLib\Core\IScanFilter.cs" />
+    <Compile Include="Implementation\SharpZipLib\Core\NameFilter.cs" />
+    <Compile Include="Implementation\SharpZipLib\Core\PathFilter.cs" />
+    <Compile Include="Implementation\SharpZipLib\Core\StreamUtils.cs" />
+    <Compile Include="Implementation\SharpZipLib\Core\WindowsPathUtils.cs" />
+    <Compile Include="Implementation\SharpZipLib\Encryption\PkzipClassic.cs" />
+    <Compile Include="Implementation\SharpZipLib\Encryption\ZipAESStream.cs" />
+    <Compile Include="Implementation\SharpZipLib\Encryption\ZipAESTransform.cs" />
+    <Compile Include="Implementation\SharpZipLib\GZip\GZip.cs" />
+    <Compile Include="Implementation\SharpZipLib\GZip\GZIPConstants.cs" />
+    <Compile Include="Implementation\SharpZipLib\GZip\GZipException.cs" />
+    <Compile Include="Implementation\SharpZipLib\GZip\GzipInputStream.cs" />
+    <Compile Include="Implementation\SharpZipLib\GZip\GzipOutputStream.cs" />
+    <Compile Include="Implementation\SharpZipLib\Lzw\LzwConstants.cs" />
+    <Compile Include="Implementation\SharpZipLib\Lzw\LzwException.cs" />
+    <Compile Include="Implementation\SharpZipLib\Lzw\LzwInputStream.cs" />
+    <Compile Include="Implementation\SharpZipLib\SharpZipBaseException.cs" />
+    <Compile Include="Implementation\SharpZipLib\Tar\InvalidHeaderException.cs" />
+    <Compile Include="Implementation\SharpZipLib\Tar\TarArchive.cs" />
+    <Compile Include="Implementation\SharpZipLib\Tar\TarBuffer.cs" />
+    <Compile Include="Implementation\SharpZipLib\Tar\TarEntry.cs" />
+    <Compile Include="Implementation\SharpZipLib\Tar\TarException.cs" />
+    <Compile Include="Implementation\SharpZipLib\Tar\TarHeader.cs" />
+    <Compile Include="Implementation\SharpZipLib\Tar\TarInputStream.cs" />
+    <Compile Include="Implementation\SharpZipLib\Tar\TarOutputStream.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\Compression\Deflater.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\Compression\DeflaterConstants.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\Compression\DeflaterEngine.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\Compression\DeflaterHuffman.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\Compression\DeflaterPending.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\Compression\Inflater.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\Compression\InflaterDynHeader.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\Compression\InflaterHuffmanTree.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\Compression\PendingBuffer.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\Compression\Streams\DeflaterOutputStream.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\Compression\Streams\InflaterInputStream.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\Compression\Streams\OutputWindow.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\Compression\Streams\StreamManipulator.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\FastZip.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\IEntryFactory.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\WindowsNameTransform.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\ZipConstants.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\ZipEntry.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\ZipEntryFactory.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\ZipException.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\ZipExtraData.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\ZipFile.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\ZipHelperStream.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\ZipInputStream.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\ZipNameTransform.cs" />
+    <Compile Include="Implementation\SharpZipLib\Zip\ZipOutputStream.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Implementation\OpenGLES.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
@@ -102,22 +167,27 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\Project.zip" />
-    <AndroidNativeLibrary Include="lib\arm64-v8a\libbgfx.so">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </AndroidNativeLibrary>
-    <AndroidNativeLibrary Include="lib\arm64-v8a\libbulletc.so">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </AndroidNativeLibrary>
-    <AndroidNativeLibrary Include="lib\arm64-v8a\libNeoAxisCoreNative.so">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </AndroidNativeLibrary>
-    <AndroidNativeLibrary Include="lib\arm64-v8a\libshaderc.so">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </AndroidNativeLibrary>
     <AndroidAsset Include="Assets\Project.zip.hash" />
-    <AndroidNativeLibrary Include="lib\arm64-v8a\libOpenAL.so">
+    <AndroidNativeLibrary Include="lib\armeabi-v7a\libbgfx.so">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AndroidNativeLibrary>
+    <AndroidNativeLibrary Include="lib\armeabi-v7a\libbulletc.so">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AndroidNativeLibrary>
+    <AndroidNativeLibrary Include="lib\armeabi-v7a\libNeoAxisCoreNative.so">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AndroidNativeLibrary>
+    <AndroidNativeLibrary Include="lib\armeabi-v7a\libOpenAL.so">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AndroidNativeLibrary>
+    <AndroidNativeLibrary Include="lib\armeabi-v7a\libshaderc.so">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AndroidNativeLibrary>
+    <None Include="lib\arm64-v8a\libbgfx.so" />
+    <None Include="lib\arm64-v8a\libbulletc.so" />
+    <None Include="lib\arm64-v8a\libNeoAxisCoreNative.so" />
+    <None Include="lib\arm64-v8a\libOpenAL.so" />
+    <None Include="lib\arm64-v8a\libshaderc.so" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml" />
     <None Include="Assets\AboutAssets.txt" />
@@ -161,10 +231,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>set Product=Base\Build\Simple Game Android.product
-rem set Product=Base\Build\Full Project Android.product
+    <PreBuildEvent>set Product=Base\Build\Mobile Demo Android.product
+rem set Product=Samples\Simple Game\Build\Simple Game Android.product
 
-if exist "$(ProjectDir)..\..\Binaries\NeoAxis.Editor.exe" "$(ProjectDir)..\..\Binaries\NeoAxis.Editor.exe" -prepareProductAssetsAndroid "%25Product%25" -destinationFolder "$(ProjectDir)Assets"
+if exist "$(ProjectDir)..\..\Binaries\NeoAxis.Editor.exe" "$(ProjectDir)..\..\Binaries\NeoAxis.Editor.exe" -prepareProductAssets "%25Product%25" -destinationFolder "$(ProjectDir)Assets" -platform Android
 </PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

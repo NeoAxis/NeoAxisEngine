@@ -1,11 +1,6 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
-using System.Drawing.Design;
-using System.ComponentModel;
-using System.Reflection;
 
 namespace NeoAxis
 {
@@ -14,13 +9,13 @@ namespace NeoAxis
 	/// </summary>
 	[DefaultOrderOfEffect( 9 )]
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
-	public class Component_RenderingEffect_Grayscale : Component_RenderingEffect_Simple
+	public class RenderingEffect_Grayscale : RenderingEffect_Simple
 	{
 		const string shaderDefault = @"Base\Shaders\Effects\Grayscale_fs.sc";
 
-		public Component_RenderingEffect_Grayscale()
+		public RenderingEffect_Grayscale()
 		{
-			Shader = shaderDefault;
+			ShaderFile = shaderDefault;
 		}
 
 		public override bool LimitedDevicesSupport

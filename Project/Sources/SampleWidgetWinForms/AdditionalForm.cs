@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,7 +15,7 @@ namespace SampleWidgetWinForms
 		{
 			InitializeComponent();
 
-			Font = new Font( new FontFamily( "Microsoft Sans Serif" ), 8f );
+			base.Font = new System.Drawing.Font( new FontFamily( "Microsoft Sans Serif" ), 8f );
 
 			widgetControl1.ViewportCreated += WidgetControl1_ViewportCreated;
 		}
@@ -25,27 +25,27 @@ namespace SampleWidgetWinForms
 			Close();
 		}
 
-		private void WidgetControl1_ViewportCreated( NeoAxis.Widget.EngineViewportControl sender )
+		private void WidgetControl1_ViewportCreated( NeoAxis.Editor.EngineViewportControl sender )
 		{
-			Component_Scene.First.ViewportUpdateGetCameraSettings += Scene_ViewportUpdateGetCameraSettings;
+			Scene.First.ViewportUpdateGetCameraSettings += Scene_ViewportUpdateGetCameraSettings;
 
 			//bind scene to viewport
-			widgetControl1.Viewport.AttachedScene = Component_Scene.First;
+			widgetControl1.Viewport.AttachedScene = Scene.First;
 		}
 
-		protected virtual void Scene_ViewportUpdateGetCameraSettings( Component_Scene scene, Viewport viewport, ref bool processed )
+		protected virtual void Scene_ViewportUpdateGetCameraSettings( Scene scene, Viewport viewport, ref bool processed )
 		{
 			if( widgetControl1.Viewport == viewport )
 			{
 				var defaultCamera = scene.CameraDefault.Value;
 				if( defaultCamera == null )
-					defaultCamera = scene.Mode.Value == Component_Scene.ModeEnum._3D ? scene.CameraEditor : scene.CameraEditor2D;
+					defaultCamera = scene.Mode.Value == Scene.ModeEnum._3D ? scene.CameraEditor : scene.CameraEditor2D;
 
 				var position = new Vector3( 27, 4, -9 );
 				var lookTo = new Vector3( 25, -0.6, -10 );
 				var up = Vector3.ZAxis;
 
-				//var obj = scene.GetComponent<Component_ObjectInSpace>( "Mesh in Space 68" );
+				//var obj = scene.GetComponent<ObjectInSpace>( "Mesh in Space 68" );
 				//if( obj != null )
 				//{
 				//	var tr = obj.TransformV;
@@ -54,8 +54,8 @@ namespace SampleWidgetWinForms
 				//	up = tr.Rotation * new Vector3( 0, 0, 1 );
 				//}
 
-				var camera = (Component_Camera)defaultCamera.Clone();
-				//camera = new Component_Camera();
+				var camera = (Camera)defaultCamera.Clone();
+				//camera = new Camera();
 				camera.Transform = new Transform( position, Quaternion.LookAt( ( lookTo - position ).GetNormalize(), up ) );
 				camera.FixedUp = up;
 				viewport.CameraSettings = new Viewport.CameraSettingsClass( viewport, camera );

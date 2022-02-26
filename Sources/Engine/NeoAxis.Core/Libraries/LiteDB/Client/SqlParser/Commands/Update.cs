@@ -1,10 +1,11 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using LiteDB.Engine;
-using static LiteDB.Constants;
+using Internal.LiteDB.Engine;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     internal partial class SqlParser
     {
@@ -45,3 +46,4 @@ namespace LiteDB
         }
     }
 }
+#endif

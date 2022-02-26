@@ -1,4 +1,4 @@
-.component NeoAxis.Component_Scene
+.component NeoAxis.Scene
 {
 	DisplayDevelopmentDataInSimulation = True
 	DisplayPhysicalObjects = True
@@ -10,20 +10,20 @@
 	{
 		GetByReference = "this:$Camera Editor"
 	}
-	.component NeoAxis.Component_Camera
+	.component NeoAxis.Camera
 	{
 		Name = Camera Editor
 		Visible = False
 		Transform = "-1.3868784719792 -5.22858796461014 10.1019289797053; -0.136245654066482 0.141469230047128 0.680172508642634 0.706249911281166; 1 1 1"
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Ambient Light
 		Transform = "-27.7871391969358 -22.3112535611728 24.8527169920668; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
 		Brightness = 20000
 	}
-	.component NeoAxis.Component_RenderingPipeline_Default
+	.component NeoAxis.RenderingPipeline_Basic
 	{
 		Name = Rendering Pipeline
 		ShadowDirectionalLightCascades = 1
@@ -35,22 +35,26 @@
 		.component NeoAxis.Component
 		{
 			Name = Scene Effects
-			.component NeoAxis.Component_RenderingEffect_Sharpen
+			.component NeoAxis.RenderingEffect_Antialiasing
+			{
+				Name = Antialiasing
+			}
+			.component NeoAxis.RenderingEffect_ResolutionUpscale
+			{
+				Name = Resolution Upscale
+			}
+			.component NeoAxis.RenderingEffect_Sharpen
 			{
 				Name = Sharpen
 				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
 			}
-			.component NeoAxis.Component_RenderingEffect_Antialiasing
-			{
-				Name = Antialiasing
-			}
 		}
 	}
-	.component NeoAxis.Component_GameMode
+	.component NeoAxis.GameMode
 	{
 		Name = Game Mode
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light1
 		Transform = "3.81787770755498 -4.02738720650646 30.8437317105508; -0.787517077619836 -0.26232887070058 0.556485675305445 0.0363883117761065; 1 1 1"
@@ -61,7 +65,7 @@
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 90
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light2
 		Transform = "0 0 30; 0 0 0 1; 1 1 1"
@@ -69,7 +73,7 @@
 		Brightness = 514788.5
 		AttenuationFar = 93.025
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space 31
 		CanBeSelected = False
@@ -82,10 +86,10 @@
 		{
 			Count = 0
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = Mesh Geometry
 				Dimensions = 50 50
@@ -96,7 +100,7 @@
 				}
 			}
 		}
-		.component NeoAxis.Component_RigidBody
+		.component NeoAxis.RigidBody
 		{
 			Name = Collision Body
 			Visible = False
@@ -105,7 +109,7 @@
 			{
 				GetByReference = "this:..\\Transform"
 			}
-			.component NeoAxis.Component_CollisionShape_Mesh
+			.component NeoAxis.CollisionShape_Mesh
 			{
 				Mesh
 				{
@@ -120,7 +124,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space 20
 		CanBeSelected = False
@@ -133,10 +137,10 @@
 		{
 			Count = 0
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = Mesh Geometry
 				Dimensions = 50 20
@@ -147,7 +151,7 @@
 				}
 			}
 		}
-		.component NeoAxis.Component_RigidBody
+		.component NeoAxis.RigidBody
 		{
 			Name = Collision Body
 			Visible = False
@@ -156,7 +160,7 @@
 			{
 				GetByReference = "this:..\\Transform"
 			}
-			.component NeoAxis.Component_CollisionShape_Mesh
+			.component NeoAxis.CollisionShape_Mesh
 			{
 				Mesh
 				{
@@ -171,7 +175,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space 12
 		CanBeSelected = False
@@ -184,10 +188,10 @@
 		{
 			Count = 0
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = Mesh Geometry
 				Dimensions = 50 20
@@ -198,7 +202,7 @@
 				}
 			}
 		}
-		.component NeoAxis.Component_RigidBody
+		.component NeoAxis.RigidBody
 		{
 			Name = Collision Body
 			Visible = False
@@ -207,7 +211,7 @@
 			{
 				GetByReference = "this:..\\Transform"
 			}
-			.component NeoAxis.Component_CollisionShape_Mesh
+			.component NeoAxis.CollisionShape_Mesh
 			{
 				Mesh
 				{
@@ -222,7 +226,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space 13
 		CanBeSelected = False
@@ -235,10 +239,10 @@
 		{
 			Count = 0
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = Mesh Geometry
 				Dimensions = 50 20
@@ -249,7 +253,7 @@
 				}
 			}
 		}
-		.component NeoAxis.Component_RigidBody
+		.component NeoAxis.RigidBody
 		{
 			Name = Collision Body
 			Visible = False
@@ -258,7 +262,7 @@
 			{
 				GetByReference = "this:..\\Transform"
 			}
-			.component NeoAxis.Component_CollisionShape_Mesh
+			.component NeoAxis.CollisionShape_Mesh
 			{
 				Mesh
 				{
@@ -273,7 +277,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space 14
 		CanBeSelected = False
@@ -286,10 +290,10 @@
 		{
 			Count = 0
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Plane
+			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = Mesh Geometry
 				Dimensions = 50 20
@@ -300,7 +304,7 @@
 				}
 			}
 		}
-		.component NeoAxis.Component_RigidBody
+		.component NeoAxis.RigidBody
 		{
 			Name = Collision Body
 			Visible = False
@@ -309,7 +313,7 @@
 			{
 				GetByReference = "this:..\\Transform"
 			}
-			.component NeoAxis.Component_CollisionShape_Mesh
+			.component NeoAxis.CollisionShape_Mesh
 			{
 				Mesh
 				{
@@ -324,7 +328,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body
 		Transform = "-7.67515321732393 3.70688855529964 3.96197753984747; 0 0 0 1; 1 1 1"
@@ -333,12 +337,12 @@
 		AngularSleepingThreshold = 0.13225
 		ContactsCollect = True
 		ContactsDisplay = True
-		.component NeoAxis.Component_CollisionShape_Box
+		.component NeoAxis.CollisionShape_Box
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body3
 		Transform = "6.18385899381374 3.70688855529964 9.16828435853848; 0 0.706513985535842 0 0.707699080289257; 1 0.2 0.2"
@@ -346,12 +350,12 @@
 		Mass = 0.1
 		LinearSleepingThreshold = 0.03
 		AngularSleepingThreshold = 0.03
-		.component NeoAxis.Component_CollisionShape_Cylinder
+		.component NeoAxis.CollisionShape_Cylinder
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body4
 		Transform = "6.18385899381374 3.70688855529964 10.297130865757; 0 0.700151841375109 0 0.713993976878688; 1 0.2 0.2"
@@ -359,21 +363,21 @@
 		Mass = 0.1
 		LinearSleepingThreshold = 0.03
 		AngularSleepingThreshold = 0.03
-		.component NeoAxis.Component_CollisionShape_Cylinder
+		.component NeoAxis.CollisionShape_Cylinder
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body6
 		Transform = "6.18385899381374 3.70688855529964 11.0444494919365; 0 0 0 1; 0.2 0.2 0.2"
-		.component NeoAxis.Component_CollisionShape_Box
+		.component NeoAxis.CollisionShape_Box
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body2
 		Transform = "2.85250989874932 3.70688855529964 7.43848779438979; 0 0 0 1; 0.552486193371665 0.552486193371665 0.552486193371665"
@@ -386,12 +390,12 @@
 		AngularSleepingThreshold = 0
 		LinearVelocity = 2 0 0.3
 		AngularVelocity = 0.1 0.3 0.4
-		.component NeoAxis.Component_CollisionShape_Box
+		.component NeoAxis.CollisionShape_Box
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 2
 		Transform = "-6.21876415229846 3.63974802918559 4.06948047464162; 0 0 0 1; 1 1 1"
@@ -400,12 +404,12 @@
 		AngularSleepingThreshold = 0.21904
 		ContactsCollect = True
 		ContactsDisplay = True
-		.component NeoAxis.Component_CollisionShape_Sphere
+		.component NeoAxis.CollisionShape_Sphere
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 3
 		Transform = "-4.75348653972656 3.61019736943889 4.06948047464161; 0 0 0 1; 1 1 1"
@@ -414,12 +418,12 @@
 		AngularSleepingThreshold = 0.17161
 		ContactsCollect = True
 		ContactsDisplay = True
-		.component NeoAxis.Component_CollisionShape_Cylinder
+		.component NeoAxis.CollisionShape_Cylinder
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 4
 		Transform = "-3.0087678783085 3.62177133150358 4.14948047464161; 0 0 0 1; 1 1 1"
@@ -428,12 +432,12 @@
 		AngularSleepingThreshold = 0.13225
 		ContactsCollect = True
 		ContactsDisplay = True
-		.component NeoAxis.Component_CollisionShape_Cone
+		.component NeoAxis.CollisionShape_Cone
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 5
 		Transform = "-1.20751384192641 3.57883511955409 4.06948047464162; 0 0 0 1; 1 1 1"
@@ -442,12 +446,12 @@
 		AngularSleepingThreshold = 0.13225
 		ContactsCollect = True
 		ContactsDisplay = True
-		.component NeoAxis.Component_CollisionShape_Capsule
+		.component NeoAxis.CollisionShape_Capsule
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 6
 		Transform = "1.38641108178995 3.64860026369495 3.72756768538433; -0.131153892610201 0 0 0.991362020885; 1 1 1"
@@ -456,129 +460,129 @@
 		AngularSleepingThreshold = 0.324
 		ContactsCollect = True
 		ContactsDisplay = True
-		.component NeoAxis.Component_CollisionShape_Box
+		.component NeoAxis.CollisionShape_Box
 		{
 			Name = CollisionShape_Box
 			TransformRelativeToParent = "0.7 0 0.5; 0 0 0 1; 1 1 1"
 		}
-		.component NeoAxis.Component_CollisionShape_Cylinder
+		.component NeoAxis.CollisionShape_Cylinder
 		{
 			Name = CollisionShape_Cylinder
 			Height = 2
 		}
-		.component NeoAxis.Component_CollisionShape_Sphere
+		.component NeoAxis.CollisionShape_Sphere
 		{
 			Name = CollisionShape_Sphere
 			TransformRelativeToParent = "-0.5 0 0.5; 0 0 0 1; 1 1 1"
 			Radius = 0.7
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 7
 		Transform = "-6.55949831916683 3.73179523764969 10.728407735708; 0 0 0 1; 1 1 1"
-		.component NeoAxis.Component_CollisionShape_Box
+		.component NeoAxis.CollisionShape_Box
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 9
 		Transform = "-2.24057645432382 3.73179523764969 10.728407735708; 0.0977234249201465 0 0 0.995213611352797; 1 1 1"
-		.component NeoAxis.Component_CollisionShape_Box
+		.component NeoAxis.CollisionShape_Box
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 11
 		Transform = "1.96339837128612 3.73179523764969 10.728407735708; 0.0589704302945614 0 0 0.998259729905436; 1 1 1"
-		.component NeoAxis.Component_CollisionShape_Box
+		.component NeoAxis.CollisionShape_Box
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 13
 		Transform = "-6.7960856009569 3.73179523764969 7.42610490394092; 0.0734468252577263 0 0 0.997299134592807; 1 1 1"
-		.component NeoAxis.Component_CollisionShape_Box
+		.component NeoAxis.CollisionShape_Box
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 15
 		Transform = "-1.9406027222418 3.73179523764969 7.56325165782133; 0 0.0615065025193687 0 0.998106682748811; 1 1 1"
-		.component NeoAxis.Component_CollisionShape_Box
+		.component NeoAxis.CollisionShape_Box
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 8
 		Transform = "-4.32547584799938 3.73179523764969 10.728407735708; 0 0 0 1; 1 1 1"
 		MotionType = Dynamic
 		LinearSleepingThreshold = 0.03
 		AngularSleepingThreshold = 0.03
-		.component NeoAxis.Component_CollisionShape_Box
+		.component NeoAxis.CollisionShape_Box
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 10
 		Transform = "-0.00655398315636546 3.73179523764969 10.728407735708; 0.0977234249201465 0 0 0.995213611352797; 1 1 1"
 		MotionType = Dynamic
 		LinearSleepingThreshold = 0.03
 		AngularSleepingThreshold = 0.03
-		.component NeoAxis.Component_CollisionShape_Box
+		.component NeoAxis.CollisionShape_Box
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 12
 		Transform = "4.19742084245358 3.73179523764969 10.728407735708; 0.0589704302945614 0 0 0.998259729905436; 1 1 1"
 		MotionType = Dynamic
 		LinearSleepingThreshold = 0.03
 		AngularSleepingThreshold = 0.03
-		.component NeoAxis.Component_CollisionShape_Box
+		.component NeoAxis.CollisionShape_Box
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 14
 		Transform = "-4.56206312978945 3.73179523764969 7.42610490394092; 0.0734468252577263 0 0 0.997299134592807; 1 1 1"
 		MotionType = Dynamic
 		LinearSleepingThreshold = 0.03
 		AngularSleepingThreshold = 0.03
-		.component NeoAxis.Component_CollisionShape_Box
+		.component NeoAxis.CollisionShape_Box
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 16
 		Transform = "0.276516912167089 3.73179523764969 7.2889581500605; 0 0.0615065025193687 0 0.998106682748811; 1 1 1"
 		MotionType = Dynamic
 		LinearSleepingThreshold = 0.03
 		AngularSleepingThreshold = 0.03
-		.component NeoAxis.Component_CollisionShape_Box
+		.component NeoAxis.CollisionShape_Box
 		{
 			Name = Collision Shape
 		}
 	}
-	.component NeoAxis.Component_Constraint
+	.component NeoAxis.Constraint
 	{
 		Name = Constraint
 		Transform = "-5.44248708358311 3.73179523764969 10.728407735708; 0 0 0 1; 1 1 1"
@@ -591,7 +595,7 @@
 			GetByReference = "this:..\\$Rigid Body 8"
 		}
 	}
-	.component NeoAxis.Component_Constraint
+	.component NeoAxis.Constraint
 	{
 		Name = Constraint 2
 		Transform = "-1.12356521874009 3.73179523764969 10.728407735708; 0.0977234249201465 0 0 0.995213611352797; 1 1 1"
@@ -605,7 +609,7 @@
 			GetByReference = "this:..\\$Rigid Body 10"
 		}
 	}
-	.component NeoAxis.Component_Constraint
+	.component NeoAxis.Constraint
 	{
 		Name = Constraint 3
 		Transform = "3.08040960686985 3.73179523764969 10.728407735708; 0.0589704302945614 0 0 0.998259729905436; 1 1 1"
@@ -621,7 +625,7 @@
 			GetByReference = "this:..\\$Rigid Body 12"
 		}
 	}
-	.component NeoAxis.Component_Constraint
+	.component NeoAxis.Constraint
 	{
 		Name = Constraint 4
 		Transform = "-5.67907436537318 3.73179523764969 7.42610490394092; 0.0734468252577263 0 0 0.997299134592807; 1 1 1"
@@ -637,7 +641,7 @@
 			GetByReference = "this:..\\$Rigid Body 14"
 		}
 	}
-	.component NeoAxis.Component_Constraint
+	.component NeoAxis.Constraint
 	{
 		Name = Constraint 5
 		Transform = "-0.832042905037355 3.73179523764969 7.42610490394092; 0 0.0615065025193687 0 0.998106682748811; 1 1 1"
@@ -651,7 +655,7 @@
 			GetByReference = "this:..\\$Rigid Body 16"
 		}
 	}
-	.component NeoAxis.Component_RigidBody
+	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 17
 		Transform = "6.19131934057641 3.69009036308359 7.98758465386021; 0 -0.710932846130269 0 0.703259900956336; 1 1 1"
@@ -659,13 +663,13 @@
 		CenterOfMassManual = True
 		LinearSleepingThreshold = 0.03
 		AngularSleepingThreshold = 0.03
-		.component NeoAxis.Component_CollisionShape_Cone
+		.component NeoAxis.CollisionShape_Cone
 		{
 			Name = Collision Shape
 			Axis = 0
 		}
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space
 		Transform
@@ -680,16 +684,16 @@
 		{
 			Count = 0
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Cylinder
+			.component NeoAxis.MeshGeometry_Cylinder
 			{
 				Name = MeshGeometry_Cylinder
 			}
 		}
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space2
 		Transform
@@ -704,16 +708,16 @@
 		{
 			Count = 0
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Cylinder
+			.component NeoAxis.MeshGeometry_Cylinder
 			{
 				Name = MeshGeometry_Cylinder
 			}
 		}
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space 2
 		Transform
@@ -728,17 +732,17 @@
 		{
 			Count = 0
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Cone
+			.component NeoAxis.MeshGeometry_Cone
 			{
 				Name = Mesh Geometry
 				Axis = 0
 			}
 		}
 	}
-	.component NeoAxis.Component_MeshInSpace
+	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space 3
 		Transform
@@ -753,16 +757,16 @@
 		{
 			Count = 0
 		}
-		.component NeoAxis.Component_Mesh
+		.component NeoAxis.Mesh
 		{
 			Name = Mesh
-			.component NeoAxis.Component_MeshGeometry_Box
+			.component NeoAxis.MeshGeometry_Box
 			{
 				Name = Mesh Geometry
 			}
 		}
 	}
-	.component NeoAxis.Component_Light
+	.component NeoAxis.Light
 	{
 		Name = Light
 		Type = Spotlight
@@ -773,7 +777,7 @@
 		{
 			GetByReference = "this:$Attach Transform Offset\\Result"
 		}
-		.component NeoAxis.Component_TransformOffset
+		.component NeoAxis.TransformOffset
 		{
 			Name = Attach Transform Offset
 			PositionOffset = 0.211429335765045 -0.0143950159042956 0.0141398105050019
@@ -784,7 +788,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_Constraint
+	.component NeoAxis.Constraint
 	{
 		Name = Constraint 6
 		Transform = "6.18385899381374 3.70688855529964 10.8805102305805; 0 0.724170199696956 0 0.689621288730903; 0.166389354181805 0.166389354181805 0.166389354181805"
@@ -801,7 +805,7 @@
 			GetByReference = "this:..\\$Rigid Body4"
 		}
 	}
-	.component NeoAxis.Component_Constraint
+	.component NeoAxis.Constraint
 	{
 		Name = Constraint 7
 		Transform = "6.18385899381374 3.70688855529964 9.73270761214774; 0 0.711378794545461 0 0.702808800934541; 0.166389354181805 0.166389354181805 0.166389354181805"
@@ -818,7 +822,7 @@
 			GetByReference = "this:..\\$Rigid Body3"
 		}
 	}
-	.component NeoAxis.Component_Constraint
+	.component NeoAxis.Constraint
 	{
 		Name = Constraint 8
 		Transform = "6.17751597966772 3.69848945919161 8.60258996795029; 0 0.695805928974049 0 0.7182298442731; 0.166389354181805 0.166389354181805 0.166389354181805"

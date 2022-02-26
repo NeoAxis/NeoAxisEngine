@@ -1,0 +1,9 @@
+// Made with NeoAxis Engine 2021.3.
+
+.component NeoAxis.Product_iOS
+{
+	Name = Full Project
+	SortOrder = -2700
+	FileCache = False
+	ShaderCache = False
+}

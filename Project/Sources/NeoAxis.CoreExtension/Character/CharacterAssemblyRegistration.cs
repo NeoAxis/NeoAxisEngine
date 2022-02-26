@@ -1,19 +1,21 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using NeoAxis.Editor;
 
 namespace NeoAxis
 {
 	/// <summary>
 	/// The class is intended to register character resource.
 	/// </summary>
-	public class CharacterAssemblyRegistration : AssemblyUtility.AssemblyRegistration
+	public class CharacterAssemblyRegistration : AssemblyRegistration
 	{
 		public override void OnRegister()
 		{
 			//file extension
-			ResourceManager.RegisterType( "Character", new string[] { "character" }, typeof( Resource ) );
+			var type = ResourceManager.RegisterType( "Character", new string[] { "character" }, typeof( Resource ) );
+#if !DEPLOY
+			Editor.PreviewImagesManager.RegisterResourceType( type );
+#endif
 
 			////editor actions
 			//if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
@@ -34,7 +36,7 @@ namespace NeoAxis
 			////ribbon menu
 			//if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
 			//{
-			//	var tab = new EditorRibbonDefaultConfiguration.Tab( "Character Editor", "CharacterEditor", MetadataManager.GetTypeOfNetType( typeof( Component_Character ) ) );
+			//	var tab = new EditorRibbonDefaultConfiguration.Tab( "Character Editor", "CharacterEditor", MetadataManager.GetTypeOfNetType( typeof( Character ) ) );
 			//	EditorRibbonDefaultConfiguration.Tabs.Add( tab );
 
 			//	//Character

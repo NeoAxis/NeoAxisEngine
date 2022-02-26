@@ -12,7 +12,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
 	/// <summary>
     /// Details for an event that provides a button drag offset value.

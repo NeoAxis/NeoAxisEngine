@@ -14,9 +14,9 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Diagnostics;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Toolkit;
 
-namespace ComponentFactory.Krypton.Navigator
+namespace Internal.ComponentFactory.Krypton.Navigator
 {
 	/// <summary>
     /// Implements the NavigatorMode.BarTabGroup mode.

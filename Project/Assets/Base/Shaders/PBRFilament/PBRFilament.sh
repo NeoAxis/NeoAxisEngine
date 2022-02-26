@@ -105,19 +105,23 @@ vec3 PrefilteredDFG(float roughness, float NoV)
 	return PrefilteredDFG_LUT(roughness, NoV);
 }
 
-
-vec3 diffuseIrradiance(const vec3 n, samplerCube environmentTextureIBL, EnvironmentTextureData environmentTextureIBLData)
+vec3 diffuseIrradiance(const vec3 n, vec4 environmentIrradiance[9], EnvironmentTextureData environmentTextureIBLData)
 {
-	return getEnvironmentValue(environmentTextureIBL, environmentTextureIBLData, n);	
+	return getEnvironmentValue(environmentIrradiance, environmentTextureIBLData, n);	
 }
+
+//vec3 diffuseIrradiance(const vec3 n, samplerCube environmentTextureIBL, EnvironmentTextureData environmentTextureIBLData)
+//{
+//	return getEnvironmentValue(environmentTextureIBL, environmentTextureIBLData, n);	
+//}
 
 vec3 specularIrradiance(const vec3 r, float roughness, samplerCube environmentTexture, EnvironmentTextureData environmentTextureData)
 {
 	float lod;
 #ifdef GLSL
-	//!!!!
-	lod = 8.0 * roughness;
+	lod = pow(float(textureSize(environmentTexture, 0)), 0.5) * roughness;
 	//lod = float(textureQueryLevels(environmentTexture.m_texture)) * roughness;
+	//lod = 8.0 * roughness;
 #else
 	vec3 texDim = vec3(0.0, 0.0, 0.0);
 	environmentTexture.m_texture.GetDimensions(0, texDim.x, texDim.y, texDim.z);
@@ -130,9 +134,9 @@ vec3 specularIrradiance_Offset(const vec3 r, float roughness, float offset, samp
 {
 	float lod;
 #ifdef GLSL
-	//!!!!
-	lod = 8.0 * roughness * roughness;
+	lod = pow(float(textureSize(environmentTexture, 0)), 0.5) * roughness;
 	//lod = float(textureQueryLevels(environmentTexture.m_texture)) * roughness * roughness;
+	//lod = 8.0 * roughness * roughness;
 #else
 	vec3 texDim = vec3(0.0, 0.0, 0.0);
 	environmentTexture.m_texture.GetDimensions(0, texDim.x, texDim.y, texDim.z);
@@ -256,7 +260,8 @@ void iblSubsurfaceDiffuse(const PixelParams pixel, const vec3 diffuseIrradiance,
 }
 */
 
-vec3 iblDiffuse(const MaterialInputs material, const PixelParams pixel, samplerCube environmentTextureIBL, EnvironmentTextureData environmentTextureIBLData, samplerCube environmentTexture, EnvironmentTextureData environmentTextureData, bool shadingModelSubsurface)
+vec3 iblDiffuse(const MaterialInputs material, const PixelParams pixel, vec4 environmentIrradiance[9], EnvironmentTextureData environmentTextureIBLData, samplerCube environmentTexture, EnvironmentTextureData environmentTextureData, bool shadingModelSubsurface)
+//vec3 iblDiffuse(const MaterialInputs material, const PixelParams pixel, samplerCube environmentTextureIBL, EnvironmentTextureData environmentTextureIBLData, samplerCube environmentTexture, EnvironmentTextureData environmentTextureData, bool shadingModelSubsurface)
 {
 	vec3 n = shading_normal;
 
@@ -267,7 +272,8 @@ vec3 iblDiffuse(const MaterialInputs material, const PixelParams pixel, samplerC
 	//float diffuseBRDF = Fd_Lambert() * ao;
 	evaluateClothIndirectDiffuseBRDF(pixel, diffuseBRDF);
 
-	vec3 diffuseIrr = diffuseIrradiance(n, environmentTextureIBL, environmentTextureIBLData);
+	vec3 diffuseIrr = diffuseIrradiance(n, environmentIrradiance, environmentTextureIBLData);
+	//vec3 diffuseIrr = diffuseIrradiance(n, environmentTextureIBL, environmentTextureIBLData);
 	vec3 Fd = pixel.diffuseColor * diffuseIrr * diffuseBRDF;
 
 #ifdef MATERIAL_HAS_CLEAR_COAT

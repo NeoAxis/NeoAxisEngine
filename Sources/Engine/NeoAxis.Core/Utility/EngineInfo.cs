@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Reflection;
 using System.Drawing;
@@ -35,7 +35,7 @@ namespace NeoAxis
 
 		public static string Copyright
 		{
-			get { return "Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica."; }
+			get { return "Copyright (C) NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica."; }
 		}
 
 		public static bool SpecialAppMode { get; set; } = false;
@@ -74,9 +74,9 @@ namespace NeoAxis
 			}
 		}
 
-		public static Bitmap GetSplashLogoImage( Component_ProjectSettings.EngineSplashScreenStyleEnum style )
+		public static Bitmap GetSplashLogoImage( ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum style )
 		{
-			if( style == Component_ProjectSettings.EngineSplashScreenStyleEnum.WhiteBackground )
+			if( style == ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.WhiteBackground )
 				return Properties.Resources.PoweredBy_WhiteBackground;
 			else
 				return Properties.Resources.PoweredBy_BlackBackground;

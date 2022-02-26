@@ -1,10 +1,11 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     internal static class StringExtensions
     {
@@ -207,3 +208,4 @@ namespace LiteDB
         }
     }
 }
+#endif

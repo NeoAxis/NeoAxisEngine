@@ -1,8 +1,6 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 
 namespace NeoAxis
 {
@@ -42,7 +40,7 @@ namespace NeoAxis
 		//		return buffers.ToArray();
 		//}
 
-		public static GpuVertexBuffer CreateVertexBuffer( byte[] vertices, SharpBgfx.VertexLayout vertexDeclaration, GpuBufferFlags flags = 0 )
+		public static GpuVertexBuffer CreateVertexBuffer( byte[] vertices, Internal.SharpBgfx.VertexLayout vertexDeclaration, GpuBufferFlags flags = 0 )
 		{
 			if( vertices.Length == 0 )
 				Log.Fatal( "GpuBufferManager: CreateVertexBuffer: vertices.Length == 0." );
@@ -53,7 +51,7 @@ namespace NeoAxis
 			return new GpuVertexBuffer( vertices, vertexCount, vertexDeclaration, flags );
 		}
 
-		public static GpuVertexBuffer CreateVertexBuffer( int vertexCount, SharpBgfx.VertexLayout vertexDeclaration, GpuBufferFlags flags )
+		public static GpuVertexBuffer CreateVertexBuffer( int vertexCount, Internal.SharpBgfx.VertexLayout vertexDeclaration, GpuBufferFlags flags )
 		{
 			if( vertexCount == 0 )
 				Log.Fatal( "GpuBufferManager: CreateVertexBuffer: vertexCount == 0." );
@@ -87,6 +85,26 @@ namespace NeoAxis
 		public static ICollection<GpuIndexBuffer> IndexBuffers
 		{
 			get { return indexBuffers; }
+		}
+
+		/// <summary>
+		/// A method to temporary destroy internal GPU buffers which are not used long time.
+		/// </summary>
+		/// <param name="howLongHasNotBeenUsedInSeconds"></param>
+		public static void DestroyNativeObjectsNotUsedForLongTime( double howLongHasNotBeenUsedInSeconds )
+		{
+			foreach( var vertexBuffer in VertexBuffers )
+				vertexBuffer.DestroyNativeObjectNotUsedForLongTime( howLongHasNotBeenUsedInSeconds );
+			foreach( var indexBuffer in IndexBuffers )
+				indexBuffer.DestroyNativeObjectNotUsedForLongTime( howLongHasNotBeenUsedInSeconds );
+		}
+
+		public static void DestroyNativeObjects()
+		{
+			foreach( var vertexBuffer in VertexBuffers )
+				vertexBuffer.DestroyNativeObject();
+			foreach( var indexBuffer in IndexBuffers )
+				indexBuffer.DestroyNativeObject();
 		}
 	}
 }

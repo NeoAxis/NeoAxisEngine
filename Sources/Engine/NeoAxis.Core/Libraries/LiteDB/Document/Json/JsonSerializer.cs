@@ -1,10 +1,11 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     /// <summary>
     /// Static class for serialize/deserialize BsonDocuments into json extended format
@@ -106,3 +107,4 @@ namespace LiteDB
         #endregion
     }
 }
+#endif

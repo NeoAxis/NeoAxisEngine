@@ -3,7 +3,7 @@
  * Microsoft Permissive License (Ms-PL) v1.1
  */
 
-namespace tainicom.Aether.Physics2D.Common.Decomposition.Seidel
+namespace Internal.tainicom.Aether.Physics2D.Common.Decomposition.Seidel
 {
     internal class YNode : Node
     {

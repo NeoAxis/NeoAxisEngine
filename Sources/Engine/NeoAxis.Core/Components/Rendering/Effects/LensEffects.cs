@@ -1,12 +1,7 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
-using System.Drawing.Design;
 using System.ComponentModel;
-using System.Reflection;
-using SharpBgfx;
 
 namespace NeoAxis
 {
@@ -15,7 +10,7 @@ namespace NeoAxis
 	/// </summary>
 	[DefaultOrderOfEffect( 2.7 )]
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
-	public class Component_RenderingEffect_LensEffects : Component_RenderingEffect
+	public class RenderingEffect_LensEffects : RenderingEffect
 	{
 		/// <summary>
 		/// The intensity of the effect.
@@ -30,7 +25,7 @@ namespace NeoAxis
 			set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_LensEffects> IntensityChanged;
+		public event Action<RenderingEffect_LensEffects> IntensityChanged;
 		ReferenceField<double> _intensity = 1;
 
 		[DefaultValue( 3.0 )]
@@ -41,7 +36,7 @@ namespace NeoAxis
 			set { if( _fadeSpeed.BeginSet( ref value ) ) { try { FadeSpeedChanged?.Invoke( this ); } finally { _fadeSpeed.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FadeSpeed"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_LensEffects> FadeSpeedChanged;
+		public event Action<RenderingEffect_LensEffects> FadeSpeedChanged;
 		ReferenceField<double> _fadeSpeed = 3.0;
 
 		public enum CheckVisibilityMethodEnum
@@ -57,7 +52,7 @@ namespace NeoAxis
 			set { if( _checkVisibilityMethod.BeginSet( ref value ) ) { try { CheckVisibilityMethodChanged?.Invoke( this ); } finally { _checkVisibilityMethod.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CheckVisibilityMethod"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_LensEffects> CheckVisibilityMethodChanged;
+		public event Action<RenderingEffect_LensEffects> CheckVisibilityMethodChanged;
 		ReferenceField<CheckVisibilityMethodEnum> _checkVisibilityMethod = CheckVisibilityMethodEnum.OcclusionQuery;
 
 		/////////////////////////////////////////
@@ -66,7 +61,7 @@ namespace NeoAxis
 		{
 			public class LightItem
 			{
-				public Component_Light light;
+				public Light light;
 				public double lastTimeVisible;
 				public double intensity;
 			}
@@ -98,7 +93,7 @@ namespace NeoAxis
 					lightItems.Remove( item );
 			}
 
-			public LightItem GetItem( Component_Light light )
+			public LightItem GetItem( Light light )
 			{
 				foreach( var item in lightItems )
 				{
@@ -108,7 +103,7 @@ namespace NeoAxis
 				return null;
 			}
 
-			public double GetIntensity( Component_Light light )
+			public double GetIntensity( Light light )
 			{
 				var item = GetItem( light );
 				if( item != null )
@@ -116,14 +111,14 @@ namespace NeoAxis
 				return 0;
 			}
 
-			public void Remove( Component_Light light )
+			public void Remove( Light light )
 			{
 				var item = GetItem( light );
 				if( item != null )
 					lightItems.Remove( item );
 			}
 
-			public void UpdateLastTimeVisible( Component_Light light )
+			public void UpdateLastTimeVisible( Light light )
 			{
 				var item = GetItem( light );
 				if( item == null )
@@ -177,17 +172,17 @@ namespace NeoAxis
 			return true;
 		}
 
-		protected override void OnRender( ViewportRenderingContext context, Component_RenderingPipeline.IFrameData frameData, ref Component_Image actualTexture )
+		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
 		{
 			base.OnRender( context, frameData, ref actualTexture );
 
-			var pipeline = context.RenderingPipeline as Component_RenderingPipeline_Basic;
+			if( Intensity <= 0 )
+				return;
+			var pipeline = context.RenderingPipeline as RenderingPipeline_Basic;
 			if( pipeline == null )
 				return;
-			var frameData2 = frameData as Component_RenderingPipeline_Basic.FrameData;
+			var frameData2 = frameData as RenderingPipeline_Basic.FrameData;
 			if( frameData2 == null )
-				return;
-			if( Intensity.Value == 0 )
 				return;
 
 			bool skip = true;
@@ -199,7 +194,7 @@ namespace NeoAxis
 				{
 					foreach( var child in lightItem.data.children )
 					{
-						var lensFlares = child as Component_LensFlares;
+						var lensFlares = child as LensFlares;
 						if( lensFlares != null )
 						{
 							skip = false;
@@ -213,12 +208,12 @@ namespace NeoAxis
 
 			//init context data
 			ViewportRenderingContextData contextData;
-			if( context.anyData.TryGetValue( "LensEffects", out var contextData2 ) )
+			if( context.AnyData.TryGetValue( "LensEffects", out var contextData2 ) )
 				contextData = (ViewportRenderingContextData)contextData2;
 			else
 			{
 				contextData = new ViewportRenderingContextData();
-				context.anyData[ "LensEffects" ] = contextData;
+				context.AnyData[ "LensEffects" ] = contextData;
 			}
 
 			//update context data light items
@@ -247,10 +242,10 @@ namespace NeoAxis
 				{
 					foreach( var child in lightItem.data.children )
 					{
-						var lensFlares = child as Component_LensFlares;
+						var lensFlares = child as LensFlares;
 						if( lensFlares != null )
 						{
-							var light = lightItem.data.Creator as Component_Light;
+							var light = lightItem.data.Creator as Light;
 							if( light != null )
 							{
 								CheckVisibilityScreenPosition( context, lightItem.data.Position, out var gotScreenPosition, out var insideScreen );
@@ -305,12 +300,12 @@ namespace NeoAxis
 			}
 
 			//render
-			if( simple3DRenderer._ViewportRendering_PrepareRenderables() )
+			if( simple3DRenderer.ViewportRendering_PrepareRenderables() )
 			{
-				simple3DRenderer._ViewportRendering_RenderToCurrentViewport( context );
-				simple3DRenderer._Clear();
+				simple3DRenderer.ViewportRendering_RenderToCurrentViewport( context );
+				simple3DRenderer.ViewportRendering_Clear();
 			}
-			canvasRenderer._ViewportRendering_RenderToCurrentViewport( context, true, context.Owner.LastUpdateTime );
+			canvasRenderer.ViewportRendering_RenderToCurrentViewport( context, true, context.Owner.LastUpdateTime );
 
 
 			//free old textures
@@ -324,7 +319,7 @@ namespace NeoAxis
 		{
 			if( passingPixels > 0 )
 			{
-				var data = ((ViewportRenderingContextData, Component_Light))callbackParameter;
+				var data = ((ViewportRenderingContextData, Light))callbackParameter;
 				var contextData = data.Item1;
 				var light = data.Item2;
 

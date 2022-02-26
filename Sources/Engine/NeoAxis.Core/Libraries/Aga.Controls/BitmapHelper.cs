@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Drawing.Imaging;
 
-namespace Aga.Controls
+namespace Internal.Aga.Controls
 {
 	public static class BitmapHelper
 	{

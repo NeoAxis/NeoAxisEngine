@@ -1,7 +1,8 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     /// <summary>
     /// Interface to read current or old datafile structure - Used to shirnk/upgrade datafile from old LiteDB versions
@@ -25,3 +26,4 @@ namespace LiteDB.Engine
         IEnumerable<BsonDocument> GetDocuments(string collection);
     }
 }
+#endif

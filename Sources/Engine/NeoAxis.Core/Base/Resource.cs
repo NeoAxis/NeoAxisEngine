@@ -1,12 +1,6 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
-using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using System.IO;
-using System.Threading;
 
 namespace NeoAxis
 {
@@ -15,17 +9,13 @@ namespace NeoAxis
 	/// </summary>
 	public class Resource : ThreadSafeDisposable
 	{
-		//!!!!!threading: еше раз проверить всё
-		//!!!!!ideas: анимированный ресурс. т.е. он с течением времени меняется.
-
 		internal ResourceManager.ResourceType resourceType;
 		internal string name = "";
 		internal bool loadFromFile;
 		internal object creator;
 
-		//!!!!name
 		volatile Instance primaryInstance;
-		volatile TextBlock loadedBlock;
+		//volatile TextBlock loadedBlock;
 		volatile object loadedAnyData;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -108,7 +98,6 @@ namespace NeoAxis
 				}
 			}
 			public event Action<Instance> StatusChanged;
-			//!!!!new
 			public static event Action<Instance> AllInstances_StatusChanged;
 
 			public string StatusError
@@ -138,7 +127,6 @@ namespace NeoAxis
 				AllInstances_DisposedEvent?.Invoke( this );
 			}
 			public event Action<Instance> DisposedEvent;
-			//!!!!new
 			public static event Action<Instance> AllInstances_DisposedEvent;
 
 			public virtual object ResultObject
@@ -153,16 +141,16 @@ namespace NeoAxis
 				set { ResultObject = value; }
 			}
 
-			public delegate void LoadOverrideDelegate( Instance instance, ref bool handled );
+			public delegate void LoadOverrideDelegate( Instance instance, ref TextBlock loadedBlock, ref bool handled );
 			public static event LoadOverrideDelegate LoadOverride;
 
-			protected virtual void Load()
+			protected virtual void Load( ref TextBlock loadedBlock )
 			{
 				//override behavior by event
 				if( ResultObject == null )
 				{
 					bool handled = false;
-					LoadOverride?.Invoke( this, ref handled );
+					LoadOverride?.Invoke( this, ref loadedBlock, ref handled );
 					if( handled )
 						return;
 				}
@@ -171,36 +159,25 @@ namespace NeoAxis
 				if( ResultObject == null )
 				{
 					//load block
-					if( Owner.LoadedBlock == null )
+					if( loadedBlock/*Owner.LoadedBlock*/ == null )
 					{
 						string error;
-						Owner.LoadedBlock = TextBlockUtility.LoadFromVirtualFile( Owner.Name, out error );
-						if( Owner.LoadedBlock == null )
+						loadedBlock/*Owner.LoadedBlock*/ = TextBlockUtility.LoadFromVirtualFile( Owner.Name, out error );
+						if( loadedBlock/*Owner.LoadedBlock*/ == null )
 						{
-							//!!!!
-							// comment this fatal !
-							//Log.Fatal( error );
-
-							//TODO: also we can use exceptions!
-							//throw new Exception( error );
-
 							StatusError = error;
 							Status = StatusEnum.Error;
-
 							return;
 						}
 					}
 
 					//parse text block
 					string error2;
-					var component = ComponentUtility.LoadComponentFromTextBlock( null, Owner.LoadedBlock, Owner.Name, this, componentSetEnabled,
+					var component = ComponentUtility.LoadComponentFromTextBlock( null, loadedBlock/*Owner.LoadedBlock*/, Owner.Name, this, componentSetEnabled,
 						componentCreateHierarchyController, out error2 );
 					//var component = ComponentUtils.LoadComponentFromTextBlock( Owner.LoadedBlock, Owner.Name, null, out error2 );
 					if( component == null )
 					{
-						////!!!!!!!
-						//Log.Fatal( "impl" );
-						//!!!!!
 						StatusError = error2;
 						Status = StatusEnum.Error;
 						return;
@@ -226,7 +203,9 @@ namespace NeoAxis
 
 			internal void PerformLoad()
 			{
-				Load();
+				TextBlock loadedBlock = null;
+
+				Load( ref loadedBlock );
 			}
 
 			//!!!!threading
@@ -326,11 +305,11 @@ namespace NeoAxis
 			set { primaryInstance = value; }
 		}
 
-		public TextBlock LoadedBlock
-		{
-			get { return loadedBlock; }
-			set { loadedBlock = value; }
-		}
+		//public TextBlock LoadedBlock
+		//{
+		//	get { return loadedBlock; }
+		//	set { loadedBlock = value; }
+		//}
 
 		public object LoadedAnyData
 		{

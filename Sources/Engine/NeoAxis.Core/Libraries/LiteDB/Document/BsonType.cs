@@ -1,4 +1,5 @@
-﻿namespace LiteDB
+#if !NO_LITE_DB
+namespace Internal.LiteDB
 {
     /// <summary>
     /// All supported BsonTypes in sort order
@@ -29,3 +30,4 @@
         MaxValue = 14
     }
 }
+#endif

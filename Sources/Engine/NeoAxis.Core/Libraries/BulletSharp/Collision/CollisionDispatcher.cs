@@ -2,9 +2,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Collections.Generic;
-using static BulletSharp.UnsafeNativeMethods;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	[Flags]
 	public enum DispatcherFlags
@@ -19,7 +19,7 @@ namespace BulletSharp
 
 	public class CollisionDispatcher : Dispatcher
 	{
-		[UnmanagedFunctionPointer(BulletSharp.Native.Conv), SuppressUnmanagedCodeSecurity]
+		[UnmanagedFunctionPointer(Internal.BulletSharp.Native.Conv), SuppressUnmanagedCodeSecurity]
 		private delegate void NearCallbackUnmanagedDelegate(IntPtr collisionPair, IntPtr dispatcher, IntPtr dispatchInfo);
 
 		protected CollisionConfiguration _collisionConfiguration;

@@ -1,4 +1,4 @@
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,15 +10,15 @@ namespace NeoAxis
 	/// </summary>
 	[DefaultOrderOfEffect( 7.1 )]
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
-	public class Component_RenderingEffect_ChromaticAberration : Component_RenderingEffect_Simple
+	public class RenderingEffect_ChromaticAberration : RenderingEffect_Simple
 	{
 		const string shaderDefault = @"Base\Shaders\Effects\ChromaticAberration_fs.sc";
 
 		//
 
-		public Component_RenderingEffect_ChromaticAberration()
+		public RenderingEffect_ChromaticAberration()
 		{
-			Shader = shaderDefault;
+			ShaderFile = shaderDefault;
 		}
 
 		/// <summary>
@@ -32,7 +32,7 @@ namespace NeoAxis
 			set { if( _amount.BeginSet( ref value ) ) { try { AmountChanged?.Invoke( this ); } finally { _amount.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Amount"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_ChromaticAberration> AmountChanged;
+		public event Action<RenderingEffect_ChromaticAberration> AmountChanged;
 		ReferenceField<double> _amount = 1.0;
 
 		/////////////////////////////////////////

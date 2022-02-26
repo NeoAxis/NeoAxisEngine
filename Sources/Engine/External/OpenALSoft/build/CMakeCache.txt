@@ -152,6 +152,9 @@ ALSOFT_WERROR:BOOL=OFF
 //The AudioIO include directory
 AUDIOIO_INCLUDE_DIR:PATH=AUDIOIO_INCLUDE_DIR-NOTFOUND
 
+//Path to a program.
+CMAKE_AR:FILEPATH=C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.16.27023/bin/Hostx86/x86/lib.exe
+
 //Choose the type of build, options are: Debug Release RelWithDebInfo
 // MinSizeRel.
 CMAKE_BUILD_TYPE:STRING=RelWithDebInfo
@@ -289,6 +292,9 @@ CMAKE_MODULE_LINKER_FLAGS_RELEASE:STRING=/INCREMENTAL:NO
 // RELWITHDEBINFO builds.
 CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO:STRING=/debug /INCREMENTAL
 
+//Path to a program.
+CMAKE_MT:FILEPATH=C:/Program Files (x86)/Windows Kits/8.1/bin/x86/mt.exe
+
 //Value Computed by CMake
 CMAKE_PROJECT_DESCRIPTION:STATIC=
 
@@ -417,6 +423,9 @@ OSS_LIBRARY:FILEPATH=OSS_LIBRARY-NOTFOUND
 //Value Computed by CMake
 OpenAL_BINARY_DIR:STATIC=F:/Dev5/Sources/Engine/External/OpenALSoft/build
 
+//Value Computed by CMake
+OpenAL_IS_TOP_LEVEL:STATIC=ON
+
 //Dependencies for the target
 OpenAL_LIB_DEPENDS:STATIC=general;C:/Program Files (x86)/Windows Kits/10/Lib/10.0.17763.0/um/x86/WinMM.Lib;
 
@@ -471,6 +480,9 @@ ZLIB_LIBRARY_RELEASE:FILEPATH=ZLIB_LIBRARY_RELEASE-NOTFOUND
 alsoft-config_BINARY_DIR:STATIC=F:/Dev5/Sources/Engine/External/OpenALSoft/build/utils/alsoft-config
 
 //Value Computed by CMake
+alsoft-config_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
 alsoft-config_SOURCE_DIR:STATIC=F:/Dev5/Sources/Engine/External/OpenALSoft/utils/alsoft-config
 
 //Dependencies for the target
@@ -487,14 +499,16 @@ ALSA_INCLUDE_DIR-ADVANCED:INTERNAL=1
 ALSA_LIBRARY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: AUDIOIO_INCLUDE_DIR
 AUDIOIO_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_AR
+CMAKE_AR-ADVANCED:INTERNAL=1
 //This is the directory where this CMakeCache.txt was created
 CMAKE_CACHEFILE_DIR:INTERNAL=f:/Dev5/Sources/Engine/External/OpenALSoft/build
 //Major version of cmake used to create the current loaded cache
 CMAKE_CACHE_MAJOR_VERSION:INTERNAL=3
 //Minor version of cmake used to create the current loaded cache
-CMAKE_CACHE_MINOR_VERSION:INTERNAL=13
+CMAKE_CACHE_MINOR_VERSION:INTERNAL=21
 //Patch version of cmake used to create the current loaded cache
-CMAKE_CACHE_PATCH_VERSION:INTERNAL=4
+CMAKE_CACHE_PATCH_VERSION:INTERNAL=3
 //Path to CMake executable.
 CMAKE_COMMAND:INTERNAL=C:/Program Files/CMake/bin/cmake.exe
 //Path to cpack program executable.
@@ -596,10 +610,14 @@ CMAKE_MODULE_LINKER_FLAGS_MINSIZEREL-ADVANCED:INTERNAL=1
 CMAKE_MODULE_LINKER_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO
 CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_MT
+CMAKE_MT-ADVANCED:INTERNAL=1
 //number of local generators
 CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=2
 //Platform information initialized
 CMAKE_PLATFORM_INFO_INITIALIZED:INTERNAL=1
+//noop for ranlib
+CMAKE_RANLIB:INTERNAL=:
 //ADVANCED property for variable: CMAKE_RC_COMPILER
 CMAKE_RC_COMPILER-ADVANCED:INTERNAL=1
 CMAKE_RC_COMPILER_WORKS:INTERNAL=1
@@ -614,7 +632,7 @@ CMAKE_RC_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_RC_FLAGS_RELWITHDEBINFO
 CMAKE_RC_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //Path to CMake installation.
-CMAKE_ROOT:INTERNAL=C:/Program Files/CMake/share/cmake-3.13
+CMAKE_ROOT:INTERNAL=C:/Program Files/CMake/share/cmake-3.21
 //ADVANCED property for variable: CMAKE_SHARED_LINKER_FLAGS
 CMAKE_SHARED_LINKER_FLAGS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_SHARED_LINKER_FLAGS_DEBUG

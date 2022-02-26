@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -36,6 +36,7 @@ namespace NeoAxis
 
 		class BakingArchive
 		{
+			string fullPath;
 			ZipArchive zipArchive;
 			Dictionary<string, ZipArchiveEntry> entries = new Dictionary<string, ZipArchiveEntry>();
 
@@ -43,6 +44,7 @@ namespace NeoAxis
 
 			public BakingArchive( string path )
 			{
+				fullPath = PathUtility.NormalizePath( path );
 				zipArchive = ZipFile.Open( path, ZipArchiveMode.Read );
 
 				var virtualFolder = VirtualPathUtility.GetVirtualPathByReal( Path.GetDirectoryName( path ) );
@@ -54,6 +56,26 @@ namespace NeoAxis
 					entries[ fileKey ] = entry;
 					files[ fileKey ] = this;
 				}
+			}
+
+			public void Dispose()
+			{
+				var toRemove = new List<string>();
+				foreach( var item in files )
+				{
+					if( item.Value == this )
+						toRemove.Add( item.Key );
+				}
+				foreach( var file in toRemove )
+					files.Remove( file );
+
+				zipArchive?.Dispose();
+				zipArchive = null;
+			}
+
+			public string FullPath
+			{
+				get { return fullPath; }
 			}
 
 			public VirtualFileStream FileOpen( string fileKey )
@@ -82,10 +104,35 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		static void LoadBakingFile( string path )
+		static BakingArchive GetArchive( string path )
 		{
-			var archive = new BakingArchive( path );
-			archives.Add( archive );
+			var path2 = PathUtility.NormalizePath( path );
+
+			foreach( var archive in archives )
+			{
+				if( string.Compare( path2, archive.FullPath, true ) == 0 )
+					return archive;
+			}
+			return null;
+		}
+
+		public static void LoadBakingFile( string path )
+		{
+			if( GetArchive( path ) == null )
+			{
+				var archive = new BakingArchive( path );
+				archives.Add( archive );
+			}
+		}
+
+		public static void UnloadBakingFile( string path )
+		{
+			var archive = GetArchive( path );
+			if( archive != null )
+			{
+				archive.Dispose();
+				archives.Remove( archive );
+			}
 		}
 
 		public static bool FileExists( string path )

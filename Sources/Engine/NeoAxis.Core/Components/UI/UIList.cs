@@ -1,10 +1,9 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
-using NeoAxis.Input;
 
 namespace NeoAxis
 {
@@ -14,6 +13,8 @@ namespace NeoAxis
 	public class UIList : UIControl
 	{
 		object touchDown;
+
+		internal int needEnsureVisibleInStyle = -1;
 
 		/// <summary>
 		/// The height of a list element.
@@ -31,13 +32,13 @@ namespace NeoAxis
 		/// The font of a list element.
 		/// </summary>
 		[DefaultValue( null )]
-		public Reference<Component_Font> Font
+		public Reference<FontComponent> Font
 		{
 			get { if( _font.BeginGet() ) Font = _font.Get( this ); return _font.value; }
 			set { if( _font.BeginSet( ref value ) ) { try { FontChanged?.Invoke( this ); } finally { _font.EndSet(); } } }
 		}
 		public event Action<UIList> FontChanged;
-		ReferenceField<Component_Font> _font = null;
+		ReferenceField<FontComponent> _font = null;
 
 		/// <summary>
 		/// The font size of a list element.
@@ -308,7 +309,8 @@ namespace NeoAxis
 			if( index < 0 || index >= Items.Count )
 				return;
 
-			GetStyle().ListEnsureVisible( this, index );
+			needEnsureVisibleInStyle = index;
+			//GetStyle().ListEnsureVisible( this, index );
 			//if( GetScrollBar() != null )
 			//	GetScrollBar().Value = MathEx.Saturate( (float)index / (float)Items.Count );
 		}

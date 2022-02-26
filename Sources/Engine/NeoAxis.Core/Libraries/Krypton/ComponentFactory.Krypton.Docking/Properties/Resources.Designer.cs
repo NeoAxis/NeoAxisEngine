@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ComponentFactory.Krypton.Docking.Properties {
+namespace Internal.ComponentFactory.Krypton.Docking.Properties {
     using System;
     
     

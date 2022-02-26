@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -121,14 +121,14 @@ namespace NeoAxis
 					foreach( SoundVirtualChannel virtualChannel in channels )
 					{
 						if( virtualChannel.IsUsingGroup( this ) )
-							SoundWorld._Instance.OnVirtualChannelUpdatePause( virtualChannel );
+							SoundWorld.Internal_Instance.OnVirtualChannelUpdatePause( virtualChannel );
 					}
 
 					channels = SoundWorld.activeVirtual3DChannels.ToArray();
 					foreach( SoundVirtualChannel virtualChannel in channels )
 					{
 						if( virtualChannel.IsUsingGroup( this ) )
-							SoundWorld._Instance.OnVirtualChannelUpdatePause( virtualChannel );
+							SoundWorld.Internal_Instance.OnVirtualChannelUpdatePause( virtualChannel );
 					}
 				}
 			}

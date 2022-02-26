@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -118,37 +118,37 @@ namespace NeoAxis
 		/// The sound played when the mouse pointer enters the button.
 		/// </summary>
 		[DefaultValue( null )]
-		public Reference<Component_Sound> ButtonSoundMouseEnter
+		public Reference<Sound> ButtonSoundMouseEnter
 		{
 			get { if( _buttonSoundMouseEnter.BeginGet() ) ButtonSoundMouseEnter = _buttonSoundMouseEnter.Get( this ); return _buttonSoundMouseEnter.value; }
 			set { if( _buttonSoundMouseEnter.BeginSet( ref value ) ) { try { ButtonSoundMouseEnterChanged?.Invoke( this ); } finally { _buttonSoundMouseEnter.EndSet(); } } }
 		}
 		public event Action<UIStyle> ButtonSoundMouseEnterChanged;
-		ReferenceField<Component_Sound> _buttonSoundMouseEnter;
+		ReferenceField<Sound> _buttonSoundMouseEnter;
 
 		/// <summary>
 		/// The sound played when the mouse pointer leaves the button.
 		/// </summary>
 		[DefaultValue( null )]
-		public Reference<Component_Sound> ButtonSoundMouseLeave
+		public Reference<Sound> ButtonSoundMouseLeave
 		{
 			get { if( _buttonSoundMouseLeave.BeginGet() ) ButtonSoundMouseLeave = _buttonSoundMouseLeave.Get( this ); return _buttonSoundMouseLeave.value; }
 			set { if( _buttonSoundMouseLeave.BeginSet( ref value ) ) { try { ButtonSoundMouseLeaveChanged?.Invoke( this ); } finally { _buttonSoundMouseLeave.EndSet(); } } }
 		}
 		public event Action<UIStyle> ButtonSoundMouseLeaveChanged;
-		ReferenceField<Component_Sound> _buttonSoundMouseLeave;
+		ReferenceField<Sound> _buttonSoundMouseLeave;
 
 		/// <summary>
 		/// The sound played when the user clicks on the button.
 		/// </summary>
 		[DefaultValue( null )]
-		public Reference<Component_Sound> ButtonSoundClick
+		public Reference<Sound> ButtonSoundClick
 		{
 			get { if( _buttonSoundClick.BeginGet() ) ButtonSoundClick = _buttonSoundClick.Get( this ); return _buttonSoundClick.value; }
 			set { if( _buttonSoundClick.BeginSet( ref value ) ) { try { ButtonSoundClickChanged?.Invoke( this ); } finally { _buttonSoundClick.EndSet(); } } }
 		}
 		public event Action<UIStyle> ButtonSoundClickChanged;
-		ReferenceField<Component_Sound> _buttonSoundClick;
+		ReferenceField<Sound> _buttonSoundClick;
 
 		/////////////////////////////////////////
 
@@ -156,37 +156,37 @@ namespace NeoAxis
 		/// The sound played when the mouse pointer enters the button of context menu.
 		/// </summary>
 		[DefaultValue( null )]
-		public Reference<Component_Sound> ContextMenuButtonSoundMouseEnter
+		public Reference<Sound> ContextMenuButtonSoundMouseEnter
 		{
 			get { if( _contextMenuButtonSoundMouseEnter.BeginGet() ) ContextMenuButtonSoundMouseEnter = _contextMenuButtonSoundMouseEnter.Get( this ); return _contextMenuButtonSoundMouseEnter.value; }
 			set { if( _contextMenuButtonSoundMouseEnter.BeginSet( ref value ) ) { try { ContextMenuButtonSoundMouseEnterChanged?.Invoke( this ); } finally { _contextMenuButtonSoundMouseEnter.EndSet(); } } }
 		}
 		public event Action<UIStyle> ContextMenuButtonSoundMouseEnterChanged;
-		ReferenceField<Component_Sound> _contextMenuButtonSoundMouseEnter;
+		ReferenceField<Sound> _contextMenuButtonSoundMouseEnter;
 
 		/// <summary>
 		/// The sound played when the mouse pointer leaves the button of context menu.
 		/// </summary>
 		[DefaultValue( null )]
-		public Reference<Component_Sound> ContextMenuButtonSoundMouseLeave
+		public Reference<Sound> ContextMenuButtonSoundMouseLeave
 		{
 			get { if( _contextMenuButtonSoundMouseLeave.BeginGet() ) ContextMenuButtonSoundMouseLeave = _contextMenuButtonSoundMouseLeave.Get( this ); return _contextMenuButtonSoundMouseLeave.value; }
 			set { if( _contextMenuButtonSoundMouseLeave.BeginSet( ref value ) ) { try { ContextMenuButtonSoundMouseLeaveChanged?.Invoke( this ); } finally { _contextMenuButtonSoundMouseLeave.EndSet(); } } }
 		}
 		public event Action<UIStyle> ContextMenuButtonSoundMouseLeaveChanged;
-		ReferenceField<Component_Sound> _contextMenuButtonSoundMouseLeave;
+		ReferenceField<Sound> _contextMenuButtonSoundMouseLeave;
 
 		/// <summary>
 		/// The sound played when the user clicks on the button of context menu.
 		/// </summary>
 		[DefaultValue( null )]
-		public Reference<Component_Sound> ContextMenuButtonSoundClick
+		public Reference<Sound> ContextMenuButtonSoundClick
 		{
 			get { if( _contextMenuButtonSoundClick.BeginGet() ) ContextMenuButtonSoundClick = _contextMenuButtonSoundClick.Get( this ); return _contextMenuButtonSoundClick.value; }
 			set { if( _contextMenuButtonSoundClick.BeginSet( ref value ) ) { try { ContextMenuButtonSoundClickChanged?.Invoke( this ); } finally { _contextMenuButtonSoundClick.EndSet(); } } }
 		}
 		public event Action<UIStyle> ContextMenuButtonSoundClickChanged;
-		ReferenceField<Component_Sound> _contextMenuButtonSoundClick;
+		ReferenceField<Sound> _contextMenuButtonSoundClick;
 
 		/////////////////////////////////////////
 
@@ -242,37 +242,37 @@ namespace NeoAxis
 		/// The sound played when the mouse pointer enters the check.
 		/// </summary>
 		[DefaultValue( null )]
-		public Reference<Component_Sound> CheckSoundMouseEnter
+		public Reference<Sound> CheckSoundMouseEnter
 		{
 			get { if( _checkSoundMouseEnter.BeginGet() ) CheckSoundMouseEnter = _checkSoundMouseEnter.Get( this ); return _checkSoundMouseEnter.value; }
 			set { if( _checkSoundMouseEnter.BeginSet( ref value ) ) { try { CheckSoundMouseEnterChanged?.Invoke( this ); } finally { _checkSoundMouseEnter.EndSet(); } } }
 		}
 		public event Action<UIStyle> CheckSoundMouseEnterChanged;
-		ReferenceField<Component_Sound> _checkSoundMouseEnter;
+		ReferenceField<Sound> _checkSoundMouseEnter;
 
 		/// <summary>
 		/// The sound played when the mouse pointer leaves the check.
 		/// </summary>
 		[DefaultValue( null )]
-		public Reference<Component_Sound> CheckSoundMouseLeave
+		public Reference<Sound> CheckSoundMouseLeave
 		{
 			get { if( _checkSoundMouseLeave.BeginGet() ) CheckSoundMouseLeave = _checkSoundMouseLeave.Get( this ); return _checkSoundMouseLeave.value; }
 			set { if( _checkSoundMouseLeave.BeginSet( ref value ) ) { try { CheckSoundMouseLeaveChanged?.Invoke( this ); } finally { _checkSoundMouseLeave.EndSet(); } } }
 		}
 		public event Action<UIStyle> CheckSoundMouseLeaveChanged;
-		ReferenceField<Component_Sound> _checkSoundMouseLeave;
+		ReferenceField<Sound> _checkSoundMouseLeave;
 
 		/// <summary>
 		/// The sound played when user clicks on the check.
 		/// </summary>
 		[DefaultValue( null )]
-		public Reference<Component_Sound> CheckSoundClick
+		public Reference<Sound> CheckSoundClick
 		{
 			get { if( _checkSoundClick.BeginGet() ) CheckSoundClick = _checkSoundClick.Get( this ); return _checkSoundClick.value; }
 			set { if( _checkSoundClick.BeginSet( ref value ) ) { try { CheckSoundClickChanged?.Invoke( this ); } finally { _checkSoundClick.EndSet(); } } }
 		}
 		public event Action<UIStyle> CheckSoundClickChanged;
-		ReferenceField<Component_Sound> _checkSoundClick;
+		ReferenceField<Sound> _checkSoundClick;
 
 		////////////////
 
@@ -300,7 +300,7 @@ namespace NeoAxis
 	/// </summary>
 	public class UIStyleDefault : UIStyle
 	{
-		int listEnsureVisible = -1;
+		//int listEnsureVisible = -1;
 
 		/////////////////////////////////////////
 
@@ -483,10 +483,12 @@ namespace NeoAxis
 			//var colorMultiplier = control.GetTotalColorMultiplier();
 			//if( colorMultiplier.Alpha > 0 )
 			//{
-			control.GetScreenRectangle( out var rect );
+			control.GetScreenRectangle( out var controlRect );
 
-			renderer.AddQuad( rect, borderColor * colorMultiplier );
-			renderer.AddQuad( Multiply( rect, new Rectangle( 0.1, 0.1, 0.9, 0.9 ) ), insideColor * colorMultiplier );
+			var imageRect = new Rectangle( controlRect.Left, controlRect.Top, controlRect.Left + controlRect.Size.Y * renderer.AspectRatioInv, controlRect.Bottom );
+
+			renderer.AddQuad( imageRect, borderColor * colorMultiplier );
+			renderer.AddQuad( Multiply( imageRect, new Rectangle( 0.1, 0.1, 0.9, 0.9 ) ), insideColor * colorMultiplier );
 
 			//Checked image
 			if( control.Checked.Value == UICheck.CheckValue.Checked )
@@ -508,7 +510,7 @@ namespace NeoAxis
 
 				var vertices = new CanvasRenderer.TriangleVertex[ points2.Length ];
 				for( int n = 0; n < points2.Length; n++ )
-					vertices[ n ] = new CanvasRenderer.TriangleVertex( Multiply( rect, points2[ n ] ).ToVector2F(), color2 );
+					vertices[ n ] = new CanvasRenderer.TriangleVertex( Multiply( imageRect, points2[ n ] ).ToVector2F(), color2 );
 
 				var indices = new int[] { 0, 1, 5, 5, 4, 1, 1, 2, 3, 3, 1, 4 };
 
@@ -517,11 +519,11 @@ namespace NeoAxis
 
 			//Indeterminate image
 			if( control.Checked.Value == UICheck.CheckValue.Indeterminate )
-				renderer.AddQuad( Multiply( rect, new Rectangle( 0.3, 0.3, 0.7, 0.7 ) ), checkColor * colorMultiplier );
+				renderer.AddQuad( Multiply( imageRect, new Rectangle( 0.3, 0.3, 0.7, 0.7 ) ), checkColor * colorMultiplier );
 
 			//!!!!странно рисует чуть ниже, чем посередине
 			//text
-			renderer.AddText( " " + control.Text, new Vector2( rect.Right, rect.GetCenter().Y ), EHorizontalAlignment.Left, EVerticalAlignment.Center, textColor * colorMultiplier );
+			renderer.AddText( " " + control.Text, new Vector2( imageRect.Right, imageRect.GetCenter().Y ), EHorizontalAlignment.Left, EVerticalAlignment.Center, textColor * colorMultiplier );
 			//renderer.AddText( " " + control.Text, new Vector2( rect.Right, rect.Top ), EHorizontalAlignment.Left, EVerticalAlignment.Top, textColor * colorMultiplier );
 			//}
 		}
@@ -694,18 +696,20 @@ namespace NeoAxis
 					scrollBar.ValueRange = new Range( 0, scrollScreenSizeY );
 
 				//ensure visible
-				if( listEnsureVisible != -1 )
+				if( control.needEnsureVisibleInStyle != -1 )
 				{
-					if( (float)listEnsureVisible * itemSize > screenSizeY / 2 )
+					var index = control.needEnsureVisibleInStyle;
+
+					if( (float)index * itemSize > screenSizeY / 2 )
 					{
-						var factor = (float)listEnsureVisible / (float)( control.Items.Count - 1 );
+						var factor = (float)index / (float)( control.Items.Count - 1 );
 						var v = scrollScreenSizeY * factor;
 						scrollBar.Value = MathEx.Clamp( v, 0, scrollBar.ValueRange.Value.Maximum );
 					}
 					else
 						scrollBar.Value = 0;
 
-					listEnsureVisible = -1;
+					control.needEnsureVisibleInStyle = -1;
 				}
 
 				//if( scrollBar.Visible )
@@ -820,7 +824,7 @@ namespace NeoAxis
 
 		public override void ListEnsureVisible( UIList control, int index )
 		{
-			listEnsureVisible = index;
+			//listEnsureVisible = index;
 		}
 
 		/////////////////////////////////////////

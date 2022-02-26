@@ -16,9 +16,9 @@ using System.Drawing.Design;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Diagnostics;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Toolkit;
 
-namespace ComponentFactory.Krypton.Ribbon
+namespace Internal.ComponentFactory.Krypton.Ribbon
 {
     /// <summary>
     /// Manage the items that can be added to the top level of a ribbon group instance.
@@ -29,7 +29,8 @@ namespace ComponentFactory.Krypton.Ribbon
         private static readonly Type[] _types = new Type[] { typeof(KryptonRibbonGroupLines),
                                                              typeof(KryptonRibbonGroupTriple),
                                                              typeof(KryptonRibbonGroupSeparator),
-                                                             typeof(KryptonRibbonGroupGallery)};
+                                                             //typeof(KryptonRibbonGroupGallery)
+        };
         #endregion
 
         #region Restrict

@@ -39,7 +39,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Net3dBool
+namespace Internal.Net3dBool
 {
     /// <summary>
     /// Represents a line segment resulting from a intersection of a face and a plane.

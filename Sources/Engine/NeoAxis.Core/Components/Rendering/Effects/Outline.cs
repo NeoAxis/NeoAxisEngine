@@ -1,8 +1,8 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using SharpBgfx;
+using Internal.SharpBgfx;
 
 namespace NeoAxis
 {
@@ -11,7 +11,7 @@ namespace NeoAxis
 	/// </summary>
 	[DefaultOrderOfEffect( 14 )]
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
-	public class Component_RenderingEffect_Outline : Component_RenderingEffect
+	public class RenderingEffect_Outline : RenderingEffect
 	{
 		/// <summary>
 		/// The intensity of the effect.
@@ -26,7 +26,7 @@ namespace NeoAxis
 			set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_Outline> IntensityChanged;
+		public event Action<RenderingEffect_Outline> IntensityChanged;
 		ReferenceField<double> _intensity = 1;
 
 		/// <summary>
@@ -40,7 +40,7 @@ namespace NeoAxis
 			set { if( _scale.BeginSet( ref value ) ) { try { ScaleChanged?.Invoke( this ); } finally { _scale.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Scale"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_Outline> ScaleChanged;
+		public event Action<RenderingEffect_Outline> ScaleChanged;
 		ReferenceField<double> _scale = 1.0;
 
 		/// <summary>
@@ -53,14 +53,14 @@ namespace NeoAxis
 			set { if( _groupsInterval.BeginSet( ref value ) ) { try { GroupsIntervalChanged?.Invoke( this ); } finally { _groupsInterval.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="GroupsInterval"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_Outline> GroupsIntervalChanged;
+		public event Action<RenderingEffect_Outline> GroupsIntervalChanged;
 		ReferenceField<RangeI> _groupsInterval = new RangeI( 0, 100000 );
 
 		/////////////////////////////////////////
 
-		unsafe void RenderObjects( ViewportRenderingContext context, Component_RenderingPipeline_Basic.FrameData frameData, ref Component_Image actualTexture, double scale, ColorValue color, Vector4 anyData, List<Vector2I> renderableItems )
+		unsafe void RenderObjects( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture, double scale, ColorValue color, Vector4 anyData, List<Vector2I> renderableItems )
 		{
-			var pipeline = context.RenderingPipeline as Component_RenderingPipeline_Basic;
+			var pipeline = context.RenderingPipeline as RenderingPipeline_Basic;
 			var owner = context.Owner;
 
 
@@ -149,8 +149,12 @@ namespace NeoAxis
 				context.SetViewport( mrt.Viewports[ 0 ], viewMatrix, projectionMatrix, FrameBufferTypes.All, ColorValue.Zero );
 
 
+				//bind textures for all render operations
+				pipeline.BindMaterialsTexture( context, frameData );
+
+
 				//use debug mode to detect pixels of the object
-				pipeline.SetViewportOwnerSettingsUniform( context, Component_RenderingPipeline_Basic.DebugModeEnum.Normal );
+				pipeline.SetViewportOwnerSettingsUniform( context, RenderingPipeline_Basic.DebugModeEnum.Normal );
 
 				if( frameData.LightsInFrustumSorted.Length != 0 )
 				{
@@ -175,14 +179,14 @@ namespace NeoAxis
 							for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
 							{
 								var oper = meshData.RenderOperations[ nOperation ];
-								var materialData = Component_RenderingPipeline_Basic.GetMeshMaterialData( ref meshItem, oper, nOperation, true );
+								var materialData = RenderingPipeline_Basic.GetMeshMaterialData( ref meshItem, oper, nOperation, true );
 
 								if( materialData.AllPasses.Count != 0 )
 								{
 									//bind material data
 									materialData.BindCurrentFrameData( context, false, true );
 
-									var passesGroup = materialData.passesByLightType[ (int)Component_Light.TypeEnum.Ambient ];
+									var passesGroup = materialData.passesByLightType[ (int)Light.TypeEnum.Ambient ];
 									bool receiveShadows = false;
 									GpuMaterialPass pass = passesGroup.passWithoutShadows;
 
@@ -190,7 +194,7 @@ namespace NeoAxis
 
 									var batchInstancing = meshItem.BatchingInstanceBuffer != null;
 
-									pipeline.BindRenderOperationData( context, frameData, materialData, batchInstancing, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, oper.UnwrappedUV, ref meshItem.Color, oper.VertexStructureContainsColor, false, meshItem.VisibilityDistance );
+									pipeline.BindRenderOperationData( context, frameData, materialData, batchInstancing, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, oper.UnwrappedUV, ref meshItem.Color, oper.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, 0, null, oper.MeshGeometryIndex );
 
 									if( !batchInstancing )
 										fixed( Matrix4F* p = &meshItem.Transform )
@@ -204,25 +208,25 @@ namespace NeoAxis
 						{
 							//billboards
 							ref var billboardItem = ref frameData.RenderSceneData.Billboards.Data[ renderableItem.Y ];
-							var meshData = Component_Billboard.GetBillboardMesh().Result.MeshData;
+							var meshData = Billboard.GetBillboardMesh().Result.MeshData;
 
 							for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
 							{
 								var oper = meshData.RenderOperations[ nOperation ];
-								var materialData = Component_RenderingPipeline_Basic.GetBillboardMaterialData( ref billboardItem, true );
+								var materialData = RenderingPipeline_Basic.GetBillboardMaterialData( ref billboardItem, true );
 
 								if( materialData.AllPasses.Count != 0 )
 								{
 									//bind material data
 									materialData.BindCurrentFrameData( context, false, true );
 
-									var passesGroup = materialData.passesByLightType[ (int)Component_Light.TypeEnum.Ambient ];
+									var passesGroup = materialData.passesByLightType[ (int)Light.TypeEnum.Ambient ];
 									bool receiveShadows = false;
 									GpuMaterialPass pass = passesGroup.passWithoutShadows;
 
 									pipeline.ForwardBindGeneralTexturesUniforms( context, frameData, ref billboardItem.BoundingSphere, lightItem, receiveShadows, nRenderableItem == 0 );
 
-									pipeline.BindRenderOperationData( context, frameData, materialData, false, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, 0, oper.UnwrappedUV, ref billboardItem.Color, oper.VertexStructureContainsColor, false, billboardItem.VisibilityDistance );
+									pipeline.BindRenderOperationData( context, frameData, materialData, false, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, 0, oper.UnwrappedUV, ref billboardItem.Color, oper.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, 0, null, oper.MeshGeometryIndex );
 
 									billboardItem.GetWorldMatrix( out var worldMatrix );
 									Bgfx.SetTransform( (float*)&worldMatrix );
@@ -304,7 +308,7 @@ namespace NeoAxis
 			context.DynamicTexture_Free( outlineTexture );
 		}
 
-		void ProcessEffect( ViewportRenderingContext context, Component_RenderingPipeline_Basic.FrameData frameData, ref Component_Image actualTexture )
+		void ProcessEffect( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture )
 		{
 			var groupsInterval = GroupsInterval.Value;
 
@@ -370,11 +374,11 @@ namespace NeoAxis
 				RenderObjects( context, frameData, ref actualTexture, item.Item2, item.Item3, item.Item4, item.Item5 );
 		}
 
-		protected override void OnRender( ViewportRenderingContext context, Component_RenderingPipeline.IFrameData frameData, ref Component_Image actualTexture )
+		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
 		{
 			base.OnRender( context, frameData, ref actualTexture );
 
-			ProcessEffect( context, (Component_RenderingPipeline_Basic.FrameData)frameData, ref actualTexture );
+			ProcessEffect( context, (RenderingPipeline_Basic.FrameData)frameData, ref actualTexture );
 		}
 
 		/////////////////////////////////////////

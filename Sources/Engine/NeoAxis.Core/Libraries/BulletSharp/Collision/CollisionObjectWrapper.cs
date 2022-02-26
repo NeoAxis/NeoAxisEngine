@@ -1,8 +1,8 @@
-using BulletSharp.Math;
+using Internal.BulletSharp.Math;
 using System;
-using static BulletSharp.UnsafeNativeMethods;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class CollisionObjectWrapper
 	{
@@ -43,11 +43,11 @@ namespace BulletSharp
 			set => btCollisionObjectWrapper_setPartId(Native, value);
 		}
 
-		public Matrix WorldTransform
+		public BMatrix WorldTransform
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btCollisionObjectWrapper_getWorldTransform(Native, out value);
 				return value;
 			}

@@ -24,7 +24,7 @@ using Microsoft.Win32;
 using System.Security;
 using System.Collections.Specialized;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     /// <summary>
     /// Base class that allows a form to have custom chrome applied. You should derive 

@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -14,7 +14,7 @@ namespace SampleWidgetWinForms
 		{
 			InitializeComponent();
 
-			Font = new Font( new FontFamily( "Microsoft Sans Serif" ), 8f );
+			base.Font = new System.Drawing.Font( new FontFamily( "Microsoft Sans Serif" ), 8f );
 		}
 
 		protected override void OnLoad( EventArgs e )
@@ -31,7 +31,7 @@ namespace SampleWidgetWinForms
 
 		private void buttonNewForm_Click( object sender, EventArgs e )
 		{
-			if( Component_Scene.First == null )
+			if( Scene.First == null )
 			{
 				MessageBox.Show( "The scene has not been created yet." );
 				return;

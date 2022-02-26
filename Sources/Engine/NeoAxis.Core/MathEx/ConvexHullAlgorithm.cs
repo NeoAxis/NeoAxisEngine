@@ -1,15 +1,15 @@
-﻿using System;
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+//!!!!Add original copyright notice
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NeoAxis
 {
 	/// <summary>
-	/// Class for calculating convex hull by a mesh.
+	/// Class for calculating convex hull from a mesh.
 	/// </summary>
-	public class ConvexHullAlgorithm
+	class ConvexHullAlgorithm
 	{
 		/// <summary>
 		/// Creates a convex hull of the input data.
@@ -22,10 +22,11 @@ namespace NeoAxis
 		/// <returns>
 		/// ConvexHull&lt;TVertex, TFace&gt;.
 		/// </returns>
-		public static ConvexHull<TVertex, TFace> Create<TVertex, TFace>( IList<TVertex> data,
-			double PlaneDistanceTolerance = Constants.DefaultPlaneDistanceTolerance )
-			where TVertex : IVertex
-			where TFace : ConvexFace<TVertex, TFace>, new()
+		/*public */
+		static ConvexHull<TVertex, TFace> Create<TVertex, TFace>( IList<TVertex> data,
+ double PlaneDistanceTolerance = Constants.DefaultPlaneDistanceTolerance )
+ where TVertex : IVertex
+ where TFace : ConvexFace<TVertex, TFace>, new()
 		{
 			return ConvexHull<TVertex, TFace>.Create( data, PlaneDistanceTolerance );
 		}
@@ -40,9 +41,10 @@ namespace NeoAxis
 		/// <returns>
 		/// ConvexHull&lt;TVertex, DefaultConvexFace&lt;TVertex&gt;&gt;.
 		/// </returns>
-		public static ConvexHull<TVertex, ConvexFace<TVertex>> Create<TVertex>( IList<TVertex> data,
-			double PlaneDistanceTolerance = Constants.DefaultPlaneDistanceTolerance )
-			where TVertex : IVertex
+		/*public */
+		static ConvexHull<TVertex, ConvexFace<TVertex>> Create<TVertex>( IList<TVertex> data,
+double PlaneDistanceTolerance = Constants.DefaultPlaneDistanceTolerance )
+where TVertex : IVertex
 		{
 			return ConvexHull<TVertex, ConvexFace<TVertex>>.Create( data, PlaneDistanceTolerance );
 		}
@@ -56,8 +58,9 @@ namespace NeoAxis
 		/// <returns>
 		/// ConvexHull&lt;DefaultVertex, DefaultConvexFace&lt;DefaultVertex&gt;&gt;.
 		/// </returns>
-		public static ConvexHull<ConvexVertex, ConvexFace<ConvexVertex>> Create( IList<double[]> data,
-			double PlaneDistanceTolerance = Constants.DefaultPlaneDistanceTolerance )
+		/*public */
+		static ConvexHull<ConvexVertex, ConvexFace<ConvexVertex>> Create( IList<double[]> data,
+double PlaneDistanceTolerance = Constants.DefaultPlaneDistanceTolerance )
 		{
 			var points = data.Select( p => new ConvexVertex { Position = p } ).ToList();
 			return ConvexHull<ConvexVertex, ConvexFace<ConvexVertex>>.Create( points, PlaneDistanceTolerance );
@@ -66,8 +69,9 @@ namespace NeoAxis
 		/// <summary>
 		/// Creates a convex hull of the input data.
 		/// </summary>
-		public static ConvexHull<ConvexVertex, ConvexFace<ConvexVertex>> Create( Vector3[] data,
-			double PlaneDistanceTolerance = Constants.DefaultPlaneDistanceTolerance )
+		/*public */
+		static ConvexHull<ConvexVertex, ConvexFace<ConvexVertex>> Create( Vector3[] data,
+double PlaneDistanceTolerance = Constants.DefaultPlaneDistanceTolerance )
 		{
 			var points = data.Select( p => new ConvexVertex { Position = new double[] { p.X, p.Y, p.Z } } ).ToList();
 
@@ -77,8 +81,9 @@ namespace NeoAxis
 		/// <summary>
 		/// Creates a convex hull of the input data.
 		/// </summary>
-		public static ConvexHull<ConvexVertex, ConvexFace<ConvexVertex>> Create( Vector3F[] data,
-			double PlaneDistanceTolerance = Constants.DefaultPlaneDistanceTolerance )
+		/*public */
+		static ConvexHull<ConvexVertex, ConvexFace<ConvexVertex>> Create( Vector3F[] data,
+double PlaneDistanceTolerance = Constants.DefaultPlaneDistanceTolerance )
 		{
 			var points = data.Select( p => new ConvexVertex { Position = new double[] { p.X, p.Y, p.Z } } ).ToList();
 
@@ -88,8 +93,9 @@ namespace NeoAxis
 		/// <summary>
 		/// Creates a convex hull of the input data.
 		/// </summary>
-		public static ConvexHull<ConvexVertex, ConvexFace<ConvexVertex>> Create( Vector3[] vdata, int[] idata,
-			double PlaneDistanceTolerance = Constants.DefaultPlaneDistanceTolerance )
+		/*public */
+		static ConvexHull<ConvexVertex, ConvexFace<ConvexVertex>> Create( Vector3[] vdata, int[] idata,
+double PlaneDistanceTolerance = Constants.DefaultPlaneDistanceTolerance )
 		{
 			var points = idata.Select( i => new ConvexVertex { Position = new double[] { vdata[ i ].X, vdata[ i ].Y, vdata[ i ].Z } } ).ToList();
 
@@ -99,8 +105,9 @@ namespace NeoAxis
 		/// <summary>
 		/// Creates a convex hull of the input data.
 		/// </summary>
-		public static ConvexHull<ConvexVertex, ConvexFace<ConvexVertex>> Create( Vector3F[] vdata, int[] idata,
-			double PlaneDistanceTolerance = Constants.DefaultPlaneDistanceTolerance )
+		/*public */
+		static ConvexHull<ConvexVertex, ConvexFace<ConvexVertex>> Create( Vector3F[] vdata, int[] idata,
+double PlaneDistanceTolerance = Constants.DefaultPlaneDistanceTolerance )
 		{
 			var points = idata.Select( i => new ConvexVertex { Position = new double[] { vdata[ i ].X, vdata[ i ].Y, vdata[ i ].Z } } ).ToList();
 
@@ -112,9 +119,10 @@ namespace NeoAxis
 		/// </summary>
 		/// <typeparam name="TVertex">The type of the t vertex.</typeparam>
 		/// <typeparam name="TFace">The type of the t face.</typeparam>
-		public class ConvexHull<TVertex, TFace>
-			where TVertex : IVertex
-			where TFace : ConvexFace<TVertex, TFace>, new()
+		/*public */
+		class ConvexHull<TVertex, TFace>
+where TVertex : IVertex
+where TFace : ConvexFace<TVertex, TFace>, new()
 		{
 			/// <summary>
 			/// Can only be created using a factory method.
@@ -157,7 +165,8 @@ namespace NeoAxis
 		/// <summary>
 		/// An interface for a structure with nD position.
 		/// </summary>
-		public interface IVertex
+		/*public */
+		interface IVertex
 		{
 			/// <summary>
 			/// Position of the vertex.
@@ -171,9 +180,10 @@ namespace NeoAxis
 		/// </summary>
 		/// <typeparam name="TVertex">The type of the t vertex.</typeparam>
 		/// <typeparam name="TFace">The type of the t face.</typeparam>
-		public abstract class ConvexFace<TVertex, TFace>
-			where TVertex : IVertex
-			where TFace : ConvexFace<TVertex, TFace>
+		/*public */
+		abstract class ConvexFace<TVertex, TFace>
+where TVertex : IVertex
+where TFace : ConvexFace<TVertex, TFace>
 		{
 			/// <summary>
 			/// Adjacency. Array of length "dimension".
@@ -1343,7 +1353,7 @@ namespace NeoAxis
 		/// <returns>
 		/// MIConvexHull.ConvexHull&lt;TVertex, TFace&gt;.
 		/// </returns>
-		internal static ConvexHull<TVertex, TFace> GetConvexHull<TVertex, TFace>( IList<TVertex> data,
+		static ConvexHull<TVertex, TFace> GetConvexHull<TVertex, TFace>( IList<TVertex> data,
 					double PlaneDistanceTolerance )
 					where TFace : ConvexFace<TVertex, TFace>, new()
 					where TVertex : IVertex
@@ -2594,7 +2604,7 @@ namespace NeoAxis
 		/// Represents a vertex.
 		/// </summary>
 		/// <seealso cref="MIConvexHull.IVertex" />
-		public class ConvexVertex : ConvexHullAlgorithm.IVertex
+		public class ConvexVertex : IVertex
 		{
 			/// <summary>
 			/// Position of the vertex.
@@ -2611,41 +2621,39 @@ namespace NeoAxis
 		/// A default convex face representation.
 		/// </summary>
 		/// <typeparam name="TVertex">The type of the t vertex.</typeparam>
-		public class ConvexFace<TVertex> : ConvexHullAlgorithm.ConvexFace<TVertex, ConvexFace<TVertex>>
-			where TVertex : ConvexHullAlgorithm.IVertex
+		/*public */
+		class ConvexFace<TVertex> : ConvexFace<TVertex, ConvexFace<TVertex>> where TVertex : IVertex
 		{
 		}
 
 		///////////////////////////////////////////
 
-		public static void Create( Vector3[] vertices, int[] indices, out Vector3[] resultVertices, double planeDistanceTolerance = Constants.DefaultPlaneDistanceTolerance )
-		{
-			//!!!!, bool removeEqualVertices = true
+		//public static void Calculate( Vector3[] vertices, int[] indices, out Vector3[] resultVertices, double epsilon = Constants.DefaultPlaneDistanceTolerance )
+		//{
+		//	//!!!!, bool removeEqualVertices = true
 
-			var convex = indices != null ? Create( vertices, indices, planeDistanceTolerance ) : Create( vertices, planeDistanceTolerance );
+		//	var convex = indices != null ? Create( vertices, indices, epsilon ) : Create( vertices, epsilon );
 
-			var vlist = new List<Vector3>( convex.Faces.Length * 3 );
-			foreach( var f in convex.Faces )
-				for( int v = 0; v < f.Vertices.Length; v++ )
-					vlist.Add( f.Vertices[ v ].ToVec3() );
+		//	var vlist = new List<Vector3>( convex.Faces.Length * 3 );
+		//	foreach( var f in convex.Faces )
+		//		for( int v = 0; v < f.Vertices.Length; v++ )
+		//			vlist.Add( f.Vertices[ v ].ToVec3() );
 
-			resultVertices = vlist.ToArray();
+		//	resultVertices = vlist.ToArray();
 
-			////!!!!planeDistanceTolerance
-			//if( mergeEqualVertices )
-			//	MathAlgorithms.MergeEqualVertices( ref resultVertices, planeDistanceTolerance );
-		}
+		//	////!!!!planeDistanceTolerance
+		//	//if( mergeEqualVertices )
+		//	//	MathAlgorithms.MergeEqualVertices( ref resultVertices, planeDistanceTolerance );
+		//}
 
-		public static void Create( Vector3[] vertices, out Vector3[] resultVertices, double planeDistanceTolerance = Constants.DefaultPlaneDistanceTolerance )
-		{
-			Create( vertices, null, out resultVertices, planeDistanceTolerance );
-		}
+		//public static void Calculate( Vector3[] vertices, out Vector3[] resultVertices, double epsilon = Constants.DefaultPlaneDistanceTolerance )
+		//{
+		//	Calculate( vertices, null, out resultVertices, epsilon );
+		//}
 
-		public static void Create( Vector3[] vertices, int[] indices, out Vector3[] resultVertices, out int[] resultIndices, double epsilon = Constants.DefaultPlaneDistanceTolerance )
+		public static void Calculate( Vector3[] vertices, int[] indices, out Vector3[] resultVertices, out int[] resultIndices, double epsilon = Constants.DefaultPlaneDistanceTolerance )
 		{
 			var convex = indices != null ? Create( vertices, indices, epsilon ) : Create( vertices, epsilon );
-
-			//!!!!slowly?
 
 			var vlist = new List<Vector3>( convex.Faces.Length * 3 );
 			foreach( var f in convex.Faces )
@@ -2657,19 +2665,13 @@ namespace NeoAxis
 			for( int n = 0; n < resultIndices.Length; n++ )
 				resultIndices[ n ] = n;
 
-			////!!!!
-			//Log.Info( "before: " + resultVertices.Length.ToString() + " " + resultIndices.Length.ToString() );
-
 			MathAlgorithms.MergeEqualVertices( ref resultVertices, ref resultIndices, epsilon, true );
-
-			////!!!!
-			//Log.Info( "after: " + resultVertices.Length.ToString() + " " + resultIndices.Length.ToString() );
 		}
 
-		public static void Create( Vector3[] vertices, out Vector3[] resultVertices, out int[] resultIndices, double epsilon = Constants.DefaultPlaneDistanceTolerance )
-		{
-			Create( vertices, null, out resultVertices, out resultIndices, epsilon );
-		}
+		//public static void Calculate( Vector3[] vertices, out Vector3[] resultVertices, out int[] resultIndices, double epsilon = Constants.DefaultPlaneDistanceTolerance )
+		//{
+		//	Calculate( vertices, null, out resultVertices, out resultIndices, epsilon );
+		//}
 
 		static bool PlanesContains( List<Plane> list, ref Plane plane, double epsilon )
 		{
@@ -2679,17 +2681,17 @@ namespace NeoAxis
 			return false;
 		}
 
-		public static void Create( Vector3[] vertices, out Vector3[] resultVertices, out int[] resultIndices, out Plane[] resultPlanes, double epsilon = Constants.DefaultPlaneDistanceTolerance )
+		public static void Calculate( Vector3[] vertices, int[] indices, out Vector3[] resultVertices, out int[] resultIndices, out Plane[] resultPlanes, double epsilon = Constants.DefaultPlaneDistanceTolerance )
 		{
-			Create( vertices, out resultVertices, out resultIndices );
+			Calculate( vertices, indices, out resultVertices, out resultIndices, epsilon );
 
 			var planes = new List<Plane>( resultIndices.Length / 3 );
 			for( int nTriangle = 0; nTriangle < resultIndices.Length / 3; nTriangle++ )
 			{
-				var v0 = resultVertices[ resultIndices[ nTriangle * 3 + 0 ] ];
-				var v1 = resultVertices[ resultIndices[ nTriangle * 3 + 1 ] ];
-				var v2 = resultVertices[ resultIndices[ nTriangle * 3 + 2 ] ];
-				var plane = Plane.FromPoints( v0, v1, v2 );
+				ref var v0 = ref resultVertices[ resultIndices[ nTriangle * 3 + 0 ] ];
+				ref var v1 = ref resultVertices[ resultIndices[ nTriangle * 3 + 1 ] ];
+				ref var v2 = ref resultVertices[ resultIndices[ nTriangle * 3 + 2 ] ];
+				Plane.FromPoints( ref v0, ref v1, ref v2, out var plane );
 
 				if( !PlanesContains( planes, ref plane, epsilon ) )
 					planes.Add( plane );
@@ -2698,9 +2700,28 @@ namespace NeoAxis
 			resultPlanes = planes.ToArray();
 		}
 
-		public static void Create( Vector3[] vertices, out Plane[] resultPlanes, double epsilon = Constants.DefaultPlaneDistanceTolerance )
-		{
-			Create( vertices, out _, out _, out resultPlanes, epsilon );
-		}
+		//public static void Calculate( Vector3[] vertices, out Vector3[] resultVertices, out int[] resultIndices, out Plane[] resultPlanes, double epsilon = Constants.DefaultPlaneDistanceTolerance )
+		//{
+		//	Calculate( vertices, null, out resultVertices, out resultIndices, epsilon );
+
+		//	var planes = new List<Plane>( resultIndices.Length / 3 );
+		//	for( int nTriangle = 0; nTriangle < resultIndices.Length / 3; nTriangle++ )
+		//	{
+		//		var v0 = resultVertices[ resultIndices[ nTriangle * 3 + 0 ] ];
+		//		var v1 = resultVertices[ resultIndices[ nTriangle * 3 + 1 ] ];
+		//		var v2 = resultVertices[ resultIndices[ nTriangle * 3 + 2 ] ];
+		//		var plane = Plane.FromPoints( v0, v1, v2 );
+
+		//		if( !PlanesContains( planes, ref plane, epsilon ) )
+		//			planes.Add( plane );
+		//	}
+
+		//	resultPlanes = planes.ToArray();
+		//}
+
+		//public static void Calculate( Vector3[] vertices, out Plane[] resultPlanes, double epsilon = Constants.DefaultPlaneDistanceTolerance )
+		//{
+		//	Calculate( vertices, out _, out _, out resultPlanes, epsilon );
+		//}
 	}
 }

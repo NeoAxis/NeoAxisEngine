@@ -14,7 +14,7 @@
 		EditorScrollPosition = 0 0
 		Specialization
 		{
-			GetByReference = NeoAxis.Component_FlowGraphSpecialization_Shader|Instance
+			GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
 		}
 		.component NeoAxis.Component_FlowGraphNode
 		{

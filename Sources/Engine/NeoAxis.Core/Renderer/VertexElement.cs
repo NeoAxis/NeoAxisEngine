@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -473,50 +473,50 @@ namespace NeoAxis
 			//v1.Index != v2.Index;
 		}
 
-		public void GetBfgx( out SharpBgfx.VertexAttributeUsage attribute, out int count, out SharpBgfx.VertexAttributeType type, out bool asInt )
+		internal void GetBfgx( out Internal.SharpBgfx.VertexAttributeUsage attribute, out int count, out Internal.SharpBgfx.VertexAttributeType type, out bool asInt )
 		{
-			attribute = (SharpBgfx.VertexAttributeUsage)semantic;
+			attribute = (Internal.SharpBgfx.VertexAttributeUsage)semantic;
 
 			switch( this.type )
 			{
 			case VertexElementType.Float1:
-				type = SharpBgfx.VertexAttributeType.Float;
+				type = Internal.SharpBgfx.VertexAttributeType.Float;
 				count = 1;
 				asInt = false;
 				break;
 			case VertexElementType.Float2:
-				type = SharpBgfx.VertexAttributeType.Float;
+				type = Internal.SharpBgfx.VertexAttributeType.Float;
 				count = 2;
 				asInt = false;
 				break;
 			case VertexElementType.Float3:
-				type = SharpBgfx.VertexAttributeType.Float;
+				type = Internal.SharpBgfx.VertexAttributeType.Float;
 				count = 3;
 				asInt = false;
 				break;
 			case VertexElementType.Float4:
-				type = SharpBgfx.VertexAttributeType.Float;
+				type = Internal.SharpBgfx.VertexAttributeType.Float;
 				count = 4;
 				asInt = false;
 				break;
 
 			case VertexElementType.Short1:
-				type = SharpBgfx.VertexAttributeType.Int16;
+				type = Internal.SharpBgfx.VertexAttributeType.Int16;
 				count = 1;
 				asInt = true;
 				break;
 			case VertexElementType.Short2:
-				type = SharpBgfx.VertexAttributeType.Int16;
+				type = Internal.SharpBgfx.VertexAttributeType.Int16;
 				count = 2;
 				asInt = true;
 				break;
 			case VertexElementType.Short3:
-				type = SharpBgfx.VertexAttributeType.Int16;
+				type = Internal.SharpBgfx.VertexAttributeType.Int16;
 				count = 3;
 				asInt = true;
 				break;
 			case VertexElementType.Short4:
-				type = SharpBgfx.VertexAttributeType.Int16;
+				type = Internal.SharpBgfx.VertexAttributeType.Int16;
 				count = 4;
 				asInt = true;
 				break;
@@ -524,39 +524,39 @@ namespace NeoAxis
 			case VertexElementType.UByte4:
 			case VertexElementType.ColorABGR:
 			case VertexElementType.ColorARGB:
-				type = SharpBgfx.VertexAttributeType.UInt8;
+				type = Internal.SharpBgfx.VertexAttributeType.UInt8;
 				count = 4;
 				asInt = true;
 				break;
 
 			case VertexElementType.Integer1:
 				//!!!!works?
-				type = SharpBgfx.VertexAttributeType.Float;
+				type = Internal.SharpBgfx.VertexAttributeType.Float;
 				count = 1;
 				asInt = true;
 				break;
 			case VertexElementType.Integer2:
 				//!!!!works?
-				type = SharpBgfx.VertexAttributeType.Float;
+				type = Internal.SharpBgfx.VertexAttributeType.Float;
 				count = 2;
 				asInt = true;
 				break;
 			case VertexElementType.Integer3:
 				//!!!!works?
-				type = SharpBgfx.VertexAttributeType.Float;
+				type = Internal.SharpBgfx.VertexAttributeType.Float;
 				count = 3;
 				asInt = true;
 				break;
 			case VertexElementType.Integer4:
 				//!!!!works?
-				type = SharpBgfx.VertexAttributeType.Float;
+				type = Internal.SharpBgfx.VertexAttributeType.Float;
 				count = 4;
 				asInt = true;
 				break;
 
 			default:
 				Log.Fatal( "VertexElement: GetBfgx: Unknown type." );
-				type = SharpBgfx.VertexAttributeType.Float;
+				type = Internal.SharpBgfx.VertexAttributeType.Float;
 				count = 1;
 				asInt = false;
 				break;
@@ -620,7 +620,7 @@ namespace NeoAxis
 			}
 		}
 
-		public static SharpBgfx.VertexLayout CreateVertexDeclaration( this VertexElement[] elements, int forSource )
+		public static Internal.SharpBgfx.VertexLayout CreateVertexDeclaration( this VertexElement[] elements, int forSource )
 		{
 			GetInfo( elements, out var vertexSize, out var holes );
 
@@ -636,7 +636,7 @@ namespace NeoAxis
 			//}
 
 
-			var result = new SharpBgfx.VertexLayout();
+			var result = new Internal.SharpBgfx.VertexLayout();
 			result.Begin();
 
 			var sorted = (VertexElement[])elements.Clone();

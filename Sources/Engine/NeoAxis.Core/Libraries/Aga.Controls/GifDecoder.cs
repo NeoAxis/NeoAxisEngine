@@ -30,7 +30,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 
-namespace Aga.Controls
+namespace Internal.Aga.Controls
 {
 	public class GifFrame
 	{

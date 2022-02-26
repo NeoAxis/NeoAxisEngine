@@ -1,8 +1,9 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     /// <summary>
     /// Represent a single internal engine variable that user can read/change
@@ -17,3 +18,4 @@ namespace LiteDB.Engine
         public Action<BufferSlice> Write { get; set; }
     }
 }
+#endif

@@ -12,10 +12,10 @@ using System;
 using System.Drawing;
 using System.Diagnostics;
 using System.ComponentModel; 
-using ComponentFactory.Krypton.Toolkit;
-using ComponentFactory.Krypton.Navigator;
+using Internal.ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Navigator;
 
-namespace ComponentFactory.Krypton.Workspace
+namespace Internal.ComponentFactory.Krypton.Workspace
 {
 	/// <summary>
     /// Event arguments for events that need to request a KryptonPage from a provided unique name.

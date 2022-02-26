@@ -46,6 +46,18 @@ void LogLongText(std::string s)
 
 #endif
 
+//!!!!
+//!!!!МОЖЕТ в фатале показывает не тот сорц.
+//bool replace(std::string& str, const std::string& from, const std::string& to)
+//{
+//	size_t start_pos = str.find(from);
+//	if (start_pos == std::string::npos)
+//		return false;
+//	str.replace(start_pos, from.length(), to);
+//	return true;
+//}
+
+
 namespace bgfx { namespace gl
 {
 	static char s_viewName[BGFX_CONFIG_MAX_VIEWS][BGFX_CONFIG_MAX_VIEW_NAME];
@@ -5073,18 +5085,24 @@ namespace bgfx { namespace gl
 		used = 0;
 		for (uint32_t ii = 0; ii < BX_COUNTOF(s_instanceDataName); ++ii)
 		{
-			GLuint loc = glGetAttribLocation(m_id, s_instanceDataName[ii]);
-			if (GLuint(-1) != loc )
+			GLint loc = glGetAttribLocation(m_id, s_instanceDataName[ii]);
+			if (-1 != loc)
 			{
 				BX_TRACE("instance data %s: %d", s_instanceDataName[ii], loc);
 				m_instanceData[used++] = loc;
 			}
 		}
-		BX_ASSERT(used < BX_COUNTOF(m_instanceData), "Out of bounds %d > array size %d."
+		BX_ASSERT(used < BX_COUNTOF(m_instanceData)
+			, "Out of bounds %d > array size %d."
 				, used
 				, BX_COUNTOF(m_instanceData)
 				);
-		m_instanceData[used] = 0xffff;
+		m_instanceData[used] = -1;
+	}
+
+	void ProgramGL::bindAttributesBegin()
+	{
+		bx::memCopy(m_unboundUsedAttrib, m_used, sizeof(m_unboundUsedAttrib));
 	}
 
 	void ProgramGL::bindAttributes(const VertexLayout& _layout, uint32_t _baseVertex)
@@ -5134,6 +5152,32 @@ namespace bgfx { namespace gl
 				}
 			}
 		}
+	}
+
+	void ProgramGL::bindInstanceData(uint32_t _stride, uint32_t _baseVertex) const
+	{
+		uint32_t baseVertex = _baseVertex;
+		for (uint32_t ii = 0; -1 != m_instanceData[ii]; ++ii)
+		{
+			GLint loc = m_instanceData[ii];
+			lazyEnableVertexAttribArray(loc);
+			GL_CHECK(glVertexAttribPointer(loc, 4, GL_FLOAT, GL_FALSE, _stride, (void*)(uintptr_t)baseVertex));
+			GL_CHECK(glVertexAttribDivisor(loc, 1));
+			baseVertex += 16;
+		}
+	}
+
+	void ProgramGL::bindAttributesEnd()
+	{
+		for (uint32_t ii = 0, iiEnd = m_usedCount; ii < iiEnd; ++ii)
+		{
+			if (Attrib::Count != m_unboundUsedAttrib[ii])
+			{
+				Attrib::Enum attr = Attrib::Enum(m_unboundUsedAttrib[ii]);
+				GLint loc = m_attributes[attr];
+				lazyDisableVertexAttribArray(loc);
+			}
+		}
 
 		applyLazyEnabledVertexAttributes();
 	}
@@ -5151,22 +5195,9 @@ namespace bgfx { namespace gl
 		}
 	}
 
-	void ProgramGL::bindInstanceData(uint32_t _stride, uint32_t _baseVertex) const
-	{
-		uint32_t baseVertex = _baseVertex;
-		for (uint32_t ii = 0; 0xffff != m_instanceData[ii]; ++ii)
-		{
-			GLint loc = m_instanceData[ii];
-			lazyEnableVertexAttribArray(loc);
-			GL_CHECK(glVertexAttribPointer(loc, 4, GL_FLOAT, GL_FALSE, _stride, (void*)(uintptr_t)baseVertex) );
-			GL_CHECK(glVertexAttribDivisor(loc, 1) );
-			baseVertex += 16;
-		}
-	}
-
 	void ProgramGL::unbindInstanceData() const
 	{
-		for(uint32_t ii = 0; 0xffff != m_instanceData[ii]; ++ii)
+		for(uint32_t ii = 0; -1 != m_instanceData[ii]; ++ii)
 		{
 			GLint loc = m_instanceData[ii];
 			lazyDisableVertexAttribArray(loc);
@@ -6343,7 +6374,12 @@ namespace bgfx { namespace gl
 					{
 						//!!!!betauser
 
-						bx::write(&writer, "#version 300 es\n");
+						bx::write(&writer, "#version 320 es\n");
+						//bx::write(&writer, "#version 300 es\n");
+
+						//bx::write(&writer, "#extension OES_texture_float : enable\n");
+
+						//bx::write(&writer, "precision highp sampler2Dshadow;\n");
 
 						//bx::write(&writer
 						//	, "#extension GL_EXT_shader_texture_lod : enable\n"
@@ -6471,6 +6507,14 @@ namespace bgfx { namespace gl
 							);
 					}
 
+
+					////!!!!
+					////replaceAll(code, "uniform sampler2DShadow", "uniform highp sampler2DShadow");
+
+					//std::string str2(code.getPtr(), code.getLength());
+					//replace(str2, "uniform sampler2DShadow", "uniform highp sampler2DShadow");
+					//bx::write(&writer, str2.c_str(), str2.length());
+
 					bx::write(&writer, code.getPtr(), code.getLength() );
 					bx::write(&writer, '\0');
 				}
@@ -6553,6 +6597,9 @@ namespace bgfx { namespace gl
 				//!!!!betauser
 //#ifdef __ANDROID__
 				std::string ss = "------------------------------------------------------------------------------\nFailed to compile shader.\n";
+
+				//the message from the driver
+				ss += std::string("\n") + std::string(log);
 
 				std::stringstream codestream(code.getPtr());
 				std::string line;
@@ -7837,6 +7884,7 @@ namespace bgfx { namespace gl
 					viewState.setPredefined<1>(this, view, program, _render, draw);
 
 					{
+						GLbitfield barrier = 0;
 						for (uint32_t stage = 0; stage < BGFX_CONFIG_MAX_TEXTURE_SAMPLERS; ++stage)
 						{
 							const Binding& bind = renderBind.m_bind[stage];
@@ -7850,6 +7898,21 @@ namespace bgfx { namespace gl
 								{
 									switch (bind.m_type)
 									{
+									case Binding::Image:
+										{
+											const TextureGL& texture = m_textures[bind.m_idx];
+											GL_CHECK(glBindImageTexture(stage
+																		, texture.m_id
+																		, bind.m_mip
+																		, texture.isCubeMap() || texture.m_target == GL_TEXTURE_2D_ARRAY ? GL_TRUE : GL_FALSE
+																		, 0
+																		, s_access[bind.m_access]
+																		, s_imageFormat[bind.m_format])
+													);
+											barrier |= GL_SHADER_IMAGE_ACCESS_BARRIER_BIT;
+										}
+										break;
+
 									case Binding::Texture:
 										{
 											TextureGL& texture = m_textures[bind.m_idx];
@@ -7876,12 +7939,14 @@ namespace bgfx { namespace gl
 
 							current = bind;
 						}
+
+						if (0 != barrier)
+						{
+							GL_CHECK(glMemoryBarrier(barrier) );
+						}
 					}
 
 					{
-						bool diffStreamHandles = false;
-						bool diffIndexBuffer = false;
-
 						for (uint32_t idx = 0, streamMask = draw.m_streamMask
 							; 0 != streamMask
 							; streamMask >>= 1, idx += 1
@@ -7893,8 +7958,14 @@ namespace bgfx { namespace gl
 
 							if (currentState.m_stream[idx].m_handle.idx != draw.m_stream[idx].m_handle.idx)
 							{
-								diffStreamHandles = true;
-								break;
+								currentState.m_stream[idx].m_handle = draw.m_stream[idx].m_handle;
+								bindAttribs = true;
+							}
+
+							if (currentState.m_stream[idx].m_startVertex != draw.m_stream[idx].m_startVertex)
+							{
+								currentState.m_stream[idx].m_startVertex = draw.m_stream[idx].m_startVertex;
+								bindAttribs = true;
 							}
 						}
 
@@ -7902,25 +7973,12 @@ namespace bgfx { namespace gl
 						||  currentState.m_streamMask             != draw.m_streamMask
 						||  currentState.m_instanceDataBuffer.idx != draw.m_instanceDataBuffer.idx
 						||  currentState.m_instanceDataOffset     != draw.m_instanceDataOffset
-						||  currentState.m_instanceDataStride     != draw.m_instanceDataStride
-						||  diffStreamHandles)
+						||  currentState.m_instanceDataStride     != draw.m_instanceDataStride)
 						{
 							currentState.m_streamMask             = draw.m_streamMask;
-							currentState.m_instanceDataBuffer.idx = draw.m_instanceDataBuffer.idx;
+							currentState.m_instanceDataBuffer = draw.m_instanceDataBuffer;
 							currentState.m_instanceDataOffset     = draw.m_instanceDataOffset;
 							currentState.m_instanceDataStride     = draw.m_instanceDataStride;
-
-							for (uint32_t idx = 0, streamMask = draw.m_streamMask
-								; 0 != streamMask
-								; streamMask >>= 1, idx += 1
-								)
-							{
-								const uint32_t ntz = bx::uint32_cnttz(streamMask);
-								streamMask >>= ntz;
-								idx         += ntz;
-
-								currentState.m_stream[idx].m_handle = draw.m_stream[idx].m_handle;
-							}
 
 							bindAttribs = true;
 						}
@@ -7929,51 +7987,30 @@ namespace bgfx { namespace gl
 						{
 							currentState.m_indexBuffer = draw.m_indexBuffer;
 
-							uint16_t handle = draw.m_indexBuffer.idx;
-							if (kInvalidHandle != handle)
+							if (isValid(draw.m_indexBuffer) )
 							{
-								IndexBufferGL& ib = m_indexBuffers[handle];
+								IndexBufferGL& ib = m_indexBuffers[draw.m_indexBuffer.idx];
 								GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib.m_id) );
 							}
 							else
 							{
 								GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0) );
 							}
-
-							diffIndexBuffer = true;
 						}
 
 						if (currentState.m_startIndex != draw.m_startIndex)
 						{
 							currentState.m_startIndex = draw.m_startIndex;
-							diffIndexBuffer = true;
 						}
 
 						if (0 != currentState.m_streamMask)
 						{
-							bool diffStartVertex = false;
-							for (uint32_t idx = 0, streamMask = draw.m_streamMask
-								; 0 != streamMask
-								; streamMask >>= 1, idx += 1
-								)
-							{
-								const uint32_t ntz = bx::uint32_cnttz(streamMask);
-								streamMask >>= ntz;
-								idx         += ntz;
-
-								if (currentState.m_stream[idx].m_startVertex != draw.m_stream[idx].m_startVertex)
-								{
-									diffStartVertex = true;
-									break;
-								}
-							}
-
-							if (bindAttribs || diffStartVertex)
+							if (bindAttribs)
 							{
 								if (isValid(boundProgram) )
 								{
 									m_program[boundProgram.idx].unbindAttributes();
-									boundProgram = BGFX_INVALID_HANDLE;
+									m_program[boundProgram.idx].unbindInstanceData();
 								}
 
 								boundProgram = currentProgram;
@@ -7991,8 +8028,6 @@ namespace bgfx { namespace gl
 										streamMask >>= ntz;
 										idx         += ntz;
 
-										currentState.m_stream[idx].m_startVertex = draw.m_stream[idx].m_startVertex;
-
 										const VertexBufferGL& vb = m_vertexBuffers[draw.m_stream[idx].m_handle.idx];
 										const uint16_t decl = isValid(draw.m_stream[idx].m_layoutHandle)
 											? draw.m_stream[idx].m_layoutHandle.idx
@@ -8002,16 +8037,13 @@ namespace bgfx { namespace gl
 									}
 								}
 
-								program.bindAttributesEnd();
-							}
-
-							if (bindAttribs || diffStartVertex || diffIndexBuffer)
-							{
 								if (isValid(draw.m_instanceDataBuffer) )
 								{
 									GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffers[draw.m_instanceDataBuffer.idx].m_id) );
 									program.bindInstanceData(draw.m_instanceDataStride, draw.m_instanceDataOffset);
 								}
+
+								program.bindAttributesEnd();
 							}
 						}
 					}
@@ -8158,11 +8190,6 @@ namespace bgfx { namespace gl
 						if (hasOcclusionQuery)
 						{
 							m_occlusionQuery.end();
-						}
-
-						if (isValid(draw.m_instanceDataBuffer) )
-						{
-							program.unbindInstanceData();
 						}
 
 						statsNumPrimsSubmitted[primIndex] += numPrimsSubmitted;

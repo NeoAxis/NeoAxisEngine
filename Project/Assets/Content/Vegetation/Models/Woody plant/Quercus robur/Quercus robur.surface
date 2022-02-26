@@ -1,0 +1,86 @@
+// Made with NeoAxis Engine 2021.4.
+
+.component NeoAxis.Surface
+{
+	EditorCameraTransform = "11.0131827615904 -122.925126008471 43.1963130757813; -0.179039339120243 0.164314273518885 0.714669287836754 0.655891411430471; 1 1 1"
+	.component NeoAxis.SurfaceGroupOfElements
+	{
+		Name = Group 1
+		Probability = 0.5
+		OccupiedAreaRadius = 4
+		RotateAroundItsAxis = True
+		MaxIncline = 5
+		ScaleRange = 0.7 1.3
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 1
+			ReceiveDecals = False
+			Mesh
+			{
+				GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Quercus robur 1 Individual 1 Very young.mesh"
+			}
+		}
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 2
+			ReceiveDecals = False
+			Mesh
+			{
+				GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Quercus robur 2 Individual 1 Very young.mesh"
+			}
+		}
+	}
+	.component NeoAxis.SurfaceGroupOfElements
+	{
+		Name = Group 2
+		Probability = 0.75
+		OccupiedAreaRadius = 5
+		RotateAroundItsAxis = True
+		MaxIncline = 5
+		ScaleRange = 0.7 1.3
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 1
+			ReceiveDecals = False
+			Mesh
+			{
+				GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Quercus robur 1 Individual 2 Young.mesh"
+			}
+		}
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 2
+			ReceiveDecals = False
+			Mesh
+			{
+				GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Quercus robur 2 Individual 2 Young.mesh"
+			}
+		}
+	}
+	.component NeoAxis.SurfaceGroupOfElements
+	{
+		Name = Group 3
+		OccupiedAreaRadius = 8
+		RotateAroundItsAxis = True
+		MaxIncline = 5
+		ScaleRange = 0.7 1.3
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 1
+			ReceiveDecals = False
+			Mesh
+			{
+				GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Quercus robur 1 Individual 3 Mature.mesh"
+			}
+		}
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 2
+			ReceiveDecals = False
+			Mesh
+			{
+				GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Quercus robur 2 Individual 3 Mature.mesh"
+			}
+		}
+	}
+}

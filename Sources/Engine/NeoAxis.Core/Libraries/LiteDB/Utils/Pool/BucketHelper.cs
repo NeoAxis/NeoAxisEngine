@@ -1,7 +1,8 @@
+#if !NO_LITE_DB
 using System.Runtime.CompilerServices;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     internal static class BucketHelper
     {
@@ -39,3 +40,4 @@ namespace LiteDB
         }
     }
 }
+#endif

@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -225,10 +225,10 @@ namespace NeoAxis
 			{
 				switch( texture.TextureType )
 				{
-				//case Component_Texture.TypeEnum._1D: return ParameterType.Texture1D;
-				case Component_Image.TypeEnum._2D: return ParameterType.Texture2D;
-				case Component_Image.TypeEnum._3D: return ParameterType.Texture3D;
-				case Component_Image.TypeEnum.Cube: return ParameterType.TextureCube;
+				//case ImageComponent.TypeEnum._1D: return ParameterType.Texture1D;
+				case ImageComponent.TypeEnum._2D: return ParameterType.Texture2D;
+				case ImageComponent.TypeEnum._3D: return ParameterType.Texture3D;
+				case ImageComponent.TypeEnum.Cube: return ParameterType.TextureCube;
 				}
 			}
 

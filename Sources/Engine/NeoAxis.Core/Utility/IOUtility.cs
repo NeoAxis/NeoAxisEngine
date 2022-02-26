@@ -1,8 +1,9 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -58,6 +59,43 @@ namespace NeoAxis
 			{
 				int errorCode = ex.HResult & 0xFFFF;
 				return errorCode == ErrorSharingViolation || errorCode == ErrorLockViolation;
+			}
+		}
+
+		public static byte[] Zip( byte[] data )
+		{
+			using( var memoryStream = new MemoryStream() )
+			{
+				using( var zipArchive = new ZipArchive( memoryStream, ZipArchiveMode.Create, true ) )
+				{
+					var file = zipArchive.CreateEntry( "file" );
+					using( var entryStream = file.Open() )
+						entryStream.Write( data, 0, data.Length );
+				}
+				return memoryStream.ToArray();
+			}
+		}
+
+		public static byte[] Unzip( byte[] data )
+		{
+			using( var zippedStream = new MemoryStream( data ) )
+			{
+				using( var archive = new ZipArchive( zippedStream ) )
+				{
+					var entry = archive.Entries.FirstOrDefault();
+					using( var stream = entry.Open() )
+					{
+						var result = new byte[ entry.Length ];
+						stream.Read( result, 0, result.Length );
+						return result;
+
+						//using( var memoryStream = new MemoryStream( (int)entry.Length ) )
+						//{
+						//	stream.CopyTo( memoryStream );
+						//	return memoryStream.ToArray();
+						//}
+					}
+				}
 			}
 		}
 	}

@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 
-namespace Aga.Controls.Tree
+namespace Internal.Aga.Controls.Tree
 {
 	[Serializable]
 	public sealed class TreeNodeAdv : ISerializable

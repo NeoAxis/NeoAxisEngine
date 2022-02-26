@@ -12,7 +12,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     /// <summary>
     /// Extend the ProfessionalColorTable with some Krypton specific properties.

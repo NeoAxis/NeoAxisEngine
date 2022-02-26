@@ -1,9 +1,11 @@
+// Made with NeoAxis Engine 2021.3.
+
 .component NeoAxis.UIControl
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1151, 842\"><KW V=\"1\" A=\"A0753326CE4E4E153CBAF1D63996AC57\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"6FC974473675409AC8BD405A147811B9\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"A0753326CE4E4E153CBAF1D63996AC57\"><KP UN=\"A0753326CE4E4E153CBAF1D63996AC57\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"606B6A5E068D4E7E349404F440C6EBE8\" S=\"False\"><CPD ObjPath=\"$Control\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1162, 842\"><KW V=\"1\" A=\"A0753326CE4E4E153CBAF1D63996AC57\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"6FC974473675409AC8BD405A147811B9\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"A0753326CE4E4E153CBAF1D63996AC57\"><KP UN=\"A0753326CE4E4E153CBAF1D63996AC57\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"606B6A5E068D4E7E349404F440C6EBE8\" S=\"False\"><CPD ObjPath=\"$Control\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	Size = Parent 1 1
 	BackgroundColor = 0.3098039 0.3098039 0.3098039
-	EditorScrollPosition = 0 0
+	EditorScrollPosition = -0.064356510246212 -0.536857811887745
 	.component NeoAxis.UIImage
 	{
 		Name = Image
@@ -65,13 +67,13 @@
 				.component "Base\\Learning\\LearningBlock.ui"
 				{
 					Name = LearningBlock 1
-					Margin = Units 260 30 0 0
+					Margin = Units 30 30 0 0
 					EditorScrollPosition = 0 0
 					EditorZoomIndex = 8
 					Title = Getting Started
 					Description = An initial overview of the editor. Getting an idea of the purpose of the editor windows.
 					"Learn Link" = "https://www.neoaxis.com/docs/html/Editor.htm"
-					.component NeoAxis.Component_CSharpScript
+					.component NeoAxis.CSharpScript
 					{
 						CreatedByBaseType = True
 						CreatedByBaseTypeHierarchyIndex = 3
@@ -81,7 +83,46 @@
 						Exit
 						{
 						}
-						.component NeoAxis.Component_EventHandler
+						.component NeoAxis.EventHandlerComponent
+						{
+							CreatedByBaseType = True
+							CreatedByBaseTypeHierarchyIndex = 3
+							Name = Event Handler UpdateEvent
+							WhenEnable = Editor, Simulation, Instance
+							Event
+							{
+								GetByReference = "this:..\\..\\event:UpdateEvent"
+							}
+							HandlerMethod
+							{
+								GetByReference = "this:..\\method:_UpdateEvent(NeoAxis.Component,System.Single)"
+							}
+							HandlerFlow
+							{
+							}
+						}
+					}
+				}
+				.component "Base\\Learning\\LearningBlock.ui"
+				{
+					Name = LearningBlock 8
+					Margin = Units 490 250 0 0
+					EditorScrollPosition = 0 0
+					EditorZoomIndex = 8
+					Title = Online Content
+					Description = How to get content from online stores.
+					"Learn Link" = "https://www.neoaxis.com/docs/html/Stores_Window.htm"
+					.component NeoAxis.CSharpScript
+					{
+						CreatedByBaseType = True
+						CreatedByBaseTypeHierarchyIndex = 3
+						Name = C# Script
+						Code = "public void _UpdateEvent(NeoAxis.Component sender, float delta)\r\n{\r\n\tvar control = (UIControl)sender;\r\n\tcontrol.ColorMultiplier = control.ReadOnly ? new ColorValue(0.5, 0.5, 0.5) : new ColorValue(1, 1, 1);\r\n}\r\n"
+						__parameter_Delta = 0
+						Exit
+						{
+						}
+						.component NeoAxis.EventHandlerComponent
 						{
 							CreatedByBaseType = True
 							CreatedByBaseTypeHierarchyIndex = 3
@@ -108,7 +149,7 @@
 					EditorScrollPosition = 0 0
 					EditorZoomIndex = 8
 					Description = How to create a new scene, how to create objects in the scene, how to edit objects using the transform tool.
-					.component NeoAxis.Component_CSharpScript
+					.component NeoAxis.CSharpScript
 					{
 						CreatedByBaseType = True
 						CreatedByBaseTypeHierarchyIndex = 3
@@ -118,7 +159,7 @@
 						Exit
 						{
 						}
-						.component NeoAxis.Component_EventHandler
+						.component NeoAxis.EventHandlerComponent
 						{
 							CreatedByBaseType = True
 							CreatedByBaseTypeHierarchyIndex = 3
@@ -144,10 +185,10 @@
 					Margin = Units 30 470 0 0
 					EditorScrollPosition = 0 0
 					EditorZoomIndex = 8
-					Title = Builder 3D
+					Title = Modeling Tools
 					Description = How to quickly prototype levels, how to create 3D models in the editor, how to work with constructive solid geometry.
-					"Learn Link" = "https://www.neoaxis.com/docs/html/Builder_3D.htm"
-					.component NeoAxis.Component_CSharpScript
+					"Learn Link" = "https://www.neoaxis.com/docs/html/Modeling_Tools.htm"
+					.component NeoAxis.CSharpScript
 					{
 						CreatedByBaseType = True
 						CreatedByBaseTypeHierarchyIndex = 3
@@ -157,7 +198,7 @@
 						Exit
 						{
 						}
-						.component NeoAxis.Component_EventHandler
+						.component NeoAxis.EventHandlerComponent
 						{
 							CreatedByBaseType = True
 							CreatedByBaseTypeHierarchyIndex = 3
@@ -186,7 +227,7 @@
 					Title = Screen Effects
 					Description = How to add screen effects to a scene such as depth of field, vignetting, blur, and more.
 					"Learn Link" = "https://www.neoaxis.com/docs/html/Depth_Of_Field.htm"
-					.component NeoAxis.Component_CSharpScript
+					.component NeoAxis.CSharpScript
 					{
 						CreatedByBaseType = True
 						CreatedByBaseTypeHierarchyIndex = 3
@@ -196,7 +237,7 @@
 						Exit
 						{
 						}
-						.component NeoAxis.Component_EventHandler
+						.component NeoAxis.EventHandlerComponent
 						{
 							CreatedByBaseType = True
 							CreatedByBaseTypeHierarchyIndex = 3
@@ -219,13 +260,13 @@
 				.component "Base\\Learning\\LearningBlock.ui"
 				{
 					Name = LearningBlock 5
-					Margin = Units 490 250 0 0
+					Margin = Units 490 30 0 0
 					EditorScrollPosition = 0 0
 					EditorZoomIndex = 8
 					Title = Import 3D Model
 					Description = How to import a 3D model, how to place it in the scene.
 					"Learn Link" = "https://www.neoaxis.com/docs/html/Import_3D_Model.htm"
-					.component NeoAxis.Component_CSharpScript
+					.component NeoAxis.CSharpScript
 					{
 						CreatedByBaseType = True
 						CreatedByBaseTypeHierarchyIndex = 3
@@ -235,7 +276,7 @@
 						Exit
 						{
 						}
-						.component NeoAxis.Component_EventHandler
+						.component NeoAxis.EventHandlerComponent
 						{
 							CreatedByBaseType = True
 							CreatedByBaseTypeHierarchyIndex = 3
@@ -264,7 +305,7 @@
 					Title = Material Creation
 					Description = How to create materials, how to assign them to a 3D model.
 					"Learn Link" = "https://www.neoaxis.com/docs/html/Material_Editor.htm"
-					.component NeoAxis.Component_CSharpScript
+					.component NeoAxis.CSharpScript
 					{
 						CreatedByBaseType = True
 						CreatedByBaseTypeHierarchyIndex = 3
@@ -274,7 +315,7 @@
 						Exit
 						{
 						}
-						.component NeoAxis.Component_EventHandler
+						.component NeoAxis.EventHandlerComponent
 						{
 							CreatedByBaseType = True
 							CreatedByBaseTypeHierarchyIndex = 3
@@ -303,7 +344,7 @@
 					Title = Build Product
 					Description = How to create a final product from a project. Need switch to the extended mode in the project settings.
 					"Learn Link" = "https://www.neoaxis.com/docs/html/Platforms.htm"
-					.component NeoAxis.Component_CSharpScript
+					.component NeoAxis.CSharpScript
 					{
 						CreatedByBaseType = True
 						CreatedByBaseTypeHierarchyIndex = 3
@@ -313,7 +354,7 @@
 						Exit
 						{
 						}
-						.component NeoAxis.Component_EventHandler
+						.component NeoAxis.EventHandlerComponent
 						{
 							CreatedByBaseType = True
 							CreatedByBaseTypeHierarchyIndex = 3
@@ -372,7 +413,7 @@
 					Title = Physics
 					Description = How to configure the physics of objects. Rigid bodies, soft bodies, constraints.
 					"Learn Link" = "https://www.neoaxis.com/docs/html/Physical_Objects_Creation.htm"
-					.component NeoAxis.Component_CSharpScript
+					.component NeoAxis.CSharpScript
 					{
 						CreatedByBaseType = True
 						CreatedByBaseTypeHierarchyIndex = 3
@@ -382,7 +423,7 @@
 						Exit
 						{
 						}
-						.component NeoAxis.Component_EventHandler
+						.component NeoAxis.EventHandlerComponent
 						{
 							CreatedByBaseType = True
 							CreatedByBaseTypeHierarchyIndex = 3
@@ -411,7 +452,7 @@
 					Title = Terrain
 					Description = An overview of the creation of landscapes.
 					"Learn Link" = "https://www.neoaxis.com/docs/html/Terrain.htm"
-					.component NeoAxis.Component_CSharpScript
+					.component NeoAxis.CSharpScript
 					{
 						CreatedByBaseType = True
 						CreatedByBaseTypeHierarchyIndex = 3
@@ -421,7 +462,7 @@
 						Exit
 						{
 						}
-						.component NeoAxis.Component_EventHandler
+						.component NeoAxis.EventHandlerComponent
 						{
 							CreatedByBaseType = True
 							CreatedByBaseTypeHierarchyIndex = 3
@@ -450,7 +491,7 @@
 					Title = Particles
 					Description = Particle system overview. Emitters, modifiers.
 					"Learn Link" = "https://www.neoaxis.com/docs/html/Particle_System_Editor.htm"
-					.component NeoAxis.Component_CSharpScript
+					.component NeoAxis.CSharpScript
 					{
 						CreatedByBaseType = True
 						CreatedByBaseTypeHierarchyIndex = 3
@@ -460,7 +501,7 @@
 						Exit
 						{
 						}
-						.component NeoAxis.Component_EventHandler
+						.component NeoAxis.EventHandlerComponent
 						{
 							CreatedByBaseType = True
 							CreatedByBaseTypeHierarchyIndex = 3
@@ -489,7 +530,7 @@
 					Title = UI Editor
 					Description = Overview of the GUI system of the engine.
 					"Learn Link" = "https://www.neoaxis.com/docs/html/UI_Editor.htm"
-					.component NeoAxis.Component_CSharpScript
+					.component NeoAxis.CSharpScript
 					{
 						CreatedByBaseType = True
 						CreatedByBaseTypeHierarchyIndex = 3
@@ -499,7 +540,7 @@
 						Exit
 						{
 						}
-						.component NeoAxis.Component_EventHandler
+						.component NeoAxis.EventHandlerComponent
 						{
 							CreatedByBaseType = True
 							CreatedByBaseTypeHierarchyIndex = 3
@@ -528,7 +569,7 @@
 					Title = 2D Game Engine
 					Description = Overview of 2D engine features. Sprites, 2D physics.
 					"Learn Link" = "https://www.neoaxis.com/docs/html/2D_Game_Engine.htm"
-					.component NeoAxis.Component_CSharpScript
+					.component NeoAxis.CSharpScript
 					{
 						CreatedByBaseType = True
 						CreatedByBaseTypeHierarchyIndex = 3
@@ -538,7 +579,7 @@
 						Exit
 						{
 						}
-						.component NeoAxis.Component_EventHandler
+						.component NeoAxis.EventHandlerComponent
 						{
 							CreatedByBaseType = True
 							CreatedByBaseTypeHierarchyIndex = 3
@@ -567,7 +608,7 @@
 					Title = Game Framework
 					Description = Overview of the game framework. Customizing control from a player. Characters, pathfinding.
 					"Learn Link" = "https://www.neoaxis.com/docs/html/Game_Framework.htm"
-					.component NeoAxis.Component_CSharpScript
+					.component NeoAxis.CSharpScript
 					{
 						CreatedByBaseType = True
 						CreatedByBaseTypeHierarchyIndex = 3
@@ -577,7 +618,7 @@
 						Exit
 						{
 						}
-						.component NeoAxis.Component_EventHandler
+						.component NeoAxis.EventHandlerComponent
 						{
 							CreatedByBaseType = True
 							CreatedByBaseTypeHierarchyIndex = 3
@@ -606,7 +647,7 @@
 					Title = Pathfinding
 					Description = Navigation mesh pathfinding.
 					"Learn Link" = "https://www.neoaxis.com/docs/html/Pathfinding.htm"
-					.component NeoAxis.Component_CSharpScript
+					.component NeoAxis.CSharpScript
 					{
 						CreatedByBaseType = True
 						CreatedByBaseTypeHierarchyIndex = 3
@@ -616,7 +657,7 @@
 						Exit
 						{
 						}
-						.component NeoAxis.Component_EventHandler
+						.component NeoAxis.EventHandlerComponent
 						{
 							CreatedByBaseType = True
 							CreatedByBaseTypeHierarchyIndex = 3
@@ -645,7 +686,7 @@
 					Title = More Objects
 					Description = Overview of other objects in the scene.
 					"Learn Link" = "https://www.neoaxis.com/docs/html/Scene_objects.htm"
-					.component NeoAxis.Component_CSharpScript
+					.component NeoAxis.CSharpScript
 					{
 						CreatedByBaseType = True
 						CreatedByBaseTypeHierarchyIndex = 3
@@ -655,7 +696,7 @@
 						Exit
 						{
 						}
-						.component NeoAxis.Component_EventHandler
+						.component NeoAxis.EventHandlerComponent
 						{
 							CreatedByBaseType = True
 							CreatedByBaseTypeHierarchyIndex = 3
@@ -714,7 +755,7 @@
 					Title = Scripting Overview
 					Description = An overview of the engine scripting capabilities.
 					"Learn Link" = "https://www.neoaxis.com/docs/html/Scripting_Overview.htm"
-					.component NeoAxis.Component_CSharpScript
+					.component NeoAxis.CSharpScript
 					{
 						CreatedByBaseType = True
 						CreatedByBaseTypeHierarchyIndex = 3
@@ -724,7 +765,7 @@
 						Exit
 						{
 						}
-						.component NeoAxis.Component_EventHandler
+						.component NeoAxis.EventHandlerComponent
 						{
 							CreatedByBaseType = True
 							CreatedByBaseTypeHierarchyIndex = 3
@@ -753,7 +794,7 @@
 					Title = Event Handlers
 					Description = How to create event handlers.
 					"Learn Link" = "https://www.neoaxis.com/docs/html/Event_Handlers.htm"
-					.component NeoAxis.Component_CSharpScript
+					.component NeoAxis.CSharpScript
 					{
 						CreatedByBaseType = True
 						CreatedByBaseTypeHierarchyIndex = 3
@@ -763,7 +804,7 @@
 						Exit
 						{
 						}
-						.component NeoAxis.Component_EventHandler
+						.component NeoAxis.EventHandlerComponent
 						{
 							CreatedByBaseType = True
 							CreatedByBaseTypeHierarchyIndex = 3
@@ -792,7 +833,7 @@
 					Title = Scripting Basic Knowledge
 					Description = Some basic advices on scripting.
 					"Learn Link" = "https://www.neoaxis.com/docs/html/Scripting_Basic_Knowledge.htm"
-					.component NeoAxis.Component_CSharpScript
+					.component NeoAxis.CSharpScript
 					{
 						CreatedByBaseType = True
 						CreatedByBaseTypeHierarchyIndex = 3
@@ -802,7 +843,7 @@
 						Exit
 						{
 						}
-						.component NeoAxis.Component_EventHandler
+						.component NeoAxis.EventHandlerComponent
 						{
 							CreatedByBaseType = True
 							CreatedByBaseTypeHierarchyIndex = 3
@@ -831,7 +872,7 @@
 					Title = Visual Scripting
 					Description = The overview of visual scripting capabilities.
 					"Learn Link" = "https://www.neoaxis.com/docs/html/Flow_Graph_Editor.htm"
-					.component NeoAxis.Component_CSharpScript
+					.component NeoAxis.CSharpScript
 					{
 						CreatedByBaseType = True
 						CreatedByBaseTypeHierarchyIndex = 3
@@ -841,7 +882,7 @@
 						Exit
 						{
 						}
-						.component NeoAxis.Component_EventHandler
+						.component NeoAxis.EventHandlerComponent
 						{
 							CreatedByBaseType = True
 							CreatedByBaseTypeHierarchyIndex = 3
@@ -870,7 +911,7 @@
 					Title = References
 					Description = "An overview of the engine\'s references, the fundamental feature of the engine."
 					"Learn Link" = "https://www.neoaxis.com/docs/html/References_Overview.htm"
-					.component NeoAxis.Component_CSharpScript
+					.component NeoAxis.CSharpScript
 					{
 						CreatedByBaseType = True
 						CreatedByBaseTypeHierarchyIndex = 3
@@ -880,7 +921,7 @@
 						Exit
 						{
 						}
-						.component NeoAxis.Component_EventHandler
+						.component NeoAxis.EventHandlerComponent
 						{
 							CreatedByBaseType = True
 							CreatedByBaseTypeHierarchyIndex = 3
@@ -909,7 +950,7 @@
 					Title = Built-in C# Programming
 					Description = The article reviews C# editor, that designed both for working with usual C# files, and with C# scripts.
 					"Learn Link" = "https://www.neoaxis.com/docs/html/Built-in_CSharp_Programming.htm"
-					.component NeoAxis.Component_CSharpScript
+					.component NeoAxis.CSharpScript
 					{
 						CreatedByBaseType = True
 						CreatedByBaseTypeHierarchyIndex = 3
@@ -919,7 +960,7 @@
 						Exit
 						{
 						}
-						.component NeoAxis.Component_EventHandler
+						.component NeoAxis.EventHandlerComponent
 						{
 							CreatedByBaseType = True
 							CreatedByBaseTypeHierarchyIndex = 3
@@ -948,7 +989,7 @@
 					Title = Metadata Programming
 					Description = "An overview of the editor\'s metaprogramming capabilities."
 					"Learn Link" = "https://www.neoaxis.com/docs/html/Type_and_Metadata_Programming.htm"
-					.component NeoAxis.Component_CSharpScript
+					.component NeoAxis.CSharpScript
 					{
 						CreatedByBaseType = True
 						CreatedByBaseTypeHierarchyIndex = 3
@@ -958,7 +999,7 @@
 						Exit
 						{
 						}
-						.component NeoAxis.Component_EventHandler
+						.component NeoAxis.EventHandlerComponent
 						{
 							CreatedByBaseType = True
 							CreatedByBaseTypeHierarchyIndex = 3
@@ -980,14 +1021,14 @@
 				}
 			}
 		}
-		.component NeoAxis.Component_CSharpScript
+		.component NeoAxis.CSharpScript
 		{
 			Name = C# Script
-			Code = "public void Control_UpdateEvent(NeoAxis.Component sender, float delta)\r\n{\r\n\tvar tabControl = sender.Components[\"Tab Control\"] as UITabControl;\r\n\tif(tabControl == null)\r\n\t\treturn;\r\n\r\n\tbool IsDone(UIControl block)\r\n\t{\r\n\t\tvar check = block.GetComponent<UICheck>(\"Check Done\");\r\n\t\treturn check != null && check.Checked.Value == UICheck.CheckValue.Checked; \r\n\t}\r\n\r\n\tvar pageBasic = tabControl.GetComponent(\"Page Basic\") as UIControl;\r\n\tif(pageBasic != null)\r\n\t{\r\n\t\tvar block1 = pageBasic.GetComponent(\"LearningBlock 1\") as UIControl;\r\n\t\tvar block2 = pageBasic.GetComponent(\"LearningBlock 2\") as UIControl;\r\n\t\tvar block3 = pageBasic.GetComponent(\"LearningBlock 3\") as UIControl;\r\n\t\tvar block4 = pageBasic.GetComponent(\"LearningBlock 4\") as UIControl;\r\n\t\tvar block5 = pageBasic.GetComponent(\"LearningBlock 5\") as UIControl;\r\n\t\tvar block6 = pageBasic.GetComponent(\"LearningBlock 6\") as UIControl;\r\n\t\tvar block7 = pageBasic.GetComponent(\"LearningBlock 7\") as UIControl;\r\n\r\n\t\tblock2.ReadOnly = !IsDone(block1);\r\n\t\tblock5.ReadOnly = !IsDone(block1);\r\n\t\tblock3.ReadOnly = !IsDone(block2);\r\n\t\tblock4.ReadOnly = !IsDone(block2);\r\n\t\tblock6.ReadOnly = !IsDone(block3) && !IsDone(block5);\r\n\t\tblock7.ReadOnly = !IsDone(block1) || !IsDone(block2) || !IsDone(block3) || !IsDone(block4) || !IsDone(block5) || !IsDone(block6);\r\n\t\t\r\n\t\tvar tabButtons = tabControl.GetAllButtons();\r\n\t\ttabButtons[1].ReadOnly = !IsDone(block7);\r\n\t\ttabButtons[2].ReadOnly = !IsDone(block7);\r\n\t}\r\n\r\n\tvar pageScripting = tabControl.GetComponent(\"Page Scripting\") as UIControl;\r\n\tif(pageScripting != null)\r\n\t{\r\n\t\tvar block1 = pageScripting.GetComponent(\"LearningBlock 1\") as UIControl;\r\n\t\tvar block2 = pageScripting.GetComponent(\"LearningBlock 2\") as UIControl;\r\n\t\tvar block3 = pageScripting.GetComponent(\"LearningBlock 3\") as UIControl;\r\n\t\tvar block4 = pageScripting.GetComponent(\"LearningBlock 4\") as UIControl;\r\n\t\tvar block5 = pageScripting.GetComponent(\"LearningBlock 5\") as UIControl;\r\n\t\tvar block6 = pageScripting.GetComponent(\"LearningBlock 6\") as UIControl;\r\n\t\tvar block7 = pageScripting.GetComponent(\"LearningBlock 7\") as UIControl;\r\n\r\n\t\tblock2.ReadOnly = !IsDone(block1);\r\n\t\tblock3.ReadOnly = !IsDone(block2);\r\n\t\tblock4.ReadOnly = !IsDone(block1);\r\n\t\tblock5.ReadOnly = !IsDone(block1);\r\n\t\tblock6.ReadOnly = !IsDone(block1);\r\n\t\tblock7.ReadOnly = !IsDone(block1);\t\t\r\n\t}\r\n\r\n}\r\n"
+			Code = "public void Control_UpdateEvent(NeoAxis.Component sender, float delta)\r\n{\r\n\tvar tabControl = sender.Components[\"Tab Control\"] as UITabControl;\r\n\tif(tabControl == null)\r\n\t\treturn;\r\n\r\n\tbool IsDone(UIControl block)\r\n\t{\r\n\t\tvar check = block.GetComponent<UICheck>(\"Check Done\");\r\n\t\treturn check != null && check.Checked.Value == UICheck.CheckValue.Checked; \r\n\t}\r\n\r\n\tvar pageBasic = tabControl.GetComponent(\"Page Basic\") as UIControl;\r\n\tif(pageBasic != null)\r\n\t{\r\n\t\tvar block1 = pageBasic.GetComponent(\"LearningBlock 1\") as UIControl;\r\n\t\tvar block2 = pageBasic.GetComponent(\"LearningBlock 2\") as UIControl;\r\n\t\tvar block3 = pageBasic.GetComponent(\"LearningBlock 3\") as UIControl;\r\n\t\tvar block4 = pageBasic.GetComponent(\"LearningBlock 4\") as UIControl;\r\n\t\tvar block5 = pageBasic.GetComponent(\"LearningBlock 5\") as UIControl;\r\n\t\tvar block6 = pageBasic.GetComponent(\"LearningBlock 6\") as UIControl;\r\n\t\tvar block7 = pageBasic.GetComponent(\"LearningBlock 7\") as UIControl;\r\n\t\tvar block8 = pageBasic.GetComponent(\"LearningBlock 8\") as UIControl;\r\n\r\n\t\tblock2.ReadOnly = !IsDone(block1);\r\n\t\tblock8.ReadOnly = !IsDone(block2) && !IsDone(block5);\r\n\t\tblock5.ReadOnly = !IsDone(block1);\r\n\t\tblock3.ReadOnly = !IsDone(block2);\r\n\t\tblock4.ReadOnly = !IsDone(block2);\r\n\t\tblock6.ReadOnly = !IsDone(block3) && !IsDone(block5) && !IsDone(block8);\r\n\t\tblock7.ReadOnly = !IsDone(block1) || !IsDone(block2) || !IsDone(block3) || !IsDone(block4) || !IsDone(block5) || !IsDone(block6) || !IsDone(block8);\r\n\t\t\r\n\t\tvar tabButtons = tabControl.GetAllButtons();\r\n\t\ttabButtons[1].ReadOnly = !IsDone(block7);\r\n\t\ttabButtons[2].ReadOnly = !IsDone(block7);\r\n\t}\r\n\r\n\tvar pageScripting = tabControl.GetComponent(\"Page Scripting\") as UIControl;\r\n\tif(pageScripting != null)\r\n\t{\r\n\t\tvar block1 = pageScripting.GetComponent(\"LearningBlock 1\") as UIControl;\r\n\t\tvar block2 = pageScripting.GetComponent(\"LearningBlock 2\") as UIControl;\r\n\t\tvar block3 = pageScripting.GetComponent(\"LearningBlock 3\") as UIControl;\r\n\t\tvar block4 = pageScripting.GetComponent(\"LearningBlock 4\") as UIControl;\r\n\t\tvar block5 = pageScripting.GetComponent(\"LearningBlock 5\") as UIControl;\r\n\t\tvar block6 = pageScripting.GetComponent(\"LearningBlock 6\") as UIControl;\r\n\t\tvar block7 = pageScripting.GetComponent(\"LearningBlock 7\") as UIControl;\r\n\r\n\t\tblock2.ReadOnly = !IsDone(block1);\r\n\t\tblock3.ReadOnly = !IsDone(block2);\r\n\t\tblock4.ReadOnly = !IsDone(block1);\r\n\t\tblock5.ReadOnly = !IsDone(block1);\r\n\t\tblock6.ReadOnly = !IsDone(block1);\r\n\t\tblock7.ReadOnly = !IsDone(block1);\t\t\r\n\t}\r\n\r\n}\r\n"
 			Exit
 			{
 			}
-			.component NeoAxis.Component_EventHandler
+			.component NeoAxis.EventHandlerComponent
 			{
 				Name = Event Handler UpdateEvent
 				WhenEnable = Editor, Simulation, Instance

@@ -5,11 +5,14 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using tainicom.Aether.Physics2D.Common.PhysicsLogic;
-using tainicom.Aether.Physics2D.Dynamics;
+using Internal.tainicom.Aether.Physics2D.Common;
+using Internal.tainicom.Aether.Physics2D.Common.PhysicsLogic;
+using Internal.tainicom.Aether.Physics2D.Dynamics;
+#if XNAAPI
+using Vector2 = Microsoft.Xna.Framework.Vector2;
+#endif
 
-namespace tainicom.Aether.Physics2D.Controllers
+namespace Internal.tainicom.Aether.Physics2D.Controllers
 {
     public enum GravityType
     {

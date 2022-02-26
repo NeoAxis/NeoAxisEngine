@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -152,7 +152,7 @@ namespace NeoAxis
 			if( string.IsNullOrEmpty( name ) )
 				Log.Fatal( "TextBlock: AddChild: \"name\" is null or empty." );
 
-			TextBlock child = new TextBlock();
+			var child = new TextBlock();
 			child.parent = this;
 			child.name = name;
 			child.data = data;
@@ -161,40 +161,31 @@ namespace NeoAxis
 		}
 
 		/// <summary>
-		/// Deletes child block.
-		/// </summary>
-		/// <param name="child">The child block.</param>
-		public void DeleteChild( TextBlock child )
-		{
-			children.Remove( child );
-			child.parent = null;
-			child.name = "";
-			child.data = "";
-			child.children = null;
-			child.attributes = null;
-		}
-
-		/// <summary>
-		/// Attaches the child block.
+		/// Adds an already created child block.
 		/// </summary>
 		/// <param name="child">The child block.</param>
 		/// <returns></returns>
-		public void AttachChild( TextBlock child )
+		public void AddChild( TextBlock child )
 		{
 			if( child.parent != null )
-				Log.Fatal( "TextBlock: AddChild: Unable to attach. Block is already attached to another block. child.Parent != null." );
+				Log.Fatal( "TextBlock: AddChild: Unable to add. The block is already added to another block. child.Parent != null." );
 			child.parent = this;
 			children.Add( child );
 		}
 
 		/// <summary>
-		/// Detaches child block without deleting.
+		/// Deletes child block.
 		/// </summary>
 		/// <param name="child">The child block.</param>
-		public void DetachChild( TextBlock child )
+		public bool DeleteChild( TextBlock child )
 		{
-			children.Remove( child );
+			var result = children.Remove( child );
 			child.parent = null;
+			//child.name = "";
+			//child.data = "";
+			//child.children = null;
+			//child.attributes = null;
+			return result;
 		}
 
 		/// <summary>
@@ -279,19 +270,20 @@ namespace NeoAxis
 		/// Deletes attribute if he exists.
 		/// </summary>
 		/// <param name="name">The attribute name.</param>
-		public void DeleteAttribute( string name )
+		public bool DeleteAttribute( string name )
 		{
 			for( int n = 0; n < attributes.Count; n++ )
 			{
 				if( name == attributes[ n ].name )
 				{
-					Attribute attribute = attributes[ n ];
-					attribute.name = "";
-					attribute.value = "";
+					//Attribute attribute = attributes[ n ];
+					//attribute.name = "";
+					//attribute.value = "";
 					attributes.RemoveAt( n );
-					return;
+					return true;
 				}
 			}
+			return false;
 		}
 
 		/// <summary>
@@ -672,7 +664,7 @@ namespace NeoAxis
 										ss += c2;
 									}
 								}
-								StringUtility._DecodeDelimiterFormatString( lex, ss );
+								StringUtility.DecodeDelimiterFormatString( lex, ss );
 								//lex.Append( StringUtils.DecodeDelimiterFormatString( ss ) );
 								continue;
 							}

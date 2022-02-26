@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -16,15 +16,14 @@ namespace NeoAxis
 		class Item
 		{
 			public RectangleF UV;
-			public double EngineTime;
-			public Component_Mesh Mesh;
+			public Mesh Mesh;
+			public double LastUsedTime;
 
 			//
 
 			public Item( RectangleF uv )
 			{
 				UV = uv;
-				EngineTime = Time.Current;
 
 				var vertexStructure = StandardVertex.MakeStructure( StandardVertex.Components.StaticOneTexCoord, true, out int vertexSize );
 
@@ -34,7 +33,7 @@ namespace NeoAxis
 				var vertices = new byte[ vertexSize * positions.Length ];
 				unsafe
 				{
-					fixed ( byte* pVertices = vertices )
+					fixed( byte* pVertices = vertices )
 					{
 						StandardVertex.StaticOneTexCoord* pVertex = (StandardVertex.StaticOneTexCoord*)pVertices;
 
@@ -51,8 +50,8 @@ namespace NeoAxis
 					}
 				}
 
-				var mesh = ComponentUtility.CreateComponent<Component_Mesh>( null, true, false );
-				var geometry = mesh.CreateComponent<Component_MeshGeometry>();
+				var mesh = ComponentUtility.CreateComponent<Mesh>( null, true, false );
+				var geometry = mesh.CreateComponent<MeshGeometry>();
 				geometry.VertexStructure = vertexStructure;
 				geometry.Vertices = vertices;
 				geometry.Indices = new int[] { 0, 1, 2, 2, 3, 0 };
@@ -69,36 +68,47 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		public static Component_Mesh GetMesh( RectangleF uv )
+		static SpriteMeshManager()
+		{
+			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
+				MaxCacheSize = 200;
+		}
+
+		public static Mesh GetMesh( RectangleF uv )
 		{
 			//try to get from the cache
 			if( items.TryGetValue( uv, out var item ) )
 			{
-				item.EngineTime = Time.Current;
-
-				items.Remove( uv );
-				items.Add( uv, item );
-
+				item.LastUsedTime = Time.Current;
 				return item.Mesh;
 			}
 
-			//remove old item from the cache
+			//remove oldest item from the cache
 			if( items.Count >= MaxCacheSize )
 			{
+				Item oldestItem = null;
+
 				foreach( var pair in items )
 				{
-					if( pair.Value.EngineTime != Time.Current )
+					if( pair.Value.LastUsedTime != Time.Current )
 					{
-						pair.Value.Dispose();
-						items.Remove( pair.Key );
-						break;
+						if( oldestItem == null || pair.Value.LastUsedTime < oldestItem.LastUsedTime )
+							oldestItem = pair.Value;
 					}
+				}
+
+				if( oldestItem != null )
+				{
+					oldestItem.Dispose();
+					items.Remove( oldestItem.UV );
 				}
 			}
 
 			//create item and add to the cache
 			item = new Item( uv );
 			items.Add( uv, item );
+
+			item.LastUsedTime = Time.Current;
 
 			return item.Mesh;
 		}

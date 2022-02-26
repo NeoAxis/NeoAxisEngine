@@ -1,5 +1,5 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-using ComponentFactory.Krypton.Toolkit;
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+using Internal.ComponentFactory.Krypton.Toolkit;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Options;
@@ -79,21 +79,21 @@ namespace NeoAxis.Editor
 
 			UpdateHighlightingScheme();
 
-			displayLineNumbers = ProjectSettings.Get.CSharpEditorDisplayLineNumbers;
+			displayLineNumbers = ProjectSettings.Get.CSharpEditor.CSharpEditorDisplayLineNumbers;
 			editor.ShowLineNumbers = displayLineNumbers;
 
-			wordWrap = ProjectSettings.Get.CSharpEditorWordWrap;
+			wordWrap = ProjectSettings.Get.CSharpEditor.CSharpEditorWordWrap;
 			editor.WordWrap = wordWrap;
 
 			editor.Options.ConvertTabsToSpaces = false;
 			editor.TextArea.IndentationStrategy = new BlockIndentationStrategy();
 
-			braceCompletion = ProjectSettings.Get.CSharpEditorBraceCompletion;
+			braceCompletion = ProjectSettings.Get.CSharpEditor.CSharpEditorBraceCompletion;
 			editor.IsBraceCompletionEnabled = braceCompletion;
 
-			editor.DisplayInfoMarkers = ProjectSettings.Get.CSharpEditorDisplayInfoMarkers;
-			editor.DisplayWarningMarkers = ProjectSettings.Get.CSharpEditorDisplayWarningMarkers;
-			editor.DisplayErrorMarkers = ProjectSettings.Get.CSharpEditorDisplayErrorMarkers;
+			editor.DisplayInfoMarkers = ProjectSettings.Get.CSharpEditor.CSharpEditorDisplayInfoMarkers;
+			editor.DisplayWarningMarkers = ProjectSettings.Get.CSharpEditor.CSharpEditorDisplayWarningMarkers;
+			editor.DisplayErrorMarkers = ProjectSettings.Get.CSharpEditor.CSharpEditorDisplayErrorMarkers;
 
 			errorMargin = new ErrorMargin
 			{
@@ -151,7 +151,7 @@ namespace NeoAxis.Editor
 			initialCode = script.LoadText();
 
 			documentId = editor.Initialize( RoslynHost.Instance, colors, script.CsFileProjectPath,
-				script.WorkingDirectory, initialCode, script.IsCSharpScript, typeof( CSharpScriptContext ) );// script.ContextType );
+				script.WorkingDirectory, initialCode, script.IsCSharpScript, typeof( CSharpScript.Context ) );// script.ContextType );
 
 			var serviceProvider = ScriptEditorEngine.Instance.GetServiceProvider();
 			//nuGet = serviceProvider.GetService<NuGetDocumentViewModel>();
@@ -221,10 +221,10 @@ namespace NeoAxis.Editor
 		{
 			if( Keyboard.Modifiers.HasFlag( System.Windows.Input.ModifierKeys.Control ) )
 			{
-				var v = ProjectSettings.Get.CSharpEditorFontSize.Value;
+				var v = ProjectSettings.Get.CSharpEditor.CSharpEditorFontSize.Value;
 				v += e.Delta > 0 ? 1 : -1;
 				v = MathEx.Clamp( v, 6, 40 );
-				ProjectSettings.Get.CSharpEditorFontSize = v;
+				ProjectSettings.Get.CSharpEditor.CSharpEditorFontSize = v;
 
 				ProjectSettings.SaveToFileAndUpdate();
 
@@ -268,7 +268,7 @@ namespace NeoAxis.Editor
 
 		private void TextArea_TextEntered( object sender, TextCompositionEventArgs e )
 		{
-			if( ProjectSettings.Get.CSharpEditorAutomaticallyFormatStatementOnSemicolon && e.Text == ";" )
+			if( ProjectSettings.Get.CSharpEditor.CSharpEditorAutomaticallyFormatStatementOnSemicolon && e.Text == ";" )
 			{
 				try
 				{
@@ -301,7 +301,7 @@ namespace NeoAxis.Editor
 				}
 			}
 
-			if( ProjectSettings.Get.CSharpEditorAutomaticallyFormatBlockOnBracket && e.Text == "}" )
+			if( ProjectSettings.Get.CSharpEditor.CSharpEditorAutomaticallyFormatBlockOnBracket && e.Text == "}" )
 			{
 				try
 				{
@@ -537,10 +537,10 @@ namespace NeoAxis.Editor
 		{
 			this.components = new System.ComponentModel.Container();
 			this.timer1 = new System.Windows.Forms.Timer( this.components );
-			this.kryptonSplitContainer = new ComponentFactory.Krypton.Toolkit.KryptonSplitContainer();
-			this.kryptonSplitContainerSub1 = new ComponentFactory.Krypton.Toolkit.KryptonSplitContainer();
+			this.kryptonSplitContainer = new Internal.ComponentFactory.Krypton.Toolkit.KryptonSplitContainer();
+			this.kryptonSplitContainerSub1 = new Internal.ComponentFactory.Krypton.Toolkit.KryptonSplitContainer();
 			this.engineScrollBarVertical = new NeoAxis.Editor.EngineScrollBar();
-			this.kryptonSplitContainerSub2 = new ComponentFactory.Krypton.Toolkit.KryptonSplitContainer();
+			this.kryptonSplitContainerSub2 = new Internal.ComponentFactory.Krypton.Toolkit.KryptonSplitContainer();
 			this.engineScrollBarHorizontal = new NeoAxis.Editor.EngineScrollBar();
 			( (System.ComponentModel.ISupportInitialize)( this.kryptonSplitContainer ) ).BeginInit();
 			( (System.ComponentModel.ISupportInitialize)( this.kryptonSplitContainer.Panel1 ) ).BeginInit();
@@ -675,43 +675,43 @@ namespace NeoAxis.Editor
 			if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
 				return;
 
-			if( displayLineNumbers != ProjectSettings.Get.CSharpEditorDisplayLineNumbers )
+			if( displayLineNumbers != ProjectSettings.Get.CSharpEditor.CSharpEditorDisplayLineNumbers )
 			{
-				displayLineNumbers = ProjectSettings.Get.CSharpEditorDisplayLineNumbers;
+				displayLineNumbers = ProjectSettings.Get.CSharpEditor.CSharpEditorDisplayLineNumbers;
 				editor.ShowLineNumbers = displayLineNumbers;
 			}
 
-			if( wordWrap != ProjectSettings.Get.CSharpEditorWordWrap )
+			if( wordWrap != ProjectSettings.Get.CSharpEditor.CSharpEditorWordWrap )
 			{
-				wordWrap = ProjectSettings.Get.CSharpEditorWordWrap;
+				wordWrap = ProjectSettings.Get.CSharpEditor.CSharpEditorWordWrap;
 				editor.WordWrap = wordWrap;
 			}
 
-			if( braceCompletion != ProjectSettings.Get.CSharpEditorBraceCompletion )
+			if( braceCompletion != ProjectSettings.Get.CSharpEditor.CSharpEditorBraceCompletion )
 			{
-				braceCompletion = ProjectSettings.Get.CSharpEditorBraceCompletion;
+				braceCompletion = ProjectSettings.Get.CSharpEditor.CSharpEditorBraceCompletion;
 				editor.IsBraceCompletionEnabled = braceCompletion;
 			}
 
-			if( editor.DisplayInfoMarkers != ProjectSettings.Get.CSharpEditorDisplayInfoMarkers )
+			if( editor.DisplayInfoMarkers != ProjectSettings.Get.CSharpEditor.CSharpEditorDisplayInfoMarkers )
 			{
-				editor.DisplayInfoMarkers = ProjectSettings.Get.CSharpEditorDisplayInfoMarkers;
+				editor.DisplayInfoMarkers = ProjectSettings.Get.CSharpEditor.CSharpEditorDisplayInfoMarkers;
 				editor.UpdateMarkers();
 			}
-			if( editor.DisplayWarningMarkers != ProjectSettings.Get.CSharpEditorDisplayWarningMarkers )
+			if( editor.DisplayWarningMarkers != ProjectSettings.Get.CSharpEditor.CSharpEditorDisplayWarningMarkers )
 			{
-				editor.DisplayWarningMarkers = ProjectSettings.Get.CSharpEditorDisplayWarningMarkers;
+				editor.DisplayWarningMarkers = ProjectSettings.Get.CSharpEditor.CSharpEditorDisplayWarningMarkers;
 				editor.UpdateMarkers();
 			}
-			if( editor.DisplayErrorMarkers != ProjectSettings.Get.CSharpEditorDisplayErrorMarkers )
+			if( editor.DisplayErrorMarkers != ProjectSettings.Get.CSharpEditor.CSharpEditorDisplayErrorMarkers )
 			{
-				editor.DisplayErrorMarkers = ProjectSettings.Get.CSharpEditorDisplayErrorMarkers;
+				editor.DisplayErrorMarkers = ProjectSettings.Get.CSharpEditor.CSharpEditorDisplayErrorMarkers;
 				editor.UpdateMarkers();
 			}
 
-			if( displayQuickActions != ProjectSettings.Get.CSharpEditorDisplayQuickActions )
+			if( displayQuickActions != ProjectSettings.Get.CSharpEditor.CSharpEditorDisplayQuickActions )
 			{
-				displayQuickActions = ProjectSettings.Get.CSharpEditorDisplayQuickActions;
+				displayQuickActions = ProjectSettings.Get.CSharpEditor.CSharpEditorDisplayQuickActions;
 				Editor.ContextActionsRenderer.ChangeIconImage( displayQuickActions ? Editor.ContextActionsIcon : null );
 			}
 
@@ -897,7 +897,7 @@ namespace NeoAxis.Editor
 			if( loadedHighlightingDefinition != null )
 				editor.SyntaxHighlighting = loadedHighlightingDefinition;
 
-			//var path = ProjectSettings.Get.CSharpEditorHighlightingSchemeLightTheme.Value;
+			//var path = ProjectSettings.Get.CSharpEditor.CSharpEditorHighlightingSchemeLightTheme.Value;
 			//if( currentHighlightingScheme != path )
 			//{
 			//	currentHighlightingScheme = path;
@@ -930,7 +930,7 @@ namespace NeoAxis.Editor
 		void UpdateBackgroundForeground()
 		{
 			{
-				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.CSharpEditorBackgroundColorDarkTheme.Value : ProjectSettings.Get.CSharpEditorBackgroundColorLightTheme.Value;
+				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.CSharpEditor.CSharpEditorBackgroundColorDarkTheme.Value : ProjectSettings.Get.CSharpEditor.CSharpEditorBackgroundColorLightTheme.Value;
 				if( backgroundColor != color )
 				{
 					backgroundColor = color;
@@ -940,7 +940,7 @@ namespace NeoAxis.Editor
 			}
 
 			{
-				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.CSharpEditorSearchBackgroundDarkTheme.Value : ProjectSettings.Get.CSharpEditorSearchBackgroundLightTheme.Value;
+				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.CSharpEditor.CSharpEditorSearchBackgroundDarkTheme.Value : ProjectSettings.Get.CSharpEditor.CSharpEditorSearchBackgroundLightTheme.Value;
 				var packed = color.ToColorPacked();
 				editor.TextArea.SearchBackgroundBrush = new SolidColorBrush( Color.FromArgb( packed.Alpha, packed.Red, packed.Green, packed.Blue ) );
 			}
@@ -957,7 +957,7 @@ namespace NeoAxis.Editor
 			//}
 
 			//{
-			//	var color = EditorAPI.DarkTheme ? ProjectSettings.Get.CSharpEditorDefaultTextColorDarkTheme : ProjectSettings.Get.CSharpEditorDefaultTextColorLightTheme;
+			//	var color = EditorAPI.DarkTheme ? ProjectSettings.Get.CSharpEditor.CSharpEditorDefaultTextColorDarkTheme : ProjectSettings.Get.CSharpEditor.CSharpEditorDefaultTextColorLightTheme;
 			//	if( textColor != color )
 			//	{
 			//		textColor = color;
@@ -969,29 +969,29 @@ namespace NeoAxis.Editor
 
 		void UpdateFont()
 		{
-			if( currentFont != ProjectSettings.Get.CSharpEditorFont )
+			if( currentFont != ProjectSettings.Get.CSharpEditor.CSharpEditorFont )
 			{
-				currentFont = ProjectSettings.Get.CSharpEditorFont;
+				currentFont = ProjectSettings.Get.CSharpEditor.CSharpEditorFont;
 
 				try
 				{
-					editor.FontFamily = new FontFamily( ProjectSettings.Get.CSharpEditorFont );
+					editor.FontFamily = new FontFamily( ProjectSettings.Get.CSharpEditor.CSharpEditorFont );
 				}
 				catch { }
 			}
 
-			if( currentFontSize != ProjectSettings.Get.CSharpEditorFontSize )
+			if( currentFontSize != ProjectSettings.Get.CSharpEditor.CSharpEditorFontSize )
 			{
-				currentFontSize = ProjectSettings.Get.CSharpEditorFontSize;
+				currentFontSize = ProjectSettings.Get.CSharpEditor.CSharpEditorFontSize;
 
 				try
 				{
-					editor.FontSize = ProjectSettings.Get.CSharpEditorFontSize;
+					editor.FontSize = ProjectSettings.Get.CSharpEditor.CSharpEditorFontSize;
 				}
 				catch { }
 			}
 
-			var selectionBackground = EditorAPI.DarkTheme ? ProjectSettings.Get.CSharpEditorSelectionBackgroundDarkTheme.Value : ProjectSettings.Get.CSharpEditorSelectionBackgroundLightTheme.Value;
+			var selectionBackground = EditorAPI.DarkTheme ? ProjectSettings.Get.CSharpEditor.CSharpEditorSelectionBackgroundDarkTheme.Value : ProjectSettings.Get.CSharpEditor.CSharpEditorSelectionBackgroundLightTheme.Value;
 			if( currentSelectionBackground != selectionBackground )
 			{
 				currentSelectionBackground = selectionBackground;
@@ -1004,7 +1004,7 @@ namespace NeoAxis.Editor
 				catch { }
 			}
 
-			var selectionForeground = EditorAPI.DarkTheme ? ProjectSettings.Get.CSharpEditorSelectionForegroundDarkTheme.Value : ProjectSettings.Get.CSharpEditorSelectionForegroundLightTheme.Value;
+			var selectionForeground = EditorAPI.DarkTheme ? ProjectSettings.Get.CSharpEditor.CSharpEditorSelectionForegroundDarkTheme.Value : ProjectSettings.Get.CSharpEditor.CSharpEditorSelectionForegroundLightTheme.Value;
 			if( currentSelectionForeground != selectionForeground )
 			{
 				currentSelectionForeground = selectionForeground;
@@ -1182,12 +1182,12 @@ namespace NeoAxis.Editor
 				{
 					if( location.IsInSource )
 					{
-						var isScript = Parent != null && Parent is Component_CSharpScript_DocumentWindow;
+						var isScript = Parent != null && Parent is CSharpScriptEditor;
 						if( isScript )
 						{
-							//Component_CSharpScript_DocumentWindow
+							//CSharpScriptEditor
 
-							var documentWindow = (Component_CSharpScript_DocumentWindow)Parent;
+							var documentWindow = (CSharpScriptEditor)Parent;
 
 							var scriptEditorControl = documentWindow.ScriptEditorControl;
 							var editor2 = scriptEditorControl.Editor;

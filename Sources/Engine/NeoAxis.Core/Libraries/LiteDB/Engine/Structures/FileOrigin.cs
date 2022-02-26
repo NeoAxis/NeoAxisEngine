@@ -1,4 +1,5 @@
-﻿namespace LiteDB.Engine
+#if !NO_LITE_DB
+namespace Internal.LiteDB.Engine
 {
     internal enum FileOrigin : byte
     {
@@ -18,3 +19,5 @@
         Log = 2
     }
 }
+
+#endif

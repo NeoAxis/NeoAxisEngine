@@ -1,11 +1,7 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
-using System.Drawing.Design;
 using System.ComponentModel;
-using System.Reflection;
 
 namespace NeoAxis
 {
@@ -14,24 +10,22 @@ namespace NeoAxis
 	/// </summary>
 	[DefaultOrderOfEffect( 10 )]
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
-	public class Component_RenderingEffect_Noise : Component_RenderingEffect_Simple
+	public class RenderingEffect_Noise : RenderingEffect_Simple
 	{
 		const string shaderDefault = @"Base\Shaders\Effects\Noise_fs.sc";
 		const string noiseTextureDefault = @"Base\Images\Noise.png";
 
-		Random random = new Random();
+		FastRandom random = new FastRandom();
 
-		public Component_RenderingEffect_Noise()
+		public RenderingEffect_Noise()
 		{
-			Shader = shaderDefault;
+			ShaderFile = shaderDefault;
 		}
 
 		/// <summary>
 		/// The range of multiply blend mode. 
 		/// </summary>
-		[Serialize]
 		[DefaultValue( "0.8 1.2" )]
-		//!!!!редактор
 		[Range( 0, 2 )]
 		public Reference<Range> Multiply
 		{
@@ -39,13 +33,12 @@ namespace NeoAxis
 			set { if( _multiply.BeginSet( ref value ) ) { try { MultiplyChanged?.Invoke( this ); } finally { _multiply.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Multiply"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_Noise> MultiplyChanged;
+		public event Action<RenderingEffect_Noise> MultiplyChanged;
 		ReferenceField<Range> _multiply = new Range( 0.8, 1.2 );
 
 		/// <summary>
 		/// The range of addition blend mode. 
 		/// </summary>
-		[Serialize]
 		[DefaultValue( "0 0" )]
 		[Range( 0, 1 )]
 		public Reference<Range> Add
@@ -54,7 +47,7 @@ namespace NeoAxis
 			set { if( _add.BeginSet( ref value ) ) { try { AddChanged?.Invoke( this ); } finally { _add.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Add"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_Noise> AddChanged;
+		public event Action<RenderingEffect_Noise> AddChanged;
 		ReferenceField<Range> _add = Range.Zero;
 
 
@@ -65,7 +58,6 @@ namespace NeoAxis
 		/// <summary>
 		/// If active, random noise will be generated.
 		/// </summary>
-		[Serialize]
 		[DefaultValue( false )]
 		public Reference<bool> SeedRandom
 		{
@@ -73,15 +65,15 @@ namespace NeoAxis
 			set { if( _seedRandom.BeginSet( ref value ) ) { try { SeedRandomChanged?.Invoke( this ); } finally { _seedRandom.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SeedRandom"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_Noise> SeedRandomChanged;
+		public event Action<RenderingEffect_Noise> SeedRandomChanged;
 		ReferenceField<bool> _seedRandom;
 
 
-		protected override void OnSetShaderParameters( ViewportRenderingContext context, Component_RenderingPipeline.IFrameData frameData, Component_Image actualTexture, CanvasRenderer.ShaderItem shader )
+		protected override void OnSetShaderParameters( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ImageComponent actualTexture, CanvasRenderer.ShaderItem shader )
 		{
 			base.OnSetShaderParameters( context, frameData, actualTexture, shader );
 
-			var noiseTexture = ResourceManager.LoadResource<Component_Image>( noiseTextureDefault );
+			var noiseTexture = ResourceManager.LoadResource<ImageComponent>( noiseTextureDefault );
 			if( noiseTexture == null )
 				return;
 

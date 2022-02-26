@@ -17,7 +17,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Globalization;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     /// <summary>
     /// Draw todays date as a button.

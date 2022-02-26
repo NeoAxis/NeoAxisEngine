@@ -1,11 +1,13 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using LiteDB;
+#if !NO_LITE_DB
+using Internal.LiteDB;
+#endif
 
 namespace NeoAxis
 {
@@ -13,7 +15,9 @@ namespace NeoAxis
 	{
 		Dictionary<string, CompiledScript> compiledScripts = new Dictionary<string, CompiledScript>();
 
+#if !NO_LITE_DB
 		LiteDatabase database;
+#endif
 		Dictionary<string, Type> loadedAssemblyDllTypes;
 
 		object lockObjectGetOrCompileScript = new object();
@@ -63,11 +67,13 @@ namespace NeoAxis
 			get { return Path.Combine( CacheFolder, "CSharpScripts.cs" ); }
 		}
 
+#if !NO_LITE_DB
 		public List<string> GetScriptsToCompile()
 		{
 			var scriptsCollection = database.GetCollection<DatabaseItem>( "scripts" );
 			return new List<string>( scriptsCollection.FindAll().Select( i => FromBase64( i.ScriptBase64 ) ) );
 		}
+#endif
 
 		public void Initialize()
 		{
@@ -79,6 +85,7 @@ namespace NeoAxis
 			//string textCachePath = Path.Combine( CacheFolder, textCacheName );
 			//string cacheAssemblyPath = Path.Combine( CacheFolder, cacheAssemblyName );
 
+#if !NO_LITE_DB
 			//init cache database
 			//on UWP, Android scripts compiled inside Project.dll
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows ||
@@ -99,11 +106,13 @@ namespace NeoAxis
 
 				//database = new LiteDatabase( DatabaseFileName );
 			}
+#endif
 
 			//recompile cache if need to update
 
 			bool needCompile = false;
 
+#if !NO_LITE_DB
 			if( ScriptingCSharpEngine.CanCompileScripts )
 			{
 				//check dll is not in the list of precompiled dlls
@@ -122,9 +131,11 @@ namespace NeoAxis
 					needCompile = false;
 				}
 			}
+#endif
 
 			if( needCompile )
 			{
+#if !NO_LITE_DB
 				var scriptsToCompile = GetScriptsToCompile();
 				if( scriptsToCompile.Count != 0 )
 				{
@@ -153,6 +164,7 @@ namespace NeoAxis
 				}
 				else
 					DeleteAssemblyDllFile();
+#endif
 			}
 			else
 			{
@@ -173,14 +185,17 @@ namespace NeoAxis
 
 		public void Dispose()
 		{
+#if !NO_LITE_DB
 			database?.Dispose();
 			database = null;
+#endif
 		}
 
 		void AddCompiledScript( string script, CompiledScript compiledScript )
 		{
 			compiledScripts.Add( script, compiledScript );
 
+#if !NO_LITE_DB
 			var scriptBase64 = ToBase64( script );
 
 			var scriptsCollection = database.GetCollection<DatabaseItem>( "scripts" );
@@ -191,6 +206,7 @@ namespace NeoAxis
 				//need recompile dlls
 				database.DropCollection( "compiledDlls" );
 			}
+#endif
 		}
 
 		string ToBase64( string code )
@@ -267,7 +283,33 @@ namespace NeoAxis
 
 				if( !ScriptingCSharpEngine.CanCompileScripts )
 				{
-					error = "Unable to get compiled script. The script is not precompiled in the cache. Script compilation is not supported on the current platform, run scenes on dev machine to make the cache.\r\n\r\nScript:\r\n" + script;//CheckConvert( script );
+					var scriptShort = "";
+
+					var reader = new StringReader( script );
+					int counter = 0;
+					do
+					{
+						var line = reader.ReadLine();
+						if( line != null )
+						{
+							if( scriptShort != "" )
+								scriptShort += "\r\n";
+							scriptShort += line;
+
+							counter++;
+							if( counter > 7 )
+							{
+								scriptShort += "\r\n...";
+								break;
+							}
+						}
+						else
+							break;
+
+					} while( true );
+
+					error = "Unable to get compiled script. The script is not precompiled in the cache. Script compilation is not supported on the current platform, run scenes on dev machine to make the cache.\r\n\r\nScript:\r\n" + scriptShort;//CheckConvert( script );
+
 					//error = "Unable to get compiled script. The script is not precompiled in the cache. Script compilation is not supported on the current platform, run scenes on dev machine to make the cache.";
 					return null;
 				}

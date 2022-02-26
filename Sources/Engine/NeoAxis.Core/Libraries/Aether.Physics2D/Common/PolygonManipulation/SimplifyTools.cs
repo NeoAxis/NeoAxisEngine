@@ -6,9 +6,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using Internal.tainicom.Aether.Physics2D.Common;
+#if XNAAPI
+using Vector2 = Microsoft.Xna.Framework.Vector2;
+#endif
 
-namespace tainicom.Aether.Physics2D.Common.PolygonManipulation
+namespace Internal.tainicom.Aether.Physics2D.Common.PolygonManipulation
 {
     /// <summary>
     /// Provides a set of tools to simplify polygons in various ways.

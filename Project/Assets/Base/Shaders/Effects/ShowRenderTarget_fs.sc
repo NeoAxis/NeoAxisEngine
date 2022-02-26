@@ -1,15 +1,19 @@
 $input v_texCoord0
 
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "../Common.sh"
 #include "../FragmentFunctions.sh"
 
 SAMPLER2D(s_sourceTexture, 0);
-#ifdef SHADOW_DIRECTIONAL_LIGHT
-SAMPLER2DARRAY(s_showTexture, 1);
+
+#ifdef SHADOW_POINT_LIGHT
+	SAMPLERCUBE(s_showTexture, 1);
+#elif defined(SHADOW_DIRECTIONAL_LIGHT)
+	SAMPLER2DARRAY(s_showTexture, 1);
 #else
-SAMPLER2D(s_showTexture, 1);
+	SAMPLER2D(s_showTexture, 1);
 #endif
+
 uniform vec4/*float*/ intensity;
 uniform vec4/*float*/ nearClipDistance;
 uniform vec4/*float*/ farClipDistance;
@@ -20,13 +24,22 @@ void main()
 {
 	vec4 sourceColor = texture2D(s_sourceTexture, v_texCoord0);
 
-#ifdef SHADOW_DIRECTIONAL_LIGHT
+	vec4 showColor;
+	
+#ifdef SHADOW_POINT_LIGHT
+
+	float h = v_texCoord0.x * PI * 2.0;
+	float v = (0.5 - v_texCoord0.y) * PI;
+	vec3 coord = flipCubemapCoords(sphericalDirectionGetVector(vec2(h,v)));
+	showColor = textureCube(s_showTexture, coord);
+	
+#elif defined(SHADOW_DIRECTIONAL_LIGHT)
 	float index = 0.0;
 	if(mode.x >= 3.0 && mode.x <= 6.0)
 		index = float(round(mode.x - 3.0));
-	vec4 showColor = texture2DArray(s_showTexture, vec3(v_texCoord0.x, v_texCoord0.y, index));
-#else
-	vec4 showColor = texture2D(s_showTexture, v_texCoord0);
+	showColor = texture2DArray(s_showTexture, vec3(v_texCoord0, index));	
+#else	
+	showColor = texture2D(s_showTexture, v_texCoord0);	
 #endif	
 	
 	vec4 color;

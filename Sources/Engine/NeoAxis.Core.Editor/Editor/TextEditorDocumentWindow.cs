@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Text;
 using System.Drawing;
@@ -35,10 +35,10 @@ namespace NeoAxis.Editor
 			avalonTextEditor.Editor.TextChanged += TextEditor_TextChanged;
 			avalonTextEditor.Editor.KeyDown += TextEditor_KeyDown;
 
-			displayLineNumbers = ProjectSettings.Get.TextEditorDisplayLineNumbers;
+			displayLineNumbers = ProjectSettings.Get.TextEditor.TextEditorDisplayLineNumbers;
 			avalonTextEditor.Editor.ShowLineNumbers = displayLineNumbers;
 
-			wordWrap = ProjectSettings.Get.TextEditorWordWrap;
+			wordWrap = ProjectSettings.Get.TextEditor.TextEditorWordWrap;
 			avalonTextEditor.Editor.WordWrap = wordWrap;
 
 			avalonTextEditor.Editor.PreviewMouseWheel += Editor_PreviewMouseWheel;
@@ -197,15 +197,15 @@ namespace NeoAxis.Editor
 			if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
 				return;
 
-			if( displayLineNumbers != ProjectSettings.Get.TextEditorDisplayLineNumbers )
+			if( displayLineNumbers != ProjectSettings.Get.TextEditor.TextEditorDisplayLineNumbers )
 			{
-				displayLineNumbers = ProjectSettings.Get.TextEditorDisplayLineNumbers;
+				displayLineNumbers = ProjectSettings.Get.TextEditor.TextEditorDisplayLineNumbers;
 				avalonTextEditor.Editor.ShowLineNumbers = displayLineNumbers;
 			}
 
-			if( wordWrap != ProjectSettings.Get.TextEditorWordWrap )
+			if( wordWrap != ProjectSettings.Get.TextEditor.TextEditorWordWrap )
 			{
-				wordWrap = ProjectSettings.Get.TextEditorWordWrap;
+				wordWrap = ProjectSettings.Get.TextEditor.TextEditorWordWrap;
 				avalonTextEditor.Editor.WordWrap = wordWrap;
 			}
 
@@ -286,10 +286,10 @@ namespace NeoAxis.Editor
 		{
 			if( Keyboard.Modifiers.HasFlag( System.Windows.Input.ModifierKeys.Control ) )
 			{
-				var v = ProjectSettings.Get.TextEditorFontSize.Value;
+				var v = ProjectSettings.Get.TextEditor.TextEditorFontSize.Value;
 				v += e.Delta > 0 ? 1 : -1;
 				v = MathEx.Clamp( v, 6, 40 );
-				ProjectSettings.Get.TextEditorFontSize = v;
+				ProjectSettings.Get.TextEditor.TextEditorFontSize = v;
 
 				ProjectSettings.SaveToFileAndUpdate();
 

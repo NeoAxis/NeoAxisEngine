@@ -29,7 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 
-namespace Net3dBool
+namespace Internal.Net3dBool
 {
     public class AxisAlignedBoundingBox
     {

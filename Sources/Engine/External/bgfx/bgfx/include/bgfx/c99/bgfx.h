@@ -3093,6 +3093,9 @@ BGFX_C_API void bgfx_set_instance_count(uint32_t _numInstances);
  */
 BGFX_C_API void bgfx_set_texture(uint8_t _stage, bgfx_uniform_handle_t _sampler, bgfx_texture_handle_t _handle, uint32_t _flags);
 
+//!!!!betauser
+BGFX_C_API void bgfx_set_textures(uint32_t* data, int count);
+
 /**
  * Submit an empty primitive for rendering. Uniforms and draw state
  * will be applied but no geometry will be submitted.

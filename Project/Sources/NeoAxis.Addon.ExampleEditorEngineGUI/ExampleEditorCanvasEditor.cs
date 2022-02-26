@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -33,10 +33,10 @@ namespace NeoAxis.Addon.ExampleEditorEngineGUI
 		//bool nodeMove_Cloned;
 		//Vec2I nodeMove_StartMousePositionInPixels;
 		//Vec2 nodeMove_StartMousePositionInUnits;
-		//Component_FlowchartNode nodeMove_StartOverNode;
+		//FlowchartNode nodeMove_StartOverNode;
 		////!!!!check deleted
-		//ESet<Component_FlowchartNode> nodeMove_Nodes;
-		//Dictionary<Component_FlowchartNode, Vec2I> nodeMove_StartPositions;
+		//ESet<FlowchartNode> nodeMove_Nodes;
+		//Dictionary<FlowchartNode, Vec2I> nodeMove_StartPositions;
 
 		////drag and drop
 		//Component dragDropObject;
@@ -50,17 +50,17 @@ namespace NeoAxis.Addon.ExampleEditorEngineGUI
 
 		public ExampleEditorCanvasEditor()
 		{
-			//DragDrop += new System.Windows.Forms.DragEventHandler( this.Component_EditorExampleCanvas_DocumentWindow_DragDrop );
-			//DragEnter += new System.Windows.Forms.DragEventHandler( this.Component_EditorExampleCanvas_DocumentWindow_DragEnter );
-			//DragOver += new System.Windows.Forms.DragEventHandler( this.Component_EditorExampleCanvas_DocumentWindow_DragOver );
-			//DragLeave += new System.EventHandler( this.Component_EditorExampleCanvas_DocumentWindow_DragLeave );
+			//DragDrop += new System.Windows.Forms.DragEventHandler( this.EditorExampleCanvas_DocumentWindow_DragDrop );
+			//DragEnter += new System.Windows.Forms.DragEventHandler( this.EditorExampleCanvas_DocumentWindow_DragEnter );
+			//DragOver += new System.Windows.Forms.DragEventHandler( this.EditorExampleCanvas_DocumentWindow_DragOver );
+			//DragLeave += new System.EventHandler( this.EditorExampleCanvas_DocumentWindow_DragLeave );
 
 			CalculateCellSize();
 		}
 
-		public Component_ExampleEditorCanvas ExampleEditorCanvas
+		public ExampleEditorCanvas ExampleEditorCanvas
 		{
-			get { return ObjectOfEditor as Component_ExampleEditorCanvas; }
+			get { return ObjectOfEditor as ExampleEditorCanvas; }
 		}
 
 		protected override void OnCreate()
@@ -293,7 +293,7 @@ namespace NeoAxis.Addon.ExampleEditorEngineGUI
 
 		object GetMouseOverObject()
 		{
-			//foreach( Component_FlowchartNode node in EditorExampleCanvas.GetComponents<Component_FlowchartNode>( true ) )
+			//foreach( FlowchartNode node in EditorExampleCanvas.GetComponents<FlowchartNode>( true ) )
 			//{
 			//	var style = node.GetResultStyle( EditorExampleCanvas );
 
@@ -340,14 +340,14 @@ namespace NeoAxis.Addon.ExampleEditorEngineGUI
 			if( button == EMouseButtons.Left )
 			{
 				var mouseOverObject = GetMouseOverObject();
-				//var mouseOverNode = mouseOverObject as Component_FlowchartNode;
+				//var mouseOverNode = mouseOverObject as FlowchartNode;
 
 				//if( mouseOverNode != null )
 				//{
 				//	//if( IsSelectableObject( obj ) )
 				//	//{
 
-				//	//Component_FlowchartNode node = node as Component_FlowchartNode;
+				//	//FlowchartNode node = node as FlowchartNode;
 				//	//if( node != null )
 				//	//{
 
@@ -363,21 +363,21 @@ namespace NeoAxis.Addon.ExampleEditorEngineGUI
 				//	//nodeMove_StartMousePositionInPixels = mouseInPixels;
 				//	//nodeMove_StartMousePositionInUnits = ConvertScreenToUnit( mouse, true );
 
-				//	//nodeMove_Nodes = new ESet<Component_FlowchartNode>();
+				//	//nodeMove_Nodes = new ESet<FlowchartNode>();
 				//	//nodeMove_Nodes.Add( mouseOverNode );
 
 				//	//var objectToNodes = GetObjectToNodesDictionary();
 
 				//	//foreach( var selectedObject in SelectedObjectsSet )
 				//	//{
-				//	//	var n = selectedObject as Component_FlowchartNode;
+				//	//	var n = selectedObject as FlowchartNode;
 				//	//	if( n != null )
 				//	//		nodeMove_Nodes.AddWithCheckAlreadyContained( n );
 
 				//	//	var c = selectedObject as Component;
 				//	//	if( c != null )
 				//	//	{
-				//	//		if( objectToNodes.TryGetValue( c, out List<Component_FlowchartNode> nodes ) )
+				//	//		if( objectToNodes.TryGetValue( c, out List<FlowchartNode> nodes ) )
 				//	//		{
 				//	//			foreach( var n2 in nodes )
 				//	//			{
@@ -391,7 +391,7 @@ namespace NeoAxis.Addon.ExampleEditorEngineGUI
 				//	//	}
 				//	//}
 
-				//	//nodeMove_StartPositions = new Dictionary<Component_FlowchartNode, Vec2I>();
+				//	//nodeMove_StartPositions = new Dictionary<FlowchartNode, Vec2I>();
 				//	//foreach( var n in nodeMove_Nodes )
 				//	//	nodeMove_StartPositions.Add( n, n.NodePosition );
 
@@ -408,7 +408,7 @@ namespace NeoAxis.Addon.ExampleEditorEngineGUI
 				//	//{
 				//	//	//!!!!
 
-				//	//	var socket = obj as Component_FlowchartNode.Representation.Socket;
+				//	//	var socket = obj as FlowchartNode.Representation.Socket;
 				//	//	if( socket != null )
 				//	//	{
 				//	//		referenceCreationSocketFrom = socket;
@@ -484,7 +484,7 @@ namespace NeoAxis.Addon.ExampleEditorEngineGUI
 				//		selectedObjects.Clear();
 
 				//	//select node
-				//	var node = mouseOverObject as Component_FlowchartNode;
+				//	var node = mouseOverObject as FlowchartNode;
 				//	if( node != null )
 				//	{
 				//		var obj = node.ControlledObject.Value;
@@ -613,17 +613,17 @@ namespace NeoAxis.Addon.ExampleEditorEngineGUI
 			//		//Clone
 			//		if( ( ModifierKeys & Keys.Shift ) != 0 )//if( EngineApp.Instance.IsKeyPressed( EKeys.Shift ) )
 			//		{
-			//			Component_FlowchartNode nodeMove_StartOverNodeSource = nodeMove_StartOverNode;
-			//			ESet<Component_FlowchartNode> nodeMove_NodesSource = nodeMove_Nodes;
-			//			Dictionary<Component_FlowchartNode, Vec2I> nodeMove_StartPositionsSource = nodeMove_StartPositions;
+			//			FlowchartNode nodeMove_StartOverNodeSource = nodeMove_StartOverNode;
+			//			ESet<FlowchartNode> nodeMove_NodesSource = nodeMove_Nodes;
+			//			Dictionary<FlowchartNode, Vec2I> nodeMove_StartPositionsSource = nodeMove_StartPositions;
 
 			//			nodeMove_StartOverNode = null;
-			//			nodeMove_Nodes = new ESet<Component_FlowchartNode>();
-			//			nodeMove_StartPositions = new Dictionary<Component_FlowchartNode, Vec2I>();
+			//			nodeMove_Nodes = new ESet<FlowchartNode>();
+			//			nodeMove_StartPositions = new Dictionary<FlowchartNode, Vec2I>();
 
 			//			foreach( var sourceNode in nodeMove_NodesSource )
 			//			{
-			//				var node = (Component_FlowchartNode)EditorUtils.CloneComponent( sourceNode );
+			//				var node = (FlowchartNode)EditorUtils.CloneComponent( sourceNode );
 
 			//				if( nodeMove_StartOverNodeSource == sourceNode )
 			//					nodeMove_StartOverNode = node;
@@ -754,11 +754,11 @@ namespace NeoAxis.Addon.ExampleEditorEngineGUI
 			base.OnViewportUpdateBegin();
 		}
 
-		//List<Component_FlowchartNode> GetNodesByRectangle( Rect rectInUnits )
+		//List<FlowchartNode> GetNodesByRectangle( Rect rectInUnits )
 		//{
-		//	List<Component_FlowchartNode> result = new List<Component_FlowchartNode>();
+		//	List<FlowchartNode> result = new List<FlowchartNode>();
 
-		//	foreach( Component_FlowchartNode node in EditorExampleCanvas.GetComponents<Component_FlowchartNode>( false ) )
+		//	foreach( FlowchartNode node in EditorExampleCanvas.GetComponents<FlowchartNode>( false ) )
 		//	{
 		//		var style = node.GetResultStyle( EditorExampleCanvas );
 		//		if( style.IsIntersectsWithRectangle( this, node, rectInUnits ) )
@@ -768,9 +768,9 @@ namespace NeoAxis.Addon.ExampleEditorEngineGUI
 		//	return result;
 		//}
 
-		//ESet<Component_FlowchartNode> SelectByRectangle_GetNodes()
+		//ESet<FlowchartNode> SelectByRectangle_GetNodes()
 		//{
-		//	ESet<Component_FlowchartNode> result = new ESet<Component_FlowchartNode>();
+		//	ESet<FlowchartNode> result = new ESet<FlowchartNode>();
 		//	if( selectByRectangle_Activated )
 		//	{
 		//		foreach( var node in GetNodesByRectangle( SelectByRectangle_GetRectangleInUnits() ) )
@@ -1075,7 +1075,7 @@ namespace NeoAxis.Addon.ExampleEditorEngineGUI
 		//	//	var component = obj as Component;
 		//	//	if( component != null )
 		//	//	{
-		//	//		if( objectToNodes.TryGetValue( component, out List<Component_FlowchartNode> nodes ) )
+		//	//		if( objectToNodes.TryGetValue( component, out List<FlowchartNode> nodes ) )
 		//	//		{
 		//	//			foreach( var node in nodes )
 		//	//				resultObjectsToClone.Add( node );
@@ -1126,12 +1126,12 @@ namespace NeoAxis.Addon.ExampleEditorEngineGUI
 		//	Document.Modified = true;
 		//}
 
-		//private void Component_EditorExampleCanvas_DocumentWindow_DragEnter( object sender, DragEventArgs e )
+		//private void EditorExampleCanvas_DocumentWindow_DragEnter( object sender, DragEventArgs e )
 		//{
 		//DragDropObjectCreate( e );
 		//}
 
-		//private void Component_EditorExampleCanvas_DocumentWindow_DragOver( object sender, DragEventArgs e )
+		//private void EditorExampleCanvas_DocumentWindow_DragOver( object sender, DragEventArgs e )
 		//{
 		//e.Effect = DragDropEffects.None;
 
@@ -1150,7 +1150,7 @@ namespace NeoAxis.Addon.ExampleEditorEngineGUI
 		//ViewportControl.TryRender();
 		//}
 
-		//private void Component_EditorExampleCanvas_DocumentWindow_DragLeave( object sender, EventArgs e )
+		//private void EditorExampleCanvas_DocumentWindow_DragLeave( object sender, EventArgs e )
 		//{
 		//DragDropObjectDestroy();
 
@@ -1159,7 +1159,7 @@ namespace NeoAxis.Addon.ExampleEditorEngineGUI
 		//ViewportControl.TryRender();
 		//}
 
-		//private void Component_EditorExampleCanvas_DocumentWindow_DragDrop( object sender, DragEventArgs e )
+		//private void EditorExampleCanvas_DocumentWindow_DragDrop( object sender, DragEventArgs e )
 		//{
 		//DragDropObjectCommit();
 
@@ -1254,7 +1254,7 @@ namespace NeoAxis.Addon.ExampleEditorEngineGUI
 		//		//start creation
 
 		//		//create node
-		//		var node = EditorExampleCanvas.CreateComponent<Component_FlowchartNode>( -1, false );
+		//		var node = EditorExampleCanvas.CreateComponent<FlowchartNode>( -1, false );
 
 		//		Component controlledObject = null;
 
@@ -1263,7 +1263,7 @@ namespace NeoAxis.Addon.ExampleEditorEngineGUI
 		//		var specialization = EditorExampleCanvas.Specialization.Value;
 		//		if( specialization != null )
 		//		{
-		//			var context = new Component_FlowchartSpecialization.DragDropObjectCreateInitNodeContext();
+		//			var context = new FlowchartSpecialization.DragDropObjectCreateInitNodeContext();
 		//			context.createComponentType = createComponentType;
 		//			context.memberFullSignature = memberFullSignature;
 		//			context.createNodeWithComponent = createNodeWithComponent;
@@ -1278,7 +1278,7 @@ namespace NeoAxis.Addon.ExampleEditorEngineGUI
 		//		if( !specializationHandled )
 		//		{
 		//			//create component
-		//			if( createComponentType != null && createComponentType != MetadataManager.GetTypeOfNetType( typeof( Component_FlowchartNode ) ) )
+		//			if( createComponentType != null && createComponentType != MetadataManager.GetTypeOfNetType( typeof( FlowchartNode ) ) )
 		//			{
 		//				var obj = node.CreateComponent( createComponentType );
 
@@ -1297,10 +1297,10 @@ namespace NeoAxis.Addon.ExampleEditorEngineGUI
 		//				controlledObject = obj;
 		//			}
 
-		//			//Component_InvokeMember
+		//			//InvokeMember
 		//			if( memberFullSignature != "" )
 		//			{
-		//				var obj = node.CreateComponent<Component_InvokeMember>();
+		//				var obj = node.CreateComponent<InvokeMember>();
 		//				obj.Name = "Invoke Member";
 		//				obj.Member = new Reference<ReferenceValueType_Member>( null, memberFullSignature );
 		//				controlledObject = obj;
@@ -1344,7 +1344,7 @@ namespace NeoAxis.Addon.ExampleEditorEngineGUI
 		//{
 		//	if( dragDropObject != null )
 		//	{
-		//		var node = dragDropObject as Component_FlowchartNode;
+		//		var node = dragDropObject as FlowchartNode;
 		//		if( node != null )
 		//		{
 		//			var viewport = ViewportControl.Viewport;

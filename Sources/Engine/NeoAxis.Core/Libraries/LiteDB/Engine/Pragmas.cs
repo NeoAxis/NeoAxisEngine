@@ -1,4 +1,5 @@
-namespace LiteDB.Engine
+#if !NO_LITE_DB
+namespace Internal.LiteDB.Engine
 {
     public static class Pragmas
     {
@@ -10,3 +11,4 @@ namespace LiteDB.Engine
         public const string CHECKPOINT = nameof(CHECKPOINT);
     }
 }
+#endif

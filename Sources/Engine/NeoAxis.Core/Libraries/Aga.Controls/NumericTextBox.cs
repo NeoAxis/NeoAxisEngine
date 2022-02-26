@@ -4,7 +4,7 @@ using System.Windows.Forms;
 using System.Globalization;
 
 
-namespace Aga.Controls
+namespace Internal.Aga.Controls
 {
 	/// <summary>
 	/// Restricts the entry of characters to digits, the negative sign,

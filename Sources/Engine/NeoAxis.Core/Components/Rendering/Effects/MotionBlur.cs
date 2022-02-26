@@ -1,11 +1,7 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
-using System.Drawing.Design;
 using System.ComponentModel;
-using System.Reflection;
 
 namespace NeoAxis
 {
@@ -14,7 +10,7 @@ namespace NeoAxis
 	/// </summary>
 	[DefaultOrderOfEffect( 1.5 )]
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
-	public class Component_RenderingEffect_MotionBlur : Component_RenderingEffect
+	public class RenderingEffect_MotionBlur : RenderingEffect
 	{
 		/// <summary>
 		/// The intensity of the effect.
@@ -29,69 +25,94 @@ namespace NeoAxis
 			set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_MotionBlur> IntensityChanged;
+		public event Action<RenderingEffect_MotionBlur> IntensityChanged;
 		ReferenceField<double> _intensity = 1;
 
 		/// <summary>
 		/// Output velocity multiplier.
 		/// </summary>
 		[DefaultValue( 1.0 )]
-		[Range( 0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
+		[Range( 0, 4, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
 		public Reference<double> Multiplier
 		{
 			get { if( _multiplier.BeginGet() ) Multiplier = _multiplier.Get( this ); return _multiplier.value; }
 			set { if( _multiplier.BeginSet( ref value ) ) { try { MultiplierChanged?.Invoke( this ); } finally { _multiplier.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Multiplier"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_MotionBlur> MultiplierChanged;
+		public event Action<RenderingEffect_MotionBlur> MultiplierChanged;
 		ReferenceField<double> _multiplier = 1.0;
+
+		/// <summary>
+		/// Depth boundary value for detecting the edge of an object.
+		/// </summary>
+		[DefaultValue( 0.3 )]
+		[Range( 0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 5 )]
+		public Reference<double> DepthThreshold
+		{
+			get { if( _depthThreshold.BeginGet() ) DepthThreshold = _depthThreshold.Get( this ); return _depthThreshold.value; }
+			set { if( _depthThreshold.BeginSet( ref value ) ) { try { DepthThresholdChanged?.Invoke( this ); } finally { _depthThreshold.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="DepthThreshold"/> property value changes.</summary>
+		public event Action<RenderingEffect_MotionBlur> DepthThresholdChanged;
+		ReferenceField<double> _depthThreshold = 0.3;
 
 		/////////////////////////////////////////
 
-		protected override void OnRender( ViewportRenderingContext context, Component_RenderingPipeline.IFrameData frameData, ref Component_Image actualTexture )
+		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
 		{
-			context.objectsDuringUpdate.namedTextures.TryGetValue( "motionTexture", out var motionTexture );
+			base.OnRender( context, frameData, ref actualTexture );
 
-			if( motionTexture != null )
+			if( Intensity <= 0 )
+				return;
+
+			context.ObjectsDuringUpdate.namedTextures.TryGetValue( "motionTexture", out var motionTexture );
+			context.ObjectsDuringUpdate.namedTextures.TryGetValue( "depthTexture", out var depthTexture );
+			if( motionTexture == null || depthTexture == null || Intensity <= 0 )
+				return;
+
+			//create final
+			var finalTexture = context.RenderTarget2D_Alloc( actualTexture.Result.ResultSize, actualTexture.Result.ResultFormat );
 			{
-				//create final
-				var finalTexture = context.RenderTarget2D_Alloc( actualTexture.Result.ResultSize, actualTexture.Result.ResultFormat );
-				{
-					context.SetViewport( finalTexture.Result.GetRenderTarget().Viewports[ 0 ] );
+				context.SetViewport( finalTexture.Result.GetRenderTarget().Viewports[ 0 ] );
 
-					var shader = new CanvasRenderer.ShaderItem();
-					shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
-					shader.FragmentProgramFileName = @"Base\Shaders\Effects\MotionBlur_fs.sc";
+				var shader = new CanvasRenderer.ShaderItem();
+				shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+				shader.FragmentProgramFileName = @"Base\Shaders\Effects\MotionBlur_fs.sc";
 
-					shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/, actualTexture,
-						TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
-					shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1/*"motionTexture"*/, motionTexture,
-						TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
-					shader.Parameters.Set( "intensity", (float)Intensity );
+				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/, actualTexture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.None ) );
+				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1/*"motionTexture"*/, motionTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
+				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 2/*"depthTexture"*/, depthTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
 
-					var multiplier = 0.0;
-					if( context.Owner.LastUpdateTimeStep != 0 )
-						multiplier = ( 1.0 / context.Owner.LastUpdateTimeStep ) / 45.0;
-					multiplier *= Multiplier.Value;
+				shader.Parameters.Set( "intensity", (float)Intensity );
 
-					//fix initial rattling
-					if( context.Owner.LastUpdateTimeStep > 0.1 )
-						multiplier = 0;
+				var multiplier = 0.0;
+				if( context.Owner.LastUpdateTimeStep != 0 )
+					multiplier = ( 1.0 / context.Owner.LastUpdateTimeStep ) / 45.0;
+				multiplier *= Multiplier.Value;
 
-					shader.Parameters.Set( "motionBlurMultiplier", (float)multiplier );
+				//fix initial rattling
+				if( context.Owner.LastUpdateTimeStep > 0.1 )
+					multiplier = 0;
 
-					var size = actualTexture.Result.ResultSize;
-					shader.Parameters.Set( "viewportSize", new Vector4( size.X, size.Y, 1.0 / (double)size.X, 1.0 / (double)size.Y ).ToVector4F() );
+				//var multiplier = 0.0;
+				//if( context.Owner.LastUpdateTimeStep != 0 )
+				//	multiplier = ( 1.0 / Math.Min( context.Owner.LastUpdateTimeStep, 0.1 ) ) / 45.0;
+				//multiplier *= Multiplier.Value;
 
-					context.RenderQuadToCurrentViewport( shader );
-				}
+				var parameters = new Vector4F( (float)multiplier, (float)DepthThreshold, 0, 0 );
+				shader.Parameters.Set( "motionBlurParameters", parameters );
 
-				//free old textures
-				context.DynamicTexture_Free( actualTexture );
+				var size = actualTexture.Result.ResultSize;
+				shader.Parameters.Set( "viewportSize", new Vector4( size.X, size.Y, 1.0 / (double)size.X, 1.0 / (double)size.Y ).ToVector4F() );
 
-				//update actual texture
-				actualTexture = finalTexture;
+				context.RenderQuadToCurrentViewport( shader );
 			}
+
+			//free old textures
+			context.DynamicTexture_Free( actualTexture );
+
+			//update actual texture
+			actualTexture = finalTexture;
 		}
 	}
 }

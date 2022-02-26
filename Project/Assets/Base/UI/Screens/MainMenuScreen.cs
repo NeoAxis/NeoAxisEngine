@@ -1,8 +1,6 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
 using System.ComponentModel;
 using NeoAxis;
 
@@ -13,7 +11,7 @@ namespace Project
 		static MainMenuScreen instance;
 
 		bool currentDisplayBackgroundSceneOption;
-		Component_Scene scene;
+		Scene scene;
 		Viewport sceneViewport;
 
 		bool firstRender = true;
@@ -90,14 +88,6 @@ namespace Project
 				if( button.Visible )
 					button.Visible = VirtualFile.Exists( fileName );
 			}
-
-			if( Components[ "Text Simple Game Comment" ] != null )
-			{
-				var text = (UIText)Components[ "Text Simple Game Comment" ];
-				var fileName = @"Samples\Simple Game\SimpleGameLevel1.scene";
-				if( text.Visible )
-					text.Visible = VirtualFile.Exists( fileName ) && SystemSettings.MobileDevice;
-			}
 			if( Components[ "Button Play Character Scene" ] != null )
 			{
 				var button = (UIButton)Components[ "Button Play Character Scene" ];
@@ -107,19 +97,19 @@ namespace Project
 				if( button.Visible )
 					button.Visible = VirtualFile.Exists( fileName );
 			}
-			if( Components[ "Button Play Spaceship 2D" ] != null )
+			if( Components[ "Button Play Spaceship Game" ] != null )
 			{
-				var button = (UIButton)Components[ "Button Play Spaceship 2D" ];
-				var fileName = @"Samples\Starter Content\Scenes\Spaceship control 2D.scene";
+				var button = (UIButton)Components[ "Button Play Spaceship Game" ];
+				var fileName = @"Samples\Spaceship Game\Spaceship Game.scene";
 				button.AnyData = fileName;
 				button.Click += ButtonPlay_Click;
 				if( button.Visible )
 					button.Visible = VirtualFile.Exists( fileName );
 			}
-			if( Components[ "Button Play Character 2D" ] != null )
+			if( Components[ "Button Play Platform Game" ] != null )
 			{
-				var button = (UIButton)Components[ "Button Play Character 2D" ];
-				var fileName = @"Samples\Starter Content\Scenes\Character 2D.scene";
+				var button = (UIButton)Components[ "Button Play Platform Game" ];
+				var fileName = @"Samples\Platform Game\Platform Game.scene";
 				button.AnyData = fileName;
 				button.Click += ButtonPlay_Click;
 				if( button.Visible )
@@ -223,8 +213,8 @@ namespace Project
 				SoundWorld.SetListenerReset();
 
 			// Scene simulation.
-			if( scene != null && scene.HierarchyController != null )
-				scene.HierarchyController.PerformSimulationSteps();
+			scene?.HierarchyController?.PerformSimulationSteps();
+			ParentRoot.HierarchyController?.PerformSimulationSteps();
 
 			if( !firstRender )
 				fadeInTimer += delta;
@@ -250,9 +240,9 @@ namespace Project
 		{
 			base.OnAfterRenderUIWithChildren( renderer );
 
+			//fade in
 			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
 			{
-				//fade in
 				var alpha = GetFadeInAlpha();
 				if( alpha != 0 )
 					renderer.AddQuad( new Rectangle( 0, 0, 1, 1 ), new Rectangle( 0, 0, 1, 1 ), null, new ColorValue( 0, 0, 0, alpha ) );
@@ -265,36 +255,41 @@ namespace Project
 		{
 			DestroyScene();
 
-			if( string.IsNullOrEmpty( fileName ) )
+			if( !string.IsNullOrEmpty( fileName ) )
+				scene = ResourceManager.LoadSeparateInstance<Scene>( fileName, true, null );
+
+			if( scene == null )
 			{
-				scene = ComponentUtility.CreateComponent<Component_Scene>( null, true, true );
+				scene = ComponentUtility.CreateComponent<Scene>( null, true, true );
 				scene.BackgroundColor = new ColorValue( 0.4, 0.4, 0.4 );
 			}
-			else
-				scene = ResourceManager.LoadSeparateInstance<Component_Scene>( fileName, true, null );
-			if( scene == null )
-				return;
 
 			sceneViewport = ParentContainer.Viewport;
 			scene.ViewportUpdateBegin += Scene_ViewportUpdateBegin;
 			scene.ViewportUpdateGetCameraSettings += Scene_ViewportUpdateGetCameraSettings;
 			sceneViewport.AttachedScene = scene;
+			sceneViewport.NotifyInstantCameraMovement();
+
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
 		}
 
-		private void Scene_ViewportUpdateBegin( Component_Scene scene, Viewport viewport, Viewport.CameraSettingsClass overrideCameraSettings )
+		private void Scene_ViewportUpdateBegin( Scene scene, Viewport viewport, Viewport.CameraSettingsClass overrideCameraSettings )
 		{
-			ProjectUtility.UpdateSceneAntialiasingByAppSettings( scene );
+			SimulationApp.UpdateSceneAntialiasingByAppSettings( scene );
+			SimulationApp.UpdateSceneResolutionUpscaleByAppSettings( scene );
+			SimulationApp.UpdateSceneSharpnessByAppSettings( scene );
 		}
 
-		private void Scene_ViewportUpdateGetCameraSettings( Component_Scene scene, Viewport viewport, ref bool processed )
+		private void Scene_ViewportUpdateGetCameraSettings( Scene scene, Viewport viewport, ref bool processed )
 		{
-			Component_Camera camera = scene.CameraDefault;
+			Camera camera = scene.CameraDefault;
 			if( camera == null )
-				camera = scene.Mode.Value == Component_Scene.ModeEnum._3D ? scene.CameraEditor : scene.CameraEditor2D;
+				camera = scene.Mode.Value == Scene.ModeEnum._3D ? scene.CameraEditor : scene.CameraEditor2D;
 
 			// Create new camera:
-			//camera = (Component_Camera)camera.Clone();
-			////camera = new Component_Camera();
+			//camera = (Camera)camera.Clone();
+			////camera = new Camera();
 			//camera.Transform = new Transform( cameraPosition, Quaternion.LookAt( ( lookTo - cameraPosition ).GetNormalize(), up ) );
 			//camera.FixedUp = up;
 
@@ -324,6 +319,9 @@ namespace Project
 			{
 				scene.Dispose();
 				scene = null;
+
+				GC.Collect();
+				GC.WaitForPendingFinalizers();
 			}
 		}
 
@@ -332,6 +330,5 @@ namespace Project
 			var playFile = (string)sender.AnyData;
 			SimulationApp.PlayFile( playFile );
 		}
-
 	}
 }

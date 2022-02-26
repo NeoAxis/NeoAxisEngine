@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 //https://github.com/File-New-Project/EarTrumpet/blob/master/EarTrumpet/Services/AccentColorService.cs
 //Seb add
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     /// <summary>
     /// Gets the Windows accent color

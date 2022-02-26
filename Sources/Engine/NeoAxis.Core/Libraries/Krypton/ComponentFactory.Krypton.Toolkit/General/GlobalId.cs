@@ -11,7 +11,7 @@
 using System;
 using System.ComponentModel;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     /// <summary>
     /// Contains a global identifier that is unique among objects.

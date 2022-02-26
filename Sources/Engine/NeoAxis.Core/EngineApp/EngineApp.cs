@@ -1,19 +1,18 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
-using System.Threading;
-using System.Globalization;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Drawing;
 using System.Reflection;
 using System.IO;
 using System.Linq;
-using NeoAxis.Input;
 using NeoAxis.Editor;
-using SharpBgfx;
+using Internal;
+using Internal.SharpBgfx;
+using System.Threading;
 
 namespace NeoAxis
 {
@@ -90,7 +89,7 @@ namespace NeoAxis
 		static object timeLocker = new object();
 
 		//auto unload textures
-		static double lastEngineTimeToAutoUnloadTextures;
+		static double lastEngineTimeToAutoUnloadGpuResources;
 
 		////gamma
 		//double gamma = 1.0f;
@@ -111,6 +110,9 @@ namespace NeoAxis
 
 		static Assembly projectAssembly;
 
+		//render video to file
+		static RenderVideoToFileData renderVideoToFileData;
+
 		//PerformanceCounter.TimeCounter renderPerformanceCounter = new PerformanceCounter.TimeCounter( "Render", false, new ColorValue( 0, 0, 1 ), 0 );
 		//PerformanceCounter.TimeCounter soundPerformanceCounter = new PerformanceCounter.TimeCounter( "Sound", false, new ColorValue( 1, 1, 1 ), 1 );
 
@@ -122,8 +124,6 @@ namespace NeoAxis
 		/// </summary>
 		public static class InitSettings
 		{
-			//!!!!!все заюзать
-
 			static string configVirtualFileName;
 
 			static bool useDirectInputForMouseRelativeMode = true;
@@ -142,15 +142,6 @@ namespace NeoAxis
 			static Vector2I? createWindowPosition = null;
 			static Vector2I? createWindowSize = null;
 			//static bool createWindowFullscreenAllowChangeDisplayFrequency = true;
-
-			//static bool renderingVerticalSync = true;//!!!!что по дефолту? в редакторах включать?
-			//static string renderingDeviceName = "";
-			//static int renderingDeviceIndex;
-			//static bool renderingDirect3DFPUPreserve = true;//!!!!!!выключив быстрее будет. проверить.
-			//static RendererWorld.FilteringMode renderingFilteringMode = RendererWorld.FilteringMode.RecommendedSetting;
-			//static bool renderingAllowDirectX9Ex;
-			//!!!!для debug geometry потом. на гуй не влияет?
-			//static int renderingHardwareFullscreenAntialiasing;
 
 			//static bool allowWriteEngineConfigFile;
 
@@ -313,6 +304,22 @@ namespace NeoAxis
 			//		createWindowFullscreenAllowChangeDisplayFrequency = value;
 			//	}
 			//}
+
+			public static RendererBackend RendererBackend = RendererBackend.Default;
+			public static bool RendererReportDebugToLog;
+			public static bool SimulationVSync = true;//for garbage collector is better to enable vsync
+			public static bool SimulationTripleBuffering;
+			public static bool UseShaderCache = true;
+			//public static bool AnisotropicFiltering = true;
+
+			public static string SoundSystemDLL = "";
+			public static int SoundMaxReal2DChannels = 32;
+			public static int SoundMaxReal3DChannels = 50;
+
+			public static bool ScriptingCompileProjectSolutionAtStartup = true;
+
+			public static double AutoUnloadGpuResourcesNotUsedForLongTimeInSecondsInEditor = 300;
+			public static double AutoUnloadGpuResourcesNotUsedForLongTimeInSecondsInSimulation = 300;
 
 			//public static bool RenderingVerticalSync
 			//{
@@ -519,7 +526,7 @@ namespace NeoAxis
 				{
 					try
 					{
-#if !ANDROID
+#if !ANDROID && !IOS
 						Vector2I smallIconSize = platform.GetSmallIconSize();
 						if( smallIconSize != Vector2I.Zero )
 							iconSmall = new Icon( icon, new Size( smallIconSize.X, smallIconSize.Y ) );
@@ -539,7 +546,7 @@ namespace NeoAxis
 				}
 			}
 
-			public /*internal */void _ProcessMouseMoveEvent()
+			public /*internal */void ProcessMouseMoveEvent()
 			{
 				//!!!!всё тут обновить с учетом изменений в Viewport
 
@@ -633,6 +640,8 @@ namespace NeoAxis
 		//   return ret;
 		//}
 
+		///////////////////////////////////////////
+
 		public static bool Init()// EngineApp overridedObject )//, IntPtr mainModuleData  )
 		{
 			StartupTiming.CounterStart( "EngineApp init" );
@@ -689,7 +698,7 @@ namespace NeoAxis
 
 		bool InitInternal( IntPtr mainModuleData )
 		{
-			platform = PlatformFunctionality.Get();
+			platform = PlatformFunctionality.Instance;
 
 			//Thread.CurrentThread.CurrentCulture = new CultureInfo( "en-US" );
 
@@ -710,6 +719,8 @@ namespace NeoAxis
 						operationSystemDisplayName = "Apple Mac OS X";
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
 						operationSystemDisplayName = "Google Android";
+					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
+						operationSystemDisplayName = "Apple iOS";
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
 					{
 						//!!!!
@@ -853,7 +864,7 @@ namespace NeoAxis
 			}
 
 			//native memory manager detect leaks
-			NativeMemoryManager.LogLeaks();
+			NativeUtility.LogLeaks();
 		}
 
 		void InitializationParameters_InitFromEngineConfig()
@@ -1053,7 +1064,7 @@ namespace NeoAxis
 
 				if( InitSettings.UseApplicationWindowHandle == IntPtr.Zero )
 				{
-					if( InitSettings.CreateWindowFullscreen == null )
+					//if( InitSettings.CreateWindowFullscreen == null )
 					{
 						//fullscreen
 						if( SystemSettings.CommandLineParameters.TryGetValue( "-fullscreen", out var fullscreenStr ) )
@@ -1084,6 +1095,50 @@ namespace NeoAxis
 						}
 					}
 
+					//if( InitSettings.CreateWindowState == null )
+					{
+						//windowState
+						if( SystemSettings.CommandLineParameters.TryGetValue( "-windowState", out var str ) )
+						{
+							try
+							{
+								if( Enum.TryParse( typeof( WindowStateEnum ), str, true, out var windowState ) )
+									InitSettings.CreateWindowState = (WindowStateEnum)windowState;
+							}
+							catch { }
+						}
+					}
+
+					//if( InitSettings.CreateWindowPosition == null )
+					{
+						//windowPosition
+						if( SystemSettings.CommandLineParameters.TryGetValue( "-windowPosition", out var str ) )
+						{
+							try
+							{
+								InitSettings.CreateWindowPosition = (Vector2I)SimpleTypes.ParseValue( typeof( Vector2I ), str );
+								if( InitSettings.CreateWindowState == null )
+									InitSettings.CreateWindowState = WindowStateEnum.Normal;
+							}
+							catch { }
+						}
+					}
+
+					//if( InitSettings.CreateWindowSize == null )
+					{
+						//windowSize
+						if( SystemSettings.CommandLineParameters.TryGetValue( "-windowSize", out var str ) )
+						{
+							try
+							{
+								InitSettings.CreateWindowSize = (Vector2I)SimpleTypes.ParseValue( typeof( Vector2I ), str );
+								if( InitSettings.CreateWindowState == null )
+									InitSettings.CreateWindowState = WindowStateEnum.Normal;
+							}
+							catch { }
+						}
+					}
+
 					if( InitSettings.CreateWindowState == null )
 						InitSettings.CreateWindowState = WindowStateEnum.Maximized;
 					if( InitSettings.CreateWindowSize == null )
@@ -1093,10 +1148,7 @@ namespace NeoAxis
 					{
 						InitSettings.CreateWindowPosition = new Vector2I( 0, 0 );
 						if( InitSettings.CreateWindowState.Value == WindowStateEnum.Normal )
-						{
-							InitSettings.CreateWindowPosition =
-								( platform.GetScreenSize() - InitSettings.CreateWindowSize.Value ) / 2;
-						}
+							InitSettings.CreateWindowPosition = ( platform.GetScreenSize() - InitSettings.CreateWindowSize.Value ) / 2;
 					}
 
 					if( InitSettings.CreateWindowFullscreen.Value )
@@ -1114,7 +1166,7 @@ namespace NeoAxis
 					Log.Fatal( "EngineApp: Create: The application is already created." );
 
 				//Project.csproj. load cs files, compile.
-				CompileAndLoadProjectAssembly( "Project" );
+				CompileAndLoadProjectAssembly();
 
 				AppCreateBefore?.Invoke();
 
@@ -1164,7 +1216,7 @@ namespace NeoAxis
 					//bool allowHardwareAcceleration = false;
 					//PhysicsWorld.Init( allowHardwareAcceleration );
 
-					BulletPhysicsUtility.InitLibrary();
+					Internal.BulletSharp.BulletPhysicsUtility.InitLibrary();
 				}
 
 				//joysticks and special input devices
@@ -1190,6 +1242,9 @@ namespace NeoAxis
 #endif
 					}
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
+					{
+					}
+					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
 					{
 					}
 					else
@@ -1224,8 +1279,8 @@ namespace NeoAxis
 				//	var renderingAPI = ProjectSettings.Get.RenderingAPI.Value;
 				//	switch( renderingAPI )
 				//	{
-				//	case Component_ProjectSettings.RenderingAPIEnum.DirectX11: EngineSettings.Init.RendererBackend = RendererBackend.Direct3D11; break;
-				//	case Component_ProjectSettings.RenderingAPIEnum.DirectX12: EngineSettings.Init.RendererBackend = RendererBackend.Direct3D12; break;
+				//	case ProjectSettingsComponent.RenderingAPIEnum.DirectX11: EngineSettings.Init.RendererBackend = RendererBackend.Direct3D11; break;
+				//	case ProjectSettingsComponent.RenderingAPIEnum.DirectX12: EngineSettings.Init.RendererBackend = RendererBackend.Direct3D12; break;
 				//	}
 				//}
 				//catch { }
@@ -1238,7 +1293,7 @@ namespace NeoAxis
 				StartupTiming.CounterStart( "Rendering system init" );
 				{
 					bool startedAtFullscreen = FullscreenEnabled;
-					if( Debugger.IsAttached )
+					if( Debugger.IsAttached && !SystemSettings.CommandLineParameters.TryGetValue( "-renderVideoToFile", out _ ) )
 						startedAtFullscreen = false;
 
 					if( !RenderingSystem.Init( startedAtFullscreen, InitSettings.MultiMonitorMode.Value, InitSettings.Language ) )
@@ -1290,7 +1345,7 @@ namespace NeoAxis
 
 				//RendererWorld.BeginRenderFrame += RendererWorld_BeginRenderFrame;
 
-				RenderingSystem._PostInitRendererAddition();
+				RenderingSystem.PostInitRendererAddition();
 
 				SoundWorld.Init( applicationWindowHandle );
 
@@ -1315,7 +1370,7 @@ namespace NeoAxis
 
 				//process message loop events
 				if( createdInsideEngineWindow != null )
-					_ProcessApplicationMessageEvents();
+					ProcessApplicationMessageEvents();
 
 				//!!!!тут?
 				//if( !SceneManager.Init() )
@@ -1327,27 +1382,14 @@ namespace NeoAxis
 
 				created = true;
 
-				//			//Project.csproj. load cs files, compile.
-				//			//!!!!new
-				//#if W__!!__INDOWS_UWP
-				//			CompileAndLoadProjectAssembly( "Project.UWP" ); // move name to config ?
-				//#else
-				//			CompileAndLoadProjectAssembly( "Project" );
-				//#endif
-				//before
-				//CSharpProjectFileUtility.GetProjectFileCSFiles( true, false );
-				//CSharpProjectFileUtility.CheckToRemoveNotExistsFilesFromProject();
-				//if( EngineSettings.Init.ScriptingCompileProjectSolutionAtStartup )
-				//	CSharpProjectFileUtility.CompileProjectSolution( false, false, out bool skipped );
-
-				VirtualFileSystem.RegisterAssemblies_IncludingFromDefaultSettingConfig();
+				VirtualFileSystem.RegisterAssembliesIncludingFromDefaultSettingConfig();
 
 				//!!!!было
 				if( createdInsideEngineWindow != null && createdInsideEngineWindow.Focused )
 					platform.CreatedWindow_UpdateShowSystemCursor( true );
 
 				if( createdInsideEngineWindow != null )
-					_CreatedWindow_ProcessResize();
+					CreatedWindowProcessResize();
 				//DoResize();
 
 				lastEngineTimeToCalculateFPS = EngineTime;
@@ -1370,6 +1412,9 @@ namespace NeoAxis
 			foreach( var line in StartupTiming.GetStatisticsAsStringLines() )
 				Log.InvisibleInfo( line );
 
+			//render video to file
+			RenderVideoToFileData.Init();
+
 			//Log.Info( "Net Types: " + MetadataManager.NetTypes.Count.ToString() );
 			//string s = "";
 			//int c = 0;
@@ -1390,39 +1435,56 @@ namespace NeoAxis
 			return true;
 		}
 
-		private static void CompileAndLoadProjectAssembly( string projectName, bool rebuild = false )
+		static void CompileAndLoadProjectAssembly()// string projectName, bool rebuild = false )
 		{
+			const string projectName = "Project";
+
 #if !DEPLOY
 
-			bool canCompile = true;
-
 			//check dotnet available
+			bool canCompile = true;
 			{
 				var folder = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "dotnet" );
 				if( !Directory.Exists( folder ) )
 					canCompile = false;
+
+				var projectSln = Path.Combine( VirtualFileSystem.Directories.Project, projectName + ".sln" );
+				if( !File.Exists( projectSln ) )
+					canCompile = false;
 			}
 
+			//compile
 			if( canCompile )
 			{
-				CSharpProjectFileUtility.Init( projectName );
+				CSharpProjectFileUtility.Init();
 				CSharpProjectFileUtility.GetProjectFileCSFiles( true, false );
 				CSharpProjectFileUtility.CheckToRemoveNotExistsFilesFromProject();
 
-				// compile
-				string outputAssemblyName = CSharpProjectFileUtility.OutputAssemblyName;
-				if( EngineSettings.Init.ScriptingCompileProjectSolutionAtStartup )
-					outputAssemblyName = CSharpProjectFileUtility.CompileIfRequired( rebuild, applicationType == ApplicationTypeEnum.Editor );
+				if( InitSettings.ScriptingCompileProjectSolutionAtStartup )
+					CSharpProjectFileUtility.ClearAndCompileIfRequiredAtStart();
 
-				// and load
-				string fullPath = Path.Combine( CSharpProjectFileUtility.OutputDir, outputAssemblyName + ".dll" );
-				projectAssembly = AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true, loadWithoutLocking: true );
+				////load
+				//string fullPath = Path.Combine( VirtualFileSystem.Directories.Binaries, projectName + ".dll" );
+				//projectAssembly = AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true, loadWithoutLocking: true );
+
+				////compile
+				//string outputAssemblyName = CSharpProjectFileUtility.OutputAssemblyName;
+				//if( InitSettings.ScriptingCompileProjectSolutionAtStartup )
+				//	outputAssemblyName = CSharpProjectFileUtility.CompileIfRequired( rebuild, applicationType == ApplicationTypeEnum.Editor );
+
+				////load
+				//string fullPath = Path.Combine( CSharpProjectFileUtility.OutputDir, outputAssemblyName + ".dll" );
+				//projectAssembly = AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true, loadWithoutLocking: true );
 			}
-			else
-			{
-				string fullPath = Path.Combine( VirtualFileSystem.Directories.Binaries, projectName + ".dll" );
-				projectAssembly = AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true, loadWithoutLocking: true );
-			}
+			//else
+			//{
+			//	string fullPath = Path.Combine( VirtualFileSystem.Directories.Binaries, projectName + ".dll" );
+			//	projectAssembly = AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true, loadWithoutLocking: true );
+			//}
+
+			//load
+			string fullPath = Path.Combine( VirtualFileSystem.Directories.Binaries, projectName + ".dll" );
+			projectAssembly = AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true, loadWithoutLocking: true );
 
 #else
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
@@ -1506,13 +1568,13 @@ namespace NeoAxis
 			if( EnginePauseWhenApplicationIsNotActive )
 			{
 				//disable simulation
-				_EnginePause_UpdateState( true, true );
+				EnginePauseUpdateState( true, true );
 			}
 
 			platform.ProcessChangingVideoMode();
 		}
 
-		static public /*internal */void _CreatedWindow_ApplicationIdle( bool doTickOnly )
+		static public /*internal */void CreatedWindowApplicationIdle( bool doTickOnly )
 		{
 			if( created && !closing )
 			{
@@ -1525,7 +1587,7 @@ namespace NeoAxis
 				}
 
 				//system pause reset
-				_EnginePause_UpdateState( false, true );
+				EnginePauseUpdateState( false, true );
 				//if( systemPause && applicationWindowCreated && platform.IsWindowActive() && !platform.IsIntoMenuLoop() )
 				//   EnginePause_UpdateState( false, true );
 
@@ -1580,7 +1642,7 @@ namespace NeoAxis
 			//if( FullScreen )
 			//   platform.FullscreenFadeOut( true );
 
-			_EnginePause_UpdateState( true, true );
+			EnginePauseUpdateState( true, true );
 			closing = true;
 
 			//!!!!!было. надо?
@@ -1600,10 +1662,13 @@ namespace NeoAxis
 			//destroy all scenes
 			do
 			{
-				foreach( var scene in Component_Scene.All )
+				foreach( var scene in Scene.GetAllInstancesEnabled() )
 					scene.Dispose();
-			} while( Component_Scene.All.Length != 0 );
+			} while( Scene.GetAllInstancesEnabled().Length != 0 );
 			//SceneManager.Shutdown();
+
+			RenderVideoToFileData?.Close();
+			RenderVideoToFileData = null;
 
 			//!!!!было
 			//UIControlsWorld.Shutdown();
@@ -1621,14 +1686,16 @@ namespace NeoAxis
 			//   RendererWorld.BeginRenderFrame -= RendererWorld_BeginRenderFrame;
 			RenderingSystem.Shutdown();
 
+#if !NO_LITE_DB
 			ShaderCache.Shutdown();
+#endif
 
 			LanguageManager.Shutdown();
 
 			platform.ShutdownDirectInputMouseDevice();
 			InputDeviceManager.Shutdown();
 
-			BulletPhysicsUtility.ShutdownLibrary();
+			Internal.BulletSharp.BulletPhysicsUtility.ShutdownLibrary();
 			//PhysicsWorld.Shutdown();
 
 			WindowDestroyOrDetach();
@@ -1684,7 +1751,7 @@ namespace NeoAxis
 
 		static void RenderSceneInternal()
 		{
-			if( DrawSplashScreen != Component_ProjectSettings.EngineSplashScreenStyleEnum.Disabled )
+			if( DrawSplashScreen != ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.Disabled )
 				return;
 
 			if( !platform.IsWindowInitialized() )
@@ -1705,16 +1772,11 @@ namespace NeoAxis
 
 				//renderPerformanceCounter.Start();
 				//needRenderScreenUI = true;
-				//!!!!!!
-				//Log.Fatal( "good?" );
 				Viewport viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
 
 				viewport.Update( true );
 
-				//!!!!так?
-				//!!!!waitForVSync
-				//SharpBgfx.Bgfx.Frame();
-				//viewport.Parent.SwapBuffers( true );
+				RenderVideoToFileData?.AddFrame();
 
 				//RendererWorld._RenderOneFrame();
 				//needRenderScreenUI = false;
@@ -1879,47 +1941,43 @@ namespace NeoAxis
 					InputDeviceManager.Instance.UpdateDeviceState();
 			}
 
-			//!!!где еще?
-			_UpdateEngineTime();
+			UpdateEngineTime();
 
-			//!!!!!тут?
-			//!!!!когда еще вызывать?
 			EngineThreading.ExecuteQueuedActionsFromMainThread();
 
-			//!!!!тут?
-			//!!!!!где-то еще?
 			VirtualFileWatcher.ProcessEvents();
 
 			//auto unload textures
-			if( EngineTime - lastEngineTimeToAutoUnloadTextures > 1.0 )
+			if( EngineTime - lastEngineTimeToAutoUnloadGpuResources > 1.0 )
 			{
 				double interval;
 				if( ApplicationType == ApplicationTypeEnum.Editor )
-					interval = EngineSettings.Init.AutoUnloadTexturesNotUsedForLongTimeInSecondsInEditor;
+					interval = InitSettings.AutoUnloadGpuResourcesNotUsedForLongTimeInSecondsInEditor;
 				else
-					interval = EngineSettings.Init.AutoUnloadTexturesNotUsedForLongTimeInSecondsInSimulation;
+					interval = InitSettings.AutoUnloadGpuResourcesNotUsedForLongTimeInSecondsInSimulation;
 
 				GpuTexture.UnloadNotUsedForLongTime( interval );
+				GpuBufferManager.DestroyNativeObjectsNotUsedForLongTime( interval );
 
-				lastEngineTimeToAutoUnloadTextures = EngineTime;
+				lastEngineTimeToAutoUnloadGpuResources = EngineTime;
 			}
 
 			//update sound world
 			//soundPerformanceCounter.Start();
 			//!!!!
-			SoundWorld._Update();// EngineTime );
-								 //soundPerformanceCounter.End();
+			SoundWorld.Internal_Update();// EngineTime );
+										 //soundPerformanceCounter.End();
 
 			Log.FlushCachedLog();
 
 			double time = EngineTime;
 			double delta = time - lastEngineTimeToCalculateFPS;
-			if( delta > 1.0f )
+			if( delta > 1.0f && renderVideoToFileData == null )
 			{
 				if( !enginePaused )
 				{
-					_EnginePause_UpdateState( true, false );
-					_EnginePause_UpdateState( false, false );
+					EnginePauseUpdateState( true, false );
+					EnginePauseUpdateState( false, false );
 				}
 				delta = 0;
 				//!!!!new
@@ -1928,7 +1986,7 @@ namespace NeoAxis
 			if( delta != 0 )
 			{
 				lastEngineTimeToCalculateFPS = time;
-				if( DrawSplashScreen == Component_ProjectSettings.EngineSplashScreenStyleEnum.Disabled )
+				if( DrawSplashScreen == ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.Disabled )
 					PerformTick( (float)delta );
 			}
 
@@ -2140,7 +2198,7 @@ namespace NeoAxis
 			mustChangeVideoMode = true;
 		}
 
-		static public /*internal */bool _IsRealShowSystemCursor()
+		static public /*internal */bool IsRealShowSystemCursor()
 		{
 			bool show;
 
@@ -2188,7 +2246,7 @@ namespace NeoAxis
 					return;
 				enginePausedFromOutsideEngineApp = value;
 
-				_EnginePause_UpdateState( false, true );
+				EnginePauseUpdateState( false, true );
 			}
 		}
 
@@ -2201,12 +2259,12 @@ namespace NeoAxis
 					return;
 				enginePauseWhenApplicationIsNotActive = value;
 
-				SoundWorld._SuspendWorkingWhenApplicationIsNotActive = value;
+				SoundWorld.Internal_SuspendWorkingWhenApplicationIsNotActive = value;
 			}
 		}
 
 		//!!!!!!
-		static public /*internal */void _EnginePause_UpdateState( bool tempPauseByEngine, bool updateSoundWorldAndKeysUpAll )
+		static public /*internal */void EnginePauseUpdateState( bool tempPauseByEngine, bool updateSoundWorldAndKeysUpAll )
 		{
 			if( Created )
 			{
@@ -2223,18 +2281,21 @@ namespace NeoAxis
 					//update
 
 					{
-						foreach( Viewport viewport in RenderingSystem.GetViewports() )
+						foreach( Viewport viewport in RenderingSystem.GetAllViewports() )
 							viewport.ResetLastUpdateTime();
 						//!!!!!!
-						//foreach( Component_Map map in Component_Map.Instances )
+						//foreach( Map map in Map.Instances )
 						//	map.ResetExecutedTimeForTicks();
 
 						//RendererWorld._ResetFrameRenderTimeAndRenderTimeStep();
 					}
 
-					//!!!!?
-					_UpdateEngineTime();
-					lastEngineTimeToCalculateFPS = EngineTime;
+					if( RenderVideoToFileData == null )
+					{
+						//!!!!?
+						UpdateEngineTime();
+						lastEngineTimeToCalculateFPS = EngineTime;
+					}
 
 					//instance.OnEnginePausedChanged( newValue );
 					EnginePausedChanged?.Invoke( newValue );
@@ -2299,10 +2360,10 @@ namespace NeoAxis
 		//	}
 		//}
 
-		public static void _ProcessApplicationMessageEvents()
+		public static void ProcessApplicationMessageEvents()
 		{
 			if( createdInsideEngineWindow == null )
-				Log.Fatal( "EngineApp: _ProcessApplicationMessageEvents: createdInsideEngineWindow == null." );
+				Log.Fatal( "EngineApp: ProcessApplicationMessageEvents: createdInsideEngineWindow == null." );
 			platform.CreatedWindow_ProcessMessageEvents();
 		}
 
@@ -2321,7 +2382,7 @@ namespace NeoAxis
 		}
 
 		//!!!!!
-		static public /*internal */void _CreatedWindow_ProcessResize()
+		static public /*internal */void CreatedWindowProcessResize()
 		{
 			if( createdInsideEngineWindow == null )
 				Log.Fatal( "EngineApp: CreatedWindow_ProcessResize: createdInsideEngineWindow == null." );
@@ -2354,6 +2415,11 @@ namespace NeoAxis
 
 				//!!!!так?
 				var rect = platform.CreatedWindow_GetClientRectangle();
+
+				////!!!!
+				//rect.Right *= 2;
+				//rect.Bottom *= 2;
+
 				RenderingSystem.ApplicationRenderTarget.WindowMovedOrResized( rect.Size );// FullScreenEnabled );//, videoMode );
 																						  //}
 
@@ -2401,37 +2467,48 @@ namespace NeoAxis
 			get { return engineTimeScale; }
 			set
 			{
-				lock( timeLocker )
-				{
-					if( engineTimeScale == value )
-						return;
+				//lock( timeLocker )
+				//{
 
-					double systemTime = platform.GetSystemTime();
-					double newAddResultTimeValue = addToResultTime + ( systemTime - startTime ) * engineTimeScale;
+				if( engineTimeScale == value )
+					return;
 
-					startTime = systemTime;
-					addToResultTime = newAddResultTimeValue;
+				double systemTime = GetSystemTime();
+				double newAddResultTimeValue = addToResultTime + ( systemTime - startTime ) * engineTimeScale;
 
-					engineTimeScale = value;
-				}
+				startTime = systemTime;
+				addToResultTime = newAddResultTimeValue;
+
+				engineTimeScale = value;
+
+				//}
 			}
 		}
 
-		public /*internal */static void _UpdateEngineTime( double? setManualValueAndDisableAutoUpdate = null )
+		public /*internal */static void UpdateEngineTime( double? setManualValueAndDisableAutoUpdate = null )
 		{
-			lock( timeLocker )
+			//lock( timeLocker )
+			//{
+
+			if( renderVideoToFileData != null )
 			{
-				if( setManualValueAndDisableAutoUpdate != null )
-				{
-					engineTime = setManualValueAndDisableAutoUpdate.Value;
-					engineTimeManualValueAndDisableAutoUpdate = true;
-				}
-				else
-				{
-					engineTime = addToResultTime + ( platform.GetSystemTime() - startTime ) * engineTimeScale;
-					engineTimeManualValueAndDisableAutoUpdate = false;
-				}
+				Interlocked.Exchange( ref engineTime, EngineTime + 1.0 / (double)renderVideoToFileData.FramesPerSecond );
+				//engineTime += 1.0 / (double)renderVideoToFileData.FramesPerSecond;
 			}
+			else if( setManualValueAndDisableAutoUpdate != null )
+			{
+				Interlocked.Exchange( ref engineTime, setManualValueAndDisableAutoUpdate.Value );
+				//engineTime = setManualValueAndDisableAutoUpdate.Value;
+				engineTimeManualValueAndDisableAutoUpdate = true;
+			}
+			else
+			{
+				Interlocked.Exchange( ref engineTime, addToResultTime + ( GetSystemTime() - startTime ) * engineTimeScale );
+				//engineTime = addToResultTime + ( GetSystemTime() - startTime ) * engineTimeScale;
+				engineTimeManualValueAndDisableAutoUpdate = false;
+			}
+
+			//}
 		}
 
 		/// <summary>
@@ -2441,19 +2518,32 @@ namespace NeoAxis
 		{
 			get
 			{
-				lock( timeLocker )
-				{
-					return engineTime;
-				}
+				return Interlocked.CompareExchange( ref engineTime, -1.0, -1.0 );
+
+				//lock( timeLocker )
+				//{
+				//	return engineTime;
+				//}
 			}
 		}
 
 		public static double GetSystemTime()
 		{
+			//!!!!use the code for all platforms?
+			//!!!!need timeClocker?
+#if WINDOWS
+			long time = Stopwatch.GetTimestamp();
+			double elapsedSeconds = time * ( 1.0 / Stopwatch.Frequency );
+			return elapsedSeconds;
+#else
 			lock( timeLocker )
 			{
-				return platform.GetSystemTime();
+				if( platform != null )
+					return platform.GetSystemTime();
+				else
+					return 0;
 			}
+#endif
 		}
 
 		///////////////////////////////////////////////////////////////// Get Info ////////////////////////////////////////////////////////////////////
@@ -2506,9 +2596,9 @@ namespace NeoAxis
 			set { maxFPS = value; }
 		}
 
-		public static IntPtr _CallSpecialPlatformSpecificMethod( string message, IntPtr param )
+		public static IntPtr CallPlatformSpecificMethod( string message, IntPtr param )
 		{
-			return platform.CallSpecialPlatformSpecificMethod( message, param );
+			return platform.CallPlatformSpecificMethod( message, param );
 		}
 
 		//public UserCustomMethodResult CallUserCustomMethod( string methodName, out object returnValue, params object[] arguments )
@@ -2549,7 +2639,7 @@ namespace NeoAxis
 		//!!!!!!
 		internal static bool ChangeVideoMode( Vector2I mode )
 		{
-			PlatformFunctionality platform = PlatformFunctionality.Get();
+			PlatformFunctionality platform = PlatformFunctionality.Instance;
 
 			if( !platform.ChangeVideoMode( mode ) )
 			{
@@ -2569,7 +2659,7 @@ namespace NeoAxis
 		{
 			if( videoModeChanged )
 			{
-				PlatformFunctionality platform = PlatformFunctionality.Get();
+				PlatformFunctionality platform = PlatformFunctionality.Instance;
 				platform.RestoreVideoMode();
 				videoModeChanged = false;
 			}
@@ -2643,11 +2733,11 @@ namespace NeoAxis
 		//}
 
 		[Browsable( false )]
-		internal static Component_ProjectSettings.EngineSplashScreenStyleEnum DrawSplashScreen
+		internal static ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum DrawSplashScreen
 		{
 			get
 			{
-				var result = ProjectSettings.Get.EngineSplashScreenStyle.Value;
+				var result = ProjectSettings.Get.CustomSplashScreen.EngineSplashScreenStyle.Value;
 
 				//if( EngineTime != 0 )
 				//{
@@ -2664,7 +2754,7 @@ namespace NeoAxis
 
 				//double totalTime = IsProPlan ? ProjectSettings.Get.EngineSplashScreenTime.Value : ProjectSettings.Get.EngineSplashScreenTimeReadOnly;
 				if( EngineTime - splashScreenStartTime > totalTime )
-					result = Component_ProjectSettings.EngineSplashScreenStyleEnum.Disabled;
+					result = ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.Disabled;
 
 				return result;
 
@@ -2759,5 +2849,10 @@ namespace NeoAxis
 		//	RestartEngineEvent?.Invoke( name );
 		//}
 
+		public static RenderVideoToFileData RenderVideoToFileData
+		{
+			get { return renderVideoToFileData; }
+			set { renderVideoToFileData = value; }
+		}
 	}
 }

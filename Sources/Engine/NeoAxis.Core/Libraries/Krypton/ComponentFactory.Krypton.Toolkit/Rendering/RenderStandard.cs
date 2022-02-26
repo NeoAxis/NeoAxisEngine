@@ -20,7 +20,7 @@ using System.Windows.Forms.VisualStyles;
 using System.Diagnostics;
 using System.Security;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
 	/// <summary>
 	/// Provides the standard renderer that honors all palette properties.

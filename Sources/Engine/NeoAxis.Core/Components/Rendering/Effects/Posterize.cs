@@ -1,4 +1,4 @@
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,15 +10,15 @@ namespace NeoAxis
 	/// </summary>
 	[DefaultOrderOfEffect( 8.1 )]
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
-	public class Component_RenderingEffect_Posterize : Component_RenderingEffect_Simple
+	public class RenderingEffect_Posterize : RenderingEffect_Simple
 	{
 		const string shaderDefault = @"Base\Shaders\Effects\Posterize_fs.sc";
 
 		//
 
-		public Component_RenderingEffect_Posterize()
+		public RenderingEffect_Posterize()
 		{
-			Shader = shaderDefault;
+			ShaderFile = shaderDefault;
 		}
 
 		/// <summary>
@@ -32,7 +32,7 @@ namespace NeoAxis
 			set { if( _levels.BeginSet( ref value ) ) { try { LevelsChanged?.Invoke( this ); } finally { _levels.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Levels"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_Posterize> LevelsChanged;
+		public event Action<RenderingEffect_Posterize> LevelsChanged;
 		ReferenceField<double> _levels = 10.0;
 
 		/////////////////////////////////////////

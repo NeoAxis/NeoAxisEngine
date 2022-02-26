@@ -14,7 +14,7 @@ using System.Drawing.Text;
 using System.Drawing.Drawing2D;
 using System.Diagnostics;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
 	/// <summary>
 	/// Set the SmoothingMode=AntiAlias until instance disposed.

@@ -1,6 +1,6 @@
 $input v_texCoord0
 
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "../../Common.sh"
 #include "../../FragmentFunctions.sh"
 
@@ -11,6 +11,7 @@ uniform vec4 effectColor;
 uniform vec4/*vec2*/ effectScale;
 uniform vec4 effectAnyData;
 
+//Output interval: 0 - 1
 float random2( vec2 p )
 {
 	vec2 k1 = vec2(
@@ -45,7 +46,7 @@ void main()
 			
 			vec4 mask2 = texture2D(s_maskTexture, p);
 			
-			if(any(mask2.rgb))
+			if(any2(mask2.rgb))
 			{
 				minScale = scl;
 				break;
@@ -56,7 +57,7 @@ void main()
 			break;		
 	}
 
-	bool insideModel = any(mask.rgb);
+	bool insideModel = any2(mask.rgb);
 	if(insideModel)
 		minScale = 0.0;//discard;
 

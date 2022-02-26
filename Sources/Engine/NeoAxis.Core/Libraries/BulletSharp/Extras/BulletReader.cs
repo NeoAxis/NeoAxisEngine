@@ -1,10 +1,10 @@
 ﻿using System;
 using System.IO;
-using BulletSharp.Math;
+using Internal.BulletSharp.Math;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
     public class BulletReader : BinaryReader
     {
@@ -43,7 +43,7 @@ namespace BulletSharp
             return ReadInt64();
         }
 
-        public Matrix ReadMatrix()
+        public BMatrix ReadMatrix()
         {
             double[] m = new double[16];
             m[0] = ReadSingle();
@@ -63,10 +63,10 @@ namespace BulletSharp
             m[14] = ReadSingle();
             ReadSingle();
             m[15] = 1;
-            return new Matrix(m);
+            return new BMatrix(m);
         }
 
-        public Matrix ReadMatrixDouble()
+        public BMatrix ReadMatrixDouble()
         {
             double[] m = new double[16];
             m[0] = ReadDouble();
@@ -86,16 +86,16 @@ namespace BulletSharp
             m[14] = ReadDouble();
             ReadDouble();
             m[15] = 1;
-            return new Matrix(m);
+            return new BMatrix(m);
         }
 
-        public Matrix ReadMatrix(int position)
+        public BMatrix ReadMatrix(int position)
         {
             BaseStream.Position = position;
             return ReadMatrix();
         }
 
-        public Matrix ReadMatrixDouble(int position)
+        public BMatrix ReadMatrixDouble(int position)
         {
             BaseStream.Position = position;
             return ReadMatrixDouble();
@@ -147,31 +147,31 @@ namespace BulletSharp
             }
         }
 
-        public Vector3 ReadVector3()
+        public BVector3 ReadVector3()
         {
             double x = ReadSingle();
             double y = ReadSingle();
             double z = ReadSingle();
             BaseStream.Position += sizeof(float); // double w = ReadSingle();
-            return new Vector3(x, y, z);
+            return new BVector3(x, y, z);
         }
 
-        public Vector3 ReadVector3Double()
+        public BVector3 ReadVector3Double()
         {
             double x = ReadDouble();
             double y = ReadDouble();
             double z = ReadDouble();
             BaseStream.Position += sizeof(double); // double w = ReadDouble();
-            return new Vector3(x, y, z);
+            return new BVector3(x, y, z);
         }
 
-        public Vector3 ReadVector3(int position)
+        public BVector3 ReadVector3(int position)
         {
             BaseStream.Position = position;
             return ReadVector3();
         }
 
-        public Vector3 ReadVector3Double(int position)
+        public BVector3 ReadVector3Double(int position)
         {
             BaseStream.Position = position;
             return ReadVector3Double();

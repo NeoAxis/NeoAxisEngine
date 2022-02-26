@@ -4,10 +4,10 @@
  */
 
 using System.Collections.Generic;
-using tainicom.Aether.Physics2D.Common;
-using tainicom.Aether.Physics2D.Common.Decomposition;
+using Internal.tainicom.Aether.Physics2D.Common;
+using Internal.tainicom.Aether.Physics2D.Common.Decomposition;
 
-namespace tainicom.Aether.Physics2D.Content
+namespace Internal.tainicom.Aether.Physics2D.Content
 {
     public struct Polygon
     {

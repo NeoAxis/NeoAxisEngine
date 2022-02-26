@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
@@ -695,7 +695,7 @@ namespace NeoAxis
 		public bool Contains( ref SphereF s )
 		{
 			Vector3F localPoint;
-			Vector3F.Subtract( ref s.Origin, ref Center, out localPoint );
+			Vector3F.Subtract( ref s.Center, ref Center, out localPoint );
 
 			float x = Math.Abs( Vector3F.Dot( ref localPoint, ref Axis.Item0 ) ) - Extents.X;
 			if( x > 0 || -x < s.Radius )

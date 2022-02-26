@@ -1,0 +1,27 @@
+.component NeoAxis.Component_Image
+{
+	LoadCubePositiveX
+	{
+		GetByReference = "Content\\Environments\\Base\\Data\\Forest_posx.jpg"
+	}
+	LoadCubeNegativeX
+	{
+		GetByReference = "Content\\Environments\\Base\\Data\\Forest_negx.jpg"
+	}
+	LoadCubePositiveY
+	{
+		GetByReference = "Content\\Environments\\Base\\Data\\Forest_posy.jpg"
+	}
+	LoadCubeNegativeY
+	{
+		GetByReference = "Content\\Environments\\Base\\Data\\Forest_negy.jpg"
+	}
+	LoadCubePositiveZ
+	{
+		GetByReference = "Content\\Environments\\Base\\Data\\Forest_posz.jpg"
+	}
+	LoadCubeNegativeZ
+	{
+		GetByReference = "Content\\Environments\\Base\\Data\\Forest_negz.jpg"
+	}
+}

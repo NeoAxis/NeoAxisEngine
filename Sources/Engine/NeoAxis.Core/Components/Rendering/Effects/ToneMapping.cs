@@ -1,11 +1,7 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
-using System.Drawing.Design;
 using System.ComponentModel;
-using System.Reflection;
 
 namespace NeoAxis
 {
@@ -15,7 +11,7 @@ namespace NeoAxis
 	[NewObjectDefaultName( "Tone Mapping" )]
 	[DefaultOrderOfEffect( 3 )]
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
-	public class Component_RenderingEffect_ToneMapping : Component_RenderingEffect
+	public class RenderingEffect_ToneMapping : RenderingEffect
 	{
 		/// <summary>
 		/// The intensity of the effect.
@@ -30,7 +26,7 @@ namespace NeoAxis
 			set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_ToneMapping> IntensityChanged;
+		public event Action<RenderingEffect_ToneMapping> IntensityChanged;
 		ReferenceField<double> _intensity = 1;
 
 		/// <summary>
@@ -45,7 +41,7 @@ namespace NeoAxis
 			set { if( _gammaInput.BeginSet( ref value ) ) { try { GammaInputChanged?.Invoke( this ); } finally { _gammaInput.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="GammaInput"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_ToneMapping> GammaInputChanged;
+		public event Action<RenderingEffect_ToneMapping> GammaInputChanged;
 		ReferenceField<double> _gammaInput = 0.5;
 
 		/// <summary>
@@ -60,7 +56,7 @@ namespace NeoAxis
 			set { if( _exposure.BeginSet( ref value ) ) { try { ExposureChanged?.Invoke( this ); } finally { _exposure.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Exposure"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_ToneMapping> ExposureChanged;
+		public event Action<RenderingEffect_ToneMapping> ExposureChanged;
 		ReferenceField<double> _exposure = 1.0;
 
 		public enum MethodEnum
@@ -80,7 +76,7 @@ namespace NeoAxis
 			set { if( _method.BeginSet( ref value ) ) { try { MethodChanged?.Invoke( this ); } finally { _method.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Method"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_ToneMapping> MethodChanged;
+		public event Action<RenderingEffect_ToneMapping> MethodChanged;
 		ReferenceField<MethodEnum> _method = MethodEnum.ACES;
 
 		//!!!!text editor form
@@ -95,7 +91,7 @@ namespace NeoAxis
 			set { if( _customCode.BeginSet( ref value ) ) { try { CustomCodeChanged?.Invoke( this ); } finally { _customCode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CustomCode"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_ToneMapping> CustomCodeChanged;
+		public event Action<RenderingEffect_ToneMapping> CustomCodeChanged;
 		ReferenceField<string> _customCode = customCodeDefault;
 
 		/// <summary>
@@ -110,7 +106,7 @@ namespace NeoAxis
 			set { if( _gammaOutput.BeginSet( ref value ) ) { try { GammaOutputChanged?.Invoke( this ); } finally { _gammaOutput.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="GammaOutput"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_ToneMapping> GammaOutputChanged;
+		public event Action<RenderingEffect_ToneMapping> GammaOutputChanged;
 		ReferenceField<double> _gammaOutput = 2.2;
 
 		/////////////////////////////////////////
@@ -132,8 +128,13 @@ namespace NeoAxis
 			}
 		}
 
-		protected override void OnRender( ViewportRenderingContext context, Component_RenderingPipeline.IFrameData frameData, ref Component_Image actualTexture )
+		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
 		{
+			base.OnRender( context, frameData, ref actualTexture );
+
+			if( Intensity <= 0 )
+				return;
+
 			var newTexture = context.RenderTarget2D_Alloc( actualTexture.Result.ResultSize, PixelFormat.A8R8G8B8 );
 
 			context.SetViewport( newTexture.Result.GetRenderTarget().Viewports[ 0 ] );

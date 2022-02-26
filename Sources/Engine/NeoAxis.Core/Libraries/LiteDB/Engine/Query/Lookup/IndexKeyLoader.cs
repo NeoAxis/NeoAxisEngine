@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
-using static LiteDB.Constants;
+#if !NO_LITE_DB
+using System.Collections.Generic;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     /// <summary>
     /// Implement lookup based only in index Key
@@ -39,3 +40,4 @@ namespace LiteDB.Engine
         }
     }
 }
+#endif

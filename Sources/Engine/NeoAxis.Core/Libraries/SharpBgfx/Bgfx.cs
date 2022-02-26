@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace SharpBgfx {
+namespace Internal.SharpBgfx {
     /// <summary>
     /// Managed interface to the bgfx graphics library.
     /// </summary>
@@ -752,6 +752,12 @@ namespace SharpBgfx {
             NativeMethods.bgfx_set_texture(textureUnit, sampler.handle, texture.handle, (uint)flags);
         }
 
+        //!!!!betauser
+        public unsafe static void SetTextures( uint* data, int count )
+        {
+            NativeMethods.bgfx_set_textures( data, count );
+        }
+
         /// <summary>
         /// Sets a texture mip as a compute image.
         /// </summary>
@@ -1119,6 +1125,12 @@ namespace SharpBgfx {
         {
             return NativeMethods.bgfx_call_special( name, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero );
         }
+
+        ////!!!!betauser
+        //public unsafe static void Float4x4Multiply( void* result, void* a, void* b )
+        //{
+        //    NativeMethods.bgfx_float4x4_mul( (IntPtr)result, (IntPtr)a, (IntPtr)b );
+        //}
 
     }
 }

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ComponentFactory.Krypton.Ribbon.Properties {
+namespace Internal.ComponentFactory.Krypton.Ribbon.Properties {
     using System;
     
     

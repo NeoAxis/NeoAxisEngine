@@ -1,15 +1,10 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Reflection;
-using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Text;
-using System.Linq.Expressions;
 
 namespace NeoAxis
 {
@@ -1005,12 +1000,12 @@ namespace NeoAxis
 
 				//!!!!не Net поддержать
 
-				//!!!!пока так. Component_CSharpScript specific
-				var scriptMethod = method as Component_CSharpScript.MethodImpl;
+				//!!!!пока так. CSharpScript specific
+				var scriptMethod = method as CSharpScript.MethodImpl;
 				if( scriptMethod != null )
 				{
 					var netMethod = scriptMethod.CompiledMethod;
-					var script = (Component_CSharpScript)target;
+					var script = (CSharpScript)target;
 					//!!!!
 					if( script.ScriptInstance != null )
 						d.netDelegate = System.Delegate.CreateDelegate( type.GetNetType(), script.ScriptInstance, netMethod );
@@ -1024,8 +1019,8 @@ namespace NeoAxis
 
 				//MethodInfo netMethod;
 
-				////!!!!пока так. Component_CSharpScript specific
-				//var scriptMethod = method as Component_CSharpScript.MethodImpl;
+				////!!!!пока так. CSharpScript specific
+				//var scriptMethod = method as CSharpScript.MethodImpl;
 				//if( scriptMethod != null )
 				//	netMethod = scriptMethod.CompiledMethod;
 				//else
@@ -1081,7 +1076,7 @@ namespace NeoAxis
 			EDictionary<string, long> enumElements;
 			bool enumFlags;
 
-			//!!!!genericParams. на базе Component_Result<T> что-то создать в редакторе
+			//!!!!genericParams. на базе ResultCompile<T> что-то создать в редакторе
 			//!!!!generics - это типа как абстрактный класс. еще слоты
 
 			////!!!!new
@@ -2149,8 +2144,8 @@ namespace NeoAxis
 				//!!!!Component
 
 				var context = new CloneContext();
-				context.typeOfCloning = CloneContext.TypeOfCloningEnum.CreateInstanceOfType;
-				context.baseTypeForCreationInstance = this;
+				context.TypeOfCloning = CloneContext.TypeOfCloningEnum.CreateInstanceOfType;
+				context.BaseTypeForCreationInstance = this;
 				var newComponent = basedOnObject.Clone( context );
 				//var newComponent = basedOnObject.Clone( null, null, this );
 
@@ -2266,11 +2261,11 @@ namespace NeoAxis
 		/// </summary>
 		public class GetMembersContext
 		{
-			public bool filter = true;
+			public bool Filter = true;
 
 			public GetMembersContext( bool filter = true )
 			{
-				this.filter = filter;
+				Filter = filter;
 			}
 		}
 
@@ -2283,10 +2278,9 @@ namespace NeoAxis
 		/// </summary>
 		public class LoadContext
 		{
-			//!!!!public
 			//!!!!threading?
 
-			public string virtualFileName;
+			public string VirtualFileName;
 
 			//!!!!было before ComponentItems
 			//!!!!why not "object" or IMetadataProvider
@@ -2297,24 +2291,22 @@ namespace NeoAxis
 			/// </summary>
 			public class ComponentItem
 			{
-				//!!!!public
-
-				public ComponentItem parent;
-				public TextBlock textBlock;
+				public ComponentItem Parent;
+				public TextBlock TextBlock;
 				//!!!!
-				public string name = "";
+				public string Name = "";
 
-				public ComponentItem[] children;
+				public ComponentItem[] Children;
 
-				public Component component;
-				public bool loaded;
+				public Component Component;
+				public bool Loaded;
 				//!!!!
-				public string error;
+				public string Error;
 			}
-			public ComponentItem rootComponentItem;
+			public ComponentItem RootComponentItem;
 
-			public List<ComponentItem> allComponentItemsCreationOrder = new List<ComponentItem>();
-			public List<ComponentItem> allComponentItemsSerializationOrder = new List<ComponentItem>();
+			public List<ComponentItem> AllComponentItemsCreationOrder = new List<ComponentItem>();
+			public List<ComponentItem> AllComponentItemsSerializationOrder = new List<ComponentItem>();
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2324,8 +2316,8 @@ namespace NeoAxis
 		/// </summary>
 		public class SaveContext
 		{
-			//!!!!public
-			public string realFileName;
+			public string RealFileName;
+			public bool SaveRootComponentName = true;
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2340,8 +2332,8 @@ namespace NeoAxis
 				Usual,
 				CreateInstanceOfType,
 			}
-			public TypeOfCloningEnum typeOfCloning = TypeOfCloningEnum.Usual;
-			public ComponentTypeInfo baseTypeForCreationInstance;
+			public TypeOfCloningEnum TypeOfCloning = TypeOfCloningEnum.Usual;
+			public ComponentTypeInfo BaseTypeForCreationInstance;
 			//public TypeInfo baseTypeForCreationInstance;
 
 			//!!!!было сделано но не юзалось
@@ -2354,8 +2346,8 @@ namespace NeoAxis
 
 			//!!!!!
 			//!!!!why not "object" or IMetadataProvider
-			public EDictionary<Component, Component> newComponentsRedirection = new EDictionary<Component, Component>();
-			public Queue<(Component, Component)> newComponentsQueue = new Queue<(Component, Component)>();
+			public EDictionary<Component, Component> NewComponentsRedirection = new EDictionary<Component, Component>();
+			public Queue<(Component, Component)> NewComponentsQueue = new Queue<(Component, Component)>();
 
 			//
 

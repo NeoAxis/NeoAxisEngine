@@ -1,22 +1,22 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 
 namespace NeoAxis
 {
 	/// <summary>
-	/// Helper class for working with project base resources.
+	/// A helper class for working with base resources of the project.
 	/// </summary>
 	public static class ResourceUtility
 	{
-		static Component_Image blackTexture2D;
-		public static Component_Image BlackTexture2D
+		static ImageComponent blackTexture2D;
+		public static ImageComponent BlackTexture2D
 		{
 			get
 			{
 				if( blackTexture2D == null )
 				{
-					blackTexture2D = ResourceManager.LoadResource<Component_Image>( @"Base\Images\Black.jpg" );
+					blackTexture2D = ResourceManager.LoadResource<ImageComponent>( @"Base\Images\Black.jpg" );
 					if( blackTexture2D == null )
 						Log.Fatal( "ResourceUtility: BlackTexture2D: blackTexture2D == null." );
 				}
@@ -24,14 +24,14 @@ namespace NeoAxis
 			}
 		}
 
-		static Component_Image whiteTexture2D;
-		public static Component_Image WhiteTexture2D
+		static ImageComponent whiteTexture2D;
+		public static ImageComponent WhiteTexture2D
 		{
 			get
 			{
 				if( whiteTexture2D == null )
 				{
-					whiteTexture2D = ResourceManager.LoadResource<Component_Image>( @"Base\Images\White.jpg" );
+					whiteTexture2D = ResourceManager.LoadResource<ImageComponent>( @"Base\Images\White.jpg" );
 					if( whiteTexture2D == null )
 						Log.Fatal( "ResourceUtility: WhiteTexture2D: whiteTexture2D == null." );
 				}
@@ -39,14 +39,14 @@ namespace NeoAxis
 			}
 		}
 
-		static Component_Image grayTexture2D;
-		public static Component_Image GrayTexture2D
+		static ImageComponent grayTexture2D;
+		public static ImageComponent GrayTexture2D
 		{
 			get
 			{
 				if( grayTexture2D == null )
 				{
-					grayTexture2D = ResourceManager.LoadResource<Component_Image>( @"Base\Images\Gray.jpg" );
+					grayTexture2D = ResourceManager.LoadResource<ImageComponent>( @"Base\Images\Gray.jpg" );
 					if( grayTexture2D == null )
 						Log.Fatal( "ResourceUtility: GrayTexture2D: grayTexture2D == null." );
 				}
@@ -54,14 +54,14 @@ namespace NeoAxis
 			}
 		}
 
-		static Component_Image blackTextureCube;
-		public static Component_Image BlackTextureCube
+		static ImageComponent blackTextureCube;
+		public static ImageComponent BlackTextureCube
 		{
 			get
 			{
 				if( blackTextureCube == null )
 				{
-					blackTextureCube = ResourceManager.LoadResource<Component_Image>( @"Base\Images\BlackCube.image" );
+					blackTextureCube = ResourceManager.LoadResource<ImageComponent>( @"Base\Images\BlackCube.image" );
 					if( blackTextureCube == null )
 						Log.Fatal( "ResourceUtility: BlackTextureCube: blackTextureCube == null." );
 				}
@@ -69,14 +69,14 @@ namespace NeoAxis
 			}
 		}
 
-		static Component_Image whiteTextureCube;
-		public static Component_Image WhiteTextureCube
+		static ImageComponent whiteTextureCube;
+		public static ImageComponent WhiteTextureCube
 		{
 			get
 			{
 				if( whiteTextureCube == null )
 				{
-					whiteTextureCube = ResourceManager.LoadResource<Component_Image>( @"Base\Images\WhiteCube.image" );
+					whiteTextureCube = ResourceManager.LoadResource<ImageComponent>( @"Base\Images\WhiteCube.image" );
 					if( whiteTextureCube == null )
 						Log.Fatal( "ResourceUtility: WhiteTextureCube: whiteTextureCube == null." );
 				}
@@ -84,14 +84,14 @@ namespace NeoAxis
 			}
 		}
 
-		static Component_Image grayTextureCube;
-		public static Component_Image GrayTextureCube
+		static ImageComponent grayTextureCube;
+		public static ImageComponent GrayTextureCube
 		{
 			get
 			{
 				if( grayTextureCube == null )
 				{
-					grayTextureCube = ResourceManager.LoadResource<Component_Image>( @"Base\Images\GrayCube.image" );
+					grayTextureCube = ResourceManager.LoadResource<ImageComponent>( @"Base\Images\GrayCube.image" );
 					if( grayTextureCube == null )
 						Log.Fatal( "ResourceUtility: GrayTextureCube: grayTextureCube == null." );
 				}
@@ -99,14 +99,14 @@ namespace NeoAxis
 			}
 		}
 
-		static Component_Material materialNull;
-		public static Component_Material MaterialNull
+		static Material materialNull;
+		public static Material MaterialNull
 		{
 			get
 			{
 				if( materialNull == null )
 				{
-					materialNull = ResourceManager.LoadResource<Component_Material>( @"Base\Materials\Null.material" );
+					materialNull = ResourceManager.LoadResource<Material>( @"Base\Materials\Null.material" );
 					if( materialNull == null )
 						Log.Fatal( "ResourceUtility: MaterialStandardNull: materialStandardNull == null." );
 				}
@@ -114,14 +114,14 @@ namespace NeoAxis
 			}
 		}
 
-		static Component_Material materialInvalid;
-		public static Component_Material MaterialInvalid
+		static Material materialInvalid;
+		public static Material MaterialInvalid
 		{
 			get
 			{
 				if( materialInvalid == null )
 				{
-					materialInvalid = ResourceManager.LoadResource<Component_Material>( @"Base\Materials\Invalid.material" );
+					materialInvalid = ResourceManager.LoadResource<Material>( @"Base\Materials\Invalid.material" );
 					if( materialInvalid == null )
 						Log.Fatal( "ResourceUtility: MaterialStandardInvalid: materialStandardInvalid == null." );
 				}
@@ -129,15 +129,15 @@ namespace NeoAxis
 			}
 		}
 
-		static Component_Mesh meshInvalid;
-		public static Component_Mesh MeshInvalid
+		static Mesh meshInvalid;
+		public static Mesh MeshInvalid
 		{
 			get
 			{
 				if( meshInvalid == null )
 				{
-					meshInvalid = ComponentUtility.CreateComponent<Component_Mesh>( null, true, false );
-					var geometry = meshInvalid.CreateComponent<Component_MeshGeometry_Box>();
+					meshInvalid = ComponentUtility.CreateComponent<Mesh>( null, true, false );
+					var geometry = meshInvalid.CreateComponent<MeshGeometry_Box>();
 					geometry.Material = MaterialInvalid;
 					meshInvalid.Enabled = true;
 				}
@@ -145,32 +145,32 @@ namespace NeoAxis
 			}
 		}
 
-		//public static Component_Image EnvironmentDefaultTexture
+		//public static Image EnvironmentDefaultTexture
 		//{
 		//	get
 		//	{
-		//		var texture = ResourceManager.LoadResource<Component_Image>( @"Base\Images\EnvironmentDefault.image" );
+		//		var texture = ResourceManager.LoadResource<Image>( @"Base\Images\EnvironmentDefault.image" );
 		//		if( texture == null )
 		//			Log.Fatal( "ResourceUtility: EnvironmentDefaultTexture: texture == null." );
 		//		return texture;
 		//	}
 		//}
 
-		//public static GpuTexture GetTextureCompiledData( Component_Texture texture )
+		//public static GpuTexture GetTextureCompiledData( Texture texture )
 		//{
 		//	if( texture != null )
 		//		return texture.Result;
 		//	return null;
 		//}
 
-		//public static Component_Material.CompiledData GetMaterialCompiledData( Component_Material material )
+		//public static Material.CompiledData GetMaterialCompiledData( Material material )
 		//{
 		//	if( material != null )
 		//		return material.Result;
 		//	return null;
 		//}
 
-		//public static Component_Mesh.CompiledData GetMeshCompiledData( Component_Mesh mesh )
+		//public static Mesh.CompiledData GetMeshCompiledData( Mesh mesh )
 		//{
 		//	if( mesh != null )
 		//		return mesh.Result;

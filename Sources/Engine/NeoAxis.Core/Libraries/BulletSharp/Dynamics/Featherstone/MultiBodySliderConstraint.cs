@@ -1,74 +1,74 @@
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class MultiBodySliderConstraint : MultiBodyConstraint
 	{
 		public MultiBodySliderConstraint(MultiBody body, int link, RigidBody bodyB,
-			Vector3 pivotInA, Vector3 pivotInB, Matrix frameInA, Matrix frameInB, Vector3 jointAxis)
+			BVector3 pivotInA, BVector3 pivotInB, BMatrix frameInA, BMatrix frameInB, BVector3 jointAxis)
 			: base(btMultiBodySliderConstraint_new(body.Native, link, bodyB.Native,
 				ref pivotInA, ref pivotInB, ref frameInA, ref frameInB, ref jointAxis), body, null)
 		{
 		}
 
 		public MultiBodySliderConstraint(MultiBody bodyA, int linkA, MultiBody bodyB,
-			int linkB, Vector3 pivotInA, Vector3 pivotInB, Matrix frameInA, Matrix frameInB,
-			Vector3 jointAxis)
+			int linkB, BVector3 pivotInA, BVector3 pivotInB, BMatrix frameInA, BMatrix frameInB,
+			BVector3 jointAxis)
 			: base(btMultiBodySliderConstraint_new2(bodyA.Native, linkA, bodyB.Native,
 				linkB, ref pivotInA, ref pivotInB, ref frameInA, ref frameInB, ref jointAxis), bodyA, bodyB)
 		{
 		}
 
-		public Matrix FrameInA
+		public BMatrix FrameInA
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btMultiBodySliderConstraint_getFrameInA(Native, out value);
 				return value;
 			}
 			set => btMultiBodySliderConstraint_setFrameInA(Native, ref value);
 		}
 
-		public Matrix FrameInB
+		public BMatrix FrameInB
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btMultiBodySliderConstraint_getFrameInB(Native, out value);
 				return value;
 			}
 			set => btMultiBodySliderConstraint_setFrameInB(Native, ref value);
 		}
 
-		public Vector3 JointAxis
+		public BVector3 JointAxis
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btMultiBodySliderConstraint_getJointAxis(Native, out value);
 				return value;
 			}
 			set => btMultiBodySliderConstraint_setJointAxis(Native, ref value);
 		}
 
-		public Vector3 PivotInA
+		public BVector3 PivotInA
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btMultiBodySliderConstraint_getPivotInA(Native, out value);
 				return value;
 			}
 			set => btMultiBodySliderConstraint_setPivotInA(Native, ref value);
 		}
 
-		public Vector3 PivotInB
+		public BVector3 PivotInB
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btMultiBodySliderConstraint_getPivotInB(Native, out value);
 				return value;
 			}

@@ -1,9 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public enum ConstraintParam
 	{
@@ -37,44 +37,44 @@ namespace BulletSharp
 			Native = btJointFeedback_new();
 		}
 
-		public Vector3 AppliedForceBodyA
+		public BVector3 AppliedForceBodyA
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btJointFeedback_getAppliedForceBodyA(Native, out value);
 				return value;
 			}
 			set => btJointFeedback_setAppliedForceBodyA(Native, ref value);
 		}
 
-		public Vector3 AppliedForceBodyB
+		public BVector3 AppliedForceBodyB
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btJointFeedback_getAppliedForceBodyB(Native, out value);
 				return value;
 			}
 			set => btJointFeedback_setAppliedForceBodyB(Native, ref value);
 		}
 
-		public Vector3 AppliedTorqueBodyA
+		public BVector3 AppliedTorqueBodyA
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btJointFeedback_getAppliedTorqueBodyA(Native, out value);
 				return value;
 			}
 			set => btJointFeedback_setAppliedTorqueBodyA(Native, ref value);
 		}
 
-		public Vector3 AppliedTorqueBodyB
+		public BVector3 AppliedTorqueBodyB
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btJointFeedback_getAppliedTorqueBodyB(Native, out value);
 				return value;
 			}
@@ -295,7 +295,7 @@ namespace BulletSharp
 				using (var cinfo = new RigidBodyConstructionInfo(0, null, null))
 				{
 					_fixedBody = new RigidBody(cinfo);
-					_fixedBody.SetMassProps(0, Vector3.Zero);
+					_fixedBody.SetMassProps(0, BVector3.Zero);
 				}
 			}
 			return _fixedBody;

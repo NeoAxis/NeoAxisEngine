@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
+using NeoAxis.Import;
 
 namespace NeoAxis.Editor
 {
@@ -109,6 +110,42 @@ namespace NeoAxis.Editor
 			control.InstallSearchReplacePanel();
 
 			return control;
+		}
+
+		public override void ImportFBX( ImportGeneral.Settings settings, out string error )
+		{
+			Import.FBX.ImportFBX.DoImport( settings, out error );
+		}
+
+		public override void ImportAssimp( ImportGeneral.Settings settings, out string error )
+		{
+			Import.ImportAssimp.DoImport( settings, out error );
+		}
+
+		public override bool ExportToFBX( Mesh sourceMesh, string realFileName, out string error )
+		{
+			return MeshExportImport.ExportToFBX( sourceMesh, realFileName, out error );
+		}
+
+		public override HCDropDownControl CreateColorValuePoweredSelectControl( HCItemProperty itemProperty )
+		{
+			return new ColorValuePoweredSelectControl( itemProperty );
+		}
+
+		public override bool ColorValuePoweredSelectFormShowDialog( Point location, ColorValuePowered initialColor, out ColorValuePowered resultColor )
+		{
+			var form = new ColorValuePoweredSelectForm();
+			form.StartPosition = FormStartPosition.Manual;
+			form.Location = location;
+			form.Init( initialColor, false, false, null, false );
+
+			if( form.ShowDialog( EditorForm.Instance ) == DialogResult.OK )
+			{
+				resultColor = form.CurrentValue;
+				return true;
+			}
+			resultColor = ColorValuePowered.Zero;
+			return false;
 		}
 	}
 }

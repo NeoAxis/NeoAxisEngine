@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -148,16 +148,21 @@ namespace NeoAxis
 		//	}
 		//}
 
-		public void GetCalculatedBoundingSphere( out Sphere result )
+		void TouchCalculatedBoundingSphere()
 		{
 			if( !calculatedBoundingSphere_Bool )
 			{
 				if( boundingSphere.HasValue )
 					calculatedBoundingSphere = boundingSphere.Value;
 				else
-					calculatedBoundingSphere = boundingBox.Value.GetBoundingSphere();
+					boundingBox.Value.GetBoundingSphere( out calculatedBoundingSphere );
 				calculatedBoundingSphere_Bool = true;
 			}
+		}
+
+		public void GetCalculatedBoundingSphere( out Sphere result )
+		{
+			TouchCalculatedBoundingSphere();
 			result = calculatedBoundingSphere;
 		}
 
@@ -165,8 +170,19 @@ namespace NeoAxis
 		{
 			get
 			{
-				GetCalculatedBoundingSphere( out var result );
-				return result;
+				TouchCalculatedBoundingSphere();
+				return calculatedBoundingSphere;
+				//GetCalculatedBoundingSphere( out var result );
+				//return result;
+			}
+		}
+
+		public double CalculatedBoundingSphereRadius
+		{
+			get
+			{
+				TouchCalculatedBoundingSphere();
+				return calculatedBoundingSphere.Radius;
 			}
 		}
 
@@ -210,20 +226,26 @@ namespace NeoAxis
 				return a;
 
 			Bounds? bounds = null;
+			//if( a.boundingBox != null || b.boundingBox != null )
+			//{
 			if( a.boundingBox != null && b.boundingBox != null )
 				bounds = Bounds.Merge( a.boundingBox.Value, b.boundingBox.Value );
 			else if( a.boundingBox != null )
 				bounds = a.boundingBox.Value;
 			else if( b.boundingBox != null )
 				bounds = b.boundingBox.Value;
+			//}
 
 			Sphere? sphere = null;
+			//if( a.boundingSphere != null || b.boundingSphere != null )
+			//{
 			if( a.boundingSphere != null && b.boundingSphere != null )
 				sphere = Sphere.Merge( a.boundingSphere.Value, b.boundingSphere.Value );
 			else if( a.boundingSphere != null )
 				sphere = a.boundingSphere.Value;
 			else if( b.boundingSphere != null )
 				sphere = b.boundingSphere.Value;
+			//}
 
 			return new SpaceBounds( bounds, sphere );
 		}

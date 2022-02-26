@@ -1,11 +1,10 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
-using System.Text;
-using static NeoAxis.DDSTextureTools;
+using Internal;
 
 namespace NeoAxis
 {
@@ -26,10 +25,11 @@ namespace NeoAxis
 			irrFileName = destFileNameBase + "Irr.dds";
 		}
 
-		static void ReadCachedInfoFile( string destFileNameBase, out string sourceFileHash, out int sourceFileSize )//, out PixelFormat sourceFileFormat )
+		static void ReadCachedInfoFile( string destFileNameBase, out string sourceFileHash, out int sourceFileSize, out Vector4F[] irradiance )//, out PixelFormat sourceFileFormat )
 		{
 			sourceFileHash = "";
 			sourceFileSize = 0;
+			irradiance = null;
 			//sourceFileFormat = PixelFormat.Unknown;
 
 			GetDestFileNames( destFileNameBase, out var infoFileName, out var envFileName, out var irrFileName );
@@ -44,6 +44,10 @@ namespace NeoAxis
 						sourceFileHash = block.GetAttribute( "SourceFileHash" );
 						sourceFileSize = int.Parse( block.GetAttribute( "SourceFileSize" ) );
 						//sourceFileFormat = (PixelFormat)Enum.Parse( typeof( PixelFormat ), block.GetAttribute( "SourceFileFormat" ) );
+
+						irradiance = new Vector4F[ 9 ];
+						for( int n = 0; n < irradiance.Length; n++ )
+							irradiance[ n ] = new Vector4F( Vector3F.Parse( block.GetAttribute( "Irradiance" + n.ToString() ) ), 0 );
 					}
 					catch { }
 				}
@@ -66,6 +70,7 @@ namespace NeoAxis
 				directory.Delete( true );
 		}
 
+#if !DEPLOY
 		static bool GenerateFile( string sourceRealFileName, bool generateIrradiance, int destSize, string destRealFileName, List<Vector3> outIrradianceValues, out string error )
 		{
 			var tempDirectory = GetTemporaryDirectory();
@@ -121,7 +126,7 @@ namespace NeoAxis
 				end16bit:;
 			}
 
-			var surfaces = new List<DDSImage.Surface>();
+			var surfaces = new List<DDSTextureTools.DDSImage.Surface>();
 
 			for( int face = 0; face < 6; face++ )
 			{
@@ -157,26 +162,26 @@ namespace NeoAxis
 
 						unsafe
 						{
-							fixed ( byte* pData = data )
+							fixed( byte* pData = data )
 							{
 								float* pData2 = (float*)pData;
 
-								fixed ( byte* pNewData = newData )
+								fixed( byte* pNewData = newData )
 								{
-									Half* pNewData2 = (Half*)pNewData;
+									HalfType* pNewData2 = (HalfType*)pNewData;
 
 									for( int n = 0; n < currentSize * currentSize; n++ )
 									{
-										pNewData2[ n * 4 + 0 ] = new Half( pData2[ n * 3 + 0 ] );
-										pNewData2[ n * 4 + 1 ] = new Half( pData2[ n * 3 + 1 ] );
-										pNewData2[ n * 4 + 2 ] = new Half( pData2[ n * 3 + 2 ] );
-										pNewData2[ n * 4 + 3 ] = new Half( 1.0f );
+										pNewData2[ n * 4 + 0 ] = new HalfType( pData2[ n * 3 + 0 ] );
+										pNewData2[ n * 4 + 1 ] = new HalfType( pData2[ n * 3 + 1 ] );
+										pNewData2[ n * 4 + 2 ] = new HalfType( pData2[ n * 3 + 2 ] );
+										pNewData2[ n * 4 + 3 ] = new HalfType( 1.0f );
 									}
 								}
 							}
 						}
 
-						surfaces.Add( new DDSImage.Surface( new Vector2I( currentSize, currentSize ), newData ) );
+						surfaces.Add( new DDSTextureTools.DDSImage.Surface( new Vector2I( currentSize, currentSize ), newData ) );
 					}
 					else
 					{
@@ -184,7 +189,7 @@ namespace NeoAxis
 
 						unsafe
 						{
-							fixed ( byte* pData = data )
+							fixed( byte* pData = data )
 							{
 								float* pData2 = (float*)pData;
 
@@ -198,7 +203,7 @@ namespace NeoAxis
 							}
 						}
 
-						surfaces.Add( new DDSImage.Surface( new Vector2I( currentSize, currentSize ), newData ) );
+						surfaces.Add( new DDSTextureTools.DDSImage.Surface( new Vector2I( currentSize, currentSize ), newData ) );
 					}
 
 					counter++;
@@ -209,8 +214,8 @@ namespace NeoAxis
 				}
 			}
 
-			var image = new DDSImage( need16bit ? DDSImage.FormatEnum.R16G16B16A16 : DDSImage.FormatEnum.X8R8G8B8, surfaces.ToArray(), true );
-			if( !WriteToFile( destRealFileName, image, out error ) )
+			var image = new DDSTextureTools.DDSImage( need16bit ? DDSTextureTools.DDSImage.FormatEnum.R16G16B16A16 : DDSTextureTools.DDSImage.FormatEnum.X8R8G8B8, surfaces.ToArray(), true );
+			if( !DDSTextureTools.WriteToFile( destRealFileName, image, out error ) )
 				return false;
 
 			if( outIrradianceValues != null )
@@ -265,7 +270,7 @@ namespace NeoAxis
 
 					if( Path.GetExtension( sourceRealFileName ) == ".image" )
 					{
-						var image = ResourceManager.LoadResource<Component_Image>( sourceFileName, out error );
+						var image = ResourceManager.LoadResource<ImageComponent>( sourceFileName, out error );
 						if( image == null )
 							return false;
 
@@ -432,6 +437,7 @@ namespace NeoAxis
 			error = "";
 			return true;
 		}
+#endif
 
 		static bool GetInfoFromSourceFile( string sourceFileName, out string hash, out int sourceFileSize )
 		{
@@ -457,27 +463,33 @@ namespace NeoAxis
 			}
 		}
 
-		public static bool GetOrGenerate( string sourceFileName, bool forceUpdate, int specifiedSize, out string envFileName, out string irrFileName, out string error )
+		public static bool GetOrGenerate( string sourceFileName, bool forceUpdate, int specifiedSize, out string envFileName, out Vector4F[] irradiance /*, out string irrFileName*/, out string error )
 		{
 			EngineThreading.CheckMainThread();
 
 			var destFileNameBase = GetDestFileNameBase( sourceFileName );
-			GetDestFileNames( destFileNameBase, out var infoFileName, out envFileName, out irrFileName );
+			GetDestFileNames( destFileNameBase, out _, out envFileName, out _ );
+			//GetDestFileNames( destFileNameBase, out var infoFileName, out envFileName, out irrFileName );
 
 			if( !GetInfoFromSourceFile( sourceFileName, out var sourceFileHash, out var sourceFileSize ) )
 			{
+				irradiance = null;
 				error = "Unable to get hash from source file.";
 				return false;
 			}
 
-			ReadCachedInfoFile( destFileNameBase, out var cacheSourceFileHash, out var cacheSourceFileSize );//, out var cacheSourceFileFormat );
+			ReadCachedInfoFile( destFileNameBase, out var cacheSourceFileHash, out var cacheSourceFileSize, out irradiance );//, out var cacheSourceFileFormat );
 
+#if !DEPLOY
 			bool needUpdate = sourceFileHash != cacheSourceFileHash || sourceFileSize != cacheSourceFileSize;
 			if( needUpdate || forceUpdate )
 				return Generate( sourceFileName, sourceFileHash, sourceFileSize, specifiedSize, out error );
-
 			error = "";
 			return true;
+#else
+			error = "The current platform is not support cubemap processing.";
+			return false;
+#endif
 		}
 	}
 }

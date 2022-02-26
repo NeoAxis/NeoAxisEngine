@@ -17,7 +17,7 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Collections.Generic;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
 	/// <summary>
 	/// Base storage class for palette double (background/border) that expose three states.

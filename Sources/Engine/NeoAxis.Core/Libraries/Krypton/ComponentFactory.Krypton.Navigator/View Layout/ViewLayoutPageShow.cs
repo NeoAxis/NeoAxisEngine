@@ -15,9 +15,9 @@ using System.Drawing.Drawing2D;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Diagnostics;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Toolkit;
 
-namespace ComponentFactory.Krypton.Navigator
+namespace Internal.ComponentFactory.Krypton.Navigator
 {
 	/// <summary>
 	/// View element that can track the size and position of the selected page.
@@ -130,8 +130,12 @@ namespace ComponentFactory.Krypton.Navigator
                                     page.SetBounds(0, 0, ClientWidth, ClientHeight);
 
                                     // Ensure the selected page is the highest in the z-order
-                                    _navigator.ChildPanel.Controls.SetChildIndex(_navigator.SelectedPage, 0);
-                                    _navigator.ChildPanel.Controls.SetChildIndex(_navigator.SelectedPage, 0);
+                                    try
+                                    {
+                                        _navigator.ChildPanel.Controls.SetChildIndex( _navigator.SelectedPage, 0 );
+                                        _navigator.ChildPanel.Controls.SetChildIndex( _navigator.SelectedPage, 0 );
+                                    }
+                                    catch { }
                                 }
                             }
                         }

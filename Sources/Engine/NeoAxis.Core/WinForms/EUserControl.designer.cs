@@ -1,4 +1,4 @@
-﻿namespace NeoAxis
+﻿namespace NeoAxis.Editor
 {
 	partial class EUserControl
 	{

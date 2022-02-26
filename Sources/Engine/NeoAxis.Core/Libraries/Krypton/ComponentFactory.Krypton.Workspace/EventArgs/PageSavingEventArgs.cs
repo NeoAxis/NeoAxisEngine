@@ -13,9 +13,9 @@ using System.IO;
 using System.Xml;
 using System.Drawing;
 using System.Diagnostics;
-using ComponentFactory.Krypton.Navigator;
+using Internal.ComponentFactory.Krypton.Navigator;
 
-namespace ComponentFactory.Krypton.Workspace
+namespace Internal.ComponentFactory.Krypton.Workspace
 {
 	/// <summary>
 	/// Event data for persisting extra data for a workspace cell page.

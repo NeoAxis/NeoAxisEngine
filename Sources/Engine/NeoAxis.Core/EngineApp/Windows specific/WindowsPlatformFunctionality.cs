@@ -1,5 +1,5 @@
 #if WINDOWS
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,9 +12,9 @@ using System.Drawing;
 using System.Reflection;
 using System.IO;
 using DirectInput;
-using NeoAxis.Input;
+using NeoAxis;
 
-namespace NeoAxis
+namespace Internal//NeoAxis
 {
 	class WindowsPlatformFunctionality : PlatformFunctionality
 	{
@@ -723,6 +723,8 @@ namespace NeoAxis
 
 		public override double GetSystemTime()
 		{
+			//!!!!never call
+
 			long time = Stopwatch.GetTimestamp();
 			double elapsedSeconds = time * ( 1.0 / Stopwatch.Frequency );
 			return elapsedSeconds;
@@ -983,7 +985,7 @@ namespace NeoAxis
 				case WM_SIZE:
 					if( !instance.goingToWindowedMode && !instance.goingToFullScreenMode && !instance.goingToChangeWindowRectangle )
 					{
-						EngineApp._CreatedWindow_ProcessResize();
+						EngineApp.CreatedWindowProcessResize();
 						return IntPtr.Zero;
 					}
 					break;
@@ -1044,7 +1046,7 @@ namespace NeoAxis
 
 									//!!!!просто обновляем. ведь внутри и так проверка есть. еще можно зафорсить. но не будет ли так, 
 									//что отключится слишком быстро? нужно там где включает ставить флаг -> ChangeVUdeMode.
-									EngineApp._EnginePause_UpdateState( false, true );
+									EngineApp.EnginePauseUpdateState( false, true );
 									//if( App.SuspendWorkingWhenApplicationIsNotActive )
 									//   App.DoSystemPause( true, true );
 
@@ -1072,7 +1074,7 @@ namespace NeoAxis
 							//if( App.SuspendWorkingWhenApplicationIsNotActive )
 							//   App.DoSystemPause( true, true );
 							instance.intoMenuLoop = true;
-							EngineApp._EnginePause_UpdateState( false, true );
+							EngineApp.EnginePauseUpdateState( false, true );
 
 							return IntPtr.Zero;
 						}
@@ -1208,7 +1210,7 @@ namespace NeoAxis
 
 					case WM_MOUSEMOVE:
 					case WM_NCMOUSEMOVE:
-						EngineApp.CreatedInsideEngineWindow._ProcessMouseMoveEvent();
+						EngineApp.CreatedInsideEngineWindow.ProcessMouseMoveEvent();
 						return IntPtr.Zero;
 
 					case WM_SYSKEYDOWN:
@@ -1421,7 +1423,7 @@ namespace NeoAxis
 					case WM_TIMER:
 						if( (int)wParam == suspendModeTimerID )
 						{
-							if( EngineApp.DrawSplashScreen != Component_ProjectSettings.EngineSplashScreenStyleEnum.Disabled )
+							if( EngineApp.DrawSplashScreen != ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.Disabled )
 							{
 								unsafe
 								{
@@ -1430,7 +1432,7 @@ namespace NeoAxis
 							}
 
 							if( !IsAllowApplicationIdle() )
-								EngineApp._CreatedWindow_ApplicationIdle( true );
+								EngineApp.CreatedWindowApplicationIdle( true );
 
 							return IntPtr.Zero;
 						}
@@ -1438,9 +1440,10 @@ namespace NeoAxis
 
 					case WM_PAINT:
 
+#if !DEPLOY
 						//draw splash screen
 						var drawSplashScreen = EngineApp.DrawSplashScreen;
-						if( drawSplashScreen != Component_ProjectSettings.EngineSplashScreenStyleEnum.Disabled )
+						if( drawSplashScreen != ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.Disabled )
 						{
 							var hdc = BeginPaint( hWnd, out var ps );
 
@@ -1448,86 +1451,99 @@ namespace NeoAxis
 							//FillRect( hdc, ref ps.rcPaint, (IntPtr)( COLOR_WINDOW + 1 ) );
 							//FillRect( hdc, out ps.rcPaint, (HBRUSH)( COLOR_WINDOW + 1 ) );
 
-							var bitmap = EngineInfo.GetSplashLogoImage( drawSplashScreen );
-							var splashBitmap = bitmap.GetHbitmap();
-
-							if( splashBitmap != IntPtr.Zero )
+							using( var bitmap = EngineInfo.GetSplashLogoImage( drawSplashScreen ) )
 							{
-								var hdcMem = CreateCompatibleDC( hdc );
-								var oldBitmap = SelectObject( hdcMem, splashBitmap );
-
 								var screenRect = instance.CreatedWindow_GetClientRectangle();
 								var screenSize = screenRect.Size;
 								var center = screenRect.GetCenter();
 
-#if !DEPLOY
+								Bitmap bitmap2 = null;
 
 								var imageSize = new Vector2I( bitmap.Size.Width, bitmap.Size.Height );
-
-								var destRect = new System.Drawing.Rectangle( center.X - imageSize.X / 2, center.Y - imageSize.Y / 2, bitmap.Size.Width, bitmap.Size.Height );
-
-								//draw background
+								if( imageSize.X > screenSize.X )
 								{
-									var color = drawSplashScreen == Component_ProjectSettings.EngineSplashScreenStyleEnum.WhiteBackground ? Color.White : Color.Black;
-									var brush = CreateSolidBrush( (uint)ColorTranslator.ToWin32( color ) );
-
-									RECT MakeRECT( int left, int top, int width, int height )
-									{
-										RECT r = new RECT();
-										r.Left = left;
-										r.Top = top;
-										r.Right = left + width;
-										r.Bottom = top + height;
-										return r;
-									}
-
-									if( destRect.Left > 0 )
-									{
-										RECT r = MakeRECT( 0, 0, destRect.Left, screenSize.Y );
-										FillRect( hdc, ref r, brush );
-									}
-									if( destRect.Right < screenSize.X )
-									{
-										RECT r = MakeRECT( destRect.Right, 0, screenSize.X - destRect.Right, screenSize.Y );
-										FillRect( hdc, ref r, brush );
-									}
-									if( destRect.Top > 0 )
-									{
-										RECT r = MakeRECT( 0, 0, screenSize.X, destRect.Top );
-										FillRect( hdc, ref r, brush );
-									}
-									if( destRect.Bottom < screenSize.Y )
-									{
-										RECT r = MakeRECT( 0, destRect.Bottom, screenSize.X, screenSize.Y - destRect.Bottom );
-										FillRect( hdc, ref r, brush );
-									}
-
-									DeleteObject( brush );
+									double factor = (double)screenSize.X / (double)imageSize.X;
+									imageSize = ( imageSize.ToVector2() * factor ).ToVector2I();
+									bitmap2 = Win32Utility.ResizeImage( bitmap, imageSize.X, imageSize.Y );
 								}
 
-								BitBlt( hdc, destRect.Left, destRect.Top, destRect.Width, destRect.Height, hdcMem, 0, 0, TernaryRasterOperations.SRCCOPY );
+								var splashBitmap = ( bitmap2 ?? bitmap ).GetHbitmap();
+								if( splashBitmap != IntPtr.Zero )
+								{
+									var hdcMem = CreateCompatibleDC( hdc );
+									var oldBitmap = SelectObject( hdcMem, splashBitmap );
 
-								//BitBlt( hdc, center.X - imageSize.X / 2, center.Y - imageSize.Y / 2, bitmap.Size.Width, bitmap.Size.Height, hdcMem, 0, 0, TernaryRasterOperations.SRCCOPY );
-#endif
+									var destRect = new System.Drawing.Rectangle( center.X - imageSize.X / 2, center.Y - imageSize.Y / 2, imageSize.X, imageSize.Y );
 
-								//SetStretchBltMode
-								//StretchBlt( hdc, center.X - 400, center.Y - 200, 800, 400, hdcMem, 0, 0, imageSize.Width, imageSize.Height, TernaryRasterOperations.SRCCOPY );
+									//draw background
+									{
+										var color = drawSplashScreen == ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.WhiteBackground ? Color.White : Color.Black;
+										var brush = CreateSolidBrush( (uint)ColorTranslator.ToWin32( color ) );
 
-								SelectObject( hdcMem, oldBitmap );
-								DeleteDC( hdcMem );
+										RECT MakeRECT( int left, int top, int width, int height )
+										{
+											RECT r = new RECT();
+											r.Left = left;
+											r.Top = top;
+											r.Right = left + width;
+											r.Bottom = top + height;
+											return r;
+										}
 
+										if( destRect.Left > 0 )
+										{
+											RECT r = MakeRECT( 0, 0, destRect.Left, screenSize.Y );
+											FillRect( hdc, ref r, brush );
+										}
+										if( destRect.Right < screenSize.X )
+										{
+											RECT r = MakeRECT( destRect.Right, 0, screenSize.X - destRect.Right, screenSize.Y );
+											FillRect( hdc, ref r, brush );
+										}
+										if( destRect.Top > 0 )
+										{
+											RECT r = MakeRECT( 0, 0, screenSize.X, destRect.Top );
+											FillRect( hdc, ref r, brush );
+										}
+										if( destRect.Bottom < screenSize.Y )
+										{
+											RECT r = MakeRECT( 0, destRect.Bottom, screenSize.X, screenSize.Y - destRect.Bottom );
+											FillRect( hdc, ref r, brush );
+										}
+
+										DeleteObject( brush );
+									}
+
+									//if( stretch )
+									//{
+									//	StretchBlt( hdc, destRect.Left, destRect.Top, destRect.Width, destRect.Height, hdcMem, 0, 0, bitmap.Size.Width, bitmap.Size.Height, TernaryRasterOperations.SRCCOPY );
+									//}
+									//else
+									//{
+
+									BitBlt( hdc, destRect.Left, destRect.Top, destRect.Width, destRect.Height, hdcMem, 0, 0, TernaryRasterOperations.SRCCOPY );
+
+									//}
+
+									SelectObject( hdcMem, oldBitmap );
+									DeleteDC( hdcMem );
+
+								}
+
+								bitmap2?.Dispose();
 							}
 
 							EndPaint( hWnd, ref ps );
 
 							return IntPtr.Zero;
 						}
+#endif
 
 						if( EngineApp.insideRunMessageLoop && EngineApp.EnginePaused && !instance.resizingMoving &&
 							!instance.intoMenuLoop && !instance.goingToWindowedMode &&
 							!instance.goingToFullScreenMode && !instance.goingToChangeWindowRectangle )
 						{
-							EngineApp._CreatedWindow_ApplicationIdle( false );
+							EngineApp.CreatedWindowApplicationIdle( false );
 						}
 						break;
 					}
@@ -1586,7 +1602,8 @@ namespace NeoAxis
 
 					if( IsAllowApplicationIdle() )
 					{
-						EngineApp._UpdateEngineTime();
+						if( EngineApp.RenderVideoToFileData == null )
+							EngineApp.UpdateEngineTime();
 						double time = EngineApp.EngineTime;
 						bool needSleep = EngineApp.MaxFPS != 0 && time < maxFPSLastRenderTime + 1.0f / EngineApp.MaxFPS;
 
@@ -1608,7 +1625,7 @@ namespace NeoAxis
 								Vector2I size = EngineApp.FullscreenSize - new Vector2I( 1, 1 );
 								SetWindowPos( EngineApp.ApplicationWindowHandle, HWND_NOTOPMOST, pos.X, pos.Y, size.X, size.Y, 0 );
 								goingToWindowedMode = false;
-								EngineApp._CreatedWindow_ProcessResize();
+								EngineApp.CreatedWindowProcessResize();
 							}
 
 							//finish switching to fullscreen mode
@@ -1618,10 +1635,10 @@ namespace NeoAxis
 								SetWindowPos( EngineApp.ApplicationWindowHandle, topMost ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0,
 									EngineApp.FullscreenSize.X, EngineApp.FullscreenSize.Y, 0 );
 								goingToFullScreenMode = false;
-								EngineApp._CreatedWindow_ProcessResize();
+								EngineApp.CreatedWindowProcessResize();
 							}
 
-							EngineApp._CreatedWindow_ApplicationIdle( false );
+							EngineApp.CreatedWindowApplicationIdle( false );
 						}
 					}
 					else
@@ -1873,7 +1890,7 @@ namespace NeoAxis
 
 		public override void CreatedWindow_UpdateShowSystemCursor( bool forceUpdate )
 		{
-			bool show = EngineApp._IsRealShowSystemCursor();
+			bool show = EngineApp.IsRealShowSystemCursor();
 
 			if( createdWindow_UpdateShowSystemCursor != show || forceUpdate )
 			{
@@ -2066,7 +2083,7 @@ namespace NeoAxis
 					if( !mouse.Equals( lastMousePositionForCheckMouseOutsideWindow, .0001f ) )
 					{
 						lastMousePositionForCheckMouseOutsideWindow = mouse;
-						EngineApp.CreatedInsideEngineWindow._ProcessMouseMoveEvent();
+						EngineApp.CreatedInsideEngineWindow.ProcessMouseMoveEvent();
 					}
 				}
 			}
@@ -2327,7 +2344,7 @@ namespace NeoAxis
 			}
 		}
 
-		public override IntPtr CallSpecialPlatformSpecificMethod( string message, IntPtr param )
+		public override IntPtr CallPlatformSpecificMethod( string message, IntPtr param )
 		{
 			return IntPtr.Zero;
 		}
@@ -2416,7 +2433,7 @@ namespace NeoAxis
 			goingToChangeWindowRectangle = false;
 
 			//!!!!!так?
-			EngineApp._CreatedWindow_ProcessResize();
+			EngineApp.CreatedWindowProcessResize();
 		}
 
 		public override void GetSystemLanguage( out string name, out string englishName )

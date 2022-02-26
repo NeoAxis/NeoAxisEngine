@@ -1,12 +1,10 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
-using System.ComponentModel;
 using System.Threading;
 using System.IO;
-using System.Runtime.InteropServices;
+using Internal;
 
 namespace NeoAxis
 {
@@ -221,7 +219,7 @@ namespace NeoAxis
 			bool handled = false;
 			Handlers.Warning( text, ref handled, ref dumpToLogFile );
 			if( !handled )
-				LogPlatformFunctionality.Get().ShowMessageBox( text, "Warning" );
+				LogPlatformFunctionality.Instance.ShowMessageBox( text, "Warning" );
 		}
 
 		//static void HandlersWarning( string text )
@@ -261,7 +259,7 @@ namespace NeoAxis
 			bool handled = false;
 			Handlers.Error( text, ref handled, ref dumpToLogFile );
 			if( !handled )
-				LogPlatformFunctionality.Get().ShowMessageBox( text, "Error" );
+				LogPlatformFunctionality.Instance.ShowMessageBox( text, "Error" );
 		}
 
 		static string GetStackTrace()
@@ -299,7 +297,7 @@ namespace NeoAxis
 				if( !handled )
 				{
 					string messageBoxText = text + "\r\n\r\n\r\n" + GetStackTrace();
-					LogPlatformFunctionality.Get().ShowMessageBox( messageBoxText, "Fatal" );//: Exception" );
+					LogPlatformFunctionality.Instance.ShowMessageBox( messageBoxText, "Fatal" );//: Exception" );
 
 					if( AfterFatal != null )
 						AfterFatal();
@@ -343,7 +341,7 @@ namespace NeoAxis
 					//}
 					//else
 					//{
-					LogPlatformFunctionality.Get().ShowMessageBox( text, "Fatal: Exception" );
+					LogPlatformFunctionality.Instance.ShowMessageBox( text, "Fatal: Exception" );
 
 					AfterFatal?.Invoke();
 

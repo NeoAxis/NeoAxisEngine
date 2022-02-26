@@ -1,9 +1,8 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
-using NeoAxis.Input;
 
 namespace NeoAxis
 {
@@ -89,6 +88,20 @@ namespace NeoAxis
 			//control rectangle
 			if( !( new Rectangle( Vector2.Zero, new Vector2( 1, 1 ) ) ).Contains( MousePosition ) )
 				return false;
+			////control rectangle with text
+			//{
+			//	GetScreenRectangle( out var rect );
+
+			//	var renderer = ParentContainer?.Viewport?.CanvasRenderer;
+			//	if( renderer != null && renderer.DefaultFont != null )
+			//	{
+			//		var textLength = renderer.DefaultFont.GetTextLength( renderer.DefaultFontSize, renderer, Text );
+			//		rect.Right += textLength;
+			//	}
+
+			//	if( !rect.Contains( ConvertLocalToScreen( MousePosition ) ) )
+			//		return false;
+			//}
 
 			if( ParentContainer != null && ParentContainer.IsControlCursorCoveredByOther( this ) )
 				return false;

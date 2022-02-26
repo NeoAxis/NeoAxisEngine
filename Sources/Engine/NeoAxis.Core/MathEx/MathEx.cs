@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 
 namespace NeoAxis
@@ -123,6 +123,11 @@ namespace NeoAxis
 		public static float Round( float v )
 		{
 			return (float)Math.Round( v );
+		}
+
+		public static int RoundToInteger( double value )
+		{
+			return (int)Math.Round( value, 0 );
 		}
 
 		public static float RadianNormalize360( float angle )
@@ -317,6 +322,14 @@ namespace NeoAxis
 			if( value > max )
 				return max;
 			return value;
+		}
+
+		public static void Saturate( ref HalfType v )
+		{
+			if( v < HalfType.Zero )
+				v = HalfType.Zero;
+			if( v > HalfType.One )
+				v = HalfType.One;
 		}
 
 		public static void Saturate( ref float v )
@@ -745,6 +758,18 @@ namespace NeoAxis
 			v++;
 
 			return v;
+		}
+
+		public static void TransformMultiply( ref Vector3 position, ref QuaternionF rotation, ref Vector3F scale, ref Vector3 point, out Vector3 result )
+		{
+			var pointF = point.ToVector3F();
+			Vector3F.Multiply( ref scale, ref pointF, out var v1 );
+			QuaternionF.Multiply( ref rotation, ref v1, out var v2 );
+			result.X = v2.X + position.X;
+			result.Y = v2.Y + position.Y;
+			result.Z = v2.Z + position.Z;
+
+			//result = rotation * ( point * scale ) + position;
 		}
 	}
 }

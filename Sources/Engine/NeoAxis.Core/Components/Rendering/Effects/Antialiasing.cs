@@ -1,11 +1,7 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
-using System.Drawing.Design;
 using System.ComponentModel;
-using System.Reflection;
 
 namespace NeoAxis
 {
@@ -14,7 +10,7 @@ namespace NeoAxis
 	/// </summary>
 	[DefaultOrderOfEffect( 5 )]
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
-	public class Component_RenderingEffect_Antialiasing : Component_RenderingEffect
+	public class RenderingEffect_Antialiasing : RenderingEffect
 	{
 		/// <summary>
 		/// The intensity of the effect.
@@ -29,15 +25,23 @@ namespace NeoAxis
 			set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_Antialiasing> IntensityChanged;
+		public event Action<RenderingEffect_Antialiasing> IntensityChanged;
 		ReferenceField<double> _intensity = 1;
 
-		public enum TechniqueEnum
+		public enum BasicTechniqueEnum
 		{
+			Auto,
 			None,
 			FXAA,
+			//[DisplayNameEnum( "SSAA Quarter" )]
+			//SSAAQuarter,
+			//[DisplayNameEnum( "SSAA Half" )]
+			//SSAAHalf,
+			[DisplayNameEnum( "SSAA x2" )]
 			SSAAx2,
+			[DisplayNameEnum( "SSAA x3" )]
 			SSAAx3,
+			[DisplayNameEnum( "SSAA x4" )]
 			SSAAx4,
 			//MSAAx2,
 			//MSAAx4,
@@ -45,39 +49,94 @@ namespace NeoAxis
 			//MSAAx16,
 		}
 
-		/// <summary>
-		/// Used anti-aliasing technique.
-		/// </summary>
-		[DefaultValue( TechniqueEnum.SSAAx2 )]
-		public Reference<TechniqueEnum> Technique
+		public enum MotionTechniqueEnum
 		{
-			get { if( _technique.BeginGet() ) Technique = _technique.Get( this ); return _technique.value; }
-			set { if( _technique.BeginSet( ref value ) ) { try { TechniqueChanged?.Invoke( this ); } finally { _technique.EndSet(); } } }
+			Auto,
+			None,
+			TAA,
 		}
-		/// <summary>Occurs when the <see cref="Technique"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_Antialiasing> TechniqueChanged;
-		ReferenceField<TechniqueEnum> _technique = TechniqueEnum.SSAAx2;
+
+		/// <summary>
+		/// The basic technique of the antialiasing solution.
+		/// </summary>
+		[DefaultValue( BasicTechniqueEnum.Auto )]
+		[Category( "Basic" )]
+		public Reference<BasicTechniqueEnum> BasicTechnique
+		{
+			get { if( _basicTechnique.BeginGet() ) BasicTechnique = _basicTechnique.Get( this ); return _basicTechnique.value; }
+			set { if( _basicTechnique.BeginSet( ref value ) ) { try { BasicTechniqueChanged?.Invoke( this ); } finally { _basicTechnique.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="BasicTechnique"/> property value changes.</summary>
+		public event Action<RenderingEffect_Antialiasing> BasicTechniqueChanged;
+		ReferenceField<BasicTechniqueEnum> _basicTechnique = BasicTechniqueEnum.Auto;
 
 		[DefaultValue( 1.0 )]
 		[Range( 0, 3 )]
+		[Category( "Basic" )]
 		public Reference<double> DownscaleSamplerMultiplier
 		{
 			get { if( _downscaleSamplerMultiplier.BeginGet() ) DownscaleSamplerMultiplier = _downscaleSamplerMultiplier.Get( this ); return _downscaleSamplerMultiplier.value; }
 			set { if( _downscaleSamplerMultiplier.BeginSet( ref value ) ) { try { DownscaleSamplerMultiplierChanged?.Invoke( this ); } finally { _downscaleSamplerMultiplier.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DownscaleSamplerMultiplier"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_Antialiasing> DownscaleSamplerMultiplierChanged;
+		public event Action<RenderingEffect_Antialiasing> DownscaleSamplerMultiplierChanged;
 		ReferenceField<double> _downscaleSamplerMultiplier = 1.0;
 
 		[DefaultValue( true )]
+		[Category( "Basic" )]
 		public Reference<bool> DownscaleBeforeSceneEffects
 		{
 			get { if( _downscaleBeforeSceneEffects.BeginGet() ) DownscaleBeforeSceneEffects = _downscaleBeforeSceneEffects.Get( this ); return _downscaleBeforeSceneEffects.value; }
 			set { if( _downscaleBeforeSceneEffects.BeginSet( ref value ) ) { try { DownscaleBeforeSceneEffectsChanged?.Invoke( this ); } finally { _downscaleBeforeSceneEffects.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DownscaleBeforeSceneEffects"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_Antialiasing> DownscaleBeforeSceneEffectsChanged;
+		public event Action<RenderingEffect_Antialiasing> DownscaleBeforeSceneEffectsChanged;
 		ReferenceField<bool> _downscaleBeforeSceneEffects = true;
+
+		/// <summary>
+		/// The technique to work with moving objects and with moving camera.
+		/// </summary>
+		[DefaultValue( MotionTechniqueEnum.Auto )]
+		[Category( "Motion" )]
+		public Reference<MotionTechniqueEnum> MotionTechnique
+		{
+			get { if( _motionTechnique.BeginGet() ) MotionTechnique = _motionTechnique.Get( this ); return _motionTechnique.value; }
+			set { if( _motionTechnique.BeginSet( ref value ) ) { try { MotionTechniqueChanged?.Invoke( this ); } finally { _motionTechnique.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="MotionTechnique"/> property value changes.</summary>
+		public event Action<RenderingEffect_Antialiasing> MotionTechniqueChanged;
+		ReferenceField<MotionTechniqueEnum> _motionTechnique = MotionTechniqueEnum.Auto;
+
+		[DefaultValue( 2.0 )]
+		[Range( 0, 4 )]
+		[Category( "Motion" )]
+		public Reference<double> Alpha
+		{
+			get { if( _alpha.BeginGet() ) Alpha = _alpha.Get( this ); return _alpha.value; }
+			set { if( _alpha.BeginSet( ref value ) ) { try { AlphaChanged?.Invoke( this ); } finally { _alpha.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Alpha"/> property value changes.</summary>
+		public event Action<RenderingEffect_Antialiasing> AlphaChanged;
+		ReferenceField<double> _alpha = 2.0;
+
+		[DefaultValue( 1.0 )]
+		[Range( 0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
+		[Category( "Motion" )]
+		public Reference<double> ColorBoxSigma
+		{
+			get { if( _colorBoxSigma.BeginGet() ) ColorBoxSigma = _colorBoxSigma.Get( this ); return _colorBoxSigma.value; }
+			set { if( _colorBoxSigma.BeginSet( ref value ) ) { try { ColorBoxSigmaChanged?.Invoke( this ); } finally { _colorBoxSigma.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ColorBoxSigma"/> property value changes.</summary>
+		public event Action<RenderingEffect_Antialiasing> ColorBoxSigmaChanged;
+		ReferenceField<double> _colorBoxSigma = 1.0;
+
+		/////////////////////////////////////////
+
+		[Browsable( false )]
+		public BasicTechniqueEnum BasicTechniqueAfterLoading = BasicTechniqueEnum.Auto;
+		[Browsable( false )]
+		public MotionTechniqueEnum MotionTechniqueAfterLoading = MotionTechniqueEnum.Auto;
 
 		/////////////////////////////////////////
 
@@ -92,21 +151,63 @@ namespace NeoAxis
 				{
 				case nameof( DownscaleSamplerMultiplier ):
 				case nameof( DownscaleBeforeSceneEffects ):
-					if( Technique.Value == TechniqueEnum.None || Technique.Value == TechniqueEnum.FXAA /*|| ( Technique.Value >= TechniqueEnum.MSAAx2 && Technique.Value <= TechniqueEnum.MSAAx16 ) */)
+					if( BasicTechnique.Value != BasicTechniqueEnum.SSAAx2 && BasicTechnique.Value != BasicTechniqueEnum.SSAAx3 && BasicTechnique.Value != BasicTechniqueEnum.SSAAx4 )
+						skip = true;
+					break;
+
+				case nameof( Alpha ):
+				case nameof( ColorBoxSigma ):
+					if( MotionTechnique.Value != MotionTechniqueEnum.TAA )
 						skip = true;
 					break;
 				}
 			}
 		}
 
-		public static void RenderFXAA( ViewportRenderingContext context, Component_RenderingPipeline.IFrameData frameData, ref Component_Image actualTexture, double intensity )
+		protected override bool OnLoad( Metadata.LoadContext context, TextBlock block, out string error )
+		{
+			if( !base.OnLoad( context, block, out error ) )
+				return false;
+
+			BasicTechniqueAfterLoading = BasicTechnique;
+			MotionTechniqueAfterLoading = MotionTechnique;
+
+			return true;
+		}
+
+		public BasicTechniqueEnum GetBasicTechnique()
+		{
+			var result = BasicTechnique.Value;
+			if( result == BasicTechniqueEnum.Auto )
+			{
+				if( SystemSettings.LimitedDevice )
+					result = BasicTechniqueEnum.FXAA;
+				else
+					result = BasicTechniqueEnum.SSAAx2;
+			}
+			return result;
+		}
+
+		public MotionTechniqueEnum GetMotionTechnique()
+		{
+			var result = MotionTechnique.Value;
+			if( result == MotionTechniqueEnum.Auto )
+			{
+				if( SystemSettings.LimitedDevice )
+					result = MotionTechniqueEnum.None;//no motion vector on mobile, because no MRT
+				else
+					result = MotionTechniqueEnum.TAA;
+			}
+			return result;
+		}
+
+		public static void RenderFXAA( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture, double intensity )
 		{
 			//render luma
 
 			//!!!!!A8R8G8B8  где еще. когда tonemapping
-			//!!!!Specifically do FXAA after tonemapping.
+			//!!!!Optionally do AA after tonemapping?
 
-			//!!!!? PixelFormat.Float16RGBA
 			var lumaTexture = context.RenderTarget2D_Alloc( actualTexture.Result.ResultSize, PixelFormat.A8R8G8B8 );
 			{
 				context.SetViewport( lumaTexture.Result.GetRenderTarget().Viewports[ 0 ] );
@@ -117,14 +218,6 @@ namespace NeoAxis
 
 				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/, actualTexture,
 					TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
-
-				//!!!!одно и тоже ставится
-
-				//var size = context.owner.SizeInPixels;
-				//shader.Parameters.Set( "viewportSize", new Vec4( size.X, size.Y, 1.0 / (double)size.X, 1.0 / (double)size.Y ).ToVec4F() );
-
-				//Mat4F identity = Mat4F.Identity;
-				//shader.Parameters.Set( "worldViewProjMatrix", ParameterType.Matrix4x4, 1, &identity, sizeof( Mat4F ) );
 
 				context.RenderQuadToCurrentViewport( shader );
 			}
@@ -150,9 +243,6 @@ namespace NeoAxis
 
 				shader.Parameters.Set( "intensity", (float)intensity );// Intensity );
 
-				//Mat4F identity = Mat4F.Identity;
-				//shader.Parameters.Set( "worldViewProjMatrix", ParameterType.Matrix4x4, 1, &identity, sizeof( Mat4F ) );
-
 				context.RenderQuadToCurrentViewport( shader );
 			}
 
@@ -160,24 +250,35 @@ namespace NeoAxis
 			context.DynamicTexture_Free( lumaTexture );
 		}
 
-		protected override void OnRender( ViewportRenderingContext context, Component_RenderingPipeline.IFrameData frameData, ref Component_Image actualTexture )
+		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
 		{
-			if( Technique.Value != TechniqueEnum.None )
+			if( Intensity > 0 )
 			{
-				if( Technique.Value == TechniqueEnum.FXAA )
-					RenderFXAA( context, frameData, ref actualTexture, Intensity );
-				else
-					RenderDownscale( context, frameData, actualTexture.Result.ResultSize, ref actualTexture );
+				if( GetBasicTechnique() != BasicTechniqueEnum.None )
+				{
+					if( GetBasicTechnique() == BasicTechniqueEnum.FXAA )
+						RenderFXAA( context, frameData, ref actualTexture, Intensity );
+					else
+						RenderDownscale( context, frameData, ref actualTexture );
+				}
+
+				if( GetMotionTechnique() != MotionTechniqueEnum.None )
+				{
+					if( GetMotionTechnique() == MotionTechniqueEnum.TAA )
+						RenderTAA( context, frameData, ref actualTexture );
+				}
 			}
 		}
 
 		public virtual Vector2 GetResolutionMultiplier()
 		{
-			switch( Technique.Value )
+			switch( GetBasicTechnique() )
 			{
-			case TechniqueEnum.SSAAx2: return new Vector2( 1.4, 1.4 );
-			case TechniqueEnum.SSAAx3: return new Vector2( 1.7, 1.7 );
-			case TechniqueEnum.SSAAx4: return new Vector2( 2.0, 2.0 );
+			//case BasicTechniqueEnum.SSAAQuarter: return new Vector2( 0.5, 0.5 );
+			//case BasicTechniqueEnum.SSAAHalf: return new Vector2( 0.7, 0.7 );
+			case BasicTechniqueEnum.SSAAx2: return new Vector2( 1.4, 1.4 );
+			case BasicTechniqueEnum.SSAAx3: return new Vector2( 1.7, 1.7 );
+			case BasicTechniqueEnum.SSAAx4: return new Vector2( 2.0, 2.0 );
 			}
 			return Vector2.One;
 		}
@@ -194,11 +295,41 @@ namespace NeoAxis
 			return 0;
 		}
 
-		public void RenderDownscale( ViewportRenderingContext context, Component_RenderingPipeline.IFrameData frameData, Vector2I destinationSize, ref Component_Image actualTexture )
+		public void RenderDownscale( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
 		{
-			if( Technique.Value >= TechniqueEnum.SSAAx2 && Technique.Value <= TechniqueEnum.SSAAx4 && context.Owner.SizeInPixels != actualTexture.Result.ResultSize )
+			//if( BasicTechnique.Value >= BasicTechniqueEnum.SSAAQuarter && BasicTechnique.Value <= BasicTechniqueEnum.SSAAHalf && context.Owner.SizeInPixels != actualTexture.Result.ResultSize )
+			//{
+			//	var rescaledTexture = context.RenderTarget2D_Alloc( context.Owner.SizeInPixels, actualTexture.Result.ResultFormat );
+
+			//	//copy to scene texture
+			//	{
+			//		context.SetViewport( rescaledTexture.Result.GetRenderTarget().Viewports[ 0 ] );
+
+			//		CanvasRenderer.ShaderItem shader = new CanvasRenderer.ShaderItem();
+			//		shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+			//		shader.FragmentProgramFileName = @"Base\Shaders\Copy_fs.sc";
+
+			//		//shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( Technique.Value.ToString().ToUpper() ) );
+
+			//		//var multiplier = new Vector2F( 1, 1 ) / destinationSize.ToVector2F() * (float)DownscaleSamplerMultiplier.Value;
+			//		//shader.Parameters.Set( "antialiasing_multiplier", multiplier );
+
+			//		shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/,
+			//			actualTexture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.None ) );
+
+			//		context.RenderQuadToCurrentViewport( shader );
+			//	}
+
+			//	context.DynamicTexture_Free( actualTexture );
+
+			//	actualTexture = rescaledTexture;
+			//}
+
+			var destinationSize = context.SizeInPixelsLowResolutionBeforeUpscale;//context.Owner.SizeInPixels
+
+			if( GetBasicTechnique() >= BasicTechniqueEnum.SSAAx2 && GetBasicTechnique() <= BasicTechniqueEnum.SSAAx4 && destinationSize != actualTexture.Result.ResultSize )
 			{
-				var rescaledTexture = context.RenderTarget2D_Alloc( context.Owner.SizeInPixels, actualTexture.Result.ResultFormat );
+				var rescaledTexture = context.RenderTarget2D_Alloc( destinationSize, actualTexture.Result.ResultFormat );
 
 				//copy to scene texture with downscale
 				{
@@ -208,13 +339,12 @@ namespace NeoAxis
 					shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
 					shader.FragmentProgramFileName = @"Base\Shaders\Effects\DownscaleAntialiasing_fs.sc";
 
-					shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( Technique.Value.ToString().ToUpper() ) );
+					shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( GetBasicTechnique().ToString().ToUpper() ) );
 
-					var multiplier = new Vector2F( 1, 1 ) / destinationSize.ToVector2F() * (float)DownscaleSamplerMultiplier.Value;
+					var multiplier = new Vector2F( 1, 1 ) / actualTexture.Result.ResultSize/*destinationSize*/.ToVector2F() * (float)DownscaleSamplerMultiplier.Value;
 					shader.Parameters.Set( "antialiasing_multiplier", multiplier );
 
-					shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/,
-						actualTexture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.None ) );
+					shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0, actualTexture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.None ) );
 
 					context.RenderQuadToCurrentViewport( shader );
 				}
@@ -223,6 +353,142 @@ namespace NeoAxis
 
 				actualTexture = rescaledTexture;
 			}
+		}
+
+		string GetTAADataKey()
+		{
+			return "TAAPreviousColor " + GetPathFromRoot();
+		}
+
+		static ImageComponent TAACreatePreviousColorTexture( Vector2I size, PixelFormat format )
+		{
+			ImageComponent texture = ComponentUtility.CreateComponent<ImageComponent>( null, true, false );
+			texture.CreateSize = size;
+			texture.CreateFormat = format;
+			texture.CreateUsage = ImageComponent.Usages.RenderTarget;
+			texture.Enabled = true;
+
+			RenderTexture renderTexture = texture.Result.GetRenderTarget();
+			var viewport = renderTexture.AddViewport( false, false );
+
+			//!!!!?
+			viewport.RenderingPipelineCreate();
+			viewport.RenderingPipelineCreated.UseRenderTargets = false;
+
+			return texture;
+		}
+
+		protected override void OnEnabledInHierarchyChanged()
+		{
+			base.OnEnabledInHierarchyChanged();
+
+			//!!!!может удалять если долго не юзается
+			//if( !EnabledInHierarchy )
+			//	TAADestroyPreviousColorTexture();
+		}
+
+		void TAADestroyPreviousColorTexture( ViewportRenderingContext context )
+		{
+			var anyDataKey = GetTAADataKey();
+
+			context.AnyImageAutoDispose.TryGetValue( anyDataKey, out var current );
+			if( current != null )
+			{
+				context.AnyImageAutoDispose.Remove( anyDataKey );
+				current?.Dispose();
+			}
+		}
+
+		void RenderTAA( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
+		{
+			var pipeline = context.RenderingPipeline as RenderingPipeline_Basic;
+			if( pipeline == null )
+				return;
+
+			context.ObjectsDuringUpdate.namedTextures.TryGetValue( "motionTexture", out var motionTexture );
+			if( motionTexture == null )
+			{
+				TAADestroyPreviousColorTexture( context );
+				return;
+			}
+
+			ImageComponent previousColorTexture = null;
+			var previousColorTextureJustCreated = false;
+			{
+				var anyDataKey = GetTAADataKey();
+				var demandedSize = actualTexture.Result.ResultSize;
+
+				//check to destroy
+				{
+					context.AnyImageAutoDispose.TryGetValue( anyDataKey, out var current );
+
+					if( current != null && current.Result.ResultSize != demandedSize )
+						TAADestroyPreviousColorTexture( context );
+				}
+
+				//create and get
+				{
+					context.AnyImageAutoDispose.TryGetValue( anyDataKey, out var current );
+
+					if( current == null )
+					{
+						//create
+						current = TAACreatePreviousColorTexture( demandedSize, actualTexture.Result.ResultFormat );
+						context.AnyImageAutoDispose[ anyDataKey ] = current;
+						previousColorTextureJustCreated = true;
+					}
+
+					previousColorTexture = current;
+				}
+			}
+
+			//render final
+			if( previousColorTexture != null && !previousColorTextureJustCreated )
+			{
+				ImageComponent newTexture;
+				{
+					newTexture = context.RenderTarget2D_Alloc( actualTexture.Result.ResultSize, PixelFormat.A8R8G8B8 );
+
+					context.SetViewport( newTexture.Result.GetRenderTarget().Viewports[ 0 ] );
+
+					CanvasRenderer.ShaderItem shader = new CanvasRenderer.ShaderItem();
+					shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+					shader.FragmentProgramFileName = @"Base\Shaders\Effects\TAA_fs.sc";
+
+					shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0, actualTexture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
+					shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1, motionTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
+					shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 2, previousColorTexture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
+
+					var size = newTexture.Result.ResultSize;
+					shader.Parameters.Set( "viewportSize", new Vector4( size.X, size.Y, 1.0 / (double)size.X, 1.0 / (double)size.Y ).ToVector4F() );
+
+					shader.Parameters.Set( "intensity", (float)Intensity );
+
+					var parameters = new Vector4F( (float)Alpha, (float)ColorBoxSigma, 0, 0 );
+					shader.Parameters.Set( "taaParameters", parameters );
+
+					context.RenderQuadToCurrentViewport( shader );
+				}
+
+				var oldTexture = actualTexture;
+				actualTexture = newTexture;
+
+				//free old texture
+				context.DynamicTexture_Free( oldTexture );
+			}
+
+			//save actual scene image as a previous color image
+			if( previousColorTexture != null )
+			{
+				context.SetViewport( previousColorTexture.Result.GetRenderTarget().Viewports[ 0 ] );
+				pipeline.CopyToCurrentViewport( context, actualTexture );
+			}
+
+		}
+
+		public override bool LimitedDevicesSupport
+		{
+			get { return true; }
 		}
 	}
 }

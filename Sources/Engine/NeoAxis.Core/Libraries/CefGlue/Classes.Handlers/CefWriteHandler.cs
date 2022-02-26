@@ -1,11 +1,12 @@
-﻿namespace Xilium.CefGlue
+#if !NO_UI_WEB_BROWSER
+namespace Internal.Xilium.CefGlue
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
     using System.Runtime.InteropServices;
-    using Xilium.CefGlue.Interop;
+    using Internal.Xilium.CefGlue.Interop;
     
     /// <summary>
     /// Interface the client can implement to provide a custom stream writer. The
@@ -86,3 +87,5 @@
         protected abstract bool MayBlock();
     }
 }
+
+#endif

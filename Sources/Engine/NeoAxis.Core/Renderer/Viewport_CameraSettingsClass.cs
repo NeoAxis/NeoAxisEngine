@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Runtime.InteropServices;
 
@@ -12,7 +12,7 @@ namespace NeoAxis
 		public class CameraSettingsClass
 		{
 			Viewport viewport;
-			//Component_Camera sourceCamera;
+			//Camera sourceCamera;
 			bool frustumCullingTest;
 
 			double aspectRatio;
@@ -28,7 +28,7 @@ namespace NeoAxis
 			double emissiveFactor;
 			bool reflectionEnabled;
 			Plane reflectionPlane;
-			Component_RenderingPipeline renderingPipelineOverride;
+			RenderingPipeline renderingPipelineOverride;
 			bool renderSky;
 
 			Quaternion rotation;
@@ -39,12 +39,17 @@ namespace NeoAxis
 			Matrix4 viewMatrix;
 			Matrix4 projectionMatrix;
 
-			bool inverseViewProjectionNeedUpdate = true;
-			Matrix4 inverseViewProjection;
+			bool viewProjectionMatrixCalculated;
+			Matrix4 viewProjectionMatrix;
+
+			bool viewProjectionInverseMatrixCalculated;
+			Matrix4 viewProjectionInverseMatrix;
+			//bool inverseViewProjectionNeedUpdate = true;
+			//Matrix4 inverseViewProjection;
 
 			//
 
-			public CameraSettingsClass( Viewport viewport, Component_Camera camera, bool frustumCullingTest = false )
+			public CameraSettingsClass( Viewport viewport, Camera camera, bool frustumCullingTest = false )
 			{
 				//!!!!reflection
 
@@ -53,8 +58,17 @@ namespace NeoAxis
 				Init( viewport, /*camera, */frustumCullingTest, camera.AspectRatio, camera.FieldOfView, camera.NearClipPlane, camera.FarClipPlane, t.Position, t.Rotation.GetForward()/* camera.Direction*/, camera.FixedUp, camera.Projection, camera.Height, camera.Exposure, camera.EmissiveFactor, false, new Plane(), camera.RenderingPipelineOverride, true );
 			}
 
+			public CameraSettingsClass( Viewport viewport, Camera camera, RenderingPipeline renderingPipelineOverride, bool frustumCullingTest = false )
+			{
+				//!!!!reflection
+
+				Transform t = camera.Transform;
+
+				Init( viewport, /*camera, */frustumCullingTest, camera.AspectRatio, camera.FieldOfView, camera.NearClipPlane, camera.FarClipPlane, t.Position, t.Rotation.GetForward()/* camera.Direction*/, camera.FixedUp, camera.Projection, camera.Height, camera.Exposure, camera.EmissiveFactor, false, new Plane(), renderingPipelineOverride, true );
+			}
+
 			public CameraSettingsClass( Viewport viewport, double aspectRatio, Degree fieldOfView, double nearClipDistance, double farClipDistance,
-				Vector3 position, Vector3 direction, Vector3 fixedUp, ProjectionType projection, double height, double exposure, double emissiveFactor, bool reflectionEnabled = false, Plane reflectionPlane = new Plane(), bool frustumCullingTest = false, Component_RenderingPipeline renderingPipelineOverride = null, bool renderSky = true )
+				Vector3 position, Vector3 direction, Vector3 fixedUp, ProjectionType projection, double height, double exposure, double emissiveFactor, bool reflectionEnabled = false, Plane reflectionPlane = new Plane(), bool frustumCullingTest = false, RenderingPipeline renderingPipelineOverride = null, bool renderSky = true )
 			{
 				Init( viewport, /*null, */frustumCullingTest, aspectRatio, fieldOfView, nearClipDistance, farClipDistance, position, direction, fixedUp, projection, height, exposure, emissiveFactor, reflectionEnabled, reflectionPlane, renderingPipelineOverride, renderSky );
 			}
@@ -75,7 +89,7 @@ namespace NeoAxis
 			//		projection, height, reflectionEnabled, reflectionPlane );
 			//}
 
-			void Init( Viewport viewport, /*Component_Camera sourceCamera, */bool frustumCullingTest, double aspectRatio, Degree fieldOfView, double nearClipDistance, double farClipDistance, Vector3 position, Vector3 direction, Vector3 fixedUp, ProjectionType projection, double height, double exposure, double emissiveFactor, bool reflectionEnabled, Plane reflectionPlane, Component_RenderingPipeline renderingPipelineOverride, bool renderSky )
+			void Init( Viewport viewport, /*Camera sourceCamera, */bool frustumCullingTest, double aspectRatio, Degree fieldOfView, double nearClipDistance, double farClipDistance, Vector3 position, Vector3 direction, Vector3 fixedUp, ProjectionType projection, double height, double exposure, double emissiveFactor, bool reflectionEnabled, Plane reflectionPlane, RenderingPipeline renderingPipelineOverride, bool renderSky )
 			{
 				this.viewport = viewport;
 				//this.sourceCamera = sourceCamera;
@@ -133,7 +147,7 @@ namespace NeoAxis
 				get { return viewport; }
 			}
 
-			//public Component_Camera SourceCamera
+			//public Camera SourceCamera
 			//{
 			//	get { return sourceCamera; }
 			//}
@@ -278,7 +292,7 @@ namespace NeoAxis
 				get { return reflectionPlane; }
 			}
 
-			public Component_RenderingPipeline RenderingPipelineOverride
+			public RenderingPipeline RenderingPipelineOverride
 			{
 				get { return renderingPipelineOverride; }
 			}
@@ -513,7 +527,11 @@ namespace NeoAxis
 
 			static void MultiplyProjectWTo1( ref Matrix4 m, ref Vector3 v, out Vector3 result )
 			{
-				double invW = 1.0 / ( m.Item0.W * v.X + m.Item1.W * v.Y + m.Item2.W * v.Z + m.Item3.W );
+				var del = m.Item0.W * v.X + m.Item1.W * v.Y + m.Item2.W * v.Z + m.Item3.W;
+				if( del == 0 )
+					del = 0.000001;
+				double invW = 1.0 / del;
+				//double invW = 1.0 / ( m.Item0.W * v.X + m.Item1.W * v.Y + m.Item2.W * v.Z + m.Item3.W );
 				result = ( m * v ) * invW;
 			}
 
@@ -569,11 +587,12 @@ namespace NeoAxis
 			/// <returns>The ray.</returns>
 			public void GetRayByScreenCoordinates( ref Vector2 screenPosition, out Ray result )
 			{
-				if( inverseViewProjectionNeedUpdate )
-				{
-					( projectionMatrix * viewMatrix ).GetInverse( out inverseViewProjection );
-					inverseViewProjectionNeedUpdate = false;
-				}
+				var inverseViewProjection = GetViewProjectionInverseMatrix();
+				//if( inverseViewProjectionNeedUpdate )
+				//{
+				//	( projectionMatrix * viewMatrix ).GetInverse( out inverseViewProjection );
+				//	inverseViewProjectionNeedUpdate = false;
+				//}
 
 				Vector3 nearPoint;
 				Vector3 midPoint;
@@ -614,6 +633,26 @@ namespace NeoAxis
 			{
 				GetRayByScreenCoordinates( ref screenPosition, out var result );
 				return result;
+			}
+
+			public ref Matrix4 GetViewProjectionMatrix()
+			{
+				if( !viewProjectionMatrixCalculated )
+				{
+					Matrix4.Multiply( ref projectionMatrix, ref viewMatrix, out viewProjectionMatrix );
+					viewProjectionMatrixCalculated = true;
+				}
+				return ref viewProjectionMatrix;
+			}
+
+			public ref Matrix4 GetViewProjectionInverseMatrix()
+			{
+				if( !viewProjectionInverseMatrixCalculated )
+				{
+					GetViewProjectionMatrix().GetInverse( out viewProjectionInverseMatrix );
+					viewProjectionInverseMatrixCalculated = true;
+				}
+				return ref viewProjectionInverseMatrix;
 			}
 		}
 	}

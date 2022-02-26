@@ -1,8 +1,9 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Text;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     /// <summary>
     /// Internal class to deserialize a byte[] into a BsonDocument using BSON data format
@@ -149,3 +150,4 @@ namespace LiteDB
         }
     }
 }
+#endif

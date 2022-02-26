@@ -1,0 +1,221 @@
+// Made with NeoAxis Engine 2021.3.
+
+.component NeoAxis.Component_ParticleSystem
+{
+	Looping = False
+	.component NeoAxis.Component_ParticleEmitter
+	{
+		Name = Emitter
+		Direction = FromCenterOfEmitter
+		ReceiveDecals = False
+		StartTime
+		{
+			Value
+			{
+				Constant = 0
+				Range = 0 1
+				Curve
+				{
+					Count = 0
+				}
+			}
+		}
+		Duration
+		{
+			Value
+			{
+				Constant = 0.1
+				Range = 0 1
+				Curve
+				{
+					Count = 0
+				}
+			}
+		}
+		SpawnRate
+		{
+			Value
+			{
+				Constant = 10
+				Range = 0 1
+				Curve
+				{
+					Count = 0
+				}
+			}
+		}
+		SpawnCount
+		{
+			Value
+			{
+				Constant = 5
+				Range = 1 1
+				Curve
+				{
+					Count = 0
+				}
+			}
+		}
+		DispersionAngle
+		{
+			Value
+			{
+				Constant = 180
+				Range = 0 1
+				Curve
+				{
+					Count = 0
+				}
+			}
+		}
+		Speed
+		{
+			Value
+			{
+				Type = Range
+				Constant = 2
+				Range = 0 1
+				Curve
+				{
+					Count = 0
+				}
+			}
+		}
+		Rotation
+		{
+			Value
+			{
+				Type = Range
+				Constant = 0 0 0
+				Range = 0 0 -180 0 0 180
+				CurveX
+				{
+					Count = 0
+				}
+				CurveY
+				{
+					Count = 0
+				}
+				CurveZ
+				{
+					Count = 0
+				}
+			}
+		}
+		AngularVelocity
+		{
+			Value
+			{
+				Type = Range
+				Constant = 0 0 0
+				Range = -30 0 0 30 0 0
+				CurveX
+				{
+					Count = 0
+				}
+				CurveY
+				{
+					Count = 0
+				}
+				CurveZ
+				{
+					Count = 0
+				}
+			}
+		}
+		Lifetime
+		{
+			Value
+			{
+				Constant = 1
+				Range = 0 1
+				Curve
+				{
+					Count = 0
+				}
+			}
+		}
+		Size
+		{
+			Value
+			{
+				Constant = 5
+				Range = 0 1
+				Curve
+				{
+					Count = 0
+				}
+			}
+		}
+		GravityMultiplier
+		{
+			Value
+			{
+				Constant = 0
+				Range = 0 1
+				Curve
+				{
+					Count = 0
+				}
+			}
+		}
+		Material
+		{
+			GetByReference = "Content\\Weapons\\Default\\Bullet 2\\Hit particle.material"
+		}
+		Color
+		{
+			Value
+			{
+				Constant = 1 1 1
+				Range = 1 1 1 1 1 1 1 1
+			}
+		}
+		.component NeoAxis.Component_ParticleEmitterShape_Point
+		{
+			Name = Point Shape
+		}
+		.component NeoAxis.Component_ParticleColorMultiplierByTime
+		{
+			Name = Color Multiplier By Time
+			Channels = Alpha
+			Type = Curve
+			Curve
+			{
+				Count = 4
+				0
+				{
+					Value
+					{
+						Point = 0
+						Value = 0
+					}
+				}
+				1
+				{
+					Value
+					{
+						Point = 0.4
+						Value = 1
+					}
+				}
+				2
+				{
+					Value
+					{
+						Point = 0.7
+						Value = 0.5
+					}
+				}
+				3
+				{
+					Value
+					{
+						Point = 1
+						Value = 0
+					}
+				}
+			}
+		}
+	}
+}

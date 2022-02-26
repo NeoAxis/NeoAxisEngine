@@ -1,8 +1,9 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     public interface ILiteRepository : IDisposable
     {
@@ -151,3 +152,4 @@ namespace LiteDB
         T SingleOrDefault<T>(Expression<Func<T, bool>> predicate, string collectionName = null);
     }
 }
+#endif

@@ -34,7 +34,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace tainicom.Aether.Physics2D.Common.Decomposition.CDT.Delaunay.Sweep
+namespace Internal.tainicom.Aether.Physics2D.Common.Decomposition.CDT.Delaunay.Sweep
 {
     internal class DTSweepConstraint : TriangulationConstraint
     {

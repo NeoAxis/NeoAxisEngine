@@ -1,12 +1,9 @@
 $input a_position, a_texcoord0
 $output v_texCoord0
 
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "Common.sh"
 #include "UniformsVertex.sh"
-//#ifdef SHADOW_MAP
-//	#include "ShadowReceiverFunctions.sh"
-//#endif
 
 //uniform vec4 u_lightDataVertex[LIGHTDATA_VERTEX_SIZE];
 
@@ -26,18 +23,6 @@ void main()
 	v_depth = gl_Position.z;
 	v_tangent = normalize(mul(toMat3(worldMatrix), a_tangent.xyz));
 	v_bitangent = cross(v_tangent.xyz, v_worldNormal) * a_tangent.w;
-
-	//!!!!
-	//Shadows
-	#ifdef SHADOW_MAP
-		//!!!!
-		#ifdef SHADOW_PSSM
-			getShadowUV(textureViewProjMatrix0, textureViewProjMatrix1, textureViewProjMatrix2, 
-				lightPosition.xyz, v_worldPosition.xyz, v_shadowUV0,  v_shadowUV1, v_shadowUV2);
-		#else
-			getShadowUV(textureViewProjMatrix0, lightPosition.xyz, v_worldPosition.xyz, v_shadowUV0);
-		#endif
-	#endif
 
 	//!!!!
 	v_reflectionVector = v_worldPosition - cameraPosition.xyz;

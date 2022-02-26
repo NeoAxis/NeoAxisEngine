@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Security;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public enum DynamicsWorldType
 	{
@@ -103,7 +103,7 @@ namespace BulletSharp
 			return _constraints[index];
 		}
 
-		public void GetGravity(out Vector3 gravity)
+		public void GetGravity(out BVector3 gravity)
 		{
 			btDynamicsWorld_getGravity(Native, out gravity);
 		}
@@ -150,7 +150,7 @@ namespace BulletSharp
 			CollisionObjectArray.Remove(body);
 		}
 
-		public void SetGravity(ref Vector3 gravity)
+		public void SetGravity(ref BVector3 gravity)
 		{
 			btDynamicsWorld_setGravity(Native, ref gravity);
 		}
@@ -251,11 +251,11 @@ namespace BulletSharp
 			}
 		}
 
-		public Vector3 Gravity
+		public BVector3 Gravity
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btDynamicsWorld_getGravity(Native, out value);
 				return value;
 			}

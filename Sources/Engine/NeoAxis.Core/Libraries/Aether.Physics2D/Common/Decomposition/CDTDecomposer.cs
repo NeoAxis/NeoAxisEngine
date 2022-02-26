@@ -10,13 +10,16 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
-using tainicom.Aether.Physics2D.Common.Decomposition.CDT;
-using tainicom.Aether.Physics2D.Common.Decomposition.CDT.Delaunay;
-using tainicom.Aether.Physics2D.Common.Decomposition.CDT.Delaunay.Sweep;
-using tainicom.Aether.Physics2D.Common.Decomposition.CDT.Polygon;
-using Microsoft.Xna.Framework;
+using Internal.tainicom.Aether.Physics2D.Common.Decomposition.CDT;
+using Internal.tainicom.Aether.Physics2D.Common.Decomposition.CDT.Delaunay;
+using Internal.tainicom.Aether.Physics2D.Common.Decomposition.CDT.Delaunay.Sweep;
+using Internal.tainicom.Aether.Physics2D.Common.Decomposition.CDT.Polygon;
+using Internal.tainicom.Aether.Physics2D.Common;
+#if XNAAPI
+using Vector2 = Microsoft.Xna.Framework.Vector2;
+#endif
 
-namespace tainicom.Aether.Physics2D.Common.Decomposition
+namespace Internal.tainicom.Aether.Physics2D.Common.Decomposition
 {
     /// <summary>
     /// 2D constrained Delaunay triangulation algorithm.

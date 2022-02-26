@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -76,7 +76,7 @@ namespace NeoAxis
 		{
 			objectBounds.GetCalculatedBoundingSphere( out var objSphere );
 
-			var centerDistance = ( cameraSettings.Position - objSphere.Origin ).Length();
+			var centerDistance = ( cameraSettings.Position - objSphere.Center ).Length();
 			var max = centerDistance + objSphere.Radius;
 
 			return (float)max;
@@ -84,21 +84,14 @@ namespace NeoAxis
 
 		public static float GetCameraDistanceMax( Viewport.CameraSettingsClass cameraSettings, ref Sphere objectBoundingSphere )
 		{
-			var centerDistance = ( cameraSettings.Position - objectBoundingSphere.Origin ).Length();
+			var centerDistance = ( cameraSettings.Position - objectBoundingSphere.Center ).Length();
 			var max = centerDistance + objectBoundingSphere.Radius;
 
 			return (float)max;
 		}
 
-		public unsafe static void GetDemandedLODs( ViewportRenderingContext context, Component_Mesh mesh, float cameraDistanceMinSquared, float cameraDistanceMaxSquared, out LodState lodState )
+		public unsafe static void GetDemandedLODs( ViewportRenderingContext context, Mesh mesh, float cameraDistanceMinSquared, float cameraDistanceMaxSquared, out LodState lodState )
 		{
-			//var cameraDistanceMinSquared2 = cameraDistanceMinSquared;
-			//var cameraDistanceMaxSquared2 = cameraDistanceMaxSquared;
-
-			////!!!!fix for shadows. в случае простых билбордов тень рисуется дальше объекта другого лода, резко пропадает
-			//cameraDistanceRangeSquared2.Maximum *= 1.1f;
-
-
 			lodState = new LodState();
 
 			var lods = mesh.Result.MeshData.LODs;
@@ -143,18 +136,32 @@ namespace NeoAxis
 					if( lodIndex == lodEnd )
 						lodRange.Maximum = 1000000;
 
-					var min = lodRange.Minimum * 0.9f;
-					var minSquared = min * min;
+					if( RenderingSystem.SmoothLOD )
+					{
+						var min = lodRange.Minimum * 0.9f;
+						var minSquared = min * min;
 
-					var max = lodRange.Maximum;
-					var maxSquared = max * max;
+						var max = lodRange.Maximum;
+						var maxSquared = max * max;
 
-					//early exit
-					if( minSquared > cameraDistanceMaxSquared )
-						break;
+						//early exit
+						if( minSquared > cameraDistanceMaxSquared )
+							break;
 
-					if( cameraDistanceMaxSquared >= minSquared && cameraDistanceMinSquared < maxSquared )
-						lodState.Add( lodIndex, lodRange );
+						if( cameraDistanceMaxSquared >= minSquared && cameraDistanceMinSquared < maxSquared )
+							lodState.Add( lodIndex, lodRange );
+					}
+					else
+					{
+						var max = lodRange.Maximum;
+						var maxSquared = max * max;
+
+						if( cameraDistanceMinSquared < maxSquared )
+						{
+							lodState.Add( lodIndex, lodRange );
+							break;
+						}
+					}
 				}
 
 				if( lodState.Count == 0 )
@@ -168,31 +175,36 @@ namespace NeoAxis
 
 		public static float GetLodValue( RangeF lodRange, float cameraDistance )
 		{
-			var lodRangeMin = lodRange.Minimum;
-			var lodRangeMax = lodRange.Maximum;
-
-			float min2 = lodRangeMin * 0.9f;
-			float max2 = lodRangeMax * 0.9f;
-
-			if( cameraDistance > max2 )
+			if( RenderingSystem.SmoothLOD )
 			{
-				//if(cameraDistance < lodRangeMax)
-				if( lodRangeMax != max2 )
-					return MathEx.Saturate( ( cameraDistance - max2 ) / ( lodRangeMax - max2 ) );
+				var lodRangeMin = lodRange.Minimum;
+				var lodRangeMax = lodRange.Maximum;
+
+				float min2 = lodRangeMin * 0.9f;
+				float max2 = lodRangeMax * 0.9f;
+
+				if( cameraDistance > max2 )
+				{
+					//if(cameraDistance < lodRangeMax)
+					if( lodRangeMax != max2 )
+						return MathEx.Saturate( ( cameraDistance - max2 ) / ( lodRangeMax - max2 ) );
+					else
+						return 0.0f;
+					//else
+					//	return 1.0;
+				}
+				else if( cameraDistance < lodRangeMin )
+				{
+					if( cameraDistance > min2 && lodRangeMin != min2 )
+						return -MathEx.Saturate( ( cameraDistance - min2 ) / ( lodRangeMin - min2 ) );
+					else
+						return 1.0f;
+				}
 				else
 					return 0.0f;
-				//else
-				//	return 1.0;
-			}
-			else if( cameraDistance < lodRangeMin )
-			{
-				if( cameraDistance > min2 && lodRangeMin != min2 )
-					return -MathEx.Saturate( ( cameraDistance - min2 ) / ( lodRangeMin - min2 ) );
-				else
-					return 1.0f;
 			}
 			else
-				return 0.0f;
+				return 0;
 		}
 
 	}
@@ -305,7 +317,7 @@ namespace NeoAxis
 
 
 ////detect what LOD is need
-//public static void DetectDemandedLOD( ViewportRenderingContext context, Component_Mesh mesh, ref Vector3 objectPosition, out LodState lodState )
+//public static void DetectDemandedLOD( ViewportRenderingContext context, Mesh mesh, ref Vector3 objectPosition, out LodState lodState )
 //{
 //	var result = new LodState();
 
@@ -568,7 +580,7 @@ namespace NeoAxis
 //	return null;
 //}
 
-//public static RenderingContextItem UpdateAndGetContextItem( ref List<RenderingContextItem> renderingContextItems, ViewportRenderingContext context, Component_Mesh mesh, double objectVisibilityDistance, ref Vector3 objectPosition, int demandLOD )
+//public static RenderingContextItem UpdateAndGetContextItem( ref List<RenderingContextItem> renderingContextItems, ViewportRenderingContext context, Mesh mesh, double objectVisibilityDistance, ref Vector3 objectPosition, int demandLOD )
 //{
 //	DeleteOldRenderingContextItems( ref renderingContextItems, context );
 
@@ -655,7 +667,7 @@ namespace NeoAxis
 //	return contextItem;
 //}
 
-//public static RenderingContextItem UpdateAndGetContextItem( ref List<RenderingContextItem> renderingContextItems, ViewportRenderingContext context, Component_Mesh mesh, double objectVisibilityDistance, ref Vector3 objectPosition )
+//public static RenderingContextItem UpdateAndGetContextItem( ref List<RenderingContextItem> renderingContextItems, ViewportRenderingContext context, Mesh mesh, double objectVisibilityDistance, ref Vector3 objectPosition )
 //{
 //	var demandLOD = DetectDemandedLOD( context, mesh, objectVisibilityDistance, ref objectPosition );
 //	return UpdateAndGetContextItem( ref renderingContextItems, context, mesh, objectVisibilityDistance, ref objectPosition, demandLOD );

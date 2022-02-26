@@ -1,4 +1,5 @@
-﻿namespace Xilium.CefGlue.Wrapper
+#if !NO_UI_WEB_BROWSER
+namespace Internal.Xilium.CefGlue.Wrapper
 {
     using System;
     using System.Collections.Generic;
@@ -50,3 +51,5 @@
         }
     }
 }
+
+#endif

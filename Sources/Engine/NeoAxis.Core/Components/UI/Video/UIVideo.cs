@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -130,10 +130,10 @@ namespace NeoAxis
 			if( !nativeLibrariesLoaded )
 			{
 				nativeLibrariesLoaded = true;
-				//NativeLibraryManager.PreLoadLibrary( "libogg" );
-				//NativeLibraryManager.PreLoadLibrary( "libvorbis" );
-				//NativeLibraryManager.PreLoadLibrary( "libtheora" );
-				//NativeLibraryManager.PreLoadLibrary( "libvorbisfile" );
+				//NativeLibraryManager.PreloadLibrary( "libogg" );
+				//NativeLibraryManager.PreloadLibrary( "libvorbis" );
+				//NativeLibraryManager.PreloadLibrary( "libtheora" );
+				//NativeLibraryManager.PreloadLibrary( "libvorbisfile" );
 			}
 		}
 

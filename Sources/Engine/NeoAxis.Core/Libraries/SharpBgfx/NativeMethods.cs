@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Security;
 
-namespace SharpBgfx {
+namespace Internal.SharpBgfx {
     [SuppressUnmanagedCodeSecurity]
     unsafe static class NativeMethods {
 #pragma warning disable IDE1006 // Naming Styles
@@ -52,6 +52,10 @@ namespace SharpBgfx {
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void bgfx_set_texture (byte stage, ushort sampler, ushort texture, uint flags);
+
+        //!!!!betauser
+        [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
+        public unsafe static extern void bgfx_set_textures( uint* data, int count );
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void bgfx_set_image (byte stage, ushort texture, byte mip, TextureFormat format, ComputeBufferAccess access);
@@ -112,6 +116,10 @@ namespace SharpBgfx {
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void bgfx_vertex_layout_add (ref VertexLayout.Data decl, VertexAttributeUsage attribute, byte count, VertexAttributeType type, [MarshalAs(UnmanagedType.U1)] bool normalized, [MarshalAs(UnmanagedType.U1)] bool asInt);
+
+        //!!!!betauser
+        [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
+        public static extern void bgfx_vertex_layout_decode( ref VertexLayout.Data decl, VertexAttributeUsage attribute, out byte count, out VertexAttributeType type, [MarshalAs( UnmanagedType.U1 )] out bool normalized, [MarshalAs( UnmanagedType.U1 )] out bool asInt );
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void bgfx_vertex_layout_skip (ref VertexLayout.Data decl, byte count);
@@ -590,6 +598,10 @@ namespace SharpBgfx {
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         public static extern IntPtr bgfx_call_special( [MarshalAs( UnmanagedType.LPStr )] string name, IntPtr parameter1, IntPtr parameter2,
             IntPtr parameter3, IntPtr parameter4 );
+
+        ////!!!!betauser
+        //[DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
+        //public static extern void bgfx_float4x4_mul( IntPtr result, IntPtr a, IntPtr b );
 
 #pragma warning restore IDE1006 // Naming Styles
 

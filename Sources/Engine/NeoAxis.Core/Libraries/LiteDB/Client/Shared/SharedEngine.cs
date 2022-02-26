@@ -1,4 +1,5 @@
-﻿using LiteDB.Engine;
+#if !NO_LITE_DB
+using Internal.LiteDB.Engine;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,16 +11,16 @@ using System.Security.AccessControl;
 using System.Security.Principal;
 #endif
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     public class SharedEngine : ILiteEngine
     {
-        private readonly EngineSettings _settings;
+        private readonly Engine.EngineSettings _settings;
         private readonly Mutex _mutex;
         private LiteEngine _engine;
         private int _stack = 0;
 
-        public SharedEngine(EngineSettings settings)
+        public SharedEngine( Engine.EngineSettings settings)
         {
             _settings = settings;
 
@@ -387,3 +388,4 @@ namespace LiteDB
         }
     }
 }
+#endif

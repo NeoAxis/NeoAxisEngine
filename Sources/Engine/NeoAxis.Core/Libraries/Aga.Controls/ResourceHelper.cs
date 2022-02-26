@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Aga.Controls
+namespace Internal.Aga.Controls
 {
     public static class ResourceHelper
     {

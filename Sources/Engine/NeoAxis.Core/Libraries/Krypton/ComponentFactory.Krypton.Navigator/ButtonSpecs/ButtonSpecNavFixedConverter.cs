@@ -17,9 +17,9 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Collections.Generic;
 using System.Diagnostics;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Toolkit;
 
-namespace ComponentFactory.Krypton.Navigator
+namespace Internal.ComponentFactory.Krypton.Navigator
 {
     /// <summary>
     /// Add conversion to a string for display in properties window at design time.

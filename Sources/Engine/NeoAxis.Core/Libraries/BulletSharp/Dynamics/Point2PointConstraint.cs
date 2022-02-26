@@ -1,9 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	[Flags]
 	public enum Point2PointFlags
@@ -44,7 +44,7 @@ namespace BulletSharp
 	public class Point2PointConstraint : TypedConstraint
 	{
 		public Point2PointConstraint(RigidBody rigidBodyA, RigidBody rigidBodyB,
-			Vector3 pivotInA, Vector3 pivotInB)
+			BVector3 pivotInA, BVector3 pivotInB)
 			: base(btPoint2PointConstraint_new(rigidBodyA.Native, rigidBodyB.Native,
 				ref pivotInA, ref pivotInB))
 		{
@@ -52,7 +52,7 @@ namespace BulletSharp
 			_rigidBodyB = rigidBodyB;
 		}
 
-		public Point2PointConstraint(RigidBody rigidBodyA, Vector3 pivotInA)
+		public Point2PointConstraint(RigidBody rigidBodyA, BVector3 pivotInA)
 			: base(btPoint2PointConstraint_new2(rigidBodyA.Native, ref pivotInA))
 		{
 			_rigidBodyA = rigidBodyA;
@@ -64,7 +64,7 @@ namespace BulletSharp
 			btPoint2PointConstraint_getInfo1NonVirtual(Native, info._native);
 		}
 
-		public void GetInfo2NonVirtual(ConstraintInfo2 info, Matrix body0Trans, Matrix body1Trans)
+		public void GetInfo2NonVirtual(ConstraintInfo2 info, BMatrix body0Trans, BMatrix body1Trans)
 		{
 			btPoint2PointConstraint_getInfo2NonVirtual(Native, info._native, ref body0Trans,
 				ref body1Trans);
@@ -77,22 +77,22 @@ namespace BulletSharp
 
 		public Point2PointFlags Flags => btPoint2PointConstraint_getFlags(Native);
 
-		public Vector3 PivotInA
+		public BVector3 PivotInA
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btPoint2PointConstraint_getPivotInA(Native, out value);
 				return value;
 			}
 			set => btPoint2PointConstraint_setPivotA(Native, ref value);
 		}
 
-		public Vector3 PivotInB
+		public BVector3 PivotInB
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btPoint2PointConstraint_getPivotInB(Native, out value);
 				return value;
 			}

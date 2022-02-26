@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -16,10 +16,12 @@ namespace NeoAxis
 		/// The matrix with all of its components set to zero.
 		/// </summary>
 		public static readonly Matrix4 Zero = new Matrix4( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 );
+		public const string ZeroAsString = "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0";
 		/// <summary>
 		/// The identity matrix.
 		/// </summary>
 		public static readonly Matrix4 Identity = new Matrix4( 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 );
+		public const string IdentityAsString = "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1";
 
 		//
 
@@ -270,14 +272,14 @@ namespace NeoAxis
 			{
 				if( index < 0 || index > 3 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( Vector4* v = &this.Item0 )
+				fixed( Vector4* v = &this.Item0 )
 					return v[ index ];
 			}
 			set
 			{
 				if( index < 0 || index > 3 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( Vector4* v = &this.Item0 )
+				fixed( Vector4* v = &this.Item0 )
 					v[ index ] = value;
 			}
 		}
@@ -1080,7 +1082,7 @@ namespace NeoAxis
 					throw new ArgumentOutOfRangeException( "row" );
 				if( column < 0 || column > 3 )
 					throw new ArgumentOutOfRangeException( "column" );
-				fixed ( double* v = &this.Item0.X )
+				fixed( double* v = &this.Item0.X )
 					return v[ row * 4 + column ];
 			}
 			set
@@ -1089,7 +1091,7 @@ namespace NeoAxis
 					throw new ArgumentOutOfRangeException( "row" );
 				if( column < 0 || column > 3 )
 					throw new ArgumentOutOfRangeException( "column" );
-				fixed ( double* v = &this.Item0.X )
+				fixed( double* v = &this.Item0.X )
 					v[ row * 4 + column ] = value;
 			}
 		}

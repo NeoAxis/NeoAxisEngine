@@ -1,9 +1,10 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
 using System.IO;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     /// <summary>
     /// Convert filename to mimetype (http://stackoverflow.com/questions/1029740/get-mime-type-from-filename-extension)
@@ -597,3 +598,5 @@ namespace LiteDB
         }
     }
 }
+
+#endif

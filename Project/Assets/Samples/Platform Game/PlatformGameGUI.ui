@@ -1,0 +1,64 @@
+// Made with NeoAxis Engine 2022.1.
+
+.component Project.PlatformGameGUI
+{
+	Size = Parent 1 1
+	EditorScrollPosition = 0 0
+	.component NeoAxis.UIImage
+	{
+		Name = Left
+		Size = Units 250 250
+		VerticalAlignment = Bottom
+		Margin = Units 0 0 0 0
+		ColorMultiplier = 1 0.7348627 0
+		EditorScrollPosition = 0 0
+		TextureCoordinatesRotation = 180
+		SourceImage
+		{
+			GetByReference = "Base\\UI\\Images\\Arrow.png"
+		}
+	}
+	.component NeoAxis.UIImage
+	{
+		Name = Right
+		Size = Units 250 250
+		VerticalAlignment = Bottom
+		Margin = Units 250 0 0 0
+		ColorMultiplier = 1 0.7348627 0
+		EditorScrollPosition = 0 0
+		SourceImage
+		{
+			GetByReference = "Base\\UI\\Images\\Arrow.png"
+		}
+	}
+	.component NeoAxis.UIImage
+	{
+		Name = Jump
+		Size = Units 250 250
+		HorizontalAlignment = Right
+		VerticalAlignment = Bottom
+		Margin = Units 0 0 250 0
+		ColorMultiplier = 1 0.7348627 0
+		EditorScrollPosition = 0 0
+		TextureCoordinatesRotation = 270
+		SourceImage
+		{
+			GetByReference = "Base\\UI\\Images\\Arrow.png"
+		}
+	}
+	.component NeoAxis.UIImage
+	{
+		Name = Fire
+		Size = Units 250 250
+		HorizontalAlignment = Right
+		VerticalAlignment = Bottom
+		Margin = Units 0 0 0 0
+		ColorMultiplier = 1 0.7348627 0
+		EditorScrollPosition = 0 0
+		TextureCoordinates = -0.3 -0.3 1.3 1.3
+		SourceImage
+		{
+			GetByReference = "Base\\UI\\Images\\Circle.png"
+		}
+	}
+}

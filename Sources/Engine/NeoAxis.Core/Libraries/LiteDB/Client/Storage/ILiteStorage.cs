@@ -1,9 +1,10 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq.Expressions;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     public interface ILiteStorage<TFileId>
     {
@@ -83,3 +84,4 @@ namespace LiteDB
         bool Delete(TFileId id);
     }
 }
+#endif

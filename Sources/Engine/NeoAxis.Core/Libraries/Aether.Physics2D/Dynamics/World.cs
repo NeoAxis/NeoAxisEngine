@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 Kastellanos Nikolaos
+﻿// Copyright (c) 2021 Kastellanos Nikolaos
 
 /* Original source Farseer Physics Engine:
  * Copyright (c) 2014 Ian Qvist, http://farseerphysics.codeplex.com
@@ -38,16 +38,17 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.Xna.Framework;
-using tainicom.Aether.Physics2D.Collision;
-using tainicom.Aether.Physics2D.Common;
-using tainicom.Aether.Physics2D.Controllers;
-using tainicom.Aether.Physics2D.Diagnostics;
-using tainicom.Aether.Physics2D.Dynamics.Contacts;
-using tainicom.Aether.Physics2D.Dynamics.Joints;
-using tainicom.Aether.Physics2D.Fluids;
+using Internal.tainicom.Aether.Physics2D.Collision;
+using Internal.tainicom.Aether.Physics2D.Common;
+using Internal.tainicom.Aether.Physics2D.Controllers;
+using Internal.tainicom.Aether.Physics2D.Dynamics.Contacts;
+using Internal.tainicom.Aether.Physics2D.Dynamics.Joints;
 
-namespace tainicom.Aether.Physics2D.Dynamics
+#if XNAAPI
+using Vector2 = Microsoft.Xna.Framework.Vector2;
+#endif
+
+namespace Internal.tainicom.Aether.Physics2D.Dynamics
 {
     /// <summary>
     /// The world class manages all physics entities, dynamic simulation,
@@ -62,28 +63,35 @@ namespace tainicom.Aether.Physics2D.Dynamics
         private const bool _subStepping = false;
         #endregion
 
+        Vector2 _gravity;
+
         private bool _stepComplete = true;
 
         private float _invDt0;
         private Body[] _stack = new Body[64];
+        private QueryReportFixtureDelegate _queryDelegateTmp;
+        private BroadPhaseQueryCallback _queryCallbackCache;
+        private TOIInput _input = new TOIInput();
+        private Vector2 _testPointPointTmp;
+        private Fixture _testPointFixtureTmp;
+        private QueryReportFixtureDelegate _testPointDelegateCache;
+        private Stopwatch _watch = new Stopwatch();
+        private RayCastReportFixtureDelegate _rayCastDelegateTmp;
+        private BroadPhaseRayCastCallback _rayCastCallbackCache;
+
+        internal bool _worldHasNewFixture;
+
+
+#if LEGACY_ASYNCADDREMOVE
         private HashSet<Body> _bodyAddList = new HashSet<Body>();
         private HashSet<Body> _bodyRemoveList = new HashSet<Body>();
         private HashSet<Joint> _jointAddList = new HashSet<Joint>();
         private HashSet<Joint> _jointRemoveList = new HashSet<Joint>();
-        private Func<Fixture, bool> _queryAABBCallback;
-        private Func<int, bool> _queryAABBCallbackWrapper;
-        private TOIInput _input = new TOIInput();
-        private Fixture _myFixture;
-        private Vector2 _point1;
-        private Vector2 _point2;
-        private List<Fixture> _testPointAllFixtures;
-        private Stopwatch _watch = new Stopwatch();
-        private Func<Fixture, Vector2, Vector2, float, float> _rayCastCallback;
-        private Func<RayCastInput, int, float> _rayCastCallbackWrapper;
+#endif
 
-        internal bool _worldHasNewFixture;
-
-        public FluidSystem2 Fluid { get; private set; }
+#if LEGACY_FLUIDS
+        public tainicom.Aether.Physics2D.Fluids.FluidSystem2 Fluid { get; private set; }
+#endif
 
         /// <summary>
         /// Set the user data. Use this to store your application specific data.
@@ -138,9 +146,9 @@ namespace tainicom.Aether.Physics2D.Dynamics
         {
             Island = new Island();
             Enabled = true;
-            ControllerList = new List<Controller>();
-            BodyList = new List<Body>(32);
-            JointList = new List<Joint>(32);
+            BodyList = new BodyCollection(this);
+            JointList = new JointCollection(this);
+            ControllerList = new ControllerCollection(this);
 
 #if USE_AWAKE_BODY_SET
             AwakeBodySet = new HashSet<Body>();
@@ -153,10 +161,13 @@ namespace tainicom.Aether.Physics2D.Dynamics
             TOISet = new HashSet<Body>();
 #endif
 
-            _queryAABBCallbackWrapper = QueryAABBCallbackWrapper;
-            _rayCastCallbackWrapper = RayCastCallbackWrapper;
+            _queryCallbackCache = new BroadPhaseQueryCallback(QueryAABBCallback);
+            _rayCastCallbackCache = new BroadPhaseRayCastCallback(RayCastCallback);
+            _testPointDelegateCache = new QueryReportFixtureDelegate(this.TestPointCallback);
 
-            Fluid = new FluidSystem2(new Vector2(0, -1), 5000, 150, 150);
+#if LEGACY_FLUIDS
+            Fluid = new tainicom.Aether.Physics2D.Fluids.FluidSystem2(new Vector2(0, -1), 5000, 150, 150);
+#endif
 
             ContactManager = new ContactManager(new DynamicTreeBroadPhase());
             Gravity = new Vector2(0f, -9.80665f);
@@ -174,41 +185,9 @@ namespace tainicom.Aether.Physics2D.Dynamics
         /// <summary>
         /// Initializes a new instance of the <see cref="World"/> class.
         /// </summary>
-        [Obsolete("Use: new World(new QuadTreeBroadPhase(span));")]
-        public World(AABB span) : this(new QuadTreeBroadPhase(span))
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="World"/> class.
-        /// </summary>
         public World(IBroadPhase broadPhase) : this()
         {
             ContactManager = new ContactManager(broadPhase);
-        }
-
-        private bool QueryAABBCallbackWrapper(int proxyId)
-        {
-            FixtureProxy proxy = ContactManager.BroadPhase.GetProxy(proxyId);
-            return _queryAABBCallback(proxy.Fixture);
-        }
-
-        private float RayCastCallbackWrapper(RayCastInput rayCastInput, int proxyId)
-        {
-            FixtureProxy proxy = ContactManager.BroadPhase.GetProxy(proxyId);
-            Fixture fixture = proxy.Fixture;
-            int index = proxy.ChildIndex;
-            RayCastOutput output;
-            bool hit = fixture.RayCast(out output, ref rayCastInput, index);
-
-            if (hit)
-            {
-                float fraction = output.Fraction;
-                Vector2 point = (1.0f - fraction) * rayCastInput.Point1 + fraction * rayCastInput.Point2;
-                return _rayCastCallback(fixture, point, output.Normal, fraction);
-            }
-
-            return rayCastInput.MaxFraction;
         }
 
         private void Solve(ref TimeStep step)
@@ -263,9 +242,9 @@ namespace tainicom.Aether.Physics2D.Dynamics
             foreach (var seed in AwakeBodyList)
             {
 #else
-            for (int index = BodyList.Count - 1; index >= 0; index--)
+            for (int index = BodyList._list.Count - 1; index >= 0; index--)
             {
-                Body seed = BodyList[index];
+                Body seed = BodyList._list[index];
 #endif
                 if (seed._island)
                 {
@@ -402,7 +381,7 @@ namespace tainicom.Aether.Physics2D.Dynamics
                     }
                 }
 
-                Island.Solve(ref step, ref Gravity);
+                Island.Solve(ref step, ref _gravity);
 
                 // Post solve cleanup.
                 for (int i = 0; i < Island.BodyCount; ++i)
@@ -483,10 +462,10 @@ namespace tainicom.Aether.Physics2D.Dynamics
                     b.Sweep.Alpha0 = 0.0f;
                 }
 #else
-                for (int i = 0; i < BodyList.Count; i++)
+                for (int i = 0; i < BodyList._list.Count; i++)
                 {
-                    BodyList[i]._island = false;
-                    BodyList[i]._sweep.Alpha0 = 0.0f;
+                    BodyList._list[i]._island = false;
+                    BodyList._list[i]._sweep.Alpha0 = 0.0f;
                 }
 #endif
 #if USE_ACTIVE_CONTACT_SET
@@ -822,13 +801,12 @@ namespace tainicom.Aether.Physics2D.Dynamics
                 // Also, some contacts can be destroyed.
                 ContactManager.FindNewContacts();
 
-				if (_subStepping)
-                {
-#pragma warning disable 162
-					_stepComplete = false;
-#pragma warning restore 162
-					break;
-                }
+				//!!!!betauser
+                //if (_subStepping)
+                //{
+                //    _stepComplete = false;
+                //    break;
+                //}
             }
 
 #if OPTIMIZE_TOI
@@ -837,7 +815,7 @@ namespace tainicom.Aether.Physics2D.Dynamics
 #endif
         }
 
-        public readonly List<Controller> ControllerList;
+        public readonly ControllerCollection ControllerList;
 
         public TimeSpan UpdateTime { get; private set; }
         public TimeSpan ContinuousPhysicsTime { get; private set; }
@@ -869,19 +847,21 @@ namespace tainicom.Aether.Physics2D.Dynamics
         /// Change the global gravity vector.
         /// </summary>
         /// <value>The gravity.</value>
-        public Vector2 Gravity;
+        public Vector2 Gravity
+        {
+            get { return _gravity; }
+            set 
+            {
+                if (IsLocked)
+                    throw new InvalidOperationException("The World is locked.");
+                _gravity = value;
+            }
+        }
         
         /// <summary>
         /// Is the world locked (in the middle of a time step).
         /// </summary>        
         public bool IsLocked { get; private set; }
-
-        /// <summary>
-        /// Is the world running (in the middle of a time step).
-        /// </summary>        
-        /// <remarks>Deprecated in version 1.3</remarks>
-        [Obsolete("Use IsLocked")]
-        public bool IsStepping { get { return IsLocked; } }
 
         /// <summary>
         /// Get the contact manager for testing.
@@ -893,7 +873,7 @@ namespace tainicom.Aether.Physics2D.Dynamics
         /// Get the world body list.
         /// </summary>
         /// <value>The head of the world body list.</value>
-        public readonly List<Body> BodyList;
+        public readonly BodyCollection BodyList;
 
 #if USE_AWAKE_BODY_SET
         public HashSet<Body> AwakeBodySet { get; private set; }
@@ -910,7 +890,7 @@ namespace tainicom.Aether.Physics2D.Dynamics
         /// Get the world joint list. 
         /// </summary>
         /// <value>The joint list.</value>
-        public readonly List<Joint> JointList;
+        public readonly JointCollection JointList;
 
         /// <summary>
         /// Get the world contact list. 
@@ -962,7 +942,8 @@ namespace tainicom.Aether.Physics2D.Dynamics
 #endif
 
             body._world = this;
-            BodyList.Add(body);
+            BodyList._list.Add(body);
+            BodyList._generationStamp++;
 
 
             // Update transform
@@ -977,12 +958,14 @@ namespace tainicom.Aether.Physics2D.Dynamics
 
             // Fire World events:
 
-            if (BodyAdded != null)
-                BodyAdded(this, body);
+            var bodyAddedHandler = BodyAdded;
+            if (bodyAddedHandler != null)
+                bodyAddedHandler(this, body);
             
-            if (FixtureAdded != null)
-                for (int i = 0; i < body.FixtureList.Count; i++)
-                    FixtureAdded(this, body, body.FixtureList[i]);
+            var fixtureAddedHandler = FixtureAdded;
+            if (fixtureAddedHandler != null)
+                for (int i = 0; i < body.FixtureList._list.Count; i++)
+                    fixtureAddedHandler(this, body, body.FixtureList._list[i]);
         }
 
         /// <summary>
@@ -1032,17 +1015,18 @@ namespace tainicom.Aether.Physics2D.Dynamics
 
             // Delete the attached fixtures. This destroys broad-phase proxies.
             body.DestroyProxies();
-            for (int i = 0; i < body.FixtureList.Count; i++)
-            {
-                if (FixtureRemoved != null)
-                    FixtureRemoved(this, body, body.FixtureList[i]);
-            }
+            var fixtureRemovedHandler = FixtureRemoved;
+            if (fixtureRemovedHandler != null)
+                for (int i = 0; i < body.FixtureList._list.Count; i++)
+                    fixtureRemovedHandler(this, body, body.FixtureList._list[i]);
 
             body._world = null;
-            BodyList.Remove(body);
+            BodyList._list.Remove(body);
+            BodyList._generationStamp++;
 
-            if (BodyRemoved != null)
-                BodyRemoved(this, body);
+            var bodyRemovedHandler = BodyRemoved;
+            if (bodyRemovedHandler != null)
+                bodyRemovedHandler(this, body);
 
 #if USE_AWAKE_BODY_SET
             Debug.Assert(!AwakeBodySet.Contains(body));
@@ -1061,11 +1045,15 @@ namespace tainicom.Aether.Physics2D.Dynamics
                 throw new InvalidOperationException("The World is locked.");
             if (joint == null)
                 throw new ArgumentNullException("joint");
-            if (JointList.Contains(joint))
+            if (joint._world == this)
                 throw new ArgumentException("You are adding the same joint more than once.", "joint");
+            if (joint._world != null)
+                throw new ArgumentException("joint belongs to another world.", "joint");
 
             // Connect to the world list.
-            JointList.Add(joint);
+            joint._world = this;
+            JointList._list.Add(joint);
+            JointList._generationStamp++;
 
             // Connect to the bodies' doubly linked lists.
             joint.EdgeA.Joint = joint;
@@ -1112,8 +1100,9 @@ namespace tainicom.Aether.Physics2D.Dynamics
                 }
             }
 
-            if (JointAdded != null)
-                JointAdded(this, joint);
+            var jointAddedHandler = JointAdded;
+            if (jointAddedHandler != null)
+                jointAddedHandler(this, joint);
 
             // Note: creating a joint doesn't wake the bodies.
         }
@@ -1130,13 +1119,15 @@ namespace tainicom.Aether.Physics2D.Dynamics
                 throw new InvalidOperationException("The World is locked.");
             if (joint == null)
                 throw new ArgumentNullException("joint");
-            if (!JointList.Contains(joint))
+            if (joint.World != this)
                 throw new ArgumentException("You are removing a joint that is not in the simulation.", "joint");
 
             bool collideConnected = joint.CollideConnected;
 
             // Remove from the world list.
-            JointList.Remove(joint);
+            joint._world = null;
+            JointList._list.Remove(joint);
+            JointList._generationStamp++;
 
             // Disconnect from island graph.
             Body bodyA = joint.BodyA;
@@ -1214,11 +1205,14 @@ namespace tainicom.Aether.Physics2D.Dynamics
                 }
             }
 
-            if (JointRemoved != null)
-                JointRemoved(this, joint);
+            var jointRemovedHandler = JointRemoved;
+            if (jointRemovedHandler != null)
+                jointRemovedHandler(this, joint);
         }
 
 
+        #region LEGACY_ASYNCADDREMOVE
+#if LEGACY_ASYNCADDREMOVE
         /// <summary>
         /// Add a rigid body.
         /// </summary>
@@ -1351,6 +1345,8 @@ namespace tainicom.Aether.Physics2D.Dynamics
                 Debug.Assert(BodyList.Contains(b));
 #endif
         }
+#endif
+        #endregion // LEGACY_ASYNCADDREMOVE
 
         
         /// <summary>
@@ -1408,9 +1404,11 @@ namespace tainicom.Aether.Physics2D.Dynamics
             if (Settings.EnableDiagnostics)
                 _watch.Start();
 
+#if LEGACY_ASYNCADDREMOVE
             ProcessChanges();
             if (Settings.EnableDiagnostics)
                 AddRemoveTime = TimeSpan.FromTicks(_watch.ElapsedTicks);
+#endif
 
             // If new fixtures were added, we need to find the new contacts.
             if (_worldHasNewFixture)
@@ -1434,9 +1432,9 @@ namespace tainicom.Aether.Physics2D.Dynamics
             try
             {
                 //Update controllers
-                for (int i = 0; i < ControllerList.Count; i++)
+                for (int i = 0; i < ControllerList._list.Count; i++)
                 {
-                    ControllerList[i].Update(dt);
+                    ControllerList._list[i].Update(dt);
                 }
                 if (Settings.EnableDiagnostics)
                     ControllersUpdateTime = TimeSpan.FromTicks(_watch.ElapsedTicks) - (AddRemoveTime + NewContactsTime);
@@ -1462,8 +1460,10 @@ namespace tainicom.Aether.Physics2D.Dynamics
                 if (Settings.EnableDiagnostics)
                     ContinuousPhysicsTime = TimeSpan.FromTicks(_watch.ElapsedTicks) - (AddRemoveTime + NewContactsTime + ControllersUpdateTime + ContactsUpdateTime + SolveUpdateTime);
 
+#if LEGACY_FLUIDS
                 if (step.dt > 0.0f)
                     Fluid.Update(dt);
+#endif
 
                 if (Settings.AutoClearForces)
                     ClearForces();
@@ -1491,9 +1491,9 @@ namespace tainicom.Aether.Physics2D.Dynamics
         /// </summary>
         public void ClearForces()
         {
-            for (int i = 0; i < BodyList.Count; i++)
+            for (int i = 0; i < BodyList._list.Count; i++)
             {
-                Body body = BodyList[i];
+                Body body = BodyList._list[i];
                 body._force = Vector2.Zero;
                 body._torque = 0.0f;
             }
@@ -1508,30 +1508,31 @@ namespace tainicom.Aether.Physics2D.Dynamics
         /// </summary>
         /// <param name="callback">A user implemented callback class.</param>
         /// <param name="aabb">The aabb query box.</param>
-        public void QueryAABB(Func<Fixture, bool> callback, ref AABB aabb)
+        public void QueryAABB(QueryReportFixtureDelegate callback, AABB aabb)
         {
-            _queryAABBCallback = callback;
-            ContactManager.BroadPhase.Query(_queryAABBCallbackWrapper, ref aabb);
-            _queryAABBCallback = null;
+            QueryAABB(callback, ref aabb);
         }
 
         /// <summary>
         /// Query the world for all fixtures that potentially overlap the provided AABB.
-        /// Use the overload with a callback for filtering and better performance.
+        /// 
+        /// Inside the callback:
+        /// Return true: Continues the query
+        /// Return false: Terminate the query
         /// </summary>
+        /// <param name="callback">A user implemented callback class.</param>
         /// <param name="aabb">The aabb query box.</param>
-        /// <returns>A list of fixtures that were in the affected area.</returns>
-        public List<Fixture> QueryAABB(ref AABB aabb)
+        public void QueryAABB(QueryReportFixtureDelegate callback, ref AABB aabb)
         {
-            List<Fixture> affected = new List<Fixture>();
+            _queryDelegateTmp = callback;
+            ContactManager.BroadPhase.Query(_queryCallbackCache, ref aabb);
+            _queryDelegateTmp = null;
+        }
 
-            QueryAABB(fixture =>
-                {
-                    affected.Add(fixture);
-                    return true;
-                }, ref aabb);
-
-            return affected;
+        private bool QueryAABBCallback(int proxyId)
+        {
+            FixtureProxy proxy = ContactManager.BroadPhase.GetProxy(proxyId);
+            return _queryDelegateTmp(proxy.Fixture);
         }
 
         /// <summary>
@@ -1548,29 +1549,34 @@ namespace tainicom.Aether.Physics2D.Dynamics
         /// <param name="callback">A user implemented callback class.</param>
         /// <param name="point1">The ray starting point.</param>
         /// <param name="point2">The ray ending point.</param>
-        public void RayCast(Func<Fixture, Vector2, Vector2, float, float> callback, Vector2 point1, Vector2 point2)
+        public void RayCast(RayCastReportFixtureDelegate callback, Vector2 point1, Vector2 point2)
         {
             RayCastInput input = new RayCastInput();
             input.MaxFraction = 1.0f;
             input.Point1 = point1;
             input.Point2 = point2;
 
-            _rayCastCallback = callback;
-            ContactManager.BroadPhase.RayCast(_rayCastCallbackWrapper, ref input);
-            _rayCastCallback = null;
+            _rayCastDelegateTmp = callback;
+            ContactManager.BroadPhase.RayCast(_rayCastCallbackCache, ref input);
+            _rayCastDelegateTmp = null;
         }
 
-        public List<Fixture> RayCast(Vector2 point1, Vector2 point2)
+        private float RayCastCallback(ref RayCastInput rayCastInput, int proxyId)
         {
-            List<Fixture> affected = new List<Fixture>();
+            FixtureProxy proxy = ContactManager.BroadPhase.GetProxy(proxyId);
+            Fixture fixture = proxy.Fixture;
+            int index = proxy.ChildIndex;
+            RayCastOutput output;
+            bool hit = fixture.RayCast(out output, ref rayCastInput, index);
 
-            RayCast((f, p, n, fr) =>
+            if (hit)
             {
-                affected.Add(f);
-                return 1;
-            }, point1, point2);
+                float fraction = output.Fraction;
+                Vector2 point = (1.0f - fraction) * rayCastInput.Point1 + fraction * rayCastInput.Point2;
+                return _rayCastDelegateTmp(fixture, point, output.Normal, fraction);
+            }
 
-            return affected;
+            return rayCastInput.MaxFraction;
         }
 
         /// <summary>
@@ -1589,10 +1595,12 @@ namespace tainicom.Aether.Physics2D.Dynamics
                 throw new ArgumentException("Controller belongs to another world.", "controller");
 
             controller.World = this;
-            ControllerList.Add(controller);
+            ControllerList._list.Add(controller);
+            ControllerList._generationStamp++;
 
-            if (ControllerAdded != null)
-                ControllerAdded(this, controller);
+            var controllerAddedHandler = ControllerAdded;
+            if (controllerAddedHandler != null)
+                controllerAddedHandler(this, controller);
         }
 
         /// <summary>
@@ -1609,10 +1617,12 @@ namespace tainicom.Aether.Physics2D.Dynamics
                     throw new ArgumentException("You are removing a controller that is not in the simulation.", "controller");
 
             controller.World = null;
-            ControllerList.Remove(controller);
+            ControllerList._list.Remove(controller);
+            ControllerList._generationStamp++;
 
-            if (ControllerRemoved != null)
-                ControllerRemoved(this, controller);
+            var controllerRemovedHandler = ControllerRemoved;
+            if (controllerRemovedHandler != null)
+                controllerRemovedHandler(this, controller);
         }
 
         public Fixture TestPoint(Vector2 point)
@@ -1622,54 +1632,23 @@ namespace tainicom.Aether.Physics2D.Dynamics
             aabb.LowerBound = point - d;
             aabb.UpperBound = point + d;
 
-            _myFixture = null;
-            _point1 = point;
+            _testPointPointTmp = point;
+            _testPointFixtureTmp = null;
 
             // Query the world for overlapping shapes.
-            QueryAABB(TestPointCallback, ref aabb);
+            QueryAABB(_testPointDelegateCache, ref aabb);
 
-            return _myFixture;
+            return _testPointFixtureTmp;
         }
 
         private bool TestPointCallback(Fixture fixture)
         {
-            bool inside = fixture.TestPoint(ref _point1);
+            bool inside = fixture.TestPoint(ref _testPointPointTmp);
             if (inside)
             {
-                _myFixture = fixture;
+                _testPointFixtureTmp = fixture;
                 return false;
             }
-
-            // Continue the query.
-            return true;
-        }
-
-        /// <summary>
-        /// Returns a list of fixtures that are at the specified point.
-        /// </summary>
-        /// <param name="point">The point.</param>
-        /// <returns></returns>
-        public List<Fixture> TestPointAll(Vector2 point)
-        {
-            AABB aabb;
-            Vector2 d = new Vector2(Settings.Epsilon, Settings.Epsilon);
-            aabb.LowerBound = point - d;
-            aabb.UpperBound = point + d;
-
-            _point2 = point;
-            _testPointAllFixtures = new List<Fixture>();
-
-            // Query the world for overlapping shapes.
-            QueryAABB(TestPointAllCallback, ref aabb);
-
-            return _testPointAllFixtures;
-        }
-
-        private bool TestPointAllCallback(Fixture fixture)
-        {
-            bool inside = fixture.TestPoint(ref _point2);
-            if (inside)
-                _testPointAllFixtures.Add(fixture);
 
             // Continue the query.
             return true;
@@ -1705,16 +1684,18 @@ namespace tainicom.Aether.Physics2D.Dynamics
             if (IsLocked)
                 throw new InvalidOperationException("The World is locked.");
 
+#if LEGACY_ASYNCADDREMOVE
             ProcessChanges();
+#endif
 
-            for (int i = BodyList.Count - 1; i >= 0; i--)
+            for (int i = BodyList._list.Count - 1; i >= 0; i--)
             {
-                Remove(BodyList[i]);
+                Remove(BodyList._list[i]);
             }
 
-            for (int i = ControllerList.Count - 1; i >= 0; i--)
+            for (int i = ControllerList._list.Count - 1; i >= 0; i--)
             {
-                Remove(ControllerList[i]);
+                Remove(ControllerList._list[i]);
             }
 
         }

@@ -1,6 +1,8 @@
-.component NeoAxis.Component_ParticleSystem
+// Made with NeoAxis Engine 2022.1.
+
+.component NeoAxis.ParticleSystem
 {
-	.component NeoAxis.Component_ParticleEmitter
+	.component NeoAxis.ParticleEmitter
 	{
 		Name = Emitter
 		StartTime
@@ -99,8 +101,9 @@
 		{
 			Value
 			{
+				Type = Range
 				Constant = 0 0 0
-				Range = 0 0 0 0 0 0
+				Range = -60 0 0 60 0 0
 				CurveX
 				{
 					Count = 0
@@ -163,18 +166,18 @@
 				Range = 1 1 1 1 1 1 1 1
 			}
 		}
-		.component NeoAxis.Component_ParticleEmitterShape_Point
+		.component NeoAxis.ParticleEmitterShape_Point
 		{
 			Name = Point Shape
 			Transform = "0 0 0; 0 -0.707106781186547 0 0.707106781186548; 1 1 1"
 		}
-		.component NeoAxis.Component_ParticleEmitterShape_Cylinder
+		.component NeoAxis.ParticleEmitterShape_Cylinder
 		{
 			Name = Cylinder Shape
 			Transform = "0 0 0; 0 -0.707106781186547 0 0.707106781186548; 1 1 1"
 			Radius = 5
 		}
-		.component NeoAxis.Component_ParticleColorMultiplierByTime
+		.component NeoAxis.ParticleColorMultiplierByTime
 		{
 			Name = Color Multiplier By Time
 			Channels = Alpha

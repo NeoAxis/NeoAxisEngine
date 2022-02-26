@@ -1,6 +1,7 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
@@ -8,31 +9,31 @@ using System.Linq;
 namespace NeoAxis
 {
 	/// <summary>
-	/// Helper class for working with engine types.
+	/// A helper class for working with types of the engine.
 	/// </summary>
 	public static class TypeUtility
 	{
 		static List<string> prefixesToRemove = new List<string>();
-		static Dictionary<string, string> wordsToReplace = new Dictionary<string, string>();
+		//static Dictionary<string, string> wordsToReplace = new Dictionary<string, string>();
 
 		//
 
-		public static List<string> PrefixesToRemove
+		public static ReadOnlyCollection<string> PrefixesToRemove
 		{
-			get { return prefixesToRemove; }
+			get { return prefixesToRemove.AsReadOnly(); }
 		}
 
-		public static Dictionary<string, string> WordsToReplace
-		{
-			get { return wordsToReplace; }
-		}
+		//public static Dictionary<string, string> WordsToReplace
+		//{
+		//	get { return wordsToReplace; }
+		//}
 
 		public static string DisplayNameAddSpaces( string str )
 		{
 			if( str.Contains( " " ) )
 				return str;
 
-			//!!!!
+			//special words
 			if( str == "iOS" )
 				return str;
 
@@ -43,7 +44,7 @@ namespace NeoAxis
 				return str2;
 
 
-			StringBuilder withSpaces = new StringBuilder();
+			var withSpaces = new StringBuilder();
 
 			char prev = ' ';
 			for( int n = 0; n < str2.Length; n++ )
@@ -63,16 +64,16 @@ namespace NeoAxis
 
 			string[] words = withSpaces.ToString().Split( new char[] { ' ' } );
 
-			StringBuilder result = new StringBuilder();
+			var result = new StringBuilder();
 			for( int n = 0; n < words.Length; n++ )
 			{
 				var word = words[ n ];
 
-				if( n > 0 && n < words.Length - 1 )
-				{
-					if( wordsToReplace.TryGetValue( word, out string newWord ) )
-						word = newWord;
-				}
+				//if( n > 0 && n < words.Length - 1 )
+				//{
+				//	if( wordsToReplace.TryGetValue( word, out string newWord ) )
+				//		word = newWord;
+				//}
 
 				if( result.Length != 0 )
 					result.Append( ' ' );
@@ -94,9 +95,9 @@ namespace NeoAxis
 			prefixesToRemove.Add( "MeshGeometry_" );
 			prefixesToRemove.Add( "MeshModifier_" );
 
-			List<string> toLowerWords = new List<string>();
-			foreach( var s in toLowerWords )
-				wordsToReplace.Add( s, s.ToLower() );
+			//List<string> toLowerWords = new List<string>();
+			//foreach( var s in toLowerWords )
+			//	wordsToReplace.Add( s, s.ToLower() );
 		}
 
 		public static string GetUserFriendlyNameForInstanceOfType( Type type )

@@ -1,7 +1,8 @@
 $input v_texCoord0
 
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "../../Common.sh"
+#include "../../FragmentFunctions.sh"
 #include "ASSAO_Helpers.sh"
 
 uniform vec4 NDCToViewMul;
@@ -18,6 +19,7 @@ uniform vec4 effectShadowStrength;
 uniform vec4 effectShadowClamp;
 uniform vec4 effectShadowPow;
 uniform vec4 detailAOStrength;
+uniform vec4 detailAOStrengthDistance;
 uniform vec4 adaptiveSampleCountLimit;
 uniform vec4 passNumber;
 uniform mat4 itViewMatrix;
@@ -57,6 +59,9 @@ static const vec4 g_samplePatternMain[MAIN_DISK_SAMPLE_COUNT] =
 
 vec3 NDCToViewspace(vec2 pos, float viewspaceDepth)
 {
+	//!!!!betauser
+	pos = clamp(pos, viewportPixelSize.xy, vec2_splat(1.0) - viewportPixelSize.xy);
+	
     vec3 ret;
 
     ret.xy = (NDCToViewMul.xy * pos.xy + NDCToViewAdd.xy) * viewspaceDepth;
@@ -219,13 +224,19 @@ void GenerateSSAOShadowsInternal(out float outShadowTerm, out vec4 outEdges, out
     const float rangeReductionConst = 4.0;
     const float modifiedFalloffCalcMulSq = rangeReductionConst * falloffCalcMulSq;
 
+	BRANCH
+	if(detailAOStrength.x != 0.0)
+	{
     vec4 additionalObscurance;
     additionalObscurance.x = CalculatePixelObscurance(pixelNormal, pixLDelta, modifiedFalloffCalcMulSq);
     additionalObscurance.y = CalculatePixelObscurance(pixelNormal, pixRDelta, modifiedFalloffCalcMulSq);
     additionalObscurance.z = CalculatePixelObscurance(pixelNormal, pixTDelta, modifiedFalloffCalcMulSq);
     additionalObscurance.w = CalculatePixelObscurance(pixelNormal, pixBDelta, modifiedFalloffCalcMulSq);
 
-    obscuranceSum += detailAOStrength.x * dot(additionalObscurance, edgesLRTB);
+		float distanceFactor = getVisibilityDistanceFactor(detailAOStrengthDistance.x, toClipSpaceDepth(pixZ));
+		
+		obscuranceSum += detailAOStrength.x * dot(additionalObscurance, edgesLRTB) * distanceFactor;
+	}
     
     vec3 neighbourNormalL = LoadNormal(fullResCoord + vec2(-2.0 * viewportPixelSize.x,  0.0 ));
     vec3 neighbourNormalR = LoadNormal(fullResCoord + vec2( 2.0 * viewportPixelSize.x,  0.0 ));
@@ -258,7 +269,7 @@ void GenerateSSAOShadowsInternal(out float outShadowTerm, out vec4 outEdges, out
     obscuranceSum *= (SSAO_ADAPTIVE_TAP_BASE_COUNT / (float)SSAO_MAX_TAPS) + (importance * SSAO_ADAPTIVE_TAP_FLEXIBLE_COUNT / (float)SSAO_MAX_TAPS);
 
     // load existing base values:
-    vec2 baseValues = bgfxTexture2DArray(s_SSAOMapBase, vec3(TexCoord, passNumber.x)).xy;
+    vec2 baseValues = texture2DArray(s_SSAOMapBase, vec3(TexCoord, passNumber.x)).xy;
     weightSum += baseValues.y * (float)SSAO_ADAPTIVE_TAP_BASE_COUNT * 4.0;
     obscuranceSum += (baseValues.x) * weightSum;
         

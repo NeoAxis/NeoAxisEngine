@@ -21,7 +21,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using Microsoft.Win32;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     public interface IVisualPopupShadow : IDisposable
     {

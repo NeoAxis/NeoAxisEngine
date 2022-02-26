@@ -1,22 +1,16 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
-using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Reflection;
 using System.IO;
 using System.Linq;
 
 namespace NeoAxis
 {
 	/// <summary>
-	/// Auxiliary class for working with components.
+	/// An auxiliary class for working with components.
 	/// </summary>
 	public static class ComponentUtility
 	{
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 		public static Component CreateComponent( Metadata.TypeInfo type, object[] constructorParams, bool createHierarchyController,
 			bool componentEnable )
 		{
@@ -57,20 +51,20 @@ namespace NeoAxis
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		public static bool _SaveToTextBlockInternal( Component component, Metadata.SaveContext context, TextBlock parentBlock, out bool skipSave, out string error )
-		{
-			return component._SaveToTextBlock( context, parentBlock, out skipSave, out error );
-		}
+		//public static bool _SaveToTextBlockInternal( Component component, Metadata.SaveContext context, TextBlock parentBlock, out bool skipSave, out string error )
+		//{
+		//	return component._SaveToTextBlock( context, parentBlock, out skipSave, out error );
+		//}
 
 		static bool LoadContext_InitComponentItemsRecursive( Metadata.LoadContext context, Metadata.LoadContext.ComponentItem componentItem, out string error )
 		{
-			context.allComponentItemsCreationOrder.Add( componentItem );
+			context.AllComponentItemsCreationOrder.Add( componentItem );
 
-			var block = componentItem.textBlock;
+			var block = componentItem.TextBlock;
 
 			//load Name property
 			if( block.AttributeExists( "Name" ) )
-				componentItem.name = block.GetAttribute( "Name" );
+				componentItem.Name = block.GetAttribute( "Name" );
 
 			//components
 			List<Metadata.LoadContext.ComponentItem> children = new List<Metadata.LoadContext.ComponentItem>();
@@ -87,17 +81,17 @@ namespace NeoAxis
 					}
 
 					Metadata.LoadContext.ComponentItem child = new Metadata.LoadContext.ComponentItem();
-					child.parent = componentItem;
-					child.textBlock = childBlock;
+					child.Parent = componentItem;
+					child.TextBlock = childBlock;
 					if( !LoadContext_InitComponentItemsRecursive( context, child, out error ) )
 						return false;
 
 					children.Add( child );
 				}
 			}
-			componentItem.children = children.ToArray();
+			componentItem.Children = children.ToArray();
 
-			context.allComponentItemsSerializationOrder.Add( componentItem );
+			context.AllComponentItemsSerializationOrder.Add( componentItem );
 
 			error = "";
 			return true;
@@ -108,26 +102,26 @@ namespace NeoAxis
 		{
 			changed = false;
 
-			if( item.component == null && ( item.parent != null && item.parent.component != null || item.parent == null ) )
+			if( item.Component == null && ( item.Parent != null && item.Parent.Component != null || item.Parent == null ) )
 			{
-				Metadata.TypeInfo type = MetadataManager.GetType( item.textBlock.Data );
+				Metadata.TypeInfo type = MetadataManager.GetType( item.TextBlock.Data );
 				if( type != null )
 				{
 					//!!!!new
 					//use component by base type
-					if( item.parent != null && item.parent.component != null && item.textBlock.AttributeExists( "CreatedByBaseType" ) )
+					if( item.Parent != null && item.Parent.Component != null && item.TextBlock.AttributeExists( "CreatedByBaseType" ) )
 					{
-						bool createdByBaseType = bool.Parse( item.textBlock.GetAttribute( "CreatedByBaseType" ) );
+						bool createdByBaseType = bool.Parse( item.TextBlock.GetAttribute( "CreatedByBaseType" ) );
 						if( createdByBaseType )
 						{
-							int hierarchyIndex = int.Parse( item.textBlock.GetAttribute( "CreatedByBaseTypeHierarchyIndex", "0" ) );
-							int nameIndex = int.Parse( item.textBlock.GetAttribute( "CreatedByBaseTypeNameIndex", "0" ) );
+							int hierarchyIndex = int.Parse( item.TextBlock.GetAttribute( "CreatedByBaseTypeHierarchyIndex", "0" ) );
+							int nameIndex = int.Parse( item.TextBlock.GetAttribute( "CreatedByBaseTypeNameIndex", "0" ) );
 
 							Component useComponent = null;
 
-							foreach( var c in item.parent.component.Components )
+							foreach( var c in item.Parent.Component.Components )
 							{
-								if( c.Name == item.name )
+								if( c.Name == item.Name )
 								{
 									//!!!!return true проверять может таки
 									c.GetBaseTypeIndex( out int baseHierarchyIndex, out string baseName, out int baseNameIndex );
@@ -140,21 +134,21 @@ namespace NeoAxis
 							}
 
 							if( useComponent != null )
-								item.component = useComponent;
+								item.Component = useComponent;
 						}
 					}
 
-					if( item.component == null )
+					if( item.Component == null )
 					{
 						//create
-						item.component = (Component)type.InvokeInstance( null );
+						item.Component = (Component)type.InvokeInstance( null );
 
 						//remove was deleted components created by base type
 						{
 							//!!!!slowly maybe
 
 							//reverse order
-							foreach( TextBlock childBlock in item.textBlock.Children.GetReverse() )
+							foreach( TextBlock childBlock in item.TextBlock.Children.GetReverse() )
 							{
 								if( childBlock.Name == ".componentCreatedByBaseTypeWasDeleted" )
 								{
@@ -163,7 +157,7 @@ namespace NeoAxis
 									int nameIndex = int.Parse( childBlock.GetAttribute( "CreatedByBaseTypeNameIndex", "0" ) );
 
 									Component foundComponent = null;
-									foreach( var c in item.component.Components )
+									foreach( var c in item.Component.Components )
 									{
 										if( c.Name == name )
 										{
@@ -187,23 +181,23 @@ namespace NeoAxis
 
 						}
 
-						item.component.providedTypeAllow = false;
+						item.Component.providedTypeAllow = false;
 
 						//!!!!new
-						item.component.Name = item.name;
+						item.Component.Name = item.Name;
 
 						//!!!!сортировать
 
-						item.parent.component.AddComponent( item.component );
+						item.Parent.Component.AddComponent( item.Component );
 					}
 
 					changed = true;
 				}
 				else
-					unableToGetTypeName.AddWithCheckAlreadyContained( item.textBlock.Data );
+					unableToGetTypeName.AddWithCheckAlreadyContained( item.TextBlock.Data );
 			}
 
-			finished = item.component != null;
+			finished = item.Component != null;
 		}
 
 		static void LoadContext_ProcessComponentsCreation( Metadata.LoadContext context, out bool changed, out bool finished, ESet<string> unableToGetTypeName )
@@ -211,7 +205,7 @@ namespace NeoAxis
 			changed = false;
 			finished = true;
 
-			foreach( var item in context.allComponentItemsCreationOrder )
+			foreach( var item in context.AllComponentItemsCreationOrder )
 			{
 				LoadContext_ProcessComponentCreation( context, item, out bool changed2, out bool finished2, unableToGetTypeName );
 				if( changed2 )
@@ -223,9 +217,9 @@ namespace NeoAxis
 
 		static bool LoadContext_IsAllChildrenLoaded( Metadata.LoadContext context, Metadata.LoadContext.ComponentItem item )
 		{
-			foreach( var child in item.children )
+			foreach( var child in item.Children )
 			{
-				if( !child.loaded )
+				if( !child.Loaded )
 					return false;
 			}
 			return true;
@@ -236,21 +230,21 @@ namespace NeoAxis
 		{
 			changed = false;
 
-			if( item.component != null && !item.loaded && LoadContext_IsAllChildrenLoaded( context, item ) )
+			if( item.Component != null && !item.Loaded && LoadContext_IsAllChildrenLoaded( context, item ) )
 			{
-				if( !item.component._Load( context, item.textBlock, out var error2 ) )
+				if( !item.Component._Load( context, item.TextBlock, out var error2 ) )
 				{
-					error = error2 + $" Component \'{item.component.GetPathFromRoot( true )}\'.";
+					error = error2 + $" Component \'{item.Component.GetPathFromRoot( true )}\'.";
 					finished = false;
 					return false;
 				}
 
-				item.component.providedTypeAllow = true;
-				item.loaded = true;
+				item.Component.providedTypeAllow = true;
+				item.Loaded = true;
 				changed = true;
 			}
 
-			finished = item.loaded;
+			finished = item.Loaded;
 			error = "";
 			return true;
 		}
@@ -260,7 +254,7 @@ namespace NeoAxis
 			changed = false;
 			finished = true;
 
-			foreach( var item in context.allComponentItemsSerializationOrder )
+			foreach( var item in context.AllComponentItemsSerializationOrder )
 			{
 				if( !LoadContext_ProcessComponentSerialization( context, item, out bool changed2, out bool finished2, out error ) )
 					return false;
@@ -316,7 +310,7 @@ namespace NeoAxis
 					else
 						error = "Unknown error, no error info.";
 
-					context.rootComponentItem?.component?.Dispose();
+					context.RootComponentItem?.Component?.Dispose();
 					return false;
 				}
 			}
@@ -326,7 +320,7 @@ namespace NeoAxis
 			if( !finished )
 				goto again;
 
-			if( !context.rootComponentItem.loaded )
+			if( !context.RootComponentItem.Loaded )
 				Log.Fatal( "never happen" );
 
 			error = "";
@@ -486,7 +480,7 @@ namespace NeoAxis
 			Metadata.LoadContext context = overrideContextObject;
 			if( context == null )
 				context = new Metadata.LoadContext();
-			context.virtualFileName = loadedFromFile;
+			context.VirtualFileName = loadedFromFile;
 
 			error = "";
 
@@ -526,27 +520,27 @@ namespace NeoAxis
 
 			//create hierarchy controller. disabled at creation.
 			if( componentCreateHierarchyController )
-				ComponentUtility.CreateHierarchyControllerForRootComponent( component, createdByResource, false );//, true );
+				CreateHierarchyControllerForRootComponent( component, createdByResource, false );//, true );
 
 			//create context, init tree structure of components
-			context.rootComponentItem = new Metadata.LoadContext.ComponentItem();
-			context.rootComponentItem.textBlock = componentBlock;
+			context.RootComponentItem = new Metadata.LoadContext.ComponentItem();
+			context.RootComponentItem.TextBlock = componentBlock;
 
-			if( !LoadContext_InitComponentItemsRecursive( context, context.rootComponentItem, out error ) )
+			if( !LoadContext_InitComponentItemsRecursive( context, context.RootComponentItem, out error ) )
 			{
 				component?.Dispose();
 				return null;
 			}
 
 			//processing
-			context.rootComponentItem.component = component;
+			context.RootComponentItem.Component = component;
 			if( !LoadContext_ProcessComponentItems( context, out error ) )
 			{
 				component?.Dispose();
 				return null;
 			}
 
-			if( !context.rootComponentItem.loaded )
+			if( !context.RootComponentItem.Loaded )
 			{
 				error = "Root component is not loaded.";
 				component?.Dispose();
@@ -712,7 +706,8 @@ namespace NeoAxis
 			Metadata.SaveContext context = overrideContextObject;
 			if( context == null )
 				context = new Metadata.SaveContext();
-			context.realFileName = realFileName;
+			//!!!!strange overwrite
+			context.RealFileName = realFileName;
 
 			component.HierarchyController?.ProcessDelayedOperations();
 
@@ -737,9 +732,9 @@ namespace NeoAxis
 			//!!!!!".createdBy"
 			//mapBlock.SetAttribute( ".engineVersion", EngineVersionInformation.Version );
 
-			//!!!!_SaveToTextBlockInternal
+			//_SaveToTextBlockInternal
 
-			component._SaveToTextBlock( context, rootBlock, out _, out error );
+			component._SaveToTextBlock( context, rootBlock, true, out _, out error );
 			if( !string.IsNullOrEmpty( error ) )
 				return false;
 

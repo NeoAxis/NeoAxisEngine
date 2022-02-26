@@ -1,8 +1,9 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     /// <summary>
     /// Simple parameter class to be passed into IEnumerable classes loop ("ref" do not works)
@@ -13,3 +14,4 @@ namespace LiteDB.Engine
         public int Count = 0;
     }
 }
+#endif

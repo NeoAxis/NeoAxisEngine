@@ -2,7 +2,7 @@ using System;
 using System.Text;
 using System.Collections.ObjectModel;
 
-namespace Aga.Controls.Tree
+namespace Internal.Aga.Controls.Tree
 {
 	public class TreePath
 	{

@@ -1,8 +1,9 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     /// <summary>
     /// </summary>
@@ -19,3 +20,4 @@ namespace LiteDB.Engine
         public Collation Collation { get; set; } = null;
     }
 }
+#endif

@@ -20,7 +20,7 @@ using System.Windows.Forms.VisualStyles;
 using System.Runtime.InteropServices;
 using System.Security;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     /// <summary>
     /// Provide accurate text measuring and drawing capability.

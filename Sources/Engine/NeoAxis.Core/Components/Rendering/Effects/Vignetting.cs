@@ -1,11 +1,7 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
-using System.Drawing.Design;
 using System.ComponentModel;
-using System.Reflection;
 
 namespace NeoAxis
 {
@@ -14,7 +10,7 @@ namespace NeoAxis
 	/// </summary>
 	[DefaultOrderOfEffect( 13 )]
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
-	public class Component_RenderingEffect_Vignetting : Component_RenderingEffect_Simple
+	public class RenderingEffect_Vignetting : RenderingEffect_Simple
 	{
 		const string shaderDefault = @"Base\Shaders\Effects\Vignetting_fs.sc";
 		const string noiseTextureDefault = @"Base\Images\Noise.png";
@@ -34,7 +30,7 @@ namespace NeoAxis
 			set { if( _color.BeginSet( ref value ) ) { try { ColorChanged?.Invoke( this ); } finally { _color.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Color"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_Vignetting> ColorChanged;
+		public event Action<RenderingEffect_Vignetting> ColorChanged;
 		ReferenceField<ColorValue> _color = new ColorValue( 0, 0, 0 );
 
 		/// <summary>
@@ -49,7 +45,7 @@ namespace NeoAxis
 			set { if( _radius.BeginSet( ref value ) ) { try { RadiusChanged?.Invoke( this ); } finally { _radius.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Radius"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_Vignetting> RadiusChanged;
+		public event Action<RenderingEffect_Vignetting> RadiusChanged;
 		ReferenceField<double> _radius = 2;
 
 		/// <summary>
@@ -64,19 +60,19 @@ namespace NeoAxis
 			set { if( _noiseRange.BeginSet( ref value ) ) { try { NoiseRangeChanged?.Invoke( this ); } finally { _noiseRange.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="NoiseRange"/> property value changes.</summary>
-		public event Action<Component_RenderingEffect_Vignetting> NoiseRangeChanged;
+		public event Action<RenderingEffect_Vignetting> NoiseRangeChanged;
 		ReferenceField<Range> _noiseRange = new Range( 1, 1 );
 
-		public Component_RenderingEffect_Vignetting()
+		public RenderingEffect_Vignetting()
 		{
-			Shader = shaderDefault;
+			ShaderFile = shaderDefault;
 		}
 
-		protected override void OnSetShaderParameters( ViewportRenderingContext context, Component_RenderingPipeline.IFrameData frameData, Component_Image actualTexture, CanvasRenderer.ShaderItem shader )
+		protected override void OnSetShaderParameters( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ImageComponent actualTexture, CanvasRenderer.ShaderItem shader )
 		{
 			base.OnSetShaderParameters( context, frameData, actualTexture, shader );
 
-			var noiseTexture = ResourceManager.LoadResource<Component_Image>( noiseTextureDefault );
+			var noiseTexture = ResourceManager.LoadResource<ImageComponent>( noiseTextureDefault );
 			if( noiseTexture == null )
 				noiseTexture = ResourceUtility.WhiteTexture2D;
 

@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
@@ -21,6 +21,7 @@ namespace NeoAxis
 		public float W;
 
 		public static readonly QuaternionF Identity = new QuaternionF( 0.0f, 0.0f, 0.0f, 1.0f );
+		public static readonly QuaternionF Zero = new QuaternionF( 0.0f, 0.0f, 0.0f, 0.0f );
 
 		public QuaternionF( Vector3F v, float w )
 		{
@@ -322,7 +323,7 @@ namespace NeoAxis
 			{
 				if( index < 0 || index > 3 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( float* v = &this.X )
+				fixed( float* v = &this.X )
 				{
 					return v[ index ];
 				}
@@ -331,7 +332,7 @@ namespace NeoAxis
 			{
 				if( index < 0 || index > 3 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( float* v = &this.X )
+				fixed( float* v = &this.X )
 				{
 					v[ index ] = value;
 				}
@@ -738,6 +739,16 @@ namespace NeoAxis
 		{
 			Matrix3F.FromRotateByZ( angle, out var mat );
 			mat.ToQuaternion( out result );
+		}
+
+		public bool Equals( ref QuaternionF v )
+		{
+			return X == v.X && Y == v.Y && Z == v.Z && W == v.W;
+		}
+
+		public static bool Equals( ref QuaternionF v1, ref QuaternionF v2 )
+		{
+			return v1.X == v2.X && v1.Y == v2.Y && v1.Z == v2.Z && v1.W == v2.W;
 		}
 	}
 }

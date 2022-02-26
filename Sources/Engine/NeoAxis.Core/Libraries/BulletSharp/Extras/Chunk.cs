@@ -2,7 +2,7 @@
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
     [StructLayout(LayoutKind.Sequential)]
     public class Chunk4

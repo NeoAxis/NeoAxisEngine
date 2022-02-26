@@ -1,9 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	[Flags]
 	public enum ConeTwistFlags
@@ -16,8 +16,8 @@ namespace BulletSharp
 
 	public class ConeTwistConstraint : TypedConstraint
 	{
-		public ConeTwistConstraint(RigidBody rigidBodyA, RigidBody rigidBodyB, Matrix rigidBodyAFrame,
-			Matrix rigidBodyBFrame)
+		public ConeTwistConstraint(RigidBody rigidBodyA, RigidBody rigidBodyB, BMatrix rigidBodyAFrame,
+			BMatrix rigidBodyBFrame)
 			: base(btConeTwistConstraint_new(rigidBodyA.Native, rigidBodyB.Native,
 				ref rigidBodyAFrame, ref rigidBodyBFrame))
 		{
@@ -25,7 +25,7 @@ namespace BulletSharp
 			_rigidBodyB = rigidBodyB;
 		}
 
-		public ConeTwistConstraint(RigidBody rigidBodyA, Matrix rigidBodyAFrame)
+		public ConeTwistConstraint(RigidBody rigidBodyA, BMatrix rigidBodyAFrame)
 			: base(btConeTwistConstraint_new2(rigidBodyA.Native, ref rigidBodyAFrame))
 		{
 			_rigidBodyA = rigidBodyA;
@@ -37,15 +37,15 @@ namespace BulletSharp
 			btConeTwistConstraint_calcAngleInfo(Native);
 		}
 
-		public void CalcAngleInfo2Ref(ref Matrix transA, ref Matrix transB, ref Matrix invInertiaWorldA,
-			Matrix invInertiaWorldB)
+		public void CalcAngleInfo2Ref(ref BMatrix transA, ref BMatrix transB, ref BMatrix invInertiaWorldA,
+			BMatrix invInertiaWorldB)
 		{
 			btConeTwistConstraint_calcAngleInfo2(Native, ref transA, ref transB,
 				ref invInertiaWorldA, ref invInertiaWorldB);
 		}
 
-		public void CalcAngleInfo2(Matrix transA, Matrix transB, Matrix invInertiaWorldA,
-			Matrix invInertiaWorldB)
+		public void CalcAngleInfo2(BMatrix transA, BMatrix transB, BMatrix invInertiaWorldA,
+			BMatrix invInertiaWorldB)
 		{
 			btConeTwistConstraint_calcAngleInfo2(Native, ref transA, ref transB,
 				ref invInertiaWorldA, ref invInertiaWorldB);
@@ -56,15 +56,15 @@ namespace BulletSharp
 			btConeTwistConstraint_enableMotor(Native, b);
 		}
 
-		public void GetInfo2NonVirtualRef(ConstraintInfo2 info, ref Matrix transA, ref Matrix transB,
-			Matrix invInertiaWorldA, Matrix invInertiaWorldB)
+		public void GetInfo2NonVirtualRef(ConstraintInfo2 info, ref BMatrix transA, ref BMatrix transB,
+			BMatrix invInertiaWorldA, BMatrix invInertiaWorldB)
 		{
 			btConeTwistConstraint_getInfo2NonVirtual(Native, info._native, ref transA,
 				ref transB, ref invInertiaWorldA, ref invInertiaWorldB);
 		}
 
-		public void GetInfo2NonVirtual(ConstraintInfo2 info, Matrix transA, Matrix transB,
-			Matrix invInertiaWorldA, Matrix invInertiaWorldB)
+		public void GetInfo2NonVirtual(ConstraintInfo2 info, BMatrix transA, BMatrix transB,
+			BMatrix invInertiaWorldA, BMatrix invInertiaWorldB)
 		{
 			btConeTwistConstraint_getInfo2NonVirtual(Native, info._native, ref transA,
 				ref transB, ref invInertiaWorldA, ref invInertiaWorldB);
@@ -75,20 +75,20 @@ namespace BulletSharp
 			return btConeTwistConstraint_getLimit(Native, limitIndex);
 		}
 
-		public Vector3 GetPointForAngle(double fAngleInRadians, double fLength)
+		public BVector3 GetPointForAngle(double fAngleInRadians, double fLength)
 		{
-			Vector3 value;
+			BVector3 value;
 			btConeTwistConstraint_GetPointForAngle(Native, fAngleInRadians, fLength,
 				out value);
 			return value;
 		}
 
-		public void SetFramesRef(ref Matrix frameA, ref Matrix frameB)
+		public void SetFramesRef(ref BMatrix frameA, ref BMatrix frameB)
 		{
 			btConeTwistConstraint_setFrames(Native, ref frameA, ref frameB);
 		}
 
-		public void SetFrames(Matrix frameA, Matrix frameB)
+		public void SetFrames(BMatrix frameA, BMatrix frameB)
 		{
 			btConeTwistConstraint_setFrames(Native, ref frameA, ref frameB);
 		}
@@ -110,7 +110,7 @@ namespace BulletSharp
 			btConeTwistConstraint_setMaxMotorImpulseNormalized(Native, maxMotorImpulse);
 		}
 
-		public void SetMotorTargetInConstraintSpace(Quaternion q)
+		public void SetMotorTargetInConstraintSpace(BQuaternion q)
 		{
 			btConeTwistConstraint_setMotorTargetInConstraintSpace(Native, ref q);
 		}
@@ -120,11 +120,11 @@ namespace BulletSharp
 			btConeTwistConstraint_updateRHS(Native, timeStep);
 		}
 
-		public Matrix AFrame
+		public BMatrix AFrame
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btConeTwistConstraint_getAFrame(Native, out value);
 				return value;
 			}
@@ -136,11 +136,11 @@ namespace BulletSharp
 			set => btConeTwistConstraint_setAngularOnly(Native, value);
 		}
 
-		public Matrix BFrame
+		public BMatrix BFrame
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btConeTwistConstraint_getBFrame(Native, out value);
 				return value;
 			}
@@ -162,21 +162,21 @@ namespace BulletSharp
 
 		public ConeTwistFlags Flags => btConeTwistConstraint_getFlags(Native);
 
-		public Matrix FrameOffsetA
+		public BMatrix FrameOffsetA
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btConeTwistConstraint_getFrameOffsetA(Native, out value);
 				return value;
 			}
 		}
 
-		public Matrix FrameOffsetB
+		public BMatrix FrameOffsetB
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btConeTwistConstraint_getFrameOffsetB(Native, out value);
 				return value;
 			}
@@ -196,11 +196,11 @@ namespace BulletSharp
 			set => btConeTwistConstraint_setMaxMotorImpulse(Native, value);
 		}
 
-		public Quaternion MotorTarget
+		public BQuaternion MotorTarget
 		{
 			get
 			{
-				Quaternion value;
+				BQuaternion value;
 				btConeTwistConstraint_getMotorTarget(Native, out value);
 				return value;
 			}

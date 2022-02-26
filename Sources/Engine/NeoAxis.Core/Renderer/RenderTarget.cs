@@ -1,10 +1,10 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
-using SharpBgfx;
+using Internal.SharpBgfx;
 
 namespace NeoAxis
 {
@@ -51,11 +51,7 @@ namespace NeoAxis
 			{
 				//after shutdown check
 				if( RenderingSystem.Disposed )
-				{
-					//waiting for .NET Standard 2.0
-					Log.Fatal( "Renderer: Dispose after Shutdown." );
-					//Log.Fatal( "Renderer: Dispose after Shutdown: {0}()", System.Reflection.MethodInfo.GetCurrentMethod().Name );
-				}
+					Log.Fatal( "RenderTarget: Dispose after shutdown." );
 
 				lock( RenderingSystem.renderTargets )
 					RenderingSystem.renderTargets.Remove( this );

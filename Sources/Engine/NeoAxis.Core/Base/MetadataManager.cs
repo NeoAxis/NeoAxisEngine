@@ -1,12 +1,8 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
-using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Reflection;
 using System.IO;
-using System.Threading;
 using System.Text;
 
 namespace NeoAxis
@@ -20,6 +16,7 @@ namespace NeoAxis
 
 		//!!!!!посмотреть не накапливается ли. значит это нужно наглядно показывать. записывать как счетчик. графиком выводить. виды записывателей.
 		//!!!!!тут вроде как складируются еще генерики не дефинишены
+
 		static Dictionary<Type, Metadata.NetTypeInfo> netTypes = new Dictionary<Type, Metadata.NetTypeInfo>();
 		static Dictionary<string, Metadata.NetTypeInfo> netTypeByName = new Dictionary<string, Metadata.NetTypeInfo>();
 
@@ -182,47 +179,75 @@ namespace NeoAxis
 			netTypeShortNames[ typeof( short ) ] = "short";
 			netTypeShortNames[ typeof( ushort ) ] = "ushort";
 
-			AssemblyUtility.RegisterAssembly( Assembly.GetExecutingAssembly(), "" );
+			Internal.AssemblyUtility.RegisterAssembly( Assembly.GetExecutingAssembly(), "" );
 			RegisterStandardReferenceTypes();
 			Serialization.RegisterStandardSerializableTypes();
 
 			RegisterStandardAutoConvertItems();
 		}
 
-		public static ICollection<Metadata.NetTypeInfo> NetTypes
+		public static Metadata.NetTypeInfo[] GetNetTypes()
 		{
-			get
+			lock( lockObject )
 			{
-				lock( lockObject )
-				{
-					//!!!!!array can be cached
-					Metadata.NetTypeInfo[] array = new Metadata.NetTypeInfo[ netTypes.Count ];
-					netTypes.Values.CopyTo( array, 0 );
-					return array;
-				}
+				//!!!!!array can be cached
+				var array = new Metadata.NetTypeInfo[ netTypes.Count ];
+				netTypes.Values.CopyTo( array, 0 );
+				return array;
 			}
 		}
 
 		//internal static ESet<string> added = new ESet<string>();
 
-		internal static void RegisterTypesOfAssembly( Assembly assembly, Type[] types = null )
+		internal static void RegisterTypesOfAssembly( Type[] exportedTypes )
 		{
 			lock( lockObject )
 			{
-				if( types == null )
-					types = assembly.GetExportedTypes();
-
-				foreach( var type in types )//assembly.GetExportedTypes() )
+				foreach( var type in exportedTypes )
 				{
 					//skip disabled types by namespace name
-					if( AssemblyUtility.disableNamespaceRegistration == null )
-						AssemblyUtility.ParseDisableAssemblyNamespaceRegistration();
-					if( AssemblyUtility.disableNamespaceRegistration.Contains( type.Namespace ) )
+					if( Internal.AssemblyUtility.disableNamespaceRegistration == null )
+						Internal.AssemblyUtility.ParseDisableAssemblyNamespaceRegistration();
+					if( Internal.AssemblyUtility.disableNamespaceRegistration.Contains( type.Namespace ) )
+						continue;
+
+					if( EngineApp.ApplicationType != EngineApp.ApplicationTypeEnum.Editor && type.Namespace == "NeoAxis.Editor" )
 						continue;
 
 					//added.AddWithCheckAlreadyContained( type.Namespace );
 
 					GetTypeOfNetType( type );//, false );
+				}
+			}
+		}
+
+		internal static void UnregisterTypesOfAssembly( Assembly assembly )
+		{
+			lock( lockObject )
+			{
+				//netTypes
+				{
+					var array = new Type[ netTypes.Count ];
+					netTypes.Keys.CopyTo( array, 0 );
+
+					foreach( var type in array )
+					{
+						if( type.Assembly == assembly )
+							netTypes.Remove( type );
+					}
+				}
+
+				//netTypeByName
+				{
+					var array = new Metadata.NetTypeInfo[ netTypeByName.Count ];
+					netTypeByName.Values.CopyTo( array, 0 );
+
+					foreach( var typeInfo in array )
+					{
+						var type = typeInfo.GetNetType();
+						if( type.Assembly == assembly )
+							netTypeByName.Remove( typeInfo.Name );
+					}
 				}
 			}
 		}
@@ -308,7 +333,7 @@ namespace NeoAxis
 
 			if( addNamespaceDeclaringTypeAssemblyName )
 			{
-				var a = AssemblyUtility.GetRegisteredAssembly( type.Assembly );
+				var a = Internal.AssemblyUtility.GetRegisteredAssembly( type.Assembly );
 				if( a != null && !string.IsNullOrEmpty( a.RegisterTypeNamesWithIncludedAssemblyName ) )
 				{
 					//!!!! :
@@ -407,7 +432,7 @@ namespace NeoAxis
 				//!!!!!только цельными сборками?
 				//register assembly
 				//if( canRegisterAssembly )//&& !assemblies.Contains( type.Assembly ) )
-				AssemblyUtility.RegisterAssembly( type.Assembly, "" );
+				Internal.AssemblyUtility.RegisterAssembly( type.Assembly, "" );
 
 				Metadata.NetTypeInfo info;
 				if( !netTypes.TryGetValue( type, out info ) )
@@ -517,13 +542,76 @@ namespace NeoAxis
 			}
 		}
 
+		static Dictionary<string, string> renamedTypeNames;
+
+		static Dictionary<string, string> RenamedTypeNames
+		{
+			get
+			{
+				if( renamedTypeNames == null )
+				{
+					var result = new Dictionary<string, string>();
+
+					result[ "NeoAxis.Component_Image" ] = "NeoAxis.ImageComponent";
+					result[ "NeoAxis.Component_Font" ] = "NeoAxis.FontComponent";
+
+					result[ "NeoAxis.Component_Pathfinding_Geometry" ] = "NeoAxis.PathfindingGeometry";
+					result[ "NeoAxis.Component_Pathfinding_GeometryTag" ] = "NeoAxis.PathfindingGeometryTag";
+
+					result[ "NeoAxis.Component_ConvertTo" ] = "NeoAxis.FlowConvertTo";
+					result[ "NeoAxis.Component_DeclareVariable" ] = "NeoAxis.FlowDeclareVariable";
+					result[ "NeoAxis.Component_DoNumber" ] = "NeoAxis.FlowDoNumber";
+					result[ "NeoAxis.Component_DoWhile" ] = "NeoAxis.FlowDoWhile";
+					result[ "NeoAxis.Component_EventHandler" ] = "NeoAxis.EventHandlerComponent";
+					result[ "NeoAxis.Component_FlowStart" ] = "NeoAxis.FlowStart";
+					result[ "NeoAxis.Component_For" ] = "NeoAxis.FlowFor";
+					result[ "NeoAxis.Component_ForEach" ] = "NeoAxis.FlowForEach";
+					result[ "NeoAxis.Component_If" ] = "NeoAxis.FlowIf";
+					result[ "NeoAxis.Component_Sequence" ] = "NeoAxis.FlowSequence";
+					result[ "NeoAxis.Component_SetVariable" ] = "NeoAxis.FlowSetVariable";
+					result[ "NeoAxis.Component_Sleep" ] = "NeoAxis.FlowSleep";
+					result[ "NeoAxis.Component_Switch" ] = "NeoAxis.FlowSwitch";
+					result[ "NeoAxis.Component_While" ] = "NeoAxis.FlowWhile";
+					result[ "NeoAxis.Component_Member" ] = "NeoAxis.VirtualMember";
+					result[ "NeoAxis.Component_MemberParameter" ] = "NeoAxis.VirtualMemberParameter";
+					result[ "NeoAxis.Component_Method" ] = "NeoAxis.VirtualMethod";
+					result[ "NeoAxis.Component_MethodBody" ] = "NeoAxis.VirtualMethodBody";
+					result[ "NeoAxis.Component_MethodBodyEnd" ] = "NeoAxis.VirtualMethodBodyEnd";
+					result[ "NeoAxis.Component_Property" ] = "NeoAxis.VirtualProperty";
+
+					result[ "NeoAxis.Component_RenderingPipeline_Default" ] = "NeoAxis.RenderingPipeline_Basic";
+					result[ "NeoAxis.RenderingEffect_CodeGenerated" ] = "NeoAxis.RenderingEffect_Script";
+					result[ "NeoAxis.RenderingEffect_ScreenSpaceReflection" ] = "NeoAxis.RenderingEffect_Reflection";
+
+					renamedTypeNames = result;
+				}
+
+				return renamedTypeNames;
+			}
+		}
+
 		public static Metadata.NetTypeInfo GetTypeOfNetType( string typeName )
 		{
 			lock( lockObject )
 			{
 				Metadata.NetTypeInfo type;
-				netTypeByName.TryGetValue( typeName, out type );
-				return type;
+				if( netTypeByName.TryGetValue( typeName, out type ) )
+					return type;
+
+				//old names compatibility
+				if( RenamedTypeNames.TryGetValue( typeName, out var typeName2 ) )
+				{
+					if( netTypeByName.TryGetValue( typeName2, out type ) )
+						return type;
+				}
+				if( typeName.Length > 18 && typeName[ 0 ] == 'N' && typeName[ 8 ] == 'C' && typeName[ 17 ] == '_' )
+				{
+					var typeName3 = typeName.Replace( "NeoAxis.Component_", "NeoAxis." );
+					if( netTypeByName.TryGetValue( typeName3, out type ) )
+						return type;
+				}
+
+				return null;
 			}
 		}
 
@@ -711,16 +799,16 @@ namespace NeoAxis
 
 		public static ReferenceType RegisterReferenceType( string name, bool canOverridePrevious, ReferenceType.GetValueDelegate getValueFunction, ReferenceType.GetMemberDelegate getMemberFunction )
 		{
-			name = name.ToLower();
+			var nameLower = name.ToLower();
 
-			if( !canOverridePrevious && GetReferenceType( name ) != null )
-				Log.Fatal( $"ComponentManager: RegisterReferenceType: The reference type with name \'{name}\' is already registered." );
+			if( !canOverridePrevious && GetReferenceType( nameLower ) != null )
+				Log.Fatal( $"ComponentManager: RegisterReferenceType: The reference type with name \'{nameLower}\' is already registered." );
 
 			ReferenceType type = new ReferenceType();
-			type.name = name;
+			type.name = nameLower;
 			type.getValueFunction = getValueFunction;
 			type.getMemberFunction = getMemberFunction;
-			referenceTypes[ name ] = type;
+			referenceTypes[ nameLower ] = type;
 			return type;
 		}
 
@@ -1759,8 +1847,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		public static void RegisterSerializableType( Type type, bool oneStringSerialization, SerializableTypeItem.LoadDelegate load,
-			SerializableTypeItem.SaveDelegate save, SerializableTypeItem.CloneDelegate clone )
+		public static void RegisterSerializableType( Type type, bool oneStringSerialization, SerializableTypeItem.LoadDelegate load, SerializableTypeItem.SaveDelegate save, SerializableTypeItem.CloneDelegate clone )
 		{
 			lock( lockObject )
 			{
@@ -1780,7 +1867,7 @@ namespace NeoAxis
 		{
 			lock( lockObject )
 			{
-				SerializableTypeItem[] array = new SerializableTypeItem[ serializableTypes.Count ];
+				var array = new SerializableTypeItem[ serializableTypes.Count ];
 				serializableTypes.Values.CopyTo( array, 0 );
 				return array;
 			}
@@ -1829,33 +1916,39 @@ namespace NeoAxis
 			}
 		}
 
-		public static void RegisterAutoConvertItem( Type from, Type to, AutoConvertTypeItem.ConvertDelegate convertFunction )
+		public static void RegisterAutoConvertItem( Type from, Type to, AutoConvertTypeItem.ConvertDelegate convertFunction, bool unregister )
 		{
 			if( from == to )
 				return;
 
 			lock( lockObject )
 			{
-				var item = new AutoConvertTypeItem( convertFunction );
-				autoConvertTypes[ (from, to) ] = item;
+				if( unregister )
+					autoConvertTypes.Remove( (from, to) );
+				else
+					autoConvertTypes[ (from, to) ] = new AutoConvertTypeItem( convertFunction );
 			}
 		}
 
-		public static void RegisterAutoConvertItem( Type from, Type to, MethodInfo convertMethod )
+		public static void RegisterAutoConvertItem( Type from, Type to, MethodInfo convertMethod, bool unregister )
 		{
 			lock( lockObject )
 			{
-				var item = new AutoConvertTypeItem( convertMethod );
-				autoConvertTypes[ (from, to) ] = item;
+				if( unregister )
+					autoConvertTypes.Remove( (from, to) );
+				else
+					autoConvertTypes[ (from, to) ] = new AutoConvertTypeItem( convertMethod );
 			}
 		}
 
-		public static void RegisterAutoConvertItem( Type from, Type to, ConstructorInfo convertConstructor )
+		public static void RegisterAutoConvertItem( Type from, Type to, ConstructorInfo convertConstructor, bool unregister )
 		{
 			lock( lockObject )
 			{
-				var item = new AutoConvertTypeItem( convertConstructor );
-				autoConvertTypes[ (from, to) ] = item;
+				if( unregister )
+					autoConvertTypes.Remove( (from, to) );
+				else
+					autoConvertTypes[ (from, to) ] = new AutoConvertTypeItem( convertConstructor );
 			}
 		}
 
@@ -1864,250 +1957,247 @@ namespace NeoAxis
 			//!!!!двойное конвертирование? т.е. через что-то. видать, так нельзя, а то всё через строки можно будет.
 
 			//sbyte
-			RegisterAutoConvertItem( typeof( sbyte ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(sbyte)value; } );
-			RegisterAutoConvertItem( typeof( sbyte ), typeof( byte ), delegate ( object value ) { return (byte)(sbyte)value; } );
-			RegisterAutoConvertItem( typeof( sbyte ), typeof( char ), delegate ( object value ) { return (char)(sbyte)value; } );
-			RegisterAutoConvertItem( typeof( sbyte ), typeof( short ), delegate ( object value ) { return (short)(sbyte)value; } );
-			RegisterAutoConvertItem( typeof( sbyte ), typeof( ushort ), delegate ( object value ) { return (ushort)(sbyte)value; } );
-			RegisterAutoConvertItem( typeof( sbyte ), typeof( int ), delegate ( object value ) { return (int)(sbyte)value; } );
-			RegisterAutoConvertItem( typeof( sbyte ), typeof( uint ), delegate ( object value ) { return (uint)(sbyte)value; } );
-			RegisterAutoConvertItem( typeof( sbyte ), typeof( long ), delegate ( object value ) { return (long)(sbyte)value; } );
-			RegisterAutoConvertItem( typeof( sbyte ), typeof( ulong ), delegate ( object value ) { return (ulong)(sbyte)value; } );
-			RegisterAutoConvertItem( typeof( sbyte ), typeof( float ), delegate ( object value ) { return (float)(sbyte)value; } );
-			RegisterAutoConvertItem( typeof( sbyte ), typeof( double ), delegate ( object value ) { return (double)(sbyte)value; } );
-			RegisterAutoConvertItem( typeof( sbyte ), typeof( decimal ), delegate ( object value ) { return (double)(sbyte)value; } );
-			RegisterAutoConvertItem( typeof( sbyte ), typeof( string ), delegate ( object value ) { return value.ToString(); } );
-			RegisterAutoConvertItem( typeof( string ), typeof( sbyte ), delegate ( object value ) { return sbyte.Parse( (string)value ); } );
-			RegisterAutoConvertItem( typeof( sbyte ), typeof( bool ), delegate ( object value ) { return ( (sbyte)value ) != 0; } );
+			RegisterAutoConvertItem( typeof( sbyte ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(sbyte)value; }, false );
+			RegisterAutoConvertItem( typeof( sbyte ), typeof( byte ), delegate ( object value ) { return (byte)(sbyte)value; }, false );
+			RegisterAutoConvertItem( typeof( sbyte ), typeof( char ), delegate ( object value ) { return (char)(sbyte)value; }, false );
+			RegisterAutoConvertItem( typeof( sbyte ), typeof( short ), delegate ( object value ) { return (short)(sbyte)value; }, false );
+			RegisterAutoConvertItem( typeof( sbyte ), typeof( ushort ), delegate ( object value ) { return (ushort)(sbyte)value; }, false );
+			RegisterAutoConvertItem( typeof( sbyte ), typeof( int ), delegate ( object value ) { return (int)(sbyte)value; }, false );
+			RegisterAutoConvertItem( typeof( sbyte ), typeof( uint ), delegate ( object value ) { return (uint)(sbyte)value; }, false );
+			RegisterAutoConvertItem( typeof( sbyte ), typeof( long ), delegate ( object value ) { return (long)(sbyte)value; }, false );
+			RegisterAutoConvertItem( typeof( sbyte ), typeof( ulong ), delegate ( object value ) { return (ulong)(sbyte)value; }, false );
+			RegisterAutoConvertItem( typeof( sbyte ), typeof( float ), delegate ( object value ) { return (float)(sbyte)value; }, false );
+			RegisterAutoConvertItem( typeof( sbyte ), typeof( double ), delegate ( object value ) { return (double)(sbyte)value; }, false );
+			RegisterAutoConvertItem( typeof( sbyte ), typeof( decimal ), delegate ( object value ) { return (double)(sbyte)value; }, false );
+			RegisterAutoConvertItem( typeof( sbyte ), typeof( string ), delegate ( object value ) { return value.ToString(); }, false );
+			RegisterAutoConvertItem( typeof( string ), typeof( sbyte ), delegate ( object value ) { return sbyte.Parse( (string)value ); }, false );
+			RegisterAutoConvertItem( typeof( sbyte ), typeof( bool ), delegate ( object value ) { return ( (sbyte)value ) != 0; }, false );
 
 
 			//byte
-			RegisterAutoConvertItem( typeof( byte ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(byte)value; } );
-			RegisterAutoConvertItem( typeof( byte ), typeof( byte ), delegate ( object value ) { return (byte)(byte)value; } );
-			RegisterAutoConvertItem( typeof( byte ), typeof( char ), delegate ( object value ) { return (char)(byte)value; } );
-			RegisterAutoConvertItem( typeof( byte ), typeof( short ), delegate ( object value ) { return (short)(byte)value; } );
-			RegisterAutoConvertItem( typeof( byte ), typeof( ushort ), delegate ( object value ) { return (ushort)(byte)value; } );
-			RegisterAutoConvertItem( typeof( byte ), typeof( int ), delegate ( object value ) { return (int)(byte)value; } );
-			RegisterAutoConvertItem( typeof( byte ), typeof( uint ), delegate ( object value ) { return (uint)(byte)value; } );
-			RegisterAutoConvertItem( typeof( byte ), typeof( long ), delegate ( object value ) { return (long)(byte)value; } );
-			RegisterAutoConvertItem( typeof( byte ), typeof( ulong ), delegate ( object value ) { return (ulong)(byte)value; } );
-			RegisterAutoConvertItem( typeof( byte ), typeof( float ), delegate ( object value ) { return (float)(byte)value; } );
-			RegisterAutoConvertItem( typeof( byte ), typeof( double ), delegate ( object value ) { return (double)(byte)value; } );
-			RegisterAutoConvertItem( typeof( byte ), typeof( decimal ), delegate ( object value ) { return (double)(byte)value; } );
-			RegisterAutoConvertItem( typeof( byte ), typeof( string ), delegate ( object value ) { return value.ToString(); } );
-			RegisterAutoConvertItem( typeof( string ), typeof( byte ), delegate ( object value ) { return byte.Parse( (string)value ); } );
-			RegisterAutoConvertItem( typeof( byte ), typeof( bool ), delegate ( object value ) { return ( (byte)value ) != 0; } );
+			RegisterAutoConvertItem( typeof( byte ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(byte)value; }, false );
+			RegisterAutoConvertItem( typeof( byte ), typeof( byte ), delegate ( object value ) { return (byte)(byte)value; }, false );
+			RegisterAutoConvertItem( typeof( byte ), typeof( char ), delegate ( object value ) { return (char)(byte)value; }, false );
+			RegisterAutoConvertItem( typeof( byte ), typeof( short ), delegate ( object value ) { return (short)(byte)value; }, false );
+			RegisterAutoConvertItem( typeof( byte ), typeof( ushort ), delegate ( object value ) { return (ushort)(byte)value; }, false );
+			RegisterAutoConvertItem( typeof( byte ), typeof( int ), delegate ( object value ) { return (int)(byte)value; }, false );
+			RegisterAutoConvertItem( typeof( byte ), typeof( uint ), delegate ( object value ) { return (uint)(byte)value; }, false );
+			RegisterAutoConvertItem( typeof( byte ), typeof( long ), delegate ( object value ) { return (long)(byte)value; }, false );
+			RegisterAutoConvertItem( typeof( byte ), typeof( ulong ), delegate ( object value ) { return (ulong)(byte)value; }, false );
+			RegisterAutoConvertItem( typeof( byte ), typeof( float ), delegate ( object value ) { return (float)(byte)value; }, false );
+			RegisterAutoConvertItem( typeof( byte ), typeof( double ), delegate ( object value ) { return (double)(byte)value; }, false );
+			RegisterAutoConvertItem( typeof( byte ), typeof( decimal ), delegate ( object value ) { return (double)(byte)value; }, false );
+			RegisterAutoConvertItem( typeof( byte ), typeof( string ), delegate ( object value ) { return value.ToString(); }, false );
+			RegisterAutoConvertItem( typeof( string ), typeof( byte ), delegate ( object value ) { return byte.Parse( (string)value ); }, false );
+			RegisterAutoConvertItem( typeof( byte ), typeof( bool ), delegate ( object value ) { return ( (byte)value ) != 0; }, false );
 
 			//char
-			RegisterAutoConvertItem( typeof( char ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(char)value; } );
-			RegisterAutoConvertItem( typeof( char ), typeof( byte ), delegate ( object value ) { return (byte)(char)value; } );
-			RegisterAutoConvertItem( typeof( char ), typeof( char ), delegate ( object value ) { return (char)(char)value; } );
-			RegisterAutoConvertItem( typeof( char ), typeof( short ), delegate ( object value ) { return (short)(char)value; } );
-			RegisterAutoConvertItem( typeof( char ), typeof( ushort ), delegate ( object value ) { return (ushort)(char)value; } );
-			RegisterAutoConvertItem( typeof( char ), typeof( int ), delegate ( object value ) { return (int)(char)value; } );
-			RegisterAutoConvertItem( typeof( char ), typeof( uint ), delegate ( object value ) { return (uint)(char)value; } );
-			RegisterAutoConvertItem( typeof( char ), typeof( long ), delegate ( object value ) { return (long)(char)value; } );
-			RegisterAutoConvertItem( typeof( char ), typeof( ulong ), delegate ( object value ) { return (ulong)(char)value; } );
-			RegisterAutoConvertItem( typeof( char ), typeof( float ), delegate ( object value ) { return (float)(char)value; } );
-			RegisterAutoConvertItem( typeof( char ), typeof( double ), delegate ( object value ) { return (double)(char)value; } );
-			RegisterAutoConvertItem( typeof( char ), typeof( decimal ), delegate ( object value ) { return (double)(char)value; } );
-			RegisterAutoConvertItem( typeof( char ), typeof( string ), delegate ( object value ) { return value.ToString(); } );
-			RegisterAutoConvertItem( typeof( string ), typeof( char ), delegate ( object value ) { return char.Parse( (string)value ); } );
-			RegisterAutoConvertItem( typeof( char ), typeof( bool ), delegate ( object value ) { return ( (char)value ) != 0; } );
+			RegisterAutoConvertItem( typeof( char ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(char)value; }, false );
+			RegisterAutoConvertItem( typeof( char ), typeof( byte ), delegate ( object value ) { return (byte)(char)value; }, false );
+			RegisterAutoConvertItem( typeof( char ), typeof( char ), delegate ( object value ) { return (char)(char)value; }, false );
+			RegisterAutoConvertItem( typeof( char ), typeof( short ), delegate ( object value ) { return (short)(char)value; }, false );
+			RegisterAutoConvertItem( typeof( char ), typeof( ushort ), delegate ( object value ) { return (ushort)(char)value; }, false );
+			RegisterAutoConvertItem( typeof( char ), typeof( int ), delegate ( object value ) { return (int)(char)value; }, false );
+			RegisterAutoConvertItem( typeof( char ), typeof( uint ), delegate ( object value ) { return (uint)(char)value; }, false );
+			RegisterAutoConvertItem( typeof( char ), typeof( long ), delegate ( object value ) { return (long)(char)value; }, false );
+			RegisterAutoConvertItem( typeof( char ), typeof( ulong ), delegate ( object value ) { return (ulong)(char)value; }, false );
+			RegisterAutoConvertItem( typeof( char ), typeof( float ), delegate ( object value ) { return (float)(char)value; }, false );
+			RegisterAutoConvertItem( typeof( char ), typeof( double ), delegate ( object value ) { return (double)(char)value; }, false );
+			RegisterAutoConvertItem( typeof( char ), typeof( decimal ), delegate ( object value ) { return (double)(char)value; }, false );
+			RegisterAutoConvertItem( typeof( char ), typeof( string ), delegate ( object value ) { return value.ToString(); }, false );
+			RegisterAutoConvertItem( typeof( string ), typeof( char ), delegate ( object value ) { return char.Parse( (string)value ); }, false );
+			RegisterAutoConvertItem( typeof( char ), typeof( bool ), delegate ( object value ) { return ( (char)value ) != 0; }, false );
 
 			//short
-			RegisterAutoConvertItem( typeof( short ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(short)value; } );
-			RegisterAutoConvertItem( typeof( short ), typeof( byte ), delegate ( object value ) { return (byte)(short)value; } );
-			RegisterAutoConvertItem( typeof( short ), typeof( char ), delegate ( object value ) { return (char)(short)value; } );
-			RegisterAutoConvertItem( typeof( short ), typeof( short ), delegate ( object value ) { return (short)(short)value; } );
-			RegisterAutoConvertItem( typeof( short ), typeof( ushort ), delegate ( object value ) { return (ushort)(short)value; } );
-			RegisterAutoConvertItem( typeof( short ), typeof( int ), delegate ( object value ) { return (int)(short)value; } );
-			RegisterAutoConvertItem( typeof( short ), typeof( uint ), delegate ( object value ) { return (uint)(short)value; } );
-			RegisterAutoConvertItem( typeof( short ), typeof( long ), delegate ( object value ) { return (long)(short)value; } );
-			RegisterAutoConvertItem( typeof( short ), typeof( ulong ), delegate ( object value ) { return (ulong)(short)value; } );
-			RegisterAutoConvertItem( typeof( short ), typeof( float ), delegate ( object value ) { return (float)(short)value; } );
-			RegisterAutoConvertItem( typeof( short ), typeof( double ), delegate ( object value ) { return (double)(short)value; } );
-			RegisterAutoConvertItem( typeof( short ), typeof( decimal ), delegate ( object value ) { return (double)(short)value; } );
-			RegisterAutoConvertItem( typeof( short ), typeof( string ), delegate ( object value ) { return value.ToString(); } );
-			RegisterAutoConvertItem( typeof( string ), typeof( short ), delegate ( object value ) { return short.Parse( (string)value ); } );
-			RegisterAutoConvertItem( typeof( short ), typeof( bool ), delegate ( object value ) { return ( (short)value ) != 0; } );
+			RegisterAutoConvertItem( typeof( short ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(short)value; }, false );
+			RegisterAutoConvertItem( typeof( short ), typeof( byte ), delegate ( object value ) { return (byte)(short)value; }, false );
+			RegisterAutoConvertItem( typeof( short ), typeof( char ), delegate ( object value ) { return (char)(short)value; }, false );
+			RegisterAutoConvertItem( typeof( short ), typeof( short ), delegate ( object value ) { return (short)(short)value; }, false );
+			RegisterAutoConvertItem( typeof( short ), typeof( ushort ), delegate ( object value ) { return (ushort)(short)value; }, false );
+			RegisterAutoConvertItem( typeof( short ), typeof( int ), delegate ( object value ) { return (int)(short)value; }, false );
+			RegisterAutoConvertItem( typeof( short ), typeof( uint ), delegate ( object value ) { return (uint)(short)value; }, false );
+			RegisterAutoConvertItem( typeof( short ), typeof( long ), delegate ( object value ) { return (long)(short)value; }, false );
+			RegisterAutoConvertItem( typeof( short ), typeof( ulong ), delegate ( object value ) { return (ulong)(short)value; }, false );
+			RegisterAutoConvertItem( typeof( short ), typeof( float ), delegate ( object value ) { return (float)(short)value; }, false );
+			RegisterAutoConvertItem( typeof( short ), typeof( double ), delegate ( object value ) { return (double)(short)value; }, false );
+			RegisterAutoConvertItem( typeof( short ), typeof( decimal ), delegate ( object value ) { return (double)(short)value; }, false );
+			RegisterAutoConvertItem( typeof( short ), typeof( string ), delegate ( object value ) { return value.ToString(); }, false );
+			RegisterAutoConvertItem( typeof( string ), typeof( short ), delegate ( object value ) { return short.Parse( (string)value ); }, false );
+			RegisterAutoConvertItem( typeof( short ), typeof( bool ), delegate ( object value ) { return ( (short)value ) != 0; }, false );
 
 			//ushort
-			RegisterAutoConvertItem( typeof( ushort ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(ushort)value; } );
-			RegisterAutoConvertItem( typeof( ushort ), typeof( byte ), delegate ( object value ) { return (byte)(ushort)value; } );
-			RegisterAutoConvertItem( typeof( ushort ), typeof( char ), delegate ( object value ) { return (char)(ushort)value; } );
-			RegisterAutoConvertItem( typeof( ushort ), typeof( short ), delegate ( object value ) { return (short)(ushort)value; } );
-			RegisterAutoConvertItem( typeof( ushort ), typeof( ushort ), delegate ( object value ) { return (ushort)(ushort)value; } );
-			RegisterAutoConvertItem( typeof( ushort ), typeof( int ), delegate ( object value ) { return (int)(ushort)value; } );
-			RegisterAutoConvertItem( typeof( ushort ), typeof( uint ), delegate ( object value ) { return (uint)(ushort)value; } );
-			RegisterAutoConvertItem( typeof( ushort ), typeof( long ), delegate ( object value ) { return (long)(ushort)value; } );
-			RegisterAutoConvertItem( typeof( ushort ), typeof( ulong ), delegate ( object value ) { return (ulong)(ushort)value; } );
-			RegisterAutoConvertItem( typeof( ushort ), typeof( float ), delegate ( object value ) { return (float)(ushort)value; } );
-			RegisterAutoConvertItem( typeof( ushort ), typeof( double ), delegate ( object value ) { return (double)(ushort)value; } );
-			RegisterAutoConvertItem( typeof( ushort ), typeof( decimal ), delegate ( object value ) { return (double)(ushort)value; } );
-			RegisterAutoConvertItem( typeof( ushort ), typeof( string ), delegate ( object value ) { return value.ToString(); } );
-			RegisterAutoConvertItem( typeof( string ), typeof( ushort ), delegate ( object value ) { return ushort.Parse( (string)value ); } );
-			RegisterAutoConvertItem( typeof( ushort ), typeof( bool ), delegate ( object value ) { return ( (ushort)value ) != 0; } );
+			RegisterAutoConvertItem( typeof( ushort ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(ushort)value; }, false );
+			RegisterAutoConvertItem( typeof( ushort ), typeof( byte ), delegate ( object value ) { return (byte)(ushort)value; }, false );
+			RegisterAutoConvertItem( typeof( ushort ), typeof( char ), delegate ( object value ) { return (char)(ushort)value; }, false );
+			RegisterAutoConvertItem( typeof( ushort ), typeof( short ), delegate ( object value ) { return (short)(ushort)value; }, false );
+			RegisterAutoConvertItem( typeof( ushort ), typeof( ushort ), delegate ( object value ) { return (ushort)(ushort)value; }, false );
+			RegisterAutoConvertItem( typeof( ushort ), typeof( int ), delegate ( object value ) { return (int)(ushort)value; }, false );
+			RegisterAutoConvertItem( typeof( ushort ), typeof( uint ), delegate ( object value ) { return (uint)(ushort)value; }, false );
+			RegisterAutoConvertItem( typeof( ushort ), typeof( long ), delegate ( object value ) { return (long)(ushort)value; }, false );
+			RegisterAutoConvertItem( typeof( ushort ), typeof( ulong ), delegate ( object value ) { return (ulong)(ushort)value; }, false );
+			RegisterAutoConvertItem( typeof( ushort ), typeof( float ), delegate ( object value ) { return (float)(ushort)value; }, false );
+			RegisterAutoConvertItem( typeof( ushort ), typeof( double ), delegate ( object value ) { return (double)(ushort)value; }, false );
+			RegisterAutoConvertItem( typeof( ushort ), typeof( decimal ), delegate ( object value ) { return (double)(ushort)value; }, false );
+			RegisterAutoConvertItem( typeof( ushort ), typeof( string ), delegate ( object value ) { return value.ToString(); }, false );
+			RegisterAutoConvertItem( typeof( string ), typeof( ushort ), delegate ( object value ) { return ushort.Parse( (string)value ); }, false );
+			RegisterAutoConvertItem( typeof( ushort ), typeof( bool ), delegate ( object value ) { return ( (ushort)value ) != 0; }, false );
 
 			//int
-			RegisterAutoConvertItem( typeof( int ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(int)value; } );
-			RegisterAutoConvertItem( typeof( int ), typeof( byte ), delegate ( object value ) { return (byte)(int)value; } );
-			RegisterAutoConvertItem( typeof( int ), typeof( char ), delegate ( object value ) { return (char)(int)value; } );
-			RegisterAutoConvertItem( typeof( int ), typeof( short ), delegate ( object value ) { return (short)(int)value; } );
-			RegisterAutoConvertItem( typeof( int ), typeof( ushort ), delegate ( object value ) { return (ushort)(int)value; } );
-			RegisterAutoConvertItem( typeof( int ), typeof( int ), delegate ( object value ) { return (int)(int)value; } );
-			RegisterAutoConvertItem( typeof( int ), typeof( uint ), delegate ( object value ) { return (uint)(int)value; } );
-			RegisterAutoConvertItem( typeof( int ), typeof( long ), delegate ( object value ) { return (long)(int)value; } );
-			RegisterAutoConvertItem( typeof( int ), typeof( ulong ), delegate ( object value ) { return (ulong)(int)value; } );
-			RegisterAutoConvertItem( typeof( int ), typeof( float ), delegate ( object value ) { return (float)(int)value; } );
-			RegisterAutoConvertItem( typeof( int ), typeof( double ), delegate ( object value ) { return (double)(int)value; } );
-			RegisterAutoConvertItem( typeof( int ), typeof( decimal ), delegate ( object value ) { return (double)(int)value; } );
-			RegisterAutoConvertItem( typeof( int ), typeof( string ), delegate ( object value ) { return value.ToString(); } );
-			RegisterAutoConvertItem( typeof( string ), typeof( int ), delegate ( object value ) { return int.Parse( (string)value ); } );
-			RegisterAutoConvertItem( typeof( int ), typeof( bool ), delegate ( object value ) { return ( (int)value ) != 0; } );
+			RegisterAutoConvertItem( typeof( int ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(int)value; }, false );
+			RegisterAutoConvertItem( typeof( int ), typeof( byte ), delegate ( object value ) { return (byte)(int)value; }, false );
+			RegisterAutoConvertItem( typeof( int ), typeof( char ), delegate ( object value ) { return (char)(int)value; }, false );
+			RegisterAutoConvertItem( typeof( int ), typeof( short ), delegate ( object value ) { return (short)(int)value; }, false );
+			RegisterAutoConvertItem( typeof( int ), typeof( ushort ), delegate ( object value ) { return (ushort)(int)value; }, false );
+			RegisterAutoConvertItem( typeof( int ), typeof( int ), delegate ( object value ) { return (int)(int)value; }, false );
+			RegisterAutoConvertItem( typeof( int ), typeof( uint ), delegate ( object value ) { return (uint)(int)value; }, false );
+			RegisterAutoConvertItem( typeof( int ), typeof( long ), delegate ( object value ) { return (long)(int)value; }, false );
+			RegisterAutoConvertItem( typeof( int ), typeof( ulong ), delegate ( object value ) { return (ulong)(int)value; }, false );
+			RegisterAutoConvertItem( typeof( int ), typeof( float ), delegate ( object value ) { return (float)(int)value; }, false );
+			RegisterAutoConvertItem( typeof( int ), typeof( double ), delegate ( object value ) { return (double)(int)value; }, false );
+			RegisterAutoConvertItem( typeof( int ), typeof( decimal ), delegate ( object value ) { return (double)(int)value; }, false );
+			RegisterAutoConvertItem( typeof( int ), typeof( string ), delegate ( object value ) { return value.ToString(); }, false );
+			RegisterAutoConvertItem( typeof( string ), typeof( int ), delegate ( object value ) { return int.Parse( (string)value ); }, false );
+			RegisterAutoConvertItem( typeof( int ), typeof( bool ), delegate ( object value ) { return ( (int)value ) != 0; }, false );
 
 			//uint
-			RegisterAutoConvertItem( typeof( uint ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(uint)value; } );
-			RegisterAutoConvertItem( typeof( uint ), typeof( byte ), delegate ( object value ) { return (byte)(uint)value; } );
-			RegisterAutoConvertItem( typeof( uint ), typeof( char ), delegate ( object value ) { return (char)(uint)value; } );
-			RegisterAutoConvertItem( typeof( uint ), typeof( short ), delegate ( object value ) { return (short)(uint)value; } );
-			RegisterAutoConvertItem( typeof( uint ), typeof( ushort ), delegate ( object value ) { return (ushort)(uint)value; } );
-			RegisterAutoConvertItem( typeof( uint ), typeof( int ), delegate ( object value ) { return (int)(uint)value; } );
-			RegisterAutoConvertItem( typeof( uint ), typeof( uint ), delegate ( object value ) { return (uint)(uint)value; } );
-			RegisterAutoConvertItem( typeof( uint ), typeof( long ), delegate ( object value ) { return (long)(uint)value; } );
-			RegisterAutoConvertItem( typeof( uint ), typeof( ulong ), delegate ( object value ) { return (ulong)(uint)value; } );
-			RegisterAutoConvertItem( typeof( uint ), typeof( float ), delegate ( object value ) { return (float)(uint)value; } );
-			RegisterAutoConvertItem( typeof( uint ), typeof( double ), delegate ( object value ) { return (double)(uint)value; } );
-			RegisterAutoConvertItem( typeof( uint ), typeof( decimal ), delegate ( object value ) { return (double)(uint)value; } );
-			RegisterAutoConvertItem( typeof( uint ), typeof( string ), delegate ( object value ) { return value.ToString(); } );
-			RegisterAutoConvertItem( typeof( string ), typeof( uint ), delegate ( object value ) { return uint.Parse( (string)value ); } );
-			RegisterAutoConvertItem( typeof( uint ), typeof( bool ), delegate ( object value ) { return ( (uint)value ) != 0; } );
+			RegisterAutoConvertItem( typeof( uint ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(uint)value; }, false );
+			RegisterAutoConvertItem( typeof( uint ), typeof( byte ), delegate ( object value ) { return (byte)(uint)value; }, false );
+			RegisterAutoConvertItem( typeof( uint ), typeof( char ), delegate ( object value ) { return (char)(uint)value; }, false );
+			RegisterAutoConvertItem( typeof( uint ), typeof( short ), delegate ( object value ) { return (short)(uint)value; }, false );
+			RegisterAutoConvertItem( typeof( uint ), typeof( ushort ), delegate ( object value ) { return (ushort)(uint)value; }, false );
+			RegisterAutoConvertItem( typeof( uint ), typeof( int ), delegate ( object value ) { return (int)(uint)value; }, false );
+			RegisterAutoConvertItem( typeof( uint ), typeof( uint ), delegate ( object value ) { return (uint)(uint)value; }, false );
+			RegisterAutoConvertItem( typeof( uint ), typeof( long ), delegate ( object value ) { return (long)(uint)value; }, false );
+			RegisterAutoConvertItem( typeof( uint ), typeof( ulong ), delegate ( object value ) { return (ulong)(uint)value; }, false );
+			RegisterAutoConvertItem( typeof( uint ), typeof( float ), delegate ( object value ) { return (float)(uint)value; }, false );
+			RegisterAutoConvertItem( typeof( uint ), typeof( double ), delegate ( object value ) { return (double)(uint)value; }, false );
+			RegisterAutoConvertItem( typeof( uint ), typeof( decimal ), delegate ( object value ) { return (double)(uint)value; }, false );
+			RegisterAutoConvertItem( typeof( uint ), typeof( string ), delegate ( object value ) { return value.ToString(); }, false );
+			RegisterAutoConvertItem( typeof( string ), typeof( uint ), delegate ( object value ) { return uint.Parse( (string)value ); }, false );
+			RegisterAutoConvertItem( typeof( uint ), typeof( bool ), delegate ( object value ) { return ( (uint)value ) != 0; }, false );
 
 			//long
-			RegisterAutoConvertItem( typeof( long ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(long)value; } );
-			RegisterAutoConvertItem( typeof( long ), typeof( byte ), delegate ( object value ) { return (byte)(long)value; } );
-			RegisterAutoConvertItem( typeof( long ), typeof( char ), delegate ( object value ) { return (char)(long)value; } );
-			RegisterAutoConvertItem( typeof( long ), typeof( short ), delegate ( object value ) { return (short)(long)value; } );
-			RegisterAutoConvertItem( typeof( long ), typeof( ushort ), delegate ( object value ) { return (ushort)(long)value; } );
-			RegisterAutoConvertItem( typeof( long ), typeof( int ), delegate ( object value ) { return (int)(long)value; } );
-			RegisterAutoConvertItem( typeof( long ), typeof( uint ), delegate ( object value ) { return (uint)(long)value; } );
-			RegisterAutoConvertItem( typeof( long ), typeof( long ), delegate ( object value ) { return (long)(long)value; } );
-			RegisterAutoConvertItem( typeof( long ), typeof( ulong ), delegate ( object value ) { return (ulong)(long)value; } );
-			RegisterAutoConvertItem( typeof( long ), typeof( float ), delegate ( object value ) { return (float)(long)value; } );
-			RegisterAutoConvertItem( typeof( long ), typeof( double ), delegate ( object value ) { return (double)(long)value; } );
-			RegisterAutoConvertItem( typeof( long ), typeof( decimal ), delegate ( object value ) { return (double)(long)value; } );
-			RegisterAutoConvertItem( typeof( long ), typeof( string ), delegate ( object value ) { return value.ToString(); } );
-			RegisterAutoConvertItem( typeof( string ), typeof( long ), delegate ( object value ) { return long.Parse( (string)value ); } );
-			RegisterAutoConvertItem( typeof( long ), typeof( bool ), delegate ( object value ) { return ( (long)value ) != 0; } );
+			RegisterAutoConvertItem( typeof( long ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(long)value; }, false );
+			RegisterAutoConvertItem( typeof( long ), typeof( byte ), delegate ( object value ) { return (byte)(long)value; }, false );
+			RegisterAutoConvertItem( typeof( long ), typeof( char ), delegate ( object value ) { return (char)(long)value; }, false );
+			RegisterAutoConvertItem( typeof( long ), typeof( short ), delegate ( object value ) { return (short)(long)value; }, false );
+			RegisterAutoConvertItem( typeof( long ), typeof( ushort ), delegate ( object value ) { return (ushort)(long)value; }, false );
+			RegisterAutoConvertItem( typeof( long ), typeof( int ), delegate ( object value ) { return (int)(long)value; }, false );
+			RegisterAutoConvertItem( typeof( long ), typeof( uint ), delegate ( object value ) { return (uint)(long)value; }, false );
+			RegisterAutoConvertItem( typeof( long ), typeof( long ), delegate ( object value ) { return (long)(long)value; }, false );
+			RegisterAutoConvertItem( typeof( long ), typeof( ulong ), delegate ( object value ) { return (ulong)(long)value; }, false );
+			RegisterAutoConvertItem( typeof( long ), typeof( float ), delegate ( object value ) { return (float)(long)value; }, false );
+			RegisterAutoConvertItem( typeof( long ), typeof( double ), delegate ( object value ) { return (double)(long)value; }, false );
+			RegisterAutoConvertItem( typeof( long ), typeof( decimal ), delegate ( object value ) { return (double)(long)value; }, false );
+			RegisterAutoConvertItem( typeof( long ), typeof( string ), delegate ( object value ) { return value.ToString(); }, false );
+			RegisterAutoConvertItem( typeof( string ), typeof( long ), delegate ( object value ) { return long.Parse( (string)value ); }, false );
+			RegisterAutoConvertItem( typeof( long ), typeof( bool ), delegate ( object value ) { return ( (long)value ) != 0; }, false );
 
 			//ulong
-			RegisterAutoConvertItem( typeof( ulong ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(ulong)value; } );
-			RegisterAutoConvertItem( typeof( ulong ), typeof( byte ), delegate ( object value ) { return (byte)(ulong)value; } );
-			RegisterAutoConvertItem( typeof( ulong ), typeof( char ), delegate ( object value ) { return (char)(ulong)value; } );
-			RegisterAutoConvertItem( typeof( ulong ), typeof( short ), delegate ( object value ) { return (short)(ulong)value; } );
-			RegisterAutoConvertItem( typeof( ulong ), typeof( ushort ), delegate ( object value ) { return (ushort)(ulong)value; } );
-			RegisterAutoConvertItem( typeof( ulong ), typeof( int ), delegate ( object value ) { return (int)(ulong)value; } );
-			RegisterAutoConvertItem( typeof( ulong ), typeof( uint ), delegate ( object value ) { return (uint)(ulong)value; } );
-			RegisterAutoConvertItem( typeof( ulong ), typeof( long ), delegate ( object value ) { return (long)(ulong)value; } );
-			RegisterAutoConvertItem( typeof( ulong ), typeof( ulong ), delegate ( object value ) { return (ulong)(ulong)value; } );
-			RegisterAutoConvertItem( typeof( ulong ), typeof( float ), delegate ( object value ) { return (float)(ulong)value; } );
-			RegisterAutoConvertItem( typeof( ulong ), typeof( double ), delegate ( object value ) { return (double)(ulong)value; } );
-			RegisterAutoConvertItem( typeof( ulong ), typeof( decimal ), delegate ( object value ) { return (double)(ulong)value; } );
-			RegisterAutoConvertItem( typeof( ulong ), typeof( string ), delegate ( object value ) { return value.ToString(); } );
-			RegisterAutoConvertItem( typeof( string ), typeof( ulong ), delegate ( object value ) { return ulong.Parse( (string)value ); } );
-			RegisterAutoConvertItem( typeof( ulong ), typeof( bool ), delegate ( object value ) { return ( (ulong)value ) != 0; } );
+			RegisterAutoConvertItem( typeof( ulong ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(ulong)value; }, false );
+			RegisterAutoConvertItem( typeof( ulong ), typeof( byte ), delegate ( object value ) { return (byte)(ulong)value; }, false );
+			RegisterAutoConvertItem( typeof( ulong ), typeof( char ), delegate ( object value ) { return (char)(ulong)value; }, false );
+			RegisterAutoConvertItem( typeof( ulong ), typeof( short ), delegate ( object value ) { return (short)(ulong)value; }, false );
+			RegisterAutoConvertItem( typeof( ulong ), typeof( ushort ), delegate ( object value ) { return (ushort)(ulong)value; }, false );
+			RegisterAutoConvertItem( typeof( ulong ), typeof( int ), delegate ( object value ) { return (int)(ulong)value; }, false );
+			RegisterAutoConvertItem( typeof( ulong ), typeof( uint ), delegate ( object value ) { return (uint)(ulong)value; }, false );
+			RegisterAutoConvertItem( typeof( ulong ), typeof( long ), delegate ( object value ) { return (long)(ulong)value; }, false );
+			RegisterAutoConvertItem( typeof( ulong ), typeof( ulong ), delegate ( object value ) { return (ulong)(ulong)value; }, false );
+			RegisterAutoConvertItem( typeof( ulong ), typeof( float ), delegate ( object value ) { return (float)(ulong)value; }, false );
+			RegisterAutoConvertItem( typeof( ulong ), typeof( double ), delegate ( object value ) { return (double)(ulong)value; }, false );
+			RegisterAutoConvertItem( typeof( ulong ), typeof( decimal ), delegate ( object value ) { return (double)(ulong)value; }, false );
+			RegisterAutoConvertItem( typeof( ulong ), typeof( string ), delegate ( object value ) { return value.ToString(); }, false );
+			RegisterAutoConvertItem( typeof( string ), typeof( ulong ), delegate ( object value ) { return ulong.Parse( (string)value ); }, false );
+			RegisterAutoConvertItem( typeof( ulong ), typeof( bool ), delegate ( object value ) { return ( (ulong)value ) != 0; }, false );
 
 			//float
-			RegisterAutoConvertItem( typeof( float ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(float)value; } );
-			RegisterAutoConvertItem( typeof( float ), typeof( byte ), delegate ( object value ) { return (byte)(float)value; } );
-			RegisterAutoConvertItem( typeof( float ), typeof( char ), delegate ( object value ) { return (char)(float)value; } );
-			RegisterAutoConvertItem( typeof( float ), typeof( short ), delegate ( object value ) { return (short)(float)value; } );
-			RegisterAutoConvertItem( typeof( float ), typeof( ushort ), delegate ( object value ) { return (ushort)(float)value; } );
-			RegisterAutoConvertItem( typeof( float ), typeof( int ), delegate ( object value ) { return (int)(float)value; } );
-			RegisterAutoConvertItem( typeof( float ), typeof( uint ), delegate ( object value ) { return (uint)(float)value; } );
-			RegisterAutoConvertItem( typeof( float ), typeof( long ), delegate ( object value ) { return (long)(float)value; } );
-			RegisterAutoConvertItem( typeof( float ), typeof( ulong ), delegate ( object value ) { return (ulong)(float)value; } );
-			RegisterAutoConvertItem( typeof( float ), typeof( float ), delegate ( object value ) { return (float)(float)value; } );
-			RegisterAutoConvertItem( typeof( float ), typeof( double ), delegate ( object value ) { return (double)(float)value; } );
-			RegisterAutoConvertItem( typeof( float ), typeof( decimal ), delegate ( object value ) { return (double)(float)value; } );
-			RegisterAutoConvertItem( typeof( float ), typeof( string ), delegate ( object value ) { return value.ToString(); } );
-			RegisterAutoConvertItem( typeof( string ), typeof( float ), delegate ( object value ) { return float.Parse( (string)value ); } );
-			RegisterAutoConvertItem( typeof( float ), typeof( bool ), delegate ( object value ) { return ( (float)value ) != 0; } );
+			RegisterAutoConvertItem( typeof( float ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(float)value; }, false );
+			RegisterAutoConvertItem( typeof( float ), typeof( byte ), delegate ( object value ) { return (byte)(float)value; }, false );
+			RegisterAutoConvertItem( typeof( float ), typeof( char ), delegate ( object value ) { return (char)(float)value; }, false );
+			RegisterAutoConvertItem( typeof( float ), typeof( short ), delegate ( object value ) { return (short)(float)value; }, false );
+			RegisterAutoConvertItem( typeof( float ), typeof( ushort ), delegate ( object value ) { return (ushort)(float)value; }, false );
+			RegisterAutoConvertItem( typeof( float ), typeof( int ), delegate ( object value ) { return (int)(float)value; }, false );
+			RegisterAutoConvertItem( typeof( float ), typeof( uint ), delegate ( object value ) { return (uint)(float)value; }, false );
+			RegisterAutoConvertItem( typeof( float ), typeof( long ), delegate ( object value ) { return (long)(float)value; }, false );
+			RegisterAutoConvertItem( typeof( float ), typeof( ulong ), delegate ( object value ) { return (ulong)(float)value; }, false );
+			RegisterAutoConvertItem( typeof( float ), typeof( float ), delegate ( object value ) { return (float)(float)value; }, false );
+			RegisterAutoConvertItem( typeof( float ), typeof( double ), delegate ( object value ) { return (double)(float)value; }, false );
+			RegisterAutoConvertItem( typeof( float ), typeof( decimal ), delegate ( object value ) { return (double)(float)value; }, false );
+			RegisterAutoConvertItem( typeof( float ), typeof( string ), delegate ( object value ) { return value.ToString(); }, false );
+			RegisterAutoConvertItem( typeof( string ), typeof( float ), delegate ( object value ) { return float.Parse( (string)value ); }, false );
+			RegisterAutoConvertItem( typeof( float ), typeof( bool ), delegate ( object value ) { return ( (float)value ) != 0; }, false );
 
 			//double
-			RegisterAutoConvertItem( typeof( double ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(double)value; } );
-			RegisterAutoConvertItem( typeof( double ), typeof( byte ), delegate ( object value ) { return (byte)(double)value; } );
-			RegisterAutoConvertItem( typeof( double ), typeof( char ), delegate ( object value ) { return (char)(double)value; } );
-			RegisterAutoConvertItem( typeof( double ), typeof( short ), delegate ( object value ) { return (short)(double)value; } );
-			RegisterAutoConvertItem( typeof( double ), typeof( ushort ), delegate ( object value ) { return (ushort)(double)value; } );
-			RegisterAutoConvertItem( typeof( double ), typeof( int ), delegate ( object value ) { return (int)(double)value; } );
-			RegisterAutoConvertItem( typeof( double ), typeof( uint ), delegate ( object value ) { return (uint)(double)value; } );
-			RegisterAutoConvertItem( typeof( double ), typeof( long ), delegate ( object value ) { return (long)(double)value; } );
-			RegisterAutoConvertItem( typeof( double ), typeof( ulong ), delegate ( object value ) { return (ulong)(double)value; } );
-			RegisterAutoConvertItem( typeof( double ), typeof( float ), delegate ( object value ) { return (float)(double)value; } );
-			RegisterAutoConvertItem( typeof( double ), typeof( double ), delegate ( object value ) { return (double)(double)value; } );
-			RegisterAutoConvertItem( typeof( double ), typeof( decimal ), delegate ( object value ) { return (double)(double)value; } );
-			RegisterAutoConvertItem( typeof( double ), typeof( string ), delegate ( object value ) { return value.ToString(); } );
-			RegisterAutoConvertItem( typeof( string ), typeof( double ), delegate ( object value ) { return double.Parse( (string)value ); } );
-			RegisterAutoConvertItem( typeof( double ), typeof( bool ), delegate ( object value ) { return ( (double)value ) != 0; } );
+			RegisterAutoConvertItem( typeof( double ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(double)value; }, false );
+			RegisterAutoConvertItem( typeof( double ), typeof( byte ), delegate ( object value ) { return (byte)(double)value; }, false );
+			RegisterAutoConvertItem( typeof( double ), typeof( char ), delegate ( object value ) { return (char)(double)value; }, false );
+			RegisterAutoConvertItem( typeof( double ), typeof( short ), delegate ( object value ) { return (short)(double)value; }, false );
+			RegisterAutoConvertItem( typeof( double ), typeof( ushort ), delegate ( object value ) { return (ushort)(double)value; }, false );
+			RegisterAutoConvertItem( typeof( double ), typeof( int ), delegate ( object value ) { return (int)(double)value; }, false );
+			RegisterAutoConvertItem( typeof( double ), typeof( uint ), delegate ( object value ) { return (uint)(double)value; }, false );
+			RegisterAutoConvertItem( typeof( double ), typeof( long ), delegate ( object value ) { return (long)(double)value; }, false );
+			RegisterAutoConvertItem( typeof( double ), typeof( ulong ), delegate ( object value ) { return (ulong)(double)value; }, false );
+			RegisterAutoConvertItem( typeof( double ), typeof( float ), delegate ( object value ) { return (float)(double)value; }, false );
+			RegisterAutoConvertItem( typeof( double ), typeof( double ), delegate ( object value ) { return (double)(double)value; }, false );
+			RegisterAutoConvertItem( typeof( double ), typeof( decimal ), delegate ( object value ) { return (double)(double)value; }, false );
+			RegisterAutoConvertItem( typeof( double ), typeof( string ), delegate ( object value ) { return value.ToString(); }, false );
+			RegisterAutoConvertItem( typeof( string ), typeof( double ), delegate ( object value ) { return double.Parse( (string)value ); }, false );
+			RegisterAutoConvertItem( typeof( double ), typeof( bool ), delegate ( object value ) { return ( (double)value ) != 0; }, false );
 
 			//decimal
-			RegisterAutoConvertItem( typeof( decimal ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(decimal)value; } );
-			RegisterAutoConvertItem( typeof( decimal ), typeof( byte ), delegate ( object value ) { return (byte)(decimal)value; } );
-			RegisterAutoConvertItem( typeof( decimal ), typeof( char ), delegate ( object value ) { return (char)(decimal)value; } );
-			RegisterAutoConvertItem( typeof( decimal ), typeof( short ), delegate ( object value ) { return (short)(decimal)value; } );
-			RegisterAutoConvertItem( typeof( decimal ), typeof( ushort ), delegate ( object value ) { return (ushort)(decimal)value; } );
-			RegisterAutoConvertItem( typeof( decimal ), typeof( int ), delegate ( object value ) { return (int)(decimal)value; } );
-			RegisterAutoConvertItem( typeof( decimal ), typeof( uint ), delegate ( object value ) { return (uint)(decimal)value; } );
-			RegisterAutoConvertItem( typeof( decimal ), typeof( long ), delegate ( object value ) { return (long)(decimal)value; } );
-			RegisterAutoConvertItem( typeof( decimal ), typeof( ulong ), delegate ( object value ) { return (ulong)(decimal)value; } );
-			RegisterAutoConvertItem( typeof( decimal ), typeof( float ), delegate ( object value ) { return (float)(decimal)value; } );
-			RegisterAutoConvertItem( typeof( decimal ), typeof( double ), delegate ( object value ) { return (double)(decimal)value; } );
-			RegisterAutoConvertItem( typeof( decimal ), typeof( decimal ), delegate ( object value ) { return (double)(decimal)value; } );
-			RegisterAutoConvertItem( typeof( decimal ), typeof( string ), delegate ( object value ) { return value.ToString(); } );
-			RegisterAutoConvertItem( typeof( string ), typeof( decimal ), delegate ( object value ) { return decimal.Parse( (string)value ); } );
-			RegisterAutoConvertItem( typeof( decimal ), typeof( bool ), delegate ( object value ) { return ( (decimal)value ) != 0; } );
+			RegisterAutoConvertItem( typeof( decimal ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(decimal)value; }, false );
+			RegisterAutoConvertItem( typeof( decimal ), typeof( byte ), delegate ( object value ) { return (byte)(decimal)value; }, false );
+			RegisterAutoConvertItem( typeof( decimal ), typeof( char ), delegate ( object value ) { return (char)(decimal)value; }, false );
+			RegisterAutoConvertItem( typeof( decimal ), typeof( short ), delegate ( object value ) { return (short)(decimal)value; }, false );
+			RegisterAutoConvertItem( typeof( decimal ), typeof( ushort ), delegate ( object value ) { return (ushort)(decimal)value; }, false );
+			RegisterAutoConvertItem( typeof( decimal ), typeof( int ), delegate ( object value ) { return (int)(decimal)value; }, false );
+			RegisterAutoConvertItem( typeof( decimal ), typeof( uint ), delegate ( object value ) { return (uint)(decimal)value; }, false );
+			RegisterAutoConvertItem( typeof( decimal ), typeof( long ), delegate ( object value ) { return (long)(decimal)value; }, false );
+			RegisterAutoConvertItem( typeof( decimal ), typeof( ulong ), delegate ( object value ) { return (ulong)(decimal)value; }, false );
+			RegisterAutoConvertItem( typeof( decimal ), typeof( float ), delegate ( object value ) { return (float)(decimal)value; }, false );
+			RegisterAutoConvertItem( typeof( decimal ), typeof( double ), delegate ( object value ) { return (double)(decimal)value; }, false );
+			RegisterAutoConvertItem( typeof( decimal ), typeof( decimal ), delegate ( object value ) { return (double)(decimal)value; }, false );
+			RegisterAutoConvertItem( typeof( decimal ), typeof( string ), delegate ( object value ) { return value.ToString(); }, false );
+			RegisterAutoConvertItem( typeof( string ), typeof( decimal ), delegate ( object value ) { return decimal.Parse( (string)value ); }, false );
+			RegisterAutoConvertItem( typeof( decimal ), typeof( bool ), delegate ( object value ) { return ( (decimal)value ) != 0; }, false );
 
 			////xxx
-			//RegisterAutoConvertItem( typeof( xxx ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(xxx)value; } );
-			//RegisterAutoConvertItem( typeof( xxx ), typeof( byte ), delegate ( object value ) { return (byte)(xxx)value; } );
-			//RegisterAutoConvertItem( typeof( xxx ), typeof( char ), delegate ( object value ) { return (char)(xxx)value; } );
-			//RegisterAutoConvertItem( typeof( xxx ), typeof( short ), delegate ( object value ) { return (short)(xxx)value; } );
-			//RegisterAutoConvertItem( typeof( xxx ), typeof( ushort ), delegate ( object value ) { return (ushort)(xxx)value; } );
-			//RegisterAutoConvertItem( typeof( xxx ), typeof( int ), delegate ( object value ) { return (int)(xxx)value; } );
-			//RegisterAutoConvertItem( typeof( xxx ), typeof( uint ), delegate ( object value ) { return (uint)(xxx)value; } );
-			//RegisterAutoConvertItem( typeof( xxx ), typeof( long ), delegate ( object value ) { return (long)(xxx)value; } );
-			//RegisterAutoConvertItem( typeof( xxx ), typeof( ulong ), delegate ( object value ) { return (ulong)(xxx)value; } );
-			//RegisterAutoConvertItem( typeof( xxx ), typeof( float ), delegate ( object value ) { return (float)(xxx)value; } );
-			//RegisterAutoConvertItem( typeof( xxx ), typeof( double ), delegate ( object value ) { return (double)(xxx)value; } );
-			//RegisterAutoConvertItem( typeof( xxx ), typeof( decimal ), delegate ( object value ) { return (double)(xxx)value; } );
-			//RegisterAutoConvertItem( typeof( xxx ), typeof( string ), delegate ( object value ) { return value.ToString(); } );
-			//RegisterAutoConvertItem( typeof( string ), typeof( xxx ), delegate ( object value ) { return xxx.Parse( (string)value ); } );
-			//RegisterAutoConvertItem( typeof( xxx ), typeof( bool ), delegate ( object value ) { return ( (xxx)value ) != 0; } );
+			//RegisterAutoConvertItem( typeof( xxx ), typeof( sbyte ), delegate ( object value ) { return (sbyte)(xxx)value; }, false );
+			//RegisterAutoConvertItem( typeof( xxx ), typeof( byte ), delegate ( object value ) { return (byte)(xxx)value; }, false );
+			//RegisterAutoConvertItem( typeof( xxx ), typeof( char ), delegate ( object value ) { return (char)(xxx)value; }, false );
+			//RegisterAutoConvertItem( typeof( xxx ), typeof( short ), delegate ( object value ) { return (short)(xxx)value; }, false );
+			//RegisterAutoConvertItem( typeof( xxx ), typeof( ushort ), delegate ( object value ) { return (ushort)(xxx)value; }, false );
+			//RegisterAutoConvertItem( typeof( xxx ), typeof( int ), delegate ( object value ) { return (int)(xxx)value; }, false );
+			//RegisterAutoConvertItem( typeof( xxx ), typeof( uint ), delegate ( object value ) { return (uint)(xxx)value; }, false );
+			//RegisterAutoConvertItem( typeof( xxx ), typeof( long ), delegate ( object value ) { return (long)(xxx)value; }, false );
+			//RegisterAutoConvertItem( typeof( xxx ), typeof( ulong ), delegate ( object value ) { return (ulong)(xxx)value; }, false );
+			//RegisterAutoConvertItem( typeof( xxx ), typeof( float ), delegate ( object value ) { return (float)(xxx)value; }, false );
+			//RegisterAutoConvertItem( typeof( xxx ), typeof( double ), delegate ( object value ) { return (double)(xxx)value; }, false );
+			//RegisterAutoConvertItem( typeof( xxx ), typeof( decimal ), delegate ( object value ) { return (double)(xxx)value; }, false );
+			//RegisterAutoConvertItem( typeof( xxx ), typeof( string ), delegate ( object value ) { return value.ToString(); }, false );
+			//RegisterAutoConvertItem( typeof( string ), typeof( xxx ), delegate ( object value ) { return xxx.Parse( (string)value ); }, false );
+			//RegisterAutoConvertItem( typeof( xxx ), typeof( bool ), delegate ( object value ) { return ( (xxx)value ) != 0; }, false );
 
 			//bool
-			RegisterAutoConvertItem( typeof( bool ), typeof( sbyte ), delegate ( object value ) { return (sbyte)( ( (bool)value ) ? 1 : 0 ); } );
-			RegisterAutoConvertItem( typeof( bool ), typeof( byte ), delegate ( object value ) { return (byte)( ( (bool)value ) ? 1 : 0 ); } );
-			RegisterAutoConvertItem( typeof( bool ), typeof( char ), delegate ( object value ) { return (char)( ( (bool)value ) ? 1 : 0 ); } );
-			RegisterAutoConvertItem( typeof( bool ), typeof( short ), delegate ( object value ) { return (short)( ( (bool)value ) ? 1 : 0 ); } );
-			RegisterAutoConvertItem( typeof( bool ), typeof( ushort ), delegate ( object value ) { return (ushort)( ( (bool)value ) ? 1 : 0 ); } );
-			RegisterAutoConvertItem( typeof( bool ), typeof( int ), delegate ( object value ) { return (int)( ( (bool)value ) ? 1 : 0 ); } );
-			RegisterAutoConvertItem( typeof( bool ), typeof( uint ), delegate ( object value ) { return (uint)( ( (bool)value ) ? 1 : 0 ); } );
-			RegisterAutoConvertItem( typeof( bool ), typeof( long ), delegate ( object value ) { return (long)( ( (bool)value ) ? 1 : 0 ); } );
-			RegisterAutoConvertItem( typeof( bool ), typeof( ulong ), delegate ( object value ) { return (ulong)( ( (bool)value ) ? 1 : 0 ); } );
-			RegisterAutoConvertItem( typeof( bool ), typeof( float ), delegate ( object value ) { return (float)( ( (bool)value ) ? 1 : 0 ); } );
-			RegisterAutoConvertItem( typeof( bool ), typeof( double ), delegate ( object value ) { return (double)( ( (bool)value ) ? 1 : 0 ); } );
-			RegisterAutoConvertItem( typeof( bool ), typeof( decimal ), delegate ( object value ) { return (double)( ( (bool)value ) ? 1 : 0 ); } );
-			RegisterAutoConvertItem( typeof( bool ), typeof( string ), delegate ( object value ) { return value.ToString(); } );
-			RegisterAutoConvertItem( typeof( string ), typeof( bool ), delegate ( object value ) { return bool.Parse( (string)value ); } );
+			RegisterAutoConvertItem( typeof( bool ), typeof( sbyte ), delegate ( object value ) { return (sbyte)( ( (bool)value ) ? 1 : 0 ); }, false );
+			RegisterAutoConvertItem( typeof( bool ), typeof( byte ), delegate ( object value ) { return (byte)( ( (bool)value ) ? 1 : 0 ); }, false );
+			RegisterAutoConvertItem( typeof( bool ), typeof( char ), delegate ( object value ) { return (char)( ( (bool)value ) ? 1 : 0 ); }, false );
+			RegisterAutoConvertItem( typeof( bool ), typeof( short ), delegate ( object value ) { return (short)( ( (bool)value ) ? 1 : 0 ); }, false );
+			RegisterAutoConvertItem( typeof( bool ), typeof( ushort ), delegate ( object value ) { return (ushort)( ( (bool)value ) ? 1 : 0 ); }, false );
+			RegisterAutoConvertItem( typeof( bool ), typeof( int ), delegate ( object value ) { return (int)( ( (bool)value ) ? 1 : 0 ); }, false );
+			RegisterAutoConvertItem( typeof( bool ), typeof( uint ), delegate ( object value ) { return (uint)( ( (bool)value ) ? 1 : 0 ); }, false );
+			RegisterAutoConvertItem( typeof( bool ), typeof( long ), delegate ( object value ) { return (long)( ( (bool)value ) ? 1 : 0 ); }, false );
+			RegisterAutoConvertItem( typeof( bool ), typeof( ulong ), delegate ( object value ) { return (ulong)( ( (bool)value ) ? 1 : 0 ); }, false );
+			RegisterAutoConvertItem( typeof( bool ), typeof( float ), delegate ( object value ) { return (float)( ( (bool)value ) ? 1 : 0 ); }, false );
+			RegisterAutoConvertItem( typeof( bool ), typeof( double ), delegate ( object value ) { return (double)( ( (bool)value ) ? 1 : 0 ); }, false );
+			RegisterAutoConvertItem( typeof( bool ), typeof( decimal ), delegate ( object value ) { return (double)( ( (bool)value ) ? 1 : 0 ); }, false );
+			RegisterAutoConvertItem( typeof( bool ), typeof( string ), delegate ( object value ) { return value.ToString(); }, false );
+			RegisterAutoConvertItem( typeof( string ), typeof( bool ), delegate ( object value ) { return bool.Parse( (string)value ); }, false );
 		}
 
-		public static void RegisterAutoConvertItemsForAssembly( Assembly assembly, Type[] types = null )
+		internal static void RegisterAutoConvertItemsForAssembly( Type[] exportedTypes, bool unregister )
 		{
-			if( types == null )
-				types = assembly.GetExportedTypes();
-
-			foreach( var type in types )//assembly.GetExportedTypes() )
+			foreach( var type in exportedTypes )
 			{
 				//methods
 				foreach( var method in type.GetMethods() )
@@ -2128,9 +2218,9 @@ namespace NeoAxis
 						//!!!!checks
 
 						if( method.IsStatic )
-							RegisterAutoConvertItem( method.GetParameters()[ 0 ].ParameterType, method.ReturnType, method );
+							RegisterAutoConvertItem( method.GetParameters()[ 0 ].ParameterType, method.ReturnType, method, unregister );
 						else
-							RegisterAutoConvertItem( type, method.ReturnType, method );
+							RegisterAutoConvertItem( type, method.ReturnType, method, unregister );
 					}
 				}
 
@@ -2148,7 +2238,7 @@ namespace NeoAxis
 					{
 						//!!!!checks
 
-						RegisterAutoConvertItem( constructor.GetParameters()[ 0 ].ParameterType, type, constructor );
+						RegisterAutoConvertItem( constructor.GetParameters()[ 0 ].ParameterType, type, constructor, unregister );
 					}
 				}
 			}
@@ -2157,9 +2247,7 @@ namespace NeoAxis
 		public static bool CanAutoConvertType( Type from, Type to )
 		{
 			lock( lockObject )
-			{
 				return autoConvertTypes.ContainsKey( (from, to) );
-			}
 		}
 
 		public static object AutoConvertValue( object value, Type destinationType )
@@ -2218,20 +2306,20 @@ namespace NeoAxis
 		//	return value;
 		//}
 
-		public static void RegisterExtensions( Assembly assembly, Type[] types = null )
-		{
-			if( types == null )
-				types = assembly.GetExportedTypes();
+		//public static void RegisterExtensions( Assembly assembly, Type[] types = null )
+		//{
+		//	if( types == null )
+		//		types = assembly.GetExportedTypes();
 
-			foreach( var type in types )
-			{
-				if( !type.IsAbstract && typeof( MetadataExtensions ).IsAssignableFrom( type ) )
-				{
-					var constructor = type.GetConstructor( new Type[ 0 ] );
-					MetadataExtensions obj = (MetadataExtensions)constructor.Invoke( new object[ 0 ] );
-					obj.Register();
-				}
-			}
-		}
+		//	foreach( var type in types )
+		//	{
+		//		if( !type.IsAbstract && typeof( MetadataExtensions ).IsAssignableFrom( type ) )
+		//		{
+		//			var constructor = type.GetConstructor( new Type[ 0 ] );
+		//			MetadataExtensions obj = (MetadataExtensions)constructor.Invoke( new object[ 0 ] );
+		//			obj.Register();
+		//		}
+		//	}
+		//}
 	}
 }

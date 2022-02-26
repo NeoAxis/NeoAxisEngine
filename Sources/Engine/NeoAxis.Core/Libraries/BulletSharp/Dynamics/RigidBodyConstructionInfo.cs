@@ -1,8 +1,8 @@
 using System;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class RigidBodyConstructionInfo : IDisposable
 	{
@@ -21,7 +21,7 @@ namespace BulletSharp
 		}
 
 		public RigidBodyConstructionInfo(double mass, MotionState motionState,
-			CollisionShape collisionShape, Vector3 localInertia)
+			CollisionShape collisionShape, BVector3 localInertia)
 		{
 			Native = btRigidBody_btRigidBodyConstructionInfo_new2(mass, motionState != null ? motionState._native : IntPtr.Zero,
 				collisionShape != null ? collisionShape.Native : IntPtr.Zero, ref localInertia);
@@ -99,11 +99,11 @@ namespace BulletSharp
 			set => btRigidBody_btRigidBodyConstructionInfo_setLinearSleepingThreshold(Native, value);
 		}
 
-		public Vector3 LocalInertia
+		public BVector3 LocalInertia
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btRigidBody_btRigidBodyConstructionInfo_getLocalInertia(Native, out value);
 				return value;
 			}
@@ -138,11 +138,11 @@ namespace BulletSharp
 			set => btRigidBody_btRigidBodyConstructionInfo_setRollingFriction(Native, value);
 		}
 
-		public Matrix StartWorldTransform
+		public BMatrix StartWorldTransform
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btRigidBody_btRigidBodyConstructionInfo_getStartWorldTransform(Native, out value);
 				return value;
 			}

@@ -1,19 +1,11 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
-using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection;
-using ComponentFactory.Krypton.Toolkit;
-using ComponentFactory.Krypton.Navigator;
-using ComponentFactory.Krypton.Workspace;
-using ComponentFactory.Krypton.Docking;
-using System.IO;
 
-namespace NeoAxis
+namespace NeoAxis.Editor
 {
 	/// <summary>
 	/// Provides an empty control that can be used to create other controls. It differs from the base <see cref="UserControl"/>in that the <see cref="OnDestroy"/> method provides.
@@ -32,7 +24,7 @@ namespace NeoAxis
 		{
 			InitializeComponent();
 
-			Font = new Font( new FontFamily( "Microsoft Sans Serif" ), 8f );
+			base.Font = new System.Drawing.Font( new FontFamily( "Microsoft Sans Serif" ), 8f );
 		}
 
 		protected override void WndProc( ref Message m )

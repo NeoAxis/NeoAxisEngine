@@ -1,16 +1,16 @@
-using BulletSharp.Math;
+using Internal.BulletSharp.Math;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
     public class VehicleRaycasterResult
     {
         public double DistFraction { get; set; }
-        public Vector3 HitNormalInWorld { get; set; }
-        public Vector3 HitPointInWorld { get; set; }
+        public BVector3 HitNormalInWorld { get; set; }
+        public BVector3 HitPointInWorld { get; set; }
     }
     
     public interface IVehicleRaycaster
 	{
-        object CastRay(ref Vector3 from, ref Vector3 to, VehicleRaycasterResult result);
+        object CastRay(ref BVector3 from, ref BVector3 to, VehicleRaycasterResult result);
 	}
 }

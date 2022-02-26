@@ -1,4 +1,5 @@
-﻿//
+#if !NO_UI_WEB_BROWSER
+//
 // CEF provides functions for converting between UTF-8, -16 and -32 strings.
 // CEF string types are safe for reading from multiple threads but not for
 // modification. It is the user's responsibility to provide synchronization if
@@ -11,7 +12,7 @@
 //   /Interop/Base/cef_string_t.cs
 //   /Interop/Base/cef_string_userfree.cs
 //
-namespace Xilium.CefGlue.Interop
+namespace Internal.Xilium.CefGlue.Interop
 {
     using System;
     using System.Runtime.InteropServices;
@@ -47,3 +48,5 @@ namespace Xilium.CefGlue.Interop
         public static extern void string_userfree_free(cef_string_userfree* str);
     }
 }
+
+#endif

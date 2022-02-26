@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,10 +16,9 @@ namespace NeoAxis
 	/// Base class of all components.
 	/// </summary>
 	[ResourceFileExtension( "component" )]
-	//!!!![EditorDocumentWindow( typeof( Component_DocumentWindow ) )]
-	[EditorDocumentWindow( typeof( DocumentWindow ) )]
+	[EditorControl( typeof( DocumentWindow ) )]
 	//[EditorDocumentWindow( typeof( DocumentWindowWithViewport ) )]//!!!! можно без сцены нойс нарисовать
-	[EditorSettingsCell( typeof( SettingsCell_Properties ), true )]
+	[SettingsCell( typeof( SettingsCell_Properties ), true )]
 	public class Component : Metadata.IMetadataProvider/*, ISettingsProvider*/, IDisposable
 	{
 		Metadata.TypeInfo baseType;
@@ -413,7 +412,7 @@ namespace NeoAxis
 
 		//protected virtual bool OnLoad_Old( Metadata.LoadContext context, TextBlock block, out string error )
 		//{
-		//	//новый порядок загрузки. теперь сначала компоненты. это нужно, чтобы сначала Component_Member загрузить и создать метаданные
+		//	//новый порядок загрузки. теперь сначала компоненты. это нужно, чтобы сначала VirtualMember загрузить и создать метаданные
 		//	////serialize parameters
 		//	//if( !MetadataManager.Serialization.LoadSerializableMembers( context, this, block, out error ) )
 		//	//	return false;
@@ -535,7 +534,7 @@ namespace NeoAxis
 			return true;
 		}
 
-		internal bool _SaveToTextBlock( Metadata.SaveContext context, TextBlock parentBlock, out bool skipSave, out string error )
+		internal bool _SaveToTextBlock( Metadata.SaveContext context, TextBlock parentBlock, bool isRootComponent, out bool skipSave, out string error )
 		{
 			error = "";
 
@@ -616,7 +615,7 @@ namespace NeoAxis
 
 							//if( !skip )
 							//{
-							if( !component._SaveToTextBlock( context, block, out _, out error ) )
+							if( !component._SaveToTextBlock( context, block, false, out _, out error ) )
 								return false;
 							//}
 						}
@@ -627,6 +626,10 @@ namespace NeoAxis
 					return false;
 				if( !string.IsNullOrEmpty( error ) )
 					return false;
+
+				//remove Name from root component
+				if( !context.SaveRootComponentName && isRootComponent )
+					block.DeleteAttribute( "Name" );
 
 				if( !skipSave )
 				{
@@ -644,8 +647,8 @@ namespace NeoAxis
 
 		internal void _CloneHierarchy( Metadata.CloneContext context, Component newObject )//, bool skipTypeOnly )
 		{
-			context.newComponentsRedirection[ this ] = newObject;
-			context.newComponentsQueue.Enqueue( (this, newObject) );
+			context.NewComponentsRedirection[ this ] = newObject;
+			context.NewComponentsQueue.Enqueue( (this, newObject) );
 
 			//load Name property
 			newObject.Name = Name;
@@ -655,7 +658,7 @@ namespace NeoAxis
 			{
 				if( !child.CloneSupport )
 					continue;
-				if( context.typeOfCloning == Metadata.CloneContext.TypeOfCloningEnum.CreateInstanceOfType && child.TypeOnly )
+				if( context.TypeOfCloning == Metadata.CloneContext.TypeOfCloningEnum.CreateInstanceOfType && child.TypeOnly )
 					continue;
 				//if( skipTypeOnly && child.TypeOnly )
 				//	continue;
@@ -668,7 +671,7 @@ namespace NeoAxis
 				//var newChild = child.Clone( context );
 
 				//!!!!рутовому нужно createdByBaseType = true?
-				switch( context.typeOfCloning )
+				switch( context.TypeOfCloning )
 				{
 				case Metadata.CloneContext.TypeOfCloningEnum.Usual:
 					newChild.createdByBaseType = child.CreatedByBaseType;
@@ -722,16 +725,16 @@ namespace NeoAxis
 			//baseTypeForCreationInstanceOfType
 			//Metadata.TypeInfo overrideBaseType = null
 
-			Component newObject = _CloneInstance( /*overrideClass, */context.baseTypeForCreationInstance/* overrideBaseType */);
+			Component newObject = _CloneInstance( /*overrideClass, */context.BaseTypeForCreationInstance/* overrideBaseType */);
 
 			////!!!!так?
 			//bool skipTypeOnly = overrideBaseType != null;
 
 			_CloneHierarchy( context, newObject );//, skipTypeOnly );
 
-			while( context.newComponentsQueue.Count != 0 )
+			while( context.NewComponentsQueue.Count != 0 )
 			{
-				var pair = context.newComponentsQueue.Dequeue();
+				var pair = context.NewComponentsQueue.Dequeue();
 				var sourceC = pair.Item1;
 				var newC = pair.Item2;
 
@@ -2444,7 +2447,7 @@ namespace NeoAxis
 			//foreach( var m in OnMetadataGetMembers( context ) )
 			{
 				bool skip = false;
-				if( context == null || context.filter )
+				if( context == null || context.Filter )
 					MetadataGetMemberFilterInternal( context, m, ref skip );
 				if( !skip )
 					yield return m;
@@ -2459,7 +2462,7 @@ namespace NeoAxis
 				foreach( var m in list )
 				{
 					bool skip = false;
-					if( context == null || context.filter )
+					if( context == null || context.Filter )
 						MetadataGetMemberFilterInternal( context, m, ref skip );
 					if( !skip )
 						yield return m;
@@ -2511,7 +2514,7 @@ namespace NeoAxis
 			if( m != null )
 			{
 				bool skip = false;
-				if( context == null || context.filter )
+				if( context == null || context.Filter )
 					MetadataGetMemberFilterInternal( context, m, ref skip );
 				if( !skip )
 					return m;
@@ -2522,7 +2525,7 @@ namespace NeoAxis
 			if( m != null )
 			{
 				bool skip = false;
-				if( context == null || context.filter )
+				if( context == null || context.Filter )
 					MetadataGetMemberFilterInternal( context, m, ref skip );
 				if( !skip )
 					return m;
@@ -3257,7 +3260,7 @@ namespace NeoAxis
 				virtualMembers = null;
 				virtualMemberBySignature = null;
 
-				foreach( var child in GetComponents<Component_Member>() )
+				foreach( var child in GetComponents<VirtualMember>() )
 				{
 					if( child.Enabled )
 						child.UpdateParentVirtualMembers( ref virtualMembers, ref virtualMemberBySignature );

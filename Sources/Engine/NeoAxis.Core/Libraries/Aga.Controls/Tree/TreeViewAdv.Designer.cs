@@ -1,6 +1,6 @@
 using System.Windows.Forms;
 
-namespace Aga.Controls.Tree
+namespace Internal.Aga.Controls.Tree
 {
 	partial class TreeViewAdv
 	{

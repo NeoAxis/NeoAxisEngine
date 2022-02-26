@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,7 +9,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using NeoAxis.Editor;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace NeoAxis
 {
@@ -144,7 +144,7 @@ namespace NeoAxis
 				if( threadItem.needStop || EditorAPI.ClosingApplication )
 					return;
 
-				var root = JsonConvert.DeserializeObject<SearchJson.Root>( jsonString );
+				var root = JsonSerializer.Deserialize<SearchJson.Root>( jsonString );
 
 				foreach( var item in root.results )
 				{
@@ -199,7 +199,7 @@ namespace NeoAxis
 
 
 					//!!!!
-					//info.License = Component_StoreProduct.LicenseEnum.None;
+					//info.License = StoreProduct.LicenseEnum.None;
 
 					//!!!!
 					//Date
@@ -330,7 +330,7 @@ namespace NeoAxis
 			task.Wait();
 			var responseString = task.Result;
 
-			var data = JsonConvert.DeserializeObject<GetAccessTokenJson>( responseString );
+			var data = JsonSerializer.Deserialize<GetAccessTokenJson>( responseString );
 
 			if( !string.IsNullOrEmpty( data.error ) )
 				throw new Exception( "Sketchfab: " + ( !string.IsNullOrEmpty( data.error_description ) ? data.error_description : data.error ) );
@@ -367,7 +367,7 @@ namespace NeoAxis
 			task.Wait();
 			var responseString = task.Result;
 
-			var data = JsonConvert.DeserializeObject<DownloadLinkJson.Root>( responseString );
+			var data = JsonSerializer.Deserialize<DownloadLinkJson.Root>( responseString );
 
 			if( data == null || data.gltf == null )
 				throw new Exception( "No link GLTF file." );
@@ -394,7 +394,8 @@ namespace NeoAxis
 			var downloadLink = RequestDownloadLink( package, accessToken );
 
 
-			var tempDownloadedFileName = Path.GetTempFileName();
+			var tempDownloadedFileName = Path.Combine( Path.GetTempPath(), "Temp" + Path.GetRandomFileName() );
+			//var tempDownloadedFileName = Path.GetTempFileName();
 
 			try
 			{

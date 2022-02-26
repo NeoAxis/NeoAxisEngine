@@ -1,12 +1,13 @@
-﻿using System;
+#if !NO_LITE_DB
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB.Engine
+namespace Internal.LiteDB.Engine
 {
     /// <summary>
     /// Internal class to read all datafile documents - use only Stream - no cache system (database are modified during this read - shrink)
@@ -120,3 +121,4 @@ namespace LiteDB.Engine
         }
     }
 }
+#endif

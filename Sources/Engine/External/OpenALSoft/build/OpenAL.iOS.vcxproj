@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|ARM64">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM64">
+      <Configuration>Release</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\alc\backends\coreaudio.h" />
+    <ClInclude Include="..\common\albyte.h" />
+    <ClCompile Include="..\alc\backends\coreaudio.cpp" />
+    <ClCompile Include="..\alc\helpers.cpp" />
+    <ClCompile Include="..\common\alcomplex.cpp" />
+    <ClInclude Include="..\common\alcomplex.h" />
+    <ClCompile Include="..\common\alexcpt.cpp" />
+    <ClInclude Include="..\common\alexcpt.h" />
+    <ClCompile Include="..\common\almalloc.cpp" />
+    <ClInclude Include="..\common\almalloc.h" />
+    <ClInclude Include="..\common\alnumeric.h" />
+    <ClInclude Include="..\common\aloptional.h" />
+    <ClInclude Include="..\common\alspan.h" />
+    <ClInclude Include="..\common\atomic.h" />
+    <ClCompile Include="..\common\dynload.cpp" />
+    <ClInclude Include="..\common\dynload.h" />
+    <ClInclude Include="..\common\endiantest.h" />
+    <ClInclude Include="..\common\intrusive_ptr.h" />
+    <ClInclude Include="..\common\math_defs.h" />
+    <ClInclude Include="..\common\opthelpers.h" />
+    <ClCompile Include="..\common\strutils.cpp" />
+    <ClInclude Include="..\common\strutils.h" />
+    <ClCompile Include="..\common\threads.cpp" />
+    <ClInclude Include="..\common\threads.h" />
+    <ClInclude Include="..\common\vecmat.h" />
+    <ClInclude Include="..\common\vector.h" />
+    <ClCompile Include="..\al\auxeffectslot.cpp" />
+    <ClInclude Include="..\al\auxeffectslot.h" />
+    <ClCompile Include="..\al\buffer.cpp" />
+    <ClInclude Include="..\al\buffer.h" />
+    <ClCompile Include="..\al\effect.cpp" />
+    <ClInclude Include="..\al\effect.h" />
+    <ClCompile Include="..\al\error.cpp" />
+    <ClCompile Include="..\al\event.cpp" />
+    <ClInclude Include="..\al\event.h" />
+    <ClCompile Include="..\al\extension.cpp" />
+    <ClCompile Include="..\al\filter.cpp" />
+    <ClInclude Include="..\al\filter.h" />
+    <ClCompile Include="..\al\listener.cpp" />
+    <ClInclude Include="..\al\listener.h" />
+    <ClCompile Include="..\al\source.cpp" />
+    <ClInclude Include="..\al\source.h" />
+    <ClCompile Include="..\al\state.cpp" />
+    <ClCompile Include="..\alc\alc.cpp" />
+    <ClInclude Include="..\alc\alcmain.h" />
+    <ClCompile Include="..\alc\alu.cpp" />
+    <ClInclude Include="..\alc\alu.h" />
+    <ClCompile Include="..\alc\alconfig.cpp" />
+    <ClInclude Include="..\alc\alconfig.h" />
+    <ClInclude Include="..\alc\alcontext.h" />
+    <ClCompile Include="..\alc\ambdec.cpp" />
+    <ClInclude Include="..\alc\ambdec.h" />
+    <ClInclude Include="..\alc\ambidefs.h" />
+    <ClCompile Include="..\alc\bformatdec.cpp" />
+    <ClInclude Include="..\alc\bformatdec.h" />
+    <ClCompile Include="..\alc\bs2b.cpp" />
+    <ClInclude Include="..\alc\bs2b.h" />
+    <ClInclude Include="..\alc\compat.h" />
+    <ClCompile Include="..\alc\converter.cpp" />
+    <ClInclude Include="..\alc\converter.h" />
+    <ClInclude Include="..\alc\cpu_caps.h" />
+    <ClInclude Include="..\alc\devformat.h" />
+    <ClInclude Include="..\alc\effects\base.h" />
+    <ClCompile Include="..\alc\effects\autowah.cpp" />
+    <ClCompile Include="..\alc\effects\chorus.cpp" />
+    <ClCompile Include="..\alc\effects\compressor.cpp" />
+    <ClCompile Include="..\alc\effects\dedicated.cpp" />
+    <ClCompile Include="..\alc\effects\distortion.cpp" />
+    <ClCompile Include="..\alc\effects\echo.cpp" />
+    <ClCompile Include="..\alc\effects\equalizer.cpp" />
+    <ClCompile Include="..\alc\effects\fshifter.cpp" />
+    <ClCompile Include="..\alc\effects\modulator.cpp" />
+    <ClCompile Include="..\alc\effects\null.cpp">
+      <ObjectFileName>$(IntDir)/alc/effects/null.cpp.obj</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\alc\effects\pshifter.cpp" />
+    <ClCompile Include="..\alc\effects\reverb.cpp" />
+    <ClCompile Include="..\alc\effects\vmorpher.cpp" />
+    <ClInclude Include="..\alc\filters\biquad.h" />
+    <ClCompile Include="..\alc\filters\biquad.cpp" />
+    <ClCompile Include="..\alc\filters\nfc.cpp" />
+    <ClInclude Include="..\alc\filters\nfc.h" />
+    <ClCompile Include="..\alc\filters\splitter.cpp" />
+    <ClInclude Include="..\alc\filters\splitter.h" />
+    <ClInclude Include="..\alc\fpu_modes.h" />
+    <ClCompile Include="..\alc\hrtf.cpp" />
+    <ClInclude Include="..\alc\hrtf.h" />
+    <ClInclude Include="..\alc\inprogext.h" />
+    <ClInclude Include="..\alc\logging.h" />
+    <ClCompile Include="..\alc\mastering.cpp" />
+    <ClInclude Include="..\alc\mastering.h" />
+    <ClCompile Include="..\alc\mixvoice.cpp" />
+    <ClCompile Include="..\alc\panning.cpp" />
+    <ClCompile Include="..\alc\ringbuffer.cpp" />
+    <ClInclude Include="..\alc\ringbuffer.h" />
+    <ClCompile Include="..\alc\uhjfilter.cpp" />
+    <ClInclude Include="..\alc\uhjfilter.h" />
+    <ClCompile Include="..\alc\uiddefs.cpp" />
+    <ClInclude Include="..\alc\mixer\defs.h" />
+    <ClInclude Include="..\alc\mixer\hrtfbase.h" />
+    <ClCompile Include="..\alc\mixer\mixer_c.cpp" />
+    <ClCompile Include="..\alc\backends\base.cpp" />
+    <ClInclude Include="..\alc\backends\base.h" />
+    <ClCompile Include="..\alc\backends\loopback.cpp" />
+    <ClInclude Include="..\alc\backends\loopback.h" />
+    <ClCompile Include="..\alc\backends\null.cpp">
+      <ObjectFileName>$(IntDir)/alc/backends/null.cpp.obj</ObjectFileName>
+    </ClCompile>
+    <ClInclude Include="..\alc\backends\null.h" />
+    <ClCompile Include="..\alc\backends\wave.cpp" />
+    <ClInclude Include="..\alc\backends\wave.h" />
+    <ClCompile Include="..\alc\backends\winmm.cpp" />
+    <ClInclude Include="..\alc\backends\winmm.h" />
+    <ClCompile Include="..\alc\backends\dsound.cpp" />
+    <ClInclude Include="..\alc\backends\dsound.h" />
+    <ClInclude Include="..\build\default-44100.mhr.h" />
+    <ClInclude Include="..\build\default-48000.mhr.h" />
+    <ClInclude Include="..\build\bsinc_inc.h" />
+    <ClInclude Include="..\include\AL\al.h" />
+    <ClInclude Include="..\include\AL\alc.h" />
+    <ClInclude Include="..\include\AL\alext.h" />
+    <ClInclude Include="..\include\AL\efx-creative.h" />
+    <ClInclude Include="..\include\AL\efx-presets.h" />
+    <ClInclude Include="..\include\AL\efx.h" />
+    <ClInclude Include="config.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <Keyword>iOS</Keyword>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <ApplicationType>iOS</ApplicationType>
+    <ApplicationTypeRevision>1.0</ApplicationTypeRevision>
+    <ProjectGuid>{7F9D7BC6-8FDB-4664-944B-387BA3C49DED}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
+    <iOSConfigurationType>StaticLibrary</iOSConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>XCode_6_1</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
+    <iOSConfigurationType>StaticLibrary</iOSConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>XCode_6_1</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <OutDir>$(SolutionDir)_Compilation\iOS\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_Compilation\iOS\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <IncludePath>./;../include;../alc;../common;..</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <PreprocessorDefinitions>__APPLE__;NDEBUG;IOS;AL_BUILD_LIBRARY;AL_ALEXT_PROTOTYPES;AL_NO_UID_DEFS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>-D PLATFORM=1 %(AdditionalOptions)</AdditionalOptions>
+      <ExceptionHandling>Enabled</ExceptionHandling>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <PreprocessorDefinitions>__APPLE__;</PreprocessorDefinitions>
+      <AdditionalOptions>-D PLATFORM=1 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Collections;
@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Drawing;
 using System.Drawing.Design;
 using NeoAxis.Editor;
-using NeoAxis.Input;
 
 namespace NeoAxis
 {
@@ -16,9 +15,9 @@ namespace NeoAxis
 	/// Base class of all UI controls.
 	/// </summary>
 	[ResourceFileExtension( "ui" )]
-	[EditorDocumentWindow( typeof( UIControl_DocumentWindow ) )]
+	[EditorControl( typeof( UIControlEditor ) )]
 	//[EditorNewObjectSettings( typeof( UIControl_NewObjectSettings ) )]
-	public class UIControl : Component, IComponent_VisibleInHierarchy//, IComponent_CanBeSelectedInHierarchy
+	public class UIControl : Component, IVisibleInHierarchy//, ICanBeSelectedInHierarchy
 	{
 		//!!!!всё тут
 
@@ -161,7 +160,7 @@ namespace NeoAxis
 				if( !CanBeSelected )
 					return false;
 
-				var p = Parent as IComponent_CanBeSelectedInHierarchy;
+				var p = Parent as ICanBeSelectedInHierarchy;
 				if( p != null )
 					return p.CanBeSelectedInHierarchy;
 				else
@@ -573,7 +572,7 @@ namespace NeoAxis
 		//!!!!!!!!тогда Visible станет самым обычным параметром
 		//!!!!тут надо эвент и референс, т.к. довольно таки очевидный флаг видимости объекта в зависимости от стейта
 		//!!!!с другой стороны может стать уж слишком медленно? если не юзать ссылки то не станет? хотя они обновляются иерархически же
-		//!!!!!а тут ли? может это в Component_ObjectInScene?
+		//!!!!!а тут ли? может это в ObjectInScene?
 		//bool visible = true;
 		//bool visibleInHierarchy;//!!!!? = true;
 
@@ -604,12 +603,12 @@ namespace NeoAxis
 				if( !Visible )
 					return false;
 
-				var p = Parent as IComponent_VisibleInHierarchy;
+				var p = Parent as IVisibleInHierarchy;
 				if( p != null )
 					return p.VisibleInHierarchy;
 				else
 					return true;
-				//var p = Parent as Component_ObjectInSpace;
+				//var p = Parent as ObjectInSpace;
 				//if( p != null )
 				//	return p.VisibleInHierarchy;
 				//else
@@ -2030,7 +2029,7 @@ namespace NeoAxis
 			////!!!!!заранее при загрузке?
 
 			////!!!!Wait
-			//Component_Texture backTex = ResourceManager.LoadResource<Component_Texture>( BackTexture );
+			//Texture backTex = ResourceManager.LoadResource<Texture>( BackTexture );
 
 			////!!!!?
 			//GpuTexture gpuTexture = ResourceUtils.GetTextureCompiledData( backTex );

@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -26,9 +26,9 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		public abstract bool _ViewportRendering_PrepareRenderables();
-		public abstract void _ViewportRendering_RenderToCurrentViewport( ViewportRenderingContext context );
-		public abstract void _Clear();
+		public abstract bool ViewportRendering_PrepareRenderables();
+		public abstract void ViewportRendering_RenderToCurrentViewport( ViewportRenderingContext context );
+		public abstract void ViewportRendering_Clear();
 
 		/////////////////////////////////////////
 
@@ -46,7 +46,14 @@ namespace NeoAxis
 			SetColor( color, depthTest ? new ColorValue( 0, 0, 0, 0 ) : color );//, depthWrite );
 		}
 
-		public abstract void SetOcclusionQuery( SharpBgfx.OcclusionQuery? query );
+		public abstract void SetOcclusionQuery( Internal.SharpBgfx.OcclusionQuery? query );
+
+		public abstract void SetCutVolumes( RenderingPipeline.RenderSceneData.CutVolumeItem[] cutVolumes );
+
+		public void ResetCutVolumes()
+		{
+			SetCutVolumes( null );
+		}
 
 		//public abstract void EnableNonOverlappingGroup();
 		//public abstract void DisableNonOverlappingGroup();
@@ -148,7 +155,7 @@ namespace NeoAxis
 		/// <param name="segments">The count of lines in circles of sphere.</param>
 		public void AddSphere( Sphere sphere, int segments = 32, bool solid = false, double lineThickness = 0 )
 		{
-			AddSphere( Matrix4.FromTranslate( sphere.Origin ), sphere.Radius, segments, solid, lineThickness );
+			AddSphere( Matrix4.FromTranslate( sphere.Center ), sphere.Radius, segments, solid, lineThickness );
 		}
 
 		/// <summary>
@@ -494,8 +501,8 @@ namespace NeoAxis
 		}
 
 		//bool transformAlreadyAppliedRelativeCameraOffset
-		public abstract void AddMesh( Component_Mesh.CompiledData meshData, ref Matrix4 transform, bool wireframe, bool culling );
-		public void AddMesh( Component_Mesh.CompiledData meshData, Matrix4 transform, bool wireframe, bool culling )
+		public abstract void AddMesh( Mesh.CompiledData meshData, ref Matrix4 transform, bool wireframe, bool culling );
+		public void AddMesh( Mesh.CompiledData meshData, Matrix4 transform, bool wireframe, bool culling )
 		{
 			AddMesh( meshData, ref transform, wireframe, culling );
 		}

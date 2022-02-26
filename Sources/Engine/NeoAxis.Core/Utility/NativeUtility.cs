@@ -1,12 +1,15 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Collections.Generic;
+using System.IO;
+using Internal;
 
 namespace NeoAxis
 {
 	/// <summary>
-	/// Class for working with native memory.
+	/// Class for working with native memory and libraries.
 	/// </summary>
 	public static class NativeUtility
 	{
@@ -14,6 +17,28 @@ namespace NeoAxis
 		internal const CallingConvention convention = CallingConvention.Cdecl;
 
 		static bool nativeWrapperLibraryLoaded;
+
+		static object preLoadLibraryLockObject = new object();
+		static Dictionary<string, IntPtr> loadedNativeLibraries = new Dictionary<string, IntPtr>();
+
+		///////////////////////////////////////////
+
+		[DllImport( library, EntryPoint = "MemoryManager_GetStatistics", CallingConvention = convention )]
+		static extern void MemoryManager_GetStatistics( MemoryAllocationType allocationType, out long allocatedMemory, out int allocationCount );
+
+		[DllImport( library, EntryPoint = "MemoryManager_GetCRTStatistics", CallingConvention = convention )]
+		static extern void MemoryManager_GetCRTStatistics( out long allocatedMemory, out int allocationCount );
+
+		[UnmanagedFunctionPointer( convention )]
+		unsafe delegate void MemoryManager_GetAllocationInformationDelegate( MemoryAllocationType allocationType, int size, sbyte* fileName, int lineNumber, int allocationCount );
+
+		[DllImport( library, EntryPoint = "MemoryManager_GetAllocationInformation", CallingConvention = convention )]
+		static extern void MemoryManager_GetAllocationInformation( MemoryManager_GetAllocationInformationDelegate callback );
+
+		///////////////////////////////////////////
+
+		[DllImport( "kernel32.dll", EntryPoint = "SetDllDirectory", CharSet = CharSet.Unicode )]
+		static extern bool SetDllDirectory( string lpPathName );
 
 		/////////////////////////////////////////
 
@@ -35,7 +60,7 @@ namespace NeoAxis
 			if( !nativeWrapperLibraryLoaded )
 			{
 				nativeWrapperLibraryLoaded = true;
-				NativeLibraryManager.PreLoadLibrary( library );
+				PreloadLibrary( library );
 			}
 		}
 
@@ -133,6 +158,162 @@ namespace NeoAxis
 		{
 			LoadUtilsNativeWrapperLibrary();
 			return NativeUtils_CalculateHash( (IntPtr)buffer, length );
+		}
+
+		///////////////////////////////////////////
+
+		public static IntPtr PreloadLibrary( string baseName, string overrideSetCurrentDirectory = "" )
+		{
+			lock( preLoadLibraryLockObject )
+			{
+				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
+				{
+					if( Path.GetExtension( baseName ) != ".dll" )
+						baseName += ".dll";
+				}
+				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.MacOS )
+				{
+					//remove ".dll"
+					if( Path.GetExtension( baseName ) != ".dll" )
+						baseName = Path.ChangeExtension( baseName, null );
+
+					string checkPath = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, baseName + ".bundle" );
+					if( Directory.Exists( checkPath ) )
+						baseName += ".bundle";
+					else
+						baseName += ".dylib";
+				}
+				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
+				{
+					//no preloading on Android
+					return IntPtr.Zero;
+
+					//if( Path.GetExtension( baseName ) != ".so" )
+					//	baseName += ".so";
+
+					//string prefix = "lib";
+					//if( baseName.Length > 3 && baseName.Substring( 0, 3 ) == "lib" )
+					//	prefix = "";
+					//baseName = prefix + baseName + ".so";
+				}
+				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
+				{
+					//no preloading on iOS
+					return IntPtr.Zero;
+				}
+				else
+				{
+					Log.Fatal( "NativeLibraryManager: PreloadLibrary: no code." );
+				}
+
+				if( loadedNativeLibraries.TryGetValue( baseName, out var pointer2 ) )
+					return pointer2;
+				//if( loadedNativeLibraries.ContainsKey( baseName ) )
+				//	return;
+
+				loadedNativeLibraries[ baseName ] = IntPtr.Zero;
+
+				string saveCurrentDirectory = Directory.GetCurrentDirectory();
+
+				//Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, additionalPath )
+				if( !string.IsNullOrEmpty( overrideSetCurrentDirectory ) )
+					Directory.SetCurrentDirectory( overrideSetCurrentDirectory );
+				else
+					Directory.SetCurrentDirectory( VirtualFileSystem.Directories.PlatformSpecific );
+
+				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows ||
+					SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
+				{
+					try
+					{
+						SetDllDirectory( VirtualFileSystem.Directories.PlatformSpecific );
+					}
+					catch { }
+				}
+
+				string fullPath = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, baseName );
+
+				var pointer = PlatformSpecificUtility.Instance.LoadLibrary( fullPath );
+				if( pointer == IntPtr.Zero )
+					Log.Fatal( "NativeLibraryManager: PreloadLibrary: Loading native library failed ({0}).", fullPath );
+
+				loadedNativeLibraries[ baseName ] = pointer;
+
+				Directory.SetCurrentDirectory( saveCurrentDirectory );
+
+				return pointer;
+			}
+		}
+
+		///////////////////////////////////////////
+
+		public static void GetStatistics( MemoryAllocationType allocationType, out long allocatedMemory, out int allocationCount )
+		{
+			LoadUtilsNativeWrapperLibrary();
+			MemoryManager_GetStatistics( allocationType, out allocatedMemory, out allocationCount );
+		}
+
+		public static void GetCRTStatistics( out long allocatedMemory, out int allocationCount )
+		{
+			LoadUtilsNativeWrapperLibrary();
+			MemoryManager_GetCRTStatistics( out allocatedMemory, out allocationCount );
+		}
+
+		static string allocationItemName;
+		static List<string> allocations;
+		static ulong totalAllocationSize;
+
+		unsafe static void EnumerateGetAllocationInformationCallback( MemoryAllocationType allocationType, int size, sbyte* fileName,
+			int lineNumber, int allocationCount )
+		{
+			string fileInfo;
+			if( fileName != null )
+				fileInfo = string.Format( "{0}:{1}", new string( fileName ), lineNumber );
+			else
+				fileInfo = "NULL";
+
+			allocations.Add( string.Format( "{0} - type: {1}, size: {2} x {3} = {4} (file: {5})", allocationItemName, allocationType,
+				size, allocationCount, size * allocationCount, fileInfo ) );
+
+			totalAllocationSize += (ulong)( size * allocationCount );
+		}
+
+		internal static void LogStatistics( string allocationName )
+		{
+			LoadUtilsNativeWrapperLibrary();
+
+			Log.InvisibleInfo( string.Format( "NativeMemoryManager: {0}s statistics begin",
+				allocationName ) );
+
+			allocationItemName = allocationName;
+			allocations = new List<string>( 128 );
+			totalAllocationSize = 0;
+
+			unsafe
+			{
+				MemoryManager_GetAllocationInformation( EnumerateGetAllocationInformationCallback );
+			}
+
+			foreach( string leak in allocations )
+				Log.InvisibleInfo( leak );
+
+			Log.InvisibleInfo( "Total size: " + totalAllocationSize.ToString() );
+
+			allocationItemName = null;
+			allocations = null;
+			totalAllocationSize = 0;
+
+			Log.InvisibleInfo( string.Format( "NativeMemoryManager: {0}s statistics end", allocationName ) );
+		}
+
+		internal static void LogLeaks()
+		{
+			LogStatistics( "Leak" );
+		}
+
+		public static void LogAllocationStatistics()
+		{
+			LogStatistics( "Allocation" );
 		}
 	}
 }

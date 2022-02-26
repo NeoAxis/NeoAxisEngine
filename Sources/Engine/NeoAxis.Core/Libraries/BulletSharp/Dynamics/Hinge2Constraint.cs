@@ -1,12 +1,12 @@
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class Hinge2Constraint : Generic6DofSpring2Constraint
 	{
-		public Hinge2Constraint(RigidBody rigidBodyA, RigidBody rigidBodyB, Vector3 anchor,
-			Vector3 axis1, Vector3 axis2)
+		public Hinge2Constraint(RigidBody rigidBodyA, RigidBody rigidBodyB, BVector3 anchor,
+			BVector3 axis1, BVector3 axis2)
 			: base(btHinge2Constraint_new(rigidBodyA.Native, rigidBodyB.Native,
 				ref anchor, ref axis1, ref axis2))
 		{
@@ -24,21 +24,21 @@ namespace BulletSharp
 			btHinge2Constraint_setUpperLimit(Native, ang1max);
 		}
 
-		public Vector3 Anchor
+		public BVector3 Anchor
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btHinge2Constraint_getAnchor(Native, out value);
 				return value;
 			}
 		}
 
-		public Vector3 Anchor2
+		public BVector3 Anchor2
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btHinge2Constraint_getAnchor2(Native, out value);
 				return value;
 			}
@@ -48,21 +48,21 @@ namespace BulletSharp
 
 		public double Angle2 => btHinge2Constraint_getAngle2(Native);
 
-		public Vector3 Axis1
+		public BVector3 Axis1
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btHinge2Constraint_getAxis1(Native, out value);
 				return value;
 			}
 		}
 
-		public Vector3 Axis2
+		public BVector3 Axis2
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btHinge2Constraint_getAxis2(Native, out value);
 				return value;
 			}

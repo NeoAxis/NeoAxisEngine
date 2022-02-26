@@ -28,7 +28,7 @@ namespace NeoAxis.Editor
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.runScriptKryptonButton = new ComponentFactory.Krypton.Toolkit.KryptonButton();
+			this.runScriptKryptonButton = new Internal.ComponentFactory.Krypton.Toolkit.KryptonButton();
 			this.scriptEditorControl = new NeoAxis.Editor.ScriptEditorControl();
 			this.SuspendLayout();
 			// 
@@ -69,7 +69,7 @@ namespace NeoAxis.Editor
 		}
 
 		#endregion
-		private ComponentFactory.Krypton.Toolkit.KryptonButton runScriptKryptonButton;
+		private Internal.ComponentFactory.Krypton.Toolkit.KryptonButton runScriptKryptonButton;
 		private NeoAxis.Editor.ScriptEditorControl scriptEditorControl;
 	}
 }

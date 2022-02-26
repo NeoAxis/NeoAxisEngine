@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -191,7 +191,7 @@ namespace NeoAxis
 				Log.Fatal( "Prohibited call from not app main thread." );
 		}
 
-		public unsafe static void ExecuteQueuedActionsFromMainThread()
+		public static void ExecuteQueuedActionsFromMainThread()
 		{
 			CheckMainThread();
 

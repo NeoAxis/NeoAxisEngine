@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -26,7 +26,7 @@ namespace OpenALSoundSystem
 
 		static internal string captureDeviceName = "";
 
-		static OpenALCaptureSound recordingSound;
+		static OpenALCaptureSoundData recordingSound;
 
 		public static CriticalSection criticalSection;
 
@@ -60,9 +60,9 @@ namespace OpenALSoundSystem
 
 		protected override bool InitLibrary( IntPtr mainWindowHandle, int maxReal2DChannels, int maxReal3DChannels )
 		{
-			//NativeLibraryManager.PreLoadLibrary( "libogg" );
-			//NativeLibraryManager.PreLoadLibrary( "libvorbis" );
-			//NativeLibraryManager.PreLoadLibrary( "libvorbisfile" );
+			//NativeLibraryManager.PreloadLibrary( "libogg" );
+			//NativeLibraryManager.PreloadLibrary( "libvorbis" );
+			//NativeLibraryManager.PreloadLibrary( "libvorbisfile" );
 
 			//preload dlls
 			{
@@ -78,7 +78,9 @@ namespace OpenALSoundSystem
 					fileNames.Add( "OpenAL32.dylib" );
 				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
 				{
-					//fileNames.Add( "libOpenAL.so" );
+				}
+				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
+				{
 				}
 				else
 				{
@@ -90,7 +92,7 @@ namespace OpenALSoundSystem
 				{
 					var path = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, fileName );
 					if( File.Exists( path ) )
-						NativeLibraryManager.PreLoadLibrary( fileName );
+						NativeUtility.PreloadLibrary( fileName );
 				}
 			}
 
@@ -242,13 +244,13 @@ namespace OpenALSoundSystem
 			}
 		}
 
-		protected override Sound _SoundCreate( string name, SoundModes mode )
+		protected override SoundData Internal_SoundCreate( string name, SoundModes mode )
 		{
 			criticalSection.Enter();
 
-			OpenALSound sound;
+			OpenALSoundData sound;
 
-			sound = (OpenALSound)base._SoundCreate( name, mode );
+			sound = (OpenALSoundData)base.Internal_SoundCreate( name, mode );
 			if( sound != null )
 			{
 				criticalSection.Leave();
@@ -263,20 +265,34 @@ namespace OpenALSoundSystem
 				return null;
 			}
 
-			bool initialized;
-
-			if( ( mode & SoundModes.Stream ) == 0 )
+			try
 			{
-				sound = new OpenALSampleSound( stream, SoundType.Unknown, name, mode, out initialized );
-				stream.Dispose();
+				bool initialized;
+
+				if( ( mode & SoundModes.Stream ) == 0 )
+				{
+					//read whole file to a memory stream
+					var bytes = new byte[ stream.Length ];
+					stream.Read( bytes, 0, bytes.Length );
+					var memoryStream = new MemoryVirtualFileStream( bytes );
+
+					sound = new OpenALSampleSoundData( memoryStream, SoundType.Unknown, name, mode, out initialized );
+					stream.Dispose();
+				}
+				else
+					sound = new OpenALFileStreamSoundData( stream, /*true, */SoundType.Unknown, name, mode, out initialized );
+
+				if( !initialized )
+				{
+					sound.Dispose();
+					sound = null;
+				}
 			}
-			else
-				sound = new OpenALFileStreamSound( stream, /*true, */SoundType.Unknown, name, mode, out initialized );
-
-			if( !initialized )
+			catch( Exception ex )
 			{
-				sound.Dispose();
-				sound = null;
+				criticalSection.Leave();
+				Log.Warning( string.Format( "Creating sound \"{0}\" failed. {1}", name, ex.Message ) );
+				return null;
 			}
 
 			criticalSection.Leave();
@@ -312,15 +328,15 @@ namespace OpenALSoundSystem
 		//	return sound;
 		//}
 
-		protected override Sound _SoundCreateDataBuffer( SoundModes mode, int channels, int frequency, int bufferSize, DataReadDelegate dataReadCallback )
+		protected override SoundData Internal_SoundCreateDataBuffer( SoundModes mode, int channels, int frequency, int bufferSize, DataReadDelegate dataReadCallback )
 		{
 			criticalSection.Enter();
 
-			Sound sound;
+			SoundData sound;
 
 			if( ( mode & SoundModes.Record ) != 0 )
 			{
-				OpenALCaptureSound captureSound = new OpenALCaptureSound( mode, channels, frequency, bufferSize );
+				OpenALCaptureSoundData captureSound = new OpenALCaptureSoundData( mode, channels, frequency, bufferSize );
 				if( captureSound.alCaptureDevice == IntPtr.Zero )
 				{
 					criticalSection.Leave();
@@ -329,7 +345,7 @@ namespace OpenALSoundSystem
 				sound = captureSound;
 			}
 			else
-				sound = new OpenALDataStreamSound( mode, channels, frequency, bufferSize, dataReadCallback );
+				sound = new OpenALDataStreamSoundData( mode, channels, frequency, bufferSize, dataReadCallback );
 
 			criticalSection.Leave();
 
@@ -379,7 +395,7 @@ namespace OpenALSoundSystem
 			criticalSection.Leave();
 		}
 
-		protected override string _DriverName
+		protected override string Internal_DriverName
 		{
 			get
 			{
@@ -402,7 +418,7 @@ namespace OpenALSoundSystem
 			}
 		}
 
-		protected override string[] _RecordDrivers
+		protected override string[] Internal_RecordDrivers
 		{
 			get
 			{
@@ -423,23 +439,23 @@ namespace OpenALSoundSystem
 			}
 		}
 
-		protected override int _RecordDriver
+		protected override int Internal_RecordDriver
 		{
 			get
 			{
-				return Array.IndexOf<string>( _RecordDrivers, captureDeviceName );
+				return Array.IndexOf<string>( Internal_RecordDrivers, captureDeviceName );
 			}
 			set
 			{
-				captureDeviceName = _RecordDrivers[ value ];
+				captureDeviceName = Internal_RecordDrivers[ value ];
 			}
 		}
 
-		protected override bool _RecordStart( Sound sound )
+		protected override bool Internal_RecordStart( SoundData sound )
 		{
 			criticalSection.Enter();
 
-			OpenALCaptureSound captureSound = sound as OpenALCaptureSound;
+			OpenALCaptureSoundData captureSound = sound as OpenALCaptureSoundData;
 			if( captureSound == null )
 			{
 				criticalSection.Leave();
@@ -455,7 +471,7 @@ namespace OpenALSoundSystem
 			return true;
 		}
 
-		protected override void _RecordStop()
+		protected override void Internal_RecordStop()
 		{
 			criticalSection.Enter();
 
@@ -468,7 +484,7 @@ namespace OpenALSoundSystem
 			criticalSection.Leave();
 		}
 
-		protected override bool _IsRecording()
+		protected override bool Internal_IsRecording()
 		{
 			return recordingSound != null;
 		}
@@ -532,7 +548,7 @@ namespace OpenALSoundSystem
 
 			bool active = !masterGroupPaused;
 
-			if( active && _SuspendWorkingWhenApplicationIsNotActive )
+			if( active && Internal_SuspendWorkingWhenApplicationIsNotActive )
 			{
 				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
 				{

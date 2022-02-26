@@ -1,6 +1,6 @@
-using static BulletSharp.UnsafeNativeMethods;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp.SoftBody
+namespace Internal.BulletSharp.SoftBody
 {
 	public class DefaultSoftBodySolver : SoftBodySolver
 	{

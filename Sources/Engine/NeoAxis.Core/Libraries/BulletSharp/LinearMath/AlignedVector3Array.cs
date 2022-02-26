@@ -1,14 +1,14 @@
-﻿using BulletSharp.Math;
+﻿using Internal.BulletSharp.Math;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using static BulletSharp.UnsafeNativeMethods;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	[DebuggerDisplay("Count = {Count}")]
 	[DebuggerTypeProxy(typeof(Vector3ListDebugView))]
-	public class AlignedVector3Array : IList<Vector3>, IDisposable
+	public class AlignedVector3Array : IList<BVector3>, IDisposable
 	{
 		internal IntPtr _native;
 		private bool _preventDelete;
@@ -47,12 +47,12 @@ namespace BulletSharp
 			Dispose(false);
 		}
 
-		public int IndexOf(Vector3 item)
+		public int IndexOf(BVector3 item)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void Insert(int index, Vector3 item)
+		public void Insert(int index, BVector3 item)
 		{
 			throw new NotImplementedException();
 		}
@@ -62,7 +62,7 @@ namespace BulletSharp
 			throw new NotImplementedException();
 		}
 
-		public Vector3 this[int index]
+		public BVector3 this[int index]
 		{
 			get
 			{
@@ -70,7 +70,7 @@ namespace BulletSharp
 				{
 					throw new ArgumentOutOfRangeException(nameof(index));
 				}
-				Vector3 value;
+				BVector3 value;
 				btAlignedObjectArray_btVector3_at(_native, index, out value);
 				return value;
 			}
@@ -84,7 +84,7 @@ namespace BulletSharp
 			}
 		}
 
-		public void Add(Vector3 item)
+		public void Add(BVector3 item)
 		{
 			btAlignedObjectArray_btVector3_push_back(_native, ref item);
 		}
@@ -94,12 +94,12 @@ namespace BulletSharp
 			throw new NotImplementedException();
 		}
 
-		public bool Contains(Vector3 item)
+		public bool Contains(BVector3 item)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void CopyTo(Vector3[] array, int arrayIndex)
+		public void CopyTo(BVector3[] array, int arrayIndex)
 		{
 			if (array == null)
 				throw new ArgumentNullException(nameof(array));
@@ -121,12 +121,12 @@ namespace BulletSharp
 
 		public bool IsReadOnly => false;
 
-		public bool Remove(Vector3 item)
+		public bool Remove(BVector3 item)
 		{
 			throw new NotImplementedException();
 		}
 
-		public IEnumerator<Vector3> GetEnumerator()
+		public IEnumerator<BVector3> GetEnumerator()
 		{
 			return new Vector3ArrayEnumerator(this);
 		}

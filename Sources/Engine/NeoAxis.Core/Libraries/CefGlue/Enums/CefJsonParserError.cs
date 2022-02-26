@@ -1,8 +1,9 @@
-﻿//
+#if !NO_UI_WEB_BROWSER
+//
 // This file manually written from cef/include/internal/cef_types.h.
 // C API name: cef_json_parser_error_t.
 //
-namespace Xilium.CefGlue
+namespace Internal.Xilium.CefGlue
 {
     /// <summary>
     /// Error codes that can be returned from CefParseJSONAndReturnError.
@@ -21,3 +22,5 @@ namespace Xilium.CefGlue
         ParseErrorCount,
     }
 }
+
+#endif

@@ -882,11 +882,22 @@ void* btCollisionWorld_callCustomMethod(btCollisionWorld* world, int message, vo
 		{
 			//!!!!multithreading
 
-			if (sizeof(btCollisionWorld::CollectContactsItem) != 256)
-			//if (sizeof(btCollisionWorld::CollectContactsItem) != 4 + 8 + 8 + 4 + 56 * 4)
+			if (sizeof(void*) == 8)
 			{
-				int* p = 0;
-				*p = 0;
+				if (sizeof(btCollisionWorld::CollectContactsItem) != 248)
+					//if (sizeof(btCollisionWorld::CollectContactsItem) != 4 + 8 + 8 + 4 + 56 * 4)
+				{
+					int* p = 0;
+					*p = 0;
+				}
+			}
+			else
+			{
+				if (sizeof(btCollisionWorld::CollectContactsItem) != 240)
+				{
+					int* p = 0;
+					*p = 0;
+				}
 			}
 
 			int simulationSubStep = (int)(int64_t)param1;

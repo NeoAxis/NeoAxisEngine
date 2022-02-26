@@ -1,8 +1,9 @@
-﻿//
+#if !NO_UI_WEB_BROWSER
+//
 // This file manually written from cef/include/internal/cef_types.h.
 // C API name: cef_xml_encoding_type_t.
 //
-namespace Xilium.CefGlue
+namespace Internal.Xilium.CefGlue
 {
     /// <summary>
     /// Supported XML encoding types. The parser supports ASCII, ISO-8859-1, and
@@ -19,3 +20,5 @@ namespace Xilium.CefGlue
        Ascii,
     }
 }
+
+#endif

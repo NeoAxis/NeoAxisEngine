@@ -1,7 +1,8 @@
-﻿using System;
-using static LiteDB.Constants;
+#if !NO_LITE_DB
+using System;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     internal static class DateExtensions
     {
@@ -52,3 +53,4 @@ namespace LiteDB
         }
     }
 }
+#endif

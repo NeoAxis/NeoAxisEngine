@@ -1,9 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class TriangleMeshShape : ConcaveShape
 	{
@@ -14,27 +14,27 @@ namespace BulletSharp
 		{
 		}
 
-		public void LocalGetSupportingVertex(ref Vector3 vec, out Vector3 value)
+		public void LocalGetSupportingVertex(ref BVector3 vec, out BVector3 value)
 		{
 			btTriangleMeshShape_localGetSupportingVertex(Native, ref vec, out value);
 		}
 
-		public Vector3 LocalGetSupportingVertex(Vector3 vec)
+		public BVector3 LocalGetSupportingVertex(BVector3 vec)
 		{
-			Vector3 value;
+			BVector3 value;
 			btTriangleMeshShape_localGetSupportingVertex(Native, ref vec, out value);
 			return value;
 		}
 
-		public void LocalGetSupportingVertexWithoutMargin(ref Vector3 vec, out Vector3 value)
+		public void LocalGetSupportingVertexWithoutMargin(ref BVector3 vec, out BVector3 value)
 		{
 			btTriangleMeshShape_localGetSupportingVertexWithoutMargin(Native, ref vec,
 				out value);
 		}
 
-		public Vector3 LocalGetSupportingVertexWithoutMargin(Vector3 vec)
+		public BVector3 LocalGetSupportingVertexWithoutMargin(BVector3 vec)
 		{
-			Vector3 value;
+			BVector3 value;
 			btTriangleMeshShape_localGetSupportingVertexWithoutMargin(Native, ref vec,
 				out value);
 			return value;
@@ -45,21 +45,21 @@ namespace BulletSharp
 			btTriangleMeshShape_recalcLocalAabb(Native);
 		}
 
-		public Vector3 LocalAabbMax
+		public BVector3 LocalAabbMax
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btTriangleMeshShape_getLocalAabbMax(Native, out value);
 				return value;
 			}
 		}
 
-		public Vector3 LocalAabbMin
+		public BVector3 LocalAabbMin
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btTriangleMeshShape_getLocalAabbMin(Native, out value);
 				return value;
 			}

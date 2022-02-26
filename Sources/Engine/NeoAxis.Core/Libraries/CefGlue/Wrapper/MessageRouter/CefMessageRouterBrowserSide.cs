@@ -1,11 +1,12 @@
-﻿namespace Xilium.CefGlue.Wrapper
+#if !NO_UI_WEB_BROWSER
+namespace Internal.Xilium.CefGlue.Wrapper
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Text;
 
-    using BrowserInfoMap = CefBrowserInfoMap<long, Xilium.CefGlue.Wrapper.CefMessageRouterBrowserSide.QueryInfo>;
+    using BrowserInfoMap = CefBrowserInfoMap<long, Internal.Xilium.CefGlue.Wrapper.CefMessageRouterBrowserSide.QueryInfo>;
 
     /// <summary>
     /// Implements the browser side of query routing. The methods of this class may
@@ -627,3 +628,5 @@
         }
     }
 }
+
+#endif

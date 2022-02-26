@@ -1,7 +1,7 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
-using SharpBgfx;
+using Internal.SharpBgfx;
 
 namespace NeoAxis
 {
@@ -76,62 +76,6 @@ namespace NeoAxis
 		//	{
 		//		get { return elementCount; }
 		//	}
-		//}
-
-		////////////
-
-		//public struct TextureParameterValue//public class TextureParameterValue
-		//{
-		//	xx xx;//int Index;
-
-		//	//!!!!какие-то параметры могут быть тоже составными
-
-		//	public Component_Image Texture;
-		//	public TextureAddressingMode AddressingMode;
-		//	public FilterOption FilteringMin;
-		//	public FilterOption FilteringMag;
-		//	public FilterOption FilteringMip;
-		//	public ColorValue BorderColor;
-		//	public TextureFlags AdditionFlags;
-
-		//	//!!!!
-		//	//int numMipmaps;
-		//	//bool isAlpha;
-		//	//virtual void _setTextureLayerAnisotropy( size_t unit, unsigned int maxAnisotropy ) = 0;
-		//	//virtual void _setTextureMipmapBias( size_t unit, float bias ) = 0;
-		//	//public ContentTypes contentType;
-		//	//bool fetch4;
-
-		//	//public TextureParameterValue()
-		//	//{
-		//	//}
-
-		//	//public TextureParameterValue( Component_Image texture, TextureAddressingMode addressingMode, FilterOption filteringMin, FilterOption filteringMag, FilterOption filteringMip, ColorValue borderColor )
-		//	//{
-		//	//	this.texture = texture;
-		//	//	this.addressingMode = addressingMode;
-		//	//	this.filteringMin = filteringMin;
-		//	//	this.filteringMag = filteringMag;
-		//	//	this.filteringMip = filteringMip;
-		//	//	this.borderColor = borderColor;
-		//	//}
-
-		//	public TextureParameterValue( Component_Image texture, TextureAddressingMode addressingMode, FilterOption filteringMin, FilterOption filteringMag, FilterOption filteringMip )
-		//	{
-		//		this.Texture = texture;
-		//		this.AddressingMode = addressingMode;
-		//		this.FilteringMin = filteringMin;
-		//		this.FilteringMag = filteringMag;
-		//		this.FilteringMip = filteringMip;
-
-		//		this.BorderColor = new ColorValue( 0, 0, 0, 0 );
-		//		this.AdditionFlags = 0;
-		//	}
-
-		//	//public Texture Texture
-		//	//{
-		//	//	get { return texture; }
-		//	//}
 		//}
 
 		////////////
@@ -1043,5 +987,28 @@ namespace NeoAxis
 		//	var linkedProgram = GpuProgramManager.GetLinkedProgram( vertexProgram, fragmentProgram );
 		//	return CreatePass( linkedProgram );
 		//}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public struct GpuMaterialPassGroup
+	{
+		public GpuMaterialPass Usual;
+		public GpuMaterialPass Billboard;
+
+		//
+
+		public GpuMaterialPass Get( bool billboard )
+		{
+			return billboard ? Billboard : Usual;
+		}
+
+		public void Set( GpuMaterialPass pass, bool billboard )
+		{
+			if( billboard )
+				Billboard = pass;
+			else
+				Usual = pass;
+		}
 	}
 }

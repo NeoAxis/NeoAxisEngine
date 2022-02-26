@@ -1,42 +1,46 @@
-// Made with NeoAxis Engine 2021.3.
+// Made with NeoAxis Engine 2021.4.
 
-.component NeoAxis.Component_Surface
+.component NeoAxis.Surface
 {
 	EditorCameraTransform = "13.5916060977021 -19.550358835253 13.9411986970496; -0.285758937697935 0.149158847647722 0.839179860790949 0.438030397275159; 1 1 1"
-	.component NeoAxis.Component_SurfaceGroupOfElements
+	.component NeoAxis.SurfaceGroupOfElements
 	{
 		Name = Group 1
 		OccupiedAreaRadius = 1.2
 		RotateAroundItsAxis = True
 		MaxIncline = 180
 		ScaleRange = 0.7 1.3
-		.component NeoAxis.Component_SurfaceElement_Mesh
+		.component NeoAxis.SurfaceElement_Mesh
 		{
 			Name = Mesh 1
+			VisibilityDistance = 500
 			Mesh
 			{
 				GetByReference = "Content\\Models\\Rocks\\Rocks (4 pieces)\\Rock 1.fbx|$Mesh"
 			}
 		}
-		.component NeoAxis.Component_SurfaceElement_Mesh
+		.component NeoAxis.SurfaceElement_Mesh
 		{
 			Name = Mesh 2
+			VisibilityDistance = 500
 			Mesh
 			{
 				GetByReference = "Content\\Models\\Rocks\\Rocks (4 pieces)\\Rock 1.fbx|$Mesh"
 			}
 		}
-		.component NeoAxis.Component_SurfaceElement_Mesh
+		.component NeoAxis.SurfaceElement_Mesh
 		{
 			Name = Mesh 3
+			VisibilityDistance = 500
 			Mesh
 			{
 				GetByReference = "Content\\Models\\Rocks\\Rocks (4 pieces)\\Rock 3.fbx|$Mesh"
 			}
 		}
-		.component NeoAxis.Component_SurfaceElement_Mesh
+		.component NeoAxis.SurfaceElement_Mesh
 		{
 			Name = Mesh 4
+			VisibilityDistance = 500
 			Mesh
 			{
 				GetByReference = "Content\\Models\\Rocks\\Rocks (4 pieces)\\Rock 4.fbx|$Mesh"

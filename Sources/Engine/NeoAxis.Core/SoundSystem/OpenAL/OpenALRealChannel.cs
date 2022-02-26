@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,7 +14,7 @@ namespace OpenALSoundSystem
 	{
 		internal int alSource;
 
-		internal OpenALSound currentSound;
+		internal OpenALSoundData currentSound;
 
 		//stream (file stream, data stream)
 		unsafe byte* streamBuffer;
@@ -38,17 +38,17 @@ namespace OpenALSoundSystem
 		{
 			OpenALSoundWorld.criticalSection.Enter();
 
-			currentSound = (OpenALSound)CurrentVirtualChannel.Sound;
+			currentSound = (OpenALSoundData)CurrentVirtualChannel.Sound;
 
-			OpenALSampleSound sampleSound = currentSound as OpenALSampleSound;
-			OpenALDataBufferSound streamSound = null;
-			OpenALFileStreamSound fileStreamSound = null;
-			OpenALDataStreamSound dataStreamSound = null;
+			OpenALSampleSoundData sampleSound = currentSound as OpenALSampleSoundData;
+			OpenALDataBufferSoundData streamSound = null;
+			OpenALFileStreamSoundData fileStreamSound = null;
+			OpenALDataStreamSoundData dataStreamSound = null;
 			if( sampleSound == null )
 			{
-				streamSound = currentSound as OpenALDataBufferSound;
-				fileStreamSound = currentSound as OpenALFileStreamSound;
-				dataStreamSound = currentSound as OpenALDataStreamSound;
+				streamSound = currentSound as OpenALDataBufferSoundData;
+				fileStreamSound = currentSound as OpenALFileStreamSoundData;
+				dataStreamSound = currentSound as OpenALDataStreamSoundData;
 			}
 
 			//create streamBuffer
@@ -204,9 +204,9 @@ namespace OpenALSoundSystem
 			//	streamAlDataBuffers = null;
 			//}
 
-			if( currentSound is OpenALDataBufferSound )
+			if( currentSound is OpenALDataBufferSoundData )
 			{
-				if( currentSound is OpenALFileStreamSound )
+				if( currentSound is OpenALFileStreamSoundData )
 					OpenALSoundWorld.fileStreamRealChannels.Remove( this );
 
 				if( streamBuffer != null )
@@ -325,13 +325,13 @@ namespace OpenALSoundSystem
 			if( ( currentSound.Mode & SoundModes.Mode3D ) != 0 )
 				UpdateVolume2();
 
-			if( currentSound is OpenALSampleSound )
+			if( currentSound is OpenALSampleSoundData )
 			{
 				UpdateSample();
 				return;
 			}
 
-			if( currentSound is OpenALDataStreamSound )
+			if( currentSound is OpenALDataStreamSoundData )
 				UpdateDataStream();
 		}
 
@@ -346,7 +346,7 @@ namespace OpenALSoundSystem
 
 		int ReadDataFromDataStream( IntPtr buffer, int needRead )
 		{
-			OpenALDataStreamSound currentDataStreamSound = (OpenALDataStreamSound)currentSound;
+			OpenALDataStreamSoundData currentDataStreamSound = (OpenALDataStreamSoundData)currentSound;
 
 			if( tempDataStreamReadArray.Length < needRead )
 				tempDataStreamReadArray = new byte[ needRead ];
@@ -380,7 +380,7 @@ namespace OpenALSoundSystem
 
 		unsafe void UpdateDataStream()
 		{
-			OpenALDataStreamSound dataStreamSound = (OpenALDataStreamSound)currentSound;
+			OpenALDataStreamSoundData dataStreamSound = (OpenALDataStreamSoundData)currentSound;
 
 			int alFormat = ( currentSound.channels == 1 ) ? Al.AL_FORMAT_MONO16 : Al.AL_FORMAT_STEREO16;
 
@@ -460,7 +460,7 @@ namespace OpenALSoundSystem
 
 			//file stream played
 
-			OpenALFileStreamSound fileStreamSound = (OpenALFileStreamSound)currentSound;
+			OpenALFileStreamSoundData fileStreamSound = (OpenALFileStreamSoundData)currentSound;
 
 			if( !streamDataAvailable && stoppedNoQueued )
 			{
@@ -521,7 +521,7 @@ namespace OpenALSoundSystem
 
 		unsafe bool FileStream( int alStreamBuffer )
 		{
-			OpenALFileStreamSound fileStreamSound = (OpenALFileStreamSound)currentSound;
+			OpenALFileStreamSoundData fileStreamSound = (OpenALFileStreamSoundData)currentSound;
 
 			int size = 0;
 

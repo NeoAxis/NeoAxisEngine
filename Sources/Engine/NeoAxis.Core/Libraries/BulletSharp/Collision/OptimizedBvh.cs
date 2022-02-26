@@ -1,8 +1,8 @@
 using System;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class OptimizedBvh : QuantizedBvh
 	{
@@ -17,7 +17,7 @@ namespace BulletSharp
 		}
 
 		public void Build(StridingMeshInterface triangles, bool useQuantizedAabbCompression,
-			Vector3 bvhAabbMin, Vector3 bvhAabbMax)
+			BVector3 bvhAabbMin, BVector3 bvhAabbMax)
 		{
 			btOptimizedBvh_build(_native, triangles.Native, useQuantizedAabbCompression,
 				ref bvhAabbMin, ref bvhAabbMax);
@@ -30,13 +30,13 @@ namespace BulletSharp
                 swapEndian), true);
 		}
 
-		public void Refit(StridingMeshInterface triangles, Vector3 aabbMin, Vector3 aabbMax)
+		public void Refit(StridingMeshInterface triangles, BVector3 aabbMin, BVector3 aabbMax)
 		{
 			btOptimizedBvh_refit(_native, triangles.Native, ref aabbMin, ref aabbMax);
 		}
 
-		public void RefitPartial(StridingMeshInterface triangles, Vector3 aabbMin,
-			Vector3 aabbMax)
+		public void RefitPartial(StridingMeshInterface triangles, BVector3 aabbMin,
+			BVector3 aabbMax)
 		{
 			btOptimizedBvh_refitPartial(_native, triangles.Native, ref aabbMin,
 				ref aabbMax);

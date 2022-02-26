@@ -1,8 +1,9 @@
-﻿//
+#if !NO_UI_WEB_BROWSER
+//
 // This file manually written from cef/include/internal/cef_types.h.
 // C API name: cef_resource_type_t.
 //
-namespace Xilium.CefGlue
+namespace Internal.Xilium.CefGlue
 {
     /// <summary>
     /// Resource type for a request.
@@ -101,3 +102,5 @@ namespace Xilium.CefGlue
         PluginResource,
     }
 }
+
+#endif

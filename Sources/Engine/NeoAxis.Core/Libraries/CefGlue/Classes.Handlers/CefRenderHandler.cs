@@ -1,10 +1,11 @@
-﻿namespace Xilium.CefGlue
+#if !NO_UI_WEB_BROWSER
+namespace Internal.Xilium.CefGlue
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Runtime.InteropServices;
-    using Xilium.CefGlue.Interop;
+    using Internal.Xilium.CefGlue.Interop;
 
     /// <summary>
     /// Implement this interface to handle events when window rendering is disabled.
@@ -286,3 +287,5 @@
         protected abstract void OnScrollOffsetChanged(CefBrowser browser, double x, double y);
     }
 }
+
+#endif

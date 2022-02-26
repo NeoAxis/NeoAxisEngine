@@ -1,11 +1,18 @@
 $input v_texCoord0
 
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+#define DEFERRED_DIRECT_LIGHT
 #include "Common.sh"
 #include "UniformsFragment.sh"
 #include "FragmentFunctions.sh"
 
 uniform vec4 u_lightDataFragment[LIGHTDATA_FRAGMENT_SIZE];
+
+#ifdef SHADOW_CONTACT
+uniform mat4 viewProj;
+uniform mat4 invViewProj;
+#endif
+
 
 SAMPLER2D(s_sceneTexture, 0);
 SAMPLER2D(s_normalTexture, 1);
@@ -25,9 +32,17 @@ SAMPLER2D(s_gBuffer5Texture, 11);
 
 #ifdef SHADOW_MAP
 	#ifdef LIGHT_TYPE_POINT
-		SAMPLERCUBESHADOW(s_shadowMapShadow, 5);
+		#ifdef SHADOW_TEXTURE_FORMAT_BYTE4 //GLOBAL_SHADOW_TECHNIQUE_EVSM
+			SAMPLERCUBE(s_shadowMapShadow, 5);
+		#else
+			SAMPLERCUBESHADOW(s_shadowMapShadow, 5);
+		#endif
 	#else
-		SAMPLER2DARRAYSHADOW(s_shadowMapArrayShadow, 5);
+		#ifdef SHADOW_TEXTURE_FORMAT_BYTE4 //GLOBAL_SHADOW_TECHNIQUE_EVSM
+			SAMPLER2DARRAY(s_shadowMapShadow, 5);
+		#else
+			SAMPLER2DARRAYSHADOW(s_shadowMapShadow, 5);
+		#endif
 	#endif
 #endif
 
@@ -39,7 +54,6 @@ SAMPLER2D(s_brdfLUT, 8);
 
 #define SHADING_MODEL_SUBSURFACE
 
-#include "PBRFilament/common_types.sh"
 #include "PBRFilament/common_math.sh"
 #include "PBRFilament/brdf.sh"
 #include "PBRFilament/PBRFilament.sh"
@@ -48,6 +62,8 @@ SAMPLER2D(s_brdfLUT, 8);
 
 void main()
 {
+	vec4 fragCoord = getFragCoord();
+	
 	float rawDepth = texture2D(s_depthTexture, v_texCoord0).r;
 	vec3 worldPosition = reconstructWorldPosition(u_invViewProj, v_texCoord0, rawDepth);
 
@@ -94,13 +110,13 @@ void main()
 	vec4 tangent = gBuffer4Data * 2.0 - 1.0;
 	tangent.xyz = normalize(tangent.xyz);
 
-	int shadingModel = int(round(gBuffer5Data.x * 10.0));
+	int shadingModel = int(round(gBuffer5Data.x * 8.0));
 	bool receiveDecals = gBuffer5Data.y == 1.0;
 	float thickness = gBuffer5Data.z;
 	float subsurfacePower = gBuffer5Data.w * 15.0;
 	
 	bool shadingModelSubsurface = shadingModel == 1;
-	bool shadingModelSimple = shadingModel == 4;
+	bool shadingModelSimple = shadingModel == 3;
 	
 	vec3 subsurfaceColor = vec3_splat(0);
 	{
@@ -148,7 +164,7 @@ void main()
 	float shadowMultiplier = 1;
 	#ifdef SHADOW_MAP
 		float depth = getDepthValue(rawDepth, u_viewportOwnerNearClipDistance, u_viewportOwnerFarClipDistance);
-		shadowMultiplier = getShadowMultiplier(worldPosition, cameraDistance, depth, lightWorldDirection, normal);
+		shadowMultiplier = getShadowMultiplier(worldPosition, cameraDistance, depth, lightWorldDirection, normal, v_texCoord0, fragCoord);
 	#endif
 	
 	//light color
@@ -166,6 +182,10 @@ void main()
 	{
 		//Lit, Subsurface shading models
 
+#if GLOBAL_MATERIAL_SHADING == GLOBAL_MATERIAL_SHADING_SIMPLE
+		resultColor.rgb = baseColor * lightColor * saturate(dot(normal, lightWorldDirection) / PI);
+#else
+		
 		float metallic = gBuffer2Data.x;
 		float roughness = gBuffer2Data.y;
 		float ambientOcclusion = gBuffer2Data.z;
@@ -223,16 +243,9 @@ void main()
 			shadingResult = surfaceShadingStandard(pixel);
 		resultColor.rgb = shadingResult * lightColor;
 		//resultColor.rgb = surfaceShading(pixel) * lightColor;
+		
+#endif
 	}
 	
-	////debug mode
-	//if(u_viewportOwnerDebugMode != DebugMode_None)
-	//{
-	//	if(u_viewportOwnerDebugMode == DebugMode_Lighting)
-	//		resultColor = vec4(lightColor, 1);
-	//	else
-	//		resultColor = vec4_splat(0);
-	//}
-
 	gl_FragColor = vec4(resultColor, 1.0);
 }

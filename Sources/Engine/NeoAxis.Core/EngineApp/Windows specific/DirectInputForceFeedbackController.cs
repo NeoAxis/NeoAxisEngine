@@ -1,10 +1,9 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #if WINDOWS || UWP
 using System;
 using System.Collections.Generic;
 using System.Text;
 using NeoAxis;
-using NeoAxis.Input;
 
 namespace DirectInput
 {

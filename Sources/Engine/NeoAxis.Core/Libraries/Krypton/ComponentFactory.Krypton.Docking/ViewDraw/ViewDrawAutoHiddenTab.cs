@@ -21,11 +21,11 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using Microsoft.Win32;
-using ComponentFactory.Krypton.Toolkit;
-using ComponentFactory.Krypton.Navigator;
-using ComponentFactory.Krypton.Workspace;
+using Internal.ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Navigator;
+using Internal.ComponentFactory.Krypton.Workspace;
 
-namespace ComponentFactory.Krypton.Docking
+namespace Internal.ComponentFactory.Krypton.Docking
 {
 	/// <summary>
 	/// View element that can draw an auto hidden tab based on a KryptonPage as the source.

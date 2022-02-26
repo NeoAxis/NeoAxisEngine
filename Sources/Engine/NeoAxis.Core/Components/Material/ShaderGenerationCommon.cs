@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Text;
 using System.ComponentModel;
@@ -56,12 +56,12 @@ namespace NeoAxis
 	/// The attribute for tagging members for use in visual adjustment of materials and effects.
 	/// </summary>
 	[AttributeUsage( AttributeTargets.Property )]
-	public class ShaderGenerationAutoConstantAttributeAttribute : Attribute
+	public class ShaderGenerationAutoConstantAttribute : Attribute
 	{
 		Type type;
 		string name;
 
-		public ShaderGenerationAutoConstantAttributeAttribute( Type type, string name )
+		public ShaderGenerationAutoConstantAttribute( Type type, string name )
 		{
 			this.type = type;
 			this.name = name;

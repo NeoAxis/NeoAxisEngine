@@ -1,8 +1,9 @@
-﻿using System.IO;
+#if !NO_LITE_DB
+using System.IO;
 using System.Runtime.InteropServices;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     internal static class IOExceptionExtensions
     {
@@ -40,3 +41,4 @@ namespace LiteDB
         }
     }
 }
+#endif

@@ -27,7 +27,7 @@ using System.Threading;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     /// <summary>
     /// Displays a message box that can contain text, buttons, and symbols that inform and instruct the user.
@@ -990,16 +990,16 @@ namespace ComponentFactory.Krypton.Toolkit
 
         private void InitializeComponent()
         {
-            this._panelMessage = new ComponentFactory.Krypton.Toolkit.KryptonPanel();
-            this._panelMessageText = new ComponentFactory.Krypton.Toolkit.KryptonPanel();
-            this._messageText = new ComponentFactory.Krypton.Toolkit.KryptonWrapLabel();
-            this._panelMessageIcon = new ComponentFactory.Krypton.Toolkit.KryptonPanel();
+            this._panelMessage = new Internal.ComponentFactory.Krypton.Toolkit.KryptonPanel();
+            this._panelMessageText = new Internal.ComponentFactory.Krypton.Toolkit.KryptonPanel();
+            this._messageText = new Internal.ComponentFactory.Krypton.Toolkit.KryptonWrapLabel();
+            this._panelMessageIcon = new Internal.ComponentFactory.Krypton.Toolkit.KryptonPanel();
             this._messageIcon = new System.Windows.Forms.PictureBox();
-            this._panelButtons = new ComponentFactory.Krypton.Toolkit.KryptonPanel();
-            this.borderEdge = new ComponentFactory.Krypton.Toolkit.KryptonBorderEdge();
-            this._button3 = new ComponentFactory.Krypton.Toolkit.KryptonMessageBox.MessageButton();
-            this._button1 = new ComponentFactory.Krypton.Toolkit.KryptonMessageBox.MessageButton();
-            this._button2 = new ComponentFactory.Krypton.Toolkit.KryptonMessageBox.MessageButton();
+            this._panelButtons = new Internal.ComponentFactory.Krypton.Toolkit.KryptonPanel();
+            this.borderEdge = new Internal.ComponentFactory.Krypton.Toolkit.KryptonBorderEdge();
+            this._button3 = new Internal.ComponentFactory.Krypton.Toolkit.KryptonMessageBox.MessageButton();
+            this._button1 = new Internal.ComponentFactory.Krypton.Toolkit.KryptonMessageBox.MessageButton();
+            this._button2 = new Internal.ComponentFactory.Krypton.Toolkit.KryptonMessageBox.MessageButton();
             ((System.ComponentModel.ISupportInitialize)(this._panelMessage)).BeginInit();
             this._panelMessage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._panelMessageText)).BeginInit();
@@ -1039,7 +1039,7 @@ namespace ComponentFactory.Krypton.Toolkit
             this._messageText.AutoSize = false;
             this._messageText.Font = new System.Drawing.Font("Segoe UI", 9F);
             this._messageText.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
-            this._messageText.LabelStyle = ComponentFactory.Krypton.Toolkit.LabelStyle.NormalPanel;
+            this._messageText.LabelStyle = Internal.ComponentFactory.Krypton.Toolkit.LabelStyle.NormalPanel;
             this._messageText.Location = new System.Drawing.Point(10, 22);
             this._messageText.Margin = new System.Windows.Forms.Padding(0);
             this._messageText.Name = "_messageText";
@@ -1079,13 +1079,13 @@ namespace ComponentFactory.Krypton.Toolkit
             this._panelButtons.Location = new System.Drawing.Point(0, 52);
             this._panelButtons.Margin = new System.Windows.Forms.Padding(0);
             this._panelButtons.Name = "_panelButtons";
-            this._panelButtons.PanelBackStyle = ComponentFactory.Krypton.Toolkit.PaletteBackStyle.PanelAlternate;
+            this._panelButtons.PanelBackStyle = Internal.ComponentFactory.Krypton.Toolkit.PaletteBackStyle.PanelAlternate;
             this._panelButtons.Size = new System.Drawing.Size(156, 26);
             this._panelButtons.TabIndex = 0;
             // 
             // borderEdge
             // 
-            this.borderEdge.BorderStyle = ComponentFactory.Krypton.Toolkit.PaletteBorderStyle.HeaderPrimary;
+            this.borderEdge.BorderStyle = Internal.ComponentFactory.Krypton.Toolkit.PaletteBorderStyle.HeaderPrimary;
             this.borderEdge.Dock = System.Windows.Forms.DockStyle.Top;
             this.borderEdge.Location = new System.Drawing.Point(0, 0);
             this.borderEdge.Name = "borderEdge";

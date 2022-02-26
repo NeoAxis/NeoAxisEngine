@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,12 +10,19 @@ namespace NeoAxis
 	/// </summary>
 	public static class Time
 	{
+		static float simulationDeltaCached;
+
 		/// <summary>
 		/// Gets simulation time step.
 		/// </summary>
 		public static float SimulationDelta
 		{
-			get { return ProjectSettings.Get.SimulationStepsPerSecondInv; }
+			get 
+			{
+				if( simulationDeltaCached == 0 )
+					simulationDeltaCached = ProjectSettings.Get.General.SimulationStepsPerSecondInv;
+				return simulationDeltaCached;
+			}
 		}
 
 		/// <summary>

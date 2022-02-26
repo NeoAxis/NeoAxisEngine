@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,7 +27,7 @@ namespace NeoAxis
 	public class FlowGraphRepresentationData
 	{
 		public string NodeTitle;
-		public Component_Image NodeImage;
+		public ImageComponent NodeImage;
 
 		public enum NodeImageViewEnum
 		{
@@ -50,7 +50,7 @@ namespace NeoAxis
 		//string FlowchartNodeTitle { get; }
 
 		////!!!!пока так
-		//Component_Texture FlowchartNodeRenderTexture { get; }
+		//Texture FlowchartNodeRenderTexture { get; }
 		////void FlowchartNodeRenderClientArea();
 
 		//FlowchartNodeContentType FlowchartNodeContentType { get; }

@@ -19,14 +19,14 @@ using System.Runtime.InteropServices;
 using Microsoft.Win32;
 using System.Security;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     /// <summary>
     /// Exposes global settings that affect all the Krypton controls.
     /// </summary>
     [ToolboxItem(true)]
     [ToolboxBitmap(typeof(KryptonManager), "ToolboxBitmaps.KryptonManager.bmp")]
-    [Designer("ComponentFactory.Krypton.Toolkit.KryptonManagerDesigner, ComponentFactory.Krypton.Design, Version=5.0.0.2, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e")]
+    //[Designer("ComponentFactory.Krypton.Toolkit.KryptonManagerDesigner, ComponentFactory.Krypton.Design, Version=5.0.0.2, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e")]
     [DefaultProperty("GlobalPaletteMode")]
     [Description("Access global Krypton settings.")]
     [ClassInterface(ClassInterfaceType.AutoDispatch)]
@@ -40,7 +40,7 @@ namespace ComponentFactory.Krypton.Toolkit
         private static GlobalStrings _globalStrings = new GlobalStrings();
 
         // Initialize the default modes
-        private static PaletteModeManager _globalPaletteMode = PaletteModeManager.NeoAxisBlue;
+        internal /*private */static PaletteModeManager _globalPaletteMode = PaletteModeManager.NeoAxisBlue;
 
         // Initialize instances to match the default modes
         private static IPalette _globalPalette = CurrentGlobalPalette;

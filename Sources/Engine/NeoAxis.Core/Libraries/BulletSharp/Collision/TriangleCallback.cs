@@ -1,16 +1,16 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Security;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public abstract class TriangleCallback : IDisposable
 	{
 		internal IntPtr Native;
 
-		[UnmanagedFunctionPointer(BulletSharp.Native.Conv), SuppressUnmanagedCodeSecurity]
+		[UnmanagedFunctionPointer(Internal.BulletSharp.Native.Conv), SuppressUnmanagedCodeSecurity]
 		private delegate void ProcessTriangleDelegate(IntPtr triangle, int partId, int triangleIndex);
 
 		private ProcessTriangleDelegate _processTriangle;
@@ -27,13 +27,13 @@ namespace BulletSharp
 		{
 			double[] triangleData = new double[11];
 			Marshal.Copy(triangle, triangleData, 0, 11);
-			Vector3 p0 = new Vector3(triangleData[0], triangleData[1], triangleData[2]);
-			Vector3 p1 = new Vector3(triangleData[4], triangleData[5], triangleData[6]);
-			Vector3 p2 = new Vector3(triangleData[8], triangleData[9], triangleData[10]);
+			BVector3 p0 = new BVector3(triangleData[0], triangleData[1], triangleData[2]);
+			BVector3 p1 = new BVector3(triangleData[4], triangleData[5], triangleData[6]);
+			BVector3 p2 = new BVector3(triangleData[8], triangleData[9], triangleData[10]);
 			ProcessTriangle(ref p0, ref p1, ref p2, partId, triangleIndex);
 		}
 
-		public abstract void ProcessTriangle(ref Vector3 point0, ref Vector3 point1, ref Vector3 point2, int partId, int triangleIndex);
+		public abstract void ProcessTriangle(ref BVector3 point0, ref BVector3 point1, ref BVector3 point2, int partId, int triangleIndex);
 
 		public void Dispose()
 		{
@@ -77,13 +77,13 @@ namespace BulletSharp
 		{
 			double[] triangleData = new double[11];
 			Marshal.Copy(triangle, triangleData, 0, 11);
-			Vector3 p0 = new Vector3(triangleData[0], triangleData[1], triangleData[2]);
-			Vector3 p1 = new Vector3(triangleData[4], triangleData[5], triangleData[6]);
-			Vector3 p2 = new Vector3(triangleData[8], triangleData[9], triangleData[10]);
+			BVector3 p0 = new BVector3(triangleData[0], triangleData[1], triangleData[2]);
+			BVector3 p1 = new BVector3(triangleData[4], triangleData[5], triangleData[6]);
+			BVector3 p2 = new BVector3(triangleData[8], triangleData[9], triangleData[10]);
 			InternalProcessTriangleIndex(ref p0, ref p1, ref p2, partId, triangleIndex);
 		}
 
-		public abstract void InternalProcessTriangleIndex(ref Vector3 point0, ref Vector3 point1, ref Vector3 point2, int partId, int triangleIndex);
+		public abstract void InternalProcessTriangleIndex(ref BVector3 point0, ref BVector3 point1, ref BVector3 point2, int partId, int triangleIndex);
 
 		public void Dispose()
 		{

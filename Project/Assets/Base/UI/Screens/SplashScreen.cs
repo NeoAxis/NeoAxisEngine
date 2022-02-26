@@ -1,7 +1,6 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
 using NeoAxis;
 
@@ -9,7 +8,7 @@ namespace Project
 {
 	public class SplashScreen : UIControl
 	{
-		Component_ProjectSettings.EngineSplashScreenStyleEnum drawSplashScreen = Component_ProjectSettings.EngineSplashScreenStyleEnum.Disabled;
+		ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum drawSplashScreen = ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.Disabled;
 
 		int resetTimeCounter = 3;
 
@@ -23,7 +22,7 @@ namespace Project
 		[Browsable( false )]
 		public double PoweredByTime
 		{
-			get { return drawSplashScreen != Component_ProjectSettings.EngineSplashScreenStyleEnum.Disabled ? 2.0 : 0.0; }
+			get { return drawSplashScreen != ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.Disabled ? 2.0 : 0.0; }
 		}
 
 		[Serialize]
@@ -38,14 +37,14 @@ namespace Project
 
 		protected override void OnEnabledInSimulation()
 		{
-			var originalDrawSplashScreen = ProjectSettings.Get.EngineSplashScreenStyle.Value;
+			var originalDrawSplashScreen = ProjectSettings.Get.CustomSplashScreen.EngineSplashScreenStyle.Value;
 
 			//get drawing engine splash settings. engine splash for Windows is rendered from another place
 			if( SystemSettings.CurrentPlatform != SystemSettings.Platform.Windows )
 				drawSplashScreen = originalDrawSplashScreen;
 
 			//update background color
-			if( originalDrawSplashScreen == Component_ProjectSettings.EngineSplashScreenStyleEnum.WhiteBackground )
+			if( originalDrawSplashScreen == ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.WhiteBackground )
 				BackgroundColor = new ColorValue( 1, 1, 1 );
 		}
 
@@ -132,14 +131,14 @@ namespace Project
 			var image = Components[ "PoweredBy_BlackBackground" ] as UIImage;
 			if( image != null )
 			{
-				image.Visible = drawSplashScreen == Component_ProjectSettings.EngineSplashScreenStyleEnum.BlackBackground;
+				image.Visible = drawSplashScreen == ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.BlackBackground;
 				image.ColorMultiplier = new ColorValue( 1, 1, 1, poweredBy );
 			}
 
 			image = Components[ "PoweredBy_WhiteBackground" ] as UIImage;
 			if( image != null )
 			{
-				image.Visible = drawSplashScreen == Component_ProjectSettings.EngineSplashScreenStyleEnum.WhiteBackground;
+				image.Visible = drawSplashScreen == ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.WhiteBackground;
 				image.ColorMultiplier = new ColorValue( 1, 1, 1, poweredBy );
 			}
 

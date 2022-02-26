@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +8,7 @@ namespace NeoAxis
 {
 	public static partial class SimpleMeshGenerator
 	{
-		public static void GenerateSegmentedPlane( int axis, Vector2 size, Vector2I segments, Vector2 uvTilesPerUnit, Vector2 uvTilesInTotal, out Vector3[] positions, out Vector3[] normals, out Vector4[] tangents, out Vector2[] texCoords, out int[] indices, out Face[] faces )
+		public static void GenerateSegmentedPlane( int axis, Vector2 size, Vector2I segments, Vector2 uvTilesPerUnit, Vector2 uvTilesInTotal, Vector2 uvOffset, out Vector3[] positions, out Vector3[] normals, out Vector4[] tangents, out Vector2[] texCoords, out int[] indices, out Face[] faces )
 		{
 			int resX = Math.Max( 2, segments.X + 1 ); // 2 minimum
 			int resY = Math.Max( 2, segments.Y + 1 );
@@ -50,6 +50,12 @@ namespace NeoAxis
 					else
 						texCoords[ index ] = new Vector2( tx, 1.0f - ty );
 				}
+			}
+
+			if( uvOffset != Vector2.Zero )
+			{
+				for( int n = 0; n < texCoords.Length; n++ )
+					texCoords[ n ] += uvOffset;
 			}
 
 			normals = new Vector3[ positions.Length ];
@@ -97,7 +103,7 @@ namespace NeoAxis
 			faces = new Face[] { new Face( faceTriangles ) };
 		}
 
-		public static void GeneratePlane( Vector2 size, Vector2 uvTilesPerUnit, Vector2 uvTilesInTotal, out Vector3[] positions, out Vector3[] normals, out Vector4[] tangents, out Vector2[] texCoords, out int[] indices, out Face[] faces )
+		public static void GeneratePlane( Vector2 size, Vector2 uvTilesPerUnit, Vector2 uvTilesInTotal, Vector2 uvOffset, out Vector3[] positions, out Vector3[] normals, out Vector4[] tangents, out Vector2[] texCoords, out int[] indices, out Face[] faces )
 		{
 			var half = size * 0.5;
 			positions = new Vector3[ 4 ];
@@ -151,6 +157,12 @@ namespace NeoAxis
 				//texCoords[ 3 ] = new Vec2( -half.X, half.Y );
 			}
 
+			if( uvOffset != Vector2.Zero )
+			{
+				for( int n = 0; n < texCoords.Length; n++ )
+					texCoords[ n ] += uvOffset;
+			}
+
 			indices = new int[] { 0, 1, 2, 2, 3, 0 };
 
 			var faceTriangles = new FaceVertex[ indices.Length ];
@@ -159,18 +171,18 @@ namespace NeoAxis
 			faces = new Face[] { new Face( faceTriangles ) };
 		}
 
-		public static void GeneratePlane( Vector2 size, Vector2 uvTilesPerUnit, Vector2 uvTilesInTotal, out Vector3F[] positions, out Vector3F[] normals, out Vector4F[] tangents, out Vector2F[] texCoords, out int[] indices, out Face[] faces )
+		public static void GeneratePlane( Vector2 size, Vector2 uvTilesPerUnit, Vector2 uvTilesInTotal, Vector2 uvOffset, out Vector3F[] positions, out Vector3F[] normals, out Vector4F[] tangents, out Vector2F[] texCoords, out int[] indices, out Face[] faces )
 		{
-			GeneratePlane( size, uvTilesPerUnit, uvTilesInTotal, out Vector3[] positionsD, out Vector3[] normalsD, out Vector4[] tangentsD, out Vector2[] texCoordsD, out indices, out faces );
+			GeneratePlane( size, uvTilesPerUnit, uvTilesInTotal, uvOffset, out Vector3[] positionsD, out Vector3[] normalsD, out Vector4[] tangentsD, out Vector2[] texCoordsD, out indices, out faces );
 			positions = ToVector3F( positionsD );
 			normals = ToVector3F( normalsD );
 			tangents = ToVector4F( tangentsD );
 			texCoords = ToVector2F( texCoordsD );
 		}
 
-		public static void GenerateSegmentedPlane( int axis, Vector2F size, Vector2I segments, Vector2F uvTilesPerUnit, Vector2F uvTilesInTotal, out Vector3F[] positions, out Vector3F[] normals, out Vector4F[] tangents, out Vector2F[] texCoords, out int[] indices, out Face[] faces )
+		public static void GenerateSegmentedPlane( int axis, Vector2F size, Vector2I segments, Vector2F uvTilesPerUnit, Vector2F uvTilesInTotal, Vector2F uvOffset, out Vector3F[] positions, out Vector3F[] normals, out Vector4F[] tangents, out Vector2F[] texCoords, out int[] indices, out Face[] faces )
 		{
-			GenerateSegmentedPlane( axis, size, segments, uvTilesPerUnit, uvTilesInTotal, out Vector3[] positionsD, out Vector3[] normalsD, out Vector4[] tangentsD, out Vector2[] texCoordsD, out indices, out faces );
+			GenerateSegmentedPlane( axis, size, segments, uvTilesPerUnit, uvTilesInTotal, uvOffset, out Vector3[] positionsD, out Vector3[] normalsD, out Vector4[] tangentsD, out Vector2[] texCoordsD, out indices, out faces );
 			positions = ToVector3F( positionsD );
 			normals = ToVector3F( normalsD );
 			tangents = ToVector4F( tangentsD );

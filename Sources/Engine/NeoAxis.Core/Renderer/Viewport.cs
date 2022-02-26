@@ -1,7 +1,6 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using NeoAxis.Input;
 
 namespace NeoAxis
 {
@@ -26,7 +25,7 @@ namespace NeoAxis
 		bool dimensionsDefault = true;
 
 		ModeEnum mode = ModeEnum.Default;
-		Component_Scene attachedScene;
+		Scene attachedScene;
 
 		internal Simple3DRendererImpl simple3DRenderer;
 
@@ -59,7 +58,7 @@ namespace NeoAxis
 		Matrix4? projectionMatrixPreviousFrame;
 
 		ViewportRenderingContext renderingContext;
-		Component_RenderingPipeline renderingPipelineCreated;
+		RenderingPipeline renderingPipelineCreated;
 
 		/// <summary>
 		/// Represents an item for <see cref="LastFrameScreenLabels"/> list.
@@ -86,6 +85,8 @@ namespace NeoAxis
 		bool allowRenderScreenLabels = true;
 
 		ColorValue backgroundColorDefault = new ColorValue( 0, 0, 0 );
+
+		bool outputFlipY;
 
 		///////////////////////////////////////////
 
@@ -119,7 +120,7 @@ namespace NeoAxis
 
 		//!!!!new
 		//!!!!name
-		public delegate void UpdateGetObjectInSceneRenderingContextDelegate( Viewport viewport, ref Component_ObjectInSpace.RenderingContext context );
+		public delegate void UpdateGetObjectInSceneRenderingContextDelegate( Viewport viewport, ref ObjectInSpace.RenderingContext context );
 		public event UpdateGetObjectInSceneRenderingContextDelegate UpdateGetObjectInSceneRenderingContext;
 		public static event UpdateGetObjectInSceneRenderingContextDelegate AllViewports_UpdateGetObjectInSceneRenderingContext;
 
@@ -209,11 +210,7 @@ namespace NeoAxis
 				{
 					//after shutdown check
 					if( RenderingSystem.Disposed )
-					{
-						//waiting for .NET Standard 2.0
-						Log.Fatal( "Renderer: Dispose after Shutdown." );
-						//Log.Fatal( "Renderer: Dispose after Shutdown: {0}()", System.Reflection.MethodInfo.GetCurrentMethod().Name );
-					}
+						Log.Fatal( "Viewport: Dispose after shutdown." );
 
 					Disposing?.Invoke( this );
 
@@ -447,7 +444,7 @@ namespace NeoAxis
 			set { mode = value; }
 		}
 
-		public Component_Scene AttachedScene
+		public Scene AttachedScene
 		{
 			get { return attachedScene; }
 			set { attachedScene = value; }
@@ -1450,12 +1447,20 @@ namespace NeoAxis
 		//	//renderingData.canUseObjectsDictionaries = true;
 		//}
 
-		//!!!!callBgfxFrame
+		//!!!!callBgfxFrame always true
 		/// <summary>
 		/// Updates viewport with the rendering of attached map and GUI rendering.
 		/// </summary>
 		public void Update( bool callBgfxFrame, CameraSettingsClass overrideCameraSettings = null )
 		{
+			//render video to file
+			if( EngineApp.RenderVideoToFileData != null && !string.IsNullOrEmpty( EngineApp.RenderVideoToFileData.Camera ) && RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ] == this && AttachedScene != null )
+			{
+				var c = AttachedScene.GetComponentByPath( EngineApp.RenderVideoToFileData.Camera ) as Camera;
+				if( c != null )
+					overrideCameraSettings = new CameraSettingsClass( this, c );
+			}
+
 			UpdateBefore?.Invoke( this );
 			AllViewports_UpdateBefore?.Invoke( this );
 			AttachedScene?.PerformViewportUpdateBefore( this, overrideCameraSettings );
@@ -1470,7 +1475,7 @@ namespace NeoAxis
 			RenderingSystem.viewportsDuringUpdate.Add( this );
 
 			//remove reference to scene when destroyed
-			if( attachedScene != null && Array.IndexOf( Component_Scene.All, attachedScene ) == -1 )
+			if( attachedScene != null && !Scene.AllInstancesEnabledContains( attachedScene ) )
 				attachedScene = null;
 
 			//!!!!!тут? так?
@@ -1482,7 +1487,7 @@ namespace NeoAxis
 
 			//begin update
 			renderingContext.uniquePerFrameObjectToDetectNewFrame = new object();
-			renderingContext.objectsDuringUpdate = new ViewportRenderingContext.ObjectsDuringUpdateClass();
+			renderingContext.ObjectsDuringUpdate = new ViewportRenderingContext.ObjectsDuringUpdateClass();
 
 			renderingContext.currentViewNumber = -1;
 
@@ -1551,11 +1556,19 @@ namespace NeoAxis
 			//!!!!new тут. было ниже
 			AttachedScene?.PerformViewportUpdateBegin( this, overrideCameraSettings );
 
-			Component_RenderingPipeline pipeline = null;
+			RenderingPipeline pipeline = null;
 			if( cameraSettings != null && cameraSettings.RenderingPipelineOverride != null )
 				pipeline = cameraSettings.RenderingPipelineOverride;
 			else if( AttachedScene != null )
 				pipeline = AttachedScene.RenderingPipeline;
+
+			//render video to file
+			if( EngineApp.RenderVideoToFileData != null && !string.IsNullOrEmpty( EngineApp.RenderVideoToFileData.RenderingPipeline ) && RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ] == this && AttachedScene != null )
+			{
+				var p = AttachedScene.GetComponentByPath( EngineApp.RenderVideoToFileData.RenderingPipeline ) as RenderingPipeline;
+				if( p != null )
+					pipeline = p;
+			}
 
 			if( pipeline == null )
 			{
@@ -1577,14 +1590,14 @@ namespace NeoAxis
 			//{
 			//	//!!!!slowly. еще одна выборка из octree
 
-			//	var getObjectsItem = new Component_Scene.GetObjectsInSpaceItem( Component_Scene.GetObjectsInSpaceItem.CastTypeEnum.All,
-			//		MetadataManager.GetTypeOfNetType( typeof( Component_ReflectionProbe ) ), true, CameraSettings.Frustum );
+			//	var getObjectsItem = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All,
+			//		MetadataManager.GetTypeOfNetType( typeof( ReflectionProbe ) ), true, CameraSettings.Frustum );
 			//	AttachedScene.GetObjectsInSpace( getObjectsItem );
 
 			//	foreach( var item in getObjectsItem.Result )
 			//	{
-			//		var probe = item.Object as Component_ReflectionProbe;
-			//		if( probe != null && probe.Mode.Value == Component_ReflectionProbe.ModeEnum.Capture )
+			//		var probe = item.Object as ReflectionProbe;
+			//		if( probe != null && probe.Mode.Value == ReflectionProbe.ModeEnum.Capture )
 			//			probe.Update( false );
 			//	}
 			//}
@@ -1600,16 +1613,16 @@ namespace NeoAxis
 			//	//FinishRenderingData( renderingData );
 			//}
 
-			//ComponentScene.OnRender, Component_ObjectInScene.OnRender
+			//ComponentScene.OnRender, ObjectInScene.OnRender
 			{
 				//get rendering context for objects in space
-				Component_ObjectInSpace.RenderingContext objectInSpaceRenderingContext = null;
+				ObjectInSpace.RenderingContext objectInSpaceRenderingContext = null;
 				UpdateGetObjectInSceneRenderingContext?.Invoke( this, ref objectInSpaceRenderingContext );
 				AllViewports_UpdateGetObjectInSceneRenderingContext?.Invoke( this, ref objectInSpaceRenderingContext );
 				if( objectInSpaceRenderingContext == null )
-					objectInSpaceRenderingContext = new Component_ObjectInSpace.RenderingContext( this );
+					objectInSpaceRenderingContext = new ObjectInSpace.RenderingContext( this );
 
-				renderingContext.objectInSpaceRenderingContext = objectInSpaceRenderingContext;
+				renderingContext.ObjectInSpaceRenderingContext = objectInSpaceRenderingContext;
 
 				lastFrameScreenLabels.Clear();
 				lastFrameScreenLabelByObjectInSpace.Clear();
@@ -1619,7 +1632,7 @@ namespace NeoAxis
 				{
 					AttachedScene.PerformRender( this );
 
-					//foreach( var obj in AttachedScene.GetComponents<Component_ObjectInSpace>( false, true, true ) )
+					//foreach( var obj in AttachedScene.GetComponents<ObjectInSpace>( false, true, true ) )
 					//{
 					//	//!!!!new: obj.VisibleInHierarchy
 					//	if( obj.EnabledInHierarchy && obj.VisibleInHierarchy )//second check if will updated during enumeration
@@ -1711,7 +1724,6 @@ namespace NeoAxis
 			renderingContext.renderingPipeline = null;
 			//renderingContext.Render( pipeline );// renderingData );
 
-			//!!!!
 			if( callBgfxFrame )
 			{
 				RenderingSystem.CallBgfxFrame();
@@ -1719,8 +1731,8 @@ namespace NeoAxis
 			}
 
 			//clear
-			simple3DRenderer?._Clear();
-			canvasRenderer?.Clear( LastUpdateTime );
+			simple3DRenderer?.ViewportRendering_Clear();
+			canvasRenderer?.ViewportRendering_Clear( LastUpdateTime );
 
 			AttachedScene?.PerformViewportUpdateEnd( this );
 
@@ -1728,11 +1740,12 @@ namespace NeoAxis
 			AllViewports_UpdateEnd?.Invoke( this );
 
 			//!!!!по идее, можно не чистить до следующего апдейта
-			renderingContext.objectsDuringUpdate = null;
-			renderingContext.objectInSpaceRenderingContext = null;
+			renderingContext.ObjectsDuringUpdate = null;
+			renderingContext.ObjectInSpaceRenderingContext = null;
 
 			renderingContext.MultiRenderTarget_DestroyAll();
 			renderingContext.DynamicTexture_FreeAllEndUpdate();
+			renderingContext.OcclusionCullingBuffer_FreeAllEndUpdate();
 
 			if( cameraSettings != null )
 			{
@@ -1809,7 +1822,7 @@ namespace NeoAxis
 			set { allowRenderScreenLabels = value; }
 		}
 
-		public Component_RenderingPipeline RenderingPipelineCreated
+		public RenderingPipeline RenderingPipelineCreated
 		{
 			get { return renderingPipelineCreated; }
 		}
@@ -1819,8 +1832,8 @@ namespace NeoAxis
 			RenderingPipelineDestroyCreated();
 
 			if( type == null )
-				type = RenderingSystem.RenderingPipelineDefault;
-			renderingPipelineCreated = (Component_RenderingPipeline)ComponentUtility.CreateComponent( type, null, true, true );
+				type = RenderingSystem.RenderingPipelineBasic;
+			renderingPipelineCreated = (RenderingPipeline)ComponentUtility.CreateComponent( type, null, true, true );
 		}
 
 		public void RenderingPipelineDestroyCreated()
@@ -1857,6 +1870,25 @@ namespace NeoAxis
 		{
 			get { return backgroundColorDefault; }
 			set { backgroundColorDefault = value; }
+		}
+
+		public delegate void InstantCameraMovementDelegate( Viewport viewport );
+		public event InstantCameraMovementDelegate InstantCameraMovement;
+		public static event InstantCameraMovementDelegate AllViewports_InstantCameraMovement;
+
+		public void NotifyInstantCameraMovement()
+		{
+			viewMatrixPreviousFrame = null;
+			projectionMatrixPreviousFrame = null;
+
+			InstantCameraMovement?.Invoke( this );
+			AllViewports_InstantCameraMovement?.Invoke( this );
+		}
+
+		public bool OutputFlipY
+		{
+			get { return outputFlipY; }
+			set { outputFlipY = value; }
 		}
 	}
 }

@@ -1,23 +1,23 @@
 using System.Runtime.InteropServices;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class StaticPlaneShape : ConcaveShape
 	{
-		public StaticPlaneShape(Vector3 planeNormal, double planeConstant)
+		public StaticPlaneShape(BVector3 planeNormal, double planeConstant)
 			: base(btStaticPlaneShape_new(ref planeNormal, planeConstant))
 		{
 		}
 
 		public double PlaneConstant => btStaticPlaneShape_getPlaneConstant(Native);
 
-		public Vector3 PlaneNormal
+		public BVector3 PlaneNormal
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btStaticPlaneShape_getPlaneNormal(Native, out value);
 				return value;
 			}

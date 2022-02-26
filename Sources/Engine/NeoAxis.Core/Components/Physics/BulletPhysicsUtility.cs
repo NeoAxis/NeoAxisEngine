@@ -1,15 +1,10 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
-using System.Drawing.Design;
-using System.ComponentModel;
-using System.Reflection;
-using BulletSharp;
-using BulletSharp.Math;
+using Internal.BulletSharp.Math;
+using NeoAxis;
 
-namespace NeoAxis
+namespace Internal.BulletSharp
 {
 	/// <summary>
 	/// Auxiliary methods for working with the Bullet physics engine.
@@ -24,32 +19,32 @@ namespace NeoAxis
 
 		internal static void InitLibrary()
 		{
-			NativeLibraryManager.PreLoadLibrary( "libbulletc" );
+			NativeUtility.PreloadLibrary( "libbulletc" );
 		}
 
 		internal static void ShutdownLibrary()
 		{
 		}
 
-		public static Vector3 ToVector3( BulletSharp.Math.Vector3 v )
+		public static Vector3 ToVector3( BVector3 v )
 		{
 			return new Vector3( v.X, v.Y, v.Z );
 		}
 
-		public static BulletSharp.Math.Vector3 ToVector3( Vector3 v )
+		public static BVector3 ToVector3( Vector3 v )
 		{
-			return new BulletSharp.Math.Vector3( v.X, v.Y, v.Z );
+			return new BVector3( v.X, v.Y, v.Z );
 		}
 
-		public static BulletSharp.Math.Vector3[] ToVectorArray( Vector3[] arr )
+		public static BVector3[] ToVectorArray( Vector3[] arr )
 		{
-			var result = new BulletSharp.Math.Vector3[ arr.Length ];
+			var result = new BVector3[ arr.Length ];
 			for( int n = 0; n < result.Length; n++ )
 				result[ n ] = ToVector3( arr[ n ] );
 			return result;
 		}
 
-		public static bool IntersectsConvexHull( Plane[] convexPlanes, BulletSharp.SoftBody.SoftBody body )
+		public static bool IntersectsConvexHull( Plane[] convexPlanes, Internal.BulletSharp.SoftBody.SoftBody body )
 		{
 			var nodes = body.Nodes;
 			var nnodes = nodes.Count;
@@ -130,60 +125,60 @@ namespace NeoAxis
 
 		//convert to Bullet
 
-		public static Matrix Convert( Matrix4 v )
+		public static BMatrix Convert( Matrix4 v )
 		{
-			return new Matrix(
+			return new BMatrix(
 				v.Item0.X, v.Item0.Y, v.Item0.Z, v.Item0.W,
 				v.Item1.X, v.Item1.Y, v.Item1.Z, v.Item1.W,
 				v.Item2.X, v.Item2.Y, v.Item2.Z, v.Item2.W,
 				v.Item3.X, v.Item3.Y, v.Item3.Z, v.Item3.W );
 		}
 
-		public static void Convert( ref Matrix4 v, out Matrix result )
+		public static void Convert( ref Matrix4 v, out BMatrix result )
 		{
-			result = new Matrix(
+			result = new BMatrix(
 				v.Item0.X, v.Item0.Y, v.Item0.Z, v.Item0.W,
 				v.Item1.X, v.Item1.Y, v.Item1.Z, v.Item1.W,
 				v.Item2.X, v.Item2.Y, v.Item2.Z, v.Item2.W,
 				v.Item3.X, v.Item3.Y, v.Item3.Z, v.Item3.W );
 		}
 
-		public static BulletSharp.Math.Quaternion Convert( Quaternion v )
+		public static BQuaternion Convert( Quaternion v )
 		{
-			return new BulletSharp.Math.Quaternion( v.X, v.Y, v.Z, v.W );
+			return new BQuaternion( v.X, v.Y, v.Z, v.W );
 		}
 
-		public static BulletSharp.Math.Vector3 Convert( Vector3 v )
+		public static BVector3 Convert( Vector3 v )
 		{
-			return new BulletSharp.Math.Vector3( v.X, v.Y, v.Z );
+			return new BVector3( v.X, v.Y, v.Z );
 		}
 
-		public static BulletSharp.Math.Vector3 Convert( Vector3F v )
+		public static BVector3 Convert( Vector3F v )
 		{
-			return new BulletSharp.Math.Vector3( v.X, v.Y, v.Z );
+			return new BVector3( v.X, v.Y, v.Z );
 		}
 
-		public static void Convert( ref Vector3 v, out BulletSharp.Math.Vector3 result )
+		public static void Convert( ref Vector3 v, out BVector3 result )
 		{
-			result = new BulletSharp.Math.Vector3( v.X, v.Y, v.Z );
+			result = new BVector3( v.X, v.Y, v.Z );
 		}
 
-		public static void Convert( ref Vector3F v, out BulletSharp.Math.Vector3 result )
+		public static void Convert( ref Vector3F v, out BVector3 result )
 		{
-			result = new BulletSharp.Math.Vector3( v.X, v.Y, v.Z );
+			result = new BVector3( v.X, v.Y, v.Z );
 		}
 
-		public static BulletSharp.Math.Vector3[] Convert( Vector3F[] vertices )
+		public static BVector3[] Convert( Vector3F[] vertices )
 		{
-			var result = new BulletSharp.Math.Vector3[ vertices.Length ];
+			var result = new BVector3[ vertices.Length ];
 			for( int n = 0; n < vertices.Length; n++ )
 				result[ n ] = Convert( vertices[ n ] );
 			return result;
 		}
 
-		public static BulletSharp.Math.Vector3[] Convert( Vector3[] vertices )
+		public static BVector3[] Convert( Vector3[] vertices )
 		{
-			var result = new BulletSharp.Math.Vector3[ vertices.Length ];
+			var result = new BVector3[ vertices.Length ];
 			for( int n = 0; n < vertices.Length; n++ )
 				result[ n ] = Convert( vertices[ n ] );
 			//unsafe
@@ -203,17 +198,17 @@ namespace NeoAxis
 
 		//convert from Bullet
 
-		public static Quaternion Convert( BulletSharp.Math.Quaternion v )
+		public static Quaternion Convert( BQuaternion v )
 		{
 			return new Quaternion( v.X, v.Y, v.Z, v.W );
 		}
 
-		public static Vector3 Convert( BulletSharp.Math.Vector3 v )
+		public static Vector3 Convert( BVector3 v )
 		{
 			return new Vector3( v.X, v.Y, v.Z );
 		}
 
-		public static Matrix4 Convert( Matrix v )
+		public static Matrix4 Convert( BMatrix v )
 		{
 			return new Matrix4(
 				v.M11, v.M12, v.M13, v.M14,
@@ -222,7 +217,7 @@ namespace NeoAxis
 				v.M41, v.M42, v.M43, v.M44 );
 		}
 
-		public static void Convert( ref Matrix v, out Matrix4 result )
+		public static void Convert( ref BMatrix v, out Matrix4 result )
 		{
 			result = new Matrix4(
 				v.M11, v.M12, v.M13, v.M14,

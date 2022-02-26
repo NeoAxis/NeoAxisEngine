@@ -1,6 +1,6 @@
 $input v_texCoord0
 
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "../../Common.sh"
 #include "../../FragmentFunctions.sh"
 
@@ -8,7 +8,7 @@ SAMPLER2D(s_depthTexture, 0);
 SAMPLER2D(s_sceneTexture, 1);
 SAMPLER2D(s_normalTexture, 2);
 SAMPLERCUBE(s_environmentTexture, 3);
-SAMPLERCUBE(s_environmentTextureIBL, 4);
+//SAMPLERCUBE(s_environmentTextureIBL, 4);
 SAMPLER2D(s_brdfLUT, 5);
 SAMPLER2D(s_gBuffer2Texture, 6);
 SAMPLER2D(s_gBuffer0Texture, 7);
@@ -25,7 +25,6 @@ uniform vec4/*vec3*/ cameraPosition;
 uniform vec4/*float*/ initialStepScale;
 uniform vec4/*float*/ worldThickness;
 
-#include "../../PBRFilament/common_types.sh"
 #include "../../PBRFilament/common_math.sh"
 #include "../../PBRFilament/brdf.sh"
 #include "../../PBRFilament/PBRFilament.sh"
@@ -179,7 +178,7 @@ vec3 specularIBL(vec2 texCoords)
 	getPBRFilamentPixelParams(material, pixel);
 
 	EnvironmentTextureData data;
-	data.rotation = mat3(1,0,0,0,1,0,0,0,1);
+	data.rotation = vec4(0,0,0,1);
 	data.multiplierAndAffect = vec4_splat(1);
 	
 	return getSpecularIrradiance(pixel, s_environmentTexture, data);

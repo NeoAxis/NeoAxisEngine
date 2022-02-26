@@ -1,4 +1,5 @@
-﻿using LiteDB.Engine;
+#if !NO_LITE_DB
+using Internal.LiteDB.Engine;
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -8,7 +9,7 @@ using System.Threading;
 [assembly: InternalsVisibleTo("LiteDB.Tests")]
 #endif
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     /// <summary>
     /// Class with all constants used in LiteDB + Debbuger HELPER
@@ -176,3 +177,5 @@ namespace LiteDB
         }
     }
 }
+
+#endif

@@ -1,11 +1,12 @@
-﻿namespace Xilium.CefGlue.Platform
+#if !NO_UI_WEB_BROWSER
+namespace Internal.Xilium.CefGlue.Platform
 {
     using System;
     using System.Collections.Generic;
     using System.Text;
-    using Xilium.CefGlue;
-    using Xilium.CefGlue.Interop;
-    using Xilium.CefGlue.Platform.Windows;
+    using Internal.Xilium.CefGlue;
+    using Internal.Xilium.CefGlue.Interop;
+    using Internal.Xilium.CefGlue.Platform.Windows;
 
     internal unsafe sealed class CefWindowInfoMacImpl : CefWindowInfo
     {
@@ -116,3 +117,5 @@
         }
     }
 }
+
+#endif

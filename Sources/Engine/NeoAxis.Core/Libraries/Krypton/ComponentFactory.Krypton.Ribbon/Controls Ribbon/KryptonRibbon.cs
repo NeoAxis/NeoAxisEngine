@@ -23,9 +23,9 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
-using ComponentFactory.Krypton.Toolkit;
+using Internal.ComponentFactory.Krypton.Toolkit;
 
-namespace ComponentFactory.Krypton.Ribbon
+namespace Internal.ComponentFactory.Krypton.Ribbon
 {
     /// <summary>
     /// Ribbon control presents a tabbed set of user options.
@@ -34,7 +34,7 @@ namespace ComponentFactory.Krypton.Ribbon
     [ToolboxBitmap(typeof(KryptonRibbon), "ToolboxBitmaps.KryptonRibbon.bmp")]
     [DefaultEvent("SelectedTabChanged")]
     [DefaultProperty("RibbonTabs")]
-    [Designer("ComponentFactory.Krypton.Ribbon.KryptonRibbonDesigner, ComponentFactory.Krypton.Design, Version=125.0.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e")]
+    //[Designer("ComponentFactory.Krypton.Ribbon.KryptonRibbonDesigner, ComponentFactory.Krypton.Design, Version=125.0.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e")]
     [DesignerCategory("code")]
     [Description("Ribbon control presents a tabbed set of user options.")]
     [Docking(DockingBehavior.Never)]
@@ -861,7 +861,7 @@ namespace ComponentFactory.Krypton.Ribbon
         [Category("Values")]
         [Description("Collection of ribbon quick access toolbar buttons.")]
         [MergableProperty(false)]
-        [Editor("ComponentFactory.Krypton.Ribbon.KryptonRibbonQATButtonCollectionEditor, ComponentFactory.Krypton.Design, Version=125.0.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e", typeof(UITypeEditor))]
+        //[Editor("ComponentFactory.Krypton.Ribbon.KryptonRibbonQATButtonCollectionEditor, ComponentFactory.Krypton.Design, Version=125.0.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e", typeof(UITypeEditor))]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public KryptonRibbonQATButtonCollection QATButtons
         {
@@ -1469,9 +1469,9 @@ namespace ComponentFactory.Krypton.Ribbon
             // Get the view the mouse is currently over
             ViewBase mouseView = ViewManager.Root.ViewFromPoint(pt);
 
-            if (mouseView is ViewDrawRibbonGroupDateTimePicker)
-                return ((ViewDrawRibbonGroupDateTimePicker)mouseView).Component;
-            else
+            //if (mouseView is ViewDrawRibbonGroupDateTimePicker)
+            //    return ((ViewDrawRibbonGroupDateTimePicker)mouseView).Component;
+            //else
                 return ViewManager.ComponentFromPoint(pt);
         }
         #endregion

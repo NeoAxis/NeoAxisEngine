@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SharpBgfx {
+namespace Internal.SharpBgfx {
     /// <summary>
     /// Represents a static vertex buffer.
     /// </summary>
@@ -20,6 +20,18 @@ namespace SharpBgfx {
         /// <param name="flags">Flags used to control buffer behavior.</param>
         public VertexBuffer (MemoryBlock memory, VertexLayout layout, BufferFlags flags = BufferFlags.None) {
             handle = NativeMethods.bgfx_create_vertex_buffer(memory.ptr, ref layout.data, flags);
+        }
+
+        //!!!!betauser
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VertexBuffer"/> struct.
+        /// </summary>
+        /// <param name="memory">The vertex data with which to populate the buffer.</param>
+        /// <param name="layout">The layout of the vertex data.</param>
+        /// <param name="flags">Flags used to control buffer behavior.</param>
+        internal VertexBuffer( MemoryBlock.DataPtr memory, VertexLayout layout, BufferFlags flags = BufferFlags.None )
+        {
+            handle = NativeMethods.bgfx_create_vertex_buffer( &memory, ref layout.data, flags );
         }
 
         /// <summary>

@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Forms;
 using System.Drawing;
 
-namespace Aga.Controls.Tree
+namespace Internal.Aga.Controls.Tree
 {
 	public class Node
 	{

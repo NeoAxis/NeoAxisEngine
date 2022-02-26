@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "LibraryBase.h"
 #include "shaderc.h"
 
@@ -126,8 +126,7 @@ private:
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-//!!!!optimization option
-EXPORT Instance* ShaderC_New(ShaderType shaderType, ShaderModel shaderModel, wchar16* shaderFile, wchar16* varyingFile)
+EXPORT Instance* ShaderC_New(ShaderType shaderType, ShaderModel shaderModel, wchar16* shaderFile, wchar16* varyingFile, bool optimize)
 {
 	Instance* instance = new Instance();
 	//instance->shaderType = shaderType;
@@ -179,9 +178,12 @@ EXPORT Instance* ShaderC_New(ShaderType shaderType, ShaderModel shaderModel, wch
 	case ShaderModel_OpenGLES:
 		switch (shaderType)
 		{
-		case ShaderType_Vertex:instance->options.profile = "300"; break;
-		case ShaderType_Fragment:instance->options.profile = "300"; break;
-		case ShaderType_Compute:instance->options.profile = "300"; break;
+		case ShaderType_Vertex:instance->options.profile = "310"; break;
+		case ShaderType_Fragment:instance->options.profile = "310"; break;
+		case ShaderType_Compute:instance->options.profile = "310"; break;
+		//case ShaderType_Vertex:instance->options.profile = "300"; break;
+		//case ShaderType_Fragment:instance->options.profile = "300"; break;
+		//case ShaderType_Compute:instance->options.profile = "300"; break;
 
 		//case ShaderType_Vertex:instance->options.profile = "430"; break;
 		//case ShaderType_Fragment:instance->options.profile = "430"; break;
@@ -244,11 +246,8 @@ EXPORT Instance* ShaderC_New(ShaderType shaderType, ShaderModel shaderModel, wch
 	//bool backwardsCompatibility;
 	//bool warningsAreErrors;
 
-	//!!!!
-	instance->options.optimize = true;// false;
-	instance->options.optimizationLevel = 3;
-	//instance->options.optimize = false;// false;
-	//instance->options.optimizationLevel = 0;
+	instance->options.optimize = optimize;
+	instance->options.optimizationLevel = optimize ? 3 : 0;
 
 	return instance;
 }

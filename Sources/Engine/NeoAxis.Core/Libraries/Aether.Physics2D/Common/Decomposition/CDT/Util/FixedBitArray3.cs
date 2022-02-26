@@ -38,7 +38,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace tainicom.Aether.Physics2D.Common.Decomposition.CDT.Util
+namespace Internal.tainicom.Aether.Physics2D.Common.Decomposition.CDT.Util
 {
     internal struct FixedBitArray3 : IEnumerable<bool>
     {

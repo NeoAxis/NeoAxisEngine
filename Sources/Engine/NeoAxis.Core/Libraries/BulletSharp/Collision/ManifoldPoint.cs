@@ -1,10 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Security;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	[Flags]
 	public enum ContactPointFlags
@@ -28,7 +28,7 @@ namespace BulletSharp
 		private static ContactAddedUnmanagedDelegate _contactAddedUnmanaged;
 		private static IntPtr _contactAddedUnmanagedPtr;
 
-		[UnmanagedFunctionPointer(BulletSharp.Native.Conv), SuppressUnmanagedCodeSecurity]
+		[UnmanagedFunctionPointer(Internal.BulletSharp.Native.Conv), SuppressUnmanagedCodeSecurity]
 		private delegate bool ContactAddedUnmanagedDelegate(IntPtr cp, IntPtr colObj0Wrap, int partId0, int index0, IntPtr colObj1Wrap, int partId1, int index1);
 
 		static bool ContactAddedUnmanaged(IntPtr cp, IntPtr colObj0Wrap, int partId0, int index0, IntPtr colObj1Wrap, int partId1, int index1)
@@ -70,7 +70,7 @@ namespace BulletSharp
 			Native = btManifoldPoint_new();
 		}
 
-		public ManifoldPoint(Vector3 pointA, Vector3 pointB, Vector3 normal, double distance)
+		public ManifoldPoint(BVector3 pointA, BVector3 pointB, BVector3 normal, double distance)
 		{
 			Native = btManifoldPoint_new2(ref pointA, ref pointB, ref normal, distance);
 		}
@@ -183,22 +183,22 @@ namespace BulletSharp
 			set => btManifoldPoint_setIndex1(Native, value);
 		}
 
-		public Vector3 LateralFrictionDir1
+		public BVector3 LateralFrictionDir1
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btManifoldPoint_getLateralFrictionDir1(Native, out value);
 				return value;
 			}
 			set => btManifoldPoint_setLateralFrictionDir1(Native, ref value);
 		}
 
-		public Vector3 LateralFrictionDir2
+		public BVector3 LateralFrictionDir2
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btManifoldPoint_getLateralFrictionDir2(Native, out value);
 				return value;
 			}
@@ -211,33 +211,33 @@ namespace BulletSharp
             set => btManifoldPoint_setLifeTime(Native, value);
 		}
 
-		public Vector3 LocalPointA
+		public BVector3 LocalPointA
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btManifoldPoint_getLocalPointA(Native, out value);
 				return value;
 			}
 			set => btManifoldPoint_setLocalPointA(Native, ref value);
 		}
 
-		public Vector3 LocalPointB
+		public BVector3 LocalPointB
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btManifoldPoint_getLocalPointB(Native, out value);
 				return value;
 			}
 			set => btManifoldPoint_setLocalPointB(Native, ref value);
 		}
 
-		public Vector3 NormalWorldOnB
+		public BVector3 NormalWorldOnB
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btManifoldPoint_getNormalWorldOnB(Native, out value);
 				return value;
 			}
@@ -256,22 +256,22 @@ namespace BulletSharp
 			set => btManifoldPoint_setPartId1(Native, value);
 		}
 
-		public Vector3 PositionWorldOnA
+		public BVector3 PositionWorldOnA
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btManifoldPoint_getPositionWorldOnA(Native, out value);
 				return value;
 			}
 			set => btManifoldPoint_setPositionWorldOnA(Native, ref value);
 		}
 
-		public Vector3 PositionWorldOnB
+		public BVector3 PositionWorldOnB
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btManifoldPoint_getPositionWorldOnB(Native, out value);
 				return value;
 			}

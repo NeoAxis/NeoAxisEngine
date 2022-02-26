@@ -90,7 +90,9 @@ THE SOFTWARE
 #include <memory.h>
 #include <stdlib.h>
 #if OGRE_PLATFORM != OGRE_PLATFORM_APPLE
-	#include <malloc.h>
+#if OGRE_PLATFORM != OGRE_PLATFORM_APPLE_IOS
+#include <malloc.h>
+#endif
 #endif
 #include <stdio.h>
 #include <stdlib.h>
@@ -105,6 +107,9 @@ THE SOFTWARE
 #endif
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
+	#include <new>
+#endif
+#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
 	#include <new>
 #endif
 

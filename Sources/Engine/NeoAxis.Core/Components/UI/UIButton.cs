@@ -1,9 +1,8 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
-using NeoAxis.Input;
 
 namespace NeoAxis
 {
@@ -31,24 +30,24 @@ namespace NeoAxis
 		/////////////////////////////////////////
 
 		[DefaultValue( null )]
-		public Reference<Component_Image> Image
+		public Reference<ImageComponent> Image
 		{
 			get { if( _image.BeginGet() ) Image = _image.Get( this ); return _image.value; }
 			set { if( _image.BeginSet( ref value ) ) { try { ImageChanged?.Invoke( this ); } finally { _image.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Image"/> property value changes.</summary>
 		public event Action<UIButton> ImageChanged;
-		ReferenceField<Component_Image> _image = null;
+		ReferenceField<ImageComponent> _image = null;
 
 		[DefaultValue( null )]
-		public Reference<Component_Image> ImageDisabled
+		public Reference<ImageComponent> ImageDisabled
 		{
 			get { if( _imageDisabled.BeginGet() ) ImageDisabled = _imageDisabled.Get( this ); return _imageDisabled.value; }
 			set { if( _imageDisabled.BeginSet( ref value ) ) { try { ImageDisabledChanged?.Invoke( this ); } finally { _imageDisabled.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ImageDisabled"/> property value changes.</summary>
 		public event Action<UIButton> ImageDisabledChanged;
-		ReferenceField<Component_Image> _imageDisabled = null;
+		ReferenceField<ImageComponent> _imageDisabled = null;
 
 		/// <summary>
 		/// Specifies highlighted state of the button.

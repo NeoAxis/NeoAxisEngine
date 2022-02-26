@@ -27,7 +27,7 @@ using System.Threading;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
     /// <summary>
     /// Displays a task dialog that allows the user to select a task based on the presented options.
@@ -914,29 +914,29 @@ namespace ComponentFactory.Krypton.Toolkit
 
         private void InitializeComponent()
         {
-            this._panelMain = new ComponentFactory.Krypton.Toolkit.KryptonPanel();
-            this._panelMainSpacer = new ComponentFactory.Krypton.Toolkit.KryptonPanel();
-            this._panelMainCommands = new ComponentFactory.Krypton.Toolkit.KryptonPanel();
-            this._panelMainRadio = new ComponentFactory.Krypton.Toolkit.KryptonPanel();
-            this._panelMainText = new ComponentFactory.Krypton.Toolkit.KryptonPanel();
-            this._messageContent = new ComponentFactory.Krypton.Toolkit.KryptonWrapLabel();
-            this._messageText = new ComponentFactory.Krypton.Toolkit.KryptonWrapLabel();
-            this._panelIcon = new ComponentFactory.Krypton.Toolkit.KryptonPanel();
+            this._panelMain = new Internal.ComponentFactory.Krypton.Toolkit.KryptonPanel();
+            this._panelMainSpacer = new Internal.ComponentFactory.Krypton.Toolkit.KryptonPanel();
+            this._panelMainCommands = new Internal.ComponentFactory.Krypton.Toolkit.KryptonPanel();
+            this._panelMainRadio = new Internal.ComponentFactory.Krypton.Toolkit.KryptonPanel();
+            this._panelMainText = new Internal.ComponentFactory.Krypton.Toolkit.KryptonPanel();
+            this._messageContent = new Internal.ComponentFactory.Krypton.Toolkit.KryptonWrapLabel();
+            this._messageText = new Internal.ComponentFactory.Krypton.Toolkit.KryptonWrapLabel();
+            this._panelIcon = new Internal.ComponentFactory.Krypton.Toolkit.KryptonPanel();
             this._messageIcon = new System.Windows.Forms.PictureBox();
-            this._panelButtons = new ComponentFactory.Krypton.Toolkit.KryptonPanel();
-            this._checkBox = new ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
-            this._panelButtonsBorderTop = new ComponentFactory.Krypton.Toolkit.KryptonBorderEdge();
-            this._buttonOK = new ComponentFactory.Krypton.Toolkit.VisualTaskDialog.MessageButton();
-            this._buttonYes = new ComponentFactory.Krypton.Toolkit.VisualTaskDialog.MessageButton();
-            this._buttonNo = new ComponentFactory.Krypton.Toolkit.VisualTaskDialog.MessageButton();
-            this._buttonRetry = new ComponentFactory.Krypton.Toolkit.VisualTaskDialog.MessageButton();
-            this._buttonCancel = new ComponentFactory.Krypton.Toolkit.VisualTaskDialog.MessageButton();
-            this._buttonClose = new ComponentFactory.Krypton.Toolkit.VisualTaskDialog.MessageButton();
-            this._panelFooter = new ComponentFactory.Krypton.Toolkit.KryptonPanel();
-            this._linkLabelFooter = new ComponentFactory.Krypton.Toolkit.KryptonLinkLabel();
+            this._panelButtons = new Internal.ComponentFactory.Krypton.Toolkit.KryptonPanel();
+            this._checkBox = new Internal.ComponentFactory.Krypton.Toolkit.KryptonCheckBox();
+            this._panelButtonsBorderTop = new Internal.ComponentFactory.Krypton.Toolkit.KryptonBorderEdge();
+            this._buttonOK = new Internal.ComponentFactory.Krypton.Toolkit.VisualTaskDialog.MessageButton();
+            this._buttonYes = new Internal.ComponentFactory.Krypton.Toolkit.VisualTaskDialog.MessageButton();
+            this._buttonNo = new Internal.ComponentFactory.Krypton.Toolkit.VisualTaskDialog.MessageButton();
+            this._buttonRetry = new Internal.ComponentFactory.Krypton.Toolkit.VisualTaskDialog.MessageButton();
+            this._buttonCancel = new Internal.ComponentFactory.Krypton.Toolkit.VisualTaskDialog.MessageButton();
+            this._buttonClose = new Internal.ComponentFactory.Krypton.Toolkit.VisualTaskDialog.MessageButton();
+            this._panelFooter = new Internal.ComponentFactory.Krypton.Toolkit.KryptonPanel();
+            this._linkLabelFooter = new Internal.ComponentFactory.Krypton.Toolkit.KryptonLinkLabel();
             this._iconFooter = new System.Windows.Forms.PictureBox();
-            this._footerLabel = new ComponentFactory.Krypton.Toolkit.KryptonWrapLabel();
-            this._panelFooterBorderTop = new ComponentFactory.Krypton.Toolkit.KryptonBorderEdge();
+            this._footerLabel = new Internal.ComponentFactory.Krypton.Toolkit.KryptonWrapLabel();
+            this._panelFooterBorderTop = new Internal.ComponentFactory.Krypton.Toolkit.KryptonBorderEdge();
             ((System.ComponentModel.ISupportInitialize)(this._panelMain)).BeginInit();
             this._panelMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._panelMainSpacer)).BeginInit();
@@ -1011,7 +1011,7 @@ namespace ComponentFactory.Krypton.Toolkit
             this._messageContent.AutoSize = false;
             this._messageContent.Font = new System.Drawing.Font("Segoe UI", 9F);
             this._messageContent.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
-            this._messageContent.LabelStyle = ComponentFactory.Krypton.Toolkit.LabelStyle.NormalPanel;
+            this._messageContent.LabelStyle = Internal.ComponentFactory.Krypton.Toolkit.LabelStyle.NormalPanel;
             this._messageContent.Location = new System.Drawing.Point(6, 34);
             this._messageContent.Margin = new System.Windows.Forms.Padding(0);
             this._messageContent.Name = "_messageContent";
@@ -1023,7 +1023,7 @@ namespace ComponentFactory.Krypton.Toolkit
             this._messageText.AutoSize = false;
             this._messageText.Font = new System.Drawing.Font("Segoe UI", 13.5F, System.Drawing.FontStyle.Bold);
             this._messageText.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
-            this._messageText.LabelStyle = ComponentFactory.Krypton.Toolkit.LabelStyle.TitlePanel;
+            this._messageText.LabelStyle = Internal.ComponentFactory.Krypton.Toolkit.LabelStyle.TitlePanel;
             this._messageText.Location = new System.Drawing.Point(5, 5);
             this._messageText.Margin = new System.Windows.Forms.Padding(0);
             this._messageText.Name = "_messageText";
@@ -1066,13 +1066,13 @@ namespace ComponentFactory.Krypton.Toolkit
             this._panelButtons.Location = new System.Drawing.Point(0, 72);
             this._panelButtons.Margin = new System.Windows.Forms.Padding(0);
             this._panelButtons.Name = "_panelButtons";
-            this._panelButtons.PanelBackStyle = ComponentFactory.Krypton.Toolkit.PaletteBackStyle.PanelAlternate;
+            this._panelButtons.PanelBackStyle = Internal.ComponentFactory.Krypton.Toolkit.PaletteBackStyle.PanelAlternate;
             this._panelButtons.Size = new System.Drawing.Size(408, 46);
             this._panelButtons.TabIndex = 1;
             // 
             // _checkBox
             // 
-            this._checkBox.LabelStyle = ComponentFactory.Krypton.Toolkit.LabelStyle.NormalPanel;
+            this._checkBox.LabelStyle = Internal.ComponentFactory.Krypton.Toolkit.LabelStyle.NormalPanel;
             this._checkBox.Location = new System.Drawing.Point(12, 12);
             this._checkBox.Name = "_checkBox";
             this._checkBox.Size = new System.Drawing.Size(75, 20);
@@ -1082,7 +1082,7 @@ namespace ComponentFactory.Krypton.Toolkit
             // 
             // _panelButtonsBorderTop
             // 
-            this._panelButtonsBorderTop.BorderStyle = ComponentFactory.Krypton.Toolkit.PaletteBorderStyle.HeaderPrimary;
+            this._panelButtonsBorderTop.BorderStyle = Internal.ComponentFactory.Krypton.Toolkit.PaletteBorderStyle.HeaderPrimary;
             this._panelButtonsBorderTop.Dock = System.Windows.Forms.DockStyle.Top;
             this._panelButtonsBorderTop.Location = new System.Drawing.Point(0, 0);
             this._panelButtonsBorderTop.Name = "_panelButtonsBorderTop";
@@ -1188,13 +1188,13 @@ namespace ComponentFactory.Krypton.Toolkit
             this._panelFooter.Dock = System.Windows.Forms.DockStyle.Top;
             this._panelFooter.Location = new System.Drawing.Point(0, 118);
             this._panelFooter.Name = "_panelFooter";
-            this._panelFooter.PanelBackStyle = ComponentFactory.Krypton.Toolkit.PaletteBackStyle.PanelAlternate;
+            this._panelFooter.PanelBackStyle = Internal.ComponentFactory.Krypton.Toolkit.PaletteBackStyle.PanelAlternate;
             this._panelFooter.Size = new System.Drawing.Size(408, 49);
             this._panelFooter.TabIndex = 2;
             // 
             // _linkLabelFooter
             // 
-            this._linkLabelFooter.LabelStyle = ComponentFactory.Krypton.Toolkit.LabelStyle.NormalPanel;
+            this._linkLabelFooter.LabelStyle = Internal.ComponentFactory.Krypton.Toolkit.LabelStyle.NormalPanel;
             this._linkLabelFooter.Location = new System.Drawing.Point(127, 11);
             this._linkLabelFooter.Name = "_linkLabelFooter";
             this._linkLabelFooter.Size = new System.Drawing.Size(110, 20);
@@ -1217,7 +1217,7 @@ namespace ComponentFactory.Krypton.Toolkit
             this._footerLabel.AutoSize = false;
             this._footerLabel.Font = new System.Drawing.Font("Segoe UI", 9F);
             this._footerLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(57)))), ((int)(((byte)(91)))));
-            this._footerLabel.LabelStyle = ComponentFactory.Krypton.Toolkit.LabelStyle.NormalPanel;
+            this._footerLabel.LabelStyle = Internal.ComponentFactory.Krypton.Toolkit.LabelStyle.NormalPanel;
             this._footerLabel.Location = new System.Drawing.Point(36, 11);
             this._footerLabel.Margin = new System.Windows.Forms.Padding(0);
             this._footerLabel.Name = "_footerLabel";
@@ -1226,7 +1226,7 @@ namespace ComponentFactory.Krypton.Toolkit
             // 
             // _panelFooterBorderTop
             // 
-            this._panelFooterBorderTop.BorderStyle = ComponentFactory.Krypton.Toolkit.PaletteBorderStyle.HeaderPrimary;
+            this._panelFooterBorderTop.BorderStyle = Internal.ComponentFactory.Krypton.Toolkit.PaletteBorderStyle.HeaderPrimary;
             this._panelFooterBorderTop.Dock = System.Windows.Forms.DockStyle.Top;
             this._panelFooterBorderTop.Location = new System.Drawing.Point(0, 0);
             this._panelFooterBorderTop.Name = "_panelFooterBorderTop";

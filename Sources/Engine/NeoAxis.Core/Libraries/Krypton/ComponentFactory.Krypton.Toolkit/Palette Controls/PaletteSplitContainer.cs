@@ -16,7 +16,7 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace ComponentFactory.Krypton.Toolkit
+namespace Internal.ComponentFactory.Krypton.Toolkit
 {
 	/// <summary>
 	/// Extend storage for the split container with background and border information combined with separator information.

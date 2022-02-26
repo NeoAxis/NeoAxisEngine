@@ -138,7 +138,7 @@ namespace bx
 			}
 
 			//!!!!betauser
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(IOS)
 			m_file = fopen(_filePath.getCPtr(), "rb");
 #else
 			wchar_t wfilePath[PATH_MAX + 1];
@@ -240,7 +240,7 @@ namespace bx
 			}
 
 			//!!!!betauser
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(IOS)
 			m_file = fopen(_filePath.getCPtr(), _append ? "ab" : "wb");
 #else
 			wchar_t wfilePath[PATH_MAX + 1];

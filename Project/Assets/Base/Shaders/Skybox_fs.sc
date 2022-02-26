@@ -1,6 +1,6 @@
 $input v_texCoord0
 
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "Common.sh"
 
 #ifdef USE_2D
@@ -10,7 +10,7 @@ $input v_texCoord0
 #endif
 
 uniform vec4/*vec3*/ multiplier;
-uniform mat3 rotation;
+uniform vec4 rotation;
 uniform vec4/*float*/ stretch;
 
 vec2 toRadialCoords(vec3 coords)
@@ -25,7 +25,7 @@ vec2 toRadialCoords(vec3 coords)
 void main()
 {
 	vec3 color;
-	vec3 texCoord = flipCubemapCoords2(mul(rotation, v_texCoord0));
+	vec3 texCoord = flipCubemapCoords2(mulQuat(rotation, v_texCoord0));
 	#ifdef USE_2D
 		vec2 r = toRadialCoords(texCoord);
 		r.y /= stretch.x;

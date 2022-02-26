@@ -1,5 +1,5 @@
-using static BulletSharp.UnsafeNativeMethods;
-namespace BulletSharp
+using static Internal.BulletSharp.UnsafeNativeMethods;
+namespace Internal.BulletSharp
 {
 	public class EmptyShape : ConcaveShape
 	{

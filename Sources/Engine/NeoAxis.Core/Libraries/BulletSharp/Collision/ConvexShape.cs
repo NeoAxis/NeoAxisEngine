@@ -1,8 +1,8 @@
 using System;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp
+namespace Internal.BulletSharp
 {
 	public class ConvexShape : CollisionShape
 	{
@@ -19,60 +19,60 @@ namespace BulletSharp
 		}
 		*/
 
-		public void GetAabbNonVirtual(Matrix t, out Vector3 aabbMin, out Vector3 aabbMax)
+		public void GetAabbNonVirtual(BMatrix t, out BVector3 aabbMin, out BVector3 aabbMax)
 		{
 			btConvexShape_getAabbNonVirtual(Native, ref t, out aabbMin, out aabbMax);
 		}
 
-		public void GetAabbSlow(Matrix t, out Vector3 aabbMin, out Vector3 aabbMax)
+		public void GetAabbSlow(BMatrix t, out BVector3 aabbMin, out BVector3 aabbMax)
 		{
 			btConvexShape_getAabbSlow(Native, ref t, out aabbMin, out aabbMax);
 		}
 
-		public void GetPreferredPenetrationDirection(int index, out Vector3 penetrationVector)
+		public void GetPreferredPenetrationDirection(int index, out BVector3 penetrationVector)
 		{
 			btConvexShape_getPreferredPenetrationDirection(Native, index, out penetrationVector);
 		}
 
-		public Vector3 LocalGetSupportingVertex(Vector3 vec)
+		public BVector3 LocalGetSupportingVertex(BVector3 vec)
 		{
-			Vector3 value;
+			BVector3 value;
 			btConvexShape_localGetSupportingVertex(Native, ref vec, out value);
 			return value;
 		}
 
-		public Vector3 LocalGetSupportingVertexWithoutMargin(Vector3 vec)
+		public BVector3 LocalGetSupportingVertexWithoutMargin(BVector3 vec)
 		{
-			Vector3 value;
+			BVector3 value;
 			btConvexShape_localGetSupportingVertexWithoutMargin(Native, ref vec,
 				out value);
 			return value;
 		}
 
-		public Vector3 LocalGetSupportVertexNonVirtual(Vector3 vec)
+		public BVector3 LocalGetSupportVertexNonVirtual(BVector3 vec)
 		{
-			Vector3 value;
+			BVector3 value;
 			btConvexShape_localGetSupportVertexNonVirtual(Native, ref vec, out value);
 			return value;
 		}
 
-		public Vector3 LocalGetSupportVertexWithoutMarginNonVirtual(Vector3 vec)
+		public BVector3 LocalGetSupportVertexWithoutMarginNonVirtual(BVector3 vec)
 		{
-			Vector3 value;
+			BVector3 value;
 			btConvexShape_localGetSupportVertexWithoutMarginNonVirtual(Native, ref vec,
 				out value);
 			return value;
 		}
 
-		public void ProjectRef(ref Matrix trans, ref Vector3 dir, out double minProj, out double maxProj,
-			out Vector3 witnesPtMin, out Vector3 witnesPtMax)
+		public void ProjectRef(ref BMatrix trans, ref BVector3 dir, out double minProj, out double maxProj,
+			out BVector3 witnesPtMin, out BVector3 witnesPtMax)
 		{
 			btConvexShape_project(Native, ref trans, ref dir, out minProj, out maxProj,
 				out witnesPtMin, out witnesPtMax);
 		}
 
-		public void Project(Matrix trans, Vector3 dir, out double minProj, out double maxProj,
-			out Vector3 witnesPtMin, out Vector3 witnesPtMax)
+		public void Project(BMatrix trans, BVector3 dir, out double minProj, out double maxProj,
+			out BVector3 witnesPtMin, out BVector3 witnesPtMax)
 		{
 			btConvexShape_project(Native, ref trans, ref dir, out minProj, out maxProj,
 				out witnesPtMin, out witnesPtMax);

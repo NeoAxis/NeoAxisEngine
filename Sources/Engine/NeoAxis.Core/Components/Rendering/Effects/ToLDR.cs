@@ -1,11 +1,6 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
-using System.Drawing.Design;
-using System.ComponentModel;
-using System.Reflection;
 
 namespace NeoAxis
 {
@@ -14,11 +9,11 @@ namespace NeoAxis
     /// </summary>
 	[DefaultOrderOfEffect( 4 )]
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
-	public class Component_RenderingEffect_ToLDR : Component_RenderingEffect
+	public class RenderingEffect_ToLDR : RenderingEffect
 	{
-		protected override void OnRender( ViewportRenderingContext context, Component_RenderingPipeline.IFrameData frameData, ref Component_Image actualTexture )
+		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
 		{
-			var pipeline = (Component_RenderingPipeline_Basic)context.RenderingPipeline;
+			var pipeline = (RenderingPipeline_Basic)context.RenderingPipeline;
 			pipeline.ConvertToLDR( context, ref actualTexture );
 
 			//var demandFormat = PixelFormat.A8R8G8B8;

@@ -1,4 +1,5 @@
-﻿namespace Xilium.CefGlue
+#if !NO_UI_WEB_BROWSER
+namespace Internal.Xilium.CefGlue
 {
     using System;
     using System.Collections.Generic;
@@ -6,8 +7,8 @@
     using System.Text;
     using System.Reflection;
     using System.Runtime.InteropServices;
-    using Xilium.CefGlue.Interop;
-    using Windows = Xilium.CefGlue.Platform.Windows;
+    using Internal.Xilium.CefGlue.Interop;
+    using Windows = Internal.Xilium.CefGlue.Platform.Windows;
 
     public sealed unsafe class CefMainArgs
     {
@@ -114,3 +115,5 @@
         }
     }
 }
+
+#endif

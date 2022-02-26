@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Security;
-using BulletSharp.Math;
-using static BulletSharp.UnsafeNativeMethods;
+using Internal.BulletSharp.Math;
+using static Internal.BulletSharp.UnsafeNativeMethods;
 
-namespace BulletSharp.SoftBody
+namespace Internal.BulletSharp.SoftBody
 {
 	public class SoftBodyCollisionShape : ConvexShape
 	{
@@ -130,11 +130,11 @@ namespace BulletSharp.SoftBody
 			}
 		}
 
-		public Vector3 Gravity
+		public BVector3 Gravity
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBodyWorldInfo_getGravity(Native, out value);
 				return value;
 			}
@@ -165,11 +165,11 @@ namespace BulletSharp.SoftBody
 			set => btSoftBodyWorldInfo_setWater_density(Native, value);
 		}
 
-		public Vector3 WaterNormal
+		public BVector3 WaterNormal
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBodyWorldInfo_getWater_normal(Native, out value);
 				return value;
 			}
@@ -213,9 +213,9 @@ namespace BulletSharp.SoftBody
 			internal IntPtr Native;
 			private bool _preventDelete;
 
-			[UnmanagedFunctionPointer(BulletSharp.Native.Conv), SuppressUnmanagedCodeSecurity]
+			[UnmanagedFunctionPointer(Internal.BulletSharp.Native.Conv), SuppressUnmanagedCodeSecurity]
 			private delegate void PrepareUnmanagedDelegate(IntPtr angularJoint);
-			[UnmanagedFunctionPointer(BulletSharp.Native.Conv), SuppressUnmanagedCodeSecurity]
+			[UnmanagedFunctionPointer(Internal.BulletSharp.Native.Conv), SuppressUnmanagedCodeSecurity]
 			private delegate double SpeedUnmanagedDelegate(IntPtr angularJoint, double current);
 
 			private PrepareUnmanagedDelegate _prepare;
@@ -322,11 +322,11 @@ namespace BulletSharp.SoftBody
 			{
 			}
 
-			public Vector3 Axis
+			public BVector3 Axis
 			{
 				get
 				{
-					Vector3 value;
+					BVector3 value;
 					btSoftBody_AJoint_Specs_getAxis(Native, out value);
 					return value;
 				}
@@ -406,22 +406,22 @@ namespace BulletSharp.SoftBody
 			set => btSoftBody_Anchor_setBody(Native, (value != null) ? value.Native : IntPtr.Zero);
 		}
 
-		public Matrix C0
+		public BMatrix C0
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btSoftBody_Anchor_getC0(Native, out value);
 				return value;
 			}
 			set => btSoftBody_Anchor_setC0(Native, ref value);
 		}
 
-		public Vector3 C1
+		public BVector3 C1
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_Anchor_getC1(Native, out value);
 				return value;
 			}
@@ -440,11 +440,11 @@ namespace BulletSharp.SoftBody
 			set => btSoftBody_Anchor_setInfluence(Native, value);
 		}
 
-		public Vector3 Local
+		public BVector3 Local
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_Anchor_getLocal(Native, out value);
 				return value;
 			}
@@ -505,55 +505,55 @@ namespace BulletSharp.SoftBody
 			btSoftBody_Body_applyAImpulse(Native, impulse.Native);
 		}
 
-		public void ApplyDAImpulse(Vector3 impulse)
+		public void ApplyDAImpulse(BVector3 impulse)
 		{
 			btSoftBody_Body_applyDAImpulse(Native, ref impulse);
 		}
 
-		public void ApplyDCImpulse(Vector3 impulse)
+		public void ApplyDCImpulse(BVector3 impulse)
 		{
 			btSoftBody_Body_applyDCImpulse(Native, ref impulse);
 		}
 
-		public void ApplyDImpulse(Vector3 impulse, Vector3 rpos)
+		public void ApplyDImpulse(BVector3 impulse, BVector3 rpos)
 		{
 			btSoftBody_Body_applyDImpulse(Native, ref impulse, ref rpos);
 		}
 
-		public void ApplyImpulse(Impulse impulse, Vector3 rpos)
+		public void ApplyImpulse(Impulse impulse, BVector3 rpos)
 		{
 			btSoftBody_Body_applyImpulse(Native, impulse.Native, ref rpos);
 		}
 
-		public void ApplyVAImpulse(Vector3 impulse)
+		public void ApplyVAImpulse(BVector3 impulse)
 		{
 			btSoftBody_Body_applyVAImpulse(Native, ref impulse);
 		}
 
-		public void ApplyVImpulse(Vector3 impulse, Vector3 rpos)
+		public void ApplyVImpulse(BVector3 impulse, BVector3 rpos)
 		{
 			btSoftBody_Body_applyVImpulse(Native, ref impulse, ref rpos);
 		}
 
-		public Vector3 GetAngularVelocity(Vector3 rpos)
+		public BVector3 GetAngularVelocity(BVector3 rpos)
 		{
-			Vector3 value;
+			BVector3 value;
 			btSoftBody_Body_angularVelocity(Native, ref rpos, out value);
 			return value;
 		}
 
-		public Vector3 Velocity(Vector3 rpos)
+		public BVector3 Velocity(BVector3 rpos)
 		{
-			Vector3 value;
+			BVector3 value;
 			btSoftBody_Body_velocity(Native, ref rpos, out value);
 			return value;
 		}
 
-		public Vector3 AngularVelocity
+		public BVector3 AngularVelocity
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_Body_angularVelocity2(Native, out value);
 				return value;
 			}
@@ -567,21 +567,21 @@ namespace BulletSharp.SoftBody
 
 		public double InverseMass => btSoftBody_Body_invMass(Native);
 
-		public Matrix InverseWorldInertia
+		public BMatrix InverseWorldInertia
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btSoftBody_Body_invWorldInertia(Native, out value);
 				return value;
 			}
 		}
 
-		public Vector3 LinearVelocity
+		public BVector3 LinearVelocity
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_Body_linearVelocity(Native, out value);
 				return value;
 			}
@@ -610,11 +610,11 @@ namespace BulletSharp.SoftBody
 			}
 		}
 
-		public Matrix Transform
+		public BMatrix Transform
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btSoftBody_Body_xform(Native, out value);
 				return value;
 			}
@@ -668,11 +668,11 @@ namespace BulletSharp.SoftBody
 			set => btSoftBody_CJoint_setMaxlife(Native, value);
 		}
 
-		public Vector3 Normal
+		public BVector3 Normal
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_CJoint_getNormal(Native, out value);
 				return value;
 			}
@@ -714,11 +714,11 @@ namespace BulletSharp.SoftBody
 			set => btSoftBody_Cluster_setAdamping(Native, value);
 		}
 
-		public Vector3 AngularVelocity
+		public BVector3 AngularVelocity
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_Cluster_getAv(Native, out value);
 				return value;
 			}
@@ -737,11 +737,11 @@ namespace BulletSharp.SoftBody
 			set => btSoftBody_Cluster_setCollide(Native, value);
 		}
 
-		public Vector3 CenterOfMass
+		public BVector3 CenterOfMass
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_Cluster_getCom(Native, out value);
 				return value;
 			}
@@ -778,11 +778,11 @@ namespace BulletSharp.SoftBody
 			}
 		}
 
-		public Matrix FrameTransform
+		public BMatrix FrameTransform
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btSoftBody_Cluster_getFramexform(Native, out value);
 				return value;
 			}
@@ -801,11 +801,11 @@ namespace BulletSharp.SoftBody
 			set => btSoftBody_Cluster_setImass(Native, value);
 		}
 
-		public Matrix InverseWorldInertia
+		public BMatrix InverseWorldInertia
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btSoftBody_Cluster_getInvwi(Native, out value);
 				return value;
 			}
@@ -835,22 +835,22 @@ namespace BulletSharp.SoftBody
 			}
 		}
 
-		public Vector3 LinearVelocity
+		public BVector3 LinearVelocity
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_Cluster_getLv(Native, out value);
 				return value;
 			}
 			set => btSoftBody_Cluster_setLv(Native, ref value);
 		}
 
-		public Matrix Locii
+		public BMatrix Locii
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btSoftBody_Cluster_getLocii(Native, out value);
 				return value;
 			}
@@ -1208,11 +1208,11 @@ namespace BulletSharp.SoftBody
 			}
 		}
 
-		public Vector3 Normal
+		public BVector3 Normal
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_Face_getNormal(Native, out value);
 				return value;
 			}
@@ -1257,8 +1257,8 @@ namespace BulletSharp.SoftBody
 	{
 		internal IntPtr Native;
 
-		[UnmanagedFunctionPointer(BulletSharp.Native.Conv), SuppressUnmanagedCodeSecurity]
-		private delegate double EvalUnmanagedDelegate([In] ref Vector3 x);
+		[UnmanagedFunctionPointer(Internal.BulletSharp.Native.Conv), SuppressUnmanagedCodeSecurity]
+		private delegate double EvalUnmanagedDelegate([In] ref BVector3 x);
 
 		private EvalUnmanagedDelegate _eval;
 
@@ -1269,7 +1269,7 @@ namespace BulletSharp.SoftBody
 			Native = btSoftBody_ImplicitFnWrapper_new(Marshal.GetFunctionPointerForDelegate(_eval));
 		}
 
-		public abstract double Eval(ref Vector3 x);
+		public abstract double Eval(ref BVector3 x);
 
 		public void Dispose()
 		{
@@ -1328,22 +1328,22 @@ namespace BulletSharp.SoftBody
 			set => btSoftBody_Impulse_setAsVelocity(Native, value);
 		}
 
-		public Vector3 Drift
+		public BVector3 Drift
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_Impulse_getDrift(Native, out value);
 				return value;
 			}
 			set => btSoftBody_Impulse_setDrift(Native, ref value);
 		}
 
-		public Vector3 Velocity
+		public BVector3 Velocity
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_Impulse_getVelocity(Native, out value);
 				return value;
 			}
@@ -1482,11 +1482,11 @@ namespace BulletSharp.SoftBody
 			set => btSoftBody_Joint_setDelete(Native, value);
 		}
 
-		public Vector3 Drift
+		public BVector3 Drift
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_Joint_getDrift(Native, out value);
 				return value;
 			}
@@ -1499,11 +1499,11 @@ namespace BulletSharp.SoftBody
 			set => btSoftBody_Joint_setErp(Native, value);
 		}
 
-		public Matrix MassMatrix
+		public BMatrix MassMatrix
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btSoftBody_Joint_getMassmatrix(Native, out value);
 				return value;
 			}
@@ -1522,11 +1522,11 @@ namespace BulletSharp.SoftBody
 			}
 		}
 
-		public Vector3 SplitDrift
+		public BVector3 SplitDrift
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_Joint_getSdrift(Native, out value);
 				return value;
 			}
@@ -1569,11 +1569,11 @@ namespace BulletSharp.SoftBody
 			set => btSoftBody_Link_setC2(Native, value);
 		}
 
-		public Vector3 C3
+		public BVector3 C3
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_Link_getC3(Native, out value);
 				return value;
 			}
@@ -1614,11 +1614,11 @@ namespace BulletSharp.SoftBody
 			{
 			}
 
-			public Vector3 Position
+			public BVector3 Position
 			{
 				get
 				{
-					Vector3 value;
+					BVector3 value;
 					btSoftBody_LJoint_Specs_getPosition(Native, out value);
 					return value;
 				}
@@ -1693,11 +1693,11 @@ namespace BulletSharp.SoftBody
 			set => btSoftBody_Node_setArea(Native, value);
 		}
 
-		public Vector3 Force
+		public BVector3 Force
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_Node_getF(Native, out value);
 				return value;
 			}
@@ -1733,44 +1733,44 @@ namespace BulletSharp.SoftBody
 			}
 		}
 
-		public Vector3 Normal
+		public BVector3 Normal
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_Node_getN(Native, out value);
 				return value;
 			}
 			set => btSoftBody_Node_setN(Native, ref value);
 		}
 
-		public Vector3 Position
+		public BVector3 Position
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_Node_getX(Native, out value);
 				return value;
 			}
 			set => btSoftBody_Node_setX(Native, ref value);
 		}
 
-		public Vector3 Q
+		public BVector3 Q
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_Node_getQ(Native, out value);
 				return value;
 			}
 			set => btSoftBody_Node_setQ(Native, ref value);
 		}
 
-		public Vector3 Velocity
+		public BVector3 Velocity
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_Node_getV(Native, out value);
 				return value;
 			}
@@ -1804,11 +1804,11 @@ namespace BulletSharp.SoftBody
 			}
 		}
 
-		public Vector3 Offset
+		public BVector3 Offset
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_Note_getOffset(Native, out value);
 				return value;
 			}
@@ -1841,22 +1841,22 @@ namespace BulletSharp.SoftBody
 			Native = native;
 		}
 
-		public Matrix Aqq
+		public BMatrix Aqq
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btSoftBody_Pose_getAqq(Native, out value);
 				return value;
 			}
 			set => btSoftBody_Pose_setAqq(Native, ref value);
 		}
 
-		public Vector3 Com
+		public BVector3 Com
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_Pose_getCom(Native, out value);
 				return value;
 			}
@@ -1887,22 +1887,22 @@ namespace BulletSharp.SoftBody
 			}
 		}
 
-		public Matrix Rotation
+		public BMatrix Rotation
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btSoftBody_Pose_getRot(Native, out value);
 				return value;
 			}
 			set => btSoftBody_Pose_setRot(Native, ref value);
 		}
 
-		public Matrix Scale
+		public BMatrix Scale
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btSoftBody_Pose_getScl(Native, out value);
 				return value;
 			}
@@ -1937,13 +1937,13 @@ namespace BulletSharp.SoftBody
 		{
 		}
 
-		public RayFromToCaster(Vector3 rayFrom, Vector3 rayTo, double mxt)
+		public RayFromToCaster(BVector3 rayFrom, BVector3 rayTo, double mxt)
 			: base(btSoftBody_RayFromToCaster_new(ref rayFrom, ref rayTo, mxt))
 		{
 		}
 
-		public static double RayFromToTriangle(Vector3 rayFrom, Vector3 rayTo,
-			Vector3 rayNormalizedDirection, Vector3 a, Vector3 b, Vector3 c, double maxt = double.MaxValue)
+		public static double RayFromToTriangle(BVector3 rayFrom, BVector3 rayTo,
+			BVector3 rayNormalizedDirection, BVector3 a, BVector3 b, BVector3 c, double maxt = double.MaxValue)
 		{
 			return btSoftBody_RayFromToCaster_rayFromToTriangle(ref rayFrom,
 				ref rayTo, ref rayNormalizedDirection, ref a, ref b, ref c, maxt);
@@ -1976,33 +1976,33 @@ namespace BulletSharp.SoftBody
 			set => btSoftBody_RayFromToCaster_setMint(Native, value);
 		}
 
-		public Vector3 RayFrom
+		public BVector3 RayFrom
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_RayFromToCaster_getRayFrom(Native, out value);
 				return value;
 			}
 			set => btSoftBody_RayFromToCaster_setRayFrom(Native, ref value);
 		}
 
-		public Vector3 RayNormalizedDirection
+		public BVector3 RayNormalizedDirection
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_RayFromToCaster_getRayNormalizedDirection(Native, out value);
 				return value;
 			}
 			set => btSoftBody_RayFromToCaster_setRayNormalizedDirection(Native, ref value);
 		}
 
-		public Vector3 RayTo
+		public BVector3 RayTo
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_RayFromToCaster_getRayTo(Native, out value);
 				return value;
 			}
@@ -2033,22 +2033,22 @@ namespace BulletSharp.SoftBody
 			Native = btSoftBody_RContact_new();
 		}
 
-		public Matrix C0
+		public BMatrix C0
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btSoftBody_RContact_getC0(Native, out value);
 				return value;
 			}
 			set => btSoftBody_RContact_setC0(Native, ref value);
 		}
 
-		public Vector3 C1
+		public BVector3 C1
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_RContact_getC1(Native, out value);
 				return value;
 			}
@@ -2143,11 +2143,11 @@ namespace BulletSharp.SoftBody
 			set => btSoftBody_sCti_setColObj(Native, (value != null) ? value.Native : IntPtr.Zero);
 		}
 
-		public Vector3 Normal
+		public BVector3 Normal
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_sCti_getNormal(Native, out value);
 				return value;
 			}
@@ -2261,22 +2261,22 @@ namespace BulletSharp.SoftBody
 			}
 		}
 
-		public Vector3 Normal
+		public BVector3 Normal
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_SContact_getNormal(Native, out value);
 				return value;
 			}
 			set => btSoftBody_SContact_setNormal(Native, ref value);
 		}
 
-		public Vector3 Weights
+		public BVector3 Weights
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_SContact_getWeights(Native, out value);
 				return value;
 			}
@@ -2457,7 +2457,7 @@ namespace BulletSharp.SoftBody
 			_collisionShape = new SoftBodyCollisionShape(btCollisionObject_getCollisionShape(Native));
 		}
 
-		public SoftBody(SoftBodyWorldInfo worldInfo, int nodeCount, Vector3[] positions, double[] masses)
+		public SoftBody(SoftBodyWorldInfo worldInfo, int nodeCount, BVector3[] positions, double[] masses)
 			: base(btSoftBody_new(worldInfo.Native, nodeCount, positions, masses))
 		{
 			_collisionShape = new SoftBodyCollisionShape(btCollisionObject_getCollisionShape(Native));
@@ -2471,37 +2471,37 @@ namespace BulletSharp.SoftBody
 			_worldInfo = worldInfo;
 		}
 
-		public void AddAeroForceToFace(Vector3 windVelocity, int faceIndex)
+		public void AddAeroForceToFace(BVector3 windVelocity, int faceIndex)
 		{
 			btSoftBody_addAeroForceToFace(Native, ref windVelocity, faceIndex);
 		}
 
-		public void AddAeroForceToNode(Vector3 windVelocity, int nodeIndex)
+		public void AddAeroForceToNode(BVector3 windVelocity, int nodeIndex)
 		{
 			btSoftBody_addAeroForceToNode(Native, ref windVelocity, nodeIndex);
 		}
 
-		public void AddForce(Vector3 force)
+		public void AddForce(BVector3 force)
 		{
 			btSoftBody_addForce(Native, ref force);
 		}
 
-		public void AddForce(Vector3 force, int node)
+		public void AddForce(BVector3 force, int node)
 		{
 			btSoftBody_addForce2(Native, ref force, node);
 		}
 
-		public void AddVelocity(Vector3 velocity)
+		public void AddVelocity(BVector3 velocity)
 		{
 			btSoftBody_addVelocity(Native, ref velocity);
 		}
 
-		public void AddVelocity(Vector3 velocity, int node)
+		public void AddVelocity(BVector3 velocity, int node)
 		{
 			btSoftBody_addVelocity2(Native, ref velocity, node);
 		}
 
-		public void AppendAnchor(int node, RigidBody body, Vector3 localPivot, bool disableCollisionBetweenLinkedBodies = false,
+		public void AppendAnchor(int node, RigidBody body, BVector3 localPivot, bool disableCollisionBetweenLinkedBodies = false,
 			double influence = 1.0f)
 		{
 			btSoftBody_appendAnchor(Native, node, body.Native, ref localPivot,
@@ -2597,32 +2597,32 @@ namespace BulletSharp.SoftBody
 			return new Material(btSoftBody_appendMaterial(Native));
 		}
 
-		public void AppendNode(Vector3 x, double m)
+		public void AppendNode(BVector3 x, double m)
 		{
 			btSoftBody_appendNode(Native, ref x, m);
 		}
 
-		public void AppendNote(string text, Vector3 o, Face feature)
+		public void AppendNote(string text, BVector3 o, Face feature)
 		{
 			btSoftBody_appendNote(Native, Marshal.StringToHGlobalAnsi(text), ref o, feature.Native);
 		}
 
-		public void AppendNote(string text, Vector3 o, Link feature)
+		public void AppendNote(string text, BVector3 o, Link feature)
 		{
 			btSoftBody_appendNote2(Native, Marshal.StringToHGlobalAnsi(text), ref o, feature.Native);
 		}
 
-		public void AppendNote(string text, Vector3 o, Node feature)
+		public void AppendNote(string text, BVector3 o, Node feature)
 		{
 			btSoftBody_appendNote3(Native, Marshal.StringToHGlobalAnsi(text), ref o, feature.Native);
 		}
 
-		public void AppendNote(string text, Vector3 o)
+		public void AppendNote(string text, BVector3 o)
 		{
 			btSoftBody_appendNote4(Native, Marshal.StringToHGlobalAnsi(text), ref o);
 		}
 
-		public void AppendNote(string text, Vector3 o, Vector4 c,
+		public void AppendNote(string text, BVector3 o, BVector4 c,
 			Node n0 = null, Node n1 = null, Node n2 = null, Node n3 = null)
 		{
 			btSoftBody_appendNote5(Native, Marshal.StringToHGlobalAnsi(text), ref o, ref c,
@@ -2652,7 +2652,7 @@ namespace BulletSharp.SoftBody
 			btSoftBody_applyForces(Native);
 		}
 
-		public bool CheckContact(CollisionObjectWrapper colObjWrap, Vector3 x, double margin,
+		public bool CheckContact(CollisionObjectWrapper colObjWrap, BVector3 x, double margin,
 			ContactInfo cti)
 		{
 			return btSoftBody_checkContact(Native, colObjWrap.Native, ref x, margin,
@@ -2685,16 +2685,16 @@ namespace BulletSharp.SoftBody
 			btSoftBody_clusterAImpulse(cluster.Native, impulse.Native);
 		}
 
-		public Vector3 ClusterCom(int cluster)
+		public BVector3 ClusterCom(int cluster)
 		{
-			Vector3 value;
+			BVector3 value;
 			btSoftBody_clusterCom(Native, cluster, out value);
 			return value;
 		}
 
-		public static Vector3 ClusterCom(Cluster cluster)
+		public static BVector3 ClusterCom(Cluster cluster)
 		{
-			Vector3 value;
+			BVector3 value;
 			btSoftBody_clusterCom2(cluster.Native, out value);
 			return value;
 		}
@@ -2704,39 +2704,39 @@ namespace BulletSharp.SoftBody
 			return btSoftBody_clusterCount(Native);
 		}
 
-		public static void ClusterDAImpulse(Cluster cluster, Vector3 impulse)
+		public static void ClusterDAImpulse(Cluster cluster, BVector3 impulse)
 		{
 			btSoftBody_clusterDAImpulse(cluster.Native, ref impulse);
 		}
 
-		public static void ClusterDCImpulse(Cluster cluster, Vector3 impulse)
+		public static void ClusterDCImpulse(Cluster cluster, BVector3 impulse)
 		{
 			btSoftBody_clusterDCImpulse(cluster.Native, ref impulse);
 		}
 
-		public static void ClusterDImpulse(Cluster cluster, Vector3 rpos, Vector3 impulse)
+		public static void ClusterDImpulse(Cluster cluster, BVector3 rpos, BVector3 impulse)
 		{
 			btSoftBody_clusterDImpulse(cluster.Native, ref rpos, ref impulse);
 		}
 
-		public static void ClusterImpulse(Cluster cluster, Vector3 rpos, Impulse impulse)
+		public static void ClusterImpulse(Cluster cluster, BVector3 rpos, Impulse impulse)
 		{
 			btSoftBody_clusterImpulse(cluster.Native, ref rpos, impulse.Native);
 		}
 
-		public static void ClusterVAImpulse(Cluster cluster, Vector3 impulse)
+		public static void ClusterVAImpulse(Cluster cluster, BVector3 impulse)
 		{
 			btSoftBody_clusterVAImpulse(cluster.Native, ref impulse);
 		}
 
-		public static Vector3 ClusterVelocity(Cluster cluster, Vector3 rpos)
+		public static BVector3 ClusterVelocity(Cluster cluster, BVector3 rpos)
 		{
-			Vector3 value;
+			BVector3 value;
 			btSoftBody_clusterVelocity(cluster.Native, ref rpos, out value);
 			return value;
 		}
 
-		public static void ClusterVImpulse(Cluster cluster, Vector3 rpos, Vector3 impulse)
+		public static void ClusterVImpulse(Cluster cluster, BVector3 rpos, BVector3 impulse)
 		{
 			btSoftBody_clusterVImpulse(cluster.Native, ref rpos, ref impulse);
 		}
@@ -2766,9 +2766,9 @@ namespace BulletSharp.SoftBody
 			btSoftBody_defaultCollisionHandler2(Native, psb.Native);
 		}
 
-		public Vector3 EvaluateCom()
+		public BVector3 EvaluateCom()
 		{
-			Vector3 value;
+			BVector3 value;
 			btSoftBody_evaluateCom(Native, out value);
 			return value;
 		}
@@ -2788,7 +2788,7 @@ namespace BulletSharp.SoftBody
 			return btSoftBody_generateClusters2(Native, k, maxIterations);
 		}
 
-		public void GetAabb(out Vector3 aabbMin, out Vector3 aabbMax)
+		public void GetAabb(out BVector3 aabbMin, out BVector3 aabbMax)
 		{
 			btSoftBody_getAabb(Native, out aabbMin, out aabbMax);
 		}
@@ -2873,7 +2873,7 @@ namespace BulletSharp.SoftBody
 			btSoftBody_randomizeConstraints(Native);
 		}
 
-		public bool RayTestRef(ref Vector3 rayFrom, ref Vector3 rayTo, SoftBodyRayCast results)
+		public bool RayTestRef(ref BVector3 rayFrom, ref BVector3 rayTo, SoftBodyRayCast results)
 		{
 			IntPtr rayCast = btSoftBody_sRayCast_new();
 			bool ret = btSoftBody_rayTest(Native, ref rayFrom, ref rayTo, rayCast);
@@ -2885,7 +2885,7 @@ namespace BulletSharp.SoftBody
 			return ret;
 		}
 
-		public bool RayTest(Vector3 rayFrom, Vector3 rayTo, SoftBodyRayCast results)
+		public bool RayTest(BVector3 rayFrom, BVector3 rayTo, SoftBodyRayCast results)
 		{
 			IntPtr rayCast = btSoftBody_sRayCast_new();
 			bool ret = btSoftBody_rayTest(Native, ref rayFrom, ref rayTo, rayCast);
@@ -2897,7 +2897,7 @@ namespace BulletSharp.SoftBody
 			return ret;
 		}
 
-		public int RayTest(Vector3 rayFrom, Vector3 rayTo, ref double mint, out FeatureType feature,
+		public int RayTest(BVector3 rayFrom, BVector3 rayTo, ref double mint, out FeatureType feature,
 			out int index, bool countOnly)
 		{
 			return btSoftBody_rayTest2(Native, ref rayFrom, ref rayTo, ref mint,
@@ -2924,12 +2924,12 @@ namespace BulletSharp.SoftBody
 			btSoftBody_resetLinkRestLengths(Native);
 		}
 
-		public void Rotate(Quaternion rot)
+		public void Rotate(BQuaternion rot)
 		{
 			btSoftBody_rotate(Native, ref rot);
 		}
 
-		public void Scale(Vector3 scl)
+		public void Scale(BVector3 scl)
 		{
 			btSoftBody_scale(Native, ref scl);
 		}
@@ -2959,7 +2959,7 @@ namespace BulletSharp.SoftBody
 			btSoftBody_setTotalMass(Native, mass, fromFaces);
 		}
 
-		public void SetVelocity(Vector3 velocity)
+		public void SetVelocity(BVector3 velocity)
 		{
 			btSoftBody_setVelocity(Native, ref velocity);
 		}
@@ -2999,19 +2999,19 @@ namespace BulletSharp.SoftBody
 			btSoftBody_staticSolve(Native, iterations);
 		}
 
-		public void Transform(Matrix trs)
+		public void Transform(BMatrix trs)
 		{
 			btSoftBody_transform(Native, ref trs);
 		}
 
-		public void Translate(Vector3 trs)
+		public void Translate(BVector3 trs)
 		{
 			btSoftBody_translate(Native, ref trs);
 		}
 
 		public void Translate(double x, double y, double z)
 		{
-			Vector3 trs = new Vector3(x, y, z);
+			BVector3 trs = new BVector3(x, y, z);
 			btSoftBody_translate(Native, ref trs);
 		}
 		/*
@@ -3073,111 +3073,111 @@ namespace BulletSharp.SoftBody
 			return btSoftBody_getFaceVertexData(Native, vertices);
 		}
 
-		public int GetFaceVertexData(ref Vector3[] vertices)
+		public int GetFaceVertexData(ref BVector3[] vertices)
 		{
 			int vertexCount = Faces.Count * 3;
 
 			if (vertices == null || vertices.Length != vertexCount)
 			{
-				vertices = new Vector3[vertexCount];
+				vertices = new BVector3[vertexCount];
 			}
 
 			return btSoftBody_getFaceVertexData(Native, vertices);
 		}
 
-		public int GetFaceVertexNormalData(ref Vector3[] vertices)
+		public int GetFaceVertexNormalData(ref BVector3[] vertices)
 		{
 			int vertexNormalCount = Faces.Count * 3 * 2;
 
 			if (vertices == null || vertices.Length != vertexNormalCount)
 			{
-				vertices = new Vector3[vertexNormalCount];
+				vertices = new BVector3[vertexNormalCount];
 			}
 
 			return btSoftBody_getFaceVertexNormalData(Native, vertices);
 		}
 
-		public int GetFaceVertexNormalData(ref Vector3[] vertices, ref Vector3[] normals)
+		public int GetFaceVertexNormalData(ref BVector3[] vertices, ref BVector3[] normals)
 		{
 			int vertexCount = Faces.Count * 3;
 
 			if (vertices == null || vertices.Length != vertexCount)
 			{
-				vertices = new Vector3[vertexCount];
+				vertices = new BVector3[vertexCount];
 			}
 			if (normals == null || normals.Length != vertexCount)
 			{
-				normals = new Vector3[vertexCount];
+				normals = new BVector3[vertexCount];
 			}
 
 			return btSoftBody_getFaceVertexNormalData2(Native, vertices, normals);
 		}
 
-		public int GetLinkVertexData(ref Vector3[] vertices)
+		public int GetLinkVertexData(ref BVector3[] vertices)
 		{
 			int vertexCount = Links.Count * 2;
 
 			if (vertices == null || vertices.Length != vertexCount)
 			{
-				vertices = new Vector3[vertexCount];
+				vertices = new BVector3[vertexCount];
 			}
 
 			return btSoftBody_getLinkVertexData(Native, vertices);
 		}
 
-		public int GetLinkVertexNormalData(ref Vector3[] vertices)
+		public int GetLinkVertexNormalData(ref BVector3[] vertices)
 		{
 			int vertexNormalCount = Links.Count * 2 * 2;
 
 			if (vertices == null || vertices.Length != vertexNormalCount)
 			{
-				vertices = new Vector3[vertexNormalCount];
+				vertices = new BVector3[vertexNormalCount];
 			}
 
 			return btSoftBody_getLinkVertexNormalData(Native, vertices);
 		}
 
-		int GetTetraVertexData(ref Vector3[] vertices)
+		int GetTetraVertexData(ref BVector3[] vertices)
 		{
 			int vertexCount = Tetras.Count * 12;
 
 			if (vertices == null || vertices.Length != vertexCount)
 			{
-				vertices = new Vector3[vertexCount];
+				vertices = new BVector3[vertexCount];
 			}
 
 			return btSoftBody_getTetraVertexData(Native, vertices);
 		}
 
-		int GetTetraVertexNormalData(ref Vector3[] vertices)
+		int GetTetraVertexNormalData(ref BVector3[] vertices)
 		{
 			int vertexNormalCount = Tetras.Count * 12 * 2;
 
 			if (vertices == null || vertices.Length != vertexNormalCount)
 			{
-				vertices = new Vector3[vertexNormalCount];
+				vertices = new BVector3[vertexNormalCount];
 			}
 
 			return btSoftBody_getTetraVertexNormalData(Native, vertices);
 		}
 
-		int GetTetraVertexNormalData(ref Vector3[] vertices, ref Vector3[] normals)
+		int GetTetraVertexNormalData(ref BVector3[] vertices, ref BVector3[] normals)
 		{
 			int vertexCount = Tetras.Count * 12;
 
 			if (vertices == null || vertices.Length != vertexCount)
 			{
-				vertices = new Vector3[vertexCount];
+				vertices = new BVector3[vertexCount];
 			}
 			if (normals == null || normals.Length != vertexCount)
 			{
-				normals = new Vector3[vertexCount];
+				normals = new BVector3[vertexCount];
 			}
 
 			return btSoftBody_getTetraVertexNormalData2(Native, vertices, normals);
 		}
 
-		public int GetVertexNormalData(ref Vector3[] data)
+		public int GetVertexNormalData(ref BVector3[] data)
 		{
 			if (Faces.Count != 0)
 			{
@@ -3190,7 +3190,7 @@ namespace BulletSharp.SoftBody
 			return GetLinkVertexNormalData(ref data);
 		}
 
-		public int GetVertexNormalData(ref Vector3[] vertices, ref Vector3[] normals)
+		public int GetVertexNormalData(ref BVector3[] vertices, ref BVector3[] normals)
 		{
 			if (Faces.Count != 0)
 			{
@@ -3300,11 +3300,11 @@ namespace BulletSharp.SoftBody
 			}
 		}
 
-		public Matrix InitialWorldTransform
+		public BMatrix InitialWorldTransform
 		{
 			get
 			{
-				Matrix value;
+				BMatrix value;
 				btSoftBody_getInitialWorldTransform(Native, out value);
 				return value;
 			}
@@ -3473,11 +3473,11 @@ namespace BulletSharp.SoftBody
 			set { btSoftBody_setUserIndexMapping(_native, value._native); }
 		}
 		*/
-		public Vector3 WindVelocity
+		public BVector3 WindVelocity
 		{
 			get
 			{
-				Vector3 value;
+				BVector3 value;
 				btSoftBody_getWindVelocity(Native, out value);
 				return value;
 			}

@@ -521,4 +521,10 @@
   }
 };
 
+%extend FbxFileTexture {
+  static FbxFileTexture *Cast(FbxObject *base) {
+    return FbxCast<FbxFileTexture>(base);
+  }
+};
+
 //-----------------------------------------------------------------------

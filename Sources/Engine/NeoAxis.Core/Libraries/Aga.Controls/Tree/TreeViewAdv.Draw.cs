@@ -3,9 +3,9 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using Aga.Controls.Tree.NodeControls;
+using Internal.Aga.Controls.Tree.NodeControls;
 
-namespace Aga.Controls.Tree
+namespace Internal.Aga.Controls.Tree
 {
 	public partial class TreeViewAdv
 	{
@@ -70,8 +70,8 @@ namespace Aga.Controls.Tree
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            BeginPerformanceCount();
-			PerformanceAnalyzer.Start("OnPaint");
+            //BeginPerformanceCount();
+			//PerformanceAnalyzer.Start("OnPaint");
 
             DrawContext context = new DrawContext();
             context.Graphics = e.Graphics;
@@ -117,14 +117,27 @@ namespace Aga.Controls.Tree
             if (DragMode && _dragBitmap != null)
                 e.Graphics.DrawImage(_dragBitmap, PointToClient(MousePosition));
 
-			PerformanceAnalyzer.Finish("OnPaint");
-			EndPerformanceCount(e);
+			//PerformanceAnalyzer.Finish("OnPaint");
+			//EndPerformanceCount(e);
         }
+
+		//!!!!betauser
+		public delegate void DrawRowEventDelegate( TreeViewAdv treeView, TreeNodeAdv node, ref bool skip );
+		public event DrawRowEventDelegate DrawRowEvent;
 
 		private void DrawRow(PaintEventArgs e, ref DrawContext context, int row, Rectangle rowRect)
 		{
 			TreeNodeAdv node = RowMap[row];
 			if (node.IsHidden) return;
+
+			//!!!!betauser
+			{
+				var skip = false;
+				DrawRowEvent?.Invoke( this, node, ref skip );
+				if( skip )
+					return;
+			}
+
 			context.DrawSelection = DrawSelectionMode.None;
 			context.CurrentEditorOwner = CurrentEditorOwner;
 			if (DragMode)
@@ -186,7 +199,7 @@ namespace Aga.Controls.Tree
 
 		private void DrawColumnHeaders(Graphics gr)
 		{
-			PerformanceAnalyzer.Start("DrawColumnHeaders");
+			//PerformanceAnalyzer.Start("DrawColumnHeaders");
 			ReorderColumnState reorder = Input as ReorderColumnState;
 			int x = 0;
 			if (Columns.Count > 0)
@@ -219,7 +232,7 @@ namespace Aga.Controls.Tree
 					TreeColumn.DrawDropMark(gr, new Rectangle(x, 0, 0, ColumnHeaderHeight));
 				gr.DrawImage(reorder.GhostImage, new Point(reorder.Location.X +  + reorder.DragOffset, reorder.Location.Y));
 			}
-			PerformanceAnalyzer.Finish("DrawColumnHeaders");
+			//PerformanceAnalyzer.Finish("DrawColumnHeaders");
 		}
 
 		public void DrawNode(TreeNodeAdv node, DrawContext context)
@@ -291,30 +304,30 @@ namespace Aga.Controls.Tree
 			gr.ResetClip();
 		}
 
-		#region Performance
+		//#region Performance
 
-		private double _totalTime;
-		private int _paintCount;
+		//private double _totalTime;
+		//private int _paintCount;
 
-		[Conditional("PERF_TEST")]
-		private void BeginPerformanceCount()
-		{
-			_paintCount++;
-			TimeCounter.Start();
-		}
+		//[Conditional("PERF_TEST")]
+		//private void BeginPerformanceCount()
+		//{
+		//	_paintCount++;
+		//	TimeCounter.Start();
+		//}
 
-		[Conditional("PERF_TEST")]
-		private void EndPerformanceCount(PaintEventArgs e)
-		{
-			double time = TimeCounter.Finish();
-			_totalTime += time;
-			string debugText = string.Format("FPS {0:0.0}; Avg. FPS {1:0.0}",
-				1 / time, 1 / (_totalTime / _paintCount));
-			e.Graphics.FillRectangle(Brushes.White, new Rectangle(DisplayRectangle.Width - 150, DisplayRectangle.Height - 20, 150, 20));
-			e.Graphics.DrawString(debugText, Control.DefaultFont, Brushes.Gray,
-				new PointF(DisplayRectangle.Width - 150, DisplayRectangle.Height - 20));
-		}
-		#endregion
+		//[Conditional("PERF_TEST")]
+		//private void EndPerformanceCount(PaintEventArgs e)
+		//{
+		//	double time = TimeCounter.Finish();
+		//	_totalTime += time;
+		//	string debugText = string.Format("FPS {0:0.0}; Avg. FPS {1:0.0}",
+		//		1 / time, 1 / (_totalTime / _paintCount));
+		//	e.Graphics.FillRectangle(Brushes.White, new Rectangle(DisplayRectangle.Width - 150, DisplayRectangle.Height - 20, 150, 20));
+		//	e.Graphics.DrawString(debugText, Control.DefaultFont, Brushes.Gray,
+		//		new PointF(DisplayRectangle.Width - 150, DisplayRectangle.Height - 20));
+		//}
+		//#endregion
 
 	}
 }

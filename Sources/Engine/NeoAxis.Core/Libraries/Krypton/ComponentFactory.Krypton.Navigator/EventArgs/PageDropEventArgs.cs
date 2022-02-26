@@ -12,7 +12,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 
-namespace ComponentFactory.Krypton.Navigator
+namespace Internal.ComponentFactory.Krypton.Navigator
 {
 	/// <summary>
     /// Details for an event that indicates a page is being dropped.

@@ -26,11 +26,12 @@
 */
 
 using System.Diagnostics;
-using tainicom.Aether.Physics2D.Common;
-using tainicom.Aether.Physics2D.Common.Maths;
-using Microsoft.Xna.Framework;
+using Internal.tainicom.Aether.Physics2D.Common;
+#if XNAAPI
+using Vector2 = Microsoft.Xna.Framework.Vector2;
+#endif
 
-namespace tainicom.Aether.Physics2D.Dynamics.Joints
+namespace Internal.tainicom.Aether.Physics2D.Dynamics.Joints
 {
     // Gear Joint:
     // C0 = (coordinate1 + ratio * coordinate2)_initial

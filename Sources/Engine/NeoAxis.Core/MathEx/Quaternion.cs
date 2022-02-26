@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
@@ -21,6 +21,7 @@ namespace NeoAxis
 		public double W;
 
 		public static readonly Quaternion Identity = new Quaternion( 0.0, 0.0, 0.0, 1.0 );
+		public static readonly Quaternion Zero = new Quaternion( 0.0, 0.0, 0.0, 0.0 );
 
 		public Quaternion( Vector3 v, double w )
 		{
@@ -330,7 +331,7 @@ namespace NeoAxis
 			{
 				if( index < 0 || index > 3 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( double* v = &this.X )
+				fixed( double* v = &this.X )
 				{
 					return v[ index ];
 				}
@@ -339,7 +340,7 @@ namespace NeoAxis
 			{
 				if( index < 0 || index > 3 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( double* v = &this.X )
+				fixed( double* v = &this.X )
 				{
 					v[ index ] = value;
 				}
@@ -738,6 +739,16 @@ namespace NeoAxis
 		{
 			Matrix3.FromRotateByZ( angle, out var mat );
 			mat.ToQuaternion( out result );
+		}
+
+		public bool Equals( ref Quaternion v )
+		{
+			return X == v.X && Y == v.Y && Z == v.Z && W == v.W;
+		}
+
+		public static bool Equals( ref Quaternion v1, ref Quaternion v2 )
+		{
+			return v1.X == v2.X && v1.Y == v2.Y && v1.Z == v2.Z && v1.W == v2.W;
 		}
 	}
 }

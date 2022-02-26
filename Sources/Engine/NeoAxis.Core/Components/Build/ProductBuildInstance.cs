@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -7,7 +7,7 @@ namespace NeoAxis.Editor
 {
 	public class ProductBuildInstance
 	{
-		Component_Product configuration;
+		Product configuration;
 		string destinationFolder;
 		bool run;
 		volatile StateEnum state = StateEnum.Building;
@@ -16,6 +16,8 @@ namespace NeoAxis.Editor
 
 		Task buildTask;
 		volatile bool requestCancel;
+
+		bool buildFunctionFinished;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -29,7 +31,7 @@ namespace NeoAxis.Editor
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		public Component_Product Configuration
+		public Product Configuration
 		{
 			get { return configuration; }
 		}
@@ -87,23 +89,34 @@ namespace NeoAxis.Editor
 			set { requestCancel = value; }
 		}
 
+		public bool BuildFunctionFinished
+		{
+			get { return buildFunctionFinished; }
+		}
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		static void BuildFunction( object obj )
 		{
 			var instance = (ProductBuildInstance)obj;
 			instance.configuration.BuildFunction( instance );
+			instance.buildFunctionFinished = true;
 		}
 
-		public static ProductBuildInstance Start( Component_Product configuration, string destinationFolder, bool run )
+		public static ProductBuildInstance Start( Product configuration, string destinationFolder, bool run )
 		{
 			var instance = new ProductBuildInstance();
 			instance.configuration = configuration;
 			instance.destinationFolder = destinationFolder;
 			instance.run = run;
 
-			instance.buildTask = new Task( BuildFunction, instance );
-			instance.buildTask.Start();
+			if( configuration.CanBuildFromThread )
+			{
+				instance.buildTask = new Task( BuildFunction, instance );
+				instance.buildTask.Start();
+			}
+			else
+				BuildFunction( instance );
 
 			return instance;
 

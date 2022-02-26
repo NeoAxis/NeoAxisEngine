@@ -234,9 +234,6 @@
     <ClCompile Include="NeoAxis\OctreeContainer.cpp">
       <Filter>NeoAxis</Filter>
     </ClCompile>
-    <ClCompile Include="NeoAxis\SoftwareOcclusionBuffer.cpp">
-      <Filter>NeoAxis</Filter>
-    </ClCompile>
     <ClCompile Include="NeoAxis\StringUtils.cpp">
       <Filter>NeoAxis</Filter>
     </ClCompile>
@@ -783,9 +780,6 @@
       <Filter>NeoAxis</Filter>
     </ClInclude>
     <ClInclude Include="NeoAxis\OctreeContainer.h">
-      <Filter>NeoAxis</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\SoftwareOcclusionBuffer.h">
       <Filter>NeoAxis</Filter>
     </ClInclude>
     <ClInclude Include="NeoAxis\StringUtils.h">

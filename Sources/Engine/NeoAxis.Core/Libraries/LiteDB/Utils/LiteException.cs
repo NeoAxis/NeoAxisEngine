@@ -1,11 +1,12 @@
-﻿using LiteDB.Engine;
+#if !NO_LITE_DB
+using Internal.LiteDB.Engine;
 using System;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using static LiteDB.Constants;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     /// <summary>
     /// The main exception for LiteDB
@@ -309,3 +310,4 @@ namespace LiteDB
         #endregion
     }
 }
+#endif

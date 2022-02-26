@@ -41,7 +41,7 @@ using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace Net3dBool
+namespace Internal.Net3dBool
 {
     /// <summary>
     /// Class representing a 3D solid.

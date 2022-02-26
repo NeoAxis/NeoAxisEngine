@@ -1,7 +1,8 @@
-﻿using System;
-using static LiteDB.Constants;
+#if !NO_LITE_DB
+using System;
+using static Internal.LiteDB.Constants;
 
-namespace LiteDB
+namespace Internal.LiteDB
 {
     /// <summary>
     /// Indicate that property will not be persist in Bson serialization
@@ -10,3 +11,4 @@ namespace LiteDB
     {
     }
 }
+#endif

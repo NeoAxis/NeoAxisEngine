@@ -1,4 +1,4 @@
-// Copyright (C) 2021 NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,8 +12,8 @@ namespace NeoAxis
 	/// </summary>
 	public sealed class SoundVirtualChannel
 	{
-		internal Component_Scene attachedToScene;
-		internal Sound sound;
+		internal Scene attachedToScene;
+		internal SoundData sound;
 		internal SoundChannelGroup group;
 		internal Vector3 position;
 		internal Vector3 velocity;
@@ -71,7 +71,7 @@ namespace NeoAxis
 
 		internal SoundVirtualChannel() { }
 
-		internal void SoundPlayInit( Component_Scene attachedToScene, Sound sound, SoundChannelGroup group )
+		internal void SoundPlayInit( Scene attachedToScene, SoundData sound, SoundChannelGroup group )
 		{
 			this.attachedToScene = attachedToScene;
 			this.sound = sound;
@@ -116,12 +116,12 @@ namespace NeoAxis
 			stopped = true;
 		}
 
-		public Component_Scene AttachedToScene
+		public Scene AttachedToScene
 		{
 			get { return attachedToScene; }
 		}
 
-		public Sound Sound
+		public SoundData Sound
 		{
 			get { return sound; }
 		}
@@ -144,7 +144,7 @@ namespace NeoAxis
 				if( pause == value )
 					return;
 				pause = value;
-				SoundWorld._Instance.OnVirtualChannelUpdatePause( this );
+				SoundWorld.Internal_Instance.OnVirtualChannelUpdatePause( this );
 			}
 		}
 
