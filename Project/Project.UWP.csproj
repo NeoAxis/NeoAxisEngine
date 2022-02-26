@@ -78,7 +78,8 @@
     <Compile Include="Caches\CSharpScripts\CSharpScripts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Assets\Base\WindowApp\WindowAppMainForm.cs" />
-    <Compile Include="Assets\_____TestCompileUpdate\MyComponent.cs" />
+    <Compile Include="Assets\Samples\Spaceship Game\SpaceshipGameGUI.cs" />
+    <Compile Include="Assets\Samples\Platform Game\PlatformGameGUI.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
@@ -107,6 +108,9 @@
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>if EXIST "$(ProjectDir)Project.csproj" ( if EXIST "$(ProjectDir)Binaries\NeoAxis.Editor.exe" ( "$(ProjectDir)Binaries\NeoAxis.Editor.exe" -platformProjectPatch "$(ProjectDir)Project.UWP.csproj" -baseProject "$(ProjectDir)Project.csproj" ) )</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
