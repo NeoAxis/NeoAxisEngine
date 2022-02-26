@@ -63,7 +63,6 @@
     <Compile Include="Caches\CSharpScripts\CSharpScripts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Assets\Base\WindowApp\WindowAppMainForm.cs" />
-    <Compile Include="Assets\_____TestCompileUpdate\MyComponent.cs" />
     <Compile Include="Assets\Samples\Spaceship Game\SpaceshipGameGUI.cs" />
     <Compile Include="Assets\Samples\Platform Game\PlatformGameGUI.cs" />
   </ItemGroup>
