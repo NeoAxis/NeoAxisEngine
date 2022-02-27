@@ -79399,7 +79399,7 @@ namespace NeoAxis.Editor
 
 						if( __0x9060.Installed )
 						{
-							var __0x9067 = new KryptonContextMenuItem( __0x9260( "Delete (Save Archive)" ), EditorResourcesCache.Delete, delegate ( object __0x9318, EventArgs __0x9319 )
+							var __0x9067 = new KryptonContextMenuItem( __0x9260( "Delete (Save archive)" ), EditorResourcesCache.Delete, delegate ( object __0x9318, EventArgs __0x9319 )
 							{
 								__0x9276( __0x9058.packageId, false );
 							} );
@@ -80219,8 +80219,8 @@ namespace NeoAxis.Editor
 				
 			}
 
-			if( __0x9143.Count == 0 )
-				return false;
+			
+			
 
 			var __0x9148 = string.Format( __0x9260( "Uninstall {0}?\n\n{1} files will deleted." ), __0x9142.Title, __0x9143.Count );
 			if( EditorMessageBox.ShowQuestion( __0x9148, EMessageBoxButtons.YesNo ) != EDialogResult.Yes )

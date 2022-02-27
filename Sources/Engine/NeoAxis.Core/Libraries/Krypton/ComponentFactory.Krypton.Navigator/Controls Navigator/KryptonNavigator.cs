@@ -3310,8 +3310,13 @@ namespace Internal.ComponentFactory.Krypton.Navigator
                                                     {
                                                         // We need to call the protected select method in order to have 
                                                         // it perform an internal select of the first/last ordered item
-                                                        _containerSelect.Invoke(next, new object[] { true, forward });
+                                                        //!!!!betauser
+                                                        try
+                                                        {
+                                                            _containerSelect.Invoke( next, new object[] { true, forward } );
                                                         return true;
+                                                    }
+                                                        catch { }
                                                     }
                                                 }
                                                 else

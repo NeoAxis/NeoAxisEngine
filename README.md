@@ -22,7 +22,7 @@
 <ul>
 <li>Windows 7+ x64</li>
 <li>Android 8.0+ ARM32 and ARM64</li>
-<li>UWP x64 (Universal Windows, Xbox, Windows Store)</li>
+<li>UWP x64 (Universal Windows, Xbox)</li>
 <li>iOS and other coming soon.</li>
 </ul>
 
