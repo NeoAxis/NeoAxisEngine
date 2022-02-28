@@ -55468,6 +55468,8 @@ namespace NeoAxis.Editor
 				return;
 
 			EditorLocalization.TranslateForm( "StartPageWindow", this );
+			EditorLocalization.TranslateForm( "StartPageWindow", __0x5769 );
+			EditorLocalization.TranslateForm( "StartPageWindow", __0x5773 );
 
 			__0x5758.Start();
 

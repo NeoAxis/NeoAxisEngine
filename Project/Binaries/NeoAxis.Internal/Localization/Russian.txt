@@ -51,6 +51,7 @@ Ribbon.Tab|Terrain Editor|Редактор ландшафтов
 Ribbon.Tab|Tools|Инструменты
 Ribbon.Tab|UI Editor|UI редактор
 Ribbon.Tab|Windows|Окна
+Ribbon.Tab|Modeling|Моделирование
 
 Backstage|About|О программе
 Backstage|Build|Построить
@@ -302,6 +303,8 @@ ContentBrowser|The name is not specified.|Имя не указано.
 ContentBrowser|Invalid file path.|Некорректный файловый путь.
 ContentBrowser|A file or folder with same name already exists.|Файл или папка с таким именем уже существует.
 ContentBrowser|Same name.|То же имя.
+ContentBrowser|Export to File|Экспорт в файл
+ContentBrowser|Separate Settings|Настройки отдельно
 
 ContentBrowser.SearchForm|Close|Закрыть
 ContentBrowser.SearchForm|Filter by name|Фильтр по имени
@@ -391,6 +394,7 @@ ContextMenu|Detach from Another Object|Открепить от другого объекта
 ContextMenu|Image Compression|Сжатие изображения
 ContextMenu|Process Environment Cubemap|Обработка кубемапы окружения
 ContextMenu|Move && Rotate|Двигать и вращать
+ContextMenu|Export to File|Экспорт в файл
 
 NewObjectWindow|New Object|Новый объект
 NewObjectWindow|Close|Закрыть
@@ -522,6 +526,14 @@ ContentBrowser.Group|Favorites|Избранное
 ContentBrowser.Group|All types|Все типы
 ContentBrowser.Group|Assets|Активы
 ContentBrowser.Group|Volumes|Объёмы
+ContentBrowser.Group|Added by default|Добавленные по умолчанию
+ContentBrowser.Group|Containers|Контейнеры
+ContentBrowser.Group|More|Больше
+ContentBrowser.Group|Product|Продукт
+ContentBrowser.Group|Shader scripting|Скриптование шейдеров
+ContentBrowser.Group|Special|Специальные
+ContentBrowser.Group|Vegetation|Растительность
+ContentBrowser.Group|Vehicles|Транспортные средства
 
 EditorAction.Description|Adds a collision body to selected objects.|Добавляет физическое тело к выделенным объектам.
 EditorAction.Description|Add Paint Layer\nAdds a masked paint layer.|Добавить слой краски\nДобавляет красящий слой.
@@ -924,6 +936,7 @@ ProjectSettings.Property|Window Size|Размер окна
 ProjectSettings.Property|Window State|Состояние окна
 ProjectSettings.Property|Show Centering Borders|Показать центрирующие границы
 ProjectSettings.Property|Custom Windows Style (Restart to apply changes)|Собственный стиль окон (Нужно перезагрузить приложение)
+ProjectSettings.Property|Splash Screen At Startup|Заставка при запуске
 
 ProjectSettings.Description|The language of the editor. Restart the editor to apply changes.|Язык редактора. Перезапустите редактор, чтобы применить изменения.
 
@@ -986,6 +999,8 @@ StartPageWindow|Minimize the Ribbon|Минимизировать ленту
 StartPageWindow|New resource|Новый ресурс
 StartPageWindow|Show Quick Access Toolbar below the Ribbon|Показывать панель быстрого доступа под лентой
 StartPageWindow|Get Content|Контент
+StartPageWindow|Featured store items|Рекомендуемые товары магазина
+StartPageWindow|Learn More|Узнать больше
 
 StoresWindow|Filter|Фильтр
 StoresWindow|Options|Настройки
