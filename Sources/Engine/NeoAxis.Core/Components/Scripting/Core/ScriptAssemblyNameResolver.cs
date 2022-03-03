@@ -58,9 +58,18 @@ namespace NeoAxis
 			{
 				foreach( var extension in extensions )
 				{
+					{
 					string file = Path.Combine( directory, name + extension );
 					if( File.Exists( file ) )
 						return file;
+				}
+
+					//replace '-' to '.'
+					{
+						string file = Path.Combine( directory, name.Replace( '-', '.' ) + extension );
+						if( File.Exists( file ) )
+							return file;
+					}
 				}
 			}
 
