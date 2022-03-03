@@ -82,6 +82,9 @@ namespace NeoAxis
 		/// </summary>
 		[DefaultValue( "" )]
 		[Category( "Common" )]
+#if !DEPLOY
+		[Editor( typeof( HCItemTextBoxDropMultiline ), typeof( object ) )]
+#endif
 		public Reference<string> Text
 		{
 			get { if( _text.BeginGet() ) Text = _text.Get( this ); return _text.value; }
