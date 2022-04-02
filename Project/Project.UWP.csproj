@@ -80,9 +80,6 @@
     <Compile Include="Assets\Base\WindowApp\WindowAppMainForm.cs" />
     <Compile Include="Assets\Samples\Spaceship Game\SpaceshipGameGUI.cs" />
     <Compile Include="Assets\Samples\Platform Game\PlatformGameGUI.cs" />
-    <Compile Include="Assets\Base\Scripts\Networking\WorldClientManager.cs" />
-    <Compile Include="Assets\Base\Scripts\Networking\WorldNetworkCommon.cs" />
-    <Compile Include="Assets\Base\Scripts\Networking\WorldServerManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
