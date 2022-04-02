@@ -152,7 +152,7 @@ namespace Internal//NeoAxis
 						Log.Fatal( "PlatformFunctionality: Get: Instance must be already initialized." );
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
 						Log.Fatal( "PlatformFunctionality: Get: Instance must be already initialized." );
-					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.MacOS )
+					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 					{
 						Log.Fatal( "MacOSXInputDeviceManager impl." );
 						//instance = new MacOSXPlatformFunctionality();

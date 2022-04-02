@@ -83,7 +83,7 @@ namespace NeoAxis
 
 							var supportShared =
 								SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows ||
-								SystemSettings.CurrentPlatform == SystemSettings.Platform.MacOS;
+								SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS;
 							var connectionType = supportShared ? "shared" : "direct";
 
 							var connectionString = $"Filename={fileName};Connection={connectionType};Upgrade=true";

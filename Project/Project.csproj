@@ -48,6 +48,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Base\Scripts\Networking\WorldClientManager.cs" />
+    <Compile Include="Assets\Base\Scripts\Networking\WorldNetworkCommon.cs" />
+    <Compile Include="Assets\Base\Scripts\Networking\WorldServerManager.cs" />
     <Compile Include="Assets\Base\Scripts\SimulationApp.cs" />
     <Compile Include="Assets\Base\UI\Screens\MainMenuScreen.cs" />
     <Compile Include="Assets\Base\UI\Screens\MenuWindow.cs" />

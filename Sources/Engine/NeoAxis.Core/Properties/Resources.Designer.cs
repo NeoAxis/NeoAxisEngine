@@ -2670,6 +2670,26 @@ namespace NeoAxis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap macOS_16 {
+            get {
+                object obj = ResourceManager.GetObject("macOS_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap macOS_32 {
+            get {
+                object obj = ResourceManager.GetObject("macOS_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap Material_16 {
             get {
                 object obj = ResourceManager.GetObject("Material_16", resourceCulture);

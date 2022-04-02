@@ -32,7 +32,42 @@ namespace NeoAxis
 		//!!!!serialization
 		ESet<Flow> sleepingFlows = new ESet<Flow>();
 
-		//
+		internal NetworkInterface networkInterface;
+
+		/////////////////////////////////////////
+
+		public class NetworkInterface
+		{
+			public delegate void CreateComponentDelegate( NetworkInterface sender, Component component );
+			public event CreateComponentDelegate CreateComponent;
+			public void PerformCreateComponent( Component component )
+			{
+				CreateComponent?.Invoke( this, component );
+			}
+
+			public delegate void RemoveFromParentDelegate( NetworkInterface sender, Component component, bool queued );
+			public event RemoveFromParentDelegate RemoveFromParent;
+			public void PerformRemoveFromParent( Component component, bool queued )
+			{
+				RemoveFromParent?.Invoke( this, component, queued );
+			}
+
+			public delegate void DisposeDelegate( NetworkInterface sender, Component component );
+			public event DisposeDelegate Dispose;
+			public void PerformDispose( Component component )
+			{
+				Dispose?.Invoke( this, component );
+			}
+
+			public delegate void SimulationStepDelegate( NetworkInterface sender );
+			public event SimulationStepDelegate SimulationStep;
+			public void PerformSimulationStep()
+			{
+				SimulationStep?.Invoke( this );
+			}
+		}
+
+		/////////////////////////////////////////
 
 		public ComponentHierarchyController()
 		{
@@ -197,6 +232,8 @@ namespace NeoAxis
 			}
 			foreach( var flow in flows )
 				flow.ContinueProcess();
+
+			networkInterface?.PerformSimulationStep();
 		}
 
 		public void PerformSimulationSteps()

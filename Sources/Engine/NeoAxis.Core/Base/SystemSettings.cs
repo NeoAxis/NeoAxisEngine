@@ -29,7 +29,7 @@ namespace NeoAxis
 		public enum Platform
 		{
 			Windows,
-			MacOS,
+			macOS,
 			UWP,
 			Android,
 			iOS,
@@ -179,7 +179,7 @@ namespace NeoAxis
 #else
 			if( Environment.OSVersion.Platform == PlatformID.Unix )
 			{
-				platform = Platform.MacOS;
+				platform = Platform.macOS;
 				//try
 				//{
 				//   if( AndroidAppNativeWrapper.IsAndroid() )
@@ -205,7 +205,7 @@ namespace NeoAxis
 		{
 			get
 			{
-				if( CurrentPlatform == Platform.MacOS )
+				if( CurrentPlatform == Platform.macOS )
 				{
 					int major, minor, bugFix;
 					MacOSXUtilsNativeWrapper.GetOSVersion( out major, out minor, out bugFix );
@@ -375,7 +375,7 @@ namespace NeoAxis
 		{
 			var result = new Dictionary<string, string>();
 
-			if( CurrentPlatform == Platform.Windows || CurrentPlatform == Platform.MacOS )
+			if( CurrentPlatform == Platform.Windows || CurrentPlatform == Platform.macOS )
 			{
 				try
 				{

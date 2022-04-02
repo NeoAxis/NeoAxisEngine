@@ -29,7 +29,7 @@ namespace Internal//NeoAxis
 			{
 				if( instance == null )
 				{
-					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.MacOS )
+					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 						instance = new LogPlatformFunctionalityMacOSX();
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
 						Log.Fatal( "LogPlatformFunctionality: Get: Instance must be already initialized." );

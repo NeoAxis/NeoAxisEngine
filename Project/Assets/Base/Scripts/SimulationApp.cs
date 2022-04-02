@@ -98,6 +98,10 @@ namespace Project
 
 		/////////////////////////////////////////
 
+		public static event Action MainViewportRenderUI;
+
+		/////////////////////////////////////////
+
 		public static Viewport MainViewport
 		{
 			get { return RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ]; }
@@ -207,7 +211,6 @@ namespace Project
 					}
 				}
 			}
-
 		}
 
 		public static void EngineApp_AppCreateAfter()
@@ -479,6 +482,8 @@ namespace Project
 					CanvasRendererUtility.AddTextLinesWithShadow( MainViewport, null, fontSize, lines, new Rectangle( offset.X, offset.Y, 1, 1 ), EHorizontalAlignment.Left, EVerticalAlignment.Top, new ColorValue( 1, 1, 1 ) );
 				}
 			}
+
+			MainViewportRenderUI?.Invoke();
 
 			//engine console
 			EngineConsole.PerformRenderUI();

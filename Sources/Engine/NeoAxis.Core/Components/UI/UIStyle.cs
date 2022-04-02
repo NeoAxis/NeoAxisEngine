@@ -44,6 +44,32 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		protected virtual void OnBeforeRenderUIWithChildren( Component component, CanvasRenderer renderer ) { }
+
+		public delegate void BeforeRenderUIWithChildrenDelegate( Component component, CanvasRenderer renderer );
+		public event BeforeRenderUIWithChildrenDelegate BeforeRenderUIWithChildren;
+
+		public void PerformBeforeRenderUIWithChildren( Component component, CanvasRenderer renderer )
+		{
+			OnBeforeRenderUIWithChildren( component, renderer );
+			BeforeRenderUIWithChildren?.Invoke( component, renderer );
+		}
+
+		/////////////////////////////////////////
+
+		protected virtual void OnAfterRenderUIWithChildren( Component component, CanvasRenderer renderer ) { }
+
+		public delegate void AfterRenderUIWithChildrenDelegate( Component component, CanvasRenderer renderer );
+		public event AfterRenderUIWithChildrenDelegate AfterRenderUIWithChildren;
+
+		public void PerformAfterRenderUIWithChildren( Component component, CanvasRenderer renderer )
+		{
+			OnAfterRenderUIWithChildren( component, renderer );
+			AfterRenderUIWithChildren?.Invoke( component, renderer );
+		}
+
+		/////////////////////////////////////////
+
 		protected virtual void OnRenderComponent( Component component, CanvasRenderer renderer ) { }
 
 		public delegate void RenderComponentDelegate( Component component, CanvasRenderer renderer );
@@ -318,6 +344,92 @@ namespace NeoAxis
 			}
 		}
 
+		protected override void OnBeforeRenderUIWithChildren( Component component, CanvasRenderer renderer )
+		{
+			base.OnBeforeRenderUIWithChildren( component, renderer );
+
+			var control = component as UIControl;
+			if( control != null )
+			{
+				if( control is UIButton && control.ReadOnlyInHierarchy )
+					renderer.PushColorMultiplier( new ColorValue( 0.5, 0.5, 0.5 ) );
+
+				if( control is UIEdit && control.ReadOnlyInHierarchy )
+				{
+					var parentCombo = control.Parent as UICombo;
+					var insideCombo = parentCombo != null && parentCombo.GetTextControl() == control;
+					if( !insideCombo )
+						renderer.PushColorMultiplier( new ColorValue( 0.5, 0.5, 0.5 ) );
+				}
+
+				if( control is UICombo && control.ReadOnlyInHierarchy )
+					renderer.PushColorMultiplier( new ColorValue( 0.5, 0.5, 0.5 ) );
+
+				if( control is UIScroll && control.ReadOnlyInHierarchy )
+					renderer.PushColorMultiplier( new ColorValue( 0.5, 0.5, 0.5 ) );
+
+				if( control is UISlider && control.ReadOnlyInHierarchy )
+					renderer.PushColorMultiplier( new ColorValue( 0.5, 0.5, 0.5 ) );
+
+				if( control is UIList && control.ReadOnlyInHierarchy )
+					renderer.PushColorMultiplier( new ColorValue( 0.5, 0.5, 0.5 ) );
+
+				if( control is UIText && control.ReadOnlyInHierarchy )
+				{
+					var parentEdit = control.Parent as UIEdit;
+					var insideEdit = parentEdit != null && parentEdit.GetTextControl() == control;
+					if( !insideEdit )
+						renderer.PushColorMultiplier( new ColorValue( 0.5, 0.5, 0.5 ) );
+				}
+
+				if( control is UICheck && control.ReadOnlyInHierarchy )
+					renderer.PushColorMultiplier( new ColorValue( 0.5, 0.5, 0.5 ) );
+			}
+		}
+
+		protected override void OnAfterRenderUIWithChildren( Component component, CanvasRenderer renderer )
+		{
+			var control = component as UIControl;
+			if( control != null )
+			{
+				if( control is UIButton && control.ReadOnlyInHierarchy )
+					renderer.PopColorMultiplier();
+
+				if( control is UIEdit && control.ReadOnlyInHierarchy )
+				{
+					var parentCombo = control.Parent as UICombo;
+					var insideCombo = parentCombo != null && parentCombo.GetTextControl() == control;
+					if( !insideCombo )
+						renderer.PopColorMultiplier();
+				}
+
+				if( control is UICombo && control.ReadOnlyInHierarchy )
+					renderer.PopColorMultiplier();
+
+				if( control is UIScroll && control.ReadOnlyInHierarchy )
+					renderer.PopColorMultiplier();
+
+				if( control is UISlider && control.ReadOnlyInHierarchy )
+					renderer.PopColorMultiplier();
+
+				if( control is UIList && control.ReadOnlyInHierarchy )
+					renderer.PopColorMultiplier();
+
+				if( control is UIText && control.ReadOnlyInHierarchy )
+				{
+					var parentEdit = control.Parent as UIEdit;
+					var insideEdit = parentEdit != null && parentEdit.GetTextControl() == control;
+					if( !insideEdit )
+						renderer.PopColorMultiplier();
+				}
+
+				if( control is UICheck && control.ReadOnlyInHierarchy )
+					renderer.PopColorMultiplier();
+			}
+
+			base.OnAfterRenderUIWithChildren( component, renderer );
+		}
+
 		protected virtual void OnRenderBackground( UIControl control, CanvasRenderer renderer )
 		{
 			//BackgroundColor
@@ -386,8 +498,10 @@ namespace NeoAxis
 				case UIButton.StateEnum.Normal: styleColor = new ColorValue( 0.5, 0.5, 0.5 ); break;
 				case UIButton.StateEnum.Hover: styleColor = new ColorValue( 0.65, 0.65, 0.65 ); break;
 				case UIButton.StateEnum.Pushed: styleColor = new ColorValue( 0.8, 0.8, 0.8 ); break;
-				case UIButton.StateEnum.Highlighted: styleColor = new ColorValue( 0.6, 0.6, 0 ); break;
-				case UIButton.StateEnum.Disabled: styleColor = new ColorValue( 0.5, 0.5, 0.5 ); break;
+				case UIButton.StateEnum.Highlighted: styleColor = new ColorValue( 0.6, 0.6, 0.6 ); break;
+				//case UIButton.StateEnum.Highlighted: styleColor = new ColorValue( 0.6, 0.6, 0 ); break;
+				case UIButton.StateEnum.Disabled: styleColor = new ColorValue( 0.8, 0.8, 0.8 ); break;
+					//case UIButton.StateEnum.Disabled: styleColor = new ColorValue( 0.5, 0.5, 0.5 ); break;
 				}
 
 				control.GetScreenRectangle( out var rect );
@@ -401,7 +515,8 @@ namespace NeoAxis
 
 					//text
 					var position = new Vector2( rect.Left + control.GetScreenOffsetByValueX( new UIMeasureValueDouble( UIMeasure.Units, 10 ) ), rect.GetCenter().Y ) + new Vector2( 0, renderer.DefaultFontSize / 10 );
-					var textColor = control.State == UIButton.StateEnum.Disabled ? new ColorValue( 0.7, 0.7, 0.7 ) : new ColorValue( 1, 1, 1 );
+					var textColor = new ColorValue( 1, 1, 1 );
+					//var textColor = control.State == UIButton.StateEnum.Disabled ? new ColorValue( 0.7, 0.7, 0.7 ) : new ColorValue( 1, 1, 1 );
 					renderer.AddText( control.Text, position, EHorizontalAlignment.Left, EVerticalAlignment.Center, textColor );
 				}
 			}
@@ -412,11 +527,14 @@ namespace NeoAxis
 				var styleColor = ColorValue.Zero;
 				switch( control.State )
 				{
-				case UIButton.StateEnum.Normal: styleColor = new ColorValue( 0.5, 0.5, 0.5 ); break;
+				case UIButton.StateEnum.Normal: styleColor = control.Focused ? new ColorValue( 0.75, 0.75, 0.75 ) : new ColorValue( 0.5, 0.5, 0.5 ); break;
+				//case UIButton.StateEnum.Normal: styleColor = new ColorValue( 0.5, 0.5, 0.5 ); break;
 				case UIButton.StateEnum.Hover: styleColor = new ColorValue( 0.65, 0.65, 0.65 ); break;
 				case UIButton.StateEnum.Pushed: styleColor = new ColorValue( 0.8, 0.8, 0.8 ); break;
-				case UIButton.StateEnum.Highlighted: styleColor = new ColorValue( 0.6, 0.6, 0 ); break;
-				case UIButton.StateEnum.Disabled: styleColor = new ColorValue( 0.5, 0.5, 0.5 ); break;
+				case UIButton.StateEnum.Highlighted: styleColor = control.Focused ? new ColorValue( 0.8, 0.8, 0.8 ) : new ColorValue( 0.6, 0.6, 0.6 ); break;
+				//case UIButton.StateEnum.Highlighted: styleColor = new ColorValue( 0.6, 0.6, 0 ); break;
+				case UIButton.StateEnum.Disabled: styleColor = new ColorValue( 0.8, 0.8, 0.8 ); break;
+					//case UIButton.StateEnum.Disabled: styleColor = new ColorValue( 0.5, 0.5, 0.5 ); break;
 				}
 
 				control.GetScreenRectangle( out var rect );
@@ -430,8 +548,10 @@ namespace NeoAxis
 					if( control.Image.Value != null )
 					{
 						var image = control.Image.Value;
-						if( control.ReadOnly && control.ImageDisabled.Value != null )
+						if( control.ReadOnlyInHierarchy && control.ImageDisabled.Value != null )
 							image = control.ImageDisabled.Value;
+						//if( control.ReadOnly && control.ImageDisabled.Value != null )
+						//	image = control.ImageDisabled.Value;
 
 						var imageRect = rect;
 						imageRect.Expand( -control.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 4, 4 ) ) );
@@ -440,7 +560,8 @@ namespace NeoAxis
 
 					//text
 					var position = rect.GetCenter() + new Vector2( 0, renderer.DefaultFontSize / 10 );
-					var textColor = control.State == UIButton.StateEnum.Disabled ? new ColorValue( 0.7, 0.7, 0.7 ) : new ColorValue( 1, 1, 1 );
+					var textColor = new ColorValue( 1, 1, 1 );
+					//var textColor = control.State == UIButton.StateEnum.Disabled ? new ColorValue( 0.7, 0.7, 0.7 ) : new ColorValue( 1, 1, 1 );
 					renderer.AddText( control.Text, position, EHorizontalAlignment.Center, EVerticalAlignment.Center, textColor );
 				}
 			}
@@ -458,9 +579,11 @@ namespace NeoAxis
 
 		protected virtual void OnRenderCheck( UICheck control, CanvasRenderer renderer )
 		{
-			var borderColor = new ColorValue( 0.5, 0.5, 0.5 );
+			var borderColor = control.Focused ? new ColorValue( 0.7, 0.7, 0.7 ) : new ColorValue( 0.5, 0.5, 0.5 );
 			var insideColor = new ColorValue( 0, 0, 0 );
-			var checkColor = new ColorValue( 1, 1, 0 );
+
+			var checkColor = new ColorValue( 0.8, 0.8, 0.8 );
+			//var checkColor = new ColorValue( 1, 1, 0 );
 			var textColor = new ColorValue( 1, 1, 1 );
 
 			switch( control.State )
@@ -474,8 +597,11 @@ namespace NeoAxis
 				break;
 
 			case UICheck.StateEnum.Disabled:
-				checkColor = new ColorValue( 0.7, 0.7, 0.7 );
-				textColor = new ColorValue( 0.5, 0.5, 0.5 );
+				borderColor = new ColorValue( 0.8, 0.8, 0.8 );
+				checkColor = new ColorValue( 0.8, 0.8, 0.8 );
+				textColor = new ColorValue( 1, 1, 1 );
+				//checkColor = new ColorValue( 0.7, 0.7, 0.7 );
+				//textColor = new ColorValue( 0.5, 0.5, 0.5 );
 				break;
 			}
 
@@ -537,7 +663,16 @@ namespace NeoAxis
 			//rect2.Expand( -control.ConvertOffset( new UIMeasureValueVector2( UIMeasure.Units, 2, 2 ), UIMeasure.Screen ) );
 			rect2.Expand( -control.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 2, 2 ) ) );
 
-			var color = new ColorValue( 0.75, 0.75, 0.75 );
+
+			var focused = control.Focused;
+
+			//!!!!good?
+			var parentCombo = control.Parent as UICombo;
+			if( parentCombo != null && parentCombo.GetTextControl() == control && parentCombo.Focused )
+				focused = true;
+
+			var color = focused ? new ColorValue( 1, 1, 1 ) : new ColorValue( 0.75, 0.75, 0.75 );
+
 			renderer.AddQuad( new Rectangle( rect.Left, rect.Top, rect2.Left, rect.Bottom ), color );
 			renderer.AddQuad( new Rectangle( rect2.Left, rect.Top, rect2.Right, rect2.Top ), color );
 			renderer.AddQuad( new Rectangle( rect2.Right, rect.Top, rect.Right, rect.Bottom ), color );
@@ -554,26 +689,20 @@ namespace NeoAxis
 
 		protected virtual void OnRenderText( UIText control, CanvasRenderer renderer )
 		{
-			control.RenderDefaultStyle( renderer );
+			UIText.RenderParentEditData parentEditData = null;
 
-			//string localizedText;
-			////!!!!
-			////if( SupportLocalization )
-			////	localizedText = LanguageManager.Instance.Translate( "UISystem", Text );
-			////else
-			//localizedText = control.Text;
+			var parentEdit = control.Parent as UIEdit;
+			if( parentEdit != null && parentEdit.GetTextControl() == control )
+			{
+				parentEditData = new UIText.RenderParentEditData();
+				parentEditData.Edit = parentEdit;
+				parentEditData.SelectionColor = new ColorValue( 0.75, 0.75, 0.75, 0.75 );
+				parentEditData.CaretColor = new ColorValue( 1, 1, 1 );
+				if( ( EngineApp.EngineTime - parentEdit.EditingLastTime ) % 1 > 0.5 )
+					parentEditData.CaretColor.Alpha = 0;
+			}
 
-			////!!!!было
-			////if( AutoSize )
-			////	UpdateAutoSize( renderer, localizedText );
-
-			//if( !string.IsNullOrEmpty( localizedText ) )
-			//{
-			//	if( !control.WordWrap )
-			//		NoWordWrapRenderUI( control, renderer, localizedText );
-			//	else
-			//		WordWrapRenderUI( control, renderer, localizedText );
-			//}
+			control.RenderDefaultStyle( renderer, parentEditData );
 		}
 
 		/////////////////////////////////////////
@@ -613,11 +742,7 @@ namespace NeoAxis
 				Vector2.Lerp( up.LeftTop, down.LeftTop, factor ),
 				Vector2.Lerp( up.RightBottom, down.RightBottom, factor ) );
 
-			ColorValue c;
-			if( !control.ReadOnly.Value )
-				c = new ColorValue( 1, 1, 1 );
-			else
-				c = new ColorValue( 0.5, 0.5, 0.5 );
+			var c = new ColorValue( 1, 1, 1 );
 			renderer.AddQuad( r, c );
 
 			//renderer.AddQuad( up, new ColorValue( 1, 0, 0 ) );
@@ -640,7 +765,7 @@ namespace NeoAxis
 		/////////////////////////////////////////
 
 		//!!!!тут? так?
-		double GetListItemSizeScreen( UIList control, CanvasRenderer renderer )
+		public double GetListItemSizeScreen( UIList control, CanvasRenderer renderer )
 		{
 			//var font = control.Font.Value;
 			//if( font == null )
@@ -670,7 +795,7 @@ namespace NeoAxis
 			rect2.Expand( -control.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 2, 2 ) ) );
 
 			//border
-			var color = new ColorValue( 0.75, 0.75, 0.75 );
+			var color = control.Focused ? new ColorValue( 1, 1, 1 ) : new ColorValue( 0.75, 0.75, 0.75 );
 			renderer.AddQuad( new Rectangle( rect.Left, rect.Top, rect2.Left, rect.Bottom ), color );
 			renderer.AddQuad( new Rectangle( rect2.Left, rect.Top, rect2.Right, rect2.Top ), color );
 			renderer.AddQuad( new Rectangle( rect2.Right, rect.Top, rect.Right, rect.Bottom ), color );
@@ -693,12 +818,12 @@ namespace NeoAxis
 
 				scrollBar.Visible = control.AlwaysShowScroll || totalItemsHeight > screenSizeY;
 				if( scrollBar.Visible )
-					scrollBar.ValueRange = new Range( 0, scrollScreenSizeY );
+					scrollBar.ValueRange = new NeoAxis.Range( 0, scrollScreenSizeY );
 
 				//ensure visible
-				if( control.needEnsureVisibleInStyle != -1 )
+				if( control.NeedEnsureVisibleInStyle != -1 )
 				{
-					var index = control.needEnsureVisibleInStyle;
+					var index = control.NeedEnsureVisibleInStyle;
 
 					if( (float)index * itemSize > screenSizeY / 2 )
 					{
@@ -709,7 +834,7 @@ namespace NeoAxis
 					else
 						scrollBar.Value = 0;
 
-					control.needEnsureVisibleInStyle = -1;
+					control.NeedEnsureVisibleInStyle = -1;
 				}
 
 				//if( scrollBar.Visible )
@@ -762,7 +887,8 @@ namespace NeoAxis
 
 						if( n == control.SelectedIndex )
 						{
-							var color2 = control.ReadOnlyInHierarchy ? new ColorValue( 0.5, 0.5, 0.5 ) : new ColorValue( 0, 0, 0.8 );
+							var color2 = new ColorValue( 0.5, 0.5, 0.5 );
+							//var color2 = control.ReadOnlyInHierarchy ? new ColorValue( 0.5, 0.5, 0.5 ) : new ColorValue( 0, 0, 0.8 );
 							renderer.AddQuad( itemRectangle, color2 );
 						}
 
@@ -952,7 +1078,7 @@ namespace NeoAxis
 		{
 			var rect = control.GetScreenRectangle();
 
-			renderer.AddQuad( rect, new ColorValue( 0.5, 0.5, 0.5, 0.5 ) );
+			renderer.AddQuad( rect, control.Focused ? new ColorValue( 0.7, 0.7, 0.7, 0.5 ) : new ColorValue( 0.5, 0.5, 0.5, 0.5 ) );
 
 			var valuesRay = GetSliderValuesRayInScreenCoords( control );
 
@@ -965,11 +1091,7 @@ namespace NeoAxis
 				var r = new Rectangle( position );
 				r.Expand( tickBarSize / 2 );
 
-				ColorValue c;
-				if( !control.ReadOnly.Value )
-					c = new ColorValue( 0.7, 0.7, 0.7, 0.5 );
-				else
-					c = new ColorValue( 0.5, 0.5, 0.5, 0.5 );
+				var c = new ColorValue( 0.7, 0.7, 0.7, 0.5 );
 				renderer.AddQuad( r, c );
 			}
 
@@ -981,11 +1103,7 @@ namespace NeoAxis
 				var r = new Rectangle( position );
 				r.Expand( valueBarSize / 2 );
 
-				ColorValue c;
-				if( !control.ReadOnly.Value )
-					c = new ColorValue( 1, 1, 1 );
-				else
-					c = new ColorValue( 0.5, 0.5, 0.5 );
+				var c = new ColorValue( 1, 1, 1 );
 				renderer.AddQuad( r, c );
 			}
 		}

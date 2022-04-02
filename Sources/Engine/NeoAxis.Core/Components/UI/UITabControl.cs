@@ -177,7 +177,7 @@ namespace NeoAxis
 			return new Rectangle( 0, 0, 0, 0 );
 		}
 
-		void UpdateControls()
+		public void UpdateControls()
 		{
 			var side = Side.Value;
 			var pages = GetAllPages();

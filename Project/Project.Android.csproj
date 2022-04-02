@@ -75,6 +75,9 @@
     <Compile Include="Assets\Base\UI\Windows\MessageBoxWindow.cs" />
     <Compile Include="Assets\Samples\Simple Game\SimpleGameGUI.cs" />
     <Compile Include="Assets\Samples\Platform Game\PlatformGameGUI.cs" />
+    <Compile Include="Assets\Base\Scripts\Networking\WorldClientManager.cs" />
+    <Compile Include="Assets\Base\Scripts\Networking\WorldNetworkCommon.cs" />
+    <Compile Include="Assets\Base\Scripts\Networking\WorldServerManager.cs" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

@@ -1,7 +1,9 @@
+// Made with NeoAxis Engine 2022.1.
+
 .component Project.MessageBoxWindow
 {
 	Text = Caption
-	Size = Units 740 270
+	Size = Units 740 280
 	HorizontalAlignment = Center
 	VerticalAlignment = Center
 	EditorScrollPosition = 0 0

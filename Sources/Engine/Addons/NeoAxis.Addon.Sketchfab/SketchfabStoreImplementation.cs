@@ -10,6 +10,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using NeoAxis.Editor;
 using System.Text.Json;
+using System.Text.RegularExpressions;
+using System.Text;
 
 namespace NeoAxis
 {
@@ -172,8 +174,14 @@ namespace NeoAxis
 					info.Triangles = item.faceCount;
 					info.Vertices = item.vertexCount;
 					info.Animations = item.animationCount;
-					//!!!!remove links
+
 					info.ShortDescription = item.description.Trim( new char[] { '\n', '\r', ' ', '\t' } );
+					//remove tags
+					try
+					{
+						info.ShortDescription = Regex.Replace( info.ShortDescription, "<.*?>", string.Empty );
+					}
+					catch { }
 
 					//!!!!
 					info.Categories = "Uncategorized Models";
@@ -300,7 +308,7 @@ namespace NeoAxis
 		{
 			var CLIENT_ID = "iCfsSDtpdY2nNQDsv2pyWEBgKrKwlK58XWRZhKmE";
 
-			if( !SketchfabLogin.LoadFromRegistry( out var username, out var password ) || string.IsNullOrEmpty( username ) || string.IsNullOrEmpty( password ) )
+			if( !SketchfabLogin.LoadFromRegistry( out var username, out var password, out _ ) || string.IsNullOrEmpty( username ) || string.IsNullOrEmpty( password ) )
 			{
 				StoresWindow.needOpenOptions = true;
 
@@ -524,6 +532,8 @@ namespace NeoAxis
 							streamWriter.Write( block.DumpToString() );
 					}
 
+					var licenseTxtText = "";
+
 					//copy files
 					using( var sketchfabArchive = ZipFile.Open( tempDownloadedFileName, ZipArchiveMode.Read ) )
 					{
@@ -542,6 +552,68 @@ namespace NeoAxis
 								entryStream.Write( bytes );
 						}
 
+						//license.txt
+						{
+							var licenseTxtEntry = sketchfabArchive.GetEntry( "license.txt" );
+							if( licenseTxtText != null )
+							{
+								using( var sketchfabStream = licenseTxtEntry.Open() )
+								{
+									using( var reader = new StreamReader( sketchfabStream ) )
+										licenseTxtText = reader.ReadToEnd();
+								}
+							}
+						}
+					}
+
+					//write Store.product
+					if( SketchfabLogin.LoadFromRegistry( out _, out _, out var prepareStoreProduct ) && prepareStoreProduct )
+					{
+						var product = ComponentUtility.CreateComponent<Product_Store>( null, true, true );
+						product.Name = package.Title;
+						product.ShortDescription = package.ShortDescription;
+
+						{
+							var index = licenseTxtText.IndexOf( "this credit wherever you share it:" );
+							if( index != -1 )
+							{
+								index += "this credit wherever you share it:".Length + 1;
+								product.FullDescription = licenseTxtText.Substring( index ).Trim( new char[] { ' ', '\n', '\r' } );
+							}
+						}
+
+						//!!!!
+						product.ProjectItemCategories = Product_Store.ProjectItemCategoriesEnum.UncategorizedModels;
+
+						if( package.License != StoreProductLicense.None )
+							product.License = package.License;
+						else
+						{
+							//try to detect license because Sketchfab API is not provides it
+							if( licenseTxtText.Contains( "CC-BY-4.0" ) )
+								product.License = StoreProductLicense.CCAttribution;
+							else
+								product.License = StoreProductLicense.FreeToUseWithNeoAxis;
+						}
+
+						//!!!!Tags
+
+
+						var block = ComponentUtility.SaveComponentToTextBlock( product, null, out var error );
+						if( block != null )
+						{
+							var str = block.DumpToString();
+							var bytes = Encoding.ASCII.GetBytes( str );
+
+							var destPath = Path.Combine( "Assets", virtualDestinationFolder, "Store.product" );
+
+							//write
+							var entry = archive.CreateEntry( destPath );
+							using( var entryStream = entry.Open() )
+								entryStream.Write( bytes );
+						}
+
+						product.Dispose();
 					}
 
 				}

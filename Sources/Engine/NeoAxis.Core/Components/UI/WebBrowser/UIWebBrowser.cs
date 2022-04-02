@@ -1130,7 +1130,7 @@ namespace NeoAxis
 		protected override bool OnKeyDown( KeyEvent e )
 		{
 #if !NO_UI_WEB_BROWSER
-			if( Focused && EnabledInHierarchy && VisibleInHierarchy && browserHost != null )
+			if( Focused && browserHost != null )
 			{
 				browserHost.SendFocusEvent( true );
 
@@ -1334,7 +1334,7 @@ namespace NeoAxis
 					return browser.CanGoBack;
 				else
 #endif
-				return false;
+					return false;
 			}
 		}
 
@@ -1355,7 +1355,7 @@ namespace NeoAxis
 					return browser.CanGoForward;
 				else
 #endif
-				return false;
+					return false;
 			}
 		}
 

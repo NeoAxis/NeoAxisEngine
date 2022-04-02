@@ -42,5 +42,13 @@ namespace NeoAxis
 		{
 			get { return CoverOtherControlsEnum.OnlyBehind; }
 		}
+
+		protected override void OnEnabledInSimulation()
+		{
+			base.OnEnabledInSimulation();
+
+			//unfocus controls
+			ParentContainer?.FocusedControl?.Unfocus();
+		}
 	}
 }

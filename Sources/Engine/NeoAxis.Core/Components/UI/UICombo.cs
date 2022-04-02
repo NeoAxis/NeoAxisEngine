@@ -152,23 +152,24 @@ namespace NeoAxis
 			//}
 
 			{
-				var obj = CreateComponent<UIList>();
-				obj.Name = "Down List";
-				obj.Margin = new UIMeasureValueRectangle( UIMeasure.Parent, 0, 1, 1, 1 );
-				obj.Size = new UIMeasureValueVector2( UIMeasure.Screen, new Vector2( 0, 0 ) );
-				obj.CanBeSelected = false;
-				obj.Visible = false;
-				obj.TopMost = true;
+				var list = CreateComponent<UIList>();
+				list.Name = "Down List";
+				list.Margin = new UIMeasureValueRectangle( UIMeasure.Parent, 0, 1, 1, 1 );
+				list.Size = new UIMeasureValueVector2( UIMeasure.Screen, new Vector2( 0, 0 ) );
+				list.CanBeSelected = false;
+				list.Visible = false;
+				list.TopMost = true;
 				//obj.ZOrder = 1;
 
-				obj.NewObjectSetDefaultConfiguration();
+				list.NewObjectSetDefaultConfiguration();
 
-				obj.SelectedIndexChanged += List_SelectedIndexChanged;
-				//obj.MouseDown += List_MouseDown;
+				list.SelectedIndexChanged += List_SelectedIndexChanged;
+				list.KeyDown += List_KeyDown;
+				list.ItemMouseClick += List_ItemMouseClick;
 
 				//control to hide the list when clicked outside control
 				{
-					var obj2 = obj.CreateComponent<UIControl>();
+					var obj2 = list.CreateComponent<UIControl>();
 					obj2.Name = "Cover";
 					obj2.CanBeSelected = false;
 					obj2.Margin = new UIMeasureValueRectangle( UIMeasure.Screen, 0, 0, 1, 1 );
@@ -204,7 +205,8 @@ namespace NeoAxis
 				if( EnabledInHierarchy )
 				{
 					list.SelectedIndexChanged += List_SelectedIndexChanged;
-					//list.MouseDown += List_MouseDown;
+					list.KeyDown += List_KeyDown;
+					list.ItemMouseClick += List_ItemMouseClick;
 
 					var cover = list.GetComponent( "Cover" ) as UIControl;
 					if( cover != null )
@@ -216,7 +218,8 @@ namespace NeoAxis
 				else
 				{
 					list.SelectedIndexChanged -= List_SelectedIndexChanged;
-					//list.MouseDown -= List_MouseDown;
+					list.KeyDown -= List_KeyDown;
+					list.ItemMouseClick -= List_ItemMouseClick;
 
 					var cover = list.GetComponent( "Cover" ) as UIControl;
 					if( cover != null )
@@ -226,17 +229,78 @@ namespace NeoAxis
 					}
 				}
 			}
+		}
 
+		/// <summary>
+		/// Whether control can be focused.
+		/// </summary>
+		[Browsable( false )]
+		public override bool CanFocus
+		{
+			get { return EnabledInHierarchy && VisibleInHierarchy && !ReadOnlyInHierarchy; }
+		}
+
+		protected override bool OnKeyDown( KeyEvent e )
+		{
+			if( Focused )
+			{
+				switch( e.Key )
+				{
+				case EKeys.Space:
+				case EKeys.Right:
+					{
+						var list = GetDownList();
+						if( list != null )
+						{
+							var show = !list.Visible;
+							list.Visible = show;
+							if( list.Visible )
+								list.Focus();
+						}
+					}
+					return true;
+
+				case EKeys.Up:
+					{
+						var index = SelectedIndex - 1;
+						if( index < 0 )
+							index = 0;
+						SelectedIndex = index;
+					}
+					return true;
+
+				case EKeys.Down:
+					{
+						var index = SelectedIndex + 1;
+						if( index >= Items.Count )
+							index = Items.Count - 1;
+						SelectedIndex = index;
+					}
+					return true;
+
+				case EKeys.Home:
+					SelectedIndex = 0;
+					return true;
+
+				case EKeys.End:
+					SelectedIndex = Items.Count - 1;
+					return true;
+				}
+			}
+
+			return base.OnKeyDown( e );
 		}
 
 		private void TextControl_MouseDown( UIControl sender, EMouseButtons button, ref bool handled )
 		{
 			if( button == EMouseButtons.Left )
 			{
+				Focus();
+
 				var list = GetDownList();
 				if( list != null )
 				{
-					var show = !list.Visible;
+					var show = !list.Visible && !ReadOnlyInHierarchy;
 					list.Visible = show;
 					//list.Capture = show;
 				}
@@ -261,7 +325,7 @@ namespace NeoAxis
 							var list = GetDownList();
 							if( list != null )
 							{
-								var show = !list.Visible;
+								var show = !list.Visible && !ReadOnlyInHierarchy;
 								list.Visible = show;
 								//list.Capture = show;
 							}
@@ -289,24 +353,34 @@ namespace NeoAxis
 			if( disableListSelectedIndexChangedEvent )
 				return;
 
-			SelectedIndex = sender.SelectedIndex;
-			if( remainingTimeToClose == 0 )
-				remainingTimeToClose = 0.2;
-			//sender.Visible = false;
+			if( SelectedIndex != sender.SelectedIndex )
+				SelectedIndex = sender.SelectedIndex;
 		}
 
-		//private void List_MouseDown( UIControl sender, EMouseButtons button, ref bool handled )
-		//{
-		//if( button == EMouseButtons.Left && !new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) )
-		//{
-		//	var list = GetDownList();
-		//	if( list != null )
-		//	{
-		//		list.Visible = false;
-		//		//list.Capture = false;
-		//	}
-		//}
-		//}
+		private void List_KeyDown( UIControl sender, KeyEvent e, ref bool handled )
+		{
+			if( sender.Focused )
+			{
+				if( e.Key == EKeys.Left || e.Key == EKeys.Return || e.Key == EKeys.Space )
+				{
+					Focus();
+					if( remainingTimeToClose == 0 )
+						remainingTimeToClose = 0.2;
+					handled = true;
+				}
+			}
+		}
+
+		private void List_ItemMouseClick( UIControl sender, EMouseButtons button, ref bool handled )
+		{
+			var list = GetDownList();
+			if( list != null )
+			{
+				list.Visible = false;
+				Focus();
+				handled = true;
+			}
+		}
 
 		private void ListCover_MouseDown( UIControl sender, EMouseButtons button, ref bool handled )
 		{

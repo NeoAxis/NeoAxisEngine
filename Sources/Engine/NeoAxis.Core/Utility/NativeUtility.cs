@@ -171,7 +171,7 @@ namespace NeoAxis
 					if( Path.GetExtension( baseName ) != ".dll" )
 						baseName += ".dll";
 				}
-				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.MacOS )
+				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 				{
 					//remove ".dll"
 					if( Path.GetExtension( baseName ) != ".dll" )

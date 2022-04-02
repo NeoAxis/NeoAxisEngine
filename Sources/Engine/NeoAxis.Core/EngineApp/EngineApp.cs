@@ -715,7 +715,7 @@ namespace NeoAxis
 				{
 					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
 						operationSystemDisplayName = "Microsoft Windows";
-					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.MacOS )
+					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 						operationSystemDisplayName = "Apple Mac OS X";
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
 						operationSystemDisplayName = "Google Android";
@@ -1230,7 +1230,7 @@ namespace NeoAxis
 						instance = new WindowsInputDeviceManager( applicationWindowHandle );
 #endif
 					}
-					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.MacOS )
+					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 					{
 						Log.Fatal( "MacOSXInputDeviceManager impl." );
 						//instance = new MacOSXInputDeviceManager();
@@ -2099,7 +2099,7 @@ namespace NeoAxis
 				return;
 			}
 
-			if( created && SystemSettings.CurrentPlatform == SystemSettings.Platform.MacOS )
+			if( created && SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 			{
 				Log.Warning( "Switching fullscreen/windowed mode during application work on Mac OS X is not supported." );
 				return;

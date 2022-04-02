@@ -101,6 +101,8 @@ namespace NeoAxis
 		//long uin;
 		//static long uinCounter;
 
+		internal long networkID;
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		public Component()
@@ -1411,6 +1413,9 @@ namespace NeoAxis
 				SetUniqueName( component );
 			component.Enabled = enabled;
 			AddComponent( component, insertIndex );
+
+			ParentRoot.HierarchyController?.networkInterface?.PerformCreateComponent( component );
+
 			return component;
 		}
 
@@ -1431,6 +1436,9 @@ namespace NeoAxis
 				SetUniqueName( component );
 			component.Enabled = enabled;
 			AddComponent( component, insertIndex );
+
+			ParentRoot.HierarchyController?.networkInterface?.PerformCreateComponent( component );
+
 			return component;
 		}
 
@@ -2202,6 +2210,8 @@ namespace NeoAxis
 
 				oldParent.ComponentsChanged?.Invoke( oldParent );
 			}
+
+			controller?.networkInterface?.PerformRemoveFromParent( this, queued );
 		}
 
 		/// <summary>
@@ -2614,6 +2624,8 @@ namespace NeoAxis
 			}
 
 			//!!!!эвенты чистить?
+
+			controller?.networkInterface?.PerformDispose( this );
 		}
 
 		/// <summary>

@@ -80,7 +80,7 @@ namespace NeoAxis
 						stream = new Win32HandleVirtualFileStream( realPath );
 #endif
 					}
-					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.MacOS )
+					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 					{
 #if MACOS
 						stream = new MacOSXVirtualFileStream( realPath );

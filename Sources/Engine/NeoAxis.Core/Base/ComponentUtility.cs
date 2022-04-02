@@ -758,6 +758,24 @@ namespace NeoAxis
 			return true;
 		}
 
+		public static TextBlock SaveComponentToTextBlock( Component component, Metadata.SaveContext overrideContextObject, out string error )
+		{
+			Metadata.SaveContext context = overrideContextObject;
+			if( context == null )
+				context = new Metadata.SaveContext();
+
+			component.HierarchyController?.ProcessDelayedOperations();
+
+			var rootBlock = new TextBlock();
+
+			component._SaveToTextBlock( context, rootBlock, true, out _, out error );
+			if( !string.IsNullOrEmpty( error ) )
+				return null;
+
+			error = "";
+			return rootBlock;
+		}
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		//public delegate void OverrideCreationOfComponentDelegate( string creationInfo, ref Component component, ref string error );

@@ -66,17 +66,22 @@ namespace NeoAxis
 			cachedCoverControls.Clear();
 			int counter = 0;
 
-			foreach( var control in GetComponents<UIControl>( false, true, true ) )
+			try
 			{
-				if( control.VisibleInHierarchy )
+				foreach( var control in GetComponents<UIControl>( false, true, true, true ) )
+				//foreach( var control in GetComponents<UIControl>( false, true, true ) )
 				{
-					control.cachedIndexInHierarchyToImplementCovering = counter;
-					counter++;
+					if( control.VisibleInHierarchy )
+					{
+						control.cachedIndexInHierarchyToImplementCovering = counter;
+						counter++;
 
-					if( control.CoverOtherControls != CoverOtherControlsEnum.None )
-						cachedCoverControls.Add( control );
+						if( control.CoverOtherControls != CoverOtherControlsEnum.None )
+							cachedCoverControls.Add( control );
+					}
 				}
 			}
+			catch { }
 		}
 
 		public bool IsControlCursorCoveredByOther( UIControl controlToCheck )
@@ -102,6 +107,29 @@ namespace NeoAxis
 			return false;
 		}
 
+		public bool IsControlCoveredByOther( UIControl controlToCheck )
+		{
+			if( cachedCoverControls.Count != 0 )
+			{
+				foreach( var cachedControl in cachedCoverControls )
+				{
+					//check control before
+					if( controlToCheck.cachedIndexInHierarchyToImplementCovering < cachedControl.cachedIndexInHierarchyToImplementCovering )
+					{
+						//check control is not child
+						if( !controlToCheck.GetAllParents( false ).Contains( controlToCheck ) )
+						{
+							if( cachedControl.CoverOtherControls == CoverOtherControlsEnum.AllPreviousInHierarchy )
+								return true;
+							//if( cachedControl.GetScreenRectangle().Contains( MousePosition ) )
+							//	return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+
 		public bool PerformKeyDown( KeyEvent e )
 		{
 			CheckCachedParameters();
@@ -113,7 +141,17 @@ namespace NeoAxis
 				focusedControl = null;
 
 			if( focusedControl != null )
-				return focusedControl.CallKeyDown( e );
+			{
+				if( focusedControl.CallKeyDown( e ) )
+					return true;
+			}
+
+			//tab stop
+			if( e.Key == EKeys.Tab )
+			{
+				if( PerformTabStop( focusedControl, !Viewport.IsKeyPressed( EKeys.Shift ) ) )
+					return true;
+			}
 
 			return CallKeyDown( e );
 		}
@@ -163,14 +201,18 @@ namespace NeoAxis
 				focusedControl = null;
 
 			if( capturedControl != null )
-				return capturedControl.CallMouseDown( button );
+				return capturedControl.CallMouseDown( button, false, true );
 
 			//if( focused == null || focused.IsDestroyed )
 			//   return false;
 			//return focused.DoMouseDown( button );
 
-
-			return CallMouseDown( button );
+			if( CallMouseDown( button, true, false ) )
+				return true;
+			if( CallMouseDown( button, false, false ) )
+				return true;
+			return false;
+			//return CallMouseDown( button );
 		}
 
 		public bool PerformMouseUp( EMouseButtons button )
@@ -184,9 +226,14 @@ namespace NeoAxis
 				focusedControl = null;
 
 			if( capturedControl != null )
-				return capturedControl.CallMouseUp( button );
+				return capturedControl.CallMouseUp( button, false, true );
 
-			return CallMouseUp( button );
+			if( CallMouseUp( button, true, false ) )
+				return true;
+			if( CallMouseUp( button, false, false ) )
+				return true;
+			return false;
+			//return CallMouseUp( button );
 		}
 
 		public bool PerformMouseDoubleClick( EMouseButtons button )
@@ -200,9 +247,14 @@ namespace NeoAxis
 				focusedControl = null;
 
 			if( capturedControl != null )
-				return capturedControl.CallMouseDoubleClick( button );
+				return capturedControl.CallMouseDoubleClick( button, false, true );
 
-			return CallMouseDoubleClick( button );
+			if( CallMouseDoubleClick( button, true, false ) )
+				return true;
+			if( CallMouseDoubleClick( button, false, false ) )
+				return true;
+			return false;
+			//return CallMouseDoubleClick( button );
 		}
 
 		public void PerformMouseMove( Vector2 mouse )
@@ -579,7 +631,7 @@ namespace NeoAxis
 			var mouse = ContainerGetMousePosition();
 			var control = GetControlByScreenPosition( mouse );
 
-			if( control != null )
+			if( control != null && !IsControlCursorCoveredByOther( control ) )
 			{
 				var tooltip = control.GetComponent<UITooltip>( onlyEnabledInHierarchy: true );
 				if( tooltip != null )
@@ -590,5 +642,78 @@ namespace NeoAxis
 			}
 		}
 
+		public UIControl CapturedControl
+		{
+			get { return capturedControl; }
+		}
+
+		public UIControl FocusedControl
+		{
+			get { return focusedControl; }
+		}
+
+		bool PerformTabStop( UIControl currentFocused, bool forward )
+		{
+			var components = GetComponents<UIControl>( checkChildren: true, onlyEnabledInHierarchy: true, depthFirstSearch: true );
+
+			var currentIndex = 0;
+			if( currentFocused != null )
+			{
+				currentIndex = Array.IndexOf( components, currentFocused );
+				if( currentIndex == -1 )
+					currentIndex = 0;
+			}
+
+			if( currentIndex != -1 )
+			{
+				if( forward )
+				{
+					for( int n = currentIndex + 1; n < components.Length; n++ )
+					{
+						var control = components[ n ];
+						if( control.CanFocus && !IsControlCoveredByOther( control ) )
+						{
+							control.Focus();
+							return true;
+						}
+					}
+
+					for( int n = 0; n < currentIndex; n++ )
+					{
+						var control = components[ n ];
+						if( control.CanFocus && !IsControlCoveredByOther( control ) )
+						{
+							control.Focus();
+							return true;
+						}
+					}
+				}
+				else
+				{
+					for( int n = currentIndex - 1; n >= 0; n-- )
+					{
+						var control = components[ n ];
+						if( control.CanFocus && !IsControlCoveredByOther( control ) )
+						{
+							control.Focus();
+							return true;
+						}
+					}
+
+					for( int n = components.Length - 1; n > currentIndex; n-- )
+					{
+						var control = components[ n ];
+						if( control.CanFocus && !IsControlCoveredByOther( control ) )
+						{
+							control.Focus();
+							return true;
+						}
+					}
+				}
+
+			}
+
+			return false;
+		}
 	}
 }

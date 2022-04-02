@@ -15,7 +15,7 @@ namespace Project
 
 		public void ButtonMessageBox_Click(NeoAxis.UIButton sender)
 		{
-			MessageBoxWindow.ShowInfo(this, "The text of the message.", "Message");
+			MessageBoxWindow.Show(this, "The text of the message.", "Message");
 		}
 	}
 }

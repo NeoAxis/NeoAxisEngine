@@ -118,10 +118,59 @@ namespace NeoAxis
 			return result.ToArray();
 		}
 
+		/// <summary>
+		/// Whether control can be focused.
+		/// </summary>
+		[Browsable( false )]
+		public override bool CanFocus
+		{
+			get { return EnabledInHierarchy && VisibleInHierarchy && !ReadOnlyInHierarchy; }
+		}
+
+		protected override bool OnKeyDown( KeyEvent e )
+		{
+			if( Focused )
+			{
+				switch( e.Key )
+				{
+				case EKeys.Left:
+				case EKeys.Up:
+					{
+						var value = Value.Value - Step.Value;
+						MathEx.Clamp( ref value, ValueRange.Value );
+						Value = value;
+					}
+					return true;
+
+				case EKeys.Right:
+				case EKeys.Down:
+					{
+						var value = Value.Value + Step.Value;
+						MathEx.Clamp( ref value, ValueRange.Value );
+						Value = value;
+					}
+					return true;
+
+				case EKeys.Home:
+				case EKeys.PageUp:
+					Value = ValueRange.Value.Minimum;
+					return true;
+
+				case EKeys.End:
+				case EKeys.PageDown:
+					Value = ValueRange.Value.Maximum;
+					return true;
+				}
+			}
+
+			return base.OnKeyDown( e );
+		}
+
 		protected override bool OnMouseDown( EMouseButtons button )
 		{
 			if( button == EMouseButtons.Left && VisibleInHierarchy && cursorInsideArea && EnabledInHierarchy && !ReadOnlyInHierarchy )
 			{
+				Focus();
 				pushed = true;
 				Capture = true;
 				UpdateValueByCursor();
@@ -201,11 +250,11 @@ namespace NeoAxis
 					UpdateValueByCursor( e.Position );
 				break;
 
-			//case TouchData.ActionEnum.Cancel:
-			//	break;
+				//case TouchData.ActionEnum.Cancel:
+				//	break;
 
-			//case TouchData.ActionEnum.Outside:
-			//	break;
+				//case TouchData.ActionEnum.Outside:
+				//	break;
 			}
 
 			return base.OnTouch( e );

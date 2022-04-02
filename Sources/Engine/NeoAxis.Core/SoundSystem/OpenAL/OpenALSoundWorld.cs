@@ -74,7 +74,7 @@ namespace OpenALSoundSystem
 					fileNames.Add( "SDL2.dll" );
 					fileNames.Add( "OpenAL32.dll" );
 				}
-				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.MacOS )
+				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 					fileNames.Add( "OpenAL32.dylib" );
 				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
 				{

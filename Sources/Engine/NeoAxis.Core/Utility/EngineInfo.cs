@@ -86,5 +86,10 @@ namespace NeoAxis
 		public static string ReplaceNameWithVersion { get; set; } = "";
 
 		public static bool ExtendedEdition;
+
+		public static string StoreAddress
+		{
+			get { return "https://store.neoaxis.com"; }
+		}
 	}
 }

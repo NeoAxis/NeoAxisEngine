@@ -14,7 +14,8 @@ namespace NeoAxis
 	{
 		object touchDown;
 
-		internal int needEnsureVisibleInStyle = -1;
+		[Browsable( false )]
+		public int NeedEnsureVisibleInStyle { get; set; } = -1;
 
 		/// <summary>
 		/// The height of a list element.
@@ -275,6 +276,116 @@ namespace NeoAxis
 		//		ItemMouseDoubleClick( this, new ItemMouseEventArgs( itemIndex, items[ itemIndex ] ) );
 		//}
 
+		/// <summary>
+		/// Whether control can be focused.
+		/// </summary>
+		[Browsable( false )]
+		public override bool CanFocus
+		{
+			get { return EnabledInHierarchy && VisibleInHierarchy && !ReadOnlyInHierarchy; }
+		}
+
+		protected override bool OnKeyDown( KeyEvent e )
+		{
+			if( Focused )
+			{
+				switch( e.Key )
+				{
+				case EKeys.Up:
+					{
+						var index = SelectedIndex - 1;
+						if( index < 0 )
+							index = 0;
+						if( index != SelectedIndex )
+						{
+							SelectedIndex = index;
+							EnsureVisible( SelectedIndex );
+						}
+					}
+					return true;
+
+				case EKeys.Down:
+					{
+						var index = SelectedIndex + 1;
+						if( index >= Items.Count )
+							index = Items.Count - 1;
+						if( index != SelectedIndex )
+						{
+							SelectedIndex = index;
+							EnsureVisible( SelectedIndex );
+						}
+					}
+					return true;
+
+				case EKeys.Home:
+					{
+						var index = 0;
+						if( index != SelectedIndex )
+						{
+							SelectedIndex = index;
+							EnsureVisible( SelectedIndex );
+						}
+					}
+					return true;
+
+				case EKeys.End:
+					{
+						var index = Items.Count - 1;
+						if( index != SelectedIndex )
+						{
+							SelectedIndex = index;
+							EnsureVisible( SelectedIndex );
+						}
+					}
+					return true;
+
+				case EKeys.PageUp:
+					{
+						var itemSize = ConvertOffsetY( ItemSize, UIMeasure.Screen );
+						if( itemSize != 0 )
+						{
+							var step = (int)( GetScreenSize().Y / itemSize ) - 1;
+							if( step <= 0 )
+								step = 1;
+
+							var index = SelectedIndex - step;
+							if( index < 0 )
+								index = 0;
+							if( index != SelectedIndex )
+							{
+								SelectedIndex = index;
+								EnsureVisible( SelectedIndex );
+							}
+						}
+					}
+					return true;
+
+				case EKeys.PageDown:
+					{
+						var itemSize = ConvertOffsetY( ItemSize, UIMeasure.Screen );
+						if( itemSize != 0 )
+						{
+							var step = (int)( GetScreenSize().Y / itemSize ) - 1;
+							if( step <= 0 )
+								step = 1;
+
+							var index = SelectedIndex + step;
+							if( index >= Items.Count )
+								index = Items.Count - 1;
+							if( index != SelectedIndex )
+							{
+								SelectedIndex = index;
+								EnsureVisible( SelectedIndex );
+							}
+						}
+					}
+					return true;
+				}
+			}
+
+			return base.OnKeyDown( e );
+		}
+
 		protected override bool OnMouseWheel( int delta )
 		{
 			var cursorInsideArea = CursorIsInArea();
@@ -309,7 +420,7 @@ namespace NeoAxis
 			if( index < 0 || index >= Items.Count )
 				return;
 
-			needEnsureVisibleInStyle = index;
+			NeedEnsureVisibleInStyle = index;
 			//GetStyle().ListEnsureVisible( this, index );
 			//if( GetScrollBar() != null )
 			//	GetScrollBar().Value = MathEx.Saturate( (float)index / (float)Items.Count );
@@ -329,22 +440,51 @@ namespace NeoAxis
 
 		protected override bool OnMouseDown( EMouseButtons button )
 		{
-			//bool ret = base.OnMouseDown( button );
-
 			var cursorInsideArea = CursorIsInArea();
 			if( button == EMouseButtons.Left && VisibleInHierarchy && cursorInsideArea && EnabledInHierarchy && !ReadOnlyInHierarchy )
 			{
+				Focus();
+
 				var renderer = ParentContainer?.Viewport.CanvasRenderer;
 				if( renderer != null )
 				{
 					var index = GetListItemIndexByScreenPosition( ParentContainer.MousePosition );
 					if( index != -1 )
+					{
 						SelectedIndex = index;
-					return true;
+						//CallItemMouseClick( button );
+						return true;
+					}
+
+					//return true;
 				}
 			}
 
-			return false;//return base.OnMouseDown( button );
+			return base.OnMouseDown( button );
+		}
+
+		protected override bool OnMouseUp( EMouseButtons button )
+		{
+			var cursorInsideArea = CursorIsInArea();
+			if( button == EMouseButtons.Left && VisibleInHierarchy && cursorInsideArea && EnabledInHierarchy && !ReadOnlyInHierarchy )
+			{
+				Focus();
+
+				var renderer = ParentContainer?.Viewport.CanvasRenderer;
+				if( renderer != null )
+				{
+					var index = GetListItemIndexByScreenPosition( ParentContainer.MousePosition );
+					if( index != -1 && index == SelectedIndex )
+					{
+						CallItemMouseClick( button );
+						return true;
+					}
+
+					//return true;
+				}
+			}
+
+			return base.OnMouseUp( button );
 		}
 
 		protected override bool OnMouseDoubleClick( EMouseButtons button )
@@ -358,7 +498,7 @@ namespace NeoAxis
 					var index = GetListItemIndexByScreenPosition( ParentContainer.MousePosition );
 					if( index != -1 && SelectedIndex == index )
 					{
-						if( CallItemMouseDoubleClick( button, index ) )
+						if( CallItemMouseDoubleClick( button ) )//, index ) )
 							return true;
 					}
 				}
@@ -422,23 +562,45 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		protected virtual bool OnItemMouseDoubleClick( EMouseButtons button, int index ) { return false; }
+		protected virtual bool OnItemMouseClick( EMouseButtons button ) { return false; }
 
-		public delegate void ItemMouseDoubleClickDelegate( UIControl sender, EMouseButtons button, int index, ref bool handled );
-		public event ItemMouseDoubleClickDelegate ItemMouseDoubleClick;
+		public delegate void ItemMouseClickDelegate( UIControl sender, EMouseButtons button, ref bool handled );
+		public event ItemMouseClickDelegate ItemMouseClick;
 
-		internal bool CallItemMouseDoubleClick( EMouseButtons button, int index )
+		bool CallItemMouseClick( EMouseButtons button )
 		{
-			if( OnItemMouseDoubleClick( button, index ) )
+			if( OnItemMouseClick( button ) )
 				return true;
 
 			bool handled = false;
-			ItemMouseDoubleClick?.Invoke( this, button, index, ref handled );
+			ItemMouseClick?.Invoke( this, button, ref handled );
 			if( handled )
 				return true;
 
 			return false;
 		}
+
+		/////////////////////////////////////////
+
+		protected virtual bool OnItemMouseDoubleClick( EMouseButtons button/*, int index*/ ) { return false; }
+
+		public delegate void ItemMouseDoubleClickDelegate( UIControl sender, EMouseButtons button/*, int index*/, ref bool handled );
+		public event ItemMouseDoubleClickDelegate ItemMouseDoubleClick;
+
+		bool CallItemMouseDoubleClick( EMouseButtons button )//, int index )
+		{
+			if( OnItemMouseDoubleClick( button ) )//, index ) )
+				return true;
+
+			bool handled = false;
+			ItemMouseDoubleClick?.Invoke( this, button/*, index*/, ref handled );
+			if( handled )
+				return true;
+
+			return false;
+		}
+
+		/////////////////////////////////////////
 
 		public bool SelectItem( string value )
 		{

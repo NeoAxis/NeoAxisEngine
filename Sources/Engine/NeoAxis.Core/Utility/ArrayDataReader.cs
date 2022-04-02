@@ -1,6 +1,7 @@
 // Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace NeoAxis
@@ -11,9 +12,8 @@ namespace NeoAxis
 	public class ArrayDataReader
 	{
 		byte[] data;
-		int bitPosition;
-		int startBitPosition;
-		int endBitPosition;
+		int currentPosition;
+		int endPosition;
 		bool overflow;
 
 		//
@@ -22,39 +22,84 @@ namespace NeoAxis
 		{
 		}
 
-		public ArrayDataReader( byte[] data, int bitOffset, int bitLength )
-		{
-			Init( data, bitOffset, bitLength );
-		}
-
 		public ArrayDataReader( byte[] data )
 		{
-			Init( data, 0, data.Length * 8 );
+			this.data = data;
+			endPosition = data.Length;
 		}
 
-		public void Init( byte[] data, int bitOffset, int bitLength )
+		public ArrayDataReader( byte[] data, int startPosition, int length )
+		{
+			Init( data, startPosition, length );
+		}
+
+		public void Init( byte[] data, int startPosition, int length )
 		{
 			this.data = data;
-			bitPosition = bitOffset;
-			startBitPosition = bitPosition;
-			endBitPosition = bitPosition + bitLength;
+			currentPosition = startPosition;
+			endPosition = startPosition + length;
 			overflow = false;
 		}
 
-		public int BitPosition
+		//public ArrayDataReader( byte[] data, int byteOffset = 0 )
+		//{
+		//	Init( data, byteOffset );
+		//}
+
+		//public ArrayDataReader( byte[] data, int bitOffset, int bitLength )
+		//{
+		//	Init( data, bitOffset, bitLength );
+		//}
+
+		//public ArrayDataReader( byte[] data )
+		//{
+		//	Init( data, 0, data.Length );
+		//	//Init( data, 0, data.Length * 8 );
+		//}
+
+		//public void Init( byte[] data, int byteOffset )
+		//{
+		//	this.data = data;
+		//	this.bytePosition = byteOffset;
+		//	//bitPosition = bitOffset;
+		//	//startBitPosition = bitPosition;
+		//	//endBitPosition = bitPosition + bitLength;
+		//	overflow = false;
+		//}
+
+		//public void Init( byte[] data, int bitOffset, int bitLength )
+		//{
+		//	this.data = data;
+		//	bitPosition = bitOffset;
+		//	startBitPosition = bitPosition;
+		//	endBitPosition = bitPosition + bitLength;
+		//	overflow = false;
+		//}
+
+		public int CurrentPosition
 		{
-			get { return bitPosition; }
+			get { return currentPosition; }
 		}
 
-		public int StartBitPosition
+		public int EndPosition
 		{
-			get { return startBitPosition; }
+			get { return endPosition; }
 		}
 
-		public int EndBitPosition
-		{
-			get { return endBitPosition; }
-		}
+		//public int BitPosition
+		//{
+		//	get { return bitPosition; }
+		//}
+
+		//public int StartBitPosition
+		//{
+		//	get { return startBitPosition; }
+		//}
+
+		//public int EndBitPosition
+		//{
+		//	get { return endBitPosition; }
+		//}
 
 		public bool Overflow
 		{
@@ -63,64 +108,114 @@ namespace NeoAxis
 
 		public bool Complete()
 		{
-			return bitPosition == endBitPosition && !overflow;
+			return currentPosition == endPosition && !overflow;
 		}
 
-		public void ReadBuffer( byte[] destination, int byteOffset, int byteLength )
+		public unsafe void ReadBuffer( void* destination, int length )
 		{
-			int newPosition = bitPosition + byteLength * 8;
-			if( overflow || newPosition > endBitPosition )
+			int newPosition = currentPosition + length;
+			if( overflow || newPosition > endPosition )
 			{
 				overflow = true;
 				return;
 			}
-			BitWriter.ReadBytes( data, byteLength, bitPosition, destination, byteOffset );
-			bitPosition = newPosition;
+
+			fixed( byte* pData = data )
+			{
+				byte* p = pData + currentPosition;
+
+				if( length == 8 )
+					*(ulong*)destination = *(ulong*)p;
+				else if( length == 4 )
+					*(uint*)destination = *(uint*)p;
+				else
+					Buffer.MemoryCopy( p, destination, length, length );
+			}
+
+			//Marshal.Copy( data, currentPosition, (IntPtr)destination, length );
+
+			currentPosition = newPosition;
 		}
 
-		public void ReadBuffer( byte[] destination )
+		public void ReadBuffer( byte[] destination, int offset, int length )
 		{
-			ReadBuffer( destination, 0, destination.Length );
+			int newPosition = currentPosition + length;
+			if( overflow || newPosition > endPosition )
+			{
+				overflow = true;
+				return;
+			}
+			Array.Copy( data, currentPosition, destination, offset, length );
+			currentPosition = newPosition;
 		}
+
+		//public void ReadBuffer( byte[] destination, int byteOffset, int byteLength )
+		//{
+		//	int newPosition = bitPosition + byteLength * 8;
+		//	if( overflow || newPosition > endBitPosition )
+		//	{
+		//		overflow = true;
+		//		return;
+		//	}
+		//	BitWriter.ReadBytes( data, byteLength, bitPosition, destination, byteOffset );
+		//	bitPosition = newPosition;
+		//}
+
+		//public void ReadBuffer( byte[] destination )
+		//{
+		//	ReadBuffer( destination, 0, destination.Length );
+		//}
 
 		public bool ReadBoolean()
 		{
-			int newPosition = bitPosition + 1;
-			if( overflow || newPosition > endBitPosition )
-			{
-				overflow = true;
-				return false;
-			}
-			byte value = BitWriter.ReadByte( data, 1, bitPosition );
-			bitPosition = newPosition;
-			return ( value > 0 ? true : false );
+			return ReadByte() != 0;
+
+			//int newPosition = bitPosition + 1;
+			//if( overflow || newPosition > endBitPosition )
+			//{
+			//	overflow = true;
+			//	return false;
+			//}
+			//byte value = BitWriter.ReadByte( data, 1, bitPosition );
+			//bitPosition = newPosition;
+			//return ( value > 0 ? true : false );
 		}
 
 		public byte ReadByte()
 		{
-			int newPosition = bitPosition + 8;
-			if( overflow || newPosition > endBitPosition )
+			int newPosition = currentPosition + 1;
+			if( overflow || newPosition > endPosition )
 			{
 				overflow = true;
 				return 0;
 			}
-			byte value = BitWriter.ReadByte( data, 8, bitPosition );
-			bitPosition = newPosition;
+			var value = data[ currentPosition ];
+			currentPosition = newPosition;
 			return value;
+
+			//int newPosition = bitPosition + 8;
+			//if( overflow || newPosition > endBitPosition )
+			//{
+			//	overflow = true;
+			//	return 0;
+			//}
+			//byte value = BitWriter.ReadByte( data, 8, bitPosition );
+			//bitPosition = newPosition;
+			//return value;
 		}
 
-		public byte ReadByte( int numberOfBits )
-		{
-			int newPosition = bitPosition + numberOfBits;
-			if( overflow || newPosition > endBitPosition )
-			{
-				overflow = true;
-				return 0;
-			}
-			byte value = BitWriter.ReadByte( data, numberOfBits, bitPosition );
-			bitPosition = newPosition;
-			return value;
-		}
+		//public byte ReadByte( int numberOfBits )
+		//{
+		//	int newPosition = bitPosition + numberOfBits;
+		//	if( overflow || newPosition > endBitPosition )
+		//	{
+		//		overflow = true;
+		//		return 0;
+		//	}
+		//	byte value = BitWriter.ReadByte( data, numberOfBits, bitPosition );
+		//	bitPosition = newPosition;
+		//	return value;
+		//}
 
 		//public sbyte ReadSByte()
 		//{
@@ -134,220 +229,276 @@ namespace NeoAxis
 
 		public short ReadInt16()
 		{
-			int newPosition = bitPosition + 16;
-			if( overflow || newPosition > endBitPosition )
+			unsafe
 			{
-				overflow = true;
-				return 0;
+				short result = 0;
+				ReadBuffer( &result, 2 );
+				return result;
 			}
-			uint value = BitWriter.ReadUInt32( data, 16, bitPosition );
-			bitPosition = newPosition;
-			return (short)value;
+
+			//int newPosition = bitPosition + 16;
+			//if( overflow || newPosition > endBitPosition )
+			//{
+			//	overflow = true;
+			//	return 0;
+			//}
+			//uint value = BitWriter.ReadUInt32( data, 16, bitPosition );
+			//bitPosition = newPosition;
+			//return (short)value;
 		}
 
 		//public byte ReadInt16( int numberOfBits )
 
 		public ushort ReadUInt16()
 		{
-			int newPosition = bitPosition + 16;
-			if( overflow || newPosition > endBitPosition )
+			unsafe
 			{
-				overflow = true;
-				return 0;
+				ushort result = 0;
+				ReadBuffer( &result, 2 );
+				return result;
 			}
-			uint value = BitWriter.ReadUInt32( data, 16, bitPosition );
-			bitPosition = newPosition;
-			return (ushort)value;
+
+			//int newPosition = bitPosition + 16;
+			//if( overflow || newPosition > endBitPosition )
+			//{
+			//	overflow = true;
+			//	return 0;
+			//}
+			//uint value = BitWriter.ReadUInt32( data, 16, bitPosition );
+			//bitPosition = newPosition;
+			//return (ushort)value;
 		}
 
 		//public byte ReadUInt16( int numberOfBits )
 
 		public int ReadInt32()
 		{
-			int newPosition = bitPosition + 32;
-			if( overflow || newPosition > endBitPosition )
+			unsafe
 			{
-				overflow = true;
-				return 0;
+				int result = 0;
+				ReadBuffer( &result, 4 );
+				return result;
 			}
-			uint value = BitWriter.ReadUInt32( data, 32, bitPosition );
-			bitPosition = newPosition;
-			return (int)value;
+
+			//int newPosition = bitPosition + 32;
+			//if( overflow || newPosition > endBitPosition )
+			//{
+			//	overflow = true;
+			//	return 0;
+			//}
+			//uint value = BitWriter.ReadUInt32( data, 32, bitPosition );
+			//bitPosition = newPosition;
+			//return (int)value;
 		}
 
-		public int ReadInt32( int numberOfBits )
-		{
-			int newPosition = bitPosition + numberOfBits;
-			if( overflow || newPosition > endBitPosition )
-			{
-				overflow = true;
-				return 0;
-			}
+		//public int ReadInt32( int numberOfBits )
+		//{
+		//	int newPosition = bitPosition + numberOfBits;
+		//	if( overflow || newPosition > endBitPosition )
+		//	{
+		//		overflow = true;
+		//		return 0;
+		//	}
 
-			uint value = BitWriter.ReadUInt32( data, numberOfBits, bitPosition );
-			bitPosition += numberOfBits;
+		//	uint value = BitWriter.ReadUInt32( data, numberOfBits, bitPosition );
+		//	bitPosition += numberOfBits;
 
-			if( numberOfBits == 32 )
-				return (int)value;
+		//	if( numberOfBits == 32 )
+		//		return (int)value;
 
-			int signBit = 1 << ( numberOfBits - 1 );
-			if( ( value & signBit ) == 0 )
-				return (int)value; // positive
+		//	int signBit = 1 << ( numberOfBits - 1 );
+		//	if( ( value & signBit ) == 0 )
+		//		return (int)value; // positive
 
-			// negative
-			unchecked
-			{
-				uint mask = ( (uint)-1 ) >> ( 33 - numberOfBits );
-				uint tmp = ( value & mask ) + 1;
-				return -( (int)tmp );
-			}
-		}
+		//	// negative
+		//	unchecked
+		//	{
+		//		uint mask = ( (uint)-1 ) >> ( 33 - numberOfBits );
+		//		uint tmp = ( value & mask ) + 1;
+		//		return -( (int)tmp );
+		//	}
+		//}
 
 		public uint ReadUInt32()
 		{
-			int newPosition = bitPosition + 32;
-			if( overflow || newPosition > endBitPosition )
+			unsafe
 			{
-				overflow = true;
-				return 0;
+				uint result = 0;
+				ReadBuffer( &result, 4 );
+				return result;
 			}
-			uint value = BitWriter.ReadUInt32( data, 32, bitPosition );
-			bitPosition += 32;
-			return value;
+
+			//int newPosition = bitPosition + 32;
+			//if( overflow || newPosition > endBitPosition )
+			//{
+			//	overflow = true;
+			//	return 0;
+			//}
+			//uint value = BitWriter.ReadUInt32( data, 32, bitPosition );
+			//bitPosition += 32;
+			//return value;
 		}
 
-		public UInt32 ReadUInt32( int numberOfBits )
-		{
-			int newPosition = bitPosition + numberOfBits;
-			if( overflow || newPosition > endBitPosition )
-			{
-				overflow = true;
-				return 0;
-			}
-			uint value = BitWriter.ReadUInt32( data, numberOfBits, bitPosition );
-			bitPosition += numberOfBits;
-			return value;
-		}
+		//public UInt32 ReadUInt32( int numberOfBits )
+		//{
+		//	int newPosition = bitPosition + numberOfBits;
+		//	if( overflow || newPosition > endBitPosition )
+		//	{
+		//		overflow = true;
+		//		return 0;
+		//	}
+		//	uint value = BitWriter.ReadUInt32( data, numberOfBits, bitPosition );
+		//	bitPosition += numberOfBits;
+		//	return value;
+		//}
 
 		public long ReadInt64()
 		{
-			int newPosition = bitPosition + 64;
-			if( overflow || newPosition > endBitPosition )
+			unsafe
 			{
-				overflow = true;
-				return 0;
+				long result = 0;
+				ReadBuffer( &result, 8 );
+				return result;
 			}
-			unchecked
-			{
-				ulong value = ReadUInt64();
-				long longValue = (long)value;
-				return longValue;
-			}
+
+			//int newPosition = bitPosition + 64;
+			//if( overflow || newPosition > endBitPosition )
+			//{
+			//	overflow = true;
+			//	return 0;
+			//}
+			//unchecked
+			//{
+			//	ulong value = ReadUInt64();
+			//	long longValue = (long)value;
+			//	return longValue;
+			//}
 		}
 
 		public ulong ReadUInt64()
 		{
-			int newPosition = bitPosition + 64;
-			if( overflow || newPosition > endBitPosition )
+			unsafe
 			{
-				overflow = true;
-				return 0;
-			}
-			ulong low = BitWriter.ReadUInt32( data, 32, bitPosition );
-			bitPosition += 32;
-			ulong high = BitWriter.ReadUInt32( data, 32, bitPosition );
-			bitPosition += 32;
-			ulong value = low + ( high << 32 );
-			return value;
-		}
-
-		public ulong ReadUInt64( int numberOfBits )
-		{
-			int newPosition = bitPosition + numberOfBits;
-			if( overflow || newPosition > endBitPosition )
-			{
-				overflow = true;
-				return 0;
+				ulong result = 0;
+				ReadBuffer( &result, 8 );
+				return result;
 			}
 
-			ulong value;
-			if( numberOfBits <= 32 )
-			{
-				value = (ulong)BitWriter.ReadUInt32( data, numberOfBits, bitPosition );
-			}
-			else
-			{
-				value = BitWriter.ReadUInt32( data, 32, bitPosition );
-				value |= BitWriter.ReadUInt32( data, numberOfBits - 32, bitPosition ) << 32;
-			}
-			bitPosition += numberOfBits;
-			return value;
+			//int newPosition = bitPosition + 64;
+			//if( overflow || newPosition > endBitPosition )
+			//{
+			//	overflow = true;
+			//	return 0;
+			//}
+			//ulong low = BitWriter.ReadUInt32( data, 32, bitPosition );
+			//bitPosition += 32;
+			//ulong high = BitWriter.ReadUInt32( data, 32, bitPosition );
+			//bitPosition += 32;
+			//ulong value = low + ( high << 32 );
+			//return value;
 		}
 
-		public long ReadInt64( int numberOfBits )
-		{
-			int newPosition = bitPosition + numberOfBits;
-			if( overflow || newPosition > endBitPosition )
-			{
-				overflow = true;
-				return 0;
-			}
-			return (long)ReadUInt64( numberOfBits );
-		}
+		//public ulong ReadUInt64( int numberOfBits )
+		//{
+		//	int newPosition = bitPosition + numberOfBits;
+		//	if( overflow || newPosition > endBitPosition )
+		//	{
+		//		overflow = true;
+		//		return 0;
+		//	}
+
+		//	ulong value;
+		//	if( numberOfBits <= 32 )
+		//	{
+		//		value = (ulong)BitWriter.ReadUInt32( data, numberOfBits, bitPosition );
+		//	}
+		//	else
+		//	{
+		//		value = BitWriter.ReadUInt32( data, 32, bitPosition );
+		//		value |= BitWriter.ReadUInt32( data, numberOfBits - 32, bitPosition ) << 32;
+		//	}
+		//	bitPosition += numberOfBits;
+		//	return value;
+		//}
+
+		//public long ReadInt64( int numberOfBits )
+		//{
+		//	int newPosition = bitPosition + numberOfBits;
+		//	if( overflow || newPosition > endBitPosition )
+		//	{
+		//		overflow = true;
+		//		return 0;
+		//	}
+		//	return (long)ReadUInt64( numberOfBits );
+		//}
 
 		public float ReadSingle()
 		{
-			int newPosition = bitPosition + 32;
-			if( overflow || newPosition > endBitPosition )
+			unsafe
 			{
-				overflow = true;
-				return 0;
+				float result = 0;
+				ReadBuffer( &result, 4 );
+				return result;
 			}
 
-			//read directly
-			if( ( bitPosition & 7 ) == 0 )
-			{
-				//endianness is handled inside BitConverter.ToSingle
-				float value = BitConverter.ToSingle( data, bitPosition >> 3 );
-				bitPosition += 32;
-				return value;
-			}
+			//int newPosition = bitPosition + 32;
+			//if( overflow || newPosition > endBitPosition )
+			//{
+			//	overflow = true;
+			//	return 0;
+			//}
 
-			byte[] bytes = new byte[ 4 ];
-			ReadBuffer( bytes );
-			if( overflow )
-				return 0;
-			//endianness is handled inside BitConverter.ToSingle
-			return BitConverter.ToSingle( bytes, 0 );
+			////read directly
+			//if( ( bitPosition & 7 ) == 0 )
+			//{
+			//	//endianness is handled inside BitConverter.ToSingle
+			//	float value = BitConverter.ToSingle( data, bitPosition >> 3 );
+			//	bitPosition += 32;
+			//	return value;
+			//}
+
+			//byte[] bytes = new byte[ 4 ];
+			//ReadBuffer( bytes );
+			//if( overflow )
+			//	return 0;
+			////endianness is handled inside BitConverter.ToSingle
+			//return BitConverter.ToSingle( bytes, 0 );
 		}
 
 		public double ReadDouble()
 		{
-			int newPosition = bitPosition + 64;
-			if( overflow || newPosition > endBitPosition )
+			unsafe
 			{
-				overflow = true;
-				return 0;
+				double result = 0;
+				ReadBuffer( &result, 8 );
+				return result;
 			}
 
-			//read directly
-			if( ( bitPosition & 7 ) == 0 )
-			{
-				double value = BitConverter.ToDouble( data, bitPosition >> 3 );
-				bitPosition += 64;
-				return value;
-			}
+			//int newPosition = bitPosition + 64;
+			//if( overflow || newPosition > endBitPosition )
+			//{
+			//	overflow = true;
+			//	return 0;
+			//}
 
-			byte[] bytes = new byte[ 8 ];
-			ReadBuffer( bytes );
-			if( overflow )
-				return 0;
-			//endianness is handled inside BitConverter.ToSingle
-			return BitConverter.ToDouble( bytes, 0 );
+			////read directly
+			//if( ( bitPosition & 7 ) == 0 )
+			//{
+			//	double value = BitConverter.ToDouble( data, bitPosition >> 3 );
+			//	bitPosition += 64;
+			//	return value;
+			//}
+
+			//byte[] bytes = new byte[ 8 ];
+			//ReadBuffer( bytes );
+			//if( overflow )
+			//	return 0;
+			////endianness is handled inside BitConverter.ToSingle
+			//return BitConverter.ToDouble( bytes, 0 );
 		}
 
 		/// <summary>
-		/// Reads a UInt32 written using WriteUnsignedVarInt()
+		/// Reads a UInt32 written using WriteVariableUInt32()
 		/// </summary>
 		public uint ReadVariableUInt32()
 		{
@@ -362,7 +513,6 @@ namespace NeoAxis
 				{
 					overflow = true;
 					return 0;
-					//throw new FormatException( "Bad 7-bit encoded integer" );
 				}
 
 				byte num3 = ReadByte();
@@ -377,7 +527,7 @@ namespace NeoAxis
 		}
 
 		/// <summary>
-		/// Reads a Int32 written using WriteSignedVarInt()
+		/// Reads a Int32 written using WriteVariableInt32()
 		/// </summary>
 		public int ReadVariableInt32()
 		{
@@ -392,7 +542,6 @@ namespace NeoAxis
 				{
 					overflow = true;
 					return 0;
-					//throw new FormatException( "Bad 7-bit encoded integer" );
 				}
 
 				byte num3 = ReadByte();
@@ -410,7 +559,7 @@ namespace NeoAxis
 		}
 
 		/// <summary>
-		/// Reads a UInt32 written using WriteUnsignedVarInt()
+		/// Reads a UInt64 written using WriteVariableUInt64()
 		/// </summary>
 		public ulong ReadVariableUInt64()
 		{
@@ -425,7 +574,6 @@ namespace NeoAxis
 				{
 					overflow = true;
 					return 0;
-					//throw new FormatException( "Bad 7-bit encoded integer" );
 				}
 
 				byte num3 = ReadByte();
@@ -439,82 +587,94 @@ namespace NeoAxis
 			}
 		}
 
-		/// <summary>
-		/// Reads a float written using WriteSignedSingle()
-		/// </summary>
-		public float ReadSignedSingle( int numberOfBits )
-		{
-			if( overflow || bitPosition + numberOfBits > endBitPosition )
-			{
-				overflow = true;
-				return 0;
-			}
+		///// <summary>
+		///// Reads a float written using WriteSignedSingle()
+		///// </summary>
+		//public float ReadSignedSingle( int numberOfBits )
+		//{
+		//	if( overflow || bitPosition + numberOfBits > endBitPosition )
+		//	{
+		//		overflow = true;
+		//		return 0;
+		//	}
 
-			uint encodedVal = ReadUInt32( numberOfBits );
-			int maxVal = ( 1 << numberOfBits ) - 1;
-			return ( (float)( encodedVal + 1 ) / (float)( maxVal + 1 ) - 0.5f ) * 2.0f;
+		//	uint encodedVal = ReadUInt32( numberOfBits );
+		//	int maxVal = ( 1 << numberOfBits ) - 1;
+		//	return ( (float)( encodedVal + 1 ) / (float)( maxVal + 1 ) - 0.5f ) * 2.0f;
+		//}
+
+		///// <summary>
+		///// Reads a float written using WriteUnitSingle()
+		///// </summary>
+		//public float ReadUnitSingle( int numberOfBits )
+		//{
+		//	if( overflow || bitPosition + numberOfBits > endBitPosition )
+		//	{
+		//		overflow = true;
+		//		return 0;
+		//	}
+
+		//	uint encodedVal = ReadUInt32( numberOfBits );
+		//	int maxVal = ( 1 << numberOfBits ) - 1;
+		//	return (float)( encodedVal + 1 ) / (float)( maxVal + 1 );
+		//}
+
+		///// <summary>
+		///// Reads a float written using WriteRangedSingle() using the same MIN and MAX values
+		///// </summary>
+		//public float ReadRangedSingle( float min, float max, int numberOfBits )
+		//{
+		//	if( overflow || bitPosition + numberOfBits > endBitPosition )
+		//	{
+		//		overflow = true;
+		//		return 0;
+		//	}
+		//	float range = max - min;
+		//	int maxVal = ( 1 << numberOfBits ) - 1;
+		//	float encodedVal = (float)ReadUInt32( numberOfBits );
+		//	float unit = encodedVal / (float)maxVal;
+		//	return min + ( unit * range );
+		//}
+
+		//static int BitsToHoldUInt( uint value )
+		//{
+		//	int bits = 1;
+		//	while( ( value >>= 1 ) != 0 )
+		//		bits++;
+		//	return bits;
+		//}
+
+		///// <summary>
+		///// Reads an integer written using WriteRangedInteger() using the same min/max values
+		///// </summary>
+		//public int ReadRangedInteger( int min, int max )
+		//{
+		//	uint range = (uint)( max - min );
+		//	int numBits = BitsToHoldUInt( range );
+		//	if( overflow || bitPosition + numBits > endBitPosition )
+		//	{
+		//		overflow = true;
+		//		return 0;
+		//	}
+		//	uint rvalue = ReadUInt32( numBits );
+		//	return (int)( min + rvalue );
+		//}
+
+		public void ReadVector2F( out Vector2F result )
+		{
+			result.X = ReadSingle();
+			result.Y = ReadSingle();
 		}
 
-		/// <summary>
-		/// Reads a float written using WriteUnitSingle()
-		/// </summary>
-		public float ReadUnitSingle( int numberOfBits )
-		{
-			if( overflow || bitPosition + numberOfBits > endBitPosition )
-			{
-				overflow = true;
-				return 0;
-			}
-
-			uint encodedVal = ReadUInt32( numberOfBits );
-			int maxVal = ( 1 << numberOfBits ) - 1;
-			return (float)( encodedVal + 1 ) / (float)( maxVal + 1 );
-		}
-
-		/// <summary>
-		/// Reads a float written using WriteRangedSingle() using the same MIN and MAX values
-		/// </summary>
-		public float ReadRangedSingle( float min, float max, int numberOfBits )
-		{
-			if( overflow || bitPosition + numberOfBits > endBitPosition )
-			{
-				overflow = true;
-				return 0;
-			}
-			float range = max - min;
-			int maxVal = ( 1 << numberOfBits ) - 1;
-			float encodedVal = (float)ReadUInt32( numberOfBits );
-			float unit = encodedVal / (float)maxVal;
-			return min + ( unit * range );
-		}
-
-		static int BitsToHoldUInt( uint value )
-		{
-			int bits = 1;
-			while( ( value >>= 1 ) != 0 )
-				bits++;
-			return bits;
-		}
-
-		/// <summary>
-		/// Reads an integer written using WriteRangedInteger() using the same min/max values
-		/// </summary>
-		public int ReadRangedInteger( int min, int max )
-		{
-			uint range = (uint)( max - min );
-			int numBits = BitsToHoldUInt( range );
-			if( overflow || bitPosition + numBits > endBitPosition )
-			{
-				overflow = true;
-				return 0;
-			}
-			uint rvalue = ReadUInt32( numBits );
-			return (int)( min + rvalue );
-		}
-
-		public Vector2F ReadVec2F()
+		public Vector2F ReadVector2F()
 		{
 			return new Vector2F( ReadSingle(), ReadSingle() );
+		}
+
+		public void ReadRangeF( out RangeF result )
+		{
+			result.Minimum = ReadSingle();
+			result.Maximum = ReadSingle();
 		}
 
 		public RangeF ReadRangeF()
@@ -522,14 +682,39 @@ namespace NeoAxis
 			return new RangeF( ReadSingle(), ReadSingle() );
 		}
 
-		public Vector3F ReadVec3F()
+		public void ReadVector3F( out Vector3F result )
+		{
+			result.X = ReadSingle();
+			result.Y = ReadSingle();
+			result.Z = ReadSingle();
+		}
+
+		public Vector3F ReadVector3F()
 		{
 			return new Vector3F( ReadSingle(), ReadSingle(), ReadSingle() );
 		}
 
-		public Vector4F ReadVec4F()
+		public void ReadVector4F( out Vector4F result )
+		{
+			result.X = ReadSingle();
+			result.Y = ReadSingle();
+			result.Z = ReadSingle();
+			result.W = ReadSingle();
+		}
+
+		public Vector4F ReadVector4F()
 		{
 			return new Vector4F( ReadSingle(), ReadSingle(), ReadSingle(), ReadSingle() );
+		}
+
+		public void ReadBoundsF( out BoundsF result )
+		{
+			result.Minimum.X = ReadSingle();
+			result.Minimum.Y = ReadSingle();
+			result.Minimum.Z = ReadSingle();
+			result.Maximum.X = ReadSingle();
+			result.Maximum.Y = ReadSingle();
+			result.Maximum.Z = ReadSingle();
 		}
 
 		public BoundsF ReadBoundsF()
@@ -537,18 +722,34 @@ namespace NeoAxis
 			return new BoundsF( ReadSingle(), ReadSingle(), ReadSingle(), ReadSingle(), ReadSingle(), ReadSingle() );
 		}
 
-		public QuaternionF ReadQuatF()
+		public void ReadQuaternionF( out QuaternionF result )
+		{
+			result.X = ReadSingle();
+			result.Y = ReadSingle();
+			result.Z = ReadSingle();
+			result.W = ReadSingle();
+		}
+
+		public QuaternionF ReadQuatertionF()
 		{
 			return new QuaternionF( ReadSingle(), ReadSingle(), ReadSingle(), ReadSingle() );
 		}
 
-		public QuaternionF ReadQuatF( int bitsPerElement )
+		//public QuaternionF ReadQuatertionF( int bitsPerElement )
+		//{
+		//	return new QuaternionF(
+		//		ReadRangedSingle( -1, 1, bitsPerElement ),
+		//		ReadRangedSingle( -1, 1, bitsPerElement ),
+		//		ReadRangedSingle( -1, 1, bitsPerElement ),
+		//		ReadRangedSingle( -1, 1, bitsPerElement ) );
+		//}
+
+		public void ReadColorValue( out ColorValue result )
 		{
-			return new QuaternionF(
-				ReadRangedSingle( -1, 1, bitsPerElement ),
-				ReadRangedSingle( -1, 1, bitsPerElement ),
-				ReadRangedSingle( -1, 1, bitsPerElement ),
-				ReadRangedSingle( -1, 1, bitsPerElement ) );
+			result.Red = ReadSingle();
+			result.Green = ReadSingle();
+			result.Blue = ReadSingle();
+			result.Alpha = ReadSingle();
 		}
 
 		public ColorValue ReadColorValue()
@@ -556,32 +757,75 @@ namespace NeoAxis
 			return new ColorValue( ReadSingle(), ReadSingle(), ReadSingle(), ReadSingle() );
 		}
 
+		public void ReadSphericalDirectionF( out SphericalDirectionF result )
+		{
+			result.Horizontal = ReadSingle();
+			result.Vertical = ReadSingle();
+		}
+
 		public SphericalDirectionF ReadSphericalDirectionF()
 		{
 			return new SphericalDirectionF( ReadSingle(), ReadSingle() );
 		}
 
-		public Vector2I ReadVec2I()
+		public void ReadVector2I( out Vector2I result )
+		{
+			result.X = ReadInt32();
+			result.Y = ReadInt32();
+		}
+
+		public Vector2I ReadVector2I()
 		{
 			return new Vector2I( ReadInt32(), ReadInt32() );
 		}
 
-		public Vector3I ReadVec3I()
+		public void ReadVector3I( out Vector3I result )
+		{
+			result.X = ReadInt32();
+			result.Y = ReadInt32();
+			result.Z = ReadInt32();
+		}
+
+		public Vector3I ReadVector3I()
 		{
 			return new Vector3I( ReadInt32(), ReadInt32(), ReadInt32() );
 		}
 
-		public Vector4I ReadVec4I()
+		public void ReadVector4I( out Vector4I result )
+		{
+			result.X = ReadInt32();
+			result.Y = ReadInt32();
+			result.Z = ReadInt32();
+			result.W = ReadInt32();
+		}
+
+		public Vector4I ReadVector4I()
 		{
 			return new Vector4I( ReadInt32(), ReadInt32(), ReadInt32(), ReadInt32() );
 		}
 
-		public RectangleF ReadRectF()
+		public void ReadRectangleF( out RectangleF result )
+		{
+			result.Left = ReadSingle();
+			result.Top = ReadSingle();
+			result.Right = ReadSingle();
+			result.Bottom = ReadSingle();
+		}
+
+		public RectangleF ReadRectangleF()
 		{
 			return new RectangleF( ReadSingle(), ReadSingle(), ReadSingle(), ReadSingle() );
 		}
 
-		public RectangleI ReadRectI()
+		public void ReadRectangleI( out RectangleI result )
+		{
+			result.Left = ReadInt32();
+			result.Top = ReadInt32();
+			result.Right = ReadInt32();
+			result.Bottom = ReadInt32();
+		}
+
+		public RectangleI ReadRectangleI()
 		{
 			return new RectangleI( ReadInt32(), ReadInt32(), ReadInt32(), ReadInt32() );
 		}
@@ -598,51 +842,74 @@ namespace NeoAxis
 
 		public string ReadString()
 		{
-			int byteLength = (int)ReadVariableUInt32();
-
-			if( byteLength == 0 )
+			int length = (int)ReadVariableUInt32();
+			if( length == 0 )
 				return "";
 
-			if( overflow || bitPosition + byteLength * 8 > endBitPosition )
+			int newPosition = currentPosition + length;
+			if( overflow || newPosition > endPosition )
 			{
 				overflow = true;
 				return "";
 			}
+			var result = Encoding.UTF8.GetString( data, currentPosition, length );
+			currentPosition = newPosition;
 
-			if( ( bitPosition & 7 ) == 0 )
-			{
-				//read directly
-				string result = System.Text.Encoding.UTF8.GetString( data, bitPosition >> 3, byteLength );
-				bitPosition += ( byteLength * 8 );
-				return result;
-			}
+			return result;
 
-			byte[] bytes = new byte[ byteLength ];
-			ReadBuffer( bytes );
-			if( overflow )
-				return "";
-			return System.Text.Encoding.UTF8.GetString( bytes, 0, bytes.Length );
+
+			//if( overflow || bitPosition + byteLength * 8 > endBitPosition )
+			//{
+			//	overflow = true;
+			//	return "";
+			//}
+
+			//if( ( bitPosition & 7 ) == 0 )
+			//{
+			//	//read directly
+			//	string result = System.Text.Encoding.UTF8.GetString( data, bitPosition >> 3, byteLength );
+			//	bitPosition += ( byteLength * 8 );
+			//	return result;
+			//}
+
+			//byte[] bytes = new byte[ byteLength ];
+			//ReadBuffer( bytes );
+			//if( overflow )
+			//	return "";
+			//return System.Text.Encoding.UTF8.GetString( bytes, 0, bytes.Length );
 		}
 
-		/// <summary>
-		/// Pads data with enough bits to reach a full byte. Decreases cpu usage for subsequent byte writes.
-		/// </summary>
-		public void SkipPadBits()
+		///// <summary>
+		///// Pads data with enough bits to reach a full byte. Decreases cpu usage for subsequent byte writes.
+		///// </summary>
+		//public void SkipPadBits()
+		//{
+		//	bitPosition = ( ( bitPosition + 7 ) / 8 ) * 8;
+		//}
+
+		///// <summary>
+		///// Pads data with the specified number of bits.
+		///// </summary>
+		//public void SkipPadBits( int numberOfBits )
+		//{
+		//	bitPosition += numberOfBits;
+		//}
+
+		public void ReadVector2( out Vector2 result )
 		{
-			bitPosition = ( ( bitPosition + 7 ) / 8 ) * 8;
+			result.X = ReadDouble();
+			result.Y = ReadDouble();
 		}
 
-		/// <summary>
-		/// Pads data with the specified number of bits.
-		/// </summary>
-		public void SkipPadBits( int numberOfBits )
-		{
-			bitPosition += numberOfBits;
-		}
-
-		public Vector2 ReadVec2()
+		public Vector2 ReadVector2()
 		{
 			return new Vector2( ReadDouble(), ReadDouble() );
+		}
+
+		public void ReadRange( out Range result )
+		{
+			result.Minimum = ReadDouble();
+			result.Maximum = ReadDouble();
 		}
 
 		public Range ReadRange()
@@ -650,14 +917,39 @@ namespace NeoAxis
 			return new Range( ReadDouble(), ReadDouble() );
 		}
 
-		public Vector3 ReadVec3()
+		public void ReadVector3( out Vector3 result )
+		{
+			result.X = ReadDouble();
+			result.Y = ReadDouble();
+			result.Z = ReadDouble();
+		}
+
+		public Vector3 ReadVector3()
 		{
 			return new Vector3( ReadDouble(), ReadDouble(), ReadDouble() );
 		}
 
-		public Vector4 ReadVec4()
+		public void ReadVector4( out Vector4 result )
+		{
+			result.X = ReadDouble();
+			result.Y = ReadDouble();
+			result.Z = ReadDouble();
+			result.W = ReadDouble();
+		}
+
+		public Vector4 ReadVector4()
 		{
 			return new Vector4( ReadDouble(), ReadDouble(), ReadDouble(), ReadDouble() );
+		}
+
+		public void ReadBounds( out Bounds result )
+		{
+			result.Minimum.X = ReadDouble();
+			result.Minimum.Y = ReadDouble();
+			result.Minimum.Z = ReadDouble();
+			result.Maximum.X = ReadDouble();
+			result.Maximum.Y = ReadDouble();
+			result.Maximum.Z = ReadDouble();
 		}
 
 		public Bounds ReadBounds()
@@ -665,9 +957,23 @@ namespace NeoAxis
 			return new Bounds( ReadDouble(), ReadDouble(), ReadDouble(), ReadDouble(), ReadDouble(), ReadDouble() );
 		}
 
-		public Quaternion ReadQuat()
+		public void ReadQuaternion( out Quaternion result )
+		{
+			result.X = ReadDouble();
+			result.Y = ReadDouble();
+			result.Z = ReadDouble();
+			result.W = ReadDouble();
+		}
+
+		public Quaternion ReadQuaternion()
 		{
 			return new Quaternion( ReadDouble(), ReadDouble(), ReadDouble(), ReadDouble() );
+		}
+
+		public void ReadSphericalDirection( out SphericalDirection result )
+		{
+			result.Horizontal = ReadDouble();
+			result.Vertical = ReadDouble();
 		}
 
 		public SphericalDirection ReadSphericalDirection()
@@ -675,7 +981,15 @@ namespace NeoAxis
 			return new SphericalDirection( ReadDouble(), ReadDouble() );
 		}
 
-		public Rectangle ReadRect()
+		public void ReadRectangle( out Rectangle result )
+		{
+			result.Left = ReadDouble();
+			result.Top = ReadDouble();
+			result.Right = ReadDouble();
+			result.Bottom = ReadDouble();
+		}
+
+		public Rectangle ReadRectangle()
 		{
 			return new Rectangle( ReadDouble(), ReadDouble(), ReadDouble(), ReadDouble() );
 		}
@@ -688,6 +1002,11 @@ namespace NeoAxis
 		public Radian ReadRadian()
 		{
 			return new Radian( ReadDouble() );
+		}
+
+		public DateTime ReadDateTime()
+		{
+			return new DateTime( ReadInt64() );
 		}
 
 		//!!!!more types

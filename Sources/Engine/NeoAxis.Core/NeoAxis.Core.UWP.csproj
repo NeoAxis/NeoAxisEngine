@@ -274,7 +274,6 @@
     <Compile Include="Utility\ArrayDataReader.cs" />
     <Compile Include="Utility\ArrayDataWriter.cs" />
     <Compile Include="Utility\AssemblyUtility.cs" />
-    <Compile Include="Utility\BitWriter.cs" />
     <Compile Include="Utility\CollectionUtility.cs" />
     <Compile Include="Utility\ConcurrentArrayPool.cs" />
     <Compile Include="Utility\CRC32.cs" />
@@ -2958,6 +2957,95 @@
     <Compile Include="MathEx\Vector3H.cs" />
     <Compile Include="MathEx\Vector4H.cs" />
     <Compile Include="Components\Build\Product_iOS.cs" />
+    <Compile Include="Networking\EntitySystemWorld.cs" />
+    <Compile Include="Networking\NetworkService_Chat.cs" />
+    <Compile Include="Networking\NetworkService_Components.cs" />
+    <Compile Include="Networking\NetworkService_FileSync.cs" />
+    <Compile Include="Networking\NetworkService_FileTransfer.cs" />
+    <Compile Include="Networking\NetworkService_Messages.cs" />
+    <Compile Include="Networking\NetworkService_Users.cs" />
+    <Compile Include="Networking\RemoteEntityWorld.cs" />
+    <Compile Include="Networking\ServerManager.cs" />
+    <Compile Include="Components\Build\Product_macOS.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetBigInteger.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetBitVector.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetBitWriter.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetBuffer.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetBuffer.Peek.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetBuffer.Read.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetBuffer.Read.Reflection.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetBuffer.Write.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetBuffer.Write.Reflection.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetClient.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetConnection.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetConnection.Handshake.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetConnection.Latency.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetConnection.MTU.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetConnectionStatistics.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetConnectionStatus.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetConstants.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetDeliveryMethod.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetException.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetFragmentationHelper.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetFragmentationInfo.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetIncomingMessage.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetIncomingMessageType.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetMessageType.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetNatIntroduction.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetOutgoingMessage.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetPeer.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetPeer.Discovery.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetPeer.Fragmentation.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetPeer.Internal.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetPeer.LatencySimulation.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetPeer.Logging.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetPeer.MessagePools.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetPeer.Send.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetPeerConfiguration.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetPeerStatistics.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetPeerStatus.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetQueue.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetRandom.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetRandom.Implementations.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetRandomSeed.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetReceiverChannelBase.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetReliableOrderedReceiver.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetReliableSenderChannel.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetReliableSequencedReceiver.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetReliableUnorderedReceiver.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetSenderChannelBase.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetSendResult.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetServer.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetSRP.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetStoredReliableMessage.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetTime.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetTuple.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetUnreliableSenderChannel.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetUnreliableSequencedReceiver.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetUnreliableUnorderedReceiver.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetUPnP.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetUtility.cs" />
+    <Compile Include="Libraries\Lidgren.Network\NetUtility.Dns.cs" />
+    <Compile Include="Networking\Common\ClientNetworkService.cs" />
+    <Compile Include="Networking\Common\NetworkClient.cs" />
+    <Compile Include="Networking\Common\NetworkCommon.cs" />
+    <Compile Include="Networking\Common\NetworkNode.cs" />
+    <Compile Include="Networking\Common\NetworkServer.cs" />
+    <Compile Include="Networking\Common\NetworkService.cs" />
+    <Compile Include="Networking\Common\ServerNetworkService.cs" />
+    <Compile Include="Libraries\Lidgren.Network\Encryption\NetAESEncryption.cs" />
+    <Compile Include="Libraries\Lidgren.Network\Encryption\NetBlockEncryptionBase.cs" />
+    <Compile Include="Libraries\Lidgren.Network\Encryption\NetCryptoProviderBase.cs" />
+    <Compile Include="Libraries\Lidgren.Network\Encryption\NetCryptoProviderEncryption.cs" />
+    <Compile Include="Libraries\Lidgren.Network\Encryption\NetDESEncryption.cs" />
+    <Compile Include="Libraries\Lidgren.Network\Encryption\NetEncryption.cs" />
+    <Compile Include="Libraries\Lidgren.Network\Encryption\NetRC2Encryption.cs" />
+    <Compile Include="Libraries\Lidgren.Network\Encryption\NetTripleDESEncryption.cs" />
+    <Compile Include="Libraries\Lidgren.Network\Encryption\NetXorEncryption.cs" />
+    <Compile Include="Libraries\Lidgren.Network\Encryption\NetXteaEncryption.cs" />
+    <Compile Include="Libraries\Lidgren.Network\Platform\PlatformAndroid.cs" />
+    <Compile Include="Libraries\Lidgren.Network\Platform\PlatformWin32.cs" />
+    <Compile Include="Libraries\Lidgren.Network\Platform\PlatformWinRT.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -3441,6 +3529,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.10</Version>
+    </PackageReference>
+    <PackageReference Include="System.Memory">
+      <Version>4.5.4</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

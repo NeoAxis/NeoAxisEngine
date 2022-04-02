@@ -23,7 +23,7 @@ namespace NeoAxis
 		{
 			if( sender is StoresWindow.StoresContentBrowserOptions )
 			{
-				LoadFromRegistry( out var username, out var password );
+				LoadFromRegistry( out var username, out var password, out var prepareStoreProduct );
 
 				{
 					var attributes = new List<Attribute>();
@@ -61,10 +61,31 @@ namespace NeoAxis
 
 					sender.AddProperty( property );
 				}
+
+				{
+					var attributes = new List<Attribute>();
+					attributes.Add( new DisplayNameAttribute( "Sketchfab Product for Store" ) );
+
+					var property = new ContentBrowserOptions.PropertyImpl( sender, "SketchfabPrepareStoreProduct", MetadataManager.GetTypeOfNetType( typeof( bool ) ), attributes, "Sketchfab", "" );
+					property.DefaultValueSpecified = true;
+					property.DefaultValue = false;
+					property.Attributes.Add( new HCTextBoxPasswordAttribute() );
+
+					property.Attributes.Add( new DescriptionAttribute( "Whether to prepare a product file for upload to NeoAxis Store." ) );
+
+					property.Value = prepareStoreProduct;
+
+					property.ValueChanged += delegate ( ContentBrowserOptions.PropertyImpl sender )
+					{
+						Save( (ContentBrowserOptions)sender.Owner );
+					};
+
+					sender.AddProperty( property );
+				}
 			}
 		}
 
-		public static bool LoadFromRegistry( out string username, out string hash )
+		public static bool LoadFromRegistry( out string username, out string hash, out bool prepareStoreProduct )
 		{
 			try
 			{
@@ -75,11 +96,25 @@ namespace NeoAxis
 				if( key != null )
 				{
 					username = ( key.GetValue( "SketchfabUsername" ) ?? "" ).ToString();
+
 					var p = key.GetValue( "SketchfabHash" );
 					if( p != null )
 						hash = EncryptDecrypt( p.ToString() );
 					else
 						hash = "";
+
+					prepareStoreProduct = false;
+					{
+						var v = key.GetValue( "SketchfabPrepareStoreProduct", false );
+						if( v != null )
+						{
+							if( v is bool )
+								prepareStoreProduct = (bool)v;
+							else
+								bool.TryParse( v.ToString(), out prepareStoreProduct );
+						}
+					}
+
 					key.Close();
 					return true;
 				}
@@ -88,6 +123,7 @@ namespace NeoAxis
 
 			username = "";
 			hash = "";
+			prepareStoreProduct = false;
 			return false;
 		}
 
@@ -102,7 +138,7 @@ namespace NeoAxis
 			return new string( output );
 		}
 
-		public static void SaveToRegistry( string email, string hash )
+		public static void SaveToRegistry( string email, string hash, bool prepareProductStore )
 		{
 			try
 			{
@@ -110,6 +146,8 @@ namespace NeoAxis
 
 				key.SetValue( "SketchfabUsername", email );
 				key.SetValue( "SketchfabHash", EncryptDecrypt( hash ) );
+				key.SetValue( "SketchfabPrepareStoreProduct", prepareProductStore );
+
 				key.Close();
 			}
 			catch( Exception e )
@@ -123,7 +161,9 @@ namespace NeoAxis
 		{
 			var username = (string)( (ContentBrowserOptions.PropertyImpl)options.MetadataGetMemberBySignature( "property:SketchfabUsername" ) ).Value;
 			var password = (string)( (ContentBrowserOptions.PropertyImpl)options.MetadataGetMemberBySignature( "property:SketchfabPassword" ) ).Value;
-			SaveToRegistry( username, password );
+			var prepareProductStore = (bool)( (ContentBrowserOptions.PropertyImpl)options.MetadataGetMemberBySignature( "property:SketchfabPrepareStoreProduct" ) ).Value;
+
+			SaveToRegistry( username, password, prepareProductStore );
 		}
 
 	}

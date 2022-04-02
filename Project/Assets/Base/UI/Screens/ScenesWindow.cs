@@ -86,7 +86,7 @@ namespace Project
 			}
 		}
 
-		private void List_ItemMouseDoubleClick( UIControl sender, EMouseButtons button, int index, ref bool handled )
+		private void List_ItemMouseDoubleClick( UIControl sender, EMouseButtons button, ref bool handled )
 		{
 			ButtonLoad_Click( null );
 		}

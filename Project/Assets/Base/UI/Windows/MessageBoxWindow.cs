@@ -4,21 +4,34 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
 using NeoAxis;
+using System.Threading.Tasks;
 
 namespace Project
 {
 	public class MessageBoxWindow : NeoAxis.UIWindow
 	{
+		ResultDelegate resultHandler;
+		object resultHandlerAnyData;
+
+		public delegate void ResultDelegate( MessageBoxWindow sender, EDialogResult result, object anyData );
+
+		/////////////////////////////////////////
+
 		public class ResultData
 		{
-			public EDialogResult Result = EDialogResult.None;
+			public MessageBoxWindow Window;
+			public volatile EDialogResult Result = EDialogResult.None;
 		}
+
+		/////////////////////////////////////////
 
 		class ButtonData
 		{
 			public EDialogResult DialogResult;
 			public ResultData ResultData;
 		}
+
+		/////////////////////////////////////////
 
 		protected override void OnRenderUI( CanvasRenderer renderer )
 		{
@@ -34,36 +47,38 @@ namespace Project
 			get { return CoverOtherControlsEnum.AllPreviousInHierarchy; }
 		}
 
-		public void Button_Click(NeoAxis.UIButton sender)
-        {
+		public void Button_Click( NeoAxis.UIButton sender )
+		{
 			//close window
-			RemoveFromParent(true);
+			RemoveFromParent( true );
 
 			var data = (ButtonData)sender.AnyData;
 			data.ResultData.Result = data.DialogResult;
+
+			resultHandler?.Invoke( this, data.ResultData.Result, resultHandlerAnyData );
 		}
 
-		static void ConfigureButtons(UIWindow window, EDialogResult[] results, ResultData resultData )
+		static void ConfigureButtons( UIWindow window, EDialogResult[] results, ResultData resultData )
 		{
 			var allButtonNames = new List<string>();
-			allButtonNames.Add("Button 1 Set 1");			
-			allButtonNames.Add("Button 2 Set 1");
-			allButtonNames.Add("Button 2 Set 2");			
-			allButtonNames.Add("Button 3 Set 1");
-			allButtonNames.Add("Button 3 Set 2");
-			allButtonNames.Add("Button 3 Set 3");
+			allButtonNames.Add( "Button 1 Set 1" );
+			allButtonNames.Add( "Button 2 Set 1" );
+			allButtonNames.Add( "Button 2 Set 2" );
+			allButtonNames.Add( "Button 3 Set 1" );
+			allButtonNames.Add( "Button 3 Set 2" );
+			allButtonNames.Add( "Button 3 Set 3" );
 
-			var uiButtons = new List<UIButton>(); 
+			var uiButtons = new List<UIButton>();
 
-			foreach(var name in allButtonNames)
+			foreach( var name in allButtonNames )
 			{
-				var b = window.GetComponent(name) as UIButton;
-				if (b != null)
+				var b = window.GetComponent( name ) as UIButton;
+				if( b != null )
 				{
-					var thisSet = name.Contains($"Button {results.Length} Set");					
+					var thisSet = name.Contains( $"Button {results.Length} Set" );
 					b.Enabled = b.Visible = thisSet;
-					if(thisSet)
-						uiButtons.Add(b);
+					if( thisSet )
+						uiButtons.Add( b );
 				}
 			}
 
@@ -79,28 +94,77 @@ namespace Project
 			}
 		}
 
-		static UIWindow CreateWindow(UIControl parent, string text, string caption)
+		static MessageBoxWindow CreateWindow( UIControl parent, string text, string caption )
 		{
-			var resourse = ResourceManager.LoadSeparateInstance(@"Base\UI\Windows\MessageBoxWindow.ui", true, false, true);
-			if (resourse == null)
+			var resourse = ResourceManager.LoadSeparateInstance( @"Base\UI\Windows\MessageBoxWindow.ui", true, false, true );
+			if( resourse == null )
 				return null;
-			
-			var window = resourse.ResultComponent as UIWindow;
-			
+
+			var window = resourse.ResultComponent as MessageBoxWindow;
+
 			window.Text = caption;
 
-			var textControl = window.GetComponent("Text") as UIText;
-			if(textControl != null)
+			var textControl = window.GetComponent( "Text" ) as UIText;
+			if( textControl != null )
 				textControl.Text = text;
 
 			return window;
 		}
 
-		public static ResultData Show(UIControl parent, string text, string caption, EMessageBoxButtons buttons )
+		UIButton FindButtonByResult( EDialogResult result )
 		{
-			var window = CreateWindow( parent, text, caption);
+			foreach( var button in GetComponents<UIButton>( checkChildren: true ) )
+			{
+				var buttonData = button.AnyData as ButtonData;
+				if( buttonData != null && buttonData.DialogResult == result )
+					return button;
+			}
+			return null;
+		}
+
+		protected override bool OnKeyDown( KeyEvent e )
+		{
+			switch( e.Key )
+			{
+			case EKeys.Escape:
+				{
+					var button = FindButtonByResult( EDialogResult.Cancel ) ?? FindButtonByResult( EDialogResult.No ) ?? FindButtonByResult( EDialogResult.OK );
+					if( button != null )
+					{
+						Button_Click( button );
+						return true;
+					}
+				}
+				break;
+
+			case EKeys.Return:
+				{
+					var button = FindButtonByResult( EDialogResult.OK ) ?? FindButtonByResult( EDialogResult.Yes );
+					if( button != null )
+					{
+						Button_Click( button );
+						return true;
+					}
+				}
+				break;
+			}
+
+			return base.OnKeyDown( e );
+		}
+
+		public static ResultData Show( UIControl parent, string text, string caption, EMessageBoxButtons buttons = EMessageBoxButtons.OK, EMessageBoxIcon icon = EMessageBoxIcon.None, UIStyle overrideStyle = null, ResultDelegate resultHandler = null, object resultHandlerAnyData = null )
+		{
+			//!!!!impl icon
+
+			var window = CreateWindow( parent, text, caption );
 			if( window == null )
 				return null;
+
+			if( overrideStyle != null )
+				window.Style = overrideStyle;
+
+			window.resultHandler = resultHandler;
+			window.resultHandlerAnyData = resultHandlerAnyData;
 
 			EDialogResult[] results = null;
 			switch( buttons )
@@ -115,7 +179,7 @@ namespace Project
 				results = new EDialogResult[] { EDialogResult.Abort, EDialogResult.Retry, EDialogResult.Ignore };
 				break;
 			case EMessageBoxButtons.YesNoCancel:
-				results = new EDialogResult[] { EDialogResult.Yes, EDialogResult.No, EDialogResult.Cancel};
+				results = new EDialogResult[] { EDialogResult.Yes, EDialogResult.No, EDialogResult.Cancel };
 				break;
 			case EMessageBoxButtons.YesNo:
 				results = new EDialogResult[] { EDialogResult.Yes, EDialogResult.No };
@@ -123,21 +187,30 @@ namespace Project
 			case EMessageBoxButtons.RetryCancel:
 				results = new EDialogResult[] { EDialogResult.Retry, EDialogResult.Cancel };
 				break;
+			case EMessageBoxButtons.Cancel:
+				results = new EDialogResult[] { EDialogResult.Cancel };
+				break;
 			}
 
 			var resultData = new ResultData();
+			resultData.Window = window;
 
-			ConfigureButtons( window, results, resultData);
+			ConfigureButtons( window, results, resultData );
 
 			//add to parent and enable
-			parent.AddComponent(window);
+			parent.AddComponent( window );
 
 			return resultData;
 		}
 
-		public static void ShowInfo(UIControl parent, string text, string caption)
+		public static async Task<EDialogResult> ShowAsync( UIControl parent, string text, string caption, EMessageBoxButtons buttons = EMessageBoxButtons.OK, EMessageBoxIcon icon = EMessageBoxIcon.None, UIStyle overrideStyle = null )
 		{
-			Show( parent, text, caption, EMessageBoxButtons.OK );
+			var result = Show( parent, text, caption, buttons, icon, overrideStyle );
+
+			while( result.Result == EDialogResult.None )
+				await Task.Delay( 10 );
+
+			return result.Result;
 		}
-    }
+	}
 }

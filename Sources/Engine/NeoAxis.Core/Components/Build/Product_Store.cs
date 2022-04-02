@@ -146,6 +146,7 @@ namespace NeoAxis
 		ReferenceField<string> _fullDescription = "";
 
 		[DefaultValue( ProjectItemCategoriesEnum.Uncategorized )]
+		[DisplayName( "Categories" )]
 		public Reference<ProjectItemCategoriesEnum> ProjectItemCategories
 		{
 			get { if( _projectItemCategories.BeginGet() ) ProjectItemCategories = _projectItemCategories.Get( this ); return _projectItemCategories.value; }
@@ -356,11 +357,14 @@ namespace NeoAxis
 			Interior = 1 << 19,
 			Vehicles = 1 << 20,
 			Nature = 1 << 21,
-			UncategorizedModels = 1 << 22,
+			Weapons = 1 << 22,
+			UncategorizedModels = 1 << 23,
 
-			Surfaces = 1 << 23,
+			Surfaces = 1 << 24,
 
-			BasicContent = 1 << 24,
+			BasicContent = 1 << 25,
+
+			FunctionalObjects = 1 << 26,
 		}
 
 		/////////////////////////////////////////
@@ -387,6 +391,7 @@ namespace NeoAxis
 			Surface surface;
 			Material material;
 			Skybox skybox;
+			ObjectInSpace objectInSpace;
 
 			ImageComponent texture;
 			Viewport viewport;
@@ -503,7 +508,9 @@ namespace NeoAxis
 				camera.NearClipPlane = Math.Max( distance / 10000, 0.01 );//.1;
 				camera.FarClipPlane = Math.Max( 1000, distance * 2 );
 
-				if( mesh?.EditorCameraTransform != null )
+				if( objectInSpace?.EditorCameraTransform != null )
+					camera.Transform = objectInSpace.EditorCameraTransform;
+				else if( mesh?.EditorCameraTransform != null )
 					camera.Transform = mesh.EditorCameraTransform;
 				else if( surface?.EditorCameraTransform != null )
 					camera.Transform = surface.EditorCameraTransform;
@@ -708,6 +715,27 @@ namespace NeoAxis
 				var instanceInScene = (Skybox)skybox.Clone();
 				scene.AddComponent( instanceInScene );
 
+				scene.Enabled = true;
+
+				GenerateGeneral( writeStream, writeImageFormat );// writeRealFileName );
+			}
+
+			public void Generate( ObjectInSpace objectInSpace, Stream writeStream, ImageFormat writeImageFormat )//string writeRealFileName )
+			{
+				this.objectInSpace = objectInSpace;
+				Init();
+
+				var scene = CreateScene( false );
+				if( objectInSpace != null )
+				{
+					var objInSpace = objectInSpace.Clone();
+					scene.AddComponent( objInSpace );
+
+					//enable shadows
+					var directionalLight = scene.GetComponent( "Directional Light" ) as Light;
+					if( directionalLight != null )
+						directionalLight.Shadows = true;
+				}
 				scene.Enabled = true;
 
 				GenerateGeneral( writeStream, writeImageFormat );// writeRealFileName );
@@ -1173,8 +1201,6 @@ namespace NeoAxis
 
 						var email64 = StringUtility.EncodeToBase64URL( email );
 						var hash64 = StringUtility.EncodeToBase64URL( hash );
-						//var email64 = Convert.ToBase64String( Encoding.UTF8.GetBytes( email/*.ToLower()*/ ) ).Replace( "=", "" );
-						//var hash64 = Convert.ToBase64String( Encoding.UTF8.GetBytes( hash ) ).Replace( "=", "" );
 						var parameters = $"email={email64}&hash={hash64}";
 
 						var Client = new System.Net.WebClient();
@@ -1186,7 +1212,7 @@ namespace NeoAxis
 						var notification = ScreenNotifications.ShowSticky( "Uploading to the Store..." );
 						try
 						{
-							var result = Client.UploadFile( "https://store.neoaxis.com/api/upload_item/?" + parameters, "POST", fileToUpload );
+							var result = Client.UploadFile( EngineInfo.StoreAddress + "/api/product_processing_upload/?" + parameters, "POST", fileToUpload );
 							resultString = Encoding.UTF8.GetString( result, 0, result.Length );
 						}
 						catch( Exception e )
@@ -1200,9 +1226,7 @@ namespace NeoAxis
 
 						if( resultString == "OK" )
 						{
-							ScreenNotifications.Show( EditorLocalization.Translate( "Backstage", "The product was uploaded successfully. Please wait for approval, details will be send by email." ) );
-							//ScreenNotifications.Show( EditorLocalization.Translate( "Backstage", "The product was uploaded. Details in email." ) );
-							//ScreenNotifications.Show( EditorLocalization.Translate( "Backstage", "The product was uploaded successfully. Check email." ) );
+							ScreenNotifications.Show( EditorLocalization.Translate( "Backstage", "The product was uploaded successfully. Now you can check it on the website and submit to publish." ) );
 						}
 						else
 						{
@@ -1358,7 +1382,7 @@ namespace NeoAxis
 
 		public static bool CategoryIsModel( ProjectItemCategoriesEnum category )
 		{
-			return ( category & ( ProjectItemCategoriesEnum.Animals | ProjectItemCategoriesEnum.Architecture | ProjectItemCategoriesEnum.Characters | ProjectItemCategoriesEnum.Exterior | ProjectItemCategoriesEnum.Food | ProjectItemCategoriesEnum.Industrial | ProjectItemCategoriesEnum.Interior | ProjectItemCategoriesEnum.Vehicles | ProjectItemCategoriesEnum.Nature | ProjectItemCategoriesEnum.UncategorizedModels ) ) != 0;
+			return ( category & ( ProjectItemCategoriesEnum.Animals | ProjectItemCategoriesEnum.Architecture | ProjectItemCategoriesEnum.Characters | ProjectItemCategoriesEnum.Exterior | ProjectItemCategoriesEnum.Food | ProjectItemCategoriesEnum.Industrial | ProjectItemCategoriesEnum.Interior | ProjectItemCategoriesEnum.Vehicles | ProjectItemCategoriesEnum.Nature | ProjectItemCategoriesEnum.Weapons | ProjectItemCategoriesEnum.UncategorizedModels ) ) != 0;
 		}
 
 		static string GetMD5( string input )
@@ -1383,7 +1407,7 @@ namespace NeoAxis
 
 			if( string.IsNullOrEmpty( result ) )
 			{
-				result = Name.Replace( ' ', '_' );
+				result = Name.Replace( ' ', '_' ).Replace( '-', '_' );
 
 				var fileName = ComponentUtility.GetOwnedFileNameOfComponent( this );
 				if( !string.IsNullOrEmpty( fileName ) )
@@ -1598,7 +1622,50 @@ namespace NeoAxis
 					//try to create screenshots
 					if( CreateScreenshots )
 					{
-						if( ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Surfaces ) )
+						var objectInSpaceVirtualFileName = "";
+						if( ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Components ) )
+						{
+							var objectInSpaceVirtualFileNames = new List<string>();
+							foreach( var file in files )
+							{
+								var ext = Path.GetExtension( file );
+								if( !string.IsNullOrEmpty( ext ) )
+								{
+									//!!!!
+
+									var ext2 = ext.ToLower().Replace( ".", "" );
+
+									//var resourceClass = resourceType?.ResourceClass;
+									//if( resourceClass != null && typeof( ObjectInSpace ).IsAssignableFrom( resourceClass ) )
+									//{
+									if( ext2 == "objectinspace" || ext2 == "character" || ext2 == "vehicle" )
+									{
+										var virtualFileName = VirtualPathUtility.GetVirtualPathByReal( file );
+										if( !string.IsNullOrEmpty( virtualFileName ) )
+											objectInSpaceVirtualFileNames.Add( virtualFileName );
+									}
+								}
+							}
+							//if( objectInSpaceVirtualFileNames.Count == 1 )
+							if( objectInSpaceVirtualFileNames.Count != 0 )
+								objectInSpaceVirtualFileName = objectInSpaceVirtualFileNames[ 0 ];
+						}
+
+						if( !string.IsNullOrEmpty( objectInSpaceVirtualFileName ) )
+						{
+							//ObjectInSpace
+
+							var objectInSpace = ResourceManager.LoadResource<ObjectInSpace>( objectInSpaceVirtualFileName );// importVirtualFileNames[ 0 ] );
+							if( objectInSpace != null )
+							{
+								var generator = new ImageGenerator();
+
+								var entry = archive.CreateEntry( "_ProductLogo.png" );
+								using( var entryStream = entry.Open() )
+									generator.Generate( objectInSpace, entryStream, ImageFormat.Png );
+							}
+						}
+						else if( ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Surfaces ) )
 						{
 							//surface
 

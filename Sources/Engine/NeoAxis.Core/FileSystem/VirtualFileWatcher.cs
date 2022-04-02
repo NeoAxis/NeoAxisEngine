@@ -22,7 +22,7 @@ namespace NeoAxis
 
 		public static void Init()
 		{
-			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP || SystemSettings.CurrentPlatform == SystemSettings.Platform.MacOS )
+			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP || SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 			{
 				systemWatcher = new FileSystemWatcher( VirtualFileSystem.Directories.Assets );
 				//!!!!?

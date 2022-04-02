@@ -89,7 +89,7 @@ namespace NeoAxis
 			//init cache database
 			//on UWP, Android scripts compiled inside Project.dll
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows ||
-				SystemSettings.CurrentPlatform == SystemSettings.Platform.MacOS )
+				SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 			{
 				var connectionString = $"Filename={DatabaseFileName};Connection=shared;Upgrade=true";
 

@@ -939,5 +939,12 @@ namespace NeoAxis
 
 			OnOcclusionCullingDataGet( context, mode, modeGetObjectsItem, occluders );
 		}
+
+		/////////////////////////////////////////
+
+		[Serialize]
+		[Browsable( false )]
+		public Transform EditorCameraTransform;
+
 	}
 }

@@ -49,12 +49,22 @@ namespace NeoAxis
 			Size = new UIMeasureValueVector2( UIMeasure.Units, 25, 25 );
 		}
 
+		/// <summary>
+		/// Whether control can be focused.
+		/// </summary>
+		[Browsable( false )]
+		public override bool CanFocus
+		{
+			get { return EnabledInHierarchy && VisibleInHierarchy && !ReadOnlyInHierarchy; }
+		}
+
 		protected override bool OnMouseDown( EMouseButtons button )
 		{
 			//bool ret = base.OnMouseDown( button );
 
 			if( button == EMouseButtons.Left && VisibleInHierarchy && cursorInsideArea && EnabledInHierarchy && !ReadOnlyInHierarchy )
 			{
+				Focus();
 				pushed = true;
 				Capture = true;
 				return true;
@@ -125,6 +135,17 @@ namespace NeoAxis
 			//}
 
 			return true;
+		}
+
+		protected override bool OnKeyDown( KeyEvent e )
+		{
+			if( e.Key == EKeys.Space && Focused )
+			{
+				PerformClick();
+				return true;
+			}
+
+			return base.OnKeyDown( e );
 		}
 
 		protected override void OnMouseMove( Vector2 mouse )

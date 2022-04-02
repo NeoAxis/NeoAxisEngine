@@ -1584,43 +1584,53 @@ namespace NeoAxis
 		public event MouseButtonDelegate MouseDownBefore;
 		public event MouseButtonDelegate MouseDown;
 
-		internal bool CallMouseDown( EMouseButtons button )
+		internal bool CallMouseDown( EMouseButtons button, bool topMostStep, bool alwaysPass )
 		{
+			if( !topMostStep && TopMost && !alwaysPass )
+				return false;
+
+			if( topMostStep && TopMost )
+				alwaysPass = true;
+
+
 			foreach( UIControl control in GetControls( true ) )
 			{
 				if( control.EnabledInHierarchy && !control.RemoveFromParentQueued && control.Visible )
-					if( control.CallMouseDown( button ) )
+					if( control.CallMouseDown( button, topMostStep, alwaysPass ) )
 						return true;
 			}
 
-			if( new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) || MouseRelativeMode )
+			if( !topMostStep || alwaysPass )
 			{
-				if( OnMouseDownBefore( button ) )
-					return true;
+				if( new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) || MouseRelativeMode )
+				{
+					if( OnMouseDownBefore( button ) )
+						return true;
 
-				//if( new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) )
-				//{
-				bool handled = false;
-				MouseDownBefore?.Invoke( this, button, ref handled );
-				if( handled )
-					return true;
-				//}
+					//if( new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) )
+					//{
+					bool handled = false;
+					MouseDownBefore?.Invoke( this, button, ref handled );
+					if( handled )
+						return true;
+					//}
 
-				if( OnMouseDown( button ) )
-					return true;
+					if( OnMouseDown( button ) )
+						return true;
 
-				//if( new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) )
-				//{
-				//bool handled = false;
-				MouseDown?.Invoke( this, button, ref handled );
-				if( handled )
+					//if( new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) )
+					//{
+					//bool handled = false;
+					MouseDown?.Invoke( this, button, ref handled );
+					if( handled )
+						return true;
+				}
+
+				if( CoverOtherControls == CoverOtherControlsEnum.OnlyBehind && ( new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) || MouseRelativeMode ) )
+					return true;
+				if( CoverOtherControls == CoverOtherControlsEnum.AllPreviousInHierarchy )
 					return true;
 			}
-
-			if( CoverOtherControls == CoverOtherControlsEnum.OnlyBehind && ( new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) || MouseRelativeMode ) )
-				return true;
-			if( CoverOtherControls == CoverOtherControlsEnum.AllPreviousInHierarchy )
-				return true;
 
 			return false;
 		}
@@ -1634,29 +1644,39 @@ namespace NeoAxis
 		public event MouseUpDelegate MouseUpBefore;
 		public event MouseUpDelegate MouseUp;
 
-		internal bool CallMouseUp( EMouseButtons button )
+		internal bool CallMouseUp( EMouseButtons button, bool topMostStep, bool alwaysPass )
 		{
+			if( !topMostStep && TopMost && !alwaysPass )
+				return false;
+
+			if( topMostStep && TopMost )
+				alwaysPass = true;
+
+
 			foreach( UIControl control in GetControls( true ) )
 			{
 				if( control.EnabledInHierarchy && !control.RemoveFromParentQueued && control.Visible )
-					if( control.CallMouseUp( button ) )
+					if( control.CallMouseUp( button, topMostStep, alwaysPass ) )
 						return false;
 			}
 
-			if( OnMouseUpBefore( button ) )
-				return true;
+			if( !topMostStep || alwaysPass )
+			{
+				if( OnMouseUpBefore( button ) )
+					return true;
 
-			bool handled = false;
-			MouseUpBefore?.Invoke( this, button, ref handled );
-			if( handled )
-				return true;
+				bool handled = false;
+				MouseUpBefore?.Invoke( this, button, ref handled );
+				if( handled )
+					return true;
 
-			if( OnMouseUp( button ) )
-				return true;
+				if( OnMouseUp( button ) )
+					return true;
 
-			MouseUp?.Invoke( this, button, ref handled );
-			if( handled )
-				return true;
+				MouseUp?.Invoke( this, button, ref handled );
+				if( handled )
+					return true;
+			}
 
 			return false;
 		}
@@ -1669,43 +1689,53 @@ namespace NeoAxis
 		public event MouseButtonDelegate MouseDoubleClickBefore;
 		public event MouseButtonDelegate MouseDoubleClick;
 
-		internal bool CallMouseDoubleClick( EMouseButtons button )
+		internal bool CallMouseDoubleClick( EMouseButtons button, bool topMostStep, bool alwaysPass )
 		{
+			if( !topMostStep && TopMost && !alwaysPass )
+				return false;
+
+			if( topMostStep && TopMost )
+				alwaysPass = true;
+
+
 			foreach( UIControl control in GetControls( true ) )
 			{
 				if( control.EnabledInHierarchy && !control.RemoveFromParentQueued && control.Visible )
-					if( control.CallMouseDoubleClick( button ) )
+					if( control.CallMouseDoubleClick( button, topMostStep, alwaysPass ) )
 						return true;
 			}
 
-			if( new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) || MouseRelativeMode )
+			if( !topMostStep || alwaysPass )
 			{
-				if( OnMouseDoubleClickBefore( button ) )
-					return true;
+				if( new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) || MouseRelativeMode )
+				{
+					if( OnMouseDoubleClickBefore( button ) )
+						return true;
 
-				//if( new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) )
-				//{
-				bool handled = false;
-				MouseDoubleClickBefore?.Invoke( this, button, ref handled );
-				if( handled )
-					return true;
-				//}
+					//if( new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) )
+					//{
+					bool handled = false;
+					MouseDoubleClickBefore?.Invoke( this, button, ref handled );
+					if( handled )
+						return true;
+					//}
 
-				if( OnMouseDoubleClick( button ) )
-					return true;
+					if( OnMouseDoubleClick( button ) )
+						return true;
 
-				//if( new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) )
-				//{
-				//bool handled = false;
-				MouseDoubleClick?.Invoke( this, button, ref handled );
-				if( handled )
+					//if( new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) )
+					//{
+					//bool handled = false;
+					MouseDoubleClick?.Invoke( this, button, ref handled );
+					if( handled )
+						return true;
+				}
+
+				if( CoverOtherControls == CoverOtherControlsEnum.OnlyBehind && ( new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) || MouseRelativeMode ) )
+					return true;
+				if( CoverOtherControls == CoverOtherControlsEnum.AllPreviousInHierarchy )
 					return true;
 			}
-
-			if( CoverOtherControls == CoverOtherControlsEnum.OnlyBehind && ( new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) || MouseRelativeMode ) )
-				return true;
-			if( CoverOtherControls == CoverOtherControlsEnum.AllPreviousInHierarchy )
-				return true;
 
 			return false;
 		}
@@ -1937,10 +1967,14 @@ namespace NeoAxis
 					pushedColorMultiplier = true;
 				}
 			}
+
+			GetStyle().PerformBeforeRenderUIWithChildren( this, renderer );
 		}
 
 		protected virtual void OnAfterRenderUIWithChildren( CanvasRenderer renderer )
 		{
+			GetStyle().PerformAfterRenderUIWithChildren( this, renderer );
+
 			//pop settings from GuiRenderer
 			{
 				if( pushedColorMultiplier )
@@ -2441,7 +2475,7 @@ namespace NeoAxis
 				UIContainer manager = ParentContainer;
 				if( manager == null )
 					return false;
-				return manager.focusedControl == this;
+				return manager.focusedControl == this && CanFocus;
 			}
 		}
 

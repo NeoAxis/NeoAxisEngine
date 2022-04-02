@@ -84,12 +84,33 @@ namespace NeoAxis
 			}
 		}
 
+		/// <summary>
+		/// Whether control can be focused.
+		/// </summary>
+		[Browsable( false )]
+		public override bool CanFocus
+		{
+			get { return EnabledInHierarchy && VisibleInHierarchy && !ReadOnlyInHierarchy; }
+		}
+
+		protected override bool OnKeyDown( KeyEvent e )
+		{
+			if( e.Key == EKeys.Space && Focused )
+			{
+				PerformClick();
+				return true;
+			}
+
+			return base.OnKeyDown( e );
+		}
+
 		protected override bool OnMouseDown( EMouseButtons button )
 		{
 			//bool ret = base.OnMouseDown( button );
 
 			if( button == EMouseButtons.Left && VisibleInHierarchy && cursorInsideArea && EnabledInHierarchy && !ReadOnlyInHierarchy )
 			{
+				Focus();
 				pushed = true;
 				Capture = true;
 				return true;
@@ -301,15 +322,23 @@ namespace NeoAxis
 			{
 				if( EnabledInHierarchy && !ReadOnlyInHierarchy )
 				{
+					if( Highlighted )
+						return StateEnum.Highlighted;
+
 					if( Pushed )
 						return CursorInsideArea ? StateEnum.Pushed : StateEnum.Hover;
 					else
-					{
-						if( CursorInsideArea )
-							return StateEnum.Hover;
-						else
-							return Highlighted ? StateEnum.Highlighted : StateEnum.Normal;
-					}
+						return CursorInsideArea ? StateEnum.Hover : StateEnum.Normal;
+
+					//if( Pushed )
+					//	return CursorInsideArea ? StateEnum.Pushed : StateEnum.Hover;
+					//else
+					//{
+					//	if( CursorInsideArea )
+					//		return StateEnum.Hover;
+					//	else
+					//		return Highlighted ? StateEnum.Highlighted : StateEnum.Normal;
+					//}
 				}
 				else
 					return StateEnum.Disabled;

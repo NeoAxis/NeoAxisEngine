@@ -219,6 +219,14 @@ namespace NeoAxis
 				value = max;
 		}
 
+		public static void Clamp( ref double value, Range range )
+		{
+			if( value < range.Minimum )
+				value = range.Minimum;
+			if( value > range.Maximum )
+				value = range.Maximum;
+		}
+
 		public static void Clamp( ref RadianF value, RadianF min, RadianF max )
 		{
 			if( value < min )

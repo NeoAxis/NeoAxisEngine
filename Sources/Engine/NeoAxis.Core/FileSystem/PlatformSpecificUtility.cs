@@ -31,7 +31,7 @@ namespace Internal
 			{
 				if( instance == null )
 				{
-					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.MacOS )
+					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 						instance = new MacOSXPlatformSpecificUtility();
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
 						Log.Fatal( "PlatformSpecificUtility: Get: Instance must be already initialized." );
