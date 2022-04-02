@@ -103,7 +103,9 @@ namespace NeoAxis
 
 						var realFileName = VirtualPathUtility.GetRealPathByVirtual( FileName );
 						if( !ComponentUtility.SaveComponentToFile( settingsComponent2, realFileName, null, out var error ) )
-							Log.Warning( "Unable to write project settings file. " + error );
+						{
+							//Log.Warning( "Unable to write project settings file. " + error );
+						}
 
 						settingsComponent2.Dispose();
 					}
