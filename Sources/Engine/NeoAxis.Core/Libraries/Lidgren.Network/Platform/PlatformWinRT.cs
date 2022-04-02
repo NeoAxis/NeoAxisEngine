@@ -1,4 +1,5 @@
-﻿#if WINDOWS_RUNTIME
+﻿#if !UWP
+#if WINDOWS_RUNTIME
 //
 //
 //
@@ -99,4 +100,5 @@ namespace Lidgren.Network
 		public static double Now { get { return (double)((uint)Environment.TickCount - s_timeInitialized) / 1000.0; } }
 	}
 }
+#endif
 #endif

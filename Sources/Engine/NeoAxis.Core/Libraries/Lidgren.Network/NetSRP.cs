@@ -1,4 +1,5 @@
-﻿#define USE_SHA256
+﻿#if !UWP
+#define USE_SHA256
 
 using System;
 using System.Security.Cryptography;
@@ -177,3 +178,4 @@ namespace Lidgren.Network
 		}
 	}
 }
+#endif

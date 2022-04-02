@@ -1,3 +1,4 @@
+#if !UWP
 #if !__NOIPENDPOINT__
 using NetEndPoint = System.Net.IPEndPoint;
 using NetAddress = System.Net.IPAddress;
@@ -276,3 +277,4 @@ namespace Lidgren.Network
         }
     }
 }
+#endif

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UWP
+using System;
 using System.Text;
 using System.Collections;
 using System.Diagnostics;
@@ -2360,3 +2361,4 @@ namespace Lidgren.Network
 	}
 #endif
 }
+#endif

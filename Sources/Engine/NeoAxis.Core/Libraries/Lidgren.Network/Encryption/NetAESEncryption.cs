@@ -1,3 +1,4 @@
+#if !UWP
 using System;
 using System.Security.Cryptography;
 
@@ -28,3 +29,4 @@ namespace Lidgren.Network
 		}
 	}
 }
+#endif

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UWP
+using System;
 
 namespace Lidgren.Network
 {
@@ -28,3 +29,4 @@ namespace Lidgren.Network
 		Dropped = 3
 	}
 }
+#endif

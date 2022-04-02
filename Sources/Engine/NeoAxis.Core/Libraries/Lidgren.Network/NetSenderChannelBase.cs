@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UWP
+using System;
 
 namespace Lidgren.Network
 {
@@ -26,3 +27,4 @@ namespace Lidgren.Network
 		internal abstract void ReceiveAcknowledge(double now, int sequenceNumber);
 	}
 }
+#endif

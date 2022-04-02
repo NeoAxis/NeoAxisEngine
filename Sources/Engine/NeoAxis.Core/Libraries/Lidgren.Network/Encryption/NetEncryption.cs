@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UWP
+using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
@@ -43,3 +44,4 @@ namespace Lidgren.Network
 		public abstract bool Decrypt(NetIncomingMessage msg);
 	}
 }
+#endif

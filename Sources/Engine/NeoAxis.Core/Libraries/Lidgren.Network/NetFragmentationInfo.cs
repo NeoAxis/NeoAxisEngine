@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UWP
+using System;
 
 namespace Lidgren.Network
 {
@@ -10,3 +11,4 @@ namespace Lidgren.Network
 		public int FragmentSize;
 	}
 }
+#endif

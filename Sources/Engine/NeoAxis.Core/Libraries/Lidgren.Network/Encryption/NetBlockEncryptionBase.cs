@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UWP
+using System;
 using System.Collections.Generic;
 
 namespace Lidgren.Network
@@ -89,3 +90,4 @@ namespace Lidgren.Network
 		protected abstract void DecryptBlock(ReadOnlySpan<byte> source, Span<byte> destination);
 	}
 }
+#endif

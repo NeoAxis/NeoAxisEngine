@@ -1,4 +1,5 @@
-﻿/* Copyright (c) 2010 Michael Lidgren
+﻿#if !UWP
+/* Copyright (c) 2010 Michael Lidgren
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 and associated documentation files (the "Software"), to deal in the Software without
@@ -47,3 +48,4 @@ namespace Lidgren.Network
 		ShutdownRequested = 3,
 	}
 }
+#endif

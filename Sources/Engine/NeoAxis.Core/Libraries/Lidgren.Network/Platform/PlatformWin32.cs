@@ -1,4 +1,5 @@
-﻿#if !__ANDROID__ && !__CONSTRAINED__ && !WINDOWS_RUNTIME
+﻿#if !UWP
+#if !__ANDROID__ && !__CONSTRAINED__ && !WINDOWS_RUNTIME
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -164,4 +165,5 @@ namespace Lidgren.Network
 		public static double Now { get { return (double)(Stopwatch.GetTimestamp() - s_timeInitialized) * s_dInvFreq; } }
 	}
 }
+#endif
 #endif

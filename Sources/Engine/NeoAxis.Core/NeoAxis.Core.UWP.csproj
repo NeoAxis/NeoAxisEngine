@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -118,7 +118,9 @@
     <Compile Include="DebugInfo\DebugInfo_RenderResources.cs" />
     <Compile Include="DebugInfo\DebugInfo_RenderStatistics.cs" />
     <Compile Include="DebugInfo\DebugInfo_Sound.cs" />
-    <Compile Include="Editor\_Editor.cs" />
+    <Compile Include="Editor\_Editor.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="EngineApp\EngineApp.cs" />
     <Compile Include="EngineApp\EngineBackgroundTasks.cs" />
     <Compile Include="EngineApp\EngineConfig.cs" />
@@ -316,9 +318,13 @@
     <Compile Include="Utility\UniqueNameGenerator.cs" />
     <Compile Include="Utility\VisualStudioSolutionUtility.cs" />
     <Compile Include="Utility\Win32Utility.cs" />
-    <Compile Include="WinForms\EngineViewportControl.cs" />
+    <Compile Include="WinForms\EngineViewportControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WinForms\EngineViewportControl.designer.cs" />
-    <Compile Include="WinForms\EUserControl.cs" />
+    <Compile Include="WinForms\EUserControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WinForms\EUserControl.designer.cs" />
     <Compile Include="WinForms\WinFormsUtility.cs" />
     <Compile Include="Components\Area\Area.cs" />
@@ -360,7 +366,9 @@
     <Compile Include="Components\FlowGraph\FlowGraphSpecialization.cs" />
     <Compile Include="Components\FlowGraph\FlowGraphStyle.cs" />
     <Compile Include="Components\Font\FontComponent.cs" />
-    <Compile Include="Components\Font\FontPreview.cs" />
+    <Compile Include="Components\Font\FontPreview.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\Font\FontPreview.designer.cs" />
     <Compile Include="Components\Font\FontResource.cs" />
     <Compile Include="Components\GroupOfObjects\GroupOfObjects.cs" />
@@ -373,7 +381,9 @@
     <Compile Include="Components\Import3D\Import3DResource.cs" />
     <Compile Include="Components\Import3D\ImportGeneral.cs" />
     <Compile Include="Components\Learning\LearningComponent.cs" />
-    <Compile Include="Components\Learning\LearningEditor.cs" />
+    <Compile Include="Components\Learning\LearningEditor.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\Learning\LearningEditor.designer.cs" />
     <Compile Include="Components\Material\ContentBrowserFilteringMode_Shaders.cs" />
     <Compile Include="Components\Material\FlowGraphSpecialization_Shader.cs" />
@@ -467,7 +477,9 @@
     <Compile Include="Components\Sprite\Sprite.cs" />
     <Compile Include="Components\Sprite\SpriteAnimation.cs" />
     <Compile Include="Components\Sprite\SpriteAnimationController.cs" />
-    <Compile Include="Components\Sprite\SpriteEditor.cs" />
+    <Compile Include="Components\Sprite\SpriteEditor.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\Sprite\SpriteEditor.designer.cs" />
     <Compile Include="Components\Sprite\SpriteMeshManager.cs" />
     <Compile Include="Components\Sprite\SpritePreview.cs" />
@@ -541,7 +553,9 @@
     <Compile Include="Libraries\Aether.Physics2D\Settings.cs" />
     <Compile Include="Libraries\Aga.Controls\BitmapHelper.cs" />
     <Compile Include="Libraries\Aga.Controls\GifDecoder.cs" />
-    <Compile Include="Libraries\Aga.Controls\NumericTextBox.cs" />
+    <Compile Include="Libraries\Aga.Controls\NumericTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Aga.Controls\PerformanceAnalyzer.cs" />
     <Compile Include="Libraries\Aga.Controls\ResourceHelper.cs" />
     <Compile Include="Libraries\Aga.Controls\StringCollectionEditor.cs" />
@@ -701,9 +715,13 @@
     <Compile Include="Components\Rendering\Pipelines\RenderingPipeline_Basic_Render.cs" />
     <Compile Include="Components\Rendering\Sky\Sky.cs" />
     <Compile Include="Components\Rendering\Sky\Skybox.cs" />
-    <Compile Include="Components\Rendering\Sky\SkyboxEditor.cs" />
+    <Compile Include="Components\Rendering\Sky\SkyboxEditor.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\Rendering\Sky\SkyboxEditor.designer.cs" />
-    <Compile Include="Components\Rendering\Sky\SkyboxPreview.cs" />
+    <Compile Include="Components\Rendering\Sky\SkyboxPreview.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\Rendering\Sky\SkyboxPreview.designer.cs" />
     <Compile Include="Components\Rendering\Sky\SkyboxPreviewImage.cs" />
     <Compile Include="Components\Rendering\Sky\SkyboxSettingsCell.cs" />
@@ -814,12 +832,22 @@
     <Compile Include="Libraries\Aga.Controls\Tree\TreeNodeAdvMouseEventArgs.cs" />
     <Compile Include="Libraries\Aga.Controls\Tree\TreePath.cs" />
     <Compile Include="Libraries\Aga.Controls\Tree\TreePathEventArgs.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.cs" />
+    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Designer.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Draw.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Editor.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Input.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Properties.cs" />
+    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Draw.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Editor.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Input.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Properties.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdvCancelEventArgs.cs" />
     <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdvEventArgs.cs" />
     <Compile Include="Libraries\Aga.Controls\Tree\TreeViewRowDrawEventArgs.cs" />
@@ -1738,8 +1766,12 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DragTarget.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DragTargetNavigatorTransfer.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DropDockingIndicatorsRounded.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DropDockingIndicatorsSquare.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DropSolidWindow.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DropDockingIndicatorsSquare.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DropSolidWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\PageDragEndData.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\EventArgs\CloseActionEventArgs.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\EventArgs\ContextActionEventArgs.cs" />
@@ -1915,8 +1947,12 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Ribbon\KryptonRibbonRecentDocCollection.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Ribbon\KryptonRibbonTab.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Ribbon\KryptonRibbonTabCollection.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\BackstageAppMenu.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\KeyTipControl.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\BackstageAppMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\KeyTipControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\VisualPopupAppMenu.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\VisualPopupGroup.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\VisualPopupMinimized.cs" />
@@ -2193,7 +2229,9 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonDateTimePicker.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonDomainUpDown.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonDropButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonForm.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonForm.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonGroup.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonGroupBox.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonGroupPanel.cs" />
@@ -2232,16 +2270,24 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualControl.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualControlBase.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualControlContainment.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualForm.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualForm.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPanel.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopup.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopupManager.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopupShadow.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopupSimpleShadow.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopupShadow.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopupSimpleShadow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopupTooltip.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualSimple.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualSimpleBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualTaskDialog.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualTaskDialog.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\ButtonSpecFormFixedConverter.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\ButtonStyleConverter.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\DataGridViewStyleConverter.cs" />
@@ -2307,7 +2353,9 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\KryptonControlCollection.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\KryptonDefaultColorAttribute.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\KryptonReadOnlyControls.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\ModalWaitDialog.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\ModalWaitDialog.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\ModalWaitDialog.Designer.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\NullContentValues.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\OperationThread.cs" />
@@ -2522,7 +2570,9 @@
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewComposite.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewContext.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewContextMenuManager.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewControl.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewDecorator.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewLeaf.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewManager.cs" />
@@ -2756,7 +2806,9 @@
     <Compile Include="Libraries\Aether.Physics2D\Common\Decomposition\Seidel\Triangulator.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Common\Decomposition\Seidel\XNode.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Common\Decomposition\Seidel\YNode.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\ShadowsV2\DropShadow.cs" />
+    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\ShadowsV2\DropShadow.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\ShadowsV2\DropShadowManager.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\ShadowsV2\ImageMaps.cs" />
     <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\ShadowsV2\ShadowImageCache.cs" />
@@ -3513,9 +3565,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.10</Version>
-    </PackageReference>
-    <PackageReference Include="System.Memory">
-      <Version>4.5.4</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

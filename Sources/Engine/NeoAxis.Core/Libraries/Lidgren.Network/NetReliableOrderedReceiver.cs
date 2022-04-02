@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UWP
+using System;
 
 namespace Lidgren.Network
 {
@@ -87,3 +88,4 @@ namespace Lidgren.Network
 		}
 	}
 }
+#endif

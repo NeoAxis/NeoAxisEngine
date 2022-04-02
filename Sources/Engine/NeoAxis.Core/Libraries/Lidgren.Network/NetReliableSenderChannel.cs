@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UWP
+using System;
 using System.Threading;
 
 namespace Lidgren.Network
@@ -288,3 +289,4 @@ namespace Lidgren.Network
 		}
 	}
 }
+#endif

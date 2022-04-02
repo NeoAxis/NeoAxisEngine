@@ -1,4 +1,5 @@
-﻿#if __ANDROID__
+﻿#if !UWP
+#if __ANDROID__
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -88,4 +89,5 @@ namespace Lidgren.Network
 		public static double Now { get { return (double)((uint)Environment.TickCount - s_timeInitialized) / 1000.0; } }
 	}
 }
+#endif
 #endif
