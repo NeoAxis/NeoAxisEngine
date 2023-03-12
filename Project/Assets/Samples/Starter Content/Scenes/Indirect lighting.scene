@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2021.3.
+// Made with NeoAxis Engine 2023.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1174, 842\"><KW V=\"1\" A=\"2C240F26F2654EFEDFB5EC1A9243C6A6\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"45C28AC0AA1E4CB4D18A3D229EC0E452\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"2C240F26F2654EFEDFB5EC1A9243C6A6\"><KP UN=\"2C240F26F2654EFEDFB5EC1A9243C6A6\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"CEDEB39BEA424621AD9D1A56B0BA2AF9\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1155, 842\"><KW V=\"1\" A=\"2C240F26F2654EFEDFB5EC1A9243C6A6\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"45C28AC0AA1E4CB4D18A3D229EC0E452\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"2C240F26F2654EFEDFB5EC1A9243C6A6\"><KP UN=\"2C240F26F2654EFEDFB5EC1A9243C6A6\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"CEDEB39BEA424621AD9D1A56B0BA2AF9\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP><KP UN=\"12750E2CBB88463FF2A85A61AD60CD75\" S=\"False\"><CPD ObjPath=\"$Rendering Pipeline\\$Scene Effects\\$Indirect Lighting\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	BackgroundColor = 0.6666667 0.6666667 0.6666667
 	RenderingPipeline
 	{
@@ -16,7 +16,7 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "14.2642121764316 -2.56462507692639 -13.8303727342757; -0.236228341823244 0.0945196763176862 0.897882958557161 0.359260899682778; 1 1 1"
+		Transform = "14.4468066804452 -2.2046606008322 -14.1586885802124; -0.152885337552734 0.0545874770427762 0.929277634671618 0.331797164862231; 1 1 1"
 	}
 	.component NeoAxis.Light
 	{
@@ -42,7 +42,32 @@
 			.component NeoAxis.RenderingEffect_IndirectLighting
 			{
 				Name = Indirect Lighting
-				Multiplier = 5
+				Multiplier = 0.3
+				.component NeoAxis.CSharpScript
+				{
+					Name = C# Script
+					Code = "public void IndirectLighting_UpdateEvent(NeoAxis.Component sender, float delta)\r\n{\r\n\tvar effect = sender as RenderingEffect_IndirectLighting;\r\n\tif(effect != null)\r\n\t\teffect.Intensity = (Time.Current % 8.0) > 4 ? 1 : 0;\r\n}\r\n"
+					__parameter_Delta = 0
+					Exit
+					{
+					}
+					.component NeoAxis.EventHandlerComponent
+					{
+						Name = Event Handler UpdateEvent
+						WhenEnable = Editor, Simulation, Instance
+						Event
+						{
+							GetByReference = "this:..\\..\\event:UpdateEvent"
+						}
+						HandlerMethod
+						{
+							GetByReference = "this:..\\method:IndirectLighting_UpdateEvent(NeoAxis.Component,System.Single)"
+						}
+						HandlerFlow
+						{
+						}
+					}
+				}
 			}
 			.component NeoAxis.RenderingEffect_AmbientOcclusion
 			{
@@ -52,6 +77,7 @@
 			}
 			.component NeoAxis.RenderingEffect_Bloom
 			{
+				Enabled = False
 				Name = Bloom
 			}
 			.component NeoAxis.RenderingEffect_ToLDR
@@ -90,8 +116,8 @@
 		Brightness = 346459.78125
 		AttenuationFar = 100
 		AttenuationPower = 1.5
-		SpotlightInnerAngle = 70
-		SpotlightOuterAngle = 70
+		SpotlightInnerAngle = 30
+		SpotlightOuterAngle = 110
 	}
 	.component NeoAxis.Light
 	{
@@ -336,7 +362,7 @@
 	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space3
-		Transform = "13.8748917888877 3.53208757169405 -15.0263342903994; 0 0 -0.828200876772728 0.560431358609495; 1 1 1"
+		Transform = "13.4078080707687 3.3617734604721 -15.6060938455259; 0 0 -0.828200876772728 0.560431358609495; 1 1 1"
 		Mesh
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Drone\\Sci-fi Drone.fbx|$Mesh"
@@ -360,7 +386,7 @@
 	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space2
-		Transform = "8.4597365162221 -2.42590726188159 -14.7848503691802; 0 0 0.27145995818091 0.96244973432612; 1 1 1"
+		Transform = "9.68772464379571 -2.40282421997848 -15.5510906128757; 0 0 0.27145995818091 0.96244973432612; 1 1 1"
 		Mesh
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Drone\\Sci-fi Drone.fbx|$Mesh"
@@ -462,7 +488,7 @@
 	.component NeoAxis.Light
 	{
 		Name = Light
-		Transform = "12.592760187925 3.04544908238442 -15.0046736143598; 0 0 -1 0.00000000000000006; 1 1 1"
+		Transform = "15.6111591916718 2.33218545335632 -14.4280717761837; 0 0 -1 0.00000000000000006; 1 1 1"
 		Type = Spotlight
 		Brightness = 1000000
 		Color = 0 1 0.04290196
@@ -473,7 +499,7 @@
 	.component NeoAxis.MeshInSpace
 	{
 		Name = Capsule
-		Transform = "7.78142101449648 -1.17448974744552 -13.8500355828009; -0.707106781186548 0 0 0.707106781186548; 1 1 1"
+		Transform = "7.59223279480325 -1.32652271537986 -15.6786029045751; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -507,7 +533,7 @@
 	.component NeoAxis.MeshInSpace
 	{
 		Name = Capsule 2
-		Transform = "12.5073134695107 4.94004789045893 -13.8500355828009; -0.5 0.5 -0.5 0.5; 1 1 1"
+		Transform = "12.5073134695107 5.04732964063298 -15.6501072806751; -0.707106781186548 0.707106781186548 0 0; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"

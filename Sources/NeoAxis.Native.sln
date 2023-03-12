@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2036
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32630.194
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FreeImage", "Engine\External\FreeImage\FreeImage.vcxproj", "{F69FEDA9-188B-4BF8-B8F0-481529CCF7B4}"
 EndProject
@@ -54,8 +54,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "spirv-cross", "Engine\External\bgfx\bgfx\.build\projects\vs2017\spirv-cross.vcxproj", "{F0E19980-5C97-1276-E58B-0C4D5140097A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenAL", "Engine\External\OpenALSoft\build\OpenAL.vcxproj", "{40BE9B23-2425-3A97-AB20-7DFB672B5FE6}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libbulletc", "Engine\External\Bullet\BulletSharpPInvoke\libbulletc\build\libbulletc.vcxproj", "{7547CDEB-420F-3252-92FF-4882F1762FE7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -193,14 +191,6 @@ Global
 		{40BE9B23-2425-3A97-AB20-7DFB672B5FE6}.Release|Mixed Platforms.Build.0 = Release|x64
 		{40BE9B23-2425-3A97-AB20-7DFB672B5FE6}.Release|x64.ActiveCfg = Release|x64
 		{40BE9B23-2425-3A97-AB20-7DFB672B5FE6}.Release|x64.Build.0 = Release|x64
-		{7547CDEB-420F-3252-92FF-4882F1762FE7}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
-		{7547CDEB-420F-3252-92FF-4882F1762FE7}.Debug|Mixed Platforms.Build.0 = Debug|x64
-		{7547CDEB-420F-3252-92FF-4882F1762FE7}.Debug|x64.ActiveCfg = Debug|x64
-		{7547CDEB-420F-3252-92FF-4882F1762FE7}.Debug|x64.Build.0 = Debug|x64
-		{7547CDEB-420F-3252-92FF-4882F1762FE7}.Release|Mixed Platforms.ActiveCfg = Release|x64
-		{7547CDEB-420F-3252-92FF-4882F1762FE7}.Release|Mixed Platforms.Build.0 = Release|x64
-		{7547CDEB-420F-3252-92FF-4882F1762FE7}.Release|x64.ActiveCfg = Release|x64
-		{7547CDEB-420F-3252-92FF-4882F1762FE7}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

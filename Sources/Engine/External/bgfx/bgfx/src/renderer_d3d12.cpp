@@ -1,6 +1,6 @@
 /*
- * Copyright 2011-2020 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
+ * Copyright 2011-2022 Branimir Karadzic. All rights reserved.
+ * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
 #include "bgfx_p.h"
@@ -503,7 +503,7 @@ namespace bgfx { namespace d3d12
 
 	ID3D12Resource* createCommittedResource(ID3D12Device* _device, HeapProperty::Enum _heapProperty, uint64_t _size, D3D12_RESOURCE_FLAGS _flags = D3D12_RESOURCE_FLAG_NONE)
 	{
-		D3D12_RESOURCE_DESC resourceDesc;
+		D3D12_RESOURCE_DESC resourceDesc = {};
 		resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
 		resourceDesc.Alignment = 0;
 		resourceDesc.Width     = _size;
@@ -914,7 +914,7 @@ namespace bgfx { namespace d3d12
 			}
 
 			DX_CHECK(m_device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS, &m_options, sizeof(m_options) ) );
-			BX_TRACE("D3D12 options:")
+			BX_TRACE("D3D12 options:");
 			BX_TRACE("\tTiledResourcesTier %d", m_options.TiledResourcesTier);
 			BX_TRACE("\tResourceBindingTier %d", m_options.ResourceBindingTier);
 			BX_TRACE("\tROVsSupported %d", m_options.ROVsSupported);
@@ -1014,6 +1014,7 @@ namespace bgfx { namespace d3d12
 				m_resolution.width  = _init.resolution.width;
 				m_resolution.height = _init.resolution.height;
 
+				m_windows[0] = BGFX_INVALID_HANDLE;
 				m_numWindows = 1;
 
 #if BX_PLATFORM_WINDOWS
@@ -6433,8 +6434,11 @@ namespace bgfx { namespace d3d12
 						if (NULL == bindCached)
 						{
 							uint32_t numSet = 0;
-							D3D12_GPU_DESCRIPTOR_HANDLE srvHandle[BGFX_CONFIG_MAX_TEXTURE_SAMPLERS];
-							uint32_t samplerFlags[BGFX_CONFIG_MAX_TEXTURE_SAMPLERS];
+
+							//!!!!betauser. samplers > 16 support
+
+							D3D12_GPU_DESCRIPTOR_HANDLE srvHandle[BGFX_CONFIG_MAX_TEXTURE_SAMPLERS] = {};
+							uint32_t samplerFlags[BGFX_CONFIG_MAX_TEXTURE_SAMPLERS] = {};
 							{
 								for (uint32_t stage = 0; stage < BGFX_CONFIG_MAX_TEXTURE_SAMPLERS; ++stage)
 								{

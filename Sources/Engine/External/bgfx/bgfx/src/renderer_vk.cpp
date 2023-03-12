@@ -1,6 +1,6 @@
 /*
- * Copyright 2011-2020 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
+ * Copyright 2011-2022 Branimir Karadzic. All rights reserved.
+ * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
 #include "bgfx_p.h"
@@ -4758,8 +4758,10 @@ VK_DESTROY
 	{
 		bx::MemoryReader reader(_mem->data, _mem->size);
 
+		bx::ErrorAssert err;
+
 		uint32_t magic;
-		bx::read(&reader, magic);
+		bx::read(&reader, magic, &err);
 
 		VkShaderStageFlagBits shaderStage;
 		BX_UNUSED(shaderStage);
@@ -4780,7 +4782,7 @@ VK_DESTROY
 		const bool fragment = isShaderType(magic, 'F');
 
 		uint32_t hashIn;
-		bx::read(&reader, hashIn);
+		bx::read(&reader, hashIn, &err);
 
 		uint32_t hashOut;
 
@@ -4790,11 +4792,11 @@ VK_DESTROY
 		}
 		else
 		{
-			bx::read(&reader, hashOut);
+			bx::read(&reader, hashOut, &err);
 		}
 
 		uint16_t count;
-		bx::read(&reader, count);
+		bx::read(&reader, count, &err);
 
 		m_numPredefined = 0;
 		m_numUniforms = count;
@@ -4819,28 +4821,28 @@ VK_DESTROY
 			for (uint32_t ii = 0; ii < count; ++ii)
 			{
 				uint8_t nameSize = 0;
-				bx::read(&reader, nameSize);
+				bx::read(&reader, nameSize, &err);
 
 				char name[256];
-				bx::read(&reader, &name, nameSize);
+				bx::read(&reader, &name, nameSize, &err);
 				name[nameSize] = '\0';
 
 				uint8_t type = 0;
-				bx::read(&reader, type);
+				bx::read(&reader, type, &err);
 
 				uint8_t num;
-				bx::read(&reader, num);
+				bx::read(&reader, num, &err);
 
 				uint16_t regIndex;
-				bx::read(&reader, regIndex);
+				bx::read(&reader, regIndex, &err);
 
 				uint16_t regCount;
-				bx::read(&reader, regCount);
+				bx::read(&reader, regCount, &err);
 
 				if (!isShaderVerLess(magic, 8) )
 				{
 					uint16_t texInfo = 0;
-					bx::read(&reader, texInfo);
+					bx::read(&reader, texInfo, &err);
 				}
 				const char* kind = "invalid";
 
@@ -4915,7 +4917,7 @@ VK_DESTROY
 		}
 
 		uint32_t shaderSize;
-		bx::read(&reader, shaderSize);
+		bx::read(&reader, shaderSize, &err);
 
 		const void* code = reader.getDataPtr();
 		bx::skip(&reader, shaderSize+1);
@@ -4942,12 +4944,12 @@ VK_DESTROY
 		bx::memSet(m_attrMask,  0, sizeof(m_attrMask) );
 		bx::memSet(m_attrRemap, 0, sizeof(m_attrRemap) );
 
-		bx::read(&reader, m_numAttrs);
+		bx::read(&reader, m_numAttrs, &err);
 
 		for (uint8_t ii = 0; ii < m_numAttrs; ++ii)
 		{
 			uint16_t id;
-			bx::read(&reader, id);
+			bx::read(&reader, id, &err);
 
 			Attrib::Enum attr = idToAttrib(id);
 
@@ -4968,7 +4970,7 @@ VK_DESTROY
 		murmur.add(m_attrRemap, m_numAttrs);
 		m_hash = murmur.end();
 
-		bx::read(&reader, m_size);
+		bx::read(&reader, m_size, &err);
 
 		// fill binding description with uniform informations
 		uint16_t bidx = 0;

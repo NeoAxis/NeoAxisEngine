@@ -1,5 +1,5 @@
 ﻿#if !NO_LITE_DB
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -69,8 +69,8 @@ namespace NeoAxis
 
 					try
 					{
-						//!!!!Android readonly?
-						bool readOnly = SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP || SystemSettings.CurrentPlatform == SystemSettings.Platform.Android;
+						//!!!!Android, iOS, Web readonly?
+						bool readOnly = SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP || SystemSettings.CurrentPlatform == SystemSettings.Platform.Android || SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS || SystemSettings.CurrentPlatform == SystemSettings.Platform.Web;
 
 						bool skip = false;
 						if( readOnly && !File.Exists( fileName ) )
@@ -84,9 +84,13 @@ namespace NeoAxis
 							var supportShared =
 								SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows ||
 								SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS;
-							var connectionType = supportShared ? "shared" : "direct";
+							var connection = supportShared ? "shared" : "direct";
 
-							var connectionString = $"Filename={fileName};Connection={connectionType};Upgrade=true";
+							//if( ( EngineInfo.EngineMode == EngineInfo.EngineModeEnum.WorldsClient || EngineInfo.EngineMode == EngineInfo.EngineModeEnum.WorldsServer ) && EngineApp.IsSimulation )
+							if( SystemSettings.AppContainer )
+								connection = "direct";
+							
+							var connectionString = $"Filename={fileName};Connection={connection};Upgrade=true";
 							if( readOnly )
 								connectionString += ";ReadOnly=true";
 

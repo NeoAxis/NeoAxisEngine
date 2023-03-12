@@ -1,16 +1,16 @@
-// Made with NeoAxis Engine 2022.1.
+// Made with NeoAxis Engine 2023.1.
 
 .component Project.MainMenuScreen
 {
 	Size = Parent 1 1
-	EditorScrollPosition = 0 0
+	EditorScrollPosition = -0.405228756438499 -0.163398689347588
 	BackgroundScene
 	{
 		GetByReference = "Samples\\Starter Content\\Scenes\\Character.scene"
 	}
 	BackgroundSceneLimitedDevice
 	{
-		GetByReference = "Samples\\Starter Content\\Scenes Test\\_TestAnimation.scene"
+		GetByReference = "Samples\\Starter Content\\Scenes\\Mesh in space animation.scene"
 	}
 	.component NeoAxis.UIControl
 	{
@@ -34,6 +34,19 @@
 			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
 		}
 	}
+	.component NeoAxis.UIText
+	{
+		Name = Text Console
+		Text = Press ~ or F12 to show the developer console
+		Size = Units 430 30
+		VerticalAlignment = Bottom
+		Margin = Units 650 960 0 10
+		EditorScrollPosition = 0 0
+		FontSize = Screen 0.015
+		TextHorizontalAlignment = Left
+		TextVerticalAlignment = Bottom
+		ShadowColor = 0 0 0 0.5
+	}
 	.component NeoAxis.UIButton
 	{
 		Name = Button Options
@@ -45,6 +58,62 @@
 		Style
 		{
 			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Multiplayer Create
+		Text = Create Server
+		Size = Units 150 40
+		VerticalAlignment = Bottom
+		Margin = Units 330 10 10 10
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonMultiplayerCreate_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Multiplayer Join
+		Text = Join Server
+		Size = Units 150 40
+		VerticalAlignment = Bottom
+		Margin = Units 490 10 10 10
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonMultiplayerJoin_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
 		}
 	}
 	.component NeoAxis.UIButton
@@ -63,10 +132,10 @@
 	}
 	.component NeoAxis.UIButton
 	{
-		Name = Button Play Nature Demo
-		Text = Nature Demo
+		Name = Button Play City Demo
+		Text = City Demo
 		Size = Units 200 40
-		Margin = Units 10 680 130 318.058171164124
+		Margin = Units 10 580 130 318.058171164124
 		EditorScrollPosition = 0 0
 		Style
 		{
@@ -75,8 +144,8 @@
 	}
 	.component NeoAxis.UIButton
 	{
-		Name = Button Play Sci-fi Demo
-		Text = Sci-fi Demo
+		Name = Button Play Nature Demo
+		Text = Nature Demo
 		Size = Units 200 40
 		Margin = Units 10 630 130 318.058171164124
 		EditorScrollPosition = 0 0
@@ -87,10 +156,10 @@
 	}
 	.component NeoAxis.UIButton
 	{
-		Name = Button Play Character Scene
-		Text = Character scene
+		Name = Button Play Battle Demo
+		Text = Battle Demo
 		Size = Units 200 40
-		Margin = Units 10 780 130 318.058171164124
+		Margin = Units 10 680 130 318.058171164124
 		EditorScrollPosition = 0 0
 		Style
 		{
@@ -101,6 +170,18 @@
 	{
 		Name = Button Play Simple Game
 		Text = Simple Game
+		Size = Units 200 40
+		Margin = Units 10 780 130 318.058171164124
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Play Character Scene
+		Text = Character scene
 		Size = Units 200 40
 		Margin = Units 10 730 130 318.058171164124
 		EditorScrollPosition = 0 0

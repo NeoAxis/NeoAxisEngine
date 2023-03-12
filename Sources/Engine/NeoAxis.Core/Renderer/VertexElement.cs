@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -111,35 +111,40 @@ namespace NeoAxis
 	{
 		/// <summary>Float 1.</summary>
 		Float1 = 0,//Ogre::VET_FLOAT1,
-				   /// <summary>Float 2.</summary>
+		/// <summary>Float 2.</summary>
 		Float2 = 1,//Ogre::VET_FLOAT2,
-				   /// <summary>Float 3.</summary>
+		/// <summary>Float 3.</summary>
 		Float3 = 2,//Ogre::VET_FLOAT3,
-				   /// <summary>Float 4.</summary>
+		/// <summary>Float 4.</summary>
 		Float4 = 3,//Ogre::VET_FLOAT4,
-				   /// <summary>alias to more specific color type - use the current rendersystem's color packing.</summary>
+		/// <summary>alias to more specific color type - use the current rendersystem's color packing.</summary>
 		//Color = 4,//Ogre::VET_COLOUR,
 		//		  /// <summary>Short 1.</summary>
 		Short1 = 5,//Ogre::VET_SHORT1,
-				   /// <summary>Short 2.</summary>
+		/// <summary>Short 2.</summary>
 		Short2 = 6,//Ogre::VET_SHORT2,
-				   /// <summary>Short 3.</summary>
+		/// <summary>Short 3.</summary>
 		Short3 = 7,//Ogre::VET_SHORT3,
-				   /// <summary>Short 4.</summary>
+		/// <summary>Short 4.</summary>
 		Short4 = 8,//Ogre::VET_SHORT4,
-				   /// <summary>Byte 4.</summary>
+		/// <summary>Byte 4.</summary>
 		UByte4 = 9,//Ogre::VET_UBYTE4,
 
 		//!!!!
 		/// <summary>D3D style compact color.</summary>
 		ColorARGB = 10,//Ogre::VET_COLOUR_ARGB,
-					   /// <summary>GL style compact color.</summary>
+		/// <summary>GL style compact color.</summary>
 		ColorABGR = 11,//Ogre::VET_COLOUR_ABGR
 
 		Integer1 = 12,
 		Integer2 = 13,
 		Integer3 = 14,
 		Integer4 = 15,
+
+		Half1 = 16,
+		Half2 = 17,
+		Half3 = 18,
+		Half4 = 19,
 
 		//Double1 = 12,
 		//Double2 = 13,
@@ -194,7 +199,6 @@ namespace NeoAxis
 		public int Source
 		{
 			get { return source; }
-			//!!!!для сериализации
 			set { source = value; }
 		}
 
@@ -275,6 +279,14 @@ namespace NeoAxis
 				return sizeof( int ) * 3;
 			case VertexElementType.Integer4:
 				return sizeof( int ) * 4;
+			case VertexElementType.Half1:
+				return 2;
+			case VertexElementType.Half2:
+				return 2 * 2;
+			case VertexElementType.Half3:
+				return 2 * 3;
+			case VertexElementType.Half4:
+				return 2 * 4;
 
 				//case VertexElementType.Double1:
 				//	return sizeof( double );
@@ -553,6 +565,28 @@ namespace NeoAxis
 				count = 4;
 				asInt = true;
 				break;
+
+			case VertexElementType.Half1:
+				type = Internal.SharpBgfx.VertexAttributeType.Half;
+				count = 1;
+				asInt = false;
+				break;
+			case VertexElementType.Half2:
+				type = Internal.SharpBgfx.VertexAttributeType.Half;
+				count = 2;
+				asInt = false;
+				break;
+			case VertexElementType.Half3:
+				type = Internal.SharpBgfx.VertexAttributeType.Half;
+				count = 3;
+				asInt = false;
+				break;
+			case VertexElementType.Half4:
+				type = Internal.SharpBgfx.VertexAttributeType.Half;
+				count = 4;
+				asInt = false;
+				break;
+
 
 			default:
 				Log.Fatal( "VertexElement: GetBfgx: Unknown type." );

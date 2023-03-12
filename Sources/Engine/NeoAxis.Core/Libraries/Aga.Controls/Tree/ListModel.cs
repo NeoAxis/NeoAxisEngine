@@ -1,4 +1,5 @@
-﻿using System;
+#if !DEPLOY
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Collections;
@@ -54,3 +55,5 @@ namespace Internal.Aga.Controls.Tree
 		}
 	}
 }
+
+#endif

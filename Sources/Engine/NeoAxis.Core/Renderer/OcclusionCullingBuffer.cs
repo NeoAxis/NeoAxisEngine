@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -33,7 +33,7 @@ namespace NeoAxis
 		};
 
 		[DllImport( NativeUtility.library, EntryPoint = "MaskedOcclusionCulling_RenderTriangles", CallingConvention = NativeUtility.convention )]
-		static unsafe extern CullingResult MaskedOcclusionCulling_RenderTriangles( IntPtr instance, float* inVtx, uint* inTris, int nTris, float* modelToClipMatrix );
+		static unsafe extern CullingResult MaskedOcclusionCulling_RenderTriangles( IntPtr instance, float* inVtx, uint* inTris, int nTris, float* modelToClipMatrix/*, [MarshalAs( UnmanagedType.U1 )] bool stride16*/ );
 
 		[DllImport( NativeUtility.library, EntryPoint = "MaskedOcclusionCulling_TestTriangles", CallingConvention = NativeUtility.convention )]
 		static unsafe extern CullingResult MaskedOcclusionCulling_TestTriangles( IntPtr instance, float* inVtx, uint* inTris, int nTris, float* modelToClipMatrix );
@@ -51,8 +51,8 @@ namespace NeoAxis
 			get
 			{
 				//!!!!
-				return 
-					SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows || 
+				return
+					SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows ||
 					SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP;
 			}
 		}
@@ -86,9 +86,9 @@ namespace NeoAxis
 			MaskedOcclusionCulling_ClearBuffer( nativeObject );
 		}
 
-		public unsafe CullingResult RenderTriangles( float* inVtx, uint* inTris, int nTris, float* modelToClipMatrix )
+		public unsafe CullingResult RenderTriangles( float* inVtx, uint* inTris, int nTris, float* modelToClipMatrix )//, bool stride16 )
 		{
-			return MaskedOcclusionCulling_RenderTriangles( nativeObject, inVtx, inTris, nTris, modelToClipMatrix );
+			return MaskedOcclusionCulling_RenderTriangles( nativeObject, inVtx, inTris, nTris, modelToClipMatrix );//, stride16 );
 		}
 
 		public unsafe CullingResult TestTriangles( float* inVtx, uint* inTris, int nTris, float* modelToClipMatrix )

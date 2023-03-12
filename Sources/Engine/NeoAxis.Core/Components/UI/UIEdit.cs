@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -165,12 +165,12 @@ namespace NeoAxis
 			{
 				if( EnabledInHierarchy && VisibleInHierarchy )
 				{
-					var parentControl = Parent as UIControl;
-					if( parentControl != null && parentControl.ReadOnlyInHierarchy )
-						return false;
+					//var parentControl = Parent as UIControl;
+					//if( parentControl != null && parentControl.ReadOnlyInHierarchy )
+					//	return false;
 
 					var parentCombo = Parent as UICombo;
-					if( parentCombo != null && parentCombo.GetTextControl() == this )
+					if( parentCombo != null && ( parentCombo.GetTextControl() == this || parentCombo.ReadOnlyInHierarchy ) )
 						return false;
 
 					return true;

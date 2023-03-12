@@ -1,4 +1,10 @@
 ﻿#if !UWP
+
+//!!!!betauser
+#if !ANDROID
+#define HAS_FULL_SPAN
+#endif
+
 /* Copyright (c) 2010 Michael Lidgren
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software
@@ -26,7 +32,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	public partial class NetBuffer
 	{
@@ -41,9 +47,15 @@ namespace Lidgren.Network
 				m_data = new byte[byteLen + c_overAllocateAmount];
 				return;
 			}
+
 			if (m_data.Length < byteLen)
-				Array.Resize<byte>(ref m_data, byteLen + c_overAllocateAmount);
-			return;
+			{
+				var newLen = m_data.Length * 2;
+				if (newLen < byteLen)
+					newLen = byteLen;
+				
+				Array.Resize(ref m_data, newLen);
+			}
 		}
 
 		/// <summary>

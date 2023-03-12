@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -141,9 +141,15 @@ namespace NeoAxis
 			{
 				var item = new RenderingPipeline.RenderSceneData.CutVolumeItem();
 				item.Shape = Shape;
-				item.CutScene = CutScene;
-				item.CutShadows = CutShadows;
-				item.CutSimple3DRenderer = CutSimple3DRenderer;
+				if( CutScene )
+					item.Flags |= CutVolumeFlags.CutScene;
+				if( CutShadows )
+					item.Flags |= CutVolumeFlags.CutShadows;
+				if( CutSimple3DRenderer )
+					item.Flags |= CutVolumeFlags.CutSimple3DRenderer;
+				//item.CutScene = CutScene;
+				//item.CutShadows = CutShadows;
+				//item.CutSimple3DRenderer = CutSimple3DRenderer;
 
 				switch( item.Shape )
 				{
@@ -175,7 +181,7 @@ namespace NeoAxis
 			{
 				var context2 = context.ObjectInSpaceRenderingContext;
 
-				bool show = ( ParentScene.GetDisplayDevelopmentDataInThisApplication() && ParentScene.DisplayVolumes ) || context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this;
+				bool show = ( context.SceneDisplayDevelopmentDataInThisApplication && ParentScene.DisplayVolumes ) || context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this;
 				if( show )
 				{
 					//if( context2.displayVolumesCounter < context2.displayVolumesMax )
@@ -184,15 +190,15 @@ namespace NeoAxis
 
 					ColorValue color;
 					if( context2.selectedObjects.Contains( this ) )
-						color = ProjectSettings.Get.General.SelectedColor;
+						color = ProjectSettings.Get.Colors.SelectedColor;
 					else if( context2.canSelectObjects.Contains( this ) )
-						color = ProjectSettings.Get.General.CanSelectColor;
+						color = ProjectSettings.Get.Colors.CanSelectColor;
 					else
-						color = ProjectSettings.Get.General.SceneShowVolumeColor;
+						color = ProjectSettings.Get.Colors.SceneShowVolumeColor;
 
 					if( color.Alpha != 0 )
 					{
-						context.Owner.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+						context.Owner.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 						RenderShape( context2 );
 					}
 

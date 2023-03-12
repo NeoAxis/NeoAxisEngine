@@ -1,6 +1,6 @@
 $input v_worldPosition_depth, v_colorVisible, v_colorInvisible
 
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "Common.sh"
 #include "FragmentFunctions.sh"
 
@@ -17,8 +17,9 @@ uniform vec4 u_simple3DRendererVertex[3];
 
 void main()
 {
-	cutVolumes(v_worldPosition_depth.xyz);
-
+	if( cutVolumes( v_worldPosition_depth.xyz ) )
+		discard;	
+	
 	bool visible = true;
 //!!!!need get depth from geometry in GLSL. right now depth check is skipped
 #ifndef GLSL

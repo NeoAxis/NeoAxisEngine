@@ -1,10 +1,11 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using NeoAxis.Editor;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -24,46 +25,53 @@ namespace NeoAxis
 			new Vector3F( float.MaxValue, float.MaxValue, float.MaxValue ),
 			new Vector3F( float.MinValue, float.MinValue, float.MinValue ) );
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public BoundsF( BoundsF source )
 		{
 			Minimum = source.Minimum;
 			Maximum = source.Maximum;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public BoundsF( Vector3F minimum, Vector3F maximum )
 		{
 			this.Minimum = minimum;
 			this.Maximum = maximum;
 		}
 
-		public BoundsF( float minimumX, float minimumY, float minimumZ,
-			float maximumX, float maximumY, float maximumZ )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public BoundsF( float minimumX, float minimumY, float minimumZ, float maximumX, float maximumY, float maximumZ )
 		{
 			this.Minimum = new Vector3F( minimumX, minimumY, minimumZ );
 			this.Maximum = new Vector3F( maximumX, maximumY, maximumZ );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public BoundsF( Vector3F v )
 		{
 			this.Minimum = v;
 			this.Maximum = v;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is BoundsF && this == (BoundsF)obj );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return ( Minimum.GetHashCode() ^ Maximum.GetHashCode() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( BoundsF v1, BoundsF v2 )
 		{
 			return ( v1.Minimum == v2.Minimum && v1.Maximum == v2.Maximum );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( BoundsF v1, BoundsF v2 )
 		{
 			return ( v1.Minimum != v2.Minimum || v1.Maximum != v2.Maximum );
@@ -71,26 +79,43 @@ namespace NeoAxis
 
 		public unsafe Vector3F this[ int index ]
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
-				if( index < 0 || index > 1 )
+				if( index == 0 )
+					return Minimum;
+				else if( index == 1 )
+					return Maximum;
+				else
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed( Vector3F* v = &this.Minimum )
-				{
-					return v[ index ];
-				}
+
+				//if( index < 0 || index > 1 )
+				//	throw new ArgumentOutOfRangeException( "index" );
+				//fixed( Vector3F* v = &this.Minimum )
+				//{
+				//	return v[ index ];
+				//}
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set
 			{
-				if( index < 0 || index > 1 )
+				if( index == 0 )
+					Minimum = value;
+				else if( index == 1 )
+					Maximum = value;
+				else
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed( Vector3F* v = &this.Minimum )
-				{
-					v[ index ] = value;
-				}
+
+				//if( index < 0 || index > 1 )
+				//	throw new ArgumentOutOfRangeException( "index" );
+				//fixed( Vector3F* v = &this.Minimum )
+				//{
+				//	v[ index ] = value;
+				//}
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( BoundsF v, float epsilon )
 		{
 			if( !Minimum.Equals( ref v.Minimum, epsilon ) )
@@ -100,11 +125,13 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool IsCleared()
 		{
 			return Minimum.X > Maximum.X;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector3F GetCenter()
 		{
 			Vector3F result;
@@ -114,6 +141,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void GetCenter( out Vector3F result )
 		{
 			result.X = ( Minimum.X + Maximum.X ) * .5f;
@@ -121,6 +149,7 @@ namespace NeoAxis
 			result.Z = ( Minimum.Z + Maximum.Z ) * .5f;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float GetRadius()
 		{
 			float total = 0.0f;
@@ -136,6 +165,7 @@ namespace NeoAxis
 			return MathEx.Sqrt( total );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float GetRadius( Vector3F center )
 		{
 			float total = 0.0f;
@@ -151,6 +181,7 @@ namespace NeoAxis
 			return MathEx.Sqrt( total );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public SphereF GetBoundingSphere()
 		{
 			//!!!!slowly
@@ -159,6 +190,7 @@ namespace NeoAxis
 			return new SphereF( c, GetRadius( c ) );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float GetVolume()
 		{
 			Vector3F s;
@@ -166,6 +198,7 @@ namespace NeoAxis
 			return s.X * s.Y * s.Z;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Add( Vector3F v )
 		{
 			if( v.X < Minimum.X )
@@ -182,6 +215,7 @@ namespace NeoAxis
 				Maximum.Z = v.Z;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Add( ref Vector3F v )
 		{
 			if( v.X < Minimum.X )
@@ -198,6 +232,7 @@ namespace NeoAxis
 				Maximum.Z = v.Z;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Add( BoundsF v )
 		{
 			if( v.Minimum.X < Minimum.X )
@@ -214,6 +249,7 @@ namespace NeoAxis
 				Maximum.Z = v.Maximum.Z;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Add( ref BoundsF v )
 		{
 			if( v.Minimum.X < Minimum.X )
@@ -230,18 +266,21 @@ namespace NeoAxis
 				Maximum.Z = v.Maximum.Z;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Add( ICollection<Vector3F> collection )
 		{
 			foreach( var v in collection )
 				Add( v );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Add( Vector3F[] collection )
 		{
 			for( int i = 0; i < collection.Length; i++ )
 				Add( ref collection[ i ] );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public BoundsF Intersection( BoundsF v )
 		{
 			BoundsF result;
@@ -254,6 +293,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Intersection( ref BoundsF v, out BoundsF result )
 		{
 			result.Minimum.X = ( v.Minimum.X > Minimum.X ) ? v.Minimum.X : Minimum.X;
@@ -264,6 +304,7 @@ namespace NeoAxis
 			result.Maximum.Z = ( v.Maximum.Z < Maximum.Z ) ? v.Maximum.Z : Maximum.Z;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Expand( float d )
 		{
 			Minimum.X -= d;
@@ -274,6 +315,7 @@ namespace NeoAxis
 			Maximum.Z += d;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Expand( Vector3F d )
 		{
 			Minimum.X -= d.X;
@@ -284,6 +326,7 @@ namespace NeoAxis
 			Maximum.Z += d.Z;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( Vector3F p )
 		{
 			if( p.X < Minimum.X || p.Y < Minimum.Y || p.Z < Minimum.Z || p.X > Maximum.X || p.Y > Maximum.Y || p.Z > Maximum.Z )
@@ -291,6 +334,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( ref Vector3F p )
 		{
 			if( p.X < Minimum.X || p.Y < Minimum.Y || p.Z < Minimum.Z || p.X > Maximum.X || p.Y > Maximum.Y || p.Z > Maximum.Z )
@@ -298,6 +342,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( BoundsF v )
 		{
 			if( v.Minimum.X < Minimum.X || v.Minimum.Y < Minimum.Y || v.Minimum.Z < Minimum.Z
@@ -306,6 +351,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( ref BoundsF v )
 		{
 			if( v.Minimum.X < Minimum.X || v.Minimum.Y < Minimum.Y || v.Minimum.Z < Minimum.Z
@@ -314,6 +360,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( BoundsF v )
 		{
 			if( v.Maximum.X < Minimum.X || v.Maximum.Y < Minimum.Y || v.Maximum.Z < Minimum.Z
@@ -322,6 +369,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( ref BoundsF v )
 		{
 			if( v.Maximum.X < Minimum.X || v.Maximum.Y < Minimum.Y || v.Maximum.Z < Minimum.Z
@@ -330,6 +378,19 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public bool Intersects( SphereF v )
+		{
+			return v.Intersects( ref this );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public bool Intersects( ref SphereF v )
+		{
+			return v.Intersects( ref this );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector3F GetSize()
 		{
 			Vector3F result;
@@ -337,11 +398,13 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void GetSize( out Vector3F result )
 		{
 			Vector3F.Subtract( ref Maximum, ref Minimum, out result );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector3F[] ToPoints()
 		{
 			Vector3F[] r = null;
@@ -349,6 +412,7 @@ namespace NeoAxis
 			return r;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ToPoints( ref Vector3F[] points )
 		{
 			if( points == null || points.Length < 8 )
@@ -399,6 +463,12 @@ namespace NeoAxis
 			//	Maximum.X, Maximum.Y, Maximum.Z );
 		}
 
+		public string ToString( int precision )
+		{
+			return string.Format( "{0} {1}", Minimum.ToString( precision ), Maximum.ToString( precision ) );
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
 		public bool Intersects( ref RayF ray, out float scale )
 		{
 			int i, ax0, ax1, ax2, side, inside;
@@ -448,17 +518,20 @@ namespace NeoAxis
 						hit[ ax2 ] >= Minimum[ ax2 ] && hit[ ax2 ] <= Maximum[ ax2 ] );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( RayF ray, out float scale )
 		{
 			return Intersects( ref ray, out scale );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( ref RayF ray )
 		{
 			float s;
 			return Intersects( ref ray, out s );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( RayF ray )
 		{
 			float s;
@@ -496,6 +569,7 @@ namespace NeoAxis
 		//   return new Bounds( center - rotatedExtents, center + rotatedExtents );
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static BoundsF operator +( BoundsF b, Vector3F v )
 		{
 			BoundsF result;
@@ -504,6 +578,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static BoundsF operator +( Vector3F v, BoundsF b )
 		{
 			BoundsF result;
@@ -512,6 +587,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static BoundsF operator -( BoundsF b, Vector3F v )
 		{
 			BoundsF result;
@@ -520,6 +596,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static BoundsF operator -( Vector3F v, BoundsF b )
 		{
 			BoundsF result;
@@ -528,30 +605,35 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Add( ref BoundsF b, ref Vector3F v, out BoundsF result )
 		{
 			Vector3F.Add( ref b.Minimum, ref v, out result.Minimum );
 			Vector3F.Add( ref b.Maximum, ref v, out result.Maximum );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Add( ref Vector3F v, ref BoundsF b, out BoundsF result )
 		{
 			Vector3F.Add( ref v, ref b.Minimum, out result.Minimum );
 			Vector3F.Add( ref v, ref b.Maximum, out result.Maximum );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Subtract( ref BoundsF b, ref Vector3F v, out BoundsF result )
 		{
 			Vector3F.Subtract( ref b.Minimum, ref v, out result.Minimum );
 			Vector3F.Subtract( ref b.Maximum, ref v, out result.Maximum );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Subtract( ref Vector3F v, ref BoundsF b, out BoundsF result )
 		{
 			Vector3F.Subtract( ref v, ref b.Minimum, out result.Minimum );
 			Vector3F.Subtract( ref v, ref b.Maximum, out result.Maximum );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static BoundsF Add( ref BoundsF b, ref Vector3F v )
 		{
 			BoundsF result;
@@ -560,6 +642,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static BoundsF Add( ref Vector3F v, ref BoundsF b )
 		{
 			BoundsF result;
@@ -568,6 +651,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static BoundsF Subtract( ref BoundsF b, ref Vector3F v )
 		{
 			BoundsF result;
@@ -576,6 +660,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static BoundsF Subtract( ref Vector3F v, ref BoundsF b )
 		{
 			BoundsF result;
@@ -584,6 +669,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public PlaneF.Side GetPlaneSide( ref PlaneF plane )
 		{
 			Vector3F center;
@@ -601,11 +687,13 @@ namespace NeoAxis
 			return PlaneF.Side.No;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public PlaneF.Side GetPlaneSide( PlaneF plane )
 		{
 			return GetPlaneSide( ref plane );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float GetPlaneDistance( ref PlaneF plane )
 		{
 			Vector3F center;
@@ -623,11 +711,13 @@ namespace NeoAxis
 			return 0.0f;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float GetPlaneDistance( PlaneF plane )
 		{
 			return GetPlaneDistance( ref plane );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		internal bool LineIntersection( ref Vector3F start, ref Vector3F end )
 		{
 			//unsafe
@@ -698,7 +788,8 @@ namespace NeoAxis
 		//	result.bottom = maximum.Y;
 		//}
 
-		public float GetPointDistanceSquared( Vector3F point )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public float GetPointDistanceSquared( ref Vector3F point )
 		{
 			float x;
 			if( point.X < Minimum.X )
@@ -728,6 +819,13 @@ namespace NeoAxis
 			return sqr;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public float GetPointDistanceSquared( Vector3F point )
+		{
+			return GetPointDistanceSquared( ref point );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float GetPointDistance( Vector3F point )
 		{
 			float sqr = GetPointDistanceSquared( point );
@@ -736,6 +834,7 @@ namespace NeoAxis
 			return MathEx.Sqrt( sqr );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Bounds ToBounds()
 		{
@@ -749,6 +848,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public BoundsI ToBoundsI()
 		{
@@ -769,17 +869,144 @@ namespace NeoAxis
 		//}
 
 #if !DISABLE_IMPLICIT
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator Bounds( BoundsF v )
 		{
 			return new Bounds( v );
 		}
 #endif
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static BoundsF Merge( BoundsF a, BoundsF b )
 		{
 			var v = a;
 			v.Add( b );
 			return v;
 		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		public bool Intersects( ref TriangleF triangle )
+		{
+			//https://github.com/juj/MathGeoLib/blob/master/src/Geometry/Triangle.cpp#L697
+
+			var a = triangle.A;
+			var b = triangle.B;
+			var c = triangle.C;
+
+			var triangleBounds = new BoundsF( a );
+			triangleBounds.Add( ref b );
+			triangleBounds.Add( ref c );
+			var tMin = triangleBounds.Minimum;
+			var tMax = triangleBounds.Maximum;
+			//var tMin = a.Min( b.Min( c ) );
+			//var tMax = a.Max( b.Max( c ) );
+
+			if( tMin.X >= Maximum.X || tMax.X <= Minimum.X || tMin.Y >= Maximum.Y || tMax.Y <= Minimum.Y || tMin.Z >= Maximum.Z || tMax.Z <= Minimum.Z )
+				return false;
+
+			var center = ( Minimum + Maximum ) * 0.5f;
+			var h = Maximum - center;
+
+			var t0 = b - a;
+			var t1 = c - a;
+			var t2 = c - b;
+
+			var ac = a - center;
+
+			var n = Vector3F.Cross( t0, t1 );
+			var s = n.Dot( ac );
+			var r = Math.Abs( h.Dot( Vector3F.Abs( n ) ) );
+			if( Math.Abs( s ) >= r )
+				return false;
+
+			var at0 = Vector3F.Abs( t0 );
+			var at1 = Vector3F.Abs( t1 );
+			var at2 = Vector3F.Abs( t2 );
+
+			var bc = b - center;
+			var cc = c - center;
+
+			// eX <cross> t[0]
+			var d1 = t0.Y * ac.Z - t0.Z * ac.Y;
+			var d2 = t0.Y * cc.Z - t0.Z * cc.Y;
+			var tc = ( d1 + d2 ) * 0.5f;
+			r = Math.Abs( h.Y * at0.Z + h.Z * at0.Y );
+			if( r + Math.Abs( tc - d1 ) < Math.Abs( tc ) )
+				return false;
+
+			// eX <cross> t[1]
+			d1 = t1.Y * ac.Z - t1.Z * ac.Y;
+			d2 = t1.Y * bc.Z - t1.Z * bc.Y;
+			tc = ( d1 + d2 ) * 0.5f;
+			r = Math.Abs( h.Y * at1.Z + h.Z * at1.Y );
+			if( r + Math.Abs( tc - d1 ) < Math.Abs( tc ) )
+				return false;
+
+			// eX <cross> t[2]
+			d1 = t2.Y * ac.Z - t2.Z * ac.Y;
+			d2 = t2.Y * bc.Z - t2.Z * bc.Y;
+			tc = ( d1 + d2 ) * 0.5f;
+			r = Math.Abs( h.Y * at2.Z + h.Z * at2.Y );
+			if( r + Math.Abs( tc - d1 ) < Math.Abs( tc ) )
+				return false;
+
+			// eY <cross> t[0]
+			d1 = t0.Z * ac.X - t0.X * ac.Z;
+			d2 = t0.Z * cc.X - t0.X * cc.Z;
+			tc = ( d1 + d2 ) * 0.5f;
+			r = Math.Abs( h.X * at0.Z + h.Z * at0.X );
+			if( r + Math.Abs( tc - d1 ) < Math.Abs( tc ) )
+				return false;
+
+			// eY <cross> t[1]
+			d1 = t1.Z * ac.X - t1.X * ac.Z;
+			d2 = t1.Z * bc.X - t1.X * bc.Z;
+			tc = ( d1 + d2 ) * 0.5f;
+			r = Math.Abs( h.X * at1.Z + h.Z * at1.X );
+			if( r + Math.Abs( tc - d1 ) < Math.Abs( tc ) )
+				return false;
+
+			// eY <cross> t[2]
+			d1 = t2.Z * ac.X - t2.X * ac.Z;
+			d2 = t2.Z * bc.X - t2.X * bc.Z;
+			tc = ( d1 + d2 ) * 0.5f;
+			r = Math.Abs( h.X * at2.Z + h.Z * at2.X );
+			if( r + Math.Abs( tc - d1 ) < Math.Abs( tc ) )
+				return false;
+
+			// eZ <cross> t[0]
+			d1 = t0.X * ac.Y - t0.Y * ac.X;
+			d2 = t0.X * cc.Y - t0.Y * cc.X;
+			tc = ( d1 + d2 ) * 0.5f;
+			r = Math.Abs( h.Y * at0.X + h.X * at0.Y );
+			if( r + Math.Abs( tc - d1 ) < Math.Abs( tc ) )
+				return false;
+
+			// eZ <cross> t[1]
+			d1 = t1.X * ac.Y - t1.Y * ac.X;
+			d2 = t1.X * bc.Y - t1.Y * bc.X;
+			tc = ( d1 + d2 ) * 0.5f;
+			r = Math.Abs( h.Y * at1.X + h.X * at1.Y );
+			if( r + Math.Abs( tc - d1 ) < Math.Abs( tc ) )
+				return false;
+
+			// eZ <cross> t[2]
+			d1 = t2.X * ac.Y - t2.Y * ac.X;
+			d2 = t2.X * bc.Y - t2.Y * bc.X;
+			tc = ( d1 + d2 ) * 0.5f;
+			r = Math.Abs( h.Y * at2.X + h.X * at2.Y );
+			if( r + Math.Abs( tc - d1 ) < Math.Abs( tc ) )
+				return false;
+
+			// No separating axis exists, the AABB and triangle intersect.
+			return true;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public bool Intersects( TriangleF triangle )
+		{
+			return Intersects( ref triangle );
+		}
+
 	}
 }

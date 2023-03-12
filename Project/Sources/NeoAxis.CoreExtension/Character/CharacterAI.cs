@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -57,6 +57,19 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="DisplayPath"/> property value changes.</summary>
 		public event Action<CharacterAI> DisplayPathChanged;
 		ReferenceField<bool> _displayPath = false;
+
+		///// <summary>
+		///// Defines a dialogue tree of the NPC.
+		///// </summary>
+		//[DefaultValue( null )]
+		//public Reference<DialogueTree> SourceDialogueTree
+		//{
+		//	get { if( _sourceDialogueTree.BeginGet() ) SourceDialogueTree = _sourceDialogueTree.Get( this ); return _sourceDialogueTree.value; }
+		//	set { if( _sourceDialogueTree.BeginSet( ref value ) ) { try { SourceDialogueTreeChanged?.Invoke( this ); } finally { _sourceDialogueTree.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="SourceDialogueTree"/> property value changes.</summary>
+		//public event Action<CharacterAI> SourceDialogueTreeChanged;
+		//ReferenceField<DialogueTree> _sourceDialogueTree = null;
 
 		/////////////////////////////////////////
 
@@ -139,12 +152,12 @@ namespace NeoAxis
 					{
 						findPathContext = new Pathfinding.FindPathContext();
 
-					////public double StepSize = 0.5;
-					////public double Slop = 0.01;
-					////public Vector3 PolygonPickExtents = new Vector3( 2, 2, 2 );
-					//////public int MaxPolygonPath = 512;
-					////public int MaxSmoothPath = 2048;
-					//////public int MaxSteerPoints = 16;
+						////public double StepSize = 0.5;
+						////public double Slop = 0.01;
+						////public Vector3 PolygonPickExtents = new Vector3( 2, 2, 2 );
+						//////public int MaxPolygonPath = 512;
+						////public int MaxSmoothPath = 2048;
+						//////public int MaxSteerPoints = 16;
 
 						findPathContext.Start = from;
 						findPathContext.End = target;
@@ -159,23 +172,23 @@ namespace NeoAxis
 					if( findPathContext != null && findPathContext.Finished )
 					{
 						if( findPathContext.Path != null )
-					{
+						{
 							path = findPathContext.Path;
-						foundPathForTargetPosition = target;
-						currentIndex = 0;
+							foundPathForTargetPosition = target;
+							currentIndex = 0;
 
 							//disable finding a new path during specified time.
-						updateRemainingTime = 0.3f;
-					}
-					else
-					{
-						path = null;
-						foundPathForTargetPosition = null;
-						currentIndex = 0;
+							updateRemainingTime = 0.3f;
+						}
+						else
+						{
+							path = null;
+							foundPathForTargetPosition = null;
+							currentIndex = 0;
 
 							//disable finding a new path during specified time.
-						updateRemainingTime = 1.0f;
-					}
+							updateRemainingTime = 1.0f;
+						}
 
 						findPathContext = null;
 					}
@@ -232,7 +245,7 @@ namespace NeoAxis
 					var offset = new Vector3( 0, 0, 0.1 );
 					var color = new ColorValue( 0, 0.5, 1 );
 
-					renderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+					renderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 
 					for( int n = 1; n < path.Length; n++ )
 					{
@@ -303,7 +316,7 @@ namespace NeoAxis
 						var distanceXY = diff.ToVector2().Length();
 						var distanceZ = Math.Abs( diff.Z );
 
-						if( distanceXY <= moveTo.DistanceToReach && distanceZ < character.Height )
+						if( distanceXY <= moveTo.DistanceToReach && distanceZ < 2.0 ) //!!!! character.Height )
 						{
 							//reach
 							PathfindingClearData();
@@ -324,10 +337,10 @@ namespace NeoAxis
 							}
 
 							if( diff != Vector3.Zero )
-							character.SetTurnToDirection( diff, false );
+								character.TurnToDirection( diff.ToVector3F(), false );
 
 							//!!!!it is better to call it less often, here it is less likely to update the task. inside in SetMoveVector the timer will be different
-							character.SetMoveVector( diff.ToVector2().GetNormalize(), moveTo.Run );
+							character.SetMoveVector( diff.ToVector2().GetNormalize().ToVector2F(), moveTo.Run );
 						}
 					}
 				}
@@ -351,14 +364,14 @@ namespace NeoAxis
 						else if( turnTo is CharacterAITask_TurnToPosition turnToPosition )
 							target = turnToPosition.Target;
 
-						var diff = ( target - character.TransformV.Position ).ToVector2();
+						var diff = ( target - character.TransformV.Position ).ToVector2F();
 						if( diff.X == 0 && diff.Y == 0 )
-							diff.X += 0.001;
+							diff.X += 0.001f;
 						diff.Normalize();
 
 						var current = character.CurrentTurnToDirection.GetVector().ToVector2().GetNormalize();
 
-						if( current.Equals( diff, 0.001 ) )
+						if( current.Equals( diff, 0.001f ) )
 						{
 							//reach
 							if( task.DeleteTaskWhenReach )
@@ -367,7 +380,7 @@ namespace NeoAxis
 						else
 						{
 							//turn character
-							character.SetTurnToDirection( new Vector3( diff, 0 ), turnTo.TurnInstantly );
+							character.TurnToDirection( new Vector3F( diff, 0 ), turnTo.TurnInstantly );
 						}
 					}
 				}
@@ -465,7 +478,7 @@ namespace NeoAxis
 			var scene = FindParent<Scene>();
 			if( scene != null )
 			{
-				if( EnabledInHierarchy )
+				if( EnabledInHierarchyAndIsInstance )
 					scene.GetRenderSceneData += Scene_GetRenderSceneData;
 				else
 					scene.GetRenderSceneData += Scene_GetRenderSceneData;
@@ -477,5 +490,113 @@ namespace NeoAxis
 			if( DisplayPath )
 				pathController?.DrawPath( context );
 		}
+
+		public override void ObjectInteractionGetInfo( GameMode gameMode, ref InteractiveObjectObjectInfo info )
+		{
+			//!!!!если есть дерево
+
+			////talk with another character
+			//var character = gameMode.ObjectControlledByPlayer.Value as Character;
+			//if( character != null && SourceDialogueTree.Value != null )
+			//{
+			//	info = new InteractiveObjectObjectInfo();
+			//	info.AllowInteract = true;
+			//	info.SelectionTextInfo.Add( Name );
+			//	info.SelectionTextInfo.Add( "Press E to start a dialogue." );
+			//	return;
+			//}
+
+			base.ObjectInteractionGetInfo( gameMode, ref info );
+		}
+
+		public override bool ObjectInteractionInputMessage( GameMode gameMode, InputMessage message )
+		{
+			var keyDown = message as InputMessageKeyDown;
+			if( keyDown != null )
+			{
+				if( keyDown.Key == EKeys.E )
+				{
+					//!!!!
+					Log.Info( "ee" );
+
+					////start control by a character
+					//var character = gameMode.ObjectControlledByPlayer.Value as Character;
+					//if( character != null )
+					//{
+					//	var seat = GetComponent<VehicleCharacterSeat>();
+					//	if( seat != null && !seat.Character.ReferenceOrValueSpecified )
+					//	{
+					//		if( NetworkIsClient )
+					//		{
+					//			var writer = BeginNetworkMessageToServer( "PutObjectToSeat" );
+					//			if( writer != null )
+					//			{
+					//				writer.WriteVariableUInt64( (ulong)character.NetworkID );
+					//				writer.WriteVariableUInt64( (ulong)seat.NetworkID );
+					//				EndNetworkMessage();
+					//			}
+					//		}
+					//		else
+					//		{
+					//			seat.PutCharacterToSeat( character );
+					//			gameMode.ObjectControlledByPlayer = ReferenceUtility.MakeRootReference( this );
+
+					//			GameMode.PlayScreen?.ParentContainer?.Viewport?.NotifyInstantCameraMovement();
+					//		}
+
+					//		return true;
+					//	}
+					//}
+				}
+			}
+
+			//!!!!
+			//var mouseDown = message as InputMessageMouseButtonDown;
+			//if( mouseDown != null )
+			//{
+			//	if( mouseDown.Button == EMouseButtons.Left )
+			//	{
+			//		var character = gameMode.ObjectControlledByPlayer.Value as Character;
+			//		if( character != null )
+			//		{
+			//			if( NetworkIsClient )
+			//			{
+			//				var writer = BeginNetworkMessageToServer( "PutObjectToSeat" );
+			//				if( writer != null )
+			//				{
+			//					writer.WriteVariableUInt64( (ulong)character.NetworkID );
+			//					EndNetworkMessage();
+			//				}
+			//			}
+			//			else
+			//			{
+			//				PutCharacterToSeat( character, out var reason );
+
+			//				//!!!!reason
+			//			}
+			//		}
+
+			//		return true;
+			//	}
+			//}
+
+			return base.ObjectInteractionInputMessage( gameMode, message );
+		}
+
+		public override void ObjectInteractionEnter( ObjectInteractionContext context )
+		{
+			base.ObjectInteractionEnter( context );
+		}
+
+		public override void ObjectInteractionExit( ObjectInteractionContext context )
+		{
+			base.ObjectInteractionExit( context );
+		}
+
+		public override void ObjectInteractionUpdate( ObjectInteractionContext context )
+		{
+			base.ObjectInteractionUpdate( context );
+		}
+
 	}
 }

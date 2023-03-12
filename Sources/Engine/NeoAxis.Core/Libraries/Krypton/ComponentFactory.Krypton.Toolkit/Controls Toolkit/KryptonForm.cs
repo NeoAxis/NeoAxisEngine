@@ -1,4 +1,5 @@
-﻿// *****************************************************************************
+﻿#if !DEPLOY
+// *****************************************************************************
 // 
 //  © Component Factory Pty Ltd 2012. All rights reserved.
 //  The software and associated documentation supplied hereunder are the 
@@ -126,7 +127,10 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
             _headerStylePrev = _headerStyle;
             _allowButtonSpecToolTips = false;
 
-            _allowFormChrome = KryptonToolkitSettings.AllowFormChrome;
+            //betauser
+            _allowFormChrome = KryptonToolkitSettings.GetResultCustomizeWindowsStyle( false );
+            if( NeoAxis.Editor.WinFormsUtility.IsDesignerHosted( this ) )
+                _allowFormChrome = false;
 
             _allowStatusStripMerge = true;
             _allowIconDisplay = true;
@@ -272,7 +276,7 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         [Category("Visuals")]
         [Description("Should custom chrome be allowed for this KryptonForm instance.")]
         [DefaultValue(true)]
-        public bool AllowFormChrome {
+        public override bool AllowFormChrome {
             get { return _allowFormChrome; }
             set {
                 if (_allowFormChrome != value)
@@ -1630,3 +1634,5 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         }
     }
 }
+
+#endif

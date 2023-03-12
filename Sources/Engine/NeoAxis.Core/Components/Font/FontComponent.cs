@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -17,7 +17,9 @@ namespace NeoAxis
 	/// <summary>
 	/// Represents font import settings.
 	/// </summary>
+#if !DEPLOY
 	[Preview( typeof( FontPreview ) )]
+#endif
 	public class FontComponent : Component
 	{
 		//true type specific
@@ -222,7 +224,7 @@ namespace NeoAxis
 						string text = string.Format( "Width of character ({0} pixels) is more than texture size.", characterInfo.Size.X );
 
 						////!!!!
-						//if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )//  RendererWorld.isEditor )
+						//if( EngineApp.IsEditor )//  RendererWorld.isEditor )
 						//	Log.Info( text );
 						//else
 						Log.Warning( text );

@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -132,7 +132,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
+		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture )
 		{
 			base.OnRender( context, frameData, ref actualTexture );
 
@@ -199,21 +199,41 @@ namespace NeoAxis
 				else
 					angle = 10000;
 
-				var curve = new CurveLine();
-				curve.AddPoint( 0, new Vector3( 1, 0, 0 ) );
-				curve.AddPoint( 60, new Vector3( 1, 0, 0 ) );
-				curve.AddPoint( 75, new Vector3( 0, 0, 0 ) );
-				curve.AddPoint( 90, new Vector3( 0, 0, 0 ) );
-				var angleFactor = curve.CalculateValueByTime( angle ).X;
+				var fov = (float)context.OwnerCameraSettings.FieldOfView;
 
-				var curve2 = new CurveLine();
-				curve2.AddPoint( -0.2, new Vector3( 0, 0, 0 ) );
-				curve2.AddPoint( -0.1, new Vector3( 1, 0, 0 ) );
-				curve2.AddPoint( 1.1, new Vector3( 1, 0, 0 ) );
-				curve2.AddPoint( 1.2, new Vector3( 0, 0, 0 ) );
-				var heightFactor = curve2.CalculateValueByTime( screenLightPosition.Y ).X;
+				var curve = new CurveLine1F();
+				curve.AddPoint( 0, 1 );
+				curve.AddPoint( fov * 0.7f, 1 );
+				curve.AddPoint( fov, 0 );
+				var angleFactor = curve.CalculateValueByTime( (float)angle );
+
+				var curve2 = new CurveLine1F();
+				curve2.AddPoint( -0.2f, 0 );
+				curve2.AddPoint( -0.1f, 1 );
+				curve2.AddPoint( 1.1f, 1 );
+				curve2.AddPoint( 1.2f, 0 );
+				var heightFactor = curve2.CalculateValueByTime( (float)screenLightPosition.Y );
 
 				demandIntensityFactor = angleFactor * heightFactor;
+
+
+				//var curve = new CurveLine();
+				//curve.AddPoint( 0, new Vector3( 1, 0, 0 ) );
+				//curve.AddPoint( 60, new Vector3( 1, 0, 0 ) );
+				//curve.AddPoint( 75, new Vector3( 0, 0, 0 ) );
+				//curve.AddPoint( 90, new Vector3( 0, 0, 0 ) );
+				//var angleFactor = curve.CalculateValueByTime( angle ).X;
+
+				//var curve2 = new CurveLine();
+				//curve2.AddPoint( -0.2, new Vector3( 0, 0, 0 ) );
+				//curve2.AddPoint( -0.1, new Vector3( 1, 0, 0 ) );
+				//curve2.AddPoint( 1.1, new Vector3( 1, 0, 0 ) );
+				//curve2.AddPoint( 1.2, new Vector3( 0, 0, 0 ) );
+				//var heightFactor = curve2.CalculateValueByTime( screenLightPosition.Y ).X;
+
+				//demandIntensityFactor = angleFactor * heightFactor;
+
+
 
 				//const float screenFadingBorder = .1f;
 

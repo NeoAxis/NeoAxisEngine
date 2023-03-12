@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -163,7 +163,7 @@ namespace NeoAxis
 			var scene = FindParent<Scene>();
 			if( scene != null )
 			{
-				if( EnabledInHierarchy )
+				if( EnabledInHierarchyAndIsInstance )
 					scene.CachedObjectsInSpaceToFastFindByRenderingPipeline.Add( this );
 				else
 					scene.CachedObjectsInSpaceToFastFindByRenderingPipeline.Remove( this );

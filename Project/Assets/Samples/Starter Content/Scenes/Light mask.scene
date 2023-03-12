@@ -1,7 +1,8 @@
-// Made with NeoAxis Engine 2022.1.
+// Made with NeoAxis Engine 2023.1.
 
 .component NeoAxis.Scene
 {
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1146, 842\"><KW V=\"1\" A=\"BCA52DF15A69481CB1A4E4952BAD03AB\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"ABE5E46721694418CDA665770640AB27\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"BCA52DF15A69481CB1A4E4952BAD03AB\"><KP UN=\"BCA52DF15A69481CB1A4E4952BAD03AB\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"1DA4CFCDC01548FCEB821DEAD055F32E\" S=\"False\"><CPD ObjPath=\"$Light4\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	BackgroundColor = 0.3077647 0.4585882 0.7294118
 	DisplayDevelopmentDataInSimulation = True
 	RenderingPipeline
@@ -16,7 +17,7 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "-73.3550491082788 112.067596161769 35.1732132249724; -0.290314648260797 -0.124493343132889 0.872004362299295 -0.373934759887076; 1 1 1"
+		Transform = "-70.9013913716563 114.639481381158 37.7723438888126; -0.267990327195843 -0.114145118217103 0.880126595517435 -0.374872314768054; 1 1 1"
 	}
 	.component NeoAxis.Light
 	{
@@ -74,7 +75,7 @@
 		MaskScale = 257.5
 		Mask
 		{
-			GetByReference = "Samples\\Starter Content\\Scenes Test\\Files\\LightMaskClouds.jpg"
+			GetByReference = "Samples\\Starter Content\\Textures\\LightMaskClouds.jpg"
 		}
 	}
 	.component NeoAxis.Material
@@ -112,7 +113,7 @@
 					Location3 = 0 0 0
 					Texture
 					{
-						GetByReference = "Samples\\Starter Content\\Scenes Test\\Files\\BoxDiffuse.dds"
+						GetByReference = "Samples\\Starter Content\\Textures\\BoxDiffuse.dds"
 					}
 				}
 			}
@@ -187,7 +188,7 @@
 		AttenuationPower = 1.06929
 		Mask
 		{
-			GetByReference = "Samples\\Starter Content\\Scenes Test\\Files\\LightMask.jpg"
+			GetByReference = "Samples\\Starter Content\\Textures\\LightMask.jpg"
 		}
 	}
 	.component NeoAxis.Light
@@ -202,7 +203,7 @@
 		SpotlightOuterAngle = 23.607
 		Mask
 		{
-			GetByReference = "Samples\\Starter Content\\Scenes Test\\Files\\LightMask.jpg"
+			GetByReference = "Samples\\Starter Content\\Textures\\LightMask.jpg"
 		}
 	}
 	.component NeoAxis.Light
@@ -216,21 +217,46 @@
 		SpotlightOuterAngle = 23.607
 		Mask
 		{
-			GetByReference = "Samples\\Starter Content\\Scenes Test\\Files\\LightMask.jpg"
+			GetByReference = "Samples\\Starter Content\\Textures\\LightMask.jpg"
 		}
 	}
 	.component NeoAxis.Light
 	{
 		Name = Light4
 		ScreenLabel = AlwaysDisplay
-		Transform = "-121.483039294596 95.7365175420483 10.5607987376299; 0.663817768100232 -0.0843374454495114 0.728327223920035 0.147555484297985; 0.456621010112085 0.456621010112085 0.456621010112085"
+		Transform = "-121.483039294596 95.7365175420483 10.5607987376299; 0 0 0.375904439210285 0.926658433610789; 0.456621010112085 0.456621010112085 0.456621010112085"
 		Type = Point
 		Brightness = 1389918
 		AttenuationFar = 93.025
 		AttenuationPower = 1.10889
 		Mask
 		{
-			GetByReference = "Samples\\Starter Content\\Scenes Test\\Files\\CubeDDS.dds"
+			GetByReference = "Samples\\Starter Content\\Textures\\CubeDDS.dds"
+		}
+		.component NeoAxis.CSharpScript
+		{
+			Name = C# Script
+			Code = "public void Light4_UpdateEvent(NeoAxis.Component sender, float delta)\r\n{\r\n\tvar obj = (ObjectInSpace)sender;\r\n\tvar tr = obj.TransformV;\r\n\tobj.Transform = new Transform(tr.Position, Quaternion.FromRotateByZ(Time.Current * 0.25), tr.Scale);\r\n}\r\n"
+			__parameter_Delta = 0
+			Exit
+			{
+			}
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler UpdateEvent
+				WhenEnable = Editor, Simulation, Instance
+				Event
+				{
+					GetByReference = "this:..\\..\\event:UpdateEvent"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\method:Light4_UpdateEvent(NeoAxis.Component,System.Single)"
+				}
+				HandlerFlow
+				{
+				}
+			}
 		}
 	}
 	.component NeoAxis.MeshInSpace

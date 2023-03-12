@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "OgreStableHeaders.h"
 #include "NeoAxisCoreNative.h"
 #include "UtilsNativeWrapper.h"
@@ -27,8 +27,11 @@ EXPORT void MaskedOcclusionCulling_ClearBuffer(MaskedOcclusionCulling* instance)
 	instance->ClearBuffer();
 }
 
-EXPORT MaskedOcclusionCulling::CullingResult MaskedOcclusionCulling_RenderTriangles(MaskedOcclusionCulling* instance, float* inVtx, const unsigned int* inTris, int nTris, float* modelToClipMatrix)
+EXPORT MaskedOcclusionCulling::CullingResult MaskedOcclusionCulling_RenderTriangles(MaskedOcclusionCulling* instance, float* inVtx, const unsigned int* inTris, int nTris, float* modelToClipMatrix)//, bool stride16)
 {
+	//if(stride16)
+	//	return instance->RenderTriangles(inVtx, inTris, nTris, modelToClipMatrix, MaskedOcclusionCulling::BACKFACE_CW, MaskedOcclusionCulling::CLIP_PLANE_ALL, MaskedOcclusionCulling::VertexLayout(16, 4, 8));
+	//else
 	return instance->RenderTriangles(inVtx, inTris, nTris, modelToClipMatrix, MaskedOcclusionCulling::BACKFACE_CW, MaskedOcclusionCulling::CLIP_PLANE_ALL, MaskedOcclusionCulling::VertexLayout(12, 4, 8));
 }
 

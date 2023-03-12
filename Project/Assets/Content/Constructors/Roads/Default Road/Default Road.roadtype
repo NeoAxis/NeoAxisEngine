@@ -1,0 +1,9 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.RoadType
+{
+	AgeImperfection
+	{
+		GetByReference = "Content\\Constructors\\Roads\\Default Road\\Age imperfection.surface"
+	}
+}

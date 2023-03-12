@@ -1,6 +1,7 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using NeoAxis;
 
@@ -16,6 +17,12 @@ namespace Project
 
 		//music
 		static SoundChannelGroup musicChannelGroup;
+
+		//debug info
+		static double showEngineInfoLastTime;
+		static long showEngineInfoManagedMemory;
+		static long showEngineInfoNativeMemory;
+		static long showEngineInfoGPUMemory;
 
 		/////////////////////////////////////////
 
@@ -86,7 +93,11 @@ namespace Project
 		}
 
 		[EngineConfig]
-		public static bool DisplayViewportStatistics { get; set; }
+		public static bool DisplayFrameInfo { get; set; }
+		[EngineConfig]
+		public static bool DisplaySceneInfo { get; set; }
+		[EngineConfig]
+		public static bool DisplayEngineInfo { get; set; }
 		[EngineConfig]
 		public static Vector2I VideoMode { get; set; }
 		[EngineConfig]
@@ -95,6 +106,129 @@ namespace Project
 		public static bool VerticalSync { get; set; } = true;
 		[EngineConfig]
 		public static bool DisplayBackgroundScene { get; set; } = true;
+
+		static double lodScale = 1.0;
+		[EngineConfig]
+		public static double LODScale
+		{
+			get { return lodScale; }
+			set
+			{
+				lodScale = value;
+				RenderingPipeline.GlobalLODScale = LODScale;
+			}
+		}
+
+		static double textureQuality = 1.0;
+		[EngineConfig]
+		public static double TextureQuality
+		{
+			get { return textureQuality; }
+			set
+			{
+				textureQuality = value;
+				RenderingPipeline_Basic.GlobalTextureQuality = TextureQuality;
+			}
+		}
+
+		static double shadowQuality = 1.0;
+		[EngineConfig]
+		public static double ShadowQuality
+		{
+			get { return shadowQuality; }
+			set
+			{
+				shadowQuality = value;
+				RenderingPipeline_Basic.GlobalShadowQuality = ShadowQuality;
+			}
+		}
+
+		static double indirectLightingMultiplier = 1.0;
+		[EngineConfig]
+		public static double IndirectLightingMultiplier
+		{
+			get { return indirectLightingMultiplier; }
+			set
+			{
+				indirectLightingMultiplier = value;
+				RenderingEffect_IndirectLighting.GlobalMultiplier = IndirectLightingMultiplier;
+			}
+		}
+
+		static double ambientOcclusionMultiplier = 1.0;
+		[EngineConfig]
+		public static double AmbientOcclusionMultiplier
+		{
+			get { return ambientOcclusionMultiplier; }
+			set
+			{
+				ambientOcclusionMultiplier = value;
+				RenderingEffect_AmbientOcclusion.GlobalMultiplier = AmbientOcclusionMultiplier;
+			}
+		}
+
+		static double reflectionMultiplier = 1.0;
+		[EngineConfig]
+		public static double ReflectionMultiplier
+		{
+			get { return reflectionMultiplier; }
+			set
+			{
+				reflectionMultiplier = value;
+				RenderingEffect_Reflection.GlobalMultiplier = ReflectionMultiplier;
+			}
+		}
+
+		static double motionBlurMultiplier = 1.0;
+		[EngineConfig]
+		public static double MotionBlurMultiplier
+		{
+			get { return motionBlurMultiplier; }
+			set
+			{
+				motionBlurMultiplier = value;
+				RenderingEffect_MotionBlur.GlobalMultiplier = MotionBlurMultiplier;
+			}
+		}
+
+		static double depthOfFieldBlurFactor = 1.0;
+		[EngineConfig]
+		public static double DepthOfFieldBlurFactor
+		{
+			get { return depthOfFieldBlurFactor; }
+			set
+			{
+				depthOfFieldBlurFactor = value;
+				RenderingEffect_DepthOfField.GlobalBlurFactor = DepthOfFieldBlurFactor;
+			}
+		}
+
+		static double bloomScale = 1.0;
+		[EngineConfig]
+		public static double BloomScale
+		{
+			get { return bloomScale; }
+			set
+			{
+				bloomScale = value;
+				RenderingEffect_Bloom.GlobalScale = BloomScale;
+			}
+		}
+
+		static bool networkLogging;
+		[EngineConfig]
+		public static bool NetworkLogging
+		{
+			get { return networkLogging; }
+			set
+			{
+				networkLogging = value;
+				NeoAxis.Networking.NetworkCommonSettings.NetworkLogging = networkLogging;
+			}
+		}
+
+		//[EngineConfig]
+		//public static bool ShowEngineWatermark { get; set; }
 
 		/////////////////////////////////////////
 
@@ -112,8 +246,11 @@ namespace Project
 			get { return currentUIScreen; }
 		}
 
-		public static bool ChangeUIScreen( string fileName )
+		public static bool ChangeUIScreen( string fileName, bool destroyNetworkClient )
 		{
+			if( destroyNetworkClient )
+				SimulationAppClient.Destroy();
+
 			//load
 			UIControl newScreen = null;
 			if( !string.IsNullOrEmpty( fileName ) )
@@ -427,14 +564,16 @@ namespace Project
 
 		private static void EngineApp_Tick( float delta )
 		{
-			// Perform update viewport, attached scene, UI container.
+			//perform update viewport, attached scene, UI container
 			MainViewport.PerformTick( delta );
 
-			// Process screen messages.
+			//process screen messages
 			ScreenMessages.PerformTick( delta );
 
 			//engine console
 			EngineConsole.PerformTick( delta );
+
+			RunServer.Update();
 
 			if( firstTick )
 				FirstTickActions();
@@ -457,36 +596,178 @@ namespace Project
 			// Process screen messages.
 			ScreenMessages.PerformRenderUI( MainViewport );
 
-			//viewport statistics
-			if( DisplayViewportStatistics )
+			//debug info on the screen
+			if( DisplayFrameInfo || DisplaySceneInfo || DisplayEngineInfo )
 			{
-				var statistics = MainViewport.RenderingContext?.UpdateStatisticsPrevious;
-				if( statistics != null )
+				var lines = new List<string>();
+
+				if( DisplayFrameInfo )
 				{
-					var lines = new List<string>();
-					lines.Add( "FPS: " + statistics.FPS.ToString( "F1" ) );
-					lines.Add( "Triangles: " + statistics.Triangles.ToString() );
-					lines.Add( "Lines: " + statistics.Lines.ToString() );
-					lines.Add( "Draw calls: " + statistics.DrawCalls.ToString() );
-					lines.Add( "Render targets: " + statistics.RenderTargets.ToString() );
-					lines.Add( "Dynamic textures: " + statistics.DynamicTextures.ToString() );
-					lines.Add( "Compute write images: " + statistics.ComputeWriteImages.ToString() );
-					lines.Add( "Lights: " + statistics.Lights.ToString() );
-					lines.Add( "Reflection probes: " + statistics.ReflectionProbes.ToString() );
-					lines.Add( "Occlusion culling buffers: " + statistics.OcclusionCullingBuffers.ToString() );
-
-					var renderer = MainViewport.CanvasRenderer;
-					var fontSize = renderer.DefaultFontSize;
-					var offset = new Vector2( fontSize * renderer.AspectRatioInv * 0.8, fontSize * 0.6 );
-
-					CanvasRendererUtility.AddTextLinesWithShadow( MainViewport, null, fontSize, lines, new Rectangle( offset.X, offset.Y, 1, 1 ), EHorizontalAlignment.Left, EVerticalAlignment.Top, new ColorValue( 1, 1, 1 ) );
+					var statistics = MainViewport.RenderingContext?.UpdateStatisticsPrevious;
+					if( statistics != null )
+					{
+						lines.Add( SystemSettings.CPUDescription );
+						lines.Add( Internal.SharpBgfx.Bgfx.GetGPUDescription() );
+						lines.Add( "" );
+						lines.Add( "FPS: " + statistics.FPS.ToString( "F1" ) );
+						lines.Add( "Triangles: " + statistics.Triangles.ToString( "N0" ) );
+						lines.Add( "Lines: " + statistics.Lines.ToString( "N0" ) );
+						lines.Add( "Draw calls: " + statistics.DrawCalls.ToString( "N0" ) );
+						lines.Add( "Instances: " + statistics.Instances.ToString( "N0" ) );
+						lines.Add( "Compute dispatches: " + statistics.ComputeDispatches.ToString( "N0" ) );
+						lines.Add( "Render targets: " + statistics.RenderTargets.ToString( "N0" ) );
+						lines.Add( "Dynamic textures: " + statistics.DynamicTextures.ToString( "N0" ) );
+						lines.Add( "Compute write images: " + statistics.ComputeWriteImages.ToString( "N0" ) );
+						lines.Add( "Lights: " + statistics.Lights.ToString( "N0" ) );
+						lines.Add( "Reflection probes: " + statistics.ReflectionProbes.ToString( "N0" ) );
+						lines.Add( "Occlusion culling buffers: " + statistics.OcclusionCullingBuffers.ToString( "N0" ) );
+					}
 				}
+
+				if( DisplaySceneInfo )
+				{
+					var playScreen = CurrentUIScreen as PlayScreen;
+					var scene = playScreen?.Scene;
+					if( scene == null && Scene.GetAllInstancesEnabled().Length != 0 )
+						scene = Scene.GetAllInstancesEnabled()[ 0 ];
+
+					if( scene != null )
+					{
+						if( lines.Count != 0 )
+							lines.Add( "" );
+
+						var components = 0;
+						var meshesInSpace = 0;
+						var rigidBodies = 0;
+						var groupOfObjectsItems = 0L;
+						scene.GetComponents( false, true, false, false, delegate ( Component c )
+						{
+							components++;
+							if( c is MeshInSpace )
+								meshesInSpace++;
+							else if( c is RigidBody )
+								rigidBodies++;
+							else if( c is GroupOfObjects groupOfObjects )
+								groupOfObjectsItems += groupOfObjects.ObjectsGetCount();
+						} );
+						lines.Add( "Components: " + components.ToString( "N0" ) );
+						lines.Add( "MeshInSpace components: " + meshesInSpace.ToString( "N0" ) );
+						lines.Add( "GroupOfObjects items: " + groupOfObjectsItems.ToString( "N0" ) );
+						lines.Add( "RigidBody components: " + rigidBodies.ToString( "N0" ) );
+
+						if( scene.PhysicsWorld != null )
+						{
+							scene.PhysicsWorld.GetStatistics( out var shapes, out var allBodies, out var kinematicDynamicBodies, out var activeBodies );
+							if( allBodies != 0 )
+							{
+								lines.Add( "Physics shapes: " + shapes.ToString( "N0" ) );
+								lines.Add( "Physics bodies: " + allBodies.ToString( "N0" ) );
+								lines.Add( "Physics kinematic and dynamic bodies: " + kinematicDynamicBodies.ToString( "N0" ) );
+								lines.Add( "Physics active bodies: " + activeBodies.ToString( "N0" ) );
+							}
+						}
+
+						var physicsWorld2D = scene.Physics2DGetWorld( false );
+						if( physicsWorld2D != null )
+						{
+							var rigidBodyCount = 0;
+							var dynamicRigidBodyCount = 0;
+							var activeRigidBodyCount = 0;
+
+							foreach( var worldBody in physicsWorld2D.BodyList )
+							{
+								rigidBodyCount++;
+								if( worldBody.BodyType == Internal.tainicom.Aether.Physics2D.Dynamics.BodyType.Dynamic )
+								{
+									dynamicRigidBodyCount++;
+									if( worldBody.Awake )
+										activeRigidBodyCount++;
+								}
+							}
+
+							if( rigidBodyCount != 0 )
+							{
+								lines.Add( "Physics 2D rigid bodies: " + rigidBodyCount.ToString( "N0" ) );
+								lines.Add( "Physics 2D dynamic rigid bodies: " + dynamicRigidBodyCount.ToString( "N0" ) );
+								lines.Add( "Physics 2D active rigid bodies: " + activeRigidBodyCount.ToString( "N0" ) );
+							}
+						}
+
+						if( scene.GetOctreeStatistics( out var objectCount, out var octreeBounds, out var octreeNodeCount, out var timeSinceLastFullRebuild ) )
+						{
+							lines.Add( "Octree objects: " + objectCount.ToString( "N0" ) );
+							lines.Add( "Octree nodes: " + octreeNodeCount.ToString( "N0" ) );
+							var size = octreeBounds.GetSize();
+							lines.Add( "Octree bounds size: " + size.X.ToString( "N1" ) + " " + size.Y.ToString( "N1" ) + " " + size.Z.ToString( "N1" ) );
+							lines.Add( "Octree since last full rebuild: " + timeSinceLastFullRebuild.ToString( "F1" ) );
+						}
+					}
+				}
+
+				if( DisplayEngineInfo )
+				{
+					if( lines.Count != 0 )
+						lines.Add( "" );
+
+					var stats = Internal.SharpBgfx.Bgfx.GetStats();
+
+					if( showEngineInfoLastTime + 0.25 < Time.Current )
+					{
+						showEngineInfoLastTime = Time.Current;
+						showEngineInfoManagedMemory = GC.GetTotalMemory( false );
+						NativeUtility.GetCRTStatistics( out showEngineInfoNativeMemory, out _ );
+						showEngineInfoGPUMemory = stats.GpuMemoryUsed;
+					}
+
+					lines.Add( "Managed memory: " + ( showEngineInfoManagedMemory / 1024 / 1024 ).ToString( "N0" ) + " MB" );
+					lines.Add( "Native memory: " + ( showEngineInfoNativeMemory / 1024 / 1024 ).ToString( "N0" ) + " MB" );
+					lines.Add( "GPU memory" + ": " + ( showEngineInfoGPUMemory / 1024 / 1024 ).ToString( "N0" ) + " / " + ( stats.MaxGpuMemory / 1024 / 1024 ).ToString( "N0" ) + " MB" );
+				}
+
+				var renderer = MainViewport.CanvasRenderer;
+				var fontSize = renderer.DefaultFontSize;
+				var offset = new Vector2( fontSize * renderer.AspectRatioInv * 0.8, fontSize * 0.6 );
+
+				////draw background
+				//{
+				//	var maxLength = 0.0;
+				//	foreach( var line in lines )
+				//	{
+				//		var length = renderer.DefaultFont.GetTextLength( fontSize, renderer, line );
+				//		if( length > maxLength )
+				//			maxLength = length;
+				//	}
+				//	var rect = offset + new Rectangle( 0, 0, maxLength, fontSize * lines.Count );
+				//	rect.Expand( new Vector2( fontSize * 0.2, fontSize * 0.2 * renderer.AspectRatio ) );
+				//	renderer.AddQuad( rect, new ColorValue( 0, 0, 0, 0.4 ) );
+				//}
+
+				//draw text
+				CanvasRendererUtility.AddTextLinesWithShadow( MainViewport, null, fontSize, lines, new Rectangle( offset.X, offset.Y, 1, 1 ), EHorizontalAlignment.Left, EVerticalAlignment.Top, new ColorValue( 1, 1, 1 ) );
 			}
 
 			MainViewportRenderUI?.Invoke();
 
 			//engine console
 			EngineConsole.PerformRenderUI();
+
+			//!!!!too blurry
+			//if( ShowEngineWatermark )
+			//{
+			//	var texture = ResourceManager.LoadResource<ImageComponent>( @"Base\UI\Images\Watermark.png" );
+			//	if( texture != null )
+			//	{
+			//		var renderer = MainViewport.CanvasRenderer;
+
+			//		var imageSize = texture.Result.SourceSize;
+			//		var aspect = (double)imageSize.X / (double)imageSize.Y;
+			//		var size = 0.1;
+
+			//		var screenSize = new Vector2( size * renderer.AspectRatioInv * aspect, size );
+
+			//		renderer.AddQuad( new Rectangle( 1.0 - screenSize.X, 1.0 - screenSize.Y, 1, 1 ), new RectangleF( 0, 0, 1, 1 ), texture, new ColorValue( 1, 1, 1, 0.8 ), true );
+			//	}
+			//}
 		}
 
 		private static void MainViewport_UpdateBeforeOutput( Viewport viewport )
@@ -618,43 +899,45 @@ namespace Project
 
 		static void FirstTickActions()
 		{
-			string playFile;
-
-			if( SystemSettings.CommandLineParameters.TryGetValue( "-play", out playFile ) )
+			if( !SimulationAppClient.Created )
 			{
-				try
+				string playFile;
+				if( SystemSettings.CommandLineParameters.TryGetValue( "-play", out playFile ) )
 				{
-					if( Path.IsPathRooted( playFile ) )
-						playFile = VirtualPathUtility.GetVirtualPathByReal( playFile );
+					try
+					{
+						if( Path.IsPathRooted( playFile ) )
+							playFile = VirtualPathUtility.GetVirtualPathByReal( playFile );
+					}
+					catch { }
 				}
-				catch { }
-			}
 
-			if( string.IsNullOrEmpty( playFile ) && ProjectSettings.Get.General.AutorunScene.ReferenceSpecified )
-			{
-				var res = ProjectSettings.Get.General.AutorunScene.Value;
-				if( res != null && VirtualFile.Exists( res.ResourceName ) )
-					playFile = res.ResourceName;
-			}
+				if( string.IsNullOrEmpty( playFile ) && ProjectSettings.Get.General.AutorunScene.ReferenceSpecified )
+				{
+					var res = ProjectSettings.Get.General.AutorunScene.Value;
+					if( res != null && VirtualFile.Exists( res.ResourceName ) )
+						playFile = res.ResourceName;
+				}
 
-			if( !string.IsNullOrEmpty( playFile ) && VirtualFile.Exists( playFile ) )
-			{
-				PlayFile( playFile );
-			}
-			else
-			{
-				//default start screen
-				if( !string.IsNullOrEmpty( ProjectSettings.Get.General.InitialUIScreen.GetByReference ) )
-					ChangeUIScreen( ProjectSettings.Get.General.InitialUIScreen.GetByReference );
+				if( !string.IsNullOrEmpty( playFile ) && VirtualFile.Exists( playFile ) )
+				{
+					PlayFile( playFile );
+				}
+				else
+				{
+					//default start screen
+					if( !string.IsNullOrEmpty( ProjectSettings.Get.General.InitialUIScreen.GetByReference ) )
+						ChangeUIScreen( ProjectSettings.Get.General.InitialUIScreen.GetByReference, false );
+				}
 			}
 		}
 
 		public static void PlayFile( string virtualFileName )
 		{
-			if( !string.IsNullOrEmpty( virtualFileName ) && VirtualFile.Exists( virtualFileName ) )
+			if( !string.IsNullOrEmpty( virtualFileName ) && VirtualFile.Exists( virtualFileName ) && !SimulationAppClient.Created )
 			{
 				//load Play screen
-				if( ChangeUIScreen( @"Base\UI\Screens\PlayScreen.ui" ) )
+				if( ChangeUIScreen( @"Base\UI\Screens\PlayScreen.ui", true ) )
 				{
 					var playScreen = CurrentUIScreen as PlayScreen;
 					if( playScreen != null )
@@ -668,6 +951,31 @@ namespace Project
 					}
 				}
 			}
+		}
+
+		public static void NetworkClientSceneCreated( Scene scene )
+		{
+			//load Play screen
+			if( ChangeUIScreen( @"Base\UI\Screens\PlayScreen.ui", false ) )
+			{
+				var playScreen = CurrentUIScreen as PlayScreen;
+				if( playScreen != null )
+				{
+					playScreen.NetworkClientSetScene( scene, true );
+
+					GC.Collect();
+					GC.WaitForPendingFinalizers();
+
+					playScreen.ResetCreateTime();
+				}
+			}
+		}
+
+		public static void NetworkClientSceneDestroyed()
+		{
+			if( PlayScreen.Instance != null )
+				PlayScreen.Instance.DestroyScene();
+			ChangeUIScreen( @"Base\UI\Screens\MainMenuScreen.ui", false );
 		}
 
 		private static void EngineApp_EnginePausedChanged( bool pause )
@@ -743,5 +1051,6 @@ namespace Project
 				}
 			}
 		}
+
 	}
 }

@@ -1,0 +1,289 @@
+// Made with NeoAxis Engine 2022.1.
+
+.component Project.MultiplayerJoinWindow
+{
+	Name = Window
+	Text = Multiplayer Join
+	Size = Units 400 800
+	HorizontalAlignment = Center
+	VerticalAlignment = Stretch
+	Margin = Units 50 50 50 110
+	EditorScrollPosition = -0.925203121595568 -0.49334947755098
+	EditorZoomIndex = 11
+	Style
+	{
+		GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+	}
+	.component NeoAxis.UIText
+	{
+		Name = Text 3
+		Text = "Server address:"
+		Size = Units 360 30
+		Margin = Units 20 50 0 0
+		EditorScrollPosition = 0 0
+		TextHorizontalAlignment = Left
+	}
+	.component NeoAxis.UIText
+	{
+		Name = Text 2
+		Text = "Port:"
+		Size = Units 360 30
+		Margin = Units 20 130 0 0
+		EditorScrollPosition = 0 0
+		TextHorizontalAlignment = Left
+	}
+	.component NeoAxis.UIEdit
+	{
+		Name = Edit Address
+		Text = localhost
+		Size = Units 360 40
+		Margin = Units 20 80 0 0
+		EditorScrollPosition = 0 0
+		.component NeoAxis.UIText
+		{
+			Name = Text
+			CanBeSelected = False
+			Size = Parent 1 1
+			HorizontalAlignment = Stretch
+			VerticalAlignment = Stretch
+			Margin = Units 4 2 4 2
+			EditorScrollPosition = 0 0
+			TextHorizontalAlignment = Left
+			ClipRectangle = True
+			Text
+			{
+				GetByReference = "this:..\\DisplayText"
+			}
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler TextChanged
+			Event
+			{
+				GetByReference = "this:..\\event:TextChanged"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:EditAddress_TextChanged(NeoAxis.UIControl)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIEdit
+	{
+		Name = Edit Port
+		Text = 52000
+		Size = Units 360 40
+		Margin = Units 20 160 0 0
+		EditorScrollPosition = 0 0
+		.component NeoAxis.UIText
+		{
+			Name = Text
+			CanBeSelected = False
+			Size = Parent 1 1
+			HorizontalAlignment = Stretch
+			VerticalAlignment = Stretch
+			Margin = Units 4 2 4 2
+			EditorScrollPosition = 0 0
+			TextHorizontalAlignment = Left
+			ClipRectangle = True
+			Text
+			{
+				GetByReference = "this:..\\DisplayText"
+			}
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler TextChanged
+			Event
+			{
+				GetByReference = "this:..\\event:TextChanged"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:EditPort_TextChanged(NeoAxis.UIControl)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIText
+	{
+		Name = Text
+		Text = "Servers:"
+		Size = Units 360 30
+		Margin = Units 20 210 0 0
+		EditorScrollPosition = 0 0
+		TextHorizontalAlignment = Left
+	}
+	.component NeoAxis.UIList
+	{
+		Name = List Servers
+		Size = Units 360 280
+		VerticalAlignment = Stretch
+		Margin = Units 20 240 0 260
+		EditorScrollPosition = 0 0
+		Items
+		{
+			Count = 0
+		}
+		.component NeoAxis.UIScroll
+		{
+			Name = Scroll
+			CanBeSelected = False
+			Size = Units 30 400
+			HorizontalAlignment = Right
+			VerticalAlignment = Stretch
+			Margin = Units 0 2 2 2
+			EditorScrollPosition = 0 0
+			Vertical = True
+		}
+	}
+	.component NeoAxis.UIText
+	{
+		Name = Text 4
+		Text = "Username:"
+		Size = Units 360 30
+		Margin = Units 20 590 0 0
+		EditorScrollPosition = 0 0
+		TextHorizontalAlignment = Left
+	}
+	.component NeoAxis.UIText
+	{
+		Name = Text 5
+		Text = "Password:"
+		Size = Units 360 30
+		Margin = Units 20 670 0 0
+		EditorScrollPosition = 0 0
+		TextHorizontalAlignment = Left
+	}
+	.component NeoAxis.UIEdit
+	{
+		Name = Edit Username
+		Size = Units 360 40
+		Margin = Units 20 620 0 0
+		EditorScrollPosition = 0 0
+		.component NeoAxis.UIText
+		{
+			Name = Text
+			CanBeSelected = False
+			Size = Parent 1 1
+			HorizontalAlignment = Stretch
+			VerticalAlignment = Stretch
+			Margin = Units 4 2 4 2
+			EditorScrollPosition = 0 0
+			TextHorizontalAlignment = Left
+			ClipRectangle = True
+			Text
+			{
+				GetByReference = "this:..\\DisplayText"
+			}
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler TextChanged
+			Event
+			{
+				GetByReference = "this:..\\event:TextChanged"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:EditUsername_TextChanged(NeoAxis.UIControl)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIEdit
+	{
+		Name = Edit Password
+		Size = Units 360 40
+		Margin = Units 20 700 0 0
+		EditorScrollPosition = 0 0
+		.component NeoAxis.UIText
+		{
+			Name = Text
+			CanBeSelected = False
+			Size = Parent 1 1
+			HorizontalAlignment = Stretch
+			VerticalAlignment = Stretch
+			Margin = Units 4 2 4 2
+			EditorScrollPosition = 0 0
+			TextHorizontalAlignment = Left
+			ClipRectangle = True
+			Text
+			{
+				GetByReference = "this:..\\DisplayText"
+			}
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler TextChanged
+			Event
+			{
+				GetByReference = "this:..\\event:TextChanged"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:EditPassword_TextChanged(NeoAxis.UIControl)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Join
+		Text = Join
+		Size = Units 150 40
+		HorizontalAlignment = Right
+		VerticalAlignment = Bottom
+		Margin = Units 490 880 210 20
+		EditorScrollPosition = 0 0
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonJoin_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Close
+		Text = Close
+		Size = Units 150 40
+		HorizontalAlignment = Right
+		VerticalAlignment = Bottom
+		Margin = Units 490 740 40 20
+		EditorScrollPosition = 0 0
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonClose_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+}

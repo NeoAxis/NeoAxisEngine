@@ -1,0 +1,192 @@
+// Made with NeoAxis Engine 2021.3.
+
+.component "Base\\Material templates\\Vegetation.material"
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1162, 842\"><KW V=\"1\" A=\"9B981D0F78C147ED74BA53BF81EC2A18\"><CGD /><WS UN=\"5F4388784EB64F69B39F626810700B8E\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"47E80A7ACB3044BD9DB84042C6BAD078\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"9B981D0F78C147ED74BA53BF81EC2A18\"><KP UN=\"1A69BC37AED74EE45E9B01638057B360\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"9B981D0F78C147ED74BA53BF81EC2A18\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	BlendMode = Masked
+	ShadingModel = Subsurface
+	Thickness = 0.02
+	BaseColor
+	{
+		GetByReference = "this:$Shader graph\\$Node Invoke Member 1\\$Invoke Member\\__parameter_ReturnValue"
+	}
+	Roughness
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample 2\\$Texture Sample\\R"
+	}
+	Normal
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample 3\\$Texture Sample\\RGBA"
+	}
+	Opacity
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample 4\\$Texture Sample\\R"
+	}
+	SubsurfaceColor
+	{
+		GetByReference = "this:$Shader graph\\$Node Invoke Member 2\\$Invoke Member\\__parameter_ReturnValue"
+	}
+	.component NeoAxis.FlowGraph
+	{
+		Name = Shader graph
+		EditorScrollPosition = 3.1764705882353 3.23529411764707
+		Specialization
+		{
+			GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = "Node "
+			Position = 10 -7
+			ControlledObject
+			{
+				GetByReference = "this:..\\.."
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample 1
+			Position = -19 -19
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen_Albedo.dds"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample 2
+			Position = -19 -10
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen_Glossiness.dds"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample 3
+			Position = -19 -1
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen_Normal.dds"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample 4
+			Position = -19 8
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen_Opacity.dds"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Invoke Member 1
+			Position = -4 -12
+			ControlledObject
+			{
+				GetByReference = "this:$Invoke Member"
+			}
+			.component NeoAxis.InvokeMember
+			{
+				Name = Invoke Member
+				__parameter_V2 = 1 1 1
+				Member
+				{
+					GetByReference = "NeoAxis.ColorValue|method:op_Multiply(NeoAxis.ColorValue,NeoAxis.ColorValue)"
+				}
+				Exit
+				{
+				}
+				__parameter_V1
+				{
+					GetByReference = "this:..\\..\\$Node Texture Sample 1\\$Texture Sample\\RGBA"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample 5
+			Position = -19 17
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen_Translucency.dds"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Invoke Member 2
+			Position = -4 16
+			ControlledObject
+			{
+				GetByReference = "this:$Invoke Member"
+			}
+			.component NeoAxis.InvokeMember
+			{
+				Name = Invoke Member
+				__parameter_V2 = 0.1 0.8 0.1
+				Member
+				{
+					GetByReference = "NeoAxis.Vector3|method:op_Multiply(NeoAxis.Vector3,NeoAxis.Vector3)"
+				}
+				Exit
+				{
+				}
+				__parameter_V1
+				{
+					GetByReference = "this:..\\..\\$Node Texture Sample 5\\$Texture Sample\\RGBA"
+				}
+			}
+		}
+	}
+}

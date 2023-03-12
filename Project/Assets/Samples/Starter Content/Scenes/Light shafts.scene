@@ -1,3 +1,5 @@
+// Made with NeoAxis Engine 2023.1.
+
 .component NeoAxis.Scene
 {
 	BackgroundColor = 0.2471372 0.5754902 0.7098039
@@ -13,7 +15,7 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "-0.398786819451097 -3.29645481623289 2.61476636819233; 0.00623381136492767 -0.00708618605040451 0.660477109353822 0.750786862952959; 1 1 1"
+		Transform = "-0.454051533369654 -4.05066556213663 2.61010268554162; -0.00016304623716154 0.00017703284835052 0.677452505177141 0.735566479187647; 1 1 1"
 	}
 	.component NeoAxis.Light
 	{
@@ -81,7 +83,6 @@
 			.component NeoAxis.RenderingEffect_Sharpen
 			{
 				Name = Sharpen
-				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
 			}
 		}
 		.component NeoAxis.Component
@@ -92,6 +93,12 @@
 	.component NeoAxis.GameMode
 	{
 		Name = Game Mode
+		CutsceneStarted = False
+		CutsceneGuiFadingFactor = 0
+		CutsceneGuiFadingSpeed = 0
+		ScreenFadingCurrentColor = 0 0 0 0
+		ScreenFadingTargetColor = 0 0 0 0
+		ScreenFadingSpeed = 0
 	}
 	.component NeoAxis.Light
 	{
@@ -117,6 +124,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Mesh
 		{
@@ -162,6 +176,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Mesh
 		{
 			Name = Mesh
@@ -182,6 +203,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Mesh
 		{
@@ -204,6 +232,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Mesh
 		{
 			Name = Mesh
@@ -224,6 +259,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Mesh
 		{
@@ -246,6 +288,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Mesh
 		{
 			Name = Mesh
@@ -266,6 +315,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Mesh
 		{
@@ -288,6 +344,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Mesh
 		{
 			Name = Mesh
@@ -308,6 +371,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Mesh
 		{

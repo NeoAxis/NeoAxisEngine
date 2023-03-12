@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 
@@ -126,6 +126,12 @@ namespace NeoAxis
 			get { return 0; }
 		}
 
+		[ShaderGenerationFunction( "cameraPosition" )]
+		public static Vector3 CameraPosition
+		{
+			get { return Vector3.Zero; }
+		}
+
 		///////////////////////////////////////////////
 
 		/// <summary>
@@ -165,6 +171,42 @@ namespace NeoAxis
 		}
 
 		/// <summary>
+		/// Indicates whether a primitive is front or back facing. Works only in fragment shaders.
+		/// </summary>
+		[ShaderGenerationFunction( "gl_FrontFacing" )]
+		public static bool IsFrontFace
+		{
+			get { return false; }
+		}
+
+		/// <summary>
+		/// Gets the window-relative coordinates of the current fragment.
+		/// </summary>
+		[ShaderGenerationFunction( "fragCoord" )]//[ShaderGenerationFunction( "getFragCoord()" )]
+		public static Vector4 FragmentCoordinates
+		{
+			get { return Vector4.Zero; }
+		}
+
+		/// <summary>
+		/// Gets world position of the fragment. Works only in fragment shaders.
+		/// </summary>
+		[ShaderGenerationFunction( "worldPosition" )]//[ShaderGenerationFunction( "v_worldPosition_depth.xyz" )]
+		public static Vector3 FragmentWorldPosition
+		{
+			get { return Vector3.Zero; }
+		}
+
+		/// <summary>
+		/// Gets world normal of the fragment. Works only in fragment shaders.
+		/// </summary>
+		[ShaderGenerationFunction( "inputWorldNormal" )]//[ShaderGenerationFunction( "normalize(v_worldNormal)" )]
+		public static Vector3 FragmentWorldNormal
+		{
+			get { return Vector3.Zero; }
+		}
+
+		/// <summary>
 		/// Gets texture coordinate 0 of the vertex or of the fragment. Works only in vertex and fragment shaders.
 		/// </summary>
 		[ShaderGenerationFunction( "texCoord0" )]
@@ -191,20 +233,47 @@ namespace NeoAxis
 			get { return Vector2.Zero; }
 		}
 
-		///// <summary>
-		///// Gets texture coordinate 3 of the vertex or of the fragment. Works only in vertex and fragment shaders.
-		///// </summary>
-		//[ShaderGenerationFunction( "texCoord3" )]
-		//public static Vector2 TexCoord3
-		//{
-		//	get { return Vector2.Zero; }
-		//}
-
 		/// <summary>
 		/// Gets texture coordinate unwrapped UV of the vertex or of the fragment. Works only in vertex and fragment shaders.
 		/// </summary>
 		[ShaderGenerationFunction( "unwrappedUV" )]
 		public static Vector2 UnwrappedUV
+		{
+			get { return Vector2.Zero; }
+		}
+
+		/// <summary>
+		/// Gets texture coordinate 0 of the fragment before displacement. Works only in fragment shaders.
+		/// </summary>
+		[ShaderGenerationFunction( "texCoord0BeforeDisplacement" )]
+		public static Vector2 TexCoord0BeforeDisplacement
+		{
+			get { return Vector2.Zero; }
+		}
+
+		/// <summary>
+		/// Gets texture coordinate 1 of the fragment before displacement. Works only in fragment shaders.
+		/// </summary>
+		[ShaderGenerationFunction( "texCoord1BeforeDisplacement" )]
+		public static Vector2 TexCoord1BeforeDisplacement
+		{
+			get { return Vector2.Zero; }
+		}
+
+		/// <summary>
+		/// Gets texture coordinate 2 of the fragment before displacement. Works only in fragment shaders.
+		/// </summary>
+		[ShaderGenerationFunction( "texCoord2BeforeDisplacement" )]
+		public static Vector2 TexCoord2BeforeDisplacement
+		{
+			get { return Vector2.Zero; }
+		}
+
+		/// <summary>
+		/// Gets texture coordinate unwrapped UV of the fragment before displacement. Works only in fragment shaders.
+		/// </summary>
+		[ShaderGenerationFunction( "unwrappedUVBeforeDisplacement" )]
+		public static Vector2 UnwrappedUVBeforeDisplacement
 		{
 			get { return Vector2.Zero; }
 		}
@@ -216,42 +285,6 @@ namespace NeoAxis
 		public static Vector4 Color0
 		{
 			get { return Vector4.Zero; }
-		}
-
-		/// <summary>
-		/// Indicates whether a primitive is front or back facing. Works only in fragment shaders.
-		/// </summary>
-		[ShaderGenerationFunction( "(gl_FrontFacing == false)" )]//[ShaderGenerationFunction( "gl_FrontFacing" )]
-		public static bool IsFrontFace
-		{
-			get { return false; }
-		}
-
-		/// <summary>
-		/// Gets the window-relative coordinates of the current fragment.
-		/// </summary>
-		[ShaderGenerationFunction( "getFragCoord()" )]
-		public static Vector4 FragmentCoordinates
-		{
-			get { return Vector4.Zero; }
-		}
-
-		/// <summary>
-		/// Gets world position of the fragment. Works only in fragment shaders.
-		/// </summary>
-		[ShaderGenerationFunction( "v_worldPosition_depth.xyz" )]
-		public static Vector3 FragmentWorldPosition
-		{
-			get { return Vector3.Zero; }
-		}
-
-		/// <summary>
-		/// Gets world normal of the fragment. Works only in fragment shaders.
-		/// </summary>
-		[ShaderGenerationFunction( "normalize(v_worldNormal)" )]
-		public static Vector3 FragmentWorldNormal
-		{
-			get { return Vector3.Zero; }
 		}
 	}
 }

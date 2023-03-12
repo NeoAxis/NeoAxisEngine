@@ -1,9 +1,10 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using NeoAxis.Editor;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -20,38 +21,45 @@ namespace NeoAxis
 
 		public static readonly SphericalDirectionF Zero = new SphericalDirectionF( 0.0f, 0.0f );
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public SphericalDirectionF( SphericalDirectionF source )
 		{
 			Horizontal = source.Horizontal;
 			Vertical = source.Vertical;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public SphericalDirectionF( float horizontal, float vertical )
 		{
 			this.Horizontal = horizontal;
 			this.Vertical = vertical;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is SphericalDirectionF && this == (SphericalDirectionF)obj );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return ( Horizontal.GetHashCode() ^ Vertical.GetHashCode() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( SphericalDirectionF v1, SphericalDirectionF v2 )
 		{
 			return ( v1.Horizontal == v2.Horizontal && v1.Vertical == v2.Vertical );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( SphericalDirectionF v1, SphericalDirectionF v2 )
 		{
 			return ( v1.Horizontal != v2.Horizontal || v1.Vertical != v2.Vertical );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( SphericalDirectionF v, float epsilon )
 		{
 			if( Math.Abs( Horizontal - v.Horizontal ) > epsilon )
@@ -61,6 +69,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static SphericalDirectionF operator +( SphericalDirectionF v1, SphericalDirectionF v2 )
 		{
 			SphericalDirectionF result;
@@ -69,6 +78,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static SphericalDirectionF operator -( SphericalDirectionF v1, SphericalDirectionF v2 )
 		{
 			SphericalDirectionF result;
@@ -77,6 +87,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static SphericalDirectionF operator *( SphericalDirectionF d, QuaternionF q )
 		{
 			SphericalDirectionF result;
@@ -84,6 +95,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static SphericalDirectionF operator -( SphericalDirectionF v )
 		{
 			SphericalDirectionF result;
@@ -92,18 +104,21 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Add( ref SphericalDirectionF v1, ref SphericalDirectionF v2, out SphericalDirectionF result )
 		{
 			result.Horizontal = v1.Horizontal + v2.Horizontal;
 			result.Vertical = v1.Vertical + v2.Vertical;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Subtract( ref SphericalDirectionF v1, ref SphericalDirectionF v2, out SphericalDirectionF result )
 		{
 			result.Horizontal = v1.Horizontal - v2.Horizontal;
 			result.Vertical = v1.Vertical - v2.Vertical;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Multiply( ref SphericalDirectionF d, ref QuaternionF q, out SphericalDirectionF result )
 		{
 			Vector3F vector;
@@ -113,12 +128,14 @@ namespace NeoAxis
 			SphericalDirectionF.FromVector( ref vector2, out result );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Negate( ref SphericalDirectionF v, out SphericalDirectionF result )
 		{
 			result.Horizontal = -v.Horizontal;
 			result.Vertical = -v.Vertical;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static SphericalDirectionF Add( SphericalDirectionF v1, SphericalDirectionF v2 )
 		{
 			SphericalDirectionF result;
@@ -126,6 +143,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static SphericalDirectionF Subtract( SphericalDirectionF v1, SphericalDirectionF v2 )
 		{
 			SphericalDirectionF result;
@@ -133,6 +151,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static SphericalDirectionF Multiply( SphericalDirectionF d, QuaternionF q )
 		{
 			SphericalDirectionF result;
@@ -140,6 +159,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static SphericalDirectionF Negate( SphericalDirectionF v )
 		{
 			SphericalDirectionF result;
@@ -147,6 +167,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static SphericalDirectionF FromVector( Vector3F dir )
 		{
 			SphericalDirectionF result;
@@ -154,6 +175,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void FromVector( ref Vector3F dir, out SphericalDirectionF result )
 		{
 			result.Horizontal = MathEx.Atan2( dir.Y, dir.X );
@@ -161,6 +183,7 @@ namespace NeoAxis
 			result.Vertical = MathEx.Atan2( dir.Z, dir2Length );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector3F GetVector()
 		{
 			Vector3F result;
@@ -168,6 +191,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void GetVector( out Vector3F result )
 		{
 			result.X = MathEx.Cos( Vertical ) * MathEx.Cos( Horizontal );
@@ -215,6 +239,7 @@ namespace NeoAxis
 		}
 
 #if !DISABLE_IMPLICIT
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator SphericalDirection( SphericalDirectionF v )
 		{
 			return new SphericalDirection( v );

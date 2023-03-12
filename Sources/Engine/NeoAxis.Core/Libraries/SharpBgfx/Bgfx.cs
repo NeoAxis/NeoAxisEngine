@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Internal.SharpBgfx {
@@ -59,27 +60,28 @@ namespace Internal.SharpBgfx {
             NativeMethods.bgfx_vertex_convert(ref destinationLayout.data, destinationData, ref sourceLayout.data, sourceData, count);
         }
 
-        /// <summary>
-        /// Welds vertices that are close together.
-        /// </summary>
-        /// <param name="layout">The layout of the vertex stream.</param>
-        /// <param name="data">A pointer to the vertex data stream.</param>
-        /// <param name="count">The number of vertices in the stream.</param>
-        /// <param name="remappingTable">An output remapping table from the original vertices to the welded ones.</param>
-        /// <param name="epsilon">The tolerance for welding vertex positions.</param>
-        /// <returns>
-        /// The number of unique vertices after welding.
-        /// </returns>
-        public static int WeldVertices (VertexLayout layout, IntPtr data, int count, out int[] remappingTable, float epsilon = 0.001f) {
-            var output = stackalloc ushort[count];
-            var result = NativeMethods.bgfx_weld_vertices(output, ref layout.data, data, (ushort)count, epsilon);
+        //!!!!stackalloc
+        ///// <summary>
+        ///// Welds vertices that are close together.
+        ///// </summary>
+        ///// <param name="layout">The layout of the vertex stream.</param>
+        ///// <param name="data">A pointer to the vertex data stream.</param>
+        ///// <param name="count">The number of vertices in the stream.</param>
+        ///// <param name="remappingTable">An output remapping table from the original vertices to the welded ones.</param>
+        ///// <param name="epsilon">The tolerance for welding vertex positions.</param>
+        ///// <returns>
+        ///// The number of unique vertices after welding.
+        ///// </returns>
+        //public static int WeldVertices (VertexLayout layout, IntPtr data, int count, out int[] remappingTable, float epsilon = 0.001f) {
+        //    var output = stackalloc ushort[count];
+        //    var result = NativeMethods.bgfx_weld_vertices(output, ref layout.data, data, (ushort)count, epsilon);
 
-            remappingTable = new int[count];
-            for (int i = 0; i < count; i++)
-                remappingTable[i] = output[i];
+        //    remappingTable = new int[count];
+        //    for (int i = 0; i < count; i++)
+        //        remappingTable[i] = output[i];
 
-            return result;
-        }
+        //    return result;
+        //}
 
         /// <summary>
         /// Swizzles an RGBA8 image to BGRA8.
@@ -487,6 +489,7 @@ namespace Internal.SharpBgfx {
         /// <param name="id">The index of the view.</param>
         /// <param name="view">The 4x4 view transform matrix.</param>
         /// <param name="projection">The 4x4 projection transform matrix.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetViewTransform (ushort id, float* view, float* projection) {
             NativeMethods.bgfx_set_view_transform(id, view, projection);
         }
@@ -496,6 +499,7 @@ namespace Internal.SharpBgfx {
         /// </summary>
         /// <param name="id">The index of the view.</param>
         /// <param name="frameBuffer">The frame buffer to set.</param>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetViewFrameBuffer (ushort id, FrameBuffer frameBuffer) {
             NativeMethods.bgfx_set_view_frame_buffer(id, frameBuffer.handle);
         }
@@ -506,6 +510,7 @@ namespace Internal.SharpBgfx {
         /// <param name="matrix">A pointer to one or more matrices to set.</param>
         /// <param name="count">The number of matrices in the array.</param>
         /// <returns>An index into the matrix cache to allow reusing the matrix in other calls.</returns>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static int SetTransform (float* matrix, int count = 1) {
             return NativeMethods.bgfx_set_transform(matrix, (ushort)count);
         }
@@ -515,6 +520,7 @@ namespace Internal.SharpBgfx {
         /// </summary>
         /// <param name="cacheIndex">The index of the cached matrix.</param>
         /// <param name="count">The number of matrices to set from the cache.</param>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetTransform (int cacheIndex, int count = 1) {
             NativeMethods.bgfx_set_transform_cached(cacheIndex, (ushort)count);
         }
@@ -529,6 +535,7 @@ namespace Internal.SharpBgfx {
         /// <returns>
         /// An index into the scissor cache to allow reusing the rectangle in other calls.
         /// </returns>
+   		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static int SetScissor (int x, int y, int width, int height) {
             return NativeMethods.bgfx_set_scissor((ushort)x, (ushort)y, (ushort)width, (ushort)height);
         }
@@ -537,6 +544,7 @@ namespace Internal.SharpBgfx {
         /// Sets a scissor rectangle from the cache.
         /// </summary>
         /// <param name="cacheIndex">The index of the cached scissor rectangle, or -1 to unset.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetScissor (int cacheIndex = -1) {
             NativeMethods.bgfx_set_scissor_cached((ushort)cacheIndex);
         }
@@ -545,6 +553,7 @@ namespace Internal.SharpBgfx {
         /// Sets the index buffer to use for drawing primitives.
         /// </summary>
         /// <param name="indexBuffer">The index buffer to set.</param>
+ 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetIndexBuffer (IndexBuffer indexBuffer) {
             NativeMethods.bgfx_set_index_buffer(indexBuffer.handle, 0, -1);
         }
@@ -555,6 +564,7 @@ namespace Internal.SharpBgfx {
         /// <param name="indexBuffer">The index buffer to set.</param>
         /// <param name="firstIndex">The first index in the buffer to use.</param>
         /// <param name="count">The number of indices to pull from the buffer.</param>
+  		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetIndexBuffer (IndexBuffer indexBuffer, int firstIndex, int count) {
             NativeMethods.bgfx_set_index_buffer(indexBuffer.handle, firstIndex, count);
         }
@@ -564,6 +574,7 @@ namespace Internal.SharpBgfx {
         /// </summary>
         /// <param name="stream">The index of the vertex stream to set.</param>
         /// <param name="vertexBuffer">The vertex buffer to set.</param>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetVertexBuffer (int stream, VertexBuffer vertexBuffer) {
             NativeMethods.bgfx_set_vertex_buffer((byte)stream, vertexBuffer.handle, 0, -1);
         }
@@ -575,6 +586,7 @@ namespace Internal.SharpBgfx {
         /// <param name="vertexBuffer">The vertex buffer to set.</param>
         /// <param name="firstVertex">The index of the first vertex to use.</param>
         /// <param name="count">The number of vertices to pull from the buffer.</param>
+   		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetVertexBuffer (int stream, VertexBuffer vertexBuffer, int firstVertex, int count) {
             NativeMethods.bgfx_set_vertex_buffer((byte)stream, vertexBuffer.handle, firstVertex, count);
         }
@@ -583,6 +595,7 @@ namespace Internal.SharpBgfx {
         /// Sets the index buffer to use for drawing primitives.
         /// </summary>
         /// <param name="indexBuffer">The index buffer to set.</param>
+   		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetIndexBuffer (DynamicIndexBuffer indexBuffer) {
             NativeMethods.bgfx_set_dynamic_index_buffer(indexBuffer.handle, 0, -1);
         }
@@ -593,6 +606,7 @@ namespace Internal.SharpBgfx {
         /// <param name="indexBuffer">The index buffer to set.</param>
         /// <param name="firstIndex">The first index in the buffer to use.</param>
         /// <param name="count">The number of indices to pull from the buffer.</param>
+  		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetIndexBuffer (DynamicIndexBuffer indexBuffer, int firstIndex, int count) {
             NativeMethods.bgfx_set_dynamic_index_buffer(indexBuffer.handle, firstIndex, count);
         }
@@ -602,6 +616,7 @@ namespace Internal.SharpBgfx {
         /// </summary>
         /// <param name="stream">The index of the vertex stream to set.</param>
         /// <param name="vertexBuffer">The vertex buffer to set.</param>
+  		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetVertexBuffer (int stream, DynamicVertexBuffer vertexBuffer) {
             NativeMethods.bgfx_set_dynamic_vertex_buffer((byte)stream, vertexBuffer.handle, 0, -1);
         }
@@ -613,6 +628,7 @@ namespace Internal.SharpBgfx {
         /// <param name="vertexBuffer">The vertex buffer to set.</param>
         /// <param name="startVertex">The index of the first vertex to use.</param>
         /// <param name="count">The number of vertices to pull from the buffer.</param>
+   		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetVertexBuffer (int stream, DynamicVertexBuffer vertexBuffer, int startVertex, int count) {
             NativeMethods.bgfx_set_dynamic_vertex_buffer((byte)stream, vertexBuffer.handle, startVertex, count);
         }
@@ -621,6 +637,7 @@ namespace Internal.SharpBgfx {
         /// Sets the index buffer to use for drawing primitives.
         /// </summary>
         /// <param name="indexBuffer">The index buffer to set.</param>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetIndexBuffer (TransientIndexBuffer indexBuffer) {
             NativeMethods.bgfx_set_transient_index_buffer(ref indexBuffer, 0, -1);
         }
@@ -631,6 +648,7 @@ namespace Internal.SharpBgfx {
         /// <param name="indexBuffer">The index buffer to set.</param>
         /// <param name="firstIndex">The first index in the buffer to use.</param>
         /// <param name="count">The number of indices to pull from the buffer.</param>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetIndexBuffer (TransientIndexBuffer indexBuffer, int firstIndex, int count) {
             NativeMethods.bgfx_set_transient_index_buffer(ref indexBuffer, firstIndex, count);
         }
@@ -640,6 +658,7 @@ namespace Internal.SharpBgfx {
         /// </summary>
         /// <param name="stream">The index of the vertex stream to set.</param>
         /// <param name="vertexBuffer">The vertex buffer to set.</param>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetVertexBuffer (int stream, TransientVertexBuffer vertexBuffer) {
             NativeMethods.bgfx_set_transient_vertex_buffer((byte)stream, ref vertexBuffer, 0, -1);
         }
@@ -651,6 +670,7 @@ namespace Internal.SharpBgfx {
         /// <param name="vertexBuffer">The vertex buffer to set.</param>
         /// <param name="firstVertex">The index of the first vertex to use.</param>
         /// <param name="count">The number of vertices to pull from the buffer.</param>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetVertexBuffer (int stream, TransientVertexBuffer vertexBuffer, int firstVertex, int count) {
             NativeMethods.bgfx_set_transient_vertex_buffer((byte)stream, ref vertexBuffer, firstVertex, count);
         }
@@ -659,6 +679,7 @@ namespace Internal.SharpBgfx {
         /// Sets the number of auto-generated vertices for use with gl_VertexID.
         /// </summary>
         /// <param name="count">The number of auto-generated vertices.</param>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetVertexCount(int count) {
             NativeMethods.bgfx_set_vertex_count(count);
         }
@@ -667,6 +688,7 @@ namespace Internal.SharpBgfx {
         /// Sets the number of auto-generated indices for use with gl_InstanceID.
         /// </summary>
         /// <param name="count">The number of auto-generated instances.</param>
+   		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetInstanceCount (int count) {
             NativeMethods.bgfx_set_instance_count(count);
         }
@@ -677,6 +699,7 @@ namespace Internal.SharpBgfx {
         /// <param name="instanceData">The instance data.</param>
         /// <param name="start">The starting offset in the buffer.</param>
         /// <param name="count">The number of entries to pull from the buffer.</param>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetInstanceDataBuffer (ref InstanceDataBuffer instanceData, int start = 0, int count = -1) {
             NativeMethods.bgfx_set_instance_data_buffer(ref instanceData.data, (uint)start, (uint)count);
         }
@@ -687,6 +710,7 @@ namespace Internal.SharpBgfx {
         /// <param name="vertexBuffer">The vertex buffer containing instance data.</param>
         /// <param name="firstVertex">The index of the first vertex to use.</param>
         /// <param name="count">The number of vertices to pull from the buffer.</param>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetInstanceDataBuffer (VertexBuffer vertexBuffer, int firstVertex, int count) {
             NativeMethods.bgfx_set_instance_data_from_vertex_buffer(vertexBuffer.handle, firstVertex, count);
         }
@@ -697,6 +721,7 @@ namespace Internal.SharpBgfx {
         /// <param name="vertexBuffer">The vertex buffer containing instance data.</param>
         /// <param name="firstVertex">The index of the first vertex to use.</param>
         /// <param name="count">The number of vertices to pull from the buffer.</param>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetInstanceDataBuffer (DynamicVertexBuffer vertexBuffer, int firstVertex, int count) {
             NativeMethods.bgfx_set_instance_data_from_dynamic_vertex_buffer(vertexBuffer.handle, firstVertex, count);
         }
@@ -707,6 +732,7 @@ namespace Internal.SharpBgfx {
         /// <param name="uniform">The uniform to set.</param>
         /// <param name="value">A pointer to the uniform's data.</param>
         /// <param name="arraySize">The size of the data array, if the uniform is an array.</param>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetUniform (Uniform uniform, float value, int arraySize = 1) {
             NativeMethods.bgfx_set_uniform(uniform.handle, &value, (ushort)arraySize);
         }
@@ -717,6 +743,7 @@ namespace Internal.SharpBgfx {
         /// <param name="uniform">The uniform to set.</param>
         /// <param name="value">A pointer to the uniform's data.</param>
         /// <param name="arraySize">The size of the data array, if the uniform is an array.</param>
+   		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetUniform (Uniform uniform, void* value, int arraySize = 1) {
             NativeMethods.bgfx_set_uniform(uniform.handle, value, (ushort)arraySize);
         }
@@ -727,6 +754,7 @@ namespace Internal.SharpBgfx {
         /// <param name="uniform">The uniform to set.</param>
         /// <param name="value">A pointer to the uniform's data.</param>
         /// <param name="arraySize">The size of the data array, if the uniform is an array.</param>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetUniform (Uniform uniform, IntPtr value, int arraySize = 1) {
             NativeMethods.bgfx_set_uniform(uniform.handle, value.ToPointer(), (ushort)arraySize);
         }
@@ -737,6 +765,7 @@ namespace Internal.SharpBgfx {
         /// <param name="textureUnit">The texture unit to set.</param>
         /// <param name="sampler">The sampler uniform.</param>
         /// <param name="texture">The texture to set.</param>
+  		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetTexture (byte textureUnit, Uniform sampler, Texture texture) {
             NativeMethods.bgfx_set_texture(textureUnit, sampler.handle, texture.handle, uint.MaxValue);
         }
@@ -748,11 +777,13 @@ namespace Internal.SharpBgfx {
         /// <param name="sampler">The sampler uniform.</param>
         /// <param name="texture">The texture to set.</param>
         /// <param name="flags">Sampling flags that override the default flags in the texture itself.</param>
+  		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetTexture (byte textureUnit, Uniform sampler, Texture texture, TextureFlags flags) {
             NativeMethods.bgfx_set_texture(textureUnit, sampler.handle, texture.handle, (uint)flags);
         }
 
         //!!!!betauser
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public unsafe static void SetTextures( uint* data, int count )
         {
             NativeMethods.bgfx_set_textures( data, count );
@@ -766,6 +797,7 @@ namespace Internal.SharpBgfx {
         /// <param name="mip">The index of the mip level within the texture to set.</param>
         /// <param name="format">The format of the buffer data.</param>
         /// <param name="access">Access control flags.</param>
+   		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetComputeImage (byte stage, Texture texture, byte mip, ComputeBufferAccess access, TextureFormat format = TextureFormat.Unknown) {
             NativeMethods.bgfx_set_image(stage, texture.handle, mip, format, access);
         }
@@ -776,6 +808,7 @@ namespace Internal.SharpBgfx {
         /// <param name="stage">The resource stage to set.</param>
         /// <param name="buffer">The buffer to set.</param>
         /// <param name="access">Access control flags.</param>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetComputeBuffer (byte stage, IndexBuffer buffer, ComputeBufferAccess access) {
             NativeMethods.bgfx_set_compute_index_buffer(stage, buffer.handle, access);
         }
@@ -786,6 +819,7 @@ namespace Internal.SharpBgfx {
         /// <param name="stage">The resource stage to set.</param>
         /// <param name="buffer">The buffer to set.</param>
         /// <param name="access">Access control flags.</param>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetComputeBuffer (byte stage, VertexBuffer buffer, ComputeBufferAccess access) {
             NativeMethods.bgfx_set_compute_vertex_buffer(stage, buffer.handle, access);
         }
@@ -796,6 +830,7 @@ namespace Internal.SharpBgfx {
         /// <param name="stage">The resource stage to set.</param>
         /// <param name="buffer">The buffer to set.</param>
         /// <param name="access">Access control flags.</param>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetComputeBuffer (byte stage, DynamicIndexBuffer buffer, ComputeBufferAccess access) {
             NativeMethods.bgfx_set_compute_dynamic_index_buffer(stage, buffer.handle, access);
         }
@@ -806,6 +841,7 @@ namespace Internal.SharpBgfx {
         /// <param name="stage">The resource stage to set.</param>
         /// <param name="buffer">The buffer to set.</param>
         /// <param name="access">Access control flags.</param>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetComputeBuffer (byte stage, DynamicVertexBuffer buffer, ComputeBufferAccess access) {
             NativeMethods.bgfx_set_compute_dynamic_vertex_buffer(stage, buffer.handle, access);
         }
@@ -816,6 +852,7 @@ namespace Internal.SharpBgfx {
         /// <param name="stage">The resource stage to set.</param>
         /// <param name="buffer">The buffer to set.</param>
         /// <param name="access">Access control flags.</param>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetComputeBuffer (byte stage, IndirectBuffer buffer, ComputeBufferAccess access) {
             NativeMethods.bgfx_set_compute_indirect_buffer(stage, buffer.handle, access);
         }
@@ -825,6 +862,7 @@ namespace Internal.SharpBgfx {
         /// </summary>
         /// <param name="id">The index of the view to touch.</param>
         /// <returns>The number of draw calls.</returns>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static int Touch (ushort id) {
             return NativeMethods.bgfx_touch(id);
         }
@@ -833,6 +871,7 @@ namespace Internal.SharpBgfx {
         /// Resets all view settings to default.
         /// </summary>
         /// <param name="id">The index of the view to reset.</param>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void ResetView (ushort id) {
             NativeMethods.bgfx_reset_view(id);
         }
@@ -846,6 +885,7 @@ namespace Internal.SharpBgfx {
         /// <param name="depth">A depth value to use for sorting the batch.</param>
         /// <param name="flags">Which states to discard for next draw.</param>
         /// <returns>The number of draw calls.</returns>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static int Submit( ushort id, Program program, int depth, DiscardFlags flags )
         {
             return NativeMethods.bgfx_submit( id, program.handle, depth, flags );
@@ -872,6 +912,7 @@ namespace Internal.SharpBgfx {
         /// <param name="depth">A depth value to use for sorting the batch.</param>
         /// <param name="flags">Which states to discard for next draw.</param>
         /// <returns>The number of draw calls.</returns>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static int Submit( ushort id, Program program, OcclusionQuery query, int depth, DiscardFlags flags )
         {
             return NativeMethods.bgfx_submit_occlusion_query( id, program.handle, query.handle, depth, flags );
@@ -901,6 +942,7 @@ namespace Internal.SharpBgfx {
         /// <param name="depth">A depth value to use for sorting the batch.</param>
         /// <param name="flags">Which states to discard for next draw.</param>
         /// <returns>The number of draw calls.</returns>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static int Submit( ushort id, Program program, IndirectBuffer indirectBuffer, int startIndex, int count, int depth, DiscardFlags flags )
         {
             return NativeMethods.bgfx_submit_indirect( id, program.handle, indirectBuffer.handle, (ushort)startIndex, (ushort)count, depth, flags );
@@ -924,6 +966,7 @@ namespace Internal.SharpBgfx {
         /// <summary>
         /// Discards all previously set state for the draw call.
         /// </summary>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void Discard( DiscardFlags flags )
         {
             NativeMethods.bgfx_discard( flags );
@@ -945,6 +988,7 @@ namespace Internal.SharpBgfx {
         /// <param name="yCount">The size of the job in the second dimension.</param>
         /// <param name="zCount">The size of the job in the third dimension.</param>
         /// <param name="flags">Which states to discard for next draw.</param>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void Dispatch( ushort id, Program program, int xCount, int yCount, int zCount, DiscardFlags flags )
         {
             NativeMethods.bgfx_dispatch( id, program.handle, (uint)xCount, (uint)yCount, (uint)zCount, flags );
@@ -971,6 +1015,7 @@ namespace Internal.SharpBgfx {
         /// <param name="startIndex">The index of the first command to process.</param>
         /// <param name="count">The number of commands to process from the buffer.</param>
         /// <param name="flags">Which states to discard for next draw.</param>
+        [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void Dispatch( ushort id, Program program, IndirectBuffer indirectBuffer, int startIndex, int count, DiscardFlags flags )
         {
             NativeMethods.bgfx_dispatch_indirect( id, program.handle, indirectBuffer.handle, (ushort)startIndex, (ushort)count, flags );
@@ -1008,6 +1053,7 @@ namespace Internal.SharpBgfx {
         /// Set rendering states used to draw primitives.
         /// </summary>
         /// <param name="state">The set of states to set.</param>
+   		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetRenderState (RenderState state) {
             NativeMethods.bgfx_set_state((ulong)state, 0);
         }
@@ -1017,6 +1063,7 @@ namespace Internal.SharpBgfx {
         /// </summary>
         /// <param name="state">The set of states to set.</param>
         /// <param name="colorRgba">The color used for "factor" blending modes.</param>
+  		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetRenderState (RenderState state, int colorRgba) {
             NativeMethods.bgfx_set_state((ulong)state, colorRgba);
         }
@@ -1025,6 +1072,7 @@ namespace Internal.SharpBgfx {
         /// Sets stencil test state.
         /// </summary>
         /// <param name="frontFace">The stencil state to use for front faces.</param>
+   		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetStencil (StencilFlags frontFace) {
             SetStencil(frontFace, StencilFlags.None);
         }
@@ -1034,6 +1082,7 @@ namespace Internal.SharpBgfx {
         /// </summary>
         /// <param name="frontFace">The stencil state to use for front faces.</param>
         /// <param name="backFace">The stencil state to use for back faces.</param>
+   		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetStencil (StencilFlags frontFace, StencilFlags backFace) {
             NativeMethods.bgfx_set_stencil((uint)frontFace, (uint)backFace);
         }

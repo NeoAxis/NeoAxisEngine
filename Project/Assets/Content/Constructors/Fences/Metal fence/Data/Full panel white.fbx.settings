@@ -1,0 +1,79 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.Import3D
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1146, 842\"><KW V=\"1\" A=\"C492039FD84E43904C9233C7756E6246\"><CGD /><WS UN=\"90C97736AB734BE954B639BC01B12031\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"FCEBA5AB57434AFC0DB2072E283F07F3\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"C492039FD84E43904C9233C7756E6246\"><KP UN=\"0A071F53251F4E639AAE974FA96707DB\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"C492039FD84E43904C9233C7756E6246\" S=\"False\"><CPD ObjPath=\"$Mesh\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	LODs = False
+	.component NeoAxis.Mesh
+	{
+		Name = Mesh
+		EditorCameraTransform = "3.93564220634258 -2.43560807880806 2.97241089306507; -0.2191854566202 0.0785722056997891 0.915470996498287 0.328172208860071; 1 1 1"
+		EditorDisplayCollision = True
+		.component NeoAxis.MeshGeometry
+		{
+			Name = Cube
+			VertexStructure
+			{
+				Value
+				{
+					Length = 4
+					0
+					{
+						Offset = 0
+						Type = Float3
+						Semantic = Position
+					}
+					1
+					{
+						Offset = 12
+						Type = Float3
+						Semantic = Normal
+					}
+					2
+					{
+						Offset = 24
+						Type = Float4
+						Semantic = Tangent
+					}
+					3
+					{
+						Offset = 40
+						Type = Float2
+						Semantic = TextureCoordinate0
+					}
+				}
+			}
+			Vertices
+			{
+				Value
+				{
+					Length = 1152
+					.elements = "UEsDBBQAAAAIAPQEK1amEOBTuQAAAIAEAAAEAAAAZmlsZWNgYGDo57tkkZbG5sDA0LAfyEUCDfYIGsYGq99x9swZW/zqEfT8+Is7CJuPAED1FoTNh7vJAeF+iJzPe70tqGaiuh9hPj71CJo48+HAgTjzEe5HCh+UcEByx37s5uNTjy18CKmHmI8UvwTcgx6/EDmgf03Q/IvifoT5+NRjCx9C6iGAOPPh7kdxDzSu9uOJLwbi1KOEjwVx6iHhQ5x6FP/C0yfCrzjDHyW+8KvHzF+41SPSD3HmQ8QAUEsBAhQAFAAAAAgA9AQrVqYQ4FO5AAAAgAQAAAQAAAAAAAAAAAAAAAAAAAAAAGZpbGVQSwUGAAAAAAEAAQAyAAAA2wAAAAAA"
+					.elementsZip = True
+				}
+			}
+			Indices
+			{
+				Value
+				{
+					Length = 36
+					.elements = 0 1 2 1 0 3 4 5 6 5 4 7 8 9 10 9 8 11 12 13 14 13 12 15 16 17 18 16 18 19 20 21 22 22 21 23
+				}
+			}
+			Material
+			{
+				GetByReference = "Content\\Materials\\Basic Library\\Metal\\Sheet Metal 002.material"
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Definition
+			Transform = "0 0 0; 0 0 0 1; 1 1 1"
+			.component NeoAxis.CollisionShape_Box
+			{
+				LocalTransform = "1 0 1.09999995306134; 0 0 0 1; 1 1 1"
+				Dimensions = 2 0.00020032584143337 1.99999990314245
+			}
+		}
+	}
+}

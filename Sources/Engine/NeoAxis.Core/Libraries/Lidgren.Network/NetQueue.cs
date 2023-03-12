@@ -33,7 +33,7 @@ using System.Threading;
 // Comment for Linux Mono users: reports of library thread hangs on EnterReadLock() suggests switching to plain lock() works better
 //
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	/// <summary>
 	/// Thread safe (blocking) expanding queue with TryDequeue() and EnqueueFirst()
@@ -87,6 +87,11 @@ namespace Lidgren.Network
 			}
 		}
 
+		private int GetGrowCapacity()
+		{
+			return Math.Max(1, m_items.Length * 2);
+		}
+
 		/// <summary>
 		/// NetQueue constructor
 		/// </summary>
@@ -104,7 +109,7 @@ namespace Lidgren.Network
 			try
 			{
 				if (m_size == m_items.Length)
-					SetCapacity(m_items.Length + 8);
+					SetCapacity(GetGrowCapacity());
 
 				int slot = (m_head + m_size) % m_items.Length;
 				m_items[slot] = item;
@@ -127,7 +132,7 @@ namespace Lidgren.Network
 				foreach (var item in items)
 				{
 					if (m_size == m_items.Length)
-						SetCapacity(m_items.Length + 8); // @TODO move this out of loop
+						SetCapacity(GetGrowCapacity()); // @TODO move this out of loop
 
 					int slot = (m_head + m_size) % m_items.Length;
 					m_items[slot] = item;
@@ -149,7 +154,7 @@ namespace Lidgren.Network
 			try
 			{
 				if (m_size >= m_items.Length)
-					SetCapacity(m_items.Length + 8);
+					SetCapacity(GetGrowCapacity());
 
 				m_head--;
 				if (m_head < 0)

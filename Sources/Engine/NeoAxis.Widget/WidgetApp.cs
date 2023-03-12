@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -76,7 +76,7 @@ namespace NeoAxis.Widget
 			form.Show();
 			while( form.Created )
 			{
-				Application.DoEvents();
+				NeoAxis.Editor.EditorAPI.ApplicationDoEvents( true );//Application.DoEvents();
 
 				if( /*WidgetAppForm.Instance == null ||*/ EngineApp.Instance == null || EngineApp.Closing )
 					break;

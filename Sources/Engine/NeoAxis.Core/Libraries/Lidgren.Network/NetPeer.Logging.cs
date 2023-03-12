@@ -19,7 +19,7 @@ USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 using System.Diagnostics;
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	public partial class NetPeer
 	{

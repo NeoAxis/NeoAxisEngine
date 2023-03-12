@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -10,9 +10,11 @@ namespace NeoAxis
 	/// Sprite in the scene.
 	/// </summary>
 	[ResourceFileExtension( "sprite" )]
+#if !DEPLOY
 	[EditorControl( typeof( SpriteEditor ), true )]
 	[Preview( typeof( SpritePreview ) )]
 	[AddToResourcesWindow( @"Base\2D\Sprite", -8000 )]
+#endif
 	public class Sprite : MeshInSpace
 	{
 		/// <summary>

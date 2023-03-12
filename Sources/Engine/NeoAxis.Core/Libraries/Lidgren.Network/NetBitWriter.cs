@@ -26,7 +26,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	/// <summary>
 	/// Helper class for NetBuffer to write/read bits

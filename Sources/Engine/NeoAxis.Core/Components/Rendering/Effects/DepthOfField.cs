@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,6 +12,8 @@ namespace NeoAxis
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class RenderingEffect_DepthOfField : RenderingEffect
 	{
+		public static double GlobalBlurFactor = 1;
+
 		/// <summary>
 		/// The intensity of the effect.
 		/// </summary>
@@ -289,7 +291,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
+		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture )
 		{
 			base.OnRender( context, frameData, ref actualTexture );
 
@@ -304,9 +306,11 @@ namespace NeoAxis
 			if( depthTexture == null )
 				return;
 
-
 			var effects = GetComponents<RenderingEffect>( false, false, true );
 			if( effects.Length == 0 )
+				return;
+
+			if( GlobalBlurFactor <= 0 && effects.Length == 1 && effects[ 0 ] is RenderingEffect_GaussianBlur )
 				return;
 
 			//need to make a copy of scene texture because child effects will dispose it

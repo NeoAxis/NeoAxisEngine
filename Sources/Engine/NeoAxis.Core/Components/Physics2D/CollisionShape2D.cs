@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -164,7 +164,7 @@ namespace NeoAxis
 		ReferenceField<Physics2DCategories> _collidesWith = Physics2DCategories.All;
 
 		/// <summary>
-		/// Collision groups allow a certain group of objects to never collide or always collide. Zero means no collision group. Non-zero group filtering always wins against the mask bits.
+		/// Collision groups allow a certain group of objects to never collide(negative) or always collide (positive). Zero means no collision group. Non-zero group filtering always wins against the mask bits.
 		/// </summary>
 		[DefaultValue( 0 )]
 		[Category( "Collision Shape 2D" )]

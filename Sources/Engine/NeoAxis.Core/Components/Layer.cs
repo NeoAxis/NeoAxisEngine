@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -10,6 +10,10 @@ namespace NeoAxis
 	/// </summary>
 	public class Layer : Component, IVisibleInHierarchy, ICanBeSelectedInHierarchy
 	{
+		IVisibleInHierarchy parentIVisibleInHierarchy;
+
+		/////////////////////////////////////////
+
 		/// <summary>
 		/// Whether the object and its children are visible.
 		/// </summary>
@@ -47,18 +51,22 @@ namespace NeoAxis
 		{
 			get
 			{
-				//!!!!slowly
-
 				if( !Visible )
 					return false;
 
-				var p = Parent as IVisibleInHierarchy;
-				if( p != null )
-					return p.VisibleInHierarchy;
+				if( parentIVisibleInHierarchy != null )
+					return parentIVisibleInHierarchy.VisibleInHierarchy;
 				else
 					return true;
 
-				//return visibleInHierarchy;
+				//if( !Visible )
+				//	return false;
+
+				//var p = Parent as IVisibleInHierarchy;
+				//if( p != null )
+				//	return p.VisibleInHierarchy;
+				//else
+				//	return true;
 			}
 		}
 
@@ -90,6 +98,20 @@ namespace NeoAxis
 				else
 					return true;
 			}
+		}
+
+		protected override void OnAddedToParent()
+		{
+			parentIVisibleInHierarchy = Parent as IVisibleInHierarchy;
+
+			base.OnAddedToParent();
+		}
+
+		protected override void OnRemovedFromParent( Component oldParent )
+		{
+			parentIVisibleInHierarchy = null;
+
+			base.OnRemovedFromParent( oldParent );
 		}
 	}
 }

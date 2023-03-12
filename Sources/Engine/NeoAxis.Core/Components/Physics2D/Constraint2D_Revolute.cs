@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -226,9 +226,9 @@ namespace NeoAxis
 			c.MaxMotorTorque = (float)MotorMaxTorque.Value;
 		}
 
-		public override void Render( ViewportRenderingContext context, out int verticesRendered )
+		public override void RenderPhysicalObject( ViewportRenderingContext context, out int verticesRendered )
 		{
-			base.Render( context, out verticesRendered );
+			base.RenderPhysicalObject( context, out verticesRendered );
 
 			var context2 = context.ObjectInSpaceRenderingContext;
 			var renderer = context.Owner.Simple3DRenderer;
@@ -240,7 +240,7 @@ namespace NeoAxis
 
 				{
 					var color = new ColorValue( 0, 0, 0, 0.4 );
-					renderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+					renderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 					renderer.AddLine( pos, pos + tr.Rotation * new Vector3( 1, 0, 0 ) );
 					verticesRendered += 2;
 				}
@@ -249,7 +249,7 @@ namespace NeoAxis
 				{
 					var color = new ColorValue( 1, 0, 0 );
 
-					renderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+					renderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 
 					var r = tr.Rotation * Quaternion.FromRotateByZ( -ConstraintRigid.LowerLimit );
 					renderer.AddLine( pos, pos + r * new Vector3( 1, 0, 0 ) );
@@ -266,7 +266,7 @@ namespace NeoAxis
 					var rotationOffset = Quaternion.FromRotateByZ( -ConstraintRigid.JointAngle );
 					var rot = tr.Rotation * rotationOffset;
 
-					renderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+					renderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 					renderer.AddLine( pos, pos + rot * new Vector3( 1, 0, 0 ) );
 					verticesRendered += 2;
 				}

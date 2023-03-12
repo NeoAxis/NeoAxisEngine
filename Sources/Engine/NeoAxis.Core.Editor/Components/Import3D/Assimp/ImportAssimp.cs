@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -1109,7 +1109,7 @@ namespace NeoAxis.Import
 
 					PostProcessSteps flags =
 						PostProcessSteps.CalculateTangentSpace |
-						PostProcessSteps.JoinIdenticalVertices |
+						//!!!!new PostProcessSteps.JoinIdenticalVertices |
 						//PostProcessSteps.MakeLeftHanded |
 						PostProcessSteps.Triangulate |
 						PostProcessSteps.RemoveComponent |
@@ -1118,7 +1118,7 @@ namespace NeoAxis.Import
 						//PostProcessSteps.PreTransformVertices |
 						PostProcessSteps.LimitBoneWeights |
 						PostProcessSteps.ValidateDataStructure |
-						PostProcessSteps.ImproveCacheLocality |
+						//!!!!new PostProcessSteps.ImproveCacheLocality |
 						//PostProcessSteps.RemoveRedundantMaterials |
 						//PostProcessSteps.FixInFacingNormals | //!!!!?
 						PostProcessSteps.SortByPrimitiveType |
@@ -1192,7 +1192,7 @@ namespace NeoAxis.Import
 					{
 						Material material = null;
 						if( context.settings.updateMaterials )
-							material = CreateMaterial( context.materialsGroup, data );
+							material = CreateMaterial( settings, context.materialsGroup, data );
 						else
 						{
 							if( context.materialsGroup != null )
@@ -1284,7 +1284,7 @@ namespace NeoAxis.Import
 							InitMeshGeometriesRecursive( context, node, transform, mesh );
 						}
 
-						if( settings.component.MergeMeshGeometries )
+						if( settings.component.MergeGeometries.Value != Import3D.MergeGeometriesEnum.False )
 							mesh.MergeGeometriesWithEqualVertexStructureAndMaterial();
 
 						mesh.Enabled = true;
@@ -1316,7 +1316,7 @@ namespace NeoAxis.Import
 
 									//!!!!transform?
 
-									if( settings.component.MergeMeshGeometries )
+									if( settings.component.MergeGeometries.Value != Import3D.MergeGeometriesEnum.False )
 										mesh.MergeGeometriesWithEqualVertexStructureAndMaterial();
 								}
 								else
@@ -1959,6 +1959,48 @@ namespace NeoAxis.Import
 
 									}
 								}
+							}
+						}
+
+						//detect transparency by alpha channel of the texture. Pixels must contain alpha.
+						if( string.IsNullOrEmpty( data.OpacityTexture ) && !string.IsNullOrEmpty( data.BaseColorTexture ) )
+						{
+							var containsAlpha = false;
+
+							try
+							{
+								if( ImageUtility.LoadFromVirtualFile( data.BaseColorTexture, out var data2, out var size, out _, out var format, out _, out _, out var error ) )
+								{
+									var opacityTexture = new ImageUtility.Image2D( format, size, data2 );
+
+									var allZero = true;
+
+									for( int y = 0; y < size.Y; y++ )
+									{
+										for( int x = 0; x < size.X; x++ )
+										{
+											var c = opacityTexture.GetPixel( new Vector2I( x, y ) );
+
+											if( c.W != 0 )
+												allZero = false;
+											if( c.W != 1 )
+												containsAlpha = true;
+										}
+									}
+
+									if( allZero )
+										containsAlpha = false;
+								}
+							}
+							catch( Exception e )
+							{
+								Log.Warning( "ImportAssimp: GetMaterialsData: Unable to read opacity data. " + e.Message );
+							}
+
+							if( containsAlpha )
+							{
+								data.OpacityTexture = data.BaseColorTexture;
+								data.OpacityTextureChannel = "A";
 							}
 						}
 

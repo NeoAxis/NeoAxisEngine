@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -30,7 +30,7 @@ namespace NeoAxis
 		///// </summary>
 		///// <param name="realPath">The real file path.</param>
 		///// <returns>The virtual file path.</returns>
-		public static bool GetVirtualPathByReal( string realPath, out string virtualPath )
+		public static bool GetVirtualPathByReal( string realPath, bool returnAssetsOnly, out string virtualPath )
 		{
 			if( realPath == null )
 				Log.Fatal( "VirtualPathUtility: GetVirtualPathByReal: realPath == null." );
@@ -39,7 +39,7 @@ namespace NeoAxis
 			if( !Path.IsPathRooted( realPath ) )
 				realPath = Path.Combine( VirtualFileSystem.Directories.Binaries, realPath );
 
-			//project data
+			//project assets
 			{
 				string dir = VirtualFileSystem.Directories.Assets;
 				if( realPath.Length >= dir.Length )
@@ -58,6 +58,7 @@ namespace NeoAxis
 			}
 
 			//user settings
+			if( !returnAssetsOnly )
 			{
 				string dir = VirtualFileSystem.Directories.UserSettings;
 				if( realPath.Length > dir.Length )
@@ -76,6 +77,7 @@ namespace NeoAxis
 			}
 
 			//project directory
+			if( !returnAssetsOnly )
 			{
 				string dir = VirtualFileSystem.Directories.Project;
 				if( realPath.Length > dir.Length )
@@ -102,9 +104,9 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="realPath">The real file path.</param>
 		/// <returns>The virtual file path.</returns>
-		public static string GetVirtualPathByReal( string realPath )
+		public static string GetVirtualPathByReal( string realPath, bool returnAssetsOnly = false )
 		{
-			GetVirtualPathByReal( realPath, out var virtualPath );
+			GetVirtualPathByReal( realPath, returnAssetsOnly, out var virtualPath );
 			return virtualPath;
 		}
 
@@ -166,6 +168,59 @@ namespace NeoAxis
 					return true;
 			}
 			return false;
+		}
+
+		public static bool GetProjectPathByReal( string realPath, out string projectPath )
+		{
+			if( realPath == null )
+				Log.Fatal( "VirtualPathUtility: GetProjectPathByReal: realPath == null." );
+
+			realPath = NormalizePath( realPath );
+			if( !Path.IsPathRooted( realPath ) )
+				realPath = Path.Combine( VirtualFileSystem.Directories.Binaries, realPath );
+
+			//project directory
+			{
+				string dir = VirtualFileSystem.Directories.Project;
+				if( realPath.Length > dir.Length )
+				{
+					if( string.Equals( realPath, dir, StringComparison.OrdinalIgnoreCase ) )
+					{
+						projectPath = "";
+						return true;
+					}
+					else if( string.Equals( realPath.Substring( 0, dir.Length ), dir, StringComparison.OrdinalIgnoreCase ) )
+					{
+						projectPath = realPath.Substring( dir.Length + 1, realPath.Length - dir.Length - 1 );
+						return true;
+					}
+				}
+			}
+
+			projectPath = "";
+			return false;
+		}
+
+		/// <summary>
+		/// Converts a file path of real file system to a local project path.
+		/// </summary>
+		/// <param name="realPath">The real file path.</param>
+		/// <returns>The virtual file path.</returns>
+		public static string GetProjectPathByReal( string realPath )
+		{
+			GetProjectPathByReal( realPath, out var projectPath );
+			return projectPath;
+		}
+
+		/// <summary>
+		/// Converts a local project path to path of real file system.
+		/// </summary>
+		/// <param name="projectPath">The virtual file path.</param>
+		/// <returns>The real file path.</returns>
+		public static string GetRealPathByProject( string projectPath )
+		{
+			projectPath = NormalizePath( projectPath );
+			return Path.Combine( VirtualFileSystem.Directories.Project, projectPath );
 		}
 
 		//!!!!!

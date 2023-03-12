@@ -1,17 +1,18 @@
-$input a_position, a_normal, a_tangent, a_texcoord0, a_texcoord1, a_texcoord2, a_color0, a_indices, a_weight, i_data0, i_data1, i_data2, i_data3, i_data4
-$output v_texCoord01, v_worldPosition_depth, v_worldNormal, v_tangent, v_bitangent, v_color0, v_eyeTangentSpace, v_normalTangentSpace, v_texCoord23, v_colorParameter, v_lodValue_visibilityDistance_receiveDecals
+$input a_position, a_normal, a_tangent, a_texcoord0, a_texcoord1, a_texcoord2, a_color0, a_color3, a_indices, a_weight, i_data0, i_data1, i_data2, i_data3, i_data4
+$output v_texCoord01, v_worldPosition_depth, v_worldNormal_materialIndex, v_tangent, v_color0, v_eyeTangentSpace, v_normalTangentSpace, v_texCoord23, v_colorParameter, v_lodValue_visibilityDistance_receiveDecals
 
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #define DEFERRED_DECAL 1
 #include "Common.sh"
 #include "UniformsVertex.sh"
 #include "VertexFunctions.sh"
 
-uniform vec4 u_renderOperationData[5];
+uniform vec4 u_renderOperationData[7];
 uniform vec4 u_materialCustomParameters[2];
 #ifdef GLOBAL_SKELETAL_ANIMATION
 	SAMPLER2D(s_bones, 0);
 #endif
+SAMPLER2D(s_linearSamplerVertex, 9);
 
 #ifdef VERTEX_CODE_PARAMETERS
 	VERTEX_CODE_PARAMETERS
@@ -33,6 +34,8 @@ void main()
 #endif
 	
 	mat4 worldMatrix;
+	uint cullingByCameraDirectionData = uint(0);
+	BRANCH
 	if(u_renderOperationData[0].y < 0.0)
 	{
 		//instancing
@@ -43,15 +46,25 @@ void main()
 		v_colorParameter.y = float((data & uint(0x0000ff00)) >> 8);
 		v_colorParameter.x = float((data & uint(0x000000ff)) >> 0);
 		v_colorParameter = pow2(v_colorParameter / 255.0, 2.0) * 10.0;
-		v_lodValue_visibilityDistance_receiveDecals = i_data4;
+		
+		v_lodValue_visibilityDistance_receiveDecals.xy = i_data4.xy;
+		uint data2 = asuint(i_data4.z);
+		v_lodValue_visibilityDistance_receiveDecals.z = float((data2 & uint(0x000000ff)) >> 0) / 255.0;
+		v_lodValue_visibilityDistance_receiveDecals.w = 0.0;//float((data2 & uint(0x0000ff00)) >> 8) / 255.0;
+		//v_lodValue_visibilityDistance_receiveDecals = i_data4;
+		
 		if(v_lodValue_visibilityDistance_receiveDecals.y < 0.0)
 			v_lodValue_visibilityDistance_receiveDecals.y = u_renderOperationData[1].y;
+		
+		cullingByCameraDirectionData = asuint( i_data4.w );
 	}
 	else
 	{
 		worldMatrix = u_model[0];
 		v_colorParameter = u_renderOperationData[4];
 		v_lodValue_visibilityDistance_receiveDecals = vec4(u_renderOperationData[2].w, u_renderOperationData[1].y, u_renderOperationData[1].x, 0);
+		//!!!!?
+		//cullingByCameraDirectionData = 0;
 	}
 	
 	vec4 billboardRotation;
@@ -67,11 +80,14 @@ void main()
 	vec3 positionOffset = vec3(0,0,0);
 	vec4 customParameter1 = u_materialCustomParameters[0];
 	vec4 customParameter2 = u_materialCustomParameters[1];
+	vec3 cameraPosition = u_viewportOwnerCameraPosition;
 #ifdef VERTEX_CODE_BODY
-	#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(_sampler, _uv, 0, 0)
-	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(_sampler, _uv, u_removeTextureTiling)
-	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(_sampler, _uv, u_mipBias)
-	VERTEX_CODE_BODY
+	#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(makeSampler(s_linearSamplerVertex, _sampler), _uv, 0, 0)
+	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(makeSampler(s_linearSamplerVertex, _sampler), _uv, u_removeTextureTiling)
+	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerVertex, _sampler), _uv, u_mipBias)
+	{
+		VERTEX_CODE_BODY
+	}
 	#undef CODE_BODY_TEXTURE2D_MASK_OPACITY
 	#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
 	#undef CODE_BODY_TEXTURE2D
@@ -84,14 +100,33 @@ void main()
 	v_texCoord23.xy = texCoord2;
 	v_texCoord23.zw = vec2_splat(0);//texCoord3;
 	v_worldPosition_depth.xyz = worldPosition.xyz;
-	v_worldNormal = normalize(mul(toMat3(worldMatrix), normalLocal));
+	v_worldNormal_materialIndex.xyz = normalize(mul(toMat3(worldMatrix), normalLocal));
+	v_worldNormal_materialIndex.w = a_color3;
 	v_worldPosition_depth.w = gl_Position.z;
-
 	v_tangent.xyz = normalize(mul(toMat3(worldMatrix), tangentLocal.xyz));
 	v_tangent.w = tangentLocal.w;
 
-	v_bitangent = cross(v_tangent.xyz, v_worldNormal) * tangentLocal.w;
-
+	//!!!!GLSL
+#ifndef GLSL
+	BRANCH
+	if( cullingByCameraDirectionData != 0 )
+	{
+		vec4 data;
+		data.x = float((cullingByCameraDirectionData & uint(0x000000ff)) >> 0);
+		data.y = float((cullingByCameraDirectionData & uint(0x0000ff00)) >> 8);
+		data.z = float((cullingByCameraDirectionData & uint(0x00ff0000)) >> 16);
+		data.w = float((cullingByCameraDirectionData & uint(0xff000000)) >> 24);
+		data = data / 255.0;
+		
+		vec3 cullingNormal = normalize( expand( data.xyz ) );
+		vec3 dir = normalize( u_viewportOwnerCameraPosition - worldPosition.xyz );
+		float _cos = dot( dir, cullingNormal );
+		float _acos = acos( clamp( _cos, -1.0, 1.0 ) );
+		if( _acos > PI / 2.0 + data.w * PI / 2.0 )
+			gl_Position.x = 0.0 / 0.0;
+	}
+#endif
+	
 	//v_reflectionVector = v_worldPosition_depth.xyz - u_viewportOwnerCameraPosition;
 	
 	v_color0 = color0;
@@ -116,7 +151,7 @@ void main()
 #endif
 		
 		v_eyeTangentSpace = mul( eyeWorldSpace, worldToTangentSpace );
-		v_normalTangentSpace = mul( v_worldNormal, worldToTangentSpace );
+		v_normalTangentSpace = mul( v_worldNormal_materialIndex.xyz, worldToTangentSpace );
 	}
 #endif
 	

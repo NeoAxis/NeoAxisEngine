@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -400,7 +400,7 @@ namespace NeoAxis
 
 		private void Viewport_UpdateBegin( Viewport viewport )
 		{
-			if( EnabledInHierarchyAndIsNotResource && AutoUpdate && VisibleInHierarchy )
+			if( EnabledInHierarchyAndIsInstance && AutoUpdate && VisibleInHierarchy )
 				RenderTargetUpdate();
 		}
 

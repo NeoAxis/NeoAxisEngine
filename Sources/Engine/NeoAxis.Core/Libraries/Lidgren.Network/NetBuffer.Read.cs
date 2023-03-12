@@ -1,4 +1,10 @@
 ﻿#if !UWP
+
+//!!!!betauser
+#if !ANDROID
+#define HAS_FULL_SPAN
+#endif
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,7 +16,7 @@ using System.Threading;
 using NetEndPoint = System.Net.IPEndPoint;
 #endif
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	/// <summary>
 	/// Base class for NetIncomingMessage and NetOutgoingMessage
@@ -637,21 +643,22 @@ namespace Lidgren.Network
 				return true;
 			}
 
-#if HAS_FULL_SPAN
-			if (byteLen < c_stackallocThresh)
-			{
-				Span<byte> spanBytes = stackalloc byte[(int)byteLen];
+			//!!!!check
+//#if HAS_FULL_SPAN
+//			if (byteLen < c_stackallocThresh)
+//			{
+//				Span<byte> spanBytes = stackalloc byte[(int)byteLen];
 
-				if (TryReadBytes(spanBytes))
-				{
-					result = Encoding.UTF8.GetString(spanBytes);
-					return true;
-				}
+//				if (TryReadBytes(spanBytes))
+//				{
+//					result = Encoding.UTF8.GetString(spanBytes);
+//					return true;
+//				}
 
-				result = String.Empty;
-				return false;
-			}
-#endif
+//				result = String.Empty;
+//				return false;
+//			}
+//#endif
 
 			byte[] bytes;
 			if (ReadBytes((int)byteLen, out bytes) == false)

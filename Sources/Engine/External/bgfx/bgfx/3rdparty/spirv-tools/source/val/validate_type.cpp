@@ -40,21 +40,6 @@ int64_t ConstantLiteralAsInt64(uint32_t width,
   return static_cast<int64_t>(uint64_t(lo_word) | uint64_t(hi_word) << 32);
 }
 
-// Returns, as an uint64_t, the literal value from an OpConstant or the
-// default value of an OpSpecConstant, assuming it is an integral type.
-// For signed integers, relies the rule that literal value is sign extended
-// to fill out to word granularity.  Assumes that the constant value
-// has
-int64_t ConstantLiteralAsUint64(uint32_t width,
-                                const std::vector<uint32_t>& const_words) {
-  const uint32_t lo_word = const_words[3];
-  if (width <= 32) return lo_word;
-  assert(width <= 64);
-  assert(const_words.size() > 4);
-  const uint32_t hi_word = const_words[4];  // Must exist, per spec.
-  return (uint64_t(lo_word) | uint64_t(hi_word) << 32);
-}
-
 // Validates that type declarations are unique, unless multiple declarations
 // of the same data type are allowed by the specification.
 // (see section 2.8 Types and Variables)
@@ -240,11 +225,11 @@ spv_result_t ValidateTypeArray(ValidationState_t& _, const Instruction* inst) {
            << "' is a void type.";
   }
 
-  if (spvIsVulkanOrWebGPUEnv(_.context()->target_env) &&
+  if (spvIsVulkanEnv(_.context()->target_env) &&
       element_type->opcode() == SpvOpTypeRuntimeArray) {
     return _.diag(SPV_ERROR_INVALID_ID, inst)
-           << "OpTypeArray Element Type <id> '" << _.getIdName(element_type_id)
-           << "' is not valid in "
+           << _.VkErrorID(4680) << "OpTypeArray Element Type <id> '"
+           << _.getIdName(element_type_id) << "' is not valid in "
            << spvLogStringForEnv(_.context()->target_env) << " environments.";
   }
 
@@ -279,18 +264,6 @@ spv_result_t ValidateTypeArray(ValidationState_t& _, const Instruction* inst) {
                << "OpTypeArray Length <id> '" << _.getIdName(length_id)
                << "' default value must be at least 1: found " << ivalue;
       }
-      if (spvIsWebGPUEnv(_.context()->target_env)) {
-        // WebGPU has maximum integer width of 32 bits, and max array size
-        // is one more than the max signed integer representation.
-        const uint64_t max_permitted = (uint64_t(1) << 31);
-        const uint64_t uvalue = ConstantLiteralAsUint64(width, length->words());
-        if (uvalue > max_permitted) {
-          return _.diag(SPV_ERROR_INVALID_ID, inst)
-                 << "OpTypeArray Length <id> '" << _.getIdName(length_id)
-                 << "' size exceeds max value " << max_permitted
-                 << " permitted by WebGPU: got " << uvalue;
-        }
-      }
     } break;
     case SpvOpConstantNull:
       return _.diag(SPV_ERROR_INVALID_ID, inst)
@@ -322,44 +295,15 @@ spv_result_t ValidateTypeRuntimeArray(ValidationState_t& _,
            << _.getIdName(element_id) << "' is a void type.";
   }
 
-  if (spvIsVulkanOrWebGPUEnv(_.context()->target_env) &&
+  if (spvIsVulkanEnv(_.context()->target_env) &&
       element_type->opcode() == SpvOpTypeRuntimeArray) {
     return _.diag(SPV_ERROR_INVALID_ID, inst)
-           << "OpTypeRuntimeArray Element Type <id> '"
+           << _.VkErrorID(4680) << "OpTypeRuntimeArray Element Type <id> '"
            << _.getIdName(element_id) << "' is not valid in "
            << spvLogStringForEnv(_.context()->target_env) << " environments.";
   }
 
   return SPV_SUCCESS;
-}
-
-bool ContainsOpaqueType(ValidationState_t& _, const Instruction* str) {
-  const size_t elem_type_index = 1;
-  uint32_t elem_type_id;
-  Instruction* elem_type;
-
-  if (spvOpcodeIsBaseOpaqueType(str->opcode())) {
-    return true;
-  }
-
-  switch (str->opcode()) {
-    case SpvOpTypeArray:
-    case SpvOpTypeRuntimeArray:
-      elem_type_id = str->GetOperandAs<uint32_t>(elem_type_index);
-      elem_type = _.FindDef(elem_type_id);
-      return ContainsOpaqueType(_, elem_type);
-    case SpvOpTypeStruct:
-      for (size_t member_type_index = 1;
-           member_type_index < str->operands().size(); ++member_type_index) {
-        auto member_type_id = str->GetOperandAs<uint32_t>(member_type_index);
-        auto member_type = _.FindDef(member_type_id);
-        if (ContainsOpaqueType(_, member_type)) return true;
-      }
-      break;
-    default:
-      break;
-  }
-  return false;
 }
 
 spv_result_t ValidateTypeStruct(ValidationState_t& _, const Instruction* inst) {
@@ -394,13 +338,14 @@ spv_result_t ValidateTypeStruct(ValidationState_t& _, const Instruction* inst) {
              << ".";
     }
 
-    if (spvIsVulkanOrWebGPUEnv(_.context()->target_env) &&
+    if (spvIsVulkanEnv(_.context()->target_env) &&
         member_type->opcode() == SpvOpTypeRuntimeArray) {
       const bool is_last_member =
           member_type_index == inst->operands().size() - 1;
       if (!is_last_member) {
         return _.diag(SPV_ERROR_INVALID_ID, inst)
-               << "In " << spvLogStringForEnv(_.context()->target_env)
+               << _.VkErrorID(4680) << "In "
+               << spvLogStringForEnv(_.context()->target_env)
                << ", OpTypeRuntimeArray must only be used for the last member "
                   "of an OpTypeStruct";
       }
@@ -451,10 +396,24 @@ spv_result_t ValidateTypeStruct(ValidationState_t& _, const Instruction* inst) {
     _.RegisterStructTypeWithBuiltInMember(struct_id);
   }
 
+  const auto isOpaqueType = [&_](const Instruction* opaque_inst) {
+    auto opcode = opaque_inst->opcode();
+    if (_.HasCapability(SpvCapabilityBindlessTextureNV) &&
+        (opcode == SpvOpTypeImage || opcode == SpvOpTypeSampler ||
+         opcode == SpvOpTypeSampledImage)) {
+      return false;
+    } else if (spvOpcodeIsBaseOpaqueType(opcode)) {
+      return true;
+    }
+    return false;
+  };
+
   if (spvIsVulkanEnv(_.context()->target_env) &&
-      !_.options()->before_hlsl_legalization && ContainsOpaqueType(_, inst)) {
+      !_.options()->before_hlsl_legalization &&
+      _.ContainsType(inst->id(), isOpaqueType)) {
     return _.diag(SPV_ERROR_INVALID_ID, inst)
-           << "In " << spvLogStringForEnv(_.context()->target_env)
+           << _.VkErrorID(4667) << "In "
+           << spvLogStringForEnv(_.context()->target_env)
            << ", OpTypeStruct must not contain an opaque type.";
   }
 
@@ -489,6 +448,7 @@ spv_result_t ValidateTypePointer(ValidationState_t& _,
 
   if (!_.IsValidStorageClass(storage_class)) {
     return _.diag(SPV_ERROR_INVALID_BINARY, inst)
+           << _.VkErrorID(4643)
            << "Invalid storage class for target environment";
   }
 
@@ -555,8 +515,8 @@ spv_result_t ValidateTypeForwardPointer(ValidationState_t& _,
            << "Pointer type in OpTypeForwardPointer is not a pointer type.";
   }
 
-  if (inst->GetOperandAs<uint32_t>(1) !=
-      pointer_type_inst->GetOperandAs<uint32_t>(1)) {
+  const auto storage_class = inst->GetOperandAs<SpvStorageClass>(1);
+  if (storage_class != pointer_type_inst->GetOperandAs<uint32_t>(1)) {
     return _.diag(SPV_ERROR_INVALID_ID, inst)
            << "Storage class in OpTypeForwardPointer does not match the "
            << "pointer definition.";
@@ -567,6 +527,15 @@ spv_result_t ValidateTypeForwardPointer(ValidationState_t& _,
   if (!pointee_type || pointee_type->opcode() != SpvOpTypeStruct) {
     return _.diag(SPV_ERROR_INVALID_ID, inst)
            << "Forward pointers must point to a structure";
+  }
+
+  if (spvIsVulkanEnv(_.context()->target_env)) {
+    if (storage_class != SpvStorageClassPhysicalStorageBuffer) {
+      return _.diag(SPV_ERROR_INVALID_ID, inst)
+             << _.VkErrorID(4711)
+             << "In Vulkan, OpTypeForwardPointer must have "
+             << "a storage class of PhysicalStorageBuffer.";
+    }
   }
 
   return SPV_SUCCESS;
@@ -612,7 +581,7 @@ spv_result_t ValidateTypeCooperativeMatrixNV(ValidationState_t& _,
   if (!cols || !_.IsIntScalarType(cols->type_id()) ||
       !spvOpcodeIsConstant(cols->opcode())) {
     return _.diag(SPV_ERROR_INVALID_ID, inst)
-           << "OpTypeCooperativeMatrixNV Cols <id> '" << _.getIdName(rows_id)
+           << "OpTypeCooperativeMatrixNV Cols <id> '" << _.getIdName(cols_id)
            << "' is not a constant instruction with scalar integer type.";
   }
 

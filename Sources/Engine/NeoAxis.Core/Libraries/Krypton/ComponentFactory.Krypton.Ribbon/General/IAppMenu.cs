@@ -1,4 +1,5 @@
-﻿//using System;
+#if !DEPLOY
+//using System;
 //using System.Collections.Generic;
 //using System.Drawing;
 //using System.Linq;
@@ -34,3 +35,5 @@
 //		void Show(Rectangle screenRect);
 //	}
 //}
+
+#endif

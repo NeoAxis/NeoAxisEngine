@@ -143,7 +143,7 @@ namespace Internal.Assimp
         }
 
         /// <summary>
-        /// Gets the shading mode. Default value is <see cref="Internal.Assimp.ShadingMode.None"/>, meaning it is not defined.
+        /// Gets the shading mode. Default value is <see cref="Assimp.ShadingMode.None"/>, meaning it is not defined.
         /// </summary>
         public ShadingMode ShadingMode
         {
@@ -223,7 +223,7 @@ namespace Internal.Assimp
         }
 
         /// <summary>
-        /// Gets the blending mode. Default value is <see cref="Internal.Assimp.BlendMode.Default"/>.
+        /// Gets the blending mode. Default value is <see cref="Assimp.BlendMode.Default"/>.
         /// </summary>
         public BlendMode BlendMode
         {

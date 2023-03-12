@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,7 +25,7 @@ namespace NeoAxis
 			case WatcherChangeTypes.Renamed:
 			case WatcherChangeTypes.Changed:
 				{
-					var virtualPath = VirtualPathUtility.GetVirtualPathByReal( args.FullPath );
+					var virtualPath = VirtualPathUtility.GetVirtualPathByReal( args.FullPath, true );
 					if( !string.IsNullOrEmpty( virtualPath ) )
 						ResourceManager.TryReloadResource( virtualPath );
 				}
@@ -34,7 +34,7 @@ namespace NeoAxis
 			case WatcherChangeTypes.Deleted:
 				{
 					//set FileWasDeleted flag
-					var virtualPath = VirtualPathUtility.GetVirtualPathByReal( args.FullPath );
+					var virtualPath = VirtualPathUtility.GetVirtualPathByReal( args.FullPath, true );
 					if( !string.IsNullOrEmpty( virtualPath ) )
 					{
 						var resource = ResourceManager.GetByName( virtualPath );

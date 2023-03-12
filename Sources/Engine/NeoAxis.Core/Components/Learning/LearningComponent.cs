@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -7,7 +7,9 @@ using NeoAxis.Editor;
 namespace NeoAxis
 {
 	[ResourceFileExtension( "learning" )]
+#if !DEPLOY
 	[EditorControl( typeof( LearningEditor ) )]
+#endif
 	public class LearningComponent : Component
 	{
 		[Serialize]

@@ -1,18 +1,32 @@
-// Made with NeoAxis Engine 2021.4.
+// Made with NeoAxis Engine 2023.1.
 
 .component NeoAxis.Mesh
 {
-	EditorCameraTransform = "0.633439755966097 -0.521106867882944 0.416655382548743; -0.2191854566202 0.0785722056997891 0.915470996498287 0.328172208860071; 1 1 1"
+	EditorCameraTransform = "0.385572025370667 -0.317195484798314 0.253616319812278; -0.2191854566202 0.0785722056997891 0.915470996498287 0.328172208860071; 1 1 1"
 	VisibilityDistanceFactor = 6
+	EditorDisplayCollision = True
 	.component NeoAxis.MeshGeometry_Sphere
 	{
 		Name = Sphere
-		Radius = 0.075
-		SegmentsHorizontal = 24
-		SegmentsVertical = 24
+		Radius = 0.03
+		SegmentsHorizontal = 12
+		SegmentsVertical = 12
 		Material
 		{
-			GetByReference = "Base\\Materials\\Green.material"
+			GetByReference = "Content\\Weapons\\Default\\Bullet 2\\Bullet 2.material"
+		}
+	}
+	.component NeoAxis.RigidBody
+	{
+		Name = Collision Definition
+		Transform = "0 0 0; 0 0 0 1; 1 1 1"
+		MotionType = Dynamic
+		MotionQuality = LinearCast
+		MaterialRestitution = 0.5
+		.component NeoAxis.CollisionShape_Sphere
+		{
+			Name = Shape
+			Radius = 0.03
 		}
 	}
 }

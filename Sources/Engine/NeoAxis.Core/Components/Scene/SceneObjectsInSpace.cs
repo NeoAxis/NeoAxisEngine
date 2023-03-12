@@ -1,6 +1,8 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -64,7 +66,8 @@ namespace NeoAxis
 			public struct ResultItem
 			{
 				public ObjectInSpace Object;
-				public Vector3? Position;
+				//ray specific
+				public Vector3 Position;
 				public double DistanceScale;
 			}
 
@@ -144,6 +147,7 @@ namespace NeoAxis
 				this.Ray = ray;
 			}
 
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			bool BoundsPlanesIntersects( ref Bounds bounds, Plane[] planes )
 			{
 				bounds.GetCenter( out var boundsCenter );
@@ -154,6 +158,7 @@ namespace NeoAxis
 				return true;
 			}
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			public bool Intersects( ref Bounds bounds )
 			{
 				if( Bounds != null && Planes != null )
@@ -236,18 +241,30 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		internal void ObjectsInSpace_ObjectUpdate( ObjectInSpace obj )
+		[Flags]
+		public enum SceneObjectFlags
+		{
+			Logic = 1,
+			Visual = 2,
+			Occluder = 4,
+
+			Custom1 = 8,
+			Custom2 = 16,
+			Custom3 = 32,
+			Custom4 = 64,
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		internal void ObjectsInSpace_ObjectUpdateBounds( ObjectInSpace obj )
 		{
 			if( octree != null )
 			{
-				uint groupMask = 0x1;
-				if( obj.PerformOcclusionCullingDataContains() )
-					groupMask |= 0x2;
+				var bounds = obj.SpaceBoundsOctreeOverride.HasValue ? obj.SpaceBoundsOctreeOverride.Value : obj.SpaceBounds.boundingBox;
 
 				if( obj.sceneOctreeIndex == -1 )
 				{
 					//add object to the scene graph
-					obj.sceneOctreeIndex = octree.AddObject( obj.SpaceBounds.CalculatedBoundingBox, groupMask );// obj.sceneOctreeGroup );
+					obj.sceneOctreeIndex = octree.AddObject( ref bounds, (uint)obj.PerformGetSceneObjectFlags() );
 
 					//add to sceneGraphObjects
 					while( octreeObjects.Count <= obj.sceneOctreeIndex )
@@ -257,11 +274,67 @@ namespace NeoAxis
 				else
 				{
 					//update
-					octree.UpdateObject( obj.sceneOctreeIndex, obj.SpaceBounds.CalculatedBoundingBox, groupMask );// obj.sceneOctreeGroup );
+					octree.UpdateObjectBounds( obj.sceneOctreeIndex, ref bounds );
 				}
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		internal void ObjectsInSpace_ObjectUpdateGroupMask( ObjectInSpace obj )
+		{
+			if( octree != null )
+			{
+				if( obj.sceneOctreeIndex == -1 )
+				{
+					var bounds = obj.SpaceBoundsOctreeOverride.HasValue ? obj.SpaceBoundsOctreeOverride.Value : obj.SpaceBounds.boundingBox;
+
+					//add object to the scene graph
+					obj.sceneOctreeIndex = octree.AddObject( ref bounds, (uint)obj.PerformGetSceneObjectFlags() );
+
+					//add to sceneGraphObjects
+					while( octreeObjects.Count <= obj.sceneOctreeIndex )
+						octreeObjects.Add( null );
+					octreeObjects[ obj.sceneOctreeIndex ] = obj;
+				}
+				else
+				{
+					//update
+					octree.UpdateObjectGroupMask( obj.sceneOctreeIndex, (uint)obj.PerformGetSceneObjectFlags() );
+				}
+			}
+		}
+
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//internal void ObjectsInSpace_ObjectUpdate( ObjectInSpace obj )
+		//{
+		//	if( octree != null )
+		//	{
+		//		var groupMask = (uint)obj.PerformGetSceneObjectFlags();
+		//		//uint groupMask = 0x1;
+		//		//if( obj.PerformOcclusionCullingDataContains() )
+		//		//	groupMask |= 0x2;
+
+		//		var bounds = obj.SpaceBoundsOctreeOverride.HasValue ? obj.SpaceBoundsOctreeOverride.Value : obj.SpaceBounds.CalculatedBoundingBox;
+
+		//		if( obj.sceneOctreeIndex == -1 )
+		//		{
+		//			//add object to the scene graph
+		//			obj.sceneOctreeIndex = octree.AddObject( ref bounds, groupMask );// obj.sceneOctreeGroup );
+
+		//			//add to sceneGraphObjects
+		//			while( octreeObjects.Count <= obj.sceneOctreeIndex )
+		//				octreeObjects.Add( null );
+		//			octreeObjects[ obj.sceneOctreeIndex ] = obj;
+		//		}
+		//		else
+		//		{
+		//			//update
+		//			octree.UpdateObject( obj.sceneOctreeIndex, ref bounds, groupMask );// obj.sceneOctreeGroup );
+		//		}
+		//	}
+		//}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		internal void ObjectsInSpace_ObjectRemove( ObjectInSpace obj )
 		{
 			if( octree != null && obj.sceneOctreeIndex != -1 )
@@ -285,11 +358,14 @@ namespace NeoAxis
 			settings.MinNodeSize = OctreeMinNodeSize;
 			settings.ObjectCountThresholdToCreateChildNodes = OctreeObjectCountToCreateChildNodes;
 			settings.MaxNodeCount = OctreeMaxNodeCount;
+			settings.ThreadingMode = OctreeThreadingMode;
 			octree = new OctreeContainer( settings );
 
 			//update objects
 			foreach( var obj in GetComponents<ObjectInSpace>( false, true, true ) )
-				ObjectsInSpace_ObjectUpdate( obj );
+				ObjectsInSpace_ObjectUpdateBounds( obj );
+
+			octree?.SetEngineTimeToGetStatistics( EngineApp.EngineTime );
 		}
 
 		void ObjectsInSpace_DestroyOctree()
@@ -324,20 +400,16 @@ namespace NeoAxis
 						ObjectsInSpace_DestroyOctree();
 						ObjectsInSpace_CreateOctree();
 					}
-					else
-					{
-						octree.UpdateSettings(
-							OctreeObjectCountOutsideOctreeToRebuld,
-							OctreeBoundsRebuildExpand,
-							OctreeMinNodeSize,
-							OctreeObjectCountToCreateChildNodes,
-							OctreeMaxNodeCount,
-							false );
-					}
+					//else
+					//{
+					//	octree.UpdateSettings( OctreeObjectCountOutsideOctreeToRebuld, OctreeBoundsRebuildExpand, OctreeMinNodeSize, OctreeObjectCountToCreateChildNodes, OctreeMaxNodeCount, OctreeThreadingMode );//, false );
+					//}
 				}
 			}
 			else
 				ObjectsInSpace_DestroyOctree();
+
+			octree?.SetEngineTimeToGetStatistics( EngineApp.EngineTime );
 		}
 
 		public delegate void GetObjectsInSpaceOverrideDelegate( Scene scene, IList<GetObjectsInSpaceItem> items, ref bool handled );
@@ -410,7 +482,7 @@ namespace NeoAxis
 					}
 
 					if( length != current )
-						Log.Fatal( "Scene: GetObjectsInSpace_FromOctree_GetResult: length != current." );
+						Log.Fatal( "Scene: GetObjectsInSpace_FromOctree_GetResult: Internal error. length != current." );
 
 					return result;
 				}
@@ -646,6 +718,7 @@ namespace NeoAxis
 				//Ray: sort
 				if( item.Ray != null && item.CastType == GetObjectsInSpaceItem.CastTypeEnum.All )
 				{
+					//!!!!slowly?
 					CollectionUtility.MergeSort( resultArray, delegate ( GetObjectsInSpaceItem.ResultItem v1, GetObjectsInSpaceItem.ResultItem v2 )
 					{
 						if( v1.DistanceScale < v2.DistanceScale )
@@ -689,7 +762,7 @@ namespace NeoAxis
 
 					//!!!!что с bounding sphere?
 
-					var bounds = obj.SpaceBounds.CalculatedBoundingBox;
+					var bounds = obj.SpaceBounds.boundingBox;
 
 					//!!!!если уже внутри бокса, то вроде как не надо (не выделять в редакторе)
 
@@ -815,6 +888,7 @@ namespace NeoAxis
 				//Ray: sort
 				if( item.Ray != null && item.CastType == GetObjectsInSpaceItem.CastTypeEnum.All )
 				{
+					//!!!!slowly?
 					CollectionUtility.MergeSort( resultArray, delegate ( GetObjectsInSpaceItem.ResultItem v1, GetObjectsInSpaceItem.ResultItem v2 )
 					{
 						if( v1.DistanceScale < v2.DistanceScale )
@@ -826,6 +900,23 @@ namespace NeoAxis
 				}
 
 				item.Result = resultArray;
+			}
+		}
+
+		public bool GetOctreeStatistics( out int objectCount, out Bounds octreeBounds, out int octreeNodeCount, out double timeSinceLastFullRebuild )
+		{
+			if( octree != null )
+			{
+				octree.GetStatistics( out objectCount, out octreeBounds, out octreeNodeCount, out timeSinceLastFullRebuild );
+				return true;
+			}
+			else
+			{
+				objectCount = 0;
+				octreeBounds = Bounds.Zero;
+				octreeNodeCount = 0;
+				timeSinceLastFullRebuild = 0;
+				return false;
 			}
 		}
 	}

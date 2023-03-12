@@ -1,9 +1,10 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using NeoAxis.Editor;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -26,6 +27,7 @@ namespace NeoAxis
 			new Vector2( double.MaxValue, double.MaxValue ),
 			new Vector2( double.MinValue, double.MinValue ) );
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Rectangle( Rectangle source )
 		{
 			Left = source.Left;
@@ -34,6 +36,7 @@ namespace NeoAxis
 			Bottom = source.Bottom;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Rectangle( double left, double top, double right, double bottom )
 		{
 			this.Left = left;
@@ -42,6 +45,7 @@ namespace NeoAxis
 			this.Bottom = bottom;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Rectangle( Vector2 leftTop, Vector2 rightBottom )
 		{
 			this.Left = leftTop.X;
@@ -50,6 +54,7 @@ namespace NeoAxis
 			this.Bottom = rightBottom.Y;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Rectangle( RectangleF source )
 		{
 			Left = source.Left;
@@ -58,6 +63,7 @@ namespace NeoAxis
 			Bottom = source.Bottom;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Rectangle( RectangleI source )
 		{
 			Left = source.Left;
@@ -66,6 +72,7 @@ namespace NeoAxis
 			Bottom = source.Bottom;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Rectangle( Vector2 v )
 		{
 			Left = v.X;
@@ -115,16 +122,19 @@ namespace NeoAxis
 			return string.Format( format, Left, Top, Right, Bottom );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is Rectangle && this == (Rectangle)obj );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return ( Left.GetHashCode() ^ Top.GetHashCode() ^ Right.GetHashCode() ^ Bottom.GetHashCode() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Rectangle operator +( Rectangle r, Vector2 v )
 		{
 			Rectangle result;
@@ -135,6 +145,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Rectangle operator +( Vector2 v, Rectangle r )
 		{
 			Rectangle result;
@@ -145,6 +156,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Rectangle operator -( Rectangle r, Vector2 v )
 		{
 			Rectangle result;
@@ -155,6 +167,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Rectangle operator -( Vector2 v, Rectangle r )
 		{
 			Rectangle result;
@@ -165,6 +178,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Rectangle operator *( Rectangle r, Vector2 v )
 		{
 			Rectangle result;
@@ -175,6 +189,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Rectangle operator *( Vector2 v, Rectangle r )
 		{
 			Rectangle result;
@@ -185,6 +200,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Rectangle operator /( Rectangle r, Vector2 v )
 		{
 			Rectangle result;
@@ -251,6 +267,7 @@ namespace NeoAxis
 		//	result.bottom = v.Y + r.bottom;
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Add( ref Rectangle r, ref Vector2 v, out Rectangle result )
 		{
 			result.Left = r.Left + v.X;
@@ -259,6 +276,7 @@ namespace NeoAxis
 			result.Bottom = r.Bottom + v.Y;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Add( ref Vector2 v, ref Rectangle r, out Rectangle result )
 		{
 			result.Left = v.X + r.Left;
@@ -283,6 +301,7 @@ namespace NeoAxis
 		//	result.bottom = v.Y - r.bottom;
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Subtract( ref Rectangle r, ref Vector2 v, out Rectangle result )
 		{
 			result.Left = r.Left - v.X;
@@ -291,6 +310,7 @@ namespace NeoAxis
 			result.Bottom = r.Bottom - v.Y;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Subtract( ref Vector2 v, ref Rectangle r, out Rectangle result )
 		{
 			result.Left = v.X - r.Left;
@@ -315,6 +335,7 @@ namespace NeoAxis
 		//	result.bottom = v.Y * r.bottom;
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Multiply( ref Rectangle r, ref Vector2 v, out Rectangle result )
 		{
 			result.Left = r.Left * v.X;
@@ -323,6 +344,7 @@ namespace NeoAxis
 			result.Bottom = r.Bottom * v.Y;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Multiply( ref Vector2 v, ref Rectangle r, out Rectangle result )
 		{
 			result.Left = v.X * r.Left;
@@ -339,6 +361,7 @@ namespace NeoAxis
 		//	result.bottom = r.bottom / v.Y;
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Divide( ref Rectangle r, ref Vector2 v, out Rectangle result )
 		{
 			result.Left = r.Left / v.X;
@@ -347,11 +370,13 @@ namespace NeoAxis
 			result.Bottom = r.Bottom / v.Y;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( Rectangle v1, Rectangle v2 )
 		{
 			return ( v1.Left == v2.Left && v1.Top == v2.Top && v1.Right == v2.Right && v1.Bottom == v2.Bottom );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( Rectangle v1, Rectangle v2 )
 		{
 			return ( v1.Left != v2.Left || v1.Top != v2.Top || v1.Right != v2.Right || v1.Bottom != v2.Bottom );
@@ -359,26 +384,29 @@ namespace NeoAxis
 
 		public unsafe double this[ int index ]
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				if( index < 0 || index > 3 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( double* v = &this.Left )
+				fixed( double* v = &this.Left )
 				{
 					return v[ index ];
 				}
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set
 			{
 				if( index < 0 || index > 3 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( double* v = &this.Left )
+				fixed( double* v = &this.Left )
 				{
 					v[ index ] = value;
 				}
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( Rectangle v, double epsilon )
 		{
 			if( Math.Abs( Left - v.Left ) > epsilon )
@@ -395,6 +423,7 @@ namespace NeoAxis
 		[Browsable( false )]
 		public Vector2 Size
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				Vector2 result;
@@ -404,6 +433,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector2 GetSize()
 		{
 			Vector2 result;
@@ -412,6 +442,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void GetSize( out Vector2 result )
 		{
 			result.X = Right - Left;
@@ -421,6 +452,7 @@ namespace NeoAxis
 		[Browsable( false )]
 		public Vector2 LeftTop
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				Vector2 result;
@@ -428,12 +460,14 @@ namespace NeoAxis
 				result.Y = Top;
 				return result;
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set { Left = value.X; Top = value.Y; }
 		}
 
 		[Browsable( false )]
 		public Vector2 RightTop
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				Vector2 result;
@@ -441,12 +475,14 @@ namespace NeoAxis
 				result.Y = Top;
 				return result;
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set { Right = value.X; Top = value.Y; }
 		}
 
 		[Browsable( false )]
 		public Vector2 LeftBottom
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				Vector2 result;
@@ -454,12 +490,14 @@ namespace NeoAxis
 				result.Y = Bottom;
 				return result;
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set { Left = value.X; Bottom = value.Y; }
 		}
 
 		[Browsable( false )]
 		public Vector2 RightBottom
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				Vector2 result;
@@ -467,12 +505,14 @@ namespace NeoAxis
 				result.Y = Bottom;
 				return result;
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set { Right = value.X; Bottom = value.Y; }
 		}
 
 		[Browsable( false )]
 		public Vector2 Minimum
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				Vector2 result;
@@ -480,12 +520,14 @@ namespace NeoAxis
 				result.Y = Top;
 				return result;
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set { Left = value.X; Top = value.Y; }
 		}
 
 		[Browsable( false )]
 		public Vector2 Maximum
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				Vector2 result;
@@ -493,14 +535,17 @@ namespace NeoAxis
 				result.Y = Bottom;
 				return result;
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set { Right = value.X; Bottom = value.Y; }
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool IsInvalid()
 		{
 			return Right < Left || Bottom < Top;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( Vector2 p )
 		{
 			if( p.X < Left || p.Y < Top || p.X > Right || p.Y > Bottom )
@@ -508,6 +553,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( ref Vector2 p )
 		{
 			if( p.X < Left || p.Y < Top || p.X > Right || p.Y > Bottom )
@@ -515,6 +561,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( Rectangle v )
 		{
 			if( v.Left < Left || v.Top < Top || v.Right > Right || v.Bottom > Bottom )
@@ -522,6 +569,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( ref Rectangle v )
 		{
 			if( v.Left < Left || v.Top < Top || v.Right > Right || v.Bottom > Bottom )
@@ -529,6 +577,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( Rectangle v )
 		{
 			if( v.Right < Left || v.Bottom < Top || v.Left > Right || v.Top > Bottom )
@@ -536,6 +585,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( ref Rectangle v )
 		{
 			if( v.Right < Left || v.Bottom < Top || v.Left > Right || v.Top > Bottom )
@@ -543,6 +593,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Add( Vector2 v )
 		{
 			if( v.X < Left )
@@ -555,6 +606,20 @@ namespace NeoAxis
 				Bottom = v.Y;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void Add( ref Vector2 v )
+		{
+			if( v.X < Left )
+				Left = v.X;
+			if( v.X > Right )
+				Right = v.X;
+			if( v.Y < Top )
+				Top = v.Y;
+			if( v.Y > Bottom )
+				Bottom = v.Y;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Add( Rectangle a )
 		{
 			if( a.Left < Left )
@@ -567,6 +632,7 @@ namespace NeoAxis
 				Bottom = a.Bottom;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Expand( double d )
 		{
 			Left -= d;
@@ -575,6 +641,7 @@ namespace NeoAxis
 			Bottom += d;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Expand( Vector2 d )
 		{
 			Left -= d.X;
@@ -583,11 +650,13 @@ namespace NeoAxis
 			Bottom += d.Y;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool IsCleared()
 		{
 			return Left > Right;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Rectangle Intersection( Rectangle v )
 		{
 			Rectangle result;
@@ -598,6 +667,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Intersection( ref Rectangle v, out Rectangle result )
 		{
 			result.Left = ( v.Left > Left ) ? v.Left : Left;
@@ -606,6 +676,7 @@ namespace NeoAxis
 			result.Bottom = ( v.Bottom < Bottom ) ? v.Bottom : Bottom;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector2 GetCenter()
 		{
 			Vector2 result;
@@ -614,12 +685,14 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void GetCenter( out Vector2 result )
 		{
 			result.X = ( Left + Right ) * .5;
 			result.Y = ( Top + Bottom ) * .5;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public RectangleF ToRectangleF()
 		{
@@ -631,6 +704,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public RectangleI ToRectangleI()
 		{
@@ -642,7 +716,8 @@ namespace NeoAxis
 			return result;
 		}
 
-		public double GetPointDistanceSquared( Vector2 point )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public double GetPointDistanceSquared( ref Vector2 point )
 		{
 			double x;
 			if( point.X < Left )
@@ -664,6 +739,13 @@ namespace NeoAxis
 			return sqr;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public double GetPointDistanceSquared( Vector2 point )
+		{
+			return GetPointDistanceSquared( ref point );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public double GetPointDistance( Vector2 point )
 		{
 			double sqr = GetPointDistanceSquared( point );
@@ -671,5 +753,84 @@ namespace NeoAxis
 				return 0;
 			return Math.Sqrt( sqr );
 		}
+
+		//!!!!check
+
+		//[MethodImpl( (MethodImplOptions)512 )]
+		//public bool Intersects( ref Triangle2 triangle )
+		//{
+		//	//https://github.com/juj/MathGeoLib/blob/master/src/Geometry/Triangle.cpp#L697
+
+		//	var a = triangle.A;
+		//	var b = triangle.B;
+		//	var c = triangle.C;
+
+		//	var triangleBounds = new Rectangle( a );
+		//	triangleBounds.Add( ref b );
+		//	triangleBounds.Add( ref c );
+		//	var tMin = triangleBounds.Minimum;
+		//	var tMax = triangleBounds.Maximum;
+		//	//var tMin = a.Min( b.Min( c ) );
+		//	//var tMax = a.Max( b.Max( c ) );
+
+		//	if( tMin.X >= Maximum.X || tMax.X <= Minimum.X || tMin.Y >= Maximum.Y || tMax.Y <= Minimum.Y )
+		//		return false;
+
+		//	var center = ( Minimum + Maximum ) * 0.5f;
+		//	var h = Maximum - center;
+
+		//	var t0 = b - a;
+		//	var t1 = c - a;
+		//	var t2 = c - b;
+
+		//	var ac = a - center;
+
+		//	var n = Vector2.Cross( t0, t1 );
+		//	var s = n.Dot( ac );
+		//	var r = Math.Abs( h.Dot( Vector2.Abs( n ) ) );
+		//	if( Math.Abs( s ) >= r )
+		//		return false;
+
+		//	var at0 = Vector2.Abs( t0 );
+		//	var at1 = Vector2.Abs( t1 );
+		//	var at2 = Vector2.Abs( t2 );
+
+		//	var bc = b - center;
+		//	var cc = c - center;
+
+		//	// eZ <cross> t[0]
+		//	var d1 = t0.X * ac.Y - t0.Y * ac.X;
+		//	var d2 = t0.X * cc.Y - t0.Y * cc.X;
+		//	var tc = ( d1 + d2 ) * 0.5f;
+		//	r = Math.Abs( h.Y * at0.X + h.X * at0.Y );
+		//	if( r + Math.Abs( tc - d1 ) < Math.Abs( tc ) )
+		//		return false;
+
+		//	// eZ <cross> t[1]
+		//	d1 = t1.X * ac.Y - t1.Y * ac.X;
+		//	d2 = t1.X * bc.Y - t1.Y * bc.X;
+		//	tc = ( d1 + d2 ) * 0.5f;
+		//	r = Math.Abs( h.Y * at1.X + h.X * at1.Y );
+		//	if( r + Math.Abs( tc - d1 ) < Math.Abs( tc ) )
+		//		return false;
+
+		//	// eZ <cross> t[2]
+		//	d1 = t2.X * ac.Y - t2.Y * ac.X;
+		//	d2 = t2.X * bc.Y - t2.Y * bc.X;
+		//	tc = ( d1 + d2 ) * 0.5f;
+		//	r = Math.Abs( h.Y * at2.X + h.X * at2.Y );
+		//	if( r + Math.Abs( tc - d1 ) < Math.Abs( tc ) )
+		//		return false;
+
+		//	// No separating axis exists, the AABB and triangle intersect.
+		//	return true;
+		//}
+
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public bool Intersects( Triangle2 triangle )
+		//{
+		//	return Intersects( ref triangle );
+		//}
+
 	}
 }

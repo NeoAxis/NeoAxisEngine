@@ -1,0 +1,146 @@
+// Made with NeoAxis Engine 2021.3.
+
+.component "Base\\Material templates\\Vegetation.material"
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1162, 842\"><KW V=\"1\" A=\"7B675E609B1D4D26D8BCBC44B3F733A0\"><CGD /><WS UN=\"5796F2C631EF4C34B280C938AEF63344\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"5D821A984FF246E41E84E7402C03B0F0\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"7B675E609B1D4D26D8BCBC44B3F733A0\"><KP UN=\"18FA7E56BD2F4281B09BE7C44F98EE7C\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"7B675E609B1D4D26D8BCBC44B3F733A0\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	BlendMode = Masked
+	TwoSided = True
+	ShadingModel = Subsurface
+	BaseColor
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample BaseColor\\$Shader Texture Sample\\RGBA"
+	}
+	Roughness
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample Roughness\\$Shader Texture Sample\\R"
+	}
+	Normal
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample Normal\\$Shader Texture Sample\\RGBA"
+	}
+	AmbientOcclusion
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample AmbientOcclusion\\$Shader Texture Sample\\R"
+	}
+	Opacity
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample Opacity\\$Shader Texture Sample\\R"
+	}
+	SubsurfaceColor
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample BaseColor\\$Shader Texture Sample\\RGBA"
+	}
+	.component NeoAxis.FlowGraph
+	{
+		Name = Shader graph
+		EditorScrollPosition = 0 0
+		Specialization
+		{
+			GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = "Node "
+			Position = 10 -7
+			ControlledObject
+			{
+				GetByReference = "this:..\\.."
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample BaseColor
+			Position = -20 -22
+			ControlledObject
+			{
+				GetByReference = "this:$Shader Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Shader Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\MargueriteFlower01_2K_BaseColor.jpg"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample Roughness
+			Position = -20 -13
+			ControlledObject
+			{
+				GetByReference = "this:$Shader Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Shader Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\MargueriteFlower01_2K_Roughness.jpg"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample Normal
+			Position = -20 -4
+			ControlledObject
+			{
+				GetByReference = "this:$Shader Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Shader Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\MargueriteFlower01_2K_Normal.png"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample AmbientOcclusion
+			Position = -20 5
+			ControlledObject
+			{
+				GetByReference = "this:$Shader Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Shader Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\MargueriteFlower01_2K_AO.jpg"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample Opacity
+			Position = -20 14
+			ControlledObject
+			{
+				GetByReference = "this:$Shader Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Shader Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\MargueriteFlower01_2K_Opacity.png"
+				}
+			}
+		}
+	}
+}

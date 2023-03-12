@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using NeoAxis;
@@ -7,22 +7,40 @@ namespace Project
 {
 	public class MenuWindow : UIWindow
 	{
+		UIButton GetButtonClose() { return GetComponent<UIButton>( "Button Close" ); }
+		UIButton GetButtonScenes() { return GetComponent<UIButton>( "Button Scenes" ); }
+		UIButton GetButtonOptions() { return GetComponent<UIButton>( "Button Options" ); }
+		UIButton GetButtonMainMenu() { return GetComponent<UIButton>( "Button Main Menu" ); }
+		UIButton GetButtonExit() { return GetComponent<UIButton>( "Button Exit" ); }
+
+		//
+
 		protected override void OnEnabledInSimulation()
 		{
-			if( Components[ "Button Close" ] != null )
-				( (UIButton)Components[ "Button Close" ] ).Click += ButtonClose_Click;
+			var networkClientByCommandLine = false;
+			if( SystemSettings.CommandLineParameters.TryGetValue( "-client", out var isClient ) && isClient == "1" )
+				networkClientByCommandLine = true;
 
-			if( Components[ "Button Scenes" ] != null )
-				( (UIButton)Components[ "Button Scenes" ] ).Click += ButtonScenes_Click;
+			if( GetButtonClose() != null )
+				GetButtonClose().Click += ButtonClose_Click;
 
-			if( Components[ "Button Options" ] != null )
-				( (UIButton)Components[ "Button Options" ] ).Click += ButtonOptions_Click;
+			if( GetButtonScenes() != null )
+			{
+				GetButtonScenes().Click += ButtonScenes_Click;
+				GetButtonScenes().ReadOnly = networkClientByCommandLine;
+			}
 
-			if( Components[ "Button Main Menu" ] != null )
-				( (UIButton)Components[ "Button Main Menu" ] ).Click += ButtonMainMenu_Click;
+			if( GetButtonOptions() != null )
+				GetButtonOptions().Click += ButtonOptions_Click;
 
-			if( Components[ "Button Exit" ] != null )
-				( (UIButton)Components[ "Button Exit" ] ).Click += ButtonExit_Click;
+			if( GetButtonMainMenu() != null )
+			{
+				GetButtonMainMenu().Click += ButtonMainMenu_Click;
+				GetButtonMainMenu().ReadOnly = networkClientByCommandLine;
+			}
+
+			if( GetButtonExit() != null )
+				GetButtonExit().Click += ButtonExit_Click;
 		}
 
 		void ButtonClose_Click( UIButton sender )
@@ -54,7 +72,7 @@ namespace Project
 
 		void ButtonMainMenu_Click( UIButton sender )
 		{
-			SimulationApp.ChangeUIScreen( @"Base\UI\Screens\MainMenuScreen.ui" );
+			SimulationApp.ChangeUIScreen( @"Base\UI\Screens\MainMenuScreen.ui", true );
 		}
 
 		void ButtonExit_Click( UIButton sender )

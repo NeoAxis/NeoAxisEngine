@@ -1,6 +1,7 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -93,12 +94,14 @@ namespace NeoAxis
 		[Browsable( false )]
 		public bool ReferenceSpecified
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get { return !string.IsNullOrEmpty( getByReference ); }
 		}
 
 		[Browsable( false )]
 		public bool ReferenceOrValueSpecified
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get { return !string.IsNullOrEmpty( getByReference ) || value != null; }
 		}
 
@@ -115,23 +118,27 @@ namespace NeoAxis
 			get { return typeof( T ); }
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator Reference<T>( T value )
 		{
 			return new Reference<T>( value );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return obj is Reference<T> && Equals( (Reference<T>)obj );
 			//return ( obj is Reference<T> && this == (Reference<T>)obj );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( IReference reference )
 		{
 			return reference is Reference<T> && Equals( (Reference<T>)reference );
 			//return ( reference is Reference<T> && this == (Reference<T>)reference );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			var getByRef = GetByReference;
@@ -144,6 +151,7 @@ namespace NeoAxis
 				return getByRef.GetHashCode();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static bool IsEqual( ref T v1, ref T v2 )
 		{
 			if( v1 != null && v2 == null )
@@ -156,6 +164,7 @@ namespace NeoAxis
 		}
 
 		//!!!!new
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static bool IsEqualGetByReference( string v1, string v2 )
 		{
 			if( string.IsNullOrEmpty( v1 ) && string.IsNullOrEmpty( v2 ) )
@@ -164,6 +173,7 @@ namespace NeoAxis
 		}
 
 		//!!!!new
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( Reference<T> reference )
 		{
 			return IsEqual( ref value, ref reference.value ) && IsEqualGetByReference( GetByReference, reference.GetByReference );
@@ -206,11 +216,13 @@ namespace NeoAxis
 			//}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator T( Reference<T> r )
 		{
 			return r.Value;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Reference<T> GetValue( object owner )
 		{
 			if( !string.IsNullOrEmpty( getByReference ) )
@@ -221,6 +233,7 @@ namespace NeoAxis
 			return this;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		IReference IReference.GetValue( object owner )
 		{
 			if( !string.IsNullOrEmpty( getByReference ) )
@@ -233,6 +246,7 @@ namespace NeoAxis
 
 		//!!!!ValueTuple<object, Metadata.Property> 
 		//!!!!new. так оставить?
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void GetMember( object owner, out object outObject, out Metadata.Member outMember )
 		{
 			if( !string.IsNullOrEmpty( getByReference ) )
@@ -259,6 +273,7 @@ namespace NeoAxis
 		//		return path;
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator Reference<T>( ReferenceNoValue r )
 		{
 			return new Reference<T>( default, r.GetByReference );
@@ -299,6 +314,7 @@ namespace NeoAxis
 		//	}
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator ReferenceField<T>( T initValue )
 		{
 			var result = new ReferenceField<T>();
@@ -306,6 +322,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator ReferenceField<T>( Reference<T> initValue )
 		{
 			var result = new ReferenceField<T>();
@@ -313,6 +330,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		bool GetFastExitOptimized()
 		{
 			var component = value.Value as Component;
@@ -334,6 +352,7 @@ namespace NeoAxis
 			return false;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool BeginGet()
 		{
 			if( !value.ReferenceSpecified )
@@ -346,6 +365,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		internal bool BeginGet_WithoutFastExitOptimization()
 		{
 			if( !value.ReferenceSpecified )
@@ -358,6 +378,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Reference<T> Get( object owner )
 		{
 			//не может быть исключения наружу.
@@ -379,6 +400,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool BeginSet( ref Reference<T> newValue )
 		{
 			if( value.Equals( newValue ) )
@@ -397,6 +419,7 @@ namespace NeoAxis
 			//return setLock.Enter();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void EndSet()
 		{
 			setLock = false;
@@ -427,19 +450,23 @@ namespace NeoAxis
 
 		public bool ReferenceSpecified
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get { return !string.IsNullOrEmpty( getByReference ); }
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is ReferenceNoValue && this == (ReferenceNoValue)obj );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( ReferenceNoValue reference )
 		{
 			return this == reference;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			var getByRef = GetByReference;
@@ -448,16 +475,19 @@ namespace NeoAxis
 			return getByRef.GetHashCode();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( ReferenceNoValue v1, ReferenceNoValue v2 )
 		{
 			return v1.GetByReference == v2.GetByReference;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( ReferenceNoValue v1, ReferenceNoValue v2 )
 		{
 			return v1.GetByReference != v2.GetByReference;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public override string ToString()
 		{
 			if( getByReference != null )

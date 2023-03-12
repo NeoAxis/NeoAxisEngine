@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -34,7 +34,6 @@ namespace NeoAxis
 		/// What kind of data is used as a source of events.
 		/// </summary>
 		[DefaultValue( SourceDataEnum.ObjectsInSpace )]
-		[Serialize]
 		public Reference<SourceDataEnum> SourceData
 		{
 			get { if( _sourceData.BeginGet() ) SourceData = _sourceData.Get( this ); return _sourceData.value; }
@@ -57,7 +56,6 @@ namespace NeoAxis
 		/// The shape of the trigger.
 		/// </summary>
 		[DefaultValue( ShapeEnum.Box )]
-		[Serialize]
 		public Reference<ShapeEnum> Shape
 		{
 			get { if( _shape.BeginGet() ) Shape = _shape.Get( this ); return _shape.value; }
@@ -70,7 +68,6 @@ namespace NeoAxis
 		/// <summary>
 		/// The target by which the sensor ray will trigger.
 		/// </summary>
-		[Serialize]
 		[DefaultValue( null )]
 		public Reference<ObjectInSpace> RayTarget
 		{
@@ -82,18 +79,17 @@ namespace NeoAxis
 		ReferenceField<ObjectInSpace> _rayTarget;
 
 		/// <summary>
-		/// The end point of the sensor in Convex Sweep mode.
+		/// The end point of the sensor in volume mode.
 		/// </summary>
 		[DefaultValue( null )]
-		[Serialize]
-		public Reference<ObjectInSpace> ConvexSweepTarget
+		public Reference<ObjectInSpace> Target
 		{
-			get { if( _convexSweepTarget.BeginGet() ) ConvexSweepTarget = _convexSweepTarget.Get( this ); return _convexSweepTarget.value; }
-			set { if( _convexSweepTarget.BeginSet( ref value ) ) { try { ConvexSweepTargetChanged?.Invoke( this ); } finally { _convexSweepTarget.EndSet(); } } }
+			get { if( _target.BeginGet() ) Target = _target.Get( this ); return _target.value; }
+			set { if( _target.BeginSet( ref value ) ) { try { TargetChanged?.Invoke( this ); } finally { _target.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="ConvexSweepTarget"/> property value changes.</summary>
-		public event Action<Sensor> ConvexSweepTargetChanged;
-		ReferenceField<ObjectInSpace> _convexSweepTarget;
+		/// <summary>Occurs when the <see cref="Target"/> property value changes.</summary>
+		public event Action<Sensor> TargetChanged;
+		ReferenceField<ObjectInSpace> _target;
 
 		public enum ModeEnum
 		{
@@ -105,7 +101,6 @@ namespace NeoAxis
 		/// The recognition mode of the sensor.
 		/// </summary>
 		[DefaultValue( ModeEnum.AllObjects )]
-		[Serialize]
 		public Reference<ModeEnum> Mode
 		{
 			get { if( _mode.BeginGet() ) Mode = _mode.Get( this ); return _mode.value; }
@@ -119,7 +114,6 @@ namespace NeoAxis
 		/// <summary>
 		/// The type of objects that sensor will recognize.
 		/// </summary>
-		[Serialize]
 		[DefaultValue( null )]
 		public Reference<Metadata.TypeInfo> FilterByType
 		{
@@ -134,7 +128,6 @@ namespace NeoAxis
 		/// The group of physical objects that sensor will recognize.
 		/// </summary>
 		[DefaultValue( 1 )]
-		[Serialize]
 		public Reference<int> PhysicsFilterGroup
 		{
 			get { if( _physicsFilterGroup.BeginGet() ) PhysicsFilterGroup = _physicsFilterGroup.Get( this ); return _physicsFilterGroup.value; }
@@ -148,7 +141,6 @@ namespace NeoAxis
 		/// The mask of physical objects that sensor will recognize.
 		/// </summary>
 		[DefaultValue( -1 )]
-		[Serialize]
 		public Reference<int> PhysicsFilterMask
 		{
 			get { if( _physicsFilterMask.BeginGet() ) PhysicsFilterMask = _physicsFilterMask.Get( this ); return _physicsFilterMask.value; }
@@ -162,7 +154,6 @@ namespace NeoAxis
 		/// Whether the sensor is ignoring other sensors.
 		/// </summary>
 		[DefaultValue( true )]
-		[Serialize]
 		public Reference<bool> IgnoreSensors
 		{
 			get { if( _ignoreSensors.BeginGet() ) IgnoreSensors = _ignoreSensors.Get( this ); return _ignoreSensors.value; }
@@ -185,7 +176,6 @@ namespace NeoAxis
 		/// The update case mode of the sensor.
 		/// </summary>
 		[DefaultValue( /*WhenUpdateEnum.SimulationStep |*/ WhenUpdateEnum.Update )]
-		[Serialize]
 		public Reference<WhenUpdateEnum> WhenUpdate
 		{
 			get { if( _whenUpdate.BeginGet() ) WhenUpdate = _whenUpdate.Get( this ); return _whenUpdate.value; }
@@ -198,7 +188,6 @@ namespace NeoAxis
 		/// <summary>
 		/// The display color of the sensor.
 		/// </summary>
-		[Serialize]
 		[DefaultValue( "1 1 1" )]
 		public Reference<ColorValue> DisplayColor
 		{
@@ -213,7 +202,6 @@ namespace NeoAxis
 		/// Whether to draw gizmos on the objects recognized by the sensor.
 		/// </summary>
 		[DefaultValue( false )]
-		[Serialize]
 		public Reference<bool> DisplayObjects
 		{
 			get { if( _displayObjects.BeginGet() ) DisplayObjects = _displayObjects.Get( this ); return _displayObjects.value; }
@@ -226,7 +214,6 @@ namespace NeoAxis
 		/// <summary>
 		/// The color of the recognized object gizmos.
 		/// </summary>
-		[Serialize]
 		[DefaultValue( "1 0 0" )]
 		public Reference<ColorValue> DisplayObjectsColor
 		{
@@ -276,7 +263,7 @@ namespace NeoAxis
 						skip = true;
 					break;
 
-				case nameof( ConvexSweepTarget ):
+				case nameof( Target ):
 					if( !( Shape.Value == ShapeEnum.Box || Shape.Value == ShapeEnum.Sphere ) )
 						skip = true;
 					break;
@@ -295,9 +282,9 @@ namespace NeoAxis
 		{
 			base.OnEnabledInHierarchyChanged();
 
-			if( EnabledInHierarchyAndIsNotResource )
+			if( EnabledInHierarchyAndIsInstance )
 			{
-				if( WhenUpdate.Value.HasFlag( WhenUpdateEnum.Enable ) )
+				if( ( WhenUpdate.Value & WhenUpdateEnum.Enable ) != 0 )
 					Update();
 			}
 			else
@@ -363,9 +350,9 @@ namespace NeoAxis
 
 		protected virtual void RenderShape( RenderingContext context )
 		{
-			if( ConvexSweepTarget.ReferenceSpecified && ( Shape.Value == ShapeEnum.Box || Shape.Value == ShapeEnum.Sphere ) && context.viewport.Simple3DRenderer != null )
+			if( Target.ReferenceSpecified && ( Shape.Value == ShapeEnum.Box || Shape.Value == ShapeEnum.Sphere ) && context.viewport.Simple3DRenderer != null )
 			{
-				var target = ConvexSweepTarget.Value;
+				var target = Target.Value;
 				if( target != null )
 				{
 					if( hullVertices != null )
@@ -414,7 +401,7 @@ namespace NeoAxis
 		{
 			base.OnUpdate( delta );
 
-			if( WhenUpdate.Value.HasFlag( WhenUpdateEnum.Update ) )
+			if( ( WhenUpdate.Value & WhenUpdateEnum.Update ) != 0 )
 				Update();
 		}
 
@@ -422,7 +409,7 @@ namespace NeoAxis
 		{
 			base.OnSimulationStep();
 
-			if( WhenUpdate.Value.HasFlag( WhenUpdateEnum.SimulationStep ) )
+			if( ( WhenUpdate.Value & WhenUpdateEnum.SimulationStep ) != 0 )
 				Update();
 		}
 
@@ -437,7 +424,7 @@ namespace NeoAxis
 			{
 				var context2 = context.ObjectInSpaceRenderingContext;
 
-				bool show = ( ParentScene.GetDisplayDevelopmentDataInThisApplication() && ParentScene.DisplaySensors ) || context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this;
+				bool show = ( context.SceneDisplayDevelopmentDataInThisApplication && ParentScene.DisplaySensors ) || context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this;
 				if( show )
 				{
 					if( context2.displaySensorsCounter < context2.displaySensorsMax )
@@ -446,15 +433,15 @@ namespace NeoAxis
 
 						ColorValue color;
 						if( context2.selectedObjects.Contains( this ) )
-							color = ProjectSettings.Get.General.SelectedColor;
+							color = ProjectSettings.Get.Colors.SelectedColor;
 						else if( context2.canSelectObjects.Contains( this ) )
-							color = ProjectSettings.Get.General.CanSelectColor;
+							color = ProjectSettings.Get.Colors.CanSelectColor;
 						else
 							color = DisplayColor.Value;
 
 						if( color.Alpha != 0 )
 						{
-							context.Owner.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+							context.Owner.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 							RenderShape( context2 );
 						}
 					}
@@ -464,7 +451,7 @@ namespace NeoAxis
 						var color = DisplayObjectsColor.Value;
 						if( color.Alpha != 0 )
 						{
-							context.Owner.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+							context.Owner.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 							//foreach( var refObject in Objects )
 							//{
 							//	var obj = refObject.Value;
@@ -482,58 +469,87 @@ namespace NeoAxis
 
 		void RenderItem( Simple3DRenderer renderer, ResultItem item )
 		{
-			if( item.Object != null && item.Object.EnabledInHierarchy )
+			//position
+			//!!!!radius
+			if( item.Position.HasValue )
+				renderer.AddSphere( new Sphere( item.Position.Value, 0.05 ), 8 );
+
+			////!!!!length
+			//if( item.RayTestResult != null )
+			//	renderer.AddArrow( item.RayTestResult.Position, item.RayTestResult.Position + item.RayTestResult.Normal );
+
+			//bounds
+			if( item.SceneObject != null )
+				renderer.AddBounds( item.SceneObject.SpaceBounds.BoundingBox );
+			else if( item.PhysicalBody != null )
 			{
-				renderer.AddBounds( item.Object.SpaceBounds.CalculatedBoundingBox );
-
-				//!!!!
-				//!!!!radius
-				if( item.Position.HasValue )
-					renderer.AddSphere( new Sphere( item.Position.Value, 0.05 ), 8 );
-
-				//getting triangle to draw
-				var triIdx = item.RayTestResult?.TriangleIndexProcessed ?? -1;
-				//var tIdx = item.RayTestResult?.TriangleIndexSource ?? -1;
-
-				if( triIdx >= 0 )
-				{
-					if( item.RayTestResult?.Shape is CollisionShape_Mesh csMesh )
-					{
-						var t = item.Object.Transform.Value.ToMatrix4();
-						var local = csMesh.TransformRelativeToParent.Value;
-						if( !local.IsIdentity )
-							t *= local.ToMatrix4();
-
-						if( csMesh.GetTriangleProcessedData( triIdx, true, out var triangle ) )
-						{
-							var v1 = triangle.A;
-							var v2 = triangle.B;
-							var v3 = triangle.C;
-
-							var thickness = Math.Max( ( v1 - v2 ).Length(), Math.Max( ( v2 - v3 ).Length(), ( v3 - v1 ).Length() ) ) * 0.02;
-							renderer.AddLine( v1, v2, thickness );
-							renderer.AddLine( v2, v3, thickness );
-							renderer.AddLine( v3, v1, thickness );
-						}
-					}
-					else if( item.RayTestResult?.Body is SoftBody softBody )
-					{
-						var t = item.Object.Transform.Value.ToMatrix4();
-
-						if( softBody.GetTriangleSimulatedData( triIdx, true, out var triangle ) )
-						{
-							var v1 = triangle.A;
-							var v2 = triangle.B;
-							var v3 = triangle.C;
-
-							var thickness = Math.Max( ( v1 - v2 ).Length(), Math.Max( ( v2 - v3 ).Length(), ( v3 - v1 ).Length() ) ) * 0.02;
-							renderer.AddLine( v1, v2, thickness );
-							renderer.AddLine( v2, v3, thickness );
-							renderer.AddLine( v3, v1, thickness );
-						}
-					}
-				}
+				item.PhysicalBody.GetBounds( out var bounds );
+				renderer.AddBounds( bounds );
 			}
+
+
+			//!!!!render all data. triange data
+
+
+
+			//if( item.Object != null && item.Object.EnabledInHierarchy )
+			//{
+			//	renderer.AddBounds( item.Object.SpaceBounds.CalculatedBoundingBox );
+
+			////!!!!radius
+			//if( item.Position.HasValue )
+			//	renderer.AddSphere( new Sphere( item.Position.Value, 0.05 ), 8 );
+
+
+			//!!!!need
+
+
+			////getting triangle to draw
+			//var triIdx = item.RayTestResult?.TriangleIndexProcessed ?? -1;
+			////var tIdx = item.RayTestResult?.TriangleIndexSource ?? -1;
+
+			//if( triIdx >= 0 )
+			//{
+			//	//!!!!тут не так будет. где еще
+
+			//	if( item.RayTestResult?.Shape is CollisionShape_Mesh csMesh )
+			//	{
+			//		var t = item.Object.Transform.Value.ToMatrix4();
+			//		var local = csMesh.TransformRelativeToParent.Value;
+			//		if( !local.IsIdentity )
+			//			t *= local.ToMatrix4();
+
+			//		//!!!!need
+			//		//if( csMesh.GetTriangleProcessedData( triIdx, true, out var triangle ) )
+			//		//{
+			//		//	var v1 = triangle.A;
+			//		//	var v2 = triangle.B;
+			//		//	var v3 = triangle.C;
+
+			//		//	var thickness = Math.Max( ( v1 - v2 ).Length(), Math.Max( ( v2 - v3 ).Length(), ( v3 - v1 ).Length() ) ) * 0.02;
+			//		//	renderer.AddLine( v1, v2, thickness );
+			//		//	renderer.AddLine( v2, v3, thickness );
+			//		//	renderer.AddLine( v3, v1, thickness );
+			//		//}
+			//	}
+			//	else if( item.RayTestResult?.Body is SoftBody softBody )
+			//	{
+			//		var t = item.Object.Transform.Value.ToMatrix4();
+
+			//		if( softBody.GetTriangleSimulatedData( triIdx, true, out var triangle ) )
+			//		{
+			//			var v1 = triangle.A;
+			//			var v2 = triangle.B;
+			//			var v3 = triangle.C;
+
+			//			var thickness = Math.Max( ( v1 - v2 ).Length(), Math.Max( ( v2 - v3 ).Length(), ( v3 - v1 ).Length() ) ) * 0.02;
+			//			renderer.AddLine( v1, v2, thickness );
+			//			renderer.AddLine( v2, v3, thickness );
+			//			renderer.AddLine( v3, v1, thickness );
+			//		}
+			//	}
+			//}
+			//}
 		}
 
 		/////////////////////////////////////////
@@ -544,14 +560,16 @@ namespace NeoAxis
 
 		protected virtual void OnFilterObject( ResultItem item, ref bool ignore )
 		{
-			if( IgnoreSensors && ( item.Object == this || typeof( Sensor ).IsAssignableFrom( item.Object.GetType() ) ) )
+			if( IgnoreSensors && item.SceneObject != null && ( item.SceneObject == this || typeof( Sensor ).IsAssignableFrom( item.SceneObject.GetType() ) ) )
 			{
 				ignore = true;
 				return;
 			}
 			var filterByType = FilterByType.Value;
-			if( filterByType != null && !filterByType.IsAssignableFrom( item.Object.BaseType ) )
+			if( filterByType != null && item.SceneObject != null && !filterByType.IsAssignableFrom( item.SceneObject.BaseType ) )
 				ignore = true;
+
+			//filter PhysicalBody?
 		}
 
 		public delegate void FilterObjectEventDelegate( Sensor sensor, ResultItem item, ref bool ignore );
@@ -569,26 +587,40 @@ namespace NeoAxis
 		/// </summary>
 		public struct ResultItem
 		{
-			public ObjectInSpace Object;
+			public ObjectInSpace SceneObject;
+			public Scene.PhysicsWorldClass.Body PhysicalBody;
+
+			//ray specific
 			public Vector3? Position;
-			public double DistanceScale;
+			public double? DistanceScale;
 
-			public PhysicsRayTestItem.ResultItem RayTestResult;
-			//!!!!physics shape
-			//!!!!triangle index
+			//public PhysicsRayTestItem.ResultItem RayTestResult;
+			//shape index?
+			//triangle index?
 
-			public ResultItem( ObjectInSpace obj, Vector3? position, double distanceScale, PhysicsRayTestItem.ResultItem testResult = null )
+			//
+
+			public ResultItem( ObjectInSpace sceneObject, Scene.PhysicsWorldClass.Body physicalBody, Vector3? position = null, double? distanceScale = null/*, PhysicsRayTestItem.ResultItem testResult = null*/ )
 			{
-				Object = obj;
+				SceneObject = sceneObject;
+				PhysicalBody = physicalBody;
 				Position = position;
 				DistanceScale = distanceScale;
-				RayTestResult = testResult;
+				//RayTestResult = testResult;
 			}
+
+			//public ResultItem( ObjectInSpace sceneObject, Scene.PhysicsWorldClass.Body physicalBody )
+			//{
+			//	SceneObject = sceneObject;
+			//	PhysicalBody = physicalBody;
+			//}
 
 			public override string ToString()
 			{
-				if( Object != null )
-					return Object.ToString();
+				if( SceneObject != null )
+					return SceneObject.ToString();
+				else if( PhysicalBody != null )
+					return PhysicalBody.ToString();
 				else
 					return "(Null)";
 			}
@@ -596,7 +628,7 @@ namespace NeoAxis
 
 		void UpdateSweepHullGeometry( Vector3[] shapeLocalVertices )
 		{
-			var target = ConvexSweepTarget.Value;
+			var target = Target.Value;
 
 			var tr = Transform.Value;
 			var from = tr.ToMatrix4( true, true, false );
@@ -629,7 +661,7 @@ namespace NeoAxis
 
 		void UpdateConvexSweepHull()
 		{
-			var target = ConvexSweepTarget.Value;
+			var target = Target.Value;
 			if( target != null )
 			{
 				var tr = Transform.Value;
@@ -673,10 +705,10 @@ namespace NeoAxis
 			{
 				Scene.GetObjectsInSpaceItem item = null;
 
-				if( ConvexSweepTarget.ReferenceSpecified && ( Shape.Value == ShapeEnum.Box || Shape.Value == ShapeEnum.Sphere ) )
+				if( Target.ReferenceSpecified && ( Shape.Value == ShapeEnum.Box || Shape.Value == ShapeEnum.Sphere ) )
 				{
 					//Convex sweep test
-					var target = ConvexSweepTarget.Value;
+					var target = Target.Value;
 					if( target != null )
 					{
 						UpdateConvexSweepHull();
@@ -712,7 +744,11 @@ namespace NeoAxis
 						{
 							ref var resultItem2 = ref item.Result[ n ];
 
-							var resultItem = new ResultItem( resultItem2.Object, resultItem2.Position, resultItem2.DistanceScale );
+							ResultItem resultItem;
+							if( Shape.Value == ShapeEnum.Ray )
+								resultItem = new ResultItem( resultItem2.Object, null, resultItem2.Position, resultItem2.DistanceScale );
+							else
+								resultItem = new ResultItem( resultItem2.Object, null );
 
 							bool ignore = false;
 							PerformFilterObject( resultItem, ref ignore );
@@ -743,109 +779,187 @@ namespace NeoAxis
 				case ShapeEnum.Box:
 				case ShapeEnum.Sphere:
 					{
-						if( ConvexSweepTarget.ReferenceSpecified )
+						var direction = Vector3.Zero;
+
+						if( Target.ReferenceSpecified )
 						{
 							//Convex sweep test
-							var target = ConvexSweepTarget.Value;
+							var target = Target.Value;
 							if( target != null )
 							{
 								UpdateConvexSweepHull();
 
-								var tr = Transform.Value;
-								var from = tr.ToMatrix4( true, true, false );
-								var to = target.Transform.Value.ToMatrix4( true, false, false );
+								var tr = TransformV;
+								//var from = tr.ToMatrix4( true, true, false );
+								//var to = target.Transform.Value.ToMatrix4( true, false, false );
 
-								//!!!!PhysicsConvexSweepTestItem.ModeEnum.OneClosestForEach
-
-								PhysicsConvexSweepTestItem item = null;
-								switch( Shape.Value )
-								{
-								case ShapeEnum.Box:
-									item = new PhysicsConvexSweepTestItem( from, to, PhysicsFilterGroup, PhysicsFilterMask, PhysicsConvexSweepTestItem.ModeEnum.All, new Bounds( tr.Scale * -.5, tr.Scale * .5 ) );//GetBox()
-									break;
-								case ShapeEnum.Sphere:
-									item = new PhysicsConvexSweepTestItem( from, to, PhysicsFilterGroup, PhysicsFilterMask, PhysicsConvexSweepTestItem.ModeEnum.All, new Sphere( Vector3.Zero, Math.Max( tr.Scale.X, Math.Max( tr.Scale.Y, tr.Scale.Z ) ) * 0.5 ) );//GetSphere()
-									break;
-								}
-								if( item != null )
-								{
-									scene.PhysicsConvexSweepTest( item );
-									if( item.Result.Length != 0 )
-									{
-										var result = new List<ResultItem>( item.Result.Length );
-										foreach( var i in item.Result )
-										{
-											//!!!!Distance good?
-											var length = ( to.GetTranslation() - from.GetTranslation() ).Length();
-											var resultItem = new ResultItem( i.Body, i.Position, i.DistanceScale * length );
-											//var resultItem = new ResultItem( i.Body, i.Position, i.Distance );
-
-											bool ignore = false;
-											PerformFilterObject( resultItem, ref ignore );
-											if( ignore )
-												continue;
-
-											result.Add( resultItem );
-
-											if( Mode.Value == ModeEnum.OneClosestObject )
-												break;
-										}
-										return result.ToArray();
-									}
-								}
+								direction = target.TransformV.Position - tr.Position;
 							}
 						}
-						else
+
+						//Volume test
+						PhysicsVolumeTestItem item = null;
+						switch( Shape.Value )
 						{
-							//Contact test
-							PhysicsContactTestItem item = null;
-							switch( Shape.Value )
+						case ShapeEnum.Box:
+							item = new PhysicsVolumeTestItem( GetBox(), direction, PhysicsVolumeTestItem.ModeEnum.All/*OneClosestForEach*/, PhysicsFilterGroup, PhysicsFilterMask );
+							break;
+						case ShapeEnum.Sphere:
+							item = new PhysicsVolumeTestItem( GetSphere(), direction, PhysicsVolumeTestItem.ModeEnum.All/*OneClosestForEach*/, PhysicsFilterGroup, PhysicsFilterMask );
+							break;
+						}
+
+
+						//!!!!
+						//var c = new Capsule( TransformV.Position, TransformV.Position + direction, GetSphere().Radius );
+						//item = new PhysicsVolumeTestItem( c, Vector3.Zero, PhysicsVolumeTestItem.ModeEnum.All/*OneClosestForEach*/, PhysicsFilterGroup, PhysicsFilterMask );
+
+
+						//!!!!цилиндр глючит
+						//var c = new Cylinder( TransformV.Position, TransformV.Position + direction, GetSphere().Radius );
+						//item = new PhysicsVolumeTestItem( c, Vector3.Zero, PhysicsVolumeTestItem.ModeEnum.All/*OneClosestForEach*/, PhysicsFilterGroup, PhysicsFilterMask );
+
+
+
+						if( item != null )
+						{
+							scene.PhysicsVolumeTest( item );
+
+							if( item.Result.Length != 0 )
 							{
-							case ShapeEnum.Box:
-								item = new PhysicsContactTestItem( PhysicsFilterGroup, PhysicsFilterMask, PhysicsContactTestItem.ModeEnum.OneClosestForEach, GetBox() );
-								break;
-							case ShapeEnum.Sphere:
-								item = new PhysicsContactTestItem( PhysicsFilterGroup, PhysicsFilterMask, PhysicsContactTestItem.ModeEnum.OneClosestForEach, GetSphere() );
-								break;
-							}
-							if( item != null )
-							{
-								scene.PhysicsContactTest( item );
-								if( item.Result.Length != 0 )
+								var result = new List<ResultItem>( item.Result.Length );
+								foreach( var i in item.Result )
 								{
-									var result = new List<ResultItem>( item.Result.Length );
-									foreach( var i in item.Result )
-									{
-										var resultItem = new ResultItem( i.Body, i.PositionWorldOnA, i.Distance );
+									var resultItem = new ResultItem( i.Body.Owner as ObjectInSpace, i.Body );
+									//var resultItem = new ResultItem( i.Body.RigidBodyOwner, i.Body, i.PositionWorldOnA, i.Distance );
 
-										bool ignore = false;
-										PerformFilterObject( resultItem, ref ignore );
-										if( ignore )
-											continue;
+									bool ignore = false;
+									PerformFilterObject( resultItem, ref ignore );
+									if( ignore )
+										continue;
 
-										result.Add( resultItem );
+									result.Add( resultItem );
 
-										if( Mode.Value == ModeEnum.OneClosestObject )
-											break;
-									}
-									return result.ToArray();
+									if( Mode.Value == ModeEnum.OneClosestObject )
+										break;
 								}
+								return result.ToArray();
 							}
 						}
 					}
 					break;
 
+				//old Bullet
+				//case ShapeEnum.Box:
+				//case ShapeEnum.Sphere:
+				//	{
+				//		if( ConvexSweepTarget.ReferenceSpecified )
+				//		{
+				//			//Convex sweep test
+				//			var target = ConvexSweepTarget.Value;
+				//			if( target != null )
+				//			{
+				//				UpdateConvexSweepHull();
+
+				//				var tr = Transform.Value;
+				//				var from = tr.ToMatrix4( true, true, false );
+				//				var to = target.Transform.Value.ToMatrix4( true, false, false );
+
+				//				//!!!!impl
+
+				//				//PhysicsConvexSweepTestItem item = null;
+				//				//switch( Shape.Value )
+				//				//{
+				//				//case ShapeEnum.Box:
+				//				//	item = new PhysicsConvexSweepTestItem( from, to, PhysicsFilterGroup, PhysicsFilterMask, PhysicsConvexSweepTestItem.ModeEnum.All, new Bounds( tr.Scale * -.5, tr.Scale * .5 ) );//GetBox()
+				//				//	break;
+				//				//case ShapeEnum.Sphere:
+				//				//	item = new PhysicsConvexSweepTestItem( from, to, PhysicsFilterGroup, PhysicsFilterMask, PhysicsConvexSweepTestItem.ModeEnum.All, new Sphere( Vector3.Zero, Math.Max( tr.Scale.X, Math.Max( tr.Scale.Y, tr.Scale.Z ) ) * 0.5 ) );//GetSphere()
+				//				//	break;
+				//				//}
+				//				//if( item != null )
+				//				//{
+				//				//	zzzz;
+				//				//	scene.PhysicsConvexSweepTest( item );
+				//				//	if( item.Result.Length != 0 )
+				//				//	{
+				//				//		var result = new List<ResultItem>( item.Result.Length );
+				//				//		foreach( var i in item.Result )
+				//				//		{
+				//				//			//!!!!Distance good?
+				//				//			var length = ( to.GetTranslation() - from.GetTranslation() ).Length();
+				//				//			var resultItem = new ResultItem( i.Body.RigidBodyOwner, i.Body, i.Position, i.DistanceScale * length );
+				//				//			//var resultItem = new ResultItem( i.Body, i.Position, i.Distance );
+
+				//				//			bool ignore = false;
+				//				//			PerformFilterObject( resultItem, ref ignore );
+				//				//			if( ignore )
+				//				//				continue;
+
+				//				//			result.Add( resultItem );
+
+				//				//			if( Mode.Value == ModeEnum.OneClosestObject )
+				//				//				break;
+				//				//		}
+				//				//		return result.ToArray();
+				//				//	}
+				//				//}
+				//			}
+				//		}
+				//		else
+				//		{
+				//			//Volume test
+				//			PhysicsVolumeTestItem item = null;
+				//			switch( Shape.Value )
+				//			{
+				//			case ShapeEnum.Box:
+				//				item = new PhysicsVolumeTestItem( GetBox(), PhysicsVolumeTestItem.ModeEnum.All/*OneClosestForEach*/, PhysicsFilterGroup, PhysicsFilterMask );
+				//				break;
+				//			case ShapeEnum.Sphere:
+				//				item = new PhysicsVolumeTestItem( GetSphere(), PhysicsVolumeTestItem.ModeEnum.All/*OneClosestForEach*/, PhysicsFilterGroup, PhysicsFilterMask );
+				//				break;
+				//			}
+				//			if( item != null )
+				//			{
+				//				scene.PhysicsVolumeTest( item );
+				//				if( item.Result.Length != 0 )
+				//				{
+				//					var result = new List<ResultItem>( item.Result.Length );
+				//					foreach( var i in item.Result )
+				//					{
+				//						var resultItem = new ResultItem( i.Body.RigidBodyOwner, i.Body );
+				//						//var resultItem = new ResultItem( i.Body.RigidBodyOwner, i.Body, i.PositionWorldOnA, i.Distance );
+
+				//						bool ignore = false;
+				//						PerformFilterObject( resultItem, ref ignore );
+				//						if( ignore )
+				//							continue;
+
+				//						result.Add( resultItem );
+
+				//						if( Mode.Value == ModeEnum.OneClosestObject )
+				//							break;
+				//					}
+				//					return result.ToArray();
+				//				}
+				//			}
+				//		}
+				//	}
+				//	break;
+
 				case ShapeEnum.Ray:
 					{
-						var item = new PhysicsRayTestItem( GetRay(), PhysicsFilterGroup, PhysicsFilterMask, PhysicsRayTestItem.ModeEnum.OneClosestForEach );
+						var item = new PhysicsRayTestItem( GetRay(), PhysicsRayTestItem.ModeEnum.OneClosestForEach, PhysicsRayTestItem.FlagsEnum.CalculateNormal, PhysicsFilterGroup, PhysicsFilterMask );
 
 						scene.PhysicsRayTest( item );
 						if( item.Result.Length != 0 )
 						{
 							var result = new List<ResultItem>( item.Result.Length );
-							foreach( var i in item.Result )
+							for( int n = 0; n < item.Result.Length; n++ )//foreach( var i in item.Result )
 							{
-								var resultItem = new ResultItem( i.Body, i.Position, i.DistanceScale, i );
+								ref var i = ref item.Result[ n ];
+
+								var resultItem = new ResultItem( i.Body.Owner as ObjectInSpace, i.Body, i.Position, i.DistanceScale );//, i );
 
 								bool ignore = false;
 								PerformFilterObject( resultItem, ref ignore );
@@ -880,7 +994,7 @@ namespace NeoAxis
 
 		public ResultItem[] CalculateObjects()
 		{
-			if( EnabledInHierarchyAndIsNotResource )
+			if( EnabledInHierarchyAndIsInstance )
 			{
 				bool handled = false;
 				ResultItem[] result = null;
@@ -932,7 +1046,10 @@ namespace NeoAxis
 
 			var newSet = new ESet<ObjectInSpace>( newList.Length );
 			foreach( var item in newList )
-				newSet.AddWithCheckAlreadyContained( item.Object );
+			{
+				if( item.SceneObject != null )
+					newSet.AddWithCheckAlreadyContained( item.SceneObject );
+			}
 
 			var currentSet = new ESet<ObjectInSpace>( Objects.Count );
 			foreach( var refObject in Objects )
@@ -963,11 +1080,11 @@ namespace NeoAxis
 			//get enter list
 			foreach( var item in newList )
 			{
-				if( !currentSet.Contains( item.Object ) )
+				if( item.SceneObject != null && !currentSet.Contains( item.SceneObject ) )
 				{
 					if( toEnter == null )
 						toEnter = new List<ObjectInSpace>();
-					toEnter.Add( item.Object );
+					toEnter.Add( item.SceneObject );
 				}
 			}
 

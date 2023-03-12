@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -123,12 +124,14 @@ namespace NeoAxis
 		{
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public EDictionary( int capacity, IEqualityComparer<TKey> comparer )
 		{
 			baseDictionary = new Dictionary<TKey, int>( capacity, comparer );
 			ordered = new List<OrderedItem>( capacity );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public EDictionary( IDictionary<TKey, TValue> dictionary, IEqualityComparer<TKey> comparer )
 		{
 			baseDictionary = new Dictionary<TKey, int>( dictionary.Count, comparer );
@@ -139,6 +142,7 @@ namespace NeoAxis
 
 		public TValue this[ TKey key ]
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get { return ordered[ baseDictionary[ key ] ].value; }
 			set
 			{
@@ -154,6 +158,7 @@ namespace NeoAxis
 
 		public int Count
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get { return baseDictionary.Count; }
 		}
 
@@ -164,6 +169,7 @@ namespace NeoAxis
 
 		public ICollection<TKey> Keys
 		{
+			[MethodImpl( (MethodImplOptions)512 )]
 			get
 			{
 				//TO DO: good?
@@ -180,6 +186,7 @@ namespace NeoAxis
 
 		public ICollection<TValue> Values
 		{
+			[MethodImpl( (MethodImplOptions)512 )]
 			get
 			{
 				//TO DO: good?
@@ -194,11 +201,13 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Add( KeyValuePair<TKey, TValue> item )
 		{
 			Add( item.Key, item.Value );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public void Add( TKey key, TValue value )
 		{
 			int orderedIndex;
@@ -252,6 +261,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool ContainsKey( TKey key )
 		{
 			return baseDictionary.ContainsKey( key );
@@ -267,6 +277,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( KeyValuePair<TKey, TValue> item )
 		{
 			TValue v;
@@ -278,6 +289,7 @@ namespace NeoAxis
 			return false;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Remove( KeyValuePair<TKey, TValue> item )
 		{
 			if( Contains( item ) )
@@ -288,6 +300,7 @@ namespace NeoAxis
 			return false;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public bool Remove( TKey key )
 		{
 			int orderedIndex;
@@ -330,6 +343,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool TryGetValue( TKey key, out TValue value )
 		{
 			int orderedIndex;

@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	/// <summary>
 	/// Time service

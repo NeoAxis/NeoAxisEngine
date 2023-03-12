@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -15,11 +15,13 @@ namespace NeoAxis
 	/// <summary>
 	/// Implements the sky is using cubemap or panoramic image.
 	/// </summary>
+#if !DEPLOY
 	[SettingsCell( typeof( SkyboxSettingsCell ) )]
 	[EditorControl( typeof( SkyboxEditor ) )]
 	[Preview( typeof( SkyboxPreview ) )]
 	[PreviewImage( typeof( SkyboxPreviewImage ) )]
 	[WhenCreatingShowWarningIfItAlreadyExists]
+#endif
 	public class Skybox : Sky
 	{
 		static GpuMaterialPass materialPassCube;
@@ -504,7 +506,7 @@ namespace NeoAxis
 			UpdateProcessedCubemaps();
 		}
 
-		unsafe public override void Render( RenderingPipeline pipeline, ViewportRenderingContext context, RenderingPipeline.IFrameData frameData )
+		unsafe public override void Render( RenderingPipeline pipeline, ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData )
 		{
 			UpdateProcessedCubemaps();
 
@@ -567,7 +569,7 @@ namespace NeoAxis
 							else
 								addressingMode = TextureAddressingMode.WrapU | TextureAddressingMode.ClampV;
 
-							context.BindTexture( 0/*"skyboxTexture"*/, tex, addressingMode, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear );
+							context.BindTexture( 0/*"skyboxTexture"*/, tex, addressingMode, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear, 0, false );
 
 							var containers = new List<ParameterContainer>();
 							containers.Add( generalContainer );
@@ -628,7 +630,7 @@ namespace NeoAxis
 					return null;
 				}
 
-				var pass = new GpuMaterialPass( vertexProgram, fragmentProgram );
+				var pass = new GpuMaterialPass( null, vertexProgram, fragmentProgram );
 				pass.CullingMode = CullingMode.None;
 				pass.DepthCheck = true;
 				pass.DepthWrite = false;

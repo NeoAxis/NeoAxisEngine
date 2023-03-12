@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -81,8 +81,9 @@ namespace NeoAxis
 		public event Action<Sensor2D> RayTargetChanged;
 		ReferenceField<ObjectInSpace> _rayTarget;
 
+		//rename
 		///// <summary>
-		///// The end point of the sensor in Convex Sweep mode.
+		///// The end point of the sensor in volume mode.
 		///// </summary>
 		//[DefaultValue( null )]
 		//public Reference<ObjectInSpace> ConvexSweepTarget
@@ -310,9 +311,9 @@ namespace NeoAxis
 		{
 			base.OnEnabledInHierarchyChanged();
 
-			if( EnabledInHierarchyAndIsNotResource )
+			if( EnabledInHierarchyAndIsInstance )
 			{
-				if( WhenUpdate.Value.HasFlag( WhenUpdateEnum.Enable ) )
+				if( ( WhenUpdate.Value & WhenUpdateEnum.Enable ) != 0 )
 					Update();
 			}
 			else
@@ -410,7 +411,7 @@ namespace NeoAxis
 		{
 			base.OnUpdate( delta );
 
-			if( WhenUpdate.Value.HasFlag( WhenUpdateEnum.Update ) )
+			if( ( WhenUpdate.Value & WhenUpdateEnum.Update ) != 0 )
 				Update();
 		}
 
@@ -418,7 +419,7 @@ namespace NeoAxis
 		{
 			base.OnSimulationStep();
 
-			if( WhenUpdate.Value.HasFlag( WhenUpdateEnum.SimulationStep ) )
+			if( ( WhenUpdate.Value & WhenUpdateEnum.SimulationStep ) != 0 )
 				Update();
 		}
 
@@ -433,7 +434,7 @@ namespace NeoAxis
 			{
 				var context2 = context.ObjectInSpaceRenderingContext;
 
-				bool show = ( ParentScene.GetDisplayDevelopmentDataInThisApplication() && ParentScene.DisplaySensors ) || context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this;
+				bool show = ( context.SceneDisplayDevelopmentDataInThisApplication && ParentScene.DisplaySensors ) || context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this;
 				if( show )
 				{
 					if( context2.displaySensorsCounter < context2.displaySensorsMax )
@@ -443,7 +444,7 @@ namespace NeoAxis
 						var displayColor = DisplayColor.Value;
 						if( displayColor.Alpha != 0 )
 						{
-							context.Owner.Simple3DRenderer.SetColor( displayColor, displayColor * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+							context.Owner.Simple3DRenderer.SetColor( displayColor, displayColor * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 							RenderShape( context2 );
 						}
 					}
@@ -453,7 +454,7 @@ namespace NeoAxis
 						var color = DisplayObjectsColor.Value;
 						if( color.Alpha != 0 )
 						{
-							context.Owner.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+							context.Owner.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 							//foreach( var refObject in Objects )
 							//{
 							//	var obj = refObject.Value;
@@ -473,7 +474,7 @@ namespace NeoAxis
 		{
 			if( item.Object != null && item.Object.EnabledInHierarchy )
 			{
-				renderer.AddBounds( item.Object.SpaceBounds.CalculatedBoundingBox );
+				renderer.AddBounds( item.Object.SpaceBounds.BoundingBox );
 
 				//!!!!
 				//!!!!radius
@@ -709,7 +710,7 @@ namespace NeoAxis
 								{
 									ref var resultItem2 = ref item.Result[ n ];
 
-									var objBounds = resultItem2.Object.SpaceBounds.CalculatedBoundingBox.ToRectangle();
+									var objBounds = resultItem2.Object.SpaceBounds.BoundingBox.ToRectangle();
 									var count = MathAlgorithms.IntersectRectangleLine( objBounds, rayFrom, rayTo, out var intersect1, out var intersect2 );
 									if( count != 0 )
 									{
@@ -1013,7 +1014,7 @@ namespace NeoAxis
 
 		public ResultItem[] CalculateObjects()
 		{
-			if( EnabledInHierarchyAndIsNotResource )
+			if( EnabledInHierarchyAndIsInstance )
 			{
 				bool handled = false;
 				ResultItem[] result = null;

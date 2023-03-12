@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 
@@ -16,14 +16,17 @@ namespace NeoAxis
 		public class MessageItem
 		{
 			internal string text;
+			internal bool error;
 			internal double timeRemaining;
 
 			public string Text { get { return text; } }
+			public bool Error { get { return error; } }
 			public double TimeRemaining { get { return timeRemaining; } }
 
-			internal MessageItem( string text, double timeRemaining )
+			internal MessageItem( string text, bool error, double timeRemaining )
 			{
 				this.text = text;
+				this.error = error;
 				this.timeRemaining = timeRemaining;
 			}
 		}
@@ -78,9 +81,9 @@ namespace NeoAxis
 			{
 				var renderer = viewport.CanvasRenderer;
 				var fontSize = renderer.DefaultFontSize;
-				var offset = new Vector2( fontSize * renderer.AspectRatioInv * 0.8, fontSize * 0.6 );
+				var offset = new Vector2( fontSize * renderer.AspectRatioInv * 3, 0 );
 
-				var pos = new Vector2( offset.X, 0.75 );// 1.0 - offset.Y );
+				var pos = new Vector2( offset.X, 0.75 );
 				for( int n = messages.Count - 1; n >= 0; n-- )
 				{
 					var message = messages[ n ];
@@ -88,14 +91,35 @@ namespace NeoAxis
 					var alpha = message.TimeRemaining;
 					if( alpha > 1 )
 						alpha = 1;
-					CanvasRendererUtility.AddTextWithShadow( viewport, message.Text, pos, EHorizontalAlignment.Left, EVerticalAlignment.Bottom, new ColorValue( 1, 1, 1, alpha ) );
+					var color = message.Error ? new ColorValue( 1, 0, 0, alpha ) : new ColorValue( 1, 1, 1, alpha );
+
+					CanvasRendererUtility.AddTextWithShadow( viewport, message.Text, pos, EHorizontalAlignment.Left, EVerticalAlignment.Bottom, color );
 
 					pos.Y -= renderer.DefaultFontSize;
 				}
+
+				//var renderer = viewport.CanvasRenderer;
+				//var fontSize = renderer.DefaultFontSize;
+				//var offset = new Vector2( fontSize * renderer.AspectRatioInv * 0.8, fontSize * 0.6 );
+
+				//var pos = new Vector2( offset.X, 0.75 );// 1.0 - offset.Y );
+				//for( int n = messages.Count - 1; n >= 0; n-- )
+				//{
+				//	var message = messages[ n ];
+
+				//	var alpha = message.TimeRemaining;
+				//	if( alpha > 1 )
+				//		alpha = 1;
+				//	var color = message.Error ? new ColorValue( 1, 0, 0, alpha ) : new ColorValue( 1, 1, 1, alpha );
+
+				//	CanvasRendererUtility.AddTextWithShadow( viewport, message.Text, pos, EHorizontalAlignment.Left, EVerticalAlignment.Bottom, color );
+
+				//	pos.Y -= renderer.DefaultFontSize;
+				//}
 			}
 		}
 
-		public static void Add( string text )
+		public static void Add( string text, bool error = false )
 		{
 			var text2 = text;
 			var skip = false;
@@ -105,7 +129,7 @@ namespace NeoAxis
 
 			lock( messages )
 			{
-				var message = new MessageItem( text2, MessageShowingTime );
+				var message = new MessageItem( text2, error, MessageShowingTime );
 				messages.Add( message );
 
 				while( messages.Count > 100 )

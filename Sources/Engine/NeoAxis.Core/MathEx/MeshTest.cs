@@ -1,6 +1,7 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace NeoAxis
@@ -11,6 +12,7 @@ namespace NeoAxis
 	public class MeshTest : IDisposable
 	{
 		OctreeContainer octreeContainer;
+		int objectCount;
 		Vector3F[] vertices;
 		int[] indices;
 
@@ -30,29 +32,21 @@ namespace NeoAxis
 		/// </summary>
 		public struct ResultItem
 		{
-			internal float scale;
-			public float Scale
-			{
-				get { return scale; }
-				set { scale = value; }
-			}
+			public float Scale;
+			public Vector3F Normal;
+			public int TriangleIndex;
 
-			internal int triangleIndex;
-			public int TriangleIndex
+			public ResultItem( float scale, Vector3F normal, int triangleIndex )
 			{
-				get { return triangleIndex; }
-				set { triangleIndex = value; }
-			}
-
-			public ResultItem( float scale, int triangleIndex )
-			{
-				this.scale = scale;
-				this.triangleIndex = triangleIndex;
+				Scale = scale;
+				Normal = normal;
+				TriangleIndex = triangleIndex;
 			}
 		}
 
 		/////////////////////////////////////////
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public MeshTest( Vector3F[] vertices, int[] indices )
 		{
 			this.vertices = vertices;
@@ -63,10 +57,8 @@ namespace NeoAxis
 				var bounds = Bounds.Cleared;
 				foreach( var vertex in vertices )
 				{
-					//!!!!new
 					if( float.IsNaN( vertex.X ) || float.IsNaN( vertex.Y ) || float.IsNaN( vertex.Z ) )
 						continue;
-
 					bounds.Add( vertex );
 				}
 
@@ -93,7 +85,8 @@ namespace NeoAxis
 					triangleBounds.Add( vertex1 );
 					triangleBounds.Add( vertex2 );
 
-					octreeContainer.AddObject( triangleBounds, 1 );
+					octreeContainer.AddObject( ref triangleBounds, 1 );
+					objectCount++;
 				}
 			}
 		}
@@ -104,118 +97,178 @@ namespace NeoAxis
 			octreeContainer = null;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public ResultItem[] RayCast( RayF ray, Mode mode, bool twoSided )
 		{
-			if( vertices.Length == 0 || indices.Length == 0 )
-				return new ResultItem[ 0 ];
-			if( ray.Direction == Vector3F.Zero )
-				return new ResultItem[ 0 ];
-
-			var octreeObjects = octreeContainer.GetObjects( ray, 0xFFFFFFFF );
-			var resultList = new List<ResultItem>( octreeObjects.Length );
-			foreach( var data in octreeObjects )
+			unsafe
 			{
-				int triangleIndex = data.ObjectIndex;
-				ref var vertex0 = ref vertices[ indices[ triangleIndex * 3 + 0 ] ];
-				ref var vertex1 = ref vertices[ indices[ triangleIndex * 3 + 1 ] ];
-				ref var vertex2 = ref vertices[ indices[ triangleIndex * 3 + 2 ] ];
+				if( vertices.Length == 0 || indices.Length == 0 || ray.Direction == Vector3F.Zero )
+					return Array.Empty<ResultItem>();
 
-				if( MathAlgorithms.IntersectTriangleRay( ref vertex0, ref vertex1, ref vertex2, ref ray, out float scale ) ||
-					twoSided && MathAlgorithms.IntersectTriangleRay( ref vertex0, ref vertex2, ref vertex1, ref ray, out scale ) )
+				OctreeContainer.GetObjectsRayOutputData* octreeObjects = null;
+				try
 				{
-					var item = new ResultItem( scale, triangleIndex );
+					octreeObjects = (OctreeContainer.GetObjectsRayOutputData*)NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Utility, sizeof( OctreeContainer.GetObjectsRayOutputData ) * objectCount );
+					var octreeSuccess = octreeContainer.GetObjects( ray, 0xFFFFFFFF, OctreeContainer.ModeEnum.All, octreeObjects, objectCount, out var octreeResultCount );
 
-					if( mode == Mode.One )
+					if( !octreeSuccess || octreeResultCount == 0 )
+						return Array.Empty<ResultItem>();
+
+					using( var resultList = new OpenListNative<ResultItem>( mode == Mode.All ? octreeResultCount : 1 ) )
 					{
-						//mode One
-						return new ResultItem[] { item };
-					}
-					else
-					{
-						//modes OneClosest, All
-						if( resultList.Count == 0 )
-							resultList.Add( item );
-						else
+						for( int n = 0; n < octreeResultCount; n++ )
 						{
-							if( mode == Mode.All )
-								resultList.Add( item );
+							int triangleIndex = octreeObjects[ n ].ObjectIndex;
+							ref var vertex0 = ref vertices[ indices[ triangleIndex * 3 + 0 ] ];
+							ref var vertex1 = ref vertices[ indices[ triangleIndex * 3 + 1 ] ];
+							ref var vertex2 = ref vertices[ indices[ triangleIndex * 3 + 2 ] ];
+
+							//!!!!надо ли два раз искать IntersectTriangleRay?
+							var found = MathAlgorithms.IntersectTriangleRay( ref vertex0, ref vertex1, ref vertex2, ref ray, out float scale );
+							var normal = Vector3F.Zero;
+							if( found )
+								MathAlgorithms.CalculateTriangleNormal( ref vertex0, ref vertex1, ref vertex2, out normal );
 							else
 							{
-								if( item.scale < resultList[ 0 ].scale )
-									resultList[ 0 ] = item;
+								found = twoSided && MathAlgorithms.IntersectTriangleRay( ref vertex0, ref vertex2, ref vertex1, ref ray, out scale );
+								if( found )
+									MathAlgorithms.CalculateTriangleNormal( ref vertex0, ref vertex2, ref vertex1, out normal );
+							}
+
+							//if( MathAlgorithms.IntersectTriangleRay( ref vertex0, ref vertex1, ref vertex2, ref ray, out float scale ) ||
+							//	twoSided && MathAlgorithms.IntersectTriangleRay( ref vertex0, ref vertex2, ref vertex1, ref ray, out scale ) )
+							if( found )
+							{
+								var item = new ResultItem( scale, normal, triangleIndex );
+
+								if( mode == Mode.One )
+								{
+									//mode One
+									return new ResultItem[] { item };
+								}
+								else
+								{
+									//modes OneClosest, All
+									if( resultList.Count == 0 )
+										resultList.Add( ref item );
+									else
+									{
+										if( mode == Mode.All )
+											resultList.Add( ref item );
+										else
+										{
+											if( item.Scale < resultList[ 0 ].Scale )
+												resultList.Data[ 0 ] = item;
+										}
+									}
+								}
 							}
 						}
+
+						if( resultList.Count == 0 )
+							return Array.Empty<ResultItem>();
+
+						var array = resultList.ToArray();
+
+						if( mode == Mode.All )
+						{
+							CollectionUtility.SelectionSort( array, delegate ( ResultItem r1, ResultItem r2 )
+							{
+								if( r1.Scale < r2.Scale )
+									return -1;
+								if( r1.Scale > r2.Scale )
+									return 1;
+								return 0;
+							} );
+						}
+
+						return array;
 					}
 				}
-			}
-
-			ResultItem[] array = resultList.ToArray();
-			if( mode == Mode.All )
-			{
-				CollectionUtility.SelectionSort( array, delegate ( ResultItem r1, ResultItem r2 )
+				finally
 				{
-					if( r1.scale < r2.scale )
-						return -1;
-					if( r1.scale > r2.scale )
-						return 1;
-					return 0;
-				} );
+					NativeUtility.Free( octreeObjects );
+				}
 			}
-
-			return resultList.ToArray();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool IntersectsFast( Plane[] planes, ref Bounds bounds )
 		{
 			if( vertices.Length == 0 || indices.Length == 0 )
 				return false;
-			var octreeObjects = octreeContainer.GetObjects( planes, bounds, 0xFFFFFFFF, OctreeContainer.ModeEnum.One, IntPtr.Zero );
+
 			//сами треугольники тоже можно проверять. тогда это не Fast method
-			return octreeObjects.Length != 0;
+
+			unsafe
+			{
+				octreeContainer.GetObjects( planes, bounds, 0xFFFFFFFF, OctreeContainer.ModeEnum.One, null, 0, out var count, IntPtr.Zero );
+				return count != 0;
+			}
+			//var octreeObjects = octreeContainer.GetObjects( planes, bounds, 0xFFFFFFFF, OctreeContainer.ModeEnum.One, IntPtr.Zero );
+			//return octreeObjects.Length != 0;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool IntersectsFast( Plane[] planes, Bounds bounds )
 		{
 			return IntersectsFast( planes, ref bounds );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool IntersectsFast( ref Bounds bounds )
 		{
 			if( vertices.Length == 0 || indices.Length == 0 )
 				return false;
-			var octreeObjects = octreeContainer.GetObjects( bounds, 0xFFFFFFFF, OctreeContainer.ModeEnum.One );
+
 			//сами треугольники тоже можно проверять. тогда это не Fast method
-			return octreeObjects.Length != 0;
+
+			unsafe
+			{
+				octreeContainer.GetObjects( bounds, 0xFFFFFFFF, OctreeContainer.ModeEnum.One, null, 0, out var count );
+				return count != 0;
+			}
+			//var octreeObjects = octreeContainer.GetObjects( bounds, 0xFFFFFFFF, OctreeContainer.ModeEnum.One );
+			//return octreeObjects.Length != 0;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool IntersectsFast( Bounds bounds )
 		{
 			return IntersectsFast( ref bounds );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int[] GetIntersectedTrianglesFast( Plane[] planes, ref Bounds bounds )
 		{
 			if( vertices.Length == 0 || indices.Length == 0 )
 				return Array.Empty<int>();
-			var octreeObjects = octreeContainer.GetObjects( planes, bounds, 0xFFFFFFFF, OctreeContainer.ModeEnum.All, IntPtr.Zero );
+
 			//сами треугольники тоже можно проверять. тогда это не Fast method
+
+			var octreeObjects = octreeContainer.GetObjects( planes, bounds, 0xFFFFFFFF, OctreeContainer.ModeEnum.All, IntPtr.Zero );
 			return octreeObjects;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int[] GetIntersectedTrianglesFast( Plane[] planes, Bounds bounds )
 		{
 			return GetIntersectedTrianglesFast( planes, ref bounds );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int[] GetIntersectedTrianglesFast( ref Bounds bounds )
 		{
 			if( vertices.Length == 0 || indices.Length == 0 )
 				return Array.Empty<int>();
-			var octreeObjects = octreeContainer.GetObjects( bounds, 0xFFFFFFFF, OctreeContainer.ModeEnum.All );
+
 			//сами треугольники тоже можно проверять. тогда это не Fast method
+
+			var octreeObjects = octreeContainer.GetObjects( bounds, 0xFFFFFFFF, OctreeContainer.ModeEnum.All );
 			return octreeObjects;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int[] GetIntersectedTrianglesFast( Bounds bounds )
 		{
 			return GetIntersectedTrianglesFast( ref bounds );

@@ -1,0 +1,59 @@
+// Made with NeoAxis Engine 2022.1.
+
+.component NeoAxis.Surface
+{
+	EditorCameraTransform = "0.0989976721818381 -11.4214803186186 7.1403343976775; -0.225356210508748 0.222796494582063 0.674482095231455 0.666820968176068; 1 1 1"
+	.component NeoAxis.SurfaceGroupOfElements
+	{
+		Name = Group Young
+		Probability = 0.5
+		OccupiedAreaRadius = 0.4
+		RotateAroundItsAxis = True
+		MaxIncline = 5
+		ScaleRange = 0.7 1.3
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 1
+			ReceiveDecals = False
+			Mesh
+			{
+				GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Doronicum grandiflorum 1 Group 2 Young.mesh"
+			}
+		}
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 2
+			ReceiveDecals = False
+			Mesh
+			{
+				GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Doronicum grandiflorum 2 Group 2 Young.mesh"
+			}
+		}
+	}
+	.component NeoAxis.SurfaceGroupOfElements
+	{
+		Name = Group Mature
+		OccupiedAreaRadius = 0.6
+		RotateAroundItsAxis = True
+		MaxIncline = 5
+		ScaleRange = 0.7 1.3
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 1
+			ReceiveDecals = False
+			Mesh
+			{
+				GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Doronicum grandiflorum 1 Group 3 Mature.mesh"
+			}
+		}
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 2
+			ReceiveDecals = False
+			Mesh
+			{
+				GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Doronicum grandiflorum 2 Group 3 Mature.mesh"
+			}
+		}
+	}
+}

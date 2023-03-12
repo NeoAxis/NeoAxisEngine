@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -56,7 +56,7 @@ namespace NeoAxis
 	/// <summary>
 	/// The task of the vehicle to move to the specified position in the scene.
 	/// </summary>
-	[AddToResourcesWindow( @"Base\3D\Vehicle AI Move To Position", -7995 )]
+	[AddToResourcesWindow( @"Addons\Vehicle\Vehicle AI Move To Position", 22005 )]
 	[NewObjectDefaultName( "Move To Position" )]
 	public class VehicleAITask_MoveToPosition : VehicleAITask_MoveTo
 	{
@@ -79,7 +79,7 @@ namespace NeoAxis
 	/// <summary>
 	/// The task of the vehicle to move to the specified object in the scene.
 	/// </summary>
-	[AddToResourcesWindow( @"Base\3D\Vehicle AI Move To Object", -7994 )]
+	[AddToResourcesWindow( @"Addons\Vehicle\Vehicle AI Move To Object", 22006 )]
 	[NewObjectDefaultName( "Move To Object" )]
 	public class VehicleAITask_MoveToObject : VehicleAITask_MoveTo
 	{

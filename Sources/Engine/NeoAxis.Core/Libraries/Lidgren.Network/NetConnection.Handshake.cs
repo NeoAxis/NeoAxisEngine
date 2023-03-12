@@ -8,7 +8,7 @@ using System.Threading;
 using NetEndPoint = System.Net.IPEndPoint;
 #endif
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	public partial class NetConnection
 	{

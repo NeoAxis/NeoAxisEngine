@@ -1,7 +1,8 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 
 namespace NeoAxis
@@ -57,6 +58,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="polynomial"></param>
 		/// <returns></returns>
+		[MethodImpl( (MethodImplOptions)512 )]
 		protected static uint[] BuildCRC32Table( uint polynomial )
 		{
 			//changes (for standard crc32 compability)
@@ -83,6 +85,7 @@ namespace NeoAxis
 		}
 
 		//changes (for standard crc32 compability)
+		[MethodImpl(  (MethodImplOptions)512 )]
 		protected static uint Reflect( uint value, int count )
 		{
 			uint t = value;
@@ -145,6 +148,7 @@ namespace NeoAxis
 		/// <param name="buffer"></param>
 		/// <param name="offset"></param>
 		/// <param name="count"></param>
+		[MethodImpl( (MethodImplOptions)512 )]
 		protected override void HashCore( byte[] buffer, int offset, int count )
 		{
 			// Save the text in the buffer. 

@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -50,7 +50,15 @@ namespace NeoAxis
 					{
 						//jump
 						if( Character.JumpSupport && keyDown.Key == EKeys.Space )
-							Character.TryJump();
+						{
+							if( NetworkIsClient )
+							{
+								BeginNetworkMessageToServer( "Jump" );
+								EndNetworkMessage();
+							}
+							else
+								Character.TryJump();
+						}
 
 						//drop item
 						if( keyDown.Key == EKeys.T )
@@ -58,17 +66,21 @@ namespace NeoAxis
 							var item = Character.ItemGetEnabledFirst();
 							if( item != null )
 							{
-								Transform newTransform = null;
-
-								//drop to ground. it is simple implementation
-								//var obj = item as ObjectInSpace;
-								//if( obj != null )
-								//{
-								//	var scaleFactor = Character.GetScaleFactor();
-								//	newTransform = new Transform( Character.TransformV.Position + new Vector3( 0, 0.2 * scaleFactor - Character.PositionToGroundHeight * scaleFactor, 0 ), Character.TransformV.Rotation, obj.TransformV.Scale );
-								//}
-
-								Character.ItemDrop( item, newTransform );
+								if( NetworkIsClient )
+								{
+									var component = item as Component;
+									if( component != null )
+									{
+										var writer = Character.BeginNetworkMessageToServer( "ItemDrop" );
+										if( writer != null )
+										{
+											writer.WriteVariableUInt64( (ulong)component.NetworkID );
+											Character.EndNetworkMessage();
+										}
+									}
+								}
+								else
+									Character.ItemDrop( item, true );
 							}
 						}
 					}
@@ -87,7 +99,14 @@ namespace NeoAxis
 							if( weapon != null )
 							{
 								firing = true;
-								weapon.FiringBegin();
+
+								if( NetworkIsClient )
+								{
+									weapon.BeginNetworkMessageToServer( "FiringBegin" );
+									weapon.EndNetworkMessage();
+								}
+								else
+									weapon.FiringBegin();
 							}
 						}
 					}
@@ -126,10 +145,8 @@ namespace NeoAxis
 			}
 		}
 
-		protected override void OnSimulationStep()
+		void UpdateObjectControl()
 		{
-			base.OnSimulationStep();
-
 			var character = Character;
 			if( character != null && InputEnabled )
 			{
@@ -151,6 +168,22 @@ namespace NeoAxis
 				character.SetMoveVector( vector, run );
 				character.SetLookToDirection( lookDirection );
 
+				//send data to the server
+				if( NetworkIsClient )
+				{
+					//!!!!no sense to send same values. firing too
+
+					var writer = BeginNetworkMessageToServer( "UpdateObjectControl" );
+					if( writer != null )
+					{
+						writer.Write( (float)vector );
+						writer.Write( run );
+						writer.Write( lookDirection.ToVector2F() );
+						EndNetworkMessage();
+					}
+				}
+
+
 				//firing
 				if( IsMouseButtonPressed( EMouseButtons.Left ) && firing )
 				{
@@ -159,10 +192,68 @@ namespace NeoAxis
 					{
 						var weapon = item as Weapon2D;
 						if( weapon != null )
-							weapon.FiringBegin();
+						{
+							if( NetworkIsClient )
+							{
+								weapon.BeginNetworkMessageToServer( "FiringBegin" );
+								weapon.EndNetworkMessage();
+							}
+							else
+								weapon.FiringBegin();
+						}
 					}
 				}
 			}
+		}
+
+		protected override void OnSimulationStep()
+		{
+			base.OnSimulationStep();
+
+			if( NetworkIsSingle )
+				UpdateObjectControl();
+		}
+
+		protected override void OnSimulationStepClient()
+		{
+			base.OnSimulationStepClient();
+
+			UpdateObjectControl();
+		}
+
+		protected override bool OnReceiveNetworkMessageFromClient( ServerNetworkService_Components.ClientItem client, string message, ArrayDataReader reader )
+		{
+			if( !base.OnReceiveNetworkMessageFromClient( client, message, reader ) )
+				return false;
+
+			var character = Character;
+			if( character != null )
+			{
+				//security check the object is controlled by the player
+				var networkLogic = NetworkLogicUtility.GetNetworkLogic( character );
+				if( networkLogic != null && networkLogic.ServerGetObjectControlledByUser( client.User, true ) == character )
+				{
+					if( message == "UpdateObjectControl" )
+					{
+						var vector = reader.ReadSingle();
+						var run = reader.ReadBoolean();
+						var lookDirection = reader.ReadVector2F();
+						if( !reader.Complete() )
+							return false;
+
+						MathEx.Clamp( ref vector, -1, 1 );
+						if( lookDirection != Vector2.Zero )
+							lookDirection.Normalize();
+
+						character.SetMoveVector( vector, run );
+						character.SetLookToDirection( lookDirection );
+					}
+					else if( message == "Jump" )
+						character.TryJump();
+				}
+			}
+
+			return true;
 		}
 
 	}

@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -266,14 +266,14 @@ namespace NeoAxis
 				if( EnabledInHierarchy )
 				{
 					var whenEnable = WhenEnable.Value;
-					if( whenEnable.HasFlag( WhenEnableEnum.Editor ) && EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor ||
-						whenEnable.HasFlag( WhenEnableEnum.Simulation ) && EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+					if( ( ( whenEnable & WhenEnableEnum.Editor ) != 0 ) && EngineApp.IsEditor ||
+						( ( whenEnable & WhenEnableEnum.Simulation ) != 0 ) && EngineApp.IsSimulation )
 					{
 						var ins = ComponentUtility.GetResourceInstanceByComponent( this );
 						var isResource = ins != null && ins.InstanceType == Resource.InstanceType.Resource;
 
-						if( whenEnable.HasFlag( WhenEnableEnum.Resource ) && isResource ||
-							whenEnable.HasFlag( WhenEnableEnum.Instance ) && !isResource )
+						if( ( ( whenEnable & WhenEnableEnum.Resource ) != 0 ) && isResource || 
+							( ( whenEnable & WhenEnableEnum.Instance ) != 0 ) && !isResource )
 						{
 							subscribed = true;
 							Subscribe();

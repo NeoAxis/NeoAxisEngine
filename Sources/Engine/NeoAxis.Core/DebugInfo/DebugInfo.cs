@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -55,10 +55,14 @@ namespace Internal//NeoAxis
 
 		public static string Translate( string text )
 		{
-			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+#if !DEPLOY
+			if( EngineApp.IsEditor )
 				return NeoAxis.Editor.EditorLocalization.Translate( "DebugInfoWindow", text );
 			else
 				return text;
+#else
+			return text;
+#endif
 		}
 
 	}

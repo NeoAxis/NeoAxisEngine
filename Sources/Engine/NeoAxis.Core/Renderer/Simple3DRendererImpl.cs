@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,8 +14,10 @@ namespace NeoAxis
 		//!!!!если стенсил юзать, то можно рисовать правильнее. без наложений если альфа < 1
 
 		//!!!!
-		const int constBufferVertexCount = 1024;
-		const int constBufferIndexCount = 4098;
+		int constBufferVertexCount = 1024;
+		int constBufferIndexCount = 4098;
+		//const int constBufferVertexCount = 1024;
+		//const int constBufferIndexCount = 4098;
 
 		Viewport viewport;
 
@@ -125,11 +127,12 @@ namespace NeoAxis
 			//public bool depthTest;
 			//public bool depthWrite;
 
-			public unsafe byte[] vertices = new byte[ constBufferVertexCount * sizeof( Vertex ) ];
+			public unsafe byte[] vertices;
+			// = new byte[ constBufferVertexCount * sizeof( Vertex ) ];
 			//public Vertex[] vertices = new Vertex[ constBufferVertexCount ];
 
 			public int vertexCount;
-			public int[] indices = new int[ constBufferIndexCount ];
+			public int[] indices;// = new int[ constBufferIndexCount ];
 			public int indexCount;
 			public bool actualIndexData;
 
@@ -137,6 +140,12 @@ namespace NeoAxis
 			//public Mat4 transform;
 			//public bool wireframe;
 			//public bool culling;
+
+			public unsafe Item_DynamicallyCreated( Simple3DRendererImpl owner )
+			{
+				vertices = new byte[ owner.constBufferVertexCount * sizeof( Vertex ) ];
+				indices = new int[ owner.constBufferIndexCount ];
+			}
 		}
 
 		///////////////////////////////////////////
@@ -162,6 +171,12 @@ namespace NeoAxis
 		public Simple3DRendererImpl( Viewport viewport )
 		{
 			this.viewport = viewport;
+
+			if( EngineApp.IsEditor )
+			{
+				constBufferVertexCount *= 8;
+				constBufferIndexCount *= 8;
+			}
 
 			InitInternal();
 		}
@@ -797,11 +812,11 @@ namespace NeoAxis
 
 		unsafe void SetColors( Vertex* pVertex )
 		{
-			pVertex->color = currentColorPacked;
-			pVertex->colorInvisibleBehindObjects = currentColorInvisibleBehindObjectsPacked;
+			pVertex->Color = currentColorPacked;
+			pVertex->ColorInvisibleBehindObjects = currentColorInvisibleBehindObjectsPacked;
 		}
 
-		public override void AddLine( Vector3 start, Vector3 end, double thickness )
+		public override void AddLine( ref Vector3 start, ref Vector3 end, double thickness )
 		{
 			if( thickness >= 0 )
 			{
@@ -939,7 +954,7 @@ namespace NeoAxis
 					//use new item
 
 					if( freeItemsDynamicallyCreated.Count == 0 )
-						freeItemsDynamicallyCreated.Push( new Item_DynamicallyCreated() );
+						freeItemsDynamicallyCreated.Push( new Item_DynamicallyCreated( this ) );
 					item = freeItemsDynamicallyCreated.Pop();
 
 					item.type = Item_DynamicallyCreated.ItemType.Lines;
@@ -965,13 +980,13 @@ namespace NeoAxis
 						Vertex* pVertices = (Vertex*)pVertices2;
 						Vertex* pVertex = pVertices + item.vertexCount;
 
-						//!!!!!как-то неправильно. тогда матрицу выставлять?
-						pVertex->position = start.ToVector3F();
+						//!!!!!double
+						pVertex->Position = start.ToVector3F();
 						SetColors( pVertex );
 						pVertex++;
 
-						//!!!!!как-то неправильно. тогда матрицу выставлять?
-						pVertex->position = end.ToVector3F();
+						//!!!!!double
+						pVertex->Position = end.ToVector3F();
 						SetColors( pVertex );
 					}
 				}
@@ -1074,7 +1089,7 @@ namespace NeoAxis
 					//get new item
 
 					if( freeItemsDynamicallyCreated.Count == 0 )
-						freeItemsDynamicallyCreated.Push( new Item_DynamicallyCreated() );
+						freeItemsDynamicallyCreated.Push( new Item_DynamicallyCreated( this ) );
 					item = freeItemsDynamicallyCreated.Pop();
 
 					item.type = Item_DynamicallyCreated.ItemType.Triangles;
@@ -1105,15 +1120,15 @@ namespace NeoAxis
 						Vertex* pVertices = (Vertex*)pVertices2;
 						Vertex* pVertex = pVertices + item.vertexCount;
 
-						pVertex->position = vertices[ index0 ];
+						pVertex->Position = vertices[ index0 ];
 						SetColors( pVertex );
 						pVertex++;
 
-						pVertex->position = vertices[ index1 ];
+						pVertex->Position = vertices[ index1 ];
 						SetColors( pVertex );
 						pVertex++;
 
-						pVertex->position = vertices[ index2 ];
+						pVertex->Position = vertices[ index2 ];
 						SetColors( pVertex );
 					}
 				}
@@ -1124,15 +1139,15 @@ namespace NeoAxis
 						Vertex* pVertices = (Vertex*)pVertices2;
 						Vertex* pVertex = pVertices + item.vertexCount;
 
-						pVertex->position = vertices[ nTriangle * 3 + 0 ];
+						pVertex->Position = vertices[ nTriangle * 3 + 0 ];
 						SetColors( pVertex );
 						pVertex++;
 
-						pVertex->position = vertices[ nTriangle * 3 + 1 ];
+						pVertex->Position = vertices[ nTriangle * 3 + 1 ];
 						SetColors( pVertex );
 						pVertex++;
 
-						pVertex->position = vertices[ nTriangle * 3 + 2 ];
+						pVertex->Position = vertices[ nTriangle * 3 + 2 ];
 						SetColors( pVertex );
 					}
 				}
@@ -1236,7 +1251,7 @@ namespace NeoAxis
 					//get new item
 
 					if( freeItemsDynamicallyCreated.Count == 0 )
-						freeItemsDynamicallyCreated.Push( new Item_DynamicallyCreated() );
+						freeItemsDynamicallyCreated.Push( new Item_DynamicallyCreated( this ) );
 					item = freeItemsDynamicallyCreated.Pop();
 
 					item.type = Item_DynamicallyCreated.ItemType.Triangles;
@@ -1267,15 +1282,15 @@ namespace NeoAxis
 						Vertex* pVertices = (Vertex*)pVertices2;
 						Vertex* pVertex = pVertices + item.vertexCount;
 
-						pVertex->position = vertices[ index0 ];
+						pVertex->Position = vertices[ index0 ];
 						SetColors( pVertex );
 						pVertex++;
 
-						pVertex->position = vertices[ index1 ];
+						pVertex->Position = vertices[ index1 ];
 						SetColors( pVertex );
 						pVertex++;
 
-						pVertex->position = vertices[ index2 ];
+						pVertex->Position = vertices[ index2 ];
 						SetColors( pVertex );
 					}
 				}
@@ -1286,15 +1301,15 @@ namespace NeoAxis
 						Vertex* pVertices = (Vertex*)pVertices2;
 						Vertex* pVertex = pVertices + item.vertexCount;
 
-						pVertex->position = vertices[ nTriangle * 3 + 0 ];
+						pVertex->Position = vertices[ nTriangle * 3 + 0 ];
 						SetColors( pVertex );
 						pVertex++;
 
-						pVertex->position = vertices[ nTriangle * 3 + 1 ];
+						pVertex->Position = vertices[ nTriangle * 3 + 1 ];
 						SetColors( pVertex );
 						pVertex++;
 
-						pVertex->position = vertices[ nTriangle * 3 + 2 ];
+						pVertex->Position = vertices[ nTriangle * 3 + 2 ];
 						SetColors( pVertex );
 					}
 				}
@@ -1325,7 +1340,7 @@ namespace NeoAxis
 
 				//!!!!slowly
 
-				Vector3[] verticesTransformed = new Vector3[ vertices.Count ];
+				var verticesTransformed = new Vector3[ vertices.Count ];
 				{
 					bool identity = transformIsIdentity;// || transform == Matrix4.Identity;
 					for( int n = 0; n < verticesTransformed.Length; n++ )
@@ -1576,7 +1591,7 @@ namespace NeoAxis
 				if( !string.IsNullOrEmpty( error ) )
 					Log.Fatal( error );
 
-				oneMaterial = new GpuMaterialPass( vertexProgram, fragmentProgram );
+				oneMaterial = new GpuMaterialPass( null, vertexProgram, fragmentProgram );
 			}
 		}
 
@@ -1762,7 +1777,7 @@ namespace NeoAxis
 					}
 
 					//bind depth texture
-					context.BindTexture( 0/*"depthTexture"*/, depthTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point );
+					context.BindTexture( 0/*"depthTexture"*/, depthTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point, 0, false );
 
 					//set uniform
 					{
@@ -1820,12 +1835,13 @@ namespace NeoAxis
 							//!!!!глючит на HD7850
 							//if( item_DynamicallyCreated.actualIndexData )
 							//	context.SetIndexBuffer( renderableItem_DynamicallyCreated.indexBuffer, 0, renderableItem_DynamicallyCreated.indexCount );
-							context.SetPassAndSubmit( pass, operationType, containers, item_DynamicallyCreated.occlusionQuery );
+							context.SetPassAndSubmit( pass, operationType, containers, item_DynamicallyCreated.occlusionQuery, false );
 
 							if( operationType == RenderOperationType.TriangleList )
 								context.UpdateStatisticsCurrent.Triangles += renderableItem_DynamicallyCreated.vertexCount / 3;
 							else if( operationType == RenderOperationType.LineList )
 								context.UpdateStatisticsCurrent.Lines += renderableItem_DynamicallyCreated.vertexCount / 2;
+							context.UpdateStatisticsCurrent.Instances++;
 						}
 					}
 					//_VertexIndexData
@@ -1841,12 +1857,13 @@ namespace NeoAxis
 								context.SetVertexBuffer( n, data.VertexBuffers[ n ], data.VertexStartOffset, data.VertexCount );
 							if( data.IndexBuffer != null )
 								context.SetIndexBuffer( data.IndexBuffer, data.IndexStartOffset, data.IndexCount );
-							context.SetPassAndSubmit( pass, data.OperationType, containers, item_VertexIndexData.occlusionQuery );
+							context.SetPassAndSubmit( pass, data.OperationType, containers, item_VertexIndexData.occlusionQuery, false );
 
 							if( data.OperationType == RenderOperationType.TriangleList )
 								context.UpdateStatisticsCurrent.Triangles += data.IndexBuffer != null ? data.IndexCount / 3 : data.VertexCount / 3;
 							else if( data.OperationType == RenderOperationType.LineList )
 								context.UpdateStatisticsCurrent.Lines += data.IndexBuffer != null ? data.IndexCount / 2 : data.VertexCount / 2;
+							context.UpdateStatisticsCurrent.Instances++;
 						}
 					}
 
@@ -1953,7 +1970,7 @@ namespace NeoAxis
 					//use new item
 
 					if( freeItemsDynamicallyCreated.Count == 0 )
-						freeItemsDynamicallyCreated.Push( new Item_DynamicallyCreated() );
+						freeItemsDynamicallyCreated.Push( new Item_DynamicallyCreated( this ) );
 					item = freeItemsDynamicallyCreated.Pop();
 
 					item.type = Item_DynamicallyCreated.ItemType.Lines;
@@ -2012,7 +2029,7 @@ namespace NeoAxis
 					//get new item
 
 					if( freeItemsDynamicallyCreated.Count == 0 )
-						freeItemsDynamicallyCreated.Push( new Item_DynamicallyCreated() );
+						freeItemsDynamicallyCreated.Push( new Item_DynamicallyCreated( this ) );
 					item = freeItemsDynamicallyCreated.Pop();
 
 					item.type = Item_DynamicallyCreated.ItemType.Triangles;
@@ -2093,7 +2110,7 @@ namespace NeoAxis
 					//get new item
 
 					if( freeItemsDynamicallyCreated.Count == 0 )
-						freeItemsDynamicallyCreated.Push( new Item_DynamicallyCreated() );
+						freeItemsDynamicallyCreated.Push( new Item_DynamicallyCreated( this ) );
 					item = freeItemsDynamicallyCreated.Pop();
 
 					item.type = Item_DynamicallyCreated.ItemType.Triangles;
@@ -2178,7 +2195,7 @@ namespace NeoAxis
 					bool identity = transformIsIdentity;// transform == Matrix4.Identity;
 					for( int n = 0; n < verticesTransformed.Length; n++ )
 					{
-						Vector3 v = vertices[ n ].position.ToVector3();
+						Vector3 v = vertices[ n ].Position.ToVector3();
 						if( !identity )
 							Matrix4.Multiply( ref transform, ref v, out verticesTransformed[ n ] );//v = transform * v;
 						else
@@ -2214,8 +2231,8 @@ namespace NeoAxis
 						var p0 = verticesTransformed[ index0 ];
 						var p1 = verticesTransformed[ index1 ];
 
-						var v0 = new Vertex( p0.ToVector3F(), vertices[ index0 ].color, vertices[ index0 ].colorInvisibleBehindObjects );
-						var v1 = new Vertex( p1.ToVector3F(), vertices[ index1 ].color, vertices[ index1 ].colorInvisibleBehindObjects );
+						var v0 = new Vertex( p0.ToVector3F(), vertices[ index0 ].Color, vertices[ index0 ].ColorInvisibleBehindObjects );
+						var v1 = new Vertex( p1.ToVector3F(), vertices[ index1 ].Color, vertices[ index1 ].ColorInvisibleBehindObjects );
 
 						AddLine( v0, v1 );
 					}
@@ -2232,9 +2249,9 @@ namespace NeoAxis
 						var p1 = verticesTransformed[ index1 ];
 						var p2 = verticesTransformed[ index2 ];
 
-						var v0 = new Vertex( p0.ToVector3F(), vertices[ index0 ].color, vertices[ index0 ].colorInvisibleBehindObjects );
-						var v1 = new Vertex( p1.ToVector3F(), vertices[ index1 ].color, vertices[ index1 ].colorInvisibleBehindObjects );
-						var v2 = new Vertex( p2.ToVector3F(), vertices[ index2 ].color, vertices[ index2 ].colorInvisibleBehindObjects );
+						var v0 = new Vertex( p0.ToVector3F(), vertices[ index0 ].Color, vertices[ index0 ].ColorInvisibleBehindObjects );
+						var v1 = new Vertex( p1.ToVector3F(), vertices[ index1 ].Color, vertices[ index1 ].ColorInvisibleBehindObjects );
+						var v2 = new Vertex( p2.ToVector3F(), vertices[ index2 ].Color, vertices[ index2 ].ColorInvisibleBehindObjects );
 
 						AddLine( v0, v1 );
 						AddLine( v1, v2 );

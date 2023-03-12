@@ -1,6 +1,6 @@
 $input v_texCoord0
 
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 /***************************************************************************
  # Copyright (c) 2015-21, NVIDIA CORPORATION. All rights reserved.
  #

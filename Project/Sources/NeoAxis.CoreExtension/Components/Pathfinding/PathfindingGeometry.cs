@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -210,15 +210,15 @@ namespace NeoAxis
 
 				//!!!!опцию DisplayPathfindingGeometries
 
-				bool show = ( ParentScene.GetDisplayDevelopmentDataInThisApplication() /*!!!! && ParentScene.DisplayLights */) ||
+				bool show = ( context.SceneDisplayDevelopmentDataInThisApplication /*!!!! && ParentScene.DisplayLights */) ||
 					context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this;
 				if( show )
 				{
 					ColorValue color;
 					if( context2.selectedObjects.Contains( this ) )
-						color = ProjectSettings.Get.General.SelectedColor;
+						color = ProjectSettings.Get.Colors.SelectedColor;
 					else if( context2.canSelectObjects.Contains( this ) )
-						color = ProjectSettings.Get.General.CanSelectColor;
+						color = ProjectSettings.Get.Colors.CanSelectColor;
 					else
 					{
 						//!!!!
@@ -227,7 +227,7 @@ namespace NeoAxis
 					}
 
 					var viewport = context.Owner;
-					viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+					viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 					DebugDraw( viewport );
 				}
 				//if( !show )
@@ -304,7 +304,7 @@ namespace NeoAxis
 		{
 			base.OnEnabledInHierarchyChanged();
 
-			if( EnabledInHierarchy )
+			if( EnabledInHierarchyAndIsInstance )
 			{
 				if( dynamicObstacle == null )
 					UpdateDynamicObstacle( true );
@@ -342,7 +342,8 @@ namespace NeoAxis
 				{
 					dynamicObstacle = new Pathfinding.DynamicObstacleData();
 					dynamicObstacle.Area = (byte)Area.Value;
-					SpaceBounds.GetCalculatedBoundingBox( out dynamicObstacle.Bounds );
+					dynamicObstacle.Bounds = SpaceBounds.BoundingBox;
+					//SpaceBounds.GetCalculatedBoundingBox( out dynamicObstacle.Bounds );
 
 					//!!!!calculate geometry from background thread
 					GetGeometry( out dynamicObstacle.Vertices, out dynamicObstacle.Indices );

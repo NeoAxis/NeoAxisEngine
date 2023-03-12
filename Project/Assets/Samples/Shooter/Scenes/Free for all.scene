@@ -1,0 +1,997 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.Scene
+{
+	RenderingPipeline
+	{
+		GetByReference = "root:$Rendering Pipeline"
+	}
+	UIScreen
+	{
+		GetByReference = "Samples\\Shooter\\UI\\ShooterSceneScreen.ui"
+	}
+	CameraEditor
+	{
+		GetByReference = "this:$Camera Editor"
+	}
+	CameraEditor2D
+	{
+		GetByReference = "this:$Camera Editor 2D"
+	}
+	.component NeoAxis.Camera
+	{
+		Name = Camera Editor
+		Visible = False
+		Transform = "-8.40882974819185 -24.1053524459336 13.9184324739428; -0.198205698482994 0.307065408561813 0.504800368040953 0.782049822184849; 1 1 1"
+	}
+	.component NeoAxis.Camera
+	{
+		Name = Camera Editor 2D
+		Visible = False
+		Transform = "2.64918580053222 3.02745193504869 10; -0.502493739596367 0.497493760429674 0.497493760429674 0.502493739596367; 1 1 1"
+		Projection = Orthographic
+		Height = 16.8586419336498
+		FixedUp = 0 1 0
+		FarClipPlane = 100
+	}
+	.component NeoAxis.Light
+	{
+		Name = Ambient Light
+		Transform = "33.3672008088317 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
+		Type = Ambient
+		Brightness = 50000
+	}
+	.component NeoAxis.Light
+	{
+		Name = Directional Light
+		Transform = "33.6705836506032 -12.3480975923698 0.979243192658027; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
+		Type = Directional
+		Color = 1 0.9698039 0.8792549
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 91.429
+	}
+	.component NeoAxis.RenderingPipeline_Basic
+	{
+		Name = Rendering Pipeline
+		ShadowFarDistance = 60
+		ShadowIntensity = 0.5
+		.component NeoAxis.Component
+		{
+			Name = Background Effects
+		}
+		.component NeoAxis.Component
+		{
+			Name = Scene Effects
+			.component NeoAxis.RenderingEffect_AmbientOcclusion
+			{
+				Name = Ambient Occlusion
+			}
+			.component NeoAxis.RenderingEffect_MotionBlur
+			{
+				Name = Motion Blur
+			}
+			.component NeoAxis.RenderingEffect_LensEffects
+			{
+				Name = Lens Effects
+			}
+			.component NeoAxis.RenderingEffect_ToneMapping
+			{
+				Name = Tone Mapping
+				Intensity = 0.5
+			}
+			.component NeoAxis.RenderingEffect_ToLDR
+			{
+				Name = To LDR
+			}
+			.component NeoAxis.RenderingEffect_Antialiasing
+			{
+				Name = Antialiasing
+			}
+			.component NeoAxis.RenderingEffect_ResolutionUpscale
+			{
+				Name = Resolution Upscale
+			}
+			.component NeoAxis.RenderingEffect_Sharpen
+			{
+				Name = Sharpen
+			}
+		}
+		.component NeoAxis.Component
+		{
+			Name = Final Image Effects
+		}
+	}
+	.component NeoAxis.GameMode
+	{
+		Name = Game Mode
+		UseBuiltInCamera = FirstPerson
+		ThirdPersonCameraHorizontalAngle = -89.99999999999993
+		CutsceneStarted = False
+		CutsceneGuiFadingFactor = 0
+		CutsceneGuiFadingSpeed = 0
+		ScreenFadingCurrentColor = 0 0 0 0
+		ScreenFadingTargetColor = 0 0 0 0
+		ScreenFadingSpeed = 0
+		ObjectControlledByPlayer
+		{
+			GetByReference = "this:..\\$Character"
+		}
+	}
+	.component Project.ShooterNetworkLogic
+	{
+		Name = Shooter Network Logic
+	}
+	.component NeoAxis.SpawnPoint
+	{
+		Name = Spawn Point
+		Transform = "13.9978315200476 -16.9145977514872 1.45791460965927; 0 0 0 1; 1 1 1"
+		Team = Team1
+	}
+	.component NeoAxis.SpawnPoint
+	{
+		Name = Spawn Point 2
+		Transform = "-12.0021684799524 -16.9145977514872 1.45791460965927; 0 0 0 1; 1 1 1"
+		Team = Team1
+	}
+	.component NeoAxis.SpawnPoint
+	{
+		Name = Spawn Point 3
+		Transform = "-11.8864681295687 14.933003131459 1.45791460965927; 0 0 -1 0.00000000000000006; 1 1 1"
+		Team = Team2
+	}
+	.component NeoAxis.SpawnPoint
+	{
+		Name = Spawn Point 4
+		Transform = "15.1135318704313 14.933003131459 1.45791460965927; 0 0 -1 0.00000000000000006; 1 1 1"
+		Team = Team2
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Ground
+		CanBeSelected = False
+		Transform = "0 0 0; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Materials\\Basic Library\\Wood\\Wood Floor 039.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 100 100
+				UVTilesPerUnit = 0.2 0.2
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform
+			{
+				GetByReference = "this:..\\Transform"
+			}
+			.component NeoAxis.CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Sphere
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform = "2 14 6.5; 0 0 0 1; 1 1 1"
+			MotionType = Dynamic
+			.component NeoAxis.CollisionShape_Sphere
+			{
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform = "5.61498704813375 -13.5345161508952 0.500000000000008; 0 0 0 1; 1 1 1"
+			MotionType = Dynamic
+			.component NeoAxis.CollisionShape_Box
+			{
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Cylinder
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Cylinder
+			{
+				Name = Mesh Geometry
+				Height = 2
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform = "1.98502021467533 -5.24018235532556 4; 0 0 0 1; 1 1 1"
+			MotionType = Dynamic
+			.component NeoAxis.CollisionShape_Cylinder
+			{
+				Height = 2
+			}
+		}
+	}
+	.component NeoAxis.GroupOfObjects
+	{
+		Name = Group Of Objects
+		BaseObjects
+		{
+			Count = 1
+			0 "NeoAxis.Reference<NeoAxis.Component>"
+			{
+				GetByReference = "root:$Ground"
+			}
+		}
+	}
+	.component NeoAxis.Weapon
+	{
+		Name = Weapon
+		Transform = "14.1135318704313 -13.1914088043696 0.600748485574068; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+	}
+	.component NeoAxis.Weapon
+	{
+		Name = Weapon 2
+		Transform = "-11.8864681295687 -13.1914088043696 0.600748485574068; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+	}
+	.component NeoAxis.Weapon
+	{
+		Name = Weapon 3
+		Transform = "-12.0021684799524 11.2098141843413 0.600748485574068; 0 0 -1 0.00000000000000006; 1 1 1"
+		Mesh
+		{
+			GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+	}
+	.component NeoAxis.Weapon
+	{
+		Name = Weapon 4
+		Transform = "14.9978315200476 11.2098141843413 0.600748485574068; 0 0 -1 0.00000000000000006; 1 1 1"
+		Mesh
+		{
+			GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 2
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+				Dimensions = 10 10 0.2
+			}
+			.component NeoAxis.MeshModifier_BoxUV
+			{
+				Name = Box UV
+				Tiles = 5 5 1
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform = "-12 -15 0.1; 0 0 0 1; 1 1 1"
+			.component NeoAxis.CollisionShape_Box
+			{
+				Dimensions = 10 10 0.200000002980232
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 5
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+				Dimensions = 10 10 0.2
+			}
+			.component NeoAxis.MeshModifier_BoxUV
+			{
+				Name = Box UV
+				Tiles = 5 5 1
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform = "-12 12.0056123470607 0.1; 0 0 0 1; 1 1 1"
+			.component NeoAxis.CollisionShape_Box
+			{
+				Dimensions = 10 10 0.200000002980232
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 6
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Materials\\Basic Library\\Wood\\Wood Floor 039.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+				Dimensions = 8 8 0.2
+			}
+			.component NeoAxis.MeshModifier_BoxUV
+			{
+				Name = Box UV
+				Tiles = 2 2 2
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform = "2 -1.99438765293925 2.9; 0 0 0 1; 1 1 1"
+			.component NeoAxis.CollisionShape_Box
+			{
+				Dimensions = 8 8 0.200000002980232
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 8
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Materials\\Basic Library\\Wood\\Wood Floor 039.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+				Dimensions = 8 8 0.2
+			}
+			.component NeoAxis.MeshModifier_BoxUV
+			{
+				Name = Box UV
+				Tiles = 2 2 2
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform = "2 6.00561234706075 2.9; 0 0 0 1; 1 1 1"
+			.component NeoAxis.CollisionShape_Box
+			{
+				Dimensions = 8 8 0.200000002980232
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 7
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Materials\\Basic Library\\Wood\\Wood Floor 039.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+				Dimensions = 8 8 6
+			}
+			.component NeoAxis.MeshModifier_BoxUV
+			{
+				Name = Box UV
+				Tiles = 2 2 2
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform = "2 14.0056123470607 3; 0 0 0 1; 1 1 1"
+			.component NeoAxis.CollisionShape_Box
+			{
+				Dimensions = 8 8 6
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 3
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+				Dimensions = 10 10 0.2
+			}
+			.component NeoAxis.MeshModifier_BoxUV
+			{
+				Name = Box UV
+				Tiles = 5 5 1
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform = "14.5457272572694 -15 0.1; 0 0 0 1; 1 1 1"
+			.component NeoAxis.CollisionShape_Box
+			{
+				Dimensions = 10 10 0.200000002980232
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 4
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+				Dimensions = 10 10 0.2
+			}
+			.component NeoAxis.MeshModifier_BoxUV
+			{
+				Name = Box UV
+				Tiles = 5 5 1
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform = "14.5457272572694 12.0056123470607 0.1; 0 0 0 1; 1 1 1"
+			.component NeoAxis.CollisionShape_Box
+			{
+				Dimensions = 10 10 0.200000002980232
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Stairs
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Stairs
+			{
+				Name = Mesh Geometry
+				Width = 8
+				Height = 3
+				Depth = 8
+				Steps = 20
+			}
+			.component NeoAxis.MeshModifier_BoxUV
+			{
+				Name = Box UV
+				Tiles = 5 5 5
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform = "-10 -2 0; 0 0 0 1; 1 1 1"
+			.component NeoAxis.CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Stairs 2
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Stairs
+			{
+				Name = Mesh Geometry
+				Width = 8
+				Height = 3
+				Depth = 8
+				Steps = 20
+			}
+			.component NeoAxis.MeshModifier_BoxUV
+			{
+				Name = Box UV
+				Tiles = 5 5 5
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform = "14 -2 0; 0 0 -1 0.00000000000000006; 1 1 1"
+			.component NeoAxis.CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Stairs 3
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Stairs
+			{
+				Name = Mesh Geometry
+				Width = 8
+				Height = 3
+				Depth = 8
+				Steps = 20
+			}
+			.component NeoAxis.MeshModifier_BoxUV
+			{
+				Name = Box UV
+				Tiles = 5 5 5
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform = "2 2 3; 0 0 -0.707106781186548 -0.707106781186548; 1 1 1"
+			.component NeoAxis.CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Character
+	{
+		Name = Character
+		Transform = "-0.5 -22 0; 0 0 0.707106781186548 0.707106781186548; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.MeshInSpaceAnimationController
+		{
+			Name = Animation Controller
+		}
+		.component NeoAxis.CharacterInputProcessing
+		{
+			Name = Character Input Processing
+		}
+	}
+}

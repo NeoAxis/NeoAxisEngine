@@ -1,6 +1,6 @@
 /*
- * Copyright 2011-2020 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
+ * Copyright 2011-2022 Branimir Karadzic. All rights reserved.
+ * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
 #include "shaderc.h"
@@ -878,8 +878,8 @@ namespace bgfx
 
 		FPRINTF(stderr
 			, "shaderc, bgfx shader compiler tool, version %d.%d.%d.\n"
-			  "Copyright 2011-2020 Branimir Karadzic. All rights reserved.\n"
-			  "License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause\n\n"
+			  "Copyright 2011-2022 Branimir Karadzic. All rights reserved.\n"
+			  "License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE\n\n"
 			, BGFX_SHADERC_VERSION_MAJOR
 			, BGFX_SHADERC_VERSION_MINOR
 			, BGFX_API_VERSION
@@ -1335,8 +1335,8 @@ namespace bgfx
 			}
 
 			bx::write(_writer, inputHash);
-				bx::write(_writer, outputHash);
-			}
+			bx::write(_writer, outputHash);
+		}
 
 		if (raw)
 		{
@@ -1740,6 +1740,14 @@ namespace bgfx
 						const bool hasFragColor   = !bx::strFind(input, "gl_FragColor").isEmpty();
 						const bool hasFragCoord   = !bx::strFind(input, "gl_FragCoord").isEmpty() || hlsl > 3 || hlsl == 2;
 						const bool hasFragDepth   = !bx::strFind(input, "gl_FragDepth").isEmpty();
+
+						//!!!!betauser
+						//can't name gl_FragDepthGreaterEqual because it is enables gl_FragDepth too
+						const bool hasFragDepthGreaterEqual = !bx::strFind(input, "gl_GreaterEqualFragDepth").isEmpty();
+						const bool hasFragDepthLessEqual = !bx::strFind(input, "gl_LessEqualFragDepth").isEmpty();
+						//const bool hasFragDepthGreaterEqual = !bx::strFind(input, "gl_FragDepthGreaterEqual").isEmpty();
+						//const bool hasFragDepthLessEqual = !bx::strFind(input, "gl_FragDepthLessEqual").isEmpty();
+
 						const bool hasFrontFacing = !bx::strFind(input, "gl_FrontFacing").isEmpty();
 						const bool hasPrimitiveId = !bx::strFind(input, "gl_PrimitiveID").isEmpty();
 
@@ -1779,7 +1787,9 @@ namespace bgfx
 
 						if (hasFragCoord)
 						{
-							preprocessor.writef(" \\\n\tvec4 gl_FragCoord : SV_POSITION");
+							//!!!!betauser. set interpolation for SV_DepthGreaterEqual, SV_DepthLessEqual
+							preprocessor.writef(" \\\n\tcentroid vec4 gl_FragCoord : SV_POSITION");
+							//preprocessor.writef(" \\\n\tvec4 gl_FragCoord : SV_POSITION");
 							++arg;
 						}
 
@@ -1822,6 +1832,22 @@ namespace bgfx
 								" \\\n\t%sout float gl_FragDepth : SV_DEPTH"
 								, arg++ > 0 ? ", " : "  "
 								);
+						}
+
+						if (hasFragDepthGreaterEqual)
+						{
+							preprocessor.writef(
+								" \\\n\t%sout float gl_GreaterEqualFragDepth : SV_DepthGreaterEqual"
+								, arg++ > 0 ? ", " : "  "
+							);
+						}
+
+						if (hasFragDepthLessEqual)
+						{
+							preprocessor.writef(
+								" \\\n\t%sout float gl_LessEqualFragDepth : SV_DepthLessEqual"
+								, arg++ > 0 ? ", " : "  "
+							);
 						}
 
 						//!!!!betauser
@@ -2509,7 +2535,6 @@ namespace bgfx
 										bx::write(_writer, un.regIndex);
 										bx::write(_writer, un.regCount);
 
-										//!!!!new
 										bx::write(_writer, un.texComponent);
 										bx::write(_writer, un.texDimension);
 

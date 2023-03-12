@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,7 +24,13 @@ namespace NeoAxis
 		{
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP || SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 			{
-				systemWatcher = new FileSystemWatcher( VirtualFileSystem.Directories.Assets );
+				var folder = "";
+				if( EngineApp.IsEditor )
+					folder = VirtualFileSystem.Directories.Project;
+				else
+					folder = VirtualFileSystem.Directories.Assets;
+
+				systemWatcher = new FileSystemWatcher( folder );
 				//!!!!?
 				systemWatcher.InternalBufferSize = 32768;
 				systemWatcher.IncludeSubdirectories = true;
@@ -75,7 +81,7 @@ namespace NeoAxis
 					{
 						int index = list.FindIndex( delegate ( FileSystemEventArgs evt2 )
 						{
-							return ( string.Compare( evt2.FullPath, evt.FullPath, true ) == 0 );
+							return string.Compare( evt2.FullPath, evt.FullPath, true ) == 0;
 						} );
 						if( index != -1 )
 							continue;

@@ -1,9 +1,10 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.IO;
 using NeoAxis.Editor;
+using Internal.SharpBgfx;
 
 namespace NeoAxis
 {
@@ -11,11 +12,13 @@ namespace NeoAxis
 	/// Defines how a geometry looks.
 	/// </summary>
 	[ResourceFileExtension( "material" )]
+#if !DEPLOY
 	[EditorControl( typeof( MaterialEditor ) )]
 	[Preview( typeof( MaterialPreview ) )]
 	[PreviewImage( typeof( MaterialPreviewImage ) )]
 	[SettingsCell( typeof( MaterialSettingsCell ) )]
 	[NewObjectSettings( typeof( NewObjectSettingsMaterial ) )]
+#endif
 	public partial class Material : ResultCompile<Material.CompiledMaterialData>, IEditorUpdateWhenDocumentModified
 	{
 		const bool shaderGenerationCompile = true;
@@ -23,7 +26,7 @@ namespace NeoAxis
 		const bool shaderGenerationPrintLog = false;
 		//const bool shaderGenerationPrintLog = true;
 
-		static ESet<Material> all = new ESet<Material>();
+		//static ESet<Material> all = new ESet<Material>();
 
 		/////////////////////////////////////////
 
@@ -592,7 +595,7 @@ namespace NeoAxis
 		/// <summary>
 		/// Amount of ray-tracing reflection. Used as option to use screen space or raytracing reflection technique.
 		/// </summary>
-		[DefaultValue( 0.0 )]
+		[DefaultValue( 0.0 )]//!!!! 1.0 )]
 		[Serialize]
 		[Category( "Shading" )]
 		[Range( 0, 1 )]
@@ -603,7 +606,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="RayTracingReflection"/> property value changes.</summary>
 		public event Action<Material> RayTracingReflectionChanged;
-		ReferenceField<double> _rayTracingReflection = 0.0;
+		ReferenceField<double> _rayTracingReflection = 0.0;//!!!! 1.0;
 
 		/// <summary>
 		/// Whether the surface receive shadows from other sources.
@@ -691,6 +694,42 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="SoftParticlesDistance"/> property value changes.</summary>
 		public event Action<Material> SoftParticlesDistanceChanged;
 		ReferenceField<double> _softParticlesDistance = 3.0;
+
+		public enum DepthOffsetModeEnum
+		{
+			None,
+			GreaterOrEqual,
+			LessOrEqual
+		}
+
+		/// <summary>
+		/// The depth offset mode gives the ability to change output depth in the fragment shader. Works only for deferred shading.
+		/// </summary>
+		[Category( "Shading" )]
+		[DefaultValue( DepthOffsetModeEnum.None )]
+		[FlowGraphBrowsable( false )]
+		public Reference<DepthOffsetModeEnum> DepthOffsetMode
+		{
+			get { if( _depthOffsetMode.BeginGet() ) DepthOffsetMode = _depthOffsetMode.Get( this ); return _depthOffsetMode.value; }
+			set { if( _depthOffsetMode.BeginSet( ref value ) ) { try { DepthOffsetModeChanged?.Invoke( this ); } finally { _depthOffsetMode.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="DepthOffsetMode"/> property value changes.</summary>
+		public event Action<Material> DepthOffsetModeChanged;
+		ReferenceField<DepthOffsetModeEnum> _depthOffsetMode = DepthOffsetModeEnum.None;
+
+		/// <summary>
+		/// The depth offset value. Limitation: You can specify the value by means additional block in shader graph, but can't set value in this property.
+		/// </summary>
+		[Category( "Shading" )]
+		[DefaultValue( 0.0 )]
+		public Reference<double> DepthOffset
+		{
+			get { if( _depthOffset.BeginGet() ) DepthOffset = _depthOffset.Get( this ); return _depthOffset.value; }
+			set { if( _depthOffset.BeginSet( ref value ) ) { try { DepthOffsetChanged?.Invoke( this ); } finally { _depthOffset.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="DepthOffset"/> property value changes.</summary>
+		public event Action<Material> DepthOffsetChanged;
+		ReferenceField<double> _depthOffset = 0.0;
 
 		/// <summary>
 		/// Enables advanced blending mode. In this mode, it is possible to configure blending for each channel separately.
@@ -843,7 +882,9 @@ namespace NeoAxis
 		[DefaultValue( "" )]
 		[Category( "Advanced Scripting" )]
 		//!!!!
+#if !DEPLOY
 		[Editor( typeof( HCItemTextBoxDropMultiline ), typeof( object ) )]
+#endif
 		[FlowGraphBrowsable( false )]
 		public Reference<string> VertexFunctions
 		{
@@ -859,7 +900,9 @@ namespace NeoAxis
 		/// </summary>
 		[DefaultValue( "" )]
 		[Category( "Advanced Scripting" )]
+#if !DEPLOY
 		[Editor( typeof( HCItemTextBoxDropMultiline ), typeof( object ) )]
+#endif
 		[FlowGraphBrowsable( false )]
 		public Reference<string> VertexCode
 		{
@@ -875,7 +918,9 @@ namespace NeoAxis
 		/// </summary>
 		[DefaultValue( "" )]
 		[Category( "Advanced Scripting" )]
+#if !DEPLOY
 		[Editor( typeof( HCItemTextBoxDropMultiline ), typeof( object ) )]
+#endif
 		[FlowGraphBrowsable( false )]
 		public Reference<string> FragmentFunctions
 		{
@@ -891,7 +936,9 @@ namespace NeoAxis
 		/// </summary>
 		[DefaultValue( "" )]
 		[Category( "Advanced Scripting" )]
+#if !DEPLOY
 		[Editor( typeof( HCItemTextBoxDropMultiline ), typeof( object ) )]
+#endif
 		[FlowGraphBrowsable( false )]
 		public Reference<string> FragmentCode
 		{
@@ -943,6 +990,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+#if !DEPLOY
 		/// <summary>
 		/// A set of settings for <see cref="Material"/> creation in the editor.
 		/// </summary>
@@ -1221,6 +1269,7 @@ namespace NeoAxis
 				return base.Creation( context );
 			}
 		}
+#endif
 
 		///////////////////////////////////////////////
 
@@ -1315,16 +1364,16 @@ namespace NeoAxis
 
 		public Material()
 		{
-			lock( all )
-				all.Add( this );
+			//lock( all )
+			//	all.Add( this );
 		}
 
 		protected override void OnDispose()
 		{
 			base.OnDispose();
 
-			lock( all )
-				all.Remove( this );
+			//lock( all )
+			//	all.Remove( this );
 		}
 
 		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
@@ -1477,6 +1526,11 @@ namespace NeoAxis
 						skip = true;
 					break;
 
+				case nameof( DepthOffset ):
+					if( DepthOffsetMode.Value == DepthOffsetModeEnum.None )
+						skip = true;
+					break;
+
 				case nameof( SoftParticles ):
 					{
 						var blendMode = BlendMode.Value;
@@ -1510,7 +1564,7 @@ namespace NeoAxis
 		{
 			if( Result != null )
 				return;
-			Result = Compile( CompiledMaterialData.SpecialMode.Usual );
+			Result = Compile( CompiledMaterialData.SpecialMode.Usual, null, 0, null, null, 0 );
 		}
 
 		string GetDisplayName()
@@ -1524,244 +1578,57 @@ namespace NeoAxis
 			return displayName;
 		}
 
-		bool GenerateCode( CompiledMaterialData compiledData, bool needSpecialShadowCaster )
+		bool GenerateCode( CompiledMaterialData compiledData, bool needSpecialShadowCaster, Material[] multiMaterialSourceMaterialsToGetProperties )
+		//bool GenerateCode( CompiledMaterialData compiledData, bool needSpecialShadowCaster, Material[] multiMaterialSeparateMaterialsOfCombinedGroup )
 		{
-			//vertex
+			var sourceMaterials = new List<Material>();
+			if( multiMaterialSourceMaterialsToGetProperties != null )
+				sourceMaterials.AddRange( multiMaterialSourceMaterialsToGetProperties );
+			else
+				sourceMaterials.Add( this );
+
+			//multiMaterialSourceMaterialsToGetProperties 
+
+			//var sourceMaterials = new List<Material>();
+			//if( compiledData.multiMaterialReferencedSeparateMaterialsOfCombinedGroup != null )
+			//{
+			//	foreach( var subMaterial in compiledData.multiMaterialReferencedSeparateMaterialsOfCombinedGroup )
+			//		sourceMaterials.Add( subMaterial.owner );
+			//}
+			//else
+			//	sourceMaterials.Add( this );
+
+			////if( multiMaterialSeparateMaterialsOfCombinedGroup != null )
+			////{
+			////	foreach( var subMaterial in multiMaterialSeparateMaterialsOfCombinedGroup )
+			////		sourceMaterials.Add( subMaterial );
+			////}
+			////else
+			////	sourceMaterials.Add( this );
+
 			{
-				var properties = new List<(Component, Metadata.Property)>();
-				properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( PositionOffset ) )) );
+				int textureRegisterCounter = SystemSettings.LimitedDevice ? 9 : 12;//11;
 
-				if( AdvancedScripting )
-				{
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) )) );
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) )) );
-				}
-
-				if( compiledData.extensionData != null )
-					properties.AddRange( compiledData.extensionData.vertexShaderProperties );
-
-				var generator = new ShaderGenerator();
-				int textureRegisterCounter = 9;
-				var code = generator.Process( properties, "vertex_", ref textureRegisterCounter, out string error );
-
-				//process error
-				if( !string.IsNullOrEmpty( error ) )
-				{
-					//!!!!
-
-					return false;
-				}
-
-				if( AdvancedScripting )
-				{
-					if( !string.IsNullOrEmpty( VertexFunctions.Value ) )
-					{
-						if( code == null )
-							code = new ShaderGenerator.ResultData();
-						if( !string.IsNullOrEmpty( code.shaderScripts ) )
-							code.shaderScripts += "\r\n";
-						code.shaderScripts += VertexFunctions.Value;
-					}
-
-					if( !string.IsNullOrEmpty( VertexCode.Value ) )
-					{
-						if( code == null )
-							code = new ShaderGenerator.ResultData();
-						if( !string.IsNullOrEmpty( code.codeBody ) )
-							code.codeBody += "\r\n";
-						code.codeBody += VertexCode.Value;
-					}
-				}
-
-				//print to log
-				if( code != null && shaderGenerationPrintLog )
-					code.PrintToLog( GetDisplayName() + ", Vertex shader" );
-
-				compiledData.vertexGeneratedCode = code;
-			}
-
-			int fragmentTextureRegisterCounter = 9;
-			////for depth texture
-			//if( SoftParticles )
-			//	fragmentTextureRegisterCounter++;
-
-			//displacement
-			if( Displacement.ReferenceSpecified )
-			{
-				var properties = new List<(Component, Metadata.Property)>();
-				properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Displacement ) )) );
-				properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( DisplacementScale ) )) );
-
-				if( AdvancedScripting )
-				{
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) )) );
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) )) );
-				}
-
-				//if( compiledData.extensionData != null )
-				//	properties.AddRange( compiledData.extensionData.vertexShaderProperties );
-
-				var generator = new ShaderGenerator();
-				var code = generator.Process( properties, "displacement_", ref fragmentTextureRegisterCounter, out string error );
-
-				//process error
-				if( !string.IsNullOrEmpty( error ) )
-				{
-					//!!!!
-
-					return false;
-				}
-
-				if( AdvancedScripting )
-				{
-					if( !string.IsNullOrEmpty( FragmentFunctions.Value ) )
-					{
-						if( code == null )
-							code = new ShaderGenerator.ResultData();
-						if( !string.IsNullOrEmpty( code.shaderScripts ) )
-							code.shaderScripts += "\r\n";
-						code.shaderScripts += FragmentFunctions.Value;
-					}
-
-					if( !string.IsNullOrEmpty( FragmentCode.Value ) )
-					{
-						if( code == null )
-							code = new ShaderGenerator.ResultData();
-						if( !string.IsNullOrEmpty( code.codeBody ) )
-							code.codeBody += "\r\n";
-						code.codeBody += FragmentCode.Value;
-					}
-				}
-
-				//print to log
-				if( code != null && shaderGenerationPrintLog )
-					code.PrintToLog( GetDisplayName() + ", Displacement shader code" );
-
-				compiledData.displacementGeneratedCode = code;
-			}
-
-			//fragment
-			{
-				var properties = new List<(Component, Metadata.Property)>( 16 );
-
-				if( RenderingSystem.MaterialShading != ProjectSettingsPage_Rendering.MaterialShadingEnum.Simple )
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Normal ) )) );
-
-				properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( BaseColor ) )) );
-
-				if( ( compiledData.specialMode == CompiledMaterialData.SpecialMode.PaintLayerMasked || compiledData.specialMode == CompiledMaterialData.SpecialMode.PaintLayerTransparent ) && !Opacity.ReferenceSpecified )
-				{
-					var obj = new ShaderGenerator.PaintLayerOpacityPropertyWithMask();
-					obj.Init();
-					properties.Add( (obj, (Metadata.Property)obj.MetadataGetMemberBySignature( "property:" + nameof( Opacity ) )) );
-				}
-				else
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Opacity ) )) );
-
-				properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( OpacityMaskThreshold ) )) );
-
-				if( RenderingSystem.MaterialShading != ProjectSettingsPage_Rendering.MaterialShadingEnum.Simple )
-				{
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Metallic ) )) );
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Roughness ) )) );
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Reflectance ) )) );
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( ClearCoat ) )) );
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( ClearCoatRoughness ) )) );
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( ClearCoatNormal ) )) );
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Anisotropy ) )) );
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( AnisotropyDirection ) )) );
-					//properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( AnisotropyDirectionBasis ) )) );
-
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Thickness ) )) );
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( SubsurfacePower ) )) );
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( SheenColor ) )) );
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( SubsurfaceColor ) )) );
-
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( AmbientOcclusion ) )) );
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( RayTracingReflection ) )) );
-				}
-
-				properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Emissive ) )) );
-
-				if( RenderingSystem.MaterialShading != ProjectSettingsPage_Rendering.MaterialShadingEnum.Simple )
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( SoftParticlesDistance ) )) );
-
-				if( AdvancedScripting )
-				{
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) )) );
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) )) );
-				}
-
-				if( compiledData.extensionData != null )
-					properties.AddRange( compiledData.extensionData.fragmentShaderProperties );
-
-				var generator = new ShaderGenerator();
-				var code = generator.Process( properties, "fragment_", ref fragmentTextureRegisterCounter, out string error );
-
-				//process error
-				if( !string.IsNullOrEmpty( error ) )
-				{
-					//!!!!
-
-					return false;
-				}
-
-				if( AdvancedScripting )
-				{
-					if( !string.IsNullOrEmpty( FragmentFunctions.Value ) )
-					{
-						if( code == null )
-							code = new ShaderGenerator.ResultData();
-						if( !string.IsNullOrEmpty( code.shaderScripts ) )
-							code.shaderScripts += "\r\n";
-						code.shaderScripts += FragmentFunctions.Value;
-					}
-
-					if( !string.IsNullOrEmpty( FragmentCode.Value ) )
-					{
-						if( code == null )
-							code = new ShaderGenerator.ResultData();
-						if( !string.IsNullOrEmpty( code.codeBody ) )
-							code.codeBody += "\r\n";
-						code.codeBody += FragmentCode.Value;
-					}
-				}
-
-				//print to log
-				if( code != null && shaderGenerationPrintLog )
-					code.PrintToLog( GetDisplayName() + ", Fragment shader" );
-
-				compiledData.fragmentGeneratedCode = code;
-			}
-
-			//special shadow caster
-			if( needSpecialShadowCaster )
-			{
 				//vertex
 				{
-					var properties = new List<(Component, Metadata.Property)>();
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( PositionOffset ) )) );
+					var properties = new List<(Component, int, Metadata.Property)>();
+					properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( PositionOffset ) )) );
 
 					if( AdvancedScripting )
 					{
-						properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) )) );
-						properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) )) );
+						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) )) );
+						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) )) );
 					}
 
 					if( compiledData.extensionData != null )
-						properties.AddRange( compiledData.extensionData.specialShadowCasterVertexShaderProperties );
+						properties.AddRange( compiledData.extensionData.vertexShaderProperties );
 
 					var generator = new ShaderGenerator();
-					int textureRegisterCounter = 9;
-					var code = generator.Process( properties, "vertex_", ref textureRegisterCounter, out string error );
+					var code = generator.Process( properties, "vertex_", this, null, ref textureRegisterCounter, out string error );
 
 					//process error
 					if( !string.IsNullOrEmpty( error ) )
-					{
-						//!!!!
-
 						return false;
-					}
 
 					if( AdvancedScripting )
 					{
@@ -1786,42 +1653,349 @@ namespace NeoAxis
 
 					//print to log
 					if( code != null && shaderGenerationPrintLog )
-						code.PrintToLog( GetDisplayName() + ", Shadow caster vertex shader" );
+						code.PrintToLog( GetDisplayName() + ", Vertex shader code" );
 
-					compiledData.vertexGeneratedCodeShadowCaster = code;
+					compiledData.vertexGeneratedCode = code;
+				}
+
+				//material index
+				if( compiledData.specialMode == CompiledMaterialData.SpecialMode.MultiMaterialSeparatePass || compiledData.specialMode == CompiledMaterialData.SpecialMode.MultiMaterialCombinedPass )
+				{
+					var properties = new List<(Component, int, Metadata.Property)>();
+
+					if( AdvancedScripting )
+					{
+						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) )) );
+						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) )) );
+					}
+
+					if( compiledData.extensionData != null )
+						properties.AddRange( compiledData.extensionData.materialIndexShaderProperties );
+
+					var generator = new ShaderGenerator();
+					var code = generator.Process( properties, "materialIndex_", this, null, ref textureRegisterCounter, out string error );
+
+					//process error
+					if( !string.IsNullOrEmpty( error ) )
+						return false;
+
+					if( AdvancedScripting )
+					{
+						//!!!!врядли везде это нужно
+						if( !string.IsNullOrEmpty( FragmentFunctions.Value ) )
+						{
+							if( code == null )
+								code = new ShaderGenerator.ResultData();
+							if( !string.IsNullOrEmpty( code.shaderScripts ) )
+								code.shaderScripts += "\r\n";
+							code.shaderScripts += FragmentFunctions.Value;
+						}
+
+						if( !string.IsNullOrEmpty( FragmentCode.Value ) )
+						{
+							if( code == null )
+								code = new ShaderGenerator.ResultData();
+							if( !string.IsNullOrEmpty( code.codeBody ) )
+								code.codeBody += "\r\n";
+							code.codeBody += FragmentCode.Value;
+						}
+					}
+
+					//print to log
+					if( code != null && shaderGenerationPrintLog )
+						code.PrintToLog( GetDisplayName() + ", Material Index shader code" );
+
+					compiledData.materialIndexGeneratedCode = code;
+				}
+
+				//displacement
+				if( Displacement.ReferenceSpecified )
+				{
+					var properties = new List<(Component, int, Metadata.Property)>();
+					properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Displacement ) )) );
+					properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( DisplacementScale ) )) );
+
+					if( AdvancedScripting )
+					{
+						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) )) );
+						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) )) );
+					}
+
+					//if( compiledData.extensionData != null )
+					//	properties.AddRange( compiledData.extensionData.vertexShaderProperties );
+
+					var generator = new ShaderGenerator();
+					var code = generator.Process( properties, "displacement_", this, null, ref textureRegisterCounter/*fragmentTextureRegisterCounter*/, out string error );
+
+					//process error
+					if( !string.IsNullOrEmpty( error ) )
+						return false;
+
+					if( AdvancedScripting )
+					{
+						if( !string.IsNullOrEmpty( FragmentFunctions.Value ) )
+						{
+							if( code == null )
+								code = new ShaderGenerator.ResultData();
+							if( !string.IsNullOrEmpty( code.shaderScripts ) )
+								code.shaderScripts += "\r\n";
+							code.shaderScripts += FragmentFunctions.Value;
+						}
+
+						if( !string.IsNullOrEmpty( FragmentCode.Value ) )
+						{
+							if( code == null )
+								code = new ShaderGenerator.ResultData();
+							if( !string.IsNullOrEmpty( code.codeBody ) )
+								code.codeBody += "\r\n";
+							code.codeBody += FragmentCode.Value;
+						}
+					}
+
+					//print to log
+					if( code != null && shaderGenerationPrintLog )
+						code.PrintToLog( GetDisplayName() + ", Displacement shader code" );
+
+					compiledData.displacementGeneratedCode = code;
 				}
 
 				//fragment
 				{
-					var properties = new List<(Component, Metadata.Property)>();
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Opacity ) )) );
-					properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( OpacityMaskThreshold ) )) );
+					var properties = new List<(Component, int, Metadata.Property)>( 32 );
 
-					if( AdvancedScripting )
+					for( int materialIndex = 0; materialIndex < sourceMaterials.Count; materialIndex++ )
 					{
-						properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) )) );
-						properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) )) );
+						var material = sourceMaterials[ materialIndex ];
+
+						if( RenderingSystem.MaterialShading != ProjectSettingsPage_Rendering.MaterialShadingEnum.Simple )
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Normal ) )) );
+
+						properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( BaseColor ) )) );
+
+						if( ( compiledData.specialMode == CompiledMaterialData.SpecialMode.PaintLayerMasked || compiledData.specialMode == CompiledMaterialData.SpecialMode.PaintLayerTransparent ) && !Opacity.ReferenceSpecified )
+						{
+							var obj = new ShaderGenerator.PaintLayerOpacityPropertyWithMask();
+							obj.Init();
+							properties.Add( (obj, materialIndex, (Metadata.Property)obj.MetadataGetMemberBySignature( "property:" + nameof( Opacity ) )) );
+						}
+						else
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Opacity ) )) );
+
+						properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( OpacityMaskThreshold ) )) );
+
+						if( RenderingSystem.MaterialShading != ProjectSettingsPage_Rendering.MaterialShadingEnum.Simple )
+						{
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Metallic ) )) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Roughness ) )) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Reflectance ) )) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( ClearCoat ) )) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( ClearCoatRoughness ) )) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( ClearCoatNormal ) )) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Anisotropy ) )) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( AnisotropyDirection ) )) );
+							//properties.Add( (material, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( AnisotropyDirectionBasis ) )) );
+
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Thickness ) )) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( SubsurfacePower ) )) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( SheenColor ) )) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( SubsurfaceColor ) )) );
+
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( AmbientOcclusion ) )) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( RayTracingReflection ) )) );
+						}
+
+						properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Emissive ) )) );
+
+						if( RenderingSystem.MaterialShading != ProjectSettingsPage_Rendering.MaterialShadingEnum.Simple )
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( SoftParticlesDistance ) )) );
+
+						if( AdvancedScripting )
+						{
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) )) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) )) );
+						}
+
+						if( DepthOffsetMode.Value != DepthOffsetModeEnum.None )
+						{
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( DepthOffset ) )) );
+						}
 					}
 
 					if( compiledData.extensionData != null )
-						properties.AddRange( compiledData.extensionData.specialShadowCasterFragmentShaderProperties );
+						properties.AddRange( compiledData.extensionData.fragmentShaderProperties );
 
 					var generator = new ShaderGenerator();
-
-					int textureRegisterCounter = 9;
-					////for depth texture
-					//if( SoftParticles )
-					//	textureRegisterCounter++;
-
-					var code = generator.Process( properties, "fragment_", ref textureRegisterCounter, out string error );
+					var code = generator.Process( properties, "fragment_", this, compiledData.multiMaterialReferencedSeparateMaterialsOfCombinedGroup, ref textureRegisterCounter, out string error );
 
 					//process error
 					if( !string.IsNullOrEmpty( error ) )
-					{
-						//!!!!
-
 						return false;
+
+					if( AdvancedScripting )
+					{
+						if( !string.IsNullOrEmpty( FragmentFunctions.Value ) )
+						{
+							if( code == null )
+								code = new ShaderGenerator.ResultData();
+							if( !string.IsNullOrEmpty( code.shaderScripts ) )
+								code.shaderScripts += "\r\n";
+							code.shaderScripts += FragmentFunctions.Value;
+						}
+
+						if( !string.IsNullOrEmpty( FragmentCode.Value ) )
+						{
+							if( code == null )
+								code = new ShaderGenerator.ResultData();
+							if( !string.IsNullOrEmpty( code.codeBody ) )
+								code.codeBody += "\r\n";
+							code.codeBody += FragmentCode.Value;
+						}
 					}
+
+					//print to log
+					if( code != null && shaderGenerationPrintLog )
+						code.PrintToLog( GetDisplayName() + ", Fragment shader code" );
+
+					compiledData.fragmentGeneratedCode = code;
+				}
+			}
+
+			//special shadow caster
+			if( needSpecialShadowCaster )
+			{
+				int textureRegisterCounter = SystemSettings.LimitedDevice ? 9 : 12;//11;
+
+				//////for depth texture
+				////if( SoftParticles )
+				////	fragmentTextureRegisterCounter++;
+
+				//vertex
+				{
+					var properties = new List<(Component, int, Metadata.Property)>();
+					properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( PositionOffset ) )) );
+
+					if( AdvancedScripting )
+					{
+						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) )) );
+						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) )) );
+					}
+
+					if( compiledData.extensionData != null )
+						properties.AddRange( compiledData.extensionData.shadowCasterVertexShaderProperties );
+
+					var generator = new ShaderGenerator();
+					var code = generator.Process( properties, "vertex_", this, null, ref textureRegisterCounter, out string error );
+
+					//process error
+					if( !string.IsNullOrEmpty( error ) )
+						return false;
+
+					if( AdvancedScripting )
+					{
+						if( !string.IsNullOrEmpty( VertexFunctions.Value ) )
+						{
+							if( code == null )
+								code = new ShaderGenerator.ResultData();
+							if( !string.IsNullOrEmpty( code.shaderScripts ) )
+								code.shaderScripts += "\r\n";
+							code.shaderScripts += VertexFunctions.Value;
+						}
+
+						if( !string.IsNullOrEmpty( VertexCode.Value ) )
+						{
+							if( code == null )
+								code = new ShaderGenerator.ResultData();
+							if( !string.IsNullOrEmpty( code.codeBody ) )
+								code.codeBody += "\r\n";
+							code.codeBody += VertexCode.Value;
+						}
+					}
+
+					//print to log
+					if( code != null && shaderGenerationPrintLog )
+						code.PrintToLog( GetDisplayName() + ", Shadow caster vertex shader code" );
+
+					compiledData.shadowCasterVertexGeneratedCode = code;
+				}
+
+				//material index
+				if( compiledData.specialMode == CompiledMaterialData.SpecialMode.MultiMaterialSeparatePass || compiledData.specialMode == CompiledMaterialData.SpecialMode.MultiMaterialCombinedPass )
+				{
+					var properties = new List<(Component, int, Metadata.Property)>();
+
+					if( AdvancedScripting )
+					{
+						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) )) );
+						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) )) );
+					}
+
+					if( compiledData.extensionData != null )
+						properties.AddRange( compiledData.extensionData.shadowCasterMaterialIndexShaderProperties );
+
+					var generator = new ShaderGenerator();
+					var code = generator.Process( properties, "materialIndex_", this, null, ref textureRegisterCounter, out string error );
+
+					//process error
+					if( !string.IsNullOrEmpty( error ) )
+						return false;
+
+					if( AdvancedScripting )
+					{
+						//!!!!врядли везде это нужно
+						if( !string.IsNullOrEmpty( FragmentFunctions.Value ) )
+						{
+							if( code == null )
+								code = new ShaderGenerator.ResultData();
+							if( !string.IsNullOrEmpty( code.shaderScripts ) )
+								code.shaderScripts += "\r\n";
+							code.shaderScripts += FragmentFunctions.Value;
+						}
+
+						if( !string.IsNullOrEmpty( FragmentCode.Value ) )
+						{
+							if( code == null )
+								code = new ShaderGenerator.ResultData();
+							if( !string.IsNullOrEmpty( code.codeBody ) )
+								code.codeBody += "\r\n";
+							code.codeBody += FragmentCode.Value;
+						}
+					}
+
+					//print to log
+					if( code != null && shaderGenerationPrintLog )
+						code.PrintToLog( GetDisplayName() + ", Shadow caster material Index shader code" );
+
+					compiledData.shadowCasterMaterialIndexGeneratedCode = code;
+				}
+
+				//fragment
+				{
+					var properties = new List<(Component, int, Metadata.Property)>();
+
+					for( int materialIndex = 0; materialIndex < sourceMaterials.Count; materialIndex++ )
+					{
+						var material = sourceMaterials[ materialIndex ];
+
+						properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Opacity ) )) );
+						properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( OpacityMaskThreshold ) )) );
+
+						if( AdvancedScripting )
+						{
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) )) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) )) );
+						}
+					}
+
+					if( compiledData.extensionData != null )
+						properties.AddRange( compiledData.extensionData.shadowCasterFragmentShaderProperties );
+
+					var generator = new ShaderGenerator();
+
+					var code = generator.Process( properties, "fragment_", this, compiledData.multiMaterialReferencedSeparateMaterialsOfCombinedGroup, ref textureRegisterCounter, out string error );
+
+					//process error
+					if( !string.IsNullOrEmpty( error ) )
+						return false;
 
 					if( AdvancedScripting )
 					{
@@ -1848,7 +2022,7 @@ namespace NeoAxis
 					if( code != null && shaderGenerationPrintLog )
 						code.PrintToLog( GetDisplayName() + ", Shadow caster fragment shader" );
 
-					compiledData.fragmentGeneratedCodeShadowCaster = code;
+					compiledData.shadowCasterFragmentGeneratedCode = code;
 				}
 			}
 
@@ -1860,30 +2034,48 @@ namespace NeoAxis
 		/// </summary>
 		public class CompileExtensionData
 		{
-			public List<(Component, Metadata.Property)> vertexShaderProperties = new List<(Component, Metadata.Property)>();
-			//!!!!displacement?
-			public List<(Component, Metadata.Property)> fragmentShaderProperties = new List<(Component, Metadata.Property)>();
-			public List<(Component, Metadata.Property)> specialShadowCasterVertexShaderProperties = new List<(Component, Metadata.Property)>();
-			public List<(Component, Metadata.Property)> specialShadowCasterFragmentShaderProperties = new List<(Component, Metadata.Property)>();
+			public List<(Component, int, Metadata.Property)> vertexShaderProperties = new List<(Component, int, Metadata.Property)>();
+			public List<(Component, int, Metadata.Property)> materialIndexShaderProperties = new List<(Component, int, Metadata.Property)>();
+			//displacement?
+			public List<(Component, int, Metadata.Property)> fragmentShaderProperties = new List<(Component, int, Metadata.Property)>();
+
+			public List<(Component, int, Metadata.Property)> shadowCasterVertexShaderProperties = new List<(Component, int, Metadata.Property)>();
+			public List<(Component, int, Metadata.Property)> shadowCasterMaterialIndexShaderProperties = new List<(Component, int, Metadata.Property)>();
+			public List<(Component, int, Metadata.Property)> shadowCasterFragmentShaderProperties = new List<(Component, int, Metadata.Property)>();
 		}
 
 		/////////////////////////////////////////
 
-		public static Material[] GetAll()
-		{
-			lock( all )
-				return all.ToArray();
-		}
+		//public static Material[] GetAll()
+		//{
+		//	lock( all )
+		//		return all.ToArray();
+		//}
 
 		protected virtual string OnCheckDeferredShadingSupport( CompiledMaterialData compiledData )
 		{
+
+			//if( compiledData.specialMode == CompiledMaterialData.SpecialMode.MultiMaterialCombinedPass )
+			//	return "";
+
+
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
 				return "Android";
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
 				return "iOS";
+			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+				return "Web";
 
-			if( compiledData.blendMode == BlendModeEnum.Transparent || compiledData.blendMode == BlendModeEnum.Add )
-				return "Blend Mode";
+			if( compiledData != null )
+			{
+				if( compiledData.blendMode == BlendModeEnum.Transparent || compiledData.blendMode == BlendModeEnum.Add )
+					return "Blend Mode";
+			}
+			else
+			{
+				if( BlendMode.Value == BlendModeEnum.Transparent || BlendMode.Value == BlendModeEnum.Add )
+					return "Blend Mode";
+			}
 
 			switch( ShadingModel.Value )
 			{
@@ -1910,7 +2102,7 @@ namespace NeoAxis
 		public delegate void CheckDeferredShadingSupportEventDelegate( Material sender, CompiledMaterialData compiledData, ref string reason );
 		public event CheckDeferredShadingSupportEventDelegate CheckDeferredShadingSupportEvent;
 
-		string PerformCheckDeferredShadingSupport( CompiledMaterialData compiledData )
+		public string PerformCheckDeferredShadingSupport( CompiledMaterialData compiledData = null )
 		{
 			string reason = OnCheckDeferredShadingSupport( compiledData );
 			if( !string.IsNullOrEmpty( reason ) )
@@ -1967,11 +2159,11 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		public virtual CompiledMaterialData Compile( CompiledMaterialData.SpecialMode specialMode, CompileExtensionData extensionData = null )
+		public virtual CompiledMaterialData Compile( CompiledMaterialData.SpecialMode specialMode, CompileExtensionData extensionData, int multiMaterialStartIndexOfCombinedGroup, CompiledMaterialData[] multiMaterialReferencedSeparateMaterialsOfCombinedGroup, Material[] multiMaterialSourceMaterialsToGetProperties, int multiSubMaterialSeparatePassIndex )
 		{
 			var optimize = true;
 #if !DEPLOY
-			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+			if( EngineApp.IsEditor )
 			{
 				var document = EditorAPI.GetDocumentByObject( this );
 				if( document != null && document.Modified )
@@ -1979,14 +2171,15 @@ namespace NeoAxis
 			}
 #endif
 
-			////!!!!
 			//var time = DateTime.Now;
-
 
 			var result = new CompiledMaterialData();
 			result.owner = this;
 			result.specialMode = specialMode;
 			result.extensionData = extensionData;
+			result.multiMaterialStartIndexOfCombinedGroup = multiMaterialStartIndexOfCombinedGroup;
+			result.multiMaterialReferencedSeparateMaterialsOfCombinedGroup = multiMaterialReferencedSeparateMaterialsOfCombinedGroup;
+			result.multiSubMaterialSeparatePassIndex = multiSubMaterialSeparatePassIndex;
 
 			var blendMode = BlendMode.Value;
 			var opacityDithering = OpacityDithering.Value;
@@ -2022,13 +2215,13 @@ namespace NeoAxis
 			////soft particles
 			//result.softParticles = SoftParticles;
 
-			//!!!!что еще?
-			bool needSpecialShadowCaster = PositionOffset.ReferenceSpecified || blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */|| blendMode == BlendModeEnum.Transparent || AdvancedScripting;
+			//!!!!what else?
+			bool needSpecialShadowCaster = PositionOffset.ReferenceSpecified || blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */|| blendMode == BlendModeEnum.Transparent || AdvancedScripting || ( extensionData != null && ( extensionData.shadowCasterVertexShaderProperties.Count != 0 || extensionData.shadowCasterMaterialIndexShaderProperties.Count != 0 || extensionData.shadowCasterFragmentShaderProperties.Count != 0 ) ) || specialMode == CompiledMaterialData.SpecialMode.MultiMaterialSeparatePass || specialMode == CompiledMaterialData.SpecialMode.MultiMaterialCombinedPass || DepthOffsetMode.Value != DepthOffsetModeEnum.None;
 
 			//shader generation
 			if( shaderGenerationCompile )
 			{
-				if( !GenerateCode( result, needSpecialShadowCaster ) )
+				if( !GenerateCode( result, needSpecialShadowCaster, multiMaterialSourceMaterialsToGetProperties ) )
 					return null;
 			}
 
@@ -2040,229 +2233,237 @@ namespace NeoAxis
 				var programsToCompile = new List<GpuProgramManager.GetProgramItem>();
 
 
-				//base material
-
-				bool unlit = ShadingModel.Value == ShadingModelEnum.Unlit;
-				if( unlit )
-					result.passesByLightType = new CompiledMaterialData.PassGroup[ 1 ];
-				else
+				//forward passes
+				if( specialMode != CompiledMaterialData.SpecialMode.MultiMaterialCombinedPass )
 				{
-					//!!!! 4
-					result.passesByLightType = new CompiledMaterialData.PassGroup[ 4 ];
-				}
+					bool unlit = ShadingModel.Value == ShadingModelEnum.Unlit;
+					result.passesByLightType = new CompiledMaterialData.PassGroup[ unlit ? 1 : 4 ];
 
-				foreach( Light.TypeEnum lightType in Enum.GetValues( typeof( Light.TypeEnum ) ) )
-				{
-					if( unlit && lightType != Light.TypeEnum.Ambient )
-						break;
-
-					CompiledMaterialData.PassGroup group = new CompiledMaterialData.PassGroup();
-					result.passesByLightType[ (int)lightType ] = group;
-
-					//one or two iterations depending Ambient light source, ReceiveShadows
-					int shadowsSupportIterations = 1;
-					if( lightType != Light.TypeEnum.Ambient && ReceiveShadows.Value && RenderingSystem.ShadowTechnique != ProjectSettingsPage_Rendering.ShadowTechniqueEnum.None )
-						shadowsSupportIterations = 2;// 3;// 2;
-					for( int nShadowsSupportCounter = 0; nShadowsSupportCounter < shadowsSupportIterations; nShadowsSupportCounter++ )
+					foreach( Light.TypeEnum lightType in Enum.GetValues( typeof( Light.TypeEnum ) ) )
 					{
-						//generate compile arguments
-						var vertexDefines = new List<(string, string)>( 8 );
-						var fragmentDefines = new List<(string, string)>( 8 );
+						if( unlit && lightType != Light.TypeEnum.Ambient )
+							break;
+
+						var group = new CompiledMaterialData.PassGroup();
+						result.passesByLightType[ (int)lightType ] = group;
+
+						//one or two iterations depending Ambient light source, ReceiveShadows
+						int shadowsSupportIterations = 1;
+						if( lightType != Light.TypeEnum.Ambient && ReceiveShadows.Value && RenderingSystem.ShadowTechnique != ProjectSettingsPage_Rendering.ShadowTechniqueEnum.None )
+							shadowsSupportIterations = 2;// 3;// 2;
+						for( int nShadowsSupportCounter = 0; nShadowsSupportCounter < shadowsSupportIterations; nShadowsSupportCounter++ )
 						{
-							var generalDefines = new List<(string, string)>( 16 );
-							generalDefines.Add( ("LIGHT_TYPE_" + lightType.ToString().ToUpper(), "") );
-							generalDefines.Add( ("BLEND_MODE_" + blendMode.ToString().ToUpper(), "") );
-							fragmentDefines.Add( ("SHADING_MODEL_" + ShadingModel.Value.ToString().ToUpper(), "") );
-							fragmentDefines.Add( ("SHADING_MODEL_INDEX", ( (int)ShadingModel.Value ).ToString()) );
-							if( TwoSided && TwoSidedFlipNormals )
-								fragmentDefines.Add( ("TWO_SIDED_FLIP_NORMALS", "") );
-
-							if( ShadingModel.Value == ShadingModelEnum.Lit )
+							//generate compile arguments
+							var vertexDefines = new List<(string, string)>( 8 );
+							var fragmentDefines = new List<(string, string)>( 8 );
 							{
-								if( ClearCoat.ReferenceSpecified || ClearCoat.Value != 0 )
-									fragmentDefines.Add( ("MATERIAL_HAS_CLEAR_COAT", "") );
-								if( Anisotropy.ReferenceSpecified || Anisotropy.Value != 0 )
-									fragmentDefines.Add( ("MATERIAL_HAS_ANISOTROPY", "") );
-							}
+								var generalDefines = new List<(string, string)>( 16 );
+								generalDefines.Add( ("LIGHT_TYPE_" + lightType.ToString().ToUpper(), "") );
+								generalDefines.Add( ("BLEND_MODE_" + blendMode.ToString().ToUpper(), "") );
+								fragmentDefines.Add( ("SHADING_MODEL_" + ShadingModel.Value.ToString().ToUpper(), "") );
+								fragmentDefines.Add( ("SHADING_MODEL_INDEX", ( (int)ShadingModel.Value ).ToString()) );
+								if( TwoSided && TwoSidedFlipNormals )
+									fragmentDefines.Add( ("TWO_SIDED_FLIP_NORMALS", "") );
+								if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialSeparatePass )
+									fragmentDefines.Add( ("MULTI_MATERIAL_SEPARATE_PASS", "") );
+								if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialCombinedPass )
+									fragmentDefines.Add( ("MULTI_MATERIAL_COMBINED_PASS", "") );
 
-							if( RenderingSystem.DisplacementMaxSteps > 0 && Displacement.ReferenceSpecified )
-								generalDefines.Add( ("DISPLACEMENT", "") );
-							if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering )
-								fragmentDefines.Add( ("OPACITY_DITHERING", "") );
-							if( SoftParticles )
-								fragmentDefines.Add( ("SOFT_PARTICLES", "") );
-
-							//receive shadows support
-							if( nShadowsSupportCounter != 0 )
-							{
-								fragmentDefines.Add( ("SHADOW_MAP", "") );
-
-								//if( nShadowsSupportCounter == 2 )
-								//	fragmentDefines.Add( ("SHADOW_MAP_HIGH", "") );
-								//else
-								//	fragmentDefines.Add( ("SHADOW_MAP_LOW", "") );
-							}
-
-							vertexDefines.AddRange( generalDefines );
-							fragmentDefines.AddRange( generalDefines );
-
-							if( shaderGenerationEnable )
-							{
-								//vertex
-								var vertexCode = result.vertexGeneratedCode;
-								if( vertexCode != null )
+								if( ShadingModel.Value == ShadingModelEnum.Lit )
 								{
-									if( !string.IsNullOrEmpty( vertexCode.parametersBody ) )
-										vertexDefines.Add( ("VERTEX_CODE_PARAMETERS", vertexCode.parametersBody) );
-									if( !string.IsNullOrEmpty( vertexCode.samplersBody ) )
-										vertexDefines.Add( ("VERTEX_CODE_SAMPLERS", vertexCode.samplersBody) );
-									if( !string.IsNullOrEmpty( vertexCode.shaderScripts ) )
-										vertexDefines.Add( ("VERTEX_CODE_SHADER_SCRIPTS", "\r\n" + vertexCode.shaderScripts) );
-									if( !string.IsNullOrEmpty( vertexCode.codeBody ) )
-										vertexDefines.Add( ("VERTEX_CODE_BODY", "\r\n" + vertexCode.codeBody) );
+									if( ClearCoat.ReferenceSpecified || ClearCoat.Value != 0 )
+										fragmentDefines.Add( ("MATERIAL_HAS_CLEAR_COAT", "") );
+									if( Anisotropy.ReferenceSpecified || Anisotropy.Value != 0 )
+										fragmentDefines.Add( ("MATERIAL_HAS_ANISOTROPY", "") );
 								}
 
-								//displacement
-								var displacementCode = result.displacementGeneratedCode;
-								if( RenderingSystem.DisplacementMaxSteps > 0 && displacementCode != null )
+								if( RenderingSystem.DisplacementMaxSteps > 0 && Displacement.ReferenceSpecified )
+									generalDefines.Add( ("DISPLACEMENT", "") );
+								if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering )
+									fragmentDefines.Add( ("OPACITY_DITHERING", "") );
+								if( SoftParticles )
+									fragmentDefines.Add( ("SOFT_PARTICLES", "") );
+
+								//receive shadows support
+								if( nShadowsSupportCounter != 0 )
 								{
-									if( !string.IsNullOrEmpty( displacementCode.parametersBody ) )
-										fragmentDefines.Add( ("DISPLACEMENT_CODE_PARAMETERS", displacementCode.parametersBody) );
-									if( !string.IsNullOrEmpty( displacementCode.samplersBody ) )
-										fragmentDefines.Add( ("DISPLACEMENT_CODE_SAMPLERS", displacementCode.samplersBody) );
-									if( !string.IsNullOrEmpty( displacementCode.shaderScripts ) )
-										fragmentDefines.Add( ("DISPLACEMENT_CODE_SHADER_SCRIPTS", "\r\n" + displacementCode.shaderScripts) );
-									if( !string.IsNullOrEmpty( displacementCode.codeBody ) )
-										fragmentDefines.Add( ("DISPLACEMENT_CODE_BODY", "\r\n" + displacementCode.codeBody) );
-								}
+									fragmentDefines.Add( ("SHADOW_MAP", "") );
 
-								//fragment
-								var fragmentCode = result.fragmentGeneratedCode;
-								if( fragmentCode != null )
-								{
-									if( !string.IsNullOrEmpty( fragmentCode.parametersBody ) )
-										fragmentDefines.Add( ("FRAGMENT_CODE_PARAMETERS", fragmentCode.parametersBody) );
-									if( !string.IsNullOrEmpty( fragmentCode.samplersBody ) )
-										fragmentDefines.Add( ("FRAGMENT_CODE_SAMPLERS", fragmentCode.samplersBody) );
-									if( !string.IsNullOrEmpty( fragmentCode.shaderScripts ) )
-										fragmentDefines.Add( ("FRAGMENT_CODE_SHADER_SCRIPTS", "\r\n" + fragmentCode.shaderScripts) );
-									if( !string.IsNullOrEmpty( fragmentCode.codeBody ) )
-										fragmentDefines.Add( ("FRAGMENT_CODE_BODY", "\r\n" + fragmentCode.codeBody) );
-								}
-							}
-						}
-
-						{
-							var vertexParameters = new GpuProgramManager.GetProgramItem( "Standard_Forward_Vertex_", GpuProgramType.Vertex, @"Base\Shaders\MaterialStandard_Forward_vs.sc", vertexDefines, optimize );
-
-							var fragmentParameters = new GpuProgramManager.GetProgramItem( "Standard_Forward_Fragment_", GpuProgramType.Fragment, @"Base\Shaders\MaterialStandard_Forward_fs.sc", fragmentDefines, optimize );
-
-							if( collecting )
-							{
-								programsToCompile.Add( vertexParameters );
-								programsToCompile.Add( fragmentParameters );
-							}
-							else
-							{
-								string error2;
-
-								//vertex program
-								GpuProgram vertexProgram = GpuProgramManager.GetProgram( vertexParameters, out error2 );
-								if( !string.IsNullOrEmpty( error2 ) )
-								{
-									result.error = GpuProgramManager.GetGpuProgramCompilationErrorText( this, error2 );
-									Log.Warning( result.error );
-									result.Dispose();
-									return null;
-								}
-
-								//fragment program
-								GpuProgram fragmentProgram = GpuProgramManager.GetProgram( fragmentParameters, out error2 );
-								if( !string.IsNullOrEmpty( error2 ) )
-								{
-									result.error = GpuProgramManager.GetGpuProgramCompilationErrorText( this, error2 );
-									Log.Warning( result.error );
-									result.Dispose();
-									return null;
-								}
-
-								var pass = new GpuMaterialPass( vertexProgram, fragmentProgram );
-								result.AllPasses.Add( pass );
-
-								if( nShadowsSupportCounter == 1 )
-									group.passWithShadows = pass;
-								else
-									group.passWithoutShadows = pass;
-
-								//if( nShadowsSupportCounter == 2 )
-								//	group.passWithShadowsHigh = pass;
-								//else if( nShadowsSupportCounter == 1 )
-								//	group.passWithShadowsLow = pass;
-								//else
-								//	group.passWithoutShadows = pass;
-
-								if( blendMode == BlendModeEnum.Opaque || blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer*/ )
-								{
-									if( lightType == Light.TypeEnum.Ambient )
-									{
-										pass.DepthWrite = true;
-										pass.SourceBlendFactor = SceneBlendFactor.One;
-										pass.DestinationBlendFactor = SceneBlendFactor.Zero;
-									}
-									else
-									{
-										pass.DepthWrite = false;
-										pass.SourceBlendFactor = SceneBlendFactor.One;
-										pass.DestinationBlendFactor = SceneBlendFactor.One;
-									}
-									//if( lightType != Light.TypeEnum.Ambient || usageMode == CompiledDataStandard.UsageMode.MaterialBlendNotFirst )
-									//{
-									//	pass.DepthWrite = false;
-									//	pass.SourceBlendFactor = SceneBlendFactor.One;
-									//	pass.DestinationBlendFactor = SceneBlendFactor.One;
-									//}
+									//if( nShadowsSupportCounter == 2 )
+									//	fragmentDefines.Add( ("SHADOW_MAP_HIGH", "") );
 									//else
-									//{
-									//	pass.DepthWrite = true;
-									//	pass.SourceBlendFactor = SceneBlendFactor.One;
-									//	pass.DestinationBlendFactor = SceneBlendFactor.Zero;
-									//}
+									//	fragmentDefines.Add( ("SHADOW_MAP_LOW", "") );
 								}
-								else if( blendMode == BlendModeEnum.Transparent )
-								{
-									//!!!!usageMode
 
-									if( lightType == Light.TypeEnum.Ambient )
+								if( DepthOffsetMode.Value == DepthOffsetModeEnum.GreaterOrEqual )
+									fragmentDefines.Add( ("DEPTH_OFFSET_MODE_GREATER_EQUAL", "") );
+								else if( DepthOffsetMode.Value == DepthOffsetModeEnum.LessOrEqual )
+									fragmentDefines.Add( ("DEPTH_OFFSET_MODE_LESS_EQUAL", "") );
+
+								vertexDefines.AddRange( generalDefines );
+								fragmentDefines.AddRange( generalDefines );
+
+								if( shaderGenerationEnable )
+								{
+									//vertex
+									var vertexCode = result.vertexGeneratedCode;
+									if( vertexCode != null )
 									{
-										pass.DepthWrite = false;
-										pass.SourceBlendFactor = SceneBlendFactor.SourceAlpha;
-										pass.DestinationBlendFactor = SceneBlendFactor.OneMinusSourceAlpha;
+										if( !string.IsNullOrEmpty( vertexCode.parametersBody ) )
+											vertexDefines.Add( ("VERTEX_CODE_PARAMETERS", vertexCode.parametersBody) );
+										if( !string.IsNullOrEmpty( vertexCode.samplersBody ) )
+											vertexDefines.Add( ("VERTEX_CODE_SAMPLERS", vertexCode.samplersBody) );
+										if( !string.IsNullOrEmpty( vertexCode.shaderScripts ) )
+											vertexDefines.Add( ("VERTEX_CODE_SHADER_SCRIPTS", "\r\n" + vertexCode.shaderScripts) );
+										if( !string.IsNullOrEmpty( vertexCode.codeBody ) )
+											vertexDefines.Add( ("VERTEX_CODE_BODY", "\r\n" + vertexCode.codeBody) );
 									}
+
+									//material index
+									var materialIndexCode = result.materialIndexGeneratedCode;
+									if( materialIndexCode != null )
+									{
+										if( !string.IsNullOrEmpty( materialIndexCode.parametersBody ) )
+											fragmentDefines.Add( ("MATERIAL_INDEX_CODE_PARAMETERS", materialIndexCode.parametersBody) );
+										if( !string.IsNullOrEmpty( materialIndexCode.samplersBody ) )
+											fragmentDefines.Add( ("MATERIAL_INDEX_CODE_SAMPLERS", materialIndexCode.samplersBody) );
+										if( !string.IsNullOrEmpty( materialIndexCode.shaderScripts ) )
+											fragmentDefines.Add( ("MATERIAL_INDEX_CODE_SHADER_SCRIPTS", "\r\n" + materialIndexCode.shaderScripts) );
+										if( !string.IsNullOrEmpty( materialIndexCode.codeBody ) )
+											fragmentDefines.Add( ("MATERIAL_INDEX_CODE_BODY", "\r\n" + materialIndexCode.codeBody) );
+									}
+
+									//displacement
+									var displacementCode = result.displacementGeneratedCode;
+									if( RenderingSystem.DisplacementMaxSteps > 0 && displacementCode != null )
+									{
+										if( !string.IsNullOrEmpty( displacementCode.parametersBody ) )
+											fragmentDefines.Add( ("DISPLACEMENT_CODE_PARAMETERS", displacementCode.parametersBody) );
+										if( !string.IsNullOrEmpty( displacementCode.samplersBody ) )
+											fragmentDefines.Add( ("DISPLACEMENT_CODE_SAMPLERS", displacementCode.samplersBody) );
+										if( !string.IsNullOrEmpty( displacementCode.shaderScripts ) )
+											fragmentDefines.Add( ("DISPLACEMENT_CODE_SHADER_SCRIPTS", "\r\n" + displacementCode.shaderScripts) );
+										if( !string.IsNullOrEmpty( displacementCode.codeBody ) )
+											fragmentDefines.Add( ("DISPLACEMENT_CODE_BODY", "\r\n" + displacementCode.codeBody) );
+									}
+
+									//fragment
+									var fragmentCode = result.fragmentGeneratedCode;
+									if( fragmentCode != null )
+									{
+										if( !string.IsNullOrEmpty( fragmentCode.parametersBody ) )
+											fragmentDefines.Add( ("FRAGMENT_CODE_PARAMETERS", fragmentCode.parametersBody) );
+										if( !string.IsNullOrEmpty( fragmentCode.samplersBody ) )
+											fragmentDefines.Add( ("FRAGMENT_CODE_SAMPLERS", fragmentCode.samplersBody) );
+										if( !string.IsNullOrEmpty( fragmentCode.shaderScripts ) )
+											fragmentDefines.Add( ("FRAGMENT_CODE_SHADER_SCRIPTS", "\r\n" + fragmentCode.shaderScripts) );
+										if( !string.IsNullOrEmpty( fragmentCode.codeBody ) )
+											fragmentDefines.Add( ("FRAGMENT_CODE_BODY", "\r\n" + fragmentCode.codeBody) );
+									}
+								}
+							}
+
+							{
+								var vertexParameters = new GpuProgramManager.GetProgramItem( "Standard_Forward_Vertex_", GpuProgramType.Vertex, @"Base\Shaders\MaterialStandard_Forward_vs.sc", vertexDefines, optimize );
+
+								var fragmentParameters = new GpuProgramManager.GetProgramItem( "Standard_Forward_Fragment_", GpuProgramType.Fragment, @"Base\Shaders\MaterialStandard_Forward_fs.sc", fragmentDefines, optimize );
+
+								if( collecting )
+								{
+									programsToCompile.Add( vertexParameters );
+									programsToCompile.Add( fragmentParameters );
+								}
+								else
+								{
+									string error2;
+
+									//vertex program
+									GpuProgram vertexProgram = GpuProgramManager.GetProgram( vertexParameters, out error2 );
+									if( !string.IsNullOrEmpty( error2 ) )
+									{
+										result.error = GpuProgramManager.GetGpuProgramCompilationErrorText( this, error2 );
+										Log.Warning( result.error );
+										//result.Dispose();
+										return null;
+									}
+
+									//fragment program
+									GpuProgram fragmentProgram = GpuProgramManager.GetProgram( fragmentParameters, out error2 );
+									if( !string.IsNullOrEmpty( error2 ) )
+									{
+										result.error = GpuProgramManager.GetGpuProgramCompilationErrorText( this, error2 );
+										Log.Warning( result.error );
+										//result.Dispose();
+										return null;
+									}
+
+									var pass = new GpuMaterialPass( result, vertexProgram, fragmentProgram );
+									result.AllPasses.Add( pass );
+
+									if( nShadowsSupportCounter == 1 )
+										group.passWithShadows = pass;
 									else
+										group.passWithoutShadows = pass;
+
+									//if( nShadowsSupportCounter == 2 )
+									//	group.passWithShadowsHigh = pass;
+									//else if( nShadowsSupportCounter == 1 )
+									//	group.passWithShadowsLow = pass;
+									//else
+									//	group.passWithoutShadows = pass;
+
+									if( blendMode == BlendModeEnum.Opaque || blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer*/ )
+									{
+										if( lightType == Light.TypeEnum.Ambient )
+										{
+											pass.DepthWrite = true;
+											pass.SourceBlendFactor = SceneBlendFactor.One;
+											pass.DestinationBlendFactor = SceneBlendFactor.Zero;
+										}
+										else
+										{
+											pass.DepthWrite = false;
+											pass.SourceBlendFactor = SceneBlendFactor.One;
+											pass.DestinationBlendFactor = SceneBlendFactor.One;
+										}
+										//if( lightType != Light.TypeEnum.Ambient || usageMode == CompiledDataStandard.UsageMode.MaterialBlendNotFirst )
+										//{
+										//	pass.DepthWrite = false;
+										//	pass.SourceBlendFactor = SceneBlendFactor.One;
+										//	pass.DestinationBlendFactor = SceneBlendFactor.One;
+										//}
+										//else
+										//{
+										//	pass.DepthWrite = true;
+										//	pass.SourceBlendFactor = SceneBlendFactor.One;
+										//	pass.DestinationBlendFactor = SceneBlendFactor.Zero;
+										//}
+									}
+									else if( blendMode == BlendModeEnum.Transparent )
+									{
+										if( lightType == Light.TypeEnum.Ambient )
+										{
+											pass.DepthWrite = false;
+											pass.SourceBlendFactor = SceneBlendFactor.SourceAlpha;
+											pass.DestinationBlendFactor = SceneBlendFactor.OneMinusSourceAlpha;
+										}
+										else
+										{
+											pass.DepthWrite = false;
+											pass.SourceBlendFactor = SceneBlendFactor.SourceAlpha;
+											pass.DestinationBlendFactor = SceneBlendFactor.One;
+										}
+									}
+									else if( blendMode == BlendModeEnum.Add )
 									{
 										pass.DepthWrite = false;
-										pass.SourceBlendFactor = SceneBlendFactor.SourceAlpha;
+										pass.SourceBlendFactor = SceneBlendFactor.One;
 										pass.DestinationBlendFactor = SceneBlendFactor.One;
 									}
+
+									if( TwoSided )
+										pass.CullingMode = CullingMode.None;
 								}
-								else if( blendMode == BlendModeEnum.Add )
-								{
-									pass.DepthWrite = false;
-									pass.SourceBlendFactor = SceneBlendFactor.One;
-									pass.DestinationBlendFactor = SceneBlendFactor.One;
-								}
-
-								if( TwoSided )
-									pass.CullingMode = CullingMode.None;
-
-								//Texture baseTextureV = BaseTexture;
-								////!!!!ниже проверять незагурежнность? есть инвалидные текстуры для показа ошибки, а есть белые или еще какие-то, которые для замены
-								//if( baseTextureV == null )
-								//	baseTextureV = ResourceUtils.GetWhiteTexture2D();
-
-								//GpuMaterialPass.TextureParameterValue textureValue = new GpuMaterialPass.TextureParameterValue( baseTextureV,
-								//	TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear );
-								//pass.ConstantParameterValues.Set( "baseTexture", textureValue, ParameterType.Texture2D );
 							}
 						}
 					}
@@ -2280,9 +2481,11 @@ namespace NeoAxis
 						if( lightType == Light.TypeEnum.Ambient )
 							continue;
 
-						for( int nPassType = 0; nPassType < 2; nPassType++ )
+						for( int nPassType = 0; nPassType < 3; nPassType++ )//for( int nPassType = 0; nPassType < 4; nPassType++ )
 						{
-							var billboardPass = nPassType == 1;
+							var voxelPass = nPassType == 1;
+							//var virtualizedPass = nPassType == 2;
+							var billboardPass = nPassType == 2;// 3;
 
 							//generate compile arguments
 							var vertexDefines = new List<(string, string)>( 8 );
@@ -2293,10 +2496,23 @@ namespace NeoAxis
 								generalDefines.Add( ("BLEND_MODE_" + blendMode.ToString().ToUpper(), "") );
 								if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering )
 									fragmentDefines.Add( ("OPACITY_DITHERING", "") );
+								if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialSeparatePass )
+									fragmentDefines.Add( ("MULTI_MATERIAL_SEPARATE_PASS", "") );
+								if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialCombinedPass )
+									fragmentDefines.Add( ("MULTI_MATERIAL_COMBINED_PASS", "") );
 								//if( SoftParticles )
 								//	fragmentDefines.Add( ("SOFT_PARTICLES", "") );
+								if( voxelPass )
+									generalDefines.Add( ("VOXEL", "") );
+								//if( virtualizedPass )
+								//	generalDefines.Add( ("VIRTUALIZED", "") );
 								if( billboardPass )
 									generalDefines.Add( ("BILLBOARD", "") );
+
+								if( DepthOffsetMode.Value == DepthOffsetModeEnum.GreaterOrEqual )
+									fragmentDefines.Add( ("DEPTH_OFFSET_MODE_GREATER_EQUAL", "") );
+								else if( DepthOffsetMode.Value == DepthOffsetModeEnum.LessOrEqual )
+									fragmentDefines.Add( ("DEPTH_OFFSET_MODE_LESS_EQUAL", "") );
 
 								vertexDefines.AddRange( generalDefines );
 								fragmentDefines.AddRange( generalDefines );
@@ -2304,7 +2520,7 @@ namespace NeoAxis
 								if( shaderGenerationEnable )
 								{
 									//vertex
-									var vertexCode = result.vertexGeneratedCodeShadowCaster;
+									var vertexCode = result.vertexGeneratedCode;//result.vertexGeneratedCodeShadowCaster;
 									if( vertexCode != null )
 									{
 										if( !string.IsNullOrEmpty( vertexCode.parametersBody ) )
@@ -2317,10 +2533,22 @@ namespace NeoAxis
 											vertexDefines.Add( ("VERTEX_CODE_BODY", "\r\n" + vertexCode.codeBody) );
 									}
 
-									//!!!!displacement?
+									//material index
+									var materialIndexCode = result.materialIndexGeneratedCode;
+									if( materialIndexCode != null )
+									{
+										if( !string.IsNullOrEmpty( materialIndexCode.parametersBody ) )
+											fragmentDefines.Add( ("MATERIAL_INDEX_CODE_PARAMETERS", materialIndexCode.parametersBody) );
+										if( !string.IsNullOrEmpty( materialIndexCode.samplersBody ) )
+											fragmentDefines.Add( ("MATERIAL_INDEX_CODE_SAMPLERS", materialIndexCode.samplersBody) );
+										if( !string.IsNullOrEmpty( materialIndexCode.shaderScripts ) )
+											fragmentDefines.Add( ("MATERIAL_INDEX_CODE_SHADER_SCRIPTS", "\r\n" + materialIndexCode.shaderScripts) );
+										if( !string.IsNullOrEmpty( materialIndexCode.codeBody ) )
+											fragmentDefines.Add( ("MATERIAL_INDEX_CODE_BODY", "\r\n" + materialIndexCode.codeBody) );
+									}
 
 									//fragment
-									var fragmentCode = result.fragmentGeneratedCodeShadowCaster;
+									var fragmentCode = result.shadowCasterFragmentGeneratedCode;
 									if( fragmentCode != null )
 									{
 										if( !string.IsNullOrEmpty( fragmentCode.parametersBody ) )
@@ -2355,7 +2583,7 @@ namespace NeoAxis
 									{
 										result.error = GpuProgramManager.GetGpuProgramCompilationErrorText( this, error2 );
 										Log.Warning( result.error );
-										result.Dispose();
+										//result.Dispose();
 										return null;
 									}
 
@@ -2365,12 +2593,12 @@ namespace NeoAxis
 									{
 										result.error = GpuProgramManager.GetGpuProgramCompilationErrorText( this, error2 );
 										Log.Warning( result.error );
-										result.Dispose();
+										//result.Dispose();
 										return null;
 									}
 
-									var pass = new GpuMaterialPass( vertexProgram, fragmentProgram );
-									result.specialShadowCasterData.passByLightType[ (int)lightType ].Set( pass, billboardPass );
+									var pass = new GpuMaterialPass( result, vertexProgram, fragmentProgram );
+									result.specialShadowCasterData.passByLightType[ (int)lightType ].Set( pass, voxelPass, /*virtualizedPass,*/ billboardPass );
 
 									if( TwoSided )
 										pass.CullingMode = CullingMode.None;
@@ -2383,9 +2611,11 @@ namespace NeoAxis
 				//deferred shading pass
 				if( result.deferredShadingSupport )
 				{
-					for( int nPassType = 0; nPassType < 2; nPassType++ )
+					for( int nPassType = 0; nPassType < 3; nPassType++ )//for( int nPassType = 0; nPassType < 4; nPassType++ )
 					{
-						var billboardPass = nPassType == 1;
+						var voxelPass = nPassType == 1;
+						//var virtualizedPass = nPassType == 2;
+						var billboardPass = nPassType == 2;// 3;
 
 						//generate compile arguments
 						var vertexDefines = new List<(string, string)>( 8 );
@@ -2397,6 +2627,10 @@ namespace NeoAxis
 							fragmentDefines.Add( ("SHADING_MODEL_INDEX", ( (int)ShadingModel.Value ).ToString()) );
 							if( TwoSided && TwoSidedFlipNormals )
 								fragmentDefines.Add( ("TWO_SIDED_FLIP_NORMALS", "") );
+							if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialSeparatePass )
+								fragmentDefines.Add( ("MULTI_MATERIAL_SEPARATE_PASS", "") );
+							if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialCombinedPass )
+								fragmentDefines.Add( ("MULTI_MATERIAL_COMBINED_PASS", "") );
 
 							if( RenderingSystem.DisplacementMaxSteps > 0 && Displacement.ReferenceSpecified )
 								generalDefines.Add( ("DISPLACEMENT", "") );
@@ -2404,8 +2638,17 @@ namespace NeoAxis
 								fragmentDefines.Add( ("OPACITY_DITHERING", "") );
 							//if( SoftParticles )
 							//	generalDefines.Add( ("SOFT_PARTICLES", "") );
+							if( voxelPass )
+								generalDefines.Add( ("VOXEL", "") );
+							//if( virtualizedPass )
+							//	generalDefines.Add( ("VIRTUALIZED", "") );
 							if( billboardPass )
 								generalDefines.Add( ("BILLBOARD", "") );
+
+							if( DepthOffsetMode.Value == DepthOffsetModeEnum.GreaterOrEqual )
+								fragmentDefines.Add( ("DEPTH_OFFSET_MODE_GREATER_EQUAL", "") );
+							else if( DepthOffsetMode.Value == DepthOffsetModeEnum.LessOrEqual )
+								fragmentDefines.Add( ("DEPTH_OFFSET_MODE_LESS_EQUAL", "") );
 
 							////receive shadows support
 							//if( nShadowsSupportCounter != 0 )
@@ -2419,8 +2662,6 @@ namespace NeoAxis
 
 							if( shaderGenerationEnable )
 							{
-								//!!!!может тут попроще для деферреда
-
 								//vertex
 								var vertexCode = result.vertexGeneratedCode;
 								if( vertexCode != null )
@@ -2433,6 +2674,20 @@ namespace NeoAxis
 										vertexDefines.Add( ("VERTEX_CODE_SHADER_SCRIPTS", "\r\n" + vertexCode.shaderScripts) );
 									if( !string.IsNullOrEmpty( vertexCode.codeBody ) )
 										vertexDefines.Add( ("VERTEX_CODE_BODY", "\r\n" + vertexCode.codeBody) );
+								}
+
+								//material index
+								var materialIndexCode = result.materialIndexGeneratedCode;
+								if( materialIndexCode != null )
+								{
+									if( !string.IsNullOrEmpty( materialIndexCode.parametersBody ) )
+										fragmentDefines.Add( ("MATERIAL_INDEX_CODE_PARAMETERS", materialIndexCode.parametersBody) );
+									if( !string.IsNullOrEmpty( materialIndexCode.samplersBody ) )
+										fragmentDefines.Add( ("MATERIAL_INDEX_CODE_SAMPLERS", materialIndexCode.samplersBody) );
+									if( !string.IsNullOrEmpty( materialIndexCode.shaderScripts ) )
+										fragmentDefines.Add( ("MATERIAL_INDEX_CODE_SHADER_SCRIPTS", "\r\n" + materialIndexCode.shaderScripts) );
+									if( !string.IsNullOrEmpty( materialIndexCode.codeBody ) )
+										fragmentDefines.Add( ("MATERIAL_INDEX_CODE_BODY", "\r\n" + materialIndexCode.codeBody) );
 								}
 
 								//displacement
@@ -2485,7 +2740,7 @@ namespace NeoAxis
 								{
 									result.error = GpuProgramManager.GetGpuProgramCompilationErrorText( this, error2 );
 									Log.Warning( result.error );
-									result.Dispose();
+									//result.Dispose();
 									return null;
 								}
 
@@ -2495,25 +2750,16 @@ namespace NeoAxis
 								{
 									result.error = GpuProgramManager.GetGpuProgramCompilationErrorText( this, error2 );
 									Log.Warning( result.error );
-									result.Dispose();
+									//result.Dispose();
 									return null;
 								}
 
-								var pass = new GpuMaterialPass( vertexProgram, fragmentProgram );
+								var pass = new GpuMaterialPass( result, vertexProgram, fragmentProgram );
 								result.AllPasses.Add( pass );
-								result.deferredShadingPass.Set( pass, billboardPass );
+								result.deferredShadingPass.Set( pass, voxelPass/*, virtualizedPass*/, billboardPass );
 
 								if( TwoSided )
 									pass.CullingMode = CullingMode.None;
-
-								//Texture baseTextureV = BaseTexture;
-								////!!!!ниже проверять незагурежнность? есть инвалидные текстуры для показа ошибки, а есть белые или еще какие-то, которые для замены
-								//if( baseTextureV == null )
-								//	baseTextureV = ResourceUtils.GetWhiteTexture2D();
-
-								//GpuMaterialPass.TextureParameterValue textureValue = new GpuMaterialPass.TextureParameterValue( baseTextureV,
-								//	TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear );
-								//pass.ConstantParameterValues.Set( "baseTexture", textureValue, ParameterType.Texture2D );
 							}
 						}
 					}
@@ -2532,6 +2778,10 @@ namespace NeoAxis
 						fragmentDefines.Add( ("SHADING_MODEL_INDEX", ( (int)ShadingModel.Value ).ToString()) );
 						if( TwoSided && TwoSidedFlipNormals )
 							fragmentDefines.Add( ("TWO_SIDED_FLIP_NORMALS", "") );
+						if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialSeparatePass )
+							fragmentDefines.Add( ("MULTI_MATERIAL_SEPARATE_PASS", "") );
+						if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialCombinedPass )
+							fragmentDefines.Add( ("MULTI_MATERIAL_COMBINED_PASS", "") );
 
 						if( RenderingSystem.DisplacementMaxSteps > 0 && Displacement.ReferenceSpecified )
 							generalDefines.Add( ("DISPLACEMENT", "") );
@@ -2540,13 +2790,18 @@ namespace NeoAxis
 						//if( SoftParticles )
 						//	generalDefines.Add( ("SOFT_PARTICLES", "") );
 
+						if( DepthOffsetMode.Value == DepthOffsetModeEnum.GreaterOrEqual )
+							fragmentDefines.Add( ("DEPTH_OFFSET_MODE_GREATER_EQUAL", "") );
+						else if( DepthOffsetMode.Value == DepthOffsetModeEnum.LessOrEqual )
+							fragmentDefines.Add( ("DEPTH_OFFSET_MODE_LESS_EQUAL", "") );
+
+						//!!!!clusters, maybe voxels
+
 						vertexDefines.AddRange( generalDefines );
 						fragmentDefines.AddRange( generalDefines );
 
 						if( shaderGenerationEnable )
 						{
-							//!!!!может тут попроще для деферреда
-
 							//vertex
 							var vertexCode = result.vertexGeneratedCode;
 							if( vertexCode != null )
@@ -2559,6 +2814,20 @@ namespace NeoAxis
 									vertexDefines.Add( ("VERTEX_CODE_SHADER_SCRIPTS", "\r\n" + vertexCode.shaderScripts) );
 								if( !string.IsNullOrEmpty( vertexCode.codeBody ) )
 									vertexDefines.Add( ("VERTEX_CODE_BODY", "\r\n" + vertexCode.codeBody) );
+							}
+
+							//material index
+							var materialIndexCode = result.materialIndexGeneratedCode;
+							if( materialIndexCode != null )
+							{
+								if( !string.IsNullOrEmpty( materialIndexCode.parametersBody ) )
+									fragmentDefines.Add( ("MATERIAL_INDEX_CODE_PARAMETERS", materialIndexCode.parametersBody) );
+								if( !string.IsNullOrEmpty( materialIndexCode.samplersBody ) )
+									fragmentDefines.Add( ("MATERIAL_INDEX_CODE_SAMPLERS", materialIndexCode.samplersBody) );
+								if( !string.IsNullOrEmpty( materialIndexCode.shaderScripts ) )
+									fragmentDefines.Add( ("MATERIAL_INDEX_CODE_SHADER_SCRIPTS", "\r\n" + materialIndexCode.shaderScripts) );
+								if( !string.IsNullOrEmpty( materialIndexCode.codeBody ) )
+									fragmentDefines.Add( ("MATERIAL_INDEX_CODE_BODY", "\r\n" + materialIndexCode.codeBody) );
 							}
 
 							//displacement
@@ -2611,7 +2880,7 @@ namespace NeoAxis
 							{
 								result.error = GpuProgramManager.GetGpuProgramCompilationErrorText( this, error2 );
 								Log.Warning( result.error );
-								result.Dispose();
+								//result.Dispose();
 								return null;
 							}
 
@@ -2621,11 +2890,11 @@ namespace NeoAxis
 							{
 								result.error = GpuProgramManager.GetGpuProgramCompilationErrorText( this, error2 );
 								Log.Warning( result.error );
-								result.Dispose();
+								//result.Dispose();
 								return null;
 							}
 
-							var pass = new GpuMaterialPass( vertexProgram, fragmentProgram );
+							var pass = new GpuMaterialPass( result, vertexProgram, fragmentProgram );
 							result.AllPasses.Add( pass );
 							result.decalShadingPass = pass;
 
@@ -2633,7 +2902,7 @@ namespace NeoAxis
 							pass.DepthWrite = false;
 							pass.CullingMode = CullingMode.Anticlockwise;
 
-							////!!!!temp
+							//temp
 							//pass.SettempAlphaToCoverage( blendMode == BlendModeEnum.Masked );
 
 							if( AdvancedBlending )
@@ -2702,6 +2971,128 @@ namespace NeoAxis
 					}
 				}
 
+				//gi
+				if( result.deferredShadingSupport )
+				{
+					var nPassType = 1;
+					//for( int nPassType = 0; nPassType < 3; nPassType++ )//for( int nPassType = 0; nPassType < 4; nPassType++ )
+					//{
+					var voxelPass = nPassType == 1;
+					var billboardPass = nPassType == 2;
+
+					//generate compile arguments
+					var defines = new List<(string, string)>( 8 );
+					{
+						defines.Add( ("BLEND_MODE_" + blendMode.ToString().ToUpper(), "") );
+						defines.Add( ("SHADING_MODEL_" + ShadingModel.Value.ToString().ToUpper(), "") );
+						defines.Add( ("SHADING_MODEL_INDEX", ( (int)ShadingModel.Value ).ToString()) );
+						//if( TwoSided && TwoSidedFlipNormals )
+						//	fragmentDefines.Add( ("TWO_SIDED_FLIP_NORMALS", "") );
+						if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialSeparatePass )
+							defines.Add( ("MULTI_MATERIAL_SEPARATE_PASS", "") );
+						if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialCombinedPass )
+							defines.Add( ("MULTI_MATERIAL_COMBINED_PASS", "") );
+
+						//if( RenderingSystem.DisplacementMaxSteps > 0 && Displacement.ReferenceSpecified )
+						//	generalDefines.Add( ("DISPLACEMENT", "") );
+						//if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering )
+						//	fragmentDefines.Add( ("OPACITY_DITHERING", "") );
+						if( voxelPass )
+							defines.Add( ("VOXEL", "") );
+						//if( billboardPass )
+						//	generalDefines.Add( ("BILLBOARD", "") );
+
+						//if( DepthOffsetMode.Value == DepthOffsetModeEnum.GreaterEqual )
+						//	defines.Add( ("DEPTH_OFFSET_MODE_GREATER_EQUAL", "") );
+						//else if( DepthOffsetMode.Value == DepthOffsetModeEnum.LessEqual )
+						//	defines.Add( ("DEPTH_OFFSET_MODE_LESS_EQUAL", "") );
+
+						if( shaderGenerationEnable )
+						{
+							//vertex
+							var vertexCode = result.vertexGeneratedCode;
+							if( vertexCode != null )
+							{
+								if( !string.IsNullOrEmpty( vertexCode.parametersBody ) )
+									defines.Add( ("VERTEX_CODE_PARAMETERS", vertexCode.parametersBody) );
+								if( !string.IsNullOrEmpty( vertexCode.samplersBody ) )
+									defines.Add( ("VERTEX_CODE_SAMPLERS", vertexCode.samplersBody) );
+								if( !string.IsNullOrEmpty( vertexCode.shaderScripts ) )
+									defines.Add( ("VERTEX_CODE_SHADER_SCRIPTS", "\r\n" + vertexCode.shaderScripts) );
+								if( !string.IsNullOrEmpty( vertexCode.codeBody ) )
+									defines.Add( ("VERTEX_CODE_BODY", "\r\n" + vertexCode.codeBody) );
+							}
+
+							//material index
+							var materialIndexCode = result.materialIndexGeneratedCode;
+							if( materialIndexCode != null )
+							{
+								if( !string.IsNullOrEmpty( materialIndexCode.parametersBody ) )
+									defines.Add( ("MATERIAL_INDEX_CODE_PARAMETERS", materialIndexCode.parametersBody) );
+								if( !string.IsNullOrEmpty( materialIndexCode.samplersBody ) )
+									defines.Add( ("MATERIAL_INDEX_CODE_SAMPLERS", materialIndexCode.samplersBody) );
+								if( !string.IsNullOrEmpty( materialIndexCode.shaderScripts ) )
+									defines.Add( ("MATERIAL_INDEX_CODE_SHADER_SCRIPTS", "\r\n" + materialIndexCode.shaderScripts) );
+								if( !string.IsNullOrEmpty( materialIndexCode.codeBody ) )
+									defines.Add( ("MATERIAL_INDEX_CODE_BODY", "\r\n" + materialIndexCode.codeBody) );
+							}
+
+							////displacement
+							//var displacementCode = result.displacementGeneratedCode;
+							//if( RenderingSystem.DisplacementMaxSteps > 0 && displacementCode != null )
+							//{
+							//	if( !string.IsNullOrEmpty( displacementCode.parametersBody ) )
+							//		fragmentDefines.Add( ("DISPLACEMENT_CODE_PARAMETERS", displacementCode.parametersBody) );
+							//	if( !string.IsNullOrEmpty( displacementCode.samplersBody ) )
+							//		fragmentDefines.Add( ("DISPLACEMENT_CODE_SAMPLERS", displacementCode.samplersBody) );
+							//	if( !string.IsNullOrEmpty( displacementCode.shaderScripts ) )
+							//		fragmentDefines.Add( ("DISPLACEMENT_CODE_SHADER_SCRIPTS", "\r\n" + displacementCode.shaderScripts) );
+							//	if( !string.IsNullOrEmpty( displacementCode.codeBody ) )
+							//		fragmentDefines.Add( ("DISPLACEMENT_CODE_BODY", "\r\n" + displacementCode.codeBody) );
+							//}
+
+							//fragment
+							var fragmentCode = result.fragmentGeneratedCode;
+							if( fragmentCode != null )
+							{
+								if( !string.IsNullOrEmpty( fragmentCode.parametersBody ) )
+									defines.Add( ("FRAGMENT_CODE_PARAMETERS", fragmentCode.parametersBody) );
+								if( !string.IsNullOrEmpty( fragmentCode.samplersBody ) )
+									defines.Add( ("FRAGMENT_CODE_SAMPLERS", fragmentCode.samplersBody) );
+								if( !string.IsNullOrEmpty( fragmentCode.shaderScripts ) )
+									defines.Add( ("FRAGMENT_CODE_SHADER_SCRIPTS", "\r\n" + fragmentCode.shaderScripts) );
+								if( !string.IsNullOrEmpty( fragmentCode.codeBody ) )
+									defines.Add( ("FRAGMENT_CODE_BODY", "\r\n" + fragmentCode.codeBody) );
+							}
+						}
+					}
+
+					{
+						var parameters = new GpuProgramManager.GetProgramItem( "Standard_GI_Voxel_", GpuProgramType.Compute, @"Base\Shaders\MaterialStandard_GI_Voxel.sc", defines, optimize );
+
+						if( collecting )
+							programsToCompile.Add( parameters );
+						else
+						{
+							string error2;
+
+							//vertex program
+							var program = GpuProgramManager.GetProgram( parameters, out error2 );
+							if( !string.IsNullOrEmpty( error2 ) )
+							{
+								result.error = GpuProgramManager.GetGpuProgramCompilationErrorText( this, error2 );
+								Log.Warning( result.error );
+								return null;
+							}
+
+							//!!!!Dispose()? who else
+							result.giVoxelProgram = new Program( program.RealObject );
+							//result.giVoxelProgram = program;
+						}
+					}
+					//}
+				}
+
 
 				if( collecting )
 				{
@@ -2714,17 +3105,16 @@ namespace NeoAxis
 						{
 							result.error = GpuProgramManager.GetGpuProgramCompilationErrorText( this, item.Error );
 							Log.Warning( result.error );
-							result.Dispose();
+							//result.Dispose();
 							return null;
 						}
 					}
 				}
 			}
 
-			if( !result.Disposed )
-				result.InitDynamicParametersUniformToUpdate();
+			//if( !result.Disposed )
+			result.InitDynamicParametersUniformToUpdate();
 
-			////!!!!
 			//Log.Info( "Total time: " + ( DateTime.Now - time ).TotalSeconds.ToString() );
 
 			return result;
@@ -2739,7 +3129,10 @@ namespace NeoAxis
 
 			{
 				var node = graph.CreateComponent<FlowGraphNode>();
-				node.Name = "Node " + Name;
+				if( !string.IsNullOrEmpty( Name ) )
+					node.Name = "Node " + Name;
+				else
+					node.Name = "Node";
 				node.Position = new Vector2I( 10, -7 );
 				node.ControlledObject = ReferenceUtility.MakeThisReference( node, this );
 			}
@@ -2891,11 +3284,13 @@ namespace NeoAxis
 				}
 			}
 
+#if !DEPLOY
 			if( Parent == null )
 			{
 				var toSelect = new Component[] { this, graph };
 				EditorDocumentConfiguration = KryptonConfigGenerator.CreateEditorDocumentXmlConfiguration( toSelect, graph );
 			}
+#endif
 		}
 
 		public override void NewObjectSetDefaultConfiguration( bool createdFromNewObjectWindow )

@@ -137,6 +137,16 @@ namespace NeoAxis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap AddCircle_32 {
+            get {
+                object obj = ResourceManager.GetObject("AddCircle_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap Addon_16 {
             get {
                 object obj = ResourceManager.GetObject("Addon_16", resourceCulture);
@@ -971,6 +981,16 @@ namespace NeoAxis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap CheckedCircle_32 {
+            get {
+                object obj = ResourceManager.GetObject("CheckedCircle_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap Circle_16 {
             get {
                 object obj = ResourceManager.GetObject("Circle_16", resourceCulture);
@@ -1390,6 +1410,26 @@ namespace NeoAxis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap Database_16 {
+            get {
+                object obj = ResourceManager.GetObject("Database_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Database_32 {
+            get {
+                object obj = ResourceManager.GetObject("Database_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap DateTimeSmall {
             get {
                 object obj = ResourceManager.GetObject("DateTimeSmall", resourceCulture);
@@ -1553,6 +1593,16 @@ namespace NeoAxis.Properties {
         public static System.Drawing.Bitmap Delete_32 {
             get {
                 object obj = ResourceManager.GetObject("Delete_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap DeleteCircle_32 {
+            get {
+                object obj = ResourceManager.GetObject("DeleteCircle_32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -2830,6 +2880,16 @@ namespace NeoAxis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap MeshClusters_32 {
+            get {
+                object obj = ResourceManager.GetObject("MeshClusters_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap MeshCollision_32 {
             get {
                 object obj = ResourceManager.GetObject("MeshCollision_32", resourceCulture);
@@ -3854,6 +3914,26 @@ namespace NeoAxis.Properties {
         public static System.Drawing.Bitmap PlainTextSmall {
             get {
                 object obj = ResourceManager.GetObject("PlainTextSmall", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Plant_16 {
+            get {
+                object obj = ResourceManager.GetObject("Plant_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Plant_32 {
+            get {
+                object obj = ResourceManager.GetObject("Plant_32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -5317,6 +5397,26 @@ namespace NeoAxis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap ServerOnly_16 {
+            get {
+                object obj = ResourceManager.GetObject("ServerOnly_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ServerOnly_32 {
+            get {
+                object obj = ResourceManager.GetObject("ServerOnly_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap SetMaterial_32 {
             get {
                 object obj = ResourceManager.GetObject("SetMaterial_32", resourceCulture);
@@ -5617,6 +5717,26 @@ namespace NeoAxis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap StorageOnly_16 {
+            get {
+                object obj = ResourceManager.GetObject("StorageOnly_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap StorageOnly_32 {
+            get {
+                object obj = ResourceManager.GetObject("StorageOnly_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap Store_16 {
             get {
                 object obj = ResourceManager.GetObject("Store_16", resourceCulture);
@@ -5710,6 +5830,26 @@ namespace NeoAxis.Properties {
         public static System.Drawing.Bitmap SymbolSmall {
             get {
                 object obj = ResourceManager.GetObject("SymbolSmall", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Synchronize_16 {
+            get {
+                object obj = ResourceManager.GetObject("Synchronize_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Synchronize_32 {
+            get {
+                object obj = ResourceManager.GetObject("Synchronize_32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -6087,6 +6227,26 @@ namespace NeoAxis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap Tree_16 {
+            get {
+                object obj = ResourceManager.GetObject("Tree_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Tree_32 {
+            get {
+                object obj = ResourceManager.GetObject("Tree_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap TriangulateFaces_32 {
             get {
                 object obj = ResourceManager.GetObject("TriangulateFaces_32", resourceCulture);
@@ -6309,6 +6469,26 @@ namespace NeoAxis.Properties {
         public static System.Drawing.Bitmap Warning_32 {
             get {
                 object obj = ResourceManager.GetObject("Warning_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Web_16 {
+            get {
+                object obj = ResourceManager.GetObject("Web_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Web_32 {
+            get {
+                object obj = ResourceManager.GetObject("Web_32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

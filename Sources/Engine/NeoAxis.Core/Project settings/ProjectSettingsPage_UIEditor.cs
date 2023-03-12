@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -25,6 +25,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_UIEditor> UIEditorAspectRatioChanged;
 		ReferenceField<double> _uiEditorAspectRatio = 1.77777777777;
 
+		/// <summary>
+		/// Whether to display a grid.
+		/// </summary>
 		[Category( "UI Editor: General" )]
 		[DisplayName( "Display Grid" )]
 		[DefaultValue( true )]
@@ -39,6 +42,9 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		/// <summary>
+		/// The size of move step for Parent measure.
+		/// </summary>
 		[Category( "UI Editor: Snapping" )]
 		[DisplayName( "Parent Measure: Step Movement" )]
 		[DefaultValue( 0.01 )]
@@ -51,6 +57,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_UIEditor> UIEditorParentMeasureStepMovementChanged;
 		ReferenceField<double> _uIEditorParentMeasureStepMovement = 0.01;
 
+		/// <summary>
+		/// The size of move step for Units measure.
+		/// </summary>
 		[Category( "UI Editor: Snapping" )]
 		[DisplayName( "Units Measure: Step Movement" )]
 		[DefaultValue( 10.0 )]
@@ -63,6 +72,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_UIEditor> UIEditorUnitsMeasureStepMovementChanged;
 		ReferenceField<double> _uIEditorUnitsMeasureStepMovement = 10.0;
 
+		/// <summary>
+		/// The size of move step for Pixels measure.
+		/// </summary>
 		[Category( "UI Editor: Snapping" )]
 		[DisplayName( "Pixels Measure: Step Movement" )]
 		[DefaultValue( 10.0 )]
@@ -75,6 +87,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_UIEditor> UIEditorPixelsMeasureStepMovementChanged;
 		ReferenceField<double> _uIEditorPixelsMeasureStepMovement = 10.0;
 
+		/// <summary>
+		/// The size of move step for Screen measure.
+		/// </summary>
 		[Category( "UI Editor: Snapping" )]
 		[DisplayName( "Screen Measure: Step Movement" )]
 		[DefaultValue( 0.01 )]

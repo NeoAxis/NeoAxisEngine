@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -360,11 +360,13 @@ namespace Internal
 								}
 							}
 
-							if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+#if !DEPLOY
+							if( EngineApp.IsEditor )
 							{
 								EditorUtility.RegisterEditorExtensions( assembly, false );
 								ResourcesWindowItems.RegisterAssembly( exportedTypes );
 							}
+#endif
 						}
 
 						RegisterAssemblyEvent?.Invoke( assembly, reloadingOldAssembly );
@@ -421,11 +423,13 @@ namespace Internal
 									ins.OnUnregister();
 							}
 
-							if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+#if !DEPLOY
+							if( EngineApp.IsEditor )
 							{
 								EditorUtility.RegisterEditorExtensions( assembly, true );
 								ResourcesWindowItems.UnregisterAssembly( assembly );
 							}
+#endif
 						}
 
 					}

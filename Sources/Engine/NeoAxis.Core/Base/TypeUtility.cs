@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
@@ -30,57 +30,7 @@ namespace NeoAxis
 
 		public static string DisplayNameAddSpaces( string str )
 		{
-			if( str.Contains( " " ) )
-				return str;
-
-			//special words
-			if( str == "iOS" )
-				return str;
-
-
-			var str2 = str.Replace( '_', ' ' ).Trim();
-
-			if( !str2.Any( char.IsLower ) )
-				return str2;
-
-
-			var withSpaces = new StringBuilder();
-
-			char prev = ' ';
-			for( int n = 0; n < str2.Length; n++ )
-			{
-				var c = str2[ n ];
-
-				if( n != 0 )
-				{
-					if( c >= 'A' && c <= 'Z' && !( prev >= 'A' && prev <= 'Z' ) )
-						withSpaces.Append( " " );
-				}
-
-				withSpaces.Append( c );
-
-				prev = c;
-			}
-
-			string[] words = withSpaces.ToString().Split( new char[] { ' ' } );
-
-			var result = new StringBuilder();
-			for( int n = 0; n < words.Length; n++ )
-			{
-				var word = words[ n ];
-
-				//if( n > 0 && n < words.Length - 1 )
-				//{
-				//	if( wordsToReplace.TryGetValue( word, out string newWord ) )
-				//		word = newWord;
-				//}
-
-				if( result.Length != 0 )
-					result.Append( ' ' );
-				result.Append( word );
-			}
-
-			return result.ToString();
+			return StringUtility.AddSpacesBetweenWords( str );
 		}
 
 		static TypeUtility()

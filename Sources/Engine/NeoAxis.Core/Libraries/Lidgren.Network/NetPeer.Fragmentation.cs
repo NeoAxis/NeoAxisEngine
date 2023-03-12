@@ -3,7 +3,7 @@ using System;
 using System.Threading;
 using System.Collections.Generic;
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	internal class ReceivedFragmentGroup
 	{

@@ -1,3 +1,5 @@
+// Made with NeoAxis Engine 2023.1.
+
 .component NeoAxis.Scene
 {
 	DisplayDevelopmentDataInSimulation = True
@@ -61,7 +63,6 @@
 			.component NeoAxis.RenderingEffect_AmbientOcclusion
 			{
 				Name = Ambient Occlusion
-				Quality = High
 			}
 			.component NeoAxis.RenderingEffect_MotionBlur
 			{
@@ -96,7 +97,6 @@
 			.component NeoAxis.RenderingEffect_Sharpen
 			{
 				Name = Sharpen
-				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
 			}
 		}
 		.component NeoAxis.Component
@@ -181,46 +181,25 @@
 	.component NeoAxis.Character
 	{
 		Name = Character
-		RunSupport = True
-		FlyControlSupport = True
-		JumpSupport = True
-		Animate = True
-		WalkAnimationSpeed = 0.57
-		RunAnimationSpeed = 0.2
+		Transform = "-1.48277710261228 1.47734958140738 -0.00374229084847322; 0 0 -0.681516051292419 0.731803119182587; 1 1 1"
+		Collision = True
 		LeftHandFactor = 1
 		RightHandFactor = 1
 		HeadFactor = 1
-		Transform
+		Mesh
 		{
-			GetByReference = "this:$Collision Body\\Transform"
+			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
 		}
-		IdleAnimation
+		ReplaceMaterialSelectively
 		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Idle"
+			Count = 0
 		}
-		WalkAnimation
+		SpecialEffects
 		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Walk"
-		}
-		RunAnimation
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Run"
-		}
-		FlyAnimation
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Fly"
-		}
-		JumpAnimation
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Jump"
-		}
-		LeftTurnAnimation
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Left Turn"
-		}
-		RightTurnAnimation
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Right Turn"
+			Value
+			{
+				Count = 0
+			}
 		}
 		LeftHandTransform
 		{
@@ -234,117 +213,14 @@
 		{
 			GetByReference = "root:$Object In Space 5\\TransformV\\Position"
 		}
-		.component NeoAxis.RigidBody
-		{
-			Name = Collision Body
-			CanBeSelected = False
-			Transform = "-1.48277564612382 1.47735106112734 1.15221954800588; 0 0 0.681516071807674 -0.731803145571154; 1 1 1"
-			MotionType = Dynamic
-			Mass = 70
-			AngularDamping = 10
-			MaterialFriction = 0
-			MaterialSpinningFriction = 0
-			MaterialRollingFriction = 0
-			LinearSleepingThreshold = 0
-			AngularSleepingThreshold = 0
-			.component NeoAxis.CollisionShape_Capsule
-			{
-				Name = CollisionShape Capsule
-				TransformRelativeToParent = "0 0 -0.25; 0 0 0 1; 1 1 1"
-				Radius = 0.3
-				Height = 1.2000000000000002
-			}
-		}
-		.component NeoAxis.MeshInSpace
-		{
-			Name = Mesh In Space
-			CanBeSelected = False
-			Transform
-			{
-				GetByReference = "this:$Transform Offset\\Result"
-			}
-			Mesh
-			{
-				GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
-			SpecialEffects
-			{
-				Value
-				{
-					Count = 0
-				}
-			}
-			.component NeoAxis.MeshInSpaceAnimationController
-			{
-				Name = Mesh In Space Animation Controller
-				DisplaySkeleton = True
-			}
-			.component NeoAxis.TransformOffset
-			{
-				Name = Transform Offset
-				PositionOffset = 0 0 -1.15
-				Source
-				{
-					GetByReference = "this:..\\..\\$Collision Body\\Transform"
-				}
-			}
-		}
 		.component NeoAxis.CharacterInputProcessing
 		{
 			Name = Character Input Processing
 		}
-		.component NeoAxis.CharacterAI
+		.component NeoAxis.MeshInSpaceAnimationController
 		{
-			Name = Character AI
-			.component NeoAxis.CharacterAITask_MoveToObject
-			{
-				Enabled = False
-				Name = Move To Object
-				Target
-				{
-					GetByReference = "this:..\\..\\..\\$Object In Space"
-				}
-			}
-			.component NeoAxis.CharacterAITask_TurnToObject
-			{
-				Enabled = False
-				Name = Turn To Object 2
-				Target
-				{
-					GetByReference = "this:..\\..\\..\\$Object In Space 2"
-				}
-			}
-			.component NeoAxis.CharacterAITask_MoveToObject
-			{
-				Enabled = False
-				Name = Move To Object 2
-				Target
-				{
-					GetByReference = "this:..\\..\\..\\$Object In Space 2"
-				}
-			}
-			.component NeoAxis.CharacterAITask_TurnToObject
-			{
-				Enabled = False
-				Name = Turn To Object
-				Target
-				{
-					GetByReference = "this:..\\..\\..\\$Button"
-				}
-			}
-			.component NeoAxis.CharacterAITask_PressButton
-			{
-				Enabled = False
-				Name = Press Button
-				Target
-				{
-					GetByReference = "this:..\\..\\..\\$Button"
-				}
-			}
+			Name = Animation Controller
+			DisplaySkeleton = True
 		}
 	}
 	.component NeoAxis.ObjectInSpace

@@ -1,4 +1,5 @@
-﻿// *****************************************************************************
+﻿#if !DEPLOY
+// *****************************************************************************
 // 
 //  © Component Factory Pty Ltd 2012. All rights reserved.
 //	The software and associated documentation supplied hereunder are the 
@@ -77,11 +78,14 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         //private bool _isOnePixelBorder = false;
         #endregion
 
+        [Browsable(false)]
+        public abstract bool AllowFormChrome { get; set; }
+
         #region Events
         /// <summary>
         /// Occurs when the palette changes.
         /// </summary>
-        [Category("Property Changed")]
+        [ Category("Property Changed")]
         [Description("Occurs when the value of the Palette property is changed.")]
         public event EventHandler PaletteChanged;
 
@@ -555,7 +559,11 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool IsCustomHeader {
             get {
-                return KryptonToolkitSettings.AllowFormChrome;
+                //betauser
+                if( NeoAxis.Editor.WinFormsUtility.IsDesignerHosted( this ) )
+                    return false;
+                return AllowFormChrome;
+                //return KryptonToolkitSettings.AllowFormChrome;
                 //if (_palette.GetAllowFormChrome() == InheritBool.False)
                 //    return false;
                 //return ApplyCustomChrome && !ApplyComposition;
@@ -578,7 +586,7 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         /// <returns></returns>
         protected virtual Padding CalculateDynamicWindowMargin()
         {
-            if (!IsCustomHeader)
+            if( !IsCustomHeader)
                 return CommonHelper.GetWindowRealNCMargin(CreateParams);
 
             Padding margin = new Padding();
@@ -926,31 +934,84 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         private Size _savedClientSize;
         private bool _shouldPatchClientSize;
 
+        [Flags]
+        enum DwmWindowAttribute : uint
+        {
+            NCRenderingEnabled = 1,
+            NCRenderingPolicy,
+            TransitionsForceDisabled,
+            AllowNCPaint,
+            CaptionButtonBounds,
+            NonClientRtlLayout,
+            ForceIconicRepresentation,
+            Flip3DPolicy,
+            ExtendedFrameBounds,
+            HasIconicBitmap,
+            DisallowPeek,
+            ExcludedFromPeek,
+            Cloak,
+            Cloaked,
+            FreezeRepresentation,
+            PassiveUpdateMode,
+            UseHostBackdropBrush,
+            UseImmersiveDarkMode = 20,
+            WindowCornerPreference = 33,
+            BorderColor,
+            CaptionColor,
+            TextColor,
+            VisibleFrameBorderThickness,
+            Last
+        }
+
+        [DllImport( "dwmapi.dll", PreserveSig = true )]
+        static extern int DwmSetWindowAttribute( IntPtr hwnd, DwmWindowAttribute attr, ref int attrValue, int attrSize );
+
+        public void ApplyWindows11DarkTheme()
+        {
+            if( IsHandleCreated && !NeoAxis.Editor.WinFormsUtility.IsDesignerHosted( this ) && KryptonDarkThemeUtility.DarkTheme )
+            {
+                try
+                {
+                    int value = 1;
+                    DwmSetWindowAttribute( Handle, DwmWindowAttribute.UseImmersiveDarkMode, ref value, 4 );
+                }
+                catch { }
+            }
+        }
+
         protected override void CreateHandle()
         {
             bool shouldPatchSize = !_creatingHandle;
             _creatingHandle = true;
 
-            if (shouldPatchSize)
-                if (WindowState != FormWindowState.Minimized && !DesignMode)
-                    Size = SizeFromClientSize(ClientSize);
+            if( !NeoAxis.Editor.WinFormsUtility.IsDesignerHosted( this ) )//betauser
+            {
+                if( shouldPatchSize )
+                    if( WindowState != FormWindowState.Minimized && !DesignMode )
+                        Size = SizeFromClientSize( ClientSize );
+            }
 
             if (!IsHandleCreated && !IsDisposed)
                 base.CreateHandle();
+
+            ApplyWindows11DarkTheme();
 
             _creatingHandle = false;
         }
 
         private void RecalcSizeFromClientSize()
         {
-            // HACK? We break the bounds for restoring from maximized state if we call SetClientSizeCore in the maximized state.
-            // see Form.restoredWindowBounds etc.
-            if (WindowState == FormWindowState.Maximized)
-                return;
-            //
+            if( !NeoAxis.Editor.WinFormsUtility.IsDesignerHosted( this ) )//betauser
+            {
+                // HACK? We break the bounds for restoring from maximized state if we call SetClientSizeCore in the maximized state.
+                // see Form.restoredWindowBounds etc.
+                if( WindowState == FormWindowState.Maximized )
+                    return;
+                //
 
-            //Debug.WriteLine($"EDITOR RecalcSizeFromClientSize()");
-            SetClientSizeCore(ClientSize.Width, ClientSize.Height);
+                //Debug.WriteLine($"EDITOR RecalcSizeFromClientSize()");
+                SetClientSizeCore( ClientSize.Width, ClientSize.Height );
+            }
         }
 
         protected override void OnSizeChanged(EventArgs e)
@@ -976,7 +1037,7 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
 
             if( ClientSize != _savedClientSize )
             {
-                var before = ClientSize;
+                //var before = ClientSize;
 
                 FieldInfo fiWidth = typeof( Control ).GetField( "_clientWidth", BindingFlags.Instance | BindingFlags.NonPublic );
                 FieldInfo fiHeight = typeof( Control ).GetField( "_clientHeight", BindingFlags.Instance | BindingFlags.NonPublic );
@@ -1059,14 +1120,14 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
             if (formSize == Size.Empty)
                 return Size.Empty;
 
-            Size size1 = SizeFromClientSize(Size.Empty);
-            Size size2 = new Size(formSize.Width - size1.Width, formSize.Height - size1.Height);
-            if (this.WindowState != FormWindowState.Maximized)
+            Size size1 = SizeFromClientSize( Size.Empty );
+            Size size2 = new Size( formSize.Width - size1.Width, formSize.Height - size1.Height );
+            if( this.WindowState != FormWindowState.Maximized )
                 return size2;
 
-            PI.RECT rect = new PI.RECT(0, 0, size2.Width, size2.Height);
+            PI.RECT rect = new PI.RECT( 0, 0, size2.Width, size2.Height );
             //Taskbar.CorrectRECTByAutoHide(ref rect);
-            return new Size(rect.right, rect.bottom);
+            return new Size( rect.right, rect.bottom );
         }
 
         /// <summary>
@@ -1080,25 +1141,25 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
         {
             // Patch form size when restoring
-            Size size = PatchFormSizeInRestoreWindowBoundsIfNecessary(width, height);
-            size = CalcPreferredSizeCore(size);
-            base.SetBoundsCore(x, y, size.Width, size.Height, specified);
+            Size size = PatchFormSizeInRestoreWindowBoundsIfNecessary( width, height );
+            //size = CalcPreferredSizeCore( size );
+            base.SetBoundsCore( x, y, size.Width, size.Height, specified );
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="size"></param>
-        /// <returns></returns>
-        protected virtual Size CalcPreferredSizeCore(Size size)
-        {
-            //// With the Aero glass appearance we need to reduce height by the top border, 
-            //// otherwise each time the window is maximized and restored it grows in size
-            //if (ApplyComposition && FormBorderStyle != FormBorderStyle.None)
-            //    size.Height -= WindowMargin.Top;
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <param name="size"></param>
+        ///// <returns></returns>
+        //protected virtual Size CalcPreferredSizeCore(Size size)
+        //{
+        //    //// With the Aero glass appearance we need to reduce height by the top border, 
+        //    //// otherwise each time the window is maximized and restored it grows in size
+        //    //if (ApplyComposition && FormBorderStyle != FormBorderStyle.None)
+        //    //    size.Height -= WindowMargin.Top;
 
-            return size;
-        }
+        //    return size;
+        //}
 
         /// <summary>
         /// Patch form size when restoring
@@ -2387,3 +2448,5 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
 
     }
 }
+
+#endif

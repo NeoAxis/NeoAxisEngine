@@ -1,9 +1,10 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using NeoAxis.Editor;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -51,6 +52,7 @@ namespace NeoAxis
 		/// Constructs a plane with another specified <see cref="Plane"/> object.
 		/// </summary>
 		/// <param name="source">A specified plane.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Plane( Plane source )
 		{
 			this.A = source.A;
@@ -66,6 +68,7 @@ namespace NeoAxis
 		/// <param name="b">The B component of the plane.</param>
 		/// <param name="c">The C component of the plane.</param>
 		/// <param name="d">The D component of the plane.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Plane( double a, double b, double c, double d )
 		{
 			this.A = a;
@@ -79,6 +82,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="normal">The normal vector of the plane.</param>
 		/// <param name="distance">The distance of the plane along its normal from the origin.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Plane( Vector3 normal, double distance )
 		{
 			A = normal.X;
@@ -91,6 +95,7 @@ namespace NeoAxis
 		/// Constructs a plane with the specified <see cref="PlaneF"/> object.
 		/// </summary>
 		/// <param name="source">A specified plane.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Plane( PlaneF source )
 		{
 			A = source.A;
@@ -103,6 +108,7 @@ namespace NeoAxis
 		/// Constructs a plane from the given <see cref="Vector4"/> object.
 		/// </summary>
 		/// <param name="source">A specified vector.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Plane( Vector4 source )
 		{
 			A = source.X;
@@ -172,6 +178,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="obj">The object to compare with the current instance of <see cref="Plane"/>.</param>
 		/// <returns>True if the specified object is equal to the current instance of <see cref="Plane"/>; otherwise, False.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is Plane && this == (Plane)obj );
@@ -181,6 +188,7 @@ namespace NeoAxis
 		/// Returns a hash code for this instance.
 		/// </summary>
 		/// <returns>A hash code for this instance.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return ( A.GetHashCode() ^ B.GetHashCode() ^ C.GetHashCode() ^ D.GetHashCode() );
@@ -192,6 +200,7 @@ namespace NeoAxis
 		/// <param name="p0">The first plane to add.</param>
 		/// <param name="p1">The second plane to add.</param>
 		/// <returns>The resulting plane.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Plane operator +( Plane p0, Plane p1 )
 		{
 			Plane result;
@@ -208,6 +217,7 @@ namespace NeoAxis
 		/// <param name="p0">The plane to subtract from.</param>
 		/// <param name="p1">The plane to be subtracted from another plane.</param>
 		/// <returns>The resulting plane.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Plane operator -( Plane p0, Plane p1 )
 		{
 			Plane result;
@@ -223,6 +233,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="p">The plane to negate.</param>
 		/// <returns>A plane facing in the opposite direction.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Plane operator -( Plane p )
 		{
 			Plane result;
@@ -239,6 +250,7 @@ namespace NeoAxis
 		/// <param name="p0">The first plane to add.</param>
 		/// <param name="p1">The second plane to add.</param>
 		/// <param name="result">When the method completes, contains the resulting plane.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Add( ref Plane p0, ref Plane p1, out Plane result )
 		{
 			result.A = p0.A + p1.A;
@@ -253,6 +265,7 @@ namespace NeoAxis
 		/// <param name="p0">The plane to subtract from.</param>
 		/// <param name="p1">The plane to be subtracted from another plane.</param>
 		/// <param name="result">When the method completes, contains the resulting plane.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Subtract( ref Plane p0, ref Plane p1, out Plane result )
 		{
 			result.A = p0.A - p1.A;
@@ -266,6 +279,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="p">The plane to negate.</param>
 		/// <param name="result">When the method completes, contains the plane facing in the opposite direction.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Negate( ref Plane p, out Plane result )
 		{
 			result.A = -p.A;
@@ -310,6 +324,7 @@ namespace NeoAxis
 		/// <param name="p0">The first plane to compare.</param>
 		/// <param name="p1">The second plane to compare.</param>
 		/// <returns>True if the planes are equal; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( Plane p0, Plane p1 )
 		{
 			return ( p0.A == p1.A && p0.B == p1.B && p0.C == p1.C && p0.D == p1.D );
@@ -321,6 +336,7 @@ namespace NeoAxis
 		/// <param name="p0">The first plane to compare.</param>
 		/// <param name="p1">The second plane to compare.</param>
 		/// <returns>True if the planes are unequal; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( Plane p0, Plane p1 )
 		{
 			return ( p0.A != p1.A || p0.B != p1.B || p0.C != p1.C || p0.D != p1.D );
@@ -335,6 +351,7 @@ namespace NeoAxis
 		/// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="index"/> is out of the range [0, 3].</exception>
 		public unsafe double this[ int index ]
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				if( index < 0 || index > 3 )
@@ -344,6 +361,7 @@ namespace NeoAxis
 					return v[ index ];
 				}
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set
 			{
 				if( index < 0 || index > 3 )
@@ -362,6 +380,7 @@ namespace NeoAxis
 		/// <param name="p">The plane to compare.</param>
 		/// <param name="epsilon">The precision value.</param>
 		/// <returns>True if the specified plane is equal to the current instance of <see cref="Plane"/>; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( Plane p, double epsilon )
 		{
 			if( Math.Abs( A - p.A ) > epsilon )
@@ -382,6 +401,7 @@ namespace NeoAxis
 		/// <param name="p">The plane to compare.</param>
 		/// <param name="epsilon">The precision value.</param>
 		/// <returns>True if the specified plane is equal to the current instance of <see cref="Plane"/>; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( ref Plane p, double epsilon )
 		{
 			if( Math.Abs( A - p.A ) > epsilon )
@@ -403,6 +423,7 @@ namespace NeoAxis
 		/// <param name="normalEpsilon">The precision value for the plane normal.</param>
 		/// <param name="distanceEpsilon">The precision value for the distance component of the plane.</param>
 		/// <returns>True if the specified plane is equal to the current instance of <see cref="Plane"/>; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( Plane p, double normalEpsilon, double distanceEpsilon )
 		{
 			if( Math.Abs( D - p.D ) > distanceEpsilon )
@@ -422,6 +443,7 @@ namespace NeoAxis
 		/// <param name="normalEpsilon">The precision value for the plane normal.</param>
 		/// <param name="distanceEpsilon">The precision value for the distance component of the plane.</param>
 		/// <returns>True if the specified plane is equal to the current instance of <see cref="Plane"/>; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( ref Plane p, double normalEpsilon, double distanceEpsilon )
 		{
 			if( Math.Abs( D - p.D ) > distanceEpsilon )
@@ -438,6 +460,7 @@ namespace NeoAxis
 		/// </summary>
 		public Vector3 Normal
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				Vector3 result;
@@ -446,6 +469,7 @@ namespace NeoAxis
 				result.Z = C;
 				return result;
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set { A = value.X; B = value.Y; C = value.Z; }
 		}
 
@@ -454,7 +478,9 @@ namespace NeoAxis
 		/// </summary>
 		public double Distance
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get { return -D; }
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set { D = -value; }
 		}
 
@@ -462,6 +488,7 @@ namespace NeoAxis
 		/// Converts a normal vector of the current instance of <see cref="Plane"/> into a unit vector.
 		/// </summary>
 		/// <returns>The length of the plane normal vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public double Normalize()
 		{
 			Vector3 normal = Normal;
@@ -474,6 +501,7 @@ namespace NeoAxis
 		/// Converts a normal vector of the current instance of <see cref="Plane"/> into a unit vector and returns the resulting plane.
 		/// </summary>
 		/// <returns>The plane with normalized normal vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Plane GetNormalize()
 		{
 			Plane result;
@@ -491,6 +519,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="v">A specified vector.</param>
 		/// <returns>The dot product of a specified vector and the normal of the plane plus the distance value of the plane.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public double GetDistance( Vector3 v )
 		{
 			return A * v.X + B * v.Y + C * v.Z + D;
@@ -501,6 +530,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="v">A specified vector.</param>
 		/// <returns>The dot product of a specified vector and the normal of the plane plus the distance value of the plane.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public double GetDistance( ref Vector3 v )
 		{
 			return A * v.X + B * v.Y + C * v.Z + D;
@@ -511,6 +541,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="point">The point to check.</param>
 		/// <returns>The resulting side of the plane.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Side GetSide( Vector3 point )
 		{
 			double distance = GetDistance( ref point );
@@ -526,6 +557,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="point">The point to check.</param>
 		/// <returns>The resulting side of the plane.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Side GetSide( ref Vector3 point )
 		{
 			double distance = GetDistance( ref point );
@@ -542,6 +574,7 @@ namespace NeoAxis
 		/// <param name="point">The point to check.</param>
 		/// <param name="epsilon">The given precision.</param>
 		/// <returns>The resulting side of the plane.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Side GetSide( Vector3 point, double epsilon )
 		{
 			double distance = GetDistance( ref point );
@@ -558,6 +591,7 @@ namespace NeoAxis
 		/// <param name="point">The point to check.</param>
 		/// <param name="epsilon">The given precision.</param>
 		/// <returns>The resulting side of the plane.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Side GetSide( ref Vector3 point, double epsilon )
 		{
 			double distance = GetDistance( ref point );
@@ -572,6 +606,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="Plane"/> into an instance of <see cref="Vector4"/>.
 		/// </summary>
 		/// <returns>The result of the conversion.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Vector4 ToVector4()
 		{
@@ -590,6 +625,7 @@ namespace NeoAxis
 		/// <param name="point1">The second point defining the plane.</param>
 		/// <param name="point2">The third point defining the plane.</param>
 		/// <returns>The resulting plane.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Plane FromPoints( Vector3 point0, Vector3 point1, Vector3 point2 )
 		{
 			Plane result;
@@ -608,6 +644,7 @@ namespace NeoAxis
 		/// <param name="point1">The second point defining the plane.</param>
 		/// <param name="point2">The third point defining the plane.</param>
 		/// <param name="result">When the method completes, contains the resulting plane.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void FromPoints( ref Vector3 point0, ref Vector3 point1, ref Vector3 point2, out Plane result )
 		{
 			Vector3 edge1;
@@ -631,6 +668,7 @@ namespace NeoAxis
 		/// <param name="dir2">The second direction vector.</param>
 		/// <param name="p">The point that is the start of direction vectors.</param>
 		/// <returns>The resulting plane.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Plane FromVectors( Vector3 dir1, Vector3 dir2, Vector3 p )
 		{
 			Plane result;
@@ -653,6 +691,7 @@ namespace NeoAxis
 		/// <param name="dir2">The second direction vector.</param>
 		/// <param name="p">The point that is the start of direction vectors.</param>
 		/// <param name="result">When the method completes, contains the resulting plane.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void FromVectors( ref Vector3 dir1, ref Vector3 dir2, ref Vector3 p, out Plane result )
 		{
 			Vector3 normal;
@@ -670,6 +709,7 @@ namespace NeoAxis
 		/// <param name="point">Any point that lies along the plane.</param>
 		/// <param name="normal">The normal vector to the plane.</param>
 		/// <returns>The resulting plane.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Plane FromPointAndNormal( Vector3 point, Vector3 normal )
 		{
 			double distance = Vector3.Dot( ref point, ref normal );
@@ -682,6 +722,7 @@ namespace NeoAxis
 		/// <param name="point">Any point that lies along the plane.</param>
 		/// <param name="normal">The normal vector to the plane.</param>
 		/// <param name="plane">When the method completes, contains the resulting plane.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void FromPointAndNormal( ref Vector3 point, ref Vector3 normal, out Plane plane )
 		{
 			double distance = Vector3.Dot( ref point, ref normal );
@@ -694,6 +735,7 @@ namespace NeoAxis
 		/// <param name="ray">The ray to check.</param>
 		/// <param name="scale">When the method completes, contains the ray and plane intersection.</param>
 		/// <returns>True if the given ray intersects the current instance of <see cref="Plane"/>; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( ref Ray ray, out double scale )
 		{
 			double d1 = A * ray.Origin.X + B * ray.Origin.Y + C * ray.Origin.Z + D;
@@ -713,6 +755,7 @@ namespace NeoAxis
 		/// <param name="ray">The ray to check.</param>
 		/// <param name="scale">When the method completes, contains the ray and plane intersection.</param>
 		/// <returns>True if the given ray intersects the current instance of <see cref="Plane"/>; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( Ray ray, out double scale )
 		{
 			double d1 = A * ray.Origin.X + B * ray.Origin.Y + C * ray.Origin.Z + D;
@@ -732,6 +775,7 @@ namespace NeoAxis
 		/// <param name="ray">The ray to check.</param>
 		/// <param name="intersectionPoint">The resulting point of intersection of the plane and the ray (if they intersected).</param>
 		/// <returns>True if the given ray intersects the current instance of <see cref="Plane"/>; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( ref Ray ray, out Vector3 intersectionPoint )
 		{
 			double d1 = A * ray.Origin.X + B * ray.Origin.Y + C * ray.Origin.Z + D;
@@ -752,6 +796,7 @@ namespace NeoAxis
 		/// <param name="ray">The ray to check.</param>
 		/// <param name="intersectionPoint">The resulting point of intersection of the plane and the ray (if they intersected).</param>
 		/// <returns>True if the given ray intersects the current instance of <see cref="Plane"/>; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( Ray ray, out Vector3 intersectionPoint )
 		{
 			double d1 = A * ray.Origin.X + B * ray.Origin.Y + C * ray.Origin.Z + D;
@@ -772,6 +817,7 @@ namespace NeoAxis
 		/// <param name="line">The line to check.</param>
 		/// <param name="scale">When the method completes, contains the line and plane intersection.</param>
 		/// <returns>True if the given line intersects the current instance of <see cref="Plane"/>; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( ref Line3 line, out double scale )
 		{
 			scale = 0;
@@ -796,11 +842,13 @@ namespace NeoAxis
 		/// <param name="line">The line to check.</param>
 		/// <param name="scale">When the method completes, contains the line and plane intersection.</param>
 		/// <returns>True if the given line intersects the current instance of <see cref="Plane"/>; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( Line3 line, out double scale )
 		{
 			return Intersects( ref line, out scale );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( Line3 line, Vector3 end )
 		{
 			double scale;
@@ -814,6 +862,7 @@ namespace NeoAxis
 		/// <param name="boundsCenter">The box center.</param>
 		/// <param name="boundsHalfSize">The box extents.</param>
 		/// <returns>The resulting side.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Side GetSide( ref Vector3 boundsCenter, ref Vector3 boundsHalfSize )
 		{
 			// Calculate the distance between box centre and the plane
@@ -842,6 +891,7 @@ namespace NeoAxis
 		/// <param name="boundsCenter">The box center.</param>
 		/// <param name="boundsHalfSize">The box extents.</param>
 		/// <returns>The resulting side.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Side GetSide( Vector3 boundsCenter, Vector3 boundsHalfSize )
 		{
 			return GetSide( ref boundsCenter, ref boundsHalfSize );
@@ -853,6 +903,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="bounds">The given bounds.</param>
 		/// <returns>The resulting side.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Side GetSide( ref Bounds bounds )
 		{
 			Vector3 boundsCenter;
@@ -871,6 +922,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="bounds">The given bounds.</param>
 		/// <returns>The resulting side.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Side GetSide( Bounds bounds )
 		{
 			return GetSide( ref bounds );
@@ -880,6 +932,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="Plane"/> to the plane of <see cref="PlaneF"/> format.
 		/// </summary>
 		/// <returns>The plane of <see cref="PlaneF"/> format.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public PlaneF ToPlaneF()
 		{

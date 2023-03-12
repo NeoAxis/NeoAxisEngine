@@ -125,6 +125,133 @@
     <ClCompile Include="ImageLibrary\OgreVector3D.cpp" />
     <ClCompile Include="ImageLibrary\OgreVector4.cpp" />
     <ClCompile Include="ImageLibrary\YUVToRGBConverter.cpp" />
+    <ClCompile Include="Jolt\AABBTree\AABBTreeBuilder.cpp" />
+    <ClCompile Include="Jolt\Core\Color.cpp" />
+    <ClCompile Include="Jolt\Core\Factory.cpp" />
+    <ClCompile Include="Jolt\Core\IssueReporting.cpp" />
+    <ClCompile Include="Jolt\Core\JobSystemThreadPool.cpp" />
+    <ClCompile Include="Jolt\Core\LinearCurve.cpp" />
+    <ClCompile Include="Jolt\Core\Memory.cpp" />
+    <ClCompile Include="Jolt\Core\Profiler.cpp" />
+    <ClCompile Include="Jolt\Core\RTTI.cpp" />
+    <ClCompile Include="Jolt\Core\StringTools.cpp" />
+    <ClCompile Include="Jolt\Core\TickCounter.cpp" />
+    <ClCompile Include="Jolt\Geometry\ConvexHullBuilder.cpp" />
+    <ClCompile Include="Jolt\Geometry\ConvexHullBuilder2D.cpp" />
+    <ClCompile Include="Jolt\Geometry\Indexify.cpp" />
+    <ClCompile Include="Jolt\Geometry\OrientedBox.cpp" />
+    <ClCompile Include="Jolt\Math\UVec4.cpp" />
+    <ClCompile Include="Jolt\Math\Vec3.cpp" />
+    <ClCompile Include="Jolt\NeoAxisPhysicsNative.cpp" />
+    <ClCompile Include="Jolt\ObjectStream\ObjectStream.cpp" />
+    <ClCompile Include="Jolt\ObjectStream\ObjectStreamBinaryIn.cpp" />
+    <ClCompile Include="Jolt\ObjectStream\ObjectStreamBinaryOut.cpp" />
+    <ClCompile Include="Jolt\ObjectStream\ObjectStreamIn.cpp" />
+    <ClCompile Include="Jolt\ObjectStream\ObjectStreamOut.cpp" />
+    <ClCompile Include="Jolt\ObjectStream\ObjectStreamTextIn.cpp" />
+    <ClCompile Include="Jolt\ObjectStream\ObjectStreamTextOut.cpp" />
+    <ClCompile Include="Jolt\ObjectStream\SerializableObject.cpp" />
+    <ClCompile Include="Jolt\ObjectStream\TypeDeclarations.cpp" />
+    <ClCompile Include="Jolt\Physics\Body\Body.cpp" />
+    <ClCompile Include="Jolt\Physics\Body\BodyAccess.cpp" />
+    <ClCompile Include="Jolt\Physics\Body\BodyCreationSettings.cpp" />
+    <ClCompile Include="Jolt\Physics\Body\BodyInterface.cpp" />
+    <ClCompile Include="Jolt\Physics\Body\BodyManager.cpp" />
+    <ClCompile Include="Jolt\Physics\Body\MassProperties.cpp" />
+    <ClCompile Include="Jolt\Physics\Body\MotionProperties.cpp" />
+    <ClCompile Include="Jolt\Physics\Character\Character.cpp" />
+    <ClCompile Include="Jolt\Physics\Character\CharacterBase.cpp" />
+    <ClCompile Include="Jolt\Physics\Character\CharacterVirtual.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\BroadPhase\BroadPhase.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\BroadPhase\BroadPhaseBruteForce.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\BroadPhase\BroadPhaseQuadTree.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\BroadPhase\QuadTree.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\CastConvexVsTriangles.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\CastSphereVsTriangles.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\CollideConvexVsTriangles.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\CollideSphereVsTriangles.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\CollisionDispatch.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\CollisionGroup.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\GroupFilter.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\GroupFilterTable.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\ManifoldBetweenTwoFaces.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\NarrowPhaseQuery.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\NarrowPhaseStats.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\PhysicsMaterial.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\PhysicsMaterialSimple.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\Shape\BoxShape.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\Shape\CapsuleShape.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\Shape\CompoundShape.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\Shape\ConvexHullShape.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\Shape\ConvexShape.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\Shape\CylinderShape.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\Shape\DecoratedShape.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\Shape\HeightFieldShape.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\Shape\MeshShape.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\Shape\MutableCompoundShape.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\Shape\OffsetCenterOfMassShape.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\Shape\RotatedTranslatedShape.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\Shape\ScaledShape.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\Shape\Shape.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\Shape\SphereShape.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\Shape\StaticCompoundShape.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\Shape\TaperedCapsuleShape.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\Shape\TriangleShape.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\TransformedShape.cpp" />
+    <ClCompile Include="Jolt\Physics\Constraints\ConeConstraint.cpp" />
+    <ClCompile Include="Jolt\Physics\Constraints\Constraint.cpp" />
+    <ClCompile Include="Jolt\Physics\Constraints\ConstraintManager.cpp" />
+    <ClCompile Include="Jolt\Physics\Constraints\ContactConstraintManager.cpp" />
+    <ClCompile Include="Jolt\Physics\Constraints\DistanceConstraint.cpp" />
+    <ClCompile Include="Jolt\Physics\Constraints\FixedConstraint.cpp" />
+    <ClCompile Include="Jolt\Physics\Constraints\GearConstraint.cpp" />
+    <ClCompile Include="Jolt\Physics\Constraints\HingeConstraint.cpp" />
+    <ClCompile Include="Jolt\Physics\Constraints\MotorSettings.cpp" />
+    <ClCompile Include="Jolt\Physics\Constraints\PathConstraint.cpp" />
+    <ClCompile Include="Jolt\Physics\Constraints\PathConstraintPath.cpp" />
+    <ClCompile Include="Jolt\Physics\Constraints\PathConstraintPathHermite.cpp" />
+    <ClCompile Include="Jolt\Physics\Constraints\PointConstraint.cpp" />
+    <ClCompile Include="Jolt\Physics\Constraints\PulleyConstraint.cpp" />
+    <ClCompile Include="Jolt\Physics\Constraints\RackAndPinionConstraint.cpp" />
+    <ClCompile Include="Jolt\Physics\Constraints\SixDOFConstraint.cpp" />
+    <ClCompile Include="Jolt\Physics\Constraints\SliderConstraint.cpp" />
+    <ClCompile Include="Jolt\Physics\Constraints\SwingTwistConstraint.cpp" />
+    <ClCompile Include="Jolt\Physics\Constraints\TwoBodyConstraint.cpp" />
+    <ClCompile Include="Jolt\Physics\DeterminismLog.cpp" />
+    <ClCompile Include="Jolt\Physics\IslandBuilder.cpp" />
+    <ClCompile Include="Jolt\Physics\PhysicsLock.cpp" />
+    <ClCompile Include="Jolt\Physics\PhysicsScene.cpp" />
+    <ClCompile Include="Jolt\Physics\PhysicsSystem.cpp" />
+    <ClCompile Include="Jolt\Physics\PhysicsUpdateContext.cpp" />
+    <ClCompile Include="Jolt\Physics\Ragdoll\Ragdoll.cpp" />
+    <ClCompile Include="Jolt\Physics\StateRecorderImpl.cpp" />
+    <ClCompile Include="Jolt\Physics\Vehicle\TrackedVehicleController.cpp" />
+    <ClCompile Include="Jolt\Physics\Vehicle\VehicleAntiRollBar.cpp" />
+    <ClCompile Include="Jolt\Physics\Vehicle\VehicleCollisionTester.cpp" />
+    <ClCompile Include="Jolt\Physics\Vehicle\VehicleConstraint.cpp" />
+    <ClCompile Include="Jolt\Physics\Vehicle\VehicleController.cpp" />
+    <ClCompile Include="Jolt\Physics\Vehicle\VehicleDifferential.cpp" />
+    <ClCompile Include="Jolt\Physics\Vehicle\VehicleEngine.cpp" />
+    <ClCompile Include="Jolt\Physics\Vehicle\VehicleTrack.cpp" />
+    <ClCompile Include="Jolt\Physics\Vehicle\VehicleTransmission.cpp" />
+    <ClCompile Include="Jolt\Physics\Vehicle\Wheel.cpp" />
+    <ClCompile Include="Jolt\Physics\Vehicle\WheeledVehicleController.cpp" />
+    <ClCompile Include="Jolt\RegisterTypes.cpp" />
+    <ClCompile Include="Jolt\Renderer\DebugRenderer.cpp" />
+    <ClCompile Include="Jolt\Renderer\DebugRendererPlayback.cpp" />
+    <ClCompile Include="Jolt\Renderer\DebugRendererRecorder.cpp" />
+    <ClCompile Include="Jolt\Skeleton\SkeletalAnimation.cpp" />
+    <ClCompile Include="Jolt\Skeleton\Skeleton.cpp" />
+    <ClCompile Include="Jolt\Skeleton\SkeletonMapper.cpp" />
+    <ClCompile Include="Jolt\Skeleton\SkeletonPose.cpp" />
+    <ClCompile Include="Jolt\TriangleGrouper\TriangleGrouperClosestCentroid.cpp" />
+    <ClCompile Include="Jolt\TriangleGrouper\TriangleGrouperMorton.cpp" />
+    <ClCompile Include="Jolt\TriangleSplitter\TriangleSplitter.cpp" />
+    <ClCompile Include="Jolt\TriangleSplitter\TriangleSplitterBinning.cpp" />
+    <ClCompile Include="Jolt\TriangleSplitter\TriangleSplitterFixedLeafSize.cpp" />
+    <ClCompile Include="Jolt\TriangleSplitter\TriangleSplitterLongestAxis.cpp" />
+    <ClCompile Include="Jolt\TriangleSplitter\TriangleSplitterMean.cpp" />
+    <ClCompile Include="Jolt\TriangleSplitter\TriangleSplitterMorton.cpp" />
     <ClCompile Include="MemoryManager\CRTMemoryManager.cpp" />
     <ClCompile Include="MemoryManager\MemoryManagerInternal.cpp" />
     <ClCompile Include="MemoryManager\MemoryManagerInternal_precompiled.cpp" />
@@ -270,6 +397,264 @@
     <ClInclude Include="ImageLibrary\OgreVector3D.h" />
     <ClInclude Include="ImageLibrary\OgreVector4.h" />
     <ClInclude Include="ImageLibrary\YUVToRGBConverter.h" />
+    <ClInclude Include="Jolt\AABBTree\AABBTreeBuilder.h" />
+    <ClInclude Include="Jolt\AABBTree\AABBTreeToBuffer.h" />
+    <ClInclude Include="Jolt\AABBTree\NodeCodec\NodeCodecQuadTreeHalfFloat.h" />
+    <ClInclude Include="Jolt\AABBTree\TriangleCodec\TriangleCodecIndexed8BitPackSOA4Flags.h" />
+    <ClInclude Include="Jolt\Core\ARMNeon.h" />
+    <ClInclude Include="Jolt\Core\Atomics.h" />
+    <ClInclude Include="Jolt\Core\ByteBuffer.h" />
+    <ClInclude Include="Jolt\Core\Color.h" />
+    <ClInclude Include="Jolt\Core\Core.h" />
+    <ClInclude Include="Jolt\Core\Factory.h" />
+    <ClInclude Include="Jolt\Core\FixedSizeFreeList.h" />
+    <ClInclude Include="Jolt\Core\FPControlWord.h" />
+    <ClInclude Include="Jolt\Core\FPException.h" />
+    <ClInclude Include="Jolt\Core\FPFlushDenormals.h" />
+    <ClInclude Include="Jolt\Core\HashCombine.h" />
+    <ClInclude Include="Jolt\Core\InsertionSort.h" />
+    <ClInclude Include="Jolt\Core\IssueReporting.h" />
+    <ClInclude Include="Jolt\Core\JobSystem.h" />
+    <ClInclude Include="Jolt\Core\JobSystemThreadPool.h" />
+    <ClInclude Include="Jolt\Core\LinearCurve.h" />
+    <ClInclude Include="Jolt\Core\LockFreeHashMap.h" />
+    <ClInclude Include="Jolt\Core\Memory.h" />
+    <ClInclude Include="Jolt\Core\Mutex.h" />
+    <ClInclude Include="Jolt\Core\MutexArray.h" />
+    <ClInclude Include="Jolt\Core\NonCopyable.h" />
+    <ClInclude Include="Jolt\Core\Profiler.h" />
+    <ClInclude Include="Jolt\Core\QuickSort.h" />
+    <ClInclude Include="Jolt\Core\Reference.h" />
+    <ClInclude Include="Jolt\Core\Result.h" />
+    <ClInclude Include="Jolt\Core\RTTI.h" />
+    <ClInclude Include="Jolt\Core\StaticArray.h" />
+    <ClInclude Include="Jolt\Core\STLAlignedAllocator.h" />
+    <ClInclude Include="Jolt\Core\STLAllocator.h" />
+    <ClInclude Include="Jolt\Core\STLTempAllocator.h" />
+    <ClInclude Include="Jolt\Core\StreamIn.h" />
+    <ClInclude Include="Jolt\Core\StreamOut.h" />
+    <ClInclude Include="Jolt\Core\StreamWrapper.h" />
+    <ClInclude Include="Jolt\Core\StringTools.h" />
+    <ClInclude Include="Jolt\Core\TempAllocator.h" />
+    <ClInclude Include="Jolt\Core\TickCounter.h" />
+    <ClInclude Include="Jolt\Core\UnorderedMap.h" />
+    <ClInclude Include="Jolt\Core\UnorderedSet.h" />
+    <ClInclude Include="Jolt\Geometry\AABox.h" />
+    <ClInclude Include="Jolt\Geometry\AABox4.h" />
+    <ClInclude Include="Jolt\Geometry\ClipPoly.h" />
+    <ClInclude Include="Jolt\Geometry\ClosestPoint.h" />
+    <ClInclude Include="Jolt\Geometry\ConvexHullBuilder.h" />
+    <ClInclude Include="Jolt\Geometry\ConvexHullBuilder2D.h" />
+    <ClInclude Include="Jolt\Geometry\ConvexSupport.h" />
+    <ClInclude Include="Jolt\Geometry\Ellipse.h" />
+    <ClInclude Include="Jolt\Geometry\EPAConvexHullBuilder.h" />
+    <ClInclude Include="Jolt\Geometry\EPAPenetrationDepth.h" />
+    <ClInclude Include="Jolt\Geometry\GJKClosestPoint.h" />
+    <ClInclude Include="Jolt\Geometry\IndexedTriangle.h" />
+    <ClInclude Include="Jolt\Geometry\Indexify.h" />
+    <ClInclude Include="Jolt\Geometry\MortonCode.h" />
+    <ClInclude Include="Jolt\Geometry\OrientedBox.h" />
+    <ClInclude Include="Jolt\Geometry\Plane.h" />
+    <ClInclude Include="Jolt\Geometry\RayAABox.h" />
+    <ClInclude Include="Jolt\Geometry\RayAABox8.h" />
+    <ClInclude Include="Jolt\Geometry\RayCapsule.h" />
+    <ClInclude Include="Jolt\Geometry\RayCylinder.h" />
+    <ClInclude Include="Jolt\Geometry\RaySphere.h" />
+    <ClInclude Include="Jolt\Geometry\RayTriangle.h" />
+    <ClInclude Include="Jolt\Geometry\RayTriangle8.h" />
+    <ClInclude Include="Jolt\Geometry\Sphere.h" />
+    <ClInclude Include="Jolt\Geometry\Triangle.h" />
+    <ClInclude Include="Jolt\Jolt.h" />
+    <ClInclude Include="Jolt\Math\DMat44.h" />
+    <ClInclude Include="Jolt\Math\Double3.h" />
+    <ClInclude Include="Jolt\Math\DVec3.h" />
+    <ClInclude Include="Jolt\Math\DynMatrix.h" />
+    <ClInclude Include="Jolt\Math\EigenValueSymmetric.h" />
+    <ClInclude Include="Jolt\Math\FindRoot.h" />
+    <ClInclude Include="Jolt\Math\Float2.h" />
+    <ClInclude Include="Jolt\Math\Float3.h" />
+    <ClInclude Include="Jolt\Math\Float4.h" />
+    <ClInclude Include="Jolt\Math\GaussianElimination.h" />
+    <ClInclude Include="Jolt\Math\HalfFloat.h" />
+    <ClInclude Include="Jolt\Math\Mat44.h" />
+    <ClInclude Include="Jolt\Math\Math.h" />
+    <ClInclude Include="Jolt\Math\MathTypes.h" />
+    <ClInclude Include="Jolt\Math\Matrix.h" />
+    <ClInclude Include="Jolt\Math\Quat.h" />
+    <ClInclude Include="Jolt\Math\Real.h" />
+    <ClInclude Include="Jolt\Math\Swizzle.h" />
+    <ClInclude Include="Jolt\Math\Trigonometry.h" />
+    <ClInclude Include="Jolt\Math\UVec4.h" />
+    <ClInclude Include="Jolt\Math\UVec8.h" />
+    <ClInclude Include="Jolt\Math\Vec3.h" />
+    <ClInclude Include="Jolt\Math\Vec4.h" />
+    <ClInclude Include="Jolt\Math\Vec8.h" />
+    <ClInclude Include="Jolt\Math\Vector.h" />
+    <ClInclude Include="Jolt\NeoAxisPhysicsNative.h" />
+    <ClInclude Include="Jolt\ObjectStream\GetPrimitiveTypeOfType.h" />
+    <ClInclude Include="Jolt\ObjectStream\ObjectStream.h" />
+    <ClInclude Include="Jolt\ObjectStream\ObjectStreamBinaryIn.h" />
+    <ClInclude Include="Jolt\ObjectStream\ObjectStreamBinaryOut.h" />
+    <ClInclude Include="Jolt\ObjectStream\ObjectStreamIn.h" />
+    <ClInclude Include="Jolt\ObjectStream\ObjectStreamOut.h" />
+    <ClInclude Include="Jolt\ObjectStream\ObjectStreamTextIn.h" />
+    <ClInclude Include="Jolt\ObjectStream\ObjectStreamTextOut.h" />
+    <ClInclude Include="Jolt\ObjectStream\ObjectStreamTypes.h" />
+    <ClInclude Include="Jolt\ObjectStream\SerializableAttribute.h" />
+    <ClInclude Include="Jolt\ObjectStream\SerializableAttributeEnum.h" />
+    <ClInclude Include="Jolt\ObjectStream\SerializableAttributeTyped.h" />
+    <ClInclude Include="Jolt\ObjectStream\SerializableObject.h" />
+    <ClInclude Include="Jolt\ObjectStream\TypeDeclarations.h" />
+    <ClInclude Include="Jolt\Physics\Body\Body.h" />
+    <ClInclude Include="Jolt\Physics\Body\BodyAccess.h" />
+    <ClInclude Include="Jolt\Physics\Body\BodyActivationListener.h" />
+    <ClInclude Include="Jolt\Physics\Body\BodyCreationSettings.h" />
+    <ClInclude Include="Jolt\Physics\Body\BodyFilter.h" />
+    <ClInclude Include="Jolt\Physics\Body\BodyID.h" />
+    <ClInclude Include="Jolt\Physics\Body\BodyInterface.h" />
+    <ClInclude Include="Jolt\Physics\Body\BodyLock.h" />
+    <ClInclude Include="Jolt\Physics\Body\BodyLockInterface.h" />
+    <ClInclude Include="Jolt\Physics\Body\BodyLockMulti.h" />
+    <ClInclude Include="Jolt\Physics\Body\BodyManager.h" />
+    <ClInclude Include="Jolt\Physics\Body\BodyPair.h" />
+    <ClInclude Include="Jolt\Physics\Body\MassProperties.h" />
+    <ClInclude Include="Jolt\Physics\Body\MotionProperties.h" />
+    <ClInclude Include="Jolt\Physics\Body\MotionQuality.h" />
+    <ClInclude Include="Jolt\Physics\Body\MotionType.h" />
+    <ClInclude Include="Jolt\Physics\Character\Character.h" />
+    <ClInclude Include="Jolt\Physics\Character\CharacterBase.h" />
+    <ClInclude Include="Jolt\Physics\Character\CharacterVirtual.h" />
+    <ClInclude Include="Jolt\Physics\Collision\AABoxCast.h" />
+    <ClInclude Include="Jolt\Physics\Collision\ActiveEdgeMode.h" />
+    <ClInclude Include="Jolt\Physics\Collision\ActiveEdges.h" />
+    <ClInclude Include="Jolt\Physics\Collision\BackFaceMode.h" />
+    <ClInclude Include="Jolt\Physics\Collision\BroadPhase\BroadPhase.h" />
+    <ClInclude Include="Jolt\Physics\Collision\BroadPhase\BroadPhaseBruteForce.h" />
+    <ClInclude Include="Jolt\Physics\Collision\BroadPhase\BroadPhaseLayer.h" />
+    <ClInclude Include="Jolt\Physics\Collision\BroadPhase\BroadPhaseQuadTree.h" />
+    <ClInclude Include="Jolt\Physics\Collision\BroadPhase\BroadPhaseQuery.h" />
+    <ClInclude Include="Jolt\Physics\Collision\BroadPhase\QuadTree.h" />
+    <ClInclude Include="Jolt\Physics\Collision\CastConvexVsTriangles.h" />
+    <ClInclude Include="Jolt\Physics\Collision\CastResult.h" />
+    <ClInclude Include="Jolt\Physics\Collision\CastSphereVsTriangles.h" />
+    <ClInclude Include="Jolt\Physics\Collision\CollectFacesMode.h" />
+    <ClInclude Include="Jolt\Physics\Collision\CollideConvexVsTriangles.h" />
+    <ClInclude Include="Jolt\Physics\Collision\CollidePointResult.h" />
+    <ClInclude Include="Jolt\Physics\Collision\CollideShape.h" />
+    <ClInclude Include="Jolt\Physics\Collision\CollideSphereVsTriangles.h" />
+    <ClInclude Include="Jolt\Physics\Collision\CollisionCollector.h" />
+    <ClInclude Include="Jolt\Physics\Collision\CollisionCollectorImpl.h" />
+    <ClInclude Include="Jolt\Physics\Collision\CollisionDispatch.h" />
+    <ClInclude Include="Jolt\Physics\Collision\CollisionGroup.h" />
+    <ClInclude Include="Jolt\Physics\Collision\ContactListener.h" />
+    <ClInclude Include="Jolt\Physics\Collision\GroupFilter.h" />
+    <ClInclude Include="Jolt\Physics\Collision\GroupFilterTable.h" />
+    <ClInclude Include="Jolt\Physics\Collision\ManifoldBetweenTwoFaces.h" />
+    <ClInclude Include="Jolt\Physics\Collision\NarrowPhaseQuery.h" />
+    <ClInclude Include="Jolt\Physics\Collision\NarrowPhaseStats.h" />
+    <ClInclude Include="Jolt\Physics\Collision\ObjectLayer.h" />
+    <ClInclude Include="Jolt\Physics\Collision\PhysicsMaterial.h" />
+    <ClInclude Include="Jolt\Physics\Collision\PhysicsMaterialSimple.h" />
+    <ClInclude Include="Jolt\Physics\Collision\RayCast.h" />
+    <ClInclude Include="Jolt\Physics\Collision\ShapeCast.h" />
+    <ClInclude Include="Jolt\Physics\Collision\ShapeFilter.h" />
+    <ClInclude Include="Jolt\Physics\Collision\Shape\BoxShape.h" />
+    <ClInclude Include="Jolt\Physics\Collision\Shape\CapsuleShape.h" />
+    <ClInclude Include="Jolt\Physics\Collision\Shape\CompoundShape.h" />
+    <ClInclude Include="Jolt\Physics\Collision\Shape\CompoundShapeVisitors.h" />
+    <ClInclude Include="Jolt\Physics\Collision\Shape\ConvexHullShape.h" />
+    <ClInclude Include="Jolt\Physics\Collision\Shape\ConvexShape.h" />
+    <ClInclude Include="Jolt\Physics\Collision\Shape\CylinderShape.h" />
+    <ClInclude Include="Jolt\Physics\Collision\Shape\DecoratedShape.h" />
+    <ClInclude Include="Jolt\Physics\Collision\Shape\GetTrianglesContext.h" />
+    <ClInclude Include="Jolt\Physics\Collision\Shape\HeightFieldShape.h" />
+    <ClInclude Include="Jolt\Physics\Collision\Shape\MeshShape.h" />
+    <ClInclude Include="Jolt\Physics\Collision\Shape\MutableCompoundShape.h" />
+    <ClInclude Include="Jolt\Physics\Collision\Shape\OffsetCenterOfMassShape.h" />
+    <ClInclude Include="Jolt\Physics\Collision\Shape\PolyhedronSubmergedVolumeCalculator.h" />
+    <ClInclude Include="Jolt\Physics\Collision\Shape\RotatedTranslatedShape.h" />
+    <ClInclude Include="Jolt\Physics\Collision\Shape\ScaledShape.h" />
+    <ClInclude Include="Jolt\Physics\Collision\Shape\ScaleHelpers.h" />
+    <ClInclude Include="Jolt\Physics\Collision\Shape\Shape.h" />
+    <ClInclude Include="Jolt\Physics\Collision\Shape\SphereShape.h" />
+    <ClInclude Include="Jolt\Physics\Collision\Shape\StaticCompoundShape.h" />
+    <ClInclude Include="Jolt\Physics\Collision\Shape\SubShapeID.h" />
+    <ClInclude Include="Jolt\Physics\Collision\Shape\SubShapeIDPair.h" />
+    <ClInclude Include="Jolt\Physics\Collision\Shape\TaperedCapsuleShape.h" />
+    <ClInclude Include="Jolt\Physics\Collision\Shape\TriangleShape.h" />
+    <ClInclude Include="Jolt\Physics\Collision\SortReverseAndStore.h" />
+    <ClInclude Include="Jolt\Physics\Collision\TransformedShape.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\ConeConstraint.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\Constraint.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\ConstraintManager.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\AngleConstraintPart.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\AxisConstraintPart.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\DualAxisConstraintPart.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\GearConstraintPart.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\HingeRotationConstraintPart.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\IndependentAxisConstraintPart.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\PointConstraintPart.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\RackAndPinionConstraintPart.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\RotationEulerConstraintPart.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\RotationQuatConstraintPart.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\SpringPart.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\SwingTwistConstraintPart.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\ContactConstraintManager.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\DistanceConstraint.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\FixedConstraint.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\GearConstraint.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\HingeConstraint.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\MotorSettings.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\PathConstraint.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\PathConstraintPath.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\PathConstraintPathHermite.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\PointConstraint.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\PulleyConstraint.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\RackAndPinionConstraint.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\SixDOFConstraint.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\SliderConstraint.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\SwingTwistConstraint.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\TwoBodyConstraint.h" />
+    <ClInclude Include="Jolt\Physics\DeterminismLog.h" />
+    <ClInclude Include="Jolt\Physics\EActivation.h" />
+    <ClInclude Include="Jolt\Physics\IslandBuilder.h" />
+    <ClInclude Include="Jolt\Physics\PhysicsLock.h" />
+    <ClInclude Include="Jolt\Physics\PhysicsScene.h" />
+    <ClInclude Include="Jolt\Physics\PhysicsSettings.h" />
+    <ClInclude Include="Jolt\Physics\PhysicsStepListener.h" />
+    <ClInclude Include="Jolt\Physics\PhysicsSystem.h" />
+    <ClInclude Include="Jolt\Physics\PhysicsUpdateContext.h" />
+    <ClInclude Include="Jolt\Physics\Ragdoll\Ragdoll.h" />
+    <ClInclude Include="Jolt\Physics\StateRecorder.h" />
+    <ClInclude Include="Jolt\Physics\StateRecorderImpl.h" />
+    <ClInclude Include="Jolt\Physics\Vehicle\TrackedVehicleController.h" />
+    <ClInclude Include="Jolt\Physics\Vehicle\VehicleAntiRollBar.h" />
+    <ClInclude Include="Jolt\Physics\Vehicle\VehicleCollisionTester.h" />
+    <ClInclude Include="Jolt\Physics\Vehicle\VehicleConstraint.h" />
+    <ClInclude Include="Jolt\Physics\Vehicle\VehicleController.h" />
+    <ClInclude Include="Jolt\Physics\Vehicle\VehicleDifferential.h" />
+    <ClInclude Include="Jolt\Physics\Vehicle\VehicleEngine.h" />
+    <ClInclude Include="Jolt\Physics\Vehicle\VehicleTrack.h" />
+    <ClInclude Include="Jolt\Physics\Vehicle\VehicleTransmission.h" />
+    <ClInclude Include="Jolt\Physics\Vehicle\Wheel.h" />
+    <ClInclude Include="Jolt\Physics\Vehicle\WheeledVehicleController.h" />
+    <ClInclude Include="Jolt\RegisterTypes.h" />
+    <ClInclude Include="Jolt\Renderer\DebugRenderer.h" />
+    <ClInclude Include="Jolt\Renderer\DebugRendererPlayback.h" />
+    <ClInclude Include="Jolt\Renderer\DebugRendererRecorder.h" />
+    <ClInclude Include="Jolt\Skeleton\SkeletalAnimation.h" />
+    <ClInclude Include="Jolt\Skeleton\Skeleton.h" />
+    <ClInclude Include="Jolt\Skeleton\SkeletonMapper.h" />
+    <ClInclude Include="Jolt\Skeleton\SkeletonPose.h" />
+    <ClInclude Include="Jolt\TriangleGrouper\TriangleGrouper.h" />
+    <ClInclude Include="Jolt\TriangleGrouper\TriangleGrouperClosestCentroid.h" />
+    <ClInclude Include="Jolt\TriangleGrouper\TriangleGrouperMorton.h" />
+    <ClInclude Include="Jolt\TriangleSplitter\TriangleSplitter.h" />
+    <ClInclude Include="Jolt\TriangleSplitter\TriangleSplitterBinning.h" />
+    <ClInclude Include="Jolt\TriangleSplitter\TriangleSplitterFixedLeafSize.h" />
+    <ClInclude Include="Jolt\TriangleSplitter\TriangleSplitterLongestAxis.h" />
+    <ClInclude Include="Jolt\TriangleSplitter\TriangleSplitterMean.h" />
+    <ClInclude Include="Jolt\TriangleSplitter\TriangleSplitterMorton.h" />
     <ClInclude Include="MemoryManager\MemoryManager.h" />
     <ClInclude Include="MemoryManager\MemoryManagerInternal.h" />
     <ClInclude Include="MemoryManager\MemoryManagerInternal_precompiled.h" />
@@ -327,6 +712,21 @@
     <ClInclude Include="NeoAxis\vhacd\VHACD.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Jolt\Core\FixedSizeFreeList.inl" />
+    <None Include="Jolt\Core\JobSystem.inl" />
+    <None Include="Jolt\Core\LockFreeHashMap.inl" />
+    <None Include="Jolt\Core\Profiler.inl" />
+    <None Include="Jolt\Math\DMat44.inl" />
+    <None Include="Jolt\Math\DVec3.inl" />
+    <None Include="Jolt\Math\Mat44.inl" />
+    <None Include="Jolt\Math\Quat.inl" />
+    <None Include="Jolt\Math\UVec4.inl" />
+    <None Include="Jolt\Math\UVec8.inl" />
+    <None Include="Jolt\Math\Vec3.inl" />
+    <None Include="Jolt\Math\Vec4.inl" />
+    <None Include="Jolt\Math\Vec8.inl" />
+    <None Include="Jolt\Physics\Body\Body.inl" />
+    <None Include="Jolt\Physics\Body\MotionProperties.inl" />
     <None Include="NeoAxis\vhacd\src\FloatMath.inl" />
     <None Include="NeoAxis\vhacd\src\vhacdCircularList.inl" />
     <None Include="NeoAxis\vhacd\src\vhacdVector.inl" />
@@ -522,7 +922,7 @@
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(StlIncludeDirectories);$(Sysroot)\usr\include;..\include;..\..\PlugIns\ParticleFX\include;..\..\..\FreeImage\Source;..\..\..\FreeType\include;..\..\..\Stlport\stlport;..\..\..\NvidiaTextureTools\src;..\..\..\NvidiaTextureTools\project\vc8;..\..\RenderSystems\NULL\include;..\..\OgreNativeWrapper\src;..\External\OggVorbisTheora\libogg\include;..\External\OggVorbisTheora\libvorbis\include;..\External\OggVorbisTheora\libvorbis\lib;..\External\OggVorbisTheora\libtheora\include;./;MemoryManager;..\External\FreeImage\Source;NativeWrapper;ImageLibrary;..\External\FreeType\include;NeoAxis;MaskedOcclusionCulling;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;NDEBUG;_MT;FREEIMAGE_LIB;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;OGRE_MEMORY_TRACKER_DEBUG_MODE;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;OGRE_GCC_VISIBILITY;PLATFORM_ANDROID;PNG_ARM_NEON_OPT=0;NATIVEMEMORYMANAGER_EXPORTS;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;NDEBUG;_MT;FREEIMAGE_LIB;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;OGRE_MEMORY_TRACKER_DEBUG_MODE;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;OGRE_GCC_VISIBILITY;PLATFORM_ANDROID;PNG_ARM_NEON_OPT=0;NATIVEMEMORYMANAGER_EXPORTS;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;JPH_DOU___________BLE_PRECISION;JPH_DEBUG_RENDERER;JPH_FLOATING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -536,6 +936,7 @@
       <ExceptionHandling>Enabled</ExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <AdditionalOptions>-fms-extensions %(AdditionalOptions)</AdditionalOptions>
+      <CppLanguageStandard>c++1z</CppLanguageStandard>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -571,7 +972,7 @@
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(StlIncludeDirectories);$(Sysroot)\usr\include;..\include;..\..\PlugIns\ParticleFX\include;..\..\..\FreeImage\Source;..\..\..\FreeType\include;..\..\..\Stlport\stlport;..\..\..\NvidiaTextureTools\src;..\..\..\NvidiaTextureTools\project\vc8;..\..\RenderSystems\NULL\include;..\..\OgreNativeWrapper\src;..\External\OggVorbisTheora\libogg\include;..\External\OggVorbisTheora\libvorbis\include;..\External\OggVorbisTheora\libvorbis\lib;..\External\OggVorbisTheora\libtheora\include;./;MemoryManager;..\External\FreeImage\Source;NativeWrapper;ImageLibrary;..\External\FreeType\include;NeoAxis;MaskedOcclusionCulling;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=4;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;NDEBUG;_MT;FREEIMAGE_LIB;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;OGRE_MEMORY_TRACKER_DEBUG_MODE;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;OGRE_GCC_VISIBILITY;PLATFORM_ANDROID;PNG_ARM_NEON_OPT=0;NATIVEMEMORYMANAGER_EXPORTS;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=4;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;NDEBUG;_MT;FREEIMAGE_LIB;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;OGRE_MEMORY_TRACKER_DEBUG_MODE;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;OGRE_GCC_VISIBILITY;PLATFORM_ANDROID;PNG_ARM_NEON_OPT=0;NATIVEMEMORYMANAGER_EXPORTS;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;JPH_DOU___________BLE_PRECISION;JPH_DEBUG_RENDERER;JPH_FLOATING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -585,6 +986,7 @@
       <ExceptionHandling>Enabled</ExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <AdditionalOptions>-fms-extensions %(AdditionalOptions)</AdditionalOptions>
+      <CppLanguageStandard>c++1z</CppLanguageStandard>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -605,6 +1007,7 @@
       <AdditionalOptions>-z muldefs -lm %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>$(SolutionDir)Engine\Lib\Android\$(Platform)\FreeImage.a;$(SolutionDir)Engine\Lib\Android\$(Platform)\freetype.a;%(AdditionalDependencies)</AdditionalDependencies>
       <DebuggerSymbolInformation>OmitAllSymbolInformation</DebuggerSymbolInformation>
+      <SharedLibrarySearchPath>%(SharedLibrarySearchPath)</SharedLibrarySearchPath>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(OutDir)$(TargetName)$(TargetExt)" "..\..\..\Project\Sources\NeoAxis.Player.Android\lib\armeabi-v7a\"</Command>
@@ -673,7 +1076,7 @@
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(StlIncludeDirectories);$(Sysroot)\usr\include;..\include;..\..\PlugIns\ParticleFX\include;..\..\..\FreeImage\Source;..\..\..\FreeType\include;..\..\..\Stlport\stlport;..\..\..\NvidiaTextureTools\src;..\..\..\NvidiaTextureTools\project\vc8;..\..\RenderSystems\NULL\include;..\..\OgreNativeWrapper\src;..\External\OggVorbisTheora\libogg\include;..\External\OggVorbisTheora\libvorbis\include;..\External\OggVorbisTheora\libvorbis\lib;..\External\OggVorbisTheora\libtheora\include;./;MemoryManager;..\External\FreeImage\Source;NativeWrapper;ImageLibrary;..\External\FreeType\include;NeoAxis;MaskedOcclusionCulling;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;_DEBUG;_MT;FREEIMAGE_LIB;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;OGRE_MEMORY_TRACKER_DEBUG_MODE;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;OGRE_GCC_VISIBILITY;PLATFORM_ANDROID;PNG_ARM_NEON_OPT=0;NATIVEMEMORYMANAGER_EXPORTS;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;_DEBUG;_MT;FREEIMAGE_LIB;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;OGRE_MEMORY_TRACKER_DEBUG_MODE;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;OGRE_GCC_VISIBILITY;PLATFORM_ANDROID;PNG_ARM_NEON_OPT=0;NATIVEMEMORYMANAGER_EXPORTS;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;JPH_DOU___________BLE_PRECISION;JPH_DEBUG_RENDERER;JPH_FLOATING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>
       </StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -689,7 +1092,7 @@
       <LanguageStandard>
       </LanguageStandard>
       <Verbose>false</Verbose>
-      <CppLanguageStandard>c++11</CppLanguageStandard>
+      <CppLanguageStandard>c++1z</CppLanguageStandard>
       <ExceptionHandling>Enabled</ExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <AdditionalOptions>-fms-extensions %(AdditionalOptions)</AdditionalOptions>
@@ -727,7 +1130,7 @@
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(StlIncludeDirectories);$(Sysroot)\usr\include;..\include;..\..\PlugIns\ParticleFX\include;..\..\..\FreeImage\Source;..\..\..\FreeType\include;..\..\..\Stlport\stlport;..\..\..\NvidiaTextureTools\src;..\..\..\NvidiaTextureTools\project\vc8;..\..\RenderSystems\NULL\include;..\..\OgreNativeWrapper\src;..\External\OggVorbisTheora\libogg\include;..\External\OggVorbisTheora\libvorbis\include;..\External\OggVorbisTheora\libvorbis\lib;..\External\OggVorbisTheora\libtheora\include;./;MemoryManager;..\External\FreeImage\Source;NativeWrapper;ImageLibrary;..\External\FreeType\include;NeoAxis;MaskedOcclusionCulling;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=4;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;_DEBUG;_MT;FREEIMAGE_LIB;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;OGRE_MEMORY_TRACKER_DEBUG_MODE;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;OGRE_GCC_VISIBILITY;PLATFORM_ANDROID;PNG_ARM_NEON_OPT=0;NATIVEMEMORYMANAGER_EXPORTS;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=4;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;_DEBUG;_MT;FREEIMAGE_LIB;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;OGRE_MEMORY_TRACKER_DEBUG_MODE;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;OGRE_GCC_VISIBILITY;PLATFORM_ANDROID;PNG_ARM_NEON_OPT=0;NATIVEMEMORYMANAGER_EXPORTS;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;JPH_DOU___________BLE_PRECISION;JPH_DEBUG_RENDERER;JPH_FLOATING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>
       </StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -743,7 +1146,7 @@
       <LanguageStandard>
       </LanguageStandard>
       <Verbose>false</Verbose>
-      <CppLanguageStandard>c++11</CppLanguageStandard>
+      <CppLanguageStandard>c++1z</CppLanguageStandard>
       <ExceptionHandling>Enabled</ExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <AdditionalOptions>-fms-extensions %(AdditionalOptions)</AdditionalOptions>

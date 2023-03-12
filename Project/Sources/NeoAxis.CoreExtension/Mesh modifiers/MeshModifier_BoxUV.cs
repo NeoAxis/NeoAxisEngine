@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -188,12 +188,17 @@ namespace NeoAxis
 			{
 				if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.Position, out var positionElement ) && positionElement.Type == VertexElementType.Float3 )
 				{
-					if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.Normal, out var normalElement ) && normalElement.Type == VertexElementType.Float3 )
+					if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.Normal, out var normalElement ) && ( normalElement.Type == VertexElementType.Float3 || normalElement.Type == VertexElementType.Half3 ) )
 					{
 						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.TextureCoordinate0, out var texCoordElement ) && texCoordElement.Type == VertexElementType.Float2 )
 						{
 							var positions = oper.VertexBuffers[ positionElement.Source ].ExtractChannel<Vector3F>( positionElement.Offset );
-							var normals = oper.VertexBuffers[ normalElement.Source ].ExtractChannel<Vector3F>( normalElement.Offset );
+
+							Vector3F[] normals;
+							if( normalElement.Type == VertexElementType.Float3 )
+								normals = oper.VertexBuffers[ normalElement.Source ].ExtractChannel<Vector3F>( normalElement.Offset );
+							else
+								normals = CollectionUtility.ToVector3F( oper.VertexBuffers[ normalElement.Source ].ExtractChannel<Vector3H>( normalElement.Offset ) );
 
 							var newTexCoords = new Vector2F[ positions.Length ];
 							for( int n = 0; n < newTexCoords.Length; n++ )

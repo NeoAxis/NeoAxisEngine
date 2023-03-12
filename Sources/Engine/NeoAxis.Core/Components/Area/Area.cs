@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using NeoAxis.Editor;
@@ -8,13 +8,16 @@ namespace NeoAxis
 	/// <summary>
 	/// Represents an area in the scene defined by the set of points.
 	/// </summary>
+#if !DEPLOY
 	[ObjectCreationMode( typeof( CreationModeArea ) )]
 	[AddToResourcesWindow( @"Base\Scene objects\Areas\Area", 0 )]
+#endif
 	public class Area : ObjectInSpace
 	{
 
 		/////////////////////////////////////////
 
+#if !DEPLOY
 		/// <summary>
 		/// A class for providing the creation of a <see cref="Area"/> in the editor.
 		/// </summary>
@@ -183,6 +186,7 @@ namespace NeoAxis
 				base.Finish( cancel );
 			}
 		}
+#endif
 
 		/////////////////////////////////////////
 
@@ -233,13 +237,13 @@ namespace NeoAxis
 						{
 							ColorValue color;
 							if( context2.selectedObjects.Contains( this ) )
-								color = ProjectSettings.Get.General.SelectedColor;
+								color = ProjectSettings.Get.Colors.SelectedColor;
 							else if( context2.canSelectObjects.Contains( this ) )
-								color = ProjectSettings.Get.General.CanSelectColor;
+								color = ProjectSettings.Get.Colors.CanSelectColor;
 							else
-								color = ProjectSettings.Get.General.SceneShowAreaColor;
+								color = ProjectSettings.Get.Colors.SceneShowAreaColor;
 
-							renderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+							renderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 
 							for( int n = 0; n < pointPositions.Length; n++ )
 							{
@@ -257,7 +261,7 @@ namespace NeoAxis
 		{
 			if( EnabledInHierarchy && VisibleInHierarchy && mode == GetRenderSceneDataMode.InsideFrustum )
 			{
-				if( ParentScene.GetDisplayDevelopmentDataInThisApplication() && ParentScene.DisplayAreas )
+				if( context.SceneDisplayDevelopmentDataInThisApplication/*ParentScene.GetDisplayDevelopmentDataInThisApplication()*/ && ParentScene.DisplayAreas )
 					return true;
 
 				var context2 = context.ObjectInSpaceRenderingContext;

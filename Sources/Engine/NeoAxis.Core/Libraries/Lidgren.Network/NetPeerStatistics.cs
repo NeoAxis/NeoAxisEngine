@@ -28,7 +28,7 @@ using System;
 using System.Text;
 using System.Diagnostics;
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	/// <summary>
 	/// Statistics for a NetPeer instance
@@ -37,16 +37,16 @@ namespace Lidgren.Network
 	{
 		private readonly NetPeer m_peer;
 
-		internal int m_sentPackets;
-		internal int m_receivedPackets;
+		internal long m_sentPackets;
+		internal long m_receivedPackets;
 
-		internal int m_sentMessages;
-		internal int m_receivedMessages;
-		internal int m_receivedFragments;
+		internal long m_sentMessages;
+		internal long m_receivedMessages;
+		internal long m_receivedFragments;
 		internal long m_droppedMessages;
 
-		internal int m_sentBytes;
-		internal int m_receivedBytes;
+		internal long m_sentBytes;
+		internal long m_receivedBytes;
 
 		internal long m_bytesAllocated;
 
@@ -77,32 +77,32 @@ namespace Lidgren.Network
 		/// <summary>
 		/// Gets the number of sent packets since the NetPeer was initialized
 		/// </summary>
-		public int SentPackets { get { return m_sentPackets; } }
+		public long SentPackets { get { return m_sentPackets; } }
 
 		/// <summary>
 		/// Gets the number of received packets since the NetPeer was initialized
 		/// </summary>
-		public int ReceivedPackets { get { return m_receivedPackets; } }
+		public long ReceivedPackets { get { return m_receivedPackets; } }
 
 		/// <summary>
 		/// Gets the number of sent messages since the NetPeer was initialized
 		/// </summary>
-		public int SentMessages { get { return m_sentMessages; } }
+		public long SentMessages { get { return m_sentMessages; } }
 
 		/// <summary>
 		/// Gets the number of received messages since the NetPeer was initialized
 		/// </summary>
-		public int ReceivedMessages { get { return m_receivedMessages; } }
+		public long ReceivedMessages { get { return m_receivedMessages; } }
 
 		/// <summary>
 		/// Gets the number of sent bytes since the NetPeer was initialized
 		/// </summary>
-		public int SentBytes { get { return m_sentBytes; } }
+		public long SentBytes { get { return m_sentBytes; } }
 
 		/// <summary>
 		/// Gets the number of received bytes since the NetPeer was initialized
 		/// </summary>
-		public int ReceivedBytes { get { return m_receivedBytes; } }
+		public long ReceivedBytes { get { return m_receivedBytes; } }
 
 		/// <summary>
 		/// Gets the number of bytes allocated (and possibly garbage collected) for message storage

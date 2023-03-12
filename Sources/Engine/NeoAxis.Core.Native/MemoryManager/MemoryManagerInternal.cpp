@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "MemoryManagerInternal_precompiled.h"
 #pragma hdrstop
 #include "MemoryManagerInternal.h"
@@ -185,12 +185,12 @@ void Memory_FreeAligned( void* pointer )
 	Memory_Free(p);
 }
 
-void MemoryManager_GetAllocationInformation( MemoryManager_GetAllocationInformationDelegate* callback)
+int64_t MemoryManager_GetAllocationInformation( MemoryManager_GetAllocationInformationDelegate* callback)
 {
 	Init();
 
 	//EnterMutex();
-	memoryManager->GetAllocationInformation(callback);
+	return memoryManager->GetAllocationInformation(callback);
 	//LeaveMutex();
 }
 

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Net;
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	public static partial class NetUtility
 	{

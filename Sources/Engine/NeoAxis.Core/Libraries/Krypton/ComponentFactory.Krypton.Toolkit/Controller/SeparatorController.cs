@@ -1,4 +1,5 @@
-﻿// *****************************************************************************
+#if !DEPLOY
+// *****************************************************************************
 // 
 //  © Component Factory Pty Ltd 2017. All rights reserved.
 //	The software and associated documentation supplied hereunder are the 
@@ -678,7 +679,7 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         /// </summary>
         /// <param name="m">The message to be dispatched.</param>
         /// <returns>true to filter the message and stop it from being dispatched.</returns>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+        //[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         public bool PreFilterMessage(ref Message m)
         {
             // We are only interested in filtering when moving the separator
@@ -703,3 +704,5 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         #endregion
     }
 }
+
+#endif

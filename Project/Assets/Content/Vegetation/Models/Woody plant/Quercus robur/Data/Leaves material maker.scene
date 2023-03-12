@@ -1,0 +1,2309 @@
+// Made with NeoAxis Engine 2021.3.
+
+.component NeoAxis.Scene
+{
+	BackgroundColor = 0.4941176 0.4941176 0.4941176
+	Mode = _2D
+	RenderingPipeline
+	{
+		GetByReference = "root:$Rendering Pipeline"
+	}
+	CameraEditor
+	{
+		GetByReference = "this:$Camera Editor"
+	}
+	CameraEditor2D
+	{
+		GetByReference = "this:$Camera Editor 2D"
+	}
+	.component NeoAxis.RenderToFile
+	{
+		Name = Render To File
+		Mode = Material
+		Resolution = 1024 1024
+		OutputFileName = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Leaves.material"
+		FillTransparentPixelsByNearPixels = True
+		Camera
+		{
+			GetByReference = "root:$Camera Editor 2D To File"
+		}
+		Template
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Leaves material template.material"
+		}
+	}
+	.component NeoAxis.Camera
+	{
+		Name = Camera Editor
+		Visible = False
+		Transform = "0.201225275694478 -0.336318972421266 0.77018113694836; -0.411598802328469 0.352366376398584 0.638479459963394 0.546597056258404; 1 1 1"
+	}
+	.component NeoAxis.Camera
+	{
+		Name = Camera Editor 2D
+		Visible = False
+		Transform = "-0.100411666133993 0.0114667458432292 10; 0.5 -0.5 -0.5 -0.5; 1 1 1"
+		Projection = Orthographic
+		Height = 1.1
+		FixedUp = 0 1 0
+		FarClipPlane = 100
+	}
+	.component NeoAxis.Camera
+	{
+		Name = Camera Editor 2D To File
+		ScreenLabel = NeverDisplay
+		Transform = "0 0 1; 0.5 -0.5 -0.5 -0.5; 0.699300704000806 0.699300704000806 0.699300704000806"
+		Projection = Orthographic
+		Height = 1
+		FixedUp = 0 1 0
+		FarClipPlane = 100
+	}
+	.component NeoAxis.Light
+	{
+		Name = Ambient Light
+		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
+		Type = Ambient
+		Brightness = 50000
+	}
+	.component NeoAxis.Light
+	{
+		Name = Directional Light
+		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
+		Type = Directional
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 91.429
+	}
+	.component NeoAxis.RenderingPipeline_Basic
+	{
+		Name = Rendering Pipeline
+		Shadows = False
+		ShadowFarDistance = 15
+		ShadowDirectionalLightCascades = 1
+		.component NeoAxis.Component
+		{
+			Name = Background Effects
+		}
+		.component NeoAxis.Component
+		{
+			Name = Scene Effects
+			.component NeoAxis.RenderingEffect_AmbientOcclusion
+			{
+				Enabled = False
+				Name = Ambient Occlusion
+			}
+			.component NeoAxis.RenderingEffect_MotionBlur
+			{
+				Enabled = False
+				Name = Motion Blur
+			}
+			.component NeoAxis.RenderingEffect_Bloom
+			{
+				Enabled = False
+				Name = Bloom
+			}
+			.component NeoAxis.RenderingEffect_LensEffects
+			{
+				Enabled = False
+				Name = Lens Effects
+			}
+			.component NeoAxis.RenderingEffect_ToneMapping
+			{
+				Enabled = False
+				Name = Tone Mapping
+				Intensity = 0.5
+			}
+			.component NeoAxis.RenderingEffect_ToLDR
+			{
+				Name = To LDR
+			}
+			.component NeoAxis.RenderingEffect_Antialiasing
+			{
+				Name = Antialiasing
+			}
+			.component NeoAxis.RenderingEffect_ResolutionUpscale
+			{
+				Name = Resolution Upscale
+			}
+			.component NeoAxis.RenderingEffect_Sharpen
+			{
+				Name = Sharpen
+				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
+			}
+		}
+		.component NeoAxis.Component
+		{
+			Name = Final Image Effects
+		}
+	}
+	.component NeoAxis.GameMode
+	{
+		Name = Game Mode
+		CutsceneStarted = False
+		CutsceneGuiFadingFactor = 0
+		CutsceneGuiFadingSpeed = 0
+		ScreenFadingCurrentColor = 0 0 0 0
+		ScreenFadingTargetColor = 0 0 0 0
+		ScreenFadingSpeed = 0
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Enabled = False
+		Name = Ground
+		CanBeSelected = False
+		Transform = "0 0 -1; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 100 100
+				UVTilesPerUnit = 0.25 0.25
+			}
+		}
+	}
+	.component NeoAxis.GroupOfObjects
+	{
+		Name = Group Of Objects
+		BaseObjects
+		{
+			Count = 1
+			0 "NeoAxis.Reference<NeoAxis.Component>"
+			{
+				GetByReference = "root:$Ground"
+			}
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space Border
+		ScreenLabel = NeverDisplay
+		Transform = "-0.51 0.51 0; 0 0 0 1; 1 1 1"
+		CurveTypePosition = Line
+		Color = 0.6039216 0.6039216 0.6039216
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			ScreenLabel = NeverDisplay
+			Transform = "0.51 0.51 0; 0 0 0 1; 1.37999999150634 1.37999999150634 1.37999999150634"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 2
+			ScreenLabel = NeverDisplay
+			Transform = "0.51 -0.51 0; 0 0 0 1; 1.37999999150634 1.37999999150634 1.37999999150634"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 3
+			ScreenLabel = NeverDisplay
+			Transform = "-0.51 -0.51 0; 0 0 0 1; 1.37999999150634 1.37999999150634 1.37999999150634"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			ScreenLabel = NeverDisplay
+			Transform = "-0.51 0.51 0; 0 0 0 1; 1.37999999150634 1.37999999150634 1.37999999150634"
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Enabled = False
+		Name = Plane
+		Transform = "0 0 -0.977678062625181; 0 0 0 1; 1 1 1"
+		Color = 0.6635686 0.7559215 1
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 2
+		Transform = "0.461413301662709 0.229011049831342 -0.75; 0 0 0 1; 1.03671648149507 1.03671648149507 1.03671648149507"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Bark009.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "0.273819163446451 0.242843457467218 -0.75; 0 0 0 1; 0.987305002865855 0.987305002865855 0.987305002865855"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "0.093846496216452 0.265818691581686 -0.75; 0 0 0 1; 0.658203339016209 0.658203339016209 0.658203339016209"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 2
+			Transform = "-0.108380315369579 0.246429515414484 -0.75; 0 0 0 1; 0.753933570546854 0.753933570546854 0.753933570546854"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 3
+			Transform = "-0.322549951304455 0.274922337192376 -0.75; 0 0 0 1; 0.347134881882577 0.347134881882577 0.347134881882577"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 7
+		Transform = "0.461413301662709 -0.266036894260639 -0.75; 0 0 0 1; 0.900634454993754 0.900634454993754 0.900634454993754"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Bark009.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "0.273819163446451 -0.205173607764907 -0.75; 0 0 0 1; 0.836249318275321 0.836249318275321 0.836249318275321"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "0.13086215117865 -0.196238794498169 -0.75; 0 0 0 1; 0.694911407552132 0.694911407552132 0.694911407552132"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 2
+			Transform = "-0.0305197997594373 -0.200311147922392 -0.75; 0 0 0 1; 0.741935486972146 0.741935486972146 0.741935486972146"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 3
+			Transform = "-0.138748078388712 -0.159054307192019 -0.75; 0 0 0 1; 0.370967743486073 0.370967743486073 0.370967743486073"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 8
+		Transform = "-0.336180217140425 -0.464806247670275 -0.75; 0 0 -0.707106781186548 0.707106781186548; 0.76893939699148 0.76893939699148 0.76893939699148"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Bark009.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.357620968649442 -0.292889069073968 -0.75; 0 0 -0.707106781186548 0.707106781186548; 0.656866286520886 0.656866286520886 0.656866286520886"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.340847675572729 -0.134255097186216 -0.75; 0 0 -0.707106781186548 0.707106781186548; 0.362111688654653 0.362111688654653 0.362111688654653"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 3
+		Transform = "0.236766568099023 0.246324548223517 -0.75; 0 0 0 1; 0.699300704000806 0.699300704000806 0.699300704000806"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Bark009.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "0.0517252336732609 0.156048128590339 -0.75; 0 0 0 1; 0.707692311042865 0.707692311042865 0.707692311042865"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.118036218394752 0.112650464151899 -0.75; 0 0 0 1; 0.707692311042865 0.707692311042865 0.707692311042865"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 2
+			Transform = "-0.281970973123336 0.140488158108882 -0.75; 0 0 0 1; 0.707692311042865 0.707692311042865 0.707692311042865"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 3
+			Transform = "-0.442531729457788 0.110266492705355 -0.75; 0 0 0 1; 0.381215471080133 0.381215471080133 0.381215471080133"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 5
+		Transform = "0.236766568099023 -0.201692517008608 -0.75; 0 0 0 1; 0.625000005238689 0.625000005238689 0.625000005238689"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Bark009.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "0.172983413721842 -0.290692534746538 -0.75; 0 0 0 1; 0.741935486972146 0.741935486972146 0.741935486972146"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "0.119374534121417 -0.327708189708736 -0.75; 0 0 0 1; 0.741935486972146 0.741935486972146 0.741935486972146"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 2
+			Transform = "-0.00371535995922481 -0.367519796199909 -0.75; 0 0 0 1; 0.741935486972146 0.741935486972146 0.741935486972146"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 3
+			Transform = "-0.103008825321762 -0.36583141422223 -0.75; 0 0 0 1; 0.370967743486073 0.370967743486073 0.370967743486073"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 4
+		Transform = "0.3222298615227 0.244031258948985 -0.75; 0 0 -0.455162959763421 0.890408153634838; 0.83482409390082 0.83482409390082 0.83482409390082"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Bark009.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "0.18153004184826 0.332213161207927 -0.75; 0 0 -0.455162959763421 0.890408153634838; 0.737022008061525 0.737022008061525 0.737022008061525"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "0.0723928293202583 0.370459541483048 -0.75; 0 0 -0.455162959763421 0.890408153634838; 0.737022008061525 0.737022008061525 0.737022008061525"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 2
+			Transform = "-0.0762922517352049 0.397015858717176 -0.75; 0 0 -0.455162959763421 0.890408153634838; 0.737022008061525 0.737022008061525 0.737022008061525"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 3
+			Transform = "-0.24211599478174 0.399781823182992 -0.75; 0 0 -0.455162959763421 0.890408153634838; 0.341584160168747 0.341584160168747 0.341584160168747"
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Enabled = False
+		Name = Plane 2
+		CanBeSelected = False
+		Transform = "0 0 -5; 0 0 0 1; 1 1 1"
+		Color = 1 1 1 0.6710196
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Leaves.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 3
+		Transform = "-0.684038004750594 0.382256532066508 0; 0 0 0 1; 0.2 0.309999997541308 0.2"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3544535296
+				UVOffset = 0.015 0.985
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 65
+		Transform = "-0.0943933076684582 0.433012493812292 0; 0.130360756390915 0.260049720078682 -0.428757447899126 0.85530536485586; 0.0575556142550662 0.0892112013877952 0.0575556142550662"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3544535296
+				UVOffset = 0.015 0.985
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 71
+		Transform = "0.319602529708376 0.300398332142423 0; 0 0 -0.363718687614346 0.931508838541052; 0.0575556142550662 0.0892112013877952 0.0575556142550662"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3544535296
+				UVOffset = 0.015 0.985
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 17
+		Transform = "0.319602529708377 -0.191256488779456 0; 0 0 0.156697947328746 0.98764657307306; 0.0514403303258949 0.0797325113727577 0.0514403303258949"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3544535296
+				UVOffset = 0.015 0.985
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 56
+		Transform = "-0.0742810807429297 -0.346719671677319 0; 0 0 0.360478069651784 0.932767688816527; 0.0514403303258949 0.0797325113727577 0.0514403303258949"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3544535296
+				UVOffset = 0.015 0.985
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 15
+		Transform = "-0.297326177454966 -0.334099988780075 0; 0 0 -0.858454189664122 0.512890245811047; 0.0657367335085337 0.101891936130096 0.0657367335085337"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3544535296
+				UVOffset = 0.015 0.985
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 39
+		Transform = "-0.0112841717355394 0.420068406421323 0; 0 0 0 1; 0.046465163750067 0.0720210032413866 0.046465163750067"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3544535296
+				UVOffset = 0.015 0.985
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 40
+		Transform = "-0.0900079738414135 0.28153378367727 0; 0 0 0 1; 0.046465163750067 0.0720210032413866 0.046465163750067"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3544535296
+				UVOffset = 0.015 0.985
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 19
+		Transform = "-0.0297840378037186 -0.165206879659607 0; 0 0 0 1; 0.0415282401705904 0.0643687717538897 0.0415282401705904"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3544535296
+				UVOffset = 0.015 0.985
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 41
+		Transform = "0.234445243093237 0.202561011784528 0; 0 0 -0.989077237031879 0.147398165474962; 0.046465163750067 0.0720210032413866 0.046465163750067"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3544535296
+				UVOffset = 0.015 0.985
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 20
+		Transform = "0.201131703900838 -0.298365792164937 0; 0 0 -0.989077237031879 0.147398165474962; 0.0415282401705904 0.0643687717538897 0.0415282401705904"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3544535296
+				UVOffset = 0.015 0.985
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 42
+		Transform = "0.152538397662162 0.165035162913283 0; 0 0 -0.989077237031879 0.147398165474962; 0.046465163750067 0.0720210032413866 0.046465163750067"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3544535296
+				UVOffset = 0.015 0.985
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 24
+		Transform = "-0.684038004750594 0.00862232779097388 0; 0 0 0 1; 0.2 0.309999997541308 0.2"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3373402561
+				UVOffset = 0.022 0.348
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 31
+		Transform = "-0.421129225735876 0.164456360346627 0; 0 0 0.276198964265745 0.961100479730673; 0.0618850188243545 0.0959217784169686 0.0618850188243545"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3373402561
+				UVOffset = 0.022 0.348
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 36
+		Transform = "-0.219811395619125 0.43225382134946 0; 0 0 0.47871444588078 0.877970659706267; 0.0618850188243545 0.0959217784169686 0.0618850188243545"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3373402561
+				UVOffset = 0.022 0.348
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 80
+		Transform = "0.23579851737089 -0.156862260227503 0; 0 0 0.224155816199428 0.974553318225313; 0.0553097356661225 0.0857300896025419 0.0553097356661225"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3373402561
+				UVOffset = 0.022 0.348
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 23
+		Transform = "-0.310616034413702 -0.24572352988677 0.0244384980822856; 0 0 -0.530611162267949 0.847615357621991; 0.0574646604010582 0.0890702229152009 0.0574646604010582"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3373402561
+				UVOffset = 0.022 0.348
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 32
+		Transform = "-0.269740549820097 0.181875815783885 0; 0 0 0.276198964265745 0.961100479730673; 0.0618850188243545 0.0959217784169686 0.0618850188243545"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3373402561
+				UVOffset = 0.022 0.348
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 14
+		Transform = "0.0563051058997873 -0.22231638102971 0; 0 0 0.897039146592553 0.441951093991749; 0.0553097356661225 0.0857300896025419 0.0553097356661225"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3373402561
+				UVOffset = 0.022 0.348
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 45
+		Transform = "0.130892543965485 0.247406560711921 0; 0 0 0.276198964265745 0.961100479730673; 0.0618850188243545 0.0959217784169686 0.0618850188243545"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3373402561
+				UVOffset = 0.022 0.348
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 51
+		Transform = "-0.123673132328136 0.0766720719975335 0; 0 0 0.967283037903524 0.253699673992952; 0.0618850188243545 0.0959217784169686 0.0618850188243545"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3373402561
+				UVOffset = 0.022 0.348
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 57
+		Transform = "0.0322972609050358 0.312204931332487 0; 0 0 -0.169166351449297 -0.985587512876118; 0.0618850188243545 0.0959217784169686 0.0618850188243545"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3373402561
+				UVOffset = 0.022 0.348
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 86
+		Transform = "0.00718568292622565 -0.314944635531817 -0.0212580189746044; 0 0 0.276198964265745 0.961100479730673; 0.0553097356661225 0.0857300896025419 0.0553097356661225"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3373402561
+				UVOffset = 0.022 0.348
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 16
+		Transform = "-0.381571238201622 -0.190309546281672 0; 0 0 0.575600290125647 0.81773119422416; 0.0448942661578347 0.0695861119927378 0.0448942661578347"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3373402561
+				UVOffset = 0.022 0.348
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 52
+		Transform = "0.0389197036578109 0.117708719014963 0; 0 0 0.980613467188263 0.195952106314306; 0.0618850188243545 0.0959217784169686 0.0618850188243545"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3373402561
+				UVOffset = 0.022 0.348
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 70
+		Transform = "-0.338528850816628 0.0962425014298451 0; 0.322085228403606 -0.183964943056401 0.913829536702438 0.165328712632322; 0.0618850188243545 0.0959217784169686 0.0618850188243545"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3373402561
+				UVOffset = 0.022 0.348
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 91
+		Transform = "0.109680938539184 -0.151528137243343 0; -0.0603087844313424 0.209858866788392 0.269534261981449 0.937909051117869; 0.0553097356661225 0.0857300896025419 0.0553097356661225"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3373402561
+				UVOffset = 0.022 0.348
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 92
+		Transform = "-0.313120391239518 -0.144427803786655 0; 0 0 -0.444052904238864 0.896000568212449; 0.0442035851518972 0.0685155564420258 0.0442035851518972"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3373402561
+				UVOffset = 0.022 0.348
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 75
+		Transform = "-0.084996250620785 0.360014553117744 0; -0.0400597098024206 -0.181649856647853 0.953190446163721 0.238383142383366; 0.0618850188243545 0.0959217784169686 0.0618850188243545"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.3373402561
+				UVOffset = 0.022 0.348
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 25
+		Transform = "-0.684038004750594 -0.372197149643706 0; 0 0 0 1; 0.2 0.33 0.2"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 68
+		Transform = "0.126770268505882 0.387171943809741 0; 0 0 0.23510138071548 0.971970853876635; 0.0549450558792301 0.0906593422007297 0.0549450558792301"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 9
+		Transform = "0.0321162146398494 0.21468923043408 0; 0 0 0.983024120572567 -0.183476370065824; 0.0569463120043877 0.0939614148072396 0.0569463120043877"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 18
+		Transform = "-0.0456153768090816 0.245389943023154 0; 0 0 0.774518221687627 0.632551598111835; 0.0569463120043877 0.0939614148072396 0.0569463120043877"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 5
+		Transform = "-0.243679350889958 0.308125060523595 0; -0.0789949982234149 -0.284766540873122 0.255369353973565 0.920572811083384; 0.0569463120043877 0.0939614148072396 0.0569463120043877"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 47
+		Transform = "0.408836254902785 0.188130529270009 0; 0 0 0.97390878959193 0.226939792798844; 0.0569463120043877 0.0939614148072396 0.0569463120043877"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 105
+		Transform = "0.389893262028676 -0.270991049026249 0; 0 0 0.97701690233039 -0.213161845931042; 0.0508957664384466 0.0839780146234368 0.0508957664384466"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 98
+		Transform = "-0.380979977606746 -0.391979794734579 0; -0.125490862590669 0.158757938268577 0.607287720330266 0.768277023721932; 0.0528787183488261 0.0872498852755629 0.0528787183488261"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 53
+		Transform = "0.11380030444005 0.136563614001938 0; -0.158433058994145 -0.0650216383702952 0.911453190070176 -0.374064479297753; 0.0569463120043877 0.0939614148072396 0.0569463120043877"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 106
+		Transform = "0.126211230805846 -0.365519546217116 0; 0 0 0.925120506675397 -0.379673607363821; 0.0508957664384466 0.0839780146234368 0.0508957664384466"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 59
+		Transform = "0.231674066508177 0.266463473842758 0; 0 0 -0.994497084642594 0.104764252669411; 0.0569463120043877 0.0939614148072396 0.0569463120043877"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 107
+		Transform = "0.212077866983236 -0.205722237470127 0; 0 0 -0.746534618262059 -0.665346574152389; 0.0508957664384466 0.0839780146234368 0.0508957664384466"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 6
+		Transform = "-0.145396404955846 0.280307277195577 0; 0 0 0.267308280255575 0.963611064333949; 0.0569463120043877 0.0939614148072396 0.0569463120043877"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 109
+		Transform = "-0.0806000223623314 -0.154675666426336 0.0244242522851535; 0 0 0.267308280255575 0.963611064333949; 0.0508957664384466 0.0839780146234368 0.0508957664384466"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 103
+		Transform = "-0.396206282799628 -0.300332565541421 -0.0165033626096132; 0 0 0.841583463719776 0.540127090223612; 0.0528787183488261 0.0872498852755629 0.0528787183488261"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 112
+		Transform = "0.0667037912868544 -0.388206885652854 0; 0 0 0.925120506675397 -0.379673607363821; 0.0508957664384466 0.0839780146234368 0.0508957664384466"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 113
+		Transform = "0.140025093671113 -0.267329848332432 0; 0 0 -0.31689336692717 -0.9484611715814; 0.0508957664384466 0.0839780146234368 0.0508957664384466"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 117
+		Transform = "-0.104384343468338 -0.220112541140716 0; 0 0 0.995487563593386 0.0948921004662908; 0.0508957664384466 0.0839780146234368 0.0508957664384466"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 55
+		Transform = "-0.0738094679475504 0.0735582576150252 0; 0 0 0.996833725880356 -0.0795142939822019; 0.0569463120043877 0.0939614148072396 0.0569463120043877"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 43
+		Transform = "0.393072170690703 0.272138671915042 0; 0 0 0.267308280255575 0.963611064333949; 0.0569463120043877 0.0939614148072396 0.0569463120043877"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 123
+		Transform = "0.409402336961487 -0.21245796576364 0; 0 0 0.146838519273588 0.989160476999329; 0.0508957664384466 0.0839780146234368 0.0508957664384466"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 78
+		Transform = "-0.180572485591208 0.154250647920436 0; 0 0 0.271194509091282 0.96252456500535; 0.0569463120043877 0.0939614148072396 0.0569463120043877"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 79
+		Transform = "0.0741447210268482 0.374497959076502 0; 0 0 0.569341891649094 0.822100851728929; 0.0569463120043877 0.0939614148072396 0.0569463120043877"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 135
+		Transform = "-0.371050157407124 -0.143286226369641 0; 0 0 0.396453693804411 0.918054719866326; 0.0397584350692385 0.0656014178642436 0.0397584350692385"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 29
+		Transform = "-0.390304284373076 0.0793037703961159 0; 0 0 0.989269365543083 0.14610312247856; 0.0569463120043877 0.0939614148072396 0.0569463120043877"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Data\\Nature_018_OakGreen.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				UVTilesPerUnit = 0.2136750625 0.36
+				UVOffset = 0.544 0.975
+			}
+		}
+	}
+}

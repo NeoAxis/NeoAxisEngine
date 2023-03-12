@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -91,7 +91,18 @@ namespace NeoAxis
 		/// <param name="start">The line start position.</param>
 		/// <param name="end">The line end position.</param>
 		/// <param name="thickness"></param>
-		public abstract void AddLine( Vector3 start, Vector3 end, double thickness = 0 );
+		public abstract void AddLine( ref Vector3 start, ref Vector3 end, double thickness = 0 );
+
+		/// <summary>
+		/// Renders a line.
+		/// </summary>
+		/// <param name="start">The line start position.</param>
+		/// <param name="end">The line end position.</param>
+		/// <param name="thickness"></param>
+		public void AddLine( Vector3 start, Vector3 end, double thickness = 0 )
+		{
+			AddLine( ref start, ref end, thickness );
+		}
 
 		/// <summary>
 		/// Renders a line.
@@ -100,7 +111,7 @@ namespace NeoAxis
 		/// <param name="thickness"></param>
 		public void AddLine( Line3 line, double thickness = 0 )
 		{
-			AddLine( line.Start, line.End, thickness );
+			AddLine( ref line.Start, ref line.End, thickness );
 		}
 
 		/// <summary>
@@ -110,7 +121,7 @@ namespace NeoAxis
 		/// <param name="end">The line end position.</param>
 		public void AddLineThin( Vector3 start, Vector3 end )
 		{
-			AddLine( start, end, -1 );
+			AddLine( ref start, ref end, -1 );
 		}
 
 		/// <summary>
@@ -119,7 +130,16 @@ namespace NeoAxis
 		/// <param name="line">The line.</param>
 		public void AddLineThin( Line3 line )
 		{
-			AddLineThin( line.Start, line.End );
+			AddLine( ref line.Start, ref line.End, -1 );
+		}
+
+		/// <summary>
+		/// Renders a line.
+		/// </summary>
+		/// <param name="line">The line.</param>
+		public void AddLineThin( ref Line3 line )
+		{
+			AddLine( ref line.Start, ref line.End, -1 );
 		}
 
 		///// <summary>
@@ -385,18 +405,17 @@ namespace NeoAxis
 		[StructLayout( LayoutKind.Sequential )]
 		public struct Vertex
 		{
-			public Vector3F position;
-			//!!!!maybe return back to uint?
+			public Vector3F Position;
+			public uint Color;
+			public uint ColorInvisibleBehindObjects;
 			//public ColorValue color;
 			//public ColorValue colorInvisibleBehindObjects;
-			public uint color;
-			public uint colorInvisibleBehindObjects;
 
 			public Vertex( Vector3F position, uint color, uint colorInvisibleBehindObjects )
 			{
-				this.position = position;
-				this.color = color;
-				this.colorInvisibleBehindObjects = colorInvisibleBehindObjects;
+				this.Position = position;
+				this.Color = color;
+				this.ColorInvisibleBehindObjects = colorInvisibleBehindObjects;
 			}
 
 			//public Vertex( Vector3F position, ColorValue color, ColorValue colorInvisibleBehindObjects )

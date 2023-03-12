@@ -1,3 +1,4 @@
+#if !DEPLOY
 using System;
 using System.Text;
 using System.Collections.ObjectModel;
@@ -66,3 +67,5 @@ namespace Internal.Aga.Controls.Tree
 		}
 	}
 }
+
+#endif

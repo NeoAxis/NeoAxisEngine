@@ -87,9 +87,6 @@
     <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\x64\bgfx.dll">
       <Link>NeoAxis.Internal\Platforms\UWP\x64\bgfx.dll</Link>
     </Content>
-    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\x64\libbulletc.dll">
-      <Link>NeoAxis.Internal\Platforms\UWP\x64\libbulletc.dll</Link>
-    </Content>
     <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\x64\NeoAxisCoreNative.dll">
       <Link>NeoAxis.Internal\Platforms\UWP\x64\NeoAxisCoreNative.dll</Link>
     </Content>
@@ -107,9 +104,6 @@
     </Content>
     <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\NeoAxis.CoreExtension.dll">
       <Link>NeoAxis.CoreExtension.dll</Link>
-    </Content>
-    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\NeoAxis.Stubs.dll">
-      <Link>NeoAxis.Stubs.dll</Link>
     </Content>
     <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\Project.dll">
       <Link>Project.dll</Link>

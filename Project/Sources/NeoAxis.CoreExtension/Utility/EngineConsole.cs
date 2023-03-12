@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -124,10 +124,10 @@ namespace NeoAxis
 
 			Print( string.Format( "Welcome to {0}!", EngineInfo.NameWithVersion ), new ColorValue( 1, 1, 0 ) );
 			Print( "" );
-			Print( "Use \"Commands\" command to look the list of available commands." );
-			Print( "Press \"Tab\" to autocompletion the command name." );
-			Print( "Press \"Up\", \"Down\" to select the last processed commands." );
-			Print( "Press \"Page Up\", \"Page Down\" to scroll the history of the commands." );
+			Print( "Use Commands to show the list of available commands." );
+			Print( "Press Tab to autocompletion the command name." );
+			Print( "Press Up, Down to select the last processed commands." );
+			Print( "Press Page Up, Page Down to scroll the history of the commands." );
 			Print( "-------------------------------------------------------------------------------" );
 		}
 
@@ -217,7 +217,7 @@ namespace NeoAxis
 
 		static Viewport MainViewport
 		{
-			get { return RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ]; }
+			get { return RenderingSystem.ApplicationRenderTarget?.Viewports[ 0 ]; }
 		}
 
 		public static void Print( string text, ColorValue color )
@@ -228,7 +228,7 @@ namespace NeoAxis
 			while( strings.Count > 256 )
 				strings.RemoveAt( 0 );
 
-			CanvasRenderer renderer = MainViewport.CanvasRenderer;
+			CanvasRenderer renderer = MainViewport?.CanvasRenderer;
 
 			if( font != null && renderer != null )
 			{
@@ -635,7 +635,10 @@ namespace NeoAxis
 			if( SystemSettings.MobileDevice )
 				staticText = "Click to the console to hide it";
 			else
-				staticText = "Press \"~\" or \"F12\" to hide console\r\nPress \"Ctrl + ~\" to hide and disable auto opening";
+			{
+				staticText = "Press ~ or F12 to hide the console\r\nPress Ctrl + ~ to hide and disable auto opening";
+				//staticText = "Press \"~\" or \"F12\" to hide console\r\nPress \"Ctrl + ~\" to hide and disable auto opening";
+			}
 			renderer.AddTextWordWrap( staticText, new RectangleF( 0, 0, .995f, .495f ), EHorizontalAlignment.Right, false, EVerticalAlignment.Bottom, 0,
 				new ColorValue( 0.8, 0.8, 0.8, transparency ) );
 
@@ -721,13 +724,24 @@ namespace NeoAxis
 
 		public static void RegisterConfigParameter( EngineConfig.Parameter parameter )
 		{
+			//skip parameters from NeoAxis.Editor namespace
+			{
+				Type type = null;
+				if( parameter.Field != null )
+					type = parameter.Field.DeclaringType;
+				else if( parameter.Property != null )
+					type = parameter.Property.DeclaringType;
+				if( type != null && type.Namespace != null && type.Namespace.Contains( "NeoAxis.Editor" ) )
+					return;
+			}
+
 			string strType = "";
 			if( parameter.Field != null )
 				strType = parameter.Field.FieldType.Name;
 			else if( parameter.Property != null )
 				strType = parameter.Property.PropertyType.Name;
 
-			string description = string.Format( "\"{0}\", Default: \"{1}\"", strType, parameter.DefaultValue );
+			string description = string.Format( "{0}, Default: {1}", strType, parameter.DefaultValue );
 			AddCommand( parameter.Name, OnConsoleConfigCommand, parameter, description );
 		}
 
@@ -740,20 +754,20 @@ namespace NeoAxis
 
 		//standard commands
 
-		static void OnConsoleQuit( string arguments )
+		static void ConsoleQuit( string arguments )
 		{
 			EngineApp.NeedExit = true;
 		}
 
-		static void OnConsoleClear( string arguments )
+		static void ConsoleClear( string arguments )
 		{
 			Clear();
 		}
 
-		static void OnConsoleCommands( string arguments )
+		static void ConsoleCommands( string arguments )
 		{
 			Print( "The list of commands:" );
-			foreach( Command command in commands )
+			foreach( var command in commands )
 			{
 				string text = command.Name;
 				if( command.Description != null )
@@ -762,7 +776,7 @@ namespace NeoAxis
 			}
 		}
 
-		static void OnConsoleFullscreen( string arguments )
+		static void ConsoleFullscreen( string arguments )
 		{
 			if( !string.IsNullOrEmpty( arguments ) )
 			{
@@ -789,7 +803,7 @@ namespace NeoAxis
 				Print( string.Format( "Value: \"{0}\", Default value: \"{1}\"", EngineApp.FullscreenEnabled, true ) );
 		}
 
-		static void OnConsoleVideoMode( string arguments )
+		static void ConsoleVideoMode( string arguments )
 		{
 			if( !string.IsNullOrEmpty( arguments ) )
 			{
@@ -817,13 +831,13 @@ namespace NeoAxis
 				Print( string.Format( "Value: \"{0}\"", EngineApp.FullscreenSize ) );
 		}
 
-		//static void OnLogNativeMemoryStatistics( string arguments )
+		//static void LogNativeMemoryStatistics( string arguments )
 		//{
 		//	NativeMemoryManager.LogAllocationStatistics();
 		//	Print( "Done. See log file in UserSettings\\Logs folder." );
 		//}
 
-		static void OnConsoleEngineTimeScale( string arguments )
+		static void ConsoleEngineTimeScale( string arguments )
 		{
 			if( !string.IsNullOrEmpty( arguments ) )
 			{
@@ -842,7 +856,7 @@ namespace NeoAxis
 			}
 		}
 
-		static void OnConsoleSoundPitchScale( string arguments )
+		static void ConsoleSoundPitchScale( string arguments )
 		{
 			if( !string.IsNullOrEmpty( arguments ) )
 			{
@@ -861,17 +875,35 @@ namespace NeoAxis
 			}
 		}
 
+		static void ConsoleDebugInfo( string arguments )
+		{
+			var first = true;
+
+			foreach( var page in Internal.DebugInfo.AllPages )
+			{
+				if( !first )
+					Log.Info( "-------------------------------------------------------------------------------" );
+
+				Log.Info( page.Title + ":" );
+				foreach( var s in page.Content )
+					Log.Info( s );
+
+				first = false;
+			}
+		}
+
 		static void AddStandardCommands()
 		{
-			AddCommand( "Quit", OnConsoleQuit );
-			AddCommand( "Exit", OnConsoleQuit );
-			AddCommand( "Clear", OnConsoleClear );
-			AddCommand( "Commands", OnConsoleCommands );
-			AddCommand( "Fullscreen", OnConsoleFullscreen );
-			AddCommand( "VideoMode", OnConsoleVideoMode );
-			//AddCommand( "LogNativeMemoryStatistics", OnLogNativeMemoryStatistics );
-			AddCommand( "EngineTimeScale", OnConsoleEngineTimeScale );
-			AddCommand( "SoundPitchScale", OnConsoleSoundPitchScale );
+			AddCommand( "Quit", ConsoleQuit );
+			AddCommand( "Exit", ConsoleQuit );
+			AddCommand( "Clear", ConsoleClear );
+			AddCommand( "Commands", ConsoleCommands );
+			AddCommand( "Fullscreen", ConsoleFullscreen );
+			AddCommand( "VideoMode", ConsoleVideoMode );
+			//AddCommand( "LogNativeMemoryStatistics", LogNativeMemoryStatistics );
+			AddCommand( "EngineTimeScale", ConsoleEngineTimeScale );
+			AddCommand( "SoundPitchScale", ConsoleSoundPitchScale );
+			AddCommand( "DebugInfo", ConsoleDebugInfo );
 		}
 	}
 }

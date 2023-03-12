@@ -1,4 +1,5 @@
-﻿// *****************************************************************************
+﻿#if !DEPLOY
+// *****************************************************************************
 // 
 //  © Component Factory Pty Ltd 2012. All rights reserved.
 //	The software and associated documentation supplied hereunder are the 
@@ -2142,11 +2143,22 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
             {
                 SelectAll();
                 e.Handled = true;
+                e.SuppressKeyPress = true;
                 return;
             }
 
             base.OnKeyDown( e );
+
+            //!!!!betauser
+            //disable asterisk sound
+            if( e.KeyCode == Keys.Enter || e.KeyCode == Keys.Escape )
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
         }
 
     }
 }
+
+#endif

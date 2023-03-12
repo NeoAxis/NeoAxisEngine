@@ -1,7 +1,8 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -153,6 +154,7 @@ namespace NeoAxis
 				checkedTriangles = new BitArray( vertices.Count * vertices.Count * vertices.Count );
 			}
 
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public bool AreCollinear( ref Vector3 v1, ref Vector3 v2, ref Vector3 v3 )
 			{
 				//const double epsilon = .001;
@@ -205,6 +207,7 @@ namespace NeoAxis
 				return true;
 			}
 
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			int GetCheckedTriangleKey( int nVertex0, int nVertex1, int nVertex2 )
 			{
 				int n;
@@ -231,6 +234,7 @@ namespace NeoAxis
 				return ( nVertex0 * vertices.Length + nVertex1 ) * vertices.Length + nVertex2;
 			}
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			public Plane[] Calculate()
 			{
 				//const double epsilon = .001;
@@ -324,12 +328,14 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static Plane[] GetConvexPolyhedronPlanesFromVertices( IList<Vector3> vertices, double epsilon )
 		{
 			HullInternal hull = new HullInternal( vertices, epsilon );
 			return hull.Calculate();
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static Plane[] GetConvexPolyhedronPlanesFromVertices( IList<Vector3F> vertices, double epsilon )
 		{
 			Vector3[] verticesD = new Vector3[ vertices.Count ];
@@ -341,6 +347,7 @@ namespace NeoAxis
 
 		///////////////////////////////////////////
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		bool ContainsPoint( Vector3 point )
 		{
 			//const double epsilon = .001;
@@ -354,6 +361,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		bool IntersectsLine( Line3 line )
 		{
 			if( ContainsPoint( line.Start ) )
@@ -404,6 +412,7 @@ namespace NeoAxis
 		//	return ( positive != 0 ? 1 : -1 );
 		//}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public Vector3 GetApproximateConvexCentroid()
 		{
 			Vector3 result = Vector3.Zero;
@@ -412,6 +421,7 @@ namespace NeoAxis
 			return result / (float)vertices.Length;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static bool IsIntersects( ConvexPolyhedron polyhedron1, ConvexPolyhedron polyhedron2 )
 		{
 			Vector3 center1 = polyhedron1.GetApproximateConvexCentroid();
@@ -459,6 +469,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void GenerateEdges()
 		{
 			if( edges != null )
@@ -486,8 +497,8 @@ namespace NeoAxis
 
 					if( vertexIndex1 < vertexIndex0 )
 					{
-						var z = vertexIndex0; 
-						vertexIndex0 = vertexIndex1; 
+						var z = vertexIndex0;
+						vertexIndex0 = vertexIndex1;
 						vertexIndex1 = z;
 					}
 
@@ -508,6 +519,7 @@ namespace NeoAxis
 
 		public Edge[] Edges
 		{
+			[MethodImpl( (MethodImplOptions)512 )]
 			get
 			{
 				if( edges == null )
@@ -516,6 +528,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void GenerateFacePlanes()
 		{
 			if( facePlanes != null )
@@ -539,6 +552,7 @@ namespace NeoAxis
 
 		public Plane[] FacePlanes
 		{
+			[MethodImpl( (MethodImplOptions)512 )]
 			get
 			{
 				if( facePlanes == null )

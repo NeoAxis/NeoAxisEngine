@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Threading;
 using NeoAxis;
 using Tao.OpenAl;
+using System.Runtime.CompilerServices;
 
 namespace OpenALSoundSystem
 {
@@ -80,6 +81,9 @@ namespace OpenALSoundSystem
 				{
 				}
 				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
+				{
+				}
+				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
 				{
 				}
 				else
@@ -231,6 +235,7 @@ namespace OpenALSoundSystem
 			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		protected override void OnUpdateLibrary()
 		{
 			if( IsActive() )
@@ -244,6 +249,7 @@ namespace OpenALSoundSystem
 			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		protected override SoundData Internal_SoundCreate( string name, SoundModes mode )
 		{
 			criticalSection.Enter();
@@ -328,6 +334,7 @@ namespace OpenALSoundSystem
 		//	return sound;
 		//}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		protected override SoundData Internal_SoundCreateDataBuffer( SoundModes mode, int channels, int frequency, int bufferSize, DataReadDelegate dataReadCallback )
 		{
 			criticalSection.Enter();
@@ -364,6 +371,7 @@ namespace OpenALSoundSystem
 			criticalSection.Leave();
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		protected override void OnSetListener( Vector3 position, Vector3 velocity, Quaternion rotation )
 		{
 			criticalSection.Enter();
@@ -489,6 +497,7 @@ namespace OpenALSoundSystem
 			return recordingSound != null;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		void ThreadFunction()
 		{
 			while( true )
@@ -514,14 +523,14 @@ namespace OpenALSoundSystem
 			}
 		}
 
-		[DllImport( "user32.dll" )]
-		static extern int IsWindow( IntPtr hWnd );
-		[DllImport( "user32.dll" )]
-		static extern int IsWindowVisible( IntPtr hWnd );
-		[DllImport( "user32.dll" )]
-		static extern int IsIconic( IntPtr hWnd );
-		[DllImport( "user32.dll" )]
-		static extern IntPtr GetParent( IntPtr hWnd );
+		//[DllImport( "user32.dll" )]
+		//static extern int IsWindow( IntPtr hWnd );
+		//[DllImport( "user32.dll" )]
+		//static extern int IsWindowVisible( IntPtr hWnd );
+		//[DllImport( "user32.dll" )]
+		//static extern int IsIconic( IntPtr hWnd );
+		//[DllImport( "user32.dll" )]
+		//static extern IntPtr GetParent( IntPtr hWnd );
 
 		//[DllImport( "user32.dll", CharSet = CharSet.Auto, ExactSpelling = true )]
 		//private static extern IntPtr GetForegroundWindow();
@@ -541,6 +550,7 @@ namespace OpenALSoundSystem
 		//	return activeProcId == procId;
 		//}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		bool IsActive()
 		{
 			SoundChannelGroup masterGroup = MasterChannelGroup;

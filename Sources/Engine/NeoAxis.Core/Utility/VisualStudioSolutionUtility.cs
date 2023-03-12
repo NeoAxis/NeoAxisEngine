@@ -1,4 +1,5 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿#if !DEPLOY
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 //using Microsoft.CodeAnalysis.MSBuild;
 using System;
 using System.Diagnostics;
@@ -64,7 +65,7 @@ namespace NeoAxis
 			}
 			else
 			{
-				if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+				if( EngineApp.IsSimulation )
 				{
 					var error = $"Unable to compile solution {solutionFileName}. Continue?\r\n\r\n{result}\r\n\r\nCommand line:\r\n{dotnetExePath} {arguments}\r\n\r\nSee details in the log.";
 
@@ -284,7 +285,7 @@ namespace NeoAxis
 		//	}
 		//	else
 		//	{
-		//		if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+		//		if( EngineApp.IsSimulation )
 		//		{
 		//			var error = $"Unable to compile solution \'{fileName}\'. Continue?\r\n\r\n{result}\r\n\r\nCommand line:\r\n{msBuildExePath} {arguments}\r\n\r\nSee details in log.";
 
@@ -460,7 +461,7 @@ namespace NeoAxis
 
 		static string GetDataFolder()
 		{
-#if W___!!___INDOWS_UWP
+#if W______INDOWS_UWP
 			var appFolder = GetInstalledAppFolder();
 #else
 			var appFolder = GetLocalAppDataFolder();
@@ -488,7 +489,7 @@ namespace NeoAxis
 
 		static string GetLocalAppDataFolder()
 		{
-#if W___!!___INDOWS_UWP
+#if W______INDOWS_UWP
 			Windows.Storage.StorageFolder localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
 			return localFolder.Path;
 #else
@@ -499,7 +500,7 @@ namespace NeoAxis
 
 		static string GetInstalledAppFolder()
 		{
-#if W___!!___INDOWS_UWP
+#if W______INDOWS_UWP
 			var installedLocation = Windows.ApplicationModel.Package.Current.InstalledLocation;
 			return installedLocation.Path;
 #else
@@ -509,3 +510,4 @@ namespace NeoAxis
 	}
 }
 */
+#endif

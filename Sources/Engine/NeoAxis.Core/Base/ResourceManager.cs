@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -604,9 +604,9 @@ namespace NeoAxis
 			RegisterType( "Sound", new string[] { "sound", "ogg", "wav" }, typeof( SoundResource ) );
 			RegisterType( "Material", new string[] { "material" }, typeof( Resource ) );
 			RegisterType( "Mesh", new string[] { "mesh" }, typeof( Resource ) );
-			RegisterType( "Particle System", new string[] { "particle", "particleSystem" }, typeof( Resource ) );
+			RegisterType( "Particle System", new string[] { "particle", "particlesystem" }, typeof( Resource ) );
 			RegisterType( "Font", new string[] { "ttf" }, typeof( FontResource ) );
-			RegisterType( "Object In Space", new string[] { "objectInSpace" }, typeof( Resource ) );
+			RegisterType( "Object In Space", new string[] { "objectinspace" }, typeof( Resource ) );
 			RegisterType( "UI", new string[] { "ui" }, typeof( Resource ) );
 			RegisterType( "UI Style", new string[] { "uistyle" }, typeof( Resource ) );
 			RegisterType( "Scene", new string[] { "scene" }, typeof( Resource ) );
@@ -695,6 +695,12 @@ namespace NeoAxis
 							imageKey = "Product";
 						else if( resourceType.Name == "Store Product" )
 							imageKey = "Store Product";
+
+
+						//!!!!
+						//CoreExtension.dll
+						if( resourceType.Name == "Plant Type" )
+							imageKey = "Plant";
 					}
 				}
 			}

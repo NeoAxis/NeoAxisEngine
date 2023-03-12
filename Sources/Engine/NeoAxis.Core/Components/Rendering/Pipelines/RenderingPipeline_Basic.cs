@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,6 +11,9 @@ namespace NeoAxis
 	public partial class RenderingPipeline_Basic : RenderingPipeline
 	{
 		// Don't add many non static fields. Rendering pipeline is created for each temporary render target during frame rendering.
+
+		public static double GlobalTextureQuality = 1;
+		public static double GlobalShadowQuality = 1;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -152,7 +155,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The size of a shadow texture for Directional Lights.
 		/// </summary>
-		[DefaultValue( ShadowTextureSize._2048 )]
+		[DefaultValue( ShadowTextureSize._4096 )]//_2048 )]
 		[Category( "Shadows" )]
 		public Reference<ShadowTextureSize> ShadowDirectionalLightTextureSize
 		{
@@ -161,12 +164,12 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="ShadowDirectionalLightTextureSize"/> property value changes.</summary>
 		public event Action<RenderingPipeline_Basic> ShadowDirectionalLightTextureSizeChanged;
-		ReferenceField<ShadowTextureSize> _shadowDirectionalLightTextureSize = ShadowTextureSize._2048;
+		ReferenceField<ShadowTextureSize> _shadowDirectionalLightTextureSize = ShadowTextureSize._4096;// _2048;
 
 		/// <summary>
 		/// The number of cascades used for Directional Lights.
 		/// </summary>
-		[DefaultValue( 3 )]
+		[DefaultValue( 2 )] //3 )]
 		[Range( 1, 4 )]
 		[Category( "Shadows" )]
 		public Reference<int> ShadowDirectionalLightCascades
@@ -190,14 +193,14 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="ShadowDirectionalLightCascades"/> property value changes.</summary>
 		public event Action<RenderingPipeline_Basic> ShadowDirectionalLightCascadesChanged;
-		ReferenceField<int> _shadowDirectionalLightCascades = 3;
+		ReferenceField<int> _shadowDirectionalLightCascades = 2;//3;
 
 		/// <summary>
 		/// Defines shadow cascades distribution for Directional Lights. The distance of the current cascade, multiplied by this value gives distance to the next cascade.
 		/// </summary>
-		[DefaultValue( 2.4 )]
+		[DefaultValue( 3.5/*2.4*/ )]
 		[Category( "Shadows" )]
-		[Range( 1, 5 )]
+		[Range( 1, 10 )]
 		public Reference<double> ShadowDirectionalLightCascadeDistribution
 		{
 			get { if( _shadowDirectionalLightCascadeDistribution.BeginGet() ) ShadowDirectionalLightCascadeDistribution = _shadowDirectionalLightCascadeDistribution.Get( this ); return _shadowDirectionalLightCascadeDistribution.value; }
@@ -205,7 +208,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="ShadowDirectionalLightCascadeDistribution"/> property value changes.</summary>
 		public event Action<RenderingPipeline_Basic> ShadowDirectionalLightCascadeDistributionChanged;
-		ReferenceField<double> _shadowDirectionalLightCascadeDistribution = 2.4;
+		ReferenceField<double> _shadowDirectionalLightCascadeDistribution = 3.5;//2.4;
 
 		/// <summary>
 		/// Whether to visualize shadow cascades for Directional Lights.
@@ -420,7 +423,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The height of the occlusion culling buffer in pixels.
 		/// </summary>
-		[DefaultValue( 400 )]
+		[DefaultValue( 800 )] //400
 		[Category( "Occlusion Culling" )]
 		public Reference<int> OcclusionCullingBufferSize
 		{
@@ -429,7 +432,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="OcclusionCullingBufferSize"/> property value changes.</summary>
 		public event Action<RenderingPipeline_Basic> OcclusionCullingBufferSizeChanged;
-		ReferenceField<int> _occlusionCullingBufferSize = 400;
+		ReferenceField<int> _occlusionCullingBufferSize = 800;//400;
 
 		/// <summary>
 		/// Whether to cull octree nodes by the occlusion culling buffer.
@@ -459,7 +462,57 @@ namespace NeoAxis
 		public event Action<RenderingPipeline_Basic> OcclusionCullingBufferCullObjectsChanged;
 		ReferenceField<bool> _occlusionCullingBufferCullObjects = true;
 
+		/// <summary>
+		/// The maximal amount of occluders can be rendered for the frame.
+		/// </summary>
+		[DefaultValue( 300 )]
+		[Category( "Occlusion Culling" )]
+		public Reference<int> OcclusionCullingBufferMaxOccluders
+		{
+			get { if( _occlusionCullingBufferMaxOccluders.BeginGet() ) OcclusionCullingBufferMaxOccluders = _occlusionCullingBufferMaxOccluders.Get( this ); return _occlusionCullingBufferMaxOccluders.value; }
+			set { if( _occlusionCullingBufferMaxOccluders.BeginSet( ref value ) ) { try { OcclusionCullingBufferMaxOccludersChanged?.Invoke( this ); } finally { _occlusionCullingBufferMaxOccluders.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="OcclusionCullingBufferMaxOccluders"/> property value changes.</summary>
+		public event Action<RenderingPipeline_Basic> OcclusionCullingBufferMaxOccludersChanged;
+		ReferenceField<int> _occlusionCullingBufferMaxOccluders = 300;
+
+		/// <summary>
+		/// The amount of groups of objects sorted by the distance. The groups are rendered from near to far by the distance to the camera. The settings mainly helps to calibrate the GPU instancing.
+		/// </summary>
+		[DefaultValue( 8 )]
+		[Range( 1, 16 )]
+		[Category( "Optimization" )]
+		public Reference<int> SectorsByDistance
+		{
+			get { if( _sectorsByDistance.BeginGet() ) SectorsByDistance = _sectorsByDistance.Get( this ); return _sectorsByDistance.value; }
+			set
+			{
+				if( value < 1 )
+					value = new Reference<int>( 1, value.GetByReference );
+				if( value > 16 )
+					value = new Reference<int>( 16, value.GetByReference );
+				if( _sectorsByDistance.BeginSet( ref value ) ) { try { SectorsByDistanceChanged?.Invoke( this ); } finally { _sectorsByDistance.EndSet(); } }
+			}
+		}
+		/// <summary>Occurs when the <see cref="SectorsByDistance"/> property value changes.</summary>
+		public event Action<RenderingPipeline_Basic> SectorsByDistanceChanged;
+		ReferenceField<int> _sectorsByDistance = 8;
+
 		/////////////////////////////////////////
+
+		/// <summary>
+		/// Whether to display shadows.
+		/// </summary>
+		[Category( "Debug" )]
+		[DefaultValue( true )]
+		public Reference<bool> DebugDrawShadows
+		{
+			get { if( _debugDrawShadows.BeginGet() ) DebugDrawShadows = _debugDrawShadows.Get( this ); return _debugDrawShadows.value; }
+			set { if( _debugDrawShadows.BeginSet( ref value ) ) { try { DebugDrawShadowsChanged?.Invoke( this ); } finally { _debugDrawShadows.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="DebugDrawShadows"/> property value changes.</summary>
+		public event Action<RenderingPipeline_Basic> DebugDrawShadowsChanged;
+		ReferenceField<bool> _debugDrawShadows = true;
 
 		/// <summary>
 		/// Whether to display objects that are rendered with deferred shading.
@@ -588,6 +641,96 @@ namespace NeoAxis
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+		/// <summary>
+		/// Whether to visualize triangle meshes.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Debug Geometry Type" )]
+		public Reference<bool> DebugDrawMeshes
+		{
+			get { if( _debugDrawMeshes.BeginGet() ) DebugDrawMeshes = _debugDrawMeshes.Get( this ); return _debugDrawMeshes.value; }
+			set { if( _debugDrawMeshes.BeginSet( ref value ) ) { try { DebugDrawMeshesChanged?.Invoke( this ); } finally { _debugDrawMeshes.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="DebugDrawMeshes"/> property value changes.</summary>
+		public event Action<RenderingPipeline_Basic> DebugDrawMeshesChanged;
+		ReferenceField<bool> _debugDrawMeshes = true;
+
+		/// <summary>
+		/// Whether to visualize voxelized mesh geometry.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Debug Geometry Type" )]
+		public Reference<bool> DebugDrawVoxels
+		{
+			get { if( _debugDrawVoxels.BeginGet() ) DebugDrawVoxels = _debugDrawVoxels.Get( this ); return _debugDrawVoxels.value; }
+			set { if( _debugDrawVoxels.BeginSet( ref value ) ) { try { DebugDrawVoxelsChanged?.Invoke( this ); } finally { _debugDrawVoxels.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="DebugDrawVoxels"/> property value changes.</summary>
+		public event Action<RenderingPipeline_Basic> DebugDrawVoxelsChanged;
+		ReferenceField<bool> _debugDrawVoxels = true;
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		/// <summary>
+		/// Whether to visualize batched data.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Debug Batching" )]
+		public Reference<bool> DebugDrawBatchedData
+		{
+			get { if( _debugDrawBatchedData.BeginGet() ) DebugDrawBatchedData = _debugDrawBatchedData.Get( this ); return _debugDrawBatchedData.value; }
+			set { if( _debugDrawBatchedData.BeginSet( ref value ) ) { try { DebugDrawBatchedDataChanged?.Invoke( this ); } finally { _debugDrawBatchedData.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="DebugDrawBatchedData"/> property value changes.</summary>
+		public event Action<RenderingPipeline_Basic> DebugDrawBatchedDataChanged;
+		ReferenceField<bool> _debugDrawBatchedData = true;
+
+		/// <summary>
+		/// Whether to visualize not batched data.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Debug Batching" )]
+		public Reference<bool> DebugDrawNotBatchedData
+		{
+			get { if( _debugDrawNotBatchedData.BeginGet() ) DebugDrawNotBatchedData = _debugDrawNotBatchedData.Get( this ); return _debugDrawNotBatchedData.value; }
+			set { if( _debugDrawNotBatchedData.BeginSet( ref value ) ) { try { DebugDrawNotBatchedDataChanged?.Invoke( this ); } finally { _debugDrawNotBatchedData.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="DebugDrawNotBatchedData"/> property value changes.</summary>
+		public event Action<RenderingPipeline_Basic> DebugDrawNotBatchedDataChanged;
+		ReferenceField<bool> _debugDrawNotBatchedData = true;
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		/// <summary>
+		/// Whether to add direct lighting to output image.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Debug Lighting" )]
+		public Reference<bool> DebugDirectLighting
+		{
+			get { if( _debugDirectLighting.BeginGet() ) DebugDirectLighting = _debugDirectLighting.Get( this ); return _debugDirectLighting.value; }
+			set { if( _debugDirectLighting.BeginSet( ref value ) ) { try { DebugDirectLightingChanged?.Invoke( this ); } finally { _debugDirectLighting.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="DebugDirectLighting"/> property value changes.</summary>
+		public event Action<RenderingPipeline_Basic> DebugDirectLightingChanged;
+		ReferenceField<bool> _debugDirectLighting = true;
+
+		/// <summary>
+		/// Whether to add indirect lighting to output image.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Debug Lighting" )]
+		public Reference<bool> DebugIndirectLighting
+		{
+			get { if( _debugIndirectLighting.BeginGet() ) DebugIndirectLighting = _debugIndirectLighting.Get( this ); return _debugIndirectLighting.value; }
+			set { if( _debugIndirectLighting.BeginSet( ref value ) ) { try { DebugIndirectLightingChanged?.Invoke( this ); } finally { _debugIndirectLighting.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="DebugIndirectLighting"/> property value changes.</summary>
+		public event Action<RenderingPipeline_Basic> DebugIndirectLightingChanged;
+		ReferenceField<bool> _debugIndirectLighting = true;
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
 		{
 			base.OnMetadataGetMembersFilter( context, member, ref skip );
@@ -612,6 +755,7 @@ namespace NeoAxis
 				case nameof( OcclusionCullingBufferSize ):
 				case nameof( OcclusionCullingBufferCullNodes ):
 				case nameof( OcclusionCullingBufferCullObjects ):
+				case nameof( OcclusionCullingBufferMaxOccluders ):
 					if( !OcclusionCullingBuffer )
 						skip = true;
 					break;
@@ -629,7 +773,7 @@ namespace NeoAxis
 			_2048,
 			_4096,
 			_8192,
-			//_16384,
+			//_16384, //replace also "ShadowTextureSize._8192"
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

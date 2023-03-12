@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	/// <summary>
 	/// Specialized version of NetPeer used for "server" peers

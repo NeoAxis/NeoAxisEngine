@@ -65,6 +65,10 @@ enum TBasicType {
     EbtAccStruct,
     EbtReference,
     EbtRayQuery,
+#ifndef GLSLANG_WEB
+    // SPIR-V type defined by spirv_type
+    EbtSpirvType,
+#endif
 
     // HLSL types that live only temporarily.
     EbtString,
@@ -91,6 +95,9 @@ enum TStorageQualifier {
     EvqUniform,       // read only, shared with app
     EvqBuffer,        // read/write, shared with app
     EvqShared,        // compute shader's read/write 'shared' qualifier
+#ifndef GLSLANG_WEB
+    EvqSpirvStorageClass, // spirv_storage_class
+#endif
 
     EvqPayload,
     EvqPayloadIn,
@@ -121,6 +128,7 @@ enum TStorageQualifier {
     // built-ins written by fragment shader
     EvqFragColor,
     EvqFragDepth,
+    EvqFragStencil,
 
     // end of list
     EvqLast
@@ -228,6 +236,9 @@ enum TBuiltInVariable {
     EbvViewIndex,
     EbvDeviceIndex,
 
+    EbvShadingRateKHR,
+    EbvPrimitiveShadingRateKHR,
+
     EbvFragSizeEXT,
     EbvFragInvocationCountEXT,
 
@@ -253,6 +264,7 @@ enum TBuiltInVariable {
     EbvObjectRayDirection,
     EbvRayTmin,
     EbvRayTmax,
+    EbvCullMask,
     EbvHitT,
     EbvHitKind,
     EbvObjectToWorld,
@@ -260,9 +272,12 @@ enum TBuiltInVariable {
     EbvWorldToObject,
     EbvWorldToObject3x4,
     EbvIncomingRayFlags,
+    EbvCurrentRayTimeNV,
     // barycentrics
     EbvBaryCoordNV,
     EbvBaryCoordNoPerspNV,
+    EbvBaryCoordEXT,
+    EbvBaryCoordNoPerspEXT,
     // mesh shaders
     EbvTaskCountNV,
     EbvPrimitiveCountNV,
@@ -318,6 +333,9 @@ __inline const char* GetStorageQualifierString(TStorageQualifier q)
     case EvqGlobal:         return "global";         break;
     case EvqConst:          return "const";          break;
     case EvqConstReadOnly:  return "const (read only)"; break;
+#ifndef GLSLANG_WEB
+    case EvqSpirvStorageClass: return "spirv_storage_class"; break;
+#endif
     case EvqVaryingIn:      return "in";             break;
     case EvqVaryingOut:     return "out";            break;
     case EvqUniform:        return "uniform";        break;
@@ -336,6 +354,7 @@ __inline const char* GetStorageQualifierString(TStorageQualifier q)
     case EvqPointCoord:     return "gl_PointCoord";  break;
     case EvqFragColor:      return "fragColor";      break;
     case EvqFragDepth:      return "gl_FragDepth";   break;
+    case EvqFragStencil:    return "gl_FragStencilRefARB"; break;
     case EvqPayload:        return "rayPayloadNV";     break;
     case EvqPayloadIn:      return "rayPayloadInNV";   break;
     case EvqHitAttr:        return "hitAttributeNV";   break;
@@ -462,9 +481,12 @@ __inline const char* GetBuiltInVariableString(TBuiltInVariable v)
     case EbvIncomingRayFlags:           return "IncomingRayFlagsNV";
     case EbvObjectToWorld:              return "ObjectToWorldNV";
     case EbvWorldToObject:              return "WorldToObjectNV";
+    case EbvCurrentRayTimeNV:           return "CurrentRayTimeNV";
 
-    case EbvBaryCoordNV:                return "BaryCoordNV";
-    case EbvBaryCoordNoPerspNV:         return "BaryCoordNoPerspNV";
+    case EbvBaryCoordEXT:
+    case EbvBaryCoordNV:                return "BaryCoordKHR";
+    case EbvBaryCoordNoPerspEXT:
+    case EbvBaryCoordNoPerspNV:         return "BaryCoordNoPerspKHR";
 
     case EbvTaskCountNV:                return "TaskCountNV";
     case EbvPrimitiveCountNV:           return "PrimitiveCountNV";
@@ -479,6 +501,9 @@ __inline const char* GetBuiltInVariableString(TBuiltInVariable v)
     case EbvSMCount:                    return "SMCountNV";
     case EbvWarpID:                     return "WarpIDNV";
     case EbvSMID:                       return "SMIDNV";
+
+    case EbvShadingRateKHR:             return "ShadingRateKHR";
+    case EbvPrimitiveShadingRateKHR:    return "PrimitiveShadingRateKHR";
 
     default:                      return "unknown built-in variable";
     }

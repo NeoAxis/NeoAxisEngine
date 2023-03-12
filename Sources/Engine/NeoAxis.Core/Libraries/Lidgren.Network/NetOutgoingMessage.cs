@@ -21,7 +21,7 @@ USE OR OTHER DEALINGS IN THE SOFTWARE.
 using System;
 using System.Diagnostics;
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	/// <summary>
 	/// Outgoing message used to send data to remote peer(s)
@@ -121,13 +121,14 @@ namespace Lidgren.Network
 			return retval;
 		}
 
-		/// <summary>
-		/// Encrypt this message using the provided algorithm; no more writing can be done before sending it or the message will be corrupt!
-		/// </summary>
-		public bool Encrypt(NetEncryption encryption)
-		{
-			return encryption.Encrypt(this);
-		}
+		//!!!!betauser
+		///// <summary>
+		///// Encrypt this message using the provided algorithm; no more writing can be done before sending it or the message will be corrupt!
+		///// </summary>
+		//public bool Encrypt(NetEncryption encryption)
+		//{
+		//	return encryption.Encrypt(this);
+		//}
 
 		/// <summary>
 		/// Returns a string that represents this object

@@ -1,19 +1,24 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using NeoAxis.Editor;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
 	/// <summary>
 	/// Particle system in the scene.
 	/// </summary>
+#if !DEPLOY
 	[SettingsCell( typeof( ParticleSystemInSpaceSettingsCell ) )]
+#endif
 	public class ParticleSystemInSpace : ObjectInSpace
 	{
+		static FastRandom staticRandom;
+
 		//creation
 		ParticleSystem.CompiledData currentParticleSystem;
 		int currentMustRecreateCounter;
@@ -33,7 +38,7 @@ namespace NeoAxis
 		float playingTime;
 		bool playingEnded;
 
-		FastRandom random;
+		int mergeSimulationStepsCounter;
 
 		//!!!!удал€ть. когда опции мен€ютс€ тоже
 		//public Batch batch;
@@ -213,6 +218,18 @@ namespace NeoAxis
 		public event Action<ParticleSystemInSpace> SpecialEffectsChanged;
 		ReferenceField<List<ObjectSpecialRenderingEffect>> _specialEffects = new List<ObjectSpecialRenderingEffect>();
 
+		[DefaultValue( 2 )]
+		[Category( "Optimization" )]
+		[Range( 0, 4 )]
+		public Reference<int> MergeSimulationSteps
+		{
+			get { if( _mergeSimulationSteps.BeginGet() ) MergeSimulationSteps = _mergeSimulationSteps.Get( this ); return _mergeSimulationSteps.value; }
+			set { if( _mergeSimulationSteps.BeginSet( ref value ) ) { try { MergeSimulationStepsChanged?.Invoke( this ); } finally { _mergeSimulationSteps.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="MergeSimulationSteps"/> property value changes.</summary>
+		public event Action<ParticleSystemInSpace> MergeSimulationStepsChanged;
+		ReferenceField<int> _mergeSimulationSteps = 2;
+
 		[Browsable( false )]
 		public RenderingPipeline.RenderSceneData.CutVolumeItem[] CutVolumes { get; set; }
 
@@ -307,6 +324,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		protected override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
 			base.OnGetRenderSceneData( context, mode, modeGetObjectsItem );
@@ -366,8 +384,8 @@ namespace NeoAxis
 
 					var cameraDistanceMinSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, SpaceBounds );
 
-					var boundingSize = SpaceBounds.CalculatedBoundingSphereRadius * 2;
-					var visibilityDistance = context.GetVisibilityDistanceByObjectSize( boundingSize ) * VisibilityDistanceFactor * currentParticleSystem.Owner.VisibilityDistanceFactor;
+					var boundingSize = (float)( SpaceBounds.boundingSphere.Radius * 2 );
+					var visibilityDistance = (float)( context.GetVisibilityDistanceByObjectSize( boundingSize ) * VisibilityDistanceFactor * currentParticleSystem.Owner.VisibilityDistanceFactor );
 					//var visibilityDistance = Math.Min( VisibilityDistance, currentParticleSystem.Owner.VisibilityDistance );
 
 					if( cameraDistanceMinSquared < visibilityDistance * visibilityDistance /*|| mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum*/ )
@@ -391,7 +409,7 @@ namespace NeoAxis
 						//init general parameters of billboard item
 						var billboardItem = new RenderingPipeline.RenderSceneData.BillboardItem();
 						billboardItem.Creator = this;
-						billboardItem.BoundingSphere = SpaceBounds.CalculatedBoundingSphere;
+						billboardItem.BoundingSphere = SpaceBounds.boundingSphere;
 						billboardItem.BoundingBoxCenter = billboardItem.BoundingSphere.Center;
 						//SpaceBounds.CalculatedBoundingBox.GetCenter( out billboardItem.BoundingBoxCenter );
 
@@ -466,6 +484,7 @@ namespace NeoAxis
 
 											//Color
 											billboardItem.Color = particle.Color * color;
+											billboardItem.ColorForInstancingData = RenderingPipeline.GetColorForInstancingData( ref billboardItem.Color );
 
 											//PositionPreviousFrame
 											if( previousPositions != null && particleIndex < previousPositions.Length )
@@ -502,6 +521,7 @@ namespace NeoAxis
 									meshItem.MotionBlurFactor = compiledEmitter.MotionBlurFactor * (float)MotionBlurFactor;
 									meshItem.ReplaceMaterial = replaceMaterial ?? compiledEmitter.Material;
 									meshItem.Color = particle.Color * color;
+									meshItem.ColorForInstancingData = RenderingPipeline.GetColorForInstancingData( ref meshItem.Color );
 
 									var lods = meshItem.MeshData.LODs;
 									ref var emitter = ref Emitters[ particle.Emitter ];
@@ -517,7 +537,7 @@ namespace NeoAxis
 										lodState = meshEmitterLodStates[ particle.Emitter ].Value;
 									else
 									{
-										SceneLODUtility.GetDemandedLODs( context, mesh, cameraDistanceMinSquared, cameraDistanceMaxSquared, out lodState );
+										SceneLODUtility.GetDemandedLODs( context, mesh.Result.MeshData, cameraDistanceMinSquared, cameraDistanceMaxSquared, boundingSize, out lodState );
 										meshEmitterLodStates[ particle.Emitter ] = lodState;
 									}
 
@@ -539,7 +559,7 @@ namespace NeoAxis
 										}
 
 										meshItem.CastShadows = compiledEmitter.CastShadows && CastShadows && meshItem.MeshData.CastShadows && shadowVisibilityByDistance;
-										meshItem.LODValue = SceneLODUtility.GetLodValue( lodRange, cameraDistanceMin );
+										meshItem.LODValue = SceneLODUtility.GetLodValue( context, lodRange, cameraDistanceMin );
 										//meshItem.LODRange = lodRange;
 
 
@@ -648,7 +668,7 @@ namespace NeoAxis
 			}
 
 			//display emitters
-			if( mode == GetRenderSceneDataMode.InsideFrustum && ParentScene.GetDisplayDevelopmentDataInThisApplication() && DisplayEmitters )
+			if( mode == GetRenderSceneDataMode.InsideFrustum && context.SceneDisplayDevelopmentDataInThisApplication && DisplayEmitters )
 			{
 				//!!!!if( context2.displayLightsCounter < context2.displayLightsMax )
 
@@ -670,13 +690,13 @@ namespace NeoAxis
 							{
 								ColorValue color;
 								if( emitterSelected || context2.selectedObjects.Contains( shape ) )
-									color = ProjectSettings.Get.General.SelectedColor;
+									color = ProjectSettings.Get.Colors.SelectedColor;
 								else
 								{
 									//!!!!add editor options
 									color = new ColorValue( 0, 0, 0.8 );
 								}
-								viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+								viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 								shape.PerformRender( viewport, tr, false, ref verticesRendered );
 							}
 						}
@@ -736,7 +756,7 @@ namespace NeoAxis
 		{
 			base.OnEnabledInHierarchyChanged();
 
-			if( EnabledInHierarchy )
+			if( EnabledInHierarchyAndIsInstance )
 				CreateData( false );
 			else
 				DestroyData();
@@ -746,12 +766,14 @@ namespace NeoAxis
 		{
 			base.OnUpdate( delta );
 
-			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor && currentParticleSystem != null )
+			if( EngineApp.IsEditor && currentParticleSystem != null )
 			{
 				bool wasUpdated = false;
 
 				float remainingDelta = delta;
-				if( remainingDelta > 0.0001 )
+				if( remainingDelta > 1 )
+					remainingDelta = 1;
+				while( remainingDelta > 0.0001 )
 				{
 					float step = Math.Min( remainingDelta, Time.SimulationDelta );
 					Simulate( step * currentParticleSystem.Owner.SimulationSpeed, out var wasUpdated2 );
@@ -770,11 +792,47 @@ namespace NeoAxis
 		{
 			base.OnSimulationStep();
 
+			//!!!!когда не обновл€ть? за экраном, очень далеко
+
 			if( currentParticleSystem != null )
 			{
-				Simulate( Time.SimulationDelta * currentParticleSystem.Owner.SimulationSpeed, out var wasUpdated );
-				if( wasUpdated )
-					SpaceBoundsUpdate();
+				mergeSimulationStepsCounter--;
+				if( mergeSimulationStepsCounter <= 0 )
+				{
+					var mergeSteps = MergeSimulationSteps.Value;
+					mergeSimulationStepsCounter = mergeSteps;
+					Simulate( Time.SimulationDelta * currentParticleSystem.Owner.SimulationSpeed * mergeSteps, out var wasUpdated );
+					if( wasUpdated )
+						SpaceBoundsUpdate();
+				}
+
+				//Simulate( Time.SimulationDelta * currentParticleSystem.Owner.SimulationSpeed, out var wasUpdated );
+				//if( wasUpdated )
+				//	SpaceBoundsUpdate();
+			}
+		}
+
+		protected override void OnSimulationStepClient()
+		{
+			base.OnSimulationStepClient();
+
+			//!!!!когда не обновл€ть? за экраном, очень далеко
+
+			if( currentParticleSystem != null )
+			{
+				mergeSimulationStepsCounter--;
+				if( mergeSimulationStepsCounter <= 0 )
+				{
+					var mergeSteps = MergeSimulationSteps.Value;
+					mergeSimulationStepsCounter = mergeSteps;
+					Simulate( Time.SimulationDelta * currentParticleSystem.Owner.SimulationSpeed * mergeSteps, out var wasUpdated );
+					if( wasUpdated )
+						SpaceBoundsUpdate();
+				}
+
+				//Simulate( Time.SimulationDelta * currentParticleSystem.Owner.SimulationSpeed, out var wasUpdated );
+				//if( wasUpdated )
+				//	SpaceBoundsUpdate();
 			}
 		}
 
@@ -841,15 +899,15 @@ namespace NeoAxis
 				Emitters = new Emitter[ currentParticleSystem.Emitters.Length ];
 
 			//update emitters
-			if( random == null )
-				random = new FastRandom();
+			if( staticRandom == null )
+				staticRandom = new FastRandom();
 			for( int n = 0; n < Emitters.Length; n++ )
 			{
 				ref var emitter = ref Emitters[ n ];
 				var compiledEmitter = currentParticleSystem.Emitters[ n ];
 
-				emitter.StartTime = compiledEmitter.StartTime.GenerateValue( random );
-				emitter.Duration = compiledEmitter.Duration.GenerateValue( random );
+				emitter.StartTime = compiledEmitter.StartTime.GenerateValue( staticRandom );
+				emitter.Duration = compiledEmitter.Duration.GenerateValue( staticRandom );
 			}
 		}
 
@@ -863,7 +921,7 @@ namespace NeoAxis
 
 		public void RecreateData( bool canSavePreviousState )
 		{
-			if( EnabledInHierarchy )
+			if( EnabledInHierarchyAndIsInstance )
 			{
 				CreateData( canSavePreviousState );
 				SpaceBoundsUpdate();
@@ -956,6 +1014,7 @@ namespace NeoAxis
 				ObjectsSet( pData, data.Length );//, fullRecreateInternalData );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe void/*int[]*/ ObjectsAdd( Particle* data, int count )
 		{
 			RemovedObjectsInit();
@@ -1003,18 +1062,21 @@ namespace NeoAxis
 			//return addedIndexes;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe void/*int[]*/ ObjectsAdd( ArraySegment<Particle> data )
 		{
 			fixed( Particle* pData = data.Array )
 				ObjectsAdd( pData + data.Offset, data.Count );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe void/*int[]*/ ObjectsAdd( Particle[] data )
 		{
 			fixed( Particle* pData = data )
 				ObjectsAdd( pData, data.Length );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe void ObjectsRemove( int* indexes, int count )
 		{
 			RemovedObjectsInit();
@@ -1027,6 +1089,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ObjectsRemove( List<int> indexes )
 		{
 			RemovedObjectsInit();
@@ -1039,28 +1102,33 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe void ObjectsRemove( ArraySegment<int> indexes )
 		{
 			fixed( int* pData = indexes.Array )
 				ObjectsRemove( pData + indexes.Offset, indexes.Count );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe void ObjectsRemove( int[] indexes )
 		{
 			fixed( int* pData = indexes )
 				ObjectsRemove( pData, indexes.Length );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		int ObjectsGetCapacity()
 		{
 			return Objects != null ? Objects.Length : 0;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int ObjectsGetCount()
 		{
 			return ObjectsGetCapacity() - freeObjects.Count;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public List<int> ObjectsGetAll()
 		{
 			int capacity = ObjectsGetCapacity();
@@ -1075,6 +1143,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Particle[] ObjectsGetData( IList<int> indexes )
 		{
 			var result = new Particle[ indexes.Count ];
@@ -1092,6 +1161,7 @@ namespace NeoAxis
 		//	data = ObjectsMesh[ index ];
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ref Particle ObjectGetData( int index )
 		{
 			return ref Objects[ index ];
@@ -1137,12 +1207,13 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		void Simulate( float delta, out bool wasUpdated )
 		{
 			var wasUpdated2 = false;
 
-			if( random == null )
-				random = new FastRandom();
+			if( staticRandom == null )
+				staticRandom = new FastRandom();
 
 			//update playing time
 			if( !playingEnded )
@@ -1177,8 +1248,8 @@ namespace NeoAxis
 								ref var emitter = ref Emitters[ n ];
 								var compiledEmitter = currentParticleSystem.Emitters[ n ];
 
-								emitter.StartTime = compiledEmitter.StartTime.GenerateValue( random );
-								emitter.Duration = compiledEmitter.Duration.GenerateValue( random );
+								emitter.StartTime = compiledEmitter.StartTime.GenerateValue( staticRandom );
+								emitter.Duration = compiledEmitter.Duration.GenerateValue( staticRandom );
 							}
 						}
 					}
@@ -1218,7 +1289,7 @@ namespace NeoAxis
 						//calculate spawn time
 						float spawnTime = 0;
 						{
-							var spawnRate = Math.Abs( compiledEmitter.SpawnRate.GenerateValue( random ) );
+							var spawnRate = Math.Abs( compiledEmitter.SpawnRate.GenerateValue( staticRandom ) );
 							if( spawnRate != 0 )
 								spawnTime = 1.0f / spawnRate;
 						}
@@ -1232,7 +1303,7 @@ namespace NeoAxis
 						//!!!!multithreading
 
 						//emit
-						var spawnCount = compiledEmitter.SpawnCount.GenerateValue( random );
+						var spawnCount = compiledEmitter.SpawnCount.GenerateValue( staticRandom );
 						for( int nSpawn = 0; nSpawn < spawnCount; nSpawn++ )
 						{
 							if( ObjectsGetCount() < currentParticleSystem.Owner.MaxParticles )
@@ -1240,14 +1311,14 @@ namespace NeoAxis
 								var particle = new Particle();
 
 								particle.Emitter = nEmitter;
-								particle.Lifetime = compiledEmitter.Lifetime.GenerateValue( random );
+								particle.Lifetime = compiledEmitter.Lifetime.GenerateValue( staticRandom );
 
-								particle.StartSize = compiledEmitter.Size.GenerateValue( random );
+								particle.StartSize = compiledEmitter.Size.GenerateValue( staticRandom );
 								if( currentParticleSystem.SimulationSpace == NeoAxis.ParticleSystem.SimulationSpaceEnum.World )
 									particle.StartSize *= (float)trScale.MaxComponent();
 								particle.Size = particle.StartSize;
 
-								particle.GravityMultiplier = compiledEmitter.GravityMultiplier.GenerateValue( random );
+								particle.GravityMultiplier = compiledEmitter.GravityMultiplier.GenerateValue( staticRandom );
 
 								//get shape
 								var shapes = compiledEmitter.Shapes;
@@ -1262,7 +1333,7 @@ namespace NeoAxis
 										//var groupProbabilities = stackalloc double[ shapes.Length ];
 										for( int n = 0; n < shapes.Length; n++ )
 											groupProbabilities[ n ] = shapes[ n ].Probability;
-										shapeIndex = RandomUtility.GetRandomIndexByProbabilities( random, new ArraySegment<double>( groupProbabilities, 0, shapes.Length ) );
+										shapeIndex = RandomUtility.GetRandomIndexByProbabilities( staticRandom, new ArraySegment<double>( groupProbabilities, 0, shapes.Length ) );
 										//}
 									}
 									else
@@ -1273,7 +1344,7 @@ namespace NeoAxis
 
 									Vector3 position;
 									{
-										shape.PerformGetLocalPosition( random, out var localPosition );
+										shape.PerformGetLocalPosition( staticRandom, out var localPosition );
 										if( !shapeTransform.IsIdentity )
 											Matrix4.Multiply( ref shapeTransform.ToMatrix4(), ref localPosition, out position );
 										else
@@ -1300,14 +1371,14 @@ namespace NeoAxis
 										{
 											var d = position - shapeTransform.Position;
 											while( d == Vector3.Zero )
-												d = new SphericalDirection( random.Next( Math.PI * 2 ), random.Next( -Math.PI / 2, Math.PI / 2 ) ).GetVector();
+												d = new SphericalDirection( staticRandom.Next( Math.PI * 2 ), staticRandom.Next( -Math.PI / 2, Math.PI / 2 ) ).GetVector();
 											direction = d.ToVector3F().GetNormalize();
 										}
 
-										var dispersionAngle = compiledEmitter.DispersionAngle.GenerateValue( random );
+										var dispersionAngle = compiledEmitter.DispersionAngle.GenerateValue( staticRandom );
 										if( dispersionAngle != 0 )
 										{
-											var axisAngle = random.Next( MathEx.PI * 2 );
+											var axisAngle = staticRandom.Next( MathEx.PI * 2 );
 
 											//!!!!slowly
 
@@ -1318,7 +1389,7 @@ namespace NeoAxis
 											direction = r.GetForward();
 										}
 
-										var speed = compiledEmitter.Speed.GenerateValue( random );
+										var speed = compiledEmitter.Speed.GenerateValue( staticRandom );
 
 										if( currentParticleSystem.SimulationSpace == NeoAxis.ParticleSystem.SimulationSpaceEnum.World )
 											particle.LinearVelocity = trMatrix3F * ( direction.GetNormalize() * speed );
@@ -1348,7 +1419,7 @@ namespace NeoAxis
 											particle.Rotation = Matrix3F.Identity;
 
 										{
-											var rotation = compiledEmitter.Rotation.GenerateValue( random );
+											var rotation = compiledEmitter.Rotation.GenerateValue( staticRandom );
 											if( rotation.X != 0 )
 											{
 												Matrix3F.FromRotateByX( MathEx.DegreeToRadian( rotation.X ), out var m );
@@ -1371,10 +1442,10 @@ namespace NeoAxis
 									}
 
 									//AngularVelocity
-									particle.AngularVelocity = compiledEmitter.AngularVelocity.GenerateValue( random );
+									particle.AngularVelocity = compiledEmitter.AngularVelocity.GenerateValue( staticRandom );
 
 									//Color
-									compiledEmitter.Color.GenerateValue( random, out particle.StartColor );
+									compiledEmitter.Color.GenerateValue( staticRandom, out particle.StartColor );
 									particle.Color = particle.StartColor;
 
 									//add
@@ -1400,7 +1471,7 @@ namespace NeoAxis
 					sceneGravity = scene.Gravity.Value.ToVector3F();
 
 				//!!!!GC
-				List<int> toDelete = null;
+				List<int> toDelete = new List<int>( 32 );
 
 				//!!!!slowly? ObjectsGetAll
 				var allParticles = ObjectsGetAll();
@@ -1428,8 +1499,8 @@ namespace NeoAxis
 						if( particle.Time >= particle.Lifetime )
 						{
 							//delete
-							if( toDelete == null )
-								toDelete = new List<int>( 32 );
+							//if( toDelete == null )
+							//	toDelete = new List<int>( 32 );
 							lock( toDelete )
 								toDelete.Add( particleIndex );
 

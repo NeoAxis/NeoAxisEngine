@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -11,6 +11,9 @@ namespace NeoAxis
 	/// </summary>
 	public class ProjectSettingsPage_ShaderEditor : ProjectSettingsPage
 	{
+		/// <summary>
+		/// Whether to display line numbers.
+		/// </summary>
 		[Category( "Shader Editor" )]
 		[DisplayName( "Display Line Numbers" )]
 		[DefaultValue( false )]
@@ -23,6 +26,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorDisplayLineNumbersChanged;
 		ReferenceField<bool> _shaderEditorDisplayLineNumbers = false;
 
+		/// <summary>
+		/// Whether to wrap words.
+		/// </summary>
 		[Category( "Shader Editor" )]
 		[DisplayName( "Word Wrap" )]
 		[DefaultValue( true )]
@@ -35,6 +41,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorWordWrapChanged;
 		ReferenceField<bool> _shaderEditorWordWrap = true;
 
+		/// <summary>
+		/// The background color for the light theme.
+		/// </summary>
 		[Category( "Shader Editor" )]
 		[DisplayName( "Background Color for Light Theme" )]
 		[DefaultValue( "0.98 0.98 0.98" )]
@@ -61,6 +70,9 @@ namespace NeoAxis
 		//public event Action<ProjectSettingsComponentPage_ShaderEditor> ShaderEditorDefaultTextColorLightThemeChanged;
 		//ReferenceField<ColorValue> _shaderEditorDefaultTextColorLightTheme = new ColorValue( 0.1, 0.1, 0.1 );
 
+		/// <summary>
+		/// The name of the font.
+		/// </summary>
 		[Category( "Shader Editor" )]
 		[DisplayName( "Font" )]
 		[DefaultValue( "Consolas" )]
@@ -73,6 +85,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorFontChanged;
 		ReferenceField<string> _shaderEditorFont = "Consolas";
 
+		/// <summary>
+		/// The size of the font.
+		/// </summary>
 		[Category( "Shader Editor" )]
 		[DisplayName( "Font Size" )]
 		[DefaultValue( 13.0 )]
@@ -86,6 +101,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorFontSizeChanged;
 		ReferenceField<double> _shaderEditorFontSize = 13.0;
 
+		/// <summary>
+		/// The background color for the dark theme.
+		/// </summary>
 		[Category( "Shader Editor" )]
 		[DisplayName( "Background Color for Dark Theme" )]
 		[DefaultValue( "0.1 0.1 0.1" )]
@@ -99,6 +117,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorBackgroundColorDarkThemeChanged;
 		ReferenceField<ColorValue> _shaderEditorBackgroundColorDarkTheme = new ColorValue( 0.1, 0.1, 0.1 );
 
+		/// <summary>
+		/// The background color of selected text for the light theme.
+		/// </summary>
 		[Category( "Shader Editor" )]
 		[DisplayName( "Selection Background for Light Theme" )]
 		[DefaultValue( "0.4 0.6 1" )]
@@ -112,6 +133,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorSelectionBackgroundLightThemeChanged;
 		ReferenceField<ColorValue> _shaderEditorSelectionBackgroundLightTheme = new ColorValue( 0.4, 0.6, 1 );
 
+		/// <summary>
+		/// The foreground color of selected text for the light theme.
+		/// </summary>
 		[Category( "Shader Editor" )]
 		[DisplayName( "Selection Foreground for Light Theme" )]
 		[DefaultValue( "0.1 0.1 0.1" )]
@@ -125,6 +149,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorSelectionForegroundLightThemeChanged;
 		ReferenceField<ColorValue> _shaderEditorSelectionForegroundLightTheme = new ColorValue( 0.1, 0.1, 0.1 );
 
+		/// <summary>
+		/// The background color of selected text for the dark theme.
+		/// </summary>
 		[Category( "Shader Editor" )]
 		[DisplayName( "Selection Background for Dark Theme" )]
 		[DefaultValue( "0.25 0.37 0.62" )]
@@ -138,6 +165,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorSelectionBackgroundDarkThemeChanged;
 		ReferenceField<ColorValue> _shaderEditorSelectionBackgroundDarkTheme = new ColorValue( 0.25, 0.37, 0.62 );
 
+		/// <summary>
+		/// The foreground color of selected text for the dark theme.
+		/// </summary>
 		[Category( "Shader Editor" )]
 		[DisplayName( "Selection Foreground for Dark Theme" )]
 		[DefaultValue( "0.9 0.9 0.9" )]
@@ -151,6 +181,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorSelectionForegroundDarkThemeChanged;
 		ReferenceField<ColorValue> _shaderEditorSelectionForegroundDarkTheme = new ColorValue( 0.9, 0.9, 0.9 );
 
+		/// <summary>
+		/// The background color of search text for the light theme.
+		/// </summary>
 		[Category( "Shader Editor" )]
 		[DisplayName( "Search Background for Light Theme" )]
 		[DefaultValue( "1 0 0" )]
@@ -164,6 +197,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorSearchBackgroundLightThemeChanged;
 		ReferenceField<ColorValue> _shaderEditorSearchBackgroundLightTheme = new ColorValue( 1, 0, 0 );
 
+		/// <summary>
+		/// The background color of search text for the dark theme.
+		/// </summary>
 		[Category( "Shader Editor" )]
 		[DisplayName( "Search Background for Dark Theme" )]
 		[DefaultValue( "0.8 0.16 0.16" )]

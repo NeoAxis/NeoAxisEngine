@@ -1,4 +1,5 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿#if !DEPLOY
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -138,7 +139,8 @@ namespace Project
 							{
 								var toAdd = new List<string>();
 
-								var fileName = Path.Combine( "Assets", VirtualPathUtility.GetVirtualPathByReal( csharpRealFileName ) );
+								var fileName = VirtualPathUtility.GetProjectPathByReal( csharpRealFileName );
+								//var fileName = Path.Combine( "Assets", VirtualPathUtility.GetVirtualPathByReal( csharpRealFileName ) );
 								toAdd.Add( fileName );
 
 								if( CSharpProjectFileUtility.UpdateProjectFile( toAdd, null, out var error ) )
@@ -218,3 +220,4 @@ namespace Project
 		}
 	}
 }
+#endif

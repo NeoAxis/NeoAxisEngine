@@ -65,9 +65,9 @@ float max3(const vec3 v) {
  *
  * @public-api
  */
-vec4 mulMat4x4Float3(const HIGHP mat4 m, const HIGHP vec3 v) {
-    return v.x * m[0] + (v.y * m[1] + (v.z * m[2] + m[3]));
-}
+//vec4 mulMat4x4Float3(const HIGHP mat4 m, const HIGHP vec3 v) {
+//    return v.x * m[0] + (v.y * m[1] + (v.z * m[2] + m[3]));
+//}
 
 /**
  * Multiplies the specified 3-component vector by the 3x3 matrix (m * v) in
@@ -75,30 +75,31 @@ vec4 mulMat4x4Float3(const HIGHP mat4 m, const HIGHP vec3 v) {
  *
  * @public-api
  */
-vec3 mulMat3x3Float3(const HIGHP mat4 m, const HIGHP vec3 v) {
-    return v.x * m[0].xyz + (v.y * m[1].xyz + (v.z * m[2].xyz));
-}
+//vec3 mulMat3x3Float3(const HIGHP mat4 m, const HIGHP vec3 v) {
+//    return v.x * m[0].xyz + (v.y * m[1].xyz + (v.z * m[2].xyz));
+//}
 
 /**
  * Extracts the normal vector of the tangent frame encoded in the specified quaternion.
  */
-void toTangentFrame(const HIGHP vec4 q, out HIGHP vec3 n) {
-    n = vec3( 0.0,  0.0,  1.0) +
-        vec3( 2.0, -2.0, -2.0) * q.x * q.zwx +
-        vec3( 2.0,  2.0, -2.0) * q.y * q.wzy;
-}
+//void toTangentFrame(const HIGHP vec4 q, out HIGHP vec3 n) {
+//    n = vec3( 0.0,  0.0,  1.0) +
+//        vec3( 2.0, -2.0, -2.0) * q.x * q.zwx +
+//        vec3( 2.0,  2.0, -2.0) * q.y * q.wzy;
+//}
 
 /**
  * Extracts the normal and tangent vectors of the tangent frame encoded in the
  * specified quaternion.
  */
-void toTangentFrame(const HIGHP vec4 q, out HIGHP vec3 n, out HIGHP vec3 t) {
-    toTangentFrame(q, n);
-    t = vec3( 1.0,  0.0,  0.0) +
-        vec3(-2.0,  2.0, -2.0) * q.y * q.yxw +
-        vec3(-2.0,  2.0,  2.0) * q.z * q.zwx;
-}
+//void toTangentFrame(const HIGHP vec4 q, out HIGHP vec3 n, out HIGHP vec3 t) {
+//    toTangentFrame(q, n);
+//    t = vec3( 1.0,  0.0,  0.0) +
+//        vec3(-2.0,  2.0, -2.0) * q.y * q.yxw +
+//        vec3(-2.0,  2.0,  2.0) * q.z * q.zwx;
+//}
 
+/*
 vec3 halfPartialTransformVertexUnitQ(const vec3 v, const vec4 q) {
     // this work only for unit-quaternions
     return cross(q.xyz, cross(q.xyz, v) + q.w * v);
@@ -118,3 +119,4 @@ vec3 partialTransformVertexUnitQT(const vec3 v, const vec4 q, const vec3 t) {
     // this work only for unit-quaternions
     return 2.0f * halfPartialTransformVertexUnitQ(v, q) + t;
 }
+*/

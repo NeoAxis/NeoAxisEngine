@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Text;
 using System.Collections.Generic;
@@ -58,38 +58,162 @@ namespace NeoAxis
 
 			internal string GetKey()
 			{
-				var compileArguments = "";
-				if( DefinesOutput != null )
-				{
-					var s = new StringBuilder();
-					foreach( var tuple in DefinesOutput )
-					{
-						s.Append( tuple.Item1 );
-						s.Append( "[#=]" );
-						if( string.IsNullOrEmpty( tuple.Item2 ) )
-							s.Append( "1" );
-						else
-							s.Append( tuple.Item2 );
-						s.Append( "[#R]" );
-					}
-					compileArguments = s.ToString();
-				}
+				//!!!!
+				var builder = new StringBuilder( NamePrefix.Length + SourceFile.Length + 1000 );// + compileArguments.Length + 30 );
 
-				var builder = new StringBuilder( NamePrefix.Length + SourceFile.Length + compileArguments.Length + 30 );
+				switch( Type )
+				{
+				case GpuProgramType.Vertex: builder.Append( "V-" ); break;
+				case GpuProgramType.Fragment: builder.Append( "F-" ); break;
+				case GpuProgramType.Compute: builder.Append( "C-" ); break;
+				}
 				builder.Append( NamePrefix );
 				builder.Append( SourceFile );
-				//builder.Append( entryPoint );
-				builder.Append( Type.ToString() );
-				//keyBuilder.Append( profiles );
-				builder.Append( compileArguments );
-				builder.Append( Optimize.ToString() );
-				//if( replaceStrings != null )
+				builder.Append( '-' );
+				builder.Append( Optimize );
+				builder.Append( '-' );
+
+				if( DefinesOutput != null )
+				{
+
+					//!!!!GC DefinesOutput
+
+					foreach( var tuple in DefinesOutput )
+					{
+						builder.Append( tuple.Item1 );
+						builder.Append( "[#=]" );
+						if( string.IsNullOrEmpty( tuple.Item2 ) )
+							builder.Append( "1" );
+						else
+							builder.Append( tuple.Item2 );
+						builder.Append( "[#R]" );
+					}
+				}
+
+				var result = builder.ToString();
+				return result;
+
+
+				//var compileArguments = "";
+				//if( DefinesOutput != null )
 				//{
-				//	foreach( KeyValuePair<string, string> replaceString in replaceStrings )
-				//		keyBuilder.AppendFormat( "REPLACE{0}{1}", replaceString.Key, replaceString.Value );
+				//	var s = new StringBuilder();
+				//	foreach( var tuple in DefinesOutput )
+				//	{
+				//		s.Append( tuple.Item1 );
+				//		s.Append( "[#=]" );
+				//		if( string.IsNullOrEmpty( tuple.Item2 ) )
+				//			s.Append( "1" );
+				//		else
+				//			s.Append( tuple.Item2 );
+				//		s.Append( "[#R]" );
+				//	}
+				//	compileArguments = s.ToString();
 				//}
 
-				return builder.ToString();
+				//var builder = new StringBuilder( NamePrefix.Length + SourceFile.Length + compileArguments.Length + 30 );
+				//builder.Append( NamePrefix );
+				//builder.Append( SourceFile );
+				////builder.Append( entryPoint );
+				//builder.Append( Type.ToString() );
+				////keyBuilder.Append( profiles );
+				//builder.Append( compileArguments );
+				//builder.Append( Optimize.ToString() );
+				////if( replaceStrings != null )
+				////{
+				////	foreach( KeyValuePair<string, string> replaceString in replaceStrings )
+				////		keyBuilder.AppendFormat( "REPLACE{0}{1}", replaceString.Key, replaceString.Value );
+				////}
+
+				//return builder.ToString();
+			}
+
+			static List<(string, string)> globalDefines;
+
+			List<(string, string)> GetGlobalDefines()
+			{
+				if( globalDefines == null )
+				{
+					var list = new List<(string, string)>();
+
+					switch( RenderingSystem.ShadowTechnique )
+					{
+					case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.Simple:
+						list.Add( ("GLOBAL_SHADOW_TECHNIQUE_SIMPLE", "1") );
+						break;
+					case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.PercentageCloserFiltering4:
+						list.Add( ("GLOBAL_SHADOW_TECHNIQUE_PCF4", "1") );
+						break;
+					case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.PercentageCloserFiltering8:
+						list.Add( ("GLOBAL_SHADOW_TECHNIQUE_PCF8", "1") );
+						break;
+					case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.PercentageCloserFiltering12:
+						list.Add( ("GLOBAL_SHADOW_TECHNIQUE_PCF12", "1") );
+						break;
+					case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.PercentageCloserFiltering16:
+						list.Add( ("GLOBAL_SHADOW_TECHNIQUE_PCF16", "1") );
+						break;
+						//case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.ContactHardening:
+						//	list.Add( ("GLOBAL_SHADOW_TECHNIQUE_CHS", "1") );
+						//	break;
+						//case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.ExponentialVarianceShadowMaps:
+						//	list.Add( ("GLOBAL_SHADOW_TECHNIQUE_EVSM", "1") );
+						//	break;
+					}
+
+					if( RenderingSystem.DebugMode )
+						list.Add( ("GLOBAL_DEBUG_MODE", "1") );
+
+					if( RenderingSystem.LightMask )
+						list.Add( ("GLOBAL_LIGHT_MASK_SUPPORT", "1") );
+
+					list.Add( ("DISPLACEMENT_MAX_STEPS", RenderingSystem.DisplacementMaxSteps.ToString()) );
+
+					if( RenderingSystem.RemoveTextureTiling )
+						list.Add( ("GLOBAL_REMOVE_TEXTURE_TILING", "1") );
+
+					if( RenderingSystem.MotionVector )
+						list.Add( ("GLOBAL_MOTION_VECTOR", "1") );
+
+					//if( RenderingSystem.IndirectLightingFullMode )
+					//	list.Add( ("GLOBAL_INDIRECT_LIGHTING_FULL_MODE", "1") );
+
+					list.Add( ("GLOBAL_CUT_VOLUME_MAX_AMOUNT", RenderingSystem.CutVolumeMaxAmount.ToString()) );
+
+					if( RenderingSystem.FadeByVisibilityDistance )
+						list.Add( ("GLOBAL_FADE_BY_VISIBILITY_DISTANCE", "1") );
+
+					if( RenderingSystem.Fog )
+						list.Add( ("GLOBAL_FOG", "1") );
+
+					if( RenderingSystem.SmoothLOD )
+						list.Add( ("GLOBAL_SMOOTH_LOD", "1") );
+
+					if( RenderingSystem.NormalMapping )
+						list.Add( ("GLOBAL_NORMAL_MAPPING", "1") );
+
+					if( RenderingSystem.SkeletalAnimation )
+						list.Add( ("GLOBAL_SKELETAL_ANIMATION", "1") );
+
+					if( RenderingSystem.VoxelLOD )
+					{
+						list.Add( ("GLOBAL_VOXEL_LOD", "1") );
+						list.Add( ("GLOBAL_VOXEL_LOD_MAX_STEPS", RenderingSystem.VoxelLODMaxSteps.ToString()) );
+					}
+
+					//if( RenderingSystem.VirtualizedGeometry )
+					//{
+					//	list.Add( ("GLOBAL_VIRTUALIZED_GEOMETRY", "1") );
+					//	//list.Add( ("GLOBAL_VIRTUALIZED_GEOMETRY_MAX_STEPS", RenderingSystem.VirtualizedGeometryMaxSteps.ToString()) );
+					//}
+
+					list.Add( ("GLOBAL_MATERIAL_SHADING", ( (int)RenderingSystem.MaterialShading ).ToString()) );
+
+					list.Add( ("SHADOW_TEXTURE_FORMAT_" + RenderingSystem.ShadowTextureFormat.ToString().ToUpper(), "1") );
+
+					globalDefines = list;
+				}
+				return globalDefines;
 			}
 
 			public ICollection<(string, string)> DefinesOutput
@@ -98,73 +222,90 @@ namespace NeoAxis
 				{
 					if( definesOutput == null )
 					{
-						var list = new List<(string, string)>();
+						var list = new List<(string, string)>( 32 );
+
+						//shader type
+						list.Add( (Type.ToString().ToUpper(), "1") );
 
 						//global settings
-						{
-							switch( RenderingSystem.ShadowTechnique )
-							{
-							case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.Simple:
-								list.Add( ("GLOBAL_SHADOW_TECHNIQUE_SIMPLE", "1") );
-								break;
-							case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.PercentageCloserFiltering4:
-								list.Add( ("GLOBAL_SHADOW_TECHNIQUE_PCF4", "1") );
-								break;
-							case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.PercentageCloserFiltering8:
-								list.Add( ("GLOBAL_SHADOW_TECHNIQUE_PCF8", "1") );
-								break;
-							case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.PercentageCloserFiltering12:
-								list.Add( ("GLOBAL_SHADOW_TECHNIQUE_PCF12", "1") );
-								break;
-							case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.PercentageCloserFiltering16:
-								list.Add( ("GLOBAL_SHADOW_TECHNIQUE_PCF16", "1") );
-								break;
-								//case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.ContactHardening:
-								//	list.Add( ("GLOBAL_SHADOW_TECHNIQUE_CHS", "1") );
-								//	break;
-								//case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.ExponentialVarianceShadowMaps:
-								//	list.Add( ("GLOBAL_SHADOW_TECHNIQUE_EVSM", "1") );
-								//	break;
-							}
+						list.AddRange( GetGlobalDefines() );
 
-							if( RenderingSystem.DebugMode )
-								list.Add( ("GLOBAL_DEBUG_MODE", "1") );
+						//{
+						//	switch( RenderingSystem.ShadowTechnique )
+						//	{
+						//	case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.Simple:
+						//		list.Add( ("GLOBAL_SHADOW_TECHNIQUE_SIMPLE", "1") );
+						//		break;
+						//	case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.PercentageCloserFiltering4:
+						//		list.Add( ("GLOBAL_SHADOW_TECHNIQUE_PCF4", "1") );
+						//		break;
+						//	case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.PercentageCloserFiltering8:
+						//		list.Add( ("GLOBAL_SHADOW_TECHNIQUE_PCF8", "1") );
+						//		break;
+						//	case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.PercentageCloserFiltering12:
+						//		list.Add( ("GLOBAL_SHADOW_TECHNIQUE_PCF12", "1") );
+						//		break;
+						//	case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.PercentageCloserFiltering16:
+						//		list.Add( ("GLOBAL_SHADOW_TECHNIQUE_PCF16", "1") );
+						//		break;
+						//		//case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.ContactHardening:
+						//		//	list.Add( ("GLOBAL_SHADOW_TECHNIQUE_CHS", "1") );
+						//		//	break;
+						//		//case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.ExponentialVarianceShadowMaps:
+						//		//	list.Add( ("GLOBAL_SHADOW_TECHNIQUE_EVSM", "1") );
+						//		//	break;
+						//	}
 
-							if( RenderingSystem.LightMask )
-								list.Add( ("GLOBAL_LIGHT_MASK_SUPPORT", "1") );
+						//	if( RenderingSystem.DebugMode )
+						//		list.Add( ("GLOBAL_DEBUG_MODE", "1") );
 
-							list.Add( ("DISPLACEMENT_MAX_STEPS", RenderingSystem.DisplacementMaxSteps.ToString()) );
+						//	if( RenderingSystem.LightMask )
+						//		list.Add( ("GLOBAL_LIGHT_MASK_SUPPORT", "1") );
 
-							if( RenderingSystem.RemoveTextureTiling )
-								list.Add( ("GLOBAL_REMOVE_TEXTURE_TILING", "1") );
+						//	list.Add( ("DISPLACEMENT_MAX_STEPS", RenderingSystem.DisplacementMaxSteps.ToString()) );
 
-							if( RenderingSystem.MotionVector )
-								list.Add( ("GLOBAL_MOTION_VECTOR", "1") );
+						//	if( RenderingSystem.RemoveTextureTiling )
+						//		list.Add( ("GLOBAL_REMOVE_TEXTURE_TILING", "1") );
 
-							list.Add( ("GLOBAL_CUT_VOLUME_MAX_AMOUNT", RenderingSystem.CutVolumeMaxAmount.ToString()) );
+						//	if( RenderingSystem.MotionVector )
+						//		list.Add( ("GLOBAL_MOTION_VECTOR", "1") );
 
-							if( RenderingSystem.FadeByVisibilityDistance )
-								list.Add( ("GLOBAL_FADE_BY_VISIBILITY_DISTANCE", "1") );
+						//	//if( RenderingSystem.IndirectLightingFullMode )
+						//	//	list.Add( ("GLOBAL_INDIRECT_LIGHTING_FULL_MODE", "1") );
 
-							if( RenderingSystem.Fog )
-								list.Add( ("GLOBAL_FOG", "1") );
+						//	list.Add( ("GLOBAL_CUT_VOLUME_MAX_AMOUNT", RenderingSystem.CutVolumeMaxAmount.ToString()) );
 
-							if( RenderingSystem.SmoothLOD )
-								list.Add( ("GLOBAL_SMOOTH_LOD", "1") );
+						//	if( RenderingSystem.FadeByVisibilityDistance )
+						//		list.Add( ("GLOBAL_FADE_BY_VISIBILITY_DISTANCE", "1") );
 
-							if( RenderingSystem.NormalMapping )
-								list.Add( ("GLOBAL_NORMAL_MAPPING", "1") );
+						//	if( RenderingSystem.Fog )
+						//		list.Add( ("GLOBAL_FOG", "1") );
 
-							if( RenderingSystem.SkeletalAnimation )
-								list.Add( ("GLOBAL_SKELETAL_ANIMATION", "1") );
+						//	if( RenderingSystem.SmoothLOD )
+						//		list.Add( ("GLOBAL_SMOOTH_LOD", "1") );
 
-							if( RenderingSystem.BillboardData )
-								list.Add( ("GLOBAL_BILLBOARD_DATA", "1") );
+						//	if( RenderingSystem.NormalMapping )
+						//		list.Add( ("GLOBAL_NORMAL_MAPPING", "1") );
 
-							list.Add( ("GLOBAL_MATERIAL_SHADING", ( (int)RenderingSystem.MaterialShading ).ToString()) );
+						//	if( RenderingSystem.SkeletalAnimation )
+						//		list.Add( ("GLOBAL_SKELETAL_ANIMATION", "1") );
 
-							list.Add( ("SHADOW_TEXTURE_FORMAT_" + RenderingSystem.ShadowTextureFormat.ToString().ToUpper(), "1") );
-						}
+						//	if( RenderingSystem.VoxelLOD )
+						//	{
+						//		list.Add( ("GLOBAL_VOXEL_LOD", "1") );
+						//		list.Add( ("GLOBAL_VOXEL_LOD_MAX_STEPS", RenderingSystem.VoxelLODMaxSteps.ToString()) );
+						//	}
+
+						//	//if( RenderingSystem.VirtualizedGeometry )
+						//	//{
+						//	//	list.Add( ("GLOBAL_VIRTUALIZED_GEOMETRY", "1") );
+						//	//	//list.Add( ("GLOBAL_VIRTUALIZED_GEOMETRY_MAX_STEPS", RenderingSystem.VirtualizedGeometryMaxSteps.ToString()) );
+						//	//}
+
+						//	list.Add( ("GLOBAL_MATERIAL_SHADING", ( (int)RenderingSystem.MaterialShading ).ToString()) );
+
+						//	list.Add( ("SHADOW_TEXTURE_FORMAT_" + RenderingSystem.ShadowTextureFormat.ToString().ToUpper(), "1") );
+						//}
 
 						if( DefinesSource != null )
 							list.AddRange( DefinesSource );

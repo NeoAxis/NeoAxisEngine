@@ -1,0 +1,182 @@
+// Made with NeoAxis Engine 2022.2.
+
+.component NeoAxis.Material
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"69949FA57378478C2A91A3E607DD133F\"><CGD /><WS UN=\"0A72C55BC59143E242B5D40436901DC3\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WS UN=\"9414BA75522F45A818AD7FC5ED034499\" S=\"T,0,50:T,0,50\" D=\"Vertical\"><WC UN=\"E5B519A5E37D4024C189CF0B604DA7DB\" S=\"T,0,50:T,0,580\" NM=\"BarTabGroup\" AR=\"True\" SP=\"69949FA57378478C2A91A3E607DD133F\"><KP UN=\"18FD5490E07D49C440A1E11933C1822D\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"69949FA57378478C2A91A3E607DD133F\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC><WS UN=\"E2A5B5E37D6A4D53F6BA2FF0CAC2C642\" S=\"T,0,50:T,0,257\" D=\"Horizontal\"><WC UN=\"A8AB80230E3E4D06699C5AB106905E97\" S=\"T,0,479:T,0,297\" NM=\"BarTabGroup\" AR=\"True\" SP=\"32F6AD8C5E3642F23C8058F339EA153C\"><KP UN=\"32F6AD8C5E3642F23C8058F339EA153C\" S=\"False\"><CPD ObjPath=\"$Shader graph\\$Node Shader 1\\$Shader\" /></KP></WC><WC UN=\"629992FEDDFA4AD756A83DF3BF897FA1\" S=\"T,0,661:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"E5C85C02FF184549B5A3C3C8F5D4F099\"><KP UN=\"E5C85C02FF184549B5A3C3C8F5D4F099\" S=\"False\"><CPD ObjPath=\"$Shader graph\\$Node Shader 2\\$Shader\" /></KP></WC></WS></WS></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	BlendMode = Masked
+	BaseColor = 0.75 0.75 0.75
+	DepthOffsetMode = LessOrEqual
+	Roughness
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample 1\\$Texture Sample\\R"
+	}
+	Normal
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample 2\\$Texture Sample\\RGBA"
+	}
+	Opacity
+	{
+		GetByReference = "this:$Shader graph\\$Node Shader 1\\$Shader\\__parameter_ReturnValue"
+	}
+	DepthOffset
+	{
+		GetByReference = "this:$Shader graph\\$Node Shader 2\\$Shader\\__parameter_ReturnValue"
+	}
+	.component NeoAxis.FlowGraph
+	{
+		Name = Shader graph
+		EditorScrollPosition = 4.10049020303798 -2.15767964733035
+		EditorZoomIndex = 6
+		Specialization
+		{
+			GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = "Node "
+			Position = 14 -7
+			ControlledObject
+			{
+				GetByReference = "this:..\\.."
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Shader 1
+			Position = -9 2
+			ControlledObject
+			{
+				GetByReference = "this:$Shader"
+			}
+			.component NeoAxis.ShaderScript
+			{
+				Name = Shader
+				Code = "public float Method(vec2 parameter1)\r\n{\r\n\tfloat x = parameter1.x;\r\n\tfloat y = parameter1.y;\r\n\t\r\n\treturn ((y / 5.0) % 1.0) < 0.25 ? 1.0 : 0.0;\t\r\n\t//return (y % 1.0) < 0.5 ? 1.0 : 0.0;\t\r\n}\r\n"
+				__parameter_Parameter1
+				{
+					GetByReference = "this:..\\..\\$Node Invoke Member 1\\$Invoke Member\\__value_Value"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Invoke Member 1
+			Position = -23 2
+			ControlledObject
+			{
+				GetByReference = "this:$Invoke Member"
+			}
+			.component NeoAxis.InvokeMember
+			{
+				Name = Invoke Member
+				Member
+				{
+					GetByReference = "NeoAxis.ShaderConstants|property:TexCoord0"
+				}
+				Exit
+				{
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample 1
+			Position = -9 -19
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Materials\\Basic Library\\Plastic\\Textures\\Plastic004_2K_Roughness.jpg"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample 2
+			Position = -9 -10
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Materials\\Basic Library\\Plastic\\Textures\\Plastic004_2K_Normal.png"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Shader 2
+			Position = -8 9
+			ControlledObject
+			{
+				GetByReference = "this:$Shader"
+			}
+			.component NeoAxis.ShaderScript
+			{
+				Name = Shader
+				Code = "public float Method(vec3 cameraPosition, vec3 worldPosition)\r\n{\r\n\tfloat cameraDistance = length(worldPosition - cameraPosition);  \r\n\tfloat depthOffset = -(0.01 + cameraDistance / 1000.0);\r\n\treturn depthOffset;\r\n}\r\n"
+				__parameter_CameraPosition
+				{
+					GetByReference = "this:..\\..\\$Node Invoke Member 3\\$Invoke Member\\__value_Value"
+				}
+				__parameter_WorldPosition
+				{
+					GetByReference = "this:..\\..\\$Node Invoke Member 2\\$Invoke Member\\__value_Value"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Invoke Member 2
+			Position = -23 12
+			ControlledObject
+			{
+				GetByReference = "this:$Invoke Member"
+			}
+			.component NeoAxis.InvokeMember
+			{
+				Name = Invoke Member
+				Member
+				{
+					GetByReference = "NeoAxis.ShaderConstants|property:FragmentWorldPosition"
+				}
+				Exit
+				{
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Invoke Member 3
+			Position = -23 9
+			ControlledObject
+			{
+				GetByReference = "this:$Invoke Member"
+			}
+			.component NeoAxis.InvokeMember
+			{
+				Name = Invoke Member
+				Member
+				{
+					GetByReference = "NeoAxis.ShaderConstants|property:CameraPosition"
+				}
+				Exit
+				{
+				}
+			}
+		}
+	}
+}

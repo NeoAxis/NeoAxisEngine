@@ -1,4 +1,5 @@
-﻿// *****************************************************************************
+﻿#if !DEPLOY
+// *****************************************************************************
 // 
 //  © Component Factory Pty Ltd 2012. All rights reserved.
 //	The software and associated documentation supplied hereunder are the 
@@ -707,7 +708,7 @@ namespace Internal.ComponentFactory.Krypton.Ribbon
                         _ribbon.KillMinimizedPopup();
 
                     // Give popups a change to cleanup
-                    Application.DoEvents();
+                    NeoAxis.Editor.EditorAPI.ApplicationDoEvents( true );//Application.DoEvents();
 
                     if ( !_ribbon.InDesignMode && !_ribbon.IsDisposed )
                     {
@@ -1088,3 +1089,5 @@ namespace Internal.ComponentFactory.Krypton.Ribbon
         #endregion
     }
 }
+
+#endif

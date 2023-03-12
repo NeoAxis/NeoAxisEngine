@@ -1,8 +1,9 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -34,6 +35,7 @@ namespace NeoAxis
 		/// Constructs a cone with another specified <see cref="ConeF"/> object.
 		/// </summary>
 		/// <param name="source">A specified cone.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ConeF( ConeF source )
 		{
 			Origin = source.Origin;
@@ -47,6 +49,7 @@ namespace NeoAxis
 		/// <param name="origin">The origin.</param>
 		/// <param name="axis">The axis.</param>
 		/// <param name="angle">The angle.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ConeF( Vector3F origin, Vector3F axis, RadianF angle )
 		{
 			this.Origin = origin;
@@ -59,6 +62,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="obj">The object to compare with the current instance of <see cref="ConeF"/>.</param>
 		/// <returns>True if the specified object is equal to the current instance of <see cref="ConeF"/>; otherwise, False.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is ConeF && this == (ConeF)obj );
@@ -68,6 +72,7 @@ namespace NeoAxis
 		/// Returns a hash code for this instance.
 		/// </summary>
 		/// <returns>A hash code for this instance.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return ( Origin.GetHashCode() ^ Axis.GetHashCode() ^ Angle.GetHashCode() );
@@ -79,6 +84,7 @@ namespace NeoAxis
 		/// <param name="v1">The first cone to compare.</param>
 		/// <param name="v2">The second cone to compare.</param>
 		/// <returns>True if the cones are equal; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( ConeF v1, ConeF v2 )
 		{
 			return ( v1.Origin == v2.Origin && v1.Axis == v2.Axis && v1.Angle == v2.Angle );
@@ -90,6 +96,7 @@ namespace NeoAxis
 		/// <param name="v1">The first cone to compare.</param>
 		/// <param name="v2">The second cone to compare.</param>
 		/// <returns>True if the cones are unequal; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( ConeF v1, ConeF v2 )
 		{
 			return ( v1.Origin != v2.Origin || v1.Axis != v2.Axis || v1.Angle != v2.Angle );
@@ -102,6 +109,7 @@ namespace NeoAxis
 		/// <param name="v">The cone to compare.</param>
 		/// <param name="epsilon">The precision value.</param>
 		/// <returns>True if the specified cone is equal to the current instance of <see cref="ConeF"/>; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( ConeF v, float epsilon )
 		{
 			if( !Origin.Equals( ref v.Origin, epsilon ) )
@@ -118,6 +126,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="sphere">The sphere to check.</param>
 		/// <returns>True if the given sphere intersects the current instance of <see cref="ConeF"/>; False otherwise.</returns>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public bool Intersects( SphereF sphere )
 		{
 			float sinAngle = MathEx.Sin( Angle );
@@ -148,6 +157,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="ConeF"/> to the triangle of <see cref="Cone"/> format.
 		/// </summary>
 		/// <returns>The triangle of <see cref="Cone"/> format.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Cone ToCone()
 		{
@@ -167,6 +177,7 @@ namespace NeoAxis
 		/// Implicit conversion from <see cref="ConeF"/> type to <see cref="Cone"/> type for the given value.
 		/// </summary>
 		/// <param name="v">The value to type convert.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator Cone( ConeF v )
 		{
 			return new Cone( v );

@@ -1,6 +1,6 @@
 /*
- * Copyright 2011-2020 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
+ * Copyright 2011-2022 Branimir Karadzic. All rights reserved.
+ * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
 #include "bgfx_p.h"
@@ -17,8 +17,7 @@
 #	endif // BX_PLATFORM_WINRT
 #endif // !BX_PLATFORM_WINDOWS
 
- //!!!!betauser
- //!!!!temp
+//!!!!betauser
 extern char gpuDescription[256];
 
 namespace bgfx
@@ -325,7 +324,6 @@ namespace bgfx
 			_caps.deviceId = (uint16_t)m_adapterDesc.DeviceId;
 
 			//!!!!betauser
-			//!!!!temp
 			wcstombs(gpuDescription, m_adapterDesc.Description, 256);
 		}
 

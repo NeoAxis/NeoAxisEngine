@@ -1,6 +1,7 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -106,11 +107,13 @@ namespace NeoAxis
 			get { return overflow; }
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Complete()
 		{
 			return currentPosition == endPosition && !overflow;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe void ReadBuffer( void* destination, int length )
 		{
 			int newPosition = currentPosition + length;
@@ -137,6 +140,7 @@ namespace NeoAxis
 			currentPosition = newPosition;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ReadBuffer( byte[] destination, int offset, int length )
 		{
 			int newPosition = currentPosition + length;
@@ -166,6 +170,7 @@ namespace NeoAxis
 		//	ReadBuffer( destination, 0, destination.Length );
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool ReadBoolean()
 		{
 			return ReadByte() != 0;
@@ -181,6 +186,7 @@ namespace NeoAxis
 			//return ( value > 0 ? true : false );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public byte ReadByte()
 		{
 			int newPosition = currentPosition + 1;
@@ -227,6 +233,7 @@ namespace NeoAxis
 
 		//public byte ReadSByte( int numberOfBits )
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public short ReadInt16()
 		{
 			unsafe
@@ -249,6 +256,7 @@ namespace NeoAxis
 
 		//public byte ReadInt16( int numberOfBits )
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ushort ReadUInt16()
 		{
 			unsafe
@@ -271,6 +279,7 @@ namespace NeoAxis
 
 		//public byte ReadUInt16( int numberOfBits )
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int ReadInt32()
 		{
 			unsafe
@@ -319,6 +328,7 @@ namespace NeoAxis
 		//	}
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public uint ReadUInt32()
 		{
 			unsafe
@@ -352,6 +362,7 @@ namespace NeoAxis
 		//	return value;
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public long ReadInt64()
 		{
 			unsafe
@@ -375,6 +386,7 @@ namespace NeoAxis
 			//}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ulong ReadUInt64()
 		{
 			unsafe
@@ -432,6 +444,7 @@ namespace NeoAxis
 		//	return (long)ReadUInt64( numberOfBits );
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float ReadSingle()
 		{
 			unsafe
@@ -465,6 +478,7 @@ namespace NeoAxis
 			//return BitConverter.ToSingle( bytes, 0 );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public double ReadDouble()
 		{
 			unsafe
@@ -500,6 +514,7 @@ namespace NeoAxis
 		/// <summary>
 		/// Reads a UInt32 written using WriteVariableUInt32()
 		/// </summary>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public uint ReadVariableUInt32()
 		{
 			if( overflow )
@@ -529,6 +544,7 @@ namespace NeoAxis
 		/// <summary>
 		/// Reads a Int32 written using WriteVariableInt32()
 		/// </summary>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int ReadVariableInt32()
 		{
 			if( overflow )
@@ -561,6 +577,7 @@ namespace NeoAxis
 		/// <summary>
 		/// Reads a UInt64 written using WriteVariableUInt64()
 		/// </summary>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ulong ReadVariableUInt64()
 		{
 			if( overflow )
@@ -660,28 +677,33 @@ namespace NeoAxis
 		//	return (int)( min + rvalue );
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ReadVector2F( out Vector2F result )
 		{
 			result.X = ReadSingle();
 			result.Y = ReadSingle();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector2F ReadVector2F()
 		{
 			return new Vector2F( ReadSingle(), ReadSingle() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ReadRangeF( out RangeF result )
 		{
 			result.Minimum = ReadSingle();
 			result.Maximum = ReadSingle();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public RangeF ReadRangeF()
 		{
 			return new RangeF( ReadSingle(), ReadSingle() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ReadVector3F( out Vector3F result )
 		{
 			result.X = ReadSingle();
@@ -689,11 +711,13 @@ namespace NeoAxis
 			result.Z = ReadSingle();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector3F ReadVector3F()
 		{
 			return new Vector3F( ReadSingle(), ReadSingle(), ReadSingle() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ReadVector4F( out Vector4F result )
 		{
 			result.X = ReadSingle();
@@ -702,11 +726,13 @@ namespace NeoAxis
 			result.W = ReadSingle();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector4F ReadVector4F()
 		{
 			return new Vector4F( ReadSingle(), ReadSingle(), ReadSingle(), ReadSingle() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ReadBoundsF( out BoundsF result )
 		{
 			result.Minimum.X = ReadSingle();
@@ -717,11 +743,13 @@ namespace NeoAxis
 			result.Maximum.Z = ReadSingle();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public BoundsF ReadBoundsF()
 		{
 			return new BoundsF( ReadSingle(), ReadSingle(), ReadSingle(), ReadSingle(), ReadSingle(), ReadSingle() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ReadQuaternionF( out QuaternionF result )
 		{
 			result.X = ReadSingle();
@@ -730,6 +758,7 @@ namespace NeoAxis
 			result.W = ReadSingle();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public QuaternionF ReadQuatertionF()
 		{
 			return new QuaternionF( ReadSingle(), ReadSingle(), ReadSingle(), ReadSingle() );
@@ -744,6 +773,7 @@ namespace NeoAxis
 		//		ReadRangedSingle( -1, 1, bitsPerElement ) );
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ReadColorValue( out ColorValue result )
 		{
 			result.Red = ReadSingle();
@@ -752,33 +782,39 @@ namespace NeoAxis
 			result.Alpha = ReadSingle();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ColorValue ReadColorValue()
 		{
 			return new ColorValue( ReadSingle(), ReadSingle(), ReadSingle(), ReadSingle() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ReadSphericalDirectionF( out SphericalDirectionF result )
 		{
 			result.Horizontal = ReadSingle();
 			result.Vertical = ReadSingle();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public SphericalDirectionF ReadSphericalDirectionF()
 		{
 			return new SphericalDirectionF( ReadSingle(), ReadSingle() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ReadVector2I( out Vector2I result )
 		{
 			result.X = ReadInt32();
 			result.Y = ReadInt32();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector2I ReadVector2I()
 		{
 			return new Vector2I( ReadInt32(), ReadInt32() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ReadVector3I( out Vector3I result )
 		{
 			result.X = ReadInt32();
@@ -786,11 +822,13 @@ namespace NeoAxis
 			result.Z = ReadInt32();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector3I ReadVector3I()
 		{
 			return new Vector3I( ReadInt32(), ReadInt32(), ReadInt32() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ReadVector4I( out Vector4I result )
 		{
 			result.X = ReadInt32();
@@ -799,11 +837,13 @@ namespace NeoAxis
 			result.W = ReadInt32();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector4I ReadVector4I()
 		{
 			return new Vector4I( ReadInt32(), ReadInt32(), ReadInt32(), ReadInt32() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ReadRectangleF( out RectangleF result )
 		{
 			result.Left = ReadSingle();
@@ -812,11 +852,13 @@ namespace NeoAxis
 			result.Bottom = ReadSingle();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public RectangleF ReadRectangleF()
 		{
 			return new RectangleF( ReadSingle(), ReadSingle(), ReadSingle(), ReadSingle() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ReadRectangleI( out RectangleI result )
 		{
 			result.Left = ReadInt32();
@@ -825,21 +867,25 @@ namespace NeoAxis
 			result.Bottom = ReadInt32();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public RectangleI ReadRectangleI()
 		{
 			return new RectangleI( ReadInt32(), ReadInt32(), ReadInt32(), ReadInt32() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public DegreeF ReadDegreeF()
 		{
 			return new DegreeF( ReadSingle() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public RadianF ReadRadianF()
 		{
 			return new RadianF( ReadSingle() );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public string ReadString()
 		{
 			int length = (int)ReadVariableUInt32();
@@ -895,28 +941,33 @@ namespace NeoAxis
 		//	bitPosition += numberOfBits;
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ReadVector2( out Vector2 result )
 		{
 			result.X = ReadDouble();
 			result.Y = ReadDouble();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector2 ReadVector2()
 		{
 			return new Vector2( ReadDouble(), ReadDouble() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ReadRange( out Range result )
 		{
 			result.Minimum = ReadDouble();
 			result.Maximum = ReadDouble();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Range ReadRange()
 		{
 			return new Range( ReadDouble(), ReadDouble() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ReadVector3( out Vector3 result )
 		{
 			result.X = ReadDouble();
@@ -924,11 +975,13 @@ namespace NeoAxis
 			result.Z = ReadDouble();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector3 ReadVector3()
 		{
 			return new Vector3( ReadDouble(), ReadDouble(), ReadDouble() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ReadVector4( out Vector4 result )
 		{
 			result.X = ReadDouble();
@@ -937,11 +990,13 @@ namespace NeoAxis
 			result.W = ReadDouble();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector4 ReadVector4()
 		{
 			return new Vector4( ReadDouble(), ReadDouble(), ReadDouble(), ReadDouble() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ReadBounds( out Bounds result )
 		{
 			result.Minimum.X = ReadDouble();
@@ -952,11 +1007,13 @@ namespace NeoAxis
 			result.Maximum.Z = ReadDouble();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Bounds ReadBounds()
 		{
 			return new Bounds( ReadDouble(), ReadDouble(), ReadDouble(), ReadDouble(), ReadDouble(), ReadDouble() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ReadQuaternion( out Quaternion result )
 		{
 			result.X = ReadDouble();
@@ -965,22 +1022,26 @@ namespace NeoAxis
 			result.W = ReadDouble();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Quaternion ReadQuaternion()
 		{
 			return new Quaternion( ReadDouble(), ReadDouble(), ReadDouble(), ReadDouble() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ReadSphericalDirection( out SphericalDirection result )
 		{
 			result.Horizontal = ReadDouble();
 			result.Vertical = ReadDouble();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public SphericalDirection ReadSphericalDirection()
 		{
 			return new SphericalDirection( ReadDouble(), ReadDouble() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ReadRectangle( out Rectangle result )
 		{
 			result.Left = ReadDouble();
@@ -989,21 +1050,25 @@ namespace NeoAxis
 			result.Bottom = ReadDouble();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Rectangle ReadRectangle()
 		{
 			return new Rectangle( ReadDouble(), ReadDouble(), ReadDouble(), ReadDouble() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Degree ReadDegree()
 		{
 			return new Degree( ReadDouble() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Radian ReadRadian()
 		{
 			return new Radian( ReadDouble() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public DateTime ReadDateTime()
 		{
 			return new DateTime( ReadInt64() );

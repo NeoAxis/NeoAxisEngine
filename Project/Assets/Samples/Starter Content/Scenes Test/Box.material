@@ -1,4 +1,0 @@
-﻿.component NeoAxis.Component_Material
-{
-	BaseTexture{GetByReference = "Samples\\Starter Content\\Scenes Test\\Files\\BoxDiffuse.dds"}
-}

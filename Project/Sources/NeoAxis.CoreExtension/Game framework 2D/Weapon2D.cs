@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -282,6 +282,12 @@ namespace NeoAxis
 				return false;
 
 			SoundPlay( FireSound );
+			if( NetworkIsServer && FireSound.ReferenceOrValueSpecified )
+			{
+				BeginNetworkMessageToEveryone( "FireSound" );
+				EndNetworkMessage();
+			}
+
 			OnFire();
 			Fire?.Invoke( this );
 
@@ -313,6 +319,12 @@ namespace NeoAxis
 
 			SoundPlay( FiringBeginSound );
 
+			if( NetworkIsServer )
+			{
+				BeginNetworkMessageToEveryone( "FiringBegin" );
+				EndNetworkMessage();
+			}
+
 			FiringBeginEvent?.Invoke( this );
 			return true;
 		}
@@ -340,7 +352,15 @@ namespace NeoAxis
 					PerformFire();
 
 				if( firingCurrentTime >= FiringTotalTime )
-					FiringEnd();
+				{
+					if( NetworkIsClient )
+					{
+						BeginNetworkMessageToServer( "FiringEnd" );
+						EndNetworkMessage();
+					}
+					else
+						FiringEnd();
+				}
 			}
 		}
 
@@ -398,8 +418,21 @@ namespace NeoAxis
 					var character = gameMode.ObjectControlledByPlayer.Value as Character2D;
 					if( character != null && character.ItemGetEnabledFirst() == null )
 					{
-						character.ItemTake( this );
-						character.ItemActivate( this );
+						if( NetworkIsClient )
+						{
+							var writer = character.BeginNetworkMessageToServer( "ItemTakeAndActivate" );
+							if( writer != null )
+							{
+								writer.WriteVariableUInt64( (ulong)NetworkID );
+								character.EndNetworkMessage();
+							}
+						}
+						else
+						{
+							character.ItemTake( this );
+							character.ItemActivate( this );
+						}
+
 						return true;
 					}
 				}
@@ -526,7 +559,7 @@ namespace NeoAxis
 					}
 
 					//current state animation
-					if( animation == null && EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+					if( animation == null && EngineApp.IsSimulation )
 					{
 						//animation = FlyAnimation;
 						//autoRewind = true;
@@ -570,5 +603,63 @@ namespace NeoAxis
 			eventAnimationUpdateMethod = null;
 		}
 
+		protected override bool OnReceiveNetworkMessageFromServer( string message, ArrayDataReader reader )
+		{
+			if( !base.OnReceiveNetworkMessageFromServer( message, reader ) )
+				return false;
+
+			if( message == "FireSound" )
+			{
+				if( !reader.Complete() )
+					return false;
+				SoundPlay( FireSound );
+			}
+			else if( message == "FiringBegin" )
+			{
+				if( !reader.Complete() )
+					return false;
+
+				if( FireAnimation.Value != null )
+				{
+					EventAnimationBegin( FireAnimation, delegate ()
+					{
+						EventAnimationBegin( null );
+					} );
+				}
+
+				SoundPlay( FiringBeginSound );
+			}
+
+			return true;
+		}
+
+		protected override bool OnReceiveNetworkMessageFromClient( ServerNetworkService_Components.ClientItem client, string message, ArrayDataReader reader )
+		{
+			if( !base.OnReceiveNetworkMessageFromClient( client, message, reader ) )
+				return false;
+
+			if( Parent != null )
+			{
+				//security check the object is controlled by the player
+				var networkLogic = NetworkLogicUtility.GetNetworkLogic( this );
+				if( networkLogic != null && networkLogic.ServerGetObjectControlledByUser( client.User, true ) == Parent )
+				{
+					if( message == "FiringBegin" )
+					{
+						if( !reader.Complete() )
+							return false;
+						FiringBegin();
+					}
+					else if( message == "FiringEnd" )
+					{
+						if( !reader.Complete() )
+							return false;
+						FiringEnd();
+					}
+				}
+			}
+
+			return true;
+		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿// *****************************************************************************
+﻿#if !DEPLOY
+// *****************************************************************************
 // 
 //  © Component Factory Pty Ltd 2012. All rights reserved.
 //	The software and associated documentation supplied hereunder are the 
@@ -1425,7 +1426,7 @@ namespace Internal.ComponentFactory.Krypton.Docking
                     if (page != null)
                     {
                         // Ensure all docking controls have been layed out before the change is processed
-                        Application.DoEvents();
+                        NeoAxis.Editor.EditorAPI.ApplicationDoEvents( true );//Application.DoEvents();
 
                         CancelUniqueNameEventArgs args = new CancelUniqueNameEventArgs(uniqueName, !page.AreFlagsSet(KryptonPageFlags.DockingAllowAutoHidden));
                         OnPageAutoHiddenRequest(args);
@@ -1486,7 +1487,7 @@ namespace Internal.ComponentFactory.Krypton.Docking
                     if (page != null)
                     {
                         // Ensure all docking controls have been layed out before the change is processed
-                        Application.DoEvents();
+                        NeoAxis.Editor.EditorAPI.ApplicationDoEvents( true );//Application.DoEvents();
 
                         CancelUniqueNameEventArgs args = new CancelUniqueNameEventArgs(uniqueName, !page.AreFlagsSet(KryptonPageFlags.DockingAllowDocked));
                         OnPageDockedRequest(args);
@@ -1552,7 +1553,7 @@ namespace Internal.ComponentFactory.Krypton.Docking
                     if (page != null)
                     {
                         // Ensure all docking controls have been layed out before the change is processed
-                        Application.DoEvents();
+                        NeoAxis.Editor.EditorAPI.ApplicationDoEvents( true );//Application.DoEvents();
 
                         CancelUniqueNameEventArgs args = new CancelUniqueNameEventArgs(uniqueName, !page.AreFlagsSet(KryptonPageFlags.DockingAllowFloating));
                         OnPageFloatingRequest(args);
@@ -1617,7 +1618,7 @@ namespace Internal.ComponentFactory.Krypton.Docking
                     if (page != null)
                     {
                         // Ensure all docking controls have been layed out before the change is processed
-                        Application.DoEvents();
+                        NeoAxis.Editor.EditorAPI.ApplicationDoEvents( true );//Application.DoEvents();
 
                         CancelUniqueNameEventArgs args = new CancelUniqueNameEventArgs(uniqueName, !page.AreFlagsSet(KryptonPageFlags.DockingAllowWorkspace));
                         OnPageWorkspaceRequest(args);
@@ -1679,7 +1680,7 @@ namespace Internal.ComponentFactory.Krypton.Docking
                     if (page != null)
                     {
                         // Ensure all docking controls have been layed out before the change is processed
-                        Application.DoEvents();
+                        NeoAxis.Editor.EditorAPI.ApplicationDoEvents( true );//Application.DoEvents();
 
                         CancelUniqueNameEventArgs args = new CancelUniqueNameEventArgs(uniqueName, !page.AreFlagsSet(KryptonPageFlags.DockingAllowNavigator));
                         OnPageNavigatorRequest(args);
@@ -2948,7 +2949,7 @@ namespace Internal.ComponentFactory.Krypton.Docking
             }
 
             // Alow workspace controls to compact and update based on changes from above
-            Application.DoEvents();
+            NeoAxis.Editor.EditorAPI.ApplicationDoEvents( true );//Application.DoEvents();
             Debug.Assert(!dragManager.FloatingWindow.IsDisposed);
             // Add ourself as a source of drag targets and then begin the dragging process
             dragManager.DragTargetProviders.Add(new DockingDragTargetProvider(this, dragManager.FloatingWindow, pages));
@@ -4215,3 +4216,5 @@ namespace Internal.ComponentFactory.Krypton.Docking
         #endregion
     }
 }
+
+#endif

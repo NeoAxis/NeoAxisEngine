@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #if !NO_EMIT
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
@@ -189,7 +189,15 @@ namespace NeoAxis
 							//CopyToFileAsync( Path.ChangeExtension( assemblyPath, "pdb" ), pdbStream ).ConfigureAwait( false );
 						}
 
-						return Assembly.LoadFrom( writeToDllOptional );
+
+						byte[] pdb = null;
+						var pdbFile = Path.ChangeExtension( writeToDllOptional, ".pdb" );
+						if( File.Exists( pdbFile ) )
+							pdb = File.ReadAllBytes( pdbFile );
+
+						return Assembly.Load( File.ReadAllBytes( writeToDllOptional ), pdb );
+
+						//return Assembly.LoadFrom( writeToDllOptional );
 					}
 				}
 				else

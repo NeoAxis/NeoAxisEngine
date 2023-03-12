@@ -1,9 +1,10 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -15,6 +16,8 @@ namespace NeoAxis
 		internal Scene attachedToScene;
 		internal SoundData sound;
 		internal SoundChannelGroup group;
+		internal double startTime;
+
 		internal Vector3 position;
 		internal Vector3 velocity;
 		internal double pitch = 1;
@@ -76,6 +79,7 @@ namespace NeoAxis
 			this.attachedToScene = attachedToScene;
 			this.sound = sound;
 			this.group = group;
+			startTime = EngineApp.EngineTime;
 
 			//!!!!было
 			//sound.playingCount++;
@@ -86,6 +90,7 @@ namespace NeoAxis
 			//}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Stop()
 		{
 			if( Stopped )
@@ -214,16 +219,19 @@ namespace NeoAxis
 			set { userData = value; }
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool IsTotalPaused()
 		{
 			return pause || group.IsTotalPaused();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public double GetTotalVolume()
 		{
 			return volume * group.GetTotalVolume();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public double GetTotalPitch()
 		{
 			return pitch * group.GetTotalPitch();
@@ -266,6 +274,7 @@ namespace NeoAxis
 			set { rolloffGraph = value; }
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		internal bool IsUsingGroup( SoundChannelGroup group )
 		{
 			SoundChannelGroup g = this.Group;
@@ -278,6 +287,7 @@ namespace NeoAxis
 			return false;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void SetLogarithmicRolloff( double minDistance, double maxDistance, double rolloffFactor )
 		{
 			//!!!!slowly
@@ -308,6 +318,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void SetLinearRolloff( double minDistance, double maxDistance )
 		{
 			if( maxDistance < minDistance )
@@ -319,6 +330,7 @@ namespace NeoAxis
 			rolloffGraph[ 1 ] = new RolloffGraphItem( maxDistance, 0 );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public double GetRolloffFactor()
 		{
 			if( ( sound.Mode & SoundModes.Mode3D ) != 0 )

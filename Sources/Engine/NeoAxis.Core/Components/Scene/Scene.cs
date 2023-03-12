@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,9 +11,12 @@ namespace NeoAxis
 	/// Represents a scene.
 	/// </summary>
 	[ResourceFileExtension( "scene" )]
+#if !DEPLOY
 	[EditorControl( typeof( SceneEditor ) )]
 	//[EditorNewObjectCell( typeof( Scene_NewObjectCell ) )]
 	[NewObjectSettings( typeof( NewObjectSettingsScene ) )]
+	[SettingsCell( typeof( SceneSettingsCell ) )]
+#endif
 	public partial class Scene : Component
 	{
 		static List<Scene> all = new List<Scene>();
@@ -187,38 +190,6 @@ namespace NeoAxis
 		public event Action<Scene> GravityChanged;
 		ReferenceField<Vector3> _gravity = new Vector3( 0, 0, -9.81 );
 
-		//!!!!default
-		/// <summary>
-		/// The number of simulation sub-steps performed by the physics system per one update.
-		/// </summary>
-		[DefaultValue( 2 )]
-		[Serialize]
-		[Category( "Physics" )]
-		public Reference<int> PhysicsSimulationSteps
-		{
-			get { if( _physicsSimulationSteps.BeginGet() ) PhysicsSimulationSteps = _physicsSimulationSteps.Get( this ); return _physicsSimulationSteps.value; }
-			set { if( _physicsSimulationSteps.BeginSet( ref value ) ) { try { PhysicsSimulationStepsChanged?.Invoke( this ); } finally { _physicsSimulationSteps.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="PhysicsSimulationSteps"/> property value changes.</summary>
-		public event Action<Scene> PhysicsSimulationStepsChanged;
-		ReferenceField<int> _physicsSimulationSteps = 2;
-
-		//!!!!default
-		/// <summary>
-		/// The number of iterations performed by the physics system.
-		/// </summary>
-		[DefaultValue( 4 )]// 10 )]
-		[Serialize]
-		[Category( "Physics" )]
-		public Reference<int> PhysicsNumberIterations
-		{
-			get { if( _physicsNumberIterations.BeginGet() ) PhysicsNumberIterations = _physicsNumberIterations.Get( this ); return _physicsNumberIterations.value; }
-			set { if( _physicsNumberIterations.BeginSet( ref value ) ) { try { PhysicsNumberIterationsChanged?.Invoke( this ); } finally { _physicsNumberIterations.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="PhysicsNumberIterations"/> property value changes.</summary>
-		public event Action<Scene> PhysicsNumberIterationsChanged;
-		ReferenceField<int> _physicsNumberIterations = 4;// 10;
-
 		//!!!!в Environment
 
 		/// <summary>
@@ -251,6 +222,482 @@ namespace NeoAxis
 		public event Action<Scene> WindSpeedChanged;
 		ReferenceField<double> _windSpeed = 0.0;
 
+		//!!!!default
+		//!!!!обрабатывать когда переполнение
+		//!!!!update when changed
+		/// <summary>
+		/// The max amount of bodies at the same time in the scene. Reopen the scene to apply changes.
+		/// </summary>
+		[DefaultValue( 100000 )]
+		[Category( "Physics" )]
+		public Reference<int> PhysicsMaxBodies
+		{
+			get { if( _maxBodies.BeginGet() ) PhysicsMaxBodies = _maxBodies.Get( this ); return _maxBodies.value; }
+			set { if( _maxBodies.BeginSet( ref value ) ) { try { MaxBodiesChanged?.Invoke( this ); } finally { _maxBodies.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsMaxBodies"/> property value changes.</summary>
+		public event Action<Scene> MaxBodiesChanged;
+		ReferenceField<int> _maxBodies = 100000;
+
+		/// <summary>
+		/// Whether to enabled advanced settings of the physics world.
+		/// </summary>
+		[DefaultValue( false )]
+		[Category( "Physics" )]
+		public Reference<bool> PhysicsAdvancedSettings
+		{
+			get { if( _physicsAdvancedSettings.BeginGet() ) PhysicsAdvancedSettings = _physicsAdvancedSettings.Get( this ); return _physicsAdvancedSettings.value; }
+			set { if( _physicsAdvancedSettings.BeginSet( ref value ) ) { try { PhysicsAdvancedSettingsChanged?.Invoke( this ); UpdateAdvancedPhysicsSettings(); } finally { _physicsAdvancedSettings.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsAdvancedSettings"/> property value changes.</summary>
+		public event Action<Scene> PhysicsAdvancedSettingsChanged;
+		ReferenceField<bool> _physicsAdvancedSettings = false;
+
+		internal const double physicsDefaultConvexRadiusDefault = 0.05;
+
+		/// <summary>
+		/// In order to speed up the collision detection system, all convex shapes use a convex radius. The provided shape will first be shrunken by the convex radius and then inflated again by the same amount.
+		/// </summary>
+		[DefaultValue( physicsDefaultConvexRadiusDefault )]
+		[Category( "Physics" )]
+		public Reference<double> PhysicsDefaultConvexRadius
+		{
+			get { if( _physicsDefaultConvexRadius.BeginGet() ) PhysicsDefaultConvexRadius = _physicsDefaultConvexRadius.Get( this ); return _physicsDefaultConvexRadius.value; }
+			set { if( _physicsDefaultConvexRadius.BeginSet( ref value ) ) { try { PhysicsDefaultConvexRadiusChanged?.Invoke( this ); } finally { _physicsDefaultConvexRadius.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsDefaultConvexRadius"/> property value changes.</summary>
+		public event Action<Scene> PhysicsDefaultConvexRadiusChanged;
+		ReferenceField<double> _physicsDefaultConvexRadius = physicsDefaultConvexRadiusDefault;
+
+		/// <summary>
+		/// Maximum amount of body pairs to process (anything else will fall through the world), this number should generally be much higher than the max amount of contact points as there will be lots of bodies close that are not actually touching. Set for to auto mode.
+		/// </summary>
+		[DefaultValue( 0 )]
+		[Category( "Physics" )]
+		public Reference<int> PhysicsMaxBodyPairs
+		{
+			get { if( _physicsMaxBodyPairs.BeginGet() ) PhysicsMaxBodyPairs = _physicsMaxBodyPairs.Get( this ); return _physicsMaxBodyPairs.value; }
+			set { if( _physicsMaxBodyPairs.BeginSet( ref value ) ) { try { PhysicsMaxBodyPairsChanged?.Invoke( this ); } finally { _physicsMaxBodyPairs.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsMaxBodyPairs"/> property value changes.</summary>
+		public event Action<Scene> PhysicsMaxBodyPairsChanged;
+		ReferenceField<int> _physicsMaxBodyPairs = 0;
+
+		/// <summary>
+		/// Maximum amount of contact constraints to process (anything else will fall through the world). Set 0 for auto mode.
+		/// </summary>
+		[DefaultValue( 0 )]
+		[Category( "Physics" )]
+		public Reference<int> PhysicsMaxContactConstraints
+		{
+			get { if( _physicsMaxContactConstraints.BeginGet() ) PhysicsMaxContactConstraints = _physicsMaxContactConstraints.Get( this ); return _physicsMaxContactConstraints.value; }
+			set { if( _physicsMaxContactConstraints.BeginSet( ref value ) ) { try { PhysicsMaxContactConstraintsChanged?.Invoke( this ); } finally { _physicsMaxContactConstraints.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsMaxContactConstraints"/> property value changes.</summary>
+		public event Action<Scene> PhysicsMaxContactConstraintsChanged;
+		ReferenceField<int> _physicsMaxContactConstraints = 0;
+
+		/// <summary>
+		/// Size of body pairs array, corresponds to the maximum amount of potential body pairs that can be in flight at any time. Setting this to a low value will use less memory but slow down simulation as threads may run out of narrow phase work. Set 0 for auto mode.
+		/// </summary>
+		[DefaultValue( 0 )]
+		[Category( "Physics" )]
+		public Reference<int> PhysicsMaxInFlightBodyPairs
+		{
+			get { if( _physicsMaxInFlightBodyPairs.BeginGet() ) PhysicsMaxInFlightBodyPairs = _physicsMaxInFlightBodyPairs.Get( this ); return _physicsMaxInFlightBodyPairs.value; }
+			set { if( _physicsMaxInFlightBodyPairs.BeginSet( ref value ) ) { try { PhysicsMaxInFlightBodyPairsChanged?.Invoke( this ); UpdateAdvancedPhysicsSettings(); } finally { _physicsMaxInFlightBodyPairs.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsMaxInFlightBodyPairs"/> property value changes.</summary>
+		public event Action<Scene> PhysicsMaxInFlightBodyPairsChanged;
+		ReferenceField<int> _physicsMaxInFlightBodyPairs = 0;
+
+		/// <summary>
+		/// The amount of collision steps for one update.
+		/// </summary>
+		[DefaultValue( 2 )]
+		[Category( "Physics" )]
+		public Reference<int> PhysicsCollisionSteps
+		{
+			get { if( _physicsCollisionSteps.BeginGet() ) PhysicsCollisionSteps = _physicsCollisionSteps.Get( this ); return _physicsCollisionSteps.value; }
+			set { if( _physicsCollisionSteps.BeginSet( ref value ) ) { try { PhysicsCollisionStepsChanged?.Invoke( this ); } finally { _physicsCollisionSteps.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsCollisionSteps"/> property value changes.</summary>
+		public event Action<Scene> PhysicsCollisionStepsChanged;
+		ReferenceField<int> _physicsCollisionSteps = 2;
+
+		/// <summary>
+		/// The amount of integration sub steps for one update.
+		/// </summary>
+		[DefaultValue( 1 )]
+		[Range( 1, 4 )]
+		[Category( "Physics" )]
+		public Reference<int> PhysicsIntegrationSubSteps
+		{
+			get { if( _physicsIntegrationSubSteps.BeginGet() ) PhysicsIntegrationSubSteps = _physicsIntegrationSubSteps.Get( this ); return _physicsIntegrationSubSteps.value; }
+			set { if( _physicsIntegrationSubSteps.BeginSet( ref value ) ) { try { PhysicsIntegrationSubStepsChanged?.Invoke( this ); } finally { _physicsIntegrationSubSteps.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsIntegrationSubSteps"/> property value changes.</summary>
+		public event Action<Scene> PhysicsIntegrationSubStepsChanged;
+		ReferenceField<int> _physicsIntegrationSubSteps = 1;
+
+		/// <summary>
+		/// How many PhysicsStepListeners to notify in 1 batch.
+		/// </summary>
+		[DefaultValue( 8 )]
+		[Category( "Physics" )]
+		public Reference<int> PhysicsStepListenersBatchSize
+		{
+			get { if( _physicsStepListenersBatchSize.BeginGet() ) PhysicsStepListenersBatchSize = _physicsStepListenersBatchSize.Get( this ); return _physicsStepListenersBatchSize.value; }
+			set { if( _physicsStepListenersBatchSize.BeginSet( ref value ) ) { try { PhysicsStepListenersBatchSizeChanged?.Invoke( this ); UpdateAdvancedPhysicsSettings(); } finally { _physicsStepListenersBatchSize.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsStepListenersBatchSize"/> property value changes.</summary>
+		public event Action<Scene> PhysicsStepListenersBatchSizeChanged;
+		ReferenceField<int> _physicsStepListenersBatchSize = 8;
+
+		/// <summary>
+		/// How many step listener batches are needed before spawning another job. Set to 2147483647 (INT_MAX) if no parallelism is desired.
+		/// </summary>
+		[DefaultValue( 1 )]
+		[Category( "Physics" )]
+		public Reference<int> PhysicsStepListenerBatchesPerJob
+		{
+			get { if( _physicsStepListenerBatchesPerJob.BeginGet() ) PhysicsStepListenerBatchesPerJob = _physicsStepListenerBatchesPerJob.Get( this ); return _physicsStepListenerBatchesPerJob.value; }
+			set { if( _physicsStepListenerBatchesPerJob.BeginSet( ref value ) ) { try { PhysicsStepListenerBatchesPerJobChanged?.Invoke( this ); } finally { _physicsStepListenerBatchesPerJob.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsStepListenerBatchesPerJob"/> property value changes.</summary>
+		public event Action<Scene> PhysicsStepListenerBatchesPerJobChanged;
+		ReferenceField<int> _physicsStepListenerBatchesPerJob = 1;
+
+		/// <summary>
+		/// Baumgarte stabilization factor (how much of the position error to 'fix' in 1 update) (unit: dimensionless, 0 = nothing, 1 = 100%).
+		/// </summary>
+		[DefaultValue( 0.2 )]
+		[Category( "Physics" )]
+		public Reference<double> PhysicsBaumgarte
+		{
+			get { if( _physicsBaumgarte.BeginGet() ) PhysicsBaumgarte = _physicsBaumgarte.Get( this ); return _physicsBaumgarte.value; }
+			set { if( _physicsBaumgarte.BeginSet( ref value ) ) { try { PhysicsBaumgarteChanged?.Invoke( this ); } finally { _physicsBaumgarte.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsBaumgarte"/> property value changes.</summary>
+		public event Action<Scene> PhysicsBaumgarteChanged;
+		ReferenceField<double> _physicsBaumgarte = 0.2;
+
+		/// <summary>
+		/// Radius around objects inside which speculative contact points will be detected (unit: meters).
+		/// </summary>
+		/// <remarks>Note that if this is too big you will get ghost collisions as speculative contacts are based on the closest points during the collision detection step which may not be the actual closest points by the time the two objects hit.</remarks>
+		[DefaultValue( 0.01 )]// 0.02 )]
+		[Category( "Physics" )]
+		public Reference<double> PhysicsSpeculativeContactDistance
+		{
+			get { if( _physicsSpeculativeContactDistance.BeginGet() ) PhysicsSpeculativeContactDistance = _physicsSpeculativeContactDistance.Get( this ); return _physicsSpeculativeContactDistance.value; }
+			set { if( _physicsSpeculativeContactDistance.BeginSet( ref value ) ) { try { PhysicsSpeculativeContactDistanceChanged?.Invoke( this ); } finally { _physicsSpeculativeContactDistance.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsSpeculativeContactDistance"/> property value changes.</summary>
+		public event Action<Scene> PhysicsSpeculativeContactDistanceChanged;
+		ReferenceField<double> _physicsSpeculativeContactDistance = 0.01;//0.02;
+
+		/// <summary>
+		/// How much bodies are allowed to sink into eachother (unit: meters).
+		/// </summary>
+		[DefaultValue( 0.01 )]// 0.02 )]
+		[Category( "Physics" )]
+		public Reference<double> PhysicsPenetrationSlop
+		{
+			get { if( _physicsPenetrationSlop.BeginGet() ) PhysicsPenetrationSlop = _physicsPenetrationSlop.Get( this ); return _physicsPenetrationSlop.value; }
+			set { if( _physicsPenetrationSlop.BeginSet( ref value ) ) { try { PhysicsPenetrationSlopChanged?.Invoke( this ); } finally { _physicsPenetrationSlop.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsPenetrationSlop"/> property value changes.</summary>
+		public event Action<Scene> PhysicsPenetrationSlopChanged;
+		ReferenceField<double> _physicsPenetrationSlop = 0.01;// 0.02;
+
+		/// <summary>
+		/// Fraction of its inner radius a body must move per step to enable casting for the LinearCast motion quality.
+		/// </summary>
+		[DefaultValue( 0.75 )]
+		[Category( "Physics" )]
+		public Reference<double> PhysicsLinearCastThreshold
+		{
+			get { if( _physicsLinearCastThreshold.BeginGet() ) PhysicsLinearCastThreshold = _physicsLinearCastThreshold.Get( this ); return _physicsLinearCastThreshold.value; }
+			set { if( _physicsLinearCastThreshold.BeginSet( ref value ) ) { try { PhysicsLinearCastThresholdChanged?.Invoke( this ); } finally { _physicsLinearCastThreshold.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsLinearCastThreshold"/> property value changes.</summary>
+		public event Action<Scene> PhysicsLinearCastThresholdChanged;
+		ReferenceField<double> _physicsLinearCastThreshold = 0.75;
+
+		/// <summary>
+		/// Fraction of its inner radius a body may penetrate another body for the LinearCast motion quality.
+		/// </summary>
+		[DefaultValue( 0.25 )]
+		[Category( "Physics" )]
+		public Reference<double> PhysicsLinearCastMaxPenetration
+		{
+			get { if( _physicsLinearCastMaxPenetration.BeginGet() ) PhysicsLinearCastMaxPenetration = _physicsLinearCastMaxPenetration.Get( this ); return _physicsLinearCastMaxPenetration.value; }
+			set { if( _physicsLinearCastMaxPenetration.BeginSet( ref value ) ) { try { PhysicsLinearCastMaxPenetrationChanged?.Invoke( this ); } finally { _physicsLinearCastMaxPenetration.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsLinearCastMaxPenetration"/> property value changes.</summary>
+		public event Action<Scene> PhysicsLinearCastMaxPenetrationChanged;
+		ReferenceField<double> _physicsLinearCastMaxPenetration = 0.25;
+
+		/// <summary>
+		/// Max squared distance to use to determine if two points are on the same plane for determining the contact manifold between two shape faces (unit: meter).
+		/// </summary>
+		[DefaultValue( 0.001 )]
+		[Category( "Physics" )]
+		public Reference<double> PhysicsManifoldTolerance
+		{
+			get { if( _physicsManifoldTolerance.BeginGet() ) PhysicsManifoldTolerance = _physicsManifoldTolerance.Get( this ); return _physicsManifoldTolerance.value; }
+			set { if( _physicsManifoldTolerance.BeginSet( ref value ) ) { try { PhysicsManifoldToleranceChanged?.Invoke( this ); } finally { _physicsManifoldTolerance.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsManifoldTolerance"/> property value changes.</summary>
+		public event Action<Scene> PhysicsManifoldToleranceChanged;
+		ReferenceField<double> _physicsManifoldTolerance = 0.001;
+
+		/// <summary>
+		/// Maximum distance to correct in a single iteration when solving position constraints (unit: meters).
+		/// </summary>
+		[DefaultValue( 0.02 )]//0.2 )]
+		[Category( "Physics" )]
+		public Reference<double> PhysicsMaxPenetrationDistance
+		{
+			get { if( _physicsMaxPenetrationDistance.BeginGet() ) PhysicsMaxPenetrationDistance = _physicsMaxPenetrationDistance.Get( this ); return _physicsMaxPenetrationDistance.value; }
+			set { if( _physicsMaxPenetrationDistance.BeginSet( ref value ) ) { try { PhysicsMaxPenetrationDistanceChanged?.Invoke( this ); } finally { _physicsMaxPenetrationDistance.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsMaxPenetrationDistance"/> property value changes.</summary>
+		public event Action<Scene> PhysicsMaxPenetrationDistanceChanged;
+		ReferenceField<double> _physicsMaxPenetrationDistance = 0.02;//0.2;
+
+		/// <summary>
+		/// Maximum relative delta position for body pairs to be able to reuse collision results from last frame (units: meter).
+		/// </summary>
+		[DefaultValue( 0.001 )]
+		[Category( "Physics" )]
+		public Reference<double> PhysicsBodyPairCacheMaxDeltaPosition
+		{
+			get { if( _physicsBodyPairCacheMaxDeltaPosition.BeginGet() ) PhysicsBodyPairCacheMaxDeltaPosition = _physicsBodyPairCacheMaxDeltaPosition.Get( this ); return _physicsBodyPairCacheMaxDeltaPosition.value; }
+			set { if( _physicsBodyPairCacheMaxDeltaPosition.BeginSet( ref value ) ) { try { PhysicsBodyPairCacheMaxDeltaPositionChanged?.Invoke( this ); } finally { _physicsBodyPairCacheMaxDeltaPosition.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsBodyPairCacheMaxDeltaPosition"/> property value changes.</summary>
+		public event Action<Scene> PhysicsBodyPairCacheMaxDeltaPositionChanged;
+		ReferenceField<double> _physicsBodyPairCacheMaxDeltaPosition = 0.001;
+
+		/// <summary>
+		/// Maximum relative delta orientation for body pairs to be able to reuse collision results from last frame, stored as cos(max angle / 2). Default: cos(2 degrees / 2).
+		/// </summary>
+		[DefaultValue( 0.99984769515639123915701155881391 )]
+		[Category( "Physics" )]
+		public Reference<double> PhysicsBodyPairCacheCosMaxDeltaRotationDiv2
+		{
+			get { if( _physicsBodyPairCacheCosMaxDeltaRotationDiv2.BeginGet() ) PhysicsBodyPairCacheCosMaxDeltaRotationDiv2 = _physicsBodyPairCacheCosMaxDeltaRotationDiv2.Get( this ); return _physicsBodyPairCacheCosMaxDeltaRotationDiv2.value; }
+			set { if( _physicsBodyPairCacheCosMaxDeltaRotationDiv2.BeginSet( ref value ) ) { try { PhysicsBodyPairCacheCosMaxDeltaRotationDiv2Changed?.Invoke( this ); } finally { _physicsBodyPairCacheCosMaxDeltaRotationDiv2.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsBodyPairCacheCosMaxDeltaRotationDiv2"/> property value changes.</summary>
+		public event Action<Scene> PhysicsBodyPairCacheCosMaxDeltaRotationDiv2Changed;
+		ReferenceField<double> _physicsBodyPairCacheCosMaxDeltaRotationDiv2 = 0.99984769515639123915701155881391;
+
+		/// <summary>
+		/// Maximum angle between normals that allows manifolds between different sub shapes of the same body pair to be combined. Default: cos(5 degree).
+		/// </summary>
+		[DefaultValue( 0.99619469809174553229501040247389 )]
+		[Category( "Physics" )]
+		public Reference<double> PhysicsContactNormalCosMaxDeltaRotation
+		{
+			get { if( _physicsContactNormalCosMaxDeltaRotation.BeginGet() ) PhysicsContactNormalCosMaxDeltaRotation = _physicsContactNormalCosMaxDeltaRotation.Get( this ); return _physicsContactNormalCosMaxDeltaRotation.value; }
+			set { if( _physicsContactNormalCosMaxDeltaRotation.BeginSet( ref value ) ) { try { PhysicsContactNormalCosMaxDeltaRotationChanged?.Invoke( this ); } finally { _physicsContactNormalCosMaxDeltaRotation.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsContactNormalCosMaxDeltaRotation"/> property value changes.</summary>
+		public event Action<Scene> PhysicsContactNormalCosMaxDeltaRotationChanged;
+		ReferenceField<double> _physicsContactNormalCosMaxDeltaRotation = 0.99619469809174553229501040247389;
+
+		/// <summary>
+		/// Maximum allowed distance between old and new contact point to preserve contact forces for warm start (units: meter).
+		/// </summary>
+		[DefaultValue( 0.01 )]
+		[Category( "Physics" )]
+		public Reference<double> PhysicsContactPointPreserveLambdaMaxDist
+		{
+			get { if( _physicsContactPointPreserveLambdaMaxDist.BeginGet() ) PhysicsContactPointPreserveLambdaMaxDist = _physicsContactPointPreserveLambdaMaxDist.Get( this ); return _physicsContactPointPreserveLambdaMaxDist.value; }
+			set { if( _physicsContactPointPreserveLambdaMaxDist.BeginSet( ref value ) ) { try { PhysicsContactPointPreserveLambdaMaxDistChanged?.Invoke( this ); } finally { _physicsContactPointPreserveLambdaMaxDist.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsContactPointPreserveLambdaMaxDist"/> property value changes.</summary>
+		public event Action<Scene> PhysicsContactPointPreserveLambdaMaxDistChanged;
+		ReferenceField<double> _physicsContactPointPreserveLambdaMaxDist = 0.01;
+
+		/// <summary>
+		/// Number of solver velocity iterations to run. Note that this needs to be >= 2 in order for friction to work (friction is applied using the non-penetration impulse from the previous iteration).
+		/// </summary>
+		[DefaultValue( 10 )]
+		[Category( "Physics" )]
+		public Reference<int> PhysicsNumVelocitySteps
+		{
+			get { if( _physicsNumVelocitySteps.BeginGet() ) PhysicsNumVelocitySteps = _physicsNumVelocitySteps.Get( this ); return _physicsNumVelocitySteps.value; }
+			set { if( _physicsNumVelocitySteps.BeginSet( ref value ) ) { try { PhysicsNumVelocityStepsChanged?.Invoke( this ); } finally { _physicsNumVelocitySteps.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsNumVelocitySteps"/> property value changes.</summary>
+		public event Action<Scene> PhysicsNumVelocityStepsChanged;
+		ReferenceField<int> _physicsNumVelocitySteps = 10;
+
+		/// <summary>
+		/// Number of solver position iterations to run.
+		/// </summary>
+		[DefaultValue( 2 )]
+		[Category( "Physics" )]
+		public Reference<int> PhysicsNumPositionSteps
+		{
+			get { if( _physicsNumPositionSteps.BeginGet() ) PhysicsNumPositionSteps = _physicsNumPositionSteps.Get( this ); return _physicsNumPositionSteps.value; }
+			set { if( _physicsNumPositionSteps.BeginSet( ref value ) ) { try { PhysicsNumPositionStepsChanged?.Invoke( this ); } finally { _physicsNumPositionSteps.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsNumPositionSteps"/> property value changes.</summary>
+		public event Action<Scene> PhysicsNumPositionStepsChanged;
+		ReferenceField<int> _physicsNumPositionSteps = 2;
+
+		/// <summary>
+		/// Minimal velocity needed before a collision can be elastic (unit: m).
+		/// </summary>
+		[DefaultValue( 1.0 )]
+		[Category( "Physics" )]
+		public Reference<double> PhysicsMinVelocityForRestitution
+		{
+			get { if( _physicsMinVelocityForRestitution.BeginGet() ) PhysicsMinVelocityForRestitution = _physicsMinVelocityForRestitution.Get( this ); return _physicsMinVelocityForRestitution.value; }
+			set { if( _physicsMinVelocityForRestitution.BeginSet( ref value ) ) { try { PhysicsMinVelocityForRestitutionChanged?.Invoke( this ); } finally { _physicsMinVelocityForRestitution.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsMinVelocityForRestitution"/> property value changes.</summary>
+		public event Action<Scene> PhysicsMinVelocityForRestitutionChanged;
+		ReferenceField<double> _physicsMinVelocityForRestitution = 1.0;
+
+		/// <summary>
+		/// Time before object is allowed to go to sleep (unit: seconds).
+		/// </summary>
+		[DefaultValue( 0.5 )]
+		[Category( "Physics" )]
+		public Reference<double> PhysicsTimeBeforeSleep
+		{
+			get { if( _physicsTimeBeforeSleep.BeginGet() ) PhysicsTimeBeforeSleep = _physicsTimeBeforeSleep.Get( this ); return _physicsTimeBeforeSleep.value; }
+			set { if( _physicsTimeBeforeSleep.BeginSet( ref value ) ) { try { PhysicsTimeBeforeSleepChanged?.Invoke( this ); } finally { _physicsTimeBeforeSleep.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsTimeBeforeSleep"/> property value changes.</summary>
+		public event Action<Scene> PhysicsTimeBeforeSleepChanged;
+		ReferenceField<double> _physicsTimeBeforeSleep = 0.5;
+
+		/// <summary>
+		/// Velocity of points on bounding box of object below which an object can be considered sleeping (unit: m/s).
+		/// </summary>
+		[DefaultValue( 0.01 )]// 0.03 )]
+		[Category( "Physics" )]
+		public Reference<double> PhysicsPointVelocitySleepThreshold
+		{
+			get { if( _physicsPointVelocitySleepThreshold.BeginGet() ) PhysicsPointVelocitySleepThreshold = _physicsPointVelocitySleepThreshold.Get( this ); return _physicsPointVelocitySleepThreshold.value; }
+			set { if( _physicsPointVelocitySleepThreshold.BeginSet( ref value ) ) { try { PhysicsPointVelocitySleepThresholdChanged?.Invoke( this ); } finally { _physicsPointVelocitySleepThreshold.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsPointVelocitySleepThreshold"/> property value changes.</summary>
+		public event Action<Scene> PhysicsPointVelocitySleepThresholdChanged;
+		ReferenceField<double> _physicsPointVelocitySleepThreshold = 0.01;//0.03;
+
+		/// <summary>
+		/// Whether or not to use warm starting for constraints (initially applying previous frames impulses).
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Physics" )]
+		public Reference<bool> PhysicsConstraintWarmStart
+		{
+			get { if( _physicsConstraintWarmStart.BeginGet() ) PhysicsConstraintWarmStart = _physicsConstraintWarmStart.Get( this ); return _physicsConstraintWarmStart.value; }
+			set { if( _physicsConstraintWarmStart.BeginSet( ref value ) ) { try { PhysicsConstraintWarmStartChanged?.Invoke( this ); } finally { _physicsConstraintWarmStart.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsConstraintWarmStart"/> property value changes.</summary>
+		public event Action<Scene> PhysicsConstraintWarmStartChanged;
+		ReferenceField<bool> _physicsConstraintWarmStart = true;
+
+		/// <summary>
+		/// Whether or not to use the body pair cache, which removes the need for narrow phase collision detection when orientation between two bodies didn't change.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Physics" )]
+		public Reference<bool> PhysicsUseBodyPairContactCache
+		{
+			get { if( _physicsUseBodyPairContactCache.BeginGet() ) PhysicsUseBodyPairContactCache = _physicsUseBodyPairContactCache.Get( this ); return _physicsUseBodyPairContactCache.value; }
+			set { if( _physicsUseBodyPairContactCache.BeginSet( ref value ) ) { try { PhysicsUseBodyPairContactCacheChanged?.Invoke( this ); } finally { _physicsUseBodyPairContactCache.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsUseBodyPairContactCache"/> property value changes.</summary>
+		public event Action<Scene> PhysicsUseBodyPairContactCacheChanged;
+		ReferenceField<bool> _physicsUseBodyPairContactCache = true;
+
+		/// <summary>
+		/// Whether or not to reduce manifolds with similar contact normals into one contact manifold.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Physics" )]
+		public Reference<bool> PhysicsUseManifoldReduction
+		{
+			get { if( _physicsUseManifoldReduction.BeginGet() ) PhysicsUseManifoldReduction = _physicsUseManifoldReduction.Get( this ); return _physicsUseManifoldReduction.value; }
+			set { if( _physicsUseManifoldReduction.BeginSet( ref value ) ) { try { PhysicsUseManifoldReductionChanged?.Invoke( this ); } finally { _physicsUseManifoldReduction.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsUseManifoldReduction"/> property value changes.</summary>
+		public event Action<Scene> PhysicsUseManifoldReductionChanged;
+		ReferenceField<bool> _physicsUseManifoldReduction = true;
+
+		/// <summary>
+		/// If objects can go to sleep or not.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Physics" )]
+		public Reference<bool> PhysicsAllowSleeping
+		{
+			get { if( _physicsAllowSleeping.BeginGet() ) PhysicsAllowSleeping = _physicsAllowSleeping.Get( this ); return _physicsAllowSleeping.value; }
+			set { if( _physicsAllowSleeping.BeginSet( ref value ) ) { try { PhysicsAllowSleepingChanged?.Invoke( this ); } finally { _physicsAllowSleeping.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsAllowSleeping"/> property value changes.</summary>
+		public event Action<Scene> PhysicsAllowSleepingChanged;
+		ReferenceField<bool> _physicsAllowSleeping = true;
+
+		/// <summary>
+		/// When false, we prevent collision against non-active (shared) edges. Mainly for debugging the algorithm.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Physics" )]
+		public Reference<bool> PhysicsCheckActiveEdges
+		{
+			get { if( _physicsCheckActiveEdges.BeginGet() ) PhysicsCheckActiveEdges = _physicsCheckActiveEdges.Get( this ); return _physicsCheckActiveEdges.value; }
+			set { if( _physicsCheckActiveEdges.BeginSet( ref value ) ) { try { PhysicsCheckActiveEdgesChanged?.Invoke( this ); } finally { _physicsCheckActiveEdges.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsCheckActiveEdges"/> property value changes.</summary>
+		public event Action<Scene> PhysicsCheckActiveEdgesChanged;
+		ReferenceField<bool> _physicsCheckActiveEdges = true;
+
+
+		////!!!!default
+		///// <summary>
+		///// The number of simulation sub-steps performed by the physics system per one update.
+		///// </summary>
+		//[DefaultValue( 2 )]
+		//[Serialize]
+		//[Category( "Physics" )]
+		//public Reference<int> PhysicsSimulationSteps
+		//{
+		//	get { if( _physicsSimulationSteps.BeginGet() ) PhysicsSimulationSteps = _physicsSimulationSteps.Get( this ); return _physicsSimulationSteps.value; }
+		//	set { if( _physicsSimulationSteps.BeginSet( ref value ) ) { try { PhysicsSimulationStepsChanged?.Invoke( this ); } finally { _physicsSimulationSteps.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="PhysicsSimulationSteps"/> property value changes.</summary>
+		//public event Action<Scene> PhysicsSimulationStepsChanged;
+		//ReferenceField<int> _physicsSimulationSteps = 2;
+
+		////!!!!default
+		///// <summary>
+		///// The number of iterations performed by the physics system.
+		///// </summary>
+		//[DefaultValue( 4 )]// 10 )]
+		//[Serialize]
+		//[Category( "Physics" )]
+		//public Reference<int> PhysicsNumberIterations
+		//{
+		//	get { if( _physicsNumberIterations.BeginGet() ) PhysicsNumberIterations = _physicsNumberIterations.Get( this ); return _physicsNumberIterations.value; }
+		//	set { if( _physicsNumberIterations.BeginSet( ref value ) ) { try { PhysicsNumberIterationsChanged?.Invoke( this ); } finally { _physicsNumberIterations.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="PhysicsNumberIterations"/> property value changes.</summary>
+		//public event Action<Scene> PhysicsNumberIterationsChanged;
+		//ReferenceField<int> _physicsNumberIterations = 4;// 10;
+
+		///////////////////////////////////////////////
+
 		/// <summary>
 		/// The gravity applied on the 2D physical objects.
 		/// </summary>
@@ -279,7 +726,7 @@ namespace NeoAxis
 		public event Action<Scene> Gravity2DChanged;
 		ReferenceField<Vector2> _gravity2D = new Vector2( 0, -9.81 );
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////
 
 		/// <summary>
 		/// Specifies background sound of the scene. Usually it is a music.
@@ -452,33 +899,6 @@ namespace NeoAxis
 		ReferenceField<double> _precipitation = 0.0;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-		//!!!!name
-		//!!!!заюзать
-		////DrawWireframe
-		//ReferenceField<bool> _drawWireframe;
-		//[Serialize]
-		//[DefaultValue( false )]
-		//[Category( "Debug" )]
-		//public Reference<bool> DrawWireframe
-		//{
-		//	get
-		//	{
-		//		if( _drawWireframe.BeginGet() )
-		//			DrawWireframe = _drawWireframe.Get( this );
-		//		return _drawWireframe.value;
-		//	}
-		//	set
-		//	{
-		//		if( _drawWireframe.BeginSet( ref value ) )
-		//		{
-		//			try { DrawWireframeChanged?.Invoke( this ); }
-		//			finally { _drawWireframe.EndSet(); }
-		//		}
-		//	}
-		//}
-		//public event Action<Scene> DrawWireframeChanged;
 
 		/// <summary>
 		/// Whether to show development data in the editor.
@@ -894,7 +1314,7 @@ namespace NeoAxis
 					try
 					{
 						OctreeEnabledChanged?.Invoke( this );
-						OctreeUpdate( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor );
+						OctreeUpdate( true );// EngineApp.IsEditor );
 					}
 					finally { _octreeEnabled.EndSet(); }
 				}
@@ -904,11 +1324,11 @@ namespace NeoAxis
 		public event Action<Scene> OctreeEnabledChanged;
 
 		//OctreeObjectCountOutsideOctreeToRebuld
-		ReferenceField<int> _octreeObjectCountOutsideOctreeToRebuld = 30;
+		ReferenceField<int> _octreeObjectCountOutsideOctreeToRebuld = 50;
 		/// <summary>
 		/// The number of objects to rebuild outside the octree.
 		/// </summary>
-		[DefaultValue( 30 )]
+		[DefaultValue( 50 )]
 		[Serialize]
 		[Category( "Octree" )]
 		public Reference<int> OctreeObjectCountOutsideOctreeToRebuld
@@ -928,7 +1348,7 @@ namespace NeoAxis
 					try
 					{
 						OctreeObjectCountOutsideOctreeToRebuldChanged?.Invoke( this );
-						OctreeUpdate( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor );
+						OctreeUpdate( true );// EngineApp.IsEditor );
 					}
 					finally { _octreeObjectCountOutsideOctreeToRebuld.EndSet(); }
 				}
@@ -938,11 +1358,11 @@ namespace NeoAxis
 		public event Action<Scene> OctreeObjectCountOutsideOctreeToRebuldChanged;
 
 		//OctreeBoundsRebuildExpand
-		ReferenceField<Vector3> _octreeBoundsRebuildExpand = new Vector3( 50, 50, 50 );
+		ReferenceField<Vector3> _octreeBoundsRebuildExpand = new Vector3( 100, 100, 100 );
 		/// <summary>
 		/// The expand vector of the octree bounds.
 		/// </summary>
-		[DefaultValue( "50 50 50" )]
+		[DefaultValue( "100 100 100" )]
 		[Serialize]
 		[Category( "Octree" )]
 		public Reference<Vector3> OctreeBoundsRebuildExpand
@@ -968,7 +1388,7 @@ namespace NeoAxis
 					try
 					{
 						OctreeBoundsRebuildExpandChanged?.Invoke( this );
-						OctreeUpdate( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor );
+						OctreeUpdate( true );// EngineApp.IsEditor );
 					}
 					finally { _octreeBoundsRebuildExpand.EndSet(); }
 				}
@@ -1008,7 +1428,7 @@ namespace NeoAxis
 					try
 					{
 						OctreeMinNodeSizeChanged?.Invoke( this );
-						OctreeUpdate( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor );
+						OctreeUpdate( true );// EngineApp.IsEditor );
 					}
 					finally { _octreeMinNodeSize.EndSet(); }
 				}
@@ -1018,11 +1438,11 @@ namespace NeoAxis
 		public event Action<Scene> OctreeMinNodeSizeChanged;
 
 		//OctreeObjectCountToCreateChildNodes
-		ReferenceField<int> _octreeObjectCountToCreateChildNodes = 10;
+		ReferenceField<int> _octreeObjectCountToCreateChildNodes = 50;
 		/// <summary>
 		/// The number of objects needed to create child nodes.
 		/// </summary>
-		[DefaultValue( 10 )]
+		[DefaultValue( 50 )]
 		[Serialize]
 		[Category( "Octree" )]
 		public Reference<int> OctreeObjectCountToCreateChildNodes
@@ -1042,7 +1462,7 @@ namespace NeoAxis
 					try
 					{
 						OctreeObjectCountToCreateChildNodesChanged?.Invoke( this );
-						OctreeUpdate( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor );
+						OctreeUpdate( true );// EngineApp.IsEditor );
 					}
 					finally { _octreeObjectCountToCreateChildNodes.EndSet(); }
 				}
@@ -1052,11 +1472,11 @@ namespace NeoAxis
 		public event Action<Scene> OctreeObjectCountToCreateChildNodesChanged;
 
 		//OctreeMaxNodeCount
-		ReferenceField<int> _octreeMaxNodeCount = 300000;
+		ReferenceField<int> _octreeMaxNodeCount = 100000;
 		/// <summary>
 		/// The maximum number of nodes created by the octree.
 		/// </summary>
-		[DefaultValue( 300000 )]
+		[DefaultValue( 100000 )]
 		[Serialize]
 		[Category( "Octree" )]
 		public Reference<int> OctreeMaxNodeCount
@@ -1076,7 +1496,7 @@ namespace NeoAxis
 					try
 					{
 						OctreeMaxNodeCountChanged?.Invoke( this );
-						OctreeUpdate( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor );
+						OctreeUpdate( true );// EngineApp.IsEditor );
 					}
 					finally { _octreeMaxNodeCount.EndSet(); }
 				}
@@ -1085,33 +1505,90 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="OctreeMaxNodeCount"/> property value changes.</summary>
 		public event Action<Scene> OctreeMaxNodeCountChanged;
 
-		//DisplayPhysicsInternal
-		ReferenceField<bool> _displayPhysicsInternal;
-		/// <summary>
-		/// Whether to display the internal physics data.
-		/// </summary>
-		[Serialize]
-		[DefaultValue( false )]
-		[Category( "Debug" )]
-		public Reference<bool> DisplayPhysicsInternal
+		//!!!!default
+		[Category( "Octree" )]
+		[DefaultValue( OctreeContainer.ThreadingModeEnum.SingleThreaded )]//BackgroundThread )]
+		public Reference<OctreeContainer.ThreadingModeEnum> OctreeThreadingMode
 		{
-			get
-			{
-				if( _displayPhysicsInternal.BeginGet() )
-					DisplayPhysicsInternal = _displayPhysicsInternal.Get( this );
-				return _displayPhysicsInternal.value;
-			}
+			get { if( _octreeThreadingMode.BeginGet() ) OctreeThreadingMode = _octreeThreadingMode.Get( this ); return _octreeThreadingMode.value; }
 			set
 			{
-				if( _displayPhysicsInternal.BeginSet( ref value ) )
+				if( _octreeThreadingMode.BeginSet( ref value ) )
 				{
-					try { DisplayPhysicsInternalChanged?.Invoke( this ); }
-					finally { _displayPhysicsInternal.EndSet(); }
+					try
+					{
+						OctreeThreadingModeChanged?.Invoke( this );
+						OctreeUpdate( true );// EngineApp.IsEditor );
+					}
+					finally { _octreeThreadingMode.EndSet(); }
 				}
 			}
 		}
-		/// <summary>Occurs when the <see cref="DisplayPhysicsInternal"/> property value changes.</summary>
-		public event Action<Scene> DisplayPhysicsInternalChanged;
+		/// <summary>Occurs when the <see cref="OctreeThreadingMode"/> property value changes.</summary>
+		public event Action<Scene> OctreeThreadingModeChanged;
+		ReferenceField<OctreeContainer.ThreadingModeEnum> _octreeThreadingMode = OctreeContainer.ThreadingModeEnum.SingleThreaded;//BackgroundThread;
+
+		[Category( "MeshInSpace Static Mode" )]
+		[DefaultValue( "150 150 10000" )]
+		public Reference<Vector3> MeshInSpaceStaticModeSectorSize
+		{
+			get { if( _meshInSpaceStaticModeSectorSize.BeginGet() ) MeshInSpaceStaticModeSectorSize = _meshInSpaceStaticModeSectorSize.Get( this ); return _meshInSpaceStaticModeSectorSize.value; }
+			set
+			{
+				if( _meshInSpaceStaticModeSectorSize.BeginSet( ref value ) )
+				{
+					try
+					{
+						MeshInSpaceStaticModeSectorSizeChanged?.Invoke( this );
+
+						GroupOfObjectsUtility.UpdateGroupOfObjects( this, "__GroupOfObjectsMeshInSpaceStatic", MeshInSpaceStaticModeSectorSize, MeshInSpaceStaticModeMaxObjectsInGroup );
+					}
+					finally { _meshInSpaceStaticModeSectorSize.EndSet(); }
+				}
+			}
+		}
+		/// <summary>Occurs when the <see cref="MeshInSpaceStaticModeSectorSize"/> property value changes.</summary>
+		public event Action<Scene> MeshInSpaceStaticModeSectorSizeChanged;
+		ReferenceField<Vector3> _meshInSpaceStaticModeSectorSize = new Vector3( 150, 150, 10000 );
+
+		[Category( "MeshInSpace Static Mode" )]
+		[DefaultValue( 1000 )]
+		public Reference<int> MeshInSpaceStaticModeMaxObjectsInGroup
+		{
+			get { if( _meshInSpaceStaticModeMaxObjectsInGroup.BeginGet() ) MeshInSpaceStaticModeMaxObjectsInGroup = _meshInSpaceStaticModeMaxObjectsInGroup.Get( this ); return _meshInSpaceStaticModeMaxObjectsInGroup.value; }
+			set
+			{
+				if( _meshInSpaceStaticModeMaxObjectsInGroup.BeginSet( ref value ) )
+				{
+					try
+					{
+						MeshInSpaceStaticModeMaxObjectsInGroupChanged?.Invoke( this );
+
+						GroupOfObjectsUtility.UpdateGroupOfObjects( this, "__GroupOfObjectsMeshInSpaceStatic", MeshInSpaceStaticModeSectorSize, MeshInSpaceStaticModeMaxObjectsInGroup );
+					}
+					finally { _meshInSpaceStaticModeMaxObjectsInGroup.EndSet(); }
+				}
+			}
+		}
+		/// <summary>Occurs when the <see cref="MeshInSpaceStaticModeMaxObjectsInGroup"/> property value changes.</summary>
+		public event Action<Scene> MeshInSpaceStaticModeMaxObjectsInGroupChanged;
+		ReferenceField<int> _meshInSpaceStaticModeMaxObjectsInGroup = 1000;
+
+
+
+		///// <summary>
+		///// Whether to display the internal physics data.
+		///// </summary>
+		//[DefaultValue( false )]
+		//[Category( "Debug" )]
+		//public Reference<bool> DisplayPhysicsInternal
+		//{
+		//	get { if( _displayPhysicsInternal.BeginGet() ) DisplayPhysicsInternal = _displayPhysicsInternal.Get( this ); return _displayPhysicsInternal.value; }
+		//	set { if( _displayPhysicsInternal.BeginSet( ref value ) ) { try { DisplayPhysicsInternalChanged?.Invoke( this ); } finally { _displayPhysicsInternal.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="DisplayPhysicsInternal"/> property value changes.</summary>
+		//public event Action<Scene> DisplayPhysicsInternalChanged;
+		//ReferenceField<bool> _displayPhysicsInternal;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1128,7 +1605,41 @@ namespace NeoAxis
 				case nameof( OctreeMinNodeSize ):
 				case nameof( OctreeObjectCountToCreateChildNodes ):
 				case nameof( OctreeMaxNodeCount ):
+				case nameof( OctreeThreadingMode ):
 					if( !OctreeEnabled )
+						skip = true;
+					break;
+
+				case nameof( PhysicsDefaultConvexRadius ):
+				case nameof( PhysicsMaxBodyPairs ):
+				case nameof( PhysicsMaxContactConstraints ):
+				case nameof( PhysicsCollisionSteps ):
+				case nameof( PhysicsIntegrationSubSteps ):
+				case nameof( PhysicsMaxInFlightBodyPairs ):
+				case nameof( PhysicsStepListenersBatchSize ):
+				case nameof( PhysicsStepListenerBatchesPerJob ):
+				case nameof( PhysicsBaumgarte ):
+				case nameof( PhysicsSpeculativeContactDistance ):
+				case nameof( PhysicsPenetrationSlop ):
+				case nameof( PhysicsLinearCastThreshold ):
+				case nameof( PhysicsLinearCastMaxPenetration ):
+				case nameof( PhysicsManifoldTolerance ):
+				case nameof( PhysicsMaxPenetrationDistance ):
+				case nameof( PhysicsBodyPairCacheMaxDeltaPosition ):
+				case nameof( PhysicsBodyPairCacheCosMaxDeltaRotationDiv2 ):
+				case nameof( PhysicsContactNormalCosMaxDeltaRotation ):
+				case nameof( PhysicsContactPointPreserveLambdaMaxDist ):
+				case nameof( PhysicsNumVelocitySteps ):
+				case nameof( PhysicsNumPositionSteps ):
+				case nameof( PhysicsMinVelocityForRestitution ):
+				case nameof( PhysicsTimeBeforeSleep ):
+				case nameof( PhysicsPointVelocitySleepThreshold ):
+				case nameof( PhysicsConstraintWarmStart ):
+				case nameof( PhysicsUseBodyPairContactCache ):
+				case nameof( PhysicsUseManifoldReduction ):
+				case nameof( PhysicsAllowSleeping ):
+				case nameof( PhysicsCheckActiveEdges ):
+					if( !PhysicsAdvancedSettings )
 						skip = true;
 					break;
 				}
@@ -1960,34 +2471,36 @@ namespace NeoAxis
 		//	get { return lastRenderTimeStep; }
 		//}
 
-		internal override void OnEnabledInHierarchyChanged_Before()
+		internal override void OnEnabledInHierarchyChangedBefore()
 		{
-			base.OnEnabledInHierarchyChanged_Before();
+			base.OnEnabledInHierarchyChangedBefore();
 
-			if( EnabledInHierarchy )
+			if( EnabledInHierarchyAndIsInstance )
 			{
-				var ins = ComponentUtility.GetResourceInstanceByComponent( this );
-				var isResource = ins != null && ins.InstanceType == Resource.InstanceType.Resource;
-
-				if( !isResource )
-				{
-					lock( allInstancesEnabled )
-						allInstancesEnabled.Add( this );
-				}
+				lock( allInstancesEnabled )
+					allInstancesEnabled.Add( this );
 			}
 			//if( EnabledInHierarchy )
 			//{
-			//	lock( allScenesEnabled )
-			//		allScenesEnabled.Add( this );
+			//	var ins = ComponentUtility.GetResourceInstanceByComponent( this );
+			//	var isResource = ins != null && ins.InstanceType == Resource.InstanceType.Resource;
+
+			//	if( !isResource )
+			//	{
+			//		lock( allInstancesEnabled )
+			//			allInstancesEnabled.Add( this );
+			//	}
 			//}
 
-			if( EnabledInHierarchy )
+			if( EnabledInHierarchyAndIsInstance )
 				PhysicsWorldCreate();
 		}
 
-		internal override void OnEnabledInHierarchyChanged_After()
+		internal override void OnEnabledInHierarchyChangedAfter()
 		{
-			if( EnabledInHierarchy )
+			//!!!!new
+			if( EnabledInHierarchyAndIsInstance )
+			//if( EnabledInHierarchy )
 			{
 				octreeCanCreate = true;
 				OctreeUpdate( false );
@@ -2062,9 +2575,12 @@ namespace NeoAxis
 			//}
 
 			if( EnabledInHierarchy )
+				PhysicsWorldPostCreate();
+
+			if( EnabledInHierarchy )
 				initTime = EngineApp.EngineTime;
 
-			if( EnabledInHierarchy && EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+			if( EnabledInHierarchy && EngineApp.IsSimulation )
 			{
 				if( octree != null )
 					boundsWhenSimulationStarted = octree.GetOctreeBoundsWithBoundsOfObjectsOutsideOctree();
@@ -2074,7 +2590,7 @@ namespace NeoAxis
 
 			BackgroundSoundUpdate();
 
-			base.OnEnabledInHierarchyChanged_After();
+			base.OnEnabledInHierarchyChangedAfter();
 		}
 
 		///// <summary>
@@ -2251,70 +2767,14 @@ namespace NeoAxis
 			}
 		}
 
-		//public static Scene[] AllScenesEnabled
-		//{
-		//	get
-		//	{
-		//		lock( allScenesEnabled )
-		//			return allScenesEnabled.ToArray();
-		//	}
-		//}
-
-		////!!!!везде вызывается?
-		//protected override void OnDispose()
-		//{
-		//	//!!!!!выключить её видать
-
-
-		//	//!!!!!где удаление MapObject'ов?
-
-		//	//!!!!было
-		//	//AutoDeleteSceneObjects_DeleteAll();
-
-
-		//	//StaticLighting_OnDestroy();
-
-		//	//!!!!!!
-		//	//staticBatchingRenderingManager.ClearAllMeshes( true );
-		//	//staticBatchingCollisionManager.ClearAllMeshes( true );
-
-		//	//if( SceneManager.Instance.StaticMeshObjects.Count != 0 )
-		//	//   Log.Fatal( "Map: OnDestroy: Amount of static mesh objects != 0" );
-
-		//	//!!!!!было
-		//	//MeshManager.Instance.DisposeLoadedMeshes();
-
-		//	//!!!!тут?
-		//	//SceneObjects_Shutdown();
-		//	//MapObjects_Shutdown();
-
-		//	//!!!!!
-		//	////!!!!тут?
-		//	//mapObjectTypes.Shutdown();
-
-		//	//!!!!!
-		//	////physics scene
-		//	//if( physicsScene != null )
-		//	//{
-		//	//	PhysicsWorld.Instance.DestroyNotUsedMeshGeometries();
-		//	//	physicsScene.RayVolumeCastsStatistics.Enable = false;
-		//	//	physicsScene.Dispose();
-		//	//	physicsScene = null;
-		//	//}
-
-		//	//EntitySystemWorld.Instance.Internal_SetLogicSystemScriptsAssembly( null );
-
-		//	base.OnDispose();
-		//}
-
-		internal override void OnDispose_After()
+		internal override void OnDisposeAfter()
 		{
 			lock( allInstancesEnabled )
 				allInstancesEnabled.Remove( this );
 			lock( all )
 				all.Remove( this );
 
-			base.OnDispose_After();
+			base.OnDisposeAfter();
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2327,7 +2787,7 @@ namespace NeoAxis
 			{
 				if( obj.EnabledInHierarchy && obj.VisibleInHierarchy )//!!!!параметрами может
 				{
-					var b = obj.SpaceBounds.CalculatedBoundingBox;
+					var b = obj.SpaceBounds.BoundingBox;
 					bounds.Add( b );
 				}
 			}
@@ -2337,9 +2797,9 @@ namespace NeoAxis
 			return bounds;
 		}
 
-		internal override void OnSimulationStep_Before()
+		internal override void OnSimulationStepBefore()
 		{
-			base.OnSimulationStep_Before();
+			base.OnSimulationStepBefore();
 
 			PhysicsSimulate( false, null );
 			Physics2DSimulate( false, null );
@@ -2351,7 +2811,7 @@ namespace NeoAxis
 		public bool GetDisplayDevelopmentDataInThisApplication()
 		{
 			bool result;
-			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+			if( EngineApp.IsSimulation )
 				result = DisplayDevelopmentDataInSimulation;
 			else
 				result = DisplayDevelopmentDataInEditor;
@@ -2417,11 +2877,75 @@ namespace NeoAxis
 		public event GetRenderSceneDataDelegate GetRenderSceneData;
 		public static event GetRenderSceneDataDelegate AllScenes_GetRenderSceneData;
 
+		internal event GetRenderSceneDataDelegate GetRenderSceneData2ForGroupOfObjects;
+		internal event GetRenderSceneDataDelegate GetRenderSceneData3ForGroupOfObjects;
+
 		internal void PerformGetRenderSceneData( ViewportRenderingContext context )
 		{
 			OnGetRenderSceneData( context );
-			GetRenderSceneData?.Invoke( this, context );
-			AllScenes_GetRenderSceneData?.Invoke( this, context );
+
+			if( EngineApp.IsEditor )
+			{
+				try
+				{
+					GetRenderSceneData?.Invoke( this, context );
+				}
+				catch( Exception e )
+				{
+					Log.Warning( "Scene: PerformGetRenderSceneData: GetRenderSceneData: " + e.Message );
+					return;
+				}
+			}
+			else
+				GetRenderSceneData?.Invoke( this, context );
+
+			if( EngineApp.IsEditor )
+			{
+				try
+				{
+					AllScenes_GetRenderSceneData?.Invoke( this, context );
+				}
+				catch( Exception e )
+				{
+					Log.Warning( "Scene: PerformGetRenderSceneData: AllScenes_GetRenderSceneData: " + e.Message );
+					return;
+				}
+			}
+			else
+				AllScenes_GetRenderSceneData?.Invoke( this, context );
+
+
+			//process group of objects queued actions
+			if( EngineApp.IsEditor )
+			{
+				try
+				{
+					GetRenderSceneData2ForGroupOfObjects?.Invoke( this, context );
+				}
+				catch( Exception e )
+				{
+					Log.Warning( "Scene: PerformGetRenderSceneData: GetRenderSceneData2ForGroupOfObjects: " + e.Message );
+					return;
+				}
+			}
+			else
+				GetRenderSceneData2ForGroupOfObjects?.Invoke( this, context );
+
+			//process group of objects queued actions
+			if( EngineApp.IsEditor )
+			{
+				try
+				{
+					GetRenderSceneData3ForGroupOfObjects?.Invoke( this, context );
+				}
+				catch( Exception e )
+				{
+					Log.Warning( "Scene: PerformGetRenderSceneData: GetRenderSceneData3ForGroupOfObjects: " + e.Message );
+					return;
+				}
+			}
+			else
+				GetRenderSceneData3ForGroupOfObjects?.Invoke( this, context );
 		}
 
 		/////////////////////////////////////////
@@ -2431,13 +2955,15 @@ namespace NeoAxis
 			base.OnUpdate( delta );
 
 			BackgroundSoundUpdate();
+
+			octree?.SetEngineTimeToGetStatistics( EngineApp.EngineTime );
 		}
 
 		void BackgroundSoundUpdate()
 		{
 			//get demand sound
 			Sound demandSound = null;
-			if( EnabledInHierarchy )
+			if( EnabledInHierarchyAndIsInstance )
 			{
 				demandSound = BackgroundSound;
 				if( demandSound != null && demandSound.Result == null )
@@ -2473,7 +2999,7 @@ namespace NeoAxis
 			//update channel
 			if( backgroundSoundChannel != null )
 			{
-				backgroundSoundChannel.Volume = EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor ? BackgroundSoundVolumeInEditor.Value : BackgroundSoundVolumeInSimulation.Value;
+				backgroundSoundChannel.Volume = EngineApp.IsEditor ? BackgroundSoundVolumeInEditor.Value : BackgroundSoundVolumeInSimulation.Value;
 				backgroundSoundChannel.Pause = false;
 			}
 
@@ -2496,7 +3022,7 @@ namespace NeoAxis
 			//	backgroundSoundChannel = SoundWorld.SoundPlay( this, backgroundSoundInstance, EngineApp.DefaultSoundChannelGroup, 0.5, true );
 			//	if( backgroundSoundChannel != null )
 			//	{
-			//		backgroundSoundChannel.Volume = EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor ? BackgroundSoundVolumeInEditor.Value : BackgroundSoundVolumeInSimulation.Value;
+			//		backgroundSoundChannel.Volume = EngineApp.IsEditor ? BackgroundSoundVolumeInEditor.Value : BackgroundSoundVolumeInSimulation.Value;
 			//		backgroundSoundChannel.Pause = false;
 			//	}
 			//}
@@ -2520,6 +3046,9 @@ namespace NeoAxis
 
 		public void SoundPlay( SoundData sound, Vector3 position )
 		{
+			if( SoundWorld.BackendNull )
+				return;
+
 			var channel = SoundWorld.SoundPlay( this, sound, EngineApp.DefaultSoundChannelGroup, 0.5, true );
 			if( channel != null )
 			{
@@ -2533,7 +3062,7 @@ namespace NeoAxis
 
 		public void SoundPlay( string name, Vector3 position )
 		{
-			if( string.IsNullOrEmpty( name ) )
+			if( string.IsNullOrEmpty( name ) || SoundWorld.BackendNull )
 				return;
 
 			var sound = SoundWorld.SoundCreate( name, SoundModes.Mode3D );
@@ -2550,7 +3079,10 @@ namespace NeoAxis
 
 		public void SoundPlay2D( SoundData sound )
 		{
-			var channel = SoundWorld.SoundPlay( this, sound, EngineApp.DefaultSoundChannelGroup, 0.5 );
+			if( SoundWorld.BackendNull )
+				return;
+
+			SoundWorld.SoundPlay( this, sound, EngineApp.DefaultSoundChannelGroup, 0.5 );
 		}
 
 		public void SoundPlay2D( Sound sound )
@@ -2558,6 +3090,16 @@ namespace NeoAxis
 			var sound2 = sound?.Result?.LoadSoundByMode( 0 );
 			if( sound2 != null )
 				SoundPlay2D( sound2 );
+		}
+
+		public void SoundPlay2D( string name )
+		{
+			if( string.IsNullOrEmpty( name ) || SoundWorld.BackendNull )
+				return;
+
+			var sound = SoundWorld.SoundCreate( name, 0 );
+			if( sound != null )
+				SoundPlay2D( sound );
 		}
 
 		//public OctreeContainer GetOctree()

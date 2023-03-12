@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #if !NO_EMIT
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +16,10 @@ namespace NeoAxis
 {
 	static class ScriptCodeGenerator
 	{
+		static SHA256 getUniqueNameSHA256;
+
+		//
+
 		public static void CheckForSyntaxErrors( string code )
 		{
 			SyntaxTree methodTree = CSharpSyntaxTree.ParseText( code );
@@ -37,7 +42,7 @@ namespace NeoAxis
 				tree = tree.AddMembers( GenerateClassWithMethod( method, inheritFrom/*, contextType*/ ) );
 
 			//comment
-			tree = tree.WithLeadingTrivia( SyntaxFactory.Comment( "// Auto-generated file" ) );
+			tree = tree.WithLeadingTrivia( SyntaxFactory.Comment( "// Auto-generated file. This source file is used to compile for Android, UWP, it is included into a Project csproj." ) );
 
 			var code = tree.NormalizeWhitespace().ToFullString();
 			return code;
@@ -61,7 +66,7 @@ namespace NeoAxis
 		{
 			// class decl
 
-			var classDeclaration = SyntaxFactory.ClassDeclaration( GetUniqueName() )
+			var classDeclaration = SyntaxFactory.ClassDeclaration( GetUniqueName( methodCode ) )
 				.AddModifiers( SyntaxFactory.Token( SyntaxKind.PublicKeyword ) );
 
 			if( !string.IsNullOrEmpty( inheritFrom ) )
@@ -104,15 +109,57 @@ namespace NeoAxis
 			return classDeclaration;
 		}
 
-		static string GetUniqueName()
+		static string GetUniqueName( string methodCode )
 		{
-			return "DynamicClass_" + Guid.NewGuid().ToString().Replace( "-", "_" );
+			if( getUniqueNameSHA256 == null )
+				getUniqueNameSHA256 = SHA256.Create();
+
+			var hashBytes = getUniqueNameSHA256.ComputeHash( Encoding.UTF8.GetBytes( methodCode ) );
+
+			// Convert the byte array to hexadecimal string
+			var sb = new StringBuilder();
+			for( int i = 0; i < hashBytes.Length; i++ )
+				sb.Append( hashBytes[ i ].ToString( "X2" ) );
+			return "DynamicClass" + sb.ToString();
+
+
+			//using( SHA256 mySHA256 = SHA256.Create() )
+			//{
+			//	// Compute and print the hash values for each file in directory.
+			//	foreach( FileInfo fInfo in files )
+			//	{
+			//		using( FileStream fileStream = fInfo.Open( FileMode.Open ) )
+			//		{
+			//			try
+			//			{
+			//				// Create a fileStream for the file.
+			//				// Be sure it's positioned to the beginning of the stream.
+			//				fileStream.Position = 0;
+			//				// Compute the hash of the fileStream.
+			//				byte[] hashValue = mySHA256.ComputeHash( fileStream );
+			//				// Write the name and hash value of the file to the console.
+			//				Console.Write( $"{fInfo.Name}: " );
+			//				PrintByteArray( hashValue );
+			//			}
+			//			catch( IOException e )
+			//			{
+			//				Console.WriteLine( $"I/O Exception: {e.Message}" );
+			//			}
+			//			catch( UnauthorizedAccessException e )
+			//			{
+			//				Console.WriteLine( $"Access Exception: {e.Message}" );
+			//			}
+			//		}
+			//	}
+			//}
+
+			//return "DynamicClass_" + Guid.NewGuid().ToString().Replace( "-", "_" );
 		}
 
 		static string ToBase64( string code )
 		{
 			byte[] bytes = Encoding.UTF8.GetBytes( code );
-			return Convert.ToBase64String( bytes, Base64FormattingOptions.None );
+			return Convert.ToBase64String( bytes, Base64FormattingOptions.None ).Replace( '/', '_' );
 		}
 
 		public static MethodDeclarationSyntax GenerateMethodFromReflection( string methodName, ParameterInfo[] parameters )

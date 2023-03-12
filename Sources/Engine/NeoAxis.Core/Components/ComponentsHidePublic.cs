@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.IO;
 using System.Drawing.Design;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -54,16 +55,19 @@ namespace NeoAxis
 		/////////////////////////////////////////
 		//ObjectInSpace
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static int GetRenderSceneIndex( ObjectInSpace obj )
 		{
 			return obj._internalRenderSceneIndex;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void SetRenderSceneIndex( ObjectInSpace obj, int v )
 		{
 			obj._internalRenderSceneIndex = v;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void PerformGetRenderSceneData( ObjectInSpace obj, ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
 			obj.PerformGetRenderSceneData( context, mode, modeGetObjectsItem );

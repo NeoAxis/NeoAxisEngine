@@ -35,7 +35,7 @@ namespace Project
 			if (obj != null)
 			{
 				viewport.Simple3DRenderer.SetColor(new ColorValue(1, 1, 0));
-				viewport.Simple3DRenderer.AddBounds(obj.SpaceBounds.CalculatedBoundingBox);
+				viewport.Simple3DRenderer.AddBounds(obj.SpaceBounds.BoundingBox);
 			}
 		}
 
@@ -92,7 +92,7 @@ namespace Project
 			base.OnUpdate(delta);
 
 			// Update Button Next Level.
-			if (EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation)
+			if (EngineApp.IsSimulation)
 			{
 				var buttonNextLevel = GetComponent<UIButton>("Button Next Level");
 				if (buttonNextLevel != null)
@@ -125,7 +125,7 @@ namespace Project
 
 		protected override bool OnMouseDown(EMouseButtons button)
 		{
-			if (EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && button == EMouseButtons.Left)
+			if (EngineApp.IsSimulation && button == EMouseButtons.Left)
 				ClickToDestroy();
 
 			return base.OnMouseDown(button);

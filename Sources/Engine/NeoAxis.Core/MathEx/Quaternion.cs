@@ -1,9 +1,10 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using NeoAxis.Editor;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -23,6 +24,7 @@ namespace NeoAxis
 		public static readonly Quaternion Identity = new Quaternion( 0.0, 0.0, 0.0, 1.0 );
 		public static readonly Quaternion Zero = new Quaternion( 0.0, 0.0, 0.0, 0.0 );
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Quaternion( Vector3 v, double w )
 		{
 			this.X = v.X;
@@ -31,6 +33,7 @@ namespace NeoAxis
 			this.W = w;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Quaternion( double x, double y, double z, double w )
 		{
 			this.X = x;
@@ -39,6 +42,7 @@ namespace NeoAxis
 			this.W = w;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Quaternion( Quaternion source )
 		{
 			this.X = source.X;
@@ -47,6 +51,7 @@ namespace NeoAxis
 			this.W = source.W;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Quaternion( QuaternionF source )
 		{
 			this.X = source.X;
@@ -100,16 +105,19 @@ namespace NeoAxis
 			return string.Format( format, X, Y, Z, W );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is Quaternion && this == (Quaternion)obj );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return ( X.GetHashCode() ^ Y.GetHashCode() ^ Z.GetHashCode() ^ W.GetHashCode() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Quaternion operator +( Quaternion v1, Quaternion v2 )
 		{
 			Quaternion result;
@@ -120,6 +128,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Quaternion operator -( Quaternion v1, Quaternion v2 )
 		{
 			Quaternion result;
@@ -130,6 +139,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Quaternion operator *( Quaternion v1, Quaternion v2 )
 		{
 			Quaternion result;
@@ -140,6 +150,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector3 operator *( Quaternion q, Vector3 v )
 		{
 			Vector3 result;
@@ -154,6 +165,7 @@ namespace NeoAxis
 			//return v + uv + uuv;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector3 operator *( Vector3 v, Quaternion q )
 		{
 			Vector3 result;
@@ -161,6 +173,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Quaternion operator *( Quaternion q, double v )
 		{
 			Quaternion result;
@@ -171,6 +184,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Quaternion operator *( double v, Quaternion q )
 		{
 			Quaternion result;
@@ -181,6 +195,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Quaternion operator -( Quaternion v )
 		{
 			Quaternion result;
@@ -191,6 +206,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Add( ref Quaternion v1, ref Quaternion v2, out Quaternion result )
 		{
 			result.X = v1.X + v2.X;
@@ -199,6 +215,7 @@ namespace NeoAxis
 			result.W = v1.W + v2.W;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Subtract( ref Quaternion v1, ref Quaternion v2, out Quaternion result )
 		{
 			result.X = v1.X - v2.X;
@@ -207,6 +224,7 @@ namespace NeoAxis
 			result.W = v1.W - v2.W;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Multiply( ref Quaternion v1, ref Quaternion v2, out Quaternion result )
 		{
 			result.X = v1.W * v2.X + v1.X * v2.W + v1.Y * v2.Z - v1.Z * v2.Y;
@@ -215,6 +233,7 @@ namespace NeoAxis
 			result.W = v1.W * v2.W - v1.X * v2.X - v1.Y * v2.Y - v1.Z * v2.Z;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Multiply( ref Quaternion q, ref Vector3 v, out Vector3 result )
 		{
 			Vector3 uv, uuv;
@@ -236,11 +255,13 @@ namespace NeoAxis
 			//return v + uv + uuv;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Multiply( ref Vector3 v, ref Quaternion q, out Vector3 result )
 		{
 			Multiply( ref q, ref v, out result );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Multiply( ref Quaternion q, double v, out Quaternion result )
 		{
 			result.X = q.X * v;
@@ -249,6 +270,7 @@ namespace NeoAxis
 			result.W = q.W * v;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Multiply( double v, ref Quaternion q, out Quaternion result )
 		{
 			result.X = q.X * v;
@@ -257,6 +279,7 @@ namespace NeoAxis
 			result.W = q.W * v;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Negate( ref Quaternion v, out Quaternion result )
 		{
 			result.X = -v.X;
@@ -327,6 +350,7 @@ namespace NeoAxis
 
 		public unsafe double this[ int index ]
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				if( index < 0 || index > 3 )
@@ -336,6 +360,7 @@ namespace NeoAxis
 					return v[ index ];
 				}
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set
 			{
 				if( index < 0 || index > 3 )
@@ -347,16 +372,19 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( Quaternion v1, Quaternion v2 )
 		{
 			return ( v1.X == v2.X && v1.Y == v2.Y && v1.Z == v2.Z && v1.W == v2.W );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( Quaternion v1, Quaternion v2 )
 		{
 			return ( v1.X != v2.X || v1.Y != v2.Y || v1.Z != v2.Z || v1.W != v2.W );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( Quaternion v, double epsilon )
 		{
 			if( Math.Abs( X - v.X ) > epsilon )
@@ -370,6 +398,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( ref Quaternion v, double epsilon )
 		{
 			if( Math.Abs( X - v.X ) > epsilon )
@@ -383,6 +412,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Inverse()
 		{
 			X = -X;
@@ -390,6 +420,7 @@ namespace NeoAxis
 			Z = -Z;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Quaternion GetInverse()
 		{
 			Quaternion result;
@@ -400,11 +431,13 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public double Length()
 		{
 			return Math.Sqrt( X * X + Y * Y + Z * Z + W * W );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Normalize()
 		{
 			double len = Math.Sqrt( X * X + Y * Y + Z * Z + W * W );
@@ -418,6 +451,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Quaternion GetNormalize()
 		{
 			Quaternion result;
@@ -440,6 +474,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void GetNormalize( ref Quaternion q, out Quaternion result )
 		{
 			double len = Math.Sqrt( q.X * q.X + q.Y * q.Y + q.Z * q.Z + q.W * q.W );
@@ -460,6 +495,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Matrix3 ToMatrix3()
 		{
@@ -468,6 +504,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ToMatrix3( out Matrix3 result )
 		{
 			double x2 = X + X;
@@ -497,6 +534,7 @@ namespace NeoAxis
 			//   xz + wy, yz - wx, 1.0f - ( xx + yy ) );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Quaternion Slerp( Quaternion from, Quaternion to, double t )
 		{
 			Quaternion result;
@@ -504,6 +542,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Slerp( ref Quaternion from, ref Quaternion to, double t, out Quaternion result )
 		{
 			Quaternion temp;
@@ -546,12 +585,16 @@ namespace NeoAxis
 			//return ( scale0 * from ) + ( scale1 * temp );
 		}
 
+		//need for editor Rotation properties
 		public Angles Angles
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get { return ToAngles(); }
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set { this = value.ToQuaternion(); }
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Angles ToAngles()
 		{
 			Angles result;
@@ -561,6 +604,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ToAngles( out Angles result )
 		{
 			Matrix3 mat;
@@ -568,6 +612,7 @@ namespace NeoAxis
 			mat.ToAngles( out result );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector3 GetForward()
 		{
 			Vector3 result;
@@ -580,6 +625,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void GetForward( out Vector3 result )
 		{
 			result.X = 1.0 - ( Y * Y + Z * Z ) * 2.0;
@@ -591,6 +637,7 @@ namespace NeoAxis
 			//result.z = ( -y * w + ( x * z ) ) * 2.0f;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector3 GetUp()
 		{
 			Vector3 result;
@@ -600,6 +647,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void GetUp( out Vector3 result )
 		{
 			result.X = ( Y * W + Z * X ) * 2.0;
@@ -607,12 +655,14 @@ namespace NeoAxis
 			result.Z = 1.0 - ( X * X + Y * Y ) * 2.0;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector3 GetLeft()
 		{
 			//!!!!slowly
 			return this * new Vector3( 0, 1, 0 );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector3 GetRight()
 		{
 			//!!!!slowly
@@ -624,6 +674,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="direction"></param>
 		/// <returns></returns>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static void FromDirectionZAxisUp( ref Vector3 direction, out Quaternion result )
 		{
 			//SphereDir sphereDir = SphereDir.FromVector( direction );
@@ -675,12 +726,14 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="direction"></param>
 		/// <returns></returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Quaternion FromDirectionZAxisUp( Vector3 direction )
 		{
 			FromDirectionZAxisUp( ref direction, out var result );
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Radian GetAngle( Quaternion v1, Quaternion v2 )
 		{
 			double a = v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z + v1.W * v2.W;
@@ -688,6 +741,7 @@ namespace NeoAxis
 		}
 
 		[AutoConvertType]
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public QuaternionF ToQuaternionF()
 		{
 			QuaternionF result;
@@ -698,6 +752,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Quaternion LookAt( Vector3 direction, Vector3 up )
 		{
 			return Matrix3.LookAt( direction, up ).ToQuaternion();
@@ -705,47 +760,55 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Quaternion FromRotateByX( Radian angle )
 		{
 			Matrix3.FromRotateByX( angle, out var mat );
 			return mat.ToQuaternion();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void FromRotateByX( Radian angle, out Quaternion result )
 		{
 			Matrix3.FromRotateByX( angle, out var mat );
 			mat.ToQuaternion( out result );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Quaternion FromRotateByY( Radian angle )
 		{
 			Matrix3.FromRotateByY( angle, out var mat );
 			return mat.ToQuaternion();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void FromRotateByY( Radian angle, out Quaternion result )
 		{
 			Matrix3.FromRotateByY( angle, out var mat );
 			mat.ToQuaternion( out result );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Quaternion FromRotateByZ( Radian angle )
 		{
 			Matrix3.FromRotateByZ( angle, out var mat );
 			return mat.ToQuaternion();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void FromRotateByZ( Radian angle, out Quaternion result )
 		{
 			Matrix3.FromRotateByZ( angle, out var mat );
 			mat.ToQuaternion( out result );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( ref Quaternion v )
 		{
 			return X == v.X && Y == v.Y && Z == v.Z && W == v.W;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool Equals( ref Quaternion v1, ref Quaternion v2 )
 		{
 			return v1.X == v2.X && v1.Y == v2.Y && v1.Z == v2.Z && v1.W == v2.W;

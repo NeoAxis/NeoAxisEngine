@@ -1,9 +1,10 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using NeoAxis.Editor;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -19,12 +20,14 @@ namespace NeoAxis
 
 		public static readonly RangeF Zero = new RangeF( 0.0f, 0.0f );
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public RangeF( RangeF a )
 		{
 			Minimum = a.Minimum;
 			Maximum = a.Maximum;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public RangeF( float minimum, float maximum )
 		{
 			this.Minimum = minimum;
@@ -70,16 +73,19 @@ namespace NeoAxis
 			return string.Format( format, Minimum, Maximum );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is RangeF && this == (RangeF)obj );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return ( Minimum.GetHashCode() ^ Maximum.GetHashCode() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static RangeF operator *( RangeF v, float s )
 		{
 			RangeF result;
@@ -88,6 +94,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static RangeF operator *( float s, RangeF v )
 		{
 			RangeF result;
@@ -96,6 +103,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static RangeF operator /( RangeF v, float s )
 		{
 			RangeF result;
@@ -105,6 +113,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static RangeF operator /( float s, RangeF v )
 		{
 			RangeF result;
@@ -113,6 +122,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static RangeF operator -( RangeF v )
 		{
 			RangeF result;
@@ -121,18 +131,21 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Multiply( ref RangeF v, float s, out RangeF result )
 		{
 			result.Minimum = v.Minimum * s;
 			result.Maximum = v.Maximum * s;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Multiply( float s, ref RangeF v, out RangeF result )
 		{
 			result.Minimum = v.Minimum * s;
 			result.Maximum = v.Maximum * s;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Divide( ref RangeF v, float s, out RangeF result )
 		{
 			float invS = 1.0f / s;
@@ -140,12 +153,14 @@ namespace NeoAxis
 			result.Maximum = v.Maximum * invS;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Divide( float s, ref RangeF v, out RangeF result )
 		{
 			result.Minimum = s / v.Minimum;
 			result.Maximum = s / v.Maximum;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Negate( ref RangeF v, out RangeF result )
 		{
 			result.Minimum = -v.Minimum;
@@ -193,11 +208,13 @@ namespace NeoAxis
 		//	return result;
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( RangeF v1, RangeF v2 )
 		{
 			return ( v1.Minimum == v2.Minimum && v1.Maximum == v2.Maximum );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( RangeF v1, RangeF v2 )
 		{
 			return ( v1.Minimum != v2.Minimum || v1.Maximum != v2.Maximum );
@@ -205,6 +222,7 @@ namespace NeoAxis
 
 		public unsafe float this[ int index ]
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				if( index < 0 || index > 1 )
@@ -214,6 +232,7 @@ namespace NeoAxis
 					return v[ index ];
 				}
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set
 			{
 				if( index < 0 || index > 1 )
@@ -225,6 +244,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( RangeF v, float epsilon )
 		{
 			if( Math.Abs( Minimum - v.Minimum ) > epsilon )
@@ -237,9 +257,11 @@ namespace NeoAxis
 		[Browsable( false )]
 		public float Size
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get { return Maximum - Minimum; }
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Vector2F ToVector2()
 		{
@@ -249,6 +271,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Range ToRange()
 		{
@@ -258,6 +281,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public RangeI ToRangeI()
 		{
@@ -268,12 +292,14 @@ namespace NeoAxis
 		}
 
 #if !DISABLE_IMPLICIT
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator Range( RangeF v )
 		{
 			return new Range( v );
 		}
 #endif
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float GetCenter()
 		{
 			return ( Minimum + Maximum ) / 2;

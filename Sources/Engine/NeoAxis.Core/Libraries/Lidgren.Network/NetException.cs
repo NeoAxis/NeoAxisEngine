@@ -21,7 +21,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.Serialization;
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	/// <summary>
 	/// Exception thrown in the Lidgren Network Library

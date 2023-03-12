@@ -1,6 +1,7 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
+using NeoAxis.Editor;
 
 namespace NeoAxis
 {
@@ -11,14 +12,22 @@ namespace NeoAxis
 	{
 		public override void OnRegister()
 		{
-			//file extension
-			var type = ResourceManager.RegisterType( "Character", new string[] { "character" }, typeof( Resource ) );
+			ResourceManager.RegisterType( "Character Type", new string[] { "charactertype" }, typeof( Resource ) );
+			//ResourceManager.RegisterType( "Character", new string[] { "character" }, typeof( Resource ) );
+
 #if !DEPLOY
-			Editor.PreviewImagesManager.RegisterResourceType( type );
+			if( EngineApp.IsEditor )
+			{
+				SceneEditor.CreateObjectWhatTypeWillCreatedEvent += Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent;
+				SceneEditor.CreateObjectByCreationDataEvent += Scene_DocumentWindow_CreateObjectByCreationDataEvent;
+
+				PreviewImagesManager.RegisterResourceType( "Character Type" );
+				//PreviewImagesManager.RegisterResourceType( "Character" );
+			}
 #endif
 
 			////editor actions
-			//if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+			//if( EngineApp.IsEditor )
 			//{
 			//	//Character Display Physics
 			//	{
@@ -34,7 +43,7 @@ namespace NeoAxis
 			//}
 
 			////ribbon menu
-			//if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+			//if( EngineApp.IsEditor )
 			//{
 			//	var tab = new EditorRibbonDefaultConfiguration.Tab( "Character Editor", "CharacterEditor", MetadataManager.GetTypeOfNetType( typeof( Character ) ) );
 			//	EditorRibbonDefaultConfiguration.Tabs.Add( tab );
@@ -48,5 +57,24 @@ namespace NeoAxis
 			//}
 
 		}
+
+#if !DEPLOY
+		private void Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent( Metadata.TypeInfo objectType, string referenceToObject, ref Metadata.TypeInfo type )
+		{
+			if( MetadataManager.GetTypeOfNetType( typeof( CharacterType ) ).IsAssignableFrom( objectType ) )
+				type = MetadataManager.GetTypeOfNetType( typeof( Character ) );
+		}
+
+		private void Scene_DocumentWindow_CreateObjectByCreationDataEvent( Metadata.TypeInfo objectType, string referenceToObject, object anyData, Component createTo, ref Component newObject )
+		{
+			if( newObject == null && MetadataManager.GetTypeOfNetType( typeof( CharacterType ) ).IsAssignableFrom( objectType ) )
+			{
+				var obj = createTo.CreateComponent<Character>( enabled: false );
+				newObject = obj;
+				obj.CharacterType = new Reference<CharacterType>( null, referenceToObject );
+			}
+		}
+#endif
+
 	}
 }

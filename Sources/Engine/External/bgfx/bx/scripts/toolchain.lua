@@ -1,6 +1,6 @@
 --
--- Copyright 2010-2020 Branimir Karadzic. All rights reserved.
--- License: https://github.com/bkaradzic/bx#license-bsd-2-clause
+-- Copyright 2010-2022 Branimir Karadzic. All rights reserved.
+-- License: https://github.com/bkaradzic/bx/blob/master/LICENSE
 --
 
 local bxDir = path.getabsolute("..")
@@ -71,11 +71,11 @@ function toolchain(_buildDir, _libDir)
 			{ "mingw-gcc",       "MinGW"                      },
 			{ "mingw-clang",     "MinGW (clang compiler)"     },
 			{ "netbsd",          "NetBSD"                     },
-			{ "osx",             "OSX"                        },
+			{ "osx-x64",         "OSX - x64"                  },
+			{ "osx-arm64",       "OSX - ARM64"                },
 			{ "orbis",           "Orbis"                      },
 			{ "riscv",           "RISC-V"                     },
 			{ "rpi",             "RaspberryPi"                },
-			{ "haiku",           "Haiku"                      },
 		},
 	}
 
@@ -362,7 +362,9 @@ function toolchain(_buildDir, _libDir)
 		elseif "netbsd" == _OPTIONS["gcc"] then
 			location (path.join(_buildDir, "projects", _ACTION .. "-netbsd"))
 
-		elseif "osx" == _OPTIONS["gcc"] then
+		elseif "osx-x64"   == _OPTIONS["gcc"]
+			or "osx-arm64" == _OPTIONS["gcc"] then
+
 
 			if os.is("linux") then
 				if not os.getenv("OSXCROSS") then
@@ -374,7 +376,8 @@ function toolchain(_buildDir, _libDir)
 				premake.gcc.cxx = "$(OSXCROSS)/target/bin/" .. osxToolchain .. "clang++"
 				premake.gcc.ar  = "$(OSXCROSS)/target/bin/" .. osxToolchain .. "ar"
 			end
-			location (path.join(_buildDir, "projects", _ACTION .. "-osx"))
+
+			location (path.join(_buildDir, "projects", _ACTION .. "-" .. _OPTIONS["gcc"]))
 
 		elseif "orbis" == _OPTIONS["gcc"] then
 
@@ -404,6 +407,7 @@ function toolchain(_buildDir, _libDir)
 		or _ACTION == "vs2015"
 		or _ACTION == "vs2017"
 		or _ACTION == "vs2019"
+		or _ACTION == "vs2022"
 		then
 
 		local action = premake.action.current()
@@ -556,6 +560,7 @@ function toolchain(_buildDir, _libDir)
 			"/wd4201", -- warning C4201: nonstandard extension used: nameless struct/union
 			"/wd4324", -- warning C4324: '': structure was padded due to alignment specifier
 			"/Ob2",    -- The Inline Function Expansion
+			"/Zc:__cplusplus", -- Enable updated __cplusplus macro
 		}
 		linkoptions {
 			"/ignore:4221", -- LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
@@ -936,7 +941,7 @@ function toolchain(_buildDir, _libDir)
 		}
 
 		linkoptions {
-			"-s MAX_WEBGL_VERSION=2"
+			"-s MAX_WEBGL_VERSION=2",
 		}
 
 	configuration { "wasm2js" }
@@ -944,7 +949,7 @@ function toolchain(_buildDir, _libDir)
 		objdir (path.join(_buildDir, "wasm2js/obj"))
 		libdirs { path.join(_libDir, "lib/wasm2js") }
 		linkoptions {
-			"-s WASM=0"
+			"-s WASM=0",
 		}
 
 	configuration { "wasm" }
@@ -987,37 +992,35 @@ function toolchain(_buildDir, _libDir)
 			path.join(bxDir, "include/compat/freebsd"),
 		}
 
-	configuration { "osx", "x32" }
-		targetdir (path.join(_buildDir, "osx32_clang/bin"))
-		objdir (path.join(_buildDir, "osx32_clang/obj"))
-		--libdirs { path.join(_libDir, "lib/osx32_clang") }
+	configuration { "osx-x64" }
+		targetdir (path.join(_buildDir, "osx-x64/bin"))
+		objdir (path.join(_buildDir, "osx-x64/obj"))
+		linkoptions {
+			"-arch x86_64",
+		}
 		buildoptions {
-			"-m32",
+			"-arch x86_64",
+			"-msse2",
+			"-target x86_64-apple-macos" .. (#macosPlatform > 0 and macosPlatform or "10.11"),
 		}
 
-	configuration { "osx", "x64" }
-		targetdir (path.join(_buildDir, "osx64_clang/bin"))
-		objdir (path.join(_buildDir, "osx64_clang/obj"))
-		--libdirs { path.join(_libDir, "lib/osx64_clang") }
+	configuration { "osx-arm64" }
+		targetdir (path.join(_buildDir, "osx-arm64/bin"))
+		objdir (path.join(_buildDir, "osx-arm64/obj"))
+		linkoptions {
+			"-arch arm64",
+		}
 		buildoptions {
-			"-m64",
+			"-arch arm64",
+			"-Wno-error=unused-command-line-argument",
+			"-Wno-unused-command-line-argument",
 		}
 
-	configuration { "osx", "Universal" }
-		targetdir (path.join(_buildDir, "osx_universal/bin"))
-		objdir (path.join(_buildDir, "osx_universal/obj"))
-
-	configuration { "osx", "Native" }
-		targetdir (path.join(_buildDir, "osx/bin"))
-		objdir (path.join(_buildDir, "osx/obj"))
-
-	configuration { "osx" }
+	configuration { "osx*" }
 		buildoptions {
 			"-Wfatal-errors",
-			"-msse2",
 			"-Wunused-value",
 			"-Wundef",
-			"-target x86_64-apple-macos" .. (#macosPlatform > 0 and macosPlatform or "10.11"),
 		}
 		includedirs { path.join(bxDir, "include/compat/osx") }
 

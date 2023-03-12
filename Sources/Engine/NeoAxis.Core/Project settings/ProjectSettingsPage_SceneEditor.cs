@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -98,6 +98,7 @@ namespace NeoAxis
 			get
 			{
 				var result = (double)TransformToolSize;
+#if !DEPLOY
 				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
 				{
 					try
@@ -106,6 +107,7 @@ namespace NeoAxis
 					}
 					catch { }
 				}
+#endif
 				return result;
 			}
 		}
@@ -133,6 +135,7 @@ namespace NeoAxis
 			get
 			{
 				var result = (double)TransformToolLineThickness;
+#if !DEPLOY
 				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
 				{
 					try
@@ -141,6 +144,7 @@ namespace NeoAxis
 					}
 					catch { }
 				}
+#endif
 				return result;
 			}
 		}
@@ -465,5 +469,80 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="SceneEditorSelectOutlineEffectScale"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> SceneEditorSelectOutlineEffectScaleChanged;
 		ReferenceField<double> _sceneEditorSelectOutlineEffectScale = 1.0;
+
+		/////////////////////////////////////////
+
+		/// <summary>
+		/// The maximal size of labels on the screen.
+		/// </summary>
+		[DefaultValue( 24 )]
+		[Category( "Screen Labels" )]
+		[Range( 10.0, 100.0, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		public Reference<double> ScreenLabelMaxSize
+		{
+			get { if( _screenLabelMaxSize.BeginGet() ) ScreenLabelMaxSize = _screenLabelMaxSize.Get( this ); return _screenLabelMaxSize.value; }
+			set { if( _screenLabelMaxSize.BeginSet( ref value ) ) { try { ScreenLabelMaxSizeChanged?.Invoke( this ); } finally { _screenLabelMaxSize.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ScreenLabelMaxSize"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_SceneEditor> ScreenLabelMaxSizeChanged;
+		ReferenceField<double> _screenLabelMaxSize = 24;
+
+		/// <summary>
+		/// The minimal size of labels on the screen.
+		/// </summary>
+		[DefaultValue( 0.25 )]
+		[Category( "Screen Labels" )]
+		[Range( 0, 1 )]
+		public Reference<double> ScreenLabelMinSizeFactor
+		{
+			get { if( _screenLabelMinSizeFactor.BeginGet() ) ScreenLabelMinSizeFactor = _screenLabelMinSizeFactor.Get( this ); return _screenLabelMinSizeFactor.value; }
+			set { if( _screenLabelMinSizeFactor.BeginSet( ref value ) ) { try { ScreenLabelMinSizeFactorChanged?.Invoke( this ); } finally { _screenLabelMinSizeFactor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ScreenLabelMinSizeFactor"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_SceneEditor> ScreenLabelMinSizeFactorChanged;
+		ReferenceField<double> _screenLabelMinSizeFactor = 0.25;
+
+		/// <summary>
+		/// The visibility distance of labels.
+		/// </summary>
+		[DefaultValue( 100 )]
+		[Category( "Screen Labels" )]
+		[Range( 1, 1000, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		public Reference<double> ScreenLabelMaxDistance
+		{
+			get { if( _screenLabelMaxDistance.BeginGet() ) ScreenLabelMaxDistance = _screenLabelMaxDistance.Get( this ); return _screenLabelMaxDistance.value; }
+			set { if( _screenLabelMaxDistance.BeginSet( ref value ) ) { try { ScreenLabelMaxDistanceChanged?.Invoke( this ); } finally { _screenLabelMaxDistance.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ScreenLabelMaxDistance"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_SceneEditor> ScreenLabelMaxDistanceChanged;
+		ReferenceField<double> _screenLabelMaxDistance = 100;
+
+		/// <summary>
+		/// The color of screen labels.
+		/// </summary>
+		[DefaultValue( "1 1 1 0.5" )]
+		[Category( "Screen Labels" )]
+		public Reference<ColorValue> ScreenLabelColor
+		{
+			get { if( _screenLabelColor.BeginGet() ) ScreenLabelColor = _screenLabelColor.Get( this ); return _screenLabelColor.value; }
+			set { if( _screenLabelColor.BeginSet( ref value ) ) { try { ScreenLabelColorChanged?.Invoke( this ); } finally { _screenLabelColor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ScreenLabelColor"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_SceneEditor> ScreenLabelColorChanged;
+		ReferenceField<ColorValue> _screenLabelColor = new ColorValue( 1, 1, 1, 0.5 );
+
+		/// <summary>
+		/// Whether to display label icons.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Screen Labels" )]
+		public Reference<bool> ScreenLabelDisplayIcons
+		{
+			get { if( _screenLabelDisplayIcons.BeginGet() ) ScreenLabelDisplayIcons = _screenLabelDisplayIcons.Get( this ); return _screenLabelDisplayIcons.value; }
+			set { if( _screenLabelDisplayIcons.BeginSet( ref value ) ) { try { ScreenLabelDisplayIconsChanged?.Invoke( this ); } finally { _screenLabelDisplayIcons.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ScreenLabelDisplayIcons"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_SceneEditor> ScreenLabelDisplayIconsChanged;
+		ReferenceField<bool> _screenLabelDisplayIcons = true;
 	}
 }

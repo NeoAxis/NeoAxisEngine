@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -150,6 +150,24 @@ namespace Project
 			}
 
 			return base.OnKeyDown( e );
+		}
+
+		[Browsable( false )]
+		public string MessageText
+		{
+			get
+			{
+				var textControl = GetComponent( "Text" ) as UIText;
+				if( textControl != null )
+					return textControl.Text;
+				return "";
+			}
+			set
+			{
+				var textControl = GetComponent( "Text" ) as UIText;
+				if( textControl != null )
+					textControl.Text = value;
+			}
 		}
 
 		public static ResultData Show( UIControl parent, string text, string caption, EMessageBoxButtons buttons = EMessageBoxButtons.OK, EMessageBoxIcon icon = EMessageBoxIcon.None, UIStyle overrideStyle = null, ResultDelegate resultHandler = null, object resultHandlerAnyData = null )

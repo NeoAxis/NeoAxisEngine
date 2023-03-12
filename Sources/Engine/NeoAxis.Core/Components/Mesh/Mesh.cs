@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -7,21 +7,16 @@ using System.Linq;
 
 namespace NeoAxis
 {
-	//!!!!SetTextureCoordinates
-	//!!!!!!Reference<int> Channel
-
-	//!!!!MeshTesselation
-
-	//!!!!по ссылке получать результат. т.е. например переопределить, чтобы внутри меша (детей) генерилось как-то по другому
-
 	/// <summary>
 	/// Represents a 3D mesh in the engine. The child mesh geometries defines the mesh data.
 	/// </summary>
 	[ResourceFileExtension( "mesh" )]
+#if !DEPLOY
 	[EditorControl( typeof( MeshEditor ) )]
 	[Preview( typeof( MeshPreview ) )]
 	[PreviewImage( typeof( MeshPreviewImage ) )]
 	[SettingsCell( typeof( MeshSettingsCell ) )]
+#endif
 	public partial class Mesh : ResultCompile<Mesh.CompiledData>
 	{
 		static ESet<Mesh> all = new ESet<Mesh>();
@@ -97,6 +92,23 @@ namespace NeoAxis
 		//ReferenceField<double> _visibilityDistance = 10000.0;
 
 		/// <summary>
+		/// The distance multiplier when determining the level of detail.
+		/// </summary>
+		[DefaultValue( 1.0 )]
+		[DisplayName( "LOD Scale" )]
+		[Range( 0, 6, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		//[Range( 0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
+		public Reference<double> LODScale
+		{
+			get { if( _lODScale.BeginGet() ) LODScale = _lODScale.Get( this ); return _lODScale.value; }
+			set { if( _lODScale.BeginSet( ref value ) ) { try { LODScaleChanged?.Invoke( this ); } finally { _lODScale.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LODScale"/> property value changes.</summary>
+		[DisplayName( "LOD Scale Changed" )]
+		public event Action<Mesh> LODScaleChanged;
+		ReferenceField<double> _lODScale = 1.0;
+
+		/// <summary>
 		/// Whether to treat the mesh as a billboard. When drawing the mesh will turn to face the camera.
 		/// </summary>
 		[DefaultValue( false )]
@@ -152,8 +164,6 @@ namespace NeoAxis
 
 		//!!!!Wireframe, sockets, collision
 
-		//!!!!impl всем
-
 		/// <summary>
 		/// Whether the mesh pivot displayed in the editor.
 		/// </summary>
@@ -177,6 +187,14 @@ namespace NeoAxis
 		[Browsable( false )]
 		[DefaultValue( false )]
 		public bool EditorDisplayTriangles { get; set; }
+
+		///// <summary>
+		///// Whether to display mesh clusters in the editor.
+		///// </summary>
+		//[Serialize]
+		//[Browsable( false )]
+		//[DefaultValue( false )]
+		//public bool EditorDisplayClusters { get; set; }
 
 		/// <summary>
 		/// Whether to display mesh vertices in the editor.
@@ -227,12 +245,20 @@ namespace NeoAxis
 		public int EditorDisplayUV { get; set; } = -1;
 
 		/// <summary>
+		/// Whether to display the proxy mesh of the virtualized mesh.
+		/// </summary>
+		[Serialize]
+		[Browsable( false )]
+		[DefaultValue( false )]
+		public bool EditorDisplayProxyMesh { get; set; }
+
+		/// <summary>
 		/// Whether to display number of level of detail in the editor.
 		/// </summary>
 		[Serialize]
 		[Browsable( false )]
-		[DefaultValue( 0 )]
-		public int EditorDisplayLOD { get; set; }
+		[DefaultValue( -1 )]
+		public int EditorDisplayLOD { get; set; } = -1;
 
 		/// <summary>
 		/// Whether the mesh collision displayed in the editor.
@@ -258,18 +284,13 @@ namespace NeoAxis
 		[DefaultValue( "" )]
 		public string EditorPlayAnimation { get; set; } = "";
 
-		//!!!!
-		///// <summary>
-		///// Whether to the mesh voxelized data displayed in the editor.
-		///// </summary>
-		//[Serialize]
-		//[Browsable( false )]
-		//[DefaultValue( false )]
-		//public bool EditorDisplayVoxelized { get; set; }
-
 		[Serialize]
 		[Browsable( false )]
 		public Transform EditorCameraTransform;
+
+
+		//!!!!add new editor properties to Re-import (Reset Editor Settings)
+
 
 		[Browsable( false )]
 		public bool AllowDisposeBuffers { get; set; } = true;
@@ -366,115 +387,7 @@ namespace NeoAxis
 			object meshTestLockObject = new object();
 			MeshTest meshTest;
 
-			////////////
-
-			//public class RenderOperation
-			//{
-			//	//!!!!public fields
-
-			//	public MeshGeometry creator;
-			//	public bool disposeBuffersByCreator = true;
-			//	//public Mesh disposeBuffersByObject;
-			//	//public bool disposeBuffersByMesh = true;
-
-			//	public VertexElement[] vertexStructure;//public GpuVertexDeclaration vertexDeclaration;
-			//	public IList<GpuVertexBuffer> vertexBuffers;
-			//	public int vertexStartOffset;
-			//	public int vertexCount;
-			//	public GpuIndexBuffer indexBuffer;
-			//	public int indexStartOffset;
-			//	public int indexCount;
-
-			//	///// The type of operation to perform
-			//	//OperationType operationType;
-
-			//	//!!!!pass/material
-			//	public Material material;
-
-			//	//!!!!
-			//	//public Transform transform = NeoAxis.Transform.Identity;
-
-			//	//!!!!?
-			//	//public Mat4 transform = Mat4.Identity;
-
-			//	//xx xx;
-			//	////!!!!bounds тут считать
-
-			//	//xx xx;//vertexPositions. что еще
-
-			//	////!!!!!что еще?
-
-			//	//xx xx;
-
-			//	//!!!!может нужно
-			//	//public RenderOperation Clone()
-			//	//{
-			//	//	RenderOperation newOp = new RenderOperation();
-
-			//	//	//!!!!what else
-
-			//	//	newOp.creator = creator;
-			//	//	newOp.disposeBuffersByCreator = disposeBuffersByCreator;
-
-			//	//	newOp.vertexDeclaration = vertexDeclaration;
-			//	//	newOp.vertexBuffers = vertexBuffers;
-			//	//	newOp.vertexStartOffset = vertexStartOffset;
-			//	//	newOp.vertexCount = vertexCount;
-			//	//	newOp.indexBuffer = indexBuffer;
-			//	//	newOp.indexStartOffset = indexStartOffset;
-			//	//	newOp.indexCount = indexCount;
-
-			//	//	newOp.material = material;
-
-			//	//	newOp.transform = transform;
-
-			//	//	return newOp;
-			//	//}
-
-			//	public bool ContainsDisposedBuffers()
-			//	{
-			//		//!!!!slowly где вызывается?
-
-			//		if( vertexBuffers != null )
-			//		{
-			//			for( int n = 0; n < vertexBuffers.Count; n++ )
-			//			{
-			//				if( vertexBuffers[ n ].Disposed )
-			//					return true;
-			//			}
-			//		}
-			//		if( indexBuffer != null && indexBuffer.Disposed )
-			//			return true;
-			//		return false;
-			//	}
-			//}
-
-			////////////
-
-			//public class RenderOperationItem
-			//{
-			//	//!!!!public
-
-			//	public RenderOperation operation;
-			//	//!!!!надо ли. не юзается.
-			//	public Transform transform = Transform.Identity;
-			//	//public Mat4F transform;
-
-			//	public RenderOperationItem()
-			//	{
-			//	}
-
-			//	public RenderOperationItem( RenderOperation operation, Transform transform )
-			//	{
-			//		this.operation = operation;
-			//		this.transform = transform;
-			//	}
-
-			//	public RenderOperationItem( RenderOperation operation )
-			//	{
-			//		this.operation = operation;
-			//	}
-			//}
+			RigidBody autoCollisionDefinition;
 
 			////////////
 
@@ -490,6 +403,7 @@ namespace NeoAxis
 				public SpaceBounds SpaceBounds { get; set; }
 				public float VisibilityDistanceFactor { get; set; }
 				//public float VisibilityDistance { get; set; }
+				public float LODScale { get; set; } = 1;
 				public bool CastShadows { get; set; }
 				public RenderingPipeline.RenderSceneData.IMeshDataLODLevel[] LODs { get; set; }
 				public int BillboardMode { get; set; }
@@ -700,17 +614,6 @@ namespace NeoAxis
 							foreach( var p in values )
 								extractedVerticesPositions[ destIndex++ ] = p;
 
-							//var buffer = oper.VertexBuffers[ element.Source ];
-							//var values = buffer.ExtractChannel<Vector3F>( element.Offset );
-
-							//int destIndex = startIndex;
-							//foreach( var p in values )
-							//{
-							//	extractedVertices[ destIndex++ ].Position = p;
-							//	////!!!!slowly
-							//	//extractedVertices[ destIndex++ ].Position = ( item.transform * p.ToVector3() ).ToVector3F();
-							//}
-
 							extractedVerticesComponents |= StandardVertex.Components.Position;
 						}
 					}
@@ -718,25 +621,8 @@ namespace NeoAxis
 					//Normal
 					{
 						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.Normal, out VertexElement element ) &&
-							element.Type == VertexElementType.Float3 )
+							( element.Type == VertexElementType.Float3 || element.Type == VertexElementType.Half3 ) )
 						{
-							//var buffer = oper.VertexBuffers[ element.Source ];
-							//var values = buffer.ExtractChannel<Vector3F>( element.Offset );
-
-							//int destIndex = startIndex;
-							//foreach( var p in values )
-							//{
-							//	extractedVertices[ destIndex++ ].Normal = p;
-
-							//	////!!!!slowly
-							//	////!!!!true?
-
-							//	//var v = ( item.transform.Rotation * p.ToVector3() ).ToVector3F();
-							//	////if( normalizeNormalsTangents )
-							//	//v.Normalize();
-							//	//extractedVertices[ destIndex++ ].Normal = v;
-							//}
-
 							extractedVerticesComponents |= StandardVertex.Components.Normal;
 						}
 					}
@@ -744,25 +630,8 @@ namespace NeoAxis
 					//Tangent
 					{
 						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.Tangent, out VertexElement element ) &&
-							element.Type == VertexElementType.Float4 )
+							( element.Type == VertexElementType.Float4 || element.Type == VertexElementType.Half4 ) )
 						{
-							//var buffer = oper.VertexBuffers[ element.Source ];
-							//var values = buffer.ExtractChannel<Vector4F>( element.Offset );
-
-							//int destIndex = startIndex;
-							//foreach( var p in values )
-							//{
-							//	extractedVertices[ destIndex++ ].Tangent = p;
-
-							//	////!!!!slowly
-							//	////!!!!true?
-
-							//	//var v = ( item.transform.Rotation * p.ToVector3F().ToVector3() ).ToVector3F();
-							//	////if( normalizeNormalsTangents )
-							//	//v.Normalize();
-							//	//extractedVertices[ destIndex++ ].Tangent = new Vector4F( v, p.W );
-							//}
-
 							extractedVerticesComponents |= StandardVertex.Components.Tangent;
 						}
 					}
@@ -771,35 +640,8 @@ namespace NeoAxis
 					{
 						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.Color0, out VertexElement element ) )
 						{
-							if( element.Type == VertexElementType.Float4 )
+							if( element.Type == VertexElementType.Float4 || element.Type == VertexElementType.Half4 || element.Type == VertexElementType.ColorABGR || element.Type == VertexElementType.ColorARGB )
 							{
-								//var buffer = oper.VertexBuffers[ element.Source ];
-								//var values = buffer.ExtractChannel<Vector4F>( element.Offset );
-								//int destIndex = startIndex;
-								//foreach( var p in values )
-								//	extractedVertices[ destIndex++ ].Color = p.ToColorValue();
-								extractedVerticesComponents |= StandardVertex.Components.Color;
-							}
-							else if( element.Type == VertexElementType.ColorABGR )
-							{
-								//!!!!check
-
-								//var buffer = oper.VertexBuffers[ element.Source ];
-								//var values = buffer.ExtractChannel<uint>( element.Offset );
-								//int destIndex = startIndex;
-								//foreach( var p in values )
-								//	extractedVertices[ destIndex++ ].Color = new ColorValue( ColorByte.FromABGR( p ) );
-								extractedVerticesComponents |= StandardVertex.Components.Color;
-							}
-							else if( element.Type == VertexElementType.ColorARGB )
-							{
-								//!!!!check
-
-								//var buffer = oper.VertexBuffers[ element.Source ];
-								//var values = buffer.ExtractChannel<uint>( element.Offset );
-								//int destIndex = startIndex;
-								//foreach( var p in values )
-								//	extractedVertices[ destIndex++ ].Color = new ColorValue( ColorByte.FromARGB( p ) );
 								extractedVerticesComponents |= StandardVertex.Components.Color;
 							}
 						}
@@ -808,13 +650,8 @@ namespace NeoAxis
 					//TexCoord0
 					{
 						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.TextureCoordinate0, out VertexElement element ) &&
-							element.Type == VertexElementType.Float2 )
+							( element.Type == VertexElementType.Float2 || element.Type == VertexElementType.Half2 ) )
 						{
-							//var buffer = oper.VertexBuffers[ element.Source ];
-							//var values = buffer.ExtractChannel<Vector2F>( element.Offset );
-							//int destIndex = startIndex;
-							//foreach( var p in values )
-							//	extractedVertices[ destIndex++ ].TexCoord0 = p;
 							extractedVerticesComponents |= StandardVertex.Components.TexCoord0;
 						}
 					}
@@ -822,13 +659,8 @@ namespace NeoAxis
 					//TexCoord1
 					{
 						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.TextureCoordinate1, out VertexElement element ) &&
-							element.Type == VertexElementType.Float2 )
+							( element.Type == VertexElementType.Float2 || element.Type == VertexElementType.Half2 ) )
 						{
-							//var buffer = oper.VertexBuffers[ element.Source ];
-							//var values = buffer.ExtractChannel<Vector2F>( element.Offset );
-							//int destIndex = startIndex;
-							//foreach( var p in values )
-							//	extractedVertices[ destIndex++ ].TexCoord1 = p;
 							extractedVerticesComponents |= StandardVertex.Components.TexCoord1;
 						}
 					}
@@ -836,13 +668,8 @@ namespace NeoAxis
 					//TexCoord2
 					{
 						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.TextureCoordinate2, out VertexElement element ) &&
-							element.Type == VertexElementType.Float2 )
+							( element.Type == VertexElementType.Float2 || element.Type == VertexElementType.Half2 ) )
 						{
-							//var buffer = oper.VertexBuffers[ element.Source ];
-							//var values = buffer.ExtractChannel<Vector2F>( element.Offset );
-							//int destIndex = startIndex;
-							//foreach( var p in values )
-							//	extractedVertices[ destIndex++ ].TexCoord2 = p;
 							extractedVerticesComponents |= StandardVertex.Components.TexCoord2;
 						}
 					}
@@ -850,13 +677,8 @@ namespace NeoAxis
 					//TexCoord3
 					{
 						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.TextureCoordinate3, out VertexElement element ) &&
-							element.Type == VertexElementType.Float2 )
+							( element.Type == VertexElementType.Float2 || element.Type == VertexElementType.Half2 ) )
 						{
-							//var buffer = oper.VertexBuffers[ element.Source ];
-							//var values = buffer.ExtractChannel<Vector2F>( element.Offset );
-							//int destIndex = startIndex;
-							//foreach( var p in values )
-							//	extractedVertices[ destIndex++ ].TexCoord3 = p;
 							extractedVerticesComponents |= StandardVertex.Components.TexCoord3;
 						}
 					}
@@ -866,11 +688,6 @@ namespace NeoAxis
 						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.BlendIndices, out VertexElement element ) &&
 							element.Type == VertexElementType.Integer4 )
 						{
-							//var buffer = oper.VertexBuffers[ element.Source ];
-							//var values = buffer.ExtractChannel<Vector4I>( element.Offset );
-							//int destIndex = startIndex;
-							//foreach( var p in values )
-							//	extractedVertices[ destIndex++ ].BlendIndices = p;
 							extractedVerticesComponents |= StandardVertex.Components.BlendIndices;
 						}
 					}
@@ -878,13 +695,8 @@ namespace NeoAxis
 					//BlendWeights
 					{
 						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.BlendWeights, out VertexElement element ) &&
-							element.Type == VertexElementType.Float4 )
+							( element.Type == VertexElementType.Float4 || element.Type == VertexElementType.Half4 ) )
 						{
-							//var buffer = oper.VertexBuffers[ element.Source ];
-							//var values = buffer.ExtractChannel<Vector4F>( element.Offset );
-							//int destIndex = startIndex;
-							//foreach( var p in values )
-							//	extractedVertices[ destIndex++ ].BlendWeights = p;
 							extractedVerticesComponents |= StandardVertex.Components.BlendWeights;
 						}
 					}
@@ -961,61 +773,54 @@ namespace NeoAxis
 						{
 							var buffer = oper.VertexBuffers[ element.Source ];
 							var values = buffer.ExtractChannel<Vector3F>( element.Offset );
-
 							int destIndex = startIndex;
 							foreach( var p in values )
-							{
 								extractedVertices[ destIndex++ ].Position = p;
-								////!!!!slowly
-								//extractedVertices[ destIndex++ ].Position = ( item.transform * p.ToVector3() ).ToVector3F();
-							}
 						}
 					}
 
 					//Normal
 					{
-						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.Normal, out VertexElement element ) &&
-							element.Type == VertexElementType.Float3 )
+						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.Normal, out VertexElement element ) )
 						{
 							var buffer = oper.VertexBuffers[ element.Source ];
-							var values = buffer.ExtractChannel<Vector3F>( element.Offset );
 
-							int destIndex = startIndex;
-							foreach( var p in values )
+							if( element.Type == VertexElementType.Float3 )
 							{
-								extractedVertices[ destIndex++ ].Normal = p;
-
-								////!!!!slowly
-								////!!!!true?
-
-								//var v = ( item.transform.Rotation * p.ToVector3() ).ToVector3F();
-								////if( normalizeNormalsTangents )
-								//v.Normalize();
-								//extractedVertices[ destIndex++ ].Normal = v;
+								var values = buffer.ExtractChannel<Vector3F>( element.Offset );
+								int destIndex = startIndex;
+								foreach( var p in values )
+									extractedVertices[ destIndex++ ].Normal = p;
+							}
+							else if( element.Type == VertexElementType.Half3 )
+							{
+								var values = buffer.ExtractChannel<Vector3H>( element.Offset );
+								int destIndex = startIndex;
+								foreach( var p in values )
+									extractedVertices[ destIndex++ ].Normal = p;
 							}
 						}
 					}
 
 					//Tangent
 					{
-						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.Tangent, out VertexElement element ) &&
-							element.Type == VertexElementType.Float4 )
+						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.Tangent, out VertexElement element ) )
 						{
 							var buffer = oper.VertexBuffers[ element.Source ];
-							var values = buffer.ExtractChannel<Vector4F>( element.Offset );
 
-							int destIndex = startIndex;
-							foreach( var p in values )
+							if( element.Type == VertexElementType.Float4 )
 							{
-								extractedVertices[ destIndex++ ].Tangent = p;
-
-								////!!!!slowly
-								////!!!!true?
-
-								//var v = ( item.transform.Rotation * p.ToVector3F().ToVector3() ).ToVector3F();
-								////if( normalizeNormalsTangents )
-								//v.Normalize();
-								//extractedVertices[ destIndex++ ].Tangent = new Vector4F( v, p.W );
+								var values = buffer.ExtractChannel<Vector4F>( element.Offset );
+								int destIndex = startIndex;
+								foreach( var p in values )
+									extractedVertices[ destIndex++ ].Tangent = p;
+							}
+							else if( element.Type == VertexElementType.Half4 )
+							{
+								var values = buffer.ExtractChannel<Vector4H>( element.Offset );
+								int destIndex = startIndex;
+								foreach( var p in values )
+									extractedVertices[ destIndex++ ].Tangent = p;
 							}
 						}
 					}
@@ -1024,19 +829,26 @@ namespace NeoAxis
 					{
 						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.Color0, out VertexElement element ) )
 						{
+							var buffer = oper.VertexBuffers[ element.Source ];
+
 							if( element.Type == VertexElementType.Float4 )
 							{
-								var buffer = oper.VertexBuffers[ element.Source ];
 								var values = buffer.ExtractChannel<Vector4F>( element.Offset );
 								int destIndex = startIndex;
 								foreach( var p in values )
 									extractedVertices[ destIndex++ ].Color = p.ToColorValue();
 							}
+							else if( element.Type == VertexElementType.Half4 )
+							{
+								var values = buffer.ExtractChannel<Vector4H>( element.Offset );
+								int destIndex = startIndex;
+								foreach( var p in values )
+									extractedVertices[ destIndex++ ].Color = p.ToVector4F().ToColorValue();
+							}
 							else if( element.Type == VertexElementType.ColorABGR )
 							{
 								//!!!!check
 
-								var buffer = oper.VertexBuffers[ element.Source ];
 								var values = buffer.ExtractChannel<uint>( element.Offset );
 								int destIndex = startIndex;
 								foreach( var p in values )
@@ -1046,7 +858,6 @@ namespace NeoAxis
 							{
 								//!!!!check
 
-								var buffer = oper.VertexBuffers[ element.Source ];
 								var values = buffer.ExtractChannel<uint>( element.Offset );
 								int destIndex = startIndex;
 								foreach( var p in values )
@@ -1057,53 +868,93 @@ namespace NeoAxis
 
 					//TexCoord0
 					{
-						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.TextureCoordinate0, out VertexElement element ) &&
-							element.Type == VertexElementType.Float2 )
+						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.TextureCoordinate0, out VertexElement element ) )
 						{
 							var buffer = oper.VertexBuffers[ element.Source ];
-							var values = buffer.ExtractChannel<Vector2F>( element.Offset );
-							int destIndex = startIndex;
-							foreach( var p in values )
-								extractedVertices[ destIndex++ ].TexCoord0 = p;
+
+							if( element.Type == VertexElementType.Float2 )
+							{
+								var values = buffer.ExtractChannel<Vector2F>( element.Offset );
+								int destIndex = startIndex;
+								foreach( var p in values )
+									extractedVertices[ destIndex++ ].TexCoord0 = p;
+							}
+							else if( element.Type == VertexElementType.Half2 )
+							{
+								var values = buffer.ExtractChannel<Vector2H>( element.Offset );
+								int destIndex = startIndex;
+								foreach( var p in values )
+									extractedVertices[ destIndex++ ].TexCoord0 = p;
+							}
 						}
 					}
 
 					//TexCoord1
 					{
-						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.TextureCoordinate1, out VertexElement element ) &&
-							element.Type == VertexElementType.Float2 )
+						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.TextureCoordinate1, out VertexElement element ) )
 						{
 							var buffer = oper.VertexBuffers[ element.Source ];
-							var values = buffer.ExtractChannel<Vector2F>( element.Offset );
-							int destIndex = startIndex;
-							foreach( var p in values )
-								extractedVertices[ destIndex++ ].TexCoord1 = p;
+
+							if( element.Type == VertexElementType.Float2 )
+							{
+								var values = buffer.ExtractChannel<Vector2F>( element.Offset );
+								int destIndex = startIndex;
+								foreach( var p in values )
+									extractedVertices[ destIndex++ ].TexCoord1 = p;
+							}
+							else if( element.Type == VertexElementType.Half2 )
+							{
+								var values = buffer.ExtractChannel<Vector2H>( element.Offset );
+								int destIndex = startIndex;
+								foreach( var p in values )
+									extractedVertices[ destIndex++ ].TexCoord1 = p;
+							}
 						}
 					}
 
 					//TexCoord2
 					{
-						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.TextureCoordinate2, out VertexElement element ) &&
-							element.Type == VertexElementType.Float2 )
+						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.TextureCoordinate2, out VertexElement element ) )
 						{
 							var buffer = oper.VertexBuffers[ element.Source ];
-							var values = buffer.ExtractChannel<Vector2F>( element.Offset );
-							int destIndex = startIndex;
-							foreach( var p in values )
-								extractedVertices[ destIndex++ ].TexCoord2 = p;
+
+							if( element.Type == VertexElementType.Float2 )
+							{
+								var values = buffer.ExtractChannel<Vector2F>( element.Offset );
+								int destIndex = startIndex;
+								foreach( var p in values )
+									extractedVertices[ destIndex++ ].TexCoord2 = p;
+							}
+							else if( element.Type == VertexElementType.Half2 )
+							{
+								var values = buffer.ExtractChannel<Vector2H>( element.Offset );
+								int destIndex = startIndex;
+								foreach( var p in values )
+									extractedVertices[ destIndex++ ].TexCoord2 = p;
+							}
 						}
 					}
 
 					//TexCoord3
 					{
-						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.TextureCoordinate3, out VertexElement element ) &&
-							element.Type == VertexElementType.Float2 )
+						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.TextureCoordinate3, out VertexElement element ) )
 						{
 							var buffer = oper.VertexBuffers[ element.Source ];
-							var values = buffer.ExtractChannel<Vector2F>( element.Offset );
-							int destIndex = startIndex;
-							foreach( var p in values )
-								extractedVertices[ destIndex++ ].TexCoord3 = p;
+
+							if( element.Type == VertexElementType.Float2 )
+							{
+								var values = buffer.ExtractChannel<Vector2F>( element.Offset );
+								int destIndex = startIndex;
+								foreach( var p in values )
+									extractedVertices[ destIndex++ ].TexCoord3 = p;
+							}
+							else if( element.Type == VertexElementType.Half2 )
+							{
+								var values = buffer.ExtractChannel<Vector2H>( element.Offset );
+								int destIndex = startIndex;
+								foreach( var p in values )
+									extractedVertices[ destIndex++ ].TexCoord3 = p;
+							}
 						}
 					}
 
@@ -1122,14 +973,24 @@ namespace NeoAxis
 
 					//BlendWeights
 					{
-						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.BlendWeights, out VertexElement element ) &&
-							element.Type == VertexElementType.Float4 )
+						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.BlendWeights, out VertexElement element ) )
 						{
 							var buffer = oper.VertexBuffers[ element.Source ];
-							var values = buffer.ExtractChannel<Vector4F>( element.Offset );
-							int destIndex = startIndex;
-							foreach( var p in values )
-								extractedVertices[ destIndex++ ].BlendWeights = p;
+
+							if( element.Type == VertexElementType.Float4 )
+							{
+								var values = buffer.ExtractChannel<Vector4F>( element.Offset );
+								int destIndex = startIndex;
+								foreach( var p in values )
+									extractedVertices[ destIndex++ ].BlendWeights = p;
+							}
+							else if( element.Type == VertexElementType.Half4 )
+							{
+								var values = buffer.ExtractChannel<Vector4H>( element.Offset );
+								int destIndex = startIndex;
+								foreach( var p in values )
+									extractedVertices[ destIndex++ ].BlendWeights = p;
+							}
 						}
 					}
 
@@ -1162,129 +1023,228 @@ namespace NeoAxis
 				get { return extractedIndices; }
 			}
 
-			public enum RayCastMode
+			[Flags]
+			public enum RayCastModes
 			{
-				Auto,
-				BruteforceNoCache,
-				OctreeOptimizedCached
+				None = 0,
+				Optimized = 1,
+				//VirtualizedData = 2,
+				Auto = Optimized// | VirtualizedData,
 			}
 
-			public bool RayCast( Ray ray, RayCastMode mode, bool twoSided, out double scale, out int triangleIndex )
+			//public enum RayCastMode
+			//{
+			//	Auto,
+			//	BruteforceNoCache,
+			//	OctreeOptimizedCached
+			//}
+
+			//!!!!struct?
+			public class RayCastResult
 			{
-				scale = 0;
-				triangleIndex = -1;
+				public double Scale;
+				public Vector3F Normal;
 
-				if( !SpaceBounds.CalculatedBoundingBox.Intersects( ray ) )
-					return false;
-				if( !SpaceBounds.CalculatedBoundingSphere.Intersects( ray ) )
-					return false;
+				//!!!!public int MaterialIndex;
 
-				if( mode == RayCastMode.Auto )
+				//for usual mesh
+				public bool ContainsTriangleInfo;
+				public int TriangleIndex;
+
+				//for cluster data
+				public bool ContainsVertexInfo;
+				public StandardVertex Vertex0;
+				public StandardVertex Vertex1;
+				public StandardVertex Vertex2;
+			}
+
+			public RayCastResult RayCast( Ray ray, RayCastModes mode, bool twoSided )
+			//public bool RayCast( Ray ray, RayCastModes mode, bool twoSided, out double scale, out Vector3F normal, out int triangleIndex )
+			{
+				//scale = 0;
+				//normal = Vector3F.Zero;
+				//triangleIndex = -1;
+
+				if( !SpaceBounds.BoundingBox.Intersects( ray ) )
+					return null;// false;
+				if( !SpaceBounds.BoundingSphere.Intersects( ray ) )
+					return null;// false;
+
+				//!!!!support when mixed virtualized and usual meshes. нужно пропускать некластерные
+
+				//if( ( mode & RayCastModes.VirtualizedData ) != 0 && ContainsVirtualizedData() )
+				//{
+				//	RayCastResult bestResult = null;
+
+				//	for( int n = 0; n < MeshData.RenderOperations.Count; n++ )
+				//	{
+				//		var op = MeshData.RenderOperations[ n ];
+
+				//		var result = op.VirtualizedRayCast( ray, mode, twoSided );
+				//		if( result != null )
+				//		{
+				//			if( bestResult == null || result.Scale < bestResult.Scale )
+				//				bestResult = result;
+				//		}
+				//	}
+
+				//	return bestResult;
+				//}
+
+				////var useOptimized = ( mode & RayCastModes.Optimized ) != 0;
+
+				////if( useOptimized )
+				////{
+				////	int minTriangles = 16;
+
+				////	if( ExtractedIndices.Length < minTriangles * 3 )
+				////		useOptimized = false;
+
+				////	//if( ExtractedIndices.Length > minTriangles * 3 )
+				////	//	mode = RayCastMode.OctreeOptimizedCached;
+				////	//else
+				////	//	mode = RayCastMode.BruteforceNoCache;
+				////}
+
+				if( ExtractedIndices != null && ExtractedVerticesPositions != null )
 				{
-					int minTriangles = 20;
+					RayF rayF = ray.ToRayF();
 
-					if( ExtractedIndices.Length > minTriangles * 3 )
-						mode = RayCastMode.OctreeOptimizedCached;
-					else
-						mode = RayCastMode.BruteforceNoCache;
-				}
+					int minTriangles = 16;
 
-				RayF rayF = ray.ToRayF();
-
-				if( mode == RayCastMode.OctreeOptimizedCached )
-				{
-					//octree optimized cached
-
-					//!!!!может сразу создавать?
-					//!!!!threading
-
-					MeshTest.ResultItem[] result = null;
-
-					lock( meshTestLockObject )
+					if( ( mode & RayCastModes.Optimized ) != 0 && ExtractedIndices.Length > minTriangles * 3 )
+					//if( useOptimized )//if( mode == RayCastMode.OctreeOptimizedCached )
 					{
-						//!!!!поточность в octree поддержать
-						if( meshTest == null )
-							meshTest = new MeshTest( ExtractedVerticesPositions, ExtractedIndices );
-						result = meshTest.RayCast( rayF, MeshTest.Mode.OneClosest, twoSided );
-					}
+						//octree optimized cached
 
-					if( result.Length > 0 )
-					{
-						var item = result[ 0 ];
-						scale = item.Scale;
-						triangleIndex = item.TriangleIndex;
-						return true;
-					}
-
-					return false;
-				}
-				else
-				{
-					//Brute-force no cache
-
-					var vertices = ExtractedVerticesPositions;
-					var indices = ExtractedIndices;
-
-					bool found = false;
-
-					//process data
-					for( int nTriangle = 0; nTriangle < indices.Length / 3; nTriangle++ )
-					{
-						ref Vector3F vertex0 = ref vertices[ indices[ nTriangle * 3 + 0 ] ];
-						ref Vector3F vertex1 = ref vertices[ indices[ nTriangle * 3 + 1 ] ];
-						ref Vector3F vertex2 = ref vertices[ indices[ nTriangle * 3 + 2 ] ];
-
-						var bounds = new BoundsF( vertex0 );
-						bounds.Add( ref vertex1 );
-						bounds.Add( ref vertex2 );
-
-						if( bounds.Intersects( ref rayF ) )
+						lock( meshTestLockObject )
 						{
-							if( MathAlgorithms.IntersectTriangleRay( ref vertex0, ref vertex1, ref vertex2, ref rayF, out var localScale ) ||
-							twoSided && MathAlgorithms.IntersectTriangleRay( ref vertex0, ref vertex2, ref vertex1, ref rayF, out localScale ) )
+							if( meshTest == null )
+								meshTest = new MeshTest( ExtractedVerticesPositions, ExtractedIndices );
+						}
+
+						//!!!!GC
+						var result = meshTest.RayCast( rayF, MeshTest.Mode.OneClosest, twoSided );
+
+						if( result.Length > 0 )
+						{
+							var item = result[ 0 ];
+
+							var r = new RayCastResult();
+							r.Scale = item.Scale;
+							r.Normal = item.Normal;
+							r.ContainsTriangleInfo = true;
+							r.TriangleIndex = item.TriangleIndex;
+							return r;
+						}
+
+						return null;
+
+						//if( result.Length > 0 )
+						//{
+						//	var item = result[ 0 ];
+						//	scale = item.Scale;
+						//	normal = item.Normal;
+						//	triangleIndex = item.TriangleIndex;
+						//	return true;
+						//}
+
+						//return false;
+					}
+					else
+					{
+						//Brute-force no cache
+
+						var vertices = ExtractedVerticesPositions;
+						var indices = ExtractedIndices;
+
+						RayCastResult found = null;
+						//bool found = false;
+
+						//process data
+						for( int nTriangle = 0; nTriangle < indices.Length / 3; nTriangle++ )
+						{
+							ref Vector3F vertex0 = ref vertices[ indices[ nTriangle * 3 + 0 ] ];
+							ref Vector3F vertex1 = ref vertices[ indices[ nTriangle * 3 + 1 ] ];
+							ref Vector3F vertex2 = ref vertices[ indices[ nTriangle * 3 + 2 ] ];
+
+							var bounds = new BoundsF( vertex0 );
+							bounds.Add( ref vertex1 );
+							bounds.Add( ref vertex2 );
+
+							if( bounds.Intersects( ref rayF ) )
 							{
-								if( !found || localScale < scale )
+								//!!!!надо ли два раз искать IntersectTriangleRay?
+								var found2 = MathAlgorithms.IntersectTriangleRay( ref vertex0, ref vertex1, ref vertex2, ref rayF, out float localScale );
+								var normal2 = Vector3F.Zero;
+								if( found2 )
+									MathAlgorithms.CalculateTriangleNormal( ref vertex0, ref vertex1, ref vertex2, out normal2 );
+								else
 								{
-									found = true;
-									scale = localScale;
-									triangleIndex = nTriangle;
+									found2 = twoSided && MathAlgorithms.IntersectTriangleRay( ref vertex0, ref vertex2, ref vertex1, ref rayF, out localScale );
+									if( found2 )
+										MathAlgorithms.CalculateTriangleNormal( ref vertex0, ref vertex2, ref vertex1, out normal2 );
 								}
 
-								//Vec3 localPoint = localRay.GetPointOnRay( localScale );
-								//Vec3 worldPoint = transform * localPoint;
+								////if( MathAlgorithms.IntersectTriangleRay( ref vertex0, ref vertex1, ref vertex2, ref rayF, out var localScale ) ||
+								////twoSided && MathAlgorithms.IntersectTriangleRay( ref vertex0, ref vertex2, ref vertex1, ref rayF, out localScale ) )
+								if( found2 )
+								{
+									if( found == null || localScale < found.Scale )
+									{
+										found = new RayCastResult();
+										found.Scale = localScale;
+										found.Normal = normal2;
+										found.ContainsTriangleInfo = true;
+										found.TriangleIndex = nTriangle;
+									}
 
-								//float worldScale;
-								//if( rayLength != 0 )
-								//	worldScale = ( worldPoint - ray.Origin ).Length() / rayLength;
-								//else
-								//	worldScale = 0;
+									//if( !found || localScale < scale )
+									//{
+									//	found = true;
+									//	scale = localScale;
+									//	normal = normal2;
+									//	triangleIndex = nTriangle;
+									//}
 
-								//if( list.Count == 0 )
-								//	list.Add( new Result( worldScale, nSubMesh ) );
-								//else
-								//{
-								//	if( piercing )
-								//		list.Add( new Result( worldScale, nSubMesh ) );
-								//	else
-								//	{
-								//		if( worldScale < list[ 0 ].rayScale )
-								//			list[ 0 ] = new Result( worldScale, nSubMesh );
-								//	}
-								//}
+									////Vec3 localPoint = localRay.GetPointOnRay( localScale );
+									////Vec3 worldPoint = transform * localPoint;
+
+									////float worldScale;
+									////if( rayLength != 0 )
+									////	worldScale = ( worldPoint - ray.Origin ).Length() / rayLength;
+									////else
+									////	worldScale = 0;
+
+									////if( list.Count == 0 )
+									////	list.Add( new Result( worldScale, nSubMesh ) );
+									////else
+									////{
+									////	if( piercing )
+									////		list.Add( new Result( worldScale, nSubMesh ) );
+									////	else
+									////	{
+									////		if( worldScale < list[ 0 ].rayScale )
+									////			list[ 0 ] = new Result( worldScale, nSubMesh );
+									////	}
+									////}
+								}
 							}
 						}
-					}
 
-					return found;
+						return found;
+					}
 				}
+
+				return null;
 			}
 
 			//!!!!
 			internal bool _IntersectsFast( Plane[] planes, ref Bounds bounds )
 			{
-				if( !SpaceBounds.CalculatedBoundingBox.Intersects( ref bounds ) )
+				if( !SpaceBounds.BoundingBox.Intersects( ref bounds ) )
 					return false;
-				if( !SpaceBounds.CalculatedBoundingSphere.Intersects( ref bounds ) )
+				if( !SpaceBounds.BoundingSphere.Intersects( ref bounds ) )
 					return false;
 
 				//if( ExtractedIndices.Length < 2048 )
@@ -1292,11 +1252,10 @@ namespace NeoAxis
 
 				lock( meshTestLockObject )
 				{
-					//!!!!поточность в octree поддержать
 					if( meshTest == null )
 						meshTest = new MeshTest( ExtractedVerticesPositions, ExtractedIndices );
-					return meshTest.IntersectsFast( planes, ref bounds );
 				}
+				return meshTest.IntersectsFast( planes, ref bounds );
 
 				//}
 				//else
@@ -1316,18 +1275,17 @@ namespace NeoAxis
 			//!!!!
 			internal int[] _GetIntersectedTrianglesFast(/* Plane[] planes, */ref Bounds bounds )
 			{
-				if( !SpaceBounds.CalculatedBoundingBox.Intersects( ref bounds ) )
+				if( !SpaceBounds.BoundingBox.Intersects( ref bounds ) )
 					return Array.Empty<int>();
-				if( !SpaceBounds.CalculatedBoundingSphere.Intersects( ref bounds ) )
+				if( !SpaceBounds.BoundingSphere.Intersects( ref bounds ) )
 					return Array.Empty<int>();
 
 				lock( meshTestLockObject )
 				{
-					//!!!!поточность в octree поддержать
 					if( meshTest == null )
 						meshTest = new MeshTest( ExtractedVerticesPositions, ExtractedIndices );
-					return meshTest.GetIntersectedTrianglesFast( /*planes, */ref bounds );
 				}
+				return meshTest.GetIntersectedTrianglesFast( /*planes, */ref bounds );
 			}
 
 			//!!!!!
@@ -1367,6 +1325,61 @@ namespace NeoAxis
 						return data;
 				}
 				return this;
+			}
+
+			//public bool ContainsVirtualizedData()
+			//{
+			//	for( int n = 0; n < MeshData.RenderOperations.Count; n++ )
+			//	{
+			//		var op = MeshData.RenderOperations[ n ];
+			//		if( op.VirtualizedData != null )
+			//			return true;
+			//	}
+			//	return false;
+			//}
+
+			static Mesh GetLowestNotVoxelLod( Mesh.CompiledData meshResult )
+			{
+				var lods = meshResult.MeshData?.LODs;
+				if( lods != null )
+				{
+					for( int n = lods.Length - 1; n >= 0; n-- )
+					{
+						var lod = lods[ n ];
+
+						var lodMesh = lod.Mesh;
+						if( lodMesh != null )
+						{
+							var isVoxel = false;
+
+							foreach( var geometry in lodMesh.GetComponents<MeshGeometry>() )
+							{
+								if( geometry.VoxelData.Value != null )
+								{
+									isVoxel = true;
+									break;
+								}
+							}
+
+							if( !isVoxel )
+								return lodMesh;
+						}
+					}
+				}
+
+				return meshResult.Owner;
+			}
+
+			public RigidBody GetAutoCollisionDefinition()
+			{
+				if( autoCollisionDefinition == null )
+				{
+					var body = new RigidBody();
+					var collisionShape = body.CreateComponent<CollisionShape_Mesh>();
+					collisionShape.Mesh = GetLowestNotVoxelLod( this );
+					autoCollisionDefinition = body;
+				}
+				return autoCollisionDefinition;
 			}
 		}
 
@@ -1483,6 +1496,22 @@ namespace NeoAxis
 					bounds = Bounds.Zero;
 				if( sphere.IsCleared() )
 					sphere = Sphere.Zero;
+
+				////expand zero sizes
+				//{
+				//	var size = bounds.GetSize();
+				//	for( int n = 0; n < 3; n++ )
+				//	{
+				//		if( size[ n ] <= 0.001 )
+				//		{
+				//			bounds.Minimum[ n ] -= 0.001;
+				//			bounds.Maximum[ n ] += 0.001;
+				//		}
+				//	}
+				//	if( sphere.Radius < 0.001 )
+				//		sphere.Radius = 0.001;
+				//}
+
 				compiledData.SpaceBounds = new SpaceBounds( bounds, sphere );
 
 				compiledData.MeshData.SpaceBounds = compiledData.SpaceBounds;
@@ -1490,6 +1519,7 @@ namespace NeoAxis
 				//compiledData.MeshData.BoundingSphere = sphere;
 
 				compiledData.MeshData.VisibilityDistanceFactor = (float)VisibilityDistanceFactor;
+				compiledData.MeshData.LODScale = (float)LODScale;
 				compiledData.MeshData.CastShadows = CastShadows;
 
 				//!!!!тут?
@@ -1518,6 +1548,19 @@ namespace NeoAxis
 								item.Distance = (float)lod.Distance;
 								//item.DistanceSquared = (float)( lod.Distance * lod.Distance );
 
+								if( item.Mesh != null )
+								{
+									foreach( var geometry in item.Mesh.GetComponents<MeshGeometry>() )
+									{
+										var size = geometry.VoxelGridSize.MaxComponent();
+										if( size != 0 )
+										{
+											item.VoxelGridSize = size;
+											break;
+										}
+									}
+								}
+
 								lods[ current ] = item;
 								current++;
 							}
@@ -1541,7 +1584,7 @@ namespace NeoAxis
 					}
 				}
 
-				//BillboardData
+				//Billboard data
 				if( Billboard )
 				{
 					var positions = compiledData.ExtractedVerticesPositions;
@@ -1852,9 +1895,10 @@ namespace NeoAxis
 				if( meshGeometry is MeshGeometry_Procedural meshGeometryProcedural )
 				{
 					Material material = null;
-					byte[] billboardData = null;
+					byte[] voxelData = null;
+					byte[] clusterData = null;
 					StructureClass structure = null;
-					meshGeometryProcedural.GetProceduralGeneratedData( ref item.VertexStructure, ref item.Vertices, ref item.Indices, ref material, ref billboardData, ref structure );
+					meshGeometryProcedural.GetProceduralGeneratedData( ref item.VertexStructure, ref item.Vertices, ref item.Indices, ref material, ref voxelData, ref clusterData, ref structure );
 					result.Structure = StructureClass.Concat( result.Structure, structure, i );
 
 					item.Material = meshGeometryProcedural.Material;
@@ -1924,31 +1968,75 @@ namespace NeoAxis
 					if( !Billboard || !CastShadows )
 						skip = true;
 					break;
-
-					//case nameof( VoxelizedSize ):
-					//	if( !VoxelizedData.ReferenceOrValueSpecified )
-					//		skip = true;
-					//	break;
 				}
 			}
 		}
 
-		public void ConvertToBillboard( MeshGeometry.BillboardDataModeEnum mode, int imageSize, bool centeringByXY, bool fillTransparentPixelsByNearPixels )
+		public delegate void ConvertToVoxelOverrideDelegate( Mesh sender, int gridSize, double thinFactor, bool bakeMaterialOpacity, bool optimizeMaterials, double fillHolesFactor, ref bool handled );
+		public static event ConvertToVoxelOverrideDelegate ConvertToVoxelOverride;
+
+		public void ConvertToVoxel( int gridSize, double thinFactor, bool bakeMaterialOpacity, bool optimizeMaterials, double fillHolesFactor )
 		{
-			var convert = new MeshConvertToBillboard();
+			var handled = false;
+			ConvertToVoxelOverride?.Invoke( this, gridSize, thinFactor, bakeMaterialOpacity, optimizeMaterials, fillHolesFactor, ref handled );
+			if( handled )
+				return;
+
+			var convert = new MeshConvertToVoxel();
 			convert.Mesh = this;
-			convert.Mode = mode;
-			convert.ImageSize = imageSize;
-			convert.CenteringByXY = centeringByXY;
-			convert.FillTransparentPixelsByNearPixels = fillTransparentPixelsByNearPixels;
+			convert.InitialGridSize = gridSize;
+			convert.ThinFactor = thinFactor;
+			convert.BakeMaterialOpacity = bakeMaterialOpacity;
+			convert.OptimizeMaterials = optimizeMaterials;
+			convert.FillHolesDistance = fillHolesFactor;
 
 			convert.Convert();
 		}
 
 		public bool SupportsBatching()
 		{
-			//!!!!slowly. can be cached?
+			var result = Result;
+			if( Result != null )
+			{
+				var meshData = result.MeshData;
 
+				if( meshData.LODs != null )
+				{
+					//check only last lod for transparent
+					var lod = meshData.LODs[ meshData.LODs.Length - 1 ];
+					if( lod.Mesh != null && !lod.Mesh.SupportsBatching() )
+						return false;
+				}
+				else
+				{
+					for( int n = 0; n < meshData.RenderOperations.Count; n++ )
+					{
+						var oper = meshData.RenderOperations[ n ];
+						if( oper.Material != null && oper.Material.Result != null && oper.Material.Result.Transparent )
+							return false;
+					}
+				}
+
+				//for( int n = 0; n < meshData.RenderOperations.Count; n++ )
+				//{
+				//	var oper = meshData.RenderOperations[ n ];
+				//	if( oper.Material != null && oper.Material.Result != null && oper.Material.Result.Transparent )
+				//		return false;
+				//}
+
+				//if( meshData.LODs != null )
+				//{
+				//	foreach( var lod in meshData.LODs )
+				//		if( lod.Mesh != null && !lod.Mesh.SupportsBatching() )
+				//			return false;
+				//}
+			}
+
+			return true;
+		}
+
+		public bool ContainsTransparent()
+		{
 			var result = Result;
 			if( Result != null )
 			{
@@ -1958,28 +2046,28 @@ namespace NeoAxis
 				{
 					var oper = meshData.RenderOperations[ n ];
 					if( oper.Material != null && oper.Material.Result != null && oper.Material.Result.Transparent )
-						return false;
+						return true;
 				}
 
 				if( meshData.LODs != null )
 				{
 					foreach( var lod in meshData.LODs )
-						if( lod.Mesh != null && !lod.Mesh.SupportsBatching() )
-							return false;
+						if( lod.Mesh != null && lod.Mesh.ContainsTransparent() )
+							return true;
 				}
 			}
 
-			return true;
+			return false;
 		}
-		
-		//!!!!
-		//public void Voxelize( MeshVoxelizationMode mode, MeshVoxelizationSize size )
+
+		//public bool ContainsVirtualizedData()
 		//{
-		//	//!!!!удалить старый
-
-		//	//!!!!
-
-		//	MeshVoxelization.Voxelize( this, mode, size );
+		//	foreach( var geometry in GetComponents<MeshGeometry>() )
+		//	{
+		//		if( geometry.VirtualizedData.Value != null )
+		//			return true;
+		//	}
+		//	return false;
 		//}
 	}
 }

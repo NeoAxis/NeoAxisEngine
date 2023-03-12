@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System.ComponentModel;
 using Internal.tainicom.Aether.Physics2D.Dynamics;
 
@@ -14,6 +14,6 @@ namespace NeoAxis
 		[Browsable( false )]
 		public abstract Body Physics2DBody { get; }
 
-		public abstract void Render( ViewportRenderingContext context, out int verticesRendered );
+		public abstract void RenderPhysicalObject( ViewportRenderingContext context, out int verticesRendered );
 	}
 }

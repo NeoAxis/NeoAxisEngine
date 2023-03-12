@@ -1,7 +1,8 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #pragma once
 
 #ifdef _WIN32
+	#define byte win_byte_override
 	#include <windows.h>
 	#include <objbase.h>
 #endif

@@ -16,13 +16,13 @@ A. All redistributions must retain all occurrences of the above copyright notice
 
 B. Modified versions in binary form must be plainly marked as such, and must not be misrepresented as being the original software.
 
-C. You can change the engine logo "Made with NeoAxis", which appears at the launch of the application created by the Technology, only if you have an active subscription to the Additional Content "NeoAxis Pro". It can be purchased only through www.neoaxis.com or through authorized resellers of the NeoAxis Group Ltd.
+C. Additional Content which is provided for an additional fee, can be redistributed in their Source Code form only to those that have purchased the same products. It cannot be distributed in their Source Code form with a Product.
 
-D. Additional Content which is provided for an additional fee, can be redistributed in their Source Code form only to those that have purchased the same products. It cannot be distributed in their Source Code form with a Product.
+D. Certain Additional Content is distributed under the "Free to use with NeoAxis" license. This means that the content can only be used with the Engine Code.
 
-E. Certain Additional Content is distributed under the "Free to use with NeoAxis" license. This means that the product can only be used with the Engine Code.
+E. You agree to pay the Licensor a royalty equal to 3% of all worldwide gross revenue from each Product, excluding the first $200,000 USD or equivalent in the lifetime of a Product. In includes gross revenue from any and all sales of a Product to end users through any and all media, revenue from any and all in-app purchases, in-app advertising, affiliate programs, downloadable content, microtransactions, subscriptions, sale, transfer, from advance payments, exchange of content created by end users, revenue in any other form. Payment must be made to the Licensor within 1 month after getting revenue. This requirement only applies if a Product includes the Engine Code.
 
-F. You agree to pay the Licensor a royalty equal to 3% of all worldwide gross revenue from each Product, excluding the first $200,000 USD in the lifetime of a Product. In includes gross revenue from any and all sales of a Product to end users through any and all media, revenue from any and all in-app purchases, in-app advertising, affiliate programs, downloadable content, microtransactions, subscriptions, sale, transfer, from advance payments, exchange of content created by end users, revenue in any other form. Payment must be made to the Licensor within 1 month after getting revenue.
+F. Showing the NeoAxis Engine logo at launching a Product is not a prerequisite, but need to add to the Credits of a Product that it is made with NeoAxis Engine.
 
 If you do not accept these conditions or it is not enforceable in your jurisdiction, then you may not use the software.
 

@@ -2,7 +2,7 @@
 using System;
 using System.Threading;
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	/// <summary>
 	/// Sender part of Selective repeat ARQ for a particular NetChannel
@@ -159,7 +159,8 @@ namespace Lidgren.Network
 			var storedMessage = srm.Message;
 
 			// on each destore; reduce recyclingcount so that when all instances are destored, the outgoing message can be recycled
-			Interlocked.Decrement(ref storedMessage.m_recyclingCount);
+			if( storedMessage != null ) //!!!!betauser
+				Interlocked.Decrement(ref storedMessage.m_recyclingCount);
 #if DEBUG
 			if (storedMessage == null)
 				throw new NetException("m_storedMessages[" + storeIndex + "].Message is null; sent " + m_storedMessages[storeIndex].NumSent + " times, last time " + (NetTime.Now - m_storedMessages[storeIndex].LastSent) + " seconds ago");

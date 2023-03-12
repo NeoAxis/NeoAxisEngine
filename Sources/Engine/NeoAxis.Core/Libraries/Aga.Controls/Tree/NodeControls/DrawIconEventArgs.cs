@@ -1,3 +1,4 @@
+#if !DEPLOY
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,13 +9,16 @@ namespace Internal.Aga.Controls.Tree.NodeControls
 {
 	public class DrawIconEventArgs : DrawEventArgs
 	{
-		private ColorMatrix _iconMatrix;
-		public ColorMatrix IconColorMatrix
-		{
-			get { return _iconMatrix; }
-			set { _iconMatrix = value; }
-		}
+		//betauser
+		//private ColorMatrix _iconMatrix;
+		//public ColorMatrix IconColorMatrix
+		//{
+		//	get { return _iconMatrix; }
+		//	set { _iconMatrix = value; }
+		//}
 
 		public DrawIconEventArgs(TreeNodeAdv node, NodeControl control, DrawContext context) : base(node, control, context) {}
 	}
 }
+
+#endif

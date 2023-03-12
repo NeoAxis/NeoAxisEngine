@@ -1,10 +1,11 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Runtime.InteropServices;
 using NeoAxis.Editor;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -22,18 +23,21 @@ namespace NeoAxis
 		public static readonly ColorValuePowered Zero = new ColorValuePowered( 0, 0, 0, 0, 0 );
 		public static readonly ColorValuePowered One = new ColorValuePowered( 1, 1, 1, 1, 1 );
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ColorValuePowered( ColorValuePowered source )
 		{
 			this.Color = source.Color;
 			this.Power = source.Power;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ColorValuePowered( ColorValue color, float power )
 		{
 			this.Color = color;
 			this.Power = power;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public ColorValuePowered( ColorValue source )
 		{
@@ -49,6 +53,7 @@ namespace NeoAxis
 			Power = p;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public ColorValuePowered( Vector4 source )
 		{
@@ -63,6 +68,7 @@ namespace NeoAxis
 			Power = p;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public ColorValuePowered( Vector4F source )
 		{
@@ -77,6 +83,7 @@ namespace NeoAxis
 			Power = p;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public ColorValuePowered( Vector3 source )
 		{
@@ -91,6 +98,7 @@ namespace NeoAxis
 			Power = p;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public ColorValuePowered( Vector3F source )
 		{
@@ -105,12 +113,14 @@ namespace NeoAxis
 			Power = p;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ColorValuePowered( double r, double g, double b, double a = 1, double p = 1 )
 		{
 			Color = new ColorValue( r, g, b, a );
 			Power = (float)p;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ColorValuePowered( float r, float g, float b, float a = 1, float p = 1 )
 		{
 			Color = new ColorValue( r, g, b, a );
@@ -119,25 +129,33 @@ namespace NeoAxis
 
 		public float Red
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get { return Color.Red; }
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set { Color.Red = value; }
 		}
 
 		public float Green
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get { return Color.Green; }
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set { Color.Green = value; }
 		}
 
 		public float Blue
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get { return Color.Blue; }
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set { Color.Blue = value; }
 		}
 
 		public float Alpha
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get { return Color.Alpha; }
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set { Color.Alpha = value; }
 		}
 
@@ -205,11 +223,13 @@ namespace NeoAxis
 				return Color.ToString( precision );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is ColorValuePowered && this == (ColorValuePowered)obj );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return Color.GetHashCode() ^ Power.GetHashCode();
@@ -470,11 +490,13 @@ namespace NeoAxis
 		//	return result;
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( ColorValuePowered v1, ColorValuePowered v2 )
 		{
 			return ( v1.Color == v2.Color && v1.Power == v2.Power );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( ColorValuePowered v1, ColorValuePowered v2 )
 		{
 			return ( v1.Color != v2.Color || v1.Power != v2.Power );
@@ -482,6 +504,7 @@ namespace NeoAxis
 
 		public unsafe float this[ int index ]
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				if( index < 0 || index > 4 )
@@ -496,6 +519,7 @@ namespace NeoAxis
 				}
 				return 0;
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set
 			{
 				if( index < 0 || index > 4 )
@@ -511,6 +535,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( ColorValuePowered c, float epsilon )
 		{
 			if( !Color.Equals( c.Color, epsilon ) )
@@ -520,6 +545,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Clamp( ColorValuePowered min, ColorValuePowered max )
 		{
 			Color.Clamp( min.Color, max.Color );
@@ -530,6 +556,7 @@ namespace NeoAxis
 				Power = max.Power;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ColorValuePowered GetClamp( ColorValuePowered min, ColorValuePowered max )
 		{
 			ColorValuePowered r = this;
@@ -537,6 +564,7 @@ namespace NeoAxis
 			return r;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Saturate()
 		{
 			Color.Saturate();
@@ -547,6 +575,7 @@ namespace NeoAxis
 				Power = 1;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ColorValuePowered GetSaturate()
 		{
 			ColorValuePowered r = this;
@@ -554,42 +583,49 @@ namespace NeoAxis
 			return r;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Vector4 ToVector4()
 		{
 			return new Vector4( Color.Red * Power, Color.Green * Power, Color.Blue * Power, Color.Alpha );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Vector3 ToVector3()
 		{
 			return new Vector3( Color.Red * Power, Color.Green * Power, Color.Blue * Power );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Vector3H ToVector3H()
 		{
 			return new Vector3H( Color.Red * Power, Color.Green * Power, Color.Blue * Power );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Vector4F ToVector4F()
 		{
 			return new Vector4F( Color.Red * Power, Color.Green * Power, Color.Blue * Power, Color.Alpha );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Vector3F ToVector3F()
 		{
 			return new Vector3F( Color.Red * Power, Color.Green * Power, Color.Blue * Power );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public ColorValue ToColorValue()
 		{
 			return new ColorValue( Color.Red * Power, Color.Green * Power, Color.Blue * Power, Color.Alpha );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static ColorValuePowered Lerp( ColorValuePowered v1, ColorValuePowered v2, float amount )
 		{
 			ColorValuePowered result;
@@ -598,6 +634,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Lerp( ref ColorValuePowered v1, ref ColorValuePowered v2, float amount, out ColorValuePowered result )
 		{
 			ColorValue.Lerp( ref v1.Color, ref v2.Color, amount, out result.Color );

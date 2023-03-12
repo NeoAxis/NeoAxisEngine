@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Collections;
@@ -15,8 +15,10 @@ namespace NeoAxis
 	/// Base class of all UI controls.
 	/// </summary>
 	[ResourceFileExtension( "ui" )]
+#if !DEPLOY
 	[EditorControl( typeof( UIControlEditor ) )]
 	//[EditorNewObjectSettings( typeof( UIControl_NewObjectSettings ) )]
+#endif
 	public class UIControl : Component, IVisibleInHierarchy//, ICanBeSelectedInHierarchy
 	{
 		//!!!!всё тут
@@ -74,6 +76,8 @@ namespace NeoAxis
 		//Vec2? cachedScreenSize;
 
 		internal int cachedIndexInHierarchyToImplementCovering;
+
+		IVisibleInHierarchy parentIVisibleInHierarchy;
 
 		///////////////////////////////////////////
 
@@ -601,23 +605,22 @@ namespace NeoAxis
 		{
 			get
 			{
-				//!!!!slowly
-
 				if( !Visible )
 					return false;
 
-				var p = Parent as IVisibleInHierarchy;
-				if( p != null )
-					return p.VisibleInHierarchy;
+				if( parentIVisibleInHierarchy != null )
+					return parentIVisibleInHierarchy.VisibleInHierarchy;
 				else
 					return true;
-				//var p = Parent as ObjectInSpace;
+
+				//if( !Visible )
+				//	return false;
+
+				//var p = Parent as IVisibleInHierarchy;
 				//if( p != null )
 				//	return p.VisibleInHierarchy;
 				//else
 				//	return true;
-
-				//return visibleInHierarchy;
 			}
 		}
 		//public event Action<Component> VisibleInHierarchyChanged;
@@ -2184,7 +2187,7 @@ namespace NeoAxis
 		//}
 
 		/// <summary>
-		/// The current mouse pointer position.
+		/// The current mouse pointer position in the local coordinates of the control.
 		/// </summary>
 		[Browsable( false )]
 		public Vector2 MousePosition
@@ -2693,6 +2696,8 @@ namespace NeoAxis
 			//parentControlManagerInitialized = false;
 			//parentControlManager = null;
 
+			parentIVisibleInHierarchy = Parent as IVisibleInHierarchy;
+
 			base.OnAddedToParent();
 
 			//UIControl parent = Parent as UIControl;
@@ -2708,6 +2713,8 @@ namespace NeoAxis
 			//!!!!!
 			//parentControlManagerInitialized = false;
 			//parentControlManager = null;
+
+			parentIVisibleInHierarchy = null;
 
 			base.OnRemovedFromParent( oldParent );
 		}
@@ -2771,6 +2778,5 @@ namespace NeoAxis
 
 			return true;
 		}
-
 	}
 }

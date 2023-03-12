@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	// replace with BCL 4.0 Tuple<> when appropriate
 	internal struct NetTuple<A, B>

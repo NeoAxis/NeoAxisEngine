@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using NeoAxis.Editor;
@@ -10,8 +10,10 @@ namespace NeoAxis
 	/// <summary>
 	/// Declares modifier of the mesh. Using mesh modifiers, you can change the output data provided by the mesh; they do not change the original mesh data.
 	/// </summary>
+#if !DEPLOY
 	[SettingsCell( typeof( MeshModifierSettingsCell ) )]
 	[AddToResourcesWindow( @"Base\Scene common\Mesh modifiers\Mesh Modifier", -10000 )]
+#endif
 	public class MeshModifier : Component
 	{
 		protected override void OnEnabledInHierarchyChanged()
@@ -104,9 +106,10 @@ namespace NeoAxis
 						byte[] vertices = null;
 						int[] indices = null;
 						Material material = null;
-						byte[] billboardData = null;
+						byte[] voxelData = null;
+						byte[] clusterData = null;
 						Mesh.StructureClass structure = null;
-						meshGeometryProcedural.GetProceduralGeneratedData( ref vertexStructure, ref vertices, ref indices, ref material, ref billboardData, ref structure );
+						meshGeometryProcedural.GetProceduralGeneratedData( ref vertexStructure, ref vertices, ref indices, ref material, ref voxelData, ref clusterData, ref structure );
 
 						var insertIndex = meshGeometryProcedural.Parent.Components.IndexOf( meshGeometryProcedural );
 
@@ -115,6 +118,8 @@ namespace NeoAxis
 						meshGeometryNew.VertexStructure = vertexStructure;
 						meshGeometryNew.Vertices = vertices;
 						meshGeometryNew.Indices = indices;
+
+						//!!!!voxels?
 
 						meshGeometryNew.Material = meshGeometryProcedural.Material;
 

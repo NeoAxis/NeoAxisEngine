@@ -1,9 +1,7 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-////!!!!
-//using Internal.BulletSharp;
 
 namespace NeoAxis
 {
@@ -17,359 +15,85 @@ namespace NeoAxis
 	//Three wheel bike
 
 	/// <summary>
-	/// A basic class to make vehicles of various types.
+	/// A component to make instance of a vehicle in the scene.
 	/// </summary>
-	[ResourceFileExtension( "vehicle" )]
-	[AddToResourcesWindow( @"Base\3D\Vehicle", -7999 )]
-#if !DEPLOY
-	[Editor.EditorControl( typeof( Editor.VehicleEditor ), true )]
-	[Editor.Preview( typeof( Editor.VehiclePreview ) )]
-	[Editor.PreviewImage( typeof( Editor.VehiclePreviewImage ) )]
-#endif
-	public class Vehicle : ObjectInSpace, InteractiveObject
+	[AddToResourcesWindow( @"Addons\Vehicle\Vehicle", 22002 )]
+	public class Vehicle : MeshInSpace, InteractiveObject, IProcessDamage
 	{
+		static FastRandom boundsPredictionAndUpdateRandom = new FastRandom( 0 );
+
+		//
+
 		DynamicData dynamicData;
 		bool needRecreateDynamicData;
 
-		//!!!!smooth?
-		Vector3? lastTransformPosition;
-		Vector3 lastLinearVelocity;
+		//bool needBeActiveBecauseDriverInput;
+		double cannotBeStaticRemainingTime;
 
-		//[FieldSerialize( FieldSerializeSerializationTypes.World )]
-		//Vector3 linearVelocityForSerialization;
+		//!!!!by idea it must by solved inside Jolt
+		////going sleep after 10 seconds. fix for Jolt
+		//double needStaticTotalTime;
+
+		//bool needBeActiveBecausePhysicsVelocity;
+		//Transform lastTransformToCalculateDynamicState;
+		//bool needBeActiveBecauseTransformChange;
+		////Vector3 lastTransformPosition;
+		////Quaternion lastTransformRotation;
+		////Vector3 lastLinearVelocity;
+		////smooth?
 
 		Vector3 groundRelativeVelocity;
 		Vector3[] groundRelativeVelocitySmoothArray;
 		Vector3 groundRelativeVelocitySmooth;
 
+		bool duringTransformUpdateWithoutRecrecting;
+
+		bool driverInputNeedUpdate = true;
+
+		double currentSteering;
+
+		float remainingTimeToUpdateObjectsOnSeat;
+
 		//!!!!
 		//double allowToSleepTime;
+
+		//[FieldSerialize( FieldSerializeSerializationTypes.World )]
+		//Vector3 linearVelocityForSerialization;
 
 		/////////////////////////////////////////
 		//Basic
 
-		//!!!!default
-		/// <summary>
-		/// The method of simulating the vehicle.
-		/// </summary>
-		[Category( "Configuration" )]
-		[DefaultValue( SimulationModeEnum.RealPhysics )]
-		public Reference<SimulationModeEnum> SimulationMode
+		const string vehicleTypeDefault = @"Content\Vehicles\Default\Default Vehicle.vehicletype";
+
+		[DefaultValueReference( vehicleTypeDefault )]
+		//[Category( "General" )]
+		public Reference<VehicleType> VehicleType
 		{
-			get { if( _simulationMode.BeginGet() ) SimulationMode = _simulationMode.Get( this ); return _simulationMode.value; }
-			set { if( _simulationMode.BeginSet( ref value ) ) { try { SimulationModeChanged?.Invoke( this ); NeedRecreateDynamicData(); } finally { _simulationMode.EndSet(); } } }
+			get { if( _vehicleType.BeginGet() ) VehicleType = _vehicleType.Get( this ); return _vehicleType.value; }
+			set { if( _vehicleType.BeginSet( ref value ) ) { try { VehicleTypeChanged?.Invoke( this ); NeedRecreateDynamicData(); } finally { _vehicleType.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="SimulationMode"/> property value changes.</summary>
-		public event Action<Vehicle> SimulationModeChanged;
-		ReferenceField<SimulationModeEnum> _simulationMode = SimulationModeEnum.RealPhysics;
+		/// <summary>Occurs when the <see cref="VehicleType"/> property value changes.</summary>
+		public event Action<Vehicle> VehicleTypeChanged;
+		ReferenceField<VehicleType> _vehicleType = new Reference<VehicleType>( null, vehicleTypeDefault );
 
-		//[Category( "Configuration" )]
-		//[DefaultValue( WheelShapeEnum.RigidBody )]
-		//public Reference<WheelShapeEnum> WheelShape
-		//{
-		//	get { if( _wheelShape.BeginGet() ) WheelShape = _wheelShape.Get( this ); return _wheelShape.value; }
-		//	set { if( _wheelShape.BeginSet( ref value ) ) { try { WheelShapeChanged?.Invoke( this ); } finally { _wheelShape.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="WheelShape"/> property value changes.</summary>
-		//public event Action<Vehicle> WheelShapeChanged;
-		//ReferenceField<WheelShapeEnum> _wheelShape = WheelShapeEnum.RigidBody;
+		//!!!!impl modes
 
-		/// <summary>
-		/// The type of chassis.
-		/// </summary>
-		[Category( "Configuration" )]
-		[DefaultValue( ChassisEnum._4Wheels )]
-		public Reference<ChassisEnum> Chassis
+		[DefaultValue( PhysicsModeEnum.Basic )]
+		public Reference<PhysicsModeEnum> PhysicsMode
 		{
-			get { if( _chassis.BeginGet() ) Chassis = _chassis.Get( this ); return _chassis.value; }
-			set { if( _chassis.BeginSet( ref value ) ) { try { ChassisChanged?.Invoke( this ); NeedRecreateDynamicData(); } finally { _chassis.EndSet(); } } }
+			get { if( _physicsMode.BeginGet() ) PhysicsMode = _physicsMode.Get( this ); return _physicsMode.value; }
+			set { if( _physicsMode.BeginSet( ref value ) ) { try { PhysicsModeChanged?.Invoke( this ); NeedRecreateDynamicData(); } finally { _physicsMode.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="Chassis"/> property value changes.</summary>
-		public event Action<Vehicle> ChassisChanged;
-		ReferenceField<ChassisEnum> _chassis = ChassisEnum._4Wheels;
-
-		/// <summary>
-		/// The position offset for front wheels.
-		/// </summary>
-		[Category( "Configuration" )]
-		[DefaultValue( "1.24 0.7 0.03" )]
-		public Reference<Vector3> FrontWheelPosition
-		{
-			get { if( _frontWheelPosition.BeginGet() ) FrontWheelPosition = _frontWheelPosition.Get( this ); return _frontWheelPosition.value; }
-			set { if( _frontWheelPosition.BeginSet( ref value ) ) { try { FrontWheelPositionChanged?.Invoke( this ); NeedRecreateDynamicData(); } finally { _frontWheelPosition.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="FrontWheelPosition"/> property value changes.</summary>
-		public event Action<Vehicle> FrontWheelPositionChanged;
-		ReferenceField<Vector3> _frontWheelPosition = new Vector3( 1.24, 0.7, 0.03 );
-
-		/// <summary>
-		/// The diameter of a front wheel.
-		/// </summary>
-		[Category( "Configuration" )]
-		[DefaultValue( 0.665 )]
-		public Reference<double> FrontWheelDiameter
-		{
-			get { if( _frontWheelDiameter.BeginGet() ) FrontWheelDiameter = _frontWheelDiameter.Get( this ); return _frontWheelDiameter.value; }
-			set { if( _frontWheelDiameter.BeginSet( ref value ) ) { try { FrontWheelDiameterChanged?.Invoke( this ); NeedRecreateDynamicData(); } finally { _frontWheelDiameter.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="FrontWheelDiameter"/> property value changes.</summary>
-		public event Action<Vehicle> FrontWheelDiameterChanged;
-		ReferenceField<double> _frontWheelDiameter = 0.665;
-
-		/// <summary>
-		/// The width of a front wheel.
-		/// </summary>
-		[Category( "Configuration" )]
-		[DefaultValue( 0.364 )]
-		public Reference<double> FrontWheelWidth
-		{
-			get { if( _frontWheelWidth.BeginGet() ) FrontWheelWidth = _frontWheelWidth.Get( this ); return _frontWheelWidth.value; }
-			set { if( _frontWheelWidth.BeginSet( ref value ) ) { try { FrontWheelWidthChanged?.Invoke( this ); NeedRecreateDynamicData(); } finally { _frontWheelWidth.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="FrontWheelWidth"/> property value changes.</summary>
-		public event Action<Vehicle> FrontWheelWidthChanged;
-		ReferenceField<double> _frontWheelWidth = 0.364;
-
-		/// <summary>
-		/// The mass of a front wheel.
-		/// </summary>
-		[Category( "Configuration" )]
-		[DefaultValue( 18.0 )]
-		public Reference<double> FrontWheelMass
-		{
-			get { if( _frontWheelMass.BeginGet() ) FrontWheelMass = _frontWheelMass.Get( this ); return _frontWheelMass.value; }
-			set { if( _frontWheelMass.BeginSet( ref value ) ) { try { FrontWheelMassChanged?.Invoke( this ); NeedRecreateDynamicData(); } finally { _frontWheelMass.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="FrontWheelMass"/> property value changes.</summary>
-		public event Action<Vehicle> FrontWheelMassChanged;
-		ReferenceField<double> _frontWheelMass = 18.0;
-
-		const string wheelMeshDefault = @"Content\Vehicles\Default\Wheel\scene.gltf|$Mesh";
-
-		/// <summary>
-		/// The mesh of a front wheel.
-		/// </summary>
-		[Category( "Configuration" )]
-		[DefaultValueReference( wheelMeshDefault )]
-		public Reference<Mesh> FrontWheelMesh
-		{
-			get { if( _frontWheelMesh.BeginGet() ) FrontWheelMesh = _frontWheelMesh.Get( this ); return _frontWheelMesh.value; }
-			set { if( _frontWheelMesh.BeginSet( ref value ) ) { try { FrontWheelMeshChanged?.Invoke( this ); NeedRecreateDynamicData(); } finally { _frontWheelMesh.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="FrontWheelMesh"/> property value changes.</summary>
-		public event Action<Vehicle> FrontWheelMeshChanged;
-		ReferenceField<Mesh> _frontWheelMesh = new Reference<Mesh>( null, wheelMeshDefault );
-
-		/// <summary>
-		/// The position offset for rear wheels.
-		/// </summary>
-		[Category( "Configuration" )]
-		[DefaultValue( "-1.3 0.812 0.03" )]
-		public Reference<Vector3> RearWheelPosition
-		{
-			get { if( _rearWheelPosition.BeginGet() ) RearWheelPosition = _rearWheelPosition.Get( this ); return _rearWheelPosition.value; }
-			set { if( _rearWheelPosition.BeginSet( ref value ) ) { try { RearWheelPositionChanged?.Invoke( this ); NeedRecreateDynamicData(); } finally { _rearWheelPosition.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="RearWheelPosition"/> property value changes.</summary>
-		public event Action<Vehicle> RearWheelPositionChanged;
-		ReferenceField<Vector3> _rearWheelPosition = new Vector3( -1.3, 0.812, 0.03 );
-
-		/// <summary>
-		/// The diameter of a rear wheel.
-		/// </summary>
-		[Category( "Configuration" )]
-		[DefaultValue( 0.665 )]
-		public Reference<double> RearWheelDiameter
-		{
-			get { if( _rearWheelDiameter.BeginGet() ) RearWheelDiameter = _rearWheelDiameter.Get( this ); return _rearWheelDiameter.value; }
-			set { if( _rearWheelDiameter.BeginSet( ref value ) ) { try { RearWheelDiameterChanged?.Invoke( this ); NeedRecreateDynamicData(); } finally { _rearWheelDiameter.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="RearWheelDiameter"/> property value changes.</summary>
-		public event Action<Vehicle> RearWheelDiameterChanged;
-		ReferenceField<double> _rearWheelDiameter = 0.665;
-
-		/// <summary>
-		/// The width of a rear wheel.
-		/// </summary>
-		[Category( "Configuration" )]
-		[DefaultValue( 0.364 )]
-		public Reference<double> RearWheelWidth
-		{
-			get { if( _rearWheelWidth.BeginGet() ) RearWheelWidth = _rearWheelWidth.Get( this ); return _rearWheelWidth.value; }
-			set { if( _rearWheelWidth.BeginSet( ref value ) ) { try { RearWheelWidthChanged?.Invoke( this ); NeedRecreateDynamicData(); } finally { _rearWheelWidth.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="RearWheelWidth"/> property value changes.</summary>
-		public event Action<Vehicle> RearWheelWidthChanged;
-		ReferenceField<double> _rearWheelWidth = 0.364;
-
-		/// <summary>
-		/// The mass of a rear wheel.
-		/// </summary>
-		[Category( "Configuration" )]
-		[DefaultValue( 18.0 )]
-		public Reference<double> RearWheelMass
-		{
-			get { if( _rearWheelMass.BeginGet() ) RearWheelMass = _rearWheelMass.Get( this ); return _rearWheelMass.value; }
-			set { if( _rearWheelMass.BeginSet( ref value ) ) { try { RearWheelMassChanged?.Invoke( this ); NeedRecreateDynamicData(); } finally { _rearWheelMass.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="RearWheelMass"/> property value changes.</summary>
-		public event Action<Vehicle> RearWheelMassChanged;
-		ReferenceField<double> _rearWheelMass = 18.0;
-
-		/// <summary>
-		/// The mesh of a rear wheel.
-		/// </summary>
-		[Category( "Configuration" )]
-		[DefaultValueReference( wheelMeshDefault )]
-		public Reference<Mesh> RearWheelMesh
-		{
-			get { if( _rearWheelMesh.BeginGet() ) RearWheelMesh = _rearWheelMesh.Get( this ); return _rearWheelMesh.value; }
-			set { if( _rearWheelMesh.BeginSet( ref value ) ) { try { RearWheelMeshChanged?.Invoke( this ); NeedRecreateDynamicData(); } finally { _rearWheelMesh.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="RearWheelMesh"/> property value changes.</summary>
-		public event Action<Vehicle> RearWheelMeshChanged;
-		ReferenceField<Mesh> _rearWheelMesh = new Reference<Mesh>( null, wheelMeshDefault );
-
-		/// <summary>
-		/// The drive wheel type.
-		/// </summary>
-		[Category( "Configuration" )]
-		[DefaultValue( WheelDriveEnum.Front )]
-		public Reference<WheelDriveEnum> WheelDrive
-		{
-			get { if( _WheelDrive.BeginGet() ) WheelDrive = _WheelDrive.Get( this ); return _WheelDrive.value; }
-			set { if( _WheelDrive.BeginSet( ref value ) ) { try { WheelDriveChanged?.Invoke( this ); NeedRecreateDynamicData(); } finally { _WheelDrive.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="WheelDrive"/> property value changes.</summary>
-		public event Action<Vehicle> WheelDriveChanged;
-		ReferenceField<WheelDriveEnum> _WheelDrive = WheelDriveEnum.Front;
-
-		//!!!!default
-		/// <summary>
-		/// The physics material friction of the wheels.
-		/// </summary>
-		[Category( "Configuration" )]
-		[DefaultValue( 2.0 )]
-		public Reference<double> WheelFriction
-		{
-			get { if( _wheelFriction.BeginGet() ) WheelFriction = _wheelFriction.Get( this ); return _wheelFriction.value; }
-			set { if( _wheelFriction.BeginSet( ref value ) ) { try { WheelFrictionChanged?.Invoke( this ); } finally { _wheelFriction.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="WheelFriction"/> property value changes.</summary>
-		public event Action<Vehicle> WheelFrictionChanged;
-		ReferenceField<double> _wheelFriction = 2.0;
-
-		/// <summary>
-		/// The range of suspension travel.
-		/// </summary>
-		[Category( "Configuration" )]
-		[DefaultValue( "-0.1 0.05" )]
-		public Reference<Range> SuspensionTravel
-		{
-			get { if( _suspensionTravel.BeginGet() ) SuspensionTravel = _suspensionTravel.Get( this ); return _suspensionTravel.value; }
-			set { if( _suspensionTravel.BeginSet( ref value ) ) { try { SuspensionTravelChanged?.Invoke( this ); } finally { _suspensionTravel.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="SuspensionTravel"/> property value changes.</summary>
-		public event Action<Vehicle> SuspensionTravelChanged;
-		ReferenceField<Range> _suspensionTravel = new Range( -0.1, 0.05 );
-
-		//!!!!default
-		/// <summary>
-		/// The spring rate of the chassis.
-		/// </summary>
-		[Category( "Configuration" )]
-		[DefaultValue( 1.0 )]
-		public Reference<double> SpringRate
-		{
-			get { if( _springRate.BeginGet() ) SpringRate = _springRate.Get( this ); return _springRate.value; }
-			set { if( _springRate.BeginSet( ref value ) ) { try { SpringRateChanged?.Invoke( this ); } finally { _springRate.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="SpringRate"/> property value changes.</summary>
-		public event Action<Vehicle> SpringRateChanged;
-		ReferenceField<double> _springRate = 1.0;
-
-		//!!!!
-		/// <summary>
-		/// The maximal target velocity of throttle.
-		/// </summary>
-		[Category( "Configuration" )]
-		[DefaultValue( 30.0 )]
-		public Reference<double> ThrottleTargetVelocity
-		{
-			get { if( _throttleTargetVelocity.BeginGet() ) ThrottleTargetVelocity = _throttleTargetVelocity.Get( this ); return _throttleTargetVelocity.value; }
-			set { if( _throttleTargetVelocity.BeginSet( ref value ) ) { try { ThrottleTargetVelocityChanged?.Invoke( this ); } finally { _throttleTargetVelocity.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="ThrottleTargetVelocity"/> property value changes.</summary>
-		public event Action<Vehicle> ThrottleTargetVelocityChanged;
-		ReferenceField<double> _throttleTargetVelocity = 30.0;
-
-		//!!!!
-		//!!!!default
-		/// <summary>
-		/// The maximal physical force of throttle.
-		/// </summary>
-		[Category( "Configuration" )]
-		[DefaultValue( 10.0 )]
-		public Reference<double> ThrottleForce
-		{
-			get { if( _throttleForce.BeginGet() ) ThrottleForce = _throttleForce.Get( this ); return _throttleForce.value; }
-			set { if( _throttleForce.BeginSet( ref value ) ) { try { ThrottleForceChanged?.Invoke( this ); } finally { _throttleForce.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="ThrottleForce"/> property value changes.</summary>
-		public event Action<Vehicle> ThrottleForceChanged;
-		ReferenceField<double> _throttleForce = 10.0;
-
-		//!!!!default
-		/// <summary>
-		/// The maximal brake force.
-		/// </summary>
-		[Category( "Configuration" )]
-		[DefaultValue( 10.0 )]
-		public Reference<double> BrakeForce
-		{
-			get { if( _brakeForce.BeginGet() ) BrakeForce = _brakeForce.Get( this ); return _brakeForce.value; }
-			set { if( _brakeForce.BeginSet( ref value ) ) { try { BrakeForceChanged?.Invoke( this ); } finally { _brakeForce.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="BrakeForce"/> property value changes.</summary>
-		public event Action<Vehicle> BrakeForceChanged;
-		ReferenceField<double> _brakeForce = 10.0;
-
-		//!!!!default
-		/// <summary>
-		/// The maximal steering force.
-		/// </summary>
-		[Category( "Configuration" )]
-		[DefaultValue( 10.0 )]
-		public Reference<double> SteeringForce
-		{
-			get { if( _steeringForce.BeginGet() ) SteeringForce = _steeringForce.Get( this ); return _steeringForce.value; }
-			set { if( _steeringForce.BeginSet( ref value ) ) { try { SteeringForceChanged?.Invoke( this ); } finally { _steeringForce.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="SteeringForce"/> property value changes.</summary>
-		public event Action<Vehicle> SteeringForceChanged;
-		ReferenceField<double> _steeringForce = 10.0;
-
-		/// <summary>
-		/// The maximal steering angle.
-		/// </summary>
-		[Category( "Configuration" )]
-		[DefaultValue( 45.0 )]
-		[Range( 0, 90 )]
-		public Reference<Degree> MaxSteeringAngle
-		{
-			get { if( _maxSteeringAngle.BeginGet() ) MaxSteeringAngle = _maxSteeringAngle.Get( this ); return _maxSteeringAngle.value; }
-			set { if( _maxSteeringAngle.BeginSet( ref value ) ) { try { MaxSteeringAngleChanged?.Invoke( this ); NeedRecreateDynamicData(); } finally { _maxSteeringAngle.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="MaxSteeringAngle"/> property value changes.</summary>
-		public event Action<Vehicle> MaxSteeringAngleChanged;
-		ReferenceField<Degree> _maxSteeringAngle = new Degree( 45.0 );
+		/// <summary>Occurs when the <see cref="PhysicsMode"/> property value changes.</summary>
+		public event Action<Vehicle> PhysicsModeChanged;
+		ReferenceField<PhysicsModeEnum> _physicsMode = PhysicsModeEnum.Basic;
 
 		/////////////////////////////////////////
 
 		/// <summary>
 		/// Whether to visualize debug info.
 		/// </summary>
-		[Category( "Debug" )]
+		//[Category( "Debug" )]
 		[DefaultValue( false )]
 		public Reference<bool> DebugVisualization
 		{
@@ -380,21 +104,19 @@ namespace NeoAxis
 		public event Action<Vehicle> DebugVisualizationChanged;
 		ReferenceField<bool> _debugVisualization = false;
 
-		/////////////////////////////////////////
-
-		//!!!!
-		//[Category( "Advanced" )]
-		//[DefaultValue( 1.0/*0.6*/ )]
-		//public Reference<double> MinSpeedToSleepBody
-		//{
-		//	get { if( _minSpeedToSleepBody.BeginGet() ) MinSpeedToSleepBody = _minSpeedToSleepBody.Get( this ); return _minSpeedToSleepBody.value; }
-		//	set { if( _minSpeedToSleepBody.BeginSet( ref value ) ) { try { MinSpeedToSleepBodyChanged?.Invoke( this ); } finally { _minSpeedToSleepBody.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="MinSpeedToSleepBody"/> property value changes.</summary>
-		//public event Action<Vehicle> MinSpeedToSleepBodyChanged;
-		//ReferenceField<double> _minSpeedToSleepBody = 1.0;//0.6;
+		[Cloneable( CloneType.Deep )]
+		[Serialize]
+		public ReferenceList<ObjectInSpace> ObjectsOnSeats
+		{
+			get { return _objectsOnSeats; }
+		}
+		public delegate void ObjectsOnSeatsChangedDelegate( Vehicle sender );
+		public event ObjectsOnSeatsChangedDelegate ObjectsOnSeatsChanged;
+		ReferenceList<ObjectInSpace> _objectsOnSeats;
 
 		/////////////////////////////////////////
+
+		//!!!!Tracked chassis
 
 		/// <summary>
 		/// The throttle parameter to control the vehicle.
@@ -405,7 +127,7 @@ namespace NeoAxis
 		public Reference<double> Throttle
 		{
 			get { if( _throttle.BeginGet() ) Throttle = _throttle.Get( this ); return _throttle.value; }
-			set { if( _throttle.BeginSet( ref value ) ) { try { ThrottleChanged?.Invoke( this ); } finally { _throttle.EndSet(); } } }
+			set { if( _throttle.BeginSet( ref value ) ) { try { ThrottleChanged?.Invoke( this ); driverInputNeedUpdate = true; } finally { _throttle.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Throttle"/> property value changes.</summary>
 		public event Action<Vehicle> ThrottleChanged;
@@ -420,11 +142,26 @@ namespace NeoAxis
 		public Reference<double> Brake
 		{
 			get { if( _brake.BeginGet() ) Brake = _brake.Get( this ); return _brake.value; }
-			set { if( _brake.BeginSet( ref value ) ) { try { BrakeChanged?.Invoke( this ); } finally { _brake.EndSet(); } } }
+			set { if( _brake.BeginSet( ref value ) ) { try { BrakeChanged?.Invoke( this ); driverInputNeedUpdate = true; } finally { _brake.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Brake"/> property value changes.</summary>
 		public event Action<Vehicle> BrakeChanged;
 		ReferenceField<double> _brake = 0.0;
+
+		/// <summary>
+		/// The hand brake parameter to control the vehicle.
+		/// </summary>
+		[Category( "Control" )]
+		[DefaultValue( 1.0 )]
+		[Range( 0, 1 )]
+		public Reference<double> HandBrake
+		{
+			get { if( _handHandBrake.BeginGet() ) HandBrake = _handHandBrake.Get( this ); return _handHandBrake.value; }
+			set { if( _handHandBrake.BeginSet( ref value ) ) { try { HandBrakeChanged?.Invoke( this ); driverInputNeedUpdate = true; } finally { _handHandBrake.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="HandBrake"/> property value changes.</summary>
+		public event Action<Vehicle> HandBrakeChanged;
+		ReferenceField<double> _handHandBrake = 1.0;
 
 		/// <summary>
 		/// The steering parameter to control the vehicle.
@@ -435,7 +172,7 @@ namespace NeoAxis
 		public Reference<double> Steering
 		{
 			get { if( _steering.BeginGet() ) Steering = _steering.Get( this ); return _steering.value; }
-			set { if( _steering.BeginSet( ref value ) ) { try { SteeringChanged?.Invoke( this ); } finally { _steering.EndSet(); } } }
+			set { if( _steering.BeginSet( ref value ) ) { try { SteeringChanged?.Invoke( this ); driverInputNeedUpdate = true; } finally { _steering.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Steering"/> property value changes.</summary>
 		public event Action<Vehicle> SteeringChanged;
@@ -451,59 +188,46 @@ namespace NeoAxis
 		public Reference<double> Health
 		{
 			get { if( _health.BeginGet() ) Health = _health.Get( this ); return _health.value; }
-			set { if( _health.BeginSet( ref value ) ) { try { HealthChanged?.Invoke( this ); } finally { _health.EndSet(); } } }
+			set { if( _health.BeginSet( ref value ) ) { try { HealthChanged?.Invoke( this ); driverInputNeedUpdate = true; } finally { _health.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Health"/> property value changes.</summary>
 		public event Action<Vehicle> HealthChanged;
 		ReferenceField<double> _health = 0.0;
 
-		/////////////////////////////////////////
-
-		public enum SimulationModeEnum
+		/// <summary>
+		/// The team index of the object.
+		/// </summary>
+		[Category( "Game Framework" )]
+		[DefaultValue( 0 )]
+		public Reference<int> Team
 		{
-			RealPhysics,//!!!!для оптимизации: просто выключать констрейнты, тем самым делать упрощенную модель
-
-			//!!!!impl Raycast,
-			//!!!!EmulationWithoutPhysicsWithCollision,//!!!!name
-			//!!!!EmulationWithoutPhysics,//!!!!name
+			get { if( _team.BeginGet() ) Team = _team.Get( this ); return _team.value; }
+			set { if( _team.BeginSet( ref value ) ) { try { TeamChanged?.Invoke( this ); } finally { _team.EndSet(); } } }
 		}
+		/// <summary>Occurs when the <see cref="Team"/> property value changes.</summary>
+		public event Action<Vehicle> TeamChanged;
+		ReferenceField<int> _team = 0;
 
 		/////////////////////////////////////////
 
-		//public enum WheelShapeEnum
-		//{
-		//	RigidBody,
-		//	SoftBody
-		//}
+		[Browsable( false )]
+		public Vector3 LinearVelocityToPredictBounds { get; set; }
 
 		/////////////////////////////////////////
 
-		public enum ChassisEnum
+		internal class DynamicData
 		{
-			[DisplayNameEnum( "4 Wheels" )]
-			_4Wheels,
-			//Caterpillars,
-		}
+			public VehicleType VehicleType;
+			public PhysicsModeEnum PhysicsMode;
+			public Mesh Mesh;
+			public Mesh FrontWheelMesh;
+			public Mesh RearWheelMesh;
+			public Bounds LocalBoundsDefault;
+			public float LocalBoundsDefaultBoundingRadius;
 
-		/////////////////////////////////////////
-
-		public enum WheelDriveEnum
-		{
-			Front,
-			Rear,
-			All,
-		}
-
-		/////////////////////////////////////////
-
-		class DynamicData
-		{
-			public SimulationModeEnum SimulationMode;
-			public RigidBody MainBody;
-			public WheelData[] Wheels;
-
-			////Raycast mode
-			//public RaycastVehicle raycastVehicle;
+			public WheelItem[] Wheels;
+			public SeatItem[] Seats;
+			public Scene.PhysicsWorldClass.VehicleConstraint constraint;
 
 			/////////////////////
 
@@ -513,27 +237,35 @@ namespace NeoAxis
 				FrontRight,
 				RearLeft,
 				RearRight,
-				//Other,
+				//Custom1, Custom2, etc
 			}
 
 			/////////////////////
 
-			public class WheelData
+			public struct WheelItem
 			{
+				//static data
 				public WhichWheel Which;
-				public bool WheelDrive;
-				public Vector3 LocalPosition;
-				public double Diameter;
-				public double Width;
+				//public bool WheelDrive;
+				public float Diameter;
+				public float Width;
+				public Vector3F InitialPosition;
 
-				//RealPhysics mode
-				public RigidBody RigidBody;
-				public Constraint Constraint;
+				//dynamic data
+				public Vector3F CurrentPosition;
+				public QuaternionF CurrentRotation;
 
-				public MeshInSpace MeshInSpace;
+				////RealPhysics mode
+				//public RigidBody RigidBody;
+				//public Constraint Constraint;
+				//public MeshInSpace MeshInSpace;
 
-				public ESet<RigidBody> LastContactBodies;
-				public double LastGroundTime;
+				//public ESet<RigidBody> LastContactBodies;
+
+				public Scene.PhysicsWorldClass.Body ContactBody;
+				//no sense
+				//public double ContactBodyTimeUpdated;
+				//public double LastGroundTime;
 
 				//
 
@@ -557,33 +289,56 @@ namespace NeoAxis
 					get { return Which == WhichWheel.FrontRight || Which == WhichWheel.RearRight; }
 				}
 			}
+
+			/////////////////////
+
+			public class SeatItem
+			{
+				public VehicleSeat SeatComponent;
+
+				//!!!!need make copy? in type can be with reference
+				public Transform Transform;
+				public Vector3 EyeOffset;
+				public Transform ExitTransform;
+			}
 		}
 
 		/////////////////////////////////////////
+
+		public Vehicle()
+		{
+			_objectsOnSeats = new ReferenceList<ObjectInSpace>( this, () => ObjectsOnSeatsChanged?.Invoke( this ) );
+		}
 
 		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
 		{
 			base.OnMetadataGetMembersFilter( context, member, ref skip );
 
-			//if( member is Metadata.Property )
-			//{
-			//	switch( member.Name )
-			//	{
-			//	case nameof( RunForwardMaxSpeed ):
-			//		if( !RunSupport )
-			//			skip = true;
-			//		break;
-			//	}
-			//}
+			if( member is Metadata.Property )
+			{
+				switch( member.Name )
+				{
+				//these properties are under control by the class
+				case nameof( Mesh ):
+				case nameof( Collision ):
+					skip = true;
+					break;
+				}
+			}
 		}
 
 		protected override void OnEnabledInHierarchyChanged()
 		{
 			base.OnEnabledInHierarchyChanged();
 
-			if( EnabledInHierarchy )
+			if( EnabledInHierarchyAndIsInstance )
 			{
+				currentSteering = Steering;
 				CreateDynamicData();
+
+				//!!!!crashes
+				//if( dynamicData != null )
+				//	SetDriverInput( currentSteering, true );
 
 				//!!!!что еще восстанавливать помимо скорости
 				//if( mainBody != null )
@@ -593,27 +348,36 @@ namespace NeoAxis
 				DestroyDynamicData();
 		}
 
-		public void SetTransform( Transform value )
+		public void SetTransform( Transform value, bool recreate )
 		{
-			RigidBody body;
-			if( dynamicData != null && dynamicData.MainBody != null )
-				body = dynamicData.MainBody;
-			else
-				body = GetComponent<RigidBody>( "Collision Body" );
-
-			if( body != null && !body.Transform.ReferenceSpecified )
-				body.Transform = value;
-
-			if( !Transform.ReferenceSpecified )
-				Transform = value;
-
-			CreateDynamicData();
+			if( !recreate )
+				duringTransformUpdateWithoutRecrecting = true;
+			Transform = value;
+			if( !recreate )
+				duringTransformUpdateWithoutRecrecting = false;
 		}
 
-		//!!!!
+		//public void SetTransform( Transform value, bool recreate )
+		//{
+		//	//!!!!
+
+		//	//!!!!?
+		//	if( !Transform.ReferenceSpecified )
+		//		Transform = value;
+
+		//	//!!!!сразу обновлять?
+		//	CreateDynamicData();
+		//}
+
+		//public void SetTransformWithoutRecreating( Transform value )
+		//{
+		//	duringTransformUpdateWithoutRecrecting = true;
+		//	Transform = value;
+		//	duringTransformUpdateWithoutRecrecting = false;
+		//}
+
 		//public double GetScaleFactor()
 		//{
-		//	//!!!!cache
 		//	var result = TransformV.Scale.MaxComponent();
 		//	//var result = GetTransform().Scale.MaxComponent();
 		//	if( result == 0 )
@@ -625,12 +389,17 @@ namespace NeoAxis
 
 		public bool IsOnGround()
 		{
-			if( dynamicData != null )
+			if( dynamicData != null && dynamicData.Wheels != null )
 			{
-				foreach( var wheel in dynamicData.Wheels )
+				for( int n = 0; n < dynamicData.Wheels.Length; n++ )
 				{
-					if( EngineApp.EngineTime < wheel.LastGroundTime + 0.5 )
+					ref var wheel = ref dynamicData.Wheels[ n ];
+
+					if( wheel.ContactBody != null && !wheel.ContactBody.Disposed )
 						return true;
+					//no sense
+					//if( EngineApp.EngineTime < wheel.LastGroundTime + 0.5 )
+					//	return true;
 				}
 			}
 
@@ -645,7 +414,6 @@ namespace NeoAxis
 		//	base.OnSave( block );
 		//}
 
-		//!!!!
 		//protected override void OnSuspendPhysicsDuringMapLoading( bool suspend )
 		//{
 		//	base.OnSuspendPhysicsDuringMapLoading( suspend );
@@ -660,219 +428,464 @@ namespace NeoAxis
 		//		}
 		//}
 
+		void SetDriverInput( double lastSteering, bool initialization )
+		{
+			var activateBody = Throttle != 0 || currentSteering != 0;
+			if( driverInputNeedUpdate || activateBody || lastSteering != currentSteering )
+			{
+				dynamicData.constraint.SetDriverInput( (float)Throttle, (float)currentSteering, (float)Brake, (float)HandBrake, activateBody );
+				cannotBeStaticRemainingTime = initialization ? 0 : 3.0;
+
+				//needBeActiveBecauseDriverInput = true;
+			}
+			//else
+			//	needBeActiveBecauseDriverInput = false;
+
+			driverInputNeedUpdate = false;
+		}
+
 		protected override void OnSimulationStep()
 		{
 			base.OnSimulationStep();
 
-			//update
-			if( dynamicData != null && dynamicData.MainBody != null && dynamicData.Wheels != null )
+			if( dynamicData != null && dynamicData.constraint != null )
 			{
-				var tr = TransformV;
-				var mainBody = dynamicData.MainBody;
-
-				var throttle = Throttle.Value;
-				var brake = Brake.Value;
-				var steering = Steering.Value;
-
-				//!!!!still need?
-				//!!!!engine bug fix. motor doesn't wake up rigid body
-				if( throttle != 0 || /*brake != 0 || */steering != 0 )
-					dynamicData.MainBody.Activate();
-
-				for( int nWheel = 0; nWheel < dynamicData.Wheels.Length; nWheel++ )
-				//foreach( var wheel in dynamicData.Wheels )
+				//update cannotBeStaticReamainingTime
+				if( cannotBeStaticRemainingTime > 0 )
 				{
-					var wheel = dynamicData.Wheels[ nWheel ];
+					cannotBeStaticRemainingTime -= Time.SimulationDelta;
+					if( cannotBeStaticRemainingTime < 0 )
+						cannotBeStaticRemainingTime = 0;
+				}
 
-					//SimplePhysics mode
-					if( dynamicData.SimulationMode == SimulationModeEnum.RealPhysics )
+				var mustBeDynamic = IsMustBeDynamic();
+
+
+				//update driver input
+				if( mustBeDynamic || driverInputNeedUpdate )
+				{
+					var lastSteering = currentSteering;
+
+					var steering = Steering.Value;
+					if( currentSteering != steering )
 					{
-						var c = wheel.Constraint;
-						if( c != null )
+						if( currentSteering > steering )
 						{
-							//!!!!impl
-							////suspension
-							//if( c.InternalConstraintRigid != null )
-							//{
-							//	//!!!!
-
-							//	var offset = c.InternalConstraintRigid.GetRelativePivotPosition( 2 );
-
-							//	var suspensionTravel = SuspensionTravel.Value;
-
-							//	//!!!!
-							//	//if( nWheel == 0 )
-							//	{
-							//		var travelCenter = suspensionTravel.GetCenter();
-							//		var diff = offset - travelCenter;
-
-							//		//if( offset > 0 && suspensionTravel.Maximum > 0 )
-							//		if( diff > 0 && suspensionTravel.Maximum != suspensionTravel.Minimum )
-							//		{
-							//			var factor = diff / ( suspensionTravel.Maximum - suspensionTravel.Minimum );
-
-							//			//apply to chassis
-							//			{
-							//				//var offsetFactor = offset / suspensionTravel.Maximum;
-
-							//				//!!!!
-							//				//Log.Info( offsetFactor.ToString() );
-
-
-							//				//!!!!в 4 раза мньше нужно
-
-
-							//				var force = 10.0 * factor * mainBody.Mass.Value;
-							//				//var force = 7000.0 * factor;
-
-							//				//var force = 5000.0 * offsetFactor;
-
-							//				var forceVector = tr.Rotation.GetUp();
-
-							//				mainBody.ApplyForce( forceVector * force, wheel.LocalPosition );
-							//			}
-
-							//			//apply to wheel
-							//			if( wheel.RigidBody != null )
-							//			{
-							//				//!!!!
-							//				var force = 2.0 * factor * wheel.RigidBody.Mass.Value;
-
-							//				var forceVector = -tr.Rotation.GetUp();
-
-							//				wheel.RigidBody.ApplyForce( forceVector * force, Vector3.Zero );
-							//			}
-
-							//		}
-							//	}
-
-							//	//Log.Info( offset.ToString() );
-
-
-							//	//!!!!
-							//	//SpringRate
-
-							//	//if( offset > 0 )
-							//	//	c.LinearAxisZMotorMaxForce = SpringRate * -offset * 300;
-							//	//else
-							//	//	c.LinearAxisZMotorMaxForce = 0;
-
-							//	//c.LinearAxisZMotorTargetVelocity = 0.5;
-
-							//	//c.LinearAxisZMotorMaxForce = SpringRate * -offset * 200;
-							//	//c.LinearAxisZMotorTargetVelocity = 0.5;
-							//}
-
-							//throttle, brake
-							if( brake != 0 )
-							{
-								c.AngularAxisXMotorTargetVelocity = 0;
-								c.AngularAxisXMotorMaxForce = BrakeForce * brake;
-							}
-							else
-							{
-								if( wheel.WheelDrive )
-								{
-									//!!!!
-									c.AngularAxisXMotorTargetVelocity = -ThrottleTargetVelocity * throttle;
-									//c.AngularAxisXMotorTargetVelocity = ThrottleTargetVelocity * throttle;
-									//!!!!
-									c.AngularAxisXMotorMaxForce = throttle != 0 ? ThrottleForce : 0;
-								}
-								else
-								{
-									c.AngularAxisXMotorTargetVelocity = 0;
-									c.AngularAxisXMotorMaxForce = 0;
-								}
-							}
-
-							//steering
-							if( wheel.Front )
-							{
-								c.AngularAxisZServoTarget = c.AngularAxisZLimitHigh.Value * steering;
-								c.AngularAxisZMotorTargetVelocity = 1;
-								c.AngularAxisZMotorMaxForce = SteeringForce;
-							}
+							currentSteering -= Time.SimulationDelta / dynamicData.VehicleType.FrontWheelSteeringTime;
+							if( currentSteering < steering )
+								currentSteering = steering;
+							if( currentSteering < -1 )
+								currentSteering = -1;
+						}
+						else
+						{
+							currentSteering += Time.SimulationDelta / dynamicData.VehicleType.FrontWheelSteeringTime;
+							if( currentSteering > steering )
+								currentSteering = steering;
+							if( currentSteering > 1 )
+								currentSteering = 1;
 						}
 					}
 
-					////Raycast mode
-					//if( dynamicData.SimulationMode == SimulationModeEnum.Raycast )
+					SetDriverInput( lastSteering, false );
+
+					//var activateBody = Throttle != 0 || currentSteering != 0;
+					//if( driverInputNeedUpdate || activateBody || lastSteering != currentSteering )
 					//{
-					//	var vehicle = dynamicData.raycastVehicle;
-					//	if( vehicle != null )
-					//	{
-					//		var wheelInfo = vehicle.GetWheelInfo( nWheel );
-
-					//		if( wheel.WheelDrive )
-					//		{
-					//			//!!!!не так, не только это
-
-					//			wheelInfo.EngineForce = ThrottleForce * 100;
-
-					//		}
-
-					//		//!!!!
-					//		//wheelInfo.Brake = zzzzz;
-
-					//		//EngineForce *= ( 1.0f - timeStep );
-
-					//		//vehicle.ApplyEngineForce( EngineForce, 2 );
-					//		//vehicle.SetBrake( BreakingForce, 2 );
-					//		//vehicle.SetSteeringValue( VehicleSteering, 0 );
-
-					//		if( wheel.Front )
-					//		{
-					//			//!!!!
-					//			//wheelInfo.Steering = zzzzz;
-					//		}
-
-					//	}
+					//	dynamicData.constraint.SetDriverInput( (float)Throttle, (float)currentSteering, (float)Brake, (float)HandBrake, activateBody );
+					//	cannotBeStaticRemainingTime = 3.0;
+					//	//needBeActiveBecauseDriverInput = true;
 					//}
+					////else
+					////	needBeActiveBecauseDriverInput = false;
 
-					//update LastContactsBodies
-					wheel.LastContactBodies?.Clear();
-					var contacts = wheel.RigidBody?.ContactsData;
-					if( contacts != null )
+					//driverInputNeedUpdate = false;
+				}
+
+				dynamicData.constraint.SetStepListenerAddedMustBeAdded( mustBeDynamic );
+
+				if( mustBeDynamic )//if( PhysicalBody != null && PhysicalBody.Active )
+				{
+					CalculateGroundRelativeVelocity();
+
+					//var tr = TransformV;
+					//needBeActiveBecauseTransformChange = lastTransformToCalculateDynamicState.Equals(
+					//lastTransformToCalculateDynamicState = tr;
+
+					//var trPosition = TransformV.Position;
+					//if( lastTransformPosition.HasValue )
+					//	lastLinearVelocity = ( trPosition - lastTransformPosition.Value ) / Time.SimulationDelta;
+					//else
+					//	lastLinearVelocity = Vector3.Zero;
+					//lastTransformPosition = trPosition;
+				}
+				//else
+				//{
+				//	//needBeActiveBecausePhysicsVelocity;
+				//	lastTransformToCalculateDynamicState = TransformV;
+				//	needBeActiveBecauseTransformChange = false;
+				//}
+
+				//if( mustBeDynamic )//if( PhysicalBody != null && PhysicalBody.Active )
+				//{
+				//	CalculateGroundRelativeVelocity();
+
+				//	var tr = TransformV;
+				//	needBeActiveBecauseTransformChange = lastTransformToCalculateDynamicState.Equals(
+				//	lastTransformToCalculateDynamicState = tr;
+
+				//	//var trPosition = TransformV.Position;
+				//	//if( lastTransformPosition.HasValue )
+				//	//	lastLinearVelocity = ( trPosition - lastTransformPosition.Value ) / Time.SimulationDelta;
+				//	//else
+				//	//	lastLinearVelocity = Vector3.Zero;
+				//	//lastTransformPosition = trPosition;
+				//}
+				//else
+				//{
+				//	lastTransformToCalculateDynamicState = TransformV;
+				//	needBeActiveBecauseTransformChange = false;
+				//}
+
+				////if( PhysicalBody != null && PhysicalBody.Active )//if( !Static )//&& false )
+				////{
+				////	CalculateGroundRelativeVelocity();
+
+				////	var trPosition = TransformV.Position;
+				////	if( lastTransformPosition.HasValue )
+				////		lastLinearVelocity = ( trPosition - lastTransformPosition.Value ) / Time.SimulationDelta;
+				////	else
+				////		lastLinearVelocity = Vector3.Zero;
+				////	lastTransformPosition = trPosition;
+				////}
+
+				var needStatic = !mustBeDynamic;// !IsMustBeDynamic();
+				if( needStatic != Static )
+				{
+					//can't be static some time after change from static to dynamic
+					if( mustBeDynamic )
+						cannotBeStaticRemainingTime = 3.0;
+
+					//if( needStatic )
+					//{
+					//	lastTransformToCalculateDynamicState = TransformV;
+					//	needBeActiveBecauseTransformChange = false;
+					//}
+					//else
+					//	cannotBeStaticRemainingTime = 1.0;
+
+					Static = needStatic;
+
+					//ScreenMessages.Add( "STATIC update" );
+				}
+
+				//ScreenMessages.Add( "Static: " + Static.ToString() );
+
+
+				//!!!!by idea it must by solved inside Jolt
+				////to sleep after 10 seconds of anactivity (fix for Jolt)
+				//if( needStatic )
+				//	needStaticTotalTime += Time.SimulationDelta;
+				//else
+				//	needStaticTotalTime = 0;
+				//if( PhysicalBody != null && PhysicalBody.Active && needStaticTotalTime > 10.0 )
+				//	PhysicalBody.Active = false;
+
+
+				//update additional items
+				if( mustBeDynamic && PhysicalBody != null && PhysicalBody.Active && dynamicData.Wheels != null )
+				{
+					unsafe
 					{
-						for( int n = 0; n < contacts.Count; n++ )
+						var wheelsData = stackalloc Scene.PhysicsWorldClass.VehicleWheelData[ dynamicData.Wheels.Length ];
+						dynamicData.constraint.GetData( wheelsData, out var active );
+
+						for( int n = 0; n < dynamicData.Wheels.Length; n++ )
 						{
-							ref var contact = ref contacts.Data[ n ];
+							ref var wheel = ref dynamicData.Wheels[ n ];
+							var wheelData = wheelsData + n;
 
-							var bodyB = contact.BodyB;
+							wheel.CurrentPosition = wheel.InitialPosition;
+							wheel.CurrentPosition.Z = wheelData->Position;// = wheelData->SuspensionLength - wheel.Diameter * 0.5f;
+							wheel.CurrentRotation = QuaternionF.FromRotateByZ( -wheelData->SteerAngle ) * QuaternionF.FromRotateByY( -wheelData->RotationAngle );
+							//!!!!use angular veclocity for motion blur?
+							//wheelData->AngularVelocity
 
-							if( bodyB == null )
-								continue;
-							if( bodyB == dynamicData.MainBody )
-								continue;
-							//!!!!only static?
-							if( bodyB.MotionType.Value != RigidBody.MotionTypeEnum.Static )
-								continue;
+							Scene.PhysicsWorldClass.Body contactBody = null;
+							if( wheelData->ContactBody != 0xffffffff )
+							{
+								var physicsWorldData = dynamicData.constraint.PhysicsWorld;
+								contactBody = physicsWorldData.GetBodyById( wheelData->ContactBody );
+							}
 
-							if( wheel.LastContactBodies == null )
-								wheel.LastContactBodies = new ESet<RigidBody>();
-							wheel.LastContactBodies.AddWithCheckAlreadyContained( bodyB );
+							wheel.ContactBody = contactBody;
+
+							//no sense
+							//wheel.ContactBodyTimeUpdated = EngineApp.EngineTime;
+							//wheel.LastGroundTime
 						}
 					}
 
-					if( wheel.LastContactBodies != null && wheel.LastContactBodies.Count != 0 )
-						wheel.LastGroundTime = EngineApp.EngineTime;
+					UpdateAdditionalItems();
 				}
 			}
 
-			CalculateGroundRelativeVelocity();
-
-			var trPosition = TransformV.Position;
-			//var trPosition = GetTransform().Position;
-			if( lastTransformPosition.HasValue )
-				lastLinearVelocity = ( trPosition - lastTransformPosition.Value ) / Time.SimulationDelta;
-			else
-				lastLinearVelocity = Vector3.Zero;
-			lastTransformPosition = trPosition;
 
 
-			////!!!!temp
-			//Log.Info( "speed: " + IsOnGround().ToString() + " " + GroundRelativeVelocitySmooth.ToVector2().Length().ToString() );
+
+
+
+			//if( Static != CanBeStatic() )
+			//	SetStatic( !Static );
+
+			////if( !Static )
+			////{
+			////	if( CanSwitchToStaticState() )
+			////		SetStatic( true );
+			////}
+			////else
+			////{
+			////	if( !CanSwitchToStaticState() )
+			////		SetStatic( false );
+			////}
+
+
+			////update
+			//if( dynamicData != null && dynamicData.MainBody != null && dynamicData.Wheels != null )
+			//{
+			//	var type = dynamicData.VehicleType;
+
+			//	var tr = TransformV;
+			//	var mainBody = dynamicData.MainBody;
+
+			//	var throttle = Throttle.Value;
+			//	var brake = Brake.Value;
+			//	var steering = Steering.Value;
+
+			//	//!!!!still need?
+			//	//!!!!engine bug fix. motor doesn't wake up rigid body
+			//	if( throttle != 0 || /*brake != 0 || */steering != 0 )
+			//		dynamicData.MainBody.Activate();
+
+			//	for( int nWheel = 0; nWheel < dynamicData.Wheels.Length; nWheel++ )
+			//	//foreach( var wheel in dynamicData.Wheels )
+			//	{
+			//		var wheel = dynamicData.Wheels[ nWheel ];
+
+			//		//SimplePhysics mode
+			//		if( dynamicData.SimulationMode == SimulationModeEnum.RealPhysics )
+			//		{
+			//			var c = wheel.Constraint;
+			//			if( c != null )
+			//			{
+			//				//!!!!impl
+			//				////suspension
+			//				//if( c.InternalConstraintRigid != null )
+			//				//{
+			//				//	//!!!!
+
+			//				//	var offset = c.InternalConstraintRigid.GetRelativePivotPosition( 2 );
+
+			//				//	var suspensionTravel = SuspensionTravel.Value;
+
+			//				//	//!!!!
+			//				//	//if( nWheel == 0 )
+			//				//	{
+			//				//		var travelCenter = suspensionTravel.GetCenter();
+			//				//		var diff = offset - travelCenter;
+
+			//				//		//if( offset > 0 && suspensionTravel.Maximum > 0 )
+			//				//		if( diff > 0 && suspensionTravel.Maximum != suspensionTravel.Minimum )
+			//				//		{
+			//				//			var factor = diff / ( suspensionTravel.Maximum - suspensionTravel.Minimum );
+
+			//				//			//apply to chassis
+			//				//			{
+			//				//				//var offsetFactor = offset / suspensionTravel.Maximum;
+
+			//				//				//!!!!
+			//				//				//Log.Info( offsetFactor.ToString() );
+
+
+			//				//				//!!!!в 4 раза мньше нужно
+
+
+			//				//				var force = 10.0 * factor * mainBody.Mass.Value;
+			//				//				//var force = 7000.0 * factor;
+
+			//				//				//var force = 5000.0 * offsetFactor;
+
+			//				//				var forceVector = tr.Rotation.GetUp();
+
+			//				//				mainBody.ApplyForce( forceVector * force, wheel.LocalPosition );
+			//				//			}
+
+			//				//			//apply to wheel
+			//				//			if( wheel.RigidBody != null )
+			//				//			{
+			//				//				//!!!!
+			//				//				var force = 2.0 * factor * wheel.RigidBody.Mass.Value;
+
+			//				//				var forceVector = -tr.Rotation.GetUp();
+
+			//				//				wheel.RigidBody.ApplyForce( forceVector * force, Vector3.Zero );
+			//				//			}
+
+			//				//		}
+			//				//	}
+
+			//				//	//Log.Info( offset.ToString() );
+
+
+			//				//	//!!!!
+			//				//	//SpringRate
+
+			//				//	//if( offset > 0 )
+			//				//	//	c.LinearAxisZMotorMaxForce = SpringRate * -offset * 300;
+			//				//	//else
+			//				//	//	c.LinearAxisZMotorMaxForce = 0;
+
+			//				//	//c.LinearAxisZMotorTargetVelocity = 0.5;
+
+			//				//	//c.LinearAxisZMotorMaxForce = SpringRate * -offset * 200;
+			//				//	//c.LinearAxisZMotorTargetVelocity = 0.5;
+			//				//}
+
+			//				//throttle, brake
+			//				if( brake != 0 )
+			//				{
+			//					c.AngularAxisXMotorTargetVelocity = 0;
+			//					c.AngularAxisXMotorMaxForce = type.BrakeForce * brake;
+			//				}
+			//				else
+			//				{
+			//					if( wheel.WheelDrive )
+			//					{
+			//						//!!!!
+			//						c.AngularAxisXMotorTargetVelocity = -type.ThrottleTargetVelocity * throttle;
+			//						//c.AngularAxisXMotorTargetVelocity = ThrottleTargetVelocity * throttle;
+			//						//!!!!
+			//						c.AngularAxisXMotorMaxForce = throttle != 0 ? type.ThrottleForce : 0;
+			//					}
+			//					else
+			//					{
+			//						c.AngularAxisXMotorTargetVelocity = 0;
+			//						c.AngularAxisXMotorMaxForce = 0;
+			//					}
+			//				}
+
+			//				//steering
+			//				if( wheel.Front )
+			//				{
+			//					c.AngularAxisZServoTarget = c.AngularAxisZLimitHigh.Value * steering;
+			//					c.AngularAxisZMotorTargetVelocity = 1;
+			//					c.AngularAxisZMotorMaxForce = type.SteeringForce;
+			//				}
+			//			}
+			//		}
+
+			//		////Raycast mode
+			//		//if( dynamicData.SimulationMode == SimulationModeEnum.Raycast )
+			//		//{
+			//		//	var vehicle = dynamicData.raycastVehicle;
+			//		//	if( vehicle != null )
+			//		//	{
+			//		//		var wheelInfo = vehicle.GetWheelInfo( nWheel );
+
+			//		//		if( wheel.WheelDrive )
+			//		//		{
+			//		//			//!!!!не так, не только это
+
+			//		//			wheelInfo.EngineForce = ThrottleForce * 100;
+
+			//		//		}
+
+			//		//		//!!!!
+			//		//		//wheelInfo.Brake = zzzzz;
+
+			//		//		//EngineForce *= ( 1.0f - timeStep );
+
+			//		//		//vehicle.ApplyEngineForce( EngineForce, 2 );
+			//		//		//vehicle.SetBrake( BreakingForce, 2 );
+			//		//		//vehicle.SetSteeringValue( VehicleSteering, 0 );
+
+			//		//		if( wheel.Front )
+			//		//		{
+			//		//			//!!!!
+			//		//			//wheelInfo.Steering = zzzzz;
+			//		//		}
+
+			//		//	}
+			//		//}
+
+
+			//		//!!!!need
+
+
+			//		////update LastContactsBodies
+			//		//wheel.LastContactBodies?.Clear();
+			//		//var contacts = wheel.RigidBody?.ContactsData;
+			//		//if( contacts != null )
+			//		//{
+			//		//	for( int n = 0; n < contacts.Count; n++ )
+			//		//	{
+			//		//		ref var contact = ref contacts.Data[ n ];
+
+			//		//		var bodyB = contact.BodyB;
+
+			//		//		if( bodyB == null )
+			//		//			continue;
+			//		//		if( bodyB == dynamicData.MainBody )
+			//		//			continue;
+			//		//		//!!!!only static?
+			//		//		if( bodyB.MotionType.Value != PhysicsMotionType.Static )
+			//		//			continue;
+
+			//		//		if( wheel.LastContactBodies == null )
+			//		//			wheel.LastContactBodies = new ESet<RigidBody>();
+			//		//		wheel.LastContactBodies.AddWithCheckAlreadyContained( bodyB );
+			//		//	}
+			//		//}
+
+			//		if( wheel.LastContactBodies != null && wheel.LastContactBodies.Count != 0 )
+			//			wheel.LastGroundTime = EngineApp.EngineTime;
+			//	}
+			//}
+
+
+			//ScreenMessages.Add( "speed: " + IsOnGround().ToString() + " " + GroundRelativeVelocitySmooth.ToVector2().Length().ToString() );
+		}
+
+		protected override void OnSimulationStepClient()
+		{
+			base.OnSimulationStepClient();
+
+			//!!!!?
+		}
+
+		void UpdateObjectOnSeat( int seatIndex )
+		{
+			var objectOnSeat = GetObjectOnSeat( seatIndex );
+			if( objectOnSeat != null )
+			{
+				var seatItem = dynamicData.Seats[ seatIndex ];
+
+				//!!!!animation
+
+				objectOnSeat.Visible = seatItem.SeatComponent.Visible && Visible;
+
+
+				//!!!!slowly. update not each call
+
+				var character = objectOnSeat as Character;
+				if( character != null )
+				{
+					character.Collision = false;
+					//character.DestroyCollisionBody();
+
+					character.SetTransformAndTurnToDirectionInstantly( TransformV * seatItem.Transform );
+				}
+			}
 		}
 
 		protected override void OnUpdate( float delta )
@@ -882,32 +895,92 @@ namespace NeoAxis
 			if( needRecreateDynamicData )
 				CreateDynamicData();
 
-			//!!!!
-			//UpdateEnabledItemTransform( delta );
-
-			//!!!!
-			//touch Transform to update vehicle AABB
-			if( EnabledInHierarchy && VisibleInHierarchy )
+			//update objects on seats
+			if( dynamicData != null && !NetworkIsClient )
 			{
-				var t = Transform;
+				remainingTimeToUpdateObjectsOnSeat -= delta;
+				if( remainingTimeToUpdateObjectsOnSeat <= 0 )
+				{
+					remainingTimeToUpdateObjectsOnSeat = 0.25f + boundsPredictionAndUpdateRandom.Next( 0.05f );
+
+					for( int seatIndex = 0; seatIndex < dynamicData.Seats.Length; seatIndex++ )
+						UpdateObjectOnSeat( seatIndex );
+				}
 			}
 		}
 
 		protected override void OnTransformChanged()
 		{
+			//UpdateSpaceBoundsOverride();
+
 			base.OnTransformChanged();
 
-			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+			if( EngineApp.IsEditor && !duringTransformUpdateWithoutRecrecting )
 				NeedRecreateDynamicData();
 		}
 
 		protected override void OnSpaceBoundsUpdate( ref SpaceBounds newBounds )
 		{
-			base.OnSpaceBoundsUpdate( ref newBounds );
+			//base.OnSpaceBoundsUpdate( ref newBounds );
 
 			GetBox( out var box );
-			box.ToBounds( out var bounds );
-			newBounds = SpaceBounds.Merge( newBounds, new SpaceBounds( bounds ) );
+			box.ToBounds( out var realBounds );
+
+			if( !IsMustBeDynamic() )
+			{
+				newBounds = new SpaceBounds( realBounds );
+				SpaceBoundsOctreeOverride = null;
+			}
+			else
+			{
+				if( dynamicData != null )
+				{
+					//here is a bounds prediction to skip small updates in future steps
+
+					////calculate actual bounds
+					//var radius = dynamicData.LocalBoundsDefaultBoundingRadius;
+					//var tr = TransformV;
+					//var realBounds = new Bounds(
+					//	tr.Position.X - radius, tr.Position.Y - radius, tr.Position.Z - radius,
+					//	tr.Position.X + radius, tr.Position.Y + radius, tr.Position.Z + radius );
+					newBounds = new SpaceBounds( realBounds );
+
+					//check for update extended bounds
+					if( !SpaceBoundsOctreeOverride.HasValue || !SpaceBoundsOctreeOverride.Value.Contains( realBounds ) )
+					{
+						//calculate extended bounds
+
+						var radius = dynamicData.LocalBoundsDefaultBoundingRadius;
+						var tr = TransformV;
+
+						//update each 2-3 seconds
+						var extendForSeconds = 2.0f + boundsPredictionAndUpdateRandom.Next( 0.0f, 1.0f );
+						var radiusExtended = radius * 1.1f;
+
+						Vector3 velocity;
+						if( PhysicalBody != null )
+							velocity = PhysicalBody.LinearVelocity;
+						else
+							velocity = LinearVelocityToPredictBounds;
+
+						var pos2 = tr.Position + velocity * extendForSeconds;
+						var b2 = new Bounds(
+							pos2.X - radiusExtended, pos2.Y - radiusExtended, pos2.Z - radiusExtended,
+							pos2.X + radiusExtended, pos2.Y + radiusExtended, pos2.Z + radiusExtended );
+
+						var bTotal = new Bounds(
+							tr.Position.X - radiusExtended, tr.Position.Y - radiusExtended, tr.Position.Z - radiusExtended,
+							tr.Position.X + radiusExtended, tr.Position.Y + radiusExtended, tr.Position.Z + radiusExtended );
+						bTotal.Add( ref b2 );
+
+						SpaceBoundsOctreeOverride = bTotal;
+					}
+				}
+			}
+
+			//GetBox( out var box );
+			//box.ToBounds( out var bounds );
+			//newBounds = SpaceBounds.Merge( newBounds, new SpaceBounds( bounds ) );
 		}
 
 		protected override void OnCheckSelectionByRay( CheckSelectionByRayContext context )
@@ -922,15 +995,16 @@ namespace NeoAxis
 
 		void CalculateGroundRelativeVelocity()
 		{
-			if( dynamicData?.MainBody != null )
-			{
-				groundRelativeVelocity = GetLinearVelocity();
-				//!!!!moving ground
-				//if( groundBody != null && groundBody.AngularVelocity.Value.LengthSquared() < .3f )
-				//	groundRelativeVelocity -= groundBody.LinearVelocity;
-			}
-			else
-				groundRelativeVelocity = Vector3.Zero;
+			groundRelativeVelocity = GetLinearVelocity();
+			//if( PhysicalBody != null )
+			//{
+			//	groundRelativeVelocity = GetLinearVelocity();
+			//	//!!!!moving ground
+			//	//if( groundBody != null && groundBody.AngularVelocity.Value.LengthSquared() < .3f )
+			//	//	groundRelativeVelocity -= groundBody.LinearVelocity;
+			//}
+			//else
+			//	groundRelativeVelocity = Vector3.Zero;
 
 			//groundRelativeVelocityToSmooth
 			if( groundRelativeVelocitySmoothArray == null )
@@ -962,38 +1036,29 @@ namespace NeoAxis
 
 		public Vector3 GetLinearVelocity()
 		{
-			return lastLinearVelocity;
-			//if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+			if( PhysicalBody != null )
+				return PhysicalBody.LinearVelocity;
+
+			//!!!!impl for non-physics mode
+			return Vector3.Zero;
+
+			//return lastLinearVelocity;
+
+			//if( EngineApp.IsSimulation )
 			//	return ( GetTransform().Position - lastSimulationStepPosition ) / Time.SimulationDelta;
 			//return Vector3.Zero;
 		}
 
-		void GetBox( out Box box )
+		public void GetBox( out Box box )
 		{
 			var tr = TransformV;
+			var trPosition = tr.Position;
 			tr.Rotation.ToMatrix3( out var rot );
 
-			var meshInSpace = GetComponent<MeshInSpace>( "Mesh In Space" );
-			if( meshInSpace?.MeshOutput?.Result != null )
-			{
-				var bounds = meshInSpace.MeshOutput.Result.SpaceBounds.CalculatedBoundingBox;
-
-				//!!!!scale support
-
-				//add wheels
-				if( dynamicData != null && dynamicData.Wheels != null )
-				{
-					foreach( var wheel in dynamicData.Wheels )
-					{
-						var offsetZ = wheel.LocalPosition.Z - wheel.Diameter * 0.5;
-						bounds.Minimum.Z = Math.Min( bounds.Minimum.Z, offsetZ );
-					}
-				}
-
-				box = new Box( bounds, tr.Position, rot );
-			}
+			if( dynamicData != null )
+				box = new Box( ref dynamicData.LocalBoundsDefault, ref trPosition, ref rot );
 			else
-				box = new Box( tr.Position, new Vector3( tr.Scale.X, tr.Scale.Y, tr.Scale.Z ) * 0.5, rot );
+				box = new Box( trPosition, Vector3.One, rot );
 		}
 
 		void DebugDraw( Viewport viewport )
@@ -1033,95 +1098,152 @@ namespace NeoAxis
 			//renderer.AddLine( points[ 3 ], points[ 7 ], -1 );
 		}
 
+		void DebugRenderSeat( ViewportRenderingContext context, DynamicData.SeatItem seatItem )
+		{
+			var renderer = context.Owner.Simple3DRenderer;
+			var vehicleTransform = TransformV;
+
+			//seat
+			{
+				var color = new ColorValue( 0, 1, 0 );
+				renderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
+				var tr = vehicleTransform * seatItem.Transform;
+				var p = tr * new Vector3( 0, 0, 0 );
+				renderer.AddSphere( new Sphere( p, 0.1 ), 16 );
+				renderer.AddArrow( p, tr * new Vector3( 1, 0, 0 ) );
+			}
+
+			//exit
+			{
+				var color = new ColorValue( 1, 0, 0 );
+				renderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
+				var tr = vehicleTransform * seatItem.ExitTransform;
+				var p = tr * new Vector3( 0, 0, 0 );
+				renderer.AddSphere( new Sphere( p, 0.1 ), 16 );
+				renderer.AddArrow( p, tr * new Vector3( 1, 0, 0 ) );
+			}
+		}
+
 		protected override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
 			base.OnGetRenderSceneData( context, mode, modeGetObjectsItem );
 
+			//!!!!slowly?
+
 			if( mode == GetRenderSceneDataMode.InsideFrustum )
 			{
 				var context2 = context.ObjectInSpaceRenderingContext;
-				var scene = context.Owner.AttachedScene;
 
-				if( scene != null && scene.GetDisplayDevelopmentDataInThisApplication() && DebugVisualization && dynamicData != null )//!!!! scene.DisplayPhysicalObjects )
+				if( DebugVisualization )
 				{
-					var renderer = context.Owner.Simple3DRenderer;
-					var tr = TransformV;
+					var scene = context.Owner.AttachedScene;
 
-					//var vehicle = dynamicData.raycastVehicle;
-
-					//wheels
-					if( dynamicData.Wheels != null )
+					if( scene != null && context.SceneDisplayDevelopmentDataInThisApplication && dynamicData != null )//!!!! scene.DisplayPhysicalObjects )
 					{
-						//foreach( var wheel in dynamicData.Wheels )
-						for( int nWheel = 0; nWheel < dynamicData.Wheels.Length; nWheel++ )
+						var renderer = context.Owner.Simple3DRenderer;
+						var tr = TransformV;
+
+						//wheels
+						if( dynamicData.Wheels != null )
 						{
-							var wheel = dynamicData.Wheels[ nWheel ];
-
+							//foreach( var wheel in dynamicData.Wheels )
+							for( int nWheel = 0; nWheel < dynamicData.Wheels.Length; nWheel++ )
 							{
-								var color = new ColorValue( 1, 0, 0 );
-								renderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+								ref var wheel = ref dynamicData.Wheels[ nWheel ];
 
-								//!!!!scale
+								{
+									var color = new ColorValue( 1, 0, 0 );
+									renderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 
-								var pos1 = tr * ( wheel.LocalPosition + new Vector3( 0, -wheel.Width * 0.5, 0 ) );
-								var pos2 = tr * ( wheel.LocalPosition + new Vector3( 0, wheel.Width * 0.5, 0 ) );
-								var cylinder = new Cylinder( pos1, pos2, wheel.Diameter * 0.5 );
-								renderer.AddCylinder( cylinder );
+									//!!!!slowly
+
+									var m1 = new Matrix4( wheel.CurrentRotation.ToMatrix3(), wheel.CurrentPosition + new Vector3( 0, -wheel.Width * 0.5, 0 ) );
+									var m2 = new Matrix4( wheel.CurrentRotation.ToMatrix3(), wheel.CurrentPosition + new Vector3( 0, wheel.Width * 0.5, 0 ) );
+
+									var pos1 = ( tr.ToMatrix4() * m1 ).GetTranslation();
+									var pos2 = ( tr.ToMatrix4() * m2 ).GetTranslation();
+
+
+									////!!!!
+									//PhysicalBody.GetShapeCenterOfMass( out var shapeCenterOfMass );
+									//pos1 -= shapeCenterOfMass;
+									//pos2 -= shapeCenterOfMass;
+
+
+									//var pos1 = tr * ( wheel.LocalPosition + new Vector3( 0, -wheel.Width * 0.5, 0 ) );
+									//var pos2 = tr * ( wheel.LocalPosition + new Vector3( 0, wheel.Width * 0.5, 0 ) );
+
+									var cylinder = new Cylinder( pos1, pos2, wheel.Diameter * 0.5 );
+									renderer.AddCylinder( cylinder );
+								}
+
+								//можно transform указывать
+								//var wheelTransform = Matrix4.FromTranslate(tr
+								//renderer.AddCylinder( z, 1, WheelDiameter * 0.5, WheelWidth );
+
+								//if( vehicle != null )
+								//{
+								//	var wheelInfo = vehicle.GetWheelInfo( nWheel );
+
+								//	ColorValue wheelColor;
+								//	if( wheelInfo.RaycastInfo.IsInContact )
+								//		wheelColor = new ColorValue( 0, 0, 1 );
+								//	else
+								//		wheelColor = new ColorValue( 1, 0, 1 );
+
+								//	var transform = wheelInfo.WorldTransform;
+								//	var wheelPosWS = transform.Origin;
+
+								//	int RightAxis = 1;
+
+								//	var axle = new Internal.BulletSharp.Math.BVector3(
+								//		transform[ 0, RightAxis ],
+								//		transform[ 1, RightAxis ],
+								//		transform[ 2, RightAxis ] );
+
+								//	var to1 = wheelPosWS + axle;
+								//	var to2 = wheelInfo.RaycastInfo.ContactPointWS;
+
+								//	//debug wheels (cylinders)
+
+								//	renderer.SetColor( wheelColor, wheelColor * ProjectSettings.Get.HiddenByOtherObjectsColorMultiplier );
+								//	renderer.AddLine( BulletPhysicsUtility.Convert( wheelPosWS ), BulletPhysicsUtility.Convert( to1 ) );
+								//	renderer.AddLine( BulletPhysicsUtility.Convert( wheelPosWS ), BulletPhysicsUtility.Convert( to2 ) );
+
+								//	//debugDrawer.DrawLine( ref wheelPosWS, ref to1, ref wheelColor );
+								//	//debugDrawer.DrawLine( ref wheelPosWS, ref to2, ref wheelColor );
+								//}
 							}
 
-							//можно transform указывать
-							//var wheelTransform = Matrix4.FromTranslate(tr
-							//renderer.AddCylinder( z, 1, WheelDiameter * 0.5, WheelWidth );
-
-							//if( vehicle != null )
+							//if( dynamicData.constraint != null )
 							//{
-							//	var wheelInfo = vehicle.GetWheelInfo( nWheel );
-
-							//	ColorValue wheelColor;
-							//	if( wheelInfo.RaycastInfo.IsInContact )
-							//		wheelColor = new ColorValue( 0, 0, 1 );
-							//	else
-							//		wheelColor = new ColorValue( 1, 0, 1 );
-
-							//	var transform = wheelInfo.WorldTransform;
-							//	var wheelPosWS = transform.Origin;
-
-							//	int RightAxis = 1;
-
-							//	var axle = new Internal.BulletSharp.Math.BVector3(
-							//		transform[ 0, RightAxis ],
-							//		transform[ 1, RightAxis ],
-							//		transform[ 2, RightAxis ] );
-
-							//	var to1 = wheelPosWS + axle;
-							//	var to2 = wheelInfo.RaycastInfo.ContactPointWS;
-
-							//	//debug wheels (cylinders)
-
-							//	renderer.SetColor( wheelColor, wheelColor * ProjectSettings.Get.HiddenByOtherObjectsColorMultiplier );
-							//	renderer.AddLine( BulletPhysicsUtility.Convert( wheelPosWS ), BulletPhysicsUtility.Convert( to1 ) );
-							//	renderer.AddLine( BulletPhysicsUtility.Convert( wheelPosWS ), BulletPhysicsUtility.Convert( to2 ) );
-
-							//	//debugDrawer.DrawLine( ref wheelPosWS, ref to1, ref wheelColor );
-							//	//debugDrawer.DrawLine( ref wheelPosWS, ref to2, ref wheelColor );
+							//	dynamicData.constraint.GetData2( out var wheel0, out var wheel1, out var wheel2, out var wheel3 );
+							//	renderer.AddSphere( new Sphere( wheel0, 0.01 ) );
+							//	renderer.AddSphere( new Sphere( wheel1, 0.01 ) );
+							//	renderer.AddSphere( new Sphere( wheel2, 0.01 ) );
+							//	renderer.AddSphere( new Sphere( wheel3, 0.01 ) );
 							//}
+
 						}
+
+						//seats
+						for( int n = 0; n < dynamicData.Seats.Length; n++ )
+						{
+							var seatItem = dynamicData.Seats[ n ];
+							DebugRenderSeat( context, seatItem );
+						}
+
+						//!!!!
+
+						//var tr = GetTransform();
+						//var scaleFactor = tr.Scale.MaxComponent();
+
+						//renderer.SetColor( new ColorValue( 1, 0, 0, 1 ) );
+
+						////eye position
+						//renderer.SetColor( new ColorValue( 0, 1, 0, 1 ) );
+						//renderer.AddSphere( new Sphere( TransformV * EyePosition.Value, .05f ), 16 );
 					}
-
-					//seats
-					foreach( var seat in GetComponents<VehicleCharacterSeat>() )
-						seat.DebugRender( context );
-
-					//!!!!
-
-					//var tr = GetTransform();
-					//var scaleFactor = tr.Scale.MaxComponent();
-
-					//renderer.SetColor( new ColorValue( 1, 0, 0, 1 ) );
-
-					////eye position
-					//renderer.SetColor( new ColorValue( 0, 1, 0, 1 ) );
-					//renderer.AddSphere( new Sphere( TransformV * EyePosition.Value, .05f ), 16 );
 				}
 
 				//!!!!
@@ -1129,22 +1251,27 @@ namespace NeoAxis
 				if( !showLabels )
 					context2.disableShowingLabelForThisObject = true;
 
+#if !DEPLOY
 				//draw selection
-				if( context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) )
+				if( EngineApp.IsEditor )
 				{
-					ColorValue color;
-					if( context2.selectedObjects.Contains( this ) )
-						color = ProjectSettings.Get.General.SelectedColor;
-					else //if( context2.canSelectObjects.Contains( this ) )
-						color = ProjectSettings.Get.General.CanSelectColor;
-					//else
-					//	color = ProjectSettings.Get.SceneShowPhysicsDynamicActiveColor;
+					if( context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) )
+					{
+						ColorValue color;
+						if( context2.selectedObjects.Contains( this ) )
+							color = ProjectSettings.Get.Colors.SelectedColor;
+						else //if( context2.canSelectObjects.Contains( this ) )
+							color = ProjectSettings.Get.Colors.CanSelectColor;
+						//else
+						//	color = ProjectSettings.Get.SceneShowPhysicsDynamicActiveColor;
 
-					var viewport = context.Owner;
+						var viewport = context.Owner;
 
-					viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
-					DebugDraw( viewport );
+						viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
+						DebugDraw( viewport );
+					}
 				}
+#endif
 			}
 		}
 
@@ -1213,18 +1340,18 @@ namespace NeoAxis
 			//if( !positionCalculated )
 			//{
 
+
 			//!!!!select seat
-			var seat = GetComponent<VehicleCharacterSeat>();
-			if( seat != null )
+
+			if( dynamicData != null )
 			{
-				var seatTransform = seat.Transform.Value;
-				position = vehicleTransform * ( seatTransform * seat.EyeOffset.Value );
+				var seatItem = dynamicData.Seats[ 0 ];
 
-				//var seatTransformWorld = tr * seatTransform;
-				//position = seatTransformWorld.Position;
+				//!!!!slowly
+
+				var seatTransform = seatItem.Transform;
+				position = vehicleTransform * ( seatTransform * seatItem.EyeOffset );
 			}
-
-			//}
 		}
 
 		//public Vector3 GetSmoothPosition()
@@ -1237,54 +1364,18 @@ namespace NeoAxis
 			ParentScene?.SoundPlay( sound, TransformV.Position );
 		}
 
-		public override void NewObjectSetDefaultConfiguration( bool createdFromNewObjectWindow = false )
-		{
-			if( Components.Count == 0 )
-			{
-				//create rigid body
-				var body = CreateComponent<RigidBody>();
-				body.Name = "Collision Body";
-				body.CanBeSelected = false;
-				body.MotionType = RigidBody.MotionTypeEnum.Dynamic;
-				body.Mass = 1000;
+		//public override void NewObjectSetDefaultConfiguration( bool createdFromNewObjectWindow = false )
+		//{
+		//	if( Components.Count == 0 )
+		//	{
+		//		//var inputProcessing = CreateComponent<VehicleInputProcessing>();
+		//		//inputProcessing.Name = "Vehicle Input Processing";
 
-				//create collision shape
-				var collisionShape = body.CreateComponent<CollisionShape_Mesh>();
-				collisionShape.Name = "Collision Shape";
-				collisionShape.Vertices = ReferenceUtility.MakeReference( @"Content\Vehicles\Default\Body\scene.gltf|$Mesh\$Collision Definition\$\Vertices" );
-				collisionShape.Indices = ReferenceUtility.MakeReference( @"Content\Vehicles\Default\Body\scene.gltf|$Mesh\$Collision Definition\$\Indices" );
-				collisionShape.ShapeType = CollisionShape_Mesh.ShapeTypeEnum.Convex;
-
-				//reference tranform of the vehicle to the body
-				Transform = ReferenceUtility.MakeThisReference( this, body, "Transform" );
-
-				//create mesh in space
-				var meshInSpace = CreateComponent<MeshInSpace>();
-				meshInSpace.Name = "Mesh In Space";
-				meshInSpace.CanBeSelected = false;
-				meshInSpace.Mesh = new Reference<Mesh>( null, @"Content\Vehicles\Default\Body\scene.gltf|$Mesh" );
-				meshInSpace.Transform = new Reference<Transform>( NeoAxis.Transform.Identity, "this:..\\Transform" );
-				//meshInSpace.Transform = new Reference<Transform>( NeoAxis.Transform.Identity, "this:$Transform Offset\\Result" );
-
-				//var transformOffset = meshInSpace.CreateComponent<TransformOffset>();
-				//transformOffset.Name = "Transform Offset";
-				//transformOffset.PositionOffset = new Vector3( 0, 0, 0 );
-				////transformOffset.PositionOffset = new Vector3( 0, 0, -1.15 );
-				//transformOffset.Source = new Reference<Transform>( NeoAxis.Transform.Identity, "this:..\\..\\Transform" );
-				////transformOffset.Source = new Reference<Transform>( NeoAxis.Transform.Identity, "this:..\\..\\$Collision Body\\Transform" );
-
-				var inputProcessing = CreateComponent<VehicleInputProcessing>();
-				inputProcessing.Name = "Vehicle Input Processing";
-
-				var seat = CreateComponent<VehicleCharacterSeat>();
-				seat.Name = "Vehicle Character Seat";
-				seat.Transform = new Transform( new Vector3( 0.3, 0.5, 0 ), Quaternion.Identity );
-				seat.ExitTransform = new Transform( new Vector3( 0.3, 1.8, 0.3 ), Quaternion.Identity );
-
-				var ai = CreateComponent<VehicleAI>();
-				ai.Name = "Vehicle AI";
-			}
-		}
+		//		//var ai = CreateComponent<VehicleAI>();
+		//		//ai.Name = "Vehicle AI";
+		//		//ai.NetworkMode = NetworkModeEnum.False;
+		//	}
+		//}
 
 		public void NeedRecreateDynamicData()
 		{
@@ -1293,434 +1384,605 @@ namespace NeoAxis
 
 		public void CreateDynamicData()
 		{
-			needRecreateDynamicData = false;
-
 			DestroyDynamicData();
 
-			if( !EnabledInHierarchyAndIsNotResource )
+			if( !EnabledInHierarchyAndIsInstance )
+				return;
+			if( NetworkIsClient )
 				return;
 
-			const bool displayInEditor = false;// true;
+			//const bool displayInEditor = false;// true;
 
 			var scene = ParentScene;
 			if( scene == null )
 				return;
 
-			var tr = TransformV;
+			var type = VehicleType.Value;
+			if( type == null )
+				return;
 
 			dynamicData = new DynamicData();
-			dynamicData.SimulationMode = SimulationMode;
-			dynamicData.MainBody = GetComponent<RigidBody>( "Collision Body" );
+			dynamicData.VehicleType = type;
+			dynamicData.PhysicsMode = PhysicsMode;
+			dynamicData.Mesh = type.Mesh;
+			dynamicData.FrontWheelMesh = type.FrontWheelMesh;
+			dynamicData.RearWheelMesh = type.RearWheelMesh;
 
-			//VehicleTuning vehicleTuning = null;
+			var tr = TransformV;
 
-			//if( dynamicData.SimulationMode == SimulationModeEnum.Raycast )
-			//{
-			//	vehicleTuning = new VehicleTuning();
-			//	//!!!!
+			Mesh = dynamicData.Mesh;//type.Mesh;
 
-			//	var vehicleRayCaster = new DefaultVehicleRaycaster( scene.PhysicsWorldData.world );
-
-			//	//!!!!tuning внутри не используется
-			//	dynamicData.raycastVehicle = new RaycastVehicle( vehicleTuning, dynamicData.MainBody.InternalRigidBody, vehicleRayCaster );
-			//	var vehicle = dynamicData.raycastVehicle;
-
-			//	//!!!!
-
-			//	//var chassisShape = new BoxShape( 1.0f, 0.5f, 2.0f );
-
-			//	//var compound = new CompoundShape();
-
-			//	////localTrans effectively shifts the center of mass with respect to the chassis
-			//	//Matrix localTrans = Matrix.Translation( Vector3.UnitY );
-			//	//compound.AddChildShape( localTrans, chassisShape );
-			//	//RigidBody carChassis = PhysicsHelper.CreateBody( 800, Matrix.Identity, compound, World );
-			//	//carChassis.UserObject = "Chassis";
-			//	////carChassis.SetDamping(0.2f, 0.2f);
-
-
-			//	//!!!!
-			//	//carChassis.ActivationState = ActivationState.DisableDeactivation;
-
-
-			//	scene.PhysicsWorldData.world.AddAction( vehicle );
-
-			//	// choose coordinate system
-			//	vehicle.SetCoordinateSystem( 1, 2, 0 );
-			//	//vehicle.SetCoordinateSystem( rightIndex, upIndex, forwardIndex );
-
-
-			//	//vehicle.RigidBody.WorldTransform = transform;
-			//}
+			//!!!!Kinematic
+			if( dynamicData.PhysicsMode == PhysicsModeEnum.Basic )
+				Collision = true;
 
 			//create wheels
-
-			dynamicData.Wheels = new DynamicData.WheelData[ 4 ];
-
-			var wheelDrive = WheelDrive.Value;
-			var front = wheelDrive == WheelDriveEnum.Front || wheelDrive == WheelDriveEnum.All;
-			var rear = wheelDrive == WheelDriveEnum.Rear || wheelDrive == WheelDriveEnum.All;
-
-			for( int n = 0; n < dynamicData.Wheels.Length; n++ )
+			if( type.Chassis.Value == NeoAxis.VehicleType.ChassisEnum._4Wheels )
 			{
-				//init basic data
+				dynamicData.Wheels = new DynamicData.WheelItem[ 4 ];
 
-				var wheel = new DynamicData.WheelData();
-				dynamicData.Wheels[ n ] = wheel;
-				wheel.Which = (DynamicData.WhichWheel)n;
+				//var wheelDrive = type.WheelDrive.Value;
+				//var frontDrive = wheelDrive == NeoAxis.VehicleType.WheelDriveEnum.Front || wheelDrive == NeoAxis.VehicleType.WheelDriveEnum.All;
+				//var rearDrive = wheelDrive == NeoAxis.VehicleType.WheelDriveEnum.Rear || wheelDrive == NeoAxis.VehicleType.WheelDriveEnum.All;
 
-				if( ( wheel.Which == DynamicData.WhichWheel.FrontLeft || wheel.Which == DynamicData.WhichWheel.FrontRight ) && front )
-					wheel.WheelDrive = true;
-				if( ( wheel.Which == DynamicData.WhichWheel.RearLeft || wheel.Which == DynamicData.WhichWheel.RearRight ) && rear )
-					wheel.WheelDrive = true;
-
-				switch( wheel.Which )
+				for( int n = 0; n < dynamicData.Wheels.Length; n++ )
 				{
-				case DynamicData.WhichWheel.FrontLeft:
-					wheel.LocalPosition = FrontWheelPosition.Value;
-					if( wheel.LocalPosition.Y < 0 )
-						wheel.LocalPosition.Y = -wheel.LocalPosition.Y;
-					break;
+					ref var wheel = ref dynamicData.Wheels[ n ];
+					wheel.Which = (DynamicData.WhichWheel)n;
 
-				case DynamicData.WhichWheel.FrontRight:
-					wheel.LocalPosition = FrontWheelPosition.Value;
-					if( wheel.LocalPosition.Y > 0 )
-						wheel.LocalPosition.Y = -wheel.LocalPosition.Y;
-					break;
+					//if( ( wheel.Which == DynamicData.WhichWheel.FrontLeft || wheel.Which == DynamicData.WhichWheel.FrontRight ) && frontDrive )
+					//	wheel.WheelDrive = true;
+					//if( ( wheel.Which == DynamicData.WhichWheel.RearLeft || wheel.Which == DynamicData.WhichWheel.RearRight ) && rearDrive )
+					//	wheel.WheelDrive = true;
 
-				case DynamicData.WhichWheel.RearLeft:
-					wheel.LocalPosition = RearWheelPosition.Value;
-					if( wheel.LocalPosition.Y < 0 )
-						wheel.LocalPosition.Y = -wheel.LocalPosition.Y;
-					break;
-
-				case DynamicData.WhichWheel.RearRight:
-					wheel.LocalPosition = RearWheelPosition.Value;
-					if( wheel.LocalPosition.Y > 0 )
-						wheel.LocalPosition.Y = -wheel.LocalPosition.Y;
-					break;
-				}
-
-				switch( wheel.Which )
-				{
-				case DynamicData.WhichWheel.FrontLeft:
-				case DynamicData.WhichWheel.FrontRight:
-					wheel.Diameter = FrontWheelDiameter;
-					wheel.Width = FrontWheelWidth;
-					break;
-
-				case DynamicData.WhichWheel.RearLeft:
-				case DynamicData.WhichWheel.RearRight:
-					wheel.Diameter = RearWheelDiameter;
-					wheel.Width = RearWheelWidth;
-					break;
-				}
-
-				//init physics
-
-				if( dynamicData.MainBody != null )
-				{
-					//SimplePhysics mode
-					if( dynamicData.SimulationMode == SimulationModeEnum.RealPhysics )
+					switch( wheel.Which )
 					{
-						//create a rigid body of wheel
-						{
-							//need set ShowInEditor = false before AddComponent
-							var body = ComponentUtility.CreateComponent<RigidBody>( null, false, false );
-							body.DisplayInEditor = displayInEditor;
-							AddComponent( body );
-							//var body = CreateComponent<RigidBody>( enabled: false );
+					case DynamicData.WhichWheel.FrontLeft:
+						wheel.InitialPosition = type.FrontWheelPosition.Value.ToVector3F();
+						if( wheel.InitialPosition.Y < 0 )
+							wheel.InitialPosition.Y = -wheel.InitialPosition.Y;
+						break;
 
-							body.CanBeSelected = false;
-							body.SaveSupport = false;
-							body.CloneSupport = false;
+					case DynamicData.WhichWheel.FrontRight:
+						wheel.InitialPosition = type.FrontWheelPosition.Value.ToVector3F();
+						if( wheel.InitialPosition.Y > 0 )
+							wheel.InitialPosition.Y = -wheel.InitialPosition.Y;
+						break;
 
-							body.Name = "Wheel " + wheel.Which.ToString() + " Collision Body";
-							body.MotionType = RigidBody.MotionTypeEnum.Dynamic;
-							body.Mass = wheel.Front ? FrontWheelMass : RearWheelMass;
+					case DynamicData.WhichWheel.RearLeft:
+						wheel.InitialPosition = type.RearWheelPosition.Value.ToVector3F();
+						if( wheel.InitialPosition.Y < 0 )
+							wheel.InitialPosition.Y = -wheel.InitialPosition.Y;
+						break;
 
-							body.MaterialFriction = WheelFriction;
-							//!!!!
-							//body.MaterialFrictionMode = PhysicalMaterial.FrictionModeEnum.AnisotropicRolling;
-							//MaterialAnisotropicFriction
-							//MaterialSpinningFriction
-							//MaterialRollingFriction
-							//body.MaterialRestitution
-
-							body.Transform = tr * new Transform( wheel.LocalPosition, Quaternion.Identity );
-
-
-							//!!!!instancing geometry
-							//!!!!round
-							//!!!!more segments
-
-							SimpleMeshGenerator.GenerateCylinder( 1, wheel.Diameter / 2, wheel.Width, 64, true, true, true, out Vector3F[] vertices, out var indices );
-
-							var shape = body.CreateComponent<CollisionShape_Mesh>();
-							shape.Vertices = vertices;
-							shape.Indices = indices;
-							shape.ShapeType = CollisionShape_Mesh.ShapeTypeEnum.Convex;
-
-							//var shape = body.CreateComponent<CollisionShape_Sphere>();
-							//shape.Radius = wheel.Diameter / 2;
-
-							body.ContactsCollect = true;
-
-							body.Enabled = true;
-
-							wheel.RigidBody = body;
-						}
-
-						//create constraint
-						if( wheel.RigidBody != null )
-						{
-							//need set ShowInEditor = false before AddComponent
-							var c = ComponentUtility.CreateComponent<Constraint>( null, false, false );
-							c.DisplayInEditor = displayInEditor;
-							AddComponent( c );
-							//var body = CreateComponent<RigidBody>( enabled: false );
-
-							c.CanBeSelected = false;
-							c.SaveSupport = false;
-							c.CloneSupport = false;
-
-							c.Name = "Wheel " + wheel.Which.ToString() + " Constraint";
-							c.CollisionsBetweenLinkedBodies = false;
-							c.BodyA = ReferenceUtility.MakeThisReference( c, dynamicData.MainBody );
-							c.BodyB = ReferenceUtility.MakeThisReference( c, wheel.RigidBody );
-
-							c.Transform = new Transform( wheel.RigidBody.TransformV.Position, tr.Rotation * Quaternion.FromRotateByZ( -Math.PI / 2 ) );
-							//c.Transform = new Transform( wheel.RigidBody.TransformV.Position, tr.Rotation * Quaternion.FromRotateByZ( Math.PI / 2 ) );
-
-							c.AngularAxisX = PhysicsAxisMode.Free;
-							c.AngularAxisXMotor = true;
-
-							//steering
-							if( wheel.Which == DynamicData.WhichWheel.FrontLeft || wheel.Which == DynamicData.WhichWheel.FrontRight )
-							{
-								c.AngularAxisZ = PhysicsAxisMode.Limited;
-								c.AngularAxisZLimitLow = -MaxSteeringAngle.Value;
-								c.AngularAxisZLimitHigh = MaxSteeringAngle.Value;
-								c.AngularAxisZMotor = true;
-								c.AngularAxisZServo = true;
-							}
-
-							//!!!!impl
-							////suspension
-							//c.LinearAxisZ = PhysicsAxisMode.Limited;
-							//c.LinearAxisZLimitHigh = SuspensionTravel.Value.Maximum;
-							//c.LinearAxisZLimitLow = SuspensionTravel.Value.Minimum;
-
-							////!!!!
-							//c.LinearAxisZLimitHigh = 0;
-							//c.LinearAxisZLimitLow = 0;
-
-							//c.LinearAxisZLimitHigh = -0.2;// 0.1;
-							//c.LinearAxisZLimitLow = 0.1;
-
-							//c.LinearAxisZMotor = true;
-							//c.LinearAxisZMotorMaxForce = 0;
-							//c.LinearAxisZMotorTargetVelocity = 0;
-
-							//c.LinearAxisZSpring = true;
-							//c.LinearAxisZSpringStiffness = 1000000000;
-							//c.LinearAxisZSpringDamping = 0;
-
-							//!!!!засыпать
-							//c.AutoActivateBodies = true;
-
-							c.Enabled = true;
-
-							wheel.Constraint = c;
-						}
+					case DynamicData.WhichWheel.RearRight:
+						wheel.InitialPosition = type.RearWheelPosition.Value.ToVector3F();
+						if( wheel.InitialPosition.Y > 0 )
+							wheel.InitialPosition.Y = -wheel.InitialPosition.Y;
+						break;
 					}
 
-					////Raycast mode
-					//if( dynamicData.SimulationMode == SimulationModeEnum.Raycast )
+					wheel.CurrentPosition = wheel.InitialPosition;
+					wheel.CurrentRotation = QuaternionF.Identity;
+
+					switch( wheel.Which )
+					{
+					case DynamicData.WhichWheel.FrontLeft:
+					case DynamicData.WhichWheel.FrontRight:
+						wheel.Diameter = (float)type.FrontWheelDiameter.Value;
+						wheel.Width = (float)type.FrontWheelWidth.Value;
+						break;
+
+					case DynamicData.WhichWheel.RearLeft:
+					case DynamicData.WhichWheel.RearRight:
+						wheel.Diameter = (float)type.RearWheelDiameter.Value;
+						wheel.Width = (float)type.RearWheelWidth.Value;
+						break;
+					}
+
+
+
+
+					////init physics
+
+					//if( dynamicData.MainBody != null )
 					//{
-					//	var vehicle = dynamicData.raycastVehicle;
+					//	//SimplePhysics mode
+					//	if( dynamicData.SimulationMode == SimulationModeEnum.RealPhysics )
+					//	{
+					//		//create a rigid body of wheel
+					//		{
+					//			//need set ShowInEditor = false before AddComponent
+					//			var body = ComponentUtility.CreateComponent<RigidBody>( null, false, false );
+					//			body.DisplayInEditor = displayInEditor;
+					//			AddComponent( body );
+					//			//var body = CreateComponent<RigidBody>( enabled: false );
 
-					//	//!!!!
-					//	float suspensionRestLength = 0.6f;
+					//			body.CanBeSelected = false;
+					//			body.SaveSupport = false;
+					//			body.CloneSupport = false;
 
-					//	//!!!!
-					//	//const float connectionHeight = 1.2f;
+					//			body.Name = "Wheel " + wheel.Which.ToString() + " Collision Body";
+					//			body.MotionType = PhysicsMotionType.Dynamic;
+					//			body.Mass = wheel.Front ? type.FrontWheelMass : type.RearWheelMass;
 
-					//	//!!!!
-					//	//float wheelRadius = 0.7f;
-					//	//float wheelWidth = 0.4f;
+					//			body.MaterialFriction = type.WheelFriction;
+					//			//!!!!
+					//			//body.MaterialFrictionMode = PhysicalMaterial.FrictionModeEnum.AnisotropicRolling;
+					//			//MaterialAnisotropicFriction
+					//			//MaterialSpinningFriction
+					//			//MaterialRollingFriction
+					//			//body.MaterialRestitution
 
-					//	var connectionPoint = BulletPhysicsUtility.Convert( wheel.LocalPosition );
-					//	//var connectionPoint = BulletPhysicsUtility.Convert( new Vector3( 1.0 - ( 0.3f * wheelWidth ), connectionHeight, 2 * 1.0 - wheelRadius ) );
-
-					//	//!!!!
-					//	var wheelDirection = BulletPhysicsUtility.Convert( new Vector3( 0, 0, -1 ) );
-					//	//var wheelAxle = BulletPhysicsUtility.Convert( new Vector3( 1, 0, 0 ) );
-					//	var wheelAxle = BulletPhysicsUtility.Convert( new Vector3( 0, -1, 0 ) );
-
-					//	var wheelInfo = vehicle.AddWheel( connectionPoint, wheelDirection, wheelAxle, suspensionRestLength, wheel.Diameter / 2, vehicleTuning, wheel.Front );
-
-
-					//	//Vector3 wheelDirection = Vector3.Zero;
-					//	//Vector3 wheelAxle = Vector3.Zero;
-
-					//	//wheelDirection[ upIndex ] = -1;
-					//	//wheelAxle[ rightIndex ] = -1;
-
-
-					//	//bool isFrontWheel = true;
-					//	//var connectionPoint = new Vector3( CUBE_HALF_EXTENTS - ( 0.3f * wheelWidth ), connectionHeight, 2 * CUBE_HALF_EXTENTS - wheelRadius );
-					//	//vehicle.AddWheel( connectionPoint, wheelDirection, wheelAxle, suspensionRestLength, wheelRadius, tuning, isFrontWheel );
-
-					//	//connectionPoint = new Vector3( -CUBE_HALF_EXTENTS + ( 0.3f * wheelWidth ), connectionHeight, 2 * CUBE_HALF_EXTENTS - wheelRadius );
-					//	//vehicle.AddWheel( connectionPoint, wheelDirection, wheelAxle, suspensionRestLength, wheelRadius, tuning, isFrontWheel );
-
-					//	//isFrontWheel = false;
-					//	//connectionPoint = new Vector3( -CUBE_HALF_EXTENTS + ( 0.3f * wheelWidth ), connectionHeight, -2 * CUBE_HALF_EXTENTS + wheelRadius );
-					//	//vehicle.AddWheel( connectionPoint, wheelDirection, wheelAxle, suspensionRestLength, wheelRadius, tuning, isFrontWheel );
-
-					//	//connectionPoint = new Vector3( CUBE_HALF_EXTENTS - ( 0.3f * wheelWidth ), connectionHeight, -2 * CUBE_HALF_EXTENTS + wheelRadius );
-					//	//vehicle.AddWheel( connectionPoint, wheelDirection, wheelAxle, suspensionRestLength, wheelRadius, tuning, isFrontWheel );
+					//			body.Transform = tr * new Transform( wheel.LocalPosition, Quaternion.Identity );
 
 
-					//	//!!!!
-					//	float wheelFriction = 1000; //float.MaxValue
-					//	float suspensionStiffness = 20.0f;
-					//	float suspensionDamping = 2.3f;
-					//	float suspensionCompression = 4.4f;
-					//	float rollInfluence = 0.1f; //1.0f;
+					//			//!!!!instancing geometry
+					//			//!!!!round
+					//			//!!!!more segments
+
+					//			SimpleMeshGenerator.GenerateCylinder( 1, wheel.Diameter / 2, wheel.Width, 64, true, true, true, out Vector3F[] vertices, out var indices );
+
+					//			var shape = body.CreateComponent<CollisionShape_Mesh>();
+					//			shape.Vertices = vertices;
+					//			shape.Indices = indices;
+					//			shape.ShapeType = CollisionShape_Mesh.ShapeTypeEnum.Convex;
+
+					//			//var shape = body.CreateComponent<CollisionShape_Sphere>();
+					//			//shape.Radius = wheel.Diameter / 2;
+
+					//			//body.ContactsCollect = true;
+
+					//			body.Enabled = true;
+
+					//			wheel.RigidBody = body;
+					//		}
+
+					//		//create constraint
+					//		if( wheel.RigidBody != null )
+					//		{
+					//			//need set ShowInEditor = false before AddComponent
+					//			var c = ComponentUtility.CreateComponent<Constraint>( null, false, false );
+					//			c.DisplayInEditor = displayInEditor;
+					//			AddComponent( c );
+					//			//var body = CreateComponent<RigidBody>( enabled: false );
+
+					//			c.CanBeSelected = false;
+					//			c.SaveSupport = false;
+					//			c.CloneSupport = false;
+
+					//			c.Name = "Wheel " + wheel.Which.ToString() + " Constraint";
+					//			c.CollisionsBetweenLinkedBodies = false;
+					//			c.BodyA = ReferenceUtility.MakeThisReference( c, dynamicData.MainBody );
+					//			c.BodyB = ReferenceUtility.MakeThisReference( c, wheel.RigidBody );
+
+					//			c.Transform = new Transform( wheel.RigidBody.TransformV.Position, tr.Rotation * Quaternion.FromRotateByZ( -Math.PI / 2 ) );
+					//			//c.Transform = new Transform( wheel.RigidBody.TransformV.Position, tr.Rotation * Quaternion.FromRotateByZ( Math.PI / 2 ) );
 
 
-					//	//for( int i = 0; i < vehicle.NumWheels; i++ )
+					//			//!!!!need
+
+					//			//c.AngularAxisX = PhysicsAxisMode.Free;
+					//			//c.AngularAxisXMotor = true;
+
+
+					//			//steering
+					//			if( wheel.Which == DynamicData.WhichWheel.FrontLeft || wheel.Which == DynamicData.WhichWheel.FrontRight )
+					//			{
+					//				c.AngularAxisZ = PhysicsAxisMode.Limited;
+					//				c.AngularAxisZLimitLow = -type.MaxSteeringAngle.Value;
+					//				c.AngularAxisZLimitHigh = type.MaxSteeringAngle.Value;
+					//				c.AngularAxisZMotor = true;
+					//				c.AngularAxisZServo = true;
+					//			}
+
+					//			//!!!!impl
+					//			////suspension
+					//			//c.LinearAxisZ = PhysicsAxisMode.Limited;
+					//			//c.LinearAxisZLimitHigh = SuspensionTravel.Value.Maximum;
+					//			//c.LinearAxisZLimitLow = SuspensionTravel.Value.Minimum;
+
+					//			////!!!!
+					//			//c.LinearAxisZLimitHigh = 0;
+					//			//c.LinearAxisZLimitLow = 0;
+
+					//			//c.LinearAxisZLimitHigh = -0.2;// 0.1;
+					//			//c.LinearAxisZLimitLow = 0.1;
+
+					//			//c.LinearAxisZMotor = true;
+					//			//c.LinearAxisZMotorMaxForce = 0;
+					//			//c.LinearAxisZMotorTargetVelocity = 0;
+
+					//			//c.LinearAxisZSpring = true;
+					//			//c.LinearAxisZSpringStiffness = 1000000000;
+					//			//c.LinearAxisZSpringDamping = 0;
+
+					//			//!!!!засыпать
+					//			//c.AutoActivateBodies = true;
+
+					//			c.Enabled = true;
+
+					//			wheel.Constraint = c;
+					//		}
+					//	}
+
+					//	////Raycast mode
+					//	//if( dynamicData.SimulationMode == SimulationModeEnum.Raycast )
 					//	//{
-					//	//	WheelInfo wheelInfo = vehicle.GetWheelInfo( i );
-					//	wheelInfo.SuspensionStiffness = suspensionStiffness;
-					//	wheelInfo.WheelsDampingRelaxation = suspensionDamping;
-					//	wheelInfo.WheelsDampingCompression = suspensionCompression;
-					//	wheelInfo.FrictionSlip = wheelFriction;
-					//	wheelInfo.RollInfluence = rollInfluence;
+					//	//	var vehicle = dynamicData.raycastVehicle;
+
+					//	//	//!!!!
+					//	//	float suspensionRestLength = 0.6f;
+
+					//	//	//!!!!
+					//	//	//const float connectionHeight = 1.2f;
+
+					//	//	//!!!!
+					//	//	//float wheelRadius = 0.7f;
+					//	//	//float wheelWidth = 0.4f;
+
+					//	//	var connectionPoint = BulletPhysicsUtility.Convert( wheel.LocalPosition );
+					//	//	//var connectionPoint = BulletPhysicsUtility.Convert( new Vector3( 1.0 - ( 0.3f * wheelWidth ), connectionHeight, 2 * 1.0 - wheelRadius ) );
+
+					//	//	//!!!!
+					//	//	var wheelDirection = BulletPhysicsUtility.Convert( new Vector3( 0, 0, -1 ) );
+					//	//	//var wheelAxle = BulletPhysicsUtility.Convert( new Vector3( 1, 0, 0 ) );
+					//	//	var wheelAxle = BulletPhysicsUtility.Convert( new Vector3( 0, -1, 0 ) );
+
+					//	//	var wheelInfo = vehicle.AddWheel( connectionPoint, wheelDirection, wheelAxle, suspensionRestLength, wheel.Diameter / 2, vehicleTuning, wheel.Front );
+
+
+					//	//	//Vector3 wheelDirection = Vector3.Zero;
+					//	//	//Vector3 wheelAxle = Vector3.Zero;
+
+					//	//	//wheelDirection[ upIndex ] = -1;
+					//	//	//wheelAxle[ rightIndex ] = -1;
+
+
+					//	//	//bool isFrontWheel = true;
+					//	//	//var connectionPoint = new Vector3( CUBE_HALF_EXTENTS - ( 0.3f * wheelWidth ), connectionHeight, 2 * CUBE_HALF_EXTENTS - wheelRadius );
+					//	//	//vehicle.AddWheel( connectionPoint, wheelDirection, wheelAxle, suspensionRestLength, wheelRadius, tuning, isFrontWheel );
+
+					//	//	//connectionPoint = new Vector3( -CUBE_HALF_EXTENTS + ( 0.3f * wheelWidth ), connectionHeight, 2 * CUBE_HALF_EXTENTS - wheelRadius );
+					//	//	//vehicle.AddWheel( connectionPoint, wheelDirection, wheelAxle, suspensionRestLength, wheelRadius, tuning, isFrontWheel );
+
+					//	//	//isFrontWheel = false;
+					//	//	//connectionPoint = new Vector3( -CUBE_HALF_EXTENTS + ( 0.3f * wheelWidth ), connectionHeight, -2 * CUBE_HALF_EXTENTS + wheelRadius );
+					//	//	//vehicle.AddWheel( connectionPoint, wheelDirection, wheelAxle, suspensionRestLength, wheelRadius, tuning, isFrontWheel );
+
+					//	//	//connectionPoint = new Vector3( CUBE_HALF_EXTENTS - ( 0.3f * wheelWidth ), connectionHeight, -2 * CUBE_HALF_EXTENTS + wheelRadius );
+					//	//	//vehicle.AddWheel( connectionPoint, wheelDirection, wheelAxle, suspensionRestLength, wheelRadius, tuning, isFrontWheel );
+
+
+					//	//	//!!!!
+					//	//	float wheelFriction = 1000; //float.MaxValue
+					//	//	float suspensionStiffness = 20.0f;
+					//	//	float suspensionDamping = 2.3f;
+					//	//	float suspensionCompression = 4.4f;
+					//	//	float rollInfluence = 0.1f; //1.0f;
+
+
+					//	//	//for( int i = 0; i < vehicle.NumWheels; i++ )
+					//	//	//{
+					//	//	//	WheelInfo wheelInfo = vehicle.GetWheelInfo( i );
+					//	//	wheelInfo.SuspensionStiffness = suspensionStiffness;
+					//	//	wheelInfo.WheelsDampingRelaxation = suspensionDamping;
+					//	//	wheelInfo.WheelsDampingCompression = suspensionCompression;
+					//	//	wheelInfo.FrictionSlip = wheelFriction;
+					//	//	wheelInfo.RollInfluence = rollInfluence;
+					//	//	//}
+
+
+					//	//}
+					//}
+
+
+					//!!!!
+
+
+					////create mesh in space
+					//{
+					//	//need set ShowInEditor = false before AddComponent
+					//	var meshInSpace = ComponentUtility.CreateComponent<MeshInSpace>( null, false, false );
+					//	meshInSpace.DisplayInEditor = displayInEditor;
+					//	AddComponent( meshInSpace, -1 );
+					//	//var meshInSpace = CreateComponent<MeshInSpace>( enabled: false );
+
+					//	meshInSpace.CanBeSelected = false;
+					//	meshInSpace.SaveSupport = false;
+					//	meshInSpace.CloneSupport = false;
+
+					//	meshInSpace.Name = "Wheel " + wheel.Which.ToString() + " Mesh In Space";
+					//	meshInSpace.Mesh = wheel.Front ? type.FrontWheelMesh : type.RearWheelMesh;
+
+					//	//SimplePhysics mode
+					//	if( dynamicData.SimulationMode == SimulationModeEnum.RealPhysics )
+					//	{
+					//		//attach to the body
+					//		if( wheel.RigidBody != null )
+					//		{
+					//			if( wheel.Right )
+					//			{
+					//				var offset = meshInSpace.CreateComponent<TransformOffset>();
+					//				offset.Name = "Transform Offset";
+					//				offset.RotationOffset = Quaternion.FromRotateByZ( Math.PI );
+					//				offset.Source = ReferenceUtility.MakeThisReference( offset, wheel.RigidBody, "Transform" );
+
+					//				meshInSpace.Transform = ReferenceUtility.MakeThisReference( meshInSpace, offset, "Result" );
+					//			}
+					//			else
+					//				meshInSpace.Transform = ReferenceUtility.MakeThisReference( meshInSpace, wheel.RigidBody, "Transform" );
+					//		}
+					//	}
+
+					//	////Raycast mode
+					//	//if( dynamicData.SimulationMode == SimulationModeEnum.Raycast )
+					//	//{
+
+					//	//	//!!!!
+
 					//	//}
 
 
+					//	//else
+					//	//{
+					//	//	//var offset = meshInSpace.CreateComponent<TransformOffset>();
+					//	//	//offset.Name = "Transform Offset";
+					//	//	//offset.PositionOffset = wheel.LocalPosition;
+
+					//	//	////!!!!может тело повернуть
+					//	//	////if(wheel.Right)
+					//	//	////offset.RotationOffset = z;
+
+					//	//	//offset.Source = ReferenceUtility.MakeThisReference( offset, this, "Transform" );
+
+					//	//	////!!!!slowly maybe. where else
+					//	//	//meshInSpace.Transform = ReferenceUtility.MakeThisReference( meshInSpace, offset, "Result" );
+					//	//}
+
+					//	meshInSpace.Enabled = true;
+
+					//	wheel.MeshInSpace = meshInSpace;
 					//}
+
 				}
-
-				//create mesh in space
-				{
-					//need set ShowInEditor = false before AddComponent
-					var meshInSpace = ComponentUtility.CreateComponent<MeshInSpace>( null, false, false );
-					meshInSpace.DisplayInEditor = displayInEditor;
-					AddComponent( meshInSpace, -1 );
-					//var meshInSpace = CreateComponent<MeshInSpace>( enabled: false );
-
-					meshInSpace.CanBeSelected = false;
-					meshInSpace.SaveSupport = false;
-					meshInSpace.CloneSupport = false;
-
-					meshInSpace.Name = "Wheel " + wheel.Which.ToString() + " Mesh In Space";
-					meshInSpace.Mesh = wheel.Front ? FrontWheelMesh : RearWheelMesh;
-
-					//SimplePhysics mode
-					if( dynamicData.SimulationMode == SimulationModeEnum.RealPhysics )
-					{
-						//attach to the body
-						if( wheel.RigidBody != null )
-						{
-							if( wheel.Right )
-							{
-								var offset = meshInSpace.CreateComponent<TransformOffset>();
-								offset.Name = "Transform Offset";
-								offset.RotationOffset = Quaternion.FromRotateByZ( Math.PI );
-								offset.Source = ReferenceUtility.MakeThisReference( offset, wheel.RigidBody, "Transform" );
-
-								meshInSpace.Transform = ReferenceUtility.MakeThisReference( meshInSpace, offset, "Result" );
-							}
-							else
-								meshInSpace.Transform = ReferenceUtility.MakeThisReference( meshInSpace, wheel.RigidBody, "Transform" );
-						}
-					}
-
-					////Raycast mode
-					//if( dynamicData.SimulationMode == SimulationModeEnum.Raycast )
-					//{
-
-					//	//!!!!
-
-					//}
-
-
-					//else
-					//{
-					//	//var offset = meshInSpace.CreateComponent<TransformOffset>();
-					//	//offset.Name = "Transform Offset";
-					//	//offset.PositionOffset = wheel.LocalPosition;
-
-					//	////!!!!может тело повернуть
-					//	////if(wheel.Right)
-					//	////offset.RotationOffset = z;
-
-					//	//offset.Source = ReferenceUtility.MakeThisReference( offset, this, "Transform" );
-
-					//	////!!!!slowly maybe. where else
-					//	//meshInSpace.Transform = ReferenceUtility.MakeThisReference( meshInSpace, offset, "Result" );
-					//}
-
-					meshInSpace.Enabled = true;
-
-					wheel.MeshInSpace = meshInSpace;
-				}
-
 			}
 
-			SpaceBoundsUpdate();
-		}
+			//create constraint
+			if( dynamicData.PhysicsMode == PhysicsModeEnum.Basic && type.Chassis.Value == NeoAxis.VehicleType.ChassisEnum._4Wheels && PhysicalBody != null && !PhysicalBody.Disposed && PhysicalBody.MotionType == PhysicsMotionType.Dynamic )
+			{
+				//!!!!center offset
 
-		//public void UpdateDynamicData()
-		//{
-		//}
+				var physicsWorldData = PhysicalBody.PhysicsWorld;
+				if( physicsWorldData != null )
+				{
+					unsafe
+					{
+						var wheelsSettings = stackalloc Scene.PhysicsWorldClass.VehicleWheelSettings[ dynamicData.Wheels.Length ];
+
+						for( int n = 0; n < dynamicData.Wheels.Length; n++ )
+						{
+							var which = (DynamicData.WhichWheel)n;
+							var isFront = which == DynamicData.WhichWheel.FrontLeft || which == DynamicData.WhichWheel.FrontRight;
+
+							ref var wheel = ref dynamicData.Wheels[ n ];
+							ref var wheelSettings = ref wheelsSettings[ n ];
+
+							wheelSettings.Position = wheel.InitialPosition + new Vector3F( 0, 0, wheel.Diameter * 0.5f );
+							//wheelSettings.Position = wheel.InitialPosition;
+							wheelSettings.Direction = new Vector3F( 0, 0, -1 );
+
+							if( isFront )
+							{
+								wheelSettings.SuspensionMinLength = (float)type.FrontWheelSuspensionMinLength;
+								wheelSettings.SuspensionMaxLength = (float)type.FrontWheelSuspensionMaxLength;
+								wheelSettings.SuspensionPreloadLength = (float)type.FrontWheelSuspensionPreloadLength;
+								wheelSettings.SuspensionFrequency = (float)type.FrontWheelSuspensionFrequency;
+								wheelSettings.SuspensionDamping = (float)type.FrontWheelSuspensionDamping;
+							}
+							else
+							{
+								wheelSettings.SuspensionMinLength = (float)type.RearWheelSuspensionMinLength;
+								wheelSettings.SuspensionMaxLength = (float)type.RearWheelSuspensionMaxLength;
+								wheelSettings.SuspensionPreloadLength = (float)type.RearWheelSuspensionPreloadLength;
+								wheelSettings.SuspensionFrequency = (float)type.RearWheelSuspensionFrequency;
+								wheelSettings.SuspensionDamping = (float)type.RearWheelSuspensionDamping;
+							}
+
+							wheelSettings.Radius = wheel.Diameter * 0.5f;
+							wheelSettings.Width = wheel.Width;
+
+							//Wheeled specific
+							double mass = isFront ? type.FrontWheelMass.Value : type.RearWheelMass.Value;
+							wheelSettings.Inertia = 0.5f * (float)mass * wheelSettings.Radius * wheelSettings.Radius;
+
+							if( isFront )
+							{
+								wheelSettings.MaxSteerAngle = (float)type.FrontWheelMaxSteeringAngle.Value.InRadians();
+								wheelSettings.MaxBrakeTorque = (float)type.FrontWheelMaxBrakeTorque;
+								wheelSettings.MaxHandBrakeTorque = (float)type.FrontWheelMaxHandBrakeTorque;
+								wheelSettings.AngularDamping = (float)type.FrontWheelAngularDamping;
+							}
+							else
+							{
+								wheelSettings.MaxSteerAngle = (float)type.RearWheelMaxSteeringAngle.Value.InRadians();
+								wheelSettings.MaxBrakeTorque = (float)type.RearWheelMaxBrakeTorque;
+								wheelSettings.MaxHandBrakeTorque = (float)type.RearWheelMaxHandBrakeTorque;
+								wheelSettings.AngularDamping = (float)type.RearWheelAngularDamping;
+							}
+						}
+
+						var transmissionGearRatios = type.TransmissionGearRatios.Value;
+						var transmissionReverseGearRatios = type.TransmissionReverseGearRatios.Value;
+
+						fixed( double* pTransmissionGearRatios = transmissionGearRatios, pTransmissionReverseGearRatios = transmissionReverseGearRatios )
+						{
+							var visualScale = Vector3F.One;
+							dynamicData.constraint = physicsWorldData.CreateConstraintVehicle( this, PhysicalBody, dynamicData.Wheels.Length, wheelsSettings, ref visualScale, (float)type.FrontWheelAntiRollBarStiffness, (float)type.RearWheelAntiRollBarStiffness, (float)type.MaxPitchRollAngle.Value.InRadians(), (float)type.EngineMaxTorque, (float)type.EngineMinRPM, (float)type.EngineMaxRPM, type.TransmissionAuto, transmissionGearRatios.Length, pTransmissionGearRatios, transmissionReverseGearRatios.Length, pTransmissionReverseGearRatios, (float)type.TransmissionSwitchTime, (float)type.TransmissionClutchReleaseTime, (float)type.TransmissionSwitchLatency, (float)type.TransmissionShiftUpRPM, (float)type.TransmissionShiftDownRPM, (float)type.TransmissionClutchStrength, type.FrontWheelDrive, type.RearWheelDrive, (float)type.FrontWheelDifferentialRatio, (float)type.FrontWheelDifferentialLeftRightSplit, (float)type.FrontWheelDifferentialLimitedSlipRatio, (float)type.FrontWheelDifferentialEngineTorqueRatio, (float)type.RearWheelDifferentialRatio, (float)type.RearWheelDifferentialLeftRightSplit, (float)type.RearWheelDifferentialLimitedSlipRatio, (float)type.RearWheelDifferentialEngineTorqueRatio, type.MaxSlopeAngle.Value.InRadians().ToRadianF() );
+						}
+					}
+				}
+			}
+
+
+			//LocalBoundsDefault
+			{
+				var meshResult = dynamicData.Mesh?.Result;
+				if( meshResult != null )
+				{
+					dynamicData.LocalBoundsDefault = meshResult.SpaceBounds.BoundingBox;
+
+					if( dynamicData.Wheels != null )
+					{
+						for( int n = 0; n < dynamicData.Wheels.Length; n++ )
+						{
+							ref var wheel = ref dynamicData.Wheels[ n ];
+
+							var minZ = wheel.InitialPosition.Z - wheel.Diameter * 0.5f;
+							if( minZ < dynamicData.LocalBoundsDefault.Minimum.Z )
+								dynamicData.LocalBoundsDefault.Minimum.Z = minZ;
+						}
+					}
+				}
+				else
+					dynamicData.LocalBoundsDefault = new Bounds( -0.5, -0.5, -0.5, 0.5, 0.5, 0.5 );
+
+				foreach( var p in dynamicData.LocalBoundsDefault.ToPoints() )
+				{
+					var l = (float)p.Length();
+					if( l > dynamicData.LocalBoundsDefaultBoundingRadius )
+						dynamicData.LocalBoundsDefaultBoundingRadius = l;
+				}
+			}
+
+			//!!!!slowly. make caching in the VehicleType
+			var seatComponents = dynamicData.VehicleType.GetComponents<VehicleSeat>();
+			if( seatComponents.Length != 0 )
+			{
+				var seatItems = new List<DynamicData.SeatItem>( seatComponents.Length );
+
+				foreach( var seatComponent in seatComponents )
+				{
+					if( seatComponent.Enabled )
+					{
+						var seatItem = new DynamicData.SeatItem();
+						seatItem.SeatComponent = seatComponent;
+						seatItem.Transform = seatComponent.Transform;
+						seatItem.EyeOffset = seatComponent.EyeOffset;
+						seatItem.ExitTransform = seatComponent.ExitTransform;
+
+						seatItems.Add( seatItem );
+					}
+				}
+
+				if( seatItems.Count != 0 )
+					dynamicData.Seats = seatItems.ToArray();
+			}
+
+			//also can take seats from Vehicle component
+
+			if( dynamicData.Seats == null )
+				dynamicData.Seats = Array.Empty<DynamicData.SeatItem>();
+
+			UpdateAdditionalItems();
+
+			//UpdateSpaceBoundsOverride();
+			SpaceBoundsUpdate();
+
+			//needBeActiveBecausePhysicsVelocity = false;
+			//lastTransformToCalculateDynamicState = TransformV;
+			//needBeActiveBecauseTransformChange = false;
+			//lastLinearVelocity = Vector3.Zero;
+
+			driverInputNeedUpdate = true;
+			needRecreateDynamicData = false;
+		}
 
 		public void DestroyDynamicData()
 		{
 			if( dynamicData != null )
 			{
-				if( dynamicData.Wheels != null )
-				{
-					foreach( var wheel in dynamicData.Wheels )
-					{
-						wheel.MeshInSpace?.Dispose();
-						wheel.Constraint?.Dispose();
-						wheel.RigidBody?.Dispose();
-					}
-				}
+				AdditionalItems = null;
 
-				//if( dynamicData.raycastVehicle != null )
+				//if( dynamicData.Wheels != null )
 				//{
-				//	var scene = ParentScene;
-				//	if( scene?.PhysicsWorldData?.world != null )
-				//		scene.PhysicsWorldData.world.RemoveAction( dynamicData.raycastVehicle );
+				//	for( int n = 0; n < dynamicData.Wheels.Length; n++ )
+				//	{
+				//		ref var wheel = ref dynamicData.Wheels[ n ];
+
+				//		//wheel.MeshInSpace?.Dispose();
+				//		//wheel.Constraint?.Dispose();
+				//		//wheel.RigidBody?.Dispose();
+				//	}
 				//}
 
+				dynamicData.constraint?.Dispose();
+				dynamicData.constraint = null;
+
+				//!!!!Kinematic
+				if( dynamicData.PhysicsMode == PhysicsModeEnum.Basic )
+					Collision = false;
+
 				dynamicData = null;
+				//needBeActiveBecauseDriverInput = false;
 			}
 		}
 
 		///////////////////////////////////////////////
 
+		public int GetFreeSeat()// ObjectInSpace forObject )
+		{
+			if( dynamicData != null )
+			{
+				var count = dynamicData.Seats.Length;
+				for( int n = 0; n < count; n++ )
+				{
+					if( n >= ObjectsOnSeats.Count || ObjectsOnSeats[ n ].Value == null )
+						return n;
+				}
+			}
+			return -1;
+		}
+
+		public int GetSeatIndexByObject( ObjectInSpace obj )
+		{
+			if( dynamicData != null )
+			{
+				var count = dynamicData.Seats.Length;
+				for( int n = 0; n < count; n++ )
+				{
+					if( n < ObjectsOnSeats.Count && ObjectsOnSeats[ n ].Value == obj )
+						return n;
+				}
+			}
+			return -1;
+		}
+
 		public void ObjectInteractionGetInfo( GameMode gameMode, ref InteractiveObjectObjectInfo info )
 		{
-			//take by a character
+			//control by a character
 			var character = gameMode.ObjectControlledByPlayer.Value as Character;
 			if( character != null )
 			{
-				var seat = GetComponent<VehicleCharacterSeat>();
-				if( seat != null && !seat.Character.ReferenceOrValueSpecified )
+				var seatIndex = GetFreeSeat();// character );
+				if( seatIndex != -1 )
 				{
 					info = new InteractiveObjectObjectInfo();
 					info.AllowInteract = true;
 					info.SelectionTextInfo.Add( Name );
+
+					//!!!!!too hardcoded EKeys and code
+
 					info.SelectionTextInfo.Add( "Press E to control the vehicle." );
 				}
 			}
+		}
+
+		public ObjectInSpace GetObjectOnSeat( int seatIndex )
+		{
+			if( seatIndex < ObjectsOnSeats.Count )
+				return ObjectsOnSeats[ seatIndex ];
+			return null;
 		}
 
 		public virtual bool ObjectInteractionInputMessage( GameMode gameMode, InputMessage message )
@@ -1728,22 +1990,70 @@ namespace NeoAxis
 			var keyDown = message as InputMessageKeyDown;
 			if( keyDown != null )
 			{
+				//!!!!too hardcoded EKeys and code
+
 				if( keyDown.Key == EKeys.E )
 				{
 					//start control by a character
 					var character = gameMode.ObjectControlledByPlayer.Value as Character;
 					if( character != null )
 					{
-						var seat = GetComponent<VehicleCharacterSeat>();
-						if( seat != null && !seat.Character.ReferenceOrValueSpecified )
+						var seatIndex = GetFreeSeat();
+						if( seatIndex != -1 )
 						{
-							seat.PutCharacterToSeat( character );
-							gameMode.ObjectControlledByPlayer = ReferenceUtility.MakeRootReference( this );
+							//create VehicleInputProcessing if not exists
+							{
+								//!!!!check for networking
 
-							GameMode.PlayScreen?.ParentContainer?.Viewport?.NotifyInstantCameraMovement();
+								var inputProcessing = GetComponent<VehicleInputProcessing>();
+								if( inputProcessing == null )
+									inputProcessing = CreateComponent<VehicleInputProcessing>();
+							}
+
+							if( NetworkIsClient )
+							{
+								var writer = BeginNetworkMessageToServer( "PutObjectToSeat" );
+								if( writer != null )
+								{
+									writer.WriteVariableInt32( seatIndex );
+									writer.WriteVariableUInt64( (ulong)character.NetworkID );
+									EndNetworkMessage();
+								}
+							}
+							else
+							{
+								PutObjectToSeat( seatIndex, character );
+								gameMode.ObjectControlledByPlayer = ReferenceUtility.MakeRootReference( this );
+								GameMode.PlayScreen?.ParentContainer?.Viewport?.NotifyInstantCameraMovement();
+							}
 
 							return true;
 						}
+
+
+						//var seat = GetComponent<VehicleSeat>();
+						//if( seat != null && !seat.Character.ReferenceOrValueSpecified )
+						//{
+						//	if( NetworkIsClient )
+						//	{
+						//		var writer = BeginNetworkMessageToServer( "PutObjectToSeat" );
+						//		if( writer != null )
+						//		{
+						//			writer.WriteVariableUInt64( (ulong)character.NetworkID );
+						//			writer.WriteVariableUInt64( (ulong)seat.NetworkID );
+						//			EndNetworkMessage();
+						//		}
+						//	}
+						//	else
+						//	{
+						//		seat.PutCharacterToSeat( character );
+						//		gameMode.ObjectControlledByPlayer = ReferenceUtility.MakeRootReference( this );
+
+						//		GameMode.PlayScreen?.ParentContainer?.Viewport?.NotifyInstantCameraMovement();
+						//	}
+
+						//	return true;
+						//}
 					}
 				}
 			}
@@ -1762,5 +2072,259 @@ namespace NeoAxis
 		public void ObjectInteractionUpdate( ObjectInteractionContext context )
 		{
 		}
+
+		protected override bool OnReceiveNetworkMessageFromClient( ServerNetworkService_Components.ClientItem client, string message, ArrayDataReader reader )
+		{
+			if( !base.OnReceiveNetworkMessageFromClient( client, message, reader ) )
+				return false;
+
+
+			//!!!!security check is needed
+
+
+			if( message == "PutObjectToSeat" )
+			{
+				var seatIndex = reader.ReadVariableInt32();
+				var characterNetworkID = (long)reader.ReadVariableUInt64();
+				if( !reader.Complete() )
+					return false;
+
+				var obj = ParentRoot.HierarchyController.GetComponentByNetworkID( characterNetworkID ) as ObjectInSpace;
+				if( obj != null )
+				{
+					var networkLogic = NetworkLogicUtility.GetNetworkLogic( obj );
+					if( networkLogic != null )
+					{
+						PutObjectToSeat( seatIndex, obj );
+						networkLogic.ServerChangeObjectControlled( client.User, this );
+					}
+				}
+			}
+
+			return true;
+		}
+
+		public virtual void PutObjectToSeat( int seatIndex, ObjectInSpace obj )
+		{
+			while( seatIndex >= ObjectsOnSeats.Count )
+				ObjectsOnSeats.Add( null );
+			ObjectsOnSeats[ seatIndex ] = ReferenceUtility.MakeRootReference( obj );
+
+			UpdateObjectOnSeat( seatIndex );
+
+			remainingTimeToUpdateObjectsOnSeat = 0;
+		}
+
+		public virtual void RemoveObjectFromSeat( int seatIndex, bool resetDriverInput )
+		{
+			if( dynamicData != null )
+			{
+				DynamicData.SeatItem seatItem = null;
+				if( seatIndex < dynamicData.Seats.Length )
+					seatItem = dynamicData.Seats[ seatIndex ];
+
+				var objectOnSeat = GetObjectOnSeat( seatIndex );
+				if( objectOnSeat != null && seatItem != null )
+				{
+					if( !objectOnSeat.Disposed )
+					{
+						var character = objectOnSeat as Character;
+						if( character != null && !character.Disposed )
+						{
+							character.Collision = true;
+							//character.UpdateCollisionBody();
+							character.Visible = true;
+							character.SetTransformAndTurnToDirectionInstantly( TransformV * seatItem.ExitTransform );
+						}
+					}
+
+					ObjectsOnSeats[ seatIndex ] = null;
+				}
+			}
+
+			if( resetDriverInput )
+			{
+				Throttle = 0;
+				Brake = 0;
+				HandBrake = 1;
+				Steering = 0;
+			}
+
+			remainingTimeToUpdateObjectsOnSeat = 0;
+		}
+
+		void UpdateAdditionalItems()
+		{
+			if( dynamicData.Wheels != null )
+			{
+				var wheelCount = dynamicData.Wheels.Length;
+
+				var itemCount = 0;
+				for( int n = 0; n < wheelCount; n++ )
+				{
+					ref var wheel = ref dynamicData.Wheels[ n ];
+					var mesh = wheel.Front ? dynamicData.FrontWheelMesh : dynamicData.RearWheelMesh;
+					if( mesh != null )
+						itemCount++;
+				}
+
+				var currentAdditionalItems = AdditionalItems;
+				if( currentAdditionalItems == null || currentAdditionalItems.Length != itemCount )
+				{
+					if( itemCount != 0 )
+						currentAdditionalItems = new AdditionalItem[ itemCount ];
+					else
+						currentAdditionalItems = null;
+				}
+
+				var currentIndex = 0;
+				for( int n = 0; n < wheelCount; n++ )
+				{
+					ref var wheel = ref dynamicData.Wheels[ n ];
+					var mesh = wheel.Front ? dynamicData.FrontWheelMesh : dynamicData.RearWheelMesh;
+
+					if( mesh != null )
+					{
+						ref var item = ref currentAdditionalItems[ currentIndex++ ];
+
+						item.Mesh = wheel.Front ? dynamicData.FrontWheelMesh : dynamicData.RearWheelMesh;
+						item.Position = wheel.CurrentPosition;
+						item.Rotation = wheel.CurrentRotation;
+
+						if( wheel.Right )
+							item.Rotation = wheel.CurrentRotation * Quaternion.FromRotateByZ( Math.PI );
+						else
+							item.Rotation = wheel.CurrentRotation;
+
+						item.Scale = Vector3.One;
+						item.Color = ColorValue.One;
+					}
+				}
+
+				AdditionalItems = currentAdditionalItems;
+			}
+		}
+
+		bool IsMustBeDynamic()
+		{
+			if( /*needBeActiveBecauseDriverInput || */cannotBeStaticRemainingTime > 0 )
+				return true;
+
+			var body = PhysicalBody;
+			if( body != null && body.Active && ( body.LinearVelocity != Vector3F.Zero || body.AngularVelocity != Vector3F.Zero ) )
+				return true;
+
+			return false;
+
+			//return needBeActiveBecauseDriverInput || needBeActiveBecausePhysicsVelocity || cannotBeStaticRemainingTime > 0;
+		}
+
+		protected override void OnUpdateDataFromPhysicalBody( Transform currentTransform, ref Transform newTransform, ref Vector3F linearVelocity, ref Vector3F angularVelocity )
+		{
+			if( !IsMustBeDynamic() )
+			{
+				//!!!!0.03
+
+				//if( newTransform.Equals( currentTransform, 0.3 ) )
+				if( newTransform.Equals( currentTransform, 0.03 ) )
+				{
+					newTransform = currentTransform;
+					linearVelocity = Vector3F.Zero;
+					angularVelocity = Vector3F.Zero;
+				}
+			}
+		}
+
+		public delegate void ProcessDamageBeforeDelegate( Vehicle sender, long whoFired, ref double damage, ref object anyData, ref bool handled );
+		public event ProcessDamageBeforeDelegate ProcessDamageBefore;
+		public static event ProcessDamageBeforeDelegate ProcessDamageBeforeAll;
+
+		public delegate void ProcessDamageAfterDelegate( Vehicle sender, long whoFired, double damage, object anyData, double oldHealth );
+		public event ProcessDamageAfterDelegate ProcessDamageAfter;
+		public static event ProcessDamageAfterDelegate ProcessDamageAfterAll;
+
+		public void ProcessDamage( long whoFired, double damage, object anyData )
+		{
+			var oldHealth = Health.Value;
+
+			var damage2 = damage;
+			var anyData2 = anyData;
+			var handled = false;
+			ProcessDamageBefore?.Invoke( this, whoFired, ref damage2, ref anyData2, ref handled );
+			ProcessDamageBeforeAll?.Invoke( this, whoFired, ref damage2, ref anyData2, ref handled );
+
+			if( !handled )
+			{
+				var health = Health.Value;
+				if( health > 0 )
+				{
+					Health = health - damage;
+
+					if( Health.Value <= 0 )
+						RemoveFromParent( true );
+				}
+			}
+
+			ProcessDamageAfter?.Invoke( this, whoFired, damage2, anyData2, oldHealth );
+			ProcessDamageAfterAll?.Invoke( this, whoFired, damage2, anyData2, oldHealth );
+		}
+
+		//bool CanBeStatic()
+		//{
+		//	if( needBeActiveBecauseDriverInput )
+		//		return false;
+
+
+		//	//////the result dependings current state
+		//	////if( Static )
+		//	////{
+		//	////}
+		//	////else
+		//	////{
+		//	////}
+
+		//	//!!!!не переходит ли обратно сразу
+
+		//	//!!!!Jolt активирует если персонаж ходит по граунду
+		//	//if( PhysicalBody != null && PhysicalBody.LinearVelocity.LengthSquared() > 0.01f )// != Vector3F.Zero )
+		//	//	return false;
+		//	if( PhysicalBody != null && PhysicalBody.Active )
+		//		return false;
+
+		//	////is any object on seat
+		//	//if( dynamicData != null )
+		//	//{
+		//	//	for( int seatIndex = 0; seatIndex < dynamicData.Seats.Length; seatIndex++ )
+		//	//	{
+		//	//		if( GetObjectOnSeat( seatIndex ) != null )
+		//	//			return false;
+		//	//	}
+		//	//}
+
+		//	return true;
+		//}
+
+		//void SetStatic( bool value )
+		//{
+		//	////!!!!can switch only to dynamic from static. can't switch to static from dynamic
+		//	//if( value )
+		//	//	return;
+
+		//	//!!!!может рекурсивно что-то обновляется
+
+		//	//!!!!может клонстрент создавать по событию создания CollisionBody
+		//	//!!!!смотреть чтобы где-то не было need update
+
+		//	//Log.Info( "SetStatic: " + value.ToString() );
+
+		//	Static = value;
+
+		//	if( Static )
+		//	{
+		//		lastLinearVelocity = Vector3.Zero;
+		//		lastTransformPosition = null;
+		//		//!!!!what else to reset
+		//	}
+		//}
 	}
 }

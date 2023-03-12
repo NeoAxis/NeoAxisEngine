@@ -1,0 +1,336 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.Scene
+{
+	RenderingPipeline
+	{
+		GetByReference = "root:$Rendering Pipeline"
+	}
+	CameraEditor
+	{
+		GetByReference = "this:$Camera Editor"
+	}
+	CameraEditor2D
+	{
+		GetByReference = "this:$Camera Editor 2D"
+	}
+	.component NeoAxis.Camera
+	{
+		Name = Camera Editor
+		Visible = False
+		Transform = "5.29097836466498 -0.194798235886337 3.33777314131303; -0.314591451914449 0.0639349904019324 0.928098774315198 0.188619194408448; 1 1 1"
+	}
+	.component NeoAxis.Camera
+	{
+		Name = Camera Editor 2D
+		Visible = False
+		Transform = "2.64918580053222 3.02745193504869 10; -0.502493739596367 0.497493760429674 0.497493760429674 0.502493739596367; 1 1 1"
+		Projection = Orthographic
+		Height = 16.8586419336498
+		FixedUp = 0 1 0
+		FarClipPlane = 100
+	}
+	.component NeoAxis.Light
+	{
+		Name = Ambient Light
+		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
+		Type = Ambient
+		Brightness = 50000
+	}
+	.component NeoAxis.Light
+	{
+		Name = Directional Light
+		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
+		Type = Directional
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 91.429
+	}
+	.component NeoAxis.RenderingPipeline_Basic
+	{
+		Name = Rendering Pipeline
+		.component NeoAxis.Component
+		{
+			Name = Background Effects
+		}
+		.component NeoAxis.Component
+		{
+			Name = Scene Effects
+			.component NeoAxis.RenderingEffect_AmbientOcclusion
+			{
+				Name = Ambient Occlusion
+			}
+			.component NeoAxis.RenderingEffect_MotionBlur
+			{
+				Name = Motion Blur
+			}
+			.component NeoAxis.RenderingEffect_LensEffects
+			{
+				Name = Lens Effects
+			}
+			.component NeoAxis.RenderingEffect_ToneMapping
+			{
+				Name = Tone Mapping
+				Intensity = 0.5
+			}
+			.component NeoAxis.RenderingEffect_ToLDR
+			{
+				Name = To LDR
+			}
+			.component NeoAxis.RenderingEffect_Antialiasing
+			{
+				Name = Antialiasing
+			}
+			.component NeoAxis.RenderingEffect_ResolutionUpscale
+			{
+				Name = Resolution Upscale
+			}
+			.component NeoAxis.RenderingEffect_Sharpen
+			{
+				Name = Sharpen
+			}
+		}
+		.component NeoAxis.Component
+		{
+			Name = Final Image Effects
+		}
+	}
+	.component NeoAxis.GameMode
+	{
+		Name = Game Mode
+		UseBuiltInCamera = ThirdPerson
+		CutsceneStarted = False
+		CutsceneGuiFadingFactor = 0
+		CutsceneGuiFadingSpeed = 0
+		ScreenFadingCurrentColor = 0 0 0 0
+		ScreenFadingTargetColor = 0 0 0 0
+		ScreenFadingSpeed = 0
+		ObjectControlledByPlayer
+		{
+			GetByReference = "this:..\\$Character"
+		}
+	}
+	.component NeoAxis.NetworkLogic
+	{
+		Name = Network Logic
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Ground
+		CanBeSelected = False
+		Transform = "0 0 0; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 100 100
+				UVTilesPerUnit = 0.25 0.25
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform
+			{
+				GetByReference = "this:..\\Transform"
+			}
+			.component NeoAxis.CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.GroupOfObjects
+	{
+		Name = Group Of Objects
+		BaseObjects
+		{
+			Count = 1
+			0 "NeoAxis.Reference<NeoAxis.Component>"
+			{
+				GetByReference = "root:$Ground"
+			}
+		}
+	}
+	.component NeoAxis.CharacterType
+	{
+		Name = Character Type
+		Mesh
+		{
+			GetByReference = "root:$Character Type\\$Creature Maker\\$Mesh"
+		}
+		.component NeoAxis.CreatureMaker
+		{
+			Name = Creature Maker
+			WriteToMesh
+			{
+				GetByReference = "this:$Mesh"
+			}
+			.component NeoAxis.Mesh
+			{
+				Name = Mesh
+				.component NeoAxis.Material
+				{
+					Name = Material
+					BaseColor = 0.1 0.7 0.1
+				}
+				.component NeoAxis.MeshGeometry
+				{
+					Name = Mesh Geometry
+					VertexStructure
+					{
+						Value
+						{
+							Length = 5
+							0
+							{
+								Offset = 0
+								Type = Float3
+								Semantic = Position
+							}
+							1
+							{
+								Offset = 12
+								Type = Float3
+								Semantic = Normal
+							}
+							2
+							{
+								Offset = 24
+								Type = Float4
+								Semantic = Tangent
+							}
+							3
+							{
+								Offset = 40
+								Type = Float4
+								Semantic = Color0
+							}
+							4
+							{
+								Offset = 56
+								Type = Float2
+								Semantic = TextureCoordinate0
+							}
+						}
+					}
+					Vertices
+					{
+						Value
+						{
+							Length = 12288
+							.elements = "UEsDBBQAAAAIALKaSFYzlkUJnAMAAAAwAAAEAAAAZmlsZdWaPW7bQBSEeYeUrlOnTAqRPkOAnMFtGh9AbWrVuUGqVCosJul9hVQG0iSHCMnlvj8uoJ1ZAoIJCDYMfth5b2eHT7Lu3v2+fP/6efj38cN9t1zH/PNH+pl/n/++fd0Jfyb4rpv4nuPTpTyqP9276h8Nv3K6xhW+53jp38qfCX6p/8Lx0r+w//b+6voJPtbP8LZ+Rn/0j2VsD6/qX/2L8rL+iPNO/1o/ykf9loP6T/CiP/gX4UvnB9Ef88tmRuaq9Gf/gHzMH4R3+rN/QL7rnh7fjNOLzO/jfeYfHv4Q/LL+wPHpyjz3/BD9ZH4u/Lw+md/Km/qh/M/6cV76F/bf3l9dP8H7+jle6+f0R/8g+en0r/5FeVl/xHmnn3x+RP2Wg/pP8KI/+BfhS+cH0R/zC89/f37w/Pf+xfPf94/J/9Pl5+PpyffOstfWTzz3/mFZv+f43P/E4/pz/0+XTy9vx0LPKv136jle+rfw3PuHtH8cL/0L+2/vr6uf4339HK/1c/qjf5D8VP3qX5RP6+v+Ibzq1/pRPuq3XH3/OV70B/8ifOn8IPpjfjH5b88Pk//Wv0z+2/5x+T/xg+9d1HJ1ffLzI/Ev+fmN8rh+7f+0f4dCz5D8I3iXH4eW/Od46V/Yf3t/Xf0c7+vneK2f0x/9g+Sn6lf/orw8fw44r/q1fpSP+i1X33+OF/3BvwhfOj+I/phfXP4b/1D5b/aPyn/jnxvO/+ce57tu0j1wfLoyj+vfZ/6f12+Z/zNv6ifnf5TfZ/7f9r+W9/Xfav73+pH8VP3qX5RP6+v+Ibzqb5n/t+cvc/X95/h0bf2L8KXzg+iP+fWa539U/97zP5//HJ+uzOP695n/1/NDz/+Zb8l/jt9n/t/2v5b39d9q/vf6kfxU/epflJfnzwHnVX/L/L89f5mr7z/Hp2vrX4QvnR9Ef8yv1zz/8/k////4L/n9n8w/P38j+PT+leOl/z2nX/v//ssvy0P5P6/P8dK/hTf1w/nP8dK/sP/2/rr6Od7Xz/FaP6c/+gfJT9Wv/kX5tL7uH8Krfq0f5aN+y9X3n+NFf/AvwpfOD6I/5heX/8Y/VP6b/aPy3/iHyv+JH1ryf+Zb8p/jpf8L35L/8/e3WvKf411+DC35z/HSv7D/9v66+jne19+S/xwv9Rv9SH6qfvUvysvzh+BVv9aP8lG/5er7z/GiP/gX4UvnB9F/DPnF5b/xD5X/Zv+o/Df+gfP/P1BLAQIUABQAAAAIALKaSFYzlkUJnAMAAAAwAAAEAAAAAAAAAAAAAAAAAAAAAABmaWxlUEsFBgAAAAABAAEAMgAAAL4DAAAAAA=="
+							.elementsZip = True
+						}
+					}
+					Indices
+					{
+						Value
+						{
+							Length = 288
+							.elements = 0 1 2 2 3 0 4 5 6 6 7 4 8 9 10 10 11 8 12 13 14 14 15 12 16 17 18 18 19 16 20 21 22 22 23 20 24 25 26 26 27 24 28 29 30 30 31 28 32 33 34 34 35 32 36 37 38 38 39 36 40 41 42 42 43 40 44 45 46 46 47 44 48 49 50 50 51 48 52 53 54 54 55 52 56 57 58 58 59 56 60 61 62 62 63 60 64 65 66 66 67 64 68 69 70 70 71 68 72 73 74 74 75 72 76 77 78 78 79 76 80 81 82 82 83 80 84 85 86 86 87 84 88 89 90 90 91 88 92 93 94 94 95 92 96 97 98 98 99 96 100 101 102 102 103 100 104 105 106 106 107 104 108 109 110 110 111 108 112 113 114 114 115 112 116 117 118 118 119 116 120 121 122 122 123 120 124 125 126 126 127 124 128 129 130 130 131 128 132 133 134 134 135 132 136 137 138 138 139 136 140 141 142 142 143 140 144 145 146 146 147 144 148 149 150 150 151 148 152 153 154 154 155 152 156 157 158 158 159 156 160 161 162 162 163 160 164 165 166 166 167 164 168 169 170 170 171 168 172 173 174 174 175 172 176 177 178 178 179 176 180 181 182 182 183 180 184 185 186 186 187 184 188 189 190 190 191 188
+						}
+					}
+					Material
+					{
+						GetByReference = "this:..\\$Material"
+					}
+				}
+			}
+		}
+	}
+	.component NeoAxis.Character
+	{
+		Name = Character
+		Transform = "1.99999875632468 0.999999951409294 -0.00999988846993283; 0 0 0 1; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "root:$Character Type\\$Creature Maker\\$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		CharacterType
+		{
+			GetByReference = "root:$Character Type"
+		}
+		.component NeoAxis.MeshInSpaceAnimationController
+		{
+			Name = Animation Controller
+		}
+		.component NeoAxis.CharacterInputProcessing
+		{
+			Name = Character Input Processing
+		}
+		.component NeoAxis.CharacterAI
+		{
+			Name = Character AI
+			NetworkMode = False
+		}
+	}
+	.component NeoAxis.Character
+	{
+		Name = Character 2
+		Transform = "1.97603077156425 4.18863209175588 0.0035134841473603; 0 0 0 1; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.MeshInSpaceAnimationController
+		{
+			Name = Animation Controller
+		}
+		.component NeoAxis.CharacterInputProcessing
+		{
+			Name = Character Input Processing
+		}
+	}
+}

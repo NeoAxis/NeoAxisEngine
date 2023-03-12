@@ -1,6 +1,6 @@
 $input v_texCoord0
 
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "../Common.sh"
 
 SAMPLER2D(s_sourceTexture, 0);
@@ -37,9 +37,8 @@ void main()
 	float a = (random2(noise.yz) + 1.0) / 2.0;
 	a = lerp(add.x, add.y, a);
 
-//!!!!!clamp? optionally?
-
 	vec4 color = sourceColor * m + vec4(a, a, a, 0);
+	color.w = sourceColor.w;
 		
 	gl_FragColor = lerp(sourceColor, color, intensity.x);
 }

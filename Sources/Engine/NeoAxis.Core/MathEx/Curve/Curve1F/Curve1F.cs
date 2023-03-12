@@ -1,6 +1,7 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace NeoAxis
@@ -12,8 +13,9 @@ namespace NeoAxis
 	{
 		internal List<Point> points = new List<Point>();
 
-		ThreadLocal<int> currentIndex = new ThreadLocal<int>( () => -1 );
-		//int currentIndex = -1;
+		//bad for multithreading
+		//public bool AllowCachingIndexForTime { get; set; } = true;
+		//int cachedIndex = -1;
 
 		/////////////////////////////////////////
 
@@ -59,6 +61,7 @@ namespace NeoAxis
 			get { return points; }
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int AddPoint( Point point )
 		{
 			int index = GetIndexForTime( point.time );
@@ -66,24 +69,27 @@ namespace NeoAxis
 			return index;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int AddPoint( float time, float value )
 		{
 			return AddPoint( new Point( time, value ) );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void RemovePoint( int index )
 		{
 			points.RemoveAt( index );
-			if( points.Count == 0 )
-				currentIndex.Value = -1;
+			//cachedIndex = -1;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Clear()
 		{
 			points.Clear();
-			currentIndex.Value = -1;
+			//cachedIndex = -1;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public virtual float CalculateValueByTime( float time )
 		{
 			int i = GetIndexForTime( time );
@@ -93,69 +99,77 @@ namespace NeoAxis
 				return points[ i ].value;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public virtual float GetCurrentFirstDerivative( float time )
 		{
 			return 0;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		protected int GetIndexForTime( float time )
 		{
 			int len, mid, offset, res;
 
-			//optimization
-			var index = currentIndex.Value;
-			if( index >= 0 && index <= points.Count )
-			{
-				if( index == 0 )
-				{
-					if( time <= points[ index ].time )
-						return index;
-				}
-				else if( index == points.Count )
-				{
-					if( time > points[ index - 1 ].time )
-						return index;
-				}
-				else if( time > points[ index - 1 ].time && time <= points[ index ].time )
-				{
-					return index;
-				}
-				else if( time > points[ index ].time && ( index + 1 == points.Count || time <= points[ index + 1 ].time ) )
-				{
-					currentIndex.Value = index + 1;
-					return index + 1;
-				}
-			}
+			////optimization
+			//if( AllowCachingIndexForTime )
+			//{
+			//	var index = cachedIndex;//.Value;
+			//	if( index >= 0 && index <= points.Count )
+			//	{
+			//		if( index == 0 )
+			//		{
+			//			if( time <= points[ index ].time )
+			//				return index;
+			//		}
+			//		else if( index == points.Count )
+			//		{
+			//			if( time > points[ index - 1 ].time )
+			//				return index;
+			//		}
+			//		else if( time > points[ index - 1 ].time && time <= points[ index ].time )
+			//		{
+			//			return index;
+			//		}
+			//		else if( time > points[ index ].time && ( index + 1 == points.Count || time <= points[ index + 1 ].time ) )
+			//		{
+			//			cachedIndex/*.Value*/ = index + 1;
+			//			return index + 1;
+			//		}
+			//	}
+			//}
 
 			//default calculation
-			len = points.Count;
-			mid = len;
-			offset = 0;
-			res = 0;
-			while( mid > 0 )
 			{
-				mid = len >> 1;
-				if( time == points[ offset + mid ].time )
+				len = points.Count;
+				mid = len;
+				offset = 0;
+				res = 0;
+				while( mid > 0 )
 				{
-					return offset + mid;
+					mid = len >> 1;
+					if( time == points[ offset + mid ].time )
+					{
+						return offset + mid;
+					}
+					else if( time > points[ offset + mid ].time )
+					{
+						offset += mid;
+						len -= mid;
+						res = 1;
+					}
+					else
+					{
+						len -= mid;
+						res = 0;
+					}
 				}
-				else if( time > points[ offset + mid ].time )
-				{
-					offset += mid;
-					len -= mid;
-					res = 1;
-				}
-				else
-				{
-					len -= mid;
-					res = 0;
-				}
+				var index = offset + res;
+				//cachedIndex = index;
+				return index;
 			}
-			index = offset + res;
-			currentIndex.Value = index;
-			return index;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		protected float GetSpeed( float time )
 		{
 			//int i;
@@ -169,6 +183,7 @@ namespace NeoAxis
 			//return Math.Sqrt( speed );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int GetPointIndexByTime( float time )
 		{
 			for( int n = 0; n < points.Count; n++ )

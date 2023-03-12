@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -10,9 +10,11 @@ namespace NeoAxis
 	/// A component is defined how to apply of objects and material on the surface.
 	/// </summary>
 	[ResourceFileExtension( "surface" )]
+#if !DEPLOY
 	[EditorControl( typeof( SurfaceEditor ) )]
 	[Preview( typeof( SurfacePreview ) )]
 	[PreviewImage( typeof( SurfacePreviewImage ) )]
+#endif
 	public class Surface : ResultCompile<Surface.CompiledSurfaceData>//, IEditorUpdateWhenDocumentModified
 	{
 		/// <summary>
@@ -102,6 +104,7 @@ namespace NeoAxis
 				public float Probability;
 				public float OccupiedAreaRadius;
 				public RangeF PositionZRange;
+				public bool RotateBySurfaceNormal;
 				public bool RotateAroundItsAxis;
 				public RadianF MaxIncline;
 				public RangeF ScaleRange;
@@ -289,7 +292,7 @@ namespace NeoAxis
 
 									var b = new Bounds( position3 );
 									b.Expand( surfaceGroup.OccupiedAreaRadius * 4 );
-									octree.AddObject( b, 1 );
+									octree.AddObject( ref b, 1 );
 								}
 							}
 						}
@@ -321,6 +324,7 @@ namespace NeoAxis
 							groupItem.Probability = (float)group.Probability.Value;
 							groupItem.OccupiedAreaRadius = (float)group.OccupiedAreaRadius.Value;
 							groupItem.PositionZRange = group.PositionZRange.Value.ToRangeF();
+							groupItem.RotateBySurfaceNormal = group.RotateBySurfaceNormal;
 							groupItem.RotateAroundItsAxis = group.RotateAroundItsAxis;
 							groupItem.MaxIncline = group.MaxIncline.Value.InRadians().ToRadianF();
 							groupItem.ScaleRange = group.ScaleRange.Value.ToRangeF();
@@ -415,24 +419,19 @@ namespace NeoAxis
 			//	return result;
 			//}
 
-			public virtual void GetRandomVariation( GetRandomVariationOptions options, FastRandom random, out byte groupIndex, out byte elementIndex, out double positionZ/*, out bool rotateByBaseNormal*/, out QuaternionF rotation, out Vector3F scale )
+			public virtual void GetRandomVariation( GetRandomVariationOptions options, FastRandom random, out byte groupIndex, out byte elementIndex, out double positionZ, out QuaternionF rotation, out Vector3F scale )
 			{
-				//var result = Result;
-				//if( result == null )
-				//	result = new CompiledSurfaceData( this );
-
 				if( options.SetGroup.HasValue )
 					groupIndex = options.SetGroup.Value;
 				else
 					groupIndex = 0;
 				elementIndex = 0;
 				positionZ = 0;
-				//rotateByBaseNormal = false;
 				rotation = QuaternionF.Identity;
 				scale = Vector3F.One;
 
 				bool handled = false;
-				Owner.GetRandomVariationEvent?.Invoke( Owner, options, ref handled, ref groupIndex, ref elementIndex, ref positionZ/*, out rotateByBaseNormal*/, ref rotation, ref scale );
+				Owner.GetRandomVariationEvent?.Invoke( Owner, options, ref handled, ref groupIndex, ref elementIndex, ref positionZ, ref rotation, ref scale );
 				if( handled )
 					return;
 
@@ -454,14 +453,6 @@ namespace NeoAxis
 							}
 							groupIndex = (byte)GetRandomIndex( random, groupProbabilities, groups.Length );
 						}
-
-						//var groupProbabilities = new double[ groups.Length ];
-						//for( int n = 0; n < groupProbabilities.Length; n++ )
-						//{
-						//	if( groups[ n ].Group.Enabled )
-						//		groupProbabilities[ n ] = groups[ n ].Probability;// Group.Probability;
-						//}
-						//groupIndex = (byte)GetRandomIndex( random, groupProbabilities );
 					}
 
 					if( groupIndex < groups.Length )
@@ -470,7 +461,7 @@ namespace NeoAxis
 						var group = groupItem.Group;
 
 						var groupElements = groupItem.Elements;
-						if( groupElements.Length > 1 )//!= 0 )
+						if( groupElements.Length > 1 )
 						{
 							unsafe
 							{
@@ -485,27 +476,7 @@ namespace NeoAxis
 								}
 								elementIndex = (byte)GetRandomIndex( random, elementProbabilities, groupElements.Length );
 							}
-
-							//var elementProbabilities = new double[ groupElements.Length ];
-							//for( int n = 0; n < elementProbabilities.Length; n++ )
-							//{
-							//	if( groupElements[ n ].Enabled )
-							//		elementProbabilities[ n ] = groupElements[ n ].Probability;
-							//}
-							//elementIndex = (byte)GetRandomIndex( random, elementProbabilities );
 						}
-
-						//var groupElements = groupItem.Elements;
-						//if( groupElements.Length != 0 )
-						//{
-						//	var elementProbabilities = new double[ groupElements.Length ];
-						//	for( int n = 0; n < elementProbabilities.Length; n++ )
-						//	{
-						//		if( groupElements[ n ].Enabled )
-						//			elementProbabilities[ n ] = groupElements[ n ].Probability;
-						//	}
-						//	elementIndex = (byte)GetRandomIndex( random, elementProbabilities );
-						//}
 
 						//PositionZRange
 						var positionZRange = groupItem.PositionZRange;
@@ -514,19 +485,33 @@ namespace NeoAxis
 						else
 							positionZ = positionZRange.Minimum;
 
-						//!!!!impl
-						////RotateByBaseNormal
-						//if( group.RotateByBaseNormal )
-						//	rotateByBaseNormal = true;
+						//RotateBySurfaceNormal
+						if( groupItem.RotateBySurfaceNormal && options.SurfaceNormal != null )
+						{
+							//!!!!not versatile? locked to Z
+
+							var normal = options.SurfaceNormal.Value;
+
+							var xAngle = MathEx.Atan2( -normal.X, normal.Z );
+							var yAngle = MathEx.Atan2( normal.Y, normal.Z );
+
+							var r = QuaternionF.FromRotateByY( xAngle ) * QuaternionF.FromRotateByX( yAngle );
+							rotation *= r;
+						}
 
 						//RotateAroundItsAxis
 						if( groupItem.RotateAroundItsAxis )
 							rotation *= Quaternion.FromRotateByZ( random.Next( 0, MathEx.PI * 2 ) ).ToQuaternionF();
+
 						//MaxIncline
 						if( groupItem.MaxIncline != 0 )
 						{
-							var incline = random.Next( groupItem.MaxIncline );//.InRadians() );
-							rotation *= QuaternionF.FromRotateByX( (float)incline );
+							var inclineX = random.Next( groupItem.MaxIncline );
+							rotation *= QuaternionF.FromRotateByX( (float)inclineX );
+
+							//!!!!new
+							var inclineY = random.Next( groupItem.MaxIncline );
+							rotation *= QuaternionF.FromRotateByY( (float)inclineY );
 						}
 
 						//ScaleRange
@@ -547,12 +532,6 @@ namespace NeoAxis
 
 				foreach( var group in Groups )
 				{
-					//foreach( var element in group.Elements )
-					//{
-					//	if( element.Mesh != null )
-					//		list.Add( element.Mesh );
-					//}
-
 					foreach( var element in group.Elements )
 					{
 						var elementMesh = element.Element as SurfaceElement_Mesh;
@@ -608,10 +587,10 @@ namespace NeoAxis
 			}
 		}
 
-		static int GetRandomIndex( FastRandom random, double[] probabilities )
-		{
-			return RandomUtility.GetRandomIndexByProbabilities( random, probabilities );
-		}
+		//static int GetRandomIndex( FastRandom random, double[] probabilities )
+		//{
+		//	return RandomUtility.GetRandomIndexByProbabilities( random, probabilities );
+		//}
 
 		static unsafe int GetRandomIndex( FastRandom random, double* probabilities, int length )
 		{
@@ -621,10 +600,12 @@ namespace NeoAxis
 		public struct GetRandomVariationOptions
 		{
 			public byte? SetGroup;
+			public Vector3F? SurfaceNormal;
 
-			public GetRandomVariationOptions( byte? setGroup )
+			public GetRandomVariationOptions( byte? setGroup, Vector3F? surfaceNormal )
 			{
 				SetGroup = setGroup;
+				SurfaceNormal = surfaceNormal;
 			}
 		}
 
@@ -634,11 +615,11 @@ namespace NeoAxis
 		/// </summary>
 		public event GetRandomVariationEventDelegate GetRandomVariationEvent;
 
-		public virtual void GetRandomVariation( GetRandomVariationOptions options, FastRandom random, out byte groupIndex, out byte elementIndex, out double positionZ/*, out bool rotateByBaseNormal*/, out QuaternionF rotation, out Vector3F scale )
+		public virtual void GetRandomVariation( GetRandomVariationOptions options, FastRandom random, out byte groupIndex, out byte elementIndex, out double positionZ, out QuaternionF rotation, out Vector3F scale )
 		{
 			var result = Result;
 			if( result != null )
-				result.GetRandomVariation( options, random, out groupIndex, out elementIndex, out positionZ/*, out rotateByBaseNormal*/, out rotation, out scale );
+				result.GetRandomVariation( options, random, out groupIndex, out elementIndex, out positionZ, out rotation, out scale );
 			else
 			{
 				if( options.SetGroup.HasValue )
@@ -647,7 +628,6 @@ namespace NeoAxis
 					groupIndex = 0;
 				elementIndex = 0;
 				positionZ = 0;
-				//rotateByBaseNormal = false;
 				rotation = QuaternionF.Identity;
 				scale = Vector3F.One;
 			}

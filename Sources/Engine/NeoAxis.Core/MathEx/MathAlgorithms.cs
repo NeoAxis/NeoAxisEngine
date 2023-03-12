@@ -1,8 +1,9 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Internal.SharpBgfx;
 
@@ -15,6 +16,7 @@ namespace NeoAxis
 	{
 		public delegate void DrawPixelDelegate( Vector2I point );
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static void Draw2DLine( Vector2I start, Vector2I end, DrawPixelDelegate drawPixelCallback )
 		{
 			int x1 = start.X;
@@ -77,6 +79,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static void RenderEdge( int[] edgeMin, int[] edgeMax, RectangleI clipRectangle, Vector2I start, Vector2I end )
 		{
 			Draw2DLine( start, end, delegate ( Vector2I point )
@@ -97,6 +100,7 @@ namespace NeoAxis
 			} );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static void Fill2DTriangle( Vector2I point0, Vector2I point1, Vector2I point2, RectangleI clipRectangle, DrawPixelDelegate drawPixelCallback )
 		{
 			if( clipRectangle.Left < 0 )
@@ -135,6 +139,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector2F ProjectPointToLine( Vector2F lineStart, Vector2F lineEnd, Vector2F point )
 		{
 			Vector2F result;
@@ -142,6 +147,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void ProjectPointToLine( ref Vector2F lineStart, ref Vector2F lineEnd, ref Vector2F point, out Vector2F result )
 		{
 			Vector2F d;
@@ -158,6 +164,7 @@ namespace NeoAxis
 			//result = lineStart + d * ( distPoint - distVb );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector3F ProjectPointToLine( Vector3F lineStart, Vector3F lineEnd, Vector3F point )
 		{
 			Vector3F result;
@@ -165,6 +172,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void ProjectPointToLine( ref Vector3F lineStart, ref Vector3F lineEnd, ref Vector3F point, out Vector3F result )
 		{
 			Vector3F d;
@@ -182,6 +190,7 @@ namespace NeoAxis
 			//result = lineStart + d * ( distPoint - distVb );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IntersectTriangleRay( ref Vector3F p0, ref Vector3F p1, ref Vector3F p2, ref RayF ray )
 		{
 			float u, v, t;
@@ -235,11 +244,13 @@ namespace NeoAxis
 			return t >= 0;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IntersectTriangleRay( Vector3F p0, Vector3F p1, Vector3F p2, RayF ray )
 		{
 			return IntersectTriangleRay( ref p0, ref p1, ref p2, ref ray );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IntersectTriangleRay( ref Vector3F p0, ref Vector3F p1, ref Vector3F p2, ref RayF ray, out float scale )
 		{
 			scale = 0;
@@ -299,25 +310,24 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IntersectTriangleRay( Vector3F p0, Vector3F p1, Vector3F p2, RayF ray, out float scale )
 		{
 			return IntersectTriangleRay( ref p0, ref p1, ref p2, ref ray, out scale );
 		}
 
-		public static bool IntersectLineLine( Vector2F pt11, Vector2F pt12, Vector2F pt21, Vector2F pt22, out Vector2F intersectPoint )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static bool IntersectLineLine( ref Vector2F pt11, ref Vector2F pt12, ref Vector2F pt21, ref Vector2F pt22, out Vector2F intersectPoint )
 		{
-			float d = ( pt12.Y - pt11.Y ) * ( pt21.X - pt22.X ) -
-				( pt21.Y - pt22.Y ) * ( pt12.X - pt11.X );
+			float d = ( pt12.Y - pt11.Y ) * ( pt21.X - pt22.X ) - ( pt21.Y - pt22.Y ) * ( pt12.X - pt11.X );
 			if( d == 0.0f )
 			{
 				intersectPoint = Vector2F.Zero;
 				return false;
 			}
 
-			float d1 = ( pt12.Y - pt11.Y ) * ( pt21.X - pt11.X ) -
-				( pt21.Y - pt11.Y ) * ( pt12.X - pt11.X );
-			float d2 = ( pt21.Y - pt11.Y ) * ( pt21.X - pt22.X ) -
-				( pt21.Y - pt22.Y ) * ( pt21.X - pt11.X );
+			float d1 = ( pt12.Y - pt11.Y ) * ( pt21.X - pt11.X ) - ( pt21.Y - pt11.Y ) * ( pt12.X - pt11.X );
+			float d2 = ( pt21.Y - pt11.Y ) * ( pt21.X - pt22.X ) - ( pt21.Y - pt22.Y ) * ( pt21.X - pt11.X );
 
 			float dInv = 1.0f / d;
 			float t1 = d1 * dInv;
@@ -333,7 +343,14 @@ namespace NeoAxis
 			return true;
 		}
 
-		public static bool IntersectLineLine( Vector2F pt11, Vector2F pt12, Vector2F pt21, Vector2F pt22, out float scale )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static bool IntersectLineLine( Vector2F pt11, Vector2F pt12, Vector2F pt21, Vector2F pt22, out Vector2F intersectPoint )
+		{
+			return IntersectLineLine( ref pt11, ref pt12, ref pt21, ref pt22, out intersectPoint );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static bool IntersectLineLine( ref Vector2F pt11, ref Vector2F pt12, ref Vector2F pt21, ref Vector2F pt22, out float scale )
 		{
 			float d = ( pt12.Y - pt11.Y ) * ( pt21.X - pt22.X ) - ( pt21.Y - pt22.Y ) * ( pt12.X - pt11.X );
 			if( d == 0.0f )
@@ -358,6 +375,26 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static bool IntersectLineLine( Vector2F pt11, Vector2F pt12, Vector2F pt21, Vector2F pt22, out float scale )
+		{
+			return IntersectLineLine( ref pt11, ref pt12, ref pt21, ref pt22, out scale );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static bool IntersectLineLine( ref Line2F line1, ref Line2F line2, out float scale )
+		{
+			return IntersectLineLine( ref line1.Start, ref line1.End, ref line2.Start, ref line2.End, out scale );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static bool IntersectLineLine( Line2F line1, Line2F line2, out float scale )
+		{
+			return IntersectLineLine( ref line1.Start, ref line1.End, ref line2.Start, ref line2.End, out scale );
+		}
+
+		//!!!!check
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IntersectRayRay( Vector2F pt11, Vector2F pt12, Vector2F pt21, Vector2F pt22, out Vector2F intersectPoint )
 		{
 			float d = ( pt12.Y - pt11.Y ) * ( pt21.X - pt22.X ) - ( pt21.Y - pt22.Y ) * ( pt12.X - pt11.X );
@@ -379,6 +416,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static int IntersectRectangleLine( RectangleF rectangle, Vector2F pt1, Vector2F pt2, out Vector2F intersectPoint1, out Vector2F intersectPoint2 )
 		{
 			intersectPoint1 = Vector2F.Zero;
@@ -411,6 +449,7 @@ namespace NeoAxis
 			return count;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IsDegenerateTriangle( ref Vector3F p0, ref Vector3F p1, ref Vector3F p2, float epsilon = float.Epsilon )
 		{
 			if( p0 == p1 || p0 == p2 || p1 == p2 )
@@ -432,6 +471,7 @@ namespace NeoAxis
 			return Math.Abs( MathEx.Acos( vcos ) ) <= epsilon;// .000001f;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IsDegenerateTriangle( Vector3F p0, Vector3F p1, Vector3F p2 )
 		{
 			return IsDegenerateTriangle( ref p0, ref p1, ref p2 );
@@ -445,6 +485,7 @@ namespace NeoAxis
 		/// <param name="processedTrianglesToSourceIndex"></param>
 		/// <param name="epsilon"></param>
 		/// <returns></returns>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static bool RemoveCollinearDegenerateTriangles( Vector3F[] vertices, ref int[] indices, out int[] processedTrianglesToSourceIndex, float epsilon = float.Epsilon )
 		{
 			int[] tempIndices = new int[ indices.Length ];
@@ -495,6 +536,7 @@ namespace NeoAxis
 		/// <param name="processedTrianglesToSourceIndex"></param>
 		/// <param name="epsilon"></param>
 		/// <returns></returns>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static bool RemoveCollinearDegenerateTriangles( StandardVertex[] vertices, ref int[] indices, out int[] processedTrianglesToSourceIndex, float epsilon = float.Epsilon )
 		{
 			int[] tempIndices = new int[ indices.Length ];
@@ -537,6 +579,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static int[] RemoveDegenerateTriangles( Vector3F[] vertices, int[] indices, float epsilon = float.Epsilon )
 		{
 			int[] tempIndices = new int[ indices.Length ];
@@ -565,6 +608,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static int RemoveDegenerateTriangles( List<Vector3F> vertices, List<int> indices )
 		{
 			int count = 0;
@@ -588,6 +632,15 @@ namespace NeoAxis
 			return count;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static RadianF GetVectorsAngle( ref Vector2F vector1, ref Vector2F vector2 )
+		{
+			float cos = Vector2F.Dot( vector1, vector2 ) / ( vector1.Length() * vector2.Length() );
+			MathEx.Clamp( ref cos, -1.0f, 1.0f );
+			return MathEx.Acos( cos );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static RadianF GetVectorsAngle( Vector2F vector1, Vector2F vector2 )
 		{
 			float cos = Vector2F.Dot( vector1, vector2 ) / ( vector1.Length() * vector2.Length() );
@@ -595,6 +648,15 @@ namespace NeoAxis
 			return MathEx.Acos( cos );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static RadianF GetVectorsAngle( ref Vector3F vector1, ref Vector3F vector2 )
+		{
+			float cos = Vector3F.Dot( vector1, vector2 ) / ( vector1.Length() * vector2.Length() );
+			MathEx.Clamp( ref cos, -1.0f, 1.0f );
+			return MathEx.Acos( cos );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static RadianF GetVectorsAngle( Vector3F vector1, Vector3F vector2 )
 		{
 			float cos = Vector3F.Dot( vector1, vector2 ) / ( vector1.Length() * vector2.Length() );
@@ -602,14 +664,15 @@ namespace NeoAxis
 			return MathEx.Acos( cos );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector3F CalculateTangentSpaceVector( Vector3F position1, Vector2F texCoord1, Vector3F position2, Vector2F texCoord2, Vector3F position3, Vector2F texCoord3 )
 		{
 			Vector3F result;
-			CalculateTangentSpaceVector( ref position1, ref texCoord1, ref position2,
-				ref texCoord2, ref position3, ref texCoord3, out result );
+			CalculateTangentSpaceVector( ref position1, ref texCoord1, ref position2, ref texCoord2, ref position3, ref texCoord3, out result );
 			return result;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static void CalculateTangentSpaceVector( ref Vector3F position1, ref Vector2F texCoord1, ref Vector3F position2, ref Vector2F texCoord2, ref Vector3F position3, ref Vector2F texCoord3, out Vector3F result )
 		{
 			//side0 is the vector along one side of the triangle of vertices passed in, 
@@ -656,6 +719,7 @@ namespace NeoAxis
 			result = tangent;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static int IntersectCircleLine( Vector2F center, float radius, Vector2F point1, Vector2F point2, out float outScale1, out float outScale2 )
 		{
 			outScale1 = 0;
@@ -712,6 +776,7 @@ namespace NeoAxis
 			return 0;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		static void Triangulate( Vector3F[] vertices, float[] a, int[] b )
 		{
 			for( int k = 2; k < vertices.Length; ++k )
@@ -757,6 +822,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static int[] TriangulatePolygon( Vector3F[] vertices )
 		{
 			//slowly
@@ -819,6 +885,7 @@ namespace NeoAxis
 			return result.ToArray();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector2 ProjectPointToLine( Vector2 lineStart, Vector2 lineEnd, Vector2 point )
 		{
 			Vector2 result;
@@ -826,6 +893,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void ProjectPointToLine( ref Vector2 lineStart, ref Vector2 lineEnd, ref Vector2 point, out Vector2 result )
 		{
 			Vector2 d;
@@ -842,6 +910,7 @@ namespace NeoAxis
 			//result = lineStart + d * ( distPoint - distVb );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector3 ProjectPointToLine( Vector3 lineStart, Vector3 lineEnd, Vector3 point )
 		{
 			Vector3 result;
@@ -849,6 +918,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void ProjectPointToLine( ref Vector3 lineStart, ref Vector3 lineEnd, ref Vector3 point, out Vector3 result )
 		{
 			Vector3 d;
@@ -866,6 +936,7 @@ namespace NeoAxis
 			//result = lineStart + d * ( distPoint - distVb );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IntersectTriangleRay( ref Vector3 p0, ref Vector3 p1, ref Vector3 p2, ref Ray ray )
 		{
 			double u, v, t;
@@ -919,11 +990,13 @@ namespace NeoAxis
 			return t >= 0;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IntersectTriangleRay( Vector3 p0, Vector3 p1, Vector3 p2, Ray ray )
 		{
 			return IntersectTriangleRay( ref p0, ref p1, ref p2, ref ray );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IntersectTriangleRay( ref Vector3 p0, ref Vector3 p1, ref Vector3 p2, ref Ray ray, out double scale )
 		{
 			scale = 0;
@@ -983,11 +1056,13 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IntersectTriangleRay( Vector3 p0, Vector3 p1, Vector3 p2, Ray ray, out double scale )
 		{
 			return IntersectTriangleRay( ref p0, ref p1, ref p2, ref ray, out scale );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IntersectLineLine( Vector2 pt11, Vector2 pt12, Vector2 pt21, Vector2 pt22, out Vector2 intersectPoint )
 		{
 			double d = ( pt12.Y - pt11.Y ) * ( pt21.X - pt22.X ) - ( pt21.Y - pt22.Y ) * ( pt12.X - pt11.X );
@@ -1014,6 +1089,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IntersectLineLine( Vector2 pt11, Vector2 pt12, Vector2 pt21, Vector2 pt22, out double scale )
 		{
 			double d = ( pt12.Y - pt11.Y ) * ( pt21.X - pt22.X ) - ( pt21.Y - pt22.Y ) * ( pt12.X - pt11.X );
@@ -1039,6 +1115,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IntersectRayRay( Vector2 pt11, Vector2 pt12, Vector2 pt21, Vector2 pt22, out Vector2 intersectPoint )
 		{
 			double d = ( pt12.Y - pt11.Y ) * ( pt21.X - pt22.X ) - ( pt21.Y - pt22.Y ) * ( pt12.X - pt11.X );
@@ -1060,6 +1137,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static int IntersectRectangleLine( Rectangle rectangle, Vector2 pt1, Vector2 pt2, out Vector2 intersectPoint1, out Vector2 intersectPoint2 )
 		{
 			intersectPoint1 = Vector2.Zero;
@@ -1092,11 +1170,13 @@ namespace NeoAxis
 			return count;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IsDegenerateTriangle( Vector3 p0, Vector3 p1, Vector3 p2, double epsilon = double.Epsilon )
 		{
 			return IsDegenerateTriangle( ref p0, ref p1, ref p2 );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IsDegenerateTriangle( ref Vector3 p0, ref Vector3 p1, ref Vector3 p2, double epsilon = double.Epsilon )
 		{
 			if( p0 == p1 || p0 == p2 || p1 == p2 )
@@ -1118,6 +1198,7 @@ namespace NeoAxis
 			return Math.Abs( Math.Acos( vcos ) ) <= epsilon;// .000001;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static int[] RemoveDegenerateTriangles( Vector3[] vertices, int[] indices )
 		{
 			int[] tempIndices = new int[ indices.Length ];
@@ -1146,6 +1227,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static int RemoveDegenerateTriangles( List<Vector3> vertices, List<int> indices )
 		{
 			int count = 0;
@@ -1169,6 +1251,15 @@ namespace NeoAxis
 			return count;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static Radian GetVectorsAngle( ref Vector2 vector1, ref Vector2 vector2 )
+		{
+			double cos = Vector2.Dot( vector1, vector2 ) / ( vector1.Length() * vector2.Length() );
+			MathEx.Clamp( ref cos, -1.0, 1.0 );
+			return Math.Acos( cos );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Radian GetVectorsAngle( Vector2 vector1, Vector2 vector2 )
 		{
 			double cos = Vector2.Dot( vector1, vector2 ) / ( vector1.Length() * vector2.Length() );
@@ -1176,6 +1267,15 @@ namespace NeoAxis
 			return Math.Acos( cos );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static Radian GetVectorsAngle( ref Vector3 vector1, ref Vector3 vector2 )
+		{
+			double cos = Vector3.Dot( vector1, vector2 ) / ( vector1.Length() * vector2.Length() );
+			MathEx.Clamp( ref cos, -1.0, 1.0 );
+			return Math.Acos( cos );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Radian GetVectorsAngle( Vector3 vector1, Vector3 vector2 )
 		{
 			double cos = Vector3.Dot( vector1, vector2 ) / ( vector1.Length() * vector2.Length() );
@@ -1183,6 +1283,7 @@ namespace NeoAxis
 			return Math.Acos( cos );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static Vector3 CalculateTangentSpaceVector( Vector3 position1, Vector2 texCoord1, Vector3 position2, Vector2 texCoord2, Vector3 position3, Vector2 texCoord3 )
 		{
 			Vector3 result;
@@ -1190,6 +1291,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static void CalculateTangentSpaceVector( ref Vector3 position1, ref Vector2 texCoord1, ref Vector3 position2, ref Vector2 texCoord2, ref Vector3 position3, ref Vector2 texCoord3, out Vector3 result )
 		{
 			//side0 is the vector along one side of the triangle of vertices passed in, 
@@ -1236,6 +1338,7 @@ namespace NeoAxis
 			result = tangent;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static int IntersectCircleLine( Vector2 center, double radius, Vector2 point1, Vector2 point2, out double outScale1, out double outScale2 )
 		{
 			outScale1 = 0;
@@ -1292,6 +1395,7 @@ namespace NeoAxis
 			return 0;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		static void Triangulate( Vector3[] vertices, double[] a, int[] b )
 		{
 			for( int k = 2; k < vertices.Length; ++k )
@@ -1337,6 +1441,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static int[] TriangulatePolygon( Vector3[] vertices )
 		{
 			//slowly
@@ -1399,6 +1504,7 @@ namespace NeoAxis
 			return result.ToArray();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool CheckPointInsideEllipse( Rectangle ellipse, Vector2 point )
 		{
 			if( !ellipse.Contains( point ) )
@@ -1412,6 +1518,7 @@ namespace NeoAxis
 			return ( ( normalized.X * normalized.X ) / ( xRadius * xRadius ) ) + ( ( normalized.Y * normalized.Y ) / ( yRadius * yRadius ) ) <= 1.0;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static Sphere BoundingSphereFromPoints( IEnumerable<Vector3> points )
 		{
 			//!!!!can be better
@@ -1433,6 +1540,7 @@ namespace NeoAxis
 			return new Sphere( center, Math.Sqrt( radiusSquared ) );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static SphereF BoundingSphereFromPoints( IEnumerable<Vector3F> points )
 		{
 			//!!!!can be better
@@ -1453,6 +1561,7 @@ namespace NeoAxis
 			return new SphereF( center, MathEx.Sqrt( radiusSquared ) );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static int[] TriangleListToLineList( int[] indices )
 		{
 			RenderingSystem.NativeDLLsPreload();
@@ -1477,6 +1586,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static bool IsMeshConvex( Vector3[] vertices, int[] indices, double epsilon = double.Epsilon )
 		{
 			for( int i = 0; i < indices.Length; i += 3 )
@@ -1493,6 +1603,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static bool IsMeshConvex( Vector3F[] vertices, int[] indices, float epsilon = float.Epsilon )
 		{
 			for( int i = 0; i < indices.Length; i += 3 )
@@ -1509,6 +1620,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IsVertexInsideConvexHull( Plane[] convexPlanes, Vector3 position, double epsilon = double.Epsilon )
 		{
 			for( int i = 0; i < convexPlanes.Length; i++ )
@@ -1518,6 +1630,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IsPlaneSplitsVertices( Vector3[] vertices, Plane plane, double epsilon = double.Epsilon )
 		{
 			var side = plane.GetSide( ref vertices[ 0 ], epsilon );
@@ -1544,6 +1657,7 @@ namespace NeoAxis
 			return false;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IsPlaneSplitsVertices( Vector3F[] vertices, PlaneF plane, float epsilon = float.Epsilon )
 		{
 			var side = plane.GetSide( ref vertices[ 0 ], epsilon );
@@ -1570,6 +1684,7 @@ namespace NeoAxis
 			return false;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static bool IsPlaneMesh( Vector3[] vertices, int[] indices, double epsilon = double.Epsilon )
 		{
 			Plane plane = Plane.Zero;
@@ -1595,6 +1710,7 @@ namespace NeoAxis
 			return IsVerticesOnPlane( vertices, plane, epsilon );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static bool IsPlaneMesh( Vector3F[] vertices, int[] indices, float epsilon = float.Epsilon )
 		{
 			PlaneF plane = PlaneF.Zero;
@@ -1620,6 +1736,7 @@ namespace NeoAxis
 			return IsVerticesOnPlane( vertices, plane, epsilon );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IsVerticesOnPlane( Vector3[] vertices, Plane plane, double epsilon = double.Epsilon )
 		{
 			for( int i = 0; i < vertices.Length; i++ )
@@ -1631,6 +1748,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IsVerticesOnPlane( Vector3F[] vertices, PlaneF plane, float epsilon = float.Epsilon )
 		{
 			for( int i = 0; i < vertices.Length; i++ )
@@ -1642,6 +1760,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IsCollinearTriangle( ref Vector3 v1, ref Vector3 v2, ref Vector3 v3, double epsilon )
 		{
 			bool n1 = Math.Abs(
@@ -1657,11 +1776,13 @@ namespace NeoAxis
 			return n1 && n2 && n3;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IsCollinearTriangle( Vector3 v1, Vector3 v2, Vector3 v3, double epsilon )
 		{
 			return IsCollinearTriangle( ref v1, ref v2, ref v3, epsilon );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IsCollinearTriangle( ref Vector3F v1, ref Vector3F v2, ref Vector3F v3, float epsilon )
 		{
 			bool n1 = Math.Abs(
@@ -1677,7 +1798,8 @@ namespace NeoAxis
 			return n1 && n2 && n3;
 		}
 
-		static void MergeEqualVerticesSortByAxisMethod( ref Vector3[] vertices, ref int[] indices, double epsilon, int axis )
+		[MethodImpl( (MethodImplOptions)512 )]
+		static void MergeEqualVerticesSortByAxisMethod( ref Vector3[] vertices, ref int[] indices, double epsilon, int axis, bool multithreaded )
 		{
 			var verticesLocal = vertices;
 
@@ -1685,20 +1807,19 @@ namespace NeoAxis
 			for( int n = 0; n < vertices2.Length; n++ )
 				vertices2[ n ] = n;
 
-			CollectionUtility.MergeSort( vertices2, delegate ( int index1, int index2 )
+			CollectionUtility.MergeSortUnmanaged( vertices2, delegate ( int index1, int index2 )
 			{
 				var v1 = verticesLocal[ index1 ][ axis ];
 				var v2 = verticesLocal[ index2 ][ axis ];
-
 				if( v1 < v2 )
 					return -1;
 				if( v1 > v2 )
 					return 1;
 				return 0;
-
-			}, true );
+			}, multithreaded/*true*/ );
 
 			var newVertices = new List<Vector3>( vertices.Length );
+			//!!!!use array
 			var vertexMapping = new Dictionary<int, int>( vertices.Length );
 			bool found = false;
 
@@ -1733,7 +1854,8 @@ namespace NeoAxis
 			}
 		}
 
-		static void MergeEqualVerticesSortByAxisMethod( ref StandardVertex[] vertices, ref int[] indices, float epsilonPosition, float epsilonOtherChannels, int axis )
+		[MethodImpl( (MethodImplOptions)512 )]
+		static void MergeEqualVerticesSortByAxisMethod( ref StandardVertex[] vertices, ref int[] indices, float epsilonPosition, float epsilonOtherChannels, int axis, bool multithreaded )
 		{
 			var verticesLocal = vertices;
 
@@ -1741,24 +1863,22 @@ namespace NeoAxis
 			for( int n = 0; n < vertices2.Length; n++ )
 				vertices2[ n ] = n;
 
-			CollectionUtility.MergeSort( vertices2, delegate ( int index1, int index2 )
+			CollectionUtility.MergeSortUnmanaged( vertices2, delegate ( int index1, int index2 )
 			{
 				var v1 = verticesLocal[ index1 ].Position[ axis ];
 				var v2 = verticesLocal[ index2 ].Position[ axis ];
-
 				if( v1 < v2 )
 					return -1;
 				if( v1 > v2 )
 					return 1;
 				return 0;
-
-			}, true );
+			}, multithreaded /*true*/ );
 
 			var newVertices = new List<StandardVertex>( vertices.Length );
 			var vertexMapping = new Dictionary<int, int>( vertices.Length );
 			bool found = false;
 
-			StandardVertex current = new StandardVertex( new Vector3F( float.MinValue, 0, 0 ) );
+			var current = new StandardVertex( new Vector3F( float.MinValue, 0, 0 ) );
 			//var current = new Vector3( float.MinValue, 0, 0 );
 
 			foreach( var index in vertices2 )
@@ -1796,16 +1916,17 @@ namespace NeoAxis
 		/// <param name="vertices"></param>
 		/// <param name="indices"></param>
 		/// <param name="epsilon"></param>
-		public static void MergeEqualVertices( ref Vector3[] vertices, ref int[] indices, double epsilon, bool fastMethod = true )
+		[MethodImpl( (MethodImplOptions)512 )]
+		public static void MergeEqualVertices( ref Vector3[] vertices, ref int[] indices, double epsilon, bool fastMethod = true, bool multithreaded = true )
 		{
 			if( vertices.Length == 0 || indices.Length == 0 )
 				return;
 
 			if( fastMethod )
 			{
-				MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, epsilon, 0 );
-				MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, epsilon, 1 );
-				MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, epsilon, 2 );
+				MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, epsilon, 0, multithreaded );
+				MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, epsilon, 1, multithreaded );
+				MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, epsilon, 2, multithreaded );
 			}
 			else
 			{
@@ -1841,7 +1962,7 @@ namespace NeoAxis
 					else
 					{
 						newIndex = newVertices.Count;
-						octreeContainer.AddObject( b, 1 );
+						octreeContainer.AddObject( ref b, 1 );
 						newVertices.Add( p );
 					}
 
@@ -1858,7 +1979,8 @@ namespace NeoAxis
 			}
 		}
 
-		static void MergeEqualVerticesSortByAxisMethod( ref Vector3F[] vertices, ref int[] indices, float epsilon, int axis )
+		[MethodImpl( (MethodImplOptions)512 )]
+		static void MergeEqualVerticesSortByAxisMethod( ref Vector3F[] vertices, ref int[] indices, float epsilon, int axis, bool multithreaded )
 		{
 			var verticesLocal = vertices;
 
@@ -1866,18 +1988,16 @@ namespace NeoAxis
 			for( int n = 0; n < vertices2.Length; n++ )
 				vertices2[ n ] = n;
 
-			CollectionUtility.MergeSort( vertices2, delegate ( int index1, int index2 )
+			CollectionUtility.MergeSortUnmanaged( vertices2, delegate ( int index1, int index2 )
 			{
 				var v1 = verticesLocal[ index1 ][ axis ];
 				var v2 = verticesLocal[ index2 ][ axis ];
-
 				if( v1 < v2 )
 					return -1;
 				if( v1 > v2 )
 					return 1;
 				return 0;
-
-			}, true );
+			}, multithreaded );
 
 			var newVertices = new List<Vector3F>( vertices.Length );
 			var vertexMapping = new Dictionary<int, int>( vertices.Length );
@@ -1920,66 +2040,67 @@ namespace NeoAxis
 		/// <param name="vertices"></param>
 		/// <param name="indices"></param>
 		/// <param name="epsilon"></param>
-		public static void MergeEqualVertices( ref Vector3F[] vertices, ref int[] indices, float epsilon, bool fastMethod = true )
+		[MethodImpl( (MethodImplOptions)512 )]
+		public static void MergeEqualVertices( ref Vector3F[] vertices, ref int[] indices, float epsilon, bool multithreaded )// bool fastMethod = true )
 		{
 			if( vertices.Length == 0 || indices.Length == 0 )
 				return;
 
-			if( fastMethod )
-			{
-				MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, epsilon, 0 );
-				MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, epsilon, 1 );
-				MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, epsilon, 2 );
-			}
-			else
-			{
-				var found = false;
-				var newVertices = new List<Vector3F>( vertices.Length );
-				var newIndices = new List<int>( indices.Length );
+			//if( fastMethod )
+			//{
+			MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, epsilon, 0, multithreaded );
+			MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, epsilon, 1, multithreaded );
+			MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, epsilon, 2, multithreaded );
+			//}
+			//else
+			//{
+			//	var found = false;
+			//	var newVertices = new List<Vector3F>( vertices.Length );
+			//	var newIndices = new List<int>( indices.Length );
 
-				var bounds = Bounds.Cleared;
-				foreach( var vertex in vertices )
-					bounds.Add( vertex );
-				bounds.Expand( epsilon * 2 );
+			//	var bounds = Bounds.Cleared;
+			//	foreach( var vertex in vertices )
+			//		bounds.Add( vertex );
+			//	bounds.Expand( epsilon * 2 );
 
-				var initSettings = new OctreeContainer.InitSettings();
-				initSettings.InitialOctreeBounds = bounds;
-				initSettings.OctreeBoundsRebuildExpand = Vector3.Zero;
-				initSettings.MinNodeSize = bounds.GetSize() / 50;
-				var octreeContainer = new OctreeContainer( initSettings );
+			//	var initSettings = new OctreeContainer.InitSettings();
+			//	initSettings.InitialOctreeBounds = bounds;
+			//	initSettings.OctreeBoundsRebuildExpand = Vector3.Zero;
+			//	initSettings.MinNodeSize = bounds.GetSize() / 50;
+			//	var octreeContainer = new OctreeContainer( initSettings );
 
-				foreach( var index in indices )
-				{
-					var p = vertices[ index ];
-					var b = new Bounds( p - new Vector3F( epsilon, epsilon, epsilon ), p + new Vector3F( epsilon, epsilon, epsilon ) );
+			//	foreach( var index in indices )
+			//	{
+			//		var p = vertices[ index ];
+			//		var b = new Bounds( p - new Vector3F( epsilon, epsilon, epsilon ), p + new Vector3F( epsilon, epsilon, epsilon ) );
 
-					int newIndex;
+			//		int newIndex;
 
-					//!!!!check by Vec3 position
-					int[] result = octreeContainer.GetObjects( b, 0xFFFFFFFF, OctreeContainer.ModeEnum.All );
-					if( result.Length != 0 )
-					{
-						found = true;
-						newIndex = result[ 0 ];
-					}
-					else
-					{
-						newIndex = newVertices.Count;
-						octreeContainer.AddObject( b, 1 );
-						newVertices.Add( p );
-					}
+			//		//!!!!check by Vec3 position
+			//		int[] result = octreeContainer.GetObjects( b, 0xFFFFFFFF, OctreeContainer.ModeEnum.All );
+			//		if( result.Length != 0 )
+			//		{
+			//			found = true;
+			//			newIndex = result[ 0 ];
+			//		}
+			//		else
+			//		{
+			//			newIndex = newVertices.Count;
+			//			octreeContainer.AddObject( ref b, 1 );
+			//			newVertices.Add( p );
+			//		}
 
-					newIndices.Add( newIndex );
-				}
+			//		newIndices.Add( newIndex );
+			//	}
 
-				octreeContainer.Dispose();
+			//	octreeContainer.Dispose();
 
-				if( found )
-				{
-					vertices = newVertices.ToArray();
-					indices = newIndices.ToArray();
-				}
-			}
+			//	if( found )
+			//	{
+			//		vertices = newVertices.ToArray();
+			//		indices = newIndices.ToArray();
+			//	}
+			//}
 		}
 
 		/// <summary>
@@ -1988,16 +2109,17 @@ namespace NeoAxis
 		/// <param name="vertices"></param>
 		/// <param name="indices"></param>
 		/// <param name="positionEpsilon"></param>
-		public static void MergeEqualVertices( ref StandardVertex[] vertices, ref int[] indices, float positionEpsilon, float otherChannelsEpsilon )//, bool fastMethod = true )
+		[MethodImpl( (MethodImplOptions)512 )]
+		public static void MergeEqualVertices( ref StandardVertex[] vertices, ref int[] indices, float positionEpsilon, float otherChannelsEpsilon, bool multithreaded )//, bool fastMethod = true )
 		{
 			if( vertices.Length == 0 || indices.Length == 0 )
 				return;
 
 			//if( fastMethod )
 			//{
-			MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, positionEpsilon, otherChannelsEpsilon, 0 );
-			MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, positionEpsilon, otherChannelsEpsilon, 1 );
-			MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, positionEpsilon, otherChannelsEpsilon, 2 );
+			MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, positionEpsilon, otherChannelsEpsilon, 0, multithreaded );
+			MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, positionEpsilon, otherChannelsEpsilon, 1, multithreaded );
+			MergeEqualVerticesSortByAxisMethod( ref vertices, ref indices, positionEpsilon, otherChannelsEpsilon, 2, multithreaded );
 			//}
 			//else
 			//{
@@ -2096,6 +2218,7 @@ namespace NeoAxis
 		/// <param name="vertices"></param>
 		/// <param name="indices"></param>
 		/// <returns></returns>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static bool RemoveUnusedVertices( ref Vector3F[] vertices, ref int[] indices )
 		{
 			//check exists unused
@@ -2160,6 +2283,7 @@ namespace NeoAxis
 		/// <param name="vertices"></param>
 		/// <param name="indices"></param>
 		/// <returns></returns>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static bool RemoveUnusedVertices( ref StandardVertex[] vertices, ref int[] indices )
 		{
 			//check exists unused
@@ -2218,6 +2342,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool CheckValidVertexIndexBuffer( int vertexCount, int[] indices, bool fatal )
 		{
 			foreach( var index in indices )
@@ -2233,7 +2358,6 @@ namespace NeoAxis
 		}
 
 		/// <summary>
-		/// If no changes then return same arrays.
 		/// </summary>
 		/// <param name="sourceVertices"></param>
 		/// <param name="sourceIndices"></param>
@@ -2241,13 +2365,15 @@ namespace NeoAxis
 		/// <param name="processedVertices"></param>
 		/// <param name="processedIndices"></param>
 		/// <param name="processedTrianglesToSourceIndex"></param>
-		public static void MergeEqualVerticesRemoveInvalidTriangles( Vector3F[] sourceVertices, int[] sourceIndices, float emptySquareEpsilon, float positionEpsilon, out Vector3F[] processedVertices, out int[] processedIndices, out int[] processedTrianglesToSourceIndex )
+		[MethodImpl( (MethodImplOptions)512 )]
+		public static void MergeEqualVerticesRemoveInvalidTriangles( Vector3F[] sourceVertices, int[] sourceIndices, float emptySquareEpsilon, float positionEpsilon, bool returnSourceArraysWhenNoChanges, bool multithreaded, out Vector3F[] processedVertices, out int[] processedIndices, out int[] processedTrianglesToSourceIndex )
 		{
 			var vertices = sourceVertices;
 			var indices = sourceIndices;
 			int[] trianglesToSourceIndex;
 
-			MergeEqualVertices( ref vertices, ref indices, positionEpsilon, true );
+			MergeEqualVertices( ref vertices, ref indices, positionEpsilon, multithreaded );
+			//MergeEqualVertices( ref vertices, ref indices, positionEpsilon, true );
 			RemoveCollinearDegenerateTriangles( vertices, ref indices, out trianglesToSourceIndex, emptySquareEpsilon );
 			RemoveUnusedVertices( ref vertices, ref indices );
 			CheckValidVertexIndexBuffer( vertices.Length, indices, true );
@@ -2257,13 +2383,20 @@ namespace NeoAxis
 			//MergeEqualVertices( ref vertices, ref indices, positionEpsilon, true );
 			//CheckValidVertexIndexBuffer( vertices.Length, indices, true );
 
+			if( !returnSourceArraysWhenNoChanges )
+			{
+				if( ReferenceEquals( sourceVertices, vertices ) )
+					vertices = (Vector3F[])sourceVertices.Clone();
+				if( ReferenceEquals( sourceIndices, indices ) )
+					indices = (int[])sourceIndices.Clone();
+			}
+
 			processedVertices = vertices;
 			processedIndices = indices;
 			processedTrianglesToSourceIndex = trianglesToSourceIndex;
 		}
 
 		/// <summary>
-		/// If no changes then return same arrays.
 		/// </summary>
 		/// <param name="sourceVertices"></param>
 		/// <param name="sourceIndices"></param>
@@ -2271,7 +2404,8 @@ namespace NeoAxis
 		/// <param name="processedVertices"></param>
 		/// <param name="processedIndices"></param>
 		/// <param name="processedTrianglesToSourceIndex"></param>
-		public static void MergeEqualVerticesRemoveInvalidTriangles( StandardVertex[] sourceVertices, int[] sourceIndices, float emptySquareEpsilon, float vertexPositionEpsilon, float vertexOtherChannelsEpsilon, out StandardVertex[] processedVertices, out int[] processedIndices, out int[] processedTrianglesToSourceIndex )
+		[MethodImpl( (MethodImplOptions)512 )]
+		public static void MergeEqualVerticesRemoveInvalidTriangles( StandardVertex[] sourceVertices, int[] sourceIndices, float emptySquareEpsilon, float vertexPositionEpsilon, float vertexOtherChannelsEpsilon, bool returnSourceArraysWhenNoChanges, bool multithreaded, out StandardVertex[] processedVertices, out int[] processedIndices, out int[] processedTrianglesToSourceIndex )
 		{
 			var vertices = sourceVertices;
 			var indices = sourceIndices;
@@ -2279,7 +2413,7 @@ namespace NeoAxis
 
 			//!!!!optimization: use indexes of vertex data. no copy data in memory
 
-			MergeEqualVertices( ref vertices, ref indices, vertexPositionEpsilon, vertexOtherChannelsEpsilon );//, true );
+			MergeEqualVertices( ref vertices, ref indices, vertexPositionEpsilon, vertexOtherChannelsEpsilon, multithreaded );//, true );
 			RemoveCollinearDegenerateTriangles( vertices, ref indices, out trianglesToSourceIndex, emptySquareEpsilon );
 			RemoveUnusedVertices( ref vertices, ref indices );
 			CheckValidVertexIndexBuffer( vertices.Length, indices, true );
@@ -2289,11 +2423,20 @@ namespace NeoAxis
 			//MergeEqualVertices( ref vertices, ref indices, vertexEpsilon );//, true );
 			//CheckValidVertexIndexBuffer( vertices.Length, indices, true );
 
+			if( !returnSourceArraysWhenNoChanges )
+			{
+				if( ReferenceEquals( sourceVertices, vertices ) )
+					vertices = (StandardVertex[])sourceVertices.Clone();
+				if( ReferenceEquals( sourceIndices, indices ) )
+					indices = (int[])sourceIndices.Clone();
+			}
+
 			processedVertices = vertices;
 			processedIndices = indices;
 			processedTrianglesToSourceIndex = trianglesToSourceIndex;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool GetTriangleData( int triangleID, Vector3F[] vertices, int[] indices, out Triangle triangle )
 		{
 			if( vertices == null )
@@ -2330,6 +2473,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool GetTriangleData( int triangleID, ref Matrix4 transform, Vector3F[] vertices, int[] indices, out Triangle triangle )
 		{
 			if( vertices == null )
@@ -2366,11 +2510,13 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool GetTriangleData( int triangleID, Matrix4 transform, Vector3F[] vertices, int[] indices, out Triangle triangle )
 		{
 			return GetTriangleData( triangleID, ref transform, vertices, indices, out triangle );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool GetTriangleData( int triangleID, Transform transform, Vector3F[] vertices, int[] indices, out Triangle triangle )
 		{
 			if( transform != null && !transform.IsIdentity )
@@ -2382,6 +2528,7 @@ namespace NeoAxis
 				return GetTriangleData( triangleID, vertices, indices, out triangle );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static bool IntersectsConvexHull( Plane[] convexPlanes, Bounds bounds )
 		{
 			//!!!!slowly
@@ -2395,6 +2542,7 @@ namespace NeoAxis
 		}
 
 		// Returns the convex hull, assuming that each points[i] <= points[i + 1]. Runs in O(n) time.
+		[MethodImpl( (MethodImplOptions)512 )]
 		static List<Vector2> MakeHullPresorted( IList<Vector2> points )
 		{
 			if( points.Count <= 1 )
@@ -2443,6 +2591,7 @@ namespace NeoAxis
 		}
 
 		// Returns a new list of points representing the convex hull of the given set of points. The convex hull excludes collinear points. This algorithm runs in O(n log n) time.
+		[MethodImpl( (MethodImplOptions)512 )]
 		static List<Vector2> MakeHull( IList<Vector2> points )
 		{
 			List<Vector2> newPoints = new List<Vector2>( points );
@@ -2462,11 +2611,13 @@ namespace NeoAxis
 			return MakeHullPresorted( newPoints );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static List<Vector2> GetConvexByPoints( IList<Vector2> points )
 		{
 			return MakeHull( points );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static bool IsPointInPolygon( IList<Vector2> polygon, Vector2 point )
 		{
 			int polygonLength = polygon.Count, i = 0;
@@ -2491,6 +2642,7 @@ namespace NeoAxis
 			return inside;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static Vector2[] GenerateCapsuleConvex( Capsule2 capsule, int edges )
 		{
 			var pointsSide = Math.Max( ( edges - 2 ) / 2, 1 ) + 1;
@@ -2510,6 +2662,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static Vector3[] ClipPolygonByPlane( Vector3[] vertices, Plane plane )
 		{
 			if( vertices.Length == 0 )
@@ -2519,50 +2672,65 @@ namespace NeoAxis
 
 			unsafe
 			{
-				double* distances = stackalloc double[ vertexCount ];
-				for( int i = 0; i < vertexCount; i++ )
-					distances[ i ] = plane.GetDistance( vertices[ i ] );
-
-				//!!!!GC
-				var result = new List<Vector3>( vertices.Length + 2 );
-
-				for( int i = 0, j = vertexCount - 1; i < vertexCount; j = i, i++ )
+#if UWP
+				//!!!!
+				fixed( double* distances = new double[ vertexCount ] )
+#else
+				fixed( double* distances = vertexCount < 1024 ? stackalloc double[ vertexCount ] : new double[ vertexCount ] )
+#endif
 				{
-					bool inj = distances[ j ] >= 0;
-					bool ini = distances[ i ] >= 0;
+					//double* distances = (double*)NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Utility, vertexCount * sizeof( double ) );
+					//double* distances = stackalloc double[ vertexCount ];
+					for( int i = 0; i < vertexCount; i++ )
+						distances[ i ] = plane.GetDistance( vertices[ i ] );
 
-					if( inj != ini )
+					//!!!!GC
+					var result = new List<Vector3>( vertices.Length + 2 );
+
+					for( int i = 0, j = vertexCount - 1; i < vertexCount; j = i, i++ )
 					{
-						double s = distances[ j ] / ( distances[ j ] - distances[ i ] );
-						var outVertex = vertices[ j ] + ( vertices[ i ] - vertices[ j ] ) * s;
-						result.Add( outVertex );
+						bool inj = distances[ j ] >= 0;
+						bool ini = distances[ i ] >= 0;
+
+						if( inj != ini )
+						{
+							double s = distances[ j ] / ( distances[ j ] - distances[ i ] );
+							var outVertex = vertices[ j ] + ( vertices[ i ] - vertices[ j ] ) * s;
+							result.Add( outVertex );
+						}
+
+						if( ini )
+							result.Add( vertices[ i ] );
 					}
 
-					if( ini )
-						result.Add( vertices[ i ] );
-				}
+					//NativeUtility.Free( distances );
 
-				if( result.Count == 0 )
-					return Array.Empty<Vector3>();
-				return result.ToArray();
+					if( result.Count == 0 )
+						return Array.Empty<Vector3>();
+					return result.ToArray();
+				}
 			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static void ConvexHullFromMesh( Vector3[] vertices, int[] indices, out Vector3[] resultVertices, out int[] resultIndices, double epsilon = 1e-10 )
 		{
 			ConvexHullAlgorithm.Calculate( vertices, indices, out resultVertices, out resultIndices, epsilon );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static void ConvexHullFromMesh( Vector3[] vertices, out Vector3[] resultVertices, out int[] resultIndices, double epsilon = 1e-10 )
 		{
 			ConvexHullAlgorithm.Calculate( vertices, null, out resultVertices, out resultIndices, epsilon );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static void ConvexHullFromMesh( Vector3[] vertices, int[] indices, out Vector3[] resultVertices, out int[] resultIndices, out Plane[] resultPlanes, double epsilon = 1e-10 )
 		{
 			ConvexHullAlgorithm.Calculate( vertices, indices, out resultVertices, out resultIndices, out resultPlanes, epsilon );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static void ConvexHullFromMesh( Vector3[] vertices, out Vector3[] resultVertices, out int[] resultIndices, out Plane[] resultPlanes, double epsilon = 1e-10 )
 		{
 			ConvexHullAlgorithm.Calculate( vertices, null, out resultVertices, out resultIndices, out resultPlanes, epsilon );
@@ -2578,11 +2746,13 @@ namespace NeoAxis
 		//	ConvexHullAlgorithm.Calculate( vertices, out resultVertices, out resultIndices, out resultPlanes, epsilon );
 		//}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static unsafe ConvexDecomposition.Cluster[] ConvexDecompose( Vector3F[] vertices, int[] indices, int maxConvexHulls, int maxConvexTriangles = 64, double minConvexVolume = 0.0001, bool convexApproximation = true, int maxResolution = 100000, double maxConcavity = 0.0025, double alpha = 0.05, double beta = 0.05, int planeDownsampling = 4, int hullDownsampling = 4, bool normalizeMesh = false, bool tetrahedronMode = false )
 		{
 			return ConvexDecomposition.Decompose( vertices, indices, maxConvexHulls, maxConvexTriangles, minConvexVolume, convexApproximation, maxResolution, maxConcavity, alpha, beta, planeDownsampling, hullDownsampling, normalizeMesh, tetrahedronMode );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool PointInTriangle( ref Vector2 point, ref Vector2 v1, ref Vector2 v2, ref Vector2 v3 )
 		{
 			double Sign( ref Vector2 p1, ref Vector2 p2, ref Vector2 p3 )
@@ -2600,6 +2770,7 @@ namespace NeoAxis
 			return !( has_neg && has_pos );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool PointInTriangle( Vector2 point, Vector2 v1, Vector2 v2, Vector2 v3 )
 		{
 			return PointInTriangle( ref point, ref v1, ref v2, ref v3 );
@@ -2615,6 +2786,7 @@ namespace NeoAxis
 		/// <param name="u"></param>
 		/// <param name="v"></param>
 		/// <param name="w"></param>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static void CalculateBarycentricCoordinates( ref Vector3F vertex0, ref Vector3F vertex1, ref Vector3F vertex2, ref Vector3F point, out float u, out float v, out float w )
 		{
 			Vector3F v0 = vertex1 - vertex0, v1 = vertex2 - vertex0, v2 = point - vertex0;
@@ -2648,9 +2820,59 @@ namespace NeoAxis
 		/// <param name="u"></param>
 		/// <param name="v"></param>
 		/// <param name="w"></param>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static void CalculateBarycentricCoordinates( Vector3F vertex0, Vector3F vertex1, Vector3F vertex2, Vector3F point, out float u, out float v, out float w )
 		{
 			CalculateBarycentricCoordinates( ref vertex0, ref vertex1, ref vertex2, ref point, out u, out v, out w );
 		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static void CalculateTriangleNormal( ref Vector3F vertex0, ref Vector3F vertex1, ref Vector3F vertex2, out Vector3F normal )
+		{
+			//side0 is the vector along one side of the triangle of vertices passed in, 
+			//and side1 is the vector along another side. Taking the cross product of these returns the normal.
+			Vector3F.Subtract( ref vertex0, ref vertex1, out var side0 );
+			//Vec3 side0 = position1 - position2;
+
+			Vector3F.Subtract( ref vertex2, ref vertex0, out var side1 );
+			//Vec3 side1 = position3 - position1;
+
+			//Calculate face normal
+			Vector3F.Cross( ref side1, ref side0, out normal );
+			//Vec3 normal = Vec3.Cross( side1, side0 );
+			normal.Normalize();
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static Vector3F CalculateTriangleNormal( Vector3F vertex0, Vector3F vertex1, Vector3F vertex2 )
+		{
+			CalculateTriangleNormal( ref vertex0, ref vertex1, ref vertex2, out var result );
+			return result;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static void CalculateTriangleNormal( ref Vector3 vertex0, ref Vector3 vertex1, ref Vector3 vertex2, out Vector3 normal )
+		{
+			//side0 is the vector along one side of the triangle of vertices passed in, 
+			//and side1 is the vector along another side. Taking the cross product of these returns the normal.
+			Vector3.Subtract( ref vertex0, ref vertex1, out var side0 );
+			//Vec3 side0 = position1 - position2;
+
+			Vector3.Subtract( ref vertex2, ref vertex0, out var side1 );
+			//Vec3 side1 = position3 - position1;
+
+			//Calculate face normal
+			Vector3.Cross( ref side1, ref side0, out normal );
+			//Vec3 normal = Vec3.Cross( side1, side0 );
+			normal.Normalize();
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static Vector3 CalculateTriangleNormal( Vector3 vertex0, Vector3 vertex1, Vector3 vertex2 )
+		{
+			CalculateTriangleNormal( ref vertex0, ref vertex1, ref vertex2, out var result );
+			return result;
+		}
+
 	}
 }

@@ -1,40 +1,33 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
 	/// <summary>
-	/// The implementation of the Octree container.
+	/// An octree container to optimize getting list of objects by volume.
 	/// </summary>
 	public class OctreeContainer : IDisposable
 	{
 		IntPtr nativeObject;
 
-		//!!!!
-		static ConcurrentArrayPool<int> getObjectsTempArrays = new ConcurrentArrayPool<int>( 4096 );
-		static ConcurrentArrayPool<GetObjectsRayOutputData> getObjectsRayTempArrays = new ConcurrentArrayPool<GetObjectsRayOutputData>( 1024 );
-
 		//
 
 		[DllImport( OgreWrapper.library, CallingConvention = CallingConvention.Cdecl ), SuppressUnmanagedCodeSecurity]
-		static extern IntPtr OctreeContainer_New( ref Bounds initialOctreeBounds, int amountOfObjectsOutsideOctreeBoundsToRebuld,
-			ref Vector3 octreeBoundsRebuildExpand, ref Vector3 minNodeSize, int objectCountThresholdToCreateChildNodes, int maxNodeCount,
-			int getObjectsInputDataSize );
+		static extern IntPtr OctreeContainer_New( ref Bounds initialOctreeBounds, int amountOfObjectsOutsideOctreeBoundsToRebuld, ref Vector3 octreeBoundsRebuildExpand, ref Vector3 minNodeSize, int objectCountThresholdToCreateChildNodes, int maxNodeCount, ThreadingModeEnum threadingMode, int getObjectsInputDataSize, double engineTimeToGetStatistics );
 
 		[DllImport( OgreWrapper.library, CallingConvention = CallingConvention.Cdecl ), SuppressUnmanagedCodeSecurity]
 		static extern void OctreeContainer_Delete( IntPtr container );
 
-		[DllImport( OgreWrapper.library, CallingConvention = CallingConvention.Cdecl ), SuppressUnmanagedCodeSecurity]
-		static extern void OctreeContainer_UpdateSettings( IntPtr container, int amountOfObjectsOutsideOctreeBoundsToRebuld,
-			ref Vector3 octreeBoundsRebuildExpand, ref Vector3 minNodeSize, int objectCountThresholdToCreateChildNodes, int maxNodeCount,
-			[MarshalAs( UnmanagedType.U1 )] bool forceTreeRebuild );
+		//[DllImport( OgreWrapper.library, CallingConvention = CallingConvention.Cdecl ), SuppressUnmanagedCodeSecurity]
+		//static extern void OctreeContainer_UpdateSettings( IntPtr container, int amountOfObjectsOutsideOctreeBoundsToRebuld, ref Vector3 octreeBoundsRebuildExpand, ref Vector3 minNodeSize, int objectCountThresholdToCreateChildNodes, int maxNodeCount, ThreadingModeEnum threadingMode );//, [MarshalAs( UnmanagedType.U1 )] bool forceTreeRebuild );
 
-		[DllImport( OgreWrapper.library, CallingConvention = CallingConvention.Cdecl ), SuppressUnmanagedCodeSecurity]
-		static extern void OctreeContainer_RebuildTree( IntPtr container );
+		//[DllImport( OgreWrapper.library, CallingConvention = CallingConvention.Cdecl ), SuppressUnmanagedCodeSecurity]
+		//static extern void OctreeContainer_RebuildTree( IntPtr container );
 
 		[DllImport( OgreWrapper.library, CallingConvention = CallingConvention.Cdecl ), SuppressUnmanagedCodeSecurity]
 		static extern int OctreeContainer_AddObject( IntPtr container, ref Vector3 boundsMin, ref Vector3 boundsMax, uint groupMask );
@@ -43,31 +36,34 @@ namespace NeoAxis
 		static extern void OctreeContainer_RemoveObject( IntPtr container, int objectIndex );
 
 		[DllImport( OgreWrapper.library, CallingConvention = CallingConvention.Cdecl ), SuppressUnmanagedCodeSecurity]
-		static extern void OctreeContainer_UpdateObject( IntPtr container, int objectIndex, ref Vector3 boundsMin,
-			ref Vector3 boundsMax, uint groupMask );
+		static extern void OctreeContainer_UpdateObjectBounds( IntPtr container, int objectIndex, ref Vector3 boundsMin, ref Vector3 boundsMax );
 
 		[DllImport( OgreWrapper.library, CallingConvention = CallingConvention.Cdecl ), SuppressUnmanagedCodeSecurity]
-		static extern unsafe void OctreeContainer_GetDebugRenderLines( IntPtr container, out IntPtr outputData,
-			out int outputDataItemCount );
+		static extern void OctreeContainer_UpdateObjectGroupMask( IntPtr container, int objectIndex, uint groupMask );
+
+		//[DllImport( OgreWrapper.library, CallingConvention = CallingConvention.Cdecl ), SuppressUnmanagedCodeSecurity]
+		//static extern void OctreeContainer_UpdateObject( IntPtr container, int objectIndex, ref Vector3 boundsMin, ref Vector3 boundsMax, uint groupMask );
+
+		[DllImport( OgreWrapper.library, CallingConvention = CallingConvention.Cdecl ), SuppressUnmanagedCodeSecurity]
+		static extern unsafe void OctreeContainer_GetDebugRenderLines( IntPtr container, out IntPtr outputData, out int outputDataItemCount );
 
 		[DllImport( OgreWrapper.library, CallingConvention = CallingConvention.Cdecl ), SuppressUnmanagedCodeSecurity]
 		static extern unsafe void OctreeContainer_Free( IntPtr container, IntPtr data );
 
 		[DllImport( OgreWrapper.library, CallingConvention = CallingConvention.Cdecl ), SuppressUnmanagedCodeSecurity]
-		static extern unsafe int OctreeContainer_GetObjects( IntPtr container, ref GetObjectsInputData inputData,
-			int* outputArray, int outputArraySize );
+		static extern unsafe int OctreeContainer_GetObjects( IntPtr container, ref GetObjectsInputData inputData, int* outputArray, int outputArraySize );
 
 		[DllImport( OgreWrapper.library, CallingConvention = CallingConvention.Cdecl ), SuppressUnmanagedCodeSecurity]
-		static extern unsafe int OctreeContainer_GetObjectsRay( IntPtr container, ref GetObjectsInputData inputData,
-			GetObjectsRayOutputData* outputArray, int outputArraySize );
+		static extern unsafe int OctreeContainer_GetObjectsRay( IntPtr container, ref GetObjectsInputData inputData, GetObjectsRayOutputData* outputArray, int outputArraySize );
 
 		[DllImport( OgreWrapper.library, CallingConvention = CallingConvention.Cdecl ), SuppressUnmanagedCodeSecurity]
-		static extern unsafe void OctreeContainer_GetStatistics( IntPtr container, out int objectCount, out Bounds octreeBounds,
-			out int octreeNodeCount );
+		static extern unsafe void OctreeContainer_GetStatistics( IntPtr container, out int objectCount, out Bounds octreeBounds, out int octreeNodeCount, out double timeSinceLastFullRebuild );
 
 		[DllImport( OgreWrapper.library, CallingConvention = CallingConvention.Cdecl ), SuppressUnmanagedCodeSecurity]
-		static extern unsafe void OctreeContainer_GetOctreeBoundsWithBoundsOfObjectsOutsideOctree( IntPtr container,
-			out Bounds bounds );
+		static extern unsafe void OctreeContainer_GetOctreeBoundsWithBoundsOfObjectsOutsideOctree( IntPtr container, out Bounds bounds );
+
+		[DllImport( OgreWrapper.library, CallingConvention = CallingConvention.Cdecl ), SuppressUnmanagedCodeSecurity]
+		static extern unsafe void OctreeContainer_SetEngineTimeToGetStatistics( IntPtr container, double engineTime );
 
 		///////////////////////////////////////////
 
@@ -125,26 +121,35 @@ namespace NeoAxis
 		[StructLayout( LayoutKind.Sequential )]
 		public struct GetObjectsRayOutputData
 		{
-			int objectIndex;
-			double distanceNormalized;
+			public int ObjectIndex;
+			public double DistanceNormalized;
 
 			public GetObjectsRayOutputData( int objectIndex, double distanceNormalized )
 			{
-				this.objectIndex = objectIndex;
-				this.distanceNormalized = distanceNormalized;
+				ObjectIndex = objectIndex;
+				DistanceNormalized = distanceNormalized;
 			}
 
-			public int ObjectIndex
-			{
-				get { return objectIndex; }
-				set { objectIndex = value; }
-			}
+			//public int ObjectIndex
+			//{
+			//	get { return objectIndex; }
+			//	set { objectIndex = value; }
+			//}
 
-			public double DistanceNormalized
-			{
-				get { return distanceNormalized; }
-				set { distanceNormalized = value; }
-			}
+			//public double DistanceNormalized
+			//{
+			//	get { return distanceNormalized; }
+			//	set { distanceNormalized = value; }
+			//}
+		}
+
+		///////////////////////////////////////////
+
+		public enum ThreadingModeEnum
+		{
+			SingleThreaded,
+			BackgroundThread,
+			//MultiBackgroundThreads,
 		}
 
 		///////////////////////////////////////////
@@ -158,8 +163,9 @@ namespace NeoAxis
 			internal int amountOfObjectsOutsideOctreeBoundsToRebuld = 30;
 			internal Vector3 octreeBoundsRebuildExpand = new Vector3( 50, 50, 50 );
 			internal Vector3 minNodeSize = new Vector3( 10, 10, 10 );
-			internal int objectCountThresholdToCreateChildNodes = 10;
-			internal int maxNodeCount = 300000;
+			internal int objectCountThresholdToCreateChildNodes = 50;
+			internal int maxNodeCount = 100000;
+			internal ThreadingModeEnum threadingMode = ThreadingModeEnum.SingleThreaded;
 
 			//
 
@@ -197,6 +203,12 @@ namespace NeoAxis
 			{
 				get { return maxNodeCount; }
 				set { maxNodeCount = value; }
+			}
+
+			public ThreadingModeEnum ThreadingMode
+			{
+				get { return threadingMode; }
+				set { threadingMode = value; }
 			}
 		}
 
@@ -246,7 +258,9 @@ namespace NeoAxis
 					ref initSettings.minNodeSize,
 					initSettings.objectCountThresholdToCreateChildNodes,
 					initSettings.maxNodeCount,
-					sizeof( GetObjectsInputData ) );
+					initSettings.threadingMode,
+					sizeof( GetObjectsInputData ), 
+					EngineApp.EngineTime );
 			}
 		}
 
@@ -259,50 +273,76 @@ namespace NeoAxis
 			}
 		}
 
-		public void UpdateSettings( int amountOfObjectsOutsideOctreeBoundsToRebuld, Vector3 octreeBoundsRebuildExpand,
-			Vector3 minNodeSize, int objectCountThresholdToCreateChildNodes, int maxNodeCount, bool forceTreeRebuild )
-		{
-			OctreeContainer_UpdateSettings( nativeObject, amountOfObjectsOutsideOctreeBoundsToRebuld, ref octreeBoundsRebuildExpand,
-				ref minNodeSize, objectCountThresholdToCreateChildNodes, maxNodeCount, forceTreeRebuild );
-		}
+		//public void UpdateSettings( int amountOfObjectsOutsideOctreeBoundsToRebuld, Vector3 octreeBoundsRebuildExpand, Vector3 minNodeSize, int objectCountThresholdToCreateChildNodes, int maxNodeCount, ThreadingModeEnum threadingMode )//, bool forceTreeRebuild )
+		//{
+		//	OctreeContainer_UpdateSettings( nativeObject, amountOfObjectsOutsideOctreeBoundsToRebuld, ref octreeBoundsRebuildExpand,
+		//		ref minNodeSize, objectCountThresholdToCreateChildNodes, maxNodeCount, threadingMode );//, forceTreeRebuild );
+		//}
 
-		public void RebuildTree()
-		{
-			OctreeContainer_RebuildTree( nativeObject );
-		}
+		//public void RebuildTree()
+		//{
+		//	OctreeContainer_RebuildTree( nativeObject );
+		//}
 
-		public int AddObject( Bounds bounds, uint groupMask )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public int AddObject( ref Bounds bounds, uint groupMask )
 		{
 			if( bounds.IsCleared() )
 				Log.Fatal( "OctreeContainer: AddObject: Invalid bounds." );
-			//if( group < 0 )
-			//	Log.Fatal( "OctreeContainer: AddObject: group < 0." );
-			//if( group >= 32 )
-			//	Log.Fatal( "OctreeContainer: AddObject: group >= 32." );
 
-			Vector3 boundsMin = bounds.Minimum;
-			Vector3 boundsMax = bounds.Maximum;
-			return OctreeContainer_AddObject( nativeObject, ref boundsMin, ref boundsMax, groupMask );
+			return OctreeContainer_AddObject( nativeObject, ref bounds.Minimum, ref bounds.Maximum, groupMask );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public int AddObject( Bounds bounds, uint groupMask )
+		{
+			return AddObject( ref bounds, groupMask );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void RemoveObject( int objectIndex )
 		{
 			OctreeContainer_RemoveObject( nativeObject, objectIndex );
 		}
 
-		public void UpdateObject( int objectIndex, Bounds bounds, uint groupMask )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void UpdateObjectBounds( int objectIndex, ref Bounds bounds )
 		{
 			if( bounds.IsCleared() )
-				Log.Fatal( "OctreeContainer: UpdateObject: Invalid bounds." );
-			//if( group < 0 )
-			//	Log.Fatal( "OctreeContainer: UpdateObject: group < 0." );
-			//if( group >= 32 )
-			//	Log.Fatal( "OctreeContainer: UpdateObject: group >= 32." );
+				Log.Fatal( "OctreeContainer: UpdateObjectBounds: Invalid bounds." );
 
-			Vector3 boundsMin = bounds.Minimum;
-			Vector3 boundsMax = bounds.Maximum;
-			OctreeContainer_UpdateObject( nativeObject, objectIndex, ref boundsMin, ref boundsMax, groupMask );
+			OctreeContainer_UpdateObjectBounds( nativeObject, objectIndex, ref bounds.Minimum, ref bounds.Maximum );
 		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void UpdateObjectBounds( int objectIndex, Bounds bounds )
+		{
+			UpdateObjectBounds( objectIndex, ref bounds );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void UpdateObjectGroupMask( int objectIndex, uint groupMask )
+		{
+			OctreeContainer_UpdateObjectGroupMask( nativeObject, objectIndex, groupMask );
+		}
+
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public void UpdateObject( int objectIndex, ref Bounds bounds, uint groupMask )
+		//{
+		//	if( bounds.IsCleared() )
+		//		Log.Fatal( "OctreeContainer: UpdateObject: Invalid bounds." );
+
+		//	OctreeContainer_UpdateObject( nativeObject, objectIndex, ref bounds.Minimum, ref bounds.Maximum, groupMask );
+		//	//Vector3 boundsMin = bounds.Minimum;
+		//	//Vector3 boundsMax = bounds.Maximum;
+		//	//OctreeContainer_UpdateObject( nativeObject, objectIndex, ref boundsMin, ref boundsMax, groupMask );
+		//}
+
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public void UpdateObject( int objectIndex, Bounds bounds, uint groupMask )
+		//{
+		//	UpdateObject( objectIndex, ref bounds, groupMask );
+		//}
 
 		public void DebugRender( Viewport viewport )
 		{
@@ -317,11 +357,8 @@ namespace NeoAxis
 				{
 					ref var color = ref lines[ n ].color;
 
-					//!!!!new ColorValue( 1, 1, 1, 0.25f )
-					//viewport.Simple3DRenderer.SetColor( color, color * new ColorValue( 1, 1, 1, 0.25f ) );
-					viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier * new ColorValue( 1, 1, 1, 0.5 ) );
+					viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier * new ColorValue( 1, 1, 1, 0.5 ) );
 					viewport.Simple3DRenderer.AddLineThin( lines[ n ].start, lines[ n ].end );
-					//camera.DebugGeometry.AddBounds( new Bounds( lines[ n ].start, lines[ n ].end ) );
 				}
 
 				OctreeContainer_Free( nativeObject, data );
@@ -330,6 +367,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		unsafe bool GetObjects( ref GetObjectsInputData inputData, int* outputArray, int outputArrayLength, out int outputCount )
 		{
 			outputCount = OctreeContainer_GetObjects( nativeObject, ref inputData, outputArray, outputArrayLength );
@@ -339,6 +377,7 @@ namespace NeoAxis
 				return false;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe bool GetObjects( Bounds bounds, uint groupMask, ModeEnum mode, int* outputArray, int outputArrayLength, out int outputCount )
 		{
 			//fix invalid bounds
@@ -353,6 +392,7 @@ namespace NeoAxis
 			return GetObjects( ref inputData, outputArray, outputArrayLength, out outputCount );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe bool GetObjects( Sphere sphere, uint groupMask, ModeEnum mode, int* outputArray, int outputArrayLength, out int outputCount )
 		{
 			GetObjectsInputData inputData = new GetObjectsInputData();
@@ -367,6 +407,7 @@ namespace NeoAxis
 			return GetObjects( ref inputData, outputArray, outputArrayLength, out outputCount );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe bool GetObjects( Box box, uint groupMask, ModeEnum mode, int* outputArray, int outputArrayLength, out int outputCount )
 		{
 			GetObjectsInputData inputData = new GetObjectsInputData();
@@ -377,6 +418,7 @@ namespace NeoAxis
 			return GetObjects( ref inputData, outputArray, outputArrayLength, out outputCount );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe bool GetObjects( Plane[] planes, uint groupMask, ModeEnum mode, int* outputArray, int outputArrayLength, out int outputCount )
 		{
 			GetObjectsInputData inputData = new GetObjectsInputData();
@@ -392,6 +434,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe bool GetObjects( Plane[] planes, Bounds bounds, uint groupMask, ModeEnum mode, int* outputArray, int outputArrayLength, out int outputCount, IntPtr extensionData )
 		{
 			GetObjectsInputData inputData = new GetObjectsInputData();
@@ -409,6 +452,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe bool GetObjects( Frustum frustum, uint groupMask, ModeEnum mode, int* outputArray, int outputArrayLength, out int outputCount, IntPtr extensionData )
 		{
 			Plane[] planes = frustum.Planes;
@@ -418,6 +462,7 @@ namespace NeoAxis
 			return GetObjects( planes, bounds, groupMask, mode, outputArray, outputArrayLength, out outputCount, extensionData );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		unsafe bool GetObjectsRay( ref GetObjectsInputData inputData, GetObjectsRayOutputData* outputArray, int outputArrayLength, out int outputCount )
 		{
 			outputCount = OctreeContainer_GetObjectsRay( nativeObject, ref inputData, outputArray, outputArrayLength );
@@ -427,6 +472,7 @@ namespace NeoAxis
 				return false;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe bool GetObjects( Ray ray, uint groupMask, ModeEnum mode, GetObjectsRayOutputData* outputArray, int outputArrayLength, out int outputCount )
 		{
 			GetObjectsInputData inputData = new GetObjectsInputData();
@@ -439,6 +485,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		unsafe bool GetObjects( ref GetObjectsInputData inputData, int[] outputArray, out int outputCount )
 		{
 			if( outputArray != null )
@@ -459,17 +506,25 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		unsafe int[] GetObjects( ref GetObjectsInputData inputData )
 		{
-			var tempArray = getObjectsTempArrays.Get();
+			const int tempSize = 4096;//!!!!
+			int* temp = null;
 			try
 			{
-				int count;
-				if( GetObjects( ref inputData, tempArray, out count ) )
+				temp = (int*)NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Utility, sizeof( int ) * tempSize );
+				if( GetObjects( ref inputData, temp, tempSize, out var count ) )
 				{
-					int[] array = new int[ count ];
-					Array.Copy( tempArray, 0, array, 0, count );
-					return array;
+					if( count > 0 )
+					{
+						int[] array = new int[ count ];
+						fixed( int* pArray = array )
+							NativeUtility.CopyMemory( pArray, temp, sizeof( int ) * count );
+						return array;
+					}
+					else
+						return Array.Empty<int>();
 				}
 				else
 				{
@@ -485,10 +540,68 @@ namespace NeoAxis
 			}
 			finally
 			{
-				getObjectsTempArrays.Free( tempArray );
+				NativeUtility.Free( temp );
 			}
+
+			//var tempArray = getObjectsTempArrays.Get();
+			//try
+			//{
+			//	int count;
+			//	if( GetObjects( ref inputData, temp, out count ) )
+			//	{
+			//		int[] array = new int[ count ];
+			//		Array.Copy( temp, 0, array, 0, count );
+			//		return array;
+			//	}
+			//	else
+			//	{
+			//		//create bigger array
+			//		int[] array = new int[ count ];
+			//		int count2;
+			//		zzzzz;
+			//		if( !GetObjects( ref inputData, array, out count2 ) )
+			//			Log.Fatal( "OctreeCointainer: GetObjects: Internal error: !GetObjects( ref inputData, array, out count2 )." );
+			//		zzzzz;
+			//		if( count != count2 )
+			//			Log.Fatal( "OctreeCointainer: GetObjects: Internal error: count != count2." );
+			//		return array;
+			//	}
+			//}
+			//finally
+			//{
+			//	getObjectsTempArrays.Free( temp );
+			//}
+
+
+			//var tempArray = getObjectsTempArrays.Get();
+			//try
+			//{
+			//	int count;
+			//	if( GetObjects( ref inputData, tempArray, out count ) )
+			//	{
+			//		int[] array = new int[ count ];
+			//		Array.Copy( tempArray, 0, array, 0, count );
+			//		return array;
+			//	}
+			//	else
+			//	{
+			//		//create bigger array
+			//		int[] array = new int[ count ];
+			//		int count2;
+			//		if( !GetObjects( ref inputData, array, out count2 ) )
+			//			Log.Fatal( "OctreeCointainer: GetObjects: Internal error: !GetObjects( ref inputData, array, out count2 )." );
+			//		if( count != count2 )
+			//			Log.Fatal( "OctreeCointainer: GetObjects: Internal error: count != count2." );
+			//		return array;
+			//	}
+			//}
+			//finally
+			//{
+			//	getObjectsTempArrays.Free( tempArray );
+			//}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool GetObjects( Bounds bounds, uint groupMask, ModeEnum mode, int[] outputArray, out int outputCount )
 		{
 			//fix invalid bounds
@@ -503,6 +616,7 @@ namespace NeoAxis
 			return GetObjects( ref inputData, outputArray, out outputCount );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int[] GetObjects( Bounds bounds, uint groupMask, ModeEnum mode )
 		{
 			//fix invalid bounds
@@ -517,6 +631,7 @@ namespace NeoAxis
 			return GetObjects( ref inputData );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool GetObjects( Sphere sphere, uint groupMask, ModeEnum mode, int[] outputArray, out int outputCount )
 		{
 			GetObjectsInputData inputData = new GetObjectsInputData();
@@ -531,6 +646,7 @@ namespace NeoAxis
 			return GetObjects( ref inputData, outputArray, out outputCount );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int[] GetObjects( Sphere sphere, uint groupMask, ModeEnum mode )
 		{
 			GetObjectsInputData inputData = new GetObjectsInputData();
@@ -545,6 +661,7 @@ namespace NeoAxis
 			return GetObjects( ref inputData );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool GetObjects( Box box, uint groupMask, ModeEnum mode, int[] outputArray, out int outputCount )
 		{
 			GetObjectsInputData inputData = new GetObjectsInputData();
@@ -555,6 +672,7 @@ namespace NeoAxis
 			return GetObjects( ref inputData, outputArray, out outputCount );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int[] GetObjects( Box box, uint groupMask, ModeEnum mode )
 		{
 			GetObjectsInputData inputData = new GetObjectsInputData();
@@ -565,6 +683,7 @@ namespace NeoAxis
 			return GetObjects( ref inputData );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool GetObjects( Frustum frustum, uint groupMask, ModeEnum mode, int[] outputArray, out int outputCount, IntPtr extensionData )
 		{
 			Plane[] planes = frustum.Planes;
@@ -591,6 +710,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int[] GetObjects( Frustum frustum, uint groupMask, ModeEnum mode, IntPtr extensionData )
 		{
 			Plane[] planes = frustum.Planes;
@@ -617,6 +737,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool GetObjects( Plane[] planes, uint groupMask, int[] outputArray, ModeEnum mode, out int outputCount )
 		{
 			GetObjectsInputData inputData = new GetObjectsInputData();
@@ -635,6 +756,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int[] GetObjects( Plane[] planes, uint groupMask, ModeEnum mode )
 		{
 			GetObjectsInputData inputData = new GetObjectsInputData();
@@ -653,6 +775,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool GetObjects( Plane[] planes, Bounds bounds, uint groupMask, ModeEnum mode, int[] outputArray, out int outputCount, IntPtr extensionData )
 		{
 			GetObjectsInputData inputData = new GetObjectsInputData();
@@ -673,6 +796,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int[] GetObjects( Plane[] planes, Bounds bounds, uint groupMask, ModeEnum mode, IntPtr extensionData )
 		{
 			GetObjectsInputData inputData = new GetObjectsInputData();
@@ -693,6 +817,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		unsafe bool GetObjectsRay( ref GetObjectsInputData inputData, GetObjectsRayOutputData[] outputArray, out int outputCount )
 		{
 			if( outputArray != null )
@@ -713,53 +838,100 @@ namespace NeoAxis
 			}
 		}
 
-		public bool GetObjects( Ray ray, uint groupMask, GetObjectsRayOutputData[] outputArray, out int outputCount )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public bool GetObjects( Ray ray, uint groupMask, ModeEnum mode, GetObjectsRayOutputData[] outputArray, out int outputCount )
 		{
 			GetObjectsInputData inputData = new GetObjectsInputData();
 			inputData.groupMask = groupMask;
 			inputData.type = GetObjectsTypes.Ray;
 			inputData.ray = ray;
+			inputData.mode = mode;
 			return GetObjectsRay( ref inputData, outputArray, out outputCount );
 		}
 
-		public GetObjectsRayOutputData[] GetObjects( Ray ray, uint groupMask )
+		[MethodImpl( (MethodImplOptions)512 )]
+		public GetObjectsRayOutputData[] GetObjects( Ray ray, uint groupMask, ModeEnum mode )
 		{
-			GetObjectsInputData inputData = new GetObjectsInputData();
-			inputData.groupMask = groupMask;
-			inputData.type = GetObjectsTypes.Ray;
-			inputData.ray = ray;
+			unsafe
+			{
+				GetObjectsInputData inputData = new GetObjectsInputData();
+				inputData.groupMask = groupMask;
+				inputData.type = GetObjectsTypes.Ray;
+				inputData.ray = ray;
+				inputData.mode = mode;
 
-			var tempArray = getObjectsRayTempArrays.Get();
-			try
-			{
-				int count;
-				if( GetObjectsRay( ref inputData, tempArray, out count ) )
+				const int tempSize = 1024;
+				GetObjectsRayOutputData* temp = null;
+				try
 				{
-					GetObjectsRayOutputData[] array = new GetObjectsRayOutputData[ count ];
-					Array.Copy( tempArray, 0, array, 0, count );
-					return array;
+					temp = (GetObjectsRayOutputData*)NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Utility, sizeof( GetObjectsRayOutputData ) * tempSize );
+					if( GetObjectsRay( ref inputData, temp, tempSize, out var count ) )
+					{
+						if( count > 0 )
+						{
+							var array = new GetObjectsRayOutputData[ count ];
+							fixed( GetObjectsRayOutputData* pArray = array )
+								NativeUtility.CopyMemory( pArray, temp, sizeof( GetObjectsRayOutputData ) * count );
+							return array;
+						}
+						else
+							return Array.Empty<GetObjectsRayOutputData>();
+					}
+					else
+					{
+						//create bigger array
+						GetObjectsRayOutputData[] array = new GetObjectsRayOutputData[ count ];
+						int count2;
+						if( !GetObjectsRay( ref inputData, array, out count2 ) )
+							Log.Fatal( "OctreeCointainer: GetObjects: Internal error: !GetObjects( ref inputData, array, out count2 )." );
+						if( count != count2 )
+							Log.Fatal( "OctreeCointainer: GetObjects: Internal error: count != count2." );
+						return array;
+					}
 				}
-				else
+				finally
 				{
-					//create bigger array
-					GetObjectsRayOutputData[] array = new GetObjectsRayOutputData[ count ];
-					int count2;
-					if( !GetObjectsRay( ref inputData, array, out count2 ) )
-						Log.Fatal( "OctreeCointainer: GetObjects: Internal error: !GetObjects( ref inputData, array, out count2 )." );
-					if( count != count2 )
-						Log.Fatal( "OctreeCointainer: GetObjects: Internal error: count != count2." );
-					return array;
+					NativeUtility.Free( temp );
 				}
 			}
-			finally
-			{
-				getObjectsRayTempArrays.Free( tempArray );
-			}
+
+			//GetObjectsInputData inputData = new GetObjectsInputData();
+			//inputData.groupMask = groupMask;
+			//inputData.type = GetObjectsTypes.Ray;
+			//inputData.ray = ray;
+
+			//var tempArray = getObjectsRayTempArrays.Get();
+			//try
+			//{
+			//	int count;
+			//	if( GetObjectsRay( ref inputData, tempArray, out count ) )
+			//	{
+			//		GetObjectsRayOutputData[] array = new GetObjectsRayOutputData[ count ];
+			//		Array.Copy( tempArray, 0, array, 0, count );
+			//		return array;
+			//	}
+			//	else
+			//	{
+			//		//create bigger array
+			//		GetObjectsRayOutputData[] array = new GetObjectsRayOutputData[ count ];
+			//		int count2;
+			//		if( !GetObjectsRay( ref inputData, array, out count2 ) )
+			//			Log.Fatal( "OctreeCointainer: GetObjects: Internal error: !GetObjects( ref inputData, array, out count2 )." );
+			//		zzzz;//может измениться из другого потока
+			//		if( count != count2 )
+			//			Log.Fatal( "OctreeCointainer: GetObjects: Internal error: count != count2." );
+			//		return array;
+			//	}
+			//}
+			//finally
+			//{
+			//	getObjectsRayTempArrays.Free( tempArray );
+			//}
 		}
 
-		public void GetStatistics( out int objectCount, out Bounds octreeBounds, out int octreeNodeCount )
+		public void GetStatistics( out int objectCount, out Bounds octreeBounds, out int octreeNodeCount, out double timeSinceLastFullRebuild )
 		{
-			OctreeContainer_GetStatistics( nativeObject, out objectCount, out octreeBounds, out octreeNodeCount );
+			OctreeContainer_GetStatistics( nativeObject, out objectCount, out octreeBounds, out octreeNodeCount, out timeSinceLastFullRebuild );
 		}
 
 		public void GetOctreeBoundsWithBoundsOfObjectsOutsideOctree( out Bounds bounds )
@@ -771,6 +943,11 @@ namespace NeoAxis
 		{
 			GetOctreeBoundsWithBoundsOfObjectsOutsideOctree( out var bounds );
 			return bounds;
+		}
+
+		public void SetEngineTimeToGetStatistics( double engineTime )
+		{
+			OctreeContainer_SetEngineTimeToGetStatistics( nativeObject, engineTime );
 		}
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,6 +6,8 @@ using System.Runtime.InteropServices;
 using System.Collections.ObjectModel;
 using System.Reflection;
 using Internal;
+using System.Diagnostics;
+using Microsoft.Win32;
 
 namespace NeoAxis
 {
@@ -15,6 +17,8 @@ namespace NeoAxis
 	public static class SystemSettings
 	{
 		static Platform platform;
+		static bool limitedDevice;
+		static bool mobileDevice;
 		static List<Vector2I> videoModes;
 
 		static NetRuntimeType netRuntime;
@@ -23,6 +27,10 @@ namespace NeoAxis
 		static float? gammaChanged;
 
 		static Dictionary<string, string> commandLineParameters;
+
+		static string cpuDescription;
+
+		//static bool? appContainer;
 
 		///////////////////////////////////////////
 
@@ -33,7 +41,8 @@ namespace NeoAxis
 			UWP,
 			Android,
 			iOS,
-			
+			Web,
+
 			//!!!!
 			Store,
 
@@ -192,6 +201,9 @@ namespace NeoAxis
 			else
 				platform = Platform.Windows;
 #endif
+
+			limitedDevice = CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS || CurrentPlatform == Platform.Web;
+			mobileDevice = CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS;
 
 			netRuntime = Type.GetType( "Mono.Runtime", false ) != null ? NetRuntimeType.Mono : NetRuntimeType.Net;
 		}
@@ -405,11 +417,11 @@ namespace NeoAxis
 		}
 
 		/// <summary>
-		/// Mobile device. Android, iOS.
+		/// Android, iOS, Web.
 		/// </summary>
 		public static bool LimitedDevice
 		{
-			get { return CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS; }
+			get { return limitedDevice; }
 		}
 
 		/// <summary>
@@ -417,8 +429,80 @@ namespace NeoAxis
 		/// </summary>
 		public static bool MobileDevice
 		{
-			get { return CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS; }
+			get { return mobileDevice; }
 		}
 
+		public static bool AppContainer
+		{
+			get; set;
+		}
+
+		//[DllImport( "kernel32.dll", SetLastError = true, ExactSpelling = true, CharSet = CharSet.Unicode )]
+		//static extern int GetPackageFamilyName( IntPtr hProcess, ref uint packageFamilyNameLength, [Optional] StringBuilder packageFamilyName );
+
+		//public static bool AppContainer
+		//{
+		//	get
+		//	{
+		//		if( appContainer == null )
+		//		{
+		//			appContainer = false;
+
+		//			try
+		//			{
+		//				uint nameLength = 255;
+		//				var familyName = new StringBuilder( 256 );
+		//				if( GetPackageFamilyName( Process.GetCurrentProcess().Handle, ref nameLength, familyName ) == 0 )
+		//				{
+		//					//!!!!
+		//					appContainer = true;
+		//				}
+		//			}
+		//			catch { }
+		//		}
+
+		//		return appContainer.Value;
+		//	}
+		//}
+
+		public static bool DarkMode
+		{
+			get
+			{
+#if !DEPLOY
+				if( CurrentPlatform == Platform.Windows )
+				{
+					try
+					{
+						int res = (int)Registry.GetValue( "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "AppsUseLightTheme", -1 );
+
+						if( res == 0 )
+							return true;
+					}
+					catch { }
+				}
+#endif
+
+				return false;
+			}
+		}
+
+		public static string CPUDescription
+		{
+			get
+			{
+				if( string.IsNullOrEmpty( cpuDescription ) )
+				{
+					cpuDescription = OgreNativeWrapper.GetGlobalParameter( "CPU_ID" );
+
+					unsafe
+					{
+						if( CurrentPlatform == Platform.Android && sizeof( IntPtr ) == 4 )
+							cpuDescription += " in 32-bit mode";
+					}
+				}
+				return cpuDescription;
+			}
+		}
 	}
 }

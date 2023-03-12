@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -26,7 +26,7 @@ namespace NeoAxis
 				if( data.InsideFrustum )
 				{
 					var obj = data.ObjectInSpace;
-					var center = obj.SpaceBounds.CalculatedBoundingBox.GetCenter();
+					var center = obj.SpaceBounds.BoundingBox.GetCenter();
 					var distanceSquared = ( center - viewport.CameraSettings.Position ).LengthSquared();
 					//var distanceSquared = ( obj.TransformV.Position - viewport.CameraSettings.Position ).LengthSquared();
 					objects.Add( (obj, (float)distanceSquared) );
@@ -50,10 +50,10 @@ namespace NeoAxis
 			{
 				var obj = item.Item1;
 
-				ColorValue color = ProjectSettings.Get.General.SceneShowObjectInSpaceBoundsColor;
-				viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+				ColorValue color = ProjectSettings.Get.Colors.SceneShowObjectInSpaceBoundsColor;
+				viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 
-				var bounds = obj.SpaceBounds.CalculatedBoundingBox;
+				var bounds = obj.SpaceBoundsOctreeOverride.HasValue ? obj.SpaceBoundsOctreeOverride.Value : obj.SpaceBounds.BoundingBox;
 
 				double lineThickness = 0;
 				//precalculate line thickness
@@ -74,60 +74,290 @@ namespace NeoAxis
 			var viewport = context.Owner;
 			var context2 = context.ObjectInSpaceRenderingContext;
 
-			if( ( scene.GetDisplayDevelopmentDataInThisApplication() && scene.DisplayPhysicalObjects ) ||
-				context2.selectedObjects.Count != 0 || context2.canSelectObjects.Count != 0 || context2.objectToCreate != null )
+			if( ( scene.GetDisplayDevelopmentDataInThisApplication() && scene.DisplayPhysicalObjects ) )//|| context2.selectedObjects.Count != 0 || context2.canSelectObjects.Count != 0 || context2.objectToCreate != null )
 			{
-				var objects = new List<(IPhysicalObject, float)>( frameData.ObjectInSpaces.Count );
-				for( int n = 0; n < frameData.ObjectInSpaces.Count; n++ )
+				//3D physics
+				if( scene.PhysicsWorld != null )
 				{
-					ref var data = ref frameData.ObjectInSpaces.Data[ n ];
 
-					if( data.InsideFrustum )
+					//!!!!проверять только те что во фрустуме?
+
+
+					var objects = new List<(object, float)>( scene.PhysicsWorld.allRigidBodies.Count );
 					{
-						var obj = data.ObjectInSpace;
-						if( obj is IPhysicalObject physicalObject )
+						foreach( var body in scene.PhysicsWorld.allRigidBodies.Values )
 						{
-							var center = obj.SpaceBounds.CalculatedBoundingBox.GetCenter();
+							body.GetBounds( out var bounds );
+							var center = bounds.GetCenter();
+
 							var distanceSquared = ( center - viewport.CameraSettings.Position ).LengthSquared();
-							//var distanceSquared = ( obj.TransformV.Position - viewport.CameraSettings.Position ).LengthSquared();
-							objects.Add( (physicalObject, (float)distanceSquared) );
+							objects.Add( (body, (float)distanceSquared) );
+						}
+
+						foreach( var c in scene.PhysicsWorld.allConstraints )
+						{
+							var distanceSquared = ( c.Position - viewport.CameraSettings.Position ).LengthSquared();
+							objects.Add( (c, (float)distanceSquared) );
+						}
+					}
+
+					CollectionUtility.MergeSort( objects, delegate ( (object, float) item1, (object, float) item2 )
+					{
+						var distanceSquared1 = item1.Item2;
+						var distanceSquared2 = item2.Item2;
+						if( distanceSquared1 < distanceSquared2 )
+							return -1;
+						if( distanceSquared1 > distanceSquared2 )
+							return 1;
+						return 0;
+					}, true );
+
+					int counterCount = 0;
+					int counterVertices = 0;
+
+					foreach( var item in objects )
+					{
+						var physicalObject = item.Item1;
+
+						var body = physicalObject as Scene.PhysicsWorldClass.Body;
+						if( body != null )
+						{
+							var owner = body.Owner;
+
+							//skip RigidBody because rendering doing from the component
+							if( owner as RigidBody != null )
+								continue;
+
+							int verticesRendered = 0;
+							body.RenderPhysicalObject( context, ref verticesRendered );
+							counterCount++;
+							counterVertices += verticesRendered;
+
+							if( counterCount >= context2.displayPhysicalObjectsMaxCount )
+								break;
+							if( counterVertices >= context2.displayPhysicalObjectsMaxVertices )
+								break;
+						}
+
+						var c = physicalObject as Scene.PhysicsWorldClass.Constraint;
+						if( c != null )
+						{
+							var owner = c.Owner;
+
+							//skip Constraint because rendering doing from the component
+							if( owner as Constraint_SixDOF != null )
+								continue;
+
+							int verticesRendered = 0;
+							c.RenderPhysicalObject( context, ref verticesRendered );
+							counterCount++;
+							counterVertices += verticesRendered;
+
+							if( counterCount >= context2.displayPhysicalObjectsMaxCount )
+								break;
+							if( counterVertices >= context2.displayPhysicalObjectsMaxVertices )
+								break;
+						}
+					}
+
+
+					//var bodies = new List<(Scene.PhysicsWorldClass.Body, float)>( scene.PhysicsWorld.allRigidBodies.Count );
+					//foreach( var body in scene.PhysicsWorld.allRigidBodies.Values )
+					//{
+					//	body.GetBounds( out var bounds );
+					//	var center = bounds.GetCenter();
+
+					//	var distanceSquared = ( center - viewport.CameraSettings.Position ).LengthSquared();
+					//	bodies.Add( (body, (float)distanceSquared) );
+					//}
+
+					//CollectionUtility.MergeSort( bodies, delegate ( (Scene.PhysicsWorldClass.Body, float) item1, (Scene.PhysicsWorldClass.Body, float) item2 )
+					//{
+					//	var distanceSquared1 = item1.Item2;
+					//	var distanceSquared2 = item2.Item2;
+					//	if( distanceSquared1 < distanceSquared2 )
+					//		return -1;
+					//	if( distanceSquared1 > distanceSquared2 )
+					//		return 1;
+					//	return 0;
+					//}, true );
+
+					//int counterCount = 0;
+					//int counterVertices = 0;
+
+					//foreach( var item in bodies )
+					//{
+					//	var body = item.Item1;
+					//	var obj = body.Owner;
+
+					//	//skip RigidBody because rendering doing from the component
+					//	if( obj as RigidBody != null )
+					//		continue;
+
+					//	//bool show = ( context.SceneDisplayDevelopmentDataInThisApplication && scene.DisplayPhysicalObjects ) || ( obj != null && ( context2.selectedObjects.Contains( obj ) || context2.canSelectObjects.Contains( obj ) || context2.objectToCreate == obj ) );
+					//	//if( show )
+					//	//{
+
+					//	int verticesRendered = 0;
+
+					//	//var rigidBody = obj as RigidBody;
+					//	//if( rigidBody != null )
+					//	//	rigidBody.RenderPhysicalObject( context, out verticesRendered );
+					//	//else
+					//	body.RenderPhysicalObject( context, ref verticesRendered );
+
+					//	counterCount++;
+					//	counterVertices += verticesRendered;
+
+					//	if( counterCount >= context2.displayPhysicalObjectsMaxCount )
+					//		break;
+					//	if( counterVertices >= context2.displayPhysicalObjectsMaxVertices )
+					//		break;
+
+					//	//}
+					//}
+				}
+
+
+				//2D physics
+				var physicsWorld2D = scene.Physics2DGetWorld( false );
+				if( physicsWorld2D != null )
+				{
+					int counterCount = 0;
+					int counterVertices = 0;
+
+					foreach( var body in physicsWorld2D.BodyList )
+					{
+						var body2 = body.Tag as RigidBody2D;
+						if( body2 != null )
+						{
+							int verticesRendered;
+							body2.RenderPhysicalObject( context, out verticesRendered );
+
+							counterCount++;
+							counterVertices += verticesRendered;
+
+							if( counterCount >= context2.displayPhysicalObjectsMaxCount )
+								break;
+							if( counterVertices >= context2.displayPhysicalObjectsMaxVertices )
+								break;
+						}
+					}
+
+					foreach( var joint in physicsWorld2D.JointList )
+					{
+						var constraint = joint.Tag as Constraint2D;
+						if( constraint != null )
+						{
+							int verticesRendered;
+							constraint.RenderPhysicalObject( context, out verticesRendered );
+
+							counterCount++;
+							counterVertices += verticesRendered;
+
+							if( counterCount >= context2.displayPhysicalObjectsMaxCount )
+								break;
+							if( counterVertices >= context2.displayPhysicalObjectsMaxVertices )
+								break;
 						}
 					}
 				}
-
-				CollectionUtility.MergeSort( objects, delegate ( (IPhysicalObject, float) item1, (IPhysicalObject, float) item2 )
-				{
-					var distanceSquared1 = item1.Item2;
-					var distanceSquared2 = item2.Item2;
-					if( distanceSquared1 < distanceSquared2 )
-						return -1;
-					if( distanceSquared1 > distanceSquared2 )
-						return 1;
-					return 0;
-				}, true );
-
-				int counterCount = 0;
-				int counterVertices = 0;
-
-				foreach( var item in objects )
-				{
-					var obj = item.Item1;
-
-					bool show = ( scene.GetDisplayDevelopmentDataInThisApplication() && scene.DisplayPhysicalObjects ) ||
-						context2.selectedObjects.Contains( obj ) || context2.canSelectObjects.Contains( obj ) || context2.objectToCreate == obj;
-					if( show )
-					{
-						obj.Render( context, out var verticesRendered );
-
-						counterCount++;
-						if( counterCount >= context2.displayPhysicalObjectsMaxCount )
-							break;
-						counterVertices += verticesRendered;
-						if( counterVertices >= context2.displayPhysicalObjectsMaxVertices )
-							break;
-					}
-				}
 			}
+
+
+			//if( ( scene.GetDisplayDevelopmentDataInThisApplication() && scene.DisplayPhysicalObjects ) ||
+			//	context2.selectedObjects.Count != 0 || context2.canSelectObjects.Count != 0 || context2.objectToCreate != null )
+			//{
+			//	var objects = new List<(IPhysicalObject, float)>( frameData.ObjectInSpaces.Count );
+			//	for( int n = 0; n < frameData.ObjectInSpaces.Count; n++ )
+			//	{
+			//		ref var data = ref frameData.ObjectInSpaces.Data[ n ];
+
+			//		if( data.InsideFrustum )
+			//		{
+			//			var obj = data.ObjectInSpace;
+
+			//			//IPhysicalObject
+			//			if( obj is IPhysicalObject physicalObject )
+			//			{
+			//				var center = obj.SpaceBounds.CalculatedBoundingBox.GetCenter();
+			//				var distanceSquared = ( center - viewport.CameraSettings.Position ).LengthSquared();
+			//				//var distanceSquared = ( obj.TransformV.Position - viewport.CameraSettings.Position ).LengthSquared();
+			//				objects.Add( (physicalObject, (float)distanceSquared) );
+			//			}
+
+			//			//GroupOfObjects
+			//			{
+			//				var sector = obj.AnyData as GroupOfObjects.Sector;
+			//				if( sector != null && sector.CollisionBodies.Count != 0 )
+			//				{
+			//					foreach( var rigidBodyItem in sector.CollisionBodies )
+			//					{
+			//						rigidBodyItem.GetBounds( out var bounds );
+			//						var center = bounds.GetCenter();
+			//						var distanceSquared = ( center - viewport.CameraSettings.Position ).LengthSquared();
+			//						objects.Add( (rigidBodyItem, (float)distanceSquared) );
+			//					}
+			//				}
+			//			}
+
+			//			//Terrain
+			//			{
+			//				var tile = obj.AnyData as Terrain.Tile;
+			//				if( tile != null && tile.SurfaceObjectsCollisionBodies.Count != 0 )
+			//				{
+			//					foreach( var rigidBodyItem in tile.SurfaceObjectsCollisionBodies )
+			//					{
+			//						rigidBodyItem.GetBounds( out var bounds );
+			//						var center = bounds.GetCenter();
+			//						var distanceSquared = ( center - viewport.CameraSettings.Position ).LengthSquared();
+			//						objects.Add( (rigidBodyItem, (float)distanceSquared) );
+			//					}
+			//				}
+			//			}
+			//		}
+			//	}
+
+			//	CollectionUtility.MergeSort( objects, delegate ( (IPhysicalObject, float) item1, (IPhysicalObject, float) item2 )
+			//	{
+			//		var distanceSquared1 = item1.Item2;
+			//		var distanceSquared2 = item2.Item2;
+			//		if( distanceSquared1 < distanceSquared2 )
+			//			return -1;
+			//		if( distanceSquared1 > distanceSquared2 )
+			//			return 1;
+			//		return 0;
+			//	}, true );
+
+			//	int counterCount = 0;
+			//	int counterVertices = 0;
+
+			//	foreach( var item in objects )
+			//	{
+			//		var obj = item.Item1;
+
+			//		bool show = ( context.SceneDisplayDevelopmentDataInThisApplication && scene.DisplayPhysicalObjects ) ||
+			//			context2.selectedObjects.Contains( obj ) || context2.canSelectObjects.Contains( obj ) || context2.objectToCreate == obj;
+			//		if( show )
+			//		{
+			//			int verticesRendered;
+
+			//			var rigidBodyItem = obj as Scene.PhysicsWorldClass.Body;
+			//			if( rigidBodyItem != null )
+			//				rigidBodyItem.RenderPhysicalObject( context, out verticesRendered );
+			//			else
+			//				obj.RenderPhysicalObject( context, out verticesRendered );
+
+			//			counterCount++;
+			//			counterVertices += verticesRendered;
+
+			//			if( counterCount >= context2.displayPhysicalObjectsMaxCount )
+			//				break;
+			//			if( counterVertices >= context2.displayPhysicalObjectsMaxVertices )
+			//				break;
+			//		}
+			//	}
+			//}
 		}
 
 		void SortObjectInSpaceLabels( ViewportRenderingContext context )
@@ -156,7 +386,7 @@ namespace NeoAxis
 			var currentImage = "Default";
 			var triangles = new List<CanvasRenderer.TriangleVertex>( context.Owner.LastFrameScreenLabels.Count * 6 );
 
-			var maxSize = ProjectSettings.Get.General.ScreenLabelMaxSize.Value;
+			var maxSize = ProjectSettings.Get.SceneEditor.ScreenLabelMaxSize.Value;
 			var add = "";
 			if( maxSize <= 24 )
 				add = @"24\";
@@ -217,7 +447,7 @@ namespace NeoAxis
 				if( label.Color.Alpha > 0 )
 				{
 					string imageName = "Default";
-					if( ProjectSettings.Get.General.ScreenLabelDisplayIcons && label.Object != null )
+					if( ProjectSettings.Get.SceneEditor.ScreenLabelDisplayIcons && label.Object != null )
 					{
 						var name = label.Object.GetScreenLabelInfo().LabelName;
 						if( !string.IsNullOrEmpty( name ) )

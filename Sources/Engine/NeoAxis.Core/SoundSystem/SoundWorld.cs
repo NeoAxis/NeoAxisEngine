@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,10 +7,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
-	//!!!!!threading всей либе
+	//!!!!!threading всей либе?
 
 	/// <summary>
 	/// Represents a sound system of the engine.
@@ -31,8 +32,10 @@ namespace NeoAxis
 		static List<SoundRealChannel> real3DChannels = new List<SoundRealChannel>();
 
 		//virtual channels
-		static internal List<SoundVirtualChannel> activeVirtual2DChannels = new List<SoundVirtualChannel>();
-		static internal List<SoundVirtualChannel> activeVirtual3DChannels = new List<SoundVirtualChannel>();
+		static internal ESet<SoundVirtualChannel> activeVirtual2DChannels = new ESet<SoundVirtualChannel>();
+		static internal ESet<SoundVirtualChannel> activeVirtual3DChannels = new ESet<SoundVirtualChannel>();
+		//static internal List<SoundVirtualChannel> activeVirtual2DChannels = new List<SoundVirtualChannel>();
+		//static internal List<SoundVirtualChannel> activeVirtual3DChannels = new List<SoundVirtualChannel>();
 
 		//sounds
 		static internal Dictionary<string, SoundData> sounds = new Dictionary<string, SoundData>( 64 );
@@ -50,6 +53,7 @@ namespace NeoAxis
 
 		static bool channelsUpdating;
 
+		//!!!!
 		////update after system pause. it need only for some bugged sound drivers
 		//static double startTimeAfterEnginePauseUpdate;
 
@@ -73,11 +77,11 @@ namespace NeoAxis
 			{
 				Shutdown();
 
-				instance = new NULLSoundWorld();
+				instance = new NullSoundWorld();
 				instance.InitLibrary( mainWindowHandle, maxReal2DChannels, maxReal3DChannels );
 			}
 
-			if( instance is NULLSoundWorld )
+			if( instance is NullSoundWorld )
 			{
 				maxReal2DChannels = 0;
 				maxReal3DChannels = 0;
@@ -91,12 +95,12 @@ namespace NeoAxis
 
 		static void CreateSoundWorldInstance()
 		{
-			if( string.Compare( EngineApp.InitSettings.SoundSystemDLL, "null", true ) != 0 )
+			if( string.Compare( EngineApp.InitSettings.SoundSystem, "null", true ) != 0 )
 			{
 				string fullPath = "";
-				if( !string.IsNullOrEmpty( EngineApp.InitSettings.SoundSystemDLL ) )
+				if( !string.IsNullOrEmpty( EngineApp.InitSettings.SoundSystem ) )
 				{
-					string fullPath2 = Path.Combine( VirtualFileSystem.Directories.Binaries, EngineApp.InitSettings.SoundSystemDLL );
+					string fullPath2 = Path.Combine( VirtualFileSystem.Directories.Binaries, EngineApp.InitSettings.SoundSystem );
 					if( File.Exists( fullPath2 ) )
 						fullPath = fullPath2;
 				}
@@ -210,7 +214,7 @@ namespace NeoAxis
 		{
 			while( sounds.Count != 0 )
 			{
-				Dictionary<String, SoundData>.Enumerator enumerator = sounds.GetEnumerator();
+				var enumerator = sounds.GetEnumerator();
 				enumerator.MoveNext();
 				enumerator.Current.Value.Dispose();
 			}
@@ -218,15 +222,21 @@ namespace NeoAxis
 
 		public static void StopAllChannels()
 		{
-			while( activeVirtual2DChannels.Count != 0 )
-				activeVirtual2DChannels[ activeVirtual2DChannels.Count - 1 ].Stop();
-			while( activeVirtual3DChannels.Count != 0 )
-				activeVirtual3DChannels[ activeVirtual3DChannels.Count - 1 ].Stop();
+			foreach( var channel in activeVirtual2DChannels.ToArray() )
+				channel.Stop();
+			foreach( var channel in activeVirtual3DChannels.ToArray() )
+				channel.Stop();
+
+			//while( activeVirtual2DChannels.Count != 0 )
+			//	activeVirtual2DChannels[ activeVirtual2DChannels.Count - 1 ].Stop();
+			//while( activeVirtual3DChannels.Count != 0 )
+			//	activeVirtual3DChannels[ activeVirtual3DChannels.Count - 1 ].Stop();
 		}
 
 		protected abstract void OnUpdateLibrary();
 
-		public static void Internal_Update( /*double time,*/ bool forceUpdateChannels = false )
+		[MethodImpl( (MethodImplOptions)512 )]
+		internal static void UpdateInternal( /*double time,*/ bool forceUpdateChannels = false )
 		{
 			//check deleted scene
 			if( listenerCurrentScene != null && listenerCurrentScene.Disposed )
@@ -237,10 +247,10 @@ namespace NeoAxis
 			instance.OnUpdateLibrary();
 
 			double delta = time - lastUpdateTime;
-			if( delta > .05f || forceUpdateChannels )
+			if( delta > 0.001 || forceUpdateChannels )//if( delta > 0.05 || forceUpdateChannels )
 				UpdateChannels( time );
 
-			//!!!!было
+			//!!!!
 			////update after engine pause. it need only for some bugged sound drivers.
 			//if( startTimeAfterEnginePauseUpdate != 0 )
 			//{
@@ -256,7 +266,7 @@ namespace NeoAxis
 			//}
 		}
 
-		//!!!!было
+		//!!!!
 		//internal static void _UpdateAfterEnginePause( double time )
 		//{
 		//	//update after system pause. it need only for some bugged sound drivers
@@ -335,7 +345,7 @@ namespace NeoAxis
 			if( newScene )
 			{
 				MasterChannelGroup.Volume = saveVolume;
-				Internal_Update( true );
+				UpdateInternal( true );
 			}
 		}
 
@@ -395,20 +405,23 @@ namespace NeoAxis
 			get { return real3DChannels.AsReadOnly(); }
 		}
 
-		public static ReadOnlyCollection<SoundVirtualChannel> ActiveVirtual2DChannels
+		public static ICollection<SoundVirtualChannel> ActiveVirtual2DChannels
 		{
 			get { return activeVirtual2DChannels.AsReadOnly(); }
 		}
 
-		public static ReadOnlyCollection<SoundVirtualChannel> ActiveVirtual3DChannels
+		public static ICollection<SoundVirtualChannel> ActiveVirtual3DChannels
 		{
 			get { return activeVirtual3DChannels.AsReadOnly(); }
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static SoundVirtualChannel SoundPlay( Scene attachedToScene, SoundData sound, SoundChannelGroup group, double priority, bool paused = false )
 		{
-			if( sound == null )
+			if( sound == null || BackendNull )
 				return null;
+
+			//!!!!
 
 			////!!!!так?
 			//if( ( sound.Mode & SoundModes.Loop ) == 0 && ( sound.Mode & SoundModes.Stream ) == 0 )
@@ -416,6 +429,8 @@ namespace NeoAxis
 			//	if( attachedToScene != null && listenerCurrentScene != attachedToScene )
 			//		return null;
 			//}
+
+			//!!!!
 
 			//!!!!было
 			////!!!!так?
@@ -439,6 +454,9 @@ namespace NeoAxis
 
 			//priority = MathEx.Saturate( priority );
 
+
+			//!!!!
+
 			//!!!!было
 			//if( ( sound.Mode & SoundModes.Stream ) != 0 )
 			//{
@@ -457,14 +475,16 @@ namespace NeoAxis
 			if( ( sound.Mode & SoundModes.Mode3D ) != 0 )
 			{
 				activeVirtual3DChannels.Add( virtualChannel );
-				if( activeVirtual3DChannels.Count > 2048 )
-					Log.Info( "SoundSystem: Quantity of active 3D channels > 2048." );
+
+				//if( activeVirtual3DChannels.Count > 2048 )
+				//	Log.Info( "SoundSystem: Quantity of active 3D channels > 2048." );
 			}
 			else
 			{
 				activeVirtual2DChannels.Add( virtualChannel );
-				if( activeVirtual2DChannels.Count > 2048 )
-					Log.Info( "SoundSystem: Quantity of active 2D channels > 2048." );
+
+				//if( activeVirtual2DChannels.Count > 2048 )
+				//	Log.Info( "SoundSystem: Quantity of active 2D channels > 2048." );
 			}
 
 			virtualChannel.SoundPlayInit( attachedToScene, sound, group );
@@ -476,15 +496,20 @@ namespace NeoAxis
 			return virtualChannel;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		internal void OnVirtualChannelUpdatePause( SoundVirtualChannel virtualChannel )
 		{
 			if( !virtualChannel.IsTotalPaused() )
 			{
-				if( lastUpdateTime != 0 )
-					UpdateChannels( lastUpdateTime );
+				lastUpdateTime = 0;
+				//slowly
+				//if( lastUpdateTime != 0 )
+				//	UpdateChannels( lastUpdateTime );
 			}
 			else
 			{
+				//!!!!slowly?
+
 				if( virtualChannel.currentRealChannel != null )
 				{
 					virtualChannel.currentRealChannel.PreDetachVirtualChannel();
@@ -494,6 +519,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static void UpdateChannels( double time )
 		{
 			if( channelsUpdating )
@@ -560,32 +586,23 @@ namespace NeoAxis
 
 		static Comparison<SoundVirtualChannel> virtualChannelsTempPriorityComparer = new Comparison<SoundVirtualChannel>( VirtualChannelsTempPriorityComparer );
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static int VirtualChannelsTempPriorityComparer( SoundVirtualChannel c1, SoundVirtualChannel c2 )
 		{
 			return c2.tempPriority.CompareTo( c1.tempPriority );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		static void UpdateChannels( double delta, bool update3DChannels )
 		{
-			List<SoundVirtualChannel> activeVirtualChannels;
-			List<SoundRealChannel> realChannels;
-			if( update3DChannels )
-			{
-				activeVirtualChannels = activeVirtual3DChannels;
-				realChannels = real3DChannels;
-			}
-			else
-			{
-				activeVirtualChannels = activeVirtual2DChannels;
-				realChannels = real2DChannels;
-			}
-
 			//update virtual channels time
 			if( delta != 0 )
 			{
-				for( int n = 0; n < activeVirtualChannels.Count; n++ )
+				List<SoundVirtualChannel> toStop = null;
+
+				var list = update3DChannels ? activeVirtual3DChannels : activeVirtual2DChannels;
+				foreach( var virtualChannel in list )
 				{
-					var virtualChannel = activeVirtualChannels[ n ];
 					if( !virtualChannel.IsTotalPaused() )
 					{
 						virtualChannel.time += delta * virtualChannel.pitch;
@@ -599,20 +616,52 @@ namespace NeoAxis
 							{
 								if( virtualChannel.currentRealChannel == null || virtualChannel.time >= sound.Length + .1f )
 								{
-									virtualChannel.Stop();
-									n--;
+									if( toStop == null )
+										toStop = new List<SoundVirtualChannel>();
+									toStop.Add( virtualChannel );
 								}
 							}
 						}
+
+						//if( ( sound.Mode & SoundModes.Loop ) == 0 )
+						//{
+						//	if( virtualChannel.currentRealChannel == null )
+						//	{
+						//		//!!!!
+						//		if( ( EngineApp.EngineTime - virtualChannel.startTime ) > virtualChannel.sound.Length * 2 )
+						//		{
+						//			if( toStop == null )
+						//				toStop = new List<SoundVirtualChannel>();
+						//			toStop.Add( virtualChannel );
+						//		}
+						//	}
+						//}
 					}
 				}
+
+				if( toStop != null )
+				{
+					foreach( var virtualChannel in toStop )
+						virtualChannel.Stop();
+				}
+			}
+
+			SoundVirtualChannel[] activeVirtualChannels;
+			List<SoundRealChannel> realChannels;
+			if( update3DChannels )
+			{
+				activeVirtualChannels = activeVirtual3DChannels.ToArray();
+				realChannels = real3DChannels;
+			}
+			else
+			{
+				activeVirtualChannels = activeVirtual2DChannels.ToArray();
+				realChannels = real2DChannels;
 			}
 
 			//calculate priority
 
-			//!!!!slowly. часто обновляется может
-
-			for( int n = 0; n < activeVirtualChannels.Count; n++ )
+			for( int n = 0; n < activeVirtualChannels.Length; n++ )
 			{
 				var virtualChannel = activeVirtualChannels[ n ];
 				var sound = virtualChannel.sound;
@@ -662,12 +711,12 @@ namespace NeoAxis
 				virtualChannel.tempPriority = priority;
 			}
 
-			//Sort by priority
-			CollectionUtility.SelectionSort( activeVirtualChannels, virtualChannelsTempPriorityComparer );
-			//ListUtils.MergeSort( activeVirtualChannels, virtualChannelsTempPriorityComparer );
+			//sort by priority
+			CollectionUtility.MergeSort( activeVirtualChannels, virtualChannelsTempPriorityComparer, true );
+			//CollectionUtility.SelectionSort( activeVirtualChannels, virtualChannelsTempPriorityComparer );
 
 			//remove virtual channels from real channels
-			for( int n = 0; n < activeVirtualChannels.Count; n++ )
+			for( int n = 0; n < activeVirtualChannels.Length; n++ )
 			{
 				var virtualChannel = activeVirtualChannels[ n ];
 				var realChannel = virtualChannel.currentRealChannel;
@@ -691,7 +740,7 @@ namespace NeoAxis
 					freeRealChannels.Enqueue( c );
 			}
 
-			for( int n = 0; n < activeVirtualChannels.Count; n++ )
+			for( int n = 0; n < activeVirtualChannels.Length; n++ )
 			{
 				//no free real channels
 				if( freeRealChannels.Count == 0 )
@@ -772,12 +821,246 @@ namespace NeoAxis
 			}
 		}
 
+
+		//[MethodImpl( (MethodImplOptions)512 )]
+		//static void UpdateChannels( double delta, bool update3DChannels )
+		//{
+		//	SoundVirtualChannel[] activeVirtualChannels;
+		//	List<SoundRealChannel> realChannels;
+		//	if( update3DChannels )
+		//	{
+		//		activeVirtualChannels = activeVirtual3DChannels.ToArray();
+		//		realChannels = real3DChannels;
+		//	}
+		//	else
+		//	{
+		//		activeVirtualChannels = activeVirtual2DChannels.ToArray();
+		//		realChannels = real2DChannels;
+		//	}
+
+		//	//update virtual channels time
+		//	if( delta != 0 )
+		//	{
+		//		for( int n = 0; n < activeVirtualChannels.Length; n++ )
+		//		{
+		//			var virtualChannel = activeVirtualChannels[ n ];
+		//			if( !virtualChannel.IsTotalPaused() )
+		//			{
+		//				virtualChannel.time += delta * virtualChannel.pitch;
+
+		//				var sound = virtualChannel.sound;
+		//				if( virtualChannel.time >= sound.Length )
+		//				{
+		//					if( ( sound.Mode & SoundModes.Loop ) != 0 )
+		//						virtualChannel.time -= sound.Length;
+		//					else
+		//					{
+		//						if( virtualChannel.currentRealChannel == null || virtualChannel.time >= sound.Length + .1f )
+		//						{
+		//							virtualChannel.Stop();
+		//							//!!!!new
+		//							//n--;
+		//							continue;
+		//						}
+		//					}
+		//				}
+
+		//				//!!!!
+		//				if( ( sound.Mode & SoundModes.Loop ) == 0 )
+		//				{
+		//					if( virtualChannel.currentRealChannel == null )
+		//					{
+
+		//						//!!!!
+
+		//						if( ( EngineApp.EngineTime - virtualChannel.startTime ) > virtualChannel.sound.Length * 2 )
+		//						{
+		//							virtualChannel.Stop();
+		//							continue;
+		//						}
+		//					}
+		//				}
+		//			}
+		//		}
+		//	}
+
+
+		//	//calculate priority
+
+		//	//!!!!slowly. часто обновляется может
+
+		//	for( int n = 0; n < activeVirtualChannels.Length; n++ )
+		//	{
+		//		var virtualChannel = activeVirtualChannels[ n ];
+		//		var sound = virtualChannel.sound;
+
+		//		double priority = 0;
+
+		//		if( virtualChannel.AttachedToScene == null || virtualChannel.AttachedToScene == listenerCurrentScene )
+		//		{
+		//			if( virtualChannel.GetTotalVolume() != 0 && !virtualChannel.IsTotalPaused() )
+		//			{
+		//				if( update3DChannels )
+		//				{
+		//					double distanceSqr = ( virtualChannel.position - listenerPosition ).LengthSquared();
+		//					priority = ( 100000000.0 - distanceSqr ) * ( virtualChannel.Priority + .00001 );
+		//					//priority += 1.0f / distanceSqr + virtualChannel.Priority * 10000;
+		//				}
+		//				else
+		//				{
+		//					//if( ( sound.Mode & SoundModes.Stream ) != 0 )
+		//					//	priority += 10;
+		//					priority = ( virtualChannel.Priority + .00001 ) * 10000000000;
+
+		//					//fix sorting jerking problem
+		//					priority += (double)sound.createIndex;
+		//				}
+
+		//				//if( ( sound.Mode & SoundModes.Mode3D ) == 0 )
+		//				//{
+		//				//	priority += 100000000;
+		//				//	if( ( sound.Mode & SoundModes.Stream ) != 0 )
+		//				//		priority += 100000000;
+		//				//}
+		//				//else
+		//				//{
+		//				//	double distanceSqr = ( virtualChannel.position - listenerPosition ).LengthSquared();
+
+		//				//	priority += ( 1000000.0 - distanceSqr ) + virtualChannel.priority * 10000;
+		//				//	//priority += 1.0f / distanceSqr + virtualChannel.Priority * 10000;
+		//				//}
+
+		//				////only for small fix sorting jerking problem at the DataBuffer and Streams
+		//				//if( sound.Name == null || ( sound.Mode & SoundModes.Stream ) != 0 )
+		//				//	priority += (double)sound.createIndex;
+		//			}
+		//		}
+
+		//		virtualChannel.tempPriority = priority;
+		//	}
+
+		//	//sort by priority
+		//	CollectionUtility.MergeSort( activeVirtualChannels, virtualChannelsTempPriorityComparer, true );
+		//	//CollectionUtility.SelectionSort( activeVirtualChannels, virtualChannelsTempPriorityComparer );
+
+		//	//remove virtual channels from real channels
+		//	for( int n = 0; n < activeVirtualChannels.Length; n++ )
+		//	{
+		//		var virtualChannel = activeVirtualChannels[ n ];
+		//		var realChannel = virtualChannel.currentRealChannel;
+
+		//		if( realChannel != null )
+		//		{
+		//			if( n >= realChannels.Count || virtualChannel.tempPriority == 0 )
+		//			{
+		//				realChannel.PreDetachVirtualChannel();
+		//				realChannel.currentVirtualChannel = null;
+		//				virtualChannel.currentRealChannel = null;
+		//			}
+		//		}
+		//	}
+
+		//	//bind virtual channels to real channels
+		//	var freeRealChannels = new Queue<SoundRealChannel>( realChannels.Count );
+		//	foreach( var c in realChannels )
+		//	{
+		//		if( c.CurrentVirtualChannel == null )
+		//			freeRealChannels.Enqueue( c );
+		//	}
+
+		//	for( int n = 0; n < activeVirtualChannels.Length; n++ )
+		//	{
+		//		//no free real channels
+		//		if( freeRealChannels.Count == 0 )
+		//			break;
+
+		//		var virtualChannel = activeVirtualChannels[ n ];
+		//		if( virtualChannel.currentRealChannel == null && virtualChannel.tempPriority != 0 )
+		//		{
+		//			var realChannel = freeRealChannels.Dequeue();
+
+		//			realChannel.currentVirtualChannel = virtualChannel;
+		//			virtualChannel.currentRealChannel = realChannel;
+		//			realChannel.PostAttachVirtualChannel();
+		//		}
+		//	}
+
+		//	////add virtual channels to real channels
+		//	//int currentRealChannelIndex = 0;
+
+		//	//for( int n = 0; n < activeVirtualChannels.Count; n++ )
+		//	//{
+		//	//	VirtualChannel virtualChannel = activeVirtualChannels[ n ];
+
+		//	//	if( currentRealChannelIndex >= realChannels.Count )
+		//	//		break;
+		//	//	if( virtualChannel.currentRealChannel != null )
+		//	//		continue;
+		//	//	if( virtualChannel.tempPriority == 0 )
+		//	//		continue;
+
+		//	//	if( virtualChannel.Time >= virtualChannel.Sound.Length )
+		//	//	{
+		//	//		if( ( virtualChannel.Sound.Mode & SoundModes.Loop ) == 0 )
+		//	//			continue;
+		//	//		else
+		//	//			virtualChannel.time -= virtualChannel.Sound.Length;
+		//	//	}
+
+		//	//	RealChannel realChannel = null;
+		//	//	{
+		//	//		while( realChannels[ currentRealChannelIndex ].CurrentVirtualChannel != null )
+		//	//		{
+		//	//			currentRealChannelIndex++;
+		//	//			if( currentRealChannelIndex >= realChannels.Count )
+		//	//				break;
+		//	//		}
+
+		//	//		if( currentRealChannelIndex < realChannels.Count )
+		//	//		{
+		//	//			realChannel = realChannels[ currentRealChannelIndex ];
+		//	//			currentRealChannelIndex++;
+		//	//		}
+		//	//	}
+
+		//	//	if( realChannel == null )
+		//	//		break;
+
+		//	//	if( realChannel.currentVirtualChannel != null )
+		//	//		Log.Fatal( "SoundWorld: UpdateChannels: realChannel.currentVirtualChannel != null." );
+
+		//	//	realChannel.currentVirtualChannel = virtualChannel;
+		//	//	virtualChannel.currentRealChannel = realChannel;
+		//	//	realChannel.PostAttachVirtualChannel();
+		//	//}
+
+		//	//update gain for 3d sound (calculate attenuation)
+		//	if( update3DChannels )
+		//	{
+		//		for( int n = 0; n < real3DChannels.Count; n++ )
+		//		{
+		//			SoundRealChannel realChannel = real3DChannels[ n ];
+		//			if( realChannel.currentVirtualChannel != null )
+		//			{
+		//				//!!!!slowly enter to critical section for each real channel?
+		//				realChannel.UpdateVolume();
+		//			}
+		//		}
+		//	}
+		//}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static SoundChannelGroup GetChannelGroup( string name )
 		{
 			for( int n = 0; n < channelGroups.Count; n++ )
 				if( channelGroups[ n ].Name == name )
 					return channelGroups[ n ];
 			return null;
+		}
+
+		public static bool BackendNull
+		{
+			get { return instance as NullSoundWorld != null; }
 		}
 	}
 }

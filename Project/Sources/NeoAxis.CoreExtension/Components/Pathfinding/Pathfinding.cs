@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -710,6 +710,7 @@ namespace NeoAxis
 					if( commandQueue.Count != 0 && commandThread == null )
 					{
 						commandThread = new Thread( ThreadFunction );
+						commandThread.IsBackground = true;
 						commandThread.Start();
 					}
 				}
@@ -1695,7 +1696,7 @@ namespace NeoAxis
 
 		protected override void OnEnabledInHierarchyChanged()
 		{
-			if( EnabledInHierarchy )
+			if( EnabledInHierarchyAndIsInstance )
 				instances.Add( this );
 
 			base.OnEnabledInHierarchyChanged();
@@ -1703,20 +1704,20 @@ namespace NeoAxis
 			var scene = ParentScene;
 			if( scene != null )
 			{
-				if( EnabledInHierarchy )
+				if( EnabledInHierarchyAndIsInstance )
 					scene.RenderEvent += Scene_RenderEvent;
 				else
 					scene.RenderEvent -= Scene_RenderEvent;
 			}
 
-			if( EnabledInHierarchy )
+			if( EnabledInHierarchyAndIsInstance )
 			{
 				firstOnUpdateAfterEnabledInHierarchy = true;
 				//AddCommandsToUpdateDynamicObstacles();
 				//DoForceUpdate( false );
 			}
 
-			if( !EnabledInHierarchy )
+			if( !EnabledInHierarchyAndIsInstance )
 				instances.Remove( this );
 		}
 
@@ -1732,7 +1733,7 @@ namespace NeoAxis
 				{
 					var type = geometry.Type.Value;
 					if( type == PathfindingGeometry.TypeEnum.BakedObstacle )
-						result.Add( geometry.SpaceBounds.CalculatedBoundingBox );
+						result.Add( geometry.SpaceBounds.BoundingBox );
 				}
 
 				foreach( var geometryTag in scene.GetComponents<PathfindingGeometryTag>( false, true, true ) )
@@ -1747,7 +1748,7 @@ namespace NeoAxis
 							var mesh = meshInSpace.Mesh.Value;
 							if( mesh != null && mesh.Result != null )
 							{
-								var b = meshInSpace.SpaceBounds.CalculatedBoundingBox;
+								var b = meshInSpace.SpaceBounds.BoundingBox;
 								if( !b.IsCleared() )
 									result.Add( b );
 							}
@@ -1801,7 +1802,7 @@ namespace NeoAxis
 			{
 				//Geometry
 				var geometry = obj as PathfindingGeometry;
-				if( geometry != null && ( !clipByBounds || geometry.SpaceBounds.CalculatedBoundingBox.ToRectangle().Intersects( clipBounds ) ) )
+				if( geometry != null && ( !clipByBounds || geometry.SpaceBounds.BoundingBox.ToRectangle().Intersects( clipBounds ) ) )
 				{
 					var type = geometry.Type.Value;
 					if( type == PathfindingGeometry.TypeEnum.BakedObstacle )
@@ -1820,7 +1821,7 @@ namespace NeoAxis
 					{
 						//MeshInSpace
 						var meshInSpace = geometryTag.Parent as MeshInSpace;
-						if( meshInSpace != null && ( !clipByBounds || meshInSpace.SpaceBounds.CalculatedBoundingBox.ToRectangle().Intersects( clipBounds ) ) )
+						if( meshInSpace != null && ( !clipByBounds || meshInSpace.SpaceBounds.BoundingBox.ToRectangle().Intersects( clipBounds ) ) )
 						{
 							var mesh = meshInSpace.Mesh.Value;
 							if( mesh != null && mesh.Result != null )
@@ -1844,7 +1845,7 @@ namespace NeoAxis
 						{
 							terrain.GetGeometryFromTiles( delegate ( SpaceBounds tileBounds, Vector3[] tileVertices, int[] tileIndices )
 							{
-								if( !clipByBounds || tileBounds.CalculatedBoundingBox.ToRectangle().Intersects( clipBounds ) )
+								if( !clipByBounds || tileBounds.BoundingBox.ToRectangle().Intersects( clipBounds ) )
 									result.Add( tileVertices, tileIndices, (byte)geometryTag.Area, clipByBounds, clipBounds );
 							} );
 						}
@@ -1929,7 +1930,7 @@ namespace NeoAxis
 
 			PrecompiledData = null;
 
-			if( !EnabledInHierarchy )
+			if( !EnabledInHierarchyAndIsInstance )
 			{
 				error = "The component is not enabled.";
 				return false;

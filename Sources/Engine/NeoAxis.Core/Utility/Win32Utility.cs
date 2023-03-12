@@ -1,12 +1,12 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+#if !DEPLOY
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-#if !DEPLOY
+using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
-#endif
 
 namespace NeoAxis
 {
@@ -15,7 +15,6 @@ namespace NeoAxis
 	/// </summary>
 	public static class Win32Utility
 	{
-#if !DEPLOY
 		[StructLayout( LayoutKind.Sequential )]
 		internal/*obfuscator*/ struct SHELLEXECUTEINFO
 		{
@@ -46,13 +45,11 @@ namespace NeoAxis
 
 		[DllImport( "shell32.dll", CharSet = CharSet.Unicode )]
 		internal/*obfuscator*/ static extern bool ShellExecuteEx( ref SHELLEXECUTEINFO lpExecInfo );
-#endif
 
 		//
 
 		public static void ShellExecuteEx( string verb, string realFileName )
 		{
-#if !DEPLOY
 			try
 			{
 				SHELLEXECUTEINFO info = new SHELLEXECUTEINFO();
@@ -67,10 +64,8 @@ namespace NeoAxis
 			catch( Exception )
 			{
 			}
-#endif
 		}
 
-#if !DEPLOY
 		public static Bitmap ResizeImage( Image sourceImage, int destWidth, int destHeight )
 		{
 			var toReturn = new Bitmap( destWidth, destHeight );
@@ -90,6 +85,23 @@ namespace NeoAxis
 
 			return toReturn;
 		}
-#endif
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public class Win32WindowWrapper : IWin32Window
+	{
+		IntPtr hwnd;
+
+		public Win32WindowWrapper( IntPtr handle )
+		{
+			hwnd = handle;
+		}
+
+		public IntPtr Handle
+		{
+			get { return hwnd; }
+		}
 	}
 }
+#endif

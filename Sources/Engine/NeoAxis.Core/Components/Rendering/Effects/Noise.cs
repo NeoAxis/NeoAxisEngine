@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -56,7 +56,7 @@ namespace NeoAxis
 		//double SeedRandomUpdateTime;
 
 		/// <summary>
-		/// If active, random noise will be generated.
+		/// When active random noise will be generated.
 		/// </summary>
 		[DefaultValue( false )]
 		public Reference<bool> SeedRandom
@@ -69,7 +69,7 @@ namespace NeoAxis
 		ReferenceField<bool> _seedRandom;
 
 
-		protected override void OnSetShaderParameters( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ImageComponent actualTexture, CanvasRenderer.ShaderItem shader )
+		protected override void OnSetShaderParameters( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ImageComponent actualTexture, CanvasRenderer.ShaderItem shader )
 		{
 			base.OnSetShaderParameters( context, frameData, actualTexture, shader );
 

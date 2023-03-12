@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -26,7 +26,7 @@ namespace Internal//NeoAxis
 				NumberFormatInfo nfi = new CultureInfo( "en-US", false ).NumberFormat;
 				nfi.NumberGroupSeparator = " ";
 
-				lines.Add( Translate( ".NET memory" ) + ": " + GC.GetTotalMemory( false ).ToString( "N0", nfi ) );
+				lines.Add( Translate( "Managed memory" ) + ": " + GC.GetTotalMemory( false ).ToString( "N0", nfi ) );
 
 				//!!!!пока не нужно
 				//{
@@ -38,7 +38,8 @@ namespace Internal//NeoAxis
 
 				{
 					NativeUtility.GetCRTStatistics( out var size, out var allocations );
-					lines.Add( Translate( "Native allocator actual memory used" ) + ": " + size.ToString( "N0", nfi ) );
+					lines.Add( Translate( "Native memory (engine memory allocator)" ) + ": " + size.ToString( "N0", nfi ) );
+					//lines.Add( Translate( "Native allocator actual memory used" ) + ": " + size.ToString( "N0", nfi ) );
 					//lines.Add( string.Format( "Native allocator CRT size: " + size.ToString( "N0", nfi ) ) );
 					//lines.Add( string.Format( "Native allocator CRT allocations: " + allocations.ToString( "N0", nfi ) ) );
 				}

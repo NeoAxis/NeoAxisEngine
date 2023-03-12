@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Runtime.InteropServices;
 using System.IO;
@@ -746,7 +746,7 @@ namespace NeoAxis
 				return "NoCompression";
 
 			//default implementation
-			if( size.X > 256 && size.Y > 256 && IsPowerOfTwo( (ulong)size.X ) && IsPowerOfTwo( (ulong)size.Y ) )
+			if( size.X >= 64 && size.Y >= 64 && IsPowerOfTwo( (ulong)size.X ) && IsPowerOfTwo( (ulong)size.Y ) )
 			{
 				if( DetectTextureType( data, size, format, out var hasAlpha, out var normalMap ) )
 				{

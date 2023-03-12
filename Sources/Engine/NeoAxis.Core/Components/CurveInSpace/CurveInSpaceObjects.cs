@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -484,19 +484,20 @@ namespace NeoAxis
 		public event Action<CurveInSpaceObjects> CollisionMaterialChanged;
 		ReferenceField<PhysicalMaterial> _collisionMaterial;
 
-		/// <summary>
-		/// The type of friction applied on the rigid body.
-		/// </summary>
-		[DefaultValue( PhysicalMaterial.FrictionModeEnum.Simple )]
-		[Category( "Physics" )]
-		public Reference<PhysicalMaterial.FrictionModeEnum> CollisionFrictionMode
-		{
-			get { if( _collisionFrictionMode.BeginGet() ) CollisionFrictionMode = _collisionFrictionMode.Get( this ); return _collisionFrictionMode.value; }
-			set { if( _collisionFrictionMode.BeginSet( ref value ) ) { try { CollisionFrictionModeChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionFrictionMode.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="CollisionFrictionMode"/> property value changes.</summary>
-		public event Action<CurveInSpaceObjects> CollisionFrictionModeChanged;
-		ReferenceField<PhysicalMaterial.FrictionModeEnum> _collisionFrictionMode = PhysicalMaterial.FrictionModeEnum.Simple;
+		//!!!!
+		///// <summary>
+		///// The type of friction applied on the rigid body.
+		///// </summary>
+		//[DefaultValue( PhysicalMaterial.FrictionModeEnum.Simple )]
+		//[Category( "Physics" )]
+		//public Reference<PhysicalMaterial.FrictionModeEnum> CollisionFrictionMode
+		//{
+		//	get { if( _collisionFrictionMode.BeginGet() ) CollisionFrictionMode = _collisionFrictionMode.Get( this ); return _collisionFrictionMode.value; }
+		//	set { if( _collisionFrictionMode.BeginSet( ref value ) ) { try { CollisionFrictionModeChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionFrictionMode.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="CollisionFrictionMode"/> property value changes.</summary>
+		//public event Action<CurveInSpaceObjects> CollisionFrictionModeChanged;
+		//ReferenceField<PhysicalMaterial.FrictionModeEnum> _collisionFrictionMode = PhysicalMaterial.FrictionModeEnum.Simple;
 
 		/// <summary>
 		/// The amount of friction applied on the rigid body.
@@ -513,49 +514,52 @@ namespace NeoAxis
 		public event Action<CurveInSpaceObjects> CollisionFrictionChanged;
 		ReferenceField<double> _collisionFriction = 0.5;
 
-		/// <summary>
-		/// The amount of directional friction applied on the rigid body.
-		/// </summary>
-		[DefaultValue( "1 1 1" )]
-		[Category( "Physics" )]
-		public Reference<Vector3> CollisionAnisotropicFriction
-		{
-			get { if( _collisionAnisotropicFriction.BeginGet() ) CollisionAnisotropicFriction = _collisionAnisotropicFriction.Get( this ); return _collisionAnisotropicFriction.value; }
-			set { if( _collisionAnisotropicFriction.BeginSet( ref value ) ) { try { CollisionAnisotropicFrictionChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionAnisotropicFriction.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="CollisionAnisotropicFriction"/> property value changes.</summary>
-		public event Action<CurveInSpaceObjects> CollisionAnisotropicFrictionChanged;
-		ReferenceField<Vector3> _collisionAnisotropicFriction = Vector3.One;
+		//!!!!
+		///// <summary>
+		///// The amount of directional friction applied on the rigid body.
+		///// </summary>
+		//[DefaultValue( "1 1 1" )]
+		//[Category( "Physics" )]
+		//public Reference<Vector3> CollisionAnisotropicFriction
+		//{
+		//	get { if( _collisionAnisotropicFriction.BeginGet() ) CollisionAnisotropicFriction = _collisionAnisotropicFriction.Get( this ); return _collisionAnisotropicFriction.value; }
+		//	set { if( _collisionAnisotropicFriction.BeginSet( ref value ) ) { try { CollisionAnisotropicFrictionChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionAnisotropicFriction.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="CollisionAnisotropicFriction"/> property value changes.</summary>
+		//public event Action<CurveInSpaceObjects> CollisionAnisotropicFrictionChanged;
+		//ReferenceField<Vector3> _collisionAnisotropicFriction = Vector3.One;
 
-		/// <summary>
-		/// The amount of friction applied when rigid body is spinning.
-		/// </summary>
-		[DefaultValue( 0.5 )]
-		[Range( 0, 1 )]
-		[Category( "Physics" )]
-		public Reference<double> CollisionSpinningFriction
-		{
-			get { if( _collisionSpinningFriction.BeginGet() ) CollisionSpinningFriction = _collisionSpinningFriction.Get( this ); return _collisionSpinningFriction.value; }
-			set { if( _collisionSpinningFriction.BeginSet( ref value ) ) { try { CollisionSpinningFrictionChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionSpinningFriction.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="CollisionSpinningFriction"/> property value changes.</summary>
-		public event Action<CurveInSpaceObjects> CollisionSpinningFrictionChanged;
-		ReferenceField<double> _collisionSpinningFriction = 0.5;
+		//!!!!
+		///// <summary>
+		///// The amount of friction applied when rigid body is spinning.
+		///// </summary>
+		//[DefaultValue( 0.5 )]
+		//[Range( 0, 1 )]
+		//[Category( "Physics" )]
+		//public Reference<double> CollisionSpinningFriction
+		//{
+		//	get { if( _collisionSpinningFriction.BeginGet() ) CollisionSpinningFriction = _collisionSpinningFriction.Get( this ); return _collisionSpinningFriction.value; }
+		//	set { if( _collisionSpinningFriction.BeginSet( ref value ) ) { try { CollisionSpinningFrictionChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionSpinningFriction.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="CollisionSpinningFriction"/> property value changes.</summary>
+		//public event Action<CurveInSpaceObjects> CollisionSpinningFrictionChanged;
+		//ReferenceField<double> _collisionSpinningFriction = 0.5;
 
-		/// <summary>
-		/// The amount of friction applied when rigid body is rolling.
-		/// </summary>
-		[DefaultValue( 0.5 )]
-		[Range( 0, 1 )]
-		[Category( "Physics" )]
-		public Reference<double> CollisionRollingFriction
-		{
-			get { if( _collisionRollingFriction.BeginGet() ) CollisionRollingFriction = _collisionRollingFriction.Get( this ); return _collisionRollingFriction.value; }
-			set { if( _collisionRollingFriction.BeginSet( ref value ) ) { try { CollisionRollingFrictionChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionRollingFriction.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="CollisionRollingFriction"/> property value changes.</summary>
-		public event Action<CurveInSpaceObjects> CollisionRollingFrictionChanged;
-		ReferenceField<double> _collisionRollingFriction = 0.5;
+		//!!!!
+		///// <summary>
+		///// The amount of friction applied when rigid body is rolling.
+		///// </summary>
+		//[DefaultValue( 0.5 )]
+		//[Range( 0, 1 )]
+		//[Category( "Physics" )]
+		//public Reference<double> CollisionRollingFriction
+		//{
+		//	get { if( _collisionRollingFriction.BeginGet() ) CollisionRollingFriction = _collisionRollingFriction.Get( this ); return _collisionRollingFriction.value; }
+		//	set { if( _collisionRollingFriction.BeginSet( ref value ) ) { try { CollisionRollingFrictionChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionRollingFriction.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="CollisionRollingFriction"/> property value changes.</summary>
+		//public event Action<CurveInSpaceObjects> CollisionRollingFrictionChanged;
+		//ReferenceField<double> _collisionRollingFriction = 0.5;
 
 		/// <summary>
 		/// The ratio of the final relative velocity to initial relative velocity of the rigid body after collision.
@@ -611,22 +615,24 @@ namespace NeoAxis
 						skip = true;
 					break;
 
-				case nameof( CollisionFrictionMode ):
-					if( !Collision || CollisionMaterial.Value != null )
-						skip = true;
-					break;
+				//!!!!
+				//case nameof( CollisionFrictionMode ):
+				//	if( !Collision || CollisionMaterial.Value != null )
+				//		skip = true;
+				//	break;
 
 				case nameof( CollisionFriction ):
 					if( !Collision || CollisionMaterial.Value != null )
 						skip = true;
 					break;
 
-				case nameof( CollisionRollingFriction ):
-				case nameof( CollisionSpinningFriction ):
-				case nameof( CollisionAnisotropicFriction ):
-					if( !Collision || CollisionFrictionMode.Value == PhysicalMaterial.FrictionModeEnum.Simple || CollisionMaterial.Value != null )
-						skip = true;
-					break;
+				//!!!!
+				//case nameof( CollisionRollingFriction ):
+				//case nameof( CollisionSpinningFriction ):
+				//case nameof( CollisionAnisotropicFriction ):
+				//	if( !Collision || CollisionFrictionMode.Value == PhysicalMaterial.FrictionModeEnum.Simple || CollisionMaterial.Value != null )
+				//		skip = true;
+				//	break;
 
 				case nameof( CollisionRestitution ):
 					if( !Collision || CollisionMaterial.Value != null )
@@ -641,7 +647,7 @@ namespace NeoAxis
 		{
 			base.OnEnabledInHierarchyChanged();
 
-			if( EnabledInHierarchy )
+			if( EnabledInHierarchyAndIsInstance )
 				UpdateObjects();
 			else
 				DestroyObjects();
@@ -649,7 +655,7 @@ namespace NeoAxis
 			var curve = Parent as CurveInSpace;
 			if( curve != null )
 			{
-				if( EnabledInHierarchy )
+				if( EnabledInHierarchyAndIsInstance )
 					curve.UpdateObjectsEvent += Curve_UpdateObjectsEvent;
 				else
 					curve.UpdateObjectsEvent -= Curve_UpdateObjectsEvent;
@@ -666,7 +672,7 @@ namespace NeoAxis
 
 		private void Curve_UpdateObjectsEvent( CurveInSpace sender )
 		{
-			if( EnabledInHierarchy )
+			if( EnabledInHierarchyAndIsInstance )
 				UpdateObjects();
 		}
 
@@ -769,7 +775,7 @@ namespace NeoAxis
 						var r = transform.Rotation.ToQuaternionF();
 						var s = transform.Scale.ToVector3F();
 
-						var obj = new GroupOfObjects.Object( groupOfObjectsElementIndex.Value, 0, 0, GroupOfObjects.Object.FlagsEnum.Enabled | GroupOfObjects.Object.FlagsEnum.Visible, p, r, s, Vector4F.Zero, Color, Vector4F.Zero, Vector4F.Zero );
+						var obj = new GroupOfObjects.Object( groupOfObjectsElementIndex.Value, 0, 0, GroupOfObjects.Object.FlagsEnum.Enabled | GroupOfObjects.Object.FlagsEnum.Visible, p, r, s, Vector4F.Zero, Color, Vector4F.Zero, Vector4F.Zero, 0 );
 
 						//!!!!может обновление сразу вызывается, тогда не круто
 						var objects = groupOfObjects.ObjectsAdd( &obj, 1 );
@@ -797,6 +803,8 @@ namespace NeoAxis
 
 				if( Collision )
 				{
+					//!!!!use BodyItem
+
 					RigidBody body;
 
 					var obj = this;
@@ -804,17 +812,23 @@ namespace NeoAxis
 					//!!!!slowly?
 
 					var collisionDefinition = mesh.GetComponent( "Collision Definition" ) as RigidBody;
+					if( collisionDefinition == null )
+						collisionDefinition = mesh?.Result.GetAutoCollisionDefinition();
+
 					if( collisionDefinition != null )
 					{
 						body = (RigidBody)collisionDefinition.Clone();
 						body.Enabled = false;
+						body.NetworkMode = NetworkModeEnum.False;
 						obj.AddComponent( body );
 
-						body.MotionType = RigidBody.MotionTypeEnum.Static;
+						body.MotionType = PhysicsMotionType.Static;
 					}
 					else
 					{
-						body = obj.CreateComponent<RigidBody>( enabled: false );
+						//!!!!need?
+
+						body = obj.CreateComponent<RigidBody>( enabled: false, networkMode: NetworkModeEnum.False );
 
 						var shape = body.CreateComponent<CollisionShape_Mesh>();
 						shape.Mesh = ReferenceUtility.MakeThisReference( shape, obj, "Mesh" );
@@ -865,7 +879,7 @@ namespace NeoAxis
 
 			DestroyObjects();
 
-			if( EnabledInHierarchy )
+			if( EnabledInHierarchyAndIsInstance )
 			{
 				var curve = Curve;
 				if( curve != null && ( Mesh.ReferenceSpecified || ObjectInSpace.ReferenceSpecified ) )
@@ -1015,11 +1029,13 @@ namespace NeoAxis
 		void UpdateCollisionMaterial( RigidBody body )
 		{
 			body.Material = CollisionMaterial;
-			body.MaterialFrictionMode = CollisionFrictionMode;
+			//!!!!
+			//body.MaterialFrictionMode = CollisionFrictionMode;
 			body.MaterialFriction = CollisionFriction;
-			body.MaterialAnisotropicFriction = CollisionAnisotropicFriction;
-			body.MaterialSpinningFriction = CollisionSpinningFriction;
-			body.MaterialRollingFriction = CollisionRollingFriction;
+			//!!!!
+			//body.MaterialAnisotropicFriction = CollisionAnisotropicFriction;
+			//body.MaterialSpinningFriction = CollisionSpinningFriction;
+			//body.MaterialRollingFriction = CollisionRollingFriction;
 			body.MaterialRestitution = CollisionRestitution;
 		}
 
@@ -1057,6 +1073,7 @@ namespace NeoAxis
 			{
 				//need set ShowInEditor = false before AddComponent
 				group = ComponentUtility.CreateComponent<GroupOfObjects>( null, false, false );
+				group.NetworkMode = NetworkModeEnum.False;
 				group.DisplayInEditor = false;
 				scene.AddComponent( group, -1 );
 				//var group = scene.CreateComponent<GroupOfObjects>();

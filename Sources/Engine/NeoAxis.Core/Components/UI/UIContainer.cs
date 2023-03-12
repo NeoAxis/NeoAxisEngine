@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -345,9 +345,9 @@ namespace NeoAxis
 			return CallSpecialInputDeviceEvent( e );
 		}
 
-		internal override void OnUpdate_Before( float delta )
+		internal override void OnUpdateBefore( float delta )
 		{
-			base.OnUpdate_Before( delta );
+			base.OnUpdateBefore( delta );
 
 			CheckCachedParameters();
 			UpdateCachedCoverControls();
@@ -480,7 +480,7 @@ namespace NeoAxis
 
 		public virtual void PlaySound( string name )
 		{
-			if( string.IsNullOrEmpty( name ) )
+			if( string.IsNullOrEmpty( name ) || SoundWorld.BackendNull )
 				return;
 
 			var mode = Transform3D != null ? SoundModes.Mode3D : 0;

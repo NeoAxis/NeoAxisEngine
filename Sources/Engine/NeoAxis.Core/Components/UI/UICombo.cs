@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -647,6 +647,18 @@ namespace NeoAxis
 		//	return base.OnMouseDown( button );
 		//}
 
+		public int SelectItem( string text )
+		{
+			for( int n = 0; n < Items.Count; n++ )
+			{
+				if( Items[ n ] == text )
+				{
+					SelectedIndex = n;
+					return n;
+				}
+			}
+			return -1;
+		}
 
 	}
 }

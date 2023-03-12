@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -95,21 +95,21 @@ namespace NeoAxis
 		static Vector2F[] ToVector2F( Vector2[] source )
 		{
 			if( source != null )
-				return MathUtility.ToVector2FArray( source );
+				return CollectionUtility.ToVector2F( source );
 			return null;
 		}
 
 		static Vector3F[] ToVector3F( Vector3[] source )
 		{
 			if( source != null )
-				return MathUtility.ToVector3FArray( source );
+				return CollectionUtility.ToVector3F( source );
 			return null;
 		}
 
 		static Vector4F[] ToVector4F( Vector4[] source )
 		{
 			if( source != null )
-				return MathUtility.ToVector4FArray( source );
+				return CollectionUtility.ToVector4F( source );
 			return null;
 		}
 

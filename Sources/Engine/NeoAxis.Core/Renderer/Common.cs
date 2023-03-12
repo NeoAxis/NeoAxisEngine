@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 
 namespace NeoAxis
@@ -156,13 +156,15 @@ namespace NeoAxis
 	{
 		InsideFrustum,
 		ShadowCasterOutsideFrustum,
+		GlobalIllumination,
 	}
 
 	[Flags]
 	public enum GpuBufferFlags
 	{
 		Dynamic = 1,
-		ComputeWrite = 2,
+		ComputeRead = 2,
+		ComputeWrite = 4,
 	}
 
 	public enum UnwrappedUVEnum
@@ -192,6 +194,60 @@ namespace NeoAxis
 		//Sphere,//Ellipsoid,
 		//Cylinder,
 		////Plane
+	}
+
+	public enum VoxelGridSizeEnum
+	{
+		_16,
+		_32,
+		_64,
+		_128,
+		//_256, it is too long to calculate
+		//to add 512 need to change more code (256 multiplier)
+	}
+
+	public enum VertexFormatEnum
+	{
+		Auto,
+		Basic,
+		Full,
+	}
+
+	[Flags]
+	public enum CutVolumeFlags
+	{
+		Invert = 1,
+		CutScene = 2,
+		CutShadows = 4,
+		CutSimple3DRenderer = 8,
+	}
+
+	//public enum MeshSimplificationMethod
+	//{
+	//	Clusters,
+	//	FastQuadric,
+	//}
+
+	//same as Bgfx.ComputeBufferAccess
+	/// <summary>
+	/// Describes access rights for a compute buffer.
+	/// </summary>
+	public enum ComputeBufferAccessEnum
+	{
+		/// <summary>
+		/// The buffer can only be read.
+		/// </summary>
+		Read,
+
+		/// <summary>
+		/// The buffer can only be written to.
+		/// </summary>
+		Write,
+
+		/// <summary>
+		/// The buffer can be read and written.
+		/// </summary>
+		ReadWrite
 	}
 
 }

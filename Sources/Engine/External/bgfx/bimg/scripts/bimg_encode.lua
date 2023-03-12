@@ -1,5 +1,5 @@
 --
--- Copyright 2010-2020 Branimir Karadzic. All rights reserved.
+-- Copyright 2010-2022 Branimir Karadzic. All rights reserved.
 -- License: https://github.com/bkaradzic/bx#license-bsd-2-clause
 --
 
@@ -7,11 +7,11 @@ project "bimg_encode"
 	kind "StaticLib"
 
 	includedirs {
-		path.join(BX_DIR, "include"),
 		path.join(BIMG_DIR, "include"),
 		path.join(BIMG_DIR, "3rdparty"),
 		path.join(BIMG_DIR, "3rdparty/nvtt"),
 		path.join(BIMG_DIR, "3rdparty/iqa/include"),
+		path.join(BIMG_DIR, "3rdparty/tinyexr/deps/miniz"),
 	}
 
 	files {
@@ -37,9 +37,24 @@ project "bimg_encode"
 		path.join(BIMG_DIR, "3rdparty/iqa/source/**.c"),
 	}
 
+	using_bx()
+
 	configuration { "linux-*" }
 		buildoptions {
 			"-fPIC",
+		}
+
+	configuration { "mingw* or linux* or osx*" }
+		buildoptions {
+			"-Wno-implicit-fallthrough",
+			"-Wno-shadow",
+			"-Wno-shift-negative-value",
+			"-Wno-undef",
+		}
+
+		buildoptions_cpp {
+			"-Wno-class-memaccess",
+			"-Wno-deprecated-copy",
 		}
 
 	configuration {}

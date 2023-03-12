@@ -21,7 +21,7 @@ USE OR OTHER DEALINGS IN THE SOFTWARE.
 using System;
 using System.Text;
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	/// <summary>
 	/// Fixed size vector of booleans

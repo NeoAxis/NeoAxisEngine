@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -126,12 +126,21 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
+		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture )
 		{
 			base.OnRender( context, frameData, ref actualTexture );
 
-			if( Intensity <= 0 || BlurFactor <= 0 )
+			if( Intensity <= 0 )
 				return;
+
+			var blurFactor = BlurFactor.Value;
+			var dof = Parent as RenderingEffect_DepthOfField;
+			if( dof != null )
+				blurFactor *= RenderingEffect_DepthOfField.GlobalBlurFactor;
+
+			if( blurFactor <= 0 )
+				return;
+
 
 			//blur
 			ImageComponent blurTexture;
@@ -140,7 +149,7 @@ namespace NeoAxis
 
 				var blurSettings = new RenderingPipeline_Basic.GaussianBlurSettings();
 				blurSettings.SourceTexture = actualTexture;
-				blurSettings.BlurFactor = BlurFactor;
+				blurSettings.BlurFactor = blurFactor;
 				blurSettings.DownscalingMode = DownscalingMode;
 				blurSettings.DownscalingValue = DownscalingValue;
 				blurSettings.StandardDeviation = StandardDeviation;

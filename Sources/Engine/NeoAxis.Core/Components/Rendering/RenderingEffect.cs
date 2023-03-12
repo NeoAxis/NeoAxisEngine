@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -49,14 +49,14 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		protected virtual void OnRender( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
+		protected virtual void OnRender( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture )
 		{
 		}
 
-		public delegate void RenderEventDelegate( RenderingEffect sender, ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture );
+		public delegate void RenderEventDelegate( RenderingEffect sender, ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture );
 		public event RenderEventDelegate RenderEvent;
 
-		public void Render( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
+		public void Render( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture )
 		{
 			OnRender( context, frameData, ref actualTexture );
 			RenderEvent?.Invoke( this, context, frameData, ref actualTexture );

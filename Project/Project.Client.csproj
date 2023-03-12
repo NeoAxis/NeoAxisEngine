@@ -1,0 +1,99 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputType>Library</OutputType>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>Binaries\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CodeAnalysisRuleSet />
+    <DefineConstants>TRACE;WINDOWS;CLIENT</DefineConstants>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>false</Optimize>
+    <OutputPath>Binaries\</OutputPath>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CodeAnalysisRuleSet />
+    <DefineConstants>TRACE;WINDOWS;CLIENT</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="Packages\**" />
+    <EmbeddedResource Remove="Sources\**" />
+    <EmbeddedResource Remove="User settings\**" />
+    <None Remove="Packages\**" />
+    <None Remove="Sources\**" />
+    <None Remove="User settings\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="NeoAxis.Core">
+      <HintPath>Binaries\NeoAxis.Core.dll</HintPath>
+      <SpecificVersion>false</SpecificVersion>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="NeoAxis.CoreExtension">
+      <HintPath>Binaries\NeoAxis.CoreExtension.dll</HintPath>
+      <SpecificVersion>false</SpecificVersion>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="System.ComponentModel.Primitives">
+      <HintPath>Binaries\System.ComponentModel.Primitives.dll</HintPath>
+      <Private>false</Private>
+      <SpecificVersion>false</SpecificVersion>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Assets\BoardGames\Games\Gomoku\GomokuAI.cs" />
+    <Compile Include="Assets\BoardGames\Scripts\GamePlace.cs" />
+    <Compile Include="Assets\BoardGames\Scripts\BoardGame.cs" />
+    <Compile Include="Assets\Base\Scripts\SimulationApp.cs" />
+    <Compile Include="Assets\Base\UI\Screens\MainMenuScreen.cs" />
+    <Compile Include="Assets\Base\UI\Screens\MenuWindow.cs" />
+    <Compile Include="Assets\Base\UI\Screens\OptionsWindow.cs" />
+    <Compile Include="Assets\Base\UI\Screens\ScenesWindow.cs" />
+    <Compile Include="Assets\Base\UI\Screens\PlayScreen.cs" />
+    <Compile Include="Assets\Base\UI\Screens\SplashScreen.cs" />
+    <Compile Include="Assets\Base\Scripts\ProjectAssembly.cs" />
+    <Compile Include="Assets\Base\UI\Styles\UIStyleEditor.cs" />
+    <Compile Include="Assets\Base\UI\Styles\UIStyleSimple.cs" />
+    <Compile Include="Assets\Base\UI\Windows\MessageBoxWindow.cs" />
+    <Compile Include="Assets\BoardGames\Games\Gomoku\Gomoku.cs" />
+    <Compile Include="Assets\Samples\Simple Game\SimpleGameGUI.cs" />
+    <Compile Include="Caches\CSharpScripts\CSharpScripts.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Assets\Base\WindowApp\WindowAppMainForm.cs" />
+    <Compile Include="Assets\Samples\Spaceship Game\SpaceshipGameGUI.cs" />
+    <Compile Include="Assets\Samples\Platform Game\PlatformGameGUI.cs" />
+    <Compile Include="Assets\BoardGames\Objects\Terminal\TerminalScreen.cs" />
+    <Compile Include="Assets\BoardGames\Objects\Terminal\Terminal.cs" />
+    <Compile Include="Assets\BoardGames\UI\BoardGameScreen.cs" />
+    <Compile Include="Assets\BoardGames\Objects\Chair\Chair.cs" />
+    <Compile Include="Assets\BoardGames\UI\BoardGamesSceneScreen.cs" />
+    <Compile Include="Assets\BoardGames\Games\Gomoku\GomokuScreen.cs" />
+    <Compile Include="Assets\BoardGames\UI\BoardGamesInGameScreen.cs" />
+    <Compile Include="Assets\Base\Scripts\Networking\SimulationAppClient.cs" />
+    <Compile Include="Assets\Base\Scripts\Networking\SimulationAppServer.cs" />
+    <Compile Include="Assets\Samples\Shooter\UI\ShooterInGameContextScreen.cs" />
+    <Compile Include="Assets\Samples\Shooter\UI\ShooterSceneScreen.cs" />
+    <Compile Include="Assets\Base\UI\Screens\MultiplayerJoinWindow.cs" />
+    <Compile Include="Assets\Base\UI\Screens\MultiplayerCreateWindow.cs" />
+    <Compile Include="Assets\Base\Scripts\Networking\RunServer.cs" />
+    <Compile Include="Assets\Base\Scripts\Networking\NetworkLogic.cs" />
+    <Compile Include="Assets\Samples\Shooter\Scripts\ShooterNetworkLogic.cs" />
+    <Compile Include="Assets\Base\Scripts\Networking\ClientUtility.cs" />
+    <Compile Include="Assets\Samples\Shooter\Scripts\ShooterCommon.cs" />
+    <Compile Include="Assets\BoardGames\Scripts\BoardGamesNetworkLogic.cs" />
+    <Compile Include="Assets\Base\UI\Screens\AvatarScreen.cs" />
+    <Compile Include="Assets\Base\UI\Screens\BasicSceneScreen.cs" />
+    <Compile Include="Assets\Base\UI\Screens\EntranceScreen.cs" />
+    <Compile Include="Assets\Base\UI\Screens\InGameContextScreen.cs" />
+  </ItemGroup>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="if EXIST &quot;$(ProjectDir)Project.csproj&quot; ( if EXIST &quot;$(ProjectDir)Binaries\NeoAxis.Editor.exe&quot; ( &quot;$(ProjectDir)Binaries\NeoAxis.Editor.exe&quot; -platformProjectPatch &quot;$(ProjectDir)Project.Client.csproj&quot; -baseProject &quot;$(ProjectDir)Project.csproj&quot; ) )" />
+  </Target>
+</Project>

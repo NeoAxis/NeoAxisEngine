@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,7 +9,7 @@ using NeoAxis.Editor;
 
 namespace NeoAxis.Addon.ExampleEditorEngineGUI
 {
-	[AddToResourcesWindow( @"Addons\Example Editor Canvas" )]
+	[AddToResourcesWindow( @"Addons\Examples\Example Editor Canvas" )]
 	[EditorControl( typeof( ExampleEditorCanvasEditor ) )]
 	public class ExampleEditorCanvas : Component
 	{

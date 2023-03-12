@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -7,9 +7,6 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.IO;
 using System.Drawing.Design;
-using Internal.BulletSharp;
-using Internal.BulletSharp.Math;
-using Internal.BulletSharp.SoftBody;
 
 namespace NeoAxis
 {
@@ -22,11 +19,12 @@ namespace NeoAxis
 		//!!!!так? что с пересечением имен? или делать не чилдом?
 		const string createMeshName = "Mesh Created";
 
-		Internal.BulletSharp.SoftBody.SoftBody softBody;
+		//!!!!
+		//Internal.BulletSharp.SoftBody.SoftBody softBody;
 		Mesh.CompiledData usedMeshDataWhenInitialized;
-		Matrix4 actualTransform;
+		//!!!!Matrix4 actualTransform;
 
-		bool updatePropertiesWithoutUpdatingBody;
+		//!!!!bool updatePropertiesWithoutUpdatingBody;
 		bool duringCreateDestroy;
 
 		Vector3F[] processedVertices;
@@ -35,7 +33,7 @@ namespace NeoAxis
 		int[] processedTrianglesToSourceIndex;
 
 		Vector3F[] simulatedVertices;
-		//Vec3F[] simulatedVerticesNormals;
+		////Vec3F[] simulatedVerticesNormals;
 
 		/////////////////////////////////////////
 
@@ -263,8 +261,9 @@ namespace NeoAxis
 					try
 					{
 						MassChanged?.Invoke( this );
-						if( softBody != null )
-							softBody.SetTotalMass( value, MassFromFaces );
+						//!!!!
+						//if( softBody != null )
+						//	softBody.SetTotalMass( value, MassFromFaces );
 					}
 					finally { _mass.EndSet(); }
 				}
@@ -293,8 +292,9 @@ namespace NeoAxis
 					try
 					{
 						MassFromFacesChanged?.Invoke( this );
-						if( softBody != null )
-							softBody.SetTotalMass( Mass, value );
+						//!!!!
+						//if( softBody != null )
+						//	softBody.SetTotalMass( Mass, value );
 					}
 					finally { _massFromFaces.EndSet(); }
 				}
@@ -321,8 +321,9 @@ namespace NeoAxis
 					try
 					{
 						DampingChanged?.Invoke( this );
-						if( softBody != null )
-							softBody.Cfg.Damping = value;
+						//!!!!
+						//if( softBody != null )
+						//	softBody.Cfg.Damping = value;
 					}
 					finally { _damping.EndSet(); }
 				}
@@ -355,8 +356,9 @@ namespace NeoAxis
 					try
 					{
 						PressureChanged?.Invoke( this );
-						if( softBody != null )
-							softBody.Cfg.Pressure = value;
+						//!!!!
+						//if( softBody != null )
+						//	softBody.Cfg.Pressure = value;
 					}
 					finally { _pressure.EndSet(); }
 				}
@@ -383,8 +385,9 @@ namespace NeoAxis
 					try
 					{
 						DragChanged?.Invoke( this );
-						if( softBody != null )
-							softBody.Cfg.Drag = value;
+						//!!!!
+						//if( softBody != null )
+						//	softBody.Cfg.Drag = value;
 					}
 					finally { _drag.EndSet(); }
 				}
@@ -411,8 +414,9 @@ namespace NeoAxis
 					try
 					{
 						LiftChanged?.Invoke( this );
-						if( softBody != null )
-							softBody.Cfg.Lift = value;
+						//!!!!
+						//if( softBody != null )
+						//	softBody.Cfg.Lift = value;
 					}
 					finally { _lift.EndSet(); }
 				}
@@ -421,6 +425,17 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="Lift"/> property value changes.</summary>
 		public event Action<SoftBody> LiftChanged;
 		ReferenceField<double> _lift;
+
+		public enum AeroModel
+		{
+			VertexPoint,
+			VertexTwoSided,
+			VertexTwoSidedLiftDrag,
+			VertexOneSided,
+			FaceTwoSided,
+			FaceTwoSidedLiftDrag,
+			FaceOneSided
+		}
 
 		/// <summary>
 		/// The aero model of the soft body.
@@ -469,8 +484,9 @@ namespace NeoAxis
 					try
 					{
 						ShapeMatchingChanged?.Invoke( this );
-						if( softBody != null )
-							softBody.SetPose( VolumeMatching, value );
+						//!!!!
+						//if( softBody != null )
+						//	softBody.SetPose( VolumeMatching, value );
 					}
 					finally { _shapeMatching.EndSet(); }
 				}
@@ -499,8 +515,8 @@ namespace NeoAxis
 					{
 						ShapeCoefficientChanged?.Invoke( this );
 						//!!!!
-						if( softBody != null )
-							softBody.Cfg.PoseMatching = value;
+						//if( softBody != null )
+						//	softBody.Cfg.PoseMatching = value;
 					}
 					finally { _shapeCoefficient.EndSet(); }
 				}
@@ -526,8 +542,9 @@ namespace NeoAxis
 					try
 					{
 						VolumeMatchingChanged?.Invoke( this );
-						if( softBody != null )
-							softBody.SetPose( value, ShapeMatching );
+						//!!!!
+						//if( softBody != null )
+						//	softBody.SetPose( value, ShapeMatching );
 					}
 					finally { _volumeMatching.EndSet(); }
 				}
@@ -555,8 +572,9 @@ namespace NeoAxis
 					try
 					{
 						VolumeCoefficientChanged?.Invoke( this );
-						if( softBody != null )
-							softBody.Cfg.VolumeConversation = value;
+						//!!!!
+						//if( softBody != null )
+						//	softBody.Cfg.VolumeConversation = value;
 					}
 					finally { _volumeCoefficient.EndSet(); }
 				}
@@ -583,8 +601,9 @@ namespace NeoAxis
 					try
 					{
 						MaxVolumeRatioChanged?.Invoke( this );
-						if( softBody != null )
-							softBody.Cfg.MaxVolume = value;
+						//!!!!
+						//if( softBody != null )
+						//	softBody.Cfg.MaxVolume = value;
 					}
 					finally { _maxVolumeRatio.EndSet(); }
 				}
@@ -613,8 +632,9 @@ namespace NeoAxis
 					try
 					{
 						MaterialChanged?.Invoke( this );
-						if( softBody != null )
-							SetMaterial( softBody );
+						//!!!!
+						//if( softBody != null )
+						//	SetMaterial( softBody );
 					}
 					finally { _material.EndSet(); }
 				}
@@ -642,8 +662,9 @@ namespace NeoAxis
 					try
 					{
 						MaterialFrictionChanged?.Invoke( this );
-						if( softBody != null && Material.Value == null )
-							softBody.Cfg.DynamicFriction = value;
+						//!!!!
+						//if( softBody != null && Material.Value == null )
+						//	softBody.Cfg.DynamicFriction = value;
 					}
 					finally { _materialFriction.EndSet(); }
 				}
@@ -670,12 +691,13 @@ namespace NeoAxis
 					try
 					{
 						MaterialLinearStiffnessChanged?.Invoke( this );
-						if( softBody != null && Material.Value == null )
-						{
-							//!!!!пока один материал. везде так
-							if( softBody.Materials[ 0 ] != null )
-								softBody.Materials[ 0 ].LinearStiffness = value;
-						}
+						//!!!!
+						//if( softBody != null && Material.Value == null )
+						//{
+						//	//!!!!пока один материал. везде так
+						//	if( softBody.Materials[ 0 ] != null )
+						//		softBody.Materials[ 0 ].LinearStiffness = value;
+						//}
 					}
 					finally { _materialLinearStiffness.EndSet(); }
 				}
@@ -702,11 +724,12 @@ namespace NeoAxis
 					try
 					{
 						MaterialAngularStiffnessChanged?.Invoke( this );
-						if( softBody != null && Material.Value == null )
-						{
-							if( softBody.Materials[ 0 ] != null )
-								softBody.Materials[ 0 ].AngularStiffness = value;
-						}
+						//!!!!
+						//if( softBody != null && Material.Value == null )
+						//{
+						//	if( softBody.Materials[ 0 ] != null )
+						//		softBody.Materials[ 0 ].AngularStiffness = value;
+						//}
 					}
 					finally { _materialAngularStiffness.EndSet(); }
 				}
@@ -733,11 +756,12 @@ namespace NeoAxis
 					try
 					{
 						MaterialVolumeStiffnessChanged?.Invoke( this );
-						if( softBody != null && Material.Value == null )
-						{
-							if( softBody.Materials[ 0 ] != null )
-								softBody.Materials[ 0 ].VolumeStiffness = value;
-						}
+						//!!!!
+						//if( softBody != null && Material.Value == null )
+						//{
+						//	if( softBody.Materials[ 0 ] != null )
+						//		softBody.Materials[ 0 ].VolumeStiffness = value;
+						//}
 					}
 					finally { _materialVolumeStiffness.EndSet(); }
 				}
@@ -767,8 +791,9 @@ namespace NeoAxis
 					try
 					{
 						RigidContactHardnessChanged?.Invoke( this );
-						if( softBody != null )
-							softBody.Cfg.RigidContactHardness = value;
+						//!!!!
+						//if( softBody != null )
+						//	softBody.Cfg.RigidContactHardness = value;
 					}
 					finally { _rigidContactHardness.EndSet(); }
 				}
@@ -795,9 +820,9 @@ namespace NeoAxis
 					try
 					{
 						SoftRigidContactHardnessChanged?.Invoke( this );
-
-						if( softBody != null )
-							softBody.Cfg.SoftRigidHardness = value;
+						//!!!!
+						//if( softBody != null )
+						//	softBody.Cfg.SoftRigidHardness = value;
 					}
 					finally { _softRigidContactHardness.EndSet(); }
 				}
@@ -824,8 +849,9 @@ namespace NeoAxis
 					try
 					{
 						KineticContactHardnessChanged?.Invoke( this );
-						if( softBody != null )
-							softBody.Cfg.KineticContactHardness = value;
+						//!!!!
+						//if( softBody != null )
+						//	softBody.Cfg.KineticContactHardness = value;
 					}
 					finally { _kineticContactHardness.EndSet(); }
 				}
@@ -852,8 +878,9 @@ namespace NeoAxis
 					try
 					{
 						SoftRigidImpulseSplitChanged?.Invoke( this );
-						if( softBody != null )
-							softBody.Cfg.SoftRigidImpulseSplit = value;
+						//!!!!
+						//if( softBody != null )
+						//	softBody.Cfg.SoftRigidImpulseSplit = value;
 					}
 					finally { _softRigidImpulseSplit.EndSet(); }
 				}
@@ -880,8 +907,9 @@ namespace NeoAxis
 					try
 					{
 						SoftSoftImpulseSplitChanged?.Invoke( this );
-						if( softBody != null )
-							softBody.Cfg.SoftSoftImpulseSplit = value;
+						//!!!!
+						//if( softBody != null )
+						//	softBody.Cfg.SoftSoftImpulseSplit = value;
 					}
 					finally { _softSoftImpulseSplit.EndSet(); }
 				}
@@ -908,8 +936,9 @@ namespace NeoAxis
 					try
 					{
 						SoftKineticImpulseSplitChanged?.Invoke( this );
-						if( softBody != null )
-							softBody.Cfg.SoftKineticImpulseSplit = value;
+						//!!!!
+						//if( softBody != null )
+						//	softBody.Cfg.SoftKineticImpulseSplit = value;
 					}
 					finally { _softKineticImpulseSplit.EndSet(); }
 				}
@@ -936,8 +965,9 @@ namespace NeoAxis
 					try
 					{
 						SoftKineticContactHardnessChanged?.Invoke( this );
-						if( softBody != null )
-							softBody.Cfg.SoftKineticHardness = value;
+						//!!!!
+						//if( softBody != null )
+						//	softBody.Cfg.SoftKineticHardness = value;
 					}
 					finally { _softKineticContactHardness.EndSet(); }
 				}
@@ -964,8 +994,9 @@ namespace NeoAxis
 					try
 					{
 						SoftSoftContactHardnessChanged?.Invoke( this );
-						if( softBody != null )
-							softBody.Cfg.SoftSoftHardness = value;
+						//!!!!
+						//if( softBody != null )
+						//	softBody.Cfg.SoftSoftHardness = value;
 					}
 					finally { _softSoftContactHardness.EndSet(); }
 				}
@@ -992,8 +1023,9 @@ namespace NeoAxis
 					try
 					{
 						SoftContactHardnessChanged?.Invoke( this );
-						if( softBody != null )
-							softBody.Cfg.SoftContactHardness = value;
+						//!!!!
+						//if( softBody != null )
+						//	softBody.Cfg.SoftContactHardness = value;
 					}
 					finally { _softContactHardness.EndSet(); }
 				}
@@ -1021,8 +1053,9 @@ namespace NeoAxis
 					try
 					{
 						AnchorContactHardnessChanged?.Invoke( this );
-						if( softBody != null )
-							softBody.Cfg.AnchorHardness = value;
+						//!!!!
+						//if( softBody != null )
+						//	softBody.Cfg.AnchorHardness = value;
 					}
 					finally { _anchorContactHardness.EndSet(); }
 				}
@@ -1051,8 +1084,9 @@ namespace NeoAxis
 					try
 					{
 						PositionIterationsChanged?.Invoke( this );
-						if( softBody != null )
-							softBody.Cfg.PositionIterations = value;
+						//!!!!
+						//if( softBody != null )
+						//	softBody.Cfg.PositionIterations = value;
 					}
 					finally { _positionIterations.EndSet(); }
 				}
@@ -1079,9 +1113,9 @@ namespace NeoAxis
 					try
 					{
 						VelocityIterationsChanged?.Invoke( this );
-
-						if( softBody != null )
-							softBody.Cfg.VelocityIterations = value;
+						//!!!!
+						//if( softBody != null )
+						//	softBody.Cfg.VelocityIterations = value;
 					}
 					finally { _velocityIterations.EndSet(); }
 				}
@@ -1108,9 +1142,9 @@ namespace NeoAxis
 					try
 					{
 						DriftIterationsChanged?.Invoke( this );
-
-						if( softBody != null )
-							softBody.Cfg.DriftIterations = value;
+						//!!!!
+						//if( softBody != null )
+						//	softBody.Cfg.DriftIterations = value;
 					}
 					finally { _driftIterations.EndSet(); }
 				}
@@ -1137,9 +1171,9 @@ namespace NeoAxis
 					try
 					{
 						ClusterIterationsChanged?.Invoke( this );
-
-						if( softBody != null )
-							softBody.Cfg.ClusterIterations = value;
+						//!!!!
+						//if( softBody != null )
+						//	softBody.Cfg.ClusterIterations = value;
 					}
 					finally { _clusterIterations.EndSet(); }
 				}
@@ -1168,8 +1202,9 @@ namespace NeoAxis
 					try
 					{
 						CollisionMarginChanged?.Invoke( this );
-						if( softBody != null )
-							softBody.CollisionShape.Margin = value;
+						//!!!!
+						//if( softBody != null )
+						//	softBody.CollisionShape.Margin = value;
 					}
 					finally { _collisionMargin.EndSet(); }
 				}
@@ -1197,8 +1232,9 @@ namespace NeoAxis
 					{
 						VelocityCorrectionFactorChanged?.Invoke( this );
 
-						if( softBody?.Cfg != null )
-							softBody.Cfg.VelocityCorrectionFactor = value;
+						//!!!!
+						//if( softBody?.Cfg != null )
+						//	softBody.Cfg.VelocityCorrectionFactor = value;
 					}
 					finally { _velocityCorrectionFactor.EndSet(); }
 				}
@@ -1226,8 +1262,9 @@ namespace NeoAxis
 					{
 						TimeScaleChanged?.Invoke( this );
 
-						if( softBody?.Cfg != null )
-							softBody.Cfg.Timescale = value;
+						//!!!!
+						//if( softBody?.Cfg != null )
+						//	softBody.Cfg.Timescale = value;
 					}
 					finally { _timeScale.EndSet(); }
 				}
@@ -1256,8 +1293,9 @@ namespace NeoAxis
 					try
 					{
 						CollisionGroupChanged?.Invoke( this );
-						if( softBody != null )
-							RecreateBody();
+						//!!!!
+						//if( softBody != null )
+						//	RecreateBody();
 					}
 					finally { _collisionGroup.EndSet(); }
 				}
@@ -1284,8 +1322,9 @@ namespace NeoAxis
 					try
 					{
 						CollisionMaskChanged?.Invoke( this );
-						if( softBody != null )
-							RecreateBody();
+						//!!!!
+						//if( softBody != null )
+						//	RecreateBody();
 					}
 					finally { _collisionMask.EndSet(); }
 				}
@@ -1313,8 +1352,9 @@ namespace NeoAxis
 					try
 					{
 						LinearVelocityChanged?.Invoke( this );
-						if( softBody != null && !updatePropertiesWithoutUpdatingBody )
-							softBody.SetVelocity( BulletPhysicsUtility.Convert( value ) );
+						//!!!!
+						//if( softBody != null && !updatePropertiesWithoutUpdatingBody )
+						//	softBody.SetVelocity( BulletPhysicsUtility.Convert( value ) );
 					}
 					finally { _linearVelocity.EndSet(); }
 				}
@@ -1391,18 +1431,19 @@ namespace NeoAxis
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		[Browsable( false )]
-		public Internal.BulletSharp.SoftBody.SoftBody InternalSoftBody
-		{
-			get { return softBody; }
-		}
+		//!!!!
+		//[Browsable( false )]
+		//public Internal.BulletSharp.SoftBody.SoftBody InternalSoftBody
+		//{
+		//	get { return softBody; }
+		//}
 
-		public Scene.PhysicsWorldDataClass GetPhysicsWorldData()
+		public Scene.PhysicsWorldClass GetPhysicsWorldData()
 		{
 			//!!!!slowly?
 			var scene = ParentScene;
 			if( scene != null )
-				return scene.PhysicsWorldData;
+				return scene.PhysicsWorld;
 			return null;
 		}
 
@@ -1411,44 +1452,45 @@ namespace NeoAxis
 			//calls SpaceBoundsUpdate();
 			base.OnTransformChanged();
 
-			if( softBody != null && !updatePropertiesWithoutUpdatingBody )
-			{
-				var bodyTransform = Transform.Value;
+			//!!!!
+			//if( softBody != null && !updatePropertiesWithoutUpdatingBody )
+			//{
+			//	var bodyTransform = Transform.Value;
 
 
-				//!!!!fix ray cast bug
-				RecreateBody();
+			//	//!!!!fix ray cast bug
+			//	RecreateBody();
 
-				//before fix:
+			//	//before fix:
 
-				////back to Identity
-				//softBody.Transform( BulletUtils.Convert( actualTransform.GetInverse() ) );
-				////set transform
-				//actualTransform = bodyTransform.ToMat4();
+			//	////back to Identity
+			//	//softBody.Transform( BulletUtils.Convert( actualTransform.GetInverse() ) );
+			//	////set transform
+			//	//actualTransform = bodyTransform.ToMat4();
 
-				////softBody.Transform() internally calls updateNormals(), updateBounds(), updateConstants();
-				//softBody.Transform( BulletUtils.Convert( actualTransform ) );
+			//	////softBody.Transform() internally calls updateNormals(), updateBounds(), updateConstants();
+			//	//softBody.Transform( BulletUtils.Convert( actualTransform ) );
 
 
 
-				//fix tries:
+			//	//fix tries:
 
-				//softBody.UpdateClusters();
-				//softBody.UpdatePose();
+			//	//softBody.UpdateClusters();
+			//	//softBody.UpdatePose();
 
-				////to fix bug fix ray cast
-				//GetPhysicsWorldData().world.RemoveSoftBody( softBody );
-				//GetPhysicsWorldData().world.AddSoftBody( softBody, CollisionGroup.Value, CollisionMask.Value );
+			//	////to fix bug fix ray cast
+			//	//GetPhysicsWorldData().world.RemoveSoftBody( softBody );
+			//	//GetPhysicsWorldData().world.AddSoftBody( softBody, CollisionGroup.Value, CollisionMask.Value );
 
-				//GetPhysicsWorldData().world.UpdateSingleAabb( softBody );
-				//GetPhysicsWorldData().world.UpdateAabbs();
+			//	//GetPhysicsWorldData().world.UpdateSingleAabb( softBody );
+			//	//GetPhysicsWorldData().world.UpdateAabbs();
 
-				////the computeOverlappingPairs is usually already called by performDiscreteCollisionDetection (or stepSimulation)
-				////it can be useful to use if you perform ray tests without collision detection/simulation
-				//GetPhysicsWorldData().world.ComputeOverlappingPairs();
+			//	////the computeOverlappingPairs is usually already called by performDiscreteCollisionDetection (or stepSimulation)
+			//	////it can be useful to use if you perform ray tests without collision detection/simulation
+			//	//GetPhysicsWorldData().world.ComputeOverlappingPairs();
 
-				//!!!!update constraints
-			}
+			//	//!!!!update constraints
+			//}
 		}
 
 		protected override void OnSpaceBoundsUpdate( ref SpaceBounds newBounds )
@@ -1467,12 +1509,13 @@ namespace NeoAxis
 			var scene = ParentScene;
 			if( !scene.GetDisplayDevelopmentDataInThisApplication() )
 				return false;
-			if( softBody != null )
-			{
-				if( !scene.DisplayPhysicalObjects )
-					return false;
-			}
-			else
+			//!!!!
+			//if( softBody != null )
+			//{
+			//	if( !scene.DisplayPhysicalObjects )
+			//		return false;
+			//}
+			//else
 			{
 				if( !scene.DisplayLabels )
 					return false;
@@ -1484,17 +1527,18 @@ namespace NeoAxis
 		{
 			base.OnCheckSelectionByRay( context );
 
-			if( softBody != null )
-			{
-				context.thisObjectWasChecked = true;
+			//!!!!
+			//if( softBody != null )
+			//{
+			//	context.thisObjectWasChecked = true;
 
-				var item = new PhysicsRayTestItem( context.ray, CollisionGroup.Value, -1, PhysicsRayTestItem.ModeEnum.OneClosest, softBody );
-				ParentScene.PhysicsRayTest( item );
-				if( item.Result.Length != 0 )
-					context.thisObjectResultRayScale = item.Result[ 0 ].DistanceScale;
-				//if( SpaceBounds.CalculatedBoundingBox.Intersects( context.ray, out var scale ) )
-				//	context.thisObjectResultRayScale = scale;
-			}
+			//	var item = new PhysicsRayTestItem( context.ray, CollisionGroup.Value, -1, PhysicsRayTestItem.ModeEnum.OneClosest, softBody );
+			//	ParentScene.PhysicsRayTest( item );
+			//	if( item.Result.Length != 0 )
+			//		context.thisObjectResultRayScale = item.Result[ 0 ].DistanceScale;
+			//	//if( SpaceBounds.CalculatedBoundingBox.Intersects( context.ray, out var scale ) )
+			//	//	context.thisObjectResultRayScale = scale;
+			//}
 		}
 
 		void CreateMesh()
@@ -1504,6 +1548,7 @@ namespace NeoAxis
 			//create mesh
 			//need set ShowInEditor = false before AddComponent
 			var meshCreated = ComponentUtility.CreateComponent<Mesh>( null, false, false );
+			meshCreated.NetworkMode = NetworkModeEnum.False;
 			meshCreated.DisplayInEditor = false;
 			AddComponent( meshCreated, -1 );
 			//var meshCreated = CreateComponent<Mesh>( -1, false );
@@ -1529,7 +1574,7 @@ namespace NeoAxis
 				{
 					unsafe
 					{
-						fixed ( byte* pVertices = newVertices )
+						fixed( byte* pVertices = newVertices )
 						{
 							var pVertex = (StandardVertex.StaticOneTexCoord*)pVertices;
 							for( int n = 0; n < processedVertices.Length; n++ )
@@ -1544,8 +1589,9 @@ namespace NeoAxis
 
 				var vertexDeclaration = op.VertexStructure.CreateVertexDeclaration( 0 );
 
-				op.VertexBuffers = new List<GpuVertexBuffer>();
-				op.VertexBuffers.Add( GpuBufferManager.CreateVertexBuffer( newVertices, vertexDeclaration, GpuBufferFlags.Dynamic ) );
+				var vertexBuffers = new List<GpuVertexBuffer>();//op.VertexBuffers = new List<GpuVertexBuffer>();
+				vertexBuffers.Add( GpuBufferManager.CreateVertexBuffer( newVertices, vertexDeclaration, GpuBufferFlags.Dynamic ) );
+				op.VertexBuffers = vertexBuffers.ToArray();
 				op.VertexStartOffset = 0;
 				op.VertexCount = processedVertices.Length;
 
@@ -1697,212 +1743,215 @@ namespace NeoAxis
 			var physicsWorldData = GetPhysicsWorldData();
 			if( physicsWorldData != null )
 			{
-				if( softBody != null )
-					Log.Fatal( "SoftBody: CreateBody: softBody != null." );
-				if( !EnabledInHierarchy )
-					Log.Fatal( "SoftBody: CreateBody: !EnabledInHierarchy." );
 
-				Mesh mesh = Mesh;
-				if( mesh != null && mesh.Result != null )
-				{
-					if( GetSourceData( out var sourceVertices, out var sourceIndices ) && sourceVertices.Length != 0 && sourceIndices.Length != 0 )
-					{
-						////!!!!Clone
-						//vertices = (Vec3F[])mesh.Result.ExtractedVerticesPositions.Clone();
-						//indices = (int[])mesh.Result.ExtractedIndices.Clone();
-						//if( normals == null || normals.Length != vertices.Length )
-						//	Array.Resize( ref normals, vertices.Length );
+				//!!!!
 
-						//!!!!могут быть специально подготовленные для soft body данные в меше
+				//if( softBody != null )
+				//	Log.Fatal( "SoftBody: CreateBody: softBody != null." );
+				//if( !EnabledInHierarchy )
+				//	Log.Fatal( "SoftBody: CreateBody: !EnabledInHierarchy." );
 
-						MathAlgorithms.MergeEqualVerticesRemoveInvalidTriangles( sourceVertices, sourceIndices, 0.0001f, 0.0001f, out processedVertices, out processedIndices, out processedTrianglesToSourceIndex );
+				//Mesh mesh = Mesh;
+				//if( mesh != null && mesh.Result != null )
+				//{
+				//	if( GetSourceData( out var sourceVertices, out var sourceIndices ) && sourceVertices.Length != 0 && sourceIndices.Length != 0 )
+				//	{
+				//		////!!!!Clone
+				//		//vertices = (Vec3F[])mesh.Result.ExtractedVerticesPositions.Clone();
+				//		//indices = (int[])mesh.Result.ExtractedIndices.Clone();
+				//		//if( normals == null || normals.Length != vertices.Length )
+				//		//	Array.Resize( ref normals, vertices.Length );
 
-						////!!!!maybe temp. not good implementation. not same as bullet
-						////calculate processed normals
-						//{
-						//	processedVerticesNormals = new Vec3F[ processedVertices.Length ];
-						//	for( int nTriangle = 0; nTriangle < processedIndices.Length / 3; nTriangle++ )
-						//	{
-						//		var index0 = processedIndices[ nTriangle * 3 + 0 ];
-						//		var index1 = processedIndices[ nTriangle * 3 + 1 ];
-						//		var index2 = processedIndices[ nTriangle * 3 + 2 ];
+				//		//!!!!могут быть специально подготовленные для soft body данные в меше
 
-						//		var v0 = processedVertices[ index0 ];
-						//		var v1 = processedVertices[ index1 ];
-						//		var v2 = processedVertices[ index2 ];
+				//		MathAlgorithms.MergeEqualVerticesRemoveInvalidTriangles( sourceVertices, sourceIndices, 0.0001f, 0.0001f, true, true, out processedVertices, out processedIndices, out processedTrianglesToSourceIndex );
 
-						//		var normal = Vec3F.Cross( v1 - v0, v2 - v0 ).GetNormalize();
-						//		//!!!!not good
-						//		processedVerticesNormals[ index0 ] = normal;
-						//		processedVerticesNormals[ index1 ] = normal;
-						//		processedVerticesNormals[ index2 ] = normal;
-						//	}
-						//}
+				//		////!!!!maybe temp. not good implementation. not same as bullet
+				//		////calculate processed normals
+				//		//{
+				//		//	processedVerticesNormals = new Vec3F[ processedVertices.Length ];
+				//		//	for( int nTriangle = 0; nTriangle < processedIndices.Length / 3; nTriangle++ )
+				//		//	{
+				//		//		var index0 = processedIndices[ nTriangle * 3 + 0 ];
+				//		//		var index1 = processedIndices[ nTriangle * 3 + 1 ];
+				//		//		var index2 = processedIndices[ nTriangle * 3 + 2 ];
 
-						var wi = ParentScene.PhysicsWorldData.softBodyWorldInfo;
-						var positions = BulletPhysicsUtility.Convert( processedVertices );
+				//		//		var v0 = processedVertices[ index0 ];
+				//		//		var v1 = processedVertices[ index1 ];
+				//		//		var v2 = processedVertices[ index2 ];
 
-						//////////////
+				//		//		var normal = Vec3F.Cross( v1 - v0, v2 - v0 ).GetNormalize();
+				//		//		//!!!!not good
+				//		//		processedVerticesNormals[ index0 ] = normal;
+				//		//		processedVerticesNormals[ index1 ] = normal;
+				//		//		processedVerticesNormals[ index2 ] = normal;
+				//		//	}
+				//		//}
 
-						////!!!!
-						//var masses = new double[ processedVertices.Length ];
-						//for( int n = 0; n < masses.Length; n++ )
-						//	masses[ n ] = 1;
-						//{
-						//	masses[ 0 ] = 0;
-						//	masses[ masses.Length - 1 ] = 0;
-						//}
+				//		var wi = ParentScene.PhysicsWorldData.softBodyWorldInfo;
+				//		var positions = BulletPhysicsUtility.Convert( processedVertices );
 
-						//masses[ 0 ] = 0;
-						//var masses = new double[ processedVertices.Length ];
-						//for( int n = 0; n < masses.Length; n++ )
-						//	masses[ n ] = 1;
+				//		//////////////
 
-						//!!!!
-						//softBody = new SoftBody( wi, positions.Length, positions, masses );
-						softBody = new Internal.BulletSharp.SoftBody.SoftBody( wi, positions.Length, positions, null );
+				//		////!!!!
+				//		//var masses = new double[ processedVertices.Length ];
+				//		//for( int n = 0; n < masses.Length; n++ )
+				//		//	masses[ n ] = 1;
+				//		//{
+				//		//	masses[ 0 ] = 0;
+				//		//	masses[ masses.Length - 1 ] = 0;
+				//		//}
 
-						////!!!!
-						//Log.Info( softBody.GetMass( 0 ).ToString() );
-						//softBody.SetMass( 0, 0 );
-						//softBody.SetMass( positions.Length - 1, 0 );
+				//		//masses[ 0 ] = 0;
+				//		//var masses = new double[ processedVertices.Length ];
+				//		//for( int n = 0; n < masses.Length; n++ )
+				//		//	masses[ n ] = 1;
 
-						var lines = MathAlgorithms.TriangleListToLineList( processedIndices );
-						for( var l = 0; l < lines.Length; l += 2 )
-							softBody.AppendLink( lines[ l + 0 ], lines[ l + 1 ], null, true );
-						for( int i = 0; i < processedIndices.Length; i += 3 )
-							softBody.AppendFace( processedIndices[ i + 0 ], processedIndices[ i + 1 ], processedIndices[ i + 2 ] );
+				//		//!!!!
+				//		//softBody = new SoftBody( wi, positions.Length, positions, masses );
+				//		softBody = new Internal.BulletSharp.SoftBody.SoftBody( wi, positions.Length, positions, null );
 
-						if( RandomizeConstraints.Value )
-						{
-							softBody.RandomizeConstraints();
+				//		////!!!!
+				//		//Log.Info( softBody.GetMass( 0 ).ToString() );
+				//		//softBody.SetMass( 0, 0 );
+				//		//softBody.SetMass( positions.Length - 1, 0 );
+
+				//		var lines = MathAlgorithms.TriangleListToLineList( processedIndices );
+				//		for( var l = 0; l < lines.Length; l += 2 )
+				//			softBody.AppendLink( lines[ l + 0 ], lines[ l + 1 ], null, true );
+				//		for( int i = 0; i < processedIndices.Length; i += 3 )
+				//			softBody.AppendFace( processedIndices[ i + 0 ], processedIndices[ i + 1 ], processedIndices[ i + 2 ] );
+
+				//		if( RandomizeConstraints.Value )
+				//		{
+				//			softBody.RandomizeConstraints();
 
 
-							//!!!!need?
+				//			//!!!!need?
 
-							processedIndices = (int[])processedIndices.Clone();
+				//			processedIndices = (int[])processedIndices.Clone();
 
-							//enumerate nodes
-							for( int n = 0; n < softBody.Nodes.Count; n++ )
-								softBody.Nodes[ n ].Tag = new IntPtr( n );
+				//			//enumerate nodes
+				//			for( int n = 0; n < softBody.Nodes.Count; n++ )
+				//				softBody.Nodes[ n ].Tag = new IntPtr( n );
 
-							var triIdx = 0;
+				//			var triIdx = 0;
 
-							// update triangles after calling btSoftBody::randomizeConstraints()
-							for( int f = 0; f < softBody.Faces.Count; f++ )
-							{
-								var face = softBody.Faces[ f ];
+				//			// update triangles after calling btSoftBody::randomizeConstraints()
+				//			for( int f = 0; f < softBody.Faces.Count; f++ )
+				//			{
+				//				var face = softBody.Faces[ f ];
 
-								processedIndices[ triIdx++ ] = face.Nodes[ 0 ].Tag.ToInt32();
-								processedIndices[ triIdx++ ] = face.Nodes[ 1 ].Tag.ToInt32();
-								processedIndices[ triIdx++ ] = face.Nodes[ 2 ].Tag.ToInt32();
-							}
-						}
+				//				processedIndices[ triIdx++ ] = face.Nodes[ 0 ].Tag.ToInt32();
+				//				processedIndices[ triIdx++ ] = face.Nodes[ 1 ].Tag.ToInt32();
+				//				processedIndices[ triIdx++ ] = face.Nodes[ 2 ].Tag.ToInt32();
+				//			}
+				//		}
 
-						//////////////
+				//		//////////////
 
-						////creates nodes, faces and links, calls btSoftBody::randomizeConstraints() if needed
-						//softBody = SoftBodyHelpers.CreateFromTriMesh( wi, positions, processedIndices, RandomizeConstraints.Value );
-						////softBody = new SoftBody( wi, positions.Length, positions, null );
+				//		////creates nodes, faces and links, calls btSoftBody::randomizeConstraints() if needed
+				//		//softBody = SoftBodyHelpers.CreateFromTriMesh( wi, positions, processedIndices, RandomizeConstraints.Value );
+				//		////softBody = new SoftBody( wi, positions.Length, positions, null );
 
-						//if( RandomizeConstraints.Value )
-						//{
-						//	processedIndices = (int[])processedIndices.Clone();
+				//		//if( RandomizeConstraints.Value )
+				//		//{
+				//		//	processedIndices = (int[])processedIndices.Clone();
 
-						//	//enumerate nodes
-						//	for( int n = 0; n < softBody.Nodes.Count; n++ )
-						//		softBody.Nodes[ n ].Tag = new IntPtr( n );
+				//		//	//enumerate nodes
+				//		//	for( int n = 0; n < softBody.Nodes.Count; n++ )
+				//		//		softBody.Nodes[ n ].Tag = new IntPtr( n );
 
-						//	var triIdx = 0;
+				//		//	var triIdx = 0;
 
-						//	// update triangles after calling btSoftBody::randomizeConstraints()
-						//	for( int f = 0; f < softBody.Faces.Count; f++ )
-						//	{
-						//		var face = softBody.Faces[ f ];
+				//		//	// update triangles after calling btSoftBody::randomizeConstraints()
+				//		//	for( int f = 0; f < softBody.Faces.Count; f++ )
+				//		//	{
+				//		//		var face = softBody.Faces[ f ];
 
-						//		processedIndices[ triIdx++ ] = face.Nodes[ 0 ].Tag.ToInt32();
-						//		processedIndices[ triIdx++ ] = face.Nodes[ 1 ].Tag.ToInt32();
-						//		processedIndices[ triIdx++ ] = face.Nodes[ 2 ].Tag.ToInt32();
-						//	}
-						//}
+				//		//		processedIndices[ triIdx++ ] = face.Nodes[ 0 ].Tag.ToInt32();
+				//		//		processedIndices[ triIdx++ ] = face.Nodes[ 1 ].Tag.ToInt32();
+				//		//		processedIndices[ triIdx++ ] = face.Nodes[ 2 ].Tag.ToInt32();
+				//		//	}
+				//		//}
 
-						//////////////
+				//		//////////////
 
-						//apply settings
-						{
-							SetMaterial( softBody );
-							ApplyConfig();
+				//		//apply settings
+				//		{
+				//			SetMaterial( softBody );
+				//			ApplyConfig();
 
-							// Generate bending constraints based on distance in the adjency graph
-							if( BendingConstraintDistance > 0 )
-								softBody.GenerateBendingConstraints( BendingConstraintDistance, softBody.Materials[ 0 ] );
+				//			// Generate bending constraints based on distance in the adjency graph
+				//			if( BendingConstraintDistance > 0 )
+				//				softBody.GenerateBendingConstraints( BendingConstraintDistance, softBody.Materials[ 0 ] );
 
-							// The minimum allowable distance between cloth and collision object.
-							softBody.CollisionShape.Margin = CollisionMargin;
+				//			// The minimum allowable distance between cloth and collision object.
+				//			softBody.CollisionShape.Margin = CollisionMargin;
 
-							//!!!!было ниже
-							// Mass
-							softBody.SetTotalMass( Mass, MassFromFaces );
-							softBody.SetPose( VolumeMatching, ShapeMatching );
+				//			//!!!!было ниже
+				//			// Mass
+				//			softBody.SetTotalMass( Mass, MassFromFaces );
+				//			softBody.SetPose( VolumeMatching, ShapeMatching );
 
-							//By default, soft bodies perform collision detection using between vertices (nodes) and triangles( faces). 
-							//This requires a dense tessellation, otherwise collisions might be missed.
-							//An improved method uses automatic decomposition into convex deformable clusters. 
+				//			//By default, soft bodies perform collision detection using between vertices (nodes) and triangles( faces). 
+				//			//This requires a dense tessellation, otherwise collisions might be missed.
+				//			//An improved method uses automatic decomposition into convex deformable clusters. 
 
-							//To enable collision clusters, use: 
+				//			//To enable collision clusters, use: 
 
-							//psb->generateClusters( numSubdivisions );
-							//enable cluster collision between soft body and rigid body 
-							//psb->m_cfg.collisions += btSoftBody::fCollision::CL_RS;
+				//			//psb->generateClusters( numSubdivisions );
+				//			//enable cluster collision between soft body and rigid body 
+				//			//psb->m_cfg.collisions += btSoftBody::fCollision::CL_RS;
 
-							//enable cluster collision between soft body and soft body 
-							//psb->m_cfg.collisions += btSoftBody::fCollision::CL_SS;
+				//			//enable cluster collision between soft body and soft body 
+				//			//psb->m_cfg.collisions += btSoftBody::fCollision::CL_SS;
 
-							//clusters
-							softBody.GenerateClusters( ClustersNumber );
-							//{
-							//	int k = 0;
-							//	switch( GenerateClusters.Value )
-							//	{
-							//	case ClusterModeEnum.Manual: k = ClustersNumber; break;
-							//	//case ClusterModeEnum.Auto: k = (int)Math.Sqrt( vertices.Length ); break;
-							//	case ClusterModeEnum.ForEachTriangle: k = 0; break;
-							//	}
-							//	softBody.GenerateClusters( k );
-							//}
+				//			//clusters
+				//			softBody.GenerateClusters( ClustersNumber );
+				//			//{
+				//			//	int k = 0;
+				//			//	switch( GenerateClusters.Value )
+				//			//	{
+				//			//	case ClusterModeEnum.Manual: k = ClustersNumber; break;
+				//			//	//case ClusterModeEnum.Auto: k = (int)Math.Sqrt( vertices.Length ); break;
+				//			//	case ClusterModeEnum.ForEachTriangle: k = 0; break;
+				//			//	}
+				//			//	softBody.GenerateClusters( k );
+				//			//}
 
-							//!!!!теперь выше
-							// Mass
-							//softBody.SetTotalMass( Mass, MassFromFaces );
-							//softBody.SetPose( VolumeMatching, ShapeMatching );
-						}
+				//			//!!!!теперь выше
+				//			// Mass
+				//			//softBody.SetTotalMass( Mass, MassFromFaces );
+				//			//softBody.SetPose( VolumeMatching, ShapeMatching );
+				//		}
 
-						CreateMesh();
+				//		CreateMesh();
 
-						//set transform, velocity
-						{
-							var bodyTransform = Transform.Value;
+				//		//set transform, velocity
+				//		{
+				//			var bodyTransform = Transform.Value;
 
-							actualTransform = bodyTransform.ToMatrix4();
-							softBody.Transform( BulletPhysicsUtility.Convert( actualTransform ) );
-							//softBody.Transform( BulletUtils.Convert( bodyTransform.ToMat4() ) );
+				//			actualTransform = bodyTransform.ToMatrix4();
+				//			softBody.Transform( BulletPhysicsUtility.Convert( actualTransform ) );
+				//			//softBody.Transform( BulletUtils.Convert( bodyTransform.ToMat4() ) );
 
-							softBody.SetVelocity( BulletPhysicsUtility.Convert( LinearVelocity ) );
-						}
+				//			softBody.SetVelocity( BulletPhysicsUtility.Convert( LinearVelocity ) );
+				//		}
 
-						softBody.UserObject = this;
-						physicsWorldData.world.AddSoftBody( softBody, CollisionGroup.Value, CollisionMask.Value );
+				//		softBody.UserObject = this;
+				//		physicsWorldData.world.AddSoftBody( softBody, CollisionGroup.Value, CollisionMask.Value );
 
-						////!!!!
-						//softBody.SetMass( 0, 0 );
-						//softBody.SetMass( positions.Length - 1, 0 );
+				//		////!!!!
+				//		//softBody.SetMass( 0, 0 );
+				//		//softBody.SetMass( positions.Length - 1, 0 );
 
-						usedMeshDataWhenInitialized = mesh.Result;
+				//		usedMeshDataWhenInitialized = mesh.Result;
 
-						//!!!!не было
-						SpaceBoundsUpdate();
-					}
-				}
+				//		//!!!!не было
+				//		SpaceBoundsUpdate();
+				//	}
+				//}
 			}
 
 			duringCreateDestroy = false;
@@ -1920,23 +1969,23 @@ namespace NeoAxis
 				//!!!!что еще удалять?
 				//!!!!правильно ли тут всё?
 
-				////destroy linked constraints
-				//{
-				//	if( rigidBody != null && rigidBody.NumConstraintRefs != 0 )
-				//	{
-				//		foreach( var c in GetLinkedCreatedConstraints() )
-				//			c.DestroyConstraint();
-				//	}
+				//////destroy linked constraints
+				////{
+				////	if( rigidBody != null && rigidBody.NumConstraintRefs != 0 )
+				////	{
+				////		foreach( var c in GetLinkedCreatedConstraints() )
+				////			c.DestroyConstraint();
+				////	}
 
-				//	////!!!!что еще также? и где?
-				//	//if( rigidBody != null )
-				//	//{
-				//	//	//var cachedArray = actionsBeforeBodyDestroy.ToArray();
-				//	//	//foreach( var action in cachedArray )
-				//	//	//	action();
-				//	//}
-				//	//actionsBeforeBodyDestroy.Clear();
-				//}
+				////	////!!!!что еще также? и где?
+				////	//if( rigidBody != null )
+				////	//{
+				////	//	//var cachedArray = actionsBeforeBodyDestroy.ToArray();
+				////	//	//foreach( var action in cachedArray )
+				////	//	//	action();
+				////	//}
+				////	//actionsBeforeBodyDestroy.Clear();
+				////}
 
 				//destroy created mesh
 				var meshCreated = MeshCreated;
@@ -1946,29 +1995,31 @@ namespace NeoAxis
 					meshCreated.Dispose();
 				}
 
-				if( softBody != null )
-				{
-					physicsWorldData.world.RemoveSoftBody( softBody );
-					softBody.Dispose();
-					softBody = null;
-				}
+				//!!!!
+				//if( softBody != null )
+				//{
+				//	physicsWorldData.world.RemoveSoftBody( softBody );
+				//	softBody.Dispose();
+				//	softBody = null;
+				//}
 			}
 
 			duringCreateDestroy = false;
 		}
 
-		static int FindPose( Internal.BulletSharp.Math.BVector3[] srcArr, int srcIndex, double squaredDist = double.Epsilon )
-		{
-			var i = 0;
-			var pos = srcArr[ srcIndex ];
-			while( i < srcIndex )
-			{
-				Internal.BulletSharp.Math.BVector3.DistanceSquared( ref srcArr[ i++ ], ref pos, out double dist );
-				if( dist <= squaredDist )
-					return i - 1;
-			}
-			return -1;
-		}
+		//!!!!
+		//static int FindPose( Internal.BulletSharp.Math.BVector3[] srcArr, int srcIndex, double squaredDist = double.Epsilon )
+		//{
+		//	var i = 0;
+		//	var pos = srcArr[ srcIndex ];
+		//	while( i < srcIndex )
+		//	{
+		//		Internal.BulletSharp.Math.BVector3.DistanceSquared( ref srcArr[ i++ ], ref pos, out double dist );
+		//		if( dist <= squaredDist )
+		//			return i - 1;
+		//	}
+		//	return -1;
+		//}
 
 		public void RecreateBody()
 		{
@@ -1985,77 +2036,82 @@ namespace NeoAxis
 
 			if( EnabledInHierarchy )
 			{
-				//сделано по аналогии с rigid body, хотя может смысла нет.
-				//после загрузки создается через шейп, т.к. срабатывает RecreateBody()
-				if( softBody == null )
-					CreateBody();
+				//!!!!
+				////сделано по аналогии с rigid body, хотя может смысла нет.
+				////после загрузки создается через шейп, т.к. срабатывает RecreateBody()
+				//if( softBody == null )
+				//	CreateBody();
 			}
 			else
 				DestroyBody();
 		}
 
-		public override void Render( ViewportRenderingContext context, out int verticesRendered )
+		//!!!!
+		public void RenderPhysicalObject( ViewportRenderingContext context, out int verticesRendered )
+		//public override void RenderPhysicalObject( ViewportRenderingContext context, out int verticesRendered )
 		{
 			verticesRendered = 0;
 
 			var context2 = context.ObjectInSpaceRenderingContext;
 
-			var scene = ParentScene;
-			//bool show = ( scene.GetDisplayDevelopmentDataInThisApplication() && scene.DisplayPhysicalObjects ) ||
-			//	context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.dragDropCreateObject == this;
-			if( /*show && */softBody != null && context.Owner.Simple3DRenderer != null )
-			{
-				//if( context2.displayPhysicalObjectsCounter < context2.displayPhysicalObjectsMax )
-				//{
-				//	context2.displayPhysicalObjectsCounter++;
+			//!!!!
 
-				var viewport = context.Owner;
+			//var scene = ParentScene;
+			////bool show = ( scene.GetDisplayDevelopmentDataInThisApplication() && scene.DisplayPhysicalObjects ) ||
+			////	context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.dragDropCreateObject == this;
+			//if( /*show && */softBody != null && context.Owner.Simple3DRenderer != null )
+			//{
+			//	//if( context2.displayPhysicalObjectsCounter < context2.displayPhysicalObjectsMax )
+			//	//{
+			//	//	context2.displayPhysicalObjectsCounter++;
 
-				//if( show )
-				{
-					ColorValue color;
-					if( softBody.IsActive )
-						color = ProjectSettings.Get.General.SceneShowPhysicsDynamicActiveColor;
-					else
-						color = ProjectSettings.Get.General.SceneShowPhysicsDynamicInactiveColor;
-					viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+			//	var viewport = context.Owner;
 
-					if( GetSimulatedData( out var vertices, out var indices, out _ ) )
-					{
-						var m = Transform.Value.ToMatrix4();
-						viewport.Simple3DRenderer.AddTriangles( vertices, indices, m, true, true );
-						verticesRendered += vertices.Length;
-					}
-				}
+			//	//if( show )
+			//	{
+			//		ColorValue color;
+			//		if( softBody.IsActive )
+			//			color = ProjectSettings.Get.General.SceneShowPhysicsDynamicActiveColor;
+			//		else
+			//			color = ProjectSettings.Get.General.SceneShowPhysicsDynamicInactiveColor;
+			//		viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 
-				if( context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) )
-				{
-					ColorValue color;
-					if( context2.selectedObjects.Contains( this ) )
-						color = ProjectSettings.Get.General.SelectedColor;
-					else
-						color = ProjectSettings.Get.General.CanSelectColor;
+			//		if( GetSimulatedData( out var vertices, out var indices, out _ ) )
+			//		{
+			//			var m = Transform.Value.ToMatrix4();
+			//			viewport.Simple3DRenderer.AddTriangles( vertices, indices, m, true, true );
+			//			verticesRendered += vertices.Length;
+			//		}
+			//	}
 
-					//!!!!или невидимое лучше габаритами подсвечивать?
+			//	if( context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) )
+			//	{
+			//		ColorValue color;
+			//		if( context2.selectedObjects.Contains( this ) )
+			//			color = ProjectSettings.Get.Colors.SelectedColor;
+			//		else
+			//			color = ProjectSettings.Get.Colors.CanSelectColor;
 
-					//color.Alpha *= .5f;
-					viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+			//		//!!!!или невидимое лучше габаритами подсвечивать?
 
-					if( GetSimulatedData( out var vertices, out var indices, out _ ) )
-					{
-						var m = Transform.Value.ToMatrix4();
-						viewport.Simple3DRenderer.AddTriangles( vertices, indices, m, true, true );
-						verticesRendered += vertices.Length;
-					}
-					else
-					{
-						context.Owner.Simple3DRenderer.AddBounds( SpaceBounds.CalculatedBoundingBox );
-						verticesRendered += 96;
-					}
-				}
+			//		//color.Alpha *= .5f;
+			//		viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 
-				//}
-			}
+			//		if( GetSimulatedData( out var vertices, out var indices, out _ ) )
+			//		{
+			//			var m = Transform.Value.ToMatrix4();
+			//			viewport.Simple3DRenderer.AddTriangles( vertices, indices, m, true, true );
+			//			verticesRendered += vertices.Length;
+			//		}
+			//		else
+			//		{
+			//			context.Owner.Simple3DRenderer.AddBounds( SpaceBounds.CalculatedBoundingBox );
+			//			verticesRendered += 96;
+			//		}
+			//	}
+
+			//	//}
+			//}
 		}
 
 		protected override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem )
@@ -2069,59 +2125,62 @@ namespace NeoAxis
 
 				var context2 = context.ObjectInSpaceRenderingContext;
 
-				//var scene = ParentScene;
-				//bool show = ( scene.GetDisplayDevelopmentDataInThisApplication() && scene.DisplayPhysicalObjects ) ||
-				//	context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.dragDropCreateObject == this;
-				//if( show && softBody != null && context.Owner.Simple3DRenderer != null )
-				//{
-				//	if( context2.displayPhysicalObjectsCounter < context2.displayPhysicalObjectsMax )
-				//	{
-				//		context2.displayPhysicalObjectsCounter++;
+				////var scene = ParentScene;
+				////bool show = ( scene.GetDisplayDevelopmentDataInThisApplication() && scene.DisplayPhysicalObjects ) ||
+				////	context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.dragDropCreateObject == this;
+				////if( show && softBody != null && context.Owner.Simple3DRenderer != null )
+				////{
+				////	if( context2.displayPhysicalObjectsCounter < context2.displayPhysicalObjectsMax )
+				////	{
+				////		context2.displayPhysicalObjectsCounter++;
 
-				//		var viewport = context.Owner;
+				////		var viewport = context.Owner;
 
-				//		//if( show )
-				//		{
-				//			ColorValue color;
-				//			if( softBody.IsActive )
-				//				color = ProjectSettings.Get.SceneShowPhysicsDynamicActiveColor;
-				//			else
-				//				color = ProjectSettings.Get.SceneShowPhysicsDynamicInactiveColor;
-				//			viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.HiddenByOtherObjectsColorMultiplier );
+				////		//if( show )
+				////		{
+				////			ColorValue color;
+				////			if( softBody.IsActive )
+				////				color = ProjectSettings.Get.SceneShowPhysicsDynamicActiveColor;
+				////			else
+				////				color = ProjectSettings.Get.SceneShowPhysicsDynamicInactiveColor;
+				////			viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.HiddenByOtherObjectsColorMultiplier );
 
-				//			if( GetSimulatedData( out var vertices, out var indices, out _ ) )
-				//			{
-				//				var m = Transform.Value.ToMatrix4();
-				//				viewport.Simple3DRenderer.AddTriangles( vertices, indices, m, true, true );
-				//			}
-				//		}
+				////			if( GetSimulatedData( out var vertices, out var indices, out _ ) )
+				////			{
+				////				var m = Transform.Value.ToMatrix4();
+				////				viewport.Simple3DRenderer.AddTriangles( vertices, indices, m, true, true );
+				////			}
+				////		}
 
-				//		if( context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) )
-				//		{
-				//			ColorValue color;
-				//			if( context2.selectedObjects.Contains( this ) )
-				//				color = ProjectSettings.Get.SelectedColor;
-				//			else
-				//				color = ProjectSettings.Get.CanSelectColor;
+				////		if( context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) )
+				////		{
+				////			ColorValue color;
+				////			if( context2.selectedObjects.Contains( this ) )
+				////				color = ProjectSettings.Get.SelectedColor;
+				////			else
+				////				color = ProjectSettings.Get.CanSelectColor;
 
-				//			//!!!!или невидимое лучше габаритами подсвечивать?
+				////			//!!!!или невидимое лучше габаритами подсвечивать?
 
-				//			//color.Alpha *= .5f;
-				//			viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.HiddenByOtherObjectsColorMultiplier );
+				////			//color.Alpha *= .5f;
+				////			viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.HiddenByOtherObjectsColorMultiplier );
 
-				//			if( GetSimulatedData( out var vertices, out var indices, out _ ) )
-				//			{
-				//				var m = Transform.Value.ToMatrix4();
-				//				viewport.Simple3DRenderer.AddTriangles( vertices, indices, m, true, true );
-				//			}
-				//			else
-				//				context.Owner.Simple3DRenderer.AddBounds( SpaceBounds.CalculatedBoundingBox );
-				//		}
-				//	}
-				//}
-				var showLabels = /*show && */softBody == null;
-				if( !showLabels )
-					context2.disableShowingLabelForThisObject = true;
+				////			if( GetSimulatedData( out var vertices, out var indices, out _ ) )
+				////			{
+				////				var m = Transform.Value.ToMatrix4();
+				////				viewport.Simple3DRenderer.AddTriangles( vertices, indices, m, true, true );
+				////			}
+				////			else
+				////				context.Owner.Simple3DRenderer.AddBounds( SpaceBounds.CalculatedBoundingBox );
+				////		}
+				////	}
+				////}
+
+
+				//!!!!
+				//var showLabels = /*show && */softBody == null;
+				//if( !showLabels )
+				//	context2.disableShowingLabelForThisObject = true;
 			}
 		}
 
@@ -2188,13 +2247,14 @@ namespace NeoAxis
 
 		public bool GetTriangleSimulatedData( int triangleID, bool applyWorldTransform, out Triangle triangle )
 		{
-			//!!!!new. hmhm
-			if( applyWorldTransform && softBody != null )
-			{
-				var face = softBody.Faces[ triangleID ];
-				triangle = new Triangle( BulletPhysicsUtility.Convert( face.Nodes[ 0 ].Position ), BulletPhysicsUtility.Convert( face.Nodes[ 1 ].Position ), BulletPhysicsUtility.Convert( face.Nodes[ 2 ].Position ) );
-				return true;
-			}
+			//!!!!
+			////!!!!new. hmhm
+			//if( applyWorldTransform && softBody != null )
+			//{
+			//	var face = softBody.Faces[ triangleID ];
+			//	triangle = new Triangle( BulletPhysicsUtility.Convert( face.Nodes[ 0 ].Position ), BulletPhysicsUtility.Convert( face.Nodes[ 1 ].Position ), BulletPhysicsUtility.Convert( face.Nodes[ 2 ].Position ) );
+			//	return true;
+			//}
 
 			if( !GetSimulatedData( out var vertices, /*out _, */out var indices, out _ ) )
 			{
@@ -2206,12 +2266,13 @@ namespace NeoAxis
 
 		public Vector3 GetNodePosition( int nodeIndex )
 		{
-			if( softBody != null )
-			{
-				var nodes = softBody.Nodes;
-				if( nodeIndex >= 0 && nodeIndex < nodes.Count )
-					return BulletPhysicsUtility.Convert( nodes[ nodeIndex ].Position );
-			}
+			//!!!!
+			//if( softBody != null )
+			//{
+			//	var nodes = softBody.Nodes;
+			//	if( nodeIndex >= 0 && nodeIndex < nodes.Count )
+			//		return BulletPhysicsUtility.Convert( nodes[ nodeIndex ].Position );
+			//}
 			return Vector3.Zero;
 		}
 
@@ -2219,23 +2280,24 @@ namespace NeoAxis
 		{
 			var result = -1;
 
-			if( softBody != null )
-			{
-				var worldPosition2 = BulletPhysicsUtility.ToVector3( worldPosition );
-				var nodes = softBody.Nodes;
-				var count = nodes.Count;
+			//!!!!
+			//if( softBody != null )
+			//{
+			//	var worldPosition2 = BulletPhysicsUtility.ToVector3( worldPosition );
+			//	var nodes = softBody.Nodes;
+			//	var count = nodes.Count;
 
-				var minDistance = double.MaxValue;
-				for( int n = 0; n < count; n++ )
-				{
-					var dist = Internal.BulletSharp.Math.BVector3.DistanceSquared( nodes[ n ].Position, (Internal.BulletSharp.Math.BVector3)worldPosition2 );
-					if( dist < minDistance )
-					{
-						result = n;
-						minDistance = dist;
-					}
-				}
-			}
+			//	var minDistance = double.MaxValue;
+			//	for( int n = 0; n < count; n++ )
+			//	{
+			//		var dist = Internal.BulletSharp.Math.BVector3.DistanceSquared( nodes[ n ].Position, (Internal.BulletSharp.Math.BVector3)worldPosition2 );
+			//		if( dist < minDistance )
+			//		{
+			//			result = n;
+			//			minDistance = dist;
+			//		}
+			//	}
+			//}
 
 			return result;
 		}
@@ -2273,43 +2335,42 @@ namespace NeoAxis
 
 
 
-		unsafe void UpdateGeometryFromPhysicsEngine( out Vector3 worldPosition )
-		{
-			if( simulatedVertices == null || simulatedVertices.Length != softBody.Nodes.Count )
-			{
-				simulatedVertices = new Vector3F[ softBody.Nodes.Count ];
-				//simulatedVerticesNormals = new Vec3F[ softBody.Nodes.Count ];
-			}
+		//!!!!
+		//unsafe void UpdateGeometryFromPhysicsEngine( out Vector3 worldPosition )
+		//{
+		//	if( simulatedVertices == null || simulatedVertices.Length != softBody.Nodes.Count )
+		//	{
+		//		simulatedVertices = new Vector3F[ softBody.Nodes.Count ];
+		//		//simulatedVerticesNormals = new Vec3F[ softBody.Nodes.Count ];
+		//	}
 
-			var worldVertices = new Vector3[ simulatedVertices.Length ];
-			//!!!!stackalloc?
-			//Vec3* worldVertices = stackalloc Vec3[ simulatedVertices.Length ];
-			var worldBounds = Bounds.Cleared;
+		//	var worldVertices = new Vector3[ simulatedVertices.Length ];
+		//	var worldBounds = Bounds.Cleared;
 
-			//get data from Bullet
-			for( int i = 0; i < softBody.Nodes.Count; i++ )
-			{
-				var p = softBody.Nodes[ i ].Position;
-				var n = softBody.Nodes[ i ].Normal;
+		//	//get data from Bullet
+		//	for( int i = 0; i < softBody.Nodes.Count; i++ )
+		//	{
+		//		var p = softBody.Nodes[ i ].Position;
+		//		var n = softBody.Nodes[ i ].Normal;
 
-				worldVertices[ i ] = new Vector3( p.X, p.Y, p.Z );
-				//simulatedVerticesNormals[ i ] = new Vec3F( (float)n.X, (float)n.Y, (float)n.Z );
+		//		worldVertices[ i ] = new Vector3( p.X, p.Y, p.Z );
+		//		//simulatedVerticesNormals[ i ] = new Vec3F( (float)n.X, (float)n.Y, (float)n.Z );
 
-				worldBounds.Add( ref worldVertices[ i ] );
-			}
+		//		worldBounds.Add( ref worldVertices[ i ] );
+		//	}
 
-			var center = worldBounds.GetCenter();
-			var localBounds = worldBounds - center;
+		//	var center = worldBounds.GetCenter();
+		//	var localBounds = worldBounds - center;
 
-			worldPosition = center;
+		//	worldPosition = center;
 
-			//calculate local vertices
-			for( int n = 0; n < simulatedVertices.Length; n++ )
-			{
-				simulatedVertices[ n ] = ( worldVertices[ n ] - center ).ToVector3F();
-				//Vec3F.Subtract( ref worldVertices[ n ], ref center, out vertices[ n ] );
-			}
-		}
+		//	//calculate local vertices
+		//	for( int n = 0; n < simulatedVertices.Length; n++ )
+		//	{
+		//		simulatedVertices[ n ] = ( worldVertices[ n ] - center ).ToVector3F();
+		//		//Vec3F.Subtract( ref worldVertices[ n ], ref center, out vertices[ n ] );
+		//	}
+		//}
 
 		unsafe void UpdateCreatedMeshData()
 		{
@@ -2332,7 +2393,6 @@ namespace NeoAxis
 					{
 						var buffer = oper.VertexBuffers[ element.Source ];
 
-						//!!!!stackalloc
 						var ar = new Vector3F[ buffer.VertexCount ];
 						for( int n = 0; n < buffer.VertexCount; n++ )
 							ar[ n ] = vertices[ vertexOffset + n ];
@@ -2370,29 +2430,47 @@ namespace NeoAxis
 
 				//normals
 				{
-					if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.Normal, out VertexElement element ) &&
-						element.Type == VertexElementType.Float3 )
+					if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.Normal, out VertexElement element ) )
 					{
 						var buffer = oper.VertexBuffers[ element.Source ];
 
-						var ar = new Vector3F[ buffer.VertexCount ];
-						for( int n = 0; n < buffer.VertexCount; n++ )
-							ar[ n ] = normals[ vertexOffset + n ];
-						buffer.WriteChannel( element.Offset, ar );
+						if( element.Type == VertexElementType.Float3 )
+						{
+							var ar = new Vector3F[ buffer.VertexCount ];
+							for( int n = 0; n < buffer.VertexCount; n++ )
+								ar[ n ] = normals[ vertexOffset + n ];
+							buffer.WriteChannel( element.Offset, ar );
+						}
+						else if( element.Type == VertexElementType.Half3 )
+						{
+							var ar = new Vector3H[ buffer.VertexCount ];
+							for( int n = 0; n < buffer.VertexCount; n++ )
+								ar[ n ] = normals[ vertexOffset + n ].ToVector3H();
+							buffer.WriteChannel( element.Offset, ar );
+						}
 					}
 				}
 
 				//tangents
 				{
-					if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.Tangent, out VertexElement element ) &&
-						element.Type == VertexElementType.Float4 )
+					if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.Tangent, out VertexElement element ) )
 					{
 						var buffer = oper.VertexBuffers[ element.Source ];
 
-						var ar = new Vector4F[ buffer.VertexCount ];
-						for( int n = 0; n < buffer.VertexCount; n++ )
-							ar[ n ] = tangents[ vertexOffset + n ];
-						buffer.WriteChannel( element.Offset, ar );
+						if( element.Type == VertexElementType.Float4 )
+						{
+							var ar = new Vector4F[ buffer.VertexCount ];
+							for( int n = 0; n < buffer.VertexCount; n++ )
+								ar[ n ] = tangents[ vertexOffset + n ];
+							buffer.WriteChannel( element.Offset, ar );
+						}
+						else if( element.Type == VertexElementType.Half4 )
+						{
+							var ar = new Vector4H[ buffer.VertexCount ];
+							for( int n = 0; n < buffer.VertexCount; n++ )
+								ar[ n ] = tangents[ vertexOffset + n ].ToVector4H();
+							buffer.WriteChannel( element.Offset, ar );
+						}
 					}
 				}
 
@@ -2420,37 +2498,38 @@ namespace NeoAxis
 			meshCreated.Result.SpaceBounds = new SpaceBounds( localBounds );
 		}
 
-		public override void UpdateDataFromPhysicsEngine()
-		{
-			if( softBody != null )
-			{
-				UpdateGeometryFromPhysicsEngine( out Vector3 worldPosition );
-				UpdateCreatedMeshData();
+		//!!!!
+		//public override void UpdateDataFromPhysicsEngine()
+		//{
+		//if( softBody != null )
+		//{
+		//	UpdateGeometryFromPhysicsEngine( out Vector3 worldPosition );
+		//	UpdateCreatedMeshData();
 
-				//var bodyTransform = softBody.WorldTransform;
-				//bodyTransform.Decompose( out Vector3 scale, out Quaternion rotation, out Vector3 translation );
-				//Log.Info("{0}; {1}; {2}", translation, rotation, scale);
+		//	//var bodyTransform = softBody.WorldTransform;
+		//	//bodyTransform.Decompose( out Vector3 scale, out Quaternion rotation, out Vector3 translation );
+		//	//Log.Info("{0}; {1}; {2}", translation, rotation, scale);
 
-				try
-				{
-					updatePropertiesWithoutUpdatingBody = true;
-					Transform = new Transform( worldPosition, Quaternion.Identity );
-					//Transform = new Transform( BulletUtils.Convert( translation ), BulletUtils.Convert( rotation ), BulletUtils.Convert( scale ) );
+		//	try
+		//	{
+		//		updatePropertiesWithoutUpdatingBody = true;
+		//		Transform = new Transform( worldPosition, Quaternion.Identity );
+		//		//Transform = new Transform( BulletUtils.Convert( translation ), BulletUtils.Convert( rotation ), BulletUtils.Convert( scale ) );
 
-					//!!!!"Interpolation"
-					LinearVelocity = BulletPhysicsUtility.Convert( softBody.InterpolationLinearVelocity );
+		//		//!!!!"Interpolation"
+		//		LinearVelocity = BulletPhysicsUtility.Convert( softBody.InterpolationLinearVelocity );
 
-					//!!!!AngularVelocity
-				}
-				finally
-				{
-					updatePropertiesWithoutUpdatingBody = false;
-				}
+		//		//!!!!AngularVelocity
+		//	}
+		//	finally
+		//	{
+		//		updatePropertiesWithoutUpdatingBody = false;
+		//	}
 
-				//!!!!надо?
-				SpaceBoundsUpdate();
-			}
-		}
+		//	//!!!!надо?
+		//	SpaceBoundsUpdate();
+		//}
+		//}
 
 		//public void AddActionBeforeBodyDestroy( Action action )
 		//{
@@ -2477,88 +2556,90 @@ namespace NeoAxis
 			}
 		}
 
-		void SetMaterial( Internal.BulletSharp.SoftBody.SoftBody b )
-		{
-			//material settings
-			Internal.BulletSharp.SoftBody.Config config = b.Cfg;
-			//!!!!пока один материал
-			Internal.BulletSharp.SoftBody.Material bMaterial = b.Materials[ 0 ];
-			bMaterial.Flags = MaterialFlags.Default;
+		//!!!!
+		//void SetMaterial( Internal.BulletSharp.SoftBody.SoftBody b )
+		//{
+		//	//material settings
+		//	Internal.BulletSharp.SoftBody.Config config = b.Cfg;
+		//	//!!!!пока один материал
+		//	Internal.BulletSharp.SoftBody.Material bMaterial = b.Materials[ 0 ];
+		//	bMaterial.Flags = MaterialFlags.Default;
 
-			//!!!!disabled until all parameters fixed (SoftRigidContactHardness, etc).
-			//PhysicalMaterial material = Material;
-			//if( material != null )
-			//{
-			//	bMaterial.LinearStiffness = material.SoftLinearStiffness;
-			//	bMaterial.AngularStiffness = material.SoftAngularStiffness;
-			//	bMaterial.VolumeStiffness = material.SoftVolumeStiffness;
-			//	config.DynamicFriction = material.Friction;
-			//}
-			//else
-			{
-				bMaterial.LinearStiffness = MaterialLinearStiffness;
-				bMaterial.AngularStiffness = MaterialAngularStiffness;
-				bMaterial.VolumeStiffness = MaterialVolumeStiffness;
-				config.DynamicFriction = MaterialFriction;
-			}
-		}
+		//	//!!!!disabled until all parameters fixed (SoftRigidContactHardness, etc).
+		//	//PhysicalMaterial material = Material;
+		//	//if( material != null )
+		//	//{
+		//	//	bMaterial.LinearStiffness = material.SoftLinearStiffness;
+		//	//	bMaterial.AngularStiffness = material.SoftAngularStiffness;
+		//	//	bMaterial.VolumeStiffness = material.SoftVolumeStiffness;
+		//	//	config.DynamicFriction = material.Friction;
+		//	//}
+		//	//else
+		//	{
+		//		bMaterial.LinearStiffness = MaterialLinearStiffness;
+		//		bMaterial.AngularStiffness = MaterialAngularStiffness;
+		//		bMaterial.VolumeStiffness = MaterialVolumeStiffness;
+		//		config.DynamicFriction = MaterialFriction;
+		//	}
+		//}
 
-		void ApplyConfig()
-		{
-			Config config = softBody.Cfg;
+		//!!!!
+		//void ApplyConfig()
+		//{
+		//	Config config = softBody.Cfg;
 
-			config.Damping = Damping;
+		//	config.Damping = Damping;
 
-			config.Collisions = Collisions.Default;// SdfRigidSoft
+		//	config.Collisions = Collisions.Default;// SdfRigidSoft
 
-			//enable cluster collision between soft body and soft body 
-			//config.Collisions |= Collisions.ClusterClusterSoftSoft;
-			//enable cluster collision between soft body and rigid body 
-			//config.Collisions |= Collisions.ClusterConvexRigidSoft;
-			//config.Collisions |= Collisions.VertexFaceSoftSoft;
-			//config.Collisions |= Collisions.RigidSoftMask;
+		//	//enable cluster collision between soft body and soft body 
+		//	//config.Collisions |= Collisions.ClusterClusterSoftSoft;
+		//	//enable cluster collision between soft body and rigid body 
+		//	//config.Collisions |= Collisions.ClusterConvexRigidSoft;
+		//	//config.Collisions |= Collisions.VertexFaceSoftSoft;
+		//	//config.Collisions |= Collisions.RigidSoftMask;
 
-			if( SelfCollision )
-				config.Collisions |= Collisions.ClusterSelf;
+		//	if( SelfCollision )
+		//		config.Collisions |= Collisions.ClusterSelf;
 
-			// Aerodynamics
-			config.Pressure = Pressure;
-			config.Drag = Drag;
-			config.Lift = Lift;
+		//	// Aerodynamics
+		//	config.Pressure = Pressure;
+		//	config.Drag = Drag;
+		//	config.Lift = Lift;
 
-			// Pose Matching
-			if( ShapeMatching )
-				config.PoseMatching = ShapeCoefficient;
-			if( VolumeMatching )
-				config.VolumeConversation = VolumeCoefficient;
+		//	// Pose Matching
+		//	if( ShapeMatching )
+		//		config.PoseMatching = ShapeCoefficient;
+		//	if( VolumeMatching )
+		//		config.VolumeConversation = VolumeCoefficient;
 
-			config.MaxVolume = MaxVolumeRatio;
+		//	config.MaxVolume = MaxVolumeRatio;
 
-			//Contacts
-			config.RigidContactHardness = RigidContactHardness;
-			config.KineticContactHardness = KineticContactHardness;
-			config.SoftContactHardness = SoftContactHardness;
-			config.AnchorHardness = AnchorContactHardness;
+		//	//Contacts
+		//	config.RigidContactHardness = RigidContactHardness;
+		//	config.KineticContactHardness = KineticContactHardness;
+		//	config.SoftContactHardness = SoftContactHardness;
+		//	config.AnchorHardness = AnchorContactHardness;
 
-			//properties for andvanced mode
-			config.AeroModel = BodyAeroModel;
-			config.AnchorHardness = AnchorContactHardness;
-			config.KineticContactHardness = KineticContactHardness;
-			config.RigidContactHardness = RigidContactHardness;
-			config.SoftContactHardness = SoftContactHardness;
-			config.SoftRigidHardness = SoftRigidContactHardness;
-			config.SoftSoftHardness = SoftSoftContactHardness;
-			config.SoftKineticHardness = SoftKineticContactHardness;
-			config.SoftKineticImpulseSplit = SoftKineticImpulseSplit;
-			config.SoftRigidImpulseSplit = SoftRigidImpulseSplit;
-			config.SoftSoftImpulseSplit = SoftSoftImpulseSplit;
-			config.ClusterIterations = ClusterIterations;
-			config.PositionIterations = PositionIterations;
-			config.DriftIterations = DriftIterations;
-			config.VelocityIterations = VelocityIterations;
-			config.VelocityCorrectionFactor = VelocityCorrectionFactor;
-			config.Timescale = TimeScale;
-		}
+		//	//properties for andvanced mode
+		//	config.AeroModel = BodyAeroModel;
+		//	config.AnchorHardness = AnchorContactHardness;
+		//	config.KineticContactHardness = KineticContactHardness;
+		//	config.RigidContactHardness = RigidContactHardness;
+		//	config.SoftContactHardness = SoftContactHardness;
+		//	config.SoftRigidHardness = SoftRigidContactHardness;
+		//	config.SoftSoftHardness = SoftSoftContactHardness;
+		//	config.SoftKineticHardness = SoftKineticContactHardness;
+		//	config.SoftKineticImpulseSplit = SoftKineticImpulseSplit;
+		//	config.SoftRigidImpulseSplit = SoftRigidImpulseSplit;
+		//	config.SoftSoftImpulseSplit = SoftSoftImpulseSplit;
+		//	config.ClusterIterations = ClusterIterations;
+		//	config.PositionIterations = PositionIterations;
+		//	config.DriftIterations = DriftIterations;
+		//	config.VelocityIterations = VelocityIterations;
+		//	config.VelocityCorrectionFactor = VelocityCorrectionFactor;
+		//	config.Timescale = TimeScale;
+		//}
 
 		public void CheckForUpdateDataWhenMeshChanged()
 		{
@@ -2568,10 +2649,11 @@ namespace NeoAxis
 				RecreateBody();
 		}
 
-		[Browsable( false )]
-		public override CollisionObject BulletBody
-		{
-			get { return softBody; }
-		}
+		//!!!!
+		//[Browsable( false )]
+		//public override CollisionObject BulletBody
+		//{
+		//	get { return softBody; }
+		//}
 	}
 }

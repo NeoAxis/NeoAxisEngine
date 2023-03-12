@@ -1,4 +1,5 @@
-﻿using System;
+#if !DEPLOY
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -71,3 +72,5 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         }
     }
 }
+
+#endif

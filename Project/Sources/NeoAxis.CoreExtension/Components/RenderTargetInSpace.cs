@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -307,7 +307,7 @@ namespace NeoAxis
 
 			if( ParentScene != null )
 			{
-				if( EnabledInHierarchy )
+				if( EnabledInHierarchyAndIsInstance )
 					ParentScene.ViewportUpdateBefore += ParentScene_ViewportUpdateBefore;
 				else
 					ParentScene.ViewportUpdateBefore -= ParentScene_ViewportUpdateBefore;
@@ -402,25 +402,39 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		//public delegate void RenderTargetUpdateBeforeDelegate( RenderTargetInSpace sender, ref bool skipUpdate );
+		//public event RenderTargetUpdateBeforeDelegate RenderTargetUpdateBefore;
+
+		public delegate void RenderTargetUpdateEventDelegate( RenderTargetInSpace sender );
+		public event RenderTargetUpdateEventDelegate RenderTargetUpdateEvent;
+
 		public void RenderTargetUpdate()
 		{
 			if( !viewportDuringUpdate )
 			{
-				RecreateRenderTargetIfNeeded();
-				UpdateAttachedScene();
+				//var skipUpdate = false;
+				//RenderTargetUpdateBefore?.Invoke( this, ref skipUpdate );
 
-				if( createdViewport != null )
+				//if( !skipUpdate )
 				{
-					try
-					{
-						viewportDuringUpdate = true;
+					RecreateRenderTargetIfNeeded();
+					UpdateAttachedScene();
 
-						createdViewport.BackgroundColorDefault = BackgroundColor;
-						createdViewport.Update( true, GetCameraSettings() );
-					}
-					finally
+					if( createdViewport != null )
 					{
-						viewportDuringUpdate = false;
+						try
+						{
+							viewportDuringUpdate = true;
+
+							RenderTargetUpdateEvent?.Invoke( this );
+
+							createdViewport.BackgroundColorDefault = BackgroundColor;
+							createdViewport.Update( true, GetCameraSettings() );
+						}
+						finally
+						{
+							viewportDuringUpdate = false;
+						}
 					}
 				}
 			}
@@ -428,7 +442,7 @@ namespace NeoAxis
 
 		private void ParentScene_ViewportUpdateBefore( Scene scene, Viewport viewport, Viewport.CameraSettingsClass overrideCameraSettings )
 		{
-			if( EnabledInHierarchyAndIsNotResource && AutoUpdate && ( viewport.LastUpdateTime == lastVisibleTime || viewport.PreviousUpdateTime == lastVisibleTime ) )
+			if( EnabledInHierarchyAndIsInstance && AutoUpdate && ( viewport.LastUpdateTime == lastVisibleTime || viewport.PreviousUpdateTime == lastVisibleTime ) )
 				RenderTargetUpdate();
 		}
 
@@ -502,6 +516,7 @@ namespace NeoAxis
 
 			var renderTexture = createdImage.Result.GetRenderTarget();
 			createdViewport = renderTexture.AddViewport( true, true );
+			createdViewport.AnyData = this;
 			createdViewport.UIContainer.Transform3D = TransformV;
 
 			//PC: OriginBottomLeft = false, Android: OriginBottomLeft = true
@@ -519,8 +534,11 @@ namespace NeoAxis
 
 		void RecreateRenderTargetIfNeeded()
 		{
-			if( createdImage == null || createdForSize != GetDemandedSize() || createdForHDR != GetHDR() )//!!!! || createdForMipmaps != Mipmaps.Value )
-				CreateRenderTarget();
+			if( !RenderingSystem.BackendNull )
+			{
+				if( createdImage == null || createdForSize != GetDemandedSize() || createdForHDR != GetHDR() )// || createdForMipmaps != Mipmaps.Value )
+					CreateRenderTarget();
+			}
 		}
 
 		void DestroyRenderTarget()
@@ -758,16 +776,25 @@ namespace NeoAxis
 			info.DisplaySelectionRectangle = false;
 		}
 
+		public delegate void ObjectInteractionEventDelegate( RenderTargetInSpace sender, ObjectInteractionContext context );
+		public event ObjectInteractionEventDelegate ObjectInteractionEnterEvent;
+		public event ObjectInteractionEventDelegate ObjectInteractionExitEvent;
+		public event ObjectInteractionEventDelegate ObjectInteractionUpdateEvent;
+
 		public void ObjectInteractionEnter( ObjectInteractionContext context )
 		{
+			ObjectInteractionEnterEvent?.Invoke( this, context );
 		}
 
 		public void ObjectInteractionExit( ObjectInteractionContext context )
 		{
+			ObjectInteractionExitEvent?.Invoke( this, context );
 		}
 
 		public void ObjectInteractionUpdate( ObjectInteractionContext context )
 		{
+			ObjectInteractionUpdateEvent?.Invoke( this, context );
+
 			if( createdViewport != null )
 			{
 				var cameraSettings = context.Viewport.CameraSettings;

@@ -1,223 +1,236 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
-	//!!!!надо ли сферу? может слишком сложна. может достаточно сферы в качестве предрасчитанного от bounds параметра?
-
-	//!!!!?
-	////!!!!new: immutable. тогда можно ChangedEvent
-	//!!!!!!!!если неизменяемые то им можно добавить уникальный номер? у самого объекта есть ведь ссылка, он class
-
 	/// <summary>
 	/// Represents a class to contain axis aligned bounds box and bounding sphere.
 	/// </summary>
 	public class SpaceBounds
 	{
-		Bounds? boundingBox;
-		Sphere? boundingSphere;
-
-		Bounds calculatedBoundingBox;
-		//!!!!или сразу считать
-		volatile bool calculatedBoundingBox_Bool;
-		Sphere calculatedBoundingSphere;
-		volatile bool calculatedBoundingSphere_Bool;
-		//Bounds? calculatedBoundingBox;
-		//Sphere? calculatedBoundingSphere;
-
-		//static SpaceBounds _default = new SpaceBounds( null, new Sphere( Vec3.Zero, .5 ) );
+		bool boundingBoxOriginal;
+		bool boundingSphereOriginal;
+		internal Bounds boundingBox;
+		internal Sphere boundingSphere;
 
 		//
 
-		//public static SpaceBounds Default
-		//{
-		//	get { return _default; }
-		//}
-
 		public SpaceBounds()
 		{
-			//this.boundingBox = _default.boundingBox;
-			//this.boundingSphere = _default.boundingSphere;
 		}
 
-		//!!!!выше можно проверять входит ли box внутрь сферы и наоборот
-		public SpaceBounds( Bounds? boundingBox, Sphere? boundingSphere )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public SpaceBounds( Bounds boundingBox, Sphere boundingSphere )
 		{
 			this.boundingBox = boundingBox;
+			boundingBoxOriginal = true;
 			this.boundingSphere = boundingSphere;
-
-			//if( boundingBox == null && boundingSphere == null )
-			//{
-			//	this.boundingBox = _default.boundingBox;
-			//	this.boundingSphere = _default.boundingSphere;
-			//}
-			//else
-			//{
-			//	this.boundingBox = boundingBox;
-			//	this.boundingSphere = boundingSphere;
-			//}
+			boundingSphereOriginal = true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public SpaceBounds( Bounds boundingBox )
-			: this( boundingBox, null )
 		{
+			this.boundingBox = boundingBox;
+			boundingBoxOriginal = true;
+			boundingBox.GetBoundingSphere( out boundingSphere );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public SpaceBounds( ref Bounds boundingBox )
+		{
+			this.boundingBox = boundingBox;
+			boundingBoxOriginal = true;
+			boundingBox.GetBoundingSphere( out boundingSphere );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public SpaceBounds( Sphere boundingSphere )
-			: this( null, boundingSphere )
 		{
+			this.boundingSphere = boundingSphere;
+			boundingSphereOriginal = true;
+			boundingSphere.ToBounds( out boundingBox );
 		}
 
-		//!!!!
-		//public bool IsValid()
-		//{
-		//	return boundingBox.HasValue || boundingSphere.HasValue;
-		//}
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public SpaceBounds( ref Sphere boundingSphere )
+		{
+			this.boundingSphere = boundingSphere;
+			boundingSphereOriginal = true;
+			boundingSphere.ToBounds( out boundingBox );
+		}
 
-		//!!!!slowly?
-		public Bounds? BoundingBox
+		public bool BoundingBoxOriginal { get { return boundingBoxOriginal; } }
+		public bool BoundingSphereOriginal { get { return boundingSphereOriginal; } }
+
+		public Bounds BoundingBox
 		{
 			get { return boundingBox; }
-			//!!!!
-			//set
-			//{
-			//	if( boundingBox == value )
-			//		return;
-			//	boundingBox = value;
-			//	calculatedBoundingBox_Bool = false;
-			//	calculatedBoundingSphere_Bool = false;
-			//}
 		}
 
-		public Sphere? BoundingSphere
+		public Sphere BoundingSphere
 		{
 			get { return boundingSphere; }
-			//!!!!
-			//set
-			//{
-			//	if( boundingSphere == value )
-			//		return;
-			//	boundingSphere = value;
-			//	calculatedBoundingBox_Bool = false;
-			//	calculatedBoundingSphere_Bool = false;
-			//}
 		}
 
-		public void GetCalculatedBoundingBox( out Bounds result )
-		{
-			if( !calculatedBoundingBox_Bool )
-			{
-				if( boundingBox.HasValue )
-					calculatedBoundingBox = boundingBox.Value;
-				else
-					boundingSphere.Value.ToBounds( out calculatedBoundingBox );
-				calculatedBoundingBox_Bool = true;
-			}
-			result = calculatedBoundingBox;
-		}
 
-		public Bounds CalculatedBoundingBox
-		{
-			get
-			{
-				GetCalculatedBoundingBox( out var result );
-				return result;
-			}
-		}
-
-		//public double CalculatedBoundingBoxMaxSide
+		//public Bounds CalculatedBoundingBox
 		//{
+		//	get { return boundingBox; }
+		//}
+
+		//public Sphere CalculatedBoundingSphere
+		//{
+		//	get { return boundingSphere; }
+		//}
+
+		//public double CalculatedBoundingSphereRadius
+		//{
+		//	get { return boundingSphere.Radius; }
+		//}
+
+
+		//public Bounds? BoundingBox
+		//{
+		//	[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//	get { return boundingBox; }
+		//}
+
+		//public Sphere? BoundingSphere
+		//{
+		//	[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//	get { return boundingSphere; }
+		//}
+
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public void GetCalculatedBoundingBox( out Bounds result )
+		//{
+		//	if( !calculatedBoundingBox_Bool )
+		//	{
+		//		if( boundingBox.HasValue )
+		//			calculatedBoundingBox = boundingBox.Value;
+		//		else
+		//			boundingSphere.Value.ToBounds( out calculatedBoundingBox );
+		//		calculatedBoundingBox_Bool = true;
+		//	}
+		//	result = calculatedBoundingBox;
+		//}
+
+		//public Bounds CalculatedBoundingBox
+		//{
+		//	[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		//	get
 		//	{
-		//		if( !calculatedBoundingBox_Bool )
-		//		{
-		//			if( boundingBox.HasValue )
-		//				calculatedBoundingBox = boundingBox.Value;
-		//			else
-		//				calculatedBoundingBox = boundingSphere.Value.ToBounds();
-		//			calculatedBoundingBox_Bool = true;
-		//		}
-		//		//!!!!can be cached
-		//		calculatedBoundingBox.GetSize( out var size );
-		//		return size.MaxComponent();
+		//		GetCalculatedBoundingBox( out var result );
+		//		return result;
 		//	}
 		//}
 
-		void TouchCalculatedBoundingSphere()
-		{
-			if( !calculatedBoundingSphere_Bool )
-			{
-				if( boundingSphere.HasValue )
-					calculatedBoundingSphere = boundingSphere.Value;
-				else
-					boundingBox.Value.GetBoundingSphere( out calculatedBoundingSphere );
-				calculatedBoundingSphere_Bool = true;
-			}
-		}
+		////public double CalculatedBoundingBoxMaxSide
+		////{
+		////	get
+		////	{
+		////		if( !calculatedBoundingBox_Bool )
+		////		{
+		////			if( boundingBox.HasValue )
+		////				calculatedBoundingBox = boundingBox.Value;
+		////			else
+		////				calculatedBoundingBox = boundingSphere.Value.ToBounds();
+		////			calculatedBoundingBox_Bool = true;
+		////		}
+		////		//!!!!can be cached
+		////		calculatedBoundingBox.GetSize( out var size );
+		////		return size.MaxComponent();
+		////	}
+		////}
 
-		public void GetCalculatedBoundingSphere( out Sphere result )
-		{
-			TouchCalculatedBoundingSphere();
-			result = calculatedBoundingSphere;
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//void TouchCalculatedBoundingSphere()
+		//{
+		//	if( !calculatedBoundingSphere_Bool )
+		//	{
+		//		if( boundingSphere.HasValue )
+		//			calculatedBoundingSphere = boundingSphere.Value;
+		//		else
+		//			boundingBox.Value.GetBoundingSphere( out calculatedBoundingSphere );
+		//		calculatedBoundingSphere_Bool = true;
+		//	}
+		//}
 
-		public Sphere CalculatedBoundingSphere
-		{
-			get
-			{
-				TouchCalculatedBoundingSphere();
-				return calculatedBoundingSphere;
-				//GetCalculatedBoundingSphere( out var result );
-				//return result;
-			}
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public void GetCalculatedBoundingSphere( out Sphere result )
+		//{
+		//	TouchCalculatedBoundingSphere();
+		//	result = calculatedBoundingSphere;
+		//}
 
-		public double CalculatedBoundingSphereRadius
-		{
-			get
-			{
-				TouchCalculatedBoundingSphere();
-				return calculatedBoundingSphere.Radius;
-			}
-		}
+		//public Sphere CalculatedBoundingSphere
+		//{
+		//	[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//	get
+		//	{
+		//		TouchCalculatedBoundingSphere();
+		//		return calculatedBoundingSphere;
+		//		//GetCalculatedBoundingSphere( out var result );
+		//		//return result;
+		//	}
+		//}
 
+		//public double CalculatedBoundingSphereRadius
+		//{
+		//	[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//	get
+		//	{
+		//		TouchCalculatedBoundingSphere();
+		//		return calculatedBoundingSphere.Radius;
+		//	}
+		//}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is SpaceBounds && this == (SpaceBounds)obj );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
-			//!!!!good?
-			return ( boundingBox.GetHashCode() ^ boundingSphere.GetHashCode() );
+			return boundingBox.GetHashCode() ^ boundingSphere.GetHashCode() ^ boundingBoxOriginal.GetHashCode() ^ boundingSphereOriginal.GetHashCode();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( SpaceBounds a, SpaceBounds b )
 		{
-			//!!!!надо ли
 			bool aNull = ReferenceEquals( a, null );
 			bool bNull = ReferenceEquals( b, null );
 			if( aNull || bNull )
 				return aNull && bNull;
+			if( ReferenceEquals( a, b ) )
+				return true;
 
-			return ( a.boundingBox == b.boundingBox && a.boundingSphere == b.boundingSphere );
+			return a.boundingBox == b.boundingBox && a.boundingSphere == b.boundingSphere && a.boundingBoxOriginal == b.boundingBoxOriginal && a.boundingSphereOriginal == b.boundingSphereOriginal;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( SpaceBounds a, SpaceBounds b )
 		{
 			bool aNull = ReferenceEquals( a, null );
 			bool bNull = ReferenceEquals( b, null );
 			if( aNull || bNull )
 				return !( aNull && bNull );
+			if( ReferenceEquals( a, b ) )
+				return false;
 
-			return ( a.boundingBox != b.boundingBox || a.boundingSphere != b.boundingSphere );
+			return a.boundingBox != b.boundingBox || a.boundingSphere != b.boundingSphere || a.boundingBoxOriginal != b.boundingBoxOriginal || a.boundingSphereOriginal != b.boundingSphereOriginal;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static SpaceBounds Merge( SpaceBounds a, SpaceBounds b )
 		{
 			if( a == null )
@@ -225,46 +238,70 @@ namespace NeoAxis
 			if( b == null )
 				return a;
 
-			Bounds? bounds = null;
-			//if( a.boundingBox != null || b.boundingBox != null )
-			//{
-			if( a.boundingBox != null && b.boundingBox != null )
-				bounds = Bounds.Merge( a.boundingBox.Value, b.boundingBox.Value );
-			else if( a.boundingBox != null )
-				bounds = a.boundingBox.Value;
-			else if( b.boundingBox != null )
-				bounds = b.boundingBox.Value;
-			//}
+			Bounds bounds;
+			if( a.boundingBoxOriginal && b.boundingBoxOriginal )
+				Bounds.Merge( ref a.boundingBox, ref b.boundingBox, out bounds );
+			else if( a.boundingBoxOriginal )
+				bounds = a.boundingBox;
+			else //if( b.boundingBoxOriginal )
+				bounds = b.boundingBox;
 
-			Sphere? sphere = null;
-			//if( a.boundingSphere != null || b.boundingSphere != null )
-			//{
-			if( a.boundingSphere != null && b.boundingSphere != null )
-				sphere = Sphere.Merge( a.boundingSphere.Value, b.boundingSphere.Value );
-			else if( a.boundingSphere != null )
-				sphere = a.boundingSphere.Value;
-			else if( b.boundingSphere != null )
-				sphere = b.boundingSphere.Value;
-			//}
+			Sphere sphere;
+			if( a.boundingSphereOriginal && b.boundingSphereOriginal )
+				Sphere.Merge( ref a.boundingSphere, ref b.boundingSphere, out sphere );
+			else if( a.boundingSphereOriginal )
+				sphere = a.boundingSphere;
+			else //if( b.boundingSphereOriginal )
+				sphere = b.boundingSphere;
 
 			return new SpaceBounds( bounds, sphere );
+
+			//Bounds? bounds = null;
+			//if( a.boundingBox != null && b.boundingBox != null )
+			//	bounds = Bounds.Merge( a.boundingBox.Value, b.boundingBox.Value );
+			//else if( a.boundingBox != null )
+			//	bounds = a.boundingBox.Value;
+			//else if( b.boundingBox != null )
+			//	bounds = b.boundingBox.Value;
+
+			//Sphere? sphere = null;
+			//if( a.boundingSphere != null && b.boundingSphere != null )
+			//	sphere = Sphere.Merge( a.boundingSphere.Value, b.boundingSphere.Value );
+			//else if( a.boundingSphere != null )
+			//	sphere = a.boundingSphere.Value;
+			//else if( b.boundingSphere != null )
+			//	sphere = b.boundingSphere.Value;
+
+			//return new SpaceBounds( bounds, sphere );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static SpaceBounds Multiply( Transform transform, SpaceBounds spaceBounds )
 		{
-			Bounds? b = null;
-			Sphere? s = null;
+			if( spaceBounds.boundingBoxOriginal )
+			{
+				if( spaceBounds.boundingSphereOriginal )
+					return new SpaceBounds( transform * spaceBounds.boundingBox, transform * spaceBounds.boundingSphere );
+				else
+					return new SpaceBounds( transform * spaceBounds.boundingBox );
+			}
+			else
+				return new SpaceBounds( transform * spaceBounds.boundingSphere );
 
-			//!!!!!slowly
-			//!!!!а может еще как-то смешивать сферу и bounds
-			//!!!еще в конце расчета может еще как-то оптимизировать/уменьшить
 
-			if( spaceBounds.boundingBox != null )
-				b = transform * spaceBounds.boundingBox.Value;
-			if( spaceBounds.boundingSphere != null )
-				s = transform * spaceBounds.boundingSphere.Value;
+			//Bounds? b = null;
+			//Sphere? s = null;
 
-			return new SpaceBounds( b, s );
+			////!!!!!slowly
+			////!!!!а может еще как-то смешивать сферу и bounds
+			////!!!еще в конце расчета может еще как-то оптимизировать/уменьшить
+
+			//if( spaceBounds.boundingBox != null )
+			//	b = transform * spaceBounds.boundingBox.Value;
+			//if( spaceBounds.boundingSphere != null )
+			//	s = transform * spaceBounds.boundingSphere.Value;
+
+			//return new SpaceBounds( b, s );
 		}
 	}
 }

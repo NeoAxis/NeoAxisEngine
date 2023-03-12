@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,7 +9,9 @@ namespace NeoAxis
 	/// <summary>
 	/// Lens flares effect of the light. The component must be a child of Light.
 	/// </summary>
+#if !DEPLOY
 	[NewObjectSettings( typeof( NewObjectSettingsLensFlares ) )]
+#endif
 	public class LensFlares : Component//, ILightChild
 	{
 		/// <summary>
@@ -40,6 +42,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+#if !DEPLOY
 		/// <summary>
 		/// A set of settings for <see cref="LensFlares"/> creation in the editor.
 		/// </summary>
@@ -59,6 +62,7 @@ namespace NeoAxis
 				return base.Creation( context );
 			}
 		}
+#endif
 
 		/////////////////////////////////////////
 

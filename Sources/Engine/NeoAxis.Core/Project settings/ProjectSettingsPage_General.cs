@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -11,26 +11,26 @@ namespace NeoAxis
 	/// </summary>
 	public class ProjectSettingsPage_General : ProjectSettingsPage
 	{
-		/// <summary>
-		/// Enables the extended mode of the editor. All features of NeoAxis Editor are activated in this mode.
-		/// </summary>
-		[DefaultValue( false )]
-		[Category( "General" )]
-		[DisplayName( "Extended Mode (Restart to apply changes)" )]
-		public Reference<bool> ExtendedMode
-		{
-			get { if( _extendedMode.BeginGet() ) ExtendedMode = _extendedMode.Get( this ); return _extendedMode.value; }
-			set { if( _extendedMode.BeginSet( ref value ) ) { try { ExtendedModeChanged?.Invoke( this ); } finally { _extendedMode.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="ExtendedMode"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> ExtendedModeChanged;
-		ReferenceField<bool> _extendedMode = false;
+		///// <summary>
+		///// Enables the extended mode of the editor. All features of NeoAxis Editor are activated in this mode.
+		///// </summary>
+		//[DefaultValue( false )]
+		//[Category( "General" )]
+		//[DisplayName( "Extended Mode (Restart to apply changes)" )]
+		//public Reference<bool> ExtendedMode
+		//{
+		//	get { if( _extendedMode.BeginGet() ) ExtendedMode = _extendedMode.Get( this ); return _extendedMode.value; }
+		//	set { if( _extendedMode.BeginSet( ref value ) ) { try { ExtendedModeChanged?.Invoke( this ); } finally { _extendedMode.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="ExtendedMode"/> property value changes.</summary>
+		//public event Action<ProjectSettingsPage_General> ExtendedModeChanged;
+		//ReferenceField<bool> _extendedMode = false;
 
 		/// <summary>
 		/// The name of the project.
 		/// </summary>
 		[DefaultValue( "Example Project" )]
-		[Category( "General" )]
+		[Category( "Project" )]
 		public Reference<string> ProjectName
 		{
 			get { if( _projectName.BeginGet() ) ProjectName = _projectName.Get( this ); return _projectName.value; }
@@ -40,7 +40,42 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_General> ProjectNameChanged;
 		ReferenceField<string> _projectName = "Example Project";
 
+		/// <summary>
+		/// The name of the world.
+		/// </summary>
+		[Category( "General" )]
+		public string CloudProjectName
+		{
+			get
+			{
+				if( EngineInfo.CloudProjectInfo != null )
+					return EngineInfo.CloudProjectInfo.Name;
+				return "";
+			}
+		}
+
 		/////////////////////////////////////////
+
+		public enum ThemeEnum
+		{
+			Light,
+			Dark,
+		}
+
+		/// <summary>
+		/// The theme of the editor. Restart the editor to apply changes.
+		/// </summary>
+		[DefaultValue( ThemeEnum.Dark )]
+		[Category( "Editor" )]
+		[DisplayName( "Theme (Restart to apply changes)" )]
+		public Reference<ThemeEnum> Theme
+		{
+			get { if( _theme.BeginGet() ) Theme = _theme.Get( this ); return _theme.value; }
+			set { if( _theme.BeginSet( ref value ) ) { try { ThemeChanged?.Invoke( this ); } finally { _theme.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Theme"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_General> ThemeChanged;
+		ReferenceField<ThemeEnum> _theme = ThemeEnum.Dark;
 
 		public enum LanguageEnum
 		{
@@ -137,51 +172,60 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_General> PropertiesMaxCountCollectionItemsToDisplayChanged;
 		ReferenceField<int> _propertiesMaxCountCollectionItemsToDisplay = 100;
 
-		/// <summary>
-		/// Whether to animate windows auto-hiding in the editor.
-		/// </summary>
-		[DefaultValue( false )]
-		[Category( "Editor" )]
-		public Reference<bool> AnimateWindowsAutoHiding
+		[Flags]
+		public enum CustomizeWindowsStyleEnum
 		{
-			get { if( _animateAutoHideWindows.BeginGet() ) AnimateWindowsAutoHiding = _animateAutoHideWindows.Get( this ); return _animateAutoHideWindows.value; }
-			set { if( _animateAutoHideWindows.BeginSet( ref value ) ) { try { AnimateAutoHideWindowsChanged?.Invoke( this ); } finally { _animateAutoHideWindows.EndSet(); } } }
+			None = 0,
+			Auto = 1,
+			MainForm = 2,
+			AdditionalForms = 4,
 		}
-		/// <summary>Occurs when the <see cref="AnimateWindowsAutoHiding"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> AnimateAutoHideWindowsChanged;
-		ReferenceField<bool> _animateAutoHideWindows = false;
 
 		/// <summary>
-		/// Whether to use custom style for window title bars. Windows only. Restart the editor to apply changes.
+		/// Whether to use custom style for window title bars. Restart the editor to apply changes.
 		/// </summary>
-		[DefaultValue( true )]
+		[DefaultValue( CustomizeWindowsStyleEnum.Auto )]
 		[Category( "Editor" )]
-		[DisplayName( "Custom Windows Style (Restart to apply changes)" )]
-		public Reference<bool> CustomWindowsStyle
+		[DisplayName( "Customize Windows Style (Restart to apply changes)" )]
+		public Reference<CustomizeWindowsStyleEnum> CustomizeWindowsStyle
 		{
-			get { if( _customWindowsStyle.BeginGet() ) CustomWindowsStyle = _customWindowsStyle.Get( this ); return _customWindowsStyle.value; }
-			set { if( _customWindowsStyle.BeginSet( ref value ) ) { try { CustomWindowsStyleChanged?.Invoke( this ); } finally { _customWindowsStyle.EndSet(); } } }
+			get { if( _customizeWindowsStyle.BeginGet() ) CustomizeWindowsStyle = _customizeWindowsStyle.Get( this ); return _customizeWindowsStyle.value; }
+			set { if( _customizeWindowsStyle.BeginSet( ref value ) ) { try { CustomizeWindowsStyleChanged?.Invoke( this ); } finally { _customizeWindowsStyle.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="CustomWindowsStyle"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> CustomWindowsStyleChanged;
-		ReferenceField<bool> _customWindowsStyle = true;
+		/// <summary>Occurs when the <see cref="CustomizeWindowsStyle"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_General> CustomizeWindowsStyleChanged;
+		ReferenceField<CustomizeWindowsStyleEnum> _customizeWindowsStyle = CustomizeWindowsStyleEnum.Auto;
+
+		///// <summary>
+		///// Whether to animate windows auto-hiding in the editor.
+		///// </summary>
+		//[DefaultValue( false )]
+		//[Category( "Editor" )]
+		//public Reference<bool> AnimateWindowsAutoHiding
+		//{
+		//	get { if( _animateAutoHideWindows.BeginGet() ) AnimateWindowsAutoHiding = _animateAutoHideWindows.Get( this ); return _animateAutoHideWindows.value; }
+		//	set { if( _animateAutoHideWindows.BeginSet( ref value ) ) { try { AnimateAutoHideWindowsChanged?.Invoke( this ); } finally { _animateAutoHideWindows.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="AnimateWindowsAutoHiding"/> property value changes.</summary>
+		//public event Action<ProjectSettingsPage_General> AnimateAutoHideWindowsChanged;
+		//ReferenceField<bool> _animateAutoHideWindows = false;
+
+		///// <summary>
+		///// Shows the splash screen at start-up of the editor.
+		///// </summary>
+		//[Category( "Editor" )]
+		//[DefaultValue( true )]
+		//public Reference<bool> SplashScreenAtStartup
+		//{
+		//	get { if( _splashScreenAtStartup.BeginGet() ) SplashScreenAtStartup = _splashScreenAtStartup.Get( this ); return _splashScreenAtStartup.value; }
+		//	set { if( _splashScreenAtStartup.BeginSet( ref value ) ) { try { SplashScreenAtStartupChanged?.Invoke( this ); } finally { _splashScreenAtStartup.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="SplashScreenAtStartup"/> property value changes.</summary>
+		//public event Action<ProjectSettingsPage_General> SplashScreenAtStartupChanged;
+		//ReferenceField<bool> _splashScreenAtStartup = true;
 
 		/// <summary>
-		/// Shows the splash screen at start-up of the editor.
-		/// </summary>
-		[Category( "Editor" )]
-		[DefaultValue( true )]
-		public Reference<bool> SplashScreenAtStartup
-		{
-			get { if( _splashScreenAtStartup.BeginGet() ) SplashScreenAtStartup = _splashScreenAtStartup.Get( this ); return _splashScreenAtStartup.value; }
-			set { if( _splashScreenAtStartup.BeginSet( ref value ) ) { try { SplashScreenAtStartupChanged?.Invoke( this ); } finally { _splashScreenAtStartup.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="SplashScreenAtStartup"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> SplashScreenAtStartupChanged;
-		ReferenceField<bool> _splashScreenAtStartup = true;
-
-		/// <summary>
-		/// Whether to show centering borders for Mesh and Surface editors to help take screenshots for the store.
+		/// Whether to show centering borders for mesh and surface editors to help take screenshots for the store.
 		/// </summary>
 		[DefaultValue( false )]
 		[Category( "Editor" )]
@@ -195,336 +239,19 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_General> ShowCenteringBordersChanged;
 		ReferenceField<bool> _showCenteringBorders = false;
 
-		/////////////////////////////////////////
-
-		public enum ThemeEnum
-		{
-			Light,
-			Dark,
-		}
-
 		/// <summary>
-		/// The theme of the editor. Restart the editor to apply changes.
+		/// Whether to launch the Player in fullscreen mode.
 		/// </summary>
-		[DefaultValue( ThemeEnum.Dark )]
-		[Category( "Colors" )]
-		[DisplayName( "Theme (Restart to apply changes)" )]
-		public Reference<ThemeEnum> Theme
+		[DefaultValue( false )]
+		[Category( "Editor" )]
+		public Reference<bool> RunPlayerFromEditorInFullscreen
 		{
-			get { if( _theme.BeginGet() ) Theme = _theme.Get( this ); return _theme.value; }
-			set { if( _theme.BeginSet( ref value ) ) { try { ThemeChanged?.Invoke( this ); } finally { _theme.EndSet(); } } }
+			get { if( _runPlayerFromEditorInFullscreen.BeginGet() ) RunPlayerFromEditorInFullscreen = _runPlayerFromEditorInFullscreen.Get( this ); return _runPlayerFromEditorInFullscreen.value; }
+			set { if( _runPlayerFromEditorInFullscreen.BeginSet( ref value ) ) { try { RunPlayerFromEditorInFullscreenChanged?.Invoke( this ); } finally { _runPlayerFromEditorInFullscreen.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="Theme"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> ThemeChanged;
-		ReferenceField<ThemeEnum> _theme = ThemeEnum.Dark;
-
-		//SelectedColor
-		ReferenceField<ColorValue> _selectedColor = new ColorValue( 0, 1, 0 );
-		/// <summary>
-		/// The color of selected object in the scene view.
-		/// </summary>
-		[DefaultValue( "0 1 0" )]
-		[Category( "Colors" )]
-		public Reference<ColorValue> SelectedColor
-		{
-			get
-			{
-				if( _selectedColor.BeginGet() )
-					SelectedColor = _selectedColor.Get( this );
-				return _selectedColor.value;
-			}
-			set
-			{
-				if( _selectedColor.BeginSet( ref value ) )
-				{
-					try { SelectedColorChanged?.Invoke( this ); }
-					finally { _selectedColor.EndSet(); }
-				}
-			}
-		}
-		/// <summary>Occurs when the <see cref="SelectedColor"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> SelectedColorChanged;
-
-
-		//CanSelectColor
-		ReferenceField<ColorValue> _canSelectColor = new ColorValue( 1, 1, 0 );
-		/// <summary>
-		/// The color of selectable object in the scene view.
-		/// </summary>
-		[DefaultValue( "1 1 0" )]
-		[Category( "Colors" )]
-		public Reference<ColorValue> CanSelectColor
-		{
-			get
-			{
-				if( _canSelectColor.BeginGet() )
-					CanSelectColor = _canSelectColor.Get( this );
-				return _canSelectColor.value;
-			}
-			set
-			{
-				if( _canSelectColor.BeginSet( ref value ) )
-				{
-					try { CanSelectColorChanged?.Invoke( this ); }
-					finally { _canSelectColor.EndSet(); }
-				}
-			}
-		}
-		/// <summary>Occurs when the <see cref="CanSelectColor"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> CanSelectColorChanged;
-
-
-		//!!!!надо каждой настройке такое. тогда их парами указывать
-		//!!!!может просто "double AlphaMultiplier"
-		//HiddenByOtherObjectsColorMultiplier
-		ReferenceField<ColorValue> _hiddenByOtherObjectsColorMultiplier = new ColorValue( 1, 1, 1, .3 );
-		/// <summary>
-		/// The color multiplier applied when object is hidden by the other objects.
-		/// </summary>
-		[DefaultValue( "1 1 1 0.3" )]
-		[Category( "Colors" )]
-		public Reference<ColorValue> HiddenByOtherObjectsColorMultiplier
-		{
-			get
-			{
-				if( _hiddenByOtherObjectsColorMultiplier.BeginGet() )
-					HiddenByOtherObjectsColorMultiplier = _hiddenByOtherObjectsColorMultiplier.Get( this );
-				return _hiddenByOtherObjectsColorMultiplier.value;
-			}
-			set
-			{
-				if( _hiddenByOtherObjectsColorMultiplier.BeginSet( ref value ) )
-				{
-					try { HiddenByOtherObjectsColorMultiplierChanged?.Invoke( this ); }
-					finally { _hiddenByOtherObjectsColorMultiplier.EndSet(); }
-				}
-			}
-		}
-		/// <summary>Occurs when the <see cref="HiddenByOtherObjectsColorMultiplier"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> HiddenByOtherObjectsColorMultiplierChanged;
-
-
-		//!!!!name: может без "Draw" или без "Debug", хотя Debug - это секция. везде так
-		//SceneShowLightColor
-		ReferenceField<ColorValue> _sceneShowLightColor = new ColorValue( 1, 1, 0, .8 );
-		/// <summary>
-		/// The color of light source objects in the scene view.
-		/// </summary>
-		[DefaultValue( "1 1 0 0.8" )]
-		[Category( "Colors" )]
-		public Reference<ColorValue> SceneShowLightColor
-		{
-			get
-			{
-				if( _sceneShowLightColor.BeginGet() )
-					SceneShowLightColor = _sceneShowLightColor.Get( this );
-				return _sceneShowLightColor.value;
-			}
-			set
-			{
-				if( _sceneShowLightColor.BeginSet( ref value ) )
-				{
-					try { SceneShowLightColorChanged?.Invoke( this ); }
-					finally { _sceneShowLightColor.EndSet(); }
-				}
-			}
-		}
-		/// <summary>Occurs when the <see cref="SceneShowLightColor"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> SceneShowLightColorChanged;
-
-		/// <summary>
-		/// The color of decals in the scene view.
-		/// </summary>
-		[DefaultValue( "1 1 0" )]
-		[Category( "Colors" )]
-		public Reference<ColorValue> SceneShowDecalColor
-		{
-			get { if( _sceneShowDecalColor.BeginGet() ) SceneShowDecalColor = _sceneShowDecalColor.Get( this ); return _sceneShowDecalColor.value; }
-			set { if( _sceneShowDecalColor.BeginSet( ref value ) ) { try { SceneShowDecalColorChanged?.Invoke( this ); } finally { _sceneShowDecalColor.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="SceneShowDecalColor"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> SceneShowDecalColorChanged;
-		ReferenceField<ColorValue> _sceneShowDecalColor = new ColorValue( 1, 1, 0 );
-
-		//SceneShowPhysicsStaticColor
-		ReferenceField<ColorValue> _sceneShowPhysicsStaticColor = new ColorValue( 0, 0, .4 );
-		/// <summary>
-		/// The color of static physics objects in the scene view.
-		/// </summary>
-		[DefaultValue( "0 0 0.4" )]
-		[Category( "Colors" )]
-		public Reference<ColorValue> SceneShowPhysicsStaticColor
-		{
-			get
-			{
-				if( _sceneShowPhysicsStaticColor.BeginGet() )
-					SceneShowPhysicsStaticColor = _sceneShowPhysicsStaticColor.Get( this );
-				return _sceneShowPhysicsStaticColor.value;
-			}
-			set
-			{
-				if( _sceneShowPhysicsStaticColor.BeginSet( ref value ) )
-				{
-					try { SceneShowPhysicsStaticColorChanged?.Invoke( this ); }
-					finally { _sceneShowPhysicsStaticColor.EndSet(); }
-				}
-			}
-		}
-		/// <summary>Occurs when the <see cref="SceneShowPhysicsStaticColor"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> SceneShowPhysicsStaticColorChanged;
-
-
-		//SceneShowPhysicsDynamicActiveColor
-		ReferenceField<ColorValue> _sceneShowPhysicsDynamicActiveColor = new ColorValue( 0, 0, 1 );
-		/// <summary>
-		/// The color of active dynamic physics objects in the scene view.
-		/// </summary>
-		[DefaultValue( "0 0 1" )]
-		[Category( "Colors" )]
-		public Reference<ColorValue> SceneShowPhysicsDynamicActiveColor
-		{
-			get
-			{
-				if( _sceneShowPhysicsDynamicActiveColor.BeginGet() )
-					SceneShowPhysicsDynamicActiveColor = _sceneShowPhysicsDynamicActiveColor.Get( this );
-				return _sceneShowPhysicsDynamicActiveColor.value;
-			}
-			set
-			{
-				if( _sceneShowPhysicsDynamicActiveColor.BeginSet( ref value ) )
-				{
-					try { SceneShowPhysicsDynamicActiveColorChanged?.Invoke( this ); }
-					finally { _sceneShowPhysicsDynamicActiveColor.EndSet(); }
-				}
-			}
-		}
-		/// <summary>Occurs when the <see cref="SceneShowPhysicsDynamicActiveColor"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> SceneShowPhysicsDynamicActiveColorChanged;
-
-
-		//SceneShowPhysicsDynamicInactiveColor
-		ReferenceField<ColorValue> _sceneShowPhysicsDynamicInactiveColor = new ColorValue( 0, 0, .6 );
-		/// <summary>
-		/// The color of inactive dynamic physics objects in the scene view.
-		/// </summary>
-		[DefaultValue( "0 0 0.6" )]
-		[Category( "Colors" )]
-		public Reference<ColorValue> SceneShowPhysicsDynamicInactiveColor
-		{
-			get
-			{
-				if( _sceneShowPhysicsDynamicInactiveColor.BeginGet() )
-					SceneShowPhysicsDynamicInactiveColor = _sceneShowPhysicsDynamicInactiveColor.Get( this );
-				return _sceneShowPhysicsDynamicInactiveColor.value;
-			}
-			set
-			{
-				if( _sceneShowPhysicsDynamicInactiveColor.BeginSet( ref value ) )
-				{
-					try { SceneShowPhysicsDynamicInactiveColorChanged?.Invoke( this ); }
-					finally { _sceneShowPhysicsDynamicInactiveColor.EndSet(); }
-				}
-			}
-		}
-		/// <summary>Occurs when the <see cref="SceneShowPhysicsDynamicInactiveColor"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> SceneShowPhysicsDynamicInactiveColorChanged;
-
-		/// <summary>
-		/// The color of areas in the scene view.
-		/// </summary>
-		[DefaultValue( "0 0 1" )]
-		[Category( "Colors" )]
-		public Reference<ColorValue> SceneShowAreaColor
-		{
-			get { if( _sceneShowAreaColor.BeginGet() ) SceneShowAreaColor = _sceneShowAreaColor.Get( this ); return _sceneShowAreaColor.value; }
-			set { if( _sceneShowAreaColor.BeginSet( ref value ) ) { try { SceneShowAreaColorChanged?.Invoke( this ); } finally { _sceneShowAreaColor.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="SceneShowAreaColor"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> SceneShowAreaColorChanged;
-		ReferenceField<ColorValue> _sceneShowAreaColor = new ColorValue( 0, 0, 1 );
-
-		/// <summary>
-		/// The color of volumes in the scene view.
-		/// </summary>
-		[DefaultValue( "0 0 1" )]
-		[Category( "Colors" )]
-		public Reference<ColorValue> SceneShowVolumeColor
-		{
-			get { if( _sceneShowVolumeColor.BeginGet() ) SceneShowVolumeColor = _sceneShowVolumeColor.Get( this ); return _sceneShowVolumeColor.value; }
-			set { if( _sceneShowVolumeColor.BeginSet( ref value ) ) { try { SceneShowVolumeColorChanged?.Invoke( this ); } finally { _sceneShowVolumeColor.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="SceneShowVolumeColor"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> SceneShowVolumeColorChanged;
-		ReferenceField<ColorValue> _sceneShowVolumeColor = new ColorValue( 0, 0, 1 );
-
-		/// <summary>
-		/// The color of sound source objects in the scene view.
-		/// </summary>
-		[DefaultValue( "0 0 1" )]
-		[Category( "Colors" )]
-		public Reference<ColorValue> SceneShowSoundSourceColor
-		{
-			get { if( _sceneShowSoundSourceColor.BeginGet() ) SceneShowSoundSourceColor = _sceneShowSoundSourceColor.Get( this ); return _sceneShowSoundSourceColor.value; }
-			set { if( _sceneShowSoundSourceColor.BeginSet( ref value ) ) { try { SceneShowSoundSourceColorChanged?.Invoke( this ); } finally { _sceneShowSoundSourceColor.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="SceneShowSoundSourceColor"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> SceneShowSoundSourceColorChanged;
-		ReferenceField<ColorValue> _sceneShowSoundSourceColor = new ColorValue( 0, 0, 1 );
-
-		//SceneShowObjectInSpaceBoundsColor
-		ReferenceField<ColorValue> _sceneShowObjectInSpaceBoundsColor = new ColorValue( 1, 1, 0, .8 );
-		/// <summary>
-		/// The color of abstract objects in the scene view.
-		/// </summary>
-		[DefaultValue( "1 1 0 0.8" )]
-		[Category( "Colors" )]
-		public Reference<ColorValue> SceneShowObjectInSpaceBoundsColor
-		{
-			get
-			{
-				if( _sceneShowObjectInSpaceBoundsColor.BeginGet() )
-					SceneShowObjectInSpaceBoundsColor = _sceneShowObjectInSpaceBoundsColor.Get( this );
-				return _sceneShowObjectInSpaceBoundsColor.value;
-			}
-			set
-			{
-				if( _sceneShowObjectInSpaceBoundsColor.BeginSet( ref value ) )
-				{
-					try { SceneShowObjectInSpaceBoundsColorChanged?.Invoke( this ); }
-					finally { _sceneShowObjectInSpaceBoundsColor.EndSet(); }
-				}
-			}
-		}
-		/// <summary>Occurs when the <see cref="SceneShowObjectInSpaceBoundsColor"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> SceneShowObjectInSpaceBoundsColorChanged;
-
-
-		//SceneShowReflectionProbeColor
-		ReferenceField<ColorValue> _sceneShowReflectionProbeColor = new ColorValue( 0, 0, 1 );
-		/// <summary>
-		/// The color of reflection probe objects in the scene view.
-		/// </summary>
-		[DefaultValue( "0 0 1" )]
-		[Category( "Colors" )]
-		public Reference<ColorValue> SceneShowReflectionProbeColor
-		{
-			get
-			{
-				if( _sceneShowReflectionProbeColor.BeginGet() )
-					SceneShowReflectionProbeColor = _sceneShowReflectionProbeColor.Get( this );
-				return _sceneShowReflectionProbeColor.value;
-			}
-			set
-			{
-				if( _sceneShowReflectionProbeColor.BeginSet( ref value ) )
-				{
-					try { SceneShowReflectionProbeColorChanged?.Invoke( this ); }
-					finally { _sceneShowReflectionProbeColor.EndSet(); }
-				}
-			}
-		}
-		/// <summary>Occurs when the <see cref="SceneShowReflectionProbeColor"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> SceneShowReflectionProbeColorChanged;
+		/// <summary>Occurs when the <see cref="RunPlayerFromEditorInFullscreen"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_General> RunPlayerFromEditorInFullscreenChanged;
+		ReferenceField<bool> _runPlayerFromEditorInFullscreen = false;
 
 		/////////////////////////////////////////
 
@@ -532,7 +259,8 @@ namespace NeoAxis
 		/// The number of simulation steps per second.
 		/// </summary>
 		[DefaultValue( 60.0 )]
-		[Category( "Project Application" )]
+		[Category( "Simulation" )]
+		//[Category( "Project Application" )]
 		public Reference<double> SimulationStepsPerSecond
 		{
 			get { if( _simulationStepsPerSecond.BeginGet() ) SimulationStepsPerSecond = _simulationStepsPerSecond.Get( this ); return _simulationStepsPerSecond.value; }
@@ -572,7 +300,7 @@ namespace NeoAxis
 		/// Initial UI file when starting the project application.
 		/// </summary>
 		[DefaultValueReference( @"Base\UI\Screens\SplashScreen.ui" )]
-		[Category( "Project Application" )]
+		[Category( "Simulation" )]
 		[DisplayName( "Initial UI Screen" )]
 		public Reference<ReferenceValueType_Resource> InitialUIScreen
 		{
@@ -586,7 +314,7 @@ namespace NeoAxis
 		/// <summary>
 		/// A scene to run automatically when the Player started.
 		/// </summary>
-		[Category( "Project Application" )]
+		[Category( "Simulation" )]
 		[DefaultValue( null )]
 		public Reference<ReferenceValueType_Resource> AutorunScene
 		{
@@ -609,7 +337,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The initial state of the project window. When set to Auto, it will enabled Fullscreen mode or Maximized mode when run from the editor.
 		/// </summary>
-		[Category( "Project Application" )]
+		[Category( "Simulation" )]
 		[DefaultValue( WindowStateEnum.Auto )]
 		public Reference<WindowStateEnum> WindowState
 		{
@@ -624,7 +352,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The initial window size of the project window for Normal window state.
 		/// </summary>
-		[Category( "Project Application" )]
+		[Category( "Simulation" )]
 		[DefaultValue( "1300 900" )]
 		public Reference<Vector2I> WindowSize
 		{
@@ -635,180 +363,28 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_General> WindowSizeChanged;
 		ReferenceField<Vector2I> _windowSize = WindowSizeDefault;
 
-		/////////////////////////////////////////
+		public enum EngineSplashScreenStyleEnum
+		{
+			//!!!!GrayBackground?
+
+			WhiteBackground,
+			BlackBackground,
+			Disabled,
+		}
 
 		/// <summary>
-		/// Whether to launch the Player in fullscreen mode.
+		/// The style of the engine splash screen when the application is launched. Subscribe to NeoAxis Pro to enable the option.
 		/// </summary>
-		[DefaultValue( false )]
 		[Category( "Simulation" )]
-		public Reference<bool> RunSimulationInFullscreen
+		[DefaultValue( EngineSplashScreenStyleEnum.WhiteBackground )]
+		public Reference<EngineSplashScreenStyleEnum> EngineSplashScreenStyle
 		{
-			get { if( _runSimulationInFullscreen.BeginGet() ) RunSimulationInFullscreen = _runSimulationInFullscreen.Get( this ); return _runSimulationInFullscreen.value; }
-			set { if( _runSimulationInFullscreen.BeginSet( ref value ) ) { try { RunSimulationInFullscreenChanged?.Invoke( this ); } finally { _runSimulationInFullscreen.EndSet(); } } }
+			get { if( _engineSplashScreenStyle.BeginGet() ) EngineSplashScreenStyle = _engineSplashScreenStyle.Get( this ); return _engineSplashScreenStyle.value; }
+			set { if( _engineSplashScreenStyle.BeginSet( ref value ) ) { try { EngineSplashScreenStyleChanged?.Invoke( this ); } finally { _engineSplashScreenStyle.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="RunSimulationInFullscreen"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> RunSimulationInFullscreenChanged;
-		ReferenceField<bool> _runSimulationInFullscreen = false;
-
-		/////////////////////////////////////////
-
-		[Category( "Preview" )]
-		[DefaultValue( 50000.0 )]
-		[Range( 0, 100000 )]
-		public Reference<double> PreviewAmbientLightBrightness
-		{
-			get { if( _previewAmbientLightBrightness.BeginGet() ) PreviewAmbientLightBrightness = _previewAmbientLightBrightness.Get( this ); return _previewAmbientLightBrightness.value; }
-			set { if( _previewAmbientLightBrightness.BeginSet( ref value ) ) { try { PreviewAmbientLightBrightnessChanged?.Invoke( this ); } finally { _previewAmbientLightBrightness.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="PreviewAmbientLightBrightness"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> PreviewAmbientLightBrightnessChanged;
-		ReferenceField<double> _previewAmbientLightBrightness = 50000.0;
-
-		[Category( "Preview" )]
-		[DefaultValue( 200000.0 )]
-		[Range( 0, 1000000 )]
-		public Reference<double> PreviewDirectionalLightBrightness
-		{
-			get { if( _previewDirectionalLightBrightness.BeginGet() ) PreviewDirectionalLightBrightness = _previewDirectionalLightBrightness.Get( this ); return _previewDirectionalLightBrightness.value; }
-			set { if( _previewDirectionalLightBrightness.BeginSet( ref value ) ) { try { PreviewDirectionalLightBrightnessChanged?.Invoke( this ); } finally { _previewDirectionalLightBrightness.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="PreviewDirectionalLightBrightness"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> PreviewDirectionalLightBrightnessChanged;
-		ReferenceField<double> _previewDirectionalLightBrightness = 200000.0;
-
-		[DefaultValueReference( @"Content\Environments\Base\Forest.image" )]
-		[Category( "Preview" )]
-		[DisplayName( "Material Preview Environment for Light Theme" )]
-		public Reference<ImageComponent> MaterialPreviewEnvironmentLightTheme
-		{
-			get { if( _materialPreviewEnvironmentLightTheme.BeginGet() ) MaterialPreviewEnvironmentLightTheme = _materialPreviewEnvironmentLightTheme.Get( this ); return _materialPreviewEnvironmentLightTheme.value; }
-			set { if( _materialPreviewEnvironmentLightTheme.BeginSet( ref value ) ) { try { MaterialPreviewEnvironmentLightThemeChanged?.Invoke( this ); } finally { _materialPreviewEnvironmentLightTheme.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="MaterialPreviewEnvironmentLightTheme"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> MaterialPreviewEnvironmentLightThemeChanged;
-		ReferenceField<ImageComponent> _materialPreviewEnvironmentLightTheme = new Reference<ImageComponent>( null, @"Content\Environments\Base\Forest.image" );
-
-		[DefaultValueReference( @"Base\Tools\Material Preview\Sphere.mesh" )]
-		[Category( "Preview" )]
-		public Reference<Mesh> MaterialPreviewMesh
-		{
-			get { if( _materialPreviewMesh.BeginGet() ) MaterialPreviewMesh = _materialPreviewMesh.Get( this ); return _materialPreviewMesh.value; }
-			set { if( _materialPreviewMesh.BeginSet( ref value ) ) { try { MaterialPreviewMeshChanged?.Invoke( this ); } finally { _materialPreviewMesh.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="MaterialPreviewMesh"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> MaterialPreviewMeshChanged;
-		ReferenceField<Mesh> _materialPreviewMesh = new Reference<Mesh>( null, @"Base\Tools\Material Preview\Sphere.mesh" );
-
-		[DefaultValueReference( @"Content\Environments\Base\Forest.image" )]
-		[Category( "Preview" )]
-		[DisplayName( "Material Preview Environment for Dark Theme" )]
-		public Reference<ImageComponent> MaterialPreviewEnvironmentDarkTheme
-		{
-			get { if( _materialPreviewEnvironmentDarkTheme.BeginGet() ) MaterialPreviewEnvironmentDarkTheme = _materialPreviewEnvironmentDarkTheme.Get( this ); return _materialPreviewEnvironmentDarkTheme.value; }
-			set { if( _materialPreviewEnvironmentDarkTheme.BeginSet( ref value ) ) { try { MaterialPreviewEnvironmentDarkThemeChanged?.Invoke( this ); } finally { _materialPreviewEnvironmentDarkTheme.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="MaterialPreviewEnvironmentDarkTheme"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> MaterialPreviewEnvironmentDarkThemeChanged;
-		ReferenceField<ImageComponent> _materialPreviewEnvironmentDarkTheme = new Reference<ImageComponent>( null, @"Content\Environments\Base\Forest.image" );
-
-		public Reference<ImageComponent> GetMaterialPreviewEnvironment()
-		{
-			if( EditorAPI.DarkTheme )
-				return MaterialPreviewEnvironmentDarkTheme;
-			else
-				return MaterialPreviewEnvironmentLightTheme;
-		}
-
-		[DefaultValue( "1 1 1" )]
-		[ApplicableRangeColorValuePower( 0, 4 )]
-		[ColorValueNoAlpha]
-		[Category( "Preview" )]
-		public Reference<ColorValuePowered> MaterialPreviewEnvironmentMultiplier
-		{
-			get { if( _materialPreviewEnvironmentMultiplier.BeginGet() ) MaterialPreviewEnvironmentMultiplier = _materialPreviewEnvironmentMultiplier.Get( this ); return _materialPreviewEnvironmentMultiplier.value; }
-			set { if( _materialPreviewEnvironmentMultiplier.BeginSet( ref value ) ) { try { MaterialPreviewEnvironmentMultiplierChanged?.Invoke( this ); } finally { _materialPreviewEnvironmentMultiplier.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="MaterialPreviewEnvironmentMultiplier"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> MaterialPreviewEnvironmentMultiplierChanged;
-		ReferenceField<ColorValuePowered> _materialPreviewEnvironmentMultiplier = new ColorValuePowered( 1, 1, 1 );
-
-		[DefaultValue( 0.5 )]
-		[Range( 0, 1 )]
-		[Category( "Preview" )]
-		public Reference<double> MaterialPreviewEnvironmentAffectLighting
-		{
-			get { if( _materialPreviewEnvironmentAffectLighting.BeginGet() ) MaterialPreviewEnvironmentAffectLighting = _materialPreviewEnvironmentAffectLighting.Get( this ); return _materialPreviewEnvironmentAffectLighting.value; }
-			set { if( _materialPreviewEnvironmentAffectLighting.BeginSet( ref value ) ) { try { MaterialPreviewEnvironmentAffectLightingChanged?.Invoke( this ); } finally { _materialPreviewEnvironmentAffectLighting.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="MaterialPreviewEnvironmentAffectLighting"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> MaterialPreviewEnvironmentAffectLightingChanged;
-		ReferenceField<double> _materialPreviewEnvironmentAffectLighting = 0.5;
-
-		/////////////////////////////////////////
-
-		//!!!!descriptions
-
-		[DefaultValue( 24 )]
-		[Category( "Screen Labels" )]
-		[Range( 10.0, 100.0, RangeAttribute.ConvenientDistributionEnum.Exponential )]
-		public Reference<double> ScreenLabelMaxSize
-		{
-			get { if( _screenLabelMaxSize.BeginGet() ) ScreenLabelMaxSize = _screenLabelMaxSize.Get( this ); return _screenLabelMaxSize.value; }
-			set { if( _screenLabelMaxSize.BeginSet( ref value ) ) { try { ScreenLabelMaxSizeChanged?.Invoke( this ); } finally { _screenLabelMaxSize.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="ScreenLabelMaxSize"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> ScreenLabelMaxSizeChanged;
-		ReferenceField<double> _screenLabelMaxSize = 24;
-
-		[DefaultValue( 0.25 )]
-		[Category( "Screen Labels" )]
-		[Range( 0, 1 )]
-		public Reference<double> ScreenLabelMinSizeFactor
-		{
-			get { if( _screenLabelMinSizeFactor.BeginGet() ) ScreenLabelMinSizeFactor = _screenLabelMinSizeFactor.Get( this ); return _screenLabelMinSizeFactor.value; }
-			set { if( _screenLabelMinSizeFactor.BeginSet( ref value ) ) { try { ScreenLabelMinSizeFactorChanged?.Invoke( this ); } finally { _screenLabelMinSizeFactor.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="ScreenLabelMinSizeFactor"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> ScreenLabelMinSizeFactorChanged;
-		ReferenceField<double> _screenLabelMinSizeFactor = 0.25;
-
-		[DefaultValue( 100 )]
-		[Category( "Screen Labels" )]
-		[Range( 1, 1000, RangeAttribute.ConvenientDistributionEnum.Exponential )]
-		public Reference<double> ScreenLabelMaxDistance
-		{
-			get { if( _screenLabelMaxDistance.BeginGet() ) ScreenLabelMaxDistance = _screenLabelMaxDistance.Get( this ); return _screenLabelMaxDistance.value; }
-			set { if( _screenLabelMaxDistance.BeginSet( ref value ) ) { try { ScreenLabelMaxDistanceChanged?.Invoke( this ); } finally { _screenLabelMaxDistance.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="ScreenLabelMaxDistance"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> ScreenLabelMaxDistanceChanged;
-		ReferenceField<double> _screenLabelMaxDistance = 100;
-
-		/// <summary>
-		/// The color of screen labels.
-		/// </summary>
-		[DefaultValue( "1 1 1 0.5" )]
-		[Category( "Screen Labels" )]
-		public Reference<ColorValue> ScreenLabelColor
-		{
-			get { if( _screenLabelColor.BeginGet() ) ScreenLabelColor = _screenLabelColor.Get( this ); return _screenLabelColor.value; }
-			set { if( _screenLabelColor.BeginSet( ref value ) ) { try { ScreenLabelColorChanged?.Invoke( this ); } finally { _screenLabelColor.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="ScreenLabelColor"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> ScreenLabelColorChanged;
-		ReferenceField<ColorValue> _screenLabelColor = new ColorValue( 1, 1, 1, 0.5 );
-
-		[DefaultValue( true )]
-		[Category( "Screen Labels" )]
-		public Reference<bool> ScreenLabelDisplayIcons
-		{
-			get { if( _screenLabelDisplayIcons.BeginGet() ) ScreenLabelDisplayIcons = _screenLabelDisplayIcons.Get( this ); return _screenLabelDisplayIcons.value; }
-			set { if( _screenLabelDisplayIcons.BeginSet( ref value ) ) { try { ScreenLabelDisplayIconsChanged?.Invoke( this ); } finally { _screenLabelDisplayIcons.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="ScreenLabelDisplayIcons"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_General> ScreenLabelDisplayIconsChanged;
-		ReferenceField<bool> _screenLabelDisplayIcons = true;
+		/// <summary>Occurs when the <see cref="EngineSplashScreenStyle"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_General> EngineSplashScreenStyleChanged;
+		ReferenceField<EngineSplashScreenStyleEnum> _engineSplashScreenStyle = EngineSplashScreenStyleEnum.WhiteBackground;
 
 		///////////////////////////////////////////////
 
@@ -821,10 +397,22 @@ namespace NeoAxis
 				if( member is Metadata.Property )
 				{
 					//special app mode
-					if( !EngineInfo.SpecialAppMode && member.Name == nameof( ExtendedMode ) )
+					//if( !EngineInfo.SpecialAppMode && member.Name == nameof( ExtendedMode ) )
+					//	skip = true;
+					if( /*!ExtendedMode && */ProjectSettingsComponent.HidePropertiesForSpecialAppMode.Contains( member.Name ) )
 						skip = true;
-					if( !ExtendedMode && ProjectSettingsComponent.HidePropertiesForSpecialAppMode.Contains( member.Name ) )
-						skip = true;
+
+					//Cloud project mode
+					if( EngineInfo.EngineMode == EngineInfo.EngineModeEnum.CloudClient )
+					{
+						if( member.Name == nameof( ProjectName ) )
+							skip = true;
+					}
+					else
+					{
+						if( member.Name == nameof( CloudProjectName ) )
+							skip = true;
+					}
 				}
 			}
 		}

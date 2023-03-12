@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using NeoAxis.Editor;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -49,6 +50,7 @@ namespace NeoAxis
 
 		//!!!!конструктор из матрицы или еще из каких-то типов
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Transform( Vector3 position, Quaternion rotation, Vector3 scale )
 		{
 			this.position = position;
@@ -56,6 +58,7 @@ namespace NeoAxis
 			this.scale = scale;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Transform( Vector3 position, Quaternion rotation )
 		{
 			this.position = position;
@@ -63,6 +66,7 @@ namespace NeoAxis
 			this.scale = Vector3.One;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Transform( Vector3 position, Angles rotation, Vector3 scale )
 		{
 			this.position = position;
@@ -70,6 +74,7 @@ namespace NeoAxis
 			this.scale = scale;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Transform( Vector3 position, Angles rotation )
 		{
 			this.position = position;
@@ -77,6 +82,7 @@ namespace NeoAxis
 			this.scale = Vector3.One;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Transform( Vector3 position )
 		{
 			this.position = position;
@@ -119,6 +125,7 @@ namespace NeoAxis
 		[Browsable( false )]
 		public bool IsPositionZero
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				if( positionZero == null )
@@ -130,6 +137,7 @@ namespace NeoAxis
 		[Browsable( false )]
 		public bool IsRotationIdentity
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				if( rotationIdentity == null )
@@ -141,6 +149,7 @@ namespace NeoAxis
 		[Browsable( false )]
 		public bool IsScaleOne
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				if( scaleOne == null )
@@ -152,14 +161,17 @@ namespace NeoAxis
 		[Browsable( false )]
 		public bool IsIdentity
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get { return IsPositionZero && IsRotationIdentity && IsScaleOne; }
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is Transform && this == (Transform)obj );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return ( position.GetHashCode() ^ rotation.GetHashCode() ^ scale.GetHashCode() );
@@ -167,6 +179,7 @@ namespace NeoAxis
 
 		//!!!!maybe slowly, зато оверрайдить можно поведение, если нужно новые свойства добавить
 		/*!!!!protected sealed virtual*/
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		bool EqualsImpl( Transform a )
 		{
 			if( ReferenceEquals( this, a ) )
@@ -174,6 +187,7 @@ namespace NeoAxis
 			return position.Equals( ref a.position ) && rotation.Equals( ref a.rotation ) && scale.Equals( ref a.scale );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( Transform a, Transform b )
 		{
 			bool aNull = ReferenceEquals( a, null );
@@ -187,6 +201,7 @@ namespace NeoAxis
 			//return ( a.position == b.position && a.rotation == b.rotation && a.scale == b.scale );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( Transform a, Transform b )
 		{
 			bool aNull = ReferenceEquals( a, null );
@@ -200,6 +215,7 @@ namespace NeoAxis
 			//return ( a.position != b.position || a.rotation != b.rotation || a.scale != b.scale );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public /*!!!!sealed virtual*/ bool Equals( Transform a, double epsilon )
 		{
 			if( ReferenceEquals( this, a ) )
@@ -216,12 +232,14 @@ namespace NeoAxis
 
 		//!!!!!
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector3 operator *( Transform transform, Vector3 v )
 		{
 			transform.CalculateMatrix4();
 			return transform.matrix4 * v;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Multiply( ref Bounds bounds, out Bounds result )
 		{
 			//!!!!slowly
@@ -248,6 +266,7 @@ namespace NeoAxis
 			//return b2;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Bounds operator *( Transform transform, Bounds v )
 		{
 			transform.Multiply( ref v, out var result );
@@ -262,6 +281,7 @@ namespace NeoAxis
 			//return b2;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Multiply( ref Sphere sphere, out Sphere result )
 		{
 			//!!!!так?
@@ -279,6 +299,7 @@ namespace NeoAxis
 			//return b.ToBoundingSphere();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Sphere operator *( Transform transform, Sphere v )
 		{
 			transform.Multiply( ref v, out var result );
@@ -298,6 +319,7 @@ namespace NeoAxis
 			////return b.ToBoundingSphere();
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		void CalculateMatrix4()
 		{
 			if( !matrix4Calculated )
@@ -328,12 +350,14 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ref Matrix4 ToMatrix4()
 		{
 			CalculateMatrix4();
 			return ref matrix4;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public void ToMatrix4( bool useTraslation, bool useRotation, bool useScaling, out Matrix4 result )
 		{
 			if( useTraslation && useRotation && useScaling )
@@ -354,6 +378,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Matrix4 ToMatrix4( bool useTraslation = true, bool useRotation = true, bool useScaling = true )
 		{
 			ToMatrix4( useTraslation, useRotation, useScaling, out var result );
@@ -401,6 +426,7 @@ namespace NeoAxis
 		}
 
 		//!!!!new
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Transform operator *( Transform v1, Transform v2 )
 		{
 			//!!!!так? или через матрицы и декомпозировать?
@@ -426,6 +452,7 @@ namespace NeoAxis
 		//!!!name: Offset, AddOffset
 		//!!!!new
 		//!!!!default values
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Transform ApplyOffset( Vector3 positionOffset, Quaternion rotationOffset, Vector3 scaleOffset )
 		{
 			Vector3 pos = Position;
@@ -439,16 +466,19 @@ namespace NeoAxis
 			return new Transform( pos, rot, scl );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Transform UpdatePosition( Vector3 position )
 		{
 			return new Transform( position, Rotation, Scale );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Transform UpdateRotation( Quaternion rotation )
 		{
 			return new Transform( Position, rotation, Scale );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Transform UpdateScale( Vector3 scale )
 		{
 			return new Transform( Position, Rotation, scale );
@@ -457,6 +487,7 @@ namespace NeoAxis
 
 		//!!!!good?
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Transform Translate( Vector3 position )
 		{
 			return new Transform( Position + position, Rotation, Scale );
@@ -464,6 +495,7 @@ namespace NeoAxis
 
 		//!!!!Rotate (eulers or Angles)
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Transform Rotate( Quaternion rotation )
 		{
 			return new Transform( Position, Rotation * rotation, Scale );
@@ -471,11 +503,13 @@ namespace NeoAxis
 
 		//!!!!need?
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Transform MultiplyScale( Vector3 scale )
 		{
 			return new Transform( Position, Rotation, Scale * scale );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Transform MultiplyScale( double scale )
 		{
 			return new Transform( Position, Rotation, Scale * scale );

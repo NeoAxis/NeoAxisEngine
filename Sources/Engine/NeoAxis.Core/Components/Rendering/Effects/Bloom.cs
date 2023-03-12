@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,6 +12,8 @@ namespace NeoAxis
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class RenderingEffect_Bloom : RenderingEffect// RenderingEffect_Simple
 	{
+		public static double GlobalScale = 1;
+
 		//!!!!property names
 		//!!!!default values
 
@@ -126,11 +128,15 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
+		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture )
 		{
 			base.OnRender( context, frameData, ref actualTexture );
 
 			if( Intensity <= 0 )
+				return;
+
+			var scale = Scale * GlobalScale;
+			if( scale <= 0 )
 				return;
 
 			//PixelFormat.A8R8G8B8 );
@@ -172,7 +178,7 @@ namespace NeoAxis
 				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1/*"bloomTexture"*/, blurTexture,
 					TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
 				shader.Parameters.Set( "intensity", (float)Intensity );
-				shader.Parameters.Set( "scale", (float)Scale );
+				shader.Parameters.Set( "scale", (float)scale );
 
 				context.RenderQuadToCurrentViewport( shader );
 			}

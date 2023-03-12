@@ -1,0 +1,118 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.BuildingType
+{
+	.component NeoAxis.BuildingElement
+	{
+		Name = Element Side 1 Floor Window
+		Levels = 0 0
+		Sides = MinusY, PlusY
+		Mesh
+		{
+			GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Window level 1.obj|$Mesh"
+		}
+	}
+	.component NeoAxis.BuildingElement
+	{
+		Name = Element Side 1 Floor Wall
+		Sides = MinusX, PlusX
+		Mesh
+		{
+			GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Wall.obj|$Mesh"
+		}
+	}
+	.component NeoAxis.BuildingElement
+	{
+		Name = Element Side 2+ Floor Window
+		Levels = 1 10000
+		Sides = MinusY, PlusY
+		Mesh
+		{
+			GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Window level 2+.obj|$Mesh"
+		}
+	}
+	.component NeoAxis.BuildingElement
+	{
+		Name = Element Roof
+		ElementType = Roof
+		Mesh
+		{
+			GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Roof.obj|$Mesh"
+		}
+	}
+	.component NeoAxis.BuildingElement
+	{
+		Name = Element Roof Edge
+		ElementType = RoofEdge
+		Mesh
+		{
+			GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Roof side.obj|$Mesh"
+		}
+	}
+	.component NeoAxis.BuildingElement
+	{
+		Name = Element Roof Corner
+		ElementType = RoofCorner
+		Mesh
+		{
+			GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Roof corner.obj|$Mesh"
+		}
+	}
+	.component NeoAxis.BuildingElement
+	{
+		Name = Element Cell Level 1 1
+		ElementType = Cell
+		Levels = 0 0
+		Sides = MinusY, PlusY
+		Mesh
+		{
+			GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Room 2.obj|$Mesh"
+		}
+	}
+	.component NeoAxis.BuildingElement
+	{
+		Name = Element Cell Level 1 2
+		ElementType = Cell
+		Levels = 0 0
+		Sides = MinusY, PlusY
+		Mesh
+		{
+			GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Room 3.obj|$Mesh"
+		}
+	}
+	.component NeoAxis.BuildingElement
+	{
+		Name = Element Cell Level 2+ 1
+		ElementType = Cell
+		Levels = 1 10000
+		Sides = MinusY, PlusY
+		Mesh
+		{
+			GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Room 4.obj|$Mesh"
+		}
+	}
+	.component NeoAxis.BuildingElement
+	{
+		Name = Element Cell Level 2+ 2
+		ElementType = Cell
+		Levels = 1 10000
+		Sides = MinusY, PlusY
+		PositionOffset = 0 0 0.4
+		Mesh
+		{
+			GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Room 2.obj|$Mesh"
+		}
+	}
+	.component NeoAxis.BuildingElement
+	{
+		Name = Element Cell Level 2+ 3
+		ElementType = Cell
+		Levels = 1 10000
+		Sides = MinusY, PlusY
+		PositionOffset = 0 0 0.4
+		Mesh
+		{
+			GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Room 3.obj|$Mesh"
+		}
+	}
+}

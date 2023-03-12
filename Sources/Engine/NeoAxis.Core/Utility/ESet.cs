@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Threading;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -12,7 +13,7 @@ namespace NeoAxis
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	[DebuggerDisplay( "Count = {Count}" )]
-	public class ESet<T> : ICollection<T>, ICollection
+	public class ESet<T> : ICollection<T>, ICollection, ICloneable
 	{
 		object _syncRoot;
 		Dictionary<T, int> baseDictionary;
@@ -140,6 +141,7 @@ namespace NeoAxis
 				GC.SuppressFinalize( this );
 			}
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			public bool MoveNext()
 			{
 				if( this.version != this.set.version )
@@ -159,6 +161,7 @@ namespace NeoAxis
 				}
 			}
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			public void Reset()
 			{
 				if( this.version != this.set.version )
@@ -192,12 +195,14 @@ namespace NeoAxis
 		{
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ESet( int capacity, IEqualityComparer<T> comparer )
 		{
 			baseDictionary = new Dictionary<T, int>( capacity, comparer );
 			ordered = new List<OrderedItem>( capacity );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ESet( ICollection<T> set, IEqualityComparer<T> comparer )
 		{
 			baseDictionary = new Dictionary<T, int>( set.Count, comparer );
@@ -208,6 +213,7 @@ namespace NeoAxis
 
 		public int Count
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get { return baseDictionary.Count; }
 		}
 
@@ -233,6 +239,7 @@ namespace NeoAxis
 			get { return false; }
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public void Add( T key )
 		{
 			int orderedIndex;
@@ -271,6 +278,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool AddWithCheckAlreadyContained( T key )
 		{
 			if( Contains( key ) )
@@ -279,6 +287,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public void Clear()
 		{
 			baseDictionary.Clear();
@@ -293,6 +302,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( T key )
 		{
 			if( Count == 0 )
@@ -327,6 +337,7 @@ namespace NeoAxis
 			return array;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public bool Remove( T key )
 		{
 			int orderedIndex;
@@ -393,18 +404,21 @@ namespace NeoAxis
 			return readOnlyCollection;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void AddRange( IEnumerable<T> collection )
 		{
 			foreach( T v in collection )
 				Add( v );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void AddRangeWithCheckAlreadyContained( IEnumerable<T> collection )
 		{
 			foreach( T v in collection )
 				AddWithCheckAlreadyContained( v );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static bool IsEqual( ESet<T> set1, ESet<T> set2 )
 		{
 			if( set1.Count != set2.Count )
@@ -420,6 +434,11 @@ namespace NeoAxis
 			}
 
 			return true;
+		}
+
+		public object Clone()
+		{
+			return new ESet<T>( this );
 		}
 
 		//public T Find( Predicate<T> match )

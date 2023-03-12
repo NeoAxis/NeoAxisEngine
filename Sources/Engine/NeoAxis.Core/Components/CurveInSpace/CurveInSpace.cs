@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -34,20 +34,6 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="CurveTypePosition"/> property value changes.</summary>
 		public event Action<CurveInSpace> CurveTypePositionChanged;
 		ReferenceField<CurveTypeEnum> _curveTypePosition = CurveTypeEnum.CubicSpline;
-
-		/// <summary>
-		/// The curvature radius of the points for Rounded Line curve type.
-		/// </summary>
-		[DefaultValue( 0.2 )]
-		[Range( 0.0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 4 )]
-		public Reference<double> RoundedLineCurvatureRadius
-		{
-			get { if( _roundedLineCurvatureRadius.BeginGet() ) RoundedLineCurvatureRadius = _roundedLineCurvatureRadius.Get( this ); return _roundedLineCurvatureRadius.value; }
-			set { if( _roundedLineCurvatureRadius.BeginSet( ref value ) ) { try { RoundedLineCurvatureRadiusChanged?.Invoke( this ); DataWasChanged(); } finally { _roundedLineCurvatureRadius.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="RoundedLineCurvatureRadius"/> property value changes.</summary>
-		public event Action<CurveInSpace> RoundedLineCurvatureRadiusChanged;
-		ReferenceField<double> _roundedLineCurvatureRadius = 0.2;
 
 		/// <summary>
 		/// The type of the curve for rotation of the points.
@@ -345,19 +331,20 @@ namespace NeoAxis
 		public event Action<CurveInSpace> CollisionMaterialChanged;
 		ReferenceField<PhysicalMaterial> _collisionMaterial;
 
-		/// <summary>
-		/// The type of friction applied on the rigid body.
-		/// </summary>
-		[DefaultValue( PhysicalMaterial.FrictionModeEnum.Simple )]
-		[Category( "Physics" )]
-		public Reference<PhysicalMaterial.FrictionModeEnum> CollisionFrictionMode
-		{
-			get { if( _collisionFrictionMode.BeginGet() ) CollisionFrictionMode = _collisionFrictionMode.Get( this ); return _collisionFrictionMode.value; }
-			set { if( _collisionFrictionMode.BeginSet( ref value ) ) { try { CollisionFrictionModeChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionFrictionMode.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="CollisionFrictionMode"/> property value changes.</summary>
-		public event Action<CurveInSpace> CollisionFrictionModeChanged;
-		ReferenceField<PhysicalMaterial.FrictionModeEnum> _collisionFrictionMode = PhysicalMaterial.FrictionModeEnum.Simple;
+		//!!!!
+		///// <summary>
+		///// The type of friction applied on the rigid body.
+		///// </summary>
+		//[DefaultValue( PhysicalMaterial.FrictionModeEnum.Simple )]
+		//[Category( "Physics" )]
+		//public Reference<PhysicalMaterial.FrictionModeEnum> CollisionFrictionMode
+		//{
+		//	get { if( _collisionFrictionMode.BeginGet() ) CollisionFrictionMode = _collisionFrictionMode.Get( this ); return _collisionFrictionMode.value; }
+		//	set { if( _collisionFrictionMode.BeginSet( ref value ) ) { try { CollisionFrictionModeChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionFrictionMode.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="CollisionFrictionMode"/> property value changes.</summary>
+		//public event Action<CurveInSpace> CollisionFrictionModeChanged;
+		//ReferenceField<PhysicalMaterial.FrictionModeEnum> _collisionFrictionMode = PhysicalMaterial.FrictionModeEnum.Simple;
 
 		/// <summary>
 		/// The amount of friction applied on the rigid body.
@@ -374,49 +361,52 @@ namespace NeoAxis
 		public event Action<CurveInSpace> CollisionFrictionChanged;
 		ReferenceField<double> _collisionFriction = 0.5;
 
-		/// <summary>
-		/// The amount of directional friction applied on the rigid body.
-		/// </summary>
-		[DefaultValue( "1 1 1" )]
-		[Category( "Physics" )]
-		public Reference<Vector3> CollisionAnisotropicFriction
-		{
-			get { if( _collisionAnisotropicFriction.BeginGet() ) CollisionAnisotropicFriction = _collisionAnisotropicFriction.Get( this ); return _collisionAnisotropicFriction.value; }
-			set { if( _collisionAnisotropicFriction.BeginSet( ref value ) ) { try { CollisionAnisotropicFrictionChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionAnisotropicFriction.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="CollisionAnisotropicFriction"/> property value changes.</summary>
-		public event Action<CurveInSpace> CollisionAnisotropicFrictionChanged;
-		ReferenceField<Vector3> _collisionAnisotropicFriction = Vector3.One;
+		//!!!!
+		///// <summary>
+		///// The amount of directional friction applied on the rigid body.
+		///// </summary>
+		//[DefaultValue( "1 1 1" )]
+		//[Category( "Physics" )]
+		//public Reference<Vector3> CollisionAnisotropicFriction
+		//{
+		//	get { if( _collisionAnisotropicFriction.BeginGet() ) CollisionAnisotropicFriction = _collisionAnisotropicFriction.Get( this ); return _collisionAnisotropicFriction.value; }
+		//	set { if( _collisionAnisotropicFriction.BeginSet( ref value ) ) { try { CollisionAnisotropicFrictionChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionAnisotropicFriction.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="CollisionAnisotropicFriction"/> property value changes.</summary>
+		//public event Action<CurveInSpace> CollisionAnisotropicFrictionChanged;
+		//ReferenceField<Vector3> _collisionAnisotropicFriction = Vector3.One;
 
-		/// <summary>
-		/// The amount of friction applied when rigid body is spinning.
-		/// </summary>
-		[DefaultValue( 0.5 )]
-		[Range( 0, 1 )]
-		[Category( "Physics" )]
-		public Reference<double> CollisionSpinningFriction
-		{
-			get { if( _collisionSpinningFriction.BeginGet() ) CollisionSpinningFriction = _collisionSpinningFriction.Get( this ); return _collisionSpinningFriction.value; }
-			set { if( _collisionSpinningFriction.BeginSet( ref value ) ) { try { CollisionSpinningFrictionChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionSpinningFriction.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="CollisionSpinningFriction"/> property value changes.</summary>
-		public event Action<CurveInSpace> CollisionSpinningFrictionChanged;
-		ReferenceField<double> _collisionSpinningFriction = 0.5;
+		//!!!!
+		///// <summary>
+		///// The amount of friction applied when rigid body is spinning.
+		///// </summary>
+		//[DefaultValue( 0.5 )]
+		//[Range( 0, 1 )]
+		//[Category( "Physics" )]
+		//public Reference<double> CollisionSpinningFriction
+		//{
+		//	get { if( _collisionSpinningFriction.BeginGet() ) CollisionSpinningFriction = _collisionSpinningFriction.Get( this ); return _collisionSpinningFriction.value; }
+		//	set { if( _collisionSpinningFriction.BeginSet( ref value ) ) { try { CollisionSpinningFrictionChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionSpinningFriction.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="CollisionSpinningFriction"/> property value changes.</summary>
+		//public event Action<CurveInSpace> CollisionSpinningFrictionChanged;
+		//ReferenceField<double> _collisionSpinningFriction = 0.5;
 
-		/// <summary>
-		/// The amount of friction applied when rigid body is rolling.
-		/// </summary>
-		[DefaultValue( 0.5 )]
-		[Range( 0, 1 )]
-		[Category( "Physics" )]
-		public Reference<double> CollisionRollingFriction
-		{
-			get { if( _collisionRollingFriction.BeginGet() ) CollisionRollingFriction = _collisionRollingFriction.Get( this ); return _collisionRollingFriction.value; }
-			set { if( _collisionRollingFriction.BeginSet( ref value ) ) { try { CollisionRollingFrictionChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionRollingFriction.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="CollisionRollingFriction"/> property value changes.</summary>
-		public event Action<CurveInSpace> CollisionRollingFrictionChanged;
-		ReferenceField<double> _collisionRollingFriction = 0.5;
+		//!!!!
+		///// <summary>
+		///// The amount of friction applied when rigid body is rolling.
+		///// </summary>
+		//[DefaultValue( 0.5 )]
+		//[Range( 0, 1 )]
+		//[Category( "Physics" )]
+		//public Reference<double> CollisionRollingFriction
+		//{
+		//	get { if( _collisionRollingFriction.BeginGet() ) CollisionRollingFriction = _collisionRollingFriction.Get( this ); return _collisionRollingFriction.value; }
+		//	set { if( _collisionRollingFriction.BeginSet( ref value ) ) { try { CollisionRollingFrictionChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionRollingFriction.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="CollisionRollingFriction"/> property value changes.</summary>
+		//public event Action<CurveInSpace> CollisionRollingFrictionChanged;
+		//ReferenceField<double> _collisionRollingFriction = 0.5;
 
 		/// <summary>
 		/// The ratio of the final relative velocity to initial relative velocity of the rigid body after collision.
@@ -436,7 +426,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The time of the point.
 		/// </summary>
-		[Category( "Curve In Space Point" )]
+		[Category( "Point" )]
 		[DefaultValue( 0.0 )]
 		[Serialize]
 		public Reference<double> Time
@@ -447,6 +437,21 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="Time"/> property value changes.</summary>
 		public event Action<CurveInSpace> TimeChanged;
 		ReferenceField<double> _time = 0.0;
+
+		/// <summary>
+		/// The curvature radius of the points for Rounded Line curve type.
+		/// </summary>
+		[Category( "Point" )]
+		[DefaultValue( 1.0 )]
+		[Range( 0.0, 100, RangeAttribute.ConvenientDistributionEnum.Exponential, 4 )]
+		public Reference<double> RoundedLineCurvatureRadius
+		{
+			get { if( _roundedLineCurvatureRadius.BeginGet() ) RoundedLineCurvatureRadius = _roundedLineCurvatureRadius.Get( this ); return _roundedLineCurvatureRadius.value; }
+			set { if( _roundedLineCurvatureRadius.BeginSet( ref value ) ) { try { RoundedLineCurvatureRadiusChanged?.Invoke( this ); DataWasChanged(); } finally { _roundedLineCurvatureRadius.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="RoundedLineCurvatureRadius"/> property value changes.</summary>
+		public event Action<CurveInSpace> RoundedLineCurvatureRadiusChanged;
+		ReferenceField<double> _roundedLineCurvatureRadius = 1.0;
 
 		/////////////////////////////////////////
 
@@ -470,7 +475,7 @@ namespace NeoAxis
 		public class SourceData
 		{
 			public CurveTypeEnum CurveTypePosition;
-			public double RoundedLineCurvatureRadius;
+			//public double RoundedLineCurvatureRadius;
 			public CurveTypeEnum CurveTypeRotation;
 			public CurveTypeEnum CurveTypeScale;
 			public double TimeScale;
@@ -481,6 +486,7 @@ namespace NeoAxis
 			{
 				public Transform Transform;
 				public double Time;
+				public double RoundedLineCurvatureRadius;
 			}
 			public Point[] Points;
 
@@ -579,22 +585,24 @@ namespace NeoAxis
 						skip = true;
 					break;
 
-				case nameof( CollisionFrictionMode ):
-					if( Thickness.Value == 0 || !Collision || CollisionMaterial.Value != null )
-						skip = true;
-					break;
+				//!!!!
+				//case nameof( CollisionFrictionMode ):
+				//	if( Thickness.Value == 0 || !Collision || CollisionMaterial.Value != null )
+				//		skip = true;
+				//	break;
 
 				case nameof( CollisionFriction ):
 					if( Thickness.Value == 0 || !Collision || CollisionMaterial.Value != null )
 						skip = true;
 					break;
 
-				case nameof( CollisionRollingFriction ):
-				case nameof( CollisionSpinningFriction ):
-				case nameof( CollisionAnisotropicFriction ):
-					if( Thickness.Value == 0 || !Collision || CollisionFrictionMode.Value == PhysicalMaterial.FrictionModeEnum.Simple || CollisionMaterial.Value != null )
-						skip = true;
-					break;
+				//!!!!
+				//case nameof( CollisionRollingFriction ):
+				//case nameof( CollisionSpinningFriction ):
+				//case nameof( CollisionAnisotropicFriction ):
+				//	if( Thickness.Value == 0 || !Collision || CollisionFrictionMode.Value == PhysicalMaterial.FrictionModeEnum.Simple || CollisionMaterial.Value != null )
+				//		skip = true;
+				//	break;
 
 				case nameof( CollisionRestitution ):
 					if( Thickness.Value == 0 || !Collision || CollisionMaterial.Value != null )
@@ -620,11 +628,11 @@ namespace NeoAxis
 			{
 				var context2 = context.ObjectInSpaceRenderingContext;
 
-				if( !ParentScene.GetDisplayDevelopmentDataInThisApplication() )
+				if( !context.SceneDisplayDevelopmentDataInThisApplication )
 					context2.disableShowingLabelForThisObject = true;
 
 				//visualize handles for BezierPath
-				if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+				if( EngineApp.IsEditor )
 				{
 					if( context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) )
 					{
@@ -632,13 +640,13 @@ namespace NeoAxis
 						{
 							ColorValue color;
 							if( context2.selectedObjects.Contains( this ) )
-								color = ProjectSettings.Get.General.SelectedColor;
+								color = ProjectSettings.Get.Colors.SelectedColor;
 							else //if( context2.canSelectObjects.Contains( this ) )
-								color = ProjectSettings.Get.General.CanSelectColor;
+								color = ProjectSettings.Get.Colors.CanSelectColor;
 							color *= new ColorValue( 1, 1, 1, 0.5 );
 
 							var renderer = context.Owner.Simple3DRenderer;
-							renderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+							renderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 
 							//!!!!
 							//CurveInSpacePointHandle
@@ -668,7 +676,7 @@ namespace NeoAxis
 			var scene = FindParent<Scene>();
 			if( scene != null )
 			{
-				if( EnabledInHierarchy )
+				if( EnabledInHierarchyAndIsInstance )
 					scene.GetRenderSceneData += Scene_GetRenderSceneData;
 				else
 					scene.GetRenderSceneData -= Scene_GetRenderSceneData;
@@ -686,7 +694,7 @@ namespace NeoAxis
 			DeleteCollisionObjects();
 			DeleteRenderingObjects();
 
-			if( EnabledInHierarchyAndIsNotResource )
+			if( EnabledInHierarchyAndIsInstance )
 			{
 				if( Thickness > 0 )
 				{
@@ -743,30 +751,30 @@ namespace NeoAxis
 
 			if( VisibleInHierarchy && GetAllowDisplayCurve() && Thickness == 0 )
 			{
-				if( ( ParentScene.GetDisplayDevelopmentDataInThisApplication() /*&& ParentScene.DisplayLights */) ||
+				if( ( context.SceneDisplayDevelopmentDataInThisApplication /*&& ParentScene.DisplayLights */) ||
 					context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this )
 				{
 					if( context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) )
 					{
 						display = true;
 						if( context2.selectedObjects.Contains( this ) )
-							color = ProjectSettings.Get.General.SelectedColor;
+							color = ProjectSettings.Get.Colors.SelectedColor;
 						else
-							color = ProjectSettings.Get.General.CanSelectColor;
+							color = ProjectSettings.Get.Colors.CanSelectColor;
 					}
 
-					if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor && DisplayCurveInEditor )
+					if( EngineApp.IsEditor && DisplayCurveInEditor )
 						display = true;
 				}
 
-				if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && DisplayCurveInSimulation )
+				if( EngineApp.IsSimulation && DisplayCurveInSimulation )
 					display = true;
 			}
 
 			if( display )
 				RenderThickness0( context2, color );
 
-			if( !ParentScene.GetDisplayDevelopmentDataInThisApplication() )
+			if( !context.SceneDisplayDevelopmentDataInThisApplication )
 				context2.disableShowingLabelForThisObject = true;
 		}
 
@@ -874,7 +882,7 @@ namespace NeoAxis
 		{
 			var sourceData = new SourceData();
 			sourceData.CurveTypePosition = CurveTypePosition;
-			sourceData.RoundedLineCurvatureRadius = RoundedLineCurvatureRadius;
+			//sourceData.RoundedLineCurvatureRadius = RoundedLineCurvatureRadius;
 			sourceData.CurveTypeRotation = CurveTypeRotation;
 			sourceData.CurveTypeScale = CurveTypeScale;
 			sourceData.TimeScale = TimeScale;
@@ -882,9 +890,9 @@ namespace NeoAxis
 			var points = GetComponents<CurveInSpacePoint>( onlyEnabledInHierarchy: true );
 
 			sourceData.Points = new SourceData.Point[ 1 + points.Length ];
-			sourceData.Points[ 0 ] = new SourceData.Point() { Transform = Transform, Time = Time };
+			sourceData.Points[ 0 ] = new SourceData.Point() { Transform = Transform, Time = Time, RoundedLineCurvatureRadius = RoundedLineCurvatureRadius };
 			for( int n = 0; n < points.Length; n++ )
-				sourceData.Points[ n + 1 ] = new SourceData.Point() { Transform = points[ n ].Transform, Time = points[ n ].Time };
+				sourceData.Points[ n + 1 ] = new SourceData.Point() { Transform = points[ n ].Transform, Time = points[ n ].Time, RoundedLineCurvatureRadius = points[ n ].RoundedLineCurvatureRadius };
 
 			//sort by time
 			bool allPointsZeroTime = sourceData.Points.All( p => p.Time == 0 );
@@ -907,7 +915,7 @@ namespace NeoAxis
 
 		void UpdateData()
 		{
-			if( needUpdateData && EnabledInHierarchyAndIsNotResource && GetAllowUpdateData() )
+			if( needUpdateData && EnabledInHierarchyAndIsInstance && GetAllowUpdateData() )
 			{
 				cachedData = null;
 
@@ -937,7 +945,7 @@ namespace NeoAxis
 
 						var rounded = data.PositionCurve as CurveRoundedLine;
 						if( rounded != null )
-							additionalData = RoundedLineCurvatureRadius.Value;
+							additionalData = point.RoundedLineCurvatureRadius;
 
 						var bezierPath = data.PositionCurve as CurveBezierPath;
 						if( bezierPath != null )
@@ -1433,9 +1441,9 @@ namespace NeoAxis
 			DeleteRenderingObjects();
 
 			bool display = false;
-			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor && DisplayCurveInEditor )
+			if( EngineApp.IsEditor && DisplayCurveInEditor )
 				display = true;
-			else if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && DisplayCurveInSimulation )
+			else if( EngineApp.IsSimulation && DisplayCurveInSimulation )
 				display = true;
 			if( !display )
 				return;
@@ -1455,6 +1463,7 @@ namespace NeoAxis
 				{
 					//need set ShowInEditor = false before AddComponent
 					meshInSpace = ComponentUtility.CreateComponent<MeshInSpace>( null, false, false );
+					meshInSpace.NetworkMode = NetworkModeEnum.False;
 					meshInSpace.DisplayInEditor = false;
 					AddComponent( meshInSpace, -1 );
 					//meshInSpace = CreateComponent<MeshInSpace>();
@@ -1487,8 +1496,11 @@ namespace NeoAxis
 			if( !Collision )
 				return;
 
+			//!!!!use BodyItem
+
 			//need set DisplayInEditor = false before AddComponent
 			var body = ComponentUtility.CreateComponent<RigidBody>( null, false, false );
+			body.NetworkMode = NetworkModeEnum.False;
 			body.DisplayInEditor = false;
 			AddComponent( body );
 			//var group = scene.CreateComponent<GroupOfObjects>();
@@ -1518,11 +1530,13 @@ namespace NeoAxis
 			if( collisionBody != null )
 			{
 				collisionBody.Material = CollisionMaterial;
-				collisionBody.MaterialFrictionMode = CollisionFrictionMode;
+				//!!!!
+				//collisionBody.MaterialFrictionMode = CollisionFrictionMode;
 				collisionBody.MaterialFriction = CollisionFriction;
-				collisionBody.MaterialAnisotropicFriction = CollisionAnisotropicFriction;
-				collisionBody.MaterialSpinningFriction = CollisionSpinningFriction;
-				collisionBody.MaterialRollingFriction = CollisionRollingFriction;
+				//!!!!
+				//collisionBody.MaterialAnisotropicFriction = CollisionAnisotropicFriction;
+				//collisionBody.MaterialSpinningFriction = CollisionSpinningFriction;
+				//collisionBody.MaterialRollingFriction = CollisionRollingFriction;
 				collisionBody.MaterialRestitution = CollisionRestitution;
 			}
 		}

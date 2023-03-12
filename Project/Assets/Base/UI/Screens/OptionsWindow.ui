@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2022.1.
+// Made with NeoAxis Engine 2023.1.
 
 .component Project.OptionsWindow
 {
@@ -41,7 +41,7 @@
 		{
 			Enabled = False
 			Name = Tab Button
-			Size = Units 150 40
+			Size = Units 120 40
 			Margin = Units 460 420 0 0
 			EditorScrollPosition = 0 0
 		}
@@ -58,7 +58,7 @@
 			{
 				Name = Control
 				CanBeSelected = False
-				Size = Units 380 400
+				Size = Units 370 400
 				HorizontalAlignment = Center
 				VerticalAlignment = Stretch
 				Margin = Units 0 0 0 0
@@ -67,15 +67,16 @@
 				{
 					Name = Text
 					Text = Sound Volume
-					Size = Units 360 40
+					Size = Units 290 30
 					Margin = Units 20 20 0 0
 					EditorScrollPosition = 0 0
+					FontSize = Screen 0.025
 					TextHorizontalAlignment = Left
 				}
 				.component NeoAxis.UISlider
 				{
 					Name = Slider Sound Volume
-					Size = Units 340 30
+					Size = Units 330 30
 					Margin = Units 20 60 0 0
 					EditorScrollPosition = 0 0
 					ValueRange = 0 1
@@ -86,16 +87,17 @@
 				{
 					Name = Text 2
 					Text = Music Volume
-					Size = Units 340 40
-					Margin = Units 20 120 0 0
+					Size = Units 210 30
+					Margin = Units 20 110 0 0
 					EditorScrollPosition = 0 0
+					FontSize = Screen 0.025
 					TextHorizontalAlignment = Left
 				}
 				.component NeoAxis.UISlider
 				{
 					Name = Slider Music Volume
-					Size = Units 340 30
-					Margin = Units 20 160 0 0
+					Size = Units 330 30
+					Margin = Units 20 150 0 0
 					EditorScrollPosition = 0 0
 					ValueRange = 0 1
 					Step = 0.1
@@ -103,10 +105,26 @@
 				}
 				.component NeoAxis.UICheck
 				{
-					Name = Check Display Viewport Statistics
-					Text = Display viewport statistics
+					Name = Check Display Frame Info
+					Text = Display frame info
+					Size = Units 262.97674033836597 25
+					Margin = Units 20 490 0 0
+					EditorScrollPosition = 0 0
+				}
+				.component NeoAxis.UICheck
+				{
+					Name = Check Display Scene Info
+					Text = Display scene info
 					Size = Units 262.97674033836597 25
 					Margin = Units 20 520 0 0
+					EditorScrollPosition = 0 0
+				}
+				.component NeoAxis.UICheck
+				{
+					Name = Check Display Engine Info
+					Text = Display engine info
+					Size = Units 262.97674033836597 25
+					Margin = Units 20 550 0 0
 					EditorScrollPosition = 0 0
 				}
 				.component NeoAxis.UICheck
@@ -114,7 +132,7 @@
 					Name = Check Vertical Sync
 					Text = Vertical sync
 					Size = Units 143.32363067103114 25
-					Margin = Units 20 480 0 0
+					Margin = Units 20 450 0 0
 					EditorScrollPosition = 0 0
 				}
 				.component NeoAxis.UICheck
@@ -122,15 +140,15 @@
 					Name = Check Fullscreen
 					Text = Fullscreen
 					Size = Units 124.04625204435544 25
-					Margin = Units 20 440 0 0
+					Margin = Units 20 420 0 0
 					EditorScrollPosition = 0 0
 					Checked = Checked
 				}
 				.component NeoAxis.UIList
 				{
 					Name = List Video Mode
-					Size = Units 340 150
-					Margin = Units 20 260 0 0
+					Size = Units 330 150
+					Margin = Units 20 250 0 0
 					EditorScrollPosition = 0 0
 					Items
 					{
@@ -153,8 +171,8 @@
 				{
 					Name = Restart To Apply Changes
 					Text = Restart app to apply changes.
-					Size = Units 400 30
-					Margin = Units 20 600 0 0
+					Size = Units 330 30
+					Margin = Units 20 630 0 0
 					ColorMultiplier = 1 0 0
 					EditorScrollPosition = 0 0
 					TextHorizontalAlignment = Left
@@ -163,9 +181,10 @@
 				{
 					Name = Text 4
 					Text = Video Mode
-					Size = Units 400 30
-					Margin = Units 20 230 0 0
+					Size = Units 330 30
+					Margin = Units 20 210 0 0
 					EditorScrollPosition = 0 0
+					FontSize = Screen 0.025
 					TextHorizontalAlignment = Left
 				}
 				.component NeoAxis.UICheck
@@ -173,7 +192,7 @@
 					Name = Check Display Background Scene
 					Text = Display background scene
 					Size = Units 264.3062193346698 25
-					Margin = Units 20 560 0 0
+					Margin = Units 20 590 0 0
 					EditorScrollPosition = 0 0
 				}
 			}
@@ -181,7 +200,7 @@
 		.component NeoAxis.UIControl
 		{
 			Name = Page Graphics
-			Text = Graphics
+			Text = Graphics 1
 			Visible = False
 			CanBeSelected = False
 			Size = Parent 1 0.9436619718309859
@@ -200,7 +219,7 @@
 				.component NeoAxis.UISlider
 				{
 					Name = Slider Sharpness
-					Size = Units 270 30
+					Size = Units 280 30
 					Margin = Units 20 610 0 0
 					EditorScrollPosition = 0 0
 					ValueRange = 0 2
@@ -310,7 +329,7 @@
 						0 = Default
 						1 = Bilinear
 						2 = Lanczos 2
-						3 = AMD FSR 1.0
+						3 = AMD FSR
 					}
 					.component NeoAxis.UIScroll
 					{
@@ -385,8 +404,8 @@
 				{
 					Name = Text Sharpness
 					Text = 1.0
-					Size = Units 50 30
-					Margin = Units 300 610 0 0
+					Size = Units 40 30
+					Margin = Units 310 610 0 0
 					EditorScrollPosition = 0 0
 					FontSize = Screen 0.03
 					TextHorizontalAlignment = Left
@@ -399,6 +418,297 @@
 					Margin = Units 190 310 0 0
 					EditorScrollPosition = 0 0
 					TextHorizontalAlignment = Left
+				}
+			}
+		}
+		.component NeoAxis.UIControl
+		{
+			Name = Page Graphics 2
+			Text = Graphics 2
+			Visible = False
+			CanBeSelected = False
+			Size = Parent 1 0.9436619718309859
+			Margin = Parent 0 0.05633802816901409 0 0
+			BackgroundColor = 0 0 0.4
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIControl
+			{
+				Name = Control
+				CanBeSelected = False
+				Size = Units 370 400
+				HorizontalAlignment = Center
+				VerticalAlignment = Stretch
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				.component NeoAxis.UIText
+				{
+					Name = Text 7
+					Text = Level of Detail
+					Size = Units 130 30
+					Margin = Units 20 20 0 0
+					EditorScrollPosition = 0 0
+					FontSize = Screen 0.025
+					TextHorizontalAlignment = Left
+				}
+				.component NeoAxis.UISlider
+				{
+					Name = Slider LOD
+					Size = Units 280 25
+					Margin = Units 20 50 0 0
+					EditorScrollPosition = 0 0
+					ValueRange = 0 2
+					Value = 1
+					Step = 0.1
+					TickFrequency = 0.1
+				}
+				.component NeoAxis.UIText
+				{
+					Name = Text LOD
+					Text = 1.0
+					Size = Units 40 25
+					Margin = Units 310 50 0 0
+					EditorScrollPosition = 0 0
+					FontSize = Screen 0.025
+				}
+				.component NeoAxis.UIText
+				{
+					Name = Text 6
+					Text = Texture Quality
+					Size = Units 130 30
+					Margin = Units 20 90 0 0
+					EditorScrollPosition = 0 0
+					FontSize = Screen 0.025
+					TextHorizontalAlignment = Left
+				}
+				.component NeoAxis.UISlider
+				{
+					Name = Slider Texture
+					Size = Units 280 25
+					Margin = Units 20 120 0 0
+					EditorScrollPosition = 0 0
+					ValueRange = 0 2
+					Value = 1
+					Step = 0.1
+					TickFrequency = 0.1
+				}
+				.component NeoAxis.UIText
+				{
+					Name = Text Texture
+					Text = 1.0
+					Size = Units 40 25
+					Margin = Units 310 120 0 0
+					EditorScrollPosition = 0 0
+					FontSize = Screen 0.025
+				}
+				.component NeoAxis.UIText
+				{
+					Name = Text 5
+					Text = Shadow Quality
+					Size = Units 130 30
+					Margin = Units 20 160 0 0
+					EditorScrollPosition = 0 0
+					FontSize = Screen 0.025
+					TextHorizontalAlignment = Left
+				}
+				.component NeoAxis.UISlider
+				{
+					Name = Slider Shadow
+					Size = Units 280 25
+					Margin = Units 20 190 0 0
+					EditorScrollPosition = 0 0
+					ValueRange = 0 2
+					Value = 1
+					Step = 0.1
+					TickFrequency = 0.1
+				}
+				.component NeoAxis.UIText
+				{
+					Name = Text Shadow
+					Text = 1.0
+					Size = Units 40 25
+					Margin = Units 310 190 0 0
+					EditorScrollPosition = 0 0
+					FontSize = Screen 0.025
+				}
+				.component NeoAxis.UIText
+				{
+					Name = Text 8
+					Text = Indirect Lighting
+					Size = Units 130 30
+					Margin = Units 20 230 0 0
+					EditorScrollPosition = 0 0
+					FontSize = Screen 0.025
+					TextHorizontalAlignment = Left
+				}
+				.component NeoAxis.UISlider
+				{
+					Name = Slider Indirect Lighting
+					Size = Units 280 25
+					Margin = Units 20 260 0 0
+					EditorScrollPosition = 0 0
+					ValueRange = 0 2
+					Value = 1
+					Step = 0.1
+					TickFrequency = 0.1
+				}
+				.component NeoAxis.UIText
+				{
+					Name = Text Indirect Lighting
+					Text = 1.0
+					Size = Units 40 25
+					Margin = Units 310 260 0 0
+					EditorScrollPosition = 0 0
+					FontSize = Screen 0.025
+				}
+				.component NeoAxis.UIText
+				{
+					Name = Text 3
+					Text = Ambient Occlusion
+					Size = Units 130 30
+					Margin = Units 20 300 0 0
+					EditorScrollPosition = 0 0
+					FontSize = Screen 0.025
+					TextHorizontalAlignment = Left
+				}
+				.component NeoAxis.UISlider
+				{
+					Name = Slider AO
+					Size = Units 280 25
+					Margin = Units 20 330 0 0
+					EditorScrollPosition = 0 0
+					ValueRange = 0 2
+					Value = 1
+					Step = 0.1
+					TickFrequency = 0.1
+				}
+				.component NeoAxis.UIText
+				{
+					Name = Text AO
+					Text = 1.0
+					Size = Units 40 25
+					Margin = Units 310 330 0 0
+					EditorScrollPosition = 0 0
+					FontSize = Screen 0.025
+				}
+				.component NeoAxis.UIText
+				{
+					Name = Text 9
+					Text = Reflection
+					Size = Units 130 30
+					Margin = Units 20 370 0 0
+					EditorScrollPosition = 0 0
+					FontSize = Screen 0.025
+					TextHorizontalAlignment = Left
+				}
+				.component NeoAxis.UISlider
+				{
+					Name = Slider Reflection
+					Size = Units 280 25
+					Margin = Units 20 400 0 0
+					EditorScrollPosition = 0 0
+					ValueRange = 0 2
+					Value = 1
+					Step = 0.1
+					TickFrequency = 0.1
+				}
+				.component NeoAxis.UIText
+				{
+					Name = Text Reflection
+					Text = 1.0
+					Size = Units 40 25
+					Margin = Units 310 400 0 0
+					EditorScrollPosition = 0 0
+					FontSize = Screen 0.025
+				}
+				.component NeoAxis.UIText
+				{
+					Name = Text
+					Text = Motion Blur
+					Size = Units 130 30
+					Margin = Units 20 440 0 0
+					EditorScrollPosition = 0 0
+					FontSize = Screen 0.025
+					TextHorizontalAlignment = Left
+				}
+				.component NeoAxis.UISlider
+				{
+					Name = Slider Motion Blur
+					Size = Units 280 25
+					Margin = Units 20 470 0 0
+					EditorScrollPosition = 0 0
+					ValueRange = 0 2
+					Value = 1
+					Step = 0.1
+					TickFrequency = 0.1
+				}
+				.component NeoAxis.UIText
+				{
+					Name = Text Motion Blur
+					Text = 1.0
+					Size = Units 40 25
+					Margin = Units 310 470 0 0
+					EditorScrollPosition = 0 0
+					FontSize = Screen 0.025
+				}
+				.component NeoAxis.UIText
+				{
+					Name = Text 2
+					Text = Depth of Field
+					Size = Units 130 30
+					Margin = Units 20 510 0 0
+					EditorScrollPosition = 0 0
+					FontSize = Screen 0.025
+					TextHorizontalAlignment = Left
+				}
+				.component NeoAxis.UISlider
+				{
+					Name = Slider DOF
+					Size = Units 280 25
+					Margin = Units 20 540 0 0
+					EditorScrollPosition = 0 0
+					ValueRange = 0 2
+					Value = 1
+					Step = 0.1
+					TickFrequency = 0.1
+				}
+				.component NeoAxis.UIText
+				{
+					Name = Text DOF
+					Text = 1.0
+					Size = Units 40 25
+					Margin = Units 310 540 0 0
+					EditorScrollPosition = 0 0
+					FontSize = Screen 0.025
+				}
+				.component NeoAxis.UIText
+				{
+					Name = Text 4
+					Text = Bloom
+					Size = Units 130 30
+					Margin = Units 20 580 0 0
+					EditorScrollPosition = 0 0
+					FontSize = Screen 0.025
+					TextHorizontalAlignment = Left
+				}
+				.component NeoAxis.UISlider
+				{
+					Name = Slider Bloom
+					Size = Units 280 25
+					Margin = Units 20 610 0 0
+					EditorScrollPosition = 0 0
+					ValueRange = 0 2
+					Value = 1
+					Step = 0.1
+					TickFrequency = 0.1
+				}
+				.component NeoAxis.UIText
+				{
+					Name = Text Bloom
+					Text = 1.0
+					Size = Units 40 25
+					Margin = Units 310 610 0 0
+					EditorScrollPosition = 0 0
+					FontSize = Screen 0.025
 				}
 			}
 		}

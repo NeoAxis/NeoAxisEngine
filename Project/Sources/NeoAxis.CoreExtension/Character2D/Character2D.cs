@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ namespace NeoAxis
 	/// Basic character class.
 	/// </summary>
 	[AddToResourcesWindow( @"Base\2D\Character 2D", -7899 )]
-	[ResourceFileExtension( "character2D" )]
+	[ResourceFileExtension( "character2d" )]
 	[NewObjectDefaultName( "Character 2D" )]
 #if !DEPLOY
 	[Editor.EditorControl( typeof( Editor.Character2DEditor ), true )]
@@ -60,13 +60,13 @@ namespace NeoAxis
 		Vector2[] groundRelativeVelocitySmoothArray;
 		Vector2 groundRelativeVelocitySmooth;
 
-		//damageFastChangeSpeed
-		Vector2 damageFastChangeSpeedLastVelocity = new Vector2( double.NaN, double.NaN );
+		////damageFastChangeSpeed
+		//Vector2 damageFastChangeSpeedLastVelocity = new Vector2( double.NaN, double.NaN );
 
 		double allowToSleepTime;
 
 		//crouching
-		const float crouchingVisualSwitchTime = .3f;
+		//const float crouchingVisualSwitchTime = .3f;
 		//[FieldSerialize( FieldSerializeSerializationTypes.World )]
 		bool crouching;
 		//float crouchingSwitchRemainingTime;
@@ -94,6 +94,7 @@ namespace NeoAxis
 					try
 					{
 						HeightChanged?.Invoke( this );
+						//if( mainBody != null )//!!!!?
 						UpdateCollisionBody();
 					}
 					finally { _height.EndSet(); }
@@ -119,6 +120,7 @@ namespace NeoAxis
 					try
 					{
 						RadiusChanged?.Invoke( this );
+						//if( mainBody != null )//!!!!?
 						UpdateCollisionBody();
 					}
 					finally { _radius.EndSet(); }
@@ -725,7 +727,7 @@ namespace NeoAxis
 		{
 			base.OnEnabledInHierarchyChanged();
 
-			if( EnabledInHierarchy )
+			if( EnabledInHierarchyAndIsInstance )
 			{
 				var tr = GetTransform();
 				SetLookToDirection( tr.Rotation.GetForward().ToVector2() );
@@ -791,6 +793,9 @@ namespace NeoAxis
 
 		public void UpdateCollisionBody()
 		{
+			if( NetworkIsClient )
+				return;
+
 			GetBodyFormInfo( crouching, out var height, out var walkUpHeight, out var fromPositionToFloorDistance );
 
 			var body = GetCollisionBody();
@@ -844,6 +849,9 @@ namespace NeoAxis
 
 		void DestroyCollisionBody()
 		{
+			if( NetworkIsClient )
+				return;
+
 			//ReleaseCollisionEvents();
 
 			//reset Transform reference
@@ -887,7 +895,14 @@ namespace NeoAxis
 
 		public void SetMoveVector( double direction, bool run )
 		{
-			moveVectorTimer = 2;
+			if( NetworkIsServer )
+			{
+				//one second
+				moveVectorTimer = (int)( 1.0 / Time.SimulationDelta );
+			}
+			else
+				moveVectorTimer = 2;
+
 			moveVector = direction;
 			moveVectorRun = run;
 		}
@@ -979,8 +994,11 @@ namespace NeoAxis
 				groundBodySlopeAngle = 0;
 			}
 
-			TickMovement();
-			TickPhysicsForce();
+			if( mainBody != null )
+			{
+				TickMovement();
+				TickPhysicsForce();
+			}
 
 			UpdateRotation();
 			if( JumpSupport )
@@ -1029,6 +1047,62 @@ namespace NeoAxis
 			}
 		}
 
+		protected override void OnSimulationStepClient()
+		{
+			base.OnSimulationStepClient();
+
+			if( mainBody != null && mainBody.Parent == null )
+				mainBody = null;
+			if( mainBody == null )
+				mainBody = GetCollisionBody();
+
+			//clear groundBody when disposed
+			if( groundBody != null && groundBody.Disposed )
+			{
+				groundBody = null;
+				groundBodySlopeAngle = 0;
+			}
+
+			if( mainBody != null )
+				CalculateMainBodyGroundDistanceAndGroundBody();
+
+			//UpdateRotation();
+			if( JumpSupport )
+				TickJumpClient( false );
+
+			if( IsOnGround() )
+				onGroundTime += Time.SimulationDelta;
+			else
+				onGroundTime = 0;
+			if( !IsOnGround() )
+				elapsedTimeSinceLastGroundContact += Time.SimulationDelta;
+			else
+				elapsedTimeSinceLastGroundContact = 0;
+			CalculateGroundRelativeVelocity();
+
+			////if( CrouchingSupport )
+			////	TickCrouching();
+
+			////if( DamageFastChangeSpeedFactor != 0 )
+			////	DamageFastChangeSpeedTick();
+
+			var trPosition = GetTransform().Position;
+			if( lastTransformPosition.HasValue )
+				lastLinearVelocity = ( trPosition.ToVector2() - lastTransformPosition.Value ) / Time.SimulationDelta;
+			else
+				lastLinearVelocity = Vector2.Zero;
+			lastTransformPosition = trPosition.ToVector2();
+
+			////lastSimulationStepPosition = GetTransform().Position;
+
+			if( forceIsOnGroundRemainingTime > 0 )
+			{
+				forceIsOnGroundRemainingTime -= Time.SimulationDelta;
+				if( forceIsOnGroundRemainingTime < 0 )
+					forceIsOnGroundRemainingTime = 0;
+			}
+		}
+
 		protected override void OnUpdate( float delta )
 		{
 			base.OnUpdate( delta );
@@ -1037,7 +1111,7 @@ namespace NeoAxis
 			UpdateEnabledItemTransform();
 
 			//touch Transform to update character AABB
-			if( EnabledInHierarchy && VisibleInHierarchy )
+			if( EnabledInHierarchyAndIsInstance && VisibleInHierarchy )
 			{
 				var t = Transform;
 			}
@@ -1196,6 +1270,13 @@ namespace NeoAxis
 
 								forceIsOnGroundRemainingTime = 0.2;
 								disableGravityRemainingTime = 0.2;
+
+								if( NetworkIsServer )
+								{
+									var writer = BeginNetworkMessageToEveryone( "TickMovement" );
+									writer.Write( (float)forceIsOnGroundRemainingTime );
+									EndNetworkMessage();
+								}
 							}
 
 							//if( !keepDisableControlPhysicsModelPushedToWorldFlag )
@@ -1260,8 +1341,7 @@ namespace NeoAxis
 			mainBody.EnableGravity = disableGravityRemainingTime == 0;
 		}
 
-		bool VolumeCheckGetFirstNotFreePlace( Capsule2[] sourceVolumeCapsules, Vector2 destVector, bool firstIteration, float step,
-			out List<RigidBody2D> collisionBodies, out float collisionDistance, out bool collisionOnFirstCheck )
+		bool VolumeCheckGetFirstNotFreePlace( ref Capsule2 sourceVolumeCapsule, Vector2 destVector, bool firstIteration, float step, out List<RigidBody2D> collisionBodies, out float collisionDistance, out bool collisionOnFirstCheck )
 		{
 			collisionBodies = new List<RigidBody2D>();
 			collisionDistance = 0;
@@ -1281,66 +1361,64 @@ namespace NeoAxis
 					distance = totalDistance;
 				var offset = direction * distance;
 
-				foreach( var sourceVolumeCapsule in sourceVolumeCapsules )
+				var scene = ParentScene;
+				if( scene != null )
 				{
-					var scene = ParentScene;
-					if( scene != null )
+					var capsule = sourceVolumeCapsule;
+					CapsuleAddOffset( ref capsule, ref offset );
+
+					//check by capsule
 					{
-						var capsule = CapsuleAddOffset( sourceVolumeCapsule, offset );
+						var contactTestItem = new Physics2DContactTestItem( capsule, 32, Physics2DCategories.All, Physics2DCategories.All, 0, Physics2DContactTestItem.ModeEnum.All );
+						ParentScene.Physics2DContactTest( contactTestItem );
 
-						//check by capsule
+						foreach( var item in contactTestItem.Result )
 						{
-							var contactTestItem = new Physics2DContactTestItem( capsule, 32, Physics2DCategories.All, Physics2DCategories.All, 0, Physics2DContactTestItem.ModeEnum.All );
-							ParentScene.Physics2DContactTest( contactTestItem );
-
-							foreach( var item in contactTestItem.Result )
-							{
-								if( item.Body == mainBody )
-									continue;
-								var body = item.Body as RigidBody2D;
-								if( body != null && !collisionBodies.Contains( body ) )
-									collisionBodies.Add( body );
-							}
+							if( item.Body == mainBody )
+								continue;
+							var body = item.Body as RigidBody2D;
+							if( body != null && !collisionBodies.Contains( body ) )
+								collisionBodies.Add( body );
 						}
-
-						////check by box at bottom
-						//{
-						//	var rectangle = new Rectangle( capsule.GetCenter() );
-						//	rectangle.Add( capsule.Point1 - new Vector2( 0, Radius ) );
-						//	rectangle.Expand( new Vector2( Radius, 0 ) );
-
-						//	if( rectangle.Size.Y > 0 )
-						//	{
-						//		var contactTestItem = new Physics2DContactTestItem( rectangle, tainicom.Aether.Physics2D.Dynamics.Category.All, tainicom.Aether.Physics2D.Dynamics.Category.All, 0, Physics2DContactTestItem.ModeEnum.All );
-						//		ParentScene.Physics2DContactTest( contactTestItem );
-
-						//		foreach( var item in contactTestItem.Result )
-						//		{
-						//			if( item.Body == mainBody )
-						//				continue;
-						//			var body = item.Body as RigidBody2D;
-						//			if( body != null && !collisionBodies.Contains( body ) )
-						//				collisionBodies.Add( body );
-						//		}
-						//	}
-
-						//	//var cylinder = new Cylinder( capsule.GetCenter(), capsule.Point1 - new Vector3( 0, 0, Radius ), Radius );
-						//	//if( cylinder.Point1 != cylinder.Point2 )
-						//	//{
-						//	//	var contactTestItem = new PhysicsContactTestItem( 1, -1, PhysicsContactTestItem.ModeEnum.All, cylinder );
-						//	//	ParentScene.PhysicsContactTest( contactTestItem );
-
-						//	//	foreach( var item in contactTestItem.Result )
-						//	//	{
-						//	//		if( item.Body == mainBody )
-						//	//			continue;
-						//	//		var body = item.Body as RigidBody;
-						//	//		if( body != null && !collisionBodies.Contains( body ) )
-						//	//			collisionBodies.Add( body );
-						//	//	}
-						//	//}
-						//}
 					}
+
+					////check by box at bottom
+					//{
+					//	var rectangle = new Rectangle( capsule.GetCenter() );
+					//	rectangle.Add( capsule.Point1 - new Vector2( 0, Radius ) );
+					//	rectangle.Expand( new Vector2( Radius, 0 ) );
+
+					//	if( rectangle.Size.Y > 0 )
+					//	{
+					//		var contactTestItem = new Physics2DContactTestItem( rectangle, tainicom.Aether.Physics2D.Dynamics.Category.All, tainicom.Aether.Physics2D.Dynamics.Category.All, 0, Physics2DContactTestItem.ModeEnum.All );
+					//		ParentScene.Physics2DContactTest( contactTestItem );
+
+					//		foreach( var item in contactTestItem.Result )
+					//		{
+					//			if( item.Body == mainBody )
+					//				continue;
+					//			var body = item.Body as RigidBody2D;
+					//			if( body != null && !collisionBodies.Contains( body ) )
+					//				collisionBodies.Add( body );
+					//		}
+					//	}
+
+					//	//var cylinder = new Cylinder( capsule.GetCenter(), capsule.Point1 - new Vector3( 0, 0, Radius ), Radius );
+					//	//if( cylinder.Point1 != cylinder.Point2 )
+					//	//{
+					//	//	var contactTestItem = new PhysicsContactTestItem( 1, -1, PhysicsContactTestItem.ModeEnum.All, cylinder );
+					//	//	ParentScene.PhysicsContactTest( contactTestItem );
+
+					//	//	foreach( var item in contactTestItem.Result )
+					//	//	{
+					//	//		if( item.Body == mainBody )
+					//	//			continue;
+					//	//		var body = item.Body as RigidBody;
+					//	//		if( body != null && !collisionBodies.Contains( body ) )
+					//	//			collisionBodies.Add( body );
+					//	//	}
+					//	//}
+					//}
 				}
 
 				if( collisionBodies.Count != 0 )
@@ -1349,13 +1427,11 @@ namespace NeoAxis
 					if( nStep != 0 && firstIteration )
 					{
 						float step2 = step / 10;
-						var sourceVolumeCapsules2 = new Capsule2[ sourceVolumeCapsules.Length ];
-						for( int n = 0; n < sourceVolumeCapsules2.Length; n++ )
-							sourceVolumeCapsules2[ n ] = CapsuleAddOffset( sourceVolumeCapsules[ n ], previousOffset );
+						var sourceVolumeCapsules2 = sourceVolumeCapsule;
+						CapsuleAddOffset( ref sourceVolumeCapsule, ref previousOffset );
 						var destVector2 = offset - previousOffset;
 
-						if( VolumeCheckGetFirstNotFreePlace( sourceVolumeCapsules2, destVector2, false, step2, out var collisionBodies2,
-							out var collisionDistance2, out var collisionOnFirstCheck2 ) )
+						if( VolumeCheckGetFirstNotFreePlace( ref sourceVolumeCapsules2, destVector2, false, step2, out var collisionBodies2, out var collisionDistance2, out var collisionOnFirstCheck2 ) )
 						{
 							collisionBodies = collisionBodies2;
 							collisionDistance = ( previousOffset != Vector2.Zero ? (float)previousOffset.Length() : 0 ) + collisionDistance2;
@@ -1386,14 +1462,9 @@ namespace NeoAxis
 
 			GetBodyFormInfo( crouching, out var height, out _, out var fromPositionToFloorDistance );
 
-			Capsule2[] volumeCapsules = GetVolumeCapsules();
+			GetVolumeCapsule( out var capsule );
 			//make radius smaller
-			for( int n = 0; n < volumeCapsules.Length; n++ )
-			{
-				Capsule2 capsule = volumeCapsules[ n ];
-				capsule.Radius *= .99f;
-				volumeCapsules[ n ] = capsule;
-			}
+			capsule.Radius *= .99f;
 
 			mainBodyGroundDistanceNoScale = 1000;
 			groundBody = null;
@@ -1411,13 +1482,12 @@ namespace NeoAxis
 					Vector2 destVector = new Vector2( 0, -height * scaleFactor );
 					//Vector2 destVector = new Vector2( 0, -height * 1.5f * scaleFactor );
 					var step = (float)( Radius.Value / 2 * scaleFactor );
-					VolumeCheckGetFirstNotFreePlace( volumeCapsules, destVector, true, step, out collisionBodies, out collisionOffset, out _ );
+					VolumeCheckGetFirstNotFreePlace( ref capsule, destVector, true, step, out collisionBodies, out collisionOffset, out _ );
 				}
 
 				//2. check slope angle
 				if( collisionBodies.Count != 0 )
 				{
-					var capsule = volumeCapsules[ volumeCapsules.Length - 1 ];
 					var rayCenter = capsule.Point1 - new Vector2( 0, collisionOffset );
 
 					RigidBody2D foundBodyWithGoodAngle = null;
@@ -1519,21 +1589,19 @@ namespace NeoAxis
 			return capsule;
 		}
 
-		Capsule2[] GetVolumeCapsules()
+		void GetVolumeCapsule( out Capsule2 volumeCapsule )
 		{
-			var volumeCapsules = new Capsule2[ 1 ];
-
 			var capsuleShape = mainBody.GetComponent<CollisionShape2D_Capsule>();
 			if( capsuleShape != null )
-				volumeCapsules[ 0 ] = GetWorldCapsule( capsuleShape );
+				volumeCapsule = GetWorldCapsule( capsuleShape );
 			else
-				volumeCapsules[ 0 ] = new Capsule2( mainBody.TransformV.Position.ToVector2(), mainBody.TransformV.Position.ToVector2(), 0.1 );
-			return volumeCapsules;
+				volumeCapsule = new Capsule2( mainBody.TransformV.Position.ToVector2(), mainBody.TransformV.Position.ToVector2(), 0.1 );
 		}
 
-		Capsule2 CapsuleAddOffset( Capsule2 capsule, Vector2 offset )
+		void CapsuleAddOffset( ref Capsule2 capsule, ref Vector2 offset )
 		{
-			return new Capsule2( capsule.Point1 + offset, capsule.Point2 + offset, capsule.Radius );
+			capsule.Point1 += offset;
+			capsule.Point2 += offset;
 		}
 
 		void ClimbObstacleTest( Vector2 newPositionOffsetNoScale, out double upHeightNoScale )
@@ -1542,11 +1610,10 @@ namespace NeoAxis
 
 			var scaleFactor = GetScaleFactor();
 
-			Capsule2[] volumeCapsules = GetVolumeCapsules();
+			GetVolumeCapsule( out var capsule );
 			{
 				Vector2 offset = ( newPositionOffsetNoScale + new Vector2( 0, walkUpHeight ) ) * scaleFactor;
-				for( int n = 0; n < volumeCapsules.Length; n++ )
-					volumeCapsules[ n ] = CapsuleAddOffset( volumeCapsules[ n ], offset );
+				CapsuleAddOffset( ref capsule, ref offset );
 			}
 
 			Vector2 destVector = new Vector2( 0, -walkUpHeight );
@@ -1554,7 +1621,7 @@ namespace NeoAxis
 			List<RigidBody2D> collisionBodies;
 			float collisionDistance;
 			bool collisionOnFirstCheck;
-			bool foundCollision = VolumeCheckGetFirstNotFreePlace( volumeCapsules, destVector, true, step, out collisionBodies,
+			bool foundCollision = VolumeCheckGetFirstNotFreePlace( ref capsule, destVector, true, step, out collisionBodies,
 				out collisionDistance, out collisionOnFirstCheck );
 			if( foundCollision )
 			{
@@ -1622,7 +1689,33 @@ namespace NeoAxis
 					} );
 				}
 
+				if( NetworkIsServer && ( JumpSound.ReferenceOrValueSpecified || JumpAnimation.ReferenceOrValueSpecified ) )
+				{
+					BeginNetworkMessageToEveryone( "Jump" );
+					EndNetworkMessage();
+				}
+
 				OnJump();
+			}
+		}
+
+		void TickJumpClient( bool ignoreTicks )
+		{
+			if( !ignoreTicks )
+			{
+				if( jumpDisableRemainingTime != 0 )
+				{
+					jumpDisableRemainingTime -= Time.SimulationDelta;
+					if( jumpDisableRemainingTime < 0 )
+						jumpDisableRemainingTime = 0;
+				}
+
+				if( jumpInactiveTime != 0 )
+				{
+					jumpInactiveTime -= Time.SimulationDelta;
+					if( jumpInactiveTime < 0 )
+						jumpInactiveTime = 0;
+				}
 			}
 		}
 
@@ -1648,7 +1741,11 @@ namespace NeoAxis
 			base.OnSpaceBoundsUpdate( ref newBounds );
 
 			if( mainBody != null )
-				newBounds = SpaceBounds.Merge( newBounds, new SpaceBounds( GetBox().ToBounds() ) );
+			{
+				GetBox( out var box );
+				box.ToBounds( out var bounds );
+				newBounds = SpaceBounds.Merge( newBounds, new SpaceBounds( ref bounds ) );
+			}
 		}
 
 		protected override void OnCheckSelectionByRay( CheckSelectionByRayContext context )
@@ -1656,7 +1753,7 @@ namespace NeoAxis
 			base.OnCheckSelectionByRay( context );
 
 			context.thisObjectWasChecked = true;
-			if( SpaceBounds.CalculatedBoundingBox.Intersects( context.ray, out var scale ) )
+			if( SpaceBounds.BoundingBox.Intersects( context.ray, out var scale ) )
 				context.thisObjectResultRayScale = scale;
 		}
 
@@ -1702,7 +1799,7 @@ namespace NeoAxis
 		public Vector2 GetLinearVelocity()
 		{
 			return lastLinearVelocity;
-			//if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+			//if( EngineApp.IsSimulation )
 			//	return ( GetTransform().Position - lastSimulationStepPosition ) / Time.SimulationDelta;
 			//return Vector3.Zero;
 		}
@@ -1830,19 +1927,19 @@ namespace NeoAxis
 		//	}
 		//}
 
-		Box GetBox()
+		void GetBox( out Box box )
 		{
 			var tr = TransformV;
-			var scaleFactor = tr.Scale.MaxComponent();
-			var capsule = GetVolumeCapsules()[ 0 ];
+			GetVolumeCapsule( out var capsule );
 			var extents = new Vector3( capsule.Radius, ( capsule.Point2 - capsule.Point1 ).Length() * 0.5 + capsule.Radius, tr.Scale.Z );
-			return new Box( new Vector3( capsule.GetCenter(), tr.Position.Z ), extents, tr.Rotation.ToMatrix3() );
+			box = new Box( new Vector3( capsule.GetCenter(), tr.Position.Z ), extents, tr.Rotation.ToMatrix3() );
 		}
 
 		void DebugDraw( Viewport viewport )
 		{
 			var renderer = viewport.Simple3DRenderer;
-			var points = GetBox().ToPoints();
+			GetBox( out var box );
+			var points = box.ToPoints();
 
 			renderer.AddArrow( points[ 0 ], points[ 1 ], 0, 0, true, 0 );
 			renderer.AddLine( points[ 1 ], points[ 2 ], -1 );
@@ -1869,7 +1966,7 @@ namespace NeoAxis
 				var context2 = context.ObjectInSpaceRenderingContext;
 				var scene = context.Owner.AttachedScene;
 
-				if( scene != null && scene.GetDisplayDevelopmentDataInThisApplication() && scene.DisplayPhysicalObjects )
+				if( scene != null && context.SceneDisplayDevelopmentDataInThisApplication && scene.DisplayPhysicalObjects )
 				{
 					GetBodyFormInfo( crouching, out var height, out var walkUpHeight, out var fromPositionToFloorDistance );
 
@@ -1901,6 +1998,7 @@ namespace NeoAxis
 				if( !showLabels )
 					context2.disableShowingLabelForThisObject = true;
 
+#if !DEPLOY
 				//draw selection
 				if( mainBody != null )
 				{
@@ -1908,18 +2006,19 @@ namespace NeoAxis
 					{
 						ColorValue color;
 						if( context2.selectedObjects.Contains( this ) )
-							color = ProjectSettings.Get.General.SelectedColor;
+							color = ProjectSettings.Get.Colors.SelectedColor;
 						else //if( context2.canSelectObjects.Contains( this ) )
-							color = ProjectSettings.Get.General.CanSelectColor;
+							color = ProjectSettings.Get.Colors.CanSelectColor;
 						//else
 						//	color = ProjectSettings.Get.SceneShowPhysicsDynamicActiveColor;
 
 						var viewport = context.Owner;
 
-						viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+						viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 						DebugDraw( viewport );
 					}
 				}
+#endif
 
 				//foreach( var ray in debugRays )
 				//{
@@ -2010,7 +2109,7 @@ namespace NeoAxis
 					}
 
 					//current state animation
-					if( animation == null && EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+					if( animation == null && EngineApp.IsSimulation )
 					{
 						if( IsOnGround() )
 						{
@@ -2084,13 +2183,14 @@ namespace NeoAxis
 				transformOffset.Name = "Transform Offset";
 				transformOffset.PositionOffset = new Vector3( 0, -0.05, 0 );
 				transformOffset.ScaleOffset = new Vector3( 1.2, 1.2, 1.2 );
-				transformOffset.Source = new Reference<Transform>( NeoAxis.Transform.Identity, "this:..\\..\\$Collision Body\\Transform" );
+				transformOffset.Source = new Reference<Transform>( NeoAxis.Transform.Identity, "this:..\\..\\Transform" );
 
 				var inputProcessing = CreateComponent<Character2DInputProcessing>();
 				inputProcessing.Name = "Character Input Processing";
 
 				var characterAI = CreateComponent<Character2DAI>();
 				characterAI.Name = "Character AI";
+				characterAI.NetworkMode = NetworkModeEnum.False;
 
 				Height = 1.2;
 				PositionToGroundHeight = 0.75;
@@ -2101,46 +2201,39 @@ namespace NeoAxis
 				JumpSupport = true;
 
 				Animate = true;
-				IdleAnimation = ReferenceUtility.MakeReference( @"content\2D\Penguin\Animation Idle.component" );
-				WalkAnimation = ReferenceUtility.MakeReference( @"content\2D\Penguin\Animation Walk.component" );
-				//RunAnimation = ReferenceUtility.MakeReference( @"content\2D\Penguin\Animation Run.component" );
-				FlyAnimation = ReferenceUtility.MakeReference( @"content\2D\Penguin\Animation Fly.component" );
-				JumpAnimation = ReferenceUtility.MakeReference( @"content\2D\Penguin\Animation Jump.component" );
+				IdleAnimation = ReferenceUtility.MakeReference( @"Content\2D\Penguin\Animation Idle.component" );
+				WalkAnimation = ReferenceUtility.MakeReference( @"Content\2D\Penguin\Animation Walk.component" );
+				//RunAnimation = ReferenceUtility.MakeReference( @"Content\2D\Penguin\Animation Run.component" );
+				FlyAnimation = ReferenceUtility.MakeReference( @"Content\2D\Penguin\Animation Fly.component" );
+				JumpAnimation = ReferenceUtility.MakeReference( @"Content\2D\Penguin\Animation Jump.component" );
 			}
 		}
 
 		public bool IsFreePositionToMove( Vector2 position )
 		{
-			Capsule2[] volumeCapsules = GetVolumeCapsules();
+			GetVolumeCapsule( out var capsule );
 			//make radius smaller
-			for( int n = 0; n < volumeCapsules.Length; n++ )
-			{
-				Capsule2 capsule = volumeCapsules[ n ];
-				capsule.Radius *= .99f;
-				volumeCapsules[ n ] = capsule;
-			}
+			capsule.Radius *= .99f;
 
-			foreach( var sourceVolumeCapsule in volumeCapsules )
-			{
-				var offset = position - sourceVolumeCapsule.GetCenter();
-				var checkCapsule = CapsuleAddOffset( sourceVolumeCapsule, offset );
+			var offset = position - capsule.GetCenter();
+			var checkCapsule = capsule;
+			CapsuleAddOffset( ref checkCapsule, ref offset );
 
-				var scene = ParentScene;
-				if( scene != null )
+			var scene = ParentScene;
+			if( scene != null )
+			{
+				var contactTestItem = new Physics2DContactTestItem( checkCapsule, 32, Physics2DCategories.All, Physics2DCategories.All, 0, Physics2DContactTestItem.ModeEnum.All );
+				ParentScene.Physics2DContactTest( contactTestItem );
+
+				foreach( var item in contactTestItem.Result )
 				{
-					var contactTestItem = new Physics2DContactTestItem( checkCapsule, 32, Physics2DCategories.All, Physics2DCategories.All, 0, Physics2DContactTestItem.ModeEnum.All );
-					ParentScene.Physics2DContactTest( contactTestItem );
-
-					foreach( var item in contactTestItem.Result )
+					if( item.Body == mainBody )
+						continue;
+					var body = item.Body as RigidBody2D;
+					if( body != null )
 					{
-						if( item.Body == mainBody )
-							continue;
-						var body = item.Body as RigidBody2D;
-						if( body != null )
-						{
-							return false;
-							//collisionBodies.Add( body );
-						}
+						return false;
+						//collisionBodies.Add( body );
 					}
 				}
 			}
@@ -2220,7 +2313,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="item"></param>
 		/// <param name="newTransform"></param>
-		public void ItemDrop( IGameFrameworkItem2D item, Transform newTransform = null )
+		public void ItemDrop( IGameFrameworkItem2D item, bool calculateTransform = false, Transform setTransform = null )
 		{
 			var item2 = (ObjectInSpace)item;
 
@@ -2237,8 +2330,13 @@ namespace NeoAxis
 
 			//add to the scene
 			ParentScene.AddComponent( item2 );
-			if( newTransform != null )
-				item2.Transform = newTransform;
+			if( calculateTransform )
+			{
+				//it is simple implementation
+				item2.Transform = new Transform( TransformV.Position, TransformV.Rotation, item2.TransformV.Scale );
+			}
+			else if( setTransform != null )
+				item2.Transform = setTransform;
 
 			//enable
 			item2.Enabled = true;
@@ -2302,6 +2400,86 @@ namespace NeoAxis
 		public void SoundPlay( Sound sound )
 		{
 			ParentScene?.SoundPlay2D( sound );
+		}
+
+		protected override bool OnReceiveNetworkMessageFromServer( string message, ArrayDataReader reader )
+		{
+			if( !base.OnReceiveNetworkMessageFromServer( message, reader ) )
+				return false;
+
+			if( message == "Jump" )
+			{
+				SoundPlay( JumpSound );
+
+				if( JumpAnimation.Value != null )
+				{
+					EventAnimationBegin( JumpAnimation, delegate ()
+					{
+						if( IsOnGround() )
+							EventAnimationBegin( null );
+					} );
+				}
+			}
+			else if( message == "TickMovement" )
+			{
+				var forceIsOnGroundRemainingTime2 = reader.ReadSingle();
+				if( !reader.Complete() )
+					return false;
+
+				forceIsOnGroundRemainingTime = forceIsOnGroundRemainingTime2;
+			}
+
+			return true;
+		}
+
+		protected override bool OnReceiveNetworkMessageFromClient( ServerNetworkService_Components.ClientItem client, string message, ArrayDataReader reader )
+		{
+			if( !base.OnReceiveNetworkMessageFromClient( client, message, reader ) )
+				return false;
+
+			//security check the object is controlled by the player
+			var networkLogic = NetworkLogicUtility.GetNetworkLogic( this );
+			if( networkLogic != null && networkLogic.ServerGetObjectControlledByUser( client.User, true ) == this )
+			{
+				if( message == "ItemTakeAndActivate" )
+				{
+					var itemNetworkID = (long)reader.ReadVariableUInt64();
+					if( !reader.Complete() )
+						return false;
+
+					var item = ParentRoot.HierarchyController.GetComponentByNetworkID( itemNetworkID );
+					if( item != null )
+					{
+						//!!!!check it can be taken
+
+						var item2 = item as IGameFrameworkItem2D;
+						if( item2 != null )
+						{
+							ItemTake( item2 );
+							ItemActivate( item2 );
+						}
+					}
+				}
+				else if( message == "ItemDrop" )
+				{
+					var itemNetworkID = (long)reader.ReadVariableUInt64();
+					if( !reader.Complete() )
+						return false;
+
+					var item = ParentRoot.HierarchyController.GetComponentByNetworkID( itemNetworkID );
+					if( item != null )
+					{
+						//!!!!check it can be dropped
+
+						var item2 = item as IGameFrameworkItem2D;
+						if( item2 != null )
+							ItemDrop( item2, true );
+					}
+				}
+
+			}
+
+			return true;
 		}
 	}
 }

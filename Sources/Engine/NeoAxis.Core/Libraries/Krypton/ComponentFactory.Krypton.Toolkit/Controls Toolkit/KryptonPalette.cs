@@ -1,4 +1,5 @@
-﻿// *****************************************************************************
+﻿#if !DEPLOY
+// *****************************************************************************
 // 
 //  © Component Factory Pty Ltd 2012. All rights reserved.
 //	The software and associated documentation supplied hereunder are the 
@@ -71,7 +72,7 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         private KryptonPaletteControls _controls;
         private PaletteDragDrop _dragDrop;
         private KryptonPaletteForms _forms;
-        private KryptonPaletteGrids _grids;
+        //private KryptonPaletteGrids _grids;
         private KryptonPaletteHeaders _headers;
         private KryptonPaletteHeaderGroup _headerGroup;
         private KryptonPaletteImages _images;
@@ -168,7 +169,7 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
             _contextMenu = new KryptonPaletteContextMenu(_redirectCommon, _needPaintDelegate);
             _dragDrop = new PaletteDragDrop(_redirectCommon, _needPaintDelegate);
             _forms = new KryptonPaletteForms(_redirectCommon, _needPaintDelegate);
-            _grids = new KryptonPaletteGrids(_redirectCommon, _needPaintDelegate);
+            //_grids = new KryptonPaletteGrids(_redirectCommon, _needPaintDelegate);
             _headers = new KryptonPaletteHeaders(_redirectCommon, _needPaintDelegate);
             _headerGroup = new KryptonPaletteHeaderGroup(_redirector, _needPaintDelegate);
             _images = new KryptonPaletteImages(_redirectCommon, _needPaintDelegate);
@@ -545,24 +546,24 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         }
         #endregion
 
-        #region GridStyles
-        /// <summary>
-        /// Gets access to the appearance for grid styles.
-        /// </summary>
-        [KryptonPersist]
-        [Category("Visuals")]
-        [Description("Overrides for defining appearance of grid styles.")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        public KryptonPaletteGrids GridStyles
-        {
-            get { return _grids; }
-        }
+        //#region GridStyles
+        ///// <summary>
+        ///// Gets access to the appearance for grid styles.
+        ///// </summary>
+        //[KryptonPersist]
+        //[Category("Visuals")]
+        //[Description("Overrides for defining appearance of grid styles.")]
+        //[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+        //public KryptonPaletteGrids GridStyles
+        //{
+        //    get { return _grids; }
+        //}
 
-        private bool ShouldSerializeGridStyles()
-        {
-            return !_grids.IsDefault;
-        }
-        #endregion
+        //private bool ShouldSerializeGridStyles()
+        //{
+        //    return !_grids.IsDefault;
+        //}
+        //#endregion
 
         #region Images
         /// <summary>
@@ -2698,413 +2699,413 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
             }
         }
 
-        /// <summary>
-        /// Import palette settings from an xml file.
-        /// </summary>
-        /// <returns>Fullpath of imported filename; otherwise empty string.</returns>
-        public string Import()
-        {
-            using ( System.Windows.Forms.OpenFileDialog dialog = new System.Windows.Forms.OpenFileDialog())
-            {
-                // Palette files are just xml documents
-                dialog.CheckFileExists = true;
-                dialog.CheckPathExists = true;
-                dialog.DefaultExt = "xml";
-                dialog.Filter = "Palette files (*.xml)|*.xml|All files (*.*)|(*.*)";
-                dialog.Title = "Load Palette";
+        ///// <summary>
+        ///// Import palette settings from an xml file.
+        ///// </summary>
+        ///// <returns>Fullpath of imported filename; otherwise empty string.</returns>
+        //public string Import()
+        //{
+        //    using ( System.Windows.Forms.OpenFileDialog dialog = new System.Windows.Forms.OpenFileDialog())
+        //    {
+        //        // Palette files are just xml documents
+        //        dialog.CheckFileExists = true;
+        //        dialog.CheckPathExists = true;
+        //        dialog.DefaultExt = "xml";
+        //        dialog.Filter = "Palette files (*.xml)|*.xml|All files (*.*)|(*.*)";
+        //        dialog.Title = "Load Palette";
 
-                // Get the actual file selected by the user
-                if (dialog.ShowDialog() == DialogResult.OK)
-                {
-                    // Use the existing import overload that takes the target name
-                    return Import(dialog.FileName, false);
-                }
-            }
+        //        // Get the actual file selected by the user
+        //        if (dialog.ShowDialog() == DialogResult.OK)
+        //        {
+        //            // Use the existing import overload that takes the target name
+        //            return Import(dialog.FileName, false);
+        //        }
+        //    }
 
-            return string.Empty;
-        }
+        //    return string.Empty;
+        //}
 
-        /// <summary>
-        /// Import palette settings from the specified xml file.
-        /// </summary>
-        /// <param name="filename">Filename to load.</param>
-        /// <returns>Fullpath of imported filename; otherwise empty string.</returns>
-        public string Import(string filename)
-        {
-            // By default the export is silent
-            return Import(filename, true);
-        }
+        ///// <summary>
+        ///// Import palette settings from the specified xml file.
+        ///// </summary>
+        ///// <param name="filename">Filename to load.</param>
+        ///// <returns>Fullpath of imported filename; otherwise empty string.</returns>
+        //public string Import(string filename)
+        //{
+        //    // By default the export is silent
+        //    return Import(filename, true);
+        //}
 
-        /// <summary>
-        /// Import palette settings from the specified xml file.
-        /// </summary>
-        /// <param name="filename">Filename to load.</param>
-        /// <param name="silent">Silent mode provides no user interface feedback.</param>
-        /// <returns>Fullpath of imported filename; otherwise empty string.</returns>
-        public string Import(string filename, 
-                             bool silent)
-        {
-            string ret = string.Empty;
+        ///// <summary>
+        ///// Import palette settings from the specified xml file.
+        ///// </summary>
+        ///// <param name="filename">Filename to load.</param>
+        ///// <param name="silent">Silent mode provides no user interface feedback.</param>
+        ///// <returns>Fullpath of imported filename; otherwise empty string.</returns>
+        //public string Import(string filename, 
+        //                     bool silent)
+        //{
+        //    string ret = string.Empty;
 
-            try
-            {
-                // Prevent lots of redraw events until all loading completes
-                SuspendUpdates();
+        //    try
+        //    {
+        //        // Prevent lots of redraw events until all loading completes
+        //        SuspendUpdates();
 
-                if (silent)
-                    ret = (string)ImportFromFile(filename);
-                else
-                {
-                    // Perform the import operation on a separate worker thread
-                    ret = (string)CommonHelper.PerformOperation(new Operation(ImportFromFile), filename);
+        //        if (silent)
+        //            ret = (string)ImportFromFile(filename);
+        //        else
+        //        {
+        //            // Perform the import operation on a separate worker thread
+        //            ret = (string)CommonHelper.PerformOperation(new Operation(ImportFromFile), filename);
 
-                    MessageBox.Show("Import from file '" + filename + "' completed.",
-                                    "Palette Import",
-                                    MessageBoxButtons.OK);
-                }
-            }
-            catch (Exception ex)
-            {
-                if (!silent)
-                {
-                    MessageBox.Show("Import from file '" + filename + "' failed.\n\n Error:" + ex.Message,
-                                    "Palette Import",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
-                }
+        //            MessageBox.Show("Import from file '" + filename + "' completed.",
+        //                            "Palette Import",
+        //                            MessageBoxButtons.OK);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        if (!silent)
+        //        {
+        //            MessageBox.Show("Import from file '" + filename + "' failed.\n\n Error:" + ex.Message,
+        //                            "Palette Import",
+        //                            MessageBoxButtons.OK,
+        //                            MessageBoxIcon.Error);
+        //        }
 
-                // Rethrow the exception
-                throw ex;
-            }
-            finally
-            {
-                // Must match the SuspendUpdates even if exception occurs
-                ResumeUpdates();
-            }
+        //        // Rethrow the exception
+        //        throw ex;
+        //    }
+        //    finally
+        //    {
+        //        // Must match the SuspendUpdates even if exception occurs
+        //        ResumeUpdates();
+        //    }
 
-            return ret;
-        }
+        //    return ret;
+        //}
 
-        /// <summary>
-        /// Import palette settings from the specified stream.
-        /// </summary>
-        /// <param name="stream">Stream that contains an XmlDocument.</param>
-        public void Import(Stream stream)
-        {
-            // By default the import is silent
-            Import(stream, true);
-        }
+        ///// <summary>
+        ///// Import palette settings from the specified stream.
+        ///// </summary>
+        ///// <param name="stream">Stream that contains an XmlDocument.</param>
+        //public void Import(Stream stream)
+        //{
+        //    // By default the import is silent
+        //    Import(stream, true);
+        //}
 
-        /// <summary>
-        /// Import palette settings from the specified stream.
-        /// </summary>
-        /// <param name="stream">Stream that contains an XmlDocument.</param>
-        /// <param name="silent">Silent mode provides no user interface feedback.</param>
-        public void Import(Stream stream,   
-                           bool silent)
-        {
-            try
-            {
-                // Prevent lots of redraw events until all loading completes
-                SuspendUpdates();
+        ///// <summary>
+        ///// Import palette settings from the specified stream.
+        ///// </summary>
+        ///// <param name="stream">Stream that contains an XmlDocument.</param>
+        ///// <param name="silent">Silent mode provides no user interface feedback.</param>
+        //public void Import(Stream stream,   
+        //                   bool silent)
+        //{
+        //    try
+        //    {
+        //        // Prevent lots of redraw events until all loading completes
+        //        SuspendUpdates();
 
-                if (silent)
-                    ImportFromStream(stream);
-                else
-                {
-                    // Perform the import operation on a separate worker thread
-                    CommonHelper.PerformOperation(new Operation(ImportFromStream), stream);
+        //        if (silent)
+        //            ImportFromStream(stream);
+        //        else
+        //        {
+        //            // Perform the import operation on a separate worker thread
+        //            CommonHelper.PerformOperation(new Operation(ImportFromStream), stream);
 
-                    MessageBox.Show("Import completed with success.",
-                                    "Palette Import",
-                                    MessageBoxButtons.OK);
-                }
-            }
-            catch (Exception ex)
-            {
-                if (!silent)
-                {
-                    MessageBox.Show("Import has failed.\n\n Error:" + ex.Message,
-                                    "Palette Import",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
-                }
+        //            MessageBox.Show("Import completed with success.",
+        //                            "Palette Import",
+        //                            MessageBoxButtons.OK);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        if (!silent)
+        //        {
+        //            MessageBox.Show("Import has failed.\n\n Error:" + ex.Message,
+        //                            "Palette Import",
+        //                            MessageBoxButtons.OK,
+        //                            MessageBoxIcon.Error);
+        //        }
 
-                // Rethrow the exception
-                throw ex;
-            }
-            finally
-            {
-                // Must match the SuspendUpdates even if exception occurs
-                ResumeUpdates();
-            }
-        }
+        //        // Rethrow the exception
+        //        throw ex;
+        //    }
+        //    finally
+        //    {
+        //        // Must match the SuspendUpdates even if exception occurs
+        //        ResumeUpdates();
+        //    }
+        //}
 
-        /// <summary>
-        /// Import palette settings from the specified array of bytes.
-        /// </summary>
-        /// <param name="byteArray">ByteArray that was returning from exporting palette.</param>
-        public void Import(byte[] byteArray)
-        {
-            // By default the import is silent
-            Import(byteArray, true);
-        }
+        ///// <summary>
+        ///// Import palette settings from the specified array of bytes.
+        ///// </summary>
+        ///// <param name="byteArray">ByteArray that was returning from exporting palette.</param>
+        //public void Import(byte[] byteArray)
+        //{
+        //    // By default the import is silent
+        //    Import(byteArray, true);
+        //}
 
-        /// <summary>
-        /// Import palette settings from the specified array of bytes.
-        /// </summary>
-        /// <param name="byteArray">ByteArray that was returning from exporting palette.</param>
-        /// <param name="silent">Silent mode provides no user interface feedback.</param>
-        public void Import(byte[] byteArray, 
-                           bool silent)
-        {
-            try
-            {
-                // Prevent lots of redraw events until all loading completes
-                SuspendUpdates();
+        ///// <summary>
+        ///// Import palette settings from the specified array of bytes.
+        ///// </summary>
+        ///// <param name="byteArray">ByteArray that was returning from exporting palette.</param>
+        ///// <param name="silent">Silent mode provides no user interface feedback.</param>
+        //public void Import(byte[] byteArray, 
+        //                   bool silent)
+        //{
+        //    try
+        //    {
+        //        // Prevent lots of redraw events until all loading completes
+        //        SuspendUpdates();
 
-                if (silent)
-                    ImportFromByteArray(byteArray);
-                else
-                {
-                    // Perform the import operation on a separate worker thread
-                    CommonHelper.PerformOperation(new Operation(ImportFromByteArray), byteArray);
+        //        if (silent)
+        //            ImportFromByteArray(byteArray);
+        //        else
+        //        {
+        //            // Perform the import operation on a separate worker thread
+        //            CommonHelper.PerformOperation(new Operation(ImportFromByteArray), byteArray);
 
-                    MessageBox.Show("Import completed with success.",
-                                    "Palette Import",
-                                    MessageBoxButtons.OK);
-                }
-            }
-            catch (Exception ex)
-            {
-                if (!silent)
-                {
-                    MessageBox.Show("Import has failed.\n\n Error:" + ex.Message,
-                                    "Palette Import",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
-                }
+        //            MessageBox.Show("Import completed with success.",
+        //                            "Palette Import",
+        //                            MessageBoxButtons.OK);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        if (!silent)
+        //        {
+        //            MessageBox.Show("Import has failed.\n\n Error:" + ex.Message,
+        //                            "Palette Import",
+        //                            MessageBoxButtons.OK,
+        //                            MessageBoxIcon.Error);
+        //        }
 
-                // Rethrow the exception
-                throw ex;
-            }
-            finally
-            {
-                // Must match the SuspendUpdates even if exception occurs
-                ResumeUpdates();
-            }
-        }
+        //        // Rethrow the exception
+        //        throw ex;
+        //    }
+        //    finally
+        //    {
+        //        // Must match the SuspendUpdates even if exception occurs
+        //        ResumeUpdates();
+        //    }
+        //}
             
-        /// <summary>
-        /// Export palette settings to a user specified xml file.
-        /// </summary>
-        /// <returns>Fullpath of exported filename; otherwise empty string.</returns>
-        public string Export()
-        {
-            using ( System.Windows.Forms.SaveFileDialog dialog = new System.Windows.Forms.SaveFileDialog())
-            {
-                // Palette files are just xml documents
-                dialog.OverwritePrompt = true;
-                dialog.DefaultExt = "xml";
-                dialog.Filter = "Palette files (*.xml)|*.xml|All files (*.*)|(*.*)";
-                dialog.Title = "Save Palette As";
+        ///// <summary>
+        ///// Export palette settings to a user specified xml file.
+        ///// </summary>
+        ///// <returns>Fullpath of exported filename; otherwise empty string.</returns>
+        //public string Export()
+        //{
+        //    using ( System.Windows.Forms.SaveFileDialog dialog = new System.Windows.Forms.SaveFileDialog())
+        //    {
+        //        // Palette files are just xml documents
+        //        dialog.OverwritePrompt = true;
+        //        dialog.DefaultExt = "xml";
+        //        dialog.Filter = "Palette files (*.xml)|*.xml|All files (*.*)|(*.*)";
+        //        dialog.Title = "Save Palette As";
 
-                // Get the actual file selected by the user
-                if (dialog.ShowDialog() == DialogResult.OK)
-                {
-                    // Use the existing export overload that takes the target name
-                    return Export(dialog.FileName, true, false);
-                }
-            }
+        //        // Get the actual file selected by the user
+        //        if (dialog.ShowDialog() == DialogResult.OK)
+        //        {
+        //            // Use the existing export overload that takes the target name
+        //            return Export(dialog.FileName, true, false);
+        //        }
+        //    }
 
-            return string.Empty;
-        }
+        //    return string.Empty;
+        //}
 
-        /// <summary>
-        /// Export palette settings to the specified xml file.
-        /// </summary>
-        /// <param name="filename">Filename to create or overwrite.</param>
-        /// <param name="ignoreDefaults">Should default values be exported.</param>
-        /// <returns>Fullpath of exported filename; otherwise empty string.</returns>
-        public string Export(string filename,
-                             bool ignoreDefaults)
-        {
-            // By default the export is silent
-            return Export(filename, ignoreDefaults, true);
-        }
+        ///// <summary>
+        ///// Export palette settings to the specified xml file.
+        ///// </summary>
+        ///// <param name="filename">Filename to create or overwrite.</param>
+        ///// <param name="ignoreDefaults">Should default values be exported.</param>
+        ///// <returns>Fullpath of exported filename; otherwise empty string.</returns>
+        //public string Export(string filename,
+        //                     bool ignoreDefaults)
+        //{
+        //    // By default the export is silent
+        //    return Export(filename, ignoreDefaults, true);
+        //}
 
-        /// <summary>
-        /// Export palette settings to the specified xml file.
-        /// </summary>
-        /// <param name="filename">Filename to create or overwrite.</param>
-        /// <param name="ignoreDefaults">Should default values be exported.</param>
-        /// <param name="silent">Silent mode provides no user interface feedback.</param>
-        /// <returns>Fullpath of exported filename; otherwise empty string.</returns>
-        public string Export(string filename, 
-                             bool ignoreDefaults,
-                             bool silent)
-        {
-            string ret = string.Empty;
+        ///// <summary>
+        ///// Export palette settings to the specified xml file.
+        ///// </summary>
+        ///// <param name="filename">Filename to create or overwrite.</param>
+        ///// <param name="ignoreDefaults">Should default values be exported.</param>
+        ///// <param name="silent">Silent mode provides no user interface feedback.</param>
+        ///// <returns>Fullpath of exported filename; otherwise empty string.</returns>
+        //public string Export(string filename, 
+        //                     bool ignoreDefaults,
+        //                     bool silent)
+        //{
+        //    string ret = string.Empty;
 
-            try
-            {
-                // Prevent lots of redraw events until all saving completes
-                SuspendUpdates();
+        //    try
+        //    {
+        //        // Prevent lots of redraw events until all saving completes
+        //        SuspendUpdates();
 
-                if (silent)
-                    ret = (string)ExportToFile(new object[] { filename, ignoreDefaults });
-                else
-                {
-                    // Perform the import operation on a separate worker thread
-                    ret = (string)CommonHelper.PerformOperation(new Operation(ExportToFile), 
-                                                                new object[] { filename, ignoreDefaults });
+        //        if (silent)
+        //            ret = (string)ExportToFile(new object[] { filename, ignoreDefaults });
+        //        else
+        //        {
+        //            // Perform the import operation on a separate worker thread
+        //            ret = (string)CommonHelper.PerformOperation(new Operation(ExportToFile), 
+        //                                                        new object[] { filename, ignoreDefaults });
 
-                    MessageBox.Show("Export to file '" + filename + "' completed.",
-                                    "Palette Export",
-                                    MessageBoxButtons.OK);
-                }
-            }
-            catch (Exception ex)
-            {
-                if (!silent)
-                {
-                    MessageBox.Show("Export to file '" + filename + "' failed.\n\n Error:" + ex.Message,
-                                    "Palette Export",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
-                }
+        //            MessageBox.Show("Export to file '" + filename + "' completed.",
+        //                            "Palette Export",
+        //                            MessageBoxButtons.OK);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        if (!silent)
+        //        {
+        //            MessageBox.Show("Export to file '" + filename + "' failed.\n\n Error:" + ex.Message,
+        //                            "Palette Export",
+        //                            MessageBoxButtons.OK,
+        //                            MessageBoxIcon.Error);
+        //        }
 
-                // Rethrow the exception
-                throw ex;
-            }
-            finally
-            {
-                // Must match the SuspendUpdates even if exception occurs
-                ResumeUpdates();
-            }
+        //        // Rethrow the exception
+        //        throw ex;
+        //    }
+        //    finally
+        //    {
+        //        // Must match the SuspendUpdates even if exception occurs
+        //        ResumeUpdates();
+        //    }
 
-            return ret;
-        }
+        //    return ret;
+        //}
 
-        /// <summary>
-        /// Export palette settings into a stream object.
-        /// </summary>
-        /// <param name="stream">Destination stream for exporting.</param>
-        /// <param name="ignoreDefaults">Should default values be exported.</param>
-        public void Export(Stream stream,
-                           bool ignoreDefaults)
-        {
-            // By default the export is silent
-            Export(stream, ignoreDefaults, true);
-        }
+        ///// <summary>
+        ///// Export palette settings into a stream object.
+        ///// </summary>
+        ///// <param name="stream">Destination stream for exporting.</param>
+        ///// <param name="ignoreDefaults">Should default values be exported.</param>
+        //public void Export(Stream stream,
+        //                   bool ignoreDefaults)
+        //{
+        //    // By default the export is silent
+        //    Export(stream, ignoreDefaults, true);
+        //}
 
-        /// <summary>
-        /// Export palette settings into a stream object.
-        /// </summary>
-        /// <param name="stream">Destination stream for exporting.</param>
-        /// <param name="ignoreDefaults">Should default values be exported.</param>
-        /// <param name="silent">Silent mode provides no user interface feedback.</param>
-        public void Export(Stream stream, 
-                           bool ignoreDefaults,
-                           bool silent)
-        {
-            try
-            {
-                // Prevent lots of redraw events until all saving completes
-                SuspendUpdates();
+        ///// <summary>
+        ///// Export palette settings into a stream object.
+        ///// </summary>
+        ///// <param name="stream">Destination stream for exporting.</param>
+        ///// <param name="ignoreDefaults">Should default values be exported.</param>
+        ///// <param name="silent">Silent mode provides no user interface feedback.</param>
+        //public void Export(Stream stream, 
+        //                   bool ignoreDefaults,
+        //                   bool silent)
+        //{
+        //    try
+        //    {
+        //        // Prevent lots of redraw events until all saving completes
+        //        SuspendUpdates();
 
-                if (silent)
-                    ExportToStream(new object[] { stream, ignoreDefaults });
-                else
-                {
-                    // Perform the import operation on a separate worker thread
-                    CommonHelper.PerformOperation(new Operation(ExportToStream),
-                                                  new object[] { stream, ignoreDefaults });
+        //        if (silent)
+        //            ExportToStream(new object[] { stream, ignoreDefaults });
+        //        else
+        //        {
+        //            // Perform the import operation on a separate worker thread
+        //            CommonHelper.PerformOperation(new Operation(ExportToStream),
+        //                                          new object[] { stream, ignoreDefaults });
 
-                    MessageBox.Show("Export completed with success.",
-                                    "Palette Export",
-                                    MessageBoxButtons.OK);
-                }
-            }
-            catch (Exception ex)
-            {
-                if (!silent)
-                {
-                    MessageBox.Show("Export has failed.\n\n Error:" + ex.Message,
-                                    "Palette Export",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
-                }
+        //            MessageBox.Show("Export completed with success.",
+        //                            "Palette Export",
+        //                            MessageBoxButtons.OK);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        if (!silent)
+        //        {
+        //            MessageBox.Show("Export has failed.\n\n Error:" + ex.Message,
+        //                            "Palette Export",
+        //                            MessageBoxButtons.OK,
+        //                            MessageBoxIcon.Error);
+        //        }
 
-                // Rethrow the exception
-                throw ex;
-            }
-            finally
-            {
-                // Must match the SuspendUpdates even if exception occurs
-                ResumeUpdates();
-            }
-        }
+        //        // Rethrow the exception
+        //        throw ex;
+        //    }
+        //    finally
+        //    {
+        //        // Must match the SuspendUpdates even if exception occurs
+        //        ResumeUpdates();
+        //    }
+        //}
 
-        /// <summary>
-        /// Export palette settings into an array of bytes.
-        /// </summary>
-        /// <param name="ignoreDefaults">Should default values be exported.</param>
-        public byte[] Export(bool ignoreDefaults)
-        {
-            // By default the export is silent
-            return Export(ignoreDefaults, true);
-        }
+        ///// <summary>
+        ///// Export palette settings into an array of bytes.
+        ///// </summary>
+        ///// <param name="ignoreDefaults">Should default values be exported.</param>
+        //public byte[] Export(bool ignoreDefaults)
+        //{
+        //    // By default the export is silent
+        //    return Export(ignoreDefaults, true);
+        //}
 
-        /// <summary>
-        /// Export palette settings into an array of bytes.
-        /// </summary>
-        /// <param name="ignoreDefaults">Should default values be exported.</param>
-        /// <param name="silent">Silent mode provides no user interface feedback.</param>
-        public byte[] Export(bool ignoreDefaults,
-                             bool silent)
-        {
-            byte[] ret = null;
+        ///// <summary>
+        ///// Export palette settings into an array of bytes.
+        ///// </summary>
+        ///// <param name="ignoreDefaults">Should default values be exported.</param>
+        ///// <param name="silent">Silent mode provides no user interface feedback.</param>
+        //public byte[] Export(bool ignoreDefaults,
+        //                     bool silent)
+        //{
+        //    byte[] ret = null;
 
-            try
-            {
-                // Prevent lots of redraw events until all saving completes
-                SuspendUpdates();
+        //    try
+        //    {
+        //        // Prevent lots of redraw events until all saving completes
+        //        SuspendUpdates();
 
-                if (silent)
-                    ret = (byte[])ExportToByteArray(new object[] { ignoreDefaults });
-                else
-                {
-                    // Perform the import operation on a separate worker thread
-                    ret = (byte[])CommonHelper.PerformOperation(new Operation(ExportToByteArray),
-                                                                new object[] { ignoreDefaults });
+        //        if (silent)
+        //            ret = (byte[])ExportToByteArray(new object[] { ignoreDefaults });
+        //        else
+        //        {
+        //            // Perform the import operation on a separate worker thread
+        //            ret = (byte[])CommonHelper.PerformOperation(new Operation(ExportToByteArray),
+        //                                                        new object[] { ignoreDefaults });
 
-                    MessageBox.Show("Export completed with success.",
-                                    "Palette Export",
-                                    MessageBoxButtons.OK);
-                }
-            }
-            catch (Exception ex)
-            {
-                if (!silent)
-                {
-                    MessageBox.Show("Export has failed.\n\n Error:" + ex.Message,
-                                    "Palette Export",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
-                }
+        //            MessageBox.Show("Export completed with success.",
+        //                            "Palette Export",
+        //                            MessageBoxButtons.OK);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        if (!silent)
+        //        {
+        //            MessageBox.Show("Export has failed.\n\n Error:" + ex.Message,
+        //                            "Palette Export",
+        //                            MessageBoxButtons.OK,
+        //                            MessageBoxIcon.Error);
+        //        }
 
-                // Rethrow the exception
-                throw ex;
-            }
-            finally
-            {
-                // Must match the SuspendUpdates even if exception occurs
-                ResumeUpdates();
-            }
+        //        // Rethrow the exception
+        //        throw ex;
+        //    }
+        //    finally
+        //    {
+        //        // Must match the SuspendUpdates even if exception occurs
+        //        ResumeUpdates();
+        //    }
 
-            return ret;
-        }
+        //    return ret;
+        //}
         #endregion
 
         #region Public Properties
@@ -3532,7 +3533,7 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
             _contextMenu.PopulateFromBase(Common);
             _dragDrop.PopulateFromBase();
             _forms.PopulateFromBase(Common);
-            _grids.PopulateFromBase(Common);
+            //_grids.PopulateFromBase(Common);
             _headers.PopulateFromBase(Common);
             _headerGroup.PopulateFromBase();
             _images.PopulateFromBase();
@@ -3549,549 +3550,549 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
             return null;
         }
         
-        private object ImportFromFile(object parameter)
-        {
-            // Cast to correct type
-            string filename = (string)parameter;
+        //private object ImportFromFile(object parameter)
+        //{
+        //    // Cast to correct type
+        //    string filename = (string)parameter;
 
-            FileInfo info = new FileInfo(filename);
+        //    FileInfo info = new FileInfo(filename);
 
-            // Check the target file actually exists
-            if (!info.Exists)
-                throw new ArgumentException("Provided file does not exist.");
+        //    // Check the target file actually exists
+        //    if (!info.Exists)
+        //        throw new ArgumentException("Provided file does not exist.");
 
-            // Create a new xml document for storing the palette settings
-            XmlDocument doc = new XmlDocument();
+        //    // Create a new xml document for storing the palette settings
+        //    XmlDocument doc = new XmlDocument();
 
-            // Attempt to load as a valid xml document
-            doc.Load(filename);
+        //    // Attempt to load as a valid xml document
+        //    doc.Load(filename);
 
-            // Perform actual import using the XmlDocument we just loaded
-            ImportFromXmlDocument(doc);
+        //    // Perform actual import using the XmlDocument we just loaded
+        //    ImportFromXmlDocument(doc);
 
-            return filename;
-        }
+        //    return filename;
+        //}
 
-        private object ImportFromStream(object parameter)
-        {
-            // Cast to correct type
-            Stream stream = (Stream)parameter;
+        //private object ImportFromStream(object parameter)
+        //{
+        //    // Cast to correct type
+        //    Stream stream = (Stream)parameter;
 
-            // Create a new xml document for storing the palette settings
-            XmlDocument doc = new XmlDocument();
+        //    // Create a new xml document for storing the palette settings
+        //    XmlDocument doc = new XmlDocument();
 
-            // Attempt to load from the provided stream
-            doc.Load(stream);
+        //    // Attempt to load from the provided stream
+        //    doc.Load(stream);
 
-            // Perform actual import using the XmlDocument we just loaded
-            ImportFromXmlDocument(doc);
+        //    // Perform actual import using the XmlDocument we just loaded
+        //    ImportFromXmlDocument(doc);
 
-            return stream;
-        }
+        //    return stream;
+        //}
 
-        private object ImportFromByteArray(object parameter)
-        {
-            // Cast to an array of parameters
-            byte[] byteArray = (byte[])parameter;
+        //private object ImportFromByteArray(object parameter)
+        //{
+        //    // Cast to an array of parameters
+        //    byte[] byteArray = (byte[])parameter;
 
-            // Create a memory based stream
-            MemoryStream ms = new MemoryStream(byteArray);
+        //    // Create a memory based stream
+        //    MemoryStream ms = new MemoryStream(byteArray);
 
-            // Perform import from the memory stream
-            ImportFromStream(ms);
+        //    // Perform import from the memory stream
+        //    ImportFromStream(ms);
 
-            // Must close steam before retrieving bytes
-            ms.Close();
+        //    // Must close steam before retrieving bytes
+        //    ms.Close();
 
-            return null;
-        }
+        //    return null;
+        //}
 
-        private void ImportFromXmlDocument(XmlDocument doc)
-        {
-            // Remember the current culture setting
-            CultureInfo culture = Thread.CurrentThread.CurrentCulture;
+        //private void ImportFromXmlDocument(XmlDocument doc)
+        //{
+        //    // Remember the current culture setting
+        //    CultureInfo culture = Thread.CurrentThread.CurrentCulture;
 
-            try
-            {
-                // Use the invariant culture for persistence
-                Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+        //    try
+        //    {
+        //        // Use the invariant culture for persistence
+        //        Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-                // We insist on a root element
-                if (!doc.HasChildNodes)
-                    throw new ArgumentException("Xml document does not have a root element.");
+        //        // We insist on a root element
+        //        if (!doc.HasChildNodes)
+        //            throw new ArgumentException("Xml document does not have a root element.");
 
-                // Try and grab the root element
-                XmlElement root = (XmlElement)doc.SelectSingleNode("KryptonPalette");
+        //        // Try and grab the root element
+        //        XmlElement root = (XmlElement)doc.SelectSingleNode("KryptonPalette");
 
-                // We insist the root is always present
-                if (root == null)
-                    throw new ArgumentException("Root element must be called 'KryptonPalette'.");
+        //        // We insist the root is always present
+        //        if (root == null)
+        //            throw new ArgumentException("Root element must be called 'KryptonPalette'.");
 
-                // We insit the version number is always present
-                if (!root.HasAttribute("Version"))
-                    throw new ArgumentException("Root element must have an attribute called 'Version'.");
+        //        // We insit the version number is always present
+        //        if (!root.HasAttribute("Version"))
+        //            throw new ArgumentException("Root element must have an attribute called 'Version'.");
 
-                // Grab the version number of the format being loaded
-                int version = int.Parse(root.GetAttribute("Version"));
+        //        // Grab the version number of the format being loaded
+        //        int version = int.Parse(root.GetAttribute("Version"));
 
-                if (version < _paletteVersion)
-                    throw new ArgumentException("Version '" + version + "' number is incompatible, only version " + _paletteVersion.ToString() + 
-                                                " or above can be imported.\nUse the PaletteUpgradeTool from the Application tab of the KryptonExplorer to upgrade.");
+        //        if (version < _paletteVersion)
+        //            throw new ArgumentException("Version '" + version + "' number is incompatible, only version " + _paletteVersion.ToString() + 
+        //                                        " or above can be imported.\nUse the PaletteUpgradeTool from the Application tab of the KryptonExplorer to upgrade.");
 
-                // Grab the properties and images elements
-                XmlElement props = (XmlElement)root.SelectSingleNode("Properties");
-                XmlElement images = (XmlElement)root.SelectSingleNode("Images");
+        //        // Grab the properties and images elements
+        //        XmlElement props = (XmlElement)root.SelectSingleNode("Properties");
+        //        XmlElement images = (XmlElement)root.SelectSingleNode("Images");
 
-                // There must be both properties and images elements present
-                if (props == null) throw new ArgumentException("Element 'Properties' missing from the 'KryptonPalette'.");
-                if (images == null) throw new ArgumentException("Element 'Images' missing from the 'KryptonPalette'.");
+        //        // There must be both properties and images elements present
+        //        if (props == null) throw new ArgumentException("Element 'Properties' missing from the 'KryptonPalette'.");
+        //        if (images == null) throw new ArgumentException("Element 'Images' missing from the 'KryptonPalette'.");
 
-                // Cache the images from the images element
-                ImageReverseDictionary imageCache = new ImageReverseDictionary();
+        //        // Cache the images from the images element
+        //        ImageReverseDictionary imageCache = new ImageReverseDictionary();
 
-                // Use reflection to import the palette hierarchy
-                ImportImagesFromElement(doc, images, imageCache);
-                ImportObjectFromElement(doc, props, imageCache, this);
-            }
-            finally
-            {
-                // Put back the old culture before existing routine
-                Thread.CurrentThread.CurrentCulture = culture;
-            }
-        }
-
-        private object ExportToFile(object parameter)
-        {
-            // Cast to an array of parameters
-            object[] parameters = (object[])parameter;
-
-            // Extract the two provided parameters
-            string filename = (string)parameters[0];
-            bool ignoreDefaults = (bool)parameters[1];
-
-            FileInfo info = new FileInfo(filename);
-
-            // Check the target directory actually exists
-            if (!info.Directory.Exists)
-                throw new ArgumentException("Provided directory does not exist.");
-
-            // Create an XmlDocument containing the saved palette details
-            XmlDocument doc = ExportToXmlDocument(ignoreDefaults);
-
-            // Save to the provided filename
-            doc.Save(filename);
-
-            return filename;
-        }
-
-        private object ExportToStream(object parameter)
-        {
-            // Cast to an array of parameters
-            object[] parameters = (object[])parameter;
-
-            // Extract the two provided parameters
-            Stream stream = (Stream)parameters[0];
-            bool ignoreDefaults = (bool)parameters[1];
-
-            // Create an XmlDocument containing palette settings
-            XmlDocument doc = ExportToXmlDocument(ignoreDefaults);
-
-            // Save to the parameter provided stream object
-            doc.Save(stream);
-
-            return stream;
-        }
-
-        private object ExportToByteArray(object parameter)
-        {
-            // Cast to an array of parameters
-            object[] parameters = (object[])parameter;
-
-            // Extract the two provided parameters
-            bool ignoreDefaults = (bool)parameters[0];
-
-            // Create a memory based stream
-            MemoryStream ms = new MemoryStream();
-
-            // Perform export into the memory stream
-            ExportToStream(new object[] { ms, ignoreDefaults });
-
-            // Must close steam before retrieving bytes
-            ms.Close();
-
-            // Return the array of raw bytes
-            return ms.GetBuffer();
-        }
-
-        private XmlDocument ExportToXmlDocument(bool ignoreDefaults)
-        {
-            // Remember the current culture setting
-            CultureInfo culture = Thread.CurrentThread.CurrentCulture;
-
-            try
-            {
-                // Use the invariant culture for persistence
-                Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
-                // Create a new xml document for storing the palette settings
-                XmlDocument doc = new XmlDocument();
-
-                // Add the standard xml version number
-                doc.AppendChild(doc.CreateProcessingInstruction("xml", @"version=""1.0"""));
-
-                // Add a comment about the source of the document
-                doc.AppendChild(doc.CreateComment("Created by exporting the settings of a KryptonPalette instance."));
-                doc.AppendChild(doc.CreateComment("For more information about Krypton visit www.ComponentFactory.com"));
-                doc.AppendChild(doc.CreateComment("WARNING: Modifying this file may render it invalid for importing."));
-
-                // Create a root node with version and the date information, by 
-                // having a version number the loading of older version is easier
-                XmlElement root = doc.CreateElement("KryptonPalette");
-                root.SetAttribute("Version", _paletteVersion.ToString());
-                root.SetAttribute("Generated", DateTime.Now.ToLongDateString() + ", " + DateTime.Now.ToShortTimeString());
-                doc.AppendChild(root);
-
-                // Add two children, one for storing actual palette values the other for cached images
-                XmlElement props = doc.CreateElement("Properties");
-                XmlElement images = doc.CreateElement("Images");
-                root.AppendChild(props);
-                root.AppendChild(images);
-
-                // Cache any images that are found during object export
-                ImageDictionary imageCache = new ImageDictionary();
-
-                // Use reflection to export the palette hierarchy
-                ExportObjectToElement(doc, props, imageCache, this, ignoreDefaults);
-                ExportImagesToElement(doc, images, imageCache);
-
-                return doc;
-            }
-            finally
-            {
-                // Put back the old culture before existing routine
-                Thread.CurrentThread.CurrentCulture = culture;
-            }
-        }
-
-        private void ImportObjectFromElement(XmlDocument doc,
-                                             XmlElement element,
-                                             ImageReverseDictionary imageCache,
-                                             object obj)
-        {
-            // Cannot import to nothing
-            if (obj != null)
-            {
-                // Grab the type information for the object instance
-                Type t = obj.GetType();
-
-                // We are only interested in looking at the properties
-                foreach (PropertyInfo prop in t.GetProperties())
-                {
-                    // Search each of the attributes applied to the property
-                    foreach (object attrib in prop.GetCustomAttributes(false))
-                    {
-                        // Is it marked with the special kryton persist marker?
-                        if (attrib is KryptonPersistAttribute)
-                        {
-                            // Cast attribute to the correct type
-                            KryptonPersistAttribute persist = (KryptonPersistAttribute)attrib;
-
-                            // Check if there is an elment matching the property
-                            XmlElement childElement = (XmlElement)element.SelectSingleNode(prop.Name);
-
-                            // Can only import if a matching xml element is found
-                            if (childElement != null)
-                            {
-                                // Should we navigate down inside the property?
-                                if (persist.Navigate)
-                                {
-                                    // If we can read the property value
-                                    if (prop.CanRead)
-                                    {
-                                        // Grab the property object and recurse into it
-                                        object childObj = prop.GetValue(obj, null);
-                                        ImportObjectFromElement(doc, childElement, imageCache, childObj);
-                                    }
-                                }
-                                else
-                                {
-                                    // The xml element must have a type and value in order to recreate it
-                                    if (childElement.HasAttribute("Type") &&
-                                        childElement.HasAttribute("Value"))
-                                    {
-                                        // Get the type/value attributes
-                                        string valueType = childElement.GetAttribute("Type");
-                                        string valueValue = childElement.GetAttribute("Value");
-
-                                        // We special case the loading of images
-                                        if (prop.PropertyType.Equals(typeof(Image)))
-                                        {
-                                            if (valueValue.Length == 0)
-                                            {
-                                                // An empty string represents a null image value
-                                                prop.SetValue(obj, null, null);
-                                            }
-                                            else
-                                            {
-                                                // Have we already encountered the image?
-                                                if (imageCache.ContainsKey(valueValue))
-                                                {
-                                                    // Push the image from the cache into the property
-                                                    prop.SetValue(obj, imageCache[valueValue], null);
-                                                }
-                                                else
-                                                {
-                                                    // Cannot find image to set to empty
-                                                    prop.SetValue(obj, null, null);
-                                                }
-                                            }
-                                        }
-                                        else
-                                        {
-                                            object setValue = null;
-
-                                            // We ignore conversion of a Font of value (none) becaue instead
-                                            // of providing null it returns a default font value
-                                            if ((valueType != "Font") || (valueValue != "(none)"))
-                                            {
-                                                // We need the type converter to create a string representation
-                                                TypeConverter converter = TypeDescriptor.GetConverter(StringToType(valueType));
-
-                                                // Recreate the value using the converter
-                                                setValue = converter.ConvertFromInvariantString(valueValue);
-                                            }
-
-                                            // Push the value into the actual property
-                                            prop.SetValue(obj, setValue, null);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private void ImportImagesFromElement(XmlDocument doc,
-                                             XmlElement element,
-                                             ImageReverseDictionary imageCache)
-        {
-            // Get all nodes storing images
-            XmlNodeList images = element.SelectNodes("Image");
-
-            // Load each image node entry in turn
-            foreach (XmlNode image in images)
-            {
-                // Cast to the expected type
-                XmlElement imageElement = (XmlElement)image;
-
-                // Check the element is the expected type and has the required data
-                if ((imageElement != null) &&
-                    (imageElement.HasAttribute("Name")) &&
-                    (imageElement.ChildNodes.Count == 1) &&
-                    (imageElement.ChildNodes[0].NodeType == XmlNodeType.CDATA))
-                {
-                    try
-                    {
-                        // Extract the image name
-                        string name = imageElement.GetAttribute("Name");
-
-                        // Grab the CDATA section that contains the base64 value
-                        XmlCDataSection cdata = (XmlCDataSection)imageElement.ChildNodes[0];
-
-                        // Convert to back from a string to bytes
-                        byte[] bytes = Convert.FromBase64String(cdata.Value);
-
-                        // Convert the bytes back into an Image
-                        MemoryStream memory = new MemoryStream(bytes);
-                        BinaryFormatter formatter = new BinaryFormatter();
-                        Image resurect = (Image)formatter.Deserialize(memory);
-
-                        // Add into the lookup dictionary
-                        imageCache.Add(name, resurect);
-                    }
-                    catch (SerializationException)
-                    {
-                        // Just ignore this image and carry on
-                    }
-                }
-            }
-        }
-
-        private void ExportObjectToElement(XmlDocument doc, 
-                                           XmlElement element,
-                                           ImageDictionary imageCache,
-                                           object obj,
-                                           bool ignoreDefaults)
-        {
-            // Cannot export from nothing
-            if (obj != null)
-            {
-                // Grab the type information for the object instance
-                Type t = obj.GetType();
-
-                // We are only interested in looking at the properties
-                foreach (PropertyInfo prop in t.GetProperties())
-                {
-                    // Search each of the attributes applied to the property
-                    foreach (object attrib in prop.GetCustomAttributes(false))
-                    {
-                        // Is it marked with the special kryton persist marker?
-                        if (attrib is KryptonPersistAttribute)
-                        {
-                            // Cast attribute to the correct type
-                            KryptonPersistAttribute persist = (KryptonPersistAttribute)attrib;
-
-                            // Should we navigate down inside the property?
-                            if (persist.Navigate)
-                            {
-                                // If we can read the property value
-                                if (prop.CanRead)
-                                {
-                                    // Grab the property object
-                                    object childObj = prop.GetValue(obj, null);
-
-                                    // Should be test if the object contains only default values?
-                                    if (ignoreDefaults)
-                                    {
-                                        PropertyDescriptor propertyIsDefault = TypeDescriptor.GetProperties(childObj)["IsDefault"];
-
-                                        // All compound objects are expected to have an 'IsDefault' returning a boolean
-                                        if ((propertyIsDefault != null) && (propertyIsDefault.PropertyType == typeof(bool)))
-                                        {
-                                            // If the object 'IsDefault' then no need to persist it
-                                            if ((bool)propertyIsDefault.GetValue(childObj))
-                                                childObj = null;
-                                        }
-                                    }
-
-                                    // If we have an object to process
-                                    if (childObj != null)
-                                    {
-                                        // Create and add a new xml element
-                                        XmlElement childElement = doc.CreateElement(prop.Name);
-                                        element.AppendChild(childElement);
-
-                                        // Recurse into the object instance
-                                        ExportObjectToElement(doc, childElement, imageCache, childObj, ignoreDefaults);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                bool ignore = false;
-
-                                // Grab the actual property value
-                                object childObj = prop.GetValue(obj, null);
-
-                                // Should we test if the property value is the default?
-                                if (ignoreDefaults)
-                                {
-                                    object[] defaultAttribs = prop.GetCustomAttributes(typeof(DefaultValueAttribute), false);
-
-                                    // Does this property have a default value attribute?
-                                    if (defaultAttribs.Length == 1)
-                                    {
-                                        // Cast to correct type
-                                        DefaultValueAttribute defaultAttrib = (DefaultValueAttribute)defaultAttribs[0];
-
-                                        // Decide if the property value matches the default described by the attribute
-                                        if (defaultAttrib.Value == null)
-                                            ignore = (childObj == null);
-                                        else
-                                            ignore = defaultAttrib.Value.Equals(childObj);
-                                    }
-                                }
-
-                                // If we need to output the property value
-                                if (!ignore)
-                                {
-                                    // Create and add a new xml element
-                                    XmlElement childElement = doc.CreateElement(prop.Name);
-                                    element.AppendChild(childElement);
-
-                                    // Save the type of the property
-                                    childElement.SetAttribute("Type", TypeToString(prop.PropertyType));
-
-                                    // We special case the saving of images
-                                    if (prop.PropertyType.Equals(typeof(Image)))
-                                    {
-                                        if (childObj == null)
-                                        {
-                                            // An empty string represents a null image value
-                                            childElement.SetAttribute("Value", "");
-                                        }
-                                        else
-                                        {
-                                            // Cast to correct type
-                                            Image image = (Image)childObj;
-
-                                            // Have we already encountered the image?
-                                            if (imageCache.ContainsKey(image))
-                                            {
-                                                // Save reference to the existing cached image
-                                                childElement.SetAttribute("Value", imageCache[image]);
-                                            }
-                                            else
-                                            {
-                                                // Generate a placeholder string
-                                                string imageName = "ImageCache" + (imageCache.Count + 1);
-
-                                                // Add the actual image instance into the cache
-                                                imageCache.Add(image, imageName);
-
-                                                // Save the placeholder name instead of the actual image
-                                                childElement.SetAttribute("Value", imageName);
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        // We need the type converter to create a string representation
-                                        TypeConverter converter = TypeDescriptor.GetConverter(prop.PropertyType);
-
-                                        // Save to an invariant string so that load is not affected by culture
-                                        childElement.SetAttribute("Value", converter.ConvertToInvariantString(childObj));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private void ExportImagesToElement(XmlDocument doc, 
-                                           XmlElement element,
-                                           ImageDictionary imageCache)
-        {
-            // Process each image cache entry in turn
-            foreach (KeyValuePair<Image, string> entry in imageCache)
-            {
-                try
-                {
-                    // Conv ert the Image into base64 so it can be used in xml
-                    MemoryStream memory = new MemoryStream();
-                    BinaryFormatter formatter = new BinaryFormatter();
-                    formatter.Serialize(memory, entry.Key);
-                    string base64 = Convert.ToBase64String(memory.ToArray());
-
-                    // Create and add a new xml element
-                    XmlElement imageElement = doc.CreateElement("Image");
-                    imageElement.SetAttribute("Name", entry.Value);
-                    element.AppendChild(imageElement);
-
-                    // Set the image data into a CDATA section
-                    XmlCDataSection cdata = doc.CreateCDataSection(base64);
-                    imageElement.AppendChild(cdata);
-                }
-                catch (SerializationException)
-                {
-                    // Just ignore this image and carry on
-                }
-            }
-        }
+        //        // Use reflection to import the palette hierarchy
+        //        ImportImagesFromElement(doc, images, imageCache);
+        //        ImportObjectFromElement(doc, props, imageCache, this);
+        //    }
+        //    finally
+        //    {
+        //        // Put back the old culture before existing routine
+        //        Thread.CurrentThread.CurrentCulture = culture;
+        //    }
+        //}
+
+        //private object ExportToFile(object parameter)
+        //{
+        //    // Cast to an array of parameters
+        //    object[] parameters = (object[])parameter;
+
+        //    // Extract the two provided parameters
+        //    string filename = (string)parameters[0];
+        //    bool ignoreDefaults = (bool)parameters[1];
+
+        //    FileInfo info = new FileInfo(filename);
+
+        //    // Check the target directory actually exists
+        //    if (!info.Directory.Exists)
+        //        throw new ArgumentException("Provided directory does not exist.");
+
+        //    // Create an XmlDocument containing the saved palette details
+        //    XmlDocument doc = ExportToXmlDocument(ignoreDefaults);
+
+        //    // Save to the provided filename
+        //    doc.Save(filename);
+
+        //    return filename;
+        //}
+
+        //private object ExportToStream(object parameter)
+        //{
+        //    // Cast to an array of parameters
+        //    object[] parameters = (object[])parameter;
+
+        //    // Extract the two provided parameters
+        //    Stream stream = (Stream)parameters[0];
+        //    bool ignoreDefaults = (bool)parameters[1];
+
+        //    // Create an XmlDocument containing palette settings
+        //    XmlDocument doc = ExportToXmlDocument(ignoreDefaults);
+
+        //    // Save to the parameter provided stream object
+        //    doc.Save(stream);
+
+        //    return stream;
+        //}
+
+        //private object ExportToByteArray(object parameter)
+        //{
+        //    // Cast to an array of parameters
+        //    object[] parameters = (object[])parameter;
+
+        //    // Extract the two provided parameters
+        //    bool ignoreDefaults = (bool)parameters[0];
+
+        //    // Create a memory based stream
+        //    MemoryStream ms = new MemoryStream();
+
+        //    // Perform export into the memory stream
+        //    ExportToStream(new object[] { ms, ignoreDefaults });
+
+        //    // Must close steam before retrieving bytes
+        //    ms.Close();
+
+        //    // Return the array of raw bytes
+        //    return ms.GetBuffer();
+        //}
+
+        //private XmlDocument ExportToXmlDocument(bool ignoreDefaults)
+        //{
+        //    // Remember the current culture setting
+        //    CultureInfo culture = Thread.CurrentThread.CurrentCulture;
+
+        //    try
+        //    {
+        //        // Use the invariant culture for persistence
+        //        Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
+        //        // Create a new xml document for storing the palette settings
+        //        XmlDocument doc = new XmlDocument();
+
+        //        // Add the standard xml version number
+        //        doc.AppendChild(doc.CreateProcessingInstruction("xml", @"version=""1.0"""));
+
+        //        // Add a comment about the source of the document
+        //        doc.AppendChild(doc.CreateComment("Created by exporting the settings of a KryptonPalette instance."));
+        //        doc.AppendChild(doc.CreateComment("For more information about Krypton visit www.ComponentFactory.com"));
+        //        doc.AppendChild(doc.CreateComment("WARNING: Modifying this file may render it invalid for importing."));
+
+        //        // Create a root node with version and the date information, by 
+        //        // having a version number the loading of older version is easier
+        //        XmlElement root = doc.CreateElement("KryptonPalette");
+        //        root.SetAttribute("Version", _paletteVersion.ToString());
+        //        root.SetAttribute("Generated", DateTime.Now.ToLongDateString() + ", " + DateTime.Now.ToShortTimeString());
+        //        doc.AppendChild(root);
+
+        //        // Add two children, one for storing actual palette values the other for cached images
+        //        XmlElement props = doc.CreateElement("Properties");
+        //        XmlElement images = doc.CreateElement("Images");
+        //        root.AppendChild(props);
+        //        root.AppendChild(images);
+
+        //        // Cache any images that are found during object export
+        //        ImageDictionary imageCache = new ImageDictionary();
+
+        //        // Use reflection to export the palette hierarchy
+        //        ExportObjectToElement(doc, props, imageCache, this, ignoreDefaults);
+        //        ExportImagesToElement(doc, images, imageCache);
+
+        //        return doc;
+        //    }
+        //    finally
+        //    {
+        //        // Put back the old culture before existing routine
+        //        Thread.CurrentThread.CurrentCulture = culture;
+        //    }
+        //}
+
+        //private void ImportObjectFromElement(XmlDocument doc,
+        //                                     XmlElement element,
+        //                                     ImageReverseDictionary imageCache,
+        //                                     object obj)
+        //{
+        //    // Cannot import to nothing
+        //    if (obj != null)
+        //    {
+        //        // Grab the type information for the object instance
+        //        Type t = obj.GetType();
+
+        //        // We are only interested in looking at the properties
+        //        foreach (PropertyInfo prop in t.GetProperties())
+        //        {
+        //            // Search each of the attributes applied to the property
+        //            foreach (object attrib in prop.GetCustomAttributes(false))
+        //            {
+        //                // Is it marked with the special kryton persist marker?
+        //                if (attrib is KryptonPersistAttribute)
+        //                {
+        //                    // Cast attribute to the correct type
+        //                    KryptonPersistAttribute persist = (KryptonPersistAttribute)attrib;
+
+        //                    // Check if there is an elment matching the property
+        //                    XmlElement childElement = (XmlElement)element.SelectSingleNode(prop.Name);
+
+        //                    // Can only import if a matching xml element is found
+        //                    if (childElement != null)
+        //                    {
+        //                        // Should we navigate down inside the property?
+        //                        if (persist.Navigate)
+        //                        {
+        //                            // If we can read the property value
+        //                            if (prop.CanRead)
+        //                            {
+        //                                // Grab the property object and recurse into it
+        //                                object childObj = prop.GetValue(obj, null);
+        //                                ImportObjectFromElement(doc, childElement, imageCache, childObj);
+        //                            }
+        //                        }
+        //                        else
+        //                        {
+        //                            // The xml element must have a type and value in order to recreate it
+        //                            if (childElement.HasAttribute("Type") &&
+        //                                childElement.HasAttribute("Value"))
+        //                            {
+        //                                // Get the type/value attributes
+        //                                string valueType = childElement.GetAttribute("Type");
+        //                                string valueValue = childElement.GetAttribute("Value");
+
+        //                                // We special case the loading of images
+        //                                if (prop.PropertyType.Equals(typeof(Image)))
+        //                                {
+        //                                    if (valueValue.Length == 0)
+        //                                    {
+        //                                        // An empty string represents a null image value
+        //                                        prop.SetValue(obj, null, null);
+        //                                    }
+        //                                    else
+        //                                    {
+        //                                        // Have we already encountered the image?
+        //                                        if (imageCache.ContainsKey(valueValue))
+        //                                        {
+        //                                            // Push the image from the cache into the property
+        //                                            prop.SetValue(obj, imageCache[valueValue], null);
+        //                                        }
+        //                                        else
+        //                                        {
+        //                                            // Cannot find image to set to empty
+        //                                            prop.SetValue(obj, null, null);
+        //                                        }
+        //                                    }
+        //                                }
+        //                                else
+        //                                {
+        //                                    object setValue = null;
+
+        //                                    // We ignore conversion of a Font of value (none) becaue instead
+        //                                    // of providing null it returns a default font value
+        //                                    if ((valueType != "Font") || (valueValue != "(none)"))
+        //                                    {
+        //                                        // We need the type converter to create a string representation
+        //                                        TypeConverter converter = TypeDescriptor.GetConverter(StringToType(valueType));
+
+        //                                        // Recreate the value using the converter
+        //                                        setValue = converter.ConvertFromInvariantString(valueValue);
+        //                                    }
+
+        //                                    // Push the value into the actual property
+        //                                    prop.SetValue(obj, setValue, null);
+        //                                }
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+
+        //private void ImportImagesFromElement(XmlDocument doc,
+        //                                     XmlElement element,
+        //                                     ImageReverseDictionary imageCache)
+        //{
+        //    // Get all nodes storing images
+        //    XmlNodeList images = element.SelectNodes("Image");
+
+        //    // Load each image node entry in turn
+        //    foreach (XmlNode image in images)
+        //    {
+        //        // Cast to the expected type
+        //        XmlElement imageElement = (XmlElement)image;
+
+        //        // Check the element is the expected type and has the required data
+        //        if ((imageElement != null) &&
+        //            (imageElement.HasAttribute("Name")) &&
+        //            (imageElement.ChildNodes.Count == 1) &&
+        //            (imageElement.ChildNodes[0].NodeType == XmlNodeType.CDATA))
+        //        {
+        //            try
+        //            {
+        //                // Extract the image name
+        //                string name = imageElement.GetAttribute("Name");
+
+        //                // Grab the CDATA section that contains the base64 value
+        //                XmlCDataSection cdata = (XmlCDataSection)imageElement.ChildNodes[0];
+
+        //                // Convert to back from a string to bytes
+        //                byte[] bytes = Convert.FromBase64String(cdata.Value);
+
+        //                // Convert the bytes back into an Image
+        //                MemoryStream memory = new MemoryStream(bytes);
+        //                BinaryFormatter formatter = new BinaryFormatter();
+        //                Image resurect = (Image)formatter.Deserialize(memory);
+
+        //                // Add into the lookup dictionary
+        //                imageCache.Add(name, resurect);
+        //            }
+        //            catch (SerializationException)
+        //            {
+        //                // Just ignore this image and carry on
+        //            }
+        //        }
+        //    }
+        //}
+
+        //private void ExportObjectToElement(XmlDocument doc, 
+        //                                   XmlElement element,
+        //                                   ImageDictionary imageCache,
+        //                                   object obj,
+        //                                   bool ignoreDefaults)
+        //{
+        //    // Cannot export from nothing
+        //    if (obj != null)
+        //    {
+        //        // Grab the type information for the object instance
+        //        Type t = obj.GetType();
+
+        //        // We are only interested in looking at the properties
+        //        foreach (PropertyInfo prop in t.GetProperties())
+        //        {
+        //            // Search each of the attributes applied to the property
+        //            foreach (object attrib in prop.GetCustomAttributes(false))
+        //            {
+        //                // Is it marked with the special kryton persist marker?
+        //                if (attrib is KryptonPersistAttribute)
+        //                {
+        //                    // Cast attribute to the correct type
+        //                    KryptonPersistAttribute persist = (KryptonPersistAttribute)attrib;
+
+        //                    // Should we navigate down inside the property?
+        //                    if (persist.Navigate)
+        //                    {
+        //                        // If we can read the property value
+        //                        if (prop.CanRead)
+        //                        {
+        //                            // Grab the property object
+        //                            object childObj = prop.GetValue(obj, null);
+
+        //                            // Should be test if the object contains only default values?
+        //                            if (ignoreDefaults)
+        //                            {
+        //                                PropertyDescriptor propertyIsDefault = TypeDescriptor.GetProperties(childObj)["IsDefault"];
+
+        //                                // All compound objects are expected to have an 'IsDefault' returning a boolean
+        //                                if ((propertyIsDefault != null) && (propertyIsDefault.PropertyType == typeof(bool)))
+        //                                {
+        //                                    // If the object 'IsDefault' then no need to persist it
+        //                                    if ((bool)propertyIsDefault.GetValue(childObj))
+        //                                        childObj = null;
+        //                                }
+        //                            }
+
+        //                            // If we have an object to process
+        //                            if (childObj != null)
+        //                            {
+        //                                // Create and add a new xml element
+        //                                XmlElement childElement = doc.CreateElement(prop.Name);
+        //                                element.AppendChild(childElement);
+
+        //                                // Recurse into the object instance
+        //                                ExportObjectToElement(doc, childElement, imageCache, childObj, ignoreDefaults);
+        //                            }
+        //                        }
+        //                    }
+        //                    else
+        //                    {
+        //                        bool ignore = false;
+
+        //                        // Grab the actual property value
+        //                        object childObj = prop.GetValue(obj, null);
+
+        //                        // Should we test if the property value is the default?
+        //                        if (ignoreDefaults)
+        //                        {
+        //                            object[] defaultAttribs = prop.GetCustomAttributes(typeof(DefaultValueAttribute), false);
+
+        //                            // Does this property have a default value attribute?
+        //                            if (defaultAttribs.Length == 1)
+        //                            {
+        //                                // Cast to correct type
+        //                                DefaultValueAttribute defaultAttrib = (DefaultValueAttribute)defaultAttribs[0];
+
+        //                                // Decide if the property value matches the default described by the attribute
+        //                                if (defaultAttrib.Value == null)
+        //                                    ignore = (childObj == null);
+        //                                else
+        //                                    ignore = defaultAttrib.Value.Equals(childObj);
+        //                            }
+        //                        }
+
+        //                        // If we need to output the property value
+        //                        if (!ignore)
+        //                        {
+        //                            // Create and add a new xml element
+        //                            XmlElement childElement = doc.CreateElement(prop.Name);
+        //                            element.AppendChild(childElement);
+
+        //                            // Save the type of the property
+        //                            childElement.SetAttribute("Type", TypeToString(prop.PropertyType));
+
+        //                            // We special case the saving of images
+        //                            if (prop.PropertyType.Equals(typeof(Image)))
+        //                            {
+        //                                if (childObj == null)
+        //                                {
+        //                                    // An empty string represents a null image value
+        //                                    childElement.SetAttribute("Value", "");
+        //                                }
+        //                                else
+        //                                {
+        //                                    // Cast to correct type
+        //                                    Image image = (Image)childObj;
+
+        //                                    // Have we already encountered the image?
+        //                                    if (imageCache.ContainsKey(image))
+        //                                    {
+        //                                        // Save reference to the existing cached image
+        //                                        childElement.SetAttribute("Value", imageCache[image]);
+        //                                    }
+        //                                    else
+        //                                    {
+        //                                        // Generate a placeholder string
+        //                                        string imageName = "ImageCache" + (imageCache.Count + 1);
+
+        //                                        // Add the actual image instance into the cache
+        //                                        imageCache.Add(image, imageName);
+
+        //                                        // Save the placeholder name instead of the actual image
+        //                                        childElement.SetAttribute("Value", imageName);
+        //                                    }
+        //                                }
+        //                            }
+        //                            else
+        //                            {
+        //                                // We need the type converter to create a string representation
+        //                                TypeConverter converter = TypeDescriptor.GetConverter(prop.PropertyType);
+
+        //                                // Save to an invariant string so that load is not affected by culture
+        //                                childElement.SetAttribute("Value", converter.ConvertToInvariantString(childObj));
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+
+        //private void ExportImagesToElement(XmlDocument doc, 
+        //                                   XmlElement element,
+        //                                   ImageDictionary imageCache)
+        //{
+        //    // Process each image cache entry in turn
+        //    foreach (KeyValuePair<Image, string> entry in imageCache)
+        //    {
+        //        try
+        //        {
+        //            // Conv ert the Image into base64 so it can be used in xml
+        //            MemoryStream memory = new MemoryStream();
+        //            BinaryFormatter formatter = new BinaryFormatter();
+        //            formatter.Serialize(memory, entry.Key);
+        //            string base64 = Convert.ToBase64String(memory.ToArray());
+
+        //            // Create and add a new xml element
+        //            XmlElement imageElement = doc.CreateElement("Image");
+        //            imageElement.SetAttribute("Name", entry.Value);
+        //            element.AppendChild(imageElement);
+
+        //            // Set the image data into a CDATA section
+        //            XmlCDataSection cdata = doc.CreateCDataSection(base64);
+        //            imageElement.AppendChild(cdata);
+        //        }
+        //        catch (SerializationException)
+        //        {
+        //            // Just ignore this image and carry on
+        //        }
+        //    }
+        //}
 
         private void ResetObjectToDefault(object obj, bool populate)
         {
@@ -4185,132 +4186,132 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
             }
         }
 
-        private string TypeToString(Type t)
-        {
-            if (t.Equals(typeof(string)))
-                return "String";
-            if (t.Equals(typeof(int)))
-                return "Int";
-            if (t.Equals(typeof(float)))
-                return "Single";
-            if (t.Equals(typeof(bool)))
-                return "Bool";
-            if (t.Equals(typeof(Color)))
-                return "Color";
-            if (t.Equals(typeof(Image)))
-                return "Image";
-            if (t.Equals(typeof(Font)))
-                return "Font";
-            if (t.Equals(typeof(Padding)))
-                return "Padding";
-            else if (t.Equals(typeof(InheritBool)))
-                return "InheritBool";
-            else if (t.Equals(typeof(PaletteRectangleAlign)))
-                return "PaletteRectangleAlign";
-            else if (t.Equals(typeof(PaletteRelativeAlign)))
-                return "PaletteRelativeAlign";
-            else if (t.Equals(typeof(PaletteImageEffect)))
-                return "PaletteImageEffect";
-            else if (t.Equals(typeof(PaletteImageStyle)))
-                return "PaletteImageStyle";
-            else if (t.Equals(typeof(PaletteTextHint)))
-                return "PaletteTextHint";
-            else if (t.Equals(typeof(PaletteTextHotkeyPrefix)))
-                return "PaletteTextHotkeyPrefix";
-            else if (t.Equals(typeof(PaletteTextTrim)))
-                return "PaletteTextTrim";
-            else if (t.Equals(typeof(PaletteColorStyle)))
-                return "PaletteColorStyle";
-            else if (t.Equals(typeof(PaletteGraphicsHint)))
-                return "PaletteGraphicsHint";
-            else if (t.Equals(typeof(PaletteMode)))
-                return "PaletteMode";
-            else if (t.Equals(typeof(PaletteButtonStyle)))
-                return "PaletteButtonStyle";
-            else if (t.Equals(typeof(PaletteButtonOrientation)))
-                return "PaletteButtonOrientation";
-            else if (t.Equals(typeof(PaletteRelativeEdgeAlign)))
-                return "PaletteRelativeEdgeAlign";
-            else if (t.Equals(typeof(RendererMode)))
-                return "RendererMode";
-            else if (t.Equals(typeof(PaletteDrawBorders)))
-                return "PaletteDrawBorders";
-            else if (t.Equals(typeof(PaletteContentText)))
-                return "PaletteContentText";
-            else if (t.Equals(typeof(PaletteContentImage)))
-                return "PaletteContentImage";
-            else if (t.Equals(typeof(PaletteDragFeedback)))
-                return "PaletteDragFeedback";
-            else if (t.Equals(typeof(PaletteRibbonShape)))
-                return "PaletteRibbonShape";
-            else
-                throw new ApplicationException("Unrecognised type '" + t.ToString() + "' for export.");
-        }
+        //private string TypeToString(Type t)
+        //{
+        //    if (t.Equals(typeof(string)))
+        //        return "String";
+        //    if (t.Equals(typeof(int)))
+        //        return "Int";
+        //    if (t.Equals(typeof(float)))
+        //        return "Single";
+        //    if (t.Equals(typeof(bool)))
+        //        return "Bool";
+        //    if (t.Equals(typeof(Color)))
+        //        return "Color";
+        //    if (t.Equals(typeof(Image)))
+        //        return "Image";
+        //    if (t.Equals(typeof(Font)))
+        //        return "Font";
+        //    if (t.Equals(typeof(Padding)))
+        //        return "Padding";
+        //    else if (t.Equals(typeof(InheritBool)))
+        //        return "InheritBool";
+        //    else if (t.Equals(typeof(PaletteRectangleAlign)))
+        //        return "PaletteRectangleAlign";
+        //    else if (t.Equals(typeof(PaletteRelativeAlign)))
+        //        return "PaletteRelativeAlign";
+        //    else if (t.Equals(typeof(PaletteImageEffect)))
+        //        return "PaletteImageEffect";
+        //    else if (t.Equals(typeof(PaletteImageStyle)))
+        //        return "PaletteImageStyle";
+        //    else if (t.Equals(typeof(PaletteTextHint)))
+        //        return "PaletteTextHint";
+        //    else if (t.Equals(typeof(PaletteTextHotkeyPrefix)))
+        //        return "PaletteTextHotkeyPrefix";
+        //    else if (t.Equals(typeof(PaletteTextTrim)))
+        //        return "PaletteTextTrim";
+        //    else if (t.Equals(typeof(PaletteColorStyle)))
+        //        return "PaletteColorStyle";
+        //    else if (t.Equals(typeof(PaletteGraphicsHint)))
+        //        return "PaletteGraphicsHint";
+        //    else if (t.Equals(typeof(PaletteMode)))
+        //        return "PaletteMode";
+        //    else if (t.Equals(typeof(PaletteButtonStyle)))
+        //        return "PaletteButtonStyle";
+        //    else if (t.Equals(typeof(PaletteButtonOrientation)))
+        //        return "PaletteButtonOrientation";
+        //    else if (t.Equals(typeof(PaletteRelativeEdgeAlign)))
+        //        return "PaletteRelativeEdgeAlign";
+        //    else if (t.Equals(typeof(RendererMode)))
+        //        return "RendererMode";
+        //    else if (t.Equals(typeof(PaletteDrawBorders)))
+        //        return "PaletteDrawBorders";
+        //    else if (t.Equals(typeof(PaletteContentText)))
+        //        return "PaletteContentText";
+        //    else if (t.Equals(typeof(PaletteContentImage)))
+        //        return "PaletteContentImage";
+        //    else if (t.Equals(typeof(PaletteDragFeedback)))
+        //        return "PaletteDragFeedback";
+        //    else if (t.Equals(typeof(PaletteRibbonShape)))
+        //        return "PaletteRibbonShape";
+        //    else
+        //        throw new ApplicationException("Unrecognised type '" + t.ToString() + "' for export.");
+        //}
 
-        private Type StringToType(string s)
-        {
-            switch (s)
-            {
-                case "String":
-                    return typeof(string);
-                case "Int":
-                    return typeof(int);
-                case "Single":
-                    return typeof(float);
-                case "Bool":
-                    return typeof(bool);
-                case "Color":
-                    return typeof(Color);
-                case "Image":
-                    return typeof(Image);
-                case "Font":
-                    return typeof(Font);
-                case "Padding":
-                    return typeof(Padding);
-                case "InheritBool":
-                    return typeof(InheritBool);
-                case "PaletteRectangleAlign":
-                    return typeof(PaletteRectangleAlign);
-                case "PaletteRelativeAlign":
-                    return typeof(PaletteRelativeAlign);
-                case "PaletteImageEffect":
-                    return typeof(PaletteImageEffect);
-                case "PaletteImageStyle":
-                    return typeof(PaletteImageStyle);
-                case "PaletteTextHint":
-                    return typeof(PaletteTextHint);
-                case "PaletteTextTrim":
-                    return typeof(PaletteTextTrim);
-                case "PaletteTextHotkeyPrefix":
-                    return typeof(PaletteTextHotkeyPrefix);
-                case "PaletteColorStyle":
-                    return typeof(PaletteColorStyle);
-                case "PaletteGraphicsHint":
-                    return typeof(PaletteGraphicsHint);
-                case "PaletteMode":
-                    return typeof(PaletteMode);
-                case "PaletteButtonStyle":
-                    return typeof(PaletteButtonStyle);
-                case "PaletteButtonOrientation":
-                    return typeof(PaletteButtonOrientation);
-                case "PaletteRelativeEdgeAlign":
-                    return typeof(PaletteRelativeEdgeAlign);
-                case "RendererMode":
-                    return typeof(RendererMode);
-                case "PaletteDrawBorders":
-                    return typeof(PaletteDrawBorders);
-                case "PaletteContentText":
-                    return typeof(PaletteContentText);
-                case "PaletteContentImage":
-                    return typeof(PaletteContentImage);
-                case "PaletteDragFeedback":
-                    return typeof(PaletteDragFeedback);
-                case "PaletteRibbonShape":
-                    return typeof(PaletteRibbonShape);
-                default:
-                    throw new ApplicationException("Unrecognised type '" + s + "' for import.");
-            }
-        }
+        //private Type StringToType(string s)
+        //{
+        //    switch (s)
+        //    {
+        //        case "String":
+        //            return typeof(string);
+        //        case "Int":
+        //            return typeof(int);
+        //        case "Single":
+        //            return typeof(float);
+        //        case "Bool":
+        //            return typeof(bool);
+        //        case "Color":
+        //            return typeof(Color);
+        //        case "Image":
+        //            return typeof(Image);
+        //        case "Font":
+        //            return typeof(Font);
+        //        case "Padding":
+        //            return typeof(Padding);
+        //        case "InheritBool":
+        //            return typeof(InheritBool);
+        //        case "PaletteRectangleAlign":
+        //            return typeof(PaletteRectangleAlign);
+        //        case "PaletteRelativeAlign":
+        //            return typeof(PaletteRelativeAlign);
+        //        case "PaletteImageEffect":
+        //            return typeof(PaletteImageEffect);
+        //        case "PaletteImageStyle":
+        //            return typeof(PaletteImageStyle);
+        //        case "PaletteTextHint":
+        //            return typeof(PaletteTextHint);
+        //        case "PaletteTextTrim":
+        //            return typeof(PaletteTextTrim);
+        //        case "PaletteTextHotkeyPrefix":
+        //            return typeof(PaletteTextHotkeyPrefix);
+        //        case "PaletteColorStyle":
+        //            return typeof(PaletteColorStyle);
+        //        case "PaletteGraphicsHint":
+        //            return typeof(PaletteGraphicsHint);
+        //        case "PaletteMode":
+        //            return typeof(PaletteMode);
+        //        case "PaletteButtonStyle":
+        //            return typeof(PaletteButtonStyle);
+        //        case "PaletteButtonOrientation":
+        //            return typeof(PaletteButtonOrientation);
+        //        case "PaletteRelativeEdgeAlign":
+        //            return typeof(PaletteRelativeEdgeAlign);
+        //        case "RendererMode":
+        //            return typeof(RendererMode);
+        //        case "PaletteDrawBorders":
+        //            return typeof(PaletteDrawBorders);
+        //        case "PaletteContentText":
+        //            return typeof(PaletteContentText);
+        //        case "PaletteContentImage":
+        //            return typeof(PaletteContentImage);
+        //        case "PaletteDragFeedback":
+        //            return typeof(PaletteDragFeedback);
+        //        case "PaletteRibbonShape":
+        //            return typeof(PaletteRibbonShape);
+        //        default:
+        //            throw new ApplicationException("Unrecognised type '" + s + "' for import.");
+        //    }
+        //}
         #endregion
 
         #region Implementation GetPalette
@@ -4869,30 +4870,30 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
                     return GetPaletteBackForm(FormStyles.FormMain, state);
                 case PaletteBackStyle.FormCustom1:
                     return GetPaletteBackForm(FormStyles.FormCustom1, state);
-                case PaletteBackStyle.GridBackgroundList:
-                    return GetPaletteBackGridBackground(GridStyles.GridList, state);
-                case PaletteBackStyle.GridBackgroundSheet:
-                    return GetPaletteBackGridBackground(GridStyles.GridSheet, state);
-                case PaletteBackStyle.GridBackgroundCustom1:
-                    return GetPaletteBackGridBackground(GridStyles.GridCustom1, state);
-                case PaletteBackStyle.GridHeaderColumnList:
-                    return GetPaletteBackGridHeaderColumn(GridStyles.GridList, state);
-                case PaletteBackStyle.GridHeaderColumnSheet:
-                    return GetPaletteBackGridHeaderColumn(GridStyles.GridSheet, state);
-                case PaletteBackStyle.GridHeaderColumnCustom1:
-                    return GetPaletteBackGridHeaderColumn(GridStyles.GridCustom1, state);
-                case PaletteBackStyle.GridHeaderRowList:
-                    return GetPaletteBackGridHeaderRow(GridStyles.GridList, state);
-                case PaletteBackStyle.GridHeaderRowSheet:
-                    return GetPaletteBackGridHeaderRow(GridStyles.GridSheet, state);
-                case PaletteBackStyle.GridHeaderRowCustom1:
-                    return GetPaletteBackGridHeaderRow(GridStyles.GridCustom1, state);
-                case PaletteBackStyle.GridDataCellList:
-                    return GetPaletteBackGridDataCell(GridStyles.GridList, state);
-                case PaletteBackStyle.GridDataCellSheet:
-                    return GetPaletteBackGridDataCell(GridStyles.GridSheet, state);
-                case PaletteBackStyle.GridDataCellCustom1:
-                    return GetPaletteBackGridDataCell(GridStyles.GridCustom1, state);
+                //case PaletteBackStyle.GridBackgroundList:
+                //    return GetPaletteBackGridBackground(GridStyles.GridList, state);
+                //case PaletteBackStyle.GridBackgroundSheet:
+                //    return GetPaletteBackGridBackground(GridStyles.GridSheet, state);
+                //case PaletteBackStyle.GridBackgroundCustom1:
+                //    return GetPaletteBackGridBackground(GridStyles.GridCustom1, state);
+                //case PaletteBackStyle.GridHeaderColumnList:
+                //    return GetPaletteBackGridHeaderColumn(GridStyles.GridList, state);
+                //case PaletteBackStyle.GridHeaderColumnSheet:
+                //    return GetPaletteBackGridHeaderColumn(GridStyles.GridSheet, state);
+                //case PaletteBackStyle.GridHeaderColumnCustom1:
+                //    return GetPaletteBackGridHeaderColumn(GridStyles.GridCustom1, state);
+                //case PaletteBackStyle.GridHeaderRowList:
+                //    return GetPaletteBackGridHeaderRow(GridStyles.GridList, state);
+                //case PaletteBackStyle.GridHeaderRowSheet:
+                //    return GetPaletteBackGridHeaderRow(GridStyles.GridSheet, state);
+                //case PaletteBackStyle.GridHeaderRowCustom1:
+                //    return GetPaletteBackGridHeaderRow(GridStyles.GridCustom1, state);
+                //case PaletteBackStyle.GridDataCellList:
+                //    return GetPaletteBackGridDataCell(GridStyles.GridList, state);
+                //case PaletteBackStyle.GridDataCellSheet:
+                //    return GetPaletteBackGridDataCell(GridStyles.GridSheet, state);
+                //case PaletteBackStyle.GridDataCellCustom1:
+                //    return GetPaletteBackGridDataCell(GridStyles.GridCustom1, state);
                 case PaletteBackStyle.HeaderPrimary:
                     return GetPaletteBackHeader(HeaderStyles.HeaderPrimary, state);
                 case PaletteBackStyle.HeaderSecondary:
@@ -5037,24 +5038,24 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
                     return GetPaletteBorderForm(FormStyles.FormMain, state);
                 case PaletteBorderStyle.FormCustom1:
                     return GetPaletteBorderForm(FormStyles.FormCustom1, state);
-                case PaletteBorderStyle.GridHeaderColumnList:
-                    return GetPaletteBorderGridHeaderColumn(GridStyles.GridList, state);
-                case PaletteBorderStyle.GridHeaderColumnSheet:
-                    return GetPaletteBorderGridHeaderColumn(GridStyles.GridSheet, state);
-                case PaletteBorderStyle.GridHeaderColumnCustom1:
-                    return GetPaletteBorderGridHeaderColumn(GridStyles.GridCustom1, state);
-                case PaletteBorderStyle.GridHeaderRowList:
-                    return GetPaletteBorderGridHeaderRow(GridStyles.GridList, state);
-                case PaletteBorderStyle.GridHeaderRowSheet:
-                    return GetPaletteBorderGridHeaderRow(GridStyles.GridSheet, state);
-                case PaletteBorderStyle.GridHeaderRowCustom1:
-                    return GetPaletteBorderGridHeaderRow(GridStyles.GridCustom1, state);
-                case PaletteBorderStyle.GridDataCellList:
-                    return GetPaletteBorderGridDataCell(GridStyles.GridList, state);
-                case PaletteBorderStyle.GridDataCellSheet:
-                    return GetPaletteBorderGridDataCell(GridStyles.GridSheet, state);
-                case PaletteBorderStyle.GridDataCellCustom1:
-                    return GetPaletteBorderGridDataCell(GridStyles.GridCustom1, state);                
+                //case PaletteBorderStyle.GridHeaderColumnList:
+                //    return GetPaletteBorderGridHeaderColumn(GridStyles.GridList, state);
+                //case PaletteBorderStyle.GridHeaderColumnSheet:
+                //    return GetPaletteBorderGridHeaderColumn(GridStyles.GridSheet, state);
+                //case PaletteBorderStyle.GridHeaderColumnCustom1:
+                //    return GetPaletteBorderGridHeaderColumn(GridStyles.GridCustom1, state);
+                //case PaletteBorderStyle.GridHeaderRowList:
+                //    return GetPaletteBorderGridHeaderRow(GridStyles.GridList, state);
+                //case PaletteBorderStyle.GridHeaderRowSheet:
+                //    return GetPaletteBorderGridHeaderRow(GridStyles.GridSheet, state);
+                //case PaletteBorderStyle.GridHeaderRowCustom1:
+                //    return GetPaletteBorderGridHeaderRow(GridStyles.GridCustom1, state);
+                //case PaletteBorderStyle.GridDataCellList:
+                //    return GetPaletteBorderGridDataCell(GridStyles.GridList, state);
+                //case PaletteBorderStyle.GridDataCellSheet:
+                //    return GetPaletteBorderGridDataCell(GridStyles.GridSheet, state);
+                //case PaletteBorderStyle.GridDataCellCustom1:
+                //    return GetPaletteBorderGridDataCell(GridStyles.GridCustom1, state);                
                 case PaletteBorderStyle.HeaderPrimary:
                     return GetPaletteBorderHeader(HeaderStyles.HeaderPrimary, state);
                 case PaletteBorderStyle.HeaderSecondary:
@@ -5165,24 +5166,24 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
                     return GetPaletteContentButton(ButtonStyles.ButtonCustom2, state);
                 case PaletteContentStyle.ButtonCustom3:
                     return GetPaletteContentButton(ButtonStyles.ButtonCustom3, state);
-                case PaletteContentStyle.GridHeaderColumnList:
-                    return GetPaletteContentGridHeaderColumn(GridStyles.GridList, state);
-                case PaletteContentStyle.GridHeaderColumnSheet:
-                    return GetPaletteContentGridHeaderColumn(GridStyles.GridSheet, state);
-                case PaletteContentStyle.GridHeaderColumnCustom1:
-                    return GetPaletteContentGridHeaderColumn(GridStyles.GridCustom1, state);
-                case PaletteContentStyle.GridHeaderRowList:
-                    return GetPaletteContentGridHeaderRow(GridStyles.GridList, state);
-                case PaletteContentStyle.GridHeaderRowSheet:
-                    return GetPaletteContentGridHeaderRow(GridStyles.GridSheet, state);
-                case PaletteContentStyle.GridHeaderRowCustom1:
-                    return GetPaletteContentGridHeaderRow(GridStyles.GridCustom1, state);
-                case PaletteContentStyle.GridDataCellList:
-                    return GetPaletteContentGridDataCell(GridStyles.GridList, state);
-                case PaletteContentStyle.GridDataCellSheet:
-                    return GetPaletteContentGridDataCell(GridStyles.GridSheet, state);
-                case PaletteContentStyle.GridDataCellCustom1:
-                    return GetPaletteContentGridDataCell(GridStyles.GridCustom1, state);
+                //case PaletteContentStyle.GridHeaderColumnList:
+                //    return GetPaletteContentGridHeaderColumn(GridStyles.GridList, state);
+                //case PaletteContentStyle.GridHeaderColumnSheet:
+                //    return GetPaletteContentGridHeaderColumn(GridStyles.GridSheet, state);
+                //case PaletteContentStyle.GridHeaderColumnCustom1:
+                //    return GetPaletteContentGridHeaderColumn(GridStyles.GridCustom1, state);
+                //case PaletteContentStyle.GridHeaderRowList:
+                //    return GetPaletteContentGridHeaderRow(GridStyles.GridList, state);
+                //case PaletteContentStyle.GridHeaderRowSheet:
+                //    return GetPaletteContentGridHeaderRow(GridStyles.GridSheet, state);
+                //case PaletteContentStyle.GridHeaderRowCustom1:
+                //    return GetPaletteContentGridHeaderRow(GridStyles.GridCustom1, state);
+                //case PaletteContentStyle.GridDataCellList:
+                //    return GetPaletteContentGridDataCell(GridStyles.GridList, state);
+                //case PaletteContentStyle.GridDataCellSheet:
+                //    return GetPaletteContentGridDataCell(GridStyles.GridSheet, state);
+                //case PaletteContentStyle.GridDataCellCustom1:
+                //    return GetPaletteContentGridDataCell(GridStyles.GridCustom1, state);
                 case PaletteContentStyle.HeaderPrimary:
                     return GetPaletteContentHeader(HeaderStyles.HeaderPrimary, state);
                 case PaletteContentStyle.HeaderSecondary:
@@ -5675,198 +5676,198 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
             }
         }
 
-        private PaletteBack GetPaletteBackGridBackground(KryptonPaletteGrid grid, PaletteState state)
-        {
-            switch (state)
-            {
-                case PaletteState.Disabled:
-                    return grid.StateDisabled.Background;
-                case PaletteState.Normal:
-                    return grid.StateNormal.Background;
-                default:
-                    // Should never happen!
-                    Debug.Assert(false);
-                    return null;
-            }
-        }
+        //private PaletteBack GetPaletteBackGridBackground(KryptonPaletteGrid grid, PaletteState state)
+        //{
+        //    switch (state)
+        //    {
+        //        case PaletteState.Disabled:
+        //            return grid.StateDisabled.Background;
+        //        case PaletteState.Normal:
+        //            return grid.StateNormal.Background;
+        //        default:
+        //            // Should never happen!
+        //            Debug.Assert(false);
+        //            return null;
+        //    }
+        //}
 
-        private PaletteBack GetPaletteBackGridHeaderColumn(KryptonPaletteGrid grid, PaletteState state)
-        {
-            switch (state)
-            {
-                case PaletteState.Disabled:
-                    return grid.StateDisabled.HeaderColumn.Back;
-                case PaletteState.Normal:
-                    return grid.StateNormal.HeaderColumn.Back;
-                case PaletteState.Tracking:
-                    return grid.StateTracking.HeaderColumn.Back;
-                case PaletteState.Pressed:
-                    return grid.StatePressed.HeaderColumn.Back;
-                case PaletteState.CheckedNormal:
-                    return grid.StateSelected.HeaderColumn.Back;
-                default:
-                    // Should never happen!
-                    Debug.Assert(false);
-                    return null;
-            }
-        }
+        //private PaletteBack GetPaletteBackGridHeaderColumn(KryptonPaletteGrid grid, PaletteState state)
+        //{
+        //    switch (state)
+        //    {
+        //        case PaletteState.Disabled:
+        //            return grid.StateDisabled.HeaderColumn.Back;
+        //        case PaletteState.Normal:
+        //            return grid.StateNormal.HeaderColumn.Back;
+        //        case PaletteState.Tracking:
+        //            return grid.StateTracking.HeaderColumn.Back;
+        //        case PaletteState.Pressed:
+        //            return grid.StatePressed.HeaderColumn.Back;
+        //        case PaletteState.CheckedNormal:
+        //            return grid.StateSelected.HeaderColumn.Back;
+        //        default:
+        //            // Should never happen!
+        //            Debug.Assert(false);
+        //            return null;
+        //    }
+        //}
 
-        private PaletteBack GetPaletteBackGridHeaderRow(KryptonPaletteGrid grid, PaletteState state)
-        {
-            switch (state)
-            {
-                case PaletteState.Disabled:
-                    return grid.StateDisabled.HeaderRow.Back;
-                case PaletteState.Normal:
-                    return grid.StateNormal.HeaderRow.Back;
-                case PaletteState.Tracking:
-                    return grid.StateTracking.HeaderRow.Back;
-                case PaletteState.Pressed:
-                    return grid.StatePressed.HeaderRow.Back;
-                case PaletteState.CheckedNormal:
-                    return grid.StateSelected.HeaderRow.Back;
-                default:
-                    // Should never happen!
-                    Debug.Assert(false);
-                    return null;
-            }
-        }
+        //private PaletteBack GetPaletteBackGridHeaderRow(KryptonPaletteGrid grid, PaletteState state)
+        //{
+        //    switch (state)
+        //    {
+        //        case PaletteState.Disabled:
+        //            return grid.StateDisabled.HeaderRow.Back;
+        //        case PaletteState.Normal:
+        //            return grid.StateNormal.HeaderRow.Back;
+        //        case PaletteState.Tracking:
+        //            return grid.StateTracking.HeaderRow.Back;
+        //        case PaletteState.Pressed:
+        //            return grid.StatePressed.HeaderRow.Back;
+        //        case PaletteState.CheckedNormal:
+        //            return grid.StateSelected.HeaderRow.Back;
+        //        default:
+        //            // Should never happen!
+        //            Debug.Assert(false);
+        //            return null;
+        //    }
+        //}
 
-        private PaletteBack GetPaletteBackGridDataCell(KryptonPaletteGrid grid, PaletteState state)
-        {
-            switch (state)
-            {
-                case PaletteState.Disabled:
-                    return grid.StateDisabled.DataCell.Back;
-                case PaletteState.Normal:
-                    return grid.StateNormal.DataCell.Back;
-                case PaletteState.CheckedNormal:
-                    return grid.StateSelected.DataCell.Back;
-                default:
-                    // Should never happen!
-                    Debug.Assert(false);
-                    return null;
-            }
-        }
+        //private PaletteBack GetPaletteBackGridDataCell(KryptonPaletteGrid grid, PaletteState state)
+        //{
+        //    switch (state)
+        //    {
+        //        case PaletteState.Disabled:
+        //            return grid.StateDisabled.DataCell.Back;
+        //        case PaletteState.Normal:
+        //            return grid.StateNormal.DataCell.Back;
+        //        case PaletteState.CheckedNormal:
+        //            return grid.StateSelected.DataCell.Back;
+        //        default:
+        //            // Should never happen!
+        //            Debug.Assert(false);
+        //            return null;
+        //    }
+        //}
 
-        private PaletteBorder GetPaletteBorderGridHeaderColumn(KryptonPaletteGrid grid, PaletteState state)
-        {
-            switch (state)
-            {
-                case PaletteState.Disabled:
-                    return grid.StateDisabled.HeaderColumn.Border;
-                case PaletteState.Normal:
-                    return grid.StateNormal.HeaderColumn.Border;
-                case PaletteState.Tracking:
-                    return grid.StateTracking.HeaderColumn.Border;
-                case PaletteState.Pressed:
-                    return grid.StatePressed.HeaderColumn.Border;
-                case PaletteState.CheckedNormal:
-                    return grid.StateSelected.HeaderColumn.Border;
-                default:
-                    // Should never happen!
-                    Debug.Assert(false);
-                    return null;
-            }
-        }
+        //private PaletteBorder GetPaletteBorderGridHeaderColumn(KryptonPaletteGrid grid, PaletteState state)
+        //{
+        //    switch (state)
+        //    {
+        //        case PaletteState.Disabled:
+        //            return grid.StateDisabled.HeaderColumn.Border;
+        //        case PaletteState.Normal:
+        //            return grid.StateNormal.HeaderColumn.Border;
+        //        case PaletteState.Tracking:
+        //            return grid.StateTracking.HeaderColumn.Border;
+        //        case PaletteState.Pressed:
+        //            return grid.StatePressed.HeaderColumn.Border;
+        //        case PaletteState.CheckedNormal:
+        //            return grid.StateSelected.HeaderColumn.Border;
+        //        default:
+        //            // Should never happen!
+        //            Debug.Assert(false);
+        //            return null;
+        //    }
+        //}
 
-        private PaletteBorder GetPaletteBorderGridHeaderRow(KryptonPaletteGrid grid, PaletteState state)
-        {
-            switch (state)
-            {
-                case PaletteState.Disabled:
-                    return grid.StateDisabled.HeaderRow.Border;
-                case PaletteState.Normal:
-                    return grid.StateNormal.HeaderRow.Border;
-                case PaletteState.Tracking:
-                    return grid.StateTracking.HeaderRow.Border;
-                case PaletteState.Pressed:
-                    return grid.StatePressed.HeaderRow.Border;
-                case PaletteState.CheckedNormal:
-                    return grid.StateSelected.HeaderRow.Border;
-                default:
-                    // Should never happen!
-                    Debug.Assert(false);
-                    return null;
-            }
-        }
+        //private PaletteBorder GetPaletteBorderGridHeaderRow(KryptonPaletteGrid grid, PaletteState state)
+        //{
+        //    switch (state)
+        //    {
+        //        case PaletteState.Disabled:
+        //            return grid.StateDisabled.HeaderRow.Border;
+        //        case PaletteState.Normal:
+        //            return grid.StateNormal.HeaderRow.Border;
+        //        case PaletteState.Tracking:
+        //            return grid.StateTracking.HeaderRow.Border;
+        //        case PaletteState.Pressed:
+        //            return grid.StatePressed.HeaderRow.Border;
+        //        case PaletteState.CheckedNormal:
+        //            return grid.StateSelected.HeaderRow.Border;
+        //        default:
+        //            // Should never happen!
+        //            Debug.Assert(false);
+        //            return null;
+        //    }
+        //}
 
-        private PaletteBorder GetPaletteBorderGridDataCell(KryptonPaletteGrid grid, PaletteState state)
-        {
-            switch (state)
-            {
-                case PaletteState.Disabled:
-                    return grid.StateDisabled.DataCell.Border;
-                case PaletteState.Normal:
-                    return grid.StateNormal.DataCell.Border;
-                case PaletteState.CheckedNormal:
-                    return grid.StateSelected.DataCell.Border;
-                default:
-                    // Should never happen!
-                    Debug.Assert(false);
-                    return null;
-            }
-        }
+        //private PaletteBorder GetPaletteBorderGridDataCell(KryptonPaletteGrid grid, PaletteState state)
+        //{
+        //    switch (state)
+        //    {
+        //        case PaletteState.Disabled:
+        //            return grid.StateDisabled.DataCell.Border;
+        //        case PaletteState.Normal:
+        //            return grid.StateNormal.DataCell.Border;
+        //        case PaletteState.CheckedNormal:
+        //            return grid.StateSelected.DataCell.Border;
+        //        default:
+        //            // Should never happen!
+        //            Debug.Assert(false);
+        //            return null;
+        //    }
+        //}
 
 
-        private IPaletteContent GetPaletteContentGridHeaderColumn(KryptonPaletteGrid grid, PaletteState state)
-        {
-            switch (state)
-            {
-                case PaletteState.Disabled:
-                    return grid.StateDisabled.HeaderColumn.Content;
-                case PaletteState.Normal:
-                    return grid.StateNormal.HeaderColumn.Content;
-                case PaletteState.Tracking:
-                    return grid.StateTracking.HeaderColumn.Content;
-                case PaletteState.Pressed:
-                    return grid.StatePressed.HeaderColumn.Content;
-                case PaletteState.CheckedNormal:
-                    return grid.StateSelected.HeaderColumn.Content;
-                default:
-                    // Should never happen!
-                    Debug.Assert(false);
-                    return null;
-            }
-        }
+        //private IPaletteContent GetPaletteContentGridHeaderColumn(KryptonPaletteGrid grid, PaletteState state)
+        //{
+        //    switch (state)
+        //    {
+        //        case PaletteState.Disabled:
+        //            return grid.StateDisabled.HeaderColumn.Content;
+        //        case PaletteState.Normal:
+        //            return grid.StateNormal.HeaderColumn.Content;
+        //        case PaletteState.Tracking:
+        //            return grid.StateTracking.HeaderColumn.Content;
+        //        case PaletteState.Pressed:
+        //            return grid.StatePressed.HeaderColumn.Content;
+        //        case PaletteState.CheckedNormal:
+        //            return grid.StateSelected.HeaderColumn.Content;
+        //        default:
+        //            // Should never happen!
+        //            Debug.Assert(false);
+        //            return null;
+        //    }
+        //}
 
-        private IPaletteContent GetPaletteContentGridHeaderRow(KryptonPaletteGrid grid, PaletteState state)
-        {
-            switch (state)
-            {
-                case PaletteState.Disabled:
-                    return grid.StateDisabled.HeaderRow.Content;
-                case PaletteState.Normal:
-                    return grid.StateNormal.HeaderRow.Content;
-                case PaletteState.Tracking:
-                    return grid.StateTracking.HeaderRow.Content;
-                case PaletteState.Pressed:
-                    return grid.StatePressed.HeaderRow.Content;
-                case PaletteState.CheckedNormal:
-                    return grid.StateSelected.HeaderRow.Content;
-                default:
-                    // Should never happen!
-                    Debug.Assert(false);
-                    return null;
-            }
-        }
+        //private IPaletteContent GetPaletteContentGridHeaderRow(KryptonPaletteGrid grid, PaletteState state)
+        //{
+        //    switch (state)
+        //    {
+        //        case PaletteState.Disabled:
+        //            return grid.StateDisabled.HeaderRow.Content;
+        //        case PaletteState.Normal:
+        //            return grid.StateNormal.HeaderRow.Content;
+        //        case PaletteState.Tracking:
+        //            return grid.StateTracking.HeaderRow.Content;
+        //        case PaletteState.Pressed:
+        //            return grid.StatePressed.HeaderRow.Content;
+        //        case PaletteState.CheckedNormal:
+        //            return grid.StateSelected.HeaderRow.Content;
+        //        default:
+        //            // Should never happen!
+        //            Debug.Assert(false);
+        //            return null;
+        //    }
+        //}
 
-        private IPaletteContent GetPaletteContentGridDataCell(KryptonPaletteGrid grid, PaletteState state)
-        {
-            switch (state)
-            {
-                case PaletteState.Disabled:
-                    return grid.StateDisabled.DataCell.Content;
-                case PaletteState.Normal:
-                    return grid.StateNormal.DataCell.Content;
-                case PaletteState.CheckedNormal:
-                    return grid.StateSelected.DataCell.Content;
-                default:
-                    // Should never happen!
-                    Debug.Assert(false);
-                    return null;
-            }
-        }
+        //private IPaletteContent GetPaletteContentGridDataCell(KryptonPaletteGrid grid, PaletteState state)
+        //{
+        //    switch (state)
+        //    {
+        //        case PaletteState.Disabled:
+        //            return grid.StateDisabled.DataCell.Content;
+        //        case PaletteState.Normal:
+        //            return grid.StateNormal.DataCell.Content;
+        //        case PaletteState.CheckedNormal:
+        //            return grid.StateSelected.DataCell.Content;
+        //        default:
+        //            // Should never happen!
+        //            Debug.Assert(false);
+        //            return null;
+        //    }
+        //}
 
         private PaletteBorder GetPaletteBorderForm(KryptonPaletteForm form, PaletteState state)
         {
@@ -6218,3 +6219,5 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         #endregion
     }
 }
+
+#endif

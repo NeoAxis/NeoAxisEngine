@@ -1,0 +1,12 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.WeaponType
+{
+	Mode1FiringTotalTime = 0.2
+	Mode1BulletSpeed = 90
+	Mode2Enabled = False
+	Mode1BulletType
+	{
+		GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Bullet.bullettype"
+	}
+}

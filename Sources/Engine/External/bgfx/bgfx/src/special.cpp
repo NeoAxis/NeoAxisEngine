@@ -1,7 +1,7 @@
 //!!!!betauser
 /*
- * Copyright 2011-2020 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
+ * Copyright 2011-2022 Branimir Karadzic. All rights reserved.
+ * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
 #include <bx/platform.h>
@@ -53,6 +53,12 @@ void* call_special(const char* name, void* parameter1, void* parameter2, void* p
 
 void* call_special(const char* name, void* parameter1, void* parameter2, void* parameter3, void* parameter4)
 {
+	BX_UNUSED(name);
+	BX_UNUSED(parameter1);
+	BX_UNUSED(parameter2);
+	BX_UNUSED(parameter3);
+	BX_UNUSED(parameter4);
+
 	//!!!!
 
 	//if (bx::strCmp(name, "VXGI_Create") == 0)

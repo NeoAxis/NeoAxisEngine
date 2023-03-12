@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -168,6 +168,12 @@ namespace NeoAxis
 				Activated = !Activated;
 
 			SoundPlay( SoundClick );
+			if( NetworkIsServer && SoundClick.ReferenceOrValueSpecified )
+			{
+				BeginNetworkMessageToEveryone( "SoundClick" );
+				EndNetworkMessage();
+			}
+
 			OnClick();
 			Click?.Invoke( this );
 
@@ -188,7 +194,15 @@ namespace NeoAxis
 
 			clicking = true;
 			clickingCurrentTime = 0;
+			NetworkSendClicking( null );
+
 			SoundPlay( SoundClickingBegin );
+			if( NetworkIsServer && SoundClickingBegin.ReferenceOrValueSpecified )
+			{
+				BeginNetworkMessageToEveryone( "SoundClickingBegin" );
+				EndNetworkMessage();
+			}
+
 			ClickingBeginEvent?.Invoke( this );
 
 			return true;
@@ -201,7 +215,15 @@ namespace NeoAxis
 
 			clicking = false;
 			clickingCurrentTime = 0;
+			NetworkSendClicking( null );
+
 			SoundPlay( SoundClickingEnd );
+			if( NetworkIsServer && SoundClickingEnd.ReferenceOrValueSpecified )
+			{
+				BeginNetworkMessageToEveryone( "SoundClickingEnd" );
+				EndNetworkMessage();
+			}
+
 			ClickingEndEvent?.Invoke( this );
 		}
 
@@ -220,6 +242,8 @@ namespace NeoAxis
 
 				if( clickingCurrentTime >= ClickingTotalTime )
 					ClickingEnd();
+
+				NetworkSendClicking( null );
 			}
 		}
 
@@ -227,7 +251,7 @@ namespace NeoAxis
 		{
 			base.OnUpdate( delta );
 
-			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+			if( EngineApp.IsEditor )
 				Simulate( delta );
 		}
 
@@ -335,7 +359,13 @@ namespace NeoAxis
 			{
 				if( mouseDown.Button == EMouseButtons.Left || mouseDown.Button == EMouseButtons.Right )
 				{
-					ClickingBegin();
+					if( NetworkIsClient )
+					{
+						BeginNetworkMessageToServer( "ClickingBegin" );
+						EndNetworkMessage();
+					}
+					else
+						ClickingBegin();
 					return true;
 				}
 			}
@@ -364,6 +394,59 @@ namespace NeoAxis
 
 		protected override bool OnSpaceBoundsUpdateIncludeChildren()
 		{
+			return true;
+		}
+
+		void NetworkSendClicking( ServerNetworkService_Components.ClientItem client )
+		{
+			if( NetworkIsServer )
+			{
+				var writer = client != null ? BeginNetworkMessage( client, "Clicking" ) : BeginNetworkMessageToEveryone( "Clicking" );
+				writer.Write( clicking );
+				writer.Write( (float)clickingCurrentTime );
+				EndNetworkMessage();
+			}
+		}
+
+		protected override void OnClientConnectedBeforeRootComponentEnabled( ServerNetworkService_Components.ClientItem client )
+		{
+			base.OnClientConnectedBeforeRootComponentEnabled( client );
+
+			NetworkSendClicking( client );
+		}
+
+		protected override bool OnReceiveNetworkMessageFromServer( string message, ArrayDataReader reader )
+		{
+			if( !base.OnReceiveNetworkMessageFromServer( message, reader ) )
+				return false;
+
+			if( message == "SoundClick" )
+				SoundPlay( SoundClick );
+			else if( message == "SoundClickingBegin" )
+				SoundPlay( SoundClickingBegin );
+			else if( message == "SoundClickingEnd" )
+				SoundPlay( SoundClickingEnd );
+			else if( message == "Clicking" )
+			{
+				clicking = reader.ReadBoolean();
+				clickingCurrentTime = reader.ReadSingle();
+			}
+
+			return true;
+		}
+
+		protected override bool OnReceiveNetworkMessageFromClient( ServerNetworkService_Components.ClientItem client, string message, ArrayDataReader reader )
+		{
+			if( !base.OnReceiveNetworkMessageFromClient( client, message, reader ) )
+				return false;
+
+
+			//!!!!security check is needed. who interact
+
+
+			if( message == "ClickingBegin" )
+				ClickingBegin();
+
 			return true;
 		}
 	}

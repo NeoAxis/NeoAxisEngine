@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,23 +8,29 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.IO;
 using NeoAxis.Editor;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
 	/// <summary>
 	/// Abstract object in the scene.
 	/// </summary>
-	[ResourceFileExtension( "objectInSpace" )]
+	[ResourceFileExtension( "objectinspace" )]
+#if !DEPLOY
 	[EditorControl( typeof( ObjectInSpaceEditor ), true )]
 	[Preview( typeof( ObjectInSpacePreview ) )]
 	[PreviewImage( typeof( ObjectInSpacePreviewImage ) )]
+#endif
 	public class ObjectInSpace : Component, IVisibleInHierarchy, ICanBeSelectedInHierarchy//, Scene_DocumentWindow.ICanDropToScene
 	{
 		Scene parentSceneCached;
+		//RigidBody cachedRigidBodyByReference;
 
 		//scene octree
 		//internal int sceneOctreeGroup;
 		internal int sceneOctreeIndex = -1;
+
+		IVisibleInHierarchy parentIVisibleInHierarchy;
 
 		/////////////////////////////////////////
 
@@ -100,55 +106,30 @@ namespace NeoAxis
 		{
 			get
 			{
-				//!!!!slowly
-
 				if( !Visible )
 					return false;
 
-				var p = Parent as IVisibleInHierarchy;
-				if( p != null )
-					return p.VisibleInHierarchy;
+				if( parentIVisibleInHierarchy != null )
+					return parentIVisibleInHierarchy.VisibleInHierarchy;
 				else
 					return true;
-				//var p = Parent as ObjectInSpace;
+
+				//var p = Parent as IVisibleInHierarchy;
 				//if( p != null )
 				//	return p.VisibleInHierarchy;
 				//else
 				//	return true;
 
-				//return visibleInHierarchy;
+
+				////var p = Parent as ObjectInSpace;
+				////if( p != null )
+				////	return p.VisibleInHierarchy;
+				////else
+				////	return true;
+
+				////return visibleInHierarchy;
 			}
 		}
-
-		//!!!!
-		//internal void _UpdateVisibleInHierarchy( bool forceDisableBeforeRemove )
-		//{
-		//	bool demand;
-		//	if( Visible && !forceDisableBeforeRemove )
-		//	{
-		//		if( parent != null )
-		//			demand = parent.VisibleInHierarchy;
-		//		else
-		//		{
-		//			if( hierarchyController != null )
-		//				demand = hierarchyController.HierarchyVisible;
-		//			else
-		//				demand = false;
-		//		}
-		//	}
-		//	else
-		//		demand = false;
-
-		//	if( visibleInHierarchy != demand )
-		//	{
-		//		visibleInHierarchy = demand;
-
-		//		OnVisibleInHierarchyChanged();
-		//		VisibleInHierarchyChanged?.Invoke( this );
-		//	}
-		//}
-
-		//!!!!
 
 		/// <summary>
 		/// Whether the object is selectable in the scene view.
@@ -177,6 +158,7 @@ namespace NeoAxis
 					return p.CanBeSelectedInHierarchy;
 				else
 					return true;
+
 				//var p = Parent as ObjectInSpace;
 				//if( p != null )
 				//	return p.CanBeSelectedInHierarchy;
@@ -185,11 +167,12 @@ namespace NeoAxis
 			}
 		}
 
-		protected virtual void OnTransformUpdating( ref Reference<Transform> value )
-		{
-		}
-		public delegate void TransformUpdatingEventDelegate( ObjectInSpace obj, ref Reference<Transform> value );
-		public event TransformUpdatingEventDelegate TransformUpdatingEvent;
+		//never used
+		//protected virtual void OnTransformUpdating( ref Reference<Transform> value )
+		//{
+		//}
+		//public delegate void TransformUpdatingEventDelegate( ObjectInSpace obj, ref Reference<Transform> value );
+		//public event TransformUpdatingEventDelegate TransformUpdatingEvent;
 
 		/// <summary>
 		/// The position, rotation and scale of the object.
@@ -200,19 +183,25 @@ namespace NeoAxis
 		{
 			get
 			{
-				//if( !EngineApp._DebugCapsLock )
+				//!!!!из-за этой оптимизации не обновляется SpaceBounds у MeshInSpace
+				////optimization for often case
+				//if( _transform.value.GetByReference == "this:$Collision Body\\Transform" )
 				//{
-				//	//!!!!try, catch
-				//	//!!!!быстрая проверка на строку
-				//	if( _transform.value.GetByReference == "this:$Collision Body\\Transform" )
+				//	if( cachedRigidBodyByReference == null || cachedRigidBodyByReference.Parent != this )// || cachedRigidBodyByReference.Name != "Collision Body" )
 				//	{
 				//		var body = GetComponent<RigidBody>();
-				//		if( body.Name == "Collision Body" )
-				//		{
-				//			//Transform = body.Transform;
-				//			return new Reference<Transform>( body.Transform.Value, _transform.value.GetByReference );
-				//		}
+				//		if( body != null && body.Name == "Collision Body" )
+				//			cachedRigidBodyByReference = body;
 				//	}
+				//	if( cachedRigidBodyByReference != null )
+				//		return new Reference<Transform>( cachedRigidBodyByReference.Transform.Value, _transform.value.GetByReference );
+
+				//	//var body = GetComponent<RigidBody>();
+				//	//if( body.Name == "Collision Body" )
+				//	//{
+				//	//	//Transform = body.Transform;
+				//	//	return new Reference<Transform>( body.Transform.Value, _transform.value.GetByReference );
+				//	//}
 				//}
 
 				if( _transform.BeginGet() ) Transform = _transform.Get( this ); return _transform.value;
@@ -224,14 +213,16 @@ namespace NeoAxis
 				//!!!!slowly?
 				//!!!!!!возможно выставлять без проверок. SetTransformNoChecks. или с помощью переменной игнорировать тут проверку
 
-				//!!!!new. так?
 				//fix invalid value
 				if( value.Value == null )
 					value = new Reference<Transform>( NeoAxis.Transform.Identity, value.GetByReference );
 
-				OnTransformUpdating( ref value );
-				TransformUpdatingEvent?.Invoke( this, ref value );
+				//never used
+				//!!!!name
+				//OnTransformUpdating( ref value );
+				//TransformUpdatingEvent?.Invoke( this, ref value );
 
+				//!!!!works fast for same reference?
 				if( _transform.BeginSet( ref value ) )
 				{
 					try
@@ -249,7 +240,6 @@ namespace NeoAxis
 
 		protected virtual void OnTransformChanged()
 		{
-			//!!!!slowly?
 			SpaceBoundsUpdate();
 		}
 
@@ -263,10 +253,17 @@ namespace NeoAxis
 			set { Transform = value; }
 		}
 
+		[Browsable( false )]
+		internal bool TransformHasReference
+		{
+			get { return _transform.value.ReferenceSpecified; }
+		}
+
 		/// <summary>
 		/// The lifetime of the component during the simulation.
 		/// </summary>
 		[DefaultValue( 0.0 )]
+		[NetworkSynchronize( false )]
 		public Reference<double> RemainingLifetime
 		{
 			get { if( _remainingLifetime.BeginGet() ) RemainingLifetime = _remainingLifetime.Get( this ); return _remainingLifetime.value; }
@@ -278,12 +275,10 @@ namespace NeoAxis
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		//!!!!
-
-		//!!!!!а может лучше через виртуальную функцию? измениться в любое время тогда может
+		//!!!!!может лучше через виртуальную функцию? измениться в любое время тогда может
 		//!!!!
 		SpaceBounds spaceBoundsOverride;
-		static SpaceBounds spaceBoundsDefault = new SpaceBounds( null, new Sphere( Vector3.Zero, .5 ) );
+		static SpaceBounds spaceBoundsDefault = new SpaceBounds( /*null, */new Sphere( Vector3.Zero, .5 ) );
 		SpaceBounds spaceBounds = spaceBoundsDefault;
 		////!!!!!надо ли?
 		//int sceneGraphGroup;
@@ -311,7 +306,8 @@ namespace NeoAxis
 				if( spaceBoundsOverride == value )
 					return;
 				spaceBoundsOverride = value;
-				SpaceBoundsUpdate();
+				//do it manually because SpaceBoundsOverride can be changed inside OnTransformChanged, SpaceBoundsUpdate will already called
+				//SpaceBoundsUpdate();
 			}
 		}
 
@@ -331,20 +327,22 @@ namespace NeoAxis
 		public delegate void SpaceBoundsUpdateIncludeChildrenEventDelegate( ObjectInSpace obj, ref bool include );
 		public event SpaceBoundsUpdateIncludeChildrenEventDelegate SpaceBoundsUpdateIncludeChildrenEvent;
 
-		protected virtual void OnSpaceBoundsChanged() { }
-		/// <summary>Occurs when the <see cref="SpaceBounds"/> property value changes.</summary>
-		public event Action<ObjectInSpace> SpaceBoundsChanged;
+		//protected virtual void OnSpaceBoundsChanged() { }
+		///// <summary>Occurs when the <see cref="SpaceBounds"/> property value changes.</summary>
+		//public event Action<ObjectInSpace> SpaceBoundsChanged;
 
-		//!!!!
 
-		//!!!!вызывать
+		[Browsable( false )]
+		public Bounds? SpaceBoundsOctreeOverride
+		{
+			get { return spaceBoundsOctreeOverride; }
+			set { spaceBoundsOctreeOverride = value; }
+		}
+		Bounds? spaceBoundsOctreeOverride;
+
+
 		public void SpaceBoundsUpdate()
 		{
-			//!!!!threading. типа как подготавливать цепочку для расчета. какие тогда ограничения?
-			//!!!!!!!как вариант для размышлений - делать мультипоточность выше, на уровне объектов
-
-			//!!!!или обновлять при запросе
-
 			var oldBounds = spaceBounds;
 
 			//calculate
@@ -354,6 +352,7 @@ namespace NeoAxis
 				OnSpaceBoundsUpdate( ref newBounds );
 				SpaceBoundsUpdateEvent?.Invoke( this, ref newBounds );
 
+				//!!!!really need?
 				//include children
 				{
 					var include = OnSpaceBoundsUpdateIncludeChildren();
@@ -376,9 +375,10 @@ namespace NeoAxis
 					//!!!!от чилдов еще которые ObjectInSpace?
 					//!!!!!так медленее. целесообразности нет. может полезно выбирать чилдовые, тогда даже вредно.
 
-					//!!!!так?
-					Sphere sphere = new Sphere( Transform.Value.Position, 0.001 );// MathEx.Epsilon );
-																				  //Sphere sphere = new Sphere( Transform.Value.Position, .5 );
+					//при слишком мелком значении глючит OcclusionCullingBuffer. куллит мелкие объекты такие как curve point
+					var sphere = new Sphere( Transform.Value.Position, 0.05 );
+					//var sphere = new Sphere( Transform.Value.Position, 0.1 );
+					//var sphere = new Sphere( Transform.Value.Position, 0.001 );
 
 					newBounds = new SpaceBounds( sphere );
 
@@ -395,19 +395,18 @@ namespace NeoAxis
 			}
 
 			spaceBounds = newBounds;
-			if( oldBounds != spaceBounds )
+			//!!!!new
+			//if( oldBounds != spaceBounds )
 			{
 				if( EnabledInHierarchy )
 				{
-					//!!!!slowly ParentScene?
-					ParentScene?.ObjectsInSpace_ObjectUpdate( this );
+					ParentScene?.ObjectsInSpace_ObjectUpdateBounds( this );
 				}
 
-				OnSpaceBoundsChanged();
-				SpaceBoundsChanged?.Invoke( this );
+				//never used
+				//OnSpaceBoundsChanged();
+				//SpaceBoundsChanged?.Invoke( this );
 			}
-
-			//!!!!что-то где-то обновлять. но когда
 		}
 
 		//!!!!
@@ -493,7 +492,10 @@ namespace NeoAxis
 				SpaceBoundsUpdate();
 
 			if( EnabledInHierarchy )
-				ParentScene?.ObjectsInSpace_ObjectUpdate( this );
+			{
+				//!!!!need?
+				ParentScene?.ObjectsInSpace_ObjectUpdateBounds( this );
+			}
 			else
 			{
 				ParentScene?.ObjectsInSpace_ObjectRemove( this );
@@ -634,9 +636,9 @@ namespace NeoAxis
 				if( new Rectangle( 0, 0, 1, 1 ).Contains( ref screenPosition ) )
 				{
 					var settings = ProjectSettings.Get;
-					var maxSize = settings.General.ScreenLabelMaxSize.Value;
-					var minSize = settings.General.ScreenLabelMinSizeFactor.Value * maxSize;
-					var maxDistance = settings.General.ScreenLabelMaxDistance.Value;
+					var maxSize = settings.SceneEditor.ScreenLabelMaxSize.Value;
+					var minSize = settings.SceneEditor.ScreenLabelMinSizeFactor.Value * maxSize;
+					var maxDistance = settings.SceneEditor.ScreenLabelMaxDistance.Value;
 
 					double distance = ( pos - viewport.CameraSettings.Position ).Length();
 					if( distance < maxDistance )
@@ -648,11 +650,11 @@ namespace NeoAxis
 
 						ColorValue color;
 						if( context2.selectedObjects.Contains( this ) )
-							color = ProjectSettings.Get.General.SelectedColor;
+							color = ProjectSettings.Get.Colors.SelectedColor;
 						else if( context2.canSelectObjects.Contains( this ) )
-							color = ProjectSettings.Get.General.CanSelectColor;
+							color = ProjectSettings.Get.Colors.CanSelectColor;
 						else
-							color = ProjectSettings.Get.General.ScreenLabelColor;
+							color = ProjectSettings.Get.SceneEditor.ScreenLabelColor;
 
 						context2.displayLabelsCounter++;
 
@@ -720,6 +722,7 @@ namespace NeoAxis
 		[Browsable( false )]
 		public Scene ParentScene
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				if( parentSceneCached != null )
@@ -740,20 +743,49 @@ namespace NeoAxis
 
 		internal void PerformGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
-			//reset this object parameters
-			context.ObjectInSpaceRenderingContext.disableShowingLabelForThisObject = false;
+			var context2 = context.ObjectInSpaceRenderingContext;
 
-			GetRenderSceneDataBefore?.Invoke( this, context, mode, modeGetObjectsItem );
+			//reset this object parameters
+			context2.disableShowingLabelForThisObject = false;
+
+			if( EngineApp.IsEditor )
+			{
+				try
+				{
+					GetRenderSceneDataBefore?.Invoke( this, context, mode, modeGetObjectsItem );
+				}
+				catch( Exception e )
+				{
+					Log.Warning( "ObjectInSpace: PerformGetRenderSceneData: GetRenderSceneDataBefore: " + e.Message );
+					return;
+				}
+			}
+			else
+				GetRenderSceneDataBefore?.Invoke( this, context, mode, modeGetObjectsItem );
+
 			OnGetRenderSceneData( context, mode, modeGetObjectsItem );
-			GetRenderSceneData?.Invoke( this, context, mode, modeGetObjectsItem );
+
+			if( EngineApp.IsEditor )
+			{
+				try
+				{
+					GetRenderSceneData?.Invoke( this, context, mode, modeGetObjectsItem );
+				}
+				catch( Exception e )
+				{
+					Log.Warning( "ObjectInSpace: PerformGetRenderSceneData: GetRenderSceneData: " + e.Message );
+					return;
+				}
+			}
+			else
+				GetRenderSceneData?.Invoke( this, context, mode, modeGetObjectsItem );
 
 			//object space bounds, render screen label if not displayed
 			if( mode == GetRenderSceneDataMode.InsideFrustum )
 			{
-				var context2 = context.ObjectInSpaceRenderingContext;
 				var viewport = context.Owner;
 				var scene = viewport.AttachedScene;
-				if( scene != null && scene.GetDisplayDevelopmentDataInThisApplication() )
+				if( scene != null && context.SceneDisplayDevelopmentDataInThisApplication/*scene.GetDisplayDevelopmentDataInThisApplication()*/ )
 				{
 					////object scene bounds
 					//if( ParentScene.DisplayObjectInSpaceBounds && viewport.Simple3DRenderer != null && context2.displayObjectInSpaceBoundsCounter < context2.displayObjectInSpaceBoundsMax )
@@ -784,13 +816,11 @@ namespace NeoAxis
 						//{
 						//	context2.displayLabelsCounter++;
 
-						//	xx xx;
-
 						//	var item = new Viewport.LastFrameScreenLabelItem();
 						//	item.Obj = this;
 						//	item.ScreenRectangle = labelScreenRectangle;
 
-						//	item.Color = xxx;
+						//	item.Color = ;
 
 						//	viewport.LastFrameScreenLabels.Add( item );
 						//}
@@ -885,46 +915,65 @@ namespace NeoAxis
 		public delegate void LifetimeEndDelegate( ObjectInSpace obj, ref bool allowDestroy );
 		public event LifetimeEndDelegate LifetimeEnd;
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		void SimulationStepRemainingLifetime()
+		{
+			var newValue = RemainingLifetime.Value;
+			if( newValue > 0 )
+			{
+				newValue -= Time.SimulationDelta;
+				if( newValue <= 0 )
+				{
+					if( newValue > -0.001 )
+						newValue = -0.001;
+
+					var allowDestroy = true;
+					OnLifetimeEnd( ref allowDestroy );
+					LifetimeEnd?.Invoke( this, ref allowDestroy );
+
+					if( allowDestroy )
+						RemoveFromParent( true );
+				}
+
+				RemainingLifetime = newValue;
+			}
+		}
+
 		protected override void OnSimulationStep()
 		{
 			base.OnSimulationStep();
 
-			//process RemainingLifetime
-			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
-			{
-				var newValue = RemainingLifetime.Value;
-				if( newValue > 0 )
-				{
-					newValue -= Time.SimulationDelta;
-					if( newValue <= 0 )
-					{
-						if( newValue > -0.001 )
-							newValue = -0.001;
+			SimulationStepRemainingLifetime();
+		}
 
-						var allowDestroy = true;
-						OnLifetimeEnd( ref allowDestroy );
-						LifetimeEnd?.Invoke( this, ref allowDestroy );
+		protected override void OnSimulationStepClient()
+		{
+			base.OnSimulationStepClient();
 
-						if( allowDestroy )
-							RemoveFromParent( true );
-					}
-
-					RemainingLifetime = newValue;
-				}
-			}
+			SimulationStepRemainingLifetime();
 		}
 
 		/////////////////////////////////////////
 
-		protected virtual bool OnOcclusionCullingDataContains()
+		protected virtual Scene.SceneObjectFlags OnGetSceneObjectFlags()
 		{
-			return false;
+			return Scene.SceneObjectFlags.Logic | Scene.SceneObjectFlags.Visual;
 		}
 
-		internal bool PerformOcclusionCullingDataContains()
+		internal Scene.SceneObjectFlags PerformGetSceneObjectFlags()
 		{
-			return OnOcclusionCullingDataContains();
+			return OnGetSceneObjectFlags();
 		}
+
+		//protected virtual bool OnOcclusionCullingDataContains()
+		//{
+		//	return false;
+		//}
+
+		//internal bool PerformOcclusionCullingDataContains()
+		//{
+		//	return OnOcclusionCullingDataContains();
+		//}
 
 		//public delegate void GetOcclusionCullingDataDelegate( ObjectInSpace sender, ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem, OpenList<RenderingPipeline.OccluderItem> occluders );
 		//public event GetOcclusionCullingDataDelegate GetOcclusionCullingData;
@@ -944,7 +993,23 @@ namespace NeoAxis
 
 		[Serialize]
 		[Browsable( false )]
+		[NetworkSynchronize( false )]
 		public Transform EditorCameraTransform;
+
+
+		protected override void OnAddedToParent()
+		{
+			parentIVisibleInHierarchy = Parent as IVisibleInHierarchy;
+
+			base.OnAddedToParent();
+		}
+
+		protected override void OnRemovedFromParent( Component oldParent )
+		{
+			parentIVisibleInHierarchy = null;
+
+			base.OnRemovedFromParent( oldParent );
+		}
 
 	}
 }

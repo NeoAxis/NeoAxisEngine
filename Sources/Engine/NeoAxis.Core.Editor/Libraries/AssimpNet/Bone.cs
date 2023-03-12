@@ -147,6 +147,8 @@ namespace Internal.Assimp
             nativeValue.Name = new AiString(m_name);
             nativeValue.OffsetMatrix = m_offsetMatrix;
             nativeValue.NumWeights = (uint) m_weights.Count;
+            //nativeValue.Armature = IntPtr.Zero;
+            //nativeValue.Node = IntPtr.Zero;
             nativeValue.Weights = IntPtr.Zero;
 
             if(nativeValue.NumWeights > 0)

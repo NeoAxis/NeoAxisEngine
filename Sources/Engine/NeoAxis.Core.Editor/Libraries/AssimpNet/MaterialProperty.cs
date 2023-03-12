@@ -108,7 +108,7 @@ namespace Internal.Assimp
         }
 
         /// <summary>
-        /// Gets or sets the texture type semantic, for non-texture properties this is always <see cref="Internal.Assimp.TextureType.None"/>.
+        /// Gets or sets the texture type semantic, for non-texture properties this is always <see cref="Assimp.TextureType.None"/>.
         /// </summary>
         public TextureType TextureType
         {

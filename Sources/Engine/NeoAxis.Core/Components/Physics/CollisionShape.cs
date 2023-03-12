@@ -1,13 +1,8 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using System.IO;
-using System.Drawing.Design;
-using Internal.BulletSharp;
+using System.Text;
 
 namespace NeoAxis
 {
@@ -18,37 +13,47 @@ namespace NeoAxis
 	{
 		double cachedVolumeNotScaledByParent = -1;
 
-		//!!!!все параметры добавить
-
-		//!!!!name
 		/// <summary>
 		/// The position, rotation and scale of the object relative to parent.
 		/// </summary>
 		[Serialize]
 		[DefaultValue( Transform.IdentityAsString )]
-		public Reference<Transform> TransformRelativeToParent
+		public Reference<Transform> LocalTransform
 		{
-			get { if( _transformRelativeToParent.BeginGet() ) TransformRelativeToParent = _transformRelativeToParent.Get( this ); return _transformRelativeToParent.value; }
+			get { if( _localTransform.BeginGet() ) LocalTransform = _localTransform.Get( this ); return _localTransform.value; }
 			set
 			{
-				if( _transformRelativeToParent.BeginSet( ref value ) )
+				if( _localTransform.BeginSet( ref value ) )
 				{
 					try
 					{
-						TransformRelativeToParentChanged?.Invoke( this );
+						LocalTransformChanged?.Invoke( this );
 						if( EnabledInHierarchy )
 							RecreateBody();
 					}
-					finally { _transformRelativeToParent.EndSet(); }
+					finally { _localTransform.EndSet(); }
 				}
 			}
 		}
-		/// <summary>Occurs when the <see cref="TransformRelativeToParent"/> property value changes.</summary>
-		public event Action<CollisionShape> TransformRelativeToParentChanged;
-		ReferenceField<Transform> _transformRelativeToParent = Transform.Identity;
+		/// <summary>Occurs when the <see cref="LocalTransform"/> property value changes.</summary>
+		public event Action<CollisionShape> LocalTransformChanged;
+		ReferenceField<Transform> _localTransform = Transform.Identity;
 
+		///////////////////////////////////////////////
 
-		protected internal abstract Internal.BulletSharp.CollisionShape CreateShape();
+		protected internal virtual void GetShapeKey( StringBuilder key )
+		{
+			key.Append( " lt " );
+			var relativeTransform = LocalTransform.Value;
+			if( !relativeTransform.IsIdentity )
+				key.Append( relativeTransform.ToString() );
+			else
+				key.Append( '1' );
+		}
+		//protected internal abstract void GetShapeKey( StringBuilder key );
+
+		protected internal abstract void CreateShape( Scene scene, IntPtr nativeShape, ref Vector3F position, ref QuaternionF rotation, ref Vector3F localScaling, ref Scene.PhysicsWorldClass.Shape.CollisionShapeData collisionShapeData );
+
 		protected internal abstract void Render( Viewport viewport, Transform bodyTransform, bool solid, ref int verticesRendered );
 
 		protected override void OnAddedToParent()
@@ -73,11 +78,8 @@ namespace NeoAxis
 			RecreateBody();
 		}
 
-		//!!!!так?
 		static RigidBody GetRigidBody( Component start )
 		{
-			//!!!!slowly?
-
 			var p = start;
 			while( p != null )
 			{
@@ -103,6 +105,7 @@ namespace NeoAxis
 				body.RecreateBody();
 		}
 
+		//!!!!
 		[Browsable( false )]
 		public double VolumeNotScaledByParent
 		{
@@ -122,6 +125,7 @@ namespace NeoAxis
 			//body.NeedUpdateCachedMass();
 		}
 
+		//!!!!?
 		internal virtual Vector3 GetCenterOfMassPositionNotScaledByParent()
 		{
 			return Vector3.Zero;

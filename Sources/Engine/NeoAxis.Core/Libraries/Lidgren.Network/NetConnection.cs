@@ -8,7 +8,7 @@ using System.Diagnostics;
 using NetEndPoint = System.Net.IPEndPoint;
 #endif
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	/// <summary>
 	/// Represents a connection to a remote peer

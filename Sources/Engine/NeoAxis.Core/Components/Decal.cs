@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -151,7 +151,7 @@ namespace NeoAxis
 				var cameraSettings = context.Owner.CameraSettings;
 				var tr = Transform.Value;
 
-				var boundingSize = SpaceBounds.CalculatedBoundingSphereRadius * 2;
+				var boundingSize = (float)SpaceBounds.BoundingSphere.Radius * 2;
 				var visibilityDistance = context.GetVisibilityDistanceByObjectSize( boundingSize ) * VisibilityDistanceFactor;
 
 				//bool skip = false;
@@ -164,7 +164,7 @@ namespace NeoAxis
 					{
 						var item = new RenderingPipeline.RenderSceneData.DecalItem();
 						item.Creator = this;
-						item.BoundingBox = SpaceBounds.CalculatedBoundingBox;
+						item.BoundingBox = SpaceBounds.boundingBox;
 						//item.BoundingSphere = SpaceBounds.CalculatedBoundingSphere;
 
 						item.Position = tr.Position;
@@ -185,7 +185,7 @@ namespace NeoAxis
 					{
 						var context2 = context.ObjectInSpaceRenderingContext;
 
-						bool show = ( ParentScene.GetDisplayDevelopmentDataInThisApplication() && ParentScene.DisplayDecals ) || context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this;
+						bool show = ( context.SceneDisplayDevelopmentDataInThisApplication && ParentScene.DisplayDecals ) || context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this;
 						if( show )
 						{
 							if( context2.displayDecalsCounter < context2.displayDecalsMax )
@@ -194,16 +194,16 @@ namespace NeoAxis
 
 								ColorValue color;
 								if( context2.selectedObjects.Contains( this ) )
-									color = ProjectSettings.Get.General.SelectedColor;
+									color = ProjectSettings.Get.Colors.SelectedColor;
 								else if( context2.canSelectObjects.Contains( this ) )
-									color = ProjectSettings.Get.General.CanSelectColor;
+									color = ProjectSettings.Get.Colors.CanSelectColor;
 								else
-									color = ProjectSettings.Get.General.SceneShowDecalColor;
+									color = ProjectSettings.Get.Colors.SceneShowDecalColor;
 
 								var viewport = context.Owner;
 								if( viewport.Simple3DRenderer != null )
 								{
-									viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+									viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 									DebugDraw( viewport );
 								}
 							}

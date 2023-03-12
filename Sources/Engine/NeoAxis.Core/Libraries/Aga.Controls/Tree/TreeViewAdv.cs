@@ -1,3 +1,4 @@
+#if !DEPLOY
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,7 +10,7 @@ using System.Windows.Forms;
 using System.Collections;
 
 using Internal.Aga.Controls.Tree.NodeControls;
-using Internal.Aga.Controls.Threading;
+//using Internal.Aga.Controls.Threading;
 using System.Runtime.InteropServices;
 
 namespace Internal.Aga.Controls.Tree
@@ -40,7 +41,7 @@ namespace Internal.Aga.Controls.Tree
 		private TreeColumn _hotColumn;
 		private IncrementalSearch _search;
 		private List<TreeNodeAdv> _expandingNodes = new List<TreeNodeAdv>();
-		private AbortableThreadPool _threadPool = new AbortableThreadPool();
+		//private AbortableThreadPool _threadPool = new AbortableThreadPool();
 		private Predicate<TreeNodeAdv> _viewNodeFilter = null;
 
 		//!!!!betauser
@@ -787,7 +788,7 @@ namespace Internal.Aga.Controls.Tree
 		{
 			lock (_expandingNodes)
 			{
-				_threadPool.CancelAll(true);
+				//_threadPool.CancelAll(true);
 				for (int i = 0; i < _expandingNodes.Count; i++)
 					_expandingNodes[i].IsExpandingNow = false;
 				_expandingNodes.Clear();
@@ -802,18 +803,18 @@ namespace Internal.Aga.Controls.Tree
 			eargs.Value = value;
 			eargs.IgnoreChildren = ignoreChildren;
 
-			if (AsyncExpanding && LoadOnDemand && !_threadPool.IsMyThread(Thread.CurrentThread))
-			{
-				WaitCallback wc = delegate(object argument) { SetIsExpanded((ExpandArgs)argument); };
-				_threadPool.QueueUserWorkItem(wc, eargs);
-			}
-			else
+			//if (AsyncExpanding && LoadOnDemand && !_threadPool.IsMyThread(Thread.CurrentThread))
+			//{
+			//	WaitCallback wc = delegate(object argument) { SetIsExpanded((ExpandArgs)argument); };
+			//	_threadPool.QueueUserWorkItem(wc, eargs);
+			//}
+			//else
 				SetIsExpanded(eargs);
 		}
 
 		private void SetIsExpanded(ExpandArgs eargs)
 		{
-			bool update = !eargs.IgnoreChildren && !AsyncExpanding;
+			bool update = !eargs.IgnoreChildren;// && !AsyncExpanding;
 			if (update)
 				BeginUpdate();
 			try
@@ -849,13 +850,13 @@ namespace Internal.Aga.Controls.Tree
 
 			if (value && !node.IsExpandedOnce)
 			{
-				if (AsyncExpanding && LoadOnDemand)
-				{
-					AddExpandingNode(node);
-					node.AssignIsExpanded(true);
-					Invalidate();
-				}
-				ReadChilds(node, AsyncExpanding);
+				//if (AsyncExpanding && LoadOnDemand)
+				//{
+				//	AddExpandingNode(node);
+				//	node.AssignIsExpanded(true);
+				//	Invalidate();
+				//}
+				ReadChilds( node, false );// AsyncExpanding);
 				RemoveExpandingNode(node);
 			}
 			node.AssignIsExpanded(value);
@@ -1424,3 +1425,5 @@ namespace Internal.Aga.Controls.Tree
 		}
 	}
 }
+
+#endif

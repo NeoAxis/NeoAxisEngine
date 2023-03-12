@@ -1,4 +1,5 @@
-﻿// *****************************************************************************
+#if !DEPLOY
+// *****************************************************************************
 // 
 //  © Component Factory Pty Ltd 2012. All rights reserved.
 //	The software and associated documentation supplied hereunder are the 
@@ -339,7 +340,7 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         /// </summary>
         /// <param name="m">The message to be dispatched. You cannot modify this message.</param>
         /// <returns>true to filter the message and stop it from being dispatched; false to allow the message to continue to the next filter or control.</returns>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+        //[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         public bool PreFilterMessage(ref Message m)
         {
             // If we have suspended operation....
@@ -743,3 +744,5 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         #endregion
     }
 }
+
+#endif

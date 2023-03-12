@@ -1,8 +1,9 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -64,6 +65,7 @@ namespace NeoAxis
 		/// <param name="wy">Value at row 4 column 2 of the matrix.</param>
 		/// <param name="wz">Value at row 4 column 3 of the matrix.</param>
 		/// <param name="ww">Value at row 4 column 4 of the matrix.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Matrix4H(
 			float xx, float xy, float xz, float xw,
 			float yx, float yy, float yz, float yw,

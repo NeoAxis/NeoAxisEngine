@@ -1770,7 +1770,7 @@
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(StlIncludeDirectories);$(Sysroot)\usr\include;..\..\..\include;..\..\..\..\..\..\NativeMemoryManager;..\..\..\..\bx\include;..\..\..\..\bx\3rdparty;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty;..\..\..\..\bimg\3rdparty\astc-codec\include;..\..\..\..\bimg\3rdparty\astc-codec;..\..\..\..\bgfx\3rdparty\fcpp;..\..\..\..\bgfx\3rdparty\glsl-optimizer\src\glsl;..\..\..\..\bgfx\3rdparty\glsl-optimizer\src;..\..\..\..\bgfx\3rdparty\glsl-optimizer\src\mesa;..\..\..\..\bgfx\3rdparty\glsl-optimizer\include;..\..\..\3rdparty\glslang\glslang\Public;..\..\..\3rdparty\glslang\glslang\Include;..\..\..\3rdparty\glslang;..\..\..\3rdparty\webgpu\include;..\..\..\3rdparty\spirv-cross;..\..\..\3rdparty\spirv-tools\include;..\..\..\3rdparty;..\..\..\3rdparty\spirv-tools;..\..\..\3rdparty\spirv-headers\include;..\..\..\3rdparty\spirv-tools\include\generated;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;NDEBUG;_MT;_SECURE_SCL=0;ENABLE_OPT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;NDEBUG;_MT;_SECURE_SCL=0;ENABLE_OPT;BX_CONFIG_DEBUG=0;BGFX_CONFIG_DEBUG=0;BGFX_CONFIG_DEBUG_UNIFORM=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -1784,6 +1784,7 @@
       <ExceptionHandling>Enabled</ExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <AdditionalOptions>-fms-extensions %(AdditionalOptions)</AdditionalOptions>
+      <CppLanguageStandard>c++1z</CppLanguageStandard>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -1802,7 +1803,7 @@
       </DataExecutionPrevention>
       <ImportLibrary>$(OutDir)libshaderc.lib</ImportLibrary>
       <AdditionalOptions> -lm %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>$(Sysroot)\usr\lib\libm.a;$(Sysroot)\usr\lib\libGLESv2.so;$(Sysroot)\usr\lib\libEGL.so;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm64\usr\lib\libm.a;C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm64\usr\lib\libGLESv2.so;C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm64\usr\lib\libEGL.so;%(AdditionalDependencies)</AdditionalDependencies>
       <DebuggerSymbolInformation>OmitAllSymbolInformation</DebuggerSymbolInformation>
     </Link>
     <PostBuildEvent>
@@ -1819,7 +1820,7 @@
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(StlIncludeDirectories);$(Sysroot)\usr\include;..\..\..\include;..\..\..\..\..\..\NativeMemoryManager;..\..\..\..\bx\include;..\..\..\..\bx\3rdparty;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty;..\..\..\..\bimg\3rdparty\astc-codec\include;..\..\..\..\bimg\3rdparty\astc-codec;..\..\..\..\bgfx\3rdparty\fcpp;..\..\..\..\bgfx\3rdparty\glsl-optimizer\src\glsl;..\..\..\..\bgfx\3rdparty\glsl-optimizer\src;..\..\..\..\bgfx\3rdparty\glsl-optimizer\src\mesa;..\..\..\..\bgfx\3rdparty\glsl-optimizer\include;..\..\..\3rdparty\glslang\glslang\Public;..\..\..\3rdparty\glslang\glslang\Include;..\..\..\3rdparty\glslang;..\..\..\3rdparty\webgpu\include;..\..\..\3rdparty\spirv-cross;..\..\..\3rdparty\spirv-tools\include;..\..\..\3rdparty;..\..\..\3rdparty\spirv-tools;..\..\..\3rdparty\spirv-headers\include;..\..\..\3rdparty\spirv-tools\include\generated;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=4;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;NDEBUG;_MT;_SECURE_SCL=0;ENABLE_OPT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=4;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;NDEBUG;_MT;_SECURE_SCL=0;ENABLE_OPT;BX_CONFIG_DEBUG=0;BGFX_CONFIG_DEBUG=0;BGFX_CONFIG_DEBUG_UNIFORM=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -1833,6 +1834,7 @@
       <ExceptionHandling>Enabled</ExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <AdditionalOptions>-fms-extensions %(AdditionalOptions)</AdditionalOptions>
+      <CppLanguageStandard>c++1z</CppLanguageStandard>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -1851,7 +1853,7 @@
       </DataExecutionPrevention>
       <ImportLibrary>$(OutDir)libshaderc.lib</ImportLibrary>
       <AdditionalOptions> -lm %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>$(Sysroot)\usr\lib\libm.a;$(Sysroot)\usr\lib\libGLESv2.so;$(Sysroot)\usr\lib\libEGL.so;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm\usr\lib\libm.a;C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm\usr\lib\libGLESv2.so;C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm\usr\lib\libEGL.so;%(AdditionalDependencies)</AdditionalDependencies>
       <DebuggerSymbolInformation>OmitAllSymbolInformation</DebuggerSymbolInformation>
     </Link>
     <PostBuildEvent>
@@ -1922,7 +1924,7 @@
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(StlIncludeDirectories);$(Sysroot)\usr\include;..\..\..\include;..\..\..\..\..\..\NativeMemoryManager;..\..\..\..\bx\include;..\..\..\..\bx\3rdparty;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty;..\..\..\..\bimg\3rdparty\astc-codec\include;..\..\..\..\bimg\3rdparty\astc-codec;..\..\..\..\bgfx\3rdparty\fcpp;..\..\..\..\bgfx\3rdparty\glsl-optimizer\src\glsl;..\..\..\..\bgfx\3rdparty\glsl-optimizer\src;..\..\..\..\bgfx\3rdparty\glsl-optimizer\src\mesa;..\..\..\..\bgfx\3rdparty\glsl-optimizer\include;..\..\..\3rdparty\glslang\glslang\Public;..\..\..\3rdparty\glslang\glslang\Include;..\..\..\3rdparty\glslang;..\..\..\3rdparty\webgpu\include;..\..\..\3rdparty\spirv-cross;..\..\..\3rdparty\spirv-tools\include;..\..\..\3rdparty;..\..\..\3rdparty\spirv-tools;..\..\..\3rdparty\spirv-headers\include;..\..\..\3rdparty\spirv-tools\include\generated;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;_DEBUG;_MT;_SECURE_SCL=0;ENABLE_OPT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;_DEBUG;_MT;_SECURE_SCL=0;ENABLE_OPT;BX_CONFIG_DEBUG=1;BGFX_CONFIG_DEBUG=1;BGFX_CONFIG_DEBUG_UNIFORM=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>
       </StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -1939,13 +1941,13 @@
       <LanguageStandard>
       </LanguageStandard>
       <Verbose>false</Verbose>
-      <CppLanguageStandard>c++11</CppLanguageStandard>
+      <CppLanguageStandard>c++1z</CppLanguageStandard>
       <ExceptionHandling>Enabled</ExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <AdditionalOptions>-fms-extensions %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(Sysroot)\usr\lib\libm.a;$(Sysroot)\usr\lib\libGLESv2.so;$(Sysroot)\usr\lib\libEGL.so;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm64\usr\lib\libm.a;C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm64\usr\lib\libGLESv2.so;C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm64\usr\lib\libEGL.so;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <Version>
       </Version>
@@ -1977,7 +1979,7 @@
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(StlIncludeDirectories);$(Sysroot)\usr\include;..\..\..\include;..\..\..\..\..\..\NativeMemoryManager;..\..\..\..\bx\include;..\..\..\..\bx\3rdparty;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty;..\..\..\..\bimg\3rdparty\astc-codec\include;..\..\..\..\bimg\3rdparty\astc-codec;..\..\..\..\bgfx\3rdparty\fcpp;..\..\..\..\bgfx\3rdparty\glsl-optimizer\src\glsl;..\..\..\..\bgfx\3rdparty\glsl-optimizer\src;..\..\..\..\bgfx\3rdparty\glsl-optimizer\src\mesa;..\..\..\..\bgfx\3rdparty\glsl-optimizer\include;..\..\..\3rdparty\glslang\glslang\Public;..\..\..\3rdparty\glslang\glslang\Include;..\..\..\3rdparty\glslang;..\..\..\3rdparty\webgpu\include;..\..\..\3rdparty\spirv-cross;..\..\..\3rdparty\spirv-tools\include;..\..\..\3rdparty;..\..\..\3rdparty\spirv-tools;..\..\..\3rdparty\spirv-headers\include;..\..\..\3rdparty\spirv-tools\include\generated;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=4;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;_DEBUG;_MT;_SECURE_SCL=0;ENABLE_OPT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=4;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;_DEBUG;_MT;_SECURE_SCL=0;ENABLE_OPT;BX_CONFIG_DEBUG=1;BGFX_CONFIG_DEBUG=1;BGFX_CONFIG_DEBUG_UNIFORM=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>
       </StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -1994,13 +1996,13 @@
       <LanguageStandard>
       </LanguageStandard>
       <Verbose>false</Verbose>
-      <CppLanguageStandard>c++11</CppLanguageStandard>
+      <CppLanguageStandard>c++1z</CppLanguageStandard>
       <ExceptionHandling>Enabled</ExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <AdditionalOptions>-fms-extensions %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(Sysroot)\usr\lib\libm.a;$(Sysroot)\usr\lib\libGLESv2.so;$(Sysroot)\usr\lib\libEGL.so;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm\usr\lib\libm.a;C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm\usr\lib\libGLESv2.so;C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm\usr\lib\libEGL.so;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <Version>
       </Version>

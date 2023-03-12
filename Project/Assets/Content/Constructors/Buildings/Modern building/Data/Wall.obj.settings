@@ -1,0 +1,95 @@
+// Made with NeoAxis Engine 2022.2.
+
+.component NeoAxis.Import3D
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1146, 842\"><KW V=\"1\" A=\"A263B6F82E8246DFBA81950A8D4F4551\"><CGD /><WS UN=\"E769934E36F44459A2B0BFD947CC5E76\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"0C63088FCCB44851F890ED871166791E\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"A263B6F82E8246DFBA81950A8D4F4551\"><KP UN=\"60DC8B6350564537EB9941C36D0C95C9\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"D554EB97D2164D1EC6A0456C3E31D735\" S=\"False\"><CPD ObjPath=\"$Materials\\$Material.002\\$Material.002 shader graph\" /></KP><KP UN=\"A263B6F82E8246DFBA81950A8D4F4551\" S=\"False\"><CPD ObjPath=\"$Mesh\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	LODs = False
+	LODLevels = 2
+	.component NeoAxis.Component
+	{
+		Name = Materials
+		.component NeoAxis.Material
+		{
+			Name = Material.002
+			BaseColor = 0.8 0.8 0.8
+			.component NeoAxis.FlowGraph
+			{
+				Name = Material.002 shader graph
+				EditorScrollPosition = 0 0
+				Specialization
+				{
+					GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+				}
+				.component NeoAxis.FlowGraphNode
+				{
+					Name = Node Material.002
+					Position = 10 -7
+					ControlledObject
+					{
+						GetByReference = "this:..\\.."
+					}
+				}
+			}
+		}
+	}
+	.component NeoAxis.Mesh
+	{
+		Name = Mesh
+		EditorCameraTransform = "6.26968526786023 -3.52789309533484 4.33320373817413; -0.184430623334752 0.0412314767803535 0.958324012210209 0.214243781987235; 1 1 1"
+		.component NeoAxis.MeshGeometry
+		{
+			Name = Cube
+			VertexStructure
+			{
+				Value
+				{
+					Length = 4
+					0
+					{
+						Offset = 0
+						Type = Float3
+						Semantic = Position
+					}
+					1
+					{
+						Offset = 12
+						Type = Float3
+						Semantic = Normal
+					}
+					2
+					{
+						Offset = 24
+						Type = Half4
+						Semantic = Tangent
+					}
+					3
+					{
+						Offset = 32
+						Type = Half2
+						Semantic = TextureCoordinate0
+					}
+				}
+			}
+			Vertices
+			{
+				Value
+				{
+					Length = 144
+					.elements = AAAAAAAAQEAAAAAAAACAPwAAAAAAAAAAAAAAPAAAALwAPA4+AAAAAAAAQEAAAEBAAACAPwAAAAAAAAAAAAAAPAAAALwAPBw4AAAAAAAAQMAAAEBAAACAPwAAAAAAAAAAAAAAPAAAALwAvBw4AAAAAAAAQMAAAAAAAACAPwAAAAAAAAAAAAAAPAAAALwAvA4+
+				}
+			}
+			Indices
+			{
+				Value
+				{
+					Length = 6
+					.elements = 0 1 2 0 2 3
+				}
+			}
+			Material
+			{
+				GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\White Bricks.material"
+			}
+		}
+	}
+}

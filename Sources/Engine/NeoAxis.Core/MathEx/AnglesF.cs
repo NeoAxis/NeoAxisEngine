@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using NeoAxis.Editor;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -39,6 +40,7 @@ namespace NeoAxis
 		/// Constructs Euler angles with the given <see cref="Vector3F"/> object.
 		/// </summary>
 		/// <param name="v">The given vector.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public AnglesF( Vector3F v )
 		{
 			this.Roll = v.Z;
@@ -52,6 +54,7 @@ namespace NeoAxis
 		/// <param name="roll">The angle of rotation about the X axis.</param>
 		/// <param name="pitch">The angle of rotation about the Y axis.</param>
 		/// <param name="yaw">The angle of rotation about the Z axis.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public AnglesF( float roll, float pitch, float yaw )
 		{
 			this.Roll = roll;
@@ -63,6 +66,7 @@ namespace NeoAxis
 		/// Constructs Euler angles with another specified <see cref="AnglesF"/> object.
 		/// </summary>
 		/// <param name="source">Euler angles of <see cref="AnglesF"/> format.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public AnglesF( AnglesF source )
 		{
 			this.Roll = source.Roll;
@@ -129,6 +133,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="obj">The object to compare with the current instance of <see cref="AnglesF"/>.</param>
 		/// <returns>True if the specified object is equal to the current instance of <see cref="AnglesF"/>; otherwise, False.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is AnglesF && this == (AnglesF)obj );
@@ -138,6 +143,7 @@ namespace NeoAxis
 		/// Returns a hash code for this instance.
 		/// </summary>
 		/// <returns>A hash code for this instance.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return ( Roll.GetHashCode() ^ Pitch.GetHashCode() ^ Yaw.GetHashCode() );
@@ -152,6 +158,7 @@ namespace NeoAxis
 		/// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="index"/> is out of the range [0, 2].</exception>
 		public unsafe float this[ int index ]
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				if( index < 0 || index > 2 )
@@ -161,6 +168,7 @@ namespace NeoAxis
 					return v[ index ];
 				}
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set
 			{
 				if( index < 0 || index > 2 )
@@ -178,6 +186,7 @@ namespace NeoAxis
 		/// <param name="a">The first Euler angles to compare.</param>
 		/// <param name="b">The second Euler angles to compare.</param>
 		/// <returns>True if the Euler angles are equal; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( AnglesF a, AnglesF b )
 		{
 			return ( a.Roll == b.Roll && a.Pitch == b.Pitch && a.Yaw == b.Yaw );
@@ -189,6 +198,7 @@ namespace NeoAxis
 		/// <param name="a">The first Euler angles to compare.</param>
 		/// <param name="b">The second Euler angles to compare.</param>
 		/// <returns>True if the Euler angles are unequal; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( AnglesF a, AnglesF b )
 		{
 			return ( a.Roll != b.Roll || a.Pitch != b.Pitch || a.Yaw != b.Yaw );
@@ -201,6 +211,7 @@ namespace NeoAxis
 		/// <param name="a">The Euler angles to compare.</param>
 		/// <param name="epsilon">The precision value.</param>
 		/// <returns>True if the specified Euler angles are equal to the current instance of <see cref="AnglesF"/>; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( AnglesF a, float epsilon )
 		{
 			if( Math.Abs( Roll - a.Roll ) > epsilon )
@@ -217,6 +228,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="a">The Euler angles to negate.</param>
 		/// <returns>The negated Euler angles.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static AnglesF operator -( AnglesF a )
 		{
 			return new AnglesF( -a.Roll, -a.Pitch, -a.Yaw );
@@ -228,6 +240,7 @@ namespace NeoAxis
 		/// <param name="a">The first Euler angles to add.</param>
 		/// <param name="b">The second Euler angles to add.</param>
 		/// <returns>The sum of the two Euler angles.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static AnglesF operator +( AnglesF a, AnglesF b )
 		{
 			return new AnglesF( a.Roll + b.Roll, a.Pitch + b.Pitch, a.Yaw + b.Yaw );
@@ -239,6 +252,7 @@ namespace NeoAxis
 		/// <param name="a">The Euler angles to subtract from.</param>
 		/// <param name="b">The Euler angles to be subtracted from another Euler angles.</param>
 		/// <returns>The difference between the two Euler angles.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static AnglesF operator -( AnglesF a, AnglesF b )
 		{
 			return new AnglesF( a.Roll - b.Roll, a.Pitch - b.Pitch, a.Yaw - b.Yaw );
@@ -250,6 +264,7 @@ namespace NeoAxis
 		/// <param name="a">The Euler angles to multiply.</param>
 		/// <param name="b">The value by which to multiply.</param>
 		/// <returns>The scaled Euler angles.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static AnglesF operator *( AnglesF a, float b )
 		{
 			return new AnglesF( a.Roll * b, a.Pitch * b, a.Yaw * b );
@@ -261,6 +276,7 @@ namespace NeoAxis
 		/// <param name="a">The Euler angles to divide.</param>
 		/// <param name="b">The scalar value.</param>
 		/// <returns>The scaled Euler angles.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static AnglesF operator /( AnglesF a, float b )
 		{
 			float invb = 1.0f / b;
@@ -278,6 +294,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="min">The minimum value.</param>
 		/// <param name="max">The maximum value.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Clamp( AnglesF min, AnglesF max )
 		{
 			if( Roll < min.Roll )
@@ -298,6 +315,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="AnglesF"/> into the equivalent <see cref="QuaternionF"/> structure.
 		/// </summary>
 		/// <returns>The equivalent <see cref="QuaternionF"/> structure.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public QuaternionF ToQuaternion()
 		{
 			float a;
@@ -325,6 +343,7 @@ namespace NeoAxis
 		/// <summary>
 		/// Restricts the current instance of <see cref="AnglesF"/> to be within a range [0, 360].
 		/// </summary>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Normalize360()
 		{
 			int i;
@@ -346,6 +365,7 @@ namespace NeoAxis
 		/// <summary>
 		/// Restricts the current instance of <see cref="AnglesF"/> to be within a range [-180, 180].
 		/// </summary>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Normalize180()
 		{
 			Normalize360();
@@ -362,6 +382,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <returns>The Euler angles of <see cref="Angles"/> format.</returns>
 		[AutoConvertType]
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Angles ToAngles()
 		{
 			Angles result;
@@ -376,6 +397,7 @@ namespace NeoAxis
 		/// Implicit conversion from <see cref="AnglesF"/> type to <see cref="Angles"/> type for the given value.
 		/// </summary>
 		/// <param name="v">The value to type convert.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator Angles( AnglesF v )
 		{
 			return new Angles( v );

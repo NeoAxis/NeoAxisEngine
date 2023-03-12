@@ -1,4 +1,5 @@
-﻿// *****************************************************************************
+#if !DEPLOY
+// *****************************************************************************
 // 
 //  © Component Factory Pty Ltd 2012. All rights reserved.
 //	The software and associated documentation supplied hereunder are the 
@@ -710,52 +711,52 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
                                       IPaletteRibbonGeneral paletteGeneral,
                                       PaletteState state);
 
-        /// <summary>
-        /// Draw a grid sorting direction glyph.
-        /// </summary>
-        /// <param name="context">Render context.</param>
-        /// <param name="sortOrder">Sorting order of the glyph.</param>
-        /// <param name="cellRect">Available drawing rectangle space.</param>
-        /// <param name="paletteContent">Palette to use for sourcing values.</param>
-        /// <param name="state">State associated with rendering.</param>
-        /// <param name="rtl">Should be drawn from right to left.</param>
-        /// <returns>Remainder space left over for other drawing.</returns>
-        Rectangle DrawGridSortGlyph(RenderContext context,
-                                    SortOrder sortOrder,
-                                    Rectangle cellRect,
-                                    IPaletteContent paletteContent,
-                                    PaletteState state,
-                                    bool rtl);
+        ///// <summary>
+        ///// Draw a grid sorting direction glyph.
+        ///// </summary>
+        ///// <param name="context">Render context.</param>
+        ///// <param name="sortOrder">Sorting order of the glyph.</param>
+        ///// <param name="cellRect">Available drawing rectangle space.</param>
+        ///// <param name="paletteContent">Palette to use for sourcing values.</param>
+        ///// <param name="state">State associated with rendering.</param>
+        ///// <param name="rtl">Should be drawn from right to left.</param>
+        ///// <returns>Remainder space left over for other drawing.</returns>
+        //Rectangle DrawGridSortGlyph(RenderContext context,
+        //                            SortOrder sortOrder,
+        //                            Rectangle cellRect,
+        //                            IPaletteContent paletteContent,
+        //                            PaletteState state,
+        //                            bool rtl);
 
-        /// <summary>
-        /// Draw a grid row glyph.
-        /// </summary>
-        /// <param name="context">Render context.</param>
-        /// <param name="rowGlyph">Row glyph.</param>
-        /// <param name="cellRect">Available drawing rectangle space.</param>
-        /// <param name="paletteContent">Palette to use for sourcing values.</param>
-        /// <param name="state">State associated with rendering.</param>
-        /// <param name="rtl">Should be drawn from right to left.</param>
-        /// <returns>Remainder space left over for other drawing.</returns>
-        Rectangle DrawGridRowGlyph(RenderContext context,
-                                   GridRowGlyph rowGlyph,
-                                   Rectangle cellRect,
-                                   IPaletteContent paletteContent,
-                                   PaletteState state,
-                                   bool rtl);
+        ///// <summary>
+        ///// Draw a grid row glyph.
+        ///// </summary>
+        ///// <param name="context">Render context.</param>
+        ///// <param name="rowGlyph">Row glyph.</param>
+        ///// <param name="cellRect">Available drawing rectangle space.</param>
+        ///// <param name="paletteContent">Palette to use for sourcing values.</param>
+        ///// <param name="state">State associated with rendering.</param>
+        ///// <param name="rtl">Should be drawn from right to left.</param>
+        ///// <returns>Remainder space left over for other drawing.</returns>
+        //Rectangle DrawGridRowGlyph(RenderContext context,
+        //                           GridRowGlyph rowGlyph,
+        //                           Rectangle cellRect,
+        //                           IPaletteContent paletteContent,
+        //                           PaletteState state,
+        //                           bool rtl);
 
-        /// <summary>
-        /// Draw a grid error glyph.
-        /// </summary>
-        /// <param name="context">Render context.</param>
-        /// <param name="cellRect">Available drawing rectangle space.</param>
-        /// <param name="state">State associated with rendering.</param>
-        /// <param name="rtl">Should be drawn from right to left.</param>
-        /// <returns>Remainder space left over for other drawing.</returns>
-        Rectangle DrawGridErrorGlyph(RenderContext context,
-                                     Rectangle cellRect,
-                                     PaletteState state,
-                                     bool rtl);
+        ///// <summary>
+        ///// Draw a grid error glyph.
+        ///// </summary>
+        ///// <param name="context">Render context.</param>
+        ///// <param name="cellRect">Available drawing rectangle space.</param>
+        ///// <param name="state">State associated with rendering.</param>
+        ///// <param name="rtl">Should be drawn from right to left.</param>
+        ///// <returns>Remainder space left over for other drawing.</returns>
+        //Rectangle DrawGridErrorGlyph(RenderContext context,
+        //                             Rectangle cellRect,
+        //                             PaletteState state,
+        //                             bool rtl);
 
         /// <summary>
         /// Draw a solid area glyph suitable for a drag drop area.
@@ -885,3 +886,5 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
 	}
     #endregion
 }
+
+#endif

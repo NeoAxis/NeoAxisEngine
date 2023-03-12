@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "OgreStableHeaders.h"
 #include "OgreNativeWrapperGeneral.h"
 #include "OgreNativeWrapper.h"
@@ -17,6 +17,7 @@
 #include "AdditionalMathFunctions.h"
 #include "OgreRoot.h"
 #include "MyOgreSceneManager.h"
+#include "OgrePlatformInformation.h"
 
 
 #if defined(_UNICODE) && OGRE_PLATFORM != OGRE_PLATFORM_WINRT
@@ -95,4 +96,16 @@ wchar16* CreateOutString(const Ogre::String& str)
 EXPORT void OgreNativeWrapper_FreeOutString(wchar16* pointer)
 {
 	delete[] pointer;
+}
+
+EXPORT wchar16* OgreNativeWrapper_GetGlobalParameter(const char* name)//, void* parameter1, void* parameter2, void* parameter3, void* parameter4)
+{
+	Ogre::String result;
+
+	if (strcmp(name, "CPU_ID") == 0)
+	{
+		result = Ogre::PlatformInformation::getCpuIdentifier();
+	}
+
+	return CreateOutString(result);
 }

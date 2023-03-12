@@ -1,4 +1,5 @@
-﻿// *****************************************************************************
+﻿#if !DEPLOY
+// *****************************************************************************
 // 
 //  © Component Factory Pty Ltd 2012. All rights reserved.
 //	The software and associated documentation supplied hereunder are the 
@@ -487,7 +488,7 @@ namespace Internal.ComponentFactory.Krypton.Docking
         /// </summary>
         /// <param name="msg">The message to be dispatched. You cannot modify this message. </param>
         /// <returns>true to filter out; false otherwise.</returns>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+        //[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         public bool PreFilterMessage(ref Message msg)
         {
             Form parentForm = this.FindForm();
@@ -934,7 +935,7 @@ namespace Internal.ComponentFactory.Krypton.Docking
             if (!_dockspaceSlide.ContainsFocus)
             {
                 _dockspaceSlide.Select();
-                Application.DoEvents();
+                NeoAxis.Editor.EditorAPI.ApplicationDoEvents( true );//Application.DoEvents();
             }
 
             if (SplitterMoveRect != null)
@@ -972,3 +973,5 @@ namespace Internal.ComponentFactory.Krypton.Docking
         #endregion
     }
 }
+
+#endif

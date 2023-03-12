@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -21,6 +21,7 @@ namespace NeoAxis
 		[DllImport( OgreWrapper.library, EntryPoint = "OgreNativeWrapper_FreeOutString", CallingConvention = OgreWrapper.convention ), SuppressUnmanagedCodeSecurity]
 		public unsafe static extern void FreeOutString( IntPtr pointer );
 
+
 		public static string GetOutString( IntPtr pointer )
 		{
 			if( pointer != IntPtr.Zero )
@@ -31,6 +32,16 @@ namespace NeoAxis
 			}
 			else
 				return null;
+		}
+
+
+		[DllImport( OgreWrapper.library, EntryPoint = "OgreNativeWrapper_GetGlobalParameter", CallingConvention = OgreWrapper.convention ), SuppressUnmanagedCodeSecurity]
+		public unsafe static extern IntPtr GetGlobalParameterNative( [MarshalAs( UnmanagedType.LPStr )] string name );
+		//IntPtr parameter1, IntPtr parameter2, IntPtr parameter3, IntPtr parameter4 );
+
+		public static string GetGlobalParameter( string name )
+		{
+			return GetOutString( GetGlobalParameterNative( name ) );
 		}
 	}
 }

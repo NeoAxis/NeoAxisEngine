@@ -1,5 +1,5 @@
 #if WINDOWS
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -450,7 +450,7 @@ namespace Internal//NeoAxis
 		static extern IntPtr GetDesktopWindow();
 
 
-		//!!!!
+
 
 		[StructLayout( LayoutKind.Sequential )]
 		public struct RECT
@@ -516,6 +516,27 @@ namespace Internal//NeoAxis
 
 		[DllImport( "gdi32.dll", EntryPoint = "DeleteDC" )]
 		public static extern bool DeleteDC( [In] IntPtr hdc );
+
+
+		//!!!!
+
+		[DllImport( "gdi32.dll" )]
+		static extern int SetTextColor( IntPtr hdc, int crColor );
+
+		[DllImport( "gdi32.dll" )]
+		static extern int SetBkColor( IntPtr hdc, int crColor );
+
+
+		private const uint DT_TOP = 0x00000000;
+		private const uint DT_LEFT = 0x00000000;
+		private const uint DT_RIGHT = 0x00000002;
+		private const uint DT_CENTER = 0x00000001;
+		private const uint DT_VCENTER = 0x00000004;
+		private const uint DT_BOTTOM = 0x00000008;
+		private const uint DT_SINGLELINE = 0x00000020;
+
+		[DllImport( "user32.dll" )]
+		static extern int DrawTextEx( IntPtr hdc, StringBuilder lpchText, int cchText, ref RECT lprc, uint dwDTFormat, IntPtr/*ref DRAWTEXTPARAMS*/ lpDTParams );
 
 		///////////////////////////////////////////
 
@@ -673,6 +694,40 @@ namespace Internal//NeoAxis
 
 		[DllImport( "user32.dll" )]
 		static extern bool SetProcessDPIAware();
+
+		///////////////////////////////////////////
+
+		[Flags]
+		enum DwmWindowAttribute : uint
+		{
+			NCRenderingEnabled = 1,
+			NCRenderingPolicy,
+			TransitionsForceDisabled,
+			AllowNCPaint,
+			CaptionButtonBounds,
+			NonClientRtlLayout,
+			ForceIconicRepresentation,
+			Flip3DPolicy,
+			ExtendedFrameBounds,
+			HasIconicBitmap,
+			DisallowPeek,
+			ExcludedFromPeek,
+			Cloak,
+			Cloaked,
+			FreezeRepresentation,
+			PassiveUpdateMode,
+			UseHostBackdropBrush,
+			UseImmersiveDarkMode = 20,
+			WindowCornerPreference = 33,
+			BorderColor,
+			CaptionColor,
+			TextColor,
+			VisibleFrameBorderThickness,
+			Last
+		}
+
+		[DllImport( "dwmapi.dll", PreserveSig = true )]
+		static extern int DwmSetWindowAttribute( IntPtr hwnd, DwmWindowAttribute attr, ref int attrValue, int attrSize );
 
 		///////////////////////////////////////////
 
@@ -871,6 +926,9 @@ namespace Internal//NeoAxis
 			IntPtr windowHandle = CreateWindowEx( exStyle, applicationWindowClassName,
 				EngineApp.CreatedInsideEngineWindow.Title, style, position.X, position.Y, size.X, size.Y, IntPtr.Zero,
 				IntPtr.Zero, GetModuleHandle( null ), IntPtr.Zero );
+
+			if( SystemSettings.DarkMode )
+				SetDarkMode( windowHandle, true );
 
 			if( showMaximized )
 				ShowWindow( windowHandle, SW_SHOWMAXIMIZED );
@@ -1423,7 +1481,7 @@ namespace Internal//NeoAxis
 					case WM_TIMER:
 						if( (int)wParam == suspendModeTimerID )
 						{
-							if( EngineApp.DrawSplashScreen != ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.Disabled )
+							if( EngineApp.DrawSplashScreen != ProjectSettingsPage_General.EngineSplashScreenStyleEnum.Disabled )
 							{
 								unsafe
 								{
@@ -1441,9 +1499,20 @@ namespace Internal//NeoAxis
 					case WM_PAINT:
 
 #if !DEPLOY
+
+						RECT MakeRECT( int left, int top, int width, int height )
+						{
+							RECT r = new RECT();
+							r.Left = left;
+							r.Top = top;
+							r.Right = left + width;
+							r.Bottom = top + height;
+							return r;
+						}
+
 						//draw splash screen
 						var drawSplashScreen = EngineApp.DrawSplashScreen;
-						if( drawSplashScreen != ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.Disabled )
+						if( drawSplashScreen != ProjectSettingsPage_General.EngineSplashScreenStyleEnum.Disabled )
 						{
 							var hdc = BeginPaint( hWnd, out var ps );
 
@@ -1477,18 +1546,12 @@ namespace Internal//NeoAxis
 
 									//draw background
 									{
-										var color = drawSplashScreen == ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.WhiteBackground ? Color.White : Color.Black;
-										var brush = CreateSolidBrush( (uint)ColorTranslator.ToWin32( color ) );
+										var color = drawSplashScreen == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.WhiteBackground ? Color.White : Color.Black;
 
-										RECT MakeRECT( int left, int top, int width, int height )
-										{
-											RECT r = new RECT();
-											r.Left = left;
-											r.Top = top;
-											r.Right = left + width;
-											r.Bottom = top + height;
-											return r;
-										}
+										//!!!!
+										//color = Color.Gray;
+
+										var brush = CreateSolidBrush( (uint)ColorTranslator.ToWin32( color ) );
 
 										if( destRect.Left > 0 )
 										{
@@ -1514,6 +1577,18 @@ namespace Internal//NeoAxis
 										DeleteObject( brush );
 									}
 
+									////!!!!
+									//{
+									//	var text = new StringBuilder( "Test test" );
+
+									//	var rect = MakeRECT( 0, 0, 500, 500 );
+									//	var format = DT_CENTER | DT_VCENTER | DT_SINGLELINE;
+
+									//	SetTextColor( hdc, ColorTranslator.ToWin32( Color.FromArgb( 255, 0, 0 ) ) );
+
+									//	DrawTextEx( hdc, text, text.Length, ref rect, format, IntPtr.Zero );
+									//}
+
 									//if( stretch )
 									//{
 									//	StretchBlt( hdc, destRect.Left, destRect.Top, destRect.Width, destRect.Height, hdcMem, 0, 0, bitmap.Size.Width, bitmap.Size.Height, TernaryRasterOperations.SRCCOPY );
@@ -1537,6 +1612,50 @@ namespace Internal//NeoAxis
 
 							return IntPtr.Zero;
 						}
+
+						if( SystemSettings.CommandLineParameters.TryGetValue( "-server", out var projectServer ) && projectServer == "1" &&
+							RenderingSystem.BackendNull )
+						{
+							var hdc = BeginPaint( hWnd, out var ps );
+
+							{
+								var screenRect = instance.CreatedWindow_GetClientRectangle();
+								var screenSize = screenRect.Size;
+
+								var textColor = Color.White;
+								var backColor = Color.Black;
+
+								//draw background
+								{
+									var brush = CreateSolidBrush( (uint)ColorTranslator.ToWin32( backColor ) );
+
+									var rect = MakeRECT( 0, 0, screenSize.X, screenSize.Y );
+									FillRect( hdc, ref rect, brush );
+
+									DeleteObject( brush );
+								}
+
+								//draw text
+								{
+									var text = new StringBuilder( "Server mode" );
+
+									var rect = MakeRECT( 10, 10, screenSize.X, screenSize.Y );
+									var format = DT_LEFT | DT_TOP;//DT_BOTTOM;// | DT_SINGLELINE;
+																  //var format = DT_CENTER | DT_VCENTER;// | DT_SINGLELINE;
+
+									SetTextColor( hdc, ColorTranslator.ToWin32( textColor ) );
+									SetBkColor( hdc, ColorTranslator.ToWin32( backColor ) );
+
+									DrawTextEx( hdc, text, text.Length, ref rect, format, IntPtr.Zero );
+								}
+							}
+
+							EndPaint( hWnd, ref ps );
+
+							return IntPtr.Zero;
+						}
+
+
 #endif
 
 						if( EngineApp.insideRunMessageLoop && EngineApp.EnginePaused && !instance.resizingMoving &&
@@ -1652,8 +1771,11 @@ namespace Internal//NeoAxis
 		{
 			bool needIdle = true;
 
-			if( IsIconic( EngineApp.ApplicationWindowHandle ) )
-				needIdle = false;
+			if( EngineApp.EnginePauseWhenApplicationIsNotActive ) //!!!!new
+			{
+				if( IsIconic( EngineApp.ApplicationWindowHandle ) )
+					needIdle = false;
+			}
 
 			//!!!!!так?
 			if( EngineApp.FullscreenEnabled && GetForegroundWindow() != EngineApp.ApplicationWindowHandle )
@@ -2440,6 +2562,16 @@ namespace Internal//NeoAxis
 		{
 			name = CultureInfo.CurrentUICulture.Name;
 			englishName = CultureInfo.CurrentUICulture.EnglishName;
+		}
+
+		public void SetDarkMode( IntPtr handle, bool enable )
+		{
+			try
+			{
+				int value = enable ? 1 : 0;
+				DwmSetWindowAttribute( handle, DwmWindowAttribute.UseImmersiveDarkMode, ref value, 4 );
+			}
+			catch { }
 		}
 	}
 }

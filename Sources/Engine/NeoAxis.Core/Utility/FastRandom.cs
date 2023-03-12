@@ -1,7 +1,8 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 // TODO: Add original author copyright.
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace NeoAxis
@@ -25,6 +26,7 @@ namespace NeoAxis
 		/// Initializes a new instance of the <see cref="FastRandom"/> class, 
 		/// using a time-dependent default seed value.
 		/// </summary>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public FastRandom()
 		{
 			unchecked
@@ -42,6 +44,7 @@ namespace NeoAxis
 		/// sequence. If a negative number is specified, the absolute value of the number
 		/// is used.
 		/// </param>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public FastRandom( int seed, bool makeBetterSeed = false )
 		{
 			Random betterSeed = null;
@@ -60,6 +63,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void Initialize( int seed )
 		{
 			x = (uint)seed;
@@ -74,6 +78,7 @@ namespace NeoAxis
 		/// <returns>
 		/// A 32-bit signed integer greater than or equal to zero and less than System.Int32.MaxValue.
 		/// </returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int NextInteger()
 		{
 			uint t = ( x ^ ( x << 11 ) );
@@ -99,6 +104,7 @@ namespace NeoAxis
 		/// A 32-bit signed integer greater than or equal to zero, and less or equal than maxValue. The range of return values includes zero and maxValue.
 		/// </returns>
 		/// <exception cref="System.ArgumentOutOfRangeException" >maxValue is less than zero.</exception>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int Next( int maxValue )
 		{
 			if( maxValue < 0 )
@@ -127,6 +133,7 @@ namespace NeoAxis
 		/// that is, the range of return values includes minValue and maxValue.
 		/// </returns>
 		/// <exception cref="System.ArgumentOutOfRangeException" >minValue is greater than maxValue.</exception>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int Next( int minValue, int maxValue )
 		{
 			if( minValue > maxValue )
@@ -155,6 +162,7 @@ namespace NeoAxis
 		/// Returns a random number between 0.0 and 1.0.
 		/// </summary>
 		/// <returns>A floating point number greater than or equal to 0.0, and less than 1.0.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public double NextDouble()
 		{
 			uint t = ( x ^ ( x << 11 ) );
@@ -176,6 +184,7 @@ namespace NeoAxis
 		/// Returns a random number between 0.0 and 1.0.
 		/// </summary>
 		/// <returns>A floating point number greater than or equal to 0.0, and less than 1.0.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float NextFloat()
 		{
 			uint t = ( x ^ ( x << 11 ) );
@@ -197,6 +206,7 @@ namespace NeoAxis
 		/// Fills the elements of a specified array of bytes with random numbers.
 		/// </summary>
 		/// <param name="buffer">An array of bytes to contain random numbers.</param>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public void NextBytes( byte[] buffer )
 		{
 			// Fill up the bulk of the buffer in chunks of 4 bytes at a time.
@@ -317,6 +327,7 @@ namespace NeoAxis
 		/// Returns a single random bit.
 		/// </summary>
 		/// <returns></returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool NextBoolean()
 		{
 			if( bitMask == 1 )
@@ -356,6 +367,7 @@ namespace NeoAxis
 		/// Returns a random number between min and max values.
 		/// </summary>
 		/// <returns>A floating point number greater than to minValue, and less than to maxValue.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public double Next( double minValue, double maxValue )
 		{
 			return minValue + NextDouble() * ( maxValue - minValue );
@@ -365,6 +377,7 @@ namespace NeoAxis
 		/// Returns a random number between zero and max value.
 		/// </summary>
 		/// <returns>A floating point number greater than to zero, and less than to maxValue.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public double Next( double maxValue )
 		{
 			return NextDouble() * maxValue;
@@ -374,6 +387,7 @@ namespace NeoAxis
 		/// Returns a random number between min and max values.
 		/// </summary>
 		/// <returns>A floating point number greater than to minValue, and less than to maxValue.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float Next( float minValue, float maxValue )
 		{
 			return minValue + NextFloat() * ( maxValue - minValue );
@@ -383,6 +397,7 @@ namespace NeoAxis
 		/// Returns a random number between zero and max value.
 		/// </summary>
 		/// <returns>A floating point number greater than to zero, and less than to maxValue.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float Next( float maxValue )
 		{
 			return NextFloat() * maxValue;
@@ -390,205 +405,229 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		static FastRandom _static = new FastRandom();
+		//static FastRandom _static = new FastRandom();
 
-		public static double Generate( double minValue, double maxValue )
-		{
-			lock( _static )
-				return _static.Next( minValue, maxValue );
-		}
-
-		//public static double Generate( double maxValue )
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static double Generate( double minValue, double maxValue )
 		//{
 		//	lock( _static )
-		//		return _static.Next( maxValue );
+		//		return _static.Next( minValue, maxValue );
 		//}
 
-		public static float Generate( float minValue, float maxValue )
-		{
-			lock( _static )
-				return _static.Next( minValue, maxValue );
-		}
+		////public static double Generate( double maxValue )
+		////{
+		////	lock( _static )
+		////		return _static.Next( maxValue );
+		////}
 
-		//public static float Generate( float maxValue )
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static float Generate( float minValue, float maxValue )
 		//{
 		//	lock( _static )
-		//		return _static.Next( maxValue );
+		//		return _static.Next( minValue, maxValue );
 		//}
 
-		public static int Generate( int minValue, int maxValue )
-		{
-			lock( _static )
-				return _static.Next( minValue, maxValue );
-		}
+		////public static float Generate( float maxValue )
+		////{
+		////	lock( _static )
+		////		return _static.Next( maxValue );
+		////}
 
-		//public static int Generate( int maxValue )
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static int Generate( int minValue, int maxValue )
 		//{
 		//	lock( _static )
-		//		return _static.Next( maxValue );
+		//		return _static.Next( minValue, maxValue );
 		//}
 
-		public static double GenerateDouble()
-		{
-			lock( _static )
-				return _static.NextDouble();
-		}
+		////public static int Generate( int maxValue )
+		////{
+		////	lock( _static )
+		////		return _static.Next( maxValue );
+		////}
 
-		public static float GenerateFloat()
-		{
-			lock( _static )
-				return _static.NextFloat();
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static double GenerateDouble()
+		//{
+		//	lock( _static )
+		//		return _static.NextDouble();
+		//}
 
-		public static int GenerateInteger()
-		{
-			lock( _static )
-				return _static.NextInteger();
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static float GenerateFloat()
+		//{
+		//	lock( _static )
+		//		return _static.NextFloat();
+		//}
 
-		public static bool GenerateBoolean()
-		{
-			lock( _static )
-				return _static.NextBoolean();
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static int GenerateInteger()
+		//{
+		//	lock( _static )
+		//		return _static.NextInteger();
+		//}
 
-		public static void Generate( byte[] buffer )
-		{
-			lock( _static )
-				_static.NextBytes( buffer );
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static bool GenerateBoolean()
+		//{
+		//	lock( _static )
+		//		return _static.NextBoolean();
+		//}
 
-		public static Vector4 Generate( Vector4 minValue, Vector4 maxValue )
-		{
-			lock( _static )
-				return new Vector4(
-					_static.Next( minValue.X, maxValue.X ),
-					_static.Next( minValue.Y, maxValue.Y ),
-					_static.Next( minValue.Z, maxValue.Z ),
-					_static.Next( minValue.W, maxValue.W ) );
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static void Generate( byte[] buffer )
+		//{
+		//	lock( _static )
+		//		_static.NextBytes( buffer );
+		//}
 
-		public static Vector3 Generate( Vector3 minValue, Vector3 maxValue )
-		{
-			lock( _static )
-				return new Vector3(
-					_static.Next( minValue.X, maxValue.X ),
-					_static.Next( minValue.Y, maxValue.Y ),
-					_static.Next( minValue.Z, maxValue.Z ) );
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static Vector4 Generate( Vector4 minValue, Vector4 maxValue )
+		//{
+		//	lock( _static )
+		//		return new Vector4(
+		//			_static.Next( minValue.X, maxValue.X ),
+		//			_static.Next( minValue.Y, maxValue.Y ),
+		//			_static.Next( minValue.Z, maxValue.Z ),
+		//			_static.Next( minValue.W, maxValue.W ) );
+		//}
 
-		public static Vector2 Generate( Vector2 minValue, Vector2 maxValue )
-		{
-			lock( _static )
-				return new Vector2(
-					_static.Next( minValue.X, maxValue.X ),
-					_static.Next( minValue.Y, maxValue.Y ) );
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static Vector3 Generate( Vector3 minValue, Vector3 maxValue )
+		//{
+		//	lock( _static )
+		//		return new Vector3(
+		//			_static.Next( minValue.X, maxValue.X ),
+		//			_static.Next( minValue.Y, maxValue.Y ),
+		//			_static.Next( minValue.Z, maxValue.Z ) );
+		//}
 
-		public static Vector4F Generate( Vector4F minValue, Vector4F maxValue )
-		{
-			lock( _static )
-				return new Vector4F(
-					_static.Next( minValue.X, maxValue.X ),
-					_static.Next( minValue.Y, maxValue.Y ),
-					_static.Next( minValue.Z, maxValue.Z ),
-					_static.Next( minValue.W, maxValue.W ) );
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static Vector2 Generate( Vector2 minValue, Vector2 maxValue )
+		//{
+		//	lock( _static )
+		//		return new Vector2(
+		//			_static.Next( minValue.X, maxValue.X ),
+		//			_static.Next( minValue.Y, maxValue.Y ) );
+		//}
 
-		public static Vector3F Generate( Vector3F minValue, Vector3F maxValue )
-		{
-			lock( _static )
-				return new Vector3F(
-					_static.Next( minValue.X, maxValue.X ),
-					_static.Next( minValue.Y, maxValue.Y ),
-					_static.Next( minValue.Z, maxValue.Z ) );
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static Vector4F Generate( Vector4F minValue, Vector4F maxValue )
+		//{
+		//	lock( _static )
+		//		return new Vector4F(
+		//			_static.Next( minValue.X, maxValue.X ),
+		//			_static.Next( minValue.Y, maxValue.Y ),
+		//			_static.Next( minValue.Z, maxValue.Z ),
+		//			_static.Next( minValue.W, maxValue.W ) );
+		//}
 
-		public static Vector2F Generate( Vector2F minValue, Vector2F maxValue )
-		{
-			lock( _static )
-				return new Vector2F(
-					_static.Next( minValue.X, maxValue.X ),
-					_static.Next( minValue.Y, maxValue.Y ) );
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static Vector3F Generate( Vector3F minValue, Vector3F maxValue )
+		//{
+		//	lock( _static )
+		//		return new Vector3F(
+		//			_static.Next( minValue.X, maxValue.X ),
+		//			_static.Next( minValue.Y, maxValue.Y ),
+		//			_static.Next( minValue.Z, maxValue.Z ) );
+		//}
 
-		public static Vector4I Generate( Vector4I minValue, Vector4I maxValue )
-		{
-			lock( _static )
-				return new Vector4I(
-					_static.Next( minValue.X, maxValue.X ),
-					_static.Next( minValue.Y, maxValue.Y ),
-					_static.Next( minValue.Z, maxValue.Z ),
-					_static.Next( minValue.W, maxValue.W ) );
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static Vector2F Generate( Vector2F minValue, Vector2F maxValue )
+		//{
+		//	lock( _static )
+		//		return new Vector2F(
+		//			_static.Next( minValue.X, maxValue.X ),
+		//			_static.Next( minValue.Y, maxValue.Y ) );
+		//}
 
-		public static Vector3I Generate( Vector3I minValue, Vector3I maxValue )
-		{
-			lock( _static )
-				return new Vector3I(
-					_static.Next( minValue.X, maxValue.X ),
-					_static.Next( minValue.Y, maxValue.Y ),
-					_static.Next( minValue.Z, maxValue.Z ) );
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static Vector4I Generate( Vector4I minValue, Vector4I maxValue )
+		//{
+		//	lock( _static )
+		//		return new Vector4I(
+		//			_static.Next( minValue.X, maxValue.X ),
+		//			_static.Next( minValue.Y, maxValue.Y ),
+		//			_static.Next( minValue.Z, maxValue.Z ),
+		//			_static.Next( minValue.W, maxValue.W ) );
+		//}
 
-		public static Vector2I Generate( Vector2I minValue, Vector2I maxValue )
-		{
-			lock( _static )
-				return new Vector2I(
-					_static.Next( minValue.X, maxValue.X ),
-					_static.Next( minValue.Y, maxValue.Y ) );
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static Vector3I Generate( Vector3I minValue, Vector3I maxValue )
+		//{
+		//	lock( _static )
+		//		return new Vector3I(
+		//			_static.Next( minValue.X, maxValue.X ),
+		//			_static.Next( minValue.Y, maxValue.Y ),
+		//			_static.Next( minValue.Z, maxValue.Z ) );
+		//}
 
-		public static ColorValue Generate( ColorValue minValue, ColorValue maxValue )
-		{
-			lock( _static )
-				return new ColorValue(
-					_static.Next( minValue.Red, maxValue.Red ),
-					_static.Next( minValue.Green, maxValue.Green ),
-					_static.Next( minValue.Blue, maxValue.Blue ),
-					_static.Next( minValue.Alpha, maxValue.Alpha ) );
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static Vector2I Generate( Vector2I minValue, Vector2I maxValue )
+		//{
+		//	lock( _static )
+		//		return new Vector2I(
+		//			_static.Next( minValue.X, maxValue.X ),
+		//			_static.Next( minValue.Y, maxValue.Y ) );
+		//}
 
-		public static Angles Generate( Angles minValue, Angles maxValue )
-		{
-			lock( _static )
-				return new Angles(
-					_static.Next( minValue.Roll, maxValue.Roll ),
-					_static.Next( minValue.Pitch, maxValue.Pitch ),
-					_static.Next( minValue.Yaw, maxValue.Yaw ) );
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static ColorValue Generate( ColorValue minValue, ColorValue maxValue )
+		//{
+		//	lock( _static )
+		//		return new ColorValue(
+		//			_static.Next( minValue.Red, maxValue.Red ),
+		//			_static.Next( minValue.Green, maxValue.Green ),
+		//			_static.Next( minValue.Blue, maxValue.Blue ),
+		//			_static.Next( minValue.Alpha, maxValue.Alpha ) );
+		//}
 
-		public static AnglesF Generate( AnglesF minValue, AnglesF maxValue )
-		{
-			lock( _static )
-				return new AnglesF(
-					_static.Next( minValue.Roll, maxValue.Roll ),
-					_static.Next( minValue.Pitch, maxValue.Pitch ),
-					_static.Next( minValue.Yaw, maxValue.Yaw ) );
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static Angles Generate( Angles minValue, Angles maxValue )
+		//{
+		//	lock( _static )
+		//		return new Angles(
+		//			_static.Next( minValue.Roll, maxValue.Roll ),
+		//			_static.Next( minValue.Pitch, maxValue.Pitch ),
+		//			_static.Next( minValue.Yaw, maxValue.Yaw ) );
+		//}
 
-		public static Radian Generate( Radian minValue, Radian maxValue )
-		{
-			lock( _static )
-				return _static.Next( minValue, maxValue );
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static AnglesF Generate( AnglesF minValue, AnglesF maxValue )
+		//{
+		//	lock( _static )
+		//		return new AnglesF(
+		//			_static.Next( minValue.Roll, maxValue.Roll ),
+		//			_static.Next( minValue.Pitch, maxValue.Pitch ),
+		//			_static.Next( minValue.Yaw, maxValue.Yaw ) );
+		//}
 
-		public static RadianF Generate( RadianF minValue, RadianF maxValue )
-		{
-			lock( _static )
-				return _static.Next( minValue, maxValue );
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static Radian Generate( Radian minValue, Radian maxValue )
+		//{
+		//	lock( _static )
+		//		return _static.Next( minValue, maxValue );
+		//}
 
-		public static Degree Generate( Degree minValue, Degree maxValue )
-		{
-			lock( _static )
-				return _static.Next( minValue, maxValue );
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static RadianF Generate( RadianF minValue, RadianF maxValue )
+		//{
+		//	lock( _static )
+		//		return _static.Next( minValue, maxValue );
+		//}
 
-		public static DegreeF Generate( DegreeF minValue, DegreeF maxValue )
-		{
-			lock( _static )
-				return _static.Next( minValue, maxValue );
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static Degree Generate( Degree minValue, Degree maxValue )
+		//{
+		//	lock( _static )
+		//		return _static.Next( minValue, maxValue );
+		//}
+
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static DegreeF Generate( DegreeF minValue, DegreeF maxValue )
+		//{
+		//	lock( _static )
+		//		return _static.Next( minValue, maxValue );
+		//}
 	}
 }

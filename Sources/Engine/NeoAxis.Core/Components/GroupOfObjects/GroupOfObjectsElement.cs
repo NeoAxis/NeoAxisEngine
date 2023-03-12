@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -9,7 +9,9 @@ namespace NeoAxis
 	/// <summary>
 	/// Component for setting item type of <see cref="GroupOfObjects"/>.
 	/// </summary>
+#if !DEPLOY
 	[SettingsCell( typeof( GroupOfObjectsElementSettingsCell ) )]
+#endif
 	public abstract class GroupOfObjectsElement : Component
 	{
 		/// <summary>
@@ -85,7 +87,9 @@ namespace NeoAxis
 			return new List<int>();
 		}
 
-		public virtual void ResetColors( UndoMultiAction undoMultiAction )
+#if !DEPLOY
+
+		public virtual void SetColors( UndoMultiAction undoMultiAction, ColorValue color )
 		{
 			var groupOfObjects = Parent as GroupOfObjects;
 			if( groupOfObjects != null )
@@ -95,11 +99,12 @@ namespace NeoAxis
 
 				for( int n = 0; n < indexes.Count; n++ )
 				{
-					var index = indexes[ n ];
 					ref var obj = ref newObjects[ n ];
 
+					//!!!!?
 					obj.UniqueIdentifier = 0;
-					obj.Color = ColorValue.One;
+
+					obj.Color = color;
 				}
 
 				//delete and undo to delete
@@ -110,6 +115,8 @@ namespace NeoAxis
 				undoMultiAction.AddAction( new GroupOfObjectsUndo.UndoActionCreateDelete( groupOfObjects, newIndexes, true, false ) );
 			}
 		}
+
+#endif
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -291,11 +298,36 @@ namespace NeoAxis
 		public event Action<GroupOfObjectsElement_Mesh> MotionBlurFactorChanged;
 		ReferenceField<double> _motionBlurFactor = 1.0;
 
+		/// <summary>
+		/// Whether to enable a collision detection. A collision rigidbody of the mesh is used.
+		/// </summary>
+		[DefaultValue( false )]
+		public Reference<bool> Collision
+		{
+			get { if( _collision.BeginGet() ) Collision = _collision.Get( this ); return _collision.value; }
+			set
+			{
+				if( _collision.BeginSet( ref value ) )
+				{
+					try
+					{
+						CollisionChanged?.Invoke( this );
+						( Parent as GroupOfObjects )?.NeedUpdate();
+					}
+					finally { _collision.EndSet(); }
+				}
+			}
+		}
+		/// <summary>Occurs when the <see cref="Collision"/> property value changes.</summary>
+		public event Action<GroupOfObjectsElement_Mesh> CollisionChanged;
+		ReferenceField<bool> _collision = false;
+
 		/////////////////////////////////////////
 
+#if !DEPLOY
 		public virtual void UpdateAlignment( UndoMultiAction undoMultiAction )
 		{
-			var random = new FastRandom();
+			//var random = new FastRandom();
 
 			var groupOfObjects = Parent as GroupOfObjects;
 			if( groupOfObjects != null )
@@ -321,7 +353,11 @@ namespace NeoAxis
 					{
 						var r = SceneUtility.CalculateObjectPositionZ( scene, groupOfObjects, obj.Position.Z, obj.Position.ToVector2() );
 						if( r.found )
+						{
 							obj.Position.Z = r.positionZ + positionZ;
+							//!!!!normal
+							//obj.Rotation = ;
+						}
 					}
 					//obj.Rotation = rotation;
 					//obj.Scale = scale;
@@ -337,6 +373,7 @@ namespace NeoAxis
 				//}
 			}
 		}
+#endif
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -416,6 +453,30 @@ namespace NeoAxis
 		public event Action<GroupOfObjectsElement_Surface> CastShadowsChanged;
 		ReferenceField<bool> _castShadows = true;
 
+		/// <summary>
+		/// Whether to enable a collision detection. A collision definition of the mesh is used.
+		/// </summary>
+		[DefaultValue( false )]
+		public Reference<bool> Collision
+		{
+			get { if( _collision.BeginGet() ) Collision = _collision.Get( this ); return _collision.value; }
+			set
+			{
+				if( _collision.BeginSet( ref value ) )
+				{
+					try
+					{
+						CollisionChanged?.Invoke( this );
+						( Parent as GroupOfObjects )?.NeedUpdate();
+					}
+					finally { _collision.EndSet(); }
+				}
+			}
+		}
+		/// <summary>Occurs when the <see cref="Collision"/> property value changes.</summary>
+		public event Action<GroupOfObjectsElement_Surface> CollisionChanged;
+		ReferenceField<bool> _collision = false;
+
 		//!!!!
 		//и другие какие в PaintLayer
 		//LODScale
@@ -425,7 +486,9 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		public virtual void UpdateVariations( bool randomizeGroups, UndoMultiAction undoMultiAction )
+#if !DEPLOY
+
+		public virtual void UpdateVariationsAndTransform( bool randomizeGroups, UndoMultiAction undoMultiAction, bool updateVariations, bool updateTransform )
 		{
 			var random = new FastRandom();
 
@@ -445,86 +508,64 @@ namespace NeoAxis
 						var index = indexes[ n ];
 						ref var obj = ref newObjects[ n ];
 
-						Surface.GetRandomVariationOptions options;
-						if( randomizeGroups )
-							options = new Surface.GetRandomVariationOptions();
-						else
-							options = new Surface.GetRandomVariationOptions( obj.VariationGroup );
-						surface.GetRandomVariation( options, random, out var groupIndex, out var elementIndex, out var positionZ, out var rotation, out var scale );
-
-						obj.UniqueIdentifier = 0;
-						obj.VariationGroup = groupIndex;
-						obj.VariationElement = elementIndex;
+						var alignFound = false;
+						var alignPositionZ = 0.0;
+						var alignNormal = Vector3F.Zero;
 						if( AutoAlign && scene != null )
 						{
 							var r = SceneUtility.CalculateObjectPositionZ( scene, groupOfObjects, obj.Position.Z, obj.Position.ToVector2() );
 							if( r.found )
-								obj.Position.Z = r.positionZ + positionZ;
+							{
+								alignFound = true;
+								alignPositionZ = r.positionZ;
+								alignNormal = r.normal;
+							}
 						}
-						obj.Rotation = rotation;
-						obj.Scale = scale;
-					}
 
-					//delete and undo to delete
-					undoMultiAction.AddAction( new GroupOfObjectsUndo.UndoActionCreateDelete( groupOfObjects, indexes.ToArray(), false, true ) );
+						byte? setGroup = null;
+						if( !randomizeGroups )
+							setGroup = obj.VariationGroup;
 
-					//add new data
-					var newIndexes = groupOfObjects.ObjectsAdd( newObjects );
-					undoMultiAction.AddAction( new GroupOfObjectsUndo.UndoActionCreateDelete( groupOfObjects, newIndexes, true, false ) );
-				}
-			}
-		}
+						Vector3F? surfaceNormal = null;
+						if( alignFound )
+							surfaceNormal = alignNormal;
 
-		public virtual void UpdateAlignment( UndoMultiAction undoMultiAction )
-		{
-			var random = new FastRandom();
+						var options = new Surface.GetRandomVariationOptions( setGroup, surfaceNormal );
+						surface.GetRandomVariation( options, random, out var groupIndex, out var elementIndex, out var positionZ, out var rotation, out var scale );
 
-			var groupOfObjects = Parent as GroupOfObjects;
-			if( groupOfObjects != null )
-			{
-				var surface = Surface.Value;
-				if( surface != null )
-				{
-					var indexes = GetObjectsOfElement();
-					var scene = groupOfObjects.FindParent<Scene>();
+						obj.UniqueIdentifier = 0;
 
-					var newObjects = groupOfObjects.ObjectsGetData( indexes );
-
-					for( int n = 0; n < indexes.Count; n++ )
-					{
-						var index = indexes[ n ];
-						ref var obj = ref newObjects[ n ];
-
-						double positionZ = 0;
-
-						var group = surface.GetGroup( obj.VariationGroup );
-						if( group != null )
+						if( updateVariations )
 						{
-							//PositionZRange
-							var positionZRange = group.PositionZRange.Value;
-							if( positionZRange.Minimum != positionZRange.Maximum )
-								positionZ = random.Next( positionZRange.Minimum, positionZRange.Maximum );
-							else
-								positionZ = positionZRange.Minimum;
-
+							obj.VariationGroup = groupIndex;
+							obj.VariationElement = elementIndex;
 						}
+						if( updateTransform )
+						{
+							if( alignFound )
+								obj.Position.Z = alignPositionZ + positionZ;
+							obj.Rotation = rotation;
+							obj.Scale = scale;
+						}
+
 
 						//Surface.GetRandomVariationOptions options;
 						//if( randomizeGroups )
 						//	options = new Surface.GetRandomVariationOptions();
 						//else
-						//	options = new Surface.GetRandomVariationOptions( obj.VariationGroup );
+						//	options = new Surface.GetRandomVariationOptions( obj.VariationGroup, null );
 						//surface.GetRandomVariation( options, random, out var groupIndex, out var elementIndex, out var positionZ, out var rotation, out var scale );
 
-						obj.UniqueIdentifier = 0;
+						//obj.UniqueIdentifier = 0;
 						//obj.VariationGroup = groupIndex;
 						//obj.VariationElement = elementIndex;
-						if( AutoAlign && scene != null )
-						{
-							var r = SceneUtility.CalculateObjectPositionZ( scene, groupOfObjects, obj.Position.Z, obj.Position.ToVector2() );
-							if( r.found )
-								obj.Position.Z = r.positionZ + positionZ;
-						}
+
+						//if( AutoAlign && scene != null )
+						//{
+						//	var r = SceneUtility.CalculateObjectPositionZ( scene, groupOfObjects, obj.Position.Z, obj.Position.ToVector2() );
+						//	if( r.found )
+						//		obj.Position.Z = r.positionZ + positionZ;
+						//}
 						//obj.Rotation = rotation;
 						//obj.Scale = scale;
 					}
@@ -538,6 +579,73 @@ namespace NeoAxis
 				}
 			}
 		}
+
+		//public virtual void UpdateAlignment( UndoMultiAction undoMultiAction )
+		//{
+		//	var random = new FastRandom();
+
+		//	var groupOfObjects = Parent as GroupOfObjects;
+		//	if( groupOfObjects != null )
+		//	{
+		//		var surface = Surface.Value;
+		//		if( surface != null )
+		//		{
+		//			var indexes = GetObjectsOfElement();
+		//			var scene = groupOfObjects.FindParent<Scene>();
+
+		//			var newObjects = groupOfObjects.ObjectsGetData( indexes );
+
+		//			for( int n = 0; n < indexes.Count; n++ )
+		//			{
+		//				var index = indexes[ n ];
+		//				ref var obj = ref newObjects[ n ];
+
+		//				double positionZ = 0;
+
+		//				var group = surface.GetGroup( obj.VariationGroup );
+		//				if( group != null )
+		//				{
+		//					//PositionZRange
+		//					var positionZRange = group.PositionZRange.Value;
+		//					if( positionZRange.Minimum != positionZRange.Maximum )
+		//						positionZ = random.Next( positionZRange.Minimum, positionZRange.Maximum );
+		//					else
+		//						positionZ = positionZRange.Minimum;
+
+		//				}
+
+		//				//Surface.GetRandomVariationOptions options;
+		//				//if( randomizeGroups )
+		//				//	options = new Surface.GetRandomVariationOptions();
+		//				//else
+		//				//	options = new Surface.GetRandomVariationOptions( obj.VariationGroup );
+		//				//surface.GetRandomVariation( options, random, out var groupIndex, out var elementIndex, out var positionZ, out var rotation, out var scale );
+
+		//				
+
+		//				obj.UniqueIdentifier = 0;
+		//				//obj.VariationGroup = groupIndex;
+		//				//obj.VariationElement = elementIndex;
+		//				if( AutoAlign && scene != null )
+		//				{
+		//					var r = SceneUtility.CalculateObjectPositionZ( scene, groupOfObjects, obj.Position.Z, obj.Position.ToVector2() );
+		//					if( r.found )
+		//						obj.Position.Z = r.positionZ + positionZ;
+		//				}
+		//				//obj.Rotation = rotation;
+		//				//obj.Scale = scale;
+		//			}
+
+		//			//delete and undo to delete
+		//			undoMultiAction.AddAction( new GroupOfObjectsUndo.UndoActionCreateDelete( groupOfObjects, indexes.ToArray(), false, true ) );
+
+		//			//add new data
+		//			var newIndexes = groupOfObjects.ObjectsAdd( newObjects );
+		//			undoMultiAction.AddAction( new GroupOfObjectsUndo.UndoActionCreateDelete( groupOfObjects, newIndexes, true, false ) );
+		//		}
+		//	}
+		//}
+#endif
 
 	}
 

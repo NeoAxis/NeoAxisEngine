@@ -2,7 +2,7 @@
 using System;
 using System.Security.Cryptography;
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	/// <summary>
 	/// Multiply With Carry random

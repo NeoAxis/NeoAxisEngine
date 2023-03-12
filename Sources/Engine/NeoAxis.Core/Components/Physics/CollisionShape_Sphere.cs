@@ -1,13 +1,8 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using System.IO;
-using System.Drawing.Design;
-using Internal.BulletSharp;
+using System.Text;
 
 namespace NeoAxis
 {
@@ -16,23 +11,14 @@ namespace NeoAxis
 	/// </summary>
 	public class CollisionShape_Sphere : CollisionShape
 	{
-		//Radius
-		ReferenceField<double> _radius = 0.5;
 		/// <summary>
 		/// The radius of the sphere.
 		/// </summary>
-		[Serialize]
 		[DefaultValue( 0.5 )]
-		//!!!!крутилки. везде в шейпах
 		[Range( 0, 100, RangeAttribute.ConvenientDistributionEnum.Exponential, 4 )]
 		public Reference<double> Radius
 		{
-			get
-			{
-				if( _radius.BeginGet() )
-					Radius = _radius.Get( this );
-				return _radius.value;
-			}
+			get { if( _radius.BeginGet() ) Radius = _radius.Get( this ); return _radius.value; }
 			set
 			{
 				//!!!!check value. везде в шейпах
@@ -52,17 +38,28 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="Radius"/> property value changes.</summary>
 		public event Action<CollisionShape_Sphere> RadiusChanged;
+		ReferenceField<double> _radius = 0.5;
 
+		///////////////////////////////////////////////
 
-		protected internal override Internal.BulletSharp.CollisionShape CreateShape()
+		protected internal override void GetShapeKey( StringBuilder key )
 		{
-			return new Internal.BulletSharp.SphereShape( BulletPhysicsUtility.Convert( Radius ) );
+			base.GetShapeKey( key );
+
+			key.Append( " sph " );
+			key.Append( (float)Radius.Value );
+		}
+
+		protected internal override void CreateShape( Scene scene, IntPtr nativeShape, ref Vector3F position, ref QuaternionF rotation, ref Vector3F localScaling, ref Scene.PhysicsWorldClass.Shape.CollisionShapeData collisionShapeData )
+		{
+			var scaling = localScaling.MaxComponent();
+			PhysicsNative.JShape_AddSphere( nativeShape, ref position, ref rotation, (float)Radius * scaling );
 		}
 
 		protected internal override void Render( Viewport viewport, Transform bodyTransform, bool solid, ref int verticesRendered )
 		{
 			Matrix4 t = bodyTransform.ToMatrix4();
-			var local = TransformRelativeToParent.Value;
+			var local = LocalTransform.Value;
 			if( !local.IsIdentity )
 				t *= local.ToMatrix4();
 

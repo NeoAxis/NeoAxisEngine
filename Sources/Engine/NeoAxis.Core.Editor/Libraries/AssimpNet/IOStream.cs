@@ -32,6 +32,7 @@ namespace Internal.Assimp
     /// </summary>
     public abstract class IOStream : IDisposable
     {
+    // Don't delete these, holding onto the callbacks prevent them from being GC'ed inappropiately
         private AiFileWriteProc m_writeProc;
         private AiFileReadProc m_readProc;
         private AiFileTellProc m_tellProc;
@@ -99,26 +100,52 @@ namespace Internal.Assimp
         /// </summary>
         /// <param name="pathToFile">Path to file given by Assimp</param>
         /// <param name="fileMode">Desired file access mode</param>
-        public IOStream(String pathToFile, FileIOMode fileMode)
+    public IOStream(String pathToFile, FileIOMode fileMode) : this(pathToFile, fileMode, true) { }
+
+    /// <summary>
+    /// Constructs a new IOStream.
+    /// </summary>
+    /// <param name="pathToFile">Path to file given by Assimp</param>
+    /// <param name="fileMode">Desired file access mode</param>
+    /// <param name="initialize">True if initialize should be immediately called with the default callbacks. Set this to false
+    /// if your subclass requires a different way to setup the function pointers.</param>
+    protected IOStream(String pathToFile, FileIOMode fileMode, bool initialize = true)
         {
             m_pathToFile = pathToFile;
             m_fileMode = fileMode;
 
-            m_writeProc = OnAiFileWriteProc;
-            m_readProc = OnAiFileReadProc;
-            m_tellProc = OnAiFileTellProc;
-            m_fileSizeProc = OnAiFileSizeProc;
-            m_seekProc = OnAiFileSeekProc;
-            m_flushProc = OnAiFileFlushProc;
+      if (initialize)
+        Initialize(OnAiFileWriteProc, OnAiFileReadProc, OnAiFileTellProc, OnAiFileSizeProc, OnAiFileSeekProc, OnAiFileFlushProc);
+    }
+
+    /// <summary>
+    /// Initializes the system by setting up native pointers for Assimp to the specified functions. A reference to each
+    /// supplied callback is held on to avoid it being GC'ed.
+    /// </summary>
+    /// <param name="aiFileWriteProc">Handles write requests.</param>
+    /// <param name="aiFileReadProc">Handles read requests.</param>
+    /// <param name="aiFileTellProc">Handles tell requests.</param>
+    /// <param name="aiFileSizeProc">Handles size requests.</param>
+    /// <param name="aiFileSeek">Handles seek requests.</param>
+    /// <param name="aiFileFlushProc">Handles flush requests.</param>
+    /// <param name="userData">Additional user data, if any.</param>
+    protected void Initialize(AiFileWriteProc aiFileWriteProc, AiFileReadProc aiFileReadProc, AiFileTellProc aiFileTellProc, AiFileTellProc aiFileSizeProc, AiFileSeek aiFileSeek, AiFileFlushProc aiFileFlushProc, IntPtr userData = default)
+    {
+      m_writeProc = aiFileWriteProc;
+      m_readProc = aiFileReadProc;
+      m_tellProc = aiFileTellProc;
+      m_fileSizeProc = aiFileSizeProc;
+      m_seekProc = aiFileSeek;
+      m_flushProc = aiFileFlushProc;
 
             AiFile file;
-            file.WriteProc = Marshal.GetFunctionPointerForDelegate(m_writeProc);
-            file.ReadProc = Marshal.GetFunctionPointerForDelegate(m_readProc);
-            file.TellProc = Marshal.GetFunctionPointerForDelegate(m_tellProc);
-            file.FileSizeProc = Marshal.GetFunctionPointerForDelegate(m_fileSizeProc);
-            file.SeekProc = Marshal.GetFunctionPointerForDelegate(m_seekProc);
-            file.FlushProc = Marshal.GetFunctionPointerForDelegate(m_flushProc);
-            file.UserData = IntPtr.Zero;
+      file.WriteProc = Marshal.GetFunctionPointerForDelegate(aiFileWriteProc);
+      file.ReadProc = Marshal.GetFunctionPointerForDelegate(aiFileReadProc);
+      file.TellProc = Marshal.GetFunctionPointerForDelegate(aiFileTellProc);
+      file.FileSizeProc = Marshal.GetFunctionPointerForDelegate(aiFileSizeProc);
+      file.SeekProc = Marshal.GetFunctionPointerForDelegate(aiFileSeek);
+      file.FlushProc = Marshal.GetFunctionPointerForDelegate(aiFileFlushProc);
+      file.UserData = userData;
 
             m_filePtr = MemoryHelper.AllocateMemory(MemoryHelper.SizeOf<AiFile>());
             Marshal.StructureToPtr(file, m_filePtr, false);
@@ -147,15 +174,15 @@ namespace Internal.Assimp
         /// <param name="disposing">True to release both managed and unmanaged resources; False to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
-            if(!m_isDiposed)
+      if (!m_isDiposed)
             {
-                if(m_filePtr != IntPtr.Zero)
+        if (m_filePtr != IntPtr.Zero)
                 {
                     MemoryHelper.FreeMemory(m_filePtr);
                     m_filePtr = IntPtr.Zero;
                 }
 
-                if(disposing)
+        if (disposing)
                 {
                     m_writeProc = null;
                     m_readProc = null;
@@ -219,16 +246,24 @@ namespace Internal.Assimp
             Dispose();
         }
 
-        private UIntPtr OnAiFileWriteProc(IntPtr file, IntPtr dataToWrite, UIntPtr sizeOfElemInBytes, UIntPtr numElements)
+    /// <summary>
+    /// Callback for Assimp that handles writes.
+    /// </summary>
+    /// <param name="file"></param>
+    /// <param name="dataToWrite"></param>
+    /// <param name="sizeOfElemInBytes"></param>
+    /// <param name="numElements"></param>
+    /// <returns></returns>
+    protected UIntPtr OnAiFileWriteProc(IntPtr file, IntPtr dataToWrite, UIntPtr sizeOfElemInBytes, UIntPtr numElements)
         {
-            if(m_filePtr != file)
+      if (m_filePtr != file)
                 return UIntPtr.Zero;
 
             long longSize = (long) sizeOfElemInBytes.ToUInt64();
             long longNum = (long) numElements.ToUInt64();
             long count = longSize * longNum;
 
-            if(count == 0)
+      if (count == 0)
                 return UIntPtr.Zero;
 
             byte[] byteBuffer = GetByteBuffer(longSize, longNum);
@@ -240,14 +275,22 @@ namespace Internal.Assimp
             {
                 actualCount = Write(byteBuffer, count);
             }
-            catch(Exception) { /*Assimp will report an IO error*/ }
+      catch (Exception) { /*Assimp will report an IO error*/ }
 
             return new UIntPtr((ulong) actualCount / (ulong) longSize);
         }
 
-        private UIntPtr OnAiFileReadProc(IntPtr file, IntPtr dataRead, UIntPtr sizeOfElemInBytes, UIntPtr numElements)
+    /// <summary>
+    /// Callback for Assimp that handles reads.
+    /// </summary>
+    /// <param name="file"></param>
+    /// <param name="dataRead"></param>
+    /// <param name="sizeOfElemInBytes"></param>
+    /// <param name="numElements"></param>
+    /// <returns></returns>
+    protected UIntPtr OnAiFileReadProc(IntPtr file, IntPtr dataRead, UIntPtr sizeOfElemInBytes, UIntPtr numElements)
         {
-            if(m_filePtr != file)
+      if (m_filePtr != file)
                 return UIntPtr.Zero;
 
             long longSize = (long) sizeOfElemInBytes.ToUInt64();
@@ -262,17 +305,22 @@ namespace Internal.Assimp
             {
                 actualCount = Read(byteBuffer, count);
 
-                if(actualCount > 0)
+        if (actualCount > 0)
                     MemoryHelper.Write<byte>(dataRead, byteBuffer, 0, (int) actualCount);
             }
-            catch(Exception) { /*Assimp will report an IO error*/ }
+      catch (Exception) { /*Assimp will report an IO error*/ }
 
             return new UIntPtr((ulong) actualCount / (ulong) longSize);
         }
 
-        private UIntPtr OnAiFileTellProc(IntPtr file)
+    /// <summary>
+    /// Callback for Assimp that handles tell requests.
+    /// </summary>
+    /// <param name="file"></param>
+    /// <returns></returns>
+    protected UIntPtr OnAiFileTellProc(IntPtr file)
         {
-            if(m_filePtr != file)
+      if (m_filePtr != file)
                 return UIntPtr.Zero;
 
             long pos = 0;
@@ -281,14 +329,19 @@ namespace Internal.Assimp
             {
                 pos = GetPosition();
             }
-            catch(Exception) { /*Assimp will report an IO error*/ }
+      catch (Exception) { /*Assimp will report an IO error*/ }
 
             return new UIntPtr((ulong) pos);
         }
 
-        private UIntPtr OnAiFileSizeProc(IntPtr file)
+    /// <summary>
+    /// Callback for Assimp that handles size requests.
+    /// </summary>
+    /// <param name="file"></param>
+    /// <returns></returns>
+    protected UIntPtr OnAiFileSizeProc(IntPtr file)
         {
-            if(m_filePtr != file)
+      if (m_filePtr != file)
                 return UIntPtr.Zero;
 
             long fileSize = 0;
@@ -297,14 +350,21 @@ namespace Internal.Assimp
             {
                 fileSize = GetFileSize();
             }
-            catch(Exception) { /*Assimp will report an IO error*/ }
+      catch (Exception) { /*Assimp will report an IO error*/ }
 
             return new UIntPtr((ulong) fileSize);
         }
 
-        private ReturnCode OnAiFileSeekProc(IntPtr file, UIntPtr offset, Origin seekOrigin)
+    /// <summary>
+    /// Callback for Assimp that handles seeks.
+    /// </summary>
+    /// <param name="file"></param>
+    /// <param name="offset"></param>
+    /// <param name="seekOrigin"></param>
+    /// <returns></returns>
+    protected ReturnCode OnAiFileSeekProc(IntPtr file, UIntPtr offset, Origin seekOrigin)
         {
-            if(m_filePtr != file)
+      if (m_filePtr != file)
                 return ReturnCode.Failure;
 
             ReturnCode code = ReturnCode.Failure;
@@ -313,27 +373,29 @@ namespace Internal.Assimp
             {
                 code = Seek((long) offset.ToUInt64(), seekOrigin);
             }
-            catch(Exception) { /*Assimp will report an IO error*/ }
+      catch (Exception) { /*Assimp will report an IO error*/ }
 
             return code;
         }
 
-        private void OnAiFileFlushProc(IntPtr file)
+    /// <summary>Callback for Assimp that handles flushes.</summary>
+    /// <param name="file"></param>
+    protected void OnAiFileFlushProc(IntPtr file)
         {
-            if(m_filePtr != file)
+      if (m_filePtr != file)
                 return;
 
             try
             {
                 Flush();
             }
-            catch(Exception) { }
+      catch (Exception) { }
         }
 
         private byte[] GetByteBuffer(long sizeOfElemInBytes, long numElements)
         {
             //Only create a new buffer if we need it to grow or first time, otherwise re-use it
-            if(m_byteBuffer == null || (m_byteBuffer.Length < sizeOfElemInBytes * numElements))
+      if (m_byteBuffer == null || (m_byteBuffer.Length < sizeOfElemInBytes * numElements))
                 m_byteBuffer = new byte[sizeOfElemInBytes * numElements];
 
             return m_byteBuffer;

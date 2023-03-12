@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,6 +19,8 @@ namespace Project
 
 		UIWindow scenesWindow;
 		UIWindow optionsWindow;
+		UIWindow multiplayerCreateWindow;
+		UIWindow multiplayerJoinWindow;
 
 		///////////////////////////////////////////
 
@@ -44,6 +46,14 @@ namespace Project
 
 		///////////////////////////////////////////
 
+		UIButton GetButtonScenes() { return GetComponent<UIButton>( "Button Scenes" ); }
+		UIButton GetButtonOptions() { return GetComponent<UIButton>( "Button Options" ); }
+		UIButton GetButtonExit() { return GetComponent<UIButton>( "Button Exit" ); }
+		UIButton GetButtonMultiplayerCreate() { return GetComponent<UIButton>( "Button Multiplayer Create" ); }
+		UIButton GetButtonMultiplayerJoin() { return GetComponent<UIButton>( "Button Multiplayer Join" ); }
+
+		///////////////////////////////////////////
+
 		public static MainMenuScreen Instance
 		{
 			get { return instance; }
@@ -53,31 +63,44 @@ namespace Project
 		{
 			instance = this;
 
-			if( Components[ "Button Scenes" ] != null )
-				( (UIButton)Components[ "Button Scenes" ] ).Click += ButtonScenes_Click;
-			if( Components[ "Button Options" ] != null )
-				( (UIButton)Components[ "Button Options" ] ).Click += ButtonOptions_Click;
-			if( Components[ "Button Exit" ] != null )
-				( (UIButton)Components[ "Button Exit" ] ).Click += ButtonExit_Click;
+			if( GetButtonScenes() != null )
+			{
+				var button = GetButtonScenes();
+				button.Click += ButtonScenes_Click;
+				button.ReadOnly = SimulationAppClient.Created;
+			}
+			if( GetButtonOptions() != null )
+				GetButtonOptions().Click += ButtonOptions_Click;
+			if( GetButtonExit() != null )
+				GetButtonExit().Click += ButtonExit_Click;
 
 			//play buttons
-			if( Components[ "Button Play Sci-fi Demo" ] != null )
+			if( Components[ "Button Play City Demo" ] != null )
 			{
-				var button = (UIButton)Components[ "Button Play Sci-fi Demo" ];
-				var fileName = @"Samples\Sci-fi Demo\Scenes\Sci-fi Demo.scene";
+				var button = (UIButton)Components[ "Button Play City Demo" ];
+				var fileName = @"Samples\City Demo\City Demo.scene";
 				button.AnyData = fileName;
 				button.Click += ButtonPlay_Click;
 				if( button.Visible )
-					button.Visible = VirtualFile.Exists( fileName );
+					button.ReadOnly = !VirtualFile.Exists( fileName ) || SimulationAppClient.Created;
 			}
 			if( Components[ "Button Play Nature Demo" ] != null )
 			{
 				var button = (UIButton)Components[ "Button Play Nature Demo" ];
-				var fileName = @"Samples\Nature Demo\Scenes\Nature Demo.scene";
+				var fileName = @"Samples\Nature Demo\Nature Demo.scene";
 				button.AnyData = fileName;
 				button.Click += ButtonPlay_Click;
 				if( button.Visible )
-					button.Visible = VirtualFile.Exists( fileName );
+					button.ReadOnly = !VirtualFile.Exists( fileName ) || SimulationAppClient.Created;
+			}
+			if( Components[ "Button Play Battle Demo" ] != null )
+			{
+				var button = (UIButton)Components[ "Button Play Battle Demo" ];
+				var fileName = @"Samples\Battle Demo\Battle Demo.scene";
+				button.AnyData = fileName;
+				button.Click += ButtonPlay_Click;
+				if( button.Visible )
+					button.ReadOnly = !VirtualFile.Exists( fileName ) || SimulationAppClient.Created;
 			}
 			if( Components[ "Button Play Simple Game" ] != null )
 			{
@@ -86,7 +109,7 @@ namespace Project
 				button.AnyData = fileName;
 				button.Click += ButtonPlay_Click;
 				if( button.Visible )
-					button.Visible = VirtualFile.Exists( fileName );
+					button.ReadOnly = !VirtualFile.Exists( fileName ) || SimulationAppClient.Created;
 			}
 			if( Components[ "Button Play Character Scene" ] != null )
 			{
@@ -95,7 +118,7 @@ namespace Project
 				button.AnyData = fileName;
 				button.Click += ButtonPlay_Click;
 				if( button.Visible )
-					button.Visible = VirtualFile.Exists( fileName );
+					button.ReadOnly = !VirtualFile.Exists( fileName ) || SimulationAppClient.Created;
 			}
 			if( Components[ "Button Play Spaceship Game" ] != null )
 			{
@@ -104,7 +127,7 @@ namespace Project
 				button.AnyData = fileName;
 				button.Click += ButtonPlay_Click;
 				if( button.Visible )
-					button.Visible = VirtualFile.Exists( fileName );
+					button.ReadOnly = !VirtualFile.Exists( fileName ) || SimulationAppClient.Created;
 			}
 			if( Components[ "Button Play Platform Game" ] != null )
 			{
@@ -113,15 +136,19 @@ namespace Project
 				button.AnyData = fileName;
 				button.Click += ButtonPlay_Click;
 				if( button.Visible )
-					button.Visible = VirtualFile.Exists( fileName );
+					button.ReadOnly = !VirtualFile.Exists( fileName ) || SimulationAppClient.Created;
 			}
+
+			var textConsole = Components[ "Text Console" ] as UIControl;
+			if( textConsole != null && SystemSettings.MobileDevice )
+				textConsole.Visible = false;
 
 			// Update sound listener.
 			SoundWorld.SetListenerReset();
 
 			// Load background scene.
 			currentDisplayBackgroundSceneOption = SimulationApp.DisplayBackgroundScene;
-			if( currentDisplayBackgroundSceneOption && EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+			if( currentDisplayBackgroundSceneOption && EngineApp.IsSimulation )
 			{
 				var fileName = SystemSettings.LimitedDevice ? BackgroundSceneLimitedDevice.GetByReference : BackgroundScene.GetByReference;
 				if( !string.IsNullOrEmpty( fileName ) && VirtualFile.Exists( fileName ) )
@@ -186,38 +213,49 @@ namespace Project
 		{
 			base.OnUpdate( delta );
 
-			// Update background scene.
-			if( currentDisplayBackgroundSceneOption != SimulationApp.DisplayBackgroundScene )
+			if( EngineApp.IsSimulation )
 			{
-				currentDisplayBackgroundSceneOption = SimulationApp.DisplayBackgroundScene;
-
-				if( currentDisplayBackgroundSceneOption && EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+				// Update background scene.
+				if( currentDisplayBackgroundSceneOption != SimulationApp.DisplayBackgroundScene )
 				{
-					var fileName = SystemSettings.LimitedDevice ? BackgroundSceneLimitedDevice.GetByReference : BackgroundScene.GetByReference;
-					if( !string.IsNullOrEmpty( fileName ) && VirtualFile.Exists( fileName ) )
-						LoadScene( fileName );
+					currentDisplayBackgroundSceneOption = SimulationApp.DisplayBackgroundScene;
+
+					if( currentDisplayBackgroundSceneOption && EngineApp.IsSimulation )
+					{
+						var fileName = SystemSettings.LimitedDevice ? BackgroundSceneLimitedDevice.GetByReference : BackgroundScene.GetByReference;
+						if( !string.IsNullOrEmpty( fileName ) && VirtualFile.Exists( fileName ) )
+							LoadScene( fileName );
+						else
+							LoadScene( "" );
+					}
 					else
 						LoadScene( "" );
 				}
+
+				// Update sound listener.
+				if( scene != null && sceneViewport != null )
+				{
+					var settings = sceneViewport.CameraSettings;
+					SoundWorld.SetListener( scene, settings.Position, Vector3.Zero, settings.Rotation );
+				}
 				else
-					LoadScene( "" );
+					SoundWorld.SetListenerReset();
+
+				// Scene simulation.
+				scene?.HierarchyController?.PerformSimulationSteps();
+				ParentRoot.HierarchyController?.PerformSimulationSteps();
+
+				if( !firstRender )
+					fadeInTimer += delta;
+
+				if( GetButtonMultiplayerCreate() != null )
+				{
+					GetButtonMultiplayerCreate().Highlighted = RunServer.Running;
+					GetButtonMultiplayerCreate().ReadOnly = SystemSettings.CurrentPlatform != SystemSettings.Platform.Windows;
+				}
+				if( GetButtonMultiplayerJoin() != null )
+					GetButtonMultiplayerJoin().ReadOnly = SystemSettings.CurrentPlatform != SystemSettings.Platform.Windows;
 			}
-
-			// Update sound listener.
-			if( scene != null && sceneViewport != null )
-			{
-				var settings = sceneViewport.CameraSettings;
-				SoundWorld.SetListener( scene, settings.Position, Vector3.Zero, settings.Rotation );
-			}
-			else
-				SoundWorld.SetListenerReset();
-
-			// Scene simulation.
-			scene?.HierarchyController?.PerformSimulationSteps();
-			ParentRoot.HierarchyController?.PerformSimulationSteps();
-
-			if( !firstRender )
-				fadeInTimer += delta;
 		}
 
 		double GetFadeInAlpha()
@@ -241,7 +279,7 @@ namespace Project
 			base.OnAfterRenderUIWithChildren( renderer );
 
 			//fade in
-			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+			if( EngineApp.IsSimulation )
 			{
 				var alpha = GetFadeInAlpha();
 				if( alpha != 0 )
@@ -254,6 +292,9 @@ namespace Project
 		public void LoadScene( string fileName )
 		{
 			DestroyScene();
+
+			if( SimulationAppClient.Created )
+				return;
 
 			if( !string.IsNullOrEmpty( fileName ) )
 				scene = ResourceManager.LoadSeparateInstance<Scene>( fileName, true, null );
@@ -312,6 +353,10 @@ namespace Project
 		{
 			if( sceneViewport != null )
 			{
+				if( sceneViewport.AttachedScene == scene )
+					sceneViewport.AttachedScene = null;
+
+				scene.ViewportUpdateBegin -= Scene_ViewportUpdateBegin;
 				scene.ViewportUpdateGetCameraSettings -= Scene_ViewportUpdateGetCameraSettings;
 				sceneViewport = null;
 			}
@@ -329,6 +374,42 @@ namespace Project
 		{
 			var playFile = (string)sender.AnyData;
 			SimulationApp.PlayFile( playFile );
+		}
+
+		public void ButtonMultiplayerCreate_Click( NeoAxis.UIButton sender )
+		{
+			if( multiplayerCreateWindow != null && multiplayerCreateWindow.Disposed )
+				multiplayerCreateWindow = null;
+
+			if( multiplayerCreateWindow == null )
+			{
+				multiplayerCreateWindow = ResourceManager.LoadSeparateInstance<UIWindow>( @"Base\UI\Screens\MultiplayerCreateWindow.ui", false, true );
+				if( multiplayerCreateWindow != null )
+					AddComponent( multiplayerCreateWindow );
+			}
+			else
+			{
+				multiplayerCreateWindow.Dispose();
+				multiplayerCreateWindow = null;
+			}
+		}
+
+		public void ButtonMultiplayerJoin_Click( NeoAxis.UIButton sender )
+		{
+			if( multiplayerJoinWindow != null && multiplayerJoinWindow.Disposed )
+				multiplayerJoinWindow = null;
+
+			if( multiplayerJoinWindow == null )
+			{
+				multiplayerJoinWindow = ResourceManager.LoadSeparateInstance<UIWindow>( @"Base\UI\Screens\MultiplayerJoinWindow.ui", false, true );
+				if( multiplayerJoinWindow != null )
+					AddComponent( multiplayerJoinWindow );
+			}
+			else
+			{
+				multiplayerJoinWindow.Dispose();
+				multiplayerJoinWindow = null;
+			}
 		}
 	}
 }

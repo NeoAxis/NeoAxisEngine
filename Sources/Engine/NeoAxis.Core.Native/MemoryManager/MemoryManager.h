@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #pragma once
 
 #ifdef __cplusplus
@@ -37,16 +37,16 @@ extern "C" {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#if defined(PLATFORM_WINDOWS)//!!!! || defined(PLATFORM_WINRT)
-	//VS2010 supported only. VS2011+ is not supported.
-
-	//!!!!temp, disable
-	//#define NATIVE_MEMORY_MANAGER_ENABLE
-
-	//#if _MSC_VER <= 1600
-	//	#define NATIVE_MEMORY_MANAGER_ENABLE
-	//#endif
-#endif
+//#if defined(PLATFORM_WINDOWS) || defined(PLATFORM_WINRT)
+//	//VS2010 supported only. VS2011+ is not supported.
+//
+//	//!!!!temp, disable
+//	//#define NATIVE_MEMORY_MANAGER_ENABLE
+//
+//	//#if _MSC_VER <= 1600
+//	//	#define NATIVE_MEMORY_MANAGER_ENABLE
+//	//#endif
+//#endif
 
 //#ifdef PLATFORM_OSX
 //	#define NATIVE_MEMORY_MANAGER_ENABLE
@@ -81,7 +81,7 @@ NATIVEMEMORYMANAGER_EXPORT void MemoryManager_GetStatistics( MemoryAllocationTyp
 NATIVEMEMORYMANAGER_EXPORT void MemoryManager_GetCRTStatistics( int64_t* allocatedMemory, int* allocationCount );
 
 typedef void MemoryManager_GetAllocationInformationDelegate( MemoryAllocationType allocationType, int size, const char* fileName, int lineNumber, int allocationCount);
-NATIVEMEMORYMANAGER_EXPORT void MemoryManager_GetAllocationInformation( MemoryManager_GetAllocationInformationDelegate* callback);
+NATIVEMEMORYMANAGER_EXPORT int64_t MemoryManager_GetAllocationInformation( MemoryManager_GetAllocationInformationDelegate* callback);
 
 NATIVEMEMORYMANAGER_EXPORT void* Memory_Alloc( MemoryAllocationType allocationType, int size, const char* fileName, const int lineNumber );
 NATIVEMEMORYMANAGER_EXPORT void* Memory_Realloc( MemoryAllocationType allocationType, void* pointer, int newSize, const char* fileName, const int lineNumber );

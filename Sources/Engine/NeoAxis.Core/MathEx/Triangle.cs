@@ -1,8 +1,9 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -34,6 +35,7 @@ namespace NeoAxis
 		/// <param name="a">The A component of the triangle.</param>
 		/// <param name="b">The B component of the triangle.</param>
 		/// <param name="c">The C component of the triangle.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Triangle( Vector3 a, Vector3 b, Vector3 c )
 		{
 			this.A = a;
@@ -45,6 +47,7 @@ namespace NeoAxis
 		/// Constructs a triangle with another specified <see cref="TriangleF"/> object.
 		/// </summary>
 		/// <param name="source">The triangle of <see cref="TriangleF"/> format.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Triangle( TriangleF source )
 		{
 			this.A = source.A;
@@ -61,18 +64,20 @@ namespace NeoAxis
 		/// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="index"/> is out of the range [0, 2].</exception>
 		public unsafe Vector3 this[ int index ]
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				if( index < 0 || index > 2 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( Vector3* v = &this.A )
+				fixed( Vector3* v = &this.A )
 					return v[ index ];
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set
 			{
 				if( index < 0 || index > 2 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( Vector3* v = &this.A )
+				fixed( Vector3* v = &this.A )
 					v[ index ] = value;
 			}
 		}
@@ -81,6 +86,7 @@ namespace NeoAxis
 		/// Returns a hash code for this instance.
 		/// </summary>
 		/// <returns>A hash code for this instance.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return A.GetHashCode() ^ B.GetHashCode() ^ C.GetHashCode();
@@ -93,6 +99,7 @@ namespace NeoAxis
 		/// <param name="v">The triangle to compare.</param>
 		/// <param name="epsilon">The precision value.</param>
 		/// <returns>True if the specified triangle is equal to the current instance of <see cref="Triangle"/>; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( Triangle v, double epsilon )
 		{
 			if( !A.Equals( ref v.A, epsilon ) )
@@ -111,6 +118,7 @@ namespace NeoAxis
 		/// <param name="v">The triangle to compare.</param>
 		/// <param name="epsilon">The precision value.</param>
 		/// <returns>True if the specified triangle is equal to the current instance of <see cref="Triangle"/>; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( ref Triangle v, double epsilon )
 		{
 			if( !A.Equals( ref v.A, epsilon ) )
@@ -127,6 +135,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="obj">The object to compare with the current instance of <see cref="Triangle"/>.</param>
 		/// <returns>True if the specified object is equal to the current instance of <see cref="Triangle"/>; otherwise, False.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is Triangle && this == (Triangle)obj );
@@ -138,6 +147,7 @@ namespace NeoAxis
 		/// <param name="v1">The first triangle to compare.</param>
 		/// <param name="v2">The second triangle to compare.</param>
 		/// <returns>True if the triangles are equal; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( Triangle v1, Triangle v2 )
 		{
 			return v1.A == v2.A && v1.B == v2.B && v1.C == v2.C;
@@ -149,6 +159,7 @@ namespace NeoAxis
 		/// <param name="v1">The first triangle to compare.</param>
 		/// <param name="v2">The second triangle to compare.</param>
 		/// <returns>True if the triangles are unequal; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( Triangle v1, Triangle v2 )
 		{
 			return v1.A != v2.A || v1.B != v2.B || v1.C != v2.C;
@@ -199,6 +210,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="Triangle"/> to the triangle of <see cref="TriangleF"/> format.
 		/// </summary>
 		/// <returns>The triangle of <see cref="TriangleF"/> format.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public TriangleF ToTriangleF()
 		{
@@ -213,6 +225,18 @@ namespace NeoAxis
 			result.C.Y = (float)C.Y;
 			result.C.Z = (float)C.Z;
 			return result;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public bool Intersects( ref Bounds bounds )
+		{
+			return bounds.Intersects( ref this );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public bool Intersects( Bounds bounds )
+		{
+			return bounds.Intersects( ref this );
 		}
 	}
 }

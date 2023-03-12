@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -30,13 +30,23 @@ namespace Internal//NeoAxis
 				if( instance == null )
 				{
 					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
+					{
+#if MACOS
 						instance = new LogPlatformFunctionalityMacOSX();
+#endif
+					}
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
 						Log.Fatal( "LogPlatformFunctionality: Get: Instance must be already initialized." );
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
 						Log.Fatal( "LogPlatformFunctionality: Get: Instance must be already initialized." );
+					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+						Log.Fatal( "LogPlatformFunctionality: Get: Instance must be already initialized." );
 					else
+					{
+#if WINDOWS || UWP
 						instance = new LogPlatformFunctionalityWindows();
+#endif
+					}
 				}
 				return instance;
 			}
@@ -45,6 +55,7 @@ namespace Internal//NeoAxis
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
+#if WINDOWS || UWP
 	class LogPlatformFunctionalityWindows : LogPlatformFunctionality
 	{
 		[DllImport( "user32.dll" )]
@@ -62,16 +73,18 @@ namespace Internal//NeoAxis
 			while( ShowCursor( 1 ) < 0 ) { }
 
 			IntPtr hwnd = IntPtr.Zero;
-			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && EngineApp.CreatedInsideEngineWindow != null )
+			if( EngineApp.IsSimulation && EngineApp.CreatedInsideEngineWindow != null )
 				hwnd = EngineApp.CreatedInsideEngineWindow.Handle;
 
 			return (EDialogResult)MessageBox( hwnd, text, caption, (int)buttons | MB_ICONEXCLAMATION );
 			//MessageBox( hwnd, text, caption, MB_OK | MB_ICONEXCLAMATION );
 		}
 	}
+#endif
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
+#if MACOS
 	class LogPlatformFunctionalityMacOSX : LogPlatformFunctionality
 	{
 		struct MacAppNativeWrapper
@@ -88,4 +101,5 @@ namespace Internal//NeoAxis
 			return EDialogResult.OK;
 		}
 	}
+#endif
 }

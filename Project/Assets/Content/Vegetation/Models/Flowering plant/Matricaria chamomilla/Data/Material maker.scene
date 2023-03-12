@@ -1,0 +1,1387 @@
+// Made with NeoAxis Engine 2021.3.
+
+.component NeoAxis.Scene
+{
+	BackgroundColor = 0.4941176 0.4941176 0.4941176
+	Mode = _2D
+	RenderingPipeline
+	{
+		GetByReference = "root:$Rendering Pipeline"
+	}
+	CameraEditor
+	{
+		GetByReference = "this:$Camera Editor"
+	}
+	CameraEditor2D
+	{
+		GetByReference = "this:$Camera Editor 2D"
+	}
+	.component NeoAxis.RenderToFile
+	{
+		Name = Render To File
+		Mode = Material
+		Resolution = 1024 1024
+		OutputFileName = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Material.material"
+		FillTransparentPixelsByNearPixels = True
+		Camera
+		{
+			GetByReference = "root:$Camera Editor 2D To File"
+		}
+		Template
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Material template.material"
+		}
+	}
+	.component NeoAxis.Camera
+	{
+		Name = Camera Editor
+		Visible = False
+		Transform = "0.201225275694478 -0.336318972421266 0.77018113694836; -0.411598802328469 0.352366376398584 0.638479459963394 0.546597056258404; 1 1 1"
+	}
+	.component NeoAxis.Camera
+	{
+		Name = Camera Editor 2D
+		Visible = False
+		Transform = "0.00559521854759001 -0.00153206650831411 10; 0.5 -0.5 -0.5 -0.5; 1 1 1"
+		Projection = Orthographic
+		Height = 2.1
+		FixedUp = 0 1 0
+		FarClipPlane = 100
+	}
+	.component NeoAxis.Camera
+	{
+		Name = Camera Editor 2D To File
+		ScreenLabel = NeverDisplay
+		Transform = "0 0 1; 0.5 -0.5 -0.5 -0.5; 1 1 1"
+		Projection = Orthographic
+		Height = 2
+		FixedUp = 0 1 0
+		FarClipPlane = 100
+	}
+	.component NeoAxis.Light
+	{
+		Name = Ambient Light
+		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
+		Type = Ambient
+		Brightness = 50000
+	}
+	.component NeoAxis.Light
+	{
+		Name = Directional Light
+		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
+		Type = Directional
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 91.429
+	}
+	.component NeoAxis.RenderingPipeline_Basic
+	{
+		Name = Rendering Pipeline
+		Shadows = False
+		ShadowFarDistance = 15
+		ShadowDirectionalLightCascades = 1
+		.component NeoAxis.Component
+		{
+			Name = Background Effects
+		}
+		.component NeoAxis.Component
+		{
+			Name = Scene Effects
+			.component NeoAxis.RenderingEffect_AmbientOcclusion
+			{
+				Enabled = False
+				Name = Ambient Occlusion
+			}
+			.component NeoAxis.RenderingEffect_MotionBlur
+			{
+				Enabled = False
+				Name = Motion Blur
+			}
+			.component NeoAxis.RenderingEffect_Bloom
+			{
+				Enabled = False
+				Name = Bloom
+			}
+			.component NeoAxis.RenderingEffect_LensEffects
+			{
+				Enabled = False
+				Name = Lens Effects
+			}
+			.component NeoAxis.RenderingEffect_ToneMapping
+			{
+				Enabled = False
+				Name = Tone Mapping
+				Intensity = 0.5
+			}
+			.component NeoAxis.RenderingEffect_ToLDR
+			{
+				Name = To LDR
+			}
+			.component NeoAxis.RenderingEffect_Antialiasing
+			{
+				Name = Antialiasing
+			}
+			.component NeoAxis.RenderingEffect_ResolutionUpscale
+			{
+				Name = Resolution Upscale
+			}
+			.component NeoAxis.RenderingEffect_Sharpen
+			{
+				Name = Sharpen
+				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
+			}
+		}
+		.component NeoAxis.Component
+		{
+			Name = Final Image Effects
+		}
+	}
+	.component NeoAxis.GameMode
+	{
+		Name = Game Mode
+		CutsceneStarted = False
+		CutsceneGuiFadingFactor = 0
+		CutsceneGuiFadingSpeed = 0
+		ScreenFadingCurrentColor = 0 0 0 0
+		ScreenFadingTargetColor = 0 0 0 0
+		ScreenFadingSpeed = 0
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Enabled = False
+		Name = Ground
+		CanBeSelected = False
+		Transform = "0 0 -1; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 100 100
+				UVTilesPerUnit = 0.25 0.25
+			}
+		}
+	}
+	.component NeoAxis.GroupOfObjects
+	{
+		Name = Group Of Objects
+		BaseObjects
+		{
+			Count = 1
+			0 "NeoAxis.Reference<NeoAxis.Component>"
+			{
+				GetByReference = "root:$Ground"
+			}
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space Border
+		ScreenLabel = NeverDisplay
+		Transform = "-1.01 1.01 0; 0 0 0 1; 1 1 1"
+		CurveTypePosition = Line
+		Color = 0.6039216 0.6039216 0.6039216
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			ScreenLabel = NeverDisplay
+			Transform = "1.01 1.01 0; 0 0 0 1; 1 1 1"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 2
+			ScreenLabel = NeverDisplay
+			Transform = "1.01 -1.01 0; 0 0 0 1; 1 1 1"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 3
+			ScreenLabel = NeverDisplay
+			Transform = "-1.01 -1.01 0; 0 0 0 1; 1 1 1"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			ScreenLabel = NeverDisplay
+			Transform = "-1.01 1.01 0; 0 0 0 1; 1 1 1"
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Enabled = False
+		Name = Plane
+		Transform = "0 0 -0.977678062625181; 0 0 0 1; 1 1 1"
+		Color = 0.6635686 0.7559215 1
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 2
+		Transform = "0.0000118764845618 0.744212950068872 -0.75; 0 0 0 1; 1.92849997592717 1.92849997592717 1.92849997592717"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.178437368620057 0.714933718749879 -0.75; 0 0 0 1; 1.32999999262393 1.32999999262393 1.32999999262393"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.359716449151719 0.706555033624442 -0.75; 0 0 0 1; 1.32999999262393 1.32999999262393 1.32999999262393"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 2
+			Transform = "-0.552798367626111 0.731583909713772 -0.75; 0 0 0 1; 1 1 1"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 3
+			Transform = "-0.733001257717756 0.758770318190001 -0.75; 0 0 0 1; 0.5 0.5 0.5"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 5
+			Transform = "-0.906754226838897 0.740480531966723 -0.75; 0 0 0 1; 0.5 0.5 0.5"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 8
+		Transform = "-0.469170090149955 0.27616097945243 -0.75; 0 0 0 1; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.012
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.604507696299705 0.256026641245076 -0.75; 0 0 0 1; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 2
+			Transform = "-0.754745225990917 0.274316427468354 -0.75; 0 0 0 1; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.926443330895297 0.261042214606825 -0.75; 0 0 -0.776356291101115 0.630294303692904; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 3
+		Transform = "-0.0345885378818252 0.734195423189077 -0.75; 0 0 0.333020315765417 0.942919651554417; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.113393665995189 0.643245687909725 -0.75; 0 0 0.333020315765417 0.942919651554417; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.172771170549714 0.54996714480447 -0.75; 0 0 0.333020315765417 0.942919651554417; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 13
+		Transform = "-0.0260854540266282 0.742652964698928 -0.75; 0 0 -0.233946182330695 0.97224954809601; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.0876844796137462 0.831141874764459 -0.75; 0 0 -0.233946182330695 0.97224954809601; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.205677027484692 0.904919829741546 -0.75; 0 0 -0.233946182330695 0.97224954809601; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 36
+		Transform = "-0.516269700307903 0.271567610187642 -0.75; 0 0 -0.169949464059003 0.98545277901382; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.588876922110458 0.351272807634124 -0.75; 0 0 -0.169949464059003 0.98545277901382; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.715479158725738 0.409042191200916 -0.75; 0 0 -0.169949464059003 0.98545277901382; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 39
+		Transform = "-0.671732883205765 0.266341956980991 -0.75; 0 0 -0.169949464059003 0.98545277901382; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.74434010500832 0.346047154427473 -0.75; 0 0 -0.169949464059003 0.98545277901382; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.870942341623601 0.403816537994265 -0.75; 0 0 -0.169949464059003 0.98545277901382; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 14
+		Transform = "-0.13321134476297 0.723056765173988 -0.75; 0 0 -0.233946182330695 0.97224954809601; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.215712983176691 0.802400782127879 -0.75; 0 0 -0.233946182330695 0.97224954809601; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.34023759755595 0.89185569672492 -0.75; 0 0 -0.233946182330695 0.97224954809601; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 15
+		Transform = "-0.23841834049544 0.71164637030147 -0.75; 0 0 -0.294598695814108 0.955621059010646; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.325880977411698 0.792149245306261 -0.75; 0 0 -0.294598695814108 0.955621059010646; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.44101462659085 0.853422616542571 -0.75; 0 0 -0.294598695814108 0.955621059010646; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 16
+		Transform = "-0.352162586095382 0.706944750983299 -0.75; 0 0 -0.311565463894641 0.950224690117089; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.436703755621841 0.790510392221076 -0.75; 0 0 -0.311565463894641 0.950224690117089; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.554808647911406 0.892423421487495 -0.75; 0 0 -0.311565463894641 0.950224690117089; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 17
+		Transform = "-0.467529857005876 0.717566673747656 -0.75; 0 0 -0.344506115245686 0.938784073447312; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.546041912798463 0.806820709150006 -0.75; 0 0 -0.344506115245686 0.938784073447312; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.603143599871797 0.91513488725739 -0.75; 0 0 -0.344506115245686 0.938784073447312; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 18
+		Transform = "-0.612983879893283 0.741474517323062 -0.75; 0 0 -0.308724943219953 0.951151359896961; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.698022901148844 0.824533475926446 -0.75; 0 0 -0.308724943219953 0.951151359896961; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.770791724025932 0.904868196145449 -0.75; 0 0 -0.308724943219953 0.951151359896961; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 19
+		Transform = "-0.747536787190325 0.762044422306269 -0.75; 0 0 -0.265568007757505 0.964092129029022; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.803126162148357 0.818823343776094 -0.75; 0 0 -0.265568007757505 0.964092129029022; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.887786387083295 0.861267330676015 -0.75; 0 0 -0.265568007757505 0.964092129029022; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 4
+		Transform = "-0.140408015316504 0.717212050267461 -0.75; 0 0 0.333020315765417 0.942919651554417; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.219213143429868 0.62626231498811 -0.75; 0 0 0.333020315765417 0.942919651554417; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.33476641995589 0.564337691122759 -0.75; 0 0 0.333020315765417 0.942919651554417; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 20
+		Transform = "-0.0544499461338692 0.785133911926505 -0.75; 0 0 -0.171806254483815 0.98513075828554; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.128717750057633 0.793550740024212 -0.75; 0 0 -0.171806254483815 0.98513075828554; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.210744823128337 0.824258045757781 -0.75; 0 0 -0.171806254483815 0.98513075828554; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 5
+		Transform = "-0.549929206652565 0.3099891265878 -0.75; 0 0 -0.107100934995941 0.994248152989482; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.624660507254285 0.3086540590763 -0.75; 0 0 -0.107100934995941 0.994248152989482; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.709990234504606 0.328407969811831 -0.75; 0 0 -0.107100934995941 0.994248152989482; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 37
+		Transform = "-0.705392389550427 0.304763473381149 -0.75; 0 0 -0.107100934995941 0.994248152989482; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.780123690152148 0.303428405869649 -0.75; 0 0 -0.107100934995941 0.994248152989482; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.89027527013406 0.324488729906843 -0.75; 0 0 -0.107100934995941 0.994248152989482; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 33
+		Transform = "-0.0590665923439562 0.800171281196647 -0.75; 0 0 -0.45945091894187 0.888203159802684; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.0824862630178572 0.870486270349815 -0.75; 0 0 -0.45945091894187 0.888203159802684; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.160910732841637 0.929553554713105 -0.75; 0 0 -0.45945091894187 0.888203159802684; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 35
+		Transform = "-0.556466446177346 0.324296481206714 -0.75; 0 0 -0.400461796916684 0.916313455761871; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.588851213614107 0.39095910575864 -0.75; 0 0 -0.400461796916684 0.916313455761871; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.67430552088264 0.439300629508413 -0.75; 0 0 -0.400461796916684 0.916313455761871; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 38
+		Transform = "-0.711929629075208 0.319070828000063 -0.75; 0 0 -0.400461796916684 0.916313455761871; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.744314396511969 0.385733452551989 -0.75; 0 0 -0.400461796916684 0.916313455761871; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.829768703780502 0.434074976301762 -0.75; 0 0 -0.400461796916684 0.916313455761871; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 46
+		Transform = "-0.789008013873308 0.273346362441868 -0.75; 0 0 -0.400461796916684 0.916313455761871; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.825312021215058 0.345234640200445 -0.75; 0 0 -0.400461796916684 0.916313455761871; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.874186756037034 0.390963337346892 -0.75; 0 0 -0.400461796916684 0.916313455761871; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 47
+		Transform = "-0.476477166596342 0.279265082956755 -0.75; 0 0 -0.607035278042244 0.79467488396965; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.520098338672168 0.350735012988231 -0.75; 0 0 -0.607035278042244 0.79467488396965; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.600957414122921 0.406978923379137 -0.75; 0 0 -0.607035278042244 0.79467488396965; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 26
+		Transform = "-0.180609908368043 0.674715699313269 -0.75; 0 0 0.203481675254039 0.979078754664716; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.256557462210685 0.646160924123762 -0.75; 0 0 0.203481675254039 0.979078754664716; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.304251086983391 0.560807166908045 -0.75; 0 0 0.203481675254039 0.979078754664716; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 27
+		Transform = "-0.0760968442350272 0.685167005726571 -0.75; 0 0 0.203481675254039 0.979078754664716; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.152044398077668 0.656612230537064 -0.75; 0 0 0.203481675254039 0.979078754664716; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.21672139577199 0.60653163246624 -0.75; 0 0 0.203481675254039 0.979078754664716; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 28
+		Transform = "-0.301834243344091 0.653728862362019 -0.75; 0 0 0.108552879414033 0.994090676131168; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.381839056689705 0.640214575020922 -0.75; 0 0 0.108552879414033 0.994090676131168; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.477103827362053 0.608642965788738 -0.75; 0 0 0.108552879414033 0.994090676131168; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 29
+		Transform = "-0.397202414365469 0.678550715093611 -0.75; 0 0 0.108552879414033 0.994090676131168; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.477207227711082 0.665036427752514 -0.75; 0 0 0.108552879414033 0.994090676131168; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.538505252540201 0.615175032297052 -0.75; 0 0 0.108552879414033 0.994090676131168; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 30
+		Transform = "-0.509553958308462 0.686389194903587 -0.75; 0 0 0.108552879414033 0.994090676131168; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.589558771654075 0.67287490756249 -0.75; 0 0 0.108552879414033 0.994090676131168; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.662614516198158 0.636077645123655 -0.75; 0 0 0.108552879414033 0.994090676131168; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 31
+		Transform = "-0.645420941681383 0.712517460936841 -0.75; 0 0 0.108552879414033 0.994090676131168; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.734570648138636 0.696390346992419 -0.75; 0 0 0.108552879414033 0.994090676131168; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.807626392682718 0.659593084553584 -0.75; 0 0 0.108552879414033 0.994090676131168; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 41
+		Transform = "-0.537043613964168 0.22966985058533 -0.75; 0 0 0.216962825742388 0.976179866748889; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.621319772700568 0.199031654711132 -0.75; 0 0 0.216962825742388 0.976179866748889; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.684591186268877 0.147186610985133 -0.75; 0 0 0.216962825742388 0.976179866748889; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 48
+		Transform = "-0.489516004740039 0.270978731921776 -0.75; 0 0 0.494208753696473 0.869343262336449; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.510949894137035 0.194284124089695 -0.75; 0 0 0.494208753696473 0.869343262336449; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.557690574294069 0.124995806588414 -0.75; 0 0 0.494208753696473 0.869343262336449; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 43
+		Transform = "-0.684732362348307 0.228223598048159 -0.75; 0 0 0.110362888676936 0.993891358651882; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.773832320639765 0.214418031312412 -0.75; 0 0 0.110362888676936 0.993891358651882; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.846753568984344 0.1773549516542 -0.75; 0 0 0.110362888676936 0.993891358651882; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 45
+		Transform = "-0.750053027431443 0.237368491159798 -0.75; 0 0 0.110362888676936 0.993891358651882; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.841765812326226 0.224869337725713 -0.75; 0 0 0.110362888676936 0.993891358651882; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.914687060670805 0.187806258067502 -0.75; 0 0 0.110362888676936 0.993891358651882; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 21
+		Transform = "-0.183784862998477 0.774682605513203 -0.75; 0 0 -0.171806254483815 0.98513075828554; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.258052666922241 0.78309943361091 -0.75; 0 0 -0.171806254483815 0.98513075828554; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.340079739992945 0.813806739344479 -0.75; 0 0 -0.171806254483815 0.98513075828554; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 22
+		Transform = "-0.283968574584476 0.754794956307486 -0.75; 0 0 -0.250031379879488 0.968237733759411; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.355944817704487 0.774943656543833 -0.75; 0 0 -0.250031379879488 0.968237733759411; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.432027630593821 0.818334726187346 -0.75; 0 0 -0.250031379879488 0.968237733759411; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 32
+		Transform = "-0.303280349999287 0.779590990832429 -0.75; 0 0 -0.47864567116882 0.878008155697515; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.357160132206612 0.831393681536449 -0.75; 0 0 -0.47864567116882 0.878008155697515; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.403662060866909 0.905615982584275 -0.75; 0 0 -0.47864567116882 0.878008155697515; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 23
+		Transform = "-0.38256595653795 0.747573610191263 -0.75; 0 0 -0.280712019169089 0.959792041170385; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.453114938672348 0.772259452584943 -0.75; 0 0 -0.280712019169089 0.959792041170385; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.527590293943271 0.836078756072434 -0.75; 0 0 -0.280712019169089 0.959792041170385; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 24
+		Transform = "-0.52235217981586 0.781540356034493 -0.75; 0 0 -0.280712019169089 0.959792041170385; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.592901161950257 0.806226198428173 -0.75; 0 0 -0.280712019169089 0.959792041170385; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.666070103919518 0.854368542295712 -0.75; 0 0 -0.280712019169089 0.959792041170385; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 25
+		Transform = "-0.666057642998758 0.791991662447795 -0.75; 0 0 -0.280712019169089 0.959792041170385; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.736606625133155 0.816677504841475 -0.75; 0 0 -0.280712019169089 0.959792041170385; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.809775567102416 0.864819848709014 -0.75; 0 0 -0.280712019169089 0.959792041170385; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 34
+		Transform = "-0.557625338960753 0.822039168386037 -0.75; 0 0 -0.280712019169089 0.959792041170385; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.60857812157021 0.868934036907983 -0.75; 0 0 -0.280712019169089 0.959792041170385; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.659538037411205 0.928834100490487 -0.75; 0 0 -0.280712019169089 0.959792041170385; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 6
+		Transform = "-0.24787926680484 0.707085262342499 -0.75; 0 0 0.295158091362481 0.95544842932691; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.333680990060102 0.622704181223712 -0.75; 0 0 0.295158091362481 0.95544842932691; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.428979340839696 0.537523800460576 -0.75; 0 0 0.295158091362481 0.95544842932691; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 9
+		Transform = "-0.366256995524777 0.706701565340213 -0.75; 0 0 0.274287345674146 0.96164777959658; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.455650586189617 0.626135514720893 -0.75; 0 0 0.274287345674146 0.96164777959658; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.577943179885731 0.578894216222212 -0.75; 0 0 0.274287345674146 0.96164777959658; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 10
+		Transform = "-0.473382886261119 0.718459285055178 -0.75; 0 0 0.274287345674146 0.96164777959658; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.562776476925959 0.637893234435857 -0.75; 0 0 0.274287345674146 0.96164777959658; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.658940804588819 0.56321725660226 -0.75; 0 0 0.274287345674146 0.96164777959658; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 11
+		Transform = "-0.621007589349005 0.738055484580118 -0.75; 0 0 0.274287345674146 0.96164777959658; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.702562700203869 0.641812474340845 -0.75; 0 0 0.274287345674146 0.96164777959658; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.800033441168392 0.603716068953804 -0.75; 0 0 0.274287345674146 0.96164777959658; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 40
+		Transform = "-0.519577919690955 0.26446213199832 -0.75; 0 0 0.378137366795775 0.925749497344049; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.578178815727326 0.152748712436477 -0.75; 0 0 0.378137366795775 0.925749497344049; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.664994109235883 0.094310828657116 -0.75; 0 0 0.378137366795775 0.925749497344049; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 42
+		Transform = "-0.656502515061016 0.259109303768888 -0.75; 0 0 0.276038003274275 0.961146721759145; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.741625818167604 0.1599570901465 -0.75; 0 0 0.276038003274275 0.961146721759145; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.838957169678904 0.121505959336459 -0.75; 0 0 0.276038003274275 0.961146721759145; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 44
+		Transform = "-0.728355246652465 0.266947783578865 -0.75; 0 0 0.276038003274275 0.961146721759145; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.809559309854065 0.170408396559802 -0.75; 0 0 0.276038003274275 0.961146721759145; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.876843155427122 0.143714985464725 -0.75; 0 0 0.276038003274275 0.961146721759145; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 12
+		Transform = "-0.762100225928577 0.757651684105059 -0.75; 0 0 0.274287345674146 0.96164777959658; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.851493816593418 0.677085633485739 -0.75; 0 0 0.274287345674146 0.96164777959658; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.931981184636325 0.636376401495372 -0.75; 0 0 0.274287345674146 0.96164777959658; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Enabled = False
+		Name = Plane 2
+		CanBeSelected = False
+		Transform = "0 0 -5; 0 0 0 1; 1 1 1"
+		Color = 1 1 1 0.6710196
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Common oak\\Data\\Leaves.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 3
+		Transform = "-0.0118632137564482 -1.02908551068884 -10; 0 0 0 1; 2 2 2"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\MargueriteFlower01_2K.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 4
+		Transform = "0.53932443469961 0.514738717339667 0; 0 0 0 1; 0.7 0.7 0.7"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Matricaria chamomilla\\Data\\Bark2.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+}

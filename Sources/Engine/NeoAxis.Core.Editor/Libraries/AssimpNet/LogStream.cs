@@ -45,6 +45,8 @@ namespace Internal.Assimp
         private static List<LogStream> s_activeLogstreams = new List<LogStream>();
 
         private LoggingCallback m_logCallback;
+
+    // Don't delete this, holding onto the callbacks prevent them from being GC'ed inappropiately
         private AiLogStreamCallback m_assimpCallback;
         private IntPtr m_logstreamPtr;
         private String m_userData;
@@ -114,15 +116,22 @@ namespace Internal.Assimp
         /// <summary>
         /// Constructs a new LogStream.
         /// </summary>
-        protected LogStream() : this("") { }
+    /// <param name="initialize">
+    /// Whether to immediately initialize the system by setting up native pointers. Set this to
+    /// false if you want to manually initialize and use custom function pointers for advanced use cases.
+    /// </param>
+    protected LogStream(bool initialize = true) : this("", initialize) { }
 
         /// <summary>
         /// Constructs a new LogStream.
         /// </summary>
         /// <param name="userData">User-supplied data</param>
-        protected LogStream(String userData)
+    /// <param name="initialize">True if initialize should be immediately called with the default callbacks. Set this to false
+    /// if your subclass requires a different way to setup the function pointers.</param>
+    protected LogStream(String userData, bool initialize = true)
         {
-            Initialize(null, userData);
+      if (initialize)
+        Initialize(OnAiLogStreamCallback, null, userData);
         }
 
         /// <summary>
@@ -131,7 +140,7 @@ namespace Internal.Assimp
         /// <param name="callback">Logging callback that is called when messages are received by the log stream.</param>
         public LogStream(LoggingCallback callback)
         {
-            Initialize(callback, String.Empty);
+      Initialize(OnAiLogStreamCallback, callback);
         }
 
         /// <summary>
@@ -141,7 +150,7 @@ namespace Internal.Assimp
         /// <param name="userData">User-supplied data</param>
         public LogStream(LoggingCallback callback, String userData)
         {
-            Initialize(callback, userData);
+      Initialize(OnAiLogStreamCallback, callback, userData);
         }
 
         /// <summary>
@@ -157,9 +166,9 @@ namespace Internal.Assimp
         /// </summary>
         public static void DetachAllLogstreams()
         {
-            lock(s_sync)
+      lock (s_sync)
             {
-                foreach(LogStream logstream in s_activeLogstreams)
+        foreach (LogStream logstream in s_activeLogstreams)
                 {
                     logstream.m_isAttached = false;
                     AssimpLibrary.Instance.DetachLogStream(logstream.m_logstreamPtr);
@@ -176,7 +185,7 @@ namespace Internal.Assimp
         /// <returns>Collection of active logstreams attached to the library.</returns>
         public static IEnumerable<LogStream> GetAttachedLogStreams()
         {
-            lock(s_sync)
+      lock (s_sync)
             {
                 return s_activeLogstreams.ToArray();
             }
@@ -193,10 +202,10 @@ namespace Internal.Assimp
         /// </summary>
         public void Attach()
         {
-            if(m_isAttached)
+      if (m_isAttached)
                 return;
 
-            lock(s_sync)
+      lock (s_sync)
             {
                 s_activeLogstreams.Add(this);
                 m_isAttached = true;
@@ -210,10 +219,10 @@ namespace Internal.Assimp
         /// </summary>
         public void Detach()
         {
-            if(!m_isAttached)
+      if (!m_isAttached)
                 return;
 
-            lock(s_sync)
+      lock (s_sync)
             {
                 s_activeLogstreams.Remove(this);
                 m_isAttached = false;
@@ -249,18 +258,16 @@ namespace Internal.Assimp
         /// <param name="disposing">True to release both managed and unmanaged resources; False to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
-            if(!m_isDisposed)
+      if (!m_isDisposed)
             {
-                if(m_logstreamPtr != IntPtr.Zero)
+        if (m_logstreamPtr != IntPtr.Zero)
                 {
                     MemoryHelper.FreeMemory(m_logstreamPtr);
                     m_logstreamPtr = IntPtr.Zero;
                 }
 
-                if(disposing)
-                {
+        if (disposing)
                     m_assimpCallback = null;
-                }
 
                 m_isDisposed = true;
             }
@@ -285,9 +292,14 @@ namespace Internal.Assimp
         /// </summary>
         protected virtual void OnDetach() { }
 
-        private void OnAiLogStreamCallback(String msg, IntPtr userData)
+    /// <summary>
+    /// Callback for Assimp that handles a message being logged.
+    /// </summary>
+    /// <param name="msg"></param>
+    /// <param name="userData"></param>
+    protected void OnAiLogStreamCallback(String msg, IntPtr userData)
         {
-            if(m_logCallback != null)
+      if (m_logCallback != null)
             {
                 m_logCallback(msg, m_userData);
             }
@@ -297,18 +309,26 @@ namespace Internal.Assimp
             }
         }
 
-        private void Initialize(LoggingCallback callback, String userData)
+    /// <summary>
+    /// Initializes the stream by setting up native pointers for Assimp to the specified functions.
+    /// </summary>
+    /// <param name="aiLogStreamCallback">Callback that is marshaled to native code, a reference is held on to avoid it being GC'ed.</param>
+    /// <param name="callback">User callback, if any. Defaults to console if null.</param>
+    /// <param name="userData">User data, or empty.</param>
+    /// <param name="assimpUserData">Additional assimp user data, if any.</param>
+    protected void Initialize(AiLogStreamCallback aiLogStreamCallback, LoggingCallback callback = null, String userData = "", IntPtr assimpUserData = default)
+
         {
-            if(userData == null)
+      if (userData == null)
                 userData = String.Empty;
 
-            m_assimpCallback = OnAiLogStreamCallback;
+      m_assimpCallback = aiLogStreamCallback;
             m_logCallback = callback;
             m_userData = userData;
 
             AiLogStream logStream;
-            logStream.Callback = Marshal.GetFunctionPointerForDelegate(m_assimpCallback);
-            logStream.UserData = IntPtr.Zero;
+      logStream.Callback = Marshal.GetFunctionPointerForDelegate(aiLogStreamCallback);
+      logStream.UserData = assimpUserData;
 
             m_logstreamPtr = MemoryHelper.AllocateMemory(MemoryHelper.SizeOf<AiLogStream>());
             Marshal.StructureToPtr(logStream, m_logstreamPtr, false);
@@ -338,7 +358,7 @@ namespace Internal.Assimp
         /// <param name="userData">Userdata</param>
         protected override void LogMessage(String msg, String userData)
         {
-            if(String.IsNullOrEmpty(userData))
+      if (String.IsNullOrEmpty(userData))
             {
                 Console.WriteLine(msg);
             }

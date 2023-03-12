@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -162,7 +162,7 @@ namespace NeoAxis
 				var start = cameraPosition + direction * cameraVisibleStartOffset;
 
 				//!!!!contact group
-				var item = new PhysicsRayTestItem( new Ray( start, position - start ), 1, -1, PhysicsRayTestItem.ModeEnum.One );
+				var item = new PhysicsRayTestItem( new Ray( start, position - start ), PhysicsRayTestItem.ModeEnum.One, PhysicsRayTestItem.FlagsEnum.None );
 				scene.PhysicsRayTest( item );
 
 				if( item.Result.Length != 0 )
@@ -172,7 +172,7 @@ namespace NeoAxis
 			return true;
 		}
 
-		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
+		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture )
 		{
 			base.OnRender( context, frameData, ref actualTexture );
 

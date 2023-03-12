@@ -1,0 +1,23 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.Surface
+{
+	EditorCameraTransform = "3.61718357264247 -6.60664504634543 3.34726428063768; -0.259095355632081 0.146292508241179 0.831343430370284 0.469399829039762; 1 1 1"
+	.component NeoAxis.SurfaceGroupOfElements
+	{
+		Name = Group 1
+		OccupiedAreaRadius = 0.8
+		RotateBySurfaceNormal = True
+		RotateAroundItsAxis = True
+		ScaleRange = 1.2 1.7
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 1
+			CastShadows = False
+			Mesh
+			{
+				GetByReference = "Content\\Constructors\\Roads\\Default Road\\Imperfections\\Crack 1.mesh"
+			}
+		}
+	}
+}

@@ -1,6 +1,6 @@
 ﻿#if DEPLOY
 namespace Scripts {
-// Auto-generated file
+// Auto-generated file. This source file is used to compile for Android, UWP, it is included into a Project csproj.
 using System;
 using System.Text;
 using System.Collections;
@@ -11,8 +11,8 @@ using NeoAxis;
 using NeoAxis.Editor;
 using Project;
 
-[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgSW50ZXJhY3RpdmVPYmplY3RCdXR0b25fVXBkYXRlRXZlbnQoTmVvQXhpcy5Db21wb25lbnQgc2VuZGVyLCBmbG9hdCBkZWx0YSkKewoJdmFyIF90aGlzID0gc2VuZGVyIGFzIEJ1dHRvbkluU3BhY2U7CglpZiAoX3RoaXMgIT0gbnVsbCkKCXsKCQl2YXIgaW5kaWNhdG9yID0gX3RoaXMuR2V0Q29tcG9uZW50KCJJbmRpY2F0b3IiKSBhcyBNZXNoSW5TcGFjZTsKCQlpZiAoaW5kaWNhdG9yICE9IG51bGwpCgkJCWluZGljYXRvci5Db2xvciA9IF90aGlzLkFjdGl2YXRlZCA/IG5ldyBDb2xvclZhbHVlKDAsIDEsIDApIDogbmV3IENvbG9yVmFsdWUoMC41LCAwLjUsIDAuNSk7CgoJCXZhciBidXR0b25PZmZzZXQgPSBfdGhpcy5Db21wb25lbnRzLkdldEJ5UGF0aCgiQnV0dG9uXFxBdHRhY2ggVHJhbnNmb3JtIE9mZnNldCIpIGFzIFRyYW5zZm9ybU9mZnNldDsKCQlpZiAoYnV0dG9uT2Zmc2V0ICE9IG51bGwpCgkJewoJCQl2YXIgb2Zmc2V0UHVzaGVkID0gMC4wMTsKCQkJdmFyIG9mZnNldERlZmF1bHQgPSAwLjA1OwoKCQkJdmFyIGNvZWYgPSAwLjA7CgkJCWlmIChfdGhpcy5DbGlja2luZyAmJiBfdGhpcy5DbGlja2luZ1RvdGFsVGltZSAhPSAwKQoJCQl7CgkJCQl2YXIgdGltZUZhY3RvciA9IE1hdGhFeC5TYXR1cmF0ZShfdGhpcy5DbGlja2luZ0N1cnJlbnRUaW1lIC8gX3RoaXMuQ2xpY2tpbmdUb3RhbFRpbWUpOwoKCQkJCWlmKHRpbWVGYWN0b3IgPCAwLjUpCgkJCQkJY29lZiA9IHRpbWVGYWN0b3IgKiAyOwoJCQkJZWxzZQoJCQkJCWNvZWYgPSAoMS4wZiAtIHRpbWVGYWN0b3IpICogMjsKCQkJfQoKCQkJdmFyIG9mZnNldCA9IE1hdGhFeC5MZXJwKG9mZnNldERlZmF1bHQsIG9mZnNldFB1c2hlZCwgY29lZik7CgkJCWJ1dHRvbk9mZnNldC5Qb3NpdGlvbk9mZnNldCA9IG5ldyBWZWN0b3IzKG9mZnNldCwgMCwgMCk7CgkJfQoJfQp9")]
-public class DynamicClass_136ed899_20f7_424c_8a34_3098998bf9c2
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgSW50ZXJhY3RpdmVPYmplY3RCdXR0b25fVXBkYXRlRXZlbnQoTmVvQXhpcy5Db21wb25lbnQgc2VuZGVyLCBmbG9hdCBkZWx0YSkKewoJdmFyIF90aGlzID0gc2VuZGVyIGFzIEJ1dHRvbkluU3BhY2U7CglpZiAoX3RoaXMgIT0gbnVsbCkKCXsKCQl2YXIgaW5kaWNhdG9yID0gX3RoaXMuR2V0Q29tcG9uZW50KCJJbmRpY2F0b3IiKSBhcyBNZXNoSW5TcGFjZTsKCQlpZiAoaW5kaWNhdG9yICE9IG51bGwpCgkJCWluZGljYXRvci5Db2xvciA9IF90aGlzLkFjdGl2YXRlZCA_IG5ldyBDb2xvclZhbHVlKDAsIDEsIDApIDogbmV3IENvbG9yVmFsdWUoMC41LCAwLjUsIDAuNSk7CgoJCXZhciBidXR0b25PZmZzZXQgPSBfdGhpcy5Db21wb25lbnRzLkdldEJ5UGF0aCgiQnV0dG9uXFxBdHRhY2ggVHJhbnNmb3JtIE9mZnNldCIpIGFzIFRyYW5zZm9ybU9mZnNldDsKCQlpZiAoYnV0dG9uT2Zmc2V0ICE9IG51bGwpCgkJewoJCQl2YXIgb2Zmc2V0UHVzaGVkID0gMC4wMTsKCQkJdmFyIG9mZnNldERlZmF1bHQgPSAwLjA1OwoKCQkJdmFyIGNvZWYgPSAwLjA7CgkJCWlmIChfdGhpcy5DbGlja2luZyAmJiBfdGhpcy5DbGlja2luZ1RvdGFsVGltZSAhPSAwKQoJCQl7CgkJCQl2YXIgdGltZUZhY3RvciA9IE1hdGhFeC5TYXR1cmF0ZShfdGhpcy5DbGlja2luZ0N1cnJlbnRUaW1lIC8gX3RoaXMuQ2xpY2tpbmdUb3RhbFRpbWUpOwoKCQkJCWlmKHRpbWVGYWN0b3IgPCAwLjUpCgkJCQkJY29lZiA9IHRpbWVGYWN0b3IgKiAyOwoJCQkJZWxzZQoJCQkJCWNvZWYgPSAoMS4wZiAtIHRpbWVGYWN0b3IpICogMjsKCQkJfQoKCQkJdmFyIG9mZnNldCA9IE1hdGhFeC5MZXJwKG9mZnNldERlZmF1bHQsIG9mZnNldFB1c2hlZCwgY29lZik7CgkJCWJ1dHRvbk9mZnNldC5Qb3NpdGlvbk9mZnNldCA9IG5ldyBWZWN0b3IzKG9mZnNldCwgMCwgMCk7CgkJfQoJfQp9")]
+public class DynamicClassF6852856494DD40287E6AE691C523DC3C2FD0678AAA101EA5B672D67933B19C1
 {
     public NeoAxis.CSharpScript Owner;
     public void InteractiveObjectButton_UpdateEvent(NeoAxis.Component sender, float delta)
@@ -45,21 +45,43 @@ public class DynamicClass_136ed899_20f7_424c_8a34_3098998bf9c2
     }
 }
 
-[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgQnV0dG9uX0NsaWNrKE5lb0F4aXMuQnV0dG9uSW5TcGFjZSBzZW5kZXIpCnsKCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRTY2VuZTsKCgl2YXIgbGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkRpcmVjdGlvbmFsIExpZ2h0IikgYXMgTGlnaHQ7CglpZiAobGlnaHQgIT0gbnVsbCkKCQlsaWdodC5FbmFibGVkID0gc2VuZGVyLkFjdGl2YXRlZDsKfQo=")]
-public class DynamicClass_1016fab5_f493_42b0_bc36_52b000105b16
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgQnV0dG9uX0NsaWNrKE5lb0F4aXMuQnV0dG9uSW5TcGFjZSBzZW5kZXIpCnsKCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRTY2VuZTsKCgkvLyBHZXQgb2JqZWN0IHR5cGUuCgl2YXIgcmVzb3VyY2VOYW1lID0gQCJTYW1wbGVzXFN0YXJ0ZXIgQ29udGVudFxNb2RlbHNcU2NpLWZpIEJveFxTY2ktZmkgQm94Lm9iamVjdGluc3BhY2UiOwoJdmFyIGJveFR5cGUgPSBNZXRhZGF0YU1hbmFnZXIuR2V0VHlwZShyZXNvdXJjZU5hbWUpOwoJaWYoYm94VHlwZSA9PSBudWxsKQoJewoJCUxvZy5XYXJuaW5nKCJPYmplY3QgdHlwZSBpcyBudWxsLiIpOwoJCXJldHVybjsKCX0KCS8vdmFyIGJveFR5cGUgPSBNZXRhZGF0YU1hbmFnZXIuR2V0VHlwZShyZXNvdXJjZU5hbWUpOwoJLy92YXIgcmVzb3VyY2VOYW1lID0gQCJTYW1wbGVzXFN0YXJ0ZXIgQ29udGVudFxTY2VuZSBvYmplY3RzXFNjaS1maSBCb3hcQm94IHR5cGUuc2NlbmUiOwoJLy92YXIgb2JqZWN0TmFtZUluc2lkZVJlc291cmNlID0gIiRCb3giOwoJLy92YXIgYm94VHlwZSA9IE1ldGFkYXRhTWFuYWdlci5HZXRUeXBlKHJlc291cmNlTmFtZSArICJ8IiArIG9iamVjdE5hbWVJbnNpZGVSZXNvdXJjZSk7CgkKCS8vIENyZWF0ZSB0aGUgb2JqZWN0IHdpdGhvdXQgZW5hYmxpbmcuCgl2YXIgYm94ID0gKE1lc2hJblNwYWNlKXNjZW5lLkNyZWF0ZUNvbXBvbmVudChib3hUeXBlLCBlbmFibGVkOiBmYWxzZSk7CgkvL3ZhciBvYmogPSBzY2VuZS5DcmVhdGVDb21wb25lbnQ8TWVzaEluU3BhY2U+KGVuYWJsZWQ6IGZhbHNlKTsKCgkvLyBTZXQgaW5pdGlhbCBwb3NpdGlvbi4KCXZhciByYW5kb20gPSBuZXcgRmFzdFJhbmRvbSgpOwoJYm94LlRyYW5zZm9ybSA9IG5ldyBUcmFuc2Zvcm0oCgkJbmV3IFZlY3RvcjMoMiArIHJhbmRvbS5OZXh0KDAuMCwgNC4wKSwgOCArIHJhbmRvbS5OZXh0KDAuMCwgNC4wKSwgMTAgKyByYW5kb20uTmV4dCgwLjAsIDQuMCkpLCAKCQluZXcgQW5nbGVzKHJhbmRvbS5OZXh0KDM2MC4wKSwgcmFuZG9tLk5leHQoMzYwLjApLCByYW5kb20uTmV4dCgzNjAuMCkpKTsKCS8vYm94LlRyYW5zZm9ybSA9IG5ldyBUcmFuc2Zvcm0obmV3IFZlY3RvcjMoMSwgMSwgMTApLCBRdWF0ZXJuaW9uLklkZW50aXR5KTsKCQoJLy8gRW5hYmxlIHRoZSBvYmplY3QgaW4gdGhlIHNjZW5lLgoJYm94LkVuYWJsZWQgPSB0cnVlOwoKCS8vdmFyIGxpZ2h0ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJEaXJlY3Rpb25hbCBMaWdodCIpIGFzIExpZ2h0OwoJLy9pZiAobGlnaHQgIT0gbnVsbCkKCS8vCWxpZ2h0LkVuYWJsZWQgPSBzZW5kZXIuQWN0aXZhdGVkOwp9Cg==")]
+public class DynamicClass44C1B60A61C8C21BEB0FBDD014EC9EAC95B9251AFB420712F0EAAA7923759E8D
 {
     public NeoAxis.CSharpScript Owner;
     public void Button_Click(NeoAxis.ButtonInSpace sender)
     {
         var scene = sender.ParentScene;
-        var light = scene.GetComponent("Directional Light") as Light;
-        if (light != null)
-            light.Enabled = sender.Activated;
+        // Get object type.
+        var resourceName = @"Samples\Starter Content\Models\Sci-fi Box\Sci-fi Box.objectinspace";
+        var boxType = MetadataManager.GetType(resourceName);
+        if (boxType == null)
+        {
+            Log.Warning("Object type is null.");
+            return;
+        }
+
+        //var boxType = MetadataManager.GetType(resourceName);
+        //var resourceName = @"Samples\Starter Content\Scene objects\Sci-fi Box\Box type.scene";
+        //var objectNameInsideResource = "$Box";
+        //var boxType = MetadataManager.GetType(resourceName + "|" + objectNameInsideResource);
+        // Create the object without enabling.
+        var box = (MeshInSpace)scene.CreateComponent(boxType, enabled: false);
+        //var obj = scene.CreateComponent<MeshInSpace>(enabled: false);
+        // Set initial position.
+        var random = new FastRandom();
+        box.Transform = new Transform(new Vector3(2 + random.Next(0.0, 4.0), 8 + random.Next(0.0, 4.0), 10 + random.Next(0.0, 4.0)), new Angles(random.Next(360.0), random.Next(360.0), random.Next(360.0)));
+        //box.Transform = new Transform(new Vector3(1, 1, 10), Quaternion.Identity);
+        // Enable the object in the scene.
+        box.Enabled = true;
+    //var light = scene.GetComponent("Directional Light") as Light;
+    //if (light != null)
+    //	light.Enabled = sender.Activated;
     }
 }
 
 [CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgSW50ZXJhY3RpdmVPYmplY3RCdXR0b25fVXBkYXRlRXZlbnQoTmVvQXhpcy5Db21wb25lbnQgc2VuZGVyLCBmbG9hdCBkZWx0YSkKewoJdmFyIF90aGlzID0gc2VuZGVyIGFzIFJlZ3VsYXRvclN3aXRjaEluU3BhY2U7CglpZiAoX3RoaXMgIT0gbnVsbCkKCXsKCQl2YXIgaW5kaWNhdG9yTWluID0gX3RoaXMuR2V0Q29tcG9uZW50KCJJbmRpY2F0b3IgTWluIikgYXMgTWVzaEluU3BhY2U7CgkJaWYgKGluZGljYXRvck1pbiAhPSBudWxsKQoJCQlpbmRpY2F0b3JNaW4uQ29sb3IgPSBfdGhpcy5WYWx1ZS5WYWx1ZSA8PSBfdGhpcy5WYWx1ZVJhbmdlLlZhbHVlLk1pbmltdW0gPyBuZXcgQ29sb3JWYWx1ZSgxLCAwLCAwKSA6IG5ldyBDb2xvclZhbHVlKDAuNSwgMC41LCAwLjUpOwoKCQl2YXIgaW5kaWNhdG9yTWF4ID0gX3RoaXMuR2V0Q29tcG9uZW50KCJJbmRpY2F0b3IgTWF4IikgYXMgTWVzaEluU3BhY2U7CgkJaWYgKGluZGljYXRvck1heCAhPSBudWxsKQoJCQlpbmRpY2F0b3JNYXguQ29sb3IgPSBfdGhpcy5WYWx1ZS5WYWx1ZSA+PSBfdGhpcy5WYWx1ZVJhbmdlLlZhbHVlLk1heGltdW0gPyBuZXcgQ29sb3JWYWx1ZSgwLCAxLCAwKSA6IG5ldyBDb2xvclZhbHVlKDAuNSwgMC41LCAwLjUpOwoKCQl2YXIgYnV0dG9uID0gX3RoaXMuR2V0Q29tcG9uZW50KCJCdXR0b24iKTsKCQlpZiAoYnV0dG9uICE9IG51bGwpCgkJewoJCQl2YXIgb2Zmc2V0ID0gYnV0dG9uLkdldENvbXBvbmVudDxUcmFuc2Zvcm1PZmZzZXQ+KCk7CgkJCWlmIChvZmZzZXQgIT0gbnVsbCkKCQkJewoJCQkJdmFyIGFuZ2xlID0gX3RoaXMuR2V0VmFsdWVBbmdsZSgpIC0gOTA7CgkJCQlvZmZzZXQuUm90YXRpb25PZmZzZXQgPSBuZXcgQW5nbGVzKGFuZ2xlLCAwLCAwKS5Ub1F1YXRlcm5pb24oKTsKCQkJfQoJCX0KCgkJdmFyIG1hcmtlck1pbiA9IF90aGlzLkdldENvbXBvbmVudCgiTWFya2VyIE1pbiIpOwoJCWlmIChtYXJrZXJNaW4gIT0gbnVsbCkKCQl7CgkJCXZhciBvZmZzZXQgPSBtYXJrZXJNaW4uR2V0Q29tcG9uZW50PFRyYW5zZm9ybU9mZnNldD4oKTsKCQkJaWYgKG9mZnNldCAhPSBudWxsKQoJCQl7CgkJCQl2YXIgYW5nbGUgPSBfdGhpcy5BbmdsZVJhbmdlLlZhbHVlLk1pbmltdW0gLSA5MDsKCQkJCXZhciBhbmdsZVIgPSBNYXRoRXguRGVncmVlVG9SYWRpYW4oYW5nbGUpOwoJCQkJb2Zmc2V0LlBvc2l0aW9uT2Zmc2V0ID0gbmV3IFZlY3RvcjMoMC4wMSwgTWF0aC5Db3MoYW5nbGVSKSAqIDAuMDQsIE1hdGguU2luKC1hbmdsZVIpICogMC4wNCk7CgkJCQlvZmZzZXQuUm90YXRpb25PZmZzZXQgPSBuZXcgQW5nbGVzKGFuZ2xlLCAwLCAwKS5Ub1F1YXRlcm5pb24oKTsKCQkJfQoJCX0KCgkJdmFyIG1hcmtlck1heCA9IF90aGlzLkdldENvbXBvbmVudCgiTWFya2VyIE1heCIpOwoJCWlmIChtYXJrZXJNYXggIT0gbnVsbCkKCQl7CgkJCXZhciBvZmZzZXQgPSBtYXJrZXJNYXguR2V0Q29tcG9uZW50PFRyYW5zZm9ybU9mZnNldD4oKTsKCQkJaWYgKG9mZnNldCAhPSBudWxsKQoJCQl7CgkJCQl2YXIgYW5nbGUgPSBfdGhpcy5BbmdsZVJhbmdlLlZhbHVlLk1heGltdW0gLSA5MDsKCQkJCXZhciBhbmdsZVIgPSBNYXRoRXguRGVncmVlVG9SYWRpYW4oYW5nbGUpOwoJCQkJb2Zmc2V0LlBvc2l0aW9uT2Zmc2V0ID0gbmV3IFZlY3RvcjMoMC4wMSwgTWF0aC5Db3MoYW5nbGVSKSAqIDAuMDQsIE1hdGguU2luKC1hbmdsZVIpICogMC4wNCk7CgkJCQlvZmZzZXQuUm90YXRpb25PZmZzZXQgPSBuZXcgQW5nbGVzKGFuZ2xlLCAwLCAwKS5Ub1F1YXRlcm5pb24oKTsKCQkJfQoJCX0KCgkJdmFyIG1hcmtlckN1cnJlbnQgPSBfdGhpcy5HZXRDb21wb25lbnQoIk1hcmtlciBDdXJyZW50Iik7CgkJaWYgKG1hcmtlckN1cnJlbnQgIT0gbnVsbCkKCQl7CgkJCXZhciBvZmZzZXQgPSBtYXJrZXJDdXJyZW50LkdldENvbXBvbmVudDxUcmFuc2Zvcm1PZmZzZXQ+KCk7CgkJCWlmIChvZmZzZXQgIT0gbnVsbCkKCQkJewoJCQkJdmFyIGFuZ2xlID0gX3RoaXMuR2V0VmFsdWVBbmdsZSgpIC0gOTA7CgkJCQl2YXIgYW5nbGVSID0gTWF0aEV4LkRlZ3JlZVRvUmFkaWFuKGFuZ2xlKTsKCQkJCW9mZnNldC5Qb3NpdGlvbk9mZnNldCA9IG5ldyBWZWN0b3IzKDAuMDYsIE1hdGguQ29zKGFuZ2xlUikgKiAwLjA0LCBNYXRoLlNpbigtYW5nbGVSKSAqIDAuMDQpOwoJCQkJb2Zmc2V0LlJvdGF0aW9uT2Zmc2V0ID0gbmV3IEFuZ2xlcyhhbmdsZSwgMCwgMCkuVG9RdWF0ZXJuaW9uKCk7CgkJCX0KCQl9Cgl9Cn0=")]
-public class DynamicClass_cdbd979a_d2b8_4aba_b386_c7c9bcf977bf
+public class DynamicClass8FA65C71FE3773D6CC4FBD8C0B1F016DDDA6C168297DFD792460E1F9059D000F
 {
     public NeoAxis.CSharpScript Owner;
     public void InteractiveObjectButton_UpdateEvent(NeoAxis.Component sender, float delta)
@@ -126,54 +148,399 @@ public class DynamicClass_cdbd979a_d2b8_4aba_b386_c7c9bcf977bf
     }
 }
 
-[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgUmVndWxhdG9yU3dpdGNoX1ZhbHVlQ2hhbmdlZChOZW9BeGlzLlJlZ3VsYXRvclN3aXRjaEluU3BhY2Ugb2JqKQp7Cgl2YXIgc2NlbmUgPSBvYmouUGFyZW50U2NlbmU7CgoJdmFyIGxpZ2h0ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJEaXJlY3Rpb25hbCBMaWdodCIpIGFzIExpZ2h0OwoJaWYgKGxpZ2h0ICE9IG51bGwpCgkJbGlnaHQuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLjAsIDEuMCwgMS4wIC0gb2JqLlZhbHVlKTsKfQo=")]
-public class DynamicClass_a2f24e75_246e_40d1_bb7f_4ebe68523ece
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgUmVndWxhdG9yU3dpdGNoX1ZhbHVlQ2hhbmdlZChOZW9BeGlzLlJlZ3VsYXRvclN3aXRjaEluU3BhY2Ugb2JqKQp7Cgl2YXIgc2NlbmUgPSBvYmouUGFyZW50U2NlbmU7CgoJLy9jaGFuZ2UgdGhlIGNvbG9yIG9mIHRoZSBsaWdodAoJdmFyIGxpZ2h0ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJEaXJlY3Rpb25hbCBMaWdodCIpIGFzIExpZ2h0OwoJaWYgKGxpZ2h0ICE9IG51bGwpCgkJbGlnaHQuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLjAsIDEuMCwgMS4wIC0gb2JqLlZhbHVlKTsKfQo=")]
+public class DynamicClassCEBF52EC362E864E571175F18ED87E1E6AD5024D09FA661D105B997991E0F5C6
 {
     public NeoAxis.CSharpScript Owner;
     public void RegulatorSwitch_ValueChanged(NeoAxis.RegulatorSwitchInSpace obj)
     {
         var scene = obj.ParentScene;
+        //change the color of the light
         var light = scene.GetComponent("Directional Light") as Light;
         if (light != null)
             light.Color = new ColorValue(1.0, 1.0, 1.0 - obj.Value);
     }
 }
 
-[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgQnV0dG9uX0NsaWNrKE5lb0F4aXMuQnV0dG9uSW5TcGFjZSBzZW5kZXIpCnsKCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRTY2VuZTsKCgl2YXIgZ3JvdW5kID0gc2NlbmUuR2V0Q29tcG9uZW50KCJHcm91bmQiKSBhcyBNZXNoSW5TcGFjZTsKCWlmIChncm91bmQgIT0gbnVsbCkKCXsKCQlpZiAoIWdyb3VuZC5SZXBsYWNlTWF0ZXJpYWwuUmVmZXJlbmNlU3BlY2lmaWVkKQoJCXsKCQkJZ3JvdW5kLlJlcGxhY2VNYXRlcmlhbCA9IFJlZmVyZW5jZVV0aWxpdHkuTWFrZVJlZmVyZW5jZSgKCQkJCUAiQ29udGVudFxNYXRlcmlhbHNcQmFzaWMgTGlicmFyeVxDb25jcmV0ZVxDb25jcmV0ZSBGbG9vciAwMS5tYXRlcmlhbCIpOwoJCX0KCQllbHNlCgkJCWdyb3VuZC5SZXBsYWNlTWF0ZXJpYWwgPSBudWxsOwoJfQp9Cg==")]
-public class DynamicClass_12ab230e_bbeb_44cf_816c_1f234ee5f096
+[CSharpScriptGeneratedAttribute("dm9pZCBNZXRob2QoKQp7CgkvL3RoZSBzY3JpcHQgbWFrZXMgY29weSBvZiBjaGlsZCBjb21wb25lbnRzIG9mIHRlbXBsYXRlIGJ1aWxkaW5nIHRvIG90aGVyIGJ1aWxkaW5ncyAKCgl2YXIgcmFuZG9tID0gbmV3IEZhc3RSYW5kb20oMCk7CgkKCXZhciBzY2VuZSA9IE93bmVyLkZpbmRQYXJlbnQ8U2NlbmU+KCk7CglpZihzY2VuZSAhPSBudWxsKQoJewoJCXZhciBzb3VyY2UgPSBzY2VuZS5HZXRDb21wb25lbnQ8QnVpbGRpbmc+KCJCdWlsZGluZyIpOwoJCXZhciBkZXN0QnVpbGRpbmdzID0gc2NlbmUuR2V0Q29tcG9uZW50czxCdWlsZGluZz4oKS5XaGVyZShiID0+IGIuTmFtZSAhPSAiQnVpbGRpbmciKS5Ub0FycmF5KCk7CgkJCgkJaWYoc291cmNlICE9IG51bGwgJiYgZGVzdEJ1aWxkaW5ncy5MZW5ndGggIT0gMCkKCQl7CgkJCWZvcmVhY2godmFyIGRlc3QgaW4gZGVzdEJ1aWxkaW5ncykKCQkJewoJCQkJZGVzdC5FbmFibGVkID0gZmFsc2U7CgkJCQlkZXN0LlJlbW92ZUFsbENvbXBvbmVudHMoZmFsc2UpOwoKCQkJCWRlc3QuQnVpbGRpbmdUeXBlID0gUmVmZXJlbmNlVXRpbGl0eS5NYWtlUmVmZXJlbmNlKEAiU2FtcGxlc1xDaXR5IERlbW9cQnVpbGRpbmdzXFR5cGUgMS5idWlsZGluZ3R5cGUiKTsKCQkJCWRlc3QuT2NjbHVkZXIgPSBzb3VyY2UuT2NjbHVkZXI7CgkJCQlkZXN0LlNlZWQgPSByYW5kb20uTmV4dEludGVnZXIoKTsKCgoJCQkJLyoKCQkJCWZvcmVhY2godmFyIGMgaW4gc291cmNlLkdldENvbXBvbmVudHMoKSkKCQkJCXsKCQkJCQlpZihjLkVuYWJsZWQpCgkJCQkJewoJCQkJCQl2YXIgbmV3QyA9IChDb21wb25lbnQpYy5DbG9uZSgpOwoJCQkJCQlkZXN0LkFkZENvbXBvbmVudChuZXdDKTsKCQkJCQl9CgkJCQl9Ki8KCQkJfQoJCQkJCQkKCQkJZm9yZWFjaCh2YXIgZGVzdCBpbiBkZXN0QnVpbGRpbmdzKQoJCQkJZGVzdC5FbmFibGVkID0gdHJ1ZTsKCQl9Cgl9Cn0K")]
+public class DynamicClass116CBBFE8C60C52489D28A9D3ADA1060EEBBD4CEC00AD997532B918A435CF0FF
+{
+    public NeoAxis.CSharpScript Owner;
+    void Method()
+    {
+        //the script makes copy of child components of template building to other buildings 
+        var random = new FastRandom(0);
+        var scene = Owner.FindParent<Scene>();
+        if (scene != null)
+        {
+            var source = scene.GetComponent<Building>("Building");
+            var destBuildings = scene.GetComponents<Building>().Where(b => b.Name != "Building").ToArray();
+            if (source != null && destBuildings.Length != 0)
+            {
+                foreach (var dest in destBuildings)
+                {
+                    dest.Enabled = false;
+                    dest.RemoveAllComponents(false);
+                    dest.BuildingType = ReferenceUtility.MakeReference(@"Samples\City Demo\Buildings\Type 1.buildingtype");
+                    dest.Occluder = source.Occluder;
+                    dest.Seed = random.NextInteger();
+                /*
+				foreach(var c in source.GetComponents())
+				{
+					if(c.Enabled)
+					{
+						var newC = (Component)c.Clone();
+						dest.AddComponent(newC);
+					}
+				}*/
+                }
+
+                foreach (var dest in destBuildings)
+                    dest.Enabled = true;
+            }
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgR2FtZU1vZGVfSW5wdXRNZXNzYWdlRXZlbnQoTmVvQXhpcy5HYW1lTW9kZSBzZW5kZXIsIE5lb0F4aXMuSW5wdXRNZXNzYWdlIG1lc3NhZ2UpCnsKCXZhciBrZXlEb3duID0gbWVzc2FnZSBhcyBJbnB1dE1lc3NhZ2VLZXlEb3duOwoJaWYgKGtleURvd24gIT0gbnVsbCkKCXsKCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDEpCgkJewoJCQl2YXIgbWFuYWdlciA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxCdWlsZGluZ01hbmFnZXI+KCk7CgkJCWlmIChtYW5hZ2VyICE9IG51bGwpCgkJCQltYW5hZ2VyLkRpc3BsYXkgPSAhbWFuYWdlci5EaXNwbGF5OwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMikKCQl7CgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLlBhcmtlZFZlaGljbGVzID0gc3lzdGVtLlBhcmtlZFZlaGljbGVzLlZhbHVlICE9IDAgPyAwIDogNTAwMDsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDMpCgkJewoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5GbHlpbmdWZWhpY2xlcyA9IHN5c3RlbS5GbHlpbmdWZWhpY2xlcy5WYWx1ZSAhPSAwID8gMCA6IDEwMDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ0KQoJCXsKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uU2ltdWxhdGVEeW5hbWljT2JqZWN0cyA9ICFzeXN0ZW0uU2ltdWxhdGVEeW5hbWljT2JqZWN0czsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDUpCgkJewoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJewoJCQkJaWYgKHN5c3RlbS5QYXJrZWRWZWhpY2xlc09iamVjdE1vZGUuVmFsdWUgPT0gVHJhZmZpY1N5c3RlbS5PYmplY3RNb2RlRW51bS5WZWhpY2xlQ29tcG9uZW50KQoJCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlc09iamVjdE1vZGUgPSBUcmFmZmljU3lzdGVtLk9iamVjdE1vZGVFbnVtLlN0YXRpY09iamVjdDsKCQkJCWVsc2UKCQkJCQlzeXN0ZW0uUGFya2VkVmVoaWNsZXNPYmplY3RNb2RlID0gVHJhZmZpY1N5c3RlbS5PYmplY3RNb2RlRW51bS5WZWhpY2xlQ29tcG9uZW50OwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ2KQoJCXsKCQkJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3QgYXMgU2NlbmU7CgkJCWlmIChzY2VuZSAhPSBudWxsKQoJCQl7CgkJCQlpZiAoc2NlbmUuT2N0cmVlVGhyZWFkaW5nTW9kZS5WYWx1ZSA9PSBPY3RyZWVDb250YWluZXIuVGhyZWFkaW5nTW9kZUVudW0uQmFja2dyb3VuZFRocmVhZCkKCQkJCQlzY2VuZS5PY3RyZWVUaHJlYWRpbmdNb2RlID0gT2N0cmVlQ29udGFpbmVyLlRocmVhZGluZ01vZGVFbnVtLlNpbmdsZVRocmVhZGVkOwoJCQkJZWxzZQoJCQkJCXNjZW5lLk9jdHJlZVRocmVhZGluZ01vZGUgPSBPY3RyZWVDb250YWluZXIuVGhyZWFkaW5nTW9kZUVudW0uQmFja2dyb3VuZFRocmVhZDsKCQkJfQoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJfQp9Cg==")]
+public class DynamicClassF891909AA2EB38E5AB51868F3AD70D02869FCA0BED16BB465F4182D52BD1B94C
+{
+    public NeoAxis.CSharpScript Owner;
+    public void GameMode_InputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        var keyDown = message as InputMessageKeyDown;
+        if (keyDown != null)
+        {
+            if (keyDown.Key == EKeys.D1)
+            {
+                var manager = sender.ParentRoot.GetComponent<BuildingManager>();
+                if (manager != null)
+                    manager.Display = !manager.Display;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D2)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.ParkedVehicles = system.ParkedVehicles.Value != 0 ? 0 : 5000;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D3)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.FlyingVehicles = system.FlyingVehicles.Value != 0 ? 0 : 1000;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D4)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.SimulateDynamicObjects = !system.SimulateDynamicObjects;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D5)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                {
+                    if (system.ParkedVehiclesObjectMode.Value == TrafficSystem.ObjectModeEnum.VehicleComponent)
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.StaticObject;
+                    else
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.VehicleComponent;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D6)
+            {
+                var scene = sender.ParentRoot as Scene;
+                if (scene != null)
+                {
+                    if (scene.OctreeThreadingMode.Value == OctreeContainer.ThreadingModeEnum.BackgroundThread)
+                        scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.SingleThreaded;
+                    else
+                        scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.BackgroundThread;
+                }
+
+                message.Handled = true;
+                return;
+            }
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgRGVtb01vZGVfU2hvd0tleXNFdmVudChOZW9BeGlzLkRlbW9Nb2RlIHNlbmRlciwgU3lzdGVtLkNvbGxlY3Rpb25zLkdlbmVyaWMuTGlzdDxzdHJpbmc+IGxpbmVzKQp7Cgl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CglpZiAoc3lzdGVtID09IG51bGwpCgkJcmV0dXJuOwoJdmFyIHNjZW5lID0gc3lzdGVtLlBhcmVudFJvb3QgYXMgU2NlbmU7CglpZiAoc2NlbmUgPT0gbnVsbCkKCQlyZXR1cm47CgoJdmFyIHBhcmtlZFZlaGljbGVzQXNTdGF0aWMgPSBzeXN0ZW0uUGFya2VkVmVoaWNsZXNPYmplY3RNb2RlLlZhbHVlID09IFRyYWZmaWNTeXN0ZW0uT2JqZWN0TW9kZUVudW0uU3RhdGljT2JqZWN0OwoJdmFyIHBhcmtlZFZlaGljbGVzQXNTdGF0aWNTdHJpbmcgPSBwYXJrZWRWZWhpY2xlc0FzU3RhdGljID8gIm9uIiA6ICJvZmYiOwoKCXZhciBtdWx0aXRocmVhZGVkU2NlbmVPY3RyZWUgPSBzY2VuZS5PY3RyZWVUaHJlYWRpbmdNb2RlLlZhbHVlID09IE9jdHJlZUNvbnRhaW5lci5UaHJlYWRpbmdNb2RlRW51bS5CYWNrZ3JvdW5kVGhyZWFkOwoJdmFyIG11bHRpdGhyZWFkZWRTY2VuZU9jdHJlZVN0cmluZyA9IG11bHRpdGhyZWFkZWRTY2VuZU9jdHJlZSA_ICJvbiIgOiAib2ZmIjsKCglsaW5lcy5BZGQoIiIpOwoJbGluZXMuQWRkKCIxIC0gc2hvdyBidWlsZGluZ3MiKTsKCWxpbmVzLkFkZCgiMiAtIHNob3cgcGFya2VkIHZlaGljbGVzIik7CglsaW5lcy5BZGQoIjMgLSBzaG93IGZseWluZyB2ZWhpY2xlcyIpOwoJbGluZXMuQWRkKCI0IC0gc2ltdWxhdGUgZmx5aW5nIHZlaGljbGVzIik7CglsaW5lcy5BZGQoIiIpOwoJbGluZXMuQWRkKCQiNSAtIHBhcmtlZCB2ZWhpY2xlcyBhcyBzdGF0aWMgb2JqZWN0cyAoe3BhcmtlZFZlaGljbGVzQXNTdGF0aWNTdHJpbmd9KSIpOwoJbGluZXMuQWRkKCQiNiAtIG11bHRpdGhyZWFkZWQgc2NlbmUgb2N0cmVlICh7bXVsdGl0aHJlYWRlZFNjZW5lT2N0cmVlU3RyaW5nfSkiKTsKfQo=")]
+public class DynamicClass2F4FB5DD583562DC740579D2ACB516EE6B5D2C75E4F012D8F9AFF518A2386D05
+{
+    public NeoAxis.CSharpScript Owner;
+    public void DemoMode_ShowKeysEvent(NeoAxis.DemoMode sender, System.Collections.Generic.List<string> lines)
+    {
+        var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+        if (system == null)
+            return;
+        var scene = system.ParentRoot as Scene;
+        if (scene == null)
+            return;
+        var parkedVehiclesAsStatic = system.ParkedVehiclesObjectMode.Value == TrafficSystem.ObjectModeEnum.StaticObject;
+        var parkedVehiclesAsStaticString = parkedVehiclesAsStatic ? "on" : "off";
+        var multithreadedSceneOctree = scene.OctreeThreadingMode.Value == OctreeContainer.ThreadingModeEnum.BackgroundThread;
+        var multithreadedSceneOctreeString = multithreadedSceneOctree ? "on" : "off";
+        lines.Add("");
+        lines.Add("1 - show buildings");
+        lines.Add("2 - show parked vehicles");
+        lines.Add("3 - show flying vehicles");
+        lines.Add("4 - simulate flying vehicles");
+        lines.Add("");
+        lines.Add($"5 - parked vehicles as static objects ({parkedVehiclesAsStaticString})");
+        lines.Add($"6 - multithreaded scene octree ({multithreadedSceneOctreeString})");
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgX1VwZGF0ZUV2ZW50KE5lb0F4aXMuQ29tcG9uZW50IHNlbmRlciwgZmxvYXQgZGVsdGEpCnsKCXRyeSAvLyEhISFyZW1vdmUKCXsKCQl2YXIgYWxsID0gVGltZS5DdXJyZW50ICUgNCA+IDIuMDsKCQkKCQlmb3JlYWNoKHZhciBzZW5zb3IgaW4gc2VuZGVyLkdldENvbXBvbmVudHM8U2Vuc29yPigpKQoJCXsKCQkJc2Vuc29yLk1vZGUgPSBhbGwgPyBTZW5zb3IuTW9kZUVudW0uQWxsT2JqZWN0cyA6IFNlbnNvci5Nb2RlRW51bS5PbmVDbG9zZXN0T2JqZWN0OwoJCX0KCX0KCWNhdGNoKEV4Y2VwdGlvbiBlKQoJewoJCUxvZy5XYXJuaW5nKGUuTWVzc2FnZSk7Cgl9CQp9Cg==")]
+public class DynamicClass64FEB65296D56DF1A9166589F0262513D23B9252491F8F623346745A66306414
+{
+    public NeoAxis.CSharpScript Owner;
+    public void _UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        try //!!!!remove
+        {
+            var all = Time.Current % 4 > 2.0;
+            foreach (var sensor in sender.GetComponents<Sensor>())
+            {
+                sensor.Mode = all ? Sensor.ModeEnum.AllObjects : Sensor.ModeEnum.OneClosestObject;
+            }
+        }
+        catch (Exception e)
+        {
+            Log.Warning(e.Message);
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgQ29uc3RyYWludF9TaW11bGF0aW9uU3RlcChOZW9BeGlzLkNvbXBvbmVudCBvYmopCnsKCS8vZ2V0IG9iamVjdHMKCXZhciBjb25zdHJhaW50ID0gKENvbnN0cmFpbnRfU2l4RE9GKW9iajsKCXZhciBzY2VuZSA9IGNvbnN0cmFpbnQuUGFyZW50U2NlbmU7Cgl2YXIgc3BoZXJlID0gc2NlbmUuR2V0Q29tcG9uZW50KCJTcGhlcmUiKSBhcyBNZXNoSW5TcGFjZTsKCgkvL3VwZGF0ZSBtb3RvcgoJdmFyIGxvb2tUbyA9IHNwaGVyZS5UcmFuc2Zvcm1WLlBvc2l0aW9uOwoJdmFyIGxvb2tGcm9tID0gY29uc3RyYWludC5UcmFuc2Zvcm1WLlBvc2l0aW9uOwoJdmFyIGRpZmYgPSBsb29rVG8gLSBsb29rRnJvbTsKCWNvbnN0cmFpbnQuQW5ndWxhclpBeGlzTW90b3JUYXJnZXQgPSBNYXRoRXguUmFkaWFuVG9EZWdyZWUoTWF0aEV4LkF0YW4yKGRpZmYuWSwgZGlmZi5YKSk7Cn0K")]
+public class DynamicClassD77247E301AC6FDD9339B8A807DBD90D022CBC44A3DD75A24F9F3D50A3B31F21
+{
+    public NeoAxis.CSharpScript Owner;
+    public void Constraint_SimulationStep(NeoAxis.Component obj)
+    {
+        //get objects
+        var constraint = (Constraint_SixDOF)obj;
+        var scene = constraint.ParentScene;
+        var sphere = scene.GetComponent("Sphere") as MeshInSpace;
+        //update motor
+        var lookTo = sphere.TransformV.Position;
+        var lookFrom = constraint.TransformV.Position;
+        var diff = lookTo - lookFrom;
+        constraint.AngularZAxisMotorTarget = MathEx.RadianToDegree(MathEx.Atan2(diff.Y, diff.X));
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgQmFzaWNXb3JsZF9Qb3N0QnVpbGQoTmVvQXhpcy5Qcm9kdWN0IHNlbmRlciwgTmVvQXhpcy5FZGl0b3IuUHJvZHVjdEJ1aWxkSW5zdGFuY2UgYnVpbGRJbnN0YW5jZSkKewoJLy9kZWxldGUgUnVuLmNtZAoJewoJCXZhciBwYXRoID0gUGF0aC5Db21iaW5lKGJ1aWxkSW5zdGFuY2UuRGVzdGluYXRpb25Gb2xkZXIsICJSdW4uY21kIik7CgkJaWYoRmlsZS5FeGlzdHMocGF0aCkpCgkJCUZpbGUuRGVsZXRlKHBhdGgpOwoJfQoKCS8vcHJlcGFyZSBSZXBvc2l0b3J5U2VydmVyLmNvbmZpZwoJewoJCXZhciBzZXJ2ZXJPbmx5RmlsZXMgPSBuZXcgRVNldDxzdHJpbmc+KCk7CgkJewoJCQl2YXIgZm9sZGVycyA9IG5ldyBMaXN0PHN0cmluZz4oKTsKCQkJZm9sZGVycy5BZGQoQCJCaW5hcmllc1xOZW9BeGlzLkludGVybmFsXFRpcHMiKTsKCQkJZm9sZGVycy5BZGQoQCJCaW5hcmllc1xOZW9BeGlzLkludGVybmFsXExvY2FsaXphdGlvbiIpOwoJCQlmb2xkZXJzLkFkZChAIkJpbmFyaWVzXE5lb0F4aXMuSW50ZXJuYWxcVG9vbHNcUGxhdGZvcm1Ub29scyIpOwoJCQlmb2xkZXJzLkFkZChAIkJpbmFyaWVzXE5lb0F4aXMuSW50ZXJuYWxcUGxhdGZvcm1zXFdpbmRvd3NcZG90bmV0Iik7CgkJCWZvbGRlcnMuQWRkKEAiQmluYXJpZXNcTmVvQXhpcy5JbnRlcm5hbFxUb29sc1xGaWxhbWVudCIpOwoJCQlmb3JlYWNoICh2YXIgZm9sZGVyIGluIGZvbGRlcnMpCgkJCXsKCQkJCXZhciBmb2xkZXJGdWxsUGF0aCA9IFBhdGguQ29tYmluZShidWlsZEluc3RhbmNlLkRlc3RpbmF0aW9uRm9sZGVyLCBmb2xkZXIpOwoJCQkJaWYgKERpcmVjdG9yeS5FeGlzdHMoZm9sZGVyRnVsbFBhdGgpKQoJCQkJewoJCQkJCWZvcmVhY2ggKHZhciBmdWxsUGF0aCBpbiBEaXJlY3RvcnkuR2V0RmlsZXMoZm9sZGVyRnVsbFBhdGgsICIqIiwgU2VhcmNoT3B0aW9uLkFsbERpcmVjdG9yaWVzKSkKCQkJCQkJc2VydmVyT25seUZpbGVzLkFkZChmdWxsUGF0aC5TdWJzdHJpbmcoYnVpbGRJbnN0YW5jZS5EZXN0aW5hdGlvbkZvbGRlci5MZW5ndGggKyAxKSk7CgkJCQl9CgkJCX0KCgkJCXNlcnZlck9ubHlGaWxlcy5BZGQoIlJlcG9zaXRvcnkuc2V0dGluZ3MiKTsKCQkJc2VydmVyT25seUZpbGVzLkFkZChAIkJpbmFyaWVzXE5lb0F4aXMuSW50ZXJuYWxcUGxhdGZvcm1zXFdpbmRvd3NcRmJ4V3JhcHBlck5hdGl2ZS5kbGwiKTsKCQkJc2VydmVyT25seUZpbGVzLkFkZChAIkJpbmFyaWVzXE5lb0F4aXMuSW50ZXJuYWxcUGxhdGZvcm1zXFdpbmRvd3NcYXNzaW1wLXZjMTQxLW10LmRsbCIpOwoJCQlzZXJ2ZXJPbmx5RmlsZXMuQWRkKEAiQmluYXJpZXNcTmVvQXhpcy5FZGl0b3IuZXhlIik7CgkJCXNlcnZlck9ubHlGaWxlcy5BZGQoQCJCaW5hcmllc1xOZW9BeGlzLkVkaXRvci5leGUuY29uZmlnIik7CgkJCXNlcnZlck9ubHlGaWxlcy5BZGQoQCJCaW5hcmllc1xOZW9BeGlzLkVkaXRvci5kZXBzLmpzb24iKTsKCQkJc2VydmVyT25seUZpbGVzLkFkZChAIkJpbmFyaWVzXE5lb0F4aXMuRWRpdG9yLnJ1bnRpbWVjb25maWcuZGV2Lmpzb24iKTsKCQkJc2VydmVyT25seUZpbGVzLkFkZChAIkJpbmFyaWVzXE5lb0F4aXMuRWRpdG9yLnJ1bnRpbWVjb25maWcuanNvbiIpOwoJCQlzZXJ2ZXJPbmx5RmlsZXMuQWRkKEAiQmluYXJpZXNcUHJvamVjdC5kbGwiKTsKCQkJc2VydmVyT25seUZpbGVzLkFkZChAIkJpbmFyaWVzXFByb2plY3QuZGVwcy5qc29uIik7CgkJCXNlcnZlck9ubHlGaWxlcy5BZGQoQCJCaW5hcmllc1xQcm9qZWN0LnBkYiIpOwoJCX0KCQkKCQl2YXIgcm9vdEJsb2NrID0gbmV3IFRleHRCbG9jaygpOwoJCWZvcmVhY2godmFyIGZpbGVOYW1lIGluIHNlcnZlck9ubHlGaWxlcykKCQl7CgkJCXZhciBibG9jayA9IHJvb3RCbG9jay5BZGRDaGlsZCgiSXRlbSIpOwoJCQlibG9jay5TZXRBdHRyaWJ1dGUoIkZpbGVOYW1lIiwgZmlsZU5hbWUpOwoJCQlibG9jay5TZXRBdHRyaWJ1dGUoIlN5bmNNb2RlIiwgTmVvQXhpcy5OZXR3b3JraW5nLlJlcG9zaXRvcnlTeW5jTW9kZS5TZXJ2ZXJPbmx5LlRvU3RyaW5nKCkpOwoJCX0KCgkJdmFyIHBhdGggPSBQYXRoLkNvbWJpbmUoYnVpbGRJbnN0YW5jZS5EZXN0aW5hdGlvbkZvbGRlciwgIlJlcG9zaXRvcnlTZXJ2ZXIuY29uZmlnIik7CgkJRmlsZS5Xcml0ZUFsbFRleHQocGF0aCwgcm9vdEJsb2NrLkR1bXBUb1N0cmluZygpKTsKCX0KCQoJLy9wcmVwYXJlIFJlcG9zaXRvcnkuc2V0dGluZ3MKCXsKCQl2YXIgc2V0dGluZ3MgPSBuZXcgTmVvQXhpcy5OZXR3b3JraW5nLlJlcG9zaXRvcnlTZXR0aW5nc0ZpbGUuU2V0dGluZ3MoKTsKCgkJc2V0dGluZ3MuSWdub3JlRm9sZGVycy5BZGRXaXRoQ2hlY2tBbHJlYWR5Q29udGFpbmVkKEAiQ2FjaGVzXEZpbGVzIik7CgkJLy9zZXR0aW5ncy5JZ25vcmVGb2xkZXJzLkFkZFdpdGhDaGVja0FscmVhZHlDb250YWluZWQoQCJDYWNoZXNcU2hhZGVyQ2FjaGUiKTsKCQlzZXR0aW5ncy5JZ25vcmVGb2xkZXJzLkFkZFdpdGhDaGVja0FscmVhZHlDb250YWluZWQoIlVzZXIgc2V0dGluZ3MiKTsKCQlzZXR0aW5ncy5JZ25vcmVGb2xkZXJzLkFkZFdpdGhDaGVja0FscmVhZHlDb250YWluZWQoIm9iaiIpOwoKCQl2YXIgcGF0aCA9IFBhdGguQ29tYmluZShidWlsZEluc3RhbmNlLkRlc3RpbmF0aW9uRm9sZGVyLCAiUmVwb3NpdG9yeS5zZXR0aW5ncyIpOwoJCWlmKCFOZW9BeGlzLk5ldHdvcmtpbmcuUmVwb3NpdG9yeVNldHRpbmdzRmlsZS5TYXZlKHBhdGgsIHNldHRpbmdzLCBvdXQgdmFyIGVycm9yKSkKCQl7CgkJCS8vISEhIQoJCQlMb2cuV2FybmluZyhlcnJvcik7CgkJCS8vISEhIWJ1aWxkSW5zdGFuY2UuRXJyb3IgPSA7CgkJfQoJfQoJCn0K")]
+public class DynamicClassF78F0EF402518B1B26E36DC75167084F4FBFE333B6B42ECBCF3AE7B893CE36A5
+{
+    public NeoAxis.CSharpScript Owner;
+    public void BasicWorld_PostBuild(NeoAxis.Product sender, NeoAxis.Editor.ProductBuildInstance buildInstance)
+    {
+        //delete Run.cmd
+        {
+            var path = Path.Combine(buildInstance.DestinationFolder, "Run.cmd");
+            if (File.Exists(path))
+                File.Delete(path);
+        }
+
+        //prepare RepositoryServer.config
+        {
+            var serverOnlyFiles = new ESet<string>();
+            {
+                var folders = new List<string>();
+                folders.Add(@"Binaries\NeoAxis.Internal\Tips");
+                folders.Add(@"Binaries\NeoAxis.Internal\Localization");
+                folders.Add(@"Binaries\NeoAxis.Internal\Tools\PlatformTools");
+                folders.Add(@"Binaries\NeoAxis.Internal\Platforms\Windows\dotnet");
+                folders.Add(@"Binaries\NeoAxis.Internal\Tools\Filament");
+                foreach (var folder in folders)
+                {
+                    var folderFullPath = Path.Combine(buildInstance.DestinationFolder, folder);
+                    if (Directory.Exists(folderFullPath))
+                    {
+                        foreach (var fullPath in Directory.GetFiles(folderFullPath, "*", SearchOption.AllDirectories))
+                            serverOnlyFiles.Add(fullPath.Substring(buildInstance.DestinationFolder.Length + 1));
+                    }
+                }
+
+                serverOnlyFiles.Add("Repository.settings");
+                serverOnlyFiles.Add(@"Binaries\NeoAxis.Internal\Platforms\Windows\FbxWrapperNative.dll");
+                serverOnlyFiles.Add(@"Binaries\NeoAxis.Internal\Platforms\Windows\assimp-vc141-mt.dll");
+                serverOnlyFiles.Add(@"Binaries\NeoAxis.Editor.exe");
+                serverOnlyFiles.Add(@"Binaries\NeoAxis.Editor.exe.config");
+                serverOnlyFiles.Add(@"Binaries\NeoAxis.Editor.deps.json");
+                serverOnlyFiles.Add(@"Binaries\NeoAxis.Editor.runtimeconfig.dev.json");
+                serverOnlyFiles.Add(@"Binaries\NeoAxis.Editor.runtimeconfig.json");
+                serverOnlyFiles.Add(@"Binaries\Project.dll");
+                serverOnlyFiles.Add(@"Binaries\Project.deps.json");
+                serverOnlyFiles.Add(@"Binaries\Project.pdb");
+            }
+
+            var rootBlock = new TextBlock();
+            foreach (var fileName in serverOnlyFiles)
+            {
+                var block = rootBlock.AddChild("Item");
+                block.SetAttribute("FileName", fileName);
+                block.SetAttribute("SyncMode", NeoAxis.Networking.RepositorySyncMode.ServerOnly.ToString());
+            }
+
+            var path = Path.Combine(buildInstance.DestinationFolder, "RepositoryServer.config");
+            File.WriteAllText(path, rootBlock.DumpToString());
+        }
+
+        //prepare Repository.settings
+        {
+            var settings = new NeoAxis.Networking.RepositorySettingsFile.Settings();
+            settings.IgnoreFolders.AddWithCheckAlreadyContained(@"Caches\Files");
+            //settings.IgnoreFolders.AddWithCheckAlreadyContained(@"Caches\ShaderCache");
+            settings.IgnoreFolders.AddWithCheckAlreadyContained("User settings");
+            settings.IgnoreFolders.AddWithCheckAlreadyContained("obj");
+            var path = Path.Combine(buildInstance.DestinationFolder, "Repository.settings");
+            if (!NeoAxis.Networking.RepositorySettingsFile.Save(path, settings, out var error))
+            {
+                //!!!!
+                Log.Warning(error);
+            //!!!!buildInstance.Error = ;
+            }
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("c3RhdGljIGJvb2wgbmVhckNhbWVyYTsKc3RhdGljIGJvb2wgYWRkaXRpb25hbExpZ2h0cyA9IHRydWU7CnN0YXRpYyBib29sIHNoYWRvd3MgPSB0cnVlOwoKcHVibGljIHZvaWQgR2FtZU1vZGVfUmVuZGVyVUkoTmVvQXhpcy5HYW1lTW9kZSBzZW5kZXIsIE5lb0F4aXMuQ2FudmFzUmVuZGVyZXIgcmVuZGVyZXIpCnsKCXZhciBsaW5lcyA9IG5ldyBMaXN0PHN0cmluZz4oKTsKCglsaW5lcy5BZGQoIkMgLSBzd2l0Y2ggY2FtZXJhIik7CglsaW5lcy5BZGQoIkwgLSBhZGRpdGlvbmFsIGxpZ2h0cyIpOwoJbGluZXMuQWRkKCJIIC0gc2hhZG93cyIpOwoJbGluZXMuQWRkKCIiKTsKCWxpbmVzLkFkZCgiRjcgLSBmcmVlIGNhbWVyYSIpOwoJbGluZXMuQWRkKCJXIEEgUyBEIFEgRSAtIGZyZWUgY2FtZXJhIGNvbnRyb2wiKTsKCWxpbmVzLkFkZCgiIik7CglsaW5lcy5BZGQoIllvdSBhbHNvIGNhbiBwbGF5IHdpdGggYW50aWFsaWFzaW5nIGFuZCBvdGhlciBzZXR0aW5ncyBmcm9tIE9wdGlvbnMgKEVzYykiKTsKCgl2YXIgZm9udFNpemUgPSByZW5kZXJlci5EZWZhdWx0Rm9udFNpemU7Cgl2YXIgb2Zmc2V0ID0gbmV3IFZlY3RvcjIoZm9udFNpemUgKiByZW5kZXJlci5Bc3BlY3RSYXRpb0ludiAqIDAuOCwgMC44KTsKCgkvL2RyYXcgYmFja2dyb3VuZAoJewoJCXZhciBtYXhMZW5ndGggPSAwLjA7CgkJZm9yZWFjaCAodmFyIGxpbmUgaW4gbGluZXMpCgkJewoJCQl2YXIgbGVuZ3RoID0gcmVuZGVyZXIuRGVmYXVsdEZvbnQuR2V0VGV4dExlbmd0aChmb250U2l6ZSwgcmVuZGVyZXIsIGxpbmUpOwoJCQlpZiAobGVuZ3RoID4gbWF4TGVuZ3RoKQoJCQkJbWF4TGVuZ3RoID0gbGVuZ3RoOwoJCX0KCQl2YXIgcmVjdCA9IG9mZnNldCArIG5ldyBSZWN0YW5nbGUoMCwgMCwgbWF4TGVuZ3RoLCBmb250U2l6ZSAqIGxpbmVzLkNvdW50KTsKCQlyZWN0LkV4cGFuZChuZXcgVmVjdG9yMihmb250U2l6ZSAqIDAuMiwgZm9udFNpemUgKiAwLjIgKiByZW5kZXJlci5Bc3BlY3RSYXRpbykpOwoJCXJlbmRlcmVyLkFkZFF1YWQocmVjdCwgbmV3IENvbG9yVmFsdWUoMCwgMCwgMCwgMC43NSkpOwoJfQoKCS8vZHJhdyB0ZXh0IAoJQ2FudmFzUmVuZGVyZXJVdGlsaXR5LkFkZFRleHRMaW5lc1dpdGhTaGFkb3cocmVuZGVyZXIuVmlld3BvcnRGb3JTY3JlZW5DYW52YXNSZW5kZXJlciwgcmVuZGVyZXIuRGVmYXVsdEZvbnQsIHJlbmRlcmVyLkRlZmF1bHRGb250U2l6ZSwgbGluZXMsIG5ldyBSZWN0YW5nbGUob2Zmc2V0LlgsIG9mZnNldC5ZLCAxLCAxKSwgRUhvcml6b250YWxBbGlnbm1lbnQuTGVmdCwgRVZlcnRpY2FsQWxpZ25tZW50LlRvcCwgbmV3IENvbG9yVmFsdWUoMSwgMSwgMSkpOwp9CgpwdWJsaWMgdm9pZCBHYW1lTW9kZV9JbnB1dE1lc3NhZ2VFdmVudChOZW9BeGlzLkdhbWVNb2RlIHNlbmRlciwgTmVvQXhpcy5JbnB1dE1lc3NhZ2UgbWVzc2FnZSkKewoJdmFyIGtleURvd24gPSBtZXNzYWdlIGFzIElucHV0TWVzc2FnZUtleURvd247CglpZiAoa2V5RG93biAhPSBudWxsKQoJewoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5DKQoJCXsKCQkJLy91cGRhdGUgY2FtZXJhIHNldHRpbmdzCgkJCW5lYXJDYW1lcmEgPSAhbmVhckNhbWVyYTsKCgkJCS8vdXBkYXRlIGNhbWVyYQoJCQl2YXIgc2NlbmUgPSBzZW5kZXIuRmluZFBhcmVudDxTY2VuZT4oKTsKCQkJc2NlbmUuQ2FtZXJhRGVmYXVsdCA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KG5lYXJDYW1lcmEgPyAiQ2FtZXJhIE5lYXIiIDogIkNhbWVyYSBGYXIiKTsKCQkJU2ltdWxhdGlvbkFwcC5NYWluVmlld3BvcnQuTm90aWZ5SW5zdGFudENhbWVyYU1vdmVtZW50KCk7CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoKCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuTCkKCQl7CgkJCWFkZGl0aW9uYWxMaWdodHMgPSAhYWRkaXRpb25hbExpZ2h0czsKCgkJCXZhciBzY2VuZSA9IHNlbmRlci5GaW5kUGFyZW50PFNjZW5lPigpOwoKCQkJZm9yZWFjaCAodmFyIGxpZ2h0IGluIHNjZW5lLkdldENvbXBvbmVudHM8TGlnaHQ+KCkpCgkJCXsKCQkJCWlmIChsaWdodC5OYW1lID09ICJMaWdodCIgfHwgbGlnaHQuTmFtZS5Db250YWlucygiTGlnaHQgIikpCgkJCQkJbGlnaHQuRW5hYmxlZCA9IGFkZGl0aW9uYWxMaWdodHM7CgkJCX0KCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5IKQoJCXsKCQkJc2hhZG93cyA9ICFzaGFkb3dzOwoKCQkJdmFyIHNjZW5lID0gc2VuZGVyLkZpbmRQYXJlbnQ8U2NlbmU+KCk7CgkJCXZhciBwaXBlbGluZSA9IHNjZW5lLkdldENvbXBvbmVudDxSZW5kZXJpbmdQaXBlbGluZV9CYXNpYz4oKTsKCQkJcGlwZWxpbmUuU2hhZG93cyA9IHNoYWRvd3M7CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJfQp9Cg==")]
+public class DynamicClass690C20DD109F42C98C8FA48795CB9D0235480800766425980530B7CF0486D3C0
+{
+    public NeoAxis.CSharpScript Owner;
+    static bool nearCamera;
+    static bool additionalLights = true;
+    static bool shadows = true;
+    public void GameMode_RenderUI(NeoAxis.GameMode sender, NeoAxis.CanvasRenderer renderer)
+    {
+        var lines = new List<string>();
+        lines.Add("C - switch camera");
+        lines.Add("L - additional lights");
+        lines.Add("H - shadows");
+        lines.Add("");
+        lines.Add("F7 - free camera");
+        lines.Add("W A S D Q E - free camera control");
+        lines.Add("");
+        lines.Add("You also can play with antialiasing and other settings from Options (Esc)");
+        var fontSize = renderer.DefaultFontSize;
+        var offset = new Vector2(fontSize * renderer.AspectRatioInv * 0.8, 0.8);
+        //draw background
+        {
+            var maxLength = 0.0;
+            foreach (var line in lines)
+            {
+                var length = renderer.DefaultFont.GetTextLength(fontSize, renderer, line);
+                if (length > maxLength)
+                    maxLength = length;
+            }
+
+            var rect = offset + new Rectangle(0, 0, maxLength, fontSize * lines.Count);
+            rect.Expand(new Vector2(fontSize * 0.2, fontSize * 0.2 * renderer.AspectRatio));
+            renderer.AddQuad(rect, new ColorValue(0, 0, 0, 0.75));
+        }
+
+        //draw text 
+        CanvasRendererUtility.AddTextLinesWithShadow(renderer.ViewportForScreenCanvasRenderer, renderer.DefaultFont, renderer.DefaultFontSize, lines, new Rectangle(offset.X, offset.Y, 1, 1), EHorizontalAlignment.Left, EVerticalAlignment.Top, new ColorValue(1, 1, 1));
+    }
+
+    public void GameMode_InputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        var keyDown = message as InputMessageKeyDown;
+        if (keyDown != null)
+        {
+            if (keyDown.Key == EKeys.C)
+            {
+                //update camera settings
+                nearCamera = !nearCamera;
+                //update camera
+                var scene = sender.FindParent<Scene>();
+                scene.CameraDefault = scene.GetComponent<Camera>(nearCamera ? "Camera Near" : "Camera Far");
+                SimulationApp.MainViewport.NotifyInstantCameraMovement();
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.L)
+            {
+                additionalLights = !additionalLights;
+                var scene = sender.FindParent<Scene>();
+                foreach (var light in scene.GetComponents<Light>())
+                {
+                    if (light.Name == "Light" || light.Name.Contains("Light "))
+                        light.Enabled = additionalLights;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.H)
+            {
+                shadows = !shadows;
+                var scene = sender.FindParent<Scene>();
+                var pipeline = scene.GetComponent<RenderingPipeline_Basic>();
+                pipeline.Shadows = shadows;
+                message.Handled = true;
+                return;
+            }
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgX1NpbXVsYXRpb25TdGVwKE5lb0F4aXMuQ29tcG9uZW50IG9iaikKewoJZm9yZWFjaCAodmFyIGxpZ2h0IGluIG9iai5HZXRDb21wb25lbnRzPExpZ2h0PigpKQoJewoJCS8vc2tpcCBBbWJpZW50IExpZ2h0LCBEaXJlY3Rpb25hbCBMaWdodAoJCWlmIChsaWdodC5OYW1lID09ICJBbWJpZW50IExpZ2h0IiB8fCBsaWdodC5OYW1lID09ICJEaXJlY3Rpb25hbCBMaWdodCIpCgkJCWNvbnRpbnVlOwoKCQl2YXIgc3BlZWQgPSAwLjM7CgoJCXZhciB1cCA9IG5ldyBWZWN0b3IzKE1hdGguQ29zKFRpbWUuQ3VycmVudCAqIHNwZWVkKSwgTWF0aC5TaW4oVGltZS5DdXJyZW50ICogc3BlZWQpLCAwKS5HZXROb3JtYWxpemUoKTsKCQl2YXIgZGlyID0gbmV3IFZlY3RvcjMoMCwgMCwgLTEpOwoKCQl2YXIgbmV3Um90YXRpb24gPSBRdWF0ZXJuaW9uLkxvb2tBdChkaXIsIHVwKTsKCgkJbGlnaHQuVHJhbnNmb3JtID0gbmV3IFRyYW5zZm9ybShsaWdodC5UcmFuc2Zvcm1WLlBvc2l0aW9uLCBuZXdSb3RhdGlvbik7CgoJCS8vdmFyIG5ld1JvdGF0aW9uID0gUXVhdGVybmlvbi5Gcm9tUm90YXRlQnlaKFRpbWUuQ3VycmVudCk7Cgl9Cn0K")]
+public class DynamicClassACC11F227898AFE0EFD620D8835FB0064E872DF18ABD487C5C0C283F134E61FB
+{
+    public NeoAxis.CSharpScript Owner;
+    public void _SimulationStep(NeoAxis.Component obj)
+    {
+        foreach (var light in obj.GetComponents<Light>())
+        {
+            //skip Ambient Light, Directional Light
+            if (light.Name == "Ambient Light" || light.Name == "Directional Light")
+                continue;
+            var speed = 0.3;
+            var up = new Vector3(Math.Cos(Time.Current * speed), Math.Sin(Time.Current * speed), 0).GetNormalize();
+            var dir = new Vector3(0, 0, -1);
+            var newRotation = Quaternion.LookAt(dir, up);
+            light.Transform = new Transform(light.TransformV.Position, newRotation);
+        //var newRotation = Quaternion.FromRotateByZ(Time.Current);
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgQnV0dG9uX0NsaWNrKE5lb0F4aXMuQnV0dG9uSW5TcGFjZSBzZW5kZXIpCnsKCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRTY2VuZTsKCgl2YXIgbGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkFtYmllbnQgTGlnaHQiKSBhcyBMaWdodDsKCWlmIChsaWdodCAhPSBudWxsKQoJCWxpZ2h0LkVuYWJsZWQgPSBzZW5kZXIuQWN0aXZhdGVkOwkKfQo=")]
+public class DynamicClass2EE3F7E0E9FE11777EEBA83FC45D1AC6138EF2A14E2702A44C993A478D968988
 {
     public NeoAxis.CSharpScript Owner;
     public void Button_Click(NeoAxis.ButtonInSpace sender)
     {
         var scene = sender.ParentScene;
-        var ground = scene.GetComponent("Ground") as MeshInSpace;
-        if (ground != null)
-        {
-            if (!ground.ReplaceMaterial.ReferenceSpecified)
-            {
-                ground.ReplaceMaterial = ReferenceUtility.MakeReference(@"Content\Materials\Basic Library\Concrete\Concrete Floor 01.material");
-            }
-            else
-                ground.ReplaceMaterial = null;
-        }
-    }
-}
-
-[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgUmVndWxhdG9yU3dpdGNoX1ZhbHVlQ2hhbmdlZChOZW9BeGlzLlJlZ3VsYXRvclN3aXRjaEluU3BhY2Ugb2JqKQp7Cgl2YXIgc2NlbmUgPSBvYmouUGFyZW50U2NlbmU7CgoJdmFyIGdyb3VuZCA9IHNjZW5lLkdldENvbXBvbmVudCgiR3JvdW5kIikgYXMgTWVzaEluU3BhY2U7CglpZiAoZ3JvdW5kICE9IG51bGwpCgkJZ3JvdW5kLkNvbG9yID0gQ29sb3JWYWx1ZS5MZXJwKG5ldyBDb2xvclZhbHVlKDEsIDEsIDEpLCBuZXcgQ29sb3JWYWx1ZSgwLjQsIDAuOSwgMC40KSwgKGZsb2F0KW9iai5WYWx1ZSk7Cn0K")]
-public class DynamicClass_769e18c8_67ff_41db_a4f9_0e0553f1c9d6
-{
-    public NeoAxis.CSharpScript Owner;
-    public void RegulatorSwitch_ValueChanged(NeoAxis.RegulatorSwitchInSpace obj)
-    {
-        var scene = obj.ParentScene;
-        var ground = scene.GetComponent("Ground") as MeshInSpace;
-        if (ground != null)
-            ground.Color = ColorValue.Lerp(new ColorValue(1, 1, 1), new ColorValue(0.4, 0.9, 0.4), (float)obj.Value);
+        var light = scene.GetComponent("Ambient Light") as Light;
+        if (light != null)
+            light.Enabled = sender.Activated;
     }
 }
 
 [CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgUmVndWxhdG9yU3dpdGNoX1ZhbHVlQ2hhbmdlZChOZW9BeGlzLlJlZ3VsYXRvclN3aXRjaEluU3BhY2Ugb2JqKQp7Cgl2YXIgc2NlbmUgPSBvYmouUGFyZW50U2NlbmU7CgoJdmFyIG1lc2hJblNwYWNlID0gc2NlbmUuR2V0Q29tcG9uZW50KCJHcm91bmQiKSBhcyBNZXNoSW5TcGFjZTsKCWlmIChtZXNoSW5TcGFjZSAhPSBudWxsKQoJCW1lc2hJblNwYWNlLkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMS4wIC0gb2JqLlZhbHVlLCAxLjAsIDEuMCAtIG9iai5WYWx1ZSk7Cn0K")]
-public class DynamicClass_416f5f62_0c20_4fb0_8de3_d1c7990a98b8
+public class DynamicClassACBB828C9C939D53CB836D512DB0E8CE1ECC7A45B87B5AA18782E0D80B58164C
 {
     public NeoAxis.CSharpScript Owner;
     public void RegulatorSwitch_ValueChanged(NeoAxis.RegulatorSwitchInSpace obj)
@@ -185,30 +552,8 @@ public class DynamicClass_416f5f62_0c20_4fb0_8de3_d1c7990a98b8
     }
 }
 
-[CSharpScriptGeneratedAttribute("UXVhdGVybmlvbiBHZXRSb3RhdGlvbk9mZnNldCgpCnsKICAgIHZhciBzcGVlZCA9IC0wLjE7CiAgICB2YXIgbWF0ID0gTWF0cml4My5Gcm9tUm90YXRlQnlYKEVuZ2luZUFwcC5FbmdpbmVUaW1lICogc3BlZWQpOwogICAgcmV0dXJuIG1hdC5Ub1F1YXRlcm5pb24oKTsKfQ==")]
-public class DynamicClass_ed91f1c2_a47d_4afa_8694_37bf9d215728
-{
-    public NeoAxis.CSharpScript Owner;
-    Quaternion GetRotationOffset()
-    {
-        var speed = -0.1;
-        var mat = Matrix3.FromRotateByX(EngineApp.EngineTime * speed);
-        return mat.ToQuaternion();
-    }
-}
-
-[CSharpScriptGeneratedAttribute("ZG91YmxlIE1ldGhvZCgpCnsKCXJldHVybiAtRW5naW5lQXBwLkVuZ2luZVRpbWUgLyA1Owp9Cg==")]
-public class DynamicClass_84ebbba7_d9d3_44b8_ac85_f3e6f4f3d02e
-{
-    public NeoAxis.CSharpScript Owner;
-    double Method()
-    {
-        return -EngineApp.EngineTime / 5;
-    }
-}
-
 [CSharpScriptGeneratedAttribute("cHVibGljIGRvdWJsZSBMYXN0U3BlZWRpbmdVcDsKcHVibGljIGRvdWJsZSBMYXN0VHVybmluZzsKCnB1YmxpYyB2b2lkIElucHV0UHJvY2Vzc2luZ19TaW11bGF0aW9uU3RlcChOZW9BeGlzLkNvbXBvbmVudCBvYmopCnsKCXZhciBzZW5kZXIgPSAoTmVvQXhpcy5JbnB1dFByb2Nlc3Npbmcpb2JqOwoKCUxhc3RTcGVlZGluZ1VwID0gMDsKCUxhc3RUdXJuaW5nID0gMDsKCgkvL2dldCBhY2Nlc3MgdG8gdGhlIHNoaXAKCXZhciBzaGlwID0gc2VuZGVyLlBhcmVudDsKCWlmIChzaGlwID09IG51bGwpCgkJcmV0dXJuOwoKCS8vY29udHJvbCB0aGUgc2hpcAoJdmFyIGJvZHkgPSBzaGlwLkdldENvbXBvbmVudDxSaWdpZEJvZHkyRD4oKTsKCWlmIChib2R5ICE9IG51bGwpCgl7CgkJLy9rZXlib2FyZAoKCQkvL2ZseSBmb3J3YXJkCgkJaWYgKHNlbmRlci5Jc0tleVByZXNzZWQoRUtleXMuVykgfHwgc2VuZGVyLklzS2V5UHJlc3NlZChFS2V5cy5VcCkgfHwgc2VuZGVyLklzS2V5UHJlc3NlZChFS2V5cy5OdW1QYWQ4KSkKCQl7CgkJCXZhciBkaXIgPSBib2R5LlRyYW5zZm9ybVYuUm90YXRpb24uR2V0Rm9yd2FyZCgpLlRvVmVjdG9yMigpOwoJCQlib2R5LkFwcGx5Rm9yY2UoZGlyICogMS4wKTsJCQoJCQlMYXN0U3BlZWRpbmdVcCArPSAxLjA7CgkJfQoKCQkvL2ZseSBiYWNrCgkJaWYgKHNlbmRlci5Jc0tleVByZXNzZWQoRUtleXMuUykgfHwgc2VuZGVyLklzS2V5UHJlc3NlZChFS2V5cy5Eb3duKSB8fCBzZW5kZXIuSXNLZXlQcmVzc2VkKEVLZXlzLk51bVBhZDIpKQoJCXsKCQkJdmFyIGRpciA9IGJvZHkuVHJhbnNmb3JtVi5Sb3RhdGlvbi5HZXRGb3J3YXJkKCkuVG9WZWN0b3IyKCk7CgkJCWJvZHkuQXBwbHlGb3JjZShkaXIgKiAtMS4wKTsJCQkKCQkJTGFzdFNwZWVkaW5nVXAgLT0gMS4wOwoJCX0KCgkJLy90dXJuIGxlZnQKCQlpZiAoc2VuZGVyLklzS2V5UHJlc3NlZChFS2V5cy5BKSB8fCBzZW5kZXIuSXNLZXlQcmVzc2VkKEVLZXlzLkxlZnQpIHx8IHNlbmRlci5Jc0tleVByZXNzZWQoRUtleXMuTnVtUGFkNCkpCgkJewoJCQlib2R5LkFwcGx5VG9ycXVlKDEuMCk7CgkJCUxhc3RUdXJuaW5nICs9IDEuMDsKCQl9CgoJCS8vdHVybiByaWdodAoJCWlmIChzZW5kZXIuSXNLZXlQcmVzc2VkKEVLZXlzLkQpIHx8IHNlbmRlci5Jc0tleVByZXNzZWQoRUtleXMuUmlnaHQpIHx8IHNlbmRlci5Jc0tleVByZXNzZWQoRUtleXMuTnVtUGFkNikpCgkJewoJCQlib2R5LkFwcGx5VG9ycXVlKC0xLjApOwoJCQlMYXN0VHVybmluZyAtPSAxLjA7CgkJfQoKCQkvL21vdmVtZW50IGJ5IGpveXN0aWNrIGF4ZXMKCQlpZiAoTWF0aC5BYnMoc2VuZGVyLkpveXN0aWNrQXhlc1swXSkgPj0gMC4wMSkKCQl7CgkJCWJvZHkuQXBwbHlUb3JxdWUoLXNlbmRlci5Kb3lzdGlja0F4ZXNbMF0pOwoJCQlMYXN0VHVybmluZyAtPSBzZW5kZXIuSm95c3RpY2tBeGVzWzBdOwoJCX0KCQlpZiAoTWF0aC5BYnMoc2VuZGVyLkpveXN0aWNrQXhlc1sxXSkgPj0gMC4wMSkKCQl7CgkJCXZhciBkaXIgPSBib2R5LlRyYW5zZm9ybVYuUm90YXRpb24uR2V0Rm9yd2FyZCgpLlRvVmVjdG9yMigpOwoJCQlib2R5LkFwcGx5Rm9yY2UoZGlyICogc2VuZGVyLkpveXN0aWNrQXhlc1sxXSk7CgkJCUxhc3RTcGVlZGluZ1VwICs9IHNlbmRlci5Kb3lzdGlja0F4ZXNbMV07CgkJfQoJCS8vSm95c3RpY2tBeGVzCgkJLy9Kb3lzdGlja0J1dHRvbnMKCQkvL0pveXN0aWNrUE9WcwoJCS8vSm95c3RpY2tTbGlkZXJzCgkJLy9Jc0pveXN0aWNrQnV0dG9uUHJlc3NlZAoJCS8vR2V0Sm95c3RpY2tBeGlzCgkJLy9HZXRKb3lzdGlja1BPVgoJCS8vR2V0Sm95c3RpY2tTbGlkZXIKCgoJCS8vbXVsdGktdG91Y2gKCgkJLy9kZWJ1ZyB0byBjb250cm9sIGJ5IG1vdXNlCgkJLy9WZWN0b3IyW10gdG91Y2hQb3NpdGlvbnMgPSBuZXcgVmVjdG9yMlswXTsJCQoJCS8vaWYoc2VuZGVyLklzTW91c2VCdXR0b25QcmVzc2VkKEVNb3VzZUJ1dHRvbnMuTGVmdCkpCgkJLy8JdG91Y2hQb3NpdGlvbnMgPSBuZXcgVmVjdG9yMltdIHsgc2VuZGVyLk1vdXNlUG9zaXRpb24gfTsKCQkKCQlmb3JlYWNoKHZhciBkYXRhIGluIHNlbmRlci5Ub3VjaFBvaW50ZXJzKQoJCXsKCQkJdmFyIHRvdWNoUG9zaXRpb24gPSBkYXRhLlBvc2l0aW9uOyAKCgkJCWlmKHRvdWNoUG9zaXRpb24uWCA8IDAuNSAmJiB0b3VjaFBvc2l0aW9uLlkgPiAwLjQpCgkJCXsKCQkJCS8vZmx5IGZvcndhcmQsIGJhY2sKCQkJCXsKCQkJCQl2YXIgZmFjdG9yID0gMS4wIC0gKHRvdWNoUG9zaXRpb24uWSAtIDAuNikgLyAwLjQ7CgkJCQkJdmFyIGZvcmNlID0gZmFjdG9yICogMi4wIC0gMS4wOwoJCQkJCWZvcmNlICo9IDEuMjsKCQkJCQlmb3JjZSA9IE1hdGhFeC5DbGFtcChmb3JjZSwgLTEuMCwgMS4wKTsKCgkJCQkJdmFyIGRpciA9IGJvZHkuVHJhbnNmb3JtVi5Sb3RhdGlvbi5HZXRGb3J3YXJkKCkuVG9WZWN0b3IyKCk7CgkJCQkJYm9keS5BcHBseUZvcmNlKGRpciAqIGZvcmNlKTsKCgkJCQkJTGFzdFNwZWVkaW5nVXAgKz0gZm9yY2U7CgkJCQl9CgkJCQkKCQkJCS8vdHVybiBsZWZ0LCByaWdodAoJCQkJewoJCQkJCXZhciBmYWN0b3IgPSAxLjAgLSBNYXRoRXguQ2xhbXAodG91Y2hQb3NpdGlvbi5YIC8gMC4yLCAwLCAxKTsKCQkJCQl2YXIgZm9yY2UgPSBmYWN0b3IgKiAyLjAgLSAxLjA7CQkJCQkKCQkJCQlmb3JjZSAqPSAxLjI7CgkJCQkJZm9yY2UgPSBNYXRoRXguQ2xhbXAoZm9yY2UsIC0xLjAsIDEuMCk7CgkJCQkJCgkJCQkJYm9keS5BcHBseVRvcnF1ZShmb3JjZSk7CgkKCQkJCQlMYXN0VHVybmluZyArPSBmb3JjZTsKCQkJCX0KCQkJfQoJCX0KCgl9CgkKfQoKcHVibGljIHZvaWQgSW5wdXRQcm9jZXNzaW5nX0lucHV0TWVzc2FnZUV2ZW50KE5lb0F4aXMuSW5wdXRQcm9jZXNzaW5nIHNlbmRlciwgTmVvQXhpcy5HYW1lTW9kZSBnYW1lTW9kZSwgTmVvQXhpcy5JbnB1dE1lc3NhZ2UgbWVzc2FnZSkKewoJLy8vL2dldCBhY2Nlc3MgdG8gdGhlIHNoaXAKCS8vdmFyIHNoaXAgPSBzZW5kZXIuUGFyZW50OwoJLy9pZiAoc2hpcCA9PSBudWxsKQoJLy8JcmV0dXJuOwoKCS8vdmFyIGtleURvd24gPSBtZXNzYWdlIGFzIElucHV0TWVzc2FnZUtleURvd247CgkvL2lmKGtleURvd24gIT0gbnVsbCkKCS8vewoJLy8JaWYoa2V5RG93bi5LZXkgPT0gRUtleXMuU3BhY2UpCgkvLwl7CgkvLwkJLy92YXIgYm9keSA9IHNoaXAuR2V0Q29tcG9uZW50PFJpZ2lkQm9keTJEPigpOwoJLy8JCS8vaWYgKGJvZHkgIT0gbnVsbCkKCS8vCQkvL3sKCS8vCQkvLwlib2R5LkFwcGx5Rm9yY2UobmV3IFZlY3RvcjIoMSwgMCkpOwoJLy8JCS8vfQoJLy8JfQoJLy99Cn0K")]
-public class DynamicClass_fc04e5ae_182a_4338_88dd_05c618375e52
+public class DynamicClassEE62FE9974413A4FAA4914B2746D38836D328EAD52495D094ADF6F29C4C232E2
 {
     public NeoAxis.CSharpScript Owner;
     public double LastSpeedingUp;
@@ -335,136 +680,20 @@ public class DynamicClass_fc04e5ae_182a_4338_88dd_05c618375e52
     }
 }
 
-[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgX1VwZGF0ZUV2ZW50KE5lb0F4aXMuQ29tcG9uZW50IHNlbmRlciwgZmxvYXQgZGVsdGEpCnsKCXZhciBvYmplY3QxID0gc2VuZGVyLkNvbXBvbmVudHNbIlNwaGVyZSJdIGFzIE1lc2hJblNwYWNlOwoJaWYob2JqZWN0MSAhPSBudWxsKQoJCW9iamVjdDEuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjUsIDAuNzUgKyBNYXRoLlNpbihUaW1lLkN1cnJlbnQpICogMC4yNSwgMC41KTsKCgl2YXIgbWF0ZXJpYWwyID0gc2VuZGVyLkNvbXBvbmVudHNbIkJveFxcTWF0ZXJpYWwiXSBhcyBNYXRlcmlhbDsKCWlmKG1hdGVyaWFsMiAhPSBudWxsKQoJCW1hdGVyaWFsMi5FbWlzc2l2ZSA9IG5ldyBDb2xvclZhbHVlUG93ZXJlZCgwLCAoMS4wICsgTWF0aC5TaW4oVGltZS5DdXJyZW50KSkgKiA1LCAwKTsKCQkKCXZhciBtYXRlcmlhbDMgPSBzZW5kZXIuQ29tcG9uZW50c1siQ3lsaW5kZXJcXE1hdGVyaWFsIl0gYXMgTWF0ZXJpYWw7CglpZihtYXRlcmlhbDMgIT0gbnVsbCkKCQltYXRlcmlhbDMuUHJvcGVydHlTZXQoIk11bHRpcGxpZXIiLCBuZXcgQ29sb3JWYWx1ZSgxLCAxLCAxLjAgKyAoMS4wICsgTWF0aC5TaW4oVGltZS5DdXJyZW50KSkgKiA1KSk7Cn0K")]
-public class DynamicClass_b48e6694_bdf0_4485_8043_647bf15922e7
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgTGlnaHQ0X1VwZGF0ZUV2ZW50KE5lb0F4aXMuQ29tcG9uZW50IHNlbmRlciwgZmxvYXQgZGVsdGEpCnsKCXZhciBvYmogPSAoT2JqZWN0SW5TcGFjZSlzZW5kZXI7Cgl2YXIgdHIgPSBvYmouVHJhbnNmb3JtVjsKCW9iai5UcmFuc2Zvcm0gPSBuZXcgVHJhbnNmb3JtKHRyLlBvc2l0aW9uLCBRdWF0ZXJuaW9uLkZyb21Sb3RhdGVCeVooVGltZS5DdXJyZW50ICogMC4yNSksIHRyLlNjYWxlKTsKfQo=")]
+public class DynamicClass97F08E2F9EE2F19AC07C149F6993F605552F1C8E62B48E815F37305A31606821
 {
     public NeoAxis.CSharpScript Owner;
-    public void _UpdateEvent(NeoAxis.Component sender, float delta)
+    public void Light4_UpdateEvent(NeoAxis.Component sender, float delta)
     {
-        var object1 = sender.Components["Sphere"] as MeshInSpace;
-        if (object1 != null)
-            object1.Color = new ColorValue(0.5, 0.75 + Math.Sin(Time.Current) * 0.25, 0.5);
-        var material2 = sender.Components["Box\\Material"] as Material;
-        if (material2 != null)
-            material2.Emissive = new ColorValuePowered(0, (1.0 + Math.Sin(Time.Current)) * 5, 0);
-        var material3 = sender.Components["Cylinder\\Material"] as Material;
-        if (material3 != null)
-            material3.PropertySet("Multiplier", new ColorValue(1, 1, 1.0 + (1.0 + Math.Sin(Time.Current)) * 5));
-    }
-}
-
-[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgQnV0dG9uX0NsaWNrKE5lb0F4aXMuQnV0dG9uSW5TcGFjZSBzZW5kZXIpCnsKCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRTY2VuZTsKCgl2YXIgZ3JvdW5kID0gc2NlbmUuR2V0Q29tcG9uZW50KCJHcm91bmQiKSBhcyBNZXNoSW5TcGFjZTsKCWlmIChncm91bmQgIT0gbnVsbCkKCXsKCQlpZiAoIWdyb3VuZC5SZXBsYWNlTWF0ZXJpYWwuUmVmZXJlbmNlU3BlY2lmaWVkKQoJCXsKCQkJZ3JvdW5kLlJlcGxhY2VNYXRlcmlhbCA9IFJlZmVyZW5jZVV0aWxpdHkuTWFrZVJlZmVyZW5jZSggQCJCYXNlXE1hdGVyaWFsc1xEYXJrIFllbGxvdy5tYXRlcmlhbCIpOwoJCX0KCQllbHNlCgkJCWdyb3VuZC5SZXBsYWNlTWF0ZXJpYWwgPSBudWxsOwoJfQp9Cg==")]
-public class DynamicClass_7ab8ce43_1882_4925_a214_a4bee8660258
-{
-    public NeoAxis.CSharpScript Owner;
-    public void Button_Click(NeoAxis.ButtonInSpace sender)
-    {
-        var scene = sender.ParentScene;
-        var ground = scene.GetComponent("Ground") as MeshInSpace;
-        if (ground != null)
-        {
-            if (!ground.ReplaceMaterial.ReferenceSpecified)
-            {
-                ground.ReplaceMaterial = ReferenceUtility.MakeReference(@"Base\Materials\Dark Yellow.material");
-            }
-            else
-                ground.ReplaceMaterial = null;
-        }
-    }
-}
-
-[CSharpScriptGeneratedAttribute("Ci8vIFRoZSBleGFtcGxlIG9mIGNvbXB1dGluZyBhIGxpc3Qgb2Ygb2JqZWN0cyBmb3IgdGhlIEdyb3VwT2ZPYmplY3RzIHVzaW5nIHRocmVhZHMuCgpjbGFzcyBEYXRhCnsKCXB1YmxpYyBHcm91cE9mT2JqZWN0cy5PYmplY3RbXSBPYmplY3RzOwp9CgpwdWJsaWMgdm9pZCBDb21wdXRlVXNpbmdUaHJlYWRzX0NvbXB1dGVCZWdpbihOZW9BeGlzLkNvbXB1dGVVc2luZ1RocmVhZHMgc2VuZGVyKQp7CgkvL0xvZy5JbmZvKCJiZWdpbiIpOwoKCXZhciBkYXRhID0gbmV3IERhdGEoKTsKCWRhdGEuT2JqZWN0cyA9IG5ldyBHcm91cE9mT2JqZWN0cy5PYmplY3RbMTAwICogMTAwXTsKCXNlbmRlci5Db250ZXh0LkFueURhdGEgPSBkYXRhOwoKCS8vaG93IHRvIHNraXAgb25lIGNvbXB1dGluZzoKCS8vc2VuZGVyLkNvbnRleHQuQWxsb3dDb21wdXRlID0gZmFsc2U7Cn0KCnB1YmxpYyB2b2lkIENvbXB1dGVVc2luZ1RocmVhZHNfQ29tcHV0ZVRocmVhZChOZW9BeGlzLkNvbXB1dGVVc2luZ1RocmVhZHMgc2VuZGVyLCBpbnQgdGhyZWFkSW5kZXgpCnsKCXZhciBkYXRhID0gc2VuZGVyLkNvbnRleHQuQW55RGF0YSBhcyBEYXRhOwoJaWYgKGRhdGEgPT0gbnVsbCkKCQlyZXR1cm47CgoJdmFyIG9iamVjdHMgPSBkYXRhLk9iamVjdHM7CgoJLy9nZXQgcmFuZ2Ugb2Ygb2JqZWN0cyBmb3IgdGhlIHRocmVhZAoJdmFyIGZyb20gPSAoZGF0YS5PYmplY3RzLkxlbmd0aCAqIHRocmVhZEluZGV4KSAvIHNlbmRlci5UaHJlYWRDb3VudDsKCXZhciB0byA9IChkYXRhLk9iamVjdHMuTGVuZ3RoICogKHRocmVhZEluZGV4ICsgMSkpIC8gc2VuZGVyLlRocmVhZENvdW50OwoKCXZhciByYW5kb20gPSBuZXcgTmVvQXhpcy5GYXN0UmFuZG9tKDApOy8vKGludCkoVGltZS5DdXJyZW50ICogMC4yNSkpOwoKCS8vY29tcHV0ZSBvYmplY3RzCglmb3IgKGludCBuID0gZnJvbTsgbiA8IHRvOyBuKyspCgl7CgkJcmVmIHZhciBvYmogPSByZWYgb2JqZWN0c1tuXTsKCgkJdmFyIHggPSBuICUgMTAwOwoJCXZhciB5ID0gbiAvIDEwMDsKCgkJdmFyIHdhdmluZ1N0YXJ0ID0gcmFuZG9tLk5leHQoTWF0aC5QSSAqIDIpOwoJCXZhciB3YXZpbmdDeWNsZSA9IHJhbmRvbS5OZXh0KDEuMCwgMi4wKTsKCQkKCQkvL3VzZSBBbnlEYXRhIHRvIHN0b3JlIGFkZGl0aW9uYWwgZGF0YSBpbiB0aGUgb2JqZWN0CgkJLy9vYmouQW55RGF0YSA9IDsKCgkJb2JqLkVsZW1lbnQgPSAodXNob3J0KXJhbmRvbS5OZXh0KDIpOwoJCW9iai5GbGFncyA9IEdyb3VwT2ZPYmplY3RzLk9iamVjdC5GbGFnc0VudW0uRW5hYmxlZCB8IEdyb3VwT2ZPYmplY3RzLk9iamVjdC5GbGFnc0VudW0uVmlzaWJsZTsKCQlvYmouUG9zaXRpb24gPSBuZXcgVmVjdG9yMyh4ICogMS4zLCB5ICogMS4zLCAxLjAgKyBNYXRoLlNpbiggd2F2aW5nU3RhcnQgKyBUaW1lLkN1cnJlbnQgKiB3YXZpbmdDeWNsZSApICogMC4yNSApOwoJCW9iai5Sb3RhdGlvbiA9IFF1YXRlcm5pb25GLklkZW50aXR5OwoJCW9iai5TY2FsZSA9IG5ldyBWZWN0b3IzRigxLCAxLCAxKTsKCQlvYmouQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZShyYW5kb20uTmV4dEZsb2F0KCksIHJhbmRvbS5OZXh0RmxvYXQoKSwgcmFuZG9tLk5leHRGbG9hdCgpKTsKCgkJLy92YXIgcG9zID0gbmV3IFZlY3RvcjMobiAqIDEuMywgMCwgMSk7CgkJLy92YXIgcm90ID0gUXVhdGVybmlvbkYuSWRlbnRpdHk7CgkJLy92YXIgc2NsID0gbmV3IFZlY3RvcjNGKDEsIDEsIDEpOwoJCS8vZGF0YS5PYmplY3RzW25dID0gbmV3IEdyb3VwT2ZPYmplY3RzLk9iamVjdCgwLCAwLCAwLCBHcm91cE9mT2JqZWN0cy5PYmplY3QuRmxhZ3NFbnVtLkVuYWJsZWQgfCBHcm91cE9mT2JqZWN0cy5PYmplY3QuRmxhZ3NFbnVtLlZpc2libGUsIHBvcywgcm90LCBzY2wsIFZlY3RvcjRGLlplcm8sIENvbG9yVmFsdWUuT25lLCBWZWN0b3I0Ri5aZXJvLCBWZWN0b3I0Ri5aZXJvKTsgCgl9Cn0KCnB1YmxpYyB2b2lkIENvbXB1dGVVc2luZ1RocmVhZHNfQ29tcHV0ZUVuZChOZW9BeGlzLkNvbXB1dGVVc2luZ1RocmVhZHMgc2VuZGVyKQp7CgkvL0xvZy5JbmZvKCJlbmQiKTsKCgl2YXIgZGF0YSA9IHNlbmRlci5Db250ZXh0LkFueURhdGEgYXMgRGF0YTsKCWlmIChkYXRhID09IG51bGwpCgkJcmV0dXJuOwoKCXZhciBncm91cE9mT2JqZWN0cyA9IHNlbmRlci5QYXJlbnQgYXMgR3JvdXBPZk9iamVjdHM7CglpZiAoZ3JvdXBPZk9iamVjdHMgIT0gbnVsbCkKCQlncm91cE9mT2JqZWN0cy5PYmplY3RzU2V0KGRhdGEuT2JqZWN0cywgdHJ1ZSk7Cn0K")]
-public class DynamicClass_30d163c2_023e_4ce8_9dea_4c497ca6d5a0
-{
-    public NeoAxis.CSharpScript Owner;
-    // The example of computing a list of objects for the GroupOfObjects using threads.
-    class Data
-    {
-        public GroupOfObjects.Object[] Objects;
-    }
-
-    public GroupOfObjects.Object[] Objects;
-    public void ComputeUsingThreads_ComputeBegin(NeoAxis.ComputeUsingThreads sender)
-    {
-        //Log.Info("begin");
-        var data = new Data();
-        data.Objects = new GroupOfObjects.Object[100 * 100];
-        sender.Context.AnyData = data;
-    //how to skip one computing:
-    //sender.Context.AllowCompute = false;
-    }
-
-    public void ComputeUsingThreads_ComputeThread(NeoAxis.ComputeUsingThreads sender, int threadIndex)
-    {
-        var data = sender.Context.AnyData as Data;
-        if (data == null)
-            return;
-        var objects = data.Objects;
-        //get range of objects for the thread
-        var from = (data.Objects.Length * threadIndex) / sender.ThreadCount;
-        var to = (data.Objects.Length * (threadIndex + 1)) / sender.ThreadCount;
-        var random = new NeoAxis.FastRandom(0); //(int)(Time.Current * 0.25));
-        //compute objects
-        for (int n = from; n < to; n++)
-        {
-            ref var obj = ref objects[n];
-            var x = n % 100;
-            var y = n / 100;
-            var wavingStart = random.Next(Math.PI * 2);
-            var wavingCycle = random.Next(1.0, 2.0);
-            //use AnyData to store additional data in the object
-            //obj.AnyData = ;
-            obj.Element = (ushort)random.Next(2);
-            obj.Flags = GroupOfObjects.Object.FlagsEnum.Enabled | GroupOfObjects.Object.FlagsEnum.Visible;
-            obj.Position = new Vector3(x * 1.3, y * 1.3, 1.0 + Math.Sin(wavingStart + Time.Current * wavingCycle) * 0.25);
-            obj.Rotation = QuaternionF.Identity;
-            obj.Scale = new Vector3F(1, 1, 1);
-            obj.Color = new ColorValue(random.NextFloat(), random.NextFloat(), random.NextFloat());
-        //var pos = new Vector3(n * 1.3, 0, 1);
-        //var rot = QuaternionF.Identity;
-        //var scl = new Vector3F(1, 1, 1);
-        //data.Objects[n] = new GroupOfObjects.Object(0, 0, 0, GroupOfObjects.Object.FlagsEnum.Enabled | GroupOfObjects.Object.FlagsEnum.Visible, pos, rot, scl, Vector4F.Zero, ColorValue.One, Vector4F.Zero, Vector4F.Zero); 
-        }
-    }
-
-    public void ComputeUsingThreads_ComputeEnd(NeoAxis.ComputeUsingThreads sender)
-    {
-        //Log.Info("end");
-        var data = sender.Context.AnyData as Data;
-        if (data == null)
-            return;
-        var groupOfObjects = sender.Parent as GroupOfObjects;
-        if (groupOfObjects != null)
-            groupOfObjects.ObjectsSet(data.Objects, true);
-    }
-}
-
-[CSharpScriptGeneratedAttribute("aW50IE1ldGhvZCggaW50IGEsIGludCBiICkKewoJcmV0dXJuIGEgKyBiOwp9Cg==")]
-public class DynamicClass_c2fc4e42_e97a_4c92_9d19_a3a96d329a60
-{
-    public NeoAxis.CSharpScript Owner;
-    int Method(int a, int b)
-    {
-        return a + b;
-    }
-}
-
-[CSharpScriptGeneratedAttribute("VHJhbnNmb3JtIE1ldGhvZCgpCnsKCXZhciBhbmdsZSA9IEVuZ2luZUFwcC5FbmdpbmVUaW1lICogMC4zOwoJdmFyIG9mZnNldCA9IG5ldyBWZWN0b3IzKE1hdGguQ29zKGFuZ2xlKSwgTWF0aC5TaW4oYW5nbGUpLCAwKSAqIDIuNTsKCXZhciBsb29rVG8gPSBuZXcgVmVjdG9yMygxMS43Mzc0ODM5MTI0ODI3LCAtMC4wNTE3NzY3NTAzMjQzOSwgLTE1LjUwOTI3NTU4MjUwOTIpOwoJdmFyIGxvb2tBdCA9IFF1YXRlcm5pb24uTG9va0F0KC1vZmZzZXQsIG5ldyBWZWN0b3IzKDAsMCwxKSk7CgkKCXJldHVybiBuZXcgVHJhbnNmb3JtKCBsb29rVG8gKyBvZmZzZXQsIGxvb2tBdCwgVmVjdG9yMy5PbmUgKTsKfQo=")]
-public class DynamicClass_c85b8785_c7e2_4a69_a761_05e2e220e3b1
-{
-    public NeoAxis.CSharpScript Owner;
-    Transform Method()
-    {
-        var angle = EngineApp.EngineTime * 0.3;
-        var offset = new Vector3(Math.Cos(angle), Math.Sin(angle), 0) * 2.5;
-        var lookTo = new Vector3(11.7374839124827, -0.05177675032439, -15.5092755825092);
-        var lookAt = Quaternion.LookAt(-offset, new Vector3(0, 0, 1));
-        return new Transform(lookTo + offset, lookAt, Vector3.One);
+        var obj = (ObjectInSpace)sender;
+        var tr = obj.TransformV;
+        obj.Transform = new Transform(tr.Position, Quaternion.FromRotateByZ(Time.Current * 0.25), tr.Scale);
     }
 }
 
 [CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgTWVzaEluU3BhY2VBbmltYXRpb25Db250cm9sbGVyX0NhbGN1bGF0ZUJvbmVUcmFuc2Zvcm1zKE5lb0F4aXMuTWVzaEluU3BhY2VBbmltYXRpb25Db250cm9sbGVyIHNlbmRlciwgTmVvQXhpcy5Ta2VsZXRvbkFuaW1hdGlvblRyYWNrLkNhbGN1bGF0ZUJvbmVUcmFuc2Zvcm1zSXRlbVtdIHJlc3VsdCkKewoJLy90byBlbmFibGUgdGhpcyBldmVudCBoYW5kbGVyIGluIHRoZSBlZGl0b3IgY2hhbmdlICJXaGVuIEVuYWJsZSIgcHJvcGVydHkgdG8gIlNpbXVsYXRpb24gfCBJbnN0YW5jZSB8IEVkaXRvciIuCgkvL2NvbXBvbmVudDogQ2hhcmFjdGVyL01lc2ggSW4gU3BhY2UvQyMgU2NyaXB0L0V2ZW50IEhhbmRsZXIgQ2FsY3VsYXRlQm9uZVRyYW5zZm9ybXMuCgkKCXZhciBib25lSW5kZXggPSBzZW5kZXIuR2V0Qm9uZUluZGV4KCJtaXhhbW9yaWc6U3BpbmUxIik7CglpZihib25lSW5kZXggIT0gLTEpCgl7CgkJcmVmIHZhciBpdGVtID0gcmVmIHJlc3VsdFtib25lSW5kZXhdOwoKCQkvL2NhbGN1bGF0ZSBib25lIG9mZnNldAoJCXZhciBhbmdsZSA9IG5ldyBEZWdyZWUoNjApICogTWF0aC5TaW4oVGltZS5DdXJyZW50KTsgCgkJdmFyIG9mZnNldCA9IE1hdHJpeDNGLkZyb21Sb3RhdGVCeVkoKGZsb2F0KWFuZ2xlLkluUmFkaWFucygpKS5Ub1F1YXRlcm5pb24oKTsKCQkKCQkvL3VwZGF0ZSB0aGUgYm9uZQoJCWl0ZW0uUm90YXRpb24gKj0gb2Zmc2V0OwoJfQkKfQo=")]
-public class DynamicClass_6b3a3ef1_7ae0_4ea6_a6d7_a207f648501f
+public class DynamicClassD11D0BDF2CE301BB2E8F6F60961E3230562912D7DE50E1854F960982DD980C0E
 {
     public NeoAxis.CSharpScript Owner;
     public void MeshInSpaceAnimationController_CalculateBoneTransforms(NeoAxis.MeshInSpaceAnimationController sender, NeoAxis.SkeletonAnimationTrack.CalculateBoneTransformsItem[] result)
@@ -484,19 +713,145 @@ public class DynamicClass_6b3a3ef1_7ae0_4ea6_a6d7_a207f648501f
     }
 }
 
-[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgUGFpbnRMYXllcl9VcGRhdGVFdmVudChOZW9BeGlzLkNvbXBvbmVudCBzZW5kZXIsIGZsb2F0IGRlbHRhKQp7Cgl2YXIgbGF5ZXIgPSAoUGFpbnRMYXllcilzZW5kZXI7CglsYXllci5NYXRlcmlhbENvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMSwgMSwgTWF0aEV4LlNpbihUaW1lLkN1cnJlbnQpICogMC41ICsgMC41KTsKfQo=")]
-public class DynamicClass_9645cf0a_8efd_450f_858d_2594d6fe7d2c
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgX1VwZGF0ZUV2ZW50KE5lb0F4aXMuQ29tcG9uZW50IHNlbmRlciwgZmxvYXQgZGVsdGEpCnsKCXZhciBvYmplY3QxID0gc2VuZGVyLkNvbXBvbmVudHNbIlNwaGVyZSJdIGFzIE1lc2hJblNwYWNlOwoJaWYob2JqZWN0MSAhPSBudWxsKQoJCW9iamVjdDEuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjUsIDAuNzUgKyBNYXRoLlNpbihUaW1lLkN1cnJlbnQpICogMC4yNSwgMC41KTsKCgl2YXIgbWF0ZXJpYWwyID0gc2VuZGVyLkNvbXBvbmVudHNbIkJveFxcTWF0ZXJpYWwiXSBhcyBNYXRlcmlhbDsKCWlmKG1hdGVyaWFsMiAhPSBudWxsKQoJCW1hdGVyaWFsMi5FbWlzc2l2ZSA9IG5ldyBDb2xvclZhbHVlUG93ZXJlZCgwLCAoMS4wICsgTWF0aC5TaW4oVGltZS5DdXJyZW50KSkgKiA1LCAwKTsKCQkKCXZhciBtYXRlcmlhbDMgPSBzZW5kZXIuQ29tcG9uZW50c1siQ3lsaW5kZXJcXE1hdGVyaWFsIl0gYXMgTWF0ZXJpYWw7CglpZihtYXRlcmlhbDMgIT0gbnVsbCkKCQltYXRlcmlhbDMuUHJvcGVydHlTZXQoIk11bHRpcGxpZXIiLCBuZXcgQ29sb3JWYWx1ZSgxLCAxLCAxLjAgKyAoMS4wICsgTWF0aC5TaW4oVGltZS5DdXJyZW50KSkgKiA1KSk7Cn0K")]
+public class DynamicClass05C48E8299CF8F7A31FE138987B25138DC388677E1788A606B8EC18AFAACBFF3
 {
     public NeoAxis.CSharpScript Owner;
-    public void PaintLayer_UpdateEvent(NeoAxis.Component sender, float delta)
+    public void _UpdateEvent(NeoAxis.Component sender, float delta)
     {
-        var layer = (PaintLayer)sender;
-        layer.MaterialColor = new ColorValue(1, 1, 1, MathEx.Sin(Time.Current) * 0.5 + 0.5);
+        var object1 = sender.Components["Sphere"] as MeshInSpace;
+        if (object1 != null)
+            object1.Color = new ColorValue(0.5, 0.75 + Math.Sin(Time.Current) * 0.25, 0.5);
+        var material2 = sender.Components["Box\\Material"] as Material;
+        if (material2 != null)
+            material2.Emissive = new ColorValuePowered(0, (1.0 + Math.Sin(Time.Current)) * 5, 0);
+        var material3 = sender.Components["Cylinder\\Material"] as Material;
+        if (material3 != null)
+            material3.PropertySet("Multiplier", new ColorValue(1, 1, 1.0 + (1.0 + Math.Sin(Time.Current)) * 5));
+    }
+}
+
+[CSharpScriptGeneratedAttribute("UmVuZGVyaW5nUGlwZWxpbmUgR2V0UGlwZWxpbmUoKQp7CglzdHJpbmcgbmFtZTsKCWlmKEVuZ2luZUFwcC5FbmdpbmVUaW1lICUgNiA+IDMpCgkJbmFtZSA9ICJSZW5kZXJpbmcgUGlwZWxpbmUiOwoJZWxzZQoJCW5hbWUgPSAiUmVuZGVyaW5nIFBpcGVsaW5lIDIiOwoJCQoJcmV0dXJuIE93bmVyLlBhcmVudC5HZXRDb21wb25lbnQobmFtZSkgYXMgUmVuZGVyaW5nUGlwZWxpbmU7Cn0K")]
+public class DynamicClassE9187D41516A838882B97D8B60F698D11F337B7737278CBFF9DB427D2BB97E84
+{
+    public NeoAxis.CSharpScript Owner;
+    RenderingPipeline GetPipeline()
+    {
+        string name;
+        if (EngineApp.EngineTime % 6 > 3)
+            name = "Rendering Pipeline";
+        else
+            name = "Rendering Pipeline 2";
+        return Owner.Parent.GetComponent(name) as RenderingPipeline;
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgU0ZDcmF0ZTFfVXBkYXRlRXZlbnQoTmVvQXhpcy5Db21wb25lbnQgc2VuZGVyLCBmbG9hdCBkZWx0YSkKewoJdmFyIG1lc2hJblNwYWNlID0gKE1lc2hJblNwYWNlKXNlbmRlcjsKCQoJLy91c2UgbWVzaCBvZiB0aGUgY29tcG9uZW50Cgl2YXIgbWVzaCA9IG1lc2hJblNwYWNlLk1lc2guVmFsdWU7CgkKCXZhciBkaXN0YW5jZVN0ZXBzID0gNTsKCXZhciBhbmdsZVN0ZXBzID0gODsKCgl2YXIgYWRkaXRpb25hbEl0ZW1zID0gbmV3IE1lc2hJblNwYWNlLkFkZGl0aW9uYWxJdGVtW2Rpc3RhbmNlU3RlcHMgKiBhbmdsZVN0ZXBzXTsKCglpbnQgY3VycmVudEluZGV4ID0gMDsKCglmb3IgKGludCBkaXN0YW5jZVN0ZXAgPSAwOyBkaXN0YW5jZVN0ZXAgPCBkaXN0YW5jZVN0ZXBzOyBkaXN0YW5jZVN0ZXArKykKCXsKCQl2YXIgZGlzdGFuY2UgPSAoZG91YmxlKWRpc3RhbmNlU3RlcCAqIDEuMGY7CgoJCWZvciAoaW50IGFuZ2xlU3RlcCA9IDA7IGFuZ2xlU3RlcCA8IGFuZ2xlU3RlcHM7IGFuZ2xlU3RlcCsrKQoJCXsKCQkJdmFyIGFuZ2xlID0gTWF0aC5QSSAqIDIgKiBhbmdsZVN0ZXAgLyBhbmdsZVN0ZXBzICsgVGltZS5DdXJyZW50ICogMC41OwoKCQkJdmFyIHBvcyA9IG5ldyBWZWN0b3IzKE1hdGguQ29zKGFuZ2xlKSwgTWF0aC5TaW4oYW5nbGUpLCAwKSAqIGRpc3RhbmNlOwoJCQl2YXIgcm90ID0gUXVhdGVybmlvbi5JZGVudGl0eTsKCQkJdmFyIHNjbCA9IG5ldyBWZWN0b3IzKDAuMyAvIGRpc3RhbmNlLCAwLjMgLyBkaXN0YW5jZSwgMC4zIC8gZGlzdGFuY2UpOwoKCQkJYWRkaXRpb25hbEl0ZW1zW2N1cnJlbnRJbmRleF0gPSBuZXcgTWVzaEluU3BhY2UuQWRkaXRpb25hbEl0ZW0obWVzaCwgcG9zLCByb3QsIHNjbCwgbmV3IENvbG9yVmFsdWUoMSwgMSwgMCkpOwoJCQljdXJyZW50SW5kZXgrKzsKCQl9Cgl9CgoJLyoKCXZhciBhZGRpdGlvbmFsSXRlbXMgPSBuZXcgTWVzaEluU3BhY2UuQWRkaXRpb25hbEl0ZW1bMV07CglyZWYgdmFyIGl0ZW0gPSByZWYgYWRkaXRpb25hbEl0ZW1zWzBdOwoJaXRlbS5NZXNoID0gbWVzaDsKCWl0ZW0uUG9zaXRpb24gPSBuZXcgVmVjdG9yMygxLCAwLCAwKTsKCWl0ZW0uUm90YXRpb24gPSBRdWF0ZXJuaW9uLklkZW50aXR5OzsKCWl0ZW0uU2NhbGUgPSBuZXcgVmVjdG9yMyguMiwgLjIsIC4yKTsKCWl0ZW0uQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAxLCAwKTsKCSovCgoJbWVzaEluU3BhY2UuQWRkaXRpb25hbEl0ZW1zID0gYWRkaXRpb25hbEl0ZW1zOwoKCgkvL3VwZGF0ZSBib3VuZHMgd2hlbiBuZWVkIHVwZGF0ZQoJewoJCXZhciB0ciA9IG1lc2hJblNwYWNlLlRyYW5zZm9ybVY7CgkJdmFyIGJvdW5kcyA9IG5ldyBCb3VuZHMoLTQsIC00LCAtMC41LCA0LCA0LCAwLjUpOwoJCXZhciBib3ggPSBuZXcgQm94KGJvdW5kcywgdHIuUG9zaXRpb24sIHRyLlJvdGF0aW9uLlRvTWF0cml4MygpKTsKCQltZXNoSW5TcGFjZS5TcGFjZUJvdW5kc092ZXJyaWRlID0gbmV3IFNwYWNlQm91bmRzKGJveC5Ub0JvdW5kcygpKTsKCX0KfQo=")]
+public class DynamicClassB8560AA3AB17CD7ADD5FDB0E801D1578B96DA0EBC70DADD621E5A293D4809263
+{
+    public NeoAxis.CSharpScript Owner;
+    public void SFCrate1_UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        var meshInSpace = (MeshInSpace)sender;
+        //use mesh of the component
+        var mesh = meshInSpace.Mesh.Value;
+        var distanceSteps = 5;
+        var angleSteps = 8;
+        var additionalItems = new MeshInSpace.AdditionalItem[distanceSteps * angleSteps];
+        int currentIndex = 0;
+        for (int distanceStep = 0; distanceStep < distanceSteps; distanceStep++)
+        {
+            var distance = (double)distanceStep * 1.0f;
+            for (int angleStep = 0; angleStep < angleSteps; angleStep++)
+            {
+                var angle = Math.PI * 2 * angleStep / angleSteps + Time.Current * 0.5;
+                var pos = new Vector3(Math.Cos(angle), Math.Sin(angle), 0) * distance;
+                var rot = Quaternion.Identity;
+                var scl = new Vector3(0.3 / distance, 0.3 / distance, 0.3 / distance);
+                additionalItems[currentIndex] = new MeshInSpace.AdditionalItem(mesh, pos, rot, scl, new ColorValue(1, 1, 0));
+                currentIndex++;
+            }
+        }
+
+        /*
+	var additionalItems = new MeshInSpace.AdditionalItem[1];
+	ref var item = ref additionalItems[0];
+	item.Mesh = mesh;
+	item.Position = new Vector3(1, 0, 0);
+	item.Rotation = Quaternion.Identity;;
+	item.Scale = new Vector3(.2, .2, .2);
+	item.Color = new ColorValue(1, 1, 0);
+	*/
+        meshInSpace.AdditionalItems = additionalItems;
+        //update bounds when need update
+        {
+            var tr = meshInSpace.TransformV;
+            var bounds = new Bounds(-4, -4, -0.5, 4, 4, 0.5);
+            var box = new Box(bounds, tr.Position, tr.Rotation.ToMatrix3());
+            meshInSpace.SpaceBoundsOverride = new SpaceBounds(box.ToBounds());
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgQnV0dG9uX0NsaWNrKE5lb0F4aXMuQnV0dG9uSW5TcGFjZSBzZW5kZXIpCnsKCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRTY2VuZTsKCgl2YXIgZ3JvdW5kID0gc2NlbmUuR2V0Q29tcG9uZW50KCJHcm91bmQiKSBhcyBNZXNoSW5TcGFjZTsKCWlmIChncm91bmQgIT0gbnVsbCkKCXsKCQlpZiAoIWdyb3VuZC5SZXBsYWNlTWF0ZXJpYWwuUmVmZXJlbmNlU3BlY2lmaWVkKQoJCXsKCQkJZ3JvdW5kLlJlcGxhY2VNYXRlcmlhbCA9IFJlZmVyZW5jZVV0aWxpdHkuTWFrZVJlZmVyZW5jZSgKCQkJCUAiQ29udGVudFxNYXRlcmlhbHNcQmFzaWMgTGlicmFyeVxDb25jcmV0ZVxDb25jcmV0ZSBGbG9vciAwMS5tYXRlcmlhbCIpOwoJCX0KCQllbHNlCgkJCWdyb3VuZC5SZXBsYWNlTWF0ZXJpYWwgPSBudWxsOwoJfQp9Cg==")]
+public class DynamicClass6FE073B43FFD3D061F3EFAF849A9B642EC479C63206579FD4C47D62D3694F034
+{
+    public NeoAxis.CSharpScript Owner;
+    public void Button_Click(NeoAxis.ButtonInSpace sender)
+    {
+        var scene = sender.ParentScene;
+        var ground = scene.GetComponent("Ground") as MeshInSpace;
+        if (ground != null)
+        {
+            if (!ground.ReplaceMaterial.ReferenceSpecified)
+            {
+                ground.ReplaceMaterial = ReferenceUtility.MakeReference(@"Content\Materials\Basic Library\Concrete\Concrete Floor 01.material");
+            }
+            else
+                ground.ReplaceMaterial = null;
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgUmVndWxhdG9yU3dpdGNoX1ZhbHVlQ2hhbmdlZChOZW9BeGlzLlJlZ3VsYXRvclN3aXRjaEluU3BhY2Ugb2JqKQp7Cgl2YXIgc2NlbmUgPSBvYmouUGFyZW50U2NlbmU7CgoJdmFyIGdyb3VuZCA9IHNjZW5lLkdldENvbXBvbmVudCgiR3JvdW5kIikgYXMgTWVzaEluU3BhY2U7CglpZiAoZ3JvdW5kICE9IG51bGwpCgkJZ3JvdW5kLkNvbG9yID0gQ29sb3JWYWx1ZS5MZXJwKG5ldyBDb2xvclZhbHVlKDEsIDEsIDEpLCBuZXcgQ29sb3JWYWx1ZSgwLjQsIDAuOSwgMC40KSwgKGZsb2F0KW9iai5WYWx1ZSk7Cn0K")]
+public class DynamicClassECBC0D990E63A9EB29E57236D310C6B20F46D08EFFCC7E7095A8AD752390FB11
+{
+    public NeoAxis.CSharpScript Owner;
+    public void RegulatorSwitch_ValueChanged(NeoAxis.RegulatorSwitchInSpace obj)
+    {
+        var scene = obj.ParentScene;
+        var ground = scene.GetComponent("Ground") as MeshInSpace;
+        if (ground != null)
+            ground.Color = ColorValue.Lerp(new ColorValue(1, 1, 1), new ColorValue(0.4, 0.9, 0.4), (float)obj.Value);
+    }
+}
+
+[CSharpScriptGeneratedAttribute("aW50IE1ldGhvZCggaW50IGEsIGludCBiICkKewoJcmV0dXJuIGEgKyBiOwp9Cg==")]
+public class DynamicClassEFE66A74484991C50F6D2BF75AD19B08A7F2F3AB36497CEFF9B0405E15C4EB2C
+{
+    public NeoAxis.CSharpScript Owner;
+    int Method(int a, int b)
+    {
+        return a + b;
+    }
+}
+
+[CSharpScriptGeneratedAttribute("VHJhbnNmb3JtIE1ldGhvZCgpCnsKCXZhciBhbmdsZSA9IEVuZ2luZUFwcC5FbmdpbmVUaW1lICogMC4zOwoJdmFyIG9mZnNldCA9IG5ldyBWZWN0b3IzKE1hdGguQ29zKGFuZ2xlKSwgTWF0aC5TaW4oYW5nbGUpLCAwKSAqIDIuNTsKCXZhciBsb29rVG8gPSBuZXcgVmVjdG9yMygxMS43Mzc0ODM5MTI0ODI3LCAtMC4wNTE3NzY3NTAzMjQzOSwgLTE1LjUwOTI3NTU4MjUwOTIpOwoJdmFyIGxvb2tBdCA9IFF1YXRlcm5pb24uTG9va0F0KC1vZmZzZXQsIG5ldyBWZWN0b3IzKDAsMCwxKSk7CgkKCXJldHVybiBuZXcgVHJhbnNmb3JtKCBsb29rVG8gKyBvZmZzZXQsIGxvb2tBdCwgVmVjdG9yMy5PbmUgKTsKfQo=")]
+public class DynamicClass38E1E68F4590ADDA8A2E2D87A752F325B659F81F3159DB8B10100F7BB9E01C46
+{
+    public NeoAxis.CSharpScript Owner;
+    Transform Method()
+    {
+        var angle = EngineApp.EngineTime * 0.3;
+        var offset = new Vector3(Math.Cos(angle), Math.Sin(angle), 0) * 2.5;
+        var lookTo = new Vector3(11.7374839124827, -0.05177675032439, -15.5092755825092);
+        var lookAt = Quaternion.LookAt(-offset, new Vector3(0, 0, 1));
+        return new Transform(lookTo + offset, lookAt, Vector3.One);
     }
 }
 
 [CSharpScriptGeneratedAttribute("VHJhbnNmb3JtIE1ldGhvZCgpCnsKCXZhciBhbmdsZSA9IEVuZ2luZUFwcC5FbmdpbmVUaW1lICogLTEuMDsKCXZhciBvZmZzZXQgPSBuZXcgVmVjdG9yMyhNYXRoLkNvcyhhbmdsZSksIE1hdGguU2luKGFuZ2xlKSwgMCkgKiAyLjA7Cgl2YXIgbG9va1RvID0gbmV3IFZlY3RvcjMoMTEuNzM3NDgzOTEyNDgyNywgLTAuMDUxNzc2NzUwMzI0MzksIC0xNC44MDkyNzU1ODI1MDkyKTsKCXZhciBsb29rQXQgPSBRdWF0ZXJuaW9uLkxvb2tBdCgtb2Zmc2V0LCBuZXcgVmVjdG9yMygwLDAsMSkpOwoJCglyZXR1cm4gbmV3IFRyYW5zZm9ybSggbG9va1RvICsgb2Zmc2V0LCBsb29rQXQsIFZlY3RvcjMuT25lICk7Cn0K")]
-public class DynamicClass_4d4c728b_15d2_433d_96d8_1c329cd4689c
+public class DynamicClass18A7B3363998B96C0E6D19CE157D3F0E05EA2CD7494616F26C28412469E21318
 {
     public NeoAxis.CSharpScript Owner;
     Transform Method()
@@ -510,7 +865,7 @@ public class DynamicClass_4d4c728b_15d2_433d_96d8_1c329cd4689c
 }
 
 [CSharpScriptGeneratedAttribute("VHJhbnNmb3JtIE1ldGhvZCgpCnsKCXZhciBhbmdsZSA9IEVuZ2luZUFwcC5FbmdpbmVUaW1lICogMS4zOwoJdmFyIG9mZnNldCA9IG5ldyBWZWN0b3IzKE1hdGguQ29zKGFuZ2xlKSwgTWF0aC5TaW4oYW5nbGUpLCAwKSAqIDIuMDsKCXZhciBsb29rVG8gPSBuZXcgVmVjdG9yMygxMS43Mzc0ODM5MTI0ODI3LCAtMC4wNTE3NzY3NTAzMjQzOSwgLTE1LjUwOTI3NTU4MjUwOTIpOwoJdmFyIGxvb2tBdCA9IFF1YXRlcm5pb24uTG9va0F0KC1vZmZzZXQsIG5ldyBWZWN0b3IzKDAsMCwxKSk7CgkKCXJldHVybiBuZXcgVHJhbnNmb3JtKCBsb29rVG8gKyBvZmZzZXQsIGxvb2tBdCwgbmV3IFZlY3RvcjMoMC41LDAuNSwwLjUpICk7Cn0K")]
-public class DynamicClass_90c4546b_72e7_47dc_ae6b_86d2c6d7ce76
+public class DynamicClass4E5C224DE2D6FE23DDD4DAFC8B01F3FBD396357061CC49E0F8B9445FCDE75B0F
 {
     public NeoAxis.CSharpScript Owner;
     Transform Method()
@@ -523,171 +878,340 @@ public class DynamicClass_90c4546b_72e7_47dc_ae6b_86d2c6d7ce76
     }
 }
 
-[CSharpScriptGeneratedAttribute("ZG91YmxlIE1ldGhvZCgpCnsKCXJldHVybiBNYXRoRXguU2F0dXJhdGUoICggTWF0aC5TaW4oIEVuZ2luZUFwcC5FbmdpbmVUaW1lICogMS4zICkgKyAxLjAgKSAvIDIgKTsKfQo=")]
-public class DynamicClass_e6249ccf_1d56_4449_9534_f86bd7184fea
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgUGFpbnRMYXllcl9VcGRhdGVFdmVudChOZW9BeGlzLkNvbXBvbmVudCBzZW5kZXIsIGZsb2F0IGRlbHRhKQp7Cgl2YXIgbGF5ZXIgPSAoUGFpbnRMYXllcilzZW5kZXI7CglsYXllci5NYXRlcmlhbENvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMSwgMSwgTWF0aEV4LlNpbihUaW1lLkN1cnJlbnQpICogMC41ICsgMC41KTsKfQo=")]
+public class DynamicClass87CB81277738E3204CECEEF6374F3AD27C4171EA1B50DAD28C3F381575BB5F23
 {
     public NeoAxis.CSharpScript Owner;
-    double Method()
+    public void PaintLayer_UpdateEvent(NeoAxis.Component sender, float delta)
     {
-        return MathEx.Saturate((Math.Sin(EngineApp.EngineTime * 1.3) + 1.0) / 2);
+        var layer = (PaintLayer)sender;
+        layer.MaterialColor = new ColorValue(1, 1, 1, MathEx.Sin(Time.Current) * 0.5 + 0.5);
     }
 }
 
-[CSharpScriptGeneratedAttribute("UmVuZGVyaW5nUGlwZWxpbmUgR2V0UGlwZWxpbmUoKQp7CglzdHJpbmcgbmFtZTsKCWlmKEVuZ2luZUFwcC5FbmdpbmVUaW1lICUgNCA+IDIpCgkJbmFtZSA9ICJSZW5kZXJpbmcgUGlwZWxpbmUiOwoJZWxzZQoJCW5hbWUgPSAiUmVuZGVyaW5nIFBpcGVsaW5lIDIiOwoJCQoJcmV0dXJuIE93bmVyLlBhcmVudC5HZXRDb21wb25lbnQobmFtZSkgYXMgUmVuZGVyaW5nUGlwZWxpbmU7Cn0K")]
-public class DynamicClass_3a2205aa_26d6_4d5d_b8fe_08f93d59f0db
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgUGFpbnRMYXllcl9VcGRhdGVFdmVudChOZW9BeGlzLkNvbXBvbmVudCBzZW5kZXIsIGZsb2F0IGRlbHRhKQp7Cgl2YXIgbGF5ZXIgPSAoUGFpbnRMYXllcilzZW5kZXI7CglsYXllci5NYXRlcmlhbENvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMSwgMSwgTWF0aEV4LkNvcyhUaW1lLkN1cnJlbnQpICogMC41ICsgMC41KTsKfQo=")]
+public class DynamicClass0CEA82422398667C47366B923DF74C9208964575BB36AE3031D0BF5B96FCC8FE
 {
     public NeoAxis.CSharpScript Owner;
-    RenderingPipeline GetPipeline()
+    public void PaintLayer_UpdateEvent(NeoAxis.Component sender, float delta)
     {
-        string name;
-        if (EngineApp.EngineTime % 4 > 2)
-            name = "Rendering Pipeline";
-        else
-            name = "Rendering Pipeline 2";
-        return Owner.Parent.GetComponent(name) as RenderingPipeline;
+        var layer = (PaintLayer)sender;
+        layer.MaterialColor = new ColorValue(1, 1, 1, MathEx.Cos(Time.Current) * 0.5 + 0.5);
     }
 }
 
-[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgX1JlbmRlckV2ZW50KE5lb0F4aXMuU2NlbmUgc2VuZGVyLCBOZW9BeGlzLlZpZXdwb3J0IHZpZXdwb3J0KQp7Cgl2YXIgYm94ID0gc2VuZGVyLkdldENvbXBvbmVudCgiQm94IikgYXMgTWVzaEluU3BhY2U7CglpZihib3ggIT0gbnVsbCkKCXsKCQlpZih2aWV3cG9ydC5DYW1lcmFTZXR0aW5ncy5Qcm9qZWN0VG9TY3JlZW5Db29yZGluYXRlcyhib3guVHJhbnNmb3JtVi5Qb3NpdGlvbiwgb3V0IHZhciBzY3JlZW5Qb3NpdGlvbikpCgkJewoJCQl2aWV3cG9ydC5DYW52YXNSZW5kZXJlci5BZGRUZXh0KCJUZXh0IDEiLCBzY3JlZW5Qb3NpdGlvbik7CgkJfQoKCgkJdmlld3BvcnQuU2ltcGxlM0RSZW5kZXJlci5TZXRDb2xvcihuZXcgQ29sb3JWYWx1ZSgxLCAxLCAwKSk7CgkJdmlld3BvcnQuU2ltcGxlM0RSZW5kZXJlci5BZGRTcGhlcmUobmV3IFNwaGVyZShib3guVHJhbnNmb3JtVi5Qb3NpdGlvbiwgMSkpOwoJfQkJCn0K")]
-public class DynamicClass_576c9cef_81fe_4a66_98da_88b4ceefdd88
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgSW5kaXJlY3RMaWdodGluZ19VcGRhdGVFdmVudChOZW9BeGlzLkNvbXBvbmVudCBzZW5kZXIsIGZsb2F0IGRlbHRhKQp7Cgl2YXIgZWZmZWN0ID0gc2VuZGVyIGFzIFJlbmRlcmluZ0VmZmVjdF9JbmRpcmVjdExpZ2h0aW5nOwoJaWYoZWZmZWN0ICE9IG51bGwpCgkJZWZmZWN0LkludGVuc2l0eSA9IChUaW1lLkN1cnJlbnQgJSA4LjApID4gNCA_IDEgOiAwOwp9Cg==")]
+public class DynamicClass3C0B0632C0376DBDE4309FC857CEA711519D39308970B7C42F61B0DD30E61A98
 {
     public NeoAxis.CSharpScript Owner;
-    public void _RenderEvent(NeoAxis.Scene sender, NeoAxis.Viewport viewport)
+    public void IndirectLighting_UpdateEvent(NeoAxis.Component sender, float delta)
     {
-        var box = sender.GetComponent("Box") as MeshInSpace;
-        if (box != null)
+        var effect = sender as RenderingEffect_IndirectLighting;
+        if (effect != null)
+            effect.Intensity = (Time.Current % 8.0) > 4 ? 1 : 0;
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgQnV0dG9uX0NsaWNrKE5lb0F4aXMuQnV0dG9uSW5TcGFjZSBzZW5kZXIpCnsKCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRTY2VuZTsKCgl2YXIgZ3JvdW5kID0gc2NlbmUuR2V0Q29tcG9uZW50KCJHcm91bmQiKSBhcyBNZXNoSW5TcGFjZTsKCWlmIChncm91bmQgIT0gbnVsbCkKCXsKCQlpZiAoIWdyb3VuZC5SZXBsYWNlTWF0ZXJpYWwuUmVmZXJlbmNlU3BlY2lmaWVkKQoJCXsKCQkJZ3JvdW5kLlJlcGxhY2VNYXRlcmlhbCA9IFJlZmVyZW5jZVV0aWxpdHkuTWFrZVJlZmVyZW5jZSggQCJCYXNlXE1hdGVyaWFsc1xEYXJrIFllbGxvdy5tYXRlcmlhbCIpOwoJCX0KCQllbHNlCgkJCWdyb3VuZC5SZXBsYWNlTWF0ZXJpYWwgPSBudWxsOwoJfQp9Cg==")]
+public class DynamicClass4EEC20F75E94844B3480484FB8A7CC10F386637DC0B6869508D30793F401D012
+{
+    public NeoAxis.CSharpScript Owner;
+    public void Button_Click(NeoAxis.ButtonInSpace sender)
+    {
+        var scene = sender.ParentScene;
+        var ground = scene.GetComponent("Ground") as MeshInSpace;
+        if (ground != null)
         {
-            if (viewport.CameraSettings.ProjectToScreenCoordinates(box.TransformV.Position, out var screenPosition))
+            if (!ground.ReplaceMaterial.ReferenceSpecified)
             {
-                viewport.CanvasRenderer.AddText("Text 1", screenPosition);
+                ground.ReplaceMaterial = ReferenceUtility.MakeReference(@"Base\Materials\Dark Yellow.material");
+            }
+            else
+                ground.ReplaceMaterial = null;
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgX0dlbmVyYXRlU3RhZ2UoTmVvQXhpcy5QbGFudFR5cGUgc2VuZGVyLCBOZW9BeGlzLlBsYW50R2VuZXJhdG9yIGdlbmVyYXRvciwgTmVvQXhpcy5QbGFudEdlbmVyYXRvci5FbGVtZW50VHlwZUVudW0gc3RhZ2UpCnsKI2lmICFERVBMT1kKCgkvL2hlcmUgaXMgYSBzY3JpcHQgZm9yIHRoZSBwbGFudCBnZW5lcmF0b3IgdG8gc3BlY2lhbGl6ZSBvdXIgcGxhbnQgdHlwZQoJCgkKCS8vaWRlYXM6CgkKCS8v0LHQtdGA0LXQt9CwOgoJLy_QsdGA0LDQvdGHINCyIDcg0YDQsNC3INGC0L7QvdGM0YjQtSDRh9C10Lwg0YDQvtC00LjRgtC10LvRjAoJLy_RgdGC0LLQvtC7LCDQsdGA0LDQvdGH0LgsINCy0LXRgtC60Lgg0YDQvtCy0L3Ri9C1CgkvL9C80LDQu9C+INCx0YDQsNC90YfQtdC5LCDQstC10YLQvtC6INGC0L7QttC1CgkvL9GB0LLQtdGA0YXRgyDQsdC+0LvRjNGI0LUg0YDQsNGB0YLQuNGC0LXQu9GM0L3QvtGB0YLQuAoJCgkvL9C00YPQsToKCS8v0LHQvtC70YzRiNC1INC40LfQvtCz0L3Rg9GC0L7RgdGC0Ywg0YfQtdC8INCx0LXRgNC10LfQsAoJLy_QstC90LjQt9GDINGC0L7QttC1INC80L3QvtCz0L4g0YDQsNGB0YLQuNGC0LXQu9GM0L3QvtGB0YLQuAoJCgkvL9C10LvRjDoKCS8v0LLQtdGC0L7QuiDQvdC10YIsINC+0LTQvdC4INCx0YDQsNC90YfQuD8KCQoJLy_QstGL0YHQvtGC0LAKCS8v0YLQvtC70YnQuNC90LAg0YHQv9C70LDQudC90L7QuQoKCgl2YXIgbWluQnJhbmNoVHdpZ0xlbmd0aCA9IGdlbmVyYXRvci5IZWlnaHQgLyA1MC4wOwoJCQoJc3dpdGNoKCBzdGFnZSApCgl7CgljYXNlIFBsYW50R2VuZXJhdG9yLkVsZW1lbnRUeXBlRW51bS5UcnVuazoKCQl7CgkJCXZhciBtYXRlcmlhbCA9IGdlbmVyYXRvci5GaW5kU3VpdGFibGVNYXRlcmlhbCggUGxhbnRNYXRlcmlhbC5QYXJ0VHlwZUVudW0uQmFyayApOwoJCQl2YXIgc3RhcnRUcmFuc2Zvcm0gPSBuZXcgVHJhbnNmb3JtKCBWZWN0b3IzLlplcm8sIFF1YXRlcm5pb24uTG9va0F0KCBWZWN0b3IzLlpBeGlzLCBWZWN0b3IzLlhBeGlzICkgKTsKCQkJdmFyIGxlbmd0aCA9IGdlbmVyYXRvci5IZWlnaHQgKiBnZW5lcmF0b3IuUmFuZG9taXplci5OZXh0KCAwLjgsIDEuMiApOwoJCQl2YXIgdGhpY2tuZXNzID0gbGVuZ3RoIC8gMjAuMDsKCQoJCQlnZW5lcmF0b3IuVHJ1bmtzLkFkZCggZ2VuZXJhdG9yLkNyZWF0ZUVsZW1lbnRDeWxpbmRlciggbnVsbCwgbWF0ZXJpYWwsIHN0YXJ0VHJhbnNmb3JtLCBsZW5ndGgsIHRoaWNrbmVzcywgbnVsbCwgMTUuMCwgMjQuMCwgdGhpY2tuZXNzICogMC4yLCAwICkgKTsKCQl9CgkJYnJlYWs7CgkKCWNhc2UgUGxhbnRHZW5lcmF0b3IuRWxlbWVudFR5cGVFbnVtLkJyYW5jaDoKCQl7CgkJCXZhciBjb3VudCA9IDQwOy8vIDQwOwoJCQlpZiggZ2VuZXJhdG9yLkFnZSA8IGdlbmVyYXRvci5QbGFudFR5cGUuTWF0dXJlQWdlICkKCQkJCWNvdW50ID0gKGludCkoIChkb3VibGUpY291bnQgKiBNYXRoLlBvdyggZ2VuZXJhdG9yLkFnZSAvIGdlbmVyYXRvci5QbGFudFR5cGUuTWF0dXJlQWdlLCAyICkgKTsKCQoJCQl2YXIgcGFyZW50ID0gZ2VuZXJhdG9yLlRydW5rc1sgMCBdOwoJCQl2YXIgbWF0ZXJpYWwgPSBnZW5lcmF0b3IuRmluZFN1aXRhYmxlTWF0ZXJpYWwoIFBsYW50TWF0ZXJpYWwuUGFydFR5cGVFbnVtLkJhcmsgKTsKCQoJCQl2YXIgY29sbGlzaW9uQ2hlY2tlciA9IG5ldyBQbGFudEdlbmVyYXRvci5Db2xsaXNpb25DaGVja2VyKCk7CgkKCQkJdmFyIGFkZGVkID0gMDsKCQkJZm9yKCBpbnQgbiA9IDA7IG4gPCBjb3VudCAqIDEwOyBuKysgKQoJCQl7CgkJCQl2YXIgdGltZUZhY3RvciA9IGdlbmVyYXRvci5SYW5kb21pemVyLk5leHQoIDAuMiwgMC45NSApOwoJCQkJdmFyIHR3aXN0RmFjdG9yID0gZ2VuZXJhdG9yLlJhbmRvbWl6ZXIuTmV4dCggMS4wICk7CgkKCQkJCWlmKCAhY29sbGlzaW9uQ2hlY2tlci5JbnRlcnNlY3RzKCB0aW1lRmFjdG9yLCB0d2lzdEZhY3RvciApICkKCQkJCXsKCQkJCQl2YXIgdmVydGljYWxBbmdsZSA9IGdlbmVyYXRvci5SYW5kb21pemVyLk5leHQoIDQ1LCAxMDAgKTsKCQkJCQl2YXIgdHdpc3RBbmdsZSA9IGdlbmVyYXRvci5SYW5kb21pemVyLk5leHQoIC00NSwgNDUgKTsKCQkJCQl2YXIgc3RhcnRUcmFuc2Zvcm0gPSBwYXJlbnQuQ3VydmUuR2V0VHJhbnNmb3JtT25TdXJmYWNlKCB0aW1lRmFjdG9yLCB0d2lzdEZhY3RvciwgdmVydGljYWxBbmdsZSwgdHdpc3RBbmdsZSApOwoJCgkJCQkJdmFyIHRoaWNrbmVzcyA9IHN0YXJ0VHJhbnNmb3JtLnBhcmVudFRoaWNrbmVzcyAqIGdlbmVyYXRvci5SYW5kb21pemVyLk5leHQoIDAuMywgMC41ICk7CgkKCQkJCQl2YXIgbGVuZ3RoID0gdGhpY2tuZXNzICogMjAuMDsKCQkJCQlpZiggbGVuZ3RoID49IG1pbkJyYW5jaFR3aWdMZW5ndGggKQoJCQkJCXsKCQkJCQkJZ2VuZXJhdG9yLkJyYW5jaGVzLkFkZCggZ2VuZXJhdG9yLkNyZWF0ZUVsZW1lbnRDeWxpbmRlciggcGFyZW50LCBtYXRlcmlhbCwgc3RhcnRUcmFuc2Zvcm0udHJhbnNmb3JtLCBsZW5ndGgsIHRoaWNrbmVzcywgbnVsbCwgMTAuMCwgMTQuMCwgdGhpY2tuZXNzICogMC41LCAwLjA1ICkgKTsvLyAwLjEgKSApOwoJCgkJCQkJCWNvbGxpc2lvbkNoZWNrZXIuQWRkKCB0aW1lRmFjdG9yLCB0d2lzdEZhY3RvciApOwoJCgkJCQkJCWFkZGVkKys7CgkJCQkJCWlmKCBhZGRlZCA+PSBjb3VudCApCgkJCQkJCQlicmVhazsKCQkJCQl9CgkJCQl9CgkJCX0KCQl9CgkJYnJlYWs7CgkKCWNhc2UgUGxhbnRHZW5lcmF0b3IuRWxlbWVudFR5cGVFbnVtLlR3aWc6CgkJewoJCQl2YXIgc2VsZWN0b3IgPSBuZXcgUGxhbnRHZW5lcmF0b3IuU2VsZWN0b3JCeVByb2JhYmlsaXR5KCBnZW5lcmF0b3IgKTsKCQkJc2VsZWN0b3IuQWRkRWxlbWVudHMoIGdlbmVyYXRvci5CcmFuY2hlcy5XaGVyZSggYiA9PiBiLkxlbmd0aCA+PSBtaW5CcmFuY2hUd2lnTGVuZ3RoICkgKTsKCQoJCQlpZiggc2VsZWN0b3IuQ291bnQgIT0gMCApCgkJCXsKCQkJCXZhciBjb3VudCA9IDMwMDsvLyA0MDA7Ly8gMjAwOwoJCQkJaWYoIGdlbmVyYXRvci5BZ2UgPCBnZW5lcmF0b3IuUGxhbnRUeXBlLk1hdHVyZUFnZSApCgkJCQkJY291bnQgPSAoaW50KSggKGRvdWJsZSljb3VudCAqIE1hdGguUG93KCBnZW5lcmF0b3IuQWdlIC8gZ2VuZXJhdG9yLlBsYW50VHlwZS5NYXR1cmVBZ2UsIDIgKSApOwoJCgkJCQl2YXIgbWF0ZXJpYWwgPSBnZW5lcmF0b3IuRmluZFN1aXRhYmxlTWF0ZXJpYWwoIFBsYW50TWF0ZXJpYWwuUGFydFR5cGVFbnVtLkJhcmsgKTsKCQoJCQkJdmFyIGFkZGVkID0gMDsKCQkJCWZvciggaW50IG4gPSAwOyBuIDwgY291bnQgKiAxMDsgbisrICkKCQkJCXsKCQkJCQl2YXIgcGFyZW50ID0gc2VsZWN0b3IuR2V0KCk7CgkKCQkJCQl2YXIgdGltZUZhY3Rvck9uUGFyZW50Q3VydmUgPSBnZW5lcmF0b3IuUmFuZG9taXplci5OZXh0KCAwLjI1LCAwLjk1ICk7CgkJCQkJdmFyIHZlcnRpY2FsQW5nbGUgPSBnZW5lcmF0b3IuUmFuZG9taXplci5OZXh0KCA0NS4wLCAxMDAuMCApOwoJCQkJCXZhciB0d2lzdEFuZ2xlID0gZ2VuZXJhdG9yLlJhbmRvbWl6ZXIuTmV4dCggLTQ1LjAsIDQ1LjAgKTsKCQkJCQl2YXIgc3RhcnRUcmFuc2Zvcm0gPSBwYXJlbnQuQ3VydmUuR2V0VHJhbnNmb3JtT25TdXJmYWNlKCB0aW1lRmFjdG9yT25QYXJlbnRDdXJ2ZSwgZ2VuZXJhdG9yLlJhbmRvbWl6ZXIuTmV4dCggMS4wICksIHZlcnRpY2FsQW5nbGUsIHR3aXN0QW5nbGUgKTsKCQoJCQkJCXZhciB0aGlja25lc3MgPSBzdGFydFRyYW5zZm9ybS5wYXJlbnRUaGlja25lc3MgKiBnZW5lcmF0b3IuUmFuZG9taXplci5OZXh0KCAwLjMsIDAuNSApOwoJCgkJCQkJdmFyIGxlbmd0aCA9IHRoaWNrbmVzcyAqIDIwLjA7CgkJCQkJaWYoIGxlbmd0aCA+PSBtaW5CcmFuY2hUd2lnTGVuZ3RoICkKCQkJCQl7CgkJCQkJCWdlbmVyYXRvci5Ud2lncy5BZGQoIGdlbmVyYXRvci5DcmVhdGVFbGVtZW50Q3lsaW5kZXIoIHBhcmVudCwgbWF0ZXJpYWwsIHN0YXJ0VHJhbnNmb3JtLnRyYW5zZm9ybSwgbGVuZ3RoLCB0aGlja25lc3MsIG51bGwsIDEwLjAsIDE0LjAsIHRoaWNrbmVzcyAqIDAuNSwgMC4yICkgKTsKCQoJCQkJCQlhZGRlZCsrOwoJCQkJCQlpZiggYWRkZWQgPj0gY291bnQgKQoJCQkJCQkJYnJlYWs7CgkJCQkJfQoJCQkJfQoJCQl9CgkJfQoJCWJyZWFrOwoJCgljYXNlIFBsYW50R2VuZXJhdG9yLkVsZW1lbnRUeXBlRW51bS5MZWFmOgoJCWlmKCBnZW5lcmF0b3IuQnJhbmNoZXMuQ291bnQgIT0gMCB8fCBnZW5lcmF0b3IuVHdpZ3MuQ291bnQgIT0gMCApCgkJewoJCQl2YXIgc2VsZWN0b3IgPSBuZXcgUGxhbnRHZW5lcmF0b3IuU2VsZWN0b3JCeVByb2JhYmlsaXR5KCBnZW5lcmF0b3IgKTsKCQkJc2VsZWN0b3IuQWRkRWxlbWVudHMoIGdlbmVyYXRvci5CcmFuY2hlcyApOwoJCQlzZWxlY3Rvci5BZGRFbGVtZW50cyggZ2VuZXJhdG9yLlR3aWdzICk7CgkJCXNlbGVjdG9yLkFkZEVsZW1lbnRzKCBnZW5lcmF0b3IuVHJ1bmtzICk7CgkKCQkJLy8hISEh0YDQsNGB0L_RgNC10LTQtdC70Y_RgtGMINCyINC30LDQstC40YHQuNC80L7RgdGC0Lgg0L7RgiDQtNC70LjQvdGLCgkKCQkJLy8hISEh0YDQsNCy0L3QvtC80LXRgNC90L4g0YDQsNGB0L_RgNC10LTQtdC70Y_RgtGMLiDQsdGA0LDQvdGH0LgsINCy0LXRgtC60Lgg0YLQvtC20LUKCQoJCQkvLyEhISHQv9GA0LjQvNC10L3Rj9GC0YwgTGVhZkNvdW50CgkKCQkJdmFyIGNvdW50ID0gMjAwMDsvLyAxNTAwOy8vIDIwMDA7Ly8gMjUwMDsKCQkJaWYoIGdlbmVyYXRvci5BZ2UgPCBnZW5lcmF0b3IuUGxhbnRUeXBlLk1hdHVyZUFnZSApCgkJCQljb3VudCA9IChpbnQpKCAoZG91YmxlKWNvdW50ICogTWF0aC5Qb3coIGdlbmVyYXRvci5BZ2UgLyBnZW5lcmF0b3IuUGxhbnRUeXBlLk1hdHVyZUFnZSwgMi41ICkgKTsKCQoJCQkvL2lmKCBMT0QgPj0gMiApCgkJCS8vCWNvdW50IC89IDI7CgkJCS8vaWYoIExPRCA+PSAzICkKCQkJLy8JY291bnQgLz0gNjsKCQoJCQlmb3IoIGludCBuID0gMDsgbiA8IGNvdW50OyBuKysgKQoJCQl7CgkJCQl2YXIgcGFyZW50ID0gc2VsZWN0b3IuR2V0KCk7CgkKCQkJCXZhciBtYXRlcmlhbCA9IGdlbmVyYXRvci5GaW5kU3VpdGFibGVNYXRlcmlhbCggUGxhbnRNYXRlcmlhbC5QYXJ0VHlwZUVudW0uQnJhbmNoV2l0aExlYXZlcyApOwoJCgkJCQkvLyEhISHQv9C+0LLQvtGA0LDRh9C40LLQsNGC0Ywg0L_QviDQs9C+0YDQuNC30L7QvdGC0LDQu9C4PwoJCgkJCQkvLyEhISHRgNCw0YHQv9GA0LXQtNC10LvQtdC90LjQtQoJCgkJCQkvLyEhISHQvtGA0LjQtdC90YLQsNGG0LjRjyDQvtGC0L3QvtGB0LjRgtC10LvRjNC90L4g0YHQvtC70L3RhtCwL9Cy0LXRgNGF0LAKCQoJCQkJdmFyIHZlcnRpY2FsQW5nbGUgPSBnZW5lcmF0b3IuUmFuZG9taXplci5OZXh0KCA5MC4wIC0gNDUuMCwgOTAuMCArIDQ1LjAgKTsKCQkJCXZhciB0d2lzdEFuZ2xlID0gZ2VuZXJhdG9yLlJhbmRvbWl6ZXIuTmV4dCggLTQ1LjAsIDQ1LjAgKTsKCQoJCQkJdmFyIHN0YXJ0VHJhbnNmb3JtID0gcGFyZW50LkN1cnZlLkdldFRyYW5zZm9ybU9uU3VyZmFjZSggZ2VuZXJhdG9yLlJhbmRvbWl6ZXIuTmV4dCggMC4zLCAwLjk3ICksIGdlbmVyYXRvci5SYW5kb21pemVyLk5leHQoIDEuMCApLCB2ZXJ0aWNhbEFuZ2xlLCB0d2lzdEFuZ2xlICk7CgkKCQkJCS8vISEhIXRpbHRBbmdsZQoJCgkJCQl2YXIgbGVuZ3RoID0gMS4wOwoJCQkJaWYoIG1hdGVyaWFsICE9IG51bGwgKQoJCQkJCWxlbmd0aCA9IG1hdGVyaWFsLlJlYWxMZW5ndGggKiBnZW5lcmF0b3IuUmFuZG9taXplci5OZXh0KCAwLjgsIDEuMiApOwoJCgkJCQkvL2lmKCBMT0QgPj0gMiApCgkJCQkvLwlsZW5ndGggKj0gMS41OwoJCQkJLy9pZiggTE9EID49IDMgKQoJCQkJLy8JbGVuZ3RoICo9IDEuNTsKCQoJCQkJZ2VuZXJhdG9yLkxlYXZlcy5BZGQoIGdlbmVyYXRvci5DcmVhdGVFbGVtZW50UmliYm9uKCBwYXJlbnQsIG1hdGVyaWFsLCBzdGFydFRyYW5zZm9ybS50cmFuc2Zvcm0sIGxlbmd0aCwgMCwgdHJ1ZSwgNDUgKSApOwoJCQl9CgkKCQkJLy8hISEhCgkJCS8v0L_RgNC+0LLQtdGA0Y_RgtGMINC80LDRgtC10YDQuNCw0Lsg0LXRgdGC0Ywg0LvQuCDQstC10YLQutCwLgoJCQkvL9C10YHQu9C4INC90LXRgiDRgtC+0LPQtNCwINC00LXQu9Cw0YLRjCDQu9C40YHRgtGM0Y8uINC10YHRgtGMINC10YHRgtGMINGC0L7Qs9C00LAg0LLRgdGOINCy0LXRgtC60YMg0YDQuNCx0LHQvtC90L7QvC4KCQoJCX0KCQlicmVhazsKCX0KCQojZW5kaWYKfQo=")]
+public class DynamicClass1A2EFF831AFDEA19749650566DBD2EA0DF97D6C623E9FB6CAE92E8B58014A25E
+{
+    public NeoAxis.CSharpScript Owner;
+    public void _GenerateStage(NeoAxis.PlantType sender, NeoAxis.PlantGenerator generator, NeoAxis.PlantGenerator.ElementTypeEnum stage)
+    {
+#if !DEPLOY
+        //here is a script for the plant generator to specialize our plant type
+        //ideas:
+        //береза:
+        //бранч в 7 раз тоньше чем родитель
+        //ствол, бранчи, ветки ровные
+        //мало бранчей, веток тоже
+        //сверху больше растительности
+        //дуб:
+        //больше изогнутость чем береза
+        //внизу тоже много растительности
+        //ель:
+        //веток нет, одни бранчи?
+        //высота
+        //толщина сплайной
+        var minBranchTwigLength = generator.Height / 50.0;
+        switch (stage)
+        {
+            case PlantGenerator.ElementTypeEnum.Trunk:
+            {
+                var material = generator.FindSuitableMaterial(PlantMaterial.PartTypeEnum.Bark);
+                var startTransform = new Transform(Vector3.Zero, Quaternion.LookAt(Vector3.ZAxis, Vector3.XAxis));
+                var length = generator.Height * generator.Randomizer.Next(0.8, 1.2);
+                var thickness = length / 20.0;
+                generator.Trunks.Add(generator.CreateElementCylinder(null, material, startTransform, length, thickness, null, 15.0, 24.0, thickness * 0.2, 0));
             }
 
-            viewport.Simple3DRenderer.SetColor(new ColorValue(1, 1, 0));
-            viewport.Simple3DRenderer.AddSphere(new Sphere(box.TransformV.Position, 1));
+                break;
+            case PlantGenerator.ElementTypeEnum.Branch:
+            {
+                var count = 40; // 40;
+                if (generator.Age < generator.PlantType.MatureAge)
+                    count = (int)((double)count * Math.Pow(generator.Age / generator.PlantType.MatureAge, 2));
+                var parent = generator.Trunks[0];
+                var material = generator.FindSuitableMaterial(PlantMaterial.PartTypeEnum.Bark);
+                var collisionChecker = new PlantGenerator.CollisionChecker();
+                var added = 0;
+                for (int n = 0; n < count * 10; n++)
+                {
+                    var timeFactor = generator.Randomizer.Next(0.2, 0.95);
+                    var twistFactor = generator.Randomizer.Next(1.0);
+                    if (!collisionChecker.Intersects(timeFactor, twistFactor))
+                    {
+                        var verticalAngle = generator.Randomizer.Next(45, 100);
+                        var twistAngle = generator.Randomizer.Next(-45, 45);
+                        var startTransform = parent.Curve.GetTransformOnSurface(timeFactor, twistFactor, verticalAngle, twistAngle);
+                        var thickness = startTransform.parentThickness * generator.Randomizer.Next(0.3, 0.5);
+                        var length = thickness * 20.0;
+                        if (length >= minBranchTwigLength)
+                        {
+                            generator.Branches.Add(generator.CreateElementCylinder(parent, material, startTransform.transform, length, thickness, null, 10.0, 14.0, thickness * 0.5, 0.05)); // 0.1 ) );
+                            collisionChecker.Add(timeFactor, twistFactor);
+                            added++;
+                            if (added >= count)
+                                break;
+                        }
+                    }
+                }
+            }
+
+                break;
+            case PlantGenerator.ElementTypeEnum.Twig:
+            {
+                var selector = new PlantGenerator.SelectorByProbability(generator);
+                selector.AddElements(generator.Branches.Where(b => b.Length >= minBranchTwigLength));
+                if (selector.Count != 0)
+                {
+                    var count = 300; // 400;// 200;
+                    if (generator.Age < generator.PlantType.MatureAge)
+                        count = (int)((double)count * Math.Pow(generator.Age / generator.PlantType.MatureAge, 2));
+                    var material = generator.FindSuitableMaterial(PlantMaterial.PartTypeEnum.Bark);
+                    var added = 0;
+                    for (int n = 0; n < count * 10; n++)
+                    {
+                        var parent = selector.Get();
+                        var timeFactorOnParentCurve = generator.Randomizer.Next(0.25, 0.95);
+                        var verticalAngle = generator.Randomizer.Next(45.0, 100.0);
+                        var twistAngle = generator.Randomizer.Next(-45.0, 45.0);
+                        var startTransform = parent.Curve.GetTransformOnSurface(timeFactorOnParentCurve, generator.Randomizer.Next(1.0), verticalAngle, twistAngle);
+                        var thickness = startTransform.parentThickness * generator.Randomizer.Next(0.3, 0.5);
+                        var length = thickness * 20.0;
+                        if (length >= minBranchTwigLength)
+                        {
+                            generator.Twigs.Add(generator.CreateElementCylinder(parent, material, startTransform.transform, length, thickness, null, 10.0, 14.0, thickness * 0.5, 0.2));
+                            added++;
+                            if (added >= count)
+                                break;
+                        }
+                    }
+                }
+            }
+
+                break;
+            case PlantGenerator.ElementTypeEnum.Leaf:
+                if (generator.Branches.Count != 0 || generator.Twigs.Count != 0)
+                {
+                    var selector = new PlantGenerator.SelectorByProbability(generator);
+                    selector.AddElements(generator.Branches);
+                    selector.AddElements(generator.Twigs);
+                    selector.AddElements(generator.Trunks);
+                    //!!!!распределять в зависимости от длины
+                    //!!!!равномерно распределять. бранчи, ветки тоже
+                    //!!!!применять LeafCount
+                    var count = 2000; // 1500;// 2000;// 2500;
+                    if (generator.Age < generator.PlantType.MatureAge)
+                        count = (int)((double)count * Math.Pow(generator.Age / generator.PlantType.MatureAge, 2.5));
+                    //if( LOD >= 2 )
+                    //	count /= 2;
+                    //if( LOD >= 3 )
+                    //	count /= 6;
+                    for (int n = 0; n < count; n++)
+                    {
+                        var parent = selector.Get();
+                        var material = generator.FindSuitableMaterial(PlantMaterial.PartTypeEnum.BranchWithLeaves);
+                        //!!!!поворачивать по горизонтали?
+                        //!!!!распределение
+                        //!!!!ориентация относительно солнца/верха
+                        var verticalAngle = generator.Randomizer.Next(90.0 - 45.0, 90.0 + 45.0);
+                        var twistAngle = generator.Randomizer.Next(-45.0, 45.0);
+                        var startTransform = parent.Curve.GetTransformOnSurface(generator.Randomizer.Next(0.3, 0.97), generator.Randomizer.Next(1.0), verticalAngle, twistAngle);
+                        //!!!!tiltAngle
+                        var length = 1.0;
+                        if (material != null)
+                            length = material.RealLength * generator.Randomizer.Next(0.8, 1.2);
+                        //if( LOD >= 2 )
+                        //	length *= 1.5;
+                        //if( LOD >= 3 )
+                        //	length *= 1.5;
+                        generator.Leaves.Add(generator.CreateElementRibbon(parent, material, startTransform.transform, length, 0, true, 45));
+                    }
+                //!!!!
+                //проверять материал есть ли ветка.
+                //если нет тогда делать листья. есть есть тогда всю ветку риббоном.
+                }
+
+                break;
         }
+#endif
     }
 }
 
-[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgQnV0dG9uRG9fQ2xpY2soTmVvQXhpcy5VSUJ1dHRvbiBzZW5kZXIpCnsKCXZhciBwYXJlbnQgPSBzZW5kZXIuUGFyZW50OwoJdmFyIGxpbmsgPSBwYXJlbnQuUHJvcGVydHlHZXQ8c3RyaW5nPigiTGVhcm4gTGluayIpOwoJU3lzdGVtLkRpYWdub3N0aWNzLlByb2Nlc3MuU3RhcnQoIG5ldyBTeXN0ZW0uRGlhZ25vc3RpY3MuUHJvY2Vzc1N0YXJ0SW5mbyggbGluayApIHsgVXNlU2hlbGxFeGVjdXRlID0gdHJ1ZSB9ICk7Cn0K")]
-public class DynamicClass_703e4027_a248_4ecc_a753_f370226f29e8
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgX0dlbmVyYXRlU3RhZ2UoTmVvQXhpcy5QbGFudFR5cGUgc2VuZGVyLCBOZW9BeGlzLlBsYW50R2VuZXJhdG9yIGdlbmVyYXRvciwgTmVvQXhpcy5QbGFudEdlbmVyYXRvci5FbGVtZW50VHlwZUVudW0gc3RhZ2UpCnsKI2lmICFERVBMT1kKCQoJLy9oZXJlIGlzIGEgc2NyaXB0IGZvciB0aGUgcGxhbnQgZ2VuZXJhdG9yIHRvIHNwZWNpYWxpemUgb3VyIHBsYW50IHR5cGUKCQoJc3dpdGNoKCBzdGFnZSApCgl7CgljYXNlIFBsYW50R2VuZXJhdG9yLkVsZW1lbnRUeXBlRW51bS5UcnVuazoKCQl7CgkJCXZhciBtYXRlcmlhbCA9IGdlbmVyYXRvci5GaW5kU3VpdGFibGVNYXRlcmlhbCggUGxhbnRNYXRlcmlhbC5QYXJ0VHlwZUVudW0uQmFyayApOwoJCQl2YXIgc3RhcnRUcmFuc2Zvcm0gPSBuZXcgVHJhbnNmb3JtKCBWZWN0b3IzLlplcm8sIFF1YXRlcm5pb24uTG9va0F0KCBWZWN0b3IzLlpBeGlzLCBWZWN0b3IzLlhBeGlzICkgKTsKCQkJdmFyIGxlbmd0aCA9IGdlbmVyYXRvci5IZWlnaHQgKiBnZW5lcmF0b3IuUmFuZG9taXplci5OZXh0KCAwLjgsIDEuMiApOwoJCQl2YXIgdGhpY2tuZXNzID0gbGVuZ3RoIC8gNjAuMDsKCQoJCQl2YXIgdGhpY2tuZXNzRmFjdG9yID0gbmV3IEN1cnZlQ3ViaWNTcGxpbmUxRigpOwoJCQl0aGlja25lc3NGYWN0b3IuQWRkUG9pbnQoIG5ldyBDdXJ2ZTFGLlBvaW50KCAwLCAxICkgKTsKCQkJdGhpY2tuZXNzRmFjdG9yLkFkZFBvaW50KCBuZXcgQ3VydmUxRi5Qb2ludCggMSwgMC4zM2YgKSApOwoJCQkvL3RoaWNrbmVzc0ZhY3Rvci5BZGRQb2ludCggbmV3IEN1cnZlMUYuUG9pbnQoIDAuOTVmLCAwLjMzZiApICk7CgkJCS8vdGhpY2tuZXNzRmFjdG9yLkFkZFBvaW50KCBuZXcgQ3VydmUxRi5Qb2ludCggMSwgMCApICk7CgkKCQkJZ2VuZXJhdG9yLlRydW5rcy5BZGQoIGdlbmVyYXRvci5DcmVhdGVFbGVtZW50Q3lsaW5kZXIoIG51bGwsIG1hdGVyaWFsLCBzdGFydFRyYW5zZm9ybSwgbGVuZ3RoLCB0aGlja25lc3MsIHRoaWNrbmVzc0ZhY3RvciwgMTAsIDEzLCB0aGlja25lc3MgKiAwLjUsIDAgKSApOwoJCX0KCQlicmVhazsKCQoJY2FzZSBQbGFudEdlbmVyYXRvci5FbGVtZW50VHlwZUVudW0uQnJhbmNoOgoJCXsKCQkJdmFyIGNvdW50ID0gNzsKCQkJaWYoIGdlbmVyYXRvci5BZ2UgPCBnZW5lcmF0b3IuUGxhbnRUeXBlLk1hdHVyZUFnZSApCgkJCQljb3VudCA9IChpbnQpKCAoZG91YmxlKWNvdW50ICogTWF0aC5Qb3coIGdlbmVyYXRvci5BZ2UgLyBnZW5lcmF0b3IuUGxhbnRUeXBlLk1hdHVyZUFnZSwgMiApICk7CgkKCQkJdmFyIHBhcmVudCA9IGdlbmVyYXRvci5UcnVua3NbIDAgXTsKCQkJdmFyIG1hdGVyaWFsID0gZ2VuZXJhdG9yLkZpbmRTdWl0YWJsZU1hdGVyaWFsKCBQbGFudE1hdGVyaWFsLlBhcnRUeXBlRW51bS5CYXJrICk7CgkKCQkJdmFyIGFkZGVkID0gMDsKCQkJZm9yKCBpbnQgbiA9IDA7IG4gPCBjb3VudCAqIDEwOyBuKysgKQoJCQl7CgkJCQl2YXIgdGltZUZhY3Rvck9uUGFyZW50Q3VydmUgPSBnZW5lcmF0b3IuUmFuZG9taXplci5OZXh0KCAwLjIsIDAuNjUgKTsKCQkJCXZhciB2ZXJ0aWNhbEFuZ2xlID0gZ2VuZXJhdG9yLlJhbmRvbWl6ZXIuTmV4dCggMjAuMCwgNTAuMCApOwoJCQkJdmFyIHR3aXN0QW5nbGUgPSBnZW5lcmF0b3IuUmFuZG9taXplci5OZXh0KCAtNDUuMCwgNDUuMCApOwoJCQkJdmFyIHN0YXJ0VHJhbnNmb3JtID0gcGFyZW50LkN1cnZlLkdldFRyYW5zZm9ybU9uU3VyZmFjZSggdGltZUZhY3Rvck9uUGFyZW50Q3VydmUsIGdlbmVyYXRvci5SYW5kb21pemVyLk5leHQoIDEuMCApLCB2ZXJ0aWNhbEFuZ2xlLCB0d2lzdEFuZ2xlICk7CgkKCQkJCXZhciB0aGlja25lc3MgPSBzdGFydFRyYW5zZm9ybS5wYXJlbnRUaGlja25lc3MgKiBnZW5lcmF0b3IuUmFuZG9taXplci5OZXh0KCAwLjgsIDEuMCApOwoJCgkJCQl2YXIgbWluQnJhbmNoVHdpZ0xlbmd0aCA9IGdlbmVyYXRvci5IZWlnaHQgLyAxNTAuMDsKCQoJCQkJdmFyIGxlbmd0aCA9IHRoaWNrbmVzcyAqIDM1LjA7CgkJCQlpZiggbGVuZ3RoID49IG1pbkJyYW5jaFR3aWdMZW5ndGggKQoJCQkJewoJCQkJCXZhciB0aGlja25lc3NGYWN0b3IgPSBuZXcgQ3VydmVDdWJpY1NwbGluZTFGKCk7CgkJCQkJdGhpY2tuZXNzRmFjdG9yLkFkZFBvaW50KCBuZXcgQ3VydmUxRi5Qb2ludCggMCwgMSApICk7CgkJCQkJdGhpY2tuZXNzRmFjdG9yLkFkZFBvaW50KCBuZXcgQ3VydmUxRi5Qb2ludCggMSwgMC4zM2YgKSApOwoJCgkJCQkJZ2VuZXJhdG9yLkJyYW5jaGVzLkFkZCggZ2VuZXJhdG9yLkNyZWF0ZUVsZW1lbnRDeWxpbmRlciggcGFyZW50LCBtYXRlcmlhbCwgc3RhcnRUcmFuc2Zvcm0udHJhbnNmb3JtLCBsZW5ndGgsIHRoaWNrbmVzcywgdGhpY2tuZXNzRmFjdG9yLCAxMC4wLCAxMy4wLCB0aGlja25lc3MgKiAwLjUsIDMuMCApICk7CgkKCQkJCQlhZGRlZCsrOwoJCQkJCWlmKCBhZGRlZCA+PSBjb3VudCApCgkJCQkJCWJyZWFrOwoJCQkJfQoJCQl9CgkJfQoJCWJyZWFrOwoJCgkvL2Nhc2UgRWxlbWVudFR5cGVFbnVtLlR3aWc6CgkvLwlicmVhazsKCQoJY2FzZSBQbGFudEdlbmVyYXRvci5FbGVtZW50VHlwZUVudW0uRmxvd2VyOgoJCXsKCQkJZm9yKCBpbnQgbiA9IDA7IG4gPCBnZW5lcmF0b3IuVHJ1bmtzLkNvdW50ICsgZ2VuZXJhdG9yLkJyYW5jaGVzLkNvdW50OyBuKysgKQoJCQl7CgkJCQl2YXIgbWF0dXJpdHkgPSBnZW5lcmF0b3IuQWdlIC8gZ2VuZXJhdG9yLlBsYW50VHlwZS5NYXR1cmVBZ2UuVmFsdWUgKiBnZW5lcmF0b3IuUmFuZG9taXplci5OZXh0KCAwLjgsIDEuMiApOwoJCQkJaWYoIG1hdHVyaXR5ID4gMC4zMyApCgkJCQl7CgkJCQkJUGxhbnRHZW5lcmF0b3IuRWxlbWVudCBwYXJlbnQ7CgkJCQkJaWYoIG4gPCBnZW5lcmF0b3IuVHJ1bmtzLkNvdW50ICkKCQkJCQkJcGFyZW50ID0gZ2VuZXJhdG9yLlRydW5rc1sgbiBdOwoJCQkJCWVsc2UKCQkJCQkJcGFyZW50ID0gZ2VuZXJhdG9yLkJyYW5jaGVzWyBuIC0gZ2VuZXJhdG9yLlRydW5rcy5Db3VudCBdOwoJCgkJCQkJdmFyIG1hdGVyaWFsID0gZ2VuZXJhdG9yLkZpbmRTdWl0YWJsZU1hdGVyaWFsKCBQbGFudE1hdGVyaWFsLlBhcnRUeXBlRW51bS5GbG93ZXIgKTsKCQoJCQkJCS8vISEhIXR3aXN0IHJhbmRvbQoJCgkJCQkJdmFyIHRyYW5zZm9ybTEgPSBwYXJlbnQuQ3VydmUuR2V0VHJhbnNmb3JtQnlUaW1lRmFjdG9yKCAxICk7CgkKCQkJCQl2YXIgZGlyZWN0aW9uID0gKCB0cmFuc2Zvcm0xLlBvc2l0aW9uIC0gcGFyZW50LkN1cnZlLkdldFRyYW5zZm9ybUJ5VGltZUZhY3RvciggMC45OSApLlBvc2l0aW9uICkuR2V0Tm9ybWFsaXplKCk7CgkJCQkJdmFyIHJvdGF0aW9uID0gUXVhdGVybmlvbi5Gcm9tRGlyZWN0aW9uWkF4aXNVcCggZGlyZWN0aW9uICk7CgkKCQkJCQl2YXIgdHJhbnNmb3JtID0gbmV3IFRyYW5zZm9ybSggdHJhbnNmb3JtMS5Qb3NpdGlvbiwgcm90YXRpb24gKTsKCQoJCQkJCXZhciBsZW5ndGggPSBtYXRlcmlhbCAhPSBudWxsID8gbWF0ZXJpYWwuUmVhbExlbmd0aC5WYWx1ZSA6IGdlbmVyYXRvci5IZWlnaHQgLyAxNS4wOwoJCQkJCWxlbmd0aCAqPSBnZW5lcmF0b3IuUmFuZG9taXplci5OZXh0KCAwLjgsIDEuMiApOwoJCQkJCWlmKCBtYXR1cml0eSA8IDEgKQoJCQkJCQlsZW5ndGggKj0gbWF0dXJpdHk7CgkKCQkJCQl2YXIgd2lkdGggPSBsZW5ndGg7CgkKCQkJCQlnZW5lcmF0b3IuRmxvd2Vycy5BZGQoIGdlbmVyYXRvci5DcmVhdGVFbGVtZW50Qm93bCggcGFyZW50LCBtYXRlcmlhbCwgdHJhbnNmb3JtLCBsZW5ndGgsIHdpZHRoLCBtYXR1cml0eSApICk7CgkJCQl9CgkJCX0KCQl9CgkJYnJlYWs7CgkKCWNhc2UgUGxhbnRHZW5lcmF0b3IuRWxlbWVudFR5cGVFbnVtLkxlYWY6CgkJaWYoIGdlbmVyYXRvci5CcmFuY2hlcy5Db3VudCAhPSAwIHx8IGdlbmVyYXRvci5Ud2lncy5Db3VudCAhPSAwICkKCQl7CgkJCXZhciBzZWxlY3RvciA9IG5ldyBQbGFudEdlbmVyYXRvci5TZWxlY3RvckJ5UHJvYmFiaWxpdHkoIGdlbmVyYXRvciApOwoJCQlzZWxlY3Rvci5BZGRFbGVtZW50cyggZ2VuZXJhdG9yLkJyYW5jaGVzICk7CgkJCS8vc2VsZWN0b3IuQWRkRWxlbWVudHMoIFR3aWdzICk7CgkJCXNlbGVjdG9yLkFkZEVsZW1lbnRzKCBnZW5lcmF0b3IuVHJ1bmtzICk7CgkKCQkJLy8hISEh0YDQsNGB0L_RgNC10LTQtdC70Y_RgtGMINCyINC30LDQstC40YHQuNC80L7RgdGC0Lgg0L7RgiDQtNC70LjQvdGLCgkKCQkJLy8hISEh0YDQsNCy0L3QvtC80LXRgNC90L4g0YDQsNGB0L_RgNC10LTQtdC70Y_RgtGMLiDQsdGA0LDQvdGH0LgsINCy0LXRgtC60Lgg0YLQvtC20LUKCQoJCQkvLyEhISHQv9GA0LjQvNC10L3Rj9GC0YwgTGVhZkNvdW50CgkKCQkJdmFyIG1hdGVyaWFsID0gZ2VuZXJhdG9yLkZpbmRTdWl0YWJsZU1hdGVyaWFsKCBQbGFudE1hdGVyaWFsLlBhcnRUeXBlRW51bS5CcmFuY2hXaXRoTGVhdmVzICk7CgkKCQkJdmFyIGNvdW50ID0gNTA7CgkJCWlmKCBnZW5lcmF0b3IuQWdlIDwgZ2VuZXJhdG9yLlBsYW50VHlwZS5NYXR1cmVBZ2UgKQoJCQkJY291bnQgPSAoaW50KSggKGRvdWJsZSljb3VudCAqIE1hdGguUG93KCBnZW5lcmF0b3IuQWdlIC8gZ2VuZXJhdG9yLlBsYW50VHlwZS5NYXR1cmVBZ2UsIDIgKSApOwoJCgkJCS8vaWYoIExPRCA+PSAyICkKCQkJLy8JY291bnQgLz0gMjsKCQkJLy9pZiggTE9EID49IDMgKQoJCQkvLwljb3VudCAvPSA2OwoJCgkJCWZvciggaW50IG4gPSAwOyBuIDwgY291bnQ7IG4rKyApCgkJCXsKCQkJCXZhciBwYXJlbnQgPSBzZWxlY3Rvci5HZXQoKTsKCQoJCQkJLy8hISEh0L_QvtCy0L7RgNCw0YfQuNCy0LDRgtGMINC_0L4g0LPQvtGA0LjQt9C+0L3RgtCw0LvQuD8KCQoJCQkJLy8hISEh0YDQsNGB0L_RgNC10LTQtdC70LXQvdC40LUKCQoJCQkJLy8hISEh0L7RgNC40LXQvdGC0LDRhtC40Y8g0L7RgtC90L7RgdC40YLQtdC70YzQvdC+INGB0L7Qu9C90YbQsC_QstC10YDRhdCwCgkKCQkJCXZhciB2ZXJ0aWNhbEFuZ2xlID0gZ2VuZXJhdG9yLlJhbmRvbWl6ZXIuTmV4dCggLTMwLjAsIDMwLjAgKTsKCQkJCXZhciB0d2lzdEFuZ2xlID0gZ2VuZXJhdG9yLlJhbmRvbWl6ZXIuTmV4dCggLTkwLjAsIDkwLjAgKTsKCQoJCQkJdmFyIHN0YXJ0VHJhbnNmb3JtID0gcGFyZW50LkN1cnZlLkdldFRyYW5zZm9ybU9uU3VyZmFjZSggZ2VuZXJhdG9yLlJhbmRvbWl6ZXIuTmV4dCggMC4wMSwgMC42NSApLCBnZW5lcmF0b3IuUmFuZG9taXplci5OZXh0KCAxLjAgKSwgdmVydGljYWxBbmdsZSwgdHdpc3RBbmdsZSApOwoJCgkJCQkvLyEhISF0aWx0QW5nbGUKCQoJCQkJdmFyIGxlbmd0aCA9IDAuMTsKCQkJCWlmKCBtYXRlcmlhbCAhPSBudWxsICkKCQkJCXsKCQkJCQl2YXIgbWF0dXJpdHkgPSBNYXRoLk1pbiggZ2VuZXJhdG9yLkFnZSAvIGdlbmVyYXRvci5QbGFudFR5cGUuTWF0dXJlQWdlLlZhbHVlLCAxLjAgKTsKCQkJCQlsZW5ndGggPSBtYXRlcmlhbC5SZWFsTGVuZ3RoICogbWF0dXJpdHkgKiBnZW5lcmF0b3IuUmFuZG9taXplci5OZXh0KCAwLjgsIDEuMiApOwoJCQkJfQoJCgkJCQkvLyEhISFjcm9zcz8KCQkJCWdlbmVyYXRvci5MZWF2ZXMuQWRkKCBnZW5lcmF0b3IuQ3JlYXRlRWxlbWVudFJpYmJvbiggcGFyZW50LCBtYXRlcmlhbCwgc3RhcnRUcmFuc2Zvcm0udHJhbnNmb3JtLCBsZW5ndGgsIDAsIGZhbHNlLCAwICkgKTsKCQkJfQoJCgkJCS8vISEhIQoJCQkvL9C_0YDQvtCy0LXRgNGP0YLRjCDQvNCw0YLQtdGA0LjQsNC7INC10YHRgtGMINC70Lgg0LLQtdGC0LrQsC4KCQkJLy_QtdGB0LvQuCDQvdC10YIg0YLQvtCz0LTQsCDQtNC10LvQsNGC0Ywg0LvQuNGB0YLRjNGPLiDQtdGB0YLRjCDQtdGB0YLRjCDRgtC+0LPQtNCwINCy0YHRjiDQstC10YLQutGDINGA0LjQsdCx0L7QvdC+0LwuCgkKCQl9CgkJYnJlYWs7Cgl9CgkKI2VuZGlmCn0K")]
+public class DynamicClass468136F9295E4F7A680B2F65187F215F286B3BC42934CB88DB3C6A0F41712FAD
 {
     public NeoAxis.CSharpScript Owner;
-    public void ButtonDo_Click(NeoAxis.UIButton sender)
+    public void _GenerateStage(NeoAxis.PlantType sender, NeoAxis.PlantGenerator generator, NeoAxis.PlantGenerator.ElementTypeEnum stage)
     {
-        var parent = sender.Parent;
-        var link = parent.PropertyGet<string>("Learn Link");
-        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(link)
-        {UseShellExecute = true});
-    }
-}
-
-[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgX1VwZGF0ZUV2ZW50KE5lb0F4aXMuQ29tcG9uZW50IHNlbmRlciwgZmxvYXQgZGVsdGEpCnsKCXZhciBjb250cm9sID0gKFVJQ29udHJvbClzZW5kZXI7Cgljb250cm9sLkNvbG9yTXVsdGlwbGllciA9IGNvbnRyb2wuUmVhZE9ubHkgPyBuZXcgQ29sb3JWYWx1ZSgwLjUsIDAuNSwgMC41KSA6IG5ldyBDb2xvclZhbHVlKDEsIDEsIDEpOwp9Cg==")]
-public class DynamicClass_4b5c046a_ed62_40a8_8e0a_6f74ea3d24cd
-{
-    public NeoAxis.CSharpScript Owner;
-    public void _UpdateEvent(NeoAxis.Component sender, float delta)
-    {
-        var control = (UIControl)sender;
-        control.ColorMultiplier = control.ReadOnly ? new ColorValue(0.5, 0.5, 0.5) : new ColorValue(1, 1, 1);
-    }
-}
-
-[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgQ29udHJvbF9VcGRhdGVFdmVudChOZW9BeGlzLkNvbXBvbmVudCBzZW5kZXIsIGZsb2F0IGRlbHRhKQp7Cgl2YXIgdGFiQ29udHJvbCA9IHNlbmRlci5Db21wb25lbnRzWyJUYWIgQ29udHJvbCJdIGFzIFVJVGFiQ29udHJvbDsKCWlmKHRhYkNvbnRyb2wgPT0gbnVsbCkKCQlyZXR1cm47CgoJYm9vbCBJc0RvbmUoVUlDb250cm9sIGJsb2NrKQoJewoJCXZhciBjaGVjayA9IGJsb2NrLkdldENvbXBvbmVudDxVSUNoZWNrPigiQ2hlY2sgRG9uZSIpOwoJCXJldHVybiBjaGVjayAhPSBudWxsICYmIGNoZWNrLkNoZWNrZWQuVmFsdWUgPT0gVUlDaGVjay5DaGVja1ZhbHVlLkNoZWNrZWQ7IAoJfQoKCXZhciBwYWdlQmFzaWMgPSB0YWJDb250cm9sLkdldENvbXBvbmVudCgiUGFnZSBCYXNpYyIpIGFzIFVJQ29udHJvbDsKCWlmKHBhZ2VCYXNpYyAhPSBudWxsKQoJewoJCXZhciBibG9jazEgPSBwYWdlQmFzaWMuR2V0Q29tcG9uZW50KCJMZWFybmluZ0Jsb2NrIDEiKSBhcyBVSUNvbnRyb2w7CgkJdmFyIGJsb2NrMiA9IHBhZ2VCYXNpYy5HZXRDb21wb25lbnQoIkxlYXJuaW5nQmxvY2sgMiIpIGFzIFVJQ29udHJvbDsKCQl2YXIgYmxvY2szID0gcGFnZUJhc2ljLkdldENvbXBvbmVudCgiTGVhcm5pbmdCbG9jayAzIikgYXMgVUlDb250cm9sOwoJCXZhciBibG9jazQgPSBwYWdlQmFzaWMuR2V0Q29tcG9uZW50KCJMZWFybmluZ0Jsb2NrIDQiKSBhcyBVSUNvbnRyb2w7CgkJdmFyIGJsb2NrNSA9IHBhZ2VCYXNpYy5HZXRDb21wb25lbnQoIkxlYXJuaW5nQmxvY2sgNSIpIGFzIFVJQ29udHJvbDsKCQl2YXIgYmxvY2s2ID0gcGFnZUJhc2ljLkdldENvbXBvbmVudCgiTGVhcm5pbmdCbG9jayA2IikgYXMgVUlDb250cm9sOwoJCXZhciBibG9jazcgPSBwYWdlQmFzaWMuR2V0Q29tcG9uZW50KCJMZWFybmluZ0Jsb2NrIDciKSBhcyBVSUNvbnRyb2w7CgkJdmFyIGJsb2NrOCA9IHBhZ2VCYXNpYy5HZXRDb21wb25lbnQoIkxlYXJuaW5nQmxvY2sgOCIpIGFzIFVJQ29udHJvbDsKCgkJYmxvY2syLlJlYWRPbmx5ID0gIUlzRG9uZShibG9jazEpOwoJCWJsb2NrOC5SZWFkT25seSA9ICFJc0RvbmUoYmxvY2syKSAmJiAhSXNEb25lKGJsb2NrNSk7CgkJYmxvY2s1LlJlYWRPbmx5ID0gIUlzRG9uZShibG9jazEpOwoJCWJsb2NrMy5SZWFkT25seSA9ICFJc0RvbmUoYmxvY2syKTsKCQlibG9jazQuUmVhZE9ubHkgPSAhSXNEb25lKGJsb2NrMik7CgkJYmxvY2s2LlJlYWRPbmx5ID0gIUlzRG9uZShibG9jazMpICYmICFJc0RvbmUoYmxvY2s1KSAmJiAhSXNEb25lKGJsb2NrOCk7CgkJYmxvY2s3LlJlYWRPbmx5ID0gIUlzRG9uZShibG9jazEpIHx8ICFJc0RvbmUoYmxvY2syKSB8fCAhSXNEb25lKGJsb2NrMykgfHwgIUlzRG9uZShibG9jazQpIHx8ICFJc0RvbmUoYmxvY2s1KSB8fCAhSXNEb25lKGJsb2NrNikgfHwgIUlzRG9uZShibG9jazgpOwoJCQoJCXZhciB0YWJCdXR0b25zID0gdGFiQ29udHJvbC5HZXRBbGxCdXR0b25zKCk7CgkJdGFiQnV0dG9uc1sxXS5SZWFkT25seSA9ICFJc0RvbmUoYmxvY2s3KTsKCQl0YWJCdXR0b25zWzJdLlJlYWRPbmx5ID0gIUlzRG9uZShibG9jazcpOwoJfQoKCXZhciBwYWdlU2NyaXB0aW5nID0gdGFiQ29udHJvbC5HZXRDb21wb25lbnQoIlBhZ2UgU2NyaXB0aW5nIikgYXMgVUlDb250cm9sOwoJaWYocGFnZVNjcmlwdGluZyAhPSBudWxsKQoJewoJCXZhciBibG9jazEgPSBwYWdlU2NyaXB0aW5nLkdldENvbXBvbmVudCgiTGVhcm5pbmdCbG9jayAxIikgYXMgVUlDb250cm9sOwoJCXZhciBibG9jazIgPSBwYWdlU2NyaXB0aW5nLkdldENvbXBvbmVudCgiTGVhcm5pbmdCbG9jayAyIikgYXMgVUlDb250cm9sOwoJCXZhciBibG9jazMgPSBwYWdlU2NyaXB0aW5nLkdldENvbXBvbmVudCgiTGVhcm5pbmdCbG9jayAzIikgYXMgVUlDb250cm9sOwoJCXZhciBibG9jazQgPSBwYWdlU2NyaXB0aW5nLkdldENvbXBvbmVudCgiTGVhcm5pbmdCbG9jayA0IikgYXMgVUlDb250cm9sOwoJCXZhciBibG9jazUgPSBwYWdlU2NyaXB0aW5nLkdldENvbXBvbmVudCgiTGVhcm5pbmdCbG9jayA1IikgYXMgVUlDb250cm9sOwoJCXZhciBibG9jazYgPSBwYWdlU2NyaXB0aW5nLkdldENvbXBvbmVudCgiTGVhcm5pbmdCbG9jayA2IikgYXMgVUlDb250cm9sOwoJCXZhciBibG9jazcgPSBwYWdlU2NyaXB0aW5nLkdldENvbXBvbmVudCgiTGVhcm5pbmdCbG9jayA3IikgYXMgVUlDb250cm9sOwoKCQlibG9jazIuUmVhZE9ubHkgPSAhSXNEb25lKGJsb2NrMSk7CgkJYmxvY2szLlJlYWRPbmx5ID0gIUlzRG9uZShibG9jazIpOwoJCWJsb2NrNC5SZWFkT25seSA9ICFJc0RvbmUoYmxvY2sxKTsKCQlibG9jazUuUmVhZE9ubHkgPSAhSXNEb25lKGJsb2NrMSk7CgkJYmxvY2s2LlJlYWRPbmx5ID0gIUlzRG9uZShibG9jazEpOwoJCWJsb2NrNy5SZWFkT25seSA9ICFJc0RvbmUoYmxvY2sxKTsJCQoJfQoKfQo=")]
-public class DynamicClass_214e3c16_f840_4a6e_8b61_f45352f7ace2
-{
-    public NeoAxis.CSharpScript Owner;
-    public void Control_UpdateEvent(NeoAxis.Component sender, float delta)
-    {
-        var tabControl = sender.Components["Tab Control"] as UITabControl;
-        if (tabControl == null)
-            return;
-        bool IsDone(UIControl block)
+#if !DEPLOY
+        //here is a script for the plant generator to specialize our plant type
+        switch (stage)
         {
-            var check = block.GetComponent<UICheck>("Check Done");
-            return check != null && check.Checked.Value == UICheck.CheckValue.Checked;
+            case PlantGenerator.ElementTypeEnum.Trunk:
+            {
+                var material = generator.FindSuitableMaterial(PlantMaterial.PartTypeEnum.Bark);
+                var startTransform = new Transform(Vector3.Zero, Quaternion.LookAt(Vector3.ZAxis, Vector3.XAxis));
+                var length = generator.Height * generator.Randomizer.Next(0.8, 1.2);
+                var thickness = length / 60.0;
+                var thicknessFactor = new CurveCubicSpline1F();
+                thicknessFactor.AddPoint(new Curve1F.Point(0, 1));
+                thicknessFactor.AddPoint(new Curve1F.Point(1, 0.33f));
+                //thicknessFactor.AddPoint( new Curve1F.Point( 0.95f, 0.33f ) );
+                //thicknessFactor.AddPoint( new Curve1F.Point( 1, 0 ) );
+                generator.Trunks.Add(generator.CreateElementCylinder(null, material, startTransform, length, thickness, thicknessFactor, 10, 13, thickness * 0.5, 0));
+            }
+
+                break;
+            case PlantGenerator.ElementTypeEnum.Branch:
+            {
+                var count = 7;
+                if (generator.Age < generator.PlantType.MatureAge)
+                    count = (int)((double)count * Math.Pow(generator.Age / generator.PlantType.MatureAge, 2));
+                var parent = generator.Trunks[0];
+                var material = generator.FindSuitableMaterial(PlantMaterial.PartTypeEnum.Bark);
+                var added = 0;
+                for (int n = 0; n < count * 10; n++)
+                {
+                    var timeFactorOnParentCurve = generator.Randomizer.Next(0.2, 0.65);
+                    var verticalAngle = generator.Randomizer.Next(20.0, 50.0);
+                    var twistAngle = generator.Randomizer.Next(-45.0, 45.0);
+                    var startTransform = parent.Curve.GetTransformOnSurface(timeFactorOnParentCurve, generator.Randomizer.Next(1.0), verticalAngle, twistAngle);
+                    var thickness = startTransform.parentThickness * generator.Randomizer.Next(0.8, 1.0);
+                    var minBranchTwigLength = generator.Height / 150.0;
+                    var length = thickness * 35.0;
+                    if (length >= minBranchTwigLength)
+                    {
+                        var thicknessFactor = new CurveCubicSpline1F();
+                        thicknessFactor.AddPoint(new Curve1F.Point(0, 1));
+                        thicknessFactor.AddPoint(new Curve1F.Point(1, 0.33f));
+                        generator.Branches.Add(generator.CreateElementCylinder(parent, material, startTransform.transform, length, thickness, thicknessFactor, 10.0, 13.0, thickness * 0.5, 3.0));
+                        added++;
+                        if (added >= count)
+                            break;
+                    }
+                }
+            }
+
+                break;
+            //case ElementTypeEnum.Twig:
+            //	break;
+            case PlantGenerator.ElementTypeEnum.Flower:
+            {
+                for (int n = 0; n < generator.Trunks.Count + generator.Branches.Count; n++)
+                {
+                    var maturity = generator.Age / generator.PlantType.MatureAge.Value * generator.Randomizer.Next(0.8, 1.2);
+                    if (maturity > 0.33)
+                    {
+                        PlantGenerator.Element parent;
+                        if (n < generator.Trunks.Count)
+                            parent = generator.Trunks[n];
+                        else
+                            parent = generator.Branches[n - generator.Trunks.Count];
+                        var material = generator.FindSuitableMaterial(PlantMaterial.PartTypeEnum.Flower);
+                        //!!!!twist random
+                        var transform1 = parent.Curve.GetTransformByTimeFactor(1);
+                        var direction = (transform1.Position - parent.Curve.GetTransformByTimeFactor(0.99).Position).GetNormalize();
+                        var rotation = Quaternion.FromDirectionZAxisUp(direction);
+                        var transform = new Transform(transform1.Position, rotation);
+                        var length = material != null ? material.RealLength.Value : generator.Height / 15.0;
+                        length *= generator.Randomizer.Next(0.8, 1.2);
+                        if (maturity < 1)
+                            length *= maturity;
+                        var width = length;
+                        generator.Flowers.Add(generator.CreateElementBowl(parent, material, transform, length, width, maturity));
+                    }
+                }
+            }
+
+                break;
+            case PlantGenerator.ElementTypeEnum.Leaf:
+                if (generator.Branches.Count != 0 || generator.Twigs.Count != 0)
+                {
+                    var selector = new PlantGenerator.SelectorByProbability(generator);
+                    selector.AddElements(generator.Branches);
+                    //selector.AddElements( Twigs );
+                    selector.AddElements(generator.Trunks);
+                    //!!!!распределять в зависимости от длины
+                    //!!!!равномерно распределять. бранчи, ветки тоже
+                    //!!!!применять LeafCount
+                    var material = generator.FindSuitableMaterial(PlantMaterial.PartTypeEnum.BranchWithLeaves);
+                    var count = 50;
+                    if (generator.Age < generator.PlantType.MatureAge)
+                        count = (int)((double)count * Math.Pow(generator.Age / generator.PlantType.MatureAge, 2));
+                    //if( LOD >= 2 )
+                    //	count /= 2;
+                    //if( LOD >= 3 )
+                    //	count /= 6;
+                    for (int n = 0; n < count; n++)
+                    {
+                        var parent = selector.Get();
+                        //!!!!поворачивать по горизонтали?
+                        //!!!!распределение
+                        //!!!!ориентация относительно солнца/верха
+                        var verticalAngle = generator.Randomizer.Next(-30.0, 30.0);
+                        var twistAngle = generator.Randomizer.Next(-90.0, 90.0);
+                        var startTransform = parent.Curve.GetTransformOnSurface(generator.Randomizer.Next(0.01, 0.65), generator.Randomizer.Next(1.0), verticalAngle, twistAngle);
+                        //!!!!tiltAngle
+                        var length = 0.1;
+                        if (material != null)
+                        {
+                            var maturity = Math.Min(generator.Age / generator.PlantType.MatureAge.Value, 1.0);
+                            length = material.RealLength * maturity * generator.Randomizer.Next(0.8, 1.2);
+                        }
+
+                        //!!!!cross?
+                        generator.Leaves.Add(generator.CreateElementRibbon(parent, material, startTransform.transform, length, 0, false, 0));
+                    }
+                //!!!!
+                //проверять материал есть ли ветка.
+                //если нет тогда делать листья. есть есть тогда всю ветку риббоном.
+                }
+
+                break;
         }
-
-        var pageBasic = tabControl.GetComponent("Page Basic") as UIControl;
-        if (pageBasic != null)
-        {
-            var block1 = pageBasic.GetComponent("LearningBlock 1") as UIControl;
-            var block2 = pageBasic.GetComponent("LearningBlock 2") as UIControl;
-            var block3 = pageBasic.GetComponent("LearningBlock 3") as UIControl;
-            var block4 = pageBasic.GetComponent("LearningBlock 4") as UIControl;
-            var block5 = pageBasic.GetComponent("LearningBlock 5") as UIControl;
-            var block6 = pageBasic.GetComponent("LearningBlock 6") as UIControl;
-            var block7 = pageBasic.GetComponent("LearningBlock 7") as UIControl;
-            var block8 = pageBasic.GetComponent("LearningBlock 8") as UIControl;
-            block2.ReadOnly = !IsDone(block1);
-            block8.ReadOnly = !IsDone(block2) && !IsDone(block5);
-            block5.ReadOnly = !IsDone(block1);
-            block3.ReadOnly = !IsDone(block2);
-            block4.ReadOnly = !IsDone(block2);
-            block6.ReadOnly = !IsDone(block3) && !IsDone(block5) && !IsDone(block8);
-            block7.ReadOnly = !IsDone(block1) || !IsDone(block2) || !IsDone(block3) || !IsDone(block4) || !IsDone(block5) || !IsDone(block6) || !IsDone(block8);
-            var tabButtons = tabControl.GetAllButtons();
-            tabButtons[1].ReadOnly = !IsDone(block7);
-            tabButtons[2].ReadOnly = !IsDone(block7);
-        }
-
-        var pageScripting = tabControl.GetComponent("Page Scripting") as UIControl;
-        if (pageScripting != null)
-        {
-            var block1 = pageScripting.GetComponent("LearningBlock 1") as UIControl;
-            var block2 = pageScripting.GetComponent("LearningBlock 2") as UIControl;
-            var block3 = pageScripting.GetComponent("LearningBlock 3") as UIControl;
-            var block4 = pageScripting.GetComponent("LearningBlock 4") as UIControl;
-            var block5 = pageScripting.GetComponent("LearningBlock 5") as UIControl;
-            var block6 = pageScripting.GetComponent("LearningBlock 6") as UIControl;
-            var block7 = pageScripting.GetComponent("LearningBlock 7") as UIControl;
-            block2.ReadOnly = !IsDone(block1);
-            block3.ReadOnly = !IsDone(block2);
-            block4.ReadOnly = !IsDone(block1);
-            block5.ReadOnly = !IsDone(block1);
-            block6.ReadOnly = !IsDone(block1);
-            block7.ReadOnly = !IsDone(block1);
-        }
-    }
-}
-
-[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgQ2hhcmFjdGVyMl9IZWFsdGhDaGFuZ2VkKE5lb0F4aXMuQ2hhcmFjdGVyIG9iaikKewoJdmFyIG1lc2hJblNwYWNlID0gb2JqLkdldENvbXBvbmVudDxNZXNoSW5TcGFjZT4oKTsKCWlmKG1lc2hJblNwYWNlICE9IG51bGwpCgl7CgkJaWYob2JqLkhlYWx0aCA8PSAyKQoJCQltZXNoSW5TcGFjZS5SZXBsYWNlTWF0ZXJpYWwgPSBSZXNvdXJjZU1hbmFnZXIuTG9hZFJlc291cmNlPE1hdGVyaWFsPihAIkJhc2VcTWF0ZXJpYWxzXFJlZC5tYXRlcmlhbCIpOwoJCWVsc2UKCQkJbWVzaEluU3BhY2UuUmVwbGFjZU1hdGVyaWFsID0gbnVsbDsKCX0JCn0K")]
-public class DynamicClass_a97c87f4_14a2_432e_a7c7_3709f6fe33b4
-{
-    public NeoAxis.CSharpScript Owner;
-    public void Character2_HealthChanged(NeoAxis.Character obj)
-    {
-        var meshInSpace = obj.GetComponent<MeshInSpace>();
-        if (meshInSpace != null)
-        {
-            if (obj.Health <= 2)
-                meshInSpace.ReplaceMaterial = ResourceManager.LoadResource<Material>(@"Base\Materials\Red.material");
-            else
-                meshInSpace.ReplaceMaterial = null;
-        }
-    }
-}
-
-[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgQnV0dG9uMl9DbGljayhOZW9BeGlzLkJ1dHRvbkluU3BhY2Ugc2VuZGVyKQp7Cgl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50U2NlbmU7Cgl2YXIgZG9vciA9IHNjZW5lLkdldENvbXBvbmVudCgiRG9vciIpIGFzIERvb3I7Cglkb29yPy5PcGVuKCk7Cn0K")]
-public class DynamicClass_aabb0979_be01_425e_8575_41e2b73766da
-{
-    public NeoAxis.CSharpScript Owner;
-    public void Button2_Click(NeoAxis.ButtonInSpace sender)
-    {
-        var scene = sender.ParentScene;
-        var door = scene.GetComponent("Door") as Door;
-        door?.Open();
-    }
-}
-
-[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgQnV0dG9uM19DbGljayhOZW9BeGlzLkJ1dHRvbkluU3BhY2Ugc2VuZGVyKQp7Cgl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50U2NlbmU7Cgl2YXIgZG9vciA9IHNjZW5lLkdldENvbXBvbmVudCgiRG9vciIpIGFzIERvb3I7Cglkb29yPy5DbG9zZSgpOwp9Cg==")]
-public class DynamicClass_65313889_3ec0_41d0_853a_63066b75deae
-{
-    public NeoAxis.CSharpScript Owner;
-    public void Button3_Click(NeoAxis.ButtonInSpace sender)
-    {
-        var scene = sender.ParentScene;
-        var door = scene.GetComponent("Door") as Door;
-        door?.Close();
+#endif
     }
 }
 }

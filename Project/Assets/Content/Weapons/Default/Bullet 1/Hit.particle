@@ -1,11 +1,12 @@
-// Made with NeoAxis Engine 2021.3.
+// Made with NeoAxis Engine 2023.1.
 
-.component NeoAxis.Component_ParticleSystem
+.component NeoAxis.ParticleSystem
 {
 	Looping = False
-	.component NeoAxis.Component_ParticleEmitter
+	.component NeoAxis.ParticleEmitter
 	{
 		Name = Emitter
+		CastShadows = False
 		ReceiveDecals = False
 		StartTime
 		{
@@ -169,11 +170,11 @@
 				Range = 1 1 1 1 1 1 1 1
 			}
 		}
-		.component NeoAxis.Component_ParticleEmitterShape_Point
+		.component NeoAxis.ParticleEmitterShape_Point
 		{
 			Name = Point Shape
 		}
-		.component NeoAxis.Component_ParticleColorMultiplierByTime
+		.component NeoAxis.ParticleColorMultiplierByTime
 		{
 			Name = Color Multiplier By Time
 			Channels = Alpha

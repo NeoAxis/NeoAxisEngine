@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -66,19 +66,18 @@ namespace NeoAxis
 		public event Action<SurfaceGroupOfElements> PositionZRangeChanged;
 		ReferenceField<Range> _positionZRange = new Range( 0, 0 );
 
-		//!!!!impl
-		///// <summary>
-		///// Whether to orient elements depending by a normal of the base.
-		///// </summary>
-		//[DefaultValue( false )]
-		//public Reference<bool> RotateByBaseNormal
-		//{
-		//	get { if( _rotateByBaseNormal.BeginGet() ) RotateByBaseNormal = _rotateByBaseNormal.Get( this ); return _rotateByBaseNormal.value; }
-		//	set { if( _rotateByBaseNormal.BeginSet( ref value ) ) { try { RotateByBaseNormalChanged?.Invoke( this ); ShouldRecompileSurface(); } finally { _rotateByBaseNormal.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="RotateByBaseNormal"/> property value changes.</summary>
-		//public event Action<SurfaceGroupOfElements> RotateByBaseNormalChanged;
-		//ReferenceField<bool> _rotateByBaseNormal = false;
+		/// <summary>
+		/// Whether to orient elements depending by the normal of the surface (ground).
+		/// </summary>
+		[DefaultValue( false )]
+		public Reference<bool> RotateBySurfaceNormal
+		{
+			get { if( _rotateBySurfaceNormal.BeginGet() ) RotateBySurfaceNormal = _rotateBySurfaceNormal.Get( this ); return _rotateBySurfaceNormal.value; }
+			set { if( _rotateBySurfaceNormal.BeginSet( ref value ) ) { try { RotateBySurfaceNormalChanged?.Invoke( this ); ShouldRecompileSurface(); } finally { _rotateBySurfaceNormal.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="RotateBySurfaceNormal"/> property value changes.</summary>
+		public event Action<SurfaceGroupOfElements> RotateBySurfaceNormalChanged;
+		ReferenceField<bool> _rotateBySurfaceNormal = false;
 
 		/// <summary>
 		/// Whether to set the random value of object rotation around its axis when painting.

@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+#if !DEPLOY
+using System.Drawing;
 using System.Diagnostics;
 
 namespace Internal.ComponentFactory.Krypton.Toolkit
@@ -90,3 +91,5 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
 		#endregion
 	}
 }
+
+#endif

@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -63,7 +63,7 @@ namespace Project
 
 		protected override void OnAddedToParent()
 		{
-			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+			if( EngineApp.IsSimulation )
 			{
 				instance = this;
 				GameMode.UpdatePlayScreen( instance );
@@ -108,7 +108,7 @@ namespace Project
 
 			//!!!!SupressKeyPress
 			//Game mode
-			if( gameMode != null && gameMode.ProcessInputMessage( new InputMessageKeyDown( e.Key ) ) )
+			if( gameMode != null && gameMode.InputEnabled && gameMode.ProcessInputMessage( new InputMessageKeyDown( e.Key ) ) )
 				return true;
 
 			return base.OnKeyDown( e );
@@ -117,7 +117,7 @@ namespace Project
 		protected override bool OnKeyPress( KeyPressEvent e )
 		{
 			//Game mode
-			if( gameMode != null && gameMode.ProcessInputMessage( new InputMessageKeyPress( e.KeyChar ) ) )
+			if( gameMode != null && gameMode.InputEnabled && gameMode.ProcessInputMessage( new InputMessageKeyPress( e.KeyChar ) ) )
 				return true;
 
 			return base.OnKeyPress( e );
@@ -126,7 +126,7 @@ namespace Project
 		protected override bool OnKeyUp( KeyEvent e )
 		{
 			//Game mode
-			if( gameMode != null && gameMode.ProcessInputMessage( new InputMessageKeyUp( e.Key ) ) )
+			if( gameMode != null && gameMode.InputEnabled && gameMode.ProcessInputMessage( new InputMessageKeyUp( e.Key ) ) )
 				return true;
 
 			return base.OnKeyUp( e );
@@ -135,7 +135,7 @@ namespace Project
 		protected override bool OnMouseDown( EMouseButtons button )
 		{
 			//Game mode
-			if( gameMode != null && gameMode.ProcessInputMessage( new InputMessageMouseButtonDown( button ) ) )
+			if( gameMode != null && gameMode.InputEnabled && gameMode.ProcessInputMessage( new InputMessageMouseButtonDown( button ) ) )
 				return true;
 
 			return base.OnMouseDown( button );
@@ -144,7 +144,7 @@ namespace Project
 		protected override bool OnMouseUp( EMouseButtons button )
 		{
 			//Game mode
-			if( gameMode != null && gameMode.ProcessInputMessage( new InputMessageMouseButtonUp( button ) ) )
+			if( gameMode != null && gameMode.InputEnabled && gameMode.ProcessInputMessage( new InputMessageMouseButtonUp( button ) ) )
 				return true;
 
 			return base.OnMouseUp( button );
@@ -153,7 +153,7 @@ namespace Project
 		protected override bool OnMouseDoubleClick( EMouseButtons button )
 		{
 			//Game mode
-			if( gameMode != null && gameMode.ProcessInputMessage( new InputMessageMouseDoubleClick( button ) ) )
+			if( gameMode != null && gameMode.InputEnabled && gameMode.ProcessInputMessage( new InputMessageMouseDoubleClick( button ) ) )
 				return true;
 
 			return base.OnMouseDoubleClick( button );
@@ -164,13 +164,14 @@ namespace Project
 			base.OnMouseMove( mouse );
 
 			//Game mode
-			gameMode?.ProcessInputMessage( new InputMessageMouseMove( mouse ) );
+			if( gameMode != null && gameMode.InputEnabled )
+				gameMode?.ProcessInputMessage( new InputMessageMouseMove( mouse ) );
 		}
 
 		protected override bool OnMouseWheel( int delta )
 		{
 			//Game mode
-			if( gameMode != null && gameMode.ProcessInputMessage( new InputMessageMouseWheel( delta ) ) )
+			if( gameMode != null && gameMode.InputEnabled && gameMode.ProcessInputMessage( new InputMessageMouseWheel( delta ) ) )
 				return true;
 
 			return base.OnMouseWheel( delta );
@@ -179,7 +180,7 @@ namespace Project
 		protected override bool OnJoystickEvent( JoystickInputEvent e )
 		{
 			//Game mode
-			if( gameMode != null && gameMode.ProcessInputMessage( new InputMessageJoystick( e ) ) )
+			if( gameMode != null && gameMode.InputEnabled && gameMode.ProcessInputMessage( new InputMessageJoystick( e ) ) )
 				return true;
 
 			return base.OnJoystickEvent( e );
@@ -188,7 +189,7 @@ namespace Project
 		protected override bool OnTouch( TouchData e )
 		{
 			//Game mode
-			if( gameMode != null && gameMode.ProcessInputMessage( new InputMessageTouch( e ) ) )
+			if( gameMode != null && gameMode.InputEnabled && gameMode.ProcessInputMessage( new InputMessageTouch( e ) ) )
 				return true;
 
 			return base.OnTouch( e );
@@ -197,7 +198,7 @@ namespace Project
 		protected override bool OnSpecialInputDeviceEvent( InputEvent e )
 		{
 			//Game mode
-			if( gameMode != null && gameMode.ProcessInputMessage( new InputMessageSpecialInputDevice( e ) ) )
+			if( gameMode != null && gameMode.InputEnabled && gameMode.ProcessInputMessage( new InputMessageSpecialInputDevice( e ) ) )
 				return true;
 
 			return base.OnSpecialInputDeviceEvent( e );
@@ -220,7 +221,7 @@ namespace Project
 
 				//update mouse relative mode
 				{
-					if( gameMode != null && inputEnabled )
+					if( gameMode != null && inputEnabled && !RenderingSystem.BackendNull )
 						sceneViewport.MouseRelativeMode = gameMode.IsNeedMouseRelativeMode();
 					else
 						sceneViewport.MouseRelativeMode = false;
@@ -230,7 +231,7 @@ namespace Project
 				}
 			}
 
-			// Update sound listener.
+			//update sound listener
 			if( scene != null && sceneViewport != null )
 			{
 				var settings = sceneViewport.CameraSettings;
@@ -239,12 +240,15 @@ namespace Project
 			else
 				SoundWorld.SetListenerReset();
 
-			// Scene simulation.
-			scene?.HierarchyController?.PerformSimulationSteps();
-			ParentRoot.HierarchyController?.PerformSimulationSteps();
+			//scene simulation
+			if( !SimulationAppClient.Created )
+			{
+				scene?.HierarchyController?.PerformSimulationSteps();
+				ParentRoot.HierarchyController?.PerformSimulationSteps();
+			}
 
 			//Cutscene update
-			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && gameMode != null )
+			if( EngineApp.IsSimulation && gameMode != null )
 			{
 				var cutscene = GetComponent( "Cutscene" ) as UIControl;
 				if( cutscene != null )
@@ -259,7 +263,7 @@ namespace Project
 			}
 
 			//screen fading
-			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && gameMode != null )
+			if( EngineApp.IsSimulation && gameMode != null )
 			{
 				var screenFadingCurrentColor = gameMode.ScreenFadingCurrentColor;
 
@@ -290,7 +294,7 @@ namespace Project
 				gameMode.ScreenFadingCurrentColor = screenFadingCurrentColor;
 			}
 
-			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+			if( EngineApp.IsSimulation )
 				UpdateCursorVisibility();
 
 			if( !firstRender )
@@ -313,8 +317,8 @@ namespace Project
 		{
 			var curve = new CurveLine();
 			curve.AddPoint( 0, new Vector3( 1, 0, 0 ) );
-			curve.AddPoint( 0.1, new Vector3( 1, 0, 0 ) );
-			curve.AddPoint( 1.0, new Vector3( 0, 0, 0 ) );
+			curve.AddPoint( 0.5, new Vector3( 1, 0, 0 ) );
+			curve.AddPoint( 1.5, new Vector3( 0, 0, 0 ) );
 
 			var value = curve.CalculateValueByTime( fadeInTimer );
 			return MathEx.Saturate( value.X );
@@ -325,7 +329,7 @@ namespace Project
 			base.OnAfterRenderUIWithChildren( renderer );
 
 			//fade in at start
-			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && EngineApp.RenderVideoToFileData == null )
+			if( EngineApp.IsSimulation && EngineApp.RenderVideoToFileData == null )
 			{
 				var alpha = GetFadeInAlpha();
 				if( alpha != 0 )
@@ -338,6 +342,14 @@ namespace Project
 		public void SetScene( Scene scene, bool canChangeUIControl )
 		{
 			this.scene = scene;
+
+			//finish scene initialization
+#if !CLIENT
+			SimulationAppServer.SetScene( this.scene );
+#endif
+			scene.Enabled = true;
+
+			//post scene initialization
 
 			sceneViewport = ParentContainer.Viewport;
 			scene.ViewportUpdateBegin += Scene_ViewportUpdateBegin;
@@ -355,8 +367,6 @@ namespace Project
 				var uiScreen = scene.UIScreen.Value;
 				if( uiScreen != null )
 				{
-					//if( uiScreen.ParentRoot != scene.ParentRoot )
-					//{
 					var fileName = uiScreen.HierarchyController?.CreatedByResource?.Owner.Name;
 					if( !string.IsNullOrEmpty( fileName ) && VirtualFile.Exists( fileName ) )
 					{
@@ -364,12 +374,9 @@ namespace Project
 						if( uiControl != null )
 							AddComponent( uiControl );
 					}
-					//}
-					//else
-					//{
-					//	//!!!!impl?
-					//}
 				}
+				else
+					uiControl = CreateComponent<BasicSceneScreen>();
 			}
 		}
 
@@ -377,9 +384,13 @@ namespace Project
 		{
 			DestroyScene();
 
-			scene = ResourceManager.LoadSeparateInstance<Scene>( PlayFileName, true, null );//, out var error );
+			Log.InvisibleInfo( $"Loading scene \'{PlayFileName}\'." );
+
+			scene = ResourceManager.LoadSeparateInstance<Scene>( PlayFileName, true, false );//, out var error );
 			if( scene == null )
 				return false;
+
+			Log.InvisibleInfo( "Scene loaded successfully." );
 
 			//if( !string.IsNullOrEmpty( error ) )
 			//{
@@ -444,12 +455,20 @@ namespace Project
 		{
 			if( sceneViewport != null )
 			{
+				if( sceneViewport.AttachedScene == scene )
+					sceneViewport.AttachedScene = null;
+
+				scene.ViewportUpdateBegin -= Scene_ViewportUpdateBegin;
 				scene.ViewportUpdateGetCameraSettings -= Scene_ViewportUpdateGetCameraSettings;
 				//scene.RenderEvent -= Scene_RenderEvent;
 				sceneViewport = null;
 			}
 			if( scene != null )
 			{
+#if !CLIENT
+				SimulationAppServer.ResetScene();
+#endif
+
 				scene.Dispose();
 				scene = null;
 
@@ -465,6 +484,8 @@ namespace Project
 		bool LoadUIControl()
 		{
 			DestroyUIControl();
+
+			Log.InvisibleInfo( $"Loading UI control {PlayFileName}." );
 
 			uiControl = ResourceManager.LoadSeparateInstance<UIControl>( PlayFileName, false, null );
 			if( uiControl == null )
@@ -504,6 +525,24 @@ namespace Project
 			return false;
 		}
 
+		public bool NetworkClientSetScene( Scene scene, bool canChangeUIControl )
+		{
+			DestroyLoadedObject( canChangeUIControl );
+
+			playFileName = "";
+
+			SoundWorld.SetListenerReset();
+
+			DestroyScene();
+
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
+
+			SetScene( scene, canChangeUIControl );
+
+			return true;
+		}
+
 		public void DestroyLoadedObject( bool canChangeUIControl = true )
 		{
 			if( canChangeUIControl )
@@ -534,6 +573,9 @@ namespace Project
 			}
 		}
 
+		public delegate void InputEnabledEventDelegate( PlayScreen sender, ref bool enabled );
+		public event InputEnabledEventDelegate InputEnabledEvent;
+
 		[Browsable( false )]
 		public bool InputEnabled
 		{
@@ -545,6 +587,12 @@ namespace Project
 					return false;
 				if( gameMode != null && gameMode.CutsceneStarted )
 					return false;
+
+				var enabled = true;
+				InputEnabledEvent?.Invoke( this, ref enabled );
+				if( !enabled )
+					return false;
+
 				return true;
 			}
 		}

@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -11,6 +11,9 @@ namespace NeoAxis
 	/// </summary>
 	public class ProjectSettingsPage_TextEditor : ProjectSettingsPage
 	{
+		/// <summary>
+		/// Whether to display line numbers.
+		/// </summary>
 		[Category( "Text Editor" )]
 		[DisplayName( "Display Line Numbers" )]
 		[DefaultValue( false )]
@@ -23,6 +26,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorDisplayLineNumbersChanged;
 		ReferenceField<bool> _textEditorDisplayLineNumbers = false;
 
+		/// <summary>
+		/// Whether to wrap words.
+		/// </summary>
 		[Category( "Text Editor" )]
 		[DisplayName( "Word Wrap" )]
 		[DefaultValue( true )]
@@ -35,6 +41,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorWordWrapChanged;
 		ReferenceField<bool> _textEditorWordWrap = true;
 
+		/// <summary>
+		/// The name of the font.
+		/// </summary>
 		[Category( "Text Editor" )]
 		[DisplayName( "Font" )]
 		[DefaultValue( "Consolas" )]
@@ -47,6 +56,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorFontChanged;
 		ReferenceField<string> _textEditorFont = "Consolas";
 
+		/// <summary>
+		/// The font size.
+		/// </summary>
 		[Category( "Text Editor" )]
 		[DisplayName( "Font Size" )]
 		[DefaultValue( 13.0 )]
@@ -60,6 +72,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorFontSizeChanged;
 		ReferenceField<double> _textEditorFontSize = 13.0;
 
+		/// <summary>
+		/// The color of editor background for the light theme.
+		/// </summary>
 		[Category( "Text Editor" )]
 		[DisplayName( "Background Color for Light Theme" )]
 		[DefaultValue( "0.98 0.98 0.98" )]
@@ -73,6 +88,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorBackgroundColorLightThemeChanged;
 		ReferenceField<ColorValue> _textEditorBackgroundColorLightTheme = new ColorValue( 0.98, 0.98, 0.98 );
 
+		/// <summary>
+		/// The color of editor foreground for the light theme.
+		/// </summary>
 		[Category( "Text Editor" )]
 		[DisplayName( "Foreground Color for Light Theme" )]
 		[DefaultValue( "0.1 0.1 0.1" )]
@@ -86,6 +104,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorForegroundColorLightThemeChanged;
 		ReferenceField<ColorValue> _textEditorForegroundColorLightTheme = new ColorValue( 0.1, 0.1, 0.1 );
 
+		/// <summary>
+		/// The color of editor background for the dark theme.
+		/// </summary>
 		[Category( "Text Editor" )]
 		[DisplayName( "Background Color for Dark Theme" )]
 		[DefaultValue( "0.1 0.1 0.1" )]
@@ -99,6 +120,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorBackgroundColorDarkThemeChanged;
 		ReferenceField<ColorValue> _textEditorBackgroundColorDarkTheme = new ColorValue( 0.1, 0.1, 0.1 );
 
+		/// <summary>
+		/// The color of editor foreground for the dark theme.
+		/// </summary>
 		[Category( "Text Editor" )]
 		[DisplayName( "Foreground Color for Dark Theme" )]
 		[DefaultValue( "0.9 0.9 0.9" )]
@@ -112,6 +136,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorForegroundColorDarkThemeChanged;
 		ReferenceField<ColorValue> _textEditorForegroundColorDarkTheme = new ColorValue( 0.9, 0.9, 0.9 );
 
+		/// <summary>
+		/// The color of background selection for the light theme.
+		/// </summary>
 		[Category( "Text Editor" )]
 		[DisplayName( "Selection Background for Light Theme" )]
 		[DefaultValue( "0.4 0.6 1" )]
@@ -125,6 +152,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorSelectionBackgroundLightThemeChanged;
 		ReferenceField<ColorValue> _textEditorSelectionBackgroundLightTheme = new ColorValue( 0.4, 0.6, 1 );
 
+		/// <summary>
+		/// The color of foreground selection for the light theme.
+		/// </summary>
 		[Category( "Text Editor" )]
 		[DisplayName( "Selection Foreground for Light Theme" )]
 		[DefaultValue( "0.1 0.1 0.1" )]
@@ -138,6 +168,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorSelectionForegroundLightThemeChanged;
 		ReferenceField<ColorValue> _textEditorSelectionForegroundLightTheme = new ColorValue( 0.1, 0.1, 0.1 );
 
+		/// <summary>
+		/// The color of background selection for the dark theme.
+		/// </summary>
 		[Category( "Text Editor" )]
 		[DisplayName( "Selection Background for Dark Theme" )]
 		[DefaultValue( "0.25 0.37 0.62" )]
@@ -151,6 +184,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorSelectionBackgroundDarkThemeChanged;
 		ReferenceField<ColorValue> _textEditorSelectionBackgroundDarkTheme = new ColorValue( 0.25, 0.37, 0.62 );
 
+		/// <summary>
+		/// The color of foreground selection for the dark theme.
+		/// </summary>
 		[Category( "Text Editor" )]
 		[DisplayName( "Selection Foreground for Dark Theme" )]
 		[DefaultValue( "0.9 0.9 0.9" )]
@@ -164,6 +200,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorSelectionForegroundDarkThemeChanged;
 		ReferenceField<ColorValue> _textEditorSelectionForegroundDarkTheme = new ColorValue( 0.9, 0.9, 0.9 );
 
+		/// <summary>
+		/// The color of search background for the light theme.
+		/// </summary>
 		[Category( "Text Editor" )]
 		[DisplayName( "Search Background for Light Theme" )]
 		[DefaultValue( "1 0 0" )]
@@ -177,6 +216,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorSearchBackgroundLightThemeChanged;
 		ReferenceField<ColorValue> _textEditorSearchBackgroundLightTheme = new ColorValue( 1, 0, 0 );
 
+		/// <summary>
+		/// The color of search background for the dark theme.
+		/// </summary>
 		[Category( "Text Editor" )]
 		[DisplayName( "Search Background for Dark Theme" )]
 		[DefaultValue( "0.8 0.16 0.16" )]

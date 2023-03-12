@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -197,7 +197,7 @@ namespace NeoAxis
 			return 1.0;
 		}
 
-		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
+		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture )
 		{
 			if( GetMode() != ModeEnum.Original && context.Owner.SizeInPixels != actualTexture.Result.ResultSize )
 			{
@@ -216,7 +216,7 @@ namespace NeoAxis
 			}
 		}
 
-		void RenderBilinear( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
+		void RenderBilinear( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture )
 		{
 			var rescaledTexture = context.RenderTarget2D_Alloc( context.Owner.SizeInPixels, actualTexture.Result.ResultFormat );
 
@@ -238,7 +238,7 @@ namespace NeoAxis
 			actualTexture = rescaledTexture;
 		}
 
-		unsafe void RenderLanczos2( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
+		unsafe void RenderLanczos2( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture )
 		{
 			var rescaledTexture = context.RenderTarget2D_Alloc( context.Owner.SizeInPixels, actualTexture.Result.ResultFormat );
 
@@ -304,7 +304,7 @@ namespace NeoAxis
 			con3[ 2 ] = con3[ 3 ] = 0;
 		}
 
-		unsafe void RenderAMDFSR1( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
+		unsafe void RenderAMDFSR1( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture )
 		{
 
 			//!!!!sRGB на входе?

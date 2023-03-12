@@ -31,7 +31,7 @@ namespace Project
             base.OnRenderUI(renderer);
 
 			//draw control vector
-			if(EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation)
+			if(EngineApp.IsSimulation)
 			{
 				var imageControl = GetComponent<UIControl>("Control");
 				if (imageControl != null)

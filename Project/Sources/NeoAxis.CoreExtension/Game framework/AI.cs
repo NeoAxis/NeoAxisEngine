@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ namespace NeoAxis
 	/// Task-based artificial intelligence.
 	/// </summary>
 	[AddToResourcesWindow( @"Base\Game framework\AI", -9997 )]
-	public class AI : Component
+	public class AI : Component, InteractiveObject
 	{
 		[Browsable( false )]
 		public AITask CurrentTask
@@ -22,13 +22,39 @@ namespace NeoAxis
 		{
 			base.OnSimulationStep();
 
+			//!!!!реже вызывать
+
 			CurrentTask?.PerformTaskSimulationStep();
 		}
 
 		public void ClearTaskQueue()
 		{
-			foreach( var task in GetComponents<AITask>().Reverse() )
-				task.Dispose();
+			if( Components.Count != 0 )
+			{
+				foreach( var task in GetComponents<AITask>().Reverse() )
+					task.Dispose();
+			}
+		}
+
+		public virtual void ObjectInteractionGetInfo( GameMode gameMode, ref InteractiveObjectObjectInfo info )
+		{
+		}
+
+		public virtual bool ObjectInteractionInputMessage( GameMode gameMode, InputMessage message )
+		{
+			return false;
+		}
+
+		public virtual void ObjectInteractionEnter( ObjectInteractionContext context )
+		{
+		}
+
+		public virtual void ObjectInteractionExit( ObjectInteractionContext context )
+		{
+		}
+
+		public virtual void ObjectInteractionUpdate( ObjectInteractionContext context )
+		{
 		}
 	}
 }

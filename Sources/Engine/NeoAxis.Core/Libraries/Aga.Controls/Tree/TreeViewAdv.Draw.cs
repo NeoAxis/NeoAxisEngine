@@ -1,3 +1,4 @@
+#if !DEPLOY
 using System;
 using System.Drawing;
 using System.Diagnostics;
@@ -329,5 +330,17 @@ namespace Internal.Aga.Controls.Tree
 		//}
 		//#endregion
 
+		//!!!!betauser
+
+		public delegate void DrawIconAdditionDelegate( TreeViewAdv treeView, TreeNodeAdv node, DrawContext context, Image image, Rectangle r, float factor );
+		public event DrawIconAdditionDelegate DrawIconAddition;
+
+		internal void PerformDrawIconAddition( TreeNodeAdv node, DrawContext context, Image image, Rectangle r, float factor )
+		{
+			DrawIconAddition?.Invoke( this, node, context, image, r, factor );
+		}
+
 	}
 }
+
+#endif

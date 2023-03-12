@@ -8,7 +8,7 @@ using System.Net.Sockets;
 using NetEndPoint = System.Net.IPEndPoint;
 #endif
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	/// <summary>
 	/// Represents a local peer capable of holding zero, one or more connections to remote peers

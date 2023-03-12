@@ -1,0 +1,139 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component Project.ShooterInGameContextScreen
+{
+	Size = Parent 1 1
+	EditorScrollPosition = 0 0
+	Style
+	{
+		GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+	}
+	.component NeoAxis.UIControl
+	{
+		Name = Control Current Game
+		Size = Units 650 360
+		HorizontalAlignment = Stretch
+		Margin = Units 0 0 0 0
+		BackgroundColor = 0 0 0 0.5019608
+		EditorScrollPosition = 0 0
+		.component NeoAxis.UIText
+		{
+			Name = Text 2
+			Text = "Current game:"
+			Size = Units 180 30
+			Margin = Units 10 10 0 0
+			EditorScrollPosition = 0 0
+			TextHorizontalAlignment = Left
+		}
+		.component NeoAxis.UIText
+		{
+			Name = Text Game Info
+			Text = "Game info\r\nGame info\r\nGame info"
+			Size = Units 530 590
+			HorizontalAlignment = Stretch
+			VerticalAlignment = Stretch
+			Margin = Units 10 50 10 60
+			EditorScrollPosition = 0 0
+			TextHorizontalAlignment = Left
+			TextVerticalAlignment = Top
+			WordWrap = True
+			ClipRectangle = True
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Add Bot Level 1
+			Text = Add Bot Level 1
+			Size = Units 150 40
+			VerticalAlignment = Bottom
+			Margin = Units 10 510 0 10
+			EditorScrollPosition = 0 0
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler Click
+				Event
+				{
+					GetByReference = "this:..\\event:Click"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\..\\..\\method:ButtonAddBotLevel1_Click(NeoAxis.UIButton)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Add Bot Level 2
+			Text = Add Bot Level 2
+			Size = Units 150 40
+			VerticalAlignment = Bottom
+			Margin = Units 170 510 0 10
+			EditorScrollPosition = 0 0
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler Click
+				Event
+				{
+					GetByReference = "this:..\\event:Click"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\..\\..\\method:ButtonAddBotLevel2_Click(NeoAxis.UIButton)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Add Bot Level 3
+			Text = Add Bot Level 3
+			Size = Units 150 40
+			VerticalAlignment = Bottom
+			Margin = Units 330 510 0 10
+			EditorScrollPosition = 0 0
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler Click
+				Event
+				{
+					GetByReference = "this:..\\event:Click"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\..\\..\\method:ButtonAddBotLevel3_Click(NeoAxis.UIButton)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Delete Bot
+			Text = Delete Bot
+			Size = Units 150 40
+			VerticalAlignment = Bottom
+			Margin = Units 490 510 0 10
+			EditorScrollPosition = 0 0
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler Click
+				Event
+				{
+					GetByReference = "this:..\\event:Click"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\..\\..\\method:ButtonDeleteBot_Click(NeoAxis.UIButton)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+	}
+}

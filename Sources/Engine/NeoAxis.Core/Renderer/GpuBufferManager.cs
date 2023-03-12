@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 
@@ -12,6 +12,8 @@ namespace NeoAxis
 		internal static ESet<GpuVertexBuffer> vertexBuffers = new ESet<GpuVertexBuffer>();
 		internal static ESet<GpuIndexBuffer> indexBuffers = new ESet<GpuIndexBuffer>();
 		//internal static ESet<GpuBuffer> buffers = new ESet<GpuBuffer>();
+
+		static Internal.SharpBgfx.VertexLayout instancingVertexDeclaration;
 
 		//
 
@@ -44,7 +46,7 @@ namespace NeoAxis
 		{
 			if( vertices.Length == 0 )
 				Log.Fatal( "GpuBufferManager: CreateVertexBuffer: vertices.Length == 0." );
-			if( flags.HasFlag( GpuBufferFlags.ComputeWrite ) )
+			if( ( flags & GpuBufferFlags.ComputeWrite ) != 0 )
 				Log.Fatal( "GpuBufferManager: CreateVertexBuffer: ComputeWrite buffer can't write data from CPU." );
 
 			var vertexCount = vertices.Length / vertexDeclaration.Stride;
@@ -63,7 +65,7 @@ namespace NeoAxis
 		{
 			if( indices.Length == 0 )
 				Log.Fatal( "GpuBufferManager: CreateIndexBuffer: indices.Length == 0." );
-			if( flags.HasFlag( GpuBufferFlags.ComputeWrite ) )
+			if( ( flags & GpuBufferFlags.ComputeWrite ) != 0 )
 				Log.Fatal( "GpuBufferManager: CreateIndexBuffer: ComputeWrite buffer can't write data from CPU." );
 
 			return new GpuIndexBuffer( indices, indices.Length, flags );
@@ -105,6 +107,26 @@ namespace NeoAxis
 				vertexBuffer.DestroyNativeObject();
 			foreach( var indexBuffer in IndexBuffers )
 				indexBuffer.DestroyNativeObject();
+		}
+
+		internal static Internal.SharpBgfx.VertexLayout InstancingVertexDeclaration
+		{
+			get
+			{
+				if( instancingVertexDeclaration == null )
+				{
+					var vertexElements = new VertexElement[] {
+						new VertexElement( 0, 0, VertexElementType.Float4, VertexElementSemantic.TextureCoordinate7 ),
+						new VertexElement( 0, 16, VertexElementType.Float4, VertexElementSemantic.TextureCoordinate6 ),
+						new VertexElement( 0, 32, VertexElementType.Float4, VertexElementSemantic.TextureCoordinate5 ) ,
+						new VertexElement( 0, 48, VertexElementType.Float4, VertexElementSemantic.TextureCoordinate4 ),
+						new VertexElement( 0, 64, VertexElementType.Float4, VertexElementSemantic.TextureCoordinate3 ) };
+
+					instancingVertexDeclaration = vertexElements.CreateVertexDeclaration( 0 );
+				}
+
+				return instancingVertexDeclaration;
+			}
 		}
 	}
 }

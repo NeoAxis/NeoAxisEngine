@@ -1,0 +1,94 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.Import3D
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"DFDD9F58C422453151B5383D373AE93D\"><CGD /><WS UN=\"5E36ED662AF04E98C5AD008E2F7A29D8\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"981CCE16C1FB499DD2B6A7F37CF62E3E\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"DFDD9F58C422453151B5383D373AE93D\"><KP UN=\"D48ABD2A5427412EE09695F0C10F16CF\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"D82397D70134449BF7B2E57D8443B59B\" S=\"False\"><CPD ObjPath=\"$Materials\\$DefaultMaterial\\$DefaultMaterial shader graph\" /></KP><KP UN=\"DFDD9F58C422453151B5383D373AE93D\" S=\"False\"><CPD ObjPath=\"$Mesh\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	LODs = False
+	.component NeoAxis.Component
+	{
+		Name = Materials
+		.component NeoAxis.Material
+		{
+			Name = DefaultMaterial
+			BaseColor = 0.6 0.6 0.6
+			.component NeoAxis.FlowGraph
+			{
+				Name = DefaultMaterial shader graph
+				EditorScrollPosition = 0 0
+				Specialization
+				{
+					GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+				}
+				.component NeoAxis.FlowGraphNode
+				{
+					Name = Node DefaultMaterial
+					Position = 10 -7
+					ControlledObject
+					{
+						GetByReference = "this:..\\.."
+					}
+				}
+			}
+		}
+	}
+	.component NeoAxis.Mesh
+	{
+		Name = Mesh
+		EditorCameraTransform = "8.26225768651431 -6.79704610282101 5.73463541262789; -0.226036655221811 0.0815174816459939 0.913135363988112 0.329311611876242; 1 1 1"
+		.component NeoAxis.MeshGeometry
+		{
+			Name = Plane
+			VertexStructure
+			{
+				Value
+				{
+					Length = 4
+					0
+					{
+						Offset = 0
+						Type = Float3
+						Semantic = Position
+					}
+					1
+					{
+						Offset = 12
+						Type = Float3
+						Semantic = Normal
+					}
+					2
+					{
+						Offset = 24
+						Type = Half4
+						Semantic = Tangent
+					}
+					3
+					{
+						Offset = 32
+						Type = Half2
+						Semantic = TextureCoordinate0
+					}
+				}
+			}
+			Vertices
+			{
+				Value
+				{
+					Length = 144
+					.elements = "AABAwAAAQMBmZiY/AAAAAAAAAAAAAIA/ADwAAAAAALwAxABFAABAQAAAQMBmZiY/AAAAAAAAAAAAAIA/ADwAAAAAALwARABFAABAQAAAQEBmZiY/AAAAAAAAAAAAAIA/ADwAAAAAALwARADCAABAwAAAQEBmZiY/AAAAAAAAAAAAAIA/ADwAAAAAALwAxADC"
+				}
+			}
+			Indices
+			{
+				Value
+				{
+					Length = 6
+					.elements = 0 1 2 0 2 3
+				}
+			}
+			Material
+			{
+				GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
+			}
+		}
+	}
+}

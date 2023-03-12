@@ -1,6 +1,7 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -59,7 +60,8 @@ namespace NeoAxis
 
 		string AssemblyFileName
 		{
-			get { return Path.Combine( CacheFolder, $"CSharpScripts_{EngineApp.ApplicationType}.dll" ); }
+			get { return Path.Combine( CacheFolder, "CSharpScripts.dll" ); }
+			//get { return Path.Combine( CacheFolder, $"CSharpScripts_{EngineApp.ApplicationType}.dll" ); }
 		}
 
 		public string GeneratedCSFileName
@@ -87,11 +89,16 @@ namespace NeoAxis
 
 #if !NO_LITE_DB
 			//init cache database
-			//on UWP, Android scripts compiled inside Project.dll
+			//on UWP, Android, iOS, Web scripts compiled inside Project.dll
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows ||
 				SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 			{
-				var connectionString = $"Filename={DatabaseFileName};Connection=shared;Upgrade=true";
+				var connection = "shared";
+				//if( ( EngineInfo.EngineMode == EngineInfo.EngineModeEnum.WorldsClient || EngineInfo.EngineMode == EngineInfo.EngineModeEnum.WorldsServer ) && EngineApp.IsSimulation )
+				if( SystemSettings.AppContainer )
+					connection = "direct";
+
+				var connectionString = $"Filename={DatabaseFileName};Connection={connection};Upgrade=true";
 
 				//var connectionString = $"Filename ={ DatabaseFileName}";
 				//if( SystemSettings.MobileDevice )
@@ -117,8 +124,11 @@ namespace NeoAxis
 			{
 				//check dll is not in the list of precompiled dlls
 				var compiledDllsCollection = database.GetCollection<DatabaseCompiledAssemblyDllItem>( "compiledDlls" );
-				if( compiledDllsCollection.FindOne( Query.EQ( "ApplicationType", EngineApp.ApplicationType.ToString() ) ) == null )
+				//!!!!new. now compiledDlls used to info only about need recompilation
+				if( compiledDllsCollection.FindOne( Query.EQ( "ApplicationType", "AnyApp" ) ) == null )
 					needCompile = true;
+				//if( compiledDllsCollection.FindOne( Query.EQ( "ApplicationType", EngineApp.ApplicationType.ToString() ) ) == null )
+				//	needCompile = true;
 
 				// if text cache exists and assembly is absent
 				if( !File.Exists( AssemblyFileName ) )
@@ -135,36 +145,9 @@ namespace NeoAxis
 
 			if( needCompile )
 			{
-#if !NO_LITE_DB
-				var scriptsToCompile = GetScriptsToCompile();
-				if( scriptsToCompile.Count != 0 )
-				{
-					if( CompileAssemblyDll( scriptsToCompile ) )
-					{
-						//register dll as compiled
-						var compiledDllsCollection = database.GetCollection<DatabaseCompiledAssemblyDllItem>( "compiledDlls" );
-						try
-						{
-							if( compiledDllsCollection.FindOne( Query.EQ( "ApplicationType", EngineApp.ApplicationType.ToString() ) ) == null )
-								compiledDllsCollection.Insert( new DatabaseCompiledAssemblyDllItem { ApplicationType = EngineApp.ApplicationType.ToString() } );
-						}
-						catch { }
-					}
-					else
-					{
-						//unable to compile
-
-						//clear database
-						database.DropCollection( "scripts" );
-						database.DropCollection( "compiledDlls" );
-
-						//delete dll if exists
-						DeleteAssemblyDllFile();
-					}
-				}
-				else
-					DeleteAssemblyDllFile();
-#endif
+				Compile( out var error );
+				if( !string.IsNullOrEmpty( error ) )
+					throw new Exception( error );
 			}
 			else
 			{
@@ -180,6 +163,58 @@ namespace NeoAxis
 						DeleteAssemblyDllFile();
 				}
 #endif
+			}
+		}
+
+		public bool Compile( out string error )
+		{
+			error = "";
+
+			try
+			{
+
+#if !NO_LITE_DB
+				var scriptsToCompile = GetScriptsToCompile();
+				if( scriptsToCompile.Count != 0 )
+				{
+					if( CompileAssemblyDll( scriptsToCompile, out error ) )
+					{
+						//register dll as compiled
+						var compiledDllsCollection = database.GetCollection<DatabaseCompiledAssemblyDllItem>( "compiledDlls" );
+						try
+						{
+							//!!!!new. now compiledDlls used to info only about need recompilation
+							if( compiledDllsCollection.FindOne( Query.EQ( "ApplicationType", "AnyApp" ) ) == null )
+								compiledDllsCollection.Insert( new DatabaseCompiledAssemblyDllItem { ApplicationType = "AnyApp" } );
+							//if( compiledDllsCollection.FindOne( Query.EQ( "ApplicationType", EngineApp.ApplicationType.ToString() ) ) == null )
+							//	compiledDllsCollection.Insert( new DatabaseCompiledAssemblyDllItem { ApplicationType = EngineApp.ApplicationType.ToString() } );
+						}
+						catch { }
+					}
+					else
+					{
+						//unable to compile
+
+						//clear database
+						database.DropCollection( "scripts" );
+						database.DropCollection( "compiledDlls" );
+
+						//delete dll if exists
+						DeleteAssemblyDllFile();
+
+						return false;
+					}
+				}
+				else
+					DeleteAssemblyDllFile();
+#endif
+
+				return true;
+			}
+			catch( Exception e )
+			{
+				error = e.Message;
+				return false;
 			}
 		}
 
@@ -212,12 +247,12 @@ namespace NeoAxis
 		string ToBase64( string code )
 		{
 			byte[] bytes = Encoding.UTF8.GetBytes( code );
-			return Convert.ToBase64String( bytes, Base64FormattingOptions.None );
+			return Convert.ToBase64String( bytes, Base64FormattingOptions.None ).Replace( '/', '_' );
 		}
 
 		string FromBase64( string codeInBase64 )
 		{
-			var bytes = Convert.FromBase64String( codeInBase64 );
+			var bytes = Convert.FromBase64String( codeInBase64.Replace( '_', '/' ) );
 			return Encoding.UTF8.GetString( bytes );
 		}
 
@@ -360,8 +395,10 @@ namespace NeoAxis
 			catch { }
 		}
 
-		bool CompileAssemblyDll( List<string> scriptsToCompile )
+		bool CompileAssemblyDll( List<string> scriptsToCompile, out string error )
 		{
+			error = "";
+
 			try
 			{
 				var assembly = ScriptingCSharpEngine.CompileScriptsToAssembly( scriptsToCompile, AssemblyFileName );
@@ -371,6 +408,7 @@ namespace NeoAxis
 			catch( Exception e )
 			{
 				Log.Info( $"Unable to compile \"{AssemblyFileName}\". " + e.Message );
+				error = e.Message;
 				return false;
 			}
 
@@ -381,7 +419,28 @@ namespace NeoAxis
 		{
 			try
 			{
-				var assembly = Assembly.LoadFrom( AssemblyFileName );
+				Assembly assembly = null;
+
+				if( Debugger.IsAttached )
+				{
+					//read from file directly when debugger
+
+					assembly = Assembly.LoadFrom( AssemblyFileName );
+				}
+				else
+				{
+					//read from memory
+
+					byte[] pdb = null;
+					var pdbFile = Path.ChangeExtension( AssemblyFileName, ".pdb" );
+					if( File.Exists( pdbFile ) )
+						pdb = File.ReadAllBytes( pdbFile );
+
+					assembly = Assembly.Load( File.ReadAllBytes( AssemblyFileName ), pdb );
+				}
+
+				//var assembly = Assembly.LoadFrom( AssemblyFileName );
+
 				if( assembly != null )
 					FillLoadedAssemblyDllTypes( assembly );
 			}

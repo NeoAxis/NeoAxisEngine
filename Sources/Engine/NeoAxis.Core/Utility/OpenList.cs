@@ -1,12 +1,13 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace NeoAxis
 {
 	/// <summary>
-	/// A list that has the ability to directly work with elements of an array. For example, you can access to item by reference.
+	/// A list that has the ability to directly work with elements of an array. For example you can access to item by reference.
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	public class OpenList<T>
@@ -30,6 +31,7 @@ namespace NeoAxis
 		{
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Add( ref T item )
 		{
 			if( Count == Data.Length )
@@ -41,11 +43,13 @@ namespace NeoAxis
 			Data[ Count++ ] = item;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Add( T item )
 		{
 			Add( ref item );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void AddRange( IEnumerable<T> collection )
 		{
 			//!!!!slowly
@@ -62,15 +66,37 @@ namespace NeoAxis
 
 		public ArraySegment<T> ArraySegment
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get { return new ArraySegment<T>( Data, 0, Count ); }
 		}
 
 		/// <summary>
 		/// Clears the list. The method only sets the Count to 0. Values of items are not reset to default.
 		/// </summary>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Clear()
 		{
 			Count = 0;
+		}
+
+		public T this[ int index ]
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get
+			{
+				unsafe
+				{
+					return Data[ index ];
+				}
+			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			set
+			{
+				unsafe
+				{
+					Data[ index ] = value;
+				}
+			}
 		}
 	}
 }

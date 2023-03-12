@@ -37,7 +37,7 @@ class InlinePass : public Pass {
   using cbb_ptr = const BasicBlock*;
 
  public:
-  virtual ~InlinePass() = default;
+  virtual ~InlinePass() override = default;
 
  protected:
   InlinePass();
@@ -235,6 +235,12 @@ class InlinePass : public Pass {
   // Move the OpLoopMerge from the last block back to the first.
   void MoveLoopMergeInstToFirstBlock(
       std::vector<std::unique_ptr<BasicBlock>>* new_blocks);
+
+  // Update the structure of single block loops so that the inlined code ends
+  // up in the loop construct and a new continue target is added to satisfy
+  // structural dominance.
+  void UpdateSingleBlockLoopContinueTarget(
+      uint32_t new_id, std::vector<std::unique_ptr<BasicBlock>>* new_blocks);
 };
 
 }  // namespace opt

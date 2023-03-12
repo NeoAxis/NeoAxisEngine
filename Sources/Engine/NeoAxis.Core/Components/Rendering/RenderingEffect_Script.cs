@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,8 +9,10 @@ namespace NeoAxis
 	/// <summary>
 	/// The component for creation custom fullscreen rendering effects.
 	/// </summary>
+#if !DEPLOY
 	[NewObjectSettings( typeof( NewObjectSettingsEffect ) )]
 	[SettingsCell( typeof( RenderingEffect_Script_SettingsCell ) )]
+#endif
 	public class RenderingEffect_Script : RenderingEffect, IEditorUpdateWhenDocumentModified
 	{
 		const bool shaderGenerationCompile = true;
@@ -103,6 +105,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#if !DEPLOY
 		/// <summary>
 		/// A set of settings for creation <see cref="RenderingEffect_Script"/> in the editor.
 		/// </summary>
@@ -123,10 +126,11 @@ namespace NeoAxis
 				return base.Creation( context );
 			}
 		}
+#endif
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
+		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture )
 		{
 			base.OnRender( context, frameData, ref actualTexture );
 
@@ -175,6 +179,8 @@ namespace NeoAxis
 			//shader.Parameters.Set( "0"/*"sourceTexture"*/, new GpuMaterialPass.TextureParameterValue( actualTexture,
 			//	TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
 
+			context.RenderingPipeline.BindSamplersForTextureOnlySlots( shader );
+
 			unsafe
 			{
 				Vector4F value = Vector4F.One;
@@ -182,6 +188,8 @@ namespace NeoAxis
 					value = Color.Value.ToVector4F();
 				shader.Parameters.Set( "u_paramColor", ParameterType.Vector4, 1, &value, sizeof( Vector4F ) );
 			}
+
+		
 
 			//!!!!пока так
 			if( result.fragmentGeneratedCode != null )
@@ -306,12 +314,12 @@ namespace NeoAxis
 
 			//fragment
 			{
-				var properties = new List<(Component, Metadata.Property)>();
-				properties.Add( (this, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Color ) )) );
+				var properties = new List<(Component, int, Metadata.Property)>();
+				properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Color ) )) );
 
 				var generator = new ShaderGenerator();
 				int textureRegisterCounter = 1;
-				var code = generator.Process( properties, "fragment_", ref textureRegisterCounter, out string error );
+				var code = generator.Process( properties, "fragment_", null, null, ref textureRegisterCounter, out string error );
 
 				//process error
 				if( !string.IsNullOrEmpty( error ) )
@@ -438,11 +446,13 @@ namespace NeoAxis
 			node.Position = new Vector2I( 10, -7 );
 			node.ControlledObject = ReferenceUtility.MakeThisReference( node, this );
 
+#if !DEPLOY
 			if( Parent == null )
 			{
 				var toSelect = new Component[] { this, graph };
 				EditorDocumentConfiguration = KryptonConfigGenerator.CreateEditorDocumentXmlConfiguration( toSelect, graph );
 			}
+#endif
 		}
 
 		public override void NewObjectSetDefaultConfiguration( bool createdFromNewObjectWindow )

@@ -1,0 +1,1507 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.Scene
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1146, 842\"><KW V=\"1\" A=\"5764BE5FC5314DDD74A0CA95C1A44AF4\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"1DF809CF5B8B468161AEDC4404B322F8\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"5764BE5FC5314DDD74A0CA95C1A44AF4\"><KP UN=\"5764BE5FC5314DDD74A0CA95C1A44AF4\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"226874B46A29499F3AA0101170C9018E\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	DisplayDevelopmentDataInSimulation = True
+	DisplaySensors = True
+	RenderingPipeline
+	{
+		GetByReference = "root:$Rendering Pipeline"
+	}
+	CameraEditor
+	{
+		GetByReference = "this:$Camera Editor"
+	}
+	CameraEditor2D
+	{
+		GetByReference = "this:$Camera Editor 2D"
+	}
+	.component NeoAxis.Camera
+	{
+		Name = Camera Editor
+		Visible = False
+		Transform = "1.75584830966489 -5.16071197473696 11.2297881267152; -0.294515721995533 0.296607873664919 0.64009472287705 0.644641764488136; 1 1 1"
+	}
+	.component NeoAxis.Camera
+	{
+		Name = Camera Editor 2D
+		Visible = False
+		Transform = "2.64918580053222 3.02745193504869 10; -0.502493739596367 0.497493760429674 0.497493760429674 0.502493739596367; 1 1 1"
+		Projection = Orthographic
+		Height = 16.8586419336498
+		FixedUp = 0 1 0
+		FarClipPlane = 100
+	}
+	.component NeoAxis.Light
+	{
+		Name = Ambient Light
+		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
+		Type = Ambient
+		Brightness = 50000
+	}
+	.component NeoAxis.Light
+	{
+		Name = Directional Light
+		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
+		Type = Directional
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 91.429
+	}
+	.component NeoAxis.RenderingPipeline_Basic
+	{
+		Name = Rendering Pipeline
+		ShadowFarDistance = 50
+		.component NeoAxis.Component
+		{
+			Name = Background Effects
+		}
+		.component NeoAxis.Component
+		{
+			Name = Scene Effects
+			.component NeoAxis.RenderingEffect_AmbientOcclusion
+			{
+				Name = Ambient Occlusion
+			}
+			.component NeoAxis.RenderingEffect_MotionBlur
+			{
+				Name = Motion Blur
+			}
+			.component NeoAxis.RenderingEffect_LensEffects
+			{
+				Name = Lens Effects
+			}
+			.component NeoAxis.RenderingEffect_ToneMapping
+			{
+				Name = Tone Mapping
+				Intensity = 0.5
+			}
+			.component NeoAxis.RenderingEffect_ToLDR
+			{
+				Name = To LDR
+			}
+			.component NeoAxis.RenderingEffect_Antialiasing
+			{
+				Name = Antialiasing
+			}
+			.component NeoAxis.RenderingEffect_ResolutionUpscale
+			{
+				Name = Resolution Upscale
+			}
+			.component NeoAxis.RenderingEffect_Sharpen
+			{
+				Name = Sharpen
+			}
+		}
+		.component NeoAxis.Component
+		{
+			Name = Final Image Effects
+		}
+	}
+	.component NeoAxis.GameMode
+	{
+		Name = Game Mode
+		CutsceneStarted = False
+		CutsceneGuiFadingFactor = 0
+		CutsceneGuiFadingSpeed = 0
+		ScreenFadingCurrentColor = 0 0 0 0
+		ScreenFadingTargetColor = 0 0 0 0
+		ScreenFadingSpeed = 0
+	}
+	.component NeoAxis.NetworkLogic
+	{
+		Name = Network Logic
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Ground
+		CanBeSelected = False
+		Transform = "0 0 0; 0 0 0 1; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 100 100
+				UVTilesPerUnit = 0.25 0.25
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Sphere
+		Transform = "0 0 0.5; 0 0 0 1; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Yellow.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Sphere 4
+		Transform = "8.1349282101445 9.65570443551933 0.5; 0 0 0 1; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Yellow.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Sphere 7
+		Transform = "-3.32451796113854 15.4378901451 0.5; 0 0 0 1; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Yellow.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Sphere 10
+		Transform = "-5.04605113607226 9.42857435996467 0.5; 0 0 0.860387575116682 0.509640285480687; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Yellow.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Sphere 2
+		Transform = "2.2653351864661 2.81241580106007 0.5; 0 0 0 1; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Yellow.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Sphere 5
+		Transform = "10.4002633966106 12.4681202365794 0.5; 0 0 0 1; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Yellow.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Sphere 8
+		Transform = "-1.05918277467245 18.2503059461601 0.5; 0 0 0 1; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Yellow.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Sphere 11
+		Transform = "-8.60104282760188 10.0637595441819 0.5; 0 0 0.860387575116682 0.509640285480687; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Yellow.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Sphere 14
+		Transform = "12.5714621174482 0.979509466067077 0.5; 0 0 -0.870089903195291 -0.492893051642655; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Yellow.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Sphere 3
+		Transform = "-1.08631105883867 5.44350814401687 1.01309323555532; 0 0 0 1; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Yellow.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+				Radius = 1
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Sphere 6
+		Transform = "7.04861715130583 15.0992125795362 1.01309323555532; 0 0 0 1; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Yellow.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+				Radius = 1
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Sphere 9
+		Transform = "-4.41082901997721 20.8813982891169 1.01309323555532; 0 0 0 1; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Yellow.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+				Radius = 1
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Sphere 12
+		Transform = "-9.29787005941046 5.86011692380596 1.01309323555532; 0 0 0.860387575116682 0.509640285480687; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Yellow.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+				Radius = 1
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box
+		Transform = "4.70197196338417 5.77635926158248 0.735368469918527; 0 0 0.310781522780344 0.95048137546105; 1.48999998904765 1.48999998904765 1.48999998904765"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Green.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 3
+		Transform = "12.8369001735287 15.4320636971018 0.735368469918527; 0 0 0.310781522780344 0.95048137546105; 1.48999998904765 1.48999998904765 1.48999998904765"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Green.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 5
+		Transform = "1.37745400224563 21.2142494066825 0.735368469918527; 0 0 0.310781522780344 0.95048137546105; 1.48999998904765 1.48999998904765 1.48999998904765"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Green.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 7
+		Transform = "-12.3712368540489 10.776358044564 0.735368469918527; 0 0 0.976169149818399 0.217011038757995; 1.48999998904765 1.48999998904765 1.48999998904765"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Green.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 9
+		Transform = "8.7765146692098 1.54566623314861 0.735368469918527; 0 0 -0.980186301121188 -0.19807780060967; 1.48999998904765 1.48999998904765 1.48999998904765"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Green.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 2
+		Transform = "1.56600962659171 9.89037896754495 0.500000000000008; 0 0 0 1; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Green.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 4
+		Transform = "9.70093783673621 19.5460834030643 0.500000000000008; 0 0 0 1; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Green.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 6
+		Transform = "-1.75850833454683 25.328269112645 0.500000000000008; 0 0 0 1; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Green.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 8
+		Transform = "-14.4721996515316 6.04926874538399 0.500000000000008; 0 0 0.860387575116682 0.509640285480687; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Green.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Cylinder
+		Transform = "5.83784400973029 1.75981764467444 0.499999999999976; 0 0 0 1; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Blue.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Cylinder
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Cylinder 4
+		Transform = "13.9727722198748 11.4155220801938 0.499999999999976; 0 0 0 1; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Blue.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Cylinder
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Cylinder 7
+		Transform = "2.51332604859175 17.1977077897745 0.499999999999976; 0 0 0 1; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Blue.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Cylinder
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Cylinder 10
+		Transform = "-9.39464952896938 13.7025739904916 0.499999999999976; 0 0 0.860387575116682 0.509640285480687; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Blue.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Cylinder
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Cylinder 13
+		Transform = "11.6376264792691 4.58488505981506 0.499999999999976; 0 0 -0.870089903195291 -0.492893051642655; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Blue.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Cylinder
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Cylinder 2
+		Transform = "-2.3893703411701 2.36853679030501 0.499999999999976; 0 0.707106781186548 0 0.707106781186548; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Blue.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Cylinder
+			{
+				Name = Mesh Geometry
+				Height = 2
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Cylinder 5
+		Transform = "5.7455578689744 12.0242412258243 0.499999999999976; 0 0.707106781186548 0 0.707106781186548; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Blue.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Cylinder
+			{
+				Name = Mesh Geometry
+				Height = 2
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Cylinder 8
+		Transform = "-5.71388830230864 17.806426935405 0.499999999999976; 0 0.707106781186548 0 0.707106781186548; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Blue.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Cylinder
+			{
+				Name = Mesh Geometry
+				Height = 2
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Cylinder 11
+		Transform = "-5.97502922537174 6.19499169303112 0.499999999999976; -0.608385888813656 0.360370101829242 0.608385888813656 0.360370101829242; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Blue.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Cylinder
+			{
+				Name = Mesh Geometry
+				Height = 2
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Cylinder 3
+		Transform = "3.46681814275511 -0.884794838135829 0.499999999999976; 0 0 0 1; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Blue.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Cylinder
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Cylinder 6
+		Transform = "11.6017463528996 8.7709095973835 0.499999999999976; 0 0 0 1; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Blue.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Cylinder
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Cylinder 9
+		Transform = "0.142300181616561 14.5530953069642 0.499999999999976; 0 0 0 1; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Blue.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Cylinder
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Cylinder 12
+		Transform = "-5.93602945827892 12.8940654545327 0.499999999999976; 0 0 0.860387575116682 0.509640285480687; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Blue.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Cylinder
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Cylinder 15
+		Transform = "15.1249451379199 3.91083208034871 0.499999999999976; 0 0 -0.870089903195291 -0.492893051642655; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Blue.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Cylinder
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.GroupOfObjects
+	{
+		Name = Group Of Objects
+		BaseObjects
+		{
+			Count = 1
+			0 "NeoAxis.Reference<NeoAxis.Component>"
+			{
+				GetByReference = "root:$Ground"
+			}
+		}
+	}
+	.component NeoAxis.Sensor
+	{
+		Name = Sensor 4
+		Transform = "-3.90312085199922 -2.5689122526631 0.500803206829817; 0 0 0.707106781186548 0.707106781186548; 30 30 30"
+		SourceData = PhysicsObjects
+		Shape = Ray
+		DisplayObjects = True
+		Objects
+		{
+			Count = 1
+			0 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
+			{
+				GetByReference = "root:$Sphere 9"
+			}
+		}
+	}
+	.component NeoAxis.Sensor
+	{
+		Name = Sensor 2
+		Transform = "-6.30312085199922 -2.5689122526631 0.500803206829817; 0 0 0.707106781186548 0.707106781186548; 30 30 30"
+		SourceData = PhysicsObjects
+		Shape = Ray
+		DisplayObjects = True
+		Objects
+		{
+			Count = 3
+			0 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
+			{
+				GetByReference = "root:$Cylinder 11"
+			}
+			1 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
+			{
+				GetByReference = "root:$Cylinder 12"
+			}
+			2 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
+			{
+				GetByReference = "root:$Cylinder 8"
+			}
+		}
+	}
+	.component NeoAxis.Sensor
+	{
+		Name = Sensor 3
+		Transform = "-1.70312085199922 -2.5689122526631 0.500803206829817; 0 0 0.707106781186548 0.707106781186548; 30 30 30"
+		SourceData = PhysicsObjects
+		Shape = Ray
+		DisplayObjects = True
+		Objects
+		{
+			Count = 3
+			0 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
+			{
+				GetByReference = "root:$Cylinder 2"
+			}
+			1 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
+			{
+				GetByReference = "root:$Sphere 3"
+			}
+			2 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
+			{
+				GetByReference = "root:$Box 6"
+			}
+		}
+	}
+	.component NeoAxis.Sensor
+	{
+		Name = Sensor 5
+		Transform = "4.09687914800078 -2.5689122526631 0.500803206829817; 0 -0 0 1; 1 1 1"
+		SourceData = PhysicsObjects
+		DisplayObjects = True
+		Target
+		{
+			GetByReference = "this:..\\$Object In Space"
+		}
+		Objects
+		{
+			Count = 2
+			0 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
+			{
+				GetByReference = "root:$Cylinder 3"
+			}
+			1 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
+			{
+				GetByReference = "root:$Box"
+			}
+		}
+	}
+	.component NeoAxis.Sensor
+	{
+		Name = Sensor 6
+		Transform = "8.09687914800078 -2.5689122526631 0.500803206829817; 0 -0 0 1; 1 1 1"
+		SourceData = PhysicsObjects
+		Shape = Sphere
+		DisplayObjects = True
+		Target
+		{
+			GetByReference = "this:..\\$Object In Space 2"
+		}
+		Objects
+		{
+			Count = 3
+			0 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
+			{
+				GetByReference = "root:$Box 9"
+			}
+			1 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
+			{
+				GetByReference = "root:$Sphere 4"
+			}
+			2 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
+			{
+				GetByReference = "root:$Sphere 6"
+			}
+		}
+	}
+	.component NeoAxis.ObjectInSpace
+	{
+		Name = Object In Space
+		Transform = "4.09687914800078 27.2310877473369 0.500803206829817; 0 0 0 1; 1 1 1"
+	}
+	.component NeoAxis.ObjectInSpace
+	{
+		Name = Object In Space 2
+		Transform = "8.09687914800078 27.2310877473369 0.500803206829817; 0 0 0 1; 1 1 1"
+	}
+	.component NeoAxis.CSharpScript
+	{
+		Name = C# Script
+		Code = "public void _UpdateEvent(NeoAxis.Component sender, float delta)\r\n{\r\n\ttry //!!!!remove\r\n\t{\r\n\t\tvar all = Time.Current % 4 > 2.0;\r\n\t\t\r\n\t\tforeach(var sensor in sender.GetComponents<Sensor>())\r\n\t\t{\r\n\t\t\tsensor.Mode = all ? Sensor.ModeEnum.AllObjects : Sensor.ModeEnum.OneClosestObject;\r\n\t\t}\r\n\t}\r\n\tcatch(Exception e)\r\n\t{\r\n\t\tLog.Warning(e.Message);\r\n\t}\t\r\n}\r\n"
+		__parameter_Delta = 0
+		Exit
+		{
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler UpdateEvent
+			WhenEnable = Editor, Simulation, Instance
+			Event
+			{
+				GetByReference = "this:..\\..\\event:UpdateEvent"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\method:_UpdateEvent(NeoAxis.Component,System.Single)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+}

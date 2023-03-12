@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -9,7 +9,9 @@ namespace NeoAxis
 	/// <summary>
 	/// Component representing the settings of the project.
 	/// </summary>
+#if !DEPLOY
 	[EditorControl( typeof( ObjectSettingsWindow ) )]
+#endif
 	public class ProjectSettingsComponent : Component
 	{
 		public static ESet<string> HidePropertiesForSpecialAppMode = new ESet<string>();
@@ -28,12 +30,14 @@ namespace NeoAxis
 		{
 			get
 			{
-				if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+#if !DEPLOY
+				if( EngineApp.IsEditor )
 				{
 					var document = EditorUtility.GetDocumentByComponent( this );
 					if( document != null && document.SpecialMode == "ProjectSettingsUserMode" )
 						return true;
 				}
+#endif
 				return false;
 			}
 		}
@@ -46,7 +50,7 @@ namespace NeoAxis
 			{
 				if( member is Metadata.Property )
 				{
-					if( member.Name == "Name" || member.Name == "Enabled" || member.Name == "ScreenLabel" )
+					if( member.Name == "Name" || member.Name == "Enabled" || member.Name == "ScreenLabel" || member.Name == "NetworkMode" )
 						skip = true;
 				}
 			}
@@ -127,6 +131,30 @@ namespace NeoAxis
 		ProjectSettingsPage_TextEditor textEditor;
 
 		[Browsable( false )]
+		public ProjectSettingsPage_Colors Colors
+		{
+			get
+			{
+				if( colors == null )
+					colors = GetComponent<ProjectSettingsPage_Colors>();
+				return colors ?? new ProjectSettingsPage_Colors();
+			}
+		}
+		ProjectSettingsPage_Colors colors;
+
+		[Browsable( false )]
+		public ProjectSettingsPage_Preview Preview
+		{
+			get
+			{
+				if( preview == null )
+					preview = GetComponent<ProjectSettingsPage_Preview>();
+				return preview ?? new ProjectSettingsPage_Preview();
+			}
+		}
+		ProjectSettingsPage_Preview preview;
+
+		[Browsable( false )]
 		public ProjectSettingsPage_RibbonAndToolbar RibbonAndToolbar
 		{
 			get
@@ -165,16 +193,16 @@ namespace NeoAxis
 		ProjectSettingsPage_Rendering rendering;
 
 
-		[Browsable( false )]
-		public ProjectSettingsPage_CustomSplashScreen CustomSplashScreen
-		{
-			get
-			{
-				if( customSplashScreen == null )
-					customSplashScreen = GetComponent<ProjectSettingsPage_CustomSplashScreen>();
-				return customSplashScreen ?? new ProjectSettingsPage_CustomSplashScreen();
-			}
-		}
-		ProjectSettingsPage_CustomSplashScreen customSplashScreen;
+		//[Browsable( false )]
+		//public ProjectSettingsPage_General CustomSplashScreen
+		//{
+		//	get
+		//	{
+		//		if( customSplashScreen == null )
+		//			customSplashScreen = GetComponent<ProjectSettingsPage_CustomSplashScreen>();
+		//		return customSplashScreen ?? new ProjectSettingsPage_CustomSplashScreen();
+		//	}
+		//}
+		//ProjectSettingsPage_CustomSplashScreen customSplashScreen;
 	}
 }

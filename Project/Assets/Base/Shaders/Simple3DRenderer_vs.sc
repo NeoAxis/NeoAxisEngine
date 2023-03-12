@@ -1,7 +1,7 @@
 $input a_position, a_color0, a_color1
 $output v_worldPosition_depth, v_colorVisible, v_colorInvisible
 
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "Common.sh"
 #include "VertexFunctions.sh"
 
@@ -17,12 +17,14 @@ uniform vec4 u_simple3DRendererVertex[3];
 void main()
 {
 	mat4 worldMatrix = u_model[0];
-	vec4 renderOperationData[5];	
+	vec4 renderOperationData[7];	
 	renderOperationData[0] = vec4(0,0,u_billboardMode,0);
 	renderOperationData[1] = vec4_splat(0);
 	renderOperationData[2] = vec4_splat(0);
 	renderOperationData[3] = vec4_splat(0);
 	renderOperationData[4] = vec4_splat(0);	
+	renderOperationData[5] = vec4_splat(0);	
+	renderOperationData[6] = vec4_splat(0);	
 	//vec4 renderOperationData = vec4(0,0,u_billboardMode,0);
 	vec4 billboardRotation;
 	billboardRotateWorldMatrix(renderOperationData, worldMatrix, false, vec3_splat(0), billboardRotation);

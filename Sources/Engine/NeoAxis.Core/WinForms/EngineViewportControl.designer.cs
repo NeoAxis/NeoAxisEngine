@@ -1,3 +1,4 @@
+#if !DEPLOY
 namespace NeoAxis.Editor
 {
 	partial class EngineViewportControl
@@ -44,3 +45,4 @@ namespace NeoAxis.Editor
 		#endregion
 	}
 }
+#endif

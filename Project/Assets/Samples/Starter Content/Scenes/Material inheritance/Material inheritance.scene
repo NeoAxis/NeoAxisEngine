@@ -1,3 +1,5 @@
+// Made with NeoAxis Engine 2023.1.
+
 .component NeoAxis.Scene
 {
 	BackgroundColor = 1 1 1
@@ -45,13 +47,18 @@
 			.component NeoAxis.RenderingEffect_Sharpen
 			{
 				Name = Sharpen
-				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
 			}
 		}
 	}
 	.component NeoAxis.GameMode
 	{
 		Name = Game Mode
+		CutsceneStarted = False
+		CutsceneGuiFadingFactor = 0
+		CutsceneGuiFadingSpeed = 0
+		ScreenFadingCurrentColor = 0 0 0 0
+		ScreenFadingTargetColor = 0 0 0 0
+		ScreenFadingSpeed = 0
 	}
 	.component NeoAxis.Light
 	{
@@ -317,7 +324,7 @@
 	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space
-		Transform = "12.0151357437818 0.447709492287466 -16.2808109194805; 0 0 0 1; 1 1 1"
+		Transform = "12.0151357437818 0.447709492287466 -16.2808109194805; -0.173872937059416 0 0 0.984768095420608; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -349,7 +356,7 @@
 	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space2
-		Transform = "12.4209546347364 -1.92939460799118 -16.2808109194805; 0 0 0 1; 1 1 1"
+		Transform = "12.4209546347364 -1.92939460799118 -16.2808109194805; -0.585450705277125 0 0 0.810708006430501; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -381,7 +388,7 @@
 	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space3
-		Transform = "14.4612379570716 -0.276792487719741 -16.2808109194805; 0 0 0 1; 1 1 1"
+		Transform = "14.4612379570716 -0.276792487719741 -16.2808109194805; -0.358597715997763 0 0 0.933492194976041; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"

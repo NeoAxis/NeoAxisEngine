@@ -1,0 +1,48 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.VehicleType
+{
+	FrontWheelPosition = 1.38 0.9 0.02
+	FrontWheelDiameter = 0.678
+	FrontWheelWidth = 0.321
+	FrontWheelSuspensionMinLength = 0.25
+	FrontWheelSuspensionMaxLength = 0.45
+	RearWheelPosition = -1.45 0.9 0.05
+	RearWheelDiameter = 0.743
+	RearWheelWidth = 0.375
+	RearWheelSuspensionMinLength = 0.28
+	RearWheelSuspensionMaxLength = 0.48
+	Mesh
+	{
+		GetByReference = "Content\\Vehicles\\Default\\scene.gltf|$Mesh"
+	}
+	FrontWheelMesh
+	{
+		GetByReference = "Content\\Vehicles\\Default\\Front wheel.gltf|$Mesh"
+	}
+	RearWheelMesh
+	{
+		GetByReference = "Content\\Vehicles\\Default\\Rear wheel.gltf|$Mesh"
+	}
+	TransmissionGearRatios
+	{
+		Value
+		{
+			Length = 5
+			.elements = 2.66 1.78 1.3 1 0.74
+		}
+	}
+	TransmissionReverseGearRatios
+	{
+		Value
+		{
+			Length = 1
+			.elements = -2.9
+		}
+	}
+	.component NeoAxis.VehicleSeat
+	{
+		Name = Vehicle Seat
+		Transform = "0 0.38 0.1; 0 0 0 1; 1 1 1"
+	}
+}

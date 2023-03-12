@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -13,9 +13,11 @@ namespace NeoAxis
 	/// <summary>
 	/// Represents an area that filled by surface.
 	/// </summary>
+#if !DEPLOY
 	[SettingsCell( typeof( SurfaceAreaSettingsCell ) )]
 	[ObjectCreationMode( typeof( CreationModeSurfaceArea ) )]
 	[AddToResourcesWindow( @"Base\Scene objects\Areas\Surface Area", 0 )]
+#endif
 	public class SurfaceArea : Area
 	{
 		bool needUpdate;
@@ -139,6 +141,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+#if !DEPLOY
 		/// <summary>
 		/// A class for providing the creation of a <see cref="SurfaceArea"/> in the editor.
 		/// </summary>
@@ -188,6 +191,7 @@ namespace NeoAxis
 					CreatingObject.Surface = ReferenceUtility.MakeReference( @"Base\Surfaces\Default.surface" );
 			}
 		}
+#endif
 
 		/////////////////////////////////////////
 
@@ -226,6 +230,8 @@ namespace NeoAxis
 			if( result == null )
 			{
 				result = CreateComponent<GroupOfObjects>();
+				result.ObjectsSerialize = false;
+				result.ObjectsNetworkMode = false;
 				result.Name = "Group Of Objects";
 			}
 
@@ -407,10 +413,11 @@ namespace NeoAxis
 
 								if( factor >= 1 || random.NextDouble() <= factor )
 								{
-									var options = new Surface.GetRandomVariationOptions( groupIndex );
+									var result = SceneUtility.CalculateObjectPositionZ( scene, groupOfObjects, pointBounds.GetCenter().Z, positionXY, destinationCachedBaseObjects );
+
+									var options = new Surface.GetRandomVariationOptions( groupIndex, result.normal );
 									surface.GetRandomVariation( options, random, out _, out var elementIndex, out var positionZ, out var rotation, out var scale );
 
-									var result = SceneUtility.CalculateObjectPositionZ( scene, groupOfObjects, pointBounds.GetCenter().Z, positionXY, destinationCachedBaseObjects );
 									if( result.found || destinationCachedBaseObjects.Count == 0 )
 									{
 										var obj = new GroupOfObjects.Object();
@@ -419,7 +426,6 @@ namespace NeoAxis
 										obj.VariationElement = elementIndex;
 										obj.Flags = GroupOfObjects.Object.FlagsEnum.Enabled | GroupOfObjects.Object.FlagsEnum.Visible;
 										obj.Position = new Vector3( positionXY, result.positionZ + positionZ );
-										//!!!!наклонять ли или нет
 										obj.Rotation = rotation;
 										obj.Scale = scale * (float)objectsScale;
 										obj.Color = objectsColor;
@@ -707,7 +713,7 @@ namespace NeoAxis
 			base.OnUpdate( delta );
 
 			//check for point positions are updated
-			if( AutoUpdate && EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+			if( AutoUpdate && EngineApp.IsEditor )
 			{
 				var pointPositions = GetPointPositions();
 				if( updatedForPointPositions == null || !updatedForPointPositions.SequenceEqual( pointPositions ) )

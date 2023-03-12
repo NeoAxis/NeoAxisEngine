@@ -1,9 +1,10 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "OgreStableHeaders.h"
 #include "NeoAxisCoreNative.h"
 #include "OctreeContainer.h"
 #include "MaskedOcclusionCulling.h"
 #include <mutex>
+#include <thread>
 
 using namespace Ogre;
 
@@ -12,6 +13,13 @@ using namespace Ogre;
 class OctreeContainer;
 
 int GetObjectsRaySortCompare( const void* a, const void* b );
+
+enum class ThreadingModeEnum
+{
+	SingleThreaded,
+	BackgroundThread,
+	//MultiBackgroundThreads,
+};
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -61,6 +69,7 @@ public:
 			Flags_Free = 1 << 0,
 			Flags_InsideOctreeBounds = 1 << 1,
 			Flags_OutsideOctreeBounds = 1 << 2,
+			//Flags_AddedToWorld = 1 << 3,
 		};
 		int/*Flags*/ flags;
 		uint groupMask;
@@ -236,6 +245,24 @@ public:
 
 	/////////////////////////////////////////////
 
+	struct ThreadingQueueItem
+	{
+		enum class CommandEnum
+		{
+			AddObject,
+			RemoveObject,
+			UpdateObjectBounds,
+			UpdateObjectGroupMask,
+		};
+
+		CommandEnum command;
+		int objectIndex;
+		BoundsD bounds;
+		uint groupMask;
+	};
+
+	/////////////////////////////////////////////
+
 	//initial settings
 	BoundsD initialOctreeBounds;
 	int amountOfObjectsOutsideOctreeBoundsToRebuld;
@@ -243,11 +270,12 @@ public:
 	Vector3D minNodeSize;
 	int objectCountThresholdToCreateChildNodes;
 	int maxNodeCount;
+	ThreadingModeEnum threadingMode;
 
 	Vector3D minNodeSizeInv;
 
 	//objects
-	std::vector<ObjectData*> objects;
+	std::vector<ObjectData*> objects;//!!!!may be without pointers?
 	std::stack<int> objectsFreeIndexes;
 	int totalObjectCount;
 
@@ -263,12 +291,29 @@ public:
 	std::stack<std::vector<bool>*> getObjectsFreeCheckedLists;
 	std::mutex getObjectsFreeCheckedListsMutex;
 
+	std::mutex updateMutex;
+
+	//!!!!use concurrent queue? but what about other fields
+	//!!!!can add to queue without mutex because all calls from one thread?
+	std::queue<ThreadingQueueItem> threadingQueue;
+	std::atomic<bool> backgroundThreadInWork = false;
+	std::atomic<bool> backgroundThreadNeedExit = false;
+
+	std::mutex threadingModeMutex;
+	std::thread backgroundThread;
+
+	std::atomic<double> engineTimeToGetStatistics;
+	std::atomic<double> lastRebuildTime;
+
 	/////////////////////////////////////////////
 
-	OctreeContainer( const BoundsD& initialOctreeBounds, int amountOfObjectsOutsideOctreeBoundsToRebuld, 
-		const Vector3D& octreeBoundsRebuildExpand, const Vector3D& minNodeSize, int objectCountThresholdToCreateChildNodes, 
-		int maxNodeCount, int getObjectsInputDataSize )
+	OctreeContainer( const BoundsD& initialOctreeBounds, int amountOfObjectsOutsideOctreeBoundsToRebuld, const Vector3D& octreeBoundsRebuildExpand, const Vector3D& minNodeSize, int objectCountThresholdToCreateChildNodes, int maxNodeCount, ThreadingModeEnum threadingMode, int getObjectsInputDataSize, double engineTimeToGetStatistics )
 	{
+
+		////!!!!
+		//threadingMode = ThreadingModeEnum::SingleThreaded;
+
+
 		if( getObjectsInputDataSize != sizeof( GetObjectsInputData ) )
 			Fatal( "OctreeContainer: Constructor: getObjectsInputDataSize != sizeof( GetObjectsInputData )." );
 
@@ -278,6 +323,8 @@ public:
 		this->minNodeSize = minNodeSize;
 		this->objectCountThresholdToCreateChildNodes = objectCountThresholdToCreateChildNodes;
 		this->maxNodeCount = maxNodeCount;
+		this->threadingMode = threadingMode;
+		this->engineTimeToGetStatistics = engineTimeToGetStatistics;
 
 		minNodeSizeInv = 1.0f / minNodeSize;
 
@@ -286,10 +333,20 @@ public:
 		totalNodeCount = 0;
 
 		RebuildTree( true );
+
+		if (threadingMode == ThreadingModeEnum::BackgroundThread)
+			backgroundThread = std::thread{ &OctreeContainer::BackgroundThreadFunction, this };
 	}
 
 	~OctreeContainer()
 	{
+		if (threadingMode == ThreadingModeEnum::BackgroundThread)
+		{
+			WaitForExecuteAllBackgroundTasks();
+			backgroundThreadNeedExit = true;
+			backgroundThread.join();
+		}
+
 		while (getObjectsFreeCheckedLists.size() != 0)
 		{
 			delete getObjectsFreeCheckedLists.top();
@@ -309,27 +366,36 @@ public:
 			delete objects[ n ];
 	}
 
-	void UpdateSettings( int amountOfObjectsOutsideOctreeBoundsToRebuld, const Vector3D& octreeBoundsRebuildExpand, 
-		const Vector3D& minNodeSize, int objectCountThresholdToCreateChildNodes, int maxNodeCount, bool forceTreeRebuild )
-	{
-		bool rebuild = false;
+	//void UpdateSettings( int amountOfObjectsOutsideOctreeBoundsToRebuld, const Vector3D& octreeBoundsRebuildExpand, const Vector3D& minNodeSize, int objectCountThresholdToCreateChildNodes, int maxNodeCount, ThreadingModeEnum threadingMode )//, bool forceTreeRebuild )
+	//{
+	//	this->amountOfObjectsOutsideOctreeBoundsToRebuld = amountOfObjectsOutsideOctreeBoundsToRebuld;
+	//	this->octreeBoundsRebuildExpand = octreeBoundsRebuildExpand;
+	//	this->objectCountThresholdToCreateChildNodes = objectCountThresholdToCreateChildNodes;
+	//	this->maxNodeCount = maxNodeCount;
+	//	this->minNodeSize = minNodeSize;
+	//	this->threadingMode = threadingMode;
 
-		this->amountOfObjectsOutsideOctreeBoundsToRebuld = amountOfObjectsOutsideOctreeBoundsToRebuld;
-		this->octreeBoundsRebuildExpand = octreeBoundsRebuildExpand;
-		this->objectCountThresholdToCreateChildNodes = objectCountThresholdToCreateChildNodes;
-		this->maxNodeCount = maxNodeCount;
-		if( this->minNodeSize != minNodeSize )
-		{
-			this->minNodeSize = minNodeSize;
-			rebuild = true;
-		}
+	//	RebuildTree( false );
 
-		if( objectsOutsideOctree.size() > amountOfObjectsOutsideOctreeBoundsToRebuld )
-			rebuild = true;
 
-		if( rebuild || forceTreeRebuild )
-			RebuildTree( false );
-	}
+	//	//bool rebuild = false;
+
+	//	//this->amountOfObjectsOutsideOctreeBoundsToRebuld = amountOfObjectsOutsideOctreeBoundsToRebuld;
+	//	//this->octreeBoundsRebuildExpand = octreeBoundsRebuildExpand;
+	//	//this->objectCountThresholdToCreateChildNodes = objectCountThresholdToCreateChildNodes;
+	//	//this->maxNodeCount = maxNodeCount;
+	//	//if( this->minNodeSize != minNodeSize )
+	//	//{
+	//	//	this->minNodeSize = minNodeSize;
+	//	//	rebuild = true;
+	//	//}
+
+	//	//if( objectsOutsideOctree.size() > amountOfObjectsOutsideOctreeBoundsToRebuld )
+	//	//	rebuild = true;
+
+	//	//if( rebuild || forceTreeRebuild )
+	//	//	RebuildTree( false );
+	//}
 
 	void EnableNeedCreateChildrenNodes( Node* node )
 	{
@@ -469,6 +535,7 @@ public:
 
 	void AddObjectToWorld( ObjectData* objectData )
 	{
+		//objectData->flags = ObjectData::Flags_AddedToWorld;
 		objectData->flags = 0;
 
 		//inside octree bounds
@@ -574,13 +641,10 @@ public:
 
 	int AddObject( const Vector3D& boundsMin, const Vector3D& boundsMax, uint groupMask )
 	{
-		BoundsD bounds( boundsMin, boundsMax );
-		if( bounds.getMinimum().x + .00001f > bounds.getMaximum().x )
-			bounds.setMaximumX( bounds.getMinimum().x + .00001f );
-		if( bounds.getMinimum().y + .00001f > bounds.getMaximum().y )
-			bounds.setMaximumY( bounds.getMinimum().y + .00001f );
-		if( bounds.getMinimum().z + .00001f > bounds.getMaximum().z )
-			bounds.setMaximumZ( bounds.getMinimum().z + .00001f );
+		BoundsD bounds(boundsMin, boundsMax);
+
+		if (threadingMode == ThreadingModeEnum::BackgroundThread)
+			threadingModeMutex.lock();
 
 		//expand the objects array
 		if( objectsFreeIndexes.size() == 0 )
@@ -596,86 +660,157 @@ public:
 			objectsFreeIndexes.push( objectIndex );
 		}
 
-		//add the object to the objects array
-
 		//get index for the object
 		int objectIndex = objectsFreeIndexes.top();
 		objectsFreeIndexes.pop();
-		
-		//fill data
-		ObjectData* objectData = objects[ objectIndex ];
-		objectData->groupMask = groupMask;// (uint)(1 << group);
-		objectData->bounds = bounds;
-		objectData->boundsCenter = bounds.getCenter();
-		objectData->boundsHalfSize = bounds.getMaximum() - objectData->boundsCenter;
 
-		GetEndNodeRangeByBoundsNotClamped( bounds, objectData->nodeBoundsIndexes );
-		objectData->flags = 0;
+		if (threadingMode == ThreadingModeEnum::SingleThreaded)
+		{
+			//fill data
+			ObjectData* objectData = objects[objectIndex];
+			objectData->groupMask = groupMask;
+			objectData->bounds = bounds;
+			objectData->boundsCenter = bounds.getCenter();
+			objectData->boundsHalfSize = bounds.getMaximum() - objectData->boundsCenter;
 
-		totalObjectCount++;
+			GetEndNodeRangeByBoundsNotClamped(bounds, objectData->nodeBoundsIndexes);
+			objectData->flags = 0;
 
-		AddObjectToWorld( objectData );
+			totalObjectCount++;
+
+			AddObjectToWorld(objectData);
+		}
+
+		if (threadingMode == ThreadingModeEnum::BackgroundThread)
+		{
+			ThreadingQueueItem item;
+			item.command = ThreadingQueueItem::CommandEnum::AddObject;
+			item.objectIndex = objectIndex;
+			item.bounds = bounds;
+			item.groupMask = groupMask;
+			threadingQueue.push(item);
+
+			threadingModeMutex.unlock();
+		}
 
 		return objectIndex;
 	}
 
 	void RemoveObject( int objectIndex )
 	{
-		if( objectIndex < 0 || objectIndex >= objects.size() )
-			Fatal( "OctreeContainer: RemoveObject: Invalid object index. objectIndex < 0 || objectIndex >= objects.size()." );
-		if( objects[ objectIndex ]->flags == ObjectData::Flags_Free )
-			Fatal( "OctreeContainer: RemoveObject: Invalid object index. objects[ objectIndex ]->flags == ObjectData::Flags_Free." );
+		if (threadingMode == ThreadingModeEnum::SingleThreaded)
+		{
+#if _DEBUG
+			if (objectIndex < 0 || objectIndex >= objects.size())
+				Fatal("OctreeContainer: RemoveObject: Invalid object index. objectIndex < 0 || objectIndex >= objects.size().");
+			if (objects[objectIndex]->flags == ObjectData::Flags_Free)
+				Fatal("OctreeContainer: RemoveObject: Invalid object index. objects[ objectIndex ]->flags == ObjectData::Flags_Free.");
+#endif
 
-		ObjectData* objectData = objects[ objectIndex ];
+			ObjectData* objectData = objects[objectIndex];
 
-		totalObjectCount--;
+			totalObjectCount--;
 
-		RemoveObjectFromWorld( objectData );
-		//delete empty nodes
-		if( rootNode->needCheckForDeletion )
-			DeleteEmptyNodesCheckedForDeletionRecursive( rootNode );
+			RemoveObjectFromWorld(objectData);
+			////delete empty nodes
+			//if (rootNode->needCheckForDeletion)
+			//	DeleteEmptyNodesCheckedForDeletionRecursive(rootNode);
 
-		//free index
-		objects[ objectIndex ]->flags = ObjectData::Flags_Free;
-		objectsFreeIndexes.push( objectIndex );
+			//free index
+			objects[objectIndex]->flags = ObjectData::Flags_Free;
+			objectsFreeIndexes.push(objectIndex);
+		}
+		else
+		{
+			ThreadingQueueItem item;
+			item.command = ThreadingQueueItem::CommandEnum::RemoveObject;
+			item.objectIndex = objectIndex;
+			//item.bounds = BoundsD::BOUNDSD_ZERO;
+			//item.groupMask = 0;
+			threadingModeMutex.lock();
+			threadingQueue.push(item);
+			threadingModeMutex.unlock();
+		}
 	}
 
-	void UpdateObject( int objectIndex, const Vector3D& boundsMin, const Vector3D& boundsMax, uint groupMask )
+	void UpdateObjectBounds(int objectIndex, const Vector3D& boundsMin, const Vector3D& boundsMax)
 	{
-		if( objectIndex < 0 || objectIndex >= objects.size() )
-			Fatal( "OctreeContainer: UpdateObject: Invalid object index. objectIndex < 0 || objectIndex >= objects.size()." );
-		if( objects[ objectIndex ]->flags == ObjectData::Flags_Free )
-			Fatal( "OctreeContainer: UpdateObject: Invalid object index. objects[ objectIndex ]->flags == ObjectData::Flags_Free." );
+		if (threadingMode == ThreadingModeEnum::SingleThreaded)
+		{
+#if _DEBUG
+			if (objectIndex < 0 || objectIndex >= objects.size())
+				Fatal("OctreeContainer: UpdateObject: Invalid object index. objectIndex < 0 || objectIndex >= objects.size().");
+			if (objects[objectIndex]->flags == ObjectData::Flags_Free)
+				Fatal("OctreeContainer: UpdateObject: Invalid object index. objects[ objectIndex ]->flags == ObjectData::Flags_Free.");
+#endif
 
-		BoundsD bounds( boundsMin, boundsMax );
-		if( bounds.getMinimum().x + .00001f > bounds.getMaximum().x )
-			bounds.setMaximumX( bounds.getMinimum().x + .00001f );
-		if( bounds.getMinimum().y + .00001f > bounds.getMaximum().y )
-			bounds.setMaximumY( bounds.getMinimum().y + .00001f );
-		if( bounds.getMinimum().z + .00001f > bounds.getMaximum().z )
-			bounds.setMaximumZ( bounds.getMinimum().z + .00001f );
+			ObjectData* objectData = objects[objectIndex];
 
-		ObjectData* objectData = objects[ objectIndex ];
+			if (objectData->bounds.minimum == boundsMin && objectData->bounds.maximum == boundsMax)
+				return;
 
-		BoundsI newNodeBoundsIndexes;
-		GetEndNodeRangeByBoundsNotClamped( bounds, newNodeBoundsIndexes );
-		bool equalNodeIndexes = objectData->nodeBoundsIndexes == newNodeBoundsIndexes;
+			BoundsD bounds(boundsMin, boundsMax);
 
-		if( !equalNodeIndexes )
-			RemoveObjectFromWorld( objectData );
+			BoundsI newNodeBoundsIndexes;
+			GetEndNodeRangeByBoundsNotClamped(bounds, newNodeBoundsIndexes);
+			bool equalNodeIndexes = objectData->nodeBoundsIndexes == newNodeBoundsIndexes;
 
-		objectData->groupMask = groupMask;// (uint)(1 << group);
-		objectData->bounds = bounds;
-		objectData->boundsCenter = bounds.getCenter();
-		objectData->boundsHalfSize = bounds.getMaximum() - objectData->boundsCenter;
-		objectData->nodeBoundsIndexes = newNodeBoundsIndexes;
+			if (!equalNodeIndexes)
+				RemoveObjectFromWorld(objectData);
 
-		if( !equalNodeIndexes )
-			AddObjectToWorld( objectData );
+			//objectData->groupMask = groupMask;// (uint)(1 << group);
+			objectData->bounds = bounds;
+			objectData->boundsCenter = bounds.getCenter();
+			objectData->boundsHalfSize = bounds.getMaximum() - objectData->boundsCenter;
+			objectData->nodeBoundsIndexes = newNodeBoundsIndexes;
 
-		//delete empty nodes
-		if( rootNode->needCheckForDeletion )
-			DeleteEmptyNodesCheckedForDeletionRecursive( rootNode );
+			if (!equalNodeIndexes)
+				AddObjectToWorld(objectData);
+
+			////delete empty nodes
+			//if (rootNode->needCheckForDeletion)
+			//	DeleteEmptyNodesCheckedForDeletionRecursive(rootNode);
+		}
+		else
+		{
+			BoundsD bounds(boundsMin, boundsMax);
+
+			ThreadingQueueItem item;
+			item.command = ThreadingQueueItem::CommandEnum::UpdateObjectBounds;
+			item.objectIndex = objectIndex;
+			item.bounds = bounds;
+			//item.groupMask = 0;//groupMask;
+			threadingModeMutex.lock();
+			threadingQueue.push(item);
+			threadingModeMutex.unlock();
+		}
+	}
+
+	void UpdateObjectGroupMask(int objectIndex, uint groupMask)
+	{
+		if (threadingMode == ThreadingModeEnum::SingleThreaded)
+		{
+#if _DEBUG
+			if (objectIndex < 0 || objectIndex >= objects.size())
+				Fatal("OctreeContainer: UpdateObject: Invalid object index. objectIndex < 0 || objectIndex >= objects.size().");
+			if (objects[objectIndex]->flags == ObjectData::Flags_Free)
+				Fatal("OctreeContainer: UpdateObject: Invalid object index. objects[ objectIndex ]->flags == ObjectData::Flags_Free.");
+#endif
+
+			ObjectData* objectData = objects[objectIndex];
+			objectData->groupMask = groupMask;
+		}
+		else
+		{
+			ThreadingQueueItem item;
+			item.command = ThreadingQueueItem::CommandEnum::UpdateObjectGroupMask;
+			item.objectIndex = objectIndex;
+			//item.bounds = BoundsD::BOUNDSD_ZERO;
+			item.groupMask = groupMask;
+			threadingModeMutex.lock();
+			threadingQueue.push(item);
+			threadingModeMutex.unlock();
+		}
 	}
 
 	/////////////////////////////////////////////
@@ -921,28 +1056,27 @@ public:
 			MaskedOcclusionCulling* buffer = (MaskedOcclusionCulling*)data->occlusionCullingBuffer;
 			float* modelToClipMatrix = (float*)&data->viewProjectionMatrix;
 
-
 			//!!!!double
 			Vector3 positions[8];
 			GetBoundsGeometryVertices(bounds, positions);
 
-			//for (int n = 0; n < 8; n++)
-			//{
-			//	Vector3 pos = data->viewProjectionMatrix * positions[n];
-			//	pos.z = 1.0f / pos.z;
-			//	positions[n] = pos;
-			//	//positions[n] = data->viewProjectionMatrix * positions[n];
-			//}
+			////for (int n = 0; n < 8; n++)
+			////{
+			////	Vector3 pos = data->viewProjectionMatrix * positions[n];
+			////	pos.z = 1.0f / pos.z;
+			////	positions[n] = pos;
+			////	//positions[n] = data->viewProjectionMatrix * positions[n];
+			////}
 
-			//Bounds b = Bounds(positions[0]);
-			//for (int n = 1; n < 8; n++)
-			//	b.add(positions[n]);
+			////Bounds b = Bounds(positions[0]);
+			////for (int n = 1; n < 8; n++)
+			////	b.add(positions[n]);
 
-			//MaskedOcclusionCulling::CullingResult result = buffer->TestRect(b.minimum.x, b.minimum.y, b.maximum.x, b.maximum.y, b.maximum.z);
-
-			MaskedOcclusionCulling::CullingResult result = buffer->TestTriangles((float*)&positions[0], &boundsGeometryIndices[0], 12, modelToClipMatrix, MaskedOcclusionCulling::BACKFACE_CW, MaskedOcclusionCulling::CLIP_PLANE_ALL, MaskedOcclusionCulling::VertexLayout(12, 4, 8));
-
-			//!!!!VIEW_CULLED
+			//works with bugs when BACKFACE_CW
+			MaskedOcclusionCulling::CullingResult result = buffer->TestTriangles((float*)&positions[0], &boundsGeometryIndices[0], 12, modelToClipMatrix, MaskedOcclusionCulling::BACKFACE_NONE, MaskedOcclusionCulling::CLIP_PLANE_ALL, MaskedOcclusionCulling::VertexLayout(12, 4, 8));
+			//MaskedOcclusionCulling::CullingResult result = buffer->TestTriangles((float*)&positions[0], &boundsGeometryIndices[0], 12, modelToClipMatrix, MaskedOcclusionCulling::BACKFACE_CW, MaskedOcclusionCulling::CLIP_PLANE_ALL, MaskedOcclusionCulling::VertexLayout(12, 4, 8));
+			// 
+			////MaskedOcclusionCulling::CullingResult result = buffer->TestRect(b.minimum.x, b.minimum.y, b.maximum.x, b.maximum.y, b.maximum.z);
 
 			if (result == MaskedOcclusionCulling::OCCLUDED)
 				return false;
@@ -1096,8 +1230,8 @@ public:
 		context->getObjectsCheckedList.reserve(objects.size());
 		context->extensionData = inputData.extensionData;
 
-		//rebuild tree if need
-		CheckForRebuildTree();
+		////rebuild tree if need
+		//CheckForRebuildTree();
 
 		GetObjectsCheckShape* checkShape = NULL;
 
@@ -1310,8 +1444,8 @@ public:
 		context->getObjectsCheckedList.reserve(objects.size());
 		context->extensionData = inputData.extensionData;
 
-		//rebuild tree if need
-		CheckForRebuildTree();
+		////rebuild tree if need
+		//CheckForRebuildTree();
 
 		int resultCount = 0;
 		int outputArrayIndex = 0;
@@ -1455,6 +1589,8 @@ public:
 			delete getObjectsFreeCheckedLists.top();
 			getObjectsFreeCheckedLists.pop();
 		}
+
+		lastRebuildTime = engineTimeToGetStatistics.load();
 	}
 
 	void AddBounds( const BoundsD& bounds, const ColourValue& color, std::vector<DebugRenderLine>& lines )
@@ -1522,7 +1658,7 @@ public:
 		*outputDataItemCount = lines.size();
 	}
 
-	void GetStatistics( int* objectCount, BoundsD* octreeBounds, int* octreeNodeCount )
+	void GetStatistics( int* objectCount, BoundsD* octreeBounds, int* octreeNodeCount, double* timeSinceLastFullRebuild)
 	{
 		*objectCount = this->totalObjectCount;
 		if( rootNode )
@@ -1530,6 +1666,7 @@ public:
 		else
 			*octreeBounds = BoundsD::BOUNDSD_CLEARED;
 		*octreeNodeCount = this->totalNodeCount;
+		*timeSinceLastFullRebuild = engineTimeToGetStatistics.load() - lastRebuildTime.load();
 	}
 
 	void GetOctreeBoundsWithBoundsOfObjectsOutsideOctree( BoundsD& bounds )
@@ -1541,6 +1678,241 @@ public:
 			bounds.add( objectData->bounds );
 		}
 	}
+
+	bool IsBackgroundThreadBusy()
+	{
+		threadingModeMutex.lock();
+		bool result = backgroundThreadInWork.load() || threadingQueue.size() != 0;
+		threadingModeMutex.unlock();
+		return result;
+	}
+
+	void WaitForExecuteAllBackgroundTasks()
+	{
+		while(IsBackgroundThreadBusy())
+			std::this_thread::sleep_for(std::chrono::milliseconds(0));
+	}
+
+	void DoAllThingsForSingleThreadedMode()
+	{
+		updateMutex.lock();
+
+		//delete empty nodes
+		if (rootNode->needCheckForDeletion)
+			DeleteEmptyNodesCheckedForDeletionRecursive(rootNode);
+
+		//rebuild tree if need
+		CheckForRebuildTree();
+
+		updateMutex.unlock();
+	}
+
+	void BackgroundThreadProcessItem(const ThreadingQueueItem& item)
+	{
+		auto objectIndex = item.objectIndex;
+
+		switch (item.command)
+		{
+		case ThreadingQueueItem::CommandEnum::AddObject:
+		{
+			auto& bounds = item.bounds;
+			ObjectData* objectData = objects[objectIndex];
+			objectData->groupMask = item.groupMask;// (uint)(1 << group);
+			objectData->bounds = bounds;
+			objectData->boundsCenter = bounds.getCenter();
+			objectData->boundsHalfSize = bounds.getMaximum() - objectData->boundsCenter;
+
+			GetEndNodeRangeByBoundsNotClamped(bounds, objectData->nodeBoundsIndexes);
+			objectData->flags = 0;
+
+			totalObjectCount++;
+
+			AddObjectToWorld(objectData);
+		}
+		break;
+
+
+		case ThreadingQueueItem::CommandEnum::RemoveObject:
+		{
+#if _DEBUG
+			if (objectIndex < 0 || objectIndex >= objects.size())
+				Fatal("OctreeContainer: RemoveObject: Invalid object index. objectIndex < 0 || objectIndex >= objects.size().");
+			if (objects[objectIndex]->flags == ObjectData::Flags_Free)
+				Fatal("OctreeContainer: RemoveObject: Invalid object index. objects[ objectIndex ]->flags == ObjectData::Flags_Free.");
+#endif
+
+			ObjectData* objectData = objects[objectIndex];
+
+			totalObjectCount--;
+
+			RemoveObjectFromWorld(objectData);
+
+			////delete empty nodes
+			//if (rootNode->needCheckForDeletion)
+			//	DeleteEmptyNodesCheckedForDeletionRecursive(rootNode);
+
+			//free index
+			objects[objectIndex]->flags = ObjectData::Flags_Free;
+			objectsFreeIndexes.push(objectIndex);
+		}
+		break;
+
+
+		case ThreadingQueueItem::CommandEnum::UpdateObjectBounds:
+		{
+#if _DEBUG
+			if (objectIndex < 0 || objectIndex >= objects.size())
+				Fatal("OctreeContainer: UpdateObject: Invalid object index. objectIndex < 0 || objectIndex >= objects.size().");
+			if (objects[objectIndex]->flags == ObjectData::Flags_Free)
+				Fatal("OctreeContainer: UpdateObject: Invalid object index. objects[ objectIndex ]->flags == ObjectData::Flags_Free.");
+#endif
+
+			ObjectData* objectData = objects[objectIndex];
+
+			auto& bounds = item.bounds;
+			if (objectData->bounds == bounds)
+				return;
+			//if (objectData->bounds.minimum == boundsMin && objectData->bounds.maximum == boundsMax)
+			//	return;
+
+			//BoundsD bounds(boundsMin, boundsMax);
+
+			BoundsI newNodeBoundsIndexes;
+			GetEndNodeRangeByBoundsNotClamped(bounds, newNodeBoundsIndexes);
+			bool equalNodeIndexes = objectData->nodeBoundsIndexes == newNodeBoundsIndexes;
+
+			if (!equalNodeIndexes)
+				RemoveObjectFromWorld(objectData);
+
+			//objectData->groupMask = groupMask;// (uint)(1 << group);
+			objectData->bounds = bounds;
+			objectData->boundsCenter = bounds.getCenter();
+			objectData->boundsHalfSize = bounds.getMaximum() - objectData->boundsCenter;
+			objectData->nodeBoundsIndexes = newNodeBoundsIndexes;
+
+			if (!equalNodeIndexes)
+				AddObjectToWorld(objectData);
+
+			////delete empty nodes
+			//if (rootNode->needCheckForDeletion)
+			//	DeleteEmptyNodesCheckedForDeletionRecursive(rootNode);
+		}
+		break;
+
+
+		case ThreadingQueueItem::CommandEnum::UpdateObjectGroupMask:
+		{
+#if _DEBUG
+			if (objectIndex < 0 || objectIndex >= objects.size())
+				Fatal("OctreeContainer: UpdateObject: Invalid object index. objectIndex < 0 || objectIndex >= objects.size().");
+			if (objects[objectIndex]->flags == ObjectData::Flags_Free)
+				Fatal("OctreeContainer: UpdateObject: Invalid object index. objects[ objectIndex ]->flags == ObjectData::Flags_Free.");
+#endif
+
+			ObjectData* objectData = objects[objectIndex];
+			objectData->groupMask = item.groupMask;
+		}
+		break;
+
+		}
+	}
+
+	void BackgroundThreadFunction()
+	{
+		try
+		{
+			while (!backgroundThreadNeedExit.load())
+			{
+				std::vector<ThreadingQueueItem> items;
+
+				//!!!!?
+				//threadingModeMutex.try_lock()
+
+				threadingModeMutex.lock();
+				if (threadingQueue.size() != 0)
+				{
+					backgroundThreadInWork = true;
+
+					items.reserve(threadingQueue.size());
+					while (threadingQueue.size() != 0)
+					{
+						items.push_back(threadingQueue.front());
+						threadingQueue.pop();
+					}
+				}
+				threadingModeMutex.unlock();
+
+				if (items.size() != 0)
+				{
+					for (int n = 0; n < items.size(); n++)
+						BackgroundThreadProcessItem(items[n]);
+
+					//post process actions
+
+					//delete empty nodes
+					if (rootNode->needCheckForDeletion)
+						DeleteEmptyNodesCheckedForDeletionRecursive(rootNode);
+
+					//rebuild tree if need
+					CheckForRebuildTree();
+
+					backgroundThreadInWork = false;
+				}
+
+				std::this_thread::sleep_for(std::chrono::milliseconds(0));
+
+
+			//	bool itemProcessedInThisUpdate = false;
+
+			//again:;
+			//	bool itemFound = false;
+			//	ThreadingQueueItem item;
+
+
+			//	//!!!!get all items with one lock
+
+			//	//!!!!?
+			//	//threadingModeMutex.try_lock()
+
+			//	threadingModeMutex.lock();
+			//	if (threadingQueue.size() != 0)
+			//	{
+			//		backgroundThreadInWork = true;
+			//		itemFound = true;
+			//		itemProcessedInThisUpdate = true;
+			//		item = threadingQueue.front();
+			//		threadingQueue.pop();
+			//	}
+			//	threadingModeMutex.unlock();
+
+			//	if (itemFound)
+			//	{
+			//		BackgroundThreadProcessItem(item);
+			//		goto again;
+			//	}
+
+			//	//post process actions
+			//	if (itemProcessedInThisUpdate)
+			//	{
+			//		//delete empty nodes
+			//		if (rootNode->needCheckForDeletion)
+			//			DeleteEmptyNodesCheckedForDeletionRecursive(rootNode);
+
+			//		//rebuild tree if need
+			//		CheckForRebuildTree();
+			//	}
+
+			//	backgroundThreadInWork = false;
+
+			//	std::this_thread::sleep_for(std::chrono::milliseconds(0));
+			}
+		}
+		catch(...)
+		{
+			Fatal("OctreeContainer: BackgroundThreadFunction: Exception.");
+		}
+	}
+
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1671,35 +2043,39 @@ int GetObjectsRaySortCompare( const void* a, const void* b )
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-EXPORT OctreeContainer* OctreeContainer_New( const BoundsD& initialOctreeBounds, int amountOfObjectsOutsideOctreeBoundsToRebuld, 
-	const Vector3D& octreeBoundsRebuildExpand, const Vector3D& minNodeSize, int objectCountThresholdToCreateChildNodes, 
-	int maxNodeCount, int getObjectsInputDataSize )
+EXPORT OctreeContainer* OctreeContainer_New( const BoundsD& initialOctreeBounds, int amountOfObjectsOutsideOctreeBoundsToRebuld, const Vector3D& octreeBoundsRebuildExpand, const Vector3D& minNodeSize, int objectCountThresholdToCreateChildNodes, int maxNodeCount, ThreadingModeEnum threadingMode, int getObjectsInputDataSize, double engineTimeToGetStatistics)
 {
-	return new OctreeContainer( initialOctreeBounds, amountOfObjectsOutsideOctreeBoundsToRebuld, octreeBoundsRebuildExpand, 
-		minNodeSize, objectCountThresholdToCreateChildNodes, maxNodeCount, getObjectsInputDataSize );
+	return new OctreeContainer(initialOctreeBounds, amountOfObjectsOutsideOctreeBoundsToRebuld, octreeBoundsRebuildExpand, minNodeSize, objectCountThresholdToCreateChildNodes, maxNodeCount, threadingMode, getObjectsInputDataSize, engineTimeToGetStatistics);
 }
 
 EXPORT void OctreeContainer_Delete( OctreeContainer* container )
 {
+	//if (container->threadingMode == ThreadingModeEnum::SingleThreaded)
+	//	container->DoAllThingsForSingleThreadedMode();
+	//else
+	//	container->WaitForExecuteAllBackgroundTasks();
+
 	delete container;
 }
 
-EXPORT void OctreeContainer_UpdateSettings( OctreeContainer* container, int amountOfObjectsOutsideOctreeBoundsToRebuld,
-	const Vector3D& octreeBoundsRebuildExpand, const Vector3D& minNodeSize, int objectCountThresholdToCreateChildNodes, 
-	int maxNodeCount, bool forceTreeRebuild )
-{
-	container->UpdateSettings( amountOfObjectsOutsideOctreeBoundsToRebuld, octreeBoundsRebuildExpand, minNodeSize, 
-		objectCountThresholdToCreateChildNodes, maxNodeCount, forceTreeRebuild );
-}
+//EXPORT void OctreeContainer_UpdateSettings( OctreeContainer* container, int amountOfObjectsOutsideOctreeBoundsToRebuld, const Vector3D& octreeBoundsRebuildExpand, const Vector3D& minNodeSize, int objectCountThresholdToCreateChildNodes, int maxNodeCount, ThreadingModeEnum threadingMode)//, bool forceTreeRebuild )
+//{
+//	container->updateMutex.lock();
+//	container->UpdateSettings(amountOfObjectsOutsideOctreeBoundsToRebuld, octreeBoundsRebuildExpand, minNodeSize, objectCountThresholdToCreateChildNodes, maxNodeCount, threadingMode);// , forceTreeRebuild);
+//	container->updateMutex.unlock();
+//}
 
-EXPORT void OctreeContainer_RebuildTree( OctreeContainer* container )
-{
-	container->RebuildTree( false );
-}
+//EXPORT void OctreeContainer_RebuildTree( OctreeContainer* container )
+//{
+//	container->updateMutex.lock();
+//	container->RebuildTree( false );
+//	container->updateMutex.unlock();
+//}
 
 EXPORT int OctreeContainer_AddObject( OctreeContainer* container, const Vector3D& boundsMin, const Vector3D& boundsMax, uint groupMask )
 {
-	return container->AddObject( boundsMin, boundsMax, groupMask );
+	auto result = container->AddObject(boundsMin, boundsMax, groupMask);
+	return result;
 }
 
 EXPORT void OctreeContainer_RemoveObject( OctreeContainer* container, int objectIndex )
@@ -1707,27 +2083,48 @@ EXPORT void OctreeContainer_RemoveObject( OctreeContainer* container, int object
 	container->RemoveObject( objectIndex );
 }
 
-EXPORT void OctreeContainer_UpdateObject( OctreeContainer* container, int objectIndex, const Vector3D& boundsMin, 
-	const Vector3D& boundsMax, uint groupMask )
+EXPORT void OctreeContainer_UpdateObjectBounds(OctreeContainer* container, int objectIndex, const Vector3D& boundsMin, const Vector3D& boundsMax)
 {
-	container->UpdateObject( objectIndex, boundsMin, boundsMax, groupMask );
+	container->UpdateObjectBounds(objectIndex, boundsMin, boundsMax);
 }
 
-EXPORT int OctreeContainer_GetObjects( OctreeContainer* container, const OctreeContainer::GetObjectsInputData& inputData, 
-	int* outputArray, int outputArraySize )
+EXPORT void OctreeContainer_UpdateObjectGroupMask(OctreeContainer* container, int objectIndex, uint groupMask)
 {
-	return container->GetObjects( inputData, outputArray, outputArraySize );
+	container->UpdateObjectGroupMask(objectIndex, groupMask);
 }
 
-EXPORT int OctreeContainer_GetObjectsRay( OctreeContainer* container, const OctreeContainer::GetObjectsInputData& inputData,
-	OctreeContainer::GetObjectsRayOutputData* outputArray, int outputArraySize )
+//it called from multiple threads
+EXPORT int OctreeContainer_GetObjects( OctreeContainer* container, const OctreeContainer::GetObjectsInputData& inputData, int* outputArray, int outputArraySize )
 {
-	return container->GetObjectsRay( inputData, outputArray, outputArraySize );
+	if (container->threadingMode == ThreadingModeEnum::SingleThreaded)
+		container->DoAllThingsForSingleThreadedMode();
+	else
+		container->WaitForExecuteAllBackgroundTasks();
+
+	auto result = container->GetObjects(inputData, outputArray, outputArraySize);
+	return result;
+}
+
+//it called from multiple threads
+EXPORT int OctreeContainer_GetObjectsRay( OctreeContainer* container, const OctreeContainer::GetObjectsInputData& inputData, OctreeContainer::GetObjectsRayOutputData* outputArray, int outputArraySize )
+{
+	if (container->threadingMode == ThreadingModeEnum::SingleThreaded)
+		container->DoAllThingsForSingleThreadedMode();
+	else
+		container->WaitForExecuteAllBackgroundTasks();
+
+	auto result = container->GetObjectsRay(inputData, outputArray, outputArraySize);
+	return result;
 }
 
 EXPORT void OctreeContainer_GetDebugRenderLines( OctreeContainer* container, void** outputData, int* outputDataItemCount )
 {
-	return container->GetDebugRenderLines( outputData, outputDataItemCount );
+	if (container->threadingMode == ThreadingModeEnum::SingleThreaded)
+		container->DoAllThingsForSingleThreadedMode();
+	else
+		container->WaitForExecuteAllBackgroundTasks();
+
+	container->GetDebugRenderLines( outputData, outputDataItemCount );
 }
 
 EXPORT void OctreeContainer_Free( OctreeContainer* container, void* data )
@@ -1736,13 +2133,27 @@ EXPORT void OctreeContainer_Free( OctreeContainer* container, void* data )
 	delete[] pointer;
 }
 
-EXPORT void OctreeContainer_GetStatistics( OctreeContainer* container, int* objectCount, BoundsD* octreeBounds,
-	int* octreeNodeCount )
+EXPORT void OctreeContainer_GetStatistics( OctreeContainer* container, int* objectCount, BoundsD* octreeBounds, int* octreeNodeCount, double* timeSinceLastFullRebuild)
 {
-	container->GetStatistics( objectCount, octreeBounds, octreeNodeCount );
+	if (container->threadingMode == ThreadingModeEnum::SingleThreaded)
+		container->DoAllThingsForSingleThreadedMode();
+	else
+		container->WaitForExecuteAllBackgroundTasks();
+
+	container->GetStatistics(objectCount, octreeBounds, octreeNodeCount, timeSinceLastFullRebuild);
 }
 
 EXPORT void OctreeContainer_GetOctreeBoundsWithBoundsOfObjectsOutsideOctree( OctreeContainer* container, BoundsD& bounds )
 {
+	if (container->threadingMode == ThreadingModeEnum::SingleThreaded)
+		container->DoAllThingsForSingleThreadedMode();
+	else
+		container->WaitForExecuteAllBackgroundTasks();
+
 	container->GetOctreeBoundsWithBoundsOfObjectsOutsideOctree( bounds );
+}
+
+EXPORT void OctreeContainer_SetEngineTimeToGetStatistics(OctreeContainer* container, double engineTime)
+{
+	container->engineTimeToGetStatistics = engineTime;
 }

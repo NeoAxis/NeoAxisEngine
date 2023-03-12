@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -18,8 +18,10 @@ namespace NeoAxis
 	/// <summary>
 	/// The component containing sound data.
 	/// </summary>
-	[ResourceFileExtension( "sound" )]//!!!!!так?
+	[ResourceFileExtension( "sound" )]
+#if !DEPLOY
 	[Preview( typeof( SoundPreview ) )]
+#endif
 	public class Sound : ResultCompile<Sound.CompiledData>
 	{
 		////CreateFormat
@@ -173,6 +175,9 @@ namespace NeoAxis
 
 			public SoundData LoadSoundByMode( SoundModes mode )
 			{
+				if( SoundWorld.BackendNull )
+					return null;
+
 				if( !soundByMode.TryGetValue( mode, out var sound ) )
 				{
 					//!!!!threading

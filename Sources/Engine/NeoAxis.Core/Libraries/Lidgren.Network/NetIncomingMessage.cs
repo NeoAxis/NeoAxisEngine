@@ -25,7 +25,7 @@ using System.Diagnostics;
 using NetEndPoint = System.Net.IPEndPoint;
 #endif
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	/// <summary>
 	/// Incoming message either sent from a remote peer or generated within the library
@@ -90,15 +90,16 @@ namespace Lidgren.Network
 			m_isFragment = false;
 		}
 
-		/// <summary>
-		/// Decrypt a message
-		/// </summary>
-		/// <param name="encryption">The encryption algorithm used to encrypt the message</param>
-		/// <returns>true on success</returns>
-		public bool Decrypt(NetEncryption encryption)
-		{
-			return encryption.Decrypt(this);
-		}
+		//!!!!betauser
+		///// <summary>
+		///// Decrypt a message
+		///// </summary>
+		///// <param name="encryption">The encryption algorithm used to encrypt the message</param>
+		///// <returns>true on success</returns>
+		//public bool Decrypt(NetEncryption encryption)
+		//{
+		//	return encryption.Decrypt(this);
+		//}
 
 		/// <summary>
 		/// Reads a value, in local time comparable to NetTime.Now, written using WriteTime()

@@ -1,0 +1,219 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component Project.InGameContextScreen
+{
+	Size = Parent 1 1
+	BackgroundColor = 0.8470588 0.1124314 0.09270588 0
+	EditorScrollPosition = 0 0
+	Style
+	{
+		GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+	}
+	.component NeoAxis.UIControl
+	{
+		Name = Window
+		CanBeSelected = False
+		Size = Parent 1 1
+		HorizontalAlignment = Center
+		VerticalAlignment = Center
+		Margin = Units 0 0 0 0
+		EditorScrollPosition = 0 0
+		.component NeoAxis.UIControl
+		{
+			Name = Control
+			Size = Units 852 200
+			VerticalAlignment = Bottom
+			BackgroundColor = 0 0 0 0.5
+			EditorScrollPosition = 0 0
+		}
+		.component NeoAxis.UIText
+		{
+			Name = Text Messages
+			Text = "Messages:"
+			Size = Units 140 30
+			VerticalAlignment = Bottom
+			Margin = Units 10 500 0 160
+			EditorScrollPosition = 0 0
+			TextHorizontalAlignment = Left
+		}
+		.component NeoAxis.UIList
+		{
+			Name = List Messages
+			Size = Units 830 100
+			VerticalAlignment = Bottom
+			Margin = Units 10 720 0 60
+			EditorScrollPosition = 0 0
+			Items
+			{
+				Count = 4
+				0 = 1
+				1 = 2
+				2 = 3
+				3 = 4
+			}
+			.component NeoAxis.UIScroll
+			{
+				Name = Scroll
+				CanBeSelected = False
+				Size = Units 30 400
+				HorizontalAlignment = Right
+				VerticalAlignment = Stretch
+				Margin = Units 0 2 2 2
+				EditorScrollPosition = 0 0
+				Vertical = True
+			}
+		}
+		.component NeoAxis.UIEdit
+		{
+			Name = Edit Message
+			Size = Units 670 40
+			VerticalAlignment = Bottom
+			Margin = Units 10 880 0 10
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text
+				CanBeSelected = False
+				Size = Parent 1 1
+				HorizontalAlignment = Stretch
+				VerticalAlignment = Stretch
+				Margin = Units 4 2 4 2
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				ClipRectangle = True
+				Text
+				{
+					GetByReference = "this:..\\DisplayText"
+				}
+			}
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler KeyDownBefore
+				Event
+				{
+					GetByReference = "this:..\\event:KeyDownBefore"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\..\\..\\method:EditMessage_KeyDownBefore(NeoAxis.UIControl,NeoAxis.KeyEvent,ref System.Boolean)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Send Message
+			Text = Send
+			Size = Units 150 40
+			VerticalAlignment = Bottom
+			Margin = Units 690 880 0 10
+			EditorScrollPosition = 0 0
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler Click
+				Event
+				{
+					GetByReference = "this:..\\event:Click"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\..\\..\\method:ButtonSendMessage_Click(NeoAxis.UIButton)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+		.component NeoAxis.UIText
+		{
+			Enabled = False
+			Name = Text Friends
+			Text = "Friends:"
+			Size = Units 140 30
+			VerticalAlignment = Bottom
+			Margin = Units 860 500 0 160
+			EditorScrollPosition = 0 0
+			TextHorizontalAlignment = Left
+		}
+		.component NeoAxis.UIList
+		{
+			Enabled = False
+			Name = List Friends
+			Size = Units 260 100
+			VerticalAlignment = Bottom
+			Margin = Units 860 720 0 60
+			EditorScrollPosition = 0 0
+			Items
+			{
+				Count = 4
+				0 = 1
+				1 = 2
+				2 = 3
+				3 = 4
+			}
+			.component NeoAxis.UIScroll
+			{
+				Name = Scroll
+				CanBeSelected = False
+				Size = Units 30 400
+				HorizontalAlignment = Right
+				VerticalAlignment = Stretch
+				Margin = Units 0 2 2 2
+				EditorScrollPosition = 0 0
+				Vertical = True
+			}
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Leave
+			Text = Leave
+			Size = Units 150 40
+			HorizontalAlignment = Right
+			VerticalAlignment = Bottom
+			Margin = Units 0 600 10 60
+			EditorScrollPosition = 0 0
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler Click
+				Event
+				{
+					GetByReference = "this:..\\event:Click"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\..\\..\\method:ButtonLeave_Click(NeoAxis.UIButton)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Close
+			Text = Close
+			Size = Units 150 40
+			HorizontalAlignment = Right
+			VerticalAlignment = Bottom
+			Margin = Units 0 600 10 10
+			EditorScrollPosition = 0 0
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler Click
+				Event
+				{
+					GetByReference = "this:..\\event:Click"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\..\\..\\method:ButtonClose_Click(NeoAxis.UIButton)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+	}
+}

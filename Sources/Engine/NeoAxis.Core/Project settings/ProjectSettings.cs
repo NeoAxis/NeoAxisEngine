@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -21,6 +21,107 @@ namespace NeoAxis
 
 		public static ProjectSettingsPage_General.ThemeEnum DefaultThemeWhenNoFile = ProjectSettingsPage_General.ThemeEnum.Dark;
 
+		public static bool WriteDefaultProjectSettingsFile( string realFileName, string autorunScene, out string error )
+		{
+			error = "";
+
+			var fileBlock = new TextBlock();
+
+			var rootBlock = fileBlock.AddChild( ".component", "NeoAxis.ProjectSettingsComponent" );
+			rootBlock.SetAttribute( "Name", "Root" );
+
+			{
+				var block = rootBlock.AddChild( ".component", "NeoAxis.ProjectSettingsPage_General" );
+				block.SetAttribute( "Name", "General" );
+
+				//default theme
+				block.SetAttribute( "Theme", DefaultThemeWhenNoFile.ToString() );
+
+				//detect language
+				try
+				{
+					var ci = CultureInfo.InstalledUICulture;
+
+					if( ci.EnglishName.Contains( "Russian" ) )
+						block.SetAttribute( "Language", ProjectSettingsPage_General.LanguageEnum.Russian.ToString() );
+				}
+				catch { }
+
+				if( !string.IsNullOrEmpty( autorunScene ) )
+				{
+					var b = block.AddChild( "AutorunScene" );
+					b.SetAttribute( "GetByReference", autorunScene );
+				}
+			}
+
+			{
+				var block = rootBlock.AddChild( ".component", "NeoAxis.ProjectSettingsPage_SceneEditor" );
+				block.SetAttribute( "Name", "Scene Editor" );
+			}
+
+			{
+				var block = rootBlock.AddChild( ".component", "NeoAxis.ProjectSettingsPage_UIEditor" );
+				block.SetAttribute( "Name", "UI Editor" );
+			}
+
+			{
+				var block = rootBlock.AddChild( ".component", "NeoAxis.ProjectSettingsPage_CSharpEditor" );
+				block.SetAttribute( "Name", "C# Editor" );
+			}
+
+			{
+				var block = rootBlock.AddChild( ".component", "NeoAxis.ProjectSettingsPage_ShaderEditor" );
+				block.SetAttribute( "Name", "Shader Editor" );
+			}
+
+			{
+				var block = rootBlock.AddChild( ".component", "NeoAxis.ProjectSettingsPage_TextEditor" );
+				block.SetAttribute( "Name", "Text Editor" );
+			}
+
+			{
+				var block = rootBlock.AddChild( ".component", "NeoAxis.ProjectSettingsPage_Colors" );
+				block.SetAttribute( "Name", "Colors" );
+			}
+
+			{
+				var block = rootBlock.AddChild( ".component", "NeoAxis.ProjectSettingsPage_Preview" );
+				block.SetAttribute( "Name", "Preview" );
+			}
+
+			{
+				var block = rootBlock.AddChild( ".component", "NeoAxis.ProjectSettingsPage_RibbonAndToolbar" );
+				block.SetAttribute( "Name", "Ribbon and Toolbar" );
+			}
+
+			{
+				var block = rootBlock.AddChild( ".component", "NeoAxis.ProjectSettingsPage_Shortcuts" );
+				block.SetAttribute( "Name", "Shortcuts" );
+			}
+
+			{
+				var block = rootBlock.AddChild( ".component", "NeoAxis.ProjectSettingsPage_Rendering" );
+				block.SetAttribute( "Name", "Rendering" );
+			}
+
+			//{
+			//	var block = rootBlock.AddChild( ".component", "NeoAxis.ProjectSettingsPage_CustomSplashScreen" );
+			//	block.SetAttribute( "Name", "Custom Splash Screen" );
+			//}
+
+			if( !TextBlockUtility.SaveToRealFile( fileBlock, realFileName, out error ) )
+				return false;
+
+			////var realFileName = VirtualPathUtility.GetRealPathByVirtual( FileName );
+			//if( !ComponentUtility.SaveComponentToFile( settingsComponent2, realFileName, null, out error ) )
+			//{
+			//	return false;
+			//	//Log.Warning( "Unable to write project settings file. " + error );
+			//}
+
+			return true;
+		}
+
 		/// <summary>
 		/// Gets instance of the settings.
 		/// </summary>
@@ -33,81 +134,86 @@ namespace NeoAxis
 					//create default settings
 					if( !VirtualFile.Exists( FileName ) )
 					{
-						var settingsComponent2 = ComponentUtility.CreateComponent<ProjectSettingsComponent>( null, true, true );
-						settingsComponent2.Name = "Root";
-
-						{
-							var page = settingsComponent2.CreateComponent<ProjectSettingsPage_General>();
-							page.Name = "General";
-						}
-
-						{
-							var page = settingsComponent2.CreateComponent<ProjectSettingsPage_SceneEditor>();
-							page.Name = "Scene Editor";
-						}
-
-						{
-							var page = settingsComponent2.CreateComponent<ProjectSettingsPage_UIEditor>();
-							page.Name = "UI Editor";
-						}
-
-						{
-							var page = settingsComponent2.CreateComponent<ProjectSettingsPage_CSharpEditor>();
-							page.Name = "C# Editor";
-						}
-
-						{
-							var page = settingsComponent2.CreateComponent<ProjectSettingsPage_ShaderEditor>();
-							page.Name = "Shader Editor";
-						}
-
-						{
-							var page = settingsComponent2.CreateComponent<ProjectSettingsPage_TextEditor>();
-							page.Name = "Text Editor";
-						}
-
-						{
-							var page = settingsComponent2.CreateComponent<ProjectSettingsPage_RibbonAndToolbar>();
-							page.Name = "Ribbon and Toolbar";
-						}
-
-						{
-							var page = settingsComponent2.CreateComponent<ProjectSettingsPage_Shortcuts>();
-							page.Name = "Shortcuts";
-						}
-
-						{
-							var page = settingsComponent2.CreateComponent<ProjectSettingsPage_Rendering>();
-							page.Name = "Rendering";
-						}
-
-						{
-							var page = settingsComponent2.CreateComponent<ProjectSettingsPage_CustomSplashScreen>();
-							page.Name = "Custom Splash Screen";
-						}
-
-
-						//default theme
-						settingsComponent2.General.Theme = DefaultThemeWhenNoFile;
-
-						//detect language
-						try
-						{
-							var ci = CultureInfo.InstalledUICulture;
-
-							if( ci.EnglishName.Contains( "Russian" ) )
-								settingsComponent2.General.Language = ProjectSettingsPage_General.LanguageEnum.Russian;
-						}
-						catch { }
-
-
 						var realFileName = VirtualPathUtility.GetRealPathByVirtual( FileName );
-						if( !ComponentUtility.SaveComponentToFile( settingsComponent2, realFileName, null, out var error ) )
+						if( !WriteDefaultProjectSettingsFile( realFileName, "", out var error ) )
 						{
-							//Log.Warning( "Unable to write project settings file. " + error );
 						}
 
-						settingsComponent2.Dispose();
+						//var settingsComponent2 = ComponentUtility.CreateComponent<ProjectSettingsComponent>( null, true, true );
+						//settingsComponent2.Name = "Root";
+
+						//{
+						//	var page = settingsComponent2.CreateComponent<ProjectSettingsPage_General>();
+						//	page.Name = "General";
+						//}
+
+						//{
+						//	var page = settingsComponent2.CreateComponent<ProjectSettingsPage_SceneEditor>();
+						//	page.Name = "Scene Editor";
+						//}
+
+						//{
+						//	var page = settingsComponent2.CreateComponent<ProjectSettingsPage_UIEditor>();
+						//	page.Name = "UI Editor";
+						//}
+
+						//{
+						//	var page = settingsComponent2.CreateComponent<ProjectSettingsPage_CSharpEditor>();
+						//	page.Name = "C# Editor";
+						//}
+
+						//{
+						//	var page = settingsComponent2.CreateComponent<ProjectSettingsPage_ShaderEditor>();
+						//	page.Name = "Shader Editor";
+						//}
+
+						//{
+						//	var page = settingsComponent2.CreateComponent<ProjectSettingsPage_TextEditor>();
+						//	page.Name = "Text Editor";
+						//}
+
+						//{
+						//	var page = settingsComponent2.CreateComponent<ProjectSettingsPage_RibbonAndToolbar>();
+						//	page.Name = "Ribbon and Toolbar";
+						//}
+
+						//{
+						//	var page = settingsComponent2.CreateComponent<ProjectSettingsPage_Shortcuts>();
+						//	page.Name = "Shortcuts";
+						//}
+
+						//{
+						//	var page = settingsComponent2.CreateComponent<ProjectSettingsPage_Rendering>();
+						//	page.Name = "Rendering";
+						//}
+
+						//{
+						//	var page = settingsComponent2.CreateComponent<ProjectSettingsPage_CustomSplashScreen>();
+						//	page.Name = "Custom Splash Screen";
+						//}
+
+
+						////default theme
+						//settingsComponent2.General.Theme = DefaultThemeWhenNoFile;
+
+						////detect language
+						//try
+						//{
+						//	var ci = CultureInfo.InstalledUICulture;
+
+						//	if( ci.EnglishName.Contains( "Russian" ) )
+						//		settingsComponent2.General.Language = ProjectSettingsPage_General.LanguageEnum.Russian;
+						//}
+						//catch { }
+
+
+						//var realFileName = VirtualPathUtility.GetRealPathByVirtual( FileName );
+						//if( !ComponentUtility.SaveComponentToFile( settingsComponent2, realFileName, null, out var error ) )
+						//{
+						//	//Log.Warning( "Unable to write project settings file. " + error );
+						//}
+
+						//settingsComponent2.Dispose();
 					}
 
 					//load

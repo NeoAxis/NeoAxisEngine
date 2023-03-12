@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -52,6 +52,7 @@ namespace NeoAxis
 		/// The type of the shader code.
 		/// </summary>
 		[DefaultValue( TypeEnum.Function )]
+		[FlowGraphBrowsable( false )]
 		public Reference<TypeEnum> Type
 		{
 			get { if( _type.BeginGet() ) Type = _type.Get( this ); return _type.value; }
@@ -81,8 +82,10 @@ namespace NeoAxis
 		[Serialize]
 		[FlowGraphBrowsable( false )]
 		//!!!!
+#if !DEPLOY
 		[Editor( typeof( HCItemTextBoxDropMultiline ), typeof( object ) )]
 		//!!!![Editor( typeof( HCItemScript ), typeof( object ) )]
+#endif
 		public Reference<string> Code
 		{
 			get { if( _code.BeginGet() ) Code = _code.Get( this ); return _code.value; }
@@ -487,7 +490,7 @@ namespace NeoAxis
 			if( newCode == compiledCode )
 				return;
 			////no update in the editor when no need update and auto update is disabled
-			//if( !forceNeedUpdate && EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor && !EditorAutoUpdate )
+			//if( !forceNeedUpdate && EngineApp.IsEditor && !EditorAutoUpdate )
 			//	return;
 
 			//do update

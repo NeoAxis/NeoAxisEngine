@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Linq;
 using System.ComponentModel;
@@ -13,9 +13,11 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "csscript" )]
 	[NewObjectDefaultName( "C# Script" )]
+#if !DEPLOY
 	[SettingsCell( typeof( CSharpScriptSettingsCell ) )]
 	[EditorControl( "NeoAxis.Editor.CSharpScriptEditor" )]
 	[Preview( "NeoAxis.Editor.CSharpScriptPreview" )]
+#endif
 	public class CSharpScript : Component, IFlowGraphRepresentationData, IFlowExecutionComponent
 	{
 		////!!!!is not used
@@ -37,9 +39,11 @@ namespace NeoAxis
 		List<MethodParameterPropertyImpl> propertyMethodParameters;
 		MethodParameterPropertyImpl propertyMethodReturnParameter;
 
+#if !DEPLOY
 		//FlowGraph
 		ImageComponent cachedFlowGraphNodeImage;
 		EditorAssemblyInterface.IScriptPrinter cachedFlowGraphNodeImageScriptPrinter;
+#endif
 
 		//!!!!
 		bool disableUpdate;
@@ -622,7 +626,8 @@ namespace NeoAxis
 				compiledScript = ScriptingCSharpEngine.GetOrCompileScript( compiledCode, out var error );
 				if( !string.IsNullOrEmpty( error ) )
 				{
-					Log.Warning( $"Unable to compile script.\r\n\r\nComponent \"{GetPathFromRoot( true )}\".\r\n\r\n" + error );
+					var path = ComponentUtility.GetOwnedFileNameOfComponent( this );
+					Log.Warning( $"Unable to compile script.\r\n\r\nResource: {path}.\r\nComponent \"{GetPathFromRoot( true )}\".\r\n\r\n" + error );
 					return;
 				}
 
@@ -902,9 +907,11 @@ namespace NeoAxis
 				propertyMethodParameters = null;
 				propertyMethodReturnParameter = null;
 
+#if !DEPLOY
 				// clear cached texture for flow graph
 				cachedFlowGraphNodeImage?.Dispose();
 				cachedFlowGraphNodeImage = null;
+#endif
 			}
 		}
 
@@ -970,6 +977,7 @@ namespace NeoAxis
 		/////////////////////////////////////////
 		//Invoke Method
 
+#if !DEPLOY
 		public virtual void GetFlowGraphRepresentationData( FlowGraphRepresentationData data )
 		{
 			if( compiledOneMethod != null )
@@ -998,6 +1006,7 @@ namespace NeoAxis
 					data.NodeContentType = FlowGraphNodeContentType.Flow;
 			}
 		}
+#endif
 
 		void IFlowExecutionComponent.FlowExecution( Flow flow, Flow.ExecutionStackItem entryItem, ref bool sleep )
 		{
@@ -1011,7 +1020,7 @@ namespace NeoAxis
 			}
 		}
 
-		void Invoke()
+		public void Invoke()
 		{
 			//!!!!
 

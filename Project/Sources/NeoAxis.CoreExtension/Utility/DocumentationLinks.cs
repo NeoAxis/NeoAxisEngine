@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #if !DEPLOY
 using System;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace NeoAxis.Editor
 			("Component",typeof(Component)),
 			("Text File",typeof(NewResourceType_TextFile)),
 			("Component Host",typeof(ComponentHost)),
-			("Compute Using Threads",typeof(ComputeUsingThreads)),
+			//("Compute Using Threads",typeof(ComputeUsingThreads)),
 
 			//Scripting
 			("CSharp File",typeof(NewResourceType_CSharpClass)),
@@ -73,6 +73,7 @@ namespace NeoAxis.Editor
 			//Scene common
 			("Scene",typeof(Scene)),
 			("Material",typeof(Material)),
+			("Multi Material",typeof(MultiMaterial)),
 			("Surface",typeof(Surface)),
 			("Image",typeof(ImageComponent)),
 			("Paint Layer",typeof(PaintLayer)),
@@ -138,7 +139,7 @@ namespace NeoAxis.Editor
 			("Mesh Shape",typeof(CollisionShape_Mesh)),
 			("Physical Material",typeof(PhysicalMaterial)),
 			("Soft Body",typeof(SoftBody)),
-			("Constraint",typeof(Constraint)),
+			("Constraint SixDOF",typeof(Constraint_SixDOF)),
 			//("Sensor",typeof(Sensor)), 
 
 			//Particles
@@ -215,14 +216,14 @@ namespace NeoAxis.Editor
 			("Character AI Turn Switch",typeof(CharacterAITask_TurnSwitch)),
 			("Character AI Wait",typeof(CharacterAITask_Wait)),
 			("Vehicle",typeof(Vehicle)),
-			("Vehicle Character Seat",typeof(VehicleCharacterSeat)),
+			("Vehicle Character Seat",typeof(VehicleSeat)),
 			("Vehicle Input Processing",typeof(VehicleInputProcessing)),
 			("Vehicle AI",typeof(VehicleAI)),
 			("Vehicle AI Move To Position",typeof(VehicleAITask_MoveToPosition)),
 			("Vehicle AI Move To Object",typeof(VehicleAITask_MoveToObject)),
 			("Weapon",typeof(Weapon)),
 			("Bullet",typeof(Bullet)),
-			("Explosion",typeof(Explosion)),
+			//("Explosion",typeof(Explosion)),
 			("Door Component",typeof(Door)),
 
 			//2D

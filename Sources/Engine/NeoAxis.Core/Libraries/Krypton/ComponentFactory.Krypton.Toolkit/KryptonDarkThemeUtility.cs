@@ -1,4 +1,5 @@
-﻿using System;
+#if !DEPLOY
+using System;
 using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -13,3 +14,5 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         public static bool DarkTheme;
     }
 }
+
+#endif

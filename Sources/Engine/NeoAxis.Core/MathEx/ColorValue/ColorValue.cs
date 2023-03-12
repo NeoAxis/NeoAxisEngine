@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
@@ -6,6 +6,7 @@ using System.Drawing.Design;
 using System.Runtime.InteropServices;
 using NeoAxis.Editor;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -39,6 +40,7 @@ namespace NeoAxis
 		public static readonly ColorValue Zero = new ColorValue( 0, 0, 0, 0 );
 		public static readonly ColorValue One = new ColorValue( 1, 1, 1, 1 );
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ColorValue( ColorValue source )
 		{
 			this.Red = source.Red;
@@ -47,6 +49,7 @@ namespace NeoAxis
 			this.Alpha = source.Alpha;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public ColorValue( Vector4 source )
 		{
@@ -56,6 +59,7 @@ namespace NeoAxis
 			this.Alpha = (float)source.W;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public ColorValue( Vector4F source )
 		{
@@ -65,6 +69,7 @@ namespace NeoAxis
 			this.Alpha = source.W;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public ColorValue( Vector3 source )
 		{
@@ -74,6 +79,7 @@ namespace NeoAxis
 			this.Alpha = 1;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public ColorValue( Vector3F source )
 		{
@@ -83,6 +89,7 @@ namespace NeoAxis
 			this.Alpha = 1;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[ShaderGenerationFunction( "float4({r}, {g}, {b}, {a})" )]
 		public ColorValue( double r, double g, double b, double a = 1 )
 		{
@@ -92,6 +99,7 @@ namespace NeoAxis
 			this.Alpha = (float)a;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ColorValue( float r, float g, float b, float a = 1 )
 		{
 			this.Red = r;
@@ -100,6 +108,7 @@ namespace NeoAxis
 			this.Alpha = a;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ColorValue( ColorByte source )
 		{
 			Red = (float)source.Red / 255;
@@ -108,6 +117,7 @@ namespace NeoAxis
 			Alpha = (float)source.Alpha / 255;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ColorValue( Color source )
 		{
 			Red = (float)source.R / 255;
@@ -195,16 +205,19 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is ColorValue && this == (ColorValue)obj );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return ( Red.GetHashCode() ^ Green.GetHashCode() ^ Blue.GetHashCode() ^ Alpha.GetHashCode() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[ShaderGenerationFunction( "{v1} + {v2}" )]
 		public static ColorValue operator +( ColorValue v1, ColorValue v2 )
 		{
@@ -216,6 +229,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[ShaderGenerationFunction( "{v1} - {v2}" )]
 		public static ColorValue operator -( ColorValue v1, ColorValue v2 )
 		{
@@ -227,6 +241,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[ShaderGenerationFunction( "{v1} * {v2}" )]
 		public static ColorValue operator *( ColorValue v1, ColorValue v2 )
 		{
@@ -238,6 +253,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[ShaderGenerationFunction( "{v} * {s}" )]
 		public static ColorValue operator *( ColorValue v, float s )
 		{
@@ -249,6 +265,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[ShaderGenerationFunction( "{s} * {v}" )]
 		public static ColorValue operator *( float s, ColorValue v )
 		{
@@ -260,6 +277,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[ShaderGenerationFunction( "{v1} / {v2}" )]
 		public static ColorValue operator /( ColorValue v1, ColorValue v2 )
 		{
@@ -271,6 +289,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[ShaderGenerationFunction( "{v} / {s}" )]
 		public static ColorValue operator /( ColorValue v, float s )
 		{
@@ -283,6 +302,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[ShaderGenerationFunction( "{s} / {v}" )]
 		public static ColorValue operator /( float s, ColorValue v )
 		{
@@ -294,6 +314,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[ShaderGenerationFunction( "-{v}" )]
 		public static ColorValue operator -( ColorValue v )
 		{
@@ -305,6 +326,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Add( ref ColorValue v1, ref ColorValue v2, out ColorValue result )
 		{
 			result.Red = v1.Red + v2.Red;
@@ -313,6 +335,7 @@ namespace NeoAxis
 			result.Alpha = v1.Alpha + v2.Alpha;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Subtract( ref ColorValue v1, ref ColorValue v2, out ColorValue result )
 		{
 			result.Red = v1.Red - v2.Red;
@@ -321,6 +344,7 @@ namespace NeoAxis
 			result.Alpha = v1.Alpha - v2.Alpha;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Multiply( ref ColorValue v1, ref ColorValue v2, out ColorValue result )
 		{
 			result.Red = v1.Red * v2.Red;
@@ -329,6 +353,7 @@ namespace NeoAxis
 			result.Alpha = v1.Alpha * v2.Alpha;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Multiply( ref ColorValue v, float s, out ColorValue result )
 		{
 			result.Red = v.Red * s;
@@ -337,6 +362,7 @@ namespace NeoAxis
 			result.Alpha = v.Alpha * s;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Multiply( float s, ref ColorValue v, out ColorValue result )
 		{
 			result.Red = v.Red * s;
@@ -345,6 +371,7 @@ namespace NeoAxis
 			result.Alpha = v.Alpha * s;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Divide( ref ColorValue v1, ref ColorValue v2, out ColorValue result )
 		{
 			result.Red = v1.Red / v2.Red;
@@ -353,6 +380,7 @@ namespace NeoAxis
 			result.Alpha = v1.Alpha / v2.Alpha;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Divide( ref ColorValue v, float s, out ColorValue result )
 		{
 			float invS = 1.0f / s;
@@ -362,6 +390,7 @@ namespace NeoAxis
 			result.Alpha = v.Alpha * invS;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Divide( float s, ref ColorValue v, out ColorValue result )
 		{
 			result.Red = s / v.Red;
@@ -370,6 +399,7 @@ namespace NeoAxis
 			result.Alpha = s / v.Alpha;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Negate( ref ColorValue v, out ColorValue result )
 		{
 			result.Red = -v.Red;
@@ -469,11 +499,13 @@ namespace NeoAxis
 		//	return result;
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( ColorValue v1, ColorValue v2 )
 		{
 			return ( v1.Red == v2.Red && v1.Green == v2.Green && v1.Blue == v2.Blue && v1.Alpha == v2.Alpha );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( ColorValue v1, ColorValue v2 )
 		{
 			return ( v1.Red != v2.Red || v1.Green != v2.Green || v1.Blue != v2.Blue || v1.Alpha != v2.Alpha );
@@ -481,6 +513,7 @@ namespace NeoAxis
 
 		public unsafe float this[ int index ]
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				if( index < 0 || index > 3 )
@@ -490,6 +523,7 @@ namespace NeoAxis
 					return v[ index ];
 				}
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set
 			{
 				if( index < 0 || index > 3 )
@@ -501,6 +535,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( ColorValue c, float epsilon )
 		{
 			if( Math.Abs( Red - c.Red ) > epsilon )
@@ -514,6 +549,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( ref ColorValue c, float epsilon )
 		{
 			if( Math.Abs( Red - c.Red ) > epsilon )
@@ -527,6 +563,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Clamp( ColorValue min, ColorValue max )
 		{
 			if( Red < min.Red )
@@ -550,6 +587,7 @@ namespace NeoAxis
 				Alpha = max.Alpha;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[ShaderGenerationFunction( "clamp({this}, {min}, {max})" )]
 		public ColorValue GetClamp( ColorValue min, ColorValue max )
 		{
@@ -558,6 +596,7 @@ namespace NeoAxis
 			return r;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Saturate()
 		{
 			if( Red < 0 ) Red = 0;
@@ -570,6 +609,7 @@ namespace NeoAxis
 			else if( Alpha > 1 ) Alpha = 1;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[ShaderGenerationFunction( "saturate({this})" )]
 		public ColorValue GetSaturate()
 		{
@@ -578,41 +618,48 @@ namespace NeoAxis
 			return r;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Vector4 ToVector4()
 		{
 			return new Vector4( Red, Green, Blue, Alpha );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Vector3 ToVector3()
 		{
 			return new Vector3( Red, Green, Blue );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Vector3H ToVector3H()
 		{
 			return new Vector3H( Red, Green, Blue );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Vector4F ToVector4F()
 		{
 			return new Vector4F( Red, Green, Blue, Alpha );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Vector3F ToVector3F()
 		{
 			return new Vector3F( Red, Green, Blue );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ColorValuePowered ToColorValuePowered()
 		{
 			return new ColorValuePowered( this );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Color ToColor()
 		{
 			return Color.FromArgb(
@@ -622,11 +669,13 @@ namespace NeoAxis
 				(int)MathEx.Clamp( Blue * 255, 0, 255 ) );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ColorByte ToColorPacked()
 		{
-			return new ColorByte( this );
+			return new ColorByte( ref this );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[ShaderGenerationFunction( "lerp({v1}, {v2}, {amount})" )]
 		public static ColorValue Lerp( ColorValue v1, ColorValue v2, float amount )
 		{
@@ -638,6 +687,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Lerp( ref ColorValue v1, ref ColorValue v2, float amount, out ColorValue result )
 		{
 			result.Red = v1.Red + ( ( v2.Red - v1.Red ) * amount );
@@ -646,20 +696,39 @@ namespace NeoAxis
 			result.Alpha = v1.Alpha + ( ( v2.Alpha - v1.Alpha ) * amount );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[ShaderGenerationFunction( "{pick1} ? {v1} : {v2}" )]
 		public static ColorValue Select( ColorValue v1, ColorValue v2, bool pick1 )
 		{
 			return pick1 ? v1 : v2;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( ref ColorValue v )
 		{
 			return Red == v.Red && Green == v.Green && Blue == v.Blue && Alpha == v.Alpha;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool Equals( ref ColorValue v1, ref ColorValue v2 )
 		{
 			return v1.Red == v2.Red && v1.Green == v2.Green && v1.Blue == v2.Blue && v1.Alpha == v2.Alpha;
+		}
+
+		/// <summary>
+		/// Converts the current instance of <see cref="Vector2F"/> into the equivalent <see cref="Vector2H"/> structure.
+		/// </summary>
+		/// <returns>The equivalent <see cref="Vector2H"/> structure.</returns>
+		[AutoConvertType]
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public Vector4H ToVector4H()
+		{
+			Vector4H result;
+			result.X = new HalfType( Red );
+			result.Y = new HalfType( Green );
+			result.Z = new HalfType( Blue );
+			result.W = new HalfType( Alpha );
+			return result;
 		}
 	}
 }

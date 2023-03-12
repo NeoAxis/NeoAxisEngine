@@ -127,9 +127,6 @@
   <data name="arrow_up_blue" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\arrow_up_blue.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="CF_Logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\CF_Logo.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="check2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\check2.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

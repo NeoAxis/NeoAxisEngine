@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -23,6 +23,9 @@ namespace NeoAxis
 		//public event Action<ProjectSettingsComponentPage_CSharpEditor> CSharpEditorBuildConfigurationChanged;
 		//ReferenceField<string> _cSharpEditorBuildConfiguration = "Release";
 
+		/// <summary>
+		/// Whether to display line numbers.
+		/// </summary>
 		[Category( "C# Editor" )]
 		[DisplayName( "Display Line Numbers" )]
 		[DefaultValue( false )]
@@ -35,6 +38,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorDisplayLineNumbersChanged;
 		ReferenceField<bool> _cSharpEditorDisplayLineNumbers = false;
 
+		/// <summary>
+		/// Whether to display info markers.
+		/// </summary>
 		[Category( "C# Editor" )]
 		[DisplayName( "Display Info Markers" )]
 		[DefaultValue( false )]
@@ -47,6 +53,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorDisplayInfoMarkersChanged;
 		ReferenceField<bool> _cSharpEditorDisplayInfoMarkers = false;
 
+		/// <summary>
+		/// Whether to display warning markers.
+		/// </summary>
 		[Category( "C# Editor" )]
 		[DisplayName( "Display Warning Markers" )]
 		[DefaultValue( true )]
@@ -59,6 +68,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorDisplayWarningMarkersChanged;
 		ReferenceField<bool> _cSharpEditorDisplayWarningMarkers = true;
 
+		/// <summary>
+		/// Whether to display error markers.
+		/// </summary>
 		[Category( "C# Editor" )]
 		[DisplayName( "Display Error Markers" )]
 		[DefaultValue( true )]
@@ -71,6 +83,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorDisplayErrorMarkersChanged;
 		ReferenceField<bool> _cSharpEditorDisplayErrorMarkers = true;
 
+		/// <summary>
+		/// Whether to display quick actions.
+		/// </summary>
 		[Category( "C# Editor" )]
 		[DisplayName( "Display Quick Actions" )]
 		[DefaultValue( true )]
@@ -83,6 +98,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorDisplayQuickActionsChanged;
 		ReferenceField<bool> _cSharpEditorDisplayQuickActions = true;
 
+		/// <summary>
+		/// Whether to wrap words.
+		/// </summary>
 		[Category( "C# Editor" )]
 		[DisplayName( "Word Wrap" )]
 		[DefaultValue( true )]
@@ -95,6 +113,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorWordWrapChanged;
 		ReferenceField<bool> _cSharpEditorWordWrap = true;
 
+		/// <summary>
+		/// Whether to enable auto brace completion.
+		/// </summary>
 		[Category( "C# Editor" )]
 		[DisplayName( "Brace Completion" )]
 		[DefaultValue( false )]
@@ -107,6 +128,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorBraceCompletionChanged;
 		ReferenceField<bool> _cSharpEditorBraceCompletion = false;
 
+		/// <summary>
+		/// Whether to enable auto format when enter semicolon character.
+		/// </summary>
 		[Category( "C# Editor" )]
 		[DisplayName( "Automatically Format Statement On ;" )]
 		[DefaultValue( true )]
@@ -119,6 +143,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorAutomaticallyFormatStatementOnSemicolonChanged;
 		ReferenceField<bool> _cSharpEditorAutomaticallyFormatStatementOnSemicolon = true;
 
+		/// <summary>
+		/// Whether to enable auto format when enter bracket character.
+		/// </summary>
 		[Category( "C# Editor" )]
 		[DisplayName( "Automatically Format Block On }" )]
 		[DefaultValue( true )]
@@ -144,6 +171,9 @@ namespace NeoAxis
 		//public event Action<ProjectSettingsComponentPage_CSharpEditor> CSharpEditorDefaultTextColorLightThemeChanged;
 		//ReferenceField<ColorValue> _cSharpEditorDefaultTextColorLightTheme = new ColorValue( 0.1, 0.1, 0.1 );
 
+		/// <summary>
+		/// The name of the font.
+		/// </summary>
 		[Category( "C# Editor" )]
 		[DisplayName( "Font" )]
 		[DefaultValue( "Consolas" )]
@@ -156,6 +186,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorFontChanged;
 		ReferenceField<string> _cSharpEditorFont = "Consolas";
 
+		/// <summary>
+		/// The size of the font.
+		/// </summary>
 		[Category( "C# Editor" )]
 		[DisplayName( "Font Size" )]
 		[DefaultValue( 13.0 )]
@@ -169,6 +202,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorFontSizeChanged;
 		ReferenceField<double> _cSharpEditorFontSize = 13.0;
 
+		/// <summary>
+		/// The background color for the light theme.
+		/// </summary>
 		[Category( "C# Editor" )]
 		[DisplayName( "Background Color for Light Theme" )]
 		[DefaultValue( "0.98 0.98 0.98" )]
@@ -182,6 +218,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorBackgroundColorLightThemeChanged;
 		ReferenceField<ColorValue> _cSharpEditorBackgroundColorLightTheme = new ColorValue( 0.98, 0.98, 0.98 );
 
+		/// <summary>
+		/// The background color for the dark theme.
+		/// </summary>
 		[Category( "C# Editor" )]
 		[DisplayName( "Background Color for Dark Theme" )]
 		[DefaultValue( "0.1 0.1 0.1" )]
@@ -195,6 +234,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorBackgroundColorDarkThemeChanged;
 		ReferenceField<ColorValue> _cSharpEditorBackgroundColorDarkTheme = new ColorValue( 0.1, 0.1, 0.1 );
 
+		/// <summary>
+		/// The background color of selected text for the light theme.
+		/// </summary>
 		[Category( "C# Editor" )]
 		[DisplayName( "Selection Background for Light Theme" )]
 		[DefaultValue( "0.4 0.6 1" )]
@@ -208,6 +250,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorSelectionBackgroundLightThemeChanged;
 		ReferenceField<ColorValue> _cSharpEditorSelectionBackgroundLightTheme = new ColorValue( 0.4, 0.6, 1 );
 
+		/// <summary>
+		/// The foreground color of selected text for the light theme.
+		/// </summary>
 		[Category( "C# Editor" )]
 		[DisplayName( "Selection Foreground for Light Theme" )]
 		[DefaultValue( "0.1 0.1 0.1" )]
@@ -221,6 +266,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorSelectionForegroundLightThemeChanged;
 		ReferenceField<ColorValue> _cSharpEditorSelectionForegroundLightTheme = new ColorValue( 0.1, 0.1, 0.1 );
 
+		/// <summary>
+		/// The background color of selected text for the dark theme.
+		/// </summary>
 		[Category( "C# Editor" )]
 		[DisplayName( "Selection Background for Dark Theme" )]
 		[DefaultValue( "0.25 0.37 0.62" )]
@@ -234,6 +282,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorSelectionBackgroundDarkThemeChanged;
 		ReferenceField<ColorValue> _cSharpEditorSelectionBackgroundDarkTheme = new ColorValue( 0.25, 0.37, 0.62 );
 
+		/// <summary>
+		/// The foreground color of selected text for the dark theme.
+		/// </summary>
 		[Category( "C# Editor" )]
 		[DisplayName( "Selection Foreground for Dark Theme" )]
 		[DefaultValue( "0.9 0.9 0.9" )]
@@ -247,6 +298,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorSelectionForegroundDarkThemeChanged;
 		ReferenceField<ColorValue> _cSharpEditorSelectionForegroundDarkTheme = new ColorValue( 0.9, 0.9, 0.9 );
 
+		/// <summary>
+		/// The background color of search text for the light theme.
+		/// </summary>
 		[Category( "C# Editor" )]
 		[DisplayName( "Search Background for Light Theme" )]
 		[DefaultValue( "1 0 0" )]
@@ -260,6 +314,9 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorSearchBackgroundLightThemeChanged;
 		ReferenceField<ColorValue> _cSharpEditorSearchBackgroundLightTheme = new ColorValue( 1, 0, 0 );
 
+		/// <summary>
+		/// The background color of search text for the dark theme.
+		/// </summary>
 		[Category( "C# Editor" )]
 		[DisplayName( "Search Background for Dark Theme" )]
 		[DefaultValue( "0.8 0.16 0.16" )]

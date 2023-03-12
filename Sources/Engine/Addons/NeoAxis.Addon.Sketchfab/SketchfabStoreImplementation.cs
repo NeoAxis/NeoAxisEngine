@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -290,6 +290,7 @@ namespace NeoAxis
 			StopCurrentTask();
 
 			var thread = new Thread( ThreadGetStoreItems );
+			thread.IsBackground = true;
 			var threadItem = new ThreadItem() { thread = thread, search = search, filterSettings = filterSettings };
 			currentThread = threadItem;
 
@@ -312,7 +313,7 @@ namespace NeoAxis
 			{
 				StoresWindow.needOpenOptions = true;
 
-				throw new Exception( "Sketchfab: Need to enter login information in the options of the Stores window." );
+				throw new Exception( "Sketchfab: Please specify your Sketchfab login info in the options of the Stores window." );
 			}
 
 			var client = new HttpClient();

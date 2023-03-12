@@ -1,8 +1,9 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Internal.Fbx;
 
 namespace NeoAxis
@@ -84,20 +85,36 @@ namespace NeoAxis
 
 					//Normal
 					{
-						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.Normal, out VertexElement element ) && element.Type == VertexElementType.Float3 )
+						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.Normal, out VertexElement element ) )
 						{
-							var buffer = oper.VertexBuffers[ element.Source ];
-							normals = buffer.ExtractChannel<Vector3F>( element.Offset );
+							if( element.Type == VertexElementType.Float3 )
+							{
+								var buffer = oper.VertexBuffers[ element.Source ];
+								normals = buffer.ExtractChannel<Vector3F>( element.Offset );
+							}
+							else if( element.Type == VertexElementType.Half3 )
+							{
+								var buffer = oper.VertexBuffers[ element.Source ];
+								normals = buffer.ExtractChannel<Vector3H>( element.Offset ).Select( v => v.ToVector3F() ).ToArray();
+							}
 						}
 					}
 
 					//TexCoord
 					for( var channel = VertexElementSemantic.TextureCoordinate0; channel <= VertexElementSemantic.TextureCoordinate3; channel++ )
 					{
-						if( oper.VertexStructure.GetElementBySemantic( channel, out VertexElement element ) && element.Type == VertexElementType.Float2 )
+						if( oper.VertexStructure.GetElementBySemantic( channel, out VertexElement element ) )
 						{
-							var buffer = oper.VertexBuffers[ element.Source ];
-							texCoords.Add( buffer.ExtractChannel<Vector2F>( element.Offset ) );
+							if( element.Type == VertexElementType.Float2 )
+							{
+								var buffer = oper.VertexBuffers[ element.Source ];
+								texCoords.Add( buffer.ExtractChannel<Vector2F>( element.Offset ) );
+							}
+							else if( element.Type == VertexElementType.Half2 )
+							{
+								var buffer = oper.VertexBuffers[ element.Source ];
+								texCoords.Add( buffer.ExtractChannel<Vector2H>( element.Offset ).Select( v => v.ToVector2F() ).ToArray() );
+							}
 						}
 					}
 
@@ -109,6 +126,15 @@ namespace NeoAxis
 							{
 								var buffer = oper.VertexBuffers[ element.Source ];
 								var values = buffer.ExtractChannel<Vector4F>( element.Offset );
+								colors = new ColorValue[ positions.Length ];
+								int destIndex = 0;
+								foreach( var p in values )
+									colors[ destIndex++ ] = p.ToColorValue();
+							}
+							if( element.Type == VertexElementType.Half4 )
+							{
+								var buffer = oper.VertexBuffers[ element.Source ];
+								var values = buffer.ExtractChannel<Vector4H>( element.Offset );
 								colors = new ColorValue[ positions.Length ];
 								int destIndex = 0;
 								foreach( var p in values )
@@ -142,10 +168,14 @@ namespace NeoAxis
 					//Tangent, Binormal
 					if( normals != null )
 					{
-						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.Tangent, out VertexElement element ) && element.Type == VertexElementType.Float4 )
+						if( oper.VertexStructure.GetElementBySemantic( VertexElementSemantic.Tangent, out VertexElement element ) && ( element.Type == VertexElementType.Float4 || element.Type == VertexElementType.Half4 ) )
 						{
 							var buffer = oper.VertexBuffers[ element.Source ];
-							var tangents4 = buffer.ExtractChannel<Vector4F>( element.Offset );
+							Vector4F[] tangents4;
+							if( element.Type == VertexElementType.Float4 )
+								tangents4 = buffer.ExtractChannel<Vector4F>( element.Offset );
+							else
+								tangents4 = buffer.ExtractChannel<Vector4H>( element.Offset ).Select( v => v.ToVector4F() ).ToArray();
 
 							tangents = new Vector3F[ tangents4.Length ];
 							binormals = new Vector3F[ tangents4.Length ];

@@ -86,6 +86,78 @@
     <ClCompile Include="..\..\..\src\topology.cpp" />
     <ClCompile Include="..\..\..\src\vertexlayout.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\bx\include\bx\inline\allocator.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\bounds.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\bx.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\cpu.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\easing.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\endian.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\error.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\float4x4_t.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\handlealloc.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\hash.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\math.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\mpscqueue.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\mutex.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\os.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\pixelformat.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\readerwriter.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\ringbuffer.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\rng.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\simd128_langext.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\simd128_neon.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\simd128_ref.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\simd128_sse.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\simd128_swizzle.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\simd256_avx.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\simd256_ref.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\simd_ni.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\sort.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\spscqueue.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\string.inl" />
+    <None Include="..\..\..\..\bx\include\bx\inline\uint32_t.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\bx\include\bx\allocator.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\bounds.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\bx.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\commandline.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\config.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\constants.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\cpu.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\debug.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\easing.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\endian.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\error.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\file.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\filepath.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\float4x4_t.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\handlealloc.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\hash.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\macros.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\maputil.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\math.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\mpscqueue.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\mutex.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\os.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\pixelformat.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\platform.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\process.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\readerwriter.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\ringbuffer.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\rng.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\semaphore.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\settings.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\simd_t.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\sort.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\spscqueue.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\string.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\thread.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\timer.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\uint32_t.h" />
+    <ClInclude Include="..\..\..\..\bx\include\bx\url.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{85F5B410-5450-430A-A385-56231A8640D3}</ProjectGuid>
     <RootNamespace>libbgfx</RootNamespace>
@@ -277,7 +349,7 @@
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(StlIncludeDirectories);$(Sysroot)\usr\include;..\..\..\include;..\..\..\..\..\..\NativeMemoryManager;..\..\..\..\bx\include;..\..\..\..\bx\3rdparty;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty;..\..\..\..\bimg\3rdparty\astc-codec\include;..\..\..\..\bimg\3rdparty\astc-codec;..\..\..\3rdparty\khronos;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;NDEBUG;_MT;_SECURE_SCL=0;BGFX_CONFIG_RENDERER_VUL___KAN=10;BGFX_CONFIG_RENDERER_OPENGLES=32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;NDEBUG;_MT;_SECURE_SCL=0;BGFX_CONFIG_RENDERER_VUL___KAN=10;BGFX_CONFIG_RENDERER_OPENGLES=32;BX_CONFIG_DEBUG=0;BGFX_CONFIG_DEBUG=0;BGFX_CONFIG_DEBUG_UNIFORM=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -291,6 +363,7 @@
       <ExceptionHandling>Enabled</ExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <AdditionalOptions>-fms-extensions %(AdditionalOptions)</AdditionalOptions>
+      <CppLanguageStandard>c++1z</CppLanguageStandard>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -309,7 +382,7 @@
       </DataExecutionPrevention>
       <ImportLibrary>$(OutDir)libbgfx.lib</ImportLibrary>
       <AdditionalOptions>-z muldefs -lm %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>$(Sysroot)\usr\lib\libm.a;$(Sysroot)\usr\lib\libGLESv2.so;$(Sysroot)\usr\lib\libEGL.so;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm64\usr\lib\libm.a;C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm64\usr\lib\libGLESv2.so;C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm64\usr\lib\libEGL.so;%(AdditionalDependencies)</AdditionalDependencies>
       <DebuggerSymbolInformation>OmitAllSymbolInformation</DebuggerSymbolInformation>
     </Link>
     <PostBuildEvent>
@@ -326,7 +399,7 @@
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(StlIncludeDirectories);$(Sysroot)\usr\include;..\..\..\include;..\..\..\..\..\..\NativeMemoryManager;..\..\..\..\bx\include;..\..\..\..\bx\3rdparty;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty;..\..\..\..\bimg\3rdparty\astc-codec\include;..\..\..\..\bimg\3rdparty\astc-codec;..\..\..\3rdparty\khronos;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=4;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;NDEBUG;_MT;_SECURE_SCL=0;BGFX_CONFIG_RENDERER_VUL___KAN=10;BGFX_CONFIG_RENDERER_OPENGLES=32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=4;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;NDEBUG;_MT;_SECURE_SCL=0;BGFX_CONFIG_RENDERER_VUL___KAN=10;BGFX_CONFIG_RENDERER_OPENGLES=32;BX_CONFIG_DEBUG=0;BGFX_CONFIG_DEBUG=0;BGFX_CONFIG_DEBUG_UNIFORM=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -340,6 +413,7 @@
       <ExceptionHandling>Enabled</ExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <AdditionalOptions>-fms-extensions %(AdditionalOptions)</AdditionalOptions>
+      <CppLanguageStandard>c++1z</CppLanguageStandard>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -358,8 +432,9 @@
       </DataExecutionPrevention>
       <ImportLibrary>$(OutDir)libbgfx.lib</ImportLibrary>
       <AdditionalOptions>-z muldefs -lm %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>$(Sysroot)\usr\lib\libm.a;$(Sysroot)\usr\lib\libGLESv2.so;$(Sysroot)\usr\lib\libEGL.so;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm\usr\lib\libm.a;C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm\usr\lib\libGLESv2.so;C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm\usr\lib\libEGL.so;%(AdditionalDependencies)</AdditionalDependencies>
       <DebuggerSymbolInformation>OmitAllSymbolInformation</DebuggerSymbolInformation>
+      <SharedLibrarySearchPath>%(SharedLibrarySearchPath)</SharedLibrarySearchPath>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(OutDir)$(TargetName)$(TargetExt)" "..\..\..\..\..\..\..\..\Project\Sources\NeoAxis.Player.Android\lib\armeabi-v7a\"</Command>
@@ -429,7 +504,7 @@
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(StlIncludeDirectories);$(Sysroot)\usr\include;..\..\..\include;..\..\..\..\..\..\NativeMemoryManager;..\..\..\..\bx\include;..\..\..\..\bx\3rdparty;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty;..\..\..\..\bimg\3rdparty\astc-codec\include;..\..\..\..\bimg\3rdparty\astc-codec;..\..\..\3rdparty\khronos;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;_DEBUG;_MT;_SECURE_SCL=0;BGFX_CONFIG_RENDERER_VUL___KAN=10;BGFX_CONFIG_RENDERER_OPENGLES=32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;_DEBUG;_MT;_SECURE_SCL=0;BGFX_CONFIG_RENDERER_VUL___KAN=10;BGFX_CONFIG_RENDERER_OPENGLES=32;BX_CONFIG_DEBUG=1;BGFX_CONFIG_DEBUG=1;BGFX_CONFIG_DEBUG_UNIFORM=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>
       </StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -446,13 +521,13 @@
       <LanguageStandard>
       </LanguageStandard>
       <Verbose>false</Verbose>
-      <CppLanguageStandard>c++11</CppLanguageStandard>
+      <CppLanguageStandard>c++1z</CppLanguageStandard>
       <ExceptionHandling>Enabled</ExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <AdditionalOptions>-fms-extensions %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(Sysroot)\usr\lib\libm.a;$(Sysroot)\usr\lib\libGLESv2.so;$(Sysroot)\usr\lib\libEGL.so;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm64\usr\lib\libm.a;C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm64\usr\lib\libGLESv2.so;C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm64\usr\lib\libEGL.so;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <Version>
       </Version>
@@ -484,7 +559,7 @@
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(StlIncludeDirectories);$(Sysroot)\usr\include;..\..\..\include;..\..\..\..\..\..\NativeMemoryManager;..\..\..\..\bx\include;..\..\..\..\bx\3rdparty;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty;..\..\..\..\bimg\3rdparty\astc-codec\include;..\..\..\..\bimg\3rdparty\astc-codec;..\..\..\3rdparty\khronos;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=4;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;_DEBUG;_MT;_SECURE_SCL=0;BGFX_CONFIG_RENDERER_VUL___KAN=10;BGFX_CONFIG_RENDERER_OPENGLES=32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=4;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;_DEBUG;_MT;_SECURE_SCL=0;BGFX_CONFIG_RENDERER_VUL___KAN=10;BGFX_CONFIG_RENDERER_OPENGLES=32;BX_CONFIG_DEBUG=1;BGFX_CONFIG_DEBUG=1;BGFX_CONFIG_DEBUG_UNIFORM=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>
       </StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -501,13 +576,13 @@
       <LanguageStandard>
       </LanguageStandard>
       <Verbose>false</Verbose>
-      <CppLanguageStandard>c++11</CppLanguageStandard>
+      <CppLanguageStandard>c++1z</CppLanguageStandard>
       <ExceptionHandling>Enabled</ExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <AdditionalOptions>-fms-extensions %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(Sysroot)\usr\lib\libm.a;$(Sysroot)\usr\lib\libGLESv2.so;$(Sysroot)\usr\lib\libEGL.so;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm\usr\lib\libm.a;C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm\usr\lib\libGLESv2.so;C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm\usr\lib\libEGL.so;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <Version>
       </Version>

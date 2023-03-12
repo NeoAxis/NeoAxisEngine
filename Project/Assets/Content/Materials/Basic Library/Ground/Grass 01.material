@@ -1,0 +1,145 @@
+// Made with NeoAxis Engine 2022.2.
+
+.component NeoAxis.Material
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"29B2DC3ABFD944687E87E5D8DE199893\"><CGD /><WS UN=\"F6F5F98708C542BFAD9B552AF818F27C\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"CCD58E38B89243D6E6985763F7F7ADA8\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"29B2DC3ABFD944687E87E5D8DE199893\"><KP UN=\"9F457A58B30E4ABD21889B725E30AF0E\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"29B2DC3ABFD944687E87E5D8DE199893\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	BaseColor
+	{
+		GetByReference = "this:$Shader graph\\$Node Invoke Member 1\\$Invoke Member\\__parameter_ReturnValue"
+	}
+	Roughness
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample 2\\$Texture Sample\\R"
+	}
+	Normal
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample 3\\$Texture Sample\\RGBA"
+	}
+	AmbientOcclusion
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample 4\\$Texture Sample\\R"
+	}
+	.component NeoAxis.FlowGraph
+	{
+		Name = Shader graph
+		EditorScrollPosition = 0.764705882352946 0.235294117647057
+		Specialization
+		{
+			GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node
+			Position = 10 -7
+			ControlledObject
+			{
+				GetByReference = "this:..\\.."
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample 1
+			Position = -22 -18
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Texture Sample
+				RemoveTiling = True
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Materials\\Basic Library\\Ground\\Textures\\grass-green-01-albedo.jpg"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample 2
+			Position = -22 -9
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Texture Sample
+				RemoveTiling = True
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Materials\\Basic Library\\Ground\\Textures\\grass-green-01-ambient-occlusion.jpg"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample 3
+			Position = -22 0
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Texture Sample
+				RemoveTiling = True
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Materials\\Basic Library\\Ground\\Textures\\grass-green-01-normal.jpg"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample 4
+			Position = -22 9
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Texture Sample
+				RemoveTiling = True
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Materials\\Basic Library\\Ground\\Textures\\grass-green-01-roughness.jpg"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Invoke Member 1
+			Position = -6 -14
+			ControlledObject
+			{
+				GetByReference = "this:$Invoke Member"
+			}
+			.component NeoAxis.InvokeMember
+			{
+				Name = Invoke Member
+				__parameter_V2 = 0.65 0.65 0.65
+				Member
+				{
+					GetByReference = "NeoAxis.ColorValue|method:op_Multiply(NeoAxis.ColorValue,NeoAxis.ColorValue)"
+				}
+				Exit
+				{
+				}
+				__parameter_V1
+				{
+					GetByReference = "this:..\\..\\$Node Texture Sample 1\\$Texture Sample\\RGBA"
+				}
+			}
+		}
+	}
+}

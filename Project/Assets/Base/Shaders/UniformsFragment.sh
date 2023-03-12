@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 
 #define LIGHTDATA_FRAGMENT_SIZE 29
 //#define LIGHTDATA_FRAGMENT_SIZE 28
@@ -50,33 +50,31 @@
 #define u_materialSubsurfacePower materialStandardFragment[6].x
 #define u_materialRayTracingReflection materialStandardFragment[6].y
 #define u_materialAnisotropyDirectionBasis materialStandardFragment[6].z
-//#define u_materialShininess materialStandardFragment[6].w
+#define u_materialMultiSubMaterialSeparatePassIndex int(materialStandardFragment[6].w)
 #define u_materialDisplacementScale materialStandardFragment[7].x
 #define u_materialReceiveDecals materialStandardFragment[7].y
 #define u_materialUseVertexColor materialStandardFragment[7].z
 #define u_materialSoftParticlesDistance materialStandardFragment[7].w
 
-
-//#if defined(USAGEMODE_MATERIALBLENDFIRST) || defined(USAGEMODE_MATERIALBLENDNOTFIRST)
-//	uniform vec4/*float*/ param_materialBlendMask;
-//#endif
-
-
-void getMaterialData(sampler2D materials, vec4 renderOperationData[5], out vec4 materialStandardFragment[MATERIAL_STANDARD_FRAGMENT_SIZE])
+void getMaterialData( sampler2D materials, uint frameMaterialIndex, out vec4 materialStandardFragment[ MATERIAL_STANDARD_FRAGMENT_SIZE ] )
 {
 #ifdef GLSL
-	float materialIndex = renderOperationData[0].x;
+	//!!!!need?
+	float materialIndex2 = float(frameMaterialIndex);
 	UNROLL
 	for(int n=0;n<MATERIAL_STANDARD_FRAGMENT_SIZE;n++)
 	{
-		int x = int(mod(materialIndex, 64.0) * 8.0 + float(n));
-		int y = int(floor(materialIndex / 64.0));
+		int x = int(mod(materialIndex2, 64.0) * 8.0 + float(n));
+		int y = int(floor(materialIndex2 / 64.0));
 		materialStandardFragment[n] = texelFetch(materials, ivec2(x, y), 0);
 	}
 #else
-	int materialIndex = int(renderOperationData[0].x);
+	uvec2 startIndex = uvec2( ( frameMaterialIndex % 64 ) * 8, frameMaterialIndex / 64 );
 	UNROLL
-	for(int n=0;n<MATERIAL_STANDARD_FRAGMENT_SIZE;n++)
-		materialStandardFragment[n] = texelFetch(materials, ivec2((int)(materialIndex % 64) * 8 + n, (int)(materialIndex / 64)), 0);	
+	for( uint n = 0; n < MATERIAL_STANDARD_FRAGMENT_SIZE; n++ )
+	{
+		materialStandardFragment[ n ] = texelFetch( materials, startIndex + uvec2( n, 0 ), 0 );
+		//materialStandardFragment[ n ] = texelFetch( materials, uvec2( ( frameMaterialIndex % 64 ) * 8 + n, frameMaterialIndex / 64 ), 0 );
+	}
 #endif	
 }

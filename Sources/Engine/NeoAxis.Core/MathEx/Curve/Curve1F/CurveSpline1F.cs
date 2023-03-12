@@ -1,6 +1,7 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace NeoAxis
@@ -10,6 +11,7 @@ namespace NeoAxis
 	/// </summary>
 	public class CurveSpline1F : Curve1F
 	{
+		[MethodImpl( (MethodImplOptions)512 )]
 		protected float GetValueForIndex( int index )
 		{
 			int n = points.Count - 1;
@@ -21,6 +23,7 @@ namespace NeoAxis
 			return points[ index ].value;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		protected float GetTimeForIndex( int index )
 		{
 			int n = points.Count - 1;

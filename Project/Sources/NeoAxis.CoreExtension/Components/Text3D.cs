@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -278,7 +278,7 @@ namespace NeoAxis
 			var scene = ParentScene;
 			if( scene != null )
 			{
-				if( EnabledInHierarchyAndIsNotResource )
+				if( EnabledInHierarchyAndIsInstance )
 				{
 					//scene.ViewportUpdateBefore += Scene_ViewportUpdateBefore;
 					//TransformTool.AllInstances_ModifyCommit += TransformTool_AllInstances_ModifyCommit;
@@ -318,7 +318,7 @@ namespace NeoAxis
 		{
 			DeleteGeneratedData();
 
-			if( EnabledInHierarchyAndIsNotResource )
+			if( EnabledInHierarchyAndIsInstance )
 			{
 				GetGeneratedData();
 				SpaceBoundsUpdate();
@@ -331,13 +331,13 @@ namespace NeoAxis
 		{
 			base.OnUpdate( delta );
 
-			if( EnabledInHierarchyAndIsNotResource && needUpdate )
+			if( EnabledInHierarchyAndIsInstance && needUpdate )
 				Update();
 		}
 
 		void DataWasChanged()
 		{
-			if( EnabledInHierarchyAndIsNotResource )
+			if( EnabledInHierarchyAndIsInstance )
 				needUpdate = true;
 		}
 

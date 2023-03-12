@@ -1,8 +1,9 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -20,6 +21,7 @@ namespace NeoAxis
 		[Serialize]
 		internal float Radius;
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public CapsuleF( CapsuleF source )
 		{
 			Point1 = source.Point1;
@@ -27,6 +29,7 @@ namespace NeoAxis
 			Radius = source.Radius;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public CapsuleF( Vector3F point1, Vector3F point2, float radius )
 		{
 			this.Point1 = point1;
@@ -34,26 +37,31 @@ namespace NeoAxis
 			this.Radius = radius;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is CapsuleF && this == (CapsuleF)obj );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return ( Point1.GetHashCode() ^ Point2.GetHashCode() ^ Radius.GetHashCode() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( CapsuleF v1, CapsuleF v2 )
 		{
 			return ( v1.Point1 == v2.Point1 && v1.Point2 == v2.Point2 && v1.Radius == v2.Radius );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( CapsuleF v1, CapsuleF v2 )
 		{
 			return ( v1.Point1 != v2.Point1 || v1.Point2 != v2.Point2 || v1.Radius != v2.Radius );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( CapsuleF v, float epsilon )
 		{
 			if( !Point1.Equals( ref v.Point1, epsilon ) )
@@ -65,6 +73,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public BoundsF ToBounds()
 		{
 			BoundsF result = new BoundsF( Point1 );
@@ -73,6 +82,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ToBounds( out BoundsF result )
 		{
 			result = new BoundsF( Point1 );
@@ -80,6 +90,7 @@ namespace NeoAxis
 			result.Expand( Radius );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector3F GetCenter()
 		{
 			Vector3F result;
@@ -90,6 +101,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void GetCenter( out Vector3F result )
 		{
 			Vector3F.Add( ref Point1, ref Point2, out result );
@@ -98,6 +110,7 @@ namespace NeoAxis
 			result.Z *= .5f;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float GetLength()
 		{
 			Vector3F result;
@@ -105,6 +118,7 @@ namespace NeoAxis
 			return result.Length();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector3F GetDirection()
 		{
 			Vector3F result;
@@ -113,12 +127,14 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void GetDirection( out Vector3F result )
 		{
 			Vector3F.Subtract( ref Point2, ref Point1, out result );
 			result.Normalize();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Capsule ToCapsule()
 		{
@@ -129,6 +145,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public bool Contains( Vector3F point )
 		{
 			if( Point1 != Point2 )
@@ -166,6 +183,7 @@ namespace NeoAxis
 
 
 #if !DISABLE_IMPLICIT
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator Capsule( CapsuleF v )
 		{
 			return new Capsule( v );

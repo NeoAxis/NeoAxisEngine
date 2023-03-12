@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle( "NeoAxis.Editor" )]
 [assembly: AssemblyDescription( "" )]
 [assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "NeoAxis, Inc." )]
+[assembly: AssemblyCompany( "NeoAxis Group Ltd." )]
 [assembly: AssemblyProduct( "NeoAxis.Editor" )]
-[assembly: AssemblyCopyright( "Copyright (C) NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica." )]
+[assembly: AssemblyCopyright( "Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica." )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
@@ -29,5 +29,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion( "2022.1.2.0" )]
-[assembly: AssemblyFileVersion( "2022.1.2.0" )]
+[assembly: AssemblyVersion( "2023.1.0.0" )]
+[assembly: AssemblyFileVersion( "2023.1.0.0" )]

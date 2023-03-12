@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -672,12 +672,13 @@ namespace NeoAxis
 			bool browsable = true;
 			CloneType cloneable = CloneType.Auto;
 			SerializeType serializable = SerializeType.Auto;
+			bool networkMode = true;
 
 			bool defaultValueSpecified;
 			object defaultValue;
 
 			//!!!!!
-			bool changedEvent = true;
+			//bool changedEvent = true;
 
 			//!!!!!!
 			string signature;
@@ -786,6 +787,12 @@ namespace NeoAxis
 			{
 				get { return serializable; }
 				set { serializable = value; }
+			}
+
+			public bool NetworkMode
+			{
+				get { return networkMode; }
+				set { networkMode = value; }
 			}
 
 			public bool DefaultValueSpecified
@@ -1076,6 +1083,8 @@ namespace NeoAxis
 			EDictionary<string, long> enumElements;
 			bool enumFlags;
 
+			//bool? networkMode;
+
 			//!!!!genericParams. на базе ResultCompile<T> что-то создать в редакторе
 			//!!!!generics - это типа как абстрактный класс. еще слоты
 
@@ -1087,7 +1096,7 @@ namespace NeoAxis
 			//
 
 			protected TypeInfo( string name, string displayName, TypeInfo baseType, TypeClassification classification,
-				EDictionary<string, long> enumElements, bool enumFlags )
+				EDictionary<string, long> enumElements, bool enumFlags )//, bool? networkMode )
 			{
 				this.name = name;
 				this.displayName = displayName;
@@ -1096,6 +1105,7 @@ namespace NeoAxis
 				//!!!!клонировать?
 				this.enumElements = enumElements;
 				this.enumFlags = enumFlags;
+				//this.networkMode = networkMode;
 			}
 
 			public string Name
@@ -1127,6 +1137,11 @@ namespace NeoAxis
 			{
 				get { return enumFlags; }
 			}
+
+			//public bool? NetworkMode
+			//{
+			//	get { return networkMode; }
+			//}
 
 			//public object AutoCreatedInstance
 			//{
@@ -1475,8 +1490,8 @@ namespace NeoAxis
 			////////////
 
 			internal NetTypeInfo( string name, string displayName, TypeInfo baseType, TypeClassification classification,
-				EDictionary<string, long> enumElements, bool enumFlags, Type type )
-				: base( name, displayName, baseType, classification, enumElements, enumFlags )
+				EDictionary<string, long> enumElements, bool enumFlags, Type type )//, bool? networkMode )
+				: base( name, displayName, baseType, classification, enumElements, enumFlags )//, networkMode )
 			{
 				this.type = type;
 
@@ -1590,6 +1605,10 @@ namespace NeoAxis
 						if( s != null )
 							m.Serializable = s.Type;
 
+						var n = attrib as NetworkSynchronizeAttribute;
+						if( n != null )
+							m.NetworkMode = n.NetworkMode;
+
 						var d = attrib as DefaultValueAttribute;
 						if( d != null )
 						{
@@ -1664,6 +1683,10 @@ namespace NeoAxis
 						var s = attrib as SerializeAttribute;
 						if( s != null )
 							m.Serializable = s.Type;
+
+						var n = attrib as NetworkSynchronizeAttribute;
+						if( n != null )
+							m.NetworkMode = n.NetworkMode;
 
 						var d = attrib as DefaultValueAttribute;
 						if( d != null )
@@ -2030,8 +2053,8 @@ namespace NeoAxis
 			//
 
 			public ComponentTypeInfo( string name, string displayName, TypeInfo baseType, TypeClassification classification,
-				EDictionary<string, long> enumElements, bool enumFlags, Resource resource, string pathInside, Component basedOnObject )
-				: base( name, displayName, baseType, classification, enumElements, enumFlags )
+				EDictionary<string, long> enumElements, bool enumFlags, Resource resource, string pathInside, Component basedOnObject )//, bool? networkMode )
+				: base( name, displayName, baseType, classification, enumElements, enumFlags )//, networkMode )
 			{
 				this.resource = resource;
 				this.pathInside = pathInside;
@@ -2134,35 +2157,28 @@ namespace NeoAxis
 			//	//return base.MetadataGetMemberByName( type, name, includeBaseTypes );
 			//}
 
-			//!!!!constructorParams?
 			public override object InvokeInstance( object[] constructorParams )
 			{
-				if( constructorParams == null )
-					constructorParams = Array.Empty<object>();
-
-				//!!!!constructor parameters
-				//!!!!Component
+				//if( constructorParams == null )
+				//	constructorParams = Array.Empty<object>();
 
 				var context = new CloneContext();
 				context.TypeOfCloning = CloneContext.TypeOfCloningEnum.CreateInstanceOfType;
 				context.BaseTypeForCreationInstance = this;
 				var newComponent = basedOnObject.Clone( context );
-				//var newComponent = basedOnObject.Clone( null, null, this );
 
 				return newComponent;
+			}
 
-				//Component component = basedOnObject as Component;
-				//if( component != null )
-				//{
-				//	var newComponent = component.Clone( null, null, this );
-				//	return newComponent;
-				//}
-				//else
-				//{
-				//	//!!!!!
-				//	Log.Fatal( "impl" );
-				//	return null;
-				//}
+			public object InvokeInstance( object[] constructorParams, bool cloneChildComponents )
+			{
+				var context = new CloneContext();
+				context.TypeOfCloning = CloneContext.TypeOfCloningEnum.CreateInstanceOfType;
+				context.BaseTypeForCreationInstance = this;
+				context.CloneChildComponents = cloneChildComponents;
+				var newComponent = basedOnObject.Clone( context );
+
+				return newComponent;
 			}
 
 			protected override string OnGetUserFriendlyNameForInstance()
@@ -2318,6 +2334,8 @@ namespace NeoAxis
 		{
 			public string RealFileName;
 			public bool SaveRootComponentName = true;
+			//for networking
+			public bool UseDefaultValue = true;
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2335,6 +2353,9 @@ namespace NeoAxis
 			public TypeOfCloningEnum TypeOfCloning = TypeOfCloningEnum.Usual;
 			public ComponentTypeInfo BaseTypeForCreationInstance;
 			//public TypeInfo baseTypeForCreationInstance;
+
+			//for network client
+			public bool CloneChildComponents = true;
 
 			//!!!!было сделано но не юзалось
 			//public Type overrideClass;

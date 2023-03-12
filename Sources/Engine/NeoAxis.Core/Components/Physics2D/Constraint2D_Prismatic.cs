@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -233,9 +233,9 @@ namespace NeoAxis
 			c.MaxMotorForce = (float)MotorMaxForce;
 		}
 
-		public override void Render( ViewportRenderingContext context, out int verticesRendered )
+		public override void RenderPhysicalObject( ViewportRenderingContext context, out int verticesRendered )
 		{
-			base.Render( context, out verticesRendered );
+			base.RenderPhysicalObject( context, out verticesRendered );
 
 			var context2 = context.ObjectInSpaceRenderingContext;
 			var renderer = context.Owner.Simple3DRenderer;
@@ -260,7 +260,7 @@ namespace NeoAxis
 
 				{
 					var color = new ColorValue( 0, 0, 0 );
-					renderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+					renderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 					renderer.AddLine( pos + tr.Rotation * new Vector3( low, 0, 0 ), pos + tr.Rotation * new Vector3( high, 0, 0 ) );
 					verticesRendered += 2;
 				}
@@ -269,7 +269,7 @@ namespace NeoAxis
 					var color = new ColorValue( 0, 0, 0, 0.4 );
 					var p1 = pos + tr.Rotation * new Vector3( 0, scale, 0 );
 					var p2 = pos + tr.Rotation * new Vector3( 0, -scale, 0 );
-					renderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+					renderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 					renderer.AddLine( p1, p2 );
 					verticesRendered += 2;
 				}
@@ -277,7 +277,7 @@ namespace NeoAxis
 				if( LimitEnabled )
 				{
 					var color = new ColorValue( 1, 0, 0 );
-					renderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+					renderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 					renderer.AddLine(
 						posLow + tr.Rotation * new Vector3( 0, scale, 0 ),
 						posLow + tr.Rotation * new Vector3( 0, -scale, 0 ) );
@@ -294,7 +294,7 @@ namespace NeoAxis
 
 					var p1 = posCurrent + tr.Rotation * new Vector3( 0, scale, 0 );
 					var p2 = posCurrent + tr.Rotation * new Vector3( 0, -scale, 0 );
-					renderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+					renderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 					renderer.AddLine( p1, p2 );
 					verticesRendered += 2;
 				}

@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -231,7 +231,7 @@ namespace NeoAxis
 
 			context.thisObjectWasChecked = true;
 
-			if( SpaceBounds.CalculatedBoundingSphere.Intersects( context.ray, out var scale1, out var scale2 ) )
+			if( SpaceBounds.BoundingSphere.Intersects( context.ray, out var scale1, out var scale2 ) )
 			{
 				var m = GetBillboardMesh();
 
@@ -307,17 +307,19 @@ namespace NeoAxis
 
 				var cameraDistanceMinSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, SpaceBounds );
 
-				var boundingSize = Size.Value.MaxComponent();
-				var visibilityDistance = context.GetVisibilityDistanceByObjectSize( boundingSize ) * VisibilityDistanceFactor;
+				var boundingSize = (float)Size.Value.MaxComponent();
+				var visibilityDistance = context.GetVisibilityDistanceByObjectSize( boundingSize ) * (float)VisibilityDistanceFactor.Value;
 
 				if( cameraDistanceMinSquared < visibilityDistance * visibilityDistance/* || mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum*/ )
 				{
+#if !DEPLOY
 					var allowOutlineSelect = context.renderingPipeline.UseRenderTargets && ProjectSettings.Get.SceneEditor.SceneEditorSelectOutlineEffectEnabled;
+#endif
 
 					var item = new RenderingPipeline.RenderSceneData.BillboardItem();
 					item.Creator = this;
-					SpaceBounds.CalculatedBoundingBox.GetCenter( out item.BoundingBoxCenter );
-					item.BoundingSphere = SpaceBounds.CalculatedBoundingSphere;
+					SpaceBounds.boundingBox.GetCenter( out item.BoundingBoxCenter );
+					item.BoundingSphere = SpaceBounds.BoundingSphere;
 					item.CastShadows = CastShadows && cameraDistanceMinSquared < context.GetShadowVisibilityDistanceSquared( visibilityDistance );
 					item.ShadowOffset = (float)ShadowOffset.Value;
 					item.ReceiveDecals = ReceiveDecals;
@@ -330,6 +332,7 @@ namespace NeoAxis
 					if( specialEffects != null && specialEffects.Count != 0 )
 						item.SpecialEffects = specialEffects;
 
+#if !DEPLOY
 					//display outline effect of editor selection
 					if( mode == GetRenderSceneDataMode.InsideFrustum && allowOutlineSelect && context2.selectedObjects.Contains( this ) )
 					{
@@ -337,7 +340,7 @@ namespace NeoAxis
 						{
 							context2.displayBillboardsCounter++;
 
-							var color = ProjectSettings.Get.General.SelectedColor.Value;
+							var color = ProjectSettings.Get.Colors.SelectedColor.Value;
 							//color.Alpha *= .5f;
 
 							var effect = new ObjectSpecialRenderingEffect_Outline();
@@ -351,15 +354,20 @@ namespace NeoAxis
 							item.SpecialEffects.Add( effect );
 						}
 					}
+#endif
 
 					//!!!!double
 					item.Position = tr.Position.ToVector3F();
 					item.Size = new Vector2( size.X * Math.Max( tr.Scale.X, tr.Scale.Y ), size.Y * tr.Scale.Z ).ToVector2F();
 					item.RotationAngle = Rotation.Value.InRadians().ToRadianF();
 					if( tr.Rotation != Quaternion.Identity )
-						item.RotationAngle += (float)MathEx.DegreeToRadian( tr.Rotation.Angles.Yaw );
+					{
+						tr.Rotation.ToAngles( out var angles );
+						item.RotationAngle += (float)MathEx.DegreeToRadian( angles.Yaw );
+					}
 					item.RotationQuaternion = tr.Rotation.ToQuaternionF();
 					item.Color = Color;
+					item.ColorForInstancingData = RenderingPipeline.GetColorForInstancingData( ref item.Color );
 
 					//PositionPreviousFrame
 					var previousTime = time - context.Owner.LastUpdateTimeStep;
@@ -369,7 +377,7 @@ namespace NeoAxis
 
 					context.FrameData.RenderSceneData.Billboards.Add( ref item );
 
-
+#if !DEPLOY
 					//display editor selection
 					if( mode == GetRenderSceneDataMode.InsideFrustum )
 					{
@@ -381,15 +389,15 @@ namespace NeoAxis
 
 								ColorValue color;
 								if( context2.selectedObjects.Contains( this ) )
-									color = ProjectSettings.Get.General.SelectedColor;
+									color = ProjectSettings.Get.Colors.SelectedColor;
 								else
-									color = ProjectSettings.Get.General.CanSelectColor;
+									color = ProjectSettings.Get.Colors.CanSelectColor;
 								color.Alpha *= .5f;
 
 								var viewport = context.Owner;
 								if( viewport.Simple3DRenderer != null )
 								{
-									viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+									viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 
 									item.GetWorldMatrix( out var worldMatrix );
 
@@ -400,6 +408,7 @@ namespace NeoAxis
 							}
 						}
 					}
+#endif
 				}
 
 				//}

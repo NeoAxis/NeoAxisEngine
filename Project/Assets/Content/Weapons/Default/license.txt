@@ -1,0 +1,11 @@
+Model Information:
+* title:	Xen SLR Rifle
+* source:	https://sketchfab.com/3d-models/xen-slr-rifle-9e8f90bba20b4e3dbfe97d49bfc2b975
+* author:	SamTheCaribbean (https://sketchfab.com/SamTheCaribbean)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Xen SLR Rifle" (https://sketchfab.com/3d-models/xen-slr-rifle-9e8f90bba20b4e3dbfe97d49bfc2b975) by SamTheCaribbean (https://sketchfab.com/SamTheCaribbean) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

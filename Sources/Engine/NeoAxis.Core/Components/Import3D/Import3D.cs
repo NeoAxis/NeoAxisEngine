@@ -1,10 +1,9 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-//using NeoAxis.Import;
 using NeoAxis.Editor;
 using Internal;
 
@@ -13,12 +12,15 @@ namespace NeoAxis
 	/// <summary>
 	/// The component for import of 3D content.
 	/// </summary>
+#if !DEPLOY
 	[EditorControl( typeof( Import3DEditor ) )]
 	[Preview( typeof( Import3DPreview ) )]
 	[PreviewImage( typeof( Import3DPreviewImage ) )]
 	[SettingsCell( typeof( Import3DSettingsCell ) )]
+#endif
 	public class Import3D : Component
 	{
+#if !DEPLOY
 		bool insideDoUpdate;
 
 		public enum ModeEnum
@@ -26,11 +28,10 @@ namespace NeoAxis
 			Auto,
 			OneMesh,
 			Meshes,
-			//!!!!impl
 			//Scene,
 		}
 		/// <summary>
-		/// The mode of the import.
+		/// The mode of the import. You can import into one mesh or to make a set of separated meshes.
 		/// </summary>
 		[DefaultValue( ModeEnum.Auto )]
 		[Serialize]
@@ -59,7 +60,7 @@ namespace NeoAxis
 		ReferenceField<Vector3> _position;
 
 		/// <summary>
-		/// Specifies a result rotation of imported 3D models.
+		/// Specifies a result rotation of imported 3D models. Expand the property to specify rotation by euler angles.
 		/// </summary>
 		[DefaultValue( "0 0 0 1" )]
 		[Serialize]
@@ -89,7 +90,7 @@ namespace NeoAxis
 		ReferenceField<double> _scale = 1.0;
 
 		/// <summary>
-		/// Whether to change a coordinate system to engine system.
+		/// Whether to rotate models to engine's coordinate system. X axis is forward, Z axis is up.
 		/// </summary>
 		[DefaultValue( true )]
 		[Serialize]
@@ -119,98 +120,113 @@ namespace NeoAxis
 		ReferenceField<bool> _centerBySize = false;
 
 		/// <summary>
-		/// Whether to merge geometries with the same format.
+		/// The factor to simplify initial geometry. The reduction makes less amount of triangles with some quality decreasing.
 		/// </summary>
-		[DefaultValue( true )]
-		[Serialize]
+		[DefaultValue( 1.0 )]
+		[Range( 0, 1 )]
 		[Category( "Geometry" )]
-		public Reference<bool> MergeMeshGeometries
+		public Reference<double> Simplify
 		{
-			get { if( _mergeMeshGeometries.BeginGet() ) MergeMeshGeometries = _mergeMeshGeometries.Get( this ); return _mergeMeshGeometries.value; }
-			set { if( _mergeMeshGeometries.BeginSet( ref value ) ) { try { MergeMeshGeometriesChanged?.Invoke( this ); } finally { _mergeMeshGeometries.EndSet(); } } }
+			get { if( _simplify.BeginGet() ) Simplify = _simplify.Get( this ); return _simplify.value; }
+			set { if( _simplify.BeginSet( ref value ) ) { try { SimplifyChanged?.Invoke( this ); } finally { _simplify.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="MergeMeshGeometries"/> property value changes.</summary>
-		public event Action<Import3D> MergeMeshGeometriesChanged;
-		ReferenceField<bool> _mergeMeshGeometries = true;
+		/// <summary>Occurs when the <see cref="Simplify"/> property value changes.</summary>
+		public event Action<Import3D> SimplifyChanged;
+		ReferenceField<double> _simplify = 1.0;
+
+		public enum MergeGeometriesEnum
+		{
+			False,
+			MergeWithSameFormat,
+			MultiMaterial
+		}
 
 		/// <summary>
-		/// Whether to optimize the mesh without losing quality. The optimization includes the merging of almost identical vertices, optimizing for vertex cache, for overdraw and for vertex fetch.
+		/// Whether to merge mesh geometries. The mesh with one geometry will be rendered most effectively, it can be done by using Multi Material setting.
 		/// </summary>
-		[DefaultValue( true )]
+		[DefaultValue( MergeGeometriesEnum.MultiMaterial )]
 		[Category( "Geometry" )]
-		public Reference<bool> Optimize
+		public Reference<MergeGeometriesEnum> MergeGeometries
 		{
-			get { if( _optimize.BeginGet() ) Optimize = _optimize.Get( this ); return _optimize.value; }
-			set { if( _optimize.BeginSet( ref value ) ) { try { OptimizeChanged?.Invoke( this ); } finally { _optimize.EndSet(); } } }
+			get { if( _mergeGeometries.BeginGet() ) MergeGeometries = _mergeGeometries.Get( this ); return _mergeGeometries.value; }
+			set { if( _mergeGeometries.BeginSet( ref value ) ) { try { MergeGeometriesChanged?.Invoke( this ); } finally { _mergeGeometries.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="Optimize"/> property value changes.</summary>
-		public event Action<Import3D> OptimizeChanged;
-		ReferenceField<bool> _optimize = true;
+		/// <summary>Occurs when the <see cref="MergeGeometries"/> property value changes.</summary>
+		public event Action<Import3D> MergeGeometriesChanged;
+		ReferenceField<MergeGeometriesEnum> _mergeGeometries = MergeGeometriesEnum.MultiMaterial;
 
-		/// <summary>
-		/// The threshold value when optimizes the mesh without losing quality. The parameter affects merging of almost identical vertices.
-		/// </summary>
-		[DefaultValue( 0.001 )]
-		[Category( "Geometry" )]
-		[Range( 0.0, 0.01, RangeAttribute.ConvenientDistributionEnum.Exponential, 5 )]
-		public Reference<double> OptimizeThreshold
-		{
-			get { if( _optimizeThreshold.BeginGet() ) OptimizeThreshold = _optimizeThreshold.Get( this ); return _optimizeThreshold.value; }
-			set { if( _optimizeThreshold.BeginSet( ref value ) ) { try { OptimizeThresholdChanged?.Invoke( this ); } finally { _optimizeThreshold.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="OptimizeThreshold"/> property value changes.</summary>
-		public event Action<Import3D> OptimizeThresholdChanged;
-		ReferenceField<double> _optimizeThreshold = 0.001;
+		///// <summary>
+		///// Whether to use enable a virtualized geometry optimization which indended to optimize the rendering of high-poly models.
+		///// </summary>
+		//[DefaultValue( false )]
+		//[Category( "Geometry" )]
+		//public Reference<bool> Virtualize
+		//{
+		//	get { if( _virtualize.BeginGet() ) Virtualize = _virtualize.Get( this ); return _virtualize.value; }
+		//	set { if( _virtualize.BeginSet( ref value ) ) { try { VirtualizeChanged?.Invoke( this ); } finally { _virtualize.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="Virtualize"/> property value changes.</summary>
+		//public event Action<Import3D> VirtualizeChanged;
+		//ReferenceField<bool> _virtualize = false;
+
+		//[DefaultValue( 0.0 )]
+		//[Range( 0, 1 )]
+		//[Category( "Geometry" )]
+		//public Reference<double> VirtualizeProxyFactor
+		//{
+		//	get { if( _virtualizeProxyFactor.BeginGet() ) VirtualizeProxyFactor = _virtualizeProxyFactor.Get( this ); return _virtualizeProxyFactor.value; }
+		//	set { if( _virtualizeProxyFactor.BeginSet( ref value ) ) { try { VirtualizeProxyFactorChanged?.Invoke( this ); } finally { _virtualizeProxyFactor.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="VirtualizeProxyFactor"/> property value changes.</summary>
+		//public event Action<Import3D> VirtualizeProxyFactorChanged;
+		//ReferenceField<double> _virtualizeProxyFactor = 0.0;
+
+
+		///// <summary>
+		///// Whether to calculate clusters, which are intended to increase rendering speed of high-poly models. The clusters do not simplify the model, there is no quality loss.
+		///// </summary>
+		//[DefaultValue( false )]
+		//[Category( "Geometry" )]
+		//public Reference<bool> Clusters
+		//{
+		//	get { if( _clusters.BeginGet() ) Clusters = _clusters.Get( this ); return _clusters.value; }
+		//	set { if( _clusters.BeginSet( ref value ) ) { try { ClustersChanged?.Invoke( this ); } finally { _clusters.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="Clusters"/> property value changes.</summary>
+		//public event Action<Import3D> ClustersChanged;
+		//ReferenceField<bool> _clusters = false;
+
+		///// <summary>
+		///// The allowed cell size range of an internal grid, which is intended to speed up the rendering. '0 0' value means the cell size will select automatically.
+		///// </summary>
+		//[DefaultValue( "0 0" )]
+		//[Category( "Geometry" )]
+		//public Reference<Range> ClusterCellSize
+		//{
+		//	get { if( _clusterCellSize.BeginGet() ) ClusterCellSize = _clusterCellSize.Get( this ); return _clusterCellSize.value; }
+		//	set { if( _clusterCellSize.BeginSet( ref value ) ) { try { ClusterCellSizeChanged?.Invoke( this ); } finally { _clusterCellSize.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="ClusterCellSize"/> property value changes.</summary>
+		//public event Action<Import3D> ClusterCellSizeChanged;
+		//ReferenceField<Range> _clusterCellSize = Range.Zero;
 
 		/// <summary>
 		/// Whether to generate level of detail meshes.
 		/// </summary>
-		[DefaultValue( false )]
-		[DisplayName( "LOD Generate" )]
+		[DefaultValue( true )]
+		[DisplayName( "LODs" )]
 		[Category( "Geometry" )]
-		public Reference<bool> LODGenerate
+		public Reference<bool> LODs
 		{
-			get { if( _lodGenerate.BeginGet() ) LODGenerate = _lodGenerate.Get( this ); return _lodGenerate.value; }
-			set { if( _lodGenerate.BeginSet( ref value ) ) { try { LODGenerateChanged?.Invoke( this ); } finally { _lodGenerate.EndSet(); } } }
+			get { if( _lods.BeginGet() ) LODs = _lods.Get( this ); return _lods.value; }
+			set { if( _lods.BeginSet( ref value ) ) { try { LODsChanged?.Invoke( this ); } finally { _lods.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="LODGenerate"/> property value changes.</summary>
-		public event Action<Import3D> LODGenerateChanged;
-		ReferenceField<bool> _lodGenerate = false;
+		/// <summary>Occurs when the <see cref="LODs"/> property value changes.</summary>
+		public event Action<Import3D> LODsChanged;
+		ReferenceField<bool> _lods = true;
 
 		/// <summary>
-		/// The quality of the first level of detail (LOD0).
-		/// </summary>
-		[DefaultValue( 1.0 )]
-		[Range( 0, 1 )]
-		[DisplayName( "LOD Initial Factor" )]
-		[Category( "Geometry" )]
-		public Reference<double> LODInitialFactor
-		{
-			get { if( _lODInitialFactor.BeginGet() ) LODInitialFactor = _lODInitialFactor.Get( this ); return _lODInitialFactor.value; }
-			set { if( _lODInitialFactor.BeginSet( ref value ) ) { try { LODInitialFactorChanged?.Invoke( this ); } finally { _lODInitialFactor.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="LODInitialFactor"/> property value changes.</summary>
-		public event Action<Import3D> LODInitialFactorChanged;
-		ReferenceField<double> _lODInitialFactor = 1.0;
-
-		/// <summary>
-		/// The quality factor for next level of detail, depending on the previous one.
-		/// </summary>
-		[DefaultValue( 0.4 )]
-		[Range( 0, 1 )]
-		[DisplayName( "LOD Reduction Factor" )]
-		[Category( "Geometry" )]
-		public Reference<double> LODReductionFactor
-		{
-			get { if( _lODReductionFactor.BeginGet() ) LODReductionFactor = _lODReductionFactor.Get( this ); return _lODReductionFactor.value; }
-			set { if( _lODReductionFactor.BeginSet( ref value ) ) { try { LODReductionFactorChanged?.Invoke( this ); } finally { _lODReductionFactor.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="LODReductionFactor"/> property value changes.</summary>
-		public event Action<Import3D> LODReductionFactorChanged;
-		ReferenceField<double> _lODReductionFactor = 0.4;
-
-		/// <summary>
-		/// The amount of levels of detail to generate.
+		/// The result amount of levels of detail.
 		/// </summary>
 		[DefaultValue( 4 )]
 		[Range( 1, 6 )]
@@ -225,12 +241,43 @@ namespace NeoAxis
 		public event Action<Import3D> LODLevelsChanged;
 		ReferenceField<int> _lODLevels = 4;
 
+		///// <summary>
+		///// The method of calculation a simplified mesh.
+		///// </summary>
+		//[DefaultValue( MeshSimplificationMethod.Clusters )]
+		//[DisplayName( "LOD Method" )]
+		//[Category( "Geometry" )]
+		//public Reference<MeshSimplificationMethod> LODMethod
+		//{
+		//	get { if( _lODMethod.BeginGet() ) LODMethod = _lODMethod.Get( this ); return _lODMethod.value; }
+		//	set { if( _lODMethod.BeginSet( ref value ) ) { try { LODMethodChanged?.Invoke( this ); } finally { _lODMethod.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="LODMethod"/> property value changes.</summary>
+		//public event Action<Import3D> LODMethodChanged;
+		//ReferenceField<MeshSimplificationMethod> _lODMethod = MeshSimplificationMethod.Clusters;
+
 		/// <summary>
-		/// The distance from the previous to the next level of detail.
+		/// The quality factor for next level of detail, depending on the previous one. Set 0 to use auto mode.
+		/// </summary>
+		[DefaultValue( 0.0 )]//0.5 )]
+		[Range( 0, 1 )]
+		[DisplayName( "LOD Reduction" )]
+		[Category( "Geometry" )]
+		public Reference<double> LODReduction
+		{
+			get { if( _lODReduction.BeginGet() ) LODReduction = _lODReduction.Get( this ); return _lODReduction.value; }
+			set { if( _lODReduction.BeginSet( ref value ) ) { try { LODReductionChanged?.Invoke( this ); } finally { _lODReduction.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LODReduction"/> property value changes.</summary>
+		public event Action<Import3D> LODReductionChanged;
+		ReferenceField<double> _lODReduction = 0.0;//0.5;
+
+		/// <summary>
+		/// The distance from the previous to the next level of detail. In the default scheme with the one voxel lod, this parameter has sense only when want to move the start distance of the voxel lod. Regardless of the settings, the voxel lod will not turn on while the quality is too small.
 		/// </summary>
 		[DisplayName( "LOD Distance" )]
 		[Category( "Geometry" )]
-		[DefaultValue( 15.0 )]
+		[DefaultValue( 0.0 )]//15.0 )]
 		[Range( 1, 50, RangeAttribute.ConvenientDistributionEnum.Exponential )]
 		public Reference<double> LODDistance
 		{
@@ -239,66 +286,152 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="LODDistance"/> property value changes.</summary>
 		public event Action<Import3D> LODDistanceChanged;
-		ReferenceField<double> _lODDistance = 15.0;
+		ReferenceField<double> _lODDistance = 0.0;//15.0;
 
-		//public enum LODMethodEnum
-		//{
-		//	FastQuadricMeshSimplification,
-		//}
+		/// <summary>
+		/// The distance multiplier when determining the level of detail.
+		/// </summary>
+		[DefaultValue( 1.0 )]
+		[DisplayName( "LOD Scale" )]
+		[Category( "Geometry" )]
+		[Range( 0, 6, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		//[Range( 0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
+		public Reference<double> LODScale
+		{
+			get { if( _lODScale.BeginGet() ) LODScale = _lODScale.Get( this ); return _lODScale.value; }
+			set { if( _lODScale.BeginSet( ref value ) ) { try { LODScaleChanged?.Invoke( this ); } finally { _lODScale.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LODScale"/> property value changes.</summary>
+		[DisplayName( "LOD Scale Changed" )]
+		public event Action<Import3D> LODScaleChanged;
+		ReferenceField<double> _lODScale = 1.0;
+
+		/// <summary>
+		/// Whether to generate a voxel grid for a last LOD.
+		/// </summary>
+		[DefaultValue( true )]
+		[DisplayName( "LOD Voxels" )]
+		[Category( "Geometry" )]
+		public Reference<bool> LODVoxels
+		{
+			get { if( _lODVoxels.BeginGet() ) LODVoxels = _lODVoxels.Get( this ); return _lODVoxels.value; }
+			set { if( _lODVoxels.BeginSet( ref value ) ) { try { LODVoxelsChanged?.Invoke( this ); } finally { _lODVoxels.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LODVoxels"/> property value changes.</summary>
+		public event Action<Import3D> LODVoxelsChanged;
+		ReferenceField<bool> _lODVoxels = true;
+
+		/// <summary>
+		/// The size of a voxel grid of a last LOD.
+		/// </summary>
+		[DefaultValue( VoxelGridSizeEnum._64 )]
+		[DisplayName( "LOD Voxel Grid" )]
+		[Category( "Geometry" )]
+		public Reference<VoxelGridSizeEnum> LODVoxelGrid
+		{
+			get { if( _lODVoxelGrid.BeginGet() ) LODVoxelGrid = _lODVoxelGrid.Get( this ); return _lODVoxelGrid.value; }
+			set { if( _lODVoxelGrid.BeginSet( ref value ) ) { try { LODVoxelGridChanged?.Invoke( this ); } finally { _lODVoxelGrid.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LODVoxelGrid"/> property value changes.</summary>
+		public event Action<Import3D> LODVoxelGridChanged;
+		ReferenceField<VoxelGridSizeEnum> _lODVoxelGrid = VoxelGridSizeEnum._64;
+
+		/// <summary>
+		/// The factor to changing the visibility of thin objects. It is also useful when your model has holes in its shape, the algorithm thinks your model is empty inside.
+		/// </summary>
+		[DefaultValue( 1.0 )] //0.5
+		[Range( 0, 1 )]
+		[DisplayName( "LOD Voxel Thin Factor" )]
+		[Category( "Geometry" )]
+		public Reference<double> LODVoxelThinFactor
+		{
+			get { if( _lODVoxelThinFactor.BeginGet() ) LODVoxelThinFactor = _lODVoxelThinFactor.Get( this ); return _lODVoxelThinFactor.value; }
+			set { if( _lODVoxelThinFactor.BeginSet( ref value ) ) { try { LODVoxelThinFactorChanged?.Invoke( this ); } finally { _lODVoxelThinFactor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LODVoxelThinFactor"/> property value changes.</summary>
+		public event Action<Import3D> LODVoxelThinFactorChanged;
+		ReferenceField<double> _lODVoxelThinFactor = 1.0; //0.5;
+
+		/// <summary>
+		/// Whether to apply the material opacity during the voxel calculation.
+		/// </summary>
+		[DefaultValue( true )]
+		[DisplayName( "LOD Voxel Bake Opacity" )]
+		[Category( "Geometry" )]
+		public Reference<bool> LODVoxelBakeOpacity
+		{
+			get { if( _lODVoxelBakeOpacity.BeginGet() ) LODVoxelBakeOpacity = _lODVoxelBakeOpacity.Get( this ); return _lODVoxelBakeOpacity.value; }
+			set { if( _lODVoxelBakeOpacity.BeginSet( ref value ) ) { try { LODVoxelBakeOpacityChanged?.Invoke( this ); } finally { _lODVoxelBakeOpacity.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LODVoxelBakeOpacity"/> property value changes.</summary>
+		public event Action<Import3D> LODVoxelBakeOpacityChanged;
+		ReferenceField<bool> _lODVoxelBakeOpacity = true;
+
+		/// <summary>
+		/// Whether to modify materials of the voxels to work with maximal performance (deferred rendering support).
+		/// </summary>
+		[DisplayName( "LOD Voxel Optimize Materials" )]
+		[Category( "Geometry" )]
+		[DefaultValue( true )]
+		public Reference<bool> LODVoxelOptimizeMaterials
+		{
+			get { if( _lODVoxelOptimizeMaterials.BeginGet() ) LODVoxelOptimizeMaterials = _lODVoxelOptimizeMaterials.Get( this ); return _lODVoxelOptimizeMaterials.value; }
+			set { if( _lODVoxelOptimizeMaterials.BeginSet( ref value ) ) { try { LODVoxelOptimizeMaterialsChanged?.Invoke( this ); } finally { _lODVoxelOptimizeMaterials.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LODVoxelOptimizeMaterials"/> property value changes.</summary>
+		public event Action<Import3D> LODVoxelOptimizeMaterialsChanged;
+		ReferenceField<bool> _lODVoxelOptimizeMaterials = true;
+
+		/// <summary>
+		/// The maximal distance to fill holes, which happens when ray matching can't find the result because reach max steps limitations.
+		/// </summary>
+		[DisplayName( "LOD Voxel Fill Holes Distance" )]
+		[Category( "Geometry" )]
+		[DefaultValue( 1.1 )]
+		[Range( 0, 1000, RangeAttribute.ConvenientDistributionEnum.Exponential, 5 )]
+		public Reference<double> LODVoxelFillHolesDistance
+		{
+			get { if( _lODVoxelFillHolesDistance.BeginGet() ) LODVoxelFillHolesDistance = _lODVoxelFillHolesDistance.Get( this ); return _lODVoxelFillHolesDistance.value; }
+			set { if( _lODVoxelFillHolesDistance.BeginSet( ref value ) ) { try { LODVoxelFillHolesDistanceChanged?.Invoke( this ); } finally { _lODVoxelFillHolesDistance.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LODVoxelFillHolesDistance"/> property value changes.</summary>
+		public event Action<Import3D> LODVoxelFillHolesDistanceChanged;
+		ReferenceField<double> _lODVoxelFillHolesDistance = 1.1;
 
 		///// <summary>
-		///// The method of automatic LOD generation.
+		///// The format of vertices after clusterization. Basic format contains normal, tangent and texCoord0. Full format also contains texCoord1, texCoord2 and color.
 		///// </summary>
-		//[DefaultValue( LODMethodEnum.FastQuadricMeshSimplification )]
-		//[DisplayName( "LOD Method" )]
-		//[Category( "Import Settings" )]
-		//public Reference<LODMethodEnum> LODMethod
+		//[DefaultValue( VertexFormatEnum.Auto )]
+		//[Category( "Geometry Advanced" )]
+		//public Reference<VertexFormatEnum> VertexFormat
 		//{
-		//	get { if( _lodMethod.BeginGet() ) LODMethod = _lodMethod.Get( this ); return _lodMethod.value; }
-		//	set { if( _lodMethod.BeginSet( ref value ) ) { try { LODMethodChanged?.Invoke( this ); } finally { _lodMethod.EndSet(); } } }
+		//	get { if( _vertexFormat.BeginGet() ) VertexFormat = _vertexFormat.Get( this ); return _vertexFormat.value; }
+		//	set { if( _vertexFormat.BeginSet( ref value ) ) { try { VertexFormatChanged?.Invoke( this ); } finally { _vertexFormat.EndSet(); } } }
 		//}
-		///// <summary>Occurs when the <see cref="LODMethod"/> property value changes.</summary>
-		//public event Action<Import3D> LODMethodChanged;
-		//ReferenceField<LODMethodEnum> _lodMethod = LODMethodEnum.FastQuadricMeshSimplification;
+		///// <summary>Occurs when the <see cref="VertexFormat"/> property value changes.</summary>
+		//public event Action<Import3D> VertexFormatChanged;
+		//ReferenceField<VertexFormatEnum> _vertexFormat = VertexFormatEnum.Auto;
 
-		/// <summary>
-		/// The mode of the last billboard LOD.
-		/// </summary>
-		[DefaultValue( MeshGeometry.BillboardDataModeEnum.None )]
-		[Category( "Geometry" )]
-		[DisplayName( "LOD Billboard Mode" )]
-		public Reference<MeshGeometry.BillboardDataModeEnum> LODBillboardMode
-		{
-			get { if( _lodBillboardMode.BeginGet() ) LODBillboardMode = _lodBillboardMode.Get( this ); return _lodBillboardMode.value; }
-			set { if( _lodBillboardMode.BeginSet( ref value ) ) { try { LODBillboardModeChanged?.Invoke( this ); } finally { _lodBillboardMode.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="LODBillboardMode"/> property value changes.</summary>
-		public event Action<Import3D> LODBillboardModeChanged;
-		ReferenceField<MeshGeometry.BillboardDataModeEnum> _lodBillboardMode = MeshGeometry.BillboardDataModeEnum.None;
+		///// <summary>
+		///// Whether to compress texture coordinates from Float32 to Half16.
+		///// </summary>
+		//[DefaultValue( true )]
+		//[Category( "Geometry" )]
+		//public Reference<bool> CompressTextureCoordinates
+		//{
+		//	get { if( _compressTextureCoordinates.BeginGet() ) CompressTextureCoordinates = _compressTextureCoordinates.Get( this ); return _compressTextureCoordinates.value; }
+		//	set { if( _compressTextureCoordinates.BeginSet( ref value ) ) { try { CompressTextureCoordinatesChanged?.Invoke( this ); } finally { _compressTextureCoordinates.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="CompressTextureCoordinates"/> property value changes.</summary>
+		//public event Action<Import3D> CompressTextureCoordinatesChanged;
+		//ReferenceField<bool> _compressTextureCoordinates = true;
 
-		/// <summary>
-		/// The images size of the last billboard LOD.
-		/// </summary>
-		[DefaultValue( 64 )]
-		[Category( "Geometry" )]
-		[DisplayName( "LOD Billboard Image Size" )]
-		public Reference<int> LODBillboardImageSize
-		{
-			get { if( _lodBillboardImageSize.BeginGet() ) LODBillboardImageSize = _lodBillboardImageSize.Get( this ); return _lodBillboardImageSize.value; }
-			set { if( _lodBillboardImageSize.BeginSet( ref value ) ) { try { LODBillboardImageSizeChanged?.Invoke( this ); } finally { _lodBillboardImageSize.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="LODBillboardImageSize"/> property value changes.</summary>
-		public event Action<Import3D> LODBillboardImageSizeChanged;
-		ReferenceField<int> _lodBillboardImageSize = 64;
-
-		////!!!!
 		///// <summary>
 		///// Whether to calculate the UV unwrapping channel.
 		///// </summary>
-		//[DefaultValue( false )]//!!!!включить по дефолту?
+		//[DefaultValue( false )]включить по дефолту?
 		//[Category( "Material" )]
 		//[DisplayName( "UV Unwrap" )]
-		////[Browsable( false )]//!!!!
 		//public Reference<bool> UVUnwrap
 		//{
 		//	get { if( _uVUnwrap.BeginGet() ) UVUnwrap = _uVUnwrap.Get( this ); return _uVUnwrap.value; }
@@ -308,11 +441,32 @@ namespace NeoAxis
 		//public event Action<Import3D> UVUnwrapChanged;
 		//ReferenceField<bool> _uVUnwrap = false;
 
+		public enum TransparentMaterialBlendingEnum
+		{
+			Opaque,
+			Masked,
+			MaskedDithering,
+			Transparent,
+		}
+
+		/// <summary>
+		/// The blend mode of transparent materials.
+		/// </summary>
+		[DefaultValue( TransparentMaterialBlendingEnum.Transparent )]//MaskedDithering )]
+		[Category( "Material" )]
+		public Reference<TransparentMaterialBlendingEnum> TransparentMaterialBlending
+		{
+			get { if( _transparentMaterialFormat.BeginGet() ) TransparentMaterialBlending = _transparentMaterialFormat.Get( this ); return _transparentMaterialFormat.value; }
+			set { if( _transparentMaterialFormat.BeginSet( ref value ) ) { try { TransparentMaterialsBlendingChanged?.Invoke( this ); } finally { _transparentMaterialFormat.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="TransparentMaterialBlending"/> property value changes.</summary>
+		public event Action<Import3D> TransparentMaterialsBlendingChanged;
+		ReferenceField<TransparentMaterialBlendingEnum> _transparentMaterialFormat = TransparentMaterialBlendingEnum.Transparent;//MaskedDithering;
+
 		/// <summary>
 		/// Whether to flip UV coordinates by vertical axis.
 		/// </summary>
 		[DefaultValue( false )]
-		[Serialize]
 		[Category( "Material" )]
 		public Reference<bool> FlipUVs
 		{
@@ -327,7 +481,6 @@ namespace NeoAxis
 		/// Whether to delete unused materials.
 		/// </summary>
 		[DefaultValue( true )]
-		[Serialize]
 		[Category( "Material" )]
 		public Reference<bool> DeleteUnusedMaterials
 		{
@@ -352,37 +505,49 @@ namespace NeoAxis
 		public event Action<Import3D> MaterialDisplacementChanged;
 		ReferenceField<bool> _materialDisplacement = false;
 
-		//!!!!
+		/// <summary>
+		/// Whether to optimize the mesh without losing quality. The optimization includes the merging of almost identical vertices, optimizing for vertex cache, for overdraw and for vertex fetch.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Geometry Advanced" )]
+		public Reference<bool> Optimize
+		{
+			get { if( _optimize.BeginGet() ) Optimize = _optimize.Get( this ); return _optimize.value; }
+			set { if( _optimize.BeginSet( ref value ) ) { try { OptimizeChanged?.Invoke( this ); } finally { _optimize.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Optimize"/> property value changes.</summary>
+		public event Action<Import3D> OptimizeChanged;
+		ReferenceField<bool> _optimize = true;
 
-		////!!!!description
-		///// <summary>
-		///// The mode of the mesh voxelization. For Auto mode the voxelized will use Basic mode when the number of mesh geometry less or equal 2.
-		///// </summary>
-		//[Category( "Voxelization" )]
-		//[DefaultValue( MeshVoxelizationMode.Auto )]
-		//public Reference<MeshVoxelizationMode> VoxelizationMode
-		//{
-		//	get { if( _voxelizationMode.BeginGet() ) VoxelizationMode = _voxelizationMode.Get( this ); return _voxelizationMode.value; }
-		//	set { if( _voxelizationMode.BeginSet( ref value ) ) { try { VoxelizationModeChanged?.Invoke( this ); } finally { _voxelizationMode.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="VoxelizationMode"/> property value changes.</summary>
-		//public event Action<Import3D> VoxelizationModeChanged;
-		//ReferenceField<MeshVoxelizationMode> _voxelizationMode = MeshVoxelizationMode.Auto;
+		/// <summary>
+		/// The threshold value when optimizes the mesh without losing quality. The parameter affects merging of almost identical vertices.
+		/// </summary>
+		[DefaultValue( 0.001 )]
+		[Category( "Geometry Advanced" )]
+		[Range( 0.0, 0.01, RangeAttribute.ConvenientDistributionEnum.Exponential, 5 )]
+		public Reference<double> OptimizeThreshold
+		{
+			get { if( _optimizeThreshold.BeginGet() ) OptimizeThreshold = _optimizeThreshold.Get( this ); return _optimizeThreshold.value; }
+			set { if( _optimizeThreshold.BeginSet( ref value ) ) { try { OptimizeThresholdChanged?.Invoke( this ); } finally { _optimizeThreshold.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="OptimizeThreshold"/> property value changes.</summary>
+		public event Action<Import3D> OptimizeThresholdChanged;
+		ReferenceField<double> _optimizeThreshold = 0.001;
 
-		////!!!!default
-		///// <summary>
-		///// The size in texels of one side of the mesh voxelization data. It is used for NeoAxis Radiance global illumination technique.
-		///// </summary>
-		//[DefaultValue( MeshVoxelizationSize._32 )]
-		//[Category( "Voxelization" )]
-		//public Reference<MeshVoxelizationSize> VoxelizationSize
-		//{
-		//	get { if( _voxelizationSize.BeginGet() ) VoxelizationSize = _voxelizationSize.Get( this ); return _voxelizationSize.value; }
-		//	set { if( _voxelizationSize.BeginSet( ref value ) ) { try { VoxelizationSizeChanged?.Invoke( this ); } finally { _voxelizationSize.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="VoxelizationSize"/> property value changes.</summary>
-		//public event Action<Import3D> VoxelizationSizeChanged;
-		//ReferenceField<MeshVoxelizationSize> _voxelizationSize = MeshVoxelizationSize._32;
+		//!!!!color, weights can be Byte8
+		/// <summary>
+		/// Whether to compress normals, tangents, colors, texture coordinates and blend weights from Float32 to Half16.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Geometry Advanced" )]
+		public Reference<bool> Compress
+		{
+			get { if( _compress.BeginGet() ) Compress = _compress.Get( this ); return _compress.value; }
+			set { if( _compress.BeginSet( ref value ) ) { try { CompressChanged?.Invoke( this ); } finally { _compress.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Compress"/> property value changes.</summary>
+		public event Action<Import3D> CompressChanged;
+		ReferenceField<bool> _compress = true;
 
 		/////////////////////////////////////////
 
@@ -394,30 +559,54 @@ namespace NeoAxis
 			{
 				switch( member.Name )
 				{
+				case nameof( Name ):
+				case nameof( Enabled ):
+				case nameof( ScreenLabel ):
+				case nameof( NetworkMode ):
+					skip = true;
+					break;
+
 				case nameof( OptimizeThreshold ):
 					if( !Optimize )
 						skip = true;
 					break;
 
-				case nameof( LODInitialFactor ):
-				case nameof( LODReductionFactor ):
+				//case nameof( LODMethod ):
+				case nameof( LODReduction ):
+					if( !LODs || LODLevels.Value < 2 )
+						skip = true;
+					if( LODLevels.Value == 2 && LODVoxels )
+						skip = true;
+					break;
+
 				case nameof( LODLevels ):
 				case nameof( LODDistance ):
-				case nameof( LODBillboardMode ):
-					if( !LODGenerate )
+				case nameof( LODScale ):
+				case nameof( LODVoxels ):
+					if( !LODs )
 						skip = true;
 					break;
 
-				case nameof( LODBillboardImageSize ):
-					if( !LODGenerate || LODBillboardMode.Value == MeshGeometry.BillboardDataModeEnum.None )
+				case nameof( LODVoxelGrid ):
+				//case nameof( LODVoxelFormat ):
+				case nameof( LODVoxelThinFactor ):
+				case nameof( LODVoxelBakeOpacity ):
+				case nameof( LODVoxelOptimizeMaterials ):
+				case nameof( LODVoxelFillHolesDistance ):
+					if( !LODs || !LODVoxels )
 						skip = true;
 					break;
 
-					//!!!!
-				//case nameof( VoxelizationSize ):
-				//	if( VoxelizationMode.Value == MeshVoxelizationMode.None )
-				//		skip = true;
-				//	break;
+					//case nameof( VirtualizeProxyFactor ):
+					//	if( !Virtualize )
+					//		skip = true;
+					//	break;
+
+					//case nameof( ClusterCellSize ):
+					//	//case nameof( ClusterFormat ):
+					//	if( !Clusters )
+					//		skip = true;
+					//	break;
 				}
 			}
 		}
@@ -461,11 +650,10 @@ namespace NeoAxis
 
 		public bool IsNeedUpdate()
 		{
-			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+			if( EngineApp.IsEditor )
 			{
 				if( Parent == null )
 				{
-					//!!!!good?
 					if( Components.Count == 0 )
 						return true;
 
@@ -493,14 +681,22 @@ namespace NeoAxis
 			[DefaultValue( true )]
 			[Category( "Options" )]
 			public bool UpdateObjectsInSpace { get; set; } = true;
+
+			[DefaultValue( false )]
+			[Category( "Options" )]
+			public bool ResetCollision { get; set; } = false;
+
+			[DefaultValue( false )]
+			[Category( "Options" )]
+			public bool ResetEditorSettings { get; set; } = false;
 		}
-		
+
 		//public delegate void UpdatePostProcessDelegate( Import3D import, ImportGeneral.Settings settings );
 		//public static event UpdatePostProcessDelegate UpdatePostProcess;
 
 		public bool DoUpdate( ReimportSettings reimportSettings, out string error )
 		{
-			ScreenNotifications.StickyNotificationItem notification = EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor ? ScreenNotifications.ShowSticky( "Importing..." ) : null;
+			ScreenNotifications.StickyNotificationItem notification = EngineApp.IsEditor ? ScreenNotifications.ShowSticky( "Importing..." ) : null;
 
 			try
 			{
@@ -522,6 +718,8 @@ namespace NeoAxis
 					settings.updateMaterials = reimportSettings.UpdateMaterials;
 					settings.updateMeshes = reimportSettings.UpdateMeshes;
 					settings.updateObjectsInSpace = reimportSettings.UpdateObjectsInSpace;
+					settings.resetCollision = reimportSettings.ResetCollision;
+					settings.resetEditorSettings = reimportSettings.ResetEditorSettings;
 
 					//save binding of materials settings
 					if( !settings.updateMaterials )
@@ -532,8 +730,18 @@ namespace NeoAxis
 							foreach( var geometry in c.GetComponents<MeshGeometry>( checkChildren: true ) )
 							{
 								var key = geometry.GetPathFromRoot();
-								if( !string.IsNullOrEmpty( key ) && geometry.Material.ReferenceSpecified )
-									settings.meshGeometryMaterialsToRestore[ key ] = geometry.Material.GetByReference;
+								if( !string.IsNullOrEmpty( key ) )
+								{
+									if( geometry.Material.ReferenceSpecified )
+										settings.meshGeometryMaterialsToRestore[ key ] = geometry.Material.GetByReference;
+
+									var multiMaterial = geometry.GetComponent<MultiMaterial>( "Material" );
+									if( multiMaterial != null )
+									{
+										var key2 = multiMaterial.GetPathFromRoot();
+										settings.meshGeometryMultiMaterialsToRestore[ key2 ] = (MultiMaterial)multiMaterial.Clone();
+									}
+								}
 							}
 						}
 						c = GetComponent( "Meshes" );
@@ -542,8 +750,67 @@ namespace NeoAxis
 							foreach( var geometry in c.GetComponents<MeshGeometry>( checkChildren: true ) )
 							{
 								var key = geometry.GetPathFromRoot();
-								if( !string.IsNullOrEmpty( key ) && geometry.Material.ReferenceSpecified )
-									settings.meshGeometryMaterialsToRestore[ key ] = geometry.Material.GetByReference;
+								if( !string.IsNullOrEmpty( key ) )
+								{
+									if( geometry.Material.ReferenceSpecified )
+										settings.meshGeometryMaterialsToRestore[ key ] = geometry.Material.GetByReference;
+
+									var multiMaterial = geometry.GetComponent<MultiMaterial>( "Material" );
+									if( multiMaterial != null )
+									{
+										var key2 = multiMaterial.GetPathFromRoot();
+										settings.meshGeometryMultiMaterialsToRestore[ key2 ] = (MultiMaterial)multiMaterial.Clone();
+									}
+								}
+							}
+						}
+					}
+
+					//save collision of meshes
+					if( !settings.resetCollision )
+					{
+						foreach( var mesh in GetMeshes( false ) )
+						{
+							var collision = mesh.GetComponent<RigidBody>( "Collision Definition" );
+							if( collision != null )
+							{
+								var key = mesh.GetPathFromRoot();
+								if( !string.IsNullOrEmpty( key ) )
+								{
+									//make a clone
+									settings.collisionToRestore[ key ] = (RigidBody)collision.Clone();
+								}
+							}
+						}
+					}
+
+					//save editor settings
+					if( !settings.resetEditorSettings )
+					{
+						foreach( var mesh in GetMeshes( false ) )
+						{
+							var key = mesh.GetPathFromRoot();
+							if( !string.IsNullOrEmpty( key ) )
+							{
+								var item = new ImportGeneral.Settings.MeshEditorSettings();
+
+								item.EditorDisplayPivot = mesh.EditorDisplayPivot;
+								item.EditorDisplayBounds = mesh.EditorDisplayBounds;
+								item.EditorDisplayTriangles = mesh.EditorDisplayTriangles;
+								item.EditorDisplayVertices = mesh.EditorDisplayVertices;
+								item.EditorDisplayNormals = mesh.EditorDisplayNormals;
+								item.EditorDisplayTangents = mesh.EditorDisplayTangents;
+								item.EditorDisplayBinormals = mesh.EditorDisplayBinormals;
+								item.EditorDisplayVertexColor = mesh.EditorDisplayVertexColor;
+								item.EditorDisplayUV = mesh.EditorDisplayUV;
+								item.EditorDisplayProxyMesh = mesh.EditorDisplayProxyMesh;
+								item.EditorDisplayLOD = mesh.EditorDisplayLOD;
+								item.EditorDisplayCollision = mesh.EditorDisplayCollision;
+								item.EditorDisplaySkeleton = mesh.EditorDisplaySkeleton;
+								item.EditorPlayAnimation = mesh.EditorPlayAnimation;
+								item.EditorCameraTransform = mesh.EditorCameraTransform;
+
+								settings.meshEditorSeetingsToRestore[ key ] = item;
 							}
 						}
 					}
@@ -622,23 +889,65 @@ namespace NeoAxis
 					//		return false;
 					//}
 
-					//merge equal vertices, remove extra triangles, 
-					if( Optimize && OptimizeThreshold.Value > 0 )
-						OptimizeByThreshold( false );
-
-					//generate LODs and optimize
-					if( LODGenerate )
+					//simplify
+					if( Simplify.Value < 1 )
 					{
-						if( !GenerateLODs( out error ) )
+						if( !GenerateLODsAndReductLOD0( true, out error ) )
 							return false;
 					}
 
+					//merge equal vertices, remove extra triangles, 
+					if( Optimize && OptimizeThreshold.Value >= 0 )
+						OptimizeByThreshold( false );
+
+					//generate LODs
+					if( LODs )
+					{
+						if( !GenerateLODsAndReductLOD0( false, out error ) )
+							return false;
+					}
+
+					////generate LODs and optimize
+					//if( LODs || Simplify.Value < 1 )
+					//{
+					//	if( !GenerateLODsAndReductLOD0( out error ) )
+					//		return false;
+					//}
+
 					//optimize for vertex cache
-					if( Optimize && OptimizeThreshold.Value > 0 )
+					if( Optimize && OptimizeThreshold.Value >= 0 )
 						OptimizeByThreshold( true );
 
-					if( Optimize )
+					//compress vertices
+					if( Compress )//&& !Virtualize )
+					{
+						CompressVertices( false );
+						CompressVertices( true );
+					}
+
+					//optimize
+					if( Optimize )//&& !Virtualize )
 						OptimizeCaches();
+
+					//merge to multimaterial
+					if( MergeGeometries.Value == MergeGeometriesEnum.MultiMaterial )
+					{
+						var meshes = GetMeshes( false );
+						meshes.AddRange( GetMeshes( true ) );
+
+						foreach( var mesh in meshes )
+							MergeToMultiMaterial( mesh );
+					}
+
+					////calculate virtualized data
+					//if( Virtualize )
+					//{
+					//	var meshes = GetMeshes( false );
+					//	meshes.AddRange( GetMeshes( true ) );
+
+					//	foreach( var mesh in meshes )
+					//		CalculateVirtualizedMesh( mesh );
+					//}
 
 					////generate LODs and optimize
 					//if( LODGenerate || Optimize )
@@ -657,7 +966,19 @@ namespace NeoAxis
 						{
 							var material = meshGeometry.Material.Value;
 							if( material != null )
+							{
 								usedMaterials.AddWithCheckAlreadyContained( material );
+
+								var multiMaterial = material as MultiMaterial;
+								if( multiMaterial != null )
+								{
+									foreach( var m in multiMaterial.Materials )
+									{
+										if( m.Value != null )
+											usedMaterials.AddWithCheckAlreadyContained( m.Value );
+									}
+								}
+							}
 						}
 
 						again:
@@ -684,11 +1005,66 @@ namespace NeoAxis
 							if( c != null )
 								c.Material = new Reference<Material>( null, value );
 						}
+
+						foreach( var item in settings.meshGeometryMultiMaterialsToRestore )
+						{
+							var key = item.Key;
+							var multiMaterial = item.Value;
+
+							var sourceMultiMaterial = GetComponentByPath( key ) as MultiMaterial;
+							if( sourceMultiMaterial != null )
+							{
+								var parent = sourceMultiMaterial.Parent;
+								sourceMultiMaterial.Dispose();
+								parent.AddComponent( multiMaterial );
+							}
+						}
 					}
 
-					//!!!!
-					//if( VoxelizationMode.Value != MeshVoxelizationMode.None )
-					//	Voxelize();
+					//restore collision of meshes
+					if( !settings.resetCollision )
+					{
+						foreach( var item in settings.collisionToRestore )
+						{
+							var key = item.Key;
+							var value = item.Value;
+
+							var mesh = GetComponentByPath( key ) as Mesh;
+							if( mesh != null )
+								mesh.AddComponent( value );
+						}
+					}
+
+					//save editor settings
+					if( !settings.resetEditorSettings )
+					{
+
+						foreach( var item in settings.meshEditorSeetingsToRestore )
+						{
+							var key = item.Key;
+							var value = item.Value;
+
+							var mesh = GetComponentByPath( key ) as Mesh;
+							if( mesh != null )
+							{
+								mesh.EditorDisplayPivot = value.EditorDisplayPivot;
+								mesh.EditorDisplayBounds = value.EditorDisplayBounds;
+								mesh.EditorDisplayTriangles = value.EditorDisplayTriangles;
+								mesh.EditorDisplayVertices = value.EditorDisplayVertices;
+								mesh.EditorDisplayNormals = value.EditorDisplayNormals;
+								mesh.EditorDisplayTangents = value.EditorDisplayTangents;
+								mesh.EditorDisplayBinormals = value.EditorDisplayBinormals;
+								mesh.EditorDisplayVertexColor = value.EditorDisplayVertexColor;
+								mesh.EditorDisplayUV = value.EditorDisplayUV;
+								mesh.EditorDisplayProxyMesh = value.EditorDisplayProxyMesh;
+								mesh.EditorDisplayLOD = value.EditorDisplayLOD;
+								mesh.EditorDisplayCollision = value.EditorDisplayCollision;
+								mesh.EditorDisplaySkeleton = value.EditorDisplaySkeleton;
+								mesh.EditorPlayAnimation = value.EditorPlayAnimation;
+								mesh.EditorCameraTransform = value.EditorCameraTransform;
+							}
+						}
+					}
 				}
 				finally
 				{
@@ -730,8 +1106,7 @@ namespace NeoAxis
 					EditorDocumentConfiguration = KryptonConfigGenerator.CreateEditorDocumentXmlConfiguration( toSelect, selectObject );
 
 					//update windows
-					//!!!!какие-то еще проверки?
-					if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+					if( EngineApp.IsEditor )
 					{
 						var document = EditorAPI.GetDocumentByObject( this );
 						if( document != null )
@@ -807,6 +1182,17 @@ namespace NeoAxis
 				if( Fix( meshInSpace.Mesh, out var newReference ) )
 					meshInSpace.Mesh = ReferenceUtility.MakeReference<Mesh>( null, newReference );
 			}
+
+			//MultiMaterials
+			foreach( var multiMaterial in import3D.GetComponents<MultiMaterial>( false, true ) )
+			{
+				for( int n = 0; n < multiMaterial.Materials.Count; n++ )
+				{
+					var v = multiMaterial.Materials[ n ];
+					if( Fix( v, out var newReference ) )
+						multiMaterial.Materials[ n ] = ReferenceUtility.MakeReference<Material>( null, newReference );
+				}
+			}
 		}
 
 		public Import3D CreateForPreviewDisplay( Scene scene, out bool onlyOneMaterial, out Dictionary<Mesh, Transform> transformBySourceMesh )
@@ -850,7 +1236,7 @@ namespace NeoAxis
 							{
 								if( sourceMesh.Result != null )
 								{
-									var bounds = sourceMesh.Result.SpaceBounds.CalculatedBoundingBox;
+									var bounds = sourceMesh.Result.SpaceBounds.BoundingBox;
 									var sizeY = bounds.GetSize().Y;
 									if( sizeY > maxSizeY )
 										maxSizeY = sizeY;
@@ -888,7 +1274,7 @@ namespace NeoAxis
 				var material = createdObject.GetComponent( "Material" ) as Material;
 				if( material != null )
 				{
-					var mesh = ProjectSettings.Get.General.MaterialPreviewMesh.Value;
+					var mesh = ProjectSettings.Get.Preview.MaterialPreviewMesh.Value;
 					if( mesh != null )
 					{
 						var objectInSpace = createdObject.CreateComponent<MeshInSpace>();
@@ -902,22 +1288,6 @@ namespace NeoAxis
 			}
 
 			return createdObject;
-		}
-
-		static unsafe void VerticesWriteChannel<T>( VertexElement element, T[] data, byte[] writeToVertices, int vertexSize, int vertexCount ) where T : unmanaged
-		{
-			if( VertexElement.GetSizeInBytes( element.Type ) == sizeof( T ) )
-			{
-				fixed( byte* pVertices = writeToVertices )
-				{
-					byte* src = pVertices + element.Offset;
-					for( int n = 0; n < vertexCount; n++ )
-					{
-						*(T*)src = data[ n ];
-						src += vertexSize;
-					}
-				}
-			}
 		}
 
 		List<Mesh> GetMeshes( bool lods )
@@ -953,14 +1323,14 @@ namespace NeoAxis
 			return result;
 		}
 
-		bool GenerateLODs( out string error )
+		bool GenerateLODsAndReductLOD0( bool simplifyLOD0, out string error )
 		{
 			error = "";
 
 #if !DEPLOY
 			var sourceMeshes = GetMeshes( false );
 
-			var initialFactor = LODGenerate.Value ? LODInitialFactor.Value : 1.0;
+			var initialFactor = LODReduction.Value;//Simplify.Value; //var initialFactor = LODs.Value ? ReductionFactor.Value : 1.0;
 
 			foreach( var sourceMesh in sourceMeshes )
 			{
@@ -974,250 +1344,60 @@ namespace NeoAxis
 							sourceGeometries.Add( geometry );
 				}
 
-				var lodLevels = LODGenerate.Value ? LODLevels.Value : 1;
+				var lodLevels = LODs.Value ? LODLevels.Value : 1;
 
-				var lodBillboardIndex = -1;
-				if( LODGenerate.Value && LODBillboardMode.Value != MeshGeometry.BillboardDataModeEnum.None )
-					lodBillboardIndex = lodLevels - 1;
+				var voxelLodIndex = -1;
+				if( LODs && LODVoxels )// LODBillboardMode.Value != MeshGeometry.BillboardDataModeEnum.None )
+					voxelLodIndex = lodLevels - 1;
 
 				var meshes = new List<Mesh>();
 				meshes.Add( sourceMesh );
 
 				for( int lodIndex = 0; lodIndex < lodLevels; lodIndex++ )
 				{
-
-					if( lodIndex != 0 || initialFactor != 1 )//|| Optimize )
+					if( ( simplifyLOD0 && lodIndex == 0 ) || ( !simplifyLOD0 && lodIndex != 0 ) )//|| initialFactor != 1 )
 					{
 						var newGeometries = new List<MeshGeometry>();
 
 						foreach( var sourceGeometry in sourceGeometries )
 						{
-							var structure = sourceGeometry.VertexStructure.Value;
-							VertexElements.GetInfo( structure, out var vertexSize, out _ );
+							var carefully = lodIndex != 0 && LODReduction.Value == 0;
 
+							var voxelLOD = voxelLodIndex != -1 && lodIndex == lodLevels - 1;
 
-							var simplifier = new MeshSimplifier();
-
-							var options = MeshSimplifier.SimplificationOptionsStruct.Default;
-							//options.PreserveBorderEdges = true;
-							//options.PreserveUVSeamEdges = true;
-							//options.PreserveUVFoldoverEdges = true;
-							//options.PreserveSurfaceCurvature = true;
-							options.VertexLinkDistance = 0.001;
-							//options.VertexLinkDistance = 0.00001;
-							//options.MaxIterationCount = 200;
-							//options.Agressiveness = 14.0;
-							simplifier.SimplificationOptions = options;
-
-							foreach( var element in structure )
+							if( voxelLOD )
 							{
-								switch( element.Semantic )
-								{
-								case VertexElementSemantic.Position:
-									{
-										var v = sourceGeometry.VerticesExtractChannel<Vector3F>( element.Semantic );
-										if( v != null )
-											simplifier.Vertices = v.Select( v2 => v2.ToVector3() ).ToArray();
-									}
-									break;
+								//skip voxel lod from simplification
 
-								case VertexElementSemantic.Normal:
-									{
-										var v = sourceGeometry.VerticesExtractChannel<Vector3F>( element.Semantic );
-										if( v != null )
-											simplifier.Normals = v.Select( v2 => v2.ToVector3() ).ToArray();
-									}
-									break;
+								//create mesh geometry
+								var newGeometry = ComponentUtility.CreateComponent<MeshGeometry>( null, false, true );
+								newGeometry.Name = sourceGeometry.Name;
+								newGeometry.VertexStructure = sourceGeometry.VertexStructure;
+								newGeometry.UnwrappedUV = sourceGeometry.UnwrappedUV;
+								newGeometry.Vertices = sourceGeometry.Vertices;
+								newGeometry.Indices = sourceGeometry.Indices;
+								newGeometry.Material = sourceGeometry.Material;
 
-								case VertexElementSemantic.Tangent:
-									{
-										var v = sourceGeometry.VerticesExtractChannel<Vector4F>( element.Semantic );
-										if( v != null )
-											simplifier.Tangents = v.Select( v2 => v2.ToVector4() ).ToArray();
-									}
-									break;
-
-								case VertexElementSemantic.TextureCoordinate0:
-								case VertexElementSemantic.TextureCoordinate1:
-								case VertexElementSemantic.TextureCoordinate2:
-								case VertexElementSemantic.TextureCoordinate3:
-								case VertexElementSemantic.TextureCoordinate4:
-								case VertexElementSemantic.TextureCoordinate5:
-								case VertexElementSemantic.TextureCoordinate6:
-								case VertexElementSemantic.TextureCoordinate7:
-									{
-										var v = sourceGeometry.VerticesExtractChannel<Vector2F>( element.Semantic );
-										if( v != null )
-										{
-											var channel = element.Semantic - VertexElementSemantic.TextureCoordinate0;
-											simplifier.SetUVs( channel, v.Select( v2 => v2.ToVector2() ).ToArray() );
-										}
-									}
-									break;
-
-								case VertexElementSemantic.Color0:
-									{
-										if( element.Type == VertexElementType.Float4 )
-										{
-											var v = sourceGeometry.VerticesExtractChannel<Vector4F>( element.Semantic );
-											simplifier.Colors = v.Select( v2 => v2.ToColorValue() ).ToArray();
-										}
-										else if( element.Type == VertexElementType.ColorABGR )
-										{
-											//!!!!check
-											var v = sourceGeometry.VerticesExtractChannel<uint>( element.Semantic );
-											simplifier.Colors = v.Select( v2 => ColorByte.FromABGR( v2 ).ToColorValue() ).ToArray();
-										}
-										else if( element.Type == VertexElementType.ColorARGB )
-										{
-											//!!!!check
-											var v = sourceGeometry.VerticesExtractChannel<uint>( element.Semantic );
-											simplifier.Colors = v.Select( v2 => ColorByte.FromARGB( v2 ).ToColorValue() ).ToArray();
-										}
-									}
-									break;
-
-								case VertexElementSemantic.BlendIndices:
-									{
-										var indices = sourceGeometry.VerticesExtractChannel<Vector4I>( VertexElementSemantic.BlendIndices );
-										var weights = sourceGeometry.VerticesExtractChannel<Vector4F>( VertexElementSemantic.BlendWeights );
-										if( indices != null && weights != null )
-										{
-											var array = new MeshSimplifier.BoneWeight[ indices.Length ];
-											for( int n = 0; n < array.Length; n++ )
-												array[ n ] = new MeshSimplifier.BoneWeight( indices[ n ], weights[ n ] );
-											simplifier.BoneWeights = array;
-										}
-									}
-									break;
-								}
+								newGeometries.Add( newGeometry );
 							}
-
-							//this.bindposes = mesh.bindposes;
-
-							simplifier.AddSubMeshTriangles( sourceGeometry.Indices );
-
-							if( lodBillboardIndex != lodIndex )
+							else
 							{
-								try
-								{
-									//if( lodIndex == 0 && initialFactor == 1 && Optimize )
-									//	simplifier.SimplifyMeshLossless( OptimizeThreshold );
-									//else
-									simplifier.SimplifyMesh( (float)currentQuality );
+								//simplify
 
-								}
-								catch( Exception e )
-								{
-									error = "LOD generating failed. " + e.Message;
+								if( !sourceGeometry.CalculateSimplification( carefully, lodIndex /*LODMethod*/, currentQuality, out var newVertices, out var newVertexStructure, out var newIndices, out error ) )
 									return false;
-								}
+
+								//create mesh geometry
+								var newGeometry = ComponentUtility.CreateComponent<MeshGeometry>( null, false, true );
+								newGeometry.Name = sourceGeometry.Name;
+								newGeometry.VertexStructure = newVertexStructure;
+								newGeometry.UnwrappedUV = sourceGeometry.UnwrappedUV;
+								newGeometry.Vertices = newVertices;
+								newGeometry.Indices = newIndices;
+								newGeometry.Material = sourceGeometry.Material;
+
+								newGeometries.Add( newGeometry );
 							}
-
-							var vertexCount = simplifier.Vertices.Length;
-							var newVertices = new byte[ vertexCount * vertexSize ];
-
-							foreach( var element in structure )
-							{
-								switch( element.Semantic )
-								{
-								case VertexElementSemantic.Position:
-									if( simplifier.Vertices != null )
-									{
-										var v = simplifier.Vertices.Select( v2 => v2.ToVector3F() ).ToArray();
-										VerticesWriteChannel( element, v, newVertices, vertexSize, vertexCount );
-									}
-									break;
-
-								case VertexElementSemantic.Normal:
-									if( simplifier.Normals != null )
-									{
-										var v = simplifier.Normals.Select( v2 => v2.ToVector3F() ).ToArray();
-										VerticesWriteChannel( element, v, newVertices, vertexSize, vertexCount );
-									}
-									break;
-
-								case VertexElementSemantic.Tangent:
-									if( simplifier.Tangents != null )
-									{
-										var v = simplifier.Tangents.Select( v2 => v2.ToVector4F() ).ToArray();
-										VerticesWriteChannel( element, v, newVertices, vertexSize, vertexCount );
-									}
-									break;
-
-								case VertexElementSemantic.TextureCoordinate0:
-								case VertexElementSemantic.TextureCoordinate1:
-								case VertexElementSemantic.TextureCoordinate2:
-								case VertexElementSemantic.TextureCoordinate3:
-								case VertexElementSemantic.TextureCoordinate4:
-								case VertexElementSemantic.TextureCoordinate5:
-								case VertexElementSemantic.TextureCoordinate6:
-								case VertexElementSemantic.TextureCoordinate7:
-									{
-										var channel = element.Semantic - VertexElementSemantic.TextureCoordinate0;
-										var uv = simplifier.GetUVs2D( channel );
-										if( uv != null )
-										{
-											var v = uv.Select( v2 => v2.ToVector2F() ).ToArray();
-											VerticesWriteChannel( element, v, newVertices, vertexSize, vertexCount );
-										}
-									}
-									break;
-
-								case VertexElementSemantic.Color0:
-									if( simplifier.Colors != null )
-									{
-										if( element.Type == VertexElementType.Float4 )
-										{
-											var v = simplifier.Colors.Select( v2 => v2.ToVector4F() ).ToArray();
-											VerticesWriteChannel( element, v, newVertices, vertexSize, vertexCount );
-										}
-										else if( element.Type == VertexElementType.ColorABGR )
-										{
-											//!!!!check
-											var v = simplifier.Colors.Select( v2 => v2.ToColorPacked().ToABGR() ).ToArray();
-											VerticesWriteChannel( element, v, newVertices, vertexSize, vertexCount );
-										}
-										else if( element.Type == VertexElementType.ColorARGB )
-										{
-											//!!!!check
-											var v = simplifier.Colors.Select( v2 => v2.ToColorPacked().ToARGB() ).ToArray();
-											VerticesWriteChannel( element, v, newVertices, vertexSize, vertexCount );
-										}
-									}
-									break;
-
-								case VertexElementSemantic.BlendIndices:
-									if( simplifier.BoneWeights != null )
-									{
-										var v = simplifier.BoneWeights.Select( v2 => v2.Indices ).ToArray();
-										VerticesWriteChannel( element, v, newVertices, vertexSize, vertexCount );
-									}
-									break;
-
-								case VertexElementSemantic.BlendWeights:
-									if( simplifier.BoneWeights != null )
-									{
-										var v = simplifier.BoneWeights.Select( v2 => v2.Weights ).ToArray();
-										VerticesWriteChannel( element, v, newVertices, vertexSize, vertexCount );
-									}
-									break;
-								}
-							}
-
-							var newIndices = simplifier.GetSubMeshTriangles( 0 );
-
-
-							//create mesh geometry
-							var newGeometry = ComponentUtility.CreateComponent<MeshGeometry>( null, false, true );
-							newGeometry.Name = sourceGeometry.Name;
-							newGeometry.VertexStructure = structure;
-							newGeometry.UnwrappedUV = sourceGeometry.UnwrappedUV;
-							newGeometry.Vertices = newVertices;
-							newGeometry.Indices = newIndices;
-							newGeometry.Material = sourceGeometry.Material;
-
-							newGeometries.Add( newGeometry );
 						}
 
 						if( lodIndex == 0 )
@@ -1236,7 +1416,12 @@ namespace NeoAxis
 
 							var lod = sourceMesh.CreateComponent<MeshLevelOfDetail>();
 							lod.Name = "LOD " + lodIndex.ToString();
-							lod.Distance = LODDistance.Value * (double)lodIndex;
+
+							var lodDistance = LODDistance.Value * lodIndex;
+							if( LODDistance.Value == 0 && voxelLodIndex == -1 )
+								lodDistance = 15;
+							lod.Distance = lodDistance;
+							//lod.Distance = LODDistance.Value * (double)lodIndex;
 
 							var lodMesh = lod.CreateComponent<Mesh>();
 							lodMesh.Name = "Mesh";
@@ -1247,24 +1432,22 @@ namespace NeoAxis
 
 							meshes.Add( lodMesh );
 						}
-
 					}
 
-					currentQuality *= LODReductionFactor.Value;
+					currentQuality *= LODReduction.Value;
 				}
 
-				//convert usual mesh to billboard
-				if( lodBillboardIndex != -1 && lodBillboardIndex < meshes.Count )
+				//convert usual mesh to voxel
+				if( voxelLodIndex != -1 && voxelLodIndex < meshes.Count )
 				{
-					var mesh = meshes[ lodBillboardIndex ];
+					var mesh = meshes[ voxelLodIndex ];
 
-					//!!!!CenteringByXY
+					var gridSize = int.Parse( LODVoxelGrid.Value.ToString().Replace( "_", "" ) );
 
-					mesh.ConvertToBillboard( LODBillboardMode, LODBillboardImageSize, false, true );
-					mesh.Billboard = true;
-					//mesh.BillboardShadowOffset = 0;
+					mesh.ConvertToVoxel( gridSize/*, LODVoxelFormat*/, LODVoxelThinFactor, LODVoxelBakeOpacity, LODVoxelOptimizeMaterials, LODVoxelFillHolesDistance );
 				}
 
+				sourceMesh.LODScale = LODScale;
 			}
 #endif
 
@@ -1450,7 +1633,7 @@ namespace NeoAxis
 							{
 								var indices = geometry.Indices.Value;
 
-								MathAlgorithms.MergeEqualVerticesRemoveInvalidTriangles( vertices, indices, 0, vertexPositionEpsilon, vertexOtherChannelsEpsilon, out var newVertices, out var newIndices, out _ );
+								MathAlgorithms.MergeEqualVerticesRemoveInvalidTriangles( vertices, indices, 0, vertexPositionEpsilon, vertexOtherChannelsEpsilon, true, true, out var newVertices, out var newIndices, out _ );
 
 								geometry.SetVertexData( newVertices, vertexComponents );
 								geometry.Indices = newIndices;
@@ -1459,7 +1642,6 @@ namespace NeoAxis
 					}
 				}
 			}
-
 		}
 
 		void OptimizeCaches()
@@ -1485,16 +1667,216 @@ namespace NeoAxis
 			}
 		}
 
-		//!!!!
-		//void Voxelize()
-		//{
-		//	var meshes = GetMeshes( false );
+		void CompressVertices( bool lods )
+		{
+			var meshes = GetMeshes( lods );
 
-		//	foreach( var mesh in meshes )
-		//	{
-		//		if( !mesh.Billboard )
-		//			mesh.Voxelize( VoxelizationMode, VoxelizationSize );
-		//	}
+			foreach( var mesh in meshes )
+			{
+				foreach( var geometry in mesh.GetComponents<MeshGeometry>() )
+					geometry.CompressVertices();
+			}
+		}
+
+		protected override bool OnLoad( Metadata.LoadContext context, TextBlock block, out string error )
+		{
+			if( !base.OnLoad( context, block, out error ) )
+				return false;
+
+			//old version compatibility
+			if( block.AttributeExists( "MergeMeshGeometries" ) && bool.TryParse( block.GetAttribute( "MergeMeshGeometries" ), out var v ) && !v )
+				MergeGeometries = MergeGeometriesEnum.False;
+
+			return true;
+		}
+
+		class MergeGroup
+		{
+			public List<MeshGeometry> Geometries = new List<MeshGeometry>();
+
+			public bool CanMerge( MeshGeometry geometry )
+			{
+				var geometry0 = Geometries[ 0 ];
+
+				if( !VertexElements.Equals( geometry.VertexStructure.Value, geometry0.VertexStructure.Value ) )
+					return false;
+
+				return true;
+			}
+		}
+
+		void MergeToMultiMaterial( Mesh mesh )
+		{
+			if( mesh.Billboard )
+				return;
+
+			var geometries = mesh.GetComponents<MeshGeometry>();
+			if( geometries.Length < 2 )
+				return;
+
+			foreach( var geometry in geometries )
+			{
+				if( geometry.VertexStructure.Value == null || geometry.Vertices.Value == null || geometry.Indices.Value == null )
+					return;
+				if( geometry.VoxelData.Value != null )
+					return;
+			}
+
+			//save materials of geometries
+			var materialByGeometry = new Dictionary<MeshGeometry, Material>();
+			foreach( var geometry in geometries )
+				materialByGeometry[ geometry ] = geometry.Material.Value;
+
+			//remove old geometries
+			foreach( var geometry in geometries.GetReverse() )
+				mesh.RemoveComponent( geometry, false );
+
+			//get groups
+			var groups = new List<MergeGroup>();
+			foreach( var geometry in geometries )
+			{
+				var group = groups.FirstOrDefault( g => g.CanMerge( geometry ) );
+				if( group == null )
+				{
+					group = new MergeGroup();
+					groups.Add( group );
+				}
+
+				group.Geometries.Add( geometry );
+			}
+
+			var insertIndex = 0;
+
+			foreach( var group in groups )
+			{
+				if( group.Geometries.Count > 1 )
+				{
+					//sort group. combined deferred first
+					CollectionUtility.MergeSort( group.Geometries, delegate ( MeshGeometry g1, MeshGeometry g2 )
+					{
+						materialByGeometry.TryGetValue( g1, out var m1 );
+						materialByGeometry.TryGetValue( g2, out var m2 );
+
+						var points1 = 0;
+						if( m1 != null )
+						{
+							points1++;
+							if( string.IsNullOrEmpty( m1.PerformCheckDeferredShadingSupport() ) )
+								points1 += 2;
+						}
+
+						var points2 = 0;
+						if( m2 != null )
+						{
+							points2++;
+							if( string.IsNullOrEmpty( m2.PerformCheckDeferredShadingSupport() ) )
+								points2 += 2;
+						}
+
+						if( points1 > points2 )
+							return -1;
+						if( points1 < points2 )
+							return 1;
+						return 0;
+					} );
+
+					var geometry = mesh.CreateComponent<MeshGeometry>( insertIndex++ );
+
+					var baseName = "Geometry";
+					if( mesh.GetComponent( baseName ) != null )
+						geometry.Name = mesh.Components.GetUniqueName( baseName, true, 2 );
+					else
+						geometry.Name = baseName;
+
+					var geometry0 = group.Geometries[ 0 ];
+					var vertexStructure0 = geometry0.VertexStructure.Value;
+
+					vertexStructure0.GetInfo( out var oldVertexSize, out _ );
+
+					VertexElement[] vertexStructure;
+					{
+						var list = new List<VertexElement>( vertexStructure0 );
+						list.Add( new VertexElement( 0, oldVertexSize, VertexElementType.Float1, VertexElementSemantic.Color3 ) );
+						vertexStructure = list.ToArray();
+					}
+
+					vertexStructure.GetInfo( out var vertexSize, out _ );
+
+					var totalVertexCount = 0;
+					var totalIndexCount = 0;
+					foreach( var g in group.Geometries )
+					{
+						totalVertexCount += g.Vertices.Value.Length / oldVertexSize;
+						totalIndexCount += g.Indices.Value.Length;
+					}
+
+					var resultVertices = new byte[ totalVertexCount * vertexSize ];
+					var resultIndices = new int[ totalIndexCount ];
+
+					var currentVertex = 0;
+					var currentIndex = 0;
+
+					for( int nGeometry = 0; nGeometry < group.Geometries.Count; nGeometry++ )
+					{
+						var g = group.Geometries[ nGeometry ];
+						var vertices = g.Vertices.Value;
+						var indices = g.Indices.Value;
+						var vertexCount = vertices.Length / oldVertexSize;
+
+						var vertexIndexStart = currentVertex;
+
+						for( int n = 0; n < vertexCount; n++ )
+						{
+							//write source vertex data
+							Buffer.BlockCopy( vertices, n * oldVertexSize, resultVertices, currentVertex * vertexSize, oldVertexSize );
+
+							//write material index
+							unsafe
+							{
+								fixed( byte* pResultVertices = resultVertices )
+									*(float*)( pResultVertices + currentVertex * vertexSize + oldVertexSize ) = nGeometry;
+							}
+
+							currentVertex++;
+						}
+
+						for( int n = 0; n < indices.Length; n++ )
+						{
+							resultIndices[ currentIndex ] = indices[ n ] + vertexIndexStart;
+							currentIndex++;
+						}
+					}
+
+					geometry.VertexStructure = vertexStructure;
+					geometry.Vertices = resultVertices;
+					geometry.Indices = resultIndices;
+
+					var material = geometry.CreateComponent<MultiMaterial>();
+					material.Name = "Material";
+					foreach( var sourceGeometry in group.Geometries )
+					{
+						var subMaterialReference = sourceGeometry.Material;
+						material.Materials.Add( subMaterialReference );
+					}
+					geometry.Material = ReferenceUtility.MakeThisReference( geometry, material );
+				}
+				else
+					mesh.AddComponent( group.Geometries[ 0 ], insertIndex++ );
+			}
+		}
+
+		//void CalculateVirtualizedMesh( Mesh mesh )
+		//{
+		//	if( mesh.Billboard )
+		//		return;
+
+		//	var geometries = mesh.GetComponents<MeshGeometry>();
+
+		//	foreach( var geometry in geometries )
+		//		geometry.CalculateVirtualizedData( VirtualizeProxyFactor, Compress, Optimize );
 		//}
+
+#endif
+
 	}
 }

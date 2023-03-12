@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -60,7 +60,7 @@ namespace NeoAxis
 
 		unsafe void RenderObjects( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture, double scale, ColorValue color, Vector4 anyData, List<Vector2I> renderableItems )
 		{
-			var pipeline = context.RenderingPipeline as RenderingPipeline_Basic;
+			var pipeline = context.RenderingPipeline;// as RenderingPipeline_Basic;
 			var owner = context.Owner;
 
 
@@ -70,8 +70,6 @@ namespace NeoAxis
 			var aspectRatio = (float)context.CurrentViewport.SizeInPixels.X / (float)context.CurrentViewport.SizeInPixels.Y;
 			var effectScale = new Vector2F( scaleV / aspectRatio, scaleV );
 			var effectAnyData = anyData.ToVector4F();
-
-			var scaleSizeInPixels = (int)( scaleV * (float)context.CurrentViewport.SizeInPixels.Y );
 
 
 			var scissor = RectangleI.Cleared;
@@ -86,7 +84,6 @@ namespace NeoAxis
 					{
 						//meshes
 						ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ renderableItem.Y ];
-
 						meshItem.BoundingSphere.ToBounds( out var bounds );
 						bounds.ToPoints( ref points );
 					}
@@ -111,6 +108,7 @@ namespace NeoAxis
 			if( scissor.IsCleared() )
 				return;
 
+			var scaleSizeInPixels = (int)( scaleV * (float)context.CurrentViewport.SizeInPixels.Y );
 			scissor.Expand( scaleSizeInPixels );
 
 			if( !scissor.Intersects( new RectangleI( 0, 0, owner.SizeInPixels.X, owner.SizeInPixels.Y ) ) )
@@ -148,10 +146,11 @@ namespace NeoAxis
 
 				context.SetViewport( mrt.Viewports[ 0 ], viewMatrix, projectionMatrix, FrameBufferTypes.All, ColorValue.Zero );
 
-
 				//bind textures for all render operations
 				pipeline.BindMaterialsTexture( context, frameData );
-
+				pipeline.BindBrdfLUT( context );
+				pipeline.BindSamplersForTextureOnlySlots( context, true, false );
+				pipeline.BindMaterialData( context, null, false, false );
 
 				//use debug mode to detect pixels of the object
 				pipeline.SetViewportOwnerSettingsUniform( context, RenderingPipeline_Basic.DebugModeEnum.Normal );
@@ -179,28 +178,44 @@ namespace NeoAxis
 							for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
 							{
 								var oper = meshData.RenderOperations[ nOperation ];
-								var materialData = RenderingPipeline_Basic.GetMeshMaterialData( ref meshItem, oper, nOperation, true );
+								var voxelRendering = oper.VoxelDataInfo != null;
 
-								if( materialData.AllPasses.Count != 0 )
+								foreach( var materialData in RenderingPipeline_Basic.GetMeshMaterialData( ref meshItem, oper, nOperation, true, context.DeferredShading ) )
 								{
-									//bind material data
-									materialData.BindCurrentFrameData( context, false, true );
+									if( materialData.AllPasses.Count != 0 )
+									{
+										//bind material data
+										pipeline.BindMaterialData( context, materialData, false, voxelRendering );
+										pipeline.BindSamplersForTextureOnlySlots( context, false, voxelRendering );
 
-									var passesGroup = materialData.passesByLightType[ (int)Light.TypeEnum.Ambient ];
-									bool receiveShadows = false;
-									GpuMaterialPass pass = passesGroup.passWithoutShadows;
+										GpuMaterialPass pass = null;
+										if( materialData.passesByLightType != null )
+										{
+											var passesGroup = materialData.passesByLightType[ (int)Light.TypeEnum.Ambient ];
+											pass = passesGroup.passWithoutShadows;
+										}
+										else
+										{
+											if( materialData.deferredShadingSupport )
+												pass = materialData.deferredShadingPass.Get( false/*, false*/, true );
+										}
 
-									pipeline.ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, true );
+										if( pass != null )
+										{
+											var receiveShadows = false;
 
-									var batchInstancing = meshItem.BatchingInstanceBuffer != null;
+											if( materialData.passesByLightType != null )
+												pipeline.ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, true );
 
-									pipeline.BindRenderOperationData( context, frameData, materialData, batchInstancing, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, oper.UnwrappedUV, ref meshItem.Color, oper.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, 0, null, oper.MeshGeometryIndex );
+											pipeline.BindRenderOperationData( context, frameData, materialData, meshItem.InstancingEnabled, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, oper.UnwrappedUV, ref meshItem.Color, oper.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, oper.VoxelDataImage, oper.VoxelDataInfo );
 
-									if( !batchInstancing )
-										fixed( Matrix4F* p = &meshItem.Transform )
-											Bgfx.SetTransform( (float*)p );
+											if( !meshItem.InstancingEnabled )
+												fixed( Matrix4F* p = &meshItem.Transform )
+													Bgfx.SetTransform( (float*)p );
 
-									pipeline.RenderOperation( context, oper, pass, null, meshItem.CutVolumes, meshItem.BatchingInstanceBuffer );
+											pipeline.RenderOperation( context, oper, pass, null, meshItem.CutVolumes, meshItem.InstancingEnabled, meshItem.InstancingVertexBuffer, ref meshItem.InstancingDataBuffer, meshItem.InstancingStart, meshItem.InstancingCount );
+										}
+									}
 								}
 							}
 						}
@@ -213,25 +228,43 @@ namespace NeoAxis
 							for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
 							{
 								var oper = meshData.RenderOperations[ nOperation ];
-								var materialData = RenderingPipeline_Basic.GetBillboardMaterialData( ref billboardItem, true );
+								var voxelRendering = oper.VoxelDataInfo != null;
 
-								if( materialData.AllPasses.Count != 0 )
+								foreach( var materialData in RenderingPipeline_Basic.GetBillboardMaterialData( ref billboardItem, true, context.DeferredShading ) )
 								{
-									//bind material data
-									materialData.BindCurrentFrameData( context, false, true );
+									if( materialData.AllPasses.Count != 0 )
+									{
+										//bind material data
+										pipeline.BindMaterialData( context, materialData, false, voxelRendering );
+										pipeline.BindSamplersForTextureOnlySlots( context, false, voxelRendering );
 
-									var passesGroup = materialData.passesByLightType[ (int)Light.TypeEnum.Ambient ];
-									bool receiveShadows = false;
-									GpuMaterialPass pass = passesGroup.passWithoutShadows;
+										GpuMaterialPass pass = null;
+										if( materialData.passesByLightType != null )
+										{
+											var passesGroup = materialData.passesByLightType[ (int)Light.TypeEnum.Ambient ];
+											pass = passesGroup.passWithoutShadows;
+										}
+										else
+										{
+											if( materialData.deferredShadingSupport )
+												pass = materialData.deferredShadingPass.Get( false/*, false*/, true );
+										}
 
-									pipeline.ForwardBindGeneralTexturesUniforms( context, frameData, ref billboardItem.BoundingSphere, lightItem, receiveShadows, nRenderableItem == 0 );
+										if( pass != null )
+										{
+											var receiveShadows = false;
 
-									pipeline.BindRenderOperationData( context, frameData, materialData, false, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.BoundingSphere.Value.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, 0, oper.UnwrappedUV, ref billboardItem.Color, oper.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, 0, null, oper.MeshGeometryIndex );
+											if( materialData.passesByLightType != null )
+												pipeline.ForwardBindGeneralTexturesUniforms( context, frameData, ref billboardItem.BoundingSphere, lightItem, receiveShadows, nRenderableItem == 0 );
 
-									billboardItem.GetWorldMatrix( out var worldMatrix );
-									Bgfx.SetTransform( (float*)&worldMatrix );
+											pipeline.BindRenderOperationData( context, frameData, materialData, false, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, 0, oper.UnwrappedUV, ref billboardItem.Color, oper.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, null, null );
 
-									pipeline.RenderOperation( context, oper, pass, null, billboardItem.CutVolumes, null );
+											billboardItem.GetWorldMatrix( out var worldMatrix );
+											Bgfx.SetTransform( (float*)&worldMatrix );
+
+											pipeline.RenderOperation( context, oper, pass, null, billboardItem.CutVolumes );
+										}
+									}
 								}
 							}
 						}
@@ -360,8 +393,14 @@ namespace NeoAxis
 			}
 
 			//sort by group index
-			CollectionUtility.MergeSort( items2, delegate ( (int, double, ColorValue, Vector4, List<Vector2I>) a, (int, double, ColorValue, Vector4, List<Vector2I>) b )
+			var sortedIndices = new int[ items2.Count ];
+			for( int n = 0; n < sortedIndices.Length; n++ )
+				sortedIndices[ n ] = n;
+
+			CollectionUtility.MergeSort( sortedIndices, delegate ( int indexA, int indexB )
 			{
+				var a = items2[ indexA ];
+				var b = items2[ indexB ];
 				if( a.Item1 < b.Item1 )
 					return -1;
 				if( a.Item1 > b.Item1 )
@@ -370,11 +409,28 @@ namespace NeoAxis
 			}, true );
 
 			//render
-			foreach( var item in items2 )
+			for( int n = 0; n < sortedIndices.Length; n++ )
+			{
+				var item = items2[ sortedIndices[ n ] ];
 				RenderObjects( context, frameData, ref actualTexture, item.Item2, item.Item3, item.Item4, item.Item5 );
+			}
+
+			//slowly?
+			//CollectionUtility.MergeSort( items2, delegate ( (int, double, ColorValue, Vector4, List<Vector2I>) a, (int, double, ColorValue, Vector4, List<Vector2I>) b )
+			//{
+			//	if( a.Item1 < b.Item1 )
+			//		return -1;
+			//	if( a.Item1 > b.Item1 )
+			//		return 1;
+			//	return 0;
+			//}, true );
+
+			////render
+			//foreach( var item in items2 )
+			//	RenderObjects( context, frameData, ref actualTexture, item.Item2, item.Item3, item.Item4, item.Item5 );
 		}
 
-		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
+		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture )
 		{
 			base.OnRender( context, frameData, ref actualTexture );
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -107,7 +107,7 @@ namespace NeoAxis
 		public event Action<RenderingEffect_Antialiasing> MotionTechniqueChanged;
 		ReferenceField<MotionTechniqueEnum> _motionTechnique = MotionTechniqueEnum.Auto;
 
-		[DefaultValue( 2.0 )]
+		[DefaultValue( 1.7 )]//1.3 )]//2.0 )]
 		[Range( 0, 4 )]
 		[Category( "Motion" )]
 		public Reference<double> Alpha
@@ -117,7 +117,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="Alpha"/> property value changes.</summary>
 		public event Action<RenderingEffect_Antialiasing> AlphaChanged;
-		ReferenceField<double> _alpha = 2.0;
+		ReferenceField<double> _alpha = 1.7;//1.3;//2.0;
 
 		[DefaultValue( 1.0 )]
 		[Range( 0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
@@ -201,7 +201,7 @@ namespace NeoAxis
 			return result;
 		}
 
-		public static void RenderFXAA( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture, double intensity )
+		public static void RenderFXAA( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture, double intensity )
 		{
 			//render luma
 
@@ -250,7 +250,7 @@ namespace NeoAxis
 			context.DynamicTexture_Free( lumaTexture );
 		}
 
-		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
+		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture )
 		{
 			if( Intensity > 0 )
 			{
@@ -295,7 +295,7 @@ namespace NeoAxis
 			return 0;
 		}
 
-		public void RenderDownscale( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
+		public void RenderDownscale( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture )
 		{
 			//if( BasicTechnique.Value >= BasicTechniqueEnum.SSAAQuarter && BasicTechnique.Value <= BasicTechniqueEnum.SSAAHalf && context.Owner.SizeInPixels != actualTexture.Result.ResultSize )
 			//{
@@ -391,22 +391,22 @@ namespace NeoAxis
 		{
 			var anyDataKey = GetTAADataKey();
 
-			context.AnyImageAutoDispose.TryGetValue( anyDataKey, out var current );
+			context.AnyDataAutoDispose.TryGetValue( anyDataKey, out var current );
 			if( current != null )
 			{
-				context.AnyImageAutoDispose.Remove( anyDataKey );
+				context.AnyDataAutoDispose.Remove( anyDataKey );
 				current?.Dispose();
 			}
 		}
 
-		void RenderTAA( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
+		void RenderTAA( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture )
 		{
 			var pipeline = context.RenderingPipeline as RenderingPipeline_Basic;
 			if( pipeline == null )
 				return;
 
-			context.ObjectsDuringUpdate.namedTextures.TryGetValue( "motionTexture", out var motionTexture );
-			if( motionTexture == null )
+			context.ObjectsDuringUpdate.namedTextures.TryGetValue( "motionAndObjectIdTexture", out var motionAndObjectIdTexture );
+			if( motionAndObjectIdTexture == null )
 			{
 				TAADestroyPreviousColorTexture( context );
 				return;
@@ -420,25 +420,27 @@ namespace NeoAxis
 
 				//check to destroy
 				{
-					context.AnyImageAutoDispose.TryGetValue( anyDataKey, out var current );
+					context.AnyDataAutoDispose.TryGetValue( anyDataKey, out var current );
+					var current2 = current as ImageComponent;
 
-					if( current != null && current.Result.ResultSize != demandedSize )
+					if( current2 != null && current2.Result.ResultSize != demandedSize )
 						TAADestroyPreviousColorTexture( context );
 				}
 
 				//create and get
 				{
-					context.AnyImageAutoDispose.TryGetValue( anyDataKey, out var current );
+					context.AnyDataAutoDispose.TryGetValue( anyDataKey, out var current );
+					var current2 = current as ImageComponent;
 
-					if( current == null )
+					if( current2 == null )
 					{
 						//create
-						current = TAACreatePreviousColorTexture( demandedSize, actualTexture.Result.ResultFormat );
-						context.AnyImageAutoDispose[ anyDataKey ] = current;
+						current2 = TAACreatePreviousColorTexture( demandedSize, actualTexture.Result.ResultFormat );
+						context.AnyDataAutoDispose[ anyDataKey ] = current2;
 						previousColorTextureJustCreated = true;
 					}
 
-					previousColorTexture = current;
+					previousColorTexture = current2;
 				}
 			}
 
@@ -456,7 +458,7 @@ namespace NeoAxis
 					shader.FragmentProgramFileName = @"Base\Shaders\Effects\TAA_fs.sc";
 
 					shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0, actualTexture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
-					shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1, motionTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
+					shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1, motionAndObjectIdTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
 					shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 2, previousColorTexture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
 
 					var size = newTexture.Result.ResultSize;

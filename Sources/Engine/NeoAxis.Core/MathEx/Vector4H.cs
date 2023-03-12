@@ -1,9 +1,10 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using NeoAxis.Editor;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -890,6 +891,66 @@ namespace NeoAxis
 		//			return result;
 		//		}
 
+		/// <summary>
+		/// Converts the current instance of <see cref="Vector4H"/> into the equivalent <see cref="Vector4"/> structure.
+		/// </summary>
+		/// <returns>The equivalent <see cref="Vector4F"/> structure.</returns>
+		[AutoConvertType]
+		public Vector4 ToVector4()
+		{
+			Vector4 result;
+			result.X = X;
+			result.Y = Y;
+			result.Z = Z;
+			result.W = W;
+			return result;
+		}
+
+		/// <summary>
+		/// Converts the current instance of <see cref="Vector4H"/> into the equivalent <see cref="Vector4F"/> structure.
+		/// </summary>
+		/// <returns>The equivalent <see cref="Vector4F"/> structure.</returns>
+		[AutoConvertType]
+		public Vector4F ToVector4F()
+		{
+			Vector4F result;
+			result.X = X;
+			result.Y = Y;
+			result.Z = Z;
+			result.W = W;
+			return result;
+		}
+
+		/// <summary>
+		/// Converts the current instance of <see cref="Vector4F"/> into the equivalent <see cref="Vector4H"/> structure.
+		/// </summary>
+		/// <returns>The equivalent <see cref="Vector4H"/> structure.</returns>
+		[AutoConvertType]
+		public Vector4H ToVector4H()
+		{
+			Vector4H result;
+			result.X = new HalfType( X );
+			result.Y = new HalfType( Y );
+			result.Z = new HalfType( Z );
+			result.W = new HalfType( W );
+			return result;
+		}
+
+		/// <summary>
+		/// Converts the current instance of <see cref="Vector4H"/> into the equivalent <see cref="ColorValue"/> structure.
+		/// </summary>
+		/// <returns>The equivalent <see cref="ColorValue"/> structure.</returns>
+		[AutoConvertType]
+		public ColorValue ToColorValue()
+		{
+			ColorValue result;
+			result.Red = X;
+			result.Green = Y;
+			result.Blue = Z;
+			result.Alpha = W;
+			return result;
+		}
+
 		//		/// <summary>
 		//		/// Converts the current instance of <see cref="Vector4H"/> into the equivalent <see cref="Vector4I"/> structure.
 		//		/// </summary>
@@ -921,16 +982,37 @@ namespace NeoAxis
 		//			return result;
 		//		}
 
-		//#if !DISABLE_IMPLICIT
-		//		/// <summary>
-		//		/// Implicit conversion from <see cref="Vector4H"/> type to <see cref="Vector4"/> type for given value.
-		//		/// </summary>
-		//		/// <param name="v">The value to type convert.</param>
-		//		public static implicit operator Vector4( Vector4H v )
-		//		{
-		//			return new Vector4( v );
-		//		}
-		//#endif
+#if !DISABLE_IMPLICIT
+		/// <summary>
+		/// Implicit conversion from <see cref="Vector4H"/> type to <see cref="Vector4"/> type for given value.
+		/// </summary>
+		/// <param name="v">The value to type convert.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static implicit operator Vector4( Vector4H v )
+		{
+			return v.ToVector4();
+		}
+
+		/// <summary>
+		/// Implicit conversion from <see cref="Vector4H"/> type to <see cref="Vector4F"/> type for given value.
+		/// </summary>
+		/// <param name="v">The value to type convert.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static implicit operator Vector4F( Vector4H v )
+		{
+			return v.ToVector4F();
+		}
+
+		/// <summary>
+		/// Implicit conversion from <see cref="Vector4F"/> type to <see cref="Vector4H"/> type for given value.
+		/// </summary>
+		/// <param name="v">The value to type convert.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static implicit operator Vector4H( Vector4F v )
+		{
+			return v.ToVector4H();
+		}
+#endif
 
 		//		/// <summary>
 		//		/// Chooses one of two vectors depending on the <paramref name="pick1"/> value.
@@ -948,7 +1030,7 @@ namespace NeoAxis
 		//		/// Rounds the current instance of <see cref="Vector4H"/> towards zero for each component in a vector.
 		//		/// </summary>
 		//		/// <param name="v"></param>
-		//		public void Truncate( Vector4H v )
+		//		public void Truncate()
 		//		{
 		//			X = (int)X;
 		//			Y = (int)Y;

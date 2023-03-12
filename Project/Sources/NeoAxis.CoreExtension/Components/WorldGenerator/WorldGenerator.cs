@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -46,14 +46,24 @@ namespace NeoAxis
 		public event Action<WorldGenerator> HeightRangeChanged;
 		ReferenceField<Range> _heightRange = new Range( -5, 5 );
 
+		/// <summary>
+		/// The curvature frequency of the terrain.
+		/// </summary>
+		[DefaultValue( 1.0 )]
+		[Range( 0.1, 100, RangeAttribute.ConvenientDistributionEnum.Exponential, 4 )]
+		[Category( "Geometry" )]
+		public Reference<double> Curvature
+		{
+			get { if( _curvature.BeginGet() ) Curvature = _curvature.Get( this ); return _curvature.value; }
+			set { if( _curvature.BeginSet( ref value ) ) { try { CurvatureChanged?.Invoke( this ); } finally { _curvature.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Curvature"/> property value changes.</summary>
+		public event Action<WorldGenerator> CurvatureChanged;
+		ReferenceField<double> _curvature = 1.0;
+
 		public enum TemplateEnum
 		{
 			OakForest,
-			//!!!!impl
-			//Plains,
-			//FlowerMeadow,
-			//Hills,
-			//Rocks,
 			Custom,
 		}
 
@@ -71,32 +81,96 @@ namespace NeoAxis
 		public event Action<WorldGenerator> TemplateChanged;
 		ReferenceField<TemplateEnum> _template = TemplateEnum.OakForest;
 
-		//!!!!impl
-		//[DefaultValue( true )]
-		//[Category( "Template" )]
-		//public Reference<bool> AddDetails
-		//{
-		//	get { if( _addDetails.BeginGet() ) AddDetails = _addDetails.Get( this ); return _addDetails.value; }
-		//	set { if( _addDetails.BeginSet( ref value ) ) { try { AddDetailsChanged?.Invoke( this ); } finally { _addDetails.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="AddDetails"/> property value changes.</summary>
-		//public event Action<WorldGenerator> AddDetailsChanged;
-		//ReferenceField<bool> _addDetails = true;
 
-		const string terrainMaterialDefault = @"Content\Materials\Basic Library\Ground\Forest Ground 01.material";
+		const string baseMaterialDefault = @"Content\Materials\Basic Library\Ground\Grass 01.material";
 		/// <summary>
 		/// The material of the terrain.
 		/// </summary>
-		[DefaultValueReference( terrainMaterialDefault )]
+		[DefaultValueReference( baseMaterialDefault )]
 		[Category( "Template" )]
-		public Reference<Material> TerrainMaterial
+		public Reference<Material> BaseMaterial
 		{
-			get { if( _terrainMaterial.BeginGet() ) TerrainMaterial = _terrainMaterial.Get( this ); return _terrainMaterial.value; }
-			set { if( _terrainMaterial.BeginSet( ref value ) ) { try { TerrainMaterialChanged?.Invoke( this ); } finally { _terrainMaterial.EndSet(); } } }
+			get { if( _baseMaterial.BeginGet() ) BaseMaterial = _baseMaterial.Get( this ); return _baseMaterial.value; }
+			set { if( _baseMaterial.BeginSet( ref value ) ) { try { BaseMaterialChanged?.Invoke( this ); } finally { _baseMaterial.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="TerrainMaterial"/> property value changes.</summary>
-		public event Action<WorldGenerator> TerrainMaterialChanged;
-		ReferenceField<Material> _terrainMaterial = new Reference<Material>( null, terrainMaterialDefault );
+		/// <summary>Occurs when the <see cref="BaseMaterial"/> property value changes.</summary>
+		public event Action<WorldGenerator> BaseMaterialChanged;
+		ReferenceField<Material> _baseMaterial = new Reference<Material>( null, baseMaterialDefault );
+
+		/// <summary>
+		/// The color multiplier of the terrain.
+		/// </summary>
+		[Category( "Template" )]
+		[DefaultValue( "1 1 1" )]
+		public Reference<ColorValue> BaseMaterialColor
+		{
+			get { if( _baseMaterialColor.BeginGet() ) BaseMaterialColor = _baseMaterialColor.Get( this ); return _baseMaterialColor.value; }
+			set { if( _baseMaterialColor.BeginSet( ref value ) ) { try { BaseMaterialColorChanged?.Invoke( this ); } finally { _baseMaterialColor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="BaseMaterialColor"/> property value changes.</summary>
+		public event Action<WorldGenerator> BaseMaterialColorChanged;
+		ReferenceField<ColorValue> _baseMaterialColor = ColorValue.One;
+
+
+		const string baseSurfaceDefault = @"Content\Vegetation\Models\Flowering plant\Poa annua\Poa annua.surface";
+		//const string baseSurfaceDefault = "";
+		/// <summary>
+		/// The third surface.
+		/// </summary>
+		[DefaultValueReference( baseSurfaceDefault )]
+		[Category( "Template" )]
+		public Reference<Surface> BaseSurface
+		{
+			get { if( _baseSurface.BeginGet() ) BaseSurface = _baseSurface.Get( this ); return _baseSurface.value; }
+			set { if( _baseSurface.BeginSet( ref value ) ) { try { BaseSurfaceChanged?.Invoke( this ); } finally { _baseSurface.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="BaseSurface"/> property value changes.</summary>
+		public event Action<WorldGenerator> BaseSurfaceChanged;
+		ReferenceField<Surface> _baseSurface = new Reference<Surface>( null, baseSurfaceDefault );
+
+		/// <summary>
+		/// The strength of painting for the third surface.
+		/// </summary>
+		[DefaultValue( 0.75 )]
+		[Range( 0, 1 )]
+		[Category( "Template" )]
+		public Reference<double> BaseSurfacePaintFactor
+		{
+			get { if( _baseSurfacePaintFactor.BeginGet() ) BaseSurfacePaintFactor = _baseSurfacePaintFactor.Get( this ); return _baseSurfacePaintFactor.value; }
+			set { if( _baseSurfacePaintFactor.BeginSet( ref value ) ) { try { BaseSurfacePaintFactorChanged?.Invoke( this ); } finally { _baseSurfacePaintFactor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="BaseSurfacePaintFactor"/> property value changes.</summary>
+		public event Action<WorldGenerator> BaseSurfacePaintFactorChanged;
+		ReferenceField<double> _baseSurfacePaintFactor = 0.75;
+
+		/// <summary>
+		/// The color of the first surface.
+		/// </summary>
+		[DefaultValue( "0.57 0.75 0.49" )]
+		[Category( "Template" )]
+		public Reference<ColorValue> BaseSurfaceColor
+		{
+			get { if( _baseSurfaceColor.BeginGet() ) BaseSurfaceColor = _baseSurfaceColor.Get( this ); return _baseSurfaceColor.value; }
+			set { if( _baseSurfaceColor.BeginSet( ref value ) ) { try { BaseSurfaceColorChanged?.Invoke( this ); } finally { _baseSurfaceColor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="BaseSurfaceColor"/> property value changes.</summary>
+		public event Action<WorldGenerator> BaseSurfaceColorChanged;
+		ReferenceField<ColorValue> _baseSurfaceColor = new ColorValue( 0.57, 0.75, 0.49 );
+
+		/// <summary>
+		/// Whether to enable the collision for the base surface.
+		/// </summary>
+		[Category( "Template" )]
+		[DefaultValue( false )]
+		public Reference<bool> BaseSurfaceCollision
+		{
+			get { if( _baseSurfaceCollision.BeginGet() ) BaseSurfaceCollision = _baseSurfaceCollision.Get( this ); return _baseSurfaceCollision.value; }
+			set { if( _baseSurfaceCollision.BeginSet( ref value ) ) { try { BaseSurfaceCollisionChanged?.Invoke( this ); } finally { _baseSurfaceCollision.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="BaseSurfaceCollision"/> property value changes.</summary>
+		public event Action<WorldGenerator> BaseSurfaceCollisionChanged;
+		ReferenceField<bool> _baseSurfaceCollision = false;
+
 
 		const string surface1Default = @"Content\Vegetation\Models\Woody plant\Quercus robur\Quercus robur.surface";
 		/// <summary>
@@ -104,7 +178,7 @@ namespace NeoAxis
 		/// </summary>
 		[DefaultValueReference( surface1Default )]
 		[DisplayName( "Surface 1" )]
-		[Category( "Template" )]
+		[Category( "Surface 1" )]
 		public Reference<Surface> Surface1
 		{
 			get { if( _surface1.BeginGet() ) Surface1 = _surface1.Get( this ); return _surface1.value; }
@@ -117,10 +191,10 @@ namespace NeoAxis
 		/// <summary>
 		/// The strength of painting for the first surface.
 		/// </summary>
-		[DefaultValue( 0.3 )]
+		[DefaultValue( 0.5 )]
 		[Range( 0, 1 )]
 		[DisplayName( "Surface 1 Paint Factor" )]
-		[Category( "Template" )]
+		[Category( "Surface 1" )]
 		public Reference<double> Surface1PaintFactor
 		{
 			get { if( _surface1PaintFactor.BeginGet() ) Surface1PaintFactor = _surface1PaintFactor.Get( this ); return _surface1PaintFactor.value; }
@@ -128,31 +202,57 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="Surface1PaintFactor"/> property value changes.</summary>
 		public event Action<WorldGenerator> Surface1PaintFactorChanged;
-		ReferenceField<double> _surface1PaintFactor = 0.3;
+		ReferenceField<double> _surface1PaintFactor = 0.5;
 
-		///// <summary>
-		///// The number of painting iterations for the first surface.
-		///// </summary>
-		//[DefaultValue( 5 )]
-		//[Range( 1, 20 )]
-		//[DisplayName( "Surface 1 Paint Steps" )]
-		//[Category( "Template" )]
-		//public Reference<int> Surface1PaintSteps
-		//{
-		//	get { if( _surface1PaintSteps.BeginGet() ) Surface1PaintSteps = _surface1PaintSteps.Get( this ); return _surface1PaintSteps.value; }
-		//	set { if( _surface1PaintSteps.BeginSet( ref value ) ) { try { Surface1PaintStepsChanged?.Invoke( this ); } finally { _surface1PaintSteps.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="Surface1PaintSteps"/> property value changes.</summary>
-		//public event Action<WorldGenerator> Surface1PaintStepsChanged;
-		//ReferenceField<int> _surface1PaintSteps = 5;
+		[DisplayName( "Surface 1 Distribution" )]
+		[Category( "Surface 1" )]
+		[DefaultValue( 1.0 )]
+		public Reference<double> Surface1Distribution
+		{
+			get { if( _surface1Distribution.BeginGet() ) Surface1Distribution = _surface1Distribution.Get( this ); return _surface1Distribution.value; }
+			set { if( _surface1Distribution.BeginSet( ref value ) ) { try { Surface1DistributionChanged?.Invoke( this ); } finally { _surface1Distribution.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Surface1Distribution"/> property value changes.</summary>
+		public event Action<WorldGenerator> Surface1DistributionChanged;
+		ReferenceField<double> _surface1Distribution = 1.0;
+
+		/// <summary>
+		/// The color of the first surface.
+		/// </summary>
+		[DefaultValue( "1 1 1" )]
+		[DisplayName( "Surface 1 Color" )]
+		[Category( "Surface 1" )]
+		public Reference<ColorValue> Surface1Color
+		{
+			get { if( _surface1Color.BeginGet() ) Surface1Color = _surface1Color.Get( this ); return _surface1Color.value; }
+			set { if( _surface1Color.BeginSet( ref value ) ) { try { Surface1ColorChanged?.Invoke( this ); } finally { _surface1Color.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Surface1Color"/> property value changes.</summary>
+		public event Action<WorldGenerator> Surface1ColorChanged;
+		ReferenceField<ColorValue> _surface1Color = new ColorValue( 1, 1, 1 );
+
+		/// <summary>
+		/// Whether to enable the collision for the first surface.
+		/// </summary>
+		[Category( "Surface 1" )]
+		[DefaultValue( true )]
+		public Reference<bool> Surface1Collision
+		{
+			get { if( _surface1Collision.BeginGet() ) Surface1Collision = _surface1Collision.Get( this ); return _surface1Collision.value; }
+			set { if( _surface1Collision.BeginSet( ref value ) ) { try { Surface1CollisionChanged?.Invoke( this ); } finally { _surface1Collision.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Surface1Collision"/> property value changes.</summary>
+		public event Action<WorldGenerator> Surface1CollisionChanged;
+		ReferenceField<bool> _surface1Collision = true;
+
 
 		const string surface2Default = @"Content\Models\Rocks\Rocks (4 pieces)\Rocks.surface";
 		/// <summary>
 		/// The second surface.
 		/// </summary>
-		[DefaultValue( surface2Default )]
+		[DefaultValueReference( surface2Default )]
 		[DisplayName( "Surface 2" )]
-		[Category( "Template" )]
+		[Category( "Surface 2" )]
 		public Reference<Surface> Surface2
 		{
 			get { if( _surface2.BeginGet() ) Surface2 = _surface2.Get( this ); return _surface2.value; }
@@ -163,12 +263,27 @@ namespace NeoAxis
 		ReferenceField<Surface> _surface2 = new Reference<Surface>( null, surface2Default );
 
 		/// <summary>
+		/// The color of the second surface.
+		/// </summary>
+		[DefaultValue( "1 1 1" )]
+		[DisplayName( "Surface 2 Color" )]
+		[Category( "Surface 2" )]
+		public Reference<ColorValue> Surface2Color
+		{
+			get { if( _surface2Color.BeginGet() ) Surface2Color = _surface2Color.Get( this ); return _surface2Color.value; }
+			set { if( _surface2Color.BeginSet( ref value ) ) { try { Surface2ColorChanged?.Invoke( this ); } finally { _surface2Color.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Surface2Color"/> property value changes.</summary>
+		public event Action<WorldGenerator> Surface2ColorChanged;
+		ReferenceField<ColorValue> _surface2Color = new ColorValue( 1, 1, 1 );
+
+		/// <summary>
 		/// The strength of painting for the second surface.
 		/// </summary>
-		[DefaultValue( 0.04 )]
+		[DefaultValue( 0.02 )]
 		[Range( 0, 1 )]
 		[DisplayName( "Surface 2 Paint Factor" )]
-		[Category( "Template" )]
+		[Category( "Surface 2" )]
 		public Reference<double> Surface2PaintFactor
 		{
 			get { if( _surface2PaintFactor.BeginGet() ) Surface2PaintFactor = _surface2PaintFactor.Get( this ); return _surface2PaintFactor.value; }
@@ -176,31 +291,43 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="Surface2PaintFactor"/> property value changes.</summary>
 		public event Action<WorldGenerator> Surface2PaintFactorChanged;
-		ReferenceField<double> _surface2PaintFactor = 0.04;
+		ReferenceField<double> _surface2PaintFactor = 0.02;
 
-		///// <summary>
-		///// The number of painting iterations for the second surface.
-		///// </summary>
-		//[DefaultValue( 1 )]
-		//[Range( 1, 20 )]
-		//[DisplayName( "Surface 2 Paint Steps" )]
-		//[Category( "Template" )]
-		//public Reference<int> Surface2PaintSteps
-		//{
-		//	get { if( _surface2PaintSteps.BeginGet() ) Surface2PaintSteps = _surface2PaintSteps.Get( this ); return _surface2PaintSteps.value; }
-		//	set { if( _surface2PaintSteps.BeginSet( ref value ) ) { try { Surface2PaintStepsChanged?.Invoke( this ); } finally { _surface2PaintSteps.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="Surface2PaintSteps"/> property value changes.</summary>
-		//public event Action<WorldGenerator> Surface2PaintStepsChanged;
-		//ReferenceField<int> _surface2PaintSteps = 1;
+		[DisplayName( "Surface 2 Distribution" )]
+		[Category( "Surface 2" )]
+		[DefaultValue( 1.0 )]
+		public Reference<double> Surface2Distribution
+		{
+			get { if( _surface2Distribution.BeginGet() ) Surface2Distribution = _surface2Distribution.Get( this ); return _surface2Distribution.value; }
+			set { if( _surface2Distribution.BeginSet( ref value ) ) { try { Surface2DistributionChanged?.Invoke( this ); } finally { _surface2Distribution.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Surface2Distribution"/> property value changes.</summary>
+		public event Action<WorldGenerator> Surface2DistributionChanged;
+		ReferenceField<double> _surface2Distribution = 1.0;
 
-		const string surface3Default = "";
+		/// <summary>
+		/// Whether to enable the collision for the second surface.
+		/// </summary>
+		[Category( "Surface 2" )]
+		[DisplayName( "Surface 2 Collision" )]
+		[DefaultValue( true )]
+		public Reference<bool> Surface2Collision
+		{
+			get { if( _surface2Collision.BeginGet() ) Surface2Collision = _surface2Collision.Get( this ); return _surface2Collision.value; }
+			set { if( _surface2Collision.BeginSet( ref value ) ) { try { Surface2CollisionChanged?.Invoke( this ); } finally { _surface2Collision.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Surface2Collision"/> property value changes.</summary>
+		public event Action<WorldGenerator> Surface2CollisionChanged;
+		ReferenceField<bool> _surface2Collision = true;
+
+
+		const string surface3Default = @"Content\Vegetation\Models\Flowering plant\Matricaria chamomilla\Matricaria chamomilla.surface";
 		/// <summary>
 		/// The third surface.
 		/// </summary>
 		[DefaultValueReference( surface3Default )]
 		[DisplayName( "Surface 3" )]
-		[Category( "Template" )]
+		[Category( "Surface 3" )]
 		public Reference<Surface> Surface3
 		{
 			get { if( _surface3.BeginGet() ) Surface3 = _surface3.Get( this ); return _surface3.value; }
@@ -211,12 +338,27 @@ namespace NeoAxis
 		ReferenceField<Surface> _surface3 = new Reference<Surface>( null, surface3Default );
 
 		/// <summary>
+		/// The color of the third surface.
+		/// </summary>
+		[DefaultValue( "1 1 1" )]
+		[DisplayName( "Surface 3 Color" )]
+		[Category( "Surface 3" )]
+		public Reference<ColorValue> Surface3Color
+		{
+			get { if( _surface3Color.BeginGet() ) Surface3Color = _surface3Color.Get( this ); return _surface3Color.value; }
+			set { if( _surface3Color.BeginSet( ref value ) ) { try { Surface3ColorChanged?.Invoke( this ); } finally { _surface3Color.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Surface3Color"/> property value changes.</summary>
+		public event Action<WorldGenerator> Surface3ColorChanged;
+		ReferenceField<ColorValue> _surface3Color = new ColorValue( 1, 1, 1 );
+
+		/// <summary>
 		/// The strength of painting for the third surface.
 		/// </summary>
-		[DefaultValue( 0.1 )]
+		[DefaultValue( 0.15 )]
 		[Range( 0, 1 )]
 		[DisplayName( "Surface 3 Paint Factor" )]
-		[Category( "Template" )]
+		[Category( "Surface 3" )]
 		public Reference<double> Surface3PaintFactor
 		{
 			get { if( _surface3PaintFactor.BeginGet() ) Surface3PaintFactor = _surface3PaintFactor.Get( this ); return _surface3PaintFactor.value; }
@@ -224,31 +366,43 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="Surface3PaintFactor"/> property value changes.</summary>
 		public event Action<WorldGenerator> Surface3PaintFactorChanged;
-		ReferenceField<double> _surface3PaintFactor = 0.1;
+		ReferenceField<double> _surface3PaintFactor = 0.15;
 
-		///// <summary>
-		///// The number of painting iterations for the third surface.
-		///// </summary>
-		//[DefaultValue( 1 )]
-		//[Range( 1, 20 )]
-		//[DisplayName( "Surface 3 Paint Steps" )]
-		//[Category( "Template" )]
-		//public Reference<int> Surface3PaintSteps
-		//{
-		//	get { if( _surface3PaintSteps.BeginGet() ) Surface3PaintSteps = _surface3PaintSteps.Get( this ); return _surface3PaintSteps.value; }
-		//	set { if( _surface3PaintSteps.BeginSet( ref value ) ) { try { Surface3PaintStepsChanged?.Invoke( this ); } finally { _surface3PaintSteps.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="Surface3PaintSteps"/> property value changes.</summary>
-		//public event Action<WorldGenerator> Surface3PaintStepsChanged;
-		//ReferenceField<int> _surface3PaintSteps = 1;
+		[DisplayName( "Surface 3 Distribution" )]
+		[Category( "Surface 3" )]
+		[DefaultValue( 1.0 )]
+		public Reference<double> Surface3Distribution
+		{
+			get { if( _surface3Distribution.BeginGet() ) Surface3Distribution = _surface3Distribution.Get( this ); return _surface3Distribution.value; }
+			set { if( _surface3Distribution.BeginSet( ref value ) ) { try { Surface3DistributionChanged?.Invoke( this ); } finally { _surface3Distribution.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Surface3Distribution"/> property value changes.</summary>
+		public event Action<WorldGenerator> Surface3DistributionChanged;
+		ReferenceField<double> _surface3Distribution = 1.0;
 
-		const string surface4Default = "";
+		/// <summary>
+		/// Whether to enable the collision for the third surface.
+		/// </summary>
+		[DisplayName( "Surface 3 Collision" )]
+		[Category( "Surface 3" )]
+		[DefaultValue( false )]
+		public Reference<bool> Surface3Collision
+		{
+			get { if( _surface3Collision.BeginGet() ) Surface3Collision = _surface3Collision.Get( this ); return _surface3Collision.value; }
+			set { if( _surface3Collision.BeginSet( ref value ) ) { try { Surface3CollisionChanged?.Invoke( this ); } finally { _surface3Collision.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Surface3Collision"/> property value changes.</summary>
+		public event Action<WorldGenerator> Surface3CollisionChanged;
+		ReferenceField<bool> _surface3Collision = false;
+
+
+		const string surface4Default = @"Content\Vegetation\Models\Flowering plant\Doronicum grandiflorum\Doronicum grandiflorum.surface";
 		/// <summary>
 		/// The fourth surface.
 		/// </summary>
 		[DefaultValueReference( surface4Default )]
 		[DisplayName( "Surface 4" )]
-		[Category( "Template" )]
+		[Category( "Surface 4" )]
 		public Reference<Surface> Surface4
 		{
 			get { if( _surface4.BeginGet() ) Surface4 = _surface4.Get( this ); return _surface4.value; }
@@ -259,12 +413,27 @@ namespace NeoAxis
 		ReferenceField<Surface> _surface4 = new Reference<Surface>( null, surface4Default );
 
 		/// <summary>
+		/// The color of the fourth surface.
+		/// </summary>
+		[DefaultValue( "1 1 1" )]
+		[DisplayName( "Surface 4 Color" )]
+		[Category( "Surface 4" )]
+		public Reference<ColorValue> Surface4Color
+		{
+			get { if( _surface4Color.BeginGet() ) Surface4Color = _surface4Color.Get( this ); return _surface4Color.value; }
+			set { if( _surface4Color.BeginSet( ref value ) ) { try { Surface4ColorChanged?.Invoke( this ); } finally { _surface4Color.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Surface4Color"/> property value changes.</summary>
+		public event Action<WorldGenerator> Surface4ColorChanged;
+		ReferenceField<ColorValue> _surface4Color = new ColorValue( 1, 1, 1 );
+
+		/// <summary>
 		/// The strength of painting for the fourth surface.
 		/// </summary>
-		[DefaultValue( 0.1 )]
+		[DefaultValue( 0.15 )]
 		[Range( 0, 1 )]
 		[DisplayName( "Surface 4 Paint Factor" )]
-		[Category( "Template" )]
+		[Category( "Surface 4" )]
 		public Reference<double> Surface4PaintFactor
 		{
 			get { if( _surface4PaintFactor.BeginGet() ) Surface4PaintFactor = _surface4PaintFactor.Get( this ); return _surface4PaintFactor.value; }
@@ -272,23 +441,184 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="Surface4PaintFactor"/> property value changes.</summary>
 		public event Action<WorldGenerator> Surface4PaintFactorChanged;
-		ReferenceField<double> _surface4PaintFactor = 0.1;
+		ReferenceField<double> _surface4PaintFactor = 0.15;
 
-		///// <summary>
-		///// The number of painting iterations for the fourth surface.
-		///// </summary>
-		//[DefaultValue( 1 )]
-		//[Range( 1, 20 )]
-		//[DisplayName( "Surface 4 Paint Steps" )]
-		//[Category( "Template" )]
-		//public Reference<int> Surface4PaintSteps
-		//{
-		//	get { if( _surface4PaintSteps.BeginGet() ) Surface4PaintSteps = _surface4PaintSteps.Get( this ); return _surface4PaintSteps.value; }
-		//	set { if( _surface4PaintSteps.BeginSet( ref value ) ) { try { Surface4PaintStepsChanged?.Invoke( this ); } finally { _surface4PaintSteps.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="Surface4PaintSteps"/> property value changes.</summary>
-		//public event Action<WorldGenerator> Surface4PaintStepsChanged;
-		//ReferenceField<int> _surface4PaintSteps = 1;
+		[DisplayName( "Surface 4 Distribution" )]
+		[Category( "Surface 4" )]
+		[DefaultValue( 1.1 )]
+		public Reference<double> Surface4Distribution
+		{
+			get { if( _surface4Distribution.BeginGet() ) Surface4Distribution = _surface4Distribution.Get( this ); return _surface4Distribution.value; }
+			set { if( _surface4Distribution.BeginSet( ref value ) ) { try { Surface4DistributionChanged?.Invoke( this ); } finally { _surface4Distribution.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Surface4Distribution"/> property value changes.</summary>
+		public event Action<WorldGenerator> Surface4DistributionChanged;
+		ReferenceField<double> _surface4Distribution = 1.1;
+
+		/// <summary>
+		/// Whether to enable the collision for the fourth surface.
+		/// </summary>
+		[DisplayName( "Surface 4 Collision" )]
+		[Category( "Surface 4" )]
+		[DefaultValue( false )]
+		public Reference<bool> Surface4Collision
+		{
+			get { if( _surface4Collision.BeginGet() ) Surface4Collision = _surface4Collision.Get( this ); return _surface4Collision.value; }
+			set { if( _surface4Collision.BeginSet( ref value ) ) { try { Surface4CollisionChanged?.Invoke( this ); } finally { _surface4Collision.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Surface4Collision"/> property value changes.</summary>
+		public event Action<WorldGenerator> Surface4CollisionChanged;
+		ReferenceField<bool> _surface4Collision = false;
+
+
+		const string surface5Default = @"Content\Vegetation\Models\Flowering plant\Tanacetum coccineum\Tanacetum coccineum.surface";
+		/// <summary>
+		/// The fifth surface.
+		/// </summary>
+		[DefaultValueReference( surface5Default )]
+		[DisplayName( "Surface 5" )]
+		[Category( "Surface 5" )]
+		public Reference<Surface> Surface5
+		{
+			get { if( _surface5.BeginGet() ) Surface5 = _surface5.Get( this ); return _surface5.value; }
+			set { if( _surface5.BeginSet( ref value ) ) { try { Surface5Changed?.Invoke( this ); } finally { _surface5.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Surface5"/> property value changes.</summary>
+		public event Action<WorldGenerator> Surface5Changed;
+		ReferenceField<Surface> _surface5 = new Reference<Surface>( null, surface5Default );
+
+		/// <summary>
+		/// The color of the fifth surface.
+		/// </summary>
+		[DefaultValue( "1 1 1" )]
+		[DisplayName( "Surface 5 Color" )]
+		[Category( "Surface 5" )]
+		public Reference<ColorValue> Surface5Color
+		{
+			get { if( _surface5Color.BeginGet() ) Surface5Color = _surface5Color.Get( this ); return _surface5Color.value; }
+			set { if( _surface5Color.BeginSet( ref value ) ) { try { Surface5ColorChanged?.Invoke( this ); } finally { _surface5Color.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Surface5Color"/> property value changes.</summary>
+		public event Action<WorldGenerator> Surface5ColorChanged;
+		ReferenceField<ColorValue> _surface5Color = new ColorValue( 1, 1, 1 );
+
+		/// <summary>
+		/// The strength of painting for the fifth surface.
+		/// </summary>
+		[DefaultValue( 0.15 )]
+		[Range( 0, 1 )]
+		[DisplayName( "Surface 5 Paint Factor" )]
+		[Category( "Surface 5" )]
+		public Reference<double> Surface5PaintFactor
+		{
+			get { if( _surface5PaintFactor.BeginGet() ) Surface5PaintFactor = _surface5PaintFactor.Get( this ); return _surface5PaintFactor.value; }
+			set { if( _surface5PaintFactor.BeginSet( ref value ) ) { try { Surface5PaintFactorChanged?.Invoke( this ); } finally { _surface5PaintFactor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Surface5PaintFactor"/> property value changes.</summary>
+		public event Action<WorldGenerator> Surface5PaintFactorChanged;
+		ReferenceField<double> _surface5PaintFactor = 0.15;
+
+		[DisplayName( "Surface 5 Distribution" )]
+		[Category( "Surface 5" )]
+		[DefaultValue( 0.9 )]
+		public Reference<double> Surface5Distribution
+		{
+			get { if( _surface5Distribution.BeginGet() ) Surface5Distribution = _surface5Distribution.Get( this ); return _surface5Distribution.value; }
+			set { if( _surface5Distribution.BeginSet( ref value ) ) { try { Surface5DistributionChanged?.Invoke( this ); } finally { _surface5Distribution.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Surface5Distribution"/> property value changes.</summary>
+		public event Action<WorldGenerator> Surface5DistributionChanged;
+		ReferenceField<double> _surface5Distribution = 0.9;
+
+		/// <summary>
+		/// Whether to enable the collision for the fifth surface.
+		/// </summary>
+		[DisplayName( "Surface 5 Collision" )]
+		[Category( "Surface 5" )]
+		[DefaultValue( false )]
+		public Reference<bool> Surface5Collision
+		{
+			get { if( _surface5Collision.BeginGet() ) Surface5Collision = _surface5Collision.Get( this ); return _surface5Collision.value; }
+			set { if( _surface5Collision.BeginSet( ref value ) ) { try { Surface5CollisionChanged?.Invoke( this ); } finally { _surface5Collision.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Surface5Collision"/> property value changes.</summary>
+		public event Action<WorldGenerator> Surface5CollisionChanged;
+		ReferenceField<bool> _surface5Collision = false;
+
+
+		const string surface6Default = "";
+		/// <summary>
+		/// The sixth surface.
+		/// </summary>
+		[DefaultValueReference( surface6Default )]
+		[DisplayName( "Surface 6" )]
+		[Category( "Surface 6" )]
+		public Reference<Surface> Surface6
+		{
+			get { if( _surface6.BeginGet() ) Surface6 = _surface6.Get( this ); return _surface6.value; }
+			set { if( _surface6.BeginSet( ref value ) ) { try { Surface6Changed?.Invoke( this ); } finally { _surface6.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Surface6"/> property value changes.</summary>
+		public event Action<WorldGenerator> Surface6Changed;
+		ReferenceField<Surface> _surface6 = new Reference<Surface>( null, surface6Default );
+
+		/// <summary>
+		/// The color of the sixth surface.
+		/// </summary>
+		[DefaultValue( "1 1 1" )]
+		[DisplayName( "Surface 6 Color" )]
+		[Category( "Surface 6" )]
+		public Reference<ColorValue> Surface6Color
+		{
+			get { if( _surface6Color.BeginGet() ) Surface6Color = _surface6Color.Get( this ); return _surface6Color.value; }
+			set { if( _surface6Color.BeginSet( ref value ) ) { try { Surface6ColorChanged?.Invoke( this ); } finally { _surface6Color.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Surface6Color"/> property value changes.</summary>
+		public event Action<WorldGenerator> Surface6ColorChanged;
+		ReferenceField<ColorValue> _surface6Color = new ColorValue( 1, 1, 1 );
+
+		/// <summary>
+		/// The strength of painting for the sixth surface.
+		/// </summary>
+		[DefaultValue( 0.1 )]
+		[Range( 0, 1 )]
+		[DisplayName( "Surface 6 Paint Factor" )]
+		[Category( "Surface 6" )]
+		public Reference<double> Surface6PaintFactor
+		{
+			get { if( _surface6PaintFactor.BeginGet() ) Surface6PaintFactor = _surface6PaintFactor.Get( this ); return _surface6PaintFactor.value; }
+			set { if( _surface6PaintFactor.BeginSet( ref value ) ) { try { Surface6PaintFactorChanged?.Invoke( this ); } finally { _surface6PaintFactor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Surface6PaintFactor"/> property value changes.</summary>
+		public event Action<WorldGenerator> Surface6PaintFactorChanged;
+		ReferenceField<double> _surface6PaintFactor = 0.1;
+
+		[DisplayName( "Surface 6 Distribution" )]
+		[Category( "Surface 6" )]
+		[DefaultValue( 1.0 )]
+		public Reference<double> Surface6Distribution
+		{
+			get { if( _surface6Distribution.BeginGet() ) Surface6Distribution = _surface6Distribution.Get( this ); return _surface6Distribution.value; }
+			set { if( _surface6Distribution.BeginSet( ref value ) ) { try { Surface6DistributionChanged?.Invoke( this ); } finally { _surface6Distribution.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Surface6Distribution"/> property value changes.</summary>
+		public event Action<WorldGenerator> Surface6DistributionChanged;
+		ReferenceField<double> _surface6Distribution = 1.0;
+
+		/// <summary>
+		/// Whether to enable the collision for the sixth surface.
+		/// </summary>
+		[DisplayName( "Surface 6 Collision" )]
+		[Category( "Surface 6" )]
+		[DefaultValue( false )]
+		public Reference<bool> Surface6Collision
+		{
+			get { if( _surface6Collision.BeginGet() ) Surface6Collision = _surface6Collision.Get( this ); return _surface6Collision.value; }
+			set { if( _surface6Collision.BeginSet( ref value ) ) { try { Surface6CollisionChanged?.Invoke( this ); } finally { _surface6Collision.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Surface6Collision"/> property value changes.</summary>
+		public event Action<WorldGenerator> Surface6CollisionChanged;
+		ReferenceField<bool> _surface6Collision = false;
 
 
 		//LeveledArea
@@ -404,25 +734,17 @@ namespace NeoAxis
 		public event Action<WorldGenerator> AddLayersWithObjectsChanged;
 		ReferenceField<bool> _addLayersWithObjects = true;
 
-		///// <summary>
-		///// Whether to generate objects by the surfaces.
-		///// </summary>
-		//[DefaultValue( true )]
-		//[Category( "Generator" )]
-		//public Reference<bool> AddSurfaces
-		//{
-		//	get { if( _addSurfaces.BeginGet() ) AddSurfaces = _addSurfaces.Get( this ); return _addSurfaces.value; }
-		//	set { if( _addSurfaces.BeginSet( ref value ) ) { try { AddSurfacesChanged?.Invoke( this ); } finally { _addSurfaces.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="AddSurfaces"/> property value changes.</summary>
-		//public event Action<WorldGenerator> AddSurfacesChanged;
-		//ReferenceField<bool> _addSurfaces = true;
-
 		///////////////////////////////////////////////
 
 		public class TemplateData
 		{
-			public Reference<Material> TerrainMaterial;
+			public Reference<Material> BaseMaterial;
+			public ColorValue BaseMaterialColor = ColorValue.One;
+			public Reference<Surface> BaseSurface;
+			public double BaseSurfacePaintFactor = 1;
+			public ColorValue BaseSurfaceColor = ColorValue.One;
+			public bool BaseSurfaceCollision;
+
 			public List<SurfaceItem> Surfaces = new List<SurfaceItem>();
 
 			//
@@ -431,17 +753,21 @@ namespace NeoAxis
 			{
 				public Reference<Surface> Surface;
 				public double PaintFactor;
-				//public int PaintSteps;
+				public double Distribution;
+				public ColorValue Color;
+				public bool Collision;
 
 				public SurfaceItem()
 				{
 				}
 
-				public SurfaceItem( Reference<Surface> surface, double paintFactor )// int paintSteps )
+				public SurfaceItem( Reference<Surface> surface, double paintFactor, double distribution, ColorValue color, bool collision )
 				{
 					Surface = surface;
 					PaintFactor = paintFactor;
-					//PaintSteps = paintSteps;
+					Distribution = distribution;
+					Color = color;
+					Collision = collision;
 				}
 			}
 		}
@@ -456,16 +782,26 @@ namespace NeoAxis
 			{
 				switch( member.Name )
 				{
-				case nameof( TerrainMaterial ):
+				case nameof( BaseMaterial ):
+				case nameof( BaseMaterialColor ):
+				case nameof( BaseSurface ):
+				case nameof( BaseSurfacePaintFactor ):
+				case nameof( BaseSurfaceColor ):
+				case nameof( BaseSurfaceCollision ):
 				case nameof( Surface1 ):
 				case nameof( Surface2 ):
 				case nameof( Surface3 ):
 				case nameof( Surface4 ):
+				case nameof( Surface5 ):
+				case nameof( Surface6 ):
 					if( Template.Value != TemplateEnum.Custom )
 						skip = true;
 					break;
 
 				case nameof( Surface1PaintFactor ):
+				case nameof( Surface1Distribution ):
+				case nameof( Surface1Color ):
+				case nameof( Surface1Collision ):
 					if( Template.Value != TemplateEnum.Custom )
 						skip = true;
 					if( !Surface1.ReferenceSpecified )
@@ -473,6 +809,9 @@ namespace NeoAxis
 					break;
 
 				case nameof( Surface2PaintFactor ):
+				case nameof( Surface2Distribution ):
+				case nameof( Surface2Color ):
+				case nameof( Surface2Collision ):
 					if( Template.Value != TemplateEnum.Custom )
 						skip = true;
 					if( !Surface2.ReferenceSpecified )
@@ -480,6 +819,9 @@ namespace NeoAxis
 					break;
 
 				case nameof( Surface3PaintFactor ):
+				case nameof( Surface3Distribution ):
+				case nameof( Surface3Color ):
+				case nameof( Surface3Collision ):
 					if( Template.Value != TemplateEnum.Custom )
 						skip = true;
 					if( !Surface3.ReferenceSpecified )
@@ -487,9 +829,32 @@ namespace NeoAxis
 					break;
 
 				case nameof( Surface4PaintFactor ):
+				case nameof( Surface4Distribution ):
+				case nameof( Surface4Color ):
+				case nameof( Surface4Collision ):
 					if( Template.Value != TemplateEnum.Custom )
 						skip = true;
 					if( !Surface4.ReferenceSpecified )
+						skip = true;
+					break;
+
+				case nameof( Surface5PaintFactor ):
+				case nameof( Surface5Distribution ):
+				case nameof( Surface5Color ):
+				case nameof( Surface5Collision ):
+					if( Template.Value != TemplateEnum.Custom )
+						skip = true;
+					if( !Surface5.ReferenceSpecified )
+						skip = true;
+					break;
+
+				case nameof( Surface6PaintFactor ):
+				case nameof( Surface6Distribution ):
+				case nameof( Surface6Color ):
+				case nameof( Surface6Collision ):
+					if( Template.Value != TemplateEnum.Custom )
+						skip = true;
+					if( !Surface6.ReferenceSpecified )
 						skip = true;
 					break;
 
@@ -520,34 +885,58 @@ namespace NeoAxis
 			{
 			case TemplateEnum.OakForest:
 				{
-					data.TerrainMaterial = new Reference<Material>( null, terrainMaterialDefault );
+					data.BaseMaterial = new Reference<Material>( null, baseMaterialDefault );
+					data.BaseMaterialColor = ColorValue.One;
+					data.BaseSurface = new Reference<Surface>( null, baseSurfaceDefault );
+					data.BaseSurfacePaintFactor = 1;
+					data.BaseSurfaceColor = new ColorValue( 0.57, 0.75, 0.49 );
+					data.BaseSurfaceCollision = false;
 
 					var surface1 = new Reference<Surface>( null, surface1Default );
-					data.Surfaces.Add( new TemplateData.SurfaceItem( surface1, 0.3 ) );
+					data.Surfaces.Add( new TemplateData.SurfaceItem( surface1, 0.5, 1, ColorValue.One, true ) );
 
 					var surface2 = new Reference<Surface>( null, surface2Default );
-					data.Surfaces.Add( new TemplateData.SurfaceItem( surface2, 0.04 ) );
+					data.Surfaces.Add( new TemplateData.SurfaceItem( surface2, 0.02, 1, ColorValue.One, true ) );
+
+					var surface3 = new Reference<Surface>( null, surface3Default );
+					data.Surfaces.Add( new TemplateData.SurfaceItem( surface3, 0.15, 1.0, ColorValue.One, false ) );
+
+					var surface4 = new Reference<Surface>( null, surface4Default );
+					data.Surfaces.Add( new TemplateData.SurfaceItem( surface4, 0.15, 1.1, ColorValue.One, false ) );
+
+					var surface5 = new Reference<Surface>( null, surface5Default );
+					data.Surfaces.Add( new TemplateData.SurfaceItem( surface5, 0.15, 0.9, ColorValue.One, false ) );
 				}
 				break;
 
 			default:
 
-				data.TerrainMaterial = TerrainMaterial;
+				data.BaseMaterial = BaseMaterial;
+				data.BaseMaterialColor = BaseMaterialColor;
+				data.BaseSurface = BaseSurface;
+				data.BaseSurfacePaintFactor = BaseSurfacePaintFactor;
+				data.BaseSurfaceColor = BaseSurfaceColor;
+				data.BaseSurfaceCollision = BaseSurfaceCollision;
 
-				for( int nSurface = 0; nSurface < 4; nSurface++ )
+				for( int nSurface = 0; nSurface < 6; nSurface++ )
 				{
 					Reference<Surface> surface = null;
 					var paintFactor = 0.1;//var paintSteps = 1;
+					var distribution = 1.0;
+					var color = ColorValue.One;
+					var collision = false;
 					switch( nSurface )
 					{
-					case 0: surface = Surface1; paintFactor = Surface1PaintFactor; break;
-					case 1: surface = Surface2; paintFactor = Surface2PaintFactor; break;
-					case 2: surface = Surface3; paintFactor = Surface3PaintFactor; break;
-					case 3: surface = Surface4; paintFactor = Surface4PaintFactor; break;
+					case 0: surface = Surface1; paintFactor = Surface1PaintFactor; distribution = Surface1Distribution; color = Surface1Color; collision = Surface1Collision; break;
+					case 1: surface = Surface2; paintFactor = Surface2PaintFactor; distribution = Surface2Distribution; color = Surface2Color; collision = Surface2Collision; break;
+					case 2: surface = Surface3; paintFactor = Surface3PaintFactor; distribution = Surface3Distribution; color = Surface3Color; collision = Surface3Collision; break;
+					case 3: surface = Surface4; paintFactor = Surface4PaintFactor; distribution = Surface4Distribution; color = Surface4Color; collision = Surface4Collision; break;
+					case 4: surface = Surface5; paintFactor = Surface5PaintFactor; distribution = Surface5Distribution; color = Surface5Color; collision = Surface5Collision; break;
+					case 5: surface = Surface6; paintFactor = Surface6PaintFactor; distribution = Surface6Distribution; color = Surface6Color; collision = Surface6Collision; break;
 					}
 
 					if( surface.ReferenceSpecified )
-						data.Surfaces.Add( new TemplateData.SurfaceItem( surface, paintFactor ) );
+						data.Surfaces.Add( new TemplateData.SurfaceItem( surface, paintFactor, distribution, color, collision ) );
 				}
 				break;
 			}
@@ -555,8 +944,16 @@ namespace NeoAxis
 			return data;
 		}
 
+		public delegate void GenerateOverrideDelegate( WorldGenerator sender, Editor.DocumentInstance document, ref bool handled );
+		public event GenerateOverrideDelegate GenerateOverride;
+
 		public virtual void Generate( Editor.DocumentInstance document )
 		{
+			var handled = false;
+			GenerateOverride?.Invoke( this, document, ref handled );
+			if( handled )
+				return;
+
 			var scene = FindParent<Scene>();
 			if( scene == null )
 				return;
@@ -569,6 +966,9 @@ namespace NeoAxis
 			var randomizer = new FastRandom( Seed );
 
 			var terrain = scene.GetComponent<Terrain>( true );
+			var maskSize = 1;
+			if( terrain != null )
+				maskSize = terrain.GetPaintMaskSizeInteger();
 			var groupOfObjects = scene.GetComponent<GroupOfObjects>( true );
 
 			//disable components before update
@@ -587,14 +987,23 @@ namespace NeoAxis
 
 			terrain.HorizontalSize = Size;
 			//terrain.Position = new Vector3( -terrain.HorizontalSize.Value / 2, -terrain.HorizontalSize.Value / 2, 0 );
-			terrain.Material = templateData.TerrainMaterial;
+			terrain.Material = templateData.BaseMaterial;
+			terrain.MaterialColor = templateData.BaseMaterialColor;
+			if( templateData.BaseSurfacePaintFactor > 0 )
+			{
+				terrain.Surface = templateData.BaseSurface;
+				terrain.SurfaceObjectsColor = templateData.BaseSurfaceColor;
+				terrain.SurfaceObjectsDistribution = 1.0 / templateData.BaseSurfacePaintFactor;
+				terrain.SurfaceObjectsCollision = templateData.BaseSurfaceCollision;
+			}
 
 			var heightRange = HeightRange.Value;
 			var heightmapSize = terrain.GetHeightmapSizeInteger();
 
 			//update terrain heights
 			{
-				var globalScale = 3.0;
+				var globalScale = Curvature.Value;
+				//var globalScale = 3.0;
 
 				var functions = new (Radian angle, double scale)[]{
 					(randomizer.Next( Math.PI * 2 ), randomizer.Next( 7 * globalScale, 10 * globalScale )) ,
@@ -648,6 +1057,79 @@ namespace NeoAxis
 				}
 			}
 
+			//delete old layers
+			if( terrain != null )
+			{
+				foreach( var c in terrain.GetComponents<PaintLayer>() )
+					c.RemoveFromParent( false );
+			}
+
+			////add material layers
+			//{
+			//	var layer = terrain.CreateComponent<PaintLayer>();
+			//	//layer.Material = ;
+
+			//	//layer.fill
+
+			//	var name = "";
+			//	{
+			//		var surfaceV = layer.Surface.Value;
+			//		if( surfaceV != null )
+			//		{
+			//			if( surfaceV.Parent == null )
+			//			{
+			//				var fileName = ComponentUtility.GetOwnedFileNameOfComponent( surfaceV );
+			//				if( !string.IsNullOrEmpty( fileName ) )
+			//					name = Path.GetFileNameWithoutExtension( fileName );
+			//			}
+			//			else
+			//				name = surfaceV.Name;
+			//		}
+			//		if( string.IsNullOrEmpty( name ) )
+			//			name = ( nSurface + 1 ).ToString();
+			//	}
+			//	layer.Name = "Paint Layer " + name;
+
+
+			//	layer.Mask = new byte[ terrain.GetPaintMaskSizeInteger() * terrain.GetPaintMaskSizeInteger() ];
+
+			//	{
+			//		var min = new Vector2I( -100000, -100000 );
+			//		var max = new Vector2I( 100000, 100000 );
+			//		MathEx.Clamp( ref min.X, 0, maskSize - 1 );
+			//		MathEx.Clamp( ref min.Y, 0, maskSize - 1 );
+			//		MathEx.Clamp( ref max.X, 0, maskSize - 1 );
+			//		MathEx.Clamp( ref max.Y, 0, maskSize - 1 );
+
+			//		for( int y = min.Y; y <= max.Y; y++ )
+			//		{
+			//			for( int x = min.X; x <= max.X; x++ )
+			//			{
+			//				var maskIndex = new Vector2I( x, y );
+			//				//var pos = terrain.GetPositionXYByMaskIndex( maskIndex );
+
+			//				var factor = surfaceItem.PaintFactor;
+
+			//				//var factor = leveledAreaRectangle.Contains( pos ) ? 1.0 : 0.0;
+			//				//var distance = areaRectangle.GetPointDistance( pos );
+			//				//var factor = 1.0 - MathEx.Saturate( distance / borderSize );
+
+			//				//if( factor > 0 )
+			//				{
+			//					layer.SetMaskValue( maskIndex, (float)factor );
+
+			//					//var source = terrain.GetHeightWithoutPosition( maskIndex, false );
+			//					//var dest = LeveledAreaHeight.Value;
+
+			//					//var newValue = MathEx.Lerp( source, dest, factor );
+			//					//terrain.SetHeightWithoutPosition( maskIndex, (float)newValue );
+			//				}
+			//			}
+			//		}
+			//	}
+
+			//}
+
 			//update group of objects
 
 			if( groupOfObjects == null )
@@ -677,14 +1159,7 @@ namespace NeoAxis
 			if( terrain != null && !groupOfObjects.GetBaseObjects().Contains( terrain ) )
 				groupOfObjects.BaseObjects.Add( ReferenceUtility.MakeRootReference( terrain ) );
 
-			Rectangle leveledAreaRectangle = Rectangle.Zero;
-
-			//delete old layers
-			if( terrain != null )
-			{
-				foreach( var c in terrain.GetComponents<PaintLayer>() )
-					c.RemoveFromParent( false );
-			}
+			//Rectangle leveledAreaRectangle = Rectangle.Zero;
 
 			//create internal data of the terrain
 			if( terrain != null )
@@ -705,7 +1180,10 @@ namespace NeoAxis
 					{
 						var layer = terrain.CreateComponent<PaintLayer>();
 						layer.Surface = surface;
+						layer.SurfaceObjectsColor = surfaceItem.Color;
+						layer.SurfaceObjectsCollision = surfaceItem.Collision;
 						layer.BlendMode = PaintLayer.BlendModeEnum.NoBlend;
+						layer.SurfaceObjectsDistribution = surfaceItem.Distribution;
 
 						var name = "";
 						{
@@ -725,9 +1203,6 @@ namespace NeoAxis
 								name = ( nSurface + 1 ).ToString();
 						}
 						layer.Name = "Paint Layer " + name;
-
-
-						var maskSize = terrain.GetPaintMaskSizeInteger();
 
 						layer.Mask = new byte[ terrain.GetPaintMaskSizeInteger() * terrain.GetPaintMaskSizeInteger() ];
 
@@ -771,7 +1246,7 @@ namespace NeoAxis
 
 			if( LeveledArea && LeveledAreaSize.Value.X > 0 && LeveledAreaSize.Value.Y > 0 )
 			{
-				leveledAreaRectangle = new Rectangle( -LeveledAreaSize.Value / 2, LeveledAreaSize.Value / 2 );
+				var leveledAreaRectangle = new Rectangle( -LeveledAreaSize.Value / 2, LeveledAreaSize.Value / 2 );
 				//var leveledAreaCenter = leveledAreaRectangle.GetCenter();
 				var shape = LeveledAreaShape.Value;
 
@@ -866,8 +1341,6 @@ namespace NeoAxis
 					layer.Name = "Paint Layer " + name;
 
 
-					var maskSize = terrain.GetPaintMaskSizeInteger();
-
 					layer.Mask = new byte[ terrain.GetPaintMaskSizeInteger() * terrain.GetPaintMaskSizeInteger() ];
 
 					{
@@ -877,6 +1350,10 @@ namespace NeoAxis
 
 						var min = terrain.GetMaskIndexByPosition( leveledAreaRectangle.Minimum );// - new Vector2( borderSize, borderSize ) ) - new Vector2I( 1, 1 );
 						var max = terrain.GetMaskIndexByPosition( leveledAreaRectangle.Maximum );// + new Vector2( borderSize, borderSize ) ) + new Vector2I( 2, 2 );
+
+						min -= new Vector2I( 10, 10 );
+						max += new Vector2I( 10, 10 );
+
 						MathEx.Clamp( min.X, 0, maskSize - 1 );
 						MathEx.Clamp( min.Y, 0, maskSize - 1 );
 						MathEx.Clamp( max.X, 0, maskSize - 1 );
@@ -889,11 +1366,8 @@ namespace NeoAxis
 								var maskIndex = new Vector2I( x, y );
 								var pos = terrain.GetPositionXYByMaskIndex( maskIndex );
 
-								var factor = GetPointDistance( pos ) == 0 ? 1.0 : 0.0;
-								//var factor = leveledAreaRectangle.Contains( pos ) ? 1.0 : 0.0;
-
-								//var distance = areaRectangle.GetPointDistance( pos );
-								//var factor = 1.0 - MathEx.Saturate( distance / borderSize );
+								var factor = MathEx.Saturate( 1.0 - GetPointDistance( pos ) );
+								//var factor = GetPointDistance( pos ) == 0 ? 1.0 : 0.0;
 
 								if( factor > 0 )
 									layer.SetMaskValue( maskIndex, (float)factor );
@@ -904,296 +1378,12 @@ namespace NeoAxis
 
 			}
 
-			////surfaces
-			//if( AddSurfaces )
-			//{
-			//	for( int nSurface = 0; nSurface < templateData.Surfaces.Count; nSurface++ )
-			//	{
-			//		var surfaceItem = templateData.Surfaces[ nSurface ];
-
-			//		var surface = surfaceItem.Surface;
-			//		var surfaceV = surface.GetValue( this ).Value;
-			//		if( surfaceV != null )
-			//		{
-			//			var element = groupOfObjects.CreateComponent<GroupOfObjectsElement_Surface>();
-			//			element.Name = "Element " + ( nSurface + 1 ).ToString();
-			//			element.Surface = surface;
-			//			element.Index = nSurface;
-
-			//			for( int n = 0; n < surfaceItem.PaintSteps; n++ )
-			//				FillGroupOfObjects( scene, terrain, groupOfObjects, randomizer, surfaceV, element.Index );
-			//		}
-			//	}
-			//}
-
-			//if( LeveledArea )
-			//{
-			//	//clear objects from the group of objects
-			//	{
-			//		var borderSize = leveledAreaRectangle.Size.MaxComponent() / 20.0;
-			//		if( borderSize < 0.001 )
-			//			borderSize = 0.001;
-
-			//		var rectangle = leveledAreaRectangle;
-			//		rectangle.Expand( borderSize );
-
-			//		var objectsToRemove = new List<int>();
-
-			//		foreach( var objectIndex in groupOfObjects.ObjectsGetAll() )
-			//		{
-			//			ref var obj = ref groupOfObjects.ObjectGetData( objectIndex );
-
-			//			if( rectangle.Contains( obj.Position.ToVector2() ) )
-			//				objectsToRemove.Add( objectIndex );
-			//		}
-
-			//		groupOfObjects.ObjectsRemove( objectsToRemove.ToArray() );
-
-
-			//		//works only when enabled:
-
-			//		//var bounds = new Bounds( rectangle.Minimum.X, rectangle.Minimum.Y, double.MinValue, rectangle.Maximum.X, rectangle.Maximum.Y, double.MaxValue );
-			//		//var getObjectsItem = new GroupOfObjects.GetObjectsItem( GroupOfObjects.GetObjectsItem.CastTypeEnum.All, null, false, bounds );
-
-			//		//groupOfObjects.GetObjects( getObjectsItem );
-
-			//		//foreach( var item in getObjectsItem.Result )
-			//	}
-			//}
-
 			//enable components after update
 			if( terrain != null )
 				terrain.Enabled = true;
 			if( groupOfObjects != null )
 				groupOfObjects.Enabled = true;
 		}
-
-		//void FillGroupOfObjects( Scene scene, Terrain terrain, GroupOfObjects toGroupOfObjects, FastRandom random, Surface surface, int elementIndex )
-		//{
-		//	var terrainBounds = terrain.GetBounds2();
-		//	var center = new Vector3( terrainBounds.GetCenter(), terrain.Position.Value.Z );
-
-		//	var toolRadius = ( terrainBounds.Minimum - terrainBounds.GetCenter() ).Length();
-		//	var toolStrength = 1.0;
-
-
-		//	//when destination != null
-
-		//	var destinationCachedBaseObjects = toGroupOfObjects.GetBaseObjects();
-
-		//	//creating
-
-		//	double maxOccupiedAreaRadius;
-		//	double averageOccupiedAreaRadius;
-		//	{
-		//		var groups = surface.GetComponents<SurfaceGroupOfElements>();
-		//		if( groups.Length != 0 )
-		//		{
-		//			maxOccupiedAreaRadius = 0;
-		//			averageOccupiedAreaRadius = 0;
-		//			foreach( var group in groups )
-		//			{
-		//				if( group.OccupiedAreaRadius > maxOccupiedAreaRadius )
-		//					maxOccupiedAreaRadius = group.OccupiedAreaRadius;
-		//				averageOccupiedAreaRadius += group.OccupiedAreaRadius;
-		//			}
-		//			averageOccupiedAreaRadius /= groups.Length;
-		//		}
-		//		else
-		//		{
-		//			maxOccupiedAreaRadius = 1;
-		//			averageOccupiedAreaRadius = 1;
-		//		}
-		//	}
-
-		//	//calculate object count
-		//	int count;
-		//	{
-		//		var toolSquare = Math.PI * toolRadius * toolRadius;
-
-		//		double radius = averageOccupiedAreaRadius;// minDistanceBetweenObjects / 2;
-		//		double objectSquare = Math.PI * radius * radius;
-		//		if( objectSquare < 0.1 )
-		//			objectSquare = 0.1;
-
-		//		double maxCount = toolSquare / objectSquare;
-		//		maxCount /= 20;
-
-		//		count = (int)( toolStrength * (double)maxCount );
-		//		count = Math.Max( count, 1 );
-		//	}
-
-		//	var data = new List<GroupOfObjects.Object>( count );
-
-		//	////find element
-		//	//var element = toGroupOfObjects.GetComponents<GroupOfObjectsElement_Surface>().FirstOrDefault( e => e.Surface.Value == surface );
-		//	//if( element == null )
-		//	//	return;
-
-		//	var totalBounds = new Bounds( center );
-		//	totalBounds.Expand( toolRadius + maxOccupiedAreaRadius * 4.01 );
-
-		//	var initSettings = new OctreeContainer.InitSettings();
-		//	initSettings.InitialOctreeBounds = totalBounds;
-		//	initSettings.OctreeBoundsRebuildExpand = Vector3.Zero;
-		//	initSettings.MinNodeSize = totalBounds.GetSize() / 100;
-		//	var octree = new OctreeContainer( initSettings );
-
-		//	var octreeOccupiedAreas = new List<Sphere>( 256 );
-
-		//	{
-		//		var item = new GroupOfObjects.GetObjectsItem( GroupOfObjects.GetObjectsItem.CastTypeEnum.All, null, true, totalBounds );
-		//		toGroupOfObjects.GetObjects( item );
-		//		foreach( var resultItem in item.Result )
-		//		{
-		//			ref var obj = ref toGroupOfObjects.ObjectGetData( resultItem.Object );
-		//			if( obj.Element == elementIndex )
-		//			{
-		//				var surfaceGroup = surface.GetGroup( obj.VariationGroup );
-		//				if( surfaceGroup != null )
-		//				{
-		//					octreeOccupiedAreas.Add( new Sphere( obj.Position, surfaceGroup.OccupiedAreaRadius ) );
-
-		//					var b = new Bounds( obj.Position );
-		//					b.Expand( surfaceGroup.OccupiedAreaRadius * 4 );
-		//					octree.AddObject( b, 1 );
-		//				}
-		//			}
-		//		}
-		//	}
-
-		//	////create point container to check by MinDistanceBetweenObjects
-		//	//PointContainer3D pointContainerFindFreePlace;
-		//	//{
-		//	//	double minDistanceBetweenObjectsMax = 0;
-		//	//	foreach( var group in surface.GetComponents<SurfaceGroupOfElements>() )
-		//	//		minDistanceBetweenObjectsMax = Math.Max( minDistanceBetweenObjectsMax, group.MinDistanceBetweenObjects );
-
-		//	//	var bounds = new Bounds( center );
-		//	//	bounds.Expand( toolRadius + minDistanceBetweenObjectsMax );
-		//	//	pointContainerFindFreePlace = new PointContainer3D( bounds, 100 );
-
-		//	//	var item = new GroupOfObjects.GetObjectsItem( GroupOfObjects.GetObjectsItem.CastTypeEnum.All, null, true, bounds );
-		//	//	toGroupOfObjects.GetObjects( item );
-		//	//	foreach( var resultItem in item.Result )
-		//	//	{
-		//	//		ref var obj = ref toGroupOfObjects.ObjectGetData( resultItem.Object );
-		//	//		if( obj.Element == elementIndex )
-		//	//			pointContainerFindFreePlace.Add( ref obj.Position );
-		//	//	}
-		//	//}
-
-		//	for( int n = 0; n < count; n++ )
-		//	{
-		//		surface.GetRandomVariation( new Surface.GetRandomVariationOptions(), random, out var groupIndex, out var variationIndex, out var positionZ, out var rotation, out var scale );
-		//		var surfaceGroup = surface.GetGroup( groupIndex );
-
-		//		Vector3? position = null;
-
-		//		for( var nRadiusMultiplier = 0; nRadiusMultiplier < 3; nRadiusMultiplier++ )
-		//		{
-		//			var radiusMultiplier = 1.0;
-		//			switch( nRadiusMultiplier )
-		//			{
-		//			case 0: radiusMultiplier = 4; break;
-		//			case 1: radiusMultiplier = 2; break;
-		//			case 2: radiusMultiplier = 1; break;
-		//			}
-
-		//			int counter = 0;
-		//			while( counter < 10 )
-		//			{
-		//				var offset = new Vector2( random.Next( toolRadius * 2 ) - toolRadius, random.Next( toolRadius * 2 ) - toolRadius );
-
-		//				////check by radius and by hardness
-		//				//var length = offset.Length();
-		//				//if( length <= toolRadius && random.NextDouble() <= GetHardnessFactor( length ) )
-		//				//{
-
-		//				var position2 = center.ToVector2() + offset;
-		//				if( terrainBounds.Contains( position2 ) )
-		//				{
-		//					var result = SceneUtility.CalculateObjectPositionZ( scene, toGroupOfObjects, center.Z, position2, destinationCachedBaseObjects );
-		//					if( result.found )
-		//					{
-		//						var p = new Vector3( position2, result.positionZ );
-
-		//						var objSphere = new Sphere( p, surfaceGroup.OccupiedAreaRadius );
-		//						objSphere.ToBounds( out var objBounds );
-
-		//						var occupied = false;
-
-		//						foreach( var index in octree.GetObjects( objBounds, 0xFFFFFFFF, OctreeContainer.ModeEnum.All ) )
-		//						{
-		//							var sphere = octreeOccupiedAreas[ index ];
-		//							sphere.Radius *= 0.25;//back to original
-		//							sphere.Radius *= radiusMultiplier;//multiply
-
-		//							if( ( p - sphere.Center ).LengthSquared() < ( sphere.Radius + objSphere.Radius ) * ( sphere.Radius + objSphere.Radius ) )
-		//							{
-		//								occupied = true;
-		//								break;
-		//							}
-		//						}
-
-		//						if( !occupied )
-		//						{
-		//							//found place to create
-		//							position = p;
-		//							goto end;
-		//						}
-
-		//						////check by MinDistanceBetweenObjects
-		//						//if( surfaceGroup == null || !pointContainerFindFreePlace.Contains( new Sphere( p, surfaceGroup.MinDistanceBetweenObjects ) ) )
-		//						//{
-		//						//	//found place to create
-		//						//	position = p;
-		//						//	break;
-		//						//}
-		//					}
-		//				}
-
-		//				//}
-
-		//				counter++;
-		//			}
-		//		}
-
-		//		end:;
-
-		//		if( position != null )
-		//		{
-		//			var obj = new GroupOfObjects.Object();
-		//			obj.Element = (ushort)elementIndex;
-		//			obj.VariationGroup = groupIndex;
-		//			obj.VariationElement = variationIndex;
-		//			obj.Flags = GroupOfObjects.Object.FlagsEnum.Enabled | GroupOfObjects.Object.FlagsEnum.Visible;
-		//			obj.Position = position.Value + new Vector3( 0, 0, positionZ );
-		//			obj.Rotation = rotation;
-		//			obj.Scale = scale;
-		//			obj.Color = ColorValue.One;
-		//			data.Add( obj );
-
-		//			//add to the octree
-
-		//			octreeOccupiedAreas.Add( new Sphere( position.Value, surfaceGroup.OccupiedAreaRadius ) );
-
-		//			var b = new Bounds( position.Value );
-		//			b.Expand( surfaceGroup.OccupiedAreaRadius * 4 );
-		//			octree.AddObject( b, 1 );
-
-		//			////add to point container
-		//			//pointContainerFindFreePlace.Add( ref obj.Position );
-		//		}
-		//	}
-
-		//	octree.Dispose();
-
-		//	//createByBrushGroupOfObjects = toGroupOfObjects;
-
-		//	var newIndexes = toGroupOfObjects.ObjectsAdd( data.ToArray() );
-		//	//createByBrushGroupOfObjectsObjectsCreated.AddRange( newIndexes );
-		//}
 
 #endif
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -28,8 +28,9 @@ namespace NeoAxis
 		ReferenceField<Mesh> _mesh;
 
 		/// <summary>
-		/// Specifies the distance at which this level of detail will become active.
+		/// Specifies the distance at which this level of detail will become active. For voxel LODs is also another factor exists, voxel LOD will activate only when the size of a voxel is less than 1 pixel on the screen.
 		/// </summary>
+		// Specifies the distance at which this level of detail will become active. 100000 value means it is a voxel LOD, this value is not used. The distance for the voxel LOD is calculated depending on object size on the screen during the rendering.
 		[Serialize]
 		//[DefaultValue( 0.0 )]
 		public Reference<double> Distance

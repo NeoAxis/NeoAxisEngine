@@ -1,3 +1,5 @@
+// Made with NeoAxis Engine 2023.1.
+
 .component NeoAxis.Scene
 {
 	RenderingPipeline
@@ -12,7 +14,7 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "8.64818528708613 -7.4436561330961 4.72135059492978; -0.213699745395315 0.202681168248169 0.693380583842323 0.657629172715152; 1 1 1"
+		Transform = "8.51425302204292 -7.1993075410375 4.64330327103154; -0.23945323846144 0.230378330102123 0.679683882947334 0.653924912257761; 1 1 1"
 	}
 	.component NeoAxis.Light
 	{
@@ -76,7 +78,6 @@
 			.component NeoAxis.RenderingEffect_Sharpen
 			{
 				Name = Sharpen
-				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
 			}
 		}
 		.component NeoAxis.Component
@@ -87,6 +88,12 @@
 	.component NeoAxis.GameMode
 	{
 		Name = Game Mode
+		CutsceneStarted = False
+		CutsceneGuiFadingFactor = 0
+		CutsceneGuiFadingSpeed = 0
+		ScreenFadingCurrentColor = 0 0 0 0
+		ScreenFadingTargetColor = 0 0 0 0
+		ScreenFadingSpeed = 0
 	}
 	.component NeoAxis.Light
 	{
@@ -111,6 +118,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Mesh
 		{
@@ -159,6 +173,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Mesh
 		{
 			Name = Mesh
@@ -179,6 +200,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Mesh
 		{
@@ -201,6 +229,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Mesh
 		{
 			Name = Mesh
@@ -221,6 +256,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Mesh
 		{
@@ -243,6 +285,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Mesh
 		{
 			Name = Mesh
@@ -263,6 +312,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Mesh
 		{
@@ -285,6 +341,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Mesh
 		{
 			Name = Mesh
@@ -305,6 +368,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Mesh
 		{
@@ -366,5 +436,11 @@
 			Name = Curve In Space Point9
 			Transform = "2.83330107505634 -0.755783818129606 0.694814551691028; 0 0 0.839750417986334 0.542972591842146; 1 1 1"
 		}
+	}
+	.component NeoAxis.Text2D
+	{
+		Name = Text 2D
+		Transform = "8.48433562379018 -6.91494439355219 4.00815857829812; 0 0 0 1; 1 1 1"
+		Text = The ship is animated by means configured Transform property. The property has a configured reference
 	}
 }

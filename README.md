@@ -4,7 +4,7 @@
 
 <ul>
 <li>The most open and powerful real-time .NET development platform.</li>
-<li>All power of advanced source-provided solution under your control.</li>
+<li>Modern rendering system to get maximum performance from GPU.</li>
 <li>A complete suite of development tools for real-time 3D project creators.</li>
 <li>Open for the integration of third-party services and stores.</li>
 </ul>
@@ -32,7 +32,7 @@ For Windows:
 <ul>
 <li>You need Visual Studio 2019 with .NET Core 3.1. Use NeoAxis.Managed.Sources.sln.</li>
 <li>The native core for Windows is already compiled.</li>
-<li>Download Sci-fi Demo, Nature Demo and other content from the Asset Store window inside the editor.</li>
+<li>Download City Demo, Nature Demo and other content from the Asset Store window inside the editor.</li>
 </ul>
 
 More:
@@ -64,4 +64,4 @@ Yes. If you encounter problems, please report it as soon as possible.</li>
 
 </ul>
 
-<div class="image" align="center"><a href="https://www.neoaxis.com/images/2022_1/NeoAxisEngine_2022_1_NatureDemo.jpg"><img src="https://www.neoaxis.com/images/2022_1/NeoAxisEngine_2022_1_NatureDemo.jpg" alt="" width="1000" vspace="10"></a></div>
+<div class="image" align="center"><a href="https://www.neoaxis.com/images/2023_1/NeoAxisEngine2023_Levels1.jpg"><img src="https://www.neoaxis.com/images/2023_1/NeoAxisEngine2023_Levels1.jpg" alt="" width="1000" vspace="10"></a></div>

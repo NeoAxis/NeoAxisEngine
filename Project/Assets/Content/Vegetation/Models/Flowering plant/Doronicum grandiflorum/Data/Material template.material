@@ -1,0 +1,28 @@
+// Made with NeoAxis Engine 2021.3.
+
+.component "Base\\Material templates\\Vegetation.material"
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1162, 842\"><KW V=\"1\" A=\"0B863F6DC59E4EBFD2B50BAACE64C189\"><CGD /><WS UN=\"55350C3B8756427EE986EB9E41A6033E\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"C8ED1B2A1C7F4C99199160FE33B9BB67\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"0B863F6DC59E4EBFD2B50BAACE64C189\"><KP UN=\"E466A4B14AF8426EAF812C5F6AF21BC3\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"0B863F6DC59E4EBFD2B50BAACE64C189\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	BlendMode = Masked
+	TwoSided = True
+	ShadingModel = Subsurface
+	Thickness = 0.02
+	.component NeoAxis.FlowGraph
+	{
+		Name = Shader graph
+		EditorScrollPosition = 0.705882352941178 1.52941176470588
+		Specialization
+		{
+			GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Material
+			Position = 10 -7
+			ControlledObject
+			{
+				GetByReference = "this:..\\.."
+			}
+		}
+	}
+}

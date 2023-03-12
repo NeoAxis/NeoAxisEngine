@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,11 +8,10 @@ using System.ComponentModel;
 using System.Reflection;
 using Internal.SharpBgfx;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
-	//!!!!а они не шарятся? если несколько контекстов есть
-
 	/// <summary>
 	/// Represents a manager for rendering to viewport.
 	/// </summary>
@@ -46,8 +45,8 @@ namespace NeoAxis
 		public ObjectsDuringUpdateClass ObjectsDuringUpdate;
 		internal StatisticsClass updateStatisticsCurrent = new StatisticsClass();
 		internal StatisticsClass updateStatisticsPrevious = new StatisticsClass();
-		internal RenderingPipeline renderingPipeline;
-		public RenderingPipeline.IFrameData FrameData;
+		internal RenderingPipeline_Basic renderingPipeline;//internal RenderingPipeline renderingPipeline;
+		public RenderingPipeline_Basic.FrameData FrameData;//public RenderingPipeline.IFrameData FrameData;
 		public ObjectInSpace.RenderingContext ObjectInSpaceRenderingContext;
 
 		//update many times during frame rendering
@@ -56,7 +55,7 @@ namespace NeoAxis
 
 		//custom cached data
 		public Dictionary<string, object> AnyData = new Dictionary<string, object>();
-		public Dictionary<string, ImageComponent> AnyImageAutoDispose = new Dictionary<string, ImageComponent>();
+		public Dictionary<string, IDisposable> AnyDataAutoDispose = new Dictionary<string, IDisposable>();
 
 		internal RenderingPipeline.RenderSceneData.CutVolumeItem[] CurrentCutVolumes;
 
@@ -65,8 +64,14 @@ namespace NeoAxis
 		//optimization
 		internal Viewport.CameraSettingsClass OwnerCameraSettings;
 		internal Vector3 OwnerCameraSettingsPosition;
-		internal double ShadowObjectVisibilityDistanceFactor = 1;
+		internal float ShadowObjectVisibilityDistanceFactor = 1;
 		Curve1F getVisibilityDistanceByObjectSize;
+		Curve1F[] getVoxelLodVisibilityDistanceByObjectSize;
+		internal bool DeferredShading;
+		public bool SceneDisplayDevelopmentDataInThisApplication;
+		internal RangeI LODRange;
+		internal float LODScale;
+		internal bool SmoothLOD;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -129,6 +134,8 @@ namespace NeoAxis
 			public int Triangles;
 			public int Lines;
 			public int DrawCalls;
+			public int Instances;
+			public int ComputeDispatches;
 			public int RenderTargets;
 			public int DynamicTextures;
 			public int ComputeWriteImages;
@@ -136,53 +143,6 @@ namespace NeoAxis
 			public int ReflectionProbes;
 			public int OcclusionCullingBuffers;
 		}
-
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-		//public class InputTextureItem
-		//{
-		//	GpuTexture texture;
-		//	FilterOption minFilter;
-		//	FilterOption magFilter;
-		//	FilterOption mipFilter;
-
-
-		//	public GpuTexture Texture
-		//	{
-		//		get { return texture; }
-		//		set { texture = value; }
-		//	}
-
-		//	public FilterOption MinFilter
-		//	{
-		//		get { return minFilter; }
-		//		set { minFilter = value; }
-		//	}
-
-		//	public FilterOption MagFilter
-		//	{
-		//		get { return magFilter; }
-		//		set { magFilter = value; }
-		//	}
-
-		//	public FilterOption MipFilter
-		//	{
-		//		get { return mipFilter; }
-		//		set { mipFilter = value; }
-		//	}
-
-		//	public InputTextureItem()
-		//	{
-		//	}
-
-		//	public InputTextureItem( GpuTexture texture, FilterOption minFilter, FilterOption magFilter, FilterOption mipFilter )
-		//	{
-		//		this.texture = texture;
-		//		this.minFilter = minFilter;
-		//		this.magFilter = magFilter;
-		//		this.mipFilter = mipFilter;
-		//	}
-		//}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -272,9 +232,9 @@ namespace NeoAxis
 			DynamicTexture_DestroyAll();
 			OcclusionCullingBuffer_DestroyAll();
 
-			foreach( var image in AnyImageAutoDispose.Values )
+			foreach( var image in AnyDataAutoDispose.Values )
 				image.Dispose();
-			AnyImageAutoDispose.Clear();
+			AnyDataAutoDispose.Clear();
 
 			if( renderer != null )
 			{
@@ -312,7 +272,7 @@ namespace NeoAxis
 			return null;
 		}
 
-		public ImageComponent DynamicTexture_Alloc( DynamicTextureType type, ImageComponent.TypeEnum imageType, Vector2I size, PixelFormat format, int fsaaLevel, bool mipmaps, int arrayLayers = 1, bool createSimple3DRenderer = false, bool createCanvasRenderer = false )
+		public ImageComponent DynamicTexture_Alloc( DynamicTextureType type, ImageComponent.TypeEnum imageType, Vector2I size, PixelFormat format, int fsaaLevel, bool mipmaps, int arrayLayers = 1, int depth3DTexture = 1, bool createSimple3DRenderer = false, bool createCanvasRenderer = false )
 		{
 			if( type == DynamicTextureType.RenderTarget )
 				UpdateStatisticsCurrent.RenderTargets++;
@@ -334,6 +294,7 @@ namespace NeoAxis
 			texture.CreateSize = size;
 			texture.CreateMipmaps = mipmaps;
 			texture.CreateArrayLayers = arrayLayers;
+			texture.CreateDepth = depth3DTexture;
 			texture.CreateFormat = format;
 			if( type == DynamicTextureType.DynamicTexture )
 				texture.CreateUsage = ImageComponent.Usages.Dynamic | ImageComponent.Usages.WriteOnly;
@@ -383,8 +344,6 @@ namespace NeoAxis
 				}
 			}
 
-			//Log.Info( "alloc: " + type.ToString() + " " + size.ToString() );
-
 			//add to list of allocated
 			var item = new DynamicTextureItem();
 			item.type = type;
@@ -404,15 +363,20 @@ namespace NeoAxis
 			return texture;
 		}
 
+		public ImageComponent DynamicTexture_Alloc( DynamicTextureType type, Vector3I size, PixelFormat format, int fsaaLevel, bool mipmaps, int arrayLayers = 1, bool createSimple3DRenderer = false, bool createCanvasRenderer = false )
+		{
+			return DynamicTexture_Alloc( type, ImageComponent.TypeEnum._3D, size.ToVector2I(), format, fsaaLevel, mipmaps, arrayLayers, size.Z, createSimple3DRenderer, createCanvasRenderer );
+		}
+
 		public ImageComponent RenderTarget2D_Alloc( Vector2I size, PixelFormat format, int fsaaLevel = 0, bool mipmaps = false, int arrayLayers = 1, bool createSimple3DRenderer = false, bool createCanvasRenderer = false )
 		{
-			return DynamicTexture_Alloc( DynamicTextureType.RenderTarget, ImageComponent.TypeEnum._2D, size, format, fsaaLevel, mipmaps, arrayLayers, createSimple3DRenderer, createCanvasRenderer );
+			return DynamicTexture_Alloc( DynamicTextureType.RenderTarget, ImageComponent.TypeEnum._2D, size, format, fsaaLevel, mipmaps, arrayLayers, 1, createSimple3DRenderer, createCanvasRenderer );
 		}
 
 		//!!!!check arrayLayers
 		public ImageComponent RenderTargetCube_Alloc( Vector2I size, PixelFormat format, int fsaaLevel = 0, bool mipmaps = false, int arrayLayers = 1, bool createSimple3DRenderer = false, bool createCanvasRenderer = false )
 		{
-			return DynamicTexture_Alloc( DynamicTextureType.RenderTarget, ImageComponent.TypeEnum.Cube, size, format, fsaaLevel, mipmaps, arrayLayers, createSimple3DRenderer, createCanvasRenderer );
+			return DynamicTexture_Alloc( DynamicTextureType.RenderTarget, ImageComponent.TypeEnum.Cube, size, format, fsaaLevel, mipmaps, arrayLayers, 1, createSimple3DRenderer, createCanvasRenderer );
 		}
 
 		public void DynamicTexture_Free( ImageComponent texture )
@@ -766,6 +730,7 @@ namespace NeoAxis
 			currentViewNumber = -1;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static uint ToRGBA( ColorValue color )
 		{
 			var alpha = (uint)MathEx.Clamp( color.Alpha * 255, 0, 255 );
@@ -866,7 +831,7 @@ namespace NeoAxis
 			SetViewport( viewport, Matrix4F.Identity, Matrix4F.Identity );
 		}
 
-		public void SetComputeView()
+		public void SetComputePass()
 		{
 			currentViewport = null;
 			currentViewNumber++;
@@ -928,30 +893,52 @@ namespace NeoAxis
 			renderer.ViewportRendering_RenderToCurrentViewport( this, true, Owner.LastUpdateTime );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void SetVertexBuffer( int stream, GpuVertexBuffer buffer, int startVertex = 0, int count = -1 )
 		{
-			if( buffer.Flags.HasFlag( GpuBufferFlags.Dynamic ) || buffer.Flags.HasFlag( GpuBufferFlags.ComputeWrite ) )
-				Bgfx.SetVertexBuffer( stream, (DynamicVertexBuffer)buffer.GetNativeObject(), startVertex, count );
+			buffer.UpdateNativeObject();
+			if( buffer.NativeObjectIsDynamicBuffer )
+				NativeMethods.bgfx_set_dynamic_vertex_buffer( (byte)stream, buffer.NativeObjectHandle, startVertex, count );
 			else
-				Bgfx.SetVertexBuffer( stream, (VertexBuffer)buffer.GetNativeObject(), startVertex, count );
+				NativeMethods.bgfx_set_vertex_buffer( (byte)stream, buffer.NativeObjectHandle, startVertex, count );
+
+			//if( ( ( buffer.Flags & GpuBufferFlags.Dynamic ) != 0 ) || ( ( buffer.Flags & GpuBufferFlags.ComputeWrite ) != 0 ) )
+			//	Bgfx.SetVertexBuffer( stream, (DynamicVertexBuffer)buffer.GetNativeObject(), startVertex, count );
+			//else
+			//	Bgfx.SetVertexBuffer( stream, (VertexBuffer)buffer.GetNativeObject(), startVertex, count );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void SetInstanceDataBuffer( GpuVertexBuffer buffer, int startVertex /*= 0*/, int count /*= -1*/ )
 		{
-			if( buffer.Flags.HasFlag( GpuBufferFlags.Dynamic ) || buffer.Flags.HasFlag( GpuBufferFlags.ComputeWrite ) )
-				Bgfx.SetInstanceDataBuffer( (DynamicVertexBuffer)buffer.GetNativeObject(), startVertex, count );
+			buffer.UpdateNativeObject();
+			if( buffer.NativeObjectIsDynamicBuffer )
+				NativeMethods.bgfx_set_instance_data_from_dynamic_vertex_buffer( buffer.NativeObjectHandle, startVertex, count );
 			else
-				Bgfx.SetInstanceDataBuffer( (VertexBuffer)buffer.GetNativeObject(), startVertex, count );
+				NativeMethods.bgfx_set_instance_data_from_vertex_buffer( buffer.NativeObjectHandle, startVertex, count );
+
+			//if( ( ( buffer.Flags & GpuBufferFlags.Dynamic ) != 0 ) || ( ( buffer.Flags & GpuBufferFlags.ComputeWrite ) != 0 ) )
+			//	Bgfx.SetInstanceDataBuffer( (DynamicVertexBuffer)buffer.GetNativeObject(), startVertex, count );
+			//else
+			//	Bgfx.SetInstanceDataBuffer( (VertexBuffer)buffer.GetNativeObject(), startVertex, count );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void SetIndexBuffer( GpuIndexBuffer buffer, int startIndex = 0, int count = -1 )
 		{
-			if( buffer.Flags.HasFlag( GpuBufferFlags.Dynamic ) || buffer.Flags.HasFlag( GpuBufferFlags.ComputeWrite ) )
-				Bgfx.SetIndexBuffer( (DynamicIndexBuffer)buffer.GetNativeObject(), startIndex, count );
+			buffer.UpdateNativeObject();
+			if( buffer.NativeObjectIsDynamicBuffer )
+				NativeMethods.bgfx_set_dynamic_index_buffer( buffer.NativeObjectHandle, startIndex, count );
 			else
-				Bgfx.SetIndexBuffer( (IndexBuffer)buffer.GetNativeObject(), startIndex, count );
+				NativeMethods.bgfx_set_index_buffer( buffer.NativeObjectHandle, startIndex, count );
+
+			//if( ( ( buffer.Flags & GpuBufferFlags.Dynamic ) != 0 ) || ( ( buffer.Flags & GpuBufferFlags.ComputeWrite ) != 0 ) )
+			//	Bgfx.SetIndexBuffer( (DynamicIndexBuffer)buffer.GetNativeObject(), startIndex, count );
+			//else
+			//	Bgfx.SetIndexBuffer( (IndexBuffer)buffer.GetNativeObject(), startIndex, count );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static UniformType GetUniformTypeByParameterType( ParameterType type )
 		{
 			//!!!!может какие-то как массив интов?
@@ -973,6 +960,7 @@ namespace NeoAxis
 			return UniformType.Vector4;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe void SetUniform( Uniform uniform, ParameterType type, int arraySize, IntPtr valueData )
 		{
 			//int1, vec4, mat3, mat4
@@ -1013,17 +1001,20 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe void SetUniform( Uniform uniform, ParameterType type, int arraySize, void* valueData )
 		{
 			SetUniform( uniform, type, arraySize, (IntPtr)valueData );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe void SetUniform( Uniform uniform, ParameterType type, int arraySize, ArraySegment<byte> valueData )
 		{
 			fixed( byte* pData = valueData.Array )
 				SetUniform( uniform, type, arraySize, (IntPtr)( pData + valueData.Offset ) );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe void SetUniform( string name, ParameterType type, int arraySize, IntPtr valueData )
 		{
 			//int1, vec4, mat3, mat4
@@ -1033,11 +1024,13 @@ namespace NeoAxis
 			SetUniform( uniform, type, arraySize, valueData );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe void SetUniform( string name, ParameterType type, int arraySize, void* valueData )
 		{
 			SetUniform( name, type, arraySize, (IntPtr)valueData );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe void SetUniform( string name, ParameterType type, int arraySize, ArraySegment<byte> valueData )
 		{
 			fixed( byte* pData = valueData.Array )
@@ -1050,7 +1043,6 @@ namespace NeoAxis
 		//	Bgfx.SetUniform( uniform, &value );
 
 		//	//var u = new Uniform( "u_test", UniformType.Vector4 );
-		//	//Log.Info( u.ToString() );
 
 		//	//Vec4F r = new Vec4F( 1, 0, 0, 1 );
 		//	//Bgfx.SetUniform( u, &r );
@@ -1073,7 +1065,8 @@ namespace NeoAxis
 		//	return null;
 		//}
 
-		internal unsafe void BindTexture( int textureUnit, ImageComponent texture, TextureAddressingMode addressingMode, FilterOption filteringMin, FilterOption filteringMag, FilterOption filteringMip, TextureFlags additionalFlags, ref uint* writeToPointer, ref int writeToPointerCount )
+		[MethodImpl( (MethodImplOptions)512 )]
+		internal unsafe void BindTexture( int textureUnit, ImageComponent texture, TextureAddressingMode addressingMode, FilterOption filteringMin, FilterOption filteringMag, FilterOption filteringMip, TextureFlags additionalFlags, ref uint* writeToPointer, ref int writeToPointerCount, bool disableAnisotropic )
 		{
 			if( texture == null )
 				Log.Fatal( "ViewportRenderingContext: BindTexture: texture == null." );
@@ -1115,12 +1108,12 @@ namespace NeoAxis
 
 			//filtering
 
-			if( filteringMin == FilterOption.Anisotropic )
+			if( filteringMin == FilterOption.Anisotropic && !disableAnisotropic )
 				flags |= TextureFlags.MinFilterAnisotropic;
 			else if( filteringMin == FilterOption.Point )
 				flags |= TextureFlags.MinFilterPoint;
 
-			if( filteringMag == FilterOption.Anisotropic )
+			if( filteringMag == FilterOption.Anisotropic && !disableAnisotropic )
 				flags |= TextureFlags.MagFilterAnisotropic;
 			else if( filteringMag == FilterOption.Point )
 				flags |= TextureFlags.MagFilterPoint;
@@ -1159,24 +1152,27 @@ namespace NeoAxis
 			}
 		}
 
-		internal unsafe void BindTexture( ref BindTextureData value, ref uint* writeToPointer, ref int writeToPointerCount )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		internal unsafe void BindTexture( ref BindTextureData value, ref uint* writeToPointer, ref int writeToPointerCount, bool disableAnisotropic )
 		{
-			BindTexture( value.TextureUnit, value.Texture, value.AddressingMode, value.FilteringMin, value.FilteringMag, value.FilteringMip, value.AdditionalFlags, ref writeToPointer, ref writeToPointerCount );
+			BindTexture( value.TextureUnit, value.Texture, value.AddressingMode, value.FilteringMin, value.FilteringMag, value.FilteringMip, value.AdditionalFlags, ref writeToPointer, ref writeToPointerCount, disableAnisotropic );
 		}
 
-		public void BindTexture( int textureUnit, ImageComponent texture, TextureAddressingMode addressingMode, FilterOption filteringMin, FilterOption filteringMag, FilterOption filteringMip, TextureFlags additionalFlags = 0 )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void BindTexture( int textureUnit, ImageComponent texture, TextureAddressingMode addressingMode, FilterOption filteringMin, FilterOption filteringMag, FilterOption filteringMip, TextureFlags additionalFlags /* = 0 */, bool disableAnisotropic )
 		{
 			unsafe
 			{
 				uint* dummy1 = null;
 				int dummy2 = 0;
-				BindTexture( textureUnit, texture, addressingMode, filteringMin, filteringMag, filteringMip, additionalFlags, ref dummy1, ref dummy2 );
+				BindTexture( textureUnit, texture, addressingMode, filteringMin, filteringMag, filteringMip, additionalFlags, ref dummy1, ref dummy2, disableAnisotropic );
 			}
 		}
 
-		public void BindTexture( ref BindTextureData value )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void BindTexture( ref BindTextureData value, bool disableAnisotropic )
 		{
-			BindTexture( value.TextureUnit, value.Texture, value.AddressingMode, value.FilteringMin, value.FilteringMag, value.FilteringMip, value.AdditionalFlags );
+			BindTexture( value.TextureUnit, value.Texture, value.AddressingMode, value.FilteringMin, value.FilteringMag, value.FilteringMip, value.AdditionalFlags, disableAnisotropic );
 		}
 
 		//public void BindTexture( BindTextureData value )
@@ -1184,7 +1180,21 @@ namespace NeoAxis
 		//	BindTexture( ref value );
 		//}
 
-		public void BindParameterContainer( ParameterContainer container )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void BindComputeImage( int textureUnit, ImageComponent texture, int mip, ComputeBufferAccessEnum access )
+		{
+			var gpuTexture = texture?.Result;
+
+			var realObject = gpuTexture?.GetNativeObject( true );
+			if( realObject != null )
+			{
+				var format = GpuTexture.ConvertFormat( gpuTexture.ResultFormat );
+				Bgfx.SetComputeImage( (byte)textureUnit, realObject, (byte)mip, (ComputeBufferAccess)access, format );
+			}
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		public void BindParameterContainer( ParameterContainer container, bool disableAnisotropic )
 		{
 			if( container.NamedParameters != null )
 			{
@@ -1227,7 +1237,7 @@ namespace NeoAxis
 			if( container.TextureParameters != null )
 			{
 				for( int n = 0; n < container.TextureParameters.Count; n++ )
-					BindTexture( ref container.TextureParameters.Data[ n ] );
+					BindTexture( ref container.TextureParameters.Data[ n ], disableAnisotropic );
 			}
 
 			//foreach( var p in container.AllParameters )
@@ -1251,7 +1261,8 @@ namespace NeoAxis
 		}
 
 		//!!!!parameterContainers пока так
-		public void SetPassAndSubmit( GpuMaterialPass pass, RenderOperationType renderOperation, List<ParameterContainer> parameterContainers, OcclusionQuery? occlusionQuery = null )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void SetPassAndSubmit( GpuMaterialPass pass, RenderOperationType renderOperation, List<ParameterContainer> parameterContainers, OcclusionQuery? occlusionQuery, bool disableAnisotropic )// = null )
 		{
 			////set parameters
 			//unsafe
@@ -1357,7 +1368,7 @@ namespace NeoAxis
 				if( parameterContainers != null )
 				{
 					for( int n = 0; n < parameterContainers.Count; n++ )
-						BindParameterContainer( parameterContainers[ n ] );
+						BindParameterContainer( parameterContainers[ n ], disableAnisotropic );
 				}
 
 				//var containers = new List<ParameterContainer>();
@@ -1370,7 +1381,7 @@ namespace NeoAxis
 				//	BindParameterContainer( container );
 			}
 
-			pass.RenderingProcess_SetRenderState( renderOperation, occlusionQuery == null );
+			pass.RenderingProcess_SetRenderState( renderOperation, occlusionQuery == null, disableAnisotropic );
 
 			var discardFlags = /*DiscardFlags.Bindings | */DiscardFlags.IndexBuffer | DiscardFlags.InstanceData | DiscardFlags.State | DiscardFlags.Transform | DiscardFlags.VertexStreams;
 
@@ -1394,7 +1405,7 @@ namespace NeoAxis
 			get { return updateStatisticsPrevious; }
 		}
 
-		public RenderingPipeline RenderingPipeline
+		public RenderingPipeline_Basic RenderingPipeline//public RenderingPipeline RenderingPipeline
 		{
 			get { return renderingPipeline; }
 		}
@@ -1408,6 +1419,7 @@ namespace NeoAxis
 			return owner.BackgroundColorDefault;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float GetBackgroundColorAffectLighting()
 		{
 			if( owner.AttachedScene != null )
@@ -1415,6 +1427,7 @@ namespace NeoAxis
 			return 0;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool DynamicTexturesAreExists()
 		{
 			return dynamicTexturesAllocated.Count != 0 || multiRenderTargets.Count != 0;
@@ -1426,15 +1439,16 @@ namespace NeoAxis
 
 			if( OwnerCameraSettings.Projection != ProjectionType.Orthographic )
 			{
-				function = new CurveLine1F();
-				//function = new CurveCubicSpline1F();
+				function = new CurveLine1F();//new CurveCubicSpline1F();
+
+				////disable to support multithreading
+				//function.AllowCachingIndexForTime = false;
 
 				var cameraSettings = OwnerCameraSettings;
 
 				var offset = RenderingPipeline.MinimumVisibleSizeOfObjects.Value / (double)cameraSettings.Viewport.SizeInPixels.Y * 0.5;
 				var ray1 = cameraSettings.GetRayByScreenCoordinates( new Vector2( 0.5, 0.5 - offset ) );
 				var ray2 = cameraSettings.GetRayByScreenCoordinates( new Vector2( 0.5, 0.5 + offset ) );
-
 
 				var distance = Owner.CameraSettings.FarClipDistance;
 
@@ -1446,14 +1460,11 @@ namespace NeoAxis
 
 					plane.Intersects( ref ray1, out Vector3 intersect1 );
 					plane.Intersects( ref ray2, out Vector3 intersect2 );
-
 					var objectSize = ( intersect1 - intersect2 ).Length();
 
 					function.AddPoint( (float)objectSize, (float)distance );
 
-
 					distance *= 0.5;
-
 
 
 					//var pos = cameraSettings.Position + cameraSettings.Rotation * ( Vector3.XAxis * distance );
@@ -1535,23 +1546,95 @@ namespace NeoAxis
 			getVisibilityDistanceByObjectSize = function;
 		}
 
-		public double GetVisibilityDistanceByObjectSize( double objectSize )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public float GetVisibilityDistanceByObjectSize( float objectSize )
 		{
+			//!!!!slowly?
+
 			if( getVisibilityDistanceByObjectSize != null )
-				return getVisibilityDistanceByObjectSize.CalculateValueByTime( (float)objectSize );
+				return getVisibilityDistanceByObjectSize.CalculateValueByTime( objectSize );
 			else
-				return OwnerCameraSettings.FarClipDistance * 1.1;
+				return (float)OwnerCameraSettings.FarClipDistance * 1.1f;
 		}
 
-		public double GetShadowVisibilityDistance( double visibilityDistance )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public float GetShadowVisibilityDistance( float visibilityDistance )
 		{
 			return visibilityDistance * ShadowObjectVisibilityDistanceFactor;
 		}
 
-		public double GetShadowVisibilityDistanceSquared( double visibilityDistance )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public float GetShadowVisibilityDistanceSquared( float visibilityDistance )
 		{
 			var v = visibilityDistance * ShadowObjectVisibilityDistanceFactor;
 			return v * v;
 		}
+
+		public void UpdateVoxelLodVisibilityDistanceByObjectSize()
+		{
+			var maxGridSize = 0;
+			foreach( var v in Enum.GetValues( typeof( VoxelGridSizeEnum ) ) )
+				maxGridSize = Math.Max( maxGridSize, int.Parse( v.ToString().Replace( "_", "" ) ) );
+			getVoxelLodVisibilityDistanceByObjectSize = new Curve1F[ maxGridSize + 1 ];
+
+			if( OwnerCameraSettings.Projection != ProjectionType.Orthographic )
+			{
+				foreach( var v in Enum.GetValues( typeof( VoxelGridSizeEnum ) ) )
+				{
+					var gridSize = int.Parse( v.ToString().Replace( "_", "" ) );
+
+					if( OwnerCameraSettings.Projection != ProjectionType.Orthographic )
+					{
+						var function = new CurveLine1F();
+						////disable to support multithreading
+						//function.AllowCachingIndexForTime = false;
+
+						var cameraSettings = OwnerCameraSettings;
+
+						var offset = (double)gridSize / (double)cameraSettings.Viewport.SizeInPixels.Y * 0.5;
+						var ray1 = cameraSettings.GetRayByScreenCoordinates( new Vector2( 0.5, 0.5 - offset ) );
+						var ray2 = cameraSettings.GetRayByScreenCoordinates( new Vector2( 0.5, 0.5 + offset ) );
+
+						var distance = Owner.CameraSettings.FarClipDistance;
+
+						for( int n = 0; n < 15; n++ )
+						{
+							var pos = cameraSettings.Position + cameraSettings.Rotation * ( Vector3.XAxis * distance );
+
+							var plane = Plane.FromPointAndNormal( pos, cameraSettings.Rotation * Vector3.XAxis );
+
+							plane.Intersects( ref ray1, out Vector3 intersect1 );
+							plane.Intersects( ref ray2, out Vector3 intersect2 );
+							var objectSize = ( intersect1 - intersect2 ).Length();
+
+							function.AddPoint( (float)objectSize, (float)distance );
+
+							distance *= 0.5;
+						}
+
+						getVoxelLodVisibilityDistanceByObjectSize[ gridSize ] = function;
+					}
+					else
+					{
+						//!!!!
+					}
+				}
+			}
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public float GetVoxelLodDistanceByObjectSize( int voxelGridSize, float objectSize )
+		{
+			//!!!!slowly?
+
+			if( getVoxelLodVisibilityDistanceByObjectSize != null )
+			{
+				var function = getVoxelLodVisibilityDistanceByObjectSize[ voxelGridSize ];
+				if( function != null )
+					return function.CalculateValueByTime( objectSize );
+			}
+			return 0;
+		}
+
 	}
 }

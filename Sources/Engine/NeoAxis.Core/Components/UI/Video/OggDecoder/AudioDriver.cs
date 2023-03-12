@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using NeoAxis;
@@ -187,7 +187,7 @@ namespace OggDecoder
 						if( vorbisBlock.synthesis( oggPacket ) == 0 )
 							vorbisDSPState.synthesis_blockin( vorbisBlock );
 					}
-					else	//we need more data; break out to suck in another page
+					else    //we need more data; break out to suck in another page
 						return false;
 
 				}
@@ -262,10 +262,7 @@ namespace OggDecoder
 					unsafe
 					{
 						fixed( byte* pSamplesBuffer = samplesBuffer, pBuffer = buffer )
-						{
-							NativeUtility.CopyMemory( (IntPtr)( pBuffer + bufferOffset ),
-								(IntPtr)pSamplesBuffer, sourceLength );
-						}
+							NativeUtility.CopyMemory( (IntPtr)( pBuffer + bufferOffset ), (IntPtr)pSamplesBuffer, sourceLength );
 					}
 					//Array.Copy( samplesBuffer, 0, buffer, bufferOffset, sourceLength );
 				}
@@ -275,10 +272,7 @@ namespace OggDecoder
 					unsafe
 					{
 						fixed( byte* pSamplesBuffer = samplesBuffer )
-						{
-							NativeUtility.MoveMemory( (IntPtr)pSamplesBuffer,
-								(IntPtr)( pSamplesBuffer + sourceLength ), bufferSize - sourceLength );
-						}
+							NativeUtility.CopyMemory( (IntPtr)pSamplesBuffer, (IntPtr)( pSamplesBuffer + sourceLength ), bufferSize - sourceLength );
 					}
 					//Array.Copy( samplesBuffer, sourceLength, samplesBuffer, 0, bufferSize - sourceLength );
 

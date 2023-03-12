@@ -1,0 +1,25 @@
+.component NeoAxis.Component_Material
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1178, 842\"><KW V=\"1\" A=\"518365E359F14B923BBB584126641721\"><CGD /><WS UN=\"27898E37E611458656BE48E8B899F84F\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"6D1912B4F09845F5B8B3A3AFB76BFBD7\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"518365E359F14B923BBB584126641721\"><KP UN=\"9D23C9338D8947BD3CA19B0716BD4093\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"518365E359F14B923BBB584126641721\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	BaseColor = 0.94 0.94 0.94
+	Metallic = 0.3
+	Roughness = 0.2
+	.component NeoAxis.Component_FlowGraph
+	{
+		Name = Shader graph
+		EditorScrollPosition = 0 0
+		Specialization
+		{
+			GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+		}
+		.component NeoAxis.Component_FlowGraphNode
+		{
+			Name = "Node "
+			Position = 10 -7
+			ControlledObject
+			{
+				GetByReference = "this:..\\.."
+			}
+		}
+	}
+}

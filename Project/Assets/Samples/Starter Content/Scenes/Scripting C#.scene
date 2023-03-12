@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2021.4.
+// Made with NeoAxis Engine 2023.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1154, 842\"><KW V=\"1\" A=\"C1F5BEB678A045B3BE91DBEA410F2DBB\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"32D7B3C3A5DC41F5B3B6142865E59344\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"C1F5BEB678A045B3BE91DBEA410F2DBB\"><KP UN=\"C1F5BEB678A045B3BE91DBEA410F2DBB\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"96CA4E1765F841D338B1A7AAE4CC3129\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1146, 842\"><KW V=\"1\" A=\"C1F5BEB678A045B3BE91DBEA410F2DBB\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"32D7B3C3A5DC41F5B3B6142865E59344\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"C1F5BEB678A045B3BE91DBEA410F2DBB\"><KP UN=\"C1F5BEB678A045B3BE91DBEA410F2DBB\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"96CA4E1765F841D338B1A7AAE4CC3129\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	BackgroundColor = 0.6666667 0.6666667 0.6666667
 	DisplayDevelopmentDataInEditor = False
 	DisplayTextInfo = True
@@ -408,7 +408,7 @@
 	{
 		Name = Text 2D
 		Transform = "11.7374839124827 -0.05177675032439 -18.0092755825092; 0 0 -0.331515423839943 0.943449799277218; 1 1 1"
-		Text = The animation made by configuring a reference of the Transform property of the object
+		Text = The animation made by configuring a reference of Transform property of the object
 		BackColor = 0 0.5017255 0.7803922
 		DisplayInSimulation = False
 	}

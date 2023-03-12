@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2022.1.
+// Made with NeoAxis Engine 2023.1.
 
 .component NeoAxis.Scene
 {
@@ -18,7 +18,7 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "4.38884252010046 -3.2391287510902 3.10523590221884; -0.130716807897012 0.128912264154616 0.699902313964299 0.690240172107627; 1 1 1"
+		Transform = "5.75130331131639 -6.74239373081335 4.32360001711056; -0.204076458170089 0.166507977871311 0.747460929601065 0.609860681833048; 1 1 1"
 	}
 	.component NeoAxis.Camera
 	{
@@ -62,7 +62,6 @@
 			.component NeoAxis.RenderingEffect_AmbientOcclusion
 			{
 				Name = Ambient Occlusion
-				Quality = High
 			}
 			.component NeoAxis.RenderingEffect_MotionBlur
 			{
@@ -203,7 +202,7 @@
 		.component NeoAxis.RigidBody
 		{
 			Name = Collision Body
-			Transform = "2.75939094057925 0.60514384486166 1.20891598861703; 0 0 0 1; 1.8599999807775 1.8599999807775 1.8599999807775"
+			Transform = "2.13713014418355 0.282565271161179 1.20891598861703; 0 0 0 1; 1.8599999807775 1.8599999807775 1.8599999807775"
 			MotionType = Dynamic
 			.component NeoAxis.CollisionShape_Sphere
 			{
@@ -244,7 +243,48 @@
 		.component NeoAxis.RigidBody
 		{
 			Name = Collision Body
-			Transform = "3.98464351309798 5.77635926158248 0.413388389048961; 0 0 0 1; 3.64999994076788 3.64999994076788 3.64999994076788"
+			Transform = "7.48464351309798 7.27635926158248 1.91338838904896; 0 0 0 1; 3.64999994076788 3.64999994076788 3.64999994076788"
+			MotionType = Dynamic
+			.component NeoAxis.CollisionShape_Box
+			{
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 2
+		Color = 0.1117647 1 0.3420392
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform = "0.48464351309798 7.27635926158248 1.91338838904896; 0 0 0 1; 3.64999994076788 3.64999994076788 3.64999994076788"
 			MotionType = Dynamic
 			.component NeoAxis.CollisionShape_Box
 			{
@@ -304,222 +344,6 @@
 			}
 		}
 	}
-	.component NeoAxis.Character
-	{
-		Name = Character
-		RunSupport = True
-		FlyControlSupport = True
-		JumpSupport = True
-		Animate = True
-		WalkAnimationSpeed = 0.57
-		RunAnimationSpeed = 0.2
-		Transform
-		{
-			GetByReference = "this:$Collision Body\\Transform"
-		}
-		IdleAnimation
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Idle"
-		}
-		WalkAnimation
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Walk"
-		}
-		RunAnimation
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Run"
-		}
-		FlyAnimation
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Fly"
-		}
-		JumpAnimation
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Jump"
-		}
-		LeftTurnAnimation
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Left Turn"
-		}
-		RightTurnAnimation
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Right Turn"
-		}
-		.component NeoAxis.RigidBody
-		{
-			Name = Collision Body
-			CanBeSelected = False
-			Transform = "1.40777666918928 1.95958971451822 1.15221954800588; 0 0 -0.26593276323349 0.963991579547768; 1 1 1"
-			MotionType = Dynamic
-			Mass = 70
-			AngularDamping = 10
-			MaterialFriction = 0
-			MaterialSpinningFriction = 0
-			MaterialRollingFriction = 0
-			LinearSleepingThreshold = 0
-			AngularSleepingThreshold = 0
-			.component NeoAxis.CollisionShape_Capsule
-			{
-				Name = CollisionShape Capsule
-				TransformRelativeToParent = "0 0 -0.25; 0 0 0 1; 1 1 1"
-				Radius = 0.35
-				Height = 1.1
-			}
-		}
-		.component NeoAxis.MeshInSpace
-		{
-			Name = Mesh In Space
-			CanBeSelected = False
-			Transform
-			{
-				GetByReference = "this:$Transform Offset\\Result"
-			}
-			Mesh
-			{
-				GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
-			SpecialEffects
-			{
-				Value
-				{
-					Count = 0
-				}
-			}
-			.component NeoAxis.MeshInSpaceAnimationController
-			{
-				Name = Mesh In Space Animation Controller
-			}
-			.component NeoAxis.TransformOffset
-			{
-				Name = Transform Offset
-				PositionOffset = 0 0 -1.15
-				Source
-				{
-					GetByReference = "this:..\\..\\$Collision Body\\Transform"
-				}
-			}
-		}
-		.component NeoAxis.CharacterInputProcessing
-		{
-			Name = Character Input Processing
-		}
-		.component NeoAxis.CharacterAI
-		{
-			Name = Character AI
-		}
-	}
-	.component NeoAxis.Character
-	{
-		Name = Character 2
-		RunSupport = True
-		FlyControlSupport = True
-		JumpSupport = True
-		Animate = True
-		WalkAnimationSpeed = 0.57
-		RunAnimationSpeed = 0.2
-		Transform
-		{
-			GetByReference = "this:$Collision Body\\Transform"
-		}
-		IdleAnimation
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Idle"
-		}
-		WalkAnimation
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Walk"
-		}
-		RunAnimation
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Run"
-		}
-		FlyAnimation
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Fly"
-		}
-		JumpAnimation
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Jump"
-		}
-		LeftTurnAnimation
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Left Turn"
-		}
-		RightTurnAnimation
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Right Turn"
-		}
-		.component NeoAxis.RigidBody
-		{
-			Name = Collision Body
-			CanBeSelected = False
-			Transform = "4.1875794709189 -4.18578211441994 1.15221954800588; 0 0 -0.739150029303085 -0.673540818496733; 1 1 1"
-			MotionType = Dynamic
-			Mass = 70
-			AngularDamping = 10
-			MaterialFriction = 0
-			MaterialSpinningFriction = 0
-			MaterialRollingFriction = 0
-			LinearSleepingThreshold = 0
-			AngularSleepingThreshold = 0
-			.component NeoAxis.CollisionShape_Capsule
-			{
-				Name = CollisionShape Capsule
-				TransformRelativeToParent = "0 0 -0.25; 0 0 0 1; 1 1 1"
-				Radius = 0.35
-				Height = 1.1
-			}
-		}
-		.component NeoAxis.MeshInSpace
-		{
-			Name = Mesh In Space
-			CanBeSelected = False
-			Transform
-			{
-				GetByReference = "this:$Transform Offset\\Result"
-			}
-			Mesh
-			{
-				GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
-			SpecialEffects
-			{
-				Value
-				{
-					Count = 0
-				}
-			}
-			.component NeoAxis.MeshInSpaceAnimationController
-			{
-				Name = Mesh In Space Animation Controller
-			}
-			.component NeoAxis.TransformOffset
-			{
-				Name = Transform Offset
-				PositionOffset = 0 0 -1.15
-				Source
-				{
-					GetByReference = "this:..\\..\\$Collision Body\\Transform"
-				}
-			}
-		}
-		.component NeoAxis.CharacterInputProcessing
-		{
-			Name = Character Input Processing
-		}
-		.component NeoAxis.CharacterAI
-		{
-			Name = Character AI
-		}
-	}
 	.component NeoAxis.MeshInSpace
 	{
 		Name = Box 3
@@ -550,6 +374,64 @@
 			{
 				Name = Mesh Geometry
 			}
+		}
+	}
+	.component NeoAxis.Character
+	{
+		Name = Character
+		Transform = "0.45325922957528 1.52722388721052 0.0125239255813865; 0 0 0 1; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.MeshInSpaceAnimationController
+		{
+			Name = Animation Controller
+		}
+		.component NeoAxis.CharacterInputProcessing
+		{
+			Name = Character Input Processing
+		}
+	}
+	.component NeoAxis.Character
+	{
+		Name = Character 2
+		Transform = "3.78776064804008 -3.9414240562647 0.00000006061691971; 0 0 0.699001669883728 0.715120077133179; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.MeshInSpaceAnimationController
+		{
+			Name = Animation Controller
+		}
+		.component NeoAxis.CharacterInputProcessing
+		{
+			Name = Character Input Processing
 		}
 	}
 }

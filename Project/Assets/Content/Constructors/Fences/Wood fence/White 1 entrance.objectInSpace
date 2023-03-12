@@ -1,0 +1,280 @@
+// Made with NeoAxis Engine 2022.1.
+
+.component NeoAxis.FenceEntrance
+{
+	Name = Fence Entrance
+	EditorCameraTransform = "1.73324568074503 -2.06211723419248 1.21815007571055; -0.105763675372578 0.0794911589367647 0.792361169694852 0.595532515806131; 1 1 1"
+	Transform = "0 0 0; 0 0 0 1; 1 1 1"
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Entrance 1 hinge left
+		CanBeSelected = False
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "Content\\Constructors\\Fences\\Wood fence\\Data\\White\\Entrance 1 hinge left.fbx|$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			.component NeoAxis.CollisionShape_Box
+			{
+				LocalTransform = "0.0601743422448635 -0.081597376614809 0.595591530203819; 0 0 0 1; 1 1 1"
+				Dimensions = 0.075298897922039 0.0119658336043358 0.738445073366165
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				Source
+				{
+					GetByReference = "this:..\\..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.RigidBody
+	{
+		Name = Entrance 1 door left Collision Body
+		CanBeSelected = False
+		MotionType = Dynamic
+		CCD = True
+		Transform
+		{
+			GetByReference = "this:$Attach Transform Offset\\Result"
+		}
+		.component NeoAxis.CollisionShape_Box
+		{
+			Dimensions = 0.86 0.144129648804665 1.1530856192112
+		}
+		.component NeoAxis.TransformOffset
+		{
+			Name = Attach Transform Offset
+			PositionOffset = 0.5663452843669 0 0.655726755759668
+			Source
+			{
+				GetByReference = "this:..\\..\\Transform"
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Entrance 1 door left
+		CanBeSelected = False
+		Transform
+		{
+			GetByReference = "this:$Attach Transform Offset\\Result"
+		}
+		Mesh
+		{
+			GetByReference = "Content\\Constructors\\Fences\\Wood fence\\Data\\White\\Entrance 1 door left.fbx|$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.TransformOffset
+		{
+			Name = Attach Transform Offset
+			PositionOffset = -0.5663452843669 0 -0.655726755759668
+			Source
+			{
+				GetByReference = "this:..\\..\\$Entrance 1 door left Collision Body\\Transform"
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Entrance 1 hinge right
+		CanBeSelected = False
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "Content\\Constructors\\Fences\\Wood fence\\Data\\White\\Entrance 1 hinge right.fbx|$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			.component NeoAxis.CollisionShape_Box
+			{
+				LocalTransform = "1.94976270198822 -0.0815974473953247 0.595742277801037; 0 0 0 1; 1 1 1"
+				Dimensions = 0.0752990245819092 0.0119659006595612 0.738445058465004
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				Source
+				{
+					GetByReference = "this:..\\..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.RigidBody
+	{
+		Name = Entrance 1 door right Collision Body
+		CanBeSelected = False
+		MotionType = Dynamic
+		Transform
+		{
+			GetByReference = "this:$Attach Transform Offset\\Result"
+		}
+		.component NeoAxis.CollisionShape_Box
+		{
+			Dimensions = 0.86 0.159840933978558 1.15308572351933
+		}
+		.component NeoAxis.TransformOffset
+		{
+			Name = Attach Transform Offset
+			PositionOffset = 1.44017551422119 -0.0340862236917019 0.677622549235821
+			Source
+			{
+				GetByReference = "this:..\\..\\Transform"
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Entrance 1 door right
+		CanBeSelected = False
+		Transform
+		{
+			GetByReference = "this:$Attach Transform Offset\\Result"
+		}
+		Mesh
+		{
+			GetByReference = "Content\\Constructors\\Fences\\Wood fence\\Data\\White\\Entrance 1 door right.fbx|$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.TransformOffset
+		{
+			Name = Attach Transform Offset
+			PositionOffset = -1.44017551422119 0.0340862236917019 -0.677622549235821
+			Source
+			{
+				GetByReference = "this:..\\..\\$Entrance 1 door right Collision Body\\Transform"
+			}
+		}
+	}
+	.component NeoAxis.Constraint_SixDOF
+	{
+		Name = Constraint left
+		ScreenLabel = NeverDisplay
+		CanBeSelected = False
+		CollisionsBetweenLinkedBodies = False
+		AngularAxisZ = Free
+		AngularAxisZMotor = True
+		AngularAxisZMotorTargetVelocity = 1
+		AngularAxisZMotorMaxForce = 1
+		AngularAxisZMotorRestitution = 0.5
+		AngularAxisZServo = True
+		AngularAxisZSpring = True
+		Transform
+		{
+			GetByReference = "this:$Attach Transform Offset\\Result"
+		}
+		BodyA
+		{
+			GetByReference = "this:..\\$Entrance 1 hinge left\\$Collision Body"
+		}
+		BodyB
+		{
+			GetByReference = "this:..\\$Entrance 1 door left Collision Body"
+		}
+		.component NeoAxis.TransformOffset
+		{
+			Name = Attach Transform Offset
+			PositionOffset = 0.0989471915581264 -0.0791746455401593 0.63570547848049
+			Source
+			{
+				GetByReference = "this:..\\..\\Transform"
+			}
+		}
+	}
+	.component NeoAxis.Constraint_SixDOF
+	{
+		Name = Constraint right
+		ScreenLabel = NeverDisplay
+		CanBeSelected = False
+		AngularAxisZ = Free
+		AngularAxisZMotor = True
+		AngularAxisZMotorTargetVelocity = 1
+		AngularAxisZMotorMaxForce = 1
+		AngularAxisZMotorRestitution = 0.5
+		AngularAxisZServo = True
+		AngularAxisZSpring = True
+		Transform
+		{
+			GetByReference = "this:$Attach Transform Offset\\Result"
+		}
+		BodyA
+		{
+			GetByReference = "this:..\\$Entrance 1 hinge right\\$Collision Body"
+		}
+		BodyB
+		{
+			GetByReference = "this:..\\$Entrance 1 door right Collision Body"
+		}
+		.component NeoAxis.TransformOffset
+		{
+			Name = Attach Transform Offset
+			PositionOffset = 1.91672734319894 -0.0791746455401593 0.63570547848049
+			Source
+			{
+				GetByReference = "this:..\\..\\Transform"
+			}
+		}
+	}
+}

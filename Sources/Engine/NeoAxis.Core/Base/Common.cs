@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Reflection;
 using System.ComponentModel;
@@ -591,4 +591,16 @@ namespace NeoAxis
 		}
 	}
 
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public enum NetworkModeEnum
+	{
+		False,
+		SelectedUsers,
+		True,
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public unsafe delegate int PointerComparison<T>( T* x, T* y ) where T : unmanaged;
 }

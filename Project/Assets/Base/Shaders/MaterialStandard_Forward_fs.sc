@@ -1,18 +1,24 @@
-$input v_texCoord01, v_worldPosition_depth, v_worldNormal, v_tangent, v_bitangent, v_fogFactor, v_color0, v_eyeTangentSpace, v_normalTangentSpace, v_position, v_previousPosition, v_texCoord23, v_colorParameter, v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor, v_billboardDataIndexes, v_billboardDataFactors, v_billboardDataAngles, v_billboardRotation
+$input v_texCoord01, v_worldPosition_depth, v_worldNormal_materialIndex, v_tangent, v_fogFactor, v_color0, v_eyeTangentSpace, v_normalTangentSpace, v_position, v_previousPosition, v_texCoord23, v_colorParameter, v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor, v_objectSpacePosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2
 
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #define FORWARD 1
 #include "Common.sh"
 #include "UniformsFragment.sh"
 #include "FragmentFunctions.sh"
 
 uniform vec4 u_lightDataFragment[LIGHTDATA_FRAGMENT_SIZE];
-uniform vec4 u_renderOperationData[5];
+uniform vec4 u_renderOperationData[7];
 uniform vec4 u_materialCustomParameters[2];
 
 SAMPLER2D(s_materials, 1);
-#ifdef GLOBAL_BILLBOARD_DATA
-	SAMPLER2DARRAY(s_billboardData, 2);
+#ifdef GLOBAL_VOXEL_LOD
+	SAMPLER2D(s_voxelData, 2);
+#endif
+#ifdef GLOBAL_VIRTUALIZED_GEOMETRY
+	SAMPLER2D(s_virtualizedData, 11);
+#endif
+#ifndef GLSL
+SAMPLER2D(s_linearSamplerFragment, 10);
 #endif
 
 #ifdef DISPLACEMENT_CODE_PARAMETERS
@@ -20,6 +26,9 @@ SAMPLER2D(s_materials, 1);
 #endif
 #ifdef FRAGMENT_CODE_PARAMETERS
 	FRAGMENT_CODE_PARAMETERS
+#endif
+#ifdef MATERIAL_INDEX_CODE_PARAMETERS
+	MATERIAL_INDEX_CODE_PARAMETERS
 #endif
 
 //environment cubemaps
@@ -82,18 +91,24 @@ SAMPLER2D(s_brdfLUT, 6);
 #ifdef DISPLACEMENT_CODE_SAMPLERS
 	DISPLACEMENT_CODE_SAMPLERS
 #endif
+#ifdef FRAGMENT_CODE_SAMPLERS
+	FRAGMENT_CODE_SAMPLERS
+#endif
+#ifdef MATERIAL_INDEX_CODE_SAMPLERS
+	MATERIAL_INDEX_CODE_SAMPLERS
+#endif
+
 #ifdef DISPLACEMENT_CODE_SHADER_SCRIPTS
 	DISPLACEMENT_CODE_SHADER_SCRIPTS
 #endif
 #if defined(DISPLACEMENT_CODE_BODY) && defined(DISPLACEMENT)
 	#include "ParallaxOcclusionMapping.sh"
 #endif
-
-#ifdef FRAGMENT_CODE_SAMPLERS
-	FRAGMENT_CODE_SAMPLERS
-#endif
 #ifdef FRAGMENT_CODE_SHADER_SCRIPTS
 	FRAGMENT_CODE_SHADER_SCRIPTS
+#endif
+#ifdef MATERIAL_INDEX_CODE_SHADER_SCRIPTS
+	MATERIAL_INDEX_CODE_SHADER_SCRIPTS
 #endif
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -101,6 +116,8 @@ SAMPLER2D(s_brdfLUT, 6);
 void main()
 {
 	vec4 fragCoord = getFragCoord();
+	float voxelDataMode = u_renderOperationData[1].w;
+	float virtualizedDataMode = u_renderOperationData[3].w;
 
 	//lod for opaque
 #ifdef GLOBAL_SMOOTH_LOD
@@ -110,30 +127,127 @@ void main()
 	#endif
 #endif
 
-	bool isLayer = u_renderOperationData[3].z != 0.0;
-	
-	//get material data
-	vec4 materialStandardFragment[MATERIAL_STANDARD_FRAGMENT_SIZE];
-	getMaterialData(s_materials, u_renderOperationData, materialStandardFragment);
-	
+	MEDIUMP vec2 texCoord0 = v_texCoord01.xy;
+	MEDIUMP vec2 texCoord1 = v_texCoord01.zw;
+	MEDIUMP vec2 texCoord2 = v_texCoord23.xy;
+	MEDIUMP vec2 unwrappedUV = getUnwrappedUV(texCoord0, texCoord1, texCoord2, u_renderOperationData[3].x);
+	MEDIUMP vec3 inputWorldNormal = v_worldNormal_materialIndex.xyz;
+	MEDIUMP vec4 tangent = v_tangent;
+	MEDIUMP vec4 color0 = v_color0;
+	MEDIUMP vec3 fromCameraDirection = normalize(v_worldPosition_depth.xyz - u_viewportOwnerCameraPosition);
 	vec3 worldPosition = v_worldPosition_depth.xyz;
-	MEDIUMP vec3 inputWorldNormal = normalize(v_worldNormal);
 
-	cutVolumes(worldPosition);
+	int materialIndex = int(round(v_worldNormal_materialIndex.w));
+	float depthOffset = 0.0;
+#ifdef GLOBAL_VOXEL_LOD
+	voxelDataModeCalculateParametersF(voxelDataMode, s_voxelData, fragCoord, v_objectSpacePosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2, u_renderOperationData, fromCameraDirection, inputWorldNormal, tangent, texCoord0, texCoord1, texCoord2, color0, depthOffset, materialIndex);
+	
+#endif
+#ifdef GLOBAL_VIRTUALIZED_GEOMETRY
+	virtualizedDataModeCalculateParametersF(virtualizedDataMode, s_virtualizedData, fragCoord, v_objectSpacePosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2, u_renderOperationData, gl_PrimitiveID, inputWorldNormal, tangent, texCoord0, texCoord1, texCoord2, color0, depthOffset, materialIndex);
+#endif
+	worldPosition += fromCameraDirection * depthOffset;
 
-	vec3 toCamera = u_viewportOwnerCameraPosition - worldPosition.xyz;
-	float cameraDistance = length(toCamera);
-	toCamera = normalize(toCamera);
+	float cameraDistance = length(worldPosition - u_viewportOwnerCameraPosition);
+	vec3 cameraPosition = u_viewportOwnerCameraPosition;
 
-	float billboardDataMode = u_renderOperationData[1].w;
+	//fading by visibility distance
+#ifdef GLOBAL_FADE_BY_VISIBILITY_DISTANCE
+	float visibilityDistance = v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor.y;
+	MEDIUMP float visibilityDistanceFactor = getVisibilityDistanceFactor(visibilityDistance, cameraDistance);
+	#if defined(BLEND_MODE_OPAQUE) || defined(BLEND_MODE_MASKED)
+		smoothLOD(fragCoord, 1.0f - visibilityDistanceFactor);
+	#endif
+#endif
+
+	if( cutVolumes( worldPosition ) )
+		discard;
+
+	inputWorldNormal = normalize(inputWorldNormal);
+	tangent.xyz = normalize(tangent.xyz);
+
+	//end of geometry stage
+	
+	//shading
+
+	//multi material
+#ifdef MATERIAL_INDEX_CODE_BODY
+	#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(makeSampler(s_linearSamplerFragment, _sampler), _uv, 0, 0)
+	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_mipBias)
+	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_mipBias)
+	{
+		MATERIAL_INDEX_CODE_BODY
+	}
+	#undef CODE_BODY_TEXTURE2D_MASK_OPACITY
+	#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
+	#undef CODE_BODY_TEXTURE2D
+#endif
+
+	//get material data
+	vec4 materialStandardFragment[ MATERIAL_STANDARD_FRAGMENT_SIZE ];
+	getMaterialData( s_materials, uint( u_renderOperationData[ 0 ].x ), materialStandardFragment );
+
+	//multi material
+#ifdef MULTI_MATERIAL_SEPARATE_PASS
+	if(materialIndex != u_materialMultiSubMaterialSeparatePassIndex)
+		discard;
+#endif
 	
 	//displacement
 	vec2 displacementOffset = vec2_splat(0);
 #if defined(DISPLACEMENT_CODE_BODY) && defined(DISPLACEMENT)
 	BRANCH
-	if(u_displacementScale != 0.0 && billboardDataMode == 0.0)
-		displacementOffset = getParallaxOcclusionMappingOffset(v_texCoord01.xy, v_eyeTangentSpace, v_normalTangentSpace, u_materialDisplacementScale * u_displacementScale, u_displacementMaxSteps);
+	if(u_displacementScale != 0.0 && voxelDataMode == 0.0)
+		displacementOffset = getParallaxOcclusionMappingOffset(texCoord0, v_eyeTangentSpace, v_normalTangentSpace, u_materialDisplacementScale * u_displacementScale, u_displacementMaxSteps);
 #endif //DISPLACEMENT_CODE_BODY
+	
+	//get material parameters
+	MEDIUMP vec3 normal = vec3_splat(0);
+	MEDIUMP vec3 baseColor = u_materialBaseColor;
+	MEDIUMP float opacity = u_materialOpacity;
+	MEDIUMP float opacityMaskThreshold = u_materialOpacityMaskThreshold;
+	MEDIUMP float metallic = u_materialMetallic;
+	MEDIUMP float roughness = u_materialRoughness;
+	MEDIUMP float reflectance = u_materialReflectance;
+	MEDIUMP float clearCoat = u_materialClearCoat;
+	MEDIUMP float clearCoatRoughness = u_materialClearCoatRoughness;
+	MEDIUMP vec3 clearCoatNormal = vec3_splat(0);
+	MEDIUMP float anisotropy = u_materialAnisotropy;
+	MEDIUMP vec3 anisotropyDirection = vec3_splat(0);// = u_materialAnisotropyDirection;
+	MEDIUMP float anisotropyDirectionBasis = u_materialAnisotropyDirectionBasis;
+	MEDIUMP float thickness = u_materialThickness;
+	MEDIUMP float subsurfacePower = u_materialSubsurfacePower;
+	MEDIUMP vec3 sheenColor = u_materialSheenColor;
+	MEDIUMP vec3 subsurfaceColor = u_materialSubsurfaceColor;
+	MEDIUMP float ambientOcclusion = 1.0;
+	MEDIUMP float rayTracingReflection = u_materialRayTracingReflection;
+	MEDIUMP vec3 emissive = u_materialEmissive;
+	float softParticlesDistance = u_materialSoftParticlesDistance;
+	vec4 customParameter1 = u_materialCustomParameters[0];
+	vec4 customParameter2 = u_materialCustomParameters[1];
+
+	//get material parameters (procedure generated code)
+	MEDIUMP vec2 texCoord0BeforeDisplacement = texCoord0;
+	MEDIUMP vec2 texCoord1BeforeDisplacement = texCoord1;
+	MEDIUMP vec2 texCoord2BeforeDisplacement = texCoord2;
+	MEDIUMP vec2 unwrappedUVBeforeDisplacement = unwrappedUV;
+	texCoord0 -= displacementOffset;
+	texCoord1 -= displacementOffset;
+	texCoord2 -= displacementOffset;
+	unwrappedUV -= displacementOffset;
+
+#ifdef FRAGMENT_CODE_BODY
+	#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_renderOperationData[3].z, 0/*gl_PrimitiveID*/)
+	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_removeTextureTiling)
+	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_mipBias)
+	{
+		FRAGMENT_CODE_BODY
+	}
+	#undef CODE_BODY_TEXTURE2D_MASK_OPACITY
+	#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
+	#undef CODE_BODY_TEXTURE2D
+#endif
+	
 	
 	vec3 lightPositionMinusWorldPosition = u_lightPosition.xyz - worldPosition;
 	
@@ -187,7 +301,7 @@ void main()
 
 		//shadows
 		#ifdef SHADOW_MAP
-			shadowMultiplier = getShadowMultiplier(worldPosition, cameraDistance, v_worldPosition_depth.w, lightWorldDirection, v_worldNormal, vec2_splat(0.0), fragCoord);
+			shadowMultiplier = getShadowMultiplier(worldPosition, cameraDistance, v_worldPosition_depth.w, lightWorldDirection, inputWorldNormal, vec2_splat(0.0), fragCoord);
 		#endif
 	}
 
@@ -197,53 +311,6 @@ void main()
 		lightColor = u_lightPower.rgb * u_cameraExposure * objectLightAttenuation * lightMaskMultiplier * shadowMultiplier;
 	#endif
 
-	//get material parameters
-	MEDIUMP vec3 normal = vec3_splat(0);
-	MEDIUMP vec3 baseColor = u_materialBaseColor;
-	MEDIUMP float opacity = u_materialOpacity;
-	MEDIUMP float opacityMaskThreshold = u_materialOpacityMaskThreshold;
-	MEDIUMP float metallic = u_materialMetallic;
-	MEDIUMP float roughness = u_materialRoughness;
-	MEDIUMP float reflectance = u_materialReflectance;
-	MEDIUMP float clearCoat = u_materialClearCoat;
-	MEDIUMP float clearCoatRoughness = u_materialClearCoatRoughness;
-	MEDIUMP vec3 clearCoatNormal = vec3_splat(0);
-	MEDIUMP float anisotropy = u_materialAnisotropy;
-	MEDIUMP vec3 anisotropyDirection = vec3_splat(0);// = u_materialAnisotropyDirection;
-	MEDIUMP float anisotropyDirectionBasis = u_materialAnisotropyDirectionBasis;
-	MEDIUMP float thickness = u_materialThickness;
-	MEDIUMP float subsurfacePower = u_materialSubsurfacePower;
-	MEDIUMP vec3 sheenColor = u_materialSheenColor;
-	MEDIUMP vec3 subsurfaceColor = u_materialSubsurfaceColor;
-	MEDIUMP float ambientOcclusion = 1.0;
-	MEDIUMP float rayTracingReflection = u_materialRayTracingReflection;
-	MEDIUMP vec3 emissive = u_materialEmissive;
-	float softParticlesDistance = u_materialSoftParticlesDistance;
-	vec4 customParameter1 = u_materialCustomParameters[0];
-	vec4 customParameter2 = u_materialCustomParameters[1];
-
-	//get material parameters (procedure generated code)
-	MEDIUMP vec2 texCoord0 = v_texCoord01.xy - displacementOffset;
-	MEDIUMP vec2 texCoord1 = v_texCoord01.zw - displacementOffset;
-	MEDIUMP vec2 texCoord2 = v_texCoord23.xy - displacementOffset;
-	//vec2 texCoord3 = v_texCoord23.zw - displacementOffset;
-	
-	//billboard with geometry data mode
-#ifdef GLOBAL_BILLBOARD_DATA
-	billboardDataModeCalculateParameters(billboardDataMode, s_billboardData, fragCoord, v_billboardDataIndexes, v_billboardDataFactors, v_billboardDataAngles, v_billboardRotation, inputWorldNormal, texCoord0, texCoord1, texCoord2);
-#endif
-	
-	MEDIUMP vec2 unwrappedUV = getUnwrappedUV(texCoord0, texCoord1, texCoord2/*, texCoord3*/, u_renderOperationData[3].x);
-	MEDIUMP vec4 color0 = v_color0;
-#ifdef FRAGMENT_CODE_BODY
-	#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(_sampler, _uv, u_renderOperationData[3].z, 0/*gl_PrimitiveID*/)
-	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(_sampler, _uv, u_removeTextureTiling)
-	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(_sampler, _uv, u_mipBias)
-	FRAGMENT_CODE_BODY
-	#undef CODE_BODY_TEXTURE2D_MASK_OPACITY
-	#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
-	#undef CODE_BODY_TEXTURE2D
-#endif
 
 	//apply color parameter
 
@@ -278,7 +345,7 @@ void main()
 
 	//opacity masked clipping
 #ifdef BLEND_MODE_MASKED
-	if(billboardDataMode == 0.0)
+	if(voxelDataMode == 0.0)
 		clip(opacity - opacityMaskThreshold);
 #endif
 
@@ -293,14 +360,13 @@ void main()
 	anisotropyDirection.z = 0.0;
 	anisotropyDirection = normalize(anisotropyDirection);
 
-	//get result world normal
-	MEDIUMP vec3 tangent = normalize(v_tangent);
-	MEDIUMP vec3 bitangent = normalize(v_bitangent);
-
+	vec3 bitangent = cross(tangent.xyz, inputWorldNormal) * tangent.w;
+	
 #if defined(GLOBAL_NORMAL_MAPPING) && GLOBAL_MATERIAL_SHADING != GLOBAL_MATERIAL_SHADING_SIMPLE
-	if(any2(normal) && billboardDataMode == 0.0)
+	BRANCH
+	if(any2(normal))
 	{
-		mat3 tbn = transpose(mtxFromRows(tangent, bitangent, inputWorldNormal));
+		mat3 tbn = transpose(mtxFromRows(tangent.xyz, bitangent, inputWorldNormal));
 		normal = expand(normal);
 		normal.z = sqrt(max(1.0 - dot(normal.xy, normal.xy), 0.0));
 		normal = normalize(mul(tbn, normal));
@@ -310,8 +376,9 @@ void main()
 #else
 		normal = inputWorldNormal;
 #endif
+
 #ifdef TWO_SIDED_FLIP_NORMALS
-	if(gl_FrontFacing)//if(!gl_FrontFacing)
+	if(gl_FrontFacing)
 		normal = -normal;
 #endif
 
@@ -381,7 +448,7 @@ void main()
 				material.subsurfaceColor = subsurfaceColor;
 			#endif
 
-			setupPBRFilamentParams(material, tangent, bitangent, normal, inputWorldNormal, toLight, toCamera, gl_FrontFacing);
+			setupPBRFilamentParams(material, tangent.xyz, bitangent, normal, inputWorldNormal, toLight, -fromCameraDirection/*toCamera*/, gl_FrontFacing);
 
 			PixelParams pixel;
 			getPBRFilamentPixelParams(material, pixel);
@@ -445,6 +512,7 @@ void main()
 	//lod for transparent
 #ifdef GLOBAL_SMOOTH_LOD
 	#if defined(BLEND_MODE_TRANSPARENT) || defined(BLEND_MODE_ADD)
+		bool isLayer = u_renderOperationData[3].z != 0.0;
 		if(isLayer)
 			smoothLOD(fragCoord, lodValue);
 		else
@@ -470,11 +538,6 @@ void main()
 
 	//fading by visibility distance
 #ifdef GLOBAL_FADE_BY_VISIBILITY_DISTANCE
-	float visibilityDistance = v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor.y;
-	MEDIUMP float visibilityDistanceFactor = getVisibilityDistanceFactor(visibilityDistance, cameraDistance);
-	#if defined(BLEND_MODE_OPAQUE) || defined(BLEND_MODE_MASKED)
-		smoothLOD(fragCoord, 1.0f - visibilityDistanceFactor);
-	#endif
 	#if defined(BLEND_MODE_TRANSPARENT)
 		resultColor.a *= visibilityDistanceFactor;
 	#endif
@@ -508,25 +571,6 @@ void main()
 	}
 #endif
 	
-/*
-	//_MaterialBlend mask
-	#if defined(USAGEMODE_MATERIALBLENDFIRST) || defined(USAGEMODE_MATERIALBLENDNOTFIRST)
-		float blendMask;
-		#ifdef USAGEMODE_MATERIALBLENDFIRST
-			blendMask = 1.0 - materialBlendMask;
-		#else
-			blendMask = materialBlendMask;
-		#endif
-
-		#if defined(BLEND_MODE_OPAQUE) || defined(BLEND_MODE_MASKED)
-			resultColor.rgb *= blendMask;
-		#endif
-		#ifdef BLEND_MODE_TRANSPARENT
-			//!!!!
-		#endif
-	#endif
-*/
-
 	//fog
 #ifdef GLOBAL_FOG
 	#ifdef BLEND_MODE_TRANSPARENT
@@ -553,7 +597,7 @@ void main()
 			case DebugMode_Roughness: resultColor.rgb = vec3_splat(roughness); break;
 			case DebugMode_Reflectance: resultColor.rgb = vec3_splat(reflectance); break;
 			case DebugMode_Emissive: resultColor.rgb = emissive; break;
-			case DebugMode_Normal: resultColor.rgb = inputWorldNormal * 0.5 + 0.5; break;//resultColor.rgb = normal * 0.5 + 0.5; break;
+			case DebugMode_Normal: resultColor.rgb = normal * 0.5 + 0.5; break;//inputWorldNormal * 0.5 + 0.5; break
 			case DebugMode_SubsurfaceColor: resultColor.rgb = subsurfaceColor; break;
 			case DebugMode_TextureCoordinate0: resultColor.rgb = vec3(v_texCoord01.xy, 0); break;
 			case DebugMode_TextureCoordinate1: resultColor.rgb = vec3(v_texCoord01.zw, 0); break;
@@ -585,6 +629,34 @@ void main()
 	#else
 		gl_FragData[2] = vec4(0,0,0,0);
 	#endif
+#endif
+
+	//geometry with voxel data
+//!!!!GLSL
+#ifndef GLSL
+#if defined(GLOBAL_VOXEL_LOD) || defined(GLOBAL_VIRTUALIZED_GEOMETRY)// || defined(DEPTH_OFFSET_MODE_GREATER_EQUAL)
+	BRANCH
+	if(depthOffset != 0.0)
+	{
+		float depth = getDepthValue(fragCoord.z, u_viewportOwnerNearClipDistance, u_viewportOwnerFarClipDistance);
+		depth += depthOffset;
+		gl_GreaterEqualFragDepth = getRawDepthValue(depth, u_viewportOwnerNearClipDistance, u_viewportOwnerFarClipDistance);
+	}
+	else
+		gl_GreaterEqualFragDepth = fragCoord.z;
+/*
+#elif defined(DEPTH_OFFSET_MODE_LESS_EQUAL)
+	BRANCH
+	if(depthOffset != 0.0)
+	{
+		float depth = getDepthValue(fragCoord.z, u_viewportOwnerNearClipDistance, u_viewportOwnerFarClipDistance);
+		depth += depthOffset;
+		gl_LessEqualFragDepth = getRawDepthValue(depth, u_viewportOwnerNearClipDistance, u_viewportOwnerFarClipDistance);
+	}
+	else
+		gl_LessEqualFragDepth = fragCoord.z;
+*/
+#endif
 #endif
 	
 }

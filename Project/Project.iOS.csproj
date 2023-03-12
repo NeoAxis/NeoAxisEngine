@@ -19,7 +19,7 @@
     <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>obj\Project.iOS\</OutputPath>
-    <DefineConstants>DEBUG;IOS;DEPLOY</DefineConstants>
+    <DefineConstants>DEBUG;IOS;DEPLOY;CLIENT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -33,7 +33,7 @@
     <OutputPath>obj\Project.iOS\</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DefineConstants>IOS;DEPLOY</DefineConstants>
+    <DefineConstants>IOS;DEPLOY;CLIENT</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>
     </NoWarn>

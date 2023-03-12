@@ -1,3 +1,4 @@
+#if !DEPLOY
 using System;
 using System.IO;
 using System.Reflection;
@@ -46,3 +47,5 @@ namespace Internal.Aga.Controls
 
     }
 }
+
+#endif

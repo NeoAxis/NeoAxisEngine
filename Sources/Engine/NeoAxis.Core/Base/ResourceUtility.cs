@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 
@@ -154,27 +154,6 @@ namespace NeoAxis
 		//			Log.Fatal( "ResourceUtility: EnvironmentDefaultTexture: texture == null." );
 		//		return texture;
 		//	}
-		//}
-
-		//public static GpuTexture GetTextureCompiledData( Texture texture )
-		//{
-		//	if( texture != null )
-		//		return texture.Result;
-		//	return null;
-		//}
-
-		//public static Material.CompiledData GetMaterialCompiledData( Material material )
-		//{
-		//	if( material != null )
-		//		return material.Result;
-		//	return null;
-		//}
-
-		//public static Mesh.CompiledData GetMeshCompiledData( Mesh mesh )
-		//{
-		//	if( mesh != null )
-		//		return mesh.Result;
-		//	return null;
 		//}
 
 		//public static ResourceSelectionMode GetSelectionModeByPropertyAttributes( Metadata.Property property )

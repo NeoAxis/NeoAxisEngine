@@ -1,0 +1,163 @@
+// Made with NeoAxis Engine 2022.2.
+
+.component NeoAxis.Import3D
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"DD21BA5484FA4AD452821B5016F76612\"><CGD /><WS UN=\"EDD3B518F1C3486672B17C3F1C2D59BF\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"94404DF8FB5A40E39D97499532EA7677\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"DD21BA5484FA4AD452821B5016F76612\"><KP UN=\"B31F1CBCAFE3411C55B6C44DCEAEAE38\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"ADBE5615E0EC41CF26AC3A7990ED97B5\" S=\"False\"><CPD ObjPath=\"$Materials\\$Material.001\\$Material.001 shader graph\" /></KP><KP UN=\"91682FA87F804CE0F1BB54616439CFBF\" S=\"False\"><CPD ObjPath=\"$Materials\\$Material.004\\$Material.004 shader graph\" /></KP><KP UN=\"DD21BA5484FA4AD452821B5016F76612\" S=\"False\"><CPD ObjPath=\"$Mesh\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	LODs = False
+	LODLevels = 2
+	.component NeoAxis.Component
+	{
+		Name = Materials
+		.component NeoAxis.Material
+		{
+			Name = Material.001
+			BaseColor
+			{
+				GetByReference = "this:$Material.001 shader graph\\$Node Texture Sample Base Color\\$Shader Texture Sample\\RGBA"
+			}
+			.component NeoAxis.FlowGraph
+			{
+				Name = Material.001 shader graph
+				EditorScrollPosition = 0 0
+				Specialization
+				{
+					GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+				}
+				.component NeoAxis.FlowGraphNode
+				{
+					Name = Node Material.001
+					Position = 10 -7
+					ControlledObject
+					{
+						GetByReference = "this:..\\.."
+					}
+				}
+				.component NeoAxis.FlowGraphNode
+				{
+					Name = Node Texture Sample Base Color
+					Position = -20 -4
+					ControlledObject
+					{
+						GetByReference = "this:$Shader Texture Sample"
+					}
+					.component NeoAxis.ShaderTextureSample
+					{
+						Name = Shader Texture Sample
+						Location2 = 0 0
+						Location3 = 0 0 0
+						Texture
+						{
+							GetByReference = "F:/Dev/Additions/Models/Buildings/Default constructor/White_brick_wall_01_2K_Base_Color.jpg"
+						}
+					}
+				}
+			}
+		}
+		.component NeoAxis.Material
+		{
+			Name = Material.004
+			BaseColor = 0.8 0.8 0.8
+			.component NeoAxis.FlowGraph
+			{
+				Name = Material.004 shader graph
+				EditorScrollPosition = 0 0
+				Specialization
+				{
+					GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+				}
+				.component NeoAxis.FlowGraphNode
+				{
+					Name = Node Material.004
+					Position = 10 -7
+					ControlledObject
+					{
+						GetByReference = "this:..\\.."
+					}
+				}
+			}
+		}
+	}
+	.component NeoAxis.Mesh
+	{
+		Name = Mesh
+		EditorCameraTransform = "5.27842362482913 -2.55635406975508 3.07614947387299; -0.261495861923013 0.0509248724371002 0.946086828342598 0.184245175787722; 1 1 1"
+		.component NeoAxis.MeshGeometry
+		{
+			Name = Geometry
+			VertexStructure
+			{
+				Value
+				{
+					Length = 5
+					0
+					{
+						Offset = 0
+						Type = Float3
+						Semantic = Position
+					}
+					1
+					{
+						Offset = 12
+						Type = Float3
+						Semantic = Normal
+					}
+					2
+					{
+						Offset = 24
+						Type = Half4
+						Semantic = Tangent
+					}
+					3
+					{
+						Offset = 32
+						Type = Half2
+						Semantic = TextureCoordinate0
+					}
+					4
+					{
+						Offset = 36
+						Type = Float1
+						Semantic = Color3
+					}
+				}
+			}
+			Vertices
+			{
+				Value
+				{
+					Length = 960
+					.elements = "UEsDBBQAAAAIACdNilVtQGAL2AAAAMADAAAEAAAAZmlsZX3SMQ7CMAwFUJ+AC8CAxMLEwsIQaAbExDl6jp6Bre0FOETUZmNpNzYuQxK7bazGiRRVjZ767cZNXXcA2gLsC4CqB1yV2yZstbn5g4ZcWT4Et7tETovOcCfmGswdh+EaObfnpeL6Jke5CYe55KzoDHdiLtXH+wj1+0cfunDufsQT3kfCvZmzGafj+8jk6vV/mZbrR/H6+L0lHNXH5yDp4lzZUX24tC4+B+6wD/Vtfyf/Pg7PLuu2zFnZvaL7zLg25VJzcHZ9Lm7+zsr5eZkd9S7N8+LEXIW5f1BLAQIUABQAAAAIACdNilVtQGAL2AAAAMADAAAEAAAAAAAAAAAAAAAAAAAAAABmaWxlUEsFBgAAAAABAAEAMgAAAPoAAAAAAA=="
+					.elementsZip = True
+				}
+			}
+			Indices
+			{
+				Value
+				{
+					Length = 36
+					.elements = 0 1 2 0 2 3 4 5 6 4 6 7 8 9 10 8 10 11 12 13 14 12 14 15 16 17 18 16 18 19 20 21 22 20 22 23
+				}
+			}
+			Material
+			{
+				GetByReference = "this:$Material"
+			}
+			.component NeoAxis.MultiMaterial
+			{
+				Name = Material
+				Materials
+				{
+					Count = 2
+					0 "NeoAxis.Reference<NeoAxis.Material>"
+					{
+						GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Roof corner.material"
+					}
+					1 "NeoAxis.Reference<NeoAxis.Material>"
+					{
+						GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\White Bricks.material"
+					}
+				}
+			}
+		}
+	}
+}

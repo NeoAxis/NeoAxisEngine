@@ -1,31 +1,39 @@
-.component NeoAxis.Component_Material
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.Material
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1178, 842\"><KW V=\"1\" A=\"C2C184A794BE491AEB90B31271DFB854\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"9B2AA197D7124031528FFF073059F308\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"C2C184A794BE491AEB90B31271DFB854\"><KP UN=\"935F41D5F8924088E990092813AAF122\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"C2C184A794BE491AEB90B31271DFB854\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1146, 842\"><KW V=\"1\" A=\"C2C184A794BE491AEB90B31271DFB854\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"9B2AA197D7124031528FFF073059F308\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"C2C184A794BE491AEB90B31271DFB854\"><KP UN=\"935F41D5F8924088E990092813AAF122\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"C2C184A794BE491AEB90B31271DFB854\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	TypeSettingsPrivateObjects
 	{
-		Length = 16
+		Length = 22
 		0 = $Shader graph
 		1 = BlendMode
 		2 = TwoSided
-		3 = PositionOffset
-		4 = ShadingModel
-		5 = Normal
-		6 = BaseColor
-		7 = Metallic
-		8 = Roughness
-		9 = Reflectance
-		10 = ClearCoat
-		11 = Anisotropy
-		12 = AmbientOcclusion
-		13 = RayTracingReflection
-		14 = ReceiveShadows
-		15 = Emissive
+		3 = ShadingModel
+		4 = BaseColor
+		5 = Metallic
+		6 = Roughness
+		7 = Reflectance
+		8 = Normal
+		9 = Displacement
+		10 = AmbientOcclusion
+		11 = Emissive
+		12 = ClearCoat
+		13 = Anisotropy
+		14 = PositionOffset
+		15 = RayTracingReflection
+		16 = ReceiveShadows
+		17 = ReceiveDecals
+		18 = UseVertexColor
+		19 = DepthOffsetMode
+		20 = AdvancedBlending
+		21 = AdvancedScripting
 	}
 	BaseColor
 	{
 		GetByReference = "this:$Shader graph\\$Node Invoke Member 1\\$Invoke Member\\__parameter_ReturnValue"
 	}
-	.component NeoAxis.Component_FlowGraph
+	.component NeoAxis.FlowGraph
 	{
 		Name = Shader graph
 		EditorScrollPosition = -1.17647058823529 -1.76470588235294
@@ -33,7 +41,7 @@
 		{
 			GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
 		}
-		.component NeoAxis.Component_FlowGraphNode
+		.component NeoAxis.FlowGraphNode
 		{
 			Name = "Node "
 			Position = 10 -7
@@ -42,7 +50,7 @@
 				GetByReference = "this:..\\.."
 			}
 		}
-		.component NeoAxis.Component_FlowGraphNode
+		.component NeoAxis.FlowGraphNode
 		{
 			Name = Node Shader Parameter 1
 			Position = -24 -2
@@ -50,7 +58,7 @@
 			{
 				GetByReference = "this:$Shader Parameter"
 			}
-			.component NeoAxis.Component_ShaderParameter
+			.component NeoAxis.ShaderParameter
 			{
 				Name = Shader Parameter
 				Source
@@ -59,7 +67,7 @@
 				}
 			}
 		}
-		.component NeoAxis.Component_FlowGraphNode
+		.component NeoAxis.FlowGraphNode
 		{
 			Name = Node Texture Sample 1
 			Position = -24 -16
@@ -67,7 +75,7 @@
 			{
 				GetByReference = "this:$Texture Sample"
 			}
-			.component NeoAxis.Component_ShaderTextureSample
+			.component NeoAxis.ShaderTextureSample
 			{
 				Name = Texture Sample
 				Location2 = 0 0
@@ -78,7 +86,7 @@
 				}
 			}
 		}
-		.component NeoAxis.Component_FlowGraphNode
+		.component NeoAxis.FlowGraphNode
 		{
 			Name = Node Invoke Member 1
 			Position = -7 -8
@@ -86,7 +94,7 @@
 			{
 				GetByReference = "this:$Invoke Member"
 			}
-			.component NeoAxis.Component_InvokeMember
+			.component NeoAxis.InvokeMember
 			{
 				Name = Invoke Member
 				Member
@@ -107,7 +115,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Component_Property
+	.component NeoAxis.VirtualProperty
 	{
 		Name = Color
 		DefaultValueSpecified = True

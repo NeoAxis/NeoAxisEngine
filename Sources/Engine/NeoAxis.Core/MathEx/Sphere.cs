@@ -1,8 +1,9 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -36,26 +37,31 @@ namespace NeoAxis
 			Radius = source.Radius;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is Sphere && this == (Sphere)obj );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return ( Center.GetHashCode() ^ Radius.GetHashCode() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( Sphere v1, Sphere v2 )
 		{
 			return ( v1.Center == v2.Center && v1.Radius == v2.Radius );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( Sphere v1, Sphere v2 )
 		{
 			return ( v1.Center != v2.Center || v1.Radius != v2.Radius );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( Sphere v, double epsilon )
 		{
 			if( !Center.Equals( ref v.Center, epsilon ) )
@@ -65,11 +71,13 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool IsCleared()
 		{
 			return Radius < 0.0f;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Bounds ToBounds()
 		{
 			Bounds result;
@@ -82,6 +90,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ToBounds( out Bounds result )
 		{
 			result.Minimum.X = Center.X - Radius;
@@ -92,6 +101,7 @@ namespace NeoAxis
 			result.Maximum.Z = Center.Z + Radius;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( Vector3 p )
 		{
 			double x = p.X - Center.X;
@@ -103,6 +113,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( ref Sphere s )
 		{
 			double x = s.Center.X - Center.X;
@@ -115,26 +126,31 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( Sphere s )
 		{
 			return Intersects( ref s );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( Cone cone )
 		{
 			return cone.Intersects( this );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( ref Sphere s )
 		{
 			return ( Center - s.Center ).Length() + s.Radius <= Radius;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( Sphere s )
 		{
 			return Contains( ref s );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( ref Box box )
 		{
 			Vector3[] points = null;
@@ -147,6 +163,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( Box box )
 		{
 			return Contains( ref box );
@@ -187,6 +204,7 @@ namespace NeoAxis
 		//	}
 		//}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		static void ClosestPtPointTriangle( ref Vector3 p, ref Vector3 a, ref Vector3 b, ref Vector3 c, out Vector3 result )
 		{
 			Vector3 ab;
@@ -269,6 +287,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( ref Triangle triangle )
 		{
 			Vector3 point;
@@ -278,11 +297,13 @@ namespace NeoAxis
 			return v.LengthSquared() <= Radius * Radius;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( Triangle triangle )
 		{
 			return Intersects( ref triangle );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public bool Intersects( ref Bounds bounds )
 		{
 			double distanceSqr = 0;
@@ -323,11 +344,13 @@ namespace NeoAxis
 			return distanceSqr <= Radius * Radius;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( Bounds bounds )
 		{
 			return Intersects( ref bounds );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public bool Intersects( ref Box box )
 		{
 			Matrix3 transposedAxis;
@@ -360,11 +383,13 @@ namespace NeoAxis
 			return distanceSquared <= Radius * Radius;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( Box box )
 		{
 			return Intersects( ref box );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( Line3 line )
 		{
 			Vector3 s = line.Start - Center;
@@ -386,6 +411,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( Ray ray, out double scale1, out double scale2 )
 		{
 			Vector3 p = ray.Origin - Center;
@@ -406,6 +432,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( Ray ray )
 		{
 			Vector3 p = ray.Origin - Center;
@@ -418,6 +445,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public SphereF ToSphereF()
 		{
 			SphereF result;
@@ -430,6 +458,7 @@ namespace NeoAxis
 		//[AutoConvertType]
 		//Parse, ToString
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Sphere Merge( Sphere a, Sphere b )
 		{
 			if( a == b )
@@ -449,6 +478,37 @@ namespace NeoAxis
 			var newR = ( r1 + r2 + r ) * 0.5;
 			var newC = c1 + ( c2 - c1 ) * ( newR - r1 ) / r;
 			return new Sphere( newC, newR );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static void Merge( ref Sphere a, ref Sphere b, out Sphere result )
+		{
+			if( a == b )
+			{
+				result = a;
+				return;
+			}
+
+			ref var c1 = ref a.Center;
+			ref var c2 = ref b.Center;
+			var r1 = a.Radius;
+			var r2 = b.Radius;
+
+			var r = ( c1 - c2 ).Length();
+			if( r + r1 < r2 )
+			{
+				result = b;
+				return;
+			}
+			if( r + r2 < r1 )
+			{
+				result = a;
+				return;
+			}
+
+			var newR = ( r1 + r2 + r ) * 0.5;
+			var newC = c1 + ( c2 - c1 ) * ( newR - r1 ) / r;
+			result = new Sphere( newC, newR );
 		}
 	}
 }

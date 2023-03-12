@@ -1,8 +1,9 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -20,6 +21,7 @@ namespace NeoAxis
 		[Serialize]
 		public double Radius;
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Cylinder( Cylinder source )
 		{
 			Point1 = source.Point1;
@@ -27,6 +29,7 @@ namespace NeoAxis
 			Radius = source.Radius;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Cylinder( Vector3 point1, Vector3 point2, double radius )
 		{
 			this.Point1 = point1;
@@ -34,26 +37,31 @@ namespace NeoAxis
 			this.Radius = radius;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is Cylinder && this == (Cylinder)obj );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return ( Point1.GetHashCode() ^ Point2.GetHashCode() ^ Radius.GetHashCode() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( Cylinder v1, Cylinder v2 )
 		{
 			return ( v1.Point1 == v2.Point1 && v1.Point2 == v2.Point2 && v1.Radius == v2.Radius );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( Cylinder v1, Cylinder v2 )
 		{
 			return ( v1.Point1 != v2.Point1 || v1.Point2 != v2.Point2 || v1.Radius != v2.Radius );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( Cylinder v, double epsilon )
 		{
 			if( !Point1.Equals( ref v.Point1, epsilon ) )
@@ -65,6 +73,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ToBounds( out Bounds result )
 		{
 			Vector3 a = Point2 - Point1;
@@ -80,12 +89,14 @@ namespace NeoAxis
 			result = new Bounds( Vector3.Min( Point1 - e, Point2 - e ), Vector3.Max( Point1 + e, Point2 + e ) );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Bounds ToBounds()
 		{
 			ToBounds( out var result );
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector3 GetCenter()
 		{
 			Vector3 result;
@@ -96,6 +107,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void GetCenter( out Vector3 result )
 		{
 			Vector3.Add( ref Point1, ref Point2, out result );
@@ -104,6 +116,7 @@ namespace NeoAxis
 			result.Z *= .5;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public double GetLength()
 		{
 			Vector3 result;
@@ -111,6 +124,7 @@ namespace NeoAxis
 			return result.Length();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector3 GetDirection()
 		{
 			Vector3 result;
@@ -119,6 +133,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void GetDirection( out Vector3 result )
 		{
 			Vector3.Subtract( ref Point2, ref Point1, out result );

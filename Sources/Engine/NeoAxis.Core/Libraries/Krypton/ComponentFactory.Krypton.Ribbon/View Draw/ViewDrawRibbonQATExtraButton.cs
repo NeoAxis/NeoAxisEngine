@@ -1,4 +1,5 @@
-﻿// *****************************************************************************
+#if !DEPLOY
+// *****************************************************************************
 // 
 //  © Component Factory Pty Ltd 2012. All rights reserved.
 //	The software and associated documentation supplied hereunder are the 
@@ -240,3 +241,5 @@ namespace Internal.ComponentFactory.Krypton.Ribbon
         #endregion
     }
 }
+
+#endif

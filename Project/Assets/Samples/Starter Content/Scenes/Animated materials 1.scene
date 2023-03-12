@@ -1,6 +1,8 @@
+// Made with NeoAxis Engine 2023.1.
+
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1176, 842\"><KW V=\"1\" A=\"9D09D0F8809146881CB36CAB26E17BA1\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"D1A5EB0B19AE4FE26E8F19BE8D2481BC\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"9D09D0F8809146881CB36CAB26E17BA1\"><KP UN=\"9D09D0F8809146881CB36CAB26E17BA1\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"333FE5E5BCBF424106802DE6B0F1C4BB\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP><KP UN=\"44CB650E88D7403C74B9E364EF8F5C70\" S=\"False\"><CPD ObjPath=\"$Cylinder\\$Material\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1155, 842\"><KW V=\"1\" A=\"9D09D0F8809146881CB36CAB26E17BA1\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"D1A5EB0B19AE4FE26E8F19BE8D2481BC\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"9D09D0F8809146881CB36CAB26E17BA1\"><KP UN=\"9D09D0F8809146881CB36CAB26E17BA1\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"333FE5E5BCBF424106802DE6B0F1C4BB\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP><KP UN=\"44CB650E88D7403C74B9E364EF8F5C70\" S=\"False\"><CPD ObjPath=\"$Cylinder\\$Material\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -92,7 +94,6 @@
 			.component NeoAxis.RenderingEffect_Sharpen
 			{
 				Name = Sharpen
-				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
 			}
 		}
 		.component NeoAxis.Component
@@ -103,6 +104,12 @@
 	.component NeoAxis.GameMode
 	{
 		Name = Game Mode
+		CutsceneStarted = False
+		CutsceneGuiFadingFactor = 0
+		CutsceneGuiFadingSpeed = 0
+		ScreenFadingCurrentColor = 0 0 0 0
+		ScreenFadingTargetColor = 0 0 0 0
+		ScreenFadingSpeed = 0
 	}
 	.component NeoAxis.MeshInSpace
 	{
@@ -116,6 +123,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Mesh
 		{
@@ -153,7 +167,7 @@
 	{
 		Name = Sphere
 		Transform = "-1 1.5 0.5; 0 0 0 1; 1 1 1"
-		Color = 0.5 0.9121656 0.5
+		Color = 0.5 0.5112152 0.5
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -165,6 +179,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Mesh
 		{
@@ -214,6 +235,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Mesh
 		{
 			Name = Mesh
@@ -226,7 +254,7 @@
 		{
 			Name = Material
 			BaseColor = 0.7 0.7 0.7
-			Emissive = 0 8.243313 0
+			Emissive = 0 0.2243034 0
 			.component NeoAxis.FlowGraph
 			{
 				Name = Shader graph
@@ -264,6 +292,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Mesh
 		{
 			Name = Mesh
@@ -276,7 +311,7 @@
 		{
 			Name = Material
 			BaseColor = 0.7 0.7 0.7
-			Multiplier = 1 1 9.243313
+			Multiplier = 1 1 1.224303
 			Emissive
 			{
 				GetByReference = "this:$Shader graph\\$Node Invoke Member 1\\$Invoke Member\\__parameter_ReturnValue"
@@ -389,7 +424,7 @@
 	{
 		Name = Text 2D
 		Transform = "-1 1.5 2; 0 0 0 1; 1 1 1"
-		Text = Change color multiplier of mesh in scene
+		Text = Change Color multiplier of mesh in scene
 		Back = True
 		BackColor = 0 0.5017255 0.7803922
 	}
@@ -404,7 +439,7 @@
 	.component NeoAxis.Text2D
 	{
 		Name = Text 2D 2
-		Transform = "6.83784400973029 1.75981764467444 1.99999999999998; 0 0 0 1; 1 1 1"
+		Transform = "6.32511794954256 1.75981764467444 1.99999999999998; 0 0 0 1; 1 1 1"
 		Text = Use public parameter of visually scripted material
 		Back = True
 		BackColor = 0 0.5017255 0.7803922

@@ -1,11 +1,10 @@
-// Made with NeoAxis Engine 2021.3.
+// Made with NeoAxis Engine 2023.1.
 
 .component "Base\\Material templates\\Vegetation.material"
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"1\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"200, 200\"><KW V=\"1\" A=\"(null)\"><CGD /><WS UN=\"C067AD3508FD4FA943BB7683DBBF1DF6\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"49BD904D7ACB4C57B480FAA17F9E218D\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"92AE85B296CE4995C894FB131950E69F\"><KP UN=\"B4596E2D04C1401E1B9393D56F85742C\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"92AE85B296CE4995C894FB131950E69F\" S=\"False\"><CPD ObjPath=\"$$n1$Shader graph\" /></KP></WC></WS></KW></DW></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"1\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"200, 200\"><KW V=\"1\" A=\"(null)\"><CGD /><WS UN=\"F4C53D98ABB14FC5BDB49460A1F9A66A\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"845B7BEE52794DB068B496F34A5AB180\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"B1E0E8B59622492FBCB09B3049BA0E33\"><KP UN=\"E1616B96C201424ADFAA0D57251F2148\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"B1E0E8B59622492FBCB09B3049BA0E33\" S=\"False\"><CPD ObjPath=\"$$n1$Shader graph\" /></KP></WC></WS></KW></DW></DM></KD>"
 	BlendMode = Masked
 	TwoSided = True
-	TwoSidedFlipNormals = False
 	ShadingModel = Subsurface
 	Thickness = 0.02
 	BaseColor

@@ -1,8 +1,9 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -107,7 +108,6 @@ namespace NeoAxis
 				Metadata.TypeInfo type = MetadataManager.GetType( item.TextBlock.Data );
 				if( type != null )
 				{
-					//!!!!new
 					//use component by base type
 					if( item.Parent != null && item.Parent.Component != null && item.TextBlock.AttributeExists( "CreatedByBaseType" ) )
 					{
@@ -183,7 +183,6 @@ namespace NeoAxis
 
 						item.Component.providedTypeAllow = false;
 
-						//!!!!new
 						item.Component.Name = item.Name;
 
 						//!!!!сортировать
@@ -839,6 +838,7 @@ namespace NeoAxis
 		//}
 
 		//!!!!name
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static string GetOwnedFileNameOfComponent( Component component )
 		{
 			var root = component.ParentRoot;
@@ -847,6 +847,7 @@ namespace NeoAxis
 			return "";
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static Component FindNearestCommonParent( IList<Component> components )
 		{
 			if( components.Count == 0 )
@@ -899,6 +900,7 @@ namespace NeoAxis
 		}
 
 		//!!!!проверять при изменении свойства Name
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IsValidComponentName( string name, out string error )
 		{
 			//!!!!что-то еще?
@@ -912,6 +914,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool IsChildInHierarchy( Component parent, Component child )
 		{
 			var current = child.Parent;
@@ -924,6 +927,7 @@ namespace NeoAxis
 			return false;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static int HowDeepChildInHierarchy( Component parent, Component child )
 		{
 			int level = 0;
@@ -940,11 +944,13 @@ namespace NeoAxis
 			return -1;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Resource.Instance GetResourceInstanceByComponent( Component component )
 		{
 			return component.ParentRoot?.HierarchyController?.CreatedByResource;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static string GetNewObjectUniqueName( Component newObject )
 		{
 			var name = newObject.BaseType.GetUserFriendlyNameForInstance( true );
@@ -966,6 +972,7 @@ namespace NeoAxis
 			return name;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool TypeSettingsPrivateObjectsContains( string[] typeSettingsPrivateObjects, Component component )
 		{
 			if( typeSettingsPrivateObjects != null )
@@ -978,6 +985,7 @@ namespace NeoAxis
 			return false;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool TypeSettingsPrivateObjectsContains( string[] typeSettingsPrivateObjects, Metadata.Member member )
 		{
 			if( typeSettingsPrivateObjects != null )
@@ -989,6 +997,7 @@ namespace NeoAxis
 			return false;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static List<Component> GetComponentsWithoutChildren( ICollection<Component> list )
 		{
 			var set = new ESet<Component>( list.Count );

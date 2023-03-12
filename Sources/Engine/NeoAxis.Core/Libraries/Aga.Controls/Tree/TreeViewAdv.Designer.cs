@@ -1,3 +1,4 @@
+#if !DEPLOY
 using System.Windows.Forms;
 
 namespace Internal.Aga.Controls.Tree
@@ -54,3 +55,5 @@ namespace Internal.Aga.Controls.Tree
 		private ErrorProvider _errorProvider;
 	}
 }
+
+#endif

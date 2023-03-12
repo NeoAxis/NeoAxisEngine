@@ -1,0 +1,39 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.Surface
+{
+	EditorCameraTransform = "14.364029937491 -11.6628292324357 9.52093449366073; -0.228487679662906 0.0886253299067105 0.90389103284698 0.350599389446144; 1 1 1"
+	.component NeoAxis.SurfaceGroupOfElements
+	{
+		Name = Group 1
+		OccupiedAreaRadius = 2.5
+		PositionZRange = 0.75 0.75
+		RotateAroundItsAxis = True
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 1
+			Probability = 2
+			Mesh
+			{
+				GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Tank Doodad\\Model.dae|$Mesh"
+			}
+		}
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 2
+			Probability = 3
+			Mesh
+			{
+				GetByReference = "Samples\\Starter Content\\Models\\Ball in 3D Coat\\export3dcoat.obj|$Mesh"
+			}
+		}
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 3
+			Mesh
+			{
+				GetByReference = "Content\\Vehicles\\Default\\scene.gltf|$Mesh"
+			}
+		}
+	}
+}

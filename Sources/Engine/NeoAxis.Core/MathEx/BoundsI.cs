@@ -1,9 +1,10 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -22,26 +23,29 @@ namespace NeoAxis
 			new Vector3I( int.MaxValue, int.MaxValue, int.MaxValue ),
 			new Vector3I( int.MinValue, int.MinValue, int.MinValue ) );
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public BoundsI( BoundsI source )
 		{
 			Minimum = source.Minimum;
 			Maximum = source.Maximum;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public BoundsI( Vector3I minimum, Vector3I maximum )
 		{
 			this.Minimum = minimum;
 			this.Maximum = maximum;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public BoundsI( Vector3I v )
 		{
 			this.Minimum = v;
 			this.Maximum = v;
 		}
 
-		public BoundsI( int minimumX, int minimumY, int minimumZ,
-			int maximumX, int maximumY, int maximumZ )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public BoundsI( int minimumX, int minimumY, int minimumZ, int maximumX, int maximumY, int maximumZ )
 		{
 			Minimum.X = minimumX;
 			Minimum.Y = minimumY;
@@ -51,21 +55,25 @@ namespace NeoAxis
 			Maximum.Z = maximumZ;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is BoundsI && this == (BoundsI)obj );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return ( Minimum.GetHashCode() ^ Maximum.GetHashCode() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( BoundsI b1, BoundsI b2 )
 		{
 			return ( b1.Minimum == b2.Minimum && b1.Maximum == b2.Maximum );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( BoundsI b1, BoundsI b2 )
 		{
 			return ( b1.Minimum != b2.Minimum || b1.Maximum != b2.Maximum );
@@ -73,31 +81,49 @@ namespace NeoAxis
 
 		public unsafe Vector3I this[ int index ]
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
-				if( index < 0 || index > 1 )
+				if( index == 0 )
+					return Minimum;
+				else if( index == 1 )
+					return Maximum;
+				else
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed( Vector3I* v = &this.Minimum )
-				{
-					return v[ index ];
-				}
+
+				//if( index < 0 || index > 1 )
+				//	throw new ArgumentOutOfRangeException( "index" );
+				//fixed( Vector3I* v = &this.Minimum )
+				//{
+				//	return v[ index ];
+				//}
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set
 			{
-				if( index < 0 || index > 1 )
+				if( index == 0 )
+					Minimum = value;
+				else if( index == 1 )
+					Maximum = value;
+				else
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed( Vector3I* v = &this.Minimum )
-				{
-					v[ index ] = value;
-				}
+
+				//if( index < 0 || index > 1 )
+				//	throw new ArgumentOutOfRangeException( "index" );
+				//fixed( Vector3I* v = &this.Minimum )
+				//{
+				//	v[ index ] = value;
+				//}
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool IsCleared()
 		{
 			return Minimum.X > Maximum.X;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int GetVolume()
 		{
 			Vector3I s;
@@ -105,6 +131,7 @@ namespace NeoAxis
 			return s.X * s.Y * s.Z;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Add( Vector3I v )
 		{
 			if( v.X < Minimum.X )
@@ -121,6 +148,7 @@ namespace NeoAxis
 				Maximum.Z = v.Z;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Add( ref Vector3I v )
 		{
 			if( v.X < Minimum.X )
@@ -137,6 +165,7 @@ namespace NeoAxis
 				Maximum.Z = v.Z;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Add( BoundsI b )
 		{
 			if( b.Minimum.X < Minimum.X )
@@ -153,18 +182,21 @@ namespace NeoAxis
 				Maximum.Z = b.Maximum.Z;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Add( ICollection<Vector3I> collection )
 		{
 			foreach( var v in collection )
 				Add( v );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Add( Vector3I[] collection )
 		{
 			for( int i = 0; i < collection.Length; i++ )
 				Add( ref collection[ i ] );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public BoundsI Intersection( BoundsI v )
 		{
 			BoundsI result;
@@ -177,6 +209,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Intersection( BoundsI v, out BoundsI result )
 		{
 			result.Minimum.X = ( v.Minimum.X > Minimum.X ) ? v.Minimum.X : Minimum.X;
@@ -187,6 +220,7 @@ namespace NeoAxis
 			result.Maximum.Z = ( v.Maximum.Z < Maximum.Z ) ? v.Maximum.Z : Maximum.Z;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Expand( int d )
 		{
 			Minimum.X -= d;
@@ -197,6 +231,7 @@ namespace NeoAxis
 			Maximum.Z += d;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Expand( Vector3I d )
 		{
 			Minimum.X -= d.X;
@@ -207,6 +242,7 @@ namespace NeoAxis
 			Maximum.Z += d.Z;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( Vector3I p )
 		{
 			if( p.X < Minimum.X || p.Y < Minimum.Y || p.Z < Minimum.Z || p.X > Maximum.X || p.Y > Maximum.Y || p.Z > Maximum.Z )
@@ -214,6 +250,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( ref Vector3I p )
 		{
 			if( p.X < Minimum.X || p.Y < Minimum.Y || p.Z < Minimum.Z || p.X > Maximum.X || p.Y > Maximum.Y || p.Z > Maximum.Z )
@@ -221,6 +258,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( BoundsI b )
 		{
 			if( b.Minimum.X < Minimum.X || b.Minimum.Y < Minimum.Y || b.Minimum.Z < Minimum.Z
@@ -229,6 +267,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( BoundsI b )
 		{
 			if( b.Maximum.X < Minimum.X || b.Maximum.Y < Minimum.Y || b.Maximum.Z < Minimum.Z
@@ -237,6 +276,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector3I GetSize()
 		{
 			Vector3I result;
@@ -251,6 +291,7 @@ namespace NeoAxis
 			return r;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public void ToPoints( ref Vector3I[] points )
 		{
 			if( points.Length < 8 )
@@ -299,6 +340,7 @@ namespace NeoAxis
 				Maximum.X, Maximum.Y, Maximum.Z );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public BoundsF ToBoundsF()
 		{
@@ -312,6 +354,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Bounds ToBounds()
 		{
@@ -325,6 +368,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static BoundsI Merge( BoundsI a, BoundsI b )
 		{
 			var v = a;

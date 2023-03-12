@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Drawing.Design;
 using System.ComponentModel;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -14,6 +15,10 @@ namespace NeoAxis
 	/// </summary>
 	public abstract class RenderingPipeline : Component
 	{
+		public static double GlobalLODScale = 1;
+
+		//
+
 		[Browsable( false )]
 		public ColorValue? BackgroundColorOverride;
 
@@ -141,7 +146,7 @@ namespace NeoAxis
 		/// The minimum number of objects to enable GPU instancing.
 		/// </summary>
 		[Category( "Instancing" )]
-		[DefaultValue( 10 )]
+		[DefaultValue( 4 )]
 		[Range( 2, 1000, RangeAttribute.ConvenientDistributionEnum.Exponential )]
 		public Reference<int> InstancingMinCount
 		{
@@ -150,7 +155,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="InstancingMinCount"/> property value changes.</summary>
 		public event Action<RenderingPipeline> InstancingMinCountChanged;
-		ReferenceField<int> _instancingMinCount = 10;
+		ReferenceField<int> _instancingMinCount = 4;
 
 		/// <summary>
 		/// The maximum size of instancing buffer.
@@ -283,13 +288,11 @@ namespace NeoAxis
 			public OpenList<DecalItem> Decals;// = new OpenList<DecalItem>( 512 );
 			public OpenList<CutVolumeItem> CutVolumes = new OpenList<CutVolumeItem>();
 			public OpenList<TransparentRenderingAddOffsetWhenSortByDistanceVolumeItem> TransparentRenderingAddOffsetWhenSortByDistanceVolumes = new OpenList<TransparentRenderingAddOffsetWhenSortByDistanceVolumeItem>();
-
-			public struct ActionToDoAfterPrepareListsOfObjectsSortedByDistance
-			{
-				public float DistanceToCamera;
-				public Action<ViewportRenderingContext> Action;
-			}
 			public List<ActionToDoAfterPrepareListsOfObjectsSortedByDistance> ActionsToDoAfterPrepareListsOfObjectsSortedByDistance = new List<ActionToDoAfterPrepareListsOfObjectsSortedByDistance>();
+
+			//!!!!don't forget to Clear() new fields
+
+			////////////
 
 			public RenderSceneData()
 			{
@@ -300,6 +303,18 @@ namespace NeoAxis
 				Lights = new OpenList<LightItem>( 32 * multiplier );
 				ReflectionProbes = new OpenList<ReflectionProbeItem>( 32 * multiplier );
 				Decals = new OpenList<DecalItem>( 128 * multiplier );
+			}
+
+			public void Clear()
+			{
+				Meshes.Clear();
+				Billboards.Clear();
+				Lights.Clear();
+				ReflectionProbes.Clear();
+				Decals.Clear();
+				CutVolumes.Clear();
+				TransparentRenderingAddOffsetWhenSortByDistanceVolumes.Clear();
+				ActionsToDoAfterPrepareListsOfObjectsSortedByDistance.Clear();
 			}
 
 			/// <summary>
@@ -319,14 +334,23 @@ namespace NeoAxis
 				public Material ReplaceMaterial;
 				public Material[] ReplaceMaterialSelectively;
 				public ColorValue Color;
+				public ColorByte ColorForInstancingData;
 				public AnimationDataClass AnimationData;
 
 				public IMeshData MeshData;
+				//!!!!new GI
+				//!!!!всем выставлять
+				public IMeshData MeshDataLOD0;
 
 				public Matrix4F Transform;
 				public Vector3F PositionPreviousFrame;
 
-				public GpuVertexBuffer BatchingInstanceBuffer;
+				public bool InstancingEnabled;
+				public GpuVertexBuffer InstancingVertexBuffer;
+				public Internal.SharpBgfx.InstanceDataBuffer InstancingDataBuffer;
+				public int InstancingStart;
+				public int InstancingCount;
+				public float InstancingMaxLocalBounds;
 
 				public float VisibilityDistance;
 				public bool OnlyForShadowGeneration;
@@ -337,6 +361,12 @@ namespace NeoAxis
 				public List<ObjectSpecialRenderingEffect> SpecialEffects;
 
 				public bool TransparentRenderingAddOffsetWhenSortByDistance;
+
+				//!!!!new
+				public uint CullingByCameraDirectionData;
+
+				//bool instancingDataCached;
+				//ObjectInstanceData instancingDataCache;
 
 				//!!!!without class?
 				/// <summary>
@@ -350,27 +380,67 @@ namespace NeoAxis
 
 				////////
 
+				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 				public void GetInstancingData( out ObjectInstanceData data )
 				{
 					Transform.GetTranspose( out data.Transform );
 					data.PositionPreviousFrame = PositionPreviousFrame;
 					//data.Unused = 0;
-					//!!!!slowly?
-					ColorValue c;
-					c.Red = MathEx.Sqrt( Color.Red / 10 );
-					c.Green = MathEx.Sqrt( Color.Green / 10 );
-					c.Blue = MathEx.Sqrt( Color.Blue / 10 );
-					c.Alpha = MathEx.Sqrt( Color.Alpha / 10 );
-					data.Color = c.ToColorPacked();
-					//data.Color = ( Color * 0.25f ).ToColorPacked();
-					//data.Color = Color;
+
+					data.Color = ColorForInstancingData;
+					//data.Color = GetColorForInstancingData( ref Color );
+
+					//ColorValue c;
+					//c.Red = MathEx.Sqrt( Color.Red * 0.1f );
+					//c.Green = MathEx.Sqrt( Color.Green * 0.1f );
+					//c.Blue = MathEx.Sqrt( Color.Blue * 0.1f );
+					//c.Alpha = MathEx.Sqrt( Color.Alpha * 0.1f );
+					//data.Color = c.ToColorPacked();
+					////data.Color = ( Color * 0.25f ).ToColorPacked();
+					////data.Color = Color;
 
 					data.LodValue = LODValue;
 					data.VisibilityDistance = VisibilityDistance;
-					data.ReceiveDecals = ReceiveDecals ? 1.0f : 0.0f;
-					data.MotionBlurFactor = MotionBlurFactor;
+					//!!!!new
+					data.ReceiveDecals = ReceiveDecals ? (byte)255 : (byte)0;
+					data.MotionBlurFactor = (byte)( MotionBlurFactor * 255 );
+					data.Unused1 = 0;
+					data.Unused2 = 0;
+					data.CullingByCameraDirectionData = CullingByCameraDirectionData;
+					//data.ReceiveDecals = ReceiveDecals ? 1.0f : 0.0f;
+					//data.MotionBlurFactor = MotionBlurFactor;
+
+
+					//if( !instancingDataCached )
+					//{
+					//	Transform.GetTranspose( out instancingDataCache.Transform );
+					//	instancingDataCache.PositionPreviousFrame = PositionPreviousFrame;
+					//	//data.Unused = 0;
+
+					//	instancingDataCache.Color = ColorForInstancingData;
+					//	//data.Color = GetColorForInstancingData( ref Color );
+
+					//	//ColorValue c;
+					//	//c.Red = MathEx.Sqrt( Color.Red * 0.1f );
+					//	//c.Green = MathEx.Sqrt( Color.Green * 0.1f );
+					//	//c.Blue = MathEx.Sqrt( Color.Blue * 0.1f );
+					//	//c.Alpha = MathEx.Sqrt( Color.Alpha * 0.1f );
+					//	//data.Color = c.ToColorPacked();
+					//	////data.Color = ( Color * 0.25f ).ToColorPacked();
+					//	////data.Color = Color;
+
+					//	instancingDataCache.LodValue = LODValue;
+					//	instancingDataCache.VisibilityDistance = VisibilityDistance;
+					//	instancingDataCache.ReceiveDecals = ReceiveDecals ? 1.0f : 0.0f;
+					//	instancingDataCache.MotionBlurFactor = MotionBlurFactor;
+
+					//	instancingDataCached = true;
+					//}
+
+					//data = instancingDataCache;
 				}
 
+				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 				public unsafe bool CanUseInstancingForTransparentWith( ref MeshItem meshItem )
 				{
 					//if( BoundingBoxCenter != meshItem.BoundingBoxCenter )
@@ -440,6 +510,7 @@ namespace NeoAxis
 			public class MeshDataRenderOperation
 			{
 				public object Creator;
+				//!!!!is not used
 				public int MeshGeometryIndex;
 				public object AnyData;
 				//!!!!
@@ -452,7 +523,7 @@ namespace NeoAxis
 				public bool VertexStructureContainsColor;
 				public UnwrappedUVEnum UnwrappedUV;
 
-				public IList<GpuVertexBuffer> VertexBuffers;
+				public GpuVertexBuffer[] VertexBuffers;
 				public int VertexStartOffset;
 				public int VertexCount;
 
@@ -460,17 +531,30 @@ namespace NeoAxis
 				public int IndexStartOffset;
 				public int IndexCount;
 
-				////!!!!new
-				/////// The type of operation to perform
+				public RangeI[] MaterialIndexRangesFromVertexData;
+				public bool MaterialIndexRangesFromVertexDataCalculated;
+
 				//RenderOperationType OperationType { get; }
 
 				//!!!!pass/material
 				public Material Material;
 
-				public ImageComponent BillboardDataImage;
-				public MeshGeometry.BillboardDataModeEnum BillboardDataMode;
+				//!!!!не хранить копию byte[] массива? юзать ArraySegment? где еще так
+				public ImageComponent VoxelDataImage;
+				public Vector4F[] VoxelDataInfo;
+				//!!!!new for GI
+				public byte[] SourceVoxelData;
+				//public MeshGeometry.VoxelDataModeEnum VoxelDataMode;
 
-				public int _currentRenderingFrameIndex = -1;
+				////!!!!не хранить копию byte[] массива? юзать ArraySegment? где еще так
+				//public ImageComponent VirtualizedDataImage;
+				////!!!!может без данных хранить. тогда не хранить исходно-загруженную. может в ImageComponent тоже
+				//public byte[] VirtualizedData;
+				//public Vector4F[] VirtualizedDataInfo;
+
+				//can't allocate array before been used because threading
+				internal int[] _currentRenderingFrameIndex = new int[ 16 ] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+				//public int _currentRenderingFrameIndex = -1;
 
 				//
 
@@ -488,7 +572,7 @@ namespace NeoAxis
 				{
 					if( VertexBuffers != null )
 					{
-						for( int n = 0; n < VertexBuffers.Count; n++ )
+						for( int n = 0; n < VertexBuffers.Length; n++ )
 							if( VertexBuffers[ n ] != null && VertexBuffers[ n ].Disposed )
 								return true;
 					}
@@ -501,13 +585,49 @@ namespace NeoAxis
 				{
 					if( VertexBuffers != null )
 					{
-						for( int n = 0; n < VertexBuffers.Count; n++ )
+						for( int n = 0; n < VertexBuffers.Length; n++ )
 							VertexBuffers[ n ]?.Dispose();
 					}
 					IndexBuffer?.Dispose();
 
-					BillboardDataImage?.Dispose();
+					VoxelDataImage?.Dispose();
+					//VirtualizedDataImage?.Dispose();
 				}
+
+				public unsafe RangeI[] GetMaterialIndexRangesFromVertexDataOrFromVirtualizedData()
+				{
+					if( !MaterialIndexRangesFromVertexDataCalculated )
+					{
+						if( VertexBuffers.Length != 0 && IndexBuffer?.Indices != null && VertexStructure != null )
+						{
+							/*if( VirtualizedData != null )
+							{
+								MaterialIndexRangesFromVertexData = MeshGeometry.GetMaterialIndexRangesFromVirtualizedData( VirtualizedData );
+							}
+							else */
+							if( VertexStructure.GetElementBySemantic( VertexElementSemantic.Color3, out var element ) && element.Type == VertexElementType.Float1 )
+							{
+								var vertexMaterialIndexes = VertexBuffers[ 0 ].ExtractChannelSingle( element.Offset );
+								if( vertexMaterialIndexes != null )
+								{
+									var indices = IndexBuffer.Indices;
+									var v = MeshGeometry.GetMaterialIndexRangesFromVertexMaterialIndexes( vertexMaterialIndexes, indices );
+									if( v != null )
+										MaterialIndexRangesFromVertexData = v;
+								}
+							}
+						}
+
+						MaterialIndexRangesFromVertexDataCalculated = true;
+					}
+
+					return MaterialIndexRangesFromVertexData;
+				}
+
+				//public unsafe Mesh.CompiledData.RayCastResult VirtualizedRayCast( Ray ray, Mesh.CompiledData.RayCastModes mode, bool twoSided )
+				//{
+				//	return VirtualizedDataUtility.VirtualizedRayCast( VirtualizedData, ray, mode, twoSided );
+				//}
 			}
 
 			/// <summary>
@@ -517,6 +637,22 @@ namespace NeoAxis
 			{
 				public Mesh Mesh;
 				public float Distance;//Squared;
+				public int VoxelGridSize;
+
+				//
+
+				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+				public float GetOutputDistance( ViewportRenderingContext context, float objectBoundingSize )
+				{
+					if( VoxelGridSize != 0 )
+					{
+						var voxelDistance = context.GetVoxelLodDistanceByObjectSize( VoxelGridSize, objectBoundingSize );
+						if( voxelDistance != 0 && voxelDistance > Distance )
+							return voxelDistance;
+					}
+
+					return Distance;
+				}
 			}
 
 			/// <summary>
@@ -531,6 +667,7 @@ namespace NeoAxis
 				SpaceBounds SpaceBounds { get; }
 				float VisibilityDistanceFactor { get; }
 				//float VisibilityDistance { get; }
+				float LODScale { get; }
 				bool CastShadows { get; }
 				IMeshDataLODLevel[] LODs { get; }
 				int BillboardMode { get; }
@@ -548,7 +685,7 @@ namespace NeoAxis
 			//	public IList<RenderOperation> RenderOperations = new List<RenderOperation>();
 			//	//public OpenList<RenderOperation> RenderOperations = new OpenList<RenderOperation>();
 
-			//	xx xx;//initial
+			//	//initial
 			//	public Bounds BoundingBox;
 			//	public Sphere BoundingSphere;
 
@@ -683,6 +820,7 @@ namespace NeoAxis
 				public QuaternionF RotationQuaternion;
 
 				public ColorValue Color;
+				public ColorByte ColorForInstancingData;
 				public Vector3F PositionPreviousFrame;
 				//!!!!
 				//public BillboardData[] BillboardArray;
@@ -693,8 +831,12 @@ namespace NeoAxis
 				public CutVolumeItem[] CutVolumes;
 				public List<ObjectSpecialRenderingEffect> SpecialEffects;
 
+				//!!!!
+				public uint CullingByCameraDirectionData;
+
 				//
 
+				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 				public void GetWorldMatrix( out Matrix4F result )
 				{
 					result.Item0.X = Size.X;
@@ -720,6 +862,7 @@ namespace NeoAxis
 					//Matrix4F.Construct( ref matrix3, ref Position, out result );
 				}
 
+				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 				public void GetWorldMatrixTranspose( out Matrix3x4F result )
 				{
 					result.Item0.X = Size.X;
@@ -739,27 +882,38 @@ namespace NeoAxis
 					//worldMatrix.GetTranspose( out result );
 				}
 
+				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 				public void GetInstancingData( out ObjectInstanceData data )
 				{
 					GetWorldMatrixTranspose( out data.Transform );
 					data.PositionPreviousFrame = PositionPreviousFrame;
 					//data.Unused = 0;
-					//!!!!slowly?
-					ColorValue c;
-					c.Red = MathEx.Sqrt( Color.Red / 10 );
-					c.Green = MathEx.Sqrt( Color.Green / 10 );
-					c.Blue = MathEx.Sqrt( Color.Blue / 10 );
-					c.Alpha = MathEx.Sqrt( Color.Alpha / 10 );
-					data.Color = c.ToColorPacked();
-					//data.Color = ( Color * 0.25f ).ToColorPacked();
-					//data.Color = BillboardOne.Color;
+
+					data.Color = ColorForInstancingData;
+					//data.Color = GetColorForInstancingData( ref Color );
+
+					//ColorValue c;
+					//c.Red = MathEx.Sqrt( Color.Red * 0.1f );
+					//c.Green = MathEx.Sqrt( Color.Green * 0.1f );
+					//c.Blue = MathEx.Sqrt( Color.Blue * 0.1f );
+					//c.Alpha = MathEx.Sqrt( Color.Alpha * 0.1f );
+					//data.Color = c.ToColorPacked();
+					////data.Color = ( Color * 0.25f ).ToColorPacked();
+					////data.Color = BillboardOne.Color;
 
 					data.LodValue = 0;
 					data.VisibilityDistance = VisibilityDistance;
-					data.ReceiveDecals = ReceiveDecals ? 1.0f : 0.0f;
-					data.MotionBlurFactor = MotionBlurFactor;
+					//!!!!new
+					data.ReceiveDecals = ReceiveDecals ? (byte)255 : (byte)0;
+					data.MotionBlurFactor = (byte)( MotionBlurFactor * 255 );
+					data.Unused1 = 0;
+					data.Unused2 = 0;
+					data.CullingByCameraDirectionData = CullingByCameraDirectionData;
+					//data.ReceiveDecals = ReceiveDecals ? 1.0f : 0.0f;
+					//data.MotionBlurFactor = MotionBlurFactor;
 				}
 
+				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 				public unsafe bool CanUseInstancingForTransparentWith( ref BillboardItem billboardItem )
 				{
 					if( BoundingBoxCenter != billboardItem.BoundingBoxCenter )
@@ -882,30 +1036,35 @@ namespace NeoAxis
 			{
 				public CutVolumeShape Shape;
 				public Transform Transform;
+				public CutVolumeFlags Flags;
+				//public bool Invert;
+				//public bool CutScene;
+				//public bool CutShadows;
+				//public bool CutSimple3DRenderer;
+
 				//public Plane Plane;
-				public bool Invert;
 
-				public bool CutScene;
-				public bool CutShadows;
-				public bool CutSimple3DRenderer;
+				////////
 
-				//
-
+				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 				public bool Equals( ref CutVolumeItem other )
 				{
-					return Shape == other.Shape && Transform == other.Transform && /*Plane == other.Plane && */Invert == other.Invert && CutScene == other.CutScene && CutShadows == other.CutShadows && CutSimple3DRenderer == other.CutSimple3DRenderer;
+					return Shape == other.Shape && Transform == other.Transform && /*Plane == other.Plane && */Flags == other.Flags;
+					//return Shape == other.Shape && Transform == other.Transform && /*Plane == other.Plane && */Invert == other.Invert && CutScene == other.CutScene && CutShadows == other.CutShadows && CutSimple3DRenderer == other.CutSimple3DRenderer;
 				}
 
-				public CutVolumeItem( Sphere sphere, bool invert, bool cutScene, bool cutShadows, bool cutSimple3DRenderer )
+				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+				public CutVolumeItem( Sphere sphere, CutVolumeFlags flags ) //bool invert, bool cutScene, bool cutShadows, bool cutSimple3DRenderer )
 				{
 					Shape = CutVolumeShape.Sphere;
 					var scl = sphere.Radius * 2;
 					Transform = new Transform( sphere.Center, Quaternion.Identity, new Vector3( scl, scl, scl ) );
 					//Plane = Plane.Zero;
-					Invert = invert;
-					CutScene = cutScene;
-					CutShadows = cutShadows;
-					CutSimple3DRenderer = cutSimple3DRenderer;
+					Flags = flags;
+					//Invert = invert;
+					//CutScene = cutScene;
+					//CutShadows = cutShadows;
+					//CutSimple3DRenderer = cutSimple3DRenderer;
 				}
 
 				//public CutVolumeItem( Plane plane, bool invert, bool cutScene, bool cutShadows, bool cutSimple3DRenderer )
@@ -919,30 +1078,58 @@ namespace NeoAxis
 				//	CutSimple3DRenderer = cutSimple3DRenderer;
 				//}
 
-				public CutVolumeItem( Box box, bool invert, bool cutScene, bool cutShadows, bool cutSimple3DRenderer )
+				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+				public CutVolumeItem( Box box, CutVolumeFlags flags )//, bool invert, bool cutScene, bool cutShadows, bool cutSimple3DRenderer )
 				{
 					box.Axis.ToQuaternion( out var rot );
 
 					Shape = CutVolumeShape.Box;
 					Transform = new Transform( box.Center, rot, box.Extents );
 					//Plane = Plane.Zero;
-					Invert = invert;
-					CutScene = cutScene;
-					CutShadows = cutShadows;
-					CutSimple3DRenderer = cutSimple3DRenderer;
+					Flags = flags;
+					//Invert = invert;
+					//CutScene = cutScene;
+					//CutShadows = cutShadows;
+					//CutSimple3DRenderer = cutSimple3DRenderer;
 				}
 
-				public CutVolumeItem( Cylinder cylinder, bool invert, bool cutScene, bool cutShadows, bool cutSimple3DRenderer )
+				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+				public CutVolumeItem( Cylinder cylinder, CutVolumeFlags flags )//bool invert, bool cutScene, bool cutShadows, bool cutSimple3DRenderer )
 				{
 					var rot = Quaternion.FromDirectionZAxisUp( cylinder.GetDirection() );
 
 					Shape = CutVolumeShape.Cylinder;
 					Transform = new Transform( cylinder.GetCenter(), rot, new Vector3( cylinder.GetLength(), cylinder.Radius * 2, cylinder.Radius * 2 ) );
 					//Plane = Plane.Zero;
-					Invert = invert;
-					CutScene = cutScene;
-					CutShadows = cutShadows;
-					CutSimple3DRenderer = cutSimple3DRenderer;
+					Flags = flags;
+					//Invert = invert;
+					//CutScene = cutScene;
+					//CutShadows = cutShadows;
+					//CutSimple3DRenderer = cutSimple3DRenderer;
+				}
+
+				public bool Invert
+				{
+					[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+					get { return ( Flags & CutVolumeFlags.Invert ) != 0; }
+				}
+
+				public bool CutScene
+				{
+					[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+					get { return ( Flags & CutVolumeFlags.CutScene ) != 0; }
+				}
+
+				public bool CutShadows
+				{
+					[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+					get { return ( Flags & CutVolumeFlags.CutShadows ) != 0; }
+				}
+
+				public bool CutSimple3DRenderer
+				{
+					[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+					get { return ( Flags & CutVolumeFlags.CutSimple3DRenderer ) != 0; }
 				}
 			}
 
@@ -958,40 +1145,53 @@ namespace NeoAxis
 			[StructLayout( LayoutKind.Sequential, Pack = 1 )]
 			public struct ObjectInstanceData
 			{
+				//48 bytes
 				public Matrix3x4F Transform;
 
-				//можно было бы хранить смещение, тогда 16-bit точности хватило бы. хотя в 16-bit долго конвертировать
+				//16 bytes
 				public Vector3F PositionPreviousFrame;
 				public ColorByte Color;
 
+				//16 bytes
 				public float LodValue;
 				public float VisibilityDistance;
-				public float ReceiveDecals;
-				public float MotionBlurFactor;
+				public byte ReceiveDecals;
+				public byte MotionBlurFactor;
+				public byte Unused1;
+				public byte Unused2;
+				public uint CullingByCameraDirectionData;
+
+				//public float LodValue;
+				//public float VisibilityDistance;
+				//public float ReceiveDecals;
+				//public float MotionBlurFactor;
 
 				//
 
-				public void Init( ref Matrix4F transform, ref Vector3F positionPreviousFrame, ref ColorValue color, float lodValue, float visibilityDistance, bool receiveDecals, float motionBlurFactor )
+				public void Init( ref Matrix4F transform, ref Vector3F positionPreviousFrame, ref ColorValue color, float lodValue, float visibilityDistance, bool receiveDecals, float motionBlurFactor, uint cullingByCameraDirectionData )
 				{
 					transform.GetTranspose( out Transform );
 
 					PositionPreviousFrame = positionPreviousFrame;
-
 					//Unused = 0;
-					//!!!!slowly?
-					ColorValue c;
-					c.Red = MathEx.Sqrt( color.Red * 0.1f );
-					c.Green = MathEx.Sqrt( color.Green * 0.1f );
-					c.Blue = MathEx.Sqrt( color.Blue * 0.1f );
-					c.Alpha = MathEx.Sqrt( color.Alpha * 0.1f );
-					Color = c.ToColorPacked();
-					//Color = ( color * 0.25f ).ToColorPacked();
-					//Color = new ColorByte( color );
+
+					Color = GetColorForInstancingData( ref color );
+					//ColorValue c;
+					//c.Red = MathEx.Sqrt( color.Red * 0.1f );
+					//c.Green = MathEx.Sqrt( color.Green * 0.1f );
+					//c.Blue = MathEx.Sqrt( color.Blue * 0.1f );
+					//c.Alpha = MathEx.Sqrt( color.Alpha * 0.1f );
+					//Color = c.ToColorPacked();
+					////Color = ( color * 0.25f ).ToColorPacked();
+					////Color = new ColorByte( color );
 
 					LodValue = lodValue;
 					VisibilityDistance = visibilityDistance;
-					ReceiveDecals = receiveDecals ? 1.0f : 0.0f;
-					MotionBlurFactor = motionBlurFactor;
+					ReceiveDecals = receiveDecals ? (byte)255 : (byte)0;
+					MotionBlurFactor = (byte)( motionBlurFactor * 255 );
+					CullingByCameraDirectionData = cullingByCameraDirectionData;
+					//ReceiveDecals = receiveDecals ? 1.0f : 0.0f;
+					//MotionBlurFactor = motionBlurFactor;
 				}
 			}
 
@@ -1016,6 +1216,7 @@ namespace NeoAxis
 				public ColorValue SurfaceObjectsColor { get; }
 				public float SurfaceObjectsVisibilityDistanceFactor { get; }
 				public bool SurfaceObjectsCastShadows { get; }
+				public bool SurfaceObjectsCollision { get; }
 
 				Material.CompiledMaterialData resultMaterial;
 				public Material.CompiledMaterialData ResultMaterial { get { return resultMaterial; } }
@@ -1040,6 +1241,7 @@ namespace NeoAxis
 					SurfaceObjectsColor = layer.SurfaceObjectsColor;
 					SurfaceObjectsVisibilityDistanceFactor = (float)layer.SurfaceObjectsVisibilityDistanceFactor;
 					SurfaceObjectsCastShadows = layer.SurfaceObjectsCastShadows;
+					SurfaceObjectsCollision = layer.SurfaceObjectsCollision;
 
 					//!!!!
 
@@ -1063,7 +1265,7 @@ namespace NeoAxis
 							case PaintLayer.BlendModeEnum.Transparent: useTransparent = true; break;
 							}
 
-							resultMaterial = OriginalMaterial.Compile( useTransparent ? Material.CompiledMaterialData.SpecialMode.PaintLayerTransparent : Material.CompiledMaterialData.SpecialMode.PaintLayerMasked );
+							resultMaterial = OriginalMaterial.Compile( useTransparent ? Material.CompiledMaterialData.SpecialMode.PaintLayerTransparent : Material.CompiledMaterialData.SpecialMode.PaintLayerMasked, null, 0, null, null, 0 );
 						}
 						else
 							resultMaterial = OriginalMaterial.Result;
@@ -1077,7 +1279,7 @@ namespace NeoAxis
 					if( obj is LayerItem )
 					{
 						var obj2 = (LayerItem)obj;
-						return Mask == obj2.Mask && UniqueMaskDataCounter == obj2.UniqueMaskDataCounter && OriginalMaterial == obj2.OriginalMaterial && BlendMode == obj2.BlendMode && MaterialColor == obj2.MaterialColor && Surface == obj2.Surface && SurfaceObjects == obj2.SurfaceObjects && SurfaceObjectsDistribution == obj2.SurfaceObjectsDistribution && SurfaceObjectsScale == obj2.SurfaceObjectsScale && SurfaceObjectsColor == obj2.SurfaceObjectsColor && SurfaceObjectsVisibilityDistanceFactor == obj2.SurfaceObjectsVisibilityDistanceFactor && SurfaceObjectsCastShadows == obj2.SurfaceObjectsCastShadows;
+						return Mask == obj2.Mask && UniqueMaskDataCounter == obj2.UniqueMaskDataCounter && OriginalMaterial == obj2.OriginalMaterial && BlendMode == obj2.BlendMode && MaterialColor == obj2.MaterialColor && Surface == obj2.Surface && SurfaceObjects == obj2.SurfaceObjects && SurfaceObjectsDistribution == obj2.SurfaceObjectsDistribution && SurfaceObjectsScale == obj2.SurfaceObjectsScale && SurfaceObjectsColor == obj2.SurfaceObjectsColor && SurfaceObjectsVisibilityDistanceFactor == obj2.SurfaceObjectsVisibilityDistanceFactor && SurfaceObjectsCastShadows == obj2.SurfaceObjectsCastShadows && SurfaceObjectsCollision == obj2.SurfaceObjectsCollision;
 					}
 					else
 						return false;
@@ -1105,9 +1307,16 @@ namespace NeoAxis
 						result ^= SurfaceObjectsColor.GetHashCode();
 						result ^= SurfaceObjectsVisibilityDistanceFactor.GetHashCode();
 						result ^= SurfaceObjectsCastShadows.GetHashCode();
+						result ^= SurfaceObjectsCollision.GetHashCode();
 					}
 					return result;
 				}
+			}
+
+			public struct ActionToDoAfterPrepareListsOfObjectsSortedByDistance
+			{
+				public float DistanceToCamera;
+				public Action<ViewportRenderingContext> Action;
 			}
 		}
 
@@ -1123,6 +1332,7 @@ namespace NeoAxis
 			//public Matrix3F rotation;
 			public Vector4F MultiplierAndAffect;
 
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public EnvironmentTextureData( ImageComponent texture, float affect, ref QuaternionF rotation, ref Vector3F multiplier )
 			//public EnvironmentTextureData( ImageComponent texture, float affect, ref Matrix3F rotation, ref Vector3F multiplier )
 			{
@@ -1131,6 +1341,7 @@ namespace NeoAxis
 				MultiplierAndAffect = new Vector4F( multiplier, affect );
 			}
 
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public EnvironmentTextureData( ImageComponent texture, float affect )
 			{
 				this.Texture = texture;
@@ -1156,6 +1367,7 @@ namespace NeoAxis
 			public QuaternionF Rotation;
 			public Vector4F MultiplierAndAffect;
 
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public EnvironmentIrradianceData( Vector4F[] harmonics, float affect, ref QuaternionF rotation, ref Vector3F multiplier )
 			{
 				Harmonics = harmonics;
@@ -1163,6 +1375,7 @@ namespace NeoAxis
 				MultiplierAndAffect = new Vector4F( multiplier, affect );
 			}
 
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public EnvironmentIrradianceData( Vector4F[] harmonics, float affect )
 			{
 				Harmonics = harmonics;
@@ -1184,15 +1397,27 @@ namespace NeoAxis
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+		static RenderingPipeline()
+		{
+			var one = ColorValue.One;
+			colorOneForInstancingData = GetColorForInstancingData( ref one );
+
+			unsafe
+			{
+				if( sizeof( RenderSceneData.ObjectInstanceData ) != 80 )
+					Log.Fatal( "RenderingPipeline: sizeof( RenderSceneData.ObjectInstanceData ) != 80." );
+			}
+		}
+
 		public abstract void Render( ViewportRenderingContext context );
 
-		/// <summary>
-		/// Represents an interface to access a data for rendering frame.
-		/// </summary>
-		public interface IFrameData
-		{
-			RenderSceneData RenderSceneData { get; }
-		}
+		///// <summary>
+		///// Represents an interface to access a data for rendering frame.
+		///// </summary>
+		//public interface IFrameData
+		//{
+		//	RenderSceneData RenderSceneData { get; }
+		//}
 
 		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
 		{
@@ -1213,6 +1438,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public virtual bool GetHighDynamicRange()
 		{
 			var result = HighDynamicRange.Value;
@@ -1221,6 +1447,7 @@ namespace NeoAxis
 			return result == AutoTrueFalse.True;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public virtual bool GetUseMultiRenderTargets()
 		{
 			if( !UseRenderTargets.Value )
@@ -1236,6 +1463,7 @@ namespace NeoAxis
 			return result == AutoTrueFalse.True;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public virtual bool GetSimpleGeometryAntialiasing()
 		{
 			var result = SimpleGeometryAntialiasing.Value;
@@ -1249,8 +1477,10 @@ namespace NeoAxis
 		//{
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		internal protected virtual void SetCutVolumeSettingsUniforms( ViewportRenderingContext context, RenderSceneData.CutVolumeItem[] cutVolumes, bool forceUpdate ) { }
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		internal static bool IsEqualCutVolumes( RenderSceneData.CutVolumeItem[] array1, RenderSceneData.CutVolumeItem[] array2 )
 		{
 			if( array1 == null && array2 == null )
@@ -1265,6 +1495,72 @@ namespace NeoAxis
 				if( !array1[ n ].Equals( ref array2[ n ] ) )
 					return false;
 			return true;
+		}
+
+
+		static float[] getColorForInstancingDataTable;
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		static float GetColorForInstancingData( float v )
+		{
+			if( v >= 0 && v <= 0.1f )
+			{
+				var v2 = (int)( v * 10240 );
+				if( v2 >= 0 && v2 < 1024 )
+					return getColorForInstancingDataTable[ v2 ];
+			}
+
+			return MathEx.Sqrt( v );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static ColorByte GetColorForInstancingData( ref ColorValue color )
+		{
+			//var caps = EngineApp._DebugCapsLock;
+			//if( caps )
+			//{
+
+			//for 0-0.1 range
+			if( getColorForInstancingDataTable == null )
+			{
+				var table = new float[ 1024 ];
+				for( int n = 0; n < 1024; n++ )
+					table[ n ] = MathEx.Sqrt( ( (float)n ) / 1024 * 0.1f );
+				getColorForInstancingDataTable = table;
+			}
+
+			ColorValue c;
+			c.Red = GetColorForInstancingData( color.Red * 0.1f );
+			c.Green = GetColorForInstancingData( color.Green * 0.1f );
+			c.Blue = GetColorForInstancingData( color.Blue * 0.1f );
+			c.Alpha = GetColorForInstancingData( color.Alpha * 0.1f );
+			return c.ToColorPacked();
+			//}
+			//else
+			//{
+			//	ColorValue c;
+			//	c.Red = MathEx.Sqrt( color.Red * 0.1f );
+			//	c.Green = MathEx.Sqrt( color.Green * 0.1f );
+			//	c.Blue = MathEx.Sqrt( color.Blue * 0.1f );
+			//	c.Alpha = MathEx.Sqrt( color.Alpha * 0.1f );
+			//	return c.ToColorPacked();
+			//}
+		}
+
+		public static ColorByte ColorOneForInstancingData
+		{
+			get { return colorOneForInstancingData; }
+		}
+		static ColorByte colorOneForInstancingData;
+
+		public static uint EncodeCullingByCameraDirectionData( Vector3F normal, float viewAngleFactor = 0 )
+		{
+			if( normal != Vector3F.Zero )
+			{
+				var value = new Vector4F( normal * 0.5f + new Vector3F( 0.5f, 0.5f, 0.5f ), viewAngleFactor );
+				return new ColorByte( value ).PackedValue;
+			}
+			return 0;
 		}
 	}
 }

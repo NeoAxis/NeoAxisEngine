@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 
@@ -47,7 +47,7 @@ namespace NeoAxis
 			/// </summary>
 			public struct ResultItem
 			{
-				public int Object;
+				public int ObjectIndex;
 				//!!!!
 				//public Vector3? Position;
 				//public double DistanceScale;
@@ -155,48 +155,95 @@ namespace NeoAxis
 
 				scene.GetObjectsInSpace( getObjectsInSpaceItem );
 
-				//!!!!256
-				var list = new List<GetObjectsItem.ResultItem>( 256 );
-
-				for( int nResultItem = 0; nResultItem < getObjectsInSpaceItem.Result.Length; nResultItem++ )
+				using( var list = new OpenListNative<GetObjectsItem.ResultItem>( item.CastType == GetObjectsItem.CastTypeEnum.One ? 1 : 2048 ) )
 				{
-					ref var resultItem = ref getObjectsInSpaceItem.Result[ nResultItem ];
-
-					var sector = resultItem.Object.AnyData as Sector;
-					if( sector != null && sector.owner == this )
+					using( var added = new OpenListNative<bool>( item.CastType == GetObjectsItem.CastTypeEnum.One ? 1 : 2048 ) )
 					{
-						//!!!!может поделить только на int[] и для луча
-						//!!!!!!для GetObjctsInSpace которые для _ObjectInSpace тоже?
-
-						foreach( var index in sector.Objects )
+						for( int nResultItem = 0; nResultItem < getObjectsInSpaceItem.Result.Length; nResultItem++ )
 						{
-							var item2 = new GetObjectsItem.ResultItem();
-							item2.Object = index;
-							//item2.Position = xxx;
-							list.Add( item2 );
+							ref var resultItem = ref getObjectsInSpaceItem.Result[ nResultItem ];
 
-							if( item.CastType == GetObjectsItem.CastTypeEnum.One )
-								goto end;
+							var sector = resultItem.Object.AnyData as Sector;
+							if( sector != null && sector.owner == this )
+							{
+								//!!!!может поделить только на int[] и для луча
+								//!!!!!!для GetObjctsInSpace которые для _ObjectInSpace тоже?
+
+								foreach( var index in sector.Objects )
+								{
+									if( index < added.Count && added[ index ] )
+										continue;
+
+									var item2 = new GetObjectsItem.ResultItem();
+									item2.ObjectIndex = index;
+									list.Add( ref item2 );
+
+									while( index >= added.Count )
+										added.Add( false );
+									unsafe
+									{
+										added.Data[ index ] = true;
+									}
+
+									if( item.CastType == GetObjectsItem.CastTypeEnum.One )
+										goto end;
+								}
+
+								//item.Result
+
+								//public struct ResultItem
+								//{
+								//	public int Object;
+								//	public Vector3? Position;
+								//	public double DistanceScale;
+								//}
+
+							}
 						}
 
-						//!!!!
 
-						//item.Result
-
-						//public struct ResultItem
+						//for( int nResultItem = 0; nResultItem < getObjectsInSpaceItem.Result.Length; nResultItem++ )
 						//{
-						//	public int Object;
-						//	public Vector3? Position;
-						//	public double DistanceScale;
+						//	ref var resultItem = ref getObjectsInSpaceItem.Result[ nResultItem ];
+
+						//	var sector = resultItem.Object.AnyData as Sector;
+						//	if( sector != null && sector.owner == this )
+						//	{
+						//		//!!!!может поделить только на int[] и для луча
+						//		//!!!!!!для GetObjctsInSpace которые для _ObjectInSpace тоже?
+
+						//		zzzzz;//может попадает несколько
+						//		foreach( var index in sector.Objects )
+						//		{
+						//			var item2 = new GetObjectsItem.ResultItem();
+						//			item2.ObjectIndex = index;
+						//			//item2.Position = xxx;
+						//			list.Add( ref item2 );
+
+						//			if( item.CastType == GetObjectsItem.CastTypeEnum.One )
+						//				goto end;
+						//		}
+
+						//		//!!!!
+
+						//		//item.Result
+
+						//		//public struct ResultItem
+						//		//{
+						//		//	public int Object;
+						//		//	public Vector3? Position;
+						//		//	public double DistanceScale;
+						//		//}
+
+						//	}
 						//}
 
 					}
+
+					end:;
+					//!!!!
+					item.Result = list.ToArray();
 				}
-
-				end:;
-				//!!!!
-				item.Result = list.ToArray();
-
 			}
 		}
 

@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -34,6 +34,7 @@ namespace NeoAxis
 		/// </summary>
 		[Category( "Input" )]
 		[DefaultValue( null )]
+		[NetworkSynchronize( false )]
 		public Reference<Component> ObjectControlledByPlayer
 		{
 			get { if( _objectControlledByPlayer.BeginGet() ) ObjectControlledByPlayer = _objectControlledByPlayer.Get( this ); return _objectControlledByPlayer.value; }
@@ -48,7 +49,7 @@ namespace NeoAxis
 						ObjectControlledByPlayerChanged?.Invoke( this );
 
 						//process changing object controlled by the player in simulation
-						if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && playScreen != null )
+						if( EngineApp.IsSimulation && playScreen != null )
 						{
 							if( oldObject != null && !oldObject.Disposed )
 							{
@@ -141,7 +142,7 @@ namespace NeoAxis
 		/// Whether to change the position of the third person camera depending on the direction of the object.
 		/// </summary>
 		[Category( "Camera" )]
-		[DefaultValue( true )]
+		[DefaultValue( false )]
 		public Reference<bool> ThirdPersonCameraFollowDirection
 		{
 			get { if( _thirdPersonCameraFollowDirection.BeginGet() ) ThirdPersonCameraFollowDirection = _thirdPersonCameraFollowDirection.Get( this ); return _thirdPersonCameraFollowDirection.value; }
@@ -149,7 +150,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="ThirdPersonCameraFollowDirection"/> property value changes.</summary>
 		public event Action<GameMode> ThirdPersonCameraFollowDirectionChanged;
-		ReferenceField<bool> _thirdPersonCameraFollowDirection = true;
+		ReferenceField<bool> _thirdPersonCameraFollowDirection = false;
 
 		/// <summary>
 		/// Third-person camera rotation speed. Degree per second.
@@ -186,7 +187,8 @@ namespace NeoAxis
 		/// </summary>
 		[Category( "Camera" )]
 		[DefaultValue( 30 )]
-		[Range( -180, 180 )]
+		[Range( -89.99, 89.99 )]
+		//[Range( -180, 180 )]
 		public Reference<Degree> ThirdPersonCameraVerticalAngle
 		{
 			get { if( _thirdPersonCameraVerticalAngle.BeginGet() ) ThirdPersonCameraVerticalAngle = _thirdPersonCameraVerticalAngle.Get( this ); return _thirdPersonCameraVerticalAngle.value; }
@@ -210,6 +212,21 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="ThirdPersonCameraDistance"/> property value changes.</summary>
 		public event Action<GameMode> ThirdPersonCameraDistanceChanged;
 		ReferenceField<double> _thirdPersonCameraDistance = 5;
+
+		/// <summary>
+		/// The height of the camera in third-person mode.
+		/// </summary>
+		[Category( "Camera" )]
+		[DefaultValue( 1.0 )]
+		[Range( -20, 20 )]
+		public Reference<double> ThirdPersonCameraHeight
+		{
+			get { if( _thirdPersonCameraHeight.BeginGet() ) ThirdPersonCameraHeight = _thirdPersonCameraHeight.Get( this ); return _thirdPersonCameraHeight.value; }
+			set { if( _thirdPersonCameraHeight.BeginSet( ref value ) ) { try { ThirdPersonCameraHeightChanged?.Invoke( this ); } finally { _thirdPersonCameraHeight.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ThirdPersonCameraHeight"/> property value changes.</summary>
+		public event Action<GameMode> ThirdPersonCameraHeightChanged;
+		ReferenceField<double> _thirdPersonCameraHeight = 1.0;
 
 		/// <summary>
 		/// Whether is a free camera enabled.
@@ -405,6 +422,7 @@ namespace NeoAxis
 
 				case nameof( FirstPersonCameraShowControlledObject ):
 				case nameof( FirstPersonCameraAttachToEyes ):
+				case nameof( FirstPersonCameraCutVolumeRadius ):
 					if( UseBuiltInCamera.Value != BuiltInCameraEnum.FirstPerson )
 						skip = true;
 					break;
@@ -412,6 +430,7 @@ namespace NeoAxis
 				case nameof( ThirdPersonCameraFollowDirection ):
 				case nameof( ThirdPersonCameraVerticalAngle ):
 				case nameof( ThirdPersonCameraDistance ):
+				case nameof( ThirdPersonCameraHeight ):
 					if( UseBuiltInCamera.Value != BuiltInCameraEnum.ThirdPerson )
 						skip = true;
 					break;
@@ -442,7 +461,6 @@ namespace NeoAxis
 		public virtual Viewport.CameraSettingsClass GetCameraSettings( Viewport viewport, Camera cameraDefault )
 		{
 			Viewport.CameraSettingsClass result = null;
-			GetCameraSettingsEvent?.Invoke( this, viewport, cameraDefault, ref result );
 
 			//replace camera
 			if( result == null )
@@ -500,16 +518,42 @@ namespace NeoAxis
 						if( obj != null )
 						{
 							var lookAt = obj.TransformV.Position;
-
 							//Character specific
 							var character = ObjectControlledByPlayer.Value as Character;
 							if( character != null )
-								lookAt = character.GetSmoothPosition();
+								lookAt = character.GetCenteredSmoothPosition();
+							lookAt.Z += ThirdPersonCameraHeight;
 
 							var d = new SphericalDirection( MathEx.DegreeToRadian( ThirdPersonCameraHorizontalAngle.Value ), MathEx.DegreeToRadian( ThirdPersonCameraVerticalAngle.Value ) );
 							var direction = -d.GetVector();
 
 							var from = lookAt - direction * ThirdPersonCameraDistance.Value;
+
+							//!!!!impl
+							////fix by physics
+							//{
+							//	var item = new PhysicsVolumeTestItem( new Sphere( lookAt, 0.1 ), direction, PhysicsVolumeTestItem.ModeEnum.All );
+							//	Scene.PhysicsVolumeTest( item );
+
+							//	if( item.Result.Length != 0 )
+							//	{
+							//		var body = item.Result[ 0 ].Body;
+
+							//		//!!!!need DistanceScale
+							//	}
+
+							//	//var ray = new Ray( lookAt, from - lookAt );
+							//	//var item = new PhysicsRayTestItem( ray, PhysicsRayTestItem.ModeEnum.OneClosestForEach, PhysicsRayTestItem.FlagsEnum.None );
+							//	//Scene.PhysicsRayTest( item );
+
+							//	//if( item.Result.Length != 0 )//for( int n = 0; n < item.Result.Length; n++ )
+							//	//{
+							//	//	ref var resultItem = ref item.Result[ 0 ];//ref var resultItem = ref item.Result[ n ];
+
+							//	//	var newFrom = ray.GetPointOnRay( resultItem.DistanceScale );
+							//	//	from = newFrom - ray.Direction.GetNormalize() * 0.1;
+							//	//}
+							//}
 
 							result = new Viewport.CameraSettingsClass( viewport, cameraDefault.AspectRatio, cameraDefault.FieldOfView, cameraDefault.NearClipPlane, cameraDefault.FarClipPlane, from, direction, Vector3.ZAxis, ProjectionType.Perspective, 1, cameraDefault.Exposure, cameraDefault.EmissiveFactor );
 						}
@@ -539,6 +583,8 @@ namespace NeoAxis
 				if( m != null )
 					result = m.GetCameraSettings( this, viewport, cameraDefault );
 			}
+
+			GetCameraSettingsEvent?.Invoke( this, viewport, cameraDefault, ref result );
 
 			return result;
 		}
@@ -629,9 +675,9 @@ namespace NeoAxis
 
 				//show screen message
 				if( FreeCamera )
-					ScreenMessages.Add( $"Free camera is activated." );
+					ScreenMessages.Add( "Free camera is activated." );
 				else
-					ScreenMessages.Add( $"Free camera is deactivated." );
+					ScreenMessages.Add( "Free camera is deactivated." );
 
 				return true;
 			}
@@ -664,6 +710,29 @@ namespace NeoAxis
 			var mouseMove = message as InputMessageMouseMove;
 			if( mouseMove != null )
 			{
+				//third person camera update direction controlled by mouse
+				if( EngineApp.IsSimulation && UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson )
+				{
+					if( !ThirdPersonCameraFollowDirection )
+					{
+						var viewport = playScreen.ParentContainer.Viewport;
+						if( viewport.MouseRelativeMode )
+						{
+							var sensitivity = 2.0;
+
+							var h = ThirdPersonCameraHorizontalAngle.Value - new Radian( MousePosition.X ).InDegrees() * sensitivity;
+							if( h < 0 ) h += 360;
+							if( h > 360 ) h -= 360;
+
+							var v = ThirdPersonCameraVerticalAngle.Value + new Radian( MousePosition.Y ).InDegrees() * sensitivity;
+							v = MathEx.Clamp( (double)v, -89.99, 89.99 );
+
+							ThirdPersonCameraHorizontalAngle = h;
+							ThirdPersonCameraVerticalAngle = v;
+						}
+					}
+				}
+
 				//free camera rotating
 				if( FreeCamera && freeCameraMouseRotating )
 				{
@@ -752,6 +821,23 @@ namespace NeoAxis
 			if( input != null )
 				return input;
 
+			//create input processing if not exists
+			if( EngineApp.IsSimulation )
+			{
+				var character = objectControlledByPlayer as Character;
+				if( character != null )
+				{
+					var input2 = character.CreateComponent<CharacterInputProcessing>();
+					return input2;
+				}
+				var vehicle = objectControlledByPlayer as Vehicle;
+				if( vehicle != null )
+				{
+					var input2 = vehicle.CreateComponent<VehicleInputProcessing>();
+					return input2;
+				}
+			}
+
 			return null;
 		}
 
@@ -798,10 +884,10 @@ namespace NeoAxis
 		{
 			base.OnEnabledInHierarchyChanged();
 
-			if( EnabledInHierarchy )
+			if( EnabledInHierarchyAndIsInstance )
 			{
 				//get free camera initial settings
-				if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+				if( EngineApp.IsSimulation )
 				{
 					var scene = Parent as Scene;
 					if( scene != null )
@@ -816,6 +902,16 @@ namespace NeoAxis
 							freeCameraPosition = tr.Position;
 							freeCameraDirection = SphericalDirection.FromVector( tr.Rotation.GetForward() );
 						}
+					}
+				}
+
+				//get third camera initial settings
+				{
+					var obj = ObjectControlledByPlayer.Value as ObjectInSpace;
+					if( obj != null )
+					{
+						var direction = -obj.TransformV.Rotation.GetForward().ToVector2();
+						ThirdPersonCameraHorizontalAngle = new Radian( Math.Atan2( direction.Y, direction.X ) ).InDegrees();
 					}
 				}
 
@@ -835,7 +931,7 @@ namespace NeoAxis
 						scene.RenderEvent -= Scene_RenderEvent;
 				}
 
-				if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+				if( EngineApp.IsSimulation )
 					DeleteSceneSpecificScreenData();
 			}
 		}
@@ -858,28 +954,62 @@ namespace NeoAxis
 		{
 			base.OnUpdate( delta );
 
-			//third person camera update horizontal direction
-			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson )
+			if( EngineApp.IsSimulation && UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson )
 			{
-				var step = (double)ThirdPersonCameraFollowDirectionSpeed.Value.InRadians() * delta;
-				if( step != 0 )
+				//third person camera update horizontal direction
+				if( ThirdPersonCameraFollowDirection )
 				{
-					var obj = ObjectControlledByPlayer.Value as ObjectInSpace;
-					if( obj != null )
+					var step = (double)ThirdPersonCameraFollowDirectionSpeed.Value.InRadians() * delta;
+					if( step != 0 )
 					{
-						var direction = obj.TransformV.Rotation.GetForward().ToVector2();
-						if( direction != Vector2.Zero )
+						var obj = ObjectControlledByPlayer.Value as ObjectInSpace;
+						if( obj != null )
 						{
-							var demandedAngle = Math.Atan2( direction.Y, direction.X );
-							var currentAngle = ThirdPersonCameraHorizontalAngle.Value.InRadians();
+							var direction = obj.TransformV.Rotation.GetForward().ToVector2();
+							if( direction != Vector2.Zero )
+							{
+								var demandedAngle = Math.Atan2( direction.Y, direction.X );
+								var currentAngle = ThirdPersonCameraHorizontalAngle.Value.InRadians();
 
-							var angle = demandedAngle - currentAngle;
-							var d = new Vector2( Math.Cos( angle ), Math.Sin( angle ) );
-							double factor = -d.Y;
+								var angle = demandedAngle - currentAngle;
+								var d = new Vector2( Math.Cos( angle ), Math.Sin( angle ) );
+								double factor = -d.Y;
 
-							ThirdPersonCameraHorizontalAngle += new Radian( step * factor ).InDegrees();
+								ThirdPersonCameraHorizontalAngle += new Radian( step * factor ).InDegrees();
+							}
 						}
 					}
+				}
+
+				//update third person camera distance
+				{
+					var speed = 2.0;
+
+					var distance = ThirdPersonCameraDistance.Value;
+
+					if( IsKeyPressed( EKeys.PageUp ) )
+						distance -= speed * delta;
+					if( IsKeyPressed( EKeys.PageDown ) )
+						distance += speed * delta;
+
+					if( distance < 1 )
+						distance = 1;
+
+					ThirdPersonCameraDistance = distance;
+				}
+
+				//update third person camera height
+				{
+					var speed = 1.0;
+
+					var height = ThirdPersonCameraHeight.Value;
+
+					if( IsKeyPressed( EKeys.Home ) )
+						height += speed * delta;
+					if( IsKeyPressed( EKeys.End ) )
+						height -= speed * delta;
+
+					ThirdPersonCameraHeight = height;
 				}
 			}
 
@@ -946,13 +1076,12 @@ namespace NeoAxis
 			get { return mouseRelativeMode; }
 		}
 
-		public delegate void IsNeedMouseRelativeModeEventDelegate( GameMode sender, ref bool needMouseRelativeMode );
-		public event IsNeedMouseRelativeModeEventDelegate IsNeedMouseRelativeModeEvent;
+		//public delegate void IsNeedMouseRelativeModeEventDelegate( GameMode sender, ref bool needMouseRelativeMode );
+		//public event IsNeedMouseRelativeModeEventDelegate IsNeedMouseRelativeModeEvent;
 
 		public bool IsNeedMouseRelativeMode()
 		{
 			bool result = false;
-			IsNeedMouseRelativeModeEvent?.Invoke( this, ref result );
 
 			if( FreeCamera )
 			{
@@ -975,6 +1104,8 @@ namespace NeoAxis
 			if( m != null )
 				result = m.IsNeedMouseRelativeMode( this );
 
+			//IsNeedMouseRelativeModeEvent?.Invoke( this, ref result );
+
 			return result;
 		}
 
@@ -985,16 +1116,21 @@ namespace NeoAxis
 		{
 			Render?.Invoke( this, viewport );
 
-			if( Scene != null && EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+			if( Scene != null && EngineApp.IsSimulation )
 			{
 				UpdateObjectInteraction( viewport );
 				UpdateSceneSpecificScreenData( viewport );
 			}
 		}
 
+		public delegate void RenderUIDelegate( GameMode sender, CanvasRenderer renderer );
+		public event RenderUIDelegate RenderUI;
+
 		public virtual void PerformRenderUI( CanvasRenderer renderer )
 		{
-			if( Scene != null && EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+			RenderUI?.Invoke( this, renderer );
+
+			if( Scene != null && EngineApp.IsSimulation )
 			{
 				RenderObjectInteraction( renderer );
 				RenderTargetImage( renderer );
@@ -1020,10 +1156,14 @@ namespace NeoAxis
 			get { return Parent as Scene; }
 		}
 
+		public delegate void GetInteractiveObjectInfoEventDelegate( GameMode sender, InteractiveObject obj, ref InteractiveObjectObjectInfo result );
+		public event GetInteractiveObjectInfoEventDelegate GetInteractiveObjectInfoEvent;
+
 		public virtual InteractiveObjectObjectInfo GetInteractiveObjectInfo( InteractiveObject obj )
 		{
 			InteractiveObjectObjectInfo result = null;
 			obj.ObjectInteractionGetInfo( this, ref result );
+			GetInteractiveObjectInfoEvent?.Invoke( this, obj, ref result );
 			if( result == null )
 				result = new InteractiveObjectObjectInfo();
 			return result;
@@ -1035,7 +1175,7 @@ namespace NeoAxis
 		public virtual InteractiveObject PickInteractiveObject( Viewport viewport )
 		{
 			InteractiveObject result = null;
-			PickInteractiveObjectEvent?.Invoke( this, viewport, ref result );
+			//PickInteractiveObjectEvent?.Invoke( this, viewport, ref result );
 
 			if( !FreeCamera && !CutsceneStarted )
 			{
@@ -1046,7 +1186,7 @@ namespace NeoAxis
 					{
 						Ray ray;
 						{
-							double rayDistance = UseBuiltInCamera.Value == BuiltInCameraEnum.FirstPerson ? 2.5 : 10;
+							double rayDistance = 2.5;
 							//scaling
 							{
 								var obj = ObjectControlledByPlayer.Value as ObjectInSpace;
@@ -1063,11 +1203,17 @@ namespace NeoAxis
 
 						foreach( var item in getObjectsItem.Result )
 						{
-							var obj = item.Object.FindThisOrParent<InteractiveObject>();
-							if( obj != null )
+							if( item.Object is Camera || item.Object is Sensor || item.Object is Sensor2D )
+								continue;
+
+							if( item.Object.SpaceBounds.BoundingSphere.Intersects( ray ) )
 							{
-								if( GetInteractiveObjectInfo( obj ).AllowInteract )
-									result = obj;
+								var obj = item.Object.FindThisOrParent<InteractiveObject>();
+								if( obj != null )
+								{
+									if( GetInteractiveObjectInfo( obj ).AllowInteract )
+										result = obj;
+								}
 							}
 						}
 					}
@@ -1079,7 +1225,7 @@ namespace NeoAxis
 						{
 							var distance = 1.5;
 
-							var bounds = controlledObject.SpaceBounds.CalculatedBoundingBox;
+							var bounds = controlledObject.SpaceBounds.BoundingBox;
 							var offsetsRange = new Range( bounds.Minimum.Z - controlledObject.TransformV.Position.Z, bounds.Maximum.Z - controlledObject.TransformV.Position.Z );
 							//var offsetsRange = new Range( -0.25, 0.5 );
 
@@ -1093,11 +1239,21 @@ namespace NeoAxis
 
 								foreach( var item in getObjectsItem.Result )
 								{
-									var obj = item.Object.FindThisOrParent<InteractiveObject>();
-									if( obj != null )
+									if( item.Object is Camera || item.Object is Sensor || item.Object is Sensor2D )
+										continue;
+
+									if( item.Object.SpaceBounds.BoundingSphere.Intersects( ray, out var scale1, out var scale2 ) )
 									{
-										if( GetInteractiveObjectInfo( obj ).AllowInteract )
-											result = obj;
+										var scale = Math.Min( scale1, scale2 );
+										if( ( ray.Direction * scale ).Length() < distance )
+										{
+											var obj = item.Object.FindThisOrParent<InteractiveObject>();
+											if( obj != null )
+											{
+												if( GetInteractiveObjectInfo( obj ).AllowInteract )
+													result = obj;
+											}
+										}
 									}
 								}
 							}
@@ -1153,6 +1309,8 @@ namespace NeoAxis
 			var m = GetCameraManagementOfCurrentObject();
 			if( m != null )
 				result = m.PickInteractiveObject( this, viewport );
+
+			PickInteractiveObjectEvent?.Invoke( this, viewport, ref result );
 
 			return result;
 		}
@@ -1215,7 +1373,7 @@ namespace NeoAxis
 						{
 							//calculate screen rectangle
 							var rectangle = Rectangle.Cleared;
-							foreach( var point in obj.SpaceBounds.CalculatedBoundingBox.ToPoints() )
+							foreach( var point in obj.SpaceBounds.BoundingBox.ToPoints() )
 							{
 								if( renderer.ViewportForScreenCanvasRenderer.CameraSettings.ProjectToScreenCoordinates( point, out var screenPosition ) )
 									rectangle.Add( screenPosition );
@@ -1249,6 +1407,9 @@ namespace NeoAxis
 			}
 		}
 
+		public delegate void RenderTargetImageBeforeDelegate( GameMode sender, ref bool show );
+		public event RenderTargetImageBeforeDelegate RenderTargetImageBefore;
+
 		protected virtual void RenderTargetImage( CanvasRenderer renderer )
 		{
 			var display = DisplayTarget.Value;
@@ -1257,14 +1418,19 @@ namespace NeoAxis
 
 			if( display == AutoTrueFalse.True && ( UseBuiltInCamera.Value == BuiltInCameraEnum.FirstPerson || UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson || GetCameraManagementOfCurrentObject() != null ) && !FreeCamera && Scene.Mode.Value == Scene.ModeEnum._3D && !CutsceneStarted )
 			{
-				//if( weapon != null || currentAttachedGuiObject != null || currentSwitch != null )
-				//{
-				var size = DisplayTargetSize.Value / 2;
-				var rectangle = new Rectangle(
-					0.5 - size, 0.5 - size * renderer.AspectRatio,
-					0.5 + size, 0.5 + size * renderer.AspectRatio );
-				renderer.AddQuad( rectangle, new Rectangle( 0, 0, 1, 1 ), DisplayTargetImage, DisplayTargetColor );
-				//}
+				var show = true;
+				RenderTargetImageBefore?.Invoke( this, ref show );
+				if( show )
+				{
+					//if( weapon != null || currentAttachedGuiObject != null || currentSwitch != null )
+					//{
+					var size = DisplayTargetSize.Value / 2;
+					var rectangle = new Rectangle(
+						0.5 - size, 0.5 - size * renderer.AspectRatio,
+						0.5 + size, 0.5 + size * renderer.AspectRatio );
+					renderer.AddQuad( rectangle, new Rectangle( 0, 0, 1, 1 ), DisplayTargetImage, DisplayTargetColor );
+					//}
+				}
 			}
 		}
 
@@ -1315,12 +1481,18 @@ namespace NeoAxis
 			ReplaceCamera = null;
 		}
 
+		public delegate void ShowControlledObjectDelegate( GameMode sender, Viewport viewport, ref bool show );
+		public event ShowControlledObjectDelegate ShowControlledObject;
+
 		void UpdateControlledObjectVisibility( Viewport viewport )
 		{
 			var obj = ObjectControlledByPlayer.Value as ObjectInSpace;
 			if( obj != null )
 			{
-				var meshInSpace = obj.GetComponent<MeshInSpace>();
+				var meshInSpace = obj as MeshInSpace;
+				if( meshInSpace == null )
+					meshInSpace = obj.GetComponent<MeshInSpace>();
+
 				if( meshInSpace != null )
 				{
 					var firstPersonCamera = UseBuiltInCamera.Value == BuiltInCameraEnum.FirstPerson && !FreeCamera;
@@ -1328,6 +1500,7 @@ namespace NeoAxis
 					var show = true;
 					if( firstPersonCamera && !FirstPersonCameraShowControlledObject )
 						show = false;
+					ShowControlledObject?.Invoke( this, viewport, ref show );
 
 					meshInSpace.Visible = show;
 
@@ -1335,8 +1508,9 @@ namespace NeoAxis
 					{
 						var cutVolume = new RenderingPipeline.RenderSceneData.CutVolumeItem();
 						cutVolume.Shape = CutVolumeShape.Sphere;
-						cutVolume.CutScene = true;
-						cutVolume.CutShadows = false;
+						cutVolume.Flags = CutVolumeFlags.CutScene;
+						//cutVolume.CutScene = true;
+						//cutVolume.CutShadows = false;
 
 						var scl = FirstPersonCameraCutVolumeRadius.Value * 2;
 						cutVolume.Transform = new Transform( viewport.CameraSettings.Position, Quaternion.Identity, new Vector3( scl, scl, scl ) );
@@ -1354,7 +1528,10 @@ namespace NeoAxis
 			var obj = objectControlledByPlayer as ObjectInSpace;
 			if( obj != null )
 			{
-				var meshInSpace = obj.GetComponent<MeshInSpace>();
+				var meshInSpace = obj as MeshInSpace;
+				if( meshInSpace == null )
+					meshInSpace = obj.GetComponent<MeshInSpace>();
+
 				if( meshInSpace != null )
 				{
 					meshInSpace.Visible = true;
@@ -1368,12 +1545,29 @@ namespace NeoAxis
 			//update controlled object
 			UpdateControlledObjectVisibility( viewport );
 
-			//update character data for first person camera before a frame rendering
+			//update character data for first person camera before frame rendering
 			if( UseBuiltInCamera.Value == BuiltInCameraEnum.FirstPerson && !FreeCamera )
 			{
 				var character = ObjectControlledByPlayer.Value as Character;
 				if( character != null )
 					character.UpdateDataForFirstPersonCamera( this, viewport );
+			}
+
+			//update character data for third person camera before frame rendering
+			if( UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson && !FreeCamera )
+			{
+				var character = ObjectControlledByPlayer.Value as Character;
+				if( character != null )
+				{
+					if( !ThirdPersonCameraFollowDirection )
+					{
+						//!!!!here?
+
+						var d = new SphericalDirection( MathEx.DegreeToRadian( ThirdPersonCameraHorizontalAngle.Value + 180 ), MathEx.DegreeToRadian( ThirdPersonCameraVerticalAngle.Value ) );
+
+						character.TurnToDirection( d.ToSphericalDirectionF(), true );
+					}
+				}
 			}
 		}
 

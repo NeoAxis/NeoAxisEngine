@@ -54,8 +54,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libvorbisfile", "Engine\Ext
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenAL32", "Engine\External\OpenALSoft\build\OpenAL.UWP_x64.vcxproj", "{4C1F9DB1-8676-4F25-AA95-799457804F53}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libbulletc", "Engine\External\Bullet\BulletSharpPInvoke\libbulletc\build\libbulletc.UWP_x64.vcxproj", "{CAE16A26-6C73-4BBB-B044-0A1AB1E9BA51}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoAxis.CoreExtension.UWP", "..\Project\Sources\NeoAxis.CoreExtension\NeoAxis.CoreExtension.UWP.csproj", "{5AC5DA1A-BB1C-419E-A8F6-ECE12B62E731}"
 	ProjectSection(ProjectDependencies) = postProject
 		{EAC808E4-37A9-4C48-833B-A125CB1AA4AD} = {EAC808E4-37A9-4C48-833B-A125CB1AA4AD}
@@ -65,8 +63,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project.UWP", "..\Project\P
 	ProjectSection(ProjectDependencies) = postProject
 		{EAC808E4-37A9-4C48-833B-A125CB1AA4AD} = {EAC808E4-37A9-4C48-833B-A125CB1AA4AD}
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoAxis.Stubs.UWP", "Engine\NeoAxis.Stubs\NeoAxis.Stubs.UWP.csproj", "{77341505-5B07-4CA9-933E-EBF69C25AC8B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -178,13 +174,6 @@ Global
 		{4C1F9DB1-8676-4F25-AA95-799457804F53}.Release|ARM64.ActiveCfg = Release|x64
 		{4C1F9DB1-8676-4F25-AA95-799457804F53}.Release|x64.ActiveCfg = Release|x64
 		{4C1F9DB1-8676-4F25-AA95-799457804F53}.Release|x64.Build.0 = Release|x64
-		{CAE16A26-6C73-4BBB-B044-0A1AB1E9BA51}.Debug|ARM64.ActiveCfg = Release|x64
-		{CAE16A26-6C73-4BBB-B044-0A1AB1E9BA51}.Debug|ARM64.Build.0 = Release|x64
-		{CAE16A26-6C73-4BBB-B044-0A1AB1E9BA51}.Debug|x64.ActiveCfg = Release|x64
-		{CAE16A26-6C73-4BBB-B044-0A1AB1E9BA51}.Debug|x64.Build.0 = Release|x64
-		{CAE16A26-6C73-4BBB-B044-0A1AB1E9BA51}.Release|ARM64.ActiveCfg = Release|x64
-		{CAE16A26-6C73-4BBB-B044-0A1AB1E9BA51}.Release|x64.ActiveCfg = Release|x64
-		{CAE16A26-6C73-4BBB-B044-0A1AB1E9BA51}.Release|x64.Build.0 = Release|x64
 		{5AC5DA1A-BB1C-419E-A8F6-ECE12B62E731}.Debug|ARM64.ActiveCfg = Debug|x64
 		{5AC5DA1A-BB1C-419E-A8F6-ECE12B62E731}.Debug|ARM64.Build.0 = Debug|x64
 		{5AC5DA1A-BB1C-419E-A8F6-ECE12B62E731}.Debug|x64.ActiveCfg = Debug|x64
@@ -201,14 +190,6 @@ Global
 		{1479C4F8-80D1-4313-9657-ACC6FB8815EB}.Release|ARM64.Build.0 = Release|Any CPU
 		{1479C4F8-80D1-4313-9657-ACC6FB8815EB}.Release|x64.ActiveCfg = Release|x64
 		{1479C4F8-80D1-4313-9657-ACC6FB8815EB}.Release|x64.Build.0 = Release|x64
-		{77341505-5B07-4CA9-933E-EBF69C25AC8B}.Debug|ARM64.ActiveCfg = Debug|x64
-		{77341505-5B07-4CA9-933E-EBF69C25AC8B}.Debug|ARM64.Build.0 = Debug|x64
-		{77341505-5B07-4CA9-933E-EBF69C25AC8B}.Debug|x64.ActiveCfg = Debug|x64
-		{77341505-5B07-4CA9-933E-EBF69C25AC8B}.Debug|x64.Build.0 = Debug|x64
-		{77341505-5B07-4CA9-933E-EBF69C25AC8B}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{77341505-5B07-4CA9-933E-EBF69C25AC8B}.Release|ARM64.Build.0 = Release|Any CPU
-		{77341505-5B07-4CA9-933E-EBF69C25AC8B}.Release|x64.ActiveCfg = Release|x64
-		{77341505-5B07-4CA9-933E-EBF69C25AC8B}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -228,7 +209,6 @@ Global
 		{A44D6783-B55E-4480-AC1B-FA1235B18AC7} = {67F4E20B-24FA-4ACE-80C1-529222FC311E}
 		{F1D1AA8B-AED8-4538-A5AC-1D7C7B0EAF46} = {67F4E20B-24FA-4ACE-80C1-529222FC311E}
 		{4C1F9DB1-8676-4F25-AA95-799457804F53} = {67F4E20B-24FA-4ACE-80C1-529222FC311E}
-		{CAE16A26-6C73-4BBB-B044-0A1AB1E9BA51} = {67F4E20B-24FA-4ACE-80C1-529222FC311E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D50DA316-1FA2-405C-879A-AA4D7E3309CB}

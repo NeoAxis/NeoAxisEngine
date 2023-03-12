@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -241,7 +241,7 @@ namespace NeoAxis
 						if( replayIntervalRemainingTime > newValue )
 							replayIntervalRemainingTime = newValue;
 
-						if( EnabledInHierarchyAndIsNotResource )
+						if( EnabledInHierarchyAndIsInstance )
 						{
 							bool oldNonZeroDelay = oldValue != 0;
 							bool nonZeroDelay = newValue != 0;
@@ -342,7 +342,7 @@ namespace NeoAxis
 		{
 			base.OnEnabledInHierarchyChanged();
 
-			if( EnabledInHierarchyAndIsNotResource )
+			if( EnabledInHierarchyAndIsInstance )
 				Play();
 			else
 				Stop();
@@ -427,9 +427,9 @@ namespace NeoAxis
 		{
 			base.OnSimulationStep();
 
-			if( EnabledInHierarchyAndIsNotResource )
+			if( EnabledInHierarchyAndIsInstance )
 				Update();
-			//if( EnabledInHierarchyAndIsNotResource )
+			//if( EnabledInHierarchyAndIsInstance )
 			//	Update( TickDelta );
 		}
 
@@ -499,7 +499,7 @@ namespace NeoAxis
 		{
 			base.OnUpdate( delta );
 
-			if( EnabledInHierarchyAndIsNotResource )
+			if( EnabledInHierarchyAndIsInstance )
 				Update();
 		}
 
@@ -516,14 +516,14 @@ namespace NeoAxis
 		{
 			base.OnGetRenderSceneData( context, mode, modeGetObjectsItem );
 
-			//if( EnabledInHierarchyAndIsNotResource )
+			//if( EnabledInHierarchyAndIsInstance )
 			//	Update();
 
 			if( mode == GetRenderSceneDataMode.InsideFrustum )
 			{
 				var context2 = context.ObjectInSpaceRenderingContext;
 
-				bool show = ( ParentScene.GetDisplayDevelopmentDataInThisApplication() && ParentScene.DisplaySoundSources ) ||
+				bool show = ( context.SceneDisplayDevelopmentDataInThisApplication && ParentScene.DisplaySoundSources ) ||
 					context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this;
 				if( show )
 				{
@@ -533,14 +533,14 @@ namespace NeoAxis
 
 						ColorValue color;
 						if( context2.selectedObjects.Contains( this ) )
-							color = ProjectSettings.Get.General.SelectedColor;
+							color = ProjectSettings.Get.Colors.SelectedColor;
 						else if( context2.canSelectObjects.Contains( this ) )
-							color = ProjectSettings.Get.General.CanSelectColor;
+							color = ProjectSettings.Get.Colors.CanSelectColor;
 						else
-							color = ProjectSettings.Get.General.SceneShowSoundSourceColor;
+							color = ProjectSettings.Get.Colors.SceneShowSoundSourceColor;
 
 						var viewport = context.Owner;
-						viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+						viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 						DebugDraw( viewport );
 					}
 				}
@@ -580,13 +580,16 @@ namespace NeoAxis
 
 		void Play()
 		{
+			if( SoundWorld.BackendNull )
+				return;
+
 			if( playCalling )
 				return;
 			playCalling = true;
 
 			Stop();
 
-			if( EnabledInHierarchyAndIsNotResource && ParentScene != null )
+			if( EnabledInHierarchyAndIsInstance && ParentScene != null )
 			{
 				var res = ParentRoot?.HierarchyController?.CreatedByResource;
 				if( res != null && res.InstanceType == Resource.InstanceType.SeparateInstance )

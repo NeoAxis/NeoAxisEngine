@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using NetEndPoint = System.Net.IPEndPoint;
 #endif
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	public partial class NetPeer
 	{
@@ -46,6 +46,9 @@ namespace Lidgren.Network
 		/// Gets the socket, if Start() has been called
 		/// </summary>
 		public Socket Socket { get { return m_socket; } }
+
+		//!!!!betauser
+		static private readonly object socketBindLock = new object();
 
 		/// <summary>
 		/// Call this to register a callback for when a new message arrives
@@ -117,11 +120,14 @@ namespace Lidgren.Network
 			}
 			m_lastSocketBind = now;
 
-			using (var mutex = new Mutex(false, "Global\\lidgrenSocketBind"))
+			//!!!!betauser
+			lock( socketBindLock )
+			//using (var mutex = new Mutex(false, "Global\\lidgrenSocketBind"))
 			{
 				try
 				{
-					mutex.WaitOne();
+					//!!!!betauser
+					//mutex.WaitOne();
 
 					if (m_socket == null)
 						m_socket = new Socket(m_configuration.LocalAddress.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
@@ -162,7 +168,8 @@ namespace Lidgren.Network
 				}
 				finally
 				{
-					mutex.ReleaseMutex();
+					//!!!!betauser
+					//mutex.ReleaseMutex();
 				}
 			}
 

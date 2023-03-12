@@ -48,7 +48,7 @@ namespace {
 // BBType - BasicBlock type. Will either be BasicBlock or DominatorTreeNode
 // SuccessorLambda - Lamdba matching the signature of 'const
 // std::vector<BBType>*(const BBType *A)'. Will return a vector of the nodes
-// succeding BasicBlock A.
+// succeeding BasicBlock A.
 // PostLambda - Lamdba matching the signature of 'void (const BBType*)' will be
 // called on each node traversed AFTER their children.
 // PreLambda - Lamdba matching the signature of 'void (const BBType*)' will be
@@ -59,7 +59,9 @@ static void DepthFirstSearch(const BBType* bb, SuccessorLambda successors,
                              PreLambda pre, PostLambda post) {
   // Ignore backedge operation.
   auto nop_backedge = [](const BBType*, const BBType*) {};
-  CFA<BBType>::DepthFirstTraversal(bb, successors, pre, post, nop_backedge);
+  auto no_terminal_blocks = [](const BBType*) { return false; };
+  CFA<BBType>::DepthFirstTraversal(bb, successors, pre, post, nop_backedge,
+                                   no_terminal_blocks);
 }
 
 // Wrapper around CFA::DepthFirstTraversal to provide an interface to perform
@@ -69,7 +71,7 @@ static void DepthFirstSearch(const BBType* bb, SuccessorLambda successors,
 // BBType - BasicBlock type. Will either be BasicBlock or DominatorTreeNode
 // SuccessorLambda - Lamdba matching the signature of 'const
 // std::vector<BBType>*(const BBType *A)'. Will return a vector of the nodes
-// succeding BasicBlock A.
+// succeeding BasicBlock A.
 // PostLambda - Lamdba matching the signature of 'void (const BBType*)' will be
 // called on each node traversed after their children.
 template <typename BBType, typename SuccessorLambda, typename PostLambda>

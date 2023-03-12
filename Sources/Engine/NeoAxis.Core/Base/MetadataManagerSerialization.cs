@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Text;
 using System.Collections;
@@ -171,7 +171,7 @@ namespace NeoAxis
 					delegate ( Metadata.SaveContext context, Metadata.TypeInfo type, string parameterName, TextBlock block, object value, bool defaultValueSpecified, object defaultValue, ref string error )
 					{
 						//string
-						if( type.GetNetType() == typeof( string ) && string.IsNullOrEmpty( value as string ) && string.IsNullOrEmpty( defaultValue as string ) )
+						if( type.GetNetType() == typeof( string ) && string.IsNullOrEmpty( value as string ) && context.UseDefaultValue && string.IsNullOrEmpty( defaultValue as string ) )
 							return;
 
 						if( value != null )
@@ -181,7 +181,7 @@ namespace NeoAxis
 							//!!!!можно было бы еще конвертить в похожий тип. например float в double
 
 							bool equal = false;
-							if( defaultValue != null )
+							if( context.UseDefaultValue && defaultValue != null )//if( defaultValue != null )
 							{
 								if( !( value is string ) && defaultValue is string )
 								{
@@ -235,7 +235,7 @@ namespace NeoAxis
 					if( value != null )
 					{
 						bool equal = false;
-						if( defaultValue != null )
+						if( context.UseDefaultValue && defaultValue != null )
 						{
 							if( defaultValue is string )
 							{
@@ -1480,8 +1480,17 @@ namespace NeoAxis
 							return;
 					}
 
+					var skipSimplifiedForm = false;
+					//DefaultValueReference attribute when value is empty but default value is not empty
+					if( !referenceIsSpecified && reference.ValueAsObject == null && defaultValue != null )
+					{
+						var defaultValueReference = defaultValue as IReference;
+						if( defaultValueReference != null && !string.IsNullOrEmpty( defaultValueReference.GetByReference ) )
+							skipSimplifiedForm = true;
+					}
+
 					//simplified form
-					if( !referenceIsSpecified )
+					if( !referenceIsSpecified && !skipSimplifiedForm )
 					{
 						var valueItem = GetSuitableSerializableType( reference.UnderlyingType, out _ );
 						if( valueItem != null && valueItem.OneStringSerialization )
@@ -1781,27 +1790,63 @@ namespace NeoAxis
 				return true;
 			}
 
+			public static bool IsMemberSerializable( Metadata.Member member )
+			{
+				var property = member as Metadata.Property;
+				if( property != null && /*!property.ReadOnly &&*/ !property.HasIndexers && !property.Static )
+				{
+					var type = property.Serializable;
+					if( type == SerializeType.Enable || ( type == SerializeType.Auto && property.Browsable && !property.ReadOnly ) )
+					{
+						//!!!!может еще что-то проверять
+
+						//var memberData = new MetadataPropertyData( property );
+
+						//if( !Serialization_LoadMemberRecursive( context, ref obj, memberData, block, out var error2 ) )
+						//{
+						//	error = error2 + $" Property \'{property.Name}\'.";
+						//	return false;
+						//}
+
+						return true;
+					}
+				}
+
+				//!!!!другое
+
+				return false;
+			}
+
+			public static bool LoadSerializableMember( Metadata.LoadContext context, object obj, Metadata.Member member, TextBlock block, out string error )
+			{
+				var property = member as Metadata.Property;
+				if( property != null && /*!property.ReadOnly &&*/ !property.HasIndexers && !property.Static )
+				{
+					var type = property.Serializable;
+					if( type == SerializeType.Enable || ( type == SerializeType.Auto && property.Browsable && !property.ReadOnly ) )
+					{
+						var memberData = new MetadataPropertyData( property );
+
+						if( !Serialization_LoadMemberRecursive( context, ref obj, memberData, block, out var error2 ) )
+						{
+							error = error2 + $" Property \'{property.Name}\'.";
+							return false;
+						}
+					}
+				}
+
+				//!!!!другое
+
+				error = "";
+				return true;
+			}
+
 			public static bool LoadSerializableMembers( Metadata.LoadContext context, object obj, TextBlock block, out string error )
 			{
 				foreach( var member in MetadataGetMembers( obj, new Metadata.GetMembersContext( false ) ) )
 				{
-					var property = member as Metadata.Property;
-					if( property != null && /*!property.ReadOnly &&*/ !property.HasIndexers && !property.Static )
-					{
-						var type = property.Serializable;
-						if( type == SerializeType.Enable || ( type == SerializeType.Auto && property.Browsable && !property.ReadOnly ) )
-						{
-							var memberData = new MetadataPropertyData( property );
-
-							if( !Serialization_LoadMemberRecursive( context, ref obj, memberData, block, out var error2 ) )
-							{
-								error = error2 + $" Property \'{property.Name}\'.";
-								return false;
-							}
-						}
-					}
-
-					//!!!!другое
+					if( !LoadSerializableMember( context, obj, member, block, out error ) )
+						return false;
 				}
 
 				error = "";
@@ -1815,9 +1860,14 @@ namespace NeoAxis
 				{
 					object value = member.GetValue( obj );
 
-					member.GetDefaultValue( obj, out var defaultValueSpecified, out var defaultValue );
-					//bool defaultValueSpecified = member.DefaultValueSpecified;
-					//object defaultValue = member.DefaultValue;
+					bool defaultValueSpecified = false;
+					object defaultValue = null;
+					if( context.UseDefaultValue )
+					{
+						member.GetDefaultValue( obj, out defaultValueSpecified, out defaultValue );
+						//bool defaultValueSpecified = member.DefaultValueSpecified;
+						//object defaultValue = member.DefaultValue;
+					}
 
 					string error2 = "";
 					item.Save( context, member.Type, member.ParameterName, block, value, defaultValueSpecified, defaultValue, ref error2 );
@@ -1878,43 +1928,56 @@ namespace NeoAxis
 				return true;
 			}
 
+			public static bool SaveSerializableMember( Metadata.SaveContext context, object obj, Metadata.Member member, TextBlock block, out bool serialized, out string error )
+			{
+				serialized = false;
+
+				var property = member as Metadata.Property;
+				if( property != null && /*!property.ReadOnly &&*/ !property.HasIndexers && !property.Static )
+				{
+					var type = property.Serializable;
+					if( type == SerializeType.Enable || ( type == SerializeType.Auto && property.Browsable && !property.ReadOnly ) )
+					{
+						bool skip = false;
+
+						//Type Settings filter
+						var component = obj as Component;
+						if( component != null )
+						{
+							if( !component.TypeSettingsIsPublicMember( property ) )
+								skip = true;
+							//var baseComponentType = component.BaseType as Metadata.ComponentTypeInfo;
+							//if( baseComponentType != null && ComponentUtility.TypeSettingsCheckHideObject( baseComponentType.BasedOnObject, true, member ) )
+							//	skip = true;
+						}
+
+						if( !skip )
+						{
+							var memberData = new MetadataPropertyData( property );
+
+							if( !Serialization_SaveMemberRecursive( context, ref obj, memberData, block, out var error2 ) )
+							{
+								error = error2 + $" Property \'{property.Name}\'.";
+								return false;
+							}
+
+							serialized = true;
+						}
+					}
+				}
+
+				//!!!!другое
+
+				error = "";
+				return true;
+			}
+
 			public static bool SaveSerializableMembers( Metadata.SaveContext context, object obj, TextBlock block, out string error )
 			{
 				foreach( var member in MetadataGetMembers( obj, new Metadata.GetMembersContext( false ) ) )
 				{
-					var property = member as Metadata.Property;
-					if( property != null && /*!property.ReadOnly &&*/ !property.HasIndexers && !property.Static )
-					{
-						var type = property.Serializable;
-						if( type == SerializeType.Enable || ( type == SerializeType.Auto && property.Browsable && !property.ReadOnly ) )
-						{
-							bool skip = false;
-
-							//Type Settings filter
-							var component = obj as Component;
-							if( component != null )
-							{
-								if( !component.TypeSettingsIsPublicMember( property ) )
-									skip = true;
-								//var baseComponentType = component.BaseType as Metadata.ComponentTypeInfo;
-								//if( baseComponentType != null && ComponentUtility.TypeSettingsCheckHideObject( baseComponentType.BasedOnObject, true, member ) )
-								//	skip = true;
-							}
-
-							if( !skip )
-							{
-								var memberData = new MetadataPropertyData( property );
-
-								if( !Serialization_SaveMemberRecursive( context, ref obj, memberData, block, out var error2 ) )
-								{
-									error = error2 + $" Property \'{property.Name}\'.";
-									return false;
-								}
-							}
-						}
-					}
-
-					//!!!!другое
+					if( !SaveSerializableMember( context, obj, member, block, out _, out error ) )
+						return false;
 				}
 
 				error = "";
@@ -1994,10 +2057,6 @@ namespace NeoAxis
 									//!!!!slowly?
 
 									var referenceValue = reference.GetByReference;
-
-									////!!!!
-									//if( referenceValue == "root:$Meshes\\$Box001" )
-									//	Log.Info( "dfgdg" );
 
 									bool isRoot = referenceValue.Length >= 5 && string.Compare( referenceValue, 0, "root:", 0, 5 ) == 0;
 									if( isRoot )

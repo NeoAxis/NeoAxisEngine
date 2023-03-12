@@ -1,8 +1,9 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -30,26 +31,31 @@ namespace NeoAxis
 			this.Radius = radius;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is SphereF && this == (SphereF)obj );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return ( Center.GetHashCode() ^ Radius.GetHashCode() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( SphereF v1, SphereF v2 )
 		{
 			return ( v1.Center == v2.Center && v1.Radius == v2.Radius );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( SphereF v1, SphereF v2 )
 		{
 			return ( v1.Center != v2.Center || v1.Radius != v2.Radius );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( SphereF v, float epsilon )
 		{
 			if( !Center.Equals( ref v.Center, epsilon ) )
@@ -60,11 +66,13 @@ namespace NeoAxis
 		}
 
 		//!!!!без Is. везде так
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool IsCleared()
 		{
 			return Radius < 0.0f;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public BoundsF ToBounds()
 		{
 			BoundsF result;
@@ -77,6 +85,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ToBounds( out BoundsF result )
 		{
 			result.Minimum.X = Center.X - Radius;
@@ -87,6 +96,7 @@ namespace NeoAxis
 			result.Maximum.Z = Center.Z + Radius;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( Vector3F p )
 		{
 			float x = p.X - Center.X;
@@ -98,6 +108,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( ref SphereF s )
 		{
 			float x = s.Center.X - Center.X;
@@ -110,26 +121,31 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( SphereF s )
 		{
 			return Intersects( ref s );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( ConeF cone )
 		{
 			return cone.Intersects( this );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( ref SphereF s )
 		{
 			return ( Center - s.Center ).Length() + s.Radius <= Radius;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( SphereF s )
 		{
 			return Contains( ref s );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( ref BoxF box )
 		{
 			Vector3F[] points = null;
@@ -142,6 +158,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( BoxF box )
 		{
 			return Contains( ref box );
@@ -182,6 +199,7 @@ namespace NeoAxis
 		//	}
 		//}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		static void ClosestPtPointTriangle( ref Vector3F p, ref Vector3F a, ref Vector3F b, ref Vector3F c, out Vector3F result )
 		{
 			Vector3F ab;
@@ -264,6 +282,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( ref TriangleF triangle )
 		{
 			Vector3F point;
@@ -273,11 +292,13 @@ namespace NeoAxis
 			return v.LengthSquared() <= Radius * Radius;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( TriangleF triangle )
 		{
 			return Intersects( ref triangle );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( ref BoundsF bounds )
 		{
 			float distanceSqr = 0;
@@ -318,11 +339,13 @@ namespace NeoAxis
 			return distanceSqr <= Radius * Radius;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( BoundsF bounds )
 		{
 			return Intersects( ref bounds );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public bool Intersects( ref BoxF box )
 		{
 			Matrix3F transposedAxis;
@@ -355,11 +378,13 @@ namespace NeoAxis
 			return distanceSquared <= Radius * Radius;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( BoxF box )
 		{
 			return Intersects( ref box );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( Line3F line )
 		{
 			Vector3F s = line.Start - Center;
@@ -381,6 +406,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( RayF ray, out float scale1, out float scale2 )
 		{
 			Vector3F p = ray.Origin - Center;
@@ -401,6 +427,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( RayF ray )
 		{
 			Vector3F p = ray.Origin - Center;
@@ -413,6 +440,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Sphere ToSphere()
 		{
@@ -427,12 +455,14 @@ namespace NeoAxis
 		//!!!!Parse, ToString
 
 #if !DISABLE_IMPLICIT
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator Sphere( SphereF v )
 		{
 			return new Sphere( v );
 		}
 #endif
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static SphereF Merge( SphereF a, SphereF b )
 		{
 			if( a == b )

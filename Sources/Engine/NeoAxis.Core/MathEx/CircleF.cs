@@ -1,8 +1,9 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -18,38 +19,45 @@ namespace NeoAxis
 		public static readonly CircleF Zero = new CircleF( Vector2F.Zero, 0.0f );
 		public static readonly CircleF Cleared = new CircleF( Vector2F.Zero, -1.0f );
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public CircleF( CircleF source )
 		{
 			Center = source.Center;
 			Radius = source.Radius;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public CircleF( Vector2F center, float radius )
 		{
 			this.Center = center;
 			this.Radius = radius;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is CircleF && this == (CircleF)obj );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return ( Center.GetHashCode() ^ Radius.GetHashCode() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( CircleF v1, CircleF v2 )
 		{
 			return ( v1.Center == v2.Center && v1.Radius == v2.Radius );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( CircleF v1, CircleF v2 )
 		{
 			return ( v1.Center != v2.Center || v1.Radius != v2.Radius );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( CircleF v, float epsilon )
 		{
 			if( !Center.Equals( ref v.Center, epsilon ) )
@@ -60,11 +68,13 @@ namespace NeoAxis
 		}
 
 		//!!!!без Is. везде так
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool IsCleared()
 		{
 			return Radius < 0.0f;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public RectangleF ToBounds()
 		{
 			RectangleF result;
@@ -75,6 +85,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ToBounds( out RectangleF result )
 		{
 			result.Left = Center.X - Radius;
@@ -83,6 +94,7 @@ namespace NeoAxis
 			result.Bottom = Center.Y + Radius;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( Vector2F p )
 		{
 			float x = p.X - Center.X;
@@ -93,6 +105,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( ref CircleF s )
 		{
 			float x = s.Center.X - Center.X;
@@ -104,6 +117,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( CircleF s )
 		{
 			return Intersects( ref s );
@@ -114,11 +128,13 @@ namespace NeoAxis
 		//	return cone.Intersects( this );
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( ref CircleF s )
 		{
 			return ( Center - s.Center ).Length() + s.Radius <= Radius;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( CircleF s )
 		{
 			return Contains( ref s );
@@ -272,6 +288,7 @@ namespace NeoAxis
 		//	return Intersects( ref triangle );
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( ref RectangleF bounds )
 		{
 			float distanceSqr = 0;
@@ -301,6 +318,7 @@ namespace NeoAxis
 			return distanceSqr <= Radius * Radius;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( RectangleF bounds )
 		{
 			return Intersects( ref bounds );
@@ -343,6 +361,7 @@ namespace NeoAxis
 		//	return Intersects( ref box );
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( Line2F line )
 		{
 			Vector2F s = line.Start - Center;
@@ -364,6 +383,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( Ray2F ray, out float scale1, out float scale2 )
 		{
 			Vector2F p = ray.Origin - Center;
@@ -384,6 +404,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( Ray2F ray )
 		{
 			Vector2F p = ray.Origin - Center;
@@ -396,6 +417,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Circle ToCircle()
 		{
@@ -410,12 +432,14 @@ namespace NeoAxis
 		//!!!!Parse, ToString
 
 #if !DISABLE_IMPLICIT
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator Circle( CircleF v )
 		{
 			return new Circle( v );
 		}
 #endif
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public double GetPointDistance( Vector2F point )
 		{
 			var diff = point - Center;

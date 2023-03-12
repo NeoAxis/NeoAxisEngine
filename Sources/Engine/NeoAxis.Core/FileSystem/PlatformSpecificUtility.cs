@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -32,15 +32,25 @@ namespace Internal
 				if( instance == null )
 				{
 					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
+					{
+#if MACOS
 						instance = new MacOSXPlatformSpecificUtility();
+#endif
+					}
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
 						Log.Fatal( "PlatformSpecificUtility: Get: Instance must be already initialized." );
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
 						Log.Fatal( "PlatformSpecificUtility: Get: Instance must be already initialized." );
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
 						Log.Fatal( "PlatformSpecificUtility: Get: Instance must be already initialized." );
+					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+						Log.Fatal( "PlatformSpecificUtility: Get: Instance must be already initialized." );
 					else
+					{
+#if WINDOWS || UWP
 						instance = new WindowsPlatformSpecificUtility();
+#endif
+					}
 				}
 				return instance;
 			}
@@ -49,6 +59,7 @@ namespace Internal
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
+#if WINDOWS || UWP
 	class WindowsPlatformSpecificUtility : PlatformSpecificUtility
 	{
 		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode )]
@@ -109,9 +120,11 @@ namespace Internal
 			return result;
 		}
 	}
+#endif
 
-	////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
 
+#if MACOS
 	class MacOSXPlatformSpecificUtility : PlatformSpecificUtility
 	{
 		[DllImport( "NeoAxisCoreNative", EntryPoint = "MacAppNativeWrapper_LoadLibrary",
@@ -130,4 +143,5 @@ namespace Internal
 			return MacLoadLibrary( path );
 		}
 	}
+#endif
 }

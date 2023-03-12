@@ -1,3 +1,5 @@
+// Made with NeoAxis Engine 2022.1.
+
 .component Project.MenuWindow
 {
 	Text = Menu
@@ -16,6 +18,15 @@
 		Size = Units 200 40
 		HorizontalAlignment = Center
 		Margin = Units 0 80 0 0
+		EditorScrollPosition = 0 0
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Options
+		Text = Options
+		Size = Units 200 40
+		HorizontalAlignment = Center
+		Margin = Units 0 140 0 0
 		EditorScrollPosition = 0 0
 	}
 	.component NeoAxis.UIButton
@@ -44,15 +55,6 @@
 		HorizontalAlignment = Center
 		VerticalAlignment = Bottom
 		Margin = Units 0 0 0 40
-		EditorScrollPosition = 0 0
-	}
-	.component NeoAxis.UIButton
-	{
-		Name = Button Options
-		Text = Options
-		Size = Units 200 40
-		HorizontalAlignment = Center
-		Margin = Units 0 140 0 0
 		EditorScrollPosition = 0 0
 	}
 }

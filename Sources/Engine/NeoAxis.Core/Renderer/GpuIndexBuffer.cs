@@ -1,7 +1,7 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
-using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using Internal.SharpBgfx;
 
 namespace NeoAxis
 {
@@ -15,7 +15,10 @@ namespace NeoAxis
 		int indexCountActual;
 		GpuBufferFlags flags;
 
-		IDisposable nativeObject;
+		ushort nativeObjectHandle = ushort.MaxValue;
+		bool nativeObjectIsDynamicBuffer;
+		//IDisposable nativeObject;
+
 		bool dynamic_needUpdateNative;
 		bool nativeObject16Bit;
 		double nativeObjectLastUsedTime;
@@ -32,7 +35,7 @@ namespace NeoAxis
 			this.indexCount = indexCount;
 			indexCountActual = indexCount;
 
-			if( Flags.HasFlag( GpuBufferFlags.Dynamic ) )
+			if( ( Flags & GpuBufferFlags.Dynamic ) != 0 )
 			{
 				if( this.indices == null )
 					this.indices = new int[ indexCount ];
@@ -42,13 +45,15 @@ namespace NeoAxis
 
 		protected override void OnDispose()
 		{
-			if( nativeObject != null )
+			if( nativeObjectHandle != ushort.MaxValue )
 			{
 				//after shutdown check
 				if( RenderingSystem.Disposed )
 					Log.Fatal( "GpuIndexBuffer: Dispose after shutdown." );
-				EngineThreading.ExecuteFromMainThreadLater( delegate ( IDisposable obj ) { obj.Dispose(); }, nativeObject );
-				nativeObject = null;
+
+				DestroyNativeObject();
+				//EngineThreading.ExecuteFromMainThreadLater( delegate ( IDisposable obj ) { obj.Dispose(); }, nativeObject );
+				//nativeObject = null;
 			}
 
 			lock( GpuBufferManager.indexBuffers )
@@ -72,10 +77,25 @@ namespace NeoAxis
 			get { return flags; }
 		}
 
-		public IDisposable NativeObject
+		public ushort NativeObjectHandle
 		{
-			get { return nativeObject; }
+			get { return nativeObjectHandle; }
 		}
+
+		public bool NativeObjectCreated
+		{
+			get { return nativeObjectHandle != ushort.MaxValue; }
+		}
+
+		public bool NativeObjectIsDynamicBuffer
+		{
+			get { return nativeObjectIsDynamicBuffer; }
+		}
+
+		//public IDisposable NativeObject
+		//{
+		//	get { return nativeObject; }
+		//}
 
 		public bool NativeObject16Bit
 		{
@@ -84,7 +104,9 @@ namespace NeoAxis
 
 		public void SetData( int[] indices, int indexCountActual = -1 )
 		{
-			if( !( Flags.HasFlag( GpuBufferFlags.Dynamic ) || ( nativeObject == null && !Flags.HasFlag( GpuBufferFlags.Dynamic ) && !Flags.HasFlag( GpuBufferFlags.ComputeWrite ) ) ) )
+			var isDynamic = ( Flags & GpuBufferFlags.Dynamic ) != 0;
+			var isComputeWrite = ( Flags & GpuBufferFlags.ComputeWrite ) != 0;
+			if( !( isDynamic || ( !NativeObjectCreated && !isDynamic && !isComputeWrite ) ) )
 				Log.Fatal( "GpuIndexBuffer: SetData: The buffer must be dynamic or must be still not be created on GPU." );
 			if( this.indices != null && indices.Length != this.indices.Length )
 				Log.Fatal( "GpuIndexBuffer: SetData: indices.Length != this.indices.Length." );
@@ -100,7 +122,9 @@ namespace NeoAxis
 
 		public void Write( IntPtr indices, int indexCount )
 		{
-			if( !( Flags.HasFlag( GpuBufferFlags.Dynamic ) || ( nativeObject == null && !Flags.HasFlag( GpuBufferFlags.Dynamic ) && !Flags.HasFlag( GpuBufferFlags.ComputeWrite ) ) ) )
+			var isDynamic = ( Flags & GpuBufferFlags.Dynamic ) != 0;
+			var isComputeWrite = ( Flags & GpuBufferFlags.ComputeWrite ) != 0;
+			if( !( isDynamic || ( !NativeObjectCreated && !isDynamic && !isComputeWrite ) ) )
 				Log.Fatal( "GpuIndexBuffer: Write: The buffer must be dynamic or must be still not be created on GPU." );
 			if( indexCount > this.indexCount )
 				Log.Fatal( "GpuIndexBuffer: Write: indexCount > this.indexCount." );
@@ -124,7 +148,9 @@ namespace NeoAxis
 
 		public int[] WriteBegin()
 		{
-			if( !( Flags.HasFlag( GpuBufferFlags.Dynamic ) || ( nativeObject == null && !Flags.HasFlag( GpuBufferFlags.Dynamic ) && !Flags.HasFlag( GpuBufferFlags.ComputeWrite ) ) ) )
+			var isDynamic = ( Flags & GpuBufferFlags.Dynamic ) != 0;
+			var isComputeWrite = ( Flags & GpuBufferFlags.ComputeWrite ) != 0;
+			if( !( isDynamic || ( !NativeObjectCreated && !isDynamic && !isComputeWrite ) ) )
 				Log.Fatal( "GpuIndexBuffer: WriteBegin: The buffer must be dynamic or must be still not be created on GPU." );
 			////change type to dynamic
 			//if( !dynamic && realObject != null )
@@ -139,66 +165,113 @@ namespace NeoAxis
 			indexCountActual = indexCount;
 		}
 
-		unsafe internal IDisposable GetNativeObject()
+		unsafe internal void UpdateNativeObject()
+		//unsafe internal IDisposable GetNativeObject()
 		{
 			if( Disposed )
 				Log.Fatal( "GpuIndexBuffer: GetNativeObject: Disposed." );
 
 			EngineThreading.CheckMainThread();
 
-			if( Flags.HasFlag( GpuBufferFlags.Dynamic ) || Flags.HasFlag( GpuBufferFlags.ComputeWrite ) )
+			if( ( Flags & ( GpuBufferFlags.Dynamic | GpuBufferFlags.ComputeWrite ) ) != 0 )
+			//if( ( ( Flags & GpuBufferFlags.Dynamic ) != 0 ) || ( ( Flags & GpuBufferFlags.ComputeWrite ) != 0 ) )
 			{
-				////delete old static when changed to dynamic
-				//if( realObject != null && realObject is SharpBgfx.IndexBuffer )
-				//{
-				//	realObject.Dispose();
-				//	realObject = null;
-				//}
-
-				if( nativeObject == null )
+				if( nativeObjectHandle == ushort.MaxValue )
 				{
-					var nativeFlags = Internal.SharpBgfx.BufferFlags.Index32 | Internal.SharpBgfx.BufferFlags.ComputeRead;// | SharpBgfx.BufferFlags.ComputeTypeFloat;
-					if( Flags.HasFlag( GpuBufferFlags.ComputeWrite ) )
-						nativeFlags |= Internal.SharpBgfx.BufferFlags.ComputeWrite;
-
+					BufferFlags nativeFlags = 0;
+					if( ( Flags & GpuBufferFlags.ComputeRead ) != 0 )
+						nativeFlags |= BufferFlags.ComputeRead;// | SharpBgfx.BufferFlags.ComputeTypeFloat;
+					if( ( Flags & GpuBufferFlags.ComputeWrite ) != 0 )
+						nativeFlags |= BufferFlags.ComputeWrite;
 					//dynamic buffers are always 32-bit
-					nativeObject = new Internal.SharpBgfx.DynamicIndexBuffer( indices.Length, nativeFlags );
+					nativeFlags |= BufferFlags.Index32;
+
+					nativeObjectHandle = NativeMethods.bgfx_create_dynamic_index_buffer( indices.Length, nativeFlags );
+					nativeObjectIsDynamicBuffer = true;
+
+					//nativeObject = new DynamicIndexBuffer( indices.Length, nativeFlags );
 					dynamic_needUpdateNative = true;
 					nativeObject16Bit = false;
 				}
 
-				if( !Flags.HasFlag( GpuBufferFlags.ComputeWrite ) )
+				if( ( Flags & GpuBufferFlags.ComputeWrite ) == 0 )
 				{
 					if( dynamic_needUpdateNative )
 					{
 						dynamic_needUpdateNative = false;
 
-						var buffer = (Internal.SharpBgfx.DynamicIndexBuffer)nativeObject;
+						//var buffer = (DynamicIndexBuffer)nativeObject;
 
 						fixed( int* pIndices = indices )
 						{
-							var ptr = new Internal.SharpBgfx.MemoryBlock( pIndices, indexCountActual * 4 );
-							buffer.Update( 0, ptr );
+							var memory = new MemoryBlock( pIndices, indexCountActual * 4 );
+							NativeMethods.bgfx_update_dynamic_index_buffer( nativeObjectHandle, 0, memory.ptr );
+							//buffer.Update( 0, memory );
 						}
 
 						//var memory = RendererMemoryUtility.AllocateAutoReleaseMemoryBlock( new ArraySegment<int>( indices, 0, indexCountActual ) );
 						//buffer.Update( 0, memory );
 					}
 				}
+
+				//if( nativeObject == null )
+				//{
+				//	BufferFlags nativeFlags = 0;
+				//	if( ( Flags & GpuBufferFlags.ComputeRead ) != 0 )
+				//		nativeFlags |= BufferFlags.ComputeRead;// | SharpBgfx.BufferFlags.ComputeTypeFloat;
+				//	if( ( Flags & GpuBufferFlags.ComputeWrite ) != 0 )
+				//		nativeFlags |= BufferFlags.ComputeWrite;
+				//	//dynamic buffers are always 32-bit
+				//	nativeFlags |= BufferFlags.Index32;
+
+				//	nativeObject = new DynamicIndexBuffer( indices.Length, nativeFlags );
+				//	dynamic_needUpdateNative = true;
+				//	nativeObject16Bit = false;
+				//}
+
+				//if( ( Flags & GpuBufferFlags.ComputeWrite ) == 0 )
+				//{
+				//	if( dynamic_needUpdateNative )
+				//	{
+				//		dynamic_needUpdateNative = false;
+
+				//		var buffer = (DynamicIndexBuffer)nativeObject;
+
+				//		fixed( int* pIndices = indices )
+				//		{
+				//			var ptr = new MemoryBlock( pIndices, indexCountActual * 4 );
+				//			buffer.Update( 0, ptr );
+				//		}
+
+				//		//var memory = RendererMemoryUtility.AllocateAutoReleaseMemoryBlock( new ArraySegment<int>( indices, 0, indexCountActual ) );
+				//		//buffer.Update( 0, memory );
+				//	}
+				//}
 			}
 			else
 			{
-				if( nativeObject == null )
+				if( nativeObjectHandle == ushort.MaxValue )// if( nativeObject == null )
 				{
 					bool use16Bit = true;
-					foreach( var index in indices )
+					if( indices.Length > 65000 )//fast skip
+						use16Bit = false;
+					else
 					{
-						if( index > 65535 )
+						foreach( var index in indices )
 						{
-							use16Bit = false;
-							break;
+							if( index > 65535 )
+							{
+								use16Bit = false;
+								break;
+							}
 						}
 					}
+
+					BufferFlags nativeFlags = 0;
+					if( ( Flags & GpuBufferFlags.ComputeRead ) != 0 )
+						nativeFlags |= BufferFlags.ComputeRead;// | SharpBgfx.BufferFlags.ComputeTypeFloat;
+					if( !use16Bit )
+						nativeFlags |= BufferFlags.Index32;
 
 					if( use16Bit )
 					{
@@ -208,30 +281,38 @@ namespace NeoAxis
 
 						fixed( ushort* pIndices = indices16 )
 						{
-							var memory = new Internal.SharpBgfx.MemoryBlock( pIndices, indices.Length * 2 );
-							nativeObject = new Internal.SharpBgfx.IndexBuffer( memory, Internal.SharpBgfx.BufferFlags.ComputeRead/* | SharpBgfx.BufferFlags.ComputeTypeFloat*/ );
+							//!!!!можно заливать сразу в memory. public MemoryBlock (int size). где еще так
+
+							var memory = new MemoryBlock( pIndices, indices.Length * 2 );
+
+							nativeObjectHandle = NativeMethods.bgfx_create_index_buffer( memory.ptr, nativeFlags );
+							nativeObjectIsDynamicBuffer = false;
+							//nativeObject = new IndexBuffer( memory, nativeFlags );
 						}
 
 						//var memory = RendererMemoryUtility.AllocateAutoReleaseMemoryBlock( indices16 );
-						//realObject = new Internal.SharpBgfx.IndexBuffer( memory, Internal.SharpBgfx.BufferFlags.ComputeRead/* | SharpBgfx.BufferFlags.ComputeTypeFloat*/ );
+						//realObject = new IndexBuffer( memory, BufferFlags.ComputeRead/* | SharpBgfx.BufferFlags.ComputeTypeFloat*/ );
 					}
 					else
 					{
 						fixed( int* pIndices = indices )
 						{
-							var memory = new Internal.SharpBgfx.MemoryBlock( pIndices, indices.Length * 4 );
-							nativeObject = new Internal.SharpBgfx.IndexBuffer( memory, Internal.SharpBgfx.BufferFlags.Index32 | Internal.SharpBgfx.BufferFlags.ComputeRead/* | SharpBgfx.BufferFlags.ComputeTypeFloat*/ );
+							var memory = new MemoryBlock( pIndices, indices.Length * 4 );
+
+							nativeObjectHandle = NativeMethods.bgfx_create_index_buffer( memory.ptr, nativeFlags );
+							nativeObjectIsDynamicBuffer = false;
+							//nativeObject = new IndexBuffer( memory, nativeFlags );
 						}
 
 						//var memory = RendererMemoryUtility.AllocateAutoReleaseMemoryBlock( indices );
-						//realObject = new Internal.SharpBgfx.IndexBuffer( memory, Internal.SharpBgfx.BufferFlags.Index32 | Internal.SharpBgfx.BufferFlags.ComputeRead/* | SharpBgfx.BufferFlags.ComputeTypeFloat*/ );
+						//realObject = new IndexBuffer( memory, BufferFlags.Index32 | BufferFlags.ComputeRead/* | SharpBgfx.BufferFlags.ComputeTypeFloat*/ );
 					}
 					nativeObject16Bit = use16Bit;
 				}
 			}
 
 			nativeObjectLastUsedTime = EngineApp.EngineTime;
-			return nativeObject;
+			//return nativeObject;
 		}
 
 		public void MakeCopyOfData()
@@ -242,16 +323,38 @@ namespace NeoAxis
 
 		public void DestroyNativeObject()
 		{
-			if( nativeObject != null )
+			if( nativeObjectHandle != ushort.MaxValue )
 			{
-				EngineThreading.ExecuteFromMainThreadLater( delegate ( IDisposable obj ) { obj.Dispose(); }, nativeObject );
-				nativeObject = null;
+				if( nativeObjectIsDynamicBuffer )
+				{
+					EngineThreading.ExecuteFromMainThreadLater( delegate ( ushort handle )
+					{
+						NativeMethods.bgfx_destroy_dynamic_index_buffer( handle );
+					}, nativeObjectHandle );
+				}
+				else
+				{
+					EngineThreading.ExecuteFromMainThreadLater( delegate ( ushort handle )
+					{
+						NativeMethods.bgfx_destroy_index_buffer( handle );
+					}, nativeObjectHandle );
+				}
+
+				nativeObjectHandle = ushort.MaxValue;
+				nativeObjectIsDynamicBuffer = false;
+				nativeObject16Bit = false;
 			}
+
+			//if( nativeObject != null )
+			//{
+			//	EngineThreading.ExecuteFromMainThreadLater( delegate ( IDisposable obj ) { obj.Dispose(); }, nativeObject );
+			//	nativeObject = null;
+			//}
 		}
 
 		public void DestroyNativeObjectNotUsedForLongTime( double howLongHasNotBeenUsedInSeconds )
 		{
-			if( nativeObject != null )
+			if( nativeObjectHandle != ushort.MaxValue ) //if( nativeObject != null )
 			{
 				if( EngineApp.EngineTime - nativeObjectLastUsedTime > howLongHasNotBeenUsedInSeconds )
 					DestroyNativeObject();

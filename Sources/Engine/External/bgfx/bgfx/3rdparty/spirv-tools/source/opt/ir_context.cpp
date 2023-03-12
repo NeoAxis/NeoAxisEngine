@@ -30,7 +30,8 @@ static const int kSpvDecorateBuiltinInIdx = 2;
 static const int kEntryPointInterfaceInIdx = 3;
 static const int kEntryPointFunctionIdInIdx = 1;
 
-// Constants for OpenCL.DebugInfo.100 extension instructions.
+// Constants for OpenCL.DebugInfo.100 / NonSemantic.Shader.DebugInfo.100
+// extension instructions.
 static const uint32_t kDebugFunctionOperandFunctionIndex = 13;
 static const uint32_t kDebugGlobalVariableOperandVariableIndex = 11;
 
@@ -40,6 +41,8 @@ namespace spvtools {
 namespace opt {
 
 void IRContext::BuildInvalidAnalyses(IRContext::Analysis set) {
+  set = Analysis(set & ~valid_analyses_);
+
   if (set & kAnalysisDefUse) {
     BuildDefUseManager();
   }
@@ -105,7 +108,7 @@ void IRContext::InvalidateAnalyses(IRContext::Analysis analyses_to_invalidate) {
     analyses_to_invalidate |= kAnalysisDebugInfo;
   }
 
-  // The dominator analysis hold the psuedo entry and exit nodes from the CFG.
+  // The dominator analysis hold the pseudo entry and exit nodes from the CFG.
   // Also if the CFG change the dominators many changed as well, so the
   // dominator analysis should be invalidated as well.
   if (analyses_to_invalidate & kAnalysisCFG) {
@@ -170,7 +173,9 @@ Instruction* IRContext::KillInst(Instruction* inst) {
   KillOperandFromDebugInstructions(inst);
 
   if (AreAnalysesValid(kAnalysisDefUse)) {
-    get_def_use_mgr()->ClearInst(inst);
+    analysis::DefUseManager* def_use_mgr = get_def_use_mgr();
+    def_use_mgr->ClearInst(inst);
+    for (auto& l_inst : inst->dbg_line_insts()) def_use_mgr->ClearInst(&l_inst);
   }
   if (AreAnalysesValid(kAnalysisInstrToBlockMapping)) {
     instr_to_block_.erase(inst);
@@ -181,6 +186,7 @@ Instruction* IRContext::KillInst(Instruction* inst) {
     }
   }
   if (AreAnalysesValid(kAnalysisDebugInfo)) {
+    get_debug_info_mgr()->ClearDebugScopeAndInlinedAtUses(inst);
     get_debug_info_mgr()->ClearDebugInfo(inst);
   }
   if (type_mgr_ && IsTypeInst(inst->opcode())) {
@@ -213,10 +219,12 @@ Instruction* IRContext::KillInst(Instruction* inst) {
   return next_instruction;
 }
 
-void IRContext::KillNonSemanticInfo(Instruction* inst) {
+void IRContext::CollectNonSemanticTree(
+    Instruction* inst, std::unordered_set<Instruction*>* to_kill) {
   if (!inst->HasResultId()) return;
+  // Debug[No]Line result id is not used, so we are done
+  if (inst->IsDebugLineInst()) return;
   std::vector<Instruction*> work_list;
-  std::vector<Instruction*> to_kill;
   std::unordered_set<Instruction*> seen;
   work_list.push_back(inst);
 
@@ -224,16 +232,12 @@ void IRContext::KillNonSemanticInfo(Instruction* inst) {
     auto* i = work_list.back();
     work_list.pop_back();
     get_def_use_mgr()->ForEachUser(
-        i, [&work_list, &to_kill, &seen](Instruction* user) {
+        i, [&work_list, to_kill, &seen](Instruction* user) {
           if (user->IsNonSemanticInstruction() && seen.insert(user).second) {
             work_list.push_back(user);
-            to_kill.push_back(user);
+            to_kill->insert(user);
           }
         });
-  }
-
-  for (auto* dead : to_kill) {
-    KillInst(dead);
   }
 }
 
@@ -247,14 +251,19 @@ bool IRContext::KillDef(uint32_t id) {
 }
 
 bool IRContext::ReplaceAllUsesWith(uint32_t before, uint32_t after) {
-  return ReplaceAllUsesWithPredicate(
-      before, after, [](Instruction*, uint32_t) { return true; });
+  return ReplaceAllUsesWithPredicate(before, after,
+                                     [](Instruction*) { return true; });
 }
 
 bool IRContext::ReplaceAllUsesWithPredicate(
     uint32_t before, uint32_t after,
-    const std::function<bool(Instruction*, uint32_t)>& predicate) {
+    const std::function<bool(Instruction*)>& predicate) {
   if (before == after) return false;
+
+  if (AreAnalysesValid(kAnalysisDebugInfo)) {
+    get_debug_info_mgr()->ReplaceAllUsesInDebugScopeWithPredicate(before, after,
+                                                                  predicate);
+  }
 
   // Ensure that |after| has been registered as def.
   assert(get_def_use_mgr()->GetDef(after) &&
@@ -263,7 +272,7 @@ bool IRContext::ReplaceAllUsesWithPredicate(
   std::vector<std::pair<Instruction*, uint32_t>> uses_to_update;
   get_def_use_mgr()->ForEachUse(
       before, [&predicate, &uses_to_update](Instruction* user, uint32_t index) {
-        if (predicate(user, index)) {
+        if (predicate(user)) {
           uses_to_update.emplace_back(user, index);
         }
       });
@@ -301,7 +310,6 @@ bool IRContext::ReplaceAllUsesWithPredicate(
     }
     AnalyzeUses(user);
   }
-
   return true;
 }
 
@@ -311,7 +319,7 @@ bool IRContext::IsConsistent() {
 #else
   if (AreAnalysesValid(kAnalysisDefUse)) {
     analysis::DefUseManager new_def_use(module());
-    if (*get_def_use_mgr() != new_def_use) {
+    if (!CompareAndPrintDifferences(*get_def_use_mgr(), new_def_use)) {
       return false;
     }
   }
@@ -436,8 +444,7 @@ void IRContext::KillOperandFromDebugInstructions(Instruction* inst) {
   if (opcode == SpvOpVariable || IsConstantInst(opcode)) {
     for (auto it = module()->ext_inst_debuginfo_begin();
          it != module()->ext_inst_debuginfo_end(); ++it) {
-      if (it->GetOpenCL100DebugOpcode() !=
-          OpenCLDebugInfo100DebugGlobalVariable)
+      if (it->GetCommonDebugOpcode() != CommonDebugInfoDebugGlobalVariable)
         continue;
       auto& operand = it->GetOperand(kDebugGlobalVariableOperandVariableIndex);
       if (operand.words[0] == id) {
@@ -470,7 +477,7 @@ void IRContext::AddCombinatorsForCapability(uint32_t capability) {
                                SpvOpTypeSampledImage,
                                SpvOpTypeAccelerationStructureNV,
                                SpvOpTypeAccelerationStructureKHR,
-                               SpvOpTypeRayQueryProvisionalKHR,
+                               SpvOpTypeRayQueryKHR,
                                SpvOpTypeArray,
                                SpvOpTypeRuntimeArray,
                                SpvOpTypeStruct,
@@ -618,9 +625,8 @@ void IRContext::AddCombinatorsForCapability(uint32_t capability) {
 void IRContext::AddCombinatorsForExtension(Instruction* extension) {
   assert(extension->opcode() == SpvOpExtInstImport &&
          "Expecting an import of an extension's instruction set.");
-  const char* extension_name =
-      reinterpret_cast<const char*>(&extension->GetInOperand(0).words[0]);
-  if (!strcmp(extension_name, "GLSL.std.450")) {
+  const std::string extension_name = extension->GetInOperand(0).AsString();
+  if (extension_name == "GLSL.std.450") {
     combinator_ops_[extension->result_id()] = {GLSLstd450Round,
                                                GLSLstd450RoundEven,
                                                GLSLstd450Trunc,
@@ -920,6 +926,19 @@ bool IRContext::ProcessCallTreeFromRoots(ProcessFunction& pfn,
   return modified;
 }
 
+void IRContext::CollectCallTreeFromRoots(unsigned entryId,
+                                         std::unordered_set<uint32_t>* funcs) {
+  std::queue<uint32_t> roots;
+  roots.push(entryId);
+  while (!roots.empty()) {
+    const uint32_t fi = roots.front();
+    roots.pop();
+    funcs->insert(fi);
+    Function* fn = GetFunction(fi);
+    AddCalls(fn, &roots);
+  }
+}
+
 void IRContext::EmitErrorMessage(std::string message, Instruction* inst) {
   if (!consumer()) {
     return;
@@ -929,7 +948,7 @@ void IRContext::EmitErrorMessage(std::string message, Instruction* inst) {
   while (line_inst != nullptr) {  // Stop at the beginning of the basic block.
     if (!line_inst->dbg_line_insts().empty()) {
       line_inst = &line_inst->dbg_line_insts().back();
-      if (line_inst->opcode() == SpvOpNoLine) {
+      if (line_inst->IsNoLine()) {
         line_inst = nullptr;
       }
       break;
@@ -939,11 +958,11 @@ void IRContext::EmitErrorMessage(std::string message, Instruction* inst) {
 
   uint32_t line_number = 0;
   uint32_t col_number = 0;
-  char* source = nullptr;
+  std::string source;
   if (line_inst != nullptr) {
     Instruction* file_name =
         get_def_use_mgr()->GetDef(line_inst->GetSingleWordInOperand(0));
-    source = reinterpret_cast<char*>(&file_name->GetInOperand(0).words[0]);
+    source = file_name->GetInOperand(0).AsString();
 
     // Get the line number and column number.
     line_number = line_inst->GetSingleWordInOperand(1);
@@ -952,7 +971,7 @@ void IRContext::EmitErrorMessage(std::string message, Instruction* inst) {
 
   message +=
       "\n  " + inst->PrettyPrint(SPV_BINARY_TO_TEXT_OPTION_FRIENDLY_NAMES);
-  consumer()(SPV_MSG_ERROR, source, {line_number, col_number, 0},
+  consumer()(SPV_MSG_ERROR, source.c_str(), {line_number, col_number, 0},
              message.c_str());
 }
 
@@ -1032,6 +1051,12 @@ bool IRContext::CheckCFG() {
   }
 
   return true;
+}
+
+bool IRContext::IsReachable(const opt::BasicBlock& bb) {
+  auto enclosing_function = bb.GetParent();
+  return GetDominatorAnalysis(enclosing_function)
+      ->Dominates(enclosing_function->entry().get(), &bb);
 }
 }  // namespace opt
 }  // namespace spvtools

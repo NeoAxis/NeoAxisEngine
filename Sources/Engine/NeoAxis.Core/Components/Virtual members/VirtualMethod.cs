@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -15,7 +15,9 @@ namespace NeoAxis
 	/// <summary>
 	/// The component for adding a virtual method to the parent component.
 	/// </summary>
+#if !DEPLOY
 	[NewObjectSettings( typeof( NewObjectSettingsMethod ) )]
+#endif
 	public class VirtualMethod : VirtualMember
 	{
 		Metadata.Method createdMethod;
@@ -115,6 +117,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+#if !DEPLOY
 		/// <summary>
 		/// A set of settings for <see cref="VirtualMethod"/> creation in the editor.
 		/// </summary>
@@ -135,6 +138,7 @@ namespace NeoAxis
 				return base.Creation( context );
 			}
 		}
+#endif
 
 		/////////////////////////////////////////
 

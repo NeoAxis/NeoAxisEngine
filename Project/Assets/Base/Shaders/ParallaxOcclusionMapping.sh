@@ -10,9 +10,9 @@ vec2 getParallaxOcclusionMappingOffset(vec2 texCoord, vec3 eye, vec3 normal, flo
 		float displacementScale = materialDisplacementScale;//u_materialDisplacementScale;
 		vec4 customParameter1 = u_materialCustomParameters[0];
 		vec4 customParameter2 = u_materialCustomParameters[1];
-		#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(_sampler, _uv, 0, 0)
-		#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DBias(_sampler, _uv, u_mipBias)
-		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(_sampler, _uv, u_mipBias)
+		#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(makeSampler(s_linearSamplerFragment, _sampler), _uv, 0, 0)
+		#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_mipBias)
+		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_mipBias)
 		DISPLACEMENT_CODE_BODY
 		#undef CODE_BODY_TEXTURE2D_MASK_OPACITY
 		#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
@@ -139,15 +139,17 @@ vec2 getParallaxOcclusionMappingOffset(vec2 texCoord, vec3 eye, vec3 normal, flo
 		vec2 texCoord0 = texCurrentOffset;
 		float displacement = 0.0;
 		float displacementScale = 0.0;//dummy
-		#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(_sampler, _uv, 0, 0)
-		#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DGrad(_sampler, _uv, dx, dy)
-		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DGrad(_sampler, _uv, dx, dy)
+		vec4 customParameter1 = u_materialCustomParameters[0];
+		vec4 customParameter2 = u_materialCustomParameters[1];
+		#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(makeSampler(s_linearSamplerFragment, _sampler), _uv, 0, 0)
+		#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DGrad(makeSampler(s_linearSamplerFragment, _sampler), _uv, dx, dy)
+		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DGrad(makeSampler(s_linearSamplerFragment, _sampler), _uv, dx, dy)
 		DISPLACEMENT_CODE_BODY
 		#undef CODE_BODY_TEXTURE2D_MASK_OPACITY
 		#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
 		#undef CODE_BODY_TEXTURE2D
 		float currHeight = displacement;
-
+		
 		currentBound -= stepSize;
 
 		if ( currHeight > currentBound ) 
@@ -171,6 +173,7 @@ vec2 getParallaxOcclusionMappingOffset(vec2 texCoord, vec3 eye, vec3 normal, flo
 		parallaxAmount = (pt1.x * delta2 - pt2.x * delta1 ) / denominator;
 
 	vec2 parallaxOffset = parallaxOffsetTS * ( 1.0 - parallaxAmount );
+	
 	return parallaxOffset;
 		
 	//}

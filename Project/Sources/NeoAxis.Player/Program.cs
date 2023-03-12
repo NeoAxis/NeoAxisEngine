@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -42,13 +42,21 @@ namespace NeoAxis.Player
 			//set application type
 			EngineApp.ApplicationType = EngineApp.ApplicationTypeEnum.Simulation;
 
+			var isServer = SystemSettings.CommandLineParameters.TryGetValue( "-server", out var projectServer ) && projectServer == "1";
+
 			//initialize file system of the engine
+			var logFileName = "user:Logs/Player.log";
+			if( isServer )
+				logFileName = "user:Logs/Server.log";
+
 			ProjectUtility.GetDefaultProjectPaths( out string projectDirectory, out string userSettingsDirectory );
-			if( !VirtualFileSystem.Init( "user:Logs/Player.log", true, projectDirectory, userSettingsDirectory ) )
+			if( !VirtualFileSystem.Init( logFileName, true, projectDirectory, userSettingsDirectory ) )
 				return;
 
 			//configure general settings
 			EngineApp.InitSettings.ConfigVirtualFileName = "user:Configs/Player.config";
+			if( isServer )
+				EngineApp.InitSettings.ConfigVirtualFileName = "user:Configs/Server.config";
 
 			EngineApp.InitSettings.AllowChangeScreenVideoMode = true;
 

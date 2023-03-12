@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,7 +9,9 @@ namespace NeoAxis
 	/// <summary>
 	/// Base class of simple rendering effects.
 	/// </summary>
+#if !DEPLOY
 	[SettingsCell( typeof( RenderingEffect_Simple_SettingsCell ) )]
+#endif
 	public class RenderingEffect_Simple : RenderingEffect
 	{
 		//const bool shaderGenerationCompile = true;
@@ -220,7 +222,7 @@ namespace NeoAxis
 			return text;
 		}
 
-		protected virtual void OnSetShaderParameters( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ImageComponent actualTexture, CanvasRenderer.ShaderItem shader )
+		protected virtual void OnSetShaderParameters( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ImageComponent actualTexture, CanvasRenderer.ShaderItem shader )
 		{
 		}
 
@@ -228,7 +230,7 @@ namespace NeoAxis
 			CanvasRenderer.ShaderItem shader );
 		public event SetShaderParametersEventDelegate SetShaderParametersEvent;
 
-		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
+		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture )
 		{
 			base.OnRender( context, frameData, ref actualTexture );
 

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2020 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
+ * Copyright 2010-2022 Branimir Karadzic. All rights reserved.
+ * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
 #ifndef BX_ALLOCATOR_H_HEADER_GUARD
@@ -47,13 +47,20 @@ namespace bx
 		///
 		virtual ~AllocatorI() = 0;
 
-		/// Allocates, resizes memory block, or frees memory.
+		/// Allocates, resizes, or frees memory block.
 		///
-		/// @param[in] _ptr If _ptr is NULL new block will be allocated.
+		/// @remark
+		///  - Allocate memory block: _ptr == NULL && size > 0
+		///  -   Resize memory block: _ptr != NULL && size > 0
+		///  -     Free memory block: _ptr != NULL && size == 0
+		///
+		/// @param[in] _ptr If _ptr is NULL new block will be allocated. If _ptr is not-NULL, and
+		///   _size is not 0, memory block will be resized.
 		/// @param[in] _size If _ptr is set, and _size is 0, memory will be freed.
 		/// @param[in] _align Alignment.
 		/// @param[in] _file Debug file path info.
 		/// @param[in] _line Debug file line info.
+		///
 		virtual void* realloc(
 			  void* _ptr
 			, size_t _size

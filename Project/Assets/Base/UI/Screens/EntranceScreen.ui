@@ -1,0 +1,124 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component Project.EntranceScreen
+{
+	Size = Parent 1 1
+	EditorScrollPosition = 0 0
+	Style
+	{
+		GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+	}
+	.component NeoAxis.UIControl
+	{
+		Name = Window
+		Size = Units 1200 700
+		HorizontalAlignment = Center
+		VerticalAlignment = Center
+		Margin = Units 0 0 0 0
+		BackgroundColor = 0 0 0 0.7
+		EditorScrollPosition = 0 0
+		.component NeoAxis.UIText
+		{
+			Name = Text Welcome
+			Text = "Welcome to {name}!"
+			Size = Units 640 50
+			HorizontalAlignment = Center
+			Margin = Units -0 70 0 0
+			EditorScrollPosition = 0 0
+			FontSize = Screen 0.04
+		}
+		.component NeoAxis.UIText
+		{
+			Name = Text Description
+			Text = "Description description  description  description  description  description  description  description  description  description  description  description  description  description  description  description  description  description  description  description  description  description  description  description  "
+			Size = Units 960 310
+			HorizontalAlignment = Center
+			Margin = Units 0 150 0 0
+			EditorScrollPosition = 0 0
+			WordWrap = True
+		}
+		.component NeoAxis.UIText
+		{
+			Name = Text Status
+			Text = Status status status status status status
+			Size = Units 960 30
+			HorizontalAlignment = Center
+			Margin = Units 0 490 10 0
+			EditorScrollPosition = 0 0
+		}
+		.component NeoAxis.UIButton
+		{
+			Enabled = False
+			Name = Button Avatar
+			Text = Customize Avatar
+			Size = Units 200 40
+			HorizontalAlignment = Center
+			Margin = Units 0 550 0 0
+			EditorScrollPosition = 0 0
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler Click
+				Event
+				{
+					GetByReference = "this:..\\event:Click"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\..\\..\\method:ButtonAvatar_Click(NeoAxis.UIButton)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Enter
+			Text = Enter
+			Size = Units 200 40
+			HorizontalAlignment = Center
+			Margin = Units 0 600 0 0
+			EditorScrollPosition = 0 0
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler Click
+				Event
+				{
+					GetByReference = "this:..\\event:Click"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\..\\..\\method:ButtonEnter_Click(NeoAxis.UIButton)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Exit
+			Text = Exit
+			Size = Units 150 40
+			HorizontalAlignment = Right
+			VerticalAlignment = Bottom
+			Margin = Units 480 640 20 20
+			EditorScrollPosition = 0 0
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler Click
+				Event
+				{
+					GetByReference = "this:..\\event:Click"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\..\\..\\method:ButtonExit_Click(NeoAxis.UIButton)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+	}
+}

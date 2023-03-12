@@ -1,6 +1,7 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -12,7 +13,7 @@ namespace NeoAxis
 	public class ArrayDataWriter
 	{
 		byte[] data;// = new byte[ 32 ];
-		int currentLength;
+		int length;
 		//int bitLength;
 
 		//
@@ -24,7 +25,7 @@ namespace NeoAxis
 
 		public void Reset()
 		{
-			currentLength = 0;
+			length = 0;
 			//bitLength = 0;
 		}
 
@@ -33,9 +34,9 @@ namespace NeoAxis
 			get { return data; }
 		}
 
-		public int CurrentLength
+		public int Length
 		{
-			get { return currentLength; }
+			get { return length; }
 		}
 
 		//public int BitLength
@@ -48,6 +49,7 @@ namespace NeoAxis
 		//	return ( bitLength >> 3 ) + ( ( bitLength & 7 ) > 0 ? 1 : 0 );
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void ExpandBuffer( int demandLength )
 		{
 			if( data.Length < demandLength )
@@ -72,14 +74,15 @@ namespace NeoAxis
 		//	}
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe void Write( void* source, int length )
 		{
-			int newLength = currentLength + length;
+			int newLength = this.length + length;
 			ExpandBuffer( newLength );
 
 			fixed( byte* pData = data )
 			{
-				byte* p = pData + currentLength;
+				byte* p = pData + this.length;
 
 				if( length == 8 )
 					*(ulong*)p = *(ulong*)source;
@@ -91,7 +94,7 @@ namespace NeoAxis
 
 			//Marshal.Copy( (IntPtr)source, data, byteLength, dataByteLength );
 
-			currentLength = newLength;
+			this.length = newLength;
 		}
 
 		//public void Write( byte[] source, int byteOffset, int byteLength )
@@ -102,22 +105,35 @@ namespace NeoAxis
 		//	bitLength = newLength;
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( byte[] source )
 		{
-			int newLength = currentLength + source.Length;
+			int newLength = length + source.Length;
 			ExpandBuffer( newLength );
-			Array.Copy( source, 0, data, currentLength, source.Length );
-			currentLength = newLength;
+			Array.Copy( source, 0, data, length, source.Length );
+			length = newLength;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( byte[] source, int offset, int length )
 		{
-			int newLength = currentLength + length;
+			int newLength = this.length + length;
 			ExpandBuffer( newLength );
-			Array.Copy( source, offset, data, currentLength, length );
-			currentLength = newLength;
+			Array.Copy( source, offset, data, this.length, length );
+			this.length = newLength;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void Write<T>( T[] source ) where T : unmanaged
+		{
+			unsafe
+			{
+				fixed( T* pSource = source )
+					Write( pSource, source.Length * sizeof( T ) );
+			}
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( bool source )
 		{
 			Write( source ? (byte)1 : (byte)0 );
@@ -134,12 +150,13 @@ namespace NeoAxis
 			//bitLength = newLength;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( byte source )
 		{
-			int newLength = currentLength + 1;
+			int newLength = length + 1;
 			ExpandBuffer( newLength );
-			data[ currentLength ] = source;
-			currentLength = newLength;
+			data[ length ] = source;
+			length = newLength;
 
 			//unsafe
 			//{
@@ -170,6 +187,7 @@ namespace NeoAxis
 
 		//public void Write( sbyte source, int numberOfBits )
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ushort source )
 		{
 			unsafe
@@ -190,6 +208,7 @@ namespace NeoAxis
 		//	bitLength = newLength;
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( short source )
 		{
 			unsafe
@@ -204,6 +223,7 @@ namespace NeoAxis
 
 		//public void Write( short source, int numberOfBits )
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( int source )
 		{
 			unsafe
@@ -250,6 +270,7 @@ namespace NeoAxis
 		//	bitLength = newLength;
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( uint source )
 		{
 			unsafe
@@ -286,6 +307,7 @@ namespace NeoAxis
 		//	bitLength = newLength;
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( long source )
 		{
 			unsafe
@@ -310,6 +332,7 @@ namespace NeoAxis
 		//	bitLength = newLength;
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ulong source )
 		{
 			unsafe
@@ -331,6 +354,7 @@ namespace NeoAxis
 		//	bitLength = newLength;
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( float source )
 		{
 			unsafe
@@ -345,6 +369,7 @@ namespace NeoAxis
 			//}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( double source )
 		{
 			unsafe
@@ -361,30 +386,35 @@ namespace NeoAxis
 
 		//!!!!их тоже можно через поинтер все элементы сразу
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ref Vector2F source )
 		{
 			Write( source.X );
 			Write( source.Y );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( Vector2F source )
 		{
 			Write( source.X );
 			Write( source.Y );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ref RangeF source )
 		{
 			Write( source.Minimum );
 			Write( source.Maximum );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( RangeF source )
 		{
 			Write( source.Minimum );
 			Write( source.Maximum );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ref Vector3F source )
 		{
 			Write( source.X );
@@ -392,6 +422,7 @@ namespace NeoAxis
 			Write( source.Z );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( Vector3F source )
 		{
 			Write( source.X );
@@ -399,6 +430,7 @@ namespace NeoAxis
 			Write( source.Z );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ref Vector4F source )
 		{
 			Write( source.X );
@@ -407,6 +439,7 @@ namespace NeoAxis
 			Write( source.W );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( Vector4F source )
 		{
 			Write( source.X );
@@ -415,6 +448,7 @@ namespace NeoAxis
 			Write( source.W );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ref BoundsF source )
 		{
 			Write( source.Minimum.X );
@@ -425,6 +459,7 @@ namespace NeoAxis
 			Write( source.Maximum.Z );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( BoundsF source )
 		{
 			Write( source.Minimum.X );
@@ -435,6 +470,7 @@ namespace NeoAxis
 			Write( source.Maximum.Z );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ref QuaternionF source )
 		{
 			Write( source.X );
@@ -443,6 +479,7 @@ namespace NeoAxis
 			Write( source.W );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( QuaternionF source )
 		{
 			Write( source.X );
@@ -467,6 +504,7 @@ namespace NeoAxis
 		//	WriteRangedSingle( w, -1, 1, bitsPerElement );
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ref ColorValue source )
 		{
 			Write( source.Red );
@@ -475,6 +513,7 @@ namespace NeoAxis
 			Write( source.Alpha );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ColorValue source )
 		{
 			Write( source.Red );
@@ -483,30 +522,35 @@ namespace NeoAxis
 			Write( source.Alpha );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ref SphericalDirectionF source )
 		{
 			Write( source.Horizontal );
 			Write( source.Vertical );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( SphericalDirectionF source )
 		{
 			Write( source.Horizontal );
 			Write( source.Vertical );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ref Vector2I source )
 		{
 			Write( source.X );
 			Write( source.Y );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( Vector2I source )
 		{
 			Write( source.X );
 			Write( source.Y );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ref Vector3I source )
 		{
 			Write( source.X );
@@ -514,6 +558,7 @@ namespace NeoAxis
 			Write( source.Z );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( Vector3I source )
 		{
 			Write( source.X );
@@ -521,6 +566,7 @@ namespace NeoAxis
 			Write( source.Z );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ref Vector4I source )
 		{
 			Write( source.X );
@@ -529,6 +575,7 @@ namespace NeoAxis
 			Write( source.W );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( Vector4I source )
 		{
 			Write( source.X );
@@ -537,6 +584,7 @@ namespace NeoAxis
 			Write( source.W );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ref RectangleF source )
 		{
 			Write( source.Left );
@@ -545,6 +593,7 @@ namespace NeoAxis
 			Write( source.Bottom );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( RectangleF source )
 		{
 			Write( source.Left );
@@ -553,6 +602,7 @@ namespace NeoAxis
 			Write( source.Bottom );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ref RectangleI source )
 		{
 			Write( source.Left );
@@ -561,6 +611,7 @@ namespace NeoAxis
 			Write( source.Bottom );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( RectangleI source )
 		{
 			Write( source.Left );
@@ -569,23 +620,42 @@ namespace NeoAxis
 			Write( source.Bottom );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( DegreeF source )
 		{
 			Write( (float)source );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( RadianF source )
 		{
 			Write( (float)source );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public void Write( string source )
 		{
 			if( !string.IsNullOrEmpty( source ) )
 			{
-				var bytes = Encoding.UTF8.GetBytes( source );
-				WriteVariableUInt32( (uint)bytes.Length );
-				Write( bytes );
+				if( source.Length < 255 )
+				{
+					unsafe
+					{
+						fixed( char* chars = source )
+						{
+							var bytes = stackalloc byte[ 1024 ];
+							var bytesLength = Encoding.UTF8.GetBytes( chars, source.Length, bytes, 1024 );
+							WriteVariableUInt32( (uint)bytesLength );
+							Write( bytes, bytesLength );
+						}
+					}
+				}
+				else
+				{
+					var bytes = Encoding.UTF8.GetBytes( source );
+					WriteVariableUInt32( (uint)bytes.Length );
+					Write( bytes );
+				}
 			}
 			else
 				WriteVariableUInt32( 0 );
@@ -613,6 +683,7 @@ namespace NeoAxis
 		/// Write Base128 encoded variable sized signed integer
 		/// </summary>
 		/// <returns>number of bytes written</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int WriteVariableInt32( int source )
 		{
 			int retval = 1;
@@ -631,6 +702,7 @@ namespace NeoAxis
 		/// Write ulong encoded variable sized unsigned integer.
 		/// </summary>
 		/// <returns>number of bytes written</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int WriteVariableUInt64( ulong source )
 		{
 			int retval = 1;
@@ -738,30 +810,35 @@ namespace NeoAxis
 		//	ExpandBuffer( bitLength );
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ref Vector2 source )
 		{
 			Write( source.X );
 			Write( source.Y );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( Vector2 source )
 		{
 			Write( source.X );
 			Write( source.Y );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ref Range source )
 		{
 			Write( source.Minimum );
 			Write( source.Maximum );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( Range source )
 		{
 			Write( source.Minimum );
 			Write( source.Maximum );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ref Vector3 source )
 		{
 			Write( source.X );
@@ -769,6 +846,7 @@ namespace NeoAxis
 			Write( source.Z );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( Vector3 source )
 		{
 			Write( source.X );
@@ -776,6 +854,7 @@ namespace NeoAxis
 			Write( source.Z );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ref Vector4 source )
 		{
 			Write( source.X );
@@ -784,6 +863,7 @@ namespace NeoAxis
 			Write( source.W );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( Vector4 source )
 		{
 			Write( source.X );
@@ -792,6 +872,7 @@ namespace NeoAxis
 			Write( source.W );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ref Bounds source )
 		{
 			Write( source.Minimum.X );
@@ -801,6 +882,7 @@ namespace NeoAxis
 			Write( source.Maximum.Y );
 			Write( source.Maximum.Z );
 		}
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( Bounds source )
 		{
 			Write( source.Minimum.X );
@@ -811,6 +893,7 @@ namespace NeoAxis
 			Write( source.Maximum.Z );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ref Quaternion source )
 		{
 			Write( source.X );
@@ -818,6 +901,7 @@ namespace NeoAxis
 			Write( source.Z );
 			Write( source.W );
 		}
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( Quaternion source )
 		{
 			Write( source.X );
@@ -826,18 +910,21 @@ namespace NeoAxis
 			Write( source.W );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ref SphericalDirection source )
 		{
 			Write( source.Horizontal );
 			Write( source.Vertical );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( SphericalDirection source )
 		{
 			Write( source.Horizontal );
 			Write( source.Vertical );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ref Rectangle source )
 		{
 			Write( source.Left );
@@ -846,6 +933,7 @@ namespace NeoAxis
 			Write( source.Bottom );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( Rectangle source )
 		{
 			Write( source.Left );
@@ -854,19 +942,76 @@ namespace NeoAxis
 			Write( source.Bottom );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( Degree source )
 		{
 			Write( (double)source );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( Radian source )
 		{
 			Write( (double)source );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( DateTime source )
 		{
 			Write( source.Ticks );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public byte[] ToArray()
+		{
+			var result = new byte[ Length ];
+			Array.Copy( data, 0, result, 0, Length );
+			return result;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void Write( HalfType source )
+		{
+			unsafe
+			{
+				Write( &source, sizeof( HalfType ) );
+			}
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void Write( Vector2H source )
+		{
+			unsafe
+			{
+				Write( &source, sizeof( Vector2H ) );
+			}
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void Write( Vector3H source )
+		{
+			unsafe
+			{
+				Write( &source, sizeof( Vector3H ) );
+			}
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void Write( Vector4H source )
+		{
+			unsafe
+			{
+				Write( &source, sizeof( Vector4H ) );
+			}
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void Write<T>( ref T source ) where T : unmanaged
+		{
+			unsafe
+			{
+				fixed( T* pSource = &source )
+					Write( pSource, sizeof( T ) );
+			}
 		}
 
 		//!!!!more types

@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -31,7 +31,8 @@ namespace NeoAxis
 		ImageComponent.TypeEnum textureType = ImageComponent.TypeEnum._2D;
 		Vector2I sourceSize;
 		Vector2I resultSize;
-		int depth;
+		int sourceDepth;
+		int resultDepth;
 		PixelFormat sourceFormat = PixelFormat.Unknown;
 		PixelFormat resultFormat = PixelFormat.Unknown;
 		bool mipmaps = true;
@@ -206,7 +207,8 @@ namespace NeoAxis
 			this.textureType = type;
 			sourceSize = size;
 			resultSize = size;
-			this.depth = depth;
+			sourceDepth = depth;
+			resultDepth = depth;
 			sourceFormat = format;
 			resultFormat = format;
 			this.mipmaps = mipmaps;
@@ -264,6 +266,7 @@ namespace NeoAxis
 			if( ( usage & Usages.ReadBack ) != 0 )
 				flags |= TextureFlags.ReadBack;
 
+
 			//!!!!
 			//MSAASample
 			//RenderTargetWriteOnly
@@ -292,7 +295,7 @@ namespace NeoAxis
 				break;
 
 			case ImageComponent.TypeEnum._3D:
-				nativeObject = Texture.Create3D( resultSize.X, resultSize.Y, depth, mipmaps, realFormat, flags );
+				nativeObject = Texture.Create3D( resultSize.X, resultSize.Y, sourceDepth, mipmaps, realFormat, flags );
 				nativeObjectLastUsedTime = EngineApp.EngineTime;
 				break;
 
@@ -374,7 +377,7 @@ namespace NeoAxis
 			return result;
 		}
 
-		static TextureFormat ConvertFormat( PixelFormat format )
+		internal static TextureFormat ConvertFormat( PixelFormat format )
 		{
 			//!!!!все форматы
 
@@ -385,6 +388,9 @@ namespace NeoAxis
 			case PixelFormat.L16: return TextureFormat.R16;
 			case PixelFormat.A8: return TextureFormat.A8;
 			case PixelFormat.R8G8_UInt: return TextureFormat.RG8;
+			case PixelFormat.R32_UInt: return TextureFormat.R32U;
+			case PixelFormat.R32G32_UInt: return TextureFormat.RG32U;
+			case PixelFormat.R32G32B32A32_UInt: return TextureFormat.RGBA32U;
 
 			//case PixelFormat.R5G6B5: return TextureFormat.R5G6B5;
 			//case PixelFormat.R8G8B8: return TextureFormat.RGB8;
@@ -409,7 +415,6 @@ namespace NeoAxis
 			case PixelFormat.Float32GR: return TextureFormat.RG32F;
 			case PixelFormat.Float32RGBA: return TextureFormat.RGBA32F;
 
-			//!!!!new
 			case PixelFormat.ShortRGBA: return TextureFormat.RGBA16U;
 
 			case PixelFormat.Depth24S8: return TextureFormat.D24S8;
@@ -419,7 +424,7 @@ namespace NeoAxis
 			return TextureFormat.Unknown;
 		}
 
-		static PixelFormat ConvertFormat( TextureFormat format )
+		internal static PixelFormat ConvertFormat( TextureFormat format )
 		{
 			switch( format )
 			{
@@ -429,6 +434,9 @@ namespace NeoAxis
 			case TextureFormat.R16: return PixelFormat.L16;
 			case TextureFormat.A8: return PixelFormat.A8;
 			case TextureFormat.RG8: return PixelFormat.R8G8_UInt;
+			case TextureFormat.R32U: return PixelFormat.R32_UInt;
+			case TextureFormat.RG32U: return PixelFormat.R32G32_UInt;
+			case TextureFormat.RGBA32U: return PixelFormat.R32G32B32A32_UInt;
 
 			//case PixelFormat.R5G6B5: return TextureFormat.R5G6B5;
 
@@ -455,11 +463,9 @@ namespace NeoAxis
 			case TextureFormat.RG16F: return PixelFormat.Float16GR;
 			case TextureFormat.RG32F: return PixelFormat.Float32GR;
 
-			case TextureFormat.D24S8: return PixelFormat.Depth24S8;
-
-			//!!!!new
 			case TextureFormat.RGBA16U: return PixelFormat.ShortRGBA;
 
+			case TextureFormat.D24S8: return PixelFormat.Depth24S8;
 			}
 
 			Log.Fatal( "GpuTexture: ConvertFormat (from TextureFormat to PixelFormat): " + format.ToString() + "." );
@@ -510,12 +516,14 @@ namespace NeoAxis
 			if( directoryName != "" && !Directory.Exists( directoryName ) )
 				Directory.CreateDirectory( directoryName );
 
+#if !DEPLOY
 			ScreenNotifications.StickyNotificationItem notification = null;
-			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+			if( EngineApp.IsEditor )
 			{
 				var text = string.Format( EditorLocalization.Translate( "Texture", "Compressing \'{0}\'..." ), Path.GetFileName( loadFileNames[ 0 ] ) );
 				notification = Editor.ScreenNotifications.ShowSticky( text );
 			}
+#endif
 
 			try
 			{
@@ -535,7 +543,9 @@ namespace NeoAxis
 			}
 			finally
 			{
+#if !DEPLOY
 				notification?.Close();
+#endif
 			}
 
 			error = "";
@@ -575,7 +585,7 @@ namespace NeoAxis
 
 			UpdateTextureTypeFromNativeObject();
 			resultSize = new Vector2I( nativeObject.Width, nativeObject.Height );
-			depth = nativeObject.Depth;
+			resultDepth = nativeObject.Depth;
 			resultFormat = ConvertFormat( nativeObject.Format );
 			mipmaps = nativeObject.MipLevels > 1;
 			usage = Usages.Static;
@@ -782,8 +792,8 @@ namespace NeoAxis
 					//!!!!по сути для .Windows тоже если задеплоен и read only. хотя может быть не read only.
 					//!!!!!опцией продукта?
 
-					//!!!!Android readonly?
-					bool readOnly = SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP || SystemSettings.CurrentPlatform == SystemSettings.Platform.Android || SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS;
+					//!!!!Android, iOS, Web readonly?
+					bool readOnly = SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP || SystemSettings.CurrentPlatform == SystemSettings.Platform.Android || SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS || SystemSettings.CurrentPlatform == SystemSettings.Platform.Web;
 					if( readOnly )
 						forceNoCompression = true;
 				}
@@ -976,7 +986,7 @@ namespace NeoAxis
 					//get properties
 					UpdateTextureTypeFromNativeObject();
 					//resultSize = sourceSize;
-					depth = nativeObject.Depth;
+					sourceDepth = nativeObject.Depth;
 					//resultFormat = sourceFormat;
 					mipmaps = nativeObject.MipLevels > 1;
 					usage = Usages.Static;
@@ -1059,6 +1069,20 @@ namespace NeoAxis
 			get { return resultSize; }
 		}
 
+		/// <summary>Gets the source depth of the texture.</summary>
+		[Description( "The source depth of the texture." )]
+		public int SourceDepth
+		{
+			get { return sourceDepth; }
+		}
+
+		/// <summary>Gets the result depth of the texture.</summary>
+		[Description( "The result depth of the texture." )]
+		public int ResultDepth
+		{
+			get { return resultDepth; }
+		}
+
 		/// <summary>Gets the source pixel format for the texture surface.</summary>
 		[Description( "The source format of the texture." )]
 		public PixelFormat SourceFormat
@@ -1100,7 +1124,7 @@ namespace NeoAxis
 
 		public int Depth
 		{
-			get { return depth; }
+			get { return sourceDepth; }
 		}
 
 		public int ArrayLayers
@@ -1250,6 +1274,10 @@ namespace NeoAxis
 									//!!!!
 									int pitch = ushort.MaxValue;
 
+
+									//!!!!var size =  как в _3D
+
+
 									var memory = MemoryBlock.FromArray( item.Data );
 									//var memory = RendererMemoryUtility.AllocateAutoReleaseMemoryBlock( item.Data );
 									nativeObject.Update2D( item.ArrayLayer, item.MipLevel, 0, 0, ResultSize.X, ResultSize.Y, memory, pitch );
@@ -1263,9 +1291,25 @@ namespace NeoAxis
 									//!!!!
 									int pitch = ushort.MaxValue;
 
+
+									//!!!!var size =  как в _3D
+
+
 									var memory = MemoryBlock.FromArray( item.Data );
 									//var memory = RendererMemoryUtility.AllocateAutoReleaseMemoryBlock( item.Data );
 									nativeObject.UpdateCube( (CubeMapFace)item.Face, item.ArrayLayer, item.MipLevel, 0, 0, ResultSize.X, ResultSize.Y, memory, pitch );
+								}
+								break;
+
+							case ImageComponent.TypeEnum._3D:
+								{
+									var memory = MemoryBlock.FromArray( item.Data );
+
+									var size = new Vector3I( ResultSize, ResultDepth );
+									for( int n = 0; n < item.MipLevel; n++ )
+										size /= 2;
+
+									nativeObject.Update3D( item.MipLevel, 0, 0, 0, size.X, size.Y, size.Z, memory );
 								}
 								break;
 

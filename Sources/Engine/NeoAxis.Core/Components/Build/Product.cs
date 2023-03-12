@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -38,7 +38,9 @@ namespace NeoAxis
 		/// </summary>
 		[DefaultValue( pathsDefault )]
 		[Category( "Files" )]
+#if !DEPLOY
 		[Editor( typeof( HCItemTextBoxDropMultiline ), typeof( object ) )]
+#endif
 		public Reference<string> Paths
 		{
 			get { if( _paths.BeginGet() ) Paths = _paths.Get( this ); return _paths.value; }
@@ -269,7 +271,9 @@ namespace NeoAxis
 
 		public void ShowSuccessScreenNotification()
 		{
+#if !DEPLOY
 			ScreenNotifications.Show( EditorLocalization.Translate( "Backstage", "The product was built successfully." ) );
+#endif
 		}
 
 		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
@@ -367,5 +371,27 @@ namespace NeoAxis
 		{
 			get { return true; }
 		}
+
+		public delegate void PostBuildDelegate( Product sender, ProductBuildInstance buildInstance );
+		public event PostBuildDelegate PostBuild;
+
+		protected bool PeformPostBuild( ProductBuildInstance buildInstance )
+		{
+			try
+			{
+				PostBuild?.Invoke( this, buildInstance );
+				if( buildInstance.State == ProductBuildInstance.StateEnum.Error )
+					return false;
+			}
+			catch( Exception e )
+			{
+				buildInstance.Error = e.Message;
+				buildInstance.State = ProductBuildInstance.StateEnum.Error;
+				return false;
+			}
+
+			return true;
+		}
+
 	}
 }

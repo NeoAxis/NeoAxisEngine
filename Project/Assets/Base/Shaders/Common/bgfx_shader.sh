@@ -203,6 +203,20 @@ vec4 bgfxTexture2DProj(BgfxSampler2D _sampler, vec4 _coord)
 	return _sampler.m_texture.Sample(_sampler.m_sampler, coord);
 }
 
+//!!!!betauser
+vec4 bgfxTexture2DProjLod(BgfxSampler2D _sampler, vec3 _coord, float _level)
+{
+	vec2 coord = _coord.xy * rcp(_coord.z);
+	return _sampler.m_texture.SampleLevel(_sampler.m_sampler, coord, _level);
+}
+
+//!!!!betauser
+vec4 bgfxTexture2DProjLod(BgfxSampler2D _sampler, vec4 _coord, float _level)
+{
+	vec2 coord = _coord.xy * rcp(_coord.w);
+	return _sampler.m_texture.SampleLevel(_sampler.m_sampler, coord, _level);
+}
+
 vec4 bgfxTexture2DGrad(BgfxSampler2D _sampler, vec2 _coord, vec2 _dPdx, vec2 _dPdy)
 {
 	return _sampler.m_texture.SampleGrad(_sampler.m_sampler, _coord, _dPdx, _dPdy);
@@ -261,6 +275,14 @@ uvec4 bgfxTexture3D(BgfxUSampler3D _sampler, vec3 _coord)
 	uvec3 size;
 	_sampler.m_texture.GetDimensions(size.x, size.y, size.z);
 	return _sampler.m_texture.Load(ivec4(_coord * size, 0) );
+}
+
+//!!!!betauser
+uvec4 bgfxTexture3DLod(BgfxUSampler3D _sampler, vec3 _coord, int _level)
+{
+	uvec3 size;
+	_sampler.m_texture.GetDimensions(size.x, size.y, size.z);
+	return _sampler.m_texture.Load(ivec4(_coord * size, _level) );
 }
 
 vec4 bgfxTextureCube(BgfxSamplerCube _sampler, vec3 _coord)
@@ -356,6 +378,12 @@ vec4 bgfxTexelFetch(BgfxSampler3D _sampler, ivec3 _coord, int _lod)
 	return _sampler.m_texture.Load(ivec4(_coord, _lod) );
 }
 
+//!!!!betauser
+uvec4 bgfxTexelFetch(BgfxUSampler3D _sampler, ivec3 _coord, int _lod)
+{
+	return _sampler.m_texture.Load(ivec4(_coord, _lod) );
+}
+
 vec3 bgfxTextureSize(BgfxSampler3D _sampler, int _lod)
 {
 	////!!!!betauser
@@ -387,6 +415,11 @@ vec3 bgfxTextureSize(BgfxSamplerCube _sampler, int _lod)
 			uniform SamplerState _name ## Sampler : REGISTER(s, _reg); \
 			uniform Texture2D _name ## Texture : REGISTER(t, _reg); \
 			static BgfxSampler2D _name = { _name ## Sampler, _name ## Texture }
+
+//!!!!betauser
+#		define SAMPLER2D_TEXTUREONLY(_name, _reg) \
+			uniform Texture2D _name : REGISTER(t, _reg);
+			
 #		define ISAMPLER2D(_name, _reg) \
 			uniform Texture2D<ivec4> _name ## Texture : REGISTER(t, _reg); \
 			static BgfxISampler2D _name = { _name ## Texture }
@@ -399,6 +432,10 @@ vec3 bgfxTextureSize(BgfxSamplerCube _sampler, int _lod)
 #		define texture2DLod(_sampler, _coord, _level) bgfxTexture2DLod(_sampler, _coord, _level)
 #		define texture2DLodOffset(_sampler, _coord, _level, _offset) bgfxTexture2DLodOffset(_sampler, _coord, _level, _offset)
 #		define texture2DProj(_sampler, _coord) bgfxTexture2DProj(_sampler, _coord)
+
+//!!!!betauser
+#		define texture2DProjLod(_sampler, _coord, _level) bgfxTexture2DProjLod(_sampler, _coord, _level)
+
 #		define texture2DGrad(_sampler, _coord, _dPdx, _dPdy) bgfxTexture2DGrad(_sampler, _coord, _dPdx, _dPdy)
 
 #		define SAMPLER2DARRAY(_name, _reg) \
@@ -792,6 +829,22 @@ mat3 mtxFromRows(float _00, float _01, float _02, float _10, float _11, float _1
 
 #define float3x3 mat3
 #define float4x4 mat4
+
+
+//!!!!betauser
+#ifdef HLSL
+BgfxSampler2D makeSampler( BgfxSampler2D _sampler, Texture2D _texture )
+{
+	BgfxSampler2D result;
+	result.m_sampler = _sampler.m_sampler;
+	result.m_texture = _texture;
+	return result;
+}
+#else	
+	#define makeSampler( _sampler, _texture ) _texture
+#endif
+//#define makeSampler( _sampler, _texture) {_sampler.m_sampler, _texture}
+
 
 
 #endif // __cplusplus

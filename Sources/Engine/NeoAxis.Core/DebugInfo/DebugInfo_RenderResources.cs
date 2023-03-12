@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -76,7 +76,7 @@ namespace Internal//NeoAxis
 				{
 					if( buffer.Vertices != null )
 						vertexBuffersSizeManaged += buffer.Vertices.Length;
-					if( buffer.NativeObject != null )
+					if( buffer.NativeObjectCreated )
 						vertexBuffersSizeGPU += buffer.VertexSize * buffer.VertexCount;
 				}
 
@@ -90,7 +90,7 @@ namespace Internal//NeoAxis
 				{
 					if( buffer.Indices != null )
 						indexBuffersSizeManaged += buffer.Indices.Length * 4;
-					if( buffer.NativeObject != null )
+					if( buffer.NativeObjectCreated )
 						indexBuffersSizeGPU += buffer.IndexCount * ( buffer.NativeObject16Bit ? 2 : 4 );
 				}
 
@@ -101,17 +101,17 @@ namespace Internal//NeoAxis
 				lines.Add( Translate( "GPU programs" ) + ": " + GpuProgramManager.ProgramCount.ToString( "N0", nfi ) );
 				lines.Add( Translate( "GPU linked programs" ) + ": " + GpuProgramManager.LinkedProgramCount.ToString( "N0", nfi ) );
 
-				int materials = 0;
-				int materialsEnabled = 0;
-				foreach( var material in Material.GetAll() )
-				{
-					materials++;
-					if( material.EnabledInHierarchy )
-						materialsEnabled++;
-				}
+				//int materials = 0;
+				//int materialsEnabled = 0;
+				//foreach( var material in Material.GetAll() )
+				//{
+				//	materials++;
+				//	if( material.EnabledInHierarchy )
+				//		materialsEnabled++;
+				//}
 
-				lines.Add( Translate( "Materials" ) + ": " + materials.ToString( "N0", nfi ) );
-				lines.Add( Translate( "Materials enabled" ) + ": " + materialsEnabled.ToString( "N0", nfi ) );
+				//lines.Add( Translate( "Materials" ) + ": " + materials.ToString( "N0", nfi ) );
+				//lines.Add( Translate( "Materials enabled" ) + ": " + materialsEnabled.ToString( "N0", nfi ) );
 
 				int meshes = 0;
 				int meshesEnabled = 0;
@@ -151,14 +151,14 @@ namespace Internal//NeoAxis
 									{
 										foreach( var buffer in oper.VertexBuffers )
 										{
-											if( buffer.NativeObject != null )
+											if( buffer.NativeObjectCreated )
 												meshesSizeGPUBuffers += buffer.VertexSize * buffer.VertexCount;
 										}
 									}
 
 									{
 										var buffer = oper.IndexBuffer;
-										if( buffer != null && buffer.NativeObject != null )
+										if( buffer != null && buffer.NativeObjectCreated )
 											meshesSizeGPUBuffers += buffer.IndexCount * ( buffer.NativeObject16Bit ? 2 : 4 );
 									}
 								}

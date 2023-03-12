@@ -8,7 +8,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	public static partial class NetUtility
 	{

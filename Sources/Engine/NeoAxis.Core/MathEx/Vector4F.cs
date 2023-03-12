@@ -1,9 +1,10 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using NeoAxis.Editor;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -142,6 +143,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="obj">The object to compare with the current instance of <see cref="Vector4F"/>.</param>
 		/// <returns>True if the specified object is equal to the current instance of <see cref="Vector4F"/>; otherwise, False.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is Vector4F && this == (Vector4F)obj );
@@ -151,6 +153,7 @@ namespace NeoAxis
 		/// Returns a hash code for this instance.
 		/// </summary>
 		/// <returns>A hash code for this instance.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return ( X.GetHashCode() ^ Y.GetHashCode() ^ Z.GetHashCode() ^ W.GetHashCode() );
@@ -162,6 +165,7 @@ namespace NeoAxis
 		/// <param name="v1">The first vector to add.</param>
 		/// <param name="v2">The second vector to add.</param>
 		/// <returns>The sum of the two vectors.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F operator +( Vector4F v1, Vector4F v2 )
 		{
 			Vector4F result;
@@ -178,6 +182,7 @@ namespace NeoAxis
 		/// <param name="v1">The vector to subtract from.</param>
 		/// <param name="v2">The vector to be subtracted from another vector.</param>
 		/// <returns>The difference of the two vectors.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F operator -( Vector4F v1, Vector4F v2 )
 		{
 			Vector4F result;
@@ -194,6 +199,7 @@ namespace NeoAxis
 		/// <param name="v1">The first vector to multiply.</param>
 		/// <param name="v2">The second vector to multiply.</param>
 		/// <returns>The product vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F operator *( Vector4F v1, Vector4F v2 )
 		{
 			Vector4F result;
@@ -210,6 +216,7 @@ namespace NeoAxis
 		/// <param name="v">The vector to scale.</param>
 		/// <param name="s">The scalar value.</param>
 		/// <returns>The scaled vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F operator *( Vector4F v, float s )
 		{
 			Vector4F result;
@@ -226,6 +233,7 @@ namespace NeoAxis
 		/// <param name="s">The scalar value.</param>
 		/// <param name="v">The vector to scale.</param>
 		/// <returns>The scaled vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F operator *( float s, Vector4F v )
 		{
 			Vector4F result;
@@ -242,6 +250,7 @@ namespace NeoAxis
 		/// <param name="v1">The first vector.</param>
 		/// <param name="v2">The second vector.</param>
 		/// <returns>The scaled vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F operator /( Vector4F v1, Vector4F v2 )
 		{
 			Vector4F result;
@@ -258,6 +267,7 @@ namespace NeoAxis
 		/// <param name="v">The vector to divide.</param>
 		/// <param name="s">The scalar value.</param>
 		/// <returns>The scaled vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F operator /( Vector4F v, float s )
 		{
 			Vector4F result;
@@ -275,6 +285,7 @@ namespace NeoAxis
 		/// <param name="s">The scalar value.</param>
 		/// <param name="v">The vector.</param>
 		/// <returns>The scaled vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F operator /( float s, Vector4F v )
 		{
 			Vector4F result;
@@ -290,6 +301,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="v">The vector to negate.</param>
 		/// <returns>A vector facing in the opposite direction.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F operator -( Vector4F v )
 		{
 			Vector4F result;
@@ -306,6 +318,7 @@ namespace NeoAxis
 		/// <param name="v1">The first vector to add.</param>
 		/// <param name="v2">The second vector to add.</param>
 		/// <param name="result">When the method completes, contains the sum of the two vectors.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Add( ref Vector4F v1, ref Vector4F v2, out Vector4F result )
 		{
 			result.X = v1.X + v2.X;
@@ -320,6 +333,7 @@ namespace NeoAxis
 		/// <param name="v1">The vector from which to subtract.</param>
 		/// <param name="v2">The vector which should be subtracted from another.</param>
 		/// <param name="result">When the method completes, contains the difference of the two vectors.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Subtract( ref Vector4F v1, ref Vector4F v2, out Vector4F result )
 		{
 			result.X = v1.X - v2.X;
@@ -334,6 +348,7 @@ namespace NeoAxis
 		/// <param name="v1">The first vector to multiply.</param>
 		/// <param name="v2">The second vector to multiply.</param>
 		/// <param name="result">When the method completes, contains the scaled vector.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Multiply( ref Vector4F v1, ref Vector4F v2, out Vector4F result )
 		{
 			result.X = v1.X * v2.X;
@@ -348,6 +363,7 @@ namespace NeoAxis
 		/// <param name="v">The vector to scale.</param>
 		/// <param name="s">The scalar value.</param>
 		/// <param name="result">When the method completes, contains the scaled vector.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Multiply( ref Vector4F v, float s, out Vector4F result )
 		{
 			result.X = v.X * s;
@@ -362,6 +378,7 @@ namespace NeoAxis
 		/// <param name="s">The scalar value.</param>
 		/// <param name="v">The vector to scale.</param>
 		/// <param name="result">When the method completes, contains the scaled vector.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Multiply( float s, ref Vector4F v, out Vector4F result )
 		{
 			result.X = v.X * s;
@@ -376,6 +393,7 @@ namespace NeoAxis
 		/// <param name="v1">The first vector.</param>
 		/// <param name="v2">The second vector.</param>
 		/// <param name="result">When the method completes, contains the scaled vector.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Divide( ref Vector4F v1, ref Vector4F v2, out Vector4F result )
 		{
 			result.X = v1.X / v2.X;
@@ -390,6 +408,7 @@ namespace NeoAxis
 		/// <param name="v">The vector to divide.</param>
 		/// <param name="s">The scalar value.</param>
 		/// <param name="result">When the method completes, contains the scaled vector.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Divide( ref Vector4F v, float s, out Vector4F result )
 		{
 			float invS = 1.0f / s;
@@ -405,6 +424,7 @@ namespace NeoAxis
 		/// <param name="s">The scalar value.</param>
 		/// <param name="v">The vector.</param>
 		/// <param name="result">When the method completes, contains the scaled vector.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Divide( float s, ref Vector4F v, out Vector4F result )
 		{
 			result.X = s / v.X;
@@ -418,6 +438,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="v">The vector to negate.</param>
 		/// <param name="result">When the method completes, contains a vector facing in the opposite direction.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Negate( ref Vector4F v, out Vector4F result )
 		{
 			result.X = -v.X;
@@ -524,6 +545,7 @@ namespace NeoAxis
 		/// <param name="v1">The first vector to compare.</param>
 		/// <param name="v2">The second vector to compare.</param>
 		/// <returns>True if the vectors are equal; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( Vector4F v1, Vector4F v2 )
 		{
 			return ( v1.X == v2.X && v1.Y == v2.Y && v1.Z == v2.Z && v1.W == v2.W );
@@ -535,6 +557,7 @@ namespace NeoAxis
 		/// <param name="v1">The first vector to compare.</param>
 		/// <param name="v2">The second vector to compare.</param>
 		/// <returns>True if the vectors are unequal; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( Vector4F v1, Vector4F v2 )
 		{
 			return ( v1.X != v2.X || v1.Y != v2.Y || v1.Z != v2.Z || v1.W != v2.W );
@@ -549,6 +572,7 @@ namespace NeoAxis
 		/// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="index"/> is out of the range [0, 3].</exception>
 		public unsafe float this[ int index ]
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				if( index < 0 || index > 3 )
@@ -558,6 +582,7 @@ namespace NeoAxis
 					return v[ index ];
 				}
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set
 			{
 				if( index < 0 || index > 3 )
@@ -575,6 +600,7 @@ namespace NeoAxis
 		/// <param name="v1">The first vector.</param>
 		/// <param name="v2">The second vector.</param>
 		/// <returns>The dot product of the two vectors.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static float Dot( Vector4F v1, Vector4F v2 )
 		{
 			return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z + v1.W * v2.W;
@@ -586,6 +612,7 @@ namespace NeoAxis
 		/// <param name="v1">The first vector.</param>
 		/// <param name="v2">The second vector.</param>
 		/// <returns>The dot product of the two vectors.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static float Dot( ref Vector4F v1, ref Vector4F v2 )
 		{
 			return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z + v1.W * v2.W;
@@ -596,6 +623,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="v">The second vector.</param>
 		/// <returns>The dot product of the two vectors.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float Dot( Vector4F v )
 		{
 			return X * v.X + Y * v.Y + Z * v.Z + W * v.W;
@@ -606,6 +634,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="v">The second vector.</param>
 		/// <returns>The dot product of the two vectors.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float Dot( ref Vector4F v )
 		{
 			return X * v.X + Y * v.Y + Z * v.Z + W * v.W;
@@ -617,6 +646,7 @@ namespace NeoAxis
 		/// <param name="v">The vector to compare.</param>
 		/// <param name="epsilon">The precision value.</param>
 		/// <returns>True if the specified vector is equal to the current instance of <see cref="Vector4F"/>; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( Vector4F v, float epsilon )
 		{
 			if( Math.Abs( X - v.X ) > epsilon )
@@ -636,6 +666,7 @@ namespace NeoAxis
 		/// <param name="v">The vector to compare.</param>
 		/// <param name="epsilon">The precision value.</param>
 		/// <returns>True if the specified vector is equal to the current instance of <see cref="Vector4F"/>; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( ref Vector4F v, float epsilon )
 		{
 			if( Math.Abs( X - v.X ) > epsilon )
@@ -653,6 +684,7 @@ namespace NeoAxis
 		/// Calculates the length of the current instance of <see cref="Vector4F"/>.
 		/// </summary>
 		/// <returns>The length of the current instance of <see cref="Vector4F"/>.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float Length()
 		{
 			return MathEx.Sqrt( X * X + Y * Y + Z * Z + W * W );
@@ -662,11 +694,13 @@ namespace NeoAxis
 		/// Calculates the squared length of the current instance of <see cref="Vector4F"/>.
 		/// </summary>
 		/// <returns>The squared length of the current instance of <see cref="Vector4F"/>.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float LengthSquared()
 		{
 			return X * X + Y * Y + Z * Z + W * W;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void Clamp( Vector4F min, Vector4F max )
 		{
 			if( X < min.X )
@@ -696,6 +730,7 @@ namespace NeoAxis
 		/// <param name="min">The minimum value.</param>
 		/// <param name="max">The maximum value.</param>
 		/// <returns>The clamped instance of <see cref="Vector4F"/>.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector4F GetClamp( Vector4F min, Vector4F max )
 		{
 			var r = this;
@@ -707,6 +742,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="Vector4F"/> into a unit vector.
 		/// </summary>
 		/// <returns>Returns the length of the current instance of <see cref="Vector4F"/>.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float Normalize()
 		{
 			float sqrLength = X * X + Y * Y + Z * Z + W * W;
@@ -723,6 +759,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="v">The vector to normalize.</param>
 		/// <returns>The normalized vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F Normalize( Vector4F v )
 		{
 			float invLength = MathEx.InvSqrt( v.X * v.X + v.Y * v.Y + v.Z * v.Z + v.W * v.W );
@@ -734,6 +771,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="v">The vector to normalize.</param>
 		/// <param name="result">When the method completes, contains the normalized vector.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Normalize( ref Vector4F v, out Vector4F result )
 		{
 			float invLength = MathEx.InvSqrt( v.X * v.X + v.Y * v.Y + v.Z * v.Z + v.W * v.W );
@@ -747,6 +785,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="Vector4F"/> into a unit vector and returns the normalized vector.
 		/// </summary>
 		/// <returns>The normalized instance of <see cref="Vector4F"/>.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector4F GetNormalize()
 		{
 			float invLength = MathEx.InvSqrt( X * X + Y * Y + Z * Z + W * W );
@@ -757,6 +796,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="Vector4F"/> into an instance of <see cref="Vector2F"/>.
 		/// </summary>
 		/// <returns>The result of the conversion.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Vector2F ToVector2F()
 		{
@@ -770,6 +810,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="Vector4F"/> into an instance of <see cref="Vector3F"/>.
 		/// </summary>
 		/// <returns>The result of the conversion.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Vector3F ToVector3F()
 		{
@@ -787,6 +828,7 @@ namespace NeoAxis
 		/// <param name="v2">The second vector.</param>
 		/// <param name="amount">A value between 0 and 1 that indicates the weight of <paramref name="v2"/>.</param>
 		/// <returns>The interpolated vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F Lerp( Vector4F v1, Vector4F v2, float amount )
 		{
 			Vector4F result;
@@ -804,6 +846,7 @@ namespace NeoAxis
 		/// <param name="v2">The second vector.</param>
 		/// <param name="amount">A value between 0 and 1 that indicates the weight of <paramref name="v2"/>.</param>
 		/// <param name="result">When the method completes, contains the linear interpolation of the two vectors.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Lerp( ref Vector4F v1, ref Vector4F v2, float amount, out Vector4F result )
 		{
 			result.X = v1.X + ( ( v2.X - v1.X ) * amount );
@@ -815,6 +858,7 @@ namespace NeoAxis
 		/// <summary>
 		/// Clamps the components of the current instance of <see cref="Vector4F"/> between 0 and 1.
 		/// </summary>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Saturate()
 		{
 			MathEx.Saturate( ref X );
@@ -827,6 +871,7 @@ namespace NeoAxis
 		/// Clamps the components of the current instance of <see cref="Vector4F"/> between 0 and 1 and returns the saturated value.
 		/// </summary>
 		/// <returns>The saturated value.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector4F GetSaturate()
 		{
 			var result = this;
@@ -840,6 +885,7 @@ namespace NeoAxis
 		/// <param name="v1">The first vector.</param>
 		/// <param name="v2">The second vector.</param>
 		/// <returns>The distance between two vectors.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static float Distance( Vector4F v1, Vector4F v2 )
 		{
 			Subtract( ref v1, ref v2, out Vector4F result );
@@ -852,6 +898,7 @@ namespace NeoAxis
 		/// <param name="v1">The first vector.</param>
 		/// <param name="v2">The second vector.</param>
 		/// <returns>The distance between two vectors.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static float Distance( ref Vector4F v1, ref Vector4F v2 )
 		{
 			Subtract( ref v1, ref v2, out Vector4F result );
@@ -862,6 +909,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="Vector4F"/> into the equivalent <see cref="Vector4"/> structure.
 		/// </summary>
 		/// <returns>The equivalent <see cref="Vector4"/> structure.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Vector4 ToVector4()
 		{
@@ -877,6 +925,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="Vector4F"/> into the equivalent <see cref="Vector4I"/> structure.
 		/// </summary>
 		/// <returns>The equivalent <see cref="Vector4I"/> structure.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Vector4I ToVector4I()
 		{
@@ -889,11 +938,28 @@ namespace NeoAxis
 		}
 
 		/// <summary>
+		/// Converts the current instance of <see cref="Vector4F"/> into the equivalent <see cref="Vector4H"/> structure.
+		/// </summary>
+		/// <returns>The equivalent <see cref="Vector4H"/> structure.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		[AutoConvertType]
+		public Vector4H ToVector4H()
+		{
+			Vector4H result;
+			result.X = new HalfType( X );
+			result.Y = new HalfType( Y );
+			result.Z = new HalfType( Z );
+			result.W = new HalfType( W );
+			return result;
+		}
+
+		/// <summary>
 		/// Converts each component of the current instance of <see cref="Vector4F"/> into the
 		/// component of the <see cref="ColorValue"/> structure: X to red component,
 		/// Y to green component, Z to blue component, W to alpha component.
 		/// </summary>
 		/// <returns>The equivalent <see cref="ColorValue"/> structure.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ColorValue ToColorValue()
 		{
 			ColorValue result;
@@ -909,9 +975,10 @@ namespace NeoAxis
 		/// Implicit conversion from <see cref="Vector4F"/> type to <see cref="Vector4"/> type for given value.
 		/// </summary>
 		/// <param name="v">The value to type convert.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator Vector4( Vector4F v )
 		{
-			return new Vector4( v );
+			return v.ToVector4();
 		}
 #endif
 
@@ -922,6 +989,7 @@ namespace NeoAxis
 		/// <param name="v2">The second vector to choose.</param>
 		/// <param name="pick1">If this value is true, the method chooses the virst vector, otherwise it chooses the second one.</param>
 		/// <returns>The selected vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F Select( Vector4F v1, Vector4F v2, bool pick1 )
 		{
 			return pick1 ? v1 : v2;
@@ -931,7 +999,8 @@ namespace NeoAxis
 		/// Rounds the current instance of <see cref="Vector4F"/> towards zero for each component in a vector.
 		/// </summary>
 		/// <param name="v"></param>
-		public void Truncate( Vector4F v )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void Truncate()
 		{
 			X = (int)X;
 			Y = (int)Y;
@@ -944,6 +1013,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="v">The vector to truncate.</param>
 		/// <returns>The truncated vector</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector4F GetTruncate( Vector4F v )
 		{
 			return new Vector4F( (int)v.X, (int)v.Y, (int)v.Z, (int)v.W );
@@ -954,6 +1024,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="v">The vector to compare with the zero vector.</param>
 		/// <returns>True if any component of the specified vector is unequal to the zero; otherwise, False.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool AnyNonZero( Vector4F v )
 		{
 			return v != Zero;
@@ -964,6 +1035,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="v">The vector to compare with the zero vector.</param>
 		/// <returns>True if all components of the specified vector are unequal to the zero; otherwise, False.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool AllNonZero( Vector4F v )
 		{
 			return v.X != 0 && v.Y != 0 && v.Z != 0 && v.W != 0;
@@ -974,6 +1046,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="v">The specified vector.</param>
 		/// <returns>The absolute value vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F Abs( Vector4F v )
 		{
 			return new Vector4F( Math.Abs( v.X ), Math.Abs( v.Y ), Math.Abs( v.Z ), Math.Abs( v.W ) );
@@ -985,6 +1058,7 @@ namespace NeoAxis
 		/// <param name="v">The specified vector.</param>
 		/// <returns>The vector which contains the angles in radians whose cosines are equal to the
 		/// corresponding components in the specified vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F Acos( Vector4F v )
 		{
 			return new Vector4F( MathEx.Acos( v.X ), MathEx.Acos( v.Y ), MathEx.Acos( v.Z ), MathEx.Acos( v.W ) );
@@ -996,6 +1070,7 @@ namespace NeoAxis
 		/// <param name="v">The specified vector.</param>
 		/// <returns>The vector which contains the angles in radians whose sines are equal to the
 		/// corresponding components in the specified vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F Asin( Vector4F v )
 		{
 			return new Vector4F( MathEx.Asin( v.X ), MathEx.Asin( v.Y ), MathEx.Asin( v.Z ), MathEx.Asin( v.W ) );
@@ -1007,6 +1082,7 @@ namespace NeoAxis
 		/// <param name="v">The specified vector.</param>
 		/// <returns>The vector which contains the angles in radians whose tangents are equal to the
 		/// corresponding components in the specified vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F Atan( Vector4F v )
 		{
 			return new Vector4F( MathEx.Atan( v.X ), MathEx.Atan( v.Y ), MathEx.Atan( v.Z ), MathEx.Atan( v.W ) );
@@ -1018,6 +1094,7 @@ namespace NeoAxis
 		/// <param name="y">The first vector.</param>
 		/// <param name="x">The second vector.</param>
 		/// <returns>The vector which contains the angles in radians whose tangents are the quotient of the corresponding components in the first specified vector <paramref name="y"/> and the second specified vector <paramref name="x"/>.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F Atan2( Vector4F y, Vector4F x )
 		{
 			return new Vector4F( MathEx.Atan2( y.X, x.X ), MathEx.Atan2( y.Y, x.Y ), MathEx.Atan2( y.Z, x.Z ), MathEx.Atan2( y.W, x.W ) );
@@ -1028,6 +1105,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="v">The specified vector.</param>
 		/// <returns>The vector which contains the cosines of the corresponding components in the specified vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F Cos( Vector4F v )
 		{
 			return new Vector4F( MathEx.Cos( v.X ), MathEx.Cos( v.Y ), MathEx.Cos( v.Z ), MathEx.Cos( v.W ) );
@@ -1038,6 +1116,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="v">The specified vector.</param>
 		/// <returns>The vector which contains the hyperbolic cosines of the corresponding components in the specified vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F Cosh( Vector4F v )
 		{
 			return new Vector4F( MathEx.Cosh( v.X ), MathEx.Cosh( v.Y ), MathEx.Cosh( v.Z ), MathEx.Cosh( v.W ) );
@@ -1048,6 +1127,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="v">The specified vector.</param>
 		/// <returns>The vector which contains e raised to the power of n, where n is the corresponding component in the specified vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F Exp( Vector4F v )
 		{
 			return new Vector4F( MathEx.Exp( v.X ), MathEx.Exp( v.Y ), MathEx.Exp( v.Z ), MathEx.Exp( v.W ) );
@@ -1058,6 +1138,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="v">The specified vector.</param>
 		/// <returns>The vector which contains the natural logarithms of the corresponding components in the specified vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F Log( Vector4F v )
 		{
 			return new Vector4F( MathEx.Log( v.X ), MathEx.Log( v.Y ), MathEx.Log( v.Z ), MathEx.Log( v.W ) );
@@ -1068,6 +1149,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="v">The specified vector.</param>
 		/// <returns>The vector which contains the base 10 logarithms of the corresponding components in the specified vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F Log10( Vector4F v )
 		{
 			return new Vector4F( MathEx.Log10( v.X ), MathEx.Log10( v.Y ), MathEx.Log10( v.Z ), MathEx.Log10( v.W ) );
@@ -1079,6 +1161,7 @@ namespace NeoAxis
 		/// <param name="v1">The first vector.</param>
 		/// <param name="v2">The second vector.</param>
 		/// <returns>A vector containing the largest components of the specified vectors.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F Max( Vector4F v1, Vector4F v2 )
 		{
 			return new Vector4F( Math.Max( v1.X, v2.X ), Math.Max( v1.Y, v2.Y ), Math.Max( v1.Z, v2.Z ), Math.Max( v1.W, v2.W ) );
@@ -1090,6 +1173,7 @@ namespace NeoAxis
 		/// <param name="v1">The first vector.</param>
 		/// <param name="v2">The second vector.</param>
 		/// <returns>A vector containing the smallest components of the specified vectors.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F Min( Vector4F v1, Vector4F v2 )
 		{
 			return new Vector4F( Math.Min( v1.X, v2.X ), Math.Min( v1.Y, v2.Y ), Math.Min( v1.Z, v2.Z ), Math.Min( v1.W, v2.W ) );
@@ -1102,6 +1186,7 @@ namespace NeoAxis
 		/// <param name="y">The second vector.</param>
 		/// <returns>The vector which contains the components of the first specified vector raised to power of
 		/// the numbers which are equal to the corresponding components of the second specified vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F Pow( Vector4F x, Vector4F y )
 		{
 			return new Vector4F( MathEx.Pow( x.X, y.X ), MathEx.Pow( x.Y, y.Y ), MathEx.Pow( x.Z, y.Z ), MathEx.Pow( x.W, y.W ) );
@@ -1112,6 +1197,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="v">The specified vector.</param>
 		/// <returns>The vector which contains the sines of the corresponding components in the specified vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F Sin( Vector4F v )
 		{
 			return new Vector4F( MathEx.Sin( v.X ), MathEx.Sin( v.Y ), MathEx.Sin( v.Z ), MathEx.Sin( v.W ) );
@@ -1122,6 +1208,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="v">The specified vector.</param>
 		/// <returns>The vector which contains the hyperbolic sines of the corresponding components in the specified vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F Sinh( Vector4F v )
 		{
 			return new Vector4F( MathEx.Sinh( v.X ), MathEx.Sinh( v.Y ), MathEx.Sinh( v.Z ), MathEx.Sinh( v.W ) );
@@ -1132,6 +1219,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="v">The specified vector.</param>
 		/// <returns>The vector which contains the square root of the corresponding components in the specified vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F Sqrt( Vector4F v )
 		{
 			return new Vector4F( MathEx.Sqrt( v.X ), MathEx.Sqrt( v.Y ), MathEx.Sqrt( v.Z ), MathEx.Sqrt( v.W ) );
@@ -1142,6 +1230,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="v">The specified vector.</param>
 		/// <returns>The vector which contains the tangents of the corresponding components in the specified vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F Tan( Vector4F v )
 		{
 			return new Vector4F( MathEx.Tan( v.X ), MathEx.Tan( v.Y ), MathEx.Tan( v.Z ), MathEx.Tan( v.W ) );
@@ -1152,6 +1241,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="v">The specified vector.</param>
 		/// <returns>The vector which contains the hyperbolic tangents of the corresponding components in the specified vector.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector4F Tanh( Vector4F v )
 		{
 			return new Vector4F( MathEx.Tanh( v.X ), MathEx.Tanh( v.Y ), MathEx.Tanh( v.Z ), MathEx.Tanh( v.W ) );
@@ -1161,6 +1251,7 @@ namespace NeoAxis
 		/// Returns the value of the smallest component of the current instance of <see cref="Vector4F"/>.
 		/// </summary>
 		/// <returns>The value of the smallest component of the current instance of <see cref="Vector4F"/>.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float MinComponent()
 		{
 			return Math.Min( Math.Min( X, Y ), Math.Min( Z, W ) );
@@ -1170,6 +1261,7 @@ namespace NeoAxis
 		/// Returns the value of the largest component of the current instance of <see cref="Vector4F"/>.
 		/// </summary>
 		/// <returns>The value of the largest component of the current instance of <see cref="Vector4F"/>.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float MaxComponent()
 		{
 			return Math.Max( Math.Max( X, Y ), Math.Max( Z, W ) );
@@ -1179,19 +1271,37 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="Vector4F"/> into the equivalent <see cref="Plane"/> structure.
 		/// </summary>
 		/// <returns>The equivalent <see cref="Plane"/> structure.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public PlaneF ToPlane()
 		{
 			return new PlaneF( this );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( ref Vector4F v )
 		{
 			return X == v.X && Y == v.Y && Z == v.Z && W == v.W;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool Equals( ref Vector4F v1, ref Vector4F v2 )
 		{
 			return v1.X == v2.X && v1.Y == v2.Y && v1.Z == v2.Z && v1.W == v2.W;
+		}
+
+		/// <summary>
+		/// Converts the current instance of <see cref="Vector4F"/> into an instance of <see cref="Vector2F"/>.
+		/// </summary>
+		/// <returns>The result of the conversion.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		[AutoConvertType]
+		public Vector3 ToVector3()
+		{
+			Vector3 result;
+			result.X = X;
+			result.Y = Y;
+			result.Z = Z;
+			return result;
 		}
 	}
 }

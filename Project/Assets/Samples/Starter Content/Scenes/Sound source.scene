@@ -1,0 +1,703 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.Scene
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1155, 842\"><KW V=\"1\" A=\"C1F5BEB678A045B3BE91DBEA410F2DBB\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"32D7B3C3A5DC41F5B3B6142865E59344\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"C1F5BEB678A045B3BE91DBEA410F2DBB\"><KP UN=\"C1F5BEB678A045B3BE91DBEA410F2DBB\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"B5B5A5A454584B369CA7ABFD6839B548\" S=\"False\"><CPD ObjPath=\"$GetObjectTransform\\$Flowchart\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	DisplayDevelopmentDataInSimulation = True
+	OctreeEnabled = False
+	RenderingPipeline
+	{
+		GetByReference = "root:$Rendering Pipeline"
+	}
+	CameraEditor
+	{
+		GetByReference = "this:$Camera Editor"
+	}
+	.component NeoAxis.Camera
+	{
+		Name = Camera Editor
+		Visible = False
+		Transform = "14.017396418306 -1.6959046323966 -15.3629212809712; -0.149673782963407 0.0683560714511574 0.89722813593749 0.409764418015187; 1 1 1"
+	}
+	.component NeoAxis.Light
+	{
+		Name = Ambient Light
+		Transform = "-27.7871391969358 37.4683781031502 14.686420383686; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
+		Type = Ambient
+		Brightness = 20000
+	}
+	.component NeoAxis.RenderingPipeline_Basic
+	{
+		Name = Rendering Pipeline
+		Shadows = False
+		ShadowDirectionalLightCascades = 1
+		ShadowSpotlightTextureSize = _2048
+		.component NeoAxis.Component
+		{
+			Name = Background Effects
+		}
+		.component NeoAxis.Component
+		{
+			Name = Scene Effects
+			.component NeoAxis.RenderingEffect_AmbientOcclusion
+			{
+				Enabled = False
+				Name = Ambient Occlusion
+			}
+			.component NeoAxis.RenderingEffect_Bloom
+			{
+				Enabled = False
+				Name = Bloom
+			}
+			.component NeoAxis.RenderingEffect_ToneMapping
+			{
+				Enabled = False
+				Name = Tone Mapping
+				Intensity = 0.5
+			}
+			.component NeoAxis.RenderingEffect_ColorGrading
+			{
+				Enabled = False
+				Name = Color Grading
+				ShaderFile = "Base\\Shaders\\Effects\\ColorGrading_fs.sc"
+			}
+			.component NeoAxis.RenderingEffect_Antialiasing
+			{
+				Enabled = False
+				Name = Antialiasing
+			}
+			.component NeoAxis.RenderingEffect_ResolutionUpscale
+			{
+				Name = Resolution Upscale
+			}
+			.component NeoAxis.RenderingEffect_ShowRenderTarget
+			{
+				Enabled = False
+				Name = Show Render Target
+				DepthMultiplier = 33.9889
+			}
+		}
+	}
+	.component NeoAxis.GameMode
+	{
+		Name = Game Mode
+		CutsceneStarted = False
+		CutsceneGuiFadingFactor = 0
+		CutsceneGuiFadingSpeed = 0
+		ScreenFadingCurrentColor = 0 0 0 0
+		ScreenFadingTargetColor = 0 0 0 0
+		ScreenFadingSpeed = 0
+	}
+	.component NeoAxis.Light
+	{
+		Name = Light1
+		Transform = "21.096603415861 -4.02738720650646 -4.54723975048288; -0.385544653371362 -0.735088364894102 0.426206952042812 -0.359649899324952; 1 1 1"
+		Type = Spotlight
+		Brightness = 346459.78125
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 90
+	}
+	.component NeoAxis.Material
+	{
+		Name = Material Standard
+		BaseColor
+		{
+			GetByReference = "this:$Flowchart\\$Node Shader Texture Sample 1\\$Shader Texture Sample\\RGBA"
+		}
+		.component NeoAxis.FlowGraph
+		{
+			Name = Flowchart
+			EditorScrollPosition = 7.18518518518518 -0.796296296296294
+			.component NeoAxis.FlowGraphNode
+			{
+				Name = Flowchart Node
+				Position = 13 -10
+				ControlledObject
+				{
+					GetByReference = "this:..\\.."
+				}
+			}
+			.component NeoAxis.FlowGraphNode
+			{
+				Name = Node Shader Texture Sample 1
+				Position = -12 -13
+				ControlledObject
+				{
+					GetByReference = "this:$Shader Texture Sample"
+				}
+				.component NeoAxis.ShaderTextureSample
+				{
+					Name = Shader Texture Sample
+					Location2 = 0 0
+					Location3 = 0 0 0
+					Texture
+					{
+						GetByReference = "Samples\\Starter Content\\Textures\\BoxDiffuse.dds"
+					}
+				}
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 31
+		CanBeSelected = False
+		Transform = "12.4214674037176 0.248415906223993 -16.7808109194805; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 10 10
+				Material
+				{
+					GetByReference = "Content\\Materials\\Basic Library\\Concrete\\Concrete Floor 01.material"
+				}
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform
+			{
+				GetByReference = "this:..\\Transform"
+			}
+			.component NeoAxis.CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Enabled = False
+		Name = Mesh in Space 2
+		CanBeSelected = False
+		Transform = "12.4214674037176 0.248415906223993 -17.5120932635607; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 150 150
+				Material
+				{
+					GetByReference = "Base\\Materials\\Gray.material"
+				}
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 20
+		CanBeSelected = False
+		Transform = "12.3837951266935 5.18211380366376 -13.8391352068506; 0.707106781186547 0 0 0.707106781186548; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 10 6
+				UVTilesPerUnit = 0.5 0.5
+				Material
+				{
+					GetByReference = "Content\\Materials\\Basic Library\\Brick\\Yellow Brick.material"
+				}
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform
+			{
+				GetByReference = "this:..\\Transform"
+			}
+			.component NeoAxis.CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 21
+		CanBeSelected = False
+		Transform = "7.43501064695957 0.272948256138564 -13.8541381866406; -0.5 0.5 -0.5 0.5; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 10 6
+				UVTilesPerUnit = 0.5 0.5
+				Material
+				{
+					GetByReference = "Content\\Materials\\Basic Library\\Brick\\Yellow Brick.material"
+				}
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform
+			{
+				GetByReference = "this:..\\Transform"
+			}
+			.component NeoAxis.CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.VirtualMethod
+	{
+		Name = GetObjectTransform
+		Body
+		{
+			GetByReference = "this:$Flowchart\\$Node Method Body\\$Method Body"
+		}
+		.component NeoAxis.VirtualMemberParameter
+		{
+			Name = Return Parameter
+			ReturnValue = True
+			Type
+			{
+				GetByReference = NeoAxis.Transform
+			}
+		}
+		.component NeoAxis.FlowGraph
+		{
+			Name = Flowchart
+			EditorScrollPosition = 4.6932770244641 7.89262389353576
+			.component NeoAxis.FlowGraphNode
+			{
+				Name = Node Method Body
+				Position = -29 -6
+				ControlledObject
+				{
+					GetByReference = "this:$Method Body"
+				}
+				.component NeoAxis.VirtualMethodBody
+				{
+					Name = Method Body
+					PropertyAccessorType = Get
+					Definition
+					{
+						GetByReference = "this:..\\..\\.."
+					}
+					BodyEnd
+					{
+						GetByReference = "this:..\\..\\$Node Method Body End\\$Method Body End"
+					}
+					Flow
+					{
+					}
+				}
+			}
+			.component NeoAxis.FlowGraphNode
+			{
+				Name = Node Method Body End
+				Position = 27 -5
+				ControlledObject
+				{
+					GetByReference = "this:$Method Body End"
+				}
+				.component NeoAxis.VirtualMethodBodyEnd
+				{
+					Name = Method Body End
+					Body
+					{
+						GetByReference = "this:..\\..\\$Node Method Body\\$Method Body"
+					}
+					"__parameter_Return Parameter"
+					{
+						GetByReference = "this:..\\..\\$Node Invoke Member 1\\$Invoke Member\\__returnvalue_ReturnValue"
+					}
+				}
+			}
+			.component NeoAxis.FlowGraphNode
+			{
+				Name = Node Invoke Member 1
+				Position = 14 -7
+				ControlledObject
+				{
+					GetByReference = "this:$Invoke Member"
+				}
+				.component NeoAxis.InvokeMember
+				{
+					Name = Invoke Member
+					Member
+					{
+						GetByReference = "NeoAxis.Transform|method:.ctor(NeoAxis.Vector3,NeoAxis.Quaternion)"
+					}
+					Exit
+					{
+					}
+					__parameter_Position
+					{
+						GetByReference = "this:..\\..\\$Node Invoke Member 6\\$Invoke Member\\__parameter_ReturnValue"
+					}
+					__parameter_Rotation
+					{
+						GetByReference = "this:..\\..\\$Node Invoke Member 9\\$Invoke Member\\__parameter_ReturnValue"
+					}
+				}
+			}
+			.component NeoAxis.FlowGraphNode
+			{
+				Name = Node Invoke Member 2
+				Position = -29 11
+				ControlledObject
+				{
+					GetByReference = "this:$Invoke Member"
+				}
+				.component NeoAxis.InvokeMember
+				{
+					Name = Invoke Member
+					Member
+					{
+						GetByReference = "NeoAxis.EngineApp|property:EngineTime"
+					}
+					Exit
+					{
+					}
+				}
+			}
+			.component NeoAxis.FlowGraphNode
+			{
+				Name = Node Invoke Member 3
+				Position = -27 14
+				ControlledObject
+				{
+					GetByReference = "this:$Invoke Member"
+				}
+				.component NeoAxis.InvokeMember
+				{
+					Name = Invoke Member
+					__parameter_V2 = 0.3
+					Member
+					{
+						GetByReference = "NeoAxis.MathEx|method:Multiply(System.Double,System.Double)"
+					}
+					Exit
+					{
+					}
+					__parameter_V1
+					{
+						GetByReference = "this:..\\..\\$Node Invoke Member 2\\$Invoke Member\\__value_Value"
+					}
+				}
+			}
+			.component NeoAxis.FlowGraphNode
+			{
+				Name = Node Invoke Member 4
+				Position = -14 19
+				ControlledObject
+				{
+					GetByReference = "this:$Invoke Member"
+				}
+				.component NeoAxis.InvokeMember
+				{
+					Name = Invoke Member
+					Member
+					{
+						GetByReference = "System.Math|method:Sin(System.Double)"
+					}
+					Exit
+					{
+					}
+					__parameter_A
+					{
+						GetByReference = "this:..\\..\\$Node Invoke Member 3\\$Invoke Member\\__parameter_ReturnValue"
+					}
+				}
+			}
+			.component NeoAxis.FlowGraphNode
+			{
+				Name = Node Invoke Member 5
+				Position = -14 15
+				ControlledObject
+				{
+					GetByReference = "this:$Invoke Member"
+				}
+				.component NeoAxis.InvokeMember
+				{
+					Name = Invoke Member
+					Member
+					{
+						GetByReference = "System.Math|method:Cos(System.Double)"
+					}
+					Exit
+					{
+					}
+					__parameter_D
+					{
+						GetByReference = "this:..\\..\\$Node Invoke Member 3\\$Invoke Member\\__parameter_ReturnValue"
+					}
+				}
+			}
+			.component NeoAxis.FlowGraphNode
+			{
+				Name = Node Invoke Member 6
+				Position = 1 -10
+				ControlledObject
+				{
+					GetByReference = "this:$Invoke Member"
+				}
+				.component NeoAxis.InvokeMember
+				{
+					Name = Invoke Member
+					__parameter_V1 = 11.7925520011863 -0.283675051503369 -15.481602720586
+					Member
+					{
+						GetByReference = "NeoAxis.Vector3|method:op_Addition(NeoAxis.Vector3,NeoAxis.Vector3)"
+					}
+					Exit
+					{
+					}
+					__parameter_V2
+					{
+						GetByReference = "this:..\\..\\$Node Invoke Member 7\\$Invoke Member\\__parameter_ReturnValue"
+					}
+				}
+			}
+			.component NeoAxis.FlowGraphNode
+			{
+				Name = Node Invoke Member 7
+				Position = 12 18
+				ControlledObject
+				{
+					GetByReference = "this:$Invoke Member"
+				}
+				.component NeoAxis.InvokeMember
+				{
+					Name = Invoke Member
+					__parameter_S = 2.5
+					Member
+					{
+						GetByReference = "NeoAxis.Vector3|method:op_Multiply(NeoAxis.Vector3,System.Double)"
+					}
+					Exit
+					{
+					}
+					__parameter_V
+					{
+						GetByReference = "this:..\\..\\$Node Invoke Member 8\\$Invoke Member\\__returnvalue_ReturnValue"
+					}
+				}
+			}
+			.component NeoAxis.FlowGraphNode
+			{
+				Name = Node Invoke Member 8
+				Position = -1 17
+				ControlledObject
+				{
+					GetByReference = "this:$Invoke Member"
+				}
+				.component NeoAxis.InvokeMember
+				{
+					Name = Invoke Member
+					__parameter_Z = 0
+					Member
+					{
+						GetByReference = "NeoAxis.Vector3|method:.ctor(System.Double,System.Double,System.Double)"
+					}
+					Exit
+					{
+					}
+					__parameter_X
+					{
+						GetByReference = "this:..\\..\\$Node Invoke Member 5\\$Invoke Member\\__parameter_ReturnValue"
+					}
+					__parameter_Y
+					{
+						GetByReference = "this:..\\..\\$Node Invoke Member 4\\$Invoke Member\\__parameter_ReturnValue"
+					}
+				}
+			}
+			.component NeoAxis.FlowGraphNode
+			{
+				Name = Node Invoke Member 9
+				Position = 1 -5
+				ControlledObject
+				{
+					GetByReference = "this:$Invoke Member"
+				}
+				.component NeoAxis.InvokeMember
+				{
+					Name = Invoke Member
+					__parameter_Up = 0 0 1
+					Member
+					{
+						GetByReference = "NeoAxis.Quaternion|method:LookAt(NeoAxis.Vector3,NeoAxis.Vector3)"
+					}
+					Exit
+					{
+					}
+					__parameter_Direction
+					{
+						GetByReference = "this:..\\..\\$Node Invoke Member 10\\$Invoke Member\\__parameter_ReturnValue"
+					}
+				}
+			}
+			.component NeoAxis.FlowGraphNode
+			{
+				Name = Node Invoke Member 10
+				Position = -12 -5
+				ControlledObject
+				{
+					GetByReference = "this:$Invoke Member"
+				}
+				.component NeoAxis.InvokeMember
+				{
+					Name = Invoke Member
+					__parameter_V1 = 0 0 0
+					Member
+					{
+						GetByReference = "NeoAxis.Vector3|method:op_Subtraction(NeoAxis.Vector3,NeoAxis.Vector3)"
+					}
+					Exit
+					{
+					}
+					__parameter_V2
+					{
+						GetByReference = "this:..\\..\\$Node Invoke Member 7\\$Invoke Member\\__parameter_ReturnValue"
+					}
+				}
+			}
+		}
+	}
+	.component NeoAxis.Light
+	{
+		Enabled = False
+		Name = Light
+		Transform = "12.7253496792215 -3.32669780264678 -13.7046880684082; -0.264977845245967 0.273519218321245 0.664112001992913 0.643373318957745; 1 1 1"
+		Type = Spotlight
+		Brightness = 8043570
+	}
+	.component NeoAxis.SoundSource
+	{
+		Name = Sound Source
+		Transform = "14.0140050123123 2.56897601813864 -16.7808099194805; 0 0 0 1; 1 1 1"
+		ReplayDelay = 1.72
+		Sound
+		{
+			GetByReference = "Base\\UI\\Styles\\Sounds\\ButtonClick.ogg"
+		}
+	}
+	.component NeoAxis.SoundSource
+	{
+		Name = Sound Source 2
+		Transform = "10.2447533923538 -1.0083935613889 -16.7808099194805; 0 0 0 1; 1 1 1"
+		ReplayDelay = 2
+		Sound
+		{
+			GetByReference = "Base\\UI\\Styles\\Sounds\\ButtonClick.ogg"
+		}
+	}
+}

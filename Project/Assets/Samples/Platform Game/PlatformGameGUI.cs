@@ -124,11 +124,11 @@ namespace Project
 
 			if (gameMode != null && inputProcessing != null)
 			{
-				//get an object to interaction.
+				//get an object to interaction
 				var interactionContext = gameMode.ObjectInteractionContext;
 				if (interactionContext != null)
 				{
-					//call input message to the object in context.
+					//call input message to the object in context
 					var message = new InputMessageMouseButtonDown(EMouseButtons.Left);
 					interactionContext.Obj.ObjectInteractionInputMessage(gameMode, message);
 				}

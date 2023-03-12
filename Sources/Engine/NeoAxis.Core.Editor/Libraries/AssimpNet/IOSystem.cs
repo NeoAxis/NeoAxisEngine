@@ -33,8 +33,10 @@ namespace Internal.Assimp
     /// </summary>
     public abstract class IOSystem : IDisposable
     {
+    // Don't delete these, holding onto the callbacks prevent them from being GC'ed inappropiately
         private AiFileOpenProc m_openProc;
         private AiFileCloseProc m_closeProc;
+
         private IntPtr m_fileIOPtr;
         private bool m_isDisposed;
         private Dictionary<IntPtr, IOStream> m_openedFiles;
@@ -72,20 +74,39 @@ namespace Internal.Assimp
         /// <summary>
         /// Constructs a new IOSystem.
         /// </summary>
-        public IOSystem()
+    public IOSystem() : this(true) { }
+
+    /// <summary>
+    /// Constructs a new IOSystem.
+    /// </summary>
+    /// <param name="initialize">True if initialize should be immediately called with the default callbacks. Set this to false
+    /// if your subclass requires a different way to setup the function pointers.</param>
+    protected IOSystem(bool initialize = true)
+    {
+      if (initialize)
+        Initialize(OnAiFileOpenProc, OnAiFileCloseProc);
+
+      m_openedFiles = new Dictionary<IntPtr, IOStream>();
+    }
+
+    /// <summary>
+    /// Initializes the system by setting up native pointers for Assimp to the specified functions.
+    /// </summary>
+    /// <param name="fileOpenProc">Handles open file requests.</param>
+    /// <param name="fileCloseProc">Handles close file requests.</param>
+    /// <param name="userData">Additional user data, if any.</param>
+    protected void Initialize(AiFileOpenProc fileOpenProc, AiFileCloseProc fileCloseProc, IntPtr userData = default)
         {
-            m_openProc = OnAiFileOpenProc;
-            m_closeProc = OnAiFileCloseProc;
+      m_openProc = fileOpenProc;
+      m_closeProc = fileCloseProc;
 
             AiFileIO fileIO;
-            fileIO.OpenProc = Marshal.GetFunctionPointerForDelegate(m_openProc);
-            fileIO.CloseProc = Marshal.GetFunctionPointerForDelegate(m_closeProc);
-            fileIO.UserData = IntPtr.Zero;
+      fileIO.OpenProc = Marshal.GetFunctionPointerForDelegate(fileOpenProc);
+      fileIO.CloseProc = Marshal.GetFunctionPointerForDelegate(fileCloseProc);
+      fileIO.UserData = userData;
 
             m_fileIOPtr = MemoryHelper.AllocateMemory(MemoryHelper.SizeOf<AiFileIO>());
             Marshal.StructureToPtr(fileIO, m_fileIOPtr, false);
-
-            m_openedFiles = new Dictionary<IntPtr, IOStream>();
         }
 
         /// <summary>
@@ -110,14 +131,14 @@ namespace Internal.Assimp
         /// <param name="stream">Stream to close</param>
         public virtual void CloseFile(IOStream stream)
         {
-            if(stream == null)
+      if (stream == null)
                 return;
 
-            if(m_openedFiles.ContainsKey(stream.AiFile))
+      if (m_openedFiles.ContainsKey(stream.AiFile))
             {
                 m_openedFiles.Remove(stream.AiFile);
 
-                if(!stream.IsDisposed)
+        if (!stream.IsDisposed)
                     stream.Close();
             }
         }
@@ -127,9 +148,9 @@ namespace Internal.Assimp
         /// </summary>
         public virtual void CloseAllFiles()
         {
-            foreach(KeyValuePair<IntPtr, IOStream> kv in m_openedFiles)
+      foreach (KeyValuePair<IntPtr, IOStream> kv in m_openedFiles)
             {
-                if(!kv.Value.IsDisposed)
+        if (!kv.Value.IsDisposed)
                     kv.Value.Close();
             }
             m_openedFiles.Clear();
@@ -150,36 +171,44 @@ namespace Internal.Assimp
         /// <param name="disposing">True to release both managed and unmanaged resources; False to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
-            if(!m_isDisposed)
+      if (!m_isDisposed)
             {
-                if(m_fileIOPtr != IntPtr.Zero)
+        if (m_fileIOPtr != IntPtr.Zero)
                 {
                     MemoryHelper.FreeMemory(m_fileIOPtr);
                     m_fileIOPtr = IntPtr.Zero;
                 }
 
-                if(disposing)
+        if (disposing)
                 {
                     m_openProc = null;
                     m_closeProc = null;
                     CloseAllFiles();
                 }
+
                 m_isDisposed = true;
             }
         }
 
-        private IntPtr OnAiFileOpenProc(IntPtr fileIO, String pathToFile, String mode)
+    /// <summary>
+    /// Callback for Assimp that handles a file being opened.
+    /// </summary>
+    /// <param name="fileIO"></param>
+    /// <param name="pathToFile"></param>
+    /// <param name="mode"></param>
+    /// <returns></returns>
+    protected IntPtr OnAiFileOpenProc(IntPtr fileIO, String pathToFile, String mode)
         {
-            if(m_fileIOPtr != fileIO)
+      if (m_fileIOPtr != fileIO)
                 return IntPtr.Zero;
 
             FileIOMode fileMode = ConvertFileMode(mode);
             IOStream iostream = OpenFile(pathToFile, fileMode);
             IntPtr aiFilePtr = IntPtr.Zero;
 
-            if(iostream != null)
+      if (iostream != null)
             {
-                if(iostream.IsValid)
+        if (iostream.IsValid)
                 {
                     aiFilePtr = iostream.AiFile;
                     m_openedFiles.Add(aiFilePtr, iostream);
@@ -193,13 +222,18 @@ namespace Internal.Assimp
             return aiFilePtr;
         }
 
-        private void OnAiFileCloseProc(IntPtr fileIO, IntPtr file)
+    /// <summary>
+    /// Callback for Assimp that handles a file being closed.
+    /// </summary>
+    /// <param name="fileIO"></param>
+    /// <param name="file"></param>
+    protected void OnAiFileCloseProc(IntPtr fileIO, IntPtr file)
         {
-            if(m_fileIOPtr != fileIO)
+      if (m_fileIOPtr != fileIO)
                 return;
 
             IOStream iostream;
-            if(m_openedFiles.TryGetValue(file, out iostream))
+      if (m_openedFiles.TryGetValue(file, out iostream))
             {
                 CloseFile(iostream);
             }
@@ -209,7 +243,7 @@ namespace Internal.Assimp
         {
             FileIOMode fileMode = FileIOMode.Read;
 
-            switch(mode)
+      switch (mode)
             {
                 case "w":
                     fileMode = FileIOMode.Write;

@@ -1,5 +1,6 @@
 /*
- * Copyright 2018-2020 Bradley Austin Davis
+ * Copyright 2018-2021 Bradley Austin Davis
+ * SPDX-License-Identifier: Apache-2.0 OR MIT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,6 +13,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ */
+
+/*
+ * At your option, you may choose to accept this material under either:
+ *  1. The Apache License, Version 2.0, found at <http://www.apache.org/licenses/LICENSE-2.0>, or
+ *  2. The MIT License, found at <http://opensource.org/licenses/MIT>.
  */
 
 #include "spirv_reflect.hpp"
@@ -580,18 +587,18 @@ void CompilerReflection::emit_resources(const char *tag, const SmallVector<Resou
 		{
 			bool ssbo_block = type.storage == StorageClassStorageBuffer ||
 			                  (type.storage == StorageClassUniform && typeflags.get(DecorationBufferBlock));
-			if (ssbo_block)
-			{
-				auto buffer_flags = get_buffer_block_flags(res.id);
-				if (buffer_flags.get(DecorationNonReadable))
-					json_stream->emit_json_key_value("writeonly", true);
-				if (buffer_flags.get(DecorationNonWritable))
-					json_stream->emit_json_key_value("readonly", true);
-				if (buffer_flags.get(DecorationRestrict))
-					json_stream->emit_json_key_value("restrict", true);
-				if (buffer_flags.get(DecorationCoherent))
-					json_stream->emit_json_key_value("coherent", true);
-			}
+			Bitset qualifier_mask = ssbo_block ? get_buffer_block_flags(res.id) : mask;
+
+			if (qualifier_mask.get(DecorationNonReadable))
+				json_stream->emit_json_key_value("writeonly", true);
+			if (qualifier_mask.get(DecorationNonWritable))
+				json_stream->emit_json_key_value("readonly", true);
+			if (qualifier_mask.get(DecorationRestrict))
+				json_stream->emit_json_key_value("restrict", true);
+			if (qualifier_mask.get(DecorationCoherent))
+				json_stream->emit_json_key_value("coherent", true);
+			if (qualifier_mask.get(DecorationVolatile))
+				json_stream->emit_json_key_value("volatile", true);
 		}
 
 		emit_type_array(type);
@@ -647,7 +654,7 @@ void CompilerReflection::emit_specialization_constants()
 		return;
 
 	json_stream->emit_json_key_array("specialization_constants");
-	for (const auto spec_const : specialization_constants)
+	for (const auto &spec_const : specialization_constants)
 	{
 		auto &c = get<SPIRConstant>(spec_const.id);
 		auto type = get<SPIRType>(c.constant_type);

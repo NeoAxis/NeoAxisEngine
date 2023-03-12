@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -181,7 +181,7 @@ namespace NeoAxis.Import.FBX
 			{
 				Material material = null;
 				if( context.settings.updateMaterials )
-					material = CreateMaterial( context.materialsGroup, data );
+					material = CreateMaterial( settings, context.materialsGroup, data );
 				else
 				{
 					if( context.materialsGroup != null )
@@ -231,7 +231,7 @@ namespace NeoAxis.Import.FBX
 					InitAnimations( context, sceneLoader, mesh, oldBoneFromNewIndex, additionalTransform );
 				}
 
-				if( settings.component.MergeMeshGeometries )
+				if( settings.component.MergeGeometries.Value != Import3D.MergeGeometriesEnum.False )
 					mesh.MergeGeometriesWithEqualVertexStructureAndMaterial();
 
 				mesh.Enabled = true;
@@ -263,7 +263,7 @@ namespace NeoAxis.Import.FBX
 						//else
 						//		mesh.Dispose();
 
-						if( settings.component.MergeMeshGeometries )
+						if( settings.component.MergeGeometries.Value != Import3D.MergeGeometriesEnum.False )
 							mesh.MergeGeometriesWithEqualVertexStructureAndMaterial();
 					}
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -65,9 +65,9 @@ namespace NeoAxis
 			c.DampingRatio = (float)DampingRatio;
 		}
 
-		public override void Render( ViewportRenderingContext context, out int verticesRendered )
+		public override void RenderPhysicalObject( ViewportRenderingContext context, out int verticesRendered )
 		{
-			base.Render( context, out verticesRendered );
+			base.RenderPhysicalObject( context, out verticesRendered );
 
 			var context2 = context.ObjectInSpaceRenderingContext;
 			var renderer = context.Owner.Simple3DRenderer;
@@ -79,7 +79,7 @@ namespace NeoAxis
 
 				{
 					var color = new ColorValue( 0, 0, 0 );
-					renderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+					renderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 
 					renderer.AddLine( pos, tr * new Vector3( 1, 0, 0 ) );
 					verticesRendered += 2;

@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ namespace NeoAxis
 	/// <summary>
 	/// A basic class for making doors.
 	/// </summary>
-	[AddToResourcesWindow( @"Base\3D\Door", -3000 )]
+	[AddToResourcesWindow( @"Base\Game framework\Door", -7997 )]
 	[NewObjectDefaultName( "Door" )]
 	public class Door : MeshInSpace
 	{
@@ -28,7 +28,7 @@ namespace NeoAxis
 					{
 						Door1OpenOffsetChanged?.Invoke( this );
 
-						if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+						if( EngineApp.IsEditor )
 							UpdateBodiesToState( DesiredState );
 					}
 					finally { _door1OpenOffset.EndSet(); }
@@ -55,7 +55,7 @@ namespace NeoAxis
 					{
 						Door1ClosedOffsetChanged?.Invoke( this );
 
-						if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+						if( EngineApp.IsEditor )
 							UpdateBodiesToState( DesiredState );
 					}
 					finally { _door1ClosedOffset.EndSet(); }
@@ -82,7 +82,7 @@ namespace NeoAxis
 					{
 						Door2OpenOffsetChanged?.Invoke( this );
 
-						if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+						if( EngineApp.IsEditor )
 							UpdateBodiesToState( DesiredState );
 					}
 					finally { _door2OpenOffset.EndSet(); }
@@ -109,7 +109,7 @@ namespace NeoAxis
 					{
 						Door2ClosedOffsetChanged?.Invoke( this );
 
-						if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+						if( EngineApp.IsEditor )
 							UpdateBodiesToState( DesiredState );
 					}
 					finally { _door2ClosedOffset.EndSet(); }
@@ -176,7 +176,7 @@ namespace NeoAxis
 					{
 						DesiredStateChanged?.Invoke( this );
 
-						if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+						if( EngineApp.IsEditor )
 							UpdateBodiesToState( _desiredState.value );
 					}
 					finally { _desiredState.EndSet(); }
@@ -238,7 +238,14 @@ namespace NeoAxis
 		public void Open()
 		{
 			if( CurrentState != 1 && DesiredState != 1 )
+			{
 				ParentScene?.SoundPlay( OpenSound, TransformV.Position );
+				if( NetworkIsServer && OpenSound.ReferenceOrValueSpecified )
+				{
+					BeginNetworkMessageToEveryone( "OpenSound" );
+					EndNetworkMessage();
+				}
+			}
 
 			DesiredState = 1;
 		}
@@ -246,7 +253,14 @@ namespace NeoAxis
 		public void Close()
 		{
 			if( CurrentState != 0 && DesiredState != 0 )
+			{
 				ParentScene?.SoundPlay( CloseSound, TransformV.Position );
+				if( NetworkIsServer && CloseSound.ReferenceOrValueSpecified )
+				{
+					BeginNetworkMessageToEveryone( "CloseSound" );
+					EndNetworkMessage();
+				}
+			}
 
 			DesiredState = 0;
 		}
@@ -255,7 +269,7 @@ namespace NeoAxis
 		{
 			base.OnEnabledInHierarchyChanged();
 
-			if( EnabledInHierarchy && EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+			if( EnabledInHierarchyAndIsInstance && EngineApp.IsEditor )
 				UpdateBodiesToState( _desiredState.value );
 		}
 
@@ -322,7 +336,7 @@ namespace NeoAxis
 				{
 					body = meshInSpace.CreateComponent<RigidBody>();
 					body.Name = "Collision Body";
-					body.MotionType = RigidBody.MotionTypeEnum.Kinematic;
+					body.MotionType = PhysicsMotionType.Kinematic;
 
 					var shape = body.CreateComponent<CollisionShape_Box>();
 					shape.Dimensions = new Vector3( 0.1, 1.55, 2.25 );
@@ -406,6 +420,19 @@ namespace NeoAxis
 
 				UpdateBodiesToState( newState );
 			}
+		}
+
+		protected override bool OnReceiveNetworkMessageFromServer( string message, ArrayDataReader reader )
+		{
+			if( !base.OnReceiveNetworkMessageFromServer( message, reader ) )
+				return false;
+
+			if( message == "OpenSound" )
+				ParentScene?.SoundPlay( OpenSound, TransformV.Position );
+			else if( message == "CloseSound" )
+				ParentScene?.SoundPlay( CloseSound, TransformV.Position );
+
+			return true;
 		}
 	}
 }

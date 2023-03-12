@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -185,6 +185,16 @@ namespace NeoAxis
 					return false;
 				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
 					return false;
+				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+					return false;
+
+				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
+				{
+					if( SystemSettings.CommandLineParameters.TryGetValue( "-client", out var worldClient ) )
+						return false;
+					if( SystemSettings.CommandLineParameters.TryGetValue( "-server", out var projectServer ) )
+						return false;
+				}
 
 				return true;
 			}
@@ -241,5 +251,11 @@ namespace NeoAxis
 			ScriptCodeGenerator.CheckForSyntaxErrors( code );
 #endif
 		}
+
+		public static bool ScriptCacheCompile( out string error )
+		{
+			return scriptCache.Compile( out error );
+		}
+
 	}
 }

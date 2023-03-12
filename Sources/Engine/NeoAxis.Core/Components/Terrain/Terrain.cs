@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -9,14 +9,18 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Concurrent;
 using System.Text;
+using System.Runtime.CompilerServices;
+using Internal.SharpBgfx;
 
 namespace NeoAxis
 {
 	/// <summary>
-	/// Heightmap based terrain.
+	/// A heightmap based terrain.
 	/// </summary>
+#if !DEPLOY
 	[SettingsCell( typeof( TerrainSettingsCell ) )]
 	//because sorting is added from ResourcesWindowItems.cs [AddToResourcesWindow( @"Base\Scene objects\Terrain", 0 )]
+#endif
 	public class Terrain : Component
 	{
 		const double timeLimitToDestroyFarSurfaceObjectGroups = 10;
@@ -37,7 +41,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		int tileSize = 32;
+		int tileSize = 64;
 
 		int tileCount;
 		Tile[,] tiles;
@@ -126,7 +130,7 @@ namespace NeoAxis
 		}
 
 		/// <summary>
-		/// Resolution of the height map.
+		/// The resolution of the height map.
 		/// </summary>
 		[DefaultValue( HeightmapSizeEnum._512x512 )]
 		[UndoDependentProperty( nameof( HeightmapSize_UndoDependentData ) )]
@@ -175,8 +179,8 @@ namespace NeoAxis
 		{
 			get { return _holes; }
 		}
-		public delegate void BaseObjectsChangedDelegate( Terrain sender );
-		public event BaseObjectsChangedDelegate HolesChanged;
+		public delegate void HolesChangedDelegate( Terrain sender );
+		public event HolesChangedDelegate HolesChanged;
 		ReferenceList<MeshInSpace> _holes;
 
 		/// <summary>
@@ -217,7 +221,7 @@ namespace NeoAxis
 								tile.SurfaceObjectsObjectInSpace.Visible = _visible.value;
 						}
 
-						if( EnabledInHierarchy )
+						if( EnabledInHierarchyAndIsInstance )
 						{
 							SetNeedUpdateAllTiles( NeedUpdateEnum.Layers );
 							UpdateTiles();
@@ -284,7 +288,7 @@ namespace NeoAxis
 					{
 						MaterialUV0Changed?.Invoke( this );
 
-						if( EnabledInHierarchy )
+						if( EnabledInHierarchyAndIsInstance )
 						{
 							SetNeedUpdateAllTiles( NeedUpdateEnum.Geometry );
 							UpdateTiles();
@@ -317,7 +321,7 @@ namespace NeoAxis
 					{
 						MaterialUV1Changed?.Invoke( this );
 
-						if( EnabledInHierarchy )
+						if( EnabledInHierarchyAndIsInstance )
 						{
 							SetNeedUpdateAllTiles( NeedUpdateEnum.Geometry );
 							UpdateTiles();
@@ -349,7 +353,7 @@ namespace NeoAxis
 					{
 						MaterialUVCurvatureIntensityChanged?.Invoke( this );
 
-						if( EnabledInHierarchy )
+						if( EnabledInHierarchyAndIsInstance )
 						{
 							SetNeedUpdateAllTiles( NeedUpdateEnum.Geometry );
 							UpdateTiles();
@@ -381,7 +385,7 @@ namespace NeoAxis
 					{
 						MaterialUVCurvatureFrequencyChanged?.Invoke( this );
 
-						if( EnabledInHierarchy )
+						if( EnabledInHierarchyAndIsInstance )
 						{
 							SetNeedUpdateAllTiles( NeedUpdateEnum.Geometry );
 							UpdateTiles();
@@ -542,7 +546,7 @@ namespace NeoAxis
 
 						baseSurfaceObjectsDataCache = null;
 
-						if( EnabledInHierarchy )
+						if( EnabledInHierarchyAndIsInstance )
 						{
 							SetNeedUpdateAllTiles( NeedUpdateEnum.Layers );
 							UpdateTiles();
@@ -574,7 +578,7 @@ namespace NeoAxis
 
 						baseSurfaceObjectsDataCache = null;
 
-						if( EnabledInHierarchy )
+						if( EnabledInHierarchyAndIsInstance )
 						{
 							SetNeedUpdateAllTiles( NeedUpdateEnum.Layers );
 							UpdateTiles();
@@ -607,7 +611,7 @@ namespace NeoAxis
 
 						baseSurfaceObjectsDataCache = null;
 
-						if( EnabledInHierarchy )
+						if( EnabledInHierarchyAndIsInstance )
 						{
 							SetNeedUpdateAllTiles( NeedUpdateEnum.Layers );
 							UpdateTiles();
@@ -640,7 +644,7 @@ namespace NeoAxis
 
 						baseSurfaceObjectsDataCache = null;
 
-						if( EnabledInHierarchy )
+						if( EnabledInHierarchyAndIsInstance )
 						{
 							SetNeedUpdateAllTiles( NeedUpdateEnum.Layers );
 							UpdateTiles();
@@ -673,7 +677,7 @@ namespace NeoAxis
 						baseSurfaceObjectsDataCache = null;
 
 						//!!!!не всё обновлять. где еще так
-						if( EnabledInHierarchy )
+						if( EnabledInHierarchyAndIsInstance )
 						{
 							SetNeedUpdateAllTiles( NeedUpdateEnum.Layers );
 							UpdateTiles();
@@ -707,7 +711,7 @@ namespace NeoAxis
 						baseSurfaceObjectsDataCache = null;
 
 						//!!!!не всё обновлять. где еще так
-						if( EnabledInHierarchy )
+						if( EnabledInHierarchyAndIsInstance )
 						{
 							SetNeedUpdateAllTiles( NeedUpdateEnum.Layers );
 							UpdateTiles();
@@ -740,7 +744,7 @@ namespace NeoAxis
 						baseSurfaceObjectsDataCache = null;
 
 						//!!!!не всё обновлять. где еще так
-						if( EnabledInHierarchy )
+						if( EnabledInHierarchyAndIsInstance )
 						{
 							SetNeedUpdateAllTiles( NeedUpdateEnum.Layers );
 							UpdateTiles();
@@ -753,6 +757,40 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="SurfaceObjectsCastShadows"/> property value changes.</summary>
 		public event Action<Terrain> SurfaceObjectsCastShadowsChanged;
 		ReferenceField<bool> _surfaceObjectsCastShadows = true;
+
+		/// <summary>
+		/// Whether to enable a collision detection. A collision definition of the mesh is used.
+		/// </summary>
+		[Category( "Display" )]
+		[DefaultValue( false )]
+		public Reference<bool> SurfaceObjectsCollision
+		{
+			get { if( _surfaceObjectsCollision.BeginGet() ) SurfaceObjectsCollision = _surfaceObjectsCollision.Get( this ); return _surfaceObjectsCollision.value; }
+			set
+			{
+				if( _surfaceObjectsCollision.BeginSet( ref value ) )
+				{
+					try
+					{
+						SurfaceObjectsCollisionChanged?.Invoke( this );
+
+						baseSurfaceObjectsDataCache = null;
+
+						//!!!!не всё обновлять. где еще так
+						if( EnabledInHierarchyAndIsInstance )
+						{
+							SetNeedUpdateAllTiles( NeedUpdateEnum.Layers );
+							UpdateTiles();
+						}
+					}
+					finally { _surfaceObjectsCollision.EndSet(); }
+				}
+			}
+		}
+		/// <summary>Occurs when the <see cref="SurfaceObjectsCollision"/> property value changes.</summary>
+		public event Action<Terrain> SurfaceObjectsCollisionChanged;
+		ReferenceField<bool> _surfaceObjectsCollision = false;
+
 
 		//!!!!
 		//LODScale
@@ -846,31 +884,32 @@ namespace NeoAxis
 		public event Action<Terrain> CollisionMaterialChanged;
 		ReferenceField<PhysicalMaterial> _collisionMaterial;
 
-		/// <summary>
-		/// The type of friction applied on the rigid body.
-		/// </summary>
-		[DefaultValue( PhysicalMaterial.FrictionModeEnum.Simple )]
-		[Serialize]
-		[Category( "Physics" )]
-		public Reference<PhysicalMaterial.FrictionModeEnum> CollisionFrictionMode
-		{
-			get { if( _collisionFrictionMode.BeginGet() ) CollisionFrictionMode = _collisionFrictionMode.Get( this ); return _collisionFrictionMode.value; }
-			set
-			{
-				if( _collisionFrictionMode.BeginSet( ref value ) )
-				{
-					try
-					{
-						CollisionFrictionModeChanged?.Invoke( this );
-						SetCollisionMaterial();
-					}
-					finally { _collisionFrictionMode.EndSet(); }
-				}
-			}
-		}
-		/// <summary>Occurs when the <see cref="CollisionFrictionMode"/> property value changes.</summary>
-		public event Action<Terrain> CollisionFrictionModeChanged;
-		ReferenceField<PhysicalMaterial.FrictionModeEnum> _collisionFrictionMode = PhysicalMaterial.FrictionModeEnum.Simple;
+		//!!!!
+		///// <summary>
+		///// The type of friction applied on the rigid body.
+		///// </summary>
+		//[DefaultValue( PhysicalMaterial.FrictionModeEnum.Simple )]
+		//[Serialize]
+		//[Category( "Physics" )]
+		//public Reference<PhysicalMaterial.FrictionModeEnum> CollisionFrictionMode
+		//{
+		//	get { if( _collisionFrictionMode.BeginGet() ) CollisionFrictionMode = _collisionFrictionMode.Get( this ); return _collisionFrictionMode.value; }
+		//	set
+		//	{
+		//		if( _collisionFrictionMode.BeginSet( ref value ) )
+		//		{
+		//			try
+		//			{
+		//				CollisionFrictionModeChanged?.Invoke( this );
+		//				SetCollisionMaterial();
+		//			}
+		//			finally { _collisionFrictionMode.EndSet(); }
+		//		}
+		//	}
+		//}
+		///// <summary>Occurs when the <see cref="CollisionFrictionMode"/> property value changes.</summary>
+		//public event Action<Terrain> CollisionFrictionModeChanged;
+		//ReferenceField<PhysicalMaterial.FrictionModeEnum> _collisionFrictionMode = PhysicalMaterial.FrictionModeEnum.Simple;
 
 		/// <summary>
 		/// The amount of friction applied on the rigid body.
@@ -899,86 +938,89 @@ namespace NeoAxis
 		public event Action<Terrain> CollisionFrictionChanged;
 		ReferenceField<double> _collisionFriction = 0.5;
 
-		/// <summary>
-		/// The amount of directional friction applied on the rigid body.
-		/// </summary>
-		[DefaultValue( "1 1 1" )]
-		[Serialize]
-		//[ApplicableRange( 0, 1 )]
-		[Category( "Physics" )]
-		public Reference<Vector3> CollisionAnisotropicFriction
-		{
-			get { if( _collisionAnisotropicFriction.BeginGet() ) CollisionAnisotropicFriction = _collisionAnisotropicFriction.Get( this ); return _collisionAnisotropicFriction.value; }
-			set
-			{
-				if( _collisionAnisotropicFriction.BeginSet( ref value ) )
-				{
-					try
-					{
-						CollisionAnisotropicFrictionChanged?.Invoke( this );
-						SetCollisionMaterial();
-					}
-					finally { _collisionAnisotropicFriction.EndSet(); }
-				}
-			}
-		}
-		/// <summary>Occurs when the <see cref="CollisionAnisotropicFriction"/> property value changes.</summary>
-		public event Action<Terrain> CollisionAnisotropicFrictionChanged;
-		ReferenceField<Vector3> _collisionAnisotropicFriction = Vector3.One;
+		//!!!!
+		///// <summary>
+		///// The amount of directional friction applied on the rigid body.
+		///// </summary>
+		//[DefaultValue( "1 1 1" )]
+		//[Serialize]
+		////[ApplicableRange( 0, 1 )]
+		//[Category( "Physics" )]
+		//public Reference<Vector3> CollisionAnisotropicFriction
+		//{
+		//	get { if( _collisionAnisotropicFriction.BeginGet() ) CollisionAnisotropicFriction = _collisionAnisotropicFriction.Get( this ); return _collisionAnisotropicFriction.value; }
+		//	set
+		//	{
+		//		if( _collisionAnisotropicFriction.BeginSet( ref value ) )
+		//		{
+		//			try
+		//			{
+		//				CollisionAnisotropicFrictionChanged?.Invoke( this );
+		//				SetCollisionMaterial();
+		//			}
+		//			finally { _collisionAnisotropicFriction.EndSet(); }
+		//		}
+		//	}
+		//}
+		///// <summary>Occurs when the <see cref="CollisionAnisotropicFriction"/> property value changes.</summary>
+		//public event Action<Terrain> CollisionAnisotropicFrictionChanged;
+		//ReferenceField<Vector3> _collisionAnisotropicFriction = Vector3.One;
 
-		/// <summary>
-		/// The amount of friction applied when rigid body is spinning.
-		/// </summary>
-		[DefaultValue( 0.5 )]
-		[Serialize]
-		[Range( 0, 1 )]
-		[Category( "Physics" )]
-		public Reference<double> CollisionSpinningFriction
-		{
-			get { if( _collisionSpinningFriction.BeginGet() ) CollisionSpinningFriction = _collisionSpinningFriction.Get( this ); return _collisionSpinningFriction.value; }
-			set
-			{
-				if( _collisionSpinningFriction.BeginSet( ref value ) )
-				{
-					try
-					{
-						CollisionSpinningFrictionChanged?.Invoke( this );
-						SetCollisionMaterial();
-					}
-					finally { _collisionSpinningFriction.EndSet(); }
-				}
-			}
-		}
-		/// <summary>Occurs when the <see cref="CollisionSpinningFriction"/> property value changes.</summary>
-		public event Action<Terrain> CollisionSpinningFrictionChanged;
-		ReferenceField<double> _collisionSpinningFriction = 0.5;
+		//!!!!
+		///// <summary>
+		///// The amount of friction applied when rigid body is spinning.
+		///// </summary>
+		//[DefaultValue( 0.5 )]
+		//[Serialize]
+		//[Range( 0, 1 )]
+		//[Category( "Physics" )]
+		//public Reference<double> CollisionSpinningFriction
+		//{
+		//	get { if( _collisionSpinningFriction.BeginGet() ) CollisionSpinningFriction = _collisionSpinningFriction.Get( this ); return _collisionSpinningFriction.value; }
+		//	set
+		//	{
+		//		if( _collisionSpinningFriction.BeginSet( ref value ) )
+		//		{
+		//			try
+		//			{
+		//				CollisionSpinningFrictionChanged?.Invoke( this );
+		//				SetCollisionMaterial();
+		//			}
+		//			finally { _collisionSpinningFriction.EndSet(); }
+		//		}
+		//	}
+		//}
+		///// <summary>Occurs when the <see cref="CollisionSpinningFriction"/> property value changes.</summary>
+		//public event Action<Terrain> CollisionSpinningFrictionChanged;
+		//ReferenceField<double> _collisionSpinningFriction = 0.5;
 
-		/// <summary>
-		/// The amount of friction applied when rigid body is rolling.
-		/// </summary>
-		[DefaultValue( 0.5 )]
-		[Serialize]
-		[Range( 0, 1 )]
-		[Category( "Physics" )]
-		public Reference<double> CollisionRollingFriction
-		{
-			get { if( _collisionRollingFriction.BeginGet() ) CollisionRollingFriction = _collisionRollingFriction.Get( this ); return _collisionRollingFriction.value; }
-			set
-			{
-				if( _collisionRollingFriction.BeginSet( ref value ) )
-				{
-					try
-					{
-						CollisionRollingFrictionChanged?.Invoke( this );
-						SetCollisionMaterial();
-					}
-					finally { _collisionRollingFriction.EndSet(); }
-				}
-			}
-		}
-		/// <summary>Occurs when the <see cref="CollisionRollingFriction"/> property value changes.</summary>
-		public event Action<Terrain> CollisionRollingFrictionChanged;
-		ReferenceField<double> _collisionRollingFriction = 0.5;
+		//!!!!
+		///// <summary>
+		///// The amount of friction applied when rigid body is rolling.
+		///// </summary>
+		//[DefaultValue( 0.5 )]
+		//[Serialize]
+		//[Range( 0, 1 )]
+		//[Category( "Physics" )]
+		//public Reference<double> CollisionRollingFriction
+		//{
+		//	get { if( _collisionRollingFriction.BeginGet() ) CollisionRollingFriction = _collisionRollingFriction.Get( this ); return _collisionRollingFriction.value; }
+		//	set
+		//	{
+		//		if( _collisionRollingFriction.BeginSet( ref value ) )
+		//		{
+		//			try
+		//			{
+		//				CollisionRollingFrictionChanged?.Invoke( this );
+		//				SetCollisionMaterial();
+		//			}
+		//			finally { _collisionRollingFriction.EndSet(); }
+		//		}
+		//	}
+		//}
+		///// <summary>Occurs when the <see cref="CollisionRollingFriction"/> property value changes.</summary>
+		//public event Action<Terrain> CollisionRollingFrictionChanged;
+		//ReferenceField<double> _collisionRollingFriction = 0.5;
 
 		/// <summary>
 		/// The ratio of the final relative velocity to initial relative velocity of the rigid body after collision.
@@ -1014,12 +1056,13 @@ namespace NeoAxis
 			_32x32,
 			_64x64,
 			_128x128,
+			_256x256,
 		}
 
 		/// <summary>
 		/// The size of internal tile cells. These cells divide the entire geometry of the landscape into pieces.
 		/// </summary>
-		[DefaultValue( TileSizeEnum._32x32 )]
+		[DefaultValue( TileSizeEnum._64x64 )]
 		[Category( "Optimization" )]
 		public Reference<TileSizeEnum> TileSize
 		{
@@ -1040,7 +1083,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="TileSize"/> property value changes.</summary>
 		public event Action<Terrain> TileSizeChanged;
-		ReferenceField<TileSizeEnum> _tileSize = TileSizeEnum._32x32;
+		ReferenceField<TileSizeEnum> _tileSize = TileSizeEnum._64x64;
 
 		/// <summary>
 		/// Whether to enable level of detail.
@@ -1116,6 +1159,20 @@ namespace NeoAxis
 		ReferenceField<double> _lODDistance = 50.0;
 
 		/// <summary>
+		/// Whether to precalculate data of objects from layers in the simulation. When the property is disabled, the objects will calculate when it needed and destroyed after 10 seconds when are not visible by the camera.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Optimization" )]
+		public Reference<bool> PrecalculateObjects
+		{
+			get { if( _precalculateObjects.BeginGet() ) PrecalculateObjects = _precalculateObjects.Get( this ); return _precalculateObjects.value; }
+			set { if( _precalculateObjects.BeginSet( ref value ) ) { try { PrecalculateObjectsChanged?.Invoke( this ); } finally { _precalculateObjects.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PrecalculateObjects"/> property value changes.</summary>
+		public event Action<Terrain> PrecalculateObjectsChanged;
+		ReferenceField<bool> _precalculateObjects = true;
+
+		/// <summary>
 		/// The maximal amount of objects created from layers in one rendering group.
 		/// </summary>
 		[DefaultValue( 1000 )]
@@ -1131,7 +1188,7 @@ namespace NeoAxis
 					{
 						MaxObjectsInGroupChanged?.Invoke( this );
 
-						if( EnabledInHierarchy )
+						if( EnabledInHierarchyAndIsInstance )
 						{
 							SetNeedUpdateAllTiles( NeedUpdateEnum.Layers );
 							UpdateTiles();
@@ -1198,7 +1255,7 @@ namespace NeoAxis
 		struct Vertex
 		{
 			public Vector3F Position;
-			//!!!!сжимать
+			//!!!!compress
 			public Vector3F Normal;
 			public Vector4F Tangent;
 			public Vector2F TexCoord0;
@@ -1218,7 +1275,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		class BaseSurfaceObjectsDataClass
+		internal class BaseSurfaceObjectsDataClass
 		{
 			public Surface Surface;
 			public bool SurfaceObjects;
@@ -1227,13 +1284,14 @@ namespace NeoAxis
 			public ColorValue SurfaceObjectsColor;
 			public float SurfaceObjectsVisibilityDistanceFactor;
 			public bool SurfaceObjectsCastShadows;
+			public bool SurfaceObjectsCollision;
 
 			//!!!!
 		}
 
 		/////////////////////////////////////////
 
-		class Tile
+		internal class Tile
 		{
 			public Terrain owner;
 
@@ -1253,7 +1311,8 @@ namespace NeoAxis
 
 			public Occluder Occluder;
 
-			public RigidBody CollisionBody;
+			public Scene.PhysicsWorldClass.Body CollisionBody;
+			//public RigidBody CollisionBody;
 
 			//!!!!когда слоя нет в тайле. результирующая маска нулевая
 			//!!!!!для материалов тоже полезно
@@ -1262,8 +1321,11 @@ namespace NeoAxis
 			public double LastTimeVisibledByCamera;
 
 			public SpaceBounds SurfaceObjectsBounds;
+
 			public ObjectInSpace SurfaceObjectsObjectInSpace;
 			public SurfaceObjectsItem[] SurfaceObjectsItems;
+			public List<Scene.PhysicsWorldClass.Body> SurfaceObjectsCollisionBodies = new List<Scene.PhysicsWorldClass.Body>();
+			//public RigidBody SurfaceObjectsCollisionBody;
 
 			public NeedUpdateEnum NeedUpdate;
 
@@ -1285,8 +1347,9 @@ namespace NeoAxis
 				//public float MaxVisibilityDistanceSquared;
 
 				public Bounds Bounds;
-				public double ObjectsMaxSize;
+				public float ObjectsMaxSize;
 				public double ObjectsMaxVisibilityDistanceFactor;
+
 				//!!!!bounding sphere?
 
 				//!!!!camera context
@@ -1294,8 +1357,8 @@ namespace NeoAxis
 
 				public double RenderGroupsLastVisibleTime;
 				public SurfaceObjectsRenderGroup[] RenderGroups;
-				public bool RenderGroupsTaskData;
-				public volatile SurfaceObjectsRenderGroup[] RenderGroupsTaskResult;
+				//public volatile bool RenderGroupsTaskData;
+				//public volatile SurfaceObjectsRenderGroup[] RenderGroupsTaskResult;
 
 				//
 
@@ -1328,12 +1391,18 @@ namespace NeoAxis
 				{
 					return BaseSurfaceObjectsData != null ? BaseSurfaceObjectsData.SurfaceObjectsCastShadows : Layer.SurfaceObjectsCastShadows;
 				}
+
+				public bool GetObjectsCollision()
+				{
+					return BaseSurfaceObjectsData != null ? BaseSurfaceObjectsData.SurfaceObjectsCollision : Layer.SurfaceObjectsCollision;
+				}
 			}
 
 			/////////////////////
 
 			public class SurfaceObjectsRenderGroup
 			{
+				//for transparent materials
 				public bool NoBatchingGroup;
 
 				//!!!!может хранить MeshResult и параметры
@@ -1345,11 +1414,14 @@ namespace NeoAxis
 					public Vector3 Position;
 					public QuaternionF Rotation;//!!!!need only for billboard
 					public Vector3F Scale;//!!!!need only for billboard
-					public Matrix3F MeshMatrix3;
+
+					public Matrix4F MeshMatrix;
+					//public Matrix3F MeshMatrix3;
 
 					//!!!!need only for separate rendering
 					public Bounds BoundingBox;
 					public Sphere BoundingSphere;
+					//public ColorByte ColorForInstancingData;
 				}
 				public OpenList<ObjectItem> Objects = new OpenList<ObjectItem>();
 
@@ -1488,7 +1560,7 @@ namespace NeoAxis
 							foreach( var hole in holes )
 							{
 								////еще не посчитан при загрузке. объект еще не EnabledInHierarchy, т.к. ниже в иерархии
-								if( hole.SpaceBounds.CalculatedBoundingBox.Intersects( ref bounds ) )
+								if( hole.SpaceBounds.BoundingBox.Intersects( ref bounds ) )
 								{
 									var mesh = hole.Mesh.Value;
 									if( mesh != null )
@@ -1583,7 +1655,10 @@ namespace NeoAxis
 									Parallel.For( 0, vertices.Length, delegate ( int index )
 									{
 										var position = Vertices[ index ];
-										var normal = owner.GetNormal( position.ToVector2() + new Vector2F( 0.001f, 0.001f ) );
+
+										var position2 = position.ToVector2() + new Vector2F( 0.001f, 0.001f );
+										owner.GetNormal( ref position2, calculatedPositionsForGetNormals, out var normal );
+										//var normal = owner.GetNormal( position.ToVector2() + new Vector2F( 0.001f, 0.001f ) );
 
 										ref var vertex = ref vertices[ index ];
 
@@ -1645,7 +1720,10 @@ namespace NeoAxis
 								Parallel.For( 0, vertices.Length, delegate ( int index )
 								{
 									var position = Vertices[ index ];
-									var normal = owner.GetNormal( position.ToVector2() + new Vector2F( 0.001f, 0.001f ) );
+
+									var position2 = position.ToVector2() + new Vector2F( 0.001f, 0.001f );
+									owner.GetNormal( ref position2, calculatedPositionsForGetNormals, out var normal );
+									//var normal = owner.GetNormal( position.ToVector2() + new Vector2F( 0.001f, 0.001f ) );
 
 									ref var vertex = ref vertices[ index ];
 
@@ -1973,6 +2051,7 @@ namespace NeoAxis
 
 						//need set ShowInEditor = false before AddComponent
 						sectors = ComponentUtility.CreateComponent<Component>( null, false, false );
+						sectors.NetworkMode = NetworkModeEnum.False;
 						sectors.DisplayInEditor = false;
 						owner.AddComponent( sectors, -1 );
 						//sectors = owner.CreateComponent<Component>();
@@ -2078,7 +2157,7 @@ namespace NeoAxis
 
 				if( owner.Occluder )
 				{
-					var bounds = Bounds.CalculatedBoundingBox;
+					var bounds = Bounds.BoundingBox;
 
 					var minZ = owner.cachedBounds.Minimum.Z;
 					//1.0 is offset
@@ -2147,27 +2226,48 @@ namespace NeoAxis
 
 				if( owner.Collision && ObjectInSpace != null && Indices.Length != 0 )
 				{
-					CollisionBody = ObjectInSpace.CreateComponent<RigidBody>( enabled: false );
-					CollisionBody.AnyData = this;
-					CollisionBody.Name = "Collision Body";
-					CollisionBody.SpaceBoundsUpdateEvent += CollisionBody_SpaceBoundsUpdateEvent;
+					var scene = owner.FindParent<Scene>();
+					if( scene == null )
+						return;
+
+					var shapeData = new RigidBody();
 
 					//if( existsHoles || true )
 					//{
 
-					CollisionBody.Transform = ObjectInSpace.Transform;
-
-					var shape = CollisionBody.CreateComponent<CollisionShape_Mesh>();
-					shape.ShapeType = CollisionShape_Mesh.ShapeTypeEnum.TriangleMesh;
+					var meshShape = shapeData.CreateComponent<CollisionShape_Mesh>();
+					meshShape.ShapeType = CollisionShape_Mesh.ShapeTypeEnum.TriangleMesh;
 
 					var vertices = new Vector3F[ Vertices.Length ];
 					for( int n = 0; n < vertices.Length; n++ )
 						vertices[ n ] = ( Vertices[ n ] - Position ).ToVector3F();
-					shape.Vertices = vertices;
+					meshShape.Vertices = vertices;
 
-					shape.Indices = Indices;
-					shape.CheckValidData = false;
-					shape.MergeEqualVerticesRemoveInvalidTriangles = false;
+					meshShape.Indices = Indices;
+					meshShape.CheckValidData = false;
+					meshShape.MergeEqualVerticesRemoveInvalidTriangles = false;
+
+					//!!!!
+					{
+						shapeData.Material = owner.CollisionMaterial;
+						//!!!!
+						//CollisionBody.MaterialFrictionMode = owner.CollisionFrictionMode;
+						shapeData.MaterialFriction = owner.CollisionFriction;
+						//!!!!
+						//CollisionBody.MaterialAnisotropicFriction = owner.CollisionAnisotropicFriction;
+						//CollisionBody.MaterialSpinningFriction = owner.CollisionSpinningFriction;
+						//CollisionBody.MaterialRollingFriction = owner.CollisionRollingFriction;
+						shapeData.MaterialRestitution = owner.CollisionRestitution;
+					}
+					//SetCollisionMaterial();
+
+					var shapeItem = scene.PhysicsWorld.AllocateShape( shapeData, Vector3.One );
+					if( shapeItem != null )
+					{
+						var bodyItem = scene.PhysicsWorld.CreateRigidBodyStatic( shapeItem, true, this, Position, QuaternionF.Identity );
+						if( bodyItem != null )
+							CollisionBody = bodyItem;
+					}
 
 					//}
 					//else
@@ -2200,9 +2300,63 @@ namespace NeoAxis
 					//	shape.TransformRelativeToParent = new Transform( Vector3.Zero, Quaternion.Identity, new Vector3( scl, scl, 1 ) );
 					//}
 
-					SetCollisionMaterial();
 
-					CollisionBody.Enabled = true;
+					//CollisionBody = ObjectInSpace.CreateComponent<RigidBody>( enabled: false );
+					//CollisionBody.AnyData = this;
+					//CollisionBody.Name = "Collision Body";
+					//CollisionBody.SpaceBoundsUpdateEvent += CollisionBody_SpaceBoundsUpdateEvent;
+
+					////if( existsHoles || true )
+					////{
+
+					//CollisionBody.Transform = ObjectInSpace.Transform;
+
+					//var shape = CollisionBody.CreateComponent<CollisionShape_Mesh>();
+					//shape.ShapeType = CollisionShape_Mesh.ShapeTypeEnum.TriangleMesh;
+
+					//var vertices = new Vector3F[ Vertices.Length ];
+					//for( int n = 0; n < vertices.Length; n++ )
+					//	vertices[ n ] = ( Vertices[ n ] - Position ).ToVector3F();
+					//shape.Vertices = vertices;
+
+					//shape.Indices = Indices;
+					//shape.CheckValidData = false;
+					//shape.MergeEqualVerticesRemoveInvalidTriangles = false;
+
+					////}
+					////else
+					////{
+					////	var positions = Mesh.Result.ExtractedVerticesPositions;
+					////	var heights = new float[ positions.Length ];
+					////	for( int n = 0; n < positions.Length; n++ )
+					////	{
+					////		heights[ n ] = positions[ n ].Z;
+
+					////		//!!!!
+					////		heights[ n ] = 0;
+					////	}
+
+					////	int vertexCountByAxis = owner.tileSize + 1;
+
+					////	//!!!!что с minHeight, maxHeight и position.Z
+
+					////	var pos = owner.GetPosition( cellIndexMin );
+
+					////	//!!!!
+					////	CollisionBody.Transform = new Transform( new Vector3( pos.X, pos.Y, 0 ), Quaternion.Identity );
+					////	//CollisionBody.Transform = new Transform( new Vector3( pos.X, pos.Y, 0 ), Quaternion.Identity, new Vector3( scl, scl, 1 ) );
+
+					////	var shape = CollisionBody.CreateComponent<CollisionShape_Heightfield>();
+					////	shape.VertexCount = new Vector2I( vertexCountByAxis, vertexCountByAxis );
+					////	shape.Heights = heights;
+
+					////	var scl = owner.cachedCellSize * owner.tileSize;
+					////	shape.TransformRelativeToParent = new Transform( Vector3.Zero, Quaternion.Identity, new Vector3( scl, scl, 1 ) );
+					////}
+
+					//SetCollisionMaterial();
+
+					//CollisionBody.Enabled = true;
 				}
 			}
 
@@ -2210,31 +2364,41 @@ namespace NeoAxis
 			{
 				if( CollisionBody != null )
 				{
-					CollisionBody.SpaceBoundsUpdateEvent -= CollisionBody_SpaceBoundsUpdateEvent;
 					CollisionBody.Dispose();
 					CollisionBody = null;
 				}
+
+				//if( CollisionBody != null )
+				//{
+				//	CollisionBody.SpaceBoundsUpdateEvent -= CollisionBody_SpaceBoundsUpdateEvent;
+				//	CollisionBody.Dispose();
+				//	CollisionBody = null;
+				//}
 			}
 
-			private void CollisionBody_SpaceBoundsUpdateEvent( ObjectInSpace obj, ref SpaceBounds newBounds )
-			{
-				var sector = obj.AnyData as Tile;
-				if( sector != null && sector.Bounds != null )
-					newBounds = sector.Bounds;
-			}
+			//private void CollisionBody_SpaceBoundsUpdateEvent( ObjectInSpace obj, ref SpaceBounds newBounds )
+			//{
+			//	var sector = obj.AnyData as Tile;
+			//	if( sector != null && sector.Bounds != null )
+			//		newBounds = sector.Bounds;
+			//}
 
 			public void SetCollisionMaterial()
 			{
-				if( CollisionBody != null )
-				{
-					CollisionBody.Material = owner.CollisionMaterial;
-					CollisionBody.MaterialFrictionMode = owner.CollisionFrictionMode;
-					CollisionBody.MaterialFriction = owner.CollisionFriction;
-					CollisionBody.MaterialAnisotropicFriction = owner.CollisionAnisotropicFriction;
-					CollisionBody.MaterialSpinningFriction = owner.CollisionSpinningFriction;
-					CollisionBody.MaterialRollingFriction = owner.CollisionRollingFriction;
-					CollisionBody.MaterialRestitution = owner.CollisionRestitution;
-				}
+				//!!!!impl
+
+				//if( CollisionBody != null )
+				//{
+				//	CollisionBody.Material = owner.CollisionMaterial;
+				//	//!!!!
+				//	//CollisionBody.MaterialFrictionMode = owner.CollisionFrictionMode;
+				//	CollisionBody.MaterialFriction = owner.CollisionFriction;
+				//	//!!!!
+				//	//CollisionBody.MaterialAnisotropicFriction = owner.CollisionAnisotropicFriction;
+				//	//CollisionBody.MaterialSpinningFriction = owner.CollisionSpinningFriction;
+				//	//CollisionBody.MaterialRollingFriction = owner.CollisionRollingFriction;
+				//	CollisionBody.MaterialRestitution = owner.CollisionRestitution;
+				//}
 			}
 
 			public void UpdateLayers()
@@ -2255,7 +2419,7 @@ namespace NeoAxis
 					{
 						var newList = new List<RenderingPipeline.RenderSceneData.LayerItem>();
 
-						var bounds = Bounds.CalculatedBoundingBox;
+						var bounds = Bounds.BoundingBox;
 
 						foreach( var layer in currentLayers )
 						{
@@ -2366,24 +2530,18 @@ namespace NeoAxis
 				return null;
 			}
 
-			//!!!!impl threading task
-			//called from thread in threading mode. minimize using data of the terrain and other components
-			public static SurfaceObjectsRenderGroup[] CalculateSurfaceObjectsRenderGroups( SurfaceObjectsItem surfaceObjectsItem )
+			static SurfaceObjectsObjectItem[] CalculateSurfaceObjects( SurfaceObjectsItem surfaceObjectsItem, Vector3[,] calculatedPositionsForGetNormals )
 			{
-				var renderGroups = new List<SurfaceObjectsRenderGroup>();
-
-
 				var surface = surfaceObjectsItem.GetSurface().Result;
 				if( surface == null )
-					return renderGroups.ToArray();
+					return null;
+
 				surfaceObjectsItem.GetObjectsColor( out var objectsColor );
 				var objectsDistribution = surfaceObjectsItem.GetObjectsDistribution();
 				var objectsScale = surfaceObjectsItem.GetObjectsScale();
 
-
 				var tile = surfaceObjectsItem.Owner;
 				var owner = tile.owner;
-
 
 				SurfaceObjectsObjectItem[] data = null;
 				//OpenList<SurfaceObjectsObjectItem> data = null;
@@ -2411,7 +2569,7 @@ namespace NeoAxis
 					//	color *= layer.Value.SurfaceObjectsColor;
 
 
-					var bounds = tile.Bounds.CalculatedBoundingBox;
+					var bounds = tile.Bounds.BoundingBox;
 					var bounds2 = bounds.ToRectangle();
 
 					var min = bounds.Minimum.ToVector2();
@@ -2477,17 +2635,11 @@ namespace NeoAxis
 							//var randomSeed = new FastRandom( unchecked(nObjectItem * 12 + (int)( positionXY.X * 11.7 + positionXY.Y * 13.2 )) );
 							//var random = new FastRandom( randomSeed.NextInteger() );
 
-							var options = new Surface.GetRandomVariationOptions( groupIndex );
+							owner.GetNormal( ref positionXY, calculatedPositionsForGetNormals, out var surfaceNormal );
 
-							surface.GetRandomVariation( options, random, out _, out var elementIndex, out var positionZ, /*out var rotateByBaseNormal, */out var rotation, out var scale );
+							var options = new Surface.GetRandomVariationOptions( groupIndex, surfaceNormal );
 
-							//if( rotateByBaseNormal )
-							//{
-							//	owner.GetNormal( ref positionXY, calculatedPositionsForGetNormals, out var terrainNormal );
-
-							//	//!!!!
-							//	rotation *= QuaternionF.FromDirectionZAxisUp( terrainNormal );
-							//}
+							surface.GetRandomVariation( options, random, out _, out var elementIndex, out var positionZ, out var rotation, out var scale );
 
 							try
 							{
@@ -2507,8 +2659,8 @@ namespace NeoAxis
 										obj.VariationElement = elementIndex;
 
 										obj.Position = new Vector3( positionXY, terrainHeight + positionZ );
-										//!!!!наклонять ли или нет
 										obj.Rotation = rotation;
+
 										obj.Scale = scale * objectsScale;
 										//obj.Color = objectsColor;
 
@@ -2522,11 +2674,25 @@ namespace NeoAxis
 					} );
 				}
 
+				return data;
+			}
 
-				if( data != null )
+			//!!!!impl threading task
+			//called from thread in threading mode. minimize using data of the terrain and other components
+			public static SurfaceObjectsRenderGroup[] CalculateSurfaceObjectsRenderGroups( SurfaceObjectsItem surfaceObjectsItem )
+			{
+				var renderGroups = new List<SurfaceObjectsRenderGroup>();
+
+				//!!!!calculatedPositionsForGetNormals
+				var data = CalculateSurfaceObjects( surfaceObjectsItem, null );
+				var surface = surfaceObjectsItem.GetSurface().Result;
+
+				if( data != null && surface != null )
 				{
+					var tile = surfaceObjectsItem.Owner;
+					var owner = tile.owner;
+
 					for( int nObject = 0; nObject < data.Length; nObject++ )
-					//for( int nObject = 0; nObject < data.Count; nObject++ )
 					{
 						ref var obj = ref data[ nObject ];
 						if( obj.Initialized == 0 )
@@ -2560,17 +2726,25 @@ namespace NeoAxis
 						objectItem.Rotation = obj.Rotation;
 						objectItem.Scale = obj.Scale;
 
+						//!!!!double
+						var pos = obj.Position.ToVector3F();
 						obj.Rotation.ToMatrix3( out var rot );
 						Matrix3F.FromScale( ref obj.Scale, out var scl );
-						Matrix3F.Multiply( ref rot, ref scl, out objectItem.MeshMatrix3 );
+						Matrix3F.Multiply( ref rot, ref scl, out var mat3 );
+						objectItem.MeshMatrix = new Matrix4F( ref mat3, ref pos );
+						//Matrix3F.Multiply( ref rot, ref scl, out objectItem.MeshMatrix3 );
+
+
+						//!!!!slowly
+
 
 						var transform = new Transform( obj.Position, obj.Rotation, obj.Scale );
 						if( mesh.Result != null )
 						{
 							//!!!!можно считать оптимальнее?
 							var b = SpaceBounds.Multiply( transform, mesh.Result.SpaceBounds );
-							objectItem.BoundingBox = b.CalculatedBoundingBox;
-							objectItem.BoundingSphere = b.CalculatedBoundingSphere;
+							objectItem.BoundingBox = b.BoundingBox;
+							objectItem.BoundingSphere = b.boundingSphere;
 						}
 						else
 						{
@@ -2579,11 +2753,14 @@ namespace NeoAxis
 							objectItem.BoundingSphere = new Sphere( objectItem.Position, 0.1 );
 						}
 
-						group.Objects.Add( objectItem );
+						//objectItem.ColorForInstancingData = RenderingPipeline.ColorOneForInstancingData;
+						//objectItem.ColorForInstancingData = RenderingPipeline.GetColorForInstancingData( ref obj.Color );
+
+						group.Objects.Add( ref objectItem );
 					}
 
 					//split groups by max objects count
-					if( owner.MaxObjectsInGroup > 1 )
+					if( owner.MaxObjectsInGroup > 1 )//!!!!
 					{
 						bool needProcess = true;
 						do
@@ -2608,14 +2785,12 @@ namespace NeoAxis
 
 										//var objects = group.Objects.ToArray();
 
+										//!!!!GC
 										var indexes = new int[ objectCount ];
-										//stackalloc crashes
-										//var indexes = stackalloc int[ objectCount ];
 										for( int n = 0; n < objectCount; n++ )
 											indexes[ n ] = n;
 
-										//!!!!threading
-										CollectionUtility.MergeSort( indexes, delegate ( int index1, int index2 )
+										CollectionUtility.MergeSortUnmanaged( indexes, delegate ( int index1, int index2 )
 										{
 											var pos1 = objectsArray[ index1 ].Position[ group.NextSplitAxis ];
 											var pos2 = objectsArray[ index2 ].Position[ group.NextSplitAxis ];
@@ -2626,19 +2801,6 @@ namespace NeoAxis
 												return 1;
 											return 0;
 										}, true );
-
-										////!!!!threading
-										//CollectionUtility.MergeSort( indexes, objectCount, delegate ( int index1, int index2 )
-										//{
-										//	var pos1 = objectsArray[ index1 ].Position[ group.NextSplitAxis ];
-										//	var pos2 = objectsArray[ index2 ].Position[ group.NextSplitAxis ];
-
-										//	if( pos1 < pos2 )
-										//		return -1;
-										//	if( pos1 > pos2 )
-										//		return 1;
-										//	return 0;
-										//} );//, true );
 
 										int middle = objectCount / 2;
 										//int middle = objects.Length / 2;
@@ -2787,11 +2949,14 @@ namespace NeoAxis
 
 				if( ObjectInSpace == null || !owner.Visible )
 					return;
+				var scene = owner.FindParent<Scene>();
+				if( scene == null )
+					return;
 
 
 				//update SurfaceObjectsItems and calculate total bounds
 
-				var allItemsBounds = Bounds.CalculatedBoundingBox;
+				var allItemsBounds = Bounds.BoundingBox;
 
 				{
 					int layerCount = 1;
@@ -2846,16 +3011,16 @@ namespace NeoAxis
 								foreach( var mesh in surface.Result.GetAllMeshes() )
 								{
 									if( mesh.Result != null )
-										maxRadius = Math.Max( maxRadius, mesh.Result.SpaceBounds.CalculatedBoundingSphereRadius );
+										maxRadius = Math.Max( maxRadius, mesh.Result.SpaceBounds.boundingSphere.Radius );
 								}
-								item.ObjectsMaxSize = maxRadius * 2.0 * surface.Result.GetMaxScale() * item.GetObjectsScale();
+								item.ObjectsMaxSize = (float)( maxRadius * 2.0 * surface.Result.GetMaxScale() * item.GetObjectsScale() );
 							}
 
 							//calculate item.ObjectsMaxVisibilityDistanceFactor
 							item.ObjectsMaxVisibilityDistanceFactor = surface.Result.GetMaxVisibilityDistanceFactor() * item.GetObjectsVisibilityDistanceFactor();
 
 							//calculate item.Bounds
-							item.Bounds = Bounds.CalculatedBoundingBox;
+							item.Bounds = Bounds.BoundingBox;
 							//expand by maximal objects scale
 							item.Bounds.Expand( item.ObjectsMaxSize * 0.5 );
 
@@ -2894,6 +3059,142 @@ namespace NeoAxis
 				SurfaceObjectsObjectInSpace.Enabled = true;
 
 
+				//collision
+				if( SurfaceObjectsItems != null )
+				{
+					var collisionDefinitionByMesh = new Dictionary<Mesh, RigidBody>();
+
+					foreach( var surfaceObjectsItem in SurfaceObjectsItems )
+					{
+						if( surfaceObjectsItem.GetObjectsCollision() )
+						{
+							var data = Tile.CalculateSurfaceObjects( surfaceObjectsItem, calculatedPositionsForGetNormals );
+							if( data != null )
+							{
+								var surface = surfaceObjectsItem.GetSurface().Result;
+								if( surface != null )
+								{
+									var tile = surfaceObjectsItem.Owner;
+									var owner = tile.owner;
+
+									for( int nObject = 0; nObject < data.Length; nObject++ )
+									{
+										ref var obj = ref data[ nObject ];
+										if( obj.Initialized == 0 )
+											continue;
+										//ref var obj = ref data.Data[ nObject ];
+
+										surface.GetMesh( /*obj.Element, */obj.VariationGroup, obj.VariationElement, out var enabled, out var mesh, out var replaceMaterial, out _, out _, out _, out _ );
+
+										if( enabled && mesh != null )//&& objCollision )
+										{
+											if( !collisionDefinitionByMesh.TryGetValue( mesh, out var collisionDefinition ) )
+											{
+												collisionDefinition = mesh.GetComponent<RigidBody>( "Collision Definition" );
+												if( collisionDefinition == null )
+													collisionDefinition = mesh?.Result.GetAutoCollisionDefinition();
+												collisionDefinitionByMesh[ mesh ] = collisionDefinition;
+											}
+
+											if( collisionDefinition != null )
+											{
+												var shapeItem = scene.PhysicsWorld.AllocateShape( collisionDefinition, obj.Scale );
+												if( shapeItem != null )
+												{
+													var rigidBodyItem = scene.PhysicsWorld.CreateRigidBodyStatic( shapeItem, true, this, ref obj.Position, ref obj.Rotation );
+													if( rigidBodyItem != null )
+													{
+														SurfaceObjectsCollisionBodies.Add( rigidBodyItem );
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+
+
+					//var bodiesToCreate = new List<(RigidBody, Transform)>();
+
+					//foreach( var surfaceObjectsItem in SurfaceObjectsItems )
+					//{
+					//	if( surfaceObjectsItem.GetObjectsCollision() )
+					//	{
+					//		var data = Tile.CalculateSurfaceObjects( surfaceObjectsItem, calculatedPositionsForGetNormals );
+					//		if( data != null )
+					//		{
+					//			var surface = surfaceObjectsItem.GetSurface().Result;
+					//			if( surface != null )
+					//			{
+					//				var tile = surfaceObjectsItem.Owner;
+					//				var owner = tile.owner;
+
+					//				for( int nObject = 0; nObject < data.Length; nObject++ )
+					//				{
+					//					ref var obj = ref data[ nObject ];
+					//					if( obj.Initialized == 0 )
+					//						continue;
+					//					//ref var obj = ref data.Data[ nObject ];
+
+					//					surface.GetMesh( /*obj.Element, */obj.VariationGroup, obj.VariationElement, out var enabled, out var mesh, out var replaceMaterial, out _, out _, out _, out _ );
+
+					//					if( enabled && mesh != null )//&& objCollision )
+					//					{
+					//						var collisionBody = mesh.GetComponent<RigidBody>( "Collision Definition" );
+					//						if( collisionBody != null )
+					//						{
+					//							var objTransformLocal = new Transform( obj.Position - Position, obj.Rotation, obj.Scale );
+					//							bodiesToCreate.Add( (collisionBody, objTransformLocal) );
+					//						}
+					//					}
+					//				}
+					//			}
+					//		}
+					//	}
+					//}
+
+					//if( bodiesToCreate.Count != 0 )
+					//{
+					//	var body = SurfaceObjectsObjectInSpace.CreateComponent<RigidBody>( enabled: false );
+					//	SurfaceObjectsCollisionBody = body;
+					//	body.AnyData = this;
+					//	body.Name = "Collision Body";
+					//	body.Transform = SurfaceObjectsObjectInSpace.Transform;
+
+					//	foreach( var item in bodiesToCreate )
+					//	{
+					//		var sourceBody = item.Item1;
+					//		var objTransformLocal = item.Item2;
+
+					//		//!!!!несколько тел создавать если разные свойства
+					//		body.Material = sourceBody.Material.Value;
+					//		//!!!!
+					//		//body.MaterialFrictionMode = sourceBody.MaterialFrictionMode.Value;
+					//		body.MaterialFriction = sourceBody.MaterialFriction.Value;
+					//		//!!!!
+					//		//body.MaterialAnisotropicFriction = sourceBody.MaterialAnisotropicFriction.Value;
+					//		//body.MaterialSpinningFriction = sourceBody.MaterialSpinningFriction.Value;
+					//		//body.MaterialRollingFriction = sourceBody.MaterialRollingFriction.Value;
+					//		body.MaterialRestitution = sourceBody.MaterialRestitution.Value;
+					//		body.CollisionGroup = sourceBody.CollisionGroup.Value;
+					//		body.CollisionMask = sourceBody.CollisionMask.Value;
+
+					//		foreach( var sourceShape in sourceBody.GetComponents<CollisionShape>() )
+					//		{
+					//			var shape = (CollisionShape)sourceShape.Clone();
+					//			shape.TransformRelativeToParent = objTransformLocal * sourceShape.TransformRelativeToParent.Value;
+					//			body.AddComponent( shape );
+					//		}
+					//	}
+
+					//	body.SpaceBoundsUpdateEvent += SurfaceObjectsCollisionBody_SpaceBoundsUpdateEvent;
+					//	body.Enabled = true;
+					//}
+				}
+
+
 				//!!!!
 				//!!!!check by distance
 
@@ -2907,6 +3208,25 @@ namespace NeoAxis
 
 			void DestroySurfaceObjectsData()
 			{
+				if( SurfaceObjectsCollisionBodies.Count != 0 )
+				{
+					foreach( var body in SurfaceObjectsCollisionBodies )
+					{
+						//!!!!
+						//body.SpaceBoundsUpdateEvent -= CollisionBody_SpaceBoundsUpdateEvent;
+
+						body.PhysicsWorld.DestroyRigidBody( body );
+					}
+					SurfaceObjectsCollisionBodies.Clear();
+				}
+
+				//if( SurfaceObjectsCollisionBody != null )
+				//{
+				//	SurfaceObjectsCollisionBody.SpaceBoundsUpdateEvent -= SurfaceObjectsCollisionBody_SpaceBoundsUpdateEvent;
+				//	SurfaceObjectsCollisionBody.RemoveFromParent( false );
+				//	SurfaceObjectsCollisionBody = null;
+				//}
+
 				if( SurfaceObjectsObjectInSpace != null )
 				{
 					SurfaceObjectsObjectInSpace.SpaceBoundsUpdateEvent -= SurfaceObjectsObjectInSpace_SpaceBoundsUpdateEvent;
@@ -2930,6 +3250,11 @@ namespace NeoAxis
 				var tile = obj.AnyData as Tile;
 				if( tile != null && tile.SurfaceObjectsBounds != null )
 					newBounds = tile.SurfaceObjectsBounds;
+			}
+
+			private void SurfaceObjectsCollisionBody_SpaceBoundsUpdateEvent( ObjectInSpace obj, ref SpaceBounds newBounds )
+			{
+				SurfaceObjectsObjectInSpace_SpaceBoundsUpdateEvent( obj, ref newBounds );
 			}
 
 			private void SurfaceObjectsObjectInSpace_GetRenderSceneData( ObjectInSpace sender, ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem )
@@ -2980,22 +3305,24 @@ namespace NeoAxis
 						skip = true;
 					break;
 
-				case nameof( CollisionFrictionMode ):
-					if( !Collision || CollisionMaterial.Value != null )
-						skip = true;
-					break;
+				//!!!!
+				//case nameof( CollisionFrictionMode ):
+				//	if( !Collision || CollisionMaterial.Value != null )
+				//		skip = true;
+				//	break;
 
 				case nameof( CollisionFriction ):
 					if( !Collision || CollisionMaterial.Value != null )
 						skip = true;
 					break;
 
-				case nameof( CollisionRollingFriction ):
-				case nameof( CollisionSpinningFriction ):
-				case nameof( CollisionAnisotropicFriction ):
-					if( !Collision || CollisionFrictionMode.Value == PhysicalMaterial.FrictionModeEnum.Simple || CollisionMaterial.Value != null )
-						skip = true;
-					break;
+				//!!!!
+				//case nameof( CollisionRollingFriction ):
+				//case nameof( CollisionSpinningFriction ):
+				//case nameof( CollisionAnisotropicFriction ):
+				//	if( !Collision || CollisionFrictionMode.Value == PhysicalMaterial.FrictionModeEnum.Simple || CollisionMaterial.Value != null )
+				//		skip = true;
+				//	break;
 
 				case nameof( CollisionRestitution ):
 					if( !Collision || CollisionMaterial.Value != null )
@@ -3017,7 +3344,14 @@ namespace NeoAxis
 				case nameof( SurfaceObjectsColor ):
 				case nameof( SurfaceObjectsVisibilityDistanceFactor ):
 				case nameof( SurfaceObjectsCastShadows ):
+				case nameof( SurfaceObjectsCollision ):
 					if( !Surface.ReferenceOrValueSpecified || !SurfaceObjects )
+						skip = true;
+					break;
+
+				case nameof( LODCount ):
+				case nameof( LODDistance ):
+					if( !LODEnabled )
 						skip = true;
 					break;
 				}
@@ -3272,80 +3606,88 @@ namespace NeoAxis
 			if( !base.OnLoad( context, block, out error ) )
 				return false;
 
-			//load heightmap buffer
+			try
 			{
-				string str = block.GetAttribute( nameof( HeightmapBuffer ), "" );
-				if( !string.IsNullOrEmpty( str ) )
+				//load heightmap buffer
 				{
-					var byteArray = Convert.FromBase64String( str );
-
-					if( bool.Parse( block.GetAttribute( nameof( HeightmapBuffer ) + "Zip", false.ToString() ) ) )
-						byteArray = IOUtility.Unzip( byteArray );
-
-					heightmapBuffer = HeightmapFromByteArray( byteArray );
-				}
-				else
-				{
-					//old format
-					var virtualDirectory = GetLoadVirtualDirectory();
-					if( !LoadHeightmapBufferOldFormat( virtualDirectory, out error ) )
-						return false;
-				}
-			}
-
-			//load holes cache
-			{
-				var holesCacheBlock = block.FindChild( "HolesCache" );
-				if( holesCacheBlock != null )
-				{
-					foreach( var itemBlock in holesCacheBlock.Children )
+					string str = block.GetAttribute( nameof( HeightmapBuffer ), "" );
+					if( !string.IsNullOrEmpty( str ) )
 					{
-						if( itemBlock.Name == "Item" )
+						var byteArray = Convert.FromBase64String( str );
+
+						if( bool.Parse( block.GetAttribute( nameof( HeightmapBuffer ) + "Zip", false.ToString() ) ) )
+							byteArray = IOUtility.Unzip( byteArray );
+
+						heightmapBuffer = HeightmapFromByteArray( byteArray );
+					}
+					else
+					{
+						//old format
+						var virtualDirectory = GetLoadVirtualDirectory();
+						if( !LoadHeightmapBufferOldFormat( virtualDirectory, out error ) )
+							return false;
+					}
+				}
+
+				//load holes cache
+				{
+					var holesCacheBlock = block.FindChild( "HolesCache" );
+					if( holesCacheBlock != null )
+					{
+						foreach( var itemBlock in holesCacheBlock.Children )
 						{
-							var index = Vector2I.Parse( itemBlock.GetAttribute( "Index", "0 0" ) );
-
-							Vector3[] vertices = null;
-							unsafe
+							if( itemBlock.Name == "Item" )
 							{
-								string str = itemBlock.GetAttribute( "Vertices" );
-								if( !string.IsNullOrEmpty( str ) )
+								var index = Vector2I.Parse( itemBlock.GetAttribute( "Index", "0 0" ) );
+
+								Vector3[] vertices = null;
+								unsafe
 								{
-									var verticesBytes = Convert.FromBase64String( str );
-									var count = verticesBytes.Length / sizeof( Vector3 );
+									string str = itemBlock.GetAttribute( "Vertices" );
+									if( !string.IsNullOrEmpty( str ) )
+									{
+										var verticesBytes = Convert.FromBase64String( str );
+										var count = verticesBytes.Length / sizeof( Vector3 );
 
-									vertices = new Vector3[ count ];
-									fixed( Vector3* pVertices = vertices )
-									fixed( byte* pVerticesBytes = verticesBytes )
-										NativeUtility.CopyMemory( pVertices, pVerticesBytes, verticesBytes.Length );
+										vertices = new Vector3[ count ];
+										fixed( Vector3* pVertices = vertices )
+										fixed( byte* pVerticesBytes = verticesBytes )
+											NativeUtility.CopyMemory( pVertices, pVerticesBytes, verticesBytes.Length );
+									}
 								}
-							}
 
-							int[] indices = null;
-							{
-								string str = itemBlock.GetAttribute( "Indices" );
-								if( !string.IsNullOrEmpty( str ) )
+								int[] indices = null;
 								{
-									var strings = str.Split( new char[] { ' ' } );
+									string str = itemBlock.GetAttribute( "Indices" );
+									if( !string.IsNullOrEmpty( str ) )
+									{
+										var strings = str.Split( new char[] { ' ' } );
 
-									indices = new int[ strings.Length ];
-									for( int n = 0; n < strings.Length; n++ )
-										indices[ n ] = int.Parse( strings[ n ] );
+										indices = new int[ strings.Length ];
+										for( int n = 0; n < strings.Length; n++ )
+											indices[ n ] = int.Parse( strings[ n ] );
+									}
 								}
-							}
 
-							if( vertices == null || indices == null )
-							{
-								vertices = new Vector3[ 0 ];
-								indices = new int[ 0 ];
-							}
+								if( vertices == null || indices == null )
+								{
+									vertices = new Vector3[ 0 ];
+									indices = new int[ 0 ];
+								}
 
-							var item = new HoleCacheItem();
-							item.vertices = vertices;
-							item.indices = indices;
-							holesCache[ index ] = item;
+								var item = new HoleCacheItem();
+								item.vertices = vertices;
+								item.indices = indices;
+								holesCache[ index ] = item;
+							}
 						}
 					}
 				}
+			}
+			catch( Exception e )
+			{
+				error = e.Message;
+				return false;
 			}
 
 			return true;
@@ -3478,7 +3820,7 @@ namespace NeoAxis
 			var scene = FindParent<Scene>();
 			if( scene != null )
 			{
-				if( EnabledInHierarchy )
+				if( EnabledInHierarchyAndIsInstance )
 					scene.GetRenderSceneData += Scene_GetRenderSceneData;
 				else
 					scene.GetRenderSceneData -= Scene_GetRenderSceneData;
@@ -3489,8 +3831,22 @@ namespace NeoAxis
 			{
 				allowRecreateInternalData = false;
 
-				CreateTiles();
-				CreateCollisionBodies();
+				if( EnabledInHierarchyAndIsInstance )
+				{
+					CreateTiles();
+					CreateCollisionBodies();
+
+					if( NeedPrecalculateObjects() )
+					{
+						foreach( var tile in GetTiles() )
+							TileGetRenderSceneDataSurfaceObjects( tile, null, GetRenderSceneDataMode.InsideFrustum, null );
+					}
+				}
+				else
+				{
+					DestroyCollisionBodies();
+					DestroyTiles();
+				}
 			}
 			finally
 			{
@@ -3563,8 +3919,8 @@ namespace NeoAxis
 				{
 					if( context.Owner.Simple3DRenderer != null )
 					{
-						ColorValue color = ProjectSettings.Get.General.SelectedColor;
-						context.Owner.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+						ColorValue color = ProjectSettings.Get.Colors.SelectedColor;
+						context.Owner.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 						RendererUtility.AddBoundsSegmented( context.Owner.Simple3DRenderer, bounds );
 					}
 				}
@@ -3573,11 +3929,10 @@ namespace NeoAxis
 
 		void CreateTiles( bool updateHoles = false )
 		{
-			//!!!!где еще такое полезно?
-			if( !EnabledInHierarchyAndIsNotResource )
-				return;
-
 			DestroyTiles();
+
+			if( !EnabledInHierarchyAndIsInstance )
+				return;
 
 			//!!!!так? где еще
 			CalculateCachedGeneralData();
@@ -3629,6 +3984,9 @@ namespace NeoAxis
 				tile.UpdateSurfaceObjectsData( calculatedPositionsForGetNormals );
 				tile.NeedUpdate = 0;
 			}
+
+			//!!!!тут? где еще?
+			NetworkSendData( null );
 		}
 
 		void DestroyTiles()
@@ -3830,7 +4188,7 @@ namespace NeoAxis
 		/// <returns>if hole and considerHoles == true, then Double.MinValue will be returned.</returns>
 		public double GetHeight( Vector2 position, bool considerHoles )
 		{
-			Vector2I index = GetCellIndexByPosition( position );
+			Vector2I index = GetCellIndexByPosition( ref position );
 			GetPositionWithClamp( index, out var p0 );
 
 			if( considerHoles && HolesEnabled && tiles != null )
@@ -4044,9 +4402,7 @@ namespace NeoAxis
 
 		void GetNormal( ref Vector2 pos, Vector3[,] calculatedPositionsForGetNormals, out Vector3F result )
 		{
-			//!!!!
-
-			Vector2I cellIndex = GetCellIndexByPosition( pos );
+			Vector2I cellIndex = GetCellIndexByPosition( ref pos );
 			if( IsValidCellIndex( cellIndex ) )
 				GetNormal( cellIndex, calculatedPositionsForGetNormals, out result );
 			else
@@ -4055,9 +4411,7 @@ namespace NeoAxis
 
 		public Vector3F GetNormal( Vector2 pos )
 		{
-			//!!!!
-
-			Vector2I cellIndex = GetCellIndexByPosition( pos );
+			Vector2I cellIndex = GetCellIndexByPosition( ref pos );
 			if( IsValidCellIndex( cellIndex ) )
 				return GetNormal( cellIndex );
 			return Vector3F.ZAxis;
@@ -4587,10 +4941,10 @@ namespace NeoAxis
 
 		void CreateCollisionBodies()
 		{
-			if( !EnabledInHierarchyAndIsNotResource )
-				return;
-
 			DestroyCollisionBodies();
+
+			if( !EnabledInHierarchyAndIsInstance )
+				return;
 
 			if( Collision )
 			{
@@ -4703,7 +5057,7 @@ namespace NeoAxis
 
 					foreach( var tile in GetTiles() )
 					{
-						if( tile.NeedUpdate.HasFlag( NeedUpdateEnum.Geometry ) )
+						if( ( tile.NeedUpdate & NeedUpdateEnum.Geometry ) != 0 )
 						{
 							if( tile.ObjectInSpace != null )
 								tile.UpdateRenderingData( allowFullUpdate, null, allowFullUpdate, allowFullUpdate );
@@ -4713,14 +5067,14 @@ namespace NeoAxis
 							tile.NeedUpdate |= NeedUpdateEnum.Layers;
 						}
 
-						if( tile.NeedUpdate.HasFlag( NeedUpdateEnum.Layers ) )
+						if( ( tile.NeedUpdate & NeedUpdateEnum.Layers ) != 0 )
 						{
 							tile.UpdateLayers();
 							tile.UpdateSurfaceObjectsData( null );
 							tile.NeedUpdate &= ~NeedUpdateEnum.Layers;
 						}
 
-						if( allowFullUpdate && tile.NeedUpdate.HasFlag( NeedUpdateEnum.Collision ) )
+						if( allowFullUpdate && ( ( tile.NeedUpdate & NeedUpdateEnum.Collision ) != 0 ) )
 						{
 							if( tile.ObjectInSpace != null )
 								tile.UpdateCollisionBody();
@@ -4831,7 +5185,7 @@ namespace NeoAxis
 		public float[,] HeightmapBuffer
 		{
 			get { return heightmapBuffer; }
-			set 
+			set
 			{
 				if( heightmapBuffer == value )
 					return;
@@ -4858,7 +5212,7 @@ namespace NeoAxis
 
 			GetTiles( ray, delegate ( Tile tile )
 			{
-				if( tile.Vertices != null && tile.Bounds != null && tile.Bounds.CalculatedBoundingBox.Intersects( ray ) )
+				if( tile.Vertices != null && tile.Bounds != null && tile.Bounds.BoundingBox.Intersects( ray ) )
 				{
 					intersected = FindMeshRayIntersection( ray, tile.Vertices, tile.Indices, out p );
 
@@ -4901,7 +5255,7 @@ namespace NeoAxis
 					{
 						var terrain2 = tile.owner;
 
-						if( tile.Vertices != null && tile.Bounds != null && tile.Bounds.CalculatedBoundingBox.Intersects( ray ) )
+						if( tile.Vertices != null && tile.Bounds != null && tile.Bounds.BoundingBox.Intersects( ray ) )
 						{
 							////!!!!может кешировать данные в тайле
 
@@ -5050,7 +5404,7 @@ namespace NeoAxis
 			GetTiles( delegate ( Tile tile )
 			{
 				if( tile.Bounds != null )
-					result.Add( tile.Bounds.CalculatedBoundingBox );
+					result.Add( tile.Bounds.BoundingBox );
 			} );
 
 			return result;
@@ -5082,9 +5436,402 @@ namespace NeoAxis
 			public float cameraDistanceMin;
 			public float cameraDistanceMaxSquared;
 			public int onlyForShadowGeneration;
+			public float boundingSize;
+			public float visibilityDistance;
+			public SceneLODUtility.LodState lodState;
 		}
 
-		unsafe void RenderObjectsSeparately( ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem, Tile.SurfaceObjectsItem surfaceObjectsItem, Tile.SurfaceObjectsRenderGroup group )
+		struct LodItem
+		{
+			public OpenListNative<ObjectItem> List;
+			public float MaxVisibilityDistance;
+			public int MeshesListIndex;
+			public int InstancingStart;
+
+			//
+
+			public struct ObjectItem
+			{
+				public int ObjectIndex;
+				public float LODValue;
+				public float VisibilityDistance;
+			}
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		unsafe void RenderObjectsDynamicBatched( ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem, Tile.SurfaceObjectsItem surfaceObjectsItem, Tile.SurfaceObjectsRenderGroup group )
+		{
+			//!!!!те что по одному не инстансить. а может и больше чем 1
+
+			var surface = surfaceObjectsItem.GetSurface().Result;
+			if( surface == null )
+				return;
+			surfaceObjectsItem.GetObjectsColor( out var color );
+			var colorForInstancingData = RenderingPipeline.GetColorForInstancingData( ref color );
+			var surfaceObjectsVisibilityDistanceFactor = surfaceObjectsItem.GetObjectsVisibilityDistanceFactor();
+			var surfaceObjectsCastShadows = surfaceObjectsItem.GetObjectsCastShadows();
+
+			var cameraSettings = context.Owner.CameraSettings;
+			var objectCount = group.Objects.Count;
+
+
+			surface.GetMesh( group.VariationGroup, group.VariationElement, out var enabled, out var mesh, out var replaceMaterial, out var visibilityDistanceFactor, out var castShadows, out var receiveDecals, out var motionBlurFactor );
+			castShadows = castShadows && surfaceObjectsCastShadows;
+
+			if( mesh?.Result == null )
+				mesh = ResourceUtility.MeshInvalid;
+			if( !enabled )
+				return;
+			if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum && !castShadows )
+				return;
+
+			//touch mesh result before multithreading
+			var meshResult = mesh.Result;
+			var meshData = meshResult.MeshData;
+
+
+			SurfaceObjectsLocalItem* localItems = (SurfaceObjectsLocalItem*)NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Renderer, sizeof( SurfaceObjectsLocalItem ) * objectCount );
+			for( int n = 0; n < objectCount; n++ )
+				localItems[ n ].added = 0;
+
+			try
+			{
+				Parallel.For( 0, objectCount, delegate ( int nObject )
+				{
+					ref var objectItem = ref group.Objects.Data[ nObject ];
+
+					var add = false;
+					var onlyForShadowGeneration = false;
+					if( mode == GetRenderSceneDataMode.InsideFrustum )
+					{
+						add = true;
+						onlyForShadowGeneration = !cameraSettings.Frustum.Intersects( ref group.BoundingSphere );
+					}
+					else if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum && modeGetObjectsItem.Intersects( ref group.BoundingBox ) )
+					{
+						add = true;
+						onlyForShadowGeneration = true;
+					}
+
+					if( !add )
+						return;
+					if( onlyForShadowGeneration && !castShadows )
+						return;
+
+					ref var localItem = ref localItems[ nObject ];
+
+					var cameraDistanceMinSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref objectItem.BoundingBox );
+
+					var boundingSize = (float)( meshResult.SpaceBounds.boundingSphere.Radius * 2 * objectItem.Scale.MaxComponent() );
+					var visibilityDistance = context.GetVisibilityDistanceByObjectSize( boundingSize ) * visibilityDistanceFactor * meshData.VisibilityDistanceFactor;
+
+					if( cameraDistanceMinSquared < visibilityDistance * visibilityDistance )
+					{
+						var itemCastShadows = castShadows && cameraDistanceMinSquared < context.GetShadowVisibilityDistanceSquared( visibilityDistance );
+						if( onlyForShadowGeneration && !itemCastShadows )
+							return;
+
+						var cameraDistanceMin = MathEx.Sqrt( cameraDistanceMinSquared );
+						var cameraDistanceMaxSquared = SceneLODUtility.GetCameraDistanceMax( cameraSettings, ref objectItem.BoundingSphere );
+						cameraDistanceMaxSquared *= cameraDistanceMaxSquared;
+
+						localItem.added = 1;
+						//some are not used
+						localItem.cameraDistanceMinSquared = cameraDistanceMinSquared;
+						localItem.cameraDistanceMin = cameraDistanceMin;
+						localItem.cameraDistanceMaxSquared = cameraDistanceMaxSquared;
+						localItem.onlyForShadowGeneration = onlyForShadowGeneration ? 1 : 0;
+						localItem.boundingSize = boundingSize;
+						localItem.visibilityDistance = visibilityDistance;
+
+						SceneLODUtility.GetDemandedLODs( context, meshData, cameraDistanceMinSquared, cameraDistanceMaxSquared, localItem.boundingSize, out localItem.lodState );
+					}
+				} );
+
+				int maxLods = 1;
+				if( meshData.LODs != null )
+					maxLods += meshData.LODs.Length;
+
+				//!!!!GC little bit
+				var allLodItems = new LodItem[ maxLods * 2 ];
+				var allLodItemsFound = false;
+
+				for( int nObject = 0; nObject < objectCount; nObject++ )
+				{
+					ref var localItem = ref localItems[ nObject ];
+					if( localItem.added == 0 )
+						continue;
+
+					var onlyForShadowGeneration = localItem.onlyForShadowGeneration != 0;
+
+					for( int nLodItem = 0; nLodItem < localItem.lodState.Count; nLodItem++ )
+					{
+						localItem.lodState.GetItem( nLodItem, out var lodLevel, out var lodRange );
+
+						var meshItemIndex = lodLevel * 2 + ( onlyForShadowGeneration ? 1 : 0 );
+						ref var lodItem = ref allLodItems[ meshItemIndex ];
+
+						//!!!!GC little bit
+						if( lodItem.List == null )
+							lodItem.List = new OpenListNative<LodItem.ObjectItem>( objectCount );
+
+						var lodObjectItem = new LodItem.ObjectItem();
+						lodObjectItem.ObjectIndex = nObject;
+						//!!!!threading. может потом посчитать
+						lodObjectItem.LODValue = SceneLODUtility.GetLodValue( context, lodRange, localItem.cameraDistanceMin );
+						lodObjectItem.VisibilityDistance = localItem.visibilityDistance;
+						lodItem.List.Add( ref lodObjectItem );
+
+						if( lodObjectItem.VisibilityDistance > lodItem.MaxVisibilityDistance )
+							lodItem.MaxVisibilityDistance = lodObjectItem.VisibilityDistance;
+
+						allLodItemsFound = true;
+					}
+				}
+
+				if( !allLodItemsFound )
+					return;
+
+
+				var templateItem = new RenderingPipeline.RenderSceneData.MeshItem();
+				templateItem.Creator = this;
+				templateItem.ReceiveDecals = true;
+				templateItem.MotionBlurFactor = 1.0f;
+				templateItem.ReplaceMaterial = replaceMaterial;
+				templateItem.Color = ColorValue.One;
+				templateItem.ColorForInstancingData = RenderingPipeline.ColorOneForInstancingData;
+				//if( ReplaceMaterialSelectively.Count != 0 )
+				//{
+				//	templateItem.ReplaceMaterialSelectively = new Material[ ReplaceMaterialSelectively.Count ];
+				//	for( int n = 0; n < ReplaceMaterialSelectively.Count; n++ )
+				//		templateItem.ReplaceMaterialSelectively[ n ] = ReplaceMaterialSelectively[ n ].Value;
+				//}
+
+
+				var outputMeshes = context.FrameData.RenderSceneData.Meshes;
+
+				var totalInstanceCount = 0;
+
+				//add mesh items and save indexes
+				for( int meshItemIndex = 0; meshItemIndex < allLodItems.Length; meshItemIndex++ )
+				{
+					ref var lodItem = ref allLodItems[ meshItemIndex ];
+
+					if( lodItem.List != null )
+					{
+						//add mesh item. with template data
+						outputMeshes.Add( ref templateItem );
+						lodItem.MeshesListIndex = outputMeshes.Count - 1;
+
+						ref var item = ref outputMeshes.Data[ lodItem.MeshesListIndex ];
+
+						var lodLevel = meshItemIndex / 2;
+
+						item.MeshData = meshData;
+						if( lodLevel > 0 )
+						{
+							var lods = meshData.LODs;
+
+							ref var lod = ref lods[ lodLevel - 1 ];
+							//!!!!can't thread
+							var lodMeshData = lod.Mesh?.Result?.MeshData;
+							if( lodMeshData != null )
+								item.MeshData = lodMeshData;
+						}
+
+						//!!!!need uncomment. need split lodItems then same as onlyForShadowGeneration
+						//!!!!!or maybe no big sense to do it because all of this is near to camera
+						item.CastShadows = castShadows && item.MeshData.CastShadows;// && cameraDistanceMinSquared < context.GetShadowVisibilityDistanceSquared( visibilityDistance );
+
+
+						//!!!!slower with sorting in some cases
+
+						////sort by distance
+						//CollectionUtility.MergeSortUnmanaged( lodItem.List.Data, lodItem.List.Count, delegate ( LodItem.ObjectItem* a, LodItem.ObjectItem* b )
+						//{
+						//	ref var localItemA = ref localItems[ a->ObjectIndex ];
+						//	ref var localItemB = ref localItems[ b->ObjectIndex ];
+						//	if( localItemA.cameraDistanceMin < localItemB.cameraDistanceMin )
+						//		return -1;
+						//	if( localItemA.cameraDistanceMin > localItemB.cameraDistanceMin )
+						//		return 1;
+						//	return 0;
+						//}, true );
+
+						lodItem.InstancingStart = totalInstanceCount;
+						totalInstanceCount += lodItem.List.Count;
+					}
+					else
+						lodItem.MeshesListIndex = -1;
+				}
+
+				if( totalInstanceCount == 0 )
+					return;
+
+
+				//allocate instancing buffer data
+				int instanceStride = sizeof( RenderingPipeline.RenderSceneData.ObjectInstanceData );
+				if( InstanceDataBuffer.GetAvailableSpace( totalInstanceCount, instanceStride ) != totalInstanceCount )
+					return;
+				var instanceBuffer = new InstanceDataBuffer( totalInstanceCount, instanceStride );
+				var instancingData = (RenderingPipeline.RenderSceneData.ObjectInstanceData*)instanceBuffer.Data;
+
+
+				Parallel.For( 0, allLodItems.Length, delegate ( int meshItemIndex )
+				{
+					ref var lodItem = ref allLodItems[ meshItemIndex ];
+
+					if( lodItem.List != null )
+					{
+						var lodLevel = meshItemIndex / 2;
+						var onlyForShadowGeneration = ( meshItemIndex % 2 ) == 1;
+						var instanceCount = lodItem.List.Count;
+
+						ref var item = ref outputMeshes.Data[ lodItem.MeshesListIndex ];
+
+						//!!!!нужно собрать из тех что есть в списке? или ничего не делать, это же только сфера
+						item.BoundingSphere = group.BoundingSphere;
+						item.BoundingBoxCenter = item.BoundingSphere.Center;
+						//item.BoundingSphere = objectItem.BoundingSphere;
+						//item.BoundingBoxCenter = item.BoundingSphere.Center;//objectItem.BoundingBox.GetCenter( out item.BoundingBoxCenter );
+
+						item.VisibilityDistance = lodItem.MaxVisibilityDistance;
+						item.OnlyForShadowGeneration = onlyForShadowGeneration;
+
+						var objectsMaxScale = 0.0;
+
+						//!!!!maybe parallel. blocks of items
+
+						int currentIndex = lodItem.InstancingStart;
+
+						for( int nRenderableItem = 0; nRenderableItem < instanceCount; nRenderableItem++ )
+						{
+							ref var lodObjectItem = ref lodItem.List.Data[ nRenderableItem ];
+							var nObject = lodObjectItem.ObjectIndex;
+
+							ref var objectItem = ref group.Objects.Data[ nObject ];
+							//!!!!
+							ref var obj = ref objectItem;
+							//ref var obj = ref Objects[ objectItem.ObjectIndex ];
+
+							ref var data = ref instancingData[ currentIndex++ ];
+
+							if( item.MeshData.BillboardMode != 0 )
+							{
+								var scaleH = Math.Max( obj.Scale.X, obj.Scale.Y );
+								var scaleV = obj.Scale.Z;
+
+								Vector3F offset;
+								if( item.MeshData.BillboardPositionOffset != Vector3F.Zero )
+									offset = obj.Rotation * ( item.MeshData.BillboardPositionOffset * Math.Max( scaleH, scaleV ) );
+								else
+									offset = Vector3F.Zero;
+
+
+								var itemTransform = new Matrix4F();
+								itemTransform.Item0.X = scaleH;
+								itemTransform.Item0.Y = 0;
+								itemTransform.Item0.Z = obj.Rotation.X;
+								itemTransform.Item0.W = 0;
+								itemTransform.Item1.X = obj.Rotation.Y;
+								itemTransform.Item1.Y = scaleH;
+								itemTransform.Item1.Z = obj.Rotation.Z;
+								itemTransform.Item1.W = 0;
+								itemTransform.Item2.X = obj.Rotation.W;
+								itemTransform.Item2.Y = 0;
+								itemTransform.Item2.Z = obj.Scale.Z;
+								itemTransform.Item2.W = 0;
+								//!!!!double. где еще
+								itemTransform.Item3.X = (float)( obj.Position.X + offset.X );
+								itemTransform.Item3.Y = (float)( obj.Position.Y + offset.Y );
+								itemTransform.Item3.Z = (float)( obj.Position.Z + offset.Z );
+								itemTransform.Item3.W = 1;
+
+
+								//!!!!slowly
+								itemTransform.GetTranspose( out data.Transform );
+
+
+								//!!!!double
+								data.PositionPreviousFrame = itemTransform.Item3.ToVector3F();
+							}
+							else
+							{
+								objectItem.MeshMatrix.GetTranspose( out data.Transform );
+
+								//!!!!double
+								//var pos = obj.Position.ToVector3F();
+								//var matrix = new Matrix4F( ref objectItem.MeshMatrix3, ref pos );
+
+								////!!!!slowly?
+								//matrix.GetTranspose( out data.Transform );
+
+								//!!!!double
+								data.PositionPreviousFrame = obj.Position.ToVector3F();
+								////matrix.GetTranslation( out data.PositionPreviousFrame );
+							}
+
+							data.Color = colorForInstancingData;// objectItem.ColorForInstancingData;
+							data.LodValue = lodObjectItem.LODValue;
+							data.VisibilityDistance = lodObjectItem.VisibilityDistance;
+							//!!!!
+							data.ReceiveDecals = receiveDecals ? (byte)255 : (byte)0;
+							data.MotionBlurFactor = (byte)( motionBlurFactor * 255 );
+							//data.ReceiveDecals = receiveDecals ? 1.0f : 0.0f;
+							//data.MotionBlurFactor = motionBlurFactor;
+							//data.CullingByCameraDirectionData = 0;
+
+							var maxScale = obj.Scale.MaxComponent();
+							if( maxScale > objectsMaxScale )
+								objectsMaxScale = maxScale;
+						}
+
+
+						//!!!!?
+						//if( renderableItem.X == 0 )
+
+						//int currentMatrix = 0;
+						//for( int nRenderableItem = 0; nRenderableItem < instanceCount; nRenderableItem++ )
+						//{
+						//	var renderableItem = outputItem.renderableItems[ nRenderableItem ];
+
+						//	if( renderableItem.X == 0 )
+						//	{
+						//		//meshes
+						//		ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ renderableItem.Y ];
+						//		//!!!!slowly because no threading? where else
+						//		meshItem.GetInstancingData( out instancingData[ currentMatrix++ ] );
+						//	}
+						//	else if( renderableItem.X == 1 )
+						//	{
+						//		//billboards
+						//		ref var billboardItem = ref frameData.RenderSceneData.Billboards.Data[ renderableItem.Y ];
+						//		billboardItem.GetInstancingData( out instancingData[ currentMatrix++ ] );
+						//	}
+						//}
+
+						item.InstancingEnabled = true;
+						item.InstancingDataBuffer = instanceBuffer;
+						item.InstancingStart = lodItem.InstancingStart;
+						item.InstancingCount = instanceCount;
+						item.InstancingMaxLocalBounds = (float)( objectsMaxScale * item.MeshData.SpaceBounds.boundingSphere.Radius );
+					}
+				} );
+
+				for( int meshItemIndex = 0; meshItemIndex < allLodItems.Length; meshItemIndex++ )
+				{
+					ref var lodItem = ref allLodItems[ meshItemIndex ];
+					lodItem.List?.Dispose();
+				}
+			}
+			finally
+			{
+				NativeUtility.Free( localItems );
+			}
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		unsafe void RenderObjectsNoBatchingGroup( ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem, Tile.SurfaceObjectsItem surfaceObjectsItem, Tile.SurfaceObjectsRenderGroup group )
 		{
 			var surface = surfaceObjectsItem.GetSurface().Result;
 			if( surface == null )
@@ -5099,176 +5846,177 @@ namespace NeoAxis
 			SurfaceObjectsLocalItem* localItems = (SurfaceObjectsLocalItem*)NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Renderer, sizeof( SurfaceObjectsLocalItem ) * objectCount );
 			for( int n = 0; n < objectCount; n++ )
 				localItems[ n ].added = 0;
-			//var localItems = new SurfaceObjectsLocalItem[ group.Objects.Count ];
 
-			Parallel.For( 0, objectCount, delegate ( int nObject )
+			try
 			{
-				ref var objectItem = ref group.Objects.Data[ nObject ];
-
-				var add = false;
-				var onlyForShadowGeneration = false;
-				if( mode == GetRenderSceneDataMode.InsideFrustum )
+				Parallel.For( 0, objectCount, delegate ( int nObject )
 				{
-					add = true;
-					onlyForShadowGeneration = !cameraSettings.Frustum.Intersects( ref group.BoundingSphere );
-				}
-				else if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum && modeGetObjectsItem.Intersects( ref group.BoundingBox ) )
-				{
-					add = true;
-					onlyForShadowGeneration = true;
-				}
+					ref var objectItem = ref group.Objects.Data[ nObject ];
 
-				if( add )
+					var add = false;
+					var onlyForShadowGeneration = false;
+					if( mode == GetRenderSceneDataMode.InsideFrustum )
+					{
+						add = true;
+						onlyForShadowGeneration = !cameraSettings.Frustum.Intersects( ref group.BoundingSphere );
+					}
+					else if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum && modeGetObjectsItem.Intersects( ref group.BoundingBox ) )
+					{
+						add = true;
+						onlyForShadowGeneration = true;
+					}
+
+					if( add )
+					{
+						ref var localItem = ref localItems[ nObject ];
+
+						var cameraDistanceMinSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref objectItem.BoundingBox );
+						var cameraDistanceMin = MathEx.Sqrt( cameraDistanceMinSquared );
+						var cameraDistanceMaxSquared = SceneLODUtility.GetCameraDistanceMax( cameraSettings, ref objectItem.BoundingSphere );
+						cameraDistanceMaxSquared *= cameraDistanceMaxSquared;
+
+						localItem.added = 1;
+						localItem.cameraDistanceMinSquared = cameraDistanceMinSquared;
+						localItem.cameraDistanceMin = cameraDistanceMin;
+						localItem.cameraDistanceMaxSquared = cameraDistanceMaxSquared;
+						localItem.onlyForShadowGeneration = onlyForShadowGeneration ? 1 : 0;
+					}
+				} );
+
+				for( int nObject = 0; nObject < objectCount; nObject++ )
 				{
 					ref var localItem = ref localItems[ nObject ];
+					if( localItem.added == 0 )
+						continue;
+					var onlyForShadowGeneration = localItem.onlyForShadowGeneration != 0;
 
-					var cameraDistanceMinSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref objectItem.BoundingBox );
-					var cameraDistanceMin = MathEx.Sqrt( cameraDistanceMinSquared );
-					var cameraDistanceMaxSquared = SceneLODUtility.GetCameraDistanceMax( cameraSettings, ref objectItem.BoundingSphere );
-					cameraDistanceMaxSquared *= cameraDistanceMaxSquared;
-
-					localItem.added = 1;
-					localItem.cameraDistanceMinSquared = cameraDistanceMinSquared;
-					localItem.cameraDistanceMin = cameraDistanceMin;
-					localItem.cameraDistanceMaxSquared = cameraDistanceMaxSquared;
-					localItem.onlyForShadowGeneration = onlyForShadowGeneration ? 1 : 0;
-				}
-			} );
-
-			for( int nObject = 0; nObject < objectCount; nObject++ )
-			{
-				ref var localItem = ref localItems[ nObject ];
-				if( localItem.added == 0 )
-					continue;
-				var onlyForShadowGeneration = localItem.onlyForShadowGeneration != 0;
-
-				ref var objectItem = ref group.Objects.Data[ nObject ];
+					ref var objectItem = ref group.Objects.Data[ nObject ];
 
 
-				surface.GetMesh( group.VariationGroup, group.VariationElement, out var enabled, out var mesh, out var replaceMaterial, out var visibilityDistanceFactor, out var castShadows, out var receiveDecals, out var motionBlurFactor );
-				if( mesh?.Result == null )
-					mesh = ResourceUtility.MeshInvalid;
+					surface.GetMesh( group.VariationGroup, group.VariationElement, out var enabled, out var mesh, out var replaceMaterial, out var visibilityDistanceFactor, out var castShadows, out var receiveDecals, out var motionBlurFactor );
+					if( mesh?.Result == null )
+						mesh = ResourceUtility.MeshInvalid;
 
-				if( !enabled )
-					continue;
-				if( onlyForShadowGeneration && ( !castShadows || !surfaceObjectsCastShadows ) )
-					continue;
-
-				var boundingSize = mesh.Result.SpaceBounds.CalculatedBoundingSphereRadius * 2 * objectItem.Scale.MaxComponent();
-				var visibilityDistance = context.GetVisibilityDistanceByObjectSize( boundingSize ) * visibilityDistanceFactor * mesh.Result.MeshData.VisibilityDistanceFactor * surfaceObjectsVisibilityDistanceFactor;
-
-				if( localItem.cameraDistanceMinSquared < visibilityDistance * visibilityDistance/* || mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum*/ )
-				{
-					ref var position = ref objectItem.Position;
-					ref var rotation = ref objectItem.Rotation;
-					ref var scale = ref objectItem.Scale;
-
-					var item = new RenderingPipeline.RenderSceneData.MeshItem();
-					item.Creator = this;
-					item.BoundingSphere = objectItem.BoundingSphere;
-					item.BoundingBoxCenter = item.BoundingSphere.Center;
-					//objectItem.BoundingBox.GetCenter( out item.BoundingBoxCenter );
-					//item.MeshData = mesh.Result.MeshData;
-					//!!!!выключать тени. где еще так. что еще помимо теней
-					//item.CastShadows = castShadows && item.MeshData.CastShadows && localItem.cameraDistanceMinSquared < context.GetShadowVisibilityDistanceSquared( visibilityDistance ); ;
-					item.ReceiveDecals = receiveDecals;
-					item.MotionBlurFactor = motionBlurFactor;
-					item.ReplaceMaterial = replaceMaterial;
-					//impl?
-					//if( ReplaceMaterialSelectively.Count != 0 )
-					//{
-					//	item.ReplaceMaterialSelectively = new Material[ ReplaceMaterialSelectively.Count ];
-					//	for( int n = 0; n < ReplaceMaterialSelectively.Count; n++ )
-					//		item.ReplaceMaterialSelectively[ n ] = ReplaceMaterialSelectively[ n ].Value;
-					//}
-					item.Color = color;// obj.Color;
-					item.VisibilityDistance = (float)visibilityDistance;
-					item.OnlyForShadowGeneration = onlyForShadowGeneration;
-
-					if( onlyForShadowGeneration && ( !item.CastShadows || !surfaceObjectsCastShadows ) )
+					if( !enabled )
+						continue;
+					if( onlyForShadowGeneration && ( !castShadows || !surfaceObjectsCastShadows ) )
 						continue;
 
-					int item0BillboardMode = 0;
+					var boundingSize = (float)( mesh.Result.SpaceBounds.boundingSphere.Radius * 2 * objectItem.Scale.MaxComponent() );
+					var visibilityDistance = context.GetVisibilityDistanceByObjectSize( boundingSize ) * visibilityDistanceFactor * mesh.Result.MeshData.VisibilityDistanceFactor * surfaceObjectsVisibilityDistanceFactor;
 
-					SceneLODUtility.GetDemandedLODs( context, mesh, localItem.cameraDistanceMinSquared, localItem.cameraDistanceMaxSquared, out var lodState );
-					for( int nLodItem = 0; nLodItem < lodState.Count; nLodItem++ )
+					if( localItem.cameraDistanceMinSquared < visibilityDistance * visibilityDistance/* || mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum*/ )
 					{
-						lodState.GetItem( nLodItem, out var lodLevel, out var lodRange );
+						ref var position = ref objectItem.Position;
+						ref var rotation = ref objectItem.Rotation;
+						ref var scale = ref objectItem.Scale;
 
+						var item = new RenderingPipeline.RenderSceneData.MeshItem();
+						item.Creator = this;
+						item.BoundingSphere = objectItem.BoundingSphere;
+						item.BoundingBoxCenter = item.BoundingSphere.Center;
+						//objectItem.BoundingBox.GetCenter( out item.BoundingBoxCenter );
+						//item.MeshData = mesh.Result.MeshData;
+						//!!!!выключать тени. где еще так. что еще помимо теней
+						//item.CastShadows = castShadows && item.MeshData.CastShadows && localItem.cameraDistanceMinSquared < context.GetShadowVisibilityDistanceSquared( visibilityDistance ); ;
+						item.ReceiveDecals = receiveDecals;
+						item.MotionBlurFactor = motionBlurFactor;
+						item.ReplaceMaterial = replaceMaterial;
+						//impl?
+						//if( ReplaceMaterialSelectively.Count != 0 )
+						//{
+						//	item.ReplaceMaterialSelectively = new Material[ ReplaceMaterialSelectively.Count ];
+						//	for( int n = 0; n < ReplaceMaterialSelectively.Count; n++ )
+						//		item.ReplaceMaterialSelectively[ n ] = ReplaceMaterialSelectively[ n ].Value;
+						//}
+						item.Color = color;// obj.Color;
+						item.ColorForInstancingData = RenderingPipeline.GetColorForInstancingData( ref item.Color );
+						item.VisibilityDistance = (float)visibilityDistance;
+						item.OnlyForShadowGeneration = onlyForShadowGeneration;
 
-						item.MeshData = mesh.Result.MeshData;
-						if( lodLevel > 0 )
+						if( onlyForShadowGeneration && ( !item.CastShadows || !surfaceObjectsCastShadows ) )
+							continue;
+
+						int item0BillboardMode = 0;
+
+						SceneLODUtility.GetDemandedLODs( context, mesh.Result.MeshData, localItem.cameraDistanceMinSquared, localItem.cameraDistanceMaxSquared, boundingSize, out var lodState );
+						for( int nLodItem = 0; nLodItem < lodState.Count; nLodItem++ )
 						{
-							ref var lod = ref mesh.Result.MeshData.LODs[ lodLevel - 1 ];
-							var lodMeshData = lod.Mesh?.Result?.MeshData;
-							if( lodMeshData != null )
-								item.MeshData = lodMeshData;
-						}
-
-						item.CastShadows = castShadows && surfaceObjectsCastShadows && item.MeshData.CastShadows && localItem.cameraDistanceMinSquared < context.GetShadowVisibilityDistanceSquared( visibilityDistance );
-						item.LODValue = SceneLODUtility.GetLodValue( lodRange, localItem.cameraDistanceMin );
-						//item.LODRange = lodRange;
+							lodState.GetItem( nLodItem, out var lodLevel, out var lodRange );
 
 
-						//calculate MeshInstanceOne, PositionPreviousFrame
-						if( nLodItem == 0 )
-							item0BillboardMode = item.MeshData.BillboardMode;
-						if( nLodItem == 0 || item0BillboardMode != item.MeshData.BillboardMode )
-						{
-							if( item.MeshData.BillboardMode != 0 )
+							item.MeshData = mesh.Result.MeshData;
+							if( lodLevel > 0 )
 							{
-								var scaleH = Math.Max( scale.X, scale.Y );
-								var scaleV = scale.Z;
+								ref var lod = ref mesh.Result.MeshData.LODs[ lodLevel - 1 ];
+								var lodMeshData = lod.Mesh?.Result?.MeshData;
+								if( lodMeshData != null )
+									item.MeshData = lodMeshData;
+							}
 
-								Vector3F offset;
-								if( item.MeshData.BillboardPositionOffset != Vector3F.Zero )
-									offset = rotation * ( item.MeshData.BillboardPositionOffset * Math.Max( scaleH, scaleV ) );
+							item.CastShadows = castShadows && surfaceObjectsCastShadows && item.MeshData.CastShadows && localItem.cameraDistanceMinSquared < context.GetShadowVisibilityDistanceSquared( visibilityDistance );
+							item.LODValue = SceneLODUtility.GetLodValue( context, lodRange, localItem.cameraDistanceMin );
+							//item.LODRange = lodRange;
+
+
+							//calculate MeshInstanceOne, PositionPreviousFrame
+							if( nLodItem == 0 )
+								item0BillboardMode = item.MeshData.BillboardMode;
+							if( nLodItem == 0 || item0BillboardMode != item.MeshData.BillboardMode )
+							{
+								if( item.MeshData.BillboardMode != 0 )
+								{
+									var scaleH = Math.Max( scale.X, scale.Y );
+									var scaleV = scale.Z;
+
+									Vector3F offset;
+									if( item.MeshData.BillboardPositionOffset != Vector3F.Zero )
+										offset = rotation * ( item.MeshData.BillboardPositionOffset * Math.Max( scaleH, scaleV ) );
+									else
+										offset = Vector3F.Zero;
+
+									ref var result = ref item.Transform;
+									result.Item0.X = scaleH;
+									result.Item0.Y = 0;
+									result.Item0.Z = rotation.X;
+									result.Item0.W = 0;
+									result.Item1.X = rotation.Y;
+									result.Item1.Y = scaleH;
+									result.Item1.Z = rotation.Z;
+									result.Item1.W = 0;
+									result.Item2.X = rotation.W;
+									result.Item2.Y = 0;
+									result.Item2.Z = scale.Z;
+									result.Item2.W = 0;
+									//!!!!double. где еще
+									result.Item3.X = (float)( position.X + offset.X );
+									result.Item3.Y = (float)( position.Y + offset.Y );
+									result.Item3.Z = (float)( position.Z + offset.Z );
+									result.Item3.W = 1;
+								}
 								else
-									offset = Vector3F.Zero;
+									item.Transform = objectItem.MeshMatrix;
 
-								ref var result = ref item.Transform;
-								result.Item0.X = scaleH;
-								result.Item0.Y = 0;
-								result.Item0.Z = rotation.X;
-								result.Item0.W = 0;
-								result.Item1.X = rotation.Y;
-								result.Item1.Y = scaleH;
-								result.Item1.Z = rotation.Z;
-								result.Item1.W = 0;
-								result.Item2.X = rotation.W;
-								result.Item2.Y = 0;
-								result.Item2.Z = scale.Z;
-								result.Item2.W = 0;
-								//!!!!double. где еще
-								result.Item3.X = (float)( position.X + offset.X );
-								result.Item3.Y = (float)( position.Y + offset.Y );
-								result.Item3.Z = (float)( position.Z + offset.Z );
-								result.Item3.W = 1;
+								//PositionPreviousFrame
+								item.Transform.GetTranslation( out item.PositionPreviousFrame );
 							}
-							else
+
+
+							//add to render
 							{
-								//!!!!double
-								var pos = position.ToVector3F();
-								item.Transform = new Matrix4F( ref objectItem.MeshMatrix3, ref pos );
+								////set AnimationData from event
+								//GetRenderSceneDataAddToFrameData?.Invoke( this, context, mode, ref item );
+
+								context.FrameData.RenderSceneData.Meshes.Add( ref item );
 							}
-
-							//PositionPreviousFrame
-							item.Transform.GetTranslation( out item.PositionPreviousFrame );
-						}
-
-
-						//add to render
-						{
-							////set AnimationData from event
-							//GetRenderSceneDataAddToFrameData?.Invoke( this, context, mode, ref item );
-
-							context.FrameData.RenderSceneData.Meshes.Add( ref item );
 						}
 					}
 				}
 			}
-
-			NativeUtility.Free( localItems );
+			finally
+			{
+				NativeUtility.Free( localItems );
+			}
 		}
 
 		//!!!!impl
@@ -5294,25 +6042,18 @@ namespace NeoAxis
 
 					ref var objectItem = ref batch.Objects.Data[ n ];
 
-					//!!!!double
-					var pos = objectItem.Position.ToVector3F();
-					var matrix = new Matrix4F( ref objectItem.MeshMatrix3, ref pos );
+					ref var matrix = ref objectItem.MeshMatrix;
+					////!!!!double
+					//var pos = objectItem.Position.ToVector3F();
+					//var matrix = new Matrix4F( ref objectItem.MeshMatrix3, ref pos );
 
 					matrix.GetTranslation( out var positionPreviousFrame );
-					instanceData->Init( ref matrix, ref positionPreviousFrame, ref color, lodValue, -1/*visibilityDistance*/, receiveDecals, motionBlurFactor );
+					//!!!!CullingByCameraDirectionData
+					instanceData->Init( ref matrix, ref positionPreviousFrame, ref color, lodValue, -1/*visibilityDistance*/, receiveDecals, motionBlurFactor, 0 );
 				}
 			}
 
-			var vertexElements = new VertexElement[] {
-				new VertexElement( 0, 0, VertexElementType.Float4, VertexElementSemantic.TextureCoordinate7 ),
-				new VertexElement( 0, 16, VertexElementType.Float4, VertexElementSemantic.TextureCoordinate6 ),
-				new VertexElement( 0, 32, VertexElementType.Float4, VertexElementSemantic.TextureCoordinate5 ) ,
-				new VertexElement( 0, 48, VertexElementType.Float4, VertexElementSemantic.TextureCoordinate4 ),
-				new VertexElement( 0, 64, VertexElementType.Float4, VertexElementSemantic.TextureCoordinate3 ) };
-
-			var vertexDeclaration = vertexElements.CreateVertexDeclaration( 0 );
-
-			batch.BatchingInstanceBufferMesh = GpuBufferManager.CreateVertexBuffer( vertices, vertexDeclaration, 0 );
+			batch.BatchingInstanceBufferMesh = GpuBufferManager.CreateVertexBuffer( vertices, GpuBufferManager.InstancingVertexDeclaration, 0 );
 		}
 
 		unsafe void CreateBatchingInstanceBufferBillboard( Tile.SurfaceObjectsItem surfaceObjectsItem, Tile.SurfaceObjectsRenderGroup batch, float lodValue, /*float visibilityDistance, */bool receiveDecals, float motionBlurFactor, RenderingPipeline.RenderSceneData.IMeshData meshData )
@@ -5361,423 +6102,460 @@ namespace NeoAxis
 					matrix.Item3.W = 1;
 
 					matrix.GetTranslation( out var positionPreviousFrame );
-					instanceData->Init( ref matrix, ref positionPreviousFrame, ref color, lodValue, -1/*visibilityDistance*/, receiveDecals, motionBlurFactor );
+					//!!!!CullingByCameraDirectionData
+					instanceData->Init( ref matrix, ref positionPreviousFrame, ref color, lodValue, -1/*visibilityDistance*/, receiveDecals, motionBlurFactor, 0 );
 				}
 			}
 
-			var vertexElements = new VertexElement[] {
-				new VertexElement( 0, 0, VertexElementType.Float4, VertexElementSemantic.TextureCoordinate7 ),
-				new VertexElement( 0, 16, VertexElementType.Float4, VertexElementSemantic.TextureCoordinate6 ),
-				new VertexElement( 0, 32, VertexElementType.Float4, VertexElementSemantic.TextureCoordinate5 ) ,
-				new VertexElement( 0, 48, VertexElementType.Float4, VertexElementSemantic.TextureCoordinate4 ),
-				new VertexElement( 0, 64, VertexElementType.Float4, VertexElementSemantic.TextureCoordinate3 ) };
+			batch.BatchingInstanceBufferBillboard = GpuBufferManager.CreateVertexBuffer( vertices, GpuBufferManager.InstancingVertexDeclaration, 0 );
+		}
 
-			var vertexDeclaration = vertexElements.CreateVertexDeclaration( 0 );
+		unsafe void RenderSurfaceObjectsItem( Tile tile, ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem, Tile.SurfaceObjectsItem surfaceObjectsItem )
+		{
+			if( surfaceObjectsItem.RenderGroups != null && surfaceObjectsItem.RenderGroups.Length != 0 )
+			{
+				var cameraSettings = context.Owner.CameraSettings;
 
-			batch.BatchingInstanceBufferBillboard = GpuBufferManager.CreateVertexBuffer( vertices, vertexDeclaration, 0 );
+				var surfaceObjectsVisibilityDistanceFactor = surfaceObjectsItem.GetObjectsVisibilityDistanceFactor();
+				var surfaceObjectsCastShadows = surfaceObjectsItem.GetObjectsCastShadows();
+
+				var groups = surfaceObjectsItem.RenderGroups;
+				var groupCount = groups.Length;
+
+
+				//draw render groups
+				var groupsAdded = stackalloc int/*bool*/[ groupCount ];
+				for( int nGroup = 0; nGroup < groupCount; nGroup++ )
+					groupsAdded[ nGroup ] = 0;
+				var groupsCameraDistanceMinSquared = stackalloc float[ groupCount ];
+				var groupsBoundingSize = stackalloc float[ groupCount ];
+				var groupsVisibilityDistance = stackalloc float[ groupCount ];
+				var groupsOnlyForShadowGeneration = stackalloc int[ groupCount ];
+
+
+				for( int nGroup = 0; nGroup < groupCount; nGroup++ )
+				{
+					var group = groups[ nGroup ];
+
+					if( group.NoBatchingGroup )
+					{
+						//!!!!что еще проверять?
+
+						groupsAdded[ nGroup ] = 1;
+					}
+					else
+					{
+						var surface = surfaceObjectsItem.GetSurface().Result;
+						if( surface == null )
+							return;
+
+						surface.GetMesh( group.VariationGroup, group.VariationElement, out var enabled, out var mesh, out var replaceMaterial, out var visibilityDistanceFactor, out var castShadows, out var receiveDecals, out var motionBlurFactor );
+						if( mesh?.Result == null )
+							mesh = ResourceUtility.MeshInvalid;
+
+						if( !enabled )
+							continue;
+						if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum && ( !castShadows || !surfaceObjectsCastShadows ) )
+							continue;
+
+						var cameraDistanceMinSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref group.BoundingBox );
+
+						var boundingSize = (float)( mesh.Result.SpaceBounds.boundingSphere.Radius * 2 * group.ObjectsMaxScale );
+						var visibilityDistance = context.GetVisibilityDistanceByObjectSize( boundingSize ) * visibilityDistanceFactor * mesh.Result.MeshData.VisibilityDistanceFactor * surfaceObjectsVisibilityDistanceFactor;
+
+						if( cameraDistanceMinSquared < visibilityDistance * visibilityDistance/* || mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum*/ )
+						{
+							groupsAdded[ nGroup ] = 1;
+							groupsVisibilityDistance[ nGroup ] = (float)visibilityDistance;
+							groupsCameraDistanceMinSquared[ nGroup ] = cameraDistanceMinSquared;
+							groupsBoundingSize[ nGroup ] = boundingSize;
+						}
+					}
+				}
+
+
+
+				////detect amount of render groups to draw. RenderGroups are sorted by distance
+				//int groupsCountToCheck = 0;
+				//if( mode == GetRenderSceneDataMode.InsideFrustum )
+				//{
+				//	var cameraDistanceToSectorSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref surfaceObjectsItem.Bounds );
+				//	for( int nGroup = 0; nGroup < surfaceObjectsItem.RenderGroups.Length; nGroup++ )
+				//	{
+				//		var group = surfaceObjectsItem.RenderGroups[ nGroup ];
+				//		if( cameraDistanceToSectorSquared > group.VisibilityDistanceSquared )
+				//			break;
+				//		groupsCountToCheck++;
+				//	}
+				//}
+				//else if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum )
+				//	groupsCountToCheck = surfaceObjectsItem.RenderGroups.Length;
+
+
+				Parallel.For( 0, groupCount, delegate ( int nGroup )
+				{
+					var group = groups[ nGroup ];
+
+					//!!!!
+					if( groupsAdded[ nGroup ] != 0 )
+					{
+						if( group.NoBatchingGroup )
+						{
+							groupsAdded[ nGroup ] = 2;
+						}
+						else
+						{
+							var add = false;
+							var onlyForShadowGeneration = false;
+							if( mode == GetRenderSceneDataMode.InsideFrustum )
+							{
+								add = true;
+								onlyForShadowGeneration = !cameraSettings.Frustum.Intersects( ref group.BoundingSphere );
+							}
+							else if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum && modeGetObjectsItem.Intersects( ref group.BoundingBox ) )
+							{
+								add = true;
+								onlyForShadowGeneration = true;
+							}
+
+							if( add )
+							{
+								groupsAdded[ nGroup ] = 2;
+								groupsOnlyForShadowGeneration[ nGroup ] = onlyForShadowGeneration ? 1 : 0;
+							}
+						}
+					}
+				} );
+
+
+				////detect amount of render groups to draw. RenderGroups are sorted by distance
+				//int groupsCountToCheck = 0;
+				//if( mode == GetRenderSceneDataMode.InsideFrustum )
+				//{
+				//	var cameraDistanceToSectorSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref surfaceObjectsItem.Bounds );
+				//	for( int nGroup = 0; nGroup < surfaceObjectsItem.RenderGroups.Length; nGroup++ )
+				//	{
+				//		var group = surfaceObjectsItem.RenderGroups[ nGroup ];
+				//		if( cameraDistanceToSectorSquared > group.VisibilityDistanceSquared )
+				//			break;
+				//		groupsCountToCheck++;
+				//	}
+				//}
+				//else if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum )
+				//	groupsCountToCheck = surfaceObjectsItem.RenderGroups.Length;
+
+				////draw render groups
+				//var groupsAdded = stackalloc int/*bool*/[ groupsCountToCheck ];
+				//for( int nGroup = 0; nGroup < groupsCountToCheck; nGroup++ )
+				//	groupsAdded[ nGroup ] = 0;
+				//var groupsCameraDistanceMinSquared = stackalloc float[ groupsCountToCheck ];
+				//var groupsOnlyForShadowGeneration = stackalloc int[ groupsCountToCheck ];
+
+				//Parallel.For( 0, groupsCountToCheck, delegate ( int nGroup )
+				//{
+				//	var group = surfaceObjectsItem.RenderGroups[ nGroup ];
+
+				//	var cameraDistanceMinSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref group.BoundingBox );
+
+				//	zzzz;
+				//	if( cameraDistanceMinSquared < group.VisibilityDistanceSquared )//|| mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum )
+				//	{
+				//		var add = false;
+				//		var onlyForShadowGeneration = false;
+				//		if( mode == GetRenderSceneDataMode.InsideFrustum )
+				//		{
+				//			add = true;
+				//			onlyForShadowGeneration = !cameraSettings.Frustum.Intersects( ref group.BoundingSphere );
+				//		}
+				//		else if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum && modeGetObjectsItem.Intersects( ref group.BoundingBox ) )
+				//		{
+				//			add = true;
+				//			onlyForShadowGeneration = true;
+				//		}
+
+				//		if( add )
+				//		{
+				//			groupsAdded[ nGroup ] = 1;
+				//			groupsCameraDistanceMinSquared[ nGroup ] = cameraDistanceMinSquared;
+				//			groupsOnlyForShadowGeneration[ nGroup ] = onlyForShadowGeneration ? 1 : 0;
+				//		}
+				//	}
+				//} );
+
+				for( int nGroup = 0; nGroup < groupCount; nGroup++ )
+				{
+					if( groupsAdded[ nGroup ] != 2 )
+						continue;
+
+					var group = groups[ nGroup ];
+
+					if( group.NoBatchingGroup )
+					{
+						RenderObjectsNoBatchingGroup( context, mode, modeGetObjectsItem, surfaceObjectsItem, group );
+					}
+					else
+					{
+						var surface = surfaceObjectsItem.GetSurface().Result;
+						if( surface == null )
+							return;
+						surfaceObjectsItem.GetObjectsColor( out var color );
+
+						var cameraDistanceMinSquared = groupsCameraDistanceMinSquared[ nGroup ];
+						var onlyForShadowGeneration = groupsOnlyForShadowGeneration[ nGroup ] != 0;
+						var visibilityDistance = groupsVisibilityDistance[ nGroup ];
+						var boundingSize = groupsBoundingSize[ nGroup ];
+
+						surface.GetMesh( group.VariationGroup, group.VariationElement, out var enabled, out var mesh, out var replaceMaterial, out var visibilityDistanceFactor, out var castShadows, out var receiveDecals, out var motionBlurFactor );
+						if( mesh?.Result == null )
+							mesh = ResourceUtility.MeshInvalid;
+
+						if( !enabled )
+							continue;
+						if( onlyForShadowGeneration && ( !castShadows || !surfaceObjectsCastShadows ) )
+							continue;
+
+						var cameraDistanceMaxSquared = SceneLODUtility.GetCameraDistanceMax( cameraSettings, ref group.BoundingSphere );
+						cameraDistanceMaxSquared *= cameraDistanceMaxSquared;
+
+						SceneLODUtility.GetDemandedLODs( context, mesh.Result.MeshData, cameraDistanceMinSquared, cameraDistanceMaxSquared, boundingSize, out var lodState );
+
+
+						var lods = mesh.Result.MeshData.LODs;
+
+						bool useBatching = false;
+						{
+							if( lods == null )
+								useBatching = true;
+							else
+							{
+								//check for only one last lod
+								if( lodState.Count == 1 )
+								{
+									var lodCount = lods.Length + 1;
+									lodState.GetItem( 0, out var level, out var range );
+
+									if( level == lodCount - 1 )
+										useBatching = true;
+								}
+							}
+						}
+
+						if( useBatching )
+						{
+							var item = new RenderingPipeline.RenderSceneData.MeshItem();
+							item.Creator = this;
+							item.BoundingSphere = group.BoundingSphere;
+							item.BoundingBoxCenter = item.BoundingSphere.Center;
+							//group.Bounds.CalculatedBoundingBox.GetCenter( out item.BoundingBoxCenter );
+
+							//item.MeshData = mesh.Result.MeshData;
+							//item.CastShadows = castShadows && item.MeshData.CastShadows;
+							item.ReceiveDecals = receiveDecals;
+							item.MotionBlurFactor = motionBlurFactor;
+							item.ReplaceMaterial = replaceMaterial;
+							//impl?
+							//if( ReplaceMaterialSelectively.Count != 0 )
+							//{
+							//	item.ReplaceMaterialSelectively = new Material[ ReplaceMaterialSelectively.Count ];
+							//	for( int n = 0; n < ReplaceMaterialSelectively.Count; n++ )
+							//		item.ReplaceMaterialSelectively[ n ] = ReplaceMaterialSelectively[ n ].Value;
+							//}
+							item.Color = color;// ColorValue.One;
+							item.ColorForInstancingData = RenderingPipeline.GetColorForInstancingData( ref item.Color );
+							item.VisibilityDistance = (float)visibilityDistance;
+							item.OnlyForShadowGeneration = onlyForShadowGeneration;
+
+
+							for( int nLodItem = 0; nLodItem < lodState.Count; nLodItem++ )
+							{
+								lodState.GetItem( nLodItem, out var lodLevel, out _ );
+
+
+								item.MeshData = mesh.Result.MeshData;
+								if( lodLevel > 0 )
+								{
+									ref var lod = ref lods[ lodLevel - 1 ];
+									var lodMeshData = lod.Mesh?.Result?.MeshData;
+									if( lodMeshData != null )
+										item.MeshData = lodMeshData;
+								}
+
+								item.CastShadows = castShadows && surfaceObjectsCastShadows && item.MeshData.CastShadows && cameraDistanceMinSquared < context.GetShadowVisibilityDistanceSquared( visibilityDistance );
+								item.LODValue = 0;
+								// = SceneLODUtility.GetLodValue( lodRange, objectCameraDistance );
+								//item.LODRange = lodRange;
+
+								if( onlyForShadowGeneration && !item.CastShadows )
+									continue;
+
+								//set BatchingInstanceBuffer
+								if( item.MeshData.BillboardMode != 0 )
+								{
+									//!!!!сразу создавать, чтобы потом не тормозило? или в потоке
+									if( group.BatchingInstanceBufferBillboard == null )
+										CreateBatchingInstanceBufferBillboard( surfaceObjectsItem, group, item.LODValue, /*item.VisibilityDistance,*/ item.ReceiveDecals, item.MotionBlurFactor, item.MeshData );
+
+									item.InstancingEnabled = true;
+									item.InstancingVertexBuffer = group.BatchingInstanceBufferBillboard;
+									//!!!!
+									item.InstancingStart = 0;
+									item.InstancingCount = -1;
+									item.InstancingMaxLocalBounds = (float)( group.ObjectsMaxScale * item.MeshData.SpaceBounds.boundingSphere.Radius );
+								}
+								else
+								{
+									//!!!!сразу создавать, чтобы потом не тормозило? или в потоке
+									if( group.BatchingInstanceBufferMesh == null )
+										CreateBatchingInstanceBufferMesh( surfaceObjectsItem, group, item.LODValue, /*item.VisibilityDistance,*/ item.ReceiveDecals, item.MotionBlurFactor );
+
+									item.InstancingEnabled = true;
+									item.InstancingVertexBuffer = group.BatchingInstanceBufferMesh;
+									//!!!!
+									item.InstancingStart = 0;
+									item.InstancingCount = -1;
+									item.InstancingMaxLocalBounds = (float)( group.ObjectsMaxScale * item.MeshData.SpaceBounds.boundingSphere.Radius );
+								}
+
+								//add to render
+								{
+									////set AnimationData from event
+									//GetRenderSceneDataAddToFrameData?.Invoke( this, context, mode, ref item );
+
+									context.FrameData.RenderSceneData.Meshes.Add( ref item );
+								}
+							}
+						}
+						else
+						{
+							bool containTransparent = replaceMaterial?.Result != null && replaceMaterial.Result.Transparent || mesh.ContainsTransparent();
+							if( containTransparent )
+								RenderObjectsNoBatchingGroup( context, mode, modeGetObjectsItem, surfaceObjectsItem, group );
+							else
+								RenderObjectsDynamicBatched( context, mode, modeGetObjectsItem, surfaceObjectsItem, group );
+						}
+					}
+				}
+
+				//visualize groups
+				if( DebugDrawSurfaceObjectsBounds )
+				{
+					var renderer = context.Owner.Simple3DRenderer;
+					renderer.SetColor( new ColorValue( 0, 0, 1 ) );
+
+					foreach( var group in surfaceObjectsItem.RenderGroups )
+						renderer.AddBounds( group.BoundingBox, false );
+				}
+			}
 		}
 
 		unsafe void TileGetRenderSceneDataSurfaceObjects( Tile tile, ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
+
+			//when context == null means precalculation of data
+
+
 			//hide label
-			var context2 = context.ObjectInSpaceRenderingContext;
-			context2.disableShowingLabelForThisObject = true;
+			if( context != null )
+			{
+				var context2 = context.ObjectInSpaceRenderingContext;
+				context2.disableShowingLabelForThisObject = true;
+			}
 
 
 			if( tile.SurfaceObjectsItems == null )
 				return;
 
-			var cameraSettings = context.Owner.CameraSettings;
-
+			var cameraSettings = context?.Owner.CameraSettings;
 
 			//create and destroy render groups
 			foreach( var surfaceObjectsItem in tile.SurfaceObjectsItems )
 			{
-				//!!!!чтобы при загрузке камеры сразу загрузилось
-				//!!!!метод для подгрузки заранее и сразу
-
-				var cameraDistanceToItemSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref surfaceObjectsItem.Bounds );
-
-				var visibilityDistance = context.GetVisibilityDistanceByObjectSize( surfaceObjectsItem.ObjectsMaxSize ) * surfaceObjectsItem.ObjectsMaxVisibilityDistanceFactor;// * already applied surfaceObjectsItem.GetObjectsVisibilityDistanceFactor();
-
-				//!!!!что с тенями
-				if( cameraDistanceToItemSquared < visibilityDistance * visibilityDistance/* || mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum*/ )
+				if( context != null )
 				{
-					//if( cameraDistanceToItemSquared < surfaceObjectsItem.MaxVisibilityDistanceSquared )
-					//{
+					//!!!!чтобы при загрузке камеры сразу загрузилось
+					//!!!!метод для подгрузки заранее и сразу
 
-					//start to create render groups
+					var cameraDistanceToItemSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref surfaceObjectsItem.Bounds );
 
-					surfaceObjectsItem.RenderGroupsLastVisibleTime = EngineApp.EngineTime;
+					var visibilityDistance = context.GetVisibilityDistanceByObjectSize( surfaceObjectsItem.ObjectsMaxSize ) * surfaceObjectsItem.ObjectsMaxVisibilityDistanceFactor;// * already applied surfaceObjectsItem.GetObjectsVisibilityDistanceFactor();
 
-					if( surfaceObjectsItem.RenderGroups == null )
+					//!!!!что с тенями
+					if( cameraDistanceToItemSquared < visibilityDistance * visibilityDistance/* || mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum*/ )
 					{
-						//!!!!impl
-						//if( EngineApp.RenderVideoToFileData != null || EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+						//if( cameraDistanceToItemSquared < surfaceObjectsItem.MaxVisibilityDistanceSquared )
 						//{
 
-						////!!!!
-						//var time = EngineApp.GetSystemTime();
+						//start to create render groups
 
-						//calculate right now
-						surfaceObjectsItem.RenderGroups = Tile.CalculateSurfaceObjectsRenderGroups( surfaceObjectsItem );
+						surfaceObjectsItem.RenderGroupsLastVisibleTime = EngineApp.EngineTime;
 
-						////!!!!
-						//Log.Info( ( EngineApp.GetSystemTime() - time ).ToString() );
+						if( surfaceObjectsItem.RenderGroups == null )
+						{
+							//!!!!impl
+							//if( EngineApp.RenderVideoToFileData != null || EngineApp.IsEditor )
+							//{
 
-						//}
-						//else
-						//{
-						//	//start a task
-						//	if( !surfaceObjectsItem.RenderGroupsTaskData )
-						//	{
-						//		surfaceObjectsItem.RenderGroupsTaskData = true;
+							////!!!!
+							//var time = EngineApp.GetSystemTime();
 
-						//		var task = new Task( SurfaceObjectsPrepareRenderGroupsTask, surfaceObjectsItem );
-						//		task.Start();
-						//	}
+							surfaceObjectsItem.RenderGroups = Tile.CalculateSurfaceObjectsRenderGroups( surfaceObjectsItem );
 
-						//	//render group were calculated
-						//	if( surfaceObjectsItem.RenderGroupsTaskResult != null )
-						//	{
-						//		surfaceObjectsItem.RenderGroups = surfaceObjectsItem.RenderGroupsTaskResult;
-						//		surfaceObjectsItem.RenderGroupsTaskData = false;
-						//		surfaceObjectsItem.RenderGroupsTaskResult = null;
-						//	}
-						//}
+							////!!!!
+							//Log.Info( ( EngineApp.GetSystemTime() - time ).ToString() );
+
+							//}
+							//else
+							//{
+							//	//start a task
+							//	if( !surfaceObjectsItem.RenderGroupsTaskData )
+							//	{
+							//		surfaceObjectsItem.RenderGroupsTaskData = true;
+
+							//		var task = new Task( SurfaceObjectsPrepareRenderGroupsTask, surfaceObjectsItem );
+							//		task.Start();
+							//	}
+
+							//	//render group were calculated
+							//	if( surfaceObjectsItem.RenderGroupsTaskResult != null )
+							//	{
+							//		surfaceObjectsItem.RenderGroups = surfaceObjectsItem.RenderGroupsTaskResult;
+							//		surfaceObjectsItem.RenderGroupsTaskData = false;
+							//		surfaceObjectsItem.RenderGroupsTaskResult = null;
+							//	}
+							//}
+						}
+					}
+					else
+					{
+						//can destroy render groups
+						if( surfaceObjectsItem.RenderGroups != null && !NeedPrecalculateObjects() )
+						{
+							//check time limit
+							if( EngineApp.EngineTime > surfaceObjectsItem.RenderGroupsLastVisibleTime + timeLimitToDestroyFarSurfaceObjectGroups )
+							{
+								//destroy
+								tile.DestroySurfaceObjectsRenderGroups( surfaceObjectsItem );
+								surfaceObjectsItem.RenderGroupsLastVisibleTime = EngineApp.EngineTime;
+							}
+						}
 					}
 				}
 				else
 				{
-					//can destroy render groups
-					if( surfaceObjectsItem.RenderGroups != null )
+					if( NeedPrecalculateObjects() )
 					{
-						//check time limit
-						if( EngineApp.EngineTime > surfaceObjectsItem.RenderGroupsLastVisibleTime + timeLimitToDestroyFarSurfaceObjectGroups )
-						{
-							//destroy
-							tile.DestroySurfaceObjectsRenderGroups( surfaceObjectsItem );
-							surfaceObjectsItem.RenderGroupsLastVisibleTime = EngineApp.EngineTime;
-						}
+						if( surfaceObjectsItem.RenderGroups == null )
+							surfaceObjectsItem.RenderGroups = Tile.CalculateSurfaceObjectsRenderGroups( surfaceObjectsItem );
 					}
 				}
 			}
 
-
-			//draw render groups
-			foreach( var surfaceObjectsItem in tile.SurfaceObjectsItems )
+			//!!!!precalculate instance buffers too?
+			if( context != null )
 			{
-				if( surfaceObjectsItem.RenderGroups != null && surfaceObjectsItem.RenderGroups.Length != 0 )
-				{
-					var surfaceObjectsVisibilityDistanceFactor = surfaceObjectsItem.GetObjectsVisibilityDistanceFactor();
-					var surfaceObjectsCastShadows = surfaceObjectsItem.GetObjectsCastShadows();
-
-					var groups = surfaceObjectsItem.RenderGroups;
-					var groupCount = groups.Length;
-
-
-					//draw render groups
-					var groupsAdded = stackalloc int/*bool*/[ groupCount ];
-					for( int nGroup = 0; nGroup < groupCount; nGroup++ )
-						groupsAdded[ nGroup ] = 0;
-					var groupsCameraDistanceMinSquared = stackalloc float[ groupCount ];
-					var groupsVisibilityDistance = stackalloc float[ groupCount ];
-					var groupsOnlyForShadowGeneration = stackalloc int[ groupCount ];
-
-
-					for( int nGroup = 0; nGroup < groupCount; nGroup++ )
-					{
-						var group = groups[ nGroup ];
-
-						if( group.NoBatchingGroup )
-						{
-							//!!!!что еще проверять?
-
-							groupsAdded[ nGroup ] = 1;
-						}
-						else
-						{
-							var surface = surfaceObjectsItem.GetSurface().Result;
-							if( surface == null )
-								return;
-
-							surface.GetMesh( group.VariationGroup, group.VariationElement, out var enabled, out var mesh, out var replaceMaterial, out var visibilityDistanceFactor, out var castShadows, out var receiveDecals, out var motionBlurFactor );
-							if( mesh?.Result == null )
-								mesh = ResourceUtility.MeshInvalid;
-
-							if( !enabled )
-								continue;
-							if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum && ( !castShadows || !surfaceObjectsCastShadows ) )
-								continue;
-
-							var cameraDistanceMinSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref group.BoundingBox );
-
-							var boundingSize = mesh.Result.SpaceBounds.CalculatedBoundingSphereRadius * 2 * group.ObjectsMaxScale;
-							var visibilityDistance = context.GetVisibilityDistanceByObjectSize( boundingSize ) * visibilityDistanceFactor * mesh.Result.MeshData.VisibilityDistanceFactor * surfaceObjectsVisibilityDistanceFactor;
-
-							if( cameraDistanceMinSquared < visibilityDistance * visibilityDistance/* || mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum*/ )
-							{
-								groupsAdded[ nGroup ] = 1;
-								groupsVisibilityDistance[ nGroup ] = (float)visibilityDistance;
-								groupsCameraDistanceMinSquared[ nGroup ] = cameraDistanceMinSquared;
-							}
-						}
-					}
-
-
-
-					////detect amount of render groups to draw. RenderGroups are sorted by distance
-					//int groupsCountToCheck = 0;
-					//if( mode == GetRenderSceneDataMode.InsideFrustum )
-					//{
-					//	var cameraDistanceToSectorSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref surfaceObjectsItem.Bounds );
-					//	for( int nGroup = 0; nGroup < surfaceObjectsItem.RenderGroups.Length; nGroup++ )
-					//	{
-					//		var group = surfaceObjectsItem.RenderGroups[ nGroup ];
-					//		if( cameraDistanceToSectorSquared > group.VisibilityDistanceSquared )
-					//			break;
-					//		groupsCountToCheck++;
-					//	}
-					//}
-					//else if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum )
-					//	groupsCountToCheck = surfaceObjectsItem.RenderGroups.Length;
-
-
-					Parallel.For( 0, groupCount, delegate ( int nGroup )
-					{
-						var group = groups[ nGroup ];
-
-						if( groupsAdded[ nGroup ] != 0 )
-						{
-							if( group.NoBatchingGroup )
-							{
-								groupsAdded[ nGroup ] = 2;
-							}
-							else
-							{
-								var add = false;
-								var onlyForShadowGeneration = false;
-								if( mode == GetRenderSceneDataMode.InsideFrustum )
-								{
-									add = true;
-									onlyForShadowGeneration = !cameraSettings.Frustum.Intersects( ref group.BoundingSphere );
-								}
-								else if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum && modeGetObjectsItem.Intersects( ref group.BoundingBox ) )
-								{
-									add = true;
-									onlyForShadowGeneration = true;
-								}
-
-								if( add )
-								{
-									groupsAdded[ nGroup ] = 2;
-									groupsOnlyForShadowGeneration[ nGroup ] = onlyForShadowGeneration ? 1 : 0;
-								}
-							}
-						}
-					} );
-
-
-					////detect amount of render groups to draw. RenderGroups are sorted by distance
-					//int groupsCountToCheck = 0;
-					//if( mode == GetRenderSceneDataMode.InsideFrustum )
-					//{
-					//	var cameraDistanceToSectorSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref surfaceObjectsItem.Bounds );
-					//	for( int nGroup = 0; nGroup < surfaceObjectsItem.RenderGroups.Length; nGroup++ )
-					//	{
-					//		var group = surfaceObjectsItem.RenderGroups[ nGroup ];
-					//		if( cameraDistanceToSectorSquared > group.VisibilityDistanceSquared )
-					//			break;
-					//		groupsCountToCheck++;
-					//	}
-					//}
-					//else if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum )
-					//	groupsCountToCheck = surfaceObjectsItem.RenderGroups.Length;
-
-					////draw render groups
-					//var groupsAdded = stackalloc int/*bool*/[ groupsCountToCheck ];
-					//for( int nGroup = 0; nGroup < groupsCountToCheck; nGroup++ )
-					//	groupsAdded[ nGroup ] = 0;
-					//var groupsCameraDistanceMinSquared = stackalloc float[ groupsCountToCheck ];
-					//var groupsOnlyForShadowGeneration = stackalloc int[ groupsCountToCheck ];
-
-					//Parallel.For( 0, groupsCountToCheck, delegate ( int nGroup )
-					//{
-					//	var group = surfaceObjectsItem.RenderGroups[ nGroup ];
-
-					//	var cameraDistanceMinSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref group.BoundingBox );
-
-					//	zzzz;
-					//	if( cameraDistanceMinSquared < group.VisibilityDistanceSquared )//|| mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum )
-					//	{
-					//		var add = false;
-					//		var onlyForShadowGeneration = false;
-					//		if( mode == GetRenderSceneDataMode.InsideFrustum )
-					//		{
-					//			add = true;
-					//			onlyForShadowGeneration = !cameraSettings.Frustum.Intersects( ref group.BoundingSphere );
-					//		}
-					//		else if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum && modeGetObjectsItem.Intersects( ref group.BoundingBox ) )
-					//		{
-					//			add = true;
-					//			onlyForShadowGeneration = true;
-					//		}
-
-					//		if( add )
-					//		{
-					//			groupsAdded[ nGroup ] = 1;
-					//			groupsCameraDistanceMinSquared[ nGroup ] = cameraDistanceMinSquared;
-					//			groupsOnlyForShadowGeneration[ nGroup ] = onlyForShadowGeneration ? 1 : 0;
-					//		}
-					//	}
-					//} );
-
-					for( int nGroup = 0; nGroup < groupCount; nGroup++ )
-					{
-						if( groupsAdded[ nGroup ] != 2 )
-							continue;
-
-						var group = groups[ nGroup ];
-
-						if( group.NoBatchingGroup )
-						{
-							RenderObjectsSeparately( context, mode, modeGetObjectsItem, surfaceObjectsItem, group );
-						}
-						else
-						{
-							var surface = surfaceObjectsItem.GetSurface().Result;
-							if( surface == null )
-								return;
-							surfaceObjectsItem.GetObjectsColor( out var color );
-
-							var cameraDistanceMinSquared = groupsCameraDistanceMinSquared[ nGroup ];
-							var onlyForShadowGeneration = groupsOnlyForShadowGeneration[ nGroup ] != 0;
-							var visibilityDistance = groupsVisibilityDistance[ nGroup ];
-
-							surface.GetMesh( group.VariationGroup, group.VariationElement, out var enabled, out var mesh, out var replaceMaterial, out var visibilityDistanceFactor, out var castShadows, out var receiveDecals, out var motionBlurFactor );
-							if( mesh?.Result == null )
-								mesh = ResourceUtility.MeshInvalid;
-
-							if( !enabled )
-								continue;
-							if( onlyForShadowGeneration && ( !castShadows || !surfaceObjectsCastShadows ) )
-								continue;
-
-							var cameraDistanceMaxSquared = SceneLODUtility.GetCameraDistanceMax( cameraSettings, ref group.BoundingSphere );
-							cameraDistanceMaxSquared *= cameraDistanceMaxSquared;
-
-							SceneLODUtility.GetDemandedLODs( context, mesh, cameraDistanceMinSquared, cameraDistanceMaxSquared, out var lodState );
-
-
-							var lods = mesh.Result.MeshData.LODs;
-
-							bool useBatching = false;
-							{
-								if( lods == null )
-									useBatching = true;
-								else
-								{
-									//check for only one last lod
-									if( lodState.Count == 1 )
-									{
-										var lodCount = lods.Length + 1;
-										lodState.GetItem( 0, out var level, out var range );
-
-										if( level == lodCount - 1 )
-											useBatching = true;
-									}
-								}
-							}
-
-							if( useBatching )
-							{
-								var item = new RenderingPipeline.RenderSceneData.MeshItem();
-								item.Creator = this;
-								item.BoundingSphere = group.BoundingSphere;
-								item.BoundingBoxCenter = item.BoundingSphere.Center;
-								//group.Bounds.CalculatedBoundingBox.GetCenter( out item.BoundingBoxCenter );
-
-								//item.MeshData = mesh.Result.MeshData;
-								//item.CastShadows = castShadows && item.MeshData.CastShadows;
-								item.ReceiveDecals = receiveDecals;
-								item.MotionBlurFactor = motionBlurFactor;
-								item.ReplaceMaterial = replaceMaterial;
-								//impl?
-								//if( ReplaceMaterialSelectively.Count != 0 )
-								//{
-								//	item.ReplaceMaterialSelectively = new Material[ ReplaceMaterialSelectively.Count ];
-								//	for( int n = 0; n < ReplaceMaterialSelectively.Count; n++ )
-								//		item.ReplaceMaterialSelectively[ n ] = ReplaceMaterialSelectively[ n ].Value;
-								//}
-								item.Color = color;// ColorValue.One;
-								item.VisibilityDistance = (float)visibilityDistance;
-								item.OnlyForShadowGeneration = onlyForShadowGeneration;
-
-
-								for( int nLodItem = 0; nLodItem < lodState.Count; nLodItem++ )
-								{
-									lodState.GetItem( nLodItem, out var lodLevel, out _ );
-
-
-									item.MeshData = mesh.Result.MeshData;
-									if( lodLevel > 0 )
-									{
-										ref var lod = ref lods[ lodLevel - 1 ];
-										var lodMeshData = lod.Mesh?.Result?.MeshData;
-										if( lodMeshData != null )
-											item.MeshData = lodMeshData;
-									}
-
-									item.CastShadows = castShadows && surfaceObjectsCastShadows && item.MeshData.CastShadows && cameraDistanceMinSquared < context.GetShadowVisibilityDistanceSquared( visibilityDistance );
-									item.LODValue = 0;
-									// = SceneLODUtility.GetLodValue( lodRange, objectCameraDistance );
-									//item.LODRange = lodRange;
-
-									if( onlyForShadowGeneration && !item.CastShadows )
-										continue;
-
-									//set BatchingInstanceBuffer
-									if( item.MeshData.BillboardMode != 0 )
-									{
-										//!!!!сразу создавать, чтобы потом не тормозило? или в потоке
-										if( group.BatchingInstanceBufferBillboard == null )
-											CreateBatchingInstanceBufferBillboard( surfaceObjectsItem, group, item.LODValue, /*item.VisibilityDistance,*/ item.ReceiveDecals, item.MotionBlurFactor, item.MeshData );
-										item.BatchingInstanceBuffer = group.BatchingInstanceBufferBillboard;
-									}
-									else
-									{
-										//!!!!сразу создавать, чтобы потом не тормозило? или в потоке
-										if( group.BatchingInstanceBufferMesh == null )
-											CreateBatchingInstanceBufferMesh( surfaceObjectsItem, group, item.LODValue, /*item.VisibilityDistance,*/ item.ReceiveDecals, item.MotionBlurFactor );
-										item.BatchingInstanceBuffer = group.BatchingInstanceBufferMesh;
-									}
-
-									//add to render
-									{
-										////set AnimationData from event
-										//GetRenderSceneDataAddToFrameData?.Invoke( this, context, mode, ref item );
-
-										context.FrameData.RenderSceneData.Meshes.Add( ref item );
-									}
-								}
-							}
-							else
-							{
-								RenderObjectsSeparately( context, mode, modeGetObjectsItem, surfaceObjectsItem, group );
-							}
-						}
-					}
-
-					//visualize groups
-					if( DebugDrawSurfaceObjectsBounds )
-					{
-						var renderer = context.Owner.Simple3DRenderer;
-						renderer.SetColor( new ColorValue( 0, 0, 1 ) );
-
-						foreach( var group in surfaceObjectsItem.RenderGroups )
-							renderer.AddBounds( group.BoundingBox, false );
-					}
-				}
+				//draw render groups
+				foreach( var surfaceObjectsItem in tile.SurfaceObjectsItems )
+					RenderSurfaceObjectsItem( tile, context, mode, modeGetObjectsItem, surfaceObjectsItem );
 			}
 		}
 
@@ -5793,6 +6571,7 @@ namespace NeoAxis
 				cache.SurfaceObjectsColor = SurfaceObjectsColor;
 				cache.SurfaceObjectsVisibilityDistanceFactor = (float)SurfaceObjectsVisibilityDistanceFactor;
 				cache.SurfaceObjectsCastShadows = SurfaceObjectsCastShadows;
+				cache.SurfaceObjectsCollision = SurfaceObjectsCollision;
 
 				//!!!!
 
@@ -5801,5 +6580,126 @@ namespace NeoAxis
 
 			return baseSurfaceObjectsDataCache;
 		}
+
+		void NetworkSendData( ServerNetworkService_Components.ClientItem client )
+		{
+			if( NetworkIsServer && HeightmapBuffer != null )// && ObjectsNetworkMode.Value )
+			{
+
+				//!!!!частичное обновление
+
+				{
+					var writer = client != null ? BeginNetworkMessage( client, "HeightmapBuffer" ) : BeginNetworkMessageToEveryone( "HeightmapBuffer" );
+
+					var byteArray = HeightmapToByteArray( HeightmapBuffer );
+					var zipped = IOUtility.Zip( byteArray );
+
+					writer.Write( zipped.Length );
+					writer.Write( zipped );
+
+					EndNetworkMessage();
+				}
+
+				unsafe
+				{
+					var writer = client != null ? BeginNetworkMessage( client, "HolesCache" ) : BeginNetworkMessageToEveryone( "HolesCache" );
+
+					writer.WriteVariableInt32( holesCache.Count );
+
+					foreach( var item in holesCache )
+					{
+						writer.Write( item.Key );
+
+						writer.Write( item.Value.vertices.Length );
+						fixed( Vector3* pVertices = item.Value.vertices )
+							writer.Write( pVertices, item.Value.vertices.Length * sizeof( Vector3 ) );
+
+						writer.Write( item.Value.indices.Length );
+						fixed( int* pIndices = item.Value.indices )
+							writer.Write( pIndices, item.Value.indices.Length * sizeof( int ) );
+					}
+
+					EndNetworkMessage();
+				}
+			}
+		}
+
+		protected override void OnClientConnectedBeforeRootComponentEnabled( ServerNetworkService_Components.ClientItem client )
+		{
+			base.OnClientConnectedBeforeRootComponentEnabled( client );
+
+			NetworkSendData( client );
+		}
+
+		protected override bool OnReceiveNetworkMessageFromServer( string message, ArrayDataReader reader )
+		{
+			if( !base.OnReceiveNetworkMessageFromServer( message, reader ) )
+				return false;
+
+			if( message == "HeightmapBuffer" )
+			{
+				var length = reader.ReadInt32();
+				var array = new byte[ length ];
+				reader.ReadBuffer( array, 0, length );
+
+				if( !reader.Complete() )
+					return false;
+
+				try
+				{
+					var unzipped = IOUtility.Unzip( array );
+					var heightmapBuffer = HeightmapFromByteArray( unzipped );
+
+					HeightmapBuffer = heightmapBuffer;
+				}
+				catch
+				{
+					return false;
+				}
+			}
+
+			unsafe
+			{
+				if( message == "HolesCache" )
+				{
+					holesCache.Clear();
+
+					var count = reader.ReadVariableInt32();
+
+					for( int n = 0; n < count; n++ )
+					{
+						var index = reader.ReadVector2I();
+
+						var vertexCount = reader.ReadInt32();
+						var vertices = new Vector3[ vertexCount ];
+						fixed( Vector3* pVertices = vertices )
+							reader.ReadBuffer( pVertices, vertexCount * sizeof( Vector3 ) );
+
+						var indexCount = reader.ReadInt32();
+						var indices = new int[ indexCount ];
+						fixed( int* pIndices = indices )
+							reader.ReadBuffer( pIndices, indexCount * sizeof( int ) );
+
+						var item = new HoleCacheItem();
+						item.vertices = vertices;
+						item.indices = indices;
+						holesCache[ index ] = item;
+					}
+
+					if( !reader.Complete() )
+						return false;
+				}
+			}
+
+			return true;
+		}
+
+		bool NeedPrecalculateObjects()
+		{
+			if( EngineApp.IsSimulation )
+				return PrecalculateObjects;
+			return false;
+		}
+
 	}
 }

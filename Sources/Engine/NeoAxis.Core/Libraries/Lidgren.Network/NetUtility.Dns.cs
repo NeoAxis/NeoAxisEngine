@@ -9,7 +9,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
     public static partial class NetUtility
     {

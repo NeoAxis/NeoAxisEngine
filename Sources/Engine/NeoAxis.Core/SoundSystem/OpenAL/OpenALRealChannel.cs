@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using NeoAxis;
 using NeoAxis.OggVorbisTheora;
 using Tao.OpenAl;
+using System.Runtime.CompilerServices;
 
 namespace OpenALSoundSystem
 {
@@ -34,6 +35,7 @@ namespace OpenALSoundSystem
 		{
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		unsafe internal protected override void PostAttachVirtualChannel()
 		{
 			OpenALSoundWorld.criticalSection.Enter();
@@ -103,7 +105,7 @@ namespace OpenALSoundSystem
 				if( streamAlDataBuffers == null )
 				{
 					streamAlDataBuffers = new int[ 2 ];
-					fixed ( int* pAlDataBuffers = streamAlDataBuffers )
+					fixed( int* pAlDataBuffers = streamAlDataBuffers )
 						Al.alGenBuffers( streamAlDataBuffers.Length, pAlDataBuffers );
 					if( OpenALSoundWorld.CheckError() )
 					{
@@ -187,6 +189,7 @@ namespace OpenALSoundSystem
 			OpenALSoundWorld.criticalSection.Leave();
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		unsafe internal protected override void PreDetachVirtualChannel()
 		{
 			OpenALSoundWorld.criticalSection.Enter();
@@ -230,6 +233,7 @@ namespace OpenALSoundSystem
 			OpenALSoundWorld.criticalSection.Leave();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void UpdatePosition2()
 		{
 			Vector3 value = CurrentVirtualChannel.Position;
@@ -239,6 +243,7 @@ namespace OpenALSoundSystem
 			OpenALSoundWorld.CheckError();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		internal protected override void UpdatePosition()
 		{
 			OpenALSoundWorld.criticalSection.Enter();
@@ -246,6 +251,7 @@ namespace OpenALSoundSystem
 			OpenALSoundWorld.criticalSection.Leave();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void UpdateVelocity2()
 		{
 			Vector3 value = CurrentVirtualChannel.Velocity;
@@ -255,6 +261,7 @@ namespace OpenALSoundSystem
 			OpenALSoundWorld.CheckError();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		internal protected override void UpdateVelocity()
 		{
 			OpenALSoundWorld.criticalSection.Enter();
@@ -262,6 +269,7 @@ namespace OpenALSoundSystem
 			OpenALSoundWorld.criticalSection.Leave();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void UpdateVolume2()
 		{
 			double value = CurrentVirtualChannel.GetTotalVolume() * CurrentVirtualChannel.GetRolloffFactor();
@@ -269,6 +277,7 @@ namespace OpenALSoundSystem
 			OpenALSoundWorld.CheckError();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		internal protected override void UpdateVolume()
 		{
 			OpenALSoundWorld.criticalSection.Enter();
@@ -276,12 +285,14 @@ namespace OpenALSoundSystem
 			OpenALSoundWorld.criticalSection.Leave();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void UpdatePitch2()
 		{
 			Al.alSourcef( alSource, Al.AL_PITCH, (float)CurrentVirtualChannel.GetTotalPitch() );
 			OpenALSoundWorld.CheckError();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		internal protected override void UpdatePitch()
 		{
 			OpenALSoundWorld.criticalSection.Enter();
@@ -289,6 +300,7 @@ namespace OpenALSoundSystem
 			OpenALSoundWorld.criticalSection.Leave();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void UpdatePan2()
 		{
 			float value = (float)CurrentVirtualChannel.Pan;
@@ -297,6 +309,7 @@ namespace OpenALSoundSystem
 			OpenALSoundWorld.CheckError();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		internal protected override void UpdatePan()
 		{
 			OpenALSoundWorld.criticalSection.Enter();
@@ -304,12 +317,14 @@ namespace OpenALSoundSystem
 			OpenALSoundWorld.criticalSection.Leave();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void UpdateTime2()
 		{
 			Al.alSourcef( alSource, Al.AL_SEC_OFFSET, (float)CurrentVirtualChannel.Time );
 			OpenALSoundWorld.CheckError();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		internal protected override void UpdateTime()
 		{
 			OpenALSoundWorld.criticalSection.Enter();
@@ -317,6 +332,7 @@ namespace OpenALSoundSystem
 			OpenALSoundWorld.criticalSection.Leave();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Update()
 		{
 			if( currentSound == null )
@@ -335,6 +351,7 @@ namespace OpenALSoundSystem
 				UpdateDataStream();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void UpdateSample()
 		{
 			int state;
@@ -344,6 +361,7 @@ namespace OpenALSoundSystem
 				CurrentVirtualChannel.Stop();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		int ReadDataFromDataStream( IntPtr buffer, int needRead )
 		{
 			OpenALDataStreamSoundData currentDataStreamSound = (OpenALDataStreamSoundData)currentSound;
@@ -364,6 +382,7 @@ namespace OpenALSoundSystem
 			return readed;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		unsafe void DataStreamStartPlay()
 		{
 			for( int n = 0; n < streamAlDataBuffers.Length; n++ )
@@ -374,10 +393,11 @@ namespace OpenALSoundSystem
 				Al.alBufferData( streamAlDataBuffers[ n ], alFormat, streamBuffer, readed, currentSound.frequency );
 			}
 
-			fixed ( int* pAlDataBuffers = streamAlDataBuffers )
+			fixed( int* pAlDataBuffers = streamAlDataBuffers )
 				Al.alSourceQueueBuffers( alSource, streamAlDataBuffers.Length, pAlDataBuffers );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		unsafe void UpdateDataStream()
 		{
 			OpenALDataStreamSoundData dataStreamSound = (OpenALDataStreamSoundData)currentSound;
@@ -418,6 +438,7 @@ namespace OpenALSoundSystem
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void UpdateFileStreamFromThread()
 		{
 			if( currentSound == null )
@@ -507,6 +528,7 @@ namespace OpenALSoundSystem
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void FileStreamStartPlay()
 		{
 			for( int n = 0; n < streamAlDataBuffers.Length; n++ )
@@ -519,6 +541,7 @@ namespace OpenALSoundSystem
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		unsafe bool FileStream( int alStreamBuffer )
 		{
 			OpenALFileStreamSoundData fileStreamSound = (OpenALFileStreamSoundData)currentSound;

@@ -1,4 +1,4 @@
-﻿//// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿//// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 //using System;
 //using System.Collections;
 //using System.Collections.Generic;
@@ -183,7 +183,7 @@
 //		public Span<T> GetSpan( int start ) => GetSpan().Slice( start );
 //		public Span<T> GetSpan( int start, int length ) => GetSpan().Slice( start, length );
 
-//		// [MethodImpl( MethodImplOptions.AggressiveInlining )]
+//		// [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 //		public Memory<T> Memory => new Memory<T>( this, 0, GetSpan().Length );
 //		*/
 

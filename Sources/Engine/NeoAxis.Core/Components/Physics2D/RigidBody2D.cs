@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -174,7 +174,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The linear reduction of velocity over time.
 		/// </summary>
-		[DefaultValue( 0.1 )]
+		[DefaultValue( 0.05 )]//1 )]
 		[Range( 0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
 		[Category( "Rigid Body 2D" )]
 		public Reference<double> LinearDamping
@@ -196,12 +196,12 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="LinearDamping"/> property value changes.</summary>
 		public event Action<RigidBody2D> LinearDampingChanged;
-		ReferenceField<double> _linearDamping = 0.1;
+		ReferenceField<double> _linearDamping = 0.05;//0.1;
 
 		/// <summary>
 		/// The angular reduction of velocity over time.
 		/// </summary>
-		[DefaultValue( 0.1 )]
+		[DefaultValue( 0.05 )]//1 )]
 		[Range( 0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
 		[Category( "Rigid Body 2D" )]
 		public Reference<double> AngularDamping
@@ -223,7 +223,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="AngularDamping"/> property value changes.</summary>
 		public event Action<RigidBody2D> AngularDampingChanged;
-		ReferenceField<double> _angularDamping = 0.1;
+		ReferenceField<double> _angularDamping = 0.05;//0.1;
 
 		/// <summary>
 		/// Whether the body to have fixed rotation.
@@ -405,16 +405,16 @@ namespace NeoAxis
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		static void GetComponentShapesRecursive( CollisionShape2D shape, Transform shapeTransform, List<Tuple<CollisionShape2D, Transform>> result )
-		{
-			result.Add( new Tuple<CollisionShape2D, Transform>( shape, shapeTransform ) );
+		//static void GetComponentShapesRecursive( CollisionShape2D shape, Transform shapeTransform, List<Tuple<CollisionShape2D, Transform>> result )
+		//{
+		//	result.Add( new Tuple<CollisionShape2D, Transform>( shape, shapeTransform ) );
 
-			foreach( var child in shape.GetComponents<CollisionShape2D>( false, false, true ) )
-			{
-				var childTransform = shapeTransform * child.TransformRelativeToParent.Value;
-				GetComponentShapesRecursive( child, childTransform, result );
-			}
-		}
+		//	//foreach( var child in shape.GetComponents<CollisionShape2D>( false, false, true ) )
+		//	//{
+		//	//	var childTransform = shapeTransform * child.TransformRelativeToParent.Value;
+		//	//	GetComponentShapesRecursive( child, childTransform, result );
+		//	//}
+		//}
 
 		protected override void OnTransformChanged()
 		{
@@ -505,9 +505,15 @@ namespace NeoAxis
 				var bodyTransformScale = new Transform( Vector3.Zero, Quaternion.Identity, bodyTransform.Scale );
 
 				//get shapes. calculate local transforms with applied body scaling.
-				var componentShapes = new List<Tuple<CollisionShape2D, Transform>>();
-				foreach( var child in GetComponents<CollisionShape2D>( false, false, true ) )
-					GetComponentShapesRecursive( child, bodyTransformScale * child.TransformRelativeToParent.Value, componentShapes );
+				var componentShapes = new List<(CollisionShape2D, Transform)>();
+				foreach( var child in GetComponents<CollisionShape2D>() )
+				{
+					if( child.Enabled )
+						componentShapes.Add( (child, bodyTransformScale * child.TransformRelativeToParent.Value) );
+				}
+				//var componentShapes = new List<Tuple<CollisionShape2D, Transform>>();
+				//foreach( var child in GetComponents<CollisionShape2D>( false, false, true ) )
+				//	GetComponentShapesRecursive( child, bodyTransformScale * child.TransformRelativeToParent.Value, componentShapes );
 
 				if( componentShapes.Count > 0 )
 				{
@@ -720,7 +726,7 @@ namespace NeoAxis
 					}
 					else
 					{
-						var bounds = SpaceBounds.CalculatedBoundingBox;
+						var bounds = SpaceBounds.BoundingBox;
 						if( bounds.Intersects( ref context.ray, out double scale ) )
 							context.thisObjectResultRayScale = scale;
 					}
@@ -749,7 +755,7 @@ namespace NeoAxis
 			return item;
 		}
 
-		public override void Render( ViewportRenderingContext context, out int verticesRendered )
+		public override void RenderPhysicalObject( ViewportRenderingContext context, out int verticesRendered )
 		{
 			verticesRendered = 0;
 
@@ -771,12 +777,12 @@ namespace NeoAxis
 				{
 					ColorValue color;
 					if( MotionType.Value == MotionTypeEnum.Static )
-						color = ProjectSettings.Get.General.SceneShowPhysicsStaticColor;
+						color = ProjectSettings.Get.Colors.SceneShowPhysicsStaticColor;
 					else if( rigidBody.Awake )
-						color = ProjectSettings.Get.General.SceneShowPhysicsDynamicActiveColor;
+						color = ProjectSettings.Get.Colors.SceneShowPhysicsDynamicActiveColor;
 					else
-						color = ProjectSettings.Get.General.SceneShowPhysicsDynamicInactiveColor;
-					viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+						color = ProjectSettings.Get.Colors.SceneShowPhysicsDynamicInactiveColor;
+					viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 
 					Transform tr;
 					{
@@ -785,8 +791,16 @@ namespace NeoAxis
 						tr = tr.UpdateRotation( newRotation );
 					}
 
-					foreach( var shape in GetComponents<CollisionShape2D>( false, true, true ) )
-						shape.Render( viewport, tr, false, ref verticesRendered );
+					foreach( var shape in GetComponents<CollisionShape2D>() )
+					{
+						if( shape.Enabled )
+							shape.Render( viewport, tr, false, ref verticesRendered );
+					}
+					//foreach( var shape in GetComponents<CollisionShape2D>( onlyEnabledInHierarchy: true ) )
+					//	shape.Render( viewport, tr, false, ref verticesRendered );
+
+					//foreach( var shape in GetComponents<CollisionShape2D>( false, true, true ) )
+					//	shape.Render( viewport, tr, false, ref verticesRendered );
 
 					////center of mass
 					//if( MotionType.Value == MotionTypeEnum.Dynamic )
@@ -815,25 +829,33 @@ namespace NeoAxis
 				{
 					ColorValue color;
 					if( context2.selectedObjects.Contains( this ) )
-						color = ProjectSettings.Get.General.SelectedColor;
+						color = ProjectSettings.Get.Colors.SelectedColor;
 					else if( context2.canSelectObjects.Contains( this ) )
-						color = ProjectSettings.Get.General.CanSelectColor;
+						color = ProjectSettings.Get.Colors.CanSelectColor;
 					else
-						color = ProjectSettings.Get.General.SceneShowPhysicsDynamicActiveColor;
+						color = ProjectSettings.Get.Colors.SceneShowPhysicsDynamicActiveColor;
 
 					color.Alpha *= .5f;
-					viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+					viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 
-					foreach( var shape in GetComponents<CollisionShape2D>( false, true, true ) )
-						shape.Render( viewport, Transform, true, ref verticesRendered );
+					foreach( var shape in GetComponents<CollisionShape2D>() )
+					{
+						if( shape.Enabled )
+							shape.Render( viewport, Transform, true, ref verticesRendered );
+					}
+					//foreach( var shape in GetComponents<CollisionShape2D>( onlyEnabledInHierarchy: true ) )
+					//	shape.Render( viewport, Transform, true, ref verticesRendered );
+
+					//foreach( var shape in GetComponents<CollisionShape2D>( false, true, true ) )
+					//	shape.Render( viewport, Transform, true, ref verticesRendered );
 
 					//context.viewport.DebugGeometry.AddBounds( SpaceBounds.CalculatedBoundingBox );
 				}
 
 				//display collision contacts
-				if( ContactsDisplay && rigidBody.ContactList != null && EngineApp.ApplicationType != EngineApp.ApplicationTypeEnum.Editor )
+				if( ContactsDisplay && rigidBody.ContactList != null && EngineApp.IsSimulation )
 				{
-					var size3 = SpaceBounds.CalculatedBoundingBox.GetSize();
+					var size3 = SpaceBounds.BoundingBox.GetSize();
 					var scale = (float)Math.Min( size3.X, size3.Y ) / 30;
 					//var scale = (float)Math.Max( size3.X, Math.Max( size3.Y, size3.Z ) ) / 40;
 

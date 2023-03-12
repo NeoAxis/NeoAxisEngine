@@ -1,4 +1,5 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+#if !DEPLOY
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -50,6 +51,8 @@ namespace NeoAxis.Editor
 		static Cursor hidedCursor;
 
 		int paintBackgroundCounter;
+
+		bool insideTryRender;
 
 		[Browsable( false )]
 		public object TransformTool { get; set; }
@@ -278,9 +281,9 @@ namespace NeoAxis.Editor
 			if( Viewport != null )
 			{
 				var drawSplashScreen = DrawSplashScreen;
-				if( drawSplashScreen != ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.Disabled )
+				if( drawSplashScreen != ProjectSettingsPage_General.EngineSplashScreenStyleEnum.Disabled )
 				{
-					var color = drawSplashScreen == ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.BlackBackground ? Color.Black : Color.White;
+					var color = drawSplashScreen == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.BlackBackground ? Color.Black : Color.White;
 					using( var brush = new SolidBrush( color ) )
 					{
 						//e.Graphics.FillRectangle( brush, ClientRectangle );
@@ -787,6 +790,9 @@ namespace NeoAxis.Editor
 
 		public bool IsAllowRender()
 		{
+			if( IsDisposed )
+				return false;
+
 			if( EngineApp.Instance == null )
 				return false;
 
@@ -799,12 +805,18 @@ namespace NeoAxis.Editor
 			//if( RenderSystem.IsDeviceLostByTestCooperativeLevel() )
 			//	return;
 
-			if( !WinFormsUtility.IsControlVisibleInHierarchy( this ) )
-				return false;
+			try
+			{
+				if( !WinFormsUtility.IsControlVisibleInHierarchy( this ) )
+					return false;
 
-			//!!!! check perf. replace to alternative with flag check for better perf.
-			if( !WinFormsUtility.IsPhysicalVisibleCheckBy5Points( this ) )
+				if( !WinFormsUtility.IsPhysicalVisibleCheckBy5Points( this ) )
+					return false;
+			}
+			catch
+			{
 				return false;
+			}
 
 			return true;
 		}
@@ -829,7 +841,7 @@ namespace NeoAxis.Editor
 
 		public void TryRender()
 		{
-			if( DrawSplashScreen != ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.Disabled )
+			if( DrawSplashScreen != ProjectSettingsPage_General.EngineSplashScreenStyleEnum.Disabled )
 				return;
 
 			if( !IsAllowRender() )
@@ -840,82 +852,93 @@ namespace NeoAxis.Editor
 				return;
 			}
 
+			if( EditorAPI.ApplicationDoEventsIsAdditionalCall )
+				return;
+			if( insideTryRender )
+				return;
 
-			UpdateInput();
-
-
-			//!!!!в OnPaint рисовать?
-
-			//create render window
-			if( needCreateRenderWindow && allowCreateRenderWindow && !disableRecreationRenderWindow && EngineApp.Instance != null && EngineApp.Created )
+			insideTryRender = true;
+			try
 			{
-				if( CreateRenderTarget() )
-					needCreateRenderWindow = false;
-			}
+				UpdateInput();
 
-			//!!!!где еще такое RendererWorld.ViewportsDuringUpdate.Contains(viewport)
 
-			if( renderWindow != null && !RenderingSystem.ViewportsDuringUpdate.Contains( viewport ) )
-			{
-				//!!!!?
-				double time = EngineApp.GetSystemTime();
-				//double time = EngineApp.Instance.EngineTime;
-				if( lastRenderTime == 0 )
-					lastRenderTime = time;
+				//!!!!в OnPaint рисовать?
 
-				double step = time - lastRenderTime;
-
-				float invFPS = 0;
-				if( automaticUpdateFPS != 0 )
-					invFPS = 1.0f / automaticUpdateFPS;
-
-				if( automaticUpdateFPS == 0 || step >= invFPS )
+				//create render window
+				if( needCreateRenderWindow && allowCreateRenderWindow && !disableRecreationRenderWindow && EngineApp.Instance != null && EngineApp.Created )
 				{
-					lastRenderTime = time;
-
-					OneFrameChangeCursor = viewport.MouseRelativeMode ? GetHidedCursor() : Cursors.Default;
-					//OneFrameChangeCursor = Cursors.Default;
-
-					//!!!!new. тут?
-					EngineApp.DoTick();
-
-					//!!!!так ли. где еще
-					if( DrawSplashScreen == ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.Disabled )
-						viewport.PerformTick( (float)step );
-
-					//!!!!
-					////tick and entity world tick
-					//if( WinFormsAppEngineApp.Instance != null )
-					//	WinFormsAppEngineApp.Instance.DoTick();
-
-					//!!!!!было
-					//if( renderWindow.Size.X != 0 && renderWindow.Size.Y != 0 )
-					//	camera.AspectRatio = (float)renderWindow.Size.X / (float)renderWindow.Size.Y;
-					//if( renderWindow.Size.X != 0 && renderWindow.Size.Y != 0 )
-					//	guiRenderer.AspectRatio = (float)renderWindow.Size.X / (float)renderWindow.Size.Y;
-
-					//update
-					//!!!!так?
-					viewport.Update( true, OverrideCameraSettings );// false );
-
-					//!!!!возможно надо свапать только раз. делать цепь из всех существующих.
-
-					//!!!!wait vsync?
-					//viewport.Parent.SwapBuffers( false );
-					//!!!!
-					//Log.Fatal( "viewport.Parent.SwapBuffers( true )" );
-					//viewport.Parent.SwapBuffers( true );
-					//renderWindow.Update( true );
-
-					//!!!!так?
-					if( Cursor != OneFrameChangeCursor )
-						Cursor = OneFrameChangeCursor;
-
-					OneFrameChangeCursor = viewport.MouseRelativeMode ? GetHidedCursor() : Cursors.Default;
-					//OneFrameChangeCursor = Cursors.Default;
-
-					WinFormsUtility.InvalidateParentComposedStyleControl( this );
+					if( CreateRenderTarget() )
+						needCreateRenderWindow = false;
 				}
+
+				//!!!!где еще такое RendererWorld.ViewportsDuringUpdate.Contains(viewport)
+
+				if( renderWindow != null && !RenderingSystem.ViewportsDuringUpdate.Contains( viewport ) )
+				{
+					//!!!!?
+					double time = EngineApp.GetSystemTime();
+					//double time = EngineApp.Instance.EngineTime;
+					if( lastRenderTime == 0 )
+						lastRenderTime = time;
+
+					double step = time - lastRenderTime;
+
+					float invFPS = 0;
+					if( automaticUpdateFPS != 0 )
+						invFPS = 1.0f / automaticUpdateFPS;
+
+					if( automaticUpdateFPS == 0 || step >= invFPS )
+					{
+						lastRenderTime = time;
+
+						OneFrameChangeCursor = viewport.MouseRelativeMode ? GetHidedCursor() : Cursors.Default;
+						//OneFrameChangeCursor = Cursors.Default;
+
+						EngineApp.DoTick();
+
+						//!!!!так ли. где еще
+						if( DrawSplashScreen == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.Disabled )
+							viewport.PerformTick( (float)step );
+
+						//!!!!
+						////tick and entity world tick
+						//if( WinFormsAppEngineApp.Instance != null )
+						//	WinFormsAppEngineApp.Instance.DoTick();
+
+						//!!!!!было
+						//if( renderWindow.Size.X != 0 && renderWindow.Size.Y != 0 )
+						//	camera.AspectRatio = (float)renderWindow.Size.X / (float)renderWindow.Size.Y;
+						//if( renderWindow.Size.X != 0 && renderWindow.Size.Y != 0 )
+						//	guiRenderer.AspectRatio = (float)renderWindow.Size.X / (float)renderWindow.Size.Y;
+
+						//update
+						//!!!!так?
+						viewport.Update( true, OverrideCameraSettings );// false );
+
+						//!!!!возможно надо свапать только раз. делать цепь из всех существующих.
+
+						//!!!!wait vsync?
+						//viewport.Parent.SwapBuffers( false );
+						//!!!!
+						//Log.Fatal( "viewport.Parent.SwapBuffers( true )" );
+						//viewport.Parent.SwapBuffers( true );
+						//renderWindow.Update( true );
+
+						//!!!!так?
+						if( Cursor != OneFrameChangeCursor )
+							Cursor = OneFrameChangeCursor;
+
+						OneFrameChangeCursor = viewport.MouseRelativeMode ? GetHidedCursor() : Cursors.Default;
+						//OneFrameChangeCursor = Cursors.Default;
+
+						WinFormsUtility.InvalidateParentComposedStyleControl( this );
+					}
+				}
+			}
+			finally
+			{
+				insideTryRender = false;
 			}
 		}
 
@@ -946,13 +969,13 @@ namespace NeoAxis.Editor
 		}
 
 		[Browsable( false )]
-		internal ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum DrawSplashScreen
+		internal ProjectSettingsPage_General.EngineSplashScreenStyleEnum DrawSplashScreen
 		{
 			get
 			{
 				if( IsWidget )//&& !ProjectSettings.Get.CustomizeSplashScreen )
 				{
-					var result = ProjectSettings.Get.CustomSplashScreen.EngineSplashScreenStyle.Value;
+					var result = ProjectSettings.Get.General.EngineSplashScreenStyle.Value;
 
 					if( EngineApp.EngineTime != 0 )
 					{
@@ -965,7 +988,7 @@ namespace NeoAxis.Editor
 
 						//double totalTime = EngineApp.IsProPlan ? ProjectSettings.Get.EngineSplashScreenTime.Value : ProjectSettings.Get.EngineSplashScreenTimeReadOnly;
 						if( EngineApp.EngineTime - splashScreenStartTime > totalTime )
-							result = ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.Disabled;
+							result = ProjectSettingsPage_General.EngineSplashScreenStyleEnum.Disabled;
 					}
 					//else
 					//	return true;
@@ -973,7 +996,7 @@ namespace NeoAxis.Editor
 					return result;
 				}
 
-				return ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.Disabled;
+				return ProjectSettingsPage_General.EngineSplashScreenStyleEnum.Disabled;
 			}
 		}
 
@@ -989,3 +1012,4 @@ namespace NeoAxis.Editor
 
 	}
 }
+#endif

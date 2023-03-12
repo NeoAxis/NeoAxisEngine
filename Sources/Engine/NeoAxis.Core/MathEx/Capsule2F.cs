@@ -1,8 +1,9 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -20,6 +21,7 @@ namespace NeoAxis
 		[Serialize]
 		public float Radius;
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Capsule2F( Capsule2F source )
 		{
 			Point1 = source.Point1;
@@ -27,6 +29,7 @@ namespace NeoAxis
 			Radius = source.Radius;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Capsule2F( Vector2F point1, Vector2F point2, float radius )
 		{
 			this.Point1 = point1;
@@ -34,26 +37,31 @@ namespace NeoAxis
 			this.Radius = radius;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is Capsule2F && this == (Capsule2F)obj );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return ( Point1.GetHashCode() ^ Point2.GetHashCode() ^ Radius.GetHashCode() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( Capsule2F v1, Capsule2F v2 )
 		{
 			return ( v1.Point1 == v2.Point1 && v1.Point2 == v2.Point2 && v1.Radius == v2.Radius );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( Capsule2F v1, Capsule2F v2 )
 		{
 			return ( v1.Point1 != v2.Point1 || v1.Point2 != v2.Point2 || v1.Radius != v2.Radius );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( Capsule2F v, float epsilon )
 		{
 			if( !Point1.Equals( ref v.Point1, epsilon ) )
@@ -65,6 +73,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Rectangle ToBounds()
 		{
 			Rectangle result = new Rectangle( Point1 );
@@ -73,6 +82,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ToBounds( out Rectangle result )
 		{
 			result = new Rectangle( Point1 );
@@ -80,6 +90,7 @@ namespace NeoAxis
 			result.Expand( Radius );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector2F GetCenter()
 		{
 			Vector2F result;
@@ -89,6 +100,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void GetCenter( out Vector2F result )
 		{
 			Vector2F.Add( ref Point1, ref Point2, out result );
@@ -96,6 +108,7 @@ namespace NeoAxis
 			result.Y *= .5f;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float GetLength()
 		{
 			Vector2F result;
@@ -103,6 +116,7 @@ namespace NeoAxis
 			return result.Length();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector2F GetDirection()
 		{
 			Vector2F result;
@@ -111,12 +125,14 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void GetDirection( out Vector2F result )
 		{
 			Vector2F.Subtract( ref Point2, ref Point1, out result );
 			result.Normalize();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static bool CircleContains( ref Vector2F center, float radius, ref Vector2F p )
 		{
 			float x = p.X - center.X;
@@ -127,6 +143,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public bool Contains( Vector2F point )
 		{
 			if( Point1 != Point2 )

@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2021.4.
+// Made with NeoAxis Engine 2022.1.
 
 .component NeoAxis.Surface
 {
@@ -7,13 +7,13 @@
 	{
 		Name = Group 1
 		OccupiedAreaRadius = 1.2
+		PositionZRange = -0.3 0
 		RotateAroundItsAxis = True
 		MaxIncline = 180
-		ScaleRange = 0.7 1.3
+		ScaleRange = 0.3 1.3
 		.component NeoAxis.SurfaceElement_Mesh
 		{
 			Name = Mesh 1
-			VisibilityDistance = 500
 			Mesh
 			{
 				GetByReference = "Content\\Models\\Rocks\\Rocks (4 pieces)\\Rock 1.fbx|$Mesh"
@@ -22,7 +22,6 @@
 		.component NeoAxis.SurfaceElement_Mesh
 		{
 			Name = Mesh 2
-			VisibilityDistance = 500
 			Mesh
 			{
 				GetByReference = "Content\\Models\\Rocks\\Rocks (4 pieces)\\Rock 1.fbx|$Mesh"
@@ -31,7 +30,6 @@
 		.component NeoAxis.SurfaceElement_Mesh
 		{
 			Name = Mesh 3
-			VisibilityDistance = 500
 			Mesh
 			{
 				GetByReference = "Content\\Models\\Rocks\\Rocks (4 pieces)\\Rock 3.fbx|$Mesh"
@@ -40,7 +38,6 @@
 		.component NeoAxis.SurfaceElement_Mesh
 		{
 			Name = Mesh 4
-			VisibilityDistance = 500
 			Mesh
 			{
 				GetByReference = "Content\\Models\\Rocks\\Rocks (4 pieces)\\Rock 4.fbx|$Mesh"

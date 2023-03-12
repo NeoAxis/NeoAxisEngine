@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -61,10 +61,7 @@
     <Compile Include="Character\CharacterAITask_TurnTo.cs" />
     <Compile Include="Character\CharacterAITask_Wait.cs" />
     <Compile Include="Character\CharacterAssemblyRegistration.cs" />
-    <Compile Include="Character\CharacterEditor.cs" />
     <Compile Include="Character\CharacterInputProcessing.cs" />
-    <Compile Include="Character\CharacterPreview.cs" />
-    <Compile Include="Character\CharacterPreviewImage.cs" />
     <Compile Include="Character2D\Character2D.cs" />
     <Compile Include="Character2D\Character2DAI.cs" />
     <Compile Include="Character2D\Character2DAITask_MoveTo.cs" />
@@ -94,11 +91,9 @@
     <Compile Include="Game framework\RegulatorSwitchInSpace.cs" />
     <Compile Include="Game framework 2D\IGameFrameworkItem2D.cs" />
     <Compile Include="Game framework 2D\Weapon2D.cs" />
-    <Compile Include="Game framework 3D\Bullet.cs" />
     <Compile Include="Game framework 3D\Door.cs" />
     <Compile Include="Game framework 3D\Explosion.cs" />
     <Compile Include="Game framework 3D\IGameFrameworkItem.cs" />
-    <Compile Include="Game framework 3D\Weapon.cs" />
     <Compile Include="Mesh modifiers\MeshModifier_BoxUV.cs" />
     <Compile Include="Mesh modifiers\MeshModifier_RandomizePosition.cs" />
     <Compile Include="Project settings\ProjectSettingsPage_Extension.cs" />
@@ -112,7 +107,6 @@
     <Compile Include="Vehicle\VehicleAI.cs" />
     <Compile Include="Vehicle\VehicleAITask_MoveTo.cs" />
     <Compile Include="Vehicle\VehicleAssemblyRegistration.cs" />
-    <Compile Include="Vehicle\VehicleCharacterSeat.cs" />
     <Compile Include="Vehicle\VehicleEditor.cs" />
     <Compile Include="Vehicle\VehicleInputProcessing.cs" />
     <Compile Include="Vehicle\VehiclePreview.cs" />
@@ -208,6 +202,80 @@
     <Compile Include="Components\Pathfinding\SharpNav\IO\Json\PolyIdConverter.cs" />
     <Compile Include="Components\Pathfinding\SharpNav\IO\Json\Vector3Converter.cs" />
     <Compile Include="Components\Pathfinding\SharpNav\Crowds\LocalBoundary.cs" />
+    <Compile Include="Game framework\AvatarSettings.cs" />
+    <Compile Include="Game framework\DialogueTree.cs" />
+    <Compile Include="Game framework\GameFrameworkCommon.cs" />
+    <Compile Include="Game framework\SpawnPoint.cs" />
+    <Compile Include="Building\Building.cs" />
+    <Compile Include="Building\BuildingAssemblyRegistration.cs" />
+    <Compile Include="Building\BuildingElement.cs" />
+    <Compile Include="Building\BuildingManager.cs" />
+    <Compile Include="Building\BuildingManagerSettingsCell.cs" />
+    <Compile Include="Building\BuildingModifier.cs" />
+    <Compile Include="Building\BuildingSettingsCell.cs" />
+    <Compile Include="Building\BuildingType.cs" />
+    <Compile Include="Bullet\Bullet.cs" />
+    <Compile Include="Bullet\BulletAssemblyRegistration.cs" />
+    <Compile Include="Bullet\BulletType.cs" />
+    <Compile Include="Bullet\BulletTypeEditor.cs" />
+    <Compile Include="Bullet\BulletTypePreview.cs" />
+    <Compile Include="Bullet\BulletTypePreviewImage.cs" />
+    <Compile Include="Character\CharacterType.cs" />
+    <Compile Include="Character\CharacterTypeEditor.cs" />
+    <Compile Include="Character\CharacterTypePreview.cs" />
+    <Compile Include="Character\CharacterTypePreviewImage.cs" />
+    <Compile Include="Creature\CreatureMaker.cs" />
+    <Compile Include="Creature\CreatureMakerSettingsCell.cs" />
+    <Compile Include="Fence\Fence.cs" />
+    <Compile Include="Fence\FenceAssemblyRegistration.cs" />
+    <Compile Include="Fence\FenceEntrance.cs" />
+    <Compile Include="Fence\FencePoint.cs" />
+    <Compile Include="Fence\FenceSettingsCell.cs" />
+    <Compile Include="Fence\FenceType.cs" />
+    <Compile Include="Fence\FenceTypeEditor.cs" />
+    <Compile Include="Fence\FenceTypePreview.cs" />
+    <Compile Include="Fence\FenceTypePreviewImage.cs" />
+    <Compile Include="Game framework\DemoMode.cs" />
+    <Compile Include="Game framework\GameObject.cs" />
+    <Compile Include="Plant\PlantAssemblyRegistration.cs" />
+    <Compile Include="Plant\PlantEditor.cs" />
+    <Compile Include="Plant\PlantGenerator_1_Init.cs" />
+    <Compile Include="Plant\PlantGenerator_2_Structure.cs" />
+    <Compile Include="Plant\PlantGenerator_3_PredefinedTypes.cs" />
+    <Compile Include="Plant\PlantGenerator_4_MeshData.cs" />
+    <Compile Include="Plant\PlantInSpace.cs" />
+    <Compile Include="Plant\PlantMaterial.cs" />
+    <Compile Include="Plant\PlantSettingsCell.cs" />
+    <Compile Include="Plant\PlantType.cs" />
+    <Compile Include="Road\Crossroad.cs" />
+    <Compile Include="Road\Road.cs" />
+    <Compile Include="Road\RoadAssemblyRegistration.cs" />
+    <Compile Include="Road\RoadLaneModifier.cs" />
+    <Compile Include="Road\RoadManager.cs" />
+    <Compile Include="Road\RoadManagerSettingsCell.cs" />
+    <Compile Include="Road\RoadModifier.cs" />
+    <Compile Include="Road\RoadNode.cs" />
+    <Compile Include="Road\RoadPoint.cs" />
+    <Compile Include="Road\RoadSettingsCell.cs" />
+    <Compile Include="Road\RoadType.cs" />
+    <Compile Include="Road\RoadTypeEditor.cs" />
+    <Compile Include="Road\RoadTypePreview.cs" />
+    <Compile Include="Road\RoadTypePreviewImage.cs" />
+    <Compile Include="Road\RoadUtility.cs" />
+    <Compile Include="Traffic system\TrafficSystem.cs" />
+    <Compile Include="Traffic system\TrafficSystemElement.cs" />
+    <Compile Include="Traffic system\TrafficSystemSettingsCell.cs" />
+    <Compile Include="Vehicle\VehicleSeat.cs" />
+    <Compile Include="Vehicle\VehicleType.cs" />
+    <Compile Include="Vehicle\VehicleTypeEditor.cs" />
+    <Compile Include="Vehicle\VehicleTypePreview.cs" />
+    <Compile Include="Vehicle\VehicleTypePreviewImage.cs" />
+    <Compile Include="Weapon\Weapon.cs" />
+    <Compile Include="Weapon\WeaponAssemblyRegistration.cs" />
+    <Compile Include="Weapon\WeaponType.cs" />
+    <Compile Include="Weapon\WeaponTypeEditor.cs" />
+    <Compile Include="Weapon\WeaponTypePreview.cs" />
+    <Compile Include="Weapon\WeaponTypePreviewImage.cs" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

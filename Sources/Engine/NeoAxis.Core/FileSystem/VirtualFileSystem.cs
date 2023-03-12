@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -94,36 +94,36 @@ namespace NeoAxis
 
 		///////////////////////////////////////////
 
-		/// <summary>
-		/// Represents an item of preloadable file to memory.
-		/// </summary>
-		public class PreloadFileToMemoryItem
-		{
-			internal string path;
-			volatile internal bool loaded;
-			volatile internal string error = "";
-			volatile internal byte[] data;
+		///// <summary>
+		///// Represents an item of preloadable file to memory.
+		///// </summary>
+		//public class PreloadFileToMemoryItem
+		//{
+		//	internal string path;
+		//	volatile internal bool loaded;
+		//	volatile internal string error = "";
+		//	volatile internal byte[] data;
 
-			public string Path
-			{
-				get { return path; }
-			}
+		//	public string Path
+		//	{
+		//		get { return path; }
+		//	}
 
-			public bool Loaded
-			{
-				get { return loaded; }
-			}
+		//	public bool Loaded
+		//	{
+		//		get { return loaded; }
+		//	}
 
-			public string Error
-			{
-				get { return error; }
-			}
+		//	public string Error
+		//	{
+		//		get { return error; }
+		//	}
 
-			public byte[] Data
-			{
-				get { return data; }
-			}
-		}
+		//	public byte[] Data
+		//	{
+		//		get { return data; }
+		//	}
+		//}
 
 		///////////////////////////////////////////
 
@@ -243,12 +243,16 @@ namespace NeoAxis
 				if( setCurrentDirectory )
 					CorrectCurrentDirectory();
 
-				if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+#if !DEPLOY
+				if( EngineApp.IsEditor )
 					Editor.PackageManager.DeleteFilesAsStartup();
+#endif
 
 				NativeUtility.PreloadLibrary( "NeoAxisCoreNative" );
 
 				InitDefaultSettingsConfig();
+
+				InitCloudProjectInfo();
 
 				ArchiveManager.Init();
 				//if( !ArchiveManager.Init() )
@@ -306,15 +310,26 @@ namespace NeoAxis
 
 		static Assembly CurrentDomain_AssemblyResolve( object sender, ResolveEventArgs args )
 		{
-			//!!!!ReflectionOnlyAssemblyResolve event is also exists
+			//ReflectionOnlyAssemblyResolve event is also exists
 
 			string assemblyName = args.Name;
 			if( !string.IsNullOrEmpty( assemblyName ) )
 			{
-				string fileName = assemblyName.Substring( 0, assemblyName.IndexOf( ',' ) ) + ".dll";
+				var baseName = assemblyName.Substring( 0, assemblyName.IndexOf( ',' ) );
+
+				string fileName = baseName + ".dll";
 				string fullPath = Path.Combine( Directories.Binaries, fileName );
 				if( File.Exists( fullPath ) )
 					return AssemblyUtility.LoadAssemblyByRealFileName( fullPath, false, loadWithoutLocking: true );
+
+				//Use Project.Client.dll instead of Project.dll
+				if( baseName == "Project" )
+				{
+					fileName = baseName + ".Client.dll";
+					fullPath = Path.Combine( Directories.Binaries, fileName );
+					if( File.Exists( fullPath ) )
+						return AssemblyUtility.LoadAssemblyByRealFileName( fullPath, false, loadWithoutLocking: true );
+				}
 			}
 
 			return null;
@@ -796,9 +811,9 @@ namespace NeoAxis
 			//if( !string.IsNullOrEmpty( v ) )
 			//	EngineApp.InitSettings.AnisotropicFiltering = (bool)SimpleTypes.ParseValue( typeof( bool ), v );
 
-			v = DefaultSettingsConfig.GetAttribute( "SoundSystemDLL" );
+			v = DefaultSettingsConfig.GetAttribute( "SoundSystem" );
 			if( !string.IsNullOrEmpty( v ) )
-				EngineApp.InitSettings.SoundSystemDLL = v;
+				EngineApp.InitSettings.SoundSystem = v;
 
 			v = DefaultSettingsConfig.GetAttribute( "SoundMaxReal2DChannels" );
 			if( !string.IsNullOrEmpty( v ) )
@@ -830,6 +845,27 @@ namespace NeoAxis
 		public static void SetMainThread( Thread value )
 		{
 			mainThread = value;
+		}
+
+		static void InitCloudProjectInfo()
+		{
+			var fullPath = Path.Combine( Directories.Project, "CloudProject.info" );
+			if( File.Exists( fullPath ) )
+			{
+				var block = TextBlockUtility.LoadFromRealFile( fullPath );
+				if( block != null )
+				{
+					if( !long.TryParse( block.GetAttribute( "ID" ), out var id ) )
+					{
+						Log.Warning( "VirtualFileSystem: InitCloudProjectInfo: Unable to parse project ID from \'CloudProject.info\'." );
+						return;
+					}
+
+					var name = block.GetAttribute( "Name" );
+
+					EngineInfo.SetEngineMode( EngineInfo.EngineModeEnum.CloudClient, new EngineInfo.CloudProjectInfoClass( id, name ) );
+				}
+			}
 		}
 	}
 }

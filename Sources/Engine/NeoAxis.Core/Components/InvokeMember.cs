@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -26,8 +26,6 @@ namespace NeoAxis
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		//Member
-		ReferenceField<ReferenceValueType_Member> _member;
 		/// <summary>
 		/// The member to invoke.
 		/// </summary>
@@ -36,12 +34,7 @@ namespace NeoAxis
 		[FlowGraphBrowsable( false )]
 		public Reference<ReferenceValueType_Member> Member
 		{
-			get
-			{
-				if( _member.BeginGet() )
-					Member = _member.Get( this );
-				return _member.value;
-			}
+			get { if( _member.BeginGet() ) Member = _member.Get( this ); return _member.value; }
 			set
 			{
 				if( _member.BeginSet( ref value ) )
@@ -57,6 +50,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="Member"/> property value changes.</summary>
 		public event Action<InvokeMember> MemberChanged;
+		ReferenceField<ReferenceValueType_Member> _member;
 
 		/// <summary>
 		/// Whether the member is support flow control.
@@ -333,7 +327,7 @@ namespace NeoAxis
 
 			//!!!!slowly?
 			//get actual member
-			Metadata.Member newMemberObject = GetNeededMember();
+			var newMemberObject = GetNeededMember();
 
 			//check for updates
 			if( !needUpdate && newMemberObject != memberObject )

@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -222,12 +222,15 @@ namespace Internal//NeoAxis
 					break;
 				}
 
-				//!!!!зависает BC5 на Highest и Production
+				//!!!!BC5 freezees on Highest and Production
 				if( format == DDSImage.FormatEnum.BC5 )
 					compressionOptions.SetQuality( NvidiaTextureTools.Quality.Normal );
 				else
-					compressionOptions.SetQuality( NvidiaTextureTools.Quality.Highest );
-				//compressionOptions.SetQuality( NvidiaTextureTools.Quality.Production );
+				{
+					//Highest can be very slow in some cases. more than 1 minute
+					compressionOptions.SetQuality( NvidiaTextureTools.Quality.Production );
+					//compressionOptions.SetQuality( NvidiaTextureTools.Quality.Highest );
+				}
 
 				outputOptions.SetOutputHeader( false );
 				outputOptions.SetOutputHandler( OutputOptions_BeginImage, OutputOptions_WriteData, OutputOptions_EndImage );

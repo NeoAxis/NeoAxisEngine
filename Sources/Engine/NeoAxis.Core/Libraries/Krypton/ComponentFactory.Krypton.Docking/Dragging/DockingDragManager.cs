@@ -1,4 +1,5 @@
-﻿// *****************************************************************************
+#if !DEPLOY
+// *****************************************************************************
 // 
 //  © Component Factory Pty Ltd 2012. All rights reserved.
 //	The software and associated documentation supplied hereunder are the 
@@ -204,7 +205,7 @@ namespace Internal.ComponentFactory.Krypton.Docking
         /// </summary>
         /// <param name="m">The message to be dispatched.</param>
         /// <returns>true to filter the message and stop it from being dispatched.</returns>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+        //[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         public bool PreFilterMessage(ref Message m)
         {
             switch (m.Msg)
@@ -305,3 +306,5 @@ namespace Internal.ComponentFactory.Krypton.Docking
         #endregion
     }
 }
+
+#endif

@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.Drawing.Design;
 using System.Runtime.InteropServices;
 using Internal.SharpBgfx;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -214,6 +215,7 @@ namespace NeoAxis
 		//	return item;
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Set( ref ViewportRenderingContext.BindTextureData data )
 		{
 			if( TextureParameters == null )
@@ -221,11 +223,13 @@ namespace NeoAxis
 			TextureParameters.Add( ref data );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Set( ViewportRenderingContext.BindTextureData data )
 		{
 			Set( ref data );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public void Set( string name, object value, ParameterType type = ParameterType.Unknown, int elementCount = 0 )
 		{
 			if( string.IsNullOrEmpty( name ) )
@@ -389,6 +393,7 @@ namespace NeoAxis
 			//return parameter;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public void Set( string name, ParameterType type, int elementCount, IntPtr value, int checkTotalSizeInBytes )
 		{
 			if( NamedParameters == null )
@@ -475,17 +480,20 @@ namespace NeoAxis
 			//return parameter;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe void Set( string name, ParameterType type, int elementCount, void* value, int checkTotalSizeInBytes )
 		{
 			Set( name, type, elementCount, (IntPtr)value, checkTotalSizeInBytes );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe void Set( string name, ParameterType type, int elementCount, byte[] value, int valueStartIndex, int checkTotalSizeInBytes )
 		{
 			fixed ( byte* pValue = value )
 				Set( name, type, elementCount, pValue + valueStartIndex, checkTotalSizeInBytes );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Remove( string name )
 		{
 			if( NamedParameters == null )
@@ -512,6 +520,7 @@ namespace NeoAxis
 			get { return version; }
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool IsEmpty()
 		{
 			return NamedParameters == null && UniformParameters == null && TextureParameters == null;

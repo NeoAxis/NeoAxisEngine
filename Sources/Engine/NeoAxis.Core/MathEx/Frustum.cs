@@ -1,9 +1,10 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -204,6 +205,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public void MoveFarDistance( double far )
 		{
 			if( readOnlyFrustumProperties )
@@ -231,11 +233,13 @@ namespace NeoAxis
 		//   return farDistance > nearDistance;
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is Frustum && this == (Frustum)obj );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return ( projection.GetHashCode() ^ origin.GetHashCode() ^ rotation.GetHashCode() ^
@@ -243,6 +247,7 @@ namespace NeoAxis
 				halfHeight.GetHashCode() );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( Frustum v1, Frustum v2 )
 		{
 			bool v1Null = ReferenceEquals( v1, null );
@@ -256,6 +261,7 @@ namespace NeoAxis
 				v1.halfHeight == v2.halfHeight );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( Frustum v1, Frustum v2 )
 		{
 			bool v1Null = ReferenceEquals( v1, null );
@@ -269,6 +275,7 @@ namespace NeoAxis
 				v1.halfHeight != v2.halfHeight );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void GetOrthoBox( out Box box )
 		{
 			double centerDistance = ( farDistance + nearDistance ) * .5f;
@@ -277,6 +284,7 @@ namespace NeoAxis
 			box.Axis = _axis;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( ref Vector3 point )
 		{
 			if( projection == ProjectionType.Perspective )
@@ -306,11 +314,13 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( Vector3 point )
 		{
 			return Intersects( ref point );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( Bounds bounds )
 		{
 			//!!!!slowly
@@ -335,6 +345,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( Box box )
 		{
 			//!!!!slowly
@@ -688,6 +699,7 @@ namespace NeoAxis
 		//	return Intersects( ref bounds );
 		//}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		unsafe void ToIndexPointsAndCornerVecs( Vector3* indexPoints, Vector3* cornerVecs )
 		{
 			Vector3 scaled0, scaled1, scaled2;
@@ -784,26 +796,31 @@ namespace NeoAxis
 			//indexPoints[ 7 ] = cornerVecs[ 3 ] + origin;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static int FLOATSIGNBITSET( double v )
 		{
 			return v >= 0 ? 0 : 1;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static int FLOATSIGNBITNOTSET( double v )
 		{
 			return v < 0 ? 0 : 1;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static bool FLOATSIGNBITSET_BOOL( double v )
 		{
 			return v < 0;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static bool FLOATNOTZERO( double v )
 		{
 			return v != 0;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		static unsafe bool BoundsCullLocalFrustum( ref Bounds bounds, Frustum localFrustum, Vector3* indexPoints, Vector3* cornerVecs )
 		{
 			int index;
@@ -866,6 +883,7 @@ namespace NeoAxis
 			return false;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		unsafe bool LocalFrustumIntersectsBounds( Vector3* points, ref Bounds bounds )
 		{
 			for( int i = 0; i < 4; i++ )
@@ -883,6 +901,7 @@ namespace NeoAxis
 			return false;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		unsafe bool LocalFrustumIntersectsFrustum( Vector3* points, bool testFirstSide )
 		{
 			for( int i = 0; i < 4; i++ )
@@ -901,6 +920,7 @@ namespace NeoAxis
 			return false;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		bool LocalLineIntersection( ref Vector3 start, ref Vector3 end )
 		{
 			double d1, d2, fstart, fend, lstart, lend, f, x;
@@ -1023,6 +1043,7 @@ namespace NeoAxis
 			return ( startInside != 0 );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( ref Sphere sphere )
 		{
 			if( projection == ProjectionType.Perspective )
@@ -1044,6 +1065,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( Sphere sphere )
 		{
 			return Intersects( ref sphere );
@@ -1054,6 +1076,7 @@ namespace NeoAxis
 		/// </summary>
 		public Vector3[] Points
 		{
+			[MethodImpl( (MethodImplOptions)512 )]
 			get
 			{
 				if( points == null )
@@ -1167,6 +1190,7 @@ namespace NeoAxis
 		/// </summary>
 		public Plane[] Planes
 		{
+			[MethodImpl( (MethodImplOptions)512 )]
 			get
 			{
 				if( planes == null )
@@ -1198,6 +1222,7 @@ namespace NeoAxis
 		/// <summary>Gets the direction.</summary>
 		public Vector3 Direction
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get { return rotation.GetForward(); }
 		}
 
@@ -1205,6 +1230,7 @@ namespace NeoAxis
 		/// <summary>Gets the up vector.</summary>
 		public Vector3 Up
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get { return rotation.GetUp(); }
 		}
 

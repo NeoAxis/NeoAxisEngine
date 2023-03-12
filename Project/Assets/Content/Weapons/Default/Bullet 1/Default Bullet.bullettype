@@ -1,0 +1,6 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.BulletType
+{
+	HitDamage = 1
+}

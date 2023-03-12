@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,7 +11,7 @@ namespace NeoAxis
 	{
 		public override void OnRegister()
 		{
-			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+			if( EngineApp.IsEditor )
 			{
 				//register the store
 				StoreManager.RegisterStore( new StoreManager.StoreItem() { Name = "Sketchfab", Website = "https://sketchfab.com/", Icon16 = Addon.Sketchfab.Properties.Resources.Sketchfab_16, Icon32 = Addon.Sketchfab.Properties.Resources.Sketchfab_32, Implementation = new SketchfabStoreImplementation() } );

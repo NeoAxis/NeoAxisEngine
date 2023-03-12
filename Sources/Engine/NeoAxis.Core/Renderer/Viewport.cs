@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 
@@ -11,15 +11,11 @@ namespace NeoAxis
 	{
 		//!!!!!чтобы не пересоздавалось когда не нужно
 
-		//internal unsafe OgreViewport* realObject;
 		internal RenderTarget parent;
 
 		bool disposed;
 
 		CameraSettingsClass cameraSettings;
-
-		//!!!!!
-		//bool enable3DSceneRendering = true;
 
 		Rectangle dimensions = new Rectangle( 0, 0, 1, 1 );
 		bool dimensionsDefault = true;
@@ -88,6 +84,8 @@ namespace NeoAxis
 
 		bool outputFlipY;
 
+		bool insideUpdate;
+
 		///////////////////////////////////////////
 
 		public enum ModeEnum
@@ -132,26 +130,14 @@ namespace NeoAxis
 
 		///////////////////////////////////////////
 
-		internal Viewport()// OgreViewport* realObject )
+		internal Viewport()
 		{
 			cameraSettings = new CameraSettingsClass( this, 1, 75, 0.1, 10000, Vector3.Zero, Vector3.XAxis, Vector3.ZAxis, ProjectionType.Perspective, 1, 1, 1 );
-
-			//this.realObject = realObject;
 
 			lock( RenderingSystem.viewports )
 				RenderingSystem.viewports.Add( this );
 			//lock( RendererWorld.viewports )
 			//	RendererWorld.viewports.Add( (IntPtr)realObject, this );
-
-			//!!!!было
-			//unsafe
-			//{
-			//	OgreViewport.setClearEveryFrame( realObject, false, (uint)( FrameBufferTypes.Color | FrameBufferTypes.Depth | FrameBufferTypes.Stencil ) );
-			//	//OgreViewport.setClearEveryFrame( realObject, clearEveryFrame, (uint)clearEveryFrameBuffers );
-
-			//	ColorValue black = new ColorValue( 0, 0, 0 );
-			//	OgreViewport.setBackgroundColour( realObject, ref black );
-			//}
 
 			//allKeys
 			if( allKeys == null )
@@ -263,61 +249,6 @@ namespace NeoAxis
 			get { return disposed; }
 		}
 
-		///// <summary>
-		///// Determines if the viewport is cleared before every frame.
-		///// </summary>
-		//public void GetClearEveryFrame( out bool clear, out FrameBufferTypes buffers )
-		//{
-		//	clear = clearEveryFrame;
-		//	buffers = clearEveryFrameBuffers;
-		//}
-
-		///// <summary>
-		///// Determines whether to clear the viewport before rendering.
-		///// </summary>
-		///// <param name="clear">Whether or not to clear any buffers.</param>
-		///// <param name="buffers">
-		///// One or more values from <see cref="FrameBufferTypes"/> denoting
-		///// which buffers to clear, if clear is set to true. Note you should
-		///// not clear the stencil buffer here unless you know what you're doing.
-		///// </param>
-		///// <remarks>
-		///// You can use this method to set which buffers are cleared
-		///// (if any) before rendering every frame.
-		///// </remarks>
-		//public void SetClearEveryFrame( bool clear, FrameBufferTypes buffers )
-		//{
-		//	if( clearEveryFrame == clear && clearEveryFrameBuffers == buffers )
-		//		return;
-		//	clearEveryFrame = clear;
-		//	clearEveryFrameBuffers = buffers;
-
-		//	unsafe
-		//	{
-		//		OgreViewport.setClearEveryFrame( realObject, clearEveryFrame, (uint)clearEveryFrameBuffers );
-		//	}
-		//}
-
-		//unsafe internal void UpdateNativeBackgroundColor()
-		//{
-		//	OgreViewport.setBackgroundColour( realObject, ref backgroundColor );
-		//}
-
-		///// <summary>
-		///// Gets or sets the initial background colour of the viewport (before rendering).
-		///// </summary>
-		//public ColorValue BackgroundColor
-		//{
-		//	get { return backgroundColor; }
-		//	set
-		//	{
-		//		if( backgroundColor == value )
-		//			return;
-		//		backgroundColor = value;
-		//		UpdateNativeBackgroundColor();
-		//	}
-		//}
-
 		/// <summary>
 		/// Gets or sets the dimensions (after creation).
 		/// </summary>
@@ -408,36 +339,6 @@ namespace NeoAxis
 			get { return parent; }
 		}
 
-		///// <summary>
-		///// Gets or sets this viewport whether it should display shadows.
-		///// </summary>
-		///// <remarks>
-		///// This setting enables you to disable shadow rendering for a given viewport. The global
-		///// shadow technique set on SceneManager still controls the type and nature of shadows,
-		///// but this flag can override the setting so that no shadows are rendered for a given
-		///// viewport to save processing time where they are not required.
-		///// </remarks>
-		//public bool ShadowsEnabled
-		//{
-		//	get { return shadowsEnabled; }
-		//	set
-		//	{
-		//		if( shadowsEnabled == value )
-		//			return;
-		//		shadowsEnabled = true;
-		//		unsafe
-		//		{
-		//			OgreViewport.setShadowsEnabled( realObject, value );
-		//		}
-		//	}
-		//}
-
-		//public bool Visible
-		//{
-		//	get { return visible; }
-		//	set { visible = value; }
-		//}
-
 		public ModeEnum Mode
 		{
 			get { return mode; }
@@ -450,189 +351,11 @@ namespace NeoAxis
 			set { attachedScene = value; }
 		}
 
-		//public bool Enable3DSceneRendering
-		//{
-		//	get { return enable3DSceneRendering; }
-		//	set { enable3DSceneRendering = value; }
-		//}
-
-		//public ObjectsVisibilityLevels ObjectsVisibilityLevel
-		//{
-		//	get { return objectsVisibilityLevel; }
-		//	set { objectsVisibilityLevel = value; }
-		//}
-
 		public ViewportRenderingContext RenderingContext
 		{
 			get { return renderingContext; }
 			set { renderingContext = value; }
 		}
-
-		//unsafe void RenderingData_ApplyToNative( RenderingDataClass renderingData )
-		//{
-		//	////!!!!несколько раз прокидываются объекты?
-
-		//	////!!!!!тут по сути уже конечные данные. нельзя ведь EngineDebugSettings. тут просто копируется DataForRendering. в ней все настройки
-
-		//	////!!!!!Debug.DrawShadowDebugging
-		//	//MyOgreSceneManager.setDrawShadowDebugging( SceneManager.realObject, EngineSettings.Debug.DrawShadowDebugging );
-		//	//OgreRenderSystem.setAllowHardwareInstancing( RendererWorld.realRoot, renderingData.allowHardwareInstancing );
-
-		//	////!!!!!!
-		//	////совсем убрать параметр?
-		//	////	  //!!!!!по сути нельзя свойство менять
-		//	////viewport.Camera.PolygonMode = EngineSettings.DrawInWireframeMode ? PolygonMode.Wireframe : PolygonMode.Solid;
-		//	////OgreCamera.setPolygonMode( viewport.Camera.realObject, renderingData.polygonMode );
-
-		//	////!!!!!что еще?
-
-		//	////fog
-		//	//MyOgreSceneManager.setFog( SceneManager.realObject, renderingData.fogMode, ref renderingData.fogColor, renderingData.fogExpDensity, renderingData.fogLinearStart, renderingData.fogLinearEnd );
-
-		//	////lighting
-		//	//MyOgreSceneManager.setAmbientLight( SceneManager.realObject, ref renderingData.ambientLight );
-
-		//	////shadows
-		//	//{
-		//	//	//!!!!!
-		//	//	//public bool drawShadows = true;
-		//	//	////!!!!!//shadowTechnique и другие
-
-		//	//	ColorValue shadowColor = new ColorValue( renderingData.shadowIntensity, renderingData.shadowIntensity, renderingData.shadowIntensity );
-		//	//	MyOgreSceneManager.setShadowColour( SceneManager.realObject, ref shadowColor );
-		//	//	MyOgreSceneManager.setShadowFarDistance( SceneManager.realObject, renderingData.shadowFarDistance );
-		//	//	MyOgreSceneManager.setShadowTextureFadeStart( SceneManager.realObject, renderingData.shadowTextureFadeStart );
-
-		//	//	//PSSM split distances
-		//	//	float[] splitDistances = new float[ 4 ];
-		//	//	splitDistances[ 0 ] = Camera.NearClipDistance;
-		//	//	splitDistances[ 1 ] = renderingData.shadowPSSMSplitFactors[ 0 ] * renderingData.shadowFarDistance;
-		//	//	splitDistances[ 2 ] = renderingData.shadowPSSMSplitFactors[ 1 ] * renderingData.shadowFarDistance;
-		//	//	splitDistances[ 3 ] = renderingData.shadowFarDistance;
-		//	//	fixed ( float* pSplitDistances = splitDistances )
-		//	//	{
-		//	//		MyOgreSceneManager.setShadowDirectionalLightSplitDistances( SceneManager.realObject, pSplitDistances, splitDistances.Length );
-		//	//	}
-
-		//	//	//shadow biases
-		//	//	{
-		//	//		for( int n = 0; n < 3; n++ )
-		//	//		{
-		//	//			MyOgreSceneManager.setShadowLightBias( SceneManager.realObject, LightType.Directional, n,
-		//	//				renderingData.shadowLightBiasDirectionalLight[ n ].X, renderingData.shadowLightBiasDirectionalLight[ n ].Y );
-		//	//		}
-		//	//		MyOgreSceneManager.setShadowLightBias( SceneManager.realObject, LightType.Point, 0,
-		//	//			renderingData.shadowLightBiasPointLight.X, renderingData.shadowLightBiasPointLight.Y );
-		//	//		MyOgreSceneManager.setShadowLightBias( SceneManager.realObject, LightType.Spot, 0,
-		//	//			renderingData.shadowLightBiasSpotLight.X, renderingData.shadowLightBiasSpotLight.Y );
-		//	//	}
-
-		//	//	MyOgreSceneManager.setDrawShadowDebugging( SceneManager.realObject, renderingData.shadowDrawDebugging );
-		//	//}
-
-		//	////!!!!!!
-		//	//////set OgreViewport::sceneRenderingData
-		//	////{
-		//	////	SceneObject.VisibilityFlags sceneObjectsVisibilityMask = 0;
-		//	////	if( renderingData.drawMeshSky )
-		//	////		sceneObjectsVisibilityMask |= SceneObject.VisibilityFlags.MeshSky;
-		//	////	if( renderingData.drawMeshStatic )
-		//	////		sceneObjectsVisibilityMask |= SceneObject.VisibilityFlags.MeshStatic;
-		//	////	if( renderingData.drawMeshUsual )
-		//	////		sceneObjectsVisibilityMask |= SceneObject.VisibilityFlags.MeshUsual;
-		//	////	if( renderingData.drawParticleSystem )
-		//	////		sceneObjectsVisibilityMask |= SceneObject.VisibilityFlags.ParticleSystem;
-		//	////	if( renderingData.drawBillboardSet )
-		//	////		sceneObjectsVisibilityMask |= SceneObject.VisibilityFlags.BillboardSet;
-		//	////	if( renderingData.drawRibbonTrail )
-		//	////		sceneObjectsVisibilityMask |= SceneObject.VisibilityFlags.RibbonTrail;
-		//	////	if( renderingData.draw3DGUI )
-		//	////		sceneObjectsVisibilityMask |= SceneObject.VisibilityFlags.GUI;
-
-		//	////	//lights
-		//	////	void** pLights = (void**)NativeUtils.Alloc( NativeUtils.MemoryAllocationType.Renderer, renderingData.lights.Length * sizeof( void* ) );
-		//	////	for( int n = 0; n < renderingData.lights.Length; n++ )
-		//	////		pLights[ n ] = renderingData.lights[ n ].light.realObject;
-
-		//	////	//scene nodes in frustum without scene nodes which outside the frustum (shadow casters)
-		//	////	int sceneNodesCount = 0;
-		//	////	void** pSceneNodes = (void**)NativeUtils.Alloc( NativeUtils.MemoryAllocationType.Renderer, renderingData.allSceneNodes.Length * sizeof( void* ) );
-		//	////	for( int n = 0; n < renderingData.allSceneNodes.Length; n++ )
-		//	////	{
-		//	////		if( !renderingData.allSceneNodes[ n ].shadowCasterOutsideFrustum )
-		//	////			pSceneNodes[ sceneNodesCount++ ] = renderingData.allSceneNodes[ n ].sceneNode.realObject;
-		//	////	}
-
-		//	////	//!!!!!debug geometry: пачкой сортировать внутри огра
-		//	////	//!!!!!!как-то полностью отрубать дебажную геометрию? или выше? в общем управлять нужно этим уметь всем
-
-		//	////	fixed ( IntPtr* pDebugGeometryRenderables = renderingData.debugGeometryRenderables )
-		//	////	{
-		//	////		OgreViewport.setSceneRenderingData( realObject,
-		//	////			renderingData.lights.Length, pLights,
-		//	////			(int)sceneObjectsVisibilityMask,
-		//	////			sceneNodesCount, pSceneNodes,
-		//	////			renderingData.debugGeometryRenderables.Length, (void**)pDebugGeometryRenderables );
-		//	////	}
-
-		//	////	NativeUtils.Free( (IntPtr)pLights );
-		//	////	NativeUtils.Free( (IntPtr)pSceneNodes );
-		//	////}
-
-		//	////!!!!!!!
-		//	//////set OgreLight::sceneRenderingData. must call after OgreViewport.setSceneRenderingData.
-		//	////foreach( RenderingDataClass.LightItem lightItem in renderingData.lights )
-		//	////{
-		//	////	OgreLight.SceneRenderingData_AffectedSceneNodeItem* pAffectedSceneNodes = (OgreLight.SceneRenderingData_AffectedSceneNodeItem*)
-		//	////		NativeUtils.Alloc( NativeUtils.MemoryAllocationType.Renderer, lightItem.affectedSceneNodes.Length * sizeof( void* ) );
-
-		//	////	for( int n = 0; n < lightItem.affectedSceneNodes.Length; n++ )
-		//	////	{
-		//	////		RenderingDataClass.LightItem.AffectedSceneNodeItem affectedSceneNodeItem = lightItem.affectedSceneNodes[ n ];
-		//	////		OgreLight.SceneRenderingData_AffectedSceneNodeItem item = new OgreLight.SceneRenderingData_AffectedSceneNodeItem();
-		//	////		item.sceneNode = (IntPtr)affectedSceneNodeItem.sceneNode.realObject;
-		//	////		item.shadowMapMaskForPSSMOrFaceOfPointLight = affectedSceneNodeItem.shadowMapMaskForPSSMOrFaceOfPointLight;
-		//	////		pAffectedSceneNodes[ n ] = item;
-		//	////	}
-
-		//	////	OgreLight.setSceneRenderingData( lightItem.light.realObject, pAffectedSceneNodes, lightItem.affectedSceneNodes.Length,
-		//	////		lightItem.prepareShadowTextures );
-
-		//	////	NativeUtils.Free( (IntPtr)pAffectedSceneNodes );
-		//	////}
-		//}
-
-		//unsafe void RenderingData_ClearNative( RenderingDataClass sceneRenderingData )
-		//{
-		//	//!!!!!
-
-		//	//OgreViewport.clearSceneRenderingData( realObject );
-
-		//	////clear SceneNode.sceneRenderingData_affectedLights
-		//	//{
-		//	//	void** pSceneNodes = (void**)NativeUtils.Alloc( NativeUtils.MemoryAllocationType.Renderer, sceneRenderingData.allSceneNodes.Length * sizeof( void* ) );
-		//	//	int n = 0;
-		//	//	foreach( RenderingDataClass.SceneNodeItem item in sceneRenderingData.allSceneNodes )
-		//	//	{
-		//	//		pSceneNodes[ n ] = item.sceneNode.realObject;
-		//	//		n++;
-		//	//	}
-		//	//	MyOgreSceneManager.resetDataBeforeRendering( SceneManager.realObject, sceneRenderingData.allSceneNodes.Length, pSceneNodes );
-		//	//	NativeUtils.Free( (IntPtr)pSceneNodes );
-		//	//}
-		//}
-
-		//!!!!
-		//!!!!!так? public?
-		//public void _ViewportRendering_Clear( FrameBufferTypes buffers, ColorValue backgroundColor, float depth = 1, uint stencil = 0 )
-		//{
-		//	EngineThreading.CheckMainThread();
-
-		//	unsafe
-		//	{
-		//		OgreViewport.clear( realObject, (uint)buffers, ref backgroundColor, depth, stencil );
-		//	}
-		//}
 
 		static int GetEKeysMaxIndex()
 		{
@@ -1101,6 +824,9 @@ namespace NeoAxis
 		{
 			EngineThreading.CheckMainThread();
 
+			if( attachedScene != null && attachedScene.Disposed )
+				attachedScene = null;
+
 			Tick?.Invoke( this, delta );
 			if( attachedScene != null && attachedScene.EnabledInHierarchy )
 				attachedScene.PerformUpdate( delta );
@@ -1111,662 +837,341 @@ namespace NeoAxis
 			//	controlManager.PerformSpecialInputDeviceEvent( e );
 		}
 
-
-		//!!!!!!xx xx;//Resize event?
-
-		//bool IsEnable3DSceneRendering()
-		//{
-		//	return Enable3DSceneRendering && SceneManager.Instance.Enable3DSceneRendering;
-		//}
-
-		//void InitGeneralRenderingData( RenderingDataClass renderingData )
-		//{
-		//	xx xx;
-
-		//	if( attachedMap != null )
-		//	{
-		//		//fog
-		//		renderingData.fogMode = attachedMap.FogMode;
-		//		renderingData.fogColor = attachedMap.FogColor;
-		//		renderingData.fogExpDensity = attachedMap.FogExpDensity;
-		//		renderingData.fogLinearStart = attachedMap.FogLinearStart;
-		//		renderingData.fogLinearEnd = attachedMap.FogLinearEnd;
-
-		//		//ambient lighting
-		//		renderingData.ambientLight = attachedMap.AmbientLight;
-
-		//		//shadows
-		//		renderingData.drawShadows = false;
-		//		//!!!!
-
-		//		//dataForRendering.drawShadows = SceneManager.Instance.ShadowTechnique != ShadowTechniques.None && viewport.ShadowsEnabled &&
-		//		//   EngineDebugSettings.DrawShadows && enable3DSceneRendering;
-
-		//		//!!!!!было
-		//		//if( viewport.AttachedMap != null )
-		//		//{
-		//		//   dataForRendering.shadowIntensity = viewport.AttachedMap.ShadowIntensity;
-		//		//   dataForRendering.shadowFarDistance = viewport.AttachedMap.Instance.ShadowFarDistance;
-		//		//   dataForRendering.shadowPSSMSplitFactors = viewport.AttachedMap.ShadowPSSMSplitFactors;
-		//		//}
-
-		//		//!!!!!было
-		//		////shadow biases
-		//		//if( dataForRendering.drawShadows )
-		//		//{
-		//		//   //!!!!!всё тут temp, новые тени нужны. по сути быстро их сделать
-
-
-		//		//   //bool atiHardwareShadows = false;
-		//		//   bool nvidiaHardwareShadows = false;
-		//		//   if( TextureManager.Instance.IsFormatSupported( Texture.Type.Type2D, PixelFormats.Depth24, Texture.Usage.RenderTarget ) )
-		//		//   {
-		//		//      //if( RenderSystem.Instance.Capabilities.Vendor == GPUVendors.ATI )
-		//		//      //   atiHardwareShadows = true;
-		//		//      if( RenderSystem.Instance.Capabilities.Vendor == GPUVendors.NVidia )
-		//		//         nvidiaHardwareShadows = true;
-		//		//   }
-
-		//		//   float qualityFactor;
-		//		//   {
-		//		//      if( SceneManager.Instance.ShadowTechnique == ShadowTechniques.ShadowmapHigh ||
-		//		//         SceneManager.Instance.ShadowTechnique == ShadowTechniques.ShadowmapHighPSSM ||
-		//		//         SceneManager.Instance.ShadowTechnique == ShadowTechniques.ShadowmapMedium ||
-		//		//         SceneManager.Instance.ShadowTechnique == ShadowTechniques.ShadowmapMediumPSSM )
-		//		//      {
-		//		//         qualityFactor = 1.5f;
-		//		//      }
-		//		//      else
-		//		//      {
-		//		//         qualityFactor = 1;
-		//		//      }
-		//		//   }
-
-		//		//   if( RenderSystem.Instance.IsDirect3D() )
-		//		//   {
-		//		//      //Direct3D
-
-		//		//      //directional light
-		//		//      {
-		//		//         //NVIDIA: Depth24 texture format
-		//		//         //ATI: Float32 texture format
-
-		//		//         float[] factors = null;
-		//		//         switch( SceneManager.Instance.ShadowTechnique )
-		//		//         {
-		//		//         case ShadowTechniques.ShadowmapLow: factors = new float[] { 1.0f }; break;
-		//		//         case ShadowTechniques.ShadowmapMedium: factors = new float[] { 1.5f }; break;
-		//		//         case ShadowTechniques.ShadowmapHigh: factors = new float[] { 1.5f }; break;
-		//		//         case ShadowTechniques.ShadowmapLowPSSM: factors = new float[] { 1.0f, 1.0f, 1.0f }; break;
-		//		//         case ShadowTechniques.ShadowmapMediumPSSM: factors = new float[] { 1.5f, 1.0f, 1.0f }; break;
-		//		//         case ShadowTechniques.ShadowmapHighPSSM: factors = new float[] { 1.5f, 1.5f, 1.0f }; break;
-		//		//         }
-
-		//		//         float iterationCount = SceneManager.Instance.IsShadowTechniquePSSM() ? 3 : 1;
-		//		//         for( int index = 0; index < iterationCount; index++ )
-		//		//         {
-		//		//            if( nvidiaHardwareShadows )
-		//		//            {
-		//		//               //Depth24 texture format
-		//		//               dataForRendering.shadowLightBiasDirectionalLight[ index ] = new Vec2( .0001f + .00005f * (float)index, factors[ index ] );
-		//		//            }
-		//		//            else
-		//		//            {
-		//		//               //Float32 texture format
-		//		//               dataForRendering.shadowLightBiasDirectionalLight[ index ] = new Vec2( .0001f + .00005f * (float)index, factors[ index ] );
-		//		//            }
-		//		//         }
-		//		//      }
-
-		//		//      //point light
-		//		//      {
-		//		//         //Float32 texture format (both for NVIDIA and ATI)
-		//		//         dataForRendering.shadowLightBiasPointLight = new Vec2( .05f * qualityFactor, 0 );
-		//		//         //shadowLightBiasPointLight = new Vec2( .2f * qualityFactor, .5f * qualityFactor );
-		//		//      }
-
-		//		//      //spot light
-		//		//      {
-		//		//         if( nvidiaHardwareShadows )
-		//		//         {
-		//		//            //Depth24 texture format
-		//		//            float textureSize = Map.Instance.GetShadowSpotLightTextureSizeAsInteger();
-		//		//            float textureSizeFactor = 1024.0f / textureSize;
-		//		//            dataForRendering.shadowLightBiasSpotLight = new Vec2( .001f * qualityFactor * textureSizeFactor, .001f * qualityFactor );
-		//		//         }
-		//		//         else
-		//		//         {
-		//		//            //Float32 texture format
-		//		//            dataForRendering.shadowLightBiasSpotLight = new Vec2( .1f * qualityFactor, 1.0f * qualityFactor );
-		//		//         }
-		//		//      }
-		//		//   }
-		//		//   else
-		//		//   {
-		//		//      //OpenGL
-		//		//      dataForRendering.shadowLightBiasDirectionalLight[ 0 ] = new Vec2( .0003f * qualityFactor, 0 );
-		//		//      dataForRendering.shadowLightBiasPointLight = new Vec2( .15f * qualityFactor, 0 );
-		//		//      dataForRendering.shadowLightBiasSpotLight = new Vec2( .15f * qualityFactor, 0 );
-		//		//   }
-		//		//}
-
-
-		//		renderingData.shadowDrawDebugging = EngineSettings.Debug.DrawShadowDebugging;
-
-		//		//scene nodes
-		//		renderingData.drawMeshSky = EngineSettings.Debug.DrawSky && IsEnable3DSceneRendering();
-		//		renderingData.drawMeshStatic = EngineSettings.Debug.DrawModels && IsEnable3DSceneRendering();
-		//		renderingData.drawMeshUsual = EngineSettings.Debug.DrawModels && IsEnable3DSceneRendering();
-		//		renderingData.drawParticleSystem = EngineSettings.Debug.DrawEffects && IsEnable3DSceneRendering();
-		//		renderingData.drawBillboardSet = EngineSettings.Debug.DrawEffects && IsEnable3DSceneRendering();
-		//		renderingData.drawRibbonTrail = EngineSettings.Debug.DrawEffects && IsEnable3DSceneRendering();
-		//		renderingData.draw3DGUI = EngineSettings.Debug.DrawInGame3DGUI && IsEnable3DSceneRendering();
-
-		//		//!!!!!это было после переопределения объектов. как делать?
-		//		//shadowDirectionalLightExtrusionDistanceForCastersDetection
-		//		if( renderingData.shadowDirectionalLightExtrusionDistanceForCastersDetection == 0 )
-		//		{
-		//			//!!!!!norm?
-		//			renderingData.shadowDirectionalLightExtrusionDistanceForCastersDetection = renderingData.shadowFarDistance * 2;
-		//			//dataForRendering.shadowDirectionalLightExtrusionDistanceForCastersDetection = viewport.Camera.FarClipDistance;
-		//		}
-
-		//	}
-		//}
-
-		///// <summary>
-		///// Call AddToRender events and remove if need exclude from rendering.
-		///// </summary>
-		//void PerformAddToRenderEventsAndRemoveSkipped( RenderingDataClass renderingData )
-		//{
-		//	//!!!!!
-
-		//	////call RenderLight.AddToRender event
-		//	//foreach( RenderingDataClass.LightItem item in renderingData.lights )
-		//	//{
-		//	//	bool allowRender = true;
-		//	//	item.light.PerformAddToRender( this, ref allowRender );
-		//	//	item.light.tempAllowRender = allowRender;
-		//	//}
-
-		//	////call SceneNode.AddToRender event
-		//	//foreach( RenderingDataClass.SceneNodeItem item in renderingData.allSceneNodes )
-		//	//{
-		//	//	bool allowRender = true;
-		//	//	item.sceneNode.PerformAddToRender( this, ref allowRender );
-		//	//	item.sceneNode.tempAllowRender = allowRender;
-		//	//}
-
-		//	////remove from lights
-		//	//{
-		//	//	int newCount = 0;
-		//	//	foreach( RenderingDataClass.LightItem item in renderingData.lights )
-		//	//	{
-		//	//		if( item.light.tempAllowRender )
-		//	//			newCount++;
-		//	//	}
-		//	//	if( newCount != renderingData.lights.Length )
-		//	//	{
-		//	//		RenderingDataClass.LightItem[] newBuffer = new RenderingDataClass.LightItem[ newCount ];
-		//	//		int index = 0;
-		//	//		foreach( RenderingDataClass.LightItem item in renderingData.lights )
-		//	//		{
-		//	//			if( item.light.tempAllowRender )
-		//	//				newBuffer[ index++ ] = item;
-		//	//		}
-		//	//		renderingData.lights = newBuffer;
-		//	//	}
-		//	//}
-
-		//	////remove from allSceneNodes
-		//	//{
-		//	//	int newCount = 0;
-		//	//	foreach( RenderingDataClass.SceneNodeItem item in renderingData.allSceneNodes )
-		//	//	{
-		//	//		if( item.sceneNode.tempAllowRender )
-		//	//			newCount++;
-		//	//	}
-		//	//	if( newCount != renderingData.allSceneNodes.Length )
-		//	//	{
-		//	//		RenderingDataClass.SceneNodeItem[] newBuffer = new RenderingDataClass.SceneNodeItem[ newCount ];
-		//	//		int index = 0;
-		//	//		foreach( RenderingDataClass.SceneNodeItem item in renderingData.allSceneNodes )
-		//	//		{
-		//	//			if( item.sceneNode.tempAllowRender )
-		//	//				newBuffer[ index++ ] = item;
-		//	//		}
-		//	//		renderingData.allSceneNodes = newBuffer;
-		//	//	}
-		//	//}
-
-		//	////remove from LightItem.affectedSceneNodes
-		//	//foreach( RenderingDataClass.LightItem lightItem in renderingData.lights )
-		//	//{
-		//	//	int newCount = 0;
-		//	//	foreach( RenderingDataClass.LightItem.AffectedSceneNodeItem item in lightItem.affectedSceneNodes )
-		//	//	{
-		//	//		if( item.sceneNode.tempAllowRender )
-		//	//			newCount++;
-		//	//	}
-		//	//	if( newCount != lightItem.affectedSceneNodes.Length )
-		//	//	{
-		//	//		RenderingDataClass.LightItem.AffectedSceneNodeItem[] newBuffer = new RenderingDataClass.LightItem.AffectedSceneNodeItem[ newCount ];
-		//	//		int index = 0;
-		//	//		foreach( RenderingDataClass.LightItem.AffectedSceneNodeItem item in lightItem.affectedSceneNodes )
-		//	//		{
-		//	//			if( item.sceneNode.tempAllowRender )
-		//	//				newBuffer[ index++ ] = item;
-		//	//		}
-		//	//		lightItem.affectedSceneNodes = newBuffer;
-		//	//	}
-		//	//}
-		//}
-
-		//void FinishRenderingData( RenderingDataClass renderingData )
-		//{
-		//	//что получить?
-		//	//геометрия мешей
-		//	//простую 3д сцену без освещения - одним цветом
-		//	////далее forward rendering без теней
-		//	//////далее простые тени? ну и всё. DS? после этого уже надо сразу самый современный рендер цеплять
-		//	//debug geometry - всю
-
-		//	//no hardware instancing
-		//	if( !EngineSettings.Debug.AllowHardwareInstancing )
-		//		renderingData.allowHardwareInstancing = false;
-
-		//	//wireframe mode
-		//	if( EngineSettings.Debug.DrawInWireframeMode )
-		//		renderingData.polygonMode = PolygonMode.Wireframe;
-
-		//	////default objects visibility detection
-		//	if( attachedMap != null && IsEnable3DSceneRendering() && renderingData.sceneObjects == null )
-		//	{
-		//		//!!!!temp
-
-		//		List<SceneObject> sceneObjects = new List<SceneObject>();
-		//		foreach( var s in attachedMap.SceneObjectsAll )
-		//		{
-		//			if( s.Visible )
-		//				sceneObjects.Add( s );
-		//		}
-		//		renderingData.sceneObjects = new ESet<SceneObject>( sceneObjects );
-
-		//		//SceneObjectVisiblityDetection_Default.DefaultImplObjectVisibilityDetection( this, renderingData );
-		//	}
-
-		//	//!!!!!
-		//	////check valid lights array
-		//	//if( renderingData.lights != null )
-		//	//{
-		//	//	foreach( RenderingDataClass.LightItem item in renderingData.lights )
-		//	//	{
-		//	//		if( item.affectedSceneNodes == null )
-		//	//			Log.Fatal( "Viewport: FinishRenderingData: item.affectedSceneNodes == null." );
-		//	//	}
-		//	//}
-
-		//	//!!!!!
-		//	//if( renderingData.lights != null && renderingData.allSceneNodes != null )
-		//	//	PerformAddToRenderEventsAndRemoveSkipped( renderingData );
-
-		//	//no ambient lighting
-		//	if( !EngineSettings.Debug.DrawAmbientLighting )
-		//		renderingData.ambientLight = new ColorValue( 0, 0, 0 );
-
-		//	//no fog
-		//	if( !EngineSettings.Debug.DrawFog )
-		//		renderingData.fogMode = FogMode.None;
-
-		//	//!!!!!
-		//	////no dynamic lighting
-		//	//if( !EngineSettings.Debug.DrawDynamicLighting && renderingData.lights != null )
-		//	//	renderingData.lights = new RenderingDataClass.LightItem[ 0 ];
-
-		//	//!!!!!можно раньше выключать
-		//	////no 3D scene rendering
-		//	//if( !IsEnable3DSceneRendering() )
-		//	//{
-		//	//	if( renderingData.lights != null )
-		//	//		renderingData.lights = new RenderingDataClass.LightItem[ 0 ];
-		//	//	if( renderingData.allSceneNodes != null )
-		//	//		renderingData.allSceneNodes = new RenderingDataClass.SceneNodeItem[ 0 ];
-		//	//}
-
-		//	//shadowPSSMSplitFactors
-		//	renderingData.shadowPSSMSplitFactors.Clamp( Vec2F.Zero, Vec2F.One );
-		//	if( renderingData.shadowPSSMSplitFactors[ 0 ] > renderingData.shadowPSSMSplitFactors[ 1 ] )
-		//		renderingData.shadowPSSMSplitFactors = new Vec2( renderingData.shadowPSSMSplitFactors[ 0 ], renderingData.shadowPSSMSplitFactors[ 0 ] );
-
-		//	//!!!!!
-		//	////!!!!!!!это потом для всех лучше сделать?
-		//	//SceneObjectVisiblityDetection_Default.SortLightsByTypeAndDistance( this, renderingData );
-		//	//SceneObjectVisiblityDetection_Default.FixPrepareShadowTexturesFlag( this, renderingData );
-
-		//	//!!!!
-		//	//renderingData.canUseObjectsDictionaries = true;
-		//}
-
 		//!!!!callBgfxFrame always true
 		/// <summary>
 		/// Updates viewport with the rendering of attached map and GUI rendering.
 		/// </summary>
 		public void Update( bool callBgfxFrame, CameraSettingsClass overrideCameraSettings = null )
 		{
-			//render video to file
-			if( EngineApp.RenderVideoToFileData != null && !string.IsNullOrEmpty( EngineApp.RenderVideoToFileData.Camera ) && RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ] == this && AttachedScene != null )
-			{
-				var c = AttachedScene.GetComponentByPath( EngineApp.RenderVideoToFileData.Camera ) as Camera;
-				if( c != null )
-					overrideCameraSettings = new CameraSettingsClass( this, c );
-			}
-
-			UpdateBefore?.Invoke( this );
-			AllViewports_UpdateBefore?.Invoke( this );
-			AttachedScene?.PerformViewportUpdateBefore( this, overrideCameraSettings );
-
-			if( AttachedScene != null && !AttachedScene.EnabledInHierarchy )
+			if( insideUpdate )
 				return;
 
-			EngineThreading.CheckMainThread();
-
-			if( RenderingSystem.viewportsDuringUpdate.Contains( this ) )
-				Log.Fatal( "Viewport: Update: The viewport is already during updating. RendererWorld.currentViewportsInUpdateStack.Contains( viewport )." );
-			RenderingSystem.viewportsDuringUpdate.Add( this );
-
-			//remove reference to scene when destroyed
-			if( attachedScene != null && !Scene.AllInstancesEnabledContains( attachedScene ) )
-				attachedScene = null;
-
-			//!!!!!тут? так?
-			//!!!!создавать так? надо ли Enabled= true или типа того
-			if( renderingContext == null )
-				renderingContext = new ViewportRenderingContext( this );
-
-			ViewportRenderingContext.current = renderingContext;
-
-			//begin update
-			renderingContext.uniquePerFrameObjectToDetectNewFrame = new object();
-			renderingContext.ObjectsDuringUpdate = new ViewportRenderingContext.ObjectsDuringUpdateClass();
-
-			renderingContext.currentViewNumber = -1;
-
-			previousUpdateTime = lastUpdateTime;
-
-			//!!!!!тут? так?
-			//lastUpdateTime
-			double time = EngineApp.EngineTime;
-			double oldTime = lastUpdateTime;
-			lastUpdateTime = time;
-			lastUpdateTimeStep = lastUpdateTime - oldTime;
-
-			renderingContext.updateStatisticsPrevious = renderingContext.updateStatisticsCurrent;
-			renderingContext.updateStatisticsCurrent = new ViewportRenderingContext.StatisticsClass();
-
-			//statistics FPS
+			insideUpdate = true;
+			try
 			{
-				var stats = renderingContext.updateStatisticsCurrent;
+				if( attachedScene != null && attachedScene.Disposed )
+					attachedScene = null;
 
-				stats.previousTimeStep[ 0 ] = lastUpdateTimeStep;
-				for( int n = 0; n < stats.previousTimeStep.Length - 1; n++ )
-					stats.previousTimeStep[ n + 1 ] = renderingContext.updateStatisticsPrevious.previousTimeStep[ n ];
-
-				stats.updateFPSCounter = renderingContext.updateStatisticsPrevious.updateFPSCounter;
-				stats.updateFPSCounter--;
-				if( stats.updateFPSCounter < 0 )
+				//render video to file
+				if( EngineApp.RenderVideoToFileData != null && !string.IsNullOrEmpty( EngineApp.RenderVideoToFileData.Camera ) && RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ] == this && AttachedScene != null )
 				{
-					stats.updateFPSCounter = stats.previousTimeStep.Length;
+					var c = AttachedScene.GetComponentByPath( EngineApp.RenderVideoToFileData.Camera ) as Camera;
+					if( c != null )
+						overrideCameraSettings = new CameraSettingsClass( this, c );
+				}
 
-					double timeStep = 0;
-					foreach( var v in stats.previousTimeStep )
-						timeStep += v;
-					timeStep /= stats.previousTimeStep.Length;
-					stats.FPS = timeStep != 0 ? 1.0f / timeStep : 0;
+				UpdateBefore?.Invoke( this );
+				AllViewports_UpdateBefore?.Invoke( this );
+				AttachedScene?.PerformViewportUpdateBefore( this, overrideCameraSettings );
+
+				if( AttachedScene != null && !AttachedScene.EnabledInHierarchy )
+					return;
+
+				EngineThreading.CheckMainThread();
+
+				if( RenderingSystem.viewportsDuringUpdate.Contains( this ) )
+					Log.Fatal( "Viewport: Update: The viewport is already during updating. RendererWorld.currentViewportsInUpdateStack.Contains( viewport )." );
+				RenderingSystem.viewportsDuringUpdate.Add( this );
+
+				//remove reference to scene when destroyed
+				if( attachedScene != null && !Scene.AllInstancesEnabledContains( attachedScene ) )
+					attachedScene = null;
+
+				//!!!!!тут? так?
+				//!!!!создавать так? надо ли Enabled= true или типа того
+				if( renderingContext == null )
+					renderingContext = new ViewportRenderingContext( this );
+
+				ViewportRenderingContext.current = renderingContext;
+
+				//begin update
+				renderingContext.uniquePerFrameObjectToDetectNewFrame = new object();
+				renderingContext.ObjectsDuringUpdate = new ViewportRenderingContext.ObjectsDuringUpdateClass();
+
+				renderingContext.currentViewNumber = -1;
+
+				previousUpdateTime = lastUpdateTime;
+
+				//!!!!!тут? так?
+				//lastUpdateTime
+				double time = EngineApp.EngineTime;
+				double oldTime = lastUpdateTime;
+				lastUpdateTime = time;
+				lastUpdateTimeStep = lastUpdateTime - oldTime;
+
+				renderingContext.updateStatisticsPrevious = renderingContext.updateStatisticsCurrent;
+				renderingContext.updateStatisticsCurrent = new ViewportRenderingContext.StatisticsClass();
+
+				//statistics FPS
+				{
+					var stats = renderingContext.updateStatisticsCurrent;
+
+					stats.previousTimeStep[ 0 ] = lastUpdateTimeStep;
+					for( int n = 0; n < stats.previousTimeStep.Length - 1; n++ )
+						stats.previousTimeStep[ n + 1 ] = renderingContext.updateStatisticsPrevious.previousTimeStep[ n ];
+
+					stats.updateFPSCounter = renderingContext.updateStatisticsPrevious.updateFPSCounter;
+					stats.updateFPSCounter--;
+					if( stats.updateFPSCounter < 0 )
+					{
+						stats.updateFPSCounter = stats.previousTimeStep.Length;
+
+						double timeStep = 0;
+						foreach( var v in stats.previousTimeStep )
+							timeStep += v;
+						timeStep /= stats.previousTimeStep.Length;
+						stats.FPS = timeStep != 0 ? 1.0f / timeStep : 0;
+					}
+					else
+						stats.FPS = renderingContext.updateStatisticsPrevious.FPS;
+
+					//stats.previousFPS[ 0 ] = lastUpdateTimeStep != 0 ? 1.0 / lastUpdateTimeStep : 0;
+					//for( int n = 0; n < stats.previousFPS.Length - 1; n++ )
+					//	stats.previousFPS[ n + 1 ] = renderingContext.updateStatisticsPrevious.previousFPS[ n ];
+
+					//stats.updateFPSCounter = renderingContext.updateStatisticsPrevious.updateFPSCounter;
+					//stats.updateFPSCounter--;
+					//if( stats.updateFPSCounter < 0 )
+					//{
+					//	stats.updateFPSCounter = stats.previousFPS.Length;
+
+					//	double fps = 0;
+					//	foreach( var v in stats.previousFPS )
+					//		fps += v;
+					//	fps /= stats.previousFPS.Length;
+					//	stats.FPS = fps;
+					//}
+					//else
+					//	stats.FPS = renderingContext.updateStatisticsPrevious.FPS;
+
+					//renderingContext.UpdateStatisticsCurrent.FPS = lastUpdateTimeStep != 0 ? 1.0 / lastUpdateTimeStep : double.PositiveInfinity;
+				}
+
+				UpdateBegin?.Invoke( this );
+				AllViewports_UpdateBegin?.Invoke( this );
+
+				//!!!!!!where sound listener?
+
+				//!!!!new тут. было ниже
+				AttachedScene?.PerformViewportUpdateBegin( this, overrideCameraSettings );
+
+				RenderingPipeline pipeline = null;
+				if( cameraSettings != null && cameraSettings.RenderingPipelineOverride != null )
+					pipeline = cameraSettings.RenderingPipelineOverride;
+				else if( AttachedScene != null )
+					pipeline = AttachedScene.RenderingPipeline;
+
+				//render video to file
+				if( EngineApp.RenderVideoToFileData != null && !string.IsNullOrEmpty( EngineApp.RenderVideoToFileData.RenderingPipeline ) && RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ] == this && AttachedScene != null )
+				{
+					var p = AttachedScene.GetComponentByPath( EngineApp.RenderVideoToFileData.RenderingPipeline ) as RenderingPipeline;
+					if( p != null )
+						pipeline = p;
+				}
+
+				if( pipeline == null )
+				{
+					if( renderingPipelineCreated == null )
+						RenderingPipelineCreate();
+					pipeline = renderingPipelineCreated;
 				}
 				else
-					stats.FPS = renderingContext.updateStatisticsPrevious.FPS;
+					RenderingPipelineDestroyCreated();
 
-				//stats.previousFPS[ 0 ] = lastUpdateTimeStep != 0 ? 1.0 / lastUpdateTimeStep : 0;
-				//for( int n = 0; n < stats.previousFPS.Length - 1; n++ )
-				//	stats.previousFPS[ n + 1 ] = renderingContext.updateStatisticsPrevious.previousFPS[ n ];
+				//!!!!теперь выше
+				////!!!!!что там?
+				//AttachedScene?.PerformViewportUpdateBegin( this, overrideCameraSettings );
 
-				//stats.updateFPSCounter = renderingContext.updateStatisticsPrevious.updateFPSCounter;
-				//stats.updateFPSCounter--;
-				//if( stats.updateFPSCounter < 0 )
+
+				////!!!!так?
+				////update reflection probes in Capture mode
+				//if( AttachedScene != null && Mode == ModeEnum.Default )
 				//{
-				//	stats.updateFPSCounter = stats.previousFPS.Length;
+				//	//!!!!slowly. еще одна выборка из octree
 
-				//	double fps = 0;
-				//	foreach( var v in stats.previousFPS )
-				//		fps += v;
-				//	fps /= stats.previousFPS.Length;
-				//	stats.FPS = fps;
+				//	var getObjectsItem = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All,
+				//		MetadataManager.GetTypeOfNetType( typeof( ReflectionProbe ) ), true, CameraSettings.Frustum );
+				//	AttachedScene.GetObjectsInSpace( getObjectsItem );
+
+				//	foreach( var item in getObjectsItem.Result )
+				//	{
+				//		var probe = item.Object as ReflectionProbe;
+				//		if( probe != null && probe.Mode.Value == ReflectionProbe.ModeEnum.Capture )
+				//			probe.Update( false );
+				//	}
 				//}
-				//else
-				//	stats.FPS = renderingContext.updateStatisticsPrevious.FPS;
 
-				//renderingContext.UpdateStatisticsCurrent.FPS = lastUpdateTimeStep != 0 ? 1.0 / lastUpdateTimeStep : double.PositiveInfinity;
-			}
+				//!!!!
+				//rendering data
+				//RenderingDataClass renderingData = new RenderingDataClass();
 
-			UpdateBegin?.Invoke( this );
-			AllViewports_UpdateBegin?.Invoke( this );
+				//{
+				//	//InitGeneralRenderingData( renderingData );
+				//	Update2_GetRenderingData?.Invoke( this, renderingData );
+				//	AllViewports_Update2_GetRenderingData?.Invoke( this, renderingData );
+				//	//FinishRenderingData( renderingData );
+				//}
 
-			//!!!!!!where sound listener?
-
-			//!!!!new тут. было ниже
-			AttachedScene?.PerformViewportUpdateBegin( this, overrideCameraSettings );
-
-			RenderingPipeline pipeline = null;
-			if( cameraSettings != null && cameraSettings.RenderingPipelineOverride != null )
-				pipeline = cameraSettings.RenderingPipelineOverride;
-			else if( AttachedScene != null )
-				pipeline = AttachedScene.RenderingPipeline;
-
-			//render video to file
-			if( EngineApp.RenderVideoToFileData != null && !string.IsNullOrEmpty( EngineApp.RenderVideoToFileData.RenderingPipeline ) && RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ] == this && AttachedScene != null )
-			{
-				var p = AttachedScene.GetComponentByPath( EngineApp.RenderVideoToFileData.RenderingPipeline ) as RenderingPipeline;
-				if( p != null )
-					pipeline = p;
-			}
-
-			if( pipeline == null )
-			{
-				if( renderingPipelineCreated == null )
-					RenderingPipelineCreate();
-				pipeline = renderingPipelineCreated;
-			}
-			else
-				RenderingPipelineDestroyCreated();
-
-			//!!!!теперь выше
-			////!!!!!что там?
-			//AttachedScene?.PerformViewportUpdateBegin( this, overrideCameraSettings );
-
-
-			////!!!!так?
-			////update reflection probes in Capture mode
-			//if( AttachedScene != null && Mode == ModeEnum.Default )
-			//{
-			//	//!!!!slowly. еще одна выборка из octree
-
-			//	var getObjectsItem = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All,
-			//		MetadataManager.GetTypeOfNetType( typeof( ReflectionProbe ) ), true, CameraSettings.Frustum );
-			//	AttachedScene.GetObjectsInSpace( getObjectsItem );
-
-			//	foreach( var item in getObjectsItem.Result )
-			//	{
-			//		var probe = item.Object as ReflectionProbe;
-			//		if( probe != null && probe.Mode.Value == ReflectionProbe.ModeEnum.Capture )
-			//			probe.Update( false );
-			//	}
-			//}
-
-			//!!!!
-			//rendering data
-			//RenderingDataClass renderingData = new RenderingDataClass();
-
-			//{
-			//	//InitGeneralRenderingData( renderingData );
-			//	Update2_GetRenderingData?.Invoke( this, renderingData );
-			//	AllViewports_Update2_GetRenderingData?.Invoke( this, renderingData );
-			//	//FinishRenderingData( renderingData );
-			//}
-
-			//ComponentScene.OnRender, ObjectInScene.OnRender
-			{
-				//get rendering context for objects in space
-				ObjectInSpace.RenderingContext objectInSpaceRenderingContext = null;
-				UpdateGetObjectInSceneRenderingContext?.Invoke( this, ref objectInSpaceRenderingContext );
-				AllViewports_UpdateGetObjectInSceneRenderingContext?.Invoke( this, ref objectInSpaceRenderingContext );
-				if( objectInSpaceRenderingContext == null )
-					objectInSpaceRenderingContext = new ObjectInSpace.RenderingContext( this );
-
-				renderingContext.ObjectInSpaceRenderingContext = objectInSpaceRenderingContext;
-
-				lastFrameScreenLabels.Clear();
-				lastFrameScreenLabelByObjectInSpace.Clear();
-
-				//!!!!это правильнее рисовать до transform tool. а значит между двумя UpdateBeforeOutput
-				if( AttachedScene != null && AttachedScene.EnabledInHierarchy )
+				//ComponentScene.OnRender, ObjectInScene.OnRender
 				{
-					AttachedScene.PerformRender( this );
+					//get rendering context for objects in space
+					ObjectInSpace.RenderingContext objectInSpaceRenderingContext = null;
+					UpdateGetObjectInSceneRenderingContext?.Invoke( this, ref objectInSpaceRenderingContext );
+					AllViewports_UpdateGetObjectInSceneRenderingContext?.Invoke( this, ref objectInSpaceRenderingContext );
+					if( objectInSpaceRenderingContext == null )
+						objectInSpaceRenderingContext = new ObjectInSpace.RenderingContext( this );
 
-					//foreach( var obj in AttachedScene.GetComponents<ObjectInSpace>( false, true, true ) )
-					//{
-					//	//!!!!new: obj.VisibleInHierarchy
-					//	if( obj.EnabledInHierarchy && obj.VisibleInHierarchy )//second check if will updated during enumeration
-					//	{
-					//		//reset this object parameters
-					//		objectInSpaceRenderingContext.disableShowingLabelForThisObject = false;
-					//		//context.thisObjectWasDisplayed = false;
-					//		//context.disableShowingThisObject = false;
-					//		//context.thisObjectRaySelectionDetalization_Ray = null;
-					//		//context.thisObjectRaySelectionDetalization_RayScaleResult = 0;
+					renderingContext.ObjectInSpaceRenderingContext = objectInSpaceRenderingContext;
 
-					//		obj.PerformRender( objectInSpaceRenderingContext );
+					lastFrameScreenLabels.Clear();
+					lastFrameScreenLabelByObjectInSpace.Clear();
 
-					//		//render screen label if not displayed
+					//!!!!это правильнее рисовать до transform tool. а значит между двумя UpdateBeforeOutput
+					if( AttachedScene != null && AttachedScene.EnabledInHierarchy )
+					{
+						AttachedScene.PerformRender( this );
 
-					//		if( AttachedScene.GetDisplayDevelopmentDataInThisApplication() && AttachedScene.DisplayLabels && obj.EnabledSelectionByCursor && !objectInSpaceRenderingContext.disableShowingLabelForThisObject && AllowRenderScreenLabels && objectInSpaceRenderingContext.viewport.CanvasRenderer != null )
-					//		//if( AttachedScene.DisplayDevelopmentDataInEditor && AttachedScene.DisplayLabels && obj.EnabledSelectionByCursor && !context.disableShowingLabelForThisObject && AllowRenderScreenLabels && context.viewport.CanvasRenderer != null )
-					//		{
-					//			//if( !context.thisObjectWasDisplayed )
-					//			//{
-					//			//!!!!когда не надо, не рисовать
+						//foreach( var obj in AttachedScene.GetComponents<ObjectInSpace>( false, true, true ) )
+						//{
+						//	//!!!!new: obj.VisibleInHierarchy
+						//	if( obj.EnabledInHierarchy && obj.VisibleInHierarchy )//second check if will updated during enumeration
+						//	{
+						//		//reset this object parameters
+						//		objectInSpaceRenderingContext.disableShowingLabelForThisObject = false;
+						//		//context.thisObjectWasDisplayed = false;
+						//		//context.disableShowingThisObject = false;
+						//		//context.thisObjectRaySelectionDetalization_Ray = null;
+						//		//context.thisObjectRaySelectionDetalization_RayScaleResult = 0;
 
-					//			if( obj.DrawObjectScreenLabel( objectInSpaceRenderingContext, out Rectangle labelScreenRectangle ) )
-					//			{
-					//				var item = new LastFrameScreenLabelItem();
-					//				item.obj = obj;
-					//				item.screenRectangle = labelScreenRectangle;
-					//				lastFrameScreenLabels.Add( item );
-					//			}
+						//		obj.PerformRender( objectInSpaceRenderingContext );
 
-					//			//!!!!а если уже нарисовал bouding box дебажно
+						//		//render screen label if not displayed
 
-					//			//draw bounding box for selected and can be selected
+						//		if( AttachedScene.GetDisplayDevelopmentDataInThisApplication() && AttachedScene.DisplayLabels && obj.EnabledSelectionByCursor && !objectInSpaceRenderingContext.disableShowingLabelForThisObject && AllowRenderScreenLabels && objectInSpaceRenderingContext.viewport.CanvasRenderer != null )
+						//		//if( AttachedScene.DisplayDevelopmentDataInEditor && AttachedScene.DisplayLabels && obj.EnabledSelectionByCursor && !context.disableShowingLabelForThisObject && AllowRenderScreenLabels && context.viewport.CanvasRenderer != null )
+						//		{
+						//			//if( !context.thisObjectWasDisplayed )
+						//			//{
+						//			//!!!!когда не надо, не рисовать
 
-					//			//if( ParentScene.DrawObjectInSpaceBounds )
-					//			//{
-					//			//	//!!!!цвета. ProjectSettings
-					//			//	//!!!!!!как вариант: в настройках портянкой всё. а показывается уже страницами
-					//			//	ColorValue color = new ColorValue( 1, 1, 0, .7 );
-					//			//	context.viewport.DebugGeometry.SetColor( color, color * new ColorValue( 1, 1, 1, color.Alpha * .5 ) );
-					//			//	context.viewport.DebugGeometry.AddBounds( SpaceBounds.CalculatedBoundingBox );
-					//			//}
+						//			if( obj.DrawObjectScreenLabel( objectInSpaceRenderingContext, out Rectangle labelScreenRectangle ) )
+						//			{
+						//				var item = new LastFrameScreenLabelItem();
+						//				item.obj = obj;
+						//				item.screenRectangle = labelScreenRectangle;
+						//				lastFrameScreenLabels.Add( item );
+						//			}
 
-					//			//obj.SpaceBounds.CalculatedBoundingBox;
-					//			//xx xx;//если есть bounding box
-					//			//xx xx;
-					//			//ColorValue color = new ColorValue( 1, 1, 0, .7 );
-					//			//context.viewport.DebugGeometry.SetColor( color, color * new ColorValue( 1, 1, 1, color.Alpha * .5 ) );
-					//			//context.viewport.DebugGeometry.AddBounds( SpaceBounds.CalculatedBoundingBox );
+						//			//!!!!а если уже нарисовал bouding box дебажно
 
+						//			//draw bounding box for selected and can be selected
 
+						//			//if( ParentScene.DrawObjectInSpaceBounds )
+						//			//{
+						//			//	//!!!!цвета. ProjectSettings
+						//			//	//!!!!!!как вариант: в настройках портянкой всё. а показывается уже страницами
+						//			//	ColorValue color = new ColorValue( 1, 1, 0, .7 );
+						//			//	context.viewport.DebugGeometry.SetColor( color, color * new ColorValue( 1, 1, 1, color.Alpha * .5 ) );
+						//			//	context.viewport.DebugGeometry.AddBounds( SpaceBounds.CalculatedBoundingBox );
+						//			//}
 
-
-					//			//!!!!если не пустой bounding box
-
-					//			//if( context.selectedObjects.Contains( obj ) || context.canSelectObjects.Contains( obj ) )
-					//			//{
-					//			//	ColorValue color;
-					//			//	if( context.selectedObjects.Contains( obj ) )
-					//			//		color = ProjectSettings.Get.SelectedColor;
-					//			//	else ///if( context.canSelectObjects.Contains( this ) )
-					//			//		color = ProjectSettings.Get.CanSelectColor;
-					//			//	//else
-					//			//	//	color = ProjectSettings.Get.DebugDrawObjectInSpaceBoundsColor;
-
-					//			//	var viewport = context.viewport;
-					//			//	viewport.DebugGeometry.SetColor( color, color * ProjectSettings.Get.HiddenByOtherObjectsColorMultiplier );
-					//			//	context.viewport.DebugGeometry.AddBounds( obj.SpaceBounds.CalculatedBoundingBox );
-					//			//}
+						//			//obj.SpaceBounds.CalculatedBoundingBox;
+						//			//xx xx;//если есть bounding box
+						//			//xx xx;
+						//			//ColorValue color = new ColorValue( 1, 1, 0, .7 );
+						//			//context.viewport.DebugGeometry.SetColor( color, color * new ColorValue( 1, 1, 1, color.Alpha * .5 ) );
+						//			//context.viewport.DebugGeometry.AddBounds( SpaceBounds.CalculatedBoundingBox );
 
 
 
-					//			//context.thisObjectWasDisplayed = true;
-					//			//}
 
-					//		}
-					//	}
-					//}
+						//			//!!!!если не пустой bounding box
 
-					AttachedScene.OnRenderBeforeOutput( this );
+						//			//if( context.selectedObjects.Contains( obj ) || context.canSelectObjects.Contains( obj ) )
+						//			//{
+						//			//	ColorValue color;
+						//			//	if( context.selectedObjects.Contains( obj ) )
+						//			//		color = ProjectSettings.Get.SelectedColor;
+						//			//	else ///if( context.canSelectObjects.Contains( this ) )
+						//			//		color = ProjectSettings.Get.CanSelectColor;
+						//			//	//else
+						//			//	//	color = ProjectSettings.Get.DebugDrawObjectInSpaceBoundsColor;
+
+						//			//	var viewport = context.viewport;
+						//			//	viewport.DebugGeometry.SetColor( color, color * ProjectSettings.Get.HiddenByOtherObjectsColorMultiplier );
+						//			//	context.viewport.DebugGeometry.AddBounds( obj.SpaceBounds.CalculatedBoundingBox );
+						//			//}
+
+
+
+						//			//context.thisObjectWasDisplayed = true;
+						//			//}
+
+						//		}
+						//	}
+						//}
+
+						AttachedScene.OnRenderBeforeOutput( this );
+					}
 				}
+
+				//UpdateBeforeOutput?.Invoke( this );
+				//AllViewports_UpdateBeforeOutput?.Invoke( this );
+
+				renderingContext.renderingPipeline = pipeline as RenderingPipeline_Basic;
+				//renderingContext.renderingPipeline = pipeline;
+				pipeline.Render( renderingContext );
+				renderingContext.renderingPipeline = null;
+				//renderingContext.Render( pipeline );// renderingData );
+
+				if( callBgfxFrame )
+				{
+					RenderingSystem.CallBgfxFrame();
+					renderingContext.ResetViews();
+				}
+
+				//clear
+				simple3DRenderer?.ViewportRendering_Clear();
+				canvasRenderer?.ViewportRendering_Clear( LastUpdateTime );
+
+				AttachedScene?.PerformViewportUpdateEnd( this );
+
+				UpdateEnd?.Invoke( this );
+				AllViewports_UpdateEnd?.Invoke( this );
+
+				//!!!!по идее, можно не чистить до следующего апдейта
+				renderingContext.ObjectsDuringUpdate = null;
+				renderingContext.ObjectInSpaceRenderingContext = null;
+
+				renderingContext.MultiRenderTarget_DestroyAll();
+				renderingContext.DynamicTexture_FreeAllEndUpdate();
+				renderingContext.OcclusionCullingBuffer_FreeAllEndUpdate();
+
+				if( cameraSettings != null )
+				{
+					viewMatrixPreviousFrame = cameraSettings.ViewMatrix;
+					projectionMatrixPreviousFrame = cameraSettings.ProjectionMatrix;
+				}
+				else
+				{
+					viewMatrixPreviousFrame = null;
+					projectionMatrixPreviousFrame = null;
+				}
+
+				//!!!!что чистить?
+
+				ViewportRenderingContext.current = null;
+
+				if( RenderingSystem.viewportsDuringUpdate.Count == 0 )
+					Log.Fatal( "Viewport: Update: RendererWorld.viewportsDuringUpdate.Count == 0." );
+				if( RenderingSystem.viewportsDuringUpdate[ RenderingSystem.viewportsDuringUpdate.Count - 1 ] != this )
+					Log.Fatal( "Viewport: Update: RendererWorld.viewportsDuringUpdate[ RendererWorld.viewportsDuringUpdate.Count - 1 ] != viewport." );
+				RenderingSystem.viewportsDuringUpdate.RemoveAt( RenderingSystem.viewportsDuringUpdate.Count - 1 );
 			}
-
-			//UpdateBeforeOutput?.Invoke( this );
-			//AllViewports_UpdateBeforeOutput?.Invoke( this );
-
-			renderingContext.renderingPipeline = pipeline;
-			pipeline.Render( renderingContext );
-			renderingContext.renderingPipeline = null;
-			//renderingContext.Render( pipeline );// renderingData );
-
-			if( callBgfxFrame )
+			finally
 			{
-				RenderingSystem.CallBgfxFrame();
-				renderingContext.ResetViews();
+				insideUpdate = false;
 			}
-
-			//clear
-			simple3DRenderer?.ViewportRendering_Clear();
-			canvasRenderer?.ViewportRendering_Clear( LastUpdateTime );
-
-			AttachedScene?.PerformViewportUpdateEnd( this );
-
-			UpdateEnd?.Invoke( this );
-			AllViewports_UpdateEnd?.Invoke( this );
-
-			//!!!!по идее, можно не чистить до следующего апдейта
-			renderingContext.ObjectsDuringUpdate = null;
-			renderingContext.ObjectInSpaceRenderingContext = null;
-
-			renderingContext.MultiRenderTarget_DestroyAll();
-			renderingContext.DynamicTexture_FreeAllEndUpdate();
-			renderingContext.OcclusionCullingBuffer_FreeAllEndUpdate();
-
-			if( cameraSettings != null )
-			{
-				viewMatrixPreviousFrame = cameraSettings.ViewMatrix;
-				projectionMatrixPreviousFrame = cameraSettings.ProjectionMatrix;
-			}
-			else
-			{
-				viewMatrixPreviousFrame = null;
-				projectionMatrixPreviousFrame = null;
-			}
-
-			//!!!!что чистить?
-
-			ViewportRenderingContext.current = null;
-
-			if( RenderingSystem.viewportsDuringUpdate.Count == 0 )
-				Log.Fatal( "Viewport: Update: RendererWorld.viewportsDuringUpdate.Count == 0." );
-			if( RenderingSystem.viewportsDuringUpdate[ RenderingSystem.viewportsDuringUpdate.Count - 1 ] != this )
-				Log.Fatal( "Viewport: Update: RendererWorld.viewportsDuringUpdate[ RendererWorld.viewportsDuringUpdate.Count - 1 ] != viewport." );
-			RenderingSystem.viewportsDuringUpdate.RemoveAt( RenderingSystem.viewportsDuringUpdate.Count - 1 );
 		}
 
 		public void PerformUpdateBeforeOutputEvents()
@@ -1890,5 +1295,7 @@ namespace NeoAxis
 			get { return outputFlipY; }
 			set { outputFlipY = value; }
 		}
+
+		public object AnyData { get; set; }
 	}
 }

@@ -1,5 +1,5 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-#if !DEPLOY
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+//#if !DEPLOY
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -28,8 +28,21 @@ namespace NeoAxis
 			set { if( _executableName.BeginSet( ref value ) ) { try { ExecutableNameChanged?.Invoke( this ); } finally { _executableName.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ExecutableName"/> property value changes.</summary>
-		public event Action<Product> ExecutableNameChanged;
+		public event Action<Product_Windows> ExecutableNameChanged;
 		ReferenceField<string> _executableName = "NeoAxis.Player";
+
+		/// <summary>
+		/// Whether to include NeoAxis Editor.
+		/// </summary>
+		[DefaultValue( false )]
+		public Reference<bool> Editor
+		{
+			get { if( _editor.BeginGet() ) Editor = _editor.Get( this ); return _editor.value; }
+			set { if( _editor.BeginSet( ref value ) ) { try { EditorChanged?.Invoke( this ); } finally { _editor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Editor"/> property value changes.</summary>
+		public event Action<Product_Windows> EditorChanged;
+		ReferenceField<bool> _editor = false;
 
 		/// <summary>
 		/// Whether to include tools that are intended to import 3D models.
@@ -347,6 +360,12 @@ namespace NeoAxis
 			//	return;
 			//}
 
+			//post build event
+			if( !PeformPostBuild( buildInstance ) )
+				return;
+			if( CheckCancel( buildInstance ) )
+				return;
+
 			//done
 			buildInstance.Progress = 1;
 			buildInstance.State = ProductBuildInstance.StateEnum.Success;
@@ -372,6 +391,8 @@ namespace NeoAxis
 
 		protected override void OnGetPaths( List<string> paths )
 		{
+#if !DEPLOY
+
 			base.OnGetPaths( paths );
 			//GetPathsFromPathsProperty( paths );
 			//foreach( var path in Paths.Value.Split( '\n', StringSplitOptions.RemoveEmptyEntries ) )
@@ -401,15 +422,18 @@ namespace NeoAxis
 
 				excludePaths.AddRange( GetPlatformsExcludePaths() );
 
-				excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Tips" ) );
-				excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Localization" ) );
-				excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Tools\PlatformTools" ) );
+				if( !Editor )
+				{
+					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Tips" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Localization" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Tools\PlatformTools" ) );
 
-				excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Editor.exe" ) );
-				excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Editor.exe.config" ) );
-				excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Editor.deps.json" ) );
-				excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Editor.runtimeconfig.dev.json" ) );
-				excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Editor.runtimeconfig.json" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Editor.exe" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Editor.exe.config" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Editor.deps.json" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Editor.runtimeconfig.dev.json" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Editor.runtimeconfig.json" ) );
+				}
 
 				excludePaths.Add( Path.Combine( sourceFolder, "SampleWidgetWinForms.exe" ) );
 				excludePaths.Add( Path.Combine( sourceFolder, "SampleWidgetWinForms.exe.config" ) );
@@ -425,7 +449,9 @@ namespace NeoAxis
 
 				excludePaths.Add( Path.Combine( sourceFolder, "_TestPlayerParameters.cmd" ) );
 
-				excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Platforms\Windows\dotnet" ) );
+				if( !Editor )
+					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Platforms\Windows\dotnet" ) );
+
 				//if( !BuildTools )
 				//{
 				//	excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Tools\BuildTools" ) );
@@ -474,9 +500,9 @@ namespace NeoAxis
 				foreach( var excludePath in excludePaths )
 					paths.Add( "exclude:" + excludePath );
 			}
-
+#endif
 
 		}
 	}
 }
-#endif
+//#endif

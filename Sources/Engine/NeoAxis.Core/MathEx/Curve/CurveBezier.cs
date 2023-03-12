@@ -1,6 +1,7 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace NeoAxis
@@ -10,34 +11,49 @@ namespace NeoAxis
 	/// </summary>
 	public class CurveBezier : Curve
 	{
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe override Vector3 CalculateValueByTime( double time )
 		{
-			double* bvals = stackalloc double[ points.Count ];
-
-			Basis( points.Count, time, bvals, 0 );
-			Vector3 v = bvals[ 0 ] * points[ 0 ].value;
-			for( int i = 1; i < points.Count; i++ )
-				v += bvals[ i ] * points[ i ].value;
-			return v;
+#if UWP
+			//!!!!
+			fixed(double* bvals = new double[ points.Count ] )
+#else
+			fixed( double* bvals = points.Count < 128 ? stackalloc double[ points.Count ] : new double[ points.Count ] )
+#endif
+			{
+				Basis( points.Count, time, bvals, 0 );
+				Vector3 v = bvals[ 0 ] * points[ 0 ].value;
+				for( int i = 1; i < points.Count; i++ )
+					v += bvals[ i ] * points[ i ].value;
+				return v;
+			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe override Vector3 GetCurrentFirstDerivative( double time )
 		{
 			int i;
 			double d;
 			Vector3 v;
 
-			double* bvals = stackalloc double[ points.Count ];
+#if UWP
+			//!!!!
+			fixed( double* bvals = new double[ points.Count ] )
+#else
+			fixed( double* bvals = points.Count < 128 ? stackalloc double[ points.Count ] : new double[ points.Count ] )
+#endif
+			{
+				BasisFirstDerivative( points.Count, time, bvals, 0 );
+				v = bvals[ 0 ] * points[ 0 ].value;
+				for( i = 1; i < points.Count; i++ )
+					v += bvals[ i ] * points[ i ].value;
+				d = ( points[ points.Count - 1 ].time - points[ 0 ].time );
 
-			BasisFirstDerivative( points.Count, time, bvals, 0 );
-			v = bvals[ 0 ] * points[ 0 ].value;
-			for( i = 1; i < points.Count; i++ )
-				v += bvals[ i ] * points[ i ].value;
-			d = ( points[ points.Count - 1 ].time - points[ 0 ].time );
-
-			return ( (double)( points.Count - 1 ) / d ) * v;
+				return ( (double)( points.Count - 1 ) / d ) * v;
+			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		unsafe void Basis( int order, double t, double* bvals, int bvalsOffset )
 		{
 			int i, j, d;
@@ -48,39 +64,46 @@ namespace NeoAxis
 			if( d <= 0 )
 				return;
 
-			double* c = stackalloc double[ d + 1 ];
-
-			s = (double)( t - points[ 0 ].time ) / ( points[ points.Count - 1 ].time - points[ 0 ].time );
-			o = 1.0f - s;
-			ps = s;
-			po = o;
-
-			for( i = 1; i < d; i++ )
-				c[ i ] = 1.0f;
-
-			for( i = 1; i < d; i++ )
+#if UWP
+			//!!!!
+			fixed( double* c = new double[ d + 1 ] )
+#else
+			fixed( double* c = d < 1024 ? stackalloc double[ d + 1 ] : new double[ d + 1 ] )
+#endif
 			{
-				c[ i - 1 ] = 0.0f;
-				c1 = c[ i ];
-				c[ i ] = 1.0f;
-				for( j = i + 1; j <= d; j++ )
+				s = (double)( t - points[ 0 ].time ) / ( points[ points.Count - 1 ].time - points[ 0 ].time );
+				o = 1.0f - s;
+				ps = s;
+				po = o;
+
+				for( i = 1; i < d; i++ )
+					c[ i ] = 1.0f;
+
+				for( i = 1; i < d; i++ )
 				{
-					c2 = c[ j ];
-					c[ j ] = c1 + c[ j - 1 ];
-					c1 = c2;
+					c[ i - 1 ] = 0.0f;
+					c1 = c[ i ];
+					c[ i ] = 1.0f;
+					for( j = i + 1; j <= d; j++ )
+					{
+						c2 = c[ j ];
+						c[ j ] = c1 + c[ j - 1 ];
+						c1 = c2;
+					}
+					bvals[ i + bvalsOffset ] = c[ d ] * ps;
+					ps *= s;
 				}
-				bvals[ i + bvalsOffset ] = c[ d ] * ps;
-				ps *= s;
-			}
 
-			for( i = d - 1; i >= 0; i-- )
-			{
-				bvals[ i + bvalsOffset ] *= po;
-				po *= o;
+				for( i = d - 1; i >= 0; i-- )
+				{
+					bvals[ i + bvalsOffset ] *= po;
+					po *= o;
+				}
+				bvals[ d + bvalsOffset ] = ps;
 			}
-			bvals[ d + bvalsOffset ] = ps;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		unsafe void BasisFirstDerivative( int order, double t, double* bvals, int bvalsOffset )
 		{
 			Basis( order - 1, t, bvals, 1 + bvalsOffset );

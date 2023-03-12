@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #pragma once
 
 #include <map>
@@ -43,7 +43,7 @@ public:
 	virtual void GetStatistics(MemoryAllocationType allocationType, int64_t* allocatedMemory, int* allocationCount) = 0;
 	virtual void GetCRTStatistics(int64_t* allocatedMemory, int* allocationCount) = 0;
 
-	virtual void GetAllocationInformation( MemoryManager_GetAllocationInformationDelegate* callback ) = 0;
+	virtual int64_t GetAllocationInformation( MemoryManager_GetAllocationInformationDelegate* callback ) = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

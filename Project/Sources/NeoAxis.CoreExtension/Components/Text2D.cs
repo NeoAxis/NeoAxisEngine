@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -356,13 +356,12 @@ namespace NeoAxis
 		//render after PrepareListsOfObjects with sorting by camera distance from far to near
 		void Render( ViewportRenderingContext context )
 		{
-			if( EngineApp.ApplicationType != EngineApp.ApplicationTypeEnum.Simulation ||
-				EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && DisplayInSimulation )
+			if( EngineApp.IsEditor || EngineApp.IsSimulation && DisplayInSimulation )
 			{
 				var cameraPosition = context.Owner.CameraSettings.Position;
 				var sphere = new Sphere( cameraPosition, VisibilityDistance );
 
-				if( SpaceBounds.CalculatedBoundingSphere.Intersects( ref sphere ) )
+				if( SpaceBounds.BoundingSphere.Intersects( ref sphere ) )
 				{
 					if( context.Owner.CameraSettings.ProjectToScreenCoordinates( TransformV.Position, out var screenPosition ) )
 					{
@@ -479,9 +478,9 @@ namespace NeoAxis
 			{
 				ColorValue color;
 				if( context2.selectedObjects.Contains( this ) )
-					color = ProjectSettings.Get.General.SelectedColor;
+					color = ProjectSettings.Get.Colors.SelectedColor;
 				else
-					color = ProjectSettings.Get.General.CanSelectColor;
+					color = ProjectSettings.Get.Colors.CanSelectColor;
 
 				color.Alpha *= 0.5f;
 
@@ -512,7 +511,7 @@ namespace NeoAxis
 			}
 
 			//modify selection label
-			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+			if( EngineApp.IsEditor )
 			{
 				var item = context2.viewport.GetLastFrameScreenLabelByObjectInSpace( this );
 				if( item != null )

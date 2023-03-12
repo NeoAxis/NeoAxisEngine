@@ -1,8 +1,9 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -49,6 +50,7 @@ namespace NeoAxis
 		/// <param name="zx">Value at row 3 column 1 of the matrix.</param>
 		/// <param name="zy">Value at row 3 column 2 of the matrix.</param>
 		/// <param name="zz">Value at row 3 column 3 of the matrix.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Matrix3F( float xx, float xy, float xz, float yx, float yy, float yz, float zx, float zy, float zz )
 		{
 			Item0 = new Vector3F( xx, xy, xz );
@@ -63,6 +65,7 @@ namespace NeoAxis
 		/// <param name="x">The vector which is the first row.</param>
 		/// <param name="y">The vector which is the second row.</param>
 		/// <param name="z">The vector which is the third row.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Matrix3F( Vector3F x, Vector3F y, Vector3F z )
 		{
 			Item0 = x;
@@ -74,6 +77,7 @@ namespace NeoAxis
 		/// Constructs a matrix with another specified <see cref="Matrix3F"/> object.
 		/// </summary>
 		/// <param name="source">A specified matrix.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Matrix3F( Matrix3F source )
 		{
 			Item0 = source.Item0;
@@ -90,6 +94,7 @@ namespace NeoAxis
 		/// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="index"/> is out of the range [0, 2].</exception>
 		public unsafe Vector3F this[ int index ]
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				if( index < 0 || index > 2 )
@@ -97,6 +102,7 @@ namespace NeoAxis
 				fixed ( Vector3F* v = &this.Item0 )
 					return v[ index ];
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set
 			{
 				if( index < 0 || index > 2 )
@@ -110,6 +116,7 @@ namespace NeoAxis
 		/// Returns a hash code for this instance.
 		/// </summary>
 		/// <returns>A hash code for this instance.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return Item0.GetHashCode() ^ Item1.GetHashCode() ^ Item2.GetHashCode();
@@ -121,6 +128,7 @@ namespace NeoAxis
 		/// <param name="v1">The first matrix to add.</param>
 		/// <param name="v2">The second matrix to add.</param>
 		/// <returns>The sum of the two matricies.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Matrix3F operator +( Matrix3F v1, Matrix3F v2 )
 		{
 			Matrix3F result;
@@ -142,6 +150,7 @@ namespace NeoAxis
 		/// <param name="v1">The matrix to subtract from.</param>
 		/// <param name="v2">The matrix to be subtracted from another matrix.</param>
 		/// <returns>The difference between the two matricies.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Matrix3F operator -( Matrix3F v1, Matrix3F v2 )
 		{
 			Matrix3F result;
@@ -163,6 +172,7 @@ namespace NeoAxis
 		/// <param name="m">The matrix to multiply.</param>
 		/// <param name="s">The value by which to multiply.</param>
 		/// <returns>The scaled matrix.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Matrix3F operator *( Matrix3F m, float s )
 		{
 			Matrix3F result;
@@ -184,6 +194,7 @@ namespace NeoAxis
 		/// <param name="s">The value by which to multiply.</param>
 		/// <param name="m">The matrix to multiply.</param>
 		/// <returns>The scaled matrix.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Matrix3F operator *( float s, Matrix3F m )
 		{
 			Matrix3F result;
@@ -205,6 +216,7 @@ namespace NeoAxis
 		/// <param name="m">The matrix to multiply.</param>
 		/// <param name="v">The vector by which to multiply.</param>
 		/// <returns>The result of the multiplication.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector3F operator *( Matrix3F m, Vector3F v )
 		{
 			Vector3F result;
@@ -220,6 +232,7 @@ namespace NeoAxis
 		/// <param name="v">The vector by which to multiply.</param>
 		/// <param name="m">The matrix to multiply.</param>
 		/// <returns>The result of the multiplication.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Vector3F operator *( Vector3F v, Matrix3F m )
 		{
 			Vector3F result;
@@ -235,6 +248,7 @@ namespace NeoAxis
 		/// <param name="v1">The first matrix to multiply.</param>
 		/// <param name="v2">The second matrix to multiply.</param>
 		/// <returns>The product of the two matricies.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Matrix3F operator *( Matrix3F v1, Matrix3F v2 )
 		{
 			Matrix3F result;
@@ -255,6 +269,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="v">The matrix to negate.</param>
 		/// <returns>The negated matrix.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Matrix3F operator -( Matrix3F v )
 		{
 			Matrix3F result;
@@ -276,6 +291,7 @@ namespace NeoAxis
 		/// <param name="v1">The first matrix to add.</param>
 		/// <param name="v2">The second matrix to add.</param>
 		/// <param name="result">When the method completes, contains the sum of the two matricies.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Add( ref Matrix3F v1, ref Matrix3F v2, out Matrix3F result )
 		{
 			result.Item0.X = v1.Item0.X + v2.Item0.X;
@@ -295,6 +311,7 @@ namespace NeoAxis
 		/// <param name="v1">The matrix to subtract from.</param>
 		/// <param name="v2">The matrix to be subtracted from another matrix.</param>
 		/// <param name="result">When the method completes, contains the difference of the two matricies.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Subtract( ref Matrix3F v1, ref Matrix3F v2, out Matrix3F result )
 		{
 			result.Item0.X = v1.Item0.X - v2.Item0.X;
@@ -314,6 +331,7 @@ namespace NeoAxis
 		/// <param name="m">The matrix to multiply.</param>
 		/// <param name="s">The value by which to multiply.</param>
 		/// <param name="result">When the method completes, contains the scaled matrix.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Multiply( ref Matrix3F m, float s, out Matrix3F result )
 		{
 			result.Item0.X = m.Item0.X * s;
@@ -333,6 +351,7 @@ namespace NeoAxis
 		/// <param name="s">The value by which to multiply.</param>
 		/// <param name="m">The matrix to multiply.</param>
 		/// <param name="result">When the method completes, contains the scaled matrix.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Multiply( float s, ref Matrix3F m, out Matrix3F result )
 		{
 			result.Item0.X = m.Item0.X * s;
@@ -352,6 +371,7 @@ namespace NeoAxis
 		/// <param name="v">The vector by which to multiply.</param>
 		/// <param name="m">The matrix to multiply.</param>
 		/// <param name="result">When the method completes, contains the result of the multiplication.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Multiply( ref Vector3F v, ref Matrix3F m, out Vector3F result )
 		{
 			result.X = m.Item0.X * v.X + m.Item1.X * v.Y + m.Item2.X * v.Z;
@@ -365,6 +385,7 @@ namespace NeoAxis
 		/// <param name="m">The matrix to multiply.</param>
 		/// <param name="v">The vector by which to multiply.</param>
 		/// <param name="result">When the method completes, contains the result of the multiplication.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Multiply( ref Matrix3F m, ref Vector3F v, out Vector3F result )
 		{
 			result.X = m.Item0.X * v.X + m.Item1.X * v.Y + m.Item2.X * v.Z;
@@ -378,6 +399,7 @@ namespace NeoAxis
 		/// <param name="v1">The first matrix to multiply.</param>
 		/// <param name="v2">The second matrix to multiply.</param>
 		/// <param name="result">When the method completes, contains the product of the two matricies.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Multiply( ref Matrix3F v1, ref Matrix3F v2, out Matrix3F result )
 		{
 			result.Item0.X = v1.Item0.X * v2.Item0.X + v1.Item1.X * v2.Item0.Y + v1.Item2.X * v2.Item0.Z;
@@ -396,6 +418,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="m">The matrix to negate.</param>
 		/// <param name="result">When the method completes, contains the negated matrix.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Negate( ref Matrix3F m, out Matrix3F result )
 		{
 			result.Item0.X = -m.Item0.X;
@@ -472,6 +495,7 @@ namespace NeoAxis
 		/// <param name="v">The matrix to compare.</param>
 		/// <param name="epsilon">The precision value.</param>
 		/// <returns>True if the specified matrix is equal to the current instance of <see cref="Matrix3F"/>; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( Matrix3F v, float epsilon )
 		{
 			if( !Item0.Equals( ref v.Item0, epsilon ) )
@@ -490,6 +514,7 @@ namespace NeoAxis
 		/// <param name="v">The matrix to compare.</param>
 		/// <param name="epsilon">The precision value.</param>
 		/// <returns>True if the specified matrix is equal to the current instance of <see cref="Matrix3F"/>; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( ref Matrix3F v, float epsilon )
 		{
 			if( !Item0.Equals( ref v.Item0, epsilon ) )
@@ -505,6 +530,7 @@ namespace NeoAxis
 		/// Gets the trace of the matrix, the sum of the values along the diagonal.
 		/// </summary>
 		/// <returns>The trace of the matrix.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float GetTrace()
 		{
 			return Item0.X + Item1.Y + Item2.Z;
@@ -522,6 +548,7 @@ namespace NeoAxis
 		/// <summary>
 		/// Transposes the matrix.
 		/// </summary>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Transpose()
 		{
 			float v;
@@ -534,6 +561,7 @@ namespace NeoAxis
 		/// Returns the transpose of the current instance of <see cref="Matrix3F"/>.
 		/// </summary>
 		/// <returns>The transpose of the current instance of <see cref="Matrix3F"/>.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Matrix3F GetTranspose()
 		{
 			Matrix3F result;
@@ -553,6 +581,7 @@ namespace NeoAxis
 		/// Calculates the transpose of the current instance of <see cref="Matrix3F"/>.
 		/// </summary>
 		/// <param name="result">When the method completes, contains the transpose of the current instance of <see cref="Matrix3F"/>.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void GetTranspose( out Matrix3F result )
 		{
 			result.Item0.X = Item0.X;
@@ -571,6 +600,7 @@ namespace NeoAxis
 		/// Determines whether the current instance of <see cref="Matrix3F"/> is invertible and, if so, inverts this matrix.
 		/// </summary>
 		/// <returns>True if the current instance of <see cref="Matrix3F"/> is invertible; False otherwise.</returns>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public bool Inverse()
 		{
 			Matrix3F inverse;
@@ -614,6 +644,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <returns>If the current instance of <see cref="Matrix3F"/> is invertible, returns the inverted matrix;
 		/// otherwise returns the original matrix.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Matrix3F GetInverse()
 		{
 			Matrix3F result = this;
@@ -626,6 +657,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="result">When the method completes, contains the inverted matrix if the current instance
 		/// of <see cref="Matrix3F"/> is invertible; otherwise, contains the original matrix.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void GetInverse( out Matrix3F result )
 		{
 			result = this;
@@ -636,6 +668,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="Matrix3F"/> to Euler angles.
 		/// </summary>
 		/// <returns>The result of convertion.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public AnglesF ToAngles()
 		{
 			AnglesF result;
@@ -670,6 +703,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="Matrix3F"/> to Euler angles.
 		/// </summary>
 		/// <param name="result">When the method completes, contains the result of convertion.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ToAngles( out AnglesF result )
 		{
 			float sp = Item2.X;
@@ -700,6 +734,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="Matrix3F"/> into the equivalent <see cref="QuaternionF"/> structure.
 		/// </summary>
 		/// <returns>The equivalent <see cref="QuaternionF"/> structure.</returns>
+		[MethodImpl( (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public QuaternionF ToQuaternion()
 		{
@@ -754,6 +789,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="Matrix3F"/> into the equivalent <see cref="QuaternionF"/> structure.
 		/// </summary>
 		/// <param name="result">When the method completes, contains the equivalent <see cref="QuaternionF"/> structure.</param>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public void ToQuaternion( out QuaternionF result )
 		{
 			float s;
@@ -803,6 +839,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="Matrix3F"/> into the equivalent <see cref="Matrix4F"/> structure.
 		/// </summary>
 		/// <returns>The equivalent <see cref="Matrix4F"/> structure.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Matrix4F ToMatrix4()
 		{
@@ -830,6 +867,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="Matrix3F"/> into the equivalent <see cref="Matrix4F"/> structure.
 		/// </summary>
 		/// <param name="result">When the method completes, contains the equivalent <see cref="Matrix4F"/> structure.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ToMatrix4( out Matrix4F result )
 		{
 			result.Item0.X = Item0.X;
@@ -855,6 +893,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="obj">The object to compare with the current instance of <see cref="Matrix3F"/>.</param>
 		/// <returns>True if the specified object is equal to the current instance of <see cref="Matrix3F"/>; otherwise, False.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is Matrix3F && this == (Matrix3F)obj );
@@ -866,6 +905,7 @@ namespace NeoAxis
 		/// <param name="v1">The first matrix to compare.</param>
 		/// <param name="v2">The second matrix to compare.</param>
 		/// <returns>True if the matricies are equal; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( Matrix3F v1, Matrix3F v2 )
 		{
 			return v1.Item0 == v2.Item0 && v1.Item1 == v2.Item1 && v1.Item2 == v2.Item2;
@@ -877,6 +917,7 @@ namespace NeoAxis
 		/// <param name="v1">The first matrix to compare.</param>
 		/// <param name="v2">The second matrix to compare.</param>
 		/// <returns>True if the matricies are unequal; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( Matrix3F v1, Matrix3F v2 )
 		{
 			return v1.Item0 != v2.Item0 || v1.Item1 != v2.Item1 || v1.Item2 != v2.Item2;
@@ -893,6 +934,7 @@ namespace NeoAxis
 		/// is out of the range [0, 2].</exception>
 		public unsafe float this[ int row, int column ]
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				if( row < 0 || row > 2 )
@@ -902,6 +944,7 @@ namespace NeoAxis
 				fixed ( float* v = &this.Item0.X )
 					return v[ row * 3 + column ];
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set
 			{
 				if( row < 0 || row > 2 )
@@ -964,6 +1007,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="scale">The specified vector.</param>
 		/// <returns>The scale matrix.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Matrix3F FromScale( Vector3F scale )
 		{
 			Matrix3F result;
@@ -984,6 +1028,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="scale">The specified vector.</param>
 		/// <param name="result">When the method completes, contains the scale matrix.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void FromScale( ref Vector3F scale, out Matrix3F result )
 		{
 			result.Item0.X = scale.X;
@@ -1002,6 +1047,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="scale">The specified <see cref="float"/> value.</param>
 		/// <returns>The scale matrix.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Matrix3F FromScale( float scale )
 		{
 			Matrix3F result;
@@ -1022,6 +1068,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="scale">The specified <see cref="float"/> value.</param>
 		/// <param name="result">When the method completes, contains the scale matrix.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void FromScale( float scale, out Matrix3F result )
 		{
 			result.Item0.X = scale;
@@ -1040,6 +1087,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="angle">The angle in radians.</param>
 		/// <returns>The resulting rotation matrix.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Matrix3F FromRotateByX( RadianF angle )
 		{
 			Matrix3F result;
@@ -1062,6 +1110,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="angle">The angle in radians.</param>
 		/// <param name="result">When the method completes, contains the resulting rotation matrix.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void FromRotateByX( RadianF angle, out Matrix3F result )
 		{
 			float sin = MathEx.Sin( angle );
@@ -1082,6 +1131,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="angle">The angle in radians.</param>
 		/// <returns>The resulting rotation matrix.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Matrix3F FromRotateByY( RadianF angle )
 		{
 			Matrix3F result;
@@ -1104,6 +1154,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="angle">The angle in radians.</param>
 		/// <param name="result">When the method completes, contains the resulting rotation matrix.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void FromRotateByY( RadianF angle, out Matrix3F result )
 		{
 			float sin = MathEx.Sin( angle );
@@ -1124,6 +1175,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="angle">The angle in radians.</param>
 		/// <returns>The resulting rotation matrix.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Matrix3F FromRotateByZ( RadianF angle )
 		{
 			Matrix3F result;
@@ -1146,6 +1198,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="angle">The angle in radians.</param>
 		/// <param name="result">When the method completes, contains the resulting rotation matrix.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void FromRotateByZ( RadianF angle, out Matrix3F result )
 		{
 			float sin = MathEx.Sin( angle );
@@ -1167,6 +1220,7 @@ namespace NeoAxis
 		/// <param name="kQ">Orthogonal.</param>
 		/// <param name="kD">Diagonal.</param>
 		/// <param name="kU">Upper triangular.</param>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public void QDUDecomposition( out Matrix3F kQ, out Vector3F kD, out Vector3F kU )
 		{
 			// Factor M = QR = QDU where Q is orthogonal, D is diagonal,
@@ -1263,6 +1317,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="Matrix3F"/> into the equivalent <see cref="Matrix3"/> structure.
 		/// </summary>
 		/// <param name="result">When the method completes, contains the equivalent <see cref="Matrix3"/> structure.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ToMatrix3( out Matrix3 result )
 		{
 			result.Item0.X = Item0.X;
@@ -1280,6 +1335,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="Matrix3F"/> into the equivalent <see cref="Matrix3"/> structure.
 		/// </summary>
 		/// <returns>The equivalent <see cref="Matrix3"/> structure.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Matrix3 ToMatrix3()
 		{
@@ -1292,6 +1348,7 @@ namespace NeoAxis
 		/// Implicit conversion from <see cref="Matrix3F"/> type to <see cref="Matrix3"/> type for given value.
 		/// </summary>
 		/// <param name="v">The value to type convert.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator Matrix3( Matrix3F v )
 		{
 			return new Matrix3( v );
@@ -1306,6 +1363,7 @@ namespace NeoAxis
 		/// <remarks>
 		/// This method is designed to decompose an SRT transformation matrix only.
 		/// </remarks>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Decompose( out Matrix3F rotation, out Vector3F scale )
 		{
 			//Source: Unknown
@@ -1341,6 +1399,7 @@ namespace NeoAxis
 		/// <remarks>
 		/// This method is designed to decompose an SRT transformation matrix only.
 		/// </remarks>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Decompose( out QuaternionF rotation, out Vector3F scale )
 		{
 			if( !Decompose( out Matrix3F rotationMat3, out scale ) )
@@ -1358,6 +1417,7 @@ namespace NeoAxis
 		/// <param name="direction">Target position in world space.</param>
 		/// <param name="up">Up vector in world space.</param>
 		/// <returns>The instance of <see cref="Matrix3F"/> that transforms world space to camera space.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Matrix3F LookAt( Vector3F direction, Vector3F up )
 		{
 

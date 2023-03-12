@@ -1,0 +1,759 @@
+// Made with NeoAxis Engine 2021.3.
+
+.component NeoAxis.Scene
+{
+	BackgroundColor = 0.4941176 0.4941176 0.4941176
+	Mode = _2D
+	RenderingPipeline
+	{
+		GetByReference = "root:$Rendering Pipeline"
+	}
+	CameraEditor
+	{
+		GetByReference = "this:$Camera Editor"
+	}
+	CameraEditor2D
+	{
+		GetByReference = "this:$Camera Editor 2D"
+	}
+	.component NeoAxis.RenderToFile
+	{
+		Name = Render To File
+		Mode = Material
+		Resolution = 1024 1024
+		OutputFileName = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Data\\Material.material"
+		FillTransparentPixelsByNearPixels = True
+		Camera
+		{
+			GetByReference = "root:$Camera Editor 2D To File"
+		}
+		Template
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Data\\Material template.material"
+		}
+	}
+	.component NeoAxis.Camera
+	{
+		Name = Camera Editor
+		Visible = False
+		Transform = "0.201225275694478 -0.336318972421266 0.77018113694836; -0.411598802328469 0.352366376398584 0.638479459963394 0.546597056258404; 1 1 1"
+	}
+	.component NeoAxis.Camera
+	{
+		Name = Camera Editor 2D
+		Visible = False
+		Transform = "0.00559521854759001 -0.00153206650831411 10; 0.5 -0.5 -0.5 -0.5; 1 1 1"
+		Projection = Orthographic
+		Height = 2.1
+		FixedUp = 0 1 0
+		FarClipPlane = 100
+	}
+	.component NeoAxis.Camera
+	{
+		Name = Camera Editor 2D To File
+		ScreenLabel = NeverDisplay
+		Transform = "0 0 1; 0.5 -0.5 -0.5 -0.5; 1 1 1"
+		Projection = Orthographic
+		Height = 2
+		FixedUp = 0 1 0
+		FarClipPlane = 100
+	}
+	.component NeoAxis.Light
+	{
+		Name = Ambient Light
+		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
+		Type = Ambient
+		Brightness = 50000
+	}
+	.component NeoAxis.Light
+	{
+		Name = Directional Light
+		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
+		Type = Directional
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 91.429
+	}
+	.component NeoAxis.RenderingPipeline_Basic
+	{
+		Name = Rendering Pipeline
+		Shadows = False
+		ShadowFarDistance = 15
+		ShadowDirectionalLightCascades = 1
+		.component NeoAxis.Component
+		{
+			Name = Background Effects
+		}
+		.component NeoAxis.Component
+		{
+			Name = Scene Effects
+			.component NeoAxis.RenderingEffect_AmbientOcclusion
+			{
+				Enabled = False
+				Name = Ambient Occlusion
+			}
+			.component NeoAxis.RenderingEffect_MotionBlur
+			{
+				Enabled = False
+				Name = Motion Blur
+			}
+			.component NeoAxis.RenderingEffect_Bloom
+			{
+				Enabled = False
+				Name = Bloom
+			}
+			.component NeoAxis.RenderingEffect_LensEffects
+			{
+				Enabled = False
+				Name = Lens Effects
+			}
+			.component NeoAxis.RenderingEffect_ToneMapping
+			{
+				Enabled = False
+				Name = Tone Mapping
+				Intensity = 0.5
+			}
+			.component NeoAxis.RenderingEffect_ToLDR
+			{
+				Name = To LDR
+			}
+			.component NeoAxis.RenderingEffect_Antialiasing
+			{
+				Name = Antialiasing
+			}
+			.component NeoAxis.RenderingEffect_ResolutionUpscale
+			{
+				Name = Resolution Upscale
+			}
+			.component NeoAxis.RenderingEffect_Sharpen
+			{
+				Name = Sharpen
+				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
+			}
+		}
+		.component NeoAxis.Component
+		{
+			Name = Final Image Effects
+		}
+	}
+	.component NeoAxis.GameMode
+	{
+		Name = Game Mode
+		CutsceneStarted = False
+		CutsceneGuiFadingFactor = 0
+		CutsceneGuiFadingSpeed = 0
+		ScreenFadingCurrentColor = 0 0 0 0
+		ScreenFadingTargetColor = 0 0 0 0
+		ScreenFadingSpeed = 0
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Enabled = False
+		Name = Ground
+		CanBeSelected = False
+		Transform = "0 0 -1; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 100 100
+				UVTilesPerUnit = 0.25 0.25
+			}
+		}
+	}
+	.component NeoAxis.GroupOfObjects
+	{
+		Name = Group Of Objects
+		BaseObjects
+		{
+			Count = 1
+			0 "NeoAxis.Reference<NeoAxis.Component>"
+			{
+				GetByReference = "root:$Ground"
+			}
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space Border
+		ScreenLabel = NeverDisplay
+		Transform = "-1.01 1.01 0; 0 0 0 1; 1 1 1"
+		CurveTypePosition = Line
+		Color = 0.6039216 0.6039216 0.6039216
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			ScreenLabel = NeverDisplay
+			Transform = "1.01 1.01 0; 0 0 0 1; 1 1 1"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 2
+			ScreenLabel = NeverDisplay
+			Transform = "1.01 -1.01 0; 0 0 0 1; 1 1 1"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 3
+			ScreenLabel = NeverDisplay
+			Transform = "-1.01 -1.01 0; 0 0 0 1; 1 1 1"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			ScreenLabel = NeverDisplay
+			Transform = "-1.01 1.01 0; 0 0 0 1; 1 1 1"
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Enabled = False
+		Name = Plane
+		Transform = "0 0 -0.977678062625181; 0 0 0 1; 1 1 1"
+		Color = 0.6635686 0.7559215 1
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 2
+		Transform = "0.00250593824228164 0.719272332491675 -0.75; 0 0 0 1; 1.92849997592717 1.92849997592717 1.92849997592717"
+		Thickness = 0.01
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "-0.178437368620057 0.699969348203561 -0.75; 0 0 0 1; 1.32999999262393 1.32999999262393 1.32999999262393"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "-0.359716449151719 0.706555033624442 -0.75; 0 0 0 1; 1.32999999262393 1.32999999262393 1.32999999262393"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 2
+			Transform = "-0.552798367626111 0.731583909713772 -0.75; 0 0 0 1; 1 1 1"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 3
+			Transform = "-0.733001257717756 0.758770318190001 -0.75; 0 0 0 1; 0.5 0.5 0.5"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 5
+			Transform = "-0.906754226838897 0.740480531966723 -0.75; 0 0 0 1; 0.5 0.5 0.5"
+		}
+	}
+	.component NeoAxis.CurveInSpace
+	{
+		Name = Curve In Space 8
+		Transform = "0.915034185384487 0.283643164725589 -0.75; 0 0 0 1; 1.16878787448974 1.16878787448974 1.16878787448974"
+		Thickness = 0.012
+		SegmentsLength = 0.05
+		UVTilesLength = 10
+		Material
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Data\\Bark.material"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point
+			Transform = "0.779696579234737 0.280967258822273 -0.75; 0 0 0 1; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 2
+			Transform = "0.629459049543525 0.299257045045551 -0.75; 0 0 0 1; 0.733024695318762 0.733024695318762 0.733024695318762"
+		}
+		.component NeoAxis.CurveInSpacePoint
+		{
+			Name = Curve In Space Point 4
+			Transform = "0.457760944639145 0.285982832184022 -0.75; 0 0 -0.776356291101115 0.630294303692904; 0.404095651876631 0.404095651876631 0.404095651876631"
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Enabled = False
+		Name = Plane 2
+		CanBeSelected = False
+		Transform = "0 0 -5; 0 0 0 1; 1 1 1"
+		Color = 1 1 1 0.6710196
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Common oak\\Data\\Leaves.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 3
+		Transform = "-0.0118632137564482 -1.02908551068884 -10; 0 0 0 1; 2 2 2"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Data\\MargueriteFlower01_2K.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 4
+		Transform = "0.788730610471581 0.784097387173396 0; 0 0 0 1; 0.4 0.4 0.4"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Data\\Bark2.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 5
+		Transform = "-0.166495042735071 0.579584323040379 0; 0 0 -0.941644588125791 0.336608778336823; 0.388999111462529 0.388999111462529 0.388999111462529"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Data\\LeafSet023_2K.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 1 0.7
+				UVTilesPerUnit = 0.5 0.5
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 10
+		Transform = "-0.473264638934596 0.614501187648455 0; 0 0 -0.919519667602581 0.393043993583464; 0.249358406784449 0.249358406784449 0.249358406784449"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Data\\LeafSet023_2K.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 1 0.7
+				UVTilesPerUnit = 0.5 0.5
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 12
+		Transform = "0.756307807621224 0.183028503562945 0; 0 0 -0.919519667602581 0.393043993583464; 0.249358406784449 0.249358406784449 0.249358406784449"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Data\\LeafSet023_2K.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 1 0.7
+				UVTilesPerUnit = 0.5 0.5
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 7
+		Transform = "-0.271245636559299 0.796567695961994 0; 0 0 -0.958320473277118 -0.28569541560536; 0.388999111462529 0.388999111462529 0.388999111462529"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Data\\LeafSet023_2K.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 1 0.7
+				UVTilesPerUnit = 0.5 0.5
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 9
+		Transform = "-0.543098368150748 0.806543942992873 0; 0 0 -0.907815431031393 -0.419369935953076; 0.246201971300186 0.246201971300186 0.246201971300186"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Data\\LeafSet023_2K.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 1 0.7
+				UVTilesPerUnit = 0.5 0.5
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 14
+		Transform = "0.701438448951391 0.370083135391924 0; 0 0 -0.907815431031393 -0.419369935953076; 0.246201971300186 0.246201971300186 0.246201971300186"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Data\\LeafSet023_2K.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 1 0.7
+				UVTilesPerUnit = 0.5 0.5
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 8
+		Transform = "-0.760081741072363 0.799061757719714 0; 0 0 -0.967161838506631 -0.254161323053829; 0.252596827604777 0.252596827604777 0.252596827604777"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Data\\LeafSet023_2K.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 1 0.7
+				UVTilesPerUnit = 0.5 0.5
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 11
+		Transform = "0.501913508333813 0.375071258907362 0; 0 0 -0.931277710603615 -0.364310068119025; 0.252596827604777 0.252596827604777 0.252596827604777"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Data\\LeafSet023_2K.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 1 0.7
+				UVTilesPerUnit = 0.5 0.5
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 6
+		Transform = "-0.745117370526045 0.654406175771971 0; 0 0 -0.919519667602581 0.393043993583464; 0.26107323108852 0.26107323108852 0.26107323108852"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Data\\LeafSet023_2K.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 1 0.7
+				UVTilesPerUnit = 0.5 0.5
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 13
+		Transform = "0.534336311184169 0.195498812351544 0; 0 0 -0.919519667602581 0.393043993583464; 0.26107323108852 0.26107323108852 0.26107323108852"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Data\\LeafSet023_2K.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 1 0.7
+				UVTilesPerUnit = 0.5 0.5
+			}
+		}
+	}
+}

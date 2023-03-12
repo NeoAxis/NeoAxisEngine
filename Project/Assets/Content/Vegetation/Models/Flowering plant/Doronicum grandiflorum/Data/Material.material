@@ -1,0 +1,161 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component "Base\\Material templates\\Vegetation.material"
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"1\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"200, 200\"><KW V=\"1\" A=\"(null)\"><CGD /><WS UN=\"907BFB03D35445331EBBC2D21ED98C2D\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"5939982F98DD4D62D794608BAEA457E4\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"ECBE636F25A5473ECD8335FFE37F841F\"><KP UN=\"26D70BEB05CC4EFEE5ADD823E93976FD\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"ECBE636F25A5473ECD8335FFE37F841F\" S=\"False\"><CPD ObjPath=\"$$n1$Shader graph\" /></KP></WC></WS></KW></DW></DM></KD>"
+	BlendMode = Masked
+	TwoSided = True
+	ShadingModel = Subsurface
+	Thickness = 0.02
+	BaseColor
+	{
+		GetByReference = "this:$$n1$Shader graph\\$Node Texture Sample BaseColor\\$Shader Texture Sample\\RGBA"
+	}
+	Roughness
+	{
+		GetByReference = "this:$$n1$Shader graph\\$Node Texture Sample Roughness\\$Shader Texture Sample\\R"
+	}
+	Normal
+	{
+		GetByReference = "this:$$n1$Shader graph\\$Node Texture Sample Normal\\$Shader Texture Sample\\RGBA"
+	}
+	Opacity
+	{
+		GetByReference = "this:$$n1$Shader graph\\$Node Texture Sample Opacity\\$Shader Texture Sample\\R"
+	}
+	SubsurfaceColor
+	{
+		GetByReference = "this:$$n1$Shader graph\\$Node Texture Sample SubsurfaceColor\\$Shader Texture Sample\\RGBA"
+	}
+	.component NeoAxis.FlowGraph
+	{
+		Name = Shader graph
+		EditorScrollPosition = 0 0
+		Specialization
+		{
+			GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Material
+			Position = 10 -7
+			ControlledObject
+			{
+				GetByReference = "this:..\\.."
+			}
+		}
+	}
+	.component NeoAxis.FlowGraph
+	{
+		Name = Shader graph
+		EditorScrollPosition = 0 0
+		Specialization
+		{
+			GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Material
+			Position = 10 -7
+			ControlledObject
+			{
+				GetByReference = "this:..\\.."
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample BaseColor
+			Position = -20 -22
+			ControlledObject
+			{
+				GetByReference = "this:$Shader Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Shader Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Data\\Material_BaseColor.png"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample Roughness
+			Position = -20 -13
+			ControlledObject
+			{
+				GetByReference = "this:$Shader Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Shader Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Data\\Material_Roughness.png"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample Normal
+			Position = -20 -4
+			ControlledObject
+			{
+				GetByReference = "this:$Shader Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Shader Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Data\\Material_Normal.png"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample Opacity
+			Position = -20 5
+			ControlledObject
+			{
+				GetByReference = "this:$Shader Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Shader Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Data\\Material_Opacity.png"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample SubsurfaceColor
+			Position = -20 14
+			ControlledObject
+			{
+				GetByReference = "this:$Shader Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Shader Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Doronicum grandiflorum\\Data\\Material_SubsurfaceColor.png"
+				}
+			}
+		}
+	}
+}

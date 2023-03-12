@@ -1,0 +1,23 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.MeshInSpace
+{
+	EditorCameraTransform = "2.12067969819648 -1.75081121623215 1.43533757363977; -0.239953986611549 0.0908480802736332 0.903908452354154 0.342225394122847; 1 1 1"
+	Transform = "0 0 0; 0 0 0 1; 1 1 1"
+	Collision = True
+	Mesh
+	{
+		GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Box\\SFCrate1.fbx|$Mesh"
+	}
+	ReplaceMaterialSelectively
+	{
+		Count = 0
+	}
+	SpecialEffects
+	{
+		Value
+		{
+			Count = 0
+		}
+	}
+}

@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -20,7 +20,6 @@ namespace NeoAxis
 		/// The time of the point.
 		/// </summary>
 		[DefaultValue( 0.0 )]
-		[Serialize]
 		public Reference<double> Time
 		{
 			get { if( _time.BeginGet() ) Time = _time.Get( this ); return _time.value; }
@@ -30,10 +29,37 @@ namespace NeoAxis
 		public event Action<CurveInSpacePoint> TimeChanged;
 		ReferenceField<double> _time = 0.0;
 
-		//!!!!need "double?" support for properties
-		//RoundedLineCurvatureRadius
+		[DefaultValue( 1.0 )]
+		[Range( 0.0, 100, RangeAttribute.ConvenientDistributionEnum.Exponential, 4 )]
+		public Reference<double> RoundedLineCurvatureRadius
+		{
+			get { if( _roundedLineCurvatureRadius.BeginGet() ) RoundedLineCurvatureRadius = _roundedLineCurvatureRadius.Get( this ); return _roundedLineCurvatureRadius.value; }
+			set { if( _roundedLineCurvatureRadius.BeginSet( ref value ) ) { try { RoundedLineCurvatureRadiusChanged?.Invoke( this ); DataWasChanged(); } finally { _roundedLineCurvatureRadius.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="RoundedLineCurvatureRadius"/> property value changes.</summary>
+		public event Action<CurveInSpacePoint> RoundedLineCurvatureRadiusChanged;
+		ReferenceField<double> _roundedLineCurvatureRadius = 1.0;
 
 		//
+
+		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
+		{
+			base.OnMetadataGetMembersFilter( context, member, ref skip );
+
+			if( member is Metadata.Property )
+			{
+				switch( member.Name )
+				{
+				case nameof( RoundedLineCurvatureRadius ):
+					{
+						var curve = Parent as CurveInSpace;
+						if( curve != null && curve.CurveTypePosition.Value != CurveInSpace.CurveTypeEnum.RoundedLine )
+							skip = true;
+					}
+					break;
+				}
+			}
+		}
 
 		protected override void OnEnabledInHierarchyChanged()
 		{
@@ -50,11 +76,11 @@ namespace NeoAxis
 			{
 				var context2 = context.ObjectInSpaceRenderingContext;
 
-				if( !ParentScene.GetDisplayDevelopmentDataInThisApplication() )
+				if( !context.SceneDisplayDevelopmentDataInThisApplication )
 					context2.disableShowingLabelForThisObject = true;
 
 				//visualize handles for BezierPath
-				if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+				if( EngineApp.IsEditor )
 				{
 					if( context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) )
 					{
@@ -63,13 +89,13 @@ namespace NeoAxis
 						{
 							ColorValue color;
 							if( context2.selectedObjects.Contains( this ) )
-								color = ProjectSettings.Get.General.SelectedColor;
+								color = ProjectSettings.Get.Colors.SelectedColor;
 							else //if( context2.canSelectObjects.Contains( this ) )
-								color = ProjectSettings.Get.General.CanSelectColor;
+								color = ProjectSettings.Get.Colors.CanSelectColor;
 							color *= new ColorValue( 1, 1, 1, 0.5 );
 
 							var renderer = context.Owner.Simple3DRenderer;
-							renderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+							renderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 
 							//!!!!
 							//CurveInSpacePointHandle

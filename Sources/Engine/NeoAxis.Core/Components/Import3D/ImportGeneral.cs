@@ -1,4 +1,5 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿#if !DEPLOY
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -19,8 +20,13 @@ namespace NeoAxis//.Import
 			public bool updateMaterials = true;
 			public bool updateMeshes = true;
 			public bool updateObjectsInSpace = true;
+			public bool resetCollision;
+			public bool resetEditorSettings;
 
 			public Dictionary<string, string> meshGeometryMaterialsToRestore = new Dictionary<string, string>();
+			public Dictionary<string, MultiMaterial> meshGeometryMultiMaterialsToRestore = new Dictionary<string, MultiMaterial>();
+			public Dictionary<string, RigidBody> collisionToRestore = new Dictionary<string, RigidBody>();
+			public Dictionary<string, MeshEditorSettings> meshEditorSeetingsToRestore = new Dictionary<string, MeshEditorSettings>();
 
 			public Import3D component;
 			public string virtualFileName;
@@ -29,6 +35,27 @@ namespace NeoAxis//.Import
 			//public Mat4 globalTransform;
 
 			public bool disableDeletionUnusedMaterials;
+
+			//
+
+			public class MeshEditorSettings
+			{
+				public bool EditorDisplayPivot;
+				public bool EditorDisplayBounds;
+				public bool EditorDisplayTriangles;
+				public bool EditorDisplayVertices;
+				public bool EditorDisplayNormals;
+				public bool EditorDisplayTangents;
+				public bool EditorDisplayBinormals;
+				public bool EditorDisplayVertexColor;
+				public int EditorDisplayUV;
+				public bool EditorDisplayProxyMesh;
+				public int EditorDisplayLOD;
+				public bool EditorDisplayCollision;
+				public bool EditorDisplaySkeleton;
+				public string EditorPlayAnimation;
+				public Transform EditorCameraTransform;
+			}
 		}
 
 		///////////////////////////////////////////////
@@ -92,15 +119,33 @@ namespace NeoAxis//.Import
 			return builder.ToString();
 		}
 
-		public static Material CreateMaterial( Component materialsGroup, MaterialData data )
+		public static Material CreateMaterial( Settings settings, Component materialsGroup, MaterialData data )
 		{
 			//create material
 			var material = materialsGroup.CreateComponent<Material>( enabled: false );
 			material.Name = data.Name;
 			material.ShadingModel = data.ShadingModel;
 			material.TwoSided = data.TwoSided;
+
 			if( !string.IsNullOrEmpty( data.OpacityTexture ) )
-				material.BlendMode = Material.BlendModeEnum.Masked;
+			{
+				switch( settings.component.TransparentMaterialBlending.Value )
+				{
+				case Import3D.TransparentMaterialBlendingEnum.Opaque:
+					material.BlendMode = Material.BlendModeEnum.Opaque;
+					break;
+				case Import3D.TransparentMaterialBlendingEnum.Masked:
+					material.BlendMode = Material.BlendModeEnum.Masked;
+					break;
+				case Import3D.TransparentMaterialBlendingEnum.MaskedDithering:
+					material.BlendMode = Material.BlendModeEnum.Masked;
+					material.OpacityDithering = true;
+					break;
+				case Import3D.TransparentMaterialBlendingEnum.Transparent:
+					material.BlendMode = Material.BlendModeEnum.Transparent;
+					break;
+				}
+			}
 
 			//create shader graph
 			FlowGraph graph;
@@ -207,3 +252,4 @@ namespace NeoAxis//.Import
 		}
 	}
 }
+#endif

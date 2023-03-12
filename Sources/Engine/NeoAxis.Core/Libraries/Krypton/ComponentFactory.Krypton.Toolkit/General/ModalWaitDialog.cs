@@ -1,4 +1,5 @@
-﻿// *****************************************************************************
+﻿#if !DEPLOY
+// *****************************************************************************
 // 
 //  © Component Factory Pty Ltd 2012. All rights reserved.
 //	The software and associated documentation supplied hereunder are the 
@@ -128,7 +129,7 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
             }
 
             // Let any repainting or processing events be dispatched
-            Application.DoEvents();
+            NeoAxis.Editor.EditorAPI.ApplicationDoEvents( true );//Application.DoEvents();
         }
 
         /// <summary>
@@ -136,7 +137,7 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         /// </summary>
         /// <param name="m">Message to process.</param>
         /// <returns>True to suppress message dispatch; false otherwise.</returns>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+        //[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         public bool PreFilterMessage(ref Message m)
         {
             // Prevent mouse messages from activating any application windows
@@ -163,3 +164,5 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         #endregion
     }
 }
+
+#endif

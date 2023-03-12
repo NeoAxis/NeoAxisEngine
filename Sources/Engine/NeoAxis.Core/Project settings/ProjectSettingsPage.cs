@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -32,7 +32,7 @@ namespace NeoAxis
 			{
 				if( member is Metadata.Property )
 				{
-					if( member.Name == "Name" || member.Name == "Enabled" || member.Name == "ScreenLabel" )
+					if( member.Name == "Name" || member.Name == "Enabled" || member.Name == "ScreenLabel" || member.Name == "NetworkMode" )
 						skip = true;
 
 					if( EditorAPI.DarkTheme )

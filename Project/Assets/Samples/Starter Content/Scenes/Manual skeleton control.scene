@@ -1,6 +1,8 @@
+// Made with NeoAxis Engine 2023.1.
+
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1166, 842\"><KW V=\"1\" A=\"4E8F1A9109764849FBA8764337C53FA8\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WS UN=\"EE2822F88E754BF93BA3906E32330AAF\" S=\"T,0,50:T,0,50\" D=\"Vertical\"><WC UN=\"753DE069FFC04991C3B9F57735DA9561\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"4E8F1A9109764849FBA8764337C53FA8\"><KP UN=\"4E8F1A9109764849FBA8764337C53FA8\" S=\"False\"><CPD ObjPath=\"\" /></KP></WC><WC UN=\"196A37D5838C43A7F3A1C1DA245A63CC\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"58E19DAABB8E4723B19FFED934541549\"><KP UN=\"58E19DAABB8E4723B19FFED934541549\" S=\"False\"><CPD ObjPath=\"$Character\\$Mesh In Space\\$Mesh In Space Animation Controller\\$C# Script\" /></KP></WC></WS></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"4E8F1A9109764849FBA8764337C53FA8\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WS UN=\"EE2822F88E754BF93BA3906E32330AAF\" S=\"T,0,50:T,0,50\" D=\"Vertical\"><WC UN=\"753DE069FFC04991C3B9F57735DA9561\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"4E8F1A9109764849FBA8764337C53FA8\"><KP UN=\"4E8F1A9109764849FBA8764337C53FA8\" S=\"False\"><CPD ObjPath=\"\" /></KP></WC><WC UN=\"196A37D5838C43A7F3A1C1DA245A63CC\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"58E19DAABB8E4723B19FFED934541549\"><KP UN=\"58E19DAABB8E4723B19FFED934541549\" S=\"False\"><CPD ObjPath=\"$Character\\$Mesh In Space Animation Controller\\$C# Script\" /></KP></WC></WS></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -17,7 +19,7 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "2.70562807346165 -0.569514810202128 1.9366416347359; -0.202746958248857 0.20238595616322 0.678074288668145 0.676866940185384; 1 1 1"
+		Transform = "2.70476720933872 -0.750929338260028 2.04687903356693; -0.169928858768679 0.172247291808098 0.681431537162379 0.690728683046294; 1 1 1"
 	}
 	.component NeoAxis.Camera
 	{
@@ -95,7 +97,6 @@
 			.component NeoAxis.RenderingEffect_Sharpen
 			{
 				Name = Sharpen
-				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
 			}
 		}
 		.component NeoAxis.Component
@@ -106,6 +107,12 @@
 	.component NeoAxis.GameMode
 	{
 		Name = Game Mode
+		CutsceneStarted = False
+		CutsceneGuiFadingFactor = 0
+		CutsceneGuiFadingSpeed = 0
+		ScreenFadingCurrentColor = 0 0 0 0
+		ScreenFadingTargetColor = 0 0 0 0
+		ScreenFadingSpeed = 0
 	}
 	.component NeoAxis.Light
 	{
@@ -185,137 +192,58 @@
 	.component NeoAxis.Character
 	{
 		Name = Character
-		RunSupport = True
-		FlyControlSupport = True
-		JumpSupport = True
-		Animate = True
-		WalkAnimationSpeed = 0.57
-		RunAnimationSpeed = 0.2
-		Transform
+		Transform = "2.57079018239202 1.39862690734176 -0.00504212174216057; 0 0 -0.428107023239136 0.903728067874908; 1 1 1"
+		Collision = True
+		Mesh
 		{
-			GetByReference = "this:$Collision Body\\Transform"
+			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
 		}
-		IdleAnimation
+		ReplaceMaterialSelectively
 		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Idle"
+			Count = 0
 		}
-		WalkAnimation
+		SpecialEffects
 		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Walk"
-		}
-		RunAnimation
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Run"
-		}
-		FlyAnimation
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Fly"
-		}
-		JumpAnimation
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Jump"
-		}
-		LeftTurnAnimation
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Left Turn"
-		}
-		RightTurnAnimation
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh\\$Animations\\$Right Turn"
-		}
-		.component NeoAxis.RigidBody
-		{
-			Name = Collision Body
-			CanBeSelected = False
-			Transform = "2.57078775943836 1.39862613405251 1.15091970817091; 0 0 -0.42810701246037 0.903728048630923; 1 1 1"
-			MotionType = Dynamic
-			Mass = 70
-			AngularDamping = 10
-			MaterialFriction = 0
-			MaterialSpinningFriction = 0
-			MaterialRollingFriction = 0
-			LinearSleepingThreshold = 0
-			AngularSleepingThreshold = 0
-			.component NeoAxis.CollisionShape_Capsule
-			{
-				Name = CollisionShape Capsule
-				TransformRelativeToParent = "0 0 -0.25; 0 0 0 1; 1 1 1"
-				Radius = 0.3
-				Height = 1.2000000000000002
-			}
-		}
-		.component NeoAxis.MeshInSpace
-		{
-			Name = Mesh In Space
-			CanBeSelected = False
-			Transform
-			{
-				GetByReference = "this:$Transform Offset\\Result"
-			}
-			Mesh
-			{
-				GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-			}
-			ReplaceMaterialSelectively
+			Value
 			{
 				Count = 0
-			}
-			SpecialEffects
-			{
-				Value
-				{
-					Count = 0
-				}
-			}
-			.component NeoAxis.MeshInSpaceAnimationController
-			{
-				Name = Mesh In Space Animation Controller
-				DisplaySkeleton = True
-				.component NeoAxis.CSharpScript
-				{
-					Name = C# Script
-					Code = "public void MeshInSpaceAnimationController_CalculateBoneTransforms(NeoAxis.MeshInSpaceAnimationController sender, NeoAxis.SkeletonAnimationTrack.CalculateBoneTransformsItem[] result)\r\n{\r\n\t//to enable this event handler in the editor change \"When Enable\" property to \"Simulation | Instance | Editor\".\r\n\t//component: Character/Mesh In Space/C# Script/Event Handler CalculateBoneTransforms.\r\n\t\r\n\tvar boneIndex = sender.GetBoneIndex(\"mixamorig:Spine1\");\r\n\tif(boneIndex != -1)\r\n\t{\r\n\t\tref var item = ref result[boneIndex];\r\n\r\n\t\t//calculate bone offset\r\n\t\tvar angle = new Degree(60) * Math.Sin(Time.Current); \r\n\t\tvar offset = Matrix3F.FromRotateByY((float)angle.InRadians()).ToQuaternion();\r\n\t\t\r\n\t\t//update the bone\r\n\t\titem.Rotation *= offset;\r\n\t}\t\r\n}\r\n"
-					Exit
-					{
-					}
-					__parameter_Result
-					{
-					}
-					.component NeoAxis.EventHandlerComponent
-					{
-						Name = Event Handler CalculateBoneTransforms
-						WhenEnable = Editor, Simulation, Instance
-						Event
-						{
-							GetByReference = "this:..\\..\\event:CalculateBoneTransforms"
-						}
-						HandlerMethod
-						{
-							GetByReference = "this:..\\method:MeshInSpaceAnimationController_CalculateBoneTransforms(NeoAxis.MeshInSpaceAnimationController,NeoAxis.SkeletonAnimationTrack.CalculateBoneTransformsItem[])"
-						}
-						HandlerFlow
-						{
-						}
-					}
-				}
-			}
-			.component NeoAxis.TransformOffset
-			{
-				Name = Transform Offset
-				PositionOffset = 0 0 -1.15
-				Source
-				{
-					GetByReference = "this:..\\..\\$Collision Body\\Transform"
-				}
 			}
 		}
 		.component NeoAxis.CharacterInputProcessing
 		{
 			Name = Character Input Processing
 		}
-		.component NeoAxis.CharacterAI
+		.component NeoAxis.MeshInSpaceAnimationController
 		{
-			Name = Character AI
+			Name = Mesh In Space Animation Controller
+			DisplaySkeleton = True
+			.component NeoAxis.CSharpScript
+			{
+				Name = C# Script
+				Code = "public void MeshInSpaceAnimationController_CalculateBoneTransforms(NeoAxis.MeshInSpaceAnimationController sender, NeoAxis.SkeletonAnimationTrack.CalculateBoneTransformsItem[] result)\r\n{\r\n\t//to enable this event handler in the editor change \"When Enable\" property to \"Simulation | Instance | Editor\".\r\n\t//component: Character/Mesh In Space/C# Script/Event Handler CalculateBoneTransforms.\r\n\t\r\n\tvar boneIndex = sender.GetBoneIndex(\"mixamorig:Spine1\");\r\n\tif(boneIndex != -1)\r\n\t{\r\n\t\tref var item = ref result[boneIndex];\r\n\r\n\t\t//calculate bone offset\r\n\t\tvar angle = new Degree(60) * Math.Sin(Time.Current); \r\n\t\tvar offset = Matrix3F.FromRotateByY((float)angle.InRadians()).ToQuaternion();\r\n\t\t\r\n\t\t//update the bone\r\n\t\titem.Rotation *= offset;\r\n\t}\t\r\n}\r\n"
+				Exit
+				{
+				}
+				__parameter_Result
+				{
+				}
+				.component NeoAxis.EventHandlerComponent
+				{
+					Name = Event Handler CalculateBoneTransforms
+					WhenEnable = Editor, Simulation, Instance
+					Event
+					{
+						GetByReference = "this:..\\..\\event:CalculateBoneTransforms"
+					}
+					HandlerMethod
+					{
+						GetByReference = "this:..\\method:MeshInSpaceAnimationController_CalculateBoneTransforms(NeoAxis.MeshInSpaceAnimationController,NeoAxis.SkeletonAnimationTrack.CalculateBoneTransformsItem[])"
+					}
+					HandlerFlow
+					{
+					}
+				}
+			}
 		}
 	}
 }

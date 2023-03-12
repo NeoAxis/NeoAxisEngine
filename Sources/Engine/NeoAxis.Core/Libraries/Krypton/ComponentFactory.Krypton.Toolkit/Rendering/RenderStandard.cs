@@ -1,4 +1,5 @@
-﻿// *****************************************************************************
+#if !DEPLOY
+// *****************************************************************************
 // 
 //  © Component Factory Pty Ltd 2012. All rights reserved.
 //	The software and associated documentation supplied hereunder are the 
@@ -2851,180 +2852,180 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
             }
         }
 
-        /// <summary>
-        /// Draw a grid sorting direction glyph.
-        /// </summary>
-        /// <param name="context">Render context.</param>
-        /// <param name="sortOrder">Sorting order of the glyph.</param>
-        /// <param name="cellRect">Available drawing rectangle space.</param>
-        /// <param name="paletteContent">Palette to use for sourcing values.</param>
-        /// <param name="state">State associated with rendering.</param>
-        /// <param name="rtl">Should be drawn from right to left.</param>
-        /// <returns>Remainder space left over for other drawing.</returns>
-        public override Rectangle DrawGridSortGlyph(RenderContext context,
-                                                    SortOrder sortOrder,
-                                                    Rectangle cellRect,
-                                                    IPaletteContent paletteContent,
-                                                    PaletteState state,
-                                                    bool rtl)
-        {
-            Debug.Assert(context != null);
-            Debug.Assert(paletteContent != null);
+        ///// <summary>
+        ///// Draw a grid sorting direction glyph.
+        ///// </summary>
+        ///// <param name="context">Render context.</param>
+        ///// <param name="sortOrder">Sorting order of the glyph.</param>
+        ///// <param name="cellRect">Available drawing rectangle space.</param>
+        ///// <param name="paletteContent">Palette to use for sourcing values.</param>
+        ///// <param name="state">State associated with rendering.</param>
+        ///// <param name="rtl">Should be drawn from right to left.</param>
+        ///// <returns>Remainder space left over for other drawing.</returns>
+        //public override Rectangle DrawGridSortGlyph(RenderContext context,
+        //                                            SortOrder sortOrder,
+        //                                            Rectangle cellRect,
+        //                                            IPaletteContent paletteContent,
+        //                                            PaletteState state,
+        //                                            bool rtl)
+        //{
+        //    Debug.Assert(context != null);
+        //    Debug.Assert(paletteContent != null);
 
-            // Get the appropriate each to draw
-            Image sortImage = _gridSortOrder.Images[(sortOrder == SortOrder.Ascending ? 0 : 1)];
+        //    // Get the appropriate each to draw
+        //    Image sortImage = _gridSortOrder.Images[(sortOrder == SortOrder.Ascending ? 0 : 1)];
 
-            // Is there enough room to draw the image?
-            if ((sortImage.Width < cellRect.Width) && (sortImage.Height < cellRect.Height))
-            {
-                // Find the drawing location of the image
-                int y = cellRect.Top + (cellRect.Height - sortImage.Height) / 2;
-                int x = (rtl ? cellRect.X : cellRect.Right - sortImage.Width);
+        //    // Is there enough room to draw the image?
+        //    if ((sortImage.Width < cellRect.Width) && (sortImage.Height < cellRect.Height))
+        //    {
+        //        // Find the drawing location of the image
+        //        int y = cellRect.Top + (cellRect.Height - sortImage.Height) / 2;
+        //        int x = (rtl ? cellRect.X : cellRect.Right - sortImage.Width);
 
-                // Grab the foreground color to use for the image
-                Color imageColor = paletteContent.GetContentShortTextColor1(state);
+        //        // Grab the foreground color to use for the image
+        //        Color imageColor = paletteContent.GetContentShortTextColor1(state);
 
-                // Draw the image with remapping the image color to the foreground color
-                using (ImageAttributes attribs = new ImageAttributes())
-                {
-                    ColorMap cm = new ColorMap();
-                    cm.OldColor = Color.Black;
-                    cm.NewColor = CommonHelper.MergeColors(imageColor, 0.75f, Color.Transparent, 0.25f);
-                    attribs.SetRemapTable(new ColorMap[] { cm }, ColorAdjustType.Bitmap);
+        //        // Draw the image with remapping the image color to the foreground color
+        //        using (ImageAttributes attribs = new ImageAttributes())
+        //        {
+        //            ColorMap cm = new ColorMap();
+        //            cm.OldColor = Color.Black;
+        //            cm.NewColor = CommonHelper.MergeColors(imageColor, 0.75f, Color.Transparent, 0.25f);
+        //            attribs.SetRemapTable(new ColorMap[] { cm }, ColorAdjustType.Bitmap);
 
-                    context.Graphics.DrawImage(sortImage,
-                                               new Rectangle(x, y, sortImage.Width, sortImage.Height), 
-                                               0, 0, sortImage.Width, sortImage.Height, 
-                                               GraphicsUnit.Pixel, attribs);
-                }
+        //            context.Graphics.DrawImage(sortImage,
+        //                                       new Rectangle(x, y, sortImage.Width, sortImage.Height), 
+        //                                       0, 0, sortImage.Width, sortImage.Height, 
+        //                                       GraphicsUnit.Pixel, attribs);
+        //        }
 
-                // Reduce the cell rect by that used up
-                cellRect.Width -= sortImage.Width;
+        //        // Reduce the cell rect by that used up
+        //        cellRect.Width -= sortImage.Width;
 
-                // With rtl we need to move across to the right
-                if (rtl)
-                    cellRect.X += sortImage.Width;
-            }
+        //        // With rtl we need to move across to the right
+        //        if (rtl)
+        //            cellRect.X += sortImage.Width;
+        //    }
 
-            return cellRect;
-        }
+        //    return cellRect;
+        //}
 
-        /// <summary>
-        /// Draw a grid row glyph.
-        /// </summary>
-        /// <param name="context">Render context.</param>
-        /// <param name="rowGlyph">Row glyph.</param>
-        /// <param name="cellRect">Available drawing rectangle space.</param>
-        /// <param name="paletteContent">Palette to use for sourcing values.</param>
-        /// <param name="state">State associated with rendering.</param>
-        /// <param name="rtl">Should be drawn from right to left.</param>
-        /// <returns>Remainder space left over for other drawing.</returns>
-        public override Rectangle DrawGridRowGlyph(RenderContext context,
-                                                   GridRowGlyph rowGlyph,
-                                                   Rectangle cellRect,
-                                                   IPaletteContent paletteContent,
-                                                   PaletteState state,
-                                                   bool rtl)
-        {
-            Debug.Assert(context != null);
-            Debug.Assert(paletteContent != null);
+        ///// <summary>
+        ///// Draw a grid row glyph.
+        ///// </summary>
+        ///// <param name="context">Render context.</param>
+        ///// <param name="rowGlyph">Row glyph.</param>
+        ///// <param name="cellRect">Available drawing rectangle space.</param>
+        ///// <param name="paletteContent">Palette to use for sourcing values.</param>
+        ///// <param name="state">State associated with rendering.</param>
+        ///// <param name="rtl">Should be drawn from right to left.</param>
+        ///// <returns>Remainder space left over for other drawing.</returns>
+        //public override Rectangle DrawGridRowGlyph(RenderContext context,
+        //                                           GridRowGlyph rowGlyph,
+        //                                           Rectangle cellRect,
+        //                                           IPaletteContent paletteContent,
+        //                                           PaletteState state,
+        //                                           bool rtl)
+        //{
+        //    Debug.Assert(context != null);
+        //    Debug.Assert(paletteContent != null);
 
-            // Get the appropriate each to draw
-            Image rowImage = null;
+        //    // Get the appropriate each to draw
+        //    Image rowImage = null;
 
-            switch (rowGlyph)
-            {
-                case GridRowGlyph.ArrowStar:
-                    rowImage = _gridRowIndicators.Images[rtl ? 4 : 0];
-                    break;
-                case GridRowGlyph.Star:
-                    rowImage = _gridRowIndicators.Images[rtl ? 5 : 1];
-                    break;
-                case GridRowGlyph.Pencil:
-                    rowImage = _gridRowIndicators.Images[rtl ? 6 : 2];
-                    break;
-                case GridRowGlyph.Arrow:
-                    rowImage = _gridRowIndicators.Images[rtl ? 7 : 3];
-                    break;
-            }
+        //    switch (rowGlyph)
+        //    {
+        //        case GridRowGlyph.ArrowStar:
+        //            rowImage = _gridRowIndicators.Images[rtl ? 4 : 0];
+        //            break;
+        //        case GridRowGlyph.Star:
+        //            rowImage = _gridRowIndicators.Images[rtl ? 5 : 1];
+        //            break;
+        //        case GridRowGlyph.Pencil:
+        //            rowImage = _gridRowIndicators.Images[rtl ? 6 : 2];
+        //            break;
+        //        case GridRowGlyph.Arrow:
+        //            rowImage = _gridRowIndicators.Images[rtl ? 7 : 3];
+        //            break;
+        //    }
 
-            // Is there enough room to draw the image?
-            if ((rowImage != null) && 
-                (rowImage.Width < cellRect.Width) && 
-                (rowImage.Height < cellRect.Height))
-            {
-                // Find the drawing location of the image
-                int y = cellRect.Top + (cellRect.Height - rowImage.Height) / 2;
-                int x = (rtl ? cellRect.Right - rowImage.Width : cellRect.Left);
+        //    // Is there enough room to draw the image?
+        //    if ((rowImage != null) && 
+        //        (rowImage.Width < cellRect.Width) && 
+        //        (rowImage.Height < cellRect.Height))
+        //    {
+        //        // Find the drawing location of the image
+        //        int y = cellRect.Top + (cellRect.Height - rowImage.Height) / 2;
+        //        int x = (rtl ? cellRect.Right - rowImage.Width : cellRect.Left);
 
-                // Grab the foreground color to use for the image
-                Color imageColor = paletteContent.GetContentShortTextColor1(state);
+        //        // Grab the foreground color to use for the image
+        //        Color imageColor = paletteContent.GetContentShortTextColor1(state);
 
-                // Draw the image with remapping the image color to the foreground color
-                using (ImageAttributes attribs = new ImageAttributes())
-                {
-                    ColorMap cm = new ColorMap();
-                    cm.OldColor = Color.Black;
-                    cm.NewColor = CommonHelper.MergeColors(imageColor, 0.75f, Color.Transparent, 0.25f);
-                    attribs.SetRemapTable(new ColorMap[] { cm }, ColorAdjustType.Bitmap);
+        //        // Draw the image with remapping the image color to the foreground color
+        //        using (ImageAttributes attribs = new ImageAttributes())
+        //        {
+        //            ColorMap cm = new ColorMap();
+        //            cm.OldColor = Color.Black;
+        //            cm.NewColor = CommonHelper.MergeColors(imageColor, 0.75f, Color.Transparent, 0.25f);
+        //            attribs.SetRemapTable(new ColorMap[] { cm }, ColorAdjustType.Bitmap);
 
-                    context.Graphics.DrawImage(rowImage,
-                                               new Rectangle(x, y, rowImage.Width, rowImage.Height),
-                                               0, 0, rowImage.Width, rowImage.Height,
-                                               GraphicsUnit.Pixel, attribs);
-                }
+        //            context.Graphics.DrawImage(rowImage,
+        //                                       new Rectangle(x, y, rowImage.Width, rowImage.Height),
+        //                                       0, 0, rowImage.Width, rowImage.Height,
+        //                                       GraphicsUnit.Pixel, attribs);
+        //        }
 
-                // Reduce the cell rect by that used up
-                cellRect.Width -= rowImage.Width;
+        //        // Reduce the cell rect by that used up
+        //        cellRect.Width -= rowImage.Width;
 
-                // With NOT rtl we need to move across to the right
-                if (!rtl)
-                    cellRect.X += rowImage.Width;
-            }
+        //        // With NOT rtl we need to move across to the right
+        //        if (!rtl)
+        //            cellRect.X += rowImage.Width;
+        //    }
 
-            return cellRect;
-        }
+        //    return cellRect;
+        //}
 
-        /// <summary>
-        /// Draw a grid error glyph.
-        /// </summary>
-        /// <param name="context">Render context.</param>
-        /// <param name="cellRect">Available drawing rectangle space.</param>
-        /// <param name="state">State associated with rendering.</param>
-        /// <param name="rtl">Should be drawn from right to left.</param>
-        /// <returns>Remainder space left over for other drawing.</returns>
-        public override Rectangle DrawGridErrorGlyph(RenderContext context,
-                                                     Rectangle cellRect,
-                                                     PaletteState state,
-                                                     bool rtl)
-        {
-            Debug.Assert(context != null);
+        ///// <summary>
+        ///// Draw a grid error glyph.
+        ///// </summary>
+        ///// <param name="context">Render context.</param>
+        ///// <param name="cellRect">Available drawing rectangle space.</param>
+        ///// <param name="state">State associated with rendering.</param>
+        ///// <param name="rtl">Should be drawn from right to left.</param>
+        ///// <returns>Remainder space left over for other drawing.</returns>
+        //public override Rectangle DrawGridErrorGlyph(RenderContext context,
+        //                                             Rectangle cellRect,
+        //                                             PaletteState state,
+        //                                             bool rtl)
+        //{
+        //    Debug.Assert(context != null);
 
-            // Get the appropriate each to draw
-            Image errorImage = _gridErrorIcon.Images[0];
+        //    // Get the appropriate each to draw
+        //    Image errorImage = _gridErrorIcon.Images[0];
 
-            // Is there enough room to draw the image?
-            if ((errorImage.Width < cellRect.Width) && (errorImage.Height < cellRect.Height))
-            {
-                // Find the drawing location of the image
-                int y = cellRect.Top + (cellRect.Height - errorImage.Height) / 2;
-                int x = (rtl ? cellRect.Left : cellRect.Right - errorImage.Width);
+        //    // Is there enough room to draw the image?
+        //    if ((errorImage.Width < cellRect.Width) && (errorImage.Height < cellRect.Height))
+        //    {
+        //        // Find the drawing location of the image
+        //        int y = cellRect.Top + (cellRect.Height - errorImage.Height) / 2;
+        //        int x = (rtl ? cellRect.Left : cellRect.Right - errorImage.Width);
 
-                if (state == PaletteState.Disabled)
-                    ControlPaint.DrawImageDisabled(context.Graphics, errorImage, x, y, Color.Empty);
-                else
-                    context.Graphics.DrawImage(errorImage, x, y);
+        //        if (state == PaletteState.Disabled)
+        //            ControlPaint.DrawImageDisabled(context.Graphics, errorImage, x, y, Color.Empty);
+        //        else
+        //            context.Graphics.DrawImage(errorImage, x, y);
 
-                // Reduce the cell rect by that used up
-                cellRect.Width -= errorImage.Width;
+        //        // Reduce the cell rect by that used up
+        //        cellRect.Width -= errorImage.Width;
 
-                // With rtl we need to move across to the right
-                if (rtl)
-                    cellRect.X += errorImage.Width;
-            }
+        //        // With rtl we need to move across to the right
+        //        if (rtl)
+        //            cellRect.X += errorImage.Width;
+        //    }
 
-            return cellRect;
-        }
+        //    return cellRect;
+        //}
 
         /// <summary>
         /// Draw a solid area glyph suitable for a drag drop area.
@@ -11529,3 +11530,5 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
 		#endregion
 	}
 }
+
+#endif

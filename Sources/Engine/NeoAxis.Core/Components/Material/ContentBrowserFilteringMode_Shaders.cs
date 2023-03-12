@@ -1,4 +1,5 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿#if !DEPLOY
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 
@@ -15,25 +16,25 @@ namespace NeoAxis.Editor
 			get { return "Shaders"; }
 		}
 
-		public override bool AddGroupGeneral
-		{
-			get { return false; }
-		}
+		//public override bool AddGroupGeneral
+		//{
+		//	get { return false; }
+		//}
 
 		public override bool AddGroupsBaseTypesAddonsProject
 		{
 			get { return false; }
 		}
 
-		public override bool AddGroupsFavorites
-		{
-			get { return true; }
-		}
-
-		public override bool AddSolution
+		public override bool AddGroupFavorites
 		{
 			get { return false; }
 		}
+
+		//public override bool AddSolution
+		//{
+		//	get { return false; }
+		//}
 
 		public override bool AddGroupAllTypes
 		{
@@ -86,3 +87,4 @@ namespace NeoAxis.Editor
 		}
 	}
 }
+#endif

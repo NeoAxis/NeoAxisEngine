@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -453,8 +453,10 @@ namespace NeoAxis
 		{
 			var font = Font.Value ?? renderer.DefaultFont;
 
-			var start = parentEditData.Edit.SelectionStart.Value;
-			var length = parentEditData.Edit.SelectionLength.Value;
+			var start = 0;
+			var length = 0;
+			if( parentEditData.Edit.Focused )
+				parentEditData.Edit.GetSelection( out start, out length );
 			var caret = parentEditData.Edit.GetCaretPosition();
 
 			var pixelSize = renderer.ViewportForScreenCanvasRenderer != null ? 1.0 / renderer.ViewportForScreenCanvasRenderer.SizeInPixels.ToVector2() : Vector2.Zero;
@@ -615,28 +617,28 @@ namespace NeoAxis
 			}
 		}
 
-		static TextItem Trim( TextItem text )
-		{
-			int start;
-			for( start = 0; start < text.characters.Count; start++ )
-			{
-				if( text.characters[ start ].character != ' ' )
-					break;
-			}
+		//static TextItem Trim( TextItem text )
+		//{
+		//	int start;
+		//	for( start = 0; start < text.characters.Count; start++ )
+		//	{
+		//		if( text.characters[ start ].character != ' ' )
+		//			break;
+		//	}
 
-			int end;
-			for( end = text.characters.Count - 1; end >= 0; end-- )
-			{
-				if( text.characters[ end ].character != ' ' )
-					break;
-			}
+		//	int end;
+		//	for( end = text.characters.Count - 1; end >= 0; end-- )
+		//	{
+		//		if( text.characters[ end ].character != ' ' )
+		//			break;
+		//	}
 
-			var length = end - start + 1;
-			if( length != 0 )
-				return new TextItem( text.characters.GetRange( start, length ) );
-			else
-				return new TextItem( 4 );
-		}
+		//	var length = end - start + 1;
+		//	if( length != 0 )
+		//		return new TextItem( text.characters.GetRange( start, length ) );
+		//	else
+		//		return new TextItem( 4 );
+		//}
 
 		static List<TextItem> Split( TextItem text, char splitCharacter )
 		{
@@ -762,7 +764,7 @@ namespace NeoAxis
 
 							if( currentLineWidth + word2Width > screenSize.X )
 							{
-								lines.Add( new LineItem( currentLine, true ) );
+								lines.Add( new LineItem( currentLine, TextHorizontalAlignment.Value == EHorizontalAlignment.Stretch ) );
 								currentLine = new List<TextItem>();
 								currentLineWidth = 0;
 							}

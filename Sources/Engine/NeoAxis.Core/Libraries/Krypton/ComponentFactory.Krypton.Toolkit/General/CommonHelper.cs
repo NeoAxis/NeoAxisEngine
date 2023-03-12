@@ -1,4 +1,5 @@
-﻿// *****************************************************************************
+﻿#if !DEPLOY
+// *****************************************************************************
 // 
 //  © Component Factory Pty Ltd 2012. All rights reserved.
 //  The software and associated documentation supplied hereunder are the 
@@ -471,6 +472,7 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
 
                 // Create the actual thread and provide thread entry point
                 Thread thread = new Thread(new ThreadStart(opThread.Run));
+                thread.IsBackground = true;
 
                 // Kick off the thread action
                 thread.Start();
@@ -1653,3 +1655,5 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
 #endregion
     }
 }
+
+#endif

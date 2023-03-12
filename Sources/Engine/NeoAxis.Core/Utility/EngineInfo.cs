@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Reflection;
 using System.Drawing;
@@ -35,7 +35,7 @@ namespace NeoAxis
 
 		public static string Copyright
 		{
-			get { return "Copyright (C) NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica."; }
+			get { return "Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica."; }
 		}
 
 		public static bool SpecialAppMode { get; set; } = false;
@@ -74,9 +74,9 @@ namespace NeoAxis
 			}
 		}
 
-		public static Bitmap GetSplashLogoImage( ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum style )
+		public static Bitmap GetSplashLogoImage( ProjectSettingsPage_General.EngineSplashScreenStyleEnum style )
 		{
-			if( style == ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.WhiteBackground )
+			if( style == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.WhiteBackground )
 				return Properties.Resources.PoweredBy_WhiteBackground;
 			else
 				return Properties.Resources.PoweredBy_BlackBackground;
@@ -85,11 +85,55 @@ namespace NeoAxis
 		public static string ReplaceNameWithoutVersion { get; set; } = "";
 		public static string ReplaceNameWithVersion { get; set; } = "";
 
-		public static bool ExtendedEdition;
+		//public static bool ExtendedEdition;
 
 		public static string StoreAddress
 		{
 			get { return "https://store.neoaxis.com"; }
+		}
+
+		/////////////////////////////////////////
+
+		public enum EngineModeEnum
+		{
+			Standalone,
+			CloudServer,
+			CloudClient,
+		}
+
+		/////////////////////////////////////////
+
+		public class CloudProjectInfoClass
+		{
+			public long ID { get; }
+			public string Name { get; }
+
+			internal CloudProjectInfoClass( long id, string name )
+			{
+				ID = id;
+				Name = name;
+			}
+		}
+
+		/////////////////////////////////////////
+
+		static EngineModeEnum engineMode;
+		static CloudProjectInfoClass cloudProjectInfo;
+
+		public static void SetEngineMode( EngineModeEnum engineMode, CloudProjectInfoClass cloudProjectInfo )
+		{
+			EngineInfo.engineMode = engineMode;
+			EngineInfo.cloudProjectInfo = cloudProjectInfo;
+		}
+
+		public static CloudProjectInfoClass CloudProjectInfo
+		{
+			get { return cloudProjectInfo; }
+		}
+
+		public static EngineModeEnum EngineMode
+		{
+			get { return engineMode; }
 		}
 	}
 }

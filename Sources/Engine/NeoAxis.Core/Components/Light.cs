@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -560,8 +560,8 @@ namespace NeoAxis
 				{
 					var item = new RenderingPipeline.RenderSceneData.LightItem();
 					item.Creator = this;
-					item.BoundingBox = SpaceBounds.CalculatedBoundingBox;
-					item.BoundingSphere = SpaceBounds.CalculatedBoundingSphere;
+					item.BoundingBox = SpaceBounds.boundingBox;
+					item.BoundingSphere = SpaceBounds.boundingSphere;
 
 					var tr = Transform.Value;
 					item.Position = tr.Position;
@@ -620,7 +620,7 @@ namespace NeoAxis
 				{
 					var context2 = context.ObjectInSpaceRenderingContext;
 
-					bool show = ( ParentScene.GetDisplayDevelopmentDataInThisApplication() && ParentScene.DisplayLights ) || context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this;
+					bool show = ( context.SceneDisplayDevelopmentDataInThisApplication && ParentScene.DisplayLights ) || context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this;
 					if( show )
 					{
 						if( context2.displayLightsCounter < context2.displayLightsMax )
@@ -629,16 +629,16 @@ namespace NeoAxis
 
 							ColorValue color;
 							if( context2.selectedObjects.Contains( this ) )
-								color = ProjectSettings.Get.General.SelectedColor;
+								color = ProjectSettings.Get.Colors.SelectedColor;
 							else if( context2.canSelectObjects.Contains( this ) )
-								color = ProjectSettings.Get.General.CanSelectColor;
+								color = ProjectSettings.Get.Colors.CanSelectColor;
 							else
-								color = ProjectSettings.Get.General.SceneShowLightColor;
+								color = ProjectSettings.Get.Colors.SceneShowLightColor;
 
 							var viewport = context.Owner;
 							if( viewport.Simple3DRenderer != null )
 							{
-								viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+								viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 								DebugDraw( viewport );
 							}
 						}
@@ -1394,7 +1394,7 @@ namespace NeoAxis
 			var scene = FindParent<Scene>();
 			if( scene != null )
 			{
-				if( EnabledInHierarchy )
+				if( EnabledInHierarchyAndIsInstance )
 					scene.CachedObjectsInSpaceToFastFindByRenderingPipeline.Add( this );
 				else
 					scene.CachedObjectsInSpaceToFastFindByRenderingPipeline.Remove( this );

@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -338,6 +338,7 @@ namespace NeoAxis
 				get { return itemByProperty; }
 			}
 
+#if !DEPLOY
 			//!!!!
 			public string Title
 			{
@@ -414,6 +415,7 @@ namespace NeoAxis
 				//}
 				return 0;
 			}
+#endif
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1308,6 +1310,7 @@ namespace NeoAxis
 			return representation;
 		}
 
+#if !DEPLOY
 		public FlowGraphNodeStyle GetResultStyle( FlowGraph ownerFlowGraph )
 		{
 			FlowGraphNodeStyle style = Style;
@@ -1321,6 +1324,7 @@ namespace NeoAxis
 
 			return style;
 		}
+#endif
 
 		protected override bool OnLoad( Metadata.LoadContext context, TextBlock block, out string error )
 		{

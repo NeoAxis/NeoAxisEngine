@@ -881,9 +881,12 @@ namespace Internal//NeoAxis
                     break;
                 }
 
-                // Check if we are already done
-                if ((startTrisCount - deletedTris) <= targetTrisCount)
-                    break;
+				// Check if we are already done
+				if( targetTrisCount >= 0 )//!!!!betauser
+				{
+					if( ( startTrisCount - deletedTris ) <= targetTrisCount )
+						break;
+				}
             }
         }
         #endregion
@@ -2086,70 +2089,143 @@ namespace Internal//NeoAxis
 		#endregion
 
 		#region Simplify Mesh
+
+		//!!!!betauser
 		/// <summary>
 		/// Simplifies the mesh to a desired quality.
 		/// </summary>
 		/// <param name="quality">The target quality (between 0 and 1).</param>
-		public void SimplifyMesh(float quality)
+		public void SimplifyMeshCarefully( double threshold )// float quality )
         {
-            quality = MathEx.Saturate(quality);
+			//quality = MathEx.Saturate( quality );
 
-            int deletedTris = 0;
-            ResizableArray<bool> deleted0 = new ResizableArray<bool>(20);
-            ResizableArray<bool> deleted1 = new ResizableArray<bool>(20);
-            var triangles = this.triangles.Data;
-            int triangleCount = this.triangles.Length;
-            int startTrisCount = triangleCount;
-            var vertices = this.vertices.Data;
+			int deletedTris = 0;
+			ResizableArray<bool> deleted0 = new ResizableArray<bool>( 20 );
+			ResizableArray<bool> deleted1 = new ResizableArray<bool>( 20 );
+			var triangles = this.triangles.Data;
+			int triangleCount = this.triangles.Length;
+			int startTrisCount = triangleCount;
+			var vertices = this.vertices.Data;
+			//int targetTrisCount = MathEx.RoundToInteger( triangleCount * quality );
+
+			for( int iteration = 0; iteration < 9999; iteration++ )
+			{
+				//if( ( startTrisCount - deletedTris ) <= targetTrisCount )
+				//	break;
+
+				// Update mesh constantly
+				UpdateMesh( iteration );
+				triangles = this.triangles.Data;
+				triangleCount = this.triangles.Length;
+				vertices = this.vertices.Data;
+				//// Update mesh once in a while
+				//if( ( iteration % 5 ) == 0 )
+				//{
+				//	UpdateMesh( iteration );
+				//	triangles = this.triangles.Data;
+				//	triangleCount = this.triangles.Length;
+				//	vertices = this.vertices.Data;
+				//}
+
+				// Clear dirty flag
+				for( int i = 0; i < triangleCount; i++ )
+				{
+					triangles[ i ].dirty = false;
+				}
+
+				// All triangles with edges below the threshold will be removed
+				//
+				// The following numbers works well for most models.
+				// If it does not, try to adjust the 3 parameters
+
+				//double threshold = 0.000000001;// * Math.Pow( iteration + 3, simplificationOptions.Agressiveness );
+
+				if( verbose )
+				{
+					Log.Info( "iteration {0} - triangles {1} threshold {2}", iteration, ( startTrisCount - deletedTris ), threshold );
+				}
+
+				// Remove vertices & mark deleted triangles
+				RemoveVertexPass( startTrisCount, -1/*targetTrisCount*/, threshold, deleted0, deleted1, ref deletedTris );
+
+				if( deletedTris <= 0 )
+					break;
+
+				deletedTris = 0;
+			}
+
+			CompactMesh();
+
+			if( verbose )
+			{
+				Log.Info( "Finished simplification with triangle count {0}", this.triangles.Length );
+			}
+		}
+
+		/// <summary>
+		/// Simplifies the mesh to a desired quality.
+		/// </summary>
+		/// <param name="quality">The target quality (between 0 and 1).</param>
+		public void SimplifyMeshDefault( float quality )
+		{
+			quality = MathEx.Saturate( quality );
+
+			int deletedTris = 0;
+			ResizableArray<bool> deleted0 = new ResizableArray<bool>( 20 );
+			ResizableArray<bool> deleted1 = new ResizableArray<bool>( 20 );
+			var triangles = this.triangles.Data;
+			int triangleCount = this.triangles.Length;
+			int startTrisCount = triangleCount;
+			var vertices = this.vertices.Data;
 			int targetTrisCount = MathEx.RoundToInteger( triangleCount * quality );
 
-            for (int iteration = 0; iteration < simplificationOptions.MaxIterationCount; iteration++)
-            {
-                if ((startTrisCount - deletedTris) <= targetTrisCount)
-                    break;
+			for( int iteration = 0; iteration < simplificationOptions.MaxIterationCount; iteration++ )
+			{
+				if( ( startTrisCount - deletedTris ) <= targetTrisCount )
+					break;
 
-                // Update mesh once in a while
-                if ((iteration % 5) == 0)
-                {
-                    UpdateMesh(iteration);
-                    triangles = this.triangles.Data;
-                    triangleCount = this.triangles.Length;
-                    vertices = this.vertices.Data;
-                }
+				// Update mesh once in a while
+				if( ( iteration % 5 ) == 0 )
+				{
+					UpdateMesh( iteration );
+					triangles = this.triangles.Data;
+					triangleCount = this.triangles.Length;
+					vertices = this.vertices.Data;
+				}
 
-                // Clear dirty flag
-                for (int i = 0; i < triangleCount; i++)
-                {
-                    triangles[i].dirty = false;
-                }
+				// Clear dirty flag
+				for( int i = 0; i < triangleCount; i++ )
+				{
+					triangles[ i ].dirty = false;
+				}
 
-                // All triangles with edges below the threshold will be removed
-                //
-                // The following numbers works well for most models.
-                // If it does not, try to adjust the 3 parameters
-                double threshold = 0.000000001 * Math.Pow(iteration + 3, simplificationOptions.Agressiveness);
+				// All triangles with edges below the threshold will be removed
+				//
+				// The following numbers works well for most models.
+				// If it does not, try to adjust the 3 parameters
+				double threshold = 0.000000001 * Math.Pow( iteration + 3, simplificationOptions.Agressiveness );
 
-                if (verbose)
-                {
-                    Log.Info("iteration {0} - triangles {1} threshold {2}", iteration, (startTrisCount - deletedTris), threshold);
-                }
+				if( verbose )
+				{
+					Log.Info( "iteration {0} - triangles {1} threshold {2}", iteration, ( startTrisCount - deletedTris ), threshold );
+				}
 
-                // Remove vertices & mark deleted triangles
-                RemoveVertexPass(startTrisCount, targetTrisCount, threshold, deleted0, deleted1, ref deletedTris);
-            }
+				// Remove vertices & mark deleted triangles
+				RemoveVertexPass( startTrisCount, targetTrisCount, threshold, deleted0, deleted1, ref deletedTris );
+			}
 
-            CompactMesh();
+			CompactMesh();
 
-            if (verbose)
-            {
-				Log.Info( "Finished simplification with triangle count {0}", this.triangles.Length);
-            }
-        }
+			if( verbose )
+			{
+				Log.Info( "Finished simplification with triangle count {0}", this.triangles.Length );
+			}
+		}
 
-        /// <summary>
-        /// Simplifies the mesh without losing too much quality.
-        /// </summary>
-        public void SimplifyMeshLossless(double threshold)//!!!!betauser
+		/// <summary>
+		/// Simplifies the mesh without losing too much quality.
+		/// </summary>
+		public void SimplifyMeshLossless(double threshold)//!!!!betauser
         {
             int deletedTris = 0;
             ResizableArray<bool> deleted0 = new ResizableArray<bool>(0);

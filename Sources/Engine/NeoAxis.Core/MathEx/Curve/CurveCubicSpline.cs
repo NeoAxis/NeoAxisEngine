@@ -1,6 +1,7 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace NeoAxis
@@ -10,6 +11,7 @@ namespace NeoAxis
 	/// </summary>
 	public class CurveCubicSpline : CurveSpline
 	{
+		[MethodImpl( (MethodImplOptions)512 )]
 		public unsafe override Vector3 CalculateValueByTime( double time )
 		{
 			if( points.Count == 1 )
@@ -29,6 +31,7 @@ namespace NeoAxis
 			return v;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		unsafe void Basis( int index, double t, double* bvals )
 		{
 			double s = ( t - GetTimeForIndex( index ) ) / ( GetTimeForIndex( index + 1 ) - GetTimeForIndex( index ) );

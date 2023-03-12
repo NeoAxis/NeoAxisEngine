@@ -1,8 +1,9 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -267,6 +268,10 @@ namespace NeoAxis
 
 		public class AnimationStateClass
 		{
+			public List<AnimationItem> Animations = new List<AnimationItem>();//public AnimationItem[] Animations;
+
+			//
+
 			public class AnimationItem
 			{
 				public Animation Animation;
@@ -278,7 +283,6 @@ namespace NeoAxis
 				public double? CurrentTime;
 				public float? CurrentFactor;
 			}
-			public List<AnimationItem> Animations = new List<AnimationItem>();//public AnimationItem[] Animations;
 
 			public delegate void AdditionalBoneTransformsUpdateDelegate( MeshInSpaceAnimationController controller, AnimationStateClass animationState, Skeleton skeleton, SkeletonAnimationTrack.CalculateBoneTransformsItem[] result, ref bool updateTwice, int updateIteration );
 			public AdditionalBoneTransformsUpdateDelegate AdditionalBoneTransformsUpdate;
@@ -292,7 +296,7 @@ namespace NeoAxis
 
 			if( ParentMeshInSpace != null )
 			{
-				if( EnabledInHierarchy )
+				if( EnabledInHierarchyAndIsInstance )
 				{
 					ParentMeshInSpace.GetRenderSceneDataBefore += ParentMeshInSpace_GetRenderSceneDataBefore;
 					ParentMeshInSpace.GetRenderSceneDataAddToFrameData += ParentMeshInSpace_GetRenderSceneDataAddToFrameData;
@@ -309,12 +313,13 @@ namespace NeoAxis
 			}
 
 			//touch PlayAnimation
-			if( EnabledInHierarchy )
+			if( EnabledInHierarchyAndIsInstance )
 			{
 				var a = PlayAnimation.Value;
 			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		void ParentMeshInSpace_GetRenderSceneDataBefore( ObjectInSpace sender, ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
 			//check need modifiable mesh
@@ -328,7 +333,7 @@ namespace NeoAxis
 				needRecreateModifiableMesh = false;
 			}
 
-			//recreate
+			//recreate and update
 			if( needModifiableMesh )
 			{
 				if( ParentMeshInSpace.ModifiableMesh == null )
@@ -349,6 +354,10 @@ namespace NeoAxis
 
 					needRecreateModifiableMesh = false;
 				}
+
+				//update data
+				if( ParentMeshInSpace.ModifiableMeshCreatedByObject == this )
+					UpdateModifiableMesh( context );
 			}
 			else
 			{
@@ -358,10 +367,6 @@ namespace NeoAxis
 					needRecreateModifiableMesh = false;
 				}
 			}
-
-			//update data
-			if( ParentMeshInSpace.ModifiableMeshCreatedByObject == this )
-				UpdateModifiableMesh( context );
 
 			if( DisplaySkeleton )
 				RenderSkeleton( context.Owner );
@@ -445,6 +450,7 @@ namespace NeoAxis
 			return skeleton;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		private void ParentMeshInSpace_GetRenderSceneDataAddToFrameData( MeshInSpace sender, ViewportRenderingContext context, GetRenderSceneDataMode mode, ref RenderingPipeline.RenderSceneData.MeshItem item )
 		{
 			if( !CalculateOnCPU )
@@ -554,7 +560,7 @@ namespace NeoAxis
 			if( skeletonArrows != null )
 			{
 				var color = new ColorValue( 0, 0.5, 1, 0.7 ); //ToDo : Вынести в другое место.
-				viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+				viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 
 				foreach( var arrow in skeletonArrows )
 					viewport.Simple3DRenderer.AddArrow( transformMatrix * arrow.Start, transformMatrix * arrow.End );
@@ -620,6 +626,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		void UpdateAnimationTime()
 		{
 			double t = EngineApp.EngineTime;
@@ -872,6 +879,7 @@ namespace NeoAxis
 		//		return Skeleton.SkinningModeEnum.Linear;
 		//}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		protected virtual void CalculateCPU( Skeleton skeleton, Mesh originalMesh, Mesh modifiableMesh )
 		{
 			bool dualQuaternion = false;// GetSkinningMode( skeleton ) == Skeleton.SkinningModeEnum.DualQuaternion;
@@ -979,6 +987,7 @@ namespace NeoAxis
 			public float CurrentFactor;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		void Update( Skeleton skeleton )
 		{
 			var time = EngineApp.EngineTime;
@@ -1018,6 +1027,7 @@ namespace NeoAxis
 					if( animations.Count != 0 )
 					{
 
+						//!!!!
 						//update skeleton twice because during calculation the data of bone transforms taken from previous update. it is used in Character component
 						var updateTwice = false;
 
@@ -1174,6 +1184,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		ref Matrix4F GetBoneGlobalTransformRecursive( Skeleton skeleton, SkeletonBone bone )
 		{
 			int boneIndex = bone.GetCachedBoneIndex( skeleton );
@@ -1188,6 +1199,7 @@ namespace NeoAxis
 			return ref boneGlobalTransforms[ boneIndex ].Value;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		IList<Line3F> GetSkeletonArrows( Skeleton skeleton )
 		{
 			var result = new List<Line3F>( bones.Length );
@@ -1215,6 +1227,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void TransformVertices(
 			bool dualQuaternion,
 			Vector3F[] position, Vector3F[] normal, Vector4F[] tangent, Vector4I[] blendIndex, Vector4F[] blendWeight,
@@ -1241,6 +1254,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void TransformVertices(
 			bool dualQuaternion,
 			Vector3F[] position, Vector3F[] normal, Vector4I[] blendIndex, Vector4F[] blendWeight,
@@ -1267,6 +1281,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void TransformVertices(
 			bool dualQuaternion,
 			Vector3F[] position, Vector4I[] blendIndex, Vector4F[] blendWeight,
@@ -1285,6 +1300,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		Vector3F TransformVertexByLinearBlendingSkinning( Vector3F position, Vector4I blendIndex, Vector4F blendWeight )
 		{
 			Vector4F position4 = new Vector4F( position, 1.0f );
@@ -1294,6 +1310,7 @@ namespace NeoAxis
 				return ( matrix * position4 ).ToVector3F();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		Vector3F TransformVertexByLinearBlendingSkinning( Vector3F position, Vector3F normal, Vector4F tangent, Vector4I blendIndex, Vector4F blendWeight, out Vector3F newNormal, out Vector4F newTangent )
 		{
 			Vector4F position4 = new Vector4F( position, 1.0f );
@@ -1349,6 +1366,7 @@ namespace NeoAxis
 		//}
 		//Warning : Ogre HLSL has W component of Quaternion in the first (X) component of vector.
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		Vector3F CalculateBlendNormal( Vector3F vIn, QuaternionF blendQ )
 		{
 			Vector3F blendDQ_0_yzw = new Vector3F( blendQ.X, blendQ.Y, blendQ.Z );
@@ -1374,23 +1392,25 @@ namespace NeoAxis
 		//	vOut = float4( blendPosition, 1.0 );
 		//}
 		//
-		//Warning : Ogre HLSL has W component of Quaternion in the first (X) component of vector.
-		// Also described in article: http://dev.theomader.com/dual-quaternion-skinning/
-		Vector3F CalculateBlendPosition( Vector3F position, DualQuaternionF blendDQ )
-		{
-			Vector3F blendDQ_0_yzw = new Vector3F( blendDQ.Q0.X, blendDQ.Q0.Y, blendDQ.Q0.Z );
-			Vector3F blendDQ_1_yzw = new Vector3F( blendDQ.Qe.X, blendDQ.Qe.Y, blendDQ.Qe.Z );
-			float blendDQ_0_x = blendDQ.Q0.W;
-			float blendDQ_1_x = blendDQ.Qe.W;
 
-			var blendPosition = position + 2.0f * Vector3F.Cross( blendDQ_0_yzw, Vector3F.Cross( blendDQ_0_yzw, position ) + blendDQ_0_x * position );
-			var trans = 2.0f * ( blendDQ_0_x * blendDQ_1_yzw - blendDQ_1_x * blendDQ_0_yzw + Vector3F.Cross( blendDQ_0_yzw, blendDQ_1_yzw ) );
-			blendPosition += trans;
-			return blendPosition;
-		}
+		////Warning : Ogre HLSL has W component of Quaternion in the first (X) component of vector.
+		//// Also described in article: http://dev.theomader.com/dual-quaternion-skinning/
+		//Vector3F CalculateBlendPosition( Vector3F position, DualQuaternionF blendDQ )
+		//{
+		//	Vector3F blendDQ_0_yzw = new Vector3F( blendDQ.Q0.X, blendDQ.Q0.Y, blendDQ.Q0.Z );
+		//	Vector3F blendDQ_1_yzw = new Vector3F( blendDQ.Qe.X, blendDQ.Qe.Y, blendDQ.Qe.Z );
+		//	float blendDQ_0_x = blendDQ.Q0.W;
+		//	float blendDQ_1_x = blendDQ.Qe.W;
+
+		//	var blendPosition = position + 2.0f * Vector3F.Cross( blendDQ_0_yzw, Vector3F.Cross( blendDQ_0_yzw, position ) + blendDQ_0_x * position );
+		//	var trans = 2.0f * ( blendDQ_0_x * blendDQ_1_yzw - blendDQ_1_x * blendDQ_0_yzw + Vector3F.Cross( blendDQ_0_yzw, blendDQ_1_yzw ) );
+		//	blendPosition += trans;
+		//	return blendPosition;
+		//}
 
 		/////////////////////////////////////////
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static void ToMatrix4( ref SkeletonAnimationTrack.CalculateBoneTransformsItem keyframe, out Matrix4F result )
 		{
 			keyframe.Rotation.ToMatrix3( out var rot );
@@ -1400,63 +1420,65 @@ namespace NeoAxis
 			//return new Matrix4F( keyframe.Rotation.ToMatrix3() * Matrix3F.FromScale( keyframe.Scale ), keyframe.Position );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static float Dot( ref QuaternionF q1, ref QuaternionF q2 )
 		{
 			return q1.W * q2.W + q1.X * q2.X + q1.Y * q2.Y + q1.Z * q2.Z;
 		}
 
-		struct DualQuaternionF
-		{
-			public QuaternionF Q0, Qe;
+		//struct DualQuaternionF
+		//{
+		//	public QuaternionF Q0, Qe;
 
-			public DualQuaternionF( QuaternionF q, Vector3F t )
-			{
-				float w = -0.5f * ( t.X * q.X + t.Y * q.Y + t.Z * q.Z );
-				float x = 0.5f * ( t.X * q.W + t.Y * q.Z - t.Z * q.Y );
-				float y = 0.5f * ( -t.X * q.Z + t.Y * q.W + t.Z * q.X );
-				float z = 0.5f * ( t.X * q.Y - t.Y * q.X + t.Z * q.W );
+		//	public DualQuaternionF( QuaternionF q, Vector3F t )
+		//	{
+		//		float w = -0.5f * ( t.X * q.X + t.Y * q.Y + t.Z * q.Z );
+		//		float x = 0.5f * ( t.X * q.W + t.Y * q.Z - t.Z * q.Y );
+		//		float y = 0.5f * ( -t.X * q.Z + t.Y * q.W + t.Z * q.X );
+		//		float z = 0.5f * ( t.X * q.Y - t.Y * q.X + t.Z * q.W );
 
-				Q0 = q;
-				Qe = new QuaternionF( x, y, z, w );
-			}
+		//		Q0 = q;
+		//		Qe = new QuaternionF( x, y, z, w );
+		//	}
 
-			public static DualQuaternionF operator +( DualQuaternionF dq1, DualQuaternionF dq2 )
-			{
-				return new DualQuaternionF
-				{
-					Q0 = dq1.Q0 + dq2.Q0,
-					Qe = dq1.Qe + dq2.Qe
-				};
-			}
+		//	public static DualQuaternionF operator +( DualQuaternionF dq1, DualQuaternionF dq2 )
+		//	{
+		//		return new DualQuaternionF
+		//		{
+		//			Q0 = dq1.Q0 + dq2.Q0,
+		//			Qe = dq1.Qe + dq2.Qe
+		//		};
+		//	}
 
-			public static DualQuaternionF operator *( DualQuaternionF dq, float scalar )
-			{
-				return new DualQuaternionF
-				{
-					Q0 = dq.Q0 * scalar,
-					Qe = dq.Qe * scalar
-				};
-			}
+		//	public static DualQuaternionF operator *( DualQuaternionF dq, float scalar )
+		//	{
+		//		return new DualQuaternionF
+		//		{
+		//			Q0 = dq.Q0 * scalar,
+		//			Qe = dq.Qe * scalar
+		//		};
+		//	}
 
-			public void Normalize()
-			{
-				float lengthInverse = 1 / Q0.Length();
-				Q0 *= lengthInverse;
-				Qe *= lengthInverse;
-			}
+		//	public void Normalize()
+		//	{
+		//		float lengthInverse = 1 / Q0.Length();
+		//		Q0 *= lengthInverse;
+		//		Qe *= lengthInverse;
+		//	}
 
-			////Перед вызовом сделать Normalize()
-			//public void ToRotationTranslation( out Quaternion rot, out Vector3 translation )
-			//{
-			//	rot = q0;
-			//	translation = new Vector3(
-			//		2.0 * ( -qe.W * q0.X + qe.X * q0.W - qe.Y * q0.Z + qe.Z * q0.Y ),
-			//		2.0 * ( -qe.W * q0.Y + qe.X * q0.Z + qe.Y * q0.W - qe.Z * q0.X ),
-			//		2.0 * ( -qe.W * q0.Z - qe.X * q0.Y + qe.Y * q0.X + qe.Z * q0.W )
-			//	);
-			//}
-		}
+		//	////Перед вызовом сделать Normalize()
+		//	//public void ToRotationTranslation( out Quaternion rot, out Vector3 translation )
+		//	//{
+		//	//	rot = q0;
+		//	//	translation = new Vector3(
+		//	//		2.0 * ( -qe.W * q0.X + qe.X * q0.W - qe.Y * q0.Z + qe.Z * q0.Y ),
+		//	//		2.0 * ( -qe.W * q0.Y + qe.X * q0.Z + qe.Y * q0.W - qe.Z * q0.X ),
+		//	//		2.0 * ( -qe.W * q0.Z - qe.X * q0.Y + qe.Y * q0.X + qe.Z * q0.W )
+		//	//	);
+		//	//}
+		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		bool GetVertexTransformByLinearBlendingSkinning( Vector4I blendIndex, Vector4F blendWeight, out Matrix4F matrix )
 		{
 			int index = blendIndex.X;
@@ -1554,6 +1576,7 @@ namespace NeoAxis
 			get { return currentEngineTime; }
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int GetBoneIndex( string name )
 		{
 			if( bones != null )
@@ -1565,6 +1588,7 @@ namespace NeoAxis
 			return -1;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int GetBoneIndex( SkeletonBone bone )
 		{
 			if( bones != null )
@@ -1576,6 +1600,7 @@ namespace NeoAxis
 			return -1;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool GetBoneGlobalTransform( int boneIndex, ref Matrix4F value )
 		{
 			if( boneGlobalTransforms != null && boneIndex < boneGlobalTransforms.Length )
@@ -1588,25 +1613,40 @@ namespace NeoAxis
 			return false;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		static AnimationStateClass.AnimationItem FindItem( AnimationStateClass state, Animation animation )
+		{
+			for( int n = 0; n < state.Animations.Count; n++ )
+			{
+				var item = state.Animations[ n ];
+				if( item.Animation == animation )
+					return item;
+			}
+			return null;
+
+			//return state.Animations.FirstOrDefault( i => i.Animation == animation );
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
 		public void SetAnimationState( AnimationStateClass newState, bool allowInterpolation )
 		{
-			//!!!!slowly
-
-			//склеить. добавить новые, сохранить старые
+			//!!!!GC because SetAnimationState is called each update?
 
 			var oldValue = animationState;
-
 			animationState = newState;
 
 			if( animationState != null && oldValue != null )
 			{
-				foreach( var state in animationState.Animations )
+				for( int nState = 0; nState < animationState.Animations.Count; nState++ )
 				{
+					var state = animationState.Animations[ nState ];
+
 					//copy CurrentTime from old to new if it not initialized
 					if( state.CurrentTime == null || state.CurrentFactor == null )
 					{
 						//find state in old list of animations with same animation of the 'state'
-						var oldState = oldValue.Animations.FirstOrDefault( i => i.Animation == state.Animation );
+						var oldState = FindItem( oldValue, state.Animation );
+
 						if( oldState != null && oldState.CurrentTime != null )
 							state.CurrentTime = oldState.CurrentTime;
 						if( oldState != null && oldState.CurrentFactor != null )
@@ -1617,9 +1657,11 @@ namespace NeoAxis
 				//copy from old
 				if( allowInterpolation )
 				{
-					foreach( var oldState in oldValue.Animations )
+					for( int nOldState = 0; nOldState < oldValue.Animations.Count; nOldState++ )
 					{
-						var state = animationState.Animations.FirstOrDefault( i => i.Animation == oldState.Animation );
+						var oldState = oldValue.Animations[ nOldState ];
+
+						var state = FindItem( animationState, oldState.Animation );
 						if( state == null )
 						{
 							oldState.InterpolationFading = true;
@@ -1629,6 +1671,40 @@ namespace NeoAxis
 						}
 					}
 				}
+
+
+
+				////slowly
+
+				//foreach( var state in animationState.Animations )
+				//{
+				//	//copy CurrentTime from old to new if it not initialized
+				//	if( state.CurrentTime == null || state.CurrentFactor == null )
+				//	{
+				//		//find state in old list of animations with same animation of the 'state'
+				//		var oldState = oldValue.Animations.FirstOrDefault( i => i.Animation == state.Animation );
+				//		if( oldState != null && oldState.CurrentTime != null )
+				//			state.CurrentTime = oldState.CurrentTime;
+				//		if( oldState != null && oldState.CurrentFactor != null )
+				//			state.CurrentFactor = oldState.CurrentFactor;
+				//	}
+				//}
+
+				////copy from old
+				//if( allowInterpolation )
+				//{
+				//	foreach( var oldState in oldValue.Animations )
+				//	{
+				//		var state = animationState.Animations.FirstOrDefault( i => i.Animation == oldState.Animation );
+				//		if( state == null )
+				//		{
+				//			oldState.InterpolationFading = true;
+				//			oldState.Factor = 0;
+
+				//			animationState.Animations.Add( oldState );
+				//		}
+				//	}
+				//}
 			}
 		}
 

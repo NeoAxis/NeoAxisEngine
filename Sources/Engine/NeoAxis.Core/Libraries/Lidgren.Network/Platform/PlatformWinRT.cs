@@ -15,7 +15,7 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	public class NetAddress
 	{

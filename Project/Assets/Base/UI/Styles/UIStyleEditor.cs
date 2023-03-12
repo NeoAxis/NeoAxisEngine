@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using NeoAxis;
@@ -12,7 +12,7 @@ namespace Project
 			get
 			{
 #if !DEPLOY
-				if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+				if( EngineApp.IsEditor )
 					return NeoAxis.Editor.EditorAPI.DarkTheme;
 #endif
 				return true;

@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -10,9 +10,9 @@ using System.Windows;
 [assembly: AssemblyTitle( "NeoAxis.Core.Editor" )]
 [assembly: AssemblyDescription( "" )]
 [assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "NeoAxis, Inc." )]
+[assembly: AssemblyCompany( "NeoAxis Group Ltd." )]
 [assembly: AssemblyProduct( "NeoAxis.Core.Editor" )]
-[assembly: AssemblyCopyright( "Copyright (C) NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica." )]
+[assembly: AssemblyCopyright( "Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica." )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
@@ -39,5 +39,5 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion( "2022.1.2.0" )]
-[assembly: AssemblyFileVersion( "2022.1.2.0" )]
+[assembly: AssemblyVersion( "2023.1.0.0" )]
+[assembly: AssemblyFileVersion( "2023.1.0.0" )]

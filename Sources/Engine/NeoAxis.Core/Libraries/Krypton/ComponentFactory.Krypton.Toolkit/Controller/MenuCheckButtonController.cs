@@ -1,4 +1,5 @@
-﻿// *****************************************************************************
+﻿#if !DEPLOY
+// *****************************************************************************
 // 
 //  © Component Factory Pty Ltd 2012. All rights reserved.
 //	The software and associated documentation supplied hereunder are the 
@@ -397,7 +398,7 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
             {
                 _menuCheckButton.ViewDrawButton.ElementState = PaletteState.Pressed;
                 PerformNeedPaint();
-                Application.DoEvents();
+                NeoAxis.Editor.EditorAPI.ApplicationDoEvents( true );//Application.DoEvents();
             }
 
             // Should we automatically try and close the context menu stack
@@ -494,3 +495,5 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         #endregion
     }
 }
+
+#endif

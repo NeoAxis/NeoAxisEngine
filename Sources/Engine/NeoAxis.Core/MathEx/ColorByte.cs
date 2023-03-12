@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 
 // MIT License - Copyright (C) The Mono.Xna Team
 // This file is subject to the terms and conditions defined in
@@ -8,6 +8,7 @@ using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -31,6 +32,7 @@ namespace NeoAxis
 		/// The value is a 32-bit unsigned integer, with R in the least significant octet.
 		/// </summary>
 		/// <param name="packedValue">The packed value.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[CLSCompliant( false )]
 		public ColorByte( uint packedValue )
 		{
@@ -41,6 +43,7 @@ namespace NeoAxis
 		/// Constructs an RGBA color from the XYZW unit length components of a vector.
 		/// </summary>
 		/// <param name="color">A <see cref="Vector4"/> representing color.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public ColorByte( Vector4 color )
 			: this( (int)( color.X * 255 ), (int)( color.Y * 255 ), (int)( color.Z * 255 ), (int)( color.W * 255 ) )
@@ -51,6 +54,7 @@ namespace NeoAxis
 		/// Constructs an RGBA color from the XYZ unit length components of a vector. Alpha value will be opaque.
 		/// </summary>
 		/// <param name="color">A <see cref="Vector3"/> representing color.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public ColorByte( Vector3 color )
 			: this( (int)( color.X * 255 ), (int)( color.Y * 255 ), (int)( color.Z * 255 ) )
@@ -61,6 +65,7 @@ namespace NeoAxis
 		/// Constructs an RGBA color from the XYZW unit length components of a vector.
 		/// </summary>
 		/// <param name="color">A <see cref="Vector4"/> representing color.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public ColorByte( Vector4F color )
 			: this( (int)( color.X * 255 ), (int)( color.Y * 255 ), (int)( color.Z * 255 ), (int)( color.W * 255 ) )
@@ -71,6 +76,7 @@ namespace NeoAxis
 		/// Constructs an RGBA color from the XYZ unit length components of a vector. Alpha value will be opaque.
 		/// </summary>
 		/// <param name="color">A <see cref="Vector3"/> representing color.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public ColorByte( Vector3F color )
 			: this( (int)( color.X * 255 ), (int)( color.Y * 255 ), (int)( color.Z * 255 ) )
@@ -124,6 +130,7 @@ namespace NeoAxis
 		/// <param name="g">Green component value from 0.0f to 1.0f.</param>
 		/// <param name="b">Blue component value from 0.0f to 1.0f.</param>
 		/// <param name="alpha">Alpha component value from 0.0f to 1.0f.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ColorByte( float r, float g, float b, float alpha = 1 )
 			: this( (int)( r * 255 ), (int)( g * 255 ), (int)( b * 255 ), (int)( alpha * 255 ) )
 		{
@@ -160,6 +167,7 @@ namespace NeoAxis
 		/// <param name="green">Green component value from 0 to 255.</param>
 		/// <param name="blue">Blue component value from 0 to 255.</param>
 		/// <param name="alpha">Alpha component value from 0 to 255.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ColorByte( int red, int green, int blue, int alpha = 255 )
 		{
 			if( ( ( red | green | blue | alpha ) & 0xFFFFFF00 ) != 0 )
@@ -187,22 +195,26 @@ namespace NeoAxis
 		/// <param name="green"></param>
 		/// <param name="blue"></param>
 		/// <param name="alpha"></param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ColorByte( byte red, byte green, byte blue, byte alpha = 255 )
 		{
 			_packedValue = ( (uint)alpha << 24 ) | ( (uint)blue << 16 ) | ( (uint)green << 8 ) | ( red );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public ColorByte( ColorValue source )
 			: this( (int)( source.Red * 255 ), (int)( source.Green * 255 ), (int)( source.Blue * 255 ), (int)( source.Alpha * 255 ) )
 		{
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ColorByte( ref ColorValue source )
 			: this( (int)( source.Red * 255 ), (int)( source.Green * 255 ), (int)( source.Blue * 255 ), (int)( source.Alpha * 255 ) )
 		{
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public ColorByte( Color source )
 			: this( source.R, source.G, source.B, source.A )
@@ -214,6 +226,7 @@ namespace NeoAxis
 		/// </summary>
 		public byte Blue
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				unchecked
@@ -221,6 +234,7 @@ namespace NeoAxis
 					return (byte)( this._packedValue >> 16 );
 				}
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set
 			{
 				this._packedValue = ( this._packedValue & 0xff00ffff ) | ( (uint)value << 16 );
@@ -232,6 +246,7 @@ namespace NeoAxis
 		/// </summary>
 		public byte Green
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				unchecked
@@ -239,6 +254,7 @@ namespace NeoAxis
 					return (byte)( this._packedValue >> 8 );
 				}
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set
 			{
 				this._packedValue = ( this._packedValue & 0xffff00ff ) | ( (uint)value << 8 );
@@ -250,6 +266,7 @@ namespace NeoAxis
 		/// </summary>
 		public byte Red
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				unchecked
@@ -257,6 +274,7 @@ namespace NeoAxis
 					return (byte)this._packedValue;
 				}
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set
 			{
 				this._packedValue = ( this._packedValue & 0xffffff00 ) | value;
@@ -268,6 +286,7 @@ namespace NeoAxis
 		/// </summary>
 		public byte Alpha
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				unchecked
@@ -275,6 +294,7 @@ namespace NeoAxis
 					return (byte)( this._packedValue >> 24 );
 				}
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set
 			{
 				this._packedValue = ( this._packedValue & 0x00ffffff ) | ( (uint)value << 24 );
@@ -287,6 +307,7 @@ namespace NeoAxis
 		/// <param name="a"><see cref="ColorByte"/> instance on the left of the equal sign.</param>
 		/// <param name="b"><see cref="ColorByte"/> instance on the right of the equal sign.</param>
 		/// <returns><c>true</c> if the instances are equal; <c>false</c> otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( ColorByte a, ColorByte b )
 		{
 			return ( a._packedValue == b._packedValue );
@@ -298,6 +319,7 @@ namespace NeoAxis
 		/// <param name="a"><see cref="ColorByte"/> instance on the left of the not equal sign.</param>
 		/// <param name="b"><see cref="ColorByte"/> instance on the right of the not equal sign.</param>
 		/// <returns><c>true</c> if the instances are not equal; <c>false</c> otherwise.</returns>	
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( ColorByte a, ColorByte b )
 		{
 			return ( a._packedValue != b._packedValue );
@@ -307,6 +329,7 @@ namespace NeoAxis
 		/// Gets the hash code of this <see cref="ColorByte"/>.
 		/// </summary>
 		/// <returns>Hash code of this <see cref="ColorByte"/>.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return this._packedValue.GetHashCode();
@@ -317,6 +340,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="obj">The <see cref="ColorByte"/> to compare.</param>
 		/// <returns><c>true</c> if the instances are equal; <c>false</c> otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( ( obj is ColorByte ) && this.Equals( (ColorByte)obj ) );
@@ -329,6 +353,7 @@ namespace NeoAxis
 		/// <param name="value2">Destination <see cref="ColorByte"/>.</param>
 		/// <param name="amount">Interpolation factor.</param>
 		/// <returns>Interpolated <see cref="ColorByte"/>.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static ColorByte Lerp( ColorByte value1, ColorByte value2, double amount )
 		{
 			amount = MathEx.Clamp( amount, 0, 1 );
@@ -415,6 +440,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="other">The <see cref="ColorPacked"/> to compare.</param>
 		/// <returns><c>true</c> if the instances are equal; <c>false</c> otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( ColorByte other )
 		{
 			return this.PackedValue == other.PackedValue;
@@ -455,6 +481,7 @@ namespace NeoAxis
 
 		public unsafe int this[ int index ]
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				if( index < 0 || index > 3 )
@@ -468,6 +495,7 @@ namespace NeoAxis
 				}
 				return 0;
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set
 			{
 				if( index < 0 || index > 3 )
@@ -514,53 +542,62 @@ namespace NeoAxis
 		//}
 
 		[AutoConvertType]
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector4 ToVector4()
 		{
 			return new Vector4( (double)Red / 255.0f, (double)Green / 255.0f, (double)Blue / 255.0f, (double)Alpha / 255.0f );
 		}
 
 		[AutoConvertType]
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector3 ToVector3()
 		{
 			return new Vector3( (float)Red / 255.0f, (float)Green / 255.0f, (float)Blue / 255.0f );
 		}
 
 		[AutoConvertType]
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector4F ToVector4F()
 		{
 			return new Vector4F( (float)Red / 255.0f, (float)Green / 255.0f, (float)Blue / 255.0f, (float)Alpha / 255.0f );
 		}
 
 		[AutoConvertType]
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector3F ToVector3F()
 		{
 			return new Vector3F( (float)Red / 255.0f, (float)Green / 255.0f, (float)Blue / 255.0f );
 		}
 
 		[AutoConvertType]
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ColorValue ToColorValue()
 		{
 			return new ColorValue( (float)Red / 255.0f, (float)Green / 255.0f, (float)Blue / 255.0f, (float)Alpha / 255.0f );
 		}
 
 		[AutoConvertType]
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ColorValuePowered ToColorValuePowered()
 		{
 			return new ColorValuePowered( (float)Red / 255.0f, (float)Green / 255.0f, (float)Blue / 255.0f, (float)Alpha / 255.0f );
 		}
 
 		[AutoConvertType]
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Color ToColor()
 		{
 			return Color.FromArgb( Alpha, Red, Green, Blue );
 		}
 
 		//[ShaderGenerationFunction( "{pick1} ? {v1} : {v2}" )]
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static ColorByte Select( ColorByte v1, ColorByte v2, bool pick1 )
 		{
 			return pick1 ? v1 : v2;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static ColorByte FromABGR( uint value )
 		{
 			//!!!!check
@@ -573,6 +610,7 @@ namespace NeoAxis
 			//return new ColorPacked( r, g, b, a );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static ColorByte FromARGB( uint value )
 		{
 			//!!!!check
@@ -584,6 +622,7 @@ namespace NeoAxis
 			return new ColorByte( r, g, b, a );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public uint ToABGR()
 		{
 			//!!!!check
@@ -591,6 +630,7 @@ namespace NeoAxis
 			return _packedValue;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public uint ToARGB()
 		{
 			//!!!!check

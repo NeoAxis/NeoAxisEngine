@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using NeoAxis;
@@ -77,7 +77,7 @@ namespace Project
 					if( control.Image.Value != null )
 					{
 						var image = control.Image.Value;
-						if( control.ReadOnly && control.ImageDisabled.Value != null )
+						if( control.ReadOnlyInHierarchy && control.ImageDisabled.Value != null )
 							image = control.ImageDisabled.Value;
 
 						var imageRect = rect;
@@ -199,6 +199,20 @@ namespace Project
 
 		/////////////////////////////////////////
 
+		protected override void OnRenderListItem( UIList control, CanvasRenderer renderer, int itemIndex, Rectangle itemRectangle, FontComponent font, double fontSize )
+		{
+			var item = control.Items[ itemIndex ];
+
+			if( itemIndex == control.SelectedIndex )
+			{
+				var color2 = new ColorValue( 0.1, 0.1, 0.8 );
+				renderer.AddQuad( itemRectangle, color2 );
+			}
+
+			var positionX = itemRectangle.Left + control.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 2, 0 ) ).X;
+			renderer.AddText( font, fontSize, item, new Vector2( positionX, itemRectangle.GetCenter().Y ), EHorizontalAlignment.Left, EVerticalAlignment.Center, new ColorValue( 1, 1, 1 ) );
+		}
+
 		protected override void OnRenderList( UIList control, CanvasRenderer renderer )
 		{
 			var rect = control.GetScreenRectangle();
@@ -223,6 +237,18 @@ namespace Project
 			var totalItemsHeight = itemSize * control.Items.Count;
 			var scrollBar = control.GetScroll();
 
+			var itemsPositionY = rect2.Top;
+			if( scrollBar != null && scrollBar.VisibleInHierarchy && scrollBar.EnabledInHierarchy )
+				itemsPositionY -= scrollBar.Value;
+
+			Rectangle GetItemRectangle( int itemIndex )
+			{
+				var r = new Rectangle( rect2.Left, itemsPositionY + itemSize * itemIndex, rect2.Right, itemsPositionY + itemSize * ( itemIndex + 1 ) );
+				if( scrollBar != null && scrollBar.EnabledInHierarchy && scrollBar.VisibleInHierarchy )
+					r.Right -= scrollBar.GetScreenSize().X;
+				return r;
+			}
+
 			//!!!!тут?
 			//update scroll bar properties
 			if( scrollBar != null )
@@ -239,14 +265,18 @@ namespace Project
 				{
 					var index = control.NeedEnsureVisibleInStyle;
 
-					if( (float)index * itemSize > screenSizeY / 2 )
+					var itemRectangle = GetItemRectangle( index );
+					if( !rect2.Contains( itemRectangle ) )
 					{
-						var factor = (float)index / (float)( control.Items.Count - 1 );
-						var v = scrollScreenSizeY * factor;
-						scrollBar.Value = MathEx.Clamp( v, 0, scrollBar.ValueRange.Value.Maximum );
+						if( (float)index * itemSize > screenSizeY / 2 )
+						{
+							var factor = (float)index / (float)( control.Items.Count - 1 );
+							var v = scrollScreenSizeY * factor;
+							scrollBar.Value = MathEx.Clamp( v, 0, scrollBar.ValueRange.Value.Maximum );
+						}
+						else
+							scrollBar.Value = 0;
 					}
-					else
-						scrollBar.Value = 0;
 
 					control.NeedEnsureVisibleInStyle = -1;
 				}
@@ -290,26 +320,13 @@ namespace Project
 
 				for( int n = 0; n < control.Items.Count; n++ )
 				{
-					var item = control.Items[ n ];
-					var itemRectangle = new Rectangle( rect2.Left, positionY, rect2.Right, positionY + itemSize );
-					if( scrollBar != null && scrollBar.EnabledInHierarchy && scrollBar.VisibleInHierarchy )
-						itemRectangle.Right -= scrollBar.GetScreenSize().X;
+					//var item = control.Items[ n ];
+					var itemRectangle = GetItemRectangle( n );
 
 					if( itemRectangle.Intersects( rect2 ) )
 					{
 						renderer.PushClipRectangle( itemRectangle );
-
-						if( n == control.SelectedIndex )
-						{
-							var color2 = new ColorValue( 0.1, 0.1, 0.8 );
-							//var color2 = new ColorValue( 0.5, 0.5, 0.5 );
-							//var color2 = control.ReadOnlyInHierarchy ? new ColorValue( 0.5, 0.5, 0.5 ) : new ColorValue( 0, 0, 0.8 );
-							renderer.AddQuad( itemRectangle, color2 );
-						}
-
-						var positionX = rect2.Left + control.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 2, 0 ) ).X;
-						renderer.AddText( font, fontSize, item, new Vector2( positionX, itemRectangle.GetCenter().Y ), EHorizontalAlignment.Left, EVerticalAlignment.Center, new ColorValue( 1, 1, 1 ) );
-
+						OnRenderListItem( control, renderer, n, itemRectangle, font, fontSize );
 						renderer.PopClipRectangle();
 					}
 

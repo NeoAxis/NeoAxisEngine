@@ -1,4 +1,5 @@
-﻿// *****************************************************************************
+﻿#if !DEPLOY
+// *****************************************************************************
 // 
 //  © Component Factory Pty Ltd 2012. All rights reserved.
 //	The software and associated documentation supplied hereunder are the 
@@ -116,7 +117,7 @@ namespace Internal.ComponentFactory.Krypton.Workspace
                     // Without this DoEvents() call the dropping of multiple pages in a complex arrangement causes an exception for
                     // a complex reason that is hard to work out (i.e. I'm not entirely sure). Something to do with using select to
                     // change activation is causing the source workspace control to dispose to earlier.
-                    Application.DoEvents();
+                    NeoAxis.Editor.EditorAPI.ApplicationDoEvents( true );//Application.DoEvents();
                     _cell.Select();
                 }
             }
@@ -126,3 +127,5 @@ namespace Internal.ComponentFactory.Krypton.Workspace
         #endregion
     }
 }
+
+#endif

@@ -1,7 +1,8 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace NeoAxis
@@ -188,6 +189,7 @@ namespace NeoAxis
 			return 0;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static object ExtractOneComponentArray( StandardVertex[] vertices, Components component )
 		{
 			switch( component )
@@ -277,6 +279,7 @@ namespace NeoAxis
 			return null;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static VertexElement[] MakeStructure( Components components, bool addPositionAnyway, out int vertexSize )
 		{
 			if( addPositionAnyway )
@@ -378,6 +381,7 @@ namespace NeoAxis
 			return structure.ToArray();
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static Components[] GetValuesArray()
 		{
 			return new Components[]
@@ -395,6 +399,7 @@ namespace NeoAxis
 			};
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Components[] Split( Components flags )
 		{
 			List<Components> l = new List<Components>();
@@ -406,16 +411,19 @@ namespace NeoAxis
 			return l.ToArray();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is StandardVertex && this == (StandardVertex)obj );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return Position.GetHashCode() ^ Normal.GetHashCode() ^ Tangent.GetHashCode() ^ Color.GetHashCode() ^ TexCoord0.GetHashCode() ^ TexCoord1.GetHashCode() ^ TexCoord2.GetHashCode() ^ TexCoord3.GetHashCode() ^ BlendIndices.GetHashCode() ^ BlendWeights.GetHashCode();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( StandardVertex v1, StandardVertex v2 )
 		{
 			return ( v1.Position == v2.Position && v1.Normal == v2.Normal && v1.Tangent == v2.Tangent && v1.Color == v2.Color && v1.TexCoord0 == v2.TexCoord0 && v1.TexCoord1 == v2.TexCoord1 && v1.TexCoord2 == v2.TexCoord2 && v1.TexCoord3 == v2.TexCoord3 && v1.BlendIndices == v2.BlendIndices && v1.BlendWeights == v2.BlendWeights );
@@ -426,6 +434,7 @@ namespace NeoAxis
 			return ( v1.Position != v2.Position || v1.Normal != v2.Normal || v1.Tangent != v2.Tangent || v1.Color != v2.Color || v1.TexCoord0 != v2.TexCoord0 || v1.TexCoord1 != v2.TexCoord1 || v1.TexCoord2 != v2.TexCoord2 || v1.TexCoord3 != v2.TexCoord3 || v1.BlendIndices != v2.BlendIndices || v1.BlendWeights != v2.BlendWeights );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public bool Equals( ref StandardVertex v, float positionEpsilon, float otherChannelsEpsilon )
 		{
 			if( !Position.Equals( ref v.Position, positionEpsilon ) )
@@ -451,6 +460,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( StandardVertex v, float positionEpsilon, float otherChannelsEpsilon )
 		{
 			return Equals( ref v, positionEpsilon, otherChannelsEpsilon );

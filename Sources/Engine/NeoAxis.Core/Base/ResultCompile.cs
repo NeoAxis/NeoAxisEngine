@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,7 +15,6 @@ namespace NeoAxis
 		//ThreadSafeExchangeAny<T> result;
 		ThreadSafeExchangeBool resultCompileProcessing;
 		volatile ResultCompileUpdateModes resultCompileUpdateMode = ResultCompileUpdateModes.WhenEnabled;
-
 		volatile bool shouldRecompile;
 
 		/////////////////////////////////////////
@@ -70,11 +69,11 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		internal override void OnDispose_After()
+		internal override void OnDisposeAfter()
 		{
 			ResultDispose();
 
-			base.OnDispose_After();
+			base.OnDisposeAfter();
 		}
 
 		/// <summary>

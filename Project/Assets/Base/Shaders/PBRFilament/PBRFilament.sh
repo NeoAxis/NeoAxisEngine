@@ -354,7 +354,7 @@ void setupPBRFilamentParams(const MaterialInputs material, vec3 tangent, vec3 bi
 	mat3 tangentToWorld_ClearCoat = transpose(mtxFromRows(tangent, bitangent, inputNormal));
 	shading_clearCoatNormal = normalize(mul(tangentToWorld_ClearCoat, material.clearCoatNormal));
 	#ifdef TWO_SIDED_FLIP_NORMALS
-		if(frontFacing)//if(!gl_FrontFacing)
+		if(frontFacing)
 			shading_clearCoatNormal = -shading_clearCoatNormal;
 	#endif	
 #else

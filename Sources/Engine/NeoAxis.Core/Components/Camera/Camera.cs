@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -9,7 +9,9 @@ namespace NeoAxis
 	/// <summary>
 	/// Representation of a player's point of view.
 	/// </summary>
+#if !DEPLOY
 	[Preview( typeof( CameraPreview ) )]
+#endif
 	public class Camera : ObjectInSpace
 	{
 		//!!!!
@@ -41,7 +43,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The field of view of the perspective camera in degrees.
 		/// </summary>
-		[DefaultValue( "75" )]
+		[DefaultValue( "70" )]//75
 		[Range( 1, 179 )]
 		//[Category( "General" )]
 		public Reference<Degree> FieldOfView
@@ -51,7 +53,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="FieldOfView"/> property value changes.</summary>
 		public event Action<Camera> FieldOfViewChanged;
-		ReferenceField<Degree> _fieldOfView = new Degree( 75 );
+		ReferenceField<Degree> _fieldOfView = new Degree( 70 );//75
 
 		/// <summary>
 		/// The height of the orthographic camera.
@@ -245,7 +247,7 @@ namespace NeoAxis
 
 				//context.
 
-				bool show = ( ParentScene.GetDisplayDevelopmentDataInThisApplication() && ParentScene.DisplayCameras ) ||
+				bool show = ( context.SceneDisplayDevelopmentDataInThisApplication && ParentScene.DisplayCameras ) ||
 					context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this;
 				if( show )
 				{
@@ -264,14 +266,14 @@ namespace NeoAxis
 
 						ColorValue color;
 						if( context2.selectedObjects.Contains( this ) )
-							color = ProjectSettings.Get.General.SelectedColor;
+							color = ProjectSettings.Get.Colors.SelectedColor;
 						else if( context2.canSelectObjects.Contains( this ) )
-							color = ProjectSettings.Get.General.CanSelectColor;
+							color = ProjectSettings.Get.Colors.CanSelectColor;
 						else
-							color = ProjectSettings.Get.General.SceneShowLightColor;
+							color = ProjectSettings.Get.Colors.SceneShowLightColor;
 
 						var viewport = context.Owner;
-						viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+						viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 						DebugDraw( viewport );
 					}
 				}

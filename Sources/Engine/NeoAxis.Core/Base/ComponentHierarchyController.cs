@@ -1,6 +1,9 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -9,61 +12,159 @@ namespace NeoAxis
 	/// </summary>
 	public class ComponentHierarchyController
 	{
-		//!!!!threading
+		//!!!!threading?
 
 		internal Component rootComponent;
 		internal Resource.Instance createdByResource;
 
 		internal ESet<Component> objectsDeletionQueue = new ESet<Component>();
 		bool hierarchyEnabled;
-		//!!!!
-		//bool hierarchyVisible;
 
 		object lockObjectHierarchy = new object();
 
 		//Simulation
 		double simulationTime = -1;
-		//!!!!
 		//bool simulationEnabled;
 		//bool systemPauseOfSimulationEnabled;
 		//internal SimulationTypes simulationType;
 		//internal SimulationStatuses simulationStatus = SimulationStatuses.StillNotSimulated;
 
-		//!!!!serialization
+		//!!!!serialization?
 		ESet<Flow> sleepingFlows = new ESet<Flow>();
 
-		internal NetworkInterface networkInterface;
+		internal NetworkServerInterface networkServerInterface;
+		internal NetworkClientInterface networkClientInterface;
+
+		//!!!!если динамическое свойство чтобы не копилось
+		Dictionary<Metadata.Property, PropertyChangedHandler> networkComponentPropertyChangedEventHandlers = new Dictionary<Metadata.Property, PropertyChangedHandler>();
 
 		/////////////////////////////////////////
 
-		public class NetworkInterface
+		public class NetworkServerInterface
 		{
-			public delegate void CreateComponentDelegate( NetworkInterface sender, Component component );
-			public event CreateComponentDelegate CreateComponent;
-			public void PerformCreateComponent( Component component )
+			public delegate void AddComponentDelegate( NetworkServerInterface sender, Component child, bool createComponent );
+			public event AddComponentDelegate AddComponent;
+			public void PerformAddComponent( Component child, bool createComponent )
 			{
-				CreateComponent?.Invoke( this, component );
+				AddComponent?.Invoke( this, child, createComponent );
 			}
 
-			public delegate void RemoveFromParentDelegate( NetworkInterface sender, Component component, bool queued );
+			public delegate void RemoveFromParentDelegate( NetworkServerInterface sender, Component component, bool queued, bool disposing );
 			public event RemoveFromParentDelegate RemoveFromParent;
-			public void PerformRemoveFromParent( Component component, bool queued )
+			public void PerformRemoveFromParent( Component component, bool queued, bool disposing )
 			{
-				RemoveFromParent?.Invoke( this, component, queued );
+				RemoveFromParent?.Invoke( this, component, queued, disposing );
 			}
 
-			public delegate void DisposeDelegate( NetworkInterface sender, Component component );
-			public event DisposeDelegate Dispose;
-			public void PerformDispose( Component component )
+			public delegate void PropertyChangedEventDelegate( NetworkServerInterface sender, Component component, Metadata.Property property );
+			public event PropertyChangedEventDelegate PropertyChangedEvent;
+			public void PerformPropertyChangedEvent( Component component, Metadata.Property property )
 			{
-				Dispose?.Invoke( this, component );
+				PropertyChangedEvent?.Invoke( this, component, property );
 			}
 
-			public delegate void SimulationStepDelegate( NetworkInterface sender );
+			public delegate void SimulationStepDelegate( NetworkServerInterface sender );
 			public event SimulationStepDelegate SimulationStep;
 			public void PerformSimulationStep()
 			{
 				SimulationStep?.Invoke( this );
+			}
+
+			public delegate void BeginNetworkMessageDelegate( NetworkServerInterface sender, Component component, IList<ServerNetworkService_Components.ClientItem> clientRecipients, ServerNetworkService_Components.ClientItem clientRecipient, IList<ServerNetworkService_Users.UserInfo> userRecipients, ServerNetworkService_Users.UserInfo userRecipient, bool toEveryone, string message, ref ArrayDataWriter writer );
+			public event BeginNetworkMessageDelegate BeginNetworkMessage;
+			public ArrayDataWriter PerformBeginNetworkMessage( Component component, IList<ServerNetworkService_Components.ClientItem> clientRecipients, ServerNetworkService_Components.ClientItem clientRecipient, IList<ServerNetworkService_Users.UserInfo> userRecipients, ServerNetworkService_Users.UserInfo userRecipient, bool toEveryone, string message )
+			{
+				ArrayDataWriter writer = null;
+				BeginNetworkMessage?.Invoke( this, component, clientRecipients, clientRecipient, userRecipients, userRecipient, toEveryone, message, ref writer );
+				return writer;
+			}
+
+			public delegate void EndNetworkMessageDelegate( NetworkServerInterface sender );
+			public event EndNetworkMessageDelegate EndNetworkMessage;
+			public void PerformEndNetworkMessage()
+			{
+				EndNetworkMessage?.Invoke( this );
+			}
+
+			public delegate void GetComponentByNetworkIDDelegate( NetworkServerInterface sender, long networkID, ref Component component );
+			public event GetComponentByNetworkIDDelegate GetComponentByNetworkID;
+			public Component PerformGetComponentByNetworkID( long networkID )
+			{
+				Component component = null;
+				GetComponentByNetworkID?.Invoke( this, networkID, ref component );
+				return component;
+			}
+
+			public delegate void ChangeNetworkModeDelegate( NetworkServerInterface sender, Component component );
+			public event ChangeNetworkModeDelegate ChangeNetworkMode;
+			public void PerformChangeNetworkMode( Component component )
+			{
+				ChangeNetworkMode?.Invoke( this, component );
+			}
+
+			public delegate void NetworkModeAddUserDelegate( NetworkServerInterface sender, ServerNetworkService_Components.ClientItem clientItem, Component component );
+			public event NetworkModeAddUserDelegate NetworkModeAddUser;
+			public void PerformNetworkModeAddUser( ServerNetworkService_Components.ClientItem clientItem, Component component )
+			{
+				NetworkModeAddUser?.Invoke( this, clientItem, component );
+			}
+
+			public delegate void NetworkModeRemoveUserDelegate( NetworkServerInterface sender, ServerNetworkService_Components.ClientItem clientItem, Component component );
+			public event NetworkModeRemoveUserDelegate NetworkModeRemoveUser;
+			public void PerformNetworkModeRemoveUser( ServerNetworkService_Components.ClientItem clientItem, Component component )
+			{
+				NetworkModeRemoveUser?.Invoke( this, clientItem, component );
+			}
+		}
+
+		/////////////////////////////////////////
+
+		public class NetworkClientInterface
+		{
+			public delegate void BeginNetworkMessageDelegate( NetworkClientInterface sender, Component component, string message, ref ArrayDataWriter writer );
+			public event BeginNetworkMessageDelegate BeginNetworkMessage;
+			public ArrayDataWriter PerformBeginNetworkMessage( Component component, string message )
+			{
+				ArrayDataWriter writer = null;
+				BeginNetworkMessage?.Invoke( this, component, message, ref writer );
+				return writer;
+			}
+
+			public delegate void EndNetworkMessageDelegate( NetworkClientInterface sender );
+			public event EndNetworkMessageDelegate EndNetworkMessage;
+			public void PerformEndNetworkMessage()
+			{
+				EndNetworkMessage?.Invoke( this );
+			}
+
+			public delegate void GetComponentByNetworkIDDelegate( NetworkClientInterface sender, long networkID, ref Component component );
+			public event GetComponentByNetworkIDDelegate GetComponentByNetworkID;
+			public Component PerformGetComponentByNetworkID( long networkID )
+			{
+				Component component = null;
+				GetComponentByNetworkID?.Invoke( this, networkID, ref component );
+				return component;
+			}
+		}
+
+		/////////////////////////////////////////
+
+		class PropertyChangedHandler
+		{
+			public Metadata.Property property;
+			public ComponentHierarchyController controller;
+			public Delegate _delegate;
+
+			public PropertyChangedHandler( Metadata.Property property, ComponentHierarchyController controller )
+			{
+				this.property = property;
+				this.controller = controller;
+			}
+
+			public void NetworkComponentPropertyChangedEventHandler( Component component )
+			{
+				if( !component.networkDisableChangedEvents )
+					controller.networkServerInterface?.PerformPropertyChangedEvent( component, property );
 			}
 		}
 
@@ -96,20 +197,6 @@ namespace NeoAxis
 			}
 		}
 
-		//!!!!
-		//public bool HierarchyVisible
-		//{
-		//	get { return hierarchyVisible; }
-		//	set
-		//	{
-		//		if( hierarchyVisible == value )
-		//			return;
-		//		hierarchyVisible = value;
-
-		//		rootComponent._UpdateVisibleInHierarchy( false );
-		//	}
-		//}
-
 		void ProcessObjectsDeletionQueue()
 		{
 			while( objectsDeletionQueue.Count != 0 )
@@ -125,8 +212,6 @@ namespace NeoAxis
 			}
 		}
 
-		//!!!!!!вызывать
-		//!!!!что еще вызывать?
 		public void ProcessDelayedOperations()
 		{
 			ProcessObjectsDeletionQueue();
@@ -159,71 +244,12 @@ namespace NeoAxis
 			simulationTime = -1;
 			//simulationTickTime = EngineApp.Instance.EngineTime;
 
-			//!!!!было
 			//lastRenderTime = simulationTickTime;
 			//lastRenderTimeStep = 0;
 		}
 
-		//!!!!MapObject
-		//public static double SimulationTickDelta
-		//{
-		//	get { return simulationTickDelta; }
-		//}
-
-		//void SimulationStep()
-		//{
-		////send WorldTick message
-		//if( SimulationType_IsServer() )
-		//{
-		//	//!!!!было
-		//	//networkTickCounter++;
-		//	//networkingInterface.SendWorldTickMessage();
-		//}
-
-		////physics world tick
-		//if( SimulationType != SimulationTypes.ClientOnly )
-		//{
-		//	//physicsPerformanceCounter.Start();
-		//	physicsScene.Simulate( SimulationTickDelta );
-		//	//physicsPerformanceCounter.End();
-		//}
-
-		////timer ticks
-		////entitySystemPerformanceCounter.Start();
-
-		////MapObjects.PerformSimulationTick( simulationTickExecutedTime, SimulationType == SimulationTypes.ClientOnly );
-		//{
-		//	SimulationTick?.Invoke( this );
-
-		//	//MapObject[] array = new MapObject[ objectsSubscribedToTicks.Count ];
-		//	//objectsSubscribedToTicks.Keys.CopyTo( array, 0 );
-
-		//	//foreach( MapObject obj in array )
-		//	//{
-		//	//	if( !obj.IsMustDestroy && obj.CreateTime != simulationTickTime )
-		//	//	{
-		//	//		//!!!!slowly. можно иметь ESet удаленных
-		//	//		if( objectsSubscribedToTicks.ContainsKey( obj ) )
-		//	//		{
-		//	//			if( !clientTick )
-		//	//				obj.CallTick();
-		//	//			else
-		//	//				obj.Client_CallTick();
-		//	//		}
-		//	//	}
-		//	//}
-		//}
-
-		////entitySystemPerformanceCounter.End();
-		//}
-
-		public void SimulateOneStep()
+		void ProcessSleepingFlows()
 		{
-			if( rootComponent != null && rootComponent.EnabledInHierarchy )
-				rootComponent.PerformSimulationStep();
-			ProcessDelayedOperations();
-
-			//proress sleeping flows
 			Flow[] flows;
 			lock( sleepingFlows )
 			{
@@ -232,26 +258,40 @@ namespace NeoAxis
 			}
 			foreach( var flow in flows )
 				flow.ContinueProcess();
-
-			networkInterface?.PerformSimulationStep();
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
+		public void SimulateOneStep()
+		{
+			if( rootComponent != null && rootComponent.EnabledInHierarchy )
+				rootComponent.PerformSimulationStep();
+			ProcessDelayedOperations();
+
+			ProcessSleepingFlows();
+
+			networkServerInterface?.PerformSimulationStep();
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		public void SimulateOneStepClient()
+		{
+			if( rootComponent != null && rootComponent.EnabledInHierarchy )
+				rootComponent.PerformSimulationStepClient();
+			ProcessDelayedOperations();
+
+			ProcessSleepingFlows();
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
 		public void PerformSimulationSteps()
 		{
 			ProcessDelayedOperations();
 
-			//!!!!можно было бы: чтобы можно было вне зависимости от времени прокрутить. тогда это значит что в коде и классах объектов не должно быть EngineApp.Instance.Time.
-
-			//!!!!было
-			//simulationStatus = SimulationStatuses.AlreadySimulated;
-
-			//!!!!было
 			//if( SimulationType == SimulationTypes.ClientOnly )
 			//	return;
 
 			double time = EngineApp.EngineTime;
 
-			//!!!!было
 			//if( !simulationEnabled || systemPauseOfSimulationEnabled )
 			//{
 			//	simulationTickTime = time;
@@ -260,6 +300,11 @@ namespace NeoAxis
 
 			//reset time
 			if( simulationTime < 0 )
+				simulationTime = time;
+
+			//!!!!new
+			//too big pause
+			if( time > simulationTime + 0.25 )
 				simulationTime = time;
 
 			//loop
@@ -271,10 +316,128 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
+		public void PerformSimulationStepClient()
+		{
+			double time = EngineApp.EngineTime;
+
+			//!!!!сглаживать или может иначе, например, по шагам
+			simulationTime = time;
+
+			SimulateOneStepClient();
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		internal void AddSleepingFlow( Flow flow )
 		{
 			lock( sleepingFlows )
 				sleepingFlows.AddWithCheckAlreadyContained( flow );
 		}
+
+		/////////////////////////////////////////
+		//networking
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		internal void NetworkSubscribeToEventsChanged( Component component )
+		{
+			if( !component.networkSubscribedToEvents )
+			{
+				var context = new Metadata.GetMembersContext( false );
+
+				foreach( var member in component.MetadataGetMembers( context ).ToArray() )
+				{
+					var property = member as Metadata.Property;
+					if( property != null && property.NetworkMode && MetadataManager.Serialization.IsMemberSerializable( property ) )
+					{
+						var netEvent = component.MetadataGetMemberBySignature( $"event:{property.Name}Changed", context ) as Metadata.NetTypeInfo.NetEvent;
+						if( netEvent != null )
+						{
+							var handlerType = netEvent.NetMember.EventHandlerType;
+
+							if( !networkComponentPropertyChangedEventHandlers.TryGetValue( property, out var handler ) )
+							{
+								var method = typeof( PropertyChangedHandler ).GetMethod( nameof( PropertyChangedHandler.NetworkComponentPropertyChangedEventHandler ), BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public );
+								if( method == null )
+									Log.Fatal( "ComponentHierarchyController: NetworkSubscribeToEvents: method == null." );
+
+								handler = new PropertyChangedHandler( property, this );
+								handler._delegate = Delegate.CreateDelegate( handlerType, handler, method );
+
+								networkComponentPropertyChangedEventHandlers[ property ] = handler;
+							}
+
+							//!!!!проверить не копятся ли
+							//Log.Info( networkComponentPropertyChangedEventHandlers.Count.ToString() );
+
+
+							//нестандартные эвенты наверное могут давать ассершен
+							try
+							{
+								netEvent.NetMember.AddEventHandler( component, handler._delegate );
+							}
+							catch { }
+						}
+					}
+				}
+
+				component.networkSubscribedToEvents = true;
+			}
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		internal void NetworkUnsubscribeToEventsChanged( Component component )
+		{
+			if( component.networkSubscribedToEvents )
+			{
+				var context = new Metadata.GetMembersContext( false );
+
+				foreach( var member in component.MetadataGetMembers( context ).ToArray() )
+				{
+					var property = member as Metadata.Property;
+					if( property != null && property.NetworkMode && MetadataManager.Serialization.IsMemberSerializable( property ) )
+					{
+						var netEvent = component.MetadataGetMemberBySignature( $"event:{property.Name}Changed", context ) as Metadata.NetTypeInfo.NetEvent;
+						if( netEvent != null )
+						{
+							try
+							{
+								if( networkComponentPropertyChangedEventHandlers.TryGetValue( property, out var handler ) )
+									netEvent.NetMember.RemoveEventHandler( component, handler._delegate );
+							}
+							catch { }
+						}
+					}
+				}
+
+				component.networkSubscribedToEvents = false;
+			}
+		}
+
+		public bool NetworkIsServer
+		{
+			get { return networkServerInterface != null; }
+		}
+
+		public bool NetworkIsClient
+		{
+			get { return networkClientInterface != null; }
+		}
+
+		public bool NetworkIsSingle
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get { return networkServerInterface == null && networkClientInterface == null; }
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public Component GetComponentByNetworkID( long networkID )
+		{
+			if( networkServerInterface != null )
+				return networkServerInterface.PerformGetComponentByNetworkID( networkID );
+			if( networkClientInterface != null )
+				return networkClientInterface.PerformGetComponentByNetworkID( networkID );
+			return null;
+		}
+
 	}
 }

@@ -21,7 +21,7 @@ USE OR OTHER DEALINGS IN THE SOFTWARE.
 using System;
 using System.Net;
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	/// <summary>
 	/// Partly immutable after NetPeer has been initialized

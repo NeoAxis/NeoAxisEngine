@@ -1,8 +1,9 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 
 /*
@@ -64,6 +65,7 @@ namespace NeoAxis
 		/// Constructs a box with another specified <see cref="BoxF"/> object.
 		/// </summary>
 		/// <param name="source">A specified box.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public BoxF( BoxF source )
 		{
 			Center = source.Center;
@@ -77,6 +79,21 @@ namespace NeoAxis
 		/// <param name="center">The center <see cref="Vector3F"/>.</param>
 		/// <param name="extents">The extents <see cref="Vector3F"/>.</param>
 		/// <param name="axis">The axis <see cref="Matrix3F"/>.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public BoxF( ref Vector3F center, ref Vector3F extents, ref Matrix3F axis )
+		{
+			this.Center = center;
+			this.Extents = extents;
+			this.Axis = axis;
+		}
+
+		/// <summary>
+		/// Constructs a box with the given center, extents and axis.
+		/// </summary>
+		/// <param name="center">The center <see cref="Vector3F"/>.</param>
+		/// <param name="extents">The extents <see cref="Vector3F"/>.</param>
+		/// <param name="axis">The axis <see cref="Matrix3F"/>.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public BoxF( Vector3F center, Vector3F extents, Matrix3F axis )
 		{
 			this.Center = center;
@@ -88,6 +105,7 @@ namespace NeoAxis
 		/// Constructs a box with the given center point.
 		/// </summary>
 		/// <param name="point">The center point <see cref="Vector3F"/>.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public BoxF( Vector3F point )
 		{
 			Center = point;
@@ -99,6 +117,7 @@ namespace NeoAxis
 		/// Constructs a box with the given bounds.
 		/// </summary>
 		/// <param name="bounds">The <see cref="BoundsF"/>.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public BoxF( BoundsF bounds )
 		{
 			bounds.GetCenter( out Center );
@@ -112,6 +131,7 @@ namespace NeoAxis
 		/// <param name="bounds">The <see cref="BoundsF"/>.</param>
 		/// <param name="origin">The origin <see cref="Vector3F"/>.</param>
 		/// <param name="axis">The axis <see cref="Matrix3F"/>.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public BoxF( BoundsF bounds, Vector3F origin, Matrix3F axis )
 		{
 			Vector3F temp;
@@ -134,6 +154,7 @@ namespace NeoAxis
 		/// <param name="bounds">The <see cref="BoundsF"/>.</param>
 		/// <param name="origin">The origin <see cref="Vector3F"/>.</param>
 		/// <param name="axis">The axis <see cref="Matrix3F"/>.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public BoxF( ref BoundsF bounds, ref Vector3F origin, ref Matrix3F axis )
 		{
 			Vector3F temp;
@@ -155,6 +176,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="obj">The object to compare with the current instance of <see cref="BoxF"/>.</param>
 		/// <returns>True if the specified object is equal to the current instance of <see cref="BoxF"/>; otherwise, False.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override bool Equals( object obj )
 		{
 			return ( obj is BoxF && this == (BoxF)obj );
@@ -164,6 +186,7 @@ namespace NeoAxis
 		/// Returns a hash code for this instance.
 		/// </summary>
 		/// <returns>A hash code for this instance.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public override int GetHashCode()
 		{
 			return ( Center.GetHashCode() ^ Extents.GetHashCode() ^ Axis.GetHashCode() );
@@ -175,6 +198,7 @@ namespace NeoAxis
 		/// <param name="v1">The first box to compare.</param>
 		/// <param name="v2">The second box to compare.</param>
 		/// <returns>True if the boxes are equal; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator ==( BoxF v1, BoxF v2 )
 		{
 			return ( v1.Center == v2.Center && v1.Extents == v2.Extents && v1.Axis == v2.Axis );
@@ -186,6 +210,7 @@ namespace NeoAxis
 		/// <param name="v1">The first box to compare.</param>
 		/// <param name="v2">The second box to compare.</param>
 		/// <returns>True if the boxes are unequal; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool operator !=( BoxF v1, BoxF v2 )
 		{
 			return ( v1.Center != v2.Center || v1.Extents != v2.Extents || v1.Axis != v2.Axis );
@@ -198,6 +223,7 @@ namespace NeoAxis
 		/// <param name="v">The box to compare.</param>
 		/// <param name="epsilon">The precision value.</param>
 		/// <returns>True if the specified box is equal to the current instance of <see cref="BoxF"/>; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Equals( BoxF v, float epsilon )
 		{
 			if( !Center.Equals( ref v.Center, epsilon ) )
@@ -213,6 +239,7 @@ namespace NeoAxis
 		/// Determines whether the box is not initialized.
 		/// </summary>
 		/// <returns>True if the box is not initialized; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool IsCleared()
 		{
 			return Extents.X < 0.0f;
@@ -222,6 +249,7 @@ namespace NeoAxis
 		/// Returns the volume of the current instance of <see cref="BoxF"/>.
 		/// </summary>
 		/// <returns>The volume of the box.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float GetVolume()
 		{
 			float x = Extents.X * 2.0f;
@@ -235,6 +263,7 @@ namespace NeoAxis
 		/// Expands the current instance of <see cref="BoxF"/> by a given value.
 		/// </summary>
 		/// <param name="d">The value by which to expand.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Expand( float d )
 		{
 			Extents.X += d;
@@ -248,6 +277,7 @@ namespace NeoAxis
 		/// <param name="b">The <see cref="BoxF"/> to add.</param>
 		/// <param name="v">The <see cref="Vector3F"/> to add.</param>
 		/// <returns>The resulting box.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static BoxF operator +( BoxF b, Vector3F v )
 		{
 			BoxF result;
@@ -264,6 +294,7 @@ namespace NeoAxis
 		/// <param name="b">The <see cref="BoxF"/> to multiply.</param>
 		/// <param name="m">The <see cref="Matrix3F"/> to multiply.</param>
 		/// <returns>The resulting box.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static BoxF operator *( BoxF b, Matrix3F m )
 		{
 			BoxF result;
@@ -280,6 +311,7 @@ namespace NeoAxis
 		/// <param name="b">The <see cref="BoxF"/> to multiply.</param>
 		/// <param name="m">The <see cref="Matrix4F"/> to multiply.</param>
 		/// <returns>The resulting box.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static BoxF operator *( BoxF b, Matrix4F m )
 		{
 			BoxF result;
@@ -299,6 +331,7 @@ namespace NeoAxis
 		/// <param name="b">The <see cref="BoxF"/> to add.</param>
 		/// <param name="v">The <see cref="Vector3F"/> to add.</param>
 		/// <param name="result">When the method completes, contains the resulting box.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Add( ref BoxF b, ref Vector3F v, out BoxF result )
 		{
 			Vector3F.Add( ref b.Center, ref v, out result.Center );
@@ -312,6 +345,7 @@ namespace NeoAxis
 		/// <param name="b">The <see cref="BoxF"/> to multiply.</param>
 		/// <param name="m">The <see cref="Matrix3F"/> to multiply.</param>
 		/// <param name="result">When the method completes, contains the resulting box.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Multiply( ref BoxF b, ref Matrix3F m, out BoxF result )
 		{
 			Matrix3F.Multiply( ref b.Center, ref m, out result.Center );
@@ -325,6 +359,7 @@ namespace NeoAxis
 		/// <param name="b">The <see cref="BoxF"/> to multiply.</param>
 		/// <param name="m">The <see cref="Matrix4F"/> to multiply.</param>
 		/// <param name="result">When the method completes, contains the resulting box.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void Multiply( ref BoxF b, ref Matrix4F m, out BoxF result )
 		{
 			Matrix3F m3;
@@ -341,6 +376,7 @@ namespace NeoAxis
 		/// <param name="b">The <see cref="BoxF"/> to add.</param>
 		/// <param name="v">The <see cref="Vector3F"/> to add.</param>
 		/// <returns>The resulting box.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static BoxF Add( ref BoxF b, ref Vector3F v )
 		{
 			BoxF result;
@@ -356,6 +392,7 @@ namespace NeoAxis
 		/// <param name="b">The <see cref="BoxF"/> to multiply.</param>
 		/// <param name="m">The <see cref="Matrix3F"/> to multiply.</param>
 		/// <returns>The resulting box.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static BoxF Multiply( ref BoxF b, ref Matrix3F m )
 		{
 			BoxF result;
@@ -369,6 +406,7 @@ namespace NeoAxis
 		/// <param name="b">The <see cref="BoxF"/> to multiply.</param>
 		/// <param name="m">The <see cref="Matrix4F"/> to multiply.</param>
 		/// <returns>The resulting box.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static BoxF Multiply( ref BoxF b, ref Matrix4F m )
 		{
 			BoxF result;
@@ -380,6 +418,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="BoxF"/> into the box corners array and returns the result.
 		/// </summary>
 		/// <returns>The resulting box corners array.</returns>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public Vector3F[] ToPoints()
 		{
 			Vector3F[] r = null;
@@ -391,6 +430,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="BoxF"/> into the box corners array.
 		/// </summary>
 		/// <param name="points">The array for the box corners.</param>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public void ToPoints( ref Vector3F[] points )
 		{
 			if( points == null || points.Length < 8 )
@@ -401,7 +441,7 @@ namespace NeoAxis
 			//Vec3 axMat0 = extents.x * axis.mat0;
 
 			Vector3F axMat1;
-			Vector3F.Multiply( Extents.Y, ref  Axis.Item1, out axMat1 );
+			Vector3F.Multiply( Extents.Y, ref Axis.Item1, out axMat1 );
 			//Vec3 axMat1 = extents.y * axis.mat1;
 
 			Vector3F axMat2;
@@ -438,6 +478,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="BoxF"/> into the box corners array.
 		/// </summary>
 		/// <param name="points">The pointer to an array for the box corners.</param>
+		[MethodImpl( (MethodImplOptions)512 )]
 		unsafe internal void ToPoints( Vector3F* points )
 		{
 			Vector3F axMat0;
@@ -445,7 +486,7 @@ namespace NeoAxis
 			//Vec3 axMat0 = extents.x * axis.mat0;
 
 			Vector3F axMat1;
-			Vector3F.Multiply( Extents.Y, ref  Axis.Item1, out axMat1 );
+			Vector3F.Multiply( Extents.Y, ref Axis.Item1, out axMat1 );
 			//Vec3 axMat1 = extents.y * axis.mat1;
 
 			Vector3F axMat2;
@@ -482,6 +523,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="BoxF"/> into the equivalent <see cref="BoundsF"/> structure.
 		/// </summary>
 		/// <returns>The equivalent <see cref="BoundsF"/> structure.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public BoundsF ToBounds()
 		{
 			Vector3F halfSize = new Vector3F(
@@ -563,6 +605,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="BoxF"/> into the equivalent <see cref="BoundsF"/> structure.
 		/// </summary>
 		/// <param name="result">When the method completes, contains the equivalent <see cref="BoundsF"/> structure.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void ToBounds( out BoundsF result )
 		{
 			Vector3F halfSize = new Vector3F(
@@ -615,6 +658,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="point">A point to check.</param>
 		/// <returns>True if the current instance of <see cref="BoxF"/> contains a given point; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( ref Vector3F point )
 		{
 			Vector3F localPoint;
@@ -634,6 +678,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="point">A point to check.</param>
 		/// <returns>True if the current instance of <see cref="BoxF"/> contains a given point; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( Vector3F point )
 		{
 			return Contains( ref point );
@@ -644,6 +689,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="bounds">Bounds to check.</param>
 		/// <returns>True if the current instance of <see cref="BoxF"/> contains given bounds; False otherwise.</returns>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public bool Contains( ref BoundsF bounds )
 		{
 			//slowly
@@ -682,6 +728,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="bounds">Bounds to check.</param>
 		/// <returns>True if the current instance of <see cref="BoxF"/> contains given bounds; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( BoundsF bounds )
 		{
 			return Contains( ref bounds );
@@ -692,6 +739,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="s">The sphere to check.</param>
 		/// <returns>True if the current instance of <see cref="BoxF"/> contains the given sphere; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( ref SphereF s )
 		{
 			Vector3F localPoint;
@@ -715,6 +763,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="s">The sphere to check.</param>
 		/// <returns>True if the current instance of <see cref="BoxF"/> contains the given sphere; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( SphereF s )
 		{
 			return Contains( ref s );
@@ -725,6 +774,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="box">The box to check.</param>
 		/// <returns>True if the current instance of <see cref="BoxF"/> contains the given box; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( ref BoxF box )
 		{
 			Vector3F[] points = null;
@@ -742,11 +792,13 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="box">The box to check.</param>
 		/// <returns>True if the current instance of <see cref="BoxF"/> contains the given box; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( BoxF box )
 		{
 			return Contains( ref box );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static bool BoxPlaneClip( float denom, float numer, ref float scale0, ref float scale1 )
 		{
 			if( denom > 0.0f )
@@ -776,7 +828,8 @@ namespace NeoAxis
 		/// <param name="scale1">When the method completes, contains the ray and box intersection min point.</param>
 		/// <param name="scale2">When the method completes, contains the ray and box intersection max point.</param>
 		/// <returns>True if the given ray intersects the current instance of <see cref="BoxF"/>; False otherwise.</returns>
-		public bool Intersects( RayF ray, out float scale1, out float scale2 )
+		[MethodImpl( (MethodImplOptions)512 )]
+		public bool Intersects( ref RayF ray, out float scale1, out float scale2 )
 		{
 			Matrix3F transposedAxis;
 			Axis.GetTranspose( out transposedAxis );
@@ -811,12 +864,37 @@ namespace NeoAxis
 		/// Determines whether the given ray intersects the current instance of <see cref="BoxF"/>.
 		/// </summary>
 		/// <param name="ray">The ray to check.</param>
+		/// <param name="scale1">When the method completes, contains the ray and box intersection min point.</param>
+		/// <param name="scale2">When the method completes, contains the ray and box intersection max point.</param>
 		/// <returns>True if the given ray intersects the current instance of <see cref="BoxF"/>; False otherwise.</returns>
-		public bool Intersects( RayF ray )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public bool Intersects( RayF ray, out float scale1, out float scale2 )
+		{
+			return Intersects( ref ray, out scale1, out scale2 );
+		}
+
+		/// <summary>
+		/// Determines whether the given ray intersects the current instance of <see cref="BoxF"/>.
+		/// </summary>
+		/// <param name="ray">The ray to check.</param>
+		/// <returns>True if the given ray intersects the current instance of <see cref="BoxF"/>; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public bool Intersects( ref RayF ray )
 		{
 			float scale1;
 			float scale2;
-			return Intersects( ray, out scale1, out scale2 );
+			return Intersects( ref ray, out scale1, out scale2 );
+		}
+
+		/// <summary>
+		/// Determines whether the given ray intersects the current instance of <see cref="BoxF"/>.
+		/// </summary>
+		/// <param name="ray">The ray to check.</param>
+		/// <returns>True if the given ray intersects the current instance of <see cref="BoxF"/>; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public bool Intersects( RayF ray )
+		{
+			return Intersects( ref ray );
 		}
 
 		////not used
@@ -858,6 +936,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="box">The box to check.</param>
 		/// <returns>True if another instance of <see cref="BoxF"/> intersects the current instance of <see cref="BoxF"/>; False otherwise.</returns>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public bool Intersects( ref BoxF box )
 		{
 			float c00, c01, c02, c10, c11, c12, c20, c21, c22;
@@ -865,8 +944,8 @@ namespace NeoAxis
 			float ac00, ac01, ac02, ac10, ac11, ac12, ac20, ac21, ac22;
 			//float ac[3][3];		// absolute values of c
 
-			Vector3F axisDir = Vector3F.Zero;	// axis[i] * dir
-			float d, e0, e1;	// distance between centers and projected extents
+			Vector3F axisDir = Vector3F.Zero;   // axis[i] * dir
+			float d, e0, e1;    // distance between centers and projected extents
 
 			Vector3F dir;
 			Vector3F.Subtract( ref box.Center, ref Center, out dir );
@@ -889,9 +968,9 @@ namespace NeoAxis
 
 			// axis C0 + t * A1
 			c10 = Vector3F.Dot( ref Axis.Item1, ref box.Axis.Item0 );
-			c11 = Vector3F.Dot( ref  Axis.Item1, ref box.Axis.Item1 );
+			c11 = Vector3F.Dot( ref Axis.Item1, ref box.Axis.Item1 );
 			c12 = Vector3F.Dot( ref Axis.Item1, ref box.Axis.Item2 );
-			axisDir.Y = Vector3F.Dot( ref Axis.Item1, ref  dir );
+			axisDir.Y = Vector3F.Dot( ref Axis.Item1, ref dir );
 			ac10 = Math.Abs( c10 );
 			ac11 = Math.Abs( c11 );
 			ac12 = Math.Abs( c12 );
@@ -906,7 +985,7 @@ namespace NeoAxis
 			c20 = Vector3F.Dot( ref Axis.Item2, ref box.Axis.Item0 );
 			c21 = Vector3F.Dot( ref Axis.Item2, ref box.Axis.Item1 );
 			c22 = Vector3F.Dot( ref Axis.Item2, ref box.Axis.Item2 );
-			axisDir.Z = Vector3F.Dot( ref  Axis.Item2, ref dir );
+			axisDir.Z = Vector3F.Dot( ref Axis.Item2, ref dir );
 			ac20 = Math.Abs( c20 );
 			ac21 = Math.Abs( c21 );
 			ac22 = Math.Abs( c22 );
@@ -918,14 +997,14 @@ namespace NeoAxis
 				return false;
 
 			// axis C0 + t * B0
-			d = Math.Abs( Vector3F.Dot( ref  box.Axis.Item0, ref  dir ) );
+			d = Math.Abs( Vector3F.Dot( ref box.Axis.Item0, ref dir ) );
 			e0 = Extents.X * ac00 + Extents.Y * ac10 + Extents.Z * ac20;
 			e1 = box.Extents.X;
 			if( d > e0 + e1 )
 				return false;
 
 			// axis C0 + t * B1
-			d = Math.Abs( Vector3F.Dot( ref  box.Axis.Item1, ref dir ) );
+			d = Math.Abs( Vector3F.Dot( ref box.Axis.Item1, ref dir ) );
 			e0 = Extents.X * ac01 + Extents.Y * ac11 + Extents.Z * ac21;
 			e1 = box.Extents.Y;
 			if( d > e0 + e1 )
@@ -1010,6 +1089,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="box">The box to check.</param>
 		/// <returns>True if another instance of <see cref="BoxF"/> intersects the current instance of <see cref="BoxF"/>; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( BoxF box )
 		{
 			return Intersects( ref box );
@@ -1020,6 +1100,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="bounds">The bounds to check.</param>
 		/// <returns>True if the given bounds intersect the current instance of <see cref="BoxF"/>; False otherwise.</returns>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public bool Intersects( ref BoundsF bounds )
 		{
 			float c00, c01, c02, c10, c11, c12, c20, c21, c22;
@@ -1027,7 +1108,7 @@ namespace NeoAxis
 			float ac00, ac01, ac02, ac10, ac11, ac12, ac20, ac21, ac22;
 			//float ac[3][3]; // absolute values of c
 
-			float d, e0, e1;	// distance between centers and projected extents
+			float d, e0, e1;    // distance between centers and projected extents
 
 			Vector3F boundsCenter;
 			bounds.GetCenter( out boundsCenter );
@@ -1181,6 +1262,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="bounds">The bounds to check.</param>
 		/// <returns>True if the given bounds intersect the current instance of <see cref="BoxF"/>; False otherwise.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Intersects( BoundsF bounds )
 		{
 			return Intersects( ref bounds );
@@ -1191,6 +1273,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="plane">The plane to check against.</param>
 		/// <returns>The resulting side of the plane.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public PlaneF.Side GetPlaneSide( ref PlaneF plane )
 		{
 			Vector3F localNormal;
@@ -1217,6 +1300,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="plane">The plane to check against.</param>
 		/// <returns>The resulting side of the plane.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public PlaneF.Side GetPlaneSide( PlaneF plane )
 		{
 			return GetPlaneSide( ref plane );
@@ -1227,6 +1311,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="plane">The plane to calculate the distance from.</param>
 		/// <returns>The resulting distance.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float GetPlaneDistance( ref PlaneF plane )
 		{
 			Vector3F localNormal;
@@ -1253,6 +1338,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="plane">The plane to calculate the distance from.</param>
 		/// <returns>The resulting distance.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float GetPlaneDistance( PlaneF plane )
 		{
 			return GetPlaneDistance( ref plane );
@@ -1263,6 +1349,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="point">The point to calculate the squared distance from.</param>
 		/// <returns>The resulting distance.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float GetPointDistanceSquared( Vector3F point )
 		{
 			Vector3F localPoint;
@@ -1289,6 +1376,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="point">The point to calculate the distance from.</param>
 		/// <returns>The resulting distance.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float GetPointDistance( Vector3F point )
 		{
 			float sqr = GetPointDistanceSquared( point );
@@ -1301,6 +1389,7 @@ namespace NeoAxis
 		/// Converts the current instance of <see cref="BoxF"/> to the box of <see cref="Box"/> format.
 		/// </summary>
 		/// <returns>The box of <see cref="Box"/> format.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[AutoConvertType]
 		public Box ToBox()
 		{
@@ -1320,6 +1409,7 @@ namespace NeoAxis
 		/// Implicit conversion from <see cref="BoxF"/> type to <see cref="Box"/> type for the given value.
 		/// </summary>
 		/// <param name="v">The value to type convert.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator Box( BoxF v )
 		{
 			return new Box( v );

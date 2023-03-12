@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -9,7 +9,9 @@ namespace NeoAxis
 	/// <summary>
 	/// Specifies a layer for the mesh or for the terrain.
 	/// </summary>
+#if !DEPLOY
 	[SettingsCell( typeof( PaintLayerSettingsCell ) )]
+#endif
 	public class PaintLayer : Component
 	{
 		ImageComponent createdMaskImage;
@@ -30,7 +32,7 @@ namespace NeoAxis
 		public Reference<MaskFormatEnum> MaskFormat
 		{
 			get { if( _maskFormat.BeginGet() ) MaskFormat = _maskFormat.Get( this ); return _maskFormat.value; }
-			set { if( _maskFormat.BeginSet( ref value ) ) { try { MaskFormatChanged?.Invoke( this ); DestroyCreatedMaskImage(); ShouldParentUpdate(); } finally { _maskFormat.EndSet(); } } }
+			set { if( _maskFormat.BeginSet( ref value ) ) { try { MaskFormatChanged?.Invoke( this ); DestroyCreatedMaskImage(); NeedUpdateParent(); } finally { _maskFormat.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MaskFormat"/> property value changes.</summary>
 		public event Action<PaintLayer> MaskFormatChanged;
@@ -44,7 +46,7 @@ namespace NeoAxis
 		public Reference<byte[]> Mask
 		{
 			get { if( _mask.BeginGet() ) Mask = _mask.Get( this ); return _mask.value; }
-			set { if( _mask.BeginSet( ref value ) ) { try { MaskChanged?.Invoke( this ); DestroyCreatedMaskImage(); ShouldParentUpdate(); } finally { _mask.EndSet(); } } }
+			set { if( _mask.BeginSet( ref value ) ) { try { MaskChanged?.Invoke( this ); DestroyCreatedMaskImage(); NeedUpdateParent(); } finally { _mask.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Mask"/> property value changes.</summary>
 		public event Action<PaintLayer> MaskChanged;
@@ -57,7 +59,7 @@ namespace NeoAxis
 		public Reference<ImageComponent> MaskImage
 		{
 			get { if( _maskImage.BeginGet() ) MaskImage = _maskImage.Get( this ); return _maskImage.value; }
-			set { if( _maskImage.BeginSet( ref value ) ) { try { MaskImageChanged?.Invoke( this ); ShouldParentUpdate(); } finally { _maskImage.EndSet(); } } }
+			set { if( _maskImage.BeginSet( ref value ) ) { try { MaskImageChanged?.Invoke( this ); NeedUpdateParent(); } finally { _maskImage.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MaskImage"/> property value changes.</summary>
 		public event Action<PaintLayer> MaskImageChanged;
@@ -70,7 +72,7 @@ namespace NeoAxis
 		public Reference<Material> Material
 		{
 			get { if( _material.BeginGet() ) Material = _material.Get( this ); return _material.value; }
-			set { if( _material.BeginSet( ref value ) ) { try { MaterialChanged?.Invoke( this ); ShouldParentUpdate(); } finally { _material.EndSet(); } } }
+			set { if( _material.BeginSet( ref value ) ) { try { MaterialChanged?.Invoke( this ); NeedUpdateParent(); } finally { _material.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Material"/> property value changes.</summary>
 		public event Action<PaintLayer> MaterialChanged;
@@ -83,7 +85,7 @@ namespace NeoAxis
 		public Reference<ColorValue> MaterialColor
 		{
 			get { if( _materialColor.BeginGet() ) MaterialColor = _materialColor.Get( this ); return _materialColor.value; }
-			set { if( _materialColor.BeginSet( ref value ) ) { try { MaterialColorChanged?.Invoke( this ); ShouldParentUpdate(); } finally { _materialColor.EndSet(); } } }
+			set { if( _materialColor.BeginSet( ref value ) ) { try { MaterialColorChanged?.Invoke( this ); NeedUpdateParent(); } finally { _materialColor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MaterialColor"/> property value changes.</summary>
 		public event Action<PaintLayer> MaterialColorChanged;
@@ -96,7 +98,7 @@ namespace NeoAxis
 		public Reference<BlendModeEnum> BlendMode
 		{
 			get { if( _blendMode.BeginGet() ) BlendMode = _blendMode.Get( this ); return _blendMode.value; }
-			set { if( _blendMode.BeginSet( ref value ) ) { try { BlendModeChanged?.Invoke( this ); ShouldParentUpdate(); } finally { _blendMode.EndSet(); } } }
+			set { if( _blendMode.BeginSet( ref value ) ) { try { BlendModeChanged?.Invoke( this ); NeedUpdateParent(); } finally { _blendMode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BlendMode"/> property value changes.</summary>
 		public event Action<PaintLayer> BlendModeChanged;
@@ -109,7 +111,7 @@ namespace NeoAxis
 		public Reference<Surface> Surface
 		{
 			get { if( _surface.BeginGet() ) Surface = _surface.Get( this ); return _surface.value; }
-			set { if( _surface.BeginSet( ref value ) ) { try { SurfaceChanged?.Invoke( this ); ShouldParentUpdate(); } finally { _surface.EndSet(); } } }
+			set { if( _surface.BeginSet( ref value ) ) { try { SurfaceChanged?.Invoke( this ); NeedUpdateParent(); } finally { _surface.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Surface"/> property value changes.</summary>
 		public event Action<PaintLayer> SurfaceChanged;
@@ -122,7 +124,7 @@ namespace NeoAxis
 		public Reference<bool> SurfaceObjects
 		{
 			get { if( _surfaceObjects.BeginGet() ) SurfaceObjects = _surfaceObjects.Get( this ); return _surfaceObjects.value; }
-			set { if( _surfaceObjects.BeginSet( ref value ) ) { try { SurfaceObjectsChanged?.Invoke( this ); ShouldParentUpdate(); } finally { _surfaceObjects.EndSet(); } } }
+			set { if( _surfaceObjects.BeginSet( ref value ) ) { try { SurfaceObjectsChanged?.Invoke( this ); NeedUpdateParent(); } finally { _surfaceObjects.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SurfaceObjects"/> property value changes.</summary>
 		public event Action<PaintLayer> SurfaceObjectsChanged;
@@ -136,7 +138,7 @@ namespace NeoAxis
 		public Reference<double> SurfaceObjectsDistribution
 		{
 			get { if( _surfaceObjectsDistribution.BeginGet() ) SurfaceObjectsDistribution = _surfaceObjectsDistribution.Get( this ); return _surfaceObjectsDistribution.value; }
-			set { if( _surfaceObjectsDistribution.BeginSet( ref value ) ) { try { SurfaceObjectsDistributionChanged?.Invoke( this ); ShouldParentUpdate(); } finally { _surfaceObjectsDistribution.EndSet(); } } }
+			set { if( _surfaceObjectsDistribution.BeginSet( ref value ) ) { try { SurfaceObjectsDistributionChanged?.Invoke( this ); NeedUpdateParent(); } finally { _surfaceObjectsDistribution.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SurfaceObjectsDistribution"/> property value changes.</summary>
 		public event Action<PaintLayer> SurfaceObjectsDistributionChanged;
@@ -150,7 +152,7 @@ namespace NeoAxis
 		public Reference<double> SurfaceObjectsScale
 		{
 			get { if( _surfaceObjectsScale.BeginGet() ) SurfaceObjectsScale = _surfaceObjectsScale.Get( this ); return _surfaceObjectsScale.value; }
-			set { if( _surfaceObjectsScale.BeginSet( ref value ) ) { try { SurfaceObjectsScaleChanged?.Invoke( this ); ShouldParentUpdate(); } finally { _surfaceObjectsScale.EndSet(); } } }
+			set { if( _surfaceObjectsScale.BeginSet( ref value ) ) { try { SurfaceObjectsScaleChanged?.Invoke( this ); NeedUpdateParent(); } finally { _surfaceObjectsScale.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SurfaceObjectsScale"/> property value changes.</summary>
 		public event Action<PaintLayer> SurfaceObjectsScaleChanged;
@@ -163,7 +165,7 @@ namespace NeoAxis
 		public Reference<ColorValue> SurfaceObjectsColor
 		{
 			get { if( _surfaceObjectsColor.BeginGet() ) SurfaceObjectsColor = _surfaceObjectsColor.Get( this ); return _surfaceObjectsColor.value; }
-			set { if( _surfaceObjectsColor.BeginSet( ref value ) ) { try { SurfaceObjectsColorChanged?.Invoke( this ); ShouldParentUpdate(); } finally { _surfaceObjectsColor.EndSet(); } } }
+			set { if( _surfaceObjectsColor.BeginSet( ref value ) ) { try { SurfaceObjectsColorChanged?.Invoke( this ); NeedUpdateParent(); } finally { _surfaceObjectsColor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SurfaceObjectsColor"/> property value changes.</summary>
 		public event Action<PaintLayer> SurfaceObjectsColorChanged;
@@ -177,7 +179,7 @@ namespace NeoAxis
 		public Reference<double> SurfaceObjectsVisibilityDistanceFactor
 		{
 			get { if( _surfaceObjectsVisibilityDistanceFactor.BeginGet() ) SurfaceObjectsVisibilityDistanceFactor = _surfaceObjectsVisibilityDistanceFactor.Get( this ); return _surfaceObjectsVisibilityDistanceFactor.value; }
-			set { if( _surfaceObjectsVisibilityDistanceFactor.BeginSet( ref value ) ) { try { SurfaceObjectsVisibilityDistanceFactorChanged?.Invoke( this ); ShouldParentUpdate(); } finally { _surfaceObjectsVisibilityDistanceFactor.EndSet(); } } }
+			set { if( _surfaceObjectsVisibilityDistanceFactor.BeginSet( ref value ) ) { try { SurfaceObjectsVisibilityDistanceFactorChanged?.Invoke( this ); NeedUpdateParent(); } finally { _surfaceObjectsVisibilityDistanceFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SurfaceObjectsVisibilityDistanceFactor"/> property value changes.</summary>
 		public event Action<PaintLayer> SurfaceObjectsVisibilityDistanceFactorChanged;
@@ -190,11 +192,25 @@ namespace NeoAxis
 		public Reference<bool> SurfaceObjectsCastShadows
 		{
 			get { if( _surfaceObjectsCastShadows.BeginGet() ) SurfaceObjectsCastShadows = _surfaceObjectsCastShadows.Get( this ); return _surfaceObjectsCastShadows.value; }
-			set { if( _surfaceObjectsCastShadows.BeginSet( ref value ) ) { try { SurfaceObjectsCastShadowsChanged?.Invoke( this ); ShouldParentUpdate(); } finally { _surfaceObjectsCastShadows.EndSet(); } } }
+			set { if( _surfaceObjectsCastShadows.BeginSet( ref value ) ) { try { SurfaceObjectsCastShadowsChanged?.Invoke( this ); NeedUpdateParent(); } finally { _surfaceObjectsCastShadows.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SurfaceObjectsCastShadows"/> property value changes.</summary>
 		public event Action<PaintLayer> SurfaceObjectsCastShadowsChanged;
 		ReferenceField<bool> _surfaceObjectsCastShadows = true;
+
+		/// <summary>
+		/// Whether to enable a collision detection. A collision definition of the mesh is used.
+		/// </summary>
+		[DefaultValue( false )]
+		public Reference<bool> SurfaceObjectsCollision
+		{
+			get { if( _surfaceObjectsCollision.BeginGet() ) SurfaceObjectsCollision = _surfaceObjectsCollision.Get( this ); return _surfaceObjectsCollision.value; }
+			set { if( _surfaceObjectsCollision.BeginSet( ref value ) ) { try { SurfaceObjectsCollisionChanged?.Invoke( this ); NeedUpdateParent(); } finally { _surfaceObjectsCollision.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="SurfaceObjectsCollision"/> property value changes.</summary>
+		public event Action<PaintLayer> SurfaceObjectsCollisionChanged;
+		ReferenceField<bool> _surfaceObjectsCollision = false;
+
 
 		//!!!!
 		//LODScale
@@ -252,6 +268,7 @@ namespace NeoAxis
 				case nameof( SurfaceObjectsColor ):
 				case nameof( SurfaceObjectsVisibilityDistanceFactor ):
 				case nameof( SurfaceObjectsCastShadows ):
+				case nameof( SurfaceObjectsCollision ):
 					if( !Surface.ReferenceOrValueSpecified || !SurfaceObjects )
 						skip = true;
 					break;
@@ -281,14 +298,14 @@ namespace NeoAxis
 		{
 			base.OnAddedToParent();
 
-			ShouldParentUpdate();
+			NeedUpdateParent();
 		}
 
 		protected override void OnRemovedFromParent( Component oldParent )
 		{
 			base.OnRemovedFromParent( oldParent );
 
-			ShouldParentUpdate( oldParent );
+			NeedUpdateParent( oldParent );
 		}
 
 		protected override void OnEnabledInHierarchyChanged()
@@ -298,7 +315,7 @@ namespace NeoAxis
 			if( !EnabledInHierarchy )
 				DestroyCreatedMaskImage();
 
-			ShouldParentUpdate();
+			NeedUpdateParent();
 		}
 
 		public void DestroyCreatedMaskImage()
@@ -355,6 +372,7 @@ namespace NeoAxis
 
 						//need set DisplayInEditor = false before AddComponent
 						var texture = ComponentUtility.CreateComponent<ImageComponent>( null, false, false );
+						texture.NetworkMode = NetworkModeEnum.False;
 						texture.DisplayInEditor = false;
 						AddComponent( texture, -1 );
 						//var texture = CreateComponent<ImageComponent>( enabled: false );
@@ -533,7 +551,7 @@ namespace NeoAxis
 			return current;
 		}
 
-		void ShouldParentUpdate( Component parent = null )
+		void NeedUpdateParent( Component parent = null )
 		{
 			if( parent == null )
 				parent = Parent;

@@ -1,8 +1,9 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
+using System.Linq;
 
 namespace NeoAxis
 {
@@ -37,34 +38,61 @@ namespace NeoAxis
 			return true;
 		}
 
-		public static string EncodeDelimiterFormatString( string text )
+		public static void EncodeDelimiterFormatString( StringBuilder outBuilder, string text )
 		{
-			StringBuilder builder = new StringBuilder( "", text.Length + 2 );
-
 			foreach( char c in text )
 			{
 				switch( c )
 				{
-				case '\n': builder.Append( "\\n" ); break;
-				case '\r': builder.Append( "\\r" ); break;
-				case '\t': builder.Append( "\\t" ); break;
-				case '\'': builder.Append( "\\\'" ); break;
-				case '\"': builder.Append( "\\\"" ); break;
-				case '\\': builder.Append( "\\\\" ); break;
+				case '\n': outBuilder.Append( "\\n" ); break;
+				case '\r': outBuilder.Append( "\\r" ); break;
+				case '\t': outBuilder.Append( "\\t" ); break;
+				case '\'': outBuilder.Append( "\\\'" ); break;
+				case '\"': outBuilder.Append( "\\\"" ); break;
+				case '\\': outBuilder.Append( "\\\\" ); break;
 
 				default:
 					if( (int)c < 32 || (int)c >= 127 )
-						builder.Append( "\\x" + ( (int)c ).ToString( "x04" ) );
+						outBuilder.Append( "\\x" + ( (int)c ).ToString( "x04" ) );
 					else
-						builder.Append( c );
+						outBuilder.Append( c );
 					break;
 				}
 			}
-
-			return builder.ToString();
 		}
 
-		internal static void DecodeDelimiterFormatString( StringBuilder outBuilder, string text )
+		public static string EncodeDelimiterFormatString( string text )
+		{
+			var builder = new StringBuilder( "", text.Length + 2 );
+			EncodeDelimiterFormatString( builder, text );
+			return builder.ToString();
+
+			//var builder = new StringBuilder( "", text.Length + 2 );
+
+			//foreach( char c in text )
+			//{
+			//	switch( c )
+			//	{
+			//	case '\n': builder.Append( "\\n" ); break;
+			//	case '\r': builder.Append( "\\r" ); break;
+			//	case '\t': builder.Append( "\\t" ); break;
+			//	case '\'': builder.Append( "\\\'" ); break;
+			//	case '\"': builder.Append( "\\\"" ); break;
+			//	case '\\': builder.Append( "\\\\" ); break;
+
+			//	default:
+			//		if( (int)c < 32 || (int)c >= 127 )
+			//			builder.Append( "\\x" + ( (int)c ).ToString( "x04" ) );
+			//		else
+			//			builder.Append( c );
+			//		break;
+			//	}
+			//}
+
+			//return builder.ToString();
+		}
+
+		public static void DecodeDelimiterFormatString( StringBuilder outBuilder, string text )
 		{
 			for( int n = 0; n < text.Length; n++ )
 			{
@@ -266,5 +294,64 @@ namespace NeoAxis
 			var v = base64URL.Replace( '-', '+' ).Replace( '_', '/' ).PadRight( 4 * ( ( base64URL.Length + 3 ) / 4 ), '=' );
 			return Encoding.UTF8.GetString( Convert.FromBase64String( v ) );
 		}
+
+		public static string AddSpacesBetweenWords( string text )
+		{
+			if( text.Contains( " " ) )
+				return text;
+
+			//special words
+			if( text == "iOS" )
+				return text;
+
+
+			var str2 = text.Replace( '_', ' ' ).Trim();
+
+			if( !str2.Any( char.IsLower ) )
+				return str2;
+
+
+			//!!!!use special words when split
+
+
+			var withSpaces = new StringBuilder();
+
+			char prev = ' ';
+			for( int n = 0; n < str2.Length; n++ )
+			{
+				var c = str2[ n ];
+
+				if( n != 0 )
+				{
+					if( c >= 'A' && c <= 'Z' && !( prev >= 'A' && prev <= 'Z' ) )
+						withSpaces.Append( " " );
+				}
+
+				withSpaces.Append( c );
+
+				prev = c;
+			}
+
+			string[] words = withSpaces.ToString().Split( new char[] { ' ' } );
+
+			var result = new StringBuilder();
+			for( int n = 0; n < words.Length; n++ )
+			{
+				var word = words[ n ];
+
+				//if( n > 0 && n < words.Length - 1 )
+				//{
+				//	if( wordsToReplace.TryGetValue( word, out string newWord ) )
+				//		word = newWord;
+				//}
+
+				if( result.Length != 0 )
+					result.Append( ' ' );
+				result.Append( word );
+			}
+
+			return result.ToString();
+		}
+
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -150,8 +150,139 @@ namespace NeoAxis
 			}
 		}
 
+		public static void GenerateSphere( double radius, int hSegments, int vSegments, bool insideOut, out Vector3F[] positions, out int[] indices )
+		{
+			var radius2 = (float)radius;
+			if( insideOut )
+				radius2 = -radius2;
+
+			//if( radius < 0 )
+			//	Log.Fatal( "SimpleMeshGenerator: GenerateSphere: radius < 0." );
+			if( hSegments < 3 )
+				Log.Fatal( "SimpleMeshGenerator: GenerateSphere: hSegments < 3." );
+			if( vSegments < 2 )
+				Log.Fatal( "SimpleMeshGenerator: GenerateSphere: vSegments < 2." );
+
+			//positions
+			{
+				int vertexCount = hSegments * ( vSegments - 1 ) + 2;
+				positions = new Vector3F[ vertexCount ];
+
+				float[] cosTable = new float[ hSegments ];
+				float[] sinTable = new float[ hSegments ];
+				{
+					float angleStep = MathEx.PI * 2 / hSegments;
+					for( int n = 0; n < hSegments; n++ )
+					{
+						float angle = angleStep * n;
+						cosTable[ n ] = MathEx.Cos( angle );
+						sinTable[ n ] = MathEx.Sin( angle );
+					}
+				}
+
+				int currentPosition = 0;
+
+				for( int v = 0; v < vSegments + 1; v++ )
+				{
+					if( v == 0 )
+					{
+						positions[ currentPosition++ ] = new Vector3F( 0, 0, radius2 );
+					}
+					else if( v == vSegments )
+					{
+						positions[ currentPosition++ ] = new Vector3F( 0, 0, -radius2 );
+					}
+					else
+					{
+						float c = ( (float)v / (float)vSegments );
+						float angle = -( c * 2 - 1 ) * MathEx.PI / 2;
+
+						float hRadius = MathEx.Cos( angle ) * radius2;
+						float h = MathEx.Sin( angle ) * radius2;
+
+						for( int n = 0; n < hSegments; n++ )
+							positions[ currentPosition++ ] = new Vector3F( cosTable[ n ] * hRadius, sinTable[ n ] * hRadius, h );
+					}
+				}
+
+				if( positions.Length != currentPosition )
+					Log.Fatal( "SimpleMeshGenerator: GenerateSphere: positions.Length != currentPosition." );
+			}
+
+			//indices
+			{
+				int indexCount = hSegments * ( vSegments - 2 ) * 2 * 3 + hSegments * 3 + hSegments * 3;
+				indices = new int[ indexCount ];
+
+				int currentIndex = 0;
+				for( int v = 0; v < vSegments; v++ )
+				{
+					int index;
+					int nextIndex;
+
+					if( v != 0 )
+					{
+						index = 1 + ( v - 1 ) * hSegments;
+						nextIndex = index + hSegments;
+					}
+					else
+					{
+						index = 0;
+						nextIndex = 1;
+					}
+
+					for( int n = 0; n < hSegments; n++ )
+					{
+						int start = n;
+						int end = ( n + 1 ) % hSegments;
+
+						if( v == 0 )
+						{
+
+							indices[ currentIndex++ ] = index;
+							indices[ currentIndex++ ] = nextIndex + start;
+							indices[ currentIndex++ ] = nextIndex + end;
+						}
+						else if( v == vSegments - 1 )
+						{
+							indices[ currentIndex++ ] = index + end;
+							indices[ currentIndex++ ] = index + start;
+							indices[ currentIndex++ ] = nextIndex;
+						}
+						else
+						{
+							indices[ currentIndex++ ] = index + end;
+							indices[ currentIndex++ ] = index + start;
+							indices[ currentIndex++ ] = nextIndex + end;
+
+							indices[ currentIndex++ ] = nextIndex + start;
+							indices[ currentIndex++ ] = nextIndex + end;
+							indices[ currentIndex++ ] = index + start;
+						}
+					}
+				}
+
+				if( indices.Length != currentIndex )
+					Log.Fatal( "SimpleMeshGenerator: GenerateSphere: indices.Length != currentIndex." );
+			}
+		}
+
+		public static void GenerateSphere( Sphere sphere, int hSegments, int vSegments, bool insideOut, out Vector3[] positions, out int[] indices )
+		{
+			GenerateSphere( sphere.Radius, hSegments, vSegments, insideOut, out positions, out indices );
+			for( int n = 0; n < positions.Length; n++ )
+				positions[ n ] = positions[ n ] + sphere.Center;
+		}
+
+		public static void GenerateSphere( SphereF sphere, int hSegments, int vSegments, bool insideOut, out Vector3F[] positions, out int[] indices )
+		{
+			GenerateSphere( sphere.Radius, hSegments, vSegments, insideOut, out positions, out indices );
+			for( int n = 0; n < positions.Length; n++ )
+				positions[ n ] = positions[ n ] + sphere.Center;
+		}
+
 		public static void GenerateSphere( double radius, int hSegments, int vSegments, bool insideOut,
-			out Vector3[] positions, out Vector3[] normals, out Vector4[] tangents, out Vector2[] texCoords, out int[] indices, out Face[] faces )
+		out Vector3[] positions, out Vector3[] normals, out Vector4[] tangents, out Vector2[] texCoords, out int[] indices, out Face[] faces )
 		{
 			var radius2 = radius;
 			if( insideOut )
@@ -259,8 +390,8 @@ namespace NeoAxis
 			Debug.Assert( rawVerticesInFace == 3 && ( rawVerticesInFaceForMiddle == 3 || rawVerticesInFaceForMiddle == 6 ) );
 
 			int faceCount = hSegments * ( vSegments - 2 ) * 6 / rawVerticesInFace +
-			                hSegments * 6 / rawVerticesInFaceForMiddle;
-			var faces = new Face[ faceCount];
+							hSegments * 6 / rawVerticesInFaceForMiddle;
+			var faces = new Face[ faceCount ];
 
 			int middleSegmentStart = ( vSegments / 2 ) * hSegments * 6;
 			int middleSegmentEnd = middleSegmentStart + hSegments * 6;
@@ -294,9 +425,9 @@ namespace NeoAxis
 				if( curTriangle == faceTriangles.Length )
 				{
 					bool isFirstDegenerate = IsDegenerate( faceTriangles[ 0 ].Vertex, faceTriangles[ 1 ].Vertex, faceTriangles[ 2 ].Vertex );
-					Debug.Assert( ! ( faceTriangles.Length == 6 && (
-							   isFirstDegenerate || IsDegenerate( faceTriangles[ 3 ].Vertex, faceTriangles[ 4 ].Vertex, faceTriangles[ 5 ].Vertex ) ) 
-						   ));
+					Debug.Assert( !( faceTriangles.Length == 6 && (
+							   isFirstDegenerate || IsDegenerate( faceTriangles[ 3 ].Vertex, faceTriangles[ 4 ].Vertex, faceTriangles[ 5 ].Vertex ) )
+						   ) );
 
 					//??? Сейчас отбрасываются вырожденные. Можно ли сделать чтобы вырожденные не перебирались совсем?
 					if( !isFirstDegenerate )
@@ -306,7 +437,7 @@ namespace NeoAxis
 				}
 			}
 
-			Debug.Assert(faces.Length == curFace );
+			Debug.Assert( faces.Length == curFace );
 			return faces.ToArray();
 
 			bool IsDegenerate( int i0, int i1, int i2 ) => i0 == i1 || i0 == i2 || i1 == i2;
@@ -1012,7 +1143,7 @@ namespace NeoAxis
 			bool downUsed = false;
 
 			//all the vertices in pList now have the unique positions. No more unique positions.
-			vertexIndexList = new List<int>(pList.Count);
+			vertexIndexList = new List<int>( pList.Count );
 			for( int i = 0; i < pList.Count; i++ )
 				vertexIndexList.Add( i );
 
@@ -1063,7 +1194,7 @@ namespace NeoAxis
 						indexList[ i ] = pList.Count;
 
 						pList.Add( pList[ vidx1 ] );
-						vertexIndexList.Add( vertexIndexList[vidx1] );
+						vertexIndexList.Add( vertexIndexList[ vidx1 ] );
 						nList.Add( nList[ vidx1 ] );
 						tList.Add( tList[ vidx1 ] );
 						txList.Add( txt );
@@ -1104,7 +1235,7 @@ namespace NeoAxis
 						indexList[ i + 1 ] = pList.Count;
 
 						pList.Add( pList[ vidx2 ] );
-						vertexIndexList.Add( vertexIndexList[vidx2] );
+						vertexIndexList.Add( vertexIndexList[ vidx2 ] );
 						nList.Add( nList[ vidx2 ] );
 						tList.Add( tList[ vidx2 ] );
 						txList.Add( txt );
@@ -1145,7 +1276,7 @@ namespace NeoAxis
 						indexList[ i + 2 ] = pList.Count;
 
 						pList.Add( pList[ vidx3 ] );
-						vertexIndexList.Add( vertexIndexList[vidx3] );
+						vertexIndexList.Add( vertexIndexList[ vidx3 ] );
 						nList.Add( nList[ vidx3 ] );
 						tList.Add( tList[ vidx3 ] );
 						txList.Add( txt );
@@ -1193,7 +1324,7 @@ namespace NeoAxis
 							txList.Add( texCoord );
 
 							pList.Add( pList[ index ] );
-							vertexIndexList.Add( vertexIndexList[index] ); 
+							vertexIndexList.Add( vertexIndexList[ index ] );
 							nList.Add( nList[ index ] );
 							tList.Add( tList[ index ] );
 
@@ -1313,11 +1444,11 @@ namespace NeoAxis
 			texCoords = ToVector2F( texCoordsD );
 		}
 
-		public static void GenerateSphere( double radius, int hSegments, int vSegments, bool insideOut, out Vector3F[] positions, out int[] indices )
-		{
-			GenerateSphere( radius, hSegments, vSegments, insideOut, out Vector3[] positionsD, out indices );
-			positions = ToVector3F( positionsD );
-		}
+		//public static void GenerateSphere( double radius, int hSegments, int vSegments, bool insideOut, out Vector3F[] positions, out int[] indices )
+		//{
+		//	GenerateSphere( radius, hSegments, vSegments, insideOut, out Vector3[] positionsD, out indices );
+		//	positions = ToVector3F( positionsD );
+		//}
 
 		public static void GenerateSphere( double radius, int hSegments, int vSegments, bool insideOut,
 			out Vector3F[] positions, out Vector3F[] normals, out Vector4F[] tangents, out Vector2F[] texCoords, out int[] indices, out Face[] faces )

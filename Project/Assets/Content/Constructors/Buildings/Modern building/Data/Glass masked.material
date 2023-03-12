@@ -1,0 +1,29 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.Material
+{
+	BlendMode = Masked
+	BaseColor = 0.2 0.2 0.2
+	Roughness = 0
+	Reflectance = 1
+	Opacity = 0.7
+	OpacityDithering = True
+	.component NeoAxis.FlowGraph
+	{
+		Name = window shader graph
+		EditorScrollPosition = 0 0
+		Specialization
+		{
+			GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node window
+			Position = 10 -7
+			ControlledObject
+			{
+				GetByReference = "this:..\\.."
+			}
+		}
+	}
+}

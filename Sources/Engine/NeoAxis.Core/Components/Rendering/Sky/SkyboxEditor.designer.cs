@@ -1,4 +1,5 @@
-﻿namespace NeoAxis.Editor
+﻿#if !DEPLOY
+namespace NeoAxis.Editor
 {
 	partial class SkyboxEditor
 	{
@@ -7,7 +8,7 @@
 		/// </summary>
 		private System.ComponentModel.IContainer components = null;
 
-		#region Component Designer generated code
+#region Component Designer generated code
 
 		/// <summary> 
 		/// Required method for Designer support - do not modify 
@@ -28,7 +29,7 @@
 
 		}
 
-		#endregion
+#endregion
 	}
 }
-
+#endif

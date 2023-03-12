@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2021.3.
+// Made with NeoAxis Engine 2023.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1162, 842\"><KW V=\"1\" A=\"70987FB780954C7637A20C3819F3FC99\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"064BDE238FF64DD14DAD2C4984CE9D22\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"70987FB780954C7637A20C3819F3FC99\"><KP UN=\"70987FB780954C7637A20C3819F3FC99\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"C279F2E359004186F69BE819B3194B47\" S=\"False\"><CPD ObjPath=\"$SFCrate1 2\\$Paint Layer\\$C# Script\" /></KP><KP UN=\"C6DB2560456C419026A523E7F22642B8\" S=\"False\"><CPD ObjPath=\"$SFCrate1 3\\$Paint Layer\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"70987FB780954C7637A20C3819F3FC99\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"064BDE238FF64DD14DAD2C4984CE9D22\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"70987FB780954C7637A20C3819F3FC99\"><KP UN=\"70987FB780954C7637A20C3819F3FC99\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"C279F2E359004186F69BE819B3194B47\" S=\"False\"><CPD ObjPath=\"$SFCrate1 2\\$Paint Layer\\$C# Script\" /></KP><KP UN=\"C6DB2560456C419026A523E7F22642B8\" S=\"False\"><CPD ObjPath=\"$SFCrate1 3\\$Paint Layer\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -19,7 +19,7 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "2.34105530580982 -2.54235224878404 2.84749653422594; -0.164335321439323 0.164579655848431 0.687205247932497 0.688226987426592; 1 1 1"
+		Transform = "3.36368594757274 0.16546944932039 3.65030843275713; -0.194736177146959 0.195396257405362 0.678517418503026 0.680817329898524; 1 1 1"
 	}
 	.component NeoAxis.Camera
 	{
@@ -43,7 +43,7 @@
 		Name = Light 1
 		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
 		Type = Directional
-		Brightness = 130000
+		Brightness = 160000
 		AttenuationFar = 100
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
@@ -97,7 +97,6 @@
 			.component NeoAxis.RenderingEffect_Sharpen
 			{
 				Name = Sharpen
-				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
 			}
 		}
 		.component NeoAxis.Component
@@ -192,31 +191,11 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
-		Name = SFCrate1
-		Transform = "0.0101858004595252 1.47700464308959 0.50956297708712; 0 0 0 1; 1 1 1"
-		Mesh
-		{
-			GetByReference = "Samples\\Starter Content\\Scene objects\\Sci-fi Box\\SFCrate1.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
-		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-	}
-	.component NeoAxis.MeshInSpace
-	{
 		Name = SFCrate1 2
-		Transform = "2.48967083082535 1.44040271237645 0.501349157012952; 0 0 0 1; 1 1 1"
+		Transform = "4.70544991244999 5.05375588170049 0.501349157012952; 0 0 0 1; 1 1 1"
 		Mesh
 		{
-			GetByReference = "Samples\\Starter Content\\Scene objects\\Sci-fi Box\\SFCrate1.fbx|$Mesh"
+			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Box\\SFCrate1.fbx|$Mesh"
 		}
 		ReplaceMaterialSelectively
 		{
@@ -232,7 +211,7 @@
 		.component NeoAxis.PaintLayer
 		{
 			Name = Paint Layer
-			MaterialColor = 1 1 1 0.435879
+			MaterialColor = 1 1 1 0.7521762
 			BlendMode = Transparent
 			MaskImage
 			{
@@ -272,10 +251,10 @@
 	.component NeoAxis.MeshInSpace
 	{
 		Name = SFCrate1 3
-		Transform = "4.96923292796712 1.44040271237645 0.501349157012952; 0 0 0 1; 1 1 1"
+		Transform = "2.00228633431927 5.10952375791947 0.501349157012952; 0 0 0 1; 1 1 1"
 		Mesh
 		{
-			GetByReference = "Samples\\Starter Content\\Scene objects\\Sci-fi Box\\SFCrate1.fbx|$Mesh"
+			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Box\\SFCrate1.fbx|$Mesh"
 		}
 		ReplaceMaterialSelectively
 		{
@@ -291,7 +270,7 @@
 		.component NeoAxis.PaintLayer
 		{
 			Name = Paint Layer
-			MaterialColor = 1 1 1 0.435879
+			MaterialColor = 1 1 1 0.06825104
 			BlendMode = Transparent
 			MaskImage
 			{
@@ -304,7 +283,7 @@
 			.component NeoAxis.CSharpScript
 			{
 				Name = C# Script
-				Code = "public void PaintLayer_UpdateEvent(NeoAxis.Component sender, float delta)\r\n{\r\n\tvar layer = (PaintLayer)sender;\r\n\tlayer.MaterialColor = new ColorValue(1, 1, 1, MathEx.Sin(Time.Current) * 0.5 + 0.5);\r\n}\r\n"
+				Code = "public void PaintLayer_UpdateEvent(NeoAxis.Component sender, float delta)\r\n{\r\n\tvar layer = (PaintLayer)sender;\r\n\tlayer.MaterialColor = new ColorValue(1, 1, 1, MathEx.Cos(Time.Current) * 0.5 + 0.5);\r\n}\r\n"
 				__parameter_Delta = 0
 				Exit
 				{
@@ -325,20 +304,6 @@
 					{
 					}
 				}
-			}
-		}
-		.component NeoAxis.PaintLayer
-		{
-			Enabled = False
-			Name = Paint Layer 2
-			BlendMode = Transparent
-			MaskImage
-			{
-				GetByReference = "Samples\\Starter Content\\Scenes\\Mesh paint layer\\Layer2_Mask.png"
-			}
-			Material
-			{
-				GetByReference = "Samples\\Starter Content\\Scenes\\Mesh paint layer\\Layer2.material"
 			}
 		}
 	}

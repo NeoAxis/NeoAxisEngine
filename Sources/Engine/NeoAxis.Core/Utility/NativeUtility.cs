@@ -1,10 +1,11 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Collections.Generic;
 using System.IO;
 using Internal;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -33,7 +34,7 @@ namespace NeoAxis
 		unsafe delegate void MemoryManager_GetAllocationInformationDelegate( MemoryAllocationType allocationType, int size, sbyte* fileName, int lineNumber, int allocationCount );
 
 		[DllImport( library, EntryPoint = "MemoryManager_GetAllocationInformation", CallingConvention = convention )]
-		static extern void MemoryManager_GetAllocationInformation( MemoryManager_GetAllocationInformationDelegate callback );
+		static extern long MemoryManager_GetAllocationInformation( MemoryManager_GetAllocationInformationDelegate callback );
 
 		///////////////////////////////////////////
 
@@ -55,6 +56,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		internal static void LoadUtilsNativeWrapperLibrary()
 		{
 			if( !nativeWrapperLibraryLoaded )
@@ -87,34 +89,55 @@ namespace NeoAxis
 
 		//
 
-		[DllImport( library, CallingConvention = convention ), SuppressUnmanagedCodeSecurity]
-		static extern void NativeUtils_CopyMemory( IntPtr destination, IntPtr source, int length );
-		public static void CopyMemory( IntPtr destination, IntPtr source, int length )
-		{
-			LoadUtilsNativeWrapperLibrary();
-			NativeUtils_CopyMemory( destination, source, length );
-		}
+		//[DllImport( library, CallingConvention = convention ), SuppressUnmanagedCodeSecurity]
+		//static extern void NativeUtils_CopyMemory( IntPtr destination, IntPtr source, int length );
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe static void CopyMemory( void* destination, void* source, int length )
 		{
-			LoadUtilsNativeWrapperLibrary();
-			NativeUtils_CopyMemory( (IntPtr)destination, (IntPtr)source, length );
+			Buffer.MemoryCopy( source, destination, length, length );
+
+			//if( MoveMemorySmall( destination, source, length ) )
+			//	return;
+
+			//LoadUtilsNativeWrapperLibrary();
+			//NativeUtils_CopyMemory( (IntPtr)destination, (IntPtr)source, length );
 		}
 
-		[DllImport( library, CallingConvention = convention ), SuppressUnmanagedCodeSecurity]
-		static extern void NativeUtils_MoveMemory( IntPtr destination, IntPtr source, int length );
-		public static void MoveMemory( IntPtr destination, IntPtr source, int length )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static void CopyMemory( IntPtr destination, IntPtr source, int length )
 		{
-			LoadUtilsNativeWrapperLibrary();
-			NativeUtils_MoveMemory( destination, source, length );
+			unsafe
+			{
+				CopyMemory( (void*)destination, (void*)source, length );
+			}
 		}
-		public unsafe static void MoveMemory( void* destination, void* source, int length )
-		{
-			LoadUtilsNativeWrapperLibrary();
-			NativeUtils_MoveMemory( (IntPtr)destination, (IntPtr)source, length );
-		}
+
+		//[DllImport( library, CallingConvention = convention ), SuppressUnmanagedCodeSecurity]
+		//static extern void NativeUtils_MoveMemory( IntPtr destination, IntPtr source, int length );
+
+		//public unsafe static void MoveMemory( void* destination, void* source, int length )
+		//{
+		//	Buffer.MemoryCopy( source, destination, length, length );
+
+		//	//if( MoveMemorySmall( destination, source, length ) )
+		//	//	return;
+
+		//	//LoadUtilsNativeWrapperLibrary();
+		//	//NativeUtils_MoveMemory( (IntPtr)destination, (IntPtr)source, length );
+		//}
+
+		//public static void MoveMemory( IntPtr destination, IntPtr source, int length )
+		//{
+		//	unsafe
+		//	{
+		//		MoveMemory( (void*)destination, (void*)source, length );
+		//	}
+		//}
 
 		[DllImport( library, CallingConvention = convention ), SuppressUnmanagedCodeSecurity]
 		static extern int NativeUtils_CompareMemory( IntPtr buffer1, IntPtr buffer2, int length );
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static int CompareMemory( IntPtr buffer1, IntPtr buffer2, int length )
 		{
 			LoadUtilsNativeWrapperLibrary();
@@ -128,6 +151,7 @@ namespace NeoAxis
 
 		[DllImport( library, CallingConvention = convention ), SuppressUnmanagedCodeSecurity]
 		static extern void NativeUtils_ZeroMemory( IntPtr buffer, int length );
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void ZeroMemory( IntPtr buffer, int length )
 		{
 			LoadUtilsNativeWrapperLibrary();
@@ -162,7 +186,7 @@ namespace NeoAxis
 
 		///////////////////////////////////////////
 
-		public static IntPtr PreloadLibrary( string baseName, string overrideSetCurrentDirectory = "" )
+		public static IntPtr PreloadLibrary( string baseName, string overrideSetCurrentDirectory = "", bool errorFatal = true )
 		{
 			lock( preLoadLibraryLockObject )
 			{
@@ -201,9 +225,16 @@ namespace NeoAxis
 					//no preloading on iOS
 					return IntPtr.Zero;
 				}
+				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+				{
+					//no preloading on Web
+					return IntPtr.Zero;
+				}
 				else
 				{
-					Log.Fatal( "NativeLibraryManager: PreloadLibrary: no code." );
+					if( errorFatal )
+						Log.Fatal( "NativeLibraryManager: PreloadLibrary: no code." );
+					return IntPtr.Zero;
 				}
 
 				if( loadedNativeLibraries.TryGetValue( baseName, out var pointer2 ) )
@@ -235,7 +266,11 @@ namespace NeoAxis
 
 				var pointer = PlatformSpecificUtility.Instance.LoadLibrary( fullPath );
 				if( pointer == IntPtr.Zero )
-					Log.Fatal( "NativeLibraryManager: PreloadLibrary: Loading native library failed ({0}).", fullPath );
+				{
+					if( errorFatal )
+						Log.Fatal( "NativeLibraryManager: PreloadLibrary: Loading native library failed ({0}).", fullPath );
+					return IntPtr.Zero;
+				}
 
 				loadedNativeLibraries[ baseName ] = pointer;
 
@@ -261,7 +296,7 @@ namespace NeoAxis
 
 		static string allocationItemName;
 		static List<string> allocations;
-		static ulong totalAllocationSize;
+		//static ulong totalAllocationSize;
 
 		unsafe static void EnumerateGetAllocationInformationCallback( MemoryAllocationType allocationType, int size, sbyte* fileName,
 			int lineNumber, int allocationCount )
@@ -275,29 +310,28 @@ namespace NeoAxis
 			allocations.Add( string.Format( "{0} - type: {1}, size: {2} x {3} = {4} (file: {5})", allocationItemName, allocationType,
 				size, allocationCount, size * allocationCount, fileInfo ) );
 
-			totalAllocationSize += (ulong)( size * allocationCount );
+			//totalAllocationSize += (ulong)( size * allocationCount );
 		}
 
 		internal static void LogStatistics( string allocationName )
 		{
 			LoadUtilsNativeWrapperLibrary();
 
-			Log.InvisibleInfo( string.Format( "NativeMemoryManager: {0}s statistics begin",
-				allocationName ) );
+			Log.InvisibleInfo( string.Format( "NativeMemoryManager: {0}s statistics begin", allocationName ) );
 
 			allocationItemName = allocationName;
 			allocations = new List<string>( 128 );
-			totalAllocationSize = 0;
+			long totalAllocationSize = 0;
 
 			unsafe
 			{
-				MemoryManager_GetAllocationInformation( EnumerateGetAllocationInformationCallback );
+				totalAllocationSize = MemoryManager_GetAllocationInformation( EnumerateGetAllocationInformationCallback );
 			}
 
 			foreach( string leak in allocations )
 				Log.InvisibleInfo( leak );
 
-			Log.InvisibleInfo( "Total size: " + totalAllocationSize.ToString() );
+			Log.InvisibleInfo( "Total current allocation size: " + totalAllocationSize.ToString() + " bytes" );
 
 			allocationItemName = null;
 			allocations = null;

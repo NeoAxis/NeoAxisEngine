@@ -1,6 +1,6 @@
 /*
- * Copyright 2011-2020 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
+ * Copyright 2011-2022 Branimir Karadzic. All rights reserved.
+ * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
 #include <bx/platform.h>
@@ -395,7 +395,7 @@ namespace bgfx
 
 		bx::StaticMemoryBlockWriter writer(mem->data, mem->size);
 		uint32_t magic = BGFX_CHUNK_MAGIC_TEX;
-		bx::write(&writer, magic);
+		bx::write(&writer, magic, bx::ErrorAssert{});
 
 		TextureCreate tc;
 		tc.m_width     = _width;
@@ -406,7 +406,7 @@ namespace bgfx
 		tc.m_format    = _format;
 		tc.m_cubeMap   = false;
 		tc.m_mem       = NULL;
-		bx::write(&writer, tc);
+		bx::write(&writer, tc, bx::ErrorAssert{});
 
 		rci->destroyTexture(_handle);
 		rci->createTexture(_handle, mem, _flags, 0);
@@ -444,7 +444,7 @@ namespace bgfx
 
 		if (BX_UNLIKELY(NULL == g_callback) )
 		{
-			bx::debugPrintf("%s(%d): BGFX 0x%08x: %s", _filePath, _line, _code, out);
+			bx::debugPrintf("%s(%d): BGFX FATAL 0x%08x: %s", _filePath, _line, _code, out);
 			abort();
 		}
 		else
@@ -718,7 +718,7 @@ namespace bgfx
 		s_ctx->destroyTransientIndexBuffer(m_ib);
 	}
 
-	static const uint32_t paletteSrgb[] =
+	static const uint32_t s_paletteSrgb[] =
 		{
 			0x0,        // Black
 			0xffa46534, // Blue
@@ -737,9 +737,9 @@ namespace bgfx
 			0xff4fe9fc, // Yellow
 			0xffeceeee, // White
 		};
-	BX_STATIC_ASSERT(BX_COUNTOF(paletteSrgb) == 16);
+	BX_STATIC_ASSERT(BX_COUNTOF(s_paletteSrgb) == 16);
 
-	static const uint32_t paletteLinear[] =
+	static const uint32_t s_paletteLinear[] =
 	{
 		0x0,        // Black
 		0xff5e2108, // Blue
@@ -758,7 +758,7 @@ namespace bgfx
 		0xff13cff8, // Yellow
 		0xffd5dada  // White
 	};
-	BX_STATIC_ASSERT(BX_COUNTOF(paletteLinear) == 16);
+	BX_STATIC_ASSERT(BX_COUNTOF(s_paletteLinear) == 16);
 
 	void blit(RendererContextI* _renderCtx, TextVideoMemBlitter& _blitter, const TextVideoMem& _mem)
 	{
@@ -787,8 +787,8 @@ namespace bgfx
 		_renderCtx->blitSetup(_blitter);
 
 		const uint32_t* palette = 0 != (s_ctx->m_init.resolution.reset & BGFX_RESET_SRGB_BACKBUFFER)
-			? paletteLinear
-			: paletteSrgb
+			? s_paletteLinear
+			: s_paletteSrgb
 			;
 
 		for (;yy < _mem.m_height;)
@@ -1246,7 +1246,7 @@ namespace bgfx
 		}
 
 		const uint32_t renderItemIdx = bx::atomicFetchAndAddsat<uint32_t>(&m_frame->m_numRenderItems, 1, BGFX_CONFIG_MAX_DRAW_CALLS);
-		if (BGFX_CONFIG_MAX_DRAW_CALLS-1 <= renderItemIdx)
+		if (BGFX_CONFIG_MAX_DRAW_CALLS <= renderItemIdx)
 		{
 			discard(_flags);
 			++m_numDropped;
@@ -1559,6 +1559,9 @@ namespace bgfx
 			BX_TRACE("");
 		}
 
+		BX_TRACE("GPU device, Device ID: %04x, Vendor ID: %04x", g_caps.deviceId, g_caps.vendorId);
+		BX_TRACE("");
+
 		RendererType::Enum renderers[RendererType::Count];
 		uint8_t num = getSupportedRenderers(BX_COUNTOF(renderers), renderers);
 
@@ -1608,6 +1611,7 @@ namespace bgfx
 				, s_capsFlags[ii].m_str
 				);
 		}
+		BX_UNUSED(s_capsFlags);
 
 		BX_TRACE("");
 		BX_TRACE("Limits:");
@@ -1843,7 +1847,7 @@ namespace bgfx
 		{
 			BX_TRACE("Creating rendering thread.");
 
-//!!!!iu
+//!!!!betauser
 #ifndef __ANDROID__
 			m_thread.init(renderThread, this, 0, "bgfx - renderer backend thread");
 #endif
@@ -2568,11 +2572,6 @@ namespace bgfx
 #endif // BX_PLATFORM_WINDOWS
 	}
 
-	static int32_t compareDescending(const void* _lhs, const void* _rhs)
-	{
-		return *(const int32_t*)_rhs - *(const int32_t*)_lhs;
-	}
-
 	RendererContextI* rendererCreate(const Init& _init)
 	{
 		int32_t scores[RendererType::Count];
@@ -2611,6 +2610,7 @@ namespace bgfx
 				}
 				else if (BX_ENABLED(BX_PLATFORM_LINUX) )
 				{
+					score += RendererType::Vulkan   == renderer ? 30 : 0;
 					score += RendererType::OpenGL   == renderer ? 20 : 0;
 					score += RendererType::OpenGLES == renderer ? 10 : 0;
 				}
@@ -2649,7 +2649,7 @@ namespace bgfx
 			}
 		}
 
-		bx::quickSort(scores, numScores, sizeof(int32_t), compareDescending);
+		bx::quickSort(scores, numScores, bx::compareDescending<int32_t>);
 
 		RendererContextI* renderCtx = NULL;
 		for (uint32_t ii = 0; ii < numScores; ++ii)
@@ -3018,14 +3018,15 @@ namespace bgfx
 					}
 
 					bx::MemoryReader reader(mem->data, mem->size);
+					bx::Error err;
 
 					uint32_t magic;
-					bx::read(&reader, magic);
+					bx::read(&reader, magic, &err);
 
 					if (BGFX_CHUNK_MAGIC_TEX == magic)
 					{
 						TextureCreate tc;
-						bx::read(&reader, tc);
+						bx::read(&reader, tc, &err);
 
 						if (NULL != tc.m_mem)
 						{
@@ -3430,19 +3431,6 @@ namespace bgfx
 		{
 			g_callback =
 				s_callbackStub = BX_NEW(g_allocator, CallbackStub);
-		}
-
-		if (true
-		&&  !BX_ENABLED(BX_PLATFORM_EMSCRIPTEN || BX_PLATFORM_PS4)
-		&&  RendererType::Noop != init.type
-		&&  NULL == init.platformData.ndt
-		&&  NULL == init.platformData.nwh
-		&&  NULL == init.platformData.context
-		&&  NULL == init.platformData.backBuffer
-		&&  NULL == init.platformData.backBufferDS
-		   )
-		{
-			BX_TRACE("bgfx platform data like window handle or backbuffer is not set, creating headless device.");
 		}
 
 		bx::memSet(&g_caps, 0, sizeof(g_caps) );
@@ -4428,7 +4416,7 @@ namespace bgfx
 
 		bx::StaticMemoryBlockWriter writer(mem->data, mem->size);
 		uint32_t magic = BGFX_CHUNK_MAGIC_TEX;
-		bx::write(&writer, magic);
+		bx::write(&writer, magic, bx::ErrorAssert{});
 
 		TextureCreate tc;
 		tc.m_width     = _width;
@@ -4439,7 +4427,7 @@ namespace bgfx
 		tc.m_format    = _format;
 		tc.m_cubeMap   = false;
 		tc.m_mem       = _mem;
-		bx::write(&writer, tc);
+		bx::write(&writer, tc, bx::ErrorAssert{});
 
 		return s_ctx->createTexture(mem, _flags, 0, NULL, _ratio, NULL != _mem);
 	}
@@ -4481,7 +4469,7 @@ namespace bgfx
 
 		bx::StaticMemoryBlockWriter writer(mem->data, mem->size);
 		uint32_t magic = BGFX_CHUNK_MAGIC_TEX;
-		bx::write(&writer, magic);
+		bx::write(&writer, magic, bx::ErrorAssert{});
 
 		TextureCreate tc;
 		tc.m_width     = _width;
@@ -4492,7 +4480,7 @@ namespace bgfx
 		tc.m_format    = _format;
 		tc.m_cubeMap   = false;
 		tc.m_mem       = _mem;
-		bx::write(&writer, tc);
+		bx::write(&writer, tc, bx::ErrorAssert{});
 
 		return s_ctx->createTexture(mem, _flags, 0, NULL, BackbufferRatio::Count, NULL != _mem);
 	}
@@ -4523,7 +4511,7 @@ namespace bgfx
 
 		bx::StaticMemoryBlockWriter writer(mem->data, mem->size);
 		uint32_t magic = BGFX_CHUNK_MAGIC_TEX;
-		bx::write(&writer, magic);
+		bx::write(&writer, magic, bx::ErrorAssert{});
 
 		TextureCreate tc;
 		tc.m_width     = _size;
@@ -4534,7 +4522,7 @@ namespace bgfx
 		tc.m_format    = _format;
 		tc.m_cubeMap   = true;
 		tc.m_mem       = _mem;
-		bx::write(&writer, tc);
+		bx::write(&writer, tc, bx::ErrorAssert{});
 
 		return s_ctx->createTexture(mem, _flags, 0, NULL, BackbufferRatio::Count, NULL != _mem);
 	}
@@ -5436,7 +5424,6 @@ BGFX_C_API void bgfx_set_triple_buffering()
 }
 
 //!!!!betauser
-//!!!!temp
 char gpuDescription[256] = { 0 };
 #define _MIN(x, y) (((x) < (y)) ? (x) : (y))
 BGFX_C_API void bgfx_get_gpu_description(int bufferSize, char* result)

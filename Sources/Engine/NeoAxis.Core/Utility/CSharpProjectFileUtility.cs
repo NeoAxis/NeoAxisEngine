@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #if !DEPLOY
 
 //using Microsoft.Build.Evaluation;
@@ -24,7 +24,7 @@ namespace NeoAxis
 	/// </summary>
 	static class CSharpProjectFileUtility
 	{
-		public const string ProjectAndSolutionName = "Project";
+		const string projectAndSolutionName = "Project";
 
 		static ESet<string> projectFileCSFiles;
 		static ESet<string> projectFileCSFilesFullPaths;
@@ -69,21 +69,29 @@ namespace NeoAxis
 			catch { }
 		}
 
+		static string GetProjectAndSolutionName( bool clientDll )
+		{
+			var result = projectAndSolutionName;
+			if( clientDll )
+				result += ".Client";
+			return result;
+		}
+
 		///////////////////////////////////////////////
 
-		static string GetProjectCSProjFullPath()
+		static string GetProjectCSProjFullPath( bool clientDll )
 		{
-			return VirtualPathUtility.GetRealPathByVirtual( $"project:{ProjectAndSolutionName}.csproj" );
+			return VirtualPathUtility.GetRealPathByVirtual( $"project:{GetProjectAndSolutionName( clientDll )}.csproj" );
 		}
 
-		public static bool ProjectCSProjFileExists()
+		public static bool ProjectCSProjFileExists( bool clientDll )
 		{
-			return File.Exists( GetProjectCSProjFullPath() );
+			return File.Exists( GetProjectCSProjFullPath( clientDll ) );
 		}
 
-		static string GetProjectSlnFullPath()
+		public static string GetProjectSlnFullPath( bool clientDll )
 		{
-			return VirtualPathUtility.GetRealPathByVirtual( $"project:{ProjectAndSolutionName}.sln" );
+			return VirtualPathUtility.GetRealPathByVirtual( $"project:{GetProjectAndSolutionName( clientDll )}.sln" );
 		}
 
 		//public static string GetProjectDllFullPath()
@@ -93,9 +101,9 @@ namespace NeoAxis
 
 		static void FileWatcherInit()
 		{
-			if( ProjectCSProjFileExists() )
+			if( ProjectCSProjFileExists( false ) )
 			{
-				var path = GetProjectCSProjFullPath();
+				var path = GetProjectCSProjFullPath( false );
 				systemWatcher = new FileSystemWatcher( Path.GetDirectoryName( path ), Path.GetFileName( path ) );
 				//systemWatcher.InternalBufferSize = 32768;
 				systemWatcher.IncludeSubdirectories = false;
@@ -137,12 +145,12 @@ namespace NeoAxis
 				projectFileCSFilesFullPaths = new ESet<string>();
 				projectFileReferences = new List<string>();
 
-				if( ProjectCSProjFileExists() )
+				if( ProjectCSProjFileExists( false ) )
 				{
 					try
 					{
 						var xmldoc = new XmlDocument();
-						xmldoc.Load( GetProjectCSProjFullPath() );
+						xmldoc.Load( GetProjectCSProjFullPath( false ) );
 
 						{
 							var list = xmldoc.SelectNodes( "//Reference" );
@@ -175,7 +183,7 @@ namespace NeoAxis
 					}
 					catch( Exception e )
 					{
-						Log.Warning( $"Unable to read file \'{GetProjectCSProjFullPath()}\'. Error: {e.Message}" );
+						Log.Warning( $"Unable to read file \'{GetProjectCSProjFullPath( false )}\'. Error: {e.Message}" );
 					}
 				}
 			}
@@ -189,7 +197,7 @@ namespace NeoAxis
 			try
 			{
 				var xmldoc = new XmlDocument();
-				xmldoc.Load( GetProjectCSProjFullPath() );
+				xmldoc.Load( GetProjectCSProjFullPath( false ) );
 
 				if( removeFiles != null )
 				{
@@ -269,7 +277,7 @@ namespace NeoAxis
 				}
 
 				if( wasUpdated )
-					xmldoc.Save( GetProjectCSProjFullPath() );
+					xmldoc.Save( GetProjectCSProjFullPath( false ) );
 			}
 			catch( Exception e )
 			{
@@ -337,9 +345,9 @@ namespace NeoAxis
 
 		public static bool UpdateProjectFile( ICollection<string> addFiles, ICollection<string> removeFiles, out string error )
 		{
-			if( !ProjectCSProjFileExists() )
+			if( !ProjectCSProjFileExists( false ) )
 			{
-				error = $"Project file is not exists. Path: {GetProjectCSProjFullPath()}.";
+				error = $"Project file is not exists. Path: {GetProjectCSProjFullPath( false )}.";
 				return false;
 			}
 
@@ -354,7 +362,7 @@ namespace NeoAxis
 				GetProjectFileCSFiles( true, false );
 
 				//update project for C# editor
-				if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+				if( EngineApp.IsEditor )
 					EditorAssemblyInterface.Instance.UpdateProjectFileForCSharpEditor( addFiles, removeFiles );
 			}
 
@@ -369,22 +377,24 @@ namespace NeoAxis
 			return directory;
 		}
 
-		static List<string> GetProjectCompilationFileNames()
+		static List<string> GetProjectCompilationFileNames( bool clientDll )
 		{
+			var projectName = GetProjectAndSolutionName( clientDll );
+
 			var files = new List<string>();
-			files.Add( ProjectAndSolutionName + ".dll" );
-			files.Add( ProjectAndSolutionName + ".pdb" );
-			files.Add( ProjectAndSolutionName + ".deps.json" );
+			files.Add( projectName + ".dll" );
+			files.Add( projectName + ".pdb" );
+			files.Add( projectName + ".deps.json" );
 			return files;
 		}
 
-		static bool CanCompileToLastCompilationDirectory()
+		static bool CanCompileToLastCompilationDirectory( bool clientDll )
 		{
 			var outputDirectory = lastCompilationDirectory;
 			if( string.IsNullOrEmpty( outputDirectory ) )
 				outputDirectory = VirtualFileSystem.Directories.Binaries;
 
-			foreach( var file in GetProjectCompilationFileNames() )
+			foreach( var file in GetProjectCompilationFileNames( clientDll ) )
 			{
 				var path = Path.Combine( outputDirectory, file );
 				if( File.Exists( path ) && IOUtility.IsFileLocked( path ) )
@@ -393,13 +403,13 @@ namespace NeoAxis
 			return true;
 		}
 
-		public static bool Compile( bool rebuild, out string outputDllFilePath )//, out string error )
+		public static bool Compile( bool clientDll, bool rebuild, out string outputDllFilePath )//, out string error )
 		{
 			outputDllFilePath = "";
 			//error = "";
 
 			//get compilation directory
-			if( !CanCompileToLastCompilationDirectory() )
+			if( !CanCompileToLastCompilationDirectory( clientDll ) )
 			{
 				//update last compilation directory
 
@@ -434,20 +444,21 @@ namespace NeoAxis
 			if( string.IsNullOrEmpty( outputDirectory ) )
 				outputDirectory = VirtualFileSystem.Directories.Binaries;
 
-			if( !VisualStudioSolutionUtility.BuildSolution( GetProjectSlnFullPath(), outputDirectoryOptional, rebuild ) )//, out error ) )
+			if( !VisualStudioSolutionUtility.BuildSolution( GetProjectSlnFullPath( clientDll ), outputDirectoryOptional, rebuild ) )//, out error ) )
 				return false;
 
-			outputDllFilePath = Path.Combine( outputDirectory, ProjectAndSolutionName + ".dll" );
+			outputDllFilePath = Path.Combine( outputDirectory, GetProjectAndSolutionName( clientDll ) + ".dll" );
 
 			return true;
 		}
 
-		public static void ClearAndCompileIfRequiredAtStart()
+		//clientDll is always false
+		public static void ClearAndCompileIfRequiredAtStart( bool clientDll )
 		{
 			//editor specific. delete Project.dll, Project.pdb, Project.deps.json
-			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+			if( EngineApp.IsEditor )
 			{
-				foreach( var file in GetProjectCompilationFileNames() )
+				foreach( var file in GetProjectCompilationFileNames( clientDll ) )
 				{
 					var path = Path.Combine( VirtualFileSystem.Directories.Binaries, file );
 
@@ -463,17 +474,19 @@ namespace NeoAxis
 			}
 
 			//compile
-			if( CompilationIsRequired() )
-				Compile( false, out _ );
+			if( CompilationIsRequired( clientDll ) )
+				Compile( clientDll, false, out _ );
 		}
 
-		static List<string> GetAllSolutionFiles()
+		static List<string> GetAllSolutionFiles( bool clientDll )
 		{
 			var result = new List<string>();
 
+			var projectName = GetProjectAndSolutionName( clientDll );
+
 			//!!!!simple solution. checking only Project.csproj and only cs files. need to check additional cs projects
-			result.Add( Path.Combine( VirtualFileSystem.Directories.Project, ProjectAndSolutionName + ".sln" ) );
-			result.Add( Path.Combine( VirtualFileSystem.Directories.Project, ProjectAndSolutionName + ".csproj" ) );
+			result.Add( Path.Combine( VirtualFileSystem.Directories.Project, projectName + ".sln" ) );
+			result.Add( Path.Combine( VirtualFileSystem.Directories.Project, projectName + ".csproj" ) );
 			result.AddRange( GetProjectFileCSFiles( false, true ) );
 
 			return result;
@@ -501,15 +514,15 @@ namespace NeoAxis
 			}
 		}
 
-		public static bool CompilationIsRequired()
+		public static bool CompilationIsRequired( bool clientDll )
 		{
 			var outputDirectory = lastCompilationDirectory;
 			if( string.IsNullOrEmpty( outputDirectory ) )
 				outputDirectory = VirtualFileSystem.Directories.Binaries;
 
-			var outputDllFilePath = Path.Combine( outputDirectory, ProjectAndSolutionName + ".dll" );
+			var outputDllFilePath = Path.Combine( outputDirectory, GetProjectAndSolutionName( clientDll ) + ".dll" );
 
-			return !File.Exists( outputDllFilePath ) || !IsOutputUpToDate( GetAllSolutionFiles(), outputDllFilePath );
+			return !File.Exists( outputDllFilePath ) || !IsOutputUpToDate( GetAllSolutionFiles( clientDll ), outputDllFilePath );
 		}
 
 
@@ -793,7 +806,7 @@ namespace NeoAxis
 		//		GetProjectFileCSFiles( true, false );
 
 		//		//update project for C# editor
-		//		if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+		//		if( EngineApp.IsEditor )
 		//			EditorAssemblyInterface.Instance.UpdateProjectFileForCSharpEditor( addFiles, removeFiles );
 		//	}
 

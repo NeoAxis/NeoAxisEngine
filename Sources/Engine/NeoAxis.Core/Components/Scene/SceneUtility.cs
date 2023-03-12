@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 
@@ -18,7 +18,7 @@ namespace NeoAxis
 		//	public Vector3F Normal;
 		//}
 
-		public static (bool found, Vector3 position, ObjectInSpace collidedWith) CalculateCreateObjectPositionByRay( Scene scene, ObjectInSpace objectInSpace, Ray ray, bool allowSnap )
+		public static (bool found, Vector3 position, Vector3F normal, ObjectInSpace collidedWith) CalculateCreateObjectPositionByRay( Scene scene, ObjectInSpace objectInSpace, Ray ray, bool allowSnap )
 		{
 			//var viewport = ViewportControl.Viewport;
 
@@ -46,7 +46,7 @@ namespace NeoAxis
 			{
 				//particle system specific
 				if( !( objectInSpace is ParticleSystemInSpace ) )
-					localBounds = objectInSpace.SpaceBounds.CalculatedBoundingBox - objectInSpace.Transform.Value.Position;
+					localBounds = objectInSpace.SpaceBounds.BoundingBox - objectInSpace.Transform.Value.Position;
 
 				//Light, Camera, Decal, Grid specific. use bounds without scaling
 
@@ -71,6 +71,7 @@ namespace NeoAxis
 				localBounds.Expand( new Vector3( 0, 0, 0.001 ) );
 
 			double resultMinScale = 1.01;
+			Vector3F resultMinScaleNormal = Vector3F.ZAxis;
 			ObjectInSpace resultMinScaleCollidedWith = null;
 
 			if( objectInSpace != null )
@@ -142,6 +143,10 @@ namespace NeoAxis
 								if( minScale <= 1 && minScale < resultMinScale )
 								{
 									resultMinScale = minScale;
+
+									//!!!!?
+									resultMinScaleNormal = Vector3F.ZAxis;//normal;
+
 									resultMinScaleCollidedWith = meshInSpace;
 								}
 							}
@@ -163,17 +168,32 @@ namespace NeoAxis
 					//mesh in space
 					if( resultItem.Object is MeshInSpace meshInSpace )
 					{
-						if( meshInSpace.RayCast( ray, Mesh.CompiledData.RayCastMode.Auto, out var scale, out var triangleIndex ) )
+						var rayCastResult = meshInSpace.RayCast( ray, Mesh.CompiledData.RayCastModes.Auto );
+						if( rayCastResult != null )
 						{
-							if( scale <= 1 && scale < resultMinScale )
+							if( rayCastResult.Scale <= 1 && rayCastResult.Scale < resultMinScale )
 							{
-								resultMinScale = scale;
+								resultMinScale = rayCastResult.Scale;
+								resultMinScaleNormal = rayCastResult.Normal;
 								resultMinScaleCollidedWith = meshInSpace;
 								//if( triangleIndex != -1 )
 								//{
 								//}
 							}
 						}
+
+						//if( meshInSpace.RayCast( ray, Mesh.CompiledData.RayCastMode.Auto, out var scale, out var normal, out var triangleIndex ) )
+						//{
+						//	if( scale <= 1 && scale < resultMinScale )
+						//	{
+						//		resultMinScale = scale;
+						//		resultMinScaleNormal = normal;
+						//		resultMinScaleCollidedWith = meshInSpace;
+						//		//if( triangleIndex != -1 )
+						//		//{
+						//		//}
+						//	}
+						//}
 					}
 
 					//!!!!какие еще
@@ -198,6 +218,7 @@ namespace NeoAxis
 			if( scene.Mode.Value == Scene.ModeEnum._2D )
 				pos.Z = Math.Ceiling( pos.Z );
 
+#if !DEPLOY
 			//snap
 			if( allowSnap )
 			{
@@ -216,10 +237,11 @@ namespace NeoAxis
 					pos *= snapVec;
 				}
 			}
+#endif
 
 			//CalculateCreateObjectPositionUnderCursorEvent?.Invoke( objectInSpace, ref found, ref pos );
 
-			return (found, pos, resultMinScaleCollidedWith);
+			return (found, pos, resultMinScaleNormal, resultMinScaleCollidedWith);
 			//objectToTransform.Transform = new Transform( pos, objectToTransform.Transform.Value.Rotation, objectToTransform.Transform.Value.Scale );
 			//}
 			//else
@@ -253,7 +275,7 @@ namespace NeoAxis
 		}
 
 		//!!!!где юзается? где не нужно теперь?
-		public static (bool found, double positionZ) CalculateObjectPositionZ( Scene scene, GroupOfObjects toGroupOfObjects, double defaultPositionZ, Vector2 position, List<Component> destinationCachedBaseObjects = null )
+		public static (bool found, double positionZ, Vector3F normal) CalculateObjectPositionZ( Scene scene, GroupOfObjects toGroupOfObjects, double defaultPositionZ, Vector2 position, List<Component> destinationCachedBaseObjects = null )
 		{
 			var ray = new Ray( new Vector3( position, defaultPositionZ + 10000 ), new Vector3( 0, 0, -20000 ) );
 
@@ -262,6 +284,7 @@ namespace NeoAxis
 				//when destination != null
 
 				double? maxPositionZ = null;
+				Vector3F maxNormal = Vector3F.Zero;
 
 				var baseObjects = destinationCachedBaseObjects ?? toGroupOfObjects.GetBaseObjects();
 				foreach( var baseObject in baseObjects )
@@ -274,7 +297,10 @@ namespace NeoAxis
 						{
 							var height = terrain.GetHeight( position, false );
 							if( maxPositionZ == null || height > maxPositionZ.Value )
+							{
 								maxPositionZ = height;
+								maxNormal = terrain.GetNormal( position );
+							}
 						}
 					}
 
@@ -282,12 +308,26 @@ namespace NeoAxis
 					var meshInSpace = baseObject as MeshInSpace;
 					if( meshInSpace != null )
 					{
-						if( meshInSpace.RayCast( ray, Mesh.CompiledData.RayCastMode.Auto, out var scale, out _ ) )
+						var rayCastResult = meshInSpace.RayCast( ray, Mesh.CompiledData.RayCastModes.Auto );
+						if( rayCastResult != null )
 						{
-							var height = ray.GetPointOnRay( scale ).Z;
+							var height = ray.GetPointOnRay( rayCastResult.Scale ).Z;
 							if( maxPositionZ == null || height > maxPositionZ.Value )
+							{
 								maxPositionZ = height;
+								maxNormal = rayCastResult.Normal;
+							}
 						}
+
+						//if( meshInSpace.RayCast( ray, Mesh.CompiledData.RayCastMode.Auto, out var scale, out var normal, out _ ) )
+						//{
+						//	var height = ray.GetPointOnRay( scale ).Z;
+						//	if( maxPositionZ == null || height > maxPositionZ.Value )
+						//	{
+						//		maxPositionZ = height;
+						//		maxNormal = normal;
+						//	}
+						//}
 					}
 
 					//group of objects
@@ -300,17 +340,17 @@ namespace NeoAxis
 				}
 
 				if( maxPositionZ != null )
-					return (true, maxPositionZ.Value);
+					return (true, maxPositionZ.Value, maxNormal);
 			}
 			else
 			{
 				//when destination == null
 				var result = CalculateCreateObjectPositionByRay( scene, null, ray, false );
 				if( result.found )
-					return (true, result.position.Z);
+					return (true, result.position.Z, result.normal);
 			}
 
-			return (false, defaultPositionZ);
+			return (false, defaultPositionZ, Vector3F.ZAxis);
 		}
 
 		public class PaintToLayerData

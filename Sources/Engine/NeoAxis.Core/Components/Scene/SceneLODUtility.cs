@@ -1,6 +1,7 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +14,7 @@ namespace NeoAxis
 	{
 		public unsafe struct LodState
 		{
+			//!!!!
 			const int maxCount = 3;
 			//const int maxCount = 10;
 
@@ -21,12 +23,14 @@ namespace NeoAxis
 			public fixed float minRanges[ maxCount ];
 			public fixed float maxRanges[ maxCount ];
 
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public void GetItem( int index, out int lodLevel, out RangeF lodRange )
 			{
 				lodLevel = levels[ index ];
 				lodRange = new RangeF( minRanges[ index ], maxRanges[ index ] );
 			}
 
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public void Add( int lodLevel, RangeF lodRange )
 			{
 				if( Count < maxCount )
@@ -38,6 +42,7 @@ namespace NeoAxis
 				}
 			}
 
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public void FixMinMax()
 			{
 				if( Count != 0 )
@@ -50,18 +55,21 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static float GetCameraDistanceMinSquared( Viewport.CameraSettingsClass cameraSettings, SpaceBounds objectBounds )
 		{
-			objectBounds.GetCalculatedBoundingBox( out var objBounds );
+			ref var objBounds = ref objectBounds.boundingBox;
+			//objectBounds.GetCalculatedBoundingBox( out var objBounds );
 
 			var nearestInBounds = cameraSettings.Position;
 			MathEx.Clamp( ref nearestInBounds.X, objBounds.Minimum.X, objBounds.Maximum.X );
 			MathEx.Clamp( ref nearestInBounds.Y, objBounds.Minimum.Y, objBounds.Maximum.Y );
 			MathEx.Clamp( ref nearestInBounds.Z, objBounds.Minimum.Z, objBounds.Maximum.Z );
 
-			return (float)( cameraSettings.Position - nearestInBounds ).LengthSquared();
+			return (float)( cameraSettings.position - nearestInBounds ).LengthSquared();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static float GetCameraDistanceMinSquared( Viewport.CameraSettingsClass cameraSettings, ref Bounds objectBounds )
 		{
 			var nearestInBounds = cameraSettings.Position;
@@ -69,74 +77,133 @@ namespace NeoAxis
 			MathEx.Clamp( ref nearestInBounds.Y, objectBounds.Minimum.Y, objectBounds.Maximum.Y );
 			MathEx.Clamp( ref nearestInBounds.Z, objectBounds.Minimum.Z, objectBounds.Maximum.Z );
 
-			return (float)( cameraSettings.Position - nearestInBounds ).LengthSquared();
+			return (float)( cameraSettings.position - nearestInBounds ).LengthSquared();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static float GetCameraDistanceMax( Viewport.CameraSettingsClass cameraSettings, SpaceBounds objectBounds )
 		{
-			objectBounds.GetCalculatedBoundingSphere( out var objSphere );
+			ref var objSphere = ref objectBounds.boundingSphere;
+			//objectBounds.GetCalculatedBoundingSphere( out var objSphere );
 
-			var centerDistance = ( cameraSettings.Position - objSphere.Center ).Length();
+			var centerDistance = ( cameraSettings.position - objSphere.Center ).Length();
 			var max = centerDistance + objSphere.Radius;
 
 			return (float)max;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static float GetCameraDistanceMax( Viewport.CameraSettingsClass cameraSettings, ref Sphere objectBoundingSphere )
 		{
-			var centerDistance = ( cameraSettings.Position - objectBoundingSphere.Center ).Length();
+			var centerDistance = ( cameraSettings.position - objectBoundingSphere.Center ).Length();
 			var max = centerDistance + objectBoundingSphere.Radius;
 
 			return (float)max;
 		}
 
-		public unsafe static void GetDemandedLODs( ViewportRenderingContext context, Mesh mesh, float cameraDistanceMinSquared, float cameraDistanceMaxSquared, out LodState lodState )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		unsafe static RangeF GetLodRange( int lodsLength, float* lodDistances, int lodIndex )
+		{
+			if( lodIndex == 0 )
+				return new RangeF( 0, lodDistances[ 0 ] );
+			else
+			{
+				var arrayIndex = lodIndex - 1;
+
+				float far;
+				if( arrayIndex + 1 < lodsLength )
+					far = lodDistances[ arrayIndex + 1 ];
+				else
+					far = 1000000.0f;
+
+				return new RangeF( lodDistances[ arrayIndex ], far );
+			}
+
+
+			//unsafe static RangeF GetLodRange( ViewportRenderingContext context, float objectBoundingSize, RenderingPipeline.RenderSceneData.IMeshDataLODLevel[] lods, float* lodDistances, int lodIndex )
+			//
+			//if( lodIndex == 0 )
+			//	return new RangeF( 0, lods[ 0 ].GetOutputDistance( context, objectBoundingSize ) );
+			//else
+			//{
+			//	var arrayIndex = lodIndex - 1;
+
+			//	float far;
+			//	if( arrayIndex + 1 < lods.Length )
+			//		far = lods[ arrayIndex + 1 ].GetOutputDistance( context, objectBoundingSize );
+			//	else
+			//		far = 1000000.0f;
+
+			//	return new RangeF( lods[ arrayIndex ].GetOutputDistance( context, objectBoundingSize ), far );
+			//}
+
+
+
+			//if( lodIndex == 0 )
+			//	return new RangeF( 0, lods[ 0 ].Distance );
+			//else
+			//{
+			//	var arrayIndex = lodIndex - 1;
+
+			//	var lod = lods[ arrayIndex ];
+
+			//	float far;
+			//	if( arrayIndex + 1 < lods.Length )
+			//		far = lods[ arrayIndex + 1 ].Distance;
+			//	else
+			//		far = 1000000.0f;
+
+			//	return new RangeF( lod.Distance, far );
+			//}
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		public unsafe static void GetDemandedLODs( ViewportRenderingContext context, Mesh.CompiledData.MeshDataClass meshData, float cameraDistanceMinSquared, float cameraDistanceMaxSquared, float objectBoundingSize, out LodState lodState )
 		{
 			lodState = new LodState();
 
-			var lods = mesh.Result.MeshData.LODs;
+			var lods = meshData.LODs;//var lods = mesh.Result.MeshData.LODs;
 			if( lods != null )
 			{
-				RangeF GetLodRange( int lodIndex )
+				var lodsLength = lods.Length;
+				var lodDistances = stackalloc float[ lodsLength ];
+
+				var anyZero = false;
+				for( int n = 0; n < lodsLength; n++ )
 				{
-					if( lodIndex == 0 )
-						return new RangeF( 0, lods[ 0 ].Distance );
-					else
+					lodDistances[ n ] = lods[ n ].GetOutputDistance( context, objectBoundingSize );
+					if( lodDistances[ n ] == 0 )
+						anyZero = true;
+				}
+
+				//auto distance depending last voxel LOD distance
+				if( anyZero )
+				{
+					var lastLODDistance = lodDistances[ lodsLength - 1 ];
+					for( int n = 0; n < lodsLength; n++ )
 					{
-						var arrayIndex = lodIndex - 1;
-
-						var lod = lods[ arrayIndex ];
-
-						float far;
-						if( arrayIndex + 1 < lods.Length )
-							far = lods[ arrayIndex + 1 ].Distance;
-						else
-							far = 1000000.0f;
-
-						return new RangeF( lod.Distance, far );
+						if( lodDistances[ n ] == 0 )
+							lodDistances[ n ] = lastLODDistance * ( (float)( n + 1 ) / lodsLength );
 					}
 				}
 
-				var lodCount = lods.Length + 1;
+				var lodCount = lodsLength + 1;
+				var contextLodScale = context.LODScale * meshData.LODScale;
 
-				var pipeline = context.renderingPipeline;
-				var contextLodRange = pipeline.LODRange.Value;
-				var contextLodScale = (float)pipeline.LODScale.Value;
-
-				var lodStart = contextLodRange.Minimum;
-				var lodEnd = Math.Min( lodCount - 1, contextLodRange.Maximum );
+				var lodStart = context.LODRange.Minimum;
+				var lodEnd = Math.Min( lodCount - 1, context.LODRange.Maximum );
 				if( lodStart > lodEnd )
 					lodStart = lodEnd;
 
 				for( int lodIndex = lodStart; lodIndex <= lodEnd; lodIndex++ )
 				{
-					var lodRange = GetLodRange( lodIndex ) * contextLodScale;
+					var lodRange = GetLodRange( lodsLength, lodDistances, lodIndex ) * contextLodScale;
 					if( lodIndex == lodStart )
 						lodRange.Minimum = 0;
 					if( lodIndex == lodEnd )
 						lodRange.Maximum = 1000000;
 
-					if( RenderingSystem.SmoothLOD )
+					if( context.SmoothLOD )
 					{
 						var min = lodRange.Minimum * 0.9f;
 						var minSquared = min * min;
@@ -144,9 +211,10 @@ namespace NeoAxis
 						var max = lodRange.Maximum;
 						var maxSquared = max * max;
 
-						//early exit
-						if( minSquared > cameraDistanceMaxSquared )
-							break;
+						//!!!!was bug here
+						////early exit
+						//if( minSquared > cameraDistanceMaxSquared )
+						//	break;
 
 						if( cameraDistanceMaxSquared >= minSquared && cameraDistanceMinSquared < maxSquared )
 							lodState.Add( lodIndex, lodRange );
@@ -173,9 +241,10 @@ namespace NeoAxis
 				lodState.Add( 0, new RangeF( 0, 1000000 ) );
 		}
 
-		public static float GetLodValue( RangeF lodRange, float cameraDistance )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static float GetLodValue( ViewportRenderingContext context, RangeF lodRange, float cameraDistance )
 		{
-			if( RenderingSystem.SmoothLOD )
+			if( context.SmoothLOD )// RenderingSystem.SmoothLOD )
 			{
 				var lodRangeMin = lodRange.Minimum;
 				var lodRangeMax = lodRange.Maximum;
@@ -206,7 +275,6 @@ namespace NeoAxis
 			else
 				return 0;
 		}
-
 	}
 }
 

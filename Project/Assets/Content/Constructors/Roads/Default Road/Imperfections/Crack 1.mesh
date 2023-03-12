@@ -1,0 +1,14 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.Mesh
+{
+	EditorCameraTransform = "1.37704294775239 -1.13284101713683 0.905772570758137; -0.223177712545129 0.0782690946923968 0.91688032356035 0.321552685740648; 1 1 1"
+	.component NeoAxis.MeshGeometry_Plane
+	{
+		Name = Plane
+		Material
+		{
+			GetByReference = "Content\\Constructors\\Roads\\Default Road\\Imperfections\\Crack 1.material"
+		}
+	}
+}

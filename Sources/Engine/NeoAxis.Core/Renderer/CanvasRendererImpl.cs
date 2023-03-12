@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -546,7 +546,7 @@ namespace NeoAxis
 							}
 						}
 
-						materialPass = new GpuMaterialPass( vertexProgram, fragmentProgram );
+						materialPass = new GpuMaterialPass( null, vertexProgram, fragmentProgram );
 
 						//pass.SourceBlendFactor = SceneBlendFactor.SourceAlpha;
 						//pass.DestBlendFactor = SceneBlendFactor.OneMinusSourceAlpha;
@@ -1142,7 +1142,8 @@ namespace NeoAxis
 
 									//align rectangle coordinates to screen pixels. for true type fonts.
 									//!!!!было font.Definition.Type == EngineFontDefinition.Types.TrueType
-									if( IsScreen && !compiledData.trueTypeFontSizeYInPixelsScaled && options.HasFlag( AddTextOptions.PixelAlign ) )// && font.Definition.Type == EngineFontDefinition.Types.TrueType /*&& !outGeometryTransformEnabled*/ )
+
+									if( IsScreen && !compiledData.trueTypeFontSizeYInPixelsScaled && ( ( options & AddTextOptions.PixelAlign ) != 0 ) )//&& font.Definition.Type == EngineFontDefinition.Types.TrueType /*&& !outGeometryTransformEnabled*/ )
 									{
 										//Vec2 viewportSize = ViewportForScreenGuiRenderer.DimensionsInPixels.
 										//   Size.ToVec2();
@@ -2200,7 +2201,7 @@ namespace NeoAxis
 
 		//		void RenderEngineLogo( ViewportRenderingContext context )
 		//		{
-		//			if( !logoInitialTimeFinished && EngineApp.CreatedInsideEngineWindow != null && EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+		//			if( !logoInitialTimeFinished && EngineApp.CreatedInsideEngineWindow != null && EngineApp.IsSimulation )
 		//			{
 		//				var viewport = context.CurrentViewport;
 		//				if( viewport == RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ] )
@@ -2350,7 +2351,8 @@ namespace NeoAxis
 								texture = ResourceUtility.WhiteTexture2D;
 
 							var minMag = renderableItem.textureFiltering == TextureFilteringMode.Linear ? FilterOption.Linear : FilterOption.Point;
-							context.BindTexture( 0, texture, renderableItem.textureClamp ? TextureAddressingMode.Clamp : TextureAddressingMode.Wrap, minMag, minMag, FilterOption.None );
+
+							context.BindTexture( 0, texture, renderableItem.textureClamp ? TextureAddressingMode.Clamp : TextureAddressingMode.Wrap, minMag, minMag, FilterOption.None, 0, false );
 
 							//GpuMaterialPass.TextureParameterValue textureValue = new GpuMaterialPass.TextureParameterValue( texture,
 							//	renderableItem.textureClamp ? TextureAddressingMode.Clamp : TextureAddressingMode.Wrap,
@@ -2439,12 +2441,13 @@ namespace NeoAxis
 						if( !renderableItem.vertexBuffer.Disposed )
 						{
 							context.SetVertexBuffer( 0, renderableItem.vertexBuffer, 0, renderableItem.vertexCount );
-							context.SetPassAndSubmit( pass, renderableItem.renderOperation, containers );
+							context.SetPassAndSubmit( pass, renderableItem.renderOperation, containers, null, false );
 
 							if( renderableItem.renderOperation == RenderOperationType.TriangleList )
 								context.UpdateStatisticsCurrent.Triangles += renderableItem.vertexCount / 3;
 							else if( renderableItem.renderOperation == RenderOperationType.LineList )
 								context.UpdateStatisticsCurrent.Lines += renderableItem.vertexCount / 2;
+							context.UpdateStatisticsCurrent.Instances++;
 						}
 					}
 				}

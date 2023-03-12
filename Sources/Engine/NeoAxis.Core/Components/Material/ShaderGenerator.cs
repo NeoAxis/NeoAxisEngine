@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Text;
 using System.ComponentModel;
@@ -15,7 +15,8 @@ namespace NeoAxis
 	/// <summary>
 	/// Represents a shader generation tool for materials and effects.
 	/// </summary>
-	/*public */class ShaderGenerator
+	/*public */
+	class ShaderGenerator
 	{
 		//!!!!другой алгоритм генерить, чтобы не было дублирований
 
@@ -29,7 +30,8 @@ namespace NeoAxis
 								   //int samplerRegisterCounter = 10;
 
 		Stack<VariableToCreate> variablesToCreateInQueue = new Stack<VariableToCreate>();
-		List<string> resultCodeLines = new List<string>();
+		//code, material index
+		List<(string, int)> resultCodeLines = new List<(string, int)>();
 
 		ESet<ShaderScript> addedShaderScripts = new ESet<ShaderScript>();
 
@@ -119,6 +121,16 @@ namespace NeoAxis
 				Log.Info( "CODE BODY:" );
 				Log.Info( codeBody );
 				Log.Info( "END" );
+			}
+
+			public int GetTextureCount()
+			{
+				int result = 0;
+				if( textures != null )
+					result += textures.Count;
+				if( texturesMask != null )
+					result += texturesMask.Count;
+				return result;
 			}
 		}
 
@@ -288,7 +300,8 @@ namespace NeoAxis
 		//	return value;
 		//}
 
-		public ResultData Process( ICollection<(Component, Metadata.Property)> properties, string parametersNamePrefix, ref int refTextureRegisterCounter, out string error )
+		public ResultData Process( ICollection<(Component, int, Metadata.Property)> properties, string parametersNamePrefix, Material thisMaterial, Material.CompiledMaterialData[] multiMaterialSeparateMaterialsOfCombinedGroup, ref int refTextureRegisterCounter, out string error )
+		//public ResultData Process( ICollection<(Component, int, Metadata.Property)> properties, string parametersNamePrefix, Material thisMaterial, Material[] multiMaterialSeparateMaterialsOfCombinedGroup, ref int refTextureRegisterCounter, out string error )
 		//public ResultData Process( Component owner, ICollection<string> propertyNames, string parametersNamePrefix, out string error )
 		{
 			textureRegisterCounter = refTextureRegisterCounter;
@@ -301,13 +314,14 @@ namespace NeoAxis
 			resultData = new ResultData();
 
 			{
-				//!!!!склеивать, объединять
+				//!!!!merge?
 
 				foreach( var propertyItem in properties )
 				//foreach( var propertyName in propertyNames )
 				{
 					var owner = propertyItem.Item1;
-					var property = propertyItem.Item2;
+					var materialIndex = propertyItem.Item2;
+					var property = propertyItem.Item3;
 
 					//Metadata.Property property = (Metadata.Property)owner.MetadataGetMemberBySignature( "property:" + propertyName );
 					if( property != null )
@@ -320,7 +334,7 @@ namespace NeoAxis
 								string outputVariableName = property.Name.Substring( 0, 1 ).ToLower() + property.Name.Substring( 1 );
 								string resultVariableName = "var" + variableNameCounter.ToString();
 								string line = string.Format( "{0} = {1};", outputVariableName, resultVariableName );
-								resultCodeLines.Add( line );
+								resultCodeLines.Add( (line, materialIndex) );
 							}
 
 							//push start variable
@@ -336,18 +350,16 @@ namespace NeoAxis
 							while( variablesToCreateInQueue.Count != 0 )
 							{
 								var variableToCreate = variablesToCreateInQueue.Pop();
-								GenerateLine( variableToCreate );
+								GenerateLine( variableToCreate, materialIndex );
 							}
 						}
 					}
 				}
 
-				//!!!!error
-
 				//parametersBody
 				if( resultData.parameters != null || resultData.autoConstantParameters != null )
 				{
-					StringBuilder s = new StringBuilder();
+					var s = new StringBuilder();
 
 					if( resultData.parameters != null )
 					{
@@ -387,15 +399,17 @@ namespace NeoAxis
 				//samplersBody
 				if( resultData.textures != null )
 				{
-					StringBuilder s = new StringBuilder();
+					var s = new StringBuilder();
 					foreach( var item in resultData.textures )
 					{
 						if( s.Length != 0 )
 							s.Append( returnLine );
 
-						//!!!!
-
-						var line = string.Format( "SAMPLER2D({0}, {1});", item.nameInShader, item.textureRegister );
+						string line;
+						if( !SystemSettings.LimitedDevice )
+							line = string.Format( "SAMPLER2D_TEXTUREONLY({0}, {1});", item.nameInShader, item.textureRegister );
+						else
+							line = string.Format( "SAMPLER2D({0}, {1});", item.nameInShader, item.textureRegister );
 						s.Append( line );
 
 						//var line1 = string.Format( "Texture2D<vec4> {0};", item.nameInShader );
@@ -412,14 +426,163 @@ namespace NeoAxis
 
 				//codeBody
 				{
-					StringBuilder s = new StringBuilder();
-					foreach( var line in resultCodeLines.GetReverse() )
+					var resultCodeLinesReversed = new List<(string, int)>( resultCodeLines.GetReverse() );
+
+					//additional code to combine materials
+					if( multiMaterialSeparateMaterialsOfCombinedGroup != null )
 					{
-						if( s.Length != 0 )
-							s.Append( returnLine );
-						s.Append( line );
+						//when combined material has Opaque and Masked materials at same time, then add "opacity = 1.0;" to Opaque materials
+						if( thisMaterial.BlendMode.Value == Material.BlendModeEnum.Masked )
+						{
+							for( int materialIndex = 0; materialIndex < multiMaterialSeparateMaterialsOfCombinedGroup.Length; materialIndex++ )
+							{
+								var material = multiMaterialSeparateMaterialsOfCombinedGroup[ materialIndex ].owner;
+								if( material.BlendMode.Value == Material.BlendModeEnum.Opaque )
+								{
+									string line = "opacity = 1.0;";
+									resultCodeLinesReversed.Add( (line, materialIndex) );
+								}
+							}
+						}
+
+						//when exists with different ShadingModel
+						var containsLit = false;
+						var containsSubsurface = false;
+						var containsSimple = false;
+						foreach( var m in multiMaterialSeparateMaterialsOfCombinedGroup )
+						{
+							switch( m.owner.ShadingModel.Value )
+							{
+							case Material.ShadingModelEnum.Lit: containsLit = true; break;
+							case Material.ShadingModelEnum.Subsurface: containsSubsurface = true; break;
+							case Material.ShadingModelEnum.Simple: containsSimple = true; break;
+							}
+						}
+						if( ( ( containsLit ? 1 : 0 ) + ( containsSubsurface ? 1 : 0 ) + ( containsSimple ? 1 : 0 ) ) > 1 )
+						{
+							for( int materialIndex = 0; materialIndex < multiMaterialSeparateMaterialsOfCombinedGroup.Length; materialIndex++ )
+							{
+								var material = multiMaterialSeparateMaterialsOfCombinedGroup[ materialIndex ].owner;
+								if( material.ShadingModel.Value != thisMaterial.ShadingModel.Value )
+								{
+									string line = $"shadingModel = {(int)material.ShadingModel.Value};";
+									resultCodeLinesReversed.Add( (line, materialIndex) );
+								}
+							}
+						}
+
+						//when exists with different OpacityDithering
+						if( thisMaterial.OpacityDithering )
+						{
+							for( int materialIndex = 0; materialIndex < multiMaterialSeparateMaterialsOfCombinedGroup.Length; materialIndex++ )
+							{
+								var material = multiMaterialSeparateMaterialsOfCombinedGroup[ materialIndex ].owner;
+								if( !material.OpacityDithering )
+								{
+									string line = "opacityDithering = false;";
+									resultCodeLinesReversed.Add( (line, materialIndex) );
+								}
+							}
+						}
+
+						//when exists with different RayTracingReflection
+						if( thisMaterial.RayTracingReflection.Value != 0 )
+						{
+							for( int materialIndex = 0; materialIndex < multiMaterialSeparateMaterialsOfCombinedGroup.Length; materialIndex++ )
+							{
+								var material = multiMaterialSeparateMaterialsOfCombinedGroup[ materialIndex ].owner;
+								if( material.RayTracingReflection.Value != 1 )
+								{
+									string line = $"rayTracingReflection = {material.RayTracingReflection.Value};";
+									resultCodeLinesReversed.Add( (line, materialIndex) );
+								}
+							}
+						}
+
+						//when exists with different ReceiveDecals
+						if( thisMaterial.ReceiveDecals )
+						{
+							for( int materialIndex = 0; materialIndex < multiMaterialSeparateMaterialsOfCombinedGroup.Length; materialIndex++ )
+							{
+								var material = multiMaterialSeparateMaterialsOfCombinedGroup[ materialIndex ].owner;
+								if( !material.ReceiveDecals )
+								{
+									string line = "receiveDecals = false;";
+									resultCodeLinesReversed.Add( (line, materialIndex) );
+								}
+							}
+						}
+
+						//when exists with different UseVertexColor
+						if( thisMaterial.UseVertexColor )
+						{
+							for( int materialIndex = 0; materialIndex < multiMaterialSeparateMaterialsOfCombinedGroup.Length; materialIndex++ )
+							{
+								var material = multiMaterialSeparateMaterialsOfCombinedGroup[ materialIndex ].owner;
+								if( !material.UseVertexColor )
+								{
+									string line = "useVertexColor = false;";
+									resultCodeLinesReversed.Add( (line, materialIndex) );
+								}
+							}
+						}
+
+
+						//add if/else comparisons for material index
+
+						var maxMaterialIndex = 0;
+						foreach( var line in resultCodeLinesReversed )
+						{
+							if( line.Item2 > maxMaterialIndex )
+								maxMaterialIndex = line.Item2;
+						}
+						var materialCount = maxMaterialIndex + 1;
+
+						var ifStarted = false;
+
+						for( int materialIndex = 0; materialIndex < materialCount; materialIndex++ )
+						{
+							var lines = new List<string>();
+							foreach( var line in resultCodeLinesReversed )
+							{
+								if( line.Item2 == materialIndex )
+									lines.Add( line.Item1 );
+							}
+
+							if( lines.Count != 0 )
+							{
+								lines.Insert( 0, string.Format( "{0}if( localGroupMaterialIndex == {1} ) ", ifStarted ? "else " : "", materialIndex ) + "{" );
+								lines.Add( "}" );
+								ifStarted = true;
+							}
+
+							var s = new StringBuilder();
+							foreach( var line in lines )
+							{
+								if( s.Length != 0 )
+									s.Append( returnLine );
+								s.Append( line );
+							}
+
+							if( s.Length != 0 )
+							{
+								if( !string.IsNullOrEmpty( resultData.codeBody ) )
+									resultData.codeBody += "\r\n";
+								resultData.codeBody += s.ToString();
+							}
+						}
 					}
-					resultData.codeBody = s.ToString();
+					else
+					{
+						var s = new StringBuilder();
+						foreach( var line in resultCodeLines.GetReverse() )
+						{
+							if( s.Length != 0 )
+								s.Append( returnLine );
+							s.Append( line.Item1 );
+						}
+						resultData.codeBody = s.ToString();
+					}
 				}
 			}
 
@@ -454,7 +617,7 @@ namespace NeoAxis
 			return b.ToString();
 		}
 
-		void GenerateLine( VariableToCreate variableToCreate )
+		void GenerateLine( VariableToCreate variableToCreate, int materialIndex )
 		{
 			string body;
 			//Type bodyType = null;
@@ -582,7 +745,7 @@ namespace NeoAxis
 								else
 								{
 									if( shaderTextureSample.TextureType.Value == ShaderTextureSample.TextureTypeEnum.Mask )
-										locationStr = "unwrappedUV";
+										locationStr = "unwrappedUVBeforeDisplacement";//"unwrappedUV";
 									else
 										locationStr = "texCoord0";
 								}
@@ -602,6 +765,7 @@ namespace NeoAxis
 									constructBody = string.Format( "CODE_BODY_TEXTURE2D({0}, {1})", nameInShader, locationStr );
 								//var constructBody = string.Format( "texture2D({0}, {1})", nameInShader, locationStr );
 								//var constructBody = string.Format( "{0}.Sample( {1}Sampler, {2} )", nameInShader, nameInShader, locationStr );
+
 								if( postfix != "" )
 									constructBody += "." + postfix;
 
@@ -763,13 +927,17 @@ namespace NeoAxis
 			//if( resultLine == null )
 			//	resultLine = string.Format( "{0} {1} = {2};", varTypeName, variableToCreate.name, body );
 
-			resultCodeLines.Add( resultLine );
+			resultCodeLines.Add( (resultLine, materialIndex) );
 		}
 
 		static string GetTypeString( Type type, bool colorValueNoAlpha )
 		{
 			if( type == typeof( bool ) )
 				return "bool";
+			if( type == typeof( int ) )
+				return "int";
+			if( type == typeof( uint ) )
+				return "uint";
 			if( type == typeof( double ) || type == typeof( float ) )
 				return "float";
 			if( type == typeof( Vector2 ) || type == typeof( Vector2F ) )

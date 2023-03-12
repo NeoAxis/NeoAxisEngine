@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -16,6 +16,7 @@ namespace NeoAxis
 	/// </summary>
 	public abstract class FlowGraphNodeStyle : Component
 	{
+#if !DEPLOY
 		public abstract Vector2 GetSocketPositionInUnits( FlowGraphNode.Representation.Item socket, bool input );
 
 		//EditorRenderSelectionState.Selected
@@ -31,6 +32,7 @@ namespace NeoAxis
 		public abstract object GetMouseOverObject( FlowGraphEditor window, FlowGraphNode node );
 
 		public abstract bool IsIntersectsWithRectangle( FlowGraphEditor window, FlowGraphNode node, Rectangle rectInUnits );
+#endif
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -47,6 +49,7 @@ namespace NeoAxis
 	/// </summary>
 	public class FlowGraphNodeStyle_Rectangle : FlowGraphNodeStyle
 	{
+#if !DEPLOY
 		static FlowGraphNodeStyle_Rectangle instance;
 		/// <summary>
 		/// Singleton object of the style.
@@ -779,5 +782,6 @@ namespace NeoAxis
 
 			return rectInUnits.Intersects( nodeRectInUnits );
 		}
+#endif
 	}
 }

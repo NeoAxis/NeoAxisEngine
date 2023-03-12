@@ -21,7 +21,7 @@ USE OR OTHER DEALINGS IN THE SOFTWARE.
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	/// <summary>
 	/// The type of a NetIncomingMessage

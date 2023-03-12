@@ -1,8 +1,9 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using NeoAxis.Editor;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -10,9 +11,11 @@ namespace NeoAxis
 	/// Defines a particle system.
 	/// </summary>
 	[ResourceFileExtension( "particle" )]
+#if !DEPLOY
 	[EditorControl( typeof( ParticleSystemEditor ) )]
 	[Preview( typeof( ParticleSystemPreview ) )]
 	[SettingsCell( typeof( ParticleSystemSettingsCell ) )]
+#endif
 	public class ParticleSystem : ResultCompile<ParticleSystem.CompiledData>
 	{
 		int mustRecreateInstancesCounter;
@@ -234,6 +237,7 @@ namespace NeoAxis
 					public CurveCubicSpline1F CurveZ;
 					//public ParticleAccelerationByTime.LockedAxesEnum LockedAxes;
 
+					[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 					public void Calculate( float lifetime, float time, out Vector3F result )
 					{
 						switch( Type )
@@ -269,6 +273,7 @@ namespace NeoAxis
 					public RangeF Range;
 					public CurveCubicSpline1F Curve;
 
+					[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 					public void Calculate( float lifetime, float time, out ColorValue result )
 					{
 						float value = 1;
@@ -285,13 +290,13 @@ namespace NeoAxis
 						}
 
 						result = ColorValue.One;
-						if( Channels.HasFlag( ParticleColorMultiplierByTime.ChannelsEnum.Red ) )
+						if( ( Channels & ParticleColorMultiplierByTime.ChannelsEnum.Red ) != 0 )
 							result.Red *= value;
-						if( Channels.HasFlag( ParticleColorMultiplierByTime.ChannelsEnum.Green ) )
+						if( ( Channels & ParticleColorMultiplierByTime.ChannelsEnum.Green ) != 0 )
 							result.Green *= value;
-						if( Channels.HasFlag( ParticleColorMultiplierByTime.ChannelsEnum.Blue ) )
+						if( ( Channels & ParticleColorMultiplierByTime.ChannelsEnum.Blue ) != 0 )
 							result.Blue *= value;
-						if( Channels.HasFlag( ParticleColorMultiplierByTime.ChannelsEnum.Alpha ) )
+						if( ( Channels & ParticleColorMultiplierByTime.ChannelsEnum.Alpha ) != 0 )
 							result.Alpha *= value;
 					}
 				}
@@ -305,6 +310,7 @@ namespace NeoAxis
 					public RangeF Range;
 					public CurveCubicSpline1F Curve;
 
+					[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 					public float Calculate( float lifetime, float time )
 					{
 						switch( Type )
@@ -329,6 +335,7 @@ namespace NeoAxis
 					public RangeF Range;
 					public CurveCubicSpline1F Curve;
 
+					[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 					public float Calculate( float lifetime, float time )
 					{
 						switch( Type )
@@ -359,6 +366,7 @@ namespace NeoAxis
 					public CurveCubicSpline1F CurveY;
 					public CurveCubicSpline1F CurveZ;
 
+					[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 					public void Calculate( float lifetime, float time, out Vector3F result )
 					{
 						switch( Type )
@@ -410,6 +418,7 @@ namespace NeoAxis
 				public RangeF Range;
 				public CurveCubicSpline1F Curve;
 
+				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 				public float GenerateValue( FastRandom random )
 				{
 					switch( Type )
@@ -448,6 +457,7 @@ namespace NeoAxis
 				//!!!!Integer?
 				public CurveCubicSpline1F Curve;
 
+				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 				public int GenerateValue( FastRandom random )
 				{
 					switch( Type )
@@ -482,6 +492,7 @@ namespace NeoAxis
 				public CurveCubicSpline1F CurveY;
 				public CurveCubicSpline1F CurveZ;
 
+				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 				public Vector3F GenerateValue( FastRandom random )
 				{
 					switch( Type )
@@ -527,6 +538,7 @@ namespace NeoAxis
 				public RangeColorValue Range;
 				//public CurveCubicSpline1F curve;
 
+				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 				public void GenerateValue( FastRandom random, out ColorValue result )
 				{
 					switch( Type )
@@ -839,6 +851,7 @@ namespace NeoAxis
 		//		return null;
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static CurveCubicSpline1F CreateCurve( ReferenceList<CurvePoint> curve )
 		{
 			if( curve != null && curve.Count != 0 )
@@ -855,6 +868,7 @@ namespace NeoAxis
 				return null;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static CompiledData.SingleProperty CreateSingleProperty( ParticleEmitter.SingleProperty value )
 		{
 			var result = new CompiledData.SingleProperty();
@@ -878,6 +892,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static CompiledData.IntegerProperty CreateIntegerProperty( ParticleEmitter.IntegerProperty value )
 		{
 			var result = new CompiledData.IntegerProperty();
@@ -901,6 +916,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static CompiledData.AnglesProperty CreateAnglesProperty( ParticleEmitter.AnglesProperty value )
 		{
 			var result = new CompiledData.AnglesProperty();
@@ -926,6 +942,7 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static CompiledData.ColorValueProperty CreateColorValueProperty( ParticleEmitter.ColorValueProperty value )
 		{
 			var result = new CompiledData.ColorValueProperty();

@@ -46,7 +46,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>7.3</LangVersion>
     <GenerateLibraryLayout>false</GenerateLibraryLayout>
-    <DefineConstants>UWP;DEPLOY</DefineConstants>
+    <DefineConstants>UWP;DEPLOY;CLIENT</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <PlatformTarget>x64</PlatformTarget>
@@ -57,7 +57,7 @@
     <ErrorReport>prompt</ErrorReport>
     <LangVersion>7.3</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DefineConstants>UWP;DEPLOY</DefineConstants>
+    <DefineConstants>UWP;DEPLOY;CLIENT</DefineConstants>
   </PropertyGroup>
   <PropertyGroup>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
@@ -80,6 +80,33 @@
     <Compile Include="Assets\Base\WindowApp\WindowAppMainForm.cs" />
     <Compile Include="Assets\Samples\Spaceship Game\SpaceshipGameGUI.cs" />
     <Compile Include="Assets\Samples\Platform Game\PlatformGameGUI.cs" />
+    <Compile Include="Assets\BoardGames\Games\Gomoku\GomokuAI.cs" />
+    <Compile Include="Assets\BoardGames\Scripts\GamePlace.cs" />
+    <Compile Include="Assets\BoardGames\Scripts\BoardGame.cs" />
+    <Compile Include="Assets\BoardGames\Games\Gomoku\Gomoku.cs" />
+    <Compile Include="Assets\BoardGames\Objects\Terminal\TerminalScreen.cs" />
+    <Compile Include="Assets\BoardGames\Objects\Terminal\Terminal.cs" />
+    <Compile Include="Assets\BoardGames\UI\BoardGameScreen.cs" />
+    <Compile Include="Assets\BoardGames\Objects\Chair\Chair.cs" />
+    <Compile Include="Assets\BoardGames\UI\BoardGamesSceneScreen.cs" />
+    <Compile Include="Assets\BoardGames\Games\Gomoku\GomokuScreen.cs" />
+    <Compile Include="Assets\Base\Scripts\Networking\ClientUtility.cs" />
+    <Compile Include="Assets\Base\Scripts\Networking\RunServer.cs" />
+    <Compile Include="Assets\Base\Scripts\Networking\NetworkLogic.cs" />
+    <Compile Include="Assets\Base\UI\Screens\MultiplayerCreateWindow.cs" />
+    <Compile Include="Assets\BoardGames\Scripts\BoardGamesNetworkLogic.cs" />
+    <Compile Include="Assets\Base\Scripts\Networking\SimulationAppClient.cs" />
+    <Compile Include="Assets\Base\Scripts\Networking\SimulationAppServer.cs" />
+    <Compile Include="Assets\Samples\Shooter\Scripts\ShooterCommon.cs" />
+    <Compile Include="Assets\BoardGames\UI\BoardGamesInGameScreen.cs" />
+    <Compile Include="Assets\Samples\Shooter\Scripts\ShooterNetworkLogic.cs" />
+    <Compile Include="Assets\Samples\Shooter\UI\ShooterInGameContextScreen.cs" />
+    <Compile Include="Assets\Samples\Shooter\UI\ShooterSceneScreen.cs" />
+    <Compile Include="Assets\Base\UI\Screens\MultiplayerJoinWindow.cs" />
+    <Compile Include="Assets\Base\UI\Screens\AvatarScreen.cs" />
+    <Compile Include="Assets\Base\UI\Screens\BasicSceneScreen.cs" />
+    <Compile Include="Assets\Base\UI\Screens\EntranceScreen.cs" />
+    <Compile Include="Assets\Base\UI\Screens\InGameContextScreen.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">

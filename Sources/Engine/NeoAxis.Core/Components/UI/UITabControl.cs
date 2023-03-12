@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,7 +17,7 @@ namespace NeoAxis
 		//
 
 		/// <summary>
-		/// The class of the buttons.
+		/// The class of the buttons. Use 'this:' reference to fix potential issues.
 		/// </summary>
 		[DefaultValue( null )]
 		public Reference<UIButton> Button

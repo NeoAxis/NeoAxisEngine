@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -33,7 +33,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The type to convert the value parameter to.
 		/// </summary>
-		[DefaultValue( null )]
+		[DefaultValue( null )]//!!!!
 		public Reference<Metadata.TypeInfo> DestinationType
 		{
 			get { if( _destinationType.BeginGet() ) DestinationType = _destinationType.Get( this ); return _destinationType.value; }

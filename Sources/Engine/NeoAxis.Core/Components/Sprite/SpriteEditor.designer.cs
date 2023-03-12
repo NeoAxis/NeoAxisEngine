@@ -1,3 +1,4 @@
+#if !DEPLOY
 namespace NeoAxis.Editor
 {
 	partial class SpriteEditor
@@ -7,7 +8,7 @@ namespace NeoAxis.Editor
 		/// </summary>
 		private System.ComponentModel.IContainer components = null;
 
-		#region Component Designer generated code
+#region Component Designer generated code
 
 		/// <summary> 
 		/// Required method for Designer support - do not modify 
@@ -28,7 +29,7 @@ namespace NeoAxis.Editor
 
 		}
 
-		#endregion
+#endregion
 	}
 }
-
+#endif

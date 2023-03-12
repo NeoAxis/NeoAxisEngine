@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -40,6 +40,7 @@ namespace NeoAxis
 			ShadowDirectionalLightSplit4,
 			ShadowSpotlight,
 			ShadowPointLight,
+			//ObjectId,
 		}
 
 		/// <summary>
@@ -143,7 +144,7 @@ namespace NeoAxis
 			}
 		}
 
-		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
+		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture )
 		{
 			base.OnRender( context, frameData, ref actualTexture );
 
@@ -173,8 +174,8 @@ namespace NeoAxis
 					multiplier = DepthMultiplier;
 					break;
 
-				case TextureType.MotionVector: 
-					textureName = "motionTexture";
+				case TextureType.MotionVector:
+					textureName = "motionAndObjectIdTexture";
 					multiplier = MotionMultiplier;
 					break;
 
@@ -195,7 +196,12 @@ namespace NeoAxis
 					textureName = "shadowPoint1";
 					multiplier = ShadowMultiplier;
 					break;
+
+				//case TextureType.ObjectId:
+				//	textureName = "motionAndObjectIdTexture";
+				//	break;
 				}
+
 				context.ObjectsDuringUpdate.namedTextures.TryGetValue( textureName, out var showTexture );
 				if( showTexture == null )
 				{

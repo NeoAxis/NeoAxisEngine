@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2022.1.
+// Made with NeoAxis Engine 2022.2.
 
 .component NeoAxis.Surface
 {
@@ -8,12 +8,14 @@
 		Name = Group Young
 		Probability = 0.5
 		OccupiedAreaRadius = 0.3
+		RotateBySurfaceNormal = True
 		RotateAroundItsAxis = True
 		MaxIncline = 5
 		ScaleRange = 0.7 1.3
 		.component NeoAxis.SurfaceElement_Mesh
 		{
 			Name = Mesh 1
+			VisibilityDistanceFactor = 0.2
 			ReceiveDecals = False
 			Mesh
 			{
@@ -25,12 +27,14 @@
 	{
 		Name = Group Mature
 		OccupiedAreaRadius = 0.5
+		RotateBySurfaceNormal = True
 		RotateAroundItsAxis = True
 		MaxIncline = 5
 		ScaleRange = 0.7 1.3
 		.component NeoAxis.SurfaceElement_Mesh
 		{
 			Name = Mesh 1
+			VisibilityDistanceFactor = 0.2
 			ReceiveDecals = False
 			Mesh
 			{

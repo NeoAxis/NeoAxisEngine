@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -165,6 +165,7 @@ namespace NeoAxis
 
 			changing = true;
 			changingForward = forward;
+			NetworkSendChanging( null );
 			OnChangingBegin();
 			ChangingBeginEvent?.Invoke( this );
 		}
@@ -176,6 +177,7 @@ namespace NeoAxis
 
 			changing = false;
 			changingForward = false;
+			NetworkSendChanging( null );
 			OnChangingEnd();
 			ChangingEndEvent?.Invoke( this );
 		}
@@ -212,7 +214,14 @@ namespace NeoAxis
 			}
 
 			if( play )
+			{
 				SoundPlay( SoundTick );
+				if( NetworkIsServer && SoundTick.ReferenceOrValueSpecified )
+				{
+					BeginNetworkMessageToEveryone( "SoundTick" );
+					EndNetworkMessage();
+				}
+			}
 		}
 
 		void Simulate( float delta )
@@ -268,7 +277,7 @@ namespace NeoAxis
 		{
 			base.OnUpdate( delta );
 
-			//if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+			//if( EngineApp.IsEditor )
 			//	Simulate( delta );
 		}
 
@@ -481,7 +490,17 @@ namespace NeoAxis
 			{
 				if( mouseDown.Button == EMouseButtons.Left || mouseDown.Button == EMouseButtons.Right )
 				{
-					ChangingBegin( mouseDown.Button == EMouseButtons.Left );
+					if( NetworkIsClient )
+					{
+						var writer = BeginNetworkMessageToServer( "ChangingBegin" );
+						if( writer != null )
+						{
+							writer.Write( mouseDown.Button == EMouseButtons.Left );
+							EndNetworkMessage();
+						}
+					}
+					else
+						ChangingBegin( mouseDown.Button == EMouseButtons.Left );
 					return true;
 				}
 			}
@@ -491,12 +510,24 @@ namespace NeoAxis
 			{
 				if( mouseUp.Button == EMouseButtons.Left && Changing && ChangingForward )
 				{
-					ChangingEnd();
+					if( NetworkIsClient )
+					{
+						BeginNetworkMessageToServer( "ChangingEnd" );
+						EndNetworkMessage();
+					}
+					else
+						ChangingEnd();
 					return true;
 				}
 				if( mouseUp.Button == EMouseButtons.Right && Changing && !ChangingForward )
 				{
-					ChangingEnd();
+					if( NetworkIsClient )
+					{
+						BeginNetworkMessageToServer( "ChangingEnd" );
+						EndNetworkMessage();
+					}
+					else
+						ChangingEnd();
 					return true;
 				}
 			}
@@ -517,7 +548,13 @@ namespace NeoAxis
 
 		public void ObjectInteractionExit( ObjectInteractionContext context )
 		{
-			ChangingEnd();
+			if( NetworkIsClient )
+			{
+				BeginNetworkMessageToServer( "ChangingEnd" );
+				EndNetworkMessage();
+			}
+			else
+				ChangingEnd();
 		}
 
 		public void ObjectInteractionUpdate( ObjectInteractionContext context )
@@ -526,6 +563,65 @@ namespace NeoAxis
 
 		protected override bool OnSpaceBoundsUpdateIncludeChildren()
 		{
+			return true;
+		}
+
+		void NetworkSendChanging( ServerNetworkService_Components.ClientItem client )
+		{
+			if( NetworkIsServer )
+			{
+				var writer = client != null ? BeginNetworkMessage( client, "Changing" ) : BeginNetworkMessageToEveryone( "Changing" );
+				writer.Write( changing );
+				writer.Write( changingForward );
+				EndNetworkMessage();
+			}
+		}
+
+		protected override void OnClientConnectedBeforeRootComponentEnabled( ServerNetworkService_Components.ClientItem client )
+		{
+			base.OnClientConnectedBeforeRootComponentEnabled( client );
+
+			NetworkSendChanging( client );
+		}
+
+		protected override bool OnReceiveNetworkMessageFromServer( string message, ArrayDataReader reader )
+		{
+			if( !base.OnReceiveNetworkMessageFromServer( message, reader ) )
+				return false;
+
+			if( message == "SoundTick" )
+				SoundPlay( SoundTick );
+			else if( message == "Changing" )
+			{
+				changing = reader.ReadBoolean();
+				changingForward = reader.ReadBoolean();
+			}
+
+			return true;
+		}
+
+		protected override bool OnReceiveNetworkMessageFromClient( ServerNetworkService_Components.ClientItem client, string message, ArrayDataReader reader )
+		{
+			if( !base.OnReceiveNetworkMessageFromClient( client, message, reader ) )
+				return false;
+
+
+			//!!!!security check is needed. who interact
+
+
+			if( message == "ChangingBegin" )
+			{
+				var forward = reader.ReadBoolean();
+				if( !reader.Complete() )
+					return false;
+
+				ChangingBegin( forward );
+			}
+			else if( message == "ChangingEnd" )
+			{
+				ChangingEnd();
+			}
+
 			return true;
 		}
 	}

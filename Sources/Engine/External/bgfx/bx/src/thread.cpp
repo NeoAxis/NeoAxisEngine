@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2020 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
+ * Copyright 2010-2022 Branimir Karadzic. All rights reserved.
+ * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
-#include "bx_p.h"
+#include <bx/os.h>
 #include <bx/thread.h>
 
 #if BX_CONFIG_SUPPORTS_THREADING
@@ -21,25 +21,25 @@
 	|| BX_PLATFORM_IOS     \
 	|| BX_PLATFORM_OSX     \
 	|| BX_PLATFORM_PS4     \
-	|| BX_PLATFORM_RPI
+	|| BX_PLATFORM_RPI	   \
+	|| BX_PLATFORM_NX
 #	include <pthread.h>
-#	if defined(__FreeBSD__)
+#	if BX_PLATFORM_BSD
 #		include <pthread_np.h>
-#	endif
+#	endif // BX_PLATFORM_BSD
 #	if BX_PLATFORM_LINUX && (BX_CRT_GLIBC < 21200)
 #		include <sys/prctl.h>
 #	endif // BX_PLATFORM_
 #elif  BX_PLATFORM_WINDOWS \
 	|| BX_PLATFORM_WINRT   \
-	|| BX_PLATFORM_XBOXONE
+	|| BX_PLATFORM_XBOXONE \
+	|| BX_PLATFORM_WINRT
+#	ifndef WIN32_LEAN_AND_MEAN
+#		define WIN32_LEAN_AND_MEAN
+#	endif // WIN32_LEAN_AND_MEAN
 #	include <windows.h>
 #	include <limits.h>
 #	include <errno.h>
-#	if BX_PLATFORM_WINRT
-using namespace Platform;
-using namespace Windows::Foundation;
-using namespace Windows::System::Threading;
-#	endif // BX_PLATFORM_WINRT
 #endif // BX_PLATFORM_
 
 namespace bx
@@ -145,7 +145,8 @@ namespace bx
 			return false;
 		}
 #elif  BX_PLATFORM_WINDOWS \
-	|| BX_PLATFORM_XBOXONE
+	|| BX_PLATFORM_XBOXONE \
+	|| BX_PLATFORM_WINRT
 		ti->m_handle = ::CreateThread(NULL
 				, m_stackSize
 				, (LPTHREAD_START_ROUTINE)ti->threadFunc
@@ -157,23 +158,6 @@ namespace bx
 		{
 			return false;
 		}
-#elif BX_PLATFORM_WINRT
-		ti->m_handle = CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS);
-
-		if (NULL == ti->m_handle)
-		{
-			return false;
-		}
-
-		auto workItemHandler = ref new WorkItemHandler([=](IAsyncAction^)
-			{
-				m_exitCode = ti->threadFunc(this);
-				SetEvent(ti->m_handle);
-			}
-			, CallbackContext::Any
-			);
-
-		ThreadPool::RunAsync(workItemHandler, WorkItemPriority::Normal, WorkItemOptions::TimeSliced);
 #elif BX_PLATFORM_POSIX
 		int result;
 		BX_UNUSED(result);
@@ -279,10 +263,11 @@ namespace bx
 #elif BX_PLATFORM_WINDOWS
 		// Try to use the new thread naming API from Win10 Creators update onwards if we have it
 		typedef HRESULT (WINAPI *SetThreadDescriptionProc)(HANDLE, PCWSTR);
-		SetThreadDescriptionProc SetThreadDescription = (SetThreadDescriptionProc)(GetProcAddress(GetModuleHandleA("Kernel32.dll"), "SetThreadDescription"));
-		if (SetThreadDescription)
+		SetThreadDescriptionProc SetThreadDescription = dlsym<SetThreadDescriptionProc>((void*)GetModuleHandleA("Kernel32.dll"), "SetThreadDescription");
+
+		if (NULL != SetThreadDescription)
 		{
-			uint32_t length = (uint32_t)bx::strLen(_name)+1;
+			uint32_t length = (uint32_t)strLen(_name)+1;
 			uint32_t size = length*sizeof(wchar_t);
 			wchar_t* name = (wchar_t*)alloca(size);
 			mbstowcs(name, _name, size-2);

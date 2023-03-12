@@ -1,10 +1,10 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO.Compression;
 
-#if ANDROID || UWP || IOS
+#if ANDROID || UWP || IOS || WEB
 
 namespace System.Configuration
 {
@@ -22,6 +22,33 @@ namespace System
 	public class UserPreferenceChangedEventArgs
 	{
 	}
+}
+
+#if UWP || WEB
+namespace System.Drawing
+{
+	public class Bitmap
+	{
+	}
+
+	public class Icon : IDisposable
+	{
+		public void Dispose()
+		{
+		}
+	}
+}
+#endif
+
+namespace System.Windows.Forms
+{
+	public class Cursor
+	{
+	}
+}
+
+namespace System.Drawing.Design
+{ 
 }
 
 #endif

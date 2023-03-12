@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #if !DEPLOY
 using System;
 using System.ComponentModel;
@@ -23,7 +23,7 @@ namespace NeoAxis
 		/// The name of application executable file.
 		/// </summary>
 		[DefaultValue( "NeoAxis.Player" )]
-		//[Category( "Product" )]
+		[Category( "macOS" )]
 		public Reference<string> ExecutableName
 		{
 			get { if( _executableName.BeginGet() ) ExecutableName = _executableName.Get( this ); return _executableName.value; }
@@ -37,6 +37,7 @@ namespace NeoAxis
 		/// Whether to include tools that are intended to import 3D models.
 		/// </summary>
 		[DefaultValue( false )]
+		[Category( "macOS" )]
 		public Reference<bool> ImportTools
 		{
 			get { if( _importTools.BeginGet() ) ImportTools = _importTools.Get( this ); return _importTools.value; }
@@ -50,6 +51,7 @@ namespace NeoAxis
 		/// Whether to include tools that are intended to process environment cubemaps.
 		/// </summary>
 		[DefaultValue( false )]
+		[Category( "macOS" )]
 		public Reference<bool> CubemapProcessingTools
 		{
 			get { if( _cubemapProcessingTools.BeginGet() ) CubemapProcessingTools = _cubemapProcessingTools.Get( this ); return _cubemapProcessingTools.value; }
@@ -63,6 +65,7 @@ namespace NeoAxis
 		///// Whether to include build tools that are intended to compile C# scripts.
 		///// </summary>
 		//[DefaultValue( false )]
+		//[Category( "macOS" )]
 		//public Reference<bool> BuildTools
 		//{
 		//	get { if( _buildTools.BeginGet() ) BuildTools = _buildTools.Get( this ); return _buildTools.value; }
@@ -76,6 +79,7 @@ namespace NeoAxis
 		/// Whether to include files for debugging (xml, pdb).
 		/// </summary>
 		[DefaultValue( false )]
+		[Category( "macOS" )]
 		public Reference<bool> DebugFiles
 		{
 			get { if( _debugFiles.BeginGet() ) DebugFiles = _debugFiles.Get( this ); return _debugFiles.value; }
@@ -90,6 +94,7 @@ namespace NeoAxis
 		/// </summary>
 		[DisplayName( "UIWebBrowser" )]
 		[DefaultValue( false )]
+		[Category( "macOS" )]
 		public Reference<bool> UIWebBrowser
 		{
 			get { if( _uIWebBrowser.BeginGet() ) UIWebBrowser = _uIWebBrowser.Get( this ); return _uIWebBrowser.value; }
@@ -103,6 +108,7 @@ namespace NeoAxis
 		/// Whether to include localized assemblies of .NET.
 		/// </summary>
 		[DefaultValue( false )]
+		[Category( "macOS" )]
 		public Reference<bool> SatelliteResourceLanguages
 		{
 			get { if( _satelliteResourceLanguages.BeginGet() ) SatelliteResourceLanguages = _satelliteResourceLanguages.Get( this ); return _satelliteResourceLanguages.value; }
@@ -349,6 +355,12 @@ namespace NeoAxis
 			//	buildInstance.State = ProductBuildInstance.StateEnum.Error;
 			//	return;
 			//}
+
+			//post build event
+			if( !PeformPostBuild( buildInstance ) )
+				return;
+			if( CheckCancel( buildInstance ) )
+				return;
 
 			//done
 			buildInstance.Progress = 1;

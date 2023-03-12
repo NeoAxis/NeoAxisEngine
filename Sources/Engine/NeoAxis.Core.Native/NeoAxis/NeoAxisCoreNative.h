@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #pragma once
 
 #ifdef _WIN32
@@ -156,11 +156,12 @@
 //#include "MemoryManager_SimpleNew.h"
 
 //From DirectInputNativeWrapper
-#ifdef PLATFORM_WINDOWS
+#ifdef _WIN32 //#ifdef PLATFORM_WINDOWS
 #define _CRT_SECURE_NO_DEPRECATE 
 #ifndef _WIN32_DCOM
 #define _WIN32_DCOM 
 #endif	
+#define byte win_byte_override
 #include <windows.h>
 #include <wbemidl.h>
 #include <strsafe.h>

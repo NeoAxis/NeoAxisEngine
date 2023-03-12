@@ -1,6 +1,6 @@
 $input v_texCoord0
 
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "../../Common.sh"
 #include "ASSAO_Helpers.sh"
 
@@ -50,7 +50,8 @@ static const vec4 g_samplePatternMain[MAIN_DISK_SAMPLE_COUNT] =
 vec3 NDCToViewspace(vec2 pos, float viewspaceDepth)
 {
 	//!!!!betauser
-	pos = clamp(pos, viewportPixelSize.xy, vec2_splat(1.0) - viewportPixelSize.xy);
+	if(pos.y < viewportPixelSize.y)
+		pos.y = viewportPixelSize.y;
 
     vec3 ret;
 

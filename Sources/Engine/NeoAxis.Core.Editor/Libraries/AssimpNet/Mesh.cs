@@ -671,6 +671,7 @@ namespace Internal.Assimp
             nativeValue.NumAnimMeshes = (uint) MeshAnimationAttachmentCount;
             nativeValue.MorphMethod = m_morphMethod;
             nativeValue.AABB = m_boundingBox;
+            //nativeValue.TextureCoordsNames = IntPtr.Zero;
 
             if(nativeValue.NumVertices > 0)
             {
@@ -752,6 +753,7 @@ namespace Internal.Assimp
             m_materialIndex = (int) nativeValue.MaterialIndex;
             m_morphMethod = nativeValue.MorphMethod;
             m_boundingBox = nativeValue.AABB;
+            m_primitiveType = nativeValue.PrimitiveTypes;       
 
             //Load Per-vertex components
             if(vertexCount > 0)

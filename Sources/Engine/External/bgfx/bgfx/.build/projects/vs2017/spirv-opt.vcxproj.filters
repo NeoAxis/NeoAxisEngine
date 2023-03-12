@@ -231,9 +231,6 @@
     <ClInclude Include="..\..\..\3rdparty\spirv-tools\source\opt\private_to_local_pass.h">
       <Filter>3rdparty\spirv-tools\source\opt</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\3rdparty\spirv-tools\source\opt\process_lines_pass.h">
-      <Filter>3rdparty\spirv-tools\source\opt</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\3rdparty\spirv-tools\source\opt\propagator.h">
       <Filter>3rdparty\spirv-tools\source\opt</Filter>
     </ClInclude>
@@ -277,9 +274,6 @@
       <Filter>3rdparty\spirv-tools\source\opt</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\3rdparty\spirv-tools\source\opt\strip_debug_info_pass.h">
-      <Filter>3rdparty\spirv-tools\source\opt</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\3rdparty\spirv-tools\source\opt\strip_reflect_info_pass.h">
       <Filter>3rdparty\spirv-tools\source\opt</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\3rdparty\spirv-tools\source\opt\struct_cfg_analysis.h">
@@ -668,9 +662,6 @@
     <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\private_to_local_pass.cpp">
       <Filter>3rdparty\spirv-tools\source\opt</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\process_lines_pass.cpp">
-      <Filter>3rdparty\spirv-tools\source\opt</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\propagator.cpp">
       <Filter>3rdparty\spirv-tools\source\opt</Filter>
     </ClCompile>
@@ -711,9 +702,6 @@
       <Filter>3rdparty\spirv-tools\source\opt</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\strip_debug_info_pass.cpp">
-      <Filter>3rdparty\spirv-tools\source\opt</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\strip_reflect_info_pass.cpp">
       <Filter>3rdparty\spirv-tools\source\opt</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\struct_cfg_analysis.cpp">

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2020 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
+ * Copyright 2010-2022 Branimir Karadzic. All rights reserved.
+ * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
 #ifndef BX_READERWRITER_H_HEADER_GUARD
@@ -116,7 +116,7 @@ namespace bx
 		return m_pos;
 	}
 
-	inline int32_t SizerWriter::write(const void* /*_data*/, int32_t _size, Error* _err)
+	inline int32_t SizerWriter::write(const void* /*_data*/, int32_t _size, Error* _err)// = ErrorIgnore()) //!!!!betauser Error* _err)
 	{
 		BX_ASSERT(NULL != _err, "Reader/Writer interface calling functions must handle errors.");
 
@@ -168,7 +168,7 @@ namespace bx
 		return m_pos;
 	}
 
-	inline int32_t MemoryReader::read(void* _data, int32_t _size, Error* _err)
+	inline int32_t MemoryReader::read(void* _data, int32_t _size, Error* _err)// = ErrorIgnore()) //!!!!betauser Error* _err)
 	{
 		BX_ASSERT(NULL != _err, "Reader/Writer interface calling functions must handle errors.");
 
@@ -231,7 +231,7 @@ namespace bx
 		return m_pos;
 	}
 
-	inline int32_t MemoryWriter::write(const void* _data, int32_t _size, Error* _err)
+	inline int32_t MemoryWriter::write(const void* _data, int32_t _size, Error* _err)// = ErrorIgnore()) //!!!!betauser Error* _err)
 	{
 		BX_ASSERT(NULL != _err, "Reader/Writer interface calling functions must handle errors.");
 
@@ -266,14 +266,14 @@ namespace bx
 	{
 	}
 
-	inline int32_t read(ReaderI* _reader, void* _data, int32_t _size, Error* _err)
+	inline int32_t read(ReaderI* _reader, void* _data, int32_t _size, Error* _err)// = ErrorIgnore()) //!!!!betauser Error* _err)
 	{
 		BX_ERROR_SCOPE(_err);
 		return _reader->read(_data, _size, _err);
 	}
 
 	template<typename Ty>
-	inline int32_t read(ReaderI* _reader, Ty& _value, Error* _err)
+	inline int32_t read(ReaderI* _reader, Ty& _value, Error* _err)// = ErrorIgnore()) //!!!!betauser Error* _err)
 	{
 		BX_ERROR_SCOPE(_err);
 		BX_STATIC_ASSERT(isTriviallyCopyable<Ty>() );
@@ -281,7 +281,7 @@ namespace bx
 	}
 
 	template<typename Ty>
-	inline int32_t readHE(ReaderI* _reader, Ty& _value, bool _fromLittleEndian, Error* _err)
+	inline int32_t readHE(ReaderI* _reader, Ty& _value, bool _fromLittleEndian, Error* _err)// = ErrorIgnore()) //!!!!betauser Error* _err)
 	{
 		BX_ERROR_SCOPE(_err);
 		BX_STATIC_ASSERT(isTriviallyCopyable<Ty>() );
@@ -291,23 +291,23 @@ namespace bx
 		return result;
 	}
 
-	inline int32_t write(WriterI* _writer, const void* _data, int32_t _size, Error* _err)
+	inline int32_t write(WriterI* _writer, const void* _data, int32_t _size, Error* _err)// = ErrorIgnore()) //!!!!betauser Error* _err)
 	{
 		BX_ERROR_SCOPE(_err);
 		return _writer->write(_data, _size, _err);
 	}
 
-	inline int32_t write(WriterI* _writer, const char* _str, Error* _err)
+	inline int32_t write(WriterI* _writer, const char* _str, Error* _err)// = ErrorIgnore()) //!!!!betauser Error* _err)
 	{
 		return write(_writer, _str, strLen(_str), _err);
 	}
 
-	inline int32_t write(WriterI* _writer, const StringView& _str, Error* _err)
+	inline int32_t write(WriterI* _writer, const StringView& _str, Error* _err)// = ErrorIgnore()) //!!!!betauser Error* _err)
 	{
 		return write(_writer, _str.getPtr(), _str.getLength(), _err);
 	}
 
-	inline int32_t writeRep(WriterI* _writer, uint8_t _byte, int32_t _size, Error* _err)
+	inline int32_t writeRep(WriterI* _writer, uint8_t _byte, int32_t _size, Error* _err)// = ErrorIgnore()) //!!!!betauser Error* _err)
 	{
 		BX_ERROR_SCOPE(_err);
 
@@ -329,7 +329,7 @@ namespace bx
 	}
 
 	template<typename Ty>
-	inline int32_t write(WriterI* _writer, const Ty& _value, Error* _err)
+	inline int32_t write(WriterI* _writer, const Ty& _value, Error* _err)// = ErrorIgnore()) //!!!!betauser Error* _err)
 	{
 		BX_ERROR_SCOPE(_err);
 		BX_STATIC_ASSERT(isTriviallyCopyable<Ty>() );
@@ -337,7 +337,7 @@ namespace bx
 	}
 
 	template<typename Ty>
-	inline int32_t writeLE(WriterI* _writer, const Ty& _value, Error* _err)
+	inline int32_t writeLE(WriterI* _writer, const Ty& _value, Error* _err)// = ErrorIgnore()) //!!!!betauser Error* _err)
 	{
 		BX_ERROR_SCOPE(_err);
 		BX_STATIC_ASSERT(isTriviallyCopyable<Ty>() );
@@ -353,7 +353,7 @@ namespace bx
 	}
 
 	template<typename Ty>
-	inline int32_t writeBE(WriterI* _writer, const Ty& _value, Error* _err)
+	inline int32_t writeBE(WriterI* _writer, const Ty& _value, Error* _err)// = ErrorIgnore()) //!!!!betauser Error* _err)
 	{
 		BX_ERROR_SCOPE(_err);
 		BX_STATIC_ASSERT(isTriviallyCopyable<Ty>() );
@@ -394,7 +394,7 @@ namespace bx
 		return size-offset;
 	}
 
-	inline int32_t peek(ReaderSeekerI* _reader, void* _data, int32_t _size, Error* _err)
+	inline int32_t peek(ReaderSeekerI* _reader, void* _data, int32_t _size, Error* _err)// = ErrorIgnore()) //!!!!betauser Error* _err)
 	{
 		BX_ERROR_SCOPE(_err);
 		int64_t offset = bx::seek(_reader);
@@ -404,14 +404,14 @@ namespace bx
 	}
 
 	template<typename Ty>
-	inline int32_t peek(ReaderSeekerI* _reader, Ty& _value, Error* _err)
+	inline int32_t peek(ReaderSeekerI* _reader, Ty& _value, Error* _err)// = ErrorIgnore()) //!!!!betauser Error* _err)
 	{
 		BX_ERROR_SCOPE(_err);
 		BX_STATIC_ASSERT(isTriviallyCopyable<Ty>() );
 		return peek(_reader, &_value, sizeof(Ty), _err);
 	}
 
-	inline int32_t align(ReaderSeekerI* _reader, uint32_t _alignment, Error* _err)
+	inline int32_t align(ReaderSeekerI* _reader, uint32_t _alignment, Error* _err)// = ErrorIgnore()) //!!!!betauser Error* _err)
 	{
 		BX_ERROR_SCOPE(_err);
 		const int64_t current = bx::seek(_reader);
@@ -430,7 +430,7 @@ namespace bx
 		return 0;
 	}
 
-	inline int32_t align(WriterSeekerI* _writer, uint32_t _alignment, Error* _err)
+	inline int32_t align(WriterSeekerI* _writer, uint32_t _alignment, Error* _err)// = ErrorIgnore()) //!!!!betauser Error* _err)
 	{
 		BX_ERROR_SCOPE(_err);
 		const int64_t current = bx::seek(_writer);
@@ -444,7 +444,7 @@ namespace bx
 		return 0;
 	}
 
-	inline bool open(ReaderOpenI* _reader, const FilePath& _filePath, Error* _err)
+	inline bool open(ReaderOpenI* _reader, const FilePath& _filePath, Error* _err) //!!!!betauser Error* _err)
 	{
 		BX_ERROR_USE_TEMP_WHEN_NULL(_err);
 		return _reader->open(_filePath, _err);

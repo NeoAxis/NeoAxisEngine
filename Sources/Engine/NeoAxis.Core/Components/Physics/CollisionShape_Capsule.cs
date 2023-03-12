@@ -1,13 +1,8 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using System.IO;
-using System.Drawing.Design;
-using Internal.BulletSharp;
+using System.Text;
 
 namespace NeoAxis
 {
@@ -98,22 +93,50 @@ namespace NeoAxis
 		public event Action<CollisionShape_Capsule> HeightChanged;
 		ReferenceField<double> _height = 1;
 
-		/////////////////////////////////////////
+		///////////////////////////////////////////////
 
-		protected internal override Internal.BulletSharp.CollisionShape CreateShape()
+		protected internal override void GetShapeKey( StringBuilder key )
 		{
+			base.GetShapeKey( key );
+
+			key.Append( " cap " );
+			key.Append( Axis.Value );
+			key.Append( ' ' );
+			key.Append( (float)Radius.Value );
+			key.Append( ' ' );
+			key.Append( (float)Height.Value );
+		}
+
+		protected internal override void CreateShape( Scene scene, IntPtr nativeShape, ref Vector3F position, ref QuaternionF rotation, ref Vector3F localScaling, ref Scene.PhysicsWorldClass.Shape.CollisionShapeData collisionShapeData )
+		{
+			QuaternionF rotation2 = rotation;
+			float halfHeightOfCylinder = (float)Height.Value * 0.5f;
+			float radius = (float)Radius;
 			switch( Axis.Value )
 			{
-			case 1: return new Internal.BulletSharp.CapsuleShape( BulletPhysicsUtility.Convert( Radius ), BulletPhysicsUtility.Convert( Height ) );
-			case 2: return new Internal.BulletSharp.CapsuleShapeZ( BulletPhysicsUtility.Convert( Radius ), BulletPhysicsUtility.Convert( Height ) );
-			default: return new Internal.BulletSharp.CapsuleShapeX( BulletPhysicsUtility.Convert( Radius ), BulletPhysicsUtility.Convert( Height ) );
+			case 0:
+				rotation2 = rotation * QuaternionF.FromRotateByZ( MathEx.PI / 2 );
+				halfHeightOfCylinder *= localScaling.X;
+				radius *= Math.Max( localScaling.Y, localScaling.Z );
+				break;
+			case 1:
+				halfHeightOfCylinder *= localScaling.Y;
+				radius *= Math.Max( localScaling.X, localScaling.Z );
+				break;
+			case 2:
+				rotation2 = rotation * QuaternionF.FromRotateByX( MathEx.PI / 2 );
+				halfHeightOfCylinder *= localScaling.Z;
+				radius *= Math.Max( localScaling.X, localScaling.Y );
+				break;
 			}
+
+			PhysicsNative.JShape_AddCapsule( nativeShape, ref position, ref rotation2, halfHeightOfCylinder, radius );
 		}
 
 		protected internal override void Render( Viewport viewport, Transform bodyTransform, bool solid, ref int verticesRendered )
 		{
 			Matrix4 t = bodyTransform.ToMatrix4();
-			var local = TransformRelativeToParent.Value;
+			var local = LocalTransform.Value;
 			if( !local.IsIdentity )
 				t *= local.ToMatrix4();
 			int axis = Axis.Value;

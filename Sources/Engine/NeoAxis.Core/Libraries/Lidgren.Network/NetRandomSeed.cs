@@ -2,7 +2,7 @@
 using System;
 using System.Threading;
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	/// <summary>
 	/// Class for generating random seeds

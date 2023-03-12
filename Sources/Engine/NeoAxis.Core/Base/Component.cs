@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,6 +9,7 @@ using System.Collections;
 using System.Threading;
 using NeoAxis.Editor;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -16,11 +17,14 @@ namespace NeoAxis
 	/// Base class of all components.
 	/// </summary>
 	[ResourceFileExtension( "component" )]
+#if !DEPLOY
 	[EditorControl( typeof( DocumentWindow ) )]
-	//[EditorDocumentWindow( typeof( DocumentWindowWithViewport ) )]//!!!! можно без сцены нойс нарисовать
 	[SettingsCell( typeof( SettingsCell_Properties ), true )]
+#endif
 	public class Component : Metadata.IMetadataProvider/*, ISettingsProvider*/, IDisposable
 	{
+		ThreadSafeExchangeBool disposed;
+
 		Metadata.TypeInfo baseType;
 
 		//inside hierarchy threading: мысли: как только прицепили объект, то он может получать какие-то сообщения и эвенты
@@ -67,16 +71,11 @@ namespace NeoAxis
 
 		internal ComponentHierarchyController hierarchyController;
 
-		//!!!!threading? где еще
-		ThreadSafeExchangeBool disposed;
-
 		bool cachedResourceReferenceInitialized;
 		string cachedResourceReference;
 
 		UniqueNameGenerator uniqueNameGenerator;
 
-		//!!!!new
-		//!!!!name
 		internal bool createdByBaseType;
 		/// <summary>
 		/// Whether the object is created using a base type.
@@ -85,8 +84,9 @@ namespace NeoAxis
 		public bool CreatedByBaseType
 		{
 			get { return createdByBaseType; }
-			//set { createdByBaseType = value; }
 		}
+
+
 
 		//!!!!может спрятать куда-нибудь из свойств? какие еще свойства и методы также тогда?
 		/// <summary>
@@ -94,6 +94,7 @@ namespace NeoAxis
 		/// </summary>
 		[Browsable( false )]
 		[Serialize]
+		[NetworkSynchronize( false )]
 		public string EditorDocumentConfiguration { get; set; }
 
 		//EDictionary<string, string> editorSettings;
@@ -102,6 +103,12 @@ namespace NeoAxis
 		//static long uinCounter;
 
 		internal long networkID;
+		internal bool networkSubscribedToEvents;
+		internal bool networkDisableChangedEvents;
+		ESet<ServerNetworkService_Components.ClientItem> networkModeUsers;
+
+		Component[] _tempComponentListForUpdateAndSimulationStep;
+		//List<Component> _tempComponentListForUpdateAndSimulationStep;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -124,14 +131,16 @@ namespace NeoAxis
 		/// </summary>
 		protected virtual void OnEnabledChanged() { }
 
-		internal virtual void OnEnabledInHierarchyChanged_Before() { }
-		internal virtual void OnEnabledInHierarchyChanged_After() { }
+		internal virtual void OnEnabledInHierarchyChangedBefore() { }
+		internal virtual void OnEnabledInHierarchyChangedAfter() { }
 
 		/// <summary>
 		/// Called when value of <see cref="EnabledInHierarchy"/> property is changed.
 		/// </summary>
 		protected virtual void OnEnabledInHierarchyChanged()
 		{
+			if( !EnabledInHierarchy )
+				_tempComponentListForUpdateAndSimulationStep = null;
 		}
 
 		/// <summary>
@@ -144,11 +153,12 @@ namespace NeoAxis
 		public event Action<Component> EnabledInHierarchyChanged;
 
 		/// <summary>
-		/// Whether the component is enabled. See also <see cref="EnabledInHierarchy"/> property.
+		/// Whether the component is enabled. Any functionality of component is not works when it disabled.
 		/// </summary>
+		//See also <see cref="EnabledInHierarchy"/> property.
 		[DefaultValue( true )]
 		//[Category( "Component" )]
-		public /*virtual */bool Enabled
+		public bool Enabled
 		{
 			get { return enabled; }
 			set
@@ -208,7 +218,7 @@ namespace NeoAxis
 		/// Occurs when the object is detached from a hierarchy of the components or is disabled. The method is called only in simulation application. See also <see cref="EnabledInHierarchy"/> property.
 		/// </summary>
 		public event Action<Component> DisabledInSimulation;
-
+		[MethodImpl( 512 )]
 		internal void _UpdateEnabledInHierarchy( bool forceDisableBeforeRemove )
 		{
 			bool demand;
@@ -236,7 +246,7 @@ namespace NeoAxis
 					cachedResourceReferenceInitialized = false;
 					cachedResourceReference = null;
 
-					if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+					if( EngineApp.IsSimulation )
 					{
 						OnDisabledInSimulation();
 						DisabledInSimulation?.Invoke( this );
@@ -246,7 +256,7 @@ namespace NeoAxis
 					OnDisabled();
 				}
 
-				OnEnabledInHierarchyChanged_Before();
+				OnEnabledInHierarchyChangedBefore();
 
 				//notify components
 				{
@@ -260,7 +270,7 @@ namespace NeoAxis
 				}
 
 				OnEnabledInHierarchyChanged();
-				OnEnabledInHierarchyChanged_After();
+				OnEnabledInHierarchyChangedAfter();
 				EnabledInHierarchyChanged?.Invoke( this );
 
 				if( EnabledInHierarchy )
@@ -268,7 +278,7 @@ namespace NeoAxis
 					OnEnabled();
 					EnabledEvent?.Invoke( this );
 
-					if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation )
+					if( EngineApp.IsSimulation )
 					{
 						OnEnabledInSimulation();
 						EnabledInSimulation?.Invoke( this );
@@ -647,6 +657,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		internal void _CloneHierarchy( Metadata.CloneContext context, Component newObject )//, bool skipTypeOnly )
 		{
 			context.NewComponentsRedirection[ this ] = newObject;
@@ -656,36 +667,39 @@ namespace NeoAxis
 			newObject.Name = Name;
 
 			//components
-			foreach( var child in GetComponents() )
+			if( context.CloneChildComponents )
 			{
-				if( !child.CloneSupport )
-					continue;
-				if( context.TypeOfCloning == Metadata.CloneContext.TypeOfCloningEnum.CreateInstanceOfType && child.TypeOnly )
-					continue;
-				//if( skipTypeOnly && child.TypeOnly )
-				//	continue;
-
-				//!!!!!!что тут с пересечениями
-
-				//!!!!CloneSupport
-
-				var newChild = child._CloneInstance();
-				//var newChild = child.Clone( context );
-
-				//!!!!рутовому нужно createdByBaseType = true?
-				switch( context.TypeOfCloning )
+				foreach( var child in GetComponents() )
 				{
-				case Metadata.CloneContext.TypeOfCloningEnum.Usual:
-					newChild.createdByBaseType = child.CreatedByBaseType;
-					break;
-				case Metadata.CloneContext.TypeOfCloningEnum.CreateInstanceOfType:
-					newChild.createdByBaseType = true;
-					break;
-				}
+					if( !child.CloneSupport )
+						continue;
+					if( context.TypeOfCloning == Metadata.CloneContext.TypeOfCloningEnum.CreateInstanceOfType && child.TypeOnly )
+						continue;
+					//if( skipTypeOnly && child.TypeOnly )
+					//	continue;
 
-				//!!!!в какой очереди вызывать?
-				newObject.AddComponent( newChild );
-				child._CloneHierarchy( context, newChild );//, skipTypeOnly );
+					//!!!!!!что тут с пересечениями
+
+					//!!!!CloneSupport
+
+					var newChild = child._CloneInstance();
+					//var newChild = child.Clone( context );
+
+					//!!!!рутовому нужно createdByBaseType = true?
+					switch( context.TypeOfCloning )
+					{
+					case Metadata.CloneContext.TypeOfCloningEnum.Usual:
+						newChild.createdByBaseType = child.CreatedByBaseType;
+						break;
+					case Metadata.CloneContext.TypeOfCloningEnum.CreateInstanceOfType:
+						newChild.createdByBaseType = true;
+						break;
+					}
+
+					//!!!!в какой очереди вызывать?
+					newObject.AddComponent( newChild );
+					child._CloneHierarchy( context, newChild );//, skipTypeOnly );
+				}
 			}
 		}
 
@@ -699,6 +713,7 @@ namespace NeoAxis
 		//	MetadataManager.Serialization.CloneMemberValues( context, this, newObject );
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		internal Component _CloneInstance(/*было, но не юзалось Type overrideClass = null, */Metadata.TypeInfo overrideBaseType = null )
 		{
 			Type netClass = GetType();
@@ -718,6 +733,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="context"></param>
 		/// <returns></returns>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public Component Clone( Metadata.CloneContext context = null )
 		//public Component Clone( Metadata.CloneContext context = null, Type overrideClass = null, Metadata.TypeInfo overrideBaseType = null )
 		{
@@ -774,6 +790,7 @@ namespace NeoAxis
 		/// <param name="name"></param>
 		/// <param name="nameIndex"></param>
 		/// <returns></returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Component GetComponentByNameWithIndex( string name, int nameIndex )
 		{
 			return Components.GetByNameWithIndex( name, nameIndex );
@@ -785,6 +802,7 @@ namespace NeoAxis
 		/// <param name="name"></param>
 		/// <param name="onlyEnabledInHierarchy"></param>
 		/// <returns></returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Component GetComponent( string name, bool onlyEnabledInHierarchy = false )
 		{
 			return Components.GetByName( name, onlyEnabledInHierarchy );
@@ -797,6 +815,7 @@ namespace NeoAxis
 		/// <param name="name"></param>
 		/// <param name="onlyEnabledInHierarchy"></param>
 		/// <returns></returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public T GetComponent<T>( string name, bool onlyEnabledInHierarchy = false )// where T : Component
 		{
 			return Components.GetByName<T>( name, onlyEnabledInHierarchy );
@@ -807,6 +826,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="nameOrPath"></param>
 		/// <returns></returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Component GetComponentByPath( string nameOrPath )
 		{
 			return Components.GetByPath( nameOrPath );
@@ -841,47 +861,54 @@ namespace NeoAxis
 		/// <param name="checkChildren"></param>
 		/// <param name="onlyEnabledInHierarchy"></param>
 		/// <returns></returns>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public Component GetComponent( Metadata.TypeInfo componentClass, bool checkChildren = false, bool onlyEnabledInHierarchy = false/*, bool depthFirstSearch = false*/ )
 		{
-			if( components.Count != 0 )
+			//!!!!no bool reverse
+
+			//if( depthFirstSearch )
+			//{
+			//	foreach( Component component in components )
+			//	{
+			//		//!!!!( componentClass == typeof( Component ) ||
+			//		//!!!!!!ниже еще
+
+			//		if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
+			//		{
+			//			if( componentClass.IsAssignableFrom( component.BaseType ) )
+			//				return component;
+
+			//			if( checkChildren )
+			//			{
+			//				Component component2 = component.GetComponent( componentClass, true, onlyEnabledInHierarchy, true );
+			//				if( component2 != null )
+			//					return component2;
+			//			}
+			//		}
+			//	}
+			//}
+			//else
+			//{
+
+			if( components.linkedList != null )
 			{
-				//!!!!no bool reverse
-
-				//if( depthFirstSearch )
-				//{
-				//	foreach( Component component in components )
-				//	{
-				//		//!!!!( componentClass == typeof( Component ) ||
-				//		//!!!!!!ниже еще
-
-				//		if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
-				//		{
-				//			if( componentClass.IsAssignableFrom( component.BaseType ) )
-				//				return component;
-
-				//			if( checkChildren )
-				//			{
-				//				Component component2 = component.GetComponent( componentClass, true, onlyEnabledInHierarchy, true );
-				//				if( component2 != null )
-				//					return component2;
-				//			}
-				//		}
-				//	}
-				//}
-				//else
-				//{
-				foreach( Component component in components )
+				for( var node = components.linkedList.First; node != null; node = node.Next )
 				{
+					var component = node.Value;
+
 					//!!!!( componentClass == typeof( Component ) ||
 					//!!!!!!ниже еще
 
 					if( ( !onlyEnabledInHierarchy || component.EnabledInHierarchy ) && componentClass.IsAssignableFrom( component.BaseType ) )
 						return component;
 				}
+
 				if( checkChildren )
 				{
-					foreach( Component component in components )
+					for( var node = components.linkedList.First; node != null; node = node.Next )
 					{
+						var component = node.Value;
+
 						if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
 						{
 							Component component2 = component.GetComponent( componentClass, true, onlyEnabledInHierarchy );
@@ -890,9 +917,60 @@ namespace NeoAxis
 						}
 					}
 				}
-				//}
 			}
+			//}
 			return null;
+
+			//if( components.Count != 0 )
+			//{
+			//	//!!!!no bool reverse
+
+			//	//if( depthFirstSearch )
+			//	//{
+			//	//	foreach( Component component in components )
+			//	//	{
+			//	//		//!!!!( componentClass == typeof( Component ) ||
+			//	//		//!!!!!!ниже еще
+
+			//	//		if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
+			//	//		{
+			//	//			if( componentClass.IsAssignableFrom( component.BaseType ) )
+			//	//				return component;
+
+			//	//			if( checkChildren )
+			//	//			{
+			//	//				Component component2 = component.GetComponent( componentClass, true, onlyEnabledInHierarchy, true );
+			//	//				if( component2 != null )
+			//	//					return component2;
+			//	//			}
+			//	//		}
+			//	//	}
+			//	//}
+			//	//else
+			//	//{
+			//	foreach( Component component in components )
+			//	{
+			//		//!!!!( componentClass == typeof( Component ) ||
+			//		//!!!!!!ниже еще
+
+			//		if( ( !onlyEnabledInHierarchy || component.EnabledInHierarchy ) && componentClass.IsAssignableFrom( component.BaseType ) )
+			//			return component;
+			//	}
+			//	if( checkChildren )
+			//	{
+			//		foreach( Component component in components )
+			//		{
+			//			if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
+			//			{
+			//				Component component2 = component.GetComponent( componentClass, true, onlyEnabledInHierarchy );
+			//				if( component2 != null )
+			//					return component2;
+			//			}
+			//		}
+			//	}
+			//	//}
+			//}
+			//return null;
 		}
 
 		/// <summary>
@@ -902,22 +980,28 @@ namespace NeoAxis
 		/// <param name="checkChildren"></param>
 		/// <param name="onlyEnabledInHierarchy"></param>
 		/// <returns></returns>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public Component GetComponent( Type componentClass, bool checkChildren = false, bool onlyEnabledInHierarchy = false )
 		{
-			if( components.Count != 0 )
+			if( components.linkedList != null )
 			{
-				foreach( Component component in components )
+				for( var node = components.linkedList.First; node != null; node = node.Next )
 				{
+					var component = node.Value;
+
 					if( ( !onlyEnabledInHierarchy || component.EnabledInHierarchy ) && ( componentClass == typeof( Component ) || componentClass.IsAssignableFrom( component.GetType() ) ) )
 						return component;
 				}
+
 				if( checkChildren )
 				{
-					foreach( Component component in components )
+					for( var node = components.linkedList.First; node != null; node = node.Next )
 					{
+						var component = node.Value;
+
 						if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
 						{
-							Component component2 = component.GetComponent( componentClass, true, onlyEnabledInHierarchy );
+							var component2 = component.GetComponent( componentClass, true, onlyEnabledInHierarchy );
 							if( component2 != null )
 								return component2;
 						}
@@ -925,6 +1009,30 @@ namespace NeoAxis
 				}
 			}
 			return null;
+
+			//if( components.Count != 0 )
+			//{
+			//foreach( var component in components )
+			//{
+			//	if( ( !onlyEnabledInHierarchy || component.EnabledInHierarchy ) && ( componentClass == typeof( Component ) || componentClass.IsAssignableFrom( component.GetType() ) ) )
+			//		return component;
+			//}
+
+			//if( checkChildren )
+			//{
+			//	foreach( var component in components )
+			//	{
+			//		if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
+			//		{
+			//			var component2 = component.GetComponent( componentClass, true, onlyEnabledInHierarchy );
+			//			if( component2 != null )
+			//				return component2;
+			//		}
+			//	}
+			//}
+			//}
+
+			//return null;
 		}
 
 		/// <summary>
@@ -934,22 +1042,25 @@ namespace NeoAxis
 		/// <param name="checkChildren"></param>
 		/// <param name="onlyEnabledInHierarchy"></param>
 		/// <returns></returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public T GetComponent<T>( bool checkChildren = false, bool onlyEnabledInHierarchy = false ) where T : class// Component
 		{
 			return (T)(object)GetComponent( typeof( T ), checkChildren, onlyEnabledInHierarchy );
 			//return (T)GetComponent( typeof( T ), checkChildren, onlyEnabledInHierarchy );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		void GetComponentsRecursive<T>( Metadata.TypeInfo componentClass, bool reverse, bool checkChildren, bool onlyEnabledInHierarchy, bool depthFirstSearch, ref List<T> list ) where T : class //Component
 		{
 			if( components.Count != 0 )
 			{
-				var items = ( reverse && components.Count > 1 ) ? components.Reverse() : components;
-
 				if( depthFirstSearch )
 				{
-					foreach( Component component in items )
+					var node = reverse ? components.linkedList?.Last : components.linkedList?.First;
+					while( node != null )
 					{
+						var component = node.Value;
+
 						if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
 						{
 							if( componentClass.IsAssignableFrom( component.BaseType ) )
@@ -957,47 +1068,111 @@ namespace NeoAxis
 								if( list == null )
 									list = new List<T>( 32 );
 								list.Add( (T)(object)component );
-								//list.Add( (T)component );
 							}
 							if( checkChildren )
 								component.GetComponentsRecursive( componentClass, reverse, true, onlyEnabledInHierarchy, true, ref list );
 						}
+
+						if( reverse )
+							node = node.Previous;
+						else
+							node = node.Next;
 					}
 				}
 				else
 				{
-					foreach( Component component in items )
 					{
-						if( ( !onlyEnabledInHierarchy || component.EnabledInHierarchy ) && componentClass.IsAssignableFrom( component.BaseType ) )
+						var node = reverse ? components.linkedList?.Last : components.linkedList?.First;
+						while( node != null )
 						{
-							if( list == null )
-								list = new List<T>( 32 );
-							list.Add( (T)(object)component );
-							//list.Add( (T)component );
+							var component = node.Value;
+
+							if( ( !onlyEnabledInHierarchy || component.EnabledInHierarchy ) && componentClass.IsAssignableFrom( component.BaseType ) )
+							{
+								if( list == null )
+									list = new List<T>( 32 );
+								list.Add( (T)(object)component );
+							}
+
+							if( reverse )
+								node = node.Previous;
+							else
+								node = node.Next;
 						}
 					}
+
 					if( checkChildren )
 					{
-						foreach( Component component in items )
+						var node = reverse ? components.linkedList?.Last : components.linkedList?.First;
+						while( node != null )
 						{
+							var component = node.Value;
+
 							if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
 								component.GetComponentsRecursive( componentClass, reverse, true, onlyEnabledInHierarchy, false, ref list );
+
+							if( reverse )
+								node = node.Previous;
+							else
+								node = node.Next;
 						}
 					}
 				}
+
+				//var items = ( reverse && components.Count > 1 ) ? components.Reverse() : components;
+
+				//if( depthFirstSearch )
+				//{
+				//	foreach( Component component in items )
+				//	{
+				//		if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
+				//		{
+				//			if( componentClass.IsAssignableFrom( component.BaseType ) )
+				//			{
+				//				if( list == null )
+				//					list = new List<T>( 32 );
+				//				list.Add( (T)(object)component );
+				//			}
+				//			if( checkChildren )
+				//				component.GetComponentsRecursive( componentClass, reverse, true, onlyEnabledInHierarchy, true, ref list );
+				//		}
+				//	}
+				//}
+				//else
+				//{
+				//	foreach( Component component in items )
+				//	{
+				//		if( ( !onlyEnabledInHierarchy || component.EnabledInHierarchy ) && componentClass.IsAssignableFrom( component.BaseType ) )
+				//		{
+				//			if( list == null )
+				//				list = new List<T>( 32 );
+				//			list.Add( (T)(object)component );
+				//		}
+				//	}
+				//	if( checkChildren )
+				//	{
+				//		foreach( Component component in items )
+				//		{
+				//			if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
+				//				component.GetComponentsRecursive( componentClass, reverse, true, onlyEnabledInHierarchy, false, ref list );
+				//		}
+				//	}
+				//}
 			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		void GetComponentsRecursive<T>( Type componentClass, bool reverse, bool checkChildren, bool onlyEnabledInHierarchy, bool depthFirstSearch, ref List<T> list ) where T : class //where T : Component
 		{
 			if( components.Count != 0 )
 			{
-				var items = ( reverse && components.Count > 1 ) ? components.Reverse() : components;
-
 				if( depthFirstSearch )
 				{
-					foreach( Component component in items )
+					var node = reverse ? components.linkedList?.Last : components.linkedList?.First;
+					while( node != null )
 					{
+						var component = node.Value;
+
 						if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
 						{
 							if( componentClass == typeof( Component ) || componentClass.IsAssignableFrom( component.GetType() ) )
@@ -1010,29 +1185,96 @@ namespace NeoAxis
 							if( checkChildren )
 								component.GetComponentsRecursive( componentClass, reverse, true, onlyEnabledInHierarchy, true, ref list );
 						}
+
+						if( reverse )
+							node = node.Previous;
+						else
+							node = node.Next;
 					}
 				}
 				else
 				{
-					foreach( Component component in items )
 					{
-						if( ( !onlyEnabledInHierarchy || component.EnabledInHierarchy ) && ( componentClass == typeof( Component ) || componentClass.IsAssignableFrom( component.GetType() ) ) )
+						var node = reverse ? components.linkedList?.Last : components.linkedList?.First;
+						while( node != null )
 						{
-							if( list == null )
-								list = new List<T>( 32 );
-							list.Add( (T)(object)component );
-							//list.Add( (T)component );
+							var component = node.Value;
+
+							if( ( !onlyEnabledInHierarchy || component.EnabledInHierarchy ) && ( componentClass == typeof( Component ) || componentClass.IsAssignableFrom( component.GetType() ) ) )
+							{
+								if( list == null )
+									list = new List<T>( 32 );
+								list.Add( (T)(object)component );
+								//list.Add( (T)component );
+							}
+
+							if( reverse )
+								node = node.Previous;
+							else
+								node = node.Next;
 						}
 					}
+
 					if( checkChildren )
 					{
-						foreach( Component component in items )
+						var node = reverse ? components.linkedList?.Last : components.linkedList?.First;
+						while( node != null )
 						{
+							var component = node.Value;
+
 							if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
 								component.GetComponentsRecursive( componentClass, reverse, true, onlyEnabledInHierarchy, false, ref list );
+
+							if( reverse )
+								node = node.Previous;
+							else
+								node = node.Next;
 						}
 					}
 				}
+
+
+				//var items = ( reverse && components.Count > 1 ) ? components.Reverse() : components;
+
+				//if( depthFirstSearch )
+				//{
+				//	foreach( Component component in items )
+				//	{
+				//		if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
+				//		{
+				//			if( componentClass == typeof( Component ) || componentClass.IsAssignableFrom( component.GetType() ) )
+				//			{
+				//				if( list == null )
+				//					list = new List<T>( 32 );
+				//				list.Add( (T)(object)component );
+				//				//list.Add( (T)component );
+				//			}
+				//			if( checkChildren )
+				//				component.GetComponentsRecursive( componentClass, reverse, true, onlyEnabledInHierarchy, true, ref list );
+				//		}
+				//	}
+				//}
+				//else
+				//{
+				//	foreach( Component component in items )
+				//	{
+				//		if( ( !onlyEnabledInHierarchy || component.EnabledInHierarchy ) && ( componentClass == typeof( Component ) || componentClass.IsAssignableFrom( component.GetType() ) ) )
+				//		{
+				//			if( list == null )
+				//				list = new List<T>( 32 );
+				//			list.Add( (T)(object)component );
+				//			//list.Add( (T)component );
+				//		}
+				//	}
+				//	if( checkChildren )
+				//	{
+				//		foreach( Component component in items )
+				//		{
+				//			if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
+				//				component.GetComponentsRecursive( componentClass, reverse, true, onlyEnabledInHierarchy, false, ref list );
+				//		}
+				//	}
+				//}
 			}
 		}
 
@@ -1044,6 +1286,7 @@ namespace NeoAxis
 		/// <param name="checkChildren"></param>
 		/// <param name="onlyEnabledInHierarchy"></param>
 		/// <returns></returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Component[] GetComponents( Metadata.TypeInfo componentClass, bool reverse = false, bool checkChildren = false, bool onlyEnabledInHierarchy = false, bool depthFirstSearch = false )
 		{
 			List<Component> list = null;
@@ -1059,6 +1302,7 @@ namespace NeoAxis
 		/// <param name="checkChildren"></param>
 		/// <param name="onlyEnabledInHierarchy"></param>
 		/// <returns></returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Component[] GetComponents( Type componentClass, bool reverse = false, bool checkChildren = false, bool onlyEnabledInHierarchy = false, bool depthFirstSearch = false )
 		{
 			List<Component> list = null;
@@ -1073,6 +1317,7 @@ namespace NeoAxis
 		/// <param name="checkChildren"></param>
 		/// <param name="onlyEnabledInHierarchy"></param>
 		/// <returns></returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Component[] GetComponents( bool reverse = false, bool checkChildren = false, bool onlyEnabledInHierarchy = false, bool depthFirstSearch = false )
 		{
 			return GetComponents( typeof( Component ), reverse, checkChildren, onlyEnabledInHierarchy, depthFirstSearch );
@@ -1086,6 +1331,7 @@ namespace NeoAxis
 		/// <param name="checkChildren"></param>
 		/// <param name="onlyEnabledInHierarchy"></param>
 		/// <returns></returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public T[] GetComponents<T>( bool reverse = false, bool checkChildren = false, bool onlyEnabledInHierarchy = false, bool depthFirstSearch = false ) where T : class //Component
 		{
 			List<T> list = null;
@@ -1093,16 +1339,18 @@ namespace NeoAxis
 			return list != null ? list.ToArray() : Array.Empty<T>(); //new T[ 0 ];
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		void GetComponentsRecursive<T>( Type componentClass, bool reverse, bool checkChildren, bool onlyEnabledInHierarchy, bool depthFirstSearch, Action<T> action ) where T : class //where T : Component
 		{
 			if( components.Count != 0 )
 			{
-				var items = ( reverse && components.Count > 1 ) ? components.Reverse() : components;
-
 				if( depthFirstSearch )
 				{
-					foreach( Component component in items )
+					var node = reverse ? components.linkedList?.Last : components.linkedList?.First;
+					while( node != null )
 					{
+						var component = node.Value;
+
 						if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
 						{
 							if( componentClass == typeof( Component ) || componentClass.IsAssignableFrom( component.GetType() ) )
@@ -1111,24 +1359,82 @@ namespace NeoAxis
 							if( checkChildren )
 								component.GetComponentsRecursive( componentClass, reverse, true, onlyEnabledInHierarchy, true, action );
 						}
+
+						if( reverse )
+							node = node.Previous;
+						else
+							node = node.Next;
 					}
 				}
 				else
 				{
-					foreach( Component component in items )
 					{
-						if( ( !onlyEnabledInHierarchy || component.EnabledInHierarchy ) && ( componentClass == typeof( Component ) || componentClass.IsAssignableFrom( component.GetType() ) ) )
-							action( (T)(object)component );
+						var node = reverse ? components.linkedList?.Last : components.linkedList?.First;
+						while( node != null )
+						{
+							var component = node.Value;
+
+							if( ( !onlyEnabledInHierarchy || component.EnabledInHierarchy ) && ( componentClass == typeof( Component ) || componentClass.IsAssignableFrom( component.GetType() ) ) )
+								action( (T)(object)component );
+
+							if( reverse )
+								node = node.Previous;
+							else
+								node = node.Next;
+						}
 					}
+
 					if( checkChildren )
 					{
-						foreach( Component component in items )
+						var node = reverse ? components.linkedList?.Last : components.linkedList?.First;
+						while( node != null )
 						{
+							var component = node.Value;
+
 							if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
 								component.GetComponentsRecursive( componentClass, reverse, true, onlyEnabledInHierarchy, false, action );
+
+							if( reverse )
+								node = node.Previous;
+							else
+								node = node.Next;
 						}
 					}
 				}
+
+
+				//var items = ( reverse && components.Count > 1 ) ? components.Reverse() : components;
+
+				//if( depthFirstSearch )
+				//{
+				//	foreach( Component component in items )
+				//	{
+				//		if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
+				//		{
+				//			if( componentClass == typeof( Component ) || componentClass.IsAssignableFrom( component.GetType() ) )
+				//				action( (T)(object)component );
+
+				//			if( checkChildren )
+				//				component.GetComponentsRecursive( componentClass, reverse, true, onlyEnabledInHierarchy, true, action );
+				//		}
+				//	}
+				//}
+				//else
+				//{
+				//	foreach( Component component in items )
+				//	{
+				//		if( ( !onlyEnabledInHierarchy || component.EnabledInHierarchy ) && ( componentClass == typeof( Component ) || componentClass.IsAssignableFrom( component.GetType() ) ) )
+				//			action( (T)(object)component );
+				//	}
+				//	if( checkChildren )
+				//	{
+				//		foreach( Component component in items )
+				//		{
+				//			if( !onlyEnabledInHierarchy || component.EnabledInHierarchy )
+				//				component.GetComponentsRecursive( componentClass, reverse, true, onlyEnabledInHierarchy, false, action );
+				//		}
+				//	}
+				//}
 			}
 		}
 
@@ -1154,6 +1460,7 @@ namespace NeoAxis
 		/// <param name="onlyEnabledInHierarchy"></param>
 		/// <param name="depthFirstSearch"></param>
 		/// <param name="action"></param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void GetComponents( bool reverse, bool checkChildren, bool onlyEnabledInHierarchy, bool depthFirstSearch, Action<Component> action )
 		{
 			GetComponentsRecursive( typeof( Component ), reverse, checkChildren, onlyEnabledInHierarchy, depthFirstSearch, action );
@@ -1168,6 +1475,7 @@ namespace NeoAxis
 		/// <param name="onlyEnabledInHierarchy"></param>
 		/// <param name="depthFirstSearch"></param>
 		/// <param name="action"></param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void GetComponents<T>( bool reverse, bool checkChildren, bool onlyEnabledInHierarchy, bool depthFirstSearch, Action<T> action ) where T : class
 		{
 			GetComponentsRecursive( typeof( T ), reverse, checkChildren, onlyEnabledInHierarchy, depthFirstSearch, action );
@@ -1317,21 +1625,26 @@ namespace NeoAxis
 		//	return GetComponentByName<Component>( name, includeChildren );
 		//}
 
-		/// <summary>
-		/// Adds a component as a child.
-		/// </summary>
-		/// <param name="component"></param>
-		/// <param name="insertIndex"></param>
-		public void AddComponent( Component component, int insertIndex = -1 )
+		[MethodImpl( (MethodImplOptions)512 )]
+		internal void AddComponentInternal( Component component, int insertIndex, bool createComponent )
 		{
 			if( component.HierarchyController != null )
-				Log.Fatal( "Component: AddComponent: component.HierarchyController != null." );
+				throw new Exception( "Component: AddComponent: component.HierarchyController != null." );
 			if( component.Parent != null )
-				Log.Fatal( "Component: AddComponent: component.Parent != null. This component is already attached to another parent." );
+				throw new Exception( "Component: AddComponent: component.Parent != null. This component is already attached to another parent." );
 			if( component.Disposed )
-				Log.Fatal( "Component: AddComponent: component.Disposed == true." );
+				throw new Exception( "Component: AddComponent: component.Disposed == true." );
 			if( Disposed )
-				Log.Fatal( "Component: AddComponent: Disposed == true." );
+				throw new Exception( "Component: AddComponent: Disposed == true." );
+
+			//if( component.HierarchyController != null )
+			//	Log.Fatal( "Component: AddComponent: component.HierarchyController != null." );
+			//if( component.Parent != null )
+			//	Log.Fatal( "Component: AddComponent: component.Parent != null. This component is already attached to another parent." );
+			//if( component.Disposed )
+			//	Log.Fatal( "Component: AddComponent: component.Disposed == true." );
+			//if( Disposed )
+			//	Log.Fatal( "Component: AddComponent: Disposed == true." );
 
 			if( components.linkedList == null )
 				components.linkedList = new LinkedList<Component>();
@@ -1366,6 +1679,9 @@ namespace NeoAxis
 
 			components.ComponentsByNameAdd( component, addLast );
 
+			var controller = ParentRoot.HierarchyController;
+			controller?.networkServerInterface?.PerformAddComponent( component, createComponent );
+
 			component._UpdateEnabledInHierarchy( false );
 
 			//!!!!!порядок норм?
@@ -1376,8 +1692,23 @@ namespace NeoAxis
 			component.AddedToParent?.Invoke( component );
 
 			ComponentsChanged?.Invoke( this );
+
+			//var controller = ParentRoot.HierarchyController;
+			//controller?.networkInterface?.PerformAddComponent( component, createComponent );
 		}
 
+		/// <summary>
+		/// Adds a component as a child.
+		/// </summary>
+		/// <param name="component"></param>
+		/// <param name="insertIndex"></param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void AddComponent( Component component, int insertIndex = -1 )
+		{
+			AddComponentInternal( component, insertIndex, false );
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
 		void SetUniqueName( Component component )
 		{
 			//!!!!threading?
@@ -1385,9 +1716,20 @@ namespace NeoAxis
 			if( uniqueNameGenerator == null )
 				uniqueNameGenerator = new UniqueNameGenerator();
 
+			var prefix = component.BaseType.ToString();
+			if( component.BaseType is Metadata.ComponentTypeInfo )
+			{
+				try
+				{
+					prefix = System.IO.Path.GetFileNameWithoutExtension( prefix );
+				}
+				catch { }
+			}
+
 			do
 			{
-				var componentName = uniqueNameGenerator.Get( component.BaseType.ToString() );
+				var componentName = uniqueNameGenerator.Get( prefix );
+				//var componentName = uniqueNameGenerator.Get( component.BaseType.ToString() );
 				if( GetComponent( componentName ) == null )
 				{
 					component.Name = componentName;
@@ -1406,15 +1748,17 @@ namespace NeoAxis
 		/// <param name="enabled"></param>
 		/// <param name="setUniqueName"></param>
 		/// <returns></returns>
-		public Component CreateComponent( Metadata.TypeInfo type, int insertIndex = -1, bool enabled = true, bool setUniqueName = false )
+		[MethodImpl( (MethodImplOptions)512 )]
+		public Component CreateComponent( Metadata.TypeInfo type, int insertIndex = -1, bool enabled = true, bool setUniqueName = false, NetworkModeEnum networkMode = NetworkModeEnum.True )
 		{
 			Component component = (Component)type.InvokeInstance( null );
+			component.NetworkMode = networkMode;
 			if( setUniqueName )
 				SetUniqueName( component );
 			component.Enabled = enabled;
-			AddComponent( component, insertIndex );
+			AddComponentInternal( component, insertIndex, true );
 
-			ParentRoot.HierarchyController?.networkInterface?.PerformCreateComponent( component );
+			//ParentRoot.HierarchyController?.networkInterface?.PerformCreateComponent( component );
 
 			return component;
 		}
@@ -1428,16 +1772,18 @@ namespace NeoAxis
 		/// <param name="enabled"></param>
 		/// <param name="setUniqueName"></param>
 		/// <returns></returns>
-		public Component CreateComponent( Type classType, int insertIndex = -1, bool enabled = true, bool setUniqueName = false )
+		[MethodImpl( (MethodImplOptions)512 )]
+		public Component CreateComponent( Type classType, int insertIndex = -1, bool enabled = true, bool setUniqueName = false, NetworkModeEnum networkMode = NetworkModeEnum.True )
 		{
 			ConstructorInfo constructor = classType.GetConstructor( Array.Empty<Type>() );
 			Component component = (Component)constructor.Invoke( Array.Empty<object>() );
+			component.NetworkMode = networkMode;
 			if( setUniqueName )
 				SetUniqueName( component );
 			component.Enabled = enabled;
-			AddComponent( component, insertIndex );
+			AddComponentInternal( component, insertIndex, true );
 
-			ParentRoot.HierarchyController?.networkInterface?.PerformCreateComponent( component );
+			//ParentRoot.HierarchyController?.networkInterface?.PerformCreateComponent( component );
 
 			return component;
 		}
@@ -1450,9 +1796,10 @@ namespace NeoAxis
 		/// <param name="enabled"></param>
 		/// <param name="setUniqueName"></param>
 		/// <returns></returns>
-		public T CreateComponent<T>( int insertIndex = -1, bool enabled = true, bool setUniqueName = false ) where T : Component
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public T CreateComponent<T>( int insertIndex = -1, bool enabled = true, bool setUniqueName = false, NetworkModeEnum networkMode = NetworkModeEnum.True ) where T : Component
 		{
-			return (T)CreateComponent( typeof( T ), insertIndex, enabled, setUniqueName );
+			return (T)CreateComponent( typeof( T ), insertIndex, enabled, setUniqueName, networkMode );
 		}
 
 		/// <summary>
@@ -1460,10 +1807,14 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="component"></param>
 		/// <param name="queued"></param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void RemoveComponent( Component component, bool queued )
 		{
 			if( component.Parent != this )
-				Log.Fatal( "Component: RemoveComponent: component.Parent != this." );
+				throw new Exception( "Component: RemoveComponent: component.Parent != this." );
+			//if( component.Parent != this )
+			//	Log.Fatal( "Component: RemoveComponent: component.Parent != this." );
+
 			component.RemoveFromParent( queued );
 		}
 
@@ -1471,6 +1822,7 @@ namespace NeoAxis
 		/// Removes all child components.
 		/// </summary>
 		/// <param name="queued"></param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void RemoveAllComponents( bool queued )
 		{
 			foreach( var c in Components.ToArray() )
@@ -1507,6 +1859,7 @@ namespace NeoAxis
 			/// <param name="name"></param>
 			/// <param name="nameIndex"></param>
 			/// <returns></returns>
+			[MethodImpl( (MethodImplOptions)512 )]
 			public static bool ParsePathNameWithIndex( string value, out string name, out int nameIndex )
 			{
 				if( value.Length > 0 && value[ 0 ] == '$' )
@@ -1563,6 +1916,7 @@ namespace NeoAxis
 			/// <param name="name"></param>
 			/// <param name="nameIndex"></param>
 			/// <returns></returns>
+			[MethodImpl( (MethodImplOptions)512 )]
 			public Component GetByNameWithIndex( string name, int nameIndex )
 			{
 				if( componentsByName != null )
@@ -1576,8 +1930,9 @@ namespace NeoAxis
 				else
 				{
 					int currentIndex = 0;
-					foreach( var c in this )
+					for( var node = linkedList?.First; node != null; node = node.Next )
 					{
+						var c = node.Value;
 						if( c.Name == name )
 						{
 							if( currentIndex == nameIndex )
@@ -1585,6 +1940,17 @@ namespace NeoAxis
 							currentIndex++;
 						}
 					}
+
+					//int currentIndex = 0;
+					//foreach( var c in this )
+					//{
+					//	if( c.Name == name )
+					//	{
+					//		if( currentIndex == nameIndex )
+					//			return c;
+					//		currentIndex++;
+					//	}
+					//}
 				}
 				return null;
 			}
@@ -1595,6 +1961,7 @@ namespace NeoAxis
 			/// <param name="name"></param>
 			/// <param name="onlyEnabledInHierarchy"></param>
 			/// <returns></returns>
+			[MethodImpl( (MethodImplOptions)512 )]
 			public Component GetByName( string name, bool onlyEnabledInHierarchy = false )
 			{
 				if( componentsByName != null )
@@ -1611,11 +1978,18 @@ namespace NeoAxis
 				}
 				else
 				{
-					foreach( var c in this )
+					for( var node = linkedList?.First; node != null; node = node.Next )
 					{
+						var c = node.Value;
 						if( c.Name == name && ( !onlyEnabledInHierarchy || c.EnabledInHierarchy ) )
 							return c;
 					}
+
+					//foreach( var c in this )
+					//{
+					//	if( c.Name == name && ( !onlyEnabledInHierarchy || c.EnabledInHierarchy ) )
+					//		return c;
+					//}
 				}
 				return null;
 			}
@@ -1627,6 +2001,7 @@ namespace NeoAxis
 			/// <param name="name"></param>
 			/// <param name="onlyEnabledInHierarchy"></param>
 			/// <returns></returns>
+			[MethodImpl( (MethodImplOptions)512 )]
 			public T GetByName<T>( string name, bool onlyEnabledInHierarchy = false ) //where T : Component
 			{
 				if( componentsByName != null )
@@ -1643,11 +2018,18 @@ namespace NeoAxis
 				}
 				else
 				{
-					foreach( var c in this )
+					for( var node = linkedList?.First; node != null; node = node.Next )
 					{
+						var c = node.Value;
 						if( c.Name == name && ( !onlyEnabledInHierarchy || c.EnabledInHierarchy ) && typeof( T ).IsAssignableFrom( c.GetType() ) )
 							return (T)(object)c;
 					}
+
+					//foreach( var c in this )
+					//{
+					//	if( c.Name == name && ( !onlyEnabledInHierarchy || c.EnabledInHierarchy ) && typeof( T ).IsAssignableFrom( c.GetType() ) )
+					//		return (T)(object)c;
+					//}
 				}
 				return (T)(object)null;
 			}
@@ -1657,6 +2039,7 @@ namespace NeoAxis
 			/// </summary>
 			/// <param name="nameOrPath"></param>
 			/// <returns></returns>
+			[MethodImpl( (MethodImplOptions)512 )]
 			public Component GetByPath( string nameOrPath )
 			{
 				//!!!!поддержка вверх - ".."?
@@ -1707,6 +2090,7 @@ namespace NeoAxis
 			/// <returns></returns>
 			public Component this[ string nameOrPath ]
 			{
+				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 				get { return GetByPath( nameOrPath ); }
 			}
 
@@ -1727,6 +2111,7 @@ namespace NeoAxis
 			/// </summary>
 			public int Count
 			{
+				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 				get { return linkedList != null ? linkedList.Count : 0; }
 			}
 
@@ -1764,6 +2149,7 @@ namespace NeoAxis
 			/// </summary>
 			/// <param name="key"></param>
 			/// <returns></returns>
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public bool Contains( Component key )
 			{
 				if( linkedList != null )
@@ -1777,14 +2163,22 @@ namespace NeoAxis
 			/// </summary>
 			/// <param name="array"></param>
 			/// <param name="arrayIndex"></param>
+			[MethodImpl( (MethodImplOptions)512 )]
 			public void CopyTo( Component[] array, int arrayIndex )
 			{
 				int n = arrayIndex;
-				foreach( Component v in this )
+				for( var node = linkedList?.First; node != null; node = node.Next )
 				{
-					array[ n ] = v;
+					array[ n ] = node.Value;
 					n++;
 				}
+
+				//int n = arrayIndex;
+				//foreach( Component v in this )
+				//{
+				//	array[ n ] = v;
+				//	n++;
+				//}
 			}
 
 			/// <summary>
@@ -1792,20 +2186,29 @@ namespace NeoAxis
 			/// </summary>
 			/// <param name="array"></param>
 			/// <param name="arrayIndex"></param>
+			[MethodImpl( (MethodImplOptions)512 )]
 			public void CopyTo( Array array, int arrayIndex )
 			{
 				int n = arrayIndex;
-				foreach( Component v in this )
+				for( var node = linkedList?.First; node != null; node = node.Next )
 				{
-					array.SetValue( v, n );
+					array.SetValue( node.Value, n );
 					n++;
 				}
+
+				//int n = arrayIndex;
+				//foreach( Component v in this )
+				//{
+				//	array.SetValue( v, n );
+				//	n++;
+				//}
 			}
 
 			/// <summary>
 			/// Copies a list of child components to an array.
 			/// </summary>
 			/// <returns></returns>
+			[MethodImpl( (MethodImplOptions)512 )]
 			public Component[] ToArray()
 			{
 				Component[] array = new Component[ Count ];
@@ -1855,6 +2258,7 @@ namespace NeoAxis
 			/// Adds a component as a child.
 			/// </summary>
 			/// <param name="item"></param>
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public void Add( Component item )
 			{
 				owner.AddComponent( item );
@@ -1864,6 +2268,7 @@ namespace NeoAxis
 			/// <summary>
 			/// Removes all child components.
 			/// </summary>
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public void Clear()
 			{
 				owner.RemoveAllComponents( false );
@@ -1874,6 +2279,7 @@ namespace NeoAxis
 			/// Removes all child components.
 			/// </summary>
 			/// <param name="queued"></param>
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public void Clear( bool queued )
 			{
 				owner.RemoveAllComponents( queued );
@@ -1885,6 +2291,7 @@ namespace NeoAxis
 			/// </summary>
 			/// <param name="item"></param>
 			/// <returns></returns>
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public bool Remove( Component item )
 			{
 				owner.RemoveComponent( item, false );
@@ -1898,6 +2305,7 @@ namespace NeoAxis
 			/// <param name="item"></param>
 			/// <param name="queued"></param>
 			/// <returns></returns>
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public bool Remove( Component item, bool queued )
 			{
 				owner.RemoveComponent( item, queued );
@@ -1910,6 +2318,7 @@ namespace NeoAxis
 			/// </summary>
 			/// <param name="item"></param>
 			/// <param name="newPosition"></param>
+			[MethodImpl( (MethodImplOptions)512 )]
 			public void MoveTo( Component item, int newPosition )
 			{
 				//!!!!slowly2?
@@ -1944,18 +2353,29 @@ namespace NeoAxis
 			/// </summary>
 			/// <param name="item"></param>
 			/// <returns></returns>
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public int IndexOf( Component item )
 			{
 				//!!!!slowly2?
 
 				int n = 0;
-				foreach( Component v in this )
+				for( var node = linkedList?.First; node != null; node = node.Next )
 				{
+					var v = node.Value;
 					if( v == item )
 						return n;
 					n++;
 				}
 				return -1;
+
+				//int n = 0;
+				//foreach( Component v in this )
+				//{
+				//	if( v == item )
+				//		return n;
+				//	n++;
+				//}
+				//return -1;
 			}
 
 			//public ICollection<T> AsReadOnly()
@@ -1978,6 +2398,7 @@ namespace NeoAxis
 			/// <param name="removePrefixEndNumbers"></param>
 			/// <param name="startNumber"></param>
 			/// <returns></returns>
+			[MethodImpl( (MethodImplOptions)512 )]
 			public string GetUniqueName( string prefix, bool removePrefixEndNumbers, int startNumber )
 			{
 				//!!!!slowly? option to use bool useUniqueNameGenerator
@@ -2008,6 +2429,7 @@ namespace NeoAxis
 				}
 			}
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			internal void ComponentsByNameAdd( Component component, bool addLast )
 			{
 				//!!!!8 норм?
@@ -2043,15 +2465,24 @@ namespace NeoAxis
 					else
 					{
 						list.Clear();
-						foreach( var c in this )
+
+						for( var node = linkedList?.First; node != null; node = node.Next )
 						{
+							var c = node.Value;
 							if( c.name == component.name )
 								list.Add( c );
 						}
+
+						//foreach( var c in this )
+						//{
+						//	if( c.name == component.name )
+						//		list.Add( c );
+						//}
 					}
 				}
 			}
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			internal void ComponentsByNameRemove( Component component )
 			{
 				if( componentsByName != null )
@@ -2074,6 +2505,7 @@ namespace NeoAxis
 				}
 			}
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			void ComponentsByNameUpdateForMoveTo( Component component )
 			{
 				if( componentsByName != null )
@@ -2083,11 +2515,19 @@ namespace NeoAxis
 						//!!!!достаточно просто пересортировать список если так можно
 
 						list.Clear();
-						foreach( var c in this )
+
+						for( var node = linkedList?.First; node != null; node = node.Next )
 						{
+							var c = node.Value;
 							if( c.name == component.name )
 								list.Add( c );
 						}
+
+						//foreach( var c in this )
+						//{
+						//	if( c.name == component.name )
+						//		list.Add( c );
+						//}
 					}
 				}
 			}
@@ -2116,6 +2556,7 @@ namespace NeoAxis
 		[Browsable( false )]
 		public Component ParentRoot
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				//!!!!!!slowly. когда включено EnabledInHierarchy, то можно по идее локально root хранить
@@ -2133,6 +2574,7 @@ namespace NeoAxis
 		public virtual string Name
 		{
 			get { return name; }
+			[MethodImpl( (MethodImplOptions)512 )]
 			set
 			{
 				if( name == value )
@@ -2152,7 +2594,7 @@ namespace NeoAxis
 		public event Action<Component> NameChanged;
 
 		/// <summary>
-		/// Sets the display of the on-screen label of the object in the scene editor.
+		/// The displaying mode of an on-screen label of the component in the scene editor.
 		/// </summary>
 		[DefaultValue( ScreenLabelEnum.Auto )]
 		public Reference<ScreenLabelEnum> ScreenLabel
@@ -2164,19 +2606,50 @@ namespace NeoAxis
 		public event Action<Component> ScreenLabelChanged;
 		ReferenceField<ScreenLabelEnum> _screenLabel = ScreenLabelEnum.Auto;
 
+		/// <summary>
+		/// Whether to enable synchronization of the component between server and clients.
+		/// </summary>
+		[DefaultValue( NetworkModeEnum.True )]
+		[NetworkSynchronize( false )]
+		public Reference<NetworkModeEnum> NetworkMode
+		{
+			get { if( _networkMode.BeginGet() ) NetworkMode = _networkMode.Get( this ); return _networkMode.value; }
+			set
+			{
+				if( _networkMode.BeginSet( ref value ) )
+				{
+					try
+					{
+						NetworkModeChanged?.Invoke( this );
+
+						var controller = ParentRoot.HierarchyController;
+						controller?.networkServerInterface?.PerformChangeNetworkMode( this );
+					}
+					finally { _networkMode.EndSet(); }
+				}
+			}
+		}
+		/// <summary>Occurs when the <see cref="NetworkMode"/> property value changes.</summary>
+		public event Action<Component> NetworkModeChanged;
+		ReferenceField<NetworkModeEnum> _networkMode = NetworkModeEnum.True;
+
+		[Browsable( false )]
+		public long NetworkID
+		{
+			get { return networkID; }
+		}
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		//!!!!queued = true. в других местах тоже
-		/// <summary>
-		/// Detaches the object from its parent.
-		/// </summary>
-		/// <param name="queued"></param>
-		public virtual void RemoveFromParent( bool queued )
+		[MethodImpl( (MethodImplOptions)512 )]
+		void RemoveFromParentInternal( bool queued, bool disposing )
 		{
 			if( Parent == null )
 				return;
 
 			var controller = ParentRoot.HierarchyController;
+
+			controller?.networkServerInterface?.PerformRemoveFromParent( this, queued, disposing );
 
 			if( queued && controller != null )
 			{
@@ -2210,8 +2683,17 @@ namespace NeoAxis
 
 				oldParent.ComponentsChanged?.Invoke( oldParent );
 			}
+		}
 
-			controller?.networkInterface?.PerformRemoveFromParent( this, queued );
+		//!!!!queued = true. в других местах тоже
+		/// <summary>
+		/// Detaches the object from its parent.
+		/// </summary>
+		/// <param name="queued">Whether to remove the objects later outside hierarchy loop. It is used to prevent exceptions when change the hierarchy during enumeration the hierarchy.</param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public virtual void RemoveFromParent( bool queued )
+		{
+			RemoveFromParentInternal( queued, false );
 		}
 
 		/// <summary>
@@ -2451,6 +2933,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="context"></param>
 		/// <returns></returns>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public IEnumerable<Metadata.Member> MetadataGetMembers( Metadata.GetMembersContext context = null )
 		{
 			foreach( var m in OnMetadataGetMembers() )
@@ -2485,6 +2968,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="signature"></param>
 		/// <returns></returns>
+		[MethodImpl( (MethodImplOptions)512 )]
 		protected virtual Metadata.Member OnMetadataGetMemberBySignature( string signature )//, Metadata.GetMembersContext context )
 		{
 			//virtual members
@@ -2518,6 +3002,7 @@ namespace NeoAxis
 		/// <param name="signature"></param>
 		/// <param name="context"></param>
 		/// <returns></returns>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public Metadata.Member MetadataGetMemberBySignature( string signature, Metadata.GetMembersContext context = null )
 		{
 			var m = OnMetadataGetMemberBySignature( signature );//, context );
@@ -2591,16 +3076,20 @@ namespace NeoAxis
 		/// </summary>
 		protected virtual void OnDispose() { }
 
-		internal virtual void OnDispose_After()
+		[MethodImpl( (MethodImplOptions)512 )]
+		internal virtual void OnDisposeAfter()
 		{
 			//!!!!!так?
 
 			//!!!!вызывать?
 			//Enabled = false;
 
-			RemoveFromParent( false );
+			RemoveFromParentInternal( false, true );
 
+
+			//this controller's code only for root component
 			var controller = HierarchyController;
+
 			if( controller != null )
 			{
 				controller.ProcessDelayedOperations();
@@ -2622,10 +3111,6 @@ namespace NeoAxis
 				if( ins != null )
 					ins.Dispose();
 			}
-
-			//!!!!эвенты чистить?
-
-			controller?.networkInterface?.PerformDispose( this );
 		}
 
 		/// <summary>
@@ -2637,7 +3122,7 @@ namespace NeoAxis
 			{
 				DisposeEvent?.Invoke( this );
 				OnDispose();
-				OnDispose_After();
+				OnDisposeAfter();
 			}
 		}
 
@@ -2651,6 +3136,7 @@ namespace NeoAxis
 		/// Returns the name and type of the object as a string.
 		/// </summary>
 		/// <returns></returns>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public override string ToString()
 		{
 			//!!!!!!возможность всем переопределить. или только в этой иерархии. ну это уж определить и так можно
@@ -2697,6 +3183,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		internal void GetBaseTypeIndex( out int hierarchyIndex, out string name, out int nameIndex )
 		{
 			//!!!!bool?
@@ -2747,13 +3234,23 @@ namespace NeoAxis
 				}
 				else
 				{
-					foreach( var child in parent.Components )
+					for( var node = parent.Components.linkedList?.First; node != null; node = node.Next )
 					{
+						var child = node.Value;
+
 						if( child == this )
 							break;
 						if( child.name == name )
 							nameIndex++;
 					}
+
+					//foreach( var child in parent.Components )
+					//{
+					//	if( child == this )
+					//		break;
+					//	if( child.name == name )
+					//		nameIndex++;
+					//}
 				}
 			}
 
@@ -2766,6 +3263,7 @@ namespace NeoAxis
 			//return false;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		internal int GetNameIndexFromParent()
 		{
 			int nameIndex = 0;
@@ -2785,15 +3283,23 @@ namespace NeoAxis
 				}
 				else
 				{
-					//!!!!slowly2. можно без foreach.
-					//!!!!!!много где еще так
-					foreach( var child in parent.Components )
+					for( var node = parent.Components.linkedList?.First; node != null; node = node.Next )
 					{
+						var child = node.Value;
+
 						if( child == this )
 							break;
 						if( child.name == name )
 							nameIndex++;
 					}
+
+					//foreach( var child in parent.Components )
+					//{
+					//	if( child == this )
+					//		break;
+					//	if( child.name == name )
+					//		nameIndex++;
+					//}
 				}
 			}
 			return nameIndex;
@@ -2803,6 +3309,7 @@ namespace NeoAxis
 		/// Returns the path to the object from the parent.
 		/// </summary>
 		/// <returns></returns>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public string GetPathFromParent()
 		{
 			StringBuilder result = new StringBuilder( Name.Length + 2 );
@@ -2819,6 +3326,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="displayableForUser"></param>
 		/// <returns></returns>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public string GetPathFromRoot( bool displayableForUser = false )
 		{
 			if( Parent != null )
@@ -2933,6 +3441,7 @@ namespace NeoAxis
 		//	set { provideAsTypeEnumValues = value; }
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static bool CompareEnums( EDictionary<string, long> d1, EDictionary<string, long> d2 )
 		{
 			if( d1 == null || d2 == null )
@@ -2956,6 +3465,7 @@ namespace NeoAxis
 		}
 
 		//!!!!
+		[MethodImpl( (MethodImplOptions)512 )]
 		internal Metadata.TypeInfo GetProvidedTypeInternal( EDictionary<string, long> enumElements, bool enumFlags )
 		{
 			//!!!!slowly
@@ -2986,6 +3496,8 @@ namespace NeoAxis
 					if( enumElements != null )
 						classification = Metadata.TypeClassification.Enumeration;
 
+					//bool? networkMode = null;
+
 					//!!!!что еще проверять. а может что-то тут не надо проверять
 					//!!!!!check
 					if( providedTypeCached == null ||
@@ -3000,7 +3512,7 @@ namespace NeoAxis
 						string displayName2 = name;
 
 						providedTypeCached = new Metadata.ComponentTypeInfo( name, displayName2, BaseType, classification, enumElements, enumFlags,
-							owner, namePath, this );
+							owner, namePath, this );//, networkMode );
 					}
 				}
 				else
@@ -3156,7 +3668,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		internal virtual void OnUpdate_Before( float delta ) { }
+		internal virtual void OnUpdateBefore( float delta ) { }
 		/// <summary>
 		/// Called during the update process of all objects.
 		/// </summary>
@@ -3168,29 +3680,81 @@ namespace NeoAxis
 		/// </summary>
 		public event UpdateEventDelegate UpdateEvent;
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		internal void PerformUpdate( float delta )
 		{
-			OnUpdate_Before( delta );
+			OnUpdateBefore( delta );
 
 			//children
 			int componentsCount = components.Count;
 			if( componentsCount != 0 )
 			{
-				var list = new List<Component>( componentsCount );
-				foreach( var c in components )
+				if( componentsCount > 1 )
 				{
-					if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )
-						list.Add( c );
+					var list = _tempComponentListForUpdateAndSimulationStep;
+					if( list == null || list.Length < componentsCount )
+					{
+						list = new Component[ componentsCount ];
+						_tempComponentListForUpdateAndSimulationStep = list;
+					}
+
+					int counter = 0;
+					for( var node = components.linkedList?.First; node != null; node = node.Next )
+					{
+						var c = node.Value;
+						if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )
+						{
+							if( counter >= list.Length )
+								break;
+							list[ counter++ ] = c;
+						}
+					}
+
+					for( int n = 0; n < counter; n++ )
+					{
+						var c = list[ n ];
+						if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )//second check if changed during enumeration
+							c.PerformUpdate( delta );
+					}
+
+					//!!!!clear array? maybe sometimes
+
+
+
+					//var list = _tempComponentListForUpdateAndSimulationStep;
+					//if( list == null )
+					//{
+					//	list = new List<Component>( componentsCount );
+					//	_tempComponentListForUpdateAndSimulationStep = list;
+					//}
+					//list.Clear();
+					////var list = new List<Component>( componentsCount );
+
+					//for( var node = components.linkedList?.First; node != null; node = node.Next )
+					//{
+					//	var c = node.Value;
+					//	if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )
+					//		list.Add( c );
+					//}
+
+					//for( int n = 0; n < list.Count; n++ )
+					//{
+					//	var c = list[ n ];
+					//	if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )//second check if changed during enumeration
+					//		c.PerformUpdate( delta );
+					//}
+
+					//list.Clear();
 				}
-				//GetComponents( false, false, true, delegate ( Component c )
-				//{
-				//	list.Add( c );
-				//} );
-				for( int n = 0; n < list.Count; n++ )
+				else
 				{
-					var c = list[ n ];
-					if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )//second check if changed during enumeration
-						c.PerformUpdate( delta );
+					var node = components.linkedList?.First;
+					if( node != null )
+					{
+						var c = node.Value;
+						if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )
+							c.PerformUpdate( delta );
+					}
 				}
 			}
 			//foreach( var c in GetComponents( false, false, true ) )
@@ -3200,16 +3764,29 @@ namespace NeoAxis
 			//}
 
 			//!!!!тут?
-			if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+			if( EngineApp.IsEditor )
 				MethodInvokeUpdate( delta );
 
 			OnUpdate( delta );
-			UpdateEvent?.Invoke( this, delta );
+
+			if( EngineApp.IsEditor )
+			{
+				try
+				{
+					UpdateEvent?.Invoke( this, delta );
+				}
+				catch( Exception e )
+				{
+					Log.Warning( "Component: PerformUpdate: UpdateEvent: " + e.Message );
+				}
+			}
+			else
+				UpdateEvent?.Invoke( this, delta );
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		internal virtual void OnSimulationStep_Before() { }
+		internal virtual void OnSimulationStepBefore() { }
 		/// <summary>
 		/// Called during the simulation step.
 		/// </summary>
@@ -3219,29 +3796,81 @@ namespace NeoAxis
 		/// </summary>
 		public event Action<Component> SimulationStep;
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		internal void PerformSimulationStep()
 		{
-			OnSimulationStep_Before();
+			OnSimulationStepBefore();
 
 			//children
 			int componentsCount = components.Count;
 			if( componentsCount != 0 )
 			{
-				var list = new List<Component>( componentsCount );
-				foreach( var c in components )
+				if( componentsCount > 1 )
 				{
-					if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )
-						list.Add( c );
+					var list = _tempComponentListForUpdateAndSimulationStep;
+					if( list == null || list.Length < componentsCount )
+					{
+						list = new Component[ componentsCount ];
+						_tempComponentListForUpdateAndSimulationStep = list;
+					}
+
+					int counter = 0;
+					for( var node = components.linkedList?.First; node != null; node = node.Next )
+					{
+						var c = node.Value;
+						if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )
+						{
+							if( counter >= list.Length )
+								break;
+							list[ counter++ ] = c;
+						}
+					}
+
+					for( int n = 0; n < counter; n++ )
+					{
+						var c = list[ n ];
+						if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )//second check if changed during enumeration
+							c.PerformSimulationStep();
+					}
+
+					//!!!!clear array? maybe sometimes
+
+
+
+					//var list = _tempComponentListForUpdateAndSimulationStep;
+					//if( list == null )
+					//{
+					//	list = new List<Component>( componentsCount );
+					//	_tempComponentListForUpdateAndSimulationStep = list;
+					//}
+					//list.Clear();
+					////var list = new List<Component>( componentsCount );
+
+					//for( var node = components.linkedList?.First; node != null; node = node.Next )
+					//{
+					//	var c = node.Value;
+					//	if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )
+					//		list.Add( c );
+					//}
+
+					//for( int n = 0; n < list.Count; n++ )
+					//{
+					//	var c = list[ n ];
+					//	if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )//second check if changed during enumeration
+					//		c.PerformSimulationStep();
+					//}
+
+					//list.Clear();
 				}
-				//GetComponents( false, false, true, delegate ( Component c )
-				//{
-				//	list.Add( c );
-				//} );
-				for( int n = 0; n < list.Count; n++ )
+				else
 				{
-					var c = list[ n ];
-					if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )//second check if changed during enumeration
-						c.PerformSimulationStep();
+					var node = components.linkedList?.First;
+					if( node != null )
+					{
+						var c = node.Value;
+						if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )
+							c.PerformSimulationStep();
+					}
 				}
 			}
 			//foreach( var c in GetComponents( false, false, true ) )
@@ -3258,8 +3887,107 @@ namespace NeoAxis
 			SimulationStep?.Invoke( this );
 		}
 
+		internal virtual void OnSimulationStepClientBefore() { }
+		/// <summary>
+		/// Called during the simulation step.
+		/// </summary>
+		protected virtual void OnSimulationStepClient() { }
+		/// <summary>
+		/// Occurs during the simulation step.
+		/// </summary>
+		public event Action<Component> SimulationStepClient;
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		internal void PerformSimulationStepClient()
+		{
+			OnSimulationStepClientBefore();
+
+			//children
+			int componentsCount = components.Count;
+			if( componentsCount != 0 )
+			{
+				if( componentsCount > 1 )
+				{
+					var list = _tempComponentListForUpdateAndSimulationStep;
+					if( list == null || list.Length < componentsCount )
+					{
+						list = new Component[ componentsCount ];
+						_tempComponentListForUpdateAndSimulationStep = list;
+					}
+
+					int counter = 0;
+					for( var node = components.linkedList?.First; node != null; node = node.Next )
+					{
+						var c = node.Value;
+						if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )
+						{
+							if( counter >= list.Length )
+								break;
+							list[ counter++ ] = c;
+						}
+					}
+
+					for( int n = 0; n < counter; n++ )
+					{
+						var c = list[ n ];
+						if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )//second check if changed during enumeration
+							c.PerformSimulationStepClient();
+					}
+
+
+					//var list = _tempComponentListForUpdateAndSimulationStep;
+					//if( list == null )
+					//{
+					//	list = new List<Component>( componentsCount );
+					//	_tempComponentListForUpdateAndSimulationStep = list;
+					//}
+					//list.Clear();
+					////var list = new List<Component>( componentsCount );
+
+					//for( var node = components.linkedList?.First; node != null; node = node.Next )
+					//{
+					//	var c = node.Value;
+					//	if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )
+					//		list.Add( c );
+					//}
+
+					//for( int n = 0; n < list.Count; n++ )
+					//{
+					//	var c = list[ n ];
+					//	if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )//second check if changed during enumeration
+					//		c.PerformSimulationStepClient();
+					//}
+
+					//list.Clear();
+				}
+				else
+				{
+					var node = components.linkedList?.First;
+					if( node != null )
+					{
+						var c = node.Value;
+						if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )
+							c.PerformSimulationStepClient();
+					}
+				}
+			}
+			//foreach( var c in GetComponents( false, false, true ) )
+			//{
+			//	if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )//second check if changed during enumeration
+			//		c.PerformSimulationStep();
+			//}
+
+			//!!!!тут?
+			MethodInvokeUpdate( Time.SimulationDelta );
+
+			OnSimulationStepClient();
+
+			SimulationStepClient?.Invoke( this );
+		}
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		void VirtualMembersUpdate()
 		{
 			//!!!!!threading
@@ -3313,6 +4041,7 @@ namespace NeoAxis
 		[Browsable( false )]
 		public bool EditorReadOnlyInHierarchy
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				if( EditorReadOnly )
@@ -3331,6 +4060,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="componentClass"></param>
 		/// <returns></returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Component FindThisOrParent( Metadata.TypeInfo componentClass )
 		{
 			var c = this;
@@ -3348,6 +4078,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="componentClass"></param>
 		/// <returns></returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Component FindThisOrParent( Type componentClass )
 		{
 			var c = this;
@@ -3365,6 +4096,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public T FindThisOrParent<T>() where T : class//Component
 		{
 			var c = this;
@@ -3383,6 +4115,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="componentClass"></param>
 		/// <returns></returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Component FindParent( Metadata.TypeInfo componentClass )
 		{
 			var c = Parent;
@@ -3400,6 +4133,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="componentClass"></param>
 		/// <returns></returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Component FindParent( Type componentClass )
 		{
 			var c = Parent;
@@ -3418,6 +4152,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public T FindParent<T>() where T : class//Component
 		{
 			var c = Parent;
@@ -3436,6 +4171,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="makeOrderFromTopToBottom"></param>
 		/// <returns></returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ICollection<Component> GetAllParents( bool makeOrderFromTopToBottom )
 		{
 			var list = new List<Component>();
@@ -3469,7 +4205,6 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		//!!!!так?
 		/// <summary>
 		/// Called when the object is created in the editor. Designed to configure the initial state.
 		/// </summary>
@@ -3487,6 +4222,7 @@ namespace NeoAxis
 		/// </summary>
 		[Browsable( false )]
 		[Serialize]
+		[NetworkSynchronize( false )]
 		public string[] TypeSettingsPrivateObjects
 		{
 			get;
@@ -3523,6 +4259,7 @@ namespace NeoAxis
 		/// <param name="time"></param>
 		/// <param name="repeatRate"></param>
 		/// <returns></returns>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public object MethodInvoke( string name, object[] parameters = null, double time = 0, double repeatRate = 0 )
 		{
 			if( parameters == null )
@@ -3561,6 +4298,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="name"></param>
 		/// <returns></returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool IsMethodInvoking( string name )
 		{
 			if( invokingMethods != null )
@@ -3576,6 +4314,7 @@ namespace NeoAxis
 		/// Cancels the execution of selected method that run over time. You can start executing such methods using <see cref="MethodInvoke"/> method.
 		/// </summary>
 		/// <param name="name"></param>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public void MethodInvokeCancel( string name )
 		{
 			if( invokingMethods != null )
@@ -3598,6 +4337,7 @@ namespace NeoAxis
 			invokingMethods = null;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		void MethodInvokeUpdate( double delta )
 		{
 			if( invokingMethods != null )
@@ -3648,6 +4388,7 @@ namespace NeoAxis
 		/// <param name="indexers"></param>
 		/// <param name="unreferenceValue"></param>
 		/// <returns></returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public object PropertyGet( string name, object[] indexers = null, bool unreferenceValue = true )
 		{
 			return ObjectEx.PropertyGet( this, name, indexers, unreferenceValue );
@@ -3661,6 +4402,7 @@ namespace NeoAxis
 		/// <param name="indexers"></param>
 		/// <param name="unreferenceValue"></param>
 		/// <returns></returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public T PropertyGet<T>( string name, object[] indexers = null, bool unreferenceValue = true )
 		{
 			return ObjectEx.PropertyGet<T>( this, name, indexers, unreferenceValue );
@@ -3673,6 +4415,7 @@ namespace NeoAxis
 		/// <param name="value"></param>
 		/// <param name="indexers"></param>
 		/// <returns></returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool PropertySet( string name, object value, object[] indexers = null )
 		{
 			return ObjectEx.PropertySet( this, name, value, indexers );
@@ -3756,6 +4499,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		bool TypeSettingsIsPrivateObject( Component child )//, bool checkBaseTypes )
 		{
 			//!!!!slowly?
@@ -3791,6 +4535,7 @@ namespace NeoAxis
 		//}
 
 		////!!!!было Metadata.Property property
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		bool TypeSettingsIsPrivateObject( Metadata.Member member )//, bool checkBaseTypes )
 		{
 			//!!!!slowly?
@@ -3819,6 +4564,7 @@ namespace NeoAxis
 		/// Checks whether the object provided as a type is public.
 		/// </summary>
 		/// <returns></returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool TypeSettingsIsPublic()
 		{
 			var baseComponentType = Parent?.BaseType as Metadata.ComponentTypeInfo;
@@ -3847,6 +4593,7 @@ namespace NeoAxis
 		[Browsable( false )]
 		public object AnyData { get; set; }
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		internal string GetCachedResourceReference()
 		{
 			//!!!!threading
@@ -3879,8 +4626,9 @@ namespace NeoAxis
 		/// Determines when the object is attached to a hierarchy of the components, is enabled and the object if not part of a resource (it is usual object instance). The object will be enabled only when all parents are enabled, and the property <see cref="Enabled"/> is enabled.
 		/// </summary>
 		[Browsable( false )]
-		public bool EnabledInHierarchyAndIsNotResource
+		public bool EnabledInHierarchyAndIsInstance
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				if( EnabledInHierarchy )
@@ -3918,6 +4666,264 @@ namespace NeoAxis
 		internal void PerformEditorGetTextInfoCenterBottomCorner( List<string> lines )
 		{
 			OnEditorGetTextInfoCenterBottomCorner( lines );
+		}
+
+		/////////////////////////////////////////
+
+		/// <summary>
+		/// Whether to work in network server mode. It is false until the scene is not loaded.
+		/// </summary>
+		[Browsable( false )]
+		public bool NetworkIsServer
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get { return ParentRoot.HierarchyController != null && ParentRoot.HierarchyController.NetworkIsServer; }
+		}
+
+		[Browsable( false )]
+		public bool NetworkIsClient
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get { return ParentRoot.HierarchyController != null && ParentRoot.HierarchyController.NetworkIsClient; }
+		}
+
+		[Browsable( false )]
+		public bool NetworkIsSingle
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get { return ParentRoot.HierarchyController == null || ParentRoot.HierarchyController.NetworkIsSingle; }
+		}
+
+		//!!!!может указывать long userID
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public ArrayDataWriter BeginNetworkMessage( IList<ServerNetworkService_Components.ClientItem> recipients, string message )
+		{
+			return ParentRoot.HierarchyController?.networkServerInterface?.PerformBeginNetworkMessage( this, recipients, null, null, null, false, message );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public ArrayDataWriter BeginNetworkMessage( ServerNetworkService_Components.ClientItem recipient, string message )
+		{
+			return ParentRoot.HierarchyController?.networkServerInterface?.PerformBeginNetworkMessage( this, null, recipient, null, null, false, message );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public ArrayDataWriter BeginNetworkMessage( IList<ServerNetworkService_Users.UserInfo> recipients, string message )
+		{
+			return ParentRoot.HierarchyController?.networkServerInterface?.PerformBeginNetworkMessage( this, null, null, recipients, null, false, message );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public ArrayDataWriter BeginNetworkMessage( ServerNetworkService_Users.UserInfo recipient, string message )
+		{
+			return ParentRoot.HierarchyController?.networkServerInterface?.PerformBeginNetworkMessage( this, null, null, null, recipient, false, message );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public ArrayDataWriter BeginNetworkMessageToEveryone( string message )
+		{
+			return ParentRoot.HierarchyController?.networkServerInterface?.PerformBeginNetworkMessage( this, null, null, null, null, true, message );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public ArrayDataWriter BeginNetworkMessageToServer( string message )
+		{
+			return ParentRoot.HierarchyController?.networkClientInterface?.PerformBeginNetworkMessage( this, message );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void EndNetworkMessage()
+		{
+			var controller = ParentRoot.HierarchyController;
+			if( controller != null )
+			{
+				controller.networkServerInterface?.PerformEndNetworkMessage();
+				controller.networkClientInterface?.PerformEndNetworkMessage();
+			}
+		}
+
+		//
+
+		//public class ReceiveNetworkMessageEventArgs : EventArgs
+		//{
+		//	public string Message { get; }
+		//	public ArrayDataReader Reader { get; }
+		//	public bool Error { get; set; }
+
+		//	public ReceiveNetworkMessageEventArgs( string message, ArrayDataReader reader )
+		//	{
+		//		Message = message;
+		//		Reader = reader;
+		//	}
+		//}
+
+		//
+
+		protected virtual bool OnReceiveNetworkMessageFromServer( string message, ArrayDataReader reader ) { return true; }
+
+		public delegate void ReceiveNetworkMessageFromServerDelegate( Component sender, string message, ArrayDataReader reader, ref bool error );
+		//public delegate void ReceiveNetworkMessageFromServerDelegate( Component sender, ReceiveNetworkMessageEventArgs e );
+		public event ReceiveNetworkMessageFromServerDelegate ReceiveNetworkMessageFromServer;
+		//public delegate void ReceiveNetworkMessageFromServerDelegate( Component sender, string message, ArrayDataReader reader );//, ref bool success );
+		//public event ReceiveNetworkMessageFromServerDelegate ReceiveNetworkMessageFromServer;
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		internal bool PerformReceiveNetworkMessageFromServer( string message, ArrayDataReader reader )
+		{
+			if( !OnReceiveNetworkMessageFromServer( message, reader ) )
+				return false;
+
+			var error = false;
+			ReceiveNetworkMessageFromServer?.Invoke( this, message, reader, ref error );
+			if( error )
+				return false;
+
+			//if( ReceiveNetworkMessageFromServer != null )
+			//{
+			//	var e = new ReceiveNetworkMessageEventArgs( message, reader );
+			//	ReceiveNetworkMessageFromServer?.Invoke( this, e );
+			//	if( e.Error )
+			//		return false;
+			//}
+
+			//ReceiveNetworkMessageFromServer?.Invoke( this, message, reader );
+			//var error = false;
+			//ReceiveNetworkMessageFromServer?.Invoke( this, message, reader, ref error );
+			//if( error )
+			//	return false;
+
+			return true;
+		}
+
+		//!!!!events
+		protected virtual void OnClientConnectedBeforeRootComponentEnabled( ServerNetworkService_Components.ClientItem client ) { }
+		protected virtual void OnClientConnectedAfterRootComponentEnabled( ServerNetworkService_Components.ClientItem client ) { }
+		protected virtual void OnClientDisconnected( ServerNetworkService_Components.ClientItem client ) { }
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		internal void PerformClientConnectedBeforeRootComponentEnabled( ServerNetworkService_Components.ClientItem client )
+		{
+			OnClientConnectedBeforeRootComponentEnabled( client );
+			foreach( var child in GetComponents() )
+				child.PerformClientConnectedBeforeRootComponentEnabled( client );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		internal void PerformClientConnectedAfterRootComponentEnabled( ServerNetworkService_Components.ClientItem client )
+		{
+			OnClientConnectedAfterRootComponentEnabled( client );
+			foreach( var child in GetComponents() )
+				child.PerformClientConnectedAfterRootComponentEnabled( client );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		internal void PerformClientDisconnected( ServerNetworkService_Components.ClientItem client )
+		{
+			OnClientDisconnected( client );
+			foreach( var child in GetComponents() )
+				child.PerformClientDisconnected( client );
+		}
+
+		protected virtual bool OnReceiveNetworkMessageFromClient( ServerNetworkService_Components.ClientItem client, string message, ArrayDataReader reader ) { return true; }
+
+		public delegate void ReceiveNetworkMessageFromClientDelegate( Component sender, ServerNetworkService_Components.ClientItem client, string message, ArrayDataReader reader, ref bool error );
+		//public delegate void ReceiveNetworkMessageFromClientDelegate( Component sender, ReceiveNetworkMessageEventArgs e );
+		public event ReceiveNetworkMessageFromClientDelegate ReceiveNetworkMessageFromClient;
+		//public delegate void ReceiveNetworkMessageFromClientDelegate( Component sender, string message, ArrayDataReader reader );//, ref bool success );
+		//public event ReceiveNetworkMessageFromClientDelegate ReceiveNetworkMessageFromClient;
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		internal bool PerformReceiveNetworkMessageFromClient( ServerNetworkService_Components.ClientItem client, string message, ArrayDataReader reader )
+		{
+			if( !OnReceiveNetworkMessageFromClient( client, message, reader ) )
+				return false;
+
+			var error = false;
+			ReceiveNetworkMessageFromClient?.Invoke( this, client, message, reader, ref error );
+			if( error )
+				return false;
+			//if( ReceiveNetworkMessageFromClient != null )
+			//{
+			//	var e = new ReceiveNetworkMessageEventArgs( message, reader );
+			//	ReceiveNetworkMessageFromClient?.Invoke( this, e );
+			//	if( e.Error )
+			//		return false;
+			//}
+			//ReceiveNetworkMessageFromClient?.Invoke( this, message, reader );
+			//var error = false;
+			//ReceiveNetworkMessageFromClient?.Invoke( this, client, message, reader, ref error );
+			//if( error )
+			//	return false;
+
+			return true;
+		}
+
+		[Browsable( false )]
+		public ICollection<ServerNetworkService_Components.ClientItem> NetworkModeUsers
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get { return networkModeUsers != null ? networkModeUsers.AsReadOnly() : Array.Empty<ServerNetworkService_Components.ClientItem>(); }
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		public void NetworkModeAddUser( ServerNetworkService_Components.ClientItem client )
+		{
+			if( networkModeUsers == null )
+				networkModeUsers = new ESet<ServerNetworkService_Components.ClientItem>();
+
+			if( networkModeUsers.AddWithCheckAlreadyContained( client ) )
+			{
+				var controller = ParentRoot.HierarchyController;
+				controller?.networkServerInterface?.PerformNetworkModeAddUser( client, this );
+			}
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		public void NetworkModeRemoveUser( ServerNetworkService_Components.ClientItem client )
+		{
+			if( networkModeUsers != null && networkModeUsers.Remove( client ) )
+			{
+				var controller = ParentRoot.HierarchyController;
+				controller?.networkServerInterface?.PerformNetworkModeRemoveUser( client, this );
+			}
+		}
+
+		//public void NetworkModeAddUser( ServerNetworkService_Users.UserInfo user )
+		//{
+		//	if( networkModeUsers == null )
+		//		networkModeUsers = new ESet<ServerNetworkService_Components.ClientItem>();
+
+		//	if( networkModeUsers.AddWithCheckAlreadyContained( user ) )
+		//	{
+		//		var controller = ParentRoot.HierarchyController;
+		//		controller?.networkServerInterface?.PerformNetworkModeAddUser( user, this );
+		//	}
+		//}
+
+		//public void NetworkModeRemoveUser( ServerNetworkService_Users.UserInfo user )
+		//{
+		//	if( networkModeUsers != null && networkModeUsers.Remove( client ) )
+		//	{
+		//		var controller = ParentRoot.HierarchyController;
+		//		controller?.networkServerInterface?.PerformNetworkModeRemoveUser( client, this );
+		//	}
+		//}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public bool NetworkModeIsEnabledForUser( ServerNetworkService_Components.ClientItem client )
+		{
+			var mode = NetworkMode.Value;
+			switch( mode )
+			{
+			case NetworkModeEnum.False:
+				return false;
+			case NetworkModeEnum.SelectedUsers:
+				return networkModeUsers != null && networkModeUsers.Contains( client );
+			case NetworkModeEnum.True:
+				return true;
+			}
+			return false;
 		}
 
 	}

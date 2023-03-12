@@ -1,6 +1,7 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -9,6 +10,7 @@ namespace NeoAxis
 	/// </summary>
 	static class GaussianBlurMath
 	{
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static double GaussianDistribution( double x, double y, double standardDeviation )
 		{
 			if( standardDeviation < 0.00001 )
@@ -25,6 +27,7 @@ namespace NeoAxis
 			return g;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static Vector4F[] ConvertToVector4F( Vector2F[] source )
 		{
 			Vector4F[] result = new Vector4F[ source.Length ];
@@ -43,6 +46,7 @@ namespace NeoAxis
 			public Vector4F[] SampleWeights;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static Result Calculate15( Vector2I textureSize, bool horizontal, double blurFactor, double standardDeviation = 3 )//, double intensity = 1 )
 		{
 			Vector2F[] sampleOffsets = new Vector2F[ 15 ];

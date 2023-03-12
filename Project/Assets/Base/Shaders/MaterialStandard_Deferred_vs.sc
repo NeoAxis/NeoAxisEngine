@@ -1,18 +1,19 @@
-$input a_position, a_normal, a_tangent, a_texcoord0, a_texcoord1, a_texcoord2, a_color0, a_indices, a_weight, i_data0, i_data1, i_data2, i_data3, i_data4
-$output v_texCoord01, v_worldPosition_depth, v_worldNormal, v_tangent, v_bitangent, v_color0, v_eyeTangentSpace, v_normalTangentSpace, v_position, v_previousPosition, v_texCoord23, v_colorParameter, v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor, v_billboardDataIndexes, v_billboardDataFactors, v_billboardDataAngles, v_billboardRotation
+$input a_position, a_normal, a_tangent, a_texcoord0, a_texcoord1, a_texcoord2, a_color0, a_color2, a_color3, a_indices, a_weight, i_data0, i_data1, i_data2, i_data3, i_data4
+$output v_texCoord01, v_worldPosition_depth, v_worldNormal_materialIndex, v_tangent, v_color0, v_eyeTangentSpace, v_normalTangentSpace, v_position, v_previousPosition, v_texCoord23, v_colorParameter, v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor, v_objectSpacePosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2
 
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #define DEFERRED 1
 #include "Common.sh"
 #include "UniformsVertex.sh"
 #include "VertexFunctions.sh"
 
-uniform vec4 u_renderOperationData[5];
+uniform vec4 u_renderOperationData[7];
 uniform vec4 u_materialCustomParameters[2];
 uniform mat4 u_viewProjPrevious;
 #ifdef GLOBAL_SKELETAL_ANIMATION
 	SAMPLER2D(s_bones, 0);
 #endif
+SAMPLER2D(s_linearSamplerVertex, 9);
 
 #ifdef VERTEX_CODE_PARAMETERS
 	VERTEX_CODE_PARAMETERS
@@ -35,6 +36,8 @@ void main()
 	
 	mat4 worldMatrix;
 	vec3 previousWorldPosition;
+	uint cullingByCameraDirectionData = uint(0);
+	BRANCH
 	if(u_renderOperationData[0].y < 0.0)
 	{
 		//instancing
@@ -46,9 +49,17 @@ void main()
 		v_colorParameter.z = float((data & uint(0x00ff0000)) >> 16);
 		v_colorParameter.w = float((data & uint(0xff000000)) >> 24);
 		v_colorParameter = pow2(v_colorParameter / 255.0, 2.0) * 10.0;
-		v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor = i_data4;
+
+		v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor.xy = i_data4.xy;
+		uint data2 = asuint(i_data4.z);
+		v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor.z = float((data2 & uint(0x000000ff)) >> 0) / 255.0;
+		v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor.w = float((data2 & uint(0x0000ff00)) >> 8) / 255.0;
+		//v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor = i_data4;
+		
 		if(v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor.y < 0.0)
 			v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor.y = u_renderOperationData[1].y;
+		
+		cullingByCameraDirectionData = asuint( i_data4.w );
 	}
 	else
 	{
@@ -56,9 +67,12 @@ void main()
 		previousWorldPosition = u_renderOperationData[2].xyz;
 		v_colorParameter = u_renderOperationData[4];
 		v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor = vec4(u_renderOperationData[2].w, u_renderOperationData[1].y, u_renderOperationData[1].x, u_renderOperationData[1].z);
+		//!!!!?
+		//cullingByCameraDirectionData = 0;
 	}
-
-	vec3 worldObjectPositionBeforeChanges = vec3(worldMatrix[0][3], worldMatrix[1][3], worldMatrix[2][3]);
+	
+	//mat4 worldMatrixBeforeChanges = worldMatrix;
+	//vec3 worldObjectPositionBeforeChanges = getTranslate(worldMatrix);
 	
 #ifdef BILLBOARD
 	vec4 billboardRotation;
@@ -69,37 +83,26 @@ void main()
 	vec2 texCoord0 = a_texcoord0;
 	vec2 texCoord1 = a_texcoord1;
 	vec2 texCoord2 = a_texcoord2;
-	//vec2 texCoord3 = a_texcoord3;
-	vec2 unwrappedUV = getUnwrappedUV(texCoord0, texCoord1, texCoord2/*, texCoord3*/, u_renderOperationData[3].x);
+	vec2 unwrappedUV = getUnwrappedUV(texCoord0, texCoord1, texCoord2, u_renderOperationData[3].x);
 	vec4 color0 = (u_renderOperationData[3].y > 0.0) ? a_color0 : vec4_splat(1);
 	
 	vec3 positionOffset = vec3(0,0,0);
 	vec4 customParameter1 = u_materialCustomParameters[0];
 	vec4 customParameter2 = u_materialCustomParameters[1];
+	vec3 cameraPosition = u_viewportOwnerCameraPosition;
 #ifdef VERTEX_CODE_BODY
-	#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(_sampler, _uv, 0, 0)
-	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(_sampler, _uv, u_removeTextureTiling)
-	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(_sampler, _uv, u_mipMap)
-	VERTEX_CODE_BODY
+	#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(makeSampler(s_linearSamplerVertex, _sampler), _uv, 0, 0)
+	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(makeSampler(s_linearSamplerVertex, _sampler), _uv, u_removeTextureTiling)
+	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerVertex, _sampler), _uv, u_mipMap)
+//	#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(_sampler, _uv, 0, 0)
+//	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(_sampler, _uv, u_removeTextureTiling)
+//	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(_sampler, _uv, u_mipMap)
+	{
+		VERTEX_CODE_BODY
+	}
 	#undef CODE_BODY_TEXTURE2D_MASK_OPACITY
 	#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
 	#undef CODE_BODY_TEXTURE2D
-#endif
-
-#ifdef BILLBOARD
-#ifdef GLOBAL_BILLBOARD_DATA
-	float billboardDataMode = u_renderOperationData[1].w;
-	//billboard with geometry data mode: add position offset
-	BRANCH
-	if(billboardDataMode != 0.0)
-	{
-		//works only for square billboards
-		float vertexDistance = length(positionLocal);
-		float meshGeometryIndex = u_renderOperationData[3].w;
-		float offset = vertexDistance * 0.25 + meshGeometryIndex * vertexDistance * 0.05;
-		positionOffset += normalize(u_viewportOwnerCameraPosition - worldObjectPositionBeforeChanges) * offset;
-	}
-#endif
 #endif
 	worldPosition.xyz += positionOffset;
 
@@ -111,14 +114,33 @@ void main()
 	v_texCoord23.xy = texCoord2;
 	v_texCoord23.zw = vec2_splat(0);//texCoord3;
 	v_worldPosition_depth.xyz = worldPosition.xyz;
-	v_worldNormal = normalize(mul(worldMatrix3, normalLocal));
+	v_worldNormal_materialIndex.xyz = normalize(mul(worldMatrix3, normalLocal));
+	v_worldNormal_materialIndex.w = a_color3;
 	v_worldPosition_depth.w = gl_Position.z;
-
 	v_tangent.xyz = normalize(mul(worldMatrix3, tangentLocal.xyz));
 	v_tangent.w = tangentLocal.w;
 
-	v_bitangent = cross(v_tangent.xyz, v_worldNormal) * tangentLocal.w;
-
+	//!!!!GLSL
+#ifndef GLSL
+	BRANCH
+	if( cullingByCameraDirectionData != 0 )
+	{
+		vec4 data;
+		data.x = float((cullingByCameraDirectionData & uint(0x000000ff)) >> 0);
+		data.y = float((cullingByCameraDirectionData & uint(0x0000ff00)) >> 8);
+		data.z = float((cullingByCameraDirectionData & uint(0x00ff0000)) >> 16);
+		data.w = float((cullingByCameraDirectionData & uint(0xff000000)) >> 24);
+		data = data / 255.0;
+		
+		vec3 cullingNormal = normalize( expand( data.xyz ) );
+		vec3 dir = normalize( u_viewportOwnerCameraPosition - worldPosition.xyz );
+		float _cos = dot( dir, cullingNormal );
+		float _acos = acos( clamp( _cos, -1.0, 1.0 ) );
+		if( _acos > PI / 2.0 + data.w * PI / 2.0 )
+			gl_Position.x = 0.0 / 0.0;
+	}
+#endif
+	
 	//v_reflectionVector = v_worldPosition_depth.xyz - u_viewportOwnerCameraPosition;
 	
 	v_color0 = color0;
@@ -143,7 +165,7 @@ void main()
 #endif
 		
 		v_eyeTangentSpace = mul( eyeWorldSpace, worldToTangentSpace );
-		v_normalTangentSpace = mul( v_worldNormal, worldToTangentSpace );
+		v_normalTangentSpace = mul( v_worldNormal_materialIndex.xyz, worldToTangentSpace );
 	}
 #endif
 
@@ -151,25 +173,16 @@ void main()
 #ifdef GLOBAL_MOTION_VECTOR
 	v_position = gl_Position;
 	mat4 previousWorldMatrix = worldMatrix;
-	#ifdef GLSL
-		previousWorldMatrix[3][0] = previousWorldPosition[0];
-		previousWorldMatrix[3][1] = previousWorldPosition[1];
-		previousWorldMatrix[3][2] = previousWorldPosition[2];
-	#else	
-		previousWorldMatrix[0][3] = previousWorldPosition[0];
-		previousWorldMatrix[1][3] = previousWorldPosition[1];
-		previousWorldMatrix[2][3] = previousWorldPosition[2];
-	#endif
+	setTranslate(previousWorldMatrix, previousWorldPosition);
 	vec4 previousPosition = mul(previousWorldMatrix, vec4(positionLocal, 1));
 	previousPosition.xyz += positionOffset;
 	v_previousPosition = mul(u_viewProjPrevious, vec4(previousPosition.xyz,1));
 #endif
-	
-#ifdef BILLBOARD
-#ifdef GLOBAL_BILLBOARD_DATA
-	//billboard with geometry data mode
-	billboardDataModeCalculateParameters(billboardDataMode, worldObjectPositionBeforeChanges, billboardRotation, v_billboardDataIndexes, v_billboardDataFactors, v_billboardDataAngles);
-	v_billboardRotation = mat3ToQuat(worldMatrix3);
+
+	//geometry with voxel data
+#if (defined(GLOBAL_VOXEL_LOD) && defined(VOXEL)) || (defined(GLOBAL_VIRTUALIZED_GEOMETRY) && defined(VIRTUALIZED))
+	v_objectSpacePosition = positionLocal;
+	voxelOrVirtualizedDataModeCalculateParametersV(u_renderOperationData, worldMatrix, u_viewportOwnerCameraPosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2 );
 #endif
-#endif
+
 }

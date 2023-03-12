@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -9,6 +9,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -25,14 +26,16 @@ namespace NeoAxis
 
 		//
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ThreadSafeExchangeAny( T value )
 		{
 			this.value = value;
 			//spinLock = new SpinLock();
 			lockObject = null;
-			Interlocked.CompareExchange( ref this.lockObject, new object(), null );
+			Interlocked.CompareExchange( ref lockObject, new object(), null );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public T Get()
 		{
 			//bool lockTaken = false;
@@ -48,11 +51,12 @@ namespace NeoAxis
 			//}
 
 			if( lockObject == null )
-				Interlocked.CompareExchange( ref this.lockObject, new object(), null );
+				Interlocked.CompareExchange( ref lockObject, new object(), null );
 			lock( lockObject )
 				return value;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public T Set( T value )
 		{
 			//bool lockTaken = false;
@@ -70,7 +74,7 @@ namespace NeoAxis
 			//}
 
 			if( lockObject == null )
-				Interlocked.CompareExchange( ref this.lockObject, new object(), null );
+				Interlocked.CompareExchange( ref lockObject, new object(), null );
 			lock( lockObject )
 			{
 				T oldValue = this.value;
@@ -82,32 +86,32 @@ namespace NeoAxis
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	/// <summary>
-	/// Specifies a structure for thread-safe storage of values of a class.
-	/// </summary>
-	/// <typeparam name="T"></typeparam>
-	public struct ThreadSafeExchangeClass<T> where T : class
-	{
-		//!!!!good?
-		volatile T value;
+	///// <summary>
+	///// Specifies a structure for thread-safe storage of values of a class.
+	///// </summary>
+	///// <typeparam name="T"></typeparam>
+	//public struct ThreadSafeExchangeClass<T> where T : class
+	//{
+	//	//!!!!good?
+	//	volatile T value;
 
-		//
+	//	//
 
-		public ThreadSafeExchangeClass( T value )
-		{
-			this.value = value;
-		}
+	//	public ThreadSafeExchangeClass( T value )
+	//	{
+	//		this.value = value;
+	//	}
 
-		public T Get()
-		{
-			return value;
-		}
+	//	public T Get()
+	//	{
+	//		return value;
+	//	}
 
-		public T Set( T value )
-		{
-			return Interlocked.Exchange( ref this.value, value );
-		}
-	}
+	//	public T Set( T value )
+	//	{
+	//		return Interlocked.Exchange( ref this.value, value );
+	//	}
+	//}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -116,21 +120,23 @@ namespace NeoAxis
 	/// </summary>
 	public struct ThreadSafeExchangeBool
 	{
-		//!!!!good?
 		volatile int value;
 
 		//
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ThreadSafeExchangeBool( bool value )
 		{
 			this.value = value ? 1 : 0;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Get()
 		{
 			return value != 0;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Set( bool value )
 		{
 			return Interlocked.Exchange( ref this.value, value ? 1 : 0 ) != 0;
@@ -146,15 +152,15 @@ namespace NeoAxis
 	{
 		ThreadSafeExchangeBool disposed;
 
-		//!!!!DisposedEvent?
-
 		//
 
 		public bool Disposed
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get { return disposed.Get(); }
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Dispose()
 		{
 			if( !disposed.Set( true ) )
@@ -171,6 +177,8 @@ namespace NeoAxis
 	/// </summary>
 	public static class EngineThreading
 	{
+		public static Thread MainThread { get; set; }
+
 		class QueuedActionItem
 		{
 			//public Delegate actionGeneric;
@@ -178,17 +186,21 @@ namespace NeoAxis
 			public Delegate action;
 			//public int paramCount;
 			public object[] parameters;
-			volatile public bool executed;
-			public object result;
+			public volatile bool executed;
+			public volatile object result;
 		}
-		static ConcurrentQueue<QueuedActionItem> queuedActiosToExecuteFromMainThread = new ConcurrentQueue<QueuedActionItem>();
+		static ConcurrentQueue<QueuedActionItem> queuedActionsToExecuteFromMainThread = new ConcurrentQueue<QueuedActionItem>();
 
 		//
 
 		public static void CheckMainThread()
 		{
-			if( VirtualFileSystem.MainThread != Thread.CurrentThread )
+			var thread = MainThread ?? VirtualFileSystem.MainThread;
+			if( thread != Thread.CurrentThread )
 				Log.Fatal( "Prohibited call from not app main thread." );
+
+			//if( VirtualFileSystem.MainThread != Thread.CurrentThread )
+			//	Log.Fatal( "Prohibited call from not app main thread." );
 		}
 
 		public static void ExecuteQueuedActionsFromMainThread()
@@ -196,7 +208,7 @@ namespace NeoAxis
 			CheckMainThread();
 
 			QueuedActionItem item;
-			while( queuedActiosToExecuteFromMainThread.TryDequeue( out item ) )
+			while( queuedActionsToExecuteFromMainThread.TryDequeue( out item ) )
 			{
 				//!!!!try?
 				try
@@ -231,7 +243,7 @@ namespace NeoAxis
 			QueuedActionItem item = new QueuedActionItem();
 			item.action = action;
 			item.parameters = new object[] { param1, param2, param3, param4 };
-			queuedActiosToExecuteFromMainThread.Enqueue( item );
+			queuedActionsToExecuteFromMainThread.Enqueue( item );
 			return item;
 		}
 
@@ -240,7 +252,7 @@ namespace NeoAxis
 			QueuedActionItem item = new QueuedActionItem();
 			item.action = action;
 			item.parameters = new object[] { param1, param2, param3 };
-			queuedActiosToExecuteFromMainThread.Enqueue( item );
+			queuedActionsToExecuteFromMainThread.Enqueue( item );
 			return item;
 		}
 
@@ -249,7 +261,7 @@ namespace NeoAxis
 			QueuedActionItem item = new QueuedActionItem();
 			item.action = action;
 			item.parameters = new object[] { param1, param2 };
-			queuedActiosToExecuteFromMainThread.Enqueue( item );
+			queuedActionsToExecuteFromMainThread.Enqueue( item );
 			return item;
 		}
 
@@ -258,7 +270,7 @@ namespace NeoAxis
 			QueuedActionItem item = new QueuedActionItem();
 			item.action = action;
 			item.parameters = new object[] { param };
-			queuedActiosToExecuteFromMainThread.Enqueue( item );
+			queuedActionsToExecuteFromMainThread.Enqueue( item );
 			return item;
 		}
 
@@ -267,7 +279,7 @@ namespace NeoAxis
 			QueuedActionItem item = new QueuedActionItem();
 			item.action = action;
 			item.parameters = new object[ 0 ];
-			queuedActiosToExecuteFromMainThread.Enqueue( item );
+			queuedActionsToExecuteFromMainThread.Enqueue( item );
 			return item;
 		}
 
@@ -276,7 +288,7 @@ namespace NeoAxis
 			QueuedActionItem item = new QueuedActionItem();
 			item.action = function;
 			item.parameters = new object[] { param1, param2, param3, param4 };
-			queuedActiosToExecuteFromMainThread.Enqueue( item );
+			queuedActionsToExecuteFromMainThread.Enqueue( item );
 			return item;
 		}
 
@@ -285,7 +297,7 @@ namespace NeoAxis
 			QueuedActionItem item = new QueuedActionItem();
 			item.action = function;
 			item.parameters = new object[] { param1, param2, param3 };
-			queuedActiosToExecuteFromMainThread.Enqueue( item );
+			queuedActionsToExecuteFromMainThread.Enqueue( item );
 			return item;
 		}
 
@@ -294,7 +306,7 @@ namespace NeoAxis
 			QueuedActionItem item = new QueuedActionItem();
 			item.action = function;
 			item.parameters = new object[] { param1, param2 };
-			queuedActiosToExecuteFromMainThread.Enqueue( item );
+			queuedActionsToExecuteFromMainThread.Enqueue( item );
 			return item;
 		}
 
@@ -303,7 +315,7 @@ namespace NeoAxis
 			QueuedActionItem item = new QueuedActionItem();
 			item.action = function;
 			item.parameters = new object[] { param };
-			queuedActiosToExecuteFromMainThread.Enqueue( item );
+			queuedActionsToExecuteFromMainThread.Enqueue( item );
 			return item;
 		}
 
@@ -312,7 +324,7 @@ namespace NeoAxis
 			QueuedActionItem item = new QueuedActionItem();
 			item.action = function;
 			item.parameters = new object[ 0 ];
-			queuedActiosToExecuteFromMainThread.Enqueue( item );
+			queuedActionsToExecuteFromMainThread.Enqueue( item );
 			return item;
 		}
 

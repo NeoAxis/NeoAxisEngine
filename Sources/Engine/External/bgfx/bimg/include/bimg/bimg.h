@@ -1,6 +1,6 @@
 /*
- * Copyright 2011-2020 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bimg#license-bsd-2-clause
+ * Copyright 2011-2022 Branimir Karadzic. All rights reserved.
+ * License: https://github.com/bkaradzic/bimg/blob/master/LICENSE
  */
 
 #ifndef BIMG_IMAGE_H_HEADER_GUARD
@@ -41,7 +41,7 @@ namespace bimg
 	///
 	/// @attention Availability depends on Caps (see: formats).
 	///
-	/// @attention C99 equivalent is `bgfx_texture_format_t`.
+	/// @attention C99's equivalent binding is `bgfx_texture_format_t`.
 	///
 	struct TextureFormat
 	{
@@ -121,8 +121,11 @@ namespace bimg
 			RGBA32I,
 			RGBA32U,
 			RGBA32F,
+			//!!!!betauser B5G6R5,
 			R5G6B5,
+			//!!!!BGRA4,
 			RGBA4,
+			//!!!!BGR5A1,
 			RGB5A1,
 			RGB10A2,
 			RG11B10F,
@@ -161,7 +164,7 @@ namespace bimg
 
 	/// Texture info.
 	///
-	/// @attention C99 equivalent is `bgfx_texture_info_t`.
+	/// @attention C99's equivalent binding is `bgfx_texture_info_t`.
 	///
 	struct TextureInfo
 	{
@@ -195,6 +198,7 @@ namespace bimg
 		bool     m_cubeMap;
 		bool     m_ktx;
 		bool     m_ktxLE;
+		bool     m_pvr3;
 		bool     m_srgb;
 	};
 

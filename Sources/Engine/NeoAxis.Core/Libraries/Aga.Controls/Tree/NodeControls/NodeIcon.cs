@@ -1,3 +1,4 @@
+#if !DEPLOY
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -62,42 +63,46 @@ namespace Internal.Aga.Controls.Tree.NodeControls
 							break;
 					}
 
-					if (DrawIconMustBeFired(node))
-					{
-						DrawIconEventArgs iconDrawArgs = new DrawIconEventArgs(node, this, context);
-						OnDrawIcon(iconDrawArgs);
+					//betauser
+					//if (DrawIconMustBeFired(node))
+					//{
+					//	DrawIconEventArgs iconDrawArgs = new DrawIconEventArgs(node, this, context);
+					//	OnDrawIcon(iconDrawArgs);
 
-						if (iconDrawArgs.IconColorMatrix != null)
-						{
-							ImageAttributes attrib = new ImageAttributes();
-							attrib.SetColorMatrix(iconDrawArgs.IconColorMatrix);
-							Rectangle destRect;
-							if (factor < 0.0f)
-								destRect = r;
-							else
-								destRect = new Rectangle(r.X, r.Y, (int)(image.Width * factor), (int)(image.Height * factor));
+					//	if( iconDrawArgs.IconColorMatrix != null )
+					//	{
+					//		ImageAttributes attrib = new ImageAttributes();
+					//		attrib.SetColorMatrix( iconDrawArgs.IconColorMatrix );
+					//		Rectangle destRect;
+					//		if( factor < 0.0f )
+					//			destRect = r;
+					//		else
+					//			destRect = new Rectangle( r.X, r.Y, (int)( image.Width * factor ), (int)( image.Height * factor ) );
 
-							context.Graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attrib);
-						}
-						else
-						{
-							if (factor < 0.0f)
-								context.Graphics.DrawImage(image, r);
-							else if (factor == 1.0f)
-								context.Graphics.DrawImage(image, r.X, r.Y, image.Width, image.Height);
-							else
-								context.Graphics.DrawImage(image, r.X, r.Y, image.Width * factor, image.Height * factor);
-						}
-					}
+					//		context.Graphics.DrawImage( image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attrib );
+					//	}
+					//	else
+					//	{
+					//		if( factor < 0.0f )
+					//			context.Graphics.DrawImage( image, r );
+					//		else if( factor == 1.0f )
+					//			context.Graphics.DrawImage( image, r.X, r.Y, image.Width, image.Height );
+					//		else
+					//			context.Graphics.DrawImage( image, r.X, r.Y, image.Width * factor, image.Height * factor );
+					//	}
+					//}
+					//else
+					//{
+					if (factor < 0.0f)
+						context.Graphics.DrawImage(image, r);
+					else if (factor == 1.0f)
+						context.Graphics.DrawImage(image, r.X, r.Y, image.Width, image.Height);
 					else
-					{
-						if (factor < 0.0f)
-							context.Graphics.DrawImage(image, r);
-						else if (factor == 1.0f)
-							context.Graphics.DrawImage(image, r.X, r.Y, image.Width, image.Height);
-						else
-							context.Graphics.DrawImage(image, r.X, r.Y, image.Width * factor, image.Height * factor);
-					}
+						context.Graphics.DrawImage(image, r.X, r.Y, image.Width * factor, image.Height * factor);
+					//}
+
+					//betauser
+					node.Tree.PerformDrawIconAddition( node, context, image, r, factor );
 				}
 
 			}
@@ -136,3 +141,5 @@ namespace Internal.Aga.Controls.Tree.NodeControls
 		}
 	}
 }
+
+#endif

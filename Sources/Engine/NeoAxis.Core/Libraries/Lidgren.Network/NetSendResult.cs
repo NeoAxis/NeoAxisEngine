@@ -1,7 +1,7 @@
 ﻿#if !UWP
 using System;
 
-namespace Lidgren.Network
+namespace Internal.Lidgren.Network
 {
 	/// <summary>
 	/// Result of a SendMessage call

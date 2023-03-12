@@ -35,7 +35,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
@@ -49,7 +49,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
@@ -319,7 +319,6 @@
     <ClInclude Include="..\..\..\3rdparty\spirv-tools\source\opt\pass_manager.h" />
     <ClInclude Include="..\..\..\3rdparty\spirv-tools\source\opt\pch_source_opt.h" />
     <ClInclude Include="..\..\..\3rdparty\spirv-tools\source\opt\private_to_local_pass.h" />
-    <ClInclude Include="..\..\..\3rdparty\spirv-tools\source\opt\process_lines_pass.h" />
     <ClInclude Include="..\..\..\3rdparty\spirv-tools\source\opt\propagator.h" />
     <ClInclude Include="..\..\..\3rdparty\spirv-tools\source\opt\reduce_load_size.h" />
     <ClInclude Include="..\..\..\3rdparty\spirv-tools\source\opt\redundancy_elimination.h" />
@@ -335,7 +334,6 @@
     <ClInclude Include="..\..\..\3rdparty\spirv-tools\source\opt\ssa_rewrite_pass.h" />
     <ClInclude Include="..\..\..\3rdparty\spirv-tools\source\opt\strength_reduction_pass.h" />
     <ClInclude Include="..\..\..\3rdparty\spirv-tools\source\opt\strip_debug_info_pass.h" />
-    <ClInclude Include="..\..\..\3rdparty\spirv-tools\source\opt\strip_reflect_info_pass.h" />
     <ClInclude Include="..\..\..\3rdparty\spirv-tools\source\opt\struct_cfg_analysis.h" />
     <ClInclude Include="..\..\..\3rdparty\spirv-tools\source\opt\tree_iterator.h" />
     <ClInclude Include="..\..\..\3rdparty\spirv-tools\source\opt\types.h" />
@@ -532,8 +530,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\private_to_local_pass.cpp">
     </ClCompile>
-    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\process_lines_pass.cpp">
-    </ClCompile>
     <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\propagator.cpp">
     </ClCompile>
     <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\reduce_load_size.cpp">
@@ -561,8 +557,6 @@
     <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\strength_reduction_pass.cpp">
     </ClCompile>
     <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\strip_debug_info_pass.cpp">
-    </ClCompile>
-    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\strip_reflect_info_pass.cpp">
     </ClCompile>
     <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\struct_cfg_analysis.cpp">
     </ClCompile>

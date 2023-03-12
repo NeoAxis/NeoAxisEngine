@@ -1,6 +1,6 @@
 /*
- * Copyright 2011-2020 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
+ * Copyright 2011-2022 Branimir Karadzic. All rights reserved.
+ * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
 /*
@@ -262,7 +262,7 @@
 #define BGFX_DISCARD_BINDINGS               UINT8_C(0x01) //!< Discard texture sampler and buffer bindings.
 #define BGFX_DISCARD_INDEX_BUFFER           UINT8_C(0x02) //!< Discard index buffer.
 #define BGFX_DISCARD_INSTANCE_DATA          UINT8_C(0x04) //!< Discard instance data.
-#define BGFX_DISCARD_STATE                  UINT8_C(0x08) //!< Discard state.
+#define BGFX_DISCARD_STATE                        UINT8_C(0x08) //!< Discard state and uniform bindings.
 #define BGFX_DISCARD_TRANSFORM              UINT8_C(0x10) //!< Discard transform.
 #define BGFX_DISCARD_VERTEX_STREAMS         UINT8_C(0x20) //!< Discard vertex streams.
 #define BGFX_DISCARD_ALL                    UINT8_C(0xff) //!< Discard all states.
@@ -519,8 +519,11 @@
 #define BGFX_PCI_ID_NONE                    UINT16_C(0x0000) //!< Autoselect adapter.
 #define BGFX_PCI_ID_SOFTWARE_RASTERIZER     UINT16_C(0x0001) //!< Software rasterizer.
 #define BGFX_PCI_ID_AMD                     UINT16_C(0x1002) //!< AMD adapter.
+#define BGFX_PCI_ID_APPLE                         UINT16_C(0x106b) //!< Apple adapter.
 #define BGFX_PCI_ID_INTEL                   UINT16_C(0x8086) //!< Intel adapter.
 #define BGFX_PCI_ID_NVIDIA                  UINT16_C(0x10de) //!< nVidia adapter.
+#define BGFX_PCI_ID_MICROSOFT                     UINT16_C(0x1414) //!< Microsoft adapter.
+#define BGFX_PCI_ID_ARM                           UINT16_C(0x13b5) //!< ARM adapter.
 
 #define BGFX_CUBE_MAP_POSITIVE_X            UINT8_C(0x00) //!< Cubemap +x.
 #define BGFX_CUBE_MAP_NEGATIVE_X            UINT8_C(0x01) //!< Cubemap -x.

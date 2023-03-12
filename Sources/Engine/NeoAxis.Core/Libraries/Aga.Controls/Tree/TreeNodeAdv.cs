@@ -1,3 +1,4 @@
+#if !DEPLOY
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -444,7 +445,7 @@ namespace Internal.Aga.Controls.Tree
 
 		}
 
-		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+		//[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
 		public void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue("IsExpanded", IsExpanded);
@@ -460,3 +461,5 @@ namespace Internal.Aga.Controls.Tree
 		#endregion
 	}
 }
+
+#endif

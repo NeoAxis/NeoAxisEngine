@@ -1,4 +1,5 @@
-﻿// *****************************************************************************
+﻿#if !DEPLOY
+// *****************************************************************************
 // 
 //  © Component Factory Pty Ltd 2012. All rights reserved.
 //	The software and associated documentation supplied hereunder are the 
@@ -1036,7 +1037,7 @@ namespace Internal.ComponentFactory.Krypton.Ribbon
 
                             // Allow the ribbon to be layed out and painted before we 
                             // remove the control obscurer the reduces flicker when switching.
-                            Application.DoEvents();
+                            NeoAxis.Editor.EditorAPI.ApplicationDoEvents( true );//Application.DoEvents();
                         }
                     }
 
@@ -1324,7 +1325,7 @@ namespace Internal.ComponentFactory.Krypton.Ribbon
         /// </summary>
         /// <param name="m">The message to be dispatched. You cannot modify this message.</param>
         /// <returns>true to filter the message and stop it from being dispatched; false to allow the message to continue to the next filter or control.</returns>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+        //[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         public bool PreFilterMessage(ref Message m)
         {
             // Prevent interception of messages during design time or after we have died
@@ -3696,3 +3697,4 @@ namespace Internal.ComponentFactory.Krypton.Ribbon
 
     }
 }
+#endif

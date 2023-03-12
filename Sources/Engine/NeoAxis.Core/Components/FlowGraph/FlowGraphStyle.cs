@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -16,9 +16,11 @@ namespace NeoAxis
 	/// </summary>
 	public abstract class FlowGraphStyle : Component
 	{
+#if !DEPLOY
 		public abstract void RenderBackground( FlowGraphEditor window );
 		public abstract void RenderForeground( FlowGraphEditor window );
 		public abstract void RenderReference( FlowGraphEditor window, Vector2 from, bool fromInput, Vector2 to, ColorValue color, out bool mouseOver );
+#endif
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -28,6 +30,7 @@ namespace NeoAxis
 	/// </summary>
 	public class FlowGraphStyle_Default : FlowGraphStyle
 	{
+#if !DEPLOY
 		static FlowGraphStyle_Default instance;
 		public static FlowGraphStyle_Default Instance
 		{
@@ -323,5 +326,6 @@ namespace NeoAxis
 
 			viewport.CanvasRenderer.AddLines( lines );
 		}
+#endif
 	}
 }

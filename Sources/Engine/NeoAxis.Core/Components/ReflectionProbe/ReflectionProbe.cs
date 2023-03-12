@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -10,7 +10,9 @@ namespace NeoAxis
 	/// <summary>
 	/// The camera that captures surroundings in the scene and passes information to the reflective surfaces.
 	/// </summary>
+#if !DEPLOY
 	[SettingsCell( typeof( ReflectionProbeSettingsCell ) )]
+#endif
 	public class ReflectionProbe : ObjectInSpace
 	{
 		//Image captureTexture;
@@ -20,6 +22,8 @@ namespace NeoAxis
 		ImageComponent processedEnvironmentCubemap;
 		Vector4F[] processedIrradianceHarmonics;
 		//ImageComponent processedIrradianceCubemap;
+
+		string networkOwnedFileNameOfComponent = "";
 
 		/////////////////////////////////////////
 
@@ -317,6 +321,8 @@ namespace NeoAxis
 			base.OnEnabled();
 
 			processedCubemapNeedUpdate = true;
+
+			ServerSendOwnedFileNameOfComponent( null );
 		}
 
 		protected override void OnSpaceBoundsUpdate( ref SpaceBounds newBounds )
@@ -338,7 +344,7 @@ namespace NeoAxis
 		[Browsable( false )]
 		public Sphere Sphere
 		{
-			get { return SpaceBounds.CalculatedBoundingSphere; }
+			get { return SpaceBounds.BoundingSphere; }
 		}
 
 		protected override bool OnEnabledSelectionByCursor()
@@ -413,7 +419,7 @@ namespace NeoAxis
 				{
 					var item = new RenderingPipeline.RenderSceneData.ReflectionProbeItem();
 					item.Creator = this;
-					item.BoundingBox = SpaceBounds.CalculatedBoundingBox;
+					item.BoundingBox = SpaceBounds.BoundingBox;
 					//item.BoundingSphere = SpaceBounds.CalculatedBoundingSphere;
 					item.Sphere = sphere;
 
@@ -445,7 +451,7 @@ namespace NeoAxis
 				{
 					var context2 = context.ObjectInSpaceRenderingContext;
 
-					bool show = ( ParentScene.GetDisplayDevelopmentDataInThisApplication() && ParentScene.DisplayReflectionProbes ) || context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this;
+					bool show = ( context.SceneDisplayDevelopmentDataInThisApplication && ParentScene.DisplayReflectionProbes ) || context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this;
 					if( show )
 					{
 						if( context2.displayReflectionProbesCounter < context2.displayReflectionProbesMax )
@@ -454,16 +460,16 @@ namespace NeoAxis
 
 							ColorValue color;
 							if( context2.selectedObjects.Contains( this ) )
-								color = ProjectSettings.Get.General.SelectedColor;
+								color = ProjectSettings.Get.Colors.SelectedColor;
 							else if( context2.canSelectObjects.Contains( this ) )
-								color = ProjectSettings.Get.General.CanSelectColor;
+								color = ProjectSettings.Get.Colors.CanSelectColor;
 							else
-								color = ProjectSettings.Get.General.SceneShowReflectionProbeColor;
+								color = ProjectSettings.Get.Colors.SceneShowReflectionProbeColor;
 
 							var viewport = context.Owner;
 							if( viewport.Simple3DRenderer != null )
 							{
-								viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.General.HiddenByOtherObjectsColorMultiplier );
+								viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 								DebugDraw( viewport );
 								//viewport.Simple3DRenderer.AddSphere( Transform.Value.ToMat4(), 0.5, 32 );
 							}
@@ -617,11 +623,13 @@ namespace NeoAxis
 
 		string GetDestVirtualFileName()
 		{
+			var ownedFileName = NetworkIsClient ? networkOwnedFileNameOfComponent : ComponentUtility.GetOwnedFileNameOfComponent( this );
+
 			string name = GetPathFromRoot();
 			foreach( char c in new string( Path.GetInvalidFileNameChars() ) + new string( Path.GetInvalidPathChars() ) )
 				name = name.Replace( c.ToString(), "_" );
 			name = name.Replace( " ", "_" );
-			return PathUtility.Combine( ComponentUtility.GetOwnedFileNameOfComponent( this ) + "_Files", name + ".hdr" );
+			return PathUtility.Combine( ownedFileName + "_Files", name + ".hdr" );
 		}
 
 		public bool GetHDR()
@@ -936,5 +944,37 @@ namespace NeoAxis
 		{
 			return new ScreenLabelInfo( "ReflectionProbe" );
 		}
+
+		void ServerSendOwnedFileNameOfComponent( ServerNetworkService_Components.ClientItem client )
+		{
+			if( NetworkIsServer )
+			{
+				var writer = client != null ? BeginNetworkMessage( client, "OwnedFileName" ) : BeginNetworkMessageToEveryone( "OwnedFileName" );
+				writer.Write( ComponentUtility.GetOwnedFileNameOfComponent( this ) );
+				EndNetworkMessage();
+			}
+		}
+
+		protected override void OnClientConnectedBeforeRootComponentEnabled( ServerNetworkService_Components.ClientItem client )
+		{
+			base.OnClientConnectedBeforeRootComponentEnabled( client );
+
+			ServerSendOwnedFileNameOfComponent( client );
+		}
+
+		protected override bool OnReceiveNetworkMessageFromServer( string message, ArrayDataReader reader )
+		{
+			if( !base.OnReceiveNetworkMessageFromServer( message, reader ) )
+				return false;
+
+			if( message == "OwnedFileName" )
+			{
+				networkOwnedFileNameOfComponent = reader.ReadString();
+				processedCubemapNeedUpdate = true;
+			}
+
+			return true;
+		}
+
 	}
 }

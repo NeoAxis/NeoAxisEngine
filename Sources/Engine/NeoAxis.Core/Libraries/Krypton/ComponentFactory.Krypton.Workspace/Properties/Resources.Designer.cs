@@ -94,16 +94,6 @@ namespace Internal.ComponentFactory.Krypton.Workspace.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap CF_Logo {
-            get {
-                object obj = ResourceManager.GetObject("CF_Logo", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap check2 {
             get {
                 object obj = ResourceManager.GetObject("check2", resourceCulture);

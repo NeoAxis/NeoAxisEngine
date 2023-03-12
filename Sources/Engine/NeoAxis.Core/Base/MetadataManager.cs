@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -211,7 +211,7 @@ namespace NeoAxis
 					if( Internal.AssemblyUtility.disableNamespaceRegistration.Contains( type.Namespace ) )
 						continue;
 
-					if( EngineApp.ApplicationType != EngineApp.ApplicationTypeEnum.Editor && type.Namespace == "NeoAxis.Editor" )
+					if( !EngineApp.IsEditor && type.Namespace == "NeoAxis.Editor" )
 						continue;
 
 					//added.AddWithCheckAlreadyContained( type.Namespace );
@@ -510,7 +510,14 @@ namespace NeoAxis
 						}
 					}
 
-					info = new Metadata.NetTypeInfo( name, displayName, baseType, classification, enumElements, enumFlags, type );
+					//bool? networkMode = null;
+					//{
+					//	var attrib = type.GetCustomAttribute<NetworkSynchronizeAttribute>( false );
+					//	if( attrib != null )
+					//		networkMode = attrib.NetworkMode;
+					//}
+
+					info = new Metadata.NetTypeInfo( name, displayName, baseType, classification, enumElements, enumFlags, type );//, networkMode );
 
 					netTypes[ type ] = info;
 					netTypeByName[ name ] = info;

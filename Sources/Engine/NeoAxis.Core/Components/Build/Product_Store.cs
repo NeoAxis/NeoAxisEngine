@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #if !DEPLOY
 using System;
 using System.ComponentModel;
@@ -434,7 +434,7 @@ namespace NeoAxis
 					var light = scene.CreateComponent<Light>();
 					light.Name = "Ambient Light";
 					light.Type = Light.TypeEnum.Ambient;
-					light.Brightness = ReferenceUtility.MakeReference( "Base\\ProjectSettings.component|$General\\PreviewAmbientLightBrightness" );
+					light.Brightness = ReferenceUtility.MakeReference( "Base\\ProjectSettings.component|$Preview\\PreviewAmbientLightBrightness" );
 					//light.Brightness = ProjectSettings.Get.PreviewAmbientLightBrightness.Value;
 				}
 
@@ -444,7 +444,7 @@ namespace NeoAxis
 					light.Name = "Directional Light";
 					light.Type = Light.TypeEnum.Directional;
 					light.Transform = new Transform( new Vector3( 0, 0, 0 ), Quaternion.FromDirectionZAxisUp( new Vector3( 0, 0, -1 ) ), Vector3.One );
-					light.Brightness = ReferenceUtility.MakeReference( "Base\\ProjectSettings.component|$General\\PreviewDirectionalLightBrightness" );
+					light.Brightness = ReferenceUtility.MakeReference( "Base\\ProjectSettings.component|$Preview\\PreviewDirectionalLightBrightness" );
 					//light.Brightness = ProjectSettings.Get.PreviewDirectionalLightBrightness.Value;
 					light.Shadows = false;
 					//light.Type = Light.TypeEnum.Point;
@@ -582,7 +582,7 @@ namespace NeoAxis
 						var farDistance = 1.0;
 						foreach( var meshInSpace in scene.GetComponents<MeshInSpace>( checkChildren: true ) )
 						{
-							var sphere = meshInSpace.SpaceBounds.CalculatedBoundingSphere;
+							var sphere = meshInSpace.SpaceBounds.BoundingSphere;
 							var d = ( sphere.Center - viewport.CameraSettings.Position ).Length() + sphere.Radius;
 							farDistance = Math.Max( farDistance, d );
 						}
@@ -725,11 +725,13 @@ namespace NeoAxis
 				this.objectInSpace = objectInSpace;
 				Init();
 
+				ObjectInSpace objectInSpaceInScene = null;
+
 				var scene = CreateScene( false );
 				if( objectInSpace != null )
 				{
-					var objInSpace = objectInSpace.Clone();
-					scene.AddComponent( objInSpace );
+					objectInSpaceInScene = (ObjectInSpace)objectInSpace.Clone();
+					scene.AddComponent( objectInSpaceInScene );
 
 					//enable shadows
 					var directionalLight = scene.GetComponent( "Directional Light" ) as Light;
@@ -737,6 +739,23 @@ namespace NeoAxis
 						directionalLight.Shadows = true;
 				}
 				scene.Enabled = true;
+
+				//set animation to the character
+				if( objectInSpaceInScene != null )
+				{
+					var controller = objectInSpaceInScene.GetComponent<MeshInSpaceAnimationController>( checkChildren: true, onlyEnabledInHierarchy: true );
+					if( controller != null )
+					{
+						var animation = ObjectEx.PropertyGet<Animation>( objectInSpaceInScene, "IdleAnimation" );
+						if( animation != null )
+						{
+							var state = new MeshInSpaceAnimationController.AnimationStateClass();
+							state.Animations.Add( new MeshInSpaceAnimationController.AnimationStateClass.AnimationItem() { Animation = animation, Speed = 1, AutoRewind = true } );
+
+							controller.SetAnimationState( state, false );
+						}
+					}
+				}
 
 				GenerateGeneral( writeStream, writeImageFormat );// writeRealFileName );
 			}
@@ -1357,6 +1376,12 @@ namespace NeoAxis
 				}
 
 			}
+
+			//post build event
+			if( !PeformPostBuild( buildInstance ) )
+				return;
+			if( CheckCancel( buildInstance ) )
+				return;
 
 			//done
 			buildInstance.Progress = 1;

@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2022.1.
+// Made with NeoAxis Engine 2023.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1143, 842\"><KW V=\"1\" A=\"22296A4D49194EF268976ABF602970A9\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WS UN=\"0456B00D96B149C79998AD980C2D0279\" S=\"T,0,50:T,0,50\" D=\"Vertical\"><WC UN=\"E1F301B07EC6487188AB196DB53D79FB\" S=\"T,0,50:T,0,525\" NM=\"BarTabGroup\" AR=\"True\" SP=\"22296A4D49194EF268976ABF602970A9\"><KP UN=\"22296A4D49194EF268976ABF602970A9\" S=\"False\"><CPD ObjPath=\"\" /></KP></WC><WC UN=\"E6FC5A17B2B942946E971FA482395C42\" S=\"T,0,50:T,0,312\" NM=\"BarTabGroup\" AR=\"True\" SP=\"A50D235CAA3D4B3DAABD1FE0551E9D07\"><KP UN=\"A50D235CAA3D4B3DAABD1FE0551E9D07\" S=\"False\"><CPD ObjPath=\"$Spaceship\\$Input Processing\\$C# Script\" /></KP></WC></WS></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"22296A4D49194EF268976ABF602970A9\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WS UN=\"0456B00D96B149C79998AD980C2D0279\" S=\"T,0,50:T,0,50\" D=\"Vertical\"><WC UN=\"E1F301B07EC6487188AB196DB53D79FB\" S=\"T,0,50:T,0,525\" NM=\"BarTabGroup\" AR=\"True\" SP=\"22296A4D49194EF268976ABF602970A9\"><KP UN=\"22296A4D49194EF268976ABF602970A9\" S=\"False\"><CPD ObjPath=\"\" /></KP></WC><WC UN=\"E6FC5A17B2B942946E971FA482395C42\" S=\"T,0,50:T,0,312\" NM=\"BarTabGroup\" AR=\"True\" SP=\"A50D235CAA3D4B3DAABD1FE0551E9D07\"><KP UN=\"A50D235CAA3D4B3DAABD1FE0551E9D07\" S=\"False\"><CPD ObjPath=\"$Spaceship\\$Input Processing\\$C# Script\" /></KP></WC></WS></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	Mode = _2D
 	Gravity2D = 0 0
 	RenderingPipeline
@@ -61,6 +61,7 @@
 	{
 		Name = Rendering Pipeline
 		DeferredShading = False
+		LODRange = 0 0
 		Shadows = False
 		ProvideColorDepthTextureCopy = False
 		.component NeoAxis.Component

@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 
 #ifdef GLOBAL_SKELETAL_ANIMATION
 
@@ -48,6 +48,10 @@ vec3 getScaleFromMatrix(mat3 m)
 
 vec4 mat3ToQuat(mat3 m)
 {
+#ifdef GLSL
+	m = transpose(m);
+#endif
+
 	float result[4];
 
 	float s;
@@ -113,7 +117,7 @@ mat3 lookAt( vec3 direction, vec3 up )
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void billboardRotateWorldMatrix(vec4 renderOperationData[5], inout mat4 worldMatrix, bool shadowCaster, vec3 shadowCasterCameraPosition, out vec4 billboardRotation )
+void billboardRotateWorldMatrix(vec4 renderOperationData[7], inout mat4 worldMatrix, bool shadowCaster, vec3 shadowCasterCameraPosition, out vec4 billboardRotation )
 {
 	billboardRotation = vec4_splat(0);
 	
@@ -121,34 +125,19 @@ void billboardRotateWorldMatrix(vec4 renderOperationData[5], inout mat4 worldMat
 	if(renderOperationData[0].z != 0.0)
 	{
 		//get rotation value and restore matrix
-#ifdef GLSL
-		float rotationAngle = worldMatrix[0][1];
-		worldMatrix[0][1] = 0.0;
-#else
-		float rotationAngle = worldMatrix[1][0];
-		worldMatrix[1][0] = 0.0;
-#endif
+		float rotationAngle = getValue(worldMatrix, 1, 0);
+		setValue(worldMatrix, 1, 0, 0.0);
 
 		//get billboard rotation quaternion and restore matrix
-#ifdef GLSL
-		billboardRotation = vec4(worldMatrix[0][2], worldMatrix[1][0], worldMatrix[1][2], worldMatrix[2][0]);
-		worldMatrix[0][2] = 0.0;
-		worldMatrix[1][0] = 0.0;
-		worldMatrix[1][2] = 0.0;
-		worldMatrix[2][0] = 0.0;
-#else
-		billboardRotation = vec4(worldMatrix[2][0], worldMatrix[0][1], worldMatrix[2][1], worldMatrix[0][2]);
-		worldMatrix[2][0] = 0.0;
-		worldMatrix[0][1] = 0.0;
-		worldMatrix[2][1] = 0.0;
-		worldMatrix[0][2] = 0.0;
-#endif
+		billboardRotation = vec4(getValue(worldMatrix, 2, 0), getValue(worldMatrix, 0, 1), getValue(worldMatrix, 2, 1), getValue(worldMatrix, 0, 2));
+		setValue(worldMatrix, 2, 0, 0.0);
+		setValue(worldMatrix, 0, 1, 0.0);
+		setValue(worldMatrix, 2, 1, 0.0);
+		setValue(worldMatrix, 0, 2, 0.0);
 		
 		//face to camera
 		{
 			int mode = int(renderOperationData[0].z);
-			
-			//!!!!precalculate constant values?
 			
 			mat3 rotationMatrix2;
 			switch(mode)
@@ -167,17 +156,19 @@ void billboardRotateWorldMatrix(vec4 renderOperationData[5], inout mat4 worldMat
 				rotationMatrix2 = mul(makeRotationMatrix(PI/2.0, vec3(0,0,1)), makeRotationMatrix(PI/2.0, vec3(0,1,0)));
 				break;				
 			}
-			
-			float billboardDataMode = renderOperationData[1].w;
-			BRANCH
-			if(billboardDataMode == 0.0)
-			{
-				//!!!!works only for Billboard, not for mesh billboard
-				//apply rotation parameter
-				rotationMatrix2 = mul(rotationMatrix2, makeRotationMatrix(-rotationAngle, vec3(0,1,0)));
+
+			//!!!!
+			//float voxelDataMode = renderOperationData[1].w;
+			//BRANCH
+			//if(voxelDataMode == 0.0)
+			//{
+				////!!!!works only for Billboard, not for mesh billboard
+				
+			//apply rotation parameter
+			rotationMatrix2 = mul(rotationMatrix2, makeRotationMatrix(-rotationAngle, vec3(0,1,0)));
 				
 				//rotationMatrix2 = mul(rotationMatrix2, makeRotationMatrix(, vec3(1,0,0)));
-			}
+			//}
 			
 			mat3 rotationMatrix = mul(transpose(toMat3(u_view)), rotationMatrix2);
 			
@@ -198,16 +189,7 @@ void billboardRotateWorldMatrix(vec4 renderOperationData[5], inout mat4 worldMat
 		BRANCH
 		if(shadowCaster && renderOperationData[0].w != 0.0)
 		{
-			vec3 worldPosition;
-#ifdef GLSL
-			worldPosition[0] = worldMatrix[3][0];
-			worldPosition[1] = worldMatrix[3][1];
-			worldPosition[2] = worldMatrix[3][2];
-#else
-			worldPosition[0] = worldMatrix[0][3];
-			worldPosition[1] = worldMatrix[1][3];
-			worldPosition[2] = worldMatrix[2][3];
-#endif
+			vec3 worldPosition = getTranslate(worldMatrix);
 			
 			vec3 scale = getScaleFromMatrix(toMat3(worldMatrix));
 			float scaleFloat = max(max(scale.x, scale.y), scale.z);
@@ -215,154 +197,42 @@ void billboardRotateWorldMatrix(vec4 renderOperationData[5], inout mat4 worldMat
 			vec3 direction = normalize(worldPosition - shadowCasterCameraPosition);
 			vec3 offset = direction * renderOperationData[0].w * scaleFloat;
 			worldPosition += offset;
-			
-#ifdef GLSL
-			worldMatrix[3][0] = worldPosition[0];
-			worldMatrix[3][1] = worldPosition[1];
-			worldMatrix[3][2] = worldPosition[2];
-#else
-			worldMatrix[0][3] = worldPosition[0];
-			worldMatrix[1][3] = worldPosition[1];
-			worldMatrix[2][3] = worldPosition[2];
-#endif
+
+			setTranslate(worldMatrix, worldPosition);
 		}
 #endif
 
 	}	
 }
 
-#ifdef GLOBAL_BILLBOARD_DATA
-void billboardDataModeCalculateParameters(float billboardDataMode, vec3 worldObjectPositionBeforeChanges, vec4 billboardRotation, out vec4 billboardDataIndexes, out vec3 billboardDataFactors, out vec4 billboardDataAngles)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#ifdef GLOBAL_VOXEL_LOD
+
+void voxelOrVirtualizedDataModeCalculateParametersV(vec4 renderOperationData[7], mat4 worldMatrix, vec3 cameraPosition, inout vec3 cameraPositionObjectSpace, inout vec4 worldMatrix0, inout vec4 worldMatrix1, inout vec4 worldMatrix2 )//, inout vec4 worldMatrixRotation, inout vec3 worldMatrixScale)
 {
-	billboardDataIndexes = vec4(0.5,0,0,0);
-	billboardDataFactors = vec3_splat(0);
-	billboardDataAngles = vec4(0,0,0,0);
+	float voxelDataMode = renderOperationData[1].w;
+	//float virtualizedDataMode = renderOperationData[3].w;
 	
 	BRANCH
-	if(billboardDataMode >= 2.0)
+	if( voxelDataMode != 0.0 )//|| virtualizedDataMode != 0.0)
 	{
-		//5 images, 26 images
+		mat4 worldMatrixInv = matInverse(worldMatrix);
+		cameraPositionObjectSpace = mul(worldMatrixInv, vec4(cameraPosition, 1.0)).xyz;
 		
-		vec4 billboardRotationInverse = quatInverse(billboardRotation);
+		worldMatrix0 = worldMatrix[ 0 ];
+		worldMatrix1 = worldMatrix[ 1 ];
+		worldMatrix2 = worldMatrix[ 2 ];
 		
-		vec3 direction = worldObjectPositionBeforeChanges - u_viewportOwnerCameraPosition;
-		direction = normalize(mulQuat(billboardRotationInverse, direction));
-
-			
-#ifdef GLSL
-		const vec3 cameraPositions[26] = vec3[26] ( vec3(-1, -1, -1), vec3(0, -1, -1), vec3(1, -1, -1), vec3(-1, 0, -1), vec3(0, 0, -1), vec3(1, 0, -1), vec3(-1, 1, -1), vec3(0, 1, -1), vec3(1, 1, -1), vec3(-1, -1, 0), vec3(0, -1, 0), vec3(1, -1, 0), vec3(-1, 0, 0), vec3(1, 0, 0), vec3(-1, 1, 0), vec3(0, 1, 0), vec3(1, 1, 0), vec3(-1, -1, 1), vec3(0, -1, 1), vec3(1, -1, 1), vec3(-1, 0, 1), vec3(0, 0, 1), vec3(1, 0, 1), vec3(-1, 1, 1), vec3(0, 1, 1), vec3(1, 1, 1) );
-#else
-		const vec3 cameraPositions[26] = { vec3(-1, -1, -1), vec3(0, -1, -1), vec3(1, -1, -1), vec3(-1, 0, -1), vec3(0, 0, -1), vec3(1, 0, -1), vec3(-1, 1, -1), vec3(0, 1, -1), vec3(1, 1, -1), vec3(-1, -1, 0), vec3(0, -1, 0), vec3(1, -1, 0), vec3(-1, 0, 0), vec3(1, 0, 0), vec3(-1, 1, 0), vec3(0, 1, 0), vec3(1, 1, 0), vec3(-1, -1, 1), vec3(0, -1, 1), vec3(1, -1, 1), vec3(-1, 0, 1), vec3(0, 0, 1), vec3(1, 0, 1), vec3(-1, 1, 1), vec3(0, 1, 1), vec3(1, 1, 1) };
-#endif
-
-		float angles[26];
-		{
-			LOOP
-			for(int n=0;n<26;n++)
-			{
-				vec3 cameraDirection = -normalize(cameraPositions[n]);
-				
-				float _cos = dot( cameraDirection, direction );
-				_cos = clamp(_cos, -1.0, 1.0);
-				float angle = acos(_cos);
-				
-				angles[n] = angle;
-			}
-		}
-
+		//mat3 worldMatrix3 = toMat3(worldMatrix);
+		//worldMatrixRotation = mat3ToQuat(worldMatrix3);
+		//worldMatrixScale = getScaleFromMatrix(worldMatrix3);
 		
-		ivec4 minIndexes = ivec4(0,0,0,0);
-		vec4 minAngles = vec4_splat(0);
-		
-		{
-			UNROLL
-			for(int c=0;c<4;c++)
-			{
-				int minIndex = 0;
-				float minAngle = 10000.0;
-				
-				LOOP
-				for(int n=0;n<26;n++)
-				{
-					float angle = angles[n];
-					if(angle < minAngle)
-					{
-						minAngle = angle;
-						minIndex = n;
-					}
-				}
-				
-				minIndexes[c] = minIndex;
-				minAngles[c] = minAngle;
-				
-				//disable item in the array
-				angles[minIndex] = 10000.0;
-			}
-		}
-
-		//calculate factors
-		vec4 minFactors;
-		{
-			minFactors = saturate((PI / 6.0 - minAngles) / (PI / 6.0)); //saturate((PI / 4.0 - minAngles[c]) / (PI / 4.0));
-			//UNROLL
-			//for(int c=0;c<4;c++)
-			//	minFactors[c] = saturate((PI / 6.0 - minAngles[c]) / (PI / 6.0)); //saturate((PI / 4.0 - minAngles[c]) / (PI / 4.0));
-		}
-		
-		//normalize factors
-		{
-			float q = minFactors.x + minFactors.y + minFactors.z + minFactors.w;
-			minFactors /= q;
-		}
-		
-		ivec4 minIndexesOriginal = minIndexes;
-		
-		//redirect 26 images to 5 images
-		BRANCH
-		if(billboardDataMode == 2.0)
-		{
-			#ifdef GLSL
-				const int redirects[26] = int[26] ( 1, 1, 1, 1, 0, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 4, 3, 3, 3, 3 );
-			#else
-				const int redirects[26] = { 1, 1, 1, 1, 0, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 4, 3, 3, 3, 3 };
-			#endif
-
-			minIndexes[0] = redirects[minIndexes[0]];
-			minIndexes[1] = redirects[minIndexes[1]];
-			minIndexes[2] = redirects[minIndexes[2]];
-			minIndexes[3] = redirects[minIndexes[3]];
-			//UNROLL
-			//for(int c=0;c<4;c++)
-			//{
-			//	int index = minIndexes[c];
-			//	minIndexes[c] = redirects[index];
-			//}
-		}
-		
-		billboardDataIndexes = vec4(minIndexes) + vec4_splat(0.5);
-		billboardDataFactors = minFactors.xyz;
-
-		
-		vec3 objectSpaceCameraUp = normalize(mulQuat(billboardRotationInverse, u_viewportOwnerCameraUp));
-		
-		UNROLL
-		for(int c=0;c<4;c++)
-		{
-			int minIndex = minIndexesOriginal[c];
-			vec3 cameraPosition = normalize(cameraPositions[minIndex]);
-			vec3 cameraDirection = -cameraPosition;
-			
-			vec3 cameraUp = vec3(0,0,1);
-			if( cameraPosition.z > 0.99 )
-				cameraUp = vec3(1,0,0);
-			if( cameraPosition.z < -0.99 )
-				cameraUp = vec3(-1,0,0);
-			
-			vec3 directionSpaceCameraUp = normalize(mul(transpose(lookAt(cameraDirection, cameraUp)), objectSpaceCameraUp));
-
-			billboardDataAngles[c] = PI/2.0 - atan2(directionSpaceCameraUp.z, directionSpaceCameraUp.y);
-		}
-		
+		//mat3 m = toMat3(worldMatrix);
+		//mat3 mm = transpose(m);
+		//voxelCameraPositionObjectSpace = mul(mm, cameraPosition - getTranslate(worldMatrix));		
+		//voxelCameraPositionObjectSpace = mul(worldMatrixBeforeChangesInv, vec4(cameraPosition, 1.0)).xyz;
 	}
 }
+
 #endif

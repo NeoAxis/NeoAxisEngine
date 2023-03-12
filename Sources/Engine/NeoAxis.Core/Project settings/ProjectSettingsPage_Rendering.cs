@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -146,6 +146,42 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_Rendering> ShadowTextureFormatChanged;
 		ReferenceField<ShadowTextureFormatEnum> _shadowTextureFormat = ShadowTextureFormatEnum.Float32;
 
+		//[Category( "Rendering: Basic Device" )]
+		//[DisplayName( "Shadow Max Texture Size Directional Light" )]
+		//[DefaultValue( RenderingPipeline_Basic.ShadowTextureSize._8192 )]
+		//public Reference<RenderingPipeline_Basic.ShadowTextureSize> ShadowMaxTextureSizeDirectionalLight
+		//{
+		//	get { if( _shadowMaxTextureSizeDirectionalLight.BeginGet() ) ShadowMaxTextureSizeDirectionalLight = _shadowMaxTextureSizeDirectionalLight.Get( this ); return _shadowMaxTextureSizeDirectionalLight.value; }
+		//	set { if( _shadowMaxTextureSizeDirectionalLight.BeginSet( ref value ) ) { try { ShadowMaxTextureSizeDirectionalLightChanged?.Invoke( this ); } finally { _shadowMaxTextureSizeDirectionalLight.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="ShadowMaxTextureSizeDirectionalLight"/> property value changes.</summary>
+		//public event Action<ProjectSettingsPage_Rendering> ShadowMaxTextureSizeDirectionalLightChanged;
+		//ReferenceField<RenderingPipeline_Basic.ShadowTextureSize> _shadowMaxTextureSizeDirectionalLight = RenderingPipeline_Basic.ShadowTextureSize._8192;
+
+		//[Category( "Rendering: Basic Device" )]
+		//[DisplayName( "Shadow Max Texture Size Point Light" )]
+		//[DefaultValue( RenderingPipeline_Basic.ShadowTextureSize._8192 )]
+		//public Reference<RenderingPipeline_Basic.ShadowTextureSize> ShadowMaxTextureSizePointLight
+		//{
+		//	get { if( _shadowMaxTextureSizePointLight.BeginGet() ) ShadowMaxTextureSizePointLight = _shadowMaxTextureSizePointLight.Get( this ); return _shadowMaxTextureSizePointLight.value; }
+		//	set { if( _shadowMaxTextureSizePointLight.BeginSet( ref value ) ) { try { ShadowMaxTextureSizePointLightChanged?.Invoke( this ); } finally { _shadowMaxTextureSizePointLight.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="ShadowMaxTextureSizePointLight"/> property value changes.</summary>
+		//public event Action<ProjectSettingsPage_Rendering> ShadowMaxTextureSizePointLightChanged;
+		//ReferenceField<RenderingPipeline_Basic.ShadowTextureSize> _shadowMaxTextureSizePointLight = RenderingPipeline_Basic.ShadowTextureSize._8192;
+
+		//[Category( "Rendering: Basic Device" )]
+		//[DisplayName( "Shadow Max Texture Size Spot Light" )]
+		//[DefaultValue( RenderingPipeline_Basic.ShadowTextureSize._8192 )]
+		//public Reference<RenderingPipeline_Basic.ShadowTextureSize> ShadowMaxTextureSizeSpotLight
+		//{
+		//	get { if( _shadowMaxTextureSizeSpotLight.BeginGet() ) ShadowMaxTextureSizeSpotLight = _shadowMaxTextureSizeSpotLight.Get( this ); return _shadowMaxTextureSizeSpotLight.value; }
+		//	set { if( _shadowMaxTextureSizeSpotLight.BeginSet( ref value ) ) { try { ShadowMaxTextureSizeSpotLightChanged?.Invoke( this ); } finally { _shadowMaxTextureSizeSpotLight.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="ShadowMaxTextureSizeSpotLight"/> property value changes.</summary>
+		//public event Action<ProjectSettingsPage_Rendering> ShadowMaxTextureSizeSpotLightChanged;
+		//ReferenceField<RenderingPipeline_Basic.ShadowTextureSize> _shadowMaxTextureSizeSpotLight = RenderingPipeline_Basic.ShadowTextureSize._8192;
+
 		/// <summary>
 		/// The format of shadow textures. Byte4 is used when a GPU is not supports Float32 format, mostly it is low-end mobile devices. Auto mode has not been added for this parameter, because some mobile devices incorrectly provide info about the support for Float32.
 		/// </summary>
@@ -161,55 +197,92 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_Rendering> ShadowTextureFormatLimitedDeviceChanged;
 		ReferenceField<ShadowTextureFormatEnum> _shadowTextureFormatLimitedDevice = ShadowTextureFormatEnum.Byte4;
 
-		public enum CompressVerticesEnum
-		{
-			/// <summary>
-			/// No compression, maximally fast uploading to GPU.
-			/// </summary>
-			Original,
-
-			/// <summary>
-			/// Saving full quality.
-			/// </summary>
-			Quality,
-
-			/// <summary>
-			/// Positions and texture coordinates are converted to 16-bit.
-			/// </summary>
-			Performance,
-		}
-
-		/// <summary>
-		/// The vertex data compression mode.
-		/// </summary>
-		[Category( "Rendering: Basic Device" )]
-		[DisplayName( "Compress Vertices (Restart to apply changes)" )]
-		[DefaultValue( CompressVerticesEnum.Quality )]
-		[Browsable( false )]//!!!!
-		public Reference<CompressVerticesEnum> CompressVertices
-		{
-			get { if( _compressVertices.BeginGet() ) CompressVertices = _compressVertices.Get( this ); return _compressVertices.value; }
-			set { if( _compressVertices.BeginSet( ref value ) ) { try { CompressVerticesChanged?.Invoke( this ); } finally { _compressVertices.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="CompressVertices"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_Rendering> CompressVerticesChanged;
-		ReferenceField<CompressVerticesEnum> _compressVertices = CompressVerticesEnum.Quality;
-
-		/// <summary>
-		/// The vertex data compression mode on limited devices (mobile).
-		/// </summary>
 		[Category( "Rendering: Limited Device" )]
-		[DisplayName( "Compress Vertices" )]
-		[DefaultValue( CompressVerticesEnum.Performance )]
-		[Browsable( false )]//!!!!
-		public Reference<CompressVerticesEnum> CompressVerticesLimitedDevice
+		[DisplayName( "Shadow Max Texture Size Directional Light" )]
+		[DefaultValue( RenderingPipeline_Basic.ShadowTextureSize._1024 )]
+		public Reference<RenderingPipeline_Basic.ShadowTextureSize> ShadowMaxTextureSizeDirectionalLightLimitedDevice
 		{
-			get { if( _compressVerticesLimitedDevice.BeginGet() ) CompressVerticesLimitedDevice = _compressVerticesLimitedDevice.Get( this ); return _compressVerticesLimitedDevice.value; }
-			set { if( _compressVerticesLimitedDevice.BeginSet( ref value ) ) { try { CompressVerticesLimitedDeviceChanged?.Invoke( this ); } finally { _compressVerticesLimitedDevice.EndSet(); } } }
+			get { if( _shadowMaxTextureSizeDirectionalLightLimitedDevice.BeginGet() ) ShadowMaxTextureSizeDirectionalLightLimitedDevice = _shadowMaxTextureSizeDirectionalLightLimitedDevice.Get( this ); return _shadowMaxTextureSizeDirectionalLightLimitedDevice.value; }
+			set { if( _shadowMaxTextureSizeDirectionalLightLimitedDevice.BeginSet( ref value ) ) { try { ShadowMaxTextureSizeDirectionalLightLimitedDeviceChanged?.Invoke( this ); } finally { _shadowMaxTextureSizeDirectionalLightLimitedDevice.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="CompressVerticesLimitedDevice"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_Rendering> CompressVerticesLimitedDeviceChanged;
-		ReferenceField<CompressVerticesEnum> _compressVerticesLimitedDevice = CompressVerticesEnum.Performance;
+		/// <summary>Occurs when the <see cref="ShadowMaxTextureSizeDirectionalLightLimitedDevice"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_Rendering> ShadowMaxTextureSizeDirectionalLightLimitedDeviceChanged;
+		ReferenceField<RenderingPipeline_Basic.ShadowTextureSize> _shadowMaxTextureSizeDirectionalLightLimitedDevice = RenderingPipeline_Basic.ShadowTextureSize._1024;
+
+		[Category( "Rendering: Limited Device" )]
+		[DisplayName( "Shadow Max Texture Size Point Light" )]
+		[DefaultValue( RenderingPipeline_Basic.ShadowTextureSize._512 )]
+		public Reference<RenderingPipeline_Basic.ShadowTextureSize> ShadowMaxTextureSizePointLightLimitedDevice
+		{
+			get { if( _shadowMaxTextureSizePointLightLimitedDevice.BeginGet() ) ShadowMaxTextureSizePointLightLimitedDevice = _shadowMaxTextureSizePointLightLimitedDevice.Get( this ); return _shadowMaxTextureSizePointLightLimitedDevice.value; }
+			set { if( _shadowMaxTextureSizePointLightLimitedDevice.BeginSet( ref value ) ) { try { ShadowMaxTextureSizePointLightLimitedDeviceChanged?.Invoke( this ); } finally { _shadowMaxTextureSizePointLightLimitedDevice.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ShadowMaxTextureSizePointLightLimitedDevice"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_Rendering> ShadowMaxTextureSizePointLightLimitedDeviceChanged;
+		ReferenceField<RenderingPipeline_Basic.ShadowTextureSize> _shadowMaxTextureSizePointLightLimitedDevice = RenderingPipeline_Basic.ShadowTextureSize._512;
+
+		[Category( "Rendering: Limited Device" )]
+		[DisplayName( "Shadow Max Texture Size Spot Light" )]
+		[DefaultValue( RenderingPipeline_Basic.ShadowTextureSize._1024 )]
+		public Reference<RenderingPipeline_Basic.ShadowTextureSize> ShadowMaxTextureSizeSpotLightLimitedDevice
+		{
+			get { if( _shadowMaxTextureSizeSpotLightLimitedDevice.BeginGet() ) ShadowMaxTextureSizeSpotLightLimitedDevice = _shadowMaxTextureSizeSpotLightLimitedDevice.Get( this ); return _shadowMaxTextureSizeSpotLightLimitedDevice.value; }
+			set { if( _shadowMaxTextureSizeSpotLightLimitedDevice.BeginSet( ref value ) ) { try { ShadowMaxTextureSizeSpotLightLimitedDeviceChanged?.Invoke( this ); } finally { _shadowMaxTextureSizeSpotLightLimitedDevice.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ShadowMaxTextureSizeSpotLightLimitedDevice"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_Rendering> ShadowMaxTextureSizeSpotLightLimitedDeviceChanged;
+		ReferenceField<RenderingPipeline_Basic.ShadowTextureSize> _shadowMaxTextureSizeSpotLightLimitedDevice = RenderingPipeline_Basic.ShadowTextureSize._1024;
+
+
+		//public enum CompressVerticesEnum
+		//{
+		//	/// <summary>
+		//	/// No compression, maximally fast uploading to GPU.
+		//	/// </summary>
+		//	Original,
+
+		//	/// <summary>
+		//	/// Saving full quality.
+		//	/// </summary>
+		//	Quality,
+
+		//	/// <summary>
+		//	/// Positions and texture coordinates are converted to 16-bit.
+		//	/// </summary>
+		//	Performance,
+		//}
+
+		///// <summary>
+		///// The vertex data compression mode.
+		///// </summary>
+		//[Category( "Rendering: Basic Device" )]
+		//[DisplayName( "Compress Vertices (Restart to apply changes)" )]
+		//[DefaultValue( CompressVerticesEnum.Quality )]
+		////[Browsable( false )]//!!!!
+		//public Reference<CompressVerticesEnum> CompressVertices
+		//{
+		//	get { if( _compressVertices.BeginGet() ) CompressVertices = _compressVertices.Get( this ); return _compressVertices.value; }
+		//	set { if( _compressVertices.BeginSet( ref value ) ) { try { CompressVerticesChanged?.Invoke( this ); } finally { _compressVertices.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="CompressVertices"/> property value changes.</summary>
+		//public event Action<ProjectSettingsPage_Rendering> CompressVerticesChanged;
+		//ReferenceField<CompressVerticesEnum> _compressVertices = CompressVerticesEnum.Quality;
+
+		///// <summary>
+		///// The vertex data compression mode on limited devices (mobile).
+		///// </summary>
+		//[Category( "Rendering: Limited Device" )]
+		//[DisplayName( "Compress Vertices" )]
+		//[DefaultValue( CompressVerticesEnum.Performance )]
+		////[Browsable( false )]//!!!!
+		//public Reference<CompressVerticesEnum> CompressVerticesLimitedDevice
+		//{
+		//	get { if( _compressVerticesLimitedDevice.BeginGet() ) CompressVerticesLimitedDevice = _compressVerticesLimitedDevice.Get( this ); return _compressVerticesLimitedDevice.value; }
+		//	set { if( _compressVerticesLimitedDevice.BeginSet( ref value ) ) { try { CompressVerticesLimitedDeviceChanged?.Invoke( this ); } finally { _compressVerticesLimitedDevice.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="CompressVerticesLimitedDevice"/> property value changes.</summary>
+		//public event Action<ProjectSettingsPage_Rendering> CompressVerticesLimitedDeviceChanged;
+		//ReferenceField<CompressVerticesEnum> _compressVerticesLimitedDevice = CompressVerticesEnum.Performance;
 
 		/// <summary>
 		/// Whether to allow using skeletal animation.
@@ -424,6 +497,36 @@ namespace NeoAxis
 		ReferenceField<bool> _motionVectorLimitedDevice = false;
 
 		/// <summary>
+		/// Whether to allow using the indirect lighting in a full mode.
+		/// </summary>
+		[Category( "Rendering: Basic Device" )]
+		[DisplayName( "Indirect Lighting Full Mode (Restart to apply changes)" )]
+		[DefaultValue( true )]
+		public Reference<bool> IndirectLightingFullMode
+		{
+			get { if( _indirectLightingFullMode.BeginGet() ) IndirectLightingFullMode = _indirectLightingFullMode.Get( this ); return _indirectLightingFullMode.value; }
+			set { if( _indirectLightingFullMode.BeginSet( ref value ) ) { try { IndirectLightingFullModeChanged?.Invoke( this ); } finally { _indirectLightingFullMode.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="IndirectLightingFullMode"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_Rendering> IndirectLightingFullModeChanged;
+		ReferenceField<bool> _indirectLightingFullMode = true;
+
+		/// <summary>
+		/// Whether to allow using the indirect lighting in a full mode on limited devices (mobile).
+		/// </summary>
+		[Category( "Rendering: Limited Device" )]
+		[DisplayName( "Indirect Lighting Full Mode" )]
+		[DefaultValue( false )]
+		public Reference<bool> IndirectLightingFullModeLimitedDevice
+		{
+			get { if( _indirectLightingFullModeLimitedDevice.BeginGet() ) IndirectLightingFullModeLimitedDevice = _indirectLightingFullModeLimitedDevice.Get( this ); return _indirectLightingFullModeLimitedDevice.value; }
+			set { if( _indirectLightingFullModeLimitedDevice.BeginSet( ref value ) ) { try { IndirectLightingFullModeLimitedDeviceChanged?.Invoke( this ); } finally { _indirectLightingFullModeLimitedDevice.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="IndirectLightingFullModeLimitedDevice"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_Rendering> IndirectLightingFullModeLimitedDeviceChanged;
+		ReferenceField<bool> _indirectLightingFullModeLimitedDevice = false;
+
+		/// <summary>
 		/// The amount of maximal amount of cut volumes.
 		/// </summary>
 		[Category( "Rendering: Basic Device" )]
@@ -516,6 +619,99 @@ namespace NeoAxis
 		ReferenceField<bool> _smoothLODLimitedDevice = false;
 
 		/// <summary>
+		/// Whether to allow using voxel-based LOD technique.
+		/// </summary>
+		[Category( "Rendering: Basic Device" )]
+		[DisplayName( "Voxel LOD (Restart to apply changes)" )]
+		[DefaultValue( true )]
+		public Reference<bool> VoxelLOD
+		{
+			get { if( _voxelLOD.BeginGet() ) VoxelLOD = _voxelLOD.Get( this ); return _voxelLOD.value; }
+			set { if( _voxelLOD.BeginSet( ref value ) ) { try { VoxelLODChanged?.Invoke( this ); } finally { _voxelLOD.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="VoxelLOD"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_Rendering> VoxelLODChanged;
+		ReferenceField<bool> _voxelLOD = true;
+
+		/// <summary>
+		/// Whether to allow using voxel-based LOD technique on limited devices (mobile).
+		/// </summary>
+		[Category( "Rendering: Limited Device" )]
+		[DisplayName( "Voxel LOD" )]
+		[DefaultValue( false )]
+		public Reference<bool> VoxelLODLimitedDevice
+		{
+			get { if( _voxelLODLimitedDevice.BeginGet() ) VoxelLODLimitedDevice = _voxelLODLimitedDevice.Get( this ); return _voxelLODLimitedDevice.value; }
+			set { if( _voxelLODLimitedDevice.BeginSet( ref value ) ) { try { VoxelLODLimitedDeviceChanged?.Invoke( this ); } finally { _voxelLODLimitedDevice.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="VoxelLODLimitedDevice"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_Rendering> VoxelLODLimitedDeviceChanged;
+		ReferenceField<bool> _voxelLODLimitedDevice = false;
+
+		/// <summary>
+		/// The maximal abount of ray matching steps in the fragment shader.
+		/// </summary>
+		[Category( "Rendering: Basic Device" )]
+		[DisplayName( "Voxel LOD Max Steps (Restart to apply changes)" )]
+		[DefaultValue( 12 )]
+		[Range( 4, 64, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		public Reference<int> VoxelLODMaxSteps
+		{
+			get { if( _voxelLODMaxSteps.BeginGet() ) VoxelLODMaxSteps = _voxelLODMaxSteps.Get( this ); return _voxelLODMaxSteps.value; }
+			set { if( _voxelLODMaxSteps.BeginSet( ref value ) ) { try { VoxelLODMaxStepsChanged?.Invoke( this ); } finally { _voxelLODMaxSteps.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="VoxelLODMaxSteps"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_Rendering> VoxelLODMaxStepsChanged;
+		ReferenceField<int> _voxelLODMaxSteps = 12;
+
+		/// <summary>
+		/// The maximal abount of ray matching steps in the fragment shader on limited devices (mobile).
+		/// </summary>
+		[Category( "Rendering: Limited Device" )]
+		[DisplayName( "Voxel LOD Max Steps" )]
+		[DefaultValue( 8 )]
+		[Range( 4, 64, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		public Reference<int> VoxelLODMaxStepsLimitedDevice
+		{
+			get { if( _voxelLODMaxStepsLimitedDevice.BeginGet() ) VoxelLODMaxStepsLimitedDevice = _voxelLODMaxStepsLimitedDevice.Get( this ); return _voxelLODMaxStepsLimitedDevice.value; }
+			set { if( _voxelLODMaxStepsLimitedDevice.BeginSet( ref value ) ) { try { VoxelLODMaxStepsLimitedDeviceChanged?.Invoke( this ); } finally { _voxelLODMaxStepsLimitedDevice.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="VoxelLODMaxStepsLimitedDevice"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_Rendering> VoxelLODMaxStepsLimitedDeviceChanged;
+		ReferenceField<int> _voxelLODMaxStepsLimitedDevice = 8;
+
+		///// <summary>
+		///// Whether to allow using virtualized geometry.
+		///// </summary>
+		//[Category( "Rendering: Basic Device" )]
+		//[DisplayName( "Virtualized Geometry (Restart to apply changes)" )]
+		//[DefaultValue( true )]
+		//public Reference<bool> VirtualizedGeometry
+		//{
+		//	get { if( _virtualizedGeometry.BeginGet() ) VirtualizedGeometry = _virtualizedGeometry.Get( this ); return _virtualizedGeometry.value; }
+		//	set { if( _virtualizedGeometry.BeginSet( ref value ) ) { try { VirtualizedGeometryChanged?.Invoke( this ); } finally { _virtualizedGeometry.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="VirtualizedGeometry"/> property value changes.</summary>
+		//public event Action<ProjectSettingsPage_Rendering> VirtualizedGeometryChanged;
+		//ReferenceField<bool> _virtualizedGeometry = true;
+
+		////!!!!default. what else
+		///// <summary>
+		///// Whether to allow using virtualized geometry on limited devices (mobile).
+		///// </summary>
+		//[Category( "Rendering: Limited Device" )]
+		//[DisplayName( "Virtualized Geometry" )]
+		//[DefaultValue( false )]
+		//public Reference<bool> VirtualizedGeometryLimitedDevice
+		//{
+		//	get { if( _virtualizedGeometryLimitedDevice.BeginGet() ) VirtualizedGeometryLimitedDevice = _virtualizedGeometryLimitedDevice.Get( this ); return _virtualizedGeometryLimitedDevice.value; }
+		//	set { if( _virtualizedGeometryLimitedDevice.BeginSet( ref value ) ) { try { VirtualizedGeometryLimitedDeviceChanged?.Invoke( this ); } finally { _virtualizedGeometryLimitedDevice.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="VirtualizedGeometryLimitedDevice"/> property value changes.</summary>
+		//public event Action<ProjectSettingsPage_Rendering> VirtualizedGeometryLimitedDeviceChanged;
+		//ReferenceField<bool> _virtualizedGeometryLimitedDevice = false;
+
+		/// <summary>
 		/// Whether to use smooth fading of objects by visibility distance.
 		/// </summary>
 		[Category( "Rendering: Basic Device" )]
@@ -544,36 +740,6 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="FadeByVisibilityDistanceLimitedDevice"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_Rendering> FadeByVisibilityDistanceLimitedDeviceChanged;
 		ReferenceField<bool> _fadeByVisibilityDistanceLimitedDevice = false;
-
-		/// <summary>
-		/// Whether to allow using the NeoAxis Billboard Data technique.
-		/// </summary>
-		[Category( "Rendering: Basic Device" )]
-		[DisplayName( "Billboard Data (Restart to apply changes)" )]
-		[DefaultValue( true )]
-		public Reference<bool> BillboardData
-		{
-			get { if( _billboardData.BeginGet() ) BillboardData = _billboardData.Get( this ); return _billboardData.value; }
-			set { if( _billboardData.BeginSet( ref value ) ) { try { BillboardDataChanged?.Invoke( this ); } finally { _billboardData.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="BillboardData"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_Rendering> BillboardDataChanged;
-		ReferenceField<bool> _billboardData = true;
-
-		/// <summary>
-		/// Whether to allow using the NeoAxis Billboard Data technique on limited devices (mobile).
-		/// </summary>
-		[Category( "Rendering: Limited Device" )]
-		[DisplayName( "Billboard Data" )]
-		[DefaultValue( false )]
-		public Reference<bool> BillboardDataLimitedDevice
-		{
-			get { if( _billboardDataLimitedDevice.BeginGet() ) BillboardDataLimitedDevice = _billboardDataLimitedDevice.Get( this ); return _billboardDataLimitedDevice.value; }
-			set { if( _billboardDataLimitedDevice.BeginSet( ref value ) ) { try { BillboardDataLimitedDeviceChanged?.Invoke( this ); } finally { _billboardDataLimitedDevice.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="BillboardDataLimitedDevice"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_Rendering> BillboardDataLimitedDeviceChanged;
-		ReferenceField<bool> _billboardDataLimitedDevice = false;
 
 		/// <summary>
 		/// Whether to allow using Debug Mode of the scene.

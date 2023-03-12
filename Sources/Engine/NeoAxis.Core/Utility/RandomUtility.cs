@@ -1,7 +1,8 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -10,6 +11,7 @@ namespace NeoAxis
 	/// </summary>
 	public static class RandomUtility
 	{
+		[MethodImpl( (MethodImplOptions)512 )]
 		public static int GetRandomIndexByProbabilities( FastRandom random, ArraySegment<double> probabilities )
 		{
 			var length = probabilities.Count;
@@ -44,11 +46,13 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static int GetRandomIndexByProbabilities( FastRandom random, double[] probabilities )
 		{
 			return GetRandomIndexByProbabilities( random, new ArraySegment<double>( probabilities, 0, probabilities.Length ) );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public unsafe static int GetRandomIndexByProbabilities( FastRandom random, double* probabilities, int length )
 		{
 			int result = 0;

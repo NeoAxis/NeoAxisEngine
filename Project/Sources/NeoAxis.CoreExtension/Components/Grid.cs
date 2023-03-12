@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -183,13 +183,12 @@ namespace NeoAxis
 			{
 				var context2 = context.ObjectInSpaceRenderingContext;
 
-				if( EngineApp.ApplicationType != EngineApp.ApplicationTypeEnum.Simulation ||
-					EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Simulation && DisplayInSimulation )
+				if( EngineApp.IsEditor || EngineApp.IsSimulation && DisplayInSimulation )
 				{
 					var cameraPosition = context.Owner.CameraSettings.Position;
 					var sphere = new Sphere( cameraPosition, VisibilityDistance );
 
-					if( SpaceBounds.CalculatedBoundingSphere.Intersects( ref sphere ) )
+					if( SpaceBounds.BoundingSphere.Intersects( ref sphere ) )
 					{
 						if( Step.Value >= 0 )
 							Render( context2 );

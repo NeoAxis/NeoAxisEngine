@@ -1,8 +1,9 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -101,7 +102,7 @@ namespace NeoAxis
 				name = value;
 
 				if( string.IsNullOrEmpty( name ) )
-					Log.Fatal( "TextBlock: set Name: \"name\" is null or empty." );
+					throw new Exception( "set Name: \"name\" is null or empty." );
 			}
 		}
 
@@ -127,6 +128,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="name">The block name.</param>
 		/// <returns><see cref="NeoAxis.TextBlock"/> if the block has been exists; otherwise, <b>null</b>.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public TextBlock FindChild( string name )
 		{
 			for( int n = 0; n < children.Count; n++ )
@@ -147,10 +149,11 @@ namespace NeoAxis
 		/// <remarks>
 		/// Names of blocks can repeat.
 		/// </remarks>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public TextBlock AddChild( string name, string data = "" )
 		{
 			if( string.IsNullOrEmpty( name ) )
-				Log.Fatal( "TextBlock: AddChild: \"name\" is null or empty." );
+				throw new Exception( "AddChild: \"name\" is null or empty." );
 
 			var child = new TextBlock();
 			child.parent = this;
@@ -165,10 +168,11 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="child">The child block.</param>
 		/// <returns></returns>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public void AddChild( TextBlock child )
 		{
 			if( child.parent != null )
-				Log.Fatal( "TextBlock: AddChild: Unable to add. The block is already added to another block. child.Parent != null." );
+				throw new Exception( "AddChild: Unable to add. The block is already added to another block. child.Parent != null." );
 			child.parent = this;
 			children.Add( child );
 		}
@@ -177,6 +181,7 @@ namespace NeoAxis
 		/// Deletes child block.
 		/// </summary>
 		/// <param name="child">The child block.</param>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public bool DeleteChild( TextBlock child )
 		{
 			var result = children.Remove( child );
@@ -194,11 +199,12 @@ namespace NeoAxis
 		/// <param name="name">The attribute name.</param>
 		/// <param name="defaultValue">Default value. If the attribute does not exist that this value will return.</param>
 		/// <returns>The attribute value if the attribute exists; otherwise, default value.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public string GetAttribute( string name, string defaultValue = "" )
 		{
 			for( int n = 0; n < attributes.Count; n++ )
 			{
-				Attribute attribute = attributes[ n ];
+				var attribute = attributes[ n ];
 				if( attribute.Name == name )
 					return attribute.Value;
 			}
@@ -228,11 +234,12 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="name">The attribute name.</param>
 		/// <returns><b>true</b> if the block exists; otherwise, <b>false</b>.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool AttributeExists( string name )
 		{
 			for( int n = 0; n < attributes.Count; n++ )
 			{
-				Attribute attribute = attributes[ n ];
+				var attribute = attributes[ n ];
 				if( attribute.Name == name )
 					return true;
 			}
@@ -244,12 +251,13 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="name">The attribute name.</param>
 		/// <param name="value">The attribute value.</param>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public void SetAttribute( string name, string value )
 		{
 			if( string.IsNullOrEmpty( name ) )
-				Log.Fatal( "TextBlock: AddChild: \"name\" is null or empty." );
+				throw new Exception( "AddChild: \"name\" is null or empty." );
 			if( value == null )
-				Log.Fatal( "TextBlock: AddChild: \"value\" is null." );
+				throw new Exception( "AddChild: \"value\" is null." );
 
 			for( int n = 0; n < attributes.Count; n++ )
 			{
@@ -260,7 +268,7 @@ namespace NeoAxis
 					return;
 				}
 			}
-			Attribute a = new Attribute();
+			var a = new Attribute();
 			a.name = name;
 			a.value = value;
 			attributes.Add( a );
@@ -270,6 +278,7 @@ namespace NeoAxis
 		/// Deletes attribute if he exists.
 		/// </summary>
 		/// <param name="name">The attribute name.</param>
+		[MethodImpl( (MethodImplOptions)512 )]
 		public bool DeleteAttribute( string name )
 		{
 			for( int n = 0; n < attributes.Count; n++ )
@@ -289,11 +298,13 @@ namespace NeoAxis
 		/// <summary>
 		/// Deletes all attributes.
 		/// </summary>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void DeleteAllAttributes()
 		{
 			attributes.Clear();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static string TabLevelToString( int level )
 		{
 			string str = "";
@@ -302,6 +313,7 @@ namespace NeoAxis
 			return str;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static bool IsNeedQuotesForLexeme( string text, bool thisIsAttributeValue )
 		{
 			if( !thisIsAttributeValue )
@@ -343,72 +355,122 @@ namespace NeoAxis
 			}
 		}
 
-		void DumpToString( StringBuilder builder, int tabLevel )
+		[MethodImpl( (MethodImplOptions)512 )]
+		void DumpToString( StringBuilder builder, bool userFriendly, int tabLevel )
 		{
-			string tabPrefix = TabLevelToString( tabLevel );
+			string tabPrefix = userFriendly ? TabLevelToString( tabLevel ) : null;
 
 			if( !string.IsNullOrEmpty( Name ) )
 			{
 				{
-					builder.Append( tabPrefix );
+					if( userFriendly )
+						builder.Append( tabPrefix );
 
-					string v;
 					if( IsNeedQuotesForLexeme( Name, false ) )
-						v = string.Format( "\"{0}\"", StringUtility.EncodeDelimiterFormatString( Name ) );
+					{
+						builder.Append( '\"' );
+						StringUtility.EncodeDelimiterFormatString( builder, Name );
+						builder.Append( '\"' );
+					}
 					else
-						v = Name;
-					builder.Append( v );
+						builder.Append( Name );
+					//string v;
+					//if( IsNeedQuotesForLexeme( Name, false ) )
+					//	v = string.Format( "\"{0}\"", StringUtility.EncodeDelimiterFormatString( Name ) );
+					//else
+					//	v = Name;
+					//builder.Append( v );
 				}
 
 				if( !string.IsNullOrEmpty( Data ) )
 				{
 					builder.Append( " " );
 
-					string v;
 					if( IsNeedQuotesForLexeme( Data, false ) )
-						v = string.Format( "\"{0}\"", StringUtility.EncodeDelimiterFormatString( Data ) );
+					{
+						builder.Append( '\"' );
+						StringUtility.EncodeDelimiterFormatString( builder, Data );
+						builder.Append( '\"' );
+					}
 					else
-						v = Data;
-					builder.Append( v );
+						builder.Append( Data );
+					//string v;
+					//if( IsNeedQuotesForLexeme( Data, false ) )
+					//	v = string.Format( "\"{0}\"", StringUtility.EncodeDelimiterFormatString( Data ) );
+					//else
+					//	v = Data;
+					//builder.Append( v );
 				}
 
 				builder.Append( "\r\n" );
-				builder.Append( tabPrefix );
+				if( userFriendly )
+					builder.Append( tabPrefix );
 				builder.Append( "{\r\n" );
 			}
 
-			foreach( Attribute attribute in attributes )
+			for( int nAttribute = 0; nAttribute < attributes.Count; nAttribute++ ) //foreach( Attribute attribute in attributes )
 			{
-				string name;
-				string value;
+				var attribute = attributes[ nAttribute ];
+
+				if( userFriendly )
+				{
+					builder.Append( tabPrefix );
+					builder.Append( tabLevel != -1 ? "\t" : "" );
+				}
 
 				if( IsNeedQuotesForLexeme( attribute.Name, false ) )
 				{
-					name = string.Format( "\"{0}\"",
-						StringUtility.EncodeDelimiterFormatString( attribute.Name ) );
+					builder.Append( '\"' );
+					StringUtility.EncodeDelimiterFormatString( builder, attribute.Name );
+					builder.Append( '\"' );
 				}
 				else
-					name = attribute.Name;
+					builder.Append( attribute.Name );
+
+				builder.Append( " = " );
 
 				if( IsNeedQuotesForLexeme( attribute.Value, true ) )
 				{
-					value = string.Format( "\"{0}\"",
-						StringUtility.EncodeDelimiterFormatString( attribute.Value ) );
+					builder.Append( '\"' );
+					StringUtility.EncodeDelimiterFormatString( builder, attribute.Value );
+					builder.Append( '\"' );
 				}
 				else
-					value = attribute.Value;
+					builder.Append( attribute.Value );
 
-				builder.Append( tabPrefix );
-				builder.Append( tabLevel != -1 ? "\t" : "" );
-				builder.AppendFormat( "{0} = {1}\r\n", name, value );
+				builder.Append( "\r\n" );
+
+
+				//string name;
+				//string value;
+
+				//if( IsNeedQuotesForLexeme( attribute.Name, false ) )
+				//	name = string.Format( "\"{0}\"", StringUtility.EncodeDelimiterFormatString( attribute.Name ) );
+				//else
+				//	name = attribute.Name;
+
+				//if( IsNeedQuotesForLexeme( attribute.Value, true ) )
+				//	value = string.Format( "\"{0}\"", StringUtility.EncodeDelimiterFormatString( attribute.Value ) );
+				//else
+				//	value = attribute.Value;
+
+				//if( userFriendly )
+				//{
+				//	builder.Append( tabPrefix );
+				//	builder.Append( tabLevel != -1 ? "\t" : "" );
+				//}
+				//builder.AppendFormat( "{0} = {1}\r\n", name, value );
 			}
 
-			foreach( TextBlock child in children )
-				child.DumpToString( builder, tabLevel + 1 );
+			for( int nChild = 0; nChild < children.Count; nChild++ )
+				children[ nChild ].DumpToString( builder, userFriendly, tabLevel + 1 );
+			//foreach( TextBlock child in children )
+			//	child.DumpToString( builder, userFriendly, tabLevel + 1 );
 
 			if( !string.IsNullOrEmpty( Name ) )
 			{
-				builder.Append( tabPrefix );
+				if( userFriendly )
+					builder.Append( tabPrefix );
 				builder.Append( "}\r\n" );
 			}
 		}
@@ -429,10 +491,11 @@ namespace NeoAxis
 		/// </code>
 		/// </example>
 		/// <seealso cref="NeoAxis.TextBlock.Parse(string,out string)"/>
-		public string DumpToString()
+		[MethodImpl( (MethodImplOptions)512 )]
+		public string DumpToString( bool userFriendly = true )
 		{
-			StringBuilder builder = new StringBuilder();
-			DumpToString( builder, -1 );
+			var builder = new StringBuilder( 64 );
+			DumpToString( builder, userFriendly, -1 );
 			return builder.ToString();
 		}
 
@@ -452,7 +515,7 @@ namespace NeoAxis
 		/// Parses the text with data of the block and his children.
 		/// </summary>
 		/// <param name="str">The data string.</param>
-		/// <param name="errorString">The information on an error.</param>
+		/// <param name="error">The information on an error.</param>
 		/// <returns><see cref="NeoAxis.TextBlock"/> if the block has been parsed; otherwise, <b>null</b>.</returns>
 		/// <seealso cref="NeoAxis.TextBlock.DumpToString()"/>
 		/// <remarks>
@@ -467,10 +530,11 @@ namespace NeoAxis
 		/// streamReader.Dispose();
 		/// </code>
 		/// </example>
-		public static TextBlock Parse( string str, out string errorString )
+		[MethodImpl( (MethodImplOptions)512 )]
+		public static TextBlock Parse( string str, out string error )
 		{
-			TextBlockParser parser = new TextBlockParser();
-			return parser.Parse( str, out errorString );
+			var parser = new TextBlockParser();
+			return parser.Parse( str, out error );
 		}
 	}
 
@@ -490,9 +554,11 @@ namespace NeoAxis
 
 		bool StreamEOF
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get { return streamPosition >= streamStringLength; }
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		bool StreamReadChar( out char character )
 		{
 			if( StreamEOF )
@@ -505,6 +571,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void StreamSeek( int position )
 		{
 			streamPosition = position;
@@ -516,12 +583,13 @@ namespace NeoAxis
 				error = string.Format( "{0} (line - {1})", str, linePosition );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		string GetLexeme( bool stopOnlyAtSeparatorOrQuotes, out bool intoQuotes )
 		{
 			intoQuotes = false;
 
 			if( lexStringBuilderInUse )
-				Log.Fatal( "TextBlock: GetLexeme: lexStringBuilderInUse == True." );
+				throw new Exception( "GetLexeme: lexStringBuilderInUse == True." );
 			var lex = lexStringBuilder;
 			lexStringBuilderInUse = true;
 			//StringBuilder lex = new StringBuilder( 32 );
@@ -690,12 +758,14 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		string GetLexeme( bool stopOnlyAtSeparatorOrQuotes )
 		{
 			bool intoQuotes;
 			return GetLexeme( stopOnlyAtSeparatorOrQuotes, out intoQuotes );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		bool LoadChild( TextBlock child, bool ifEmptyLexReturnTrue )
 		{
 			while( true )
@@ -756,29 +826,41 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public TextBlock Parse( string str, out string errorString )
 		{
-			if( str == null )
-				Log.Fatal( "TextBlock: Parse: \"str\" is null." );
-
-			streamString = str;
-			streamStringLength = streamString.Length;
-			streamPosition = 0;
-			error = null;
-			linePosition = 1;
-			root = new TextBlock();
-			//!!!!
-			lexStringBuilder = new StringBuilder( 128 );
-			//lexStringBuilder = new StringBuilder( Math.Max( str.Length, 4 ) );
-
-			bool ret = LoadChild( root, true );
-			if( !ret )
+			try
 			{
-				errorString = error;
+				if( str == null )
+				{
+					errorString = "TextBlock: Parse: \"str\" is null.";
+					return null;
+				}
+
+				streamString = str;
+				streamStringLength = streamString.Length;
+				streamPosition = 0;
+				error = null;
+				linePosition = 1;
+				root = new TextBlock();
+				lexStringBuilder = new StringBuilder( 128 );
+				//lexStringBuilder = new StringBuilder( Math.Max( str.Length, 4 ) );
+
+				bool ret = LoadChild( root, true );
+				if( !ret )
+				{
+					errorString = error;
+					return null;
+				}
+				errorString = "";
+				return root;
+
+			}
+			catch( Exception e )
+			{
+				errorString = e.Message;
 				return null;
 			}
-			errorString = "";
-			return root;
 		}
 	}
 }

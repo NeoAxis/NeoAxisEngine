@@ -1157,8 +1157,8 @@ namespace Ogre {
 		// Endian flip if required, all 32-bit values
 		flipEndian(&header, 4, sizeof(DDSHeader) / 4);
 
-		// Pixel format
-		PixelFormat sourceFormat = PF_UNKNOWN;
+		//// Pixel format
+		//PixelFormat sourceFormat = PF_UNKNOWN;
 
 		if(header.pixelFormat.flags & DDPF_FOURCC)
 		{

@@ -42,7 +42,8 @@ spv_result_t ValidateEntryPoint(ValidationState_t& _, const Instruction* inst) {
     const auto entry_point_type = _.FindDef(entry_point_type_id);
     if (!entry_point_type || 3 != entry_point_type->words().size()) {
       return _.diag(SPV_ERROR_INVALID_ID, inst)
-             << "OpEntryPoint Entry Point <id> '" << _.getIdName(entry_point_id)
+             << _.VkErrorID(4633) << "OpEntryPoint Entry Point <id> '"
+             << _.getIdName(entry_point_id)
              << "'s function parameter count is not zero.";
     }
   }
@@ -50,7 +51,8 @@ spv_result_t ValidateEntryPoint(ValidationState_t& _, const Instruction* inst) {
   auto return_type = _.FindDef(entry_point->type_id());
   if (!return_type || SpvOpTypeVoid != return_type->opcode()) {
     return _.diag(SPV_ERROR_INVALID_ID, inst)
-           << "OpEntryPoint Entry Point <id> '" << _.getIdName(entry_point_id)
+           << _.VkErrorID(4633) << "OpEntryPoint Entry Point <id> '"
+           << _.getIdName(entry_point_id)
            << "'s function return type is not void.";
   }
 
@@ -109,6 +111,44 @@ spv_result_t ValidateEntryPoint(ValidationState_t& _, const Instruction* inst) {
           return _.diag(SPV_ERROR_INVALID_DATA, inst)
                  << "Fragment execution model entry points can specify at most "
                     "one fragment shader interlock execution mode.";
+        }
+        if (execution_modes &&
+            1 < std::count_if(
+                    execution_modes->begin(), execution_modes->end(),
+                    [](const SpvExecutionMode& mode) {
+                      switch (mode) {
+                        case SpvExecutionModeStencilRefUnchangedFrontAMD:
+                        case SpvExecutionModeStencilRefLessFrontAMD:
+                        case SpvExecutionModeStencilRefGreaterFrontAMD:
+                          return true;
+                        default:
+                          return false;
+                      }
+                    })) {
+          return _.diag(SPV_ERROR_INVALID_DATA, inst)
+                 << "Fragment execution model entry points can specify at most "
+                    "one of StencilRefUnchangedFrontAMD, "
+                    "StencilRefLessFrontAMD or StencilRefGreaterFrontAMD "
+                    "execution modes.";
+        }
+        if (execution_modes &&
+            1 < std::count_if(
+                    execution_modes->begin(), execution_modes->end(),
+                    [](const SpvExecutionMode& mode) {
+                      switch (mode) {
+                        case SpvExecutionModeStencilRefUnchangedBackAMD:
+                        case SpvExecutionModeStencilRefLessBackAMD:
+                        case SpvExecutionModeStencilRefGreaterBackAMD:
+                          return true;
+                        default:
+                          return false;
+                      }
+                    })) {
+          return _.diag(SPV_ERROR_INVALID_DATA, inst)
+                 << "Fragment execution model entry points can specify at most "
+                    "one of StencilRefUnchangedBackAMD, "
+                    "StencilRefLessBackAMD or StencilRefGreaterBackAMD "
+                    "execution modes.";
         }
         break;
       case SpvExecutionModelTessellationControl:
@@ -223,13 +263,21 @@ spv_result_t ValidateEntryPoint(ValidationState_t& _, const Instruction* inst) {
                 }
               }
             }
+            if (i.opcode() == SpvOpExecutionModeId) {
+              const auto mode = i.GetOperandAs<SpvExecutionMode>(1);
+              if (mode == SpvExecutionModeLocalSizeId) {
+                ok = true;
+                break;
+              }
+            }
           }
           if (!ok) {
             return _.diag(SPV_ERROR_INVALID_DATA, inst)
+                   << _.VkErrorID(6426)
                    << "In the Vulkan environment, GLCompute execution model "
-                      "entry points require either the LocalSize execution "
-                      "mode or an object decorated with WorkgroupSize must be "
-                      "specified.";
+                      "entry points require either the LocalSize or "
+                      "LocalSizeId execution mode or an object decorated with "
+                      "WorkgroupSize must be specified.";
           }
         }
         break;
@@ -402,6 +450,13 @@ spv_result_t ValidateExecutionMode(ValidationState_t& _,
     case SpvExecutionModeSampleInterlockUnorderedEXT:
     case SpvExecutionModeShadingRateInterlockOrderedEXT:
     case SpvExecutionModeShadingRateInterlockUnorderedEXT:
+    case SpvExecutionModeEarlyAndLateFragmentTestsAMD:
+    case SpvExecutionModeStencilRefUnchangedFrontAMD:
+    case SpvExecutionModeStencilRefGreaterFrontAMD:
+    case SpvExecutionModeStencilRefLessFrontAMD:
+    case SpvExecutionModeStencilRefUnchangedBackAMD:
+    case SpvExecutionModeStencilRefGreaterBackAMD:
+    case SpvExecutionModeStencilRefLessBackAMD:
       if (!std::all_of(models->begin(), models->end(),
                        [](const SpvExecutionModel& model) {
                          return model == SpvExecutionModelFragment;
@@ -426,6 +481,10 @@ spv_result_t ValidateExecutionMode(ValidationState_t& _,
       break;
     case SpvExecutionModeLocalSize:
     case SpvExecutionModeLocalSizeId:
+      if (mode == SpvExecutionModeLocalSizeId && !_.IsLocalSizeIdAllowed())
+        return _.diag(SPV_ERROR_INVALID_DATA, inst)
+               << "LocalSizeId mode is not allowed by the current environment.";
+
       if (!std::all_of(models->begin(), models->end(),
                        [&_](const SpvExecutionModel& model) {
                          switch (model) {
@@ -457,28 +516,15 @@ spv_result_t ValidateExecutionMode(ValidationState_t& _,
   if (spvIsVulkanEnv(_.context()->target_env)) {
     if (mode == SpvExecutionModeOriginLowerLeft) {
       return _.diag(SPV_ERROR_INVALID_DATA, inst)
+             << _.VkErrorID(4653)
              << "In the Vulkan environment, the OriginLowerLeft execution mode "
                 "must not be used.";
     }
     if (mode == SpvExecutionModePixelCenterInteger) {
       return _.diag(SPV_ERROR_INVALID_DATA, inst)
+             << _.VkErrorID(4654)
              << "In the Vulkan environment, the PixelCenterInteger execution "
                 "mode must not be used.";
-    }
-  }
-
-  if (spvIsWebGPUEnv(_.context()->target_env)) {
-    if (mode != SpvExecutionModeOriginUpperLeft &&
-        mode != SpvExecutionModeDepthReplacing &&
-        mode != SpvExecutionModeDepthGreater &&
-        mode != SpvExecutionModeDepthLess &&
-        mode != SpvExecutionModeDepthUnchanged &&
-        mode != SpvExecutionModeLocalSize &&
-        mode != SpvExecutionModeLocalSizeHint) {
-      return _.diag(SPV_ERROR_INVALID_DATA, inst)
-             << "Execution mode must be one of OriginUpperLeft, "
-                "DepthReplacing, DepthGreater, DepthLess, DepthUnchanged, "
-                "LocalSize, or LocalSizeHint for WebGPU environment.";
     }
   }
 
@@ -496,13 +542,6 @@ spv_result_t ValidateMemoryModel(ValidationState_t& _,
               "the VulkanKHR memory model is used.";
   }
 
-  if (spvIsWebGPUEnv(_.context()->target_env)) {
-    if (_.addressing_model() != SpvAddressingModelLogical) {
-      return _.diag(SPV_ERROR_INVALID_DATA, inst)
-             << "Addressing model must be Logical for WebGPU environment.";
-    }
-  }
-
   if (spvIsOpenCLEnv(_.context()->target_env)) {
     if ((_.addressing_model() != SpvAddressingModelPhysical32) &&
         (_.addressing_model() != SpvAddressingModelPhysical64)) {
@@ -516,6 +555,15 @@ spv_result_t ValidateMemoryModel(ValidationState_t& _,
     }
   }
 
+  if (spvIsVulkanEnv(_.context()->target_env)) {
+    if ((_.addressing_model() != SpvAddressingModelLogical) &&
+        (_.addressing_model() != SpvAddressingModelPhysicalStorageBuffer64)) {
+      return _.diag(SPV_ERROR_INVALID_DATA, inst)
+             << _.VkErrorID(4635)
+             << "Addressing model must be Logical or PhysicalStorageBuffer64 "
+             << "in the Vulkan environment.";
+    }
+  }
   return SPV_SUCCESS;
 }
 

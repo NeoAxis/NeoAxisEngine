@@ -1,0 +1,8955 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.Scene
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"91347C196EB94D335DAA0C01081CFA07\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"09D1E3FB94E343984B80D4CE74E66D1D\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"91347C196EB94D335DAA0C01081CFA07\"><KP UN=\"91347C196EB94D335DAA0C01081CFA07\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"E6327D03DC9F4F3A6DA84782301DADDC\" S=\"False\"><CPD ObjPath=\"$Material\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	RenderingPipeline
+	{
+		GetByReference = "root:$Rendering Pipeline"
+	}
+	CameraEditor
+	{
+		GetByReference = "this:$Camera Editor"
+	}
+	CameraEditor2D
+	{
+		GetByReference = "this:$Camera Editor 2D"
+	}
+	CameraDefault
+	{
+		GetByReference = "root:$Camera general view"
+	}
+	.component NeoAxis.Camera
+	{
+		Name = Camera Editor
+		Visible = False
+		Transform = "17.7194951714431 -88.6986993292989 74.7276352293945; -0.365430548375177 0.278531458520047 0.706393346451301 0.538413578040381; 1 1 1"
+	}
+	.component NeoAxis.Camera
+	{
+		Name = Camera Editor 2D
+		Visible = False
+		Transform = "2.64918580053222 3.02745193504869 10; -0.502493739596367 0.497493760429674 0.497493760429674 0.502493739596367; 1 1 1"
+		Projection = Orthographic
+		Height = 16.8586419336498
+		FixedUp = 0 1 0
+		FarClipPlane = 100
+	}
+	.component NeoAxis.Light
+	{
+		Name = Ambient Light
+		Transform = "23.5216621200781 -134.500519267582 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
+		Type = Ambient
+		Brightness = 50000
+	}
+	.component NeoAxis.Light
+	{
+		Name = Directional Light
+		Transform = "23.4737008768449 -153.662335474671 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
+		Type = Directional
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 80
+		SpotlightOuterAngle = 91.429
+	}
+	.component NeoAxis.RenderingPipeline_Basic
+	{
+		Name = Rendering Pipeline
+		LODScale = 0.5
+		MinimumVisibleSizeOfObjects = 2
+		ShadowFarDistance = 300
+		ShadowIntensity = 0.5
+		.component NeoAxis.Component
+		{
+			Name = Background Effects
+		}
+		.component NeoAxis.Component
+		{
+			Name = Scene Effects
+			.component NeoAxis.RenderingEffect_AmbientOcclusion
+			{
+				Name = Ambient Occlusion
+			}
+			.component NeoAxis.RenderingEffect_MotionBlur
+			{
+				Name = Motion Blur
+			}
+			.component NeoAxis.RenderingEffect_Bloom
+			{
+				Name = Bloom
+			}
+			.component NeoAxis.RenderingEffect_LensEffects
+			{
+				Name = Lens Effects
+			}
+			.component NeoAxis.RenderingEffect_ToneMapping
+			{
+				Name = Tone Mapping
+				Intensity = 0.5
+			}
+			.component NeoAxis.RenderingEffect_ToLDR
+			{
+				Name = To LDR
+			}
+			.component NeoAxis.RenderingEffect_Antialiasing
+			{
+				Name = Antialiasing
+			}
+			.component NeoAxis.RenderingEffect_ResolutionUpscale
+			{
+				Name = Resolution Upscale
+			}
+			.component NeoAxis.RenderingEffect_Sharpen
+			{
+				Name = Sharpen
+			}
+		}
+		.component NeoAxis.Component
+		{
+			Name = Final Image Effects
+		}
+	}
+	.component NeoAxis.GameMode
+	{
+		Name = Game Mode
+		UseBuiltInCamera = ThirdPerson
+		ThirdPersonCameraHorizontalAngle = -90.00000000000009
+		CutsceneStarted = False
+		CutsceneGuiFadingFactor = 0
+		CutsceneGuiFadingSpeed = 0
+		ScreenFadingCurrentColor = 0 0 0 0
+		ScreenFadingTargetColor = 0 0 0 0
+		ScreenFadingSpeed = 0
+	}
+	.component NeoAxis.NetworkLogic
+	{
+		Name = Network Logic
+	}
+	.component NeoAxis.Material
+	{
+		Name = Material
+		Reflectance = 0
+		BaseColor
+		{
+			GetByReference = "this:$Shader graph\\$Node Texture Sample 1\\$Texture Sample\\RGBA"
+		}
+		.component NeoAxis.FlowGraph
+		{
+			Name = Shader graph
+			EditorScrollPosition = 0 0
+			Specialization
+			{
+				GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+			}
+			.component NeoAxis.FlowGraphNode
+			{
+				Name = Node Material
+				Position = 10 -7
+				ControlledObject
+				{
+					GetByReference = "this:..\\.."
+				}
+			}
+			.component NeoAxis.FlowGraphNode
+			{
+				Name = Node Texture Sample 1
+				Position = -18 -6
+				ControlledObject
+				{
+					GetByReference = "this:$Texture Sample"
+				}
+				.component NeoAxis.ShaderTextureSample
+				{
+					Name = Texture Sample
+					Location2 = 0 0
+					Location3 = 0 0 0
+					Texture
+					{
+						GetByReference = "Base\\UI\\Images\\Console.png"
+					}
+				}
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Ground
+		CanBeSelected = False
+		Transform = "0 0 0; 0 0 0 1; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 600 600
+				UVTilesPerUnit = 0.25 0.25
+			}
+		}
+	}
+	.component NeoAxis.Camera
+	{
+		Name = Camera general view
+		Transform = "19.6367036130846 -90.3970081864409 76.6453195976229; -0.369687147990249 0.272887777237146 0.71458492698928 0.52747706657743; 1 1 1"
+	}
+	.component NeoAxis.GroupOfObjects
+	{
+		Name = Group Of Objects
+		Objects = "UEsDBBQAAAAIAHUeWFbU430pfgsAAGggAAAEAAAAZmlsZa2ZeTRV6xvHDyopSpxSFBoUGROKc85+dxOZoquTYz5kqJuKhksp5zSZkmgQjSKlojQI17u3LW4Sl1RXQmWuLrc5CuXHPuvsrP3P75+91/pYz9rWsj7r+zzv3s9xZFjSS0ZGbugnGjC758nBFYTxkohRd/7+DR3+zYPn5xEiUc9qSucLaNTMAfNKDEFLlhMF9SeoSzx0byT//5L95cEa9thotu+g9UxNVD3msFbyaXvSIyW8DtnuLYPlroYcvv13fM52H6DjcIGCCQ85Wh4Ol6vHKAw6oB8eih91XJHkYZKRhWeUaMEa82Ro88YDVHyWBckvbCmY8BhFy8PP4Iu+SugSQn7mT9HhmrXE0C3iR2kLwrJ3Lnhm/xTGi73BtaYBZGXWKSCFCY/RtGwe7t3sGPRFDV21bOJeWzfSg3X0VSeSYqiJVdv9C1+3TuP1HBSB2wNiCiY8xtA8fIs3rN7nt5YYr14VppbgSPYlOq4ZH33gJWzyX8iRu2lYnPKOAxZjiRRMeMhTlSw5H15fvX/XnCdADwe9L79ibUd6vOQ1ISF4smXTFHV4Pd4GTBBoA1mHnRRMeIyl5dGZMDq/R3ctumT7qXTTfj7pMWp/Ot6XMRcKjxhiXTql2NKTkeDyriMUTHgo0PLQEaT3wU1u6KRq12TUYC3p8Um/BRfPeAnv1eRAmfqbeH/HFuCzeQcFEx7jaOelXuHWzdOWfFT1xTW2boTk3LalVuLtqmw44+V7eDFqBSjImgWyFmRSMOExnpaH6sNXjgKT31DbxIfxu1iSPEBhBbJ730NOj7w5ppTagARaBAHnZzwKJjwUaXm8ZTd77CzhoXfCtWs729cMe4jjuuqRkiZ1uD9CDotykANKqR6gYSCZggkPJVoen9scQvrPmRF1fkppeQGuZB5q6jWItmKtlcGGVHihyQOsUZQDvlctKJjwmEDL4/e0USsMrVwIuT49tyWtLmQekUgL7pp0Cb5T3A9Ffk3Ig++BoLLkBAUTHhNpefRG2OdlhS4g8nbeNv26QuKRFFKHE2Z6XI/BV0XL+0TAxT2Vo/xzN5DChIcyzWPaVY0Ftko8dJP8xagjcDXZF21+IpIW/bCQb6mBrQq4hnSMDQWXVlhTMOExieaxCSlxmoTYoy4CoRWxzpnMw0a5BX8brIqFtMfCDL3VeFDALvBlWygFEx4qtPf+DDfHRrtsJ+JS3qNwhbVupIfItR35GXuLM250BZxqug78ltqFjGlyBFKY8FCleewQqnVUltij2oI+EZLqTfYleGw2UvpqKq/zSk+Rc1AwmBtZijsq2wApTHiwR9TDHrqb5oz9uHgp0cltvPXAR7KPJV4swsthFCd2kWrRx1ARGNwcxfvkmQCkMOEx+VcepMdxR99xWwoWEh9b4q13GLiS+8cY1zv41Kq0IiKwD3ZbzwKmdSsAvuU0BRMeU2hzenVj/x0A7Aihtkdkjxaf9Oj3JXDZbj3I9q6BajP8wN0r7xGY7QOkMOGhRvOI2ZG9oeqSAtobsWQ9P8F92EN8rOw18jYmhGsQVQ/XsPeAgalqeNenzUAKEx5TaX25UnrI7HkjDy3SvHHovwTJXvitOQ0XdZ3lYjLTsVHpEcB3wSLE3TwGSGHCYxrN4/N7z4qCUgfUYBo/qaDdjfT4+u0JXrbQCDMbuF50dbGg+ObZscCInUrBhIf6iJqc087VG0MOuqDl0bVqlWxJX2SXfUT8y2M51VMMsPEZkcAklsDCvsYDKUx4aNDmw0Jj0bPnHlx0fO7zzZ3m3qRHk2o3/tYljnvuTwVM4y91cDjXHsi+41Ew4TGd1pcqsWaSjciBKNP1E0Xlkh4s4YMLuNtLWV6SazP0uSYCXOO3XN89J4AUJjxm0PL4+1hx+bFEN+KScrDlYxXBsAeq9qYNv16ex2043wYfrdkD+l5PQGI0PYAUJjw0R9TDHktOn/QIyTYnDnw/9IfzRi8yD/xROZ7p1wtdFz2HoXof8DGNvmDs+jgKJjy0aHl82a5ZTog5hMo97zNpm4WScxt4DhFMrocsYUx+cop98anxGiC+aiEFEx7atDzYj7wb9rkLidq+k+8ynck9iCV4dRLJ1A6FyxsEsGz5QfyOVhjIUDlKwYTHTNqcro9wMNpEeBNfXoV6rho6v0O30PV/tOLnD12BcxeEchuTpxbHbXMEmrtTKJjwmEXri266gnVitA+xviA8vzaL3JPF/aIXiOndrVzV9qfQOWwCuJ+wBpSv9aZgwmP2rzwk+2lM10mdzA3EAGc6V4ctJPsyZcJNJH62TNEbxR7YKBaC5Ue+Iivf2QEpTHjMGVEPeyD7fjh87wgkxIFzjacDyR70+GABIr7eY6Uz0x/Ki5uQVrkgcPfjfgomPHRofYn0X19sH25HXA4bbE6w8SU9Pty+ircaXoNl+uGc6Ucsi7famIBFrnwKJjzm0vqigRoaBRpbETw9l3ormwByPoxC25Az+525tZfToRVXBGLSkrE//7UFUpjwmEfzsOPnKfD/dSeO712/04y7jsxD9/ItvOngMm7X1U+wd7Q/aNR9g5yrswNSmPDQHVEPeygUxR4dk2eN9jpNdnMYR+bButv7FtlapsVdegGDEzfuBlrFuvhKr71AChMeerT5KGw8kuyGu6NPvBr+4eYHkX1x03yHs5FMLntwFrZumwu41zAR6OgHUjDhMZ/+HLPY9mHwpCzR2ZxzYeCG37AHsfHwa8RkzxSMFZfIORz9Az9hPvTcUL9AwYSHPs0jvF1vg471UlTxywanwr98yL40ncpAjoz9Bg0vCuCspoWcvkYReHsgjYIJDwNaX/DYlL/CIoToWc/BypWJkjnVmtaKs/mdsMZLBVO4NoDIunsD/JQHBRMehjSP543gJBz0Q6tfqNil+pEe4vOrW/A16y5BZLo8drEwF6+fGAISZ4somPAwonl87LaIBvPXoQ3yK0+905U8x6aY4vjEv8ugYlUU5OR8xf/ZJQQ3qrkUTHgY0+bj5Y+jvhfkA9HHzp51IVnu5JzOyO/CF3cQ3FyjuzC/SQRaP18r2hpwBkhhwsPklweZR2O35mgZjh/aJ9edFKsl2T8aE58gwc/SiqZVXoRKsZuBcVIhMhBoC6Qw4bFgRD3s0e/sFFmg7od+R19XH7tP/p+ONeFpE27L1+NpWddwDHR2gOxPSfgW5SgghQkP0195kB4fCp8G1xC+aN6eWvzEoBc5p+lR3biJPIRPYA53w9dlxc6xc4CR43kKJjwW0vK4ldzFcl8pQPsrboy630o+x8S81kZcMKeO86NuPjb6ehbiExYKytL3UjDhYUabj36xRrRNhQtqbbM0KOin5H37BvkPmTxQzO38oYn957MW3AsdD5rNnCiY8DD/5UHm0bZvomjpOGfUfpKLbIFd8LCHdkfnB9yiSwazbJXhmvRyitkphiBlUyYFEx4WI+phjyyWYJ/pfGc0/OKg0pdjkr5s8fqIK0dzsDrrKpj9eAaOJ+8GhsIDFEx4LKJ/35AROe+MMR89V2GsJNIiPVjjvrUMfR9VzzVzE0FHZAcYlDuKPK3cBaQw4bGYlseN5frZW235hOocudvayyXzEVTyDH+tj8GwPgVYsbuQGzj0nuNwEiiY8LCk5VF0+k6/V46QsJTVCS69LtmTfeOfIHFmtVztHA7mXxUKklmXEMU/PYEUJjysaHnMnV3+HNMKIK44FTQfE/qTn6Pkct/gcwLcYPssN1jsKcKPvwgDpmZxFEx4cGh5dJequuw3+p3Y63ru6tJU8v3CupV7H+/NqYdHb9fCNsccnuebSJCXb0nBhAeXdm6xTbn2g9O2EI1lYPyLFPJzFPop4wO+YowKplbtBqFKG27BCwB/iI9TMOHBG1EPeygLj8+KOudPmMd+z2dXepIeHbwWXP99JpxbNBMmrl5VjIWqgd31+ymY8PgfUEsBAhQAFAAAAAgAdR5YVtTjfSl+CwAAaCAAAAQAAAAAAAAAAAAAAAAAAAAAAGZpbGVQSwUGAAAAAAEAAQAyAAAAoAsAAAAA"
+		ObjectsZip = True
+		ObjectsVersion = 2
+		BaseObjects
+		{
+			Count = 2
+			0 "NeoAxis.Reference<NeoAxis.Component>"
+			{
+				GetByReference = "root:$Ground"
+			}
+			1 "NeoAxis.Reference<NeoAxis.Component>"
+			{
+				GetByReference = "root:$Terrain"
+			}
+		}
+		.component NeoAxis.GroupOfObjectsElement_Surface
+		{
+			Name = Surface Quercus robur
+			Collision = True
+			Surface
+			{
+				GetByReference = "Content\\Vegetation\\Models\\Woody plant\\Quercus robur\\Quercus robur.surface"
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle
+		Transform = "-103.628242566941 -48.260555377538 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 26
+		Transform = "-120.854155860433 -48.260555377538 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 38
+		Transform = "-183.024533545923 21.2873951114511 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 11
+		Transform = "-191.285462227917 -22.5308348805568 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 85
+		Transform = "-185.401875382538 -71.5125996083776 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 91
+		Transform = "-240.380544791934 -55.6310639418534 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 97
+		Transform = "-248.006534539709 20.0703248581718 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 3
+		Transform = "-105.480336452484 -10.6566719884505 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 27
+		Transform = "-112.242418341127 -43.8982044985686 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 39
+		Transform = "-130.622848229297 -43.8982044985686 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 6
+		Transform = "-114.092073971789 2.76373945199565 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 28
+		Transform = "-131.317987265281 2.76373945199565 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 40
+		Transform = "-183.024533545923 39.0701574308666 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 80
+		Transform = "-191.285462227917 -4.74807256114132 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 86
+		Transform = "-185.401875382538 -53.7298372889621 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 92
+		Transform = "-240.380544791934 -37.8483016224379 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 98
+		Transform = "-248.006534539709 37.8530871775873 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 10
+		Transform = "-105.480336452484 7.12609033096505 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 29
+		Transform = "-126.293521133504 49.7591889432983 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 41
+		Transform = "-174.412796026617 43.432508309836 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 81
+		Transform = "-182.673724708612 -0.385721682171919 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 87
+		Transform = "-176.790137863232 -49.3674864099927 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 93
+		Transform = "-231.768807272628 -33.4859507434685 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 99
+		Transform = "-239.394797020403 42.2154380565567 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 8
+		Transform = "-41.8646204920967 -48.9688500965484 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 30
+		Transform = "-59.0905337855886 -48.9688500965484 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 42
+		Transform = "-77.4709636737583 -48.9688500965484 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 21
+		Transform = "-33.2528829727911 -44.606499217579 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 31
+		Transform = "-50.478796266283 -44.606499217579 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 43
+		Transform = "-68.9368124092033 -2.23645926571219 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 4
+		Transform = "-117.679345359317 37.4090772854292 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 32
+		Transform = "-131.317987265281 -5.22402132690405 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 44
+		Transform = "-183.024533545923 31.0823966519669 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 82
+		Transform = "-191.285462227917 -12.735833340041 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 88
+		Transform = "-185.401875382538 -61.7175980678618 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 94
+		Transform = "-240.380544791934 -45.8360624013376 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 100
+		Transform = "-248.006534539709 29.8653263986876 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 22
+		Transform = "-105.480336452484 -0.861670447934653 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 33
+		Transform = "-126.293521133504 41.7714281643986 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 45
+		Transform = "-174.412796026617 35.4447475309363 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 83
+		Transform = "-182.673724708612 -8.37348246107162 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 89
+		Transform = "-176.790137863232 -57.3552471888924 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 95
+		Transform = "-231.768807272628 -41.4737115223682 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 101
+		Transform = "-239.394797020403 34.227677277657 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 7
+		Transform = "-114.092073971789 12.5587409925114 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 34
+		Transform = "-134.905258652809 55.1918396048447 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 46
+		Transform = "-183.024533545923 48.8651589713824 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 84
+		Transform = "-191.285462227917 5.04692897937448 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 90
+		Transform = "-185.401875382538 -43.9348357484463 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 96
+		Transform = "-240.380544791934 -28.0533000819221 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 102
+		Transform = "-248.006534539709 47.6480887181031 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 23
+		Transform = "-33.2528829727911 -53.8155228153992 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 35
+		Transform = "-50.478796266283 -53.8155228153992 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 47
+		Transform = "-68.8592261544527 -53.8155228153992 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 9
+		Transform = "-41.9422067468473 3.19619139583422 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 36
+		Transform = "-59.1681200403392 3.19619139583422 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 48
+		Transform = "-77.5485499285089 3.19619139583422 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 24
+		Transform = "-33.3304692275417 7.55854227480361 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 37
+		Transform = "-50.5563825210336 7.55854227480361 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 49
+		Transform = "-68.9368124092033 7.55854227480361 0.326127423377496; -0.00000575287276661 -0.0004657493554987 -0.00000042480064621 0.999999940395355; 1 1 1"
+		Color = 0.396 1 0.3890196
+		Collision = True
+		Health = 300
+		Team = 1
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 2
+		Transform = "40.4135263917919 -4.27834144081564 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 50
+		Transform = "56.8536701980156 -4.27834144081564 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 60
+		Transform = "73.9688349276843 -4.27834144081564 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 16
+		Transform = "31.9769248875499 -20.9663130247218 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 51
+		Transform = "47.2986232144263 -9.6732005967808 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 61
+		Transform = "64.413787944095 -9.6732005967808 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 12
+		Transform = "41.5319718711392 -24.8856055285592 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 52
+		Transform = "57.9721156773629 -24.8856055285592 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 62
+		Transform = "75.0872804070316 -24.8856055285592 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 17
+		Transform = "31.9769248875499 -30.2804646845244 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 53
+		Transform = "58.4509031830942 -53.0451564977334 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 63
+		Transform = "131.297550776804 1.06946112114011 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 103
+		Transform = "182.081606900037 64.6806288541271 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 13
+		Transform = "51.5658063604598 -57.0917547018781 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 54
+		Transform = "68.0059501666835 -57.0917547018781 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 64
+		Transform = "162.599654467375 10.6365317313568 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 104
+		Transform = "191.636653883626 60.6340306499824 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 18
+		Transform = "31.9769248875499 -39.7219220446342 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 55
+		Transform = "58.4509031830942 -62.4866138578432 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 65
+		Transform = "153.044607483786 5.24167257539172 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 105
+		Transform = "182.081606900037 55.2391714940173 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 14
+		Transform = "51.5658063604598 -65.6507479744735 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 70
+		Transform = "114.205874811503 -58.0809614255572 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 110
+		Transform = "243.791610270495 17.7703593933963 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 116
+		Transform = "242.761469272423 -44.0911071943868 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 56
+		Transform = "68.0059501666835 -65.6507479744735 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 66
+		Transform = "162.599654467375 2.07753845876142 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 106
+		Transform = "191.636653883626 52.075037377387 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 19
+		Transform = "31.9769248875499 -48.2809153172296 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 71
+		Transform = "104.650827827914 -63.4758205815224 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 111
+		Transform = "234.236563286906 12.3755002374312 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 117
+		Transform = "233.206422288834 -49.4859663503519 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 57
+		Transform = "58.4509031830942 -71.0456071304386 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 72
+		Transform = "121.090971634137 -63.4758205815224 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 67
+		Transform = "153.044607483786 -3.31732069720368 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 107
+		Transform = "182.081606900037 46.6801782214219 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 73
+		Transform = "153.35833420515 -55.4095042894601 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 15
+		Transform = "51.5658063604598 -73.5745054956885 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 74
+		Transform = "114.205874811503 -66.0047189467722 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 112
+		Transform = "243.791610270495 9.84660187218129 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 118
+		Transform = "242.761469272423 -52.0148647156018 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 58
+		Transform = "123.737433030725 -19.459887876815 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 108
+		Transform = "174.521489153957 44.151279856172 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 75
+		Transform = "145.798216459071 -57.93840265471 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 68
+		Transform = "162.599654467375 -5.84621906245359 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 76
+		Transform = "162.913381188739 -57.93840265471 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 20
+		Transform = "104.650827827914 -53.5323026375673 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 113
+		Transform = "234.236563286906 22.3190181813862 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 119
+		Transform = "233.206422288834 -39.5424484063969 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 77
+		Transform = "104.650827827914 -71.3995781027375 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 114
+		Transform = "234.236563286906 4.45174271621608 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 120
+		Transform = "233.206422288834 -57.409723871567 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 59
+		Transform = "121.090971634137 -53.5323026375673 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 115
+		Transform = "250.67670709313 22.3190181813862 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 121
+		Transform = "249.646566095058 -39.5424484063969 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 78
+		Transform = "136.243169475481 -63.3332618106752 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 69
+		Transform = "153.044607483786 -11.2410782184188 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 109
+		Transform = "182.081606900037 38.7564207002068 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 79
+		Transform = "153.35833420515 -63.3332618106752 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 5
+		Transform = "40.4135263917919 31.0628863944185 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+	.component NeoAxis.Vehicle
+	{
+		Name = Vehicle 25
+		Transform = "38.7233888126458 39.9514689090187 0.326127423377496; 0.0004657493554987 -0.00000575287276661 0.999999940395355 0.00000042480064627; 1 1 1"
+		Color = 1 0.228 0.2210196
+		Collision = True
+		Health = 300
+		Team = 2
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ObjectsOnSeats
+		{
+			Count = 0
+		}
+		.component NeoAxis.VehicleAI
+		{
+			Name = Vehicle AI
+			CombatMode = True
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform
+			{
+				GetByReference = "this:$Attach Transform Offset\\Result"
+			}
+			Mesh
+			{
+				GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
+			}
+			ReplaceMaterialSelectively
+			{
+				Count = 0
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Samples\\Battle Demo\\Objects\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.MeshInSpaceAnimationController
+			{
+				Name = Mesh In Space Animation Controller
+				InterpolationTime = 0.05
+			}
+			.component NeoAxis.TransformOffset
+			{
+				Name = Attach Transform Offset
+				PositionOffset = 0.134149983147607 -0.00003934403688177 1.03472498367689
+				RotationOffset = 0.00000575287361009 0.0004657494237867 0.0000004248007085 0.999999891522093
+				ScaleOffset = 0.999999999999916 1 0.999999999999915
+				Source
+				{
+					GetByReference = "this:..\\..\\Transform"
+				}
+			}
+		}
+	}
+}

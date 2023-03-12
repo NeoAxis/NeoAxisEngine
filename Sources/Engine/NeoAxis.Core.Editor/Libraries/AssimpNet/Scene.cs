@@ -43,6 +43,7 @@ namespace Internal.Assimp
         private List<Animation> m_animations;
         private List<Material> m_materials;
         private Metadata m_metadata;
+        //private String m_name;
 
         /// <summary>
         /// Gets or sets the state of the imported scene. By default no flags are set, but
@@ -290,6 +291,21 @@ namespace Internal.Assimp
             }
         }
 
+        ///// <summary>
+        ///// Gets or sets the name of the scene.
+        ///// </summary>
+        //public String Name
+        //{
+        //    get
+        //    {
+        //        return m_name;
+        //    }
+        //    set
+        //    {
+        //        m_name = value;
+        //    }
+        //}
+
         /// <summary>
         /// Constructs a new instance of the <see cref="Scene"/> class.
         /// </summary>
@@ -304,6 +320,17 @@ namespace Internal.Assimp
             m_animations = new List<Animation>();
             m_materials = new List<Material>();
             m_metadata = new Metadata();
+            //m_name = String.Empty;
+        }
+
+        /// <summary>
+        /// Constructs a new instance of the <see cref="Scene"/> class.
+        /// </summary>
+        /// <param name="name">Name of the scene</param>
+        public Scene(String name)
+            : this()
+        {
+            //m_name = name;
         }
 
         /// <summary>
@@ -421,6 +448,8 @@ namespace Internal.Assimp
             nativeValue.Textures = IntPtr.Zero;
             nativeValue.Animations = IntPtr.Zero;
             nativeValue.Metadata = IntPtr.Zero;
+            //nativeValue.Name = new AiString(m_name);
+            //nativeValue.Skeletons = IntPtr.Zero;
             nativeValue.PrivateData = IntPtr.Zero;
 
             nativeValue.NumMaterials = (uint) MaterialCount;
@@ -429,9 +458,10 @@ namespace Internal.Assimp
             nativeValue.NumCameras = (uint) CameraCount;
             nativeValue.NumTextures = (uint) TextureCount;
             nativeValue.NumAnimations = (uint) AnimationCount;
+            //nativeValue.NumSkeletons = 0;
 
             //Write materials
-            if(nativeValue.NumMaterials > 0)
+            if (nativeValue.NumMaterials > 0)
                 nativeValue.Materials = MemoryHelper.ToNativeArray<Material, AiMaterial>(m_materials.ToArray(), true);
 
             //Write scenegraph
@@ -472,6 +502,7 @@ namespace Internal.Assimp
             Clear();
 
             m_flags = nativeValue.Flags;
+            //m_name = AiString.GetString(nativeValue.Name); //Avoid struct copy
 
             //Read materials
             if(nativeValue.NumMaterials > 0 && nativeValue.Materials != IntPtr.Zero)

@@ -1,4 +1,5 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿#if !DEPLOY
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,6 +10,7 @@ namespace NeoAxis.Editor
 	{
 		ProcedureUI.Button buttonUpdate;
 		ProcedureUI.Button buttonInfo;
+		ProcedureUI.Button buttonExecute;
 
 		//
 
@@ -25,7 +27,19 @@ namespace NeoAxis.Editor
 			buttonInfo = ProcedureForm.CreateButton( Translate( "Info" ) );
 			buttonInfo.Click += ButtonInfo_Click;
 
+			buttonExecute = ProcedureForm.CreateButton( Translate( "Execute" ) );
+			buttonExecute.Click += ButtonExecute_Click;
+
 			ProcedureForm.AddRow( new ProcedureUI.Control[] { buttonUpdate, buttonInfo } );
+			ProcedureForm.AddRow( new ProcedureUI.Control[] { buttonExecute } );
+		}
+
+		protected override void OnUpdate()
+		{
+			base.OnUpdate();
+
+			if( buttonExecute != null )
+				buttonExecute.Enabled = Script.CompiledScript != null;
 		}
 
 		[Browsable( false )]
@@ -101,5 +115,15 @@ namespace NeoAxis.Editor
 			return text;
 		}
 		//!!!!обновлять Enabled
+
+		private void ButtonExecute_Click( ProcedureUI.Button sender )
+		{
+			if( Script?.CompiledScript != null )
+			{
+				if( EditorMessageBox.ShowQuestion( "Execute the script?", EMessageBoxButtons.OKCancel ) == EDialogResult.OK )
+					Script.Invoke();
+			}
+		}
 	}
 }
+#endif

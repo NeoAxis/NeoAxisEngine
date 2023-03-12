@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using Internal.SharpBgfx;
@@ -8,12 +8,12 @@ namespace NeoAxis
 	/// <summary>
 	/// Specifies the material settings when rendering.
 	/// </summary>
-	public class GpuMaterialPass// : ThreadSafeDisposable
+	public class GpuMaterialPass
 	{
+		Material.CompiledMaterialData owner;
+		GpuLinkedProgram linkedProgram;
 		//GpuProgram vertexProgram;
 		//GpuProgram fragmentProgram;
-
-		GpuLinkedProgram linkedProgram;
 
 		//bool lighting = false;
 		SceneBlendFactor sourceBlendFactor = SceneBlendFactor.One;
@@ -25,7 +25,6 @@ namespace NeoAxis
 		bool depthWrite = true;
 		CompareFunction depthFunction = CompareFunction.LessEqual;
 		CullingMode cullingMode = CullingMode.Clockwise;
-		//!!!!в D3D11 нет. еще там вроде баг "!!!!bug?"
 		//CompareFunction alphaRejectFunction = CompareFunction.AlwaysPass;
 		//int alphaRejectValue = 0;
 		//!!!!в bgfx нет
@@ -80,71 +79,23 @@ namespace NeoAxis
 
 		////////////
 
-		internal unsafe GpuMaterialPass( /*OgrePass* realObject, */GpuLinkedProgram linkedProgram )
+		public GpuMaterialPass( Material.CompiledMaterialData owner, GpuProgram vertexProgram, GpuProgram fragmentProgram )
 		{
-			this.linkedProgram = linkedProgram;
+			this.owner = owner;
 
-			//this.realObject = realObject;
-
-			////init programs
-			//this.programs = programs;
-			//for( int n = 0; n < programs.Length; n++ )
-			//{
-			//	_old_GpuProgramType type = (_old_GpuProgramType)n;
-			//	if( programs[ n ] != null )
-			//		OgrePass.setProgram( realObject, type, programs[ n ].Name );
-			//}
-
-			////compile, prepare parameters
-			//OgrePass.compile( realObject );
-			////!!!!!check error
-
-			////get available parameters
-			//{
-			//	int count = OgrePass.getAvailableParameterCount( realObject );
-			//	availableParameters = new AvailableParameterItem[ count ];
-			//	for( int n = 0; n < count; n++ )
-			//	{
-			//		IntPtr namePointer;
-			//		ParameterType type;
-			//		int elementCount;
-			//		OgrePass.getAvailableParameterInfo( realObject, n, out namePointer, out type, out elementCount );
-
-			//		AvailableParameterItem item = new AvailableParameterItem();
-			//		item.name = OgreNativeWrapper.GetOutString( namePointer );
-			//		item.type = type;
-			//		item.elementCount = elementCount;
-			//		availableParameters[ n ] = item;
-			//	}
-			//}
+			//!!!!может не сразу получать
+			linkedProgram = GpuProgramManager.GetLinkedProgram( vertexProgram, fragmentProgram );
 		}
 
-		///// <summary>Releases the resources that are used by the object.</summary>
-		//protected override void OnDispose()
+		//internal unsafe GpuMaterialPass( GpuLinkedProgram linkedProgram )
 		//{
-		//	//unsafe
-		//	//{
-		//	//	if( realObject != null )
-		//	//	{
-		//	//		//after shutdown check
-		//	//		if( RendererWorld.Disposed )
-		//	//		{
-		//	//			//waiting for .NET Standard 2.0
-		//	//			Log.Fatal( "Renderer: Dispose after Shutdown." );
-		//	//			//Log.Fatal( "Renderer: Dispose after Shutdown: {0}()", System.Reflection.MethodInfo.GetCurrentMethod().Name );
-		//	//		}
-
-		//	//		EngineThreading.ExecuteFromMainThreadLater( delegate ( IntPtr ptr )
-		//	//		{
-		//	//			OgrePass.Delete( (void*)ptr );
-		//	//		}, (IntPtr)realObject );
-
-		//	//		realObject = null;
-		//	//	}
-		//	//}
-
-		//	//base.OnDispose();
+		//	this.linkedProgram = linkedProgram;
 		//}
+
+		public Material.CompiledMaterialData Owner
+		{
+			get { return owner; }
+		}
 
 		/// <summary>
 		/// Gets or sets the source blend factor.
@@ -288,24 +239,6 @@ namespace NeoAxis
 				needUpdate = true;
 			}
 		}
-
-		///// <summary>
-		///// Gets or sets whether or not dynamic lighting is enabled.
-		///// </summary>
-		///// <remarks>
-		///// <para>
-		///// If <b>true</b>, dynamic lighting is performed on geometry with normals supplied, 
-		///// geometry without normals will not be displayed.
-		///// </para>
-		///// <para>
-		///// If <b>false</b>, no lighting is applied and all geometry will be full brightness.
-		///// </para>
-		///// </remarks>
-		//public bool Lighting
-		//{
-		//	get { return lighting; }
-		//	set { lighting = value; }
-		//}
 
 		/// <summary>
 		/// Gets or sets the culling mode for this pass based on the 'vertex winding'.
@@ -591,96 +524,6 @@ namespace NeoAxis
 		//	return false;
 		//}
 
-		//!!!!
-		//public unsafe void TEMP_setParameterValue( string name, void* data, int dataSizeInBytes )
-		//{
-		//	//!!!!!пока так
-		//	EngineThreading.CheckMainThread();
-
-		//	unsafe
-		//	{
-		//		OgrePass.TEMP_setParameterValue( realObject, name, data, dataSizeInBytes );
-		//	}
-		//}
-
-		//!!!!
-		//public unsafe void TEMP_setParameterValueTexture( string name, GpuTexture texture, TextureAddressingMode addressingMode,
-		//	FilterOption filteringMin, FilterOption filteringMag, FilterOption filteringMip, ColorValue borderColor )
-		//{
-		//	//!!!!!пока так
-		//	EngineThreading.CheckMainThread();
-
-		//	unsafe
-		//	{
-		//		OgrePass.TEMP_setParameterValueTexture( realObject, name, texture.realObjectPtr, addressingMode, filteringMin, filteringMag, filteringMip, ref borderColor );
-		//	}
-		//}
-
-		//!!!!
-		//public unsafe void TEMP_SetParameterValues( IList<ParameterContainer> additionalContainers )
-		//{
-		//	//!!!!!пока так
-		//	EngineThreading.CheckMainThread();
-
-		//	List<ParameterContainer> allContainers = new List<ParameterContainer>();
-		//	if( constantParameterValues != null )
-		//		allContainers.Add( constantParameterValues );
-		//	allContainers.AddRange( additionalContainers );
-
-		//	foreach( AvailableParameterItem item in AvailableParameters )
-		//	{
-		//		ParameterContainer.ParameterItem containerItem = GetValueFromContainers( allContainers, item.name );
-		//		if( containerItem == null )
-		//		{
-		//			//!!!!!
-		//			Log.Fatal( "Parameter value with name \'{0}\' is not exists in containers.", item.name );
-		//		}
-
-		//		if( ParameterTypeUtils.IsTexture( item.type ) )
-		//		{
-		//			//!!!!arrays
-
-		//			//GpuMaterialPass.TextureParameterValue textureValue = null;
-		//			//if( value.GetType().IsArray )
-		//			//{
-		//			//	Array array = (Array)value;
-		//			//	if( array.GetLength( 0 ) > 0 )
-		//			//		textureValue = array.GetValue( 0 ) as GpuMaterialPass.TextureParameterValue;
-		//			//}
-		//			//else
-		//			//	textureValue = value as GpuMaterialPass.TextureParameterValue;
-
-
-		//			TextureParameterValue v = (TextureParameterValue)containerItem.Value;
-
-		//			//!!!! var d = v.texture != null ? v.texture.Result : null;
-		//			var d = ResourceUtils.GetTextureCompiledData( v.texture );
-		//			if( d == null )
-		//			{
-		//				//!!!!!
-
-		//				d = ResourceUtils.WhiteTexture2D.Result;
-
-		//				//Log.Fatal( "impl" );
-		//			}
-
-		//			TEMP_setParameterValueTexture( item.name, d, v.addressingMode, v.filteringMin, v.filteringMag, v.filteringMip, v.borderColor );
-		//		}
-		//		else //!!!!проверить, если что-то совсем не то в контейнере лежит. не поддерживаемое что-то
-		//		{
-		//			byte[] a = new byte[ containerItem.GetTotalSizeInBytes() ];
-		//			containerItem.GetValue( a, 0 );
-		//			fixed ( byte* pA = a )
-		//			{
-		//				TEMP_setParameterValue( item.name, pA, a.Length );
-		//			}
-		//		}
-		//	}
-
-		//	//!!!!!!
-		//	OgrePass.TEMP_applyParameterValues( realObject );
-		//}
-
 		//!!!!not used
 		//public ParameterContainer ConstantParameterValues
 		//{
@@ -927,7 +770,7 @@ namespace NeoAxis
 
 		}
 
-		internal void RenderingProcess_SetRenderState( RenderOperationType renderOperation, bool canWriteRGBA )
+		internal void RenderingProcess_SetRenderState( RenderOperationType renderOperation, bool canWriteRGBA, bool voxelRendering )
 		{
 			if( needUpdate )
 				Update();
@@ -949,44 +792,16 @@ namespace NeoAxis
 			if( !canWriteRGBA )
 				state &= ~( RenderState.WriteRGB | RenderState.WriteA );
 
+			if( voxelRendering )
+			{
+				state &= ~( RenderState.NoCulling | RenderState.CullCounterclockwise );
+				state |= RenderState.CullClockwise;
+			}
+
 			Bgfx.SetRenderState( state, colorRGBA );
 
 			//Bgfx.SetRenderState( cachedState | renderOperationState | RenderState.Multisampling, colorRGBA );
 		}
-
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-		public GpuMaterialPass( GpuProgram vertexProgram, GpuProgram fragmentProgram )
-		{
-			//!!!!может не сразу получать
-			linkedProgram = GpuProgramManager.GetLinkedProgram( vertexProgram, fragmentProgram );
-		}
-
-		////!!!!!возможность свободные пассы создавать?
-		////!!!!!more program types
-		//public static GpuMaterialPass CreatePass( GpuLinkedProgram linkedProgram )
-		//{
-		//	var pass = new GpuMaterialPass( linkedProgram );
-		//	return pass;
-
-		//	////!!!!!!пока так
-		//	//EngineThreading.CheckMainThread();
-
-		//	//unsafe
-		//	//{
-		//	//	OgrePass* realPass = (OgrePass*)OgrePass.New();
-		//	//	_old_GpuProgram[] programs = new _old_GpuProgram[] { vertexProgram, fragmentProgram, geometryProgram };
-		//	//	GpuMaterialPass pass = new GpuMaterialPass( realPass, programs );
-		//	//	//passes.Add( pass );
-		//	//	return pass;
-		//	//}
-		//}
-
-		//public static GpuMaterialPass CreatePass( GpuProgram vertexProgram, GpuProgram fragmentProgram )//, GpuProgram geometryProgram = null )
-		//{
-		//	var linkedProgram = GpuProgramManager.GetLinkedProgram( vertexProgram, fragmentProgram );
-		//	return CreatePass( linkedProgram );
-		//}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -994,18 +809,31 @@ namespace NeoAxis
 	public struct GpuMaterialPassGroup
 	{
 		public GpuMaterialPass Usual;
+		public GpuMaterialPass Voxel;
+		//public GpuMaterialPass Virtualized;
 		public GpuMaterialPass Billboard;
 
 		//
 
-		public GpuMaterialPass Get( bool billboard )
+		public GpuMaterialPass Get( bool voxel/*, bool virtualized*/, bool billboard )
 		{
-			return billboard ? Billboard : Usual;
+			if( voxel )
+				return Voxel;
+			//else if( virtualized )
+			//	return Virtualized;
+			else if( billboard )
+				return Billboard;
+			else
+				return Usual;
 		}
 
-		public void Set( GpuMaterialPass pass, bool billboard )
+		public void Set( GpuMaterialPass pass, bool voxel, /*bool virtualized, */bool billboard )
 		{
-			if( billboard )
+			if( voxel )
+				Voxel = pass;
+			//else if( virtualized )
+			//	Virtualized = pass;
+			else if( billboard )
 				Billboard = pass;
 			else
 				Usual = pass;

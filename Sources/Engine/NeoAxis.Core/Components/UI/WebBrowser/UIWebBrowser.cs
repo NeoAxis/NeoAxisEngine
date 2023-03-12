@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
@@ -8,8 +8,8 @@ using System.IO;
 #if !NO_UI_WEB_BROWSER
 using Internal.Xilium.CefGlue;
 using NeoAxis.UIWebBrowserControl;
-#endif
 using System.Windows.Forms;
+#endif
 
 #pragma warning disable CS0169
 #pragma warning disable CS0067
@@ -45,7 +45,9 @@ namespace NeoAxis
 		Vector2I renderBufferForSize;
 		bool renderBufferNeedUpdate;
 
+#if !NO_UI_WEB_BROWSER
 		volatile Cursor currentCursor;
+#endif
 
 		/////////////////////////////////////////
 
@@ -272,7 +274,10 @@ namespace NeoAxis
 			}
 
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
-				NativeUtility.PreloadLibrary( Path.Combine( "CefGlue", "libcef" ) );
+			{
+				if( NativeUtility.PreloadLibrary( Path.Combine( "CefGlue", "libcef" ), errorFatal: false ) == IntPtr.Zero )
+					return;
+			}
 
 			//delete log file
 			string realLogFileName = VirtualPathUtility.GetRealPathByVirtual( "user:Logs\\UIWebBrowser_CefGlue.log" );
@@ -387,17 +392,8 @@ namespace NeoAxis
 
 				var client = new WebClient( this );
 
-				var settings = new CefBrowserSettings
-				{
-					// AuthorAndUserStylesDisabled = false,
-				};
-
-				//string r = GetURLFromVirtualFileName( "Maps\\Engine Features Demo\\Resources\\GUI\\FileTest.html" );
-				//r = PathUtils.GetRealPathByVirtual( "Maps\\Engine Features Demo\\Resources\\GUI\\FileTest.html" );
-				//CefBrowserHost.CreateBrowser( windowInfo, client, settings, r );//"about:blank" );
-				//if( !string.IsNullOrEmpty( startUrl ) )
-				//   LoadURL( startUrl );
-				//LoadFileByVirtualFileName( "Maps\\Engine Features Demo\\Resources\\GUI\\FileTest.html" );
+				var settings = new CefBrowserSettings();
+				settings.WebGL = CefState.Disabled;
 
 				string url = "about:blank";
 				if( !string.IsNullOrEmpty( StartURL ) )
@@ -406,6 +402,7 @@ namespace NeoAxis
 					url = GetURLByFileName( StartFile );
 
 				CefBrowserHost.CreateBrowser( windowInfo, client, settings, url );
+
 
 				//CefBrowserHost.CreateBrowser( windowInfo, client, settings, "about:blank" );
 				//if( !string.IsNullOrEmpty( startFile ) )
@@ -1438,11 +1435,13 @@ namespace NeoAxis
 #endif
 		}
 
+#if !NO_UI_WEB_BROWSER
 		[Browsable( false )]
 		public Cursor CurrentCursor
 		{
 			get { return currentCursor; }
 		}
+#endif
 
 		public delegate void DownloadBeforeDelegate( UIWebBrowser sender, object/*CefDownloadItem*/ cefDownloadItem, string suggestedName, object/*CefBeforeDownloadCallback*/ cefBeforeDownloadCallback );
 		public event DownloadBeforeDelegate DownloadBefore;

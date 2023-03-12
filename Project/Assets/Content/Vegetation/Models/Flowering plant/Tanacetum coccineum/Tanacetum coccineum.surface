@@ -1,0 +1,59 @@
+// Made with NeoAxis Engine 2022.2.
+
+.component NeoAxis.Surface
+{
+	EditorCameraTransform = "1.04811459200945 -9.6992635692182 5.82207661945888; -0.22604544405605 0.20401697925733 0.707100398556008 0.638192412802089; 1 1 1"
+	.component NeoAxis.SurfaceGroupOfElements
+	{
+		Name = Group Young
+		Probability = 0.5
+		OccupiedAreaRadius = 0.25
+		RotateAroundItsAxis = True
+		MaxIncline = 5
+		ScaleRange = 0.7 1.3
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 1
+			ReceiveDecals = False
+			Mesh
+			{
+				GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Tanacetum coccineum\\Tanacetum coccineum 1 Group 2 Young.mesh"
+			}
+		}
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 2
+			ReceiveDecals = False
+			Mesh
+			{
+				GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Tanacetum coccineum\\Tanacetum coccineum 2 Group 2 Young.mesh"
+			}
+		}
+	}
+	.component NeoAxis.SurfaceGroupOfElements
+	{
+		Name = Group Mature
+		OccupiedAreaRadius = 0.5
+		RotateAroundItsAxis = True
+		MaxIncline = 5
+		ScaleRange = 0.7 1.3
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 1
+			ReceiveDecals = False
+			Mesh
+			{
+				GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Tanacetum coccineum\\Tanacetum coccineum 1 Group 3 Mature.mesh"
+			}
+		}
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 2
+			ReceiveDecals = False
+			Mesh
+			{
+				GetByReference = "Content\\Vegetation\\Models\\Flowering plant\\Tanacetum coccineum\\Tanacetum coccineum 2 Group 3 Mature.mesh"
+			}
+		}
+	}
+}

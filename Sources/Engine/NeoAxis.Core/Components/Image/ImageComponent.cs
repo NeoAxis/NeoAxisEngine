@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -11,9 +11,11 @@ namespace NeoAxis
 	/// Represents a 2D or cubemap image. The component is useful to make cubemap textures from 6 2D images.
 	/// </summary>
 	[ResourceFileExtension( "image" )]
+#if !DEPLOY
 	[EditorControl( typeof( ImageEditor ) )]
 	[Preview( typeof( ImagePreview ) )]
 	[PreviewImage( typeof( ImagePreviewImage ) )]
+#endif
 	public class ImageComponent : ResultCompile<GpuTexture>
 	{
 		/// <summary>

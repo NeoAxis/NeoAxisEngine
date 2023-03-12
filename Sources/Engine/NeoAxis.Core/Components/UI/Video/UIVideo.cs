@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -42,7 +42,7 @@ namespace NeoAxis
 					{
 						FileNameChanged?.Invoke( this );
 
-						if( EnabledInHierarchyAndIsNotResource && ParentContainer != null )
+						if( EnabledInHierarchyAndIsInstance && ParentContainer != null )
 							CreateOggFile();
 
 						if( oggFile == null )
@@ -141,7 +141,7 @@ namespace NeoAxis
 		{
 			base.OnEnabledInHierarchyChanged();
 
-			if( EnabledInHierarchyAndIsNotResource )
+			if( EnabledInHierarchyAndIsInstance )
 			{
 				PreloadNativeLibraries();
 

@@ -1,8 +1,6 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-using Internal.SharpBgfx;
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
-using System.Runtime.InteropServices;
-using System.Threading;
+using Internal.SharpBgfx;
 
 namespace NeoAxis
 {
@@ -12,19 +10,24 @@ namespace NeoAxis
 	public class GpuVertexBuffer : ThreadSafeDisposable
 	{
 		byte[] vertices;
-		Internal.SharpBgfx.VertexLayout vertexDeclaration;
+		VertexLayout vertexDeclaration;
 		int vertexSize;
 		int vertexCount;
 		int vertexCountActual;
 		GpuBufferFlags flags;
 
-		IDisposable nativeObject;
+		ushort nativeObjectHandle = ushort.MaxValue;
+		bool nativeObjectIsDynamicBuffer;
+		//VertexBuffer vertexBuffer;
+		//DynamicVertexBuffer dynamicVertexBuffer;
+		//IDisposable nativeObject;
+
 		bool dynamic_needUpdateNative;
 		double nativeObjectLastUsedTime;
 
 		//
 
-		internal unsafe GpuVertexBuffer( byte[] vertices, int vertexCount, Internal.SharpBgfx.VertexLayout vertexDeclaration, GpuBufferFlags flags )
+		internal unsafe GpuVertexBuffer( byte[] vertices, int vertexCount, VertexLayout vertexDeclaration, GpuBufferFlags flags )
 		{
 			lock( GpuBufferManager.vertexBuffers )
 				GpuBufferManager.vertexBuffers.Add( this );
@@ -36,7 +39,7 @@ namespace NeoAxis
 			this.flags = flags;
 			vertexSize = vertexDeclaration.Stride;
 
-			if( Flags.HasFlag( GpuBufferFlags.Dynamic ) )
+			if( ( Flags & GpuBufferFlags.Dynamic ) != 0 )
 			{
 				if( this.vertices == null )
 					this.vertices = new byte[ vertexCount * vertexSize ];
@@ -46,14 +49,26 @@ namespace NeoAxis
 
 		protected override void OnDispose()
 		{
-			if( nativeObject != null )
+			if( nativeObjectHandle != ushort.MaxValue )
 			{
 				//after shutdown check
 				if( RenderingSystem.Disposed )
 					Log.Fatal( "GpuVertexBuffer: Dispose after shutdown." );
-				EngineThreading.ExecuteFromMainThreadLater( delegate ( IDisposable obj ) { obj.Dispose(); }, nativeObject );
-				nativeObject = null;
+
+				DestroyNativeObject();
+				//EngineThreading.ExecuteFromMainThreadLater( delegate ( IDisposable obj ) { obj.Dispose(); }, nativeObject );
+				//nativeHandle = ushort.MaxValue;
 			}
+
+			//if( nativeObject != null )
+			//{
+			//	//after shutdown check
+			//	if( RenderingSystem.Disposed )
+			//		Log.Fatal( "GpuVertexBuffer: Dispose after shutdown." );
+			//	EngineThreading.ExecuteFromMainThreadLater( delegate ( IDisposable obj ) { obj.Dispose(); }, nativeObject );
+			//	nativeObject = null;
+			//	nativeHandle = 0;
+			//}
 
 			lock( GpuBufferManager.vertexBuffers )
 				GpuBufferManager.vertexBuffers.Remove( this );
@@ -66,7 +81,7 @@ namespace NeoAxis
 			get { return vertices; }
 		}
 
-		public Internal.SharpBgfx.VertexLayout VertexDeclaration
+		public VertexLayout VertexDeclaration
 		{
 			get { return vertexDeclaration; }
 		}
@@ -86,15 +101,35 @@ namespace NeoAxis
 			get { return flags; }
 		}
 
-		public IDisposable NativeObject
+		public ushort NativeObjectHandle
 		{
-			get { return nativeObject; }
+			get { return nativeObjectHandle; }
 		}
+
+		public bool NativeObjectCreated
+		{
+			get { return nativeObjectHandle != ushort.MaxValue; }
+		}
+
+		public bool NativeObjectIsDynamicBuffer
+		{
+			get { return nativeObjectIsDynamicBuffer; }
+		}
+
+		//public IDisposable NativeObject
+		//{
+		//	get { return nativeObject; }
+		//}
 
 		public void SetData( byte[] vertices, int vertexCountActual = -1 )
 		{
-			if( !( Flags.HasFlag( GpuBufferFlags.Dynamic ) || ( nativeObject == null && !Flags.HasFlag( GpuBufferFlags.Dynamic ) && !Flags.HasFlag( GpuBufferFlags.ComputeWrite ) ) ) )
+			var isDynamic = ( Flags & GpuBufferFlags.Dynamic ) != 0;
+			var isComputeWrite = ( Flags & GpuBufferFlags.ComputeWrite ) != 0;
+			if( !( isDynamic || ( !NativeObjectCreated && !isDynamic && !isComputeWrite ) ) )
 				Log.Fatal( "GpuVertexBuffer: SetData: The buffer must be dynamic or must be still not be created on GPU." );
+			//if( !( Flags.HasFlag( GpuBufferFlags.Dynamic ) || ( nativeObject == null && !Flags.HasFlag( GpuBufferFlags.Dynamic ) && !Flags.HasFlag( GpuBufferFlags.ComputeWrite ) ) ) )
+			//	Log.Fatal( "GpuVertexBuffer: SetData: The buffer must be dynamic or must be still not be created on GPU." );
+
 			if( this.vertices != null && vertices.Length != this.vertices.Length )
 				Log.Fatal( "GpuVertexBuffer: SetData: vertices.Length != this.vertices.Length." );
 
@@ -109,8 +144,11 @@ namespace NeoAxis
 
 		public void Write( IntPtr vertices, int vertexCount )
 		{
-			if( !( Flags.HasFlag( GpuBufferFlags.Dynamic ) || ( nativeObject == null && !Flags.HasFlag( GpuBufferFlags.Dynamic ) && !Flags.HasFlag( GpuBufferFlags.ComputeWrite ) ) ) )
+			var isDynamic = ( Flags & GpuBufferFlags.Dynamic ) != 0;
+			var isComputeWrite = ( Flags & GpuBufferFlags.ComputeWrite ) != 0;
+			if( !( isDynamic || ( !NativeObjectCreated && !isDynamic && !isComputeWrite ) ) )
 				Log.Fatal( "GpuVertexBuffer: Write: The buffer must be dynamic or must be still not be created on GPU." );
+
 			if( vertexCount > this.vertexCount )
 				Log.Fatal( "GpuIndexBuffer: Write: vertexCount > this.vertexCount." );
 			////change type to dynamic
@@ -133,7 +171,9 @@ namespace NeoAxis
 
 		public byte[] WriteBegin()
 		{
-			if( !( Flags.HasFlag( GpuBufferFlags.Dynamic ) || ( nativeObject == null && !Flags.HasFlag( GpuBufferFlags.Dynamic ) && !Flags.HasFlag( GpuBufferFlags.ComputeWrite ) ) ) )
+			var isDynamic = ( Flags & GpuBufferFlags.Dynamic ) != 0;
+			var isComputeWrite = ( Flags & GpuBufferFlags.ComputeWrite ) != 0;
+			if( !( isDynamic || ( !NativeObjectCreated && !isDynamic && !isComputeWrite ) ) )
 				Log.Fatal( "GpuVertexBuffer: WriteBegin: The buffer must be dynamic or must be still not be created on GPU." );
 			////change type to dynamic
 			//if( !dynamic && realObject != null )
@@ -148,74 +188,128 @@ namespace NeoAxis
 			vertexCountActual = vertexCount;
 		}
 
-		unsafe internal IDisposable GetNativeObject()
+		unsafe internal void UpdateNativeObject()
+		//unsafe internal IDisposable GetNativeObject()
 		{
 			if( Disposed )
 				Log.Fatal( "GpuVertexBuffer: GetNativeObject: Disposed." );
 
 			EngineThreading.CheckMainThread();
 
-			if( Flags.HasFlag( GpuBufferFlags.Dynamic ) || Flags.HasFlag( GpuBufferFlags.ComputeWrite ) )
+			if( ( Flags & ( GpuBufferFlags.Dynamic | GpuBufferFlags.ComputeWrite ) ) != 0 )
+			//if( ( ( Flags & GpuBufferFlags.Dynamic ) != 0 ) || ( ( Flags & GpuBufferFlags.ComputeWrite ) != 0 ) )
 			{
-				////delete old static when changed to dynamic
-				//if( realObject != null && realObject is SharpBgfx.VertexBuffer )
-				//{
-				//	realObject.Dispose();
-				//	realObject = null;
-				//}
-
-				if( nativeObject == null )
+				if( nativeObjectHandle == ushort.MaxValue )
 				{
-					var nativeFlags = Internal.SharpBgfx.BufferFlags.ComputeRead;// | SharpBgfx.BufferFlags.ComputeTypeFloat;
-					if( Flags.HasFlag( GpuBufferFlags.ComputeWrite ) )
-						nativeFlags |= Internal.SharpBgfx.BufferFlags.ComputeWrite;
+					BufferFlags nativeFlags = 0;
+					if( ( Flags & GpuBufferFlags.ComputeRead ) != 0 )
+						nativeFlags |= BufferFlags.ComputeRead;// | SharpBgfx.BufferFlags.ComputeTypeFloat;
+					if( ( Flags & GpuBufferFlags.ComputeWrite ) != 0 )
+						nativeFlags |= BufferFlags.ComputeWrite;
 
-					nativeObject = new Internal.SharpBgfx.DynamicVertexBuffer( vertexCount, vertexDeclaration, nativeFlags );
+					nativeObjectHandle = NativeMethods.bgfx_create_dynamic_vertex_buffer( vertexCount, ref vertexDeclaration.data, nativeFlags );
+					nativeObjectIsDynamicBuffer = true;
+
+					//var buffer = new DynamicVertexBuffer( vertexCount, vertexDeclaration, nativeFlags );
+					//nativeObject = buffer;
+					//nativeObjectHandle = buffer.handle;
 					dynamic_needUpdateNative = true;
 				}
 
-				if( !Flags.HasFlag( GpuBufferFlags.ComputeWrite ) )
+				if( ( Flags & GpuBufferFlags.ComputeWrite ) == 0 )
 				{
 					if( dynamic_needUpdateNative )
 					{
 						dynamic_needUpdateNative = false;
 
-						var buffer = (Internal.SharpBgfx.DynamicVertexBuffer)nativeObject;
-
 						fixed( byte* pVertices = vertices )
 						{
-							var memory = new Internal.SharpBgfx.MemoryBlock( pVertices, vertexCountActual * vertexSize );
-							buffer.Update( 0, memory );
+							var memory = new MemoryBlock( pVertices, vertexCountActual * vertexSize );
+							NativeMethods.bgfx_update_dynamic_vertex_buffer( nativeObjectHandle, 0, memory.ptr );
 						}
 
-						//var memory = RendererMemoryUtility.AllocateAutoReleaseMemoryBlock( new ArraySegment<byte>( vertices, 0, vertexCountActual * vertexSize ) );
-						//buffer.Update( 0, memory );
+						//var buffer = (DynamicVertexBuffer)nativeObject;
+						//fixed( byte* pVertices = vertices )
+						//{
+						//	var memory = new MemoryBlock( pVertices, vertexCountActual * vertexSize );
+						//	buffer.Update( 0, memory );
+						//}
+
+						////var memory = RendererMemoryUtility.AllocateAutoReleaseMemoryBlock( new ArraySegment<byte>( vertices, 0, vertexCountActual * vertexSize ) );
+						////buffer.Update( 0, memory );
 					}
 				}
+
+				//if( nativeObject == null )
+				//{
+				//	BufferFlags nativeFlags = 0;
+				//	if( ( Flags & GpuBufferFlags.ComputeRead ) != 0 )
+				//		nativeFlags |= BufferFlags.ComputeRead;// | SharpBgfx.BufferFlags.ComputeTypeFloat;
+				//	if( ( Flags & GpuBufferFlags.ComputeWrite ) != 0 )
+				//		nativeFlags |= BufferFlags.ComputeWrite;
+
+				//	zzzzz;
+				//	nativeObjectIsDynamicBuffer = true;
+
+				//	var buffer = new DynamicVertexBuffer( vertexCount, vertexDeclaration, nativeFlags );
+				//	nativeObject = buffer;
+				//	nativeObjectHandle = buffer.handle;
+				//	dynamic_needUpdateNative = true;
+				//}
+
+				//if( ( Flags & GpuBufferFlags.ComputeWrite ) == 0 )
+				//{
+				//	if( dynamic_needUpdateNative )
+				//	{
+				//		dynamic_needUpdateNative = false;
+
+				//		var buffer = (DynamicVertexBuffer)nativeObject;
+
+				//		fixed( byte* pVertices = vertices )
+				//		{
+				//			var memory = new MemoryBlock( pVertices, vertexCountActual * vertexSize );
+				//			buffer.Update( 0, memory );
+				//		}
+
+				//		//var memory = RendererMemoryUtility.AllocateAutoReleaseMemoryBlock( new ArraySegment<byte>( vertices, 0, vertexCountActual * vertexSize ) );
+				//		//buffer.Update( 0, memory );
+				//	}
+				//}
 			}
 			else
 			{
-				if( nativeObject == null )
+				if( nativeObjectHandle == ushort.MaxValue )// if( nativeObject == null )
 				{
 					var vertexDeclaration2 = vertexDeclaration;
 					var vertices2 = vertices;
 
-					//compress vertex data (static data only)
-					CompressVertices( ref vertexDeclaration2, ref vertices2, vertexCount );
+					//!!!!can convert normals, tangents to QTangent. but need to inform shader about format of the draw call
+					////compress vertex data (static data only)
+					//CompressVertices( ref vertexDeclaration2, ref vertices2, vertexCount );
 
 					fixed( byte* pVertices = vertices2 )
 					{
-						var memory = new Internal.SharpBgfx.MemoryBlock( pVertices, vertices2.Length );
-						nativeObject = new Internal.SharpBgfx.VertexBuffer( memory, vertexDeclaration2, Internal.SharpBgfx.BufferFlags.ComputeRead/* | SharpBgfx.BufferFlags.ComputeTypeFloat*/ );
+						var memory = new MemoryBlock( pVertices, vertices2.Length );
+
+						BufferFlags nativeFlags = 0;
+						if( ( Flags & GpuBufferFlags.ComputeRead ) != 0 )
+							nativeFlags |= BufferFlags.ComputeRead;// | SharpBgfx.BufferFlags.ComputeTypeFloat;
+
+						nativeObjectHandle = NativeMethods.bgfx_create_vertex_buffer( memory.ptr, ref vertexDeclaration2.data, nativeFlags );
+						nativeObjectIsDynamicBuffer = false;
+
+						//var buffer = new VertexBuffer( memory, vertexDeclaration2, nativeFlags );
+						//nativeHandle = buffer.handle;
+						//nativeObject = buffer;
 					}
 
 					//var memory = RendererMemoryUtility.AllocateAutoReleaseMemoryBlock( vertices );
-					//realObject = new Internal.SharpBgfx.VertexBuffer( memory, vertexDeclaration, Internal.SharpBgfx.BufferFlags.ComputeRead/* | SharpBgfx.BufferFlags.ComputeTypeFloat*/ );
+					//realObject = new VertexBuffer( memory, vertexDeclaration, BufferFlags.ComputeRead/* | SharpBgfx.BufferFlags.ComputeTypeFloat*/ );
 				}
 			}
 
 			nativeObjectLastUsedTime = EngineApp.EngineTime;
-			return nativeObject;
+			//return nativeObject;
 		}
 
 		public T[] ExtractChannel<T>( int startOffsetInBytes ) where T : unmanaged
@@ -782,73 +876,92 @@ namespace NeoAxis
 
 		public void DestroyNativeObject()
 		{
-			if( nativeObject != null )
+			if( nativeObjectHandle != ushort.MaxValue )
 			{
-				EngineThreading.ExecuteFromMainThreadLater( delegate ( IDisposable obj ) { obj.Dispose(); }, nativeObject );
-				nativeObject = null;
+				if( nativeObjectIsDynamicBuffer )
+				{
+					EngineThreading.ExecuteFromMainThreadLater( delegate ( ushort handle )
+					{
+						NativeMethods.bgfx_destroy_dynamic_vertex_buffer( handle );
+					}, nativeObjectHandle );
+				}
+				else
+				{
+					EngineThreading.ExecuteFromMainThreadLater( delegate ( ushort handle )
+					{
+						NativeMethods.bgfx_destroy_vertex_buffer( handle );
+					}, nativeObjectHandle );
+				}
+
+				nativeObjectHandle = ushort.MaxValue;
+				nativeObjectIsDynamicBuffer = false;
 			}
+
+			//if( nativeObject != null )
+			//{
+			//	EngineThreading.ExecuteFromMainThreadLater( delegate ( IDisposable obj ) { obj.Dispose(); }, nativeObject );
+			//	nativeObject = null;
+			//	nativeHandle = 0;
+			//}
 		}
 
 		public void DestroyNativeObjectNotUsedForLongTime( double howLongHasNotBeenUsedInSeconds )
 		{
-			if( nativeObject != null )
+			if( nativeObjectHandle != ushort.MaxValue ) //if( nativeObject != null )
 			{
 				if( EngineApp.EngineTime - nativeObjectLastUsedTime > howLongHasNotBeenUsedInSeconds )
 					DestroyNativeObject();
 			}
 		}
 
-		static void CompressVertices( ref VertexLayout layout, ref byte[] vertices, int vertexCount )
-		{
-			var mode = RenderingSystem.CompressVertices;
-			if( mode != ProjectSettingsPage_Rendering.CompressVerticesEnum.Original )
-			{
-				//!!!!impl
+		//static void CompressVertices( ref VertexLayout layout, ref byte[] vertices, int vertexCount )
+		//{
+		//	var mode = RenderingSystem.CompressVertices;
+		//	if( mode != ProjectSettingsPage_Rendering.CompressVerticesEnum.Original )
+		//	{
+		//		//!!!!impl
 
-				////check need update
-				//var needUpdate = false;
-				//{
-				//	zzzzz;
-				//}
+		//		////check need update
+		//		//var needUpdate = false;
+		//		//{
+		//		//}
 
-				//if( needUpdate )
-				//{
-				//	var newLayout = new VertexLayout();
-				//	newLayout.Begin();
+		//		//if( needUpdate )
+		//		//{
+		//		//	var newLayout = new VertexLayout();
+		//		//	newLayout.Begin();
 
-				//	zzzzz;
-				//	//.Add( VertexAttributeUsage.Position, 3, VertexAttributeType.Float )
-				//	//.Add( VertexAttributeUsage.Color0, 4, VertexAttributeType.Float )
-				//	//.Add( VertexAttributeUsage.TexCoord0, 2, VertexAttributeType.Float )
+		//		//	//.Add( VertexAttributeUsage.Position, 3, VertexAttributeType.Float )
+		//		//	//.Add( VertexAttributeUsage.Color0, 4, VertexAttributeType.Float )
+		//		//	//.Add( VertexAttributeUsage.TexCoord0, 2, VertexAttributeType.Float )
 
 
-				//	newLayout.Add( zzzz );
+		//		//	newLayout.Add( zzzz );
 
-				//	newLayout.End();
-
-
-				//	var newVertexSize = newLayout.Stride;
-				//	var newVertices = new byte[ vertexCount * newVertexSize ];
+		//		//	newLayout.End();
 
 
-				//	//!!!!
-
-				//	//vertexDeclaration.HasAttribute
-
-				//	//for( int nAttrib = 0; nAttrib < zzzzzz; nAttrib++ )
-				//	//{
-
-				//	//	//vertexDeclaration
-
-				//	//	zzzzzzzz;
-				//	//}
+		//		//	var newVertexSize = newLayout.Stride;
+		//		//	var newVertices = new byte[ vertexCount * newVertexSize ];
 
 
-				//	layout = newLayout;
-				//	vertices = newVertices;
-				//}
-			}
-		}
+		//		//	//!!!!
+
+		//		//	//vertexDeclaration.HasAttribute
+
+		//		//	//for( int nAttrib = 0; nAttrib < zzzzzz; nAttrib++ )
+		//		//	//{
+
+		//		//	//	//vertexDeclaration
+
+		//		//	//}
+
+
+		//		//	layout = newLayout;
+		//		//	vertices = newVertices;
+		//		//}
+		//	}
+		//}
 
 	}
 }

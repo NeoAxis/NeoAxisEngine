@@ -1,14 +1,8 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using System.IO;
-using System.Drawing.Design;
-using Internal.BulletSharp;
-using Internal.BulletSharp.Math;
+using System.Text;
 
 namespace NeoAxis
 {
@@ -17,12 +11,12 @@ namespace NeoAxis
 	/// </summary>
 	public class CollisionShape_Mesh : CollisionShape
 	{
-		Vector3F[] processedVertices;
-		int[] processedIndices;
-		int[] processedTrianglesToSourceIndex;
+		//Vector3F[] processedVertices;
+		//int[] processedIndices;
+		//int[] processedTrianglesToSourceIndex;
 
 		//!!!!need delete?
-		TriangleIndexVertexArray indexVertexArrays;
+		//TriangleIndexVertexArray indexVertexArrays;
 
 		//!!!!все настройки
 		//PerTriangleMaterial[] perTriangleMaterials;
@@ -187,140 +181,346 @@ namespace NeoAxis
 			return vertices != null && vertices.Length != 0 && indices != null && indices.Length != 0;
 		}
 
-		protected internal override Internal.BulletSharp.CollisionShape CreateShape()
+		protected internal override void GetShapeKey( StringBuilder key )
+		{
+			base.GetShapeKey( key );
+
+			//get source geometry
+			if( !GetSourceData( out var sourceVertices, out var sourceIndices ) )
+				return;
+
+			key.Append( " mes " );
+			key.Append( sourceVertices.Length );
+			key.Append( ' ' );
+			key.Append( sourceIndices.Length );
+
+			{
+				var hash = 0;
+				for( int n = 0; n < sourceVertices.Length; n++ )
+					hash ^= sourceVertices[ n ].GetHashCode();
+				key.Append( ' ' );
+				key.Append( hash );
+			}
+			{
+				var hash = 0;
+				for( int n = 0; n < sourceIndices.Length; n++ )
+					hash ^= sourceIndices[ n ].GetHashCode();
+				key.Append( ' ' );
+				key.Append( hash );
+			}
+
+			if( sourceVertices.Length > 0 )
+			{
+				key.Append( ' ' );
+				key.Append( sourceVertices[ 0 ].ToString() );
+			}
+			if( sourceIndices.Length > 0 )
+			{
+				key.Append( ' ' );
+				key.Append( sourceIndices[ 0 ] );
+			}
+		}
+
+		protected unsafe internal override void CreateShape( Scene scene, IntPtr nativeShape, ref Vector3F position, ref QuaternionF rotation, ref Vector3F localScaling, ref Scene.PhysicsWorldClass.Shape.CollisionShapeData collisionShapeData )
 		{
 			var epsilon = 0.0001f;
 
 			//clear data
-			processedVertices = null;
-			processedIndices = null;
-			processedTrianglesToSourceIndex = null;
+			Vector3F[] processedVertices = null;
+			int[] processedIndices = null;
+			int[] processedTrianglesToSourceIndex = null;
 
 			//get source geometry
 			if( !GetSourceData( out var sourceVertices, out var sourceIndices ) )
-				return null;
+				return;// (null, null);
+
+
+			//!!!!multi materials
+
 
 			//check valid data
-			if( CheckValidData )
+			if( CheckValidData && !MathAlgorithms.CheckValidVertexIndexBuffer( sourceVertices.Length, sourceIndices, false ) )
 			{
-				if( !MathAlgorithms.CheckValidVertexIndexBuffer( sourceVertices.Length, sourceIndices, false ) )
-				{
-					Log.Info( "CollisionShape_Mesh: CreateShape: Invalid source data." );
-					return null;
-				}
+				Log.Info( "CollisionShape_Mesh: CreateShape: Invalid source data." );
+				return;
 			}
 
 			//process geometry
 			if( MergeEqualVerticesRemoveInvalidTriangles )
 			{
 				//!!!!slowly. later use cached precalculated bullet shape.
-				MathAlgorithms.MergeEqualVerticesRemoveInvalidTriangles( sourceVertices, sourceIndices, epsilon, epsilon, out processedVertices, out processedIndices, out processedTrianglesToSourceIndex );
+				MathAlgorithms.MergeEqualVerticesRemoveInvalidTriangles( sourceVertices, sourceIndices, epsilon, epsilon, true, true, out processedVertices, out processedIndices, out processedTrianglesToSourceIndex );
 			}
 			else
 			{
 				processedVertices = sourceVertices;
 				processedIndices = sourceIndices;
+				processedTrianglesToSourceIndex = null;
 			}
 
-			//create bullet shape
+			//!!!!slowly? IsMeshConvex for many objects. can pass parameters to the cache
+			var makeConvex = ShapeType.Value == ShapeTypeEnum.Auto && ParentRigidBody.MotionType.Value == PhysicsMotionType.Dynamic && MathAlgorithms.IsMeshConvex( processedVertices, processedIndices, epsilon ) || ShapeType.Value == ShapeTypeEnum.Convex;
 
-			if( ShapeType.Value == ShapeTypeEnum.Auto && ParentRigidBody.MotionType.Value == RigidBody.MotionTypeEnum.Dynamic && MathAlgorithms.IsMeshConvex( processedVertices, processedIndices, epsilon ) || ShapeType.Value == ShapeTypeEnum.Convex )
+			fixed( Vector3F* pProcessedVertices = processedVertices )
 			{
-				if( MathAlgorithms.IsPlaneMesh( processedVertices, processedIndices, epsilon ) )
+				fixed( int* pProcessedIndices = processedIndices )
 				{
-					Log.Info( "CollisionShape_Mesh: CreateShape: Unable to create shape as convex hull. All vertices on the one plane." );
-					return null;
+					if( makeConvex )
+					{
+						var convexRadius = scene.PhysicsAdvancedSettings ? scene.PhysicsDefaultConvexRadius.Value : Scene.physicsDefaultConvexRadiusDefault;
+
+						PhysicsNative.JShape_AddConvexHull( nativeShape, ref position, ref rotation, ref localScaling, pProcessedVertices, processedVertices.Length, (float)convexRadius );
+					}
+					else
+					{
+						PhysicsNative.JShape_AddMesh( nativeShape, ref position, ref rotation, ref localScaling, pProcessedVertices, processedVertices.Length, pProcessedIndices, processedIndices.Length );
+					}
 				}
-
-				//!!!!тут иначе? возможно лучше получить результирующие processed данные из буллета. как получить processedTrianglesToSourceIndex - это вопрос. возможно ли?
-				//если нельзя то processedTrianglesToSourceIndex = new int[ 0 ]; - что означает нельзя сконвертировать.
-				//если processedTrianglesToSourceIndex == null, то конвертация 1:1.
-
-				try
-				{
-					MathAlgorithms.ConvexHullFromMesh( MathUtility.ToVector3Array( processedVertices ), processedIndices, out var processedVertices2, out processedIndices );
-					processedVertices = MathUtility.ToVector3FArray( processedVertices2 );
-
-					//var convex = ConvexHullAlgorithm.Create( processedVertices, processedIndices );
-
-					//var vlist = new List<Vec3F>( convex.Faces.Length * 3 );
-					//foreach( var f in convex.Faces )
-					//	for( int v = 0; v < f.Vertices.Length; v++ )
-					//		vlist.Add( f.Vertices[ v ].ToVec3F() );
-
-					//processedVertices = vlist.ToArray();
-					//processedIndices = null;
-
-					//BulletUtils.GetHullVertices( processedVertices.ToVec3Array(), processedIndices, out var processedVertices2, out processedIndices );
-					//processedVertices = processedVertices2.ToVec3FArray();
-					//BulletUtils.GetHullVertices( processedVertices, processedIndices, out processedVertices, out processedIndices );
-
-					//если нельзя то processedTrianglesToSourceIndex = new int[ 0 ]; - что означает нельзя сконвертировать.
-					processedTrianglesToSourceIndex = Array.Empty<int>();
-				}
-				catch( Exception e )
-				{
-					Log.Info( "CollisionShape_Mesh: CreateShape: Unable to create shape as convex hull. " + e.Message );
-					return null;
-				}
-
-				//!!!!
-				var processedVerticesBullet = BulletPhysicsUtility.Convert( processedVertices );
-
-				return new ConvexHullShape( processedVerticesBullet );
 			}
-			else
-			{
-				//!!!проверки на ошибки данных
 
-				//!!!!can create without making of Vector3[] array. IntPtr constructor? internally the memory will copied?
-				indexVertexArrays = new TriangleIndexVertexArray( processedIndices, BulletPhysicsUtility.Convert( processedVertices ) );
-
-				//indexVertexArrays = new TriangleIndexVertexArray();
-				//var indexedMesh = new IndexedMesh();
-				//indexedMesh.Allocate( totalTriangles, totalVerts, triangleIndexStride, vertexStride );
-				//indexedMesh SetData( ICollection<int> triangles, ICollection<Vector3> vertices );
-				//indexVertexArrays.AddIndexedMesh( indexedMesh );
+			collisionShapeData.meshShapeProcessedVertices = processedVertices;
+			collisionShapeData.meshShapeProcessedIndices = processedIndices;
+			collisionShapeData.meshShapeProcessedTrianglesToSourceIndex = processedTrianglesToSourceIndex;
 
 
-				//!!!!расшаривать данные которые тут. одинаковые в разных объектах
 
-				//!!!!определять когда не считать кеш
+			//var epsilon = 0.0001f;
 
-				//It is better to use "useQuantizedAabbCompression=true", because it makes the tree data structure 4 times smaller: sizeof( btOptimizedBvhNode ) = 64 and sizeof( btQuantizedBvhNode ) = 16 bytes.Note that the number of AABB tree nodes is twice the number of triangles.
+			////clear data
+			//processedVertices = null;
+			//processedIndices = null;
+			//processedTrianglesToSourceIndex = null;
 
-				//Instead of creating the tree on the XBox 360 console, it is better to deserialize it directly from disk to memory. See btOptimizedBvh::deSerializeInPlace in Demos/ConcaveDemo/ConcavePhysicsDemo.cpp 
+			////get source geometry
+			//if( !GetSourceData( out var sourceVertices, out var sourceIndices ) )
+			//	return;// (null, null);
 
-				//без useQuantizedAabbCompression в три раза быстрее создается
 
-				//!!!!в ключ итема в кеше давать геометрию до обработки (MergeEqualVerticesRemoveInvalidTriangles)
+			////!!!!multi materials
 
-				//!!!!enable when cache support
-				bool useQuantizedAabbCompression = false;
-				//bool useQuantizedAabbCompression = true;
-				bool buildBvh = true;
 
-				//!!!!в другом конструкторе можно еще указать какие-то bound min max
-				//public BvhTriangleMeshShape( StridingMeshInterface meshInterface, bool useQuantizedAabbCompression, Vector3 bvhAabbMin, Vector3 bvhAabbMax, bool buildBvh = true );
+			////check valid data
+			//if( CheckValidData && !MathAlgorithms.CheckValidVertexIndexBuffer( sourceVertices.Length, sourceIndices, false ) )
+			//{
+			//	Log.Info( "CollisionShape_Mesh: CreateShape: Invalid source data." );
+			//	return;
+			//}
 
-				return new BvhTriangleMeshShape( indexVertexArrays, useQuantizedAabbCompression, buildBvh );
-			}
+			////process geometry
+			//if( MergeEqualVerticesRemoveInvalidTriangles )
+			//{
+			//	//!!!!slowly. later use cached precalculated bullet shape.
+			//	MathAlgorithms.MergeEqualVerticesRemoveInvalidTriangles( sourceVertices, sourceIndices, epsilon, epsilon, true, true, out processedVertices, out processedIndices, out processedTrianglesToSourceIndex );
+			//}
+			//else
+			//{
+			//	processedVertices = sourceVertices;
+			//	processedIndices = sourceIndices;
+			//	processedTrianglesToSourceIndex = null;
+			//}
+
+			////!!!!slowly? IsMeshConvex for many objects. can pass parameters to the cache
+			//var makeConvex = ShapeType.Value == ShapeTypeEnum.Auto && ParentRigidBody.MotionType.Value == RigidBody.MotionTypeEnum.Dynamic && MathAlgorithms.IsMeshConvex( processedVertices, processedIndices, epsilon ) || ShapeType.Value == ShapeTypeEnum.Convex;
+
+			//fixed( Vector3F* pProcessedVertices = processedVertices )
+			//{
+			//	fixed( int* pProcessedIndices = processedIndices )
+			//	{
+			//		if( makeConvex )
+			//		{
+			//			PhysicsNative.JShape_AddConvexHull( nativeShape, ref position, ref rotation, ref localScaling, pProcessedVertices, processedVertices.Length );
+			//		}
+			//		else
+			//		{
+			//			PhysicsNative.JShape_AddMesh( nativeShape, ref position, ref rotation, ref localScaling, pProcessedVertices, processedVertices.Length, pProcessedIndices, processedIndices.Length );
+			//		}
+			//	}
+			//}
+
+			////var meshCacheItem = physicsWorldData.AllocateShapeInCache( ref localScaling, sourceVertices, sourceIndices, CheckValidData, MergeEqualVerticesRemoveInvalidTriangles, makeConvex );
+
+			////if( meshCacheItem != null )
+			////{
+			////	processedVertices = meshCacheItem.ProcessedVertices;
+			////	processedIndices = meshCacheItem.ProcessedIndices;
+			////	processedTrianglesToSourceIndex = meshCacheItem.ProcessedTrianglesToSourceIndex;
+			////}
+
+			////if( meshCacheItem != null )
+			////	return (meshCacheItem.Shape, meshCacheItem);
+			////else
+			////	return (null, null);
 		}
 
-		public bool GetProcessedData( out Vector3F[] processedVertices, out int[] processedIndices, out int[] processedTrianglesToSourceIndex )
-		{
-			processedVertices = this.processedVertices;
-			processedIndices = this.processedIndices;
-			processedTrianglesToSourceIndex = this.processedTrianglesToSourceIndex;
-			return processedVertices != null;
-		}
+		//!!!!
+		//protected internal override (Internal.BulletSharp.CollisionShape shape, Scene.PhysicsWorldDataClass.MeshShapeCacheItem meshShapeCacheItem) CreateShape( Scene.PhysicsWorldDataClass physicsWorldData, ref Vector3 localScaling )
+		//{
+		//	var epsilon = 0.0001f;
 
-		public bool GetData( out Vector3F[] vertices, out int[] indices )
-		{
-			if( GetProcessedData( out vertices, out indices, out _ ) )
-				return true;
-			return GetSourceData( out vertices, out indices );
-		}
+		//	//clear data
+		//	processedVertices = null;
+		//	processedIndices = null;
+		//	processedTrianglesToSourceIndex = null;
+
+		//	//get source geometry
+		//	if( !GetSourceData( out var sourceVertices, out var sourceIndices ) )
+		//		return (null, null);
+
+		//	//!!!!slowly? IsMeshConvex for many objects. can pass parameters to the cache
+		//	var makeConvex = ShapeType.Value == ShapeTypeEnum.Auto && ParentRigidBody.MotionType.Value == RigidBody.MotionTypeEnum.Dynamic && MathAlgorithms.IsMeshConvex( processedVertices, processedIndices, epsilon ) || ShapeType.Value == ShapeTypeEnum.Convex;
+
+		//	var meshCacheItem = physicsWorldData.AllocateShapeInCache( ref localScaling, sourceVertices, sourceIndices, CheckValidData, MergeEqualVerticesRemoveInvalidTriangles, makeConvex );
+
+		//	if( meshCacheItem != null )
+		//	{
+		//		processedVertices = meshCacheItem.ProcessedVertices;
+		//		processedIndices = meshCacheItem.ProcessedIndices;
+		//		processedTrianglesToSourceIndex = meshCacheItem.ProcessedTrianglesToSourceIndex;
+		//	}
+
+		//	if( meshCacheItem != null )
+		//		return (meshCacheItem.Shape, meshCacheItem);
+		//	else
+		//		return (null, null);
+
+		//	//if( !string.IsNullOrEmpty( error ) )
+		//	//{
+		//	//	Log.Info( "CollisionShape_Mesh: CreateShape: " + error );
+		//	//	return null;
+		//	//}
+
+		//	//if( meshCacheItem != null )
+		//	//	meshShapeCacheItems.Add( meshCacheItem );
+
+		//	//if( meshCacheItem != null )
+		//	//	return meshCacheItem.Shape;
+		//	//return null;
+
+
+		//	////check valid data
+		//	//if( CheckValidData )
+		//	//{
+		//	//	if( !MathAlgorithms.CheckValidVertexIndexBuffer( sourceVertices.Length, sourceIndices, false ) )
+		//	//	{
+		//	//		Log.Info( "CollisionShape_Mesh: CreateShape: Invalid source data." );
+		//	//		return null;
+		//	//	}
+		//	//}
+
+		//	////process geometry
+		//	//if( MergeEqualVerticesRemoveInvalidTriangles )
+		//	//{
+		//	//	//!!!!slowly. later use cached precalculated bullet shape.
+		//	//	MathAlgorithms.MergeEqualVerticesRemoveInvalidTriangles( sourceVertices, sourceIndices, epsilon, epsilon, out processedVertices, out processedIndices, out processedTrianglesToSourceIndex );
+		//	//}
+		//	//else
+		//	//{
+		//	//	processedVertices = sourceVertices;
+		//	//	processedIndices = sourceIndices;
+		//	//}
+
+		//	////create bullet shape
+
+		//	//if( ShapeType.Value == ShapeTypeEnum.Auto && ParentRigidBody.MotionType.Value == RigidBody.MotionTypeEnum.Dynamic && MathAlgorithms.IsMeshConvex( processedVertices, processedIndices, epsilon ) || ShapeType.Value == ShapeTypeEnum.Convex )
+		//	//{
+		//	//	if( MathAlgorithms.IsPlaneMesh( processedVertices, processedIndices, epsilon ) )
+		//	//	{
+		//	//		Log.Info( "CollisionShape_Mesh: CreateShape: Unable to create shape as convex hull. All vertices on the one plane." );
+		//	//		return null;
+		//	//	}
+
+		//	//	//!!!!тут иначе? возможно лучше получить результирующие processed данные из буллета. как получить processedTrianglesToSourceIndex - это вопрос. возможно ли?
+		//	//	//если нельзя то processedTrianglesToSourceIndex = new int[ 0 ]; - что означает нельзя сконвертировать.
+		//	//	//если processedTrianglesToSourceIndex == null, то конвертация 1:1.
+
+		//	//	try
+		//	//	{
+		//	//		MathAlgorithms.ConvexHullFromMesh( MathUtility.ToVector3Array( processedVertices ), processedIndices, out var processedVertices2, out processedIndices );
+		//	//		processedVertices = MathUtility.ToVector3FArray( processedVertices2 );
+
+		//	//		//var convex = ConvexHullAlgorithm.Create( processedVertices, processedIndices );
+
+		//	//		//var vlist = new List<Vec3F>( convex.Faces.Length * 3 );
+		//	//		//foreach( var f in convex.Faces )
+		//	//		//	for( int v = 0; v < f.Vertices.Length; v++ )
+		//	//		//		vlist.Add( f.Vertices[ v ].ToVec3F() );
+
+		//	//		//processedVertices = vlist.ToArray();
+		//	//		//processedIndices = null;
+
+		//	//		//BulletUtils.GetHullVertices( processedVertices.ToVec3Array(), processedIndices, out var processedVertices2, out processedIndices );
+		//	//		//processedVertices = processedVertices2.ToVec3FArray();
+		//	//		//BulletUtils.GetHullVertices( processedVertices, processedIndices, out processedVertices, out processedIndices );
+
+		//	//		//если нельзя то processedTrianglesToSourceIndex = new int[ 0 ]; - что означает нельзя сконвертировать.
+		//	//		processedTrianglesToSourceIndex = Array.Empty<int>();
+		//	//	}
+		//	//	catch( Exception e )
+		//	//	{
+		//	//		Log.Info( "CollisionShape_Mesh: CreateShape: Unable to create shape as convex hull. " + e.Message );
+		//	//		return null;
+		//	//	}
+
+		//	//	//!!!!
+		//	//	var processedVerticesBullet = BulletPhysicsUtility.Convert( processedVertices );
+
+		//	//	return new ConvexHullShape( processedVerticesBullet );
+		//	//}
+		//	//else
+		//	//{
+		//	//	//!!!проверки на ошибки данных
+
+		//	//	//!!!!need call dispose?
+		//	//	//!!!!can create without making of Vector3[] array. IntPtr constructor? internally the memory will copied?
+		//	//	indexVertexArrays = new TriangleIndexVertexArray( processedIndices, BulletPhysicsUtility.Convert( processedVertices ) );
+
+		//	//	//indexVertexArrays = new TriangleIndexVertexArray();
+		//	//	//var indexedMesh = new IndexedMesh();
+		//	//	//indexedMesh.Allocate( totalTriangles, totalVerts, triangleIndexStride, vertexStride );
+		//	//	//indexedMesh SetData( ICollection<int> triangles, ICollection<Vector3> vertices );
+		//	//	//indexVertexArrays.AddIndexedMesh( indexedMesh );
+
+
+		//	//	//!!!!расшаривать данные которые тут. одинаковые в разных объектах
+
+		//	//	//!!!!определять когда не считать кеш
+
+		//	//	//It is better to use "useQuantizedAabbCompression=true", because it makes the tree data structure 4 times smaller: sizeof( btOptimizedBvhNode ) = 64 and sizeof( btQuantizedBvhNode ) = 16 bytes.Note that the number of AABB tree nodes is twice the number of triangles.
+
+		//	//	//Instead of creating the tree on the XBox 360 console, it is better to deserialize it directly from disk to memory. See btOptimizedBvh::deSerializeInPlace in Demos/ConcaveDemo/ConcavePhysicsDemo.cpp 
+
+		//	//	//без useQuantizedAabbCompression в три раза быстрее создается
+
+		//	//	//!!!!в ключ итема в кеше давать геометрию до обработки (MergeEqualVerticesRemoveInvalidTriangles)
+
+		//	//	//!!!!enable when cache support
+		//	//	bool useQuantizedAabbCompression = false;
+		//	//	//bool useQuantizedAabbCompression = true;
+		//	//	bool buildBvh = true;
+
+		//	//	//!!!!в другом конструкторе можно еще указать какие-то bound min max
+		//	//	//public BvhTriangleMeshShape( StridingMeshInterface meshInterface, bool useQuantizedAabbCompression, Vector3 bvhAabbMin, Vector3 bvhAabbMax, bool buildBvh = true );
+
+		//	//	return new BvhTriangleMeshShape( indexVertexArrays, useQuantizedAabbCompression, buildBvh );
+		//	//}
+		//}
+
+		//!!!!
+		//public bool GetProcessedData( out Vector3F[] processedVertices, out int[] processedIndices, out int[] processedTrianglesToSourceIndex )
+		//{
+		//	processedVertices = this.processedVertices;
+		//	processedIndices = this.processedIndices;
+		//	processedTrianglesToSourceIndex = this.processedTrianglesToSourceIndex;
+		//	return processedVertices != null;
+		//}
+
+		//!!!!
+		//public bool GetData( out Vector3F[] vertices, out int[] indices )
+		//{
+		//	if( GetProcessedData( out vertices, out indices, out _ ) )
+		//		return true;
+		//	return GetSourceData( out vertices, out indices );
+		//}
 
 		public bool GetTriangleSourceData( int triangleID, bool applyWorldTransform, out Triangle triangle )
 		{
@@ -332,22 +532,23 @@ namespace NeoAxis
 			return GetTriangleData( triangleID, applyWorldTransform, vertices, indices, out triangle );
 		}
 
-		public bool GetTriangleProcessedData( int triangleID, bool applyWorldTransform, out Triangle triangle )
-		{
-			if( !GetProcessedData( out var vertices, out var indices, out _ ) )
-			{
-				triangle = new Triangle();
-				return false;
-			}
-			return GetTriangleData( triangleID, applyWorldTransform, vertices, indices, out triangle );
-		}
+		//!!!!
+		//public bool GetTriangleProcessedData( int triangleID, bool applyWorldTransform, out Triangle triangle )
+		//{
+		//	if( !GetProcessedData( out var vertices, out var indices, out _ ) )
+		//	{
+		//		triangle = new Triangle();
+		//		return false;
+		//	}
+		//	return GetTriangleData( triangleID, applyWorldTransform, vertices, indices, out triangle );
+		//}
 
 		bool GetTriangleData( int triangleID, bool applyWorldTransform, Vector3F[] vertices, int[] indices, out Triangle triangle )
 		{
 			if( applyWorldTransform )
 			{
 				var t = ParentRigidBody.Transform.Value.ToMatrix4();
-				var local = TransformRelativeToParent.Value;
+				var local = LocalTransform.Value;
 				if( local != null && !local.IsIdentity )
 					t *= local.ToMatrix4();
 				return MathAlgorithms.GetTriangleData( triangleID, ref t, vertices, indices, out triangle );
@@ -359,7 +560,7 @@ namespace NeoAxis
 		protected internal override void Render( Viewport viewport, Transform bodyTransform, bool solid, ref int verticesRendered )
 		{
 			Matrix4 t = bodyTransform.ToMatrix4();
-			var local = TransformRelativeToParent.Value;
+			var local = LocalTransform.Value;
 			if( !local.IsIdentity )
 				t *= local.ToMatrix4();
 
@@ -375,7 +576,9 @@ namespace NeoAxis
 			//	}
 			//}
 
-			if( GetData( out Vector3F[] vertices, out int[] indices ) )
+			//!!!!
+			if( GetSourceData( out Vector3F[] vertices, out int[] indices ) )
+			//if( GetData( out Vector3F[] vertices, out int[] indices ) )
 			{
 				if( indices != null )
 					viewport.Simple3DRenderer.AddTriangles( vertices, indices, t, !solid, false );

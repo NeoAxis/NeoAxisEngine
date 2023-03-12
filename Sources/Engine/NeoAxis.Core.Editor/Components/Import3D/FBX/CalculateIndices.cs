@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 
@@ -41,7 +41,7 @@ namespace NeoAxis.Import.FBX
 			for( int n = 0; n < sourceIndices.Length; n++ )
 				sourceIndices[ n ] = n;
 
-			MathAlgorithms.MergeEqualVerticesRemoveInvalidTriangles( sourceVertices, sourceIndices, 0, vertexPositionEpsilon, vertexOtherChannelsEpsilon, out vertices, out indices, out _ );
+			MathAlgorithms.MergeEqualVerticesRemoveInvalidTriangles( sourceVertices, sourceIndices, 0, vertexPositionEpsilon, vertexOtherChannelsEpsilon, true, true, out vertices, out indices, out _ );
 		}
 
 		//public static void CalculateIndicesBySpatialSort( MeshData data, out StandardVertex[] vertices, out int[] indices )

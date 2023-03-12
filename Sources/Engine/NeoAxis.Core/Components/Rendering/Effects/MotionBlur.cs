@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,6 +12,8 @@ namespace NeoAxis
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class RenderingEffect_MotionBlur : RenderingEffect
 	{
+		public static double GlobalMultiplier = 1;
+
 		/// <summary>
 		/// The intensity of the effect.
 		/// </summary>
@@ -58,16 +60,24 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline.IFrameData frameData, ref ImageComponent actualTexture )
+		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture )
 		{
 			base.OnRender( context, frameData, ref actualTexture );
 
 			if( Intensity <= 0 )
 				return;
 
-			context.ObjectsDuringUpdate.namedTextures.TryGetValue( "motionTexture", out var motionTexture );
+			var multiplier = 0.0;
+			if( context.Owner.LastUpdateTimeStep != 0 )
+				multiplier = ( 1.0 / context.Owner.LastUpdateTimeStep ) / 45.0;
+			multiplier *= Multiplier.Value * GlobalMultiplier;
+
+			if( multiplier <= 0 )
+				return;
+
+			context.ObjectsDuringUpdate.namedTextures.TryGetValue( "motionAndObjectIdTexture", out var motionAndObjectIdTexture );
 			context.ObjectsDuringUpdate.namedTextures.TryGetValue( "depthTexture", out var depthTexture );
-			if( motionTexture == null || depthTexture == null || Intensity <= 0 )
+			if( motionAndObjectIdTexture == null || depthTexture == null || Intensity <= 0 )
 				return;
 
 			//create final
@@ -80,15 +90,10 @@ namespace NeoAxis
 				shader.FragmentProgramFileName = @"Base\Shaders\Effects\MotionBlur_fs.sc";
 
 				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/, actualTexture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.None ) );
-				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1/*"motionTexture"*/, motionTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
+				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1/*"motionTexture"*/, motionAndObjectIdTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
 				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 2/*"depthTexture"*/, depthTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
 
 				shader.Parameters.Set( "intensity", (float)Intensity );
-
-				var multiplier = 0.0;
-				if( context.Owner.LastUpdateTimeStep != 0 )
-					multiplier = ( 1.0 / context.Owner.LastUpdateTimeStep ) / 45.0;
-				multiplier *= Multiplier.Value;
 
 				//fix initial rattling
 				if( context.Owner.LastUpdateTimeStep > 0.1 )

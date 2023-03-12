@@ -1,6 +1,7 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace NeoAxis
@@ -10,6 +11,7 @@ namespace NeoAxis
 	/// </summary>
 	public class CurveRoundedLine : CurveSpline
 	{
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public double GetCurvatureRadius( int index )
 		{
 			var data = Points[ index ].additionalData;
@@ -18,6 +20,7 @@ namespace NeoAxis
 			return 0;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		static bool GetCirclePoint( Vector3 p1, Vector3 p2, Vector3 p3, Vector3 pointOnLine, double radius, out Vector3 result )
 		{
 			Vector3 p = ( p1 + p3 ) * .5f;
@@ -78,6 +81,7 @@ namespace NeoAxis
 			return false;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public override Vector3 CalculateValueByTime( double time )
 		{
 			if( points.Count == 1 )
@@ -107,6 +111,7 @@ namespace NeoAxis
 				Vector3 p2 = from;
 				Vector3 p3 = to;
 
+				//!!!!MathEx.PI / 32?
 				if( MathAlgorithms.GetVectorsAngle( p2 - p1, p3 - p2 ) > MathEx.PI / 32 )
 				{
 					Vector3 result;
@@ -122,6 +127,7 @@ namespace NeoAxis
 				Vector3 p2 = to;
 				Vector3 p3 = GetValueForIndex( i + 1 );
 
+				//!!!!MathEx.PI / 32?
 				if( MathAlgorithms.GetVectorsAngle( p2 - p1, p3 - p2 ) > MathEx.PI / 32 )
 				{
 					Vector3 result;

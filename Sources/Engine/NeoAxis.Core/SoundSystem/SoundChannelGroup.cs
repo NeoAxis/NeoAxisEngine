@@ -1,6 +1,7 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace NeoAxis
@@ -140,6 +141,7 @@ namespace NeoAxis
 			set { userData = value; }
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public double GetTotalVolume()
 		{
 			double v = Volume;
@@ -148,6 +150,7 @@ namespace NeoAxis
 			return v;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public double GetTotalPitch()
 		{
 			double p = Pitch;
@@ -156,6 +159,7 @@ namespace NeoAxis
 			return p;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool IsTotalPaused()
 		{
 			if( parent != null && parent.IsTotalPaused() )

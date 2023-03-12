@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -61,7 +61,7 @@ namespace NeoAxis.Widget
 
 			try
 			{
-				if( ProjectSettings.Get.CustomSplashScreen.EngineSplashScreenStyle.Value == ProjectSettingsPage_CustomSplashScreen.EngineSplashScreenStyleEnum.WhiteBackground )
+				if( ProjectSettings.Get.General.EngineSplashScreenStyle.Value == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.WhiteBackground )
 					BackColor = Color.White;
 			}
 			catch { }

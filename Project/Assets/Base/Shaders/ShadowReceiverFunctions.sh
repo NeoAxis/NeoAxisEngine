@@ -1,4 +1,4 @@
-// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 
 
 #ifdef SHADOW_CONTACT
@@ -13,7 +13,7 @@ float getDepth(vec2 uv)
 
 float getCameraDistance(vec2 uv)
 {
-	float rawDepth = texture2D(s_depthTexture, uv).r;
+	float rawDepth = texture2DLod(s_depthTexture, uv, 0.0).r;
 	vec3 worldPosition = reconstructWorldPosition(invViewProj, uv, rawDepth);
 	return length(u_viewportOwnerCameraPosition.xyz - worldPosition);	
 }
@@ -148,15 +148,15 @@ float getShadowValueSimple(int cascadeIndex, vec4 shadowUV)
 #ifdef SHADOW_TEXTURE_FORMAT_BYTE4
 	#ifdef GLSL
 		//!!!!shadow2DArray works wrong
-		vec4 shadowValue = texture2D(s_shadowMapShadow, texCoord);
+		vec4 shadowValue = texture2DLod(s_shadowMapShadow, texCoord, 0.0);
 	#else
-		vec4 shadowValue = texture2DArray(s_shadowMapShadow, vec3(texCoord, cascadeIndex));
+		vec4 shadowValue = texture2DArrayLod(s_shadowMapShadow, vec3(texCoord, cascadeIndex), 0);
 	#endif
 	float shadowFactor = compareDepth < unpackRgbaToFloat(shadowValue) ? 1.0 : 0.0;
 #else	
 	#ifdef GLSL
 		//!!!!shadow2DArray works wrong
-		float shadowFactor = texture2D(s_shadowMapShadow, vec3(texCoord, compareDepth));
+		float shadowFactor = texture2DLod(s_shadowMapShadow, vec3(texCoord, compareDepth), 0.0);
 		//float shadowFactor = shadow2DArray(s_shadowMapShadow, vec4(texCoord, compareDepth, float(cascadeIndex)));
 		//float shadowFactor = shadow2DArray(s_shadowMapShadow, vec4(texCoord, float(cascadeIndex), compareDepth));	
 	#else
@@ -428,15 +428,15 @@ float getShadowValuePCF(int cascadeIndex, vec4 shadowUV)
 #ifdef SHADOW_TEXTURE_FORMAT_BYTE4
 	#ifdef GLSL
 		//!!!!shadow2DArray works wrong
-		vec4 shadowValue = texture2D(s_shadowMapShadow, texCoord);
+		vec4 shadowValue = texture2DLod(s_shadowMapShadow, texCoord, 0.0);
 	#else
-		vec4 shadowValue = texture2DArray(s_shadowMapShadow, vec3(texCoord, cascadeIndex));
+		vec4 shadowValue = texture2DArrayLod(s_shadowMapShadow, vec3(texCoord, cascadeIndex), 0);
 	#endif
 	float shadowFactor = compareDepth < unpackRgbaToFloat(shadowValue) ? 1.0 : 0.0;	
 #else		
 	#ifdef GLSL
 			//!!!!shadow2DArray works wrong
-			float shadowFactor = texture2D(s_shadowMapShadow, vec3(texCoord, compareDepth));
+			float shadowFactor = texture2DLod(s_shadowMapShadow, vec3(texCoord, compareDepth), 0.0);
 			//float shadowFactor = shadow2DArray(s_shadowMapShadow, vec4(texCoord, cascadeIndex, compareDepth));
 	#else
 			float shadowFactor = shadow2DArray(s_shadowMapShadow, vec4(texCoord, cascadeIndex, compareDepth)).r;
@@ -666,7 +666,7 @@ float getShadowValuePointSimple(vec4 shadowUV)
 
 	//flipped cubemaps. conversion already done in the vertex shader.	
 #ifdef SHADOW_TEXTURE_FORMAT_BYTE4
-	vec4 shadowValue = textureCube(s_shadowMapShadow, shadowUV.xyz);
+	vec4 shadowValue = textureCubeLod(s_shadowMapShadow, shadowUV.xyz, 0.0);
 	float shadowFactor = compareDepth < unpackRgbaToFloat(shadowValue) ? 1.0 : 0.0;
 #else	
 	#ifdef GLSL
@@ -760,7 +760,7 @@ float getShadowValuePointPCF(vec4 shadowUV)
 
 		//flipped cubemaps. conversion already done in the vertex shader.		
 	#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
-		vec4 shadowValue = textureCube(s_shadowMapShadow, texCoord);
+		vec4 shadowValue = textureCubeLod(s_shadowMapShadow, texCoord, 0.0);
 		float shadowFactor = compareDepth < unpackRgbaToFloat(shadowValue) ? 1.0 : 0.0;
 	#else
 		#ifdef GLSL
@@ -826,7 +826,7 @@ float getShadowMultiplier(vec3 worldPosition, float cameraDistance, float cascad
 			else
 				cascadeIndex = 3;
 			
-			//overlap cascades			
+			//overlap cascades
 			const float cascadeOverlapping = 1.1;
 			float from = u_lightShadowCascades[cascadeIndex];
 			float to = from * cascadeOverlapping;

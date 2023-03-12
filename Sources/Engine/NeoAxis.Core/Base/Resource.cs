@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2022 NeoAxis, Inc. Delaware, USA; NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 
@@ -173,8 +173,7 @@ namespace NeoAxis
 
 					//parse text block
 					string error2;
-					var component = ComponentUtility.LoadComponentFromTextBlock( null, loadedBlock/*Owner.LoadedBlock*/, Owner.Name, this, componentSetEnabled,
-						componentCreateHierarchyController, out error2 );
+					var component = ComponentUtility.LoadComponentFromTextBlock( null, loadedBlock/*Owner.LoadedBlock*/, Owner.Name, this, componentSetEnabled, componentCreateHierarchyController, out error2 );
 					//var component = ComponentUtils.LoadComponentFromTextBlock( Owner.LoadedBlock, Owner.Name, null, out error2 );
 					if( component == null )
 					{
