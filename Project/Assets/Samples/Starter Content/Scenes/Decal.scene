@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2021.3.
+// Made with NeoAxis Engine 2023.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1174, 842\"><KW V=\"1\" A=\"6B270FC44548416A53AF337EDA2ED3DF\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"225067826B27401FE99445115B9BD284\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"6B270FC44548416A53AF337EDA2ED3DF\"><KP UN=\"6B270FC44548416A53AF337EDA2ED3DF\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"2944A7901B0C4F0370B1C81D1756F4D6\" S=\"False\"><CPD ObjPath=\"$Material Normal Map\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"6B270FC44548416A53AF337EDA2ED3DF\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"225067826B27401FE99445115B9BD284\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"6B270FC44548416A53AF337EDA2ED3DF\"><KP UN=\"6B270FC44548416A53AF337EDA2ED3DF\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"2944A7901B0C4F0370B1C81D1756F4D6\" S=\"False\"><CPD ObjPath=\"$Material Normal Map\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -81,7 +81,6 @@
 			.component NeoAxis.RenderingEffect_Sharpen
 			{
 				Name = Sharpen
-				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
 			}
 		}
 		.component NeoAxis.Component
@@ -289,7 +288,7 @@
 					Location3 = 0 0 0
 					Texture
 					{
-						GetByReference = "Content\\Materials\\Basic Library\\Brick\\Textures\\yellow_bricks_nor_2k.jpg"
+						GetByReference = "Content\\Materials\\Basic Library\\Brick\\Textures\\yellow_brick_diff_2k.jpg"
 					}
 				}
 			}

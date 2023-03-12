@@ -1,0 +1,111 @@
+// Made with NeoAxis Engine 2022.2.
+
+.component NeoAxis.Material
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"BC13FA89F8DB433CA8BF2D276C6AE1E1\"><CGD /><WS UN=\"AF8E039079D944341F90ACD46DB01036\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WS UN=\"7E98035CA7114185E5BDFDC30CD85F18\" S=\"T,0,50:T,0,50\" D=\"Vertical\"><WC UN=\"6E4AAE3197EF42FFB5A7C0AAD408FCEC\" S=\"T,0,50:T,0,635\" NM=\"BarTabGroup\" AR=\"True\" SP=\"BC13FA89F8DB433CA8BF2D276C6AE1E1\"><KP UN=\"5A852C566D5042342F9B28114D8AFFD1\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"BC13FA89F8DB433CA8BF2D276C6AE1E1\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC><WC UN=\"555DF10633D0484CF789AB08B411A131\" S=\"T,0,50:T,0,202\" NM=\"BarTabGroup\" AR=\"True\" SP=\"A4C27B5CACE84B148EAF3A3C2473F369\"><KP UN=\"A4C27B5CACE84B148EAF3A3C2473F369\" S=\"False\"><CPD ObjPath=\"$Shader graph\\$Node Shader 1\\$Shader Convert Normal\" /></KP></WC></WS></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	BaseColor
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample 1\\$Texture Sample\\RGBA"
+	}
+	Roughness
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample 3\\$Texture Sample\\R"
+	}
+	Normal
+	{
+		GetByReference = "this:$Shader graph\\$Node Shader 1\\$Shader Convert Normal\\__parameter_ReturnValue"
+	}
+	.component NeoAxis.FlowGraph
+	{
+		Name = Shader graph
+		EditorScrollPosition = 0.176470588235299 -0.705882352941177
+		Specialization
+		{
+			GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = "Node "
+			Position = 10 -7
+			ControlledObject
+			{
+				GetByReference = "this:..\\.."
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample 1
+			Position = -20 -14
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Materials\\Basic Library\\Brick\\Textures\\White_brick_wall_01_2K_Base_Color.jpg"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample 2
+			Position = -20 4
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Materials\\Basic Library\\Brick\\Textures\\White_brick_wall_01_2K_Normal.png"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample 3
+			Position = -20 -5
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Materials\\Basic Library\\Brick\\Textures\\White_brick_wall_01_2K_Roughness.jpg"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Shader 1
+			Position = -5 6
+			ControlledObject
+			{
+				GetByReference = "this:$Shader Convert Normal"
+			}
+			.component NeoAxis.ShaderScript
+			{
+				Name = Shader Convert Normal
+				Code = "public vec4 Method(vec4 v)\r\n{\r\n\treturn vec4(v.x, 1.0 - v.y, v.z, v.w);\r\n}\r\n"
+				__parameter_V
+				{
+					GetByReference = "this:..\\..\\$Node Texture Sample 2\\$Texture Sample\\RGBA"
+				}
+			}
+		}
+	}
+}
