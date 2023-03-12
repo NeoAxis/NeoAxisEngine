@@ -1,0 +1,116 @@
+// Made with NeoAxis Engine 2022.1.
+
+.component NeoAxis.Material
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1153, 842\"><KW V=\"1\" A=\"EA8915E462C94669E4B28EA4B5245580\"><CGD /><WS UN=\"7EB1B596B3974E6AEB8F0B514EA9EDA5\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"876CCB1A3E3243838481D9048477E649\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"EA8915E462C94669E4B28EA4B5245580\"><KP UN=\"24AFC2DA41504B4418AA6CC9432E9A3A\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"EA8915E462C94669E4B28EA4B5245580\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	BaseColor
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample 1\\$Texture Sample\\RGBA"
+	}
+	Roughness
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample 2\\$Texture Sample\\R"
+	}
+	Normal
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample 3\\$Texture Sample\\RGBA"
+	}
+	AmbientOcclusion
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample 4\\$Texture Sample\\R"
+	}
+	.component NeoAxis.FlowGraph
+	{
+		Name = Shader graph
+		EditorScrollPosition = 0 0
+		Specialization
+		{
+			GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = "Node "
+			Position = 10 -7
+			ControlledObject
+			{
+				GetByReference = "this:..\\.."
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample 1
+			Position = -19 -19
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Materials\\Basic Library\\Floor\\Textures\\PavingStones081_2K_Color.jpg"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample 2
+			Position = -19 -10
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Materials\\Basic Library\\Floor\\Textures\\PavingStones081_2K_Roughness.jpg"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample 3
+			Position = -19 -1
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Materials\\Basic Library\\Floor\\Textures\\PavingStones081_2K_Normal.jpg"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample 4
+			Position = -19 8
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Materials\\Basic Library\\Floor\\Textures\\PavingStones081_2K_AmbientOcclusion.jpg"
+				}
+			}
+		}
+	}
+}
