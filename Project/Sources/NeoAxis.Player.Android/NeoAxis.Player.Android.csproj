@@ -171,9 +171,6 @@
     <AndroidNativeLibrary Include="lib\armeabi-v7a\libbgfx.so">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AndroidNativeLibrary>
-    <AndroidNativeLibrary Include="lib\armeabi-v7a\libbulletc.so">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </AndroidNativeLibrary>
     <AndroidNativeLibrary Include="lib\armeabi-v7a\libNeoAxisCoreNative.so">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AndroidNativeLibrary>
@@ -184,7 +181,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AndroidNativeLibrary>
     <None Include="lib\arm64-v8a\libbgfx.so" />
-    <None Include="lib\arm64-v8a\libbulletc.so" />
     <None Include="lib\arm64-v8a\libNeoAxisCoreNative.so" />
     <None Include="lib\arm64-v8a\libOpenAL.so" />
     <None Include="lib\arm64-v8a\libshaderc.so" />

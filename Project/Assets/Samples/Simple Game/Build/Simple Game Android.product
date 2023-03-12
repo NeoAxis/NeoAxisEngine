@@ -1,10 +1,10 @@
-// Made with NeoAxis Engine 2022.1.
+// Made with NeoAxis Engine 2023.1.
 
 .component NeoAxis.Product_Android
 {
 	Name = Simple Game
 	SortOrder = -800
-	Paths = "Assets\\Base\r\nAssets\\Samples\\Simple Game\r\n\r\nexclude:Assets\\Base\\Build\r\nexclude:Assets\\Base\\Tools\r\nexclude:Assets\\Base\\Learning\r\nexclude:Assets\\Base\\Fonts\\FlowGraphEditor.ttf\r\nexclude:Assets\\Base\\Fonts\\FlowGraphEditor.ttf.settings\r\nexclude:Assets\\Base\\Models\r\nexclude:Assets\\Content\\Environments\\Base\r\n"
+	Paths = "Assets\\Base\r\n\r\nAssets\\Samples\\Simple Game\r\nAssets\\Samples\\Spaceship Game\r\nAssets\\Samples\\Platform Game\r\nAssets\\Samples\\Shooter\\Scripts\r\nAssets\\Samples\\Shooter\\UI\r\n\r\nexclude:Assets\\Base\\Build\r\nexclude:Assets\\Base\\Tools\r\nexclude:Assets\\Base\\Learning\r\nexclude:Assets\\Base\\Fonts\\FlowGraphEditor.ttf\r\nexclude:Assets\\Base\\Fonts\\FlowGraphEditor.ttf.settings\r\nexclude:Assets\\Base\\Models\r\nexclude:Assets\\Content\\Environments\\Base\r\n"
 	FileCache = False
 	ShaderCache = False
 }
