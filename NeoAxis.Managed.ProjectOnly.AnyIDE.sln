@@ -15,6 +15,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoAxis.Addon.ExampleEditor
 		{876CBDEC-8F38-453F-9BE5-D90A6AF28D10} = {876CBDEC-8F38-453F-9BE5-D90A6AF28D10}
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Project.Client", "Project\Project.Client.csproj", "{1D6DFC24-D854-48A6-A547-C7E287372F7E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{876CBDEC-8F38-453F-9BE5-D90A6AF28D10} = {876CBDEC-8F38-453F-9BE5-D90A6AF28D10}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,14 +34,14 @@ Global
 		{77A0E3BB-AD36-4128-9790-966770EAC238}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77A0E3BB-AD36-4128-9790-966770EAC238}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77A0E3BB-AD36-4128-9790-966770EAC238}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9D4B5B0D-0C33-4017-91C0-D55726101F77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9D4B5B0D-0C33-4017-91C0-D55726101F77}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9D4B5B0D-0C33-4017-91C0-D55726101F77}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9D4B5B0D-0C33-4017-91C0-D55726101F77}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FAFC17F3-1922-4A99-8C63-7E3FF578F1E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FAFC17F3-1922-4A99-8C63-7E3FF578F1E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FAFC17F3-1922-4A99-8C63-7E3FF578F1E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FAFC17F3-1922-4A99-8C63-7E3FF578F1E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D6DFC24-D854-48A6-A547-C7E287372F7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D6DFC24-D854-48A6-A547-C7E287372F7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D6DFC24-D854-48A6-A547-C7E287372F7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D6DFC24-D854-48A6-A547-C7E287372F7E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

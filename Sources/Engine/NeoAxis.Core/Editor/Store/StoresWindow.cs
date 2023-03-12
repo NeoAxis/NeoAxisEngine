@@ -1406,6 +1406,7 @@ namespace NeoAxis.Editor
 						break;
 					}
 					text += file;
+					counter++;
 				}
 
 				if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.OKCancel ) == EDialogResult.Cancel )

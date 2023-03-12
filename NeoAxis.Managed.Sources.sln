@@ -86,6 +86,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoAxis.Addon.Sketchfab", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Addons", "Addons", "{062FB22A-2A38-4D50-9853-E10C502C1FE6}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Project.Client", "Project\Project.Client.csproj", "{F2E0FF8F-10D1-4350-B881-593C4F63F66C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{765CBD47-5D68-403F-98E3-46B43C10342F} = {765CBD47-5D68-403F-98E3-46B43C10342F}
+		{876CBDEC-8F38-453F-9BE5-D90A6AF28D10} = {876CBDEC-8F38-453F-9BE5-D90A6AF28D10}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -160,6 +166,10 @@ Global
 		{0C3F019E-E955-4310-B722-06E0A53F8DDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C3F019E-E955-4310-B722-06E0A53F8DDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C3F019E-E955-4310-B722-06E0A53F8DDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2E0FF8F-10D1-4350-B881-593C4F63F66C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2E0FF8F-10D1-4350-B881-593C4F63F66C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2E0FF8F-10D1-4350-B881-593C4F63F66C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2E0FF8F-10D1-4350-B881-593C4F63F66C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
