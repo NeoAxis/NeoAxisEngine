@@ -2,7 +2,7 @@
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1146, 842\"><KW V=\"1\" A=\"F4DB533C31C040B98A98FB78DE86F73F\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"CDCAFC612A604332059A8B71DEDA5F9D\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"F4DB533C31C040B98A98FB78DE86F73F\"><KP UN=\"F4DB533C31C040B98A98FB78DE86F73F\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"74B2358CD86F4C7AF2925B9F78248F9C\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP><KP UN=\"CF86492588AE41BC15A0C88B38B4D44B\" S=\"False\"><CPD ObjPath=\"$C# Script 2\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"F4DB533C31C040B98A98FB78DE86F73F\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"CDCAFC612A604332059A8B71DEDA5F9D\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"F4DB533C31C040B98A98FB78DE86F73F\"><KP UN=\"F4DB533C31C040B98A98FB78DE86F73F\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"74B2358CD86F4C7AF2925B9F78248F9C\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP><KP UN=\"CF86492588AE41BC15A0C88B38B4D44B\" S=\"False\"><CPD ObjPath=\"$C# Script 2\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	BackgroundColor = 0.6666667 0.6666667 0.6666667
 	DisplayDevelopmentDataInEditor = False
 	DisplayTextInfo = True
@@ -45,11 +45,6 @@
 				Intensity = 0.8
 				Radius = 2
 			}
-			.component NeoAxis.RenderingEffect_MotionBlur
-			{
-				Name = Motion Blur
-				Multiplier = 2
-			}
 			.component NeoAxis.RenderingEffect_ToLDR
 			{
 				Name = To LDR
@@ -65,6 +60,11 @@
 			.component NeoAxis.RenderingEffect_Sharpen
 			{
 				Name = Sharpen
+			}
+			.component NeoAxis.RenderingEffect_MotionBlur
+			{
+				Name = Motion Blur
+				Multiplier = 3
 			}
 		}
 	}

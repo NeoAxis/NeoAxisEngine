@@ -67,6 +67,10 @@ namespace NeoAxis
 
 		public enum ShadowTechniqueEnum
 		{
+			[DisplayNameEnum( "Percentage Closer Filtering 32" )]
+			PercentageCloserFiltering32,
+			[DisplayNameEnum( "Percentage Closer Filtering 22" )]
+			PercentageCloserFiltering22,
 			[DisplayNameEnum( "Percentage Closer Filtering 16" )]
 			PercentageCloserFiltering16,
 			[DisplayNameEnum( "Percentage Closer Filtering 12" )]
@@ -97,7 +101,7 @@ namespace NeoAxis
 		/// The shadow technique of the project.
 		/// </summary>
 		[Category( "Rendering: Basic Device" )]
-		[DefaultValue( ShadowTechniqueEnum.PercentageCloserFiltering12 )]
+		[DefaultValue( ShadowTechniqueEnum.PercentageCloserFiltering22 )]//12 )]
 		[DisplayName( "Shadow Technique (Restart to apply changes)" )]
 		public Reference<ShadowTechniqueEnum> ShadowTechnique
 		{
@@ -106,7 +110,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="ShadowTechnique"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_Rendering> ShadowTechniqueChanged;
-		ReferenceField<ShadowTechniqueEnum> _shadowTechnique = ShadowTechniqueEnum.PercentageCloserFiltering12;
+		ReferenceField<ShadowTechniqueEnum> _shadowTechnique = ShadowTechniqueEnum.PercentageCloserFiltering22;//12;
 
 		/// <summary>
 		/// The shadow technique of the project on limited devices (mobile).

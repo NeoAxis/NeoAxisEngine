@@ -37,7 +37,7 @@ namespace NeoAxis
 		public delegate void RenderUIDelegate( Viewport viewport, ref bool handled );
 		public static event RenderUIDelegate RenderUI;
 
-		public delegate void AddEventDelegate( ref string text, ref bool skip );
+		public delegate void AddEventDelegate( ref string text, ref bool error, ref bool skip );
 		public static event AddEventDelegate AddEvent;
 
 		///////////////////////////////////////////////
@@ -122,14 +122,15 @@ namespace NeoAxis
 		public static void Add( string text, bool error = false )
 		{
 			var text2 = text;
+			var error2 = error;
 			var skip = false;
-			AddEvent?.Invoke( ref text2, ref skip );
+			AddEvent?.Invoke( ref text2, ref error2, ref skip );
 			if( skip )
 				return;
 
 			lock( messages )
 			{
-				var message = new MessageItem( text2, error, MessageShowingTime );
+				var message = new MessageItem( text2, error2, MessageShowingTime );
 				messages.Add( message );
 
 				while( messages.Count > 100 )

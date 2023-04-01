@@ -210,6 +210,20 @@ namespace NeoAxis
 		public event Action<Product_Store> CreateScreenshotsChanged;
 		ReferenceField<bool> _createScreenshots = true;
 
+		/// <summary>
+		/// The logo of the product. 1000x562 size. 127, 127, 127 background. PNG or JPG format.
+		/// </summary>
+		[DefaultValue( null )]
+		public Reference<ReferenceValueType_Resource> ProductLogo
+		{
+			get { if( _productLogo.BeginGet() ) ProductLogo = _productLogo.Get( this ); return _productLogo.value; }
+			set { if( _productLogo.BeginSet( ref value ) ) { try { ProductLogoChanged?.Invoke( this ); } finally { _productLogo.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ProductLogo"/> property value changes.</summary>
+		public event Action<Product_Store> ProductLogoChanged;
+		ReferenceField<ReferenceValueType_Resource> _productLogo = null;
+
+
 		[DefaultValue( CreateProductsEnum.MainProduct )]
 		public Reference<CreateProductsEnum> CreateProducts
 		{
@@ -347,24 +361,35 @@ namespace NeoAxis
 
 			Materials = 1 << 12,
 
-			//Models
-			Animals = 1 << 13,
-			Architecture = 1 << 14,
-			Characters = 1 << 15,
-			Exterior = 1 << 16,
-			Food = 1 << 17,
-			Industrial = 1 << 18,
-			Interior = 1 << 19,
-			Vehicles = 1 << 20,
-			Nature = 1 << 21,
-			Weapons = 1 << 22,
-			UncategorizedModels = 1 << 23,
+			Models = 1 << 13,
+			//[DisplayNameEnum( "3D Models" )]
+			//_3DModels = 1 << 13,
+
+			Characters = 1 << 14,
+			Vehicles = 1 << 15,
+			Weapons = 1 << 16,
+			Fences = 1 << 17,
+			Pipes = 1 << 18,
+			Buildings = 1 << 19,
+
+			////Models
+			//Animals = 1 << 13,
+			//Architecture = 1 << 14,
+			//Characters = 1 << 15,
+			//Exterior = 1 << 16,
+			//Food = 1 << 17,
+			//Industrial = 1 << 18,
+			//Interior = 1 << 19,
+			//Vehicles = 1 << 20,
+			//Nature = 1 << 21,
+			//Weapons = 1 << 22,
+			//UncategorizedModels = 1 << 23,
 
 			Surfaces = 1 << 24,
 
 			BasicContent = 1 << 25,
 
-			FunctionalObjects = 1 << 26,
+			//FunctionalObjects = 1 << 26,
 		}
 
 		/////////////////////////////////////////
@@ -381,7 +406,7 @@ namespace NeoAxis
 
 		///////////////////////////////////////////////
 
-		class ImageGenerator
+		public class ImageGenerator
 		{
 			Vector2I imageSizeRender = new Vector2I( 1000 * 4, 562 * 4 );
 			Vector2I imageSizeOutput = new Vector2I( 1000, 562 );
@@ -399,6 +424,9 @@ namespace NeoAxis
 			IntPtr imageData;
 
 			Scene scene;
+
+			public double CameraZoomFactor { get; set; } = 1;
+			public Vector3? CameraLookTo;
 
 			/////////////////////////////////////////
 
@@ -478,6 +506,8 @@ namespace NeoAxis
 				//var camera = scene.CameraEditor.Value;
 				var bounds = scene.CalculateTotalBoundsOfObjectsInSpace();
 				var cameraLookTo = bounds.GetCenter();
+				if( CameraLookTo != null )
+					cameraLookTo = CameraLookTo.Value;
 
 				double maxGararite = Math.Max( Math.Max( bounds.GetSize().X, bounds.GetSize().Y ), bounds.GetSize().Z );
 				double distance = maxGararite * 2;// 2.3;
@@ -488,12 +518,12 @@ namespace NeoAxis
 				if( surface != null )
 					distance /= 2;//!!!!
 
-				double cameraZoomFactor = 1;
+				//double cameraZoomFactor = 1;
 				SphericalDirection cameraDirection = new SphericalDirection( -3.83, -.47 );
 				if( skybox != null )
 					cameraDirection = new SphericalDirection( 0, 0 );
 
-				var cameraPosition = cameraLookTo - cameraDirection.GetVector() * distance * cameraZoomFactor;
+				var cameraPosition = cameraLookTo - cameraDirection.GetVector() * distance * CameraZoomFactor;
 				var center = cameraLookTo;// GetSceneCenter();
 
 				Vector3 from = cameraPosition;//center + cameraDirection.GetVector() * cameraDistance;
@@ -760,6 +790,11 @@ namespace NeoAxis
 				GenerateGeneral( writeStream, writeImageFormat );// writeRealFileName );
 			}
 
+			public void Generate( ObjectInSpace objectInSpace, Stream writeStream )
+			{
+				Generate( objectInSpace, writeStream, ImageFormat.Png );
+			}
+
 			void GenerateGeneral( Stream writeStream, ImageFormat writeImageFormat )// string writeRealFileName )
 			{
 #if !DEPLOY
@@ -866,6 +901,11 @@ namespace NeoAxis
 				case nameof( CreateScreenshots ):
 				case nameof( CreateProducts ):
 					if( !ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Surfaces ) && !CategoryIsModel( ProjectItemCategories ) && !ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Materials ) && !ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Environments ) )
+						skip = true;
+					break;
+
+				case nameof( ProductLogo ):
+					if( CreateScreenshots )
 						skip = true;
 					break;
 
@@ -1407,8 +1447,13 @@ namespace NeoAxis
 
 		public static bool CategoryIsModel( ProjectItemCategoriesEnum category )
 		{
-			return ( category & ( ProjectItemCategoriesEnum.Animals | ProjectItemCategoriesEnum.Architecture | ProjectItemCategoriesEnum.Characters | ProjectItemCategoriesEnum.Exterior | ProjectItemCategoriesEnum.Food | ProjectItemCategoriesEnum.Industrial | ProjectItemCategoriesEnum.Interior | ProjectItemCategoriesEnum.Vehicles | ProjectItemCategoriesEnum.Nature | ProjectItemCategoriesEnum.Weapons | ProjectItemCategoriesEnum.UncategorizedModels ) ) != 0;
+			return ( category & ( ProjectItemCategoriesEnum.Models | ProjectItemCategoriesEnum.Characters | ProjectItemCategoriesEnum.Vehicles | ProjectItemCategoriesEnum.Weapons | ProjectItemCategoriesEnum.Fences | ProjectItemCategoriesEnum.Pipes | ProjectItemCategoriesEnum.Buildings | ProjectItemCategoriesEnum.Surfaces ) ) != 0;
 		}
+
+		//public static bool CategoryIsModel( ProjectItemCategoriesEnum category )
+		//{
+		//	return ( category & ( ProjectItemCategoriesEnum.Animals | ProjectItemCategoriesEnum.Architecture | ProjectItemCategoriesEnum.Characters | ProjectItemCategoriesEnum.Exterior | ProjectItemCategoriesEnum.Food | ProjectItemCategoriesEnum.Industrial | ProjectItemCategoriesEnum.Interior | ProjectItemCategoriesEnum.Vehicles | ProjectItemCategoriesEnum.Nature | ProjectItemCategoriesEnum.Weapons | ProjectItemCategoriesEnum.UncategorizedModels ) ) != 0;
+		//}
 
 		static string GetMD5( string input )
 		{
@@ -1432,7 +1477,7 @@ namespace NeoAxis
 
 			if( string.IsNullOrEmpty( result ) )
 			{
-				result = Name.Replace( ' ', '_' ).Replace( '-', '_' );
+				result = Name.Replace( ' ', '_' ).Replace( '-', '_' ).Replace( '(', '_' ).Replace( ')', '_' );
 
 				var fileName = ComponentUtility.GetOwnedFileNameOfComponent( this );
 				if( !string.IsNullOrEmpty( fileName ) )
@@ -1516,6 +1561,9 @@ namespace NeoAxis
 
 			return result.ToArray();
 		}
+
+		public delegate void CreateScreenshotDelegate( Product_Store sender, string[] files, ZipArchive archive, ref bool handled );
+		public static event CreateScreenshotDelegate CreateScreenshot;
 
 		bool ProjectItemBuildArchive( ProductBuildInstance buildInstance, string specifiedFile, string authorEmail, List<string> filesToUpload )
 		{
@@ -1647,200 +1695,225 @@ namespace NeoAxis
 					//try to create screenshots
 					if( CreateScreenshots )
 					{
-						var objectInSpaceVirtualFileName = "";
-						if( ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Components ) )
+						bool handled = false;
+						CreateScreenshot?.Invoke( this, files, archive, ref handled );
+
+						if( !handled )
 						{
-							var objectInSpaceVirtualFileNames = new List<string>();
-							foreach( var file in files )
+							var objectInSpaceVirtualFileName = "";
+							if( ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Components ) )
 							{
-								var ext = Path.GetExtension( file );
-								if( !string.IsNullOrEmpty( ext ) )
+								var objectInSpaceVirtualFileNames = new List<string>();
+								foreach( var file in files )
 								{
-									//!!!!
-
-									var ext2 = ext.ToLower().Replace( ".", "" );
-
-									//var resourceClass = resourceType?.ResourceClass;
-									//if( resourceClass != null && typeof( ObjectInSpace ).IsAssignableFrom( resourceClass ) )
-									//{
-									if( ext2 == "objectinspace" || ext2 == "character" || ext2 == "vehicle" )
+									var ext = Path.GetExtension( file );
+									if( !string.IsNullOrEmpty( ext ) )
 									{
-										var virtualFileName = VirtualPathUtility.GetVirtualPathByReal( file );
-										if( !string.IsNullOrEmpty( virtualFileName ) )
-											objectInSpaceVirtualFileNames.Add( virtualFileName );
+										//!!!!
+
+										var ext2 = ext.ToLower().Replace( ".", "" );
+
+										//var resourceClass = resourceType?.ResourceClass;
+										//if( resourceClass != null && typeof( ObjectInSpace ).IsAssignableFrom( resourceClass ) )
+										//{
+
+										//!!!!
+										if( ext2 == "objectinspace" )//|| ext2 == "vehicletype" )//|| ext2 == "character" || ext2 == "vehicle" )
+										{
+											var virtualFileName = VirtualPathUtility.GetVirtualPathByReal( file );
+											if( !string.IsNullOrEmpty( virtualFileName ) )
+												objectInSpaceVirtualFileNames.Add( virtualFileName );
+										}
 									}
 								}
-							}
-							//if( objectInSpaceVirtualFileNames.Count == 1 )
-							if( objectInSpaceVirtualFileNames.Count != 0 )
-								objectInSpaceVirtualFileName = objectInSpaceVirtualFileNames[ 0 ];
-						}
-
-						if( !string.IsNullOrEmpty( objectInSpaceVirtualFileName ) )
-						{
-							//ObjectInSpace
-
-							var objectInSpace = ResourceManager.LoadResource<ObjectInSpace>( objectInSpaceVirtualFileName );// importVirtualFileNames[ 0 ] );
-							if( objectInSpace != null )
-							{
-								var generator = new ImageGenerator();
-
-								var entry = archive.CreateEntry( "_ProductLogo.png" );
-								using( var entryStream = entry.Open() )
-									generator.Generate( objectInSpace, entryStream, ImageFormat.Png );
-							}
-						}
-						else if( ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Surfaces ) )
-						{
-							//surface
-
-							var resourceType = ResourceManager.GetTypeByName( "Surface" );
-							var importExtensions = new ESet<string>();
-							foreach( var e in resourceType.FileExtensions )
-								importExtensions.AddWithCheckAlreadyContained( "." + e );
-
-							var importVirtualFileNames = new List<string>();
-							foreach( var file in files )
-							{
-								var ext = Path.GetExtension( file );
-								if( !string.IsNullOrEmpty( ext ) && importExtensions.Contains( ext ) )
-								{
-									var virtualFileName = VirtualPathUtility.GetVirtualPathByReal( file );
-									if( !string.IsNullOrEmpty( virtualFileName ) )
-										importVirtualFileNames.Add( virtualFileName );
-								}
+								//if( objectInSpaceVirtualFileNames.Count == 1 )
+								if( objectInSpaceVirtualFileNames.Count != 0 )
+									objectInSpaceVirtualFileName = objectInSpaceVirtualFileNames[ 0 ];
 							}
 
-							if( importVirtualFileNames.Count == 1 )
+							if( !string.IsNullOrEmpty( objectInSpaceVirtualFileName ) )
 							{
-								var surface = ResourceManager.LoadResource<Surface>( importVirtualFileNames[ 0 ] );
-								if( surface != null )
+								//ObjectInSpace
+
+								var objectInSpace = ResourceManager.LoadResource<ObjectInSpace>( objectInSpaceVirtualFileName );// importVirtualFileNames[ 0 ] );
+								if( objectInSpace != null )
 								{
 									var generator = new ImageGenerator();
 
 									var entry = archive.CreateEntry( "_ProductLogo.png" );
 									using( var entryStream = entry.Open() )
-										generator.Generate( surface, entryStream, ImageFormat.Png );
-									//generator.Generate( surface, destFileName + ".logo.png" );
+										generator.Generate( objectInSpace, entryStream, ImageFormat.Png );
 								}
 							}
-						}
-						else if( CategoryIsModel( ProjectItemCategories.Value ) )
-						{
-							//model
-
-							//find in the folder one import file (FBX, etc). make screenshot of 'Mesh' object inside the import file.
-
-							var resourceType = ResourceManager.GetTypeByName( "Import 3D" );
-							var importExtensions = new ESet<string>();
-							foreach( var e in resourceType.FileExtensions )
-								importExtensions.AddWithCheckAlreadyContained( "." + e );
-
-							var importVirtualFileNames = new List<string>();
-							foreach( var file in files )
+							else if( ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Surfaces ) )
 							{
-								var ext = Path.GetExtension( file );
-								if( !string.IsNullOrEmpty( ext ) && importExtensions.Contains( ext ) )
+								//surface
+
+								var resourceType = ResourceManager.GetTypeByName( "Surface" );
+								var importExtensions = new ESet<string>();
+								foreach( var e in resourceType.FileExtensions )
+									importExtensions.AddWithCheckAlreadyContained( "." + e );
+
+								var importVirtualFileNames = new List<string>();
+								foreach( var file in files )
 								{
-									var virtualFileName = VirtualPathUtility.GetVirtualPathByReal( file );
-									if( !string.IsNullOrEmpty( virtualFileName ) )
-										importVirtualFileNames.Add( virtualFileName );
+									var ext = Path.GetExtension( file );
+									if( !string.IsNullOrEmpty( ext ) && importExtensions.Contains( ext ) )
+									{
+										var virtualFileName = VirtualPathUtility.GetVirtualPathByReal( file );
+										if( !string.IsNullOrEmpty( virtualFileName ) )
+											importVirtualFileNames.Add( virtualFileName );
+									}
 								}
-							}
 
-							if( importVirtualFileNames.Count == 1 )
-							{
-								var import3D = ResourceManager.LoadResource<Import3D>( importVirtualFileNames[ 0 ] );
-								if( import3D != null )
+								if( importVirtualFileNames.Count == 1 )
 								{
-									var mesh = import3D.GetComponent<Mesh>( "Mesh" );
-									if( mesh != null )
+									var surface = ResourceManager.LoadResource<Surface>( importVirtualFileNames[ 0 ] );
+									if( surface != null )
 									{
 										var generator = new ImageGenerator();
 
 										var entry = archive.CreateEntry( "_ProductLogo.png" );
 										using( var entryStream = entry.Open() )
-											generator.Generate( mesh, entryStream, ImageFormat.Png );
-										//generator.Generate( mesh, destFileName + ".logo.png" );
+											generator.Generate( surface, entryStream, ImageFormat.Png );
+										//generator.Generate( surface, destFileName + ".logo.png" );
+									}
+								}
+							}
+							else if( CategoryIsModel( ProjectItemCategories.Value ) )
+							{
+								//model
 
-										//!!!!если не делаем скриншоты, тогда не будет
-										if( mesh.Result != null )
+								//find in the folder one import file (FBX, etc). make screenshot of 'Mesh' object inside the import file.
+
+								var resourceType = ResourceManager.GetTypeByName( "Import 3D" );
+								var importExtensions = new ESet<string>();
+								foreach( var e in resourceType.FileExtensions )
+									importExtensions.AddWithCheckAlreadyContained( "." + e );
+
+								var importVirtualFileNames = new List<string>();
+								foreach( var file in files )
+								{
+									var ext = Path.GetExtension( file );
+									if( !string.IsNullOrEmpty( ext ) && importExtensions.Contains( ext ) )
+									{
+										var virtualFileName = VirtualPathUtility.GetVirtualPathByReal( file );
+										if( !string.IsNullOrEmpty( virtualFileName ) )
+											importVirtualFileNames.Add( virtualFileName );
+									}
+								}
+
+								if( importVirtualFileNames.Count == 1 )
+								{
+									var import3D = ResourceManager.LoadResource<Import3D>( importVirtualFileNames[ 0 ] );
+									if( import3D != null )
+									{
+										var mesh = import3D.GetComponent<Mesh>( "Mesh" );
+										if( mesh != null )
 										{
-											triangles = mesh.Result.ExtractedIndices.Length / 3;
-											vertices = mesh.Result.ExtractedVerticesPositions.Length;
+											var generator = new ImageGenerator();
+
+											var entry = archive.CreateEntry( "_ProductLogo.png" );
+											using( var entryStream = entry.Open() )
+												generator.Generate( mesh, entryStream, ImageFormat.Png );
+											//generator.Generate( mesh, destFileName + ".logo.png" );
+
+											//!!!!если не делаем скриншоты, тогда не будет
+											if( mesh.Result != null )
+											{
+												triangles = mesh.Result.ExtractedIndices.Length / 3;
+												vertices = mesh.Result.ExtractedVerticesPositions.Length;
+											}
 										}
 									}
 								}
 							}
+							else if( ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Materials ) )
+							{
+								//material
+
+								var resourceType = ResourceManager.GetTypeByName( "Material" );
+								var importExtensions = new ESet<string>();
+								foreach( var e in resourceType.FileExtensions )
+									importExtensions.AddWithCheckAlreadyContained( "." + e );
+
+								var importVirtualFileNames = new List<string>();
+								foreach( var file in files )
+								{
+									var ext = Path.GetExtension( file );
+									if( !string.IsNullOrEmpty( ext ) && importExtensions.Contains( ext ) )
+									{
+										var virtualFileName = VirtualPathUtility.GetVirtualPathByReal( file );
+										if( !string.IsNullOrEmpty( virtualFileName ) )
+											importVirtualFileNames.Add( virtualFileName );
+									}
+								}
+
+								if( importVirtualFileNames.Count == 1 )
+								{
+									var material = ResourceManager.LoadResource<Material>( importVirtualFileNames[ 0 ] );
+									if( material != null )
+									{
+										var generator = new ImageGenerator();
+
+										var entry = archive.CreateEntry( "_ProductLogo.png" );
+										using( var entryStream = entry.Open() )
+											generator.Generate( material, entryStream, ImageFormat.Png );
+										//generator.Generate( material, destFileName + ".logo.png" );
+									}
+								}
+							}
+							else if( ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Environments ) )
+							{
+								//skybox
+
+								var resourceType = ResourceManager.GetTypeByName( "Skybox" );
+								var importExtensions = new ESet<string>();
+								foreach( var e in resourceType.FileExtensions )
+									importExtensions.AddWithCheckAlreadyContained( "." + e );
+
+								var importVirtualFileNames = new List<string>();
+								foreach( var file in files )
+								{
+									var ext = Path.GetExtension( file );
+									if( !string.IsNullOrEmpty( ext ) && importExtensions.Contains( ext ) )
+									{
+										var virtualFileName = VirtualPathUtility.GetVirtualPathByReal( file );
+										if( !string.IsNullOrEmpty( virtualFileName ) )
+											importVirtualFileNames.Add( virtualFileName );
+									}
+								}
+
+								if( importVirtualFileNames.Count == 1 )
+								{
+									var skybox = ResourceManager.LoadResource<Skybox>( importVirtualFileNames[ 0 ] );
+									if( skybox != null )
+									{
+										var generator = new ImageGenerator();
+
+										var entry = archive.CreateEntry( "_ProductLogo.jpg" );
+										using( var entryStream = entry.Open() )
+											generator.Generate( skybox, entryStream, ImageFormat.Jpeg );
+										//generator.Generate( skybox, destFileName + ".logo.jpg" );// png" );
+									}
+								}
+							}
 						}
-						else if( ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Materials ) )
+					}
+					else
+					{
+						//ProductLogo
+
+						var resourceName = ProductLogo.Value?.ResourceName;
+						if( !string.IsNullOrEmpty( resourceName ) )
 						{
-							//material
-
-							var resourceType = ResourceManager.GetTypeByName( "Material" );
-							var importExtensions = new ESet<string>();
-							foreach( var e in resourceType.FileExtensions )
-								importExtensions.AddWithCheckAlreadyContained( "." + e );
-
-							var importVirtualFileNames = new List<string>();
-							foreach( var file in files )
+							var extension = Path.GetExtension( resourceName ).ToLower();
+							if( extension == ".png" || extension == ".jpg" )
 							{
-								var ext = Path.GetExtension( file );
-								if( !string.IsNullOrEmpty( ext ) && importExtensions.Contains( ext ) )
-								{
-									var virtualFileName = VirtualPathUtility.GetVirtualPathByReal( file );
-									if( !string.IsNullOrEmpty( virtualFileName ) )
-										importVirtualFileNames.Add( virtualFileName );
-								}
-							}
-
-							if( importVirtualFileNames.Count == 1 )
-							{
-								var material = ResourceManager.LoadResource<Material>( importVirtualFileNames[ 0 ] );
-								if( material != null )
-								{
-									var generator = new ImageGenerator();
-
-									var entry = archive.CreateEntry( "_ProductLogo.png" );
-									using( var entryStream = entry.Open() )
-										generator.Generate( material, entryStream, ImageFormat.Png );
-									//generator.Generate( material, destFileName + ".logo.png" );
-								}
-							}
-						}
-						else if( ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Environments ) )
-						{
-							//skybox
-
-							var resourceType = ResourceManager.GetTypeByName( "Skybox" );
-							var importExtensions = new ESet<string>();
-							foreach( var e in resourceType.FileExtensions )
-								importExtensions.AddWithCheckAlreadyContained( "." + e );
-
-							var importVirtualFileNames = new List<string>();
-							foreach( var file in files )
-							{
-								var ext = Path.GetExtension( file );
-								if( !string.IsNullOrEmpty( ext ) && importExtensions.Contains( ext ) )
-								{
-									var virtualFileName = VirtualPathUtility.GetVirtualPathByReal( file );
-									if( !string.IsNullOrEmpty( virtualFileName ) )
-										importVirtualFileNames.Add( virtualFileName );
-								}
-							}
-
-							if( importVirtualFileNames.Count == 1 )
-							{
-								var skybox = ResourceManager.LoadResource<Skybox>( importVirtualFileNames[ 0 ] );
-								if( skybox != null )
-								{
-									var generator = new ImageGenerator();
-
-									var entry = archive.CreateEntry( "_ProductLogo.jpg" );
-									using( var entryStream = entry.Open() )
-										generator.Generate( skybox, entryStream, ImageFormat.Jpeg );
-									//generator.Generate( skybox, destFileName + ".logo.jpg" );// png" );
-								}
+								var entry = archive.CreateEntry( "_ProductLogo" + extension );
+								var data = VirtualFile.ReadAllBytes( resourceName );
+								using( var entryStream = entry.Open() )
+									entryStream.Write( data );
 							}
 						}
 					}

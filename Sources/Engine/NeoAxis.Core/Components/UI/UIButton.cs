@@ -50,6 +50,19 @@ namespace NeoAxis
 		ReferenceField<ImageComponent> _imageDisabled = null;
 
 		/// <summary>
+		/// The font size of the text.
+		/// </summary>
+		[DefaultValue( "Units 20" )]
+		public Reference<UIMeasureValueDouble> FontSize
+		{
+			get { if( _fontSize.BeginGet() ) FontSize = _fontSize.Get( this ); return _fontSize.value; }
+			set { if( _fontSize.BeginSet( ref value ) ) { try { FontSizeChanged?.Invoke( this ); } finally { _fontSize.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="TitleBarFontSize"/> property value changes.</summary>
+		public event Action<UIButton> FontSizeChanged;
+		ReferenceField<UIMeasureValueDouble> _fontSize = new UIMeasureValueDouble( UIMeasure.Units, 20 );
+
+		/// <summary>
 		/// Specifies highlighted state of the button.
 		/// </summary>
 		[DefaultValue( false )]

@@ -44,7 +44,8 @@ BOOL MiniDump::Create(HMODULE hModule, PEXCEPTION_POINTERS pExceptionInfo)
 //	::CreateDirectory("Errors",NULL);
 
 	//const char* dumpfilename = "UserSettings//NativeError.dmp";
-	const char* dumpfilename = "C://NativeError.dmp";
+	const char* dumpfilename = "C:\\_Temp\\NativeError.dmp";
+	//const char* dumpfilename = "C://NativeError.dmp";
 
 	HANDLE hDumpFile = ::CreateFile(dumpfilename, 
 									GENERIC_READ | GENERIC_WRITE, 

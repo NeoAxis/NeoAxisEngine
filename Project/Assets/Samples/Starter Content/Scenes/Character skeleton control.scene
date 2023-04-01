@@ -64,10 +64,6 @@
 			{
 				Name = Ambient Occlusion
 			}
-			.component NeoAxis.RenderingEffect_MotionBlur
-			{
-				Name = Motion Blur
-			}
 			.component NeoAxis.RenderingEffect_Bloom
 			{
 				Enabled = False
@@ -97,6 +93,10 @@
 			.component NeoAxis.RenderingEffect_Sharpen
 			{
 				Name = Sharpen
+			}
+			.component NeoAxis.RenderingEffect_MotionBlur
+			{
+				Name = Motion Blur
 			}
 		}
 		.component NeoAxis.Component

@@ -69,11 +69,6 @@
 				Enabled = False
 				Name = Ambient Occlusion
 			}
-			.component NeoAxis.RenderingEffect_MotionBlur
-			{
-				Enabled = False
-				Name = Motion Blur
-			}
 			.component NeoAxis.RenderingEffect_LensEffects
 			{
 				Enabled = False
@@ -100,6 +95,11 @@
 			.component NeoAxis.RenderingEffect_Sharpen
 			{
 				Name = Sharpen
+			}
+			.component NeoAxis.RenderingEffect_MotionBlur
+			{
+				Enabled = False
+				Name = Motion Blur
 			}
 		}
 		.component NeoAxis.Component
@@ -141,17 +141,6 @@
 				Count = 0
 			}
 		}
-		AdditionalMeshes
-		{
-			Count = 0
-		}
-		AdditionalItems
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
 		.component NeoAxis.Mesh
 		{
 			Name = Mesh
@@ -180,17 +169,6 @@
 			Count = 0
 		}
 		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-		AdditionalMeshes
-		{
-			Count = 0
-		}
-		AdditionalItems
 		{
 			Value
 			{
@@ -238,17 +216,6 @@
 			Count = 0
 		}
 		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-		AdditionalMeshes
-		{
-			Count = 0
-		}
-		AdditionalItems
 		{
 			Value
 			{
@@ -313,17 +280,6 @@
 				Count = 0
 			}
 		}
-		AdditionalMeshes
-		{
-			Count = 0
-		}
-		AdditionalItems
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
 		.component NeoAxis.Mesh
 		{
 			Name = Mesh
@@ -363,17 +319,6 @@
 			Count = 0
 		}
 		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-		AdditionalMeshes
-		{
-			Count = 0
-		}
-		AdditionalItems
 		{
 			Value
 			{

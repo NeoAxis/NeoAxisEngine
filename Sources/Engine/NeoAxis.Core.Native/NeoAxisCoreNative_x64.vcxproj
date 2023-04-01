@@ -210,10 +210,12 @@ copy ..\..\_Compilation\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\
     <ClCompile Include="Jolt\Core\Factory.cpp" />
     <ClCompile Include="Jolt\Core\IssueReporting.cpp" />
     <ClCompile Include="Jolt\Core\JobSystemThreadPool.cpp" />
+    <ClCompile Include="Jolt\Core\JobSystemWithBarrier.cpp" />
     <ClCompile Include="Jolt\Core\LinearCurve.cpp" />
     <ClCompile Include="Jolt\Core\Memory.cpp" />
     <ClCompile Include="Jolt\Core\Profiler.cpp" />
     <ClCompile Include="Jolt\Core\RTTI.cpp" />
+    <ClCompile Include="Jolt\Core\Semaphore.cpp" />
     <ClCompile Include="Jolt\Core\StringTools.cpp" />
     <ClCompile Include="Jolt\Core\TickCounter.cpp" />
     <ClCompile Include="Jolt\Geometry\ConvexHullBuilder.cpp" />
@@ -299,6 +301,7 @@ copy ..\..\_Compilation\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\
     <ClCompile Include="Jolt\Physics\Constraints\TwoBodyConstraint.cpp" />
     <ClCompile Include="Jolt\Physics\DeterminismLog.cpp" />
     <ClCompile Include="Jolt\Physics\IslandBuilder.cpp" />
+    <ClCompile Include="Jolt\Physics\LargeIslandSplitter.cpp" />
     <ClCompile Include="Jolt\Physics\PhysicsLock.cpp" />
     <ClCompile Include="Jolt\Physics\PhysicsScene.cpp" />
     <ClCompile Include="Jolt\Physics\PhysicsSystem.cpp" />
@@ -493,6 +496,7 @@ copy ..\..\_Compilation\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\
     <ClInclude Include="Jolt\Core\IssueReporting.h" />
     <ClInclude Include="Jolt\Core\JobSystem.h" />
     <ClInclude Include="Jolt\Core\JobSystemThreadPool.h" />
+    <ClInclude Include="Jolt\Core\JobSystemWithBarrier.h" />
     <ClInclude Include="Jolt\Core\LinearCurve.h" />
     <ClInclude Include="Jolt\Core\LockFreeHashMap.h" />
     <ClInclude Include="Jolt\Core\Memory.h" />
@@ -504,6 +508,7 @@ copy ..\..\_Compilation\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\
     <ClInclude Include="Jolt\Core\Reference.h" />
     <ClInclude Include="Jolt\Core\Result.h" />
     <ClInclude Include="Jolt\Core\RTTI.h" />
+    <ClInclude Include="Jolt\Core\Semaphore.h" />
     <ClInclude Include="Jolt\Core\StaticArray.h" />
     <ClInclude Include="Jolt\Core\STLAlignedAllocator.h" />
     <ClInclude Include="Jolt\Core\STLAllocator.h" />
@@ -695,6 +700,7 @@ copy ..\..\_Compilation\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\
     <ClInclude Include="Jolt\Physics\DeterminismLog.h" />
     <ClInclude Include="Jolt\Physics\EActivation.h" />
     <ClInclude Include="Jolt\Physics\IslandBuilder.h" />
+    <ClInclude Include="Jolt\Physics\LargeIslandSplitter.h" />
     <ClInclude Include="Jolt\Physics\PhysicsLock.h" />
     <ClInclude Include="Jolt\Physics\PhysicsScene.h" />
     <ClInclude Include="Jolt\Physics\PhysicsSettings.h" />

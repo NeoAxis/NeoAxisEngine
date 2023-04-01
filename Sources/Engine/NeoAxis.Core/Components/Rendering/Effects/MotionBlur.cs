@@ -8,7 +8,7 @@ namespace NeoAxis
 	/// <summary>
 	/// Per-object motion blur.
 	/// </summary>
-	[DefaultOrderOfEffect( 1.5 )]
+	[DefaultOrderOfEffect( 6.1 )]
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class RenderingEffect_MotionBlur : RenderingEffect
 	{
@@ -58,6 +58,16 @@ namespace NeoAxis
 		public event Action<RenderingEffect_MotionBlur> DepthThresholdChanged;
 		ReferenceField<double> _depthThreshold = 0.3;
 
+		[DefaultValue( 0.001 )]
+		public Reference<double> VelocityThreshold
+		{
+			get { if( _velocityThreshold.BeginGet() ) VelocityThreshold = _velocityThreshold.Get( this ); return _velocityThreshold.value; }
+			set { if( _velocityThreshold.BeginSet( ref value ) ) { try { VelocityThresholdChanged?.Invoke( this ); } finally { _velocityThreshold.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="VelocityThreshold"/> property value changes.</summary>
+		public event Action<RenderingEffect_MotionBlur> VelocityThresholdChanged;
+		ReferenceField<double> _velocityThreshold = 0.001;
+
 		/////////////////////////////////////////
 
 		protected override void OnRender( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture )
@@ -68,8 +78,8 @@ namespace NeoAxis
 				return;
 
 			var multiplier = 0.0;
-			if( context.Owner.LastUpdateTimeStep != 0 )
-				multiplier = ( 1.0 / context.Owner.LastUpdateTimeStep ) / 45.0;
+			if( context.Owner.LastUpdateTimeStepSmooth != 0 )
+				multiplier = ( 1.0 / context.Owner.LastUpdateTimeStepSmooth ) / 70.0;
 			multiplier *= Multiplier.Value * GlobalMultiplier;
 
 			if( multiplier <= 0 )
@@ -96,15 +106,10 @@ namespace NeoAxis
 				shader.Parameters.Set( "intensity", (float)Intensity );
 
 				//fix initial rattling
-				if( context.Owner.LastUpdateTimeStep > 0.1 )
+				if( context.Owner.LastUpdateTimeStepSmooth > 0.1 )
 					multiplier = 0;
 
-				//var multiplier = 0.0;
-				//if( context.Owner.LastUpdateTimeStep != 0 )
-				//	multiplier = ( 1.0 / Math.Min( context.Owner.LastUpdateTimeStep, 0.1 ) ) / 45.0;
-				//multiplier *= Multiplier.Value;
-
-				var parameters = new Vector4F( (float)multiplier, (float)DepthThreshold, 0, 0 );
+				var parameters = new Vector4F( (float)multiplier, (float)DepthThreshold, (float)VelocityThreshold, 0 );
 				shader.Parameters.Set( "motionBlurParameters", parameters );
 
 				var size = actualTexture.Result.ResultSize;

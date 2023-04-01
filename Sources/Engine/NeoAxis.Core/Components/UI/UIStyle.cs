@@ -559,10 +559,13 @@ namespace NeoAxis
 					}
 
 					//text
-					var position = rect.GetCenter() + new Vector2( 0, renderer.DefaultFontSize / 10 );
+					var fontSize = control.GetScreenOffsetByValueY( control.FontSize );
+					var position = rect.GetCenter() + new Vector2( 0, fontSize / 10 );
 					var textColor = new ColorValue( 1, 1, 1 );
+					renderer.AddText( renderer.DefaultFont, fontSize, control.Text, position, EHorizontalAlignment.Center, EVerticalAlignment.Center, textColor );
+
 					//var textColor = control.State == UIButton.StateEnum.Disabled ? new ColorValue( 0.7, 0.7, 0.7 ) : new ColorValue( 1, 1, 1 );
-					renderer.AddText( control.Text, position, EHorizontalAlignment.Center, EVerticalAlignment.Center, textColor );
+					//renderer.AddText( control.Text, position, EHorizontalAlignment.Center, EVerticalAlignment.Center, textColor );
 				}
 			}
 		}
@@ -649,7 +652,9 @@ namespace NeoAxis
 
 			//!!!!странно рисует чуть ниже, чем посередине
 			//text
-			renderer.AddText( " " + control.Text, new Vector2( imageRect.Right, imageRect.GetCenter().Y ), EHorizontalAlignment.Left, EVerticalAlignment.Center, textColor * colorMultiplier );
+			var fontSize = control.GetScreenOffsetByValueY( control.FontSize );
+			renderer.AddText( renderer.DefaultFont, fontSize, " " + control.Text, new Vector2( imageRect.Right, imageRect.GetCenter().Y ), EHorizontalAlignment.Left, EVerticalAlignment.Center, textColor * colorMultiplier );
+
 			//renderer.AddText( " " + control.Text, new Vector2( rect.Right, rect.Top ), EHorizontalAlignment.Left, EVerticalAlignment.Top, textColor * colorMultiplier );
 			//}
 		}
@@ -842,7 +847,7 @@ namespace NeoAxis
 				double screenSizeY = rect2.Size.Y;
 				double scrollScreenSizeY = totalItemsHeight - screenSizeY;
 
-				scrollBar.Visible = control.AlwaysShowScroll || totalItemsHeight > screenSizeY;
+				scrollBar.Visible = control.AlwaysShowScroll || totalItemsHeight - 0.001 > screenSizeY;
 				if( scrollBar.Visible )
 					scrollBar.ValueRange = new NeoAxis.Range( 0, scrollScreenSizeY );
 
@@ -974,8 +979,10 @@ namespace NeoAxis
 			var rect = control.GetScreenRectangle();
 			renderer.AddQuad( rect, new ColorValue( 0.15, 0.15, 0.15 ) );
 
+			var borderSize = control.BorderSize.Value;
+
 			var rect2 = rect;
-			rect2.Expand( -control.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 4, 4 ) ) );
+			rect2.Expand( -control.GetScreenOffsetByValue( borderSize ) );
 
 			var color = new ColorValue( 0.5, 0.5, 0.5 );
 			renderer.AddQuad( new Rectangle( rect.Left, rect.Top, rect2.Left, rect.Bottom ), color );
@@ -985,19 +992,46 @@ namespace NeoAxis
 
 			if( control.TitleBar.Value )
 			{
-				double titleBarHeight = 30;
-				double screenY = rect.Top + control.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 0, titleBarHeight ) ).Y;
-				double screenY2 = screenY + control.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 0, 4 ) ).Y;
-
-				var rect3 = new Rectangle( rect2.Left, rect2.Top, rect2.Right, screenY2 );
+				double screenY = rect.Top + control.GetScreenOffsetByValueY( control.TitleBarHeight );
+				var rect3 = new Rectangle( rect2.Left, rect2.Top, rect2.Right, screenY );
 				renderer.AddQuad( rect3, color );
 
 				if( !string.IsNullOrEmpty( control.Text ) )
 				{
-					var pos = new Vector2( rect.GetCenter().X, ( rect2.Top + screenY ) / 2 );
-					renderer.AddText( control.Text, pos, EHorizontalAlignment.Center, EVerticalAlignment.Center, new ColorValue( 1, 1, 1 ) );
+					var rect4 = new Rectangle( rect3.Left, rect.Top, rect3.Right, rect3.Bottom );
+					var pos = rect4.GetCenter();
+					var fontSize = control.GetScreenOffsetByValueY( control.TitleBarFontSize );
+					renderer.AddText( renderer.DefaultFont, fontSize, control.Text, pos, EHorizontalAlignment.Center, EVerticalAlignment.Center, new ColorValue( 1, 1, 1 ) );
 				}
 			}
+
+			//var rect = control.GetScreenRectangle();
+			//renderer.AddQuad( rect, new ColorValue( 0.15, 0.15, 0.15 ) );
+
+			//var rect2 = rect;
+			//rect2.Expand( -control.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 4, 4 ) ) );
+
+			//var color = new ColorValue( 0.5, 0.5, 0.5 );
+			//renderer.AddQuad( new Rectangle( rect.Left, rect.Top, rect2.Left, rect.Bottom ), color );
+			//renderer.AddQuad( new Rectangle( rect2.Left, rect.Top, rect2.Right, rect2.Top ), color );
+			//renderer.AddQuad( new Rectangle( rect2.Right, rect.Top, rect.Right, rect.Bottom ), color );
+			//renderer.AddQuad( new Rectangle( rect.Left, rect2.Bottom, rect2.Right, rect.Bottom ), color );
+
+			//if( control.TitleBar.Value )
+			//{
+			//	double titleBarHeight = 30;
+			//	double screenY = rect.Top + control.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 0, titleBarHeight ) ).Y;
+			//	double screenY2 = screenY + control.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 0, 4 ) ).Y;
+
+			//	var rect3 = new Rectangle( rect2.Left, rect2.Top, rect2.Right, screenY2 );
+			//	renderer.AddQuad( rect3, color );
+
+			//	if( !string.IsNullOrEmpty( control.Text ) )
+			//	{
+			//		var pos = new Vector2( rect.GetCenter().X, ( rect2.Top + screenY ) / 2 );
+			//		renderer.AddText( control.Text, pos, EHorizontalAlignment.Center, EVerticalAlignment.Center, new ColorValue( 1, 1, 1 ) );
+			//	}
+			//}
 		}
 
 		/////////////////////////////////////////

@@ -471,7 +471,7 @@ namespace NeoAxis
 		ReferenceField<bool> _surface4Collision = false;
 
 
-		const string surface5Default = @"Content\Vegetation\Models\Flowering plant\Tanacetum coccineum\Tanacetum coccineum.surface";
+		const string surface5Default = "";//@"Content\Vegetation\Models\Flowering plant\Tanacetum coccineum\Tanacetum coccineum.surface";
 		/// <summary>
 		/// The fifth surface.
 		/// </summary>

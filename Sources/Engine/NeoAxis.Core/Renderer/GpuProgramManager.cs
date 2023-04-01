@@ -153,6 +153,13 @@ namespace NeoAxis
 					case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.PercentageCloserFiltering16:
 						list.Add( ("GLOBAL_SHADOW_TECHNIQUE_PCF16", "1") );
 						break;
+					case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.PercentageCloserFiltering22:
+						list.Add( ("GLOBAL_SHADOW_TECHNIQUE_PCF22", "1") );
+						break;
+					case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.PercentageCloserFiltering32:
+						list.Add( ("GLOBAL_SHADOW_TECHNIQUE_PCF32", "1") );
+						break;
+
 						//case ProjectSettingsPage_Rendering.ShadowTechniqueEnum.ContactHardening:
 						//	list.Add( ("GLOBAL_SHADOW_TECHNIQUE_CHS", "1") );
 						//	break;

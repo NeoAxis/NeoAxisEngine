@@ -91,7 +91,10 @@ namespace NeoAxis.Player
 			VirtualFileSystem.Shutdown();
 
 			if( needRestartApplication )
-				Process.Start( Assembly.GetExecutingAssembly().Location, "" );
+			{
+				Process.Start( new ProcessStartInfo( Assembly.GetExecutingAssembly().Location, "" ) { UseShellExecute = true } );
+				//Process.Start( Assembly.GetExecutingAssembly().Location, "" );
+			}
 		}
 	}
 }

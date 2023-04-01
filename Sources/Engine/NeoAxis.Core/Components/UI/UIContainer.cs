@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
+using System.ComponentModel;
 
 namespace NeoAxis
 {
@@ -34,9 +35,15 @@ namespace NeoAxis
 
 		Rectangle lastCursorRectangle;
 
-		//
+		///////////////////////////////////////////////
 
-		//Keys
+		/// <summary>
+		/// The pixel scale for Measure.PixelsScaled. When no value, the size of the system font is used.
+		/// </summary>
+		[Browsable( false )]
+		public double? PixelScale { get; set; }
+
+		///////////////////////////////////////////////
 
 		public UIContainer( Viewport viewport )
 		{

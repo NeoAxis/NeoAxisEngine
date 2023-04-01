@@ -655,6 +655,15 @@
     <ClCompile Include="Jolt\NeoAxisPhysicsNative.cpp">
       <Filter>Physics</Filter>
     </ClCompile>
+    <ClCompile Include="Jolt\Core\JobSystemWithBarrier.cpp">
+      <Filter>Physics\Jolt</Filter>
+    </ClCompile>
+    <ClCompile Include="Jolt\Core\Semaphore.cpp">
+      <Filter>Physics\Jolt</Filter>
+    </ClCompile>
+    <ClCompile Include="Jolt\Physics\LargeIslandSplitter.cpp">
+      <Filter>Physics\Jolt</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MemoryManager\MemoryManager.h">
@@ -1859,6 +1868,15 @@
     </ClInclude>
     <ClInclude Include="Jolt\NeoAxisPhysicsNative.h">
       <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Jolt\Core\JobSystemWithBarrier.h">
+      <Filter>Physics\Jolt</Filter>
+    </ClInclude>
+    <ClInclude Include="Jolt\Core\Semaphore.h">
+      <Filter>Physics\Jolt</Filter>
+    </ClInclude>
+    <ClInclude Include="Jolt\Physics\LargeIslandSplitter.h">
+      <Filter>Physics\Jolt</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

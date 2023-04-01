@@ -16,6 +16,7 @@ namespace NeoAxis
 		Parent,
 		Units,
 		Pixels,
+		PixelsScaled,
 		Screen,
 	}
 

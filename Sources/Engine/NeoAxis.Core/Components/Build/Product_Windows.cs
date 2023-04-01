@@ -374,7 +374,8 @@ namespace NeoAxis
 			if( buildInstance.Run )
 			{
 				string executableFileName = Path.Combine( buildInstance.DestinationFolder, "Binaries", ExecutableName + ".exe" );
-				Process.Start( executableFileName, "" );
+				Process.Start( new ProcessStartInfo( executableFileName, "" ) { UseShellExecute = true } );
+				//Process.Start( executableFileName, "" );
 			}
 
 			if( CheckCancel( buildInstance ) )

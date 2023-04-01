@@ -67,8 +67,8 @@ namespace Project
 					arguments += " -windowState Normal";
 				//arguments += " -windowPosition \"10 10\" -windowSize \"954 754\"";
 
-
-				process = Process.Start( fileName, arguments );
+				process = Process.Start( new ProcessStartInfo( fileName, arguments ) { UseShellExecute = true } );
+				//process = Process.Start( fileName, arguments );
 			}
 			catch( Exception e )
 			{

@@ -158,63 +158,82 @@ void MemoryAlignedFree(void* inPointer)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-// Layer that objects can be in, determines which other objects it can collide with
-// Typically you at least want to have 1 layer for moving bodies and 1 layer for static bodies, but you can have more
-// layers if you want. E.g. you could have a layer for high detail collision (which is not used by the physics simulation
-// but only if you do collision testing).
+/// Layer that objects can be in, determines which other objects it can collide with
 namespace Layers
 {
-	static constexpr uint8 NON_MOVING = 0;
-	static constexpr uint8 MOVING = 1;
-	static constexpr uint8 NUM_LAYERS = 2;
+	static constexpr ObjectLayer UNUSED1 = 0; // 4 unused values so that broadphase layers values don't match with object layer values (for testing purposes)
+	static constexpr ObjectLayer UNUSED2 = 1;
+	static constexpr ObjectLayer UNUSED3 = 2;
+	static constexpr ObjectLayer UNUSED4 = 3;
+	static constexpr ObjectLayer NON_MOVING = 4;
+	static constexpr ObjectLayer MOVING = 5;
+	static constexpr ObjectLayer DEBRIS = 6; // Example: Debris collides only with NON_MOVING
+	static constexpr ObjectLayer SENSOR = 7; // Sensors only collide with MOVING objects
+	static constexpr ObjectLayer NUM_LAYERS = 8;
 };
 
-// Function that determines if two object layers can collide
-static bool MyObjectCanCollide(ObjectLayer inObject1, ObjectLayer inObject2)
+/// Class that determines if two object layers can collide
+class ObjectLayerPairFilterImpl : public ObjectLayerPairFilter
 {
-	switch (inObject1)
+public:
+	virtual bool					ShouldCollide(ObjectLayer inObject1, ObjectLayer inObject2) const override
 	{
-	case Layers::NON_MOVING:
-		return inObject2 == Layers::MOVING; // Non moving only collides with moving
-	case Layers::MOVING:
-		return true; // Moving collides with everything
-	default:
-		JPH_ASSERT(false);
-		return false;
+		switch (inObject1)
+		{
+		case Layers::UNUSED1:
+		case Layers::UNUSED2:
+		case Layers::UNUSED3:
+		case Layers::UNUSED4:
+			return false;
+		case Layers::NON_MOVING:
+			return inObject2 == Layers::MOVING || inObject2 == Layers::DEBRIS;
+		case Layers::MOVING:
+			return inObject2 == Layers::NON_MOVING || inObject2 == Layers::MOVING || inObject2 == Layers::SENSOR;
+		case Layers::DEBRIS:
+			return inObject2 == Layers::NON_MOVING;
+		case Layers::SENSOR:
+			return inObject2 == Layers::MOVING;
+		default:
+			JPH_ASSERT(false);
+			return false;
+		}
 	}
 };
 
-// Each broadphase layer results in a separate bounding volume tree in the broad phase. You at least want to have
-// a layer for non-moving and moving objects to avoid having to update a tree full of static objects every frame.
-// You can have a 1-on-1 mapping between object layers and broadphase layers (like in this case) but if you have
-// many object layers you'll be creating many broad phase trees, which is not efficient. If you want to fine tune
-// your broadphase layers define JPH_TRACK_BROADPHASE_STATS and look at the stats reported on the TTY.
+/// Broadphase layers
 namespace BroadPhaseLayers
 {
 	static constexpr BroadPhaseLayer NON_MOVING(0);
 	static constexpr BroadPhaseLayer MOVING(1);
-	static constexpr uint NUM_LAYERS(2);
+	static constexpr BroadPhaseLayer DEBRIS(2);
+	static constexpr BroadPhaseLayer SENSOR(3);
+	static constexpr BroadPhaseLayer UNUSED(4);
+	static constexpr uint NUM_LAYERS(5);
 };
 
-// BroadPhaseLayerInterface implementation
-// This defines a mapping between object and broadphase layers.
+/// BroadPhaseLayerInterface implementation
 class BPLayerInterfaceImpl final : public BroadPhaseLayerInterface
 {
 public:
 	BPLayerInterfaceImpl()
 	{
 		// Create a mapping table from object to broad phase layer
+		mObjectToBroadPhase[Layers::UNUSED1] = BroadPhaseLayers::UNUSED;
+		mObjectToBroadPhase[Layers::UNUSED2] = BroadPhaseLayers::UNUSED;
+		mObjectToBroadPhase[Layers::UNUSED3] = BroadPhaseLayers::UNUSED;
+		mObjectToBroadPhase[Layers::UNUSED4] = BroadPhaseLayers::UNUSED;
 		mObjectToBroadPhase[Layers::NON_MOVING] = BroadPhaseLayers::NON_MOVING;
 		mObjectToBroadPhase[Layers::MOVING] = BroadPhaseLayers::MOVING;
+		mObjectToBroadPhase[Layers::DEBRIS] = BroadPhaseLayers::DEBRIS;
+		mObjectToBroadPhase[Layers::SENSOR] = BroadPhaseLayers::SENSOR;
 	}
 
-	virtual uint GetNumBroadPhaseLayers() const override
+	virtual uint					GetNumBroadPhaseLayers() const override
 	{
 		return BroadPhaseLayers::NUM_LAYERS;
 	}
 
-	virtual BroadPhaseLayer GetBroadPhaseLayer(ObjectLayer inLayer) const override
+	virtual BroadPhaseLayer			GetBroadPhaseLayer(ObjectLayer inLayer) const override
 	{
 		JPH_ASSERT(inLayer < Layers::NUM_LAYERS);
 		return mObjectToBroadPhase[inLayer];
@@ -227,29 +246,44 @@ public:
 		{
 		case (BroadPhaseLayer::Type)BroadPhaseLayers::NON_MOVING:	return "NON_MOVING";
 		case (BroadPhaseLayer::Type)BroadPhaseLayers::MOVING:		return "MOVING";
+		case (BroadPhaseLayer::Type)BroadPhaseLayers::DEBRIS:		return "DEBRIS";
+		case (BroadPhaseLayer::Type)BroadPhaseLayers::SENSOR:		return "SENSOR";
+		case (BroadPhaseLayer::Type)BroadPhaseLayers::UNUSED:		return "UNUSED";
 		default:													JPH_ASSERT(false); return "INVALID";
 		}
 	}
 #endif // JPH_EXTERNAL_PROFILE || JPH_PROFILE_ENABLED
 
 private:
-	BroadPhaseLayer mObjectToBroadPhase[Layers::NUM_LAYERS];
+	BroadPhaseLayer					mObjectToBroadPhase[Layers::NUM_LAYERS];
 };
 
-// Function that determines if two broadphase layers can collide
-static bool MyBroadPhaseCanCollide(ObjectLayer inLayer1, BroadPhaseLayer inLayer2)
+/// Class that determines if an object layer can collide with a broadphase layer
+class ObjectVsBroadPhaseLayerFilterImpl : public ObjectVsBroadPhaseLayerFilter
 {
-	switch (inLayer1)
+public:
+	virtual bool					ShouldCollide(ObjectLayer inLayer1, BroadPhaseLayer inLayer2) const override
 	{
-	case Layers::NON_MOVING:
-		return inLayer2 == BroadPhaseLayers::MOVING;
-	case Layers::MOVING:
-		return true;
-	default:
-		JPH_ASSERT(false);
-		return false;
+		switch (inLayer1)
+		{
+		case Layers::NON_MOVING:
+			return inLayer2 == BroadPhaseLayers::MOVING;
+		case Layers::MOVING:
+			return inLayer2 == BroadPhaseLayers::NON_MOVING || inLayer2 == BroadPhaseLayers::MOVING || inLayer2 == BroadPhaseLayers::SENSOR;
+		case Layers::DEBRIS:
+			return inLayer2 == BroadPhaseLayers::NON_MOVING;
+		case Layers::SENSOR:
+			return inLayer2 == BroadPhaseLayers::MOVING;
+		case Layers::UNUSED1:
+		case Layers::UNUSED2:
+		case Layers::UNUSED3:
+			return false;
+		default:
+			JPH_ASSERT(false);
+			return false;
+		}
 	}
-}
+};
 
 class MyContactListener : public ContactListener
 {
@@ -364,6 +398,9 @@ public:
 	BPLayerInterfaceImpl broadPhaseLayerInterface;
 	//MyBodyActivationListener body_activation_listener;
 	MyContactListener contactListener;
+
+	ObjectVsBroadPhaseLayerFilterImpl objectVsBroadPhaseLayerFilterImpl;
+	ObjectLayerPairFilter objectLayerPairFilter;
 
 	//need?
 	std::map<uint, BodyItem*> bodyById;
@@ -614,116 +651,116 @@ public:
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/// Collision tester that tests collision using a sphere cast
-class VehicleCollisionTesterCastSphereMultiRadius : public VehicleCollisionTester
-{
-public:
-	JPH_OVERRIDE_NEW_DELETE
-
-		/// Constructor
-		/// @param inObjectLayer Object layer to test collision with
-		/// @param inUp World space up vector, used to avoid colliding with vertical walls.
-		/// @param inRadius Radius of sphere
-		/// @param inMaxSlopeAngle Max angle (rad) that is considered for colliding wheels. This is to avoid colliding with vertical walls.
-		VehicleCollisionTesterCastSphereMultiRadius(ObjectLayer inObjectLayer, /*float inRadius, */Vec3Arg inUp = Vec3::sAxisY(), float inMaxSlopeAngle = DegreesToRadians(80.0f)) : mObjectLayer(inObjectLayer), /*mRadius(inRadius), */mUp(inUp), mCosMaxSlopeAngle(Cos(inMaxSlopeAngle)) { }
-
-	// See: VehicleCollisionTester
-	virtual bool				Collide(PhysicsSystem& inPhysicsSystem, uint inWheelIndex, RVec3Arg inOrigin, Vec3Arg inDirection, float inSuspensionMaxLength, const BodyID& inVehicleBodyID, Body*& outBody, SubShapeID& outSubShapeID, RVec3& outContactPosition, Vec3& outContactNormal, float& outSuspensionLength) const override;
-
-public:
-	std::vector<float> mRadiuses;
-
-private:
-	ObjectLayer					mObjectLayer;
-	//float						mRadius;
-	Vec3						mUp;
-	float						mCosMaxSlopeAngle;
-};
-
-bool VehicleCollisionTesterCastSphereMultiRadius::Collide(PhysicsSystem& inPhysicsSystem, uint inWheelIndex, RVec3Arg inOrigin, Vec3Arg inDirection, float inSuspensionMaxLength, const BodyID& inVehicleBodyID, Body*& outBody, SubShapeID& outSubShapeID, RVec3& outContactPosition, Vec3& outContactNormal, float& outSuspensionLength) const
-{
-	DefaultBroadPhaseLayerFilter broadphase_layer_filter = inPhysicsSystem.GetDefaultBroadPhaseLayerFilter(mObjectLayer);
-	DefaultObjectLayerFilter object_layer_filter = inPhysicsSystem.GetDefaultLayerFilter(mObjectLayer);
-	IgnoreSingleBodyFilter body_filter(inVehicleBodyID);
-
-	auto mRadius = mRadiuses[inWheelIndex];
-
-	SphereShape sphere(mRadius);
-	sphere.SetEmbedded();
-
-	float cast_length = max(0.0f, inSuspensionMaxLength - mRadius);
-	RShapeCast shape_cast(&sphere, Vec3::sReplicate(1.0f), RMat44::sTranslation(inOrigin), inDirection * cast_length);
-
-	ShapeCastSettings settings;
-	settings.mUseShrunkenShapeAndConvexRadius = true;
-	settings.mReturnDeepestPoint = true;
-
-	class MyCollector : public CastShapeCollector
-	{
-	public:
-		MyCollector(PhysicsSystem& inPhysicsSystem, const RShapeCast& inShapeCast, Vec3Arg inUpDirection, float inCosMaxSlopeAngle) :
-			mPhysicsSystem(inPhysicsSystem),
-			mShapeCast(inShapeCast),
-			mUpDirection(inUpDirection),
-			mCosMaxSlopeAngle(inCosMaxSlopeAngle)
-		{
-		}
-
-		virtual void		AddHit(const ShapeCastResult& inResult) override
-		{
-			// Test if this collision is closer than the previous one
-			if (inResult.mFraction < GetEarlyOutFraction())
-			{
-				// Lock the body
-				BodyLockRead lock(mPhysicsSystem.GetBodyLockInterfaceNoLock(), inResult.mBodyID2);
-				JPH_ASSERT(lock.Succeeded()); // When this runs all bodies are locked so this should not fail
-				const Body* body = &lock.GetBody();
-
-				if (body->IsSensor())
-					return;
-
-				// Test that we're not hitting a vertical wall
-				Vec3 normal = -inResult.mPenetrationAxis.Normalized();
-				if (normal.Dot(mUpDirection) > mCosMaxSlopeAngle)
-				{
-					// Update early out fraction to this hit
-					UpdateEarlyOutFraction(inResult.mFraction);
-
-					// Get the contact properties
-					mBody = body;
-					mSubShapeID2 = inResult.mSubShapeID2;
-					mContactPosition = mShapeCast.mCenterOfMassStart.GetTranslation() + inResult.mContactPointOn2;
-					mContactNormal = normal;
-				}
-			}
-		}
-
-		// Configuration
-		PhysicsSystem& mPhysicsSystem;
-		const RShapeCast& mShapeCast;
-		Vec3				mUpDirection;
-		float				mCosMaxSlopeAngle;
-
-		// Resulting closest collision
-		const Body* mBody = nullptr;
-		SubShapeID			mSubShapeID2;
-		RVec3				mContactPosition;
-		Vec3				mContactNormal;
-	};
-
-	MyCollector collector(inPhysicsSystem, shape_cast, mUp, mCosMaxSlopeAngle);
-	inPhysicsSystem.GetNarrowPhaseQueryNoLock().CastShape(shape_cast, settings, shape_cast.mCenterOfMassStart.GetTranslation(), collector, broadphase_layer_filter, object_layer_filter, body_filter);
-	if (collector.mBody == nullptr)
-		return false;
-
-	outBody = const_cast<Body*>(collector.mBody);
-	outSubShapeID = collector.mSubShapeID2;
-	outContactPosition = collector.mContactPosition;
-	outContactNormal = collector.mContactNormal;
-	outSuspensionLength = min(inSuspensionMaxLength, cast_length * collector.GetEarlyOutFraction() + mRadius);
-
-	return true;
-}
+///// Collision tester that tests collision using a sphere cast
+//class VehicleCollisionTesterCastSphereMultiRadius : public VehicleCollisionTester
+//{
+//public:
+//	JPH_OVERRIDE_NEW_DELETE
+//
+//		/// Constructor
+//		/// @param inObjectLayer Object layer to test collision with
+//		/// @param inUp World space up vector, used to avoid colliding with vertical walls.
+//		/// @param inRadius Radius of sphere
+//		/// @param inMaxSlopeAngle Max angle (rad) that is considered for colliding wheels. This is to avoid colliding with vertical walls.
+//		VehicleCollisionTesterCastSphereMultiRadius(ObjectLayer inObjectLayer, /*float inRadius, */Vec3Arg inUp = Vec3::sAxisY(), float inMaxSlopeAngle = DegreesToRadians(80.0f)) : mObjectLayer(inObjectLayer), /*mRadius(inRadius), */mUp(inUp), mCosMaxSlopeAngle(Cos(inMaxSlopeAngle)) { }
+//
+//	// See: VehicleCollisionTester
+//	virtual bool				Collide(PhysicsSystem& inPhysicsSystem, const VehicleConstraint& inVehicleConstraint, uint inWheelIndex, RVec3Arg inOrigin, Vec3Arg inDirection, const BodyID& inVehicleBodyID, Body*& outBody, SubShapeID& outSubShapeID, RVec3& outContactPosition, Vec3& outContactNormal, float& outSuspensionLength) const override;
+//
+//public:
+//	std::vector<float> mRadiuses;
+//
+//private:
+//	ObjectLayer					mObjectLayer;
+//	//float						mRadius;
+//	Vec3						mUp;
+//	float						mCosMaxSlopeAngle;
+//};
+//
+//bool VehicleCollisionTesterCastSphereMultiRadius::Collide(PhysicsSystem& inPhysicsSystem, const VehicleConstraint& inVehicleConstraint, uint inWheelIndex, RVec3Arg inOrigin, Vec3Arg inDirection, const BodyID& inVehicleBodyID, Body*& outBody, SubShapeID& outSubShapeID, RVec3& outContactPosition, Vec3& outContactNormal, float& outSuspensionLength) const
+//{
+//	DefaultBroadPhaseLayerFilter broadphase_layer_filter = inPhysicsSystem.GetDefaultBroadPhaseLayerFilter(mObjectLayer);
+//	DefaultObjectLayerFilter object_layer_filter = inPhysicsSystem.GetDefaultLayerFilter(mObjectLayer);
+//	IgnoreSingleBodyFilter body_filter(inVehicleBodyID);
+//
+//	auto mRadius = mRadiuses[inWheelIndex];
+//
+//	SphereShape sphere(mRadius);
+//	sphere.SetEmbedded();
+//
+//	float cast_length = max(0.0f, inSuspensionMaxLength - mRadius);
+//	RShapeCast shape_cast(&sphere, Vec3::sReplicate(1.0f), RMat44::sTranslation(inOrigin), inDirection * cast_length);
+//
+//	ShapeCastSettings settings;
+//	settings.mUseShrunkenShapeAndConvexRadius = true;
+//	settings.mReturnDeepestPoint = true;
+//
+//	class MyCollector : public CastShapeCollector
+//	{
+//	public:
+//		MyCollector(PhysicsSystem& inPhysicsSystem, const RShapeCast& inShapeCast, Vec3Arg inUpDirection, float inCosMaxSlopeAngle) :
+//			mPhysicsSystem(inPhysicsSystem),
+//			mShapeCast(inShapeCast),
+//			mUpDirection(inUpDirection),
+//			mCosMaxSlopeAngle(inCosMaxSlopeAngle)
+//		{
+//		}
+//
+//		virtual void		AddHit(const ShapeCastResult& inResult) override
+//		{
+//			// Test if this collision is closer than the previous one
+//			if (inResult.mFraction < GetEarlyOutFraction())
+//			{
+//				// Lock the body
+//				BodyLockRead lock(mPhysicsSystem.GetBodyLockInterfaceNoLock(), inResult.mBodyID2);
+//				JPH_ASSERT(lock.Succeeded()); // When this runs all bodies are locked so this should not fail
+//				const Body* body = &lock.GetBody();
+//
+//				if (body->IsSensor())
+//					return;
+//
+//				// Test that we're not hitting a vertical wall
+//				Vec3 normal = -inResult.mPenetrationAxis.Normalized();
+//				if (normal.Dot(mUpDirection) > mCosMaxSlopeAngle)
+//				{
+//					// Update early out fraction to this hit
+//					UpdateEarlyOutFraction(inResult.mFraction);
+//
+//					// Get the contact properties
+//					mBody = body;
+//					mSubShapeID2 = inResult.mSubShapeID2;
+//					mContactPosition = mShapeCast.mCenterOfMassStart.GetTranslation() + inResult.mContactPointOn2;
+//					mContactNormal = normal;
+//				}
+//			}
+//		}
+//
+//		// Configuration
+//		PhysicsSystem& mPhysicsSystem;
+//		const RShapeCast& mShapeCast;
+//		Vec3				mUpDirection;
+//		float				mCosMaxSlopeAngle;
+//
+//		// Resulting closest collision
+//		const Body* mBody = nullptr;
+//		SubShapeID			mSubShapeID2;
+//		RVec3				mContactPosition;
+//		Vec3				mContactNormal;
+//	};
+//
+//	MyCollector collector(inPhysicsSystem, shape_cast, mUp, mCosMaxSlopeAngle);
+//	inPhysicsSystem.GetNarrowPhaseQueryNoLock().CastShape(shape_cast, settings, shape_cast.mCenterOfMassStart.GetTranslation(), collector, broadphase_layer_filter, object_layer_filter, body_filter);
+//	if (collector.mBody == nullptr)
+//		return false;
+//
+//	outBody = const_cast<Body*>(collector.mBody);
+//	outSubShapeID = collector.mSubShapeID2;
+//	outContactPosition = collector.mContactPosition;
+//	outContactNormal = collector.mContactNormal;
+//	outSuspensionLength = min(inSuspensionMaxLength, cast_length * collector.GetEarlyOutFraction() + mRadius);
+//
+//	return true;
+//}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -798,7 +835,9 @@ EXPORT PhysicsSystemItem* JCreateSystem(int maxBodies, int maxBodyPairs, int max
 
 	//!!!!maxActiveBodies может быть. общее количество тел и сколько активных
 
-	system->system.Init(maxBodies, 0, maxBodyPairs, maxContactConstraints, system->broadPhaseLayerInterface, MyBroadPhaseCanCollide, MyObjectCanCollide);
+	system->system.Init(maxBodies, 0, maxBodyPairs, maxContactConstraints, system->broadPhaseLayerInterface, system->objectVsBroadPhaseLayerFilterImpl, system->objectLayerPairFilter);
+
+	//system->system.Init(maxBodies, 0, maxBodyPairs, maxContactConstraints, system->broadPhaseLayerInterface, MyBroadPhaseCanCollide, MyObjectCanCollide);
 
 	//// Note that this is called from a job so whatever you do here needs to be thread safe.
 	//system->system.SetBodyActivationListener(&system->body_activation_listener);
@@ -815,6 +854,11 @@ EXPORT void JDestroySystem(PhysicsSystemItem* system)
 	//!!!!no leaks?
 
 	delete system;
+}
+
+EXPORT void JDestroy()
+{
+	job_system.SetNumThreads(0);
 }
 
 EXPORT void JPhysicsSystem_SetPhysicsSettings(PhysicsSystemItem* system, /*bool useDefault,*/
@@ -914,7 +958,7 @@ EXPORT void JPhysicsSystem_Update(PhysicsSystemItem* system, float deltaTime, in
 		if (c->GetType() == EConstraintType::Vehicle)
 		{
 			VehicleConstraint* c2 = (VehicleConstraint*)c;
-			VehicleConstraintItem* item = (VehicleConstraintItem*)c2->mAnyData;
+			VehicleConstraintItem* item = (VehicleConstraintItem*)c2->GetUserData();
 
 			if (c2->GetVehicleBody()->IsActive() || item->stepListenerAddedMustBeAdded)
 			{
@@ -928,7 +972,6 @@ EXPORT void JPhysicsSystem_Update(PhysicsSystemItem* system, float deltaTime, in
 			{
 				if (item->stepListenerAdded)
 				{
-					//!!!!slowly
 					system->system.RemoveStepListener(c2);
 					item->stepListenerAdded = false;
 				}
@@ -2171,7 +2214,7 @@ EXPORT ConstraintItem* JCreateConstraintSixDOF(PhysicsSystemItem* system, BodyIt
 	system->system.AddConstraint(constraint->constraint);
 	bodyA->constraints.push_back(constraint);
 	bodyB->constraints.push_back(constraint);
-	constraint->constraint->mAnyData = constraint;
+	constraint->constraint->SetUserData((uint64)constraint);
 
 	return constraint;
 }
@@ -2203,7 +2246,7 @@ EXPORT ConstraintItem* JCreateConstraintFixed(PhysicsSystemItem* system, BodyIte
 	system->system.AddConstraint(constraint->constraint);
 	bodyA->constraints.push_back(constraint);
 	bodyB->constraints.push_back(constraint);
-	constraint->constraint->mAnyData = constraint;
+	constraint->constraint->SetUserData((uint64)constraint);
 	constraint->collisionsBetweenLinkedBodies = false;
 
 	return constraint;
@@ -2324,25 +2367,42 @@ EXPORT VehicleConstraintItem* JCreateConstraintVehicle(PhysicsSystemItem* system
 
 	auto constraint = new VehicleConstraintItem();
 	constraint->system = &system->system;
-	//!!!!удаляется?
 	VehicleConstraint* vehicleConstraint = new VehicleConstraint(*body->body, settings);
 	constraint->constraint = vehicleConstraint;
 	constraint->body = body;
 	system->system.AddConstraint(constraint->constraint);
 	body->constraints.push_back(constraint);
-	constraint->constraint->mAnyData = constraint;
+	constraint->constraint->SetUserData((uint64)constraint);
 	constraint->collisionsBetweenLinkedBodies = false;
 
 	//collision tester
 
-	//!!!!ray tester optionally?
-	
-	VehicleCollisionTesterCastSphereMultiRadius* collisionTester = new VehicleCollisionTesterCastSphereMultiRadius(Layers::MOVING, Vec3::sAxisZ(), maxSlopeAngleInRadians);
-	for (int n = 0; n < wheelCount; n++)
-	{
-		VehicleWheelSettings* wheelSettings = wheelsSettings + n;
-		collisionTester->mRadiuses.push_back(wheelSettings->radius);
-	}
+	VehicleCollisionTesterCastCylinder* collisionTester = new VehicleCollisionTesterCastCylinder(Layers::MOVING);
+
+	//double maxWidth = 0;
+	//for (int n = 0; n < wheelCount; n++)
+	//{
+	//	VehicleWheelSettings* wheelSettings = wheelsSettings + n;
+	//	if (wheelSettings->width > maxWidth)
+	//		maxWidth = wheelSettings->width;
+	//}
+	//VehicleCollisionTesterCastSphere* collisionTester = new VehicleCollisionTesterCastSphere(Layers::MOVING, maxWidth * 0.5f, Vec3::sAxisZ(), maxSlopeAngleInRadians);
+
+	//double maxRadius = 0;
+	//for (int n = 0; n < wheelCount; n++)
+	//{
+	//	VehicleWheelSettings* wheelSettings = wheelsSettings + n;
+	//	if (wheelSettings->radius > maxRadius)
+	//		maxRadius = wheelSettings->radius;
+	//}
+	//VehicleCollisionTesterCastSphere* collisionTester = new VehicleCollisionTesterCastSphere(Layers::MOVING, maxRadius, Vec3::sAxisZ(), maxSlopeAngleInRadians);
+
+	//VehicleCollisionTesterCastSphereMultiRadius* collisionTester = new VehicleCollisionTesterCastSphereMultiRadius(Layers::MOVING, Vec3::sAxisZ(), maxSlopeAngleInRadians);
+	//for (int n = 0; n < wheelCount; n++)
+	//{
+	//	VehicleWheelSettings* wheelSettings = wheelsSettings + n;
+	//	collisionTester->mRadiuses.push_back(wheelSettings->radius);
+	//}
 	constraint->collisionTester = collisionTester;
 
 	//constraint->collisionTester = new VehicleCollisionTesterRay(Layers::MOVING, Vec3::sAxisZ(), inMaxSlopeAngle);

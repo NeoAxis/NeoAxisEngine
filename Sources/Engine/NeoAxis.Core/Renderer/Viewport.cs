@@ -44,10 +44,10 @@ namespace NeoAxis
 
 		//bool focused;
 
-		//!!!!тут? так?
-		//!!!!!когда сбрасывать? где еще подобное сбрасывать?
 		double lastUpdateTime;
 		double lastUpdateTimeStep;
+		double[] lastUpdateTimeStepSmooth = new double[ 7 ];
+		double lastUpdateTimeStepSmoothResult;
 		double previousUpdateTime;
 
 		Matrix4? viewMatrixPreviousFrame;
@@ -899,6 +899,17 @@ namespace NeoAxis
 				lastUpdateTime = time;
 				lastUpdateTimeStep = lastUpdateTime - oldTime;
 
+				for( int n = 0; n < lastUpdateTimeStepSmooth.Length - 1; n++ )
+					lastUpdateTimeStepSmooth[ n ] = lastUpdateTimeStepSmooth[ n + 1 ];
+				lastUpdateTimeStepSmooth[ lastUpdateTimeStepSmooth.Length - 1 ] = lastUpdateTimeStep;
+
+				{
+					var result = 0.0;
+					for( int n = 0; n < lastUpdateTimeStepSmooth.Length; n++ )
+						result += lastUpdateTimeStepSmooth[ n ];
+					lastUpdateTimeStepSmoothResult = result / lastUpdateTimeStepSmooth.Length;
+				}
+
 				renderingContext.updateStatisticsPrevious = renderingContext.updateStatisticsCurrent;
 				renderingContext.updateStatisticsCurrent = new ViewportRenderingContext.StatisticsClass();
 
@@ -1190,10 +1201,17 @@ namespace NeoAxis
 			get { return lastUpdateTimeStep; }
 		}
 
+		public double LastUpdateTimeStepSmooth
+		{
+			get { return lastUpdateTimeStepSmoothResult; }
+		}
+
 		public void ResetLastUpdateTime()
 		{
 			lastUpdateTime = EngineApp.EngineTime;
 			lastUpdateTimeStep = 0;
+			for( int n = 0; n < lastUpdateTimeStepSmooth.Length; n++ )
+				lastUpdateTimeStepSmooth[ 0 ] = 0;
 			previousUpdateTime = lastUpdateTime;
 		}
 

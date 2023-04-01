@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 namespace NeoAxis
 {
 	/// <summary>
-	/// A basis class for processing weapons.
+	/// An instance of a weapon.
 	/// </summary>
 	[AddToResourcesWindow( @"Addons\Weapon\Weapon", 22101 )]
 	[NewObjectDefaultName( "Weapon" )]

@@ -6,10 +6,6 @@
 	//#define MINIDUMP
 #endif
 
-//#ifdef _WIN32
-//#define MINIDUMP
-//#endif
-
 #ifdef MINIDUMP
 
 class MiniDump

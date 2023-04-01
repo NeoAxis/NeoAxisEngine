@@ -1757,8 +1757,7 @@ namespace NeoAxis
 			platform.ShutdownDirectInputMouseDevice();
 			InputDeviceManager.Shutdown();
 
-			//Internal.BulletSharp.BulletPhysicsUtility.ShutdownLibrary();
-			////PhysicsWorld.Shutdown();
+			PhysicsNative.JDestroy();
 
 			WindowDestroyOrDetach();
 

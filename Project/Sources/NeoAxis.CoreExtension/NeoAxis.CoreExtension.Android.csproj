@@ -107,10 +107,7 @@
     <Compile Include="Vehicle\VehicleAI.cs" />
     <Compile Include="Vehicle\VehicleAITask_MoveTo.cs" />
     <Compile Include="Vehicle\VehicleAssemblyRegistration.cs" />
-    <Compile Include="Vehicle\VehicleEditor.cs" />
     <Compile Include="Vehicle\VehicleInputProcessing.cs" />
-    <Compile Include="Vehicle\VehiclePreview.cs" />
-    <Compile Include="Vehicle\VehiclePreviewImage.cs" />
     <Compile Include="Components\ComputeUsingThreads\ComputeUsingThreads.cs" />
     <Compile Include="Components\ComputeUsingThreads\ComputeUsingThreadsSettingsCell.cs" />
     <Compile Include="Components\Pathfinding\Pathfinding.cs" />
@@ -276,6 +273,14 @@
     <Compile Include="Weapon\WeaponTypeEditor.cs" />
     <Compile Include="Weapon\WeaponTypePreview.cs" />
     <Compile Include="Weapon\WeaponTypePreviewImage.cs" />
+    <Compile Include="Pipe\Pipe.cs" />
+    <Compile Include="Pipe\PipeAssemblyRegistration.cs" />
+    <Compile Include="Pipe\PipePoint.cs" />
+    <Compile Include="Pipe\PipeSettingsCell.cs" />
+    <Compile Include="Pipe\PipeType.cs" />
+    <Compile Include="Pipe\PipeTypeEditor.cs" />
+    <Compile Include="Pipe\PipeTypePreview.cs" />
+    <Compile Include="Pipe\PipeTypePreviewImage.cs" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

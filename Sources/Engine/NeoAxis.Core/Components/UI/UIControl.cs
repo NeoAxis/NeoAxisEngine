@@ -868,9 +868,12 @@ namespace NeoAxis
 					break;
 
 				case UIMeasure.Pixels:
-					Vector2 screenPixelSize = GetParentContainerSizeInPixels();
-					size = Size.Value.Value / screenPixelSize;
+					size = Size.Value.Value / GetParentContainerSizeInPixels();
 					//Vec2.Divide( ref size.value, ref screenPixelSize, out s );
+					break;
+
+				case UIMeasure.PixelsScaled:
+					size = Size.Value.Value * GetParentContainerPixelScale() / GetParentContainerSizeInPixels();
 					break;
 
 				default:
@@ -949,6 +952,14 @@ namespace NeoAxis
 				case UIMeasure.Pixels:
 					posFrom += marginValue.LeftTop / GetParentContainerSizeInPixels();
 					posTo -= marginValue.RightBottom / GetParentContainerSizeInPixels();
+					break;
+
+				case UIMeasure.PixelsScaled:
+					{
+						var pixelScale = GetParentContainerPixelScale();
+						posFrom += marginValue.LeftTop * pixelScale / GetParentContainerSizeInPixels();
+						posTo -= marginValue.RightBottom * pixelScale / GetParentContainerSizeInPixels();
+					}
 					break;
 				}
 
@@ -1361,6 +1372,9 @@ namespace NeoAxis
 			case UIMeasure.Pixels:
 				screen = DivideWithZeroCheck( value.Value, GetParentContainerSizeInPixels() );
 				break;
+			case UIMeasure.PixelsScaled:
+				screen = DivideWithZeroCheck( value.Value * GetParentContainerPixelScale(), GetParentContainerSizeInPixels() );
+				break;
 			}
 
 			//to
@@ -1374,6 +1388,8 @@ namespace NeoAxis
 				return screen * GetParentContainerSizeInUnits();
 			case UIMeasure.Pixels:
 				return screen * GetParentContainerSizeInPixels();
+			case UIMeasure.PixelsScaled:
+				return screen * GetParentContainerPixelScale() * GetParentContainerSizeInPixels();
 			default:
 				return Vector2.Zero;
 			}
@@ -2629,6 +2645,25 @@ namespace NeoAxis
 				return container.Viewport.SizeInPixels.ToVector2();// GetSizeInPixels();
 			else
 				return new Vector2( 1024, 768 );
+		}
+
+		public double GetParentContainerPixelScale()
+		{
+			var result = 1.0;
+
+			if( !EngineApp.IsEditor )
+			{
+				var container = ParentContainer;
+				if( container != null )
+				{
+					if( container.PixelScale.HasValue )
+						result = container.PixelScale.Value;
+					else
+						return SystemSettings.DPIScale;
+				}
+			}
+
+			return result;
 		}
 
 		/////////////////////////////////////////

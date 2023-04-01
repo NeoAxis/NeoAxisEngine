@@ -504,5 +504,18 @@ namespace NeoAxis
 				return cpuDescription;
 			}
 		}
+
+		public static float DPIScale
+		{
+			get
+			{
+#if !DEPLOY
+				//!!!!not editor
+				return Editor.EditorAPI.DPIScale;
+#else
+				return 1;
+#endif
+			}
+		}
 	}
 }

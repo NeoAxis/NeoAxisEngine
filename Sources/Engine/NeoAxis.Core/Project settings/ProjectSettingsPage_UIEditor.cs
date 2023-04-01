@@ -109,6 +109,7 @@ namespace NeoAxis
 			case UIMeasure.Parent: return UIEditorParentMeasureStepMovement;
 			case UIMeasure.Units: return UIEditorUnitsMeasureStepMovement;
 			case UIMeasure.Pixels: return UIEditorPixelsMeasureStepMovement;
+			case UIMeasure.PixelsScaled: return UIEditorPixelsMeasureStepMovement;//!!!!?
 			case UIMeasure.Screen: return UIEditorScreenMeasureStepMovement;
 			}
 			return 0;

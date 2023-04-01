@@ -321,24 +321,24 @@ namespace NeoAxis.Editor
 
 		void InitCategories()
 		{
-			var rootCategories = new[] { /*"2D", */ /*"Audio",*/ "Basic Content", "Demos", "Environments", "Extensions", /*"Images",*/ "Materials", "Models", "Functional Objects", "Surfaces", "Visual Effects", "Uncategorized", "Installed" };
+			var rootCategories = new[] { "2D", "Audio", "Basic Content", "Buildings", "Characters", "Demos", "Environments", "Extensions", "Fences", "Materials", "Models", "Pipes", "Surfaces", "Vehicles", "Visual Effects", "Weapons", "Uncategorized", "Installed" };
 			foreach( var name in rootCategories )
 			{
 				var category = new CategoryItem( name );
 				categoryByName.Add( category.Name, category );
 			}
 
-			////Audio
-			//{
-			//	var parent = categoryByName[ "Audio" ];
-			//	var categories = new[] { "Ambient Sounds", "Music", "Sound Effects" };
-			//	foreach( var name in categories )
-			//	{
-			//		var category = new CategoryItem( name );
-			//		category.Parent = parent;
-			//		categoryByName.Add( category.Name, category );
-			//	}
-			//}
+			//Audio
+			{
+				var parent = categoryByName[ "Audio" ];
+				var categories = new[] { "Ambient Sounds", "Music", "Sound Effects" };
+				foreach( var name in categories )
+				{
+					var category = new CategoryItem( name );
+					category.Parent = parent;
+					categoryByName.Add( category.Name, category );
+				}
+			}
 
 			//Extensions
 			{
@@ -352,17 +352,50 @@ namespace NeoAxis.Editor
 				}
 			}
 
-			//Models
-			{
-				var parent = categoryByName[ "Models" ];
-				var categories = new[] { "Animals", "Architecture", "Characters", "Exterior", "Food", "Industrial", "Interior", "Nature", /*"Plant",*/ "Uncategorized Models", "Vehicles", "Weapons" };
-				foreach( var name in categories )
-				{
-					var category = new CategoryItem( name );
-					category.Parent = parent;
-					categoryByName.Add( category.Name, category );
-				}
-			}
+
+
+			//var rootCategories = new[] { /*"2D", */ /*"Audio",*/ "Basic Content", "Demos", "Environments", "Extensions", /*"Images",*/ "Materials", "Models", "Functional Objects", "Surfaces", "Visual Effects", "Uncategorized", "Installed" };
+			//foreach( var name in rootCategories )
+			//{
+			//	var category = new CategoryItem( name );
+			//	categoryByName.Add( category.Name, category );
+			//}
+
+			//////Audio
+			////{
+			////	var parent = categoryByName[ "Audio" ];
+			////	var categories = new[] { "Ambient Sounds", "Music", "Sound Effects" };
+			////	foreach( var name in categories )
+			////	{
+			////		var category = new CategoryItem( name );
+			////		category.Parent = parent;
+			////		categoryByName.Add( category.Name, category );
+			////	}
+			////}
+
+			////Extensions
+			//{
+			//	var parent = categoryByName[ "Extensions" ];
+			//	var categories = new[] { "Basic Extensions", "Components", "Constructors", "Kits" };
+			//	foreach( var name in categories )
+			//	{
+			//		var category = new CategoryItem( name );
+			//		category.Parent = parent;
+			//		categoryByName.Add( category.Name, category );
+			//	}
+			//}
+
+			////Models
+			//{
+			//	var parent = categoryByName[ "Models" ];
+			//	var categories = new[] { "Animals", "Architecture", "Characters", "Exterior", "Food", "Industrial", "Interior", "Nature", /*"Plant",*/ "Uncategorized Models", "Vehicles", "Weapons" };
+			//	foreach( var name in categories )
+			//	{
+			//		var category = new CategoryItem( name );
+			//		category.Parent = parent;
+			//		categoryByName.Add( category.Name, category );
+			//	}
+			//}
 		}
 
 		void ContentBrowserSetConstantOptions()

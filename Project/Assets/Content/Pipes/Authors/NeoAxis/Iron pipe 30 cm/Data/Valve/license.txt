@@ -1,0 +1,11 @@
+Model Information:
+* title:	Industrial Valve
+* source:	https://sketchfab.com/3d-models/industrial-valve-cea67369ae50485c9f06ea44cb608b92
+* author:	Miguel Ángel Jiménez (https://sketchfab.com/mangel.jimenez)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Industrial Valve" (https://sketchfab.com/3d-models/industrial-valve-cea67369ae50485c9f06ea44cb608b92) by Miguel Ángel Jiménez (https://sketchfab.com/mangel.jimenez) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

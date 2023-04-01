@@ -14,13 +14,15 @@ namespace NeoAxis.Editor
 
 		static readonly List<ScreenNotificationForm> openForms = new List<ScreenNotificationForm>();
 		Color borderColor = Color.FromArgb( 144, 171, 231 );
-		double opacity;
+		//double opacity;
 
 		//
 
 		public ScreenNotificationForm( string title, string body, bool error, int duration )
 		{
 			InitializeComponent();
+
+			Opacity = 1;
 
 			var duration2 = duration;
 			if( duration2 < 0 )
@@ -35,11 +37,8 @@ namespace NeoAxis.Editor
 			if( error )
 				BackColor = Color.FromArgb( 206, 0, 0 );
 
-			if( duration == -1 )
-			{
-				opacity = opacityMax;
-				Opacity = opacity;
-			}
+			//if( duration == -1 )
+			//	SetMaxOpacity();
 
 			if( EditorAPI.DarkTheme )
 			{
@@ -139,26 +138,26 @@ namespace NeoAxis.Editor
 			Close();
 		}
 
-		public void UpdateOpacity()
-		{
-			if( opacity < opacityMax )
-			{
-				opacity += 10.0 / 1000.0 * 8;
-				if( opacity > opacityMax )
-					opacity = opacityMax;
-				Opacity = opacity;
-			}
-		}
+		//public void UpdateOpacity()
+		//{
+		//	if( opacity < opacityMax )
+		//	{
+		//		opacity += 10.0 / 1000.0 * 8;
+		//		if( opacity > opacityMax )
+		//			opacity = opacityMax;
+		//		Opacity = opacity;
+		//	}
+		//}
 
 		public void SetMaxOpacity()
 		{
-			opacity = opacityMax;
-			Opacity = opacity;
+			//opacity = opacityMax;
+			//Opacity = opacity;
 		}
 
 		private void timer1_Tick( object sender, EventArgs e )
 		{
-			UpdateOpacity();
+			//UpdateOpacity();
 		}
 	}
 }

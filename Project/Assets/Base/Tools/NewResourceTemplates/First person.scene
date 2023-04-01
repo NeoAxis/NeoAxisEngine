@@ -64,10 +64,6 @@
 			{
 				Name = Ambient Occlusion
 			}
-			.component NeoAxis.RenderingEffect_MotionBlur
-			{
-				Name = Motion Blur
-			}
 			.component NeoAxis.RenderingEffect_LensEffects
 			{
 				Name = Lens Effects
@@ -93,6 +89,10 @@
 			{
 				Name = Sharpen
 			}
+			.component NeoAxis.RenderingEffect_MotionBlur
+			{
+				Name = Motion Blur
+			}
 		}
 		.component NeoAxis.Component
 		{
@@ -103,6 +103,7 @@
 	{
 		Name = Game Mode
 		UseBuiltInCamera = FirstPerson
+		ThirdPersonCameraHorizontalAngle = -90.00000000000009
 		CutsceneStarted = False
 		CutsceneGuiFadingFactor = 0
 		CutsceneGuiFadingSpeed = 0

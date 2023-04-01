@@ -168,7 +168,7 @@ float getShadowValueSimple(int cascadeIndex, vec4 shadowUV)
 }
 #endif
 
-#if defined(GLOBAL_SHADOW_TECHNIQUE_PCF4) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF8) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF12) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF16)
+#if defined(GLOBAL_SHADOW_TECHNIQUE_PCF4) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF8) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF12) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF16) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF22) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF32)
 
 //!!!!
 
@@ -381,12 +381,12 @@ float calculatePenumbra(sampler2DArrayShadow shadowMapArray, vec2 shadowMapUV, i
 
 
 
-float getShadowValuePCF(int cascadeIndex, vec4 shadowUV)
+float getShadowValuePCF(int cascadeIndex, vec4 shadowUV, vec4 fragCoord)
 {
 	float compareDepth = shadowUV.z / u_lightShadowMapFarClipDistance;
 	vec2 shadowUVScaled = shadowUV.xy / shadowUV.w;
 
-	float scale = 2.0f / u_lightShadowTextureSize;
+	float scale = 2.0f / u_lightShadowTextureSize * u_lightShadowSoftness;
 	
 	//!!!!
 	//scale *= u_lightSourceRadiusOrAngle;
@@ -403,6 +403,12 @@ float getShadowValuePCF(int cascadeIndex, vec4 shadowUV)
 #ifdef GLOBAL_SHADOW_TECHNIQUE_PCF16
 	const int sampleCount = 16;
 #endif
+#ifdef GLOBAL_SHADOW_TECHNIQUE_PCF22
+	const int sampleCount = 22;
+#endif
+#ifdef GLOBAL_SHADOW_TECHNIQUE_PCF32
+	const int sampleCount = 32;
+#endif
 
 	//!!!!	
 	float penumbra = 1.0;
@@ -416,8 +422,7 @@ float getShadowValuePCF(int cascadeIndex, vec4 shadowUV)
 	if(penumbra < 1.0)
 		penumbra = 1.0;
 	*/
-	
-	
+
 	
 	float shadow = 0.0;
 	UNROLL
@@ -680,7 +685,7 @@ float getShadowValuePointSimple(vec4 shadowUV)
 }
 #endif
 
-#if defined(GLOBAL_SHADOW_TECHNIQUE_PCF4) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF8) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF12) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF16)
+#if defined(GLOBAL_SHADOW_TECHNIQUE_PCF4) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF8) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF12) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF16) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF22) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF32)
 float getShadowValuePointPCF(vec4 shadowUV)
 {
 	vec3 ray = normalize(shadowUV.xyz);
@@ -723,8 +728,7 @@ float getShadowValuePointPCF(vec4 shadowUV)
 
 	vec3 texPos = intersectionPoint * u_lightShadowTextureSize;
 
-	const float scale = 1.5;
-	//float scale = u_lightShadowSoftness * 1.5f;
+	float scale = 1.5 * u_lightShadowSoftness;
 	//const float scale = 1.5;// = scale / u_lightShadowTextureSize;
 
 #ifdef GLOBAL_SHADOW_TECHNIQUE_PCF4
@@ -738,6 +742,12 @@ float getShadowValuePointPCF(vec4 shadowUV)
 #endif
 #ifdef GLOBAL_SHADOW_TECHNIQUE_PCF16
 	const int sampleCount = 16;
+#endif
+#ifdef GLOBAL_SHADOW_TECHNIQUE_PCF22
+	const int sampleCount = 22;
+#endif
+#ifdef GLOBAL_SHADOW_TECHNIQUE_PCF32
+	const int sampleCount = 32;
 #endif
 
 	float compareDepth = shadowUV.w / u_lightShadowMapFarClipDistance;
@@ -878,7 +888,7 @@ float getShadowMultiplier(vec3 worldPosition, float cameraDistance, float cascad
 	#ifdef GLOBAL_SHADOW_TECHNIQUE_SIMPLE
 		final = getShadowValuePointSimple(shadowUV);
 	#endif
-	#if defined(GLOBAL_SHADOW_TECHNIQUE_PCF4) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF8) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF12) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF16)
+	#if defined(GLOBAL_SHADOW_TECHNIQUE_PCF4) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF8) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF12) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF16) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF22) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF32)
 		final = getShadowValuePointPCF(shadowUV);
 	#endif
 //	#ifdef GLOBAL_SHADOW_TECHNIQUE_CHS
@@ -912,8 +922,8 @@ float getShadowMultiplier(vec3 worldPosition, float cameraDistance, float cascad
 	#ifdef GLOBAL_SHADOW_TECHNIQUE_SIMPLE
 		final = getShadowValueSimple(cascadeIndex, shadowUV);
 	#endif
-	#if defined(GLOBAL_SHADOW_TECHNIQUE_PCF4) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF8) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF12) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF16)
-		final = getShadowValuePCF(cascadeIndex, shadowUV);
+	#if defined(GLOBAL_SHADOW_TECHNIQUE_PCF4) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF8) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF12) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF16) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF22) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF32)
+		final = getShadowValuePCF(cascadeIndex, shadowUV, fragCoord);
 	#endif
 //	#ifdef GLOBAL_SHADOW_TECHNIQUE_CHS
 //		final = getShadowValueCHS(cascadeIndex, shadowUV);

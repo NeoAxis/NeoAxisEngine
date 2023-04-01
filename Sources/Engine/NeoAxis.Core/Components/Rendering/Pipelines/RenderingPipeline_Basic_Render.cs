@@ -854,7 +854,7 @@ namespace NeoAxis
 
 				public float lightShadowBias;
 				public float lightShadowNormalBias;
-				public float lightSourceRadiusOrAngle;
+				public float lightShadowSoftness;//public float lightSourceRadiusOrAngle;
 				public float lightShadowContactLength;
 
 				//
@@ -1202,7 +1202,8 @@ namespace NeoAxis
 
 				lightDataFragment.lightShadowBias = data.ShadowBias;
 				lightDataFragment.lightShadowNormalBias = data.ShadowNormalBias;
-				lightDataFragment.lightSourceRadiusOrAngle = data.SourceRadiusOrAngle;
+				lightDataFragment.lightShadowSoftness = data.ShadowSoftness;
+				//lightDataFragment.lightSourceRadiusOrAngle = data.SourceRadiusOrAngle;
 				lightDataFragment.lightShadowContactLength = data.ShadowContactLength;
 				//lightDataFragment.lightShadowQuality = pipeline.ShadowQuality.Value == ShadowQualityEnum.High ? 1 : 0;
 
@@ -3293,7 +3294,7 @@ namespace NeoAxis
 					orthoSize = ( (int)( orthoSize / 5 ) ) * 5 + 5;
 
 					//fix jittering
-					{
+				{
 						//!!!!good?
 						Quaternion lightRotation = Quaternion.FromDirectionZAxisUp( dir );
 						//Quat lightRotation = lightData.transform.Rotation;

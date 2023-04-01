@@ -239,6 +239,29 @@ namespace NeoAxis.Editor
 					}
 				}
 
+				//!!!!maybe check Models category. also can add support for droping weapons, characters and vehicles
+				//disable dropping high level components
+				{
+					var containsHighLevelComponent = false;
+
+					foreach( var file in files )
+					{
+						try
+						{
+							var type = ResourceManager.GetTypeByFileExtension( Path.GetExtension( file ) );
+							if( type != null )
+							{
+								if( type.Name == "Weapon Type" || type.Name == "Character Type" || type.Name == "Fence Type" || type.Name == "Pipe Type" || type.Name == "Vehicle Type" )
+									containsHighLevelComponent = true;
+							}
+						}
+						catch { }
+					}
+
+					if( containsHighLevelComponent )
+						return (FileTypeToDrop.None, "");
+				}
+
 				//Mesh
 				{
 					var selectedFiles = new List<(ResourceManager.ResourceType, string)>();

@@ -69,7 +69,8 @@ namespace NeoAxis.Editor
 			if( !string.IsNullOrEmpty( realFileName ) )
 				arguments += string.Format( " -play \"{0}\"", realFileName );
 
-			Process.Start( fileName, arguments );
+			Process.Start( new ProcessStartInfo( fileName, arguments ) { UseShellExecute = true } );
+			//Process.Start( fileName, arguments );
 		}
 
 		public static void RunRenderVideoToFile( string realFileName, string destRealFileName, RunMethod runMethod, int framesPerSecond, double length, string camera, string renderingPipeline, Vector2I resolution, string format )
@@ -97,7 +98,8 @@ namespace NeoAxis.Editor
 			arguments += string.Format( " -resolution \"{0}\"", resolution.ToString() );
 			arguments += string.Format( " -format \"{0}\"", format );
 
-			Process.Start( fileName, arguments );
+			Process.Start( new ProcessStartInfo( fileName, arguments ) { UseShellExecute = true } );
+			//Process.Start( fileName, arguments );
 		}
 	}
 }

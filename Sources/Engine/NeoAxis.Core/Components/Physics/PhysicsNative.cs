@@ -68,6 +68,9 @@ namespace NeoAxis
 		public static extern void JDestroySystem( IntPtr system );
 
 		[DllImport( library, CallingConvention = convention )]
+		public static extern void JDestroy();
+
+		[DllImport( library, CallingConvention = convention )]
 		public unsafe static extern void JPhysicsSystem_SetPhysicsSettings( IntPtr system/*, [MarshalAs( UnmanagedType.U1 )] bool useDafault*/,
 			int maxInFlightBodyPairs,
 			int stepListenersBatchSize,

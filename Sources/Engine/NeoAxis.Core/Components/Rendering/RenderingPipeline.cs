@@ -970,13 +970,13 @@ namespace NeoAxis
 				public DegreeF SpotlightOuterAngle;
 				public float SpotlightFalloff;
 				public Plane[] SpotlightClipPlanes;
-				//!!!!is not used
-				public float SourceRadiusOrAngle;
+				//public float SourceRadiusOrAngle;
 				public bool CastShadows;
 				public float ShadowIntensity;
 				//public float ShadowSoftness;
 				public float ShadowBias;
 				public float ShadowNormalBias;
+				public float ShadowSoftness;
 				public float ShadowContactLength;
 
 				public ImageComponent Mask;

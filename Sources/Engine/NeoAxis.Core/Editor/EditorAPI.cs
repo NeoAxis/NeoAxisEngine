@@ -1163,8 +1163,9 @@ namespace NeoAxis.Editor
 			var storeItem = item as StoresWindow.ContentBrowserItem_StoreItem;
 			if( storeItem != null )
 			{
-				var allowAutoInstall = SceneEditor.CreateObjectsMode == SceneEditor.CreateObjectsModeEnum.Drop;
-				var (type, reference) = storeItem.GetFileToDrop( allowAutoInstall );
+				var (type, reference) = storeItem.GetFileToDrop( false );
+				//var allowAutoInstall = SceneEditor.CreateObjectsMode == SceneEditor.CreateObjectsModeEnum.Drop;
+				//var (type, reference) = storeItem.GetFileToDrop( allowAutoInstall );
 
 				switch( type )
 				{

@@ -157,6 +157,7 @@ namespace NeoAxis
 					foreach( char c in new string( Path.GetInvalidFileNameChars() ) + new string( Path.GetInvalidPathChars() ) )
 						id = id.Replace( c.ToString(), "_" );
 					id = id.Replace( " ", "_" ).Replace( "-", "_" );
+					id = AnyAscii.Transliteration.Transliterate( id );
 					if( id.Length > 30 )
 						id = id.Substring( 0, 30 );
 					id += "_" + item.uid;
@@ -183,9 +184,8 @@ namespace NeoAxis
 					}
 					catch { }
 
-					//!!!!
-					info.Categories = "Uncategorized Models";
-					//info.Categories = "Models";
+					info.Categories = "Models";
+					//info.Categories = "Uncategorized Models";
 
 					if( item.isDownloadable )
 					{
@@ -583,8 +583,7 @@ namespace NeoAxis
 							}
 						}
 
-						//!!!!
-						product.ProjectItemCategories = Product_Store.ProjectItemCategoriesEnum.UncategorizedModels;
+						product.ProjectItemCategories = Product_Store.ProjectItemCategoriesEnum.Models;
 
 						if( package.License != StoreProductLicense.None )
 							product.License = package.License;

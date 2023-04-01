@@ -771,6 +771,15 @@ namespace NeoAxis
 			return context.Owner.SizeInPixels.ToVector2();
 		}
 
+		double GetParentContainerPixelScale( ViewportRenderingContext context )
+		{
+			var container = context.Owner?.UIContainer;
+			if( container != null )
+				return container.GetParentContainerPixelScale();
+			else
+				return 1;
+		}
+
 		Vector2 ConvertOffsetToScreen( ViewportRenderingContext context, UIMeasureValueVector2 value )
 		{
 			if( value.Value == Vector2.Zero )
@@ -792,6 +801,9 @@ namespace NeoAxis
 				break;
 			case UIMeasure.Pixels:
 				screen = DivideWithZeroCheck( value.Value, GetParentContainerSizeInPixels( context ) );
+				break;
+			case UIMeasure.PixelsScaled:
+				screen = DivideWithZeroCheck( value.Value * GetParentContainerPixelScale( context ), GetParentContainerSizeInPixels( context ) );
 				break;
 			}
 

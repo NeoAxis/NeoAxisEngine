@@ -130,7 +130,8 @@ namespace NeoAxis.Editor
 			if( distance < 2 )
 				distance = 2;
 
-			double cameraZoomFactor = 1;
+			double cameraZoomFactor = 0.8;
+			//double cameraZoomFactor = 1;
 			SphericalDirection cameraDirection = new SphericalDirection( -3.83, -.47 );
 
 			var cameraPosition = cameraLookTo - cameraDirection.GetVector() * distance * cameraZoomFactor;

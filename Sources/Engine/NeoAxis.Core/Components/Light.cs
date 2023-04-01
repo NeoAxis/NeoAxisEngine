@@ -335,6 +335,20 @@ namespace NeoAxis
 		ReferenceField<double> _shadowNormalBias = 0.5;
 
 		/// <summary>
+		/// The softness multiplier of shadows.
+		/// </summary>
+		[DefaultValue( 1.5 )]
+		[Range( 0, 3 )]
+		public Reference<double> ShadowSoftness
+		{
+			get { if( _shadowSoftness.BeginGet() ) ShadowSoftness = _shadowSoftness.Get( this ); return _shadowSoftness.value; }
+			set { if( _shadowSoftness.BeginSet( ref value ) ) { try { ShadowSoftnessChanged?.Invoke( this ); } finally { _shadowSoftness.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ShadowSoftness"/> property value changes.</summary>
+		public event Action<Light> ShadowSoftnessChanged;
+		ReferenceField<double> _shadowSoftness = 1.5;
+
+		/// <summary>
 		/// Whether to detail the shadows by means the screen-space contact shadows technique. The contact shadows works only for deferred shading.
 		/// </summary>
 		[DefaultValue( false )]
@@ -591,6 +605,7 @@ namespace NeoAxis
 						//item.ShadowSoftness = (float)ShadowSoftness;
 						item.ShadowBias = (float)ShadowBias;
 						item.ShadowNormalBias = (float)ShadowNormalBias;
+						item.ShadowSoftness = (float)ShadowSoftness;
 						//item.ShadowContact = ShadowContact;
 						if( ShadowContact )
 							item.ShadowContactLength = (float)ShadowContactLength;
@@ -921,6 +936,7 @@ namespace NeoAxis
 				case nameof( ShadowIntensity ):
 				case nameof( ShadowBias ):
 				case nameof( ShadowNormalBias ):
+				case nameof( ShadowSoftness ):
 				case nameof( ShadowContact ):
 					if( Type.Value == TypeEnum.Ambient || !Shadows )
 						skip = true;

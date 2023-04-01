@@ -36,17 +36,18 @@ void main()
 	{
 		vec2 offset = velocity * (float(n) / float(samples - 1) - 0.5);
 		
-		//vec2 motionVector2 = texture2D(s_motionTexture, v_texCoord0 + offset).xy;
-		//if(any(motionVector2))
-		//{
 		float rawDepth2 = texture2D(s_depthTexture, v_texCoord0 + offset).r;
 		float depth2 = getDepthValue(rawDepth2, u_viewportOwnerNearClipDistance, u_viewportOwnerFarClipDistance);
 		if(abs(depth - depth2) < motionBlurParameters.y)
 		{
-			color += texture2D(s_sourceTexture, v_texCoord0 + offset);
-			count++;
+			vec2 motionVector2 = texture2D(s_motionTexture, v_texCoord0 + offset).xy;
+			vec2 motionVectorDiff = motionVector2 - motionVector;
+			if( length( motionVectorDiff ) < motionBlurParameters.z )
+			{
+				color += texture2D(s_sourceTexture, v_texCoord0 + offset);
+				count++;
+			}			
 		}
-		//}
 	}
 	color /= float(count);
 	

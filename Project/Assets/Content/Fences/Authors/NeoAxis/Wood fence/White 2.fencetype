@@ -1,0 +1,28 @@
+.component NeoAxis.Component_FenceType
+{
+	PanelLength = 2
+	EndPost
+	{
+		GetByReference = "Content\\Fences\\Authors\\NeoAxis\\Wood fence\\Data\\White\\Post.fbx|$Mesh"
+	}
+	LinePost
+	{
+		GetByReference = "Content\\Fences\\Authors\\NeoAxis\\Wood fence\\Data\\White\\Post.fbx|$Mesh"
+	}
+	CornerPost
+	{
+		GetByReference = "Content\\Fences\\Authors\\NeoAxis\\Wood fence\\Data\\White\\Post.fbx|$Mesh"
+	}
+	StepPost
+	{
+		GetByReference = "Content\\Fences\\Authors\\NeoAxis\\Wood fence\\Data\\White\\Post.fbx|$Mesh"
+	}
+	FullPanel
+	{
+		GetByReference = "Content\\Fences\\Authors\\NeoAxis\\Wood fence\\Data\\White\\Full panel 2.fbx|$Mesh"
+	}
+	HalfPanel
+	{
+		GetByReference = "Content\\Fences\\Authors\\NeoAxis\\Wood fence\\Data\\White\\Half panel 2.fbx|$Mesh"
+	}
+}

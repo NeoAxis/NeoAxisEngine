@@ -22,7 +22,8 @@
 #define u_lightShadowUnitDistanceTexelSizes u_lightDataFragment[27]
 #define u_lightShadowBias u_lightDataFragment[28].x
 #define u_lightShadowNormalBias u_lightDataFragment[28].y
-#define u_lightSourceRadiusOrAngle u_lightDataFragment[28].z
+#define u_lightShadowSoftness u_lightDataFragment[28].z
+//#define u_lightSourceRadiusOrAngle u_lightDataFragment[28].z
 #define u_lightShadowContactLength u_lightDataFragment[28].w
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
